@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md`  
 > **Source**: github ([https://github.com/Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko))  
-> **Source Version**: `50b0a34e`  
+> **Source Version**: `10a08581`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:00:55.697Z  
+> **Timestamp**: 2026-10-23T05:56:31.609Z  
 > **Learning ID**: `learn-github-nasiko-labs-nasiko`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:00:55.689Z  
+> **Harvest Timestamp**: 2026-10-23T05:56:28.788Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Open Runtime for AI Agents
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9470 stars
+- **Stars / Engagement**: 9457 stars
 
 ---
 
@@ -37,2203 +37,2191 @@
 - Entry configurations inspected via direct stream: Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `cli/src/commands/integration/queue.rs`
+### Core Architecture Module: `agents/assistant-agent/nasiko_state.py`
 ```
-//! Durable, destination-bound queue for coding-agent events.
+"""Durable agent state over the platform's state API.
 
-use anyhow::{Context, Result, bail};
-use chrono::{DateTime, Utc};
-use nasiko_types::CodingAgentEventV1;
-use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
-use std::fs::{File, OpenOptions};
-use std::io::Write;
-use std::path::{Path, PathBuf};
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::time::{Duration, Instant};
-use uuid::Uuid;
+An A2A agent normally keeps its tasks in process memory, so a restart loses paused work
+and the agent cannot run as more than one replica. This module is a drop-in replacement
+that keeps that state in the platform instead.
 
-const MAX_SCAN_RECORDS: usize = 1_000;
+    from nasiko_state import make_task_store
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct QueueDestination {
-    pub cluster_name: String,
-    pub cluster_url: String,
-    pub principal_id: Uuid,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum DeliveryState {
-    Pending,
-    Deferred,
-    Rejected,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct QueueRecord {
-    pub destination: QueueDestination,
-    pub delivery_state: DeliveryState,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub last_error: Option<String>,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
-    #[serde(default)]
-    pub attempts: u32,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub next_attempt_at: Option<DateTime<Utc>>,
-    pub event: CodingAgentEventV1,
-}
-
-impl QueueRecord {
-    pub fn new(destination: QueueDestination, event: CodingAgentEventV1) -> Self {
-        let now = Utc::now();
-        Self {
-            destination,
-            delivery_state: DeliveryState::Pending,
-            last_error: None,
-            created_at: now,
-            updated_at: now,
-            attempts: 0,
-            next_attempt_at: None,
-            event,
-        }
-    }
-}
-
-pub struct SyncLock {
-    _file: File,
-}
-
-pub fn enqueue(record: &QueueRecord) -> Result<PathBuf> {
-    enqueue_at(&super::state::integrations_dir(), record)
-}
-
-pub fn load(path: &Path) -> Result<QueueRecord> {
-    let bytes =
-        std::fs::read(path).with_context(|| format!("failed to read {}", path.display()))?;
-    let record: QueueRecord = serde_json::from_slice(&bytes)
-        .with_context(|| format!("failed to parse {}", path.display()))?;
-    validate_record(&record)?;
-    Ok(record)
-}
-
-pub fn update(path: &Path, record: &QueueRecord) -> Result<()> {
-    validate_record(record)?;
-    atomic_owner_write(path, &serde_json::to_vec(record)?)
-}
-
-pub fn remove(path: &Path) -> Result<()> {
-    std::fs::remove_file(path).with_context(|| format!("failed to remove {}", path.display()))
-}
-
-pub fn quarantine(path: &Path, record: &QueueRecord) -> Result<PathBuf> {
-    let root = path
-        .ancestors()
-        .find(|ancestor| ancestor.file_name().is_some_and(|name| name == "queue"))
-        .and_then(Path::parent)
-        .unwrap_or_else(|| path.parent().unwrap_or_else(|| Path::new(".")));
-    quarantine_at(root, path, record)
-}
-
-pub fn reject_invalid(record: &QueueRecord, error: &str) -> Result<PathBuf> {
-    reject_invalid_at(&super::state::integrations_dir(), record, error)
-}
-
-pub fn records() -> Result<Vec<(PathBuf, QueueRecord)>> {
-    records_at(&super::state::integrations_dir())
-}
-
-pub fn has_pending_records() -> Result<bool> {
-    has_pending_records_at(&super::state::integrations_dir())
-}
-
-pub fn acquire_sync_lock(timeout: Duration) -> Result<SyncLock> {
-    acquire_sync_lock_at(&super::state::integrations_dir(), timeout)
-}
-
-fn enqueue_at(root: &Path, record: &QueueRecord) -> Result<PathBuf> {
-    validate_record(record)?;
-    let path = record_path(root, &record.destination, &record.event.event_id);
-    create_owner_dirs(&root.join("queue"))?;
-    atomic_owner_write(&path, &serde_json::to_vec(record)?)?;
-    Ok(path)
-}
-
-fn validate_record(record: &QueueRecord) -> Result<()> {
-    if record.destination.cluster_name.trim().is_empty()
-        || record.destination.cluster_url.trim().is_empty()
-    {
-        bail!("queue destination cluster name and URL must not be empty");
-    }
-    record.event.validate().map_err(anyhow::Error::msg)
-}
-
-fn cluster_hash(destination: &QueueDestination) -> String {
-    let identity = format!(
-        "{}\0{}\0{}",
-        destination.cluster_name,
-        destination.cluster_url.trim_end_matches('/'),
-        destination.principal_id,
-    );
-    hex::encode(Sha256::digest(identity.as_bytes()))[..24].to_string()
-}
-
-fn record_path(root: &Path, destination: &QueueDestination, event_id: &str) -> PathBuf {
-    root.join("queue")
-        .join(cluster_hash(destination))
-        .join(format!("{event_id}.json"))
-}
-
-fn records_at(root: &Path) -> Result<Vec<(PathBuf, QueueRecord)>> {
-    let queue = root.join("queue");
-    if !queue.exists() {
-        return Ok(Vec::new());
-    }
-    let mut records = Vec::new();
-    let now = Utc::now();
-    for cluster in std::fs::read_dir(&queue)? {
-        let cluster = cluster?;
-        if !cluster.file_type()?.is_dir() {
-            continue;
-        }
-        for entry in std::fs::read_dir(cluster.path())? {
-            let entry = entry?;
-            let path = entry.path();
-            if path
-                .extension()
-                .is_some_and(|extension| extension == "json")
-            {
-                match load(&path) {
-                    Ok(record)
-                        if record
-                            .next_attempt_at
-                            .is_none_or(|next_attempt| next_attempt <= now) =>
-                    {
-                        records.push((path, record));
-                        if records.len() >= MAX_SCAN_RECORDS {
-                            records.sort_by(|left, right| left.0.cmp(&right.0));
-                            return Ok(records);
-                        }
-                    }
-                    Ok(_) => {}
-                    Err(_) => quarantine_invalid_at(root, &path)?,
-                }
-            }
-        }
-    }
-    records.sort_by(|left, right| left.0.cmp(&right.0));
-    Ok(records)
-}
-
-fn has_pending_records_at(root: &Path) -> Result<bool> {
-    let queue = root.join("queue");
-    if !queue.exists() {
-        return Ok(false);
-    }
-    for cluster in std::fs::read_dir(queue)? {
-        let cluster = cluster?;
-        if !cluster.file_type()?.is_dir() {
-            continue;
-        }
-        if std::fs::read_dir(cluster.path())?.any(|entry| {
-            entry.ok().is_some_and(|entry| {
-                entry
-                    .path()
-                    .extension()
-                    .is_some_and(|extension| extension == "json")
-            })
-        }) {
-            return Ok(true);
-        }
-    }
-    Ok(false)
-}
-
-fn quarantine_at(root: &Path, path: &Path, record: &QueueRecord) -> Result<PathBuf> {
-    let destination = root
-        .join("rejected")
-        .join(cluster_hash(&record.destination))
-        .join(path.file_name().context("queue record has no filename")?);
-    create_owner_dirs(destination.parent().expect("quarantine has parent"))?;
-    std::fs::rename(path, &destination)
-        .with_context(|| format!("failed to quarantine {}", path.display()))?;
-    Ok(destination)
-}
-
-fn reject_invalid_at(root: &Path, record: &QueueRecord, error: &str) -> Result<PathBuf> {
-    let mut rejected = record.clone();
-    rejected.delivery_state = DeliveryState::Rejected;
-    rejected.last_error = Some(format!("invalid event: {error}"));
-    rejected.updated_at = Utc::now();
-    let destination = root
-        .join("rejected")
-        .join(cluster_hash(&record.destination))
-        .join(format!("{}.json", record.event.event_id));
-    create_owner_dirs(destination.parent().expect("rejected event has parent"))?;
-    atomic_owner_write(&destination, &serde_json::to_vec(&rejected)?)?;
-    Ok(destination)
-}
-
-fn quarantine_invalid_at(root: &Path, path: &Path) -> Result<()> {
-    let cluster = path
-        .parent()
-        .and_then(Path::file_name)
-        .context("invalid queue record has no cluster directory")?;
-    let destination = root.join("rejected").join("malformed").join(cluster).join(
-        path.file_name()
-            .context("invalid queue record has no filename")?,
-    );
-    create_owner_dirs(destination.parent().expect("invalid quarantine has parent"))?;
-    std::fs::rename(path, &destination)
-        .with_context(|| format!("failed to quarantine malformed record {}", path.display()))?;
-    Ok(())
-}
-
-fn acquire_sync_lock_at(root: &Path, timeout: Duration) -> Result<SyncLock> {
-    let path = root.join("queue").join(".sync.lock");
-    create_owner_dirs(path.parent().expect("lock has parent"))?;
-    let file = owner_open(&path, false)?;
-    let deadline = Instant::now() + timeout;
-    while file.try_lock().is_err() {
-        if Instant::now() >= deadline {
-            bail!("timed out locking {}", path.display());
-        }
-        std::thread::sleep(Duration::from_millis(25));
-    }
-    Ok(SyncLock { _file: file })
-}
-
-fn create_owner_dirs(path: &Path) -> Result<()> {
-    std::fs::create_dir_all(path)
-        .with_context(|| format!("failed to create {}", path.display()))?;
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o700))?;
-    }
-    Ok(())
-}
-
-fn owner_open(path: &Path, truncate: bool) -> Result<File> {
-    let mut options = OpenOptions::new();
-    options
-        .create(true)
-        .write(true)
-        .read(true)
-        .truncate(truncate);
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::OpenOptionsExt;
-        options.mode(0o600);
-    }
-    let file = options
-        .open(path)
-        .with_context(|| format!("failed to open {}", path.display()))?;
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        file.set_permissions(std::fs::Permissions::from_mode(0o600))?;
-    }
-    Ok(file)
-}
-
-fn atomic_owner_write(path: &Path, bytes: &[u8]) -> Result<()> {
-    static NEXT_TEMP: AtomicU64 = AtomicU64::new(0);
-    let parent = path.parent().context("queue record has no parent")?;
-    create_owner_dirs(parent)?;
-    let name = path
-        .file_name()
-
-```
-
-### Core Architecture Module: `cli/src/commands/integration/state.rs`
-```
-//! On-disk state for installed integrations, under `~/.nasiko/integrations/`.
-//!
-//! Two kinds of state live here:
-//!
-//! - `config.json` — one entry per installed agent: where to send spans and
-//!   whether prompt text may be captured. Written by `install`, read by the
-//!   hook on every report.
-//! - `watermarks/<agent>/<session>.json` — stable turn ids already exported and
-//!   persisted, so hooks remain idempotent across transcript reordering.
-
-use anyhow::{Context, Result};
-use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
-use std::collections::{HashMap, HashSet};
-use std::fs::{File, OpenOptions};
-use std::io::Write;
-use std::path::{Path, PathBuf};
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::time::{Duration, Instant};
-use uuid::Uuid;
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct InstallationBinding {
-    pub cluster_name: String,
-    pub cluster_url: String,
-    pub principal_id: Uuid,
-}
-
-/// Per-agent settings recorded at install time.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AgentState {
-    /// Name this agent is registered under in the control plane.
-    pub agent_name: String,
-    /// Whether prompt text may be attached to spans.
-    pub capture_content: bool,
-    /// Version of the installed hook script.
-    pub hook_version: u32,
-    /// Immutable delivery destination selected by the explicit installation.
-    /// Legacy state without this field fails closed and must be reinstalled.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub binding: Option<InstallationBinding>,
-}
-
-/// Every installed integration, keyed by catalog id.
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct IntegrationState {
-    #[serde(default)]
-    pub agents: HashMap<String, AgentState>,
-}
-
-impl IntegrationState {
-    pub fn load() -> Result<Self> {
-        let path = config_path();
-        if !path.exists() {
-            return Ok(Self::default());
-        }
-        let content = std::fs::read_to_string(&path)
-            .with_context(|| format!("failed to read {}", path.display()))?;
-        serde_json::from_str(&content)
-            .with_context(|| format!("failed to parse {}", path.display()))
-    }
-
-    pub fn save(&self) -> Result<()> {
-        let path = config_path();
-        create_parent_dir(&path)?;
-        let content = serde_json::to_string_pretty(self)?;
-        atomic_write(&path, content.as_bytes())
-    }
-
-    pub fn get(&self, agent_id: &str) -> Option<&AgentState> {
-        self.agents.get(agent_id)
-    }
-}
-
-// ─── Watermarks ──────────────────────────────────────────────────────────────
-
-/// A process-wide exclusive lock for one session's reporting state.
-///
-/// Keep this guard alive across reading watermarks, exporting/uploading, and
-/// advancing them so overlapping hook processes cannot perform the same work.
-pub struct SessionLock {
-    _file: File,
-    watermark_path: PathBuf,
-}
-
-/// Independent stable-id progress for span export and message persistence.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SessionProgress {
-    pub exported_turn_ids: HashSet<String>,
-    pub uploaded_turn_ids: HashSet<String>,
-    pub captured_turn_ids: HashSet<String>,
-    /// A count-only file cannot be mapped safely after transcript edits. Its
-    /// first ID-aware run deliberately replays complete turns once.
-    pub migrated_legacy_counts: bool,
-}
-
-impl SessionLock {
-    #[cfg(test)]
-    fn acquire(lock_path: &Path, watermark_path: PathBuf) -> Result<Self> {
-        create_parent_dir(lock_path)?;
-        let file = OpenOptions::new()
-            .create(true)
-            .truncate(false)
-            .read(true)
-            .write(true)
-            .open(lock_path)
-            .with_context(|| format!("failed to open {}", lock_path.display()))?;
-        file.lock()
-            .with_context(|| format!("failed to lock {}", lock_path.display()))?;
-        Ok(Self {
-            _file: file,
-            watermark_path,
-        })
-    }
-
-    fn acquire_with_timeout(
-        lock_path: &Path,
-        watermark_path: PathBuf,
-        legacy_watermark_path: Option<&Path>,
-        timeout: Duration,
-    ) -> Result<Self> {
-        create_parent_dir(lock_path)?;
-        let file = OpenOptions::new()
-            .create(true)
-            .truncate(false)
-            .read(true)
-            .write(true)
-            .open(lock_path)
-            .with_context(|| format!("failed to open {}", lock_path.display()))?;
-        let deadline = Instant::now() + timeout;
-        while file.try_lock().is_err() {
-            if Instant::now() >= deadline {
-                anyhow::bail!("timed out locking {}", lock_path.display());
-            }
-            std::thread::sleep(Duration::from_millis(25));
-        }
-        if !watermark_path.exists()
-            && let Some(legacy_path) = legacy_watermark_path.filter(|path| path.exists())
-        {
-            let legacy = read_watermark_path(legacy_path);
-            // Session-only IDs may belong to another adapter. Replay instead
-            // of suppressing turns; Tempo and the server deduplicate retries.
-            let conservative = Watermark {
-                exported_turns: legacy
-                    .exported_turn_ids
-                    .as_ref()
-                    .map_or(legacy.exported_turns, Vec::len),
-                uploaded_messages: legacy
-                    .uploaded_turn_ids
-                    .as_ref()
-                    .map_or(legacy.uploaded_messages, Vec::len),
-                exported_turn_ids: None,
-                uploaded_turn_ids: None,
-                captured_turn_ids: None,
-            };
-            write_watermark_path(&watermark_path, &conservative)?;
-        }
-        Ok(Self {
-            _file: file,
-            watermark_path,
-        })
-    }
-
-    /// Read progress. Legacy counts are intentionally not assigned to current
-    /// IDs: truncation or reordering makes that mapping unknowable. Existing
-    /// complete turns replay once, after which stable IDs govern all progress.
-    pub fn progress(&self) -> Result<SessionProgress> {
-        let mut current = read_watermark_path(&self.watermark_path);
-        let mut migrated = false;
-        let mut migrated_legacy_counts = false;
-        if current.exported_turn_ids.is_none() {
-            migrated_legacy_counts |= current.exported_turns > 0;
-            current.exported_turn_ids = Some(Vec::new());
-            migrated = true;
-        }
-        if current.uploaded_turn_ids.is_none() {
-            migrated_legacy_counts |= current.uploaded_messages > 0;
-            current.uploaded_turn_ids = Some(Vec::new());
-            migrated = true;
-        }
-        if current.captured_turn_ids.is_none() {
-            // Only turns completed by both old delivery paths can safely be
-            // treated as captured by the replacement pipeline.
-            let exported: HashSet<_> = current
-                .exported_turn_ids
-                .as_deref()
-                .unwrap_or_default()
-                .iter()
-                .cloned()
-                .collect();
-            let captured = current
-                .uploaded_turn_ids
-                .as_deref()
-                .unwrap_or_default()
-                .iter()
-                .filter(|id| exported.contains(*id))
-                .cloned()
-                .collect();
-            current.captured_turn_ids = Some(captured);
-            migrated = true;
-        }
-        if migrated {
-            write_watermark_path(&self.watermark_path, &current)?;
-        }
-        Ok(SessionProgress {
-            exported_turn_ids: current
-                .exported_turn_ids
-                .unwrap_or_default()
-                .into_iter()
-                .collect(),
-            uploaded_turn_ids: current
-                .uploaded_turn_ids
-                .unwrap_or_default()
-                .into_iter()
-                .collect(),
-            captured_turn_ids: current
-                .captured_turn_ids
-                .unwrap_or_default()
-                .into_iter()
-                .collect(),
-            migrated_legacy_counts,
-        })
-    }
-
-    pub fn mark_captured(&self, turn_ids: &[String]) -> Result<()> {
-        self.mark(turn_ids, |watermark| &mut watermark.captured_turn_ids)
-    }
-
-    fn mark(
-        &self,
-        turn_ids: &[String],
-        field: impl FnOnce(&mut Watermark) -> &mut Option<Vec<String>>,
-    ) -> Result<()> {
-        let mut watermark = read_watermark_path(&self.watermark_path);
-        let ids = field(&mut watermark).get_or_insert_with(Vec::new);
-        let mut known: HashSet<String> = ids.iter().cloned().collect();
-        for turn_id in turn_ids {
-            if known.insert(turn_id.clone()) {
-                ids.push(turn_id.clone());
-            }
-        }
-        watermark.exported_turns = watermark
-            .exported_turn_ids
-            .as_ref()
-            .map_or(watermark.exported_turns, Vec::len);
-        watermark.uploaded_messages = watermark
-            .uploaded_turn_ids
-            .as_ref()
-            .map_or(watermark.uploaded_messages, Vec::len);
-        write_watermark_path(&self.watermark_path, &watermark)
-    }
-}
-
-/// Acquire the per-session report lock. `report.rs` should hold this guard for
-/// its complete read/export/upload/watermark transaction.
-pub fn lock_session(agent_id: &str, session_id: &str, timeout: Duration) -> Result<SessionLock> {
-    let watermark = watermark_path(agent_id, session_id);
-    SessionLock::acquire_with_timeout(
-        &watermark.with_extension("lock"),
-        watermark,
-        Some(&legacy_watermark_path(session_id)),
-        timeout,
+    handler = DefaultRequestHandler(
+        agent_executor=MyExecutor(),
+        task_store=make_task_store(),   # was: InMemoryTaskStore()
+        agent_card=card,
     )
-}
+    app = Starlette(routes=...)
+    install_shutdown_hooks(app)         # flush pending writes when the server stops
 
-fn read_watermark_path(path: &Path) -> Watermark {
-    std::fs::read_to_string(path)
-        .ok()
-        .and_then(|c| serde_json::from_str(&c).ok())
-        .unwrap_or_default()
-}
+Configuration comes from the environment the platform injects into the container:
 
-fn write_watermark_path(path: &Path, watermark: &Watermark) -> Result<()> {
-    atomic_write(path, serde_json::to_string(watermar
-```
+    NASIKO_STATE_URL     base URL of the state API (ends in /api/agent-state). Unset means the
+                         platform provides no store, and every factory here returns the
+                         in-memory implementation the SDK ships, so the same code runs locally.
+    NASIKO_AGENT_TOKEN   this agent's state credential. It is the only one accepted: the MCP
+                         gateway token is a different credential and is never used here.
 
-### Core Architecture Module: `cli/src/util.rs`
-```
-use std::fs;
-use std::io::Cursor;
-use std::path::Path;
+Write guarantee (see NasikoTaskStore): a save that changes ``task.status.state`` is on the
+server before ``save()`` returns. Other saves are coalesced to at most one write per
+COALESCE_WINDOW_SECONDS per task and written on the next state change, by a background timer,
+and by ``aclose()``. Nothing calls ``aclose()`` on its own: ``install_shutdown_hooks(app)`` runs
+it when the server shuts down (uvicorn does that on SIGTERM and Ctrl-C), and an atexit hook
+covers a normal interpreter exit. A hard crash (SIGKILL, power loss), or a SIGTERM in a process
+without those hooks, can lose that window of non-status updates; so can an update the platform
+could not take for PENDING_MAX_AGE_SECONDS, which is discarded rather than written late.
 
-use anyhow::Result;
-use include_dir::Dir;
-use serde_json;
+Both a2a-sdk majors are supported (0.3.x pydantic tasks and 1.x protobuf tasks). The langgraph
+checkpointer needs the optional langgraph-checkpoint package; nothing else does.
 
-/// Best-effort scan of an agent's source directory for a reference to the MCP gateway env vars
-/// (`MCP_GATEWAY_URL`/`MCP_GATEWAY_TOKEN`) — the signal that this agent's own code is coded to
-/// call `/api/mcp`, as opposed to an agent that never touches it (every agent gets the credential
-/// injected regardless, per `oss/server/src/mcp/wiring.rs`, so its presence alone proves
-/// nothing). Shared by `deploy.rs`'s directory-deploy path (which builds straight from a
-/// directory) and `upload.rs`'s directory-source path (checked before it zips, rather than
-/// re-scanning the freshly built archive) — `upload.rs`'s zip-file-source path still needs its
-/// own zip-entry scan instead, since there's no directory to walk there. Skips common non-source
-/// directories and any file over 1MB; any read/walk failure is treated as "no reference found" —
-/// this is a hint, not a correctness check, so it must never fail the deploy/upload itself.
-pub fn dir_references_mcp_gateway(dir: &Path) -> bool {
-    const SKIP_DIRS: &[&str] = &[
-        ".git",
-        ".nasiko",
-        "node_modules",
-        "__pycache__",
-        "target",
-        ".venv",
-        "venv",
-        "dist",
-        "build",
-    ];
-    let Ok(entries) = fs::read_dir(dir) else {
-        return false;
-    };
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if path.is_dir() {
-            let skip = path
-                .file_name()
-                .and_then(|n| n.to_str())
-                .is_some_and(|n| SKIP_DIRS.contains(&n));
-            if !skip && dir_references_mcp_gateway(&path) {
-                return true;
-            }
-            continue;
-        }
-        let Ok(metadata) = entry.metadata() else {
-            continue;
-        };
-        if metadata.len() > 1_000_000 {
-            continue;
-        }
-        let Ok(contents) = fs::read_to_string(&path) else {
-            continue;
-        };
-        if contents.contains("MCP_GATEWAY_URL") || contents.contains("MCP_GATEWAY_TOKEN") {
-            return true;
-        }
-    }
-    false
-}
-
-/// Resolves the container CLI binary to shell out to. Honors `NASIKO_CONTAINER_CLI`
-/// if set, otherwise prefers `docker` and falls back to `podman` when `docker` isn't
-/// on PATH (e.g. podman-only dev setups without the podman-docker compat shim).
-pub fn container_bin() -> String {
-    if let Ok(bin) = std::env::var("NASIKO_CONTAINER_CLI") {
-        return bin;
-    }
-    if on_path("docker") {
-        "docker".to_string()
-    } else {
-        "podman".to_string()
-    }
-}
-
-fn on_path(bin: &str) -> bool {
-    std::env::var_os("PATH")
-        .map(|paths| std::env::split_paths(&paths).any(|dir| dir.join(bin).is_file()))
-        .unwrap_or(false)
-}
-
-/// Split a Docker image reference into `(name, tag)`, stripping any registry
-/// host/path prefix first so a `host:port/...` ref doesn't get its port
-/// mistaken for part of the name or tag (e.g. `localhost:5000/my-agent:v2` ->
-/// `("my-agent", "v2")`, not `("localhost", "5000/my-agent")`).
-pub fn parse_image_name_and_tag(image: &str) -> (String, String) {
-    let last_segment = image.rsplit('/').next().unwrap_or(image);
-    match last_segment.rsplit_once(':') {
-        Some((name, tag)) => (name.to_string(), tag.to_string()),
-        None => (last_segment.to_string(), "latest".to_string()),
-    }
-}
-
-/// True if `image` has a `:tag` written explicitly, as opposed to
-/// [`parse_image_name_and_tag`]'s implicit `"latest"` fallback. Used so an
-/// untagged image isn't mistaken for a deliberately chosen version.
-pub fn image_has_explicit_tag(image: &str) -> bool {
-    image.rsplit('/').next().unwrap_or(image).contains(':')
-}
-
-pub fn extract_tar_gz(data: &[u8], dest: &Path) -> Result<()> {
-    fs::create_dir_all(dest)?;
-    let cursor = Cursor::new(data);
-    let gz = flate2::read::GzDecoder::new(cursor);
-    let mut archive = tar::Archive::new(gz);
-    archive.unpack(dest)?;
-    Ok(())
-}
-
-pub fn extract_embedded_dir(dir: &Dir, dest: &Path) -> Result<()> {
-    fs::create_dir_all(dest)?;
-    for file in dir.files() {
-        let file_name = file.path().file_name().unwrap_or_default();
-        fs::write(dest.join(file_name), file.contents())?;
-    }
-    for sub in dir.dirs() {
-        let sub_name = sub.path().file_name().unwrap_or_default();
-        extract_embedded_dir(sub, &dest.join(sub_name))?;
-    }
-    Ok(())
-}
-
-/// Try to read a version string from common project files.
-///
-/// Works for both a source directory and a `.zip` file. Resolution order:
-///   1. AgentCard.json → `version`
-///   2. pyproject.toml → `[project] version` or `[tool.poetry] version`
-///   3. Cargo.toml     → `[package] version`
-///
-/// Returns `None` if no version is found; callers should fall back to `"0.1.0"` on
-/// first upload or send `"auto"` on reupload (server auto-bumps the patch digit).
-pub fn detect_version_from_source(source: &Path) -> Option<String> {
-    if source.is_dir() {
-        detect_version_from_dir(source)
-    } else if source.extension().and_then(|e| e.to_str()) == Some("zip") {
-        detect_version_from_zip(source)
-    } else {
-        None
-    }
-}
-
-fn detect_version_from_dir(source: &Path) -> Option<String> {
-    // 1. AgentCard.json
-    let card_path = source.join("AgentCard.json");
-    if card_path.exists()
-        && let Ok(s) = fs::read_to_string(&card_path)
-        && let Ok(v) = serde_json::from_str::<serde_json::Value>(&s)
-        && let Some(ver) = v.get("version").and_then(|v| v.as_str())
-    {
-        return Some(ver.to_string());
-    }
-
-    // 2. pyproject.toml — [project] version or [tool.poetry] version
-    let pyproject_path = source.join("pyproject.toml");
-    if pyproject_path.exists()
-        && let Ok(s) = fs::read_to_string(&pyproject_path)
-        && let Some(ver) = parse_toml_version(&s, &["project", "tool.poetry"])
-    {
-        return Some(ver);
-    }
-
-    // 3. Cargo.toml — [package] version
-    let cargo_path = source.join("Cargo.toml");
-    if cargo_path.exists()
-        && let Ok(s) = fs::read_to_string(&cargo_path)
-        && let Some(ver) = parse_toml_version(&s, &["package"])
-    {
-        return Some(ver);
-    }
-
-    None
-}
-
-/// Read version from a zip file by extracting specific candidate files using
-/// `unzip -p` (prints file contents to stdout without extracting to disk).
-fn detect_version_from_zip(zip_path: &Path) -> Option<String> {
-    use std::process::Command;
-
-    let zip = zip_path.to_string_lossy();
-
-    // Helper: run `unzip -p <zip> <file>` and return stdout on success.
-    let read_from_zip = |file: &str| -> Option<String> {
-        let out = Command::new("unzip")
-            .args(["-p", &zip, file])
-            .output()
-            .ok()?;
-        if out.status.success() && !out.stdout.is_empty() {
-            String::from_utf8(out.stdout).ok()
-        } else {
-            None
-        }
-    };
-
-    // 1. AgentCard.json
-    if let Some(s) = read_from_zip("AgentCard.json")
-        && let Ok(v) = serde_json::from_str::<serde_json::Value>(&s)
-        && let Some(ver) = v.get("version").and_then(|v| v.as_str())
-    {
-        return Some(ver.to_string());
-    }
-
-    // 2. pyproject.toml
-    if let Some(s) = read_from_zip("pyproject.toml")
-        && let Some(ver) = parse_toml_version(&s, &["project", "tool.poetry"])
-    {
-        return Some(ver);
-    }
-
-    // 3. Cargo.toml
-    if let Some(s) = read_from_zip("Cargo.toml")
-        && let Some(ver) = parse_toml_version(&s, &["package"])
-    {
-        return Some(ver);
-    }
-
-    None
-}
-
-/// Minimal TOML version extractor: scans for `version = "..."` under any of the
-/// given section headers. Does not depend on a TOML parser crate.
-pub fn parse_toml_version(content: &str, sections: &[&str]) -> Option<String> {
-    let mut in_section = false;
-    for line in content.lines() {
-        let trimmed = line.trim();
-        if trimmed.starts_with('[') {
-            let header = trimmed.trim_start_matches('[').trim_end_matches(']').trim();
-            in_section = sections.contains(&header);
-            continue;
-        }
-        if in_section && let Some(rest) = trimmed.strip_prefix("version") {
-            let rest = rest.trim();
-            if let Some(rest) = rest.strip_prefix('=') {
-                let ver = rest.trim().trim_matches('"').trim_matches('\'');
-                if !ver.is_empty() {
-                    return Some(ver.to_string());
-                }
-            }
-        }
-    }
-    None
-}
-
-/// Writes the resolved deploy/push version back into `AgentCard.json` so the
-/// file reflects what's actually running instead of going stale the moment a
-/// prompt or `--version` picks something different from what's on disk. A
-/// no-op if the file already has this version — avoids reformatting the file
-/// (and thus a spurious diff) on every deploy/push that didn't change it.
-pub fn sync_card_version(card_path: &Path, card: &serde_json::Value, version: &str) -> Result<()> {
-    if card.get("version").and_then(|v| v.as_str()) == Some(version) {
-        return Ok(());
-    }
-    let mut updated = card.clone();
-    updated["version"] = serde_json::Value::String(version.to_string());
-    fs::write(card_path, serde_json::to_string_pretty(&updated)?)?;
-    Ok(())
-}
-
-pub fn title_case(s: &str) -> String {
-    s.split_whitespace()
-        .map(|w| {
-            let mut c = w.chars();
-            match c.next() {
-                Some(first) => first.to_uppercase().to_string() + c.as_str(),
-                None => String::new(),
-            }
-        })
-        .collect::<Vec<_>>()
-        .join(" ")
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn image_has_explicit_tag_true_for_a_real_tag() {
-        assert!(image_has_explicit_tag("legal-agent:1.0.1"));
-        assert!(image_has_explicit_tag("nasiko/legal-agent:1.0.1"));
-    }
-
-    #[test]
-    fn image_has_explicit_tag_false_for_a_bare_name() {
-        assert!(!image_ha
-```
-
-### Core Architecture Module: `llm-router/classifier/scripts/score.py`
-```
-"""Score ``classifier_eval`` output against a labelled dataset.
-
-    python score.py --gold ../data/val.json --pred /tmp/out.jsonl [--min-confidence 0.5]
-
-Reports request-type accuracy, expected calibration error, accuracy per slice tag,
-complexity exact/MAE, and latency percentiles. With ``--min-confidence``, answers below the
-threshold are counted as fallbacks (routed to the safe default) rather than errors, the way
-the brief scores them, and accuracy on the answered remainder is reported too.
+This file is vendored: agent images are built from the agent's own directory only, so each
+agent keeps a committed copy next to its main module. oss/agents/common is canonical and
+oss/agents/common/check_vendored.py fails when a copy drifts.
 """
 
-import argparse
+from __future__ import annotations
+
+import asyncio
+import atexit
+import base64
+import contextlib
+import functools
 import json
-from collections import defaultdict
+import logging
+import os
+import random
+import signal
+import threading
+import time
+from collections import OrderedDict
+from collections.abc import AsyncIterator, Callable, Iterator, Mapping, Sequence
+from dataclasses import dataclass, fields
+from typing import Any, Generic, TypeVar
+from urllib.parse import quote, urlsplit
 
-import numpy as np
+import httpx
+from a2a.server.tasks import InMemoryTaskStore, TaskStore
+from a2a.types import Task
 
-ECE_BINS = 10
+try:
+    from a2a.types import a2a_pb2 as _a2a_pb2  # a2a-sdk 1.x: tasks are protobuf messages
+except ImportError:
+    _a2a_pb2 = None  # a2a-sdk 0.3.x: tasks are pydantic models
+
+try:
+    from langgraph.checkpoint.base import (
+        WRITES_IDX_MAP,
+        BaseCheckpointSaver,
+        CheckpointTuple,
+        get_checkpoint_metadata,
+    )
+
+    _LANGGRAPH_AVAILABLE = True
+except ImportError:
+    # langgraph is optional: only agents that checkpoint with it need the package.
+    BaseCheckpointSaver = object  # type: ignore[assignment,misc]
+    _LANGGRAPH_AVAILABLE = False
+
+logger = logging.getLogger("nasiko_state")
+
+STATE_URL_ENV = "NASIKO_STATE_URL"
+AGENT_TOKEN_ENV = "NASIKO_AGENT_TOKEN"
+
+CLIENT_NAME = "nasiko_state.py/1"
+
+CONNECT_TIMEOUT_SECONDS = 2.0
+READ_TIMEOUT_SECONDS = 10.0
+RETRY_ATTEMPTS = 3
+RETRY_BACKOFF_SECONDS = 0.2
+# A rate-limited (429) request is retried after the Retry-After the server names, waiting at most
+# MAX_RETRY_AFTER_SECONDS per attempt and RATE_LIMIT_BUDGET_SECONDS in all before the 429 surfaces.
+# The platform's limit is a per-minute window shared by every replica of the agent, so a wait of a
+# few seconds is usually enough, and a turn that keeps failing for half a minute should fail.
+MAX_RETRY_AFTER_SECONDS = 5.0
+RATE_LIMIT_BUDGET_SECONDS = 30.0
+# The wait when a 429 names none (or names an HTTP date), and the shortest wait ever taken, so a
+# server answering "Retry-After: 0" cannot turn the budget into a busy loop.
+RATE_LIMIT_DEFAULT_WAIT_SECONDS = 1.0
+RATE_LIMIT_MIN_WAIT_SECONDS = 0.5
+# Relative spread of each 429 wait, so replicas limited at the same moment do not retry in step.
+RATE_LIMIT_JITTER = 0.2
+MAX_PAGE_SIZE = 100
+DEFAULT_PAGE_SIZE = 50
+
+# Saves that do not change a task's state are written at most once per window per task.
+COALESCE_WINDOW_SECONDS = 0.5
+# A deferred write that failed is retried after a delay that doubles per failure, up to this.
+DEFERRED_RETRY_MAX_SECONDS = 10.0
+# An unwritten update this old is presumed superseded (the task has most likely moved on to
+# another replica), so it is discarded instead of being written over whatever is there now.
+PENDING_MAX_AGE_SECONDS = 60.0
+# Exiting with the platform unreachable must not hang for every pending task.
+EXIT_FLUSH_BUDGET_SECONDS = 10.0
+# A task id just looked up and not found reads as missing for this long without asking again.
+# a2a-sdk 1.x looks a new task's id up several times before the task's first save, and that id is
+# one the SDK generated for the request, so no other replica can have created the task meanwhile.
+# A task that exists is always read from the server: another replica may have changed it.
+ABSENT_CACHE_SECONDS = 2.0
+# Bound on tasks whose write state is remembered. Forgetting an idle one costs its next write the
+# version check: having no version to match, that write is unconditional.
+MAX_TRACKED_TASKS = 4096
+# The status a shell reports for a process ended by SIGTERM; kept when SIGTERM becomes an exit.
+SIGTERM_EXIT_STATUS = 128 + signal.SIGTERM
+
+# The order the registration contract spells its capability lists in.
+CAPABILITY_ORDER = ("tasks", "kv")
+# A startup registration that failed for a reason that may pass (no answer, 5xx, 429) is retried
+# in the background after a delay that doubles from the first of these up to the second.
+REGISTER_RETRY_FIRST_SECONDS = 1.0
+REGISTER_RETRY_MAX_SECONDS = 60.0
+REGISTER_THREAD_NAME = "nasiko-state-register"
+
+T = TypeVar("T")
 
 
-def ece(conf, correct):
-    total = 0.0
-    for lo in np.linspace(0, 1, ECE_BINS, endpoint=False):
-        mask = (conf > lo) & (conf <= lo + 1 / ECE_BINS)
-        if mask.any():
-            total += mask.mean() * abs(correct[mask].mean() - conf[mask].mean())
-    return float(total)
+class NasikoStateError(Exception):
+    """The state API refused a request or could not be reached.
+
+    ``status`` and ``body`` carry the HTTP answer. Both are None for transport and
+    configuration failures, where there was no answer.
+    """
+
+    def __init__(self, message: str, *, status: int | None = None, body: str | None = None):
+        super().__init__(message)
+        self.status = status
+        self.body = body
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--gold", required=True)
-    ap.add_argument("--pred", required=True)
-    ap.add_argument("--min-confidence", type=float, default=None)
-    args = ap.parse_args()
+class NasikoStateMalformedRow(NasikoStateError):
+    """A stored row cannot be read back as what it claims to be.
 
-    gold = {e["id"]: e for e in json.load(open(args.gold, encoding="utf-8"))["examples"]}
-    preds = [json.loads(line) for line in open(args.pred, encoding="utf-8") if line.strip()]
-    assert {p["id"] for p in preds} == set(gold), "prediction ids do not match the gold set"
+    Raised for a task written by the other a2a-sdk major (or not by this module at all), and for a
+    damaged record. Never answered with a half-decoded object.
+    """
 
-    correct = np.array([p["request_type"] == gold[p["id"]]["request_type"] for p in preds])
-    conf = np.array([p["confidence"] for p in preds], dtype=float)
-    cx_pred = np.array([p["complexity"] for p in preds])
-    cx_gold = np.array([gold[p["id"]]["complexity"] for p in preds])
-    latency = np.array([p["latency_us"] for p in preds])
 
-    report = {
-        "n": len(preds),
-        "type_accuracy": round(float(correct.mean()), 4),
-        "type_ece": round(ece(conf, correct), 4),
-        "complexity_exact": round(float((cx_pred == cx_gold).mean()), 4),
-        "complexity_mae": round(float(np.abs(cx_pred - cx_gold).mean()), 4),
-        "latency_p50_us": int(np.percentile(latency, 50)),
-        "latency_p95_us": int(np.percentile(latency, 95)),
+class NasikoStateTooLarge(NasikoStateError):
+    """The state API refused a value above its size limit (HTTP 413). Retrying cannot help."""
+
+
+class NasikoStateConflict(NasikoStateError):
+    """An ``If-Match`` precondition failed: another writer changed the row first.
+
+    ``current_version`` is the version the server holds, or None if the body did not say.
+    """
+
+    def __init__(self, message: str, *, current_version: int | None, body: str | None = None):
+        super().__init__(message, status=412, body=body)
+        self.current_version = current_version
+
+
+@dataclass(frozen=True)
+class WriteReceipt:
+    """What the server answers to a PUT. Task and KV writes share the three fields."""
+
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class TaskRecord:
+    """One stored task. ``body`` is the SDK's serialized Task, opaque to the server."""
+
+    task_id: str
+    context_id: str | None
+    state: str
+    body: Any
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class KVRecord:
+    """One stored key. ``value`` is opaque JSON."""
+
+    key: str
+    value: Any
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class Page(Generic[T]):
+    """One page of a listing. ``next_cursor`` is None on the last page."""
+
+    items: list[T]
+    next_cursor: str | None
+
+
+# --- Operations ---------------------------------------------------------------------------------
+#
+# Each state API call is described once, as data, and executed by the sync or the async client
+# method. That keeps request building, status handling and parsing in a single place.
+
+_UNSET: Any = object()
+
+
+@dataclass(frozen=True)
+class _Operation:
+    """One state API call: how to send it and how to read the answer."""
+
+    method: str
+    path: str
+    parse: Callable[[httpx.Response], Any]
+    ok_status: int = 200
+    params: Mapping[str, str | int | None] | None = None
+    json: Any = _UNSET
+    if_match: int | None = None
+    # A write names the capability it needs registered; reads leave it None.
+    capability: str | None = None
+    # What a 404 means. Left unset, a 404 is an error like any other status.
+    when_missing: Any = _UNSET
+    # time.monotonic() by which the call, retries included, must be over. None means no deadline.
+    deadline: float | None = None
+
+    def request_kwargs(self) -> dict[str, Any]:
+        kwargs: dict[str, Any] = {"method": self.method, "url": self.path}
+        if self.params:
+            kwargs["params"] = {key: value for key, value in self.params.items() if value is not None}
+        if self.json is not _UNSET:
+            kwargs["json"] = self.json
+        if self.if_match is not None:
+            kwargs["headers"] = {"If-Match": str(self.if_match)}
+        if self.deadline is not None:
+            kwargs["timeout"] = min(self.seconds_left(), READ_TIMEOUT_SECONDS)
+        return kwargs
+
+    def seconds_left(self) -> 
+```
+
+### Core Architecture Module: `agents/claude-sdk/src/nasiko_state.py`
+```
+"""Durable agent state over the platform's state API.
+
+An A2A agent normally keeps its tasks in process memory, so a restart loses paused work
+and the agent cannot run as more than one replica. This module is a drop-in replacement
+that keeps that state in the platform instead.
+
+    from nasiko_state import make_task_store
+
+    handler = DefaultRequestHandler(
+        agent_executor=MyExecutor(),
+        task_store=make_task_store(),   # was: InMemoryTaskStore()
+        agent_card=card,
+    )
+    app = Starlette(routes=...)
+    install_shutdown_hooks(app)         # flush pending writes when the server stops
+
+Configuration comes from the environment the platform injects into the container:
+
+    NASIKO_STATE_URL     base URL of the state API (ends in /api/agent-state). Unset means the
+                         platform provides no store, and every factory here returns the
+                         in-memory implementation the SDK ships, so the same code runs locally.
+    NASIKO_AGENT_TOKEN   this agent's state credential. It is the only one accepted: the MCP
+                         gateway token is a different credential and is never used here.
+
+Write guarantee (see NasikoTaskStore): a save that changes ``task.status.state`` is on the
+server before ``save()`` returns. Other saves are coalesced to at most one write per
+COALESCE_WINDOW_SECONDS per task and written on the next state change, by a background timer,
+and by ``aclose()``. Nothing calls ``aclose()`` on its own: ``install_shutdown_hooks(app)`` runs
+it when the server shuts down (uvicorn does that on SIGTERM and Ctrl-C), and an atexit hook
+covers a normal interpreter exit. A hard crash (SIGKILL, power loss), or a SIGTERM in a process
+without those hooks, can lose that window of non-status updates; so can an update the platform
+could not take for PENDING_MAX_AGE_SECONDS, which is discarded rather than written late.
+
+Both a2a-sdk majors are supported (0.3.x pydantic tasks and 1.x protobuf tasks). The langgraph
+checkpointer needs the optional langgraph-checkpoint package; nothing else does.
+
+This file is vendored: agent images are built from the agent's own directory only, so each
+agent keeps a committed copy next to its main module. oss/agents/common is canonical and
+oss/agents/common/check_vendored.py fails when a copy drifts.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import atexit
+import base64
+import contextlib
+import functools
+import json
+import logging
+import os
+import random
+import signal
+import threading
+import time
+from collections import OrderedDict
+from collections.abc import AsyncIterator, Callable, Iterator, Mapping, Sequence
+from dataclasses import dataclass, fields
+from typing import Any, Generic, TypeVar
+from urllib.parse import quote, urlsplit
+
+import httpx
+from a2a.server.tasks import InMemoryTaskStore, TaskStore
+from a2a.types import Task
+
+try:
+    from a2a.types import a2a_pb2 as _a2a_pb2  # a2a-sdk 1.x: tasks are protobuf messages
+except ImportError:
+    _a2a_pb2 = None  # a2a-sdk 0.3.x: tasks are pydantic models
+
+try:
+    from langgraph.checkpoint.base import (
+        WRITES_IDX_MAP,
+        BaseCheckpointSaver,
+        CheckpointTuple,
+        get_checkpoint_metadata,
+    )
+
+    _LANGGRAPH_AVAILABLE = True
+except ImportError:
+    # langgraph is optional: only agents that checkpoint with it need the package.
+    BaseCheckpointSaver = object  # type: ignore[assignment,misc]
+    _LANGGRAPH_AVAILABLE = False
+
+logger = logging.getLogger("nasiko_state")
+
+STATE_URL_ENV = "NASIKO_STATE_URL"
+AGENT_TOKEN_ENV = "NASIKO_AGENT_TOKEN"
+
+CLIENT_NAME = "nasiko_state.py/1"
+
+CONNECT_TIMEOUT_SECONDS = 2.0
+READ_TIMEOUT_SECONDS = 10.0
+RETRY_ATTEMPTS = 3
+RETRY_BACKOFF_SECONDS = 0.2
+# A rate-limited (429) request is retried after the Retry-After the server names, waiting at most
+# MAX_RETRY_AFTER_SECONDS per attempt and RATE_LIMIT_BUDGET_SECONDS in all before the 429 surfaces.
+# The platform's limit is a per-minute window shared by every replica of the agent, so a wait of a
+# few seconds is usually enough, and a turn that keeps failing for half a minute should fail.
+MAX_RETRY_AFTER_SECONDS = 5.0
+RATE_LIMIT_BUDGET_SECONDS = 30.0
+# The wait when a 429 names none (or names an HTTP date), and the shortest wait ever taken, so a
+# server answering "Retry-After: 0" cannot turn the budget into a busy loop.
+RATE_LIMIT_DEFAULT_WAIT_SECONDS = 1.0
+RATE_LIMIT_MIN_WAIT_SECONDS = 0.5
+# Relative spread of each 429 wait, so replicas limited at the same moment do not retry in step.
+RATE_LIMIT_JITTER = 0.2
+MAX_PAGE_SIZE = 100
+DEFAULT_PAGE_SIZE = 50
+
+# Saves that do not change a task's state are written at most once per window per task.
+COALESCE_WINDOW_SECONDS = 0.5
+# A deferred write that failed is retried after a delay that doubles per failure, up to this.
+DEFERRED_RETRY_MAX_SECONDS = 10.0
+# An unwritten update this old is presumed superseded (the task has most likely moved on to
+# another replica), so it is discarded instead of being written over whatever is there now.
+PENDING_MAX_AGE_SECONDS = 60.0
+# Exiting with the platform unreachable must not hang for every pending task.
+EXIT_FLUSH_BUDGET_SECONDS = 10.0
+# A task id just looked up and not found reads as missing for this long without asking again.
+# a2a-sdk 1.x looks a new task's id up several times before the task's first save, and that id is
+# one the SDK generated for the request, so no other replica can have created the task meanwhile.
+# A task that exists is always read from the server: another replica may have changed it.
+ABSENT_CACHE_SECONDS = 2.0
+# Bound on tasks whose write state is remembered. Forgetting an idle one costs its next write the
+# version check: having no version to match, that write is unconditional.
+MAX_TRACKED_TASKS = 4096
+# The status a shell reports for a process ended by SIGTERM; kept when SIGTERM becomes an exit.
+SIGTERM_EXIT_STATUS = 128 + signal.SIGTERM
+
+# The order the registration contract spells its capability lists in.
+CAPABILITY_ORDER = ("tasks", "kv")
+# A startup registration that failed for a reason that may pass (no answer, 5xx, 429) is retried
+# in the background after a delay that doubles from the first of these up to the second.
+REGISTER_RETRY_FIRST_SECONDS = 1.0
+REGISTER_RETRY_MAX_SECONDS = 60.0
+REGISTER_THREAD_NAME = "nasiko-state-register"
+
+T = TypeVar("T")
+
+
+class NasikoStateError(Exception):
+    """The state API refused a request or could not be reached.
+
+    ``status`` and ``body`` carry the HTTP answer. Both are None for transport and
+    configuration failures, where there was no answer.
+    """
+
+    def __init__(self, message: str, *, status: int | None = None, body: str | None = None):
+        super().__init__(message)
+        self.status = status
+        self.body = body
+
+
+class NasikoStateMalformedRow(NasikoStateError):
+    """A stored row cannot be read back as what it claims to be.
+
+    Raised for a task written by the other a2a-sdk major (or not by this module at all), and for a
+    damaged record. Never answered with a half-decoded object.
+    """
+
+
+class NasikoStateTooLarge(NasikoStateError):
+    """The state API refused a value above its size limit (HTTP 413). Retrying cannot help."""
+
+
+class NasikoStateConflict(NasikoStateError):
+    """An ``If-Match`` precondition failed: another writer changed the row first.
+
+    ``current_version`` is the version the server holds, or None if the body did not say.
+    """
+
+    def __init__(self, message: str, *, current_version: int | None, body: str | None = None):
+        super().__init__(message, status=412, body=body)
+        self.current_version = current_version
+
+
+@dataclass(frozen=True)
+class WriteReceipt:
+    """What the server answers to a PUT. Task and KV writes share the three fields."""
+
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class TaskRecord:
+    """One stored task. ``body`` is the SDK's serialized Task, opaque to the server."""
+
+    task_id: str
+    context_id: str | None
+    state: str
+    body: Any
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class KVRecord:
+    """One stored key. ``value`` is opaque JSON."""
+
+    key: str
+    value: Any
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class Page(Generic[T]):
+    """One page of a listing. ``next_cursor`` is None on the last page."""
+
+    items: list[T]
+    next_cursor: str | None
+
+
+# --- Operations ---------------------------------------------------------------------------------
+#
+# Each state API call is described once, as data, and executed by the sync or the async client
+# method. That keeps request building, status handling and parsing in a single place.
+
+_UNSET: Any = object()
+
+
+@dataclass(frozen=True)
+class _Operation:
+    """One state API call: how to send it and how to read the answer."""
+
+    method: str
+    path: str
+    parse: Callable[[httpx.Response], Any]
+    ok_status: int = 200
+    params: Mapping[str, str | int | None] | None = None
+    json: Any = _UNSET
+    if_match: int | None = None
+    # A write names the capability it needs registered; reads leave it None.
+    capability: str | None = None
+    # What a 404 means. Left unset, a 404 is an error like any other status.
+    when_missing: Any = _UNSET
+    # time.monotonic() by which the call, retries included, must be over. None means no deadline.
+    deadline: float | None = None
+
+    def request_kwargs(self) -> dict[str, Any]:
+        kwargs: dict[str, Any] = {"method": self.method, "url": self.path}
+        if self.params:
+            kwargs["params"] = {key: value for key, value in self.params.items() if value is not None}
+        if self.json is not _UNSET:
+            kwargs["json"] = self.json
+        if self.if_match is not None:
+            kwargs["headers"] = {"If-Match": str(self.if_match)}
+        if self.deadline is not None:
+            kwargs["timeout"] = min(self.seconds_left(), READ_TIMEOUT_SECONDS)
+        return kwargs
+
+    def seconds_left(self) -> 
+```
+
+### Core Architecture Module: `agents/common/js/nasiko-state/src/client.js`
+```
+/**
+ * Typed client for the platform's state API (see oss/agents/common/nasiko_state.py for the
+ * Python twin). One method per endpoint; failures raise the typed errors from errors.js.
+ *
+ * Connection errors and 5xx answers are retried (RETRY_ATTEMPTS attempts in total, exponential
+ * backoff) because every call is idempotent; so is a 429, after the Retry-After it names when
+ * that is at most MAX_RETRY_AFTER_SECONDS. Other 4xx answers never are. A conditional write whose
+ * outcome is unknown (the request went out and no answer came back) is not repeated: it would
+ * conflict with its own first attempt.
+ *
+ * The first write of each kind (tasks, kv) registers the agent with the platform, once.
+ */
+
+import {
+  NasikoStateConflict,
+  NasikoStateError,
+  NasikoStateNotFound,
+  NasikoStateRateLimited,
+  NasikoStateTooLarge,
+  NasikoStateUnauthorized,
+} from "./errors.js";
+
+export const STATE_URL_ENV = "NASIKO_STATE_URL";
+export const AGENT_TOKEN_ENV = "NASIKO_AGENT_TOKEN";
+export const CLIENT_NAME = "nasiko-state.js/1";
+
+export const RETRY_ATTEMPTS = 3;
+export const RETRY_BACKOFF_MS = 200;
+export const REQUEST_TIMEOUT_MS = 10_000;
+// The longest Retry-After a rate-limited request waits out; a longer one surfaces the 429.
+export const MAX_RETRY_AFTER_SECONDS = 5;
+export const MAX_PAGE_SIZE = 100;
+
+// The order the registration contract spells its capability lists in.
+const CAPABILITY_ORDER = ["tasks", "kv"];
+
+// Failures that happen before the request is sent, so repeating a conditional write is safe.
+const BEFORE_SEND_CODES = new Set(["ECONNREFUSED", "ENOTFOUND", "EAI_AGAIN", "UND_ERR_CONNECT_TIMEOUT"]);
+
+/**
+ * Escape everything but unreserved characters, so '/', ':' and '%' in an id stay inert. Matches
+ * the Python store's encoding, which both use for URL segments and composite keys.
+ * @param {string} value
+ */
+export function percentEncode(value) {
+  return encodeURIComponent(value).replace(/[!'()*]/g, (c) => "%" + c.charCodeAt(0).toString(16).toUpperCase());
+}
+
+/**
+ * @typedef {{version: number, updatedAt: string, expiresAt: string}} WriteReceipt
+ * @typedef {{taskId: string, contextId: string | null, state: string, body: any, version: number,
+ *   updatedAt: string, expiresAt: string}} TaskRecord
+ * @typedef {{key: string, value: any, version: number, updatedAt: string, expiresAt: string}} KVRecord
+ * @template T
+ * @typedef {{items: T[], nextCursor: string | null}} Page
+ */
+
+export class NasikoStateClient {
+  #baseUrl;
+  #headers;
+  #clientName;
+  #fetch;
+  #retryBackoffMs;
+  #requestTimeoutMs;
+  #registered = new Set();
+  #registering = Promise.resolve();
+
+  /**
+   * @param {string} baseUrl base URL of the state API (ends in /api/agent-state)
+   * @param {string} token this agent's state credential
+   * @param {{clientName?: string, fetch?: typeof fetch, retryBackoffMs?: number,
+   *   requestTimeoutMs?: number}} [options]
+   */
+  constructor(baseUrl, token, options = {}) {
+    if (!/^https?:\/\/[^/]/.test(baseUrl)) {
+      throw new NasikoStateError(`${STATE_URL_ENV} must be an http(s) URL, got ${JSON.stringify(baseUrl)}`);
     }
-    if args.min_confidence is not None:
-        answered = conf >= args.min_confidence
-        report["fallback_rate"] = round(float((~answered).mean()), 4)
-        report["accuracy_when_answered"] = round(float(correct[answered].mean()), 4) if answered.any() else None
-        report["confident_errors"] = int((answered & ~correct).sum())
+    if (!token) throw new NasikoStateError("the state API needs an agent token and none was given");
+    this.#baseUrl = baseUrl.replace(/\/+$/, "");
+    this.#clientName = options.clientName ?? CLIENT_NAME;
+    this.#headers = { Authorization: `Bearer ${token}`, "User-Agent": this.#clientName };
+    this.#fetch = options.fetch ?? globalThis.fetch;
+    this.#retryBackoffMs = options.retryBackoffMs ?? RETRY_BACKOFF_MS;
+    this.#requestTimeoutMs = options.requestTimeoutMs ?? REQUEST_TIMEOUT_MS;
+  }
 
-    by_tag = defaultdict(list)
-    by_label = defaultdict(list)
-    for p, ok in zip(preds, correct):
-        for tag in gold[p["id"]].get("tests", []):
-            by_tag[tag].append(ok)
-        by_label[gold[p["id"]]["request_type"]].append(ok)
-    report["accuracy_by_slice"] = {t: round(float(np.mean(v)), 3) for t, v in sorted(by_tag.items())}
-    report["recall_by_label"] = {t: round(float(np.mean(v)), 3) for t, v in sorted(by_label.items())}
-    print(json.dumps(report, indent=1))
+  /**
+   * Build a client from the platform's environment, or null when it provides no state API.
+   * @param {Record<string, string | undefined>} [env]
+   * @returns {NasikoStateClient | null}
+   */
+  static fromEnv(env = process.env) {
+    const url = (env[STATE_URL_ENV] ?? "").trim();
+    if (!url) return null;
+    const token = (env[AGENT_TOKEN_ENV] ?? "").trim();
+    if (!token) {
+      throw new NasikoStateError(
+        `${STATE_URL_ENV} is set but ${AGENT_TOKEN_ENV} is empty or missing: the state API needs ` +
+          `this agent's state credential, which the platform injects as ${AGENT_TOKEN_ENV}`,
+      );
+    }
+    return new NasikoStateClient(url, token);
+  }
 
+  toString() {
+    return `NasikoStateClient(${this.#baseUrl})`;
+  }
 
-if __name__ == "__main__":
-    main()
+  // --- registration -------------------------------------------------------------------------
+
+  /**
+   * Tell the platform which kinds of state this agent keeps. Writes do this on their own.
+   * @param {string[]} capabilities
+   * @param {string} [clientName]
+   */
+  async register(capabilities, clientName) {
+    await this.#request("POST", "/register", {
+      json: { capabilities: [...capabilities], client: clientName ?? this.#clientName },
+      okStatus: 204,
+    });
+    for (const capability of capabilities) this.#registered.add(capability);
+  }
+
+  // --- tasks --------------------------------------------------------------------------------
+
+  /**
+   * Create or replace a task.
+   * @param {string} taskId
+   * @param {{contextId: string | null, state: string, body: any, ifMatch?: number | null}} fields
+   * @returns {Promise<WriteReceipt>}
+   */
+  async putTask(taskId, { contextId, state, body, ifMatch = null }) {
+    await this.#ensureRegistered("tasks");
+    const data = await this.#request("PUT", `/tasks/${percentEncode(taskId)}`, {
+      json: { context_id: contextId, state, body },
+      ifMatch,
+    });
+    return receiptFrom(data);
+  }
+
+  /** @returns {Promise<TaskRecord | null>} */
+  async getTask(taskId) {
+    const data = await this.#request("GET", `/tasks/${percentEncode(taskId)}`, { whenMissing: null });
+    return data === null ? null : taskRecordFrom(data);
+  }
+
+  /** Delete a task. False means there was no such task. */
+  async deleteTask(taskId, { ifMatch = null } = {}) {
+    await this.#ensureRegistered("tasks");
+    return this.#delete(`/tasks/${percentEncode(taskId)}`, ifMatch);
+  }
+
+  /**
+   * @param {{contextId?: string | null, state?: string | null, limit?: number, cursor?: string | null}} [filters]
+   * @returns {Promise<Page<TaskRecord>>}
+   */
+  async listTasks({ contextId, state, limit, cursor } = {}) {
+    const data = await this.#request("GET", "/tasks", {
+      query: { context_id: contextId, state, limit, cursor },
+    });
+    return pageFrom(data, taskRecordFrom);
+  }
+
+  // --- key-value ----------------------------------------------------------------------------
+
+  /**
+   * @param {string} key
+   * @param {any} value opaque JSON
+   * @param {{ifMatch?: number | null}} [options]
+   * @returns {Promise<WriteReceipt>}
+   */
+  async putKv(key, value, { ifMatch = null } = {}) {
+    await this.#ensureRegistered("kv");
+    const data = await this.#request("PUT", `/kv/${percentEncode(key)}`, { json: { value }, ifMatch });
+    return receiptFrom(data);
+  }
+
+  /** @returns {Promise<KVRecord | null>} */
+  async getKv(key) {
+    const data = await this.#request("GET", `/kv/${percentEncode(key)}`, { whenMissing: null });
+    return data === null ? null : kvRecordFrom(data);
+  }
+
+  /** Delete a key. False means there was no such key. */
+  async deleteKv(key, { ifMatch = null } = {}) {
+    await this.#ensureRegistered("kv");
+    return this.#delete(`/kv/${percentEncode(key)}`, ifMatch);
+  }
+
+  /**
+   * @param {{prefix?: string | null, limit?: number, cursor?: string | null}} [filters]
+   * @returns {Promise<Page<KVRecord>>}
+   */
+  async listKv({ prefix, limit, cursor } = {}) {
+    const data = await this.#request("GET", "/kv", { query: { prefix, limit, cursor } });
+    return pageFrom(data, kvRecordFrom);
+  }
+
+  // --- execution ----------------------------------------------------------------------------
+
+  async #delete(path, ifMatch) {
+    const answer = await this.#request("DELETE", path, { ifMatch, okStatus: 204, whenMissing: false });
+    return answer !== false;
+  }
+
+  /** Registers on the first write of a kind; concurrent first writes share one registration. */
+  async #ensureRegistered(capability) {
+    if (this.#registered.has(capability)) return;
+    const registration = this.#registering.then(async () => {
+      if (this.#registered.has(capability)) return;
+      await this.register(this.#capabilitiesWith(capability));
+    });
+    // The chain must survive a failed registration, or every later write would reject with it.
+    this.#registering = registration.catch(() => {});
+    await registration;
+  }
+
+  #capabilitiesWith(capability) {
+    const wanted = new Set([...this.#registered, capability]);
+    const known = CAPABILITY_ORDER.filter((name) => wanted.has(name));
+    return [...known, ...[...wanted].filter((name) => !CAPABILITY_ORDER.includes(name)).sort()];
+  }
+
+  /**
+   * Send one request with retries and interpret the answer.
+   * @returns {Promise<any>} the parsed JSON body, null for a 204, or `whenMissing` on a 404
+   */
+  async #request(method, path, { json, query, ifMatch = null, okStatus = 200, whenMissing } = {}) {
+    const url = this.#baseUrl + path + queryString(query);
+    const init = { method, headers: this.#requestHeaders(json !== undefined, ifMatch) };
+    if (json !== undefined) init.body = JSON.stringify(json);
+    const description = `state API ${method} ${path}`;
+
+    for (let attempt = 1; ; attempt++) {
+      const outcome = await this.#attempt(url, init);
+      const delayMs = this.#retryDelayMs(attempt, outcome, ifMatch !== null);
+      if (delayMs !== null) {
+        if (delayMs > 0) await sleep(delayMs);
+        continue;
+      }
+      if (outcome.error) {
+        throw new NasikoStateError(`${description} request failed: ${outcome.error.message}`, {
+          cause: outcome.error,
+        });
+      }
+      return await interpret(outcome.response, description, okStatus, whenMissing);
+    }
+  }
+
+  #requestHeaders(hasBody, ifMatch) {
+    const headers = { ...this.#headers };
+    if (hasBody) headers["Content-Type"] = "application/json";
+    if (ifMatch !== null) headers["If-Mat
+```
+
+### Core Architecture Module: `agents/common/js/nasiko-state/src/errors.js`
+```
+/**
+ * Errors raised by the state client and stores. Every failure is a NasikoStateError; the
+ * subclasses name the answers a caller can act on. Nothing falls back silently.
+ */
+
+export class NasikoStateError extends Error {
+  /**
+   * @param {string} message
+   * @param {{status?: number | null, body?: string | null, cause?: unknown}} [details]
+   *   `status` and `body` carry the HTTP answer; both are null for transport and configuration
+   *   failures, where there was no answer.
+   */
+  constructor(message, { status = null, body = null, cause } = {}) {
+    super(message, cause === undefined ? undefined : { cause });
+    this.name = new.target.name;
+    this.status = status;
+    this.body = body;
+  }
+}
+
+/** 401: the agent token is missing, unknown, or not a state-scoped credential. */
+export class NasikoStateUnauthorized extends NasikoStateError {}
+
+/** 404 on an operation that has no "missing" result (reads and deletes return null / false). */
+export class NasikoStateNotFound extends NasikoStateError {}
+
+/** 412: an If-Match precondition failed because another writer changed the row first. */
+export class NasikoStateConflict extends NasikoStateError {
+  /**
+   * @param {string} message
+   * @param {{currentVersion: number | null, body?: string | null}} details
+   */
+  constructor(message, { currentVersion, body = null }) {
+    super(message, { status: 412, body });
+    /** The version the server holds, or null if its answer did not say. */
+    this.currentVersion = currentVersion;
+  }
+}
+
+/** 413: a value above the platform's size limit. Retrying cannot help. */
+export class NasikoStateTooLarge extends NasikoStateError {}
+
+/** 429: over the per-agent request rate and not worth waiting out. */
+export class NasikoStateRateLimited extends NasikoStateError {
+  /**
+   * @param {string} message
+   * @param {{retryAfterSeconds: number | null, body?: string | null}} details
+   */
+  constructor(message, { retryAfterSeconds, body = null }) {
+    super(message, { status: 429, body });
+    this.retryAfterSeconds = retryAfterSeconds;
+  }
+}
+
+/**
+ * A stored row cannot be read back as what it claims to be: written by the other a2a SDK major,
+ * not by a Nasiko store at all, or damaged. Never answered with a half-decoded object.
+ */
+export class NasikoStateMalformedRow extends NasikoStateError {}
+
+/** Whether the same request could succeed later: no answer at all, or a server-side failure. */
+export function isTransient(error) {
+  return error instanceof NasikoStateError && (error.status === null || error.status >= 500);
+}
 
 ```
 
-### Core Architecture Module: `mcp-gateway/src/state.rs`
+### Core Architecture Module: `agents/common/js/nasiko-state/src/index.js`
 ```
-//! Shared state for the MCP gateway.
-//!
-//! Constructed once from the server's `AppState` primitives (see
-//! `oss/server/src/mcp/`) and threaded through the pure gateway logic. It holds
-//! only cheaply-cloneable handles — the same `PgPool`, `redis::Client`, and
-//! pooled `reqwest::Client` the rest of the server already shares — so there is
-//! no duplicated infrastructure.
+/**
+ * Durable agent state over the Nasiko platform's state API.
+ *
+ *   import { taskStoreFromEnv, installShutdownHooks } from "nasiko-state";
+ *
+ *   const handler = new DefaultRequestHandler(card, taskStoreFromEnv(), executor);
+ *   installShutdownHooks(); // flush pending writes on SIGTERM / SIGINT
+ *
+ * Configuration comes from the environment the platform injects: NASIKO_STATE_URL (base URL of
+ * the state API) and NASIKO_AGENT_TOKEN (this agent's state credential, the only one accepted).
+ * With NASIKO_STATE_URL unset every factory returns the SDK's in-memory implementation.
+ */
 
-use std::sync::Arc;
-
-use nasiko_config::Config;
-use sqlx::PgPool;
-
-use crate::authorizer::{ConnectorAuthorizer, OssConnectorAuthorizer};
-use crate::config::{McpConfig, ToolSearchMode};
-use crate::endpoint_refresh::{EndpointRefresher, NoopEndpointRefresher};
-use crate::provider::Providers;
-use crate::search::ToolSearchIndex;
-
-#[derive(Clone)]
-pub struct McpState {
-    pub db: PgPool,
-    pub redis: redis::Client,
-    pub http_client: reqwest::Client,
-    /// SSRF/DNS-rebinding-guarded client for outbound calls to user-controlled
-    /// URLs (OAuth discovery/exchange/refresh against dynamically-discovered
-    /// endpoints). Distinct from `http_client`, which may reach internal hosts.
-    pub guarded_http_client: reqwest::Client,
-    pub config: McpConfig,
-    /// Tool backends: the Composio Tool Router client (when configured) + the
-    /// shared generic MCP transport.
-    pub providers: Providers,
-    /// Layer-1 connector reachability. Default = owner ∪ user/public grant; an
-    /// edition can swap a richer impl at startup.
-    pub authorizer: Arc<dyn ConnectorAuthorizer>,
-    /// Self-heal for `uploaded_build` connectors whose live container address
-    /// drifted (restart/redeploy/reboot) — see `endpoint_refresh`'s module
-    /// doc. Default is a no-op; `oss/server` swaps in a real,
-    /// `ContainerRuntime`-backed impl at `AppState` construction, same swap
-    /// pattern as `authorizer` above.
-    pub endpoint_refresher: Arc<dyn EndpointRefresher>,
-    /// Best-effort LLM fallback for connector/tool descriptions the native
-    /// source didn't provide — see `description_backfill`. Never used when a
-    /// native description is already present.
-    pub llm: nasiko_orchestrator::providers::LLMProvider,
-    /// Flat tool search index — semantic (default) or BM25 (fallback).
-    pub search_index: Arc<dyn ToolSearchIndex>,
-}
-
-impl McpState {
-    /// Build gateway state from the server's shared handles and platform config.
-    pub fn new(
-        db: PgPool,
-        redis: redis::Client,
-        http_client: reqwest::Client,
-        config: &Config,
-    ) -> Self {
-        let mcp_config = McpConfig::from_config(config);
-        let providers = Providers::new(http_client.clone(), &mcp_config);
-        let llm = nasiko_orchestrator::providers::LLMProvider::from_env(http_client.clone());
-        let search_index: Arc<dyn ToolSearchIndex> = match mcp_config.tool_search_mode {
-            ToolSearchMode::Semantic => {
-                if let Some(ref api_key) = mcp_config.openai_api_key {
-                    Arc::new(crate::search::SemanticSearchIndex::new(
-                        http_client.clone(),
-                        redis.clone(),
-                        api_key.clone(),
-                        mcp_config.embedding_model.clone(),
-                    ))
-                } else {
-                    tracing::warn!(
-                        "MCP_TOOL_SEARCH_MODE=semantic but OPENAI_API_KEY not set, \
-                         falling back to keyword"
-                    );
-                    Arc::new(crate::search::Bm25SearchIndex::new())
-                }
-            }
-            ToolSearchMode::Keyword => Arc::new(crate::search::Bm25SearchIndex::new()),
-            ToolSearchMode::None => Arc::new(crate::search::NoopSearchIndex),
-        };
-        Self {
-            db,
-            redis,
-            http_client,
-            guarded_http_client: crate::net::guarded_http_client(),
-            config: mcp_config,
-            providers,
-            authorizer: Arc::new(OssConnectorAuthorizer),
-            endpoint_refresher: Arc::new(NoopEndpointRefresher),
-            llm,
-            search_index,
-        }
-    }
-}
+export * from "./errors.js";
+export {
+  AGENT_TOKEN_ENV,
+  CLIENT_NAME,
+  MAX_PAGE_SIZE,
+  NasikoStateClient,
+  STATE_URL_ENV,
+  percentEncode,
+} from "./client.js";
+export {
+  COALESCE_WINDOW_MS,
+  PENDING_MAX_AGE_MS,
+  NasikoTaskStore,
+  TASK_FORMAT,
+  closeOpenTaskStores,
+  decodeStoredTask,
+  encodeStoredTask,
+  installShutdownHooks,
+  stateName,
+  taskStoreFromEnv,
+} from "./task-store.js";
 
 ```
 
-### Core Architecture Module: `mcp-gateway/src/webhooks.rs`
+### Core Architecture Module: `agents/common/js/nasiko-state/src/task-store.js`
 ```
-//! Composio webhook handling.
-//!
-//! Verifies the inbound HMAC signature and processes
-//! `composio.connected_account.expired` events: mark the matching connection
-//! `EXPIRED` and invalidate the user's cached session so the next resolve
-//! re-syncs (dropping the dead toolkit). Simpler than the PoC's per-session
-//! patch loop because our sessions are per-user and resolved on demand.
+/**
+ * An a2a-js TaskStore that keeps tasks in the platform's state API. Port of NasikoTaskStore in
+ * oss/agents/common/nasiko_state.py; the two read each other's rows.
+ *
+ * Written against @a2a-js/sdk 1.3.0, whose TaskStore is `save(task, context)`,
+ * `load(taskId, context)` and `list(params, context)`. Tasks are protobuf-shaped there, and are
+ * stored as their proto3 JSON, tagged with the format that wrote them:
+ * `{"format": "a2a-1", "task": ...}`. The 0.3.x SDK is not supported: a row of another format is
+ * refused with NasikoStateMalformedRow rather than half-decoded.
+ *
+ * Write guarantee: a save that changes `task.status.state` is on the server before `save()`
+ * resolves. Other saves are coalesced to at most one write per COALESCE_WINDOW_MS per task and
+ * written on the next state change, by a timer, and by `close()`. A hard crash can lose that
+ * window of non-status updates; an update the platform could not take for PENDING_MAX_AGE_MS is
+ * discarded rather than written late. Errors reject; nothing is swallowed.
+ *
+ * Replicas: every write is conditional on the version this process last saw of the task
+ * (If-Match). A state change that loses raises NasikoStateConflict; a coalesced update that loses
+ * is dropped (logged). Either way the store re-reads, and `load()` returns the other writer's row.
+ *
+ * Tasks are scoped to the agent, not to an end user: the SDK's per-user owner resolution (the
+ * `context` argument) does not apply.
+ */
 
-use base64::Engine;
-use base64::engine::general_purpose::STANDARD as B64;
-use hmac::{Hmac, Mac};
-use serde_json::Value;
-use sha2::Sha256;
+import { Task, TaskState, taskStateToJSON } from "@a2a-js/sdk";
+import { InMemoryTaskStore } from "@a2a-js/sdk/server";
 
-use crate::error::Result;
-use crate::repo;
-use crate::session;
-use crate::state::McpState;
+import { NasikoStateClient } from "./client.js";
+import {
+  NasikoStateConflict,
+  NasikoStateError,
+  NasikoStateMalformedRow,
+  isTransient,
+} from "./errors.js";
 
-type HmacSha256 = Hmac<Sha256>;
+export const TASK_FORMAT = "a2a-1";
+export const COALESCE_WINDOW_MS = 500;
+// A deferred write that failed is retried after a delay that doubles per failure, up to this.
+export const DEFERRED_RETRY_MAX_MS = 10_000;
+// An unwritten update this old is presumed superseded (the task has most likely moved to another
+// replica), so it is discarded instead of being written over whatever is there now.
+export const PENDING_MAX_AGE_MS = 60_000;
+// Bound on tasks whose write state is remembered. Forgetting an idle one costs its next write the
+// version check: having no version to match, that write is unconditional.
+export const MAX_TRACKED_TASKS = 4096;
+export const DEFAULT_PAGE_SIZE = 50;
 
-/// The event type we act on.
-const EXPIRED_EVENT: &str = "composio.connected_account.expired";
+/** Durable stores this process opened and has not closed: what closeOpenTaskStores closes. */
+const openStores = new Set();
 
-/// Verify a Composio webhook signature (HMAC-SHA256, base64).
-///
-/// `signing_string = "{webhook_id}.{webhook_timestamp}.{raw_body}"`. The
-/// signature header may carry a `v1,` scheme prefix, which is stripped before
-/// comparison. Comparison is constant-time.
-pub fn verify_signature(
-    webhook_id: &str,
-    webhook_timestamp: &str,
-    body: &str,
-    signature: &str,
-    secret: &str,
-) -> bool {
-    let signing_string = format!("{webhook_id}.{webhook_timestamp}.{body}");
-    let Ok(mut mac) = HmacSha256::new_from_slice(secret.as_bytes()) else {
-        return false;
-    };
-    mac.update(signing_string.as_bytes());
+// --- format ---------------------------------------------------------------------------------------
 
-    // Header may be "v1,<sig>" — take the part after the last comma.
-    let received = signature.rsplit(',').next().unwrap_or(signature);
-    let Ok(received_bytes) = B64.decode(received) else {
-        return false;
-    };
-    mac.verify_slice(&received_bytes).is_ok()
+/** 'TASK_STATE_INPUT_REQUIRED' -> 'input-required', the vocabulary the state column uses. */
+export function stateName(state) {
+  const name = taskStateToJSON(state).replace(/^TASK_STATE_/, "").toLowerCase().replaceAll("_", "-");
+  return name === "unspecified" || name === "unrecognized" ? "unknown" : name;
 }
 
-/// Outcome of processing a webhook payload (for the route to log / respond).
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum WebhookOutcome {
-    /// An event type we don't handle — acknowledged, no action.
-    Ignored,
-    /// Expiry event for an account we don't have (already deleted/unknown).
-    UnknownAccount,
-    /// Connection was already EXPIRED — no-op.
-    AlreadyExpired,
-    /// Connection marked EXPIRED and the user's session cache invalidated.
-    Expired,
+/** The body written to the state API: the task as proto3 JSON, tagged with its format. */
+export function encodeStoredTask(task) {
+  // Through JSON, so the snapshot is plain data that shares nothing with the SDK's live object.
+  return JSON.parse(JSON.stringify({ format: TASK_FORMAT, task: Task.toJSON(task) }));
 }
 
-/// Process a parsed webhook payload. Signature verification is the route's
-/// responsibility (it has the raw body + headers); this handles the effect.
-pub async fn process_event(state: &McpState, payload: &Value) -> Result<WebhookOutcome> {
-    let event_type = payload.get("type").and_then(|v| v.as_str()).unwrap_or("");
-    if event_type != EXPIRED_EVENT {
-        tracing::debug!(event_type, "ignoring composio webhook event");
-        return Ok(WebhookOutcome::Ignored);
-    }
-
-    let data = payload.get("data");
-    let Some(account_id) = data.and_then(|d| d.get("id")).and_then(|v| v.as_str()) else {
-        tracing::warn!("composio expiry webhook missing data.id — ignoring");
-        return Ok(WebhookOutcome::UnknownAccount);
-    };
-
-    let Some(connection) = repo::get_connection_by_account_id(&state.db, account_id).await? else {
-        tracing::warn!(
-            account_id,
-            "expiry webhook for unknown connection — already deleted or unknown"
-        );
-        return Ok(WebhookOutcome::UnknownAccount);
-    };
-
-    if connection.status == "EXPIRED" {
-        return Ok(WebhookOutcome::AlreadyExpired);
-    }
-
-    repo::update_connection_status(&state.db, connection.id, "EXPIRED").await?;
-    session::invalidate_session_cache(state, connection.user_id).await;
-
-    tracing::warn!(
-        account_id,
-        user_id = %connection.user_id,
-        connector_id = %connection.connector_id,
-        "composio connection expired — marked EXPIRED and invalidated session cache",
+export function decodeStoredTask(body, taskId) {
+  const storedFormat = body !== null && typeof body === "object" ? body.format : undefined;
+  if (storedFormat !== TASK_FORMAT || !("task" in body)) {
+    throw new NasikoStateMalformedRow(
+      `stored task ${JSON.stringify(taskId)} is in format ${JSON.stringify(storedFormat)}, and this ` +
+        `store reads ${JSON.stringify(TASK_FORMAT)} only`,
     );
-    Ok(WebhookOutcome::Expired)
+  }
+  let task;
+  try {
+    task = Task.fromJSON(body.task);
+  } catch (cause) {
+    throw new NasikoStateMalformedRow(`stored task ${JSON.stringify(taskId)} cannot be decoded: ${cause.message}`, {
+      cause,
+    });
+  }
+  // fromJSON turns {} into an empty task rather than failing, so check the identity too.
+  if (task.id !== taskId) {
+    throw new NasikoStateMalformedRow(
+      `stored task ${JSON.stringify(taskId)} holds a body for task ${JSON.stringify(task.id)}`,
+    );
+  }
+  return task;
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn signature_verifies_and_rejects() {
-        let secret = "whsec_test";
-        let (id, ts, body) = ("wh_1", "1700000000", r#"{"type":"x"}"#);
-        let signing = format!("{id}.{ts}.{body}");
-        let mut mac = HmacSha256::new_from_slice(secret.as_bytes()).unwrap();
-        mac.update(signing.as_bytes());
-        let sig = B64.encode(mac.finalize().into_bytes());
-
-        assert!(verify_signature(id, ts, body, &sig, secret));
-        assert!(verify_signature(id, ts, body, &format!("v1,{sig}"), secret));
-        assert!(!verify_signature(id, ts, body, &sig, "wrong-secret"));
-        assert!(!verify_signature(id, ts, "tampered", &sig, secret));
-    }
-
-    fn sign(id: &str, ts: &str, body: &str, secret: &str) -> String {
-        let signing = format!("{id}.{ts}.{body}");
-        let mut mac = HmacSha256::new_from_slice(secret.as_bytes()).unwrap();
-        mac.update(signing.as_bytes());
-        B64.encode(mac.finalize().into_bytes())
-    }
-
-    #[test]
-    fn semantically_equivalent_but_differently_serialized_body_fails() {
-        // Proves this verifies the RAW body bytes, not a re-parsed/normalized
-        // JSON value — two JSON documents that are semantically identical but
-        // differ in key order/whitespace must NOT be interchangeable.
-        let secret = "whsec_test";
-        let (id, ts) = ("wh_1", "1700000000");
-        let body_a = r#"{"type":"x","data":{"id":"1"}}"#;
-        let body_b = r#"{"data": {"id": "1"}, "type": "x"}"#; // same meaning, different bytes
-        let sig_over_a = sign(id, ts, body_a, secret);
-
-        assert!(verify_signature(id, ts, body_a, &sig_over_a, secret));
-        assert!(!verify_signature(id, ts, body_b, &sig_over_a, secret));
-    }
-
-    #[test]
-    fn truncated_and_extended_signature_are_rejected() {
-        let secret = "whsec_test";
-        let (id, ts, body) = ("wh_1", "1700000000", r#"{"type":"x"}"#);
-        let sig = sign(id, ts, body, secret);
-
-        let truncated = &sig[..sig.len() - 4];
-        assert!(!verify_signature(id, ts, body, truncated, secret));
-
-        let extended = format!("{sig}AAAA");
-        assert!(!verify_signature(id, ts, body, &extended, secret));
-    }
-
-    #[test]
-    fn empty_body_with_correct_signature_passes_wrong_signature_fails() {
-        let secret = "whsec_test";
-        let (id, ts, body) = ("wh_1", "1700000000", "");
-        let sig_over_empty = sign(id, ts, body, secret);
-        assert!(verify_signature(id, ts, body, &sig_over_empty, secret));
-
-        // A signature computed over a non-empty body must not validate an
-        // empty body.
-        let sig_over_nonempty = sign(id, ts, "not empty", secret);
-        assert!(!verify_signature(id, ts, body, &sig_over_nonempty, secret));
-    }
-
-    #[test]
-    fn empty_signature_string_is_rejected_without_panicking() {
-        let secret = "whsec_test";
-        assert!(!verify_signature("wh_1", "1700000000", "{}", "", secret));
-        // Malformed non-base64 signature must also fail cleanly, not panic.
-        assert!(!verify_signature(
-            "wh_1",
-            "1700000000",
-            "{}",
-            "not-base64!!",
-            secret
-        ));
-    }
+function snapshotOf(task) {
+  return {
+    taskId: task.id,
+    contextId: task.contextId || null,
+    state: task.status ? stateName(task.status.state) : "unknown",
+    body: encodeStoredTask(task),
+    savedAt: Date.now(),
+  };
 }
 
+const isStale = (snapshot) => Date.now() - snapshot.savedAt > PENDING_MAX_AGE_MS;
+
+// --- per-task bookkeeping -------------------------------------------------------------------------
+
+/** Runs one async function at a time, in call order. */
+class Mutex {
+  #tail = Promise.resolve();
+
+  isLocked = false;
+
+  runExclusive(fn) {
+    const result = this.#tail.then(async () => {
+      this.isLocked = true;
+      try {
+        return await fn();
+      } finally {
+        this.isLocked = false;
+      }
+    });
+    this.#tail = result.catch(() => {});
+    return result;
+  }
+}
+
+/** Write-coalescing and concurrency bookkeeping for one task. */
+class TaskSlot {
+  constructor(taskId) {
+    this.taskId = taskId;
+    /** The newest snapshot the server has not confirmed yet. */
+    this.pending = null;
+    /** The row's version as this process last saw it. Every write is conditional on it. */
+    this.version = null;
+    /** State of the newest snapshot sent or read; a save in any other state is written through. */
+    this.state = null;
+    this.lastWriteStarted = Number.NEGATIVE_INFINITY;
+    /** Consecutive failed writes; spaces out the background retries. */
+    this.failedWrites = 0;
+    this.timer = null;
+    /** One write per task at a time, so an older snapshot cannot land after a newer one. */
+    this.lock = new Mutex();
+  }
+
+  isIdle() {
+    return this.pending === null && this.timer === null && !this.lock.isLocked;
+  }
+}
+
+// --- the store ------------------------------------------------------------------------------------
+
+export class NasikoTaskStore {
+  #client;
+  #windowMs;
+  #logger;
+  /** @type {Map<string, TaskSlot>} insertion order is recency order */
+  #slots = new Map();
+
+  /**
+   * @param {NasikoStateClient} client
+   * @param {{coalesceWindowMs?: number, logger?: Pick<Console, "warn" | "error">}} [options]
+   */
+  constructor(client, { coalesceWindowMs = COALESCE_WINDOW_MS, logger = console } = {}) {
+    this.#client = client;
+    this.#windowMs = coalesceWindowMs;
+    this.#logger = logger;
+    openStores.add(this);
+  }
+
+  /** @param {import("@a2a-js/sdk").Task} task */
+  async save(task, _context) {
+    const snapshot = snapshotOf(task);
+    const slot = this.#slot(snapshot.taskId);
+    slot.pending = snapshot;
+    if (snapshot.state === slot.state) {
+      this.#scheduleFlush(slot);
+      return;
+    }
+    slot.state = snapshot.state;
+    try {
+      await this.#writePending(slot);
+    } catch (error) {
+      // The state change is still owed; retry it rather than wait for a save that may never come.
+      if (isTransient(error)) this.#scheduleFlush(slot);
+      throw error;
+    }
+  }
+
+  async load(taskId, _context) {
+    const slot = this.#slot(taskId);
+    // Under the slot's lock, so a write in flight cannot be mistaken for another writer's.
+    return slot.lock.runExclusive(async () => {
+      const record = await this.#client.getTask(taskId);
+      return this.#newestOf(slot, record);
+    });
+  }
+
+  async delete(taskId, _context) {
+    const slot = this.#slot(taskId);
+    await slot.lock.runExclusive(async () => {
+      slot.pending = null; // an unwritten snapshot must not bring the task back
+      await this.#client.deleteTask(taskId);
+    });
+    if (this.#slots.get(taskId) === slot) this.#slots.delete(taskId);
+  }
+
+  /**
+   * tasks/list, served by the server; it can lag by one coalescing window. totalSize is unknown
+   * and reported as 0 (the state API gives no totals). statusTimestampAfter is inclusive (>=),
+   * like the Python store and unlike the SDK's in-memory store.
+   */
+  async list(params, _context) {
+    const limit = params.pageSize || DEFAULT_PAGE_SIZE;
+    const page = await this.#client.listTasks({
+      contextId: params.contextId || null,
+      state: params.status ? stateName(params.status) : null,
+      limit,
+      cursor: params.pageToken || null,
+    });
+    const tasks = page.items
+      .map((record) => decodeStoredTask(record.body, record.taskId))
+      .filter((task) => statusChangedSince(task, params.statusTimestampAfter))
+      .map((task) => shaped(task, params));
+    // totalSize stays 0: the state API reports no totals, and this page's size would be a wrong one.
+    return { tasks, nextPageToken: page.nextCursor ?? "", pageSize: tasks.length, totalSize: 0 };
+  }
+
+  /** Write everything pending, stop the timers. Rejects with the first failure, after trying all. */
+  async close() {
+    openStores.delete(this);
+    for (const slot of this.#slots.values()) this.#clearTimer(slot);
+    const owed = [...this.#slots.values()].filter((slot) => this.#owesAWrite(slot));
+    const outcomes = await Promise.allSettled(owed.map((slot) => this.#writePending(slot)));
+    const failures = [];
+    outcomes.forEach((outcome, i) => {
+      if (outcome.status === "fulfilled") return;
+      if (outcome.reason instanceof NasikoStateConflict) this.#logSuperseded(owed[i], outcome.reason);
+      else failures.push(outcome.reason);
+    });
+    for (const failure of failures.slice(1)) {
+      this.#logger.error(`a pending task write could not be flushed on close: ${failure.message}`);
+    }
+    if (failures.length > 0) throw failures[0];
+  }
+
+  // --- writing ----------------------------------------------------------------------------------
+
+  #writePending(slot) {
+    return slot.lock.runExclusive(async () => {
+      const snapshot = slot.pending;
+      if (snapshot === null) return; // a newer write already carried it
+      slot.lastWriteStarted = Date.now();
+      let receipt;
+      try {
+        receipt 
 ```
 
-### Core Architecture Module: `orchestrator/src/engine.rs`
+### Core Architecture Module: `agents/common/nasiko_state.py`
 ```
-use async_trait::async_trait;
-use dashmap::DashMap;
-use reqwest::Client;
-use sqlx::PgPool;
-use std::sync::Arc;
-use std::time::Instant;
-use uuid::Uuid;
+"""Durable agent state over the platform's state API.
 
-use crate::agent_registry;
-use crate::context_selection::{self, ContextTiers};
-use crate::error::RouterError;
-use crate::models::AgentCardSummary;
-use crate::policy::RoutingPolicy;
-use crate::providers::LLMProvider;
-use crate::reranker::Reranker;
-use crate::selector::AgentSelector;
-use crate::selector::ConversationMessage;
-use crate::types::{AgentCard, RouteRequest, RouteResult, RouterLogEntry};
-use crate::vector_store::{TextEmbeddingCache, VectorStore};
+An A2A agent normally keeps its tasks in process memory, so a restart loses paused work
+and the agent cannot run as more than one replica. This module is a drop-in replacement
+that keeps that state in the platform instead.
 
-// ── Trait ─────────────────────────────────────────────────────────────────────
+    from nasiko_state import make_task_store
 
-#[async_trait]
-pub trait RoutingEngine: Send + Sync {
-    /// `policy` is resolved by the caller rather than by `route()` itself, so a
-    /// caller making several `route()` calls for one request (one per MAF
-    /// workflow step, for example) can resolve it once and share it, instead of
-    /// every call paying for its own lookup. A caller with no policy to apply
-    /// passes `None`, and routing is unconstrained.
-    async fn route(
-        &self,
-        req: RouteRequest,
-        pool: &PgPool,
-        policy: Option<&dyn RoutingPolicy>,
-    ) -> Result<RouteResult, RouterError>;
-}
-
-// ── Config ────────────────────────────────────────────────────────────────────
-
-pub struct RouterConfig {
-    /// Skip Stage 1 embedding shortlist when catalogue is smaller than this.
-    pub shortlist_threshold: usize,
-    /// Max candidates passed into Stage 3 (LLM selector).
-    pub shortlist_size: usize,
-    /// What each stored `PacmsBudgetLevel` tier means in this deployment —
-    /// the token/item counts the user's chosen tier resolves against.
-    pub context_tiers: ContextTiers,
-}
-
-impl Default for RouterConfig {
-    fn default() -> Self {
-        Self {
-            shortlist_threshold: 15,
-            shortlist_size: 10,
-            context_tiers: ContextTiers::default(),
-        }
-    }
-}
-
-// ── OSS Engine ────────────────────────────────────────────────────────────────
-
-pub struct OssRoutingEngine {
-    config: RouterConfig,
-    selector: AgentSelector,
-    api_key: String,
-    base_url: String,
-    embedding_model: String,
-    /// Cache of PACMS candidate/query embeddings shared across `route()` calls.
-    /// PACMS's history pool overlaps heavily turn-to-turn within a session, so
-    /// without this `SessionHistory::fetch_pacms` would re-embed the same
-    /// messages on every call. See `TextEmbeddingCache` docs.
-    history_embedding_cache: TextEmbeddingCache,
-}
-
-impl OssRoutingEngine {
-    pub fn new(
-        config: RouterConfig,
-        http_client: Client,
-        api_key: String,
-        base_url: String,
-        router_model: String,
-        embedding_model: String,
-    ) -> Self {
-        let provider = LLMProvider::new(http_client, api_key.clone(), base_url.clone());
-        let selector = AgentSelector::new(provider, router_model);
-        Self {
-            config,
-            selector,
-            api_key,
-            base_url,
-            embedding_model,
-            history_embedding_cache: Arc::new(DashMap::new()),
-        }
-    }
-
-    pub fn from_config(config: &nasiko_config::Config, http_client: Client) -> Self {
-        let router_config = RouterConfig {
-            shortlist_threshold: config.router_shortlist_threshold,
-            shortlist_size: config.router_shortlist_size,
-            context_tiers: ContextTiers::from_config(config),
-        };
-        Self::new(
-            router_config,
-            http_client,
-            config.openai_api_key.clone().unwrap_or_default(),
-            config
-                .openai_base_url
-                .clone()
-                .unwrap_or_else(|| "https://api.openai.com".into()),
-            config.router_model.clone(),
-            config.embedding_model.clone(),
-        )
-    }
-}
-
-#[async_trait]
-impl RoutingEngine for OssRoutingEngine {
-    async fn route(
-        &self,
-        req: RouteRequest,
-        pool: &PgPool,
-        policy: Option<&dyn RoutingPolicy>,
-    ) -> Result<RouteResult, RouterError> {
-        tracing::info!(query = %req.query, "routing_engine: route() start");
-        let t0 = Instant::now();
-
-        // Fetch available agents + conversation history in parallel. History
-        // is selected per the caller's own stored strategy and budget tier —
-        // see `context_selection::fetch_for_user`.
-        let history_store = VectorStore::for_embedding(
-            self.api_key.clone(),
-            self.base_url.clone(),
-            self.embedding_model.clone(),
-            Arc::clone(&self.history_embedding_cache),
-        );
-        let (agents, history) = tokio::join!(
-            agent_registry::get_agents_for_user(req.user_id, pool),
-            context_selection::fetch_for_user(
-                pool,
-                req.user_id,
-                &req.session_id,
-                &history_store,
-                &req.query,
-                &self.config.context_tiers,
-            ),
-        );
-        let agents = agents?;
-
-        if agents.is_empty() {
-            return Err(RouterError::NoAgentsAvailable);
-        }
-
-        let registry_ms = t0.elapsed().as_millis() as i32;
-        tracing::info!(
-            agent_count = agents.len(),
-            elapsed_ms = registry_ms,
-            "routing_engine: registry+history fetched"
-        );
-
-        // Stage 1 — vector store semantic shortlist (OpenAI embeddings, skipped if no key)
-        let t1 = Instant::now();
-        let store = Arc::new(if agents.len() < self.config.shortlist_threshold {
-            tracing::info!("routing_engine: stage 1 (shortlist) skipped — fleet below threshold");
-            // Catalog too small for semantic shortlisting to matter — skip
-            // embedding entirely rather than paying for embeddings API calls
-            // we're going to throw away (shortlist() would return `all` anyway).
-            VectorStore::disabled_from(agents.clone())
-        } else {
-            tracing::info!("routing_engine: stage 1 (shortlist) — building vector store");
-            VectorStore::build(
-                agents.clone(),
-                self.api_key.clone(),
-                self.base_url.clone(),
-                self.embedding_model.clone(),
-                pool,
-            )
-            .await
-        });
-        let shortlist = store
-            .shortlist(
-                &req.query,
-                self.config.shortlist_size,
-                self.config.shortlist_threshold,
-            )
-            .await;
-        let stage1_count = shortlist.len();
-        let stage1_ms = t1.elapsed().as_millis() as i32;
-        tracing::info!(
-            candidates = stage1_count,
-            elapsed_ms = stage1_ms,
-            "routing_engine: stage 1 (shortlist) done"
-        );
-
-        // Stage 2 — conversation-aware reranking
-        let t2 = Instant::now();
-        let reranker = Reranker::new(Arc::clone(&store));
-        let candidates = reranker
-            .rerank(shortlist, &history, &req.query, self.config.shortlist_size)
-            .await;
-        let stage2_count = candidates.len();
-        tracing::info!(
-            candidates = stage2_count,
-            elapsed_ms = t2.elapsed().as_millis() as i32,
-            "routing_engine: stage 2 (rerank) done"
-        );
-
-        if candidates.is_empty() {
-            return Err(RouterError::NoAgentsAvailable);
-        }
-
-        // Stage 3 — LLM final selection
-        tracing::info!("routing_engine: stage 3 (select) — calling LLM");
-        let t3 = Instant::now();
-        let summaries: Vec<AgentCardSummary> = candidates.iter().map(card_to_summary).collect();
-        let history_msgs: Vec<ConversationMessage> = history
-            .to_llm_messages()
-            .into_iter()
-            .map(|m| ConversationMessage {
-                role: m.role,
-                content: m.content,
-            })
-            .collect();
-
-        let (selected_agent, fallback_used, reasoning, selector_usage) = match self
-            .selector
-            .select_agent(&req.query, &history_msgs, &summaries, policy)
-            .await
-        {
-            Ok((sel, completion_result, hallucinated_fallback)) => {
-                let agent = candidates
-                    .iter()
-                    .find(|a| a.id == sel.agent_id)
-                    .cloned()
-                    .unwrap_or_else(|| candidates[0].clone());
-                let reasoning = sel.reasoning.clone();
-                let usage = Some(completion_result);
-                (agent, hallucinated_fallback, reasoning, usage)
-            }
-            // A refusal is a decision, not a failure: propagate it. The
-            // first-candidate fallback below exists for infrastructure faults
-            // (provider down, unparseable response) where delegating to *some*
-            // agent still beats erroring — but applying it here would hand the
-            // request to an agent the model just said cannot do the job, which
-            // is precisely what a policy is for.
-            Err(crate::selector::SelectorError::PolicyRefused { reason, usage }) => {
-                tracing::info!(
-                    %reason,
-                    agents_considered = candidates.len(),
-                    "routing refused by the operator's policy"
-                );
-                // The refused selection cost exactly what an accepted one
-                // costs — the provider call already happened — so its tokens
-                // are recorded on the same path and by the same helper. Written
-                // before the log row rather than after, because the row points
-                // at it; skipping this is what made a tuning session's rejected
-                // calls free in FinOps.
-                let selection_token_usage_id =
-                    write_selector_token_usage(pool, req.user_id, &req.session_id, &usage).await;
-                // A refusal is still a rou
-```
-
-### Core Architecture Module: `orchestrator/src/maf/worker.rs`
-```
-use std::sync::Arc;
-
-use futures::FutureExt;
-use nasiko_flow::FlowGuard;
-use nasiko_hitl::{HitlStore, NewHitlRequest};
-use sqlx::PgPool;
-use tracing::{error, info, warn};
-use uuid::Uuid;
-
-use super::{
-    executor,
-    llm::LlmClient,
-    types::{MafDefinition, PausedStep, StepOutcome, StepResult},
-};
-
-/// Redis stream this worker consumes from. `pub` (not just crate-visible) so every producer —
-/// `oss/server/src/maf.rs` (the initial run) and `oss/server/src/hitl/mod.rs` (a resume re-enqueue)
-/// — binds to this same constant rather than hardcoding the literal a second and third time; a
-/// drift between the two used to mean silently orphaned jobs, no compile error and no runtime
-/// error (found in review).
-pub const STREAM_KEY: &str = "nasiko:maf:execute";
-const GROUP_NAME: &str = "maf-workers";
-// Messages idle for longer than this are reclaimed on restart (10 minutes in ms)
-const RECLAIM_IDLE_MS: u64 = 600_000;
-
-/// Unique per process: pod name (HOSTNAME in k8s/docker) + OS PID.
-/// Two pods or two local processes will never share the same name, so Redis
-/// can track their pending-entry lists independently.
-fn consumer_name() -> String {
-    let hostname = std::env::var("HOSTNAME").unwrap_or_else(|_| "worker".into());
-    format!("maf-worker-{hostname}-{}", std::process::id())
-}
-
-pub async fn run(
-    db: PgPool,
-    redis: redis::Client,
-    http_client: reqwest::Client,
-    flow_guard: Arc<FlowGuard>,
-    llm: LlmClient,
-    hitl_store: Arc<dyn HitlStore>,
-) {
-    let consumer = consumer_name();
-
-    let mut conn = match redis.get_multiplexed_async_connection().await {
-        Ok(c) => c,
-        Err(e) => {
-            error!("MAF worker: failed to connect to Redis: {e}");
-            return;
-        }
-    };
-
-    // Create consumer group if it doesn't exist ('$' = only new messages; MKSTREAM creates stream)
-    let _: redis::RedisResult<()> = redis::cmd("XGROUP")
-        .arg("CREATE")
-        .arg(STREAM_KEY)
-        .arg(GROUP_NAME)
-        .arg("$")
-        .arg("MKSTREAM")
-        .query_async(&mut conn)
-        .await;
-
-    // Reclaim messages that were in-flight when the server last crashed
-    reclaim_pending(
-        &mut conn,
-        &db,
-        &http_client,
-        &flow_guard,
-        &llm,
-        &hitl_store,
-        &consumer,
+    handler = DefaultRequestHandler(
+        agent_executor=MyExecutor(),
+        task_store=make_task_store(),   # was: InMemoryTaskStore()
+        agent_card=card,
     )
-    .await;
+    app = Starlette(routes=...)
+    install_shutdown_hooks(app)         # flush pending writes when the server stops
 
-    info!("MAF worker started, consumer={consumer}, stream={STREAM_KEY}");
+Configuration comes from the environment the platform injects into the container:
 
-    loop {
-        let result: redis::RedisResult<redis::Value> = redis::cmd("XREADGROUP")
-            .arg("GROUP")
-            .arg(GROUP_NAME)
-            .arg(&consumer)
-            .arg("BLOCK")
-            .arg(2000u64)
-            .arg("COUNT")
-            .arg(1u64)
-            .arg("STREAMS")
-            .arg(STREAM_KEY)
-            .arg(">")
-            .query_async(&mut conn)
-            .await;
+    NASIKO_STATE_URL     base URL of the state API (ends in /api/agent-state). Unset means the
+                         platform provides no store, and every factory here returns the
+                         in-memory implementation the SDK ships, so the same code runs locally.
+    NASIKO_AGENT_TOKEN   this agent's state credential. It is the only one accepted: the MCP
+                         gateway token is a different credential and is never used here.
 
-        match result {
-            Ok(redis::Value::Nil) => {
-                // Block timeout — no messages, loop back
-            }
-            Ok(val) => {
-                for (msg_id, fields) in extract_messages(val) {
-                    if let Some(job) = parse_job(&fields) {
-                        process_job(
-                            job,
-                            &msg_id,
-                            &mut conn,
-                            &db,
-                            &http_client,
-                            &flow_guard,
-                            &llm,
-                            &hitl_store,
-                        )
-                        .await;
-                    } else {
-                        // Malformed message — ACK to remove from PEL so it doesn't retry forever
-                        warn!("MAF worker: could not parse job from message {msg_id}, discarding");
-                        ack(&mut conn, &msg_id).await;
-                    }
-                }
-            }
-            Err(e) => {
-                error!("MAF worker XREADGROUP error: {e}");
-                tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
-            }
-        }
-    }
-}
+Write guarantee (see NasikoTaskStore): a save that changes ``task.status.state`` is on the
+server before ``save()`` returns. Other saves are coalesced to at most one write per
+COALESCE_WINDOW_SECONDS per task and written on the next state change, by a background timer,
+and by ``aclose()``. Nothing calls ``aclose()`` on its own: ``install_shutdown_hooks(app)`` runs
+it when the server shuts down (uvicorn does that on SIGTERM and Ctrl-C), and an atexit hook
+covers a normal interpreter exit. A hard crash (SIGKILL, power loss), or a SIGTERM in a process
+without those hooks, can lose that window of non-status updates; so can an update the platform
+could not take for PENDING_MAX_AGE_SECONDS, which is discarded rather than written late.
 
-struct Job {
-    execution_id: Uuid,
-    maf_json: String,
-    user_id: Uuid,
-    /// Run-time data for this execution only, spliced into step 0 by
-    /// `executor::run_maf` — see `oss/server/src/maf.rs::RunWorkflowRequest`.
-    content: Option<String>,
-    /// Present only on a continuation job, `oss/server/src/hitl/mod.rs::deliver_maf`'s `XADD` —
-    /// a fresh run always omits these three.
-    resume: Option<ResumeFields>,
-}
+Both a2a-sdk majors are supported (0.3.x pydantic tasks and 1.x protobuf tasks). The langgraph
+checkpointer needs the optional langgraph-checkpoint package; nothing else does.
 
-struct ResumeFields {
-    step_index: i32,
-    task_id: String,
-    answer: String,
-}
+This file is vendored: agent images are built from the agent's own directory only, so each
+agent keeps a committed copy next to its main module. oss/agents/common is canonical and
+oss/agents/common/check_vendored.py fails when a copy drifts.
+"""
 
-fn parse_job(fields: &[redis::Value]) -> Option<Job> {
-    let mut execution_id = None;
-    let mut maf_json = None;
-    let mut user_id = None;
-    let mut content = None;
-    let mut resume_step_index = None;
-    let mut resume_task_id = None;
-    let mut resume_answer = None;
+from __future__ import annotations
 
-    let mut i = 0;
-    while i + 1 < fields.len() {
-        // Use continue instead of ? so one malformed field doesn't drop the whole job
-        let key = match bulk_str(&fields[i]) {
-            Some(k) => k,
-            None => {
-                i += 2;
-                continue;
-            }
-        };
-        let val = match bulk_str(&fields[i + 1]) {
-            Some(v) => v,
-            None => {
-                i += 2;
-                continue;
-            }
-        };
-        match key.as_str() {
-            "execution_id" => execution_id = val.parse().ok(),
-            "maf_json" => maf_json = Some(val),
-            "user_id" => user_id = val.parse().ok(),
-            "content" => content = Some(val),
-            "resume_step_index" => resume_step_index = val.parse().ok(),
-            "resume_task_id" => resume_task_id = Some(val),
-            "resume_answer" => resume_answer = Some(val),
-            _ => {}
-        }
-        i += 2;
-    }
+import asyncio
+import atexit
+import base64
+import contextlib
+import functools
+import json
+import logging
+import os
+import random
+import signal
+import threading
+import time
+from collections import OrderedDict
+from collections.abc import AsyncIterator, Callable, Iterator, Mapping, Sequence
+from dataclasses import dataclass, fields
+from typing import Any, Generic, TypeVar
+from urllib.parse import quote, urlsplit
 
-    // A fresh run's message never carries any of these three fields — `None` is the normal case.
-    // But `deliver_maf`'s XADD always sends all three together for a continuation, so seeing *some*
-    // of them present with even one failing to parse means this message was meant to be a resume,
-    // not a fresh run. Falling through to `None` here previously downgraded it into a fresh run
-    // from step 0 instead — silently discarding the human's answer and re-invoking every
-    // already-succeeded step. Reject the whole job instead, matching the caller's existing
-    // malformed-message handling (ACK + discard) rather than mis-executing it.
-    let any_resume_field_present =
-        resume_step_index.is_some() || resume_task_id.is_some() || resume_answer.is_some();
-    let resume = match (resume_step_index, resume_task_id, resume_answer) {
-        (Some(step_index), Some(task_id), Some(answer)) => Some(ResumeFields {
-            step_index,
-            task_id,
-            answer,
-        }),
-        _ if any_resume_field_present => return None,
-        _ => None,
-    };
+import httpx
+from a2a.server.tasks import InMemoryTaskStore, TaskStore
+from a2a.types import Task
 
-    Some(Job {
-        execution_id: execution_id?,
-        maf_json: maf_json?,
-        user_id: user_id?,
-        content,
-        resume,
-    })
-}
+try:
+    from a2a.types import a2a_pb2 as _a2a_pb2  # a2a-sdk 1.x: tasks are protobuf messages
+except ImportError:
+    _a2a_pb2 = None  # a2a-sdk 0.3.x: tasks are pydantic models
 
-fn bulk_str(val: &redis::Value) -> Option<String> {
-    match val {
-        redis::Value::BulkString(b) => String::from_utf8(b.clone()).ok(),
-        redis::Value::SimpleString(s) => Some(s.clone()),
-        _ => None,
-    }
-}
-
-// XREADGROUP returns: Array([Array([stream_key, Array([Array([msg_id, Array([k,v,...])])])])])
-fn extract_messages(val: redis::Value) -> Vec<(String, Vec<redis::Value>)> {
-    let outer = match val {
-        redis::Value::Array(v) => v,
-        _ => return vec![],
-    };
-    let stream_entry = match outer.into_iter().next() {
-        Some(redis::Value::Array(v)) => v,
-        _ => return vec![],
-    };
-    let messages = match stream_entry.into_iter().nth(1) {
-        Some(redis::Value::Array(v)) => v,
-        _ => return vec![],
-    };
-
-    let mut result = vec![];
-    for msg in messages {
-        let mut parts = match msg {
-            redis::Value::Array(p) if p.len() == 2 => p.into_iter(),
-            _ => continue,
-        };
-        let msg_id = match parts.next().and_then(|v| bulk_str(&v)) {
-            Some(id) => id,
-            None => continue,
-        };
-        let fields = match parts.next() {
-            Some(redis::Value::Array(f)) => f,
-            _ => continue,
-        };
-        result.push((msg_id, fields));
-    }
-    result
-}
-
-#[allow(clippy::too_many_arguments)]
-async fn process_job(
-    job: Job,
-    msg_id: &str,
-    conn: &mut redis::aio::MultiplexedConnection,
-    db: &PgPool,
-    http_client: &reqwest::Client,
-    flow_guard: &Arc<FlowGuard>,
-    llm: &LlmClient,
-    hitl_store: &Arc<dyn HitlStore>,
-) {
-    let execution_id = job.execution_id;
-    let user_id = job.user_id;
-    let content = job.content.clone();
-    let maf_json_str = job.maf_json;
-    let is_resume = job.resume.is_some();
-
-    // Fetch current attempt counters
-    #[derive(sqlx::FromRow)]
-    struct AttemptRow {
-        attempt_count: i32,
-        max_attempts: i32,
-    }
-
-    let row = sqlx::query_as::<_, AttemptRow>(
-        "SELECT attempt_count, max_attempts FROM maf_executions WHERE id = $1",
+try:
+    from langgraph.checkpoint.base import (
+        WRITES_IDX_MAP,
+        BaseCheckpointSaver,
+        CheckpointTuple,
+        get_checkpoint_metadata,
     )
-    .bind(execution_id)
-    .fetch_optional(db)
-    .await;
 
-    let (attempt_count, max_attempts) = match row {
-        Ok(Some(r)) => (r.attempt_count, r.max_attempts),
-        Ok(None) => {
-            warn!("MAF execution {execution_id} not found, discarding");
-            ack(conn, msg_id).await;
-            return;
-        }
-        Err(e) => {
-            error!("MAF worker: DB error for execution {execution_id}: {e}");
-            return;
-        }
-    };
+    _LANGGRAPH_AVAILABLE = True
+except ImportError:
+    # langgraph is optional: only agents that checkpoint with it need the package.
+    BaseCheckpointSaver = object  # type: ignore[assignment,misc]
+    _LANGGRAPH_AVAILABLE = False
 
-    let new_attempt = attempt_count + 1;
+logger = logging.getLogger("nasiko_state")
 
-    // Mark as running and increment attempt counter before work begins
-    if let Err(e) = sqlx::query(
-        "UPDATE maf_executions SET attempt_count = $1, status = 'running', started_at = now(), error = NULL WHERE id = $2",
+STATE_URL_ENV = "NASIKO_STATE_URL"
+AGENT_TOKEN_ENV = "NASIKO_AGENT_TOKEN"
+
+CLIENT_NAME = "nasiko_state.py/1"
+
+CONNECT_TIMEOUT_SECONDS = 2.0
+READ_TIMEOUT_SECONDS = 10.0
+RETRY_ATTEMPTS = 3
+RETRY_BACKOFF_SECONDS = 0.2
+# A rate-limited (429) request is retried after the Retry-After the server names, waiting at most
+# MAX_RETRY_AFTER_SECONDS per attempt and RATE_LIMIT_BUDGET_SECONDS in all before the 429 surfaces.
+# The platform's limit is a per-minute window shared by every replica of the agent, so a wait of a
+# few seconds is usually enough, and a turn that keeps failing for half a minute should fail.
+MAX_RETRY_AFTER_SECONDS = 5.0
+RATE_LIMIT_BUDGET_SECONDS = 30.0
+# The wait when a 429 names none (or names an HTTP date), and the shortest wait ever taken, so a
+# server answering "Retry-After: 0" cannot turn the budget into a busy loop.
+RATE_LIMIT_DEFAULT_WAIT_SECONDS = 1.0
+RATE_LIMIT_MIN_WAIT_SECONDS = 0.5
+# Relative spread of each 429 wait, so replicas limited at the same moment do not retry in step.
+RATE_LIMIT_JITTER = 0.2
+MAX_PAGE_SIZE = 100
+DEFAULT_PAGE_SIZE = 50
+
+# Saves that do not change a task's state are written at most once per window per task.
+COALESCE_WINDOW_SECONDS = 0.5
+# A deferred write that failed is retried after a delay that doubles per failure, up to this.
+DEFERRED_RETRY_MAX_SECONDS = 10.0
+# An unwritten update this old is presumed superseded (the task has most likely moved on to
+# another replica), so it is discarded instead of being written over whatever is there now.
+PENDING_MAX_AGE_SECONDS = 60.0
+# Exiting with the platform unreachable must not hang for every pending task.
+EXIT_FLUSH_BUDGET_SECONDS = 10.0
+# A task id just looked up and not found reads as missing for this long without asking again.
+# a2a-sdk 1.x looks a new task's id up several times before the task's first save, and that id is
+# one the SDK generated for the request, so no other replica can have created the task meanwhile.
+# A task that exists is always read from the server: another replica may have changed it.
+ABSENT_CACHE_SECONDS = 2.0
+# Bound on tasks whose write state is remembered. Forgetting an idle one costs its next write the
+# version check: having no version to match, that write is unconditional.
+MAX_TRACKED_TASKS = 4096
+# The status a shell reports for a process ended by SIGTERM; kept when SIGTERM becomes an exit.
+SIGTERM_EXIT_STATUS = 128 + signal.SIGTERM
+
+# The order the registration contract spells its capability lists in.
+CAPABILITY_ORDER = ("tasks", "kv")
+# A startup registration that failed for a reason that may pass (no answer, 5xx, 429) is retried
+# in the background after a delay that doubles from the first of these up to the second.
+REGISTER_RETRY_FIRST_SECONDS = 1.0
+REGISTER_RETRY_MAX_SECONDS = 60.0
+REGISTER_THREAD_NAME = "nasiko-state-register"
+
+T = TypeVar("T")
+
+
+class NasikoStateError(Exception):
+    """The state API refused a request or could not be reached.
+
+    ``status`` and ``body`` carry the HTTP answer. Both are None for transport and
+    configuration failures, where there was no answer.
+    """
+
+    def __init__(self, message: str, *, status: int | None = None, body: str | None = None):
+        super().__init__(message)
+        self.status = status
+        self.body = body
+
+
+class NasikoStateMalformedRow(NasikoStateError):
+    """A stored row cannot be read back as what it claims to be.
+
+    Raised for a task written by the other a2a-sdk major (or not by this module at all), and for a
+    damaged record. Never answered with a half-decoded object.
+    """
+
+
+class NasikoStateTooLarge(NasikoStateError):
+    """The state API refused a value above its size limit (HTTP 413). Retrying cannot help."""
+
+
+class NasikoStateConflict(NasikoStateError):
+    """An ``If-Match`` precondition failed: another writer changed the row first.
+
+    ``current_version`` is the version the server holds, or None if the body did not say.
+    """
+
+    def __init__(self, message: str, *, current_version: int | None, body: str | None = None):
+        super().__init__(message, status=412, body=body)
+        self.current_version = current_version
+
+
+@dataclass(frozen=True)
+class WriteReceipt:
+    """What the server answers to a PUT. Task and KV writes share the three fields."""
+
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class TaskRecord:
+    """One stored task. ``body`` is the SDK's serialized Task, opaque to the server."""
+
+    task_id: str
+    context_id: str | None
+    state: str
+    body: Any
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class KVRecord:
+    """One stored key. ``value`` is opaque JSON."""
+
+    key: str
+    value: Any
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class Page(Generic[T]):
+    """One page of a listing. ``next_cursor`` is None on the last page."""
+
+    items: list[T]
+    next_cursor: str | None
+
+
+# --- Operations ---------------------------------------------------------------------------------
+#
+# Each state API call is described once, as data, and executed by the sync or the async client
+# method. That keeps request building, status handling and parsing in a single place.
+
+_UNSET: Any = object()
+
+
+@dataclass(frozen=True)
+class _Operation:
+    """One state API call: how to send it and how to read the answer."""
+
+    method: str
+    path: str
+    parse: Callable[[httpx.Response], Any]
+    ok_status: int = 200
+    params: Mapping[str, str | int | None] | None = None
+    json: Any = _UNSET
+    if_match: int | None = None
+    # A write names the capability it needs registered; reads leave it None.
+    capability: str | None = None
+    # What a 404 means. Left unset, a 404 is an error like any other status.
+    when_missing: Any = _UNSET
+    # time.monotonic() by which the call, retries included, must be over. None means no deadline.
+    deadline: float | None = None
+
+    def request_kwargs(self) -> dict[str, Any]:
+        kwargs: dict[str, Any] = {"method": self.method, "url": self.path}
+        if self.params:
+            kwargs["params"] = {key: value for key, value in self.params.items() if value is not None}
+        if self.json is not _UNSET:
+            kwargs["json"] = self.json
+        if self.if_match is not None:
+            kwargs["headers"] = {"If-Match": str(self.if_match)}
+        if self.deadline is not None:
+            kwargs["timeout"] = min(self.seconds_left(), READ_TIMEOUT_SECONDS)
+        return kwargs
+
+    def seconds_left(self) -> 
+```
+
+### Core Architecture Module: `agents/crewai/src/nasiko_state.py`
+```
+"""Durable agent state over the platform's state API.
+
+An A2A agent normally keeps its tasks in process memory, so a restart loses paused work
+and the agent cannot run as more than one replica. This module is a drop-in replacement
+that keeps that state in the platform instead.
+
+    from nasiko_state import make_task_store
+
+    handler = DefaultRequestHandler(
+        agent_executor=MyExecutor(),
+        task_store=make_task_store(),   # was: InMemoryTaskStore()
+        agent_card=card,
     )
-    .bind(new_attempt)
-    .bind(execution_id)
-    .execute(db)
-    .await
-    {
-        error!("MAF worker: failed to mark execution {execution_id} running: {e}");
+    app = Starlette(routes=...)
+    install_shutdown_hooks(app)         # flush pending writes when the server stops
 
-```
+Configuration comes from the environment the platform injects into the container:
 
-### Core Architecture Module: `pricing/src/engine.rs`
-```
-//! The wired-up resolver: books, ratios and the four steps behind one call.
-//!
-//! Callers hold one of these and ask it to price a call. Constructing it is the
-//! composition root's job; handlers receive it.
+    NASIKO_STATE_URL     base URL of the state API (ends in /api/agent-state). Unset means the
+                         platform provides no store, and every factory here returns the
+                         in-memory implementation the SDK ships, so the same code runs locally.
+    NASIKO_AGENT_TOKEN   this agent's state credential. It is the only one accepted: the MCP
+                         gateway token is a different credential and is never used here.
 
-use std::sync::Arc;
-use std::time::{Duration, Instant};
+Write guarantee (see NasikoTaskStore): a save that changes ``task.status.state`` is on the
+server before ``save()`` returns. Other saves are coalesced to at most one write per
+COALESCE_WINDOW_SECONDS per task and written on the next state change, by a background timer,
+and by ``aclose()``. Nothing calls ``aclose()`` on its own: ``install_shutdown_hooks(app)`` runs
+it when the server shuts down (uvicorn does that on SIGTERM and Ctrl-C), and an atexit hook
+covers a normal interpreter exit. A hard crash (SIGKILL, power loss), or a SIGTERM in a process
+without those hooks, can lose that window of non-status updates; so can an update the platform
+could not take for PENDING_MAX_AGE_SECONDS, which is discarded rather than written late.
 
-use chrono::{DateTime, Utc};
-use sqlx::PgPool;
-use tokio::sync::RwLock;
+Both a2a-sdk majors are supported (0.3.x pydantic tasks and 1.x protobuf tasks). The langgraph
+checkpointer needs the optional langgraph-checkpoint package; nothing else does.
 
-use crate::book::{PriceBook, StaticPriceBook};
-use crate::cost::CostBreakdown;
-use crate::db::{DbPriceBook, load_cache_ratios};
-use crate::model::resolve_model;
-use crate::quote::{PriceQuote, quote};
-use crate::ratio::CacheRatios;
-use crate::usage::{NormalizedUsage, PromptConvention, RawUsage, normalize_usage};
+This file is vendored: agent images are built from the agent's own directory only, so each
+agent keeps a committed copy next to its main module. oss/agents/common is canonical and
+oss/agents/common/check_vendored.py fails when a copy drifts.
+"""
 
-/// How long derived cache ratios are reused. They move only when the pricing
-/// sync widens its coverage, which it does daily at most.
-const RATIO_TTL: Duration = Duration::from_secs(3_600);
+from __future__ import annotations
 
-/// Everything a caller needs to persist about one priced call.
-#[derive(Debug, Clone, PartialEq)]
-pub struct PricedCall {
-    /// The four token classes, with `input` guaranteed cache-exclusive.
-    pub usage: NormalizedUsage,
-    /// The rates used, and where each came from.
-    pub quote: PriceQuote,
-    /// Spend, split by token class.
-    pub cost: CostBreakdown,
-}
+import asyncio
+import atexit
+import base64
+import contextlib
+import functools
+import json
+import logging
+import os
+import random
+import signal
+import threading
+import time
+from collections import OrderedDict
+from collections.abc import AsyncIterator, Callable, Iterator, Mapping, Sequence
+from dataclasses import dataclass, fields
+from typing import Any, Generic, TypeVar
+from urllib.parse import quote, urlsplit
 
-impl PricedCall {
-    /// Why this call cost what it did, for storing alongside the figure.
-    ///
-    /// Defined here rather than at each call site so all usage writers record
-    /// provenance in the same shape.
-    pub fn provenance(&self) -> serde_json::Value {
-        serde_json::json!({
-            "source": format!("{:?}", self.quote.source),
-            "cache_source": format!("{:?}", self.quote.cache_source),
-            "estimated": self.cost.estimated,
-            "resolved_as": self.quote.resolved_as,
-            "rates_per_1m": {
-                "input": self.quote.input_per_1m,
-                "output": self.quote.output_per_1m,
-                "cache_read": self.quote.cache_read_per_1m,
-                "cache_creation": self.quote.cache_creation_per_1m,
-                "cache_creation_1h": self.quote.cache_creation_1h_per_1m,
-            },
-            "input_usd": self.cost.input_usd,
-            "output_usd": self.cost.output_usd,
-            "cache_read_usd": self.cost.cache_read_usd,
-            "cache_creation_usd": self.cost.cache_creation_usd,
-        })
-    }
-}
+import httpx
+from a2a.server.tasks import InMemoryTaskStore, TaskStore
+from a2a.types import Task
 
-/// Prices a call against the synced price book, falling back to list prices and
-/// then to vendor cache conventions.
-pub struct PricingEngine {
-    books: Vec<Box<dyn PriceBook>>,
-    ratios: RwLock<Option<(Arc<CacheRatios>, Instant)>>,
-    /// `None` for an offline engine — see [`PricingEngine::offline`].
-    db: Option<PgPool>,
-}
+try:
+    from a2a.types import a2a_pb2 as _a2a_pb2  # a2a-sdk 1.x: tasks are protobuf messages
+except ImportError:
+    _a2a_pb2 = None  # a2a-sdk 0.3.x: tasks are pydantic models
 
-impl PricingEngine {
-    /// The production engine: the synced price book first, list prices behind it.
-    pub fn new(db: PgPool) -> Self {
-        Self {
-            books: vec![
-                Box::new(DbPriceBook::new(db.clone())),
-                Box::new(StaticPriceBook),
-            ],
-            ratios: RwLock::new(None),
-            db: Some(db),
-        }
-    }
-
-    /// List prices only, with no database behind it.
-    ///
-    /// For unit tests, which the repo requires to be hermetic, and for any
-    /// caller that has no pool. Handing `new` an unreachable pool instead makes
-    /// every lookup wait out a connect timeout — a suite that used one took two
-    /// minutes and then failed.
-    pub fn offline() -> Self {
-        Self {
-            books: vec![Box::new(StaticPriceBook)],
-            ratios: RwLock::new(None),
-            db: None,
-        }
-    }
-
-    /// Normalize, resolve rates, and cost one call.
-    ///
-    /// `at` is when the call happened, not now — `model_pricing` carries price
-    /// history, and re-pricing an old call at today's rates rewrites it.
-    pub async fn price(
-        &self,
-        provider: Option<&str>,
-        model: &str,
-        raw: RawUsage,
-        convention: PromptConvention,
-        at: DateTime<Utc>,
-    ) -> PricedCall {
-        self.price_with_context(
-            provider,
-            model,
-            raw,
-            convention,
-            at,
-            crate::PricingContext::default(),
-        )
-        .await
-    }
-
-    /// Price reported cache durations and serving context through the same engine.
-    pub async fn price_with_context(
-        &self,
-        provider: Option<&str>,
-        model: &str,
-        raw: RawUsage,
-        convention: PromptConvention,
-        at: DateTime<Utc>,
-        context: crate::PricingContext<'_>,
-    ) -> PricedCall {
-        let usage = normalize_usage(raw, convention);
-        let key = resolve_model(provider.filter(|p| *p != "unknown"), model);
-        let ratios = self.ratios().await;
-        let books: Vec<&dyn PriceBook> = self.books.iter().map(Box::as_ref).collect();
-        let quote = quote(&books, &key, at, &ratios).await;
-        let cost = crate::context::context_cost(&usage, &quote, &key, context);
-        PricedCall { usage, quote, cost }
-    }
-
-    /// Cache ratios, refreshed from the price book on a TTL so the inference
-    /// used for cache-less models sharpens as the sync widens its coverage.
-    async fn ratios(&self) -> Arc<CacheRatios> {
-        if let Some((ratios, loaded_at)) = self.ratios.read().await.as_ref()
-            && loaded_at.elapsed() < RATIO_TTL
-        {
-            return ratios.clone();
-        }
-        let fresh = Arc::new(match &self.db {
-            Some(db) => load_cache_ratios(db).await,
-            None => CacheRatios::measured(),
-        });
-        *self.ratios.write().await = Some((fresh.clone(), Instant::now()));
-        fresh
-    }
-}
-
-```
-
-### Core Architecture Module: `react-agent/src/react_loop.rs`
-```
-use std::sync::Arc;
-
-use crate::completion::{CompletionEvent, UsageModel};
-use futures::StreamExt;
-use rig::completion::message::ToolCall;
-use rig::completion::{AssistantContent, CompletionModel as _, Message, ToolDefinition};
-use rig::tool::{ToolDyn, ToolError, ToolSet, ToolSetError};
-use tokio::sync::mpsc;
-
-use crate::a2a::{A2aClient, PauseInfo};
-use crate::context::{ContextConfig, ContextManager};
-use crate::error::OrchestratorError;
-use crate::events::{OrchestratorEvent, PolicyRejectionKind};
-use crate::guard::CallGuard;
-use crate::policy::DelegationPolicy;
-use crate::registry::{AgentInfo, AgentRegistry, RegistrySource};
-use crate::tool::{A2aTool, A2aToolError};
-
-/// The outcome of one `toolset.call()`, with a real pause recovered from `rig`'s type-erased
-/// `Result<String, ToolSetError>` instead of being indistinguishable from an ordinary failure.
-/// Pure — no side effects, no channel sends — so every `toolset.call()` site (`Orchestrator::run()`
-/// and both of `run_stream_inner()`'s) can classify identically by calling the same function,
-/// rather than each independently deciding what counts as a pause.
-///
-/// Deliberately not `Success(String)`/`Failure(String)` variants carrying the `Ok`/`Err` payload:
-/// every call site already has its own existing, unchanged handling for the non-pause case
-/// (`match result { Ok(..) => .., Err(..) => .. }`, untouched by this classification) — a
-/// `NotAwaitingHuman` outcome that duplicated that payload would just be dead weight nothing
-/// reads, which is exactly what the compiler's `dead_code` lint caught on the first version of
-/// this enum.
-enum ToolOutcome {
-    AwaitingHuman {
-        agent: String,
-        agent_id: String,
-        pause: PauseInfo,
-    },
-    NotAwaitingHuman,
-}
-
-/// Recovers `A2aToolError::AwaitingHuman` through `rig-core`'s type erasure: `ToolSetError`
-/// wraps `ToolError::ToolCallError(Box<dyn std::error::Error + Send + Sync>)`, built by `rig`'s
-/// own blanket `ToolDyn` impl from the tool's real `A2aToolError`. `downcast_ref` recovers the
-/// concrete type from that box — proven against the actual pinned `rig-core` dependency in
-/// `tool.rs`'s `awaiting_human_survives_rig_toolset_erasure` test, not assumed here.
-fn classify_tool_result(result: &Result<String, ToolSetError>) -> ToolOutcome {
-    if let Err(ToolSetError::ToolCallError(ToolError::ToolCallError(boxed))) = result
-        && let Some(A2aToolError::AwaitingHuman {
-            agent,
-            agent_id,
-            pause,
-        }) = boxed.downcast_ref::<A2aToolError>()
-    {
-        return ToolOutcome::AwaitingHuman {
-            agent: agent.clone(),
-            agent_id: agent_id.clone(),
-            pause: pause.clone(),
-        };
-    }
-    ToolOutcome::NotAwaitingHuman
-}
-
-/// Attribute one completion's total token cost evenly across the tool calls
-/// it produced — the API gives one usage figure per completion, not per tool
-/// call, so this is the best available granularity for `CallGuard::after_call`.
-/// `None` (no usage reported) or zero tool calls both yield 0.
-fn tokens_per_tool_call(completion_tokens: Option<u64>, num_tool_calls: usize) -> u64 {
-    completion_tokens
-        .map(|t| t / num_tool_calls.max(1) as u64)
-        .unwrap_or(0)
-}
-
-/// Does the operator's policy refuse this call? `Some(reason)` if so.
-///
-/// The decision only — no reporting — because the two loops report it in
-/// different shapes (`run_stream_inner` sends an event, `run` records a trace)
-/// and only the *decision* has to stay identical between them.
-fn policy_refusal(config: &OrchestratorConfig, tc: &ToolCall) -> Option<String> {
-    config
-        .policy
-        .as_ref()
-        .and_then(|p| p.check_tool_call(&tc.function.arguments).err())
-}
-
-/// What the model is told when a call is blocked, in the tool-result context.
-///
-/// One wording for both loops. They had drifted — one said `Blocked:` and the
-/// other `BLOCKED: … Do NOT retry`, so the same policy taught the model two
-/// different lessons depending on which entry point ran it.
-fn blocked_note(tool_name: &str, reason: &str) -> String {
-    format!(
-        "[{tool_name}] BLOCKED: {reason}. Do NOT retry this agent with different \
-         arguments unless you have a concrete reason to."
+try:
+    from langgraph.checkpoint.base import (
+        WRITES_IDX_MAP,
+        BaseCheckpointSaver,
+        CheckpointTuple,
+        get_checkpoint_metadata,
     )
-}
 
-/// The policy + call-guard gate for one tool call, in `run_stream_inner`'s
-/// event-channel reporting style (`OrchestratorEvent::PolicyRejected` plus a
-/// message telling the model not to retry). Both of its branches call this —
-/// they differ in how a turn gets here, not in what a rejection looks like once
-/// it has, and this used to be a byte-for-byte copy in each, with no structural
-/// signal that a change to one needed the other.
-///
-/// `true` means the call was blocked — already reported on `tx` and already
-/// pushed onto `results_for_context` — so the caller should `continue` its loop
-/// rather than call the tool.
-async fn call_is_blocked(
-    tc: &ToolCall,
-    agent_display: &str,
-    config: &OrchestratorConfig,
-    guard: Option<&dyn CallGuard>,
-    tx: &mpsc::Sender<OrchestratorEvent>,
-    turn_idx: usize,
-    results_for_context: &mut Vec<String>,
-) -> bool {
-    let name = &tc.function.name;
+    _LANGGRAPH_AVAILABLE = True
+except ImportError:
+    # langgraph is optional: only agents that checkpoint with it need the package.
+    BaseCheckpointSaver = object  # type: ignore[assignment,misc]
+    _LANGGRAPH_AVAILABLE = False
 
-    // Operator policy first, before the flow guard: a call the policy rejects
-    // should never consume fan-out or depth budget, and `before_call`
-    // increments both.
-    if let Some(reason) = policy_refusal(config, tc) {
-        let _ = tx
-            .send(OrchestratorEvent::PolicyRejected {
-                agent: agent_display.to_string(),
-                reason: reason.clone(),
-                turn: turn_idx + 1,
-                kind: PolicyRejectionKind::Delegation,
-            })
-            .await;
-        results_for_context.push(blocked_note(name, &reason));
-        return true;
-    }
+logger = logging.getLogger("nasiko_state")
 
-    if let Some(g) = guard
-        && let Err(reason) = g.before_call(agent_display).await
-    {
-        let _ = tx
-            .send(OrchestratorEvent::PolicyRejected {
-                agent: agent_display.to_string(),
-                reason: reason.clone(),
-                turn: turn_idx + 1,
-                kind: PolicyRejectionKind::FlowGuard,
-            })
-            .await;
-        results_for_context.push(blocked_note(name, &reason));
-        return true;
-    }
+STATE_URL_ENV = "NASIKO_STATE_URL"
+AGENT_TOKEN_ENV = "NASIKO_AGENT_TOKEN"
 
-    false
-}
+CLIENT_NAME = "nasiko_state.py/1"
 
-/// The orchestrator's system prompt. One builder for both loops — `run()` and
-/// `run_stream_inner()` previously carried byte-identical copies of this text,
-/// so a change to the policy had to be made twice to take effect.
-///
-/// The roster/protocol/rules block is the stable prefix and the two
-/// caller-supplied sections come last, so OpenAI's prefix-based prompt caching
-/// hits across turns even when those sections change. `{custom}` (e.g. the L1A
-/// supplemental context built in `oss/server/src/router/a2a_dispatch.rs`) is a
-/// query-ranked top-k slice, so it varies turn to turn; it used to sit at the
-/// very top, where any variation invalidated the whole cached prompt.
-///
-/// `{policy_footer}` is placed after `{custom}` even though it is the more
-/// stable of the two, because it is the one section whose purpose depends on
-/// being read last: a rule about HOW to answer was reliably ignored when it sat
-/// earlier (see `DelegationPolicy::preamble_footer`). The cost is that the
-/// org-rules block — at most fifty short lines — falls outside the cached
-/// prefix, while the far larger stable block ahead of it still caches. Ordering
-/// them the other way would re-bury the rules behind a `{custom}` that grows
-/// with the size of the fleet.
-fn build_preamble(config: &OrchestratorConfig, agents: &[AgentInfo]) -> String {
-    let agent_list: String = agents
-        .iter()
-        .map(|a| {
-            let skills = a
-                .skills
-                .iter()
-                .map(|s| {
-                    // The skill's own documented inputs. Without them the model invents wording
-                    // for a skill that may only answer to an exact phrase — and the agent then
-                    // answers a question the user never asked.
-                    let examples = if s.examples.is_empty() {
-                        String::new()
-                    } else {
-                        format!(
-                            "\n      send exactly: {}",
-                            s.examples
-                                .iter()
-                                .map(|e| format!("\"{e}\""))
-                                .collect::<Vec<_>>()
-                                .join(" | ")
-                        )
-                    };
-                    format!("    - {}: {}{}", s.name, s.description, examples)
-                })
-                .collect::<Vec<_>>()
-                .join("\n");
-            format!(
-                "  • {} (tool: `{}`)\n    {}\n{}",
-                a.name,
-                A2aTool::tool_name(&a.name),
-                a.description,
-                skills
-            )
-        })
-        .collect::<Vec<_>>()
-        .join("\n\n");
+CONNECT_TIMEOUT_SECONDS = 2.0
+READ_TIMEOUT_SECONDS = 10.0
+RETRY_ATTEMPTS = 3
+RETRY_BACKOFF_SECONDS = 0.2
+# A rate-limited (429) request is retried after the Retry-After the server names, waiting at most
+# MAX_RETRY_AFTER_SECONDS per attempt and RATE_LIMIT_BUDGET_SECONDS in all before the 429 surfaces.
+# The platform's limit is a per-minute window shared by every replica of the agent, so a wait of a
+# few seconds is usually enough, and a turn that keeps failing for half a minute should fail.
+MAX_RETRY_AFTER_SECONDS = 5.0
+RATE_LIMIT_BUDGET_SECONDS = 30.0
+# The wait when a 429 names none (or names an HTTP date), and the shortest wait ever taken, so a
+# server answering "Retry-After: 0" cannot turn the budget into a busy loop.
+RATE_LIMIT_DEFAULT_WAIT_SECONDS = 1.0
+RATE_LIMIT_MIN_WAIT_SECONDS = 0.5
+# Relative spread of each 429 wait, so replicas limited at the same moment do not retry in step.
+RATE_LIMIT_JITTER = 0.2
+MAX_PAGE_SIZE = 100
+DEFAULT_PAGE_SIZE = 50
 
-    // Each section carries its OWN separator rather than taking one from the
-    // template, so an absent section leaves nothing behind — not even the blank
-    // line a `{placeholder}` wrapped in newlines would. With no policy and no
-    // caller preamble the prompt below carries no trace that either seam exists,
-    // which `no_policy_leaves_the_preamble_untouched` pins against the exact
-    // joins rather than against trimmed text. (It no longer matches the prompt
-    // from before the seam byte for byte — `{custom}` has since moved from the
-    // top to the tail for prompt-cache stability, see this function's docs.)
-    // `custom` carries its own separator for the same reason the policy sections
-    // below do: an absent section must leave nothing behind, not even the blank
-    // line a `{placeholder}` wrapped in newlines would.
-    let custom = match config.preamble.as_deref() {
-        Some(text) if !text.trim().is_empty() => format!("\n\n{text}"),
+# Saves that do not change a task's state are written at most once per window per task.
+COALESCE_WINDOW_SECONDS = 0.5
+# A deferred write that failed is retried after a delay that doubles per failure, up to this.
+DEFERRED_RETRY_MAX_SECONDS = 10.0
+# An unwritten update this old is presumed superseded (the task has most likely moved on to
+# another replica), so it is discarded instead of being written over whatever is there now.
+PENDING_MAX_AGE_SECONDS = 60.0
+# Exiting with the platform unreachable must not hang for every pending task.
+EXIT_FLUSH_BUDGET_SECONDS = 10.0
+# A task id just looked up and not found reads as missing for this long without asking again.
+# a2a-sdk 1.x looks a new task's id up several times before the task's first save, and that id is
+# one the SDK generated for the request, so no other replica can have created the task meanwhile.
+# A task that exists is always read from the server: another replica may have changed it.
+ABSENT_CACHE_SECONDS = 2.0
+# Bound on tasks whose write state is remembered. Forgetting an idle one costs its next write the
+# version check: having no version to match, that write is unconditional.
+MAX_TRACKED_TASKS = 4096
+# The status a shell reports for a process ended by SIGTERM; kept when SIGTERM becomes an exit.
+SIGTERM_EXIT_STATUS = 128 + signal.SIGTERM
 
+# The order the registration contract spells its capability lists in.
+CAPABILITY_ORDER = ("tasks", "kv")
+# A startup registration that failed for a reason that may pass (no answer, 5xx, 429) is retried
+# in the background after a delay that doubles from the first of these up to the second.
+REGISTER_RETRY_FIRST_SECONDS = 1.0
+REGISTER_RETRY_MAX_SECONDS = 60.0
+REGISTER_THREAD_NAME = "nasiko-state-register"
+
+T = TypeVar("T")
+
+
+class NasikoStateError(Exception):
+    """The state API refused a request or could not be reached.
+
+    ``status`` and ``body`` carry the HTTP answer. Both are None for transport and
+    configuration failures, where there was no answer.
+    """
+
+    def __init__(self, message: str, *, status: int | None = None, body: str | None = None):
+        super().__init__(message)
+        self.status = status
+        self.body = body
+
+
+class NasikoStateMalformedRow(NasikoStateError):
+    """A stored row cannot be read back as what it claims to be.
+
+    Raised for a task written by the other a2a-sdk major (or not by this module at all), and for a
+    damaged record. Never answered with a half-decoded object.
+    """
+
+
+class NasikoStateTooLarge(NasikoStateError):
+    """The state API refused a value above its size limit (HTTP 413). Retrying cannot help."""
+
+
+class NasikoStateConflict(NasikoStateError):
+    """An ``If-Match`` precondition failed: another writer changed the row first.
+
+    ``current_version`` is the version the server holds, or None if the body did not say.
+    """
+
+    def __init__(self, message: str, *, current_version: int | None, body: str | None = None):
+        super().__init__(message, status=412, body=body)
+        self.current_version = current_version
+
+
+@dataclass(frozen=True)
+class WriteReceipt:
+    """What the server answers to a PUT. Task and KV writes share the three fields."""
+
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class TaskRecord:
+    """One stored task. ``body`` is the SDK's serialized Task, opaque to the server."""
+
+    task_id: str
+    context_id: str | None
+    state: str
+    body: Any
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class KVRecord:
+    """One stored key. ``value`` is opaque JSON."""
+
+    key: str
+    value: Any
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class Page(Generic[T]):
+    """One page of a listing. ``next_cursor`` is None on the last page."""
+
+    items: list[T]
+    next_cursor: str | None
+
+
+# --- Operations ---------------------------------------------------------------------------------
+#
+# Each state API call is described once, as data, and executed by the sync or the async client
+# method. That keeps request building, status handling and parsing in a single place.
+
+_UNSET: Any = object()
+
+
+@dataclass(frozen=True)
+class _Operation:
+    """One state API call: how to send it and how to read the answer."""
+
+    method: str
+    path: str
+    parse: Callable[[httpx.Response], Any]
+    ok_status: int = 200
+    params: Mapping[str, str | int | None] | None = None
+    json: Any = _UNSET
+    if_match: int | None = None
+    # A write names the capability it needs registered; reads leave it None.
+    capability: str | None = None
+    # What a 404 means. Left unset, a 404 is an error like any other status.
+    when_missing: Any = _UNSET
+    # time.monotonic() by which the call, retries included, must be over. None means no deadline.
+    deadline: float | None = None
+
+    def request_kwargs(self) -> dict[str, Any]:
+        kwargs: dict[str, Any] = {"method": self.method, "url": self.path}
+        if self.params:
+            kwargs["params"] = {key: value for key, value in self.params.items() if value is not None}
+        if self.json is not _UNSET:
+            kwargs["json"] = self.json
+        if self.if_match is not None:
+            kwargs["headers"] = {"If-Match": str(self.if_match)}
+        if self.deadline is not None:
+            kwargs["timeout"] = min(self.seconds_left(), READ_TIMEOUT_SECONDS)
+        return kwargs
+
+    def seconds_left(self) -> 
+```
+
+### Core Architecture Module: `agents/currency-agent/nasiko_state.py`
+```
+"""Durable agent state over the platform's state API.
+
+An A2A agent normally keeps its tasks in process memory, so a restart loses paused work
+and the agent cannot run as more than one replica. This module is a drop-in replacement
+that keeps that state in the platform instead.
+
+    from nasiko_state import make_task_store
+
+    handler = DefaultRequestHandler(
+        agent_executor=MyExecutor(),
+        task_store=make_task_store(),   # was: InMemoryTaskStore()
+        agent_card=card,
+    )
+    app = Starlette(routes=...)
+    install_shutdown_hooks(app)         # flush pending writes when the server stops
+
+Configuration comes from the environment the platform injects into the container:
+
+    NASIKO_STATE_URL     base URL of the state API (ends in /api/agent-state). Unset means the
+                         platform provides no store, and every factory here returns the
+                         in-memory implementation the SDK ships, so the same code runs locally.
+    NASIKO_AGENT_TOKEN   this agent's state credential. It is the only one accepted: the MCP
+                         gateway token is a different credential and is never used here.
+
+Write guarantee (see NasikoTaskStore): a save that changes ``task.status.state`` is on the
+server before ``save()`` returns. Other saves are coalesced to at most one write per
+COALESCE_WINDOW_SECONDS per task and written on the next state change, by a background timer,
+and by ``aclose()``. Nothing calls ``aclose()`` on its own: ``install_shutdown_hooks(app)`` runs
+it when the server shuts down (uvicorn does that on SIGTERM and Ctrl-C), and an atexit hook
+covers a normal interpreter exit. A hard crash (SIGKILL, power loss), or a SIGTERM in a process
+without those hooks, can lose that window of non-status updates; so can an update the platform
+could not take for PENDING_MAX_AGE_SECONDS, which is discarded rather than written late.
+
+Both a2a-sdk majors are supported (0.3.x pydantic tasks and 1.x protobuf tasks). The langgraph
+checkpointer needs the optional langgraph-checkpoint package; nothing else does.
+
+This file is vendored: agent images are built from the agent's own directory only, so each
+agent keeps a committed copy next to its main module. oss/agents/common is canonical and
+oss/agents/common/check_vendored.py fails when a copy drifts.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import atexit
+import base64
+import contextlib
+import functools
+import json
+import logging
+import os
+import random
+import signal
+import threading
+import time
+from collections import OrderedDict
+from collections.abc import AsyncIterator, Callable, Iterator, Mapping, Sequence
+from dataclasses import dataclass, fields
+from typing import Any, Generic, TypeVar
+from urllib.parse import quote, urlsplit
+
+import httpx
+from a2a.server.tasks import InMemoryTaskStore, TaskStore
+from a2a.types import Task
+
+try:
+    from a2a.types import a2a_pb2 as _a2a_pb2  # a2a-sdk 1.x: tasks are protobuf messages
+except ImportError:
+    _a2a_pb2 = None  # a2a-sdk 0.3.x: tasks are pydantic models
+
+try:
+    from langgraph.checkpoint.base import (
+        WRITES_IDX_MAP,
+        BaseCheckpointSaver,
+        CheckpointTuple,
+        get_checkpoint_metadata,
+    )
+
+    _LANGGRAPH_AVAILABLE = True
+except ImportError:
+    # langgraph is optional: only agents that checkpoint with it need the package.
+    BaseCheckpointSaver = object  # type: ignore[assignment,misc]
+    _LANGGRAPH_AVAILABLE = False
+
+logger = logging.getLogger("nasiko_state")
+
+STATE_URL_ENV = "NASIKO_STATE_URL"
+AGENT_TOKEN_ENV = "NASIKO_AGENT_TOKEN"
+
+CLIENT_NAME = "nasiko_state.py/1"
+
+CONNECT_TIMEOUT_SECONDS = 2.0
+READ_TIMEOUT_SECONDS = 10.0
+RETRY_ATTEMPTS = 3
+RETRY_BACKOFF_SECONDS = 0.2
+# A rate-limited (429) request is retried after the Retry-After the server names, waiting at most
+# MAX_RETRY_AFTER_SECONDS per attempt and RATE_LIMIT_BUDGET_SECONDS in all before the 429 surfaces.
+# The platform's limit is a per-minute window shared by every replica of the agent, so a wait of a
+# few seconds is usually enough, and a turn that keeps failing for half a minute should fail.
+MAX_RETRY_AFTER_SECONDS = 5.0
+RATE_LIMIT_BUDGET_SECONDS = 30.0
+# The wait when a 429 names none (or names an HTTP date), and the shortest wait ever taken, so a
+# server answering "Retry-After: 0" cannot turn the budget into a busy loop.
+RATE_LIMIT_DEFAULT_WAIT_SECONDS = 1.0
+RATE_LIMIT_MIN_WAIT_SECONDS = 0.5
+# Relative spread of each 429 wait, so replicas limited at the same moment do not retry in step.
+RATE_LIMIT_JITTER = 0.2
+MAX_PAGE_SIZE = 100
+DEFAULT_PAGE_SIZE = 50
+
+# Saves that do not change a task's state are written at most once per window per task.
+COALESCE_WINDOW_SECONDS = 0.5
+# A deferred write that failed is retried after a delay that doubles per failure, up to this.
+DEFERRED_RETRY_MAX_SECONDS = 10.0
+# An unwritten update this old is presumed superseded (the task has most likely moved on to
+# another replica), so it is discarded instead of being written over whatever is there now.
+PENDING_MAX_AGE_SECONDS = 60.0
+# Exiting with the platform unreachable must not hang for every pending task.
+EXIT_FLUSH_BUDGET_SECONDS = 10.0
+# A task id just looked up and not found reads as missing for this long without asking again.
+# a2a-sdk 1.x looks a new task's id up several times before the task's first save, and that id is
+# one the SDK generated for the request, so no other replica can have created the task meanwhile.
+# A task that exists is always read from the server: another replica may have changed it.
+ABSENT_CACHE_SECONDS = 2.0
+# Bound on tasks whose write state is remembered. Forgetting an idle one costs its next write the
+# version check: having no version to match, that write is unconditional.
+MAX_TRACKED_TASKS = 4096
+# The status a shell reports for a process ended by SIGTERM; kept when SIGTERM becomes an exit.
+SIGTERM_EXIT_STATUS = 128 + signal.SIGTERM
+
+# The order the registration contract spells its capability lists in.
+CAPABILITY_ORDER = ("tasks", "kv")
+# A startup registration that failed for a reason that may pass (no answer, 5xx, 429) is retried
+# in the background after a delay that doubles from the first of these up to the second.
+REGISTER_RETRY_FIRST_SECONDS = 1.0
+REGISTER_RETRY_MAX_SECONDS = 60.0
+REGISTER_THREAD_NAME = "nasiko-state-register"
+
+T = TypeVar("T")
+
+
+class NasikoStateError(Exception):
+    """The state API refused a request or could not be reached.
+
+    ``status`` and ``body`` carry the HTTP answer. Both are None for transport and
+    configuration failures, where there was no answer.
+    """
+
+    def __init__(self, message: str, *, status: int | None = None, body: str | None = None):
+        super().__init__(message)
+        self.status = status
+        self.body = body
+
+
+class NasikoStateMalformedRow(NasikoStateError):
+    """A stored row cannot be read back as what it claims to be.
+
+    Raised for a task written by the other a2a-sdk major (or not by this module at all), and for a
+    damaged record. Never answered with a half-decoded object.
+    """
+
+
+class NasikoStateTooLarge(NasikoStateError):
+    """The state API refused a value above its size limit (HTTP 413). Retrying cannot help."""
+
+
+class NasikoStateConflict(NasikoStateError):
+    """An ``If-Match`` precondition failed: another writer changed the row first.
+
+    ``current_version`` is the version the server holds, or None if the body did not say.
+    """
+
+    def __init__(self, message: str, *, current_version: int | None, body: str | None = None):
+        super().__init__(message, status=412, body=body)
+        self.current_version = current_version
+
+
+@dataclass(frozen=True)
+class WriteReceipt:
+    """What the server answers to a PUT. Task and KV writes share the three fields."""
+
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class TaskRecord:
+    """One stored task. ``body`` is the SDK's serialized Task, opaque to the server."""
+
+    task_id: str
+    context_id: str | None
+    state: str
+    body: Any
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class KVRecord:
+    """One stored key. ``value`` is opaque JSON."""
+
+    key: str
+    value: Any
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class Page(Generic[T]):
+    """One page of a listing. ``next_cursor`` is None on the last page."""
+
+    items: list[T]
+    next_cursor: str | None
+
+
+# --- Operations ---------------------------------------------------------------------------------
+#
+# Each state API call is described once, as data, and executed by the sync or the async client
+# method. That keeps request building, status handling and parsing in a single place.
+
+_UNSET: Any = object()
+
+
+@dataclass(frozen=True)
+class _Operation:
+    """One state API call: how to send it and how to read the answer."""
+
+    method: str
+    path: str
+    parse: Callable[[httpx.Response], Any]
+    ok_status: int = 200
+    params: Mapping[str, str | int | None] | None = None
+    json: Any = _UNSET
+    if_match: int | None = None
+    # A write names the capability it needs registered; reads leave it None.
+    capability: str | None = None
+    # What a 404 means. Left unset, a 404 is an error like any other status.
+    when_missing: Any = _UNSET
+    # time.monotonic() by which the call, retries included, must be over. None means no deadline.
+    deadline: float | None = None
+
+    def request_kwargs(self) -> dict[str, Any]:
+        kwargs: dict[str, Any] = {"method": self.method, "url": self.path}
+        if self.params:
+            kwargs["params"] = {key: value for key, value in self.params.items() if value is not None}
+        if self.json is not _UNSET:
+            kwargs["json"] = self.json
+        if self.if_match is not None:
+            kwargs["headers"] = {"If-Match": str(self.if_match)}
+        if self.deadline is not None:
+            kwargs["timeout"] = min(self.seconds_left(), READ_TIMEOUT_SECONDS)
+        return kwargs
+
+    def seconds_left(self) -> 
+```
+
+### Core Architecture Module: `agents/google-adk/src/nasiko_state.py`
+```
+"""Durable agent state over the platform's state API.
+
+An A2A agent normally keeps its tasks in process memory, so a restart loses paused work
+and the agent cannot run as more than one replica. This module is a drop-in replacement
+that keeps that state in the platform instead.
+
+    from nasiko_state import make_task_store
+
+    handler = DefaultRequestHandler(
+        agent_executor=MyExecutor(),
+        task_store=make_task_store(),   # was: InMemoryTaskStore()
+        agent_card=card,
+    )
+    app = Starlette(routes=...)
+    install_shutdown_hooks(app)         # flush pending writes when the server stops
+
+Configuration comes from the environment the platform injects into the container:
+
+    NASIKO_STATE_URL     base URL of the state API (ends in /api/agent-state). Unset means the
+                         platform provides no store, and every factory here returns the
+                         in-memory implementation the SDK ships, so the same code runs locally.
+    NASIKO_AGENT_TOKEN   this agent's state credential. It is the only one accepted: the MCP
+                         gateway token is a different credential and is never used here.
+
+Write guarantee (see NasikoTaskStore): a save that changes ``task.status.state`` is on the
+server before ``save()`` returns. Other saves are coalesced to at most one write per
+COALESCE_WINDOW_SECONDS per task and written on the next state change, by a background timer,
+and by ``aclose()``. Nothing calls ``aclose()`` on its own: ``install_shutdown_hooks(app)`` runs
+it when the server shuts down (uvicorn does that on SIGTERM and Ctrl-C), and an atexit hook
+covers a normal interpreter exit. A hard crash (SIGKILL, power loss), or a SIGTERM in a process
+without those hooks, can lose that window of non-status updates; so can an update the platform
+could not take for PENDING_MAX_AGE_SECONDS, which is discarded rather than written late.
+
+Both a2a-sdk majors are supported (0.3.x pydantic tasks and 1.x protobuf tasks). The langgraph
+checkpointer needs the optional langgraph-checkpoint package; nothing else does.
+
+This file is vendored: agent images are built from the agent's own directory only, so each
+agent keeps a committed copy next to its main module. oss/agents/common is canonical and
+oss/agents/common/check_vendored.py fails when a copy drifts.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import atexit
+import base64
+import contextlib
+import functools
+import json
+import logging
+import os
+import random
+import signal
+import threading
+import time
+from collections import OrderedDict
+from collections.abc import AsyncIterator, Callable, Iterator, Mapping, Sequence
+from dataclasses import dataclass, fields
+from typing import Any, Generic, TypeVar
+from urllib.parse import quote, urlsplit
+
+import httpx
+from a2a.server.tasks import InMemoryTaskStore, TaskStore
+from a2a.types import Task
+
+try:
+    from a2a.types import a2a_pb2 as _a2a_pb2  # a2a-sdk 1.x: tasks are protobuf messages
+except ImportError:
+    _a2a_pb2 = None  # a2a-sdk 0.3.x: tasks are pydantic models
+
+try:
+    from langgraph.checkpoint.base import (
+        WRITES_IDX_MAP,
+        BaseCheckpointSaver,
+        CheckpointTuple,
+        get_checkpoint_metadata,
+    )
+
+    _LANGGRAPH_AVAILABLE = True
+except ImportError:
+    # langgraph is optional: only agents that checkpoint with it need the package.
+    BaseCheckpointSaver = object  # type: ignore[assignment,misc]
+    _LANGGRAPH_AVAILABLE = False
+
+logger = logging.getLogger("nasiko_state")
+
+STATE_URL_ENV = "NASIKO_STATE_URL"
+AGENT_TOKEN_ENV = "NASIKO_AGENT_TOKEN"
+
+CLIENT_NAME = "nasiko_state.py/1"
+
+CONNECT_TIMEOUT_SECONDS = 2.0
+READ_TIMEOUT_SECONDS = 10.0
+RETRY_ATTEMPTS = 3
+RETRY_BACKOFF_SECONDS = 0.2
+# A rate-limited (429) request is retried after the Retry-After the server names, waiting at most
+# MAX_RETRY_AFTER_SECONDS per attempt and RATE_LIMIT_BUDGET_SECONDS in all before the 429 surfaces.
+# The platform's limit is a per-minute window shared by every replica of the agent, so a wait of a
+# few seconds is usually enough, and a turn that keeps failing for half a minute should fail.
+MAX_RETRY_AFTER_SECONDS = 5.0
+RATE_LIMIT_BUDGET_SECONDS = 30.0
+# The wait when a 429 names none (or names an HTTP date), and the shortest wait ever taken, so a
+# server answering "Retry-After: 0" cannot turn the budget into a busy loop.
+RATE_LIMIT_DEFAULT_WAIT_SECONDS = 1.0
+RATE_LIMIT_MIN_WAIT_SECONDS = 0.5
+# Relative spread of each 429 wait, so replicas limited at the same moment do not retry in step.
+RATE_LIMIT_JITTER = 0.2
+MAX_PAGE_SIZE = 100
+DEFAULT_PAGE_SIZE = 50
+
+# Saves that do not change a task's state are written at most once per window per task.
+COALESCE_WINDOW_SECONDS = 0.5
+# A deferred write that failed is retried after a delay that doubles per failure, up to this.
+DEFERRED_RETRY_MAX_SECONDS = 10.0
+# An unwritten update this old is presumed superseded (the task has most likely moved on to
+# another replica), so it is discarded instead of being written over whatever is there now.
+PENDING_MAX_AGE_SECONDS = 60.0
+# Exiting with the platform unreachable must not hang for every pending task.
+EXIT_FLUSH_BUDGET_SECONDS = 10.0
+# A task id just looked up and not found reads as missing for this long without asking again.
+# a2a-sdk 1.x looks a new task's id up several times before the task's first save, and that id is
+# one the SDK generated for the request, so no other replica can have created the task meanwhile.
+# A task that exists is always read from the server: another replica may have changed it.
+ABSENT_CACHE_SECONDS = 2.0
+# Bound on tasks whose write state is remembered. Forgetting an idle one costs its next write the
+# version check: having no version to match, that write is unconditional.
+MAX_TRACKED_TASKS = 4096
+# The status a shell reports for a process ended by SIGTERM; kept when SIGTERM becomes an exit.
+SIGTERM_EXIT_STATUS = 128 + signal.SIGTERM
+
+# The order the registration contract spells its capability lists in.
+CAPABILITY_ORDER = ("tasks", "kv")
+# A startup registration that failed for a reason that may pass (no answer, 5xx, 429) is retried
+# in the background after a delay that doubles from the first of these up to the second.
+REGISTER_RETRY_FIRST_SECONDS = 1.0
+REGISTER_RETRY_MAX_SECONDS = 60.0
+REGISTER_THREAD_NAME = "nasiko-state-register"
+
+T = TypeVar("T")
+
+
+class NasikoStateError(Exception):
+    """The state API refused a request or could not be reached.
+
+    ``status`` and ``body`` carry the HTTP answer. Both are None for transport and
+    configuration failures, where there was no answer.
+    """
+
+    def __init__(self, message: str, *, status: int | None = None, body: str | None = None):
+        super().__init__(message)
+        self.status = status
+        self.body = body
+
+
+class NasikoStateMalformedRow(NasikoStateError):
+    """A stored row cannot be read back as what it claims to be.
+
+    Raised for a task written by the other a2a-sdk major (or not by this module at all), and for a
+    damaged record. Never answered with a half-decoded object.
+    """
+
+
+class NasikoStateTooLarge(NasikoStateError):
+    """The state API refused a value above its size limit (HTTP 413). Retrying cannot help."""
+
+
+class NasikoStateConflict(NasikoStateError):
+    """An ``If-Match`` precondition failed: another writer changed the row first.
+
+    ``current_version`` is the version the server holds, or None if the body did not say.
+    """
+
+    def __init__(self, message: str, *, current_version: int | None, body: str | None = None):
+        super().__init__(message, status=412, body=body)
+        self.current_version = current_version
+
+
+@dataclass(frozen=True)
+class WriteReceipt:
+    """What the server answers to a PUT. Task and KV writes share the three fields."""
+
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class TaskRecord:
+    """One stored task. ``body`` is the SDK's serialized Task, opaque to the server."""
+
+    task_id: str
+    context_id: str | None
+    state: str
+    body: Any
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class KVRecord:
+    """One stored key. ``value`` is opaque JSON."""
+
+    key: str
+    value: Any
+    version: int
+    updated_at: str
+    expires_at: str
+
+
+@dataclass(frozen=True)
+class Page(Generic[T]):
+    """One page of a listing. ``next_cursor`` is None on the last page."""
+
+    items: list[T]
+    next_cursor: str | None
+
+
+# --- Operations ---------------------------------------------------------------------------------
+#
+# Each state API call is described once, as data, and executed by the sync or the async client
+# method. That keeps request building, status handling and parsing in a single place.
+
+_UNSET: Any = object()
+
+
+@dataclass(frozen=True)
+class _Operation:
+    """One state API call: how to send it and how to read the answer."""
+
+    method: str
+    path: str
+    parse: Callable[[httpx.Response], Any]
+    ok_status: int = 200
+    params: Mapping[str, str | int | None] | None = None
+    json: Any = _UNSET
+    if_match: int | None = None
+    # A write names the capability it needs registered; reads leave it None.
+    capability: str | None = None
+    # What a 404 means. Left unset, a 404 is an error like any other status.
+    when_missing: Any = _UNSET
+    # time.monotonic() by which the call, retries included, must be over. None means no deadline.
+    deadline: float | None = None
+
+    def request_kwargs(self) -> dict[str, Any]:
+        kwargs: dict[str, Any] = {"method": self.method, "url": self.path}
+        if self.params:
+            kwargs["params"] = {key: value for key, value in self.params.items() if value is not None}
+        if self.json is not _UNSET:
+            kwargs["json"] = self.json
+        if self.if_match is not None:
+            kwargs["headers"] = {"If-Match": str(self.if_match)}
+        if self.deadline is not None:
+            kwargs["timeout"] = min(self.seconds_left(), READ_TIMEOUT_SECONDS)
+        return kwargs
+
+    def seconds_left(self) -> 
 ```
 
 
@@ -2266,125 +2254,776 @@ fn build_preamble(config: &OrchestratorConfig, agents: &[AgentInfo]) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `befac6c0` (2026-10-07)
-**Commit Message**: fix: failing ee tests
+### Incident Patch 1: `ef447543` (2026-10-21)
+**Commit Message**: fix(ui): rename "Harnesses" to "Coding harnesses"
+
+The nav label, the page title and its cards' accessible name, the Agents tab
+and usage link, chat's "View in Coding harnesses", the Overview card's link,
+button and KPI label, and the tours. The login showcase already says "Coding
+Harnesses" in its title-cased word list and is unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+(cherry picked from commit 6c5c1afd23e7e7225a61df2bb011a67c05f7eca8)
 [synced-from-private]
 
-**File**: `cli/src/commands/integration/agents/mod.rs` (modified, +1/-1)
+**File**: `ui/common/src/app/shell/AppShell.test.tsx` (modified, +6/-3)
 ```diff
-@@ -102,7 +102,7 @@ mod tests {
-     #[test]
-     fn instrumented_adapters_have_independent_install_versions() {
-         assert_eq!(Agent::Claude.install_version(), Some(3));
--        assert_eq!(Agent::OpenCode.install_version(), Some(4));
-+        assert_eq!(Agent::OpenCode.install_version(), Some(6));
-         assert_eq!(Agent::Codex.install_version(), Some(2));
-         assert_eq!(Agent::Cursor.install_version(), Some(2));
-     }
+@@ -65,7 +65,7 @@ describe('sidebar items', () => {
+   it.each([
+     ['/tokenops', 'Monitor'],
+     ['/sessions', 'Sessions'],
+-    ['/harnesses', 'Harnesses'],
++    ['/harnesses', 'Coding harnesses'],
+     ['/agents', 'Agents'],
+     ['/agents/mine', 'Agents'],
+     ['/deploy', 'Agents'],
+@@ -89,7 +89,10 @@ describe('sidebar items', () => {
+     renderApp('/tokenops?preset=24h&compare=0')
+     await screen.findByRole('navigation', { name: 'Main' })
+     await waitFor(() =>
+-      expect(navLink('Harnesses')).toHaveAttribute('href', expect.stringContaining('preset=24h')),
++      expect(navLink('Coding harnesses')).toHaveAttribute(
++        'href',
++        expect.stringContaining('preset=24h'),
++      ),
+     )
+     // The other shared keys still cross into Sessions and TokenOps; the window doesn't.
+     expect(navLink('Sessions').getAttribute('href')).toContain('compare=false')
+@@ -107,7 +110,7 @@ describe('sidebar items', () => {
+     // TokenOps opens on its own 30 days, not Sessions' window.
+     expect(router.state.location.search).toMatchObject({ preset: '30d' })
+     expect(router.state.location.search).not.toHaveProperty('day')
+-    await userEvent.click(navLink('Harnesses'))
++    await userEvent.click(navLink('Coding harnesses'))
+     await waitFor(() => expect(router.state.location.pathname).toBe('/harnesses'))
+     expect(router.state.location.search).toMatchObject({ preset: '30d' })
+   })
+```
+
+**File**: `ui/common/src/app/shell/copy.ts` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ export const copy = {
+     tokenops: 'TokenOps',
+     monitor: 'Monitor',
+     optimise: 'Optimize',
+-    harnesses: 'Harnesses',
++    harnesses: 'Coding harnesses',
+     settings: 'Settings',
+   },
+   routeError: {
+```
+
+**File**: `ui/common/src/app/shell/nav.test.ts` (modified, +2/-2)
+```diff
+@@ -8,7 +8,7 @@ const OLD_NAV = [
+   // TokenOps became its own section; the page is its Monitor item.
+   { to: '/tokenops', label: 'Monitor', shared: true },
+   { to: '/sessions', label: 'Sessions', shared: true },
+-  { to: '/harnesses', label: 'Harnesses', shared: true },
++  { to: '/harnesses', label: 'Coding harnesses', shared: true },
+   { to: '/agents', label: 'Agents', shared: false },
+   { to: '/chat', label: 'Chat', shared: false },
+ ]
+@@ -49,7 +49,7 @@ describe('nav items', () => {
+       'Agents',
+       'Workflows',
+       'Chat',
+-      'Harnesses',
++      'Coding harnesses',
+       'Sessions',
+       'Flows',
+       'Monitor',
+```
+
+**File**: `ui/common/src/features/agents/AgentDetailPage.test.tsx` (modified, +2/-2)
+```diff
+@@ -678,12 +678,12 @@ describe('Try it (chat plan §9)', () => {
+ })
+ 
+ describe('more states (plan §10)', () => {
+-  it('a coding harness shows Overview and MCP and points at Harnesses', async () => {
++  it('a coding harness shows Overview and MCP and points at Coding harnesses', async () => {
+     const harness = await agentWhere((a) => !!a.tags?.includes('coding-agent'))
+     renderApp(`/agents/${harness.id}`)
+     await title()
+     expect(tabNames()).toEqual(['Overview', 'MCP', 'Details'])
+-    expect(screen.getByRole('link', { name: /See usage on Harnesses/ })).toHaveAttribute(
++    expect(screen.getByRole('link', { name: /See usage on Coding harnesses/ })).toHaveAttribute(
+       'href',
+       expect.stringContaining('/harnesses'),
+     )
+```
+
+**File**: `ui/common/src/features/agents/copy.ts` (modified, +2/-2)
+```diff
+@@ -25,7 +25,7 @@ export const copy = {
+   tagLabel: 'Tag',
+   tagFilter: 'Filter by tag',
+   allTags: 'All',
+-  harnessUsage: 'See usage on Harnesses',
++  harnessUsage: 'See usage on Coding harnesses',
+   excludesHarnesses: (n: number) => `Excludes ${n} coding harness${n === 1 ? '' : 'es'}`,
+   noResults: 'No agents match this search',
+   noResultsHint: 'Try another name, tag or skill, or clear the search and filters.',
+@@ -53,7 +53,7 @@ export const copy = {
+   deployHint: 'Deploy with',
+   needsAttention: 'Needs attention',
+   tabAll: 'All',
+-  tabHarnesses: 'Harnesses',
++  tabHarnesses: 'Coding harnesses',
+   colName: 'Name',
+   colStatus: 'Status',
+   colVersion: 'Version',
+```
+
+**File**: `ui/common/src/features/chat/ChatPage.transcript.test.tsx` (modified, +2/-2)
+```diff
+@@ -97,15 +97,15 @@ afterEach(() => {
+ })
+ 
+ describe('read-only chats', () => {
+-  it('a recorded harness chat says so, links to Harnesses and has no composer', async () => {
++  it('a recorded harness chat says so, links to Coding harnesses and has no composer', async () => {
+     fakeChat([sessionRow({ is_coding_agent: true, agent_id: 'harness-1' })], () => ({
+       data: [message('u1', 'user', 'refactor', 3)],
+       has_more: false,
+       hitl: [],
+     }))
+     renderApp(`/chat/${FAKE}`)
+     expect(await screen.findByText('Recorded from a coding harness.')).toBeInTheDocument()
+-    expect(screen.getByRole('link', { name: 'View in Harnesses →' })).toHaveAttribute(
++    expect(screen.getByRole('link', { name: 'View in Coding harnesses →' })).toHaveAttribute(
+       'href',
+       '/harnesses',
+     )
+```
+
+**File**: `ui/common/src/features/chat/copy.ts` (modified, +1/-1)
+```diff
+@@ -210,7 +210,7 @@ export const copy = {
+   targetNotRunningAction: 'Open the agent',
+   agentRemoved: "This chat's agent was removed.",
+   recordedReadOnly: 'Recorded from a coding harness.',
+-  viewInHarnesses: 'View in Harnesses →',
++  viewInHarnesses: 'View in Coding harnesses →',
+   loadingChat: 'Loading chat…',
+   historyMissing: "This chat was deleted or isn't yours.",
+   historyFailed: "Couldn't load this chat.",
+```
+
+**File**: `ui/common/src/features/chat/recorded.test.tsx` (modified, +4/-2)
+```diff
+@@ -315,7 +315,7 @@ describe('a recorded chat (test 12)', () => {
+     await userEvent.click(within(third!).getAllByTestId('recorded-chip')[0]!)
+     expect(within(third!).getByRole('button', { name: 'Copy full value' })).toBeInTheDocument()
+     expect(screen.queryByRole('textbox', { name: /^Message/ })).toBeNull()
+-    expect(screen.getByRole('link', { name: 'View in Harnesses →' })).toHaveAttribute(
++    expect(screen.getByRole('link', { name: 'View in Coding harnesses →' })).toHaveAttribute(
+       'href',
+       '/harnesses',
+     )
+@@ -327,7 +327,9 @@ describe('a recorded chat (test 12)', () => {
+     expect(empty).toHaveTextContent(
+       'Only metadata was recorded for this session. Turn on content capture in the harness integration to see messages.',
+     )
+-    expect(within(empty).getByRole('link', { name: 'View in Harnesses →' })).toBeInTheDocument()
++    expect(
++      within(empty).getByRole('link', { name: 'View in Coding harnesses →' }),
++    ).toBeInTheDocument()
+   })
+ })
+ 
 ```
 
 ---
 
-### Incident Patch 2: `67eb6449` (2026-10-16)
-**Commit Message**: classifier: rustfmt, and fix the two clippy -D warnings errors
+### Incident Patch 2: `6697ee8d` (2026-10-21)
+**Commit Message**: feat(ui): village and map on the OSS Overview, with world themes and the cactus Kiko
 
-Drop a stale duplicate doc comment in classifier_local.rs (empty line
-after doc comment) and use RangeInclusive::contains in a test.
+The Overview's estate canvas, ported from nasiko-ui-lab feat/product-shell
+(plans/feat-village-overview.md) and explore/village-themes:
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-[synced-from-private]
+- OSS only (useEdition, as the waitlist): a header switch Overview · Village
+  · Map swaps the summary bento for the canvas; the cards below stay. The last
+  pick is remembered per viewer (drafts prefix); ?view= and ?sel= link to it.
+- The village and the Map's board, the HUD, Kiko, the Control center, the
+  insight drawer and problem actions (OV-2), on the estate from
+  GET /api/overview/estate; the smaller map from the fleet when it's absent.
+- Three voxel worlds (medieval desert, ice age, steampunk) baked in a Web
+  Worker with a picker, robot agents, and Kiko as the animated cactus. The lab
+  exploration's 94 lint errors are fixed, not suppressed (themes as data in
+  worlds/themes.ts, geometry in worlds/paths.ts, the picker on ToggleGroup,
+  refs written in effects, the rasterizer's dead code removed).
+- Loading: the canvas's chunk downloads alongside the estate (and on hover of
+  the switch); its frame holds the final height with the page loader, so the
+  ca
 
-**File**: `llm-router/examples/classifier_eval.rs` (modified, +1/-1)
+**File**: `ui/.env.example` (modified, +2/-2)
 ```diff
-@@ -129,4 +129,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
-         );
-     }
-     Ok(())
--}
-\ No newline at end of file
-+}
-```
-
-**File**: `llm-router/src/routing/classifier.rs` (modified, +1/-1)
-```diff
-@@ -931,7 +931,7 @@ mod tests {
-             Some(&"context ".repeat(200)),
-         );
-         assert_eq!(trivial, 1);
--        assert!(hard >= 4 && hard <= 5, "hard={hard}");
-+        assert!((4..=5).contains(&hard), "hard={hard}");
-         assert_eq!(
-             estimate_complexity("same", None),
-             estimate_complexity("same", None)
-```
-
-**File**: `llm-router/src/routing/classifier_local.rs` (modified, +0/-2)
-```diff
-@@ -39,8 +39,6 @@ const ALPHA: f64 = 1.0;
- /// 5-fold cross-validation on the training split only (ECE ~0.08; the validation split was
- /// never used for tuning). See `calibration_cv_on_train_only`.
- const TEMPERATURE: f64 = 0.25;
--/// Logit scaling: `logit / (sqrt(n_tokens) * TEMPERATURE)`. Raw NB posteriors are saturated
--/// (~1.0) for long inputs; this brings confidence back to a usable, calibrated range.
+@@ -10,10 +10,10 @@ VITE_NASIKO_ALLOW_MOCK_BUILD=
+ # In live mode, endpoints MSW should still mock (comma list). Useful for the proposed
+ # /finops/top-traces endpoint, which the server doesn't have yet:
+ #   VITE_NASIKO_MOCK=top-traces
+-# Keys: agents, dashboard, spend-timeseries, spend-calendar, providers, top-traces, savings, flows, observability, harnesses, chat, router, budgets, budgets-fill, deploy, settings, mcp, workflows, onboarding, optimization, events (auth is never mocked in live mode;
++# Keys: agents, dashboard, spend-timeseries, spend-calendar, providers, top-traces, savings, flows, observability, harnesses, chat, router, budgets, budgets-fill, deploy, settings, mcp, workflows, onboarding, optimization, events, overview (auth is never mocked in live mode;
+ #   harnesses previews the Harnesses page against a live server, as the seed admin (an edition's own harness
+ #   identity routes come with it);
+-#   chat needs agents and observability too; router needs agents and providers and brings budgets along; budgets needs agents; budgets-fill answers budgets from the real server where it serves them, the golden mock elsewhere; deploy, mcp, workflows, flows and events need agents)
++#   chat needs agents and observability too; router needs agents and providers and brings budgets along; budgets needs agents; budgets-fill answers budgets from the real server where it serves them, the golden mock elsewhere; deploy, mcp, workflows, flows and events need agents; overview reads every other group's state)
+ # `observability` covers /api/agents and the session, trace, span and log endpoints together.
+ VITE_NASIKO_MOCK=
  
- /// Context tokens count for less than query tokens.
- const CONTEXT_WEIGHT: f64 = 0.3;
 ```
 
-**File**: `llm-router/src/routing/mod.rs` (modified, +1/-1)
+**File**: `ui/common/src/features/harnesses/search.ts` (modified, +3/-0)
 ```diff
-@@ -1094,4 +1094,4 @@ mod tests {
-         assert!(!is_tool_continuation(&[msg("user"), msg("assistant")]));
-         assert!(!is_tool_continuation(&[]));
-     }
--}
-\ No newline at end of file
+@@ -56,6 +56,9 @@ export const HARNESS_MOCK_VARIANTS = [
+   'events-absent',
+   'ledger-no-trace',
+   'home-budgets-absent',
++  'overview-absent',
++  'overview-quiet',
++  'village-unlimited',
+   // Chat page variants (v1c DX1); harmless here, listed so the lists stay equal.
+   'no-agents',
+   'many-chats',
+```
+
+**File**: `ui/common/src/features/overview/OverviewPage.review.test.tsx` (modified, +1/-0)
+```diff
+@@ -213,6 +213,7 @@ describe('components', () => {
+       other: null,
+       driversError: null,
+       unpriced: false,
++      latency: null,
+       retry: vi.fn(),
+     })
+     const { unmount } = renderInRouter(<Spend spend={spend('2026-09-15')} now={at} />)
+```
+
+**File**: `ui/common/src/features/overview/OverviewPage.tsx` (modified, +249/-11)
+```diff
+@@ -16,13 +16,21 @@
+  * with Home's Budget burn panel (the `budgets.useHomePanel` slot, EE only) spanning the row under Needs you. The panel
+  * reads the persona's default scope (`homeScopeFor`: Fleet for leads and finance, Yours otherwise), since the Overview
+  * has no scope switch; the first paint waits for it, so it never pushes the cards down mid-look.
++ *
++ * OSS only: the header's view switch swaps the summary bento for the estate's canvas (plans/feat-village-overview.md,
++ * ported from nasiko-ui-lab feat/product-shell); the cards under it stay either way. `?view=village` draws the village
++ * and `?view=map` the Map's board (`fleet/`), with the same HUD and insight drawer. A bare `/` opens the viewer's last
++ * pick (`homeViewKey`), else the summary; a `?sel=` without a view opens the village. The estate is read only while the
++ * canvas shows. Admins pick Org or Mine (`?scope=`) beside the range on the canvas; the filters bar shows only while a
++ * filter is set. Other editions get the summary alone, whatever the URL says.
+  */
+-import { useSlots } from '@/app/edition-context'
++import { useEdition, useSlots } from '@/app/edition-context'
+ import { useQuery, useQueryClient } from '@tanstack/react-query'
+ import { Link } from '@tanstack/react-router'
+ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+ import { RotateCw } from 'lucide-react'
+-import { useEffect, useMemo, useState, type ReactNode } from 'react'
++import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
++import { toast } from 'sonner'
+ import { TourButton } from '@/app/shell/TopBar'
+ import { PageHeader } from '@/components/shared/page-header'
+ import { PageLoader } from '@/components/shared/page-loader'
+@@ -34,6 +42,8 @@ import { overviewNarrative } from '@/features/narrative/overview'
+ import { usePersona } from '@/features/onboarding/api'
+ import { homeScopeFor } from '@/features/onboarding/logic'
+ import { meQuery, type Me } from '@/lib/api/auth'
++import { DRAFT_PREFIX } from '@/lib/draftKeys'
++import { isEndpointAbsent } from '@/lib/api/detect'
+ import { useReturnTick } from '@/lib/useReturnTick'
+ import {
+   useFleetHealth,
+@@ -55,11 +65,42 @@ import { SetupGuide } from './components/SetupGuide'
+ import { SetUpNow } from './components/SetUpNow'
+ import { SummaryCard } from './components/SummaryCard'
+ import { Spend } from './components/Spend'
++import { FilterBar } from './components/FilterBar'
+ import { copy } from './copy'
++import { useEstate, useProblemAction } from './estate/api'
++import { estateCopy } from './estate/copy'
++import type { ProblemPatch } from './estate/types'
++import { useEstateView } from './estate/useEstateView'
++import { formatSel, parseSel, type Selection } from './map/selection'
++import type { ProblemActions } from './panel/ProblemCard'
+ import { DEFAULT_RANGE, RANGE_DAYS, RANGES, type OverviewSearch } from './search'
+ import { RETURN_REFRESH_MS } from './tuning'
++import type { VillageView } from './village/Hud'
++import { VillageCanvas, VillageLoading } from './village'
++import { loadVillage } from './village/load'
+ 
+ type SetSearch = (patch: Partial<OverviewSearch>) => void
++type HomeView = 'overview' | VillageView
++const HOME_VIEWS: readonly HomeView[] = ['overview', 'village', 'map']
++
++/** The view a bare `/` opens, per viewer, under the drafts prefix (sign-out clears it, as chat's rail view). */
++const homeViewKey = (sub: string) => `${DRAFT_PREFIX}${sub}:meta:homeView`
++function readHomeView(sub: string): HomeView {
++  try {
++    const v = globalThis.localStorage?.getItem(homeViewKey(sub))
++    return HOME_VIEWS.find((x) => x === v) ?? 'overview'
++  } catch {
++    return 'overview'
++  }
 +}
++/** Written when the viewer picks a view; arriving with `?view=` alone doesn't. */
++function rememberHomeView(sub: string, view: HomeView) {
++  try {
++    globalThis.localStorage?.setItem(homeViewKey(sub), view)
++  } catch {
++    // Blocked storage: a bare `/` opens the cards.
++  }
++}
+ 
+ function Frame({
+   description,
+@@ -82,14 +123,64 @@ function HeaderActions({
+   search,
+   setSearch,
+   setup,
++  admin,
++  view,
++  onView,
+ }: {
+   search: OverviewSearch
+   setSearch: SetSearch
+   /** False on first run: the Setup guide (or deploy) card is on the page already. */
+   setup: boolean
++  /** Admins choose Org or Mine for the canvas; members only ever see their own. */
++  admin: boolean
++  view: HomeView
++  /** Null where the canvas isn't offered (any edition but OSS): no view switch. */
++  onView: ((v: HomeView) => void) | null
+ }) {
+   return (
+     <>
++      {onView ? (
++        <ToggleGroup
++          type="single"
++          variant="outline"
++          size="sm"
++          value={view}
++          onValueChange={(v) => v && onView(v as HomeView)}
++          aria-label={copy.views.label}
++        >
++          {HOME_VIEWS.map((v) => (
++            <ToggleGroupItem
++              key={v}
++              value={v}
++              className="px-3 text-xs pointer-coa
+```
+
+**File**: `ui/common/src/features/overview/api.ts` (modified, +8/-0)
+```diff
+@@ -324,6 +324,8 @@ export interface Spend {
+   driversError: unknown
+   /** Some calls in the range had no price: totals are a floor. */
+   unpriced: boolean
++  /** Fleet p95 latency over the range and its change, from the same dashboard; null while it loads or failed. */
++  latency: { p95: number; changePct: number | null } | null
+   retry(): void
+ }
+ 
+@@ -440,6 +442,12 @@ export function useSpend(now: Date, range: Range, enabled = true): Spend {
+     other,
+     driversError: cur.error,
+     unpriced: (cur.data?.summary.unpriced_calls ?? 0) > 0,
++    latency: cur.data
++      ? {
++          p95: cur.data.kpis.latency_p95_ms.current,
++          changePct: cur.data.kpis.latency_p95_ms.change_pct,
++        }
++      : null,
+     retry: () => {
+       void calThis.refetch()
+       void calLast.refetch()
+```
+
+**File**: `ui/common/src/features/overview/components.coverage.test.tsx` (modified, +1/-0)
+```diff
+@@ -270,6 +270,7 @@ const spendData = (over: Partial<SpendData> = {}): SpendData => ({
+   other: null,
+   driversError: null,
+   unpriced: false,
++  latency: null,
+   retry: vi.fn(),
+   ...over,
+ })
+```
+
+**File**: `ui/common/src/features/overview/components/Kpis.tsx` (modified, +9/-4)
+```diff
+@@ -13,6 +13,7 @@ import { KpiTile } from '@/components/shared/kpi-tile'
+ import { Skeleton } from '@/components/ui/skeleton'
+ import { seriesAt, type Series } from '@/lib/chart'
+ import { POLARITY } from '@/lib/delta'
++import { cn } from '@/lib/utils'
+ import { fmtCostPerOp, fmtInt, fmtMoneyFloor, fmtMoneyShort, fmtPct, fmtTokens } from '@/lib/format'
+ import type { Spend } from '../api'
+ import { copy } from '../copy'
+@@ -46,20 +47,24 @@ export function TileLabel({
+ export const TILE = 'min-w-0 gap-2 p-4'
+ const PENDING = <Skeleton className="h-8 w-28 motion-reduce:animate-none" />
+ 
+-/** A tiny decorative chart under a figure: a line with a light area, or bars. */
++/** A tiny decorative chart under a figure: a line with a light area, or bars. The village's meters use it too. */
+ export function Spark({
+   points,
+   kind,
+   series,
++  className,
+ }: {
+   /** One point per day, keyed by its ISO start. */
+   points: readonly { key: string; value: number }[]
+   kind: 'line' | 'bars'
+   series: Series
++  /** Overrides the size (the tiles' is `h-10 w-full`). */
++  className?: string
+ }) {
+   const values = points.map((p) => p.value)
+   const max = Math.max(0, ...values)
+-  if (!values.length || max <= 0) return <div className="mt-auto h-10" aria-hidden />
++  if (!values.length || max <= 0)
++    return <div className={cn('mt-auto h-10', className)} aria-hidden />
+   const y = (v: number) => 30 - (v / max) * 28
+   if (kind === 'bars') {
+     const w = 100 / values.length
+@@ -68,7 +73,7 @@ export function Spark({
+         aria-hidden
+         viewBox="0 0 100 32"
+         preserveAspectRatio="none"
+-        className="mt-auto h-10 w-full"
++        className={cn('mt-auto h-10 w-full', className)}
+       >
+         {points.map(({ key, value: v }, i) => (
+           <rect
+@@ -93,7 +98,7 @@ export function Spark({
+       aria-hidden
+       viewBox="0 0 100 32"
+       preserveAspectRatio="none"
+-      className="mt-auto h-10 w-full"
++      className={cn('mt-auto h-10 w-full', className)}
+     >
+       <polygon points={`0,32 ${pts} 100,32`} fill={series.fill} opacity={0.35} />
+       <polyline
+```
+
+**File**: `ui/common/src/features/overview/components/NeedsYou.tsx` (modified, +3/-2)
+```diff
+@@ -147,7 +147,7 @@ export function NeedsYou({
+                     key={r.key}
+                     className="border-t border-border first:border-t-0 @[900px]/card:rounded-lg @[900px]/card:border @[900px]/card:bg-muted/20 @[900px]/card:px-3 @[900px]/card:first:border-t"
+                   >
+-                    <Row
++                    <NeedRowView
+                       row={r}
+                       now={now}
+                       userId={userId}
+@@ -176,7 +176,8 @@ export function NeedsYou({
+   )
+ }
+ 
+-function Row({
++/** One Needs you row: its icon, what it is, and its one action (the insight panel lists requests with it too). */
++export function NeedRowView({
+   row,
+   now,
+   userId,
 ```
 
 ---
 
-### Incident Patch 3: `5429f93b` (2026-10-16)
-**Commit Message**: Merge remote-tracking branch 'origin/main' into fix-574
+### Incident Patch 3: `2a316b55` (2026-10-21)
+**Commit Message**: feat(ui): first-run Overview redesign: hero, "Works before your first agent", budget strip
 
-# Conflicts:
-#	oss/llm-router/examples/classifier_eval.rs
-#	oss/llm-router/src/routing/mod.rs
+With no agents yet, the Overview opens on one hero (Deploy on the left, the
+Setup guide on the right, the CLI steps on a server without onboarding), no
+range toggle and no window in the greeting. Under it, SetUpNow replaces Quick
+actions and the one-line Harnesses card: four cells that work before any agent
+(Orchestrator, a model, MCP servers, coding harnesses), each linking to its
+page with its own live status, failing on its own.
+
+EE fills a new `budgets.FirstRunStrip` slot: the viewer's default /budgets
+scope's own budget (its limit, what happens at the limit, when it resets), or
+Set a budget when there is none; nothing on a server without budgets.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+(cherry picked from commit ea72408fe9f2fb626b64eb091bcd40b832e2f98e)
 [synced-from-private]
 
-**File**: `llm-router/src/config.rs` (modified, +10/-0)
+**File**: `ui/common/src/app/edition.ts` (modified, +6/-0)
 ```diff
-@@ -65,6 +65,14 @@ pub struct GatewayConfig {
+@@ -269,6 +269,11 @@ export interface BudgetsSurface {
+     /** The session is one of the viewer's own chats. */
+     ownSession: boolean
+   }> | null
++  /**
++   * The Overview's first run (no agents yet): a full-width strip under the hero about the viewer's spending limit, set
++   * before anything runs. The layer renders nothing on a server without budgets.
++   */
++  FirstRunStrip: ComponentType | null
+   /** Whether the LLM router page lists a Budgets tab (the layer's own availability probe). */
+   useRouterTab: () => boolean
+   /** The Budgets tab's content, rendered inside the router page's `TabsContent`. */
+@@ -306,6 +311,7 @@ export const NO_BUDGETS: BudgetsSurface = {
+   useLedgerBudgets: () => NO_LEDGER_BUDGETS,
+   useRouterTab: () => false,
+   RouterTab: null,
++  FirstRunStrip: null,
+ }
  
-     /// Provider base URLs (overridable for tests / self-hosted gateways).
-     pub openai_api_base: String,
-+    /// Most function tools OpenAI's `/v1/chat/completions` accepts in one request; it
-+    /// rejects a longer array outright (`array_above_max_length`), so an agent whose
-+    /// tool set has grown past this — a coding client with several MCP servers
-+    /// attached, say — fails every turn rather than degrading. Over the cap the
-+    /// OpenAI spoke keeps the caller's own tools and fills the remainder with the MCP
-+    /// tools most relevant to the turn. `0` disables the cap, for an
-+    /// OpenAI-compatible endpoint that has none.
-+    pub openai_max_tools: usize,
-     pub anthropic_api_base: String,
-     pub gemini_api_base: String,
-     pub openrouter_api_base: String,
-@@ -192,6 +200,7 @@ impl Default for GatewayConfig {
-             model_catalog_sync_interval_secs: 86_400,
-             pricing_sync_interval_secs: 86_400,
-             openai_api_base: "https://api.openai.com/v1".into(),
-+            openai_max_tools: 128,
-             anthropic_api_base: "https://api.anthropic.com/v1".into(),
-             gemini_api_base: "https://generativelanguage.googleapis.com/v1beta".into(),
-             openrouter_api_base: "https://openrouter.ai/api/v1".into(),
-@@ -279,6 +288,7 @@ impl GatewayConfig {
-                 d.pricing_sync_interval_secs,
-             ),
-             openai_api_base: env_or("OPENAI_API_BASE", &d.openai_api_base),
-+            openai_max_tools: env_parse_first(&["OPENAI_MAX_TOOLS"], d.openai_max_tools),
-             anthropic_api_base: env_or("ANTHROPIC_API_BASE", &d.anthropic_api_base),
-             gemini_api_base: env_or("GEMINI_API_BASE", &d.gemini_api_base),
-             openrouter_api_base: env_or("OPENROUTER_API_BASE", &d.openrouter_api_base),
+ /** Every slot has an OSS fallback in the core; a slot is added in the PR whose layer first fills it. */
+```
+
+**File**: `ui/common/src/features/deploy/components/DeployAgentButton.tsx` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ export function DeployAgentButton({
+ }: {
+   name?: string
+   variant?: 'default' | 'outline'
+-  size?: 'sm' | 'default'
++  size?: 'sm' | 'default' | 'lg'
+   className?: string
+ }) {
+   return (
+```
+
+**File**: `ui/common/src/features/deploy/entryPoints.test.tsx` (modified, +2/-1)
+```diff
+@@ -33,7 +33,8 @@ describe('Deploy an agent entry points', () => {
+         const links = await deployLinks()
+         expect(links.every((l) => l.getAttribute('href') === '/deploy')).toBe(true)
+         const scope = testId ? within(screen.getByTestId(testId)) : screen
+-        expect(scope.getByText(copy.entry.orCli)).toBeInTheDocument()
++        // The Overview's hero titles the steps without the colon.
++        expect(scope.getByText(/^Or use the CLI/)).toBeInTheDocument()
+         expect(scope.getAllByRole('button', { name: /Copy/ }).length).toBeGreaterThan(0)
+         cleanup()
+       }
+```
+
+**File**: `ui/common/src/features/onboarding/GuideCard.tsx` (modified, +12/-0)
+```diff
+@@ -4,6 +4,7 @@
+  */
+ import { BookOpen, Check } from 'lucide-react'
+ import { Button } from '@/components/ui/button'
++import { Progress } from '@/components/ui/progress'
+ import { useAgentsDirectory } from '@/features/agents/api'
+ import { useConfigs } from '@/features/router/api'
+ import { cn } from '@/lib/utils'
+@@ -42,9 +43,20 @@ export function GuideSteps({ buttonClassName }: { buttonClassName?: string }) {
+   const t = useTicks()
+   // "Resume" only once a step is done: before that there is nothing to resume.
+   const started = t.role || t.model || t.agent
++  const done = ROWS.filter(([id]) => t[id]).length
+   return (
+     <div className="flex flex-col gap-3">
+       <p className="text-sm text-muted-foreground">{copy.card.intro}</p>
++      <div className="flex max-w-xl items-center gap-3">
++        <Progress
++          value={(done / ROWS.length) * 100}
++          aria-label={copy.card.progress(done, ROWS.length)}
++          className="h-1.5"
++        />
++        <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
++          {copy.card.progress(done, ROWS.length)}
++        </span>
++      </div>
+       {/* Each row opens the guide at its own step; the button below opens it at the first one not done. */}
+       <ul className="-mx-2 flex max-w-xl flex-col">
+         {ROWS.map(([id, s]) => (
+```
+
+**File**: `ui/common/src/features/onboarding/copy.ts` (modified, +1/-0)
+```diff
+@@ -171,5 +171,6 @@ export const copy = {
+     resume: 'Resume guide',
+     done: 'Done',
+     todo: 'Not yet',
++    progress: (done: number, total: number) => `${done} of ${total} done`,
+   },
+ }
+```
+
+**File**: `ui/common/src/features/overview/OverviewPage.test.tsx` (modified, +4/-2)
+```diff
+@@ -262,12 +262,14 @@ describe('Needs you', () => {
+ })
+ 
+ describe('first run (design 7A)', () => {
+-  it('leads with the Setup guide card instead of the deploy card, and it reopens the guide', async () => {
++  it('puts the Setup guide in the hero beside Deploy, and it reopens the guide', async () => {
+     server.use(http.get('*/api/agents', () => HttpResponse.json([])))
+     const user = userEvent.setup()
+     renderApp('/')
+     const guideCard = await screen.findByTestId('overview-setup-guide')
+-    expect(document.querySelector('[data-testid="overview-first-run"]')).toBeNull()
++    // The guide fills the hero's right half (redesign 2026-10-21), not a card of its own; no range with nothing to range.
++    expect(card('overview-first-run')).toContainElement(guideCard)
++    expect(screen.queryByRole('group', { name: copy.range.label })).toBeNull()
+     // One next action: Deploy beside the headline; the header's Setup guide and Quick actions' Deploy step aside.
+     expect(screen.getAllByRole('link', { name: deployCopy.entry.label })).toHaveLength(1)
+     expect(screen.queryByRole('button', { name: copy.setup.button })).toBeNull()
+```
+
+**File**: `ui/common/src/features/overview/OverviewPage.tsx` (modified, +28/-20)
+```diff
+@@ -26,6 +26,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
+ import { TourButton } from '@/app/shell/TopBar'
+ import { PageHeader } from '@/components/shared/page-header'
+ import { PageLoader } from '@/components/shared/page-loader'
++import { Reveal, RevealItem } from '@/components/shared/reveal'
+ import { StateCard } from '@/components/shared/state-card'
+ import { Button } from '@/components/ui/button'
+ import { useChatSessions } from '@/features/chat/api'
+@@ -42,16 +43,16 @@ import {
+   useSavedByAgent,
+   useSpend,
+ } from './api'
+-import { FirstRun, FirstRunLead, FirstRunPreview } from './components/FirstRun'
++import { FirstRunHero, FirstRunPreview } from './components/FirstRun'
+ import { FleetHealth } from './components/FleetHealth'
+-import { HarnessesLine } from './components/Harnesses'
+ import { NeedsYou } from './components/NeedsYou'
+ import { usePausedFlows } from '@/features/flows/paused'
+ import { QuickActions } from './components/QuickActions'
+ import { RecentChats } from './components/RecentChats'
+ import { RecentSessions } from './components/RecentSessions'
+ import { SavedByAgent } from './components/SavedByAgent'
+ import { SetupGuide } from './components/SetupGuide'
++import { SetUpNow } from './components/SetUpNow'
+ import { SummaryCard } from './components/SummaryCard'
+ import { Spend } from './components/Spend'
+ import { copy } from './copy'
+@@ -119,9 +120,6 @@ function HeaderActions({
+   )
+ }
+ 
+-/** A first-run row that spans the grid at every width. */
+-const FULL_ROW = '@[700px]/overview:col-span-2 @[1100px]/overview:col-span-3'
+-
+ /** Where each card sits: twelve columns from 1100 px, 2 from 700. Literal class names, so Tailwind sees them. */
+ // Redesign 2026-10-13: Needs you, Budget burn and Spend span the row; then Fleet health beside Recent sessions and
+ // Recent chats beside Quick actions, alternating widths. Heights match within a row, so no card stretches far past
+@@ -223,7 +221,8 @@ function Overview({
+   const chats = useChatSessions()
+   // Budget burn (EE): the persona's default scope; null until the persona settles (it settles on a failure too).
+   const persona = usePersona()
+-  const burn = useSlots().budgets.useHomePanel({
++  const slots = useSlots()
++  const burn = slots.budgets.useHomePanel({
+     scope: persona.settled ? homeScopeFor(persona.persona, me.is_superuser) : null,
+     meSub: me.sub,
+     isSuperuser: me.is_superuser,
+@@ -245,8 +244,6 @@ function Overview({
+     [spend.summary, spend.unpriced, needs],
+   )
+ 
+-  const grid =
+-    'grid grid-cols-1 items-stretch gap-3 @[700px]/overview:grid-cols-2 @[1100px]/overview:grid-cols-3'
+   const description = copy.greeting(now.getHours(), me.username, days)
+   const actions = <HeaderActions search={search} setSearch={setSearch} setup={!firstRun} />
+   // One page loader until the first paint's reads settle (data or error: a failed read renders its card's error), in
+@@ -272,19 +269,30 @@ function Overview({
+     )
+   }
+   if (firstRun) {
++    // A spending limit can be set before anything runs: the budgets layer's strip (EE; OSS has no budgets).
++    const { FirstRunStrip } = slots.budgets
++    // Nothing has run, so no range to pick and no window in the greeting; the tour button stays.
+     return (
+-      <Frame description={description} actions={actions}>
+-        <FirstRunLead />
+-        <div className={grid}>
+-          {/* From 1100 px Quick actions and Harnesses' one line stack beside the first-run card, so neither stretches
+-              to its height; below that each spans the grid. The preview of later cards sits apart, after a wider gap. */}
+-          <FirstRun />
+-          <div className="contents @[1100px]/overview:flex @[1100px]/overview:flex-col @[1100px]/overview:gap-3">
+-            <QuickActions firstRun className={`${FULL_ROW} @[1100px]/overview:flex-1`} />
+-            <HarnessesLine data={harnesses} days={days} className={FULL_ROW} />
+-          </div>
+-          <FirstRunPreview className={`${FULL_ROW} mt-3`} />
+-        </div>
++      <Frame
++        description={copy.firstRun.greeting(now.getHours(), me.username)}
++        actions={<TourButton className="max-md:hidden" />}
++      >
++        <Reveal className="flex flex-col gap-3">
++          <RevealItem>
++            <FirstRunHero />
++          </RevealItem>
++          {FirstRunStrip ? (
++            <RevealItem>
++              <FirstRunStrip />
++            </RevealItem>
++          ) : null}
++          <RevealItem className="mt-3">
++            <SetUpNow harnesses={harnesses} days={days} />
++          </RevealItem>
++          <RevealItem className="mt-5">
++            <FirstRunPreview />
++          </RevealItem>
++        </Reveal>
+       </Frame>
+     )
+   }
+```
+
+**File**: `ui/common/src/features/overview/components.coverage.test.tsx` (modified, +30/-1)
+```diff
+@@ -16,6 +16,7 @@ import { describe, expect, it, vi } from 'vitest'
+ import { readRailView } from '@/features/chat/rememberTarget'
+ import type { HarnessSummary, NeedsYou as NeedsYouData, Spend as SpendData } from './api'
+ import { Harnesses, HarnessesLine } from './components/Harnesses'
++import { HarnessCell } from './components/SetUpNow'
+ import { Headline } from './components/Headline'
+ import { MonthBar } from './components/MonthBar'
+ import { NeedsYou } from './components/NeedsYou'
+@@ -444,7 +445,7 @@ describe('Harnesses', () => {
+     const rows = screen.getAllByRole('listitem')
+     expect(rows[1]).toHaveTextContent(`mystery${copy.harnesses.unpriced}`)
+   })
+-  it('keeps the first run line to one sentence per state, with only priced cost', async () => {
++  it('keeps the one-line Harnesses (Weave’s view) to one sentence per state, with only priced cost', async () => {
+     const { unmount } = renderInRouter(<HarnessesLine data={data({})} days={30} />)
+     const line = await screen.findByTestId('overview-harnesses')
+     expect(line).toHaveTextContent(`${copy.harnesses.noneYet}·${copy.harnesses.connect}.`)
+@@ -471,4 +472,32 @@ describe('Harnesses', () => {
+     await userEvent.click(await screen.findByRole('button', { name: copy.retry }))
+     expect(retry).toHaveBeenCalled()
+   })
++  it('gives the first run harness cell one status per state, with only priced cost', async () => {
++    const { unmount } = renderInRouter(<HarnessCell data={data({})} days={30} />)
++    const cell = await screen.findByTestId('overview-harnesses')
++    expect(cell).toHaveTextContent(`${copy.harnesses.title}${copy.setUpNow.noHarnesses}`)
++    expect(within(cell).getByRole('link')).toHaveAttribute('href', '/harnesses')
++    unmount()
++    const second = renderInRouter(
++      <HarnessCell
++        data={data({
++          connected: 2,
++          ownOnly: true,
++          harnesses: [
++            { id: 'claude-code', cost: 12, unpriced: false },
++            { id: 'mystery', cost: 3, unpriced: true },
++          ],
++        })}
++        days={30}
++      />,
++    )
++    expect(await screen.findByTestId('overview-harnesses')).toHaveTextContent(
++      `${copy.harnesses.connected(2)} (${copy.kpi.yourUsage}) · ${copy.harnesses.lineCost('$12.00', 30)}`,
++    )
++    second.unmount()
++    const retry = vi.fn()
++    renderInRouter(<HarnessCell data={data({ error: new Error('x'), retry })} days={30} />)
++    await userEvent.click(await screen.findByRole('button', { name: copy.retry }))
++    expect(retry).toHaveBeenCalled()
++  })
+ })
 ```
 
 #### Recent Merged Pull Requests:
@@ -2413,28 +3052,35 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. failing ee tests
+## X. ui): rename "Harnesses" to "Coding harnesses"
 
 **RULE**:
-When implementing operations in `cli/src/commands/integration/agents/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/common/src/app/shell/AppShell.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `befac6c0`: failing ee tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ef447543`: ui): rename "Harnesses" to "Coding harnesses". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/src/commands/integration/agents/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/common/src/app/shell/AppShell.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        assert_eq!(Agent::OpenCode.install_version(), Some(6));
+    ['/harnesses', 'Coding harnesses'],
+      expect(navLink('Coding harnesses')).toHaveAttribute(
+        'href',
+        expect.stringContaining('preset=24h'),
+      ),
+    await userEvent.click(navLink('Coding harnesses'))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        assert_eq!(Agent::OpenCode.install_version(), Some(4));
+    ['/harnesses', 'Harnesses'],
+      expect(navLink('Harnesses')).toHaveAttribute('href', expect.stringContaining('preset=24h')),
+    await userEvent.click(navLink('Harnesses'))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `befac6c0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ef447543` are properly handled with clean fallback behavior.

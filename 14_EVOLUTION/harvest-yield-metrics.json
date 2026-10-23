@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T05:50:36.754Z",
-  "total_cycles_completed": 4440,
-  "total_learnings_persisted": 4440,
-  "total_rules_promoted": 3628,
+  "last_updated": "2026-10-23T05:56:31.848Z",
+  "total_cycles_completed": 4441,
+  "total_learnings_persisted": 4441,
+  "total_rules_promoted": 3629,
   "history": [
-    {
-      "timestamp": "2026-10-21T18:14:08.998Z",
-      "repository": "typedb/typedb",
-      "learningId": "learn-github-typedb-typedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T18:14:13.293Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-23T05:50:36.754Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T05:56:31.848Z",
+      "repository": "Nasiko-Labs/nasiko",
+      "learningId": "learn-github-nasiko-labs-nasiko",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

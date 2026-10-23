@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T05:50:36.692Z",
+  "last_updated": "2026-10-23T05:56:31.803Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34916,14 +34916,19 @@
       "slug": "nasiko-labs-nasiko",
       "platform": "github",
       "source_url": "https://github.com/Nasiko-Labs/nasiko",
-      "source_version": "50b0a34e",
-      "content_hash": "56563132cee8029d5de4ccb541348e6cbcdc21f2efd46be5c9c115473532b3c5",
+      "source_version": "10a08581",
+      "content_hash": "d668d6a9b504220af26a3bc75d6be1802815ca3189eb97e80d74614fc7fab5b5",
       "dossier_path": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "promoted_rules": [
         {
           "number": 1946,
           "title": "failing ee tests",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3777,
+          "title": "ui): rename \"Harnesses\" to \"Coding harnesses\"",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -34932,7 +34937,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:00:55.865Z",
+      "verified_at": "2026-10-23T05:56:31.797Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112794,6 +112799,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T05:50:36.682Z"
+    },
+    "rule-3777": {
+      "learning_id": "rule-3777",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3777,
+      "title": "ui): rename \"Harnesses\" to \"Coding harnesses\"",
+      "source_url": "https://github.com/Nasiko-Labs/nasiko",
+      "source_version": "10a08581",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:56:31.797Z"
     }
   },
   "aliases": {

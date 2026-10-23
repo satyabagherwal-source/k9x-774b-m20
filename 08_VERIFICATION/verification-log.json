@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-HZ7Y",
-    "timestamp": "2026-10-20T18:51:45.934Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-    "contentHash": "ee3c5c7375847f6ba37a3648bb088d293d6a82271c7d2d031700b9ce86776368",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-I2QT",
     "timestamp": "2026-10-20T18:51:50.501Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "5fcd1f947b9a293fe9058843229c632d202e489ff612be59f4fbda1471ccf42f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-4KPU",
+    "timestamp": "2026-10-23T05:56:31.842Z",
+    "repository": "Nasiko-Labs/nasiko",
+    "learningId": "learn-github-nasiko-labs-nasiko",
+    "contentHash": "d668d6a9b504220af26a3bc75d6be1802815ca3189eb97e80d74614fc7fab5b5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

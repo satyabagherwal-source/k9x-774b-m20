@@ -4293,10 +4293,10 @@
     "repository": "Nasiko-Labs/nasiko",
     "platform": "github",
     "sourceUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "sourceVersion": "50b0a34e",
+    "sourceVersion": "10a08581",
     "license": "NOASSERTION",
-    "contentHash": "56563132cee8029d5de4ccb541348e6cbcdc21f2efd46be5c9c115473532b3c5",
-    "lastHarvestedAt": "2026-10-19T01:00:55.916Z",
+    "contentHash": "d668d6a9b504220af26a3bc75d6be1802815ca3189eb97e80d74614fc7fab5b5",
+    "lastHarvestedAt": "2026-10-23T05:56:31.845Z",
     "learningId": "learn-github-nasiko-labs-nasiko"
   },
   "berty-berty": {

@@ -4470,3 +4470,4 @@ Every entry in this ledger must capture:
 | `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `0ecf3bf0` | Multi-dimensional audit evidence | 2026-10-23T05:50:29.804Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `c3e82fe4` | Multi-dimensional audit evidence | 2026-10-23T05:50:33.805Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `0386b404` | Multi-dimensional audit evidence | 2026-10-23T05:50:36.745Z |
+| `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `10a08581` | Multi-dimensional audit evidence | 2026-10-23T05:56:31.845Z |
