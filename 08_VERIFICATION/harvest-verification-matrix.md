@@ -4480,3 +4480,4 @@
 | `CYCLE-20261023-C172` | `2026-10-23T06:30:19.406Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3790` | Yes (`33b4a2ba...`) |
 | `CYCLE-20261023-JNYW` | `2026-10-23T06:36:15.512Z` | `carbon-design-system/carbon` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3791` | Yes (`21d9d299...`) |
 | `CYCLE-20261023-JT93` | `2026-10-23T06:36:22.359Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3792` | Yes (`689785b4...`) |
+| `CYCLE-20261023-RS5A` | `2026-10-23T06:42:34.174Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3793` | Yes (`76a90574...`) |

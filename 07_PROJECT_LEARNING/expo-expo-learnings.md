@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source**: github ([https://github.com/expo/expo](https://github.com/expo/expo))  
-> **Source Version**: `9b01f312`  
+> **Source Version**: `55889d57`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:57:11.236Z  
+> **Timestamp**: 2026-10-23T06:42:33.889Z  
 > **Learning ID**: `learn-github-expo-expo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/expo/expo](https://github.com/expo/expo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:57:11.036Z  
+> **Harvest Timestamp**: 2026-10-23T06:42:32.523Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 52867 stars
+- **Stars / Engagement**: 53025 stars
 
 ---
 
@@ -253,32 +253,11 @@ object ExceptionUtils {
     return null
   }
 
-  fun exceptionToPlainText(exception: Exception): String {
-    if (exception is ManifestException) {
-      return """
-${exceptionToErrorHeader(exception)}
-
-${replaceHtml(exception.errorMessage)}
-
-How to fix this error:
-${replaceHtml(exception.fixInstructions)}
-      """.trimIndent()
-    }
-    return exception.toString()
-  }
-
   fun exceptionToCanRetry(exception: Exception): Boolean {
     if (exception is ManifestException) {
       return exception.canRetry
     }
     return true
-  }
-
-  private fun replaceHtml(input: String?): String {
-    return input
-      ?.replace("<br>", "\n")
-      ?.replace("<b>", "")
-      ?.replace("</b>", "") ?: ""
   }
 
   private fun getUserErrorMessage(exception: Exception?, context: Context): String? {
@@ -695,905 +674,790 @@ object AsyncCondition {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18cf8806` (2026-10-19)
-**Commit Message**: [ui][ios] Fix List.ForEach row modifiers and reordering with a render function (#51704)
+### Incident Patch 1: `c6deec18` (2026-10-22)
+**Commit Message**: [expo] Fall back to precompiled modules for buildFromSource patterns in the SwiftPM plugin (#52073)
 
 # Why
 
-Fixes https://github.com/expo/expo/issues/51681.
+The prebuilt modules guide documents `"buildFromSource": [".*"]` to
+build every Expo module from source. Under Swift Package Manager
+(SwiftPM), this entry fails the sync. The SwiftPM plugin treats every
+match on `ExpoModulesCore` as an error. It also treats every match on a
+module that SwiftPM cannot build from source as an error. A pattern such
+as `".*"` always matches these modules.
 
-With the `List.ForEach` render function, `moveDisabled` and
-`deleteDisabled` did nothing in the recycled path. With
-`recycling={false}`, a drag did not call `onMove`, and `onDelete`
-received the wrong index.
-
-`List` reads row traits only from the root view of each `ForEach`
-element. In the recycled path, the `VStack` around the row and
-`.onGeometryChange` on the item hid the traits. In both paths, the slot
-body was `Children()`, which is a `ForEach`. A `ForEach` inside a row
-gets the move and delete events instead of the outer `ForEach`. In the
-recycled path, the `VStack` hid that inner `ForEach`, so only the traits
-broke there.
+This pull request also handles three review comments on #51661, which
+merged without these changes.
 
 # How
 
-- A slot with one child shows that child directly. A slot with two or
-more children keeps them in one `VStack`, so each item stays one row.
-- The recycled row uses a `Group` instead of a `VStack`.
-- The row is measured from a
-`.background(Color.clear.onGeometryChange(...))`, so the measurement
-does not wrap the item.
+The plugin now separates two kinds of `buildFromSource` entry:
+
+- An exact entry is equal, character for character, to the pod name or
+the npm package name. An exact entry keeps the current error. The user
+named that module, so the plugin must not ignore the request.
+- Any other entry is a pattern. When a pattern matches
+`ExpoModulesCore`, or a module that no source route can build, the
+plugin links the precompiled module. It prints one warning that names
+each such module and its entry.
+
+The fallback has a cost. A precompiled module that falls back can change
+what the source-built modules
+
+**File**: `.changeset/expo-spm-build-from-source-fallback.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'expo': patch
++---
++
++[iOS] A `buildFromSource` pattern such as `".*"` no longer fails the SwiftPM sync when it matches a module that Swift Package Manager cannot build from source, `ExpoModulesCore` included: the plugin links that module precompiled and prints one warning naming it. An entry that names such a module exactly still fails the sync.
+```
+
+**File**: `packages/expo/scripts/spm/README.md` (modified, +17/-5)
+```diff
+@@ -96,17 +96,29 @@ The plugin decides each module in this order:
+ 3. Otherwise its `Package.swift` is mirrored into a generated package, or a
+    pure-Swift module gets a generated package over its sources.
+ 
++A manifest built as it stands is linked at `<outDir>/direct/<npm package name>`,
++a symlink to the module root, next to the `ExpoModulesCoreHeaders` package the
++plugin emits in `direct/`. Link names are not flattened, so a scoped package
++lands at `direct/@scope/pkg`. SwiftPM resolves the manifest's relative paths
++from the link, not from the module's real directory, so the path to the headers
++package depends on that depth: `../ExpoModulesCoreHeaders` for an unscoped
++package, `../../ExpoModulesCoreHeaders` for a scoped one.
++
+ `buildFromSource` is the option CocoaPods reads, from
+ `"expo": { "autolinking": { "buildFromSource": [...] } }` or its `"ios"`
+ section in the app's package.json. Each entry is a regular expression that must
+ match the whole pod name or npm package name. Under SwiftPM the entries are
+ JavaScript regular expressions, so Ruby-only syntax differs: `(?i)` fails the
+ sync with an error that names the invalid entry, and `\A` matches a literal `A`.
+-An entry that matches
+-ExpoModulesCore fails the sync, because every module built from source compiles
+-against the precompiled ExpoModulesCore. A listed module that has an artifact but
+-no way to be built from source is reported with the reason, and the report asks
+-to remove the entry so the artifact is used.
++An entry that is a
++module's pod name or npm package name, character for character, names it
++exactly; any other entry is a pattern. An exact entry for ExpoModulesCore fails
++the sync, because every module built from source compiles against the
++precompiled ExpoModulesCore. A module named exactly that has an artifact but no
++way to be built from source is reported with the reason, and the report asks to
++remove the entry so the artifact is used. A module that only a pattern matches,
++ExpoModulesCore included, is linked precompiled in that case, and one warning
++names each such module and its entry.
+ 
+ ## Unsupported modules
+ 
+```
+
+**File**: `packages/expo/scripts/spm/__tests__/diagnostics.test.js` (modified, +61/-0)
+```diff
+@@ -18,6 +18,7 @@ const {
+   renderRootConflictWarning,
+   renderPartlyProvidedPackageWarning,
+   renderExtraPodsWarning,
++  renderBuildFromSourceFallbackWarning,
+ } = require('../diagnostics');
+ const { spmUpdateCommand } = require('../commands');
+ const { resolvePodIdentities, uncoveredPod } = require('../plugin');
+@@ -290,13 +291,73 @@ describe('a pod buildFromSource names that cannot be built from source', () => {
+     expect(text).toContain('Remove "ExpoBad" from');
+   });
+ 
++  describe('when a pattern links it precompiled and its XCFramework is incomplete', () => {
++    const incomplete = { ...forced(null), precompiledIncomplete: true };
++
++    it('is refused naming the entry, with what blocks the source build as the cause', () => {
++      expect(classify(incomplete)).toEqual([
++        {
++          ...subject,
++          reason: 'build-from-source-fallback-incomplete',
++          buildFromSourceEntry: 'expo-b.*',
++          cause: { reason: 'mixed-no-manifest', productName: 'ExpoBad' },
++        },
++      ]);
++    });
++
++    it('says what failed, why, and how to complete the XCFramework', () => {
++      expect(renderUnsupportedReport(classify(incomplete))).toBe(
++        [
++          'error: The buildFromSource entry "expo-b.*" matches Expo module "expo-bad" (pod ExpoBad), which Swift Package Manager cannot build from source, and its precompiled XCFramework is incomplete, so it cannot be linked precompiled either.',
++          '  It mixes Swift and Objective-C/C++ sources and ships no Package.swift, and Swift Package Manager can build such a module only from a manifest that splits the two languages into separate targets.',
++          '  A buildFromSource pattern links a module precompiled when Swift Package Manager cannot build it from source, and the plugin links a precompiled XCFramework only when both its Debug and Release flavors are present.',
++          `  Reinstall expo-bad so it ships both flavors, or, in the Expo repository, from its root, build both with \`node tools/bin/expotools.js prebuild expo-bad\`. Then run \`${spmUpdateCommand()}\` from your app directory again.`,
++          '  Module path: /m/expo-bad',
++        ].join('\n')
++      );
++    });
++  });
++
+   it('counts the pod once', () => {
+     expect(new UnsupportedModulesError(classify(forced(null))).message).toMatch(
+       /^1 Expo native module /
+     );
+   });
+ });
+ 
++describe('modules a buildFromSource pattern matches that are linked precompiled instead', () => {
++  const option =
++    '`"expo": { "autolinking": { "buildFromSource": [...] } }` (or its `"ios"` section) in your package.json';
++  const core = { podName: 'ExpoModulesCore', packageName: 'expo-modules-core', entry: '.*' };
++
++  it('renders nothing when no module fell back', () => {
++    expect(renderBuildFromSourceFallbackWarning([])).toBe('');
++  });
++
++  it('names the module and the entry that matched it', () => {
++    expect(renderBuildFromSourceFallbackWarning([core])).toBe(
++      'warning: buildFromSource matches 1 Expo module that Swift Package Manager cannot build from source, so it is linked precompiled instead: ExpoModulesCore (expo-modules-core, matched by ".*"). ' +
++        'A buildFromSource pattern links a module precompiled when Swift Package Manager cannot build that module from source; an entry that names a module exactly fails the sync instead. ' +
++        `To see what blocks a module's source build, list it by its exact pod or npm package name in ${option}: the sync then fails and names the cause. ` +
++        `To keep it precompiled without this warning, narrow ".*" so that no entry matches this module. Then run \`${spmUpdateCommand()}\` from your app directory again.`
++    );
++  });
++
++  it('names every module, and each entry once', () => {
++    const text = renderBuildFromSourceFallbackWarning([
++      core,
++      { podName: 'ExpoMixed', packageName: 'expo-mixed', entry: 'expo-.*' },
++      { podName: 'ExpoOther', packageName: 'expo-other', entry: 'expo-.*' },
++    ]);
++    expect(text).toContain(
++      'buildFromSource matches 3 Expo modules that Swift Package Manager cannot build from source, so they are linked precompiled instead: ExpoModulesCore (expo-modules-core, matched by ".*"), ExpoMixed (expo-mixed, matched by "expo-.*"), ExpoOther (expo-other, matched by "expo-.*").'
++    );
++    expect(text).toContain(
++      'To keep them precompiled without this warning, narrow ".*", "expo-.*" so that no entry matches these modules.'
++    );
++  });
++});
++
+ describe('linkage declared in a podspec', () => {
+   const podspecLinkage = {
+     file: '/m/expo-bad/ios/ExpoBad.podspec',
+```
+
+**File**: `packages/expo/scripts/spm/__tests__/direct.test.js` (modified, +17/-0)
+```diff
+@@ -260,6 +260,23 @@ describe('emitDirectPackage', () => {
+     expect(fs.realpathSync(link)).toBe(fs.realpathSync(moduleRoot));
+   });
+ 
++  // That package is written under its SwiftPM package name, which need not be the npm name.
++  it('removes the package an earlier sync generated from the manifest', () => {
++    const generated = path.join(outDir, 'expo-source', 'ExpoHapticsPackage');
++    fs.mkdirSync(generated, { recursive: true });
++    fs.writeFileSync(path.join(generated, 'Package.swift'), '// generated\n');
++    emitDirectPackage({
++      moduleRoot: path.join(root, 'expo-haptics'),
++      packageName: 'expo-haptics',
++      outDir,
++      coreHeadersXCFramework,
++      jsiHeadersPkgPath,
++      macroTool: path.join(root, 'ExpoModulesMacros'),
++      manifest: { ...hapticsManifest, name: 'ExpoHapticsPackage' },
++    });
++    expect(fs.existsSync(generated)).toBe(false);
++  });
++
+   it('links the products of the manifest it is given, without dumping it again', () => {
+     runDumpPackage.mockClear();
+     const { ok } = emit();
+```
+
+**File**: `packages/expo/scripts/spm/__tests__/plugin.test.js` (modified, +360/-11)
+```diff
+@@ -63,7 +63,7 @@ const {
+ const { resolveAppTarget } = require('../app-target');
+ const { findModuleRoot } = require('../classify');
+ const { spmUpdateCommand } = require('../commands');
+-const { UnsupportedModulesError } = require('../diagnostics');
++const { UnsupportedModulesError, renderBuildFromSourceFallbackWarning } = require('../diagnostics');
+ const { emitDirectPackage } = require('../direct');
+ const { emitPureSwiftSourcePackage } = require('../manifests');
+ const {
+@@ -218,6 +218,16 @@ function withPodfileProperties(tmp, properties) {
+   });
+ }
+ 
++/** The warnings naming modules a buildFromSource pattern matched that were linked precompiled. */
++const fallbackWarnings = (logs) =>
++  logs.warn.mock.calls.map(([text]) => text).filter((text) => text.includes('buildFromSource'));
++
++const coreFallback = (entry) => ({
++  podName: 'ExpoModulesCore',
++  packageName: 'expo-modules-core',
++  entry,
++});
++
+ /** The arguments the framework resolver was called with for one package. */
+ const resolvedFor = (packageName) =>
+   resolveFlavoredFramework.mock.calls
+@@ -1197,6 +1207,13 @@ describe('a module with a checked-in manifest', () => {
+     expect(thrown.cause).toBeInstanceOf(SyntaxError);
+   });
+ 
++  it('is built from source when a pattern matches every module, and only ExpoModulesCore is named as linked precompiled', () => {
++    builtDirect(sync({ onCoreHeaders: true, precompiled: true, buildFromSource: ['.*'] }));
++    expect(fallbackWarnings(logs)).toEqual([
++      renderBuildFromSourceFallbackWarning([coreFallback('.*')]),
++    ]);
++  });
++
+   // The plugin decides from the manifest alone; the flag an earlier preview read means nothing.
+   it('ignores a "directManifest" flag left in its spm.config.json', () => {
+     linkedPrecompiled(
+@@ -1293,7 +1310,7 @@ describe('a module without a checked-in manifest that buildFromSource names', ()
+     const { thrown, moduleRoot } = sync({
+       sources: 'mixed',
+       precompiled: true,
+-      buildFromSource: ['expo-mix.*'],
++      buildFromSource: ['expo-mixed'],
+     });
+     expect(thrown).toBeInstanceOf(UnsupportedModulesError);
+     expect(thrown.unsupported).toEqual([
+@@ -1302,7 +1319,7 @@ describe('a module without a checked-in manifest that buildFromSource names', ()
+         podName: 'ExpoMixed',
+         packageName: 'expo-mixed',
+         moduleRoot,
+-        buildFromSourceEntry: 'expo-mix.*',
++        buildFromSourceEntry: 'expo-mixed',
+         cause: { reason: 'mixed-no-manifest', productName: 'ExpoMixed' },
+       },
+     ]);
+@@ -1344,6 +1361,298 @@ describe('a module without a checked-in manifest that buildFromSource names', ()
+   });
+ });
+ 
++describe('a module without a checked-in manifest that a buildFromSource pattern matches', () => {
++  const logs = captureConsole({ each: true });
++
++  afterEach(restoreModuleMocks);
++
++  const sync = (options) => syncWithoutManifest(makeTempDir('expo-spm-pattern-source-'), options);
++  const mixedFallback = (entry) => ({ podName: 'ExpoMixed', packageName: 'expo-mixed', entry });
++
++  it('is linked precompiled, as ExpoModulesCore is, when it cannot be built from source', () => {
++    const { thrown, frameworks } = sync({
++      sources: 'mixed',
++      precompiled: true,
++      buildFromSource: ['.*'],
++    });
++    expect(thrown).toBeNull();
++    expect(frameworks).toEqual(['ExpoMixed', 'ExpoModulesCore']);
++    expect(printed(logs.log)).toContain(
++      'paired runtime frameworks (2): ExpoModulesCore, ExpoMixed'
++    );
++    expect(resolveSpmDependencyFrameworks).toHaveBeenLastCalledWith(
++      expect.arrayContaining([expect.objectContaining({ podName: 'ExpoMixed' })])
++    );
++    expect(prepareCompileInterfaces).toHaveBeenLastCalledWith(
++      expect.arrayContaining([expect.objectContaining({ frameworkName: 'ExpoMixed' })]),
++      expect.any(String)
++    );
++    expect(fallbackWarnings(logs)).toEqual([
++      renderBuildFromSourceFallbackWarning([coreFallback('.*'), mixedFallback('.*')]),
++    ]);
++  });
++
++  it('is linked precompiled whatever blocks its source build', () => {
++    const { thrown, frameworks } = sync({
++      sources: 'pure-swift with podspec linkage',
++      precompiled: true,
++      buildFromSource: ['ExpoMix.*'],
++    });
++    expect(thrown).toBeNull();
++    expect(frameworks).toEqual(['ExpoMixed', 'ExpoModulesCore']);
++    expect(fallbackWarnings(logs)).toEqual([
++      renderBuildFromSourceFallbackWarning([mixedFallback('ExpoMix.*')]),
++    ]);
++  });
++
++  it('is built from source when it can be, and is not named as linked precompiled', () => {
++    const { thrown, frameworks } = sync({
++      sources: 'pure-swift',
++      precompiled: true,
++      buildFromSource: ['.*'],
++    });
++    expect(thrown).toBeNull();
++    expect(frameworks).toEqual(['ExpoModulesCore']);
++    expect(printed(logs.log)).toContain('source pure-Swift (1): ExpoMixed');
++    expect(fallbackWarnings(logs)).toEqual([
++      renderBuildFromSourceFallbackWarning([coreFallback('.*')]),
++    ]);
++  });
++
++ 
+```
+
+**File**: `packages/expo/scripts/spm/diagnostics.js` (modified, +48/-2)
+```diff
+@@ -96,11 +96,14 @@ function classifyUnsupported({ pending, coreAvailable }) {
+   if (!coreAvailable) {
+     return [{ reason: 'core-unavailable', pods: pending.map((p) => p.podName) }];
+   }
+-  return pending.map(({ refusals, buildFromSourceEntry, ...subject }) => {
++  return pending.map(({ refusals, buildFromSourceEntry, precompiledIncomplete, ...subject }) => {
+     if (buildFromSourceEntry == null) return { ...subject, ...mostSpecific(refusals) };
+     // The artifact exists; buildFromSource is why it was not linked.
+     const cause = mostSpecific(refusals.filter((r) => r.reason !== 'prebuild-available'));
+-    return { ...subject, reason: 'build-from-source-unsupported', buildFromSourceEntry, cause };
++    const reason = precompiledIncomplete
++      ? 'build-from-source-fallback-incomplete'
++      : 'build-from-source-unsupported';
++    return { ...subject, reason, buildFromSourceEntry, cause };
+   });
+ }
+ 
+@@ -302,6 +305,25 @@ function renderBuildFromSourceUnsupported({
+   );
+ }
+ 
++function renderBuildFromSourceFallbackIncomplete({
++  podName,
++  packageName,
++  moduleRoot,
++  buildFromSourceEntry,
++  cause,
++}) {
++  return renderBlock(
++    `error: The buildFromSource entry "${buildFromSourceEntry}" matches Expo module "${packageName}" (pod ${podName}), which Swift Package Manager cannot build from source, and its precompiled XCFramework is incomplete, so it cannot be linked precompiled either.`,
++    [
++      SOURCE_BUILD_BLOCKERS[cause.reason]?.(cause) ??
++        `The plugin found no way to build it from source with Swift Package Manager (reason: ${cause.reason}).`,
++      'A buildFromSource pattern links a module precompiled when Swift Package Manager cannot build it from source, and the plugin links a precompiled XCFramework only when both its Debug and Release flavors are present.',
++      `Reinstall ${packageName} so it ships both flavors, or, in the Expo repository, from its root, build both with \`node tools/bin/expotools.js prebuild ${packageName}\`. ${rerunSpmUpdate()}`,
++    ],
++    moduleRoot
++  );
++}
++
+ function renderNoAppleSources({ podName, packageName, moduleRoot }) {
+   return renderBlock(
+     `error: Expo module "${packageName}" (pod ${podName}) has no \`ios\` or \`apple\` source directory, so Swift Package Manager has nothing to compile.`,
+@@ -682,6 +704,7 @@ const REFUSALS = new Map(
+   [
+     ['duplicate-pod-name', { render: renderDuplicatePodName }],
+     ['build-from-source-unsupported', { render: renderBuildFromSourceUnsupported }],
++    ['build-from-source-fallback-incomplete', { render: renderBuildFromSourceFallbackIncomplete }],
+     ['partially-precompiled', { render: renderPartiallyPrecompiled }],
+     ['prebuild-available', { render: renderPrebuildAvailable }],
+     ['needs-manifest-for-linkage', { render: renderNeedsManifestForLinkage }],
+@@ -851,6 +874,28 @@ function renderExtraPodsWarning(pods) {
+   ].join('\n');
+ }
+ 
++/**
++ * Modules a buildFromSource pattern matched that are linked precompiled, because Swift
++ * Package Manager cannot build them from source.
++ *
++ * @param fallbacks `{ podName, packageName, entry }` per module, `entry` being the pattern.
++ */
++function renderBuildFromSourceFallbackWarning(fallbacks) {
++  if (!fallbacks.length) return '';
++  const one = fallbacks.length === 1;
++  const them = one ? 'it' : 'them';
++  const entries = [...new Set(fallbacks.map((f) => f.entry))];
++  const modules = fallbacks
++    .map(({ podName, packageName, entry }) => `${podName} (${packageName}, matched by "${entry}")`)
++    .join(', ');
++  return [
++    `warning: buildFromSource matches ${fallbacks.length} Expo ${one ? 'module' : 'modules'} that Swift Package Manager cannot build from source, so ${one ? 'it is' : 'they are'} linked precompiled instead: ${modules}.`,
++    'A buildFromSource pattern links a module precompiled when Swift Package Manager cannot build that module from source; an entry that names a module exactly fails the sync instead.',
++    `To see what blocks a module's source build, list it by its exact pod or npm package name in ${BUILD_FROM_SOURCE_OPTION}: the sync then fails and names the cause.`,
++    `To keep ${them} precompiled without this warning, narrow ${entries.map((e) => `"${e}"`).join(', ')} so that no entry matches ${one ? 'this module' : 'these modules'}. ${rerunSpmUpdate()}`,
++  ].join(' ');
++}
++
+ /** Print the report and return the error to throw, or null when nothing is uncovered. */
+ function reportUnsupported(entries) {
+   if (!entries.length) return null;
+@@ -877,5 +922,6 @@ module.exports = {
+   renderRootConflictWarning,
+   renderPartlyProvidedPackageWarning,
+   renderExtraPodsWarning,
++  renderBuildFromSourceFallbackWarning,
+   reportUnsupported,
+ };
+```
+
+**File**: `packages/expo/scripts/spm/direct.js` (modified, +1/-1)
+```diff
+@@ -137,7 +137,7 @@ function emitDirectPackage({
+   const link = path.join(directDir, packageName);
+   fs.mkdirSync(path.dirname(link), { recursive: true });
+   relativeSymlink(moduleRoot, link);
+-  fs.rmSync(path.join(outDir, 'expo-source', packageName), { recursive: true, force: true });
++  fs.rmSync(path.join(outDir, 'expo-source', manifest.name), { recursive: true, force: true });
+ 
+   return {
+     ok: {
+```
+
+**File**: `packages/expo/scripts/spm/plugin.js` (modified, +233/-107)
+```diff
+@@ -62,6 +62,7 @@ const {
+   collectRootConflicts,
+   pluginError,
+   realPathOrSelf,
++  renderBuildFromSourceFallbackWarning,
+   renderExtraPodsWarning,
+   renderLeftOutCompanionWarning,
+   renderPartlyProvidedPackageWarning,
+@@ -318,14 +319,16 @@ function uncoveredPod(identity, ...refusals) {
+ /**
+  * What the passes decided for each pod, keyed by pod name: CocoaPods pod names are
+  * unique, so a name two packages list is one pod. `linkedAs` is `'build-phase'`,
+- * `'precompiled'`, `'manifest'`, `'pure-swift'` or null. A precompiled record carries its
+- * `framework`; `linkPrecompiledPods` documents `buildFromSourceEntry`.
++ * `'precompiled'`, `'manifest'`, `'pure-swift'` or null. ExpoModulesJSI starts as
++ * `'build-phase'` (see `linkExpoModulesJSI`). A precompiled record carries its
++ * `framework`; `linkPrecompiledPods` documents `buildFromSource`.
+  */
+ function podRecords(identities) {
+   const records = new Map();
+   for (const identity of identities.values()) {
+     if (!records.has(identity.podName)) {
+-      records.set(identity.podName, { identity, linkedAs: null });
++      const linkedAs = identity.podName === JSI_POD ? 'build-phase' : null;
++      records.set(identity.podName, { identity, linkedAs });
+     }
+   }
+   return records;
+@@ -338,11 +341,10 @@ function podRecords(identities) {
+  * instead. Returns that package's directory, or null when expo-modules-jsi is not
+  * autolinked.
+  */
+-function linkExpoModulesJSI(records, outDir, cacheDir, appRoot) {
+-  const record = records.get(JSI_POD);
+-  if (record == null) return null;
+-  record.linkedAs = 'build-phase';
+-  const { packageName, moduleRoot, productName } = record.identity;
++function linkExpoModulesJSI(identities, outDir, cacheDir, appRoot) {
++  const identity = [...identities.values()].find((i) => i.podName === JSI_POD);
++  if (identity == null) return null;
++  const { packageName, moduleRoot, productName } = identity;
+   const headers = resolveHeadersXCFramework({ packageName, moduleRoot, productName, cacheDir });
+   if (headers == null) {
+     const searched = headersXCFrameworkDirs(packageName, moduleRoot);
+@@ -378,11 +380,13 @@ function buildPhaseJsiRoot(appRoot) {
+ }
+ 
+ /**
+- * The entry of the app's `buildFromSource` autolinking option that names a pod, or
+- * undefined, matched as CocoaPods matches it in `precompiled_modules.rb#build_from_source?`:
+- * each entry is a regular expression that must match the whole pod name or npm package name.
+- * An entry naming ExpoModulesCore fails the sync, because every source package compiles
+- * against the precompiled one.
++ * The entry of the app's `buildFromSource` autolinking option that matches a pod, as
++ * `{ entry, exact }`, or undefined. An entry is exact for a pod when it is, character for
++ * character, the pod name or the npm package name. Any other entry is a pattern, matched as
++ * CocoaPods matches it in `precompiled_modules.rb#build_from_source?`: a regular expression
++ * that must match the whole pod name or npm package name. An exact entry wins over a pattern.
++ * An exact entry for ExpoModulesCore fails the sync, because every source package compiles
++ * against the precompiled one; a pattern matching it leaves it precompiled.
+  */
+ function buildFromSourceMatcher(patterns) {
+   const entries = patterns.map((pattern) => {
+@@ -399,38 +403,51 @@ function buildFromSourceMatcher(patterns) {
+       );
+     }
+   });
+-  const entryFor = ({ podName, packageName }) =>
+-    entries.find(({ expression }) => expression.test(podName) || expression.test(packageName))
+-      ?.pattern;
+-  const coreEntry = entryFor({ podName: CORE_POD, packageName: CORE_PACKAGE });
+-  if (coreEntry != null) {
++  const matchFor = ({ podName, packageName }) => {
++    const exact = patterns.find((pattern) => pattern === podName || pattern === packageName);
++    if (exact != null) return { entry: exact, exact: true };
++    const pattern = entries.find(
++      ({ expression }) => expression.test(podName) || expression.test(packageName)
++    )?.pattern;
++    return pattern != null ? { entry: pattern, exact: false } : undefined;
++  };
++  const coreMatch = matchFor({ podName: CORE_POD, packageName: CORE_PACKAGE });
++  if (coreMatch?.exact) {
++    const coreEntry = coreMatch.entry;
+     throw pluginError({
+       what: `The buildFromSource entry "${coreEntry}" in your app's Expo autolinking options matches ${CORE_POD} (${CORE_PACKAGE}), which Swift Package Manager cannot build from source.`,
+       why: `Under Swift Package Manager, ${CORE_POD} is always linked precompiled: every Expo module built from source compiles against its precompiled interface.`,
+       how: `Remove "${coreEntry}" from ${BUILD_FROM_SOURCE_OPTION}, or narrow it so it no longer matches ${CORE_POD} or ${CORE_PACKAGE}. ${rerunSpmUpdate()}`,
+     });
+   }
+-  return entryFor;
++  return matchFor;
+ }
+ 
+ /**
+  * Pass 1 — precompiled runtime frameworks. The declaration is all-or-nothing:
+  * once one flavor exists, the resolver requires and pre
+```
+
+---
+
+### Incident Patch 2: `fe33dd9f` (2026-10-22)
+**Commit Message**: [router] Fix dismissTo pushing a duplicate screen in a nested stack (#51939)
+
+# Why
+
+Fixes #51936.
+
+`router.dismissTo('/')` from a modal in the root stack pushes a second
+Home into the nested stack instead of going back to the Home already
+there. The stack becomes `index → details → index`.
+
+`dismissTo` resolves to a `POP_TO` in the navigator where the current
+state and the href diverge. The navigators below it reduce a plain
+`NAVIGATE`, and `StackRouter` pushes unless the target is focused or
+`pop` is set.
+
+# How
+
+`createResolvedAction` now asks the nested navigators to pop when the
+resolved action is a `POP_TO`
+([resolveNavigationDestination.ts#L176-L187](https://github.com/expo/expo/blob/af3faf5dd363701c698b397f548b2e0d71239452/packages/expo-router/src/global-state/resolveNavigationDestination.ts#L176-L187)).
+The target navigator still handles the `POP_TO` itself. Each nested
+navigator then applies `shouldPopTo`, the per-level rule that #51649
+added for deep links. It pops to the last route with the target's name,
+and still pushes for a dynamic route with different params.
+
+Options I considered:
+
+1. Set `pop: true` in `getNavigateAction` for `POP_TO`, as
+`__internal__popToNaviga
+
+**File**: `.changeset/router-dismissto-nested-stack.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'expo-router': patch
++---
++
++Fix `router.dismissTo` pushing a second screen in a nested stack instead of going back to the screen already in it.
+```
+
+**File**: `packages/expo-router/src/__tests__/dismissTo.test.ios.tsx` (modified, +48/-0)
+```diff
+@@ -456,3 +456,51 @@ it('collapses a nested history down to a sibling when the target was never visit
+     type: 'stack',
+   });
+ });
++
++it('should go back to a previous route in a nested stack when a screen above that stack is focused', async () => {
++  const result = await renderRouter({
++    _layout: () => <Stack />,
++    '(group)/_layout': () => <Stack />,
++    '(group)/index': () => null,
++    '(group)/details': () => null,
++    modal: () => null,
++  });
++
++  await act(() => router.push('/details'));
++  await act(() => router.push('/modal'));
++  expect(screen).toHavePathname('/modal');
++
++  await act(() => router.dismissTo('/'));
++
++  expect(screen).toHavePathname('/');
++  const rootStack = result.getRouterState()!.routes[0]!.state!;
++  expect(rootStack.routes.map((route) => route.name)).toEqual(['(group)']);
++  const groupStack = rootStack.routes[0]!.state!;
++  expect(groupStack.routes.map((route) => route.name)).toEqual(['index']);
++  expect(groupStack.index).toBe(0);
++});
++
++it('pushes a dynamic route with different params in a nested stack when a screen above that stack is focused', async () => {
++  const result = await renderRouter({
++    _layout: () => <Stack />,
++    '(group)/_layout': () => <Stack />,
++    '(group)/index': () => null,
++    '(group)/[id]': () => null,
++    modal: () => null,
++  });
++
++  await act(() => router.push('/1'));
++  await act(() => router.push('/modal'));
++  expect(screen).toHavePathname('/modal');
++
++  await act(() => router.dismissTo('/2'));
++
++  expect(screen).toHavePathname('/2');
++  const rootStack = result.getRouterState()!.routes[0]!.state!;
++  expect(rootStack.routes.map((route) => route.name)).toEqual(['(group)']);
++  const groupStack = rootStack.routes[0]!.state!;
++  expect(groupStack.routes.map((route) => route.name)).toEqual(['index', '[id]', '[id]']);
++  expect(groupStack.routes[1]!.params).toEqual({ id: '1' });
++  expect(groupStack.routes[2]!.params).toEqual({ id: '2' });
++  expect(groupStack.index).toBe(2);
++});
+```
+
+**File**: `packages/expo-router/src/global-state/resolveNavigationDestination.ts` (modified, +2/-1)
+```diff
+@@ -183,7 +183,8 @@ function createResolvedAction({
+     internalParams,
+     parentChain,
+     previewKey: action.payload.__internal__PreviewKey,
+-    pop: pop === true,
++    // Navigators below the `POP_TO` target get `NAVIGATE`, which pushes unless `pop` is set.
++    pop: pop === true || action.type === 'POP_TO',
+   });
+ 
+   return {
+```
+
+---
+
+### Incident Patch 3: `21b10fc2` (2026-10-22)
+**Commit Message**: fix(router): fix custom matcher types for global and `@jest/globals` when using `expo-router/testing-library` (#52036)
+
+# Why
+
+The custom Jest matchers exported by `expo-router/testing-library` have
+been broken for some time now. Now that the Jest 30 upgrade has landed,
+we can update them and make sure they work with both the global and
+`@jest/globals` style of importing `expect()`.
+
+Fixes #51870. Supersedes #51878.
+
+# How
+
+- Removed ambient TypeScript declaration file containing type
+augmentations for the Jest matchers, and instead re-export them from the
+matcher declarations source.
+- Add type augmentations to allow both `expect` from globals as well as
+`@jest/globals`.
 
 # Test Plan
 
-Ran the reporter's repro (`@expo/ui` 58.0.19, built from source) as a
-Releas
+- Created two SDK 58 projects, one with Jest 29 and one with Jest 30,
+created a sample test file, added this patch and ran the tests
+successfully.
+- CI
 
-**File**: `.changeset/expo-ui-list-foreach-row-traits.md` (added, +5/-0)
+# Checklist
+
+- [x] I added a changeset and followed [this short
+guide](https://github.com/expo/expo/blob/main/CONTRIBUTING.md#-before-submitting)
+- [x] This diff will work correctly for `npx expo prebuild` & EAS Build
+(eg: updated a module plugin).
+- [ ] Conforms with the [Documentation Writing Style
+Guide](https://github.com/expo/expo/blob/main/guid
+
+**File**: `.changeset/wicked-shrimps-search.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@expo/ui': patch
++'expo-router': patch
 +---
 +
-+[iOS] Fix `List.ForEach` with `data` and a `children` render function. With recycling, `List` ignored the `moveDisabled` and `deleteDisabled` modifiers on a row. With `recycling={false}`, dragging a row did not reorder it or call `onMove`, and `onDelete` received the wrong index.
++Fix custom matcher types for global and `@jest/globals` when using `expo-router/testing-library`.
 ```
 
-**File**: `packages/expo-ui/ios/DataListForEachView.swift` (modified, +24/-6)
+**File**: `packages/expo-router/package.json` (modified, +1/-0)
 ```diff
-@@ -47,9 +47,23 @@ struct DataListForEachItemView: ExpoSwiftUI.View {
-   }
+@@ -325,6 +325,7 @@
+     "@types/react": "~19.3.0",
+     "@types/react-dom": "^19.1.7",
+     "@types/react-is": "^19.0.0",
++    "expect": "^30.0.0",
+     "expect-type": "^1.3.0",
+     "expo-symbols": "workspace:^",
+     "immer": "^10.1.1",
+```
+
+**File**: `packages/expo-router/src/__tests__/testing-library.test.ios.tsx` (modified, +13/-0)
+```diff
+@@ -1,3 +1,4 @@
++import { expect as importedExpect } from '@jest/globals';
+ import { act, screen } from '@testing-library/react-native';
+ import { stripVTControlCharacters } from 'node:util';
+ import { Text } from 'react-native';
+@@ -40,6 +41,18 @@ describe('toHavePathname', () => {
+   });
+ });
  
-   var body: some View {
--    Children()
-+    content
-       .publishZeroContentOrigin(props.shadowNodeProxy)
-   }
++it('supports matchers with expect imported from @jest/globals', async () => {
++  await renderRouter(['[slug]'], { initialUrl: '/home?test=true' });
 +
-+  // `List` reads row traits such as `moveDisabled` from the row's root view, and a nested
-+  // `ForEach` breaks `onMove`. So a single child is the root itself.
-+  @ViewBuilder
-+  private var content: some View {
-+    if let children = props.children, children.count == 1 {
-+      let view: any View = children[0].childView
-+      AnyView(view)
-+    } else {
-+      VStack(alignment: .leading, spacing: 0) {
-+        Children()
-+      }
-+    }
-+  }
- }
- 
- final class DataListForEachPoolProps: ExpoSwiftUI.ViewProps {}
-@@ -112,8 +126,9 @@ private struct DataListForEachRow: View {
-     return slots[index % slots.count].childView as? DataListForEachItemView
-   }
- 
-+  // A `Group`, not a stack, so the row's traits reach `List`.
-   var body: some View {
--    VStack(alignment: .leading, spacing: 0) {
-+    Group {
-       if let slot {
-         DataListForEachSlotContent(
-           props: slot.props,
-@@ -178,12 +193,15 @@ private struct DataListForEachSlotContent: View {
-   var body: some View {
-     Group {
-       if showsContent {
-+        // Measured in the background: `onGeometryChange` on the item hides its row traits from `List`.
-         DataListForEachItemView(props: props)
-           .id(itemKey)
--          .onGeometryChange(
--            for: CGFloat.self,
--            of: { axis == .horizontal ? $0.size.width : $0.size.height },
--            action: { size in window.measure(size, for: itemKey, revision: revision) }
-+          .background(
-+            Color.clear.onGeometryChange(
-+              for: CGFloat.self,
-+              of: { axis == .horizontal ? $0.size.width : $0.size.height },
-+              action: { size in window.measure(size, for: itemKey, revision: revision) }
-+            )
-           )
-       } else {
-         // Hide the previous item while JS updates this slot.
-```
-
----
-
-### Incident Patch 2: `d194027e` (2026-10-19)
-**Commit Message**: [ui][android] Add Jetpack Compose TopAppBar (#51651)
-
-# Why
-
-`@expo/ui/jetpack-compose` has no app bar. An Android app that wants a
-Material 3 top app bar must build one from `Row` and `IconButton`. That
-layout does not get the Material 3 height, padding, or status bar insets
-of `TopAppBar`.
-
-# How
-
-This adds `TopAppBar`, a thin wrapper around Material 3's small
-`TopAppBar` composable.
-
-- The slots `TopAppBar.Title`, `TopAppBar.NavigationIcon`, and
-`TopAppBar.Actions` use the existing `SlotView` pattern, the same as
-`NavigationBarItem` and `HorizontalFloatingToolbar`.
-- `colors` maps to `TopAppBarDefaults.topAppBarColors()`. Unset colors
-keep the defaults. `scrolledContainerColor` is not in `colors`. Compose
-uses it only with a `scrollBehavior`, and this component has no
-`scrollBehavior`.
-- `windowInsets` takes the existing `PaddingValuesRecord` (`start`,
-`top`, `end`, `bottom` in dp), which `TopAppBar` re-exports so the docs
-page documents it. When it is omitted, the bar uses
-`TopAppBarDefaults.windowInsets`: the status bar at the top, and system
-bars and display cutouts at the sides. An app that already handles the
-status bar in React Native can pass `{}`.
-- The view is registere
-
-**File**: `.changeset/expo-ui-top-app-bar.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@expo/ui': patch
-+---
-+
-+[Android] Add the Jetpack Compose `TopAppBar` component with `TopAppBar.Title`, `TopAppBar.NavigationIcon`, and `TopAppBar.Actions` slots, `colors`, and `windowInsets`.
-```
-
-**File**: `apps/native-component-list/src/screens/UI/TopAppBarScreen.android.tsx` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+import {
-+  Column,
-+  Host,
-+  Icon,
-+  IconButton,
-+  Text as ComposeText,
-+  TopAppBar,
-+  useMaterialColors,
-+} from '@expo/ui/jetpack-compose';
-+import { fillMaxWidth, padding } from '@expo/ui/jetpack-compose/modifiers';
-+import * as React from 'react';
-+
-+const closeIcon = require('../../../assets/icons/ui/close.xml');
-+const editIcon = require('../../../assets/icons/ui/edit.xml');
-+const addIcon = require('../../../assets/icons/ui/add.xml');
-+
-+export default function TopAppBarScreen() {
-+  const [count, setCount] = React.useState(0);
-+
-+  return (
-+    <Host style={{ flex: 1 }}>
-+      <Column verticalArrangement={{ spacedBy: 24 }} modifiers={[fillMaxWidth()]}>
-+        <TopAppBar windowInsets={{}} modifiers={[fillMaxWidth()]}>
-+          <TopAppBar.Title>
-+            <ComposeText style={{ typography: 'titleLarge' }}>Default colors</ComposeText>
-+          </TopAppBar.Title>
-+        </TopAppBar>
-+        <ColoredTopAppBar count={count} onAdd={() => setCount(count + 1)} />
-+        <ComposeText modifiers={[padding(16, 0, 16, 0)]}>Add pressed {count} times.</ComposeText>
-+      </Column>
-+    </Host>
-+  );
-+}
-+
-+function ColoredTopAppBar({ count, onAdd }: { count: number; onAdd: () => void }) {
-+  const colors = useMaterialColors();
-+  return (
-+    <TopAppBar
-+      windowInsets={{}}
-+      colors={{
-+        containerColor: colors.primaryContainer,
-+        navigationIconContentColor: colors.onPrimaryContainer,
-+        titleContentColor: colors.onPrimaryContainer,
-+        actionIconContentColor: colors.onPrimaryContainer,
-+      }}
-+      modifiers={[fillMaxWidth()]}>
-+      <TopAppBar.NavigationIcon>
-+        <IconButton onClick={() => console.log('Close')}>
-+          <Icon source={closeIcon} contentDescription="Close" />
-+        </IconButton>
-+      </TopAppBar.NavigationIcon>
-+      <TopAppBar.Title>
-+        <ComposeText style={{ typography: 'titleLarge' }}>Custom colors ({count})</ComposeText>
-+      </TopAppBar.Title>
-+      <TopAppBar.Actions>
-+        <IconButton onClick={() => console.log('Edit')}>
-+          <Icon source={editIcon} contentDescription="Edit" />
-+        </IconButton>
-+        <IconButton onClick={onAdd}>
-+          <Icon source={addIcon} contentDescription="Add" />
-+        </IconButton>
-+      </TopAppBar.Actions>
-+    </TopAppBar>
-+  );
-+}
-+
-+TopAppBarScreen.navigationOptions = {
-+  title: 'TopAppBar',
-+};
-```
-
-**File**: `apps/native-component-list/src/screens/UI/UIScreen.android.tsx` (modified, +8/-0)
-```diff
-@@ -442,6 +442,14 @@ export const UIScreens = [
-       return optionalRequire(() => require('./TooltipScreen'));
-     },
-   },
-+  {
-+    name: 'TopAppBar component',
-+    route: 'ui/top-app-bar',
-+    options: {},
-+    getComponent() {
-+      return optionalRequire(() => require('./TopAppBarScreen'));
-+    },
-+  },
-   {
-     name: 'Extending Expo UI',
-     route: 'ui/extending',
-```
-
-**File**: `docs/pages/versions/unversioned/sdk/ui/jetpack-compose/topappbar.mdx` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+---
-+title: TopAppBar
-+description: A Jetpack Compose TopAppBar component for displaying a title, a navigation icon, and actions at the top of a screen.
-+sourceCodeUrl: 'https://github.com/expo/expo/tree/main/packages/expo-ui'
-+packageName: '@expo/ui'
-+platforms: ['android', 'expo-go']
-+---
-+
-+import APISection from '~/components/plugins/APISection';
-+import { APIInstallSection } from '~/components/plugins/InstallSection';
-+
-+Expo UI TopAppBar matches the official Jetpack Compose [`TopAppBar`](https://developer.android.com/develop/ui/compose/components/app-bars#small) API. It displays a title, a navigation icon, and action buttons at the top of a screen.
-+
-+## Installation
-+
-+<APIInstallSection />
-+
-+## Usage
-+
-+### Basic top app bar
-+
-+Put content in the `TopAppBar.Title`, `TopAppBar.NavigationIcon`, and `TopAppBar.Actions` slots. Each slot is optional. Set `style={{ typography: 'titleLarge' }}` on the title `Text` to use Material 3 title typography.
-+
-+```tsx BasicTopAppBar.tsx
-+import {
-+  Host,
-+  Icon,
-+  IconButton,
-+  Text,
-+  TopAppBar,
-+} from '@expo/ui/jetpack-compose';
-+import { fillMaxWidth } from '@expo/ui/jetpack-compose/modifiers';
-+
-+const CLOSE_ICON = require('./assets/close.xml');
-+const EDIT_ICON = require('./assets/edit.xml');
-+
-+export default function BasicTopAppBar() {
-+  return (
-+    <Host
-+      matchContents={{ vertical: true }}
-+      style={{ width: '100%' }}>
-+      <TopAppBar modifiers={[fillMaxWidth()]}>
-+        <TopAppBar.NavigationIcon>
-+          <IconButton onClick={() => console.log('Close')}>
-+            <Icon source={CLOSE_ICON} contentDescription="Close" />
-+          </IconButton>
-+        </TopAppBar.NavigationIcon>
-+        <TopAppBar.Title>
-+          <Text style={{ typography: 'titleLarge' }}>Inbox</Text>
-+        </TopAppBar.Title>
-+        <TopAppBar.Actions>
-+          <IconButton onClick={() => console.log('Edit')}>
-+            <Icon source={EDIT_ICON} contentDescription="Edit" />
-+          </IconButton>
-+        </TopAppBar.Actions>
-+      </TopAppBar>
-+    </Host>
-+  );
-+}
-+```
-+
-+### Window insets
-+
-+By default, the app bar adds the status bar height above its content. It also adds any system bar or display cutout inset at its sides. These insets assume the bar is at the top edge of the window, even inside a nested `Host`. If a parent view already handles the insets, pass `windowInsets={{}}`. This removes both the top and horizontal insets.
-+
-+```tsx TopAppBarWithoutInsets.tsx
-+import { Host, Text, TopAppBar } from '@expo/ui/jetpack-compose';
-+import { fillMaxWidth } from '@expo/ui/jetpack-compose/modifiers';
-+
-+export default function TopAppBarWithoutInsets() {
-+  return (
-+    <Host
-+      matchContents={{ vertical: true }}
-+      style={{ width: '100%' }}>
-+      <TopAppBar windowInsets={{}} modifiers={[fillMaxWidth()]}>
-+        <TopAppBar.Title>
-+          <Text style={{ typography: 'titleLarge' }}>Settings</Text>
-+        </TopAppBar.Title>
-+      </TopAppBar>
-+    </Host>
-+  );
-+}
-+```
-+
-+## API
-+
-+```tsx
-+import { TopAppBar } from '@expo/ui/jetpack-compose';
-+```
-+
-+<APISection
-+  packageName="expo-ui/jetpack-compose/topappbar"
-+  apiName="TopAppBar"
-+/>
-```
-
-**File**: `docs/pages/versions/v58.0.0/sdk/ui/jetpack-compose/topappbar.mdx` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+---
-+title: TopAppBar
-+description: A Jetpack Compose TopAppBar component for displaying a title, a navigation icon, and actions at the top of a screen.
-+sourceCodeUrl: 'https://github.com/expo/expo/tree/sdk-58/packages/expo-ui'
-+packageName: '@expo/ui'
-+platforms: ['android', 'expo-go']
-+---
-+
-+import APISection from '~/components/plugins/APISection';
-+import { APIInstallSection } from '~/components/plugins/InstallSection';
-+
-+Expo UI TopAppBar matches the official Jetpack Compose [`TopAppBar`](https://developer.android.com/develop/ui/compose/components/app-bars#small) API. It displays a title, a navigation icon, and action buttons at the top of a screen.
-+
-+## Installation
-+
-+<APIInstallSection />
-+
-+## Usage
-+
-+### Basic top app bar
-+
-+Put content in the `TopAppBar.Title`, `TopAppBar.NavigationIcon`, and `TopAppBar.Actions` slots. Each slot is optional. Set `style={{ typography: 'titleLarge' }}` on the title `Text` to use Material 3 title typography.
-+
-+```tsx BasicTopAppBar.tsx
-+import {
-+  Host,
-+  Icon,
-+  IconButton,
-+  Text,
-+  TopAppBar,
-+} from '@expo/ui/jetpack-compose';
-+import { fillMaxWidth } from '@expo/ui/jetpack-compose/modifiers';
-+
-+const CLOSE_ICON = require('./assets/close.xml');
-+const EDIT_ICON = require('./assets/edit.xml');
-+
-+export default function BasicTopAppBar() {
-+  return (
-+    <Host
-+      matchContents={{ vertical: true }}
-+      style={{ width: '100%' }}>
-+      <TopAppBar modifiers={[fillMaxWidth()]}>
-+        <TopAppBar.NavigationIcon>
-+          <IconButton onClick={() => console.log('Close')}>
-+            <Icon source={CLOSE_ICON} contentDescription="Close" />
-+          </IconButton>
-+        </TopAppBar.NavigationIcon>
-+        <TopAppBar.Title>
-+          <Text style={{ typography: 'titleLarge' }}>Inbox</Text>
-+        </TopAppBar.Title>
-+        <TopAppBar.Actions>
-+          <IconButton onClick={() => console.log('Edit')}>
-+            <Icon source={EDIT_ICON} contentDescription="Edit" />
-+          </IconButton>
-+        </TopAppBar.Actions>
-+      </TopAppBar>
-+    </Host>
-+  );
-+}
-+```
-+
-+### Window insets
-+
-+By default, the app bar adds the status bar height above its content. It also adds any system bar or display cutout inset at its sides. These insets assume the bar is at the top edge of the window, even inside a nested `Host`. If a parent view already handles the insets, pass `windowInsets={{}}`. This removes both the top and horizontal insets.
-+
-+```tsx TopAppBarWithoutInsets.tsx
-+import { Host, Text, TopAppBar } from '@expo/ui/jetpack-compose';
-+import { fillMaxWidth } from '@expo/ui/jetpack-compose/modifiers';
-+
-+export default function TopAppBarWithoutInsets() {
-+  return (
-+    <Host
-+      matchContents={{ vertical: true }}
-+      style={{ width: '100%' }}>
-+      <TopAppBar windowInsets={{}} modifiers={[fillMaxWidth()]}>
-+        <TopAppBar.Title>
-+          <Text style={{ typography: 'titleLarge' }}>Settings</Text>
-+        </TopAppBar.Title>
-+      </TopAppBar>
-+    </Host>
-+  );
-+}
-+```
-+
-+## API
-+
-+```tsx
-+import { TopAppBar } from '@expo/ui/jetpack-compose';
-+```
-+
-+<APISection
-+  packageName="expo-ui/jetpack-compose/topappbar"
-+  apiName="TopAppBar"
-+/>
-```
-
-**File**: `docs/public/static/data/unversioned/expo-ui/jetpack-compose/topappbar.json` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"schemaVersion":"2.0","name":"expo-ui/jetpack-compose/topappbar","variant":"project","kind":1,"children":[{"name":"TopAppBarProps","variant":"declaration","kind":256,"children":[{"name":"children","variant":"declaration","kind":1024,"comment":{"summary":[{"kind":"code","text":"`TopAppBar.Title`"},{"kind":"text","text":", "},{"kind":"code","text":"`TopAppBar.NavigationIcon`"},{"kind":"text","text":", and "},{"kind":"code","text":"`TopAppBar.Actions`"},{"kind":"text","text":" slots."}]},"type":{"type":"reference","target":{"packageName":"@types/react","packagePath":"index.d.ts","qualifiedName":"React.ReactNode"},"name":"ReactNode","package":"@types/react","qualifiedName":"React.ReactNode"}},{"name":"colors","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Colors for the app bar. Unset colors use "},{"kind":"code","text":"`TopAppBarDefaults.topAppBarColors()`"},{"kind":"text","text":"."}]},"type":{"type":"reference","name":"TopAppBarColors","package":"@expo/ui"}},{"name":"modifiers","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Modifiers for the component."}]},"type":{"type":"array","elementType":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/types.ts","qualifiedName":"ModifierConfig"},"name":"ModifierConfig","package":"@expo/ui"}}},{"name":"windowInsets","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Insets in dp that the app bar adds around its content. Missing sides are "},{"kind":"code","text":"`0`"},{"kind":"text","text":".\nWhen omitted, the app bar uses "},{"kind":"code","text":"`TopAppBarDefaults.windowInsets`"},{"kind":"text","text":", which assumes\nthe bar is at the top edge of the window, even inside a nested "},{"kind":"code","text":"`Host`"},{"kind":"text","text":".\nPass "},{"kind":"code","text":"`{}`"},{"kind":"text","text":" when a parent handles the insets. This removes both the top status\nbar inset and the horizontal system bar and display cutout insets."}]},"type":{"type":"reference","name":"PaddingValuesRecord","package":"@expo/ui"}}]},{"name":"PaddingValuesRecord","variant":"declaration","kind":2097152,"comment":{"summary":[{"kind":"text","text":"Per-side padding values in dp for the content."}]},"children":[{"name":"bottom","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"number"}},{"name":"end","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"number"}},{"name":"start","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"number"}},{"name":"top","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"number"}}]},{"name":"TopAppBarColors","variant":"declaration","kind":2097152,"comment":{"summary":[{"kind":"text","text":"Colors for the top app bar."}]},"children":[{"name":"actionIconContentColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Color of the action icons."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"types_DEPRECATED/Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}},{"name":"containerColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Color of the container (background)."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"types_DEPRECATED/Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}},{"name":"navigationIconContentColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Color of the navigation icon."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"types_DEPRECATED/Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}},{"name":"titleContentColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Color of the title."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"types_DEPRECATED/Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}}]},{"name":"TopAppBar","variant":"declaration","kind":64,"children":[{"name":"Actions","variant":"declaration","kind":1024,"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"comment":{"summary":[{"kind":"text","text":"Actions slot for "},{"kind":"code","text":"`TopAppBar`"},{"kind":"text","text":". It
-```
-
-**File**: `docs/public/static/data/v58.0.0/expo-ui/jetpack-compose/topappbar.json` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"schemaVersion":"2.0","name":"expo-ui/jetpack-compose/topappbar","variant":"project","kind":1,"children":[{"name":"TopAppBarProps","variant":"declaration","kind":256,"children":[{"name":"children","variant":"declaration","kind":1024,"comment":{"summary":[{"kind":"code","text":"`TopAppBar.Title`"},{"kind":"text","text":", "},{"kind":"code","text":"`TopAppBar.NavigationIcon`"},{"kind":"text","text":", and "},{"kind":"code","text":"`TopAppBar.Actions`"},{"kind":"text","text":" slots."}]},"type":{"type":"reference","target":{"packageName":"@types/react","packagePath":"index.d.ts","qualifiedName":"React.ReactNode"},"name":"ReactNode","package":"@types/react","qualifiedName":"React.ReactNode"}},{"name":"colors","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Colors for the app bar. Unset colors use "},{"kind":"code","text":"`TopAppBarDefaults.topAppBarColors()`"},{"kind":"text","text":"."}]},"type":{"type":"reference","name":"TopAppBarColors","package":"@expo/ui"}},{"name":"modifiers","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Modifiers for the component."}]},"type":{"type":"array","elementType":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/types.ts","qualifiedName":"ModifierConfig"},"name":"ModifierConfig","package":"@expo/ui"}}},{"name":"windowInsets","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Insets in dp that the app bar adds around its content. Missing sides are "},{"kind":"code","text":"`0`"},{"kind":"text","text":".\nWhen omitted, the app bar uses "},{"kind":"code","text":"`TopAppBarDefaults.windowInsets`"},{"kind":"text","text":", which assumes\nthe bar is at the top edge of the window, even inside a nested "},{"kind":"code","text":"`Host`"},{"kind":"text","text":".\nPass "},{"kind":"code","text":"`{}`"},{"kind":"text","text":" when a parent handles the insets. This removes both the top status\nbar inset and the horizontal system bar and display cutout insets."}]},"type":{"type":"reference","name":"PaddingValuesRecord","package":"@expo/ui"}}]},{"name":"PaddingValuesRecord","variant":"declaration","kind":2097152,"comment":{"summary":[{"kind":"text","text":"Per-side padding values in dp for the content."}]},"children":[{"name":"bottom","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"number"}},{"name":"end","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"number"}},{"name":"start","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"number"}},{"name":"top","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"number"}}]},{"name":"TopAppBarColors","variant":"declaration","kind":2097152,"comment":{"summary":[{"kind":"text","text":"Colors for the top app bar."}]},"children":[{"name":"actionIconContentColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Color of the action icons."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"types_DEPRECATED/Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}},{"name":"containerColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Color of the container (background)."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"types_DEPRECATED/Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}},{"name":"navigationIconContentColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Color of the navigation icon."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"types_DEPRECATED/Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}},{"name":"titleContentColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Color of the title."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"types_DEPRECATED/Libraries/StyleSheet/StyleSheet.d.ts","qualifiedName":"ColorValue"},"name":"ColorValue","package":"react-native"}}]},{"name":"TopAppBar","variant":"declaration","kind":64,"children":[{"name":"Actions","variant":"declaration","kind":1024,"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"comment":{"summary":[{"kind":"text","text":"Actions slot for "},{"kind":"code","text":"`TopAppBar`"},{"kind":"text","text":". It
-```
-
-**File**: `docs/scenes/versions/unversioned/ui/jetpack-compose.mdx` (modified, +5/-0)
-```diff
-@@ -341,6 +341,11 @@ import { UIComponentCard, UIComponentGrid } from '~/ui/components/UIComponentGri
-     src="/static/images/expo-ui/tooltip/android-light.webp"
-     darkSrc="/static/images/expo-ui/tooltip/android-dark.webp"
-   />
-+  <UIComponentCard
-+    title="TopAppBar"
-+    slug="topappbar"
-+    description="TopAppBar component for displaying a title, a navigation icon, and actions."
-+  />
-   <UIComponentCard
-     title="useNativeState"
-     slug="usenativestate"
-```
-
----
-
-### Incident Patch 3: `d71cc643` (2026-10-19)
-**Commit Message**: [ui][android] Add colorOverrides to Jetpack Compose Host (#51650)
-
-# Why
-
-An app can theme a Jetpack Compose `Host` only from `colorScheme` and
-`seedColor`. An app that has its own brand palette cannot set a specific
-Material 3 role, for example `primary` or `surface`. The `Host` builds
-the whole `ColorScheme` from the seed or the system and does not accept
-individual roles.
-
-# How
-
-This adds a `colorOverrides` prop to the Jetpack Compose `Host`. It is a
-`Partial<MaterialColors>`, so it uses the role names that
-`useMaterialColors()` already returns.
-
-- Android: `HostView` builds the base `ColorScheme` as before. Then
-`ColorScheme.withOverrides()` in `MaterialColors.kt` replaces each role
-in the map with `copy()`. The keys are the same as `toTokenMap()`. When
-the map is empty, the function returns the base scheme. This adds no
-work for a `Host` without overrides.
-- JS: `Host` merges `colorOverrides` into the palette that it puts in
-`HostPaletteContext`. `useMaterialColors()` in the subtree returns the
-same colors as the Compose theme.
-- Each override goes through `processColor` and becomes the `#RRGGBBAA`
-form that native `toTokenMap()` returns, so `'#1E88E5'` comes back as
-`'#1E88E
-
-**File**: `.changeset/expo-ui-host-color-overrides.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@expo/ui': patch
-+---
-+
-+[Android] Add `colorOverrides` to the Jetpack Compose `Host`. It replaces individual Material 3 color roles in the palette from `colorScheme` and `seedColor`. Compose children and `useMaterialColors()` use the result.
-```
-
-**File**: `apps/native-component-list/src/screens/UI/MaterialColorsScreen.android.tsx` (modified, +25/-1)
-```diff
-@@ -47,20 +47,26 @@ const SEED_PRESETS: SeedPreset[] = [
- 
- const COLOR_SCHEMES: ColorSchemeOption[] = ['auto', 'light', 'dark'];
- 
-+const PRIMARY_OVERRIDE = { primary: '#00897BFF', onPrimary: '#FFFFFFFF' } as const;
-+
- export default function MaterialColorsScreen() {
-   const [colorScheme, setColorScheme] = useState<ColorSchemeOption>('auto');
-   const [seedColor, setSeedColor] = useState<string | undefined>(undefined);
-+  const [overridePrimary, setOverridePrimary] = useState(false);
- 
-   return (
-     <Host
-       style={{ flex: 1 }}
-       colorScheme={colorScheme === 'auto' ? undefined : colorScheme}
--      seedColor={seedColor}>
-+      seedColor={seedColor}
-+      colorOverrides={overridePrimary ? PRIMARY_OVERRIDE : undefined}>
-       <Content
-         colorScheme={colorScheme}
-         seedColor={seedColor}
-+        overridePrimary={overridePrimary}
-         setColorScheme={setColorScheme}
-         setSeedColor={setSeedColor}
-+        setOverridePrimary={setOverridePrimary}
-       />
-     </Host>
-   );
-@@ -69,13 +75,17 @@ export default function MaterialColorsScreen() {
- function Content({
-   colorScheme,
-   seedColor,
-+  overridePrimary,
-   setColorScheme,
-   setSeedColor,
-+  setOverridePrimary,
- }: {
-   colorScheme: ColorSchemeOption;
-   seedColor: string | undefined;
-+  overridePrimary: boolean;
-   setColorScheme: (s: ColorSchemeOption) => void;
-   setSeedColor: (s: string | undefined) => void;
-+  setOverridePrimary: (value: boolean) => void;
- }) {
-   const colors = useMaterialColors();
- 
-@@ -131,6 +141,20 @@ function Content({
-         })}
-       </FlowRow>
- 
-+      <Text style={{ fontSize: 16, fontWeight: '600' }}>Color overrides</Text>
-+      <SingleChoiceSegmentedButtonRow>
-+        {[false, true].map((option) => (
-+          <SegmentedButton
-+            key={String(option)}
-+            selected={overridePrimary === option}
-+            onClick={() => setOverridePrimary(option)}>
-+            <SegmentedButton.Label>
-+              <Text>{option ? 'Teal primary' : 'None'}</Text>
-+            </SegmentedButton.Label>
-+          </SegmentedButton>
-+        ))}
-+      </SingleChoiceSegmentedButtonRow>
-+
-       <Text style={{ fontSize: 16, fontWeight: '600' }}>Compose components</Text>
-       <Text>These native buttons inherit the palette from Host.</Text>
-       <Row horizontalArrangement={{ spacedBy: 8 }}>
-```
-
-**File**: `docs/pages/versions/unversioned/sdk/ui/jetpack-compose/colors.mdx` (modified, +23/-0)
-```diff
-@@ -50,6 +50,29 @@ export default function BrandedHostExample() {
- 
- </ComponentExample>
- 
-+### Overriding palette roles
-+
-+Use the `colorOverrides` prop on [`Host`](./host) to set specific Material 3 roles. `Host` builds the palette from `seedColor` and `colorScheme` first. Then it replaces each role that you pass. The other roles keep their palette values. Compose components under the `Host` and [`useMaterialColors()`](#usematerialcolorsoptions) both use the result.
-+
-+```tsx
-+import { Button, Host, Text } from '@expo/ui/jetpack-compose';
-+
-+const colorOverrides = { primary: '#1E88E5FF' } as const;
-+
-+export default function ColorOverridesExample() {
-+  return (
-+    <Host
-+      seedColor="#8E24AA"
-+      colorOverrides={colorOverrides}
-+      matchContents>
-+      <Button onClick={() => {}}>
-+        <Text>Blue primary, purple palette</Text>
-+      </Button>
-+    </Host>
-+  );
-+}
-+```
-+
- ### Reading the current palette inside Host
- 
- Call [`useMaterialColors()`](#usematerialcolorsoptions) without arguments inside a [`<Host>`](./host) to read the Host's current palette. The hook returns a reference-stable [`MaterialColors`](#materialcolors) object and does not cross the native bridge on re-renders.
-```
-
-**File**: `docs/public/static/data/unversioned/expo-ui/jetpack-compose/host.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"schemaVersion":"2.0","name":"expo-ui/jetpack-compose/host","variant":"project","kind":1,"children":[{"name":"HostProps","variant":"declaration","kind":256,"children":[{"name":"children","variant":"declaration","kind":1024,"type":{"type":"reference","target":{"packageName":"@types/react","packagePath":"index.d.ts","qualifiedName":"React.ReactNode"},"name":"ReactNode","package":"@types/react","qualifiedName":"React.ReactNode"}},{"name":"colorScheme","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"The color scheme of the host view. "},{"kind":"code","text":"`'light'`"},{"kind":"text","text":" / "},{"kind":"code","text":"`'dark'`"},{"kind":"text","text":" force a specific\nappearance; omitted follows the device setting. The palette itself\nfollows the device wallpaper on Android 12+ (Material You) or the static\nMaterial 3 baseline otherwise — unless "},{"kind":"inline-tag","tag":"@link","text":"seedColor"},{"kind":"text","text":" is set."}]},"type":{"type":"reference","target":{"packageName":"react-native","packagePath":"Libraries/Utilities/Appearance.d.ts","qualifiedName":"ColorSchemeName"},"name":"ColorSchemeName","package":"react-native"}},{"name":"ignoreSafeAreaKeyboardInsets","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"When "},{"kind":"code","text":"`true`"},{"kind":"text","text":", the Compose content will not perform keyboard avoidance behaviour when keyboard is shown.\nCan be only set once on mount."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"false"}]}]},"type":{"type":"intrinsic","name":"boolean"}},{"name":"layoutDirection","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"The layout direction for the content.\nDefaults to the current locale direction from I18nManager."}]},"type":{"type":"union","types":[{"type":"literal","value":"leftToRight"},{"type":"literal","value":"rightToLeft"}]}},{"name":"matchContents","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"When true, the host view will update its size in the React Native view tree to match the content's layout from Jetpack Compose.\nCan be only set once on mount."}],"blockTags":[{"tag":"@default","content":[{"kind":"text","text":"false"}]}]},"type":{"type":"union","types":[{"type":"intrinsic","name":"boolean"},{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"children":[{"name":"horizontal","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"boolean"}},{"name":"vertical","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"intrinsic","name":"boolean"}}]}}]}},{"name":"modifiers","variant":"declaration","kind":1024,"flags":{"isOptional":true,"isInherited":true},"comment":{"summary":[{"kind":"text","text":"Modifiers for the component."}]},"type":{"type":"array","elementType":{"type":"reference","target":{"packageName":"@expo/ui","packagePath":"src/types.ts","qualifiedName":"ModifierConfig"},"name":"ModifierConfig","package":"@expo/ui"}},"inheritedFrom":{"type":"reference","name":"PrimitiveBaseProps.modifiers"}},{"name":"onLayoutContent","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Callback function that is triggered when the Jetpack Compose content completes its layout.\nProvides the current dimensions of the content, which may change as the content updates."}]},"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"signatures":[{"name":"__type","variant":"signature","kind":4096,"parameters":[{"name":"event","variant":"param","kind":32768,"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"children":[{"name":"nativeEvent","variant":"declaration","kind":1024,"type":{"type":"reflection","declaration":{"name":"__type","variant":"declaration","kind":65536,"children":[{"name":"height","variant":"declaration","kind":1024,"type":{"type":"intrinsic","name":"number"}},{"name":"width","variant":"declaration","kind":1024,"type":{"type":"intrinsic","name":"number"}}]}}}]}}}],"type":{"type":"intrinsic","name":"void"}}]}}},{"name":"pointerEvents","variant":"declaration","kind":1024,"flags":{"isOptional":true},"type":{"type":"union","types":[{"type":"literal","value":"auto"},{"type":"literal","value":"box-none"},{"type":"literal","value":"none"},{"type":"literal","value":"box-only"}]}},{"name":"seedColor","variant":"declaration","kind":1024,"flags":{"isOptional":true},"comment":{"summary":[{"kind":"text","text":"Seed color used to generate a Material 3 palette ("},{"kind":"code","text":"`SchemeTonalSpot`"},{"kind":"text","text":") for\nthis host. Combines with "},{"kind":"code","text":"`colorScheme`"},{"kind":"text","text":" ("
-```
-
-**File**: `packages/expo-ui/android/src/main/java/expo/modules/ui/HostView.kt` (modified, +4/-1)
-```diff
-@@ -52,6 +52,7 @@ import expo.modules.kotlin.views.ExpoComposeView
- import expo.modules.kotlin.views.OptimizedComposeProps
- import expo.modules.ui.colors.isDynamicColorSupported
- import expo.modules.ui.colors.seedColorScheme
-+import expo.modules.ui.colors.withOverrides
- 
- internal enum class ExpoLayoutDirection(val value: String) : Enumerable {
-   LeftToRight("leftToRight"),
-@@ -69,6 +70,7 @@ internal enum class ExpoLayoutDirection(val value: String) : Enumerable {
- internal data class HostProps(
-   val colorScheme: MutableState<ExpoColorScheme?> = mutableStateOf(null),
-   val seedColor: MutableState<android.graphics.Color?> = mutableStateOf(null),
-+  val colorOverrides: MutableState<Map<String, android.graphics.Color>?> = mutableStateOf(null),
-   val layoutDirection: MutableState<ExpoLayoutDirection> = mutableStateOf(ExpoLayoutDirection.LeftToRight),
-   val useViewportSizeMeasurement: MutableState<Boolean> = mutableStateOf(false),
-   val ignoreSafeAreaKeyboardInsets: MutableState<Boolean> = mutableStateOf(false),
-@@ -153,9 +155,10 @@ internal class HostView(context: Context, appContext: AppContext) :
-     val seededScheme = remember(seedArgb, isDark) {
-       seedArgb?.let { seedColorScheme(it, isDark) }
-     }
--    val colorScheme = seededScheme
-+    val baseColorScheme = seededScheme
-       ?: props.colorScheme.value?.toColorScheme(context)
-       ?: ExpoColorScheme.defaultColorScheme(context, isSystemInDarkTheme())
-+    val colorScheme = baseColorScheme.withOverrides(props.colorOverrides.value.orEmpty())
-     val layoutDirection = props.layoutDirection.value.toLayoutDirection()
- 
-     // Material3's `MaterialTheme` does not provide `LocalContentColor` — only `Surface` does — so
-```
-
-**File**: `packages/expo-ui/android/src/main/java/expo/modules/ui/colors/MaterialColors.kt` (modified, +61/-0)
-```diff
-@@ -15,6 +15,7 @@ import expo.modules.kotlin.records.Field
- import expo.modules.kotlin.records.Record
- import expo.modules.kotlin.types.OptimizedRecord
- import expo.modules.ui.ExpoColorScheme
-+import expo.modules.ui.composeOrNull
- 
- /**
-  * Whether the current device supports Material You wallpaper-based dynamic
-@@ -165,3 +166,63 @@ internal fun ColorScheme.toTokenMap(): Map<String, String> = mapOf(
-   "onTertiaryFixed" to onTertiaryFixed.toRgbaHex(),
-   "onTertiaryFixedVariant" to onTertiaryFixedVariant.toRgbaHex()
- )
-+
-+/**
-+ * Replaces the roles named in [overrides], keyed like [toTokenMap], and keeps the others.
-+ */
-+internal fun ColorScheme.withOverrides(overrides: Map<String, android.graphics.Color>): ColorScheme {
-+  if (overrides.isEmpty()) {
-+    return this
-+  }
-+  fun color(role: String, fallback: Color): Color = overrides[role]?.composeOrNull ?: fallback
-+  return copy(
-+    primary = color("primary", primary),
-+    onPrimary = color("onPrimary", onPrimary),
-+    primaryContainer = color("primaryContainer", primaryContainer),
-+    onPrimaryContainer = color("onPrimaryContainer", onPrimaryContainer),
-+    inversePrimary = color("inversePrimary", inversePrimary),
-+    secondary = color("secondary", secondary),
-+    onSecondary = color("onSecondary", onSecondary),
-+    secondaryContainer = color("secondaryContainer", secondaryContainer),
-+    onSecondaryContainer = color("onSecondaryContainer", onSecondaryContainer),
-+    tertiary = color("tertiary", tertiary),
-+    onTertiary = color("onTertiary", onTertiary),
-+    tertiaryContainer = color("tertiaryContainer", tertiaryContainer),
-+    onTertiaryContainer = color("onTertiaryContainer", onTertiaryContainer),
-+    background = color("background", background),
-+    onBackground = color("onBackground", onBackground),
-+    surface = color("surface", surface),
-+    onSurface = color("onSurface", onSurface),
-+    surfaceVariant = color("surfaceVariant", surfaceVariant),
-+    onSurfaceVariant = color("onSurfaceVariant", onSurfaceVariant),
-+    surfaceTint = color("surfaceTint", surfaceTint),
-+    inverseSurface = color("inverseSurface", inverseSurface),
-+    inverseOnSurface = color("inverseOnSurface", inverseOnSurface),
-+    error = color("error", error),
-+    onError = color("onError", onError),
-+    errorContainer = color("errorContainer", errorContainer),
-+    onErrorContainer = color("onErrorContainer", onErrorContainer),
-+    outline = color("outline", outline),
-+    outlineVariant = color("outlineVariant", outlineVariant),
-+    scrim = color("scrim", scrim),
-+    surfaceBright = color("surfaceBright", surfaceBright),
-+    surfaceDim = color("surfaceDim", surfaceDim),
-+    surfaceContainer = color("surfaceContainer", surfaceContainer),
-+    surfaceContainerHigh = color("surfaceContainerHigh", surfaceContainerHigh),
-+    surfaceContainerHighest = color("surfaceContainerHighest", surfaceContainerHighest),
-+    surfaceContainerLow = color("surfaceContainerLow", surfaceContainerLow),
-+    surfaceContainerLowest = color("surfaceContainerLowest", surfaceContainerLowest),
-+    primaryFixed = color("primaryFixed", primaryFixed),
-+    primaryFixedDim = color("primaryFixedDim", primaryFixedDim),
-+    onPrimaryFixed = color("onPrimaryFixed", onPrimaryFixed),
-+    onPrimaryFixedVariant = color("onPrimaryFixedVariant", onPrimaryFixedVariant),
-+    secondaryFixed = color("secondaryFixed", secondaryFixed),
-+    secondaryFixedDim = color("secondaryFixedDim", secondaryFixedDim),
-+    onSecondaryFixed = color("onSecondaryFixed", onSecondaryFixed),
-+    onSecondaryFixedVariant = color("onSecondaryFixedVariant", onSecondaryFixedVariant),
-+    tertiaryFixed = color("tertiaryFixed", tertiaryFixed),
-+    tertiaryFixedDim = color("tertiaryFixedDim", tertiaryFixedDim),
-+    onTertiaryFixed = color("onTertiaryFixed", onTertiaryFixed),
-+    onTertiaryFixedVariant = color("onTertiaryFixedVariant", onTertiaryFixedVariant)
-+  )
-+}
-```
-
-**File**: `packages/expo-ui/src/jetpack-compose/Host/__tests__/index.test.android.tsx` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+import { render } from '@testing-library/react-native';
-+import { Text } from 'react-native';
-+
-+import { Host } from '..';
-+import { type MaterialColors, useMaterialColors } from '../../colors';
-+
-+jest.mock('expo', () => {
-+  const { createElement } = require('react');
-+  const { View } = require('react-native');
-+  return {
-+    requireNativeModule: jest.fn(() => ({
-+      getMaterialColors: jest.fn(() => ({ primary: '#6750A4FF', surface: '#FEF7FFFF' })),
-+    })),
-+    requireNativeView: jest.fn(() => (props: any) => createElement(View, props)),
-+  };
++  importedExpect(screen).toHavePathname('/home');
++  importedExpect(screen).toHavePathnameWithParams('/home?test=true');
++  importedExpect(screen).toHaveSegments(['[slug]']);
++  importedExpect(screen).toHaveSearchParams({ slug: 'home', test: 'true' });
++  importedExpect(screen).not.toHaveRouterState(undefined);
++  importedExpect(screen).not.toHavePathname('/other');
++  await importedExpect(Promise.resolve(screen)).resolves.toHavePathname('/home');
 +});
 +
-+function Palette({ onRender }: { onRender?: (colors: MaterialColors) => void }) {
-+  const colors = useMaterialColors();
-+  onRender?.(colors);
-+  return <Text testID="palette">{`${colors.primary} ${colors.surface}`}</Text>;
-+}
-+
-+describe('Host', () => {
-+  it('applies colorOverrides on top of the palette it provides to descendants', async () => {
-+    const { getByTestId } = await render(
-+      <Host colorScheme="light" colorOverrides={{ primary: '#FF0000FF' }}>
-+        <Palette />
-+      </Host>
-+    );
-+
-+    expect(getByTestId('palette').props.children).toBe('#FF0000FF #FEF7FFFF');
-+  });
-+
-+  it('returns overrides in the #RRGGBBAA form of the other roles', async () => {
-+    const { getByTestId } = await render(
-+      <Host colorScheme="light" colorOverrides={{ primary: '#1e88e5', surface: '#f008' }}>
-+        <Palette />
-+      </Host>
-+    );
-+
-+    expect(getByTestId('palette').props.children).toBe('#1E88E5FF #FF000088');
-+  });
-+
-+  it('keeps the palette reference-stable when an equal inline object is passed again', async () => {
-+    const palettes: MaterialColors[] = [];
-+    const tree = () => (
-+      <Host colorScheme="light" colorOverrides={{ primary: '#FF0000FF' }}>
-+        <Palette onRender={(colors) => palettes.push(colors)} />
-+      </Host>
-+    );
-+    const { rerender } = await render(tree());
-+    await rerender(tree());
-+
-+    expect(palettes.length).toBeGreaterThan(1);
-+    expect(new Set(palettes).size).toBe(1);
-+  });
-+});
+ describe('toHavePathnameWithParams', () => {
+   it('correctly matches', async () => {
+     await renderRouter(['[slug]'], { initialUrl: '/home?test=true' });
 ```
 
-**File**: `packages/expo-ui/src/jetpack-compose/Host/index.tsx` (modified, +50/-4)
+**File**: `packages/expo-router/src/testing-library/expect.ts` (modified, +18/-0)
 ```diff
-@@ -6,13 +6,19 @@ import {
-   type StyleProp,
-   type ViewStyle,
-   I18nManager,
-+  processColor,
-   useColorScheme as useRNColorScheme,
- } from 'react-native';
- 
- import { NativeTreeContext, useWarnIfNestedHost } from '../../NativeTreeContext';
- import { TextInputHostProvider, useTextInputHostRef } from '../../keyboard';
- import { useMergeRefs } from '../../utils/useMergeRefs';
--import { getMaterialColors, HostPaletteContext } from '../colors';
-+import {
-+  getMaterialColors,
-+  HostPaletteContext,
-+  type MaterialColors,
-+  type RgbaHex,
-+} from '../colors';
- import { type PrimitiveBaseProps } from '../layout';
- 
- export interface HostProps extends PrimitiveBaseProps {
-@@ -52,6 +58,14 @@ export interface HostProps extends PrimitiveBaseProps {
-    */
-   seedColor?: ColorValue;
- 
-+  /**
-+   * Material 3 color roles that replace the matching roles of the palette from
-+   * `colorScheme` and `seedColor`. Roles you omit keep their palette value.
-+   * The overrides theme Compose children and are returned by `useMaterialColors()`
-+   * in the same `#RRGGBBAA` form as the other roles.
-+   */
-+  colorOverrides?: Partial<MaterialColors>;
-+
-   /**
-    * The layout direction for the content.
-    * Defaults to the current locale direction from I18nManager.
-@@ -93,6 +107,7 @@ export function Host(props: HostProps) {
-     layoutDirection,
-     colorScheme,
-     seedColor,
-+    colorOverrides,
-     ref,
-     children,
-     ...restProps
-@@ -101,10 +116,19 @@ export function Host(props: HostProps) {
- 
-   const systemScheme = useRNColorScheme();
-   const resolvedScheme = schemeString ?? (systemScheme === 'dark' ? 'dark' : 'light');
--  const palette = useMemo(
--    () => getMaterialColors({ scheme: resolvedScheme, seedColor }),
--    [resolvedScheme, seedColor]
-+  // Key on the normalized values, not the object, so an inline `colorOverrides` object keeps
-+  // the palette from `useMaterialColors()` reference-stable across re-renders.
-+  const overridesKey = colorOverrides
-+    ? JSON.stringify(normalizeColorOverrides(colorOverrides))
-+    : null;
-+  const normalizedOverrides = useMemo<Partial<MaterialColors> | undefined>(
-+    () => (overridesKey ? JSON.parse(overridesKey) : undefined),
-+    [overridesKey]
-   );
-+  const palette = useMemo(() => {
-+    const basePalette = getMaterialColors({ scheme: resolvedScheme, seedColor });
-+    return normalizedOverrides ? { ...basePalette, ...normalizedOverrides } : basePalette;
-+  }, [resolvedScheme, seedColor, normalizedOverrides]);
-   const hostRef = useTextInputHostRef();
-   const mergedRef = useMergeRefs(ref, hostRef);
-   useWarnIfNestedHost('Jetpack Compose');
-@@ -123,6 +147,7 @@ export function Host(props: HostProps) {
-           }
-           colorScheme={schemeString}
-           seedColor={seedColor}
-+          colorOverrides={normalizedOverrides}
-           onLayoutContent={onLayoutContent}
-           layoutDirection={
-             layoutDirection ?? (I18nManager.getConstants().isRTL ? 'rightToLeft' : 'leftToRight')
-@@ -134,3 +159,24 @@ export function Host(props: HostProps) {
-     </HostPaletteContext.Provider>
-   );
- }
-+
-+function normalizeColorOverrides(overrides: Partial<MaterialColors>): Partial<MaterialColors> {
-+  const normalized: Partial<MaterialColors> = {};
-+  for (const [role, color] of Object.entries(overrides) as [keyof MaterialColors, RgbaHex][]) {
-+    const hex = color != null ? toRgbaHex(color) : null;
-+    if (hex) {
-+      normalized[role] = hex;
-+    }
-+  }
-+  return normalized;
+@@ -1,3 +1,21 @@
++export interface RouterMatchers<R> {
++  toHavePathname(pathname: string): R;
++  toHavePathnameWithParams(pathname: string): R;
++  toHaveSegments(segments: string[]): R;
++  toHaveSearchParams(params: Record<string, string | string[]>): R;
++  toHaveRouterState(state: Record<string, unknown> | undefined): R;
 +}
 +
-+// `processColor` returns `0xAARRGGBB`; the palette uses `#RRGGBBAA` like native `toTokenMap()`.
-+function toRgbaHex(color: RgbaHex): RgbaHex | null {
-+  const argb = processColor(color);
-+  if (typeof argb !== 'number') {
-+    return null;
++declare global {
++  namespace jest {
++    interface Matchers<R> extends RouterMatchers<R> {}
 +  }
-+  const rgba = ((argb << 8) | (argb >>> 24)) >>> 0;
-+  return `#${rgba.toString(16).padStart(8, '0').toUpperCase()}`;
 +}
++
++declare module 'expect' {
++  interface Matchers<R extends void | Promise<void>> extends RouterMatchers<R> {}
++}
++
+ function printMatcherDiff(
+   context: jest.MatcherContext,
+   expected: unknown,
+```
+
+**File**: `packages/expo-router/src/ts-declarations/expect.d.ts` (removed, +0/-9)
+```diff
+@@ -1,9 +0,0 @@
+-declare namespace jest {
+-  interface Matchers<R, T = unknown> {
+-    toHavePathname(pathname: string): R;
+-    toHavePathnameWithParams(pathname: string): R;
+-    toHaveSegments(segments: string[]): R;
+-    toHaveSearchParams(params: Record<string, string | string[]>): R;
+-    toHaveRouterState(state: Record<string, unknown> | undefined): R;
+-  }
+-}
+```
+
+**File**: `pnpm-lock.yaml` (modified, +3/-0)
+```diff
+@@ -5808,6 +5808,9 @@ importers:
+       '@types/react-is':
+         specifier: ^19.0.0
+         version: 19.2.0
++      expect:
++        specifier: ^30.0.0
++        version: 30.5.2
+       expect-type:
+         specifier: ^1.3.0
+         version: 1.3.0
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #51875** (2026-10-20): [code-review] Bump the code review CLI to 0.18.0 (@brentvatne)
-- **PR #51860** (2026-10-19): [docs] Note that workflow update jobs can't publish to protected channels (@sarahlane8)
-- **PR #51854** (2026-10-19): [core][iOS] Fix a race between shared object release and pairing (@tsapeta)
-- **PR #51824** (2026-10-19): Version packages (main) (@github-actions[bot])
-- **PR #51823** (2026-10-19): [core] Publish all precompiled packages  (@alanjhughes)
-- **PR #51814** (2026-10-19): [router] Fix: Keep JS top tab bar inside horizontal safe area (@huntie)
+- **PR #52115** (closed): [ui][android] Keep the community BottomSheet host attached in a clipping list (@intergalacticspacehighway)
+- **PR #52113** (2026-10-23): [code-review] Update reviewer prompts for changesets, and pin the code they cite (@brentvatne)
+- **PR #52111** (2026-10-23): [code-review] Bump the code review CLI to 0.20.0 (@brentvatne)
+- **PR #52110** (2026-10-23): [ci] Run Linux jobs that aren't faster on Blacksmith on GitHub runners (@brentvatne)
+- **PR #52108** (2026-10-23): [ci] Skip iOS and e2e jobs on draft pull requests (@brentvatne)
+- **PR #52107** (2026-10-23): [ci] Pin ccache on macOS and drop unused applesimutils installs (@brentvatne)
 
 ---
 
@@ -1613,25 +1477,25 @@ form that native `toTokenMap()` returns, so `'#1E88E5'` comes back as
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ui][ios] Fix List.ForEach row modifiers and reordering with a render function (
+## X. [expo] Fall back to precompiled modules for buildFromSource patterns in the Swif
 
 **RULE**:
-When implementing operations in `.changeset/expo-ui-list-foreach-row-traits.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/expo-spm-build-from-source-fallback.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18cf8806`: [ui][ios] Fix List.ForEach row modifiers and reordering with a render function (#51704). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6deec18`: [expo] Fall back to precompiled modules for buildFromSource patterns in the SwiftPM plugin (#52073). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/expo-ui-list-foreach-row-traits.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/expo-spm-build-from-source-fallback.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-'@expo/ui': patch
+'expo': patch
 ---
 
-[iOS] Fix `List.ForEach` with `data` and a `children` render function. With recycling, `List` ignored the `moveDisabled` and `deleteDisabled` modifiers on a row. With `recycling={false}`, dragging a row did not reorder it or call `onMove`, and `onDelete` received the wrong index.
+[iOS] A `buildFromSource` pattern such as `".*"` no longer fails the SwiftPM sync when it matches a module that Swift Package Manager cannot build from source, `ExpoModulesCore` included: the plugin links that module precompiled and prints one warning naming it. An entry that names such a module exactly still fails the sync.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1641,4 +1505,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18cf8806` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6deec18` are properly handled with clean fallback behavior.

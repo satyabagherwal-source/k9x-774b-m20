@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-VYKY",
-    "timestamp": "2026-10-20T19:30:37.906Z",
-    "repository": "vuetifyjs/vuetify",
-    "learningId": "learn-github-vuetifyjs-vuetify",
-    "contentHash": "8b80dd84c1fa0e88f169ad2157481fe2c041b9dc59f33cdfa1e56227d5992ac0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-VZW3",
     "timestamp": "2026-10-20T19:30:39.603Z",
     "repository": "pola-rs/polars",
@@ -7490,6 +7475,21 @@
     "repository": "appwrite/appwrite",
     "learningId": "learn-github-appwrite-appwrite",
     "contentHash": "689785b47463c070e6777097be1d487417dc235527adf8357bf55cfb95572fc0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-RS5A",
+    "timestamp": "2026-10-23T06:42:34.174Z",
+    "repository": "expo/expo",
+    "learningId": "learn-github-expo-expo",
+    "contentHash": "76a90574f9442365d9ff70debc0d11c6cee02bf4d8572491a9374eba57f37f64",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

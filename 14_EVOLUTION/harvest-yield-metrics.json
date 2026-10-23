@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T06:36:22.410Z",
-  "total_cycles_completed": 4457,
-  "total_learnings_persisted": 4457,
-  "total_rules_promoted": 3644,
+  "last_updated": "2026-10-23T06:42:34.184Z",
+  "total_cycles_completed": 4458,
+  "total_learnings_persisted": 4458,
+  "total_rules_promoted": 3645,
   "history": [
-    {
-      "timestamp": "2026-10-21T19:12:25.507Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T15:22:11.926Z",
       "repository": "SolaceLabs/solace-agent-mesh",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-23T06:36:22.410Z",
       "repository": "appwrite/appwrite",
       "learningId": "learn-github-appwrite-appwrite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:42:34.184Z",
+      "repository": "expo/expo",
+      "learningId": "learn-github-expo-expo",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

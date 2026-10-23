@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T06:36:22.414Z",
+  "last_updated": "2026-10-23T06:42:34.187Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15516,14 +15516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-expo-expo",
-      "content_hash": "628de5b207d70f206ee61db0de8e5c633cff01f779baa3e5582467573f78e81b",
-      "verified_at": "2026-10-20T04:57:11.529Z",
+      "content_hash": "76a90574f9442365d9ff70debc0d11c6cee02bf4d8572491a9374eba57f37f64",
+      "verified_at": "2026-10-23T06:42:34.187Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T04:57:11.529Z"
+      "last_updated": "2026-10-23T06:42:34.187Z"
     },
     "vercel/swr": {
       "repository": "vercel/swr",

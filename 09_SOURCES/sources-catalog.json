@@ -10333,10 +10333,10 @@
     "repository": "expo/expo",
     "platform": "github",
     "sourceUrl": "https://github.com/expo/expo",
-    "sourceVersion": "9b01f312",
+    "sourceVersion": "55889d57",
     "license": "MIT",
-    "contentHash": "628de5b207d70f206ee61db0de8e5c633cff01f779baa3e5582467573f78e81b",
-    "lastHarvestedAt": "2026-10-20T04:57:11.522Z",
+    "contentHash": "76a90574f9442365d9ff70debc0d11c6cee02bf4d8572491a9374eba57f37f64",
+    "lastHarvestedAt": "2026-10-23T06:42:34.177Z",
     "learningId": "learn-github-expo-expo"
   },
   "vercel-swr": {

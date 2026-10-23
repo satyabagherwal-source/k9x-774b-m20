@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T06:36:22.327Z",
+  "last_updated": "2026-10-23T06:42:34.133Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10237,14 +10237,19 @@
       "slug": "expo-expo",
       "platform": "github",
       "source_url": "https://github.com/expo/expo",
-      "source_version": "9b01f312",
-      "content_hash": "628de5b207d70f206ee61db0de8e5c633cff01f779baa3e5582467573f78e81b",
+      "source_version": "55889d57",
+      "content_hash": "76a90574f9442365d9ff70debc0d11c6cee02bf4d8572491a9374eba57f37f64",
       "dossier_path": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "promoted_rules": [
         {
           "number": 3060,
           "title": "[ui][ios] Fix List.ForEach row modifiers and reordering with a render function (",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3793,
+          "title": "[expo] Fall back to precompiled modules for buildFromSource patterns in the Swif",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -10253,7 +10258,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:57:11.463Z",
+      "verified_at": "2026-10-23T06:42:34.124Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113098,6 +113103,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T06:36:22.321Z"
+    },
+    "rule-3793": {
+      "learning_id": "rule-3793",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3793,
+      "title": "[expo] Fall back to precompiled modules for buildFromSource patterns in the Swif",
+      "source_url": "https://github.com/expo/expo",
+      "source_version": "55889d57",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:42:34.124Z"
     }
   },
   "aliases": {
