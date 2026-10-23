@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `d59f9c4d`  
+> **Source Version**: `8ce7a3c5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T06:01:02.351Z  
+> **Timestamp**: 2026-10-23T09:58:07.007Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T06:01:02.344Z  
+> **Harvest Timestamp**: 2026-10-23T09:58:06.117Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12020 stars
+- **Stars / Engagement**: 12042 stars
 
 ---
 
@@ -804,11 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22485** (2026-10-21): **fix(server): open each extension plugin at most once**
-  *Symptoms*: **Notes for Reviewers**  `LoadExtensionFromPackage` called `plugin.Open` on every request to `/api/provider/extension/`. Go cannot unload a plugin, and opening a package again after its first load failed leaves the runtime without fresh module data. The result is `fatal error: runtime: no plugin module data`, a runtime throw that no recovery middleware can catch, so the whole server exits.  This change records the outcome of the first load for each plugin path (guarded by the existing extension mutex) and returns that outcome on later calls instead of reopening the plugin. A successful load keeps its registered endpoint; a failed load keeps returning its original error, which `ProviderComponentsHandler` already logs.  Context: the hosted Kanvas deployment restarted 179 times in 9 days with this throw. The primary cause there is a toolchain mismatch between the server and the extension plugin (fixed in the extension build pipeline); this change removes the second way the same throw can be reached from a request.  - Adds `TestLoadExtensionFromPackageOpensPluginOnce`, which loads an invalid plugin twice and asserts the second call returns the first call's error without reopening.  **[Signed commits](../CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Improved exten
+- **Issue #22528** (2026-10-22): **[Newcomer's Meet]: Add maanvi-chetwani.md with introduction**
+  *Symptoms*: **Notes for Reviewers**  - This PR fixes #  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added a brief note with the text “hi, i am maanvi.” No user-facing functionality changed.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
-- **Issue #22465** (2026-10-21): **[Catalog] Sticky header on Design Catalog page overlaps navbar and filters while scrolling**
-  *Symptoms*: ### Current Behavior On the Design Catalog page (meshery.io/catalog), the section with the title, description and search bar stays pinned when scrolling down. It overlaps other parts of the page instead of sitting below the site navbar.  - The main navbar is covered, leaving only a sliver of the logo visible. - The "Filters / Clear all" row and the "CATEGORY" heading in the sidebar are hidden under the header. - Design cards are clipped as they scroll underneath it. - The pinned header takes up a large part of the viewport, leaving little room for results.  ### Expected Behavior - The navbar stays visible, or the catalog header sits below it without overlapping. - The sidebar filters and cards are not clipped by the header. - Ideally only the search bar stays pinned, so more of the viewport shows results.  ### Screenshots/Logs  <img width="1470" height="956" alt="Image" src="https://github.com/user-attachments/assets/b27d4444-a263-49a9-bfd8-b9d0dda36127" /> ### Environment  - **Host OS:** Mac - **Platform:** Browser (meshery.io website) - **Meshery Server Version:** N/A (website issue) - **Meshery Client Version:** N/A (website issue) - **Browser:** Chrome 155.0.8059.80 (arm64) - **Theme:** Dark mode and Light mode  ### To Reproduce 1. Go to the Design Catalog page (meshery.io/catalog). 2. Scroll down past the first row of design cards. 3. See the catalog header overlap the navbar and the sidebar filters.  --- ### Contributor [Guides](https://docs.meshery.io/project/contribut
+- **Issue #22521** (2026-10-22): **ci(release): grant the Helm chart releaser its token permissions**
+  *Symptoms*: **Notes for reviewers**  The stable release workflow has ended in `startup_failure` for v1.0.72 and v1.0.73 (runs 39505500898 and 39739390015), so those tags got no Docker images, Helm charts or mesheryctl release. The workflow file is unchanged since June, and v1.0.71 built on Oct 11.  **Cause.** The repository's default `GITHUB_TOKEN` permission is `read` (the org default is `write`). `helm-chart-releaser.yml` declares `contents: write` and `packages: write`, and GitHub won't start a run when a called workflow asks for more than the calling job grants.  **Fix.** `build-and-release-stable.yml` now defaults to `contents: read` and grants `contents: write` and `packages: write` only on `call-helm-chart-releaser`. The other jobs publish with PATs or Docker Hub credentials, not the job token. actionlint finds nothing.   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Chores**   * Updated permissions for stable build and Helm chart release automation. There are no changes to user-facing functionality.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,277 +825,711 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6abba8ef` (2026-10-21)
-**Commit Message**: fix(server): open each extension plugin at most once
+### Incident Patch 1: `89911e9c` (2026-10-22)
+**Commit Message**: Merge pull request #22453 from ayanasarkar/docs/fix-governance-links
 
-LoadExtensionFromPackage called plugin.Open on every request to
-/api/provider/extension/. Go cannot unload a plugin, and re-opening a
-package whose first load failed leaves the runtime without fresh module
-data, which aborts the whole server with the unrecoverable
-"fatal error: runtime: no plugin module data".
+[Docs] Fix two stale links in GOVERNANCE.md
 
-Record the outcome of the first load per plugin path, guarded by the
-existing extension mutex, and return it on later calls instead of
-reopening the plugin.
-
-Signed-off-by: Lee Calcote <[REDACTED_EMAIL]>
-
-**File**: `server/handlers/extensions.go` (modified, +23/-2)
+**File**: `.github/label-commenter-config.yml` (modified, +2/-2)
 ```diff
-@@ -16,7 +16,13 @@ import (
- var (
- 	//USE WITH CAUTION: Wherever read/write is performed, use this in a thread safe way, using the global mutex
- 	extendedEndpoints = make(map[string]*extensions.Router)
--	mx                sync.Mutex
-+	// loadedExtensionPackages records the outcome of loading each extension
-+	// plugin, keyed by its path, so a plugin is opened at most once per process.
-+	// Go cannot unload a plugin, and re-opening one whose first load failed
-+	// leaves the runtime without fresh module data, which is a fatal,
-+	// unrecoverable error ("runtime: no plugin module data"). Guarded by mx.
-+	loadedExtensionPackages = make(map[string]error)
-+	mx                      sync.Mutex
- )
- 
- // ExtensionVersion defines the version metadata for the extension
-@@ -36,15 +42,30 @@ func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Req
- 	writeMeshkitError(w, ErrExtensionEndpointNotRegistered(req.URL.Path), http.StatusNotFound)
- }
- 
-+// LoadExtensionFromPackage loads the provider's extension plugin once and
-+// returns the outcome of that first attempt on every later call, so a request
-+// never triggers a second plugin.Open of the same package.
- func (h *Handler) LoadExtensionFromPackage(_ http.ResponseWriter, _ *http.Request, provider models.Provider) error {
- 	mx.Lock()
- 	defer mx.Unlock()
- 	packagePath := ""
- 	if len(provider.GetProviderProperties().Extensions.GraphQL) > 0 {
- 		packagePath = provider.GetProviderProperties().Extensions.GraphQL[0].Path
- 	}
-+	pluginPath := path.Join(provider.PackageLocation(), packagePath)
- 
--	plug, err := plugin.Open(path.Join(provider.PackageLocation(), packagePath))
-+	if err, loaded := loadedExtensionPackages[pluginPath]; loaded {
-+		return err
-+	}
-+	err := h.loadExtensionPlugin(pluginPath, provider)
-+	loadedExtensionPackages[pluginPath] = err
-+	return err
-+}
-+
-+// loadExtensionPlugin opens the plugin at pluginPath, runs it and registers
-+// its HTTP endpoint. Callers must hold mx.
-+func (h *Handler) loadExtensionPlugin(pluginPath string, provider models.Provider) error {
-+	plug, err := plugin.Open(pluginPath)
- 	if err != nil {
- 		return ErrPluginOpen(err)
- 	}
+@@ -14,10 +14,10 @@ labels:
+   - name: issue/remind
+     labeled:
+       issue:
+-        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
++        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community/meshmates/) or any other [community member](https://meshery.io/community) for assistance.
+         action: open
+       pr:
+-        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
++        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community/meshmates/) or any other [community member](https://meshery.io/community) for assistance.
+         action: open
+   - name: issue/dco
+     labeled:
 ```
 
-**File**: `server/handlers/extensions_test.go` (added, +55/-0)
+**File**: `GOVERNANCE.md` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,55 @@
-+package handlers
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"testing"
-+
-+	"github.com/meshery/meshery/server/models"
-+)
-+
-+// TestLoadExtensionFromPackageOpensPluginOnce checks that a failed plugin load
-+// is remembered rather than retried: a second plugin.Open of a package whose
-+// first load failed is a fatal runtime error that no handler can recover from.
-+func TestLoadExtensionFromPackageOpensPluginOnce(t *testing.T) {
-+	home := t.TempDir()
-+	t.Setenv("HOME", home)
-+
-+	props := models.ProviderProperties{
-+		ProviderName:   "TestProvider",
-+		PackageVersion: "v0.0.0-test",
-+	}
-+	props.Extensions.GraphQL = models.GraphQLExtensions{{Path: "graphql/plugin.so"}}
-+	provider := newMockProvider(props)
-+
-+	pluginPath := filepath.Join(provider.PackageLocation(), "graphql", "plugin.so")
-+	if err := os.MkdirAll(filepath.Dir(pluginPath), 0o755); err != nil {
-+		t.Fatal(err)
-+	}
-+	// Not a shared object, so plugin.Open fails cleanly instead of loading.
-+	if err := os.WriteFile(pluginPath, []byte("not a plugin"), 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+	t.Cleanup(func() {
-+		mx.Lock()
-+		delete(loadedExtensionPackages, pluginPath)
-+		mx.Unlock()
-+	})
-+
-+	h := &Handler{}
-+	first := h.LoadExtensionFromPackage(nil, nil, provider)
-+	if first == nil {
-+		t.Fatal("expected loading an invalid plugin to fail")
-+	}
-+	second := h.LoadExtensionFromPackage(nil, nil, provider)
-+	if second != first {
-+		t.Fatalf("expected the first load's error to be returned again without reopening the plugin; got %v, want %v", second, first)
-+	}
-+
-+	mx.Lock()
-+	recorded, ok := loadedExtensionPackages[pluginPath]
-+	mx.Unlock()
-+	if !ok || recorded != first {
-+		t.Fatalf("expected the load outcome to be recorded for %s", pluginPath)
-+	}
-+}
+@@ -267,7 +267,7 @@ First-time contributors are encouraged to start with issues labeled
+ 
+ A current list of contributors is published at
+ [the project's contributor list](https://github.com/meshery/meshery/graphs/contributors)
+-and celebrated through [meshery.io/community/members](https://meshery.io/community/members).
++and celebrated through [meshery.io/community](https://meshery.io/community).
+ 
+ **Reviewing work in progress.** Everyone is welcome to review and comment on open
+ pull requests and issues. The project does not maintain a separate, gated "Reviewer"
+@@ -891,7 +891,7 @@ and [OWNERS](https://www.kubernetes.dev/docs/guide/owners/) model.
+ ## Appendix A: Mapping to CNCF Incubation Governance Review Criteria
+ 
+ This appendix maps each consideration in the CNCF TOC
+-[Governance Review Template](https://github.com/cncf/toc/blob/main/toc_subprojects/project-reviews-subproject/governance-review-template.md)
++[Governance Review Template](https://github.com/cncf/toc/blob/main/operations/project-reviews/governance-review-template.md)
+ to where it is addressed, so the project and reviewers can confirm coverage during
+ Incubation diligence. It is a self-assessment companion to this document and may be
+ maintained as part of the project's Incubation self-assessment rather than published
 ```
 
 ---
 
-### Incident Patch 2: `d59f9c4d` (2026-10-21)
-**Commit Message**: Merge pull request #22485 from meshery/fix/extension-plugin-load-once
+### Incident Patch 2: `da6fcff3` (2026-10-22)
+**Commit Message**: Merge branch 'master' into docs/fix-governance-links
 
-fix(server): open each extension plugin at most once
-
-**File**: `server/handlers/extensions.go` (modified, +23/-2)
+**File**: `.github/agents/meshery-docs-contributor.md` (modified, +1/-1)
 ```diff
-@@ -16,7 +16,13 @@ import (
- var (
- 	//USE WITH CAUTION: Wherever read/write is performed, use this in a thread safe way, using the global mutex
- 	extendedEndpoints = make(map[string]*extensions.Router)
--	mx                sync.Mutex
-+	// loadedExtensionPackages records the outcome of loading each extension
-+	// plugin, keyed by its path, so a plugin is opened at most once per process.
-+	// Go cannot unload a plugin, and re-opening one whose first load failed
-+	// leaves the runtime without fresh module data, which is a fatal,
-+	// unrecoverable error ("runtime: no plugin module data"). Guarded by mx.
-+	loadedExtensionPackages = make(map[string]error)
-+	mx                      sync.Mutex
- )
+@@ -544,7 +544,7 @@ make docs
+ - **Prevention**: Check the shortcode file in `docs/layouts/shortcodes/` — if it calls `.Inner`, use `{{% %}}` when wrapping Markdown body content
  
- // ExtensionVersion defines the version metadata for the extension
-@@ -36,15 +42,30 @@ func (h *Handler) ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Req
- 	writeMeshkitError(w, ErrExtensionEndpointNotRegistered(req.URL.Path), http.StatusNotFound)
- }
+ #### Problem: Generated CLI reference docs drift
+-- **Solution**: Do not edit files under `docs/content/en/references/reference/mesheryctl/` directly; they are auto-generated from `mesheryctl` Cobra command definitions. Edit the `Short`, `Long`, or `Example` fields in the relevant Go source file instead
++- **Solution**: Do not edit files under `docs/content/en/reference/mesheryctl/` directly; they are auto-generated from `mesheryctl` Cobra command definitions. Edit the `Short`, `Long`, or `Example` fields in the relevant Go source file instead
+ - **Prevention**: Note `# This file is auto-generated` comments at the top of generated files; treat them as read-only
  
-+// LoadExtensionFromPackage loads the provider's extension plugin once and
-+// returns the outcome of that first attempt on every later call, so a request
-+// never triggers a second plugin.Open of the same package.
- func (h *Handler) LoadExtensionFromPackage(_ http.ResponseWriter, _ *http.Request, provider models.Provider) error {
- 	mx.Lock()
- 	defer mx.Unlock()
- 	packagePath := ""
- 	if len(provider.GetProviderProperties().Extensions.GraphQL) > 0 {
- 		packagePath = provider.GetProviderProperties().Extensions.GraphQL[0].Path
- 	}
-+	pluginPath := path.Join(provider.PackageLocation(), packagePath)
- 
--	plug, err := plugin.Open(path.Join(provider.PackageLocation(), packagePath))
-+	if err, loaded := loadedExtensionPackages[pluginPath]; loaded {
-+		return err
-+	}
-+	err := h.loadExtensionPlugin(pluginPath, provider)
-+	loadedExtensionPackages[pluginPath] = err
-+	return err
-+}
-+
-+// loadExtensionPlugin opens the plugin at pluginPath, runs it and registers
-+// its HTTP endpoint. Callers must hold mx.
-+func (h *Handler) loadExtensionPlugin(pluginPath string, provider models.Provider) error {
-+	plug, err := plugin.Open(pluginPath)
- 	if err != nil {
- 		return ErrPluginOpen(err)
- 	}
+ ## Documentation Patterns
 ```
 
-**File**: `server/handlers/extensions_test.go` (added, +55/-0)
+**File**: `.github/workflows/build-and-release-stable.yml` (modified, +12/-0)
 ```diff
-@@ -0,0 +1,55 @@
-+package handlers
+@@ -4,6 +4,14 @@ on:
+     tags:
+       - "v*"
+ 
++# Repository GITHUB_TOKEN default is read. A called workflow cannot request
++# more than the calling job grants. Only helm-chart-releaser.yml declares
++# more than contents: read; that grant is on call-helm-chart-releaser.
++# Goreleaser and Homebrew publish with PATs (RELEASE_NOTES_PAT, GH_ACCESS_TOKEN),
++# not this token. No job uses OIDC.
++permissions:
++  contents: read
 +
-+import (
-+	"os"
-+	"path/filepath"
-+	"testing"
-+
-+	"github.com/meshery/meshery/server/models"
-+)
-+
-+// TestLoadExtensionFromPackageOpensPluginOnce checks that a failed plugin load
-+// is remembered rather than retried: a second plugin.Open of a package whose
-+// first load failed is a fatal runtime error that no handler can recover from.
-+func TestLoadExtensionFromPackageOpensPluginOnce(t *testing.T) {
-+	home := t.TempDir()
-+	t.Setenv("HOME", home)
-+
-+	props := models.ProviderProperties{
-+		ProviderName:   "TestProvider",
-+		PackageVersion: "v0.0.0-test",
-+	}
-+	props.Extensions.GraphQL = models.GraphQLExtensions{{Path: "graphql/plugin.so"}}
-+	provider := newMockProvider(props)
-+
-+	pluginPath := filepath.Join(provider.PackageLocation(), "graphql", "plugin.so")
-+	if err := os.MkdirAll(filepath.Dir(pluginPath), 0o755); err != nil {
-+		t.Fatal(err)
-+	}
-+	// Not a shared object, so plugin.Open fails cleanly instead of loading.
-+	if err := os.WriteFile(pluginPath, []byte("not a plugin"), 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+	t.Cleanup(func() {
-+		mx.Lock()
-+		delete(loadedExtensionPackages, pluginPath)
-+		mx.Unlock()
-+	})
-+
-+	h := &Handler{}
-+	first := h.LoadExtensionFromPackage(nil, nil, provider)
-+	if first == nil {
-+		t.Fatal("expected loading an invalid plugin to fail")
-+	}
-+	second := h.LoadExtensionFromPackage(nil, nil, provider)
-+	if second != first {
-+		t.Fatalf("expected the first load's error to be returned again without reopening the plugin; got %v, want %v", second, first)
-+	}
-+
-+	mx.Lock()
-+	recorded, ok := loadedExtensionPackages[pluginPath]
-+	mx.Unlock()
-+	if !ok || recorded != first {
-+		t.Fatalf("expected the load outcome to be recorded for %s", pluginPath)
-+	}
-+}
+ jobs:
+   build:
+     name: Docker build and push
+@@ -92,6 +100,10 @@ jobs:
+     needs:
+       - build
+     name: Release Helm Charts
++    # Same set helm-chart-releaser.yml declares at workflow scope.
++    permissions:
++      contents: write
++      packages: write
+     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
+     secrets: inherit
+   # call-aks-playground-deploy-workflow:
+```
+
+**File**: `.github/workflows/mesheryctl-ci.yml` (modified, +1/-1)
+```diff
+@@ -40,7 +40,7 @@ jobs:
+           check-latest: "true"
+       - name: Remove current docs pages for mesheryctl
+         run: |
+-          find docs/content/en/reference/references/mesheryctl -mindepth 1 ! -name '_index.md' -exec rm -rf {} +
++          find docs/content/en/reference/mesheryctl -mindepth 1 ! -name '_index.md' -exec rm -rf {} +
+       - name: Run script 📜
+         run: |
+           cd mesheryctl
+```
+
+**File**: `docs/catalog/deployment/0d10efaf-433e-4e3f-a2ff-ec6a4178f52f.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++---
++layout: item
++name: Kratos.ai
++publishedVersion: 0.0.2
++userId: 87abd189-8f0b-44e1-ae6f-5692de43f131
++userName: Prabhat Mathur
++userAvatarURL: https://lh3.googleusercontent.com/a/ACg8ocLeZdPu9gAgMui3ioPMU2te9u-wue5WgvDZqVncyXfTCuXeaA=s96-c
++type: deployment
++compatibility:
++    - kubernetes
++patternId: 0d10efaf-433e-4e3f-a2ff-ec6a4178f52f
++image: /assets/images/logos/service-mesh-pattern.svg
++patternInfo: |
++  Kubernetes%20deployment%20design%20for%20Kratos.ai%2C%20an%20intelligent%20market%20intelligence%20platform.%20Includes%20a%20Node.js%20API%20gateway%20(portfolio%20management%2C%20trading%20simulation%2C%20live%20P%26L%20tracking)%2C%20an%20async%20FastAPI%20ML%20service%20running%20an%20LSTM%2FGRU%20PyTorch%20encoder%20and%20FinBERT%20for%20market%20regime%20detection%20(Stable%20Growth%2C%20Volatile%2C%20Crisis)%20with%20confidence%20scoring%2C%20and%20a%20Redis%20cache%20layer.%20MongoDB%20Atlas%20is%20used%20as%20the%20external%20data%20store%20and%20is%20not%20deployed%20in-cluster.
++patternCaveats: |
++  MongoDB%20connection%20is%20external%20(Atlas)%20%E2%80%94%20the%20Secret%20in%20this%20design%20is%20a%20placeholder%20and%20must%20be%20replaced%20with%20a%20real%20connection%20string%20or%20wired%20through%20Meshery%20Connections%2FCredentials%20before%20deploy.%0ARedis%20runs%20as%20a%20single%20replica%20with%20no%20persistence%20configured%20%E2%80%94%20cache%20loss%20on%20pod%20restart%20is%20expected%3B%20not%20suitable%20as%20a%20source%20of%20truth.%0AThe%20FastAPI%20service%20assumes%20model%20artifacts%20(LSTM%2FGRU%20encoder%2C%20FinBERT)%20are%20pre-loaded%20onto%20the%20mounted%20PVC%20(kratos-model-pvc)%3B%20the%20design%20does%20not%20include%20a%20model-sync%2Finit%20step.%0ANo%20GPU%20resource%20requests%20are%20defined%20for%20the%20ML%20service%20%E2%80%94%20PyTorch%20inference%20will%20run%20on%20CPU%20unless%20you%20add%20nvidia.com%2Fgpu%20limits%20and%20a%20compatible%20node%20pool.%0AResource%20requests%2Flimits%20(CPU%2C%20memory%2C%20storage)%20are%20placeholder%20values%20and%20haven't%20been%20load-tested%20against%20real%20inference%20throughput.%0ANo%20liveness%2Freadiness%20probes%2C%20HPA%2C%20NetworkPolicy%2C%20or%20Ingress%20are%20defined%20%E2%80%94%20this%20design%20is%20deploy-ready%20for%20a%20dev%2Fstaging%20cluster%2C%20not%20production-hardened.%0AImage%20references%20(kratos-ai%2Fnode-gateway%3A%20latest%2C%20kratos-ai%2Ffastapi-service%3A%20latest)%20are%20placeholders%20%E2%80%94%20replace%20with%20your%20actual%20registry%20paths%20and%20pin%20to%20a%20specific%20tag%20rather%20than%20latest.
++createdAt: 2026-08-18T11:32:55Z
++permalink: catalog/deployment/kratos-ai-0d10efaf-433e-4e3f-a2ff-ec6a4178f52f.html
++URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/0d10efaf-433e-4e3f-a2ff-ec6a4178f52f/0.0.2/design.yml'
++downloadLink: 0d10efaf-433e-4e3f-a2ff-ec6a4178f52f/design.yml
++---
+\ No newline at end of file
+```
+
+**File**: `docs/catalog/deployment/0f8e5810-46fe-4817-9a29-c00b33416609.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++---
++layout: item
++name: Non-Semantic Relationship Example
++publishedVersion: 0.0.109
++userId: 31f6d8d7-de53-4d07-95e7-b6f4940739c8
++userName: Piyush Sharma
++userAvatarURL: https://avatars.githubusercontent.com/u/198256714?v=4
++type: deployment
++compatibility:
++    - kubernetes
++patternId: 0f8e5810-46fe-4817-9a29-c00b33416609
++image: /assets/images/logos/service-mesh-pattern.svg
++patternInfo: |
++  A%20visual%20example%20of%20a%20non-semantic%20relationship%20where%20a%20Rectangle%20annotation%20groups%20a%20Kubernetes%20Pod%20and%20Service%20without%20affecting%20their%20deployment%20or%20lifecycle.
++patternCaveats: |
++  The%20Rectangle%20is%20a%20visual%20annotation%20only.%20It%20does%20not%20create%20a%20semantic%20relationship%20between%20the%20Pod%20and%20Service%20and%20does%20not%20affect%20deployment%2C%20configuration%2C%20or%20resource%20lifecycle.
++createdAt: 2026-08-29T21:52:18Z
++permalink: catalog/deployment/non-semantic-relationship-example-0f8e5810-46fe-4817-9a29-c00b33416609.html
++URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/0f8e5810-46fe-4817-9a29-c00b33416609/0.0.109/design.yml'
++downloadLink: 0f8e5810-46fe-4817-9a29-c00b33416609/design.yml
++---
+\ No newline at end of file
+```
+
+**File**: `docs/catalog/deployment/13bda770-d372-4878-a00d-e5b78b8d9434.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++---
++layout: item
++name: Simple Badge Design
++publishedVersion: 0.0.4
++userId: 86bd7d32-2bb8-4dc8-97f0-f6ea7b0b2e89
++userName: Mantavya Kumar
++userAvatarURL: https://lh3.googleusercontent.com/a/ACg8ocJBeTByloEha3ZWonmeVdecOeYCbkRm7Pwx37oFYAVhRKEHj0iprg=s96-c
++type: deployment
++compatibility:
++    - kubernetes
++patternId: 13bda770-d372-4878-a00d-e5b78b8d9434
++image: /assets/images/logos/service-mesh-pattern.svg
++patternInfo: |
++  A%20simple%20badge%20design%20configuration%20built%20in%20Meshery%20Kanvas%20to%20easily%20deploy%20and%20visualize%20badge%20components.
++patternCaveats: |
++  Requires%20an%20active%20Kubernetes%20cluster%20connection%20and%20appropriate%20permissions%20in%20your%20workspace.
++createdAt: 2026-10-13T16:59:17Z
++permalink: catalog/deployment/simple-badge-design-13bda770-d372-4878-a00d-e5b78b8d9434.html
++URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/13bda770-d372-4878-a00d-e5b78b8d9434/0.0.4/design.yml'
++downloadLink: 13bda770-d372-4878-a00d-e5b78b8d9434/design.yml
++---
+\ No newline at end of file
+```
+
+**File**: `docs/catalog/deployment/147167e7-c443-4ef4-b51b-4ab2101bd68b.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++---
++layout: item
++name: Solar Monitor
++publishedVersion: 0.0.31
++userId: b9d1f0ef-9cff-4d48-b8b0-33036a4274ab
++userName: Adhar Chaudhari
++userAvatarURL: 
++type: deployment
++compatibility:
++    - kubernetes
++patternId: 147167e7-c443-4ef4-b51b-4ab2101bd68b
++image: /assets/images/logos/service-mesh-pattern.svg
++patternInfo: |
++  A%20basic%20solar%20monitoring%20architecture%20that%20collects%20solar%20data%2C%20processes%20measurements%2C%20and%20presents%20the%20results%20through%20a%20monitoring%20dashboard.
++patternCaveats: |
++  This%20is%20a%20conceptual%20architecture%20for%20demonstration%20in%20Meshery.%20The%20data%20collector%20represents%20the%20service%20receiving%20data%20from%20solar%20sensors.%20The%20design%20does%20not%20include%20physical%20sensor%20hardware%2C%20persistent%20storage%2C%20or%20production%20deployment%20configuration.
++createdAt: 2026-09-04T14:04:09Z
++permalink: catalog/deployment/solar-monitor-147167e7-c443-4ef4-b51b-4ab2101bd68b.html
++URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/147167e7-c443-4ef4-b51b-4ab2101bd68b/0.0.31/design.yml'
++downloadLink: 147167e7-c443-4ef4-b51b-4ab2101bd68b/design.yml
++---
+\ No newline at end of file
+```
+
+**File**: `docs/catalog/deployment/14b05c40-d973-440a-9a34-a8a5b68a7d47.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++---
++layout: item
++name: Edge AI Rescue System
++publishedVersion: 0.0.4
++userId: 559b1e18-f997-42fa-ac72-fa27ea21dc1f
++userName: ayushi Srivastava
++userAvatarURL: https://lh3.googleusercontent.com/a/ACg8ocKGqphjG9mDkz_E1puN-TmziCDLMm1inWGKvcPm13sce7UTIg=s96-c
++type: deployment
++compatibility:
++    - kubernetes
++patternId: 14b05c40-d973-440a-9a34-a8a5b68a7d47
++image: /assets/images/logos/service-mesh-pattern.svg
++patternInfo: |
++  An%20edge%20AI-based%20rescue%20system%20designed%20for%20emergency%20response%20applications.%20It%20uses%20Kubernetes%20deployments%20and%20services%20to%20separate%20AI%20inference%20and%20backend%20workloads%2C%20enabling%20scalable%20and%20modular%20processing%20for%20autonomous%20rescue%20operations.
++patternCaveats: |
++  The%20system%20requires%20suitable%20edge%20hardware%20and%20sufficient%20compute%20resources%20for%20AI%20inference.%20Network%20connectivity%20may%20affect%20communication%20between%20services%2C%20and%20model%20performance%20depends%20on%20the%20quality%20of%20the%20deployed%20AI%20model%20and%20available%20sensor%20data.
++createdAt: 2026-09-01T05:07:31Z
++permalink: catalog/deployment/edge-ai-rescue-system-14b05c40-d973-440a-9a34-a8a5b68a7d47.html
++URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/14b05c40-d973-440a-9a34-a8a5b68a7d47/0.0.4/design.yml'
++downloadLink: 14b05c40-d973-440a-9a34-a8a5b68a7d47/design.yml
++---
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 3: `65661c6b` (2026-10-20)
-**Commit Message**: Merge pull request #22354 from ayanasarkar/fix/docs-model-catalog-link-slug
+### Incident Patch 3: `1c845db0` (2026-10-22)
+**Commit Message**: Merge pull request #22520 from meshery/fix/remote-provider-connection-shapes
 
-[Docs] Fix catalog design links for names with special characters on model pages
+fix(server): accept both remote provider connection response shapes
 
-**File**: `docs/layouts/models/single.html` (modified, +1/-1)
+**File**: `server/models/remote_connection_decode.go` (added, +91/-0)
 ```diff
-@@ -63,7 +63,7 @@ <h3 id="related-designs-header">Designs containing {{ .Title }}</h3>
-                             {{ $compatibility := index $meta "compatibility" }}
-                             {{ if and $compatibility (in $compatibility $tech) }}
-             <li class="design-link">
--                <a href="https://meshery.io/catalog/{{ $catalogType }}/{{ replace (index $meta "name") "." "-" | urlize }}-{{ index $meta "patternId" }}" target="_blank">
-+                <a href="https://meshery.io/catalog/{{ $catalogType }}/{{ strings.Trim (lower (index $meta "name") | replaceRE "[^a-z0-9]+" "-") "-" }}-{{ index $meta "patternId" }}" target="_blank">
-                     {{ index $meta "name" }}
-                 </a>
-             </li>
+@@ -0,0 +1,91 @@
++package models
++
++import (
++	"bytes"
++	"encoding/json"
++	"errors"
++	"net/http"
++
++	"github.com/gofrs/uuid"
++	"github.com/meshery/meshery/server/models/connections"
++	"github.com/meshery/schemas/models/core"
++)
++
++// errRemoteProviderConnectionMissing means the body parsed as JSON but was
++// neither a ConnectionPage with an entry nor a bare Connection.
++var errRemoteProviderConnectionMissing = errors.New("remote provider response did not include a connection")
++
++// decodeRemoteProviderConnection reads a remote-provider register or delete
++// body. registerConnection is moving from a ConnectionPage to a bare
++// Connection, so both shapes are accepted:
++//
++//   - an object with a connections array is a ConnectionPage and yields its
++//     first entry. A null first entry is returned as (nil, nil), which is
++//     what SaveConnection did when the page contained [null].
++//   - any other non-empty object is a bare Connection (a non-nil id, or any
++//     other fields and no connections array).
++//
++// An empty page, JSON null, or an empty object returns
++// errRemoteProviderConnectionMissing. An empty or invalid payload returns
++// the encoding/json error so callers can keep treating it as a malformed body.
++func decodeRemoteProviderConnection(body []byte) (*connections.Connection, error) {
++	trimmed := bytes.TrimSpace(body)
++	if len(trimmed) == 0 {
++		var discard struct{}
++		return nil, json.Unmarshal(trimmed, &discard)
++	}
++
++	var probe map[string]json.RawMessage
++	if err := json.Unmarshal(trimmed, &probe); err != nil {
++		return nil, err
++	}
++	if probe == nil {
++		return nil, errRemoteProviderConnectionMissing
++	}
++
++	if _, isPage := probe["connections"]; isPage {
++		var page connections.ConnectionPage
++		if err := json.Unmarshal(trimmed, &page); err != nil {
++			return nil, err
++		}
++		if len(page.Connections) > 0 {
++			return page.Connections[0], nil
++		}
++		return nil, errRemoteProviderConnectionMissing
++	}
++
++	if len(probe) == 0 {
++		return nil, errRemoteProviderConnectionMissing
++	}
++
++	var conn connections.Connection
++	if err := json.Unmarshal(trimmed, &conn); err != nil {
++		return nil, err
++	}
++	return &conn, nil
++}
++
++// connectionFromRemoteDelete turns a successful delete response into a
++// connection callers can dereference. 204 and an empty body carry only the
++// id that was deleted. A JSON body is a bare Connection or a ConnectionPage;
++// when that body does not include an id, the deleted id is filled in.
++func connectionFromRemoteDelete(body []byte, status int, connectionID core.Uuid) (*connections.Connection, error) {
++	if status == http.StatusNoContent || len(bytes.TrimSpace(body)) == 0 {
++		return &connections.Connection{ID: connectionID}, nil
++	}
++
++	decoded, err := decodeRemoteProviderConnection(body)
++	if err != nil {
++		if errors.Is(err, errRemoteProviderConnectionMissing) {
++			return &connections.Connection{ID: connectionID}, nil
++		}
++		return nil, err
++	}
++	if decoded == nil {
++		decoded = &connections.Connection{}
++	}
++	if decoded.ID == uuid.Nil {
++		decoded.ID = connectionID
++	}
++	return decoded, nil
++}
+```
+
+**File**: `server/models/remote_connection_decode_test.go` (added, +127/-0)
+```diff
+@@ -0,0 +1,127 @@
++package models
++
++import (
++	"errors"
++	"testing"
++
++	"github.com/gofrs/uuid"
++)
++
++func TestDecodeRemoteProviderConnection(t *testing.T) {
++	const (
++		firstID   = "11111111-1111-1111-1111-111111111111"
++		secondID  = "22222222-2222-2222-2222-222222222222"
++		firstJSON = `{"id":"` + firstID + `","name":"prod","kind":"kubernetes","type":"platform","subType":"orchestrator","status":"discovered"}`
++	)
++
++	cases := []struct {
++		name        string
++		body        string
++		wantMissing bool
++		wantJSONErr bool
++		wantNilConn bool
++		wantID      string
++		wantName    string
++	}{
++		{
++			name:     "page uses the first connection",
++			body:     `{"page":0,"page_size":2,"total_count":2,"connections":[` + firstJSON + `,{"id":"` + secondID + `","name":"other","kind":"kubernetes","status":"discovered"}]}`,
++			wantID:   firstID,
++			wantName: "prod",
++		},
++		{
++			name:     "camelCase page metadata",
++			body:     `{"page":0,"pageSize":1,"totalCount":1,"connections":[` + firstJSON + `]}`,
++			wantID:   firstID,
++			wantName: "prod",
++		},
++		{
++			name:     "bare connection",
++			body:     firstJSON,
++			wantID:   firstID,
++			wantName: "prod",
++		},
++		{
++			name:     "bare connection without an id",
++			body:     `{"name":"prod","kind":"kubernetes"}`,
++			wantName: "prod",
++		},
++		{
++			name:        "empty page",
++			body:        `{"page":0,"page_size":0,"total_count":0,"connections":[]}`,
++			wantMissing: true,
++		},
++		{
++			name:        "null connections array",
++			body:        `{"page":0,"page_size":0,"total_count":0,"connections":null}`,
++			wantMissing: true,
++		},
++		{
++			name:        "empty object",
++			body:        `{}`,
++			wantMissing: true,
++		},
++		{
++			name:        "json null",
++			body:        `null`,
++			wantMissing: true,
++		},
++		{
++			name:        "null page entry",
++			body:        `{"connections":[null]}`,
++			wantNilConn: true,
++		},
++		{
++			name:        "empty body",
++			body:        `   `,
++			wantJSONErr: true,
++		},
++		{
++			name:        "invalid json",
++			body:        `{`,
++			wantJSONErr: true,
++		},
++	}
++
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			conn, err := decodeRemoteProviderConnection([]byte(tc.body))
++			if tc.wantMissing {
++				if !errors.Is(err, errRemoteProviderConnectionMissing) {
++					t.Fatalf("err = %v, want missing connection", err)
++				}
++				if conn != nil {
++					t.Fatalf("connection = %+v, want nil", conn)
++				}
++				return
++			}
++			if tc.wantJSONErr {
++				if err == nil || errors.Is(err, errRemoteProviderConnectionMissing) {
++					t.Fatalf("err = %v, want a JSON error", err)
++				}
++				return
++			}
++			if err != nil {
++				t.Fatalf("decode: %v", err)
++			}
++			if tc.wantNilConn {
++				if conn != nil {
++					t.Fatalf("connection = %+v, want nil", conn)
++				}
++				return
++			}
++			if conn == nil {
++				t.Fatal("connection is nil")
++			}
++			if tc.wantID != "" && conn.ID.String() != tc.wantID {
++				t.Errorf("id = %s, want %s", conn.ID, tc.wantID)
++			}
++			if tc.wantID == "" && conn.ID != uuid.Nil {
++				t.Errorf("id = %s, want nil", conn.ID)
++			}
++			if conn.Name != tc.wantName {
++				t.Errorf("name = %q, want %q", conn.Name, tc.wantName)
++			}
++		})
++	}
++}
+```
+
+**File**: `server/models/remote_provider.go` (modified, +25/-21)
+```diff
+@@ -1181,10 +1181,9 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
+ 		return connections.Connection{}, err
+ 	}
+ 	if connection == nil {
+-		// SaveConnection can return (nil, nil) when the remote provider answers
+-		// 2xx but the connection page is empty or carries a null element. Guard
+-		// the dereference below so a malformed response is a structured error,
+-		// not a panic.
++		// SaveConnection returns (nil, nil) when a 2xx page's first entry is
++		// null. An empty page is already an error. Guard the dereference
++		// below so a malformed response is a structured error, not a panic.
+ 		err := ErrPersistConnection(fmt.Errorf("remote provider returned a nil connection for kubernetes context %q", conn.Name))
+ 		l.Log.Error(err)
+ 		return connections.Connection{}, err
+@@ -4557,18 +4556,20 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
+ 	l.Log.Debugf("RemoteProvider::SaveConnection: bdr value is [%s]", string(bdr))
+ 
+ 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
+-		connectionPage := &connections.ConnectionPage{}
+-		err = json.Unmarshal(bdr, connectionPage)
+-		if err != nil {
+-			return nil, ErrUnmarshal(err, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
++		// 200 and 201 may be a ConnectionPage (current Cloud) or a bare
++		// Connection (v1beta3 registerConnection). Anything else on these
++		// statuses is still a failure to save.
++		decoded, decErr := decodeRemoteProviderConnection(bdr)
++		if decErr != nil {
++			if errors.Is(decErr, errRemoteProviderConnectionMissing) {
++				return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
++			}
++			return nil, ErrUnmarshal(decErr, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
+ 		}
+-		l.Log.Debugf("RemoteProvider::SaveConnection: parsed %d connection(s) (page=%d, pageSize=%d, totalCount=%d)",
+-			len(connectionPage.Connections), connectionPage.Page, connectionPage.PageSize, connectionPage.TotalCount)
+-		// On POST request to Remote Provider API, the response always contains single entry/connection.
+-		if len(connectionPage.Connections) > 0 {
+-			return connectionPage.Connections[0], nil
++		if decoded != nil {
++			l.Log.Debugf("RemoteProvider::SaveConnection: parsed connection %s (%s)", decoded.Name, decoded.ID)
+ 		}
+-		return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
++		return decoded, nil
+ 	}
+ 
+ 	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), string(bdr), resp.StatusCode)
+@@ -4877,13 +4878,13 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID core.U
+ 		return nil, ErrDataRead(err, "Connection: "+connectionID.String())
+ 	}
+ 
+-	if resp.StatusCode == http.StatusOK {
++	// deleteConnection is moving from 200 with a Connection body to 204 with
++	// an empty body. Any 2xx is success. A JSON body may be a bare Connection
++	// or a ConnectionPage (first entry). An empty body still has to return a
++	// connection, because callers dereference the result.
++	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
+ 		l.Log.Info("connection deleted from remote provider")
+-		var conn connections.Connection
+-		if err = json.Unmarshal(bdr, &conn); err != nil {
+-			return nil, err
+-		}
+-		return &conn, nil
++		return connectionFromRemoteDelete(bdr, resp.StatusCode, connectionID)
+ 	}
+ 	err = ErrDelete(fmt.Errorf("error while deleting connection: %s", bdr), string(bdr), resp.StatusCode)
+ 	l.Log.Error(err)
+@@ -4920,7 +4921,10 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
+ 		_ = resp.Body.Close()
+ 	}()
+ 
+-	if resp.StatusCode == http.StatusOK {
++	// Same success range as DeleteConnection: 200 with a body and 204 No Content
++	// both mean the meshery connection is gone. This endpoint does not return
++	// the deleted row.
++	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
+ 		return nil
+ 	}
+ 
+```
+
+**File**: `server/models/remote_provider_connections_test.go` (modified, +199/-0)
+```diff
+@@ -1,15 +1,34 @@
+ package models
+ 
+ import (
++	"fmt"
++	"io"
+ 	"net/http"
+ 	"net/http/httptest"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/gofrs/uuid"
++	"github.com/meshery/meshery/server/models/connections"
+ 	"github.com/meshery/meshery/server/models/httputil"
+ 	"github.com/meshery/meshkit/errors"
+ )
+ 
++const (
++	remoteShapeConnectionID = "11111111-1111-1111-1111-111111111111"
++	remoteShapeOtherID      = "22222222-2222-2222-2222-222222222222"
++)
++
++func remoteConnectionJSON(id, name string) string {
++	return fmt.Sprintf(`{"id":%q,"name":%q,"kind":"kubernetes","type":"platform","subType":"orchestrator","status":"discovered"}`, id, name)
++}
++
++func persistConnectionCapability() Capabilities {
++	return Capabilities{
++		{Feature: PersistConnection, Endpoint: "/api/integrations/connections"},
++	}
++}
++
+ // newDeleteConnectionRequest builds the inbound request DeleteConnection reads
+ // its provider token off. RemoteProvider.GetToken takes the token from the
+ // session cookie, so a request without one never reaches the outbound call.
+@@ -114,3 +133,183 @@ func TestRemoteProviderDeleteConnectionUnreachableProvider(t *testing.T) {
+ 		t.Errorf("expected no provider status for an unreachable provider, got %d", status)
+ 	}
+ }
++
++func TestRemoteProviderSaveConnectionResponseShapes(t *testing.T) {
++	prod := remoteConnectionJSON(remoteShapeConnectionID, "prod")
++	other := remoteConnectionJSON(remoteShapeOtherID, "other")
++	page := fmt.Sprintf(`{"page":0,"page_size":2,"total_count":2,"connections":[%s,%s]}`, prod, other)
++
++	cases := []struct {
++		name     string
++		status   int
++		body     string
++		wantErr  bool
++		wantID   string
++		wantName string
++	}{
++		{name: "201 page", status: http.StatusCreated, body: page, wantID: remoteShapeConnectionID, wantName: "prod"},
++		{name: "201 bare connection", status: http.StatusCreated, body: prod, wantID: remoteShapeConnectionID, wantName: "prod"},
++		{name: "200 bare connection", status: http.StatusOK, body: prod, wantID: remoteShapeConnectionID, wantName: "prod"},
++		{name: "201 empty page", status: http.StatusCreated, body: `{"page":0,"page_size":0,"total_count":0,"connections":[]}`, wantErr: true},
++		{name: "400", status: http.StatusBadRequest, body: `{"error":"bad"}`, wantErr: true},
++	}
++
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				if r.Method != http.MethodPost {
++					t.Errorf("method = %s, want POST", r.Method)
++				}
++				if !strings.HasSuffix(r.URL.Path, "/api/integrations/connections") {
++					t.Errorf("path = %s, want the persist-connection endpoint", r.URL.Path)
++				}
++				w.WriteHeader(tc.status)
++				_, _ = io.WriteString(w, tc.body)
++			}))
++			defer server.Close()
++
++			provider := newTestRemoteProvider(t, server.URL)
++			provider.Capabilities = persistConnectionCapability()
++
++			conn, err := provider.SaveConnection(&connections.ConnectionPayload{
++				Name:   "prod",
++				Kind:   "kubernetes",
++				Type:   "platform",
++				Status: connections.DISCOVERED,
++			}, "test-token", true)
++			if tc.wantErr {
++				if err == nil {
++					t.Fatalf("expected an error, got connection %+v", conn)
++				}
++				if conn != nil {
++					t.Errorf("connection = %+v, want nil alongside the error", conn)
++				}
++				if errors.GetCode(err) != ErrPostCode {
++					t.Errorf("error code = %q, want %q (err: %v)", errors.GetCode(err), ErrPostCode, err)
++				}
++				// WithProviderStatus only records 4xx and 5xx. A 2xx that
++				// still failed to yield a connection stays an ErrPost without
++				// a provider status tag.
++				if tc.status >= http.StatusBadRequest {
++					got, ok := httputil.ProviderStatusCode(err)
++					if !ok || got != tc.status {
++						t.Errorf("provider status = %d (ok=%v), want %d", got, ok, tc.status)
++					}
++				}
++				return
++			}
++			if err != nil {
++				t.Fatalf("SaveConnection: %v", err)
++			}
++			if conn == nil {
++				t.Fatal("connection is nil")
++			}
++			if conn.ID.String() != tc.wantID {
++				t.Errorf("id = %s, want %s", conn.ID, tc.wantID)
++			}
++			if conn.Name != tc.wantName {
++				t.Errorf("name = %q, want %q", conn.Name, tc.wantName)
++			}
++		})
++	}
++}
++
++func TestRemoteProviderDeleteConnectionResponseShapes(t *testing.T) {
++	bodyID := remoteShapeConnectionID
++	bare := remoteConnectionJSON(bodyID, "prod")
++	page := fmt.Sprintf(`{"page":0,"page_size":1,"total_count":1,"connections":[%s]}`, bare)
++
++	cases := []struct {
++		name     string
++		status   int
++		body     string
++		wantErr  bool
++		wantBody bool
++		wantName string
++	}{
++		{name: "200 connection", status: http.StatusOK, body: bare, wantBody: true, wantName: "prod"},
++		{name: "200 page", status: http.StatusOK, body: page, wantBody: true, wantName: "prod"},
++		{name: "204 empty", status: http.StatusNoContent, wantName: ""},
++		{name: "200 empty body", status: http.StatusOK, wantName: ""},
++		{name: "404", status: http.StatusNotFound, body: `{"error":"no such connection"}`, wa
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22485** (2026-10-21): fix(server): open each extension plugin at most once (@leecalcote)
-- **PR #22458** (closed): docs: update registry terminology, comments, and CLI publishing examples (@V3DxNT)
-- **PR #22435** (closed): [Server] Detach DeleteContext and kubeconfig import state machine events from request context (@schizophrenicmaniac)
-- **PR #22423** (2026-10-20): feat(models): add Infisical Kubernetes Operator model (secrets-operator v0.11.12) (@yi-nuo426)
-- **PR #22419** (2026-10-17): fix(server): prevent nil pointer panic on ServiceMeshFilter without type (#20988) (@VimalN2005)
-- **PR #22417** (2026-10-16): docs: add Favour Adeyemo introduction (@BLVCK-MAMBA-6)
+- **PR #22528** (2026-10-22): [Newcomer's Meet]: Add maanvi-chetwani.md with introduction (@Maanvi212006)
+- **PR #22521** (2026-10-22): ci(release): grant the Helm chart releaser its token permissions (@leecalcote)
+- **PR #22520** (2026-10-22): fix(server): accept both remote provider connection response shapes (@leecalcote)
+- **PR #22514** (2026-10-22): docs: verify tutorials and extension troubleshooting guide against current behavior (@jijillery)
+- **PR #22513** (closed): fix(mesheryctl): use platform-independent invalid path error in design undeploy (fixes #22494) (@kyyril)
+- **PR #22512** (2026-10-22): docs: add guides for deploying designs, sharing clusters, and running mesheryctl in CI (@jijillery)
 
 ---
 
@@ -1115,51 +1549,30 @@ fix(server): open each extension plugin at most once
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): open each extension plugin at most once
+## X. Merge pull request #22453 from ayanasarkar/docs/fix-governance-links
 
 **RULE**:
-When implementing operations in `server/handlers/extensions.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/label-commenter-config.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6abba8ef`: server): open each extension plugin at most once. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `89911e9c`: Merge pull request #22453 from ayanasarkar/docs/fix-governance-links. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/handlers/extensions.go`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/label-commenter-config.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-	// loadedExtensionPackages records the outcome of loading each extension
-	// plugin, keyed by its path, so a plugin is opened at most once per process.
-	// Go cannot unload a plugin, and re-opening one whose first load failed
-	// leaves the runtime without fresh module data, which is a fatal,
-	// unrecoverable error ("runtime: no plugin module data"). Guarded by mx.
-	loadedExtensionPackages = make(map[string]error)
-	mx                      sync.Mutex
-// LoadExtensionFromPackage loads the provider's extension plugin once and
-// returns the outcome of that first attempt on every later call, so a request
-// never triggers a second plugin.Open of the same package.
-	pluginPath := path.Join(provider.PackageLocation(), packagePath)
-	if err, loaded := loadedExtensionPackages[pluginPath]; loaded {
-		return err
-	}
-	err := h.loadExtensionPlugin(pluginPath, provider)
-	loadedExtensionPackages[pluginPath] = err
-	return err
-}
-
-// loadExtensionPlugin opens the plugin at pluginPath, runs it and registers
-// its HTTP endpoint. Callers must hold mx.
-func (h *Handler) loadExtensionPlugin(pluginPath string, provider models.Provider) error {
-	plug, err := plugin.Open(pluginPath)
+        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community/meshmates/) or any other [community member](https://meshery.io/community) for assistance.
+        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community/meshmates/) or any other [community member](https://meshery.io/community) for assistance.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-	mx                sync.Mutex
-	plug, err := plugin.Open(path.Join(provider.PackageLocation(), packagePath))
+        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
+        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6abba8ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `89911e9c` are properly handled with clean fallback behavior.

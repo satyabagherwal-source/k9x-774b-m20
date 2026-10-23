@@ -4525,3 +4525,6 @@ Every entry in this ledger must capture:
 | `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `3cce6390` | Multi-dimensional audit evidence | 2026-10-23T09:38:25.365Z |
 | `learn-github-chakra-ui-chakra-ui` | `https://github.com/chakra-ui/chakra-ui` | `960ae222` | Multi-dimensional audit evidence | 2026-10-23T09:51:22.642Z |
 | `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `0975780a` | Multi-dimensional audit evidence | 2026-10-23T09:51:51.966Z |
+| `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `0118841e` | Multi-dimensional audit evidence | 2026-10-23T09:58:01.654Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `8ce7a3c5` | Multi-dimensional audit evidence | 2026-10-23T09:58:07.316Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `4888330a` | Multi-dimensional audit evidence | 2026-10-23T09:58:08.102Z |

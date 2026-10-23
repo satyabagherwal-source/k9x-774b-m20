@@ -4518,3 +4518,6 @@
 | `CYCLE-20261023-1XHV` | `2026-10-23T09:38:25.363Z` | `vuetifyjs/vuetify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3855, Rule 3856, Rule 3857` | Yes (`0e71db79...`) |
 | `CYCLE-20261023-IL8V` | `2026-10-23T09:51:22.639Z` | `chakra-ui/chakra-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3858, Rule 3859` | Yes (`4650593e...`) |
 | `CYCLE-20261023-J7VF` | `2026-10-23T09:51:51.963Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3860, Rule 3861, Rule 3862` | Yes (`8e5dbaf8...`) |
+| `CYCLE-20261023-R54J` | `2026-10-23T09:58:01.651Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3863` | Yes (`9577e368...`) |
+| `CYCLE-20261023-R9HU` | `2026-10-23T09:58:07.314Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3864` | Yes (`b34a5883...`) |
+| `CYCLE-20261023-RA3N` | `2026-10-23T09:58:08.099Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3865` | Yes (`5154e8e2...`) |

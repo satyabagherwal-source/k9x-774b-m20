@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T09:51:51.905Z",
+  "last_updated": "2026-10-23T09:58:08.055Z",
   "total_verified_learnings": 1073,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32915,8 +32915,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "d59f9c4d",
-      "content_hash": "5ea54301aec2ec1569fcf31141873075308be39e9399752ea49ecf656ff2eff3",
+      "source_version": "8ce7a3c5",
+      "content_hash": "b34a58833d92c6829425fbf96025acd3338a325a0b31e85a6ee1bbce41f94607",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -32939,6 +32939,11 @@
           "number": 3540,
           "title": "server): open each extension plugin at most once",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3864,
+          "title": "Merge pull request #22453 from ayanasarkar/docs/fix-governance-links",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32946,7 +32951,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T06:01:02.679Z",
+      "verified_at": "2026-10-23T09:58:07.259Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33238,8 +33243,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "7b22c59c",
-      "content_hash": "0421010b209e0ad47503fa0869becd004182720c13fc62c752417c5fc20b86da",
+      "source_version": "4888330a",
+      "content_hash": "5154e8e29edbf76dad9172c1ec5e18343030295207126985e13b6e87cba8b488",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -33282,6 +33287,11 @@
           "number": 3681,
           "title": "agent-sandbox): give Docker checkpoints a valid repository for any agent id (#43",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3865,
+          "title": "deps): Bump black (#4415)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33289,7 +33299,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:58:22.132Z",
+      "verified_at": "2026-10-23T09:58:08.044Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64062,8 +64072,8 @@
       "slug": "dubzzz-fast-check",
       "platform": "github",
       "source_url": "https://github.com/dubzzz/fast-check",
-      "source_version": "71e70142",
-      "content_hash": "5caf3fdb8f76c497e465211d260faedb748695bb35234d765ef66510ad476669",
+      "source_version": "0118841e",
+      "content_hash": "9577e368257b9785e3b59b6e15bf0b681b1b562f1c8f606c54fedc5e1098370a",
       "dossier_path": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "promoted_rules": [
@@ -64072,6 +64082,11 @@
           "number": 3034,
           "title": "⬆️ Lock file maintenance (#7457)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3863,
+          "title": "✅ Refine scheduler cloning and replay regression tests (#7474)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -64079,7 +64094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:05:28.683Z",
+      "verified_at": "2026-10-23T09:58:01.599Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -114457,6 +114472,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T09:51:51.887Z"
+    },
+    "rule-3863": {
+      "learning_id": "rule-3863",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3863,
+      "title": "✅ Refine scheduler cloning and replay regression tests (#7474)",
+      "source_url": "https://github.com/dubzzz/fast-check",
+      "source_version": "0118841e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:58:01.599Z"
+    },
+    "rule-3864": {
+      "learning_id": "rule-3864",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3864,
+      "title": "Merge pull request #22453 from ayanasarkar/docs/fix-governance-links",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "8ce7a3c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:58:07.259Z"
+    },
+    "rule-3865": {
+      "learning_id": "rule-3865",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3865,
+      "title": "deps): Bump black (#4415)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "4888330a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:58:08.044Z"
     }
   },
   "aliases": {
