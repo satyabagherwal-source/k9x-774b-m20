@@ -4543,3 +4543,6 @@ Every entry in this ledger must capture:
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `b0015350` | Multi-dimensional audit evidence | 2026-10-23T10:45:12.434Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `0cc4e2a7` | Multi-dimensional audit evidence | 2026-10-23T10:45:14.335Z |
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `d22e8daf` | Multi-dimensional audit evidence | 2026-10-23T10:48:13.119Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `e20ef17f` | Multi-dimensional audit evidence | 2026-10-23T10:54:22.193Z |
+| `learn-github-diggerhq-digger` | `https://github.com/diggerhq/digger` | `7c237c09` | Multi-dimensional audit evidence | 2026-10-23T10:54:25.451Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `307c73a4` | Multi-dimensional audit evidence | 2026-10-23T10:54:28.008Z |

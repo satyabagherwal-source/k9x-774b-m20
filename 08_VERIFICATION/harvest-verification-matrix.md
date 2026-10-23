@@ -4536,3 +4536,6 @@
 | `CYCLE-20261023-FTDB` | `2026-10-23T10:45:12.431Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`b6d65be4...`) |
 | `CYCLE-20261023-FUU4` | `2026-10-23T10:45:14.332Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3886` | Yes (`1086d06d...`) |
 | `CYCLE-20261023-JOSC` | `2026-10-23T10:48:13.116Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3887, Rule 3888, Rule 3889` | Yes (`abee897c...`) |
+| `CYCLE-20261023-RLKE` | `2026-10-23T10:54:22.190Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3890` | Yes (`d7af5ecd...`) |
+| `CYCLE-20261023-RO2W` | `2026-10-23T10:54:25.448Z` | `diggerhq/digger` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3891` | Yes (`c63310c6...`) |
+| `CYCLE-20261023-RQ1Y` | `2026-10-23T10:54:28.006Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3892` | Yes (`91bcaf14...`) |

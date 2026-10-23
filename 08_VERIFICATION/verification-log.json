@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-2C8Q",
-    "timestamp": "2026-10-20T21:27:34.010Z",
-    "repository": "CrossPaste/crosspaste-desktop",
-    "learningId": "learn-github-crosspaste-crosspaste-desktop",
-    "contentHash": "4107819731782647339ebae70fd10ccd73df10cb81131ce88e041b36db9950e0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-2GUB",
-    "timestamp": "2026-10-20T21:27:39.971Z",
-    "repository": "k3s-io/k3s",
-    "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "44d5167b78c12c30cf467b8e732da62acfa3d50d593d55f0e202e55e66db98d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-2KVK",
-    "timestamp": "2026-10-20T21:27:45.200Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "33c7b96f439d70556464ee3d34e001e31d56fe59e5577ada8f68de36d8ae4d0a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-AI05",
     "timestamp": "2026-10-20T21:33:54.725Z",
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7492,6 +7447,51 @@
     "contentHash": "abee897c1c8dd0ef0c5a533ee731407706627c412f3c83fbe9c8bcc25cce8df9",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-RLKE",
+    "timestamp": "2026-10-23T10:54:22.190Z",
+    "repository": "cypress-io/cypress",
+    "learningId": "learn-github-cypress-io-cypress",
+    "contentHash": "d7af5ecd62ce05243eb7b068fc3c367656365e83ce4498b035be7525820b8ae4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-RO2W",
+    "timestamp": "2026-10-23T10:54:25.448Z",
+    "repository": "diggerhq/digger",
+    "learningId": "learn-github-diggerhq-digger",
+    "contentHash": "c63310c6529b4260043644c47e791192903f4b82c575a0af4cca1f4910efe1b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-RQ1Y",
+    "timestamp": "2026-10-23T10:54:28.006Z",
+    "repository": "DefGuard/defguard",
+    "learningId": "learn-github-defguard-defguard",
+    "contentHash": "91bcaf14c6758ad8c447d82831011a64aeef72ab118ee8033d9ab2bd6c48f643",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

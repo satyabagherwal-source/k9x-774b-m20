@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T10:48:13.064Z",
+  "last_updated": "2026-10-23T10:54:27.956Z",
   "total_verified_learnings": 1074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7849,8 +7849,8 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "8035d117",
-      "content_hash": "3ee04516dac0067e13ee4bc1069a7ddb15dbc117f6c0fc75e1da84190b7b8e40",
+      "source_version": "307c73a4",
+      "content_hash": "91bcaf14c6758ad8c447d82831011a64aeef72ab118ee8033d9ab2bd6c48f643",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
@@ -7868,6 +7868,11 @@
           "number": 3611,
           "title": "improve graceful shutdown handling (#3888)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3892,
+          "title": "Update security patches [SECURITY] (#3937)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7875,7 +7880,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:42:08.522Z",
+      "verified_at": "2026-10-23T10:54:27.946Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8131,14 +8136,19 @@
       "slug": "diggerhq-digger",
       "platform": "github",
       "source_url": "https://github.com/diggerhq/digger",
-      "source_version": "853f6abf",
-      "content_hash": "4eabdcfda588d8c2823457d2e4b3a030170aa85baa28ca2488e10acbd0e0dce6",
+      "source_version": "7c237c09",
+      "content_hash": "c63310c6529b4260043644c47e791192903f4b82c575a0af4cca1f4910efe1b9",
       "dossier_path": "07_PROJECT_LEARNING/diggerhq-digger-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/diggerhq-digger-learnings.md",
       "promoted_rules": [
         {
           "number": 2069,
           "title": "allow digger apply when digger/apply is the sole required blocking check (#2661)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3891,
+          "title": "reuse GitHub installation tokens between clients (#2745)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -8147,7 +8157,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:20:26.298Z",
+      "verified_at": "2026-10-23T10:54:25.392Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63862,8 +63872,8 @@
       "slug": "cypress-io-cypress",
       "platform": "github",
       "source_url": "https://github.com/cypress-io/cypress",
-      "source_version": "6ecfc6ba",
-      "content_hash": "cbe293725bbb35490053a111cb03694661bf6b3b533ec51528061045007e7366",
+      "source_version": "e20ef17f",
+      "content_hash": "d7af5ecd62ce05243eb7b068fc3c367656365e83ce4498b035be7525820b8ae4",
       "dossier_path": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "promoted_rules": [
@@ -63886,6 +63896,11 @@
           "number": 3058,
           "title": "drop requests that arrive after the NetworkProxy is disposed (#34977)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3890,
+          "title": "show a clear error when the component testing dev server fails to start (#35081)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63893,7 +63908,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:50:55.778Z",
+      "verified_at": "2026-10-23T10:54:22.136Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -114978,6 +114993,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T10:48:13.053Z"
+    },
+    "rule-3890": {
+      "learning_id": "rule-3890",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3890,
+      "title": "show a clear error when the component testing dev server fails to start (#35081)",
+      "source_url": "https://github.com/cypress-io/cypress",
+      "source_version": "e20ef17f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:54:22.136Z"
+    },
+    "rule-3891": {
+      "learning_id": "rule-3891",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3891,
+      "title": "reuse GitHub installation tokens between clients (#2745)",
+      "source_url": "https://github.com/diggerhq/digger",
+      "source_version": "7c237c09",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:54:25.392Z"
+    },
+    "rule-3892": {
+      "learning_id": "rule-3892",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3892,
+      "title": "Update security patches [SECURITY] (#3937)",
+      "source_url": "https://github.com/DefGuard/defguard",
+      "source_version": "307c73a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T10:54:27.946Z"
     }
   },
   "aliases": {

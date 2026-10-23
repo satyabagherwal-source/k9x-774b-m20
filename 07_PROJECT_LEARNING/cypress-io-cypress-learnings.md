@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source**: github ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
-> **Source Version**: `6ecfc6ba`  
+> **Source Version**: `e20ef17f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:50:55.619Z  
+> **Timestamp**: 2026-10-23T10:54:21.897Z  
 > **Learning ID**: `learn-github-cypress-io-cypress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:50:55.193Z  
+> **Harvest Timestamp**: 2026-10-23T10:54:20.969Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, easy and reliable testing for anything that runs in a browser.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 51043 stars
+- **Stars / Engagement**: 51014 stars
 
 ---
 
@@ -981,11 +981,11 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35088** (2026-10-19): **chore(npm/angular): migrate to @packages/eslint-config**
-  *Symptoms*: - Closes N/A. This is one slice of the ESLint 9 flat-config migration tracked in [`guides/eslint-migration.md`](https://github.com/cypress-io/cypress/blob/develop/guides/eslint-migration.md).  ### Additional details  This moves `@cypress/angular` from the eslintrc `tests` preset onto the shared ESLint 9 flat config, following the steps in the migration guide.  - **New `eslint.config.ts`:** spreads `baseConfig` and sets `tsconfigRootDir`, with no package-specific overrides. It's modeled on `npm/svelte`, which has the same layout (`src/` plus `rollup.config.mjs`). - **Removed `.eslintrc` and `.eslintignore`:** none of the ignore entries still matched a file. Flat config only lints JS/TS here, `dist/` is ignored centrally, and the package has no `.d.ts` files or `cypress/fixtures` outside `dist/`. ESLint 9 lints all four source files: `src/index.ts`, `src/mount.ts`, `rollup.config.mjs` and `eslint.config.ts`. - **`package.json`:** adds `@packages/eslint-config`, `eslint` and `jiti` as devDependencies, changes `lint` to `eslint`, and adds a `lint-staged` block. It also drops an unused `standard.globals` block, since nothing in the repo runs the `standard` linter. - **Root `package.json`:** routes `npm/angular/**` to the package's own config in `lint-staged`, excludes angular from the catch-all `npm/!(…)` glob, and adds it to the `lint:fix` scope. - **`src/mount.ts`:**   - Autofix cleared the 4 expected stylistic errors (`object-curly-spacing` ×3, `semi` ×1).   - The shared config
+- **Issue #35125** (2026-10-22): **chore: wait for an in-flight project scaffold before a test retry re-scaffolds it**
+  *Symptoms*: - Closes N/A — flaky test fix  ### Additional details  `ct-framework-errors.cy.ts` › `Angular 21` › `error conditions` flakes on Windows ([example job](https://app.circleci.com/pipelines/github/cypress-io/cypress/87278/workflows/fccacf0e-a845-4c95-9ede-11e2744bb4e7/jobs/4031838), Cloud run `ypt4pf/74925`). The reported error, `Could not resolve "@angular-devkit/build-angular/..."`, is a symptom of the test harness, not of `@cypress/webpack-dev-server`:  | Attempt | Duration | Error | |---|---|---| | 1 | 60.6s | `` cy.task('__internal_scaffoldProject') timed out after waiting `60000ms` `` | | 2 | 4.9s | Could not resolve `.../utils/webpack-browser-config.js` | | 3 | 4.9s | Could not resolve `.../tools/webpack/configs/common.js` |  - The Windows runner has no cached `node_modules` for the Angular fixtures, so the first `yarn install` can take longer than the 60s default `cy.scaffoldProject` timeout. - A `cy.task` timeout fails the test but does not stop the plugin-side install. The CI log shows the angular-21 install still at "Linking dependencies" while the retries ran. - The retries re-scaffolded the project on top of that in-progress install. On Windows they logged "Found package.json" and then returned without installing, so the dev server loaded from a half-linked `node_modules`. Each retry was missing a different file.  Changes: - `__internal_scaffoldProject` (in `e2ePluginSetup.ts`) now waits for any in-progress scaffold of the same project, whether it succeeds or fails,
 
-- **Issue #35087** (2026-10-19): **dependency: update undici to 6.29.1 to address SNYK-JS-UNDICI-21181005**
-  *Symptoms*: - Closes N/A — no issue; this resolves a Snyk advisory that fails the `Snyk_SCA_Scan` check on every PR.  ### Additional details  Snyk reports [SNYK-JS-UNDICI-21181005](https://security.snyk.io/vuln/SNYK-JS-UNDICI-21181005) (Improper Certificate Validation, critical) against `undici@6.28.0`, which `@packages/server` pulls in through `webdriver@9.28.0` (`undici: ^6.21.3`). This fails the `Snyk_SCA_Scan` GitHub Actions check on every open PR.  This updates the lockfile so that `undici` resolves to `6.29.1`, which is within `webdriver`'s existing range. The dev-only copy under `@semantic-release/github` moves from `7.29.0` to `7.30.1`, the patched 7.x release. No `package.json` changes; `yarn.lock` was regenerated by yarn and `yarn check-lockfile` passes.  <!-- CURSOR_SUMMARY --> ---  > [!NOTE] > **Low Risk** > Lockfile-only transitive dependency patch for a known TLS/certificate validation CVE; no Cypress API or runtime behavior changes. >  > **Overview** > Bumps the resolved **`undici`** versions in **`yarn.lock`** so transitive dependencies pick up patched releases: **`6.28.0` → `6.29.1`** (via `webdriver` / `@packages/server`) and **`7.29.0` → `7.30.1`** (dev path under `@semantic-release/github`). No **`package.json`** edits. >  > Documents the **`6.x`** upgrade in **`cli/CHANGELOG.md`** under **Dependency Updates**, citing Snyk advisory **SNYK-JS-UNDICI-21181005** (improper certificate validation) so **`Snyk_SCA_Scan`** can pass. >  > <sup>Reviewed by [Cursor Bugbot](https
+- **Issue #35121** (2026-10-22): **chore: remove the GraphQL-over-fetch switch**
+  *Symptoms*: - Closes N/A — internal cleanup of a test-only code path.  ### Additional details  `window.__CYPRESS_GQL_NO_SOCKET__` made the app's urql client send GraphQL over `fetch` instead of the socket. Its only consumers were two app e2e specs (`debug.cy.ts` and `cloud_message_banner.cy.ts`) that used it so `cy.intercept('mutation-…')` could see GraphQL requests. This PR removes the switch so the app always uses the socket (launchpad is unchanged and still uses `fetch`).  - `frontend-shared/src/graphql/urqlClient.ts`: drops the flag and its `Window` type. - `data-context/src/sources/HtmlDataSource.ts`: drops the injection driven by `CYPRESS_INTERNAL_GQL_NO_SOCKET`. - `server/lib/gui/menu.ts`: drops the "GraphQL requests over Fetch" dev-menu toggle. The submenu is now typed as `MenuItemConstructorOptions[]`, which removes a `@ts-expect-error` that had been hiding the toggle's type mismatch. - `app/cypress/e2e/support/e2eSupport.ts`: drops the per-load reset hook. - `debug.cy.ts`: waits on the existing `recordEvent` spy and `openFile` stub with `cy.withRetryableCtx` instead of `cy.wait` on intercepts, and sets `preferredEditorBinary` on the server instead of rewriting the `OpenFileInIDE` response. - `cloud_message_banner.cy.ts`: spies on `ctx.actions.localSettings.setPreferences` and asserts the same payload contents the intercept checked. - `guides/app-cloud-testing.md`: updated to describe `cy.remoteGraphQLIntercept` plus server-side spies, and GraphiQL for capturing fixture response
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1002,237 +1002,577 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `30a4d032` (2026-10-19)
-**Commit Message**: fix: drop requests that arrive after the NetworkProxy is disposed (#34977)
+### Incident Patch 1: `b7fd293f` (2026-10-21)
+**Commit Message**: fix: show a clear error when the component testing dev server fails to start (#35081)
 
-* fix: drop requests that arrive after the NetworkProxy is disposed
+* fix(webpack-dev-server): reject devServer() when creating the server fails
 
-ServerBase#close() disposes the NetworkProxy before the HTTP server stops
-accepting connections. A browser request landing in that window reached the
-catch-all route, whose getNetworkProxy() threw from ensureProp. The handler is
-async and Express 4 does not catch rejections, so the throw became an
-unhandled rejection and a passing run exited 1. The routes now read the
-proxy as possibly undefined and destroy the response when it is gone.
-
-Also makes the chrome_tab_close fixture wait forever after closing its tab,
-so the test can no longer report a pass before the tab-closed handling runs,
-which put an extra line in the browser_crash_handling snapshot.
+An error thrown by devServer.create() happened inside an async Promise
+executor, so it surfaced as an unhandled rejection and devServer() never
+settled. devServer() is now async, so the error rejects its promise.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_012RGXnicvByeKrNXrZmn9Q8
 
-* chore: add changelog entry
+* fix: show a clear error when the component testing dev server fails to start
+
+When the dev server rejected during startup, the error reached the
+terminal and Launchpad as a bare message and stack. Wrap it in a new
+DEV_SERVER_START_FAILED error that names the dev server and links to the
+dev server docs. This also replaces the "config file crashed" message
+that webpack version errors used to get by escaping as an unhandled
+rejection.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_012RGXnicvByeKrNXrZmn9Q8
 
-* chore: trim changelog entry
+* chore: add changelog entry and regenerate cypress-sessions types
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Update CHANGELOG with bug fixes and new features
-
-Updated CHANGELOG with recent bug fixes and enhancements.
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session:
 
 **File**: `cli/CHANGELOG.md` (modified, +1/-0)
 ```diff
 @@ -6,6 +6,7 @@
+ - Fixed a regression in [16.1.0](#16-1-0) where, in Chrome, Chromium, and Edge run headed, the Cypress browser extension could stop responding for the rest of the run. This caused [`@cypress/puppeteer`](https://github.com/cypress-io/cypress/tree/develop/npm/puppeteer) to fail with `Cannot communicate with the Cypress Chrome extension`. Fixed in [#34958](https://github.com/cypress-io/cypress/pull/34958).
  - [`cy.fixture()`](https://on.cypress.io/fixture) and the `fixture` property of a [`cy.intercept()`](https://on.cypress.io/intercept) static response now fail when the fixture path resolves outside the [`fixturesFolder`](https://docs.cypress.io/app/references/configuration#Folders--Files). Fixed in [#35072](https://github.com/cypress-io/cypress/pull/35072).
  - Fixed an issue where [`.rightclick()`](https://on.cypress.io/rightclick) sent `buttons: 2` on its `pointerup` and `mouseup` events. A real right click reports `buttons: 0` on these events because the right button has just been released, so code that checks `event.buttons` on release now sees the same value it does in a browser. Fixed in [#35042](https://github.com/cypress-io/cypress/pull/35042).
++- When the dev server for component testing fails to start, such as when your project installs a version of webpack or webpack-dev-server that Cypress does not support, Cypress now explains that the dev server could not start, shows the dev server's error, and links to the dev server documentation. Previously, webpack errors were reported as a crash of your config file, and other dev server errors were shown with no explanation. Fixed in [#35081](https://github.com/cypress-io/cypress/pull/35081).
  - [`.trigger()`](https://on.cypress.io/trigger) now fails when passed an empty string as the event name, such as `cy.get('button').trigger('')`. Previously, it dispatched an event whose `type` was an empty string instead of failing, even though its error message says the event name must be a non-empty string. That error now shows the value that was passed, instead of the literal text `{{cmd}}`. It and the matching errors from [`cy.readFile()`](https://on.cypress.io/readfile) and [`cy.writeFile()`](https://on.cypress.io/writefile) now show an empty string as `''`, instead of leaving the value blank. Fixed in [#35068](https://github.com/cypress-io/cypress/pull/35068).
-+- Fixed a regression in [16.0.0](#16-0-0) where a run whose tests all passed could exit with code 1 and print `ServerBase#open must first be called before accessing 'this.null'` if the browser made a request while Cypress was shutting down. Fixed in [#34977](https://github.com/cypress-io/cypress/pull/34977).
- 
- **Misc:**
- 
+ - Node code in the config process, such as [`setupNodeEvents`](https://docs.cypress.io/app/plugins/plugins-guide), [`cy.task()`](https://on.cypress.io/task) handlers, and the plugins they load, now verifies TLS certificates the same way Node does. Fixed in [#35093](https://github.com/cypress-io/cypress/pull/35093).
+ - Fixed an issue where runs recorded to Cypress Cloud with Test Replay enabled did not report the hooks that run around each test. Tests whose code had not changed were then listed as **Modified** under **Tests for review** whenever a run switched between a browser that supports Test Replay and one that does not, such as from Electron to Firefox. Because hooks are now reported for these runs, tests in projects that record with Test Replay may be listed as **Modified** once, in the first run after upgrading. Fixes [#35070](https://github.com/cypress-io/cypress/issues/35070).
 ```
 
-**File**: `packages/server/lib/routes.ts` (modified, +31/-11)
+**File**: `npm/webpack-dev-server/src/devServer.ts` (modified, +20/-22)
 ```diff
-@@ -1,6 +1,6 @@
- import httpProxy from 'http-proxy'
- import Debug from 'debug'
--import type { ErrorRequestHandler, Request } from 'express'
-+import type { ErrorRequestHandler, Request, Response } from 'express'
- import { Router } from 'express'
- import send from 'send'
- import { getPathToDist } from '@packages/resolve-dist'
-@@ -35,9 +35,10 @@ export interface InitializeRoutes {
-   /**
-    * Read per request, never captured: the CDP Fetch runtime installs a new
-    * NetworkProxy at every launch, and the network path can flip on this same
--   * router when the browser is switched in open mode.
-+   * router when the browser is switched in open mode. Undefined once close()
-+   * has disposed the runtime.
-    */
--  getNetworkProxy: () => NetworkProxy
-+  getNetworkProxy: () => NetworkProxy | undefined
-   remoteStates: RemoteStates
-   isBrowserNetworkMode: () => boolean
-   onError: (...args: unknown[]) => any
-@@ -57,6 +58,23 @@ export const createCommonRoutes = ({
-   const router = Router()
-   const { clientRoute, namespace } = config
- 
-+  // close() disposes the NetworkProxy before the HTTP server stops accepting
-+  // connections, so a late browser request can still land here with nothing
-+  // left to serve it. Drop it the way the closing server would: throwing from
-+  // an async Express 4 handler is an unhandled rejection, which exits the process.
-+  const handleHttpRequest = async (req: Request, res: Response) => {
-+    const networkProxy = getNetworkProxy()
+@@ -52,29 +52,27 @@ type DevServerCreateResult = {
+  *
+  * @param config
+  */
+-export function devServer (devServerConfig: WebpackDevServerConfig): Promise<Cypress.ResolvedDevServerConfig> {
+-  return new Promise(async (resolve, reject) => {
+-    const result = await devServer.create(devServerConfig) as DevServerCreateResult
+-
+-    result.server.start().then(() => {
+-      if (!result.server.options.port) {
+-        return reject(new Error(`Expected port ${result.server.options.port} to be a number`))
+-      }
+-
+-      debug(`Component testing webpack server ${result.version} started on port %s`, result.server.options.port)
+-
+-      resolve({
+-        port: result.server.options.port as number,
+-        // Close is for unit testing only. We kill this child process which will handle the closing of the server
+-        close: async (done) => {
+-          debug('closing dev server')
+-          result.server.stop().then(() => done?.()).catch(done).finally(() => {
+-            debug('closed dev server')
+-          })
+-        },
++export async function devServer (devServerConfig: WebpackDevServerConfig): Promise<Cypress.ResolvedDevServerConfig> {
++  const result = await devServer.create(devServerConfig) as DevServerCreateResult
 +
-+    if (!networkProxy) {
-+      debug('dropping request received after the NetworkProxy was disposed: %s %s', req.method, req.url)
-+      res.destroy()
++  await result.server.start()
 +
-+      return
-+    }
-+
-+    await networkProxy.handleHttpRequest(req, res)
++  if (!result.server.options.port) {
++    throw new Error(`Expected port ${result.server.options.port} to be a number`)
 +  }
 +
-   // When a test visits an http:// site and we load our main app page,
-   // (e.g. test has cy.visit('http://example.com'), we load http://example.com/__/)
-   // Chrome will make a request to the the https:// version (i.e. https://example.com/__/)
-@@ -117,11 +135,11 @@ export const createCommonRoutes = ({
-   // to the child project. We also add a utility route for testing HTTP status code UI
-   if (process.env.CYPRESS_INTERNAL_E2E_TESTING_SELF_PARENT_PROJECT) {
-     router.all(`${CYPRESS_STUDIO_ROUTE}*`, async (req, res) => {
--      await getNetworkProxy().handleHttpRequest(req, res)
-+      await handleHttpRequest(req, res)
-     })
- 
-     router.all(`${CYPRESS_CY_PROMPT_ROUTE}*`, async (req, res) => {
--      await getNetworkProxy().handleHttpRequest(req, res)
-+      await handleHttpRequest(req, res)
-     })
- 
-     router.get('/status-code-test/:num', (req, res) => {
-@@ -184,7 +202,11 @@ export const createCommonRoutes = ({
-   router.get(`/${config.namespace}/automation/setLocalStorage`, (req, res) => {
-     const origin = req.originalUrl.slice(req.originalUrl.indexOf('?') + 1)
- 
--    getNetworkProxy().http.getRenderedHTMLOrigins()[origin] = true
-+    const renderedHTMLOrigins = getNetworkProxy()?.http.getRenderedHTMLOrigins()
++  debug(`Component testing webpack server ${result.version} started on port %s`, result.server.options.port)
 +
-+    if (renderedHTMLOrigins) {
-+      renderedHTMLOrigins[origin] = true
-+    }
++  return {
++    port: result.server.options.port as number,
++    // Close is for unit testing only. We kill this child process which will handle the closing of the server
++    close: async (done) => {
++      debug('closing dev server')
++      result.server.stop().then(() => done?.()).catch(done).finally(() => {
++        debug('closed dev server')
+       })
+-    }).catch(reject)
+-  })
++    },
++  }
+ }
  
-     res.sendFile(path.join(__dirname, './html/set-local-storage.html'))
-   })
-@@ -338,12 +360,10 @@ export const createCommonRoutes = ({
-   // this same router. Mounting both would not work either: the MITM branch
-   // never calls next(), so mount order would decide the behavior permanently.
-   router.all('*', async (req: Request & { proxiedUrl?: string }, res, next) => {
--    const proxy = getNetworkProxy()
--
-     // MITM path: every browser request arrives here in absolute form, so the
-     // pipeline owns all of it.
-     if (!isBrowserNetworkMode()) {
--      await proxy.handleHttpRequest(req, res)
-+      await handleHttpRequest(req, res)
- 
-       return
-     }
-@@ -368,7 +388,7 @@ export const createCommonRoutes = ({
-     if (isTrustedInternalLoopback(req.headers) && req.proxiedUrl && /^https?:\/\//.test(req.proxiedUrl)) {
-       debug('serving loopback-token request through the pipeline: %s %s', req.method, req.proxiedUrl)
- 
--      await proxy.handleHttpRequest(req, res)
-+      await handleHttpRequest(req, res)
- 
-       return
-     }
-@@ -386,7 +406,7 @@ export const createCommonRoutes = ({
-       debug('serving direct file server request through the pipeline: %s %s', req.method, absoluteUrl)
- 
-       req.proxiedUrl = absoluteUrl
--      await proxy.handleHttpRequest(req, res)
-+      await handleHttpRequest(req, res)
- 
-       return
-     }
+ export type PresetHandlerResult = { frameworkConfig: Configuration, sourceWebpackModulesResult: SourceRelativeWebpackResult }
 ```
 
-**File**: `packages/server/lib/server-base.ts` (modified, +1/-1)
+**File**: `packages/cypress-sessions/lib/generated/graphql.ts` (modified, +1/-0)
 ```diff
-@@ -459,7 +459,7 @@ export class ServerBase<TSocket extends SocketE2E | SocketCt> {
-       nodeProxy: this.nodeProxy,
-       // Lazy: the CDP Fetch runtime swaps NetworkProxy at each launch, so the
-       // routes must read whichever instance is current rather than capture one.
--      getNetworkProxy: () => this.networkProxy,
-+      getNetworkProxy: () => this._networkProxy,
-       isBrowserNetworkMode: this.isBrowserNetworkMode,
-       onError,
-       getSpec,
+@@ -198,6 +198,7 @@ export type ErrorTypeEnum =
+   | 'COULD_NOT_PARSE_ARGUMENTS'
+   | 'DEFAULT_SUPPORT_FILE_NOT_FOUND'
+   | 'DEV_SERVER_CONFIG_FILE_NOT_FOUND'
++  | 'DEV_SERVER_START_FAILED'
+   | 'DUPLICATE_TASK_KEY'
+   | 'ERROR_READING_FILE'
+   | 'ERROR_WRITING_FILE'
 ```
 
-**File**: `packages/server/test/unit/routes.spec.ts` (modified, +17/-1)
+**File**: `packages/data-context/schemas/schema.graphql` (modified, +1/-0)
 ```diff
-@@ -436,7 +436,7 @@ describe('lib/routes', () => {
-   })
- 
-   describe('catch-all', () => {
--    function setupCatchAll ({ remoteState, isBrowserNetworkMode = () => true, getNetworkProxy }: { remoteState: any, isBrowserNetworkMode?: () => boolean, getNetworkProxy?: () => NetworkProxy }) {
-+    function setupCatchAll ({ remoteState, isBrowserNetworkMode = () => true, getNetworkProxy }: { remoteState: any, isBrowserNetworkMode?: () => boolean, getNetworkProxy?: () => NetworkProxy | undefined }) {
-       const router = makeRouter()
- 
-       expressStubs.Router.mockReturnValue(router as any)
-@@ -635,6 +635,22 @@ describe('lib/routes', () => {
-       expect(first.handleHttpRequest).toHaveBeenCalledTimes(1)
-     })
- 
-+    // close() disposes the NetworkProxy before the HTTP server stops accepting
-+    // connections, and a rejection here would exit the process
-+    it('drops a request that arrives after the NetworkProxy is disposed', async () => {
-+      const { handler } = setupCatchAll({
-+        remoteState: { strategy: 'http', origin: 'http://localhost:3500', props: null },
-+        isBrowserNetworkMode: () => false,
-+        getNetworkProxy: () => undefined,
-+      })
-+      const req = { url: 'http://example.com/late', method: 'GET', headers: {} }
-+      const res = { destroy: vi.fn() }
-+
-+      await expect(handler(req, res, vi.fn())).resolves.toBeUndefined()
-+
-+      expect(res.destroy).toHaveBeenCalled()
-+    })
-+
-     it('falls through for URLs the file server cannot resolve', async () => {
-       const { handler, handleHttpRequest } = setupCatchAll({
-         remoteState: { strategy: 'http', origin: 'http://localhost:3500', props: null },
+@@ -1261,6 +1261,7 @@ enum ErrorTypeEnum {
+   COULD_NOT_PARSE_ARGUMENTS
+   DEFAULT_SUPPORT_FILE_NOT_FOUND
+   DEV_SERVER_CONFIG_FILE_NOT_FOUND
++  DEV_SERVER_START_FAILED
+   DUPLICATE_TASK_KEY
+   ERROR_READING_FILE
+   ERROR_WRITING_FILE
 ```
 
-**File**: `system-tests/projects/e2e/cypress/e2e/chrome_tab_close.cy.js` (modified, +5/-1)
+**File**: `packages/data-context/src/data/ProjectLifecycleManager.ts` (modified, +6/-0)
 ```diff
-@@ -7,12 +7,16 @@ it('closes the chrome tab', () => {
- 
-     const target = targetInfos.find((target) => target.url === url)
- 
--    return Cypress.automation('remote:debugger:protocol', {
-+    Cypress.automation('remote:debugger:protocol', {
-       command: 'Target.closeTarget',
-       params: {
-         targetId: target.targetId,
-       },
-     })
+@@ -246,6 +246,12 @@ export class ProjectLifecycleManager {
+            *      The empty specs are handled within the @cypress/webpack-dev-server package as this has no impact on vite.
+            */
+           const devServerOptions = await this.ctx._apis.projectApi.getDevServer().start({ specs: this.ctx.project.specs, config: finalConfig })
++          .catch((err) => {
++            span?.end()
++            const devServer = this.loadedConfigFile?.component?.devServer
 +
-+    // closeTarget can resolve before the server notices the tab is gone, and a
-+    // test that finishes first prints a passing line the snapshot doesn't have
-+    return new Promise(() => {})
-   })
-   // never settle, so the test can't report a pass before the tab finishes closing
-   .then(() => new Promise(() => {}))
++            throw getError('DEV_SERVER_START_FAILED', this.configFile, typeof devServer === 'object' ? devServer.bundler : undefined, err)
++          })
+ 
+           // If we received a cypressConfig.port we want to null it out
+           // because we propagated it into the devServer.port and it is
+```
+
+**File**: `packages/errors/src/errors.ts` (modified, +14/-0)
+```diff
+@@ -1667,6 +1667,20 @@ export const AllCypressErrors = {
+     `
+   },
+ 
++  DEV_SERVER_START_FAILED: (configFile: string, bundler: string | undefined, err: ErrorLike) => {
++    const devServer = bundler ? errPartial`the ${fmt.highlight(bundler)} dev server` : errPartial`your dev server`
++
++    return errTemplate`
++      Cypress could not start ${devServer} for component testing. Fix the error below, then run Cypress again.
++
++      Read about configuring the dev server: https://on.cypress.io/dev-server
++
++      The ${fmt.highlight('component.devServer')} set in ${fmt.path(configFile)} threw this error:
++
++      ${fmt.stackTrace(err)}
++    `
++  },
++
+   UNEXPECTED_MUTATION_ERROR: (mutationField: string, args: any, err: Error) => {
+     return errTemplate`
+       An unexpected internal error occurred while executing the ${fmt.highlight(mutationField)} operation with payload:
+```
+
+**File**: `packages/errors/test/__snapshots__/DEV_SERVER_START_FAILED - customDevServer.ansi` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++[31mCypress could not start your dev server for component testing. Fix the error below, then run Cypress again.[39m
++[31m[39m
++[31mRead about configuring the dev server: https://on.cypress.io/dev-server[39m
++[31m[39m
++[31mThe [33mcomponent.devServer[39m[31m set in [94mcypress.config.ts[39m[31m threw this error:[39m
++[35m[39m
++[35mError: fail whale[39m
++[35m    at makeErr (cypress/packages/errors/test/visualSnapshotErrors.spec.ts)[39m
++[35m    at DEV_SERVER_START_FAILED (cypress/packages/errors/test/visualSnapshotErrors.spec.ts)[39m
+\ No newline at end of file
+```
+
+**File**: `packages/errors/test/__snapshots__/DEV_SERVER_START_FAILED.ansi` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++[31mCypress could not start the [33mwebpack[39m[31m dev server for component testing. Fix the error below, then run Cypress again.[39m
++[31m[39m
++[31mRead about configuring the dev server: https://on.cypress.io/dev-server[39m
++[31m[39m
++[31mThe [33mcomponent.devServer[39m[31m set in [94mcypress.config.ts[39m[31m threw this error:[39m
++[35m[39m
++[35mError: fail whale[39m
++[35m    at makeErr (cypress/packages/errors/test/visualSnapshotErrors.spec.ts)[39m
++[35m    at DEV_SERVER_START_FAILED (cypress/packages/errors/test/visualSnapshotErrors.spec.ts)[39m
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 2: `1e3dfa6b` (2026-10-18)
-**Commit Message**: fix: only load fixtures from inside the fixturesFolder (#35072)
+### Incident Patch 2: `259b98f0` (2026-10-21)
+**Commit Message**: perf: skip resetting rendered origins between tests when none rendered (#35089)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* perf(driver): skip test-isolation clears that have nothing to clear
+
+With testIsolation on, every test asked the browser to clear cookies
+and the server to reset its rendered-origins set, even when there was
+nothing to clear or reset.
+
+- Skip `clear:cookies` when `get:cookies` found no cookies.
+- Skip `reset:rendered:html:origins` when the server reported no
+  rendered origins. `clearStorage` now returns the origins it read, so
+  this needs no extra round trip.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_0116Vhn1SQfFaCnRAs1LFB6X
+
+* chore: describe the late-render case in the rendered-origins comment
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_0116Vhn1SQfFaCnRAs1LFB6X
+
+* chore: trim the clearSessionData comment to what the name does not say
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_0116Vhn1SQfFaCnRAs1LFB6X
+
+* chore: link the changelog entry to its pull request
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://cl
+
+**File**: `cli/CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -1,6 +1,10 @@
+ <!-- See ../guides/writing-the-cypress-changelog.md for details on writing the changelog. -->
+ ## 16.2.1
+ 
++**Performance:**
++
++- Tests that run with [`testIsolation`](https://docs.cypress.io/app/references/configuration#e2e) enabled now start slightly faster when the previous test did not load any pages, such as an API test that only uses [`cy.request()`](https://on.cypress.io/request). Fixed in [#35089](https://github.com/cypress-io/cypress/pull/35089).
++
+ **Bugfixes:**
+ 
+ - Fixed an issue where `cypress open` with both a `--browser` and a testing type flag launched the browser twice the first time Cypress showed its major-version welcome screen — on first open after upgrading, or after clearing app data. Fixes [#34868](https://github.com/cypress-io/cypress/issues/34868).
+```
+
+**File**: `packages/driver/cypress/e2e/commands/sessions/manager.cy.ts` (modified, +50/-0)
+```diff
+@@ -277,6 +277,42 @@ describe('src/cy/commands/sessions/manager.ts', () => {
+       })
+     })
+ 
++    describe('.clearSessionData()', () => {
++      beforeEach(() => {
++        CypressInstance.state = cy.stub()
++      })
++
++      it('resolves to the origins that had rendered HTML', async () => {
++        cy.stub(CypressInstance, 'backend')
++        .callThrough()
++        .withArgs('get:rendered:html:origins')
++        .resolves({ [window.location.origin]: true })
++
++        const sessionsManager = new SessionsManager(CypressInstance, {
++          state: () => false,
++        })
++
++        cy.stub(sessionsManager.sessions, 'clearCookies').resolves([])
++
++        expect(await sessionsManager.clearSessionData()).to.deep.eq([window.location.origin])
++      })
++
++      it('resolves to an empty list when no origins rendered HTML', async () => {
++        cy.stub(CypressInstance, 'backend')
++        .callThrough()
++        .withArgs('get:rendered:html:origins')
++        .resolves({})
++
++        const sessionsManager = new SessionsManager(CypressInstance, {
++          state: () => false,
++        })
++
++        cy.stub(sessionsManager.sessions, 'clearCookies').resolves([])
++
++        expect(await sessionsManager.clearSessionData()).to.deep.eq([])
++      })
++    })
++
+     it('sessions.getCookies()', async () => {
+       const cookies = [{ id: 'cookie' }]
+       const cypressSpy = cy.stub(CypressInstance, 'automation').withArgs('get:cookies').resolves(cookies)
+@@ -312,6 +348,20 @@ describe('src/cy/commands/sessions/manager.ts', () => {
+       expect(cypressSpy).to.be.calledOnceWith('clear:cookies', cookies)
+     })
+ 
++    // The server also empties its cookie jar on `clear:cookies`, and the jar
++    // can hold cookies the browser no longer reports.
++    it('sessions.clearCookies() still clears when the browser reports no cookies', async () => {
++      const cypressSpy = cy.stub(CypressInstance, 'automation').withArgs('clear:cookies').resolves([])
++
++      const sessionsManager = new SessionsManager(CypressInstance, () => {})
++
++      cy.stub(sessionsManager.sessions, 'getCookies').resolves([])
++
++      await sessionsManager.sessions.clearCookies()
++
++      expect(cypressSpy).to.be.calledOnceWith('clear:cookies', [])
++    })
++
+     it('sessions.getCurrentSessionData()', async () => {
+       const sessionsManager = new SessionsManager(Cypress, () => {})
+       const cookiesSpy = cy.stub(sessionsManager.sessions, 'getCookies').resolves([{ id: 'cookie' }])
+```
+
+**File**: `packages/driver/cypress/e2e/commands/sessions/sessions.cy.ts` (modified, +23/-5)
+```diff
+@@ -156,25 +156,43 @@ describe('cy.session', { retries: 0 }, () => {
+ 
+     describe('test:before:run:async', () => {
+       it('clears session data before each run', async () => {
+-        const clearCurrentSessionData = cy.spy(Cypress.session, 'clearCurrentSessionData')
++        const backendSpy = cy.spy(Cypress, 'backend').log(false)
++        const automationSpy = cy.spy(Cypress, 'automation').log(false)
+ 
+         await Cypress.action('runner:test:before:run:async', {
+           id: 'r1',
+           currentRetry: 0,
+         }, Cypress.state('runnable'))
+ 
+-        expect(clearCurrentSessionData).to.be.called
++        expect(backendSpy).to.be.calledWith('get:rendered:html:origins')
++        expect(automationSpy).to.be.calledWith('get:cookies')
+       })
+ 
+-      it('resets rendered html origins before each run', async () => {
+-        const backendSpy = cy.spy(Cypress, 'backend').log(false)
++      it('resets rendered html origins before each run when origins were rendered', async () => {
++        const backendStub = cy.stub(Cypress, 'backend').log(false).callThrough()
++
++        backendStub.withArgs('get:rendered:html:origins').resolves({ [window.location.origin]: true })
++
++        await Cypress.action('runner:test:before:run:async', {
++          id: 'r1',
++          currentRetry: 0,
++        }, Cypress.state('runnable'))
++
++        expect(backendStub).to.be.calledWith('reset:rendered:html:origins')
++      })
++
++      it('does not reset rendered html origins before each run when no origins were rendered', async () => {
++        const backendStub = cy.stub(Cypress, 'backend').log(false).callThrough()
++
++        backendStub.withArgs('get:rendered:html:origins').resolves({})
+ 
+         await Cypress.action('runner:test:before:run:async', {
+           id: 'r1',
+           currentRetry: 0,
+         }, Cypress.state('runnable'))
+ 
+-        expect(backendSpy).to.be.calledWith('reset:rendered:html:origins')
++        expect(backendStub).to.be.calledWith('get:rendered:html:origins')
++        expect(backendStub).not.to.be.calledWith('reset:rendered:html:origins')
+       })
+ 
+       it('clears the browser context before each run', () => {
+```
+
+**File**: `packages/driver/cypress/e2e/e2e/origin/cookie_jar_isolation.cy.ts` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++// These tests run in order: the second checks that a cookie the first left in
++// the server's cookie jar, but not in the browser, is cleared between tests.
++describe('server cookie jar between isolated tests', { browser: '!webkit', testIsolation: true, retries: 0 }, () => {
++  const originUrl = 'https://www.foobar.com:3502'
++
++  it('leaves a cookie in the jar after the app deletes it from the browser', () => {
++    cy.visit(`${originUrl}/fixtures/generic.html`)
++
++    cy.window().then((win) => {
++      return cy.wrap(win.fetch(`${originUrl}/set-cookie?cookie=foo1=bar1; Domain=foobar.com`))
++    })
++
++    cy.getAllCookies().should('have.length', 1)
++
++    // Removes the cookie from the browser, but not from the server's jar
++    cy.window().then((win) => {
++      win.document.cookie = 'foo1=; Domain=foobar.com; Path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
++    })
++
++    cy.getAllCookies().should('have.length', 0)
++  })
++
++  it('does not send the previous test\'s jar cookie from cy.origin()', () => {
++    cy.intercept(`${originUrl}/test-request`).as('req')
++
++    cy.visit('/fixtures/primary-origin.html')
++    cy.get('a[data-cy="cookie-https"]').click()
++
++    cy.origin(originUrl, { args: originUrl }, (originUrl) => {
++      cy.window().then((win) => {
++        return cy.wrap(win.fetch(`${originUrl}/test-request`))
++      })
++    })
++
++    cy.wait('@req').its('request.headers.cookie').should('be.undefined')
++  })
++})
+```
+
+**File**: `packages/driver/src/cy/commands/sessions/index.ts` (modified, +7/-2)
+```diff
+@@ -49,8 +49,13 @@ export default function (Commands, Cypress, cy) {
+         return
+       }
+ 
+-      return sessions.clearCurrentSessionData()
+-      .then(() => Cypress.backend('reset:rendered:html:origins'))
++      const renderedOrigins = await sessionsManager.clearSessionData()
++
++      // An empty set has nothing to reset. A page that finishes rendering after
++      // the read stays in the set, so the next test clears its storage too.
++      if (renderedOrigins.length) {
++        await Cypress.backend('reset:rendered:html:origins')
++      }
+     })
+   })
+ 
+```
+
+**File**: `packages/driver/src/cy/commands/sessions/manager.ts` (modified, +22/-12)
+```diff
+@@ -98,6 +98,24 @@ export default class SessionsManager {
+     ])
+   }
+ 
++  // Resolves to the rendered origins that `clearStorage` read before clearing.
++  clearSessionData = async (): Promise<string[]> => {
++    // this prevents a log occurring when we clear session in-between tests
++    if (this.cy.state('duringUserTestExecution')) {
++      this.Cypress.log(getLogProperties('clearCurrentSessionData'))
++    }
++
++    window.localStorage.clear()
++    window.sessionStorage.clear()
++
++    const [renderedOrigins] = await Promise.all([
++      clearStorage(this.Cypress),
++      this.sessions.clearCookies(),
++    ])
++
++    return renderedOrigins
++  }
++
+   // this the public api exposed to consumers as Cypress.session
+   sessions = {
+     clearAllSavedSessions: async () => {
+@@ -109,18 +127,8 @@ export default class SessionsManager {
+     },
+ 
+     clearCurrentSessionData: async () => {
+-      // this prevents a log occurring when we clear session in-between tests
+-      if (this.cy.state('duringUserTestExecution')) {
+-        this.Cypress.log(getLogProperties('clearCurrentSessionData'))
+-      }
+-
+-      window.localStorage.clear()
+-      window.sessionStorage.clear()
+-
+-      await Promise.all([
+-        clearStorage(this.Cypress),
+-        this.sessions.clearCookies(),
+-      ])
++      // Public API: resolves to nothing, unlike `clearSessionData`
++      await this.clearSessionData()
+     },
+ 
+     getCookies: async () => {
+@@ -132,6 +140,8 @@ export default class SessionsManager {
+     },
+ 
+     clearCookies: async () => {
++      // Sent even when the browser reports no cookies: the server also empties
++      // its cookie jar here, and the jar can hold cookies the browser no longer has.
+       return this.Cypress.automation('clear:cookies', await this.sessions.getCookies())
+     },
+ 
+```
+
+**File**: `packages/driver/src/cy/commands/sessions/origins.ts` (modified, +9/-5)
+```diff
+@@ -20,10 +20,14 @@ export async function mapOrigins (Cypress: Cypress.Cypress, origins: string | st
+   return _.uniq(_.flatten(await getOrigins))
+ }
+ 
+-export async function getAllHtmlOrigins (Cypress: Cypress.Cypress) {
+-  const currentOrigin = window.location.origin
+-  const storedOrigins = await Cypress.backend('get:rendered:html:origins')
+-  const origins = [..._.keys(storedOrigins), currentOrigin]
++export async function getRenderedHtmlOrigins (Cypress: Cypress.Cypress): Promise<string[]> {
++  return _.keys(await Cypress.backend('get:rendered:html:origins'))
++}
+ 
+-  return _.uniq(origins)
++export function withCurrentOrigin (origins: string[]) {
++  return _.uniq([...origins, window.location.origin])
++}
++
++export async function getAllHtmlOrigins (Cypress: Cypress.Cypress) {
++  return withCurrentOrigin(await getRenderedHtmlOrigins(Cypress))
+ }
+```
+
+**File**: `packages/driver/src/cy/commands/sessions/storage.ts` (modified, +10/-4)
+```diff
+@@ -1,7 +1,7 @@
+ import _ from 'lodash'
+ 
+ import { $Location } from '../../../cypress/location'
+-import { getAllHtmlOrigins, mapOrigins } from './origins'
++import { getRenderedHtmlOrigins, mapOrigins, withCurrentOrigin } from './origins'
+ import { getCurrentOriginStorage, getPostMessageLocalStorage, setPostMessageLocalStorage } from './utils'
+ 
+ export type StorageType = 'localStorage' | 'sessionStorage'
+@@ -82,9 +82,13 @@ export async function getStorage (Cypress: Cypress.Cypress, options: GetStorageO
+   return results
+ }
+ 
+-export async function clearStorage (Cypress: Cypress.Cypress, type?: StorageType) {
+-  const origins = await getAllHtmlOrigins(Cypress)
+-  const originOptions = origins.map((origin) => ({ origin, clear: true }))
++/**
++ * Resolves to the origins the server reported as having rendered HTML,
++ * which does not include the current origin unless it rendered HTML too.
++ */
++export async function clearStorage (Cypress: Cypress.Cypress, type?: StorageType): Promise<string[]> {
++  const renderedOrigins = await getRenderedHtmlOrigins(Cypress)
++  const originOptions = withCurrentOrigin(renderedOrigins).map((origin) => ({ origin, clear: true }))
+   const options: SetStoragesOptions = {}
+ 
+   if (!type || type === 'localStorage') {
+@@ -96,6 +100,8 @@ export async function clearStorage (Cypress: Cypress.Cypress, type?: StorageType
+   }
+ 
+   await setStorage(Cypress, options)
++
++  return renderedOrigins
+ }
+ 
+ async function setStorageOnOrigins (Cypress: Cypress.Cypress, originOptions) {
+```
+
+---
+
+### Incident Patch 3: `9f506e5e` (2026-10-21)
+**Commit Message**: fix: launch the browser once when the major-version welcome gates the initial launch (#34877)
+
+* fix: launch the browser once when the major-version welcome gates the initial launch
+
+`cypress open --e2e --browser <browser>` launched the browser twice the
+first time the major-version welcome screen was shown (first open after
+upgrading, or after clearing app data). Dismissing the welcome fired a
+launch from Main.vue and mounted OpenBrowser, whose auto-launch check
+read `launchCount` while that launch was still in flight - the count only
+moved after the launch settled, so it launched again. The second launch
+tore down the first one's CDP connection, leaving Chrome/Chromium/Edge
+unable to connect and Electron reporting its tab closed unexpectedly.
+
+- Count a launch in ProjectActions as it starts, so a concurrent
+  `shouldLaunchBrowserFromOpenBrowser` check sees it.
+- Make OpenBrowser the single client-side launcher after the welcome is
+  dismissed; it also waits for the config to be ready before firing.
+- Unit-test the counter ordering, and make the launchpad e2e test for the
+  welcome path actually go through the welcome with a slow launch stub.
+
+Fixes #34868
+
+Co-Authored-By: Claude 
 
 **File**: `cli/CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -1240,188 +1580,258 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  
  **Bugfixes:**
  
-+- [`cy.fixture()`](https://on.cypress.io/fixture) and the `fixture` property of a [`cy.intercept()`](https://on.cypress.io/intercept) static response now fail when the fixture path resolves outside the [`fixturesFolder`](https://docs.cypress.io/app/references/configuration#Folders--Files). Fixed in [#35072](https://github.com/cypress-io/cypress/pull/35072).
- - Fixed an issue where [`.rightclick()`](https://on.cypress.io/rightclick) sent `buttons: 2` on its `pointerup` and `mouseup` events. A real right click reports `buttons: 0` on these events because the right button has just been released, so code that checks `event.buttons` on release now sees the same value it does in a browser. Fixed in [#35042](https://github.com/cypress-io/cypress/pull/35042).
- - [`.trigger()`](https://on.cypress.io/trigger) now fails when passed an empty string as the event name, such as `cy.get('button').trigger('')`. Previously, it dispatched an event whose `type` was an empty string instead of failing, even though its error message says the event name must be a non-empty string. That error now shows the value that was passed, instead of the literal text `{{cmd}}`. It and the matching errors from [`cy.readFile()`](https://on.cypress.io/readfile) and [`cy.writeFile()`](https://on.cypress.io/writefile) now show an empty string as `''`, instead of leaving the value blank. Fixed in [#35068](https://github.com/cypress-io/cypress/pull/35068).
++- Fixed an issue where `cypress open` with both a `--browser` and a testing type flag launched the browser twice the first time Cypress showed its major-version welcome screen — on first open after upgrading, or after clearing app data. Fixes [#34868](https://github.com/cypress-io/cypress/issues/34868).
+ - Fixed an issue where [`.scrollTo()`](https://on.cypress.io/scrollto) and [`.scrollIntoView()`](https://on.cypress.io/scrollintoview) stopped short of the end of a scrollable element with always-visible scrollbars. Positions such as `bottom`, `right`, `bottomRight`, and `'100%'` landed short by the width of the scrollbar, and `center` or `'50%'` landed off-center by half of it. Fixed in [#34948](https://github.com/cypress-io/cypress/pull/34948).
+ - Fixed a regression in [16.1.0](#16-1-0) where, in Chrome, Chromium, and Edge run headed, the Cypress browser extension could stop responding for the rest of the run. This caused [`@cypress/puppeteer`](https://github.com/cypress-io/cypress/tree/develop/npm/puppeteer) to fail with `Cannot communicate with the Cypress Chrome extension`. Fixed in [#34958](https://github.com/cypress-io/cypress/pull/34958).
+ - [`cy.fixture()`](https://on.cypress.io/fixture) and the `fixture` property of a [`cy.intercept()`](https://on.cypress.io/intercept) static response now fail when the fixture path resolves outside the [`fixturesFolder`](https://docs.cypress.io/app/references/configuration#Folders--Files). Fixed in [#35072](https://github.com/cypress-io/cypress/pull/35072).
+```
+
+**File**: `packages/data-context/src/DataContext.ts` (modified, +3/-0)
+```diff
+@@ -349,6 +349,9 @@ export class DataContext {
+ 
+     this._modeOptions = modeOptions
+     this._coreData = makeCoreData(modeOptions)
++    // DataActions is created once in the constructor and is not rebuilt here, so
++    // its launch counter has to be reset explicitly or it leaks between tests
++    this.actions.project.launchCount = 0
+     // @ts-expect-error - we've already cleaned up, this is for testing only
+     this.lifecycleManager = new ProjectLifecycleManager(this)
  
 ```
 
-**File**: `packages/server/lib/cloud/bundles/stream_download_verify_extract.ts` (modified, +1/-1)
+**File**: `packages/data-context/src/actions/ProjectActions.ts` (modified, +12/-4)
 ```diff
-@@ -16,7 +16,7 @@ import { PUBLIC_KEY_VERSION } from '../constants'
- import { createStreamingSignatureVerifier } from '../encryption'
- import type { BundleErrorStage, BundleKind } from './bundle_error'
- import { BundleError } from './bundle_error'
--import { isInsideDir } from './is_inside_dir'
-+import { isInsideDir } from '../../util/is_inside_dir'
+@@ -93,9 +93,10 @@ const debug = debugLib('cypress:data-context:ProjectActions')
+ export class ProjectActions {
+   /**
+    * @var globalLaunchCount
+-   * Used as a read-only in the launchpad to ensure
+-   * that launchProject is only called once if
+-   * the --browser flag is passed alone.
++   * Read by the `shouldLaunchBrowserFromOpenBrowser` resolver so the
++   * launchpad's `--browser` auto-launch fires only once. Incremented as a
++   * launch starts: a launch takes seconds, and dismissing the major-version
++   * welcome mounts OpenBrowser, which re-reads this inside that window (#34868).
+    */
+   private globalLaunchCount = 0
+   constructor (private ctx: DataContext) {}
+@@ -301,9 +302,16 @@ export class ProjectActions {
+       this.api.resetServer()
+     }
  
- const pkg = require('@packages/root')
+-    await this.api.launchProject(browser, activeSpec ?? emptySpec, options)
+     this.globalLaunchCount++
  
-```
-
-**File**: `packages/server/lib/cloud/bundles/verify_bundle_on_disk.ts` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ import crypto from 'crypto'
- import Debug from 'debug'
- import { verifySignature } from '../encryption'
- import { walkFiles } from './walk_files'
--import { isInsideDir } from './is_inside_dir'
-+import { isInsideDir } from '../../util/is_inside_dir'
- 
- const debug = Debug('cypress:server:cloud:bundles:verify-bundle-on-disk')
- 
-```
-
-**File**: `packages/server/lib/fixture.ts` (modified, +8/-2)
-```diff
-@@ -6,6 +6,7 @@ import { stripVTControlCharacters as stripAnsi } from 'util'
- import * as errors from './errors'
- import { fs } from './util/fs'
- import { globAsync as glob } from './util/glob'
-+import { isInsideDir } from './util/is_inside_dir'
- import type { ObjectEncodingOptions } from 'fs-extra'
- 
- const debug = debugModule('cypress:server:fixture')
-@@ -34,9 +35,14 @@ const friendlyJsonParse = function (s) {
- }
- 
- export async function get (fixturesFolder: string, filePath: string, options: { encoding?: (ObjectEncodingOptions & { flag?: string | undefined }) | BufferEncoding | null | undefined } = {}) {
-+  const root = path.resolve(fixturesFolder)
-   const p = path.join(fixturesFolder, filePath)
-   const fixture = path.basename(p)
- 
-+  if (!isInsideDir(root, path.resolve(p))) {
-+    throw new Error(`Fixture path '${filePath}' must resolve to a file inside the fixtures folder: ${fixturesFolder}`)
-+  }
++    try {
++      await this.api.launchProject(browser, activeSpec ?? emptySpec, options)
++    } catch (err) {
++      // A launch that never happened should not use up the one-shot auto-launch
++      this.globalLaunchCount--
++      throw err
++    }
 +
-   // if the file exists, go ahead and parse it
-   // otherwise, glob for potential extensions
+     return
+   }
  
-@@ -52,10 +58,10 @@ export async function get (fixturesFolder: string, filePath: string, options: {
- 
-     const pattern = `${p}{${extensions.join(',')}}`
- 
--    const matches = await glob(pattern, {
-+    const matches = (await glob(pattern, {
-       nosort: true,
-       nodir: true,
--    })
-+    })).filter((match) => isInsideDir(root, path.resolve(match)))
- 
-     if (matches.length === 0) {
-       const relativePath = path.relative('.', p)
 ```
 
-**File**: `packages/server/lib/util/is_inside_dir.ts` (renamed, +1/-1)
+**File**: `packages/data-context/src/data/ProjectLifecycleManager.ts` (modified, +2/-2)
 ```diff
-@@ -4,5 +4,5 @@ import path from 'path'
- export const isInsideDir = (parent: string, child: string): boolean => {
-   const rel = path.relative(parent, child)
+@@ -346,8 +346,8 @@ export class ProjectLifecycleManager {
+       const hasWelcomeBeenDismissed = Boolean(preferences.majorVersionWelcomeDismissed?.[GET_MAJOR_VERSION_FOR_CONTENT()])
  
--  return rel !== '' && !rel.startsWith('..') && !path.isAbsolute(rel)
-+  return rel !== '' && rel !== '..' && !rel.startsWith(`..${path.sep}`) && !path.isAbsolute(rel)
- }
+       // only continue if the browser was successfully set - we must have an activeBrowser once this function resolves
+-      // but if the user needs to dismiss a landing page, don't continue, the active browser will be opened
+-      // by a mutation called from the client side when the user dismisses the welcome screen
++      // but if the user needs to dismiss a landing page, don't continue: dismissing it renders OpenBrowser
++      // in the launchpad, whose auto-launch opens the active browser once the config is ready
+       if (this.ctx.coreData.activeBrowser && hasWelcomeBeenDismissed) {
+         // if `cypress open` was launched with a `--project` and `--testingType`, go ahead and launch the `--browser`
+         if (this.ctx.modeOptions.project && this.ctx.modeOptions.testingType) {
 ```
 
-**File**: `packages/server/test/unit/fixture.spec.ts` (modified, +34/-0)
+**File**: `packages/data-context/test/unit/actions/ProjectActions.spec.ts` (modified, +39/-0)
 ```diff
-@@ -101,6 +101,40 @@ describe('lib/fixture', () => {
+@@ -303,6 +303,45 @@ describe('ProjectActions', () => {
      })
    })
  
-+  describe('paths outside the fixtures folder', () => {
-+    const expectOutsideFolderError = async (filePath: string, options?: Parameters<typeof fixture.get>[2]) => {
-+      await expect(fixture.get(fixturesFolder, filePath, options)).rejects.toThrow(`Fixture path '${filePath}' must resolve to a file inside the fixtures folder`)
-+    }
-+
-+    it('rejects a relative path that traverses out of the fixtures folder', async () => {
-+      await expectOutsideFolderError('../test1.js')
-+      await expectOutsideFolderError('../../cypress.config.js')
++  describe('launchProject', () => {
++    beforeEach(() => {
++      ctx.coreData.currentProject = '/cy-project'
++      ctx.coreData.currentTestingType = 'e2e'
++      ctx.coreData.activeBrowser = { id: 'abc' } as any
 +    })
 +
-+    it('rejects a traversal path that omits the extension', async () => {
-+      await expectOutsideFolderError('../test1')
++    it('counts the launch before it settles so a concurrent auto-launch check does not launch again', async () => {
++      let resolveLaunch!: () => void
++      const launchProject = jest.fn().mockReturnValue(new Promise<void>((resolve) => {
++        resolveLaunch = resolve
++      }))
++
++      Object.assign(ctx._apis.projectApi, { launchProject })
++
++      expect(actions.launchCount).toBe(0)
++
++      const launching = actions.launchProject('e2e')
++
++      expect(launchProject).toHaveBeenCalledTimes(1)
++      expect(actions.launchCount).toBe(1)
++
++      resolveLaunch()
++      await launching
++
++      expect(actions.launchCount).toBe(1)
 +    })
 +
-+    it('rejects a path that resolves to the fixtures folder itself', async () => {
-+      await expectOutsideFolderError('.')
-+      await expectOutsideFolderError('nested/..')
-+    })
++    it('does not count a launch that rejects', async () => {
++      const launchProject = jest.fn().mockRejectedValue(new Error('browser failed to launch'))
 +
-+    it('rejects a traversal path when an encoding is passed', async () => {
-+      await expectOutsideFolderError('../test1.js', { encoding: 'utf8' })
-+    })
++      Object.assign(ctx._apis.projectApi, { launchProject })
 +
-+    it('does not resolve extension matches that glob patterns expand outside the fixtures folder', async () => {
-+      await expect(fixture.get(fixturesFolder, '{..,x}/test1')).rejects.toThrow('A fixture file could not be found')
-+    })
++      await expect(actions.launchProject('e2e')).rejects.toThrow('browser failed to launch')
 +
-+    it('allows a path that traverses within the fixtures folder', async () => {
-+      const obj = await fixture.get(fixturesFolder, 'nested/../foo.json')
-+
-+      expect(obj).toStrictEqual([{ json: true }])
++      expect(actions.launchCount).toBe(0)
 +    })
 +  })
 +
-   describe('json files', () => {
-     it('throws when json is invalid', () => {
-       return fixture.get(fixturesFolder, 'bad_json.json')
+   describe('debugCloudRun', () => {
+     beforeEach(() => {
+       jest.spyOn(ctx.relevantRuns, 'moveToRun')
 ```
 
-**File**: `packages/server/test/unit/util/is_inside_dir.spec.ts` (added, +29/-0)
+**File**: `packages/launchpad/cypress/e2e/choose-a-browser.cy.ts` (modified, +0/-3)
 ```diff
-@@ -0,0 +1,29 @@
-+import path from 'path'
-+import { describe, it, expect } from 'vitest'
-+import { isInsideDir } from '../../../lib/util/is_inside_dir'
-+
-+describe('lib/util/is_inside_dir', () => {
-+  const parent = path.resolve('/project/fixtures')
-+
-+  it('is true for a descendant', () => {
-+    expect(isInsideDir(parent, path.join(parent, 'users.json'))).toBe(true)
-+    expect(isInsideDir(parent, path.join(parent, 'nested', 'users.json'))).toBe(true)
-+  })
-+
-+  it('is true for a descendant whose name starts with ..', () => {
-+    expect(isInsideDir(parent, path.join(parent, '..users.json'))).toBe(true)
-+  })
-+
-+  it('is false for the directory itself', () => {
-+    expect(isInsideDir(parent, parent)).toBe(false)
-+  })
-+
-+  it('is false for the parent directory and its other children', () => {
-+    expect(isInsideDir(parent, path.dirname(parent))).toBe(false)
-+    expect(isInsideDir(parent, path.resolve(parent, '..', 'secret.json'))).toBe(false)
-+  })
-+
-+  it('is false for a sibling directory that shares a name prefix', () => {
-+    expect(isInsideDir(parent, path.resolve(parent, '..', 'fixtures-other', 'users.json'))).toBe(false)
-+  })
-+})
-```
-
-**File**: `system-tests/projects/e2e/cypress/e2e/form_submission_multipart.cy.js` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@ describe('<form> submissions', () => {
-     }
+@@ -3,9 +3,6 @@ import type { FoundBrowser } from '@packages/types'
+ describe('Choose a browser page', () => {
+   beforeEach(() => {
+     cy.scaffoldProject('launchpad')
+-    cy.withCtx((ctx, _) => {
+-      ctx.actions.project.launchCount = 0
+-    })
+   })
  
-     it('image/png', () => {
--      testUpload('../../static/javascript-logo.png')
-+      testUpload('javascript-logo.png')
+   describe('System Browsers Detected', () => {
+```
+
+**File**: `packages/launchpad/cypress/e2e/open-mode.cy.ts` (modified, +25/-3)
+```diff
+@@ -216,22 +216,44 @@ describe('Launchpad: Open Mode', () => {
+     cy.get('button[data-cy=launch-button]').invoke('text').should('include', 'Start E2E Testing in Firefox')
+   })
+ 
+-  it('auto-launches the browser when launched with --browser --testingType --project, after Major Version Welcome is dismissed', () => {
++  it('auto-launches the browser exactly once when launched with --browser --testingType --project, after Major Version Welcome is dismissed', () => {
+     cy.scaffoldProject('launchpad')
+     stubAvailableBrowsers()
+     cy.openProject('launchpad', ['--browser', 'firefox', '--e2e'])
+     cy.withCtx((ctx, o) => {
+-      o.sinon.stub(ctx._apis.projectApi, 'launchProject').resolves()
++      // A real launch takes seconds. Dismissing the welcome mounts OpenBrowser
++      // inside that window, and its own auto-launch check must not launch again.
++      // The test holds the launch open until it has checked that.
++      o.sinon.stub(ctx._apis.projectApi, 'launchProject').callsFake(() => {
++        return new Promise<void>((resolve) => {
++          o.testState.resolveLaunch = resolve
++        })
++      })
      })
  
-     it('application/pdf', () => {
++    // OpenBrowser decides whether to auto-launch from this query's response
++    cy.intercept('query-OpenBrowser_LocalSettings').as('openBrowserLocalSettings')
++
+     // Need to visit after args have been configured, todo: fix in #18776
+-    cy.visitLaunchpad()
++    cy.visitLaunchpad({ showWelcome: true })
++    cy.skipWelcome()
+ 
+     cy.get('h1').should('contain', 'Choose a browser')
+     cy.get('[data-cy-browser=firefox]').should('have.attr', 'aria-checked', 'true')
+     cy.get('button[data-cy=launch-button]').invoke('text').should('include', 'Start E2E Testing in Firefox')
++    cy.wait('@openBrowserLocalSettings')
++
++    cy.withRetryableCtx((ctx, o) => {
++      expect(ctx._apis.projectApi.launchProject).to.be.calledOnce
++      expect(o.testState.resolveLaunch).to.be.a('function')
++    })
++
++    cy.withCtx((ctx, o) => {
++      o.testState.resolveLaunch()
++    })
+ 
+     cy.withRetryableCtx((ctx) => {
++      expect(ctx.actions.project.launchCount).to.eq(1)
+       expect(ctx._apis.projectApi.launchProject).to.be.calledOnce
+     })
+   })
+```
+
+**File**: `packages/launchpad/src/Main.vue` (modified, +1/-24)
+```diff
+@@ -80,7 +80,7 @@
+ 
+ <script lang="ts" setup>
+ import { gql, useMutation, useQuery } from '@urql/vue'
+-import { MainLaunchpadQueryDocument, Main_ResetErrorsAndLoadConfigDocument, Main_LaunchProjectDocument } from './generated/graphql'
++import { MainLaunchpadQueryDocument, Main_ResetErrorsAndLoadConfigDocument } from './generated/graphql'
+ import TestingTypeCards from './setup/TestingTypeCards.vue'
+ import Wizard from './setup/Wizard.vue'
+ import GlobalPage from './global/GlobalPage.vue'
+@@ -117,7 +117,6 @@ fragment MainLaunchpadQueryData on Query {
+     preferences {
+       majorVersionWelcomeDismissed
+       wasBrowserSetInCLI
+-      shouldLaunchBrowserFromOpenBrowser
+     }
+   }
+   currentProject {
+@@ -153,22 +152,7 @@ mutation Main_ResetErrorsAndLoadConfig($id: ID!) {
+ }
+ `
+ 
+-gql`
+-mutation Main_LaunchProject ($testingType: TestingTypeEnum!)  {
+-  launchOpenProject {
+-    id
+-  }
+-  setProjectPreferencesInGlobalCache(testingType: $testingType) {
+-    currentProject {
+-      id
+-      title
+-    }
+-  }
+-}
+-`
+-
+ const mutation = useMutation(Main_ResetErrorsAndLoadConfigDocument)
+-const launchProject = useMutation(Main_LaunchProjectDocument)
+ 
+ const resetErrorAndLoadConfig = (id: string) => {
+   if (!mutation.fetching.value) {
+@@ -230,13 +214,6 @@ watch(
+ 
+ function handleClearLandingPage () {
+   setMajorVersionWelcomeDismissed(GET_MAJOR_VERSION_FOR_CONTENT())
+-  const shouldLaunchBrowser = query.data?.value?.localSettings?.preferences?.shouldLaunchBrowserFromOpenBrowser
+-
+-  const currentTestingType = currentProject.value?.currentTestingType
+-
+-  if (shouldLaunchBrowser && currentTestingType) {
+-    launchProject.executeMutation({ testingType: currentTestingType })
+-  }
+ }
+ 
+ const shouldShowWelcome = computed(() => {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35088** (2026-10-19): chore(npm/angular): migrate to @packages/eslint-config (@jennifer-shehane)
-- **PR #35087** (2026-10-19): dependency: update undici to 6.29.1 to address SNYK-JS-UNDICI-21181005 (@mschile)
-- **PR #35085** (2026-10-18): chore: lint Vue SFCs with TypeScript in @packages/eslint-config (@jennifer-shehane)
-- **PR #35083** (2026-10-18): chore: lint JSON in @packages/eslint-config with an opt-in jsonConfig (@jennifer-shehane)
-- **PR #35080** (2026-10-17): chore: enable @typescript-eslint/ban-ts-comment in the shared flat config (@jennifer-shehane)
-- **PR #35079** (2026-10-17): chore: promote zero-hit React, Vue and import-x/namespace lint warnings to errors (@jennifer-shehane)
+- **PR #35125** (2026-10-22): chore: wait for an in-flight project scaffold before a test retry re-scaffolds it (@mschile)
+- **PR #35121** (2026-10-22): chore: remove the GraphQL-over-fetch switch (@mschile)
+- **PR #35119** (2026-10-22): fix: keep cy.contains() retrying when its within subject is missing (@jennifer-shehane)
+- **PR #35118** (2026-10-21): fix: record the user's NODE_TLS_REJECT_UNAUTHORIZED at server startup (@mschile)
+- **PR #35117** (closed): fix: pass NODE_TLS_REJECT_UNAUTHORIZED to config process before request.ts loads (@cursor[bot])
+- **PR #35102** (2026-10-21): misc: rewrite the cy.visit() and cy.request() status code options errors (@jennifer-shehane)
 
 ---
 
@@ -1441,13 +1851,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. drop requests that arrive after the NetworkProxy is disposed (#34977)
+## X. show a clear error when the component testing dev server fails to start (#35081)
 
 **RULE**:
 When implementing operations in `cli/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `30a4d032`: drop requests that arrive after the NetworkProxy is disposed (#34977). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b7fd293f`: show a clear error when the component testing dev server fails to start (#35081). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/CHANGELOG.md`.
@@ -1455,7 +1865,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- Fixed a regression in [16.0.0](#16-0-0) where a run whose tests all passed could exit with code 1 and print `ServerBase#open must first be called before accessing 'this.null'` if the browser made a request while Cypress was shutting down. Fixed in [#34977](https://github.com/cypress-io/cypress/pull/34977).
+- When the dev server for component testing fails to start, such as when your project installs a version of webpack or webpack-dev-server that Cypress does not support, Cypress now explains that the dev server could not start, shows the dev server's error, and links to the dev server documentation. Previously, webpack errors were reported as a crash of your config file, and other dev server errors were shown with no explanation. Fixed in [#35081](https://github.com/cypress-io/cypress/pull/35081).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1465,4 +1875,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `30a4d032` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b7fd293f` are properly handled with clean fallback behavior.

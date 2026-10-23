@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T10:48:13.132Z",
+  "last_updated": "2026-10-23T10:54:28.021Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3021,14 +3021,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cypress-io-cypress",
-      "content_hash": "cbe293725bbb35490053a111cb03694661bf6b3b533ec51528061045007e7366",
-      "verified_at": "2026-10-20T04:50:55.830Z",
+      "content_hash": "d7af5ecd62ce05243eb7b068fc3c367656365e83ce4498b035be7525820b8ae4",
+      "verified_at": "2026-10-23T10:54:22.204Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T04:50:55.830Z"
+      "last_updated": "2026-10-23T10:54:22.204Z"
     },
     "syntax-tree/unist": {
       "repository": "syntax-tree/unist",
@@ -3801,14 +3801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-defguard-defguard",
-      "content_hash": "3ee04516dac0067e13ee4bc1069a7ddb15dbc117f6c0fc75e1da84190b7b8e40",
-      "verified_at": "2026-10-22T15:42:08.585Z",
+      "content_hash": "91bcaf14c6758ad8c447d82831011a64aeef72ab118ee8033d9ab2bd6c48f643",
+      "verified_at": "2026-10-23T10:54:28.021Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:42:08.585Z"
+      "last_updated": "2026-10-23T10:54:28.021Z"
     },
     "tamagui/tamagui": {
       "repository": "tamagui/tamagui",
@@ -8016,14 +8016,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-diggerhq-digger",
-      "content_hash": "4eabdcfda588d8c2823457d2e4b3a030170aa85baa28ca2488e10acbd0e0dce6",
-      "verified_at": "2026-10-19T03:20:26.366Z",
+      "content_hash": "c63310c6529b4260043644c47e791192903f4b82c575a0af4cca1f4910efe1b9",
+      "verified_at": "2026-10-23T10:54:25.463Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:20:26.366Z"
+      "last_updated": "2026-10-23T10:54:25.463Z"
     },
     "pingcap/talent-plan": {
       "repository": "pingcap/talent-plan",

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T10:48:13.128Z",
-  "total_cycles_completed": 4513,
-  "total_learnings_persisted": 4513,
-  "total_rules_promoted": 3742,
+  "last_updated": "2026-10-23T10:54:28.018Z",
+  "total_cycles_completed": 4516,
+  "total_learnings_persisted": 4516,
+  "total_rules_promoted": 3745,
   "history": [
-    {
-      "timestamp": "2026-10-22T16:58:08.173Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:58:15.136Z",
-      "repository": "Kong/kubernetes-ingress-controller",
-      "learningId": "learn-github-kong-kubernetes-ingress-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:58:17.568Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T16:58:22.087Z",
       "repository": "ytsaurus/ytsaurus",
@@ -1403,6 +1382,27 @@
       "repository": "grpc/grpc-rust",
       "learningId": "learn-github-grpc-grpc-rust",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T10:54:22.201Z",
+      "repository": "cypress-io/cypress",
+      "learningId": "learn-github-cypress-io-cypress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T10:54:25.460Z",
+      "repository": "diggerhq/digger",
+      "learningId": "learn-github-diggerhq-digger",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T10:54:28.018Z",
+      "repository": "DefGuard/defguard",
+      "learningId": "learn-github-defguard-defguard",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

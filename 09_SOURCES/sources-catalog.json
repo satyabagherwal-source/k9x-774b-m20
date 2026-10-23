@@ -1923,10 +1923,10 @@
     "repository": "cypress-io/cypress",
     "platform": "github",
     "sourceUrl": "https://github.com/cypress-io/cypress",
-    "sourceVersion": "6ecfc6ba",
+    "sourceVersion": "e20ef17f",
     "license": "MIT",
-    "contentHash": "cbe293725bbb35490053a111cb03694661bf6b3b533ec51528061045007e7366",
-    "lastHarvestedAt": "2026-10-20T04:50:55.825Z",
+    "contentHash": "d7af5ecd62ce05243eb7b068fc3c367656365e83ce4498b035be7525820b8ae4",
+    "lastHarvestedAt": "2026-10-23T10:54:22.193Z",
     "learningId": "learn-github-cypress-io-cypress"
   },
   "syntax-tree-unist": {
@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "8035d117",
+    "sourceVersion": "307c73a4",
     "license": "NOASSERTION",
-    "contentHash": "3ee04516dac0067e13ee4bc1069a7ddb15dbc117f6c0fc75e1da84190b7b8e40",
-    "lastHarvestedAt": "2026-10-22T15:42:08.575Z",
+    "contentHash": "91bcaf14c6758ad8c447d82831011a64aeef72ab118ee8033d9ab2bd6c48f643",
+    "lastHarvestedAt": "2026-10-23T10:54:28.008Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -5263,10 +5263,10 @@
     "repository": "diggerhq/digger",
     "platform": "github",
     "sourceUrl": "https://github.com/diggerhq/digger",
-    "sourceVersion": "853f6abf",
+    "sourceVersion": "7c237c09",
     "license": "MIT",
-    "contentHash": "4eabdcfda588d8c2823457d2e4b3a030170aa85baa28ca2488e10acbd0e0dce6",
-    "lastHarvestedAt": "2026-10-19T03:20:26.353Z",
+    "contentHash": "c63310c6529b4260043644c47e791192903f4b82c575a0af4cca1f4910efe1b9",
+    "lastHarvestedAt": "2026-10-23T10:54:25.451Z",
     "learningId": "learn-github-diggerhq-digger"
   },
   "pingcap-talent-plan": {
