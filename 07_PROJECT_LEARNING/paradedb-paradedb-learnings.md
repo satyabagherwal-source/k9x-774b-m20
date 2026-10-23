@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `0117f078`  
+> **Source Version**: `c3e82fe4`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T02:49:56.321Z  
+> **Timestamp**: 2026-10-23T05:50:33.477Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T02:49:56.184Z  
+> **Harvest Timestamp**: 2026-10-23T05:50:33.468Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9424 stars
+- **Stars / Engagement**: 9434 stars
 
 ---
 
@@ -1524,7 +1524,7 @@ impl MessageQueueReceiver {
 
 use crate::customscan::aggregatescan::AggregateCSClause;
 use crate::customscan::aggregatescan::exec::AggregationResultsRow;
-use crate::index::reader::index::SearchIndexManifest;
+use crate::index::reader::index::{SearchIndexManifest, SegmentPruningEstimate};
 use crate::postgres::PgSearchRelation;
 use crate::postgres::customscan::CustomScanState;
 use crate::postgres::customscan::aggregatescan::explain::AggregateParallelism;
@@ -1635,6 +1635,7 @@ pub struct WrappedAggregateProjection {
 
 #[derive(Default)]
 pub struct AggregateScanState {
+    pub segment_pruning: SegmentPruningEstimate,
     pub visibility_stats: VisibilityStats,
     pub parallelism: Option<AggregateParallelism>,
     pub state: ExecutionState,
@@ -1709,8 +1710,7 @@ impl AggregateScanState {
 
 impl CustomScanState for AggregateScanState {
     fn init_exec_method(&mut self, _cstate: *mut pg_sys::CustomScanState) {
-        // TODO: Unused currently. See the comment on `trait CustomScanState` regarding making this
-        // more usef
+        // TODO: Unused currently. See the co
 ```
 
 ### Core Architecture Module: `pg_search/src/postgres/customscan/basescan/projections/score.rs`
@@ -2301,11 +2301,11 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6885** (2026-10-21): **Regex search on one large segment ignores cancel until the segment is done**
+  *Symptoms*: # What happens?  When a serial Top-K scan runs a `pdb.regex` query on one large segment, `pg_cancel_backend` waits until that segment is searched. The search phase checks for interrupts once per segment (`segments_to_query` in `top_k.rs`). Tantivy walks the term dictionary and opens the matching postings with no check in between. One segment means one check.  On a 20M row table with one segment, the query below runs 18 s. A cancel sent at 1 s landed after 13.8 s. With the same table split into 10 segments, the query runs 8.3 s and the cancel landed in 0.18 s.  Found on 0.26.2 while we looked for paths that hold interrupts (see #6881). Big single segments are what the merger produces on large tables, so this isn't an artificial shape.  ## To Reproduce  1. Start `paradedb/paradedb:0.26.2-pg18` and connect. 2. In session 1, build the table and run the query.  ```sql SET maintenance_work_mem = '2GB'; CREATE TABLE docs AS SELECT i AS id, md5(i::text) || ' ' || md5((i * 7)::text) || ' common words here' AS body FROM generate_series(1, 20000000) AS i; CREATE INDEX docs_idx ON docs USING bm25 (id, body) WITH (target_segment_count = 1); VACUUM ANALYZE docs;  SET max_parallel_workers_per_gather = 0; SELECT id FROM docs WHERE body @@@ pdb.regex('.*abc.*') ORDER BY id DESC LIMIT 10; ```  3. In session 2, right after the `SELECT` starts, run `SELECT pg_cancel_backend(<session 1 pid>);`. 4. Session 1 reports the cancel about 14 s later. Rebuild the index with `target_segment_count = 10` an
+
 - **Issue #6884** (2026-10-19): **IVF training ignores cancel and terminate during CREATE INDEX and merges**
   *Symptoms*: # What happens?  When a vector index trains its IVF centroids, the backend ignores `pg_cancel_backend` and `pg_terminate_backend` until training ends. `SuperKMeansIvfClusterer::train` calls `superkmeans::train_owned`, which has no interrupt hook. The assign step after it polls `wants_cancel` in `mvcc.rs`. That reads `QueryCancelPending` but not `ProcDiePending`, so a cancel lands there and a terminate doesn't.  Background merges attach the same clusterer (`SearchIndexMerger::open`). A merger that is training ignores `SIGTERM` the same way, and a fast shutdown waits for it.  Measured on 0.26.2 with `CREATE INDEX` on 1M rows of `vector(512)` and `target_segment_count = 1`. The build reports `train=29264 assign=22265 encode=21265` ms.  | Phase | `pg_cancel_backend` | `pg_terminate_backend` | |---|---|---| | train (29 s) | waits for train to end | waits for train and assign to end | | assign (22 s) | lands in 0.6 s | waits for assign to end | | encode (21 s) | lands in 0.1 s | lands in 0.1 s |  A terminate sent during training landed after 41.7 s. A cancel sent during training landed after 14.4 s, when the phase ended. Training time grows with rows times dims, so I'd expect a few million 1536-dim rows to train for minutes.  Found while we looked for paths that hold interrupts (see #6881). A fix needs two parts, I think. `wants_cancel` should also test `ProcDiePending`, and the clusterer needs a check between splits, which `superkmeans` doesn't expose today.  ## To Reproduce  1. S
-
-- **Issue #6872** (2026-10-19): **`unicode_words` strips emojis**
-  *Symptoms*: ### What happens?  `pdb.unicode_words` removes emojis unless it is given no options. It removes them for 'remove_emojis=false', and also for unrelated options such as 'columnar=true', 'pnorms=true', 'bitmap_postings=false' or 'lowercase=false'. The docs say emojis are kept by default and only removed with `remove_emojis`.  Cause: `UnicodeWordsTypmod::try_from` (pg_search/src/api/tokenizers/typmod/definitions.rs) reads the option as `parsed.try_get("remove_emojis", 0).is_some()`. `try_get(key, 0)` falls back to the property in slot 0 when the key is absent, so any first option makes `.is_some()` true.  An index built with `(description::pdb.unicode_words('columnar=true'))`, as in docs/reference/indexing/columnar.mdx, cannot find emoji terms.  I have a fix ready that reads the option by key, or as the bare flag, instead of by position. Indexes built with these options were built with emojis removed, so it comes with a changelog note about reindexing.  ### To Reproduce  ```sql SELECT 'Hello 😊 world'::pdb.unicode_words::text[]; -- {hello,😊,world}  SELECT 'Hello 😊 world'::pdb.unicode_words('remove_emojis=false')::text[]; -- expected {hello,😊,world} -- observed {hello,world}  SELECT 'Hello 😊 world'::pdb.unicode_words('columnar=true')::text[]; -- expected {hello,😊,world} -- observed {hello,world} ```   ### OS:  `macOS (Apple Silicon, aarch64); not OS-specific`  ### ParadeDB Version (e.g. output of `SELECT * FROM paradedb.version_info();`):  `main (current)` (or paste `SELECT *
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2322,338 +2322,816 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `62fbb07d` (2026-10-20)
-**Commit Message**: chore: bump rustls-webpki and webpki-roots to fix RUSTSEC advisories (#6936)
+### Incident Patch 1: `bdae88a1` (2026-10-21)
+**Commit Message**: fix: Normal scan panics with min > max when pushed-down LIMIT exceeds 8192 (#6959)
 
-## Summary
-`cargo audit` reports two vulnerabilities in `Cargo.lock`. This PR bumps
-both crates with `cargo update`:
+# Ticket(s) Closed
 
-- `rustls-webpki` 0.103.15 → 0.103.16
-([RUSTSEC-2026-0382](https://rustsec.org/advisories/RUSTSEC-2026-0382):
-certificate verification may accept distrusted intermediates)
-- `webpki-roots` 1.0.9 → 1.0.10
-([RUSTSEC-2026-0381](https://rustsec.org/advisories/RUSTSEC-2026-0381):
-bundled roots allow trust in distrusted emSign intermediates)
-
-Only `Cargo.lock` changes.
-
-## Testing
-- `cargo audit`: 0 vulnerabilities (only the 7 existing
-unmaintained-crate warnings remain)
-- `cargo check --workspace --locked` passes
-
-🤖 Generated with Claude Code
-
----------
-
-Co-authored-by: paradedb-github-bot[bot] <282009505+paradedb-github-bot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +4/-4)
-```diff
-@@ -6233,9 +6233,9 @@ dependencies = [
- 
- [[package]]
- name = "rustls-webpki"
--version = "0.103.15"
-+version = "0.103.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
- dependencies = [
-  "ring",
-  "rustls-pki-types",
-@@ -7945,9 +7945,9 @@ dependencies = [
- 
- [[package]]
- name = "webpki-roots"
--version = "1.0.9"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
-+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
- dependencies = [
-  "rustls-pki-types",
- ]
-```
-
-**File**: `nix/pg_search.nix` (modified, +1/-1)
-```diff
-@@ -65,7 +65,7 @@ buildPgrxExtension (finalAttrs: {
-   # If maintainers forget to do so, Nix will throw an error message that begins
-   # like this and then provides the correct new hash:
-   # error: hash mismatch in fixed-output derivation '...'
--  cargoHash = "sha256-eHNTL+vkcFuXsVSWb40tw7MePZBKGk5ilP0i2YLIibU=";
-+  cargoHash = "sha256-+ftAOBJgE5k/WBfcxbtJray+xU00vmLflbvKd55H7jw=";
- 
-   inherit cargo-pgrx postgresql;
- 
-```
-
----
-
-### Incident Patch 2: `63e360ca` (2026-10-20)
-**Commit Message**: refactor: use pg_sys constants for built-in function OIDs (#6913)
+- No ticket, fixes a customer-reported issue in slack.
 
 ## What
 
-Replaces runtime `regprocedurein` lookups of built-in `pg_catalog`
-functions with the fixed OID constants that pgrx exposes from
-`fmgroids.h`:
+Queries that fall back to `NormalScanExecState` with a pushed-down LIMIT
+above 8192 fail with:
 
-| Function | Location | Constant |
-|---|---|---|
-| `pg_catalog.unnest(anyarray)` | `postgres/utils.rs` `is_unnest_func` |
-`pg_sys::F_UNNEST_ANYARRAY` |
-| `pg_catalog.lower(text)` | `customscan/orderby.rs`
-`text_lower_funcoid` | `pg_sys::F_LOWER_TEXT` |
-| `now()` | `customscan/projections.rs` `placeholder_procid` |
-`pg_sys::F_NOW` |
+```
+ERROR:  min > max. min = 100000, max = 8192
+```
+
+For example, `ORDER BY pdb.score(id) DESC, id DESC LIMIT 100000` on a
+table with a text key. Only `pdb.score` can be pushed down, so TopK is
+declined. The scan falls back to Normal with a Sort above it, and the
+scan still gets the LIMIT.
 
 ## Why
 
-Built-in function OIDs are assigned in `pg_proc.dat` and are identical
-across all supported Postgres versions (verified for PG15–18 in pgrx
-0.19.3: 2331, 870 and 1299), so looking them up by signature at runtime
-adds cost and complexity for no benefit:
+Regression from #6526. In `normal.rs`, `(rem *
+self.batch_scale).clamp(rem, BATCH_SIZE)` panics whenever `rem >
+BATCH_SIZE`, because `Ord::clamp` requires `min <= max`. 0.26.0 isn't
+affected.
 
-- `is_unnest_func` used `static mut` + `Once` caching and silently
-disabled itself (`false`) if the lookup ever failed.
-- `text_lower_funcoid` had no caching, so it did a catalog lookup on
-every call.
-- The `now()` lookup wasn't schema-qualified, so it resolved through
-`search_path`.
+## How
 
-The codebase already uses `pg_sys::F_*` constants elsewhere (e.g.
-`F_DATE_TIMESTAMP`, `F_ROW_NUMB
+Replace it with `rem.saturating_mul(self.batch_scale).min(BATCH_SIZE)`.
+`batch_scale >= 1`, so the lower bound wasn't needed. `saturating_mul`
+also stops the multiplication from overflowing for very large LIMITs.
 
-**File**: `pg_search/src/postgres/customscan/orderby.rs` (modified, +2/-8)
-```diff
-@@ -39,7 +39,7 @@ use crate::postgres::var::{
- };
- use crate::schema::{SearchField, SearchFieldType, SearchIndexSchema};
- use crate::vector::metric::VectorMetric;
--use pgrx::{FromDatum, IntoDatum, PgList, direct_function_call, pg_sys};
-+use pgrx::{FromDatum, PgList, pg_sys};
- 
- /// The type of sort expression found in an ORDER BY clause.
- #[derive(Debug, Clone, PartialEq)]
-@@ -130,13 +130,7 @@ impl PathKeyInfo {
- 
- /// Helper function to get the OID of the text lower function
- pub fn text_lower_funcoid() -> pg_sys::Oid {
--    unsafe {
--        direct_function_call::<pg_sys::Oid>(
--            pg_sys::regprocedurein,
--            &[c"pg_catalog.lower(text)".into_datum()],
--        )
--        .expect("the `pg_catalog.lower(text)` function should exist")
--    }
-+    pg_sys::F_LOWER_TEXT.into()
- }
- 
- unsafe fn extract_score_var(node: *mut pg_sys::Node) -> Option<*mut pg_sys::Var> {
-```
+## Tests
 
-**File**: `pg_search/src/postgres/customscan/projections.rs` (modified, +7/-10)
-```diff
-@@ -34,21 +34,18 @@ use crate::postgres::customscan::basescan::projections::snippet::{
- use crate::postgres::customscan::range_table::{rte_is_parent, rte_is_partitioned};
- use crate::postgres::node::{NodeExt, WalkControl};
- use crate::postgres::var::{VarContext, find_one_var_and_fieldname};
--use pgrx::{Internal, IntoDatum, PgList, direct_function_call, pg_extern, pg_guard, pg_sys};
-+use pgrx::{Internal, PgList, pg_extern, pg_guard, pg_sys};
- use std::ptr::addr_of_mut;
- use tantivy::snippet::SnippetGenerator;
- 
- /// Get the Oid of a placeholder function to use in the target list of aggregate custom scans.
- pub(crate) fn placeholder_procid() -> pg_sys::Oid {
--    unsafe {
--        let agg_fn_oid = agg_fn_oid();
--        if agg_fn_oid != pg_sys::InvalidOid {
--            agg_fn_oid
--        } else {
--            // Fallback to now() if pdb.agg_fn doesn't exist yet (e.g., during extension creation)
--            direct_function_call::<pg_sys::Oid>(pg_sys::regprocedurein, &[c"now()".into_datum()])
--                .expect("the `now()` function should exist")
--        }
-+    let agg_fn_oid = agg_fn_oid();
-+    if agg_fn_oid != pg_sys::InvalidOid {
-+        agg_fn_oid
-+    } else {
-+        // Fallback to now() if pdb.agg_fn doesn't exist yet (e.g., during extension creation)
-+        pg_sys::F_NOW.into()
-     }
- }
- 
-```
+New pg_regress test `normal_scan_large_limit`. It checks that the plan
+uses `NormalScanExecState` and runs LIMIT 12000, 100000 and `i64::MAX`.
+All of these errored before the fix.
 
-**File**: `pg_search/src/postgres/utils.rs` (modified, +1/-20)
-```diff
-@@ -653,26 +653,7 @@ pub fn strip_unnest_and_relabel(mut node: *mut pg_sys::Node) -> (*mut pg_sys::No
- 
- /// Identifies if the function identified by `funcid` is `pg_catalog.unnest(anyarray)`.
- pub fn is_unnest_func(funcid: pg_sys::Oid) -> bool {
--    use std::sync::Once;
--    static mut UNNEST_OID: pg_sys::Oid = pg_sys::InvalidOid;
--    static UNNEST_OID_ONCE: Once = Once::new();
--
--    unsafe {
--        UNNEST_OID_ONCE.call_once(|| {
--            if let Some(oid) = direct_function_call::<pg_sys::Oid>(
--                pg_sys::regprocedurein,
--                &[c"pg_catalog.unnest(anyarray)".into_datum()],
--            ) {
--                UNNEST_OID = oid;
--            }
--        });
--
--        if funcid == UNNEST_OID && UNNEST_OID != pg_sys::InvalidOid {
--            return true;
--        }
--
--        false
--    }
-+    funcid.to_u32() == pg_sys::F_UNNEST_ANYARRAY
- }
- 
- /// Create a text Const node from a string
-```
+🤖 Generated with Claude Code
 
----
-
-### Incident Patch 3: `2ca0aac4` (2026-10-20)
-**Commit Message**: fix: restore legacy range tokenizers after upgrade (#6940)
-
-Range indexes created before 0.26.0 can fail after upgrade when a query
-materializes recently written rows: `Failed to index mutable segment.:
-Schema error: 'Error getting tokenizer for field: amount_range'`. #6441
-changed the default range configuration from JSON to Range, so tokenizer
-collection stopped registering the default JSON tokenizer still
-referenced by the stored schema.
-
-Restore that tokenizer for range fields through the existing
-registration path, including its deprecated name. Existing indexes keep
-their schema and do not need REINDEX. Add an upgrade fixture with only
-integer and range fields, so another text/JSON field cannot mask the
-missing registration. Cover mutable reads, range queries, immutable
-writes, and unchanged stored tokenizer names. This needs the 0.26.x
-backport.
-
-Validation:
-- [End-to-end reproduction and
-recovery](https://github.com/paradedb/paradedb/actions/runs/39511220206)
-passed on PostgreSQL 18.6: create an index with INT8RANGE and DATERANGE
-under released 0.25.11, upgrade the same database to released 0.26.2,
-insert a mutable row, and require the exact reported error. Build 0.26.2
-wit
-
-**File**: `.github/actions/test-pg_search-upgrade/range_tokenizers/queries.sql` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+SET plpgsql.check_asserts = on;
-+SET paradedb.global_mutable_segment_rows = 1000;
-+
-+INSERT INTO range_tokenizers VALUES (2, '[200,300)', '[2026-02-01,2026-03-01)');
-+
-+DO $$
-+BEGIN
-+    ASSERT EXISTS (
-+        SELECT 1 FROM paradedb.index_info('range_tokenizers_idx') WHERE mutable
-+    ), 'the upgraded index must have a mutable segment';
-+    ASSERT (
-+        SELECT array_agg(id ORDER BY id) FROM range_tokenizers WHERE id @@@ paradedb.all()
-+    ) = ARRAY[1, 2], 'search must materialize new rows in the legacy range index';
-+    ASSERT (
-+        SELECT array_agg(id ORDER BY id) FROM range_tokenizers
-+        WHERE amount_range @@@ pdb.range_term('[250,260)'::int8range, 'Intersects')
-+    ) = ARRAY[2], 'the new amount range must be searchable';
-+    ASSERT (
-+        SELECT array_agg(id ORDER BY id) FROM range_tokenizers
-+        WHERE date_range @@@ pdb.range_term('[2026-02-10,2026-02-11)'::daterange, 'Intersects')
-+    ) = ARRAY[2], 'the new date range must be searchable';
-+END;
-+$$;
-+
-+SET paradedb.global_mutable_segment_rows = 0;
-+INSERT INTO range_tokenizers VALUES (3, '[300,400)', '[2026-03-01,2026-04-01)');
-+
-+DO $$
-+BEGIN
-+    ASSERT (
-+        SELECT array_agg(id ORDER BY id) FROM range_tokenizers WHERE id @@@ paradedb.all()
-+    ) = ARRAY[1, 2, 3], 'immutable writes must also work with the legacy range schema';
-+    ASSERT NOT EXISTS (
-+        SELECT 1 FROM paradedb.schema('range_tokenizers_idx') current
-+        FULL JOIN range_schema_before_upgrade old USING (name)
-+        WHERE current.tokenizer IS DISTINCT FROM old.tokenizer
-+    ), 'the existing range schema must remain unchanged without REINDEX';
-+END;
-+$$;
-+
-+RESET paradedb.global_mutable_segment_rows;
-```
-
-**File**: `.github/actions/test-pg_search-upgrade/range_tokenizers/setup.sql` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+CREATE TABLE range_tokenizers (
-+    id INTEGER PRIMARY KEY,
-+    amount_range INT8RANGE,
-+    date_range DATERANGE
-+);
-+
-+INSERT INTO range_tokenizers VALUES (1, '[100,200)', '[2026-01-01,2026-02-01)');
-+
-+-- A text or JSON field could mask missing range tokenizer registration.
-+CREATE INDEX range_tokenizers_idx ON range_tokenizers
-+USING paradedb (id, amount_range, date_range) WITH (key_field = 'id');
-+
-+CREATE TABLE range_schema_before_upgrade AS
-+SELECT name, tokenizer FROM paradedb.schema('range_tokenizers_idx');
-```
-
-**File**: `docs/project/changelog/unreleased/6940.stability.mdx` (added, +5/-0)
+**File**: `docs/project/changelog/unreleased/6959.stability.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +header: stability
 +---
 +
-+- Fixed missing tokenizer errors when reading or writing range indexes created before 0.26.0, without requiring a reindex.
++A query with a `LIMIT` above 8192 no longer fails with `min > max. min = ..., max = 8192` when only part of its `ORDER BY` can be pushed down, such as `ORDER BY pdb.score(id) DESC, id DESC` on a table with a text key. This regressed in 0.26.1.
 ```
 
-**File**: `pg_search/src/index/search.rs` (modified, +5/-1)
+**File**: `pg_search/src/postgres/customscan/basescan/exec_methods/normal.rs` (modified, +1/-1)
 ```diff
-@@ -16,6 +16,7 @@
- // along with this program. If not, see <http://www.gnu.org/licenses/>.
- 
- use crate::postgres::rel::PgSearchRelation;
-+use crate::schema::SearchFieldConfig;
+@@ -104,7 +104,7 @@ impl NormalScanExecState {
+                     if rem == 0 {
+                         BATCH_SIZE
+                     } else {
+-                        (rem * self.batch_scale).clamp(rem, BATCH_SIZE)
++                        rem.saturating_mul(self.batch_scale).min(BATCH_SIZE)
+                     }
+                 }
+                 None => BATCH_SIZE,
+```
+
+**File**: `pg_search/tests/pg_regress/expected/normal_scan_large_limit.out` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++-- Tests that NormalScanExecState handles a pushed-down LIMIT larger than its
++-- internal batch size (8192). A text key tiebreak means only pdb.score() can be
++-- pushed down, so TopK is declined and the Normal scan receives the LIMIT.
++\i common/common_setup.sql
++CREATE EXTENSION IF NOT EXISTS pg_search;
++-- Disable parallel workers to avoid differences in plans
++SET max_parallel_workers_per_gather = 0;
++SET enable_indexscan to OFF;
++SET paradedb.enable_columnar_exec = true;
++SET paradedb.planner_warnings = 'off';
++DROP TABLE IF EXISTS normal_large_limit CASCADE;
++CREATE TABLE normal_large_limit (id TEXT PRIMARY KEY, body TEXT);
++INSERT INTO normal_large_limit
++SELECT 'k' || g, 'hello world ' || (g % 7) FROM generate_series(1, 20000) g;
++CREATE INDEX normal_large_limit_idx ON normal_large_limit USING bm25 (id, body);
++EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF)
++SELECT id, pdb.score(id) FROM normal_large_limit
++WHERE body @@@ 'hello'
++ORDER BY pdb.score(id) DESC, id DESC
++LIMIT 100000;
++                                                                        QUERY PLAN                                                                         
++-----------------------------------------------------------------------------------------------------------------------------------------------------------
++ Limit
++   ->  Sort
++         Sort Key: (pdb.score(id)) DESC, id DESC
++         ->  Custom Scan (ParadeDB Base Scan) on normal_large_limit
++               Table: normal_large_limit
++               Index: normal_large_limit_idx
++               Exec Method: NormalScanExecState
++               Scores: true
++               Tantivy Query: {"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"hello","lenient":null,"conjunction_mode":null}}}}
++(9 rows)
++
++-- LIMIT just above the batch size
++SELECT count(*) FROM (
++    SELECT id, pdb.score(id) FROM normal_large_limit
++    WHERE body @@@ 'hello'
++    ORDER BY pdb.score(id) DESC, id DESC
++    LIMIT 12000
++) s;
++ count 
++-------
++ 12000
++(1 row)
++
++-- LIMIT above the number of matching rows
++SELECT count(*) FROM (
++    SELECT id, pdb.score(id) FROM normal_large_limit
++    WHERE body @@@ 'hello'
++    ORDER BY pdb.score(id) DESC, id DESC
++    LIMIT 100000
++) s;
++ count 
++-------
++ 20000
++(1 row)
++
++-- LIMIT near usize::MAX must not overflow the batch size computation
++SELECT count(*) FROM (
++    SELECT id, pdb.score(id) FROM normal_large_limit
++    WHERE body @@@ 'hello'
++    ORDER BY pdb.score(id) DESC, id DESC
++    LIMIT 9223372036854775807
++) s;
++ count 
++-------
++ 20000
++(1 row)
++
++DROP TABLE normal_large_limit CASCADE;
++RESET paradedb.planner_warnings;
++\i common/common_cleanup.sql
++-- Reset parallel workers setting to default
++RESET max_parallel_workers_per_gather;
++RESET enable_indexscan;
++RESET paradedb.enable_columnar_exec;
++SELECT 'Common tests cleanup complete' AS status; 
++            status             
++-------------------------------
++ Common tests cleanup complete
++(1 row)
++
+```
+
+**File**: `pg_search/tests/pg_regress/sql/normal_scan_large_limit.sql` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++-- Tests that NormalScanExecState handles a pushed-down LIMIT larger than its
++-- internal batch size (8192). A text key tiebreak means only pdb.score() can be
++-- pushed down, so TopK is declined and the Normal scan receives the LIMIT.
++\i common/common_setup.sql
++SET paradedb.planner_warnings = 'off';
++
++DROP TABLE IF EXISTS normal_large_limit CASCADE;
++CREATE TABLE normal_large_limit (id TEXT PRIMARY KEY, body TEXT);
++INSERT INTO normal_large_limit
++SELECT 'k' || g, 'hello world ' || (g % 7) FROM generate_series(1, 20000) g;
++CREATE INDEX normal_large_limit_idx ON normal_large_limit USING bm25 (id, body);
++
++EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF)
++SELECT id, pdb.score(id) FROM normal_large_limit
++WHERE body @@@ 'hello'
++ORDER BY pdb.score(id) DESC, id DESC
++LIMIT 100000;
++
++-- LIMIT just above the batch size
++SELECT count(*) FROM (
++    SELECT id, pdb.score(id) FROM normal_large_limit
++    WHERE body @@@ 'hello'
++    ORDER BY pdb.score(id) DESC, id DESC
++    LIMIT 12000
++) s;
++
++-- LIMIT above the number of matching rows
++SELECT count(*) FROM (
++    SELECT id, pdb.score(id) FROM normal_large_limit
++    WHERE body @@@ 'hello'
++    ORDER BY pdb.score(id) DESC, id DESC
++    LIMIT 100000
++) s;
++
++-- LIMIT near usize::MAX must not overflow the batch size computation
++SELECT count(*) FROM (
++    SELECT id, pdb.score(id) FROM normal_large_limit
++    WHERE body @@@ 'hello'
++    ORDER BY pdb.score(id) DESC, id DESC
++    LIMIT 9223372036854775807
++) s;
++
++DROP TABLE normal_large_limit CASCADE;
++RESET paradedb.planner_warnings;
++\i common/common_cleanup.sql
+```
+
+---
+
+### Incident Patch 2: `a8cd30c8` (2026-10-22)
+**Commit Message**: fix: preserve Numeric64 comparison semantics without overflowing (#6978)
+
+# Ticket(s) Closed
+
+- Closes #6102
+
+## What
+
+Replaces #6369, originally authored by Javier Garcia (@IamYipi). Replays
+his four commits with authorship and original commit references
+preserved, followed by a separate finishing commit.
+
+## Why
+
+Rounding Numeric64 query literals changes comparison results, and
+computing an off-grid ceiling can overflow.
+
+## How
+
+Use exact grid comparisons and overflow-safe bounds while preserving NaN
+ordering and storage rounding. Also fix off-grid negation pruning and
+check negative-floor overflow.
+
+## Tests
+
+128 numeric unit tests and six exact PostgreSQL 17 regressions pass,
+including the requested overflow case with verified pushdown. The new
+regression fails before the fix. Formatting and workspace-wide Clippy
+pass; full suites and hosted CI were not run locally.
+
+---------
+
+Co-authored-by: Javier Garcia <[REDACTED_EMAIL]>
+Co-authored-by: Mohammad Dashti <[REDACTED_EMAIL]>
+
+**File**: `docs/project/changelog/unreleased/6978.stability.mdx` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++header: stability
++---
++
++Filters that compare a `NUMERIC(p, s)` column with `p` of 18 or less to a literal carrying more decimal places than `s`, such as `price = 10.005` on a `numeric(10,2)` column, now return the same rows as PostgreSQL. The pushed-down query used to round the literal to the column's scale first, so equality, `IN` and range filters could match the wrong rows. Comparing the column with a very large literal, such as `price > 1e17`, no longer raises an error.
+```
+
+**File**: `pg_search/src/query/numeric.rs` (modified, +175/-97)
+```diff
+@@ -32,7 +32,7 @@ use crate::postgres::pdb_owned_value::PdbOwnedValue;
+ use crate::postgres::types::is_datetime_type;
+ use crate::schema::SearchFieldType;
  use anyhow::Result;
- use tantivy::Index;
- use tokenizers::manager::SearchTokenizerFilters;
-@@ -67,7 +68,10 @@ fn collect_search_tokenizers(index_relation: &PgSearchRelation) -> Result<Vec<Se
+-use decimal_bytes::Decimal;
++use decimal_bytes::{Decimal, Decimal64NoScale};
+ 
+ // ============================================================================
+ // Numeric64 Scaling (I64 Fixed-Point)
+@@ -48,8 +48,6 @@ use decimal_bytes::Decimal;
+ /// scale_i64("123.45", 2) // Returns Ok(12345)
+ /// ```
+ pub fn scale_i64(numeric_str: &str, scale: i16) -> Result<i64> {
+-    use decimal_bytes::Decimal64NoScale;
+-
+     let decimal = Decimal64NoScale::new(numeric_str, scale as i32).map_err(|e| {
+         anyhow::anyhow!(
+             "Failed to scale '{}' with scale {}: {:?}. This may occur if the value exceeds i64 range after scaling.",
+@@ -62,46 +60,6 @@ pub fn scale_i64(numeric_str: &str, scale: i16) -> Result<i64> {
+     Ok(decimal.value())
+ }
+ 
+-/// Scale an OwnedValue to I64 fixed-point representation.
+-///
+-/// Handles Str, I64, U64, and F64 values, converting to scaled I64.
+-/// Uses direct primitive constructors (`from_i64`, `from_u64`, `from_f64`)
+-/// for efficient conversion without string intermediates.
+-///
+-/// # Example
+-/// ```ignore
+-/// scale_owned_value(OwnedValue::Str("123.45"), 2) // Returns Ok(OwnedValue::I64(12345))
+-/// scale_owned_value(OwnedValue::I64(100), 2) // Returns Ok(OwnedValue::I64(10000))
+-/// ```
+-pub fn scale_owned_value(value: PdbOwnedValue, scale: i16) -> Result<PdbOwnedValue> {
+-    use decimal_bytes::Decimal64NoScale;
+-
+-    let scale_i32 = scale as i32;
+-
+-    let scaled = match &value {
+-        // Use direct primitive constructors for efficiency
+-        PdbOwnedValue::I64(i) => Decimal64NoScale::from_i64(*i, scale_i32)
+-            .map_err(|e| anyhow::anyhow!("Failed to scale i64 {}: {:?}", i, e))?
+-            .value(),
+-        PdbOwnedValue::U64(u) => Decimal64NoScale::from_u64(*u, scale_i32)
+-            .map_err(|e| anyhow::anyhow!("Failed to scale u64 {}: {:?}", u, e))?
+-            .value(),
+-        PdbOwnedValue::F64(f) => Decimal64NoScale::from_f64(*f, scale_i32)
+-            .map_err(|e| anyhow::anyhow!("Failed to scale f64 {}: {:?}", f, e))?
+-            .value(),
+-        // Fall back to string parsing for string values
+-        PdbOwnedValue::Str(s) => scale_i64(s, scale)?,
+-        _ => {
+-            return Err(anyhow::anyhow!(
+-                "Cannot scale non-numeric value: {:?}",
+-                value
+-            ));
+-        }
+-    };
+-
+-    Ok(PdbOwnedValue::I64(scaled))
+-}
+-
+ // ============================================================================
+ // NumericBytes Conversions
+ // ============================================================================
+@@ -266,12 +224,14 @@ pub fn string_to_f64(value: PdbOwnedValue) -> PdbOwnedValue {
+ 
+ /// The integers that a field holds: the values of an `I64` or a `U64` field, or the bounds of
+ /// the ranges in an `int4range` or an `int8range` field, which are stored as `I64` values. Dates
+-/// and times are stored in `I64` fields too, but they are not numbers.
++/// and times are stored in `I64` fields too, but they are not numbers. `Numeric64` holds
++/// scaled integers plus sentinels for NaN and the infinities.
+ #[derive(Clone, Copy)]
+ enum IntDomain {
+     I32,
+     I64,
+     U64,
++    Numeric64 { scale: i16 },
+ }
+ 
+ impl IntDomain {
+@@ -281,6 +241,7 @@ impl IntDomain {
+         match field_type {
+             SearchFieldType::I64(oid) if !is_datetime_type(*oid) => Some(Self::I64),
+             SearchFieldType::U64(_) => Some(Self::U64),
++            SearchFieldType::Numeric64(_, scale) => Some(Self::Numeric64 { scale: *scale }),
+             SearchFieldType::Range(oid) => match (*oid).try_into() {
+                 Ok(BuiltinOid::INT4RANGEOID) => Some(Self::I32),
+                 Ok(BuiltinOid::INT8RANGEOID) => Some(Self::I64),
+@@ -295,6 +256,7 @@ impl IntDomain {
+             Self::I32 => i32::MIN.into(),
+             Self::I64 => i64::MIN.into(),
+             Self::U64 => u64::MIN.into(),
++            Self::Numeric64 { .. } => Decimal64NoScale::min_value().value().into(),
          }
+     }
  
-         let config = search_field.field_config();
--        if let Some(tokenizer) = config.tokenizer() {
-+        // Before 0.26.0, range fields used the default JSON tokenizer.
-+        let legacy_range_tokenizer =
-+            matches!(config, SearchFieldConfig::Range { .. }).then(SearchTokenizer::default);
-+        if let Some(tokenizer) = config.tokenizer().or(legacy_range_tokenizer.as_ref()) {
-             tokenizers.push(tokenizer.clone());
+@@ -303,13 +265,14 @@ impl IntDomain {
+             Self::I32 => i32::MAX.into(),
+             Self::I64 => i64::MAX.into(),
+             Self::U64 => u64::MAX.into(),
++            Self::Numeric64 { .. } => Decimal64NoScale::max_value().value().into(),
+         }
+     }
  
-             match tokenizer {
+     /// `n`, an integer of the domain, as a value of the field's type.
+     fn value(self, n: i128) -> PdbOwnedValue {
+         match self {
+-            Self::I32 | Self::I64 => {
++            Self::I32 | Self::I64 | Self::Numeric64 { .. } => {
+                 PdbOwnedValue::I64(i64::try_from(n).expect("n should fit an i64"))
+             }
+             Self::U64 => PdbOwnedValue::U64(u64::try_from(n).expect("n should fit a u64")),
+@@ -341,27 +304,49 @@ pub fn clamp_to_int_domain(value: &PdbOwnedValue, field_type: &SearchFieldType)
+     {
+         return No
+```
+
+**File**: `pg_search/src/query/pdb_query.rs` (modified, +7/-9)
+```diff
+@@ -23,8 +23,8 @@ use crate::postgres::types::{is_datetime_type, is_pgoid_datetime_type};
+ use crate::query::more_like_this::MoreLikeThisQueryBuilder;
+ use crate::query::numeric::{
+     clamp_int_bounds, convert_value_for_field, convert_value_for_range_field,
+-    is_outside_int_domain, map_bound, numeric_bound_to_bytes, scale_numeric_bound, string_to_f64,
+-    string_to_i64, string_to_json_numeric,
++    is_outside_int_domain, map_bound, numeric_bound_to_bytes, string_to_f64, string_to_i64,
++    string_to_json_numeric,
+ };
+ use crate::query::pdb_query::pdb::{FuzzyData, ScoreAdjustStyle, SlopData};
+ use crate::query::proximity::query::ProximityQuery;
+@@ -1607,12 +1607,6 @@ pub(crate) fn canonicalize_range_bounds_for_field(
+     // Handle NUMERIC field types with special storage strategies
+     // Also handle string-encoded numeric values for JSON and other numeric fields
+     let bounds = match search_field_type {
+-        SearchFieldType::Numeric64(_, scale) => {
+-            // Scale bounds for I64 fixed-point storage
+-            let lower = scale_numeric_bound(lower_bound, scale)?;
+-            let upper = scale_numeric_bound(upper_bound, scale)?;
+-            (lower, upper)
+-        }
+         SearchFieldType::NumericBytes(..) => {
+             // Convert bounds to lexicographically sortable bytes
+             let lower = numeric_bound_to_bytes(lower_bound, index_created_by_version)?;
+@@ -1631,7 +1625,7 @@ pub(crate) fn canonicalize_range_bounds_for_field(
+             let upper = map_bound(upper_bound, string_to_i64);
+             check_range_bounds(typeoid, lower, upper, index_created_by_version)?
+         }
+-        SearchFieldType::I64(_) | SearchFieldType::U64(_) => {
++        SearchFieldType::I64(_) | SearchFieldType::U64(_) | SearchFieldType::Numeric64(..) => {
+             let (lower, upper) = clamp_int_bounds(&search_field_type, lower_bound, upper_bound)?;
+             check_range_bounds(typeoid, lower, upper, index_created_by_version)?
+         }
+@@ -2011,6 +2005,10 @@ fn parse_with_field<QueryParserCtor: Fn() -> QueryParser>(
+     ) {
+         // Convert the query string to the appropriate numeric format
+         let value = PdbOwnedValue::Str(query_string.trim().to_string());
++        // An impossible numeric term must not fall back to parsing the physical I64 value.
++        if is_outside_int_domain(&value, &field_type) {
++            return Ok(Box::new(EmptyQuery));
++        }
+         if let Ok(converted) = convert_value_for_field(value, &field_type, index_created_by_version)
+         {
+             let tantivy_field_type = search_field.field_entry().field_type();
+```
+
+**File**: `pg_search/tests/pg_regress/expected/numeric64_high_precision_literal.out` (added, +467/-0)
+```diff
+@@ -0,0 +1,467 @@
++\i common/common_setup.sql
++CREATE EXTENSION IF NOT EXISTS pg_search;
++-- Disable parallel workers to avoid differences in plans
++SET max_parallel_workers_per_gather = 0;
++SET enable_indexscan to OFF;
++SET paradedb.enable_columnar_exec = true;
++-- A NUMERIC literal is compared with a Numeric64 column as PostgreSQL compares it, including a
++-- literal far below one step of the column's scale (1e-41 against NUMERIC(10,2), where dividing
++-- by 10^39 does not fit in an i128) and one with more significant digits than an i128 holds.
++-- Such a literal is not on the column's grid: an equality term matches nothing, and a range
++-- bound moves to the neighbouring grid point on the side the operator keeps.
++CREATE TABLE numeric64_high_precision (
++    id SERIAL PRIMARY KEY,
++    price NUMERIC(10, 2)
++);
++INSERT INTO numeric64_high_precision (price) VALUES
++    (-0.01), (0.00), (0.01), (1.23), (1.24);
++CREATE INDEX numeric64_high_precision_idx ON numeric64_high_precision USING paradedb (
++    id, price
++);
++EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price = 1e-41
++ORDER BY id;
++                                                                          QUERY PLAN                                                                           
++---------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Sort
++   Output: id, price
++   Sort Key: numeric64_high_precision.id
++   ->  Custom Scan (ParadeDB Base Scan) on public.numeric64_high_precision
++         Output: id, price
++         Table: numeric64_high_precision
++         Index: numeric64_high_precision_idx
++         Worker Selection: Cost model
++         Exec Method: ColumnarExecState
++         Columnar: id, price
++         Scores: false
++         Tantivy Query: {"boolean":{"must":[{"with_index":{"query":"all"}},{"term":{"field":"price","value":"0.00000000000000000000000000000000000000001"}}]}}
++(12 rows)
++
++EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price > 1e-41
++ORDER BY id;
++                                                                                              QUERY PLAN                                                                                              
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Sort
++   Output: id, price
++   Sort Key: numeric64_high_precision.id
++   ->  Custom Scan (ParadeDB Base Scan) on public.numeric64_high_precision
++         Output: id, price
++         Table: numeric64_high_precision
++         Index: numeric64_high_precision_idx
++         Worker Selection: Cost model
++         Exec Method: ColumnarExecState
++         Columnar: id, price
++         Scores: false
++         Tantivy Query: {"boolean":{"must":[{"with_index":{"query":"all"}},{"range":{"field":"price","lower_bound":{"excluded":"0.00000000000000000000000000000000000000001"},"upper_bound":null}}]}}
++(12 rows)
++
++-- Far below one step of the scale: no row equals it, and 0.00 < 1e-41 < 0.01.
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price = 1e-41 ORDER BY id;
++ id | price 
++----+-------
++(0 rows)
++
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price > 1e-41 ORDER BY id;
++ id | price 
++----+-------
++  3 |  0.01
++  4 |  1.23
++  5 |  1.24
++(3 rows)
++
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price >= 1e-41 ORDER BY id;
++ id | price 
++----+-------
++  3 |  0.01
++  4 |  1.23
++  5 |  1.24
++(3 rows)
++
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price < 1e-41 ORDER BY id;
++ id | price 
++----+-------
++  1 | -0.01
++  2 |  0.00
++(2 rows)
++
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price <= 1e-41 ORDER BY id;
++ id | price 
++----+-------
++  1 | -0.01
++  2 |  0.00
++(2 rows)
++
++-- The same on the negative side: -0.01 < -1e-41 < 0.00.
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price = -1e-41 ORDER BY id;
++ id | price 
++----+-------
++(0 rows)
++
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price >= -1e-41 ORDER BY id;
++ id | price 
++----+-------
++  2 |  0.00
++  3 |  0.01
++  4 |  1.23
++  5 |  1.24
++(4 rows)
++
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price < -1e-41 ORDER BY id;
++ id | price 
++----+-------
++  1 | -0.01
++(1 row)
++
++-- More significant digits than an i128 holds: 1.23 < literal < 1.24.
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price = 1.2300000000000000000000000000000000000000000000001
++ORDER BY id;
++ id | price 
++---
+```
+
+**File**: `pg_search/tests/pg_regress/sql/numeric64_high_precision_literal.sql` (added, +198/-0)
+```diff
+@@ -0,0 +1,198 @@
++\i common/common_setup.sql
++
++-- A NUMERIC literal is compared with a Numeric64 column as PostgreSQL compares it, including a
++-- literal far below one step of the column's scale (1e-41 against NUMERIC(10,2), where dividing
++-- by 10^39 does not fit in an i128) and one with more significant digits than an i128 holds.
++-- Such a literal is not on the column's grid: an equality term matches nothing, and a range
++-- bound moves to the neighbouring grid point on the side the operator keeps.
++
++CREATE TABLE numeric64_high_precision (
++    id SERIAL PRIMARY KEY,
++    price NUMERIC(10, 2)
++);
++
++INSERT INTO numeric64_high_precision (price) VALUES
++    (-0.01), (0.00), (0.01), (1.23), (1.24);
++
++CREATE INDEX numeric64_high_precision_idx ON numeric64_high_precision USING paradedb (
++    id, price
++);
++
++EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price = 1e-41
++ORDER BY id;
++
++EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price > 1e-41
++ORDER BY id;
++
++-- Far below one step of the scale: no row equals it, and 0.00 < 1e-41 < 0.01.
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price = 1e-41 ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price > 1e-41 ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price >= 1e-41 ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price < 1e-41 ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price <= 1e-41 ORDER BY id;
++
++-- The same on the negative side: -0.01 < -1e-41 < 0.00.
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price = -1e-41 ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price >= -1e-41 ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price < -1e-41 ORDER BY id;
++
++-- More significant digits than an i128 holds: 1.23 < literal < 1.24.
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price = 1.2300000000000000000000000000000000000000000000001
++ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price > 1.2300000000000000000000000000000000000000000000001
++ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price <= 1.2300000000000000000000000000000000000000000000001
++ORDER BY id;
++
++-- PostgreSQL's own answers, without the index, for comparison.
++SELECT
++    count(*) FILTER (WHERE price = 1e-41) AS eq,
++    count(*) FILTER (WHERE price > 1e-41) AS gt,
++    count(*) FILTER (WHERE price >= 1e-41) AS ge,
++    count(*) FILTER (WHERE price < 1e-41) AS lt,
++    count(*) FILTER (WHERE price <= 1e-41) AS le,
++    count(*) FILTER (WHERE price = -1e-41) AS eq_neg,
++    count(*) FILTER (WHERE price >= -1e-41) AS ge_neg,
++    count(*) FILTER (WHERE price < -1e-41) AS lt_neg,
++    count(*) FILTER (WHERE price = 1.2300000000000000000000000000000000000000000000001) AS eq_long,
++    count(*) FILTER (WHERE price > 1.2300000000000000000000000000000000000000000000001) AS gt_long,
++    count(*) FILTER (WHERE price <= 1.2300000000000000000000000000000000000000000000001) AS le_long
++FROM numeric64_high_precision;
++
++-- The ceiling of this scale-2 literal exceeds i64::MAX. It must not wrap and
++-- match ordinary rows. NaN sorts above every finite literal in PostgreSQL.
++EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price > 92233720368547758.075
++ORDER BY id;
++
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price > 92233720368547758.075 ORDER BY id;
++
++INSERT INTO numeric64_high_precision (price) VALUES ('NaN'), (NULL);
++
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price > 92233720368547758.075 ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price >= 92233720368547758.075 ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price < 92233720368547758.075 ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price <= 92233720368547758.075 ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price = 92233720368547758.075 ORDER BY id;
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price <> 92233720368547758.075 ORDER BY id;
++
++-- An exact grid point at i64::MAX must not be mistaken for the NaN sentinel.
++SELECT id, price FROM numeric64_high_precision
++WHERE id @@@ paradedb.all() AND price = 92233720368547758.07 ORDER BY id;
++
++-- Check both 
+```
+
+---
+
+### Incident Patch 3: `c20bd97a` (2026-10-21)
+**Commit Message**: fix: act on cancel and SIGTERM during DataFusion scans, regex walks and IVF training (#6886)
+
+## Ticket(s) Closed
+
+- Closes #6881
+- Closes #6884
+- Closes #6885
+
+## What
+
+This PR makes DataFusion scans, term dictionary walks and IVF training
+react to `pg_cancel_backend`, `pg_terminate_backend` and
+`statement_timeout` while they run, not when they finish.
+
+## Why
+
+A fast shutdown waits for every backend. #6881 came out of a one-hour
+switchover where the last backend standing couldn't be interrupted. The
+other two turned up while looking for similar paths.
+
+- `block_on_next` holds interrupts for the whole `block_on`, so a serial
+hash aggregate ignores every signal until its first output batch.
+- A regex walks a segment's whole dictionary in one tantivy call, and
+the only check sits between segments. A cancel sent during the walk is
+dropped once the query finishes on its own.
+- IVF training reads an in-memory sample once, and the reads are the
+only cancel poll. `wants_cancel` also ignores `ProcDiePending`, so a
+`SIGTERM` waits for every tantivy loop that polls it.
+
+## How
+
+- The scan stream polls `cancel_pending()` before each batch and bails
+with `interrupted()`, like the MPP transpor
+
+**File**: `pg_search/src/index/directory/mvcc.rs` (modified, +3/-0)
+```diff
+@@ -1014,8 +1014,11 @@ impl Directory for MVCCDirectory {
+     }
+ 
+     fn wants_cancel(&self) -> bool {
++        // The merger's SIGTERM handler sets `ProcDiePending`, so a fast shutdown has to stop
++        // the loops that poll here too, not only a query cancel.
+         unsafe {
+             pg_sys::QueryCancelPending != 0
++                || pg_sys::ProcDiePending != 0
+                 || !pg_sys::IsTransactionState()
+                 || pg_sys::IsAbortedTransactionBlockState()
+         }
+```
+
+**File**: `pg_search/src/lib.rs` (modified, +7/-0)
+```diff
+@@ -117,6 +117,10 @@ pub fn available_parallelism() -> usize {
+ }
+ 
+ /// Initializes option parsing
++fn check_for_interrupts() {
++    pgrx::check_for_interrupts!();
++}
++
+ #[allow(clippy::missing_safety_doc)]
+ #[allow(non_snake_case)]
+ #[pg_guard]
+@@ -146,6 +150,9 @@ pub unsafe extern "C-unwind" fn _PG_init() {
+     postgres::options::init();
+     postgres::build_logging::init();
+     gucs::init();
++    // A term dictionary walk is one tantivy call that runs for seconds on a big segment, and
++    // pg_search's own checks sit between segments.
++    tantivy_common::interrupt::set_interrupt_check(check_for_interrupts);
+ 
+     // RegisterCustomRmgr can only be called during shared_preload_libraries init. If pg_search
+     // was loaded via plain CREATE EXTENSION (no preload), skip
+```
+
+**File**: `pg_search/src/postgres/customscan/basescan/exec_methods/fast_fields/columnar.rs` (modified, +7/-1)
+```diff
+@@ -53,7 +53,13 @@ fn poll_next_sync<S: futures::Stream + Unpin>(
+     pgrx::check_for_interrupts!();
+ 
+     // Use tokio runtime to drive the stream (same pattern as JoinScan)
+-    runtime.block_on(async { stream.next().await })
++    let next = runtime.block_on(async { stream.next().await });
++
++    // The scan stream bails with a plain error on a pending cancel or die. Let Postgres report
++    // the interrupt itself, so the client sees the right SQLSTATE and not that error.
++    pgrx::check_for_interrupts!();
++
++    next
+ }
+ 
+ struct Inner {
+```
+
+**File**: `pg_search/src/query/proximity/mod.rs` (modified, +4/-1)
+```diff
+@@ -135,7 +135,10 @@ mod pdb {
+                         tantivy_fst::Regex::new(pattern.as_str()).unwrap_or_else(|e| panic!("{e}"));
+                     let inverted_index = segment_reader.inverted_index(field)?;
+                     let dict = inverted_index.terms();
+-                    let mut term_stream = dict.search_with_state(regex).into_stream()?;
++                    let mut term_stream = dict
++                        .search_with_state(regex)
++                        .interruptible()
++                        .into_stream()?;
+ 
+                     let mut terms = Vec::new();
+                     while let Some((bytes, ..)) = term_stream.next() {
+```
+
+**File**: `pg_search/src/scan/execution_plan.rs` (modified, +7/-0)
+```diff
+@@ -68,6 +68,7 @@ use crate::index::reader::index::SearchIndexReader;
+ use crate::index::stats::{PartitionSegments, segments_for_partition};
+ use crate::postgres::ParallelScanState;
+ use crate::postgres::customscan::explain::ExplainFormat;
++use crate::postgres::customscan::mpp::interrupt::{cancel_pending, interrupted};
+ use crate::postgres::customscan::parallel::segment_view;
+ use crate::postgres::heap::VisibilityChecker;
+ use crate::postgres::options::{SortByDirection, SortByField};
+@@ -1402,6 +1403,12 @@ impl ExecutionPlan for PgSearchScanPlan {
+                 if scanner.can_pushdown_score_threshold() {
+                     scanner.set_score_threshold(score_threshold);
+                 }
++                // `block_on_next` holds interrupts while this stream runs, so the scanner's own
++                // check can't fire. Bail out instead and let the caller act on the interrupt
++                // once `block_on` has returned.
++                if cancel_pending() {
++                    Err::<(), DataFusionError>(interrupted())?;
++                }
+                 let next_batch = scanner.next(
+                     &ffhelper,
+                     &mut visibility,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6944** (2026-10-21): fix: increase Debian, Ubuntu, and schema publish storage to 80GB (@paradedb-github-bot[bot])
-- **PR #6943** (2026-10-21): fix: increase Debian, Ubuntu, and schema publish storage to 80GB (@philippemnoel)
-- **PR #6942** (2026-10-21): fix: restore legacy range tokenizers after upgrade (@paradedb-github-bot[bot])
-- **PR #6940** (2026-10-20): fix: restore legacy range tokenizers after upgrade (@rebasedming)
-- **PR #6939** (2026-10-20): fix: Improve column naming for whole-row references and non-columnar system columns in joinscan decline messages (@paradedb-github-bot[bot])
-- **PR #6938** (2026-10-20): chore: bump rustls-webpki and webpki-roots to fix RUSTSEC advisories (@paradedb-github-bot[bot])
+- **PR #6995** (2026-10-23): chore: remove Docker Scout policy checks from 0.26.x (@philippemnoel)
+- **PR #6993** (2026-10-23): chore: Generate Dockerfiles for v0.26.3 (@paradedb-github-bot[bot])
+- **PR #6992** (2026-10-23): chore: Generate Dockerfiles for v0.26.3 (@paradedb-github-bot[bot])
+- **PR #6990** (2026-10-22): perf: Prune segments before estimation and aggregate execution (@paradedb-github-bot[bot])
+- **PR #6989** (2026-10-22): perf: order an all-inner join by the planner's row estimates (@paradedb-github-bot[bot])
+- **PR #6988** (2026-10-22): fix: count ParadeDB index scans in `pg_stat_user_indexes` (@paradedb-github-bot[bot])
 
 ---
 
@@ -2673,34 +3151,32 @@ wit
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump rustls-webpki and webpki-roots to fix RUSTSEC advisories (#6936)
+## X. Normal scan panics with min > max when pushed-down LIMIT exceeds 8192 (#6959)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/project/changelog/unreleased/6959.stability.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `62fbb07d`: bump rustls-webpki and webpki-roots to fix RUSTSEC advisories (#6936). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bdae88a1`: Normal scan panics with min > max when pushed-down LIMIT exceeds 8192 (#6959). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/6959.stability.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.103.16"
-checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
-version = "1.0.10"
-checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+---
+header: stability
+---
+
+A query with a `LIMIT` above 8192 no longer fails with `min > max. min = ..., max = 8192` when only part of its `ORDER BY` can be pushed down, such as `ORDER BY pdb.score(id) DESC, id DESC` on a table with a text key. This regressed in 0.26.1.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.103.15"
-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-version = "1.0.9"
-checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `62fbb07d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bdae88a1` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `c61bb71f`  
+> **Source Version**: `0386b404`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:22:27.371Z  
+> **Timestamp**: 2026-10-23T05:50:36.416Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:22:27.048Z  
+> **Harvest Timestamp**: 2026-10-23T05:50:36.408Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1662,6 +1662,18 @@ struct FreqValue {
     percentage: f64,
 }
 
+/// A frequency-cache column stored as a single sentinel (`<ALL_UNIQUE>`, `<HIGH_CARDINALITY>`,
+/// `<NON_UTF8>`) has no per-value data: its one entry is a marker, not a value covering 100% of
+/// rows. It must be neither matched against a WHERE literal (`WHERE col = '<NON_UTF8>'` would
+/// "match 100% of rows") nor reported as a skewed top value.
+fn is_sentinel_entry(freq: &FreqEntry) -> bool {
+    freq.frequencies.len() == 1
+        && matches!(
+            freq.frequencies[0].value.as_str(),
+            "<ALL_UNIQUE>" | "<HIGH_CARDINALITY>" | "<NON_UTF8>"
+        )
+}
+
 // ════════════════════════════════════════════════════════════════════════════
 // run()
 // ════════════════════════════════════════════════════════════════════════════
@@ -1687,25 +1699,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
 
     let delim = if let Some(delimiter) = args.flag_delimiter {
         delimiter.as_byte()
-    } else if let Ok(delim) = env::var("QSV_DEFAULT_DELIMITER") {
-        Delimiter::decode_delimiter(&delim)?.as_byte()
-    } else {
-        b','
-    };
-    // each input's own delimiter, shared by cache generation and the query plan
-    let input_delims: Vec<u8> = args
-        .arg_input
-        .iter()
-        .map(|p| {
-            if stdin_input.as_ref() == Some(p) {
-                delim
-            } else {
-                path_delim(p, args.flag_delimiter, delim)
-            }
-        })
-        .collect();
-
-    // ── 1. Resolve table names & aliases ────────────────────────
+    } else 
 ```
 
 ### Core Architecture Module: `src/llmutil.rs`
@@ -2209,312 +2203,840 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c61bb71f` (2026-10-22)
-**Commit Message**: fix(stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exact integer sum, NULL antimodes (#4891)
+### Incident Patch 1: `2de71899` (2026-10-23)
+**Commit Message**: fix(frequency): exact NULLs in frequent_items, cache-hit ALL_UNIQUE count, -i ALL_UNIQUE shortcut, null JSON ratios (#4894)
 
-* fix(stats): sidecar records OOM-fallback estimators; weighted all-distinct mode; order-independent `00` typing; exact integer sum; per-value NULL antimodes
+* fix(frequency): exact NULLs in frequent_items, cache-hit ALL_UNIQUE count, -i ALL_UNIQUE shortcut, null JSON ratios
 
-- OOM fallback: try_enable_approx_sketches now re-syncs quantile/cardinality method and
-  MAD into the cache sidecar, which was snapshotted before the fallback and recorded
-  `exact` over t-digest/HLL results.
-- --weight: the *ALL antimode short-circuit for an all-distinct column now also requires
-  every weight to tie; otherwise the heaviest value is reported as the mode.
-- `00`/`-000` are the number 0, not zero-padding, in is_zero_padded_number too, so the
-  column type no longer depends on whether a float arrived first.
-- TypedSum accumulates integers in i128; *OVERFLOW*/*UNDERFLOW* only when the final total
-  is outside i64, so a total that comes back in range is exact in any row order and
-  across parallel chunk merges.
-- format_antimodes maps each empty antimode to NULL instead of sniffing the joined string,
-  fixing a lone NULL rendered as "" and a fabricated NULL for values starting with `|`.
+- --ignore-case: the stats cache's cardinality is case-sensitive, so
+  `cardinality == rowcount` cannot prove case-folded uniqueness. Keep the
+  <ALL_UNIQUE> shortcut only for Integer columns (no letters to fold); count
+  the rest in full. The -i help documents the memory cost.
+- Full frequency-cache hit: use the cache's recorded row count for
+  <ALL_UNIQUE> instead of summing another column's counts, which is short
+  under --no-nulls or with short --flexible records.
+- --sketch-method frequent_items: count NULLs exactly, outside the sketch,
+  and lay them out as the exact path does. They no longer take a --limit
+  slot, leave a rank gap, or fold into Other over a non-NULL denominator.
+- --json/--toon: unknown nullcount/sparsity/uniqueness_ratio are null
+  instead of a fabricated 0.
 
-Co
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +6/-0)
+* docs(changelog): link #4894
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* style: rustfmt for night
+
+**File**: `.claude/skills/qsv/qsv-frequency.json` (modified, +2/-2)
 ```diff
-@@ -76,6 +76,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -60,7 +60,7 @@
+       {
+         "flag": "--ignore-case",
+         "type": "flag",
+-        "description": "Ignore case when computing frequencies."
++        "description": "Ignore case when computing frequencies. The stats cache's cardinality is case-sensitive, so it cannot prove that case-folded values are unique. All-unique columns are therefore counted in full instead of being short-circuited to <ALL_UNIQUE> - except Integer columns, which have no letters to fold. On large files with all-unique text columns (e.g. emails), this can use memory proportional to the row count. Exclude such columns with -s if you don't need them."
+       },
+       {
+         "flag": "--json",
+@@ -177,7 +177,7 @@
+       {
+         "flag": "--sketch-method",
+         "type": "string",
+-        "description": "Algorithm used to compute the frequency table. Choices: 'exact' (default) tracks every distinct value in a HashMap; 'frequent_items' uses the Apache DataSketches Frequent Items (Misra-Gries) sketch to track top-K heavy hitters with bounded error and constant memory. The frequent_items mode rejects asc, weight, ignore-case, no-trim, other-sorted, null-sorted, frequency-jsonl, stats-filter, and json/pretty-json/toon output; the frequency cache is bypassed. Counts are estimates. The flags rank-strategy, lmt-threshold, and unq-limit are silently ignored under this mode (the sketch's natural ordering is top-K by estimate descending; tied counts use the sketch's hash-table iteration order). The 'Other' row format diverges from exact: label is the bare other-text (no unique-count suffix since the sketch cannot recover the true count of items not in the top-K); rank is 0 to match the exact convention. Note: 'frequent_items' requires a little-endian target. Apache DataSketches does not support big-endian platforms (e.g., s390x); on those builds, this choice is rejected.",
++        "description": "Algorithm used to compute the frequency table. Choices: 'exact' (default) tracks every distinct value in a HashMap; 'frequent_items' uses the Apache DataSketches Frequent Items (Misra-Gries) sketch to track top-K heavy hitters with bounded error and constant memory. The frequent_items mode rejects asc, weight, ignore-case, no-trim, other-sorted, null-sorted, frequency-jsonl, stats-filter, and json/pretty-json/toon output; the frequency cache is bypassed. Counts are estimates. The flags rank-strategy, lmt-threshold, and unq-limit are silently ignored under this mode (the sketch's natural ordering is top-K by estimate descending; tied counts use the sketch's hash-table iteration order). The 'Other' row format diverges from exact: label is the bare other-text (no unique-count suffix since the sketch cannot recover the true count of items not in the top-K); rank is 0 to match the exact convention. Its count is approximate. NULLs are counted exactly, outside the sketch, and are reported as in exact mode (after \"Other\"). Note: 'frequent_items' requires a little-endian target. Apache DataSketches does not support big-endian platforms (e.g., s390x); on those builds, this choice is rejected.",
+         "default": "exact"
+       },
+       {
+```
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -72,6 +72,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
+ 
+ ### Fixed
++- **`frequency --ignore-case` no longer collapses columns with case-variant duplicates to `<ALL_UNIQUE>`.** ([#4894](https://github.com/dathere/qsv/pull/4894)) The stats cache's cardinality is case-sensitive, so a column such as `Bob@x.com` / `bob@x.com` / `amy@x.com` (cardinality 3 in 3 rows) used to print a single `<ALL_UNIQUE>` row instead of `bob@x.com,2` and `amy@x.com,1`. Under `-i` the shortcut is now kept only for Integer columns, which have no letters to fold. Other all-unique columns are counted in full, which uses memory proportional to the row count; the `-i` help says so.
++- **`frequency`: a full frequency-cache hit reports the right `<ALL_UNIQUE>` count.** ([#4894](https://github.com/dathere/qsv/pull/4894)) The count was re-derived by summing another column's counts, which under `--no-nulls` (or with short `--flexible` records) is smaller than the row count, e.g. 3 instead of 5. The cache's recorded row count is now used.
++- **`frequency --sketch-method frequent_items` reports NULLs like the exact method does.** ([#4894](https://github.com/dathere/qsv/pull/4894)) NULLs used to go into the sketch, so they took up a `--limit` slot, left a gap in the ranks, and were counted in "Other" over a denominator that excluded them, so percentages could add up to more than 100. They are now counted exactly, outside the sketch: listed last (after "Other") with no percentage or rank by default, or ranked and limited by their exact count under `--pct-nulls`. For streams small enough for exact estimates, the output now matches the exact method apart from the "Other" label.
++- **`frequency --json`/`--toon`: unknown `nullcount`, `sparsity` and `uniqueness_ratio` are `null`, not 0.** ([#4894](https://github.com/dathere/qsv/pull/4894)) Without a stats cache these were reported as 0, so an all-distinct column showed a `uniqueness_ratio` of 0.0.
+ - **`stats`: weighted quartiles, median, MAD and percentiles are correct when the column has nulls or fractional weights.** ([#4889](https://github.com/dathere/qsv/pull/4889)) Null cells' weights were counted in the quantile total but their values were never ranked, so a weighted column with empty cells could report empty `q1`/`q2_median`/`q3` and a `0` that isn't in the data for upper percentiles. Separately, the total was summed in a different order from the running sum, so float rounding could drop the 100th percentile to `0` (weights `0.1/0.2/0.3`) or move a median that sits exactly on the half-weight boundary.
  - **`stats --weight`: zero and negative weights no longer count toward `mode`, `antimode` and `cardinality`**, as the `--weight` help says ([#4889](https://github.com/dathere/qsv/pull/4889)). A zero-weight value used to show up as an antimode with 0 occurrences.
  - **`stats --infer-boolean` requires one true and one false value.** ([#4889](https://github.com/dathere/qsv/pull/4889)) A two-value column whose values both matched the same side of a pattern, such as `Fiona`/`Frank` (both `f*`) or `yes`/`yellow`, was typed `Boolean`. **Behavior change:** a column holding two spellings of the same answer, such as `Yes`/`Y` or `true`/`TRUE`, is now typed `String` instead of `Boolean`, which can change the types that `schema`, `tojsonl` and other stats-cache consumers infer for it.
- - **An integer `sum` that overflows no longer breaks the stats cache.** ([#4889](https://github.com/dathere/qsv/pull/4889)) The `*OVERFLOW*`/`*UNDERFLOW*` sum made the cached stats unreadable, so `schema` failed with `ExpectedFloat` and `tojsonl` could not infer field types.
-+- **`stats`: when an out-of-memory check auto-enables approximate estimators, the stats cache now records them.** ([#4891](https://github.com/dathere/qsv/pull/4891)) The cache's `.stats.csv.json` still said `exact`, so a later `--quantile-method exact` run was served the approximate results, and `frequency` treated an approximate cardinality as exact.
-+- **`stats --weight` reports a mode for a column whose values are all distinct but whose weights differ.** ([#4891](https://github.com/dathere/qsv/pull/4891)) It always showed no mode and `*ALL` antimodes, even when one value carried most of the weight. `*ALL` is still returned when every weight is the same, now with that weight as its occurrence count instead of `1`. Weighted mode and antimode occurrence counts above 4,294,967,295 are no longer capped there.
-+- **`stats --mode` no longer crashes with `QSV_ANTIMODES_LEN=0`**, the documented way to turn off antimode truncation ([#4891](https://github.com/dathere/qsv/pull/4891)).
-+- **`stats`: a value like `00` no longer types differently depending on row order.** ([#4891](https://github.com/dathere/qsv/pull/4891)) After a float it was treated as zero-padded and made the column `String`; before a float it was the integer 0. It is now always the number 0, so such a column is `Float`. `+00` is likewise a number now.
-+- **`stats`: an integer `sum` whose running total passes the 64-bit limit and comes back is now exact.** ([#4891](https://github.com/dathere/qsv/pull/4891)) It used to clamp at the limit and print a plausible but wrong total that depended on row order. `*OVERFLOW*`/`*UNDERFLOW*` now appear only when the final total is out of range, so a sum of exactly the 64-bit maximum prints as a number.
-+- **`stats`: NULL antimodes are shown as `NULL`.** ([#4891](https://github.com/dathere/qsv/pull/4891)) A lone NULL antimode was shown as an empty string, and a value starting with `|` had a `NULL` added in front of it.
- - **`validate`: the `idn-hostname` and `idn-email` formats are checked again.** ([#4886](https://github.com/dathere/qsv/pull/4886)) jsonschema 0.52 moved them behind its `idna` feature, which qsv's build didn't enable. Since then, row validation accepted any value for them and `validate schema` rejected schemas that used them.
- - **`validate`: the error report names columns containing `/` or `~` correctly.** ([#4886](https://github.com/dathere/qsv/pull/4886)) The `field` column held the JSON Pointer form, so a column `a/b` was reported as `a~1b` and `c~d` as `c~0d`.
- - **`validate`: a local schema or `dynamicEnum` file whose name starts with `http` is read from disk.** ([#4886](https://github.com/dathere/qsv/pull/4886)) Any name starting with `http`, such as `httpd.schema.json`, was taken for a URL and the fetch failed. Only `http://` and `https://` URLs are fetched now.
 ```
 
-**File**: `docs/help/stats.md` (modified, +2/-1)
+**File**: `docs/help/frequency.md` (modified, +2/-2)
 ```diff
-@@ -57,7 +57,8 @@ You can override this behavior by setting the QSV_STATS_CHUNK_MEMORY_MB environm
- or -1 for CPU-based chunking (1 chunk = records/number of CPUs)).
- 
- "Antimode" is the least frequently occurring non-zero value and is the opposite of mode.
--It returns "*ALL" if all the values are unique, and only returns a preview of the first
-+It returns "*ALL" if all the values are unique (with --weight, if all the values are unique
-+AND have the same weight), and only returns a preview of the first
- 10 antimodes, truncating after 100 characters (configurable with QSV_ANTIMODES_LEN).
- 
- If you need all the antimode values of a column, run the `frequency` command with --limit set
+@@ -100,7 +100,7 @@ qsv frequency --help
+ |--------|------|-------------|--------|
+ | &nbsp;`‑s,`<br>`‑‑select`&nbsp; | string | Select a subset of columns to compute frequencies for. See 'qsv select --help' for the format details. This is provided here because piping 'qsv select' into 'qsv frequency' will disable the use of indexing. |  |
+ | &nbsp;`‑l,`<br>`‑‑limit`&nbsp; | integer | Limit the frequency table to the N most common items. Set to '0' to disable a limit. If negative, only return values with an occurrence count >= absolute value of the negative limit. e.g. --limit -2 will only return values with an occurrence count >= 2. | `10` |
+-| &nbsp;`‑‑sketch‑method`&nbsp; | string | Algorithm used to compute the frequency table. Choices: 'exact' (default) tracks every distinct value in a HashMap; 'frequent_items' uses the Apache DataSketches Frequent Items (Misra-Gries) sketch to track top-K heavy hitters with bounded error and constant memory. The frequent_items mode rejects asc, weight, ignore-case, no-trim, other-sorted, null-sorted, frequency-jsonl, stats-filter, and json/pretty-json/toon output; the frequency cache is bypassed. Counts are estimates. The flags rank-strategy, lmt-threshold, and unq-limit are silently ignored under this mode (the sketch's natural ordering is top-K by estimate descending; tied counts use the sketch's hash-table iteration order). The 'Other' row format diverges from exact: label is the bare other-text (no unique-count suffix since the sketch cannot recover the true count of items not in the top-K); rank is 0 to match the exact convention. Note: 'frequent_items' requires a little-endian target. Apache DataSketches does not support big-endian platforms (e.g., s390x); on those builds, this choice is rejected. | `exact` |
++| &nbsp;`‑‑sketch‑method`&nbsp; | string | Algorithm used to compute the frequency table. Choices: 'exact' (default) tracks every distinct value in a HashMap; 'frequent_items' uses the Apache DataSketches Frequent Items (Misra-Gries) sketch to track top-K heavy hitters with bounded error and constant memory. The frequent_items mode rejects asc, weight, ignore-case, no-trim, other-sorted, null-sorted, frequency-jsonl, stats-filter, and json/pretty-json/toon output; the frequency cache is bypassed. Counts are estimates. The flags rank-strategy, lmt-threshold, and unq-limit are silently ignored under this mode (the sketch's natural ordering is top-K by estimate descending; tied counts use the sketch's hash-table iteration order). The 'Other' row format diverges from exact: label is the bare other-text (no unique-count suffix since the sketch cannot recover the true count of items not in the top-K); rank is 0 to match the exact convention. Its count is approximate. NULLs are counted exactly, outside the sketch, and are reported as in exact mode (after "Other"). Note: 'frequent_items' requires a little-endian target. Apache DataSketches does not support big-endian platforms (e.g., s390x); on those builds, this choice is rejected. | `exact` |
+ | &nbsp;`‑‑sketch‑map‑size`&nbsp; | integer | Maximum map size for the Frequent Items sketch. Must be a power of two and at least 8. Larger values tighten error bounds at the cost of more memory. Only used when sketch-method is frequent_items. | `4096` |
+ | &nbsp;`‑u,`<br>`‑‑unq‑limit`&nbsp; | integer | If a column has all unique values, limit the frequency table to a sample of N unique items. Set to '0' to disable a unique_limit. Only applies in unweighted mode; ignored when --weight is set. | `10` |
+ | &nbsp;`‑‑lmt‑threshold`&nbsp; | integer | The threshold for which --limit and --unq-limit will be applied. If the number of unique items in a column >= threshold, the limits will be applied. Set to '0' to disable the threshold and always apply limits. | `0` |
+@@ -115,7 +115,7 @@ qsv frequency --help
+ | &nbsp;`‑‑null‑text`&nbsp; | string | The text to use for NULL values. If set to the literal string "<NONE>" (case-sensitive, exact match), NULLs will not be included in the frequency table (equivalent to --no-nulls). | `(NULL)` |
+ | &nbsp;`‑‑no‑nulls`&nbsp; | flag | Don't include NULLs in the frequency table. This is equivalent to --null-text "<NONE>". |  |
+ | &nbsp;`‑‑pct‑nulls`&nbsp; | flag | Include NULL values in percentage and rank calculations. When disabled (default), percentages are "valid percentages" calculated with NULLs excluded from the denominator, and NULL entries display empty percentage and rank values. When enabled, NULLs are included in the denominator (original behavior). Has no effect when --no-nulls is set. |  |
+-| &nbsp;`‑i,`<br>`‑‑ignore‑case`&nbsp; | flag | Ignore case when computing frequencies. |  |
++| &nbsp;`‑i,`<br>`‑‑ignore‑case`&nbsp; | flag | Ignore case when computing frequencies. The stats cache's cardinality is case-sensitive, so it cannot prove that case-folded values are unique. All-unique columns are therefore counted in full instead of being short-circuited to <ALL_UNIQUE> - except Inte
 ```
 
-**File**: `src/cmd/stats.rs` (modified, +103/-38)
+**File**: `src/cmd/frequency.rs` (modified, +133/-95)
 ```diff
-@@ -43,7 +43,8 @@ You can override this behavior by setting the QSV_STATS_CHUNK_MEMORY_MB environm
- or -1 for CPU-based chunking (1 chunk = records/number of CPUs)).
+@@ -106,7 +106,9 @@ frequency options:
+                             label is the bare other-text (no unique-count suffix
+                             since the sketch cannot recover the true count of
+                             items not in the top-K); rank is 0 to match the
+-                            exact convention.
++                            exact convention. Its count is approximate.
++                            NULLs are counted exactly, outside the sketch, and
++                            are reported as in exact mode (after "Other").
+                             Note: 'frequent_items' requires a little-endian
+                             target. Apache DataSketches does not support
+                             big-endian platforms (e.g., s390x); on those
+@@ -180,6 +182,15 @@ frequency options:
+                             (original behavior).
+                             Has no effect when --no-nulls is set.
+     -i, --ignore-case       Ignore case when computing frequencies.
++                            The stats cache's cardinality is case-sensitive,
++                            so it cannot prove that case-folded values are
++                            unique. All-unique columns are therefore counted
++                            in full instead of being short-circuited to
++                            <ALL_UNIQUE> - except Integer columns, which have
++                            no letters to fold. On large files with all-unique
++                            text columns (e.g. emails), this can use memory
++                            proportional to the row count. Exclude such
++                            columns with -s if you don't need them.
+     --no-float <cols>       Exclude Float columns from frequency analysis.
+                             Floats typically contain continuous values where
+                             frequency tables are not meaningful.
+@@ -721,9 +732,11 @@ struct FrequencyField {
+     field:            String,
+     r#type:           String,
+     cardinality:      u64,
+-    nullcount:        u64,
+-    sparsity:         f64,
+-    uniqueness_ratio: f64,
++    // None (JSON `null`) when unknown - no stats record, or no row count - rather than a
++    // fabricated 0, which would read as "no NULLs" / "no distinct values".
++    nullcount:        Option<u64>,
++    sparsity:         Option<f64>,
++    uniqueness_ratio: Option<f64>,
+     #[serde(skip_serializing_if = "Vec::is_empty")]
+     stats:            Vec<FieldStats>,
+     frequencies:      Vec<FrequencyEntry>,
+@@ -1082,8 +1095,8 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+             }
+             if args.flag_null_sorted {
+                 return fail_incorrectusage_clierror!(
+-                    "--sketch-method frequent_items does not support --null-sorted. The sketch \
+-                     ranks NULL alongside other values by estimate. Use --sketch-method exact."
++                    "--sketch-method frequent_items does not support --null-sorted. NULL is \
++                     always placed at the end. Use --sketch-method exact."
+                 );
+             }
+             if args.flag_frequency_jsonl {
+@@ -2579,19 +2592,11 @@ impl Args {
+             return Ok(false);
+         }
  
- "Antimode" is the least frequently occurring non-zero value and is the opposite of mode.
--It returns "*ALL" if all the values are unique, and only returns a preview of the first
-+It returns "*ALL" if all the values are unique (with --weight, if all the values are unique
-+AND have the same weight), and only returns a preview of the first
- 10 antimodes, truncating after 100 characters (configurable with QSV_ANTIMODES_LEN).
+-        // Derive row_count from cache: sum counts of first non-ALL_UNIQUE column,
+-        // or use cardinality of an ALL_UNIQUE column
+-        let row_count = selected_entries
+-            .iter()
+-            .find_map(|entry| {
+-                if entry.frequencies.len() == 1 && entry.frequencies[0].value == "<ALL_UNIQUE>" {
+-                    Some(entry.cardinality)
+-                } else {
+-                    let total: u64 = entry.frequencies.iter().map(|f| f.count).sum();
+-                    if total > 0 { Some(total) } else { None }
+-                }
+-            })
+-            .unwrap_or(0);
++        // The cache records the input's exact row count. Don't re-derive it by summing a
++        // column's counts: under --no-nulls (no NULL bucket) or --flexible (short records)
++        // that sum is smaller than the row count, and it would be reported as the
++        // <ALL_UNIQUE> count.
++        let row_count = cache_metadata.record_count;
  
- If you need all the antimode values of a column, run the `frequency` command with --limit set
-@@ -1465,6 +1466,7 @@ fn parse_boolean_patterns(boolean_patterns: &str) -> CliResult<Vec<BooleanPatter
- #[cfg(not(target_endian = "big"))]
- fn try_enable_approx_sketches(
-     args: &mut Args,
-+    stats_args: &mut StatsArgs,
-     user_set_quantile_method: bool,
-     user_set_cardinality_method: bool,
- ) -> Vec<&'static str> {
-@@ -1501,6 +1503,17 @@ fn try_enable_approx_sketches(
-         enabled.push("--cardinality-method approx");
-     }
+         if row_count == 0 {
+             return Ok(false);
+@@ -4077,7 +4082,9 @@ impl Args {
+         // What positional structures each feature needs, so we only pay for what's
+         // requested. ALL per-column lookups are positional (indexed by ORIGINAL CSV column
+         // position) so duplicate-named columns are each classified on their own data.
+-        let needs_float_types = self.flag_no_float.is_some();
++        // --ignore-case also needs the types: it keeps the <ALL_UNIQUE> shortcut for Integer
++        // columns only (see below).
++        let needs_col_types = self.flag_no_float.is_some() || self.flag_ignore_case;
+         #[cfg(feature = "luau")]
+         let needs_stats_by_pos = is_json || self.flag_stats_filter.is_some();
+         #[cfg(not(feature = 
+```
+
+**File**: `src/cmd/pragmastat.rs` (modified, +4/-5)
+```diff
+@@ -826,11 +826,10 @@ fn columns_from_cache(args: &Args, headers: &csv::ByteRecord) -> Option<Vec<(usi
+         #[cfg_attr(target_endian = "big", allow(unused_mut))]
+         let mut s_slice = curr_line.as_bytes().to_vec();
  
-+    // The cache sidecar was snapshotted from `args` before this fallback ran. Without re-syncing
-+    // it records `exact` over t-digest/HLL results: an explicit `--quantile-method exact` rerun is
-+    // then served the approximate cache, and `frequency` trusts an HLL cardinality as exact.
-+    stats_args
-+        .flag_quantile_method
-+        .clone_from(&args.flag_quantile_method);
-+    stats_args
-+        .flag_cardinality_method
-+        .clone_from(&args.flag_cardinality_method);
-+    stats_args.flag_mad = args.flag_mad;
-+
-     enabled
+-        let parse_result =
+-            cfg_select! {
+-                target_endian = "little" => simd_json::from_slice::<CacheRecord>(&mut s_slice),
+-                _ => serde_json::from_slice::<CacheRecord>(&s_slice),
+-            };
++        let parse_result = cfg_select! {
++            target_endian = "little" => simd_json::from_slice::<CacheRecord>(&mut s_slice),
++            _ => serde_json::from_slice::<CacheRecord>(&s_slice),
++        };
+ 
+         let Ok(record) = parse_result else {
+             return None;
+```
+
+**File**: `src/cmd/stats.rs` (modified, +4/-5)
+```diff
+@@ -2582,11 +2582,10 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                 .unwrap()
+                 .to_string();
+             // Use platform-appropriate JSON serialization
+-            let json_string =
+-                cfg_select! {
+-                    target_endian = "little" => simd_json::to_string_pretty(&current_stats_args)?,
+-                    _ => serde_json::to_string_pretty(&current_stats_args)?,
+-                };
++            let json_string = cfg_select! {
++                target_endian = "little" => simd_json::to_string_pretty(&current_stats_args)?,
++                _ => serde_json::to_string_pretty(&current_stats_args)?,
++            };
+             std::fs::write(stats_pathbuf.clone(), json_string)?;
+ 
+             // save the stats data to "<FILESTEM>.stats.csv.data.jsonl"
+```
+
+**File**: `src/util/stats_cache.rs` (modified, +13/-17)
+```diff
+@@ -694,11 +694,10 @@ pub fn get_stats_records_flexible(
+             s_slice = curr_line.as_bytes().to_vec();
+ 
+             // Parse regular stats record
+-            let parse_result =
+-                cfg_select! {
+-                    target_endian = "little" => simd_json::from_slice::<StatsData>(&mut s_slice),
+-                    _ => serde_json::from_slice::<StatsData>(&s_slice),
+-                };
++            let parse_result = cfg_select! {
++                target_endian = "little" => simd_json::from_slice::<StatsData>(&mut s_slice),
++                _ => serde_json::from_slice::<StatsData>(&s_slice),
++            };
+ 
+             if let Ok(mut stats) = parse_result {
+                 // a pre-fix cache carries fabricated 0.0 renderings on a date row; drop them
+@@ -918,13 +917,11 @@ pub fn get_stats_records_flexible(
+                 )));
+             }
+             return Err(CliError::Other(cfg_select! {
+-                target_family = "unix" => {
+-                    match status.signal() {
+-                        Some(signal) => {
+-                            format!("qsv stats terminated with signal: {signal}{detail}")
+-                        },
+-                        None => format!("qsv stats terminated by unknown cause{detail}"),
+-                    }
++                target_family = "unix" => match status.signal() {
++                    Some(signal) => {
++                        format!("qsv stats terminated with signal: {signal}{detail}")
++                    },
++                    None => format!("qsv stats terminated by unknown cause{detail}"),
+                 },
+                 _ => {
+                     format!("qsv stats terminated by unknown cause{detail}")
+@@ -958,11 +955,10 @@ pub fn get_stats_records_flexible(
+             s_slice = curr_line.as_bytes().to_vec();
+ 
+             // Parse regular stats record
+-            let parse_result =
+-                cfg_select! {
+-                    target_endian = "little" => simd_json::from_slice::<StatsData>(&mut s_slice),
+-                    _ => serde_json::from_slice::<StatsData>(&s_slice),
+-                };
++            let parse_result = cfg_select! {
++                target_endian = "little" => simd_json::from_slice::<StatsData>(&mut s_slice),
++                _ => serde_json::from_slice::<StatsData>(&s_slice),
++            };
+ 
+             match parse_result {
+                 Ok(mut stats) => {
+```
+
+**File**: `tests/test_frequency.rs` (modified, +165/-0)
+```diff
+@@ -8961,3 +8961,168 @@ fn frequency_drops_group_bits_when_the_cache_group_differs() {
+         "left temp/probe files behind: {strays:?}"
+     );
  }
- 
-@@ -1517,6 +1530,7 @@ const fn modes_keep_unbounded_exact_table(args: &Args) -> bool {
- #[cfg(target_endian = "big")]
- fn try_enable_approx_sketches(
-     _args: &mut Args,
-+    _stats_args: &mut StatsArgs,
-     _user_set_quantile_method: bool,
-     _user_set_cardinality_method: bool,
- ) -> Vec<&'static str> {
-@@ -2272,6 +2286,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-                             }
-                             let enabled = try_enable_approx_sketches(
-                                 &mut args,
-+                                &mut current_stats_args,
-                                 user_set_quantile_method,
-                                 user_set_cardinality_method,
-                             );
-@@ -4960,25 +4975,30 @@ fn format_antimodes(
-     max_len: usize,
-     visualize_ws: bool,
- ) -> String {
--    let mut antimodes_list = String::with_capacity(max_len);
-+    // max_len is usize::MAX when QSV_ANTIMODES_LEN=0 disables truncation, so it can't be the
-+    // capacity hint
-+    let mut antimodes_list = String::new();
- 
-     // We only store the first MAX_ANTIMODES antimodes
-     // so if antimodes_count > MAX_ANTIMODES, add the "*PREVIEW: " prefix
-     if antimodes_count > MAX_ANTIMODES {
-         antimodes_list.push_str("*PREVIEW: ");
-     }
- 
--    let antimodes_vals = &antimodes
-+    // an empty antimode is the NULL value; decide per element, since sniffing the joined string
-+    // for a leading separator missed a lone NULL and invented one for a value like "|a"
-+    let antimodes_vals = antimodes
-         .iter()
--        .map(|c| util::bytes_to_cow_str(c.as_ref()))
-+        .map(|c| {
-+            let c = c.as_ref();
-+            if c.is_empty() {
-+                std::borrow::Cow::Borrowed("NULL")
-+            } else {
-+                util::bytes_to_cow_str(c)
-+            }
-+        })
-         .join(separator);
--
--    // if the antimodes result starts with the separator,
--    // it indicates that NULL is the first antimode. Add NULL to the list.
--    if antimodes_vals.starts_with(separator) {
--        antimodes_list.push_str("NULL");
--    }
--    antimodes_list.push_str(antimodes_vals);
-+    antimodes_list.push_str(&antimodes_vals);
- 
-     // truncate at max_len characters with an ellipsis
-     if antimodes_list.len() > max_len {
-@@ -5747,30 +5767,34 @@ impl Stats {
-                         "0".to_string(),
-                     ]);
-                 } else {
--                    // Check if all values are unique (cardinality == record_count)
-+                    let max_weight = weighted_modes_map.values().copied().fold(0.0, f64::max);
-+                    let min_weight = weighted_modes_map
-+                        .values()
-+                        .copied()
-+                        .fold(f64::INFINITY, f64::min);
-+                    // The unweighted *ALL short-circuit holds because every count ties at 1.
-+                    // Weighted, distinct values can still carry different weights, so the
-+                    // short-circuit also needs every weight to tie - else the heaviest value
-+                    // IS the mode.
-                     let unique_count = weighted_modes_map.len() as u64;
--                    if unique_count == record_count {
--                        // all values unique
-+      
-```
-
-**File**: `tests/test_stats.rs` (modified, +167/-0)
-```diff
-@@ -10117,3 +10117,170 @@ fn stats_weighted_infer_boolean_uses_the_weighted_values() {
-         assert_eq!(stats_cell(&got, 1, "type"), expected, "{name}");
-     }
- }
 +
++// A full frequency-cache hit must report the input's row count for <ALL_UNIQUE> columns. It used
++// to re-derive it by summing the first non-ALL_UNIQUE column's counts, which under --no-nulls
++// leaves out that column's NULLs (here: 3 instead of 5). `a` must come BEFORE `id` to hit it.
 +#[test]
-+fn stats_weighted_all_distinct_values_still_report_the_heaviest_mode() {
-+    // Every value is distinct, but the weights are not: `a` carries 5 of the 7 total weight, so
-+    // it is the weighted mode. The *ALL short-circuit only applies when every weight ties, and
-+    // then each value's occurrences is that shared weight.
-+    for (name, rows, mode, occurrences, antimode, antimode_occurrences) in [
-+        (
-+            "unequal",
-+            [["a", "5"], ["b", "1"], ["c", "1"]],
-+            "a",
-+            "5",
-+            "b|c",
-+            "1",
-+        ),
-+        (
-+            "equal",
-+            [["a", "2"], ["b", "2"], ["c", "2"]],
-+            "",
-+            "0",
-+            "*ALL",
-+            "2",
-+        ),
-+        // occurrences above u32::MAX must not saturate at 4294967295
-+        (
-+            "huge",
-+            [["a", "5000000000"], ["b", "1"], ["c", "1"]],
-+            "a",
-+            "5000000000",
-+            "b|c",
-+            "1",
-+        ),
-+    ] {
-+        let wrk = Workdir::new(&format!(
-+            "stats_weighted_all_distinct_values_still_report_the_heaviest_mode_{name}"
-+        ));
-+        let mut data = vec![svec!["value", "w"]];
-+        data.extend(rows.iter().map(|[v, w]| svec![*v, *w]));
-+        wrk.create("data.csv", data);
-+        let mut cmd = wrk.command("stats");
-+        cmd.args(["--mode", "--cardinality", "--weight", "w"])
-+            .arg("data.csv");
-+        let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+        assert_eq!(stats_cell(&got, 1, "mode"), mode, "{name}");
-+        assert_eq!(
-+            stats_cell(&got, 1, "mode_occurrences"),
-+            occurrences,
-+            "{name}"
-+        );
-+        assert_eq!(stats_cell(&got, 1, "antimode"), antimode, "{name}");
-+        assert_eq!(
-+            stats_cell(&got, 1, "antimode_occurrences"),
-+            antimode_occurrences,
-+            "{name}"
-+        );
-+    }
-+}
-+
-+#[test]
-+fn stats_antimodes_len_zero_disables_truncation_without_panicking() {
-+    // QSV_ANTIMODES_LEN=0 is documented as "disable length limiting"; it maps to usize::MAX,
-+    // which was also used as a String capacity and aborted with a capacity overflow.
-+    let wrk = Workdir::new("stats_antimodes_len_zero_disables_truncation_without_panicking");
++fn frequency_cache_hit_all_unique_count_is_the_row_count() {
++    let wrk = Workdir::new("frequency_cache_hit_all_unique_count_is_the_row_count");
 +    wrk.create(
 +        "data.csv",
-+        vec![svec!["v"], svec!["a"], svec!["a"], svec!["b"], svec!["c"]],
++        vec![
++            svec!["a", "id"],
++            svec!["x", "1"],
++            svec!["", "2"],
++            svec!["x", "3"],
++            svec!["y", "4"],
++            svec!["", "5"],
++        ],
 +    );
-+    let mut cmd = wrk.command("stats");
-+    cmd.arg("--mode")
-+        .env("QSV_ANTIMODES_LEN", "0")
++    let mut stats_cmd = wrk.command("stats");
++    stats_cmd
++        .args(["--cardinality", "--stats-jsonl"])
 +        .arg("data.csv");
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(stats_cell(&got, 1, "antimode"), "b|c");
++    wrk.assert_success(&mut stats_cmd);
++
++    let mut write = wrk.command("frequency");
++    write
++        .args(["--no-nulls", "--frequency-jsonl"])
++        .arg("data.csv");
++    let computed: Vec<Vec<String>> = wrk.read_stdout(&mut write);
++
++    let mut hit = wrk.command("frequency");
++    hit.arg("--no-nulls").arg("data.csv");
++    let (cached, stderr): (Vec<Vec<String>>, String) =
++        wrk.read_stdout_and_stderr_on_success(&mut hit);
++    assert!(
++        stderr.contains("Frequency cache hit"),
++        "second run must be served from the cache, got:\n{stderr}"
++    );
++
++    let expected = vec![
++        svec!["field", "value", "count", "percentage", "rank"],
++        svec!["a", "x", "2", "66.66667", "1"],
++        svec!["a", "y", "1", "33.33333", "2"],
++        svec!["id", "<ALL_UNIQUE>", "5", "100", "0"],
++    ];
++    assert_eq!(computed, expected);
++    assert_eq!(cached, expected, "cache hit must match the computed output");
 +}
 +
++// The stats cache's cardinality is case-SENSITIVE, so `cardinality == rowcount` cannot prove a
++// column is unique once --ignore-case folds `a`/`A` together. The <ALL_UNIQUE> shortcut used to
++// fire anyway and discard the real distribution. Integer columns (no letters) keep it.
 +#[test]
-+fn stats_all_zero_integer_typing_does_not_depend_on_row_order() {
-+    // `00` is the integer 0 when it arrives first, so it must not be called zero-padded (and
-+    // the column String) just because a float arrived before it.
-+    for (name, rows) in [
-+        ("float_first", ["1.5", "00"]),
-+        ("zero_first", ["00", "1.5"]),
-+    ] {
-+        let wrk = Workdir::new(&format!(
-+            "stats_all_zero_integer_typing_does_not_depend_on_row_order_{name}"
-+        ));
-+        let mut data = vec![svec!["x"]];
-+        data.extend(rows.iter().map(|v| svec![*v]));
-+        wrk.create("data.csv", data);
-+        let mut cmd = wrk.command("stats");
++fn frequency_ignore_case_does_not_short_circuit_to_all_unique() {
++    let wrk = Workdir::new("frequency_ignore_case_does_not_short_circuit_to_all_unique");
++    wrk.create(
++        "data.csv",
++        vec![
++            svec!["email", "id"],
++            svec!["Bob@x.com", "101"],
++            svec!["bob@x.com", "102"],
++            svec!["amy@x.com", "103"],
++        ],
++    );
++    let mut stats_cmd = wrk.command("stats");
++    stats_cmd
++        .args(["--cardinality", "--stats-jsonl"])
++        .arg("data.csv");
++    wrk.assert_success(&mut stats_cmd);
++
++    let mut cmd = wrk.command("frequency");
++    cmd.args(["--ignore-case", "--select", "email,id"])
++        .arg("data.csv");
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    let expected = vec![
++        svec!["field", "value", "count", "percentage", "rank"],
++        svec!["email", "bob@x.com", "2", "66.66667", "1"],
++        svec!["email", "amy@x.com", "1", "33.33333", "2"],
++        // an Integer column has no letters to fold, so it keeps the shortcut
++        svec!["id", "<ALL_UNIQUE>", "3", "100", "0"],
++    ];
++    assert_eq!(got, expected);
++}
++
++// The Frequent Items path must lay out NULL, Other and percentages exactly like the exact path
++// (only the bare "Other" label differs). NULLs used to be fed into the sketch: they took a
++// --limit slot, left a gap in the ranks, and were folded into Other over a non-NULL
++// denominator (percentages summing to > 100). No count ties, and a stream far below the sketch's
++// map size, so the sketch's estimates are exact and the comparison is deterministic.
++#[test]
++#[cfg(not(target_endian = "big"))]
++fn frequency_frequent_items_null_and_other_match_exact() {
++    let wrk = Workdir::new("frequency_frequent_items_null_and_other_match_exact");
++    let mut rows = vec![svec!["c", "d"]];
++    for v in ["x", "x", "x", "x", "y", "y", "z", "", "", ""] {
++        rows.push(svec![v, "1"]);
++    }
++    wrk.create("data.csv", rows);
++
++    let strip_other_count = |rows: Vec<Vec<String>>| -> Vec<Vec<String>> {
++        rows.into_iter()
++            .map(|mut r| {
++                if r[1].starts_with("Other (") {
++                    r[1] = "Other".to_string();
++                }
++                r
++            })
++            .collect()
++    };
++
++    for pct_nulls in [false, true] {
++        for limit in ["1", "2", "3", "-2", "0"] {
++            let mut exact = wrk.command("frequency");
++            exact.args(["--select", "c", "--limit", limit]);
++            let mut fi = wrk.command("frequency");
++            fi.args([
++                "--select",
++                "c",
++                "--limit",
++                limit,
++                "--sketch-method",
++                "frequent_it
+```
+
+---
+
+### Incident Patch 2: `0386b404` (2026-10-23)
+**Commit Message**: fix(frequency): fail on a lost parallel chunk; keep thresholds when refreshing a stale cache (#4897)
+
+* fix(frequency): fail on a lost parallel chunk; keep thresholds when refreshing a stale cache
+
+- Parallel chunk guard: a worker that panics (qsv ships `panic = "unwind"`)
+  drops its sender without sending a table or recording a read error, so
+  the fold ended early and printed a partial table as complete. Both
+  parallel folds (unweighted pass and weighted) now count the chunks they
+  received and fail via `check_all_chunks_received` if any is missing.
+  Testable through `QSV_TEST_FREQ_PANIC_CHUNK`, a debug-build-only hook.
+- Stale-cache refresh: the version-stale self-heal rewrote the cache with
+  this run's thresholds, which are the defaults on a plain run (the
+  QSV_FREQ_HIGH_CARD_* overrides are only read under --frequency-jsonl).
+  `FREQ_CACHE_STALE_SIG` now carries the stale cache's own thresholds and
+  the refresh writes with them, so it changes only what the version
+  invalidated.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changelog): link #4897
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(frequency): skip the worker-panic test on single-co
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -72,6 +72,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
+ 
+ ### Fixed
++- **`frequency`: a parallel worker that crashes is an error, not a partial table.** ([#4897](https://github.com/dathere/qsv/pull/4897)) A worker that panicked dropped its chunk without recording an error, so the indexed (parallel) run printed frequencies counted over only part of the file as if they were complete. Every parallel pass now checks that it folded every chunk, and fails with "N of M parallel chunks failed" otherwise.
++- **`frequency`: refreshing a version-stale frequency cache keeps its `HIGH_CARDINALITY` thresholds.** ([#4897](https://github.com/dathere/qsv/pull/4897)) After a qsv upgrade, a plain `frequency` run refreshes an existing cache, but it rewrote it with the default thresholds (100 / 90%) instead of the ones it was built with (`--high-card-threshold`, `--high-card-pct` or their `QSV_FREQ_HIGH_CARD_*` variables). Columns those thresholds had kept in full became `<HIGH_CARDINALITY>` sentinels and were recomputed on every later run. Results were correct; only speed suffered.
+ - **`frequency` no longer collapses a column to `<ALL_UNIQUE>` when trimming merges its values.** ([#4896](https://github.com/dathere/qsv/pull/4896)) The stats cache counts untrimmed values, so a column such as `a` / ` a` / `A` (cardinality 3 in 3 rows) printed a single `<ALL_UNIQUE>` row instead of `a,2` and `A,1`, even with the default options. While it skips an `<ALL_UNIQUE>` candidate, `frequency` now checks whether trimming changes any of its values. If one does, that column is recounted in a second pass and a message names it; clean ID columns keep the shortcut, and `--no-trim` is unaffected. The same check applies to `--weight`, to the parallel (indexed) path across chunks, and to the Integer columns that keep the shortcut under `--ignore-case`. Such a column is no longer cached as `<ALL_UNIQUE>` by `--frequency-jsonl` either.
+ - **`frequency`: the frequency cache no longer merges values that aren't valid UTF-8.** ([#4895](https://github.com/dathere/qsv/pull/4895)) The cache stores values as UTF-8 text, so values that differ only in their invalid bytes (Latin-1 `Pé` / `Pè`) were both written as `P�` and came back from a cache hit as one value with their counts added, shifting the other ranks. A column with any such value is now cached as a `<NON_UTF8>` sentinel and recomputed when the cache is reused, while the rest of the columns are still served from the cache. `scoresql`, which also reads the cache, now treats every sentinel (`<NON_UTF8>`, `<ALL_UNIQUE>`, `<HIGH_CARDINALITY>`) as having no per-value data: a `WHERE` literal equal to a sentinel's text, such as `WHERE id = '<ALL_UNIQUE>'`, used to "match ~100% of rows" and cost selectivity points.
+ - **`frequency --ignore-case` no longer collapses columns with case-variant duplicates to `<ALL_UNIQUE>`.** ([#4894](https://github.com/dathere/qsv/pull/4894)) The stats cache's cardinality is case-sensitive, so a column such as `Bob@x.com` / `bob@x.com` / `amy@x.com` (cardinality 3 in 3 rows) used to print a single `<ALL_UNIQUE>` row instead of `bob@x.com,2` and `amy@x.com,1`. Under `-i` the shortcut is now kept only for Integer columns, which have no letters to fold. Other all-unique columns are counted in full, which uses memory proportional to the row count; the `-i` help says so.
+```
+
+**File**: `src/cmd/frequency.rs` (modified, +67/-7)
+```diff
+@@ -442,7 +442,17 @@ static FREQ_CACHE_FTABLES: OnceLock<FTables> = OnceLock::new();
+ // refresh the stale file after recomputing, so a version-invalidated cache self-heals instead of
+ // missing forever - `frequency` only writes its cache under `--frequency-jsonl`, so unlike
+ // stats.rs it has no recompute-and-rewrite path of its own.
+-static FREQ_CACHE_STALE_SIG: OnceLock<String> = OnceLock::new();
++static FREQ_CACHE_STALE_SIG: OnceLock<StaleFreqCache> = OnceLock::new();
++
++/// What `run()` needs to refresh a version-stale frequency cache faithfully: the selection it
++/// covered, and the `HIGH_CARDINALITY` thresholds it was BUILT with. A plain `frequency` run only
++/// reads its `QSV_FREQ_HIGH_CARD_*` overrides under `--frequency-jsonl`, so without these the
++/// refresh would silently rewrite a custom-threshold cache with the defaults.
++struct StaleFreqCache {
++    selection_signature:      String,
++    flag_high_card_threshold: usize,
++    flag_high_card_pct:       u8,
++}
+ // Frequency-cache sentinels for columns stored WITHOUT per-value data, which every reader
+ // (this command's cache hit, `read_frequency_cache_view` for viz, and `scoresql`) must recompute
+ // or skip rather than read as a value.
+@@ -1375,9 +1385,10 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     //     cannot overwrite a whole-file cache with a narrow one.
+     // An empty recorded signature (a cache predating `selection_signature`) can prove none of
+     // this, so it is left alone rather than healed.
+-    let refreshing_stale_cache = FREQ_CACHE_STALE_SIG
+-        .get()
+-        .is_some_and(|sig| !sig.is_empty() && *sig == Args::selection_signature(&headers));
++    let refreshing_stale_cache = FREQ_CACHE_STALE_SIG.get().filter(|stale| {
++        !stale.selection_signature.is_empty()
++            && stale.selection_signature == Args::selection_signature(&headers)
++    });
+     if args.flag_frequency_jsonl {
+         // explicitly requested: a failure to write the cache the user asked for is fatal
+         args.write_frequency_jsonl(&headers, &tables, &rconfig)?;
+@@ -1392,15 +1403,22 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         {
+             log::warn!("Could not persist dc frequency cache: {err}");
+         }
+-    } else if refreshing_stale_cache {
++    } else if let Some(stale) = refreshing_stale_cache {
+         // BEST-EFFORT, unlike the branch above. This user asked for frequencies, not for a
+         // cache write, and the frequencies are already computed. A cache file we cannot
+         // replace - read-only file, read-only media, a directory owned by someone else - must
+         // not turn an ordinary `qsv frequency` into a failure that prints nothing at all.
+         // (`can_use_freq_cache` requires `!flag_frequency_jsonl`, so the two branches are
+         // mutually exclusive in practice; they are kept separate because their error policies
+         // genuinely differ.)
+-        if let Err(e) = args.write_frequency_jsonl(&headers, &tables, &rconfig) {
++        //
++        // Refresh with the thresholds the stale cache was BUILT with, not this run's defaults:
++        // the refresh should change only what the version change invalidated, not demote every
++        // column a custom --high-card-threshold/--high-card-pct kept in full to a sentinel.
++        let mut refresh_args = args.clone();
++        refresh_args.flag_high_card_threshold = stale.flag_high_card_threshold;
++        refresh_args.flag_high_card_pct = stale.flag_high_card_pct;
++        if let Err(e) = refresh_args.write_frequency_jsonl(&headers, &tables, &rconfig) {
+             wwarn!(
+                 "Could not refresh the version-stale frequency cache: {e}. Continuing with the \
+                  computed frequencies."
+@@ -2435,7 +2453,11 @@ impl Args {
+             // The residual: a strict cache plus a flexible-only user never heals. The message
+             // above names --frequency-jsonl so that is recoverable rather than mysterious.
+             if metadata.flag_flexible == self.flag_flexible {
+-                let _ = FREQ_CACHE_STALE_SIG.set(metadata.selection_signature.clone());
++                let _ = FREQ_CACHE_STALE_SIG.set(StaleFreqCache {
++                    selection_signature:      metadata.selection_signature.clone(),
++                    flag_high_card_threshold: metadata.flag_high_card_threshold,
++                    flag_high_card_pct:       metadata.flag_high_card_pct,
++                });
+             }
+             return None;
+         }
+@@ -3536,6 +3558,8 @@ impl Args {
+             );
+             let read_err = Arc::clone(&read_err);
+             pool.execute(move || {
++                #[cfg(debug_assertions)]
++                inject_test_panic(i);
+                 // The parent verified the index exists before chunking, but it can be
+                 // deleted or invalidated in between (TOCTOU). Fail loudly with actionable
+                 // info, matching parallel_stats.
+@@ -3566,7 +3590,9 @@ impl A
+```
+
+**File**: `tests/test_frequency.rs` (modified, +110/-0)
+```diff
+@@ -9306,3 +9306,113 @@ fn frequency_all_unique_demotion_across_parallel_chunks() {
+         ]
+     );
+ }
++
++// GUARD: refreshing a version-stale cache must keep the HIGH_CARDINALITY thresholds the cache was
++// BUILT with. A plain run only reads its --high-card-* settings under --frequency-jsonl, so the
++// refresh used to rewrite a custom-threshold cache with the defaults (100 / 90%), turning every
++// column the custom thresholds had kept in full into a <HIGH_CARDINALITY> sentinel that is then
++// recomputed on every later run.
++#[test]
++fn frequency_self_heal_keeps_the_cache_thresholds() {
++    let wrk = Workdir::new("frequency_self_heal_keeps_the_cache_thresholds");
++    // `category` has 19 distinct values in 20 rows: above the default effective threshold
++    // min(100, 90% of 20 = 18), but within a custom min(1000, 100% of 20 = 20).
++    let mut rows = vec![svec!["id", "category"]];
++    for i in 1..=20 {
++        rows.push(vec![
++            format!("item_{i}"),
++            format!("cat_{}", if i <= 19 { i } else { 1 }),
++        ]);
++    }
++    wrk.create("in.csv", rows);
++    let mut writer = wrk.command("frequency");
++    writer
++        .args([
++            "--frequency-jsonl",
++            "--high-card-threshold",
++            "1000",
++            "--high-card-pct",
++            "100",
++        ])
++        .arg("in.csv");
++    wrk.assert_success(&mut writer);
++    let cache = wrk.path("in.freq.csv.data.jsonl");
++    let category_is_full = |cache: &std::path::Path| {
++        let fields = decode_cache_fields(cache);
++        fields[1]["field"] == "category" && fields[1]["frequencies"].as_array().unwrap().len() == 19
++    };
++    assert!(
++        category_is_full(&cache),
++        "setup: the custom thresholds keep `category` in full"
++    );
++
++    set_cache_version(&cache, "0.0.1-ancient");
++    let mut heal = wrk.command("frequency");
++    heal.arg("in.csv");
++    let stderr = wrk.output_stderr(&mut heal);
++    assert!(
++        stderr.contains("written by qsv 0.0.1-ancient"),
++        "expected the stale-version diagnostic, got:\n{stderr}"
++    );
++    assert_eq!(
++        cache_meta(&cache, "qsv_version").as_str().unwrap(),
++        env!("CARGO_PKG_VERSION"),
++        "the stale cache should have been refreshed"
++    );
++    assert_eq!(cache_meta(&cache, "flag_high_card_threshold"), 1000);
++    assert_eq!(cache_meta(&cache, "flag_high_card_pct"), 100);
++    assert!(
++        category_is_full(&cache),
++        "the refresh must not demote `category` to <HIGH_CARDINALITY>"
++    );
++}
++
++// A parallel worker that panics (qsv ships with panic = "unwind") drops its channel sender without
++// sending a table or recording a read error, so the fold used to end early and print a PARTIAL
++// frequency table as if it were complete. Every parallel pass now checks that it folded every
++// chunk. The panic is injected through a debug-build-only hook, so this test is too.
++#[test]
++#[cfg(debug_assertions)]
++fn frequency_parallel_worker_panic_is_an_error() {
++    // qsv caps --jobs/QSV_MAX_JOBS at the CPU count, and 1 job takes the sequential path, which
++    // has no workers to panic - so this needs >= 2 cores (same guard as
++    // moarstats_parallel_path_matches_sequential).
++    let cores = std::thread::available_parallelism().map_or(1, std::num::NonZeroUsize::get);
++    if cores < 2 {
++        eprintln!(
++            "skipping frequency_parallel_worker_panic_is_an_error: needs >= 2 cores to exercise \
++             the parallel path (have {cores})"
++        );
++        return;
++    }
++    let wrk = Workdir::new("frequency_parallel_worker_panic_is_an_error");
++    let mut rows = vec![svec!["code", "w"]];
++    for i in 0..400 {
++        rows.push(vec![format!("c{}", i % 7), "1".to_string()]);
++    }
++    wrk.create_indexed("data.csv", rows);
++
++    for weighted in [false, true] {
++        let mut cmd = wrk.command("frequency");
++        // pin 2 jobs regardless of the caller's QSV_MAX_JOBS (1 would take the sequential path)
++        cmd.env("QSV_MAX_JOBS", "2")
++            .env("QSV_FREQ_CHUNK_MEMORY_MB", "-1")
++            .env("QSV_TEST_FREQ_PANIC_CHUNK", "0")
++            .args(["--jobs", "2", "--select", "code"]);
++        if weighted {
++            cmd.args(["--weight", "w"]);
++        }
 +        cmd.arg("data.csv");
-+        let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+        assert_eq!(stats_cell(&got, 1, "type"), "Float", "{name}");
-+        assert_eq!(stats_cell(&got, 1, "sum"), "1.5", "{name}");
++        let got = wrk.output(&mut cmd);
++        let stderr = String::from_utf8_lossy(&got.stderr);
++        assert!(
++            !got.status.success(),
++            "a lost chunk must fail the run (weighted={weighted}), got stdout:\n{}",
++            String::from_utf8_lossy(&got.stdout)
++        );
++        assert!(
++            stderr.contains("1 of 2 parallel chunks failed"),
++            "expected the lost-chunk error (weighted={weighted}), got:\n{stderr}"
++        );
 +    }
 +}
-+
-+#[test]
-+fn stats_integer_sum_back_in_range_is_exact_in_any_order() {
-+    // 9e18 + 9e18 - 9e18 = 9e18 fits i64. A saturating i64 sum clamped at i64::MAX and then
-+    // printed 223372036854775807 - a plausible-looking wrong total - depending on row order.
-+    let big = "9000000000000000000";
-+    let neg = "-9000000000000000000";
-+    for (name, rows) in [
-+        ("pos_pos_neg", [big, big, neg]),
-+        ("pos_neg_pos", [big, neg, big]),
-+    ] {
-+        let wrk = Workdir::new(&format!(
-+            "stats_integer_sum_back_in_range_is_exact_in_any_order_{name}"
-+        ));
-+        let mut data = vec![svec!["x"]];
-+        data.extend(rows.iter().map(|v| svec![*v]));
-+        wrk.create("data.csv", data);
-+        let mut cmd = wrk.command("stats");
-+        cmd.arg("data.csv");
-+        let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+        assert_eq!(stats_cell(&got, 1, "sum"), big, "{name}");
-+    }
-+}
-+
-+#[test]
-+fn stats_integer_sum_merged_across_chunks_is_exact() {
-+    // One row per chunk, so the out-of-range intermediate total is formed in Commute::merge.
-+    let wrk = Workdir::new("stats_integer_sum_merged_across_chunks_is_exact");
-+  
+```
+
+---
+
+### Incident Patch 3: `1de86469` (2026-10-23)
+**Commit Message**: docs(viz): regenerate gallery & external Data Schematics for NULL mode rendering (#4893)
+
+#4892 renders a NULL mode/antimode as `NULL` instead of an empty cell. The
+stats bundles embedded in the Data Schematics' download row still carried
+the old empty values, so regenerate:
+
+- gallery pages via `gen_gallery.py` (nyc311: 24 modes, wpa_211: 1 antimode)
+- external dashboards via `refresh_external_dashboards.sh` after clearing
+  their stale stats caches (same qsv version, so the caches were otherwise
+  reused): pitt311 (7 modes, 3 antimodes), boston311 (9, 3), brazil-lpg (2),
+  pa_crashes (1, 1)
+
+The external pages also pick up viz output changes merged since their last
+refresh (category axis types, tour-text escaping). Charts are otherwise
+unchanged; data dictionaries are the committed ones (no re-inference).
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `examples/viz/smart_allegheny_dogs.html` (modified, +4/-4)
+```diff
+@@ -76,7 +76,7 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>50,013 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>8</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 11:02 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-23 01:00 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -941,7 +941,7 @@ <h1>allegheny_dog_licenses.csv — Data Schematic</h1>
+ <div class="qsv-dict-downloads">
+ <a class="qsv-dict-export" download="allegheny_dog_licenses_csv_data_schematic.schema.json" href="data:application/json;base64,ewogICIkc2NoZW1hIjogImh0dHBzOi8vanNvbi1zY2hlbWEub3JnL2RyYWZ0LzIwMjAtMTIvc2NoZW1hIiwKICAidGl0bGUiOiAiRGF0YSBEaWN0aW9uYXJ5IGZvciBhbGxlZ2hlbnlfZG9nX2xpY2Vuc2VzLmNzdiIsCiAgImRlc2NyaXB0aW9uIjogIlRoaXMgZGF0YXNldCBwcm92aWRlcyBhIGNvbXByZWhlbnNpdmUgcmVnaXN0cnkgb2YgZG9nIGxpY2Vuc2VzLCBlbmNvbXBhc3NpbmcgNTAsMDEzIGluZGl2aWR1YWwgcmVjb3Jkcy4gSXQgZGV0YWlscyBwZXQgY2hhcmFjdGVyaXN0aWNzIHN1Y2ggYXMgYnJlZWQgYW5kIGNvbG9yIGFsb25nc2lkZSBhZG1pbmlzdHJhdGl2ZSBpbmZvcm1hdGlvbiBsaWtlIGxpY2Vuc2UgdHlwZXMsIGVmZmVjdGl2ZSBkYXRlcywgYW5kIG93bmVyIHppcCBjb2Rlcy4gVGhlIGRhdGEgc2VydmVzIHRvIGRvY3VtZW50IHBldCBvd25lcnNoaXAgYW5kIHZhbGlkIGxpY2Vuc2luZyBwZXJpb2RzIGFjcm9zcyB2YXJpb3VzIGNhdGVnb3JpZXMgb2YgbGlmZXRpbWUgYW5kIHNlbmlvciByZWdpc3RyYXRpb25zLlxuXG4jIyMgTm90YWJsZSBDaGFyYWN0ZXJpc3RpY3NcblxuKiAqKlNlbnRpbmVsIFZhbHVlczoqKiBUaGUgYEV4cFllYXJgIGZpZWxkIGNvbnNpc3RzIGVudGlyZWx5IG9mIHRoZSB2YWx1ZSBgMjA5OWAsIHdoaWNoIHNlcnZlcyBhcyBhIHNlbnRpbmVsIGluZGljYXRpbmcgbm8gZXhwaXJhdGlvbi5cbiogKipQSUkvU2Vuc2l0aXZlIERhdGE6KiogVGhlIGRhdGFzZXQgY29udGFpbnMgUGVyc29uYWxseSBJZGVudGlmaWFibGUgSW5mb3JtYXRpb24gKFBJSSkgaW4gdGhlIGZvcm0gb2YgYERvZ05hbWVgIGFuZCBnZW9ncmFwaGljIGlkZW50aWZpZXJzIHZpYSBgT3duZXJaaXBgLlxuKiAqKkhpZ2ggQ2FyZGluYWxpdHk6KiogVGhlIGBEb2dOYW1lYCBhbmQgYEJyZWVkYCBmaWVsZHMgZXhoaWJpdCBoaWdoIGNhcmRpbmFsaXR5LCBpbmRpY2F0aW5nIGEgd2lkZSB2YXJpZXR5IG9mIHVuaXF1ZSB2YWx1ZXMgYWNyb3NzIHRoZSBkYXRhc2V0LlxuKiAqKkRpc3RyaWJ1dGlvbiBQYXR0ZXJuczoqKiBUaGUgYExpY2Vuc2VUeXBlYCBmaWVsZCBzaG93cyBhIGNvbmNlbnRyYXRpb24gaW4gbGlmZXRpbWUgcmVnaXN0cmF0aW9ucywgcGFydGljdWxhcmx5IGZvciBzcGF5ZWQgZmVtYWxlcyBhbmQgbmV1dGVyZWQgbWFsZXMuXG4qICoqRGF0YSBRdWFsaXR5OioqIFRoZSBkYXRhc2V0IGlzIGhpZ2hseSBjb21wbGV0ZSB3aXRoIHZlcnkgbG93IG51bGwgY291bnRzIGFjcm9zcyBhbGwgZmllbGRzOyBob3dldmVyLCB0aGUgYEJyZWVkYCBhbmQgYENvbG9yYCBmaWVsZHMgY29udGFpbiBtaW5vciBzcGFyc2l0eS5cbiogKipUZW1wb3JhbCBSYW5nZToqKiBUaGUgYFZhbGlkRGF0ZWAgZmllbGQgc2hvd3MgYSB0ZW1wb3JhbCBzcGFuIG9mIGFwcHJveGltYXRlbHkgMjMgeWVhcnMsIGZyb20gMjAwMyB0byAyMDI2LlxuXG5HZW5lcmF0ZWQgYnkgcXN2IHYyMS4xLjAgZGVzY3JpYmVncHRcbkNvbW1hbmQgbGluZTogdGFyZ2V0L2RlYnVnL3FzdiBkZXNjcmliZWdwdCAtLWRpY3Rpb25hcnkgLS1kZXNjcmlwdGlvbiBleGFtcGxlcy92aXovYWxsZWdoZW55X2RvZ19saWNlbnNlcy5jc3YgLS1mb3JtYXQganNvbnNjaGVtYSAtbyBleGFtcGxlcy92aXovYWxsZWdoZW55X2RvZ3NfZGljdC5zY2hlbWEuanNvbiAtLWZyZXNoIC0tdHdvLXBhc3MgLS1pbmZlci1jb250ZW50LXR5cGUgLS1pbmZlci1udWxsLXZhbHVlc1xuUHJvbXB0IGZpbGU6IERlZmF1bHQgdjcuMi4wXG5Nb2RlbDogZ29vZ2xlL2dlbW1hLTQtMjZiLWE0YlxuTExNIEFQSSBVUkw6IGh0dHA6Ly9sb2NhbGhvc3Q6MTIzNC92MVxuTGFuZ3VhZ2U6IFxuVGltZXN0YW1wOiAyMDI2LTA3LTE3VDEzOjQyOjE0LjE2ODUyNSswMDowMFxuXG5XQVJOSU5HOiBEZXNjcmlwdGlvbiBnZW5lcmF0ZWQgYnkgYW4gTExNIGFuZCBtYXkgY29udGFpbiBpbmFjY3VyYWNpZXMuIFZlcmlmeSBiZWZvcmUgdXNpbmchXG4iLAogICJ0eXBlIjogIm9iamVjdCIsCiAgInByb3BlcnRpZXMiOiB7CiAgICAiX2lkIjogewogICAgICAidHlwZSI6IFsKICAgICAgICAiaW50ZWdlciIKICAgICAgXSwKICAgICAgInRpdGxlIjogIlJlY29yZCBJRCIsCiAgICAgICJkZXNjcmlwdGlvbiI6ICJBIHVuaXF1ZSBpbnRlZ2VyIGlkZW50aWZpZXIgZm9yIGVhY2ggcmVjb3JkIGluIHRoZSBkYXRhc2V0LiIsCiAgICAgICJtaW5pbXVtIjogMjk1ODUyMjcsCiAgICAgICJtYXhpbXVtIjogMjk2MzUyMzksCiAgICAgICJ4LXFzdiI6IHsKICAgICAgICAicXN2X3R5cGUiOiAiSW50ZWdlciIsCiAgICAgICAgImNhcmRpbmFsaXR5IjogNTAwMTMsCiAgICAgICAgIm51bGxfY291bnQiOiAwLAogICAgICAgICJjb250ZW50X3R5cGUiOiAidW5pcXVlX2lkIiwKICAgICAgICAicm9sZSI6ICJpZGVudGlmaWVyIiwKICAgICAgICAiY29uY2VwdCI6ICJpZC5zdXJyb2dhdGVfa2V5IiwKICAgICAgICAiZXhhbXBsZV9jb3VudHMiOiAiPEFMTF9VTklRVUU+IgogICAgICB9CiAgICB9LAogICAgIkxpY2Vuc2VUeXBlIjogewogICAgICAidHlwZSI6IFsKICAgICAgICAic3RyaW5nIgogICAgICBdLAogICAgICAidGl0bGUiOiAiTGljZW5zZSBUeXBlIiwKICAgICAgImRlc2NyaXB0aW9uIjogIlRoZSBzcGVjaWZpYyBjbGFzc2lmaWNhdGlvbiBvZiB0aGUgZG9nIGxpY2Vuc2UgKGUuZy4sIGxpZmV0aW1lLCBzZW5pb3IpLiIsCiAgICAgICJleGFtcGxlcyI6IFsKICAgICAgICAiRG9nIExpZmV0aW1lIFNwYXllZCBGZW1hbGUiLAogICAgICAgICJEb2cgTGlmZXRpbWUgTmV1dGVyZWQgTWFsZSIsCiAgICAgICAgIkRvZyBMaWZldGltZSBNYWxlIiwKICAgICAgICAiRG9nIFNlbmlvciBMaWZldGltZSBTcGF5ZWQgRmVtYWxlIiwKICAgICAg
+```
+
+**File**: `examples/viz/smart_cms_medicare.html` (modified, +2/-2)
+```diff
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>30,007 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>4</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>97.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 11:52 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-23 01:00 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -2456,7 +2456,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"a98d8b8b-22bd-40e5-8adb-ebcdd7180cb9","fingerprint":{"algo":"blake3","digest":"ff0858a992d6fe65ecf8030a5b865c56f2a4305924037e3e82e598ab278e28fa","bytes":1049432},"rows":30007,"viz_args":["--smarter","--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"308379e7-8a6d-49a5-b66d-b221ea015e93","fingerprint":{"algo":"blake3","digest":"ff0858a992d6fe65ecf8030a5b865c56f2a4305924037e3e82e598ab278e28fa","bytes":1049432},"rows":30007,"viz_args":["--smarter","--preview-threshold","500"],"redacted":[],"pid":null}</script>
+ <style id="qsv-live-style">
+ .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
+   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+```
+
+**File**: `examples/viz/smart_cpdb.html` (modified, +2/-2)
+```diff
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>12,587 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>7</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>98.8%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 10:20 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-23 01:00 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -2496,7 +2496,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"8b5c7cbe-bf8e-4cce-862b-7b74693fa5dd","fingerprint":{"algo":"blake3","digest":"530b533b644037036b22823af6c7b58ff863393c06b3819c37a16ab975e5bfad","bytes":1214414},"rows":12587,"viz_args":["--smarter","--dictionary","nyc_capital_projects_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"6152e78f-024c-4753-bdbe-7e550c510e00","fingerprint":{"algo":"blake3","digest":"530b533b644037036b22823af6c7b58ff863393c06b3819c37a16ab975e5bfad","bytes":1214414},"rows":12587,"viz_args":["--smarter","--dictionary","nyc_capital_projects_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
+ <style id="qsv-live-style">
+ .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
+   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+```
+
+**File**: `examples/viz/smart_dict_sunburst.html` (modified, +4/-4)
+```diff
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>500 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>13</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 00:19 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-23 01:00 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -98,15 +98,15 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+       <div class="qsv-viz-plot" style="height:420px">
+ <div id="qsv-viz-panel-2" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+-    Plotly.newPlot("qsv-viz-panel-2", {"data":[{"type":"violin","x":["South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","South","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","North","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","West","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","East","
+```
+
+**File**: `examples/viz/smart_dict_treemap.html` (modified, +4/-4)
+```diff
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>300 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>5</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 00:19 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-23 01:00 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -98,7 +98,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+       <div class="qsv-viz-plot" style="height:420px">
+ <div id="qsv-viz-panel-2" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+ <script type="text/javascript">
+-    Plotly.newPlot("qsv-viz-panel-2", {"data":[{"type":"violin","x":["Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Basic","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Plus","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro","Pro"],"y":[215.39,33.58,31.74,190.01,35.99,29.68,225.56,32.76,29.26,211.95,23.3,39.14,218.09,24.28,32.54,231.08,25.72,31.68,185.8,12.37,33.04,229.34,33.83,17.32,196.4,41.27,27.1,204.15,36.63,22.81,205.83,34.42,31.94,233.75,33.96,32.7,199.77,31.71,32.49,215.94,29.56,40.44,213.86,34.36,38.36,234.35,30.99,28.14,224.0,34.47,35.23,220.02,22.02,39.85,227.19,32.87,37.13,245.64,28.16,35.83,218.9,37.28,37.48,216.54,29.8,21.18,190.37,25.82,25.53,203.76,24.6,16.4,179.86,23.87,34.62,236.14,39.17,34.83,230.1,36.32,27.49,204.65,24.11,32.99,185.0,37.23,31.28,258.17,37.26,31.82,218.94,33.66,35.52,208.73,30.0,37.38,228.04,23.24,41.05,206.26,33.65,36.8,217.33,35.11,28.49,213.82,36.12,30.17,223.71,30.39,15.94,230.2,29.62,17.26,185.85,29.64,31.75,247.05,38.15,18.89,216.41,27.82,10.95,192.93,31.4,24.04,233.22,32.06,30.74,261.84,27.75,46.36,233.8,36.63,44.85,240.93,30.18,30.13,245.45,25.07,35.68,247.41,37.92,42.51,192.91,18.65,19.93,228.42,28.38,25.08,203.26,28.51,189.56,17.79,230.02,38.38,205.46,31.71,193.64,35.79,202.58,26.28,199.84,36.84,237.19,33.71,225.85,34.55,195.16,29.06,226.21,31.0,212.3,27.39,212.24,34.59,238.15,21.82,239.6,19.87,238.87,27.94,231.07,23.26,203.98,40.92,240.45,40.41,186.63,35.73,207.91,36.16,252.24,30.31,220.14,35.64,198.77,32.55,234.04,35.23,254.93,17.69,225.27,35.78,231.47,11.85,243.86,42.67,250.66,36.92,228.25,32.64,219.99,31.23,203.25,35.18,246.71,34.95,230.73,36.36,198.99,31.31,201.02,25.6,252.9,33.61,187.14,22.54,200.92,22.46,232.62,32.48,215.49,27.8,213.28,24.82,240.09,13.37,229.16,22.45,230.4
+```
+
+**File**: `examples/viz/smart_geo_outliers.html` (modified, +2/-2)
+```diff
+@@ -75,7 +75,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>200 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>10</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 10:20 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-23 01:00 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -2883,7 +2883,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"164cedc7-3af9-4d7a-a14a-8ff699f7c175","fingerprint":{"algo":"blake3","digest":"bd40d2c0b40542c2ad595c9f0a698886ccbc046365a02dba66197518f21e286d","bytes":13402},"rows":200,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"bf95f8f0-645e-4010-81be-177d6036d29e","fingerprint":{"algo":"blake3","digest":"bd40d2c0b40542c2ad595c9f0a698886ccbc046365a02dba66197518f21e286d","bytes":13402},"rows":200,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
+ <style id="qsv-live-style">
+ .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
+   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+```
+
+**File**: `examples/viz/smart_onboarding_funnel.html` (modified, +2/-2)
+```diff
+@@ -72,7 +72,7 @@
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>60 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>6</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 00:19 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-23 01:00 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -2372,7 +2372,7 @@
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"bc869bbf-8862-45bd-a803-ce8bc3ce4e12","fingerprint":{"algo":"blake3","digest":"99982234ec29b1011a433250814fc51e8cd825ceb947e0dcfa6837b09978163c","bytes":1938},"rows":60,"viz_args":["--dictionary","onboarding_funnel_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"1e1f0616-3ff2-4373-b10e-e3d7c411ad48","fingerprint":{"algo":"blake3","digest":"99982234ec29b1011a433250814fc51e8cd825ceb947e0dcfa6837b09978163c","bytes":1938},"rows":60,"viz_args":["--dictionary","onboarding_funnel_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
+ <style id="qsv-live-style">
+ .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
+   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+```
+
+**File**: `examples/viz/smart_regions_growth.html` (modified, +2/-2)
+```diff
+@@ -74,7 +74,7 @@ <h1 class="qsv-viz-title">regions_growth.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>844 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>5</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-22 10:20 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-10-23 01:00 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 26.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -2391,7 +2391,7 @@ <h1 class="qsv-viz-title">regions_growth.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"460b5bcf-95b8-4d94-9522-2dbe48ec813a","fingerprint":{"algo":"blake3","digest":"11c45355afc05ac4e33e611f55109465bf22a716e0d543e5b31e5485f4300177","bytes":30192},"rows":844,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"26.0.0","schematic_uuid":"7583d489-c0c5-4861-bb71-e67a91be7017","fingerprint":{"algo":"blake3","digest":"11c45355afc05ac4e33e611f55109465bf22a716e0d543e5b31e5485f4300177","bytes":30192},"rows":844,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
+ <style id="qsv-live-style">
+ .qsv-live-chip, .qsv-live-panel, .qsv-live-dialog, .qsv-live-toast {
+   position: fixed; z-index: 2147482000; font: 13px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4891** (2026-10-22): fix(stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exact integer sum, NULL antimodes (@jqnatividad)
-- **PR #4890** (2026-10-22): ci(audit): ignore RUSTSEC-2026-0374 (basic-toml unmaintained) (@jqnatividad)
-- **PR #4889** (2026-10-22): fix(stats): weighted quantiles & modes, --infer-boolean true/false pairs, overflowed sum in the stats cache (@jqnatividad)
-- **PR #4888** (2026-10-22): build(deps): bump ip-address from 10.7.2 to 10.7.4 in /.claude/skills (@dependabot[bot])
-- **PR #4887** (2026-10-22): perf(validate): collect errors with Validator::iter_errors (about 2x faster on error-heavy files) (@jqnatividad)
-- **PR #4886** (2026-10-22): validate: jsonschema 0.60 follow-ups (idn formats, field names, validate schema parity, --offline, unknown-format warning) (@jqnatividad)
+- **PR #4897** (2026-10-23): fix(frequency): fail on a lost parallel chunk; keep thresholds when refreshing a stale cache (@jqnatividad)
+- **PR #4896** (2026-10-23): fix(frequency): don't collapse a column to <ALL_UNIQUE> when trimming merges its values (@jqnatividad)
+- **PR #4895** (2026-10-23): fix(frequency): don't merge non-UTF8 values through the frequency cache (@jqnatividad)
+- **PR #4894** (2026-10-23): fix(frequency): exact NULLs in frequent_items, cache-hit ALL_UNIQUE count, -i ALL_UNIQUE shortcut, null JSON ratios (@jqnatividad)
+- **PR #4893** (2026-10-23): docs(viz): regenerate gallery & external Data Schematics for NULL mode rendering (@jqnatividad)
+- **PR #4892** (2026-10-22): fix(stats): render a NULL mode as `NULL`, like NULL antimodes (@jqnatividad)
 
 ---
 
@@ -2534,31 +3056,30 @@ Co
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exa
+## X. frequency): exact NULLs in frequent_items, cache-hit ALL_UNIQUE count, -i ALL_UN
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-frequency.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c61bb71f`: stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exact integer sum, NULL antimodes (#4891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2de71899`: frequency): exact NULLs in frequent_items, cache-hit ALL_UNIQUE count, -i ALL_UNIQUE shortcut, null JSON ratios (#4894). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-frequency.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`stats`: when an out-of-memory check auto-enables approximate estimators, the stats cache now records them.** ([#4891](https://github.com/dathere/qsv/pull/4891)) The cache's `.stats.csv.json` still said `exact`, so a later `--quantile-method exact` run was served the approximate results, and `frequency` treated an approximate cardinality as exact.
-- **`stats --weight` reports a mode for a column whose values are all distinct but whose weights differ.** ([#4891](https://github.com/dathere/qsv/pull/4891)) It always showed no mode and `*ALL` antimodes, even when one value carried most of the weight. `*ALL` is still returned when every weight is the same, now with that weight as its occurrence count instead of `1`. Weighted mode and antimode occurrence counts above 4,294,967,295 are no longer capped there.
-- **`stats --mode` no longer crashes with `QSV_ANTIMODES_LEN=0`**, the documented way to turn off antimode truncation ([#4891](https://github.com/dathere/qsv/pull/4891)).
-- **`stats`: a value like `00` no longer types differently depending on row order.** ([#4891](https://github.com/dathere/qsv/pull/4891)) After a float it was treated as zero-padded and made the column `String`; 
+        "description": "Ignore case when computing frequencies. The stats cache's cardinality is case-sensitive, so it cannot prove that case-folded values are unique. All-unique columns are therefore counted in full instead of being short-circuited to <ALL_UNIQUE> - except Integer columns, which have no letters to fold. On large files with all-unique text columns (e.g. emails), this can use memory proportional to the row count. Exclude such columns with -s if you don't need them."
+        "description": "Algorithm used to compute the frequency table. Choices: 'exact' (default) tracks every distinct value in a HashMap; 'frequent_items' uses the Apache DataSketches Frequent Items (Misra-Gries) sketch to track top-K heavy hitters with bounded error and constant memory. The frequent_items mode rejects asc, weight, ignore-case, no-trim, other-sorted, null-sorted, frequency-jsonl, stats-filter, and json/pretty-json/toon output; the frequency cache is bypassed. Counts are estimates. The flags rank-strategy, lmt-threshold, and unq-limit are silently ignored under this mode (the sketch's natural ordering is top-K by estimate descending; tied counts use the sketch's hash-table iteration ord
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        "description": "Ignore case when computing frequencies."
+        "description": "Algorithm used to compute the frequency table. Choices: 'exact' (default) tracks every distinct value in a HashMap; 'frequent_items' uses the Apache DataSketches Frequent Items (Misra-Gries) sketch to track top-K heavy hitters with bounded error and constant memory. The frequent_items mode rejects asc, weight, ignore-case, no-trim, other-sorted, null-sorted, frequency-jsonl, stats-filter, and json/pretty-json/toon output; the frequency cache is bypassed. Counts are estimates. The flags rank-strategy, lmt-threshold, and unq-limit are silently ignored under this mode (the sketch's natural ordering is top-K by estimate descending; tied counts use the sketch's hash-table iteration order). The 'Other' row format diverges from exact: label is the bare other-text (no unique-count suffix since the sketch cannot recover the true count of items not in the top-K); rank is 0 to match the exact convention. Note: 'frequent_items' requires a little-endian target. Apache DataSketches does not support big-endian platforms (e.g., s390x); on those builds, this choice is rejected.",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c61bb71f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2de71899` are properly handled with clean fallback behavior.

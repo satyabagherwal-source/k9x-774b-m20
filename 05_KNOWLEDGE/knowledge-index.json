@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T05:44:01.708Z",
+  "last_updated": "2026-10-23T05:50:36.692Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7385,8 +7385,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "c61bb71f",
-      "content_hash": "b6fd6d0bc02a0825dddb1a6000e2d89464573498a5f20fcba0f126ad8eef2a30",
+      "source_version": "0386b404",
+      "content_hash": "5fcd1f947b9a293fe9058843229c632d202e489ff612be59f4fbda1471ccf42f",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7539,6 +7539,11 @@
           "number": 3749,
           "title": "stats): OOM-fallback cache sidecar, weighted all-distinct mode, `00` typing, exa",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3776,
+          "title": "frequency): exact NULLs in frequent_items, cache-hit ALL_UNIQUE count, -i ALL_UN",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7546,7 +7551,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:22:27.733Z",
+      "verified_at": "2026-10-23T05:50:36.682Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29675,14 +29680,19 @@
       "slug": "krakend-krakend-ce",
       "platform": "github",
       "source_url": "https://github.com/krakend/krakend-ce",
-      "source_version": "153d87ac",
-      "content_hash": "5837eeffb9679282327164723905c58ae31ddd141737e15a01d5331aa59809f9",
+      "source_version": "0ecf3bf0",
+      "content_hash": "03a0c4501ed7b531c7232c294f1866c038190787a5c562ab55c8fd38b1ffa355",
       "dossier_path": "07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
       "promoted_rules": [
         {
           "number": 1913,
           "title": "Bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3774,
+          "title": "Merge pull request #1129 from krakend/dev-3.0.2",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -29691,7 +29701,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:22:53.704Z",
+      "verified_at": "2026-10-23T05:50:29.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37955,8 +37965,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "0117f078",
-      "content_hash": "cdd84eee1559cbd3efe75d9dc5001f2e3d5feafaa49718d52a1682089dfcab80",
+      "source_version": "c3e82fe4",
+      "content_hash": "215d6a25e4a7a164f34bc9e0e865982c0f6a093737986cc49a7f8c2f85373618",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -37979,6 +37989,11 @@
           "number": 3499,
           "title": "bump rustls-webpki and webpki-roots to fix RUSTSEC advisories (#6936)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3775,
+          "title": "Normal scan panics with min > max when pushed-down LIMIT exceeds 8192 (#6959)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37986,7 +38001,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:49:56.658Z",
+      "verified_at": "2026-10-23T05:50:33.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112737,6 +112752,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T05:44:01.697Z"
+    },
+    "rule-3774": {
+      "learning_id": "rule-3774",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3774,
+      "title": "Merge pull request #1129 from krakend/dev-3.0.2",
+      "source_url": "https://github.com/krakend/krakend-ce",
+      "source_version": "0ecf3bf0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:50:29.742Z"
+    },
+    "rule-3775": {
+      "learning_id": "rule-3775",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3775,
+      "title": "Normal scan panics with min > max when pushed-down LIMIT exceeds 8192 (#6959)",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "c3e82fe4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:50:33.741Z"
+    },
+    "rule-3776": {
+      "learning_id": "rule-3776",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3776,
+      "title": "frequency): exact NULLs in frequent_items, cache-hit ALL_UNIQUE count, -i ALL_UN",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "0386b404",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T05:50:36.682Z"
     }
   },
   "aliases": {

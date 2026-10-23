@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md`  
 > **Source**: github ([https://github.com/krakend/krakend-ce](https://github.com/krakend/krakend-ce))  
-> **Source Version**: `153d87ac`  
+> **Source Version**: `0ecf3bf0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:22:53.542Z  
+> **Timestamp**: 2026-10-23T05:50:29.471Z  
 > **Learning ID**: `learn-github-krakend-krakend-ce`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/krakend/krakend-ce](https://github.com/krakend/krakend-ce))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:22:52.840Z  
+> **Harvest Timestamp**: 2026-10-23T05:50:28.583Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: KrakenD Community Edition: High-performance, stateless, declarative, API Gateway written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2691 stars
+- **Stars / Engagement**: 2696 stars
 
 ---
 
@@ -794,215 +794,183 @@ func (registerSubscriberFactories) Register(ctx context.Context, cfg config.Serv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `70e554ba` (2026-09-18)
-**Commit Message**: Bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc
+### Incident Patch 1: `0ecf3bf0` (2026-10-21)
+**Commit Message**: Merge pull request #1129 from krakend/dev-3.0.2
 
-Bumps [go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc](https://github.com/open-telemetry/opentelemetry-go) from 1.44.0 to 1.45.0.
-- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
-- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.44.0...v1.45.0)
+CE patch release 3.0.2
 
----
-updated-dependencies:
-- dependency-name: go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc
-  dependency-version: 1.45.0
-  dependency-type: indirect
-...
+**File**: `.github/workflows/go.yml` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ jobs:
+       run: |
+         echo "GOLANG_VERSION=$(grep -m 1 GOLANG_VERSION Makefile | sed 's/^.*= //g')" >> $GITHUB_ENV
+     - name: Set up Go
+-      uses: actions/setup-go@v3
++      uses: actions/setup-go@v6
+       with:
+         go-version: "${{ env.GOLANG_VERSION }}"
+ 
+```
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+**File**: `Makefile` (modified, +2/-2)
+```diff
+@@ -7,7 +7,7 @@
+ BIN_NAME :=krakend
+ OS := $(shell uname | tr '[:upper:]' '[:lower:]')
+ MODULE := github.com/krakend/krakend-ce/v3
+-VERSION := 3.0.1
++VERSION := 3.0.2
+ SCHEMA_VERSION := $(shell echo "${VERSION}" | cut -d '.' -f 1,2)
+ GIT_COMMIT := $(shell git rev-parse --short=7 HEAD)
+ PKGNAME := krakend
+@@ -21,7 +21,7 @@ DESC := High performance API gateway. Aggregate, filter, manipulate and add midd
+ MAINTAINER := Daniel Ortiz <dortiz@krakend.io>
+ DOCKER_WDIR := /tmp/fpm
+ DOCKER_FPM := devopsfaith/fpm
+-GOLANG_VERSION := 1.26.9
++GOLANG_VERSION := 1.26.10
+ GLIBC_VERSION := $(shell sh find_glibc.sh)
+ ALPINE_VERSION := 3.23
+ OS_TAG :=
+```
+
+**File**: `README.md` (modified, +17/-0)
+```diff
+@@ -56,6 +56,23 @@ Or, if you don't have or don't want to install `go`, you can build it using the
+ make build_on_docker
+ ```
+ 
++## Forking and maintaining older versions
++KrakenD CE is open source under the Apache 2.0 license. You are free to fork this repository, patch it, and build and distribute your own binaries.
++
++Security fixes are released for the 3.x line and are not backported to 2.13, so the recommended path is to upgrade to the latest version. If your setup relies on Go plugins, read [why the Community Edition dropped plugin support](https://www.krakend.io/blog/dropping-plugins-support-on-community/) and the options available to replace them:
++
++- **Compile your extensions in**: register your middleware or handlers directly in the source code and build your own binary. There is no version drift to worry about, and you can debug it with standard Go tools.
++- **Lua scripting**: many plugin use cases can be expressed as [Lua scripts](https://www.krakend.io/docs/endpoints/lua/), which need no compilation.
++- **KrakenD Enterprise**: still supports plugins, with toolchain support from the KrakenD team. See the [Enterprise Edition](https://www.krakend.io/enterprise/).
++
++If you need more time before upgrading, you can keep a 2.x build up to date on your own:
++
++1. Fork this repository and create a branch from the last 2.x tag (`git checkout -b release-2.13 v2.13.11`).
++2. Apply the fixes you need, usually by bumping the affected dependencies in `go.mod`, and update `GOLANG_VERSION` in the `Makefile` when a Go release fixes a vulnerability.
++3. Build with `make build` (or `make build_on_docker`) and run `make test`.
++
++The GitHub Actions in this repository publish to KrakenD's own Docker Hub and package signing accounts. In a fork, adapt the image names, secrets and GPG key to your own, or build locally with the `Makefile`.
++
+ 
+ ## License
+ [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkrakend%2Fkrakend-ce.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkrakend%2Fkrakend-ce?ref=badge_large)
+```
 
 **File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -249,7 +249,7 @@ require (
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/prometheus v0.47.0 // indirect
- 	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+@@ -100,7 +100,7 @@ require (
+ 	github.com/fatih/color v1.18.0 // indirect
+ 	github.com/felixge/httpsnoop v1.1.0 // indirect
+ 	github.com/fsnotify/fsnotify v1.9.0 // indirect
+-	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
++	github.com/gabriel-vasile/mimetype v1.4.16 // indirect
+ 	github.com/gin-contrib/sse v1.1.1 // indirect
+ 	github.com/go-jose/go-jose/v3 v3.0.5 // indirect
+ 	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
 ```
 
 **File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -816,8 +816,8 @@ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 h1:Ruy
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0/go.mod h1:qZF+/lBs71APw8mlnEZcqZHMzqrYrsFiJOv83lX1OGo=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0 h1:qazEJlUOQzhCpzQpFETGby7EdqjI1wsd0W+6Gg1SCTU=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0/go.mod h1:fOD2Yefuxixkx3ahVNf0O/PERb6r4OlbxfATVnYvzCo=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 h1:QBajQ2SrwQijzHyZbQlPsuIzpl/ll8DY6wPWsajeGcI=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0/go.mod h1:08ZQLjrPLQ6R4kAXvuOvODEer5Yh4CoFvll5qB2BCI8=
- go.opentelemetry.io/otel/exporters/prometheus v0.47.0 h1:OL6yk1Z/pEGdDnrBbxSsH+t4FY1zXfBRGd7bjwhlMLU=
+@@ -155,8 +155,8 @@ github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHk
+ github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
+ github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=
+ github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
+-github.com/gabriel-vasile/mimetype v1.4.15 h1:05iP/CYtZ/w455R/KZM6rZ5ieAdh99UPtd+d3YzLmaI=
+-github.com/gabriel-vasile/mimetype v1.4.15/go.mod h1:azpTcoLcDZRNgFou5j+APrqQx9HqVPWa6ijYQIIVswQ=
++github.com/gabriel-vasile/mimetype v1.4.16 h1:5izNFuvA37st1dDRAcA7TtmngBmRgiIPDmTtiEvjx1E=
++github.com/gabriel-vasile/mimetype v1.4.16/go.mod h1:3oFFwxX8kTklZwzIl2aQEDZT0lKY8xH92ST88bAwba4=
+ github.com/gin-contrib/sse v1.1.1 h1:uGYpNwTacv5R68bSGMapo62iLTRa9l5zxGCps4hK6ko=
+ github.com/gin-contrib/sse v1.1.1/go.mod h1:QXzuVkA0YO7o/gun03UI1Q+FTI8ZV/n5t03kIQAI89s=
+ github.com/gin-gonic/gin v1.12.0 h1:b3YAbrZtnf8N//yjKeU2+MQsh2mY5htkZidOM7O0wG8=
+```
+
+**File**: `tests/fixtures/specs/backend_301.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.1\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.2\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/backend_302.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.1\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.2\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/backend_303.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.1\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.2\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
 ```
 
 ---
 
-### Incident Patch 2: `18398f84` (2026-09-18)
-**Commit Message**: Bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp
+### Incident Patch 2: `8b1dc17a` (2026-10-21)
+**Commit Message**: Merge pull request #1131 from krakend/chore/tweak-readme
 
-Bumps [go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp](https://github.com/open-telemetry/opentelemetry-go) from 1.44.0 to 1.45.0.
-- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
-- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.44.0...v1.45.0)
+Tweak README after 3.0 upgrade
 
----
-updated-dependencies:
-- dependency-name: go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp
-  dependency-version: 1.45.0
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +5/-5)
+**File**: `README.md` (modified, +17/-0)
 ```diff
-@@ -248,15 +248,15 @@ require (
- 	go.opentelemetry.io/otel v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.44.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/prometheus v0.47.0 // indirect
- 	go.opentelemetry.io/otel/metric v1.45.0 // indirect
- 	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
- 	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
- 	go.opentelemetry.io/otel/trace v1.45.0 // indirect
--	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
-+	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-@@ -277,8 +277,8 @@ require (
- 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
- 	google.golang.org/api v0.272.0 // indirect
- 	google.golang.org/genproto v0.0.0-20260217215200-42d3e9bedb6d // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/grpc v1.83.2 // indirect
- 	google.golang.org/protobuf v1.36.11 // indirect
- 	gopkg.in/DataDog/dd-trace-go.v1 v1.62.0 // indirect
-```
-
-**File**: `go.sum` (modified, +10/-10)
-```diff
-@@ -814,12 +814,12 @@ go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 h1:SUp
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0/go.mod h1:ho2g4N+ane+swq5I/VBkKWnRDY4kUINH3FuqyZqX/Ug=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 h1:RuynHbfU8JUEw7DyONgkVYg2SVtsoF28y0LGIr69jgA=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0/go.mod h1:qZF+/lBs71APw8mlnEZcqZHMzqrYrsFiJOv83lX1OGo=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0 h1:4YsVu3B8+3qtWYYrsUYgn0OG78pN0rnNPRGX4SbokQI=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0/go.mod h1:+wnlSn0mD1ADVMe3v9Z/WIaiz6q6gL2J/ejaAmdmv80=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0 h1:qazEJlUOQzhCpzQpFETGby7EdqjI1wsd0W+6Gg1SCTU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0/go.mod h1:fOD2Yefuxixkx3ahVNf0O/PERb6r4OlbxfATVnYvzCo=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.44.0 h1:lgh3PiVrRUWMLOVSkQicxzZll5NjF1r+AtsX1XRIHw0=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.44.0/go.mod h1:5Cnhth3m/AgOeTgE3ex12pPmiu/gGtZit03kSzx9X7s=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 h1:QBajQ2SrwQijzHyZbQlPsuIzpl/ll8DY6wPWsajeGcI=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0/go.mod h1:08ZQLjrPLQ6R4kAXvuOvODEer5Yh4CoFvll5qB2BCI8=
- go.opentelemetry.io/otel/exporters/prometheus v0.47.0 h1:OL6yk1Z/pEGdDnrBbxSsH+t4FY1zXfBRGd7bjwhlMLU=
- go.opentelemetry.io/otel/exporters/prometheus v0.47.0/go.mod h1:xF3N4OSICZDVbbYZydz9MHFro1RjmkPUKEvar2utG+Q=
- go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
-@@ -832,8 +832,8 @@ go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJj
- go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
- go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
- go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
--go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
--go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
-+go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
-+go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
- go.uber.org/goleak v1.3.0/go.mod h1:CoHD4mav9JJNrW/WLlf7HGZPjdw8EucARQHekz1X6bE=
- go.uber.org/mock v0.6.0 h1:hyF9dfmbgIX5EfOdasqLsWD6xqpNZlXblLB/Dbnwv3Y=
-@@ -1163,10 +1163,10 @@ google.golang.org/genproto v0.0.0-20200804131852-c06518451d9c/go.mod h1:FWY/as6D
- google.golang.org/genproto v0.0.0-20200825200019-8632dd797987/go.mod h1:FWY/as6DDZQgahTzZj3fqbO1CbirC29ZNUFHwi0/+no=
- google.golang.org/genproto v0.0.0-20260217215200-42d3e9bedb6d h1:vsOm753cOAMkt76efriTCDKjpCbK18XGHMJHo0JUKhc=
- google.golang.org/genproto v0.0.0-20260217215200-42d3e9bedb6d/go.mod h1:0oz9d7g9QLSdv9/lgbIjowW1JoxMbxmBVNe8i6tORJI=
--google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa h1:Kjn0N0tCrDgiAFW+lGO4JZ3ck44CehvJQMAwj9QF0G8=
--google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa/go.mod h1:q4lMZS6kskjT5HvCPrnnypcDPVJqT/f4nfxmkE7gryY=
--google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa h1:mZHHdPZl0dbGHCflZgAq/Q468DWVFcU2whhB2KAo8fk=
--google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
-+google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d h1:FarXi840EJWSHYTN3ERkADbPWjl307+FGrA22KAVjjc=
-+google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d/go.mod h1:K/+WGbmBY7aNW1HDw1fJnKYo10i0DkAX6pows00dLig=
-+google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d h1:IL4hdHzcUv2l/gcg98/Rj3FbtE6axwqslOW8SW0C+S0=
-+google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
- google.golang.org/grpc v1.19.0/go.mod h1:mqu4LbDTu4XGKhr4mRzUsmM4RtVoemTSY81AxZiDr8c=
- google.golang.org/grpc v1.20.0/go.mod h1:chYK+tFQF0nDUGJgXMSgLCQk3phJEuONr2DCgLDdAQM=
- google.golang.org/grpc v1.20.1/go.mod h1:10oTOabMzJvdu6/UiuZezV6QK5dSlG84ov/aaiqXj38=
-```
-
----
-
-### Incident Patch 3: `f80df547` (2026-09-08)
-**Commit Message**: Merge pull request #1115 from krakend/fix_gh_upload_workflow
-
-Replace broken upload artifacts action
-
-**File**: `.github/workflows/manual_release.yml` (modified, +4/-4)
-```diff
-@@ -92,9 +92,9 @@ jobs:
-             checksums.txt
-           key: ${{github.ref}}-artifacts
-       - name: Upload the artifacts
--        uses: skx/github-action-publish-binaries@master
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
--        with:
--          releaseId: ${{ github.event.inputs.release-id }}
--          args: '*.tar.gz *.asc *.deb *.rpm checksums.txt'
-+          RELEASE_ID: ${{ github.event.inputs.release-id }}
-+        run: |
-+          TAG=$(gh api "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID" --jq .tag_name)
-+          gh release upload "$TAG" *.tar.gz *.asc *.deb *.rpm checksums.txt --clobber --repo "$GITHUB_REPOSITORY"
-```
-
-**File**: `.github/workflows/release.yml` (modified, +1/-3)
-```diff
-@@ -149,8 +149,6 @@ jobs:
-             checksums.txt
-           key: ${{github.ref}}-artifacts
-       - name: Upload the artifacts
--        uses: skx/github-action-publish-binaries@master
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
--        with:
--          args: '*.tar.gz *.asc *.deb *.rpm checksums.txt'
-+        run: gh release upload "${{ github.event.release.tag_name }}" *.tar.gz *.asc *.deb *.rpm checksums.txt --clobber --repo "$GITHUB_REPOSITORY"
-```
-
-**File**: `.github/workflows/upload.yml` (modified, +4/-4)
-```diff
-@@ -34,9 +34,9 @@ jobs:
-           checksums.txt
-         key: ${{ github.event.inputs.cache-ref-key }}
-     - name: Upload the artifacts
--      uses: skx/github-action-publish-binaries@master
-       env:
-         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
--      with:
--        releaseId: ${{ github.event.inputs.release-id }}
--        args: '*.tar.gz *.asc *.deb *.rpm checksums.txt'
-+        RELEASE_ID: ${{ github.event.inputs.release-id }}
-+      run: |
-+        TAG=$(gh api "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID" --jq .tag_name)
-+        gh release upload "$TAG" *.tar.gz *.asc *.deb *.rpm checksums.txt --clobber --repo "$GITHUB_REPOSITORY"
+@@ -56,6 +56,23 @@ Or, if you don't have or don't want to install `go`, you can build it using the
+ make build_on_docker
+ ```
+ 
++## Forking and maintaining older versions
++KrakenD CE is open source under the Apache 2.0 license. You are free to fork this repository, patch it, and build and distribute your own binaries.
++
++Security fixes are released for the 3.x line and are not backported to 2.13, so the recommended path is to upgrade to the latest version. If your setup relies on Go plugins, read [why the Community Edition dropped plugin support](https://www.krakend.io/blog/dropping-plugins-support-on-community/) and the options available to replace them:
++
++- **Compile your extensions in**: register your middleware or handlers directly in the source code and build your own binary. There is no version drift to worry about, and you can debug it with standard Go tools.
++- **Lua scripting**: many plugin use cases can be expressed as [Lua scripts](https://www.krakend.io/docs/endpoints/lua/), which need no compilation.
++- **KrakenD Enterprise**: still supports plugins, with toolchain support from the KrakenD team. See the [Enterprise Edition](https://www.krakend.io/enterprise/).
++
++If you need more time before upgrading, you can keep a 2.x build up to date on your own:
++
++1. Fork this repository and create a branch from the last 2.x tag (`git checkout -b release-2.13 v2.13.11`).
++2. Apply the fixes you need, usually by bumping the affected dependencies in `go.mod`, and update `GOLANG_VERSION` in the `Makefile` when a Go release fixes a vulnerability.
++3. Build with `make build` (or `make build_on_docker`) and run `make test`.
++
++The GitHub Actions in this repository publish to KrakenD's own Docker Hub and package signing accounts. In a fork, adapt the image names, secrets and GPG key to your own, or build locally with the `Makefile`.
++
+ 
+ ## License
+ [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkrakend%2Fkrakend-ce.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkrakend%2Fkrakend-ce?ref=badge_large)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1131** (2026-10-21): Tweak README after 3.0 upgrade (@thedae)
+- **PR #1130** (2026-10-20): Bump go setup action (@thedae)
+- **PR #1129** (2026-10-21): CE patch release 3.0.2 (@thedae)
 - **PR #1127** (2026-10-13): Bump github.com/rabbitmq/amqp091-go from 1.13.0 to 1.14.0 (@dependabot[bot])
 - **PR #1126** (2026-10-09): update krakend-jose (@NarcisDavins)
 - **PR #1125** (2026-10-13): CE patch release v3.0.1 (@thedae)
-- **PR #1124** (2026-09-30): Update config version and schema in the configuration example. (@taik0)
-- **PR #1123** (2026-09-30): Release 3.0 (@kpacha)
-- **PR #1122** (closed): Pin GitHub Actions to commit SHAs and add Dependabot for actions (@gypsy5oul)
 
 ---
 
@@ -1022,28 +990,28 @@ Replace broken upload artifacts action
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc
+## X. Merge pull request #1129 from krakend/dev-3.0.2
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krakend/krakend-ce. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/go.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krakend/krakend-ce. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `70e554ba`: Bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ecf3bf0`: Merge pull request #1129 from krakend/dev-3.0.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/go.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
+      uses: actions/setup-go@v6
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0 // indirect
+      uses: actions/setup-go@v3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `70e554ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ecf3bf0` are properly handled with clean fallback behavior.

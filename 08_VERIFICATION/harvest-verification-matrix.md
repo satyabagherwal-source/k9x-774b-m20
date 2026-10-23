@@ -4460,3 +4460,6 @@
 | `CYCLE-20261023-AOQH` | `2026-10-23T05:33:17.369Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3766, Rule 3767, Rule 3768` | Yes (`d1f2fc04...`) |
 | `CYCLE-20261023-LE7M` | `2026-10-23T05:41:36.946Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3769, Rule 3770` | Yes (`13cb556f...`) |
 | `CYCLE-20261023-OHYB` | `2026-10-23T05:44:01.763Z` | `NG-ZORRO/ng-zorro-antd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3771, Rule 3772, Rule 3773` | Yes (`e90161ac...`) |
+| `CYCLE-20261023-WTD5` | `2026-10-23T05:50:29.801Z` | `krakend/krakend-ce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3774` | Yes (`03a0c450...`) |
+| `CYCLE-20261023-WWGA` | `2026-10-23T05:50:33.802Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3775` | Yes (`215d6a25...`) |
+| `CYCLE-20261023-WYPY` | `2026-10-23T05:50:36.742Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3776` | Yes (`5fcd1f94...`) |

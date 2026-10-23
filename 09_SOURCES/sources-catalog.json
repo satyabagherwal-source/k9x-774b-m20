@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "c61bb71f",
+    "sourceVersion": "0386b404",
     "license": "NOASSERTION",
-    "contentHash": "b6fd6d0bc02a0825dddb1a6000e2d89464573498a5f20fcba0f126ad8eef2a30",
-    "lastHarvestedAt": "2026-10-22T21:22:27.808Z",
+    "contentHash": "5fcd1f947b9a293fe9058843229c632d202e489ff612be59f4fbda1471ccf42f",
+    "lastHarvestedAt": "2026-10-23T05:50:36.745Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4013,10 +4013,10 @@
     "repository": "krakend/krakend-ce",
     "platform": "github",
     "sourceUrl": "https://github.com/krakend/krakend-ce",
-    "sourceVersion": "153d87ac",
+    "sourceVersion": "0ecf3bf0",
     "license": "Apache-2.0",
-    "contentHash": "5837eeffb9679282327164723905c58ae31ddd141737e15a01d5331aa59809f9",
-    "lastHarvestedAt": "2026-10-19T00:22:53.755Z",
+    "contentHash": "03a0c4501ed7b531c7232c294f1866c038190787a5c562ab55c8fd38b1ffa355",
+    "lastHarvestedAt": "2026-10-23T05:50:29.804Z",
     "learningId": "learn-github-krakend-krakend-ce"
   },
   "trailbaseio-trailbase": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "0117f078",
+    "sourceVersion": "c3e82fe4",
     "license": "AGPL-3.0",
-    "contentHash": "cdd84eee1559cbd3efe75d9dc5001f2e3d5feafaa49718d52a1682089dfcab80",
-    "lastHarvestedAt": "2026-10-21T02:49:56.734Z",
+    "contentHash": "215d6a25e4a7a164f34bc9e0e865982c0f6a093737986cc49a7f8c2f85373618",
+    "lastHarvestedAt": "2026-10-23T05:50:33.805Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {

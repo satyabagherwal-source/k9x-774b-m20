@@ -4467,3 +4467,6 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `5148abb4` | Multi-dimensional audit evidence | 2026-10-23T05:33:17.372Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `733b7419` | Multi-dimensional audit evidence | 2026-10-23T05:41:36.949Z |
 | `learn-github-ng-zorro-ng-zorro-antd` | `https://github.com/NG-ZORRO/ng-zorro-antd` | `049d4de8` | Multi-dimensional audit evidence | 2026-10-23T05:44:01.766Z |
+| `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `0ecf3bf0` | Multi-dimensional audit evidence | 2026-10-23T05:50:29.804Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `c3e82fe4` | Multi-dimensional audit evidence | 2026-10-23T05:50:33.805Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `0386b404` | Multi-dimensional audit evidence | 2026-10-23T05:50:36.745Z |
