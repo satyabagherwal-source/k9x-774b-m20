@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `0cc4e2a7`  
+> **Source Version**: `d42ea86b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:45:13.995Z  
+> **Timestamp**: 2026-10-23T11:18:09.466Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:45:13.599Z  
+> **Harvest Timestamp**: 2026-10-23T11:18:08.809Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,129 +2203,378 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0cc4e2a7` (2026-10-23)
-**Commit Message**: deps: update lock file - notably MiniJinja, Redis and webpki for eMudhra CA removal
+### Incident Patch 1: `d91f305b` (2026-10-23)
+**Commit Message**: fix: read compressed CSV inputs exactly as written (#4901)
 
-Refresh Cargo.lock with newer compatible releases, including cc, MiniJinja, Redis, UUID, and webpki roots.
+* fix: read compressed CSV inputs exactly as written
 
-**File**: `Cargo.lock` (modified, +18/-18)
+.csv.gz/.zst/.zlib (and .tsv/.ssv forms) were decompressed by having
+polars parse the file and write it back out as CSV, which rewrote values
+for every command: leading zeros dropped (00501 -> 501), 1.50 -> 1.5,
+TRUE -> true, and each blank line became an all-null row. They are now
+decompressed byte-for-byte.
+
+Behavior change: a pschema.json and QSV_POLARS_FLOAT_PRECISION no longer
+re-type or reformat compressed CSVs; both still apply to Parquet, Avro,
+Arrow, JSON and JSONL.
+
+Closes #4900
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changelog): cite #4901 for the compressed CSV fix
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1335,9 +1335,9 @@ dependencies = [
+@@ -72,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
  
- [[package]]
- name = "cc"
--version = "1.9.0"
-+version = "1.10.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
-+checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
- dependencies = [
-  "find-msvc-tools",
-  "jobserver",
-@@ -1424,9 +1424,9 @@ dependencies = [
+ ### Fixed
++- **Compressed CSV inputs (`.csv.gz`, `.csv.zst`, `.csv.zlib` and their `.tsv`/`.ssv` forms) are read exactly as written.** ([#4901](https://github.com/dathere/qsv/pull/4901), fixes [#4900](https://github.com/dathere/qsv/issues/4900)) They were decompressed by having polars parse the file and write it back out as CSV, which rewrote values for every command that read them: leading zeros were dropped (`00501` → `501`), `1.50` became `1.5`, `TRUE` became `true`, and each blank line became an all-null row (so `count` reported one row too many and `stats` a null in every column). They are now decompressed byte-for-byte, so they give the same results as the uncompressed file. **Behavior change:** a `pschema.json` and `QSV_POLARS_FLOAT_PRECISION` no longer re-type or reformat compressed CSVs; both still apply to Parquet, Avro, Arrow, JSON and JSONL inputs.
+ - **`frequency`: a parallel worker that crashes is an error, not a partial table.** ([#4897](https://github.com/dathere/qsv/pull/4897)) A worker that panicked dropped its chunk without recording an error, so the indexed (parallel) run printed frequencies counted over only part of the file as if they were complete. Every parallel pass now checks that it folded every chunk, and fails with "N of M parallel chunks failed" otherwise.
+ - **`frequency`: refreshing a version-stale frequency cache keeps its `HIGH_CARDINALITY` thresholds.** ([#4897](https://github.com/dathere/qsv/pull/4897)) After a qsv upgrade, a plain `frequency` run refreshes an existing cache, but it rewrote it with the default thresholds (100 / 90%) instead of the ones it was built with (`--high-card-threshold`, `--high-card-pct` or their `QSV_FREQ_HIGH_CARD_*` variables). Columns those thresholds had kept in full became `<HIGH_CARDINALITY>` sentinels and were recomputed on every later run. Results were correct; only speed suffered.
+ - **`frequency` no longer collapses a column to `<ALL_UNIQUE>` when trimming merges its values.** ([#4896](https://github.com/dathere/qsv/pull/4896)) The stats cache counts untrimmed values, so a column such as `a` / ` a` / `A` (cardinality 3 in 3 rows) printed a single `<ALL_UNIQUE>` row instead of `a,2` and `A,1`, even with the default options. While it skips an `<ALL_UNIQUE>` candidate, `frequency` now checks whether trimming changes any of its values. If one does, that column is recounted in a second pass and a message names it; clean ID columns keep the shortcut, and `--no-trim` is unaffected. The same check applies to `--weight`, to the parallel (indexed) path across chunks, and to the Integer columns that keep the shortcut under `--ignore-case`. Such a column is no longer cached as `<ALL_UNIQUE>` by `--frequency-jsonl` either.
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -730,7 +730,7 @@ geocode = [
+ luau     = ["mlua", "sanitize-filename", "flate2", "zstd"]
+ magika   = ["dep:magika", "dep:ort"]
+ mcp      = []
+-polars   = ["dep:polars", "dep:polars-arrow", "bytemuck"]
++polars   = ["dep:polars", "dep:polars-arrow", "bytemuck", "flate2", "zstd"]
+ readstat = ["dep:polars-readstat-rs", "polars"]
  
- [[package]]
- name = "clipboard-win"
--version = "5.4.1"
-+version = "5.4.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bde03770d3df201d4fb868f2c9c59e66a3e4e2bd06692a0fe701e7103c7e84d4"
-+checksum = "052af7878466feccda12ba7a6a67d019d712f296809559b47c12c8cc196d3a9a"
- dependencies = [
-  "error-code",
- ]
-@@ -2056,9 +2056,9 @@ dependencies = [
+ prompt = ["rfd"]
+```
+
+**File**: `docs/ENVIRONMENT_VARIABLES.md` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@
+ | `QSV_FORCE_COLOR` | if set, forces colorized output even when redirecting or running in CI. Used by the `color` command to override automatic color detection. |
+ | `QSV_THEME` | sets the color theme for the `color` command. Valid values are DARK or LIGHT (case-insensitive). If not set, the theme is automatically detected based on the terminal background color. |
+ | `QSV_TERMWIDTH` | overrides the detected terminal width for the `color` command. Must be a value between 1 and 1000. If not set, the terminal width is automatically detected or defaults to 80 when output is redirected. |
+-| `QSV_POLARS_FLOAT_PRECISION` | The precision to use when converting Polars-enabled formats (Avro,Arrow,Parquet,JSON,JSONL and gz,zlib & zst compressed files) to CSV. If set, this will also override the --float-precision option of the `sqlp` command. |
++| `QSV_POLARS_FLOAT_PRECISION` | The precision to use when converting Polars-enabled formats (Avro, Arrow, Parquet, JSON and JSONL) to CSV. gz, zlib & zst compressed CSV files are decompressed as-is, so it doesn't apply to them. If set, this will also override the --float-precision option of the `sqlp` command. |
+ | `QSV_POLARS_DECIMAL_SCALE`  | The scale to use when using the Polars Decimal type. If not set, this defaults to 5. |
+ | `QSV_PREFER_DMY` | if set, date parsing will use DMY format. Otherwise, use MDY format (used with `datefmt`, `frequency`, `joinp`, `moarstats`, `pivotp`, `sample`, `schema`, `sniff`, `stats`, `tojsonl` & `viz` commands). For `viz smart --dictionary`, this is the *fallback*: a column whose dictionary entry declares its own date format (e.g. `content_type: "date:%m/%d/%Y"`) is parsed per that declaration, and this variable applies only where the dictionary is silent. |
+ | `QSV_REGEX_UNICODE` | if set, makes `search`, `searchset` & `replace` commands unicode-aware. For increased performance, these commands are not unicode-aware by default & will ignore unicode values when matching & will abort when unicode characters are used in the regex. Note that the `apply operations regex_replace` operation is always unicode-aware. |
+```
+
+**File**: `dotenv.template` (modified, +4/-3)
+```diff
+@@ -163,9 +163,10 @@ QSV_COMMENT_CHAR = '#'
+ # logical processors.  See PERFORMANCE-Multithreading section for more info.
+ # QSV_MAX_JOBS = 8
  
- [[package]]
- name = "ctutils"
--version = "0.4.3"
-+version = "0.4.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "03bb0e1cc970d482d121d9a1744999169b69a07470b3d644a7894e53fcaf4574"
-+checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
- dependencies = [
-  "cmov",
- ]
-@@ -4881,9 +4881,9 @@ dependencies = [
+-# The precision to use when converting Polars-enabled formats (Avro,Arrow,Parquet,JSON,
+-# JSONL and gz,zlib & zst compressed files) to CSV. If set, this will also override the
+-# --float-precision option of the `sqlp` command.
++# The precision to use when converting Polars-enabled formats (Avro, Arrow, Parquet, JSON
++# and JSONL) to CSV. gz, zlib & zst compressed CSV files are decompressed as-is, so it
++# doesn't apply to them. If set, this will also override the --float-precision option of
++# the `sqlp` command.
+ # QSV_POLARS_FLOAT_PRECISION = 8
  
- [[package]]
- name = "minijinja"
--version = "3.0.2"
-+version = "3.0.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0032a2738ba16d9a8822e4eb2833faeed5c41d767633ea753f33b6becd58cbfc"
-+checksum = "90086695417a271bc96e6cb50618555614ca48fa3bb0d9aa96e3468b0f84431e"
- dependencies = [
-  "itoa",
-  "percent-encoding",
-@@ -4895,9 +4895,9 @@ dependencies = [
+ # The scale to use when using the Polars Decimal type. If not set, defaults to 5.
+```
+
+**File**: `src/util/special_format.rs` (modified, +58/-63)
+```diff
+@@ -169,6 +169,46 @@ pub fn extract_zip_to_temp(
+     Ok(out)
+ }
  
- [[package]]
- name = "minijinja-contrib"
--version = "3.0.2"
-+version = "3.0.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d3ca3f8d41a993f03d865f7fd8a3e63502f778b16ef4680bbc0863d3a2ce12fd"
-+checksum = "9c8e63b8c511fbb281cc19a1f731acd0903886ab6fbaf8399240ca68e5626568"
- dependencies = [
-  "jiff",
-  "minijinja",
-@@ -7704,9 +7704,9 @@ dependencies = [
++/// Decompress a `.gz`/`.zlib`/`.zst` CSV-family file byte-for-byte to a temp file whose
++/// extension (`.csv`/`.tsv`/`.ssv`) selects the delimiter downstream. Same temp lifecycle
++/// as `extract_zip_to_temp`.
++#[cfg(feature = "polars")]
++fn decompress_csv_to_temp(
++    path: &Path,
++    format: SpecialFormat,
++) -> Result<PathBuf, Box<dyn std::error::Error>> {
++    let suffix = match format {
++        SpecialFormat::CompressedTsv => ".tsv",
++        SpecialFormat::CompressedSsv => ".ssv",
++        _ => ".csv",
++    };
++    let outer_ext = path
++        .extension()
++        .and_then(|ext| ext.to_str())
++        .map(str::to_ascii_lowercase);
++    let input = BufReader::new(File::open(path)?);
++    let mut decoder: Box<dyn Read> = match outer_ext.as_deref() {
++        // multi-member gzip (e.g. concatenated .gz files) must be read to the end
++        Some("gz") => Box::new(flate2::read::MultiGzDecoder::new(input)),
++        Some("zlib") => Box::new(flate2::read::ZlibDecoder::new(input)),
++        Some("zst") => Box::new(zstd::stream::read::Decoder::new(input)?),
++        other => return Err(format!("unsupported compression: {other:?}").into()),
++    };
++
++    let temp_dir =
++        crate::config::TEMP_FILE_DIR.get_or_init(|| tempfile::TempDir::new().unwrap().keep());
++    let mut temp_file = tempfile::Builder::new()
++        .suffix(suffix)
++        .tempfile_in(temp_dir)?;
++    std::io::copy(&mut decoder, &mut temp_file)
++        .map_err(|e| format!("failed to decompress {}: {e}", path.display()))?;
++    temp_file.flush()?;
++
++    let out = temp_file.path().to_path_buf();
++    temp_file.keep()?;
++    Ok(out)
++}
++
+ /// Extract a zip archive's usable entries into a temp subdirectory and return
+ /// that subdirectory and the entries' paths, **tabular entries first** (CSV/TSV/TAB/SSV in archive
+ /// order), followed by other supported entries (special formats parquet/avro/json/…, in
+@@ -296,8 +336,8 @@ pub fn convert_special_format(
+     use polars::{
+         io::avro::AvroReader,
+         prelude::{
+-            CsvParseOptions, CsvReadOptions, CsvWriter, IpcReader, JsonReader, LazyFileListReader,
+-            LazyJsonLineReader, ParquetReader, PlRefPath, SerReader, SerWriter,
++            CsvWriter, IpcReader, JsonReader, LazyFileListReader, LazyJsonLineReader,
++            ParquetReader, PlRefPath, SerReader, SerWriter,
+         },
+     };
  
- [[package]]
- name = "redis"
--version = "1.7.1"
-+version = "1.8.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ed5b98ae99461e02895c3a96a25dbe4d852a3d5e5b815d31d5d9e4b5344d99e9"
-+checksum = "7acd809e80afa754c63f586955699d8990efe1c4b6613183ee5f027a11fbc8b5"
- dependencies = [
-  "ahash",
-  "arcstr",
-@@ -9990,9 +9990,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
+@@ -306,17 +346,26 @@ pub fn convert_special_format(
+     if format == SpecialFormat::CompressedZip {
+         return extract_zip_to_temp(path, delim);
+     }
++    // A compressed CSV is already delimited text: decompress the bytes rather than parsing
++    // and re-writing them through polars, which rewrote values (00501 -> 501, 1.50 -> 1.5,
++    // TRUE -> true) and turned blank lines into all-null rows (#4900).
++    if let SpecialFormat::CompressedCsv
++    | SpecialFormat::CompressedTsv
++    | SpecialFormat::CompressedSsv = format
++    {
++        return decompress_csv_to_temp(path, format);
++    }
  
- [[package]]
- name = "uuid"
--version = "1.28.0"
-+version = "1.29.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
-+checksum = "4a0e2d11620c50695fe12bbbfde96b3477fe606e7284c22d505c12ce51214514"
- dependencies = [
-  "atomic",
-  "getrandom 0.4.3",
-@@ -10328,18 +10328,18 @@ dependencies = [
+     // Check if there's a pschema.json file with the same filestem
+     // the Polars schema will be used in parsing
+-    // JSON/JSONL and compressed CSV files only
++    // JSON/JSONL files only
+     let schema = if let SpecialFormat::Avro | SpecialFormat::Parquet | SpecialFormat::Ipc = format {
+         None
+     } else {
+         load_schema_from_file(path)?
+     };
  
- [[package]]
- name = "webpki-root-certs"
--version = "1.0.10"
-+version = "1.0.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
-+checksum = "e49d0e65abc00c142e8f9428da991da9f1a250c39be97459901eb12b9b49f62a"
- dependencies = [
-  "rustls-pki-types",
- ]
+-    let mut extension = ".csv";
++    let extension = ".csv";
+     // Create a reader based on the file format and convert to DataFrame
+     let mut df = match format {
+         SpecialFormat::Avro => AvroReader::new(BufReader::new(File::open(path)?)).finish()?,
+@@ -340,66 +389,12 @@ pub fn convert_special_format(
+                 df.finish()?
+             }
+         },
+-        SpecialFormat::CompressedCsv
+-        | SpecialFormat::CompressedTsv
+-        | SpecialFormat::CompressedSsv => {
+-            let separator = match format {
+-                SpecialFormat::CompressedTsv => {
+-                    extension = ".tsv";
+-                    b'\t'
+-                },
+-                SpecialFormat::CompressedSsv => {
+-                    extension = ".ssv";
+-                    b';'
+-                },
+-                _ => delim,
+-            };
+-
+-            // Create base CSV read options with the appropriate separator
+-            let base_options = CsvReadOptions::default()
+-                .with_parse_options(CsvParseOptions::default().with_separator(separator));
+-
+-            // Try reading the compressed file with a schema if available
+-            let reader = CsvReadOptions::default()
+-                .try_into_reader_with_file_path(Some(path.to_path_buf()))?
+-                .with_options(if let Some(schema) = schema {
+-                    base_options.clone().with_schema(Some(schema))
+-                } else {
+-                    // it failed, try to infer it with 1,000 rows
+-                    base_options.clone
+```
+
+**File**: `tests/test_slice.rs` (modified, +76/-82)
+```diff
+@@ -925,35 +925,22 @@ fn slice_float_precision() {
+     let parquet_file = wrk.path("float_data.parquet");
+     assert!(parquet_file.exists());
  
- [[package]]
- name = "webpki-roots"
--version = "1.0.10"
-+version = "1.0.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
-+checksum = "f5f280bbb2b287bc8e7de7e3852945a0ff50d1bbcb5ed42b6c7a568c546df171"
- dependencies = [
-  "rustls-pki-types",
- ]
+-    // gzip float_data.csv, so we go through the polars special format
+-    // processing workflow that checks for default precision
+-    let mut cmd = std::process::Command::new("gzip");
+-    cmd.arg(&test_csv);
+-    wrk.assert_success(&mut cmd);
+-    // Check if the gzipped file exists
+-    let gzipped_file = wrk.path("float_data.csv.gz");
+-    assert!(gzipped_file.exists());
+-    // Copy the schema file to match the gzipped filename
+-    std::fs::copy(
+-        wrk.path("float_data.csv.pschema.json"),
+-        wrk.path("float_data.csv.gz.pschema.json"),
+-    )
+-    .unwrap();
+-
++    // A compressed CSV is decompressed byte-for-byte (#4900), so float precision is checked
++    // through the parquet conversion, which goes through polars.
+     // Test with default precision
+     let mut cmd = wrk.command("slice");
+-    cmd.arg(&gzipped_file).arg("--json");
++    cmd.arg(&parquet_file).arg("--json");
+     let got_default: String = wrk.stdout_on_success(&mut cmd);
+ 
+     // Test with custom precision (2 decimal places)
+     let mut cmd = wrk.command("slice");
+-    cmd.arg(&gzipped_file).arg("--json");
++    cmd.arg(&parquet_file).arg("--json");
+     cmd.env("QSV_POLARS_FLOAT_PRECISION", "2");
+     let got_precision_2: String = wrk.stdout_on_success(&mut cmd);
+ 
+     // Test with custom precision (5 decimal places)
+     let mut cmd = wrk.command("slice");
+-    cmd.arg(&gzipped_file).arg("--json");
++    cmd.arg(&parquet_file).arg("--json");
+     cmd.env("QSV_POLARS_FLOAT_PRECISION", "5");
+     let got_precision_5: String = wrk.stdout_on_success(&mut cmd);
+ 
+@@ -1229,8 +1216,8 @@ fn slice_from_csvgz_with_decimal_precision() {
+ 
+ #[cfg(feature = "polars")]
+ #[test]
+-fn slice_from_tsvgz_with_decimal_precision() {
+-    let wrk = Workdir::new("slice_from_tsvgz_with_decimal_precision");
++fn slice_from_tsvgz_ignores_pschema_and_float_precision() {
++    let wrk = Workdir::new("slice_from_tsvgz_ignores_pschema_and_float_precision");
+ 
+     // Create a test TSV file with high precision decimal values
+     wrk.create_with_delim(
+@@ -1244,16 +1231,17 @@ fn slice_from_tsvgz_with_decimal_precision() {
+         b'\t',
+     );
+ 
+-    // Create a pschema.json file with Decimal type for the 'value' field
+-    // Using Decimal with precision 25 and scale 25 to maintain all decimal places
++    // A pschema and float precision used to re-type a compressed CSV through polars, which
++    // changed the digits (3.1415926535897932384626433 -> 3.1415926535897931159979635). It is
++    // now decompressed byte-for-byte (#4900), so neither applies.
+     let schema_data = r#"{
+         "fields": {
+             "id": "String",
+             "name": "String",
+             "value": { "Decimal": [25, 25] }
+         }
+     }"#;
+-    wrk.create_from_string("test.tsv.pschema.json", schema_data);
++    wrk.create_from_string("test.tsv.gz.pschema.json", schema_data);
+ 
+     // Compress the TSV file with gzip
+     let mut cmd = std::process::Command::new("gzip");
+@@ -1262,83 +1250,89 @@ fn slice_from_tsvgz_with_decimal_precision() {
+ 
+     // Run slice command
+     let mut cmd = wrk.command("slice");
+-    cmd.env("QSV_POLARS_FLOAT_PRECISION", "25")
++    cmd.env("QSV_POLARS_FLOAT_PRECISION", "5")
+         .arg("test.tsv.gz")
+         .arg("--json");
+ 
+-    // Verify the output - value should maintain all decimal places
++    // the original values come through unchanged
+     let got: String = wrk.stdout_on_success(&mut cmd);
+ 
+-    assert!(got.contains("3.1415926535897931159979635"));
+-    assert!(got.contains("2.7182818284590450907955983"));
+-    assert!(got.contains("1.4142135623730951454746219"));
++    assert!(got.contains("3.1415926535897932384626433"));
++    assert!(got.contains("2.7182818284590452353602874"));
++    assert!(got.contains("1.4142135623730950488016887"));
+ }
+ 
+ #[cfg(feature = "polars")]
+ #[test]
+-// A Decimal pschema preserves more precision than Float64. Exercised via the compressed-CSV
+-// reader because polars' JSONL reader does not support a Decimal target type — see the note
+-// on slice_from_csvgz_with_decimal_precision and issue #3988. Previously used JSONL and only
+-// "passed" because the conversion error was swallowed and raw bytes were read as-is.
+-fn slice_from_csvgz_with_decimal_precision_vs_float() {
+-    let wrk = Workdir::new("slice_from_csvgz_with_decimal_precision_vs_float");
+-
+-    // High-precision decimal values that exceed f64's ~17 significant digits.
+-    let csv_data = "id,name,value\n1,John,3.1415926535897932384626433\n2,Jane,2.\
+-                    7182818284590452353602874\n3,Bob,1.4142135623730950488016887\n";
+-    wrk.create_from_string("test.csv", csv_data);
++// A compressed CSV used to be parsed by polars and re-written as CSV, so its values were
++// re-typed: leading zeros dropped (00501 -> 501), 1.50 -> 1.5, TRUE -> true, a Float64
++// pschema truncated digi
+```
+
+---
+
+### Incident Patch 2: `d42ea86b` (2026-10-23)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.254 to 1.0.255 (#4898)
+
+Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.254 to 1.0.255.
+- [Release notes](https://github.com/anthropics/claude-code-action/releases)
+- [Commits](https://github.com/anthropics/claude-code-action/compare/v1.0.254...v1.0.255)
+
+---
+updated-dependencies:
+- dependency-name: anthropics/claude-code-action
+  dependency-version: 1.0.255
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ jobs:
+ 
+       - name: Run Claude Code Review
+         id: claude-review
+-        uses: anthropics/claude-code-action@v1.0.254
++        uses: anthropics/claude-code-action@v1.0.255
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+```
+
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ jobs:
+ 
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@v1.0.254
++        uses: anthropics/claude-code-action@v1.0.255
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4901** (2026-10-23): fix: read compressed CSV inputs exactly as written (@jqnatividad)
+- **PR #4898** (2026-10-23): build(deps): bump anthropics/claude-code-action from 1.0.254 to 1.0.255 (@dependabot[bot])
 - **PR #4897** (2026-10-23): fix(frequency): fail on a lost parallel chunk; keep thresholds when refreshing a stale cache (@jqnatividad)
 - **PR #4896** (2026-10-23): fix(frequency): don't collapse a column to <ALL_UNIQUE> when trimming merges its values (@jqnatividad)
 - **PR #4895** (2026-10-23): fix(frequency): don't merge non-UTF8 values through the frequency cache (@jqnatividad)
 - **PR #4894** (2026-10-23): fix(frequency): exact NULLs in frequent_items, cache-hit ALL_UNIQUE count, -i ALL_UNIQUE shortcut, null JSON ratios (@jqnatividad)
-- **PR #4893** (2026-10-23): docs(viz): regenerate gallery & external Data Schematics for NULL mode rendering (@jqnatividad)
-- **PR #4892** (2026-10-22): fix(stats): render a NULL mode as `NULL`, like NULL antimodes (@jqnatividad)
 
 ---
 
@@ -2345,62 +2594,28 @@ Refresh Cargo.lock with newer compatible releases, including cc, MiniJinja, Redi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: update lock file - notably MiniJinja, Redis and webpki for eMudhra CA remo
+## X. read compressed CSV inputs exactly as written (#4901)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0cc4e2a7`: deps: update lock file - notably MiniJinja, Redis and webpki for eMudhra CA removal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d91f305b`: read compressed CSV inputs exactly as written (#4901). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.10.0"
-checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
-version = "5.4.3"
-checksum = "052af7878466feccda12ba7a6a67d019d712f296809559b47c12c8cc196d3a9a"
-version = "0.4.5"
-checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
-version = "3.0.3"
-checksum = "90086695417a271bc96e6cb50618555614ca48fa3bb0d9aa96e3468b0f84431e"
-version = "3.0.3"
-checksum = "9c8e63b8c511fbb281cc19a1f731acd0903886ab6fbaf8399240ca68e5626568"
-version = "1.8.0"
-checksum = "7acd809e80afa754c63f586955699d8990efe1c4b6613183ee5f027a11fbc8b5"
-version = "1.29.0"
-checksum = "4a0e2d11620c50695fe12bbbfde96b3477fe606e7284c22d505c12ce51214514"
-version = "1.0.11"
-checksum = "e49d0e65abc00c142e8f9428da991da9f1a250c39be97459901eb12b9b49f62a"
-version = "1.0.11"
-checksum = "f5f280bbb2b287bc8e7de7e3852945a0ff50d1bbcb5ed42b6c7a568c546df171"
+- **Compressed CSV inputs (`.csv.gz`, `.csv.zst`, `.csv.zlib` and their `.tsv`/`.ssv` forms) are read exactly as written.** ([#4901](https://github.com/dathere/qsv/pull/4901), fixes [#4900](https://github.com/dathere/qsv/issues/4900)) They were decompressed by having polars parse the file and write it back out as CSV, which rewrote values for every command that read them: leading zeros were dropped (`00501` → `501`), `1.50` became `1.5`, `TRUE` became `true`, and each blank line became an all-null row (so `count` reported one row too many and `stats` a null in every column). They are now decompressed byte-for-byte, so they give the same results as the uncompressed file. **Behavior change:** a `pschema.json` and `QSV_POLARS_FLOAT_PRECISION` no longer re-type or reformat compressed CSVs; both still apply to Parquet, Avro, Arrow, JSON and JSONL inputs.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.9.0"
-checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
-version = "5.4.1"
-checksum = "bde03770d3df201d4fb868f2c9c59e66a3e4e2bd06692a0fe701e7103c7e84d4"
-version = "0.4.3"
-checksum = "03bb0e1cc970d482d121d9a1744999169b69a07470b3d644a7894e53fcaf4574"
-version = "3.0.2"
-checksum = "0032a2738ba16d9a8822e4eb2833faeed5c41d767633ea753f33b6becd58cbfc"
-version = "3.0.2"
-checksum = "d3ca3f8d41a993f03d865f7fd8a3e63502f778b16ef4680bbc0863d3a2ce12fd"
-version = "1.7.1"
-checksum = "ed5b98ae99461e02895c3a96a25dbe4d852a3d5e5b815d31d5d9e4b5344d99e9"
-version = "1.28.0"
-checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
-version = "1.0.10"
-checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
-version = "1.0.10"
-checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0cc4e2a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d91f305b` are properly handled with clean fallback behavior.

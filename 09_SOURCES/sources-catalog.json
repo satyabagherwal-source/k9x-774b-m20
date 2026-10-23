@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "0cc4e2a7",
+    "sourceVersion": "d42ea86b",
     "license": "NOASSERTION",
-    "contentHash": "1086d06d80778acf22da41428d32a8e7cb353ba24ef2235759acee3774652cbb",
-    "lastHarvestedAt": "2026-10-23T10:45:14.335Z",
+    "contentHash": "12fb54db79374c49f6a48098de9b38d2e4eda6be3a36dded55d3a0c00a5fc540",
+    "lastHarvestedAt": "2026-10-23T11:18:09.669Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2453,10 +2453,10 @@
     "repository": "tamagui/tamagui",
     "platform": "github",
     "sourceUrl": "https://github.com/tamagui/tamagui",
-    "sourceVersion": "0c9a4326",
+    "sourceVersion": "c95f4998",
     "license": "MIT",
-    "contentHash": "f0a508e76389a3585a8206f9d8bf28eb18d7849e0ec5b6b177ad77e0d1ff2a77",
-    "lastHarvestedAt": "2026-10-21T16:57:54.537Z",
+    "contentHash": "b3b002662a588bd70a315211aa6b6d439461bc2848406622bc4c11769cb2acf4",
+    "lastHarvestedAt": "2026-10-23T11:17:53.273Z",
     "learningId": "learn-github-tamagui-tamagui"
   },
   "burntsushi-ripgrep": {

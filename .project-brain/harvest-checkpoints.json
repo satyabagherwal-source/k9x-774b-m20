@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T11:11:57.014Z",
+  "last_updated": "2026-10-23T11:18:09.678Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "1086d06d80778acf22da41428d32a8e7cb353ba24ef2235759acee3774652cbb",
-      "verified_at": "2026-10-23T10:45:14.351Z",
+      "content_hash": "12fb54db79374c49f6a48098de9b38d2e4eda6be3a36dded55d3a0c00a5fc540",
+      "verified_at": "2026-10-23T11:18:09.677Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:45:14.351Z"
+      "last_updated": "2026-10-23T11:18:09.677Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -3816,14 +3816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tamagui-tamagui",
-      "content_hash": "f0a508e76389a3585a8206f9d8bf28eb18d7849e0ec5b6b177ad77e0d1ff2a77",
-      "verified_at": "2026-10-21T16:57:54.547Z",
+      "content_hash": "b3b002662a588bd70a315211aa6b6d439461bc2848406622bc4c11769cb2acf4",
+      "verified_at": "2026-10-23T11:17:53.278Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T16:57:54.547Z"
+      "last_updated": "2026-10-23T11:17:53.278Z"
     },
     "BurntSushi/ripgrep": {
       "repository": "BurntSushi/ripgrep",

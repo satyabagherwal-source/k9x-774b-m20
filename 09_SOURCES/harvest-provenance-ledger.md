@@ -4552,3 +4552,5 @@ Every entry in this ledger must capture:
 | `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `c015c32a` | Multi-dimensional audit evidence | 2026-10-23T11:11:43.715Z |
 | `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `9b55483e` | Multi-dimensional audit evidence | 2026-10-23T11:11:48.166Z |
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `4dd63b69` | Multi-dimensional audit evidence | 2026-10-23T11:11:57.007Z |
+| `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `c95f4998` | Multi-dimensional audit evidence | 2026-10-23T11:17:53.273Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `d42ea86b` | Multi-dimensional audit evidence | 2026-10-23T11:18:09.669Z |

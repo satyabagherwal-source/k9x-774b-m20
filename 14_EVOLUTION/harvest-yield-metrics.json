@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T11:11:57.011Z",
-  "total_cycles_completed": 4522,
-  "total_learnings_persisted": 4522,
-  "total_rules_promoted": 3751,
+  "last_updated": "2026-10-23T11:18:09.675Z",
+  "total_cycles_completed": 4524,
+  "total_learnings_persisted": 4524,
+  "total_rules_promoted": 3753,
   "history": [
-    {
-      "timestamp": "2026-10-22T17:19:09.769Z",
-      "repository": "scrapy/scrapy",
-      "learningId": "learn-github-scrapy-scrapy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:19:16.234Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T17:25:32.420Z",
       "repository": "mui/base-ui",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-23T11:11:57.011Z",
       "repository": "LLPhant/LLPhant",
       "learningId": "learn-github-llphant-llphant",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:17:53.276Z",
+      "repository": "tamagui/tamagui",
+      "learningId": "learn-github-tamagui-tamagui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:18:09.675Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

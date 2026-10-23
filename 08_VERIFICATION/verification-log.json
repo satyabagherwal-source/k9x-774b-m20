@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-JI4Q",
-    "timestamp": "2026-10-20T21:40:54.794Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-    "contentHash": "7c6081f08b6234cb2b2457534d21c4a15430c44b0a846be7604d2bc989b1c291",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-JLXM",
-    "timestamp": "2026-10-20T21:40:59.722Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "b7a7ad8ce8b45339709a0dc7d084c18ef0cf8d3ecddbc9edd129af8b1915fa85",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-RFPW",
     "timestamp": "2026-10-20T21:47:04.916Z",
     "repository": "google/electra-base-discriminator",
@@ -7490,6 +7460,36 @@
     "repository": "LLPhant/LLPhant",
     "learningId": "learn-github-llphant-llphant",
     "contentHash": "fc49a4ad087e9dca73f19a273df310c06039ad549e936e6c7e5de35dcfebce73",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-LUD3",
+    "timestamp": "2026-10-23T11:17:53.271Z",
+    "repository": "tamagui/tamagui",
+    "learningId": "learn-github-tamagui-tamagui",
+    "contentHash": "b3b002662a588bd70a315211aa6b6d439461bc2848406622bc4c11769cb2acf4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-M70J",
+    "timestamp": "2026-10-23T11:18:09.667Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "12fb54db79374c49f6a48098de9b38d2e4eda6be3a36dded55d3a0c00a5fc540",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

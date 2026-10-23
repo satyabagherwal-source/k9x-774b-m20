@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T11:11:56.963Z",
+  "last_updated": "2026-10-23T11:18:09.637Z",
   "total_verified_learnings": 1074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7475,8 +7475,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "0cc4e2a7",
-      "content_hash": "1086d06d80778acf22da41428d32a8e7cb353ba24ef2235759acee3774652cbb",
+      "source_version": "d42ea86b",
+      "content_hash": "12fb54db79374c49f6a48098de9b38d2e4eda6be3a36dded55d3a0c00a5fc540",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7639,6 +7639,11 @@
           "number": 3886,
           "title": "deps: update lock file - notably MiniJinja, Redis and webpki for eMudhra CA remo",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3900,
+          "title": "read compressed CSV inputs exactly as written (#4901)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7646,7 +7651,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:45:14.271Z",
+      "verified_at": "2026-10-23T11:18:09.631Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45733,8 +45738,8 @@
       "slug": "tamagui-tamagui",
       "platform": "github",
       "source_url": "https://github.com/tamagui/tamagui",
-      "source_version": "0c9a4326",
-      "content_hash": "f0a508e76389a3585a8206f9d8bf28eb18d7849e0ec5b6b177ad77e0d1ff2a77",
+      "source_version": "c95f4998",
+      "content_hash": "b3b002662a588bd70a315211aa6b6d439461bc2848406622bc4c11769cb2acf4",
       "dossier_path": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "promoted_rules": [
@@ -45767,6 +45772,11 @@
           "number": 3569,
           "title": "deps): preserve legacy brace expansion exports",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3899,
+          "title": "security): pin Next to patched 16.4.1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45774,7 +45784,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T16:57:54.484Z",
+      "verified_at": "2026-10-23T11:17:53.238Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115149,6 +115159,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T11:11:56.954Z"
+    },
+    "rule-3899": {
+      "learning_id": "rule-3899",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3899,
+      "title": "security): pin Next to patched 16.4.1",
+      "source_url": "https://github.com/tamagui/tamagui",
+      "source_version": "c95f4998",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:17:53.238Z"
+    },
+    "rule-3900": {
+      "learning_id": "rule-3900",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3900,
+      "title": "read compressed CSV inputs exactly as written (#4901)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "d42ea86b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:18:09.631Z"
     }
   },
   "aliases": {

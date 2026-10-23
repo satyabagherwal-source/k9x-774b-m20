@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tamagui-tamagui-learnings.md`  
 > **Source**: github ([https://github.com/tamagui/tamagui](https://github.com/tamagui/tamagui))  
-> **Source Version**: `0c9a4326`  
+> **Source Version**: `c95f4998`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T16:57:54.249Z  
+> **Timestamp**: 2026-10-23T11:17:53.067Z  
 > **Learning ID**: `learn-github-tamagui-tamagui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tamagui-tamagui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tamagui/tamagui](https://github.com/tamagui/tamagui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T16:57:52.604Z  
+> **Harvest Timestamp**: 2026-10-23T11:17:52.107Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Style React fast with 100% parity on React Native, an optional UI kit, and optimizing compiler.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14267 stars
+- **Stars / Engagement**: 14272 stars
 
 ---
 
@@ -743,488 +743,218 @@ function getMediaState(mediaGroups: Set<string>, layout: WidthHeight) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0c9a4326` (2026-10-21)
-**Commit Message**: fix(deps): preserve legacy brace expansion exports
+### Incident Patch 1: `4e39f146` (2026-10-22)
+**Commit Message**: fix(security): pin Next to patched 16.4.1
 
-Port the existing callable CommonJS compatibility patch to brace-expansion 5.0.12 while retaining every named security limit. Re-record the styled-view baseline on pinned Node 24.22.1 after the workspace build; document the measured artifact difference and retain 150-byte slack.
+Validation: unchanged bun run check:advisories passes; bun install --frozen-lockfile --ignore-scripts passes; Next legacy CSS imports and native SWC16.4.1 load. Critical advisory baseline failed in release PR4374 checks39862994358. Seven co-tenant declaration hashes unchanged.
+Team-Machine-Session: r116738
 
-Validation: frozen install; nine installed legacy minimatch variants and callable/named brace exports; admitted workspace build:js at concurrency 1; styled-view baseline update and unchanged gate pass. Original full lint and dependency checks passed at the preceding head.
-Team-Machine-Session: r115305
-
-**File**: `bun.lock` (modified, +1/-0)
+**File**: `bun.lock` (modified, +11/-11)
 ```diff
-@@ -3870,6 +3870,7 @@
-     "gray-matter@4.0.3": "patches/gray-matter@4.0.3.patch",
-     "expo-modules-core@58.0.22": "patches/expo-modules-core@58.0.22.patch",
-     "@react-navigation/elements@3.0.0-alpha.55": "patches/react-navigation-elements@3.0.0-alpha.55.patch",
-+    "brace-expansion@5.0.12": "patches/brace-expansion@5.0.12.patch",
-     "detox@20.47.0": "patches/detox@20.47.0.patch",
-     "@react-native/asset-utils@0.88.0": "patches/react-native-asset-utils@0.88.0.patch",
-     "@expo/ui@58.0.20": "patches/expo-ui@58.0.20.patch",
+@@ -3912,7 +3912,7 @@
+     "lodash": "4.18.1",
+     "lodash-es": "4.18.1",
+     "motion": "12.37.0",
+-    "next": "16.3.8",
++    "next": "16.4.1",
+     "node-forge": "1.4.0",
+     "picomatch": "4.0.4",
+     "piscina": "4.9.4",
+@@ -4640,23 +4640,23 @@
+ 
+     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.2.4", "", { "dependencies": { "@tybys/wasm-util": "^0.10.3" }, "peerDependencies": { "@emnapi/core": "^1.7.1 || ^2.0.0-alpha.4", "@emnapi/runtime": "^1.7.1 || ^2.0.0-alpha.4" } }, "sha512-AJxoUD2/15ESHbvpcyjU274nsAPLuOtPHCk0vKJM5pj//Fg/B1FXNWjPnXTT9PymCYYiHo4zPj0ZomXBKhoy7g=="],
+ 
+-    "@next/env": ["@next/env@16.3.8", "", {}, "sha512-Al9zqHVV7TJv0eFuOU4U7Lvv74PTih4Ch63sk2xCIpSTkE3udFnaOcnzP2lQVymiL7yS9Cj2iClUXlR3EQ5sEw=="],
++    "@next/env": ["@next/env@16.4.1", "", {}, "sha512-5sUUrrSvs/2/2LnLoesybMGx12EtPB46fdZ6RhAw0XDGSPxU2LFyQBB7yuEiOFFJPKmBY6+q2jTr1/AMbnp0/g=="],
+ 
+-    "@next/swc-darwin-arm64": ["@next/swc-darwin-arm64@16.3.8", "", { "os": "darwin", "cpu": "arm64" }, "sha512-2JPRMh2nmQG5CiL7cXGL9AGwnPWJQ//cTtAUCT+w511QHk79SYz3LGv/pc5X643B/WEO0rvu3Yww0hqwt3kgeA=="],
++    "@next/swc-darwin-arm64": ["@next/swc-darwin-arm64@16.4.1", "", { "os": "darwin", "cpu": "arm64" }, "sha512-U+hQ5Gj3fpzf4fveTIF3dpUFYhaSW8vHhdAnbiIomzXzg7boreYFgBqprepXFtW4sw+aTttiNmg0gew/iFNhbg=="],
+ 
+-    "@next/swc-darwin-x64": ["@next/swc-darwin-x64@16.3.8", "", { "os": "darwin", "cpu": "x64" }, "sha512-GZtCCOBKJ4leVIT/Th0llWKhD1ca92lzbQiS5R5ON9QkoiFnilFsebDae1JU2a3HWoKMEmEZWGs1AGLavVM72Q=="],
++    "@next/swc-darwin-x64": ["@next/swc-darwin-x64@16.4.1", "", { "os": "darwin", "cpu": "x64" }, "sha512-/hqC3V1XLUjhMASf/WridKdO9FXoEgN3HBWmtKbj00MPgnltutfraWJ3bYTpCRIgEIpbjJyOVLpYgAhh/BkdcQ=="],
+ 
+-    "@next/swc-linux-arm64-gnu": ["@next/swc-linux-arm64-gnu@16.3.8", "", { "os": "linux", "cpu": "arm64" }, "sha512-O659ygeQYqneJ1fBKMpFxIFqYkYswu8IAS1OCKK/4f3ZgJJm1dRz4fVJZRi/kLLWjnBKnebOePA4WNv+sV1pVA=="],
++    "@next/swc-linux-arm64-gnu": ["@next/swc-linux-arm64-gnu@16.4.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-GHzncHbcaS9g95kcvTNtKQW3aCLoR+xc3Jm7qrkpk1R+D2BjMHIPyvQGRPKCdMX95BsH/421jBUK06q9tEwzjw=="],
+ 
+-    "@next/swc-linux-arm64-musl": ["@next/swc-linux-arm64-musl@16.3.8", "", { "os": "linux", "cpu": "arm64" }, "sha512-dSjKSyWpzxoO1d3DIZZcP4XJcNaKeLmxQMFOiYl5vuBRMmweIqnAhty8tAmRsvTss779cK1FtYnDMj40e4TQlg=="],
++    "@next/swc-linux-arm64-musl": ["@next/swc-linux-arm64-musl@16.4.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-1SuJyDxW/PR9dHJat/ZRgcYLhuSZ+1psP4DlKb2tKIuXbjygqpLrJWRSq+onZQBv8LcmU67EIrmb6c3XTaJLjw=="],
+ 
+-    "@next/swc-linux-x64-gnu": ["@next/swc-linux-x64-gnu@16.3.8", "", { "os": "linux", "cpu": "x64" }, "sha512-lbqOuz3RPRcv+o9msNsJw5x4+Y1ZwPTs6vmL6DCf7i0fZfvng/F59wyeDwqHIvV0mK//RBy/jJkZ+nCKsSMXjQ=="],
++    "@next/swc-linux-x64-gnu": ["@next/swc-linux-x64-gnu@16.4.1", "", { "os": "linux", "cpu": "x64" }, "sha512-Istng1hMGp9TGO4lUqeKLd70MPN/OOkucVTP2Nmj+gLkwBgmPqUw8CJYBCC7nbl/B/23bBCcjCI5Hsh6hazC1A=="],
+ 
+-    "@next/swc-linux-x64-musl": ["@next/swc-linux-x64-musl@16.3.8", "", { "os": "linux", "cpu": "x64" }, "sha512-+316WswI8ScVgZeUd+1KGaXkHhaYQzCjvH/05TZSpJ8zBizb1a4G7DtO7F12jcBIqMOtsz9ji1t48fmKtzqsGA=="],
++    "@next/swc-linux-x64-musl": ["@next/swc-linux-x64-musl@16.4.1", "", { "os": "linux", "cpu": "x64" }, "sha512-aSC9wMNiZRRFVpPkPWBzRwLQxIGm/CiQcXyFF1XNcgodb+uMxdk7aSSGGpDXCbnvZdf4itjHxpOd5h7i7zaiYw=="],
+ 
+-    "@next/swc-win32-arm64-msvc": ["@next/swc-win32-arm64-msvc@16.3.8", "", { "os": "win32", "cpu": "arm64" }, "sha512-ji0gd4kMYUxO+1fJBIbiBVRCjzG/lloiyCccnlebvb1ZJ5qXCPZqYg4Jl1DrrixnWNMKylzgpmMWx0yNDYXlzw=="],
++    "@next/swc-win32-arm64-msvc": ["@next/swc-win32-arm64-msvc@16.4.1", "", { "os": "win32", "cpu": "arm64" }, "sha512-t/myvwFDlypMUjRvbBf8qLPyuaB0iXYYdBtwMt6DM6f+60wtGr4bSYholdPqNeV5VUXZhrpMwfza829kmhS3iA=="],
+ 
+-    "@next/swc-win32-x64-msvc": ["@next/swc-win32-x64-msvc@16.3.8", "", { "os": "win32", "cpu": "x64" }, "sha512-WcTlaKt/TWkh5kUjdJcUmB1XgZ+1c6fz4Y9fDHL73YNSdGaUWjceeWrrlwF0nv19iABYWC4iAq1oX1w4Bn0vfg=="],
++    "@next/swc-win32-x64-msvc": ["@next/swc-win32-x64-msvc@16.4.1", "", { "os": "win32", "cpu": "x64" }, "sha512-6ICqPo9awCkrtYNPhwkx1uU7rlFWrZRrIboDHS2LU+jv088UBYQtmJ25h6pCp27/+FZjF6BQ4Te4ErugyMeuBg=="],
+ 
+     "@ngneat/falso": ["@ngneat/falso@7.4.0", "", { "dependencies": { "seedrandom": "3.0.5", "uuid": "8.3.2" } }, "sha512-7MzPP0YGNHDrohf/epmz6SVIjHGhKyHbh0bm+iZ1z/7KVW4xZi9Dx6Tl9NMPy6a4lWh/t3WXSsCGkgkuJ/eroQ=="],
+ 
+@@ -7842,7 +7842,7 @@
+ 
+     "netmask": ["netmask@2.1.1", "", {}, "sha512-eonl3sLUha+S1GzTPxychyhnUzKyeQkZ7jLjKrBagJgPla13F+uQ71HgpFefyHgqrjEbCPkDArxYsjY8/+gLKA=="],
+ 
+-    "next": ["next@16.3.8", "", { "dependencies": { "@next/env": "16.3.8", "@swc/helpers": "0.5.23", "baseline-browser-mapping": "^2.9.19", "caniuse-lite": "^1.0.30001579", "postcss": "8.5.23", "styled-jsx": "5.1.6" }, "optionalDependencies": { "@next/swc-darwin-arm64": "16.3.8", "@next/swc-darwin-x64": "16.3.8", "@next/swc-linux-arm64-gnu": "16.3.8", "@next/swc-linux-arm64-musl": "16.3.8", "@next/swc
 ```
 
-**File**: `code/comparisons/styled-view-size-baseline.json` (modified, +6/-6)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -1,10 +1,10 @@
- {
-   "fixture": "baseline-styled-view",
--  "raw": 86412,
--  "gzip": 31733,
--  "ceiling": 31883,
--  "node": "24.16.0",
--  "zlib": "1.3.1-e00f703",
--  "recorded": "2026-10-09",
-+  "raw": 86455,
-+  "gzip": 31820,
-+  "ceiling": 31970,
-+  "node": "24.22.1",
-+  "zlib": "1.3.2.1-motley-285e94b",
-+  "recorded": "2026-10-21",
-   "notes": "One styled View from code/comparisons/tamagui-bench, React externalized, built with `vite build --mode baseline-styled-view --sourcemap`. gzip is Node gzipSync level 9 over the emitted assets/*.js, so it is only comparable within one zlib. ceiling is gzip + 150 bytes of minifier slack. Re-record with `node code/comparisons/check-styled-view-size.mts --update-baseline` on the .node-version Node."
- }
-```
-
-**File**: `package.json` (modified, +2/-2)
-```diff
-@@ -245,12 +245,12 @@
-   },
-   "patchedDependencies": {
-     "gray-matter@4.0.3": "patches/gray-matter@4.0.3.patch",
--    "brace-expansion@5.0.6": "patches/brace-expansion@5.0.6.patch",
-     "detox@20.47.0": "patches/detox@20.47.0.patch",
-     "react-native-worklets@0.13.0": "patches/react-native-worklets@0.13.0.patch",
-     "@react-native/asset-utils@0.88.0": "patches/react-native-asset-utils@0.88.0.patch",
-     "@react-navigation/elements@3.0.0-alpha.55": "patches/react-navigation-elements@3.0.0-alpha.55.patch",
-     "expo-modules-core@58.0.22": "patches/expo-modules-core@58.0.22.patch",
--    "@expo/ui@58.0.20": "patches/expo-ui@58.0.20.patch"
-+    "@expo/ui@58.0.20": "patches/expo-ui@58.0.20.patch",
-+    "brace-expansion@5.0.12": "patches/brace-expansion@5.0.12.patch"
-   }
- }
-```
-
-**File**: `patches/brace-expansion@5.0.12.patch` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+diff --git a/dist/commonjs/index.js b/dist/commonjs/index.js
-+index 48cf0d3dabc885249c65909c4912712c834786f5..b6c9d33e9f2273fd68f41d926b9e362c7250c233 100644
-+--- a/dist/commonjs/index.js
-++++ b/dist/commonjs/index.js
-+@@ -330,4 +330,7 @@ function expand_(str, max, maxLength, maxDepth, depth, maxRewrites, isTop) {
-+     }
-+     return acc;
-+ }
-++// preserve the callable CommonJS export needed by minimatch below 10, while
-++// retaining the named exports and security limits for current consumers.
-++module.exports = Object.assign(expand, exports, { default: expand });
-+ //# sourceMappingURL=index.js.map
-+\ No newline at end of file
-```
-
-**File**: `patches/brace-expansion@5.0.6.patch` (removed, +0/-18)
-```diff
-@@ -1,18 +0,0 @@
--diff --git a/dist/commonjs/index.js b/dist/commonjs/index.js
--index 33063dd3552cd631d7eba0fca8f849a348b31148..3be6fbcabd9fc1102ddd4f3a6a1a43bf1c88682b 100644
----- a/dist/commonjs/index.js
--+++ b/dist/commonjs/index.js
--@@ -198,4 +198,12 @@ function expand_(str, max, isTop) {
--     }
--     return expansions;
-- }
--+// back-compat: brace-expansion 1.x/2.x exported the function directly as a callable
--+// default (module.exports = expand). minimatch <10 (e.g. react-native codegen) does
--+// `require('brace-expansion')` then calls the result. preserve that while keeping the
--+// 5.x named exports for modern (ESM) consumers.
--+module.exports = expand;
--+module.exports.expand = expand;
--+module.exports.EXPANSION_MAX = exports.EXPANSION_MAX;
--+module.exports.default = expand;
-- //# sourceMappingURL=index.js.map
--\ No newline at end of file
-```
-
-**File**: `plans/v3-beta/bundle-size-ledger.md` (modified, +12/-0)
-```diff
-@@ -692,3 +692,15 @@ values. No behavior assertion, compiler violation gate or forbidden-module
- gate changes. Source attribution and preserved membership checks are recorded
- in style-props-architecture-report.md. Required CI validates these recorded
- values on the next beta push.
-+
-+## Security toolchain baseline (2026-10-21)
-+
-+The security maintenance PR pins Node 24.22.1 and updates compatible build
-+packages, including Vite. Rebuilding the whole workspace with `bun run build:js
-+--concurrency 1` and recording the existing styled-view fixture measures 86,455
-+raw bytes and 31,820 gzip-9 bytes on zlib 1.3.2.1-motley-285e94b. The previous
-+record was 86,412 raw and 31,733 gzip bytes on Node 24.16.0 / zlib 1.3.1-e00f703.
-+The raw artifact therefore differs by 43 bytes; the 87-byte gzip difference
-+cannot be attributed solely to compression. It remains below the previous
-+31,883-byte ceiling. The new record keeps the existing 150-byte slack and
-+changes no fixture, runtime source or size-check logic.
+@@ -182,7 +182,7 @@
+     "lodash": "4.18.1",
+     "lodash-es": "4.18.1",
+     "motion": "12.37.0",
+-    "next": "16.3.8",
++    "next": "16.4.1",
+     "webpack": "5.109.2",
+     "node-forge": "1.4.0",
+     "picomatch": "4.0.4",
 ```
 
 ---
 
-### Incident Patch 2: `0256a4e2` (2026-10-21)
-**Commit Message**: fix(security): update certificate runtime and vulnerable dependency pins
+### Incident Patch 2: `c40e016f` (2026-10-22)
+**Commit Message**: fix(static): resolve discovered DOM frontends by module identity
 
-Validation: lint and the complete repository check pass. Audit affected package names decrease from 38 to 20. A focused CLI test was not admitted by the local heavy queue; no runtime source changed. Remaining advisories need parent upgrades or have no published patch.
-Team-Machine-Session: r115305
+Address the same independent reviewer finding by using resolvedId through modulesById, matching the direct component path. Exercise both explicitly configured and automatically discovered Tailwind modules.
 
-**File**: `.node-version` (modified, +1/-1)
+Validation: discovered regression failed before (one row instead of two); focused native compiler suite now 22 passed, 1 expected failure. No Android device or press repair claim.
+Team-Machine-Session: r116738
+
+**File**: `code/compiler/static-tests/tests/tailwindHTML.native.test.tsx` (modified, +21/-16)
 ```diff
-@@ -1 +1 @@
--24.16.0
-+24.22.1
-```
-
-**File**: `bun.lock` (modified, +75/-82)
-```diff
-@@ -237,7 +237,7 @@
-         "react-test-renderer": "19.3.0",
-         "style-loader": "^3.3.3",
-         "typescript": "7.0.2",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-         "webpack": "^5.88.2",
-       },
-       "peerDependencies": {
-@@ -263,7 +263,7 @@
-       "devDependencies": {
-         "@tamagui/build": "workspace:*",
-         "vite": "^8.2.2",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-       "peerDependencies": {
-         "vite": "^8.0.3",
-@@ -443,7 +443,7 @@
-         "@tamagui/build": "workspace:*",
-         "@types/chokidar": "^2.1.3",
-         "@types/marked": "^5.0.0",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-     },
-     "code/core/codemod-flat-values": {
-@@ -571,7 +571,7 @@
-         "react": "19.3.0",
-         "react-native": "0.88.0",
-         "typescript": "7.0.2",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-       "peerDependencies": {
-         "react": ">=19",
-@@ -590,7 +590,7 @@
-         "csstype": "^3.0.10",
-         "react": "19.3.0",
-         "typescript": "7.0.2",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-       "peerDependencies": {
-         "react": ">=19",
-@@ -616,7 +616,7 @@
-       "devDependencies": {
-         "@tamagui/build": "workspace:*",
-         "react": "19.3.0",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-       "peerDependencies": {
-         "react": ">=19",
-@@ -649,15 +649,15 @@
-         "@types/validate-npm-package-name": "3.0.0",
-         "esbuild-register": "^3.6.0",
-         "tempy": "^3.1.0",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-     },
-     "code/core/create-theme": {
-       "name": "@tamagui/create-theme",
-       "version": "3.1.2",
-       "devDependencies": {
-         "@tamagui/build": "workspace:*",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-     },
-     "code/core/cubic-bezier-animator": {
-@@ -673,7 +673,7 @@
-       "devDependencies": {
-         "@tamagui/build": "workspace:*",
-         "react": "19.3.0",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-       "peerDependencies": {
-         "react": ">=19",
-@@ -689,7 +689,7 @@
-       "devDependencies": {
-         "@tamagui/build": "workspace:*",
-         "eslint": "10.8.0",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-       "peerDependencies": {
-         "eslint": ">=9",
-@@ -934,7 +934,7 @@
-         "@tamagui/build": "workspace:*",
-         "react": "19.3.0",
-         "react-native": "0.88.0",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-       "peerDependencies": {
-         "react": ">=19",
-@@ -951,7 +951,7 @@
-       "devDependencies": {
-         "@tamagui/build": "workspace:*",
-         "oxc-parser": "^0.112.0",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-     },
-     "code/core/language-service-vscode": {
-@@ -966,7 +966,7 @@
-       "name": "@tamagui/monorepo-test",
-       "version": "3.1.2",
-       "devDependencies": {
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-     },
-     "code/core/native": {
-@@ -1028,7 +1028,7 @@
-         "react-native": "0.88.0",
-         "react-native-nitro-modules": "0.37.1",
-         "typescript": "7.0.2",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-       "peerDependencies": {
-         "react": "*",
-@@ -1181,7 +1181,7 @@
-       "version": "3.1.2",
-       "devDependencies": {
-         "@tamagui/build": "workspace:*",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-     },
-     "code/core/tailwind": {
-@@ -1208,7 +1208,7 @@
-         "react": "19.3.0",
-         "typescript": "7.0.2",
-         "vite": "^8.2.2",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-       "peerDependencies": {
-         "react": ">=19",
-@@ -1262,7 +1262,7 @@
-       "devDependencies": {
-         "@tamagui/build": "workspace:*",
-         "@tamagui/cli": "workspace:*",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-     },
-     "code/core/to-tailwind": {
-@@ -1277,7 +1277,7 @@
-         "@tamagui/style-grammar": "workspace:*",
-       },
-       "devDependencies": {
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-     },
-     "code/core/types": {
-@@ -1487,7 +1487,7 @@
-         "react-dom": "19.3.0",
-         "react-native": "0.88.0",
-         "typescript": "7.0.2",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-       "peerDependencies": {
-         "react": ">=19",
-@@ -1606,7 +1606,7 @@
-         "react-native-worklets": "0.13.0",
-         "solito": "^4.3.0",
-         "tamagui": "workspace:*",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-       "devDependencies": {
-         "@babel/core": "^7.25.2",
-@@ -1690,7 +1690,7 @@
-       },
-       "devDependencies": {
-         "@babel/types": "^7.25.4",
--        "vitest": "4.1.0",
-+        "vitest": "4.1.11",
-       },
-     },
-     "code/pa
-```
-
-**File**: `code/compiler/static-tests/package.json` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@
-     "react-test-renderer": "19.3.0",
-     "style-loader": "^3.3.3",
-     "typescript": "7.0.2",
--    "vitest": "4.1.0",
-+    "vitest": "4.1.11",
-     "webpack": "^5.88.2"
-   },
-   "peerDependencies": {
-```
-
-**File**: `code/compiler/vite-plugin/package.json` (modified, +1/-1)
-```diff
-@@ -55,7 +55,7 @@
-   "devDependencies": {
-     "@tamagui/build": "workspace:*",
-     "vite": "^8.2.2",
--    "vitest": "4.1.0"
-+    "vitest": "4.1.11"
-   },
-   "peerDependencies": {
-     "vite": "^8.0.3"
-```
-
-**File**: `code/core/cli/package.json` (modified, +1/-1)
-```diff
-@@ -82,6 +82,6 @@
-     "@tamagui/build": "workspace:*",
-     "@types/chokidar": "^2.1.3",
-     "@types/marked": "^5.0.0",
--    "vitest": "4.1.0"
-+    "vitest": "4.1.11"
-   }
- }
-```
-
-**File**: `code/core/core-test/package.json` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@
-     "csstype": "^3.0.10",
-     "react": "19.3.0",
-     "typescript": "7.0.2",
--    "vitest": "4.1.0"
-+    "vitest": "4.1.11"
-   },
-   "peerDependencies": {
-     "react": ">=19"
-```
-
-**File**: `code/core/core/package.json` (modified, +1/-1)
-```diff
-@@ -155,7 +155,7 @@
-     "react": "19.3.0",
-     "react-native": "0.88.0",
-     "typescript": "7.0.2",
--    "vitest": "4.1.0"
-+    "vitest": "4.1.11"
-   },
-   "peerDependencies": {
-     "react": ">=19"
-```
-
-**File**: `code/core/create-system-font/package.json` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@
-   "devDependencies": {
-     "@tamagui/build": "workspace:*",
-     "react": "19.3.0",
--    "vitest": "4.1.0"
-+    "vitest": "4.1.11"
-   },
-   "peerDependencies": {
-     "react": ">=19"
-```
-
----
-
-### Incident Patch 3: `0084735e` (2026-10-21)
-**Commit Message**: fix(use-element-layout): measureOnNextFrame measures next frame even mid-measurement
-
-with the timer wait, measureOnNextFrame only skipped a pending timer. when a
-measurement was already in flight it did nothing, so the next one waited a full
-interval. a popover that re-enables measurement on open (LayoutMeasurementController)
-then stayed unmeasured past the moment InputRef's popover textarea is focused. a
-measureSoon flag now carries the request into the next schedule, as frameCount = 0
-did before, and the first measurement skips the wait too.
-
-Validation: kitchen-sink InputRef.test.tsx, --repeat-each 3 --retries 0: 1ca3ee4f
-fails 3/3 at line 46 (textarea-ref-popover toBeFocused), this commit passes 3/3.
-OnLayout*, Popover*, Tooltip*, Select*, DialogSheetAdapt* and InputRef across the
-default and three animated-driver projects: 255 passed, 1 not run
-(webkit-select-native, webkit not installed locally). onLayout probe: idle frame
-requests still 60/s -> 6/s, resize latency unchanged.
-
-Team-Machine-Session: m49656
-
-**File**: `code/core/use-element-layout/src/index.tsx` (modified, +11/-5)
-```diff
-@@ -145,14 +145,19 @@ if (ENABLE) {
-   let skipFrames = BASE_SKIP_FRAMES
-   let frameScheduled = false
-   let waitTimer: ReturnType<typeof setTimeout> | undefined
-+  // the next measurement skips the wait: the first one, and one asked for by
-+  // measureOnNextFrame, even while another is in flight
-+  let measureSoon = true
+@@ -4,20 +4,25 @@ import { extractForNative } from './lib/extract'
  
-   // wait out the skipped frames on a timer, then measure in one animation frame. a frame
-   // callback on every frame keeps the browser producing main frames (style, paint, and a
-   // restyle of every running css animation) even when nothing on the page changes
--  function scheduleLayoutFrame(delay = skipFrames * FRAME_MS) {
-+  function scheduleLayoutFrame() {
-     if (frameScheduled || strategy === 'off' || Nodes.size === 0 || document.hidden)
-       return
-     frameScheduled = true
-+    const delay = measureSoon ? 0 : skipFrames * FRAME_MS
-+    measureSoon = false
-     waitTimer = setTimeout(() => {
-       waitTimer = undefined
-       rAF ? rAF(layoutOnAnimationFrame) : layoutOnAnimationFrame()
-@@ -203,17 +208,18 @@ if (ENABLE) {
-     scheduleLayoutFrame()
-   }
+ process.env.TAMAGUI_TARGET = 'native'
  
--  resumeLayoutLoop = () => scheduleLayoutFrame()
-+  resumeLayoutLoop = scheduleLayoutFrame
-   measureOnNextFrame = () => {
-+    measureSoon = true
-     if (waitTimer) {
-       clearTimeout(waitTimer)
-       waitTimer = undefined
-       frameScheduled = false
+-test('html tags retain their frontend when lowering native classes', async () => {
+-  const output = await extractForNative(
+-    `import { html, View } from '@tamagui/tailwind'
+-export function Test() {
+-  return <>
+-    <html.div className="flex flex-row items-center gap-2"><html.span className="text-[14px]">a</html.span></html.div>
+-    <View className="flex flex-row items-center gap-2" />
+-  </>
+-}`,
+-    { options: { components: ['@tamagui/core', '@tamagui/tailwind'] } }
+-  )
++test.each(['configured', 'discovered'] as const)(
++  'html tags retain their %s frontend when lowering native classes',
++  async (registration) => {
++    const output = await extractForNative(
++      `import { html, View } from '@tamagui/tailwind'
++  export function Test() {
++    return <>
++      <html.div className="flex flex-row items-center gap-2"><html.span className="text-[14px]">a</html.span></html.div>
++      <View className="flex flex-row items-center gap-2" />
++    </>
++  }`,
++      registration === 'configured'
++        ? { options: { components: ['@tamagui/core', '@tamagui/tailwind'] } }
++        : {}
++    )
+ 
+-  expect(output.diagnostics).toEqual([])
+-  expect(output.code).not.toContain('className')
+-  expect(output.code.split('"flexDirection":"row"').length - 1).toBe(2)
+-  expect(output.code).toContain('"fontSize":14')
+-})
++    expect(output.diagnostics).toEqual([])
++    expect(output.code).not.toContain('className')
++    expect(output.code.split('"flexDirection":"row"').length - 1).toBe(2)
++    expect(output.code).toContain('"fontSize":14')
++  }
++)
+```
+
+**File**: `code/compiler/static/src/compilerHost.ts` (modified, +5/-3)
+```diff
+@@ -1455,9 +1455,11 @@ export function createTamaguiCompilerHost(
      }
--    scheduleLayoutFrame(0)
-+    scheduleLayoutFrame()
-   }
--  document.addEventListener('visibilitychange', () => scheduleLayoutFrame())
--  scheduleLayoutFrame(0)
-+  document.addEventListener('visibilitychange', scheduleLayoutFrame)
-+  scheduleLayoutFrame()
- }
- 
- export const getElementLayoutEvent = (
+     const row = TAGS[tag]
+     const textLike = row.backing === 'text' || row.backing === 'textinput'
+-    const frontend = componentsByModule.get(identity.specifier)?.nameToInfo[
+-      textLike ? 'Text' : 'View'
+-    ]?.staticConfig.styleFrontend
++    const moduleName = modulesById.get(identity.resolvedId)
++    const frontend = moduleName
++      ? componentsByModule.get(moduleName)?.nameToInfo[textLike ? 'Text' : 'View']
++          ?.staticConfig.styleFrontend
++      : undefined
+     const base = (textLike ? core.Text : core.View)?.staticConfig as
+       | StaticConfig
+       | undefined
+```
+
+---
+
+### Incident Patch 3: `08feedf4` (2026-10-22)
+**Commit Message**: fix(static): preserve imported DOM style frontend
+
+Retain the evaluated module View/Text style frontend when deriving semantic tag configuration, so native Tailwind html classes lower to styles like their View counterparts. Reported by Adam Xiang (@ada87) in #4371; the separate Android press report is not resolved here.
+
+Validation: compiler probe produced one row style before and two after; focused native DOM/compiler suite 21 passed, 1 expected failure; uncompiled render probe checked row style and callback only, no device proof.
+Team-Machine-Session: r116738
+
+**File**: `code/compiler/static-tests/tests/tailwindHTML.native.test.tsx` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++import { expect, test } from 'vitest'
++
++import { extractForNative } from './lib/extract'
++
++process.env.TAMAGUI_TARGET = 'native'
++
++test('html tags retain their frontend when lowering native classes', async () => {
++  const output = await extractForNative(
++    `import { html, View } from '@tamagui/tailwind'
++export function Test() {
++  return <>
++    <html.div className="flex flex-row items-center gap-2"><html.span className="text-[14px]">a</html.span></html.div>
++    <View className="flex flex-row items-center gap-2" />
++  </>
++}`,
++    { options: { components: ['@tamagui/core', '@tamagui/tailwind'] } }
++  )
++
++  expect(output.diagnostics).toEqual([])
++  expect(output.code).not.toContain('className')
++  expect(output.code.split('"flexDirection":"row"').length - 1).toBe(2)
++  expect(output.code).toContain('"fontSize":14')
++})
+```
+
+**File**: `code/compiler/static/src/compilerHost.ts` (modified, +4/-0)
+```diff
+@@ -1455,6 +1455,9 @@ export function createTamaguiCompilerHost(
+     }
+     const row = TAGS[tag]
+     const textLike = row.backing === 'text' || row.backing === 'textinput'
++    const frontend = componentsByModule.get(identity.specifier)?.nameToInfo[
++      textLike ? 'Text' : 'View'
++    ]?.staticConfig.styleFrontend
+     const base = (textLike ? core.Text : core.View)?.staticConfig as
+       | StaticConfig
+       | undefined
+@@ -1481,6 +1484,7 @@ export function createTamaguiCompilerHost(
+       displayName: tag,
+       staticConfig: normalizeStaticConfig({
+         ...base,
++        styleFrontend: frontend,
+         isDOM: true,
+         isInput: row.backing === 'textinput',
+         // CSS text properties may be authored on any element and inherited by
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4370** (2026-10-21): fix(security): refresh vulnerable dependency and runtime pins (@natew)
-- **PR #4368** (2026-10-21): test(native-registry): await the swatch paint after a theme tap (@natew)
-- **PR #4367** (2026-10-21): ci(android): build only the x86_64 abi the detox emulator runs (@natew)
-- **PR #4366** (2026-10-21): v3.1.2 (@natew)
-- **PR #4364** (2026-10-21): perf(use-element-layout): wait between onLayout measurements on a timer (@natew)
-- **PR #4363** (2026-10-21): v3.1.1 (@natew)
+- **PR #4377** (2026-10-23): v3.1.3 (@natew)
+- **PR #4376** (2026-10-23): fix(security): pin Next to patched 16.4.1 (@natew)
+- **PR #4375** (2026-10-23): ci: align repository Bun selections on 1.4.4 (@natew)
+- **PR #4374** (closed): v3.1.3 (@natew)
+- **PR #4373** (2026-10-22): Avoid the slow Azure mirror during WebKit dependency setup (@natew)
+- **PR #4372** (2026-10-22): Preserve Tailwind styles when compiling semantic DOM tags (@natew)
 
 ---
 
@@ -1244,13 +974,13 @@ Team-Machine-Session: m49656
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): preserve legacy brace expansion exports
+## X. security): pin Next to patched 16.4.1
 
 **RULE**:
 When implementing operations in `bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tamagui/tamagui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0c9a4326`: deps): preserve legacy brace expansion exports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e39f146`: security): pin Next to patched 16.4.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `bun.lock`.
@@ -1258,14 +988,28 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "brace-expansion@5.0.12": "patches/brace-expansion@5.0.12.patch",
+    "next": "16.4.1",
+    "@next/env": ["@next/env@16.4.1", "", {}, "sha512-5sUUrrSvs/2/2LnLoesybMGx12EtPB46fdZ6RhAw0XDGSPxU2LFyQBB7yuEiOFFJPKmBY6+q2jTr1/AMbnp0/g=="],
+    "@next/swc-darwin-arm64": ["@next/swc-darwin-arm64@16.4.1", "", { "os": "darwin", "cpu": "arm64" }, "sha512-U+hQ5Gj3fpzf4fveTIF3dpUFYhaSW8vHhdAnbiIomzXzg7boreYFgBqprepXFtW4sw+aTttiNmg0gew/iFNhbg=="],
+    "@next/swc-darwin-x64": ["@next/swc-darwin-x64@16.4.1", "", { "os": "darwin", "cpu": "x64" }, "sha512-/hqC3V1XLUjhMASf/WridKdO9FXoEgN3HBWmtKbj00MPgnltutfraWJ3bYTpCRIgEIpbjJyOVLpYgAhh/BkdcQ=="],
+    "@next/swc-linux-arm64-gnu": ["@next/swc-linux-arm64-gnu@16.4.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-GHzncHbcaS9g95kcvTNtKQW3aCLoR+xc3Jm7qrkpk1R+D2BjMHIPyvQGRPKCdMX95BsH/421jBUK06q9tEwzjw=="],
+    "@next/swc-linux-arm64-musl": ["@next/swc-linux-arm64-musl@16.4.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-1SuJyDxW/PR9dHJat/ZRgcYLhuSZ+1psP4DlKb2tKIuXbjygqpLrJWRSq+onZQBv8LcmU67EIrmb6c3XTaJLjw=="],
+    "@next/swc-linux-x64-gnu": ["@next/swc-linux-x64-gnu@16.4.1", "", { "os": "linux", "cpu": "x64" }, "sha512-Istng1hMGp9TGO4lUqeKLd70MPN/OOkucVTP2Nmj+gLkwBgmPqUw8CJYBCC7nbl/B/23bBCcjCI5Hsh6hazC1A=="],
+    "@n
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "next": "16.3.8",
+    "@next/env": ["@next/env@16.3.8", "", {}, "sha512-Al9zqHVV7TJv0eFuOU4U7Lvv74PTih4Ch63sk2xCIpSTkE3udFnaOcnzP2lQVymiL7yS9Cj2iClUXlR3EQ5sEw=="],
+    "@next/swc-darwin-arm64": ["@next/swc-darwin-arm64@16.3.8", "", { "os": "darwin", "cpu": "arm64" }, "sha512-2JPRMh2nmQG5CiL7cXGL9AGwnPWJQ//cTtAUCT+w511QHk79SYz3LGv/pc5X643B/WEO0rvu3Yww0hqwt3kgeA=="],
+    "@next/swc-darwin-x64": ["@next/swc-darwin-x64@16.3.8", "", { "os": "darwin", "cpu": "x64" }, "sha512-GZtCCOBKJ4leVIT/Th0llWKhD1ca92lzbQiS5R5ON9QkoiFnilFsebDae1JU2a3HWoKMEmEZWGs1AGLavVM72Q=="],
+    "@next/swc-linux-arm64-gnu": ["@next/swc-linux-arm64-gnu@16.3.8", "", { "os": "linux", "cpu": "arm64" }, "sha512-O659ygeQYqneJ1fBKMpFxIFqYkYswu8IAS1OCKK/4f3ZgJJm1dRz4fVJZRi/kLLWjnBKnebOePA4WNv+sV1pVA=="],
+    "@next/swc-linux-arm64-musl": ["@next/swc-linux-arm64-musl@16.3.8", "", { "os": "linux", "cpu": "arm64" }, "sha512-dSjKSyWpzxoO1d3DIZZcP4XJcNaKeLmxQMFOiYl5vuBRMmweIqnAhty8tAmRsvTss779cK1FtYnDMj40e4TQlg=="],
+    "@next/swc-linux-x64-gnu": ["@next/swc-linux-x64-gnu@16.3.8", "", { "os": "linux", "cpu": "x64" }, "sha512-lbqOuz3RPRcv+o9msNsJw5x4+Y1ZwPTs6vmL6DCf7i0fZfvng/F59wyeDwqHIvV0mK//RBy/jJkZ+nCKsSMXjQ=="],
+    "@n
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0c9a4326` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e39f146` are properly handled with clean fallback behavior.
