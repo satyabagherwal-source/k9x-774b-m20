@@ -4523,3 +4523,5 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `214941a2` | Multi-dimensional audit evidence | 2026-10-23T09:35:52.780Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `da33acfc` | Multi-dimensional audit evidence | 2026-10-23T09:35:54.426Z |
 | `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `3cce6390` | Multi-dimensional audit evidence | 2026-10-23T09:38:25.365Z |
+| `learn-github-chakra-ui-chakra-ui` | `https://github.com/chakra-ui/chakra-ui` | `960ae222` | Multi-dimensional audit evidence | 2026-10-23T09:51:22.642Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `0975780a` | Multi-dimensional audit evidence | 2026-10-23T09:51:51.966Z |

@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "1f43fca4",
+    "sourceVersion": "0975780a",
     "license": "Apache-2.0",
-    "contentHash": "d797bdbc3018f22ed70d857ec7f0d32e3d53a52004fbaaddab7d2d58428ca7d0",
-    "lastHarvestedAt": "2026-10-20T06:19:45.859Z",
+    "contentHash": "8e5dbaf828f3d177a3bc1ed46a2562cb3f288af3c50af841565b551d49b35b83",
+    "lastHarvestedAt": "2026-10-23T09:51:51.966Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -6763,10 +6763,10 @@
     "repository": "chakra-ui/chakra-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/chakra-ui/chakra-ui",
-    "sourceVersion": "fa9696f3",
+    "sourceVersion": "960ae222",
     "license": "MIT",
-    "contentHash": "b4ced02168852efccc36374d89caeaa63f7d348856a438a1d675827d6deac8f5",
-    "lastHarvestedAt": "2026-10-19T06:44:49.168Z",
+    "contentHash": "4650593e8e0f1d91c4b101a7d8f1062b4ac82b8742e88923b08a5027f048df54",
+    "lastHarvestedAt": "2026-10-23T09:51:22.642Z",
     "learningId": "learn-github-chakra-ui-chakra-ui"
   },
   "sachaos-viddy": {

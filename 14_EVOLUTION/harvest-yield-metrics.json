@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T09:38:25.372Z",
-  "total_cycles_completed": 4493,
-  "total_learnings_persisted": 4493,
-  "total_rules_promoted": 3709,
+  "last_updated": "2026-10-23T09:51:51.975Z",
+  "total_cycles_completed": 4495,
+  "total_learnings_persisted": 4495,
+  "total_rules_promoted": 3714,
   "history": [
-    {
-      "timestamp": "2026-10-22T16:15:40.735Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T16:15:44.657Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T16:22:18.352Z",
       "repository": "oxc-project/oxc",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-23T09:38:25.372Z",
       "repository": "vuetifyjs/vuetify",
       "learningId": "learn-github-vuetifyjs-vuetify",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T09:51:22.652Z",
+      "repository": "chakra-ui/chakra-ui",
+      "learningId": "learn-github-chakra-ui-chakra-ui",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T09:51:51.975Z",
+      "repository": "zulip/zulip",
+      "learningId": "learn-github-zulip-zulip",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

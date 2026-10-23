@@ -4516,3 +4516,5 @@
 | `CYCLE-20261023-YNRE` | `2026-10-23T09:35:52.778Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3853` | Yes (`b2db8fc0...`) |
 | `CYCLE-20261023-YP13` | `2026-10-23T09:35:54.423Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3854` | Yes (`745485bf...`) |
 | `CYCLE-20261023-1XHV` | `2026-10-23T09:38:25.363Z` | `vuetifyjs/vuetify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3855, Rule 3856, Rule 3857` | Yes (`0e71db79...`) |
+| `CYCLE-20261023-IL8V` | `2026-10-23T09:51:22.639Z` | `chakra-ui/chakra-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3858, Rule 3859` | Yes (`4650593e...`) |
+| `CYCLE-20261023-J7VF` | `2026-10-23T09:51:51.963Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3860, Rule 3861, Rule 3862` | Yes (`8e5dbaf8...`) |

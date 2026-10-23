@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-NC9N",
-    "timestamp": "2026-10-20T20:47:54.587Z",
-    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-    "contentHash": "3df1d81d9fab0fe0632772c43370f05edcebb08f744e722390c868b37e999eb5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-NIEY",
-    "timestamp": "2026-10-20T20:48:02.554Z",
-    "repository": "juicedata/juicefs",
-    "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "3d5525f173ede9b3b3c89b0456b113af110c652c01465338e260943f24f045a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-NNMC",
     "timestamp": "2026-10-20T20:48:09.300Z",
     "repository": "arangodb/arangodb",
@@ -7490,6 +7460,36 @@
     "repository": "vuetifyjs/vuetify",
     "learningId": "learn-github-vuetifyjs-vuetify",
     "contentHash": "0e71db7991ed5131b5a7f60181f9610e4145826c16bd97ad23c447d6b8bcc0c1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-IL8V",
+    "timestamp": "2026-10-23T09:51:22.639Z",
+    "repository": "chakra-ui/chakra-ui",
+    "learningId": "learn-github-chakra-ui-chakra-ui",
+    "contentHash": "4650593e8e0f1d91c4b101a7d8f1062b4ac82b8742e88923b08a5027f048df54",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-J7VF",
+    "timestamp": "2026-10-23T09:51:51.963Z",
+    "repository": "zulip/zulip",
+    "learningId": "learn-github-zulip-zulip",
+    "contentHash": "8e5dbaf828f3d177a3bc1ed46a2562cb3f288af3c50af841565b551d49b35b83",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

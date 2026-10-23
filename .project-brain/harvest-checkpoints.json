@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T09:38:25.375Z",
+  "last_updated": "2026-10-23T09:51:51.978Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4056,14 +4056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zulip-zulip",
-      "content_hash": "d797bdbc3018f22ed70d857ec7f0d32e3d53a52004fbaaddab7d2d58428ca7d0",
-      "verified_at": "2026-10-20T06:19:45.867Z",
+      "content_hash": "8e5dbaf828f3d177a3bc1ed46a2562cb3f288af3c50af841565b551d49b35b83",
+      "verified_at": "2026-10-23T09:51:51.978Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:19:45.867Z"
+      "last_updated": "2026-10-23T09:51:51.978Z"
     },
     "goodrain/rainbond": {
       "repository": "goodrain/rainbond",
@@ -10206,14 +10206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chakra-ui-chakra-ui",
-      "content_hash": "b4ced02168852efccc36374d89caeaa63f7d348856a438a1d675827d6deac8f5",
-      "verified_at": "2026-10-19T06:44:49.174Z",
+      "content_hash": "4650593e8e0f1d91c4b101a7d8f1062b4ac82b8742e88923b08a5027f048df54",
+      "verified_at": "2026-10-23T09:51:22.656Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:44:49.174Z"
+      "last_updated": "2026-10-23T09:51:22.666Z"
     },
     "sachaos/viddy": {
       "repository": "sachaos/viddy",

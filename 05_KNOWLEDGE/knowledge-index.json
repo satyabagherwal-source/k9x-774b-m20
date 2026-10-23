@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T09:38:25.333Z",
+  "last_updated": "2026-10-23T09:51:51.905Z",
   "total_verified_learnings": 1073,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5246,14 +5246,24 @@
       "slug": "chakra-ui-chakra-ui",
       "platform": "github",
       "source_url": "https://github.com/chakra-ui/chakra-ui",
-      "source_version": "fa9696f3",
-      "content_hash": "b4ced02168852efccc36374d89caeaa63f7d348856a438a1d675827d6deac8f5",
+      "source_version": "960ae222",
+      "content_hash": "4650593e8e0f1d91c4b101a7d8f1062b4ac82b8742e88923b08a5027f048df54",
       "dossier_path": "07_PROJECT_LEARNING/chakra-ui-chakra-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chakra-ui-chakra-ui-learnings.md",
       "promoted_rules": [
         {
           "number": 2251,
           "title": "test(react): add a react render benchmark",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3858,
+          "title": "Multi-State Relation Disambiguation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3859,
+          "title": "Async Collection Popup Opacity Preservation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -5262,7 +5272,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:44:49.117Z",
+      "verified_at": "2026-10-23T09:51:22.562Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50986,14 +50996,29 @@
       "slug": "zulip-zulip",
       "platform": "github",
       "source_url": "https://github.com/zulip/zulip",
-      "source_version": "1f43fca4",
-      "content_hash": "d797bdbc3018f22ed70d857ec7f0d32e3d53a52004fbaaddab7d2d58428ca7d0",
+      "source_version": "0975780a",
+      "content_hash": "8e5dbaf828f3d177a3bc1ed46a2562cb3f288af3c50af841565b551d49b35b83",
       "dossier_path": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "promoted_rules": [
         {
           "number": 1748,
           "title": "test_microsoft_teams_importer: Fix check that never ran.",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3860,
+          "title": "Dual-Engine Parsing Equivalence Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3861,
+          "title": "State-Decoupled Asymmetric Webhook Ingestion Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3862,
+          "title": "Conditional Unique Constraint for Nullable Relational Partitioning",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -51002,7 +51027,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:19:45.796Z",
+      "verified_at": "2026-10-23T09:51:51.887Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -114362,6 +114387,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T09:38:25.327Z"
+    },
+    "rule-3858": {
+      "learning_id": "rule-3858",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3858,
+      "title": "Multi-State Relation Disambiguation Invariant",
+      "source_url": "https://github.com/chakra-ui/chakra-ui",
+      "source_version": "960ae222",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:51:22.562Z"
+    },
+    "rule-3859": {
+      "learning_id": "rule-3859",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3859,
+      "title": "Async Collection Popup Opacity Preservation Invariant",
+      "source_url": "https://github.com/chakra-ui/chakra-ui",
+      "source_version": "960ae222",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:51:22.562Z"
+    },
+    "rule-3860": {
+      "learning_id": "rule-3860",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3860,
+      "title": "Dual-Engine Parsing Equivalence Invariant",
+      "source_url": "https://github.com/zulip/zulip",
+      "source_version": "0975780a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:51:51.887Z"
+    },
+    "rule-3861": {
+      "learning_id": "rule-3861",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3861,
+      "title": "State-Decoupled Asymmetric Webhook Ingestion Invariant",
+      "source_url": "https://github.com/zulip/zulip",
+      "source_version": "0975780a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:51:51.887Z"
+    },
+    "rule-3862": {
+      "learning_id": "rule-3862",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3862,
+      "title": "Conditional Unique Constraint for Nullable Relational Partitioning",
+      "source_url": "https://github.com/zulip/zulip",
+      "source_version": "0975780a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T09:51:51.887Z"
     }
   },
   "aliases": {

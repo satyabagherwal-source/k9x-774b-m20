@@ -276747,3 +276747,539 @@ pnpm exec dpdm --no-warning --no-tree --exit-code circular:1 packages/vuetify/sr
 ```
 
 ---
+
+
+---
+
+## 3858. Multi-State Relation Disambiguation Invariant (Harvested from chakra-ui/chakra-ui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-State Relation Disambiguation Invariant",
+  "source": "chakra-ui/chakra-ui",
+  "source_url": "https://github.com/chakra-ui/chakra-ui",
+  "source_version": "960ae222",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T09:51:22.217Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-chakra-ui-chakra-ui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [chakra-ui/chakra-ui](https://github.com/chakra-ui/chakra-ui) (Revision: `960ae222`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When computing entity lifecycle status from a one-to-many event stream (e.g., subscription payments, webhook transitions, user orders), systems MUST NOT rely on an aggregate entity boolean flag (such as `isActive`) without cross-referencing the disjoint sets of active and terminal event statuses. Specifically, a record MUST NOT be considered active if its event collection contains terminal state tokens (`CANCELLED`, `REFUNDED`) unless an explicit non-terminal active state token (`ACTIVE`, `CONFIRMED`) exists within the same identity key scope.
+
+**WHY**:
+Upstream aggregates and third-party webhooks (e.g., OpenCollective GraphQL) often mark an account/member node as `isActive: true` even when the underlying recurring financial order was revoked or cancelled. Consuming the top-level flag creates persistent ghost entities, security authorization bypasses, or improper sponsor/tenant listing.
+
+**WHEN TO APPLY**:
+Apply in any data aggregation layer, billing reconciliation worker, or access-control guard where an entity's operational status is derived from an asynchronous collection of events or orders.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production verified multi-status collection reconciliation
+interface OrderRecord {
+  status: "ACTIVE" | "CANCELLED" | "PENDING"
+  fromAccount?: { id: string }
+}
+
+interface MemberRecord {
+  isActive: boolean
+  account?: { id: string; slug: string; name: string }
+}
+
+export function filterActiveAuthorizedEntities(
+  members: MemberRecord[],
+  orders: OrderRecord[],
+  exclusionBlacklist: ReadonlySet<string>,
+): MemberRecord[] {
+  // Step 1: Map unique status sets per entity account ID
+  const orderStatuses = new Map<string, Set<string>>()
+  
+  for (const order of orders) {
+    const accountId = order.fromAccount?.id
+    if (!accountId) continue
+    
+    let statuses = orderStatuses.get(accountId)
+    if (!statuses) {
+      statuses = new Set<string>()
+      orderStatuses.set(accountId, statuses)
+    }
+    statuses.add(order.status)
+  }
+
+  // Step 2: Pure deterministic predicate
+  const isCancelled = (member: MemberRecord): boolean => {
+    const accountId = member.account?.id
+    if (!accountId) return false
+    const statuses = orderStatuses.get(accountId)
+    // Terminal condition: Has CANCELLED and DOES NOT have ACTIVE
+    return !!statuses?.has("CANCELLED") && !statuses.has("ACTIVE")
+  }
+
+  // Step 3: Combined invariant filter
+  return members.filter((member): boolean => {
+    const account = member.account
+    if (!member.isActive || !account?.id || !account?.name) {
+      return false
+    }
+    if (exclusionBlacklist.has(account.slug)) {
+      return false
+    }
+    return !isCancelled(member)
+  })
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blindly trusting upstream aggregate booleans or checking only individual items
+const activeMembers = members.filter((member) => {
+  // CRITICAL FAILURE: member.isActive is true even when orders are CANCELLED.
+  // Fails to deduplicate against multi-order histories.
+  return member.isActive && !EXCLUDED_SPONSORS.has(member.account?.slug)
+})
+```
+
+**VERIFICATION METHOD**:
+Enforce via unit tests validating a member with both `CANCELLED` and `ACTIVE` orders remains retained, while a member with exclusively `CANCELLED` orders is stripped, regardless of `member.isActive === true`:
+```typescript
+import { describe, it, expect } from "vitest"
+
+describe("filterActiveAuthorizedEntities", () => {
+  it("strips entities with terminal orders even if member.isActive is true", () => {
+    const members = [{ isActive: true, account: { id: "acc_1", slug: "spam", name: "Spam" } }]
+    const orders = [{ status: "CANCELLED" as const, fromAccount: { id: "acc_1" } }]
+    const blacklist = new Set<string>()
+    const result = filterActiveAuthorizedEntities(members, orders, blacklist)
+    expect(result).toHaveLength(0)
+  })
+})
+```
+
+---
+
+
+---
+
+## 3859. Async Collection Popup Opacity Preservation Invariant (Harvested from chakra-ui/chakra-ui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Async Collection Popup Opacity Preservation Invariant",
+  "source": "chakra-ui/chakra-ui",
+  "source_url": "https://github.com/chakra-ui/chakra-ui",
+  "source_version": "960ae222",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T09:51:22.439Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-chakra-ui-chakra-ui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [chakra-ui/chakra-ui](https://github.com/chakra-ui/chakra-ui) (Revision: `960ae222`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When designing headless or recipe-driven floating overlay controls (Comboboxes, Auto-completes, Filterable Menus), empty collection rules MUST NOT set container visibility or opacity to zero (`opacity: 0` or `display: none`) unless the state machine has settled into an idle empty state. While async pending transitions (`isLoading === true`) or error conditions (`isError === true`) are active, the floating surface MUST explicitly maintain visibility (`opacity: 1`, `pointer-events: auto`) to display loading indicators, skeleton states, and inline error boundaries.
+
+**WHY**:
+Applying generic CSS recipes that hide overlays when `items.length === 0` blindfolds users during network latency. Subsequent searches or refetches after an initial empty result render completely invisible loading spinners and network crash alerts, creating a perceived freeze/dead UI.
+
+**WHEN TO APPLY**:
+Any floating UI element utilizing dynamic collections, virtualized lists, or remote search APIs integrated with asynchronous loading/error slots.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```tsx
+import React from "react"
+
+interface AsyncComboboxOverlayProps {
+  isLoading: boolean
+  hasError: boolean
+  itemCount: number
+  hasCustomEmptySlot: boolean
+  children: React.ReactNode
+}
+
+export const AsyncComboboxOverlay: React.FC<AsyncComboboxOverlayProps> = ({
+  isLoading,
+  hasError,
+  itemCount,
+  hasCustomEmptySlot,
+  children,
+}) => {
+  // Opacity & pointer events contract
+  // When empty and settled without fallback: hidden (0)
+  // When loading OR erroring: forced visible (1)
+  const isSettledEmpty = itemCount === 0 && !hasCustomEmptySlot && !isLoading && !hasError
+  
+  const overlayStyle: React.CSSProperties = {
+    opacity: isSettledEmpty ? 0 : 1,
+    pointerEvents: isSettledEmpty ? "none" : "auto",
+    visibility: isSettledEmpty ? "hidden" : "visible",
+    transition: "opacity 150ms ease-in-out",
+  }
+
+  return (
+    <div
+      role="region"
+      aria-live="polite"
+      data-state-loading={isLoading ? "true" : undefined}
+      data-state-error={hasError ? "true" : undefined}
+      style={overlayStyle}
+    >
+      {children}
+    </div>
+  )
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```tsx
+// ANTI-PATTERN: Recipe or slot applying static opacity: 0 purely based on collection size
+<Combobox.Positioner
+  className={css({
+    // BUG: If items is empty during fetch, opacity is 0. 
+    // Spinner and Error Boundary inside Combobox.Content are rendered invisible!
+    opacity: collection.items.length === 0 ? 0 : 1 
+  })}
+>
+  <Combobox.Content>
+    {isLoading && <Spinner />}
+    {isError && <ErrorNotice />}
+  </Combobox.Content>
+</Combobox.Positioner>
+```
+
+**VERIFICATION METHOD**:
+Simulate an empty network search transition using `@testing-library/react` and assert that the container computed style maintains `opacity: 1` during the loading state:
+```typescript
+test("combobox popup retains opacity: 1 while loading empty collection", async () => {
+  const { getByRole } = render(<ComboboxWithAsyncSearch isLoading={true} items={[]} />)
+  const popup = getByRole("listbox", { hidden: true })
+  expect(window.getComputedStyle(popup).opacity).toBe("1")
+})
+```
+
+---
+
+
+---
+
+## 3860. Dual-Engine Parsing Equivalence Invariant (Harvested from zulip/zulip)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Engine Parsing Equivalence Invariant",
+  "source": "zulip/zulip",
+  "source_url": "https://github.com/zulip/zulip",
+  "source_version": "0975780a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T09:51:51.305Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zulip-zulip",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zulip/zulip](https://github.com/zulip/zulip) (Revision: `0975780a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an optimistic UI renders domain data client-side before asynchronous server persistence ("local echo"), all parsing filters, linkification predicates, and schema normalizations MUST be parameter-driven via explicit helper contracts and mathematically mirrored across both runtimes. Any server-side condition that causes markdown, syntax, or text linkification to degrade to plain text MUST have an exact counterpart in the client configuration layer.
+
+**WHY**:
+If the client-side parser linkifies a stream/topic combination (e.g., `#channel>topic`) because it assumes topics are universally permitted, but the backend server recognizes the channel as empty-topic-only and renders raw escaped text, the client displays a jarring "flash of linkified content" that abruptly reverts to unlinked text upon message roundtrip. This desynchronization corrupts optimistic cache state, resets selection focus, and breaks scroll-anchoring invariants.
+
+**WHEN TO APPLY**:
+Apply to any architecture featuring optimistic UI updates, multi-platform Markdown engines (Python backend + TypeScript frontend), or client-side caching of server-validated syntaxes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// web/src/markdown.ts
+export type MarkdownHelpers = {
+    get_stream_by_name: (stream_name: string) => {stream_id: number; name: string} | undefined;
+    is_empty_topic_only_channel: (stream_id: number) => boolean;
+    stream_topic_hash: (stream_id: number, topic: string) => string;
+};
+
+function handleStreamTopic({
+    stream_name,
+    topic,
+    get_stream_by_name,
+    is_empty_topic_only_channel,
+    stream_topic_hash,
+}: {
+    stream_name: string;
+    topic: string;
+    get_stream_by_name: (name: string) => {stream_id: number; name: string} | undefined;
+    is_empty_topic_only_channel: (stream_id: number) => boolean;
+    stream_topic_hash: (stream_id: number, topic: string) => string;
+}): string | undefined {
+    const stream = get_stream_by_name(stream_name);
+    if (stream === undefined) {
+        return undefined;
+    }
+    // Strict Guard: Empty-topic-only channels forbid non-empty topic linking
+    if (topic !== "" && is_empty_topic_only_channel(stream.stream_id)) {
+        return undefined; // Preserves raw text representation
+    }
+    const href = stream_topic_hash(stream.stream_id, topic);
+    const topic_display_name_html = _.escape(util.get_final_topic_display_name(topic));
+    return render_topic_link({ href, text: topic_display_name_html });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Client assumes universal valid syntax without querying channel properties
+function handleStreamTopicUnsafe({ stream_name, topic, get_stream_by_name, stream_topic_hash }) {
+    const stream = get_stream_by_name(stream_name);
+    if (!stream) return undefined;
+    // Bug: Renders link even if stream forbids non-empty topics, desyncing with server DB
+    return `<a href="${stream_topic_hash(stream.stream_id, topic)}">${topic}</a>`;
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce parity with dual test harnesses verifying raw text vs linkification boundaries:
+```javascript
+// web/tests/markdown_parse.test.cjs
+run_test("empty-topic-only channel topic links", () => {
+    assert_parse(
+        "#**empty_topic_only_channel>lunch**",
+        "<p>#**empty_topic_only_channel&gt;lunch**</p>",
+    );
+    assert_parse(
+        "#**empty_topic_only_channel>**",
+        '<p><a class="stream-topic" data-stream-id="302" href="stream-302-topic-">#empty_topic_only_channel &gt; <span class="empty-topic-display">translated: general chat</span></a></p>',
+    );
+});
+```
+
+---
+
+
+---
+
+## 3861. State-Decoupled Asymmetric Webhook Ingestion Invariant (Harvested from zulip/zulip)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "State-Decoupled Asymmetric Webhook Ingestion Invariant",
+  "source": "zulip/zulip",
+  "source_url": "https://github.com/zulip/zulip",
+  "source_version": "0975780a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T09:51:51.528Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zulip-zulip",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zulip/zulip](https://github.com/zulip/zulip) (Revision: `0975780a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+External integration webhooks (e.g., Stripe, GitHub) MUST enforce a 4-tier intake validation pipeline before executing state transitions:
+1. Cryptographic signature and payload authentication.
+2. API contract version identity matching.
+3. Event-ID level idempotency check.
+4. Entity existence resolution with a silent HTTP 200 acknowledgment on missing local targets.
+Webhook endpoints MUST NOT fail with 4xx/5xx status codes when valid signed events reference entities that do not exist locally or are already deleted.
+
+**WHY**:
+Returning HTTP 4xx or 5xx on missing records causes external providers (like Stripe) to initiate exponential retry loops, filling server error logs, exhausting connection pools, and blocking legitimate event processing. Returning HTTP 200 for missing entities prevents retry thrashing when webhooks arrive for orphaned, deleted, or un-tracked sessions. Verifying the API schema version prevents unexpected object schema permutations from silently writing corrupt state into JSON database fields.
+
+**WHEN TO APPLY**:
+All webhook receivers and asynchronous event ingress controllers interfacing with third-party billing, notification, or CRM systems.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# corporate/views/webhook.py
+@csrf_exempt
+def stripe_webhook(request: HttpRequest) -> HttpResponse:
+    stripe_webhook_endpoint_secret = get_secret("stripe_webhook_endpoint_secret", "")
+    
+    # Tier 1: Cryptographic signature validation
+    if stripe_webhook_endpoint_secret and not settings.TEST_SUITE:
+        stripe_signature = request.headers.get("Stripe-Signature")
+        if stripe_signature is None:
+            return HttpResponse(status=400)
+        try:
+            stripe_event = stripe.Webhook.construct_event(
+                request.body, stripe_signature, stripe_webhook_endpoint_secret
+            )
+        except (ValueError, stripe.SignatureVerificationError):
+            return HttpResponse(status=400)
+    else:
+        assert not settings.PRODUCTION
+        stripe_event = stripe.Event.construct_from(json.loads(request.body), stripe.api_key)
+
+    # Tier 2: API Contract Version Hard Lock
+    if stripe_event.api_version != STRIPE_API_VERSION:
+        billing_logger.error(
+            f"Mismatch between billing API ({STRIPE_API_VERSION}) and webhook ({stripe_event.api_version})"
+        )
+        return HttpResponse(status=400)
+
+    # Filter unhandled event types early
+    if stripe_event.type not in ["checkout.session.completed", "invoice.paid", "invoice.voided"]:
+        return HttpResponse(status=200)
+
+    # Tier 3: Event Idempotency Barrier
+    if Event.objects.filter(stripe_event_id=stripe_event.id).exists():
+        return HttpResponse(status=200)
+
+    # Tier 4: Entity Resolution with Silent Retires on Missing Records
+    if stripe_event.type == "checkout.session.completed":
+        stripe_session = stripe_event.data.object
+        assert isinstance(stripe_session, stripe.checkout.Session)
+        try:
+            session = Session.objects.get(stripe_session_id=stripe_session.id)
+        except Session.DoesNotExist:
+            # Return 200 to acknowledge receipt and abort external retry cycles
+            return HttpResponse(status=200)
+            
+        event = Event.objects.create(
+            stripe_event_id=stripe_event.id,
+            type=stripe_event.type,
+            content_type=ContentType.objects.get_for_model(Session),
+            object_id=session.id,
+        )
+        handle_checkout_session_completed_event(stripe_session, event)
+
+    return HttpResponse(status=200)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct get_object_or_404 in webhook endpoint triggers external retry storm
+def bad_webhook_handler(request):
+    event_data = json.loads(request.body)
+    # Bug 1: Unverified API version may parse changed payload schemas incorrectly
+    # Bug 2: Returns 404 if user cancelled or DB row was deleted, causing Stripe to retry for days
+    session = get_object_or_404(Session, stripe_session_id=event_data["data"]["object"]["id"])
+    process_session(session)
+    return HttpResponse(status=200)
+```
+
+**VERIFICATION METHOD**:
+Integration test simulating webhook posting for non-existent session:
+```python
+def test_stripe_webhook_nonexistent_session_returns_200(self):
+    payload = {"id": "evt_123", "type": "checkout.session.completed", "data": {"object": {"id": "nonexistent"}}, "api_version": STRIPE_API_VERSION}
+    response = self.client.post("/api/v1/stripe/webhook", json.dumps(payload), content_type="application/json")
+    self.assertEqual(response.status_code, 200)
+    self.assertFalse(Event.objects.filter(stripe_event_id="evt_123").exists())
+```
+
+---
+
+
+---
+
+## 3862. Conditional Unique Constraint for Nullable Relational Partitioning (Harvested from zulip/zulip)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Conditional Unique Constraint for Nullable Relational Partitioning",
+  "source": "zulip/zulip",
+  "source_url": "https://github.com/zulip/zulip",
+  "source_version": "0975780a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T09:51:51.764Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zulip-zulip",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zulip/zulip](https://github.com/zulip/zulip) (Revision: `0975780a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When a database table models entity counts, metrics, or logs partitioned by an optional subgroup/tenant (`subgroup` can be `NULL`), you MUST NOT use a single multi-column unique constraint containing the nullable field. Instead, you MUST define two mutually exclusive, partial unique constraints using explicit SQL `WHERE` clauses (`condition=models.Q(subgroup__isnull=False)` and `condition=models.Q(subgroup__isnull=True)`).
+
+**WHY**:
+In standard SQL (including ANSI standards and PostgreSQL default behavior), `NULL` does not equal `NULL`. A standard compound constraint `UNIQUE(realm_id, property, subgroup, end_time)` will permit infinite duplicate rows where `subgroup IS NULL`, causing analytics corruption, multi-worker race insertion conditions, and catastrophic aggregations.
+
+**WHEN TO APPLY**:
+Any SQL-backed persistence model where a partitioning or grouping key is optional or nullable.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# analytics/migrations/0001_squashed_0021_alter_fillstate_id.py / models.py
+class RealmCount(models.Model):
+    realm = models.ForeignKey("zerver.realm", on_delete=models.CASCADE)
+    property = models.CharField(max_length=32)
+    end_time = models.DateTimeField()
+    value = models.BigIntegerField()
+    subgroup = models.CharField(max_length=16, null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                condition=models.Q(subgroup__isnull=False),
+                fields=("realm", "property", "subgroup", "end_time"),
+                name="unique_realm_count",
+            ),
+            models.UniqueConstraint(
+                condition=models.Q(subgroup__isnull=True),
+                fields=("realm", "property", "end_time"),
+                name="unique_realm_count_null_subgroup",
+            ),
+        ]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Naive unique constraint on nullable field
+class BrokenRealmCount(models.Model):
+    realm = models.ForeignKey("zerver.realm", on_delete=models.CASCADE)
+    property = models.CharField(max_length=32)
+    end_time = models.DateTimeField()
+    subgroup = models.CharField(max_length=16, null=True)
+
+    class Meta:
+        # FAILS: Allows duplicate entries whenever subgroup is None!
+        unique_together = [("realm", "property", "subgroup", "end_time")]
+```
+
+**VERIFICATION METHOD**:
+Automated migration and ORM boundary assertion:
+```python
+def test_null_subgroup_uniqueness(self):
+    now = timezone_now()
+    RealmCount.objects.create(realm=self.realm, property="active_users", end_time=now, subgroup=None, value=10)
+    with self.assertRaises(IntegrityError):
+        RealmCount.objects.create(realm=self.realm, property="active_users", end_time=now, subgroup=None, value=20)
+```
+
+---

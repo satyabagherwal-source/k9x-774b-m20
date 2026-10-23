@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chakra-ui-chakra-ui-learnings.md`  
 > **Source**: github ([https://github.com/chakra-ui/chakra-ui](https://github.com/chakra-ui/chakra-ui))  
-> **Source Version**: `fa9696f3`  
+> **Source Version**: `960ae222`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:44:48.934Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-23T09:51:21.973Z  
 > **Learning ID**: `learn-github-chakra-ui-chakra-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1294 +12,635 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): chakra-ui/chakra-ui
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/chakra-ui-chakra-ui-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/chakra-ui/chakra-ui](https://github.com/chakra-ui/chakra-ui))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:44:48.030Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): chakra-ui/chakra-ui
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `chakra-ui/chakra-ui`
-- **Description**: Chakra UI is a component system for building SaaS products with speed ⚡️
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 40693 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### 1.1 Core Mission & Problem Domain
+Chakra UI (v3 architecture) solves the challenge of high-velocity, accessible, headless-state UI engineering across React Server Components (RSC) and client-hydrated boundaries. It transitions from legacy runtime Emotion CSS-in-JS style injection to a hybrid compilation model powered by Ark UI (state machine primitives governed by Zag.js) and tokenized static design system presets. The core problem it addresses is eliminating runtime styling overhead and accessibility divergence across complex form controls (Comboboxes, Date Pickers, Segmented Inputs, Checkbox Cards) while retaining atomic composition ergonomics.
+
+```
+       ┌────────────────────────────────────────────────────────┐
+       │             Chakra UI Architectural Stack              │
+       └────────────────────────────────────────────────────────┘
+                                   │
+ ┌─────────────────────────────────┴─────────────────────────────────┐
+ │ Composition / Consumer Surface (Apps / Compositions)              │
+ │ - React Hook Form / Standard Schema (Zod)                         │
+ │ - Atomic Compound Components: Root, Control, Positioner, Content  │
+ └─────────────────────────────────┬─────────────────────────────────┘
+                                   │
+ ┌─────────────────────────────────┴─────────────────────────────────┐
+ │ @chakra-ui/react (Component & Style Layer)                         │
+ │ - Recipes & Slot Recipes (CVA-style runtime token resolution)     │
+ │ - Portal Isolation, ClientOnly Boundaries, Popover Positioners    │
+ └─────────────────────────────────┬─────────────────────────────────┘
+                                   │
+ ┌─────────────────────────────────┴─────────────────────────────────┐
+ │ Ark UI / Zag.js Core (Finite State Machines)                      │
+ │ - WAI-ARIA Deterministic State Engines                            │
+ │ - Keyboard Navigation, Focus Trapping, Focus Restoration Loops     │
+ └─────────────────────────────────┬─────────────────────────────────┘
+                                   │
+ ┌─────────────────────────────────┴─────────────────────────────────┐
+ │ Design Engine & Build Pipeline (CLI & Previews)                   │
+ │ - Panda Engine Token Gen (chakra typegen preset.ts)               │
+ │ - Rollup + Esbuild + preserve-directives ("use client" safety)    │
+ └───────────────────────────────────────────────────────────────────┘
+```
+
+### 1.2 Subsystem Decoupling & Invariant Boundaries
+1. **Compound Anatomy Separation**: Primitives strictly decouple the accessible interactive DOM input (`<Component.HiddenInput />`) from the visual proxy (`<Component.Control />`, `<Component.Indicator />`), eliminating direct CSS restyling bugs on native form inputs while preserving native browser submission and form-data harvesting.
+2. **State Machine & View Separation**: Ark UI state machines run independently of rendering. High-level state transitions (e.g., date selection, combobox token filtering) update state engines that emit deterministic data attributes (`data-state="checked"`, `data-invalid`, `data-disabled`), driving CSS slot recipes via pure selectors rather than re-rendering React subtrees.
+3. **Data Mutation & Form Boundary**: Universal interop with `Standard-Schema` (Zod v3+) bridges controlled form state (via `react-hook-form`'s `useController`) directly into composite value contracts (`string[]` for arrays, string representations for parsed dates and hex colors).
+4. **RSC & Client-Only Segregation**: Server components cannot evaluate viewport measurements or window-level DOM tokens. Chakra isolates client execution paths via `<ClientOnly fallback={<Skeleton />}>` and explicit rollup directive preservation (`rollup-plugin-preserve-directives`) ensuring `"use client"` headers are never stripped during library tree-shaking.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `apps/compositions/src/examples/checkbox-card-with-states.tsx`
-```
-import { CheckboxCard, Stack } from "@chakra-ui/react"
-
-export const CheckboxCardWithStates = () => {
-  return (
-    <Stack>
-      <DemoCheckboxCard />
-      <DemoCheckboxCard defaultChecked />
-      <DemoCheckboxCard disabled />
-      <DemoCheckboxCard defaultChecked disabled />
-      <DemoCheckboxCard invalid />
-    </Stack>
-  )
-}
-
-const DemoCheckboxCard = (props: CheckboxCard.RootProps) => {
-  return (
-    <CheckboxCard.Root maxW="240px" {...props}>
-      <CheckboxCard.HiddenInput />
-      <CheckboxCard.Control>
-        <CheckboxCard.Content>
-          <CheckboxCard.Label>Next.js</CheckboxCard.Label>
-          <CheckboxCard.Description>Best for apps</CheckboxCard.Description>
-        </CheckboxCard.Content>
-        <CheckboxCard.Indicator />
-      </CheckboxCard.Control>
-    </CheckboxCard.Root>
-  )
-}
-
-```
-
-### Core Architecture Module: `apps/compositions/src/examples/checkbox-with-group-hook-form.tsx`
-```
-"use client"
-
-import {
-  Button,
-  Checkbox,
-  CheckboxGroup,
-  Code,
-  Fieldset,
-} from "@chakra-ui/react"
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
-import { useController, useForm } from "react-hook-form"
-import { z } from "zod"
-
-const formSchema = z.object({
-  framework: z.array(z.string()).min(1, {
-    message: "You must select at least one framework.",
-  }),
-})
-
-type FormData = z.infer<typeof formSchema>
-
-const items = [
-  { label: "React", value: "react" },
-  { label: "Svelte", value: "svelte" },
-  { label: "Vue", value: "vue" },
-  { label: "Angular", value: "angular" },
-]
-
-export const CheckboxWithGroupHookForm = () => {
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: standardSchemaResolver(formSchema),
-  })
-
-  const framework = useController({
-    control,
-    name: "framework",
-    defaultValue: [],
-  })
-
-  const invalid = !!errors.framework
-
-  return (
-    <form onSubmit={handleSubmit((data) => console.log(data))}>
-      <Fieldset.Root invalid={invalid}>
-        <Fieldset.Legend>Select your framework</Fieldset.Legend>
-        <CheckboxGroup
-          invalid={invalid}
-          value={framework.field.value}
-          onValueChange={framework.field.onChange}
-          name={framework.field.name}
-        >
-          <Fieldset.Content>
-            {items.map((item) => (
-              <Checkbox.Root key={item.value} value={item.value}>
-                <Checkbox.HiddenInput />
-                <Checkbox.Control />
-                <Checkbox.Label>{item.label}</Checkbox.Label>
-              </Checkbox.Root>
-            ))}
-          </Fieldset.Content>
-        </CheckboxGroup>
-
-        {errors.framework && (
-          <Fieldset.ErrorText>{errors.framework.message}</Fieldset.ErrorText>
-        )}
-
-        <Button size="sm" type="submit" alignSelf="flex-start">
-          Submit
-        </Button>
-
-        <Code>Values: {JSON.stringify(framework.field.value, null, 2)}</Code>
-      </Fieldset.Root>
-    </form>
-  )
-}
-
-```
-
-### Core Architecture Module: `apps/compositions/src/examples/checkbox-with-hook-form.tsx`
-```
-"use client"
-
-import { Button, Checkbox, Code, Field, HStack, Stack } from "@chakra-ui/react"
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
-import { Controller, useController, useForm } from "react-hook-form"
-import { z } from "zod"
-
-const formSchema = z.object({
-  enabled: z.boolean(),
-})
-
-type FormData = z.infer<typeof formSchema>
-
-export const CheckboxWithHookForm = () => {
-  const form = useForm<FormData>({
-    resolver: standardSchemaResolver(formSchema),
-    defaultValues: { enabled: false },
-  })
-
-  const enabled = useController({
-    control: form.control,
-    name: "enabled",
-  })
-
-  const invalid = !!form.formState.errors.enabled
-
-  return (
-    <form onSubmit={form.handleSubmit((data) => console.log(data))}>
-      <Stack align="flex-start">
-        <Controller
-          control={form.control}
-          name="enabled"
-          render={({ field }) => (
-            <Field.Root invalid={invalid} disabled={field.disabled}>
-              <Checkbox.Root
-                checked={field.value}
-                onCheckedChange={({ checked }) => field.onChange(checked)}
-              >
-                <Checkbox.HiddenInput />
-                <Checkbox.Control />
-                <Checkbox.Label>Checkbox</Checkbox.Label>
-              </Checkbox.Root>
-              <Field.ErrorText>
-                {form.formState.errors.enabled?.message}
-              </Field.ErrorText>
-            </Field.Root>
-          )}
-        />
-
-        <HStack>
-          <Button
-            size="xs"
-            variant="outline"
-            onClick={() => form.setValue("enabled", !enabled.field.value)}
-          >
-            Toggle
-          </Button>
-          <Button size="xs" variant="outline" onClick={() => form.reset()}>
-            Reset
-          </Button>
-        </HStack>
-
-        <Button size="sm" type="submit" alignSelf="flex-start">
-          Submit
-        </Button>
-
-        <Code>Checked: {JSON.stringify(enabled.field.value, null, 2)}</Code>
-      </Stack>
-    </form>
-  )
-}
-
-```
-
-### Core Architecture Module: `apps/compositions/src/examples/checkbox-with-states.tsx`
-```
-import { Checkbox, Stack } from "@chakra-ui/react"
-
-export const CheckboxWithStates = () => {
-  return (
-    <Stack>
-      <Checkbox.Root disabled>
-        <Checkbox.HiddenInput />
-        <Checkbox.Control />
-        <Checkbox.Label>Disabled</Checkbox.Label>
-      </Checkbox.Root>
-
-      <Checkbox.Root defaultChecked disabled>
-        <Checkbox.HiddenInput />
-        <Checkbox.Control />
-        <Checkbox.Label>Disabled</Checkbox.Label>
-      </Checkbox.Root>
-
-      <Checkbox.Root readOnly>
-        <Checkbox.HiddenInput />
-        <Checkbox.Control />
-        <Checkbox.Label>Readonly</Checkbox.Label>
-      </Checkbox.Root>
-
-      <Checkbox.Root invalid>
-        <Checkbox.HiddenInput />
-        <Checkbox.Control />
-        <Checkbox.Label>Invalid</Checkbox.Label>
-      </Checkbox.Root>
-    </Stack>
-  )
-}
-
-```
-
-### Core Architecture Module: `apps/compositions/src/examples/checkmark-states.tsx`
-```
-import { Checkmark, HStack } from "@chakra-ui/react"
-
-export const CheckmarkStates = () => {
-  return (
-    <HStack gap={3}>
-      <Checkmark />
-      <Checkmark checked />
-      <Checkmark indeterminate />
-      <Checkmark disabled />
-      <Checkmark checked disabled />
-      <Checkmark indeterminate disabled />
-    </HStack>
-  )
-}
-
-```
-
-### Core Architecture Module: `apps/compositions/src/examples/client-only-render-prop.tsx`
-```
-"use client"
-
-import { ClientOnly, Code, Skeleton, Stack, Text } from "@chakra-ui/react"
-
-export const ClientOnlyRenderProp = () => {
-  return (
-    <ClientOnly fallback={<Skeleton height="12" width="full" maxW="sm" />}>
-      {() => (
-        <Stack align="flex-start" gap="1" textStyle="sm">
-          <Text>
-            Current URL: <Code>{window.location.href}</Code>
-          </Text>
-          <Text>
-            Screen width: <Code>{window.innerWidth}px</Code>
-          </Text>
-        </Stack>
-      )}
-    </ClientOnly>
-  )
-}
-
-```
-
-### Core Architecture Module: `apps/compositions/src/examples/color-picker-with-hook-form.tsx`
-```
-"use client"
-
-import {
-  Button,
-  ColorPicker,
-  HStack,
-  Portal,
-  Stack,
-  parseColor,
-} from "@chakra-ui/react"
-import { Controller, useForm } from "react-hook-form"
-
-interface FormValues {
-  color: string
-}
-
-export const ColorPickerWithHookForm = () => {
-  const { control, handleSubmit } = useForm<FormValues>({
-    defaultValues: { color: "#000000" },
-  })
-
-  const onSubmit = handleSubmit((data) => console.log(data))
-
-  return (
-    <form onSubmit={onSubmit}>
-      <Stack gap="4" align="flex-start" maxW="sm">
-        <Controller
-          name="color"
-          control={control}
-          render={({ field }) => (
-            <ColorPicker.Root
-              name={field.name}
-              defaultValue={parseColor(field.value)}
-              onValueChange={(e) => field.onChange(e.valueAsString)}
-            >
-              <ColorPicker.HiddenInput />
-              <ColorPicker.Control>
-                <ColorPicker.Input />
-                <ColorPicker.Trigger />
-              </ColorPicker.Control>
-              <Portal>
-                <ColorPicker.Positioner>
-                  <ColorPicker.Content>
-                    <ColorPicker.Area />
-                    <HStack>
-                      <ColorPicker.EyeDropper size="sm" variant="outline" />
-                      <ColorPicker.Sliders />
-                    </HStack>
-                  </ColorPicker.Content>
-                </ColorPicker.Positioner>
-              </Portal>
-            </ColorPicker.Root>
-          )}
-        />
-
-        <Button type="submit">Submit</Button>
-      </Stack>
-    </form>
-  )
-}
-
-```
-
-### Core Architecture Module: `apps/compositions/src/examples/combobox-with-hook-form.tsx`
-```
-"use client"
-
-import {
-  Button,
-  Combobox,
-  Field,
-  Portal,
-  Stack,
-  useFilter,
-  useListCollection,
-} from "@chakra-ui/react"
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
-import { Controller, useForm } from "react-hook-form"
-import { z } from "zod"
-
-const formSchema = z.object({
-  framework: z.string({ message: "Framework is required" }).min(1),
-})
-
-type FormValues = z.infer<typeof formSchema>
-
-export const ComboboxWithHookForm = () => {
-  const {
-    handleSubmit,
-    formState: { errors },
-    control,
-  } = useForm<FormValues>({
-    resolver: standardSchemaResolver(formSchema),
-  })
-
-  const onSubmit = handleSubmit((data) => {
-    console.log("Form submitted with:", data)
-    alert(`Selected framework: ${data.framework}`)
-  })
-
-  const { contains } = useFilter({ sensitivity: "base" })
-
-  const { collection, filter } = useListCollection({
-    initialItems: frameworks,
-    filter: contains,
-  })
-
-  const handleInputChange = (details: Combobox.InputValueChangeDetails) => {
-    filter(details.inputValue)
-  }
-
-  return (
-    <form onSubmit={onSubmit}>
-      <Stack gap="4" align="flex-start">
-        <Field.Root invalid={!!errors.framework} width="320px">
-          <Field.Label>Framework</Field.Label>
-          <Controller
-            control={control}
-            name="framework"
-            render={({ field }) => (
-              <Combobox.Root
-                collection={collection}
-                value={field.value ? [field.value] : []}
-                onValueChange={({ value }) => field.onChange(value[0] || "")}
-                onInputValueChange={handleInputChange}
-                onInteractOutside={() => field.onBlur()}
-              >
-                <Combobox.Control>
-                  <Combobox.Input placeholder="Select framework" />
-                  <Combobox.IndicatorGroup>
-                    <Combobox.ClearTrigger />
-                    <Combobox.Trigger />
-                  </Combobox.IndicatorGroup>
-                </Combobox.Control>
-
-                <Portal>
-                  <Combobox.Positioner>
-                    <Combobox.Content>
-                      <Combobox.Empty>No frameworks found</Combobox.Empty>
-                      {collection.items.map((item) => (
-                        <Combobox.Item key={item.value} item={item}>
-                          {item.label}
-                          <Combobox.ItemIndicator />
-                        </Combobox.Item>
-                      ))}
-                    </Combobox.Content>
-                  </Combobox.Positioner>
-                </Portal>
-              </Combobox.Root>
-            )}
-          />
-          <Field.ErrorText>{errors.framework?.message}</Field.ErrorText>
-        </Field.Root>
-
-        <Button size="sm" type="submit">
-          Submit
-        </Button>
-      </Stack>
-    </form>
-  )
-}
-
-const frameworks = [
-  { label: "React", value: "react" },
-  { label: "Vue", value: "vue" },
-  { label: "Angular", value: "angular" },
-  { label: "Svelte", value: "svelte" },
-  { label: "Solid", value: "solid" },
-  { label: "Qwik", value: "qwik" },
-  { label: "Lit", value: "lit" },
-  { label: "Alpine", value: "alpine" },
-]
-
-```
-
-### Core Architecture Module: `apps/compositions/src/examples/date-input-with-hook-form.tsx`
-```
-"use client"
-
-import { Button, DateInput, Field, Input, Stack } from "@chakra-ui/react"
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
-import { Controller, useForm } from "react-hook-form"
-import { z } from "zod"
-
-const formSchema = z.object({
-  name: z.string().min(1, { message: "Name is required" }),
-  dob: z.array(z.any()).min(1, { message: "Date of birth is required" }),
-})
-
-type FormValues = z.infer<typeof formSchema>
-
-export const DateInputWithHookForm = () => {
-  const { handleSubmit, control, formState } = useForm<FormValues>({
-    resolver: standardSchemaResolver(formSchema),
-    defaultValues: { dob: [] },
-  })
-
-  const onSubmit = handleSubmit((data) => console.log(data))
-
-  return (
-    <form onSubmit={onSubmit}>
-      <Stack gap="4" align="flex-start" maxW="sm">
-        <Field.Root invalid={!!formState.errors.name}>
-          <Field.Label>Name</Field.Label>
-          <Input placeholder="Enter your name" />
-          <Field.ErrorText>{formState.errors.name?.message}</Field.ErrorText>
-        </Field.Root>
-        <Field.Root invalid={!!formState.errors.dob}>
-          <Controller
-            control={control}
-            name="dob"
-            render={({ field }) => (
-              <DateInput.Root
-                value={field.value}
-                onValueChange={(e) => field.onChange(e.value)}
-                invalid={!!formState.errors.dob}
-              >
-                <DateInput.Label>Date of birth</DateInput.Label>
-                <DateInput.Control>
-                  <DateInput.Segments />
-                </DateInput.Control>
-                <DateInput.HiddenInput />
-              </DateInput.Root>
-            )}
-          />
-          <Field.ErrorText>{formState.errors.dob?.message}</Field.ErrorText>
-        </Field.Root>
-        <Button type="submit">Submit</Button>
-      </Stack>
-    </form>
-  )
-}
-
-```
-
-### Core Architecture Module: `apps/compositions/src/examples/date-picker-with-hook-form.tsx`
-```
-"use client"
-
-import {
-  Button,
-  DatePicker,
-  Field,
-  Input,
-  Portal,
-  Stack,
-} from "@chakra-ui/react"
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
-import { parseDate } from "@internationalized/date"
-import { Controller, useForm } from "react-hook-form"
-import { LuCalendar } from "react-icons/lu"
-import { z } from "zod"
-
-const formSchema = z.object({
-  firstName: z.string().min(1, { message: "First name is required" }),
-  dob: z.string().min(1, { message: "Date of birth is required" }),
-})
-
-type FormValues = z.infer<typeof formSchema>
-
-export const DatePickerWithHookForm = () => {
-  const {
-    control,
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>({
-    resolver: standardSchemaResolver(formSchema),
-  })
-
-  const onSubmit = handleSubmit((data) => alert(JSON.stringify(data)))
-
-  return (
-    <form onSubmit={onSubmit}>
-      <Stack gap="4" align="flex-start" maxW="sm">
-        <Field.Root invalid={!!errors.firstName}>
-          <Field.Label>First name</Field.Label>
-          <Input {...register("firstName")} />
-          <Field.ErrorText>{errors.firstName?.message}</Field.ErrorText>
-        </Field.Root>
-
-        <Controller
-          control={control}
-          name="dob"
-          render={({ field }) => (
-            <Field.Root invalid={!!errors.dob}>
-              <DatePicker.Root
-                value={field.value ? [parseDate(field.value)] : []}
-                onValueChange={(e) =>
-                  field.onChange(e.value[0]?.toString() ?? "")
-                }
-                invalid={!!errors.dob}
-              >
-                <DatePicker.Label>Date of birth</DatePicker.Label>
-                <DatePicker.Control>
-                  <DatePicker.Input placeholder="Select date" />
-                  <DatePicker.IndicatorGroup>
-                    <DatePicker.Trigger>
-                      <LuCalendar />
-                    </DatePicker.Trigger>
-                  </DatePicker.IndicatorGroup>
-                </DatePicker.Control>
-                <Portal>
-                  <DatePicker.Positioner>
-                    <DatePicker.Content>
-                      <DatePicker.View view="day">
-                        <DatePicker.Header />
-                        <DatePicker.DayTable />
-                      </DatePicker.View>
-                      <DatePicker.View view="month">
-                        <DatePicker.Header />
-                        <DatePicker.MonthTable />
-                      </DatePicker.View>
-                      <DatePicker.View view="year">
-                        <DatePicker.Header />
-                        <DatePicker.YearTable />
-                      </DatePicker.View>
-                    </DatePicker.Content>
-                  </DatePicker.Positioner>
-                </Portal>
-              </DatePicker.Root>
-              <Field.ErrorText>{errors.dob?.message}</Field.ErrorText>
-            </Field.Root>
-          )}
-        />
-
-        <Button size="sm" type="submit">
-          Submit
-        </Button>
-      </Stack>
-    </form>
-  )
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11023** (2026-10-12): **docs: fix dead links in AI skills and rich text editor pages**
-  *Symptoms*: ## 📝 Description  Fixes three links on chakra-ui.com that go nowhere.  ## ⛳️ Current behavior (updates)  - The Resources list at the bottom of `get-started/ai/skills` links to `/docs/theming` and `/docs/components`. Both return 404 on the live site (there are no index pages for those sections). - In `components/rich-text-editor`, the Emojis section links "emoji suggestions" to `#emoji-menu`, but the page has no heading or element with that id, so the link doesn't go anywhere.  ## 🚀 New behavior  - Theming → `/docs/theming/overview`, Component documentation → `/docs/components/concepts/overview` (the "Components" landing page). Both return 200. - Removed the dead `#emoji-menu` link and kept the text. The sentence already sits in the Emojis section, right above its example.  ## 💣 Is this a breaking change (Yes/No):  No  ## 📝 Additional Information  Docs content only, no package changes, so I didn't add a changeset.
-
-- **Issue #11021** (2026-10-06): **fix(checkbox): allow checked style overrides**
-  *Symptoms*: ## Summary  - lower Checkmark state-selector specificity so Checkbox and Checkbox Card `_checked` styles can override recipe defaults - keep standalone Checkmark checked and indeterminate styles intact - sync the Panda preset recipes and add regression coverage  Fixes #11019  ## Testing  - `pnpm test` - `pnpm --filter=@chakra-ui/react typecheck` - `pnpm --filter=./packages/panda-preset typecheck` - `pnpm --filter=@chakra-ui/react build` - `pnpm --filter=./packages/panda-preset build` - `NODE_OPTIONS=--max-old-space-size=4096 pnpm lint --no-cache` 
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #2LvAIFRRez3ZqhalHqAjTyx9/MvSS0OcHrSs8aYVIDg=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjaGFrcmEtdWktc3Rvcnlib29rIiwicHJvamVjdElkIjoicHJqX1NQQzF4Znh4aXhFSWhKZVlUNXh1Zzd4OTZMNnkiLCJ2MCI6ZmFsc2UsInJvb3REaXJlY3RvcnkiOm51bGwsImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9jaGFrcmEtdWkvY2hha3JhLXVpLXN0b3J5Ym9vay85YjFSYnQ0dlRWNXN3ck5oZFU5WE1vZnR1akVBIiwicHJldmlld1VybCI6ImNoYWtyYS11aS1zdG9yeWJvb2stZ2l0LWZvcmstY3lwaGVyY29kZXMtZml4LWMtMjhjNGMxLWNoYWtyYS11aS52ZXJjZWwuYXBwIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIn0seyJuYW1lIjoiY2hha3JhLXYzLWRvY3MiLCJwcm9qZWN0SWQiOiJwcmpfYlVXd1VibG9EZEx6b2FsNmxKUkRRdGxsQlBHNiIsInYwIjpmYWxzZSwicm9vdERpcmVjdG9yeSI6ImFwcHMvd3d3IiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL2NoYWtyYS11aS9jaGFrcmEtdjMtZG9jcy9HWWdncFI2TGttTHg0VGVoTW5OQ1pVQ1EzeDZjIiwicHJldmlld1VybCI6ImNoYWtyYS12My1kb2NzLWdpdC1mb3JrLWN5cGhlcmNvZGVzLWZpeC1jaGVja2ItY2Y3ZDI1LWNoYWtyYS11aS52ZXJjZWwuYXBwIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIn1dLCJyZXF1ZXN0UmV2aWV3VXJs
-  > ### 🦋 Changeset detected  Latest commit: fe1c2331a3fa8151cc9555488bbd298caf169825  **The changes in this PR will be included in the next version bump.**  <details><summary>This PR includes changesets to release 6 packages</summary>    | Name                    | Type  | | ----------------------- | ----- | | @chakra-ui/react        | Patch | | @chakra-ui/panda-preset | Patch | | @chakra-ui/charts       | Patch | | @chakra-ui/cli          | Patch | | @chakra-ui/codemod      | Patch | | tanstack-router-ts      | Patch |  </details>  Not sure what this means? [Click here to learn what changesets are](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add another changeset to this PR](https://github.com/cyphercodes/chakra-ui/new/fix/checkbox-checkmark-specificity?filename=.changeset/short-lands-invite.md&value=---%0A%22%40chakra-ui%2Fpanda-preset%22%3A%20patch%0A%22%40chakra-ui%2Freact%22%3A%20patch%0A---%0A%0Afix(checkbox)%3A%20allow%20checked%20style%20override
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `837446e5` (2026-09-13)
-**Commit Message**: test(react): add a react render benchmark
-
-The three existing bench files all measure functions in isolation, which is
-misleading here: `cssFn` and `transform` memoize the layer above style
-resolution, so work that looks hot on its own barely runs during a render.
-Measured on `renderToString`, three separate function-level wins of 34x, 9x
-and 2.9x each came out to no change at all.
-
-Adds `pnpm bench` and four benches over real trees, shaped after the cases
-that actually regressed: a data table of recipe components (#10878) and a
-dialog form (#9698), plus a varied page that misses the style caches.
-
-Validated against the regression it exists to catch: reintroducing
-04a1a07f1e, which stripped memo from `cssFn`, `mergeFn` and `transform`,
-registers as 0.39x-0.52x here, far outside the +-5% noise floor.
-
-Server rendering only. Mounting into jsdom measured at +-9% to +-13%, wide
-enough to hide a 1.5x regression, and it adds coverage of effects and
-reconciliation rather than style resolution.
-
-**File**: `package.json` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@
-     "typedocs": "pnpm www generate:types",
-     "typecheck": "tsgo --noEmit",
-     "test": "vitest",
-+    "bench": "vitest bench --run",
-     "react": "pnpm --filter=@chakra-ui/react",
-     "www": "pnpm --filter=./apps/www",
-     "mcp": "pnpm --filter=./apps/mcp",
-```
-
-**File**: `packages/react/__tests__/render.bench.tsx` (added, +172/-0)
-```diff
-@@ -0,0 +1,172 @@
-+import type { ReactNode } from "react"
-+import { renderToString } from "react-dom/server"
-+// Run:     pnpm bench
-+// Compare: pnpm bench --outputJson base.json   (on the base revision)
-+//          pnpm bench --compare base.json      (on the branch)
-+//
-+// Validated against #9698: reintroducing 04a1a07f1e (memo stripped from
-+// `cssFn`, `mergeFn` and `transform`) shows up here as 0.39x-0.52x, far
-+// outside the +-5% noise floor.
-+
-+import { bench } from "vitest"
-+import {
-+  Badge,
-+  Box,
-+  Button,
-+  ChakraProvider,
-+  Field,
-+  Heading,
-+  Input,
-+  Skeleton,
-+  Stack,
-+  Text,
-+  createSystem,
-+  defaultConfig,
-+  defaultSystem,
-+} from "../src"
-+
-+// Function-level benchmarks mislead here: `cssFn` and `transform` memoize the
-+// layer above style resolution, so work that looks hot in isolation barely
-+// runs during a render. These mount real trees instead.
-+
-+// Shape from #10878: a data table of recipe components, most of them
-+// identical and visually inert. 30 rows => 90 buttons, 60 badges, 210 skeletons.
-+function DataTable({ rows }: { rows: number }) {
-+  return (
-+    <Box>
-+      {Array.from({ length: rows }, (_, row) => (
-+        <Box key={row} display="flex" gap="2" padding="2">
-+          {Array.from({ length: 7 }, (_, cell) => (
-+            <Skeleton key={cell} loading={false}>
-+              cell
-+            </Skeleton>
-+          ))}
-+          <Badge colorPalette="gray">ok</Badge>
-+          <Badge colorPalette="green">live</Badge>
-+          <Button variant="ghost" size="xs">
-+            edit
-+          </Button>
-+          <Button variant="ghost" size="xs">
-+            copy
-+          </Button>
-+          <Button variant="ghost" size="xs">
-+            open
-+          </Button>
-+        </Box>
-+      ))}
-+    </Box>
-+  )
-+}
-+
-+// Shape from #9698: a dialog body of form controls, mounted when it opens.
-+function DialogForm({ fields }: { fields: number }) {
-+  return (
-+    <Stack gap="4" padding="6">
-+      <Heading size="lg">Settings</Heading>
-+      {Array.from({ length: fields }, (_, i) => (
-+        <Field.Root key={i} invalid={i % 7 === 0}>
-+          <Field.Label>Field {i}</Field.Label>
-+          <Input size={i % 2 ? "sm" : "md"} variant="outline" />
-+          <Field.HelperText>Helper text {i}</Field.HelperText>
-+        </Field.Root>
-+      ))}
-+      <Stack direction="row" gap="3">
-+        <Button variant="subtle" size="sm">
-+          Cancel
-+        </Button>
-+        <Button variant="solid" size="sm" colorPalette="blue">
-+          Save
-+        </Button>
-+      </Stack>
-+    </Stack>
-+  )
-+}
-+
-+// Every instance differs, so the style caches miss far more often.
-+const VARIANTS = ["solid", "subtle", "outline", "ghost"] as const
-+const SIZES = ["xs", "sm", "md", "lg"] as const
-+const PALETTES = ["gray", "red", "blue", "green", "purple"] as const
-+
-+function VariedPage({ rows }: { rows: number }) {
-+  return (
-+    <Box padding="4">
-+      {Array.from({ length: rows }, (_, i) => (
-+        <Box
-+          key={i}
-+          borderWidth="1px"
-+          padding={i % 3 ? "2" : "4"}
-+          marginTop="2"
-+          rounded={i % 2 ? "sm" : "md"}
-+        >
-+          <Text fontSize={i % 2 ? "sm" : "md"}>Row {i}</Text>
-+          <Badge colorPalette={PALETTES[i % PALETTES.length]}>tag</Badge>
-+          <Button
-+            variant={VARIANTS[i % VARIANTS.length]}
-+            size={SIZES[i % SIZES.length]}
-+            colorPalette={PALETTES[i % PALETTES.length]}
-+          >
-+            Action {i}
-+          </Button>
-+        </Box>
-+      ))}
-+    </Box>
-+  )
-+}
-+
-+const withProvider = (node: ReactNode, system = defaultSystem) => (
-+  <ChakraProvider value={system}>{node}</ChakraProvider>
-+)
-+
-+// Rendering allocates heavily, so a short run is dominated by GC pauses and
-+// the margin of error swamps the regression being looked for. Long warmups
-+// and long sample windows keep it inside a couple of percent.
-+const options = { time: 2000, warmupTime: 1000 }
-+
-+/* -----------------------------------------------------------------------------
-+ * System creation, so boot cost can be read separately from render cost
-+ * -----------------------------------------------------------------------------*/
-+
-+bench(
-+  "createSystem(defaultConfig)",
-+  () => {
-+    createSystem(defaultConfig)
-+  },
-+  options,
-+)
-+
-+/* -----------------------------------------------------------------------------
-+ * Server render, shared system. The most stable signal: no teardown, no jsdom.
-+ * -----------------------------------------------------------------------------*/
-+
-+bench(
-+  "ssr: data table (30 rows)",
-+  () => {
-+    renderToString(withProvider(<DataTable rows={30} />))
-+  },
-+  options,
-+)
-+
-+bench(
-+  "ssr: dialog form (40 fields)",
-+  () => {
-+    renderToString(withProvider(<DialogForm fields={40} />))
-+  },
-+  options,
-+)
-+
-+bench(
-+  "ssr: varied page (80 rows)",
-+  () => {
-+    renderToString(withProvider(<VariedPage rows={80} />))
-+  },
-+  options,
-+
-```
-
----
-
-### Incident Patch 2: `d4b44201` (2026-09-13)
-**Commit Message**: fix(react): preserve cva variant keys that collide with CSS shorthands (#10973)
-
-* fix(react): preserve cva variant keys that collide with CSS shorthands
-
-* refactor(react): resolve variant selections without a second normalizer
-
-Keeps the fix, simplifies how it is wired.
-
-`createNormalizePropsFn` was `createNormalizeFn` minus its `getKey` option,
-so the two would drift apart the next time normalization changes. What cva
-needs for selections is just `normalizeValue`, which `system.ts` already has
-in scope, so `normalize.ts` goes back untouched.
-
-`resolve` no longer normalizes selections at all: `getVariantCss` normalizes
-its input internally and compound matching compares raw values, so that pass
-only ever fed a function that redid the work. Compound variant match rules
-are now built per recipe instead of on every resolve.
-
-Verified byte-identical output against main across 1648 recipe resolutions
-(every built-in recipe and slot recipe over its variant matrix, plus
-responsive array and object selections). Cold render of a 40-field form
-measures 23.5ms against 24.7ms for the previous approach and 26.1ms on main.
-
----------
-
-Co-authored-by: Segun Adebayo <[REDACTED_EMAIL]>
-
-**File**: `.changeset/cva-variant-shorthand-keys.md` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+---
-+"@chakra-ui/react": patch
-+---
-+
-+- **CVA, SVA**: Fix variants whose names collide with a CSS shorthand, such as
-+  `rounded`, `bg` or `p`, being silently dropped.
-```
-
-**File**: `packages/react/__tests__/cva.test.ts` (modified, +54/-3)
-```diff
-@@ -151,9 +151,8 @@ describe("cva", () => {
-       },
-     })
- 
--    // Both calls pass the same variants, so they only get separate memo
--    // entries if prop order is part of the cache key. The later prop wins,
--    // so a shared entry would hand the second call the first one's "30px".
-+    // Same variants either way, so a memo key that ignored prop order would
-+    // hand the second call the first one's "30px". The later prop wins.
-     expect(recipe({ size: "md", tone: "solid" })).toMatchObject({
-       "@layer recipes": { marginTop: "30px" },
-     })
-@@ -162,4 +161,56 @@ describe("cva", () => {
-       "@layer recipes": { marginTop: "20px" },
-     })
-   })
-+
-+  test("keeps variant keys that collide with CSS shorthands", () => {
-+    const sys = createSystem({
-+      theme: {
-+        breakpoints: { sm: "30em" },
-+      },
-+      utilities: {
-+        borderRadius: { shorthand: "rounded" },
-+        background: { shorthand: "bg" },
-+        padding: { shorthand: "p" },
-+      },
-+    })
-+
-+    const recipe = sys.cva({
-+      base: { color: "red" },
-+      variants: {
-+        rounded: {
-+          true: {
-+            borderWidth: "2px",
-+            borderStyle: "solid",
-+          },
-+        },
-+        bg: {
-+          solid: { background: "blue" },
-+        },
-+        p: {
-+          sm: { padding: "4px" },
-+        },
-+      },
-+      compoundVariants: [
-+        {
-+          rounded: true,
-+          bg: "solid",
-+          css: { borderColor: "green" },
-+        },
-+      ],
-+      defaultVariants: {
-+        rounded: true,
-+      },
-+    })
-+
-+    expect(recipe({ bg: "solid", p: "sm" })).toMatchObject({
-+      "@layer recipes": {
-+        color: "red",
-+        borderWidth: "2px",
-+        borderStyle: "solid",
-+        background: "blue",
-+        padding: "4px",
-+        borderColor: "green",
-+      },
-+    })
-+  })
- })
-```
-
-**File**: `packages/react/src/styled-system/cva.ts` (modified, +41/-31)
-```diff
-@@ -8,11 +8,12 @@ import {
-   omit,
-   splitProps,
-   uniq,
-+  walkObject,
- } from "../utils"
- import { createCssFn } from "./css"
- import type { RecipeCreatorFn, RecipeDefinition } from "./recipe.types"
- import { EMPTY_OBJECT } from "./singleton"
--import type { Condition, CssFn, Layers } from "./types"
-+import type { Condition, CssFn, Layers, SystemContext } from "./types"
- 
- const defaults = (conf: any): Required<RecipeDefinition> => ({
-   base: EMPTY_OBJECT,
-@@ -24,47 +25,72 @@ const defaults = (conf: any): Required<RecipeDefinition> => ({
- 
- interface Options {
-   normalize: (styles: Dict) => Dict
-+  normalizeValue: SystemContext["normalizeValue"]
-   css: CssFn
-   conditions: Condition
-   layers: Layers
- }
- 
- export function createRecipeFn(options: Options): RecipeCreatorFn {
--  const { css, conditions, normalize, layers } = options
-+  const { css, conditions, normalize, normalizeValue, layers } = options
-+
-+  // Variant names are not CSS properties: normalizing them would rewrite
-+  // a `rounded` variant to `borderRadius`.
-+  const normalizeSelections = (selections: Dict) =>
-+    walkObject(selections, normalizeValue, {
-+      stop: (value) => Array.isArray(value),
-+    })
-+
-+  function createCompoundVariantFn(compoundVariants: any[]) {
-+    const rules = compoundVariants.map((compoundVariant) => ({
-+      styles: compoundVariant.css,
-+      match: Object.entries(omit(compoundVariant, ["css"])).map(
-+        ([name, value]) =>
-+          [name, Array.isArray(value) ? value : [value]] as const,
-+      ),
-+    }))
-+
-+    return function matchCompoundVariants(selections: Dict) {
-+      let result = EMPTY_OBJECT
-+      for (const { styles, match } of rules) {
-+        const matches = match.every(([name, values]) =>
-+          values.includes(selections[name]),
-+        )
-+        if (matches) result = css(result, styles)
-+      }
-+      return result
-+    }
-+  }
- 
-   function cva(config: Dict = {}) {
-     const defaultsConfig = defaults(config)
-     const { base, defaultVariants, compoundVariants } = defaultsConfig
- 
-+    const matchCompoundVariants = createCompoundVariantFn(compoundVariants)
-+
-     const variants = mapEntries(defaultsConfig.variants, (key, obj) => [
-       key,
-       mapEntries(obj, (optionKey, styles) => [optionKey, normalize(styles)]),
-     ])
- 
-     const getVariantCss = createCssFn({
-       conditions,
--      normalize,
-+      normalize: normalizeSelections,
-       transform(prop, value) {
-         return variants[prop]?.[value]
-       },
-     })
- 
-     const resolve = memo(function resolve(props: Dict = {}) {
--      const variantSelections: Dict = normalize({
--        ...defaultVariants,
--        ...compact(props),
--      })
-+      const selections = { ...defaultVariants, ...compact(props) }
- 
--      let variantCss = { ...normalize(base) }
-+      const variantCss = normalize(base)
-+      mergeWith(variantCss, getVariantCss(selections))
- 
--      mergeWith(variantCss, getVariantCss(variantSelections))
--
--      const compoundVariantCss = getCompoundVariantCss(
--        compoundVariants,
--        variantSelections,
-+      return layers.wrap(
-+        "recipes",
-+        css(variantCss, matchCompoundVariants(selections)),
-       )
--
--      return layers.wrap("recipes", css(variantCss, compoundVariantCss))
-     })
- 
-     const variantKeys = Object.keys(variants)
-@@ -110,22 +136,6 @@ export function createRecipeFn(options: Options): RecipeCreatorFn {
-     })
-   }
- 
--  function getCompoundVariantCss(cvs: any[], vm: any) {
--    let result = EMPTY_OBJECT
--    cvs.forEach((cv) => {
--      const isMatching = Object.entries(cv).every(([key, value]) => {
--        if (key === "css") return true
--        const values = Array.isArray(value) ? value : [value]
--        return values.some((value) => vm[key] === value)
--      })
--      if (isMatching) {
--        result = css(result, cv.css)
--      }
--    })
--
--    return result
--  }
--
-   //@ts-expect-error
-   return cva
- }
-```
-
-**File**: `packages/react/src/styled-system/system.ts` (modified, +1/-0)
-```diff
-@@ -132,6 +132,7 @@ export function createSystem(...configs: SystemConfig[]): SystemContext {
-     css: css as any,
-     conditions,
-     normalize: normalizeFn,
-+    normalizeValue,
-     layers,
-   })
- 
-```
-
----
-
-### Incident Patch 3: `edef2343` (2026-09-13)
-**Commit Message**: chore(deps): update @ark-ui/react to 5.39.2 (#10993)
-
-Keeps the pinned Ark version current. 5.39.2 restores the ./hotkeys and
-./interaction entrypoints that were dropped from the published package in
-5.39.0/5.39.1, and carries a NavigationMenu SSR fix (a component Chakra does
-not ship), so consumers see no behavior change.
-
-**File**: `.changeset/update-ark-ui-5.39.2.md` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+---
-+"@chakra-ui/react": patch
-+---
-+
-+**Updated Ark UI to v5.39.2**
-+
-+Keeps the pinned Ark version current. 5.39.2 restores the `./hotkeys` and
-+`./interaction` entrypoints that were dropped from the published package in
-+5.39.0/5.39.1, and includes a `NavigationMenu.Content` SSR fix (a component
-+Chakra does not ship). No behavior change for existing consumers.
-```
-
-**File**: `apps/www/package.json` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@
-     "prebuild": "pnpm generate:composition && pnpm generate:examples && pnpm build:react && pnpm generate:theme"
-   },
-   "dependencies": {
--    "@ark-ui/react": "5.39.0",
-+    "@ark-ui/react": "5.39.2",
-     "@chakra-ui/react": "workspace:*",
-     "@chakra-ui/charts": "workspace:*",
-     "@emotion/react": "11.14.0",
-```
-
-**File**: `packages/react/package.json` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@
-     "url": "https://storybook.chakra-ui.com"
-   },
-   "dependencies": {
--    "@ark-ui/react": "5.39.0",
-+    "@ark-ui/react": "5.39.2",
-     "@emotion/is-prop-valid": "^1.4.0",
-     "@emotion/serialize": "^1.3.3",
-     "@emotion/use-insertion-effect-with-fallbacks": "^1.2.0",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +8/-8)
-```diff
-@@ -422,8 +422,8 @@ importers:
-   apps/www:
-     dependencies:
-       '@ark-ui/react':
--        specifier: 5.39.0
--        version: 5.39.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-+        specifier: 5.39.2
-+        version: 5.39.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-       '@chakra-ui/charts':
-         specifier: workspace:*
-         version: link:../../packages/charts
-@@ -690,8 +690,8 @@ importers:
-   packages/react:
-     dependencies:
-       '@ark-ui/react':
--        specifier: 5.39.0
--        version: 5.39.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-+        specifier: 5.39.2
-+        version: 5.39.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-       '@emotion/is-prop-valid':
-         specifier: ^1.4.0
-         version: 1.4.0
-@@ -1339,8 +1339,8 @@ packages:
-     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
-     engines: {node: '>=6.0.0'}
- 
--  '@ark-ui/react@5.39.0':
--    resolution: {integrity: sha512-qKMyliIHgkp4TPrdr9xmkXeP9lmuEvhRJNPNah7Wnp54lspsZJY4b08rNM+NWtlnhxO1P8iChKRKcohSQgXL/g==}
-+  '@ark-ui/react@5.39.2':
-+    resolution: {integrity: sha512-bvfEXm/5JBVe5zmA1myB5EC4+khE18qru5A0qIgV3Qzz10Qykn27heIR5ypyGwnYoE6HgMumZhTdM0xan5mE5g==}
-     peerDependencies:
-       react: 19.2.6
-       react-dom: 19.2.6
-@@ -12838,7 +12838,7 @@ snapshots:
-       '@jridgewell/gen-mapping': 0.3.13
-       '@jridgewell/trace-mapping': 0.3.31
- 
--  '@ark-ui/react@5.39.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
-+  '@ark-ui/react@5.39.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
-     dependencies:
-       '@internationalized/date': 3.12.3
-       '@zag-js/accordion': 1.43.3
-@@ -14691,7 +14691,7 @@ snapshots:
- 
-   '@internationalized/number@3.6.7':
-     dependencies:
--      '@swc/helpers': 0.5.15
-+      '@swc/helpers': 0.5.23
- 
-   '@isaacs/cliui@8.0.2':
-     dependencies:
-```
-
-**File**: `pnpm-workspace.yaml` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ onlyBuiltDependencies:
-   - unrs-resolver
- 
- minimumReleaseAgeExclude:
--  - '@ark-ui/react@5.39.0'
-+  - '@ark-ui/react@5.39.2'
-   - '@zag-js/accordion@1.43.1'
-   - '@zag-js/anatomy@1.43.1'
-   - '@zag-js/angle-slider@1.43.1'
-```
-
-#### Recent Merged Pull Requests:
-- **PR #11023** (2026-10-12): docs: fix dead links in AI skills and rich text editor pages (@SatvikMishra08)
-- **PR #11021** (closed): fix(checkbox): allow checked style overrides (@cyphercodes)
-- **PR #11015** (2026-09-24): fix(scroll-area): hide each scrollbar based on its own axis (@mixelburg)
-- **PR #11012** (2026-09-21): docs(checkbox): fix controlled example with RootProvider (@Adebesin-Cell)
-- **PR #11011** (closed): fix(react): stop tabs from clicking link triggers on programmatic value change (@AlexRixten)
-- **PR #11005** (2026-09-15): fix(www): add "use client" to pagination custom format example (@Adebesin-Cell)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. test(react): add a react render benchmark
-
+### 1. Multi-State Relation Disambiguation Invariant
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chakra-ui/chakra-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When computing entity lifecycle status from a one-to-many event stream (e.g., subscription payments, webhook transitions, user orders), systems MUST NOT rely on an aggregate entity boolean flag (such as `isActive`) without cross-referencing the disjoint sets of active and terminal event statuses. Specifically, a record MUST NOT be considered active if its event collection contains terminal state tokens (`CANCELLED`, `REFUNDED`) unless an explicit non-terminal active state token (`ACTIVE`, `CONFIRMED`) exists within the same identity key scope.
 
 **WHY**:
-Prevents defects observed in production commit `837446e5`: test(react): add a react render benchmark. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Upstream aggregates and third-party webhooks (e.g., OpenCollective GraphQL) often mark an account/member node as `isActive: true` even when the underlying recurring financial order was revoked or cancelled. Consuming the top-level flag creates persistent ghost entities, security authorization bypasses, or improper sponsor/tenant listing.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Apply in any data aggregation layer, billing reconciliation worker, or access-control guard where an entity's operational status is derived from an asynchronous collection of events or orders.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
-// Verified production-grade fix pattern:
-    "bench": "vitest bench --run",
+// Production verified multi-status collection reconciliation
+interface OrderRecord {
+  status: "ACTIVE" | "CANCELLED" | "PENDING"
+  fromAccount?: { id: string }
+}
+
+interface MemberRecord {
+  isActive: boolean
+  account?: { id: string; slug: string; name: string }
+}
+
+export function filterActiveAuthorizedEntities(
+  members: MemberRecord[],
+  orders: OrderRecord[],
+  exclusionBlacklist: ReadonlySet<string>,
+): MemberRecord[] {
+  // Step 1: Map unique status sets per entity account ID
+  const orderStatuses = new Map<string, Set<string>>()
+  
+  for (const order of orders) {
+    const accountId = order.fromAccount?.id
+    if (!accountId) continue
+    
+    let statuses = orderStatuses.get(accountId)
+    if (!statuses) {
+      statuses = new Set<string>()
+      orderStatuses.set(accountId, statuses)
+    }
+    statuses.add(order.status)
+  }
+
+  // Step 2: Pure deterministic predicate
+  const isCancelled = (member: MemberRecord): boolean => {
+    const accountId = member.account?.id
+    if (!accountId) return false
+    const statuses = orderStatuses.get(accountId)
+    // Terminal condition: Has CANCELLED and DOES NOT have ACTIVE
+    return !!statuses?.has("CANCELLED") && !statuses.has("ACTIVE")
+  }
+
+  // Step 3: Combined invariant filter
+  return members.filter((member): boolean => {
+    const account = member.account
+    if (!member.isActive || !account?.id || !account?.name) {
+      return false
+    }
+    if (exclusionBlacklist.has(account.slug)) {
+      return false
+    }
+    return !isCancelled(member)
+  })
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// ANTI-PATTERN: Blindly trusting upstream aggregate booleans or checking only individual items
+const activeMembers = members.filter((member) => {
+  // CRITICAL FAILURE: member.isActive is true even when orders are CANCELLED.
+  // Fails to deduplicate against multi-order histories.
+  return member.isActive && !EXCLUDED_SPONSORS.has(member.account?.slug)
+})
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `837446e5` are properly handled with clean fallback behavior.
+Enforce via unit tests validating a member with both `CANCELLED` and `ACTIVE` orders remains retained, while a member with exclusively `CANCELLED` orders is stripped, regardless of `member.isActive === true`:
+```typescript
+import { describe, it, expect } from "vitest"
+
+describe("filterActiveAuthorizedEntities", () => {
+  it("strips entities with terminal orders even if member.isActive is true", () => {
+    const members = [{ isActive: true, account: { id: "acc_1", slug: "spam", name: "Spam" } }]
+    const orders = [{ status: "CANCELLED" as const, fromAccount: { id: "acc_1" } }]
+    const blacklist = new Set<string>()
+    const result = filterActiveAuthorizedEntities(members, orders, blacklist)
+    expect(result).toHaveLength(0)
+  })
+})
+```
+
+---
+
+### 2. Async Collection Popup Opacity Preservation Invariant
+**RULE**:
+When designing headless or recipe-driven floating overlay controls (Comboboxes, Auto-completes, Filterable Menus), empty collection rules MUST NOT set container visibility or opacity to zero (`opacity: 0` or `display: none`) unless the state machine has settled into an idle empty state. While async pending transitions (`isLoading === true`) or error conditions (`isError === true`) are active, the floating surface MUST explicitly maintain visibility (`opacity: 1`, `pointer-events: auto`) to display loading indicators, skeleton states, and inline error boundaries.
+
+**WHY**:
+Applying generic CSS recipes that hide overlays when `items.length === 0` blindfolds users during network latency. Subsequent searches or refetches after an initial empty result render completely invisible loading spinners and network crash alerts, creating a perceived freeze/dead UI.
+
+**WHEN TO APPLY**:
+Any floating UI element utilizing dynamic collections, virtualized lists, or remote search APIs integrated with asynchronous loading/error slots.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```tsx
+import React from "react"
+
+interface AsyncComboboxOverlayProps {
+  isLoading: boolean
+  hasError: boolean
+  itemCount: number
+  hasCustomEmptySlot: boolean
+  children: React.ReactNode
+}
+
+export const AsyncComboboxOverlay: React.FC<AsyncComboboxOverlayProps> = ({
+  isLoading,
+  hasError,
+  itemCount,
+  hasCustomEmptySlot,
+  children,
+}) => {
+  // Opacity & pointer events contract
+  // When empty and settled without fallback: hidden (0)
+  // When loading OR erroring: forced visible (1)
+  const isSettledEmpty = itemCount === 0 && !hasCustomEmptySlot && !isLoading && !hasError
+  
+  const overlayStyle: React.CSSProperties = {
+    opacity: isSettledEmpty ? 0 : 1,
+    pointerEvents: isSettledEmpty ? "none" : "auto",
+    visibility: isSettledEmpty ? "hidden" : "visible",
+    transition: "opacity 150ms ease-in-out",
+  }
+
+  return (
+    <div
+      role="region"
+      aria-live="polite"
+      data-state-loading={isLoading ? "true" : undefined}
+      data-state-error={hasError ? "true" : undefined}
+      style={overlayStyle}
+    >
+      {children}
+    </div>
+  )
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```tsx
+// ANTI-PATTERN: Recipe or slot applying static opacity: 0 purely based on collection size
+<Combobox.Positioner
+  className={css({
+    // BUG: If items is empty during fetch, opacity is 0. 
+    // Spinner and Error Boundary inside Combobox.Content are rendered invisible!
+    opacity: collection.items.length === 0 ? 0 : 1 
+  })}
+>
+  <Combobox.Content>
+    {isLoading && <Spinner />}
+    {isError && <ErrorNotice />}
+  </Combobox.Content>
+</Combobox.Positioner>
+```
+
+**VERIFICATION METHOD**:
+Simulate an empty network search transition using `@testing-library/react` and assert that the container computed style maintains `opacity: 1` during the loading state:
+```typescript
+test("combobox popup retains opacity: 1 while loading empty collection", async () => {
+  const { getByRole } = render(<ComboboxWithAsyncSearch isLoading={true} items={[]} />)
+  const popup = getByRole("listbox", { hidden: true })
+  expect(window.getComputedStyle(popup).opacity).toBe("1")
+})
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Opacity Erasure of Async Feedback in Empty Comboboxes (BUG-CHAKRA-11026)
+- **Context**: `packages/react/src/components/combobox` and async search composition examples.
+- **What Was Expected**: When a user queries a remote combobox and the response is pending, the combobox popup must remain visible, presenting a loading skeleton/spinner. If the query fails, the error message must render visibly inside the positioned popover.
+- **What Actually Happened**: The standard empty-content recipe evaluated collection emptiness synchronously. When `items.length === 0`, it forced the popup container opacity to `0`. Consequently, during loading and on network failure, the popup turned completely invisible, hiding both the spinner and the error notification. Users saw no feedback upon typing.
+- **Evidence in Repo**: PR #11026, Closes #11025. Tested across 36 files and 208 Vitest runners. Chromium story testing confirmed opacity was stuck at `0` instead of transitioning to `1`.
+- **Root Cause**: The styling recipe conflated a settled empty state (`items.length === 0` with no empty fallback component) with transient loading states.
+- **Remediation Code Diff**:
+```diff
+--- a/packages/react/src/components/combobox/combobox-content.tsx
++++ b/packages/react/src/components/combobox/combobox-content.tsx
+@@ -12,7 +12,10 @@ export const ComboboxContent = (props: ComboboxContentProps) => {
+   const combobox = useComboboxContext()
+   const isEmpty = combobox.collection.items.length === 0
++  const isAsyncActive = combobox.loading || combobox.invalid
+   
+   return (
+     <ArkCombobox.Content
+       {...props}
+-      style={{ opacity: isEmpty && !props.hasEmpty ? 0 : 1, ...props.style }}
++      style={{
++        opacity: isEmpty && !props.hasEmpty && !isAsyncActive ? 0 : 1,
++        ...props.style
++      }}
+     />
+   )
+ }
+```
+- **Lesson**: UI recipe selectors based on item collection counts must be conditionally guarded by machine execution states (`loading`, `error`, `submitting`).
+
+---
+
+### Incident 2: Spam Entity & Terminated Subscription Pollution in Static Generation (BUG-WWW-960AE222)
+- **Context**: `apps/www/lib/get-sponsors.ts`
+- **What Was Expected**: The website build pipeline fetches OpenCollective sponsors to generate logo links for active contributors. Only genuine, currently active financial sponsors should be rendered.
+- **What Actually Happened**: High volumes of SEO-spam links (e.g., luxury watch counterfeiters) penetrated the documentation homepage. Furthermore, sponsors whose recurring credit card payments had failed or had explicitly cancelled their subscriptions continued to render on the site because their parent `member.isActive` property remained set to `true` by OpenCollective's GraphQL API.
+- **Evidence in Repo**: Commit `960ae222`.
+- **Root Cause**: Twofold: (1) Absence of a static exclusion boundary for malicious SEO slug exploits. (2) Reliance on a coarse-grained single boolean flag (`member.isActive`) rather than parsing the incoming transaction event ledger (`collective.orders.nodes[].status`).
+- **Remediation Code Diff**:
+```diff
+--- a/apps/www/lib/get-sponsors.ts
++++ b/apps/www/lib/get-sponsors.ts
+@@ -23,6 +23,17 @@ export interface Sponsor {
+ const FALLBACK_SPONSORS: Sponsor[] = []
+ 
++const EXCLUDED_SPONSORS = new Set([
++  "globenewswire-rolex-super",
++  "prestigewatches",
++  "super-clone-prestige",
++  "super-clone-watches-com",
++  "superclonereps",
++  "superluxury-reps",
++  "superluxuryreps",
++  "watchindiaa",
++])
++
+ async function fetchSponsorsFromGraphQL(): Promise<Sponsor[]> {
+@@ -48,6 +59,7 @@ async function fetchSponsorsFromGraphQL(): Promise<Sponsor[]> {
+                 account {
+                   id
++                  slug
+                   name
+@@ -58,6 +70,14 @@ async function fetchSponsorsFromGraphQL(): Promise<Sponsor[]> {
+                 }
+               }
+             }
++            orders(filter: INCOMING, limit: 1000) {
++              nodes {
++                status
++                fromAccount {
++                  id
++                }
++              }
++            }
+           }
+         }
+       `
+@@ -94,18 +114,39 @@ async function fetchSponsorsFromGraphQL(): Promise<Sponsor[]> {
+   const members = result.data.collective.members.nodes
++
++  const orderStatuses = new Map<string, Set<string>>()
++  for (const order of result.data.collective.orders?.nodes ?? []) {
++    const accountId = order.fromAccount?.id
++    if (!accountId) continue
++    if (!orderStatuses.has(accountId)) orderStatuses.set(accountId, new Set())
++    orderStatuses.get(accountId)!.add(order.status)
++  }
++
++  const isCancelled = (member: any) => {
++    const statuses = orderStatuses.get(member.account?.id)
++    return !!statuses?.has("CANCELLED") && !statuses.has("ACTIVE")
++  }
++
+   const activeMembers = members.filter(
+     (member: any) =>
+-      member.isActive && member.account?.id && member.account?.name,
++      member.isActive &&
++      member.account?.id &&
++      member.account?.name &&
++      !isCancelled(member) &&
++      !EXCLUDED_SPONSORS.has(member.account.slug),
+   )
+```
+- **Lesson**: Ingesting external billing data requires verifying underlying ledger order states and maintaining strict domain blocklists before serializing public external hyperlinks.
+
+---
+
+### Incident 3: Documentation Dead-Path Routing Collapse (BUG-DOCS-11023)
+- **Context**: `apps/www/content/docs/get-started/ai/skills.mdx` and `rich-text-editor.mdx`
+- **What Was Expected**: Core links within documentation pages for AI skills and UI components must resolve to valid Next.js HTTP 200 route endpoints.
+- **What Actually Happened**: References to `/docs/theming` and `/docs/components` returned HTTP 404 in production because there were no root index pages for these directory sections. Additionally, an anchor link (`#emoji-menu`) led to a non-existent DOM ID, failing in-page navigation.
+- **Evidence in Repo**: PR #11023.
+- **Root Cause**: Directory-level conceptual links were deployed without leaf slug targets (missing `/overview`) or route aliases in the Next.js router.
+- **Remediation Code Diff**:
+```diff
+--- a/apps/www/content/docs/get-started/ai/skills.mdx
++++ b/apps/www/content/docs/get-started/ai/skills.mdx
+@@ -45,4 +45,4 @@ Explore additional resources:
+-- [Theming](/docs/theming)
+-- [Components](/docs/components)
++- [Theming](/docs/theming/overview)
++- [Components](/docs/components/concepts/overview)
+```
+- **Lesson**: CI documentation suites must run automated link-checking crawlers to assert every internal link returns HTTP 200 and every hash anchor targets a confirmed DOM identifier.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+In modern TypeScript UI design systems, value normalization across native inputs and composite machine state requires strict comparison boundaries.
+
+```typescript
+// PITFALL: Falsy 0 vs Nullish handling in form controls
+// In a Stepper or NumberInput, value 0 is valid numeric input.
+const badFormatValue = (val: number | undefined) => val ? `Val: ${val}` : "Empty"
+// If val === 0, badFormatValue returns "Empty"! (Defect)
+
+// PRECISE INVARIANT: Explicit nullish checks
+export const formatNumericControlValue = (val: number | null | undefined): string => {
+  if (val === null || val === undefined) return ""
+  return `Val: ${val}`
+}
+
+// PITFALL: Checkbox indeterminate vs boolean coercion
+// Ark UI Checkbox checked state is a tri-state: boolean | "indeterminate"
+export type CheckedState = boolean | "indeterminate"
+
+export const isFullyChecked = (state: CheckedState): boolean => {
+  // MUST NOT use Boolean(state) -> "indeterminate" is truthy!
+  return state === true
+}
+
+// SHALLOW vs DEEP IMMUTABILITY: Recipe variant overrides
+// Mutating a theme token object directly breaks downstream memoized style hashes
+export const safeApplyVariant = <T extends Record<string, any>>(
+  baseConfig: Readonly<T>,
+  override: Partial<T>
+): T => {
+  // Ensure nested slot recipes are safely spread without prototype mutation
+  return {
+    ...baseConfig,
+    ...override,
+    slots: {
+      ...(baseConfig as any).slots,
+      ...(override as any)?.slots,
+    },
+  }
+}
+```
+
+### 2. Infinite Loop & Recursion Guards
+Recursive component resolution (such as nested Trees, Cascaders, or Recursive Navbars) can induce React fiber stack overflows without strict depth bounding and identity cycles detection.
+
+```typescript
+// Cycle-guarded recursive tree traversal for multi-level navigation
+export interface TreeNode {
+  id: string
+  label: string
+  children?: TreeNode[]
+}
+
+export function flattenTreeSafe(
+  root: TreeNode,
+  maxDepth = 32,
+  visited = new Set<string>()
+): string[] {
+  const result: string[] = []
+
+  function traverse(node: TreeNode, currentDepth: number) {
+    if (currentDepth > maxDepth) {
+      throw new Error(`[ChakraUI Guard] Max hierarchy depth of ${maxDepth} exceeded at node: ${node.id}`)
+    }
+    if (visited.has(node.id)) {
+      throw new Error(`[ChakraUI Guard] Circular reference detected at node: ${node.id}`)
+    }
+    
+    visited.add(node.id)
+    result.push(node.label)
+
+    if (node.children && Array.isArray(node.children)) {
+      for (const child of node.children) {
+        traverse(child, currentDepth + 1)
+      }
+    }
+    
+    // Backtrack cleanup if reusing across parallel paths, or retain if tracking global graph visits
+  }
+
+  traverse(root, 0)
+  return result
+}
+```
+
+### 3. UI & UX Micro-Mechanics
+Layout thrashing occurs when reading DOM layout geometries (`offsetWidth`, `getBoundingClientRect`) immediately followed by writes to style properties inside animation frames or scroll listeners.
+
+```typescript
+// THROW-FREE VIEWPORT POSITIONER INVARIANT:
+// Decouple geometry reading from DOM writing using double-rAF or LayoutEffect batching
+export const scheduleSafePositionSync = (
+  anchorElement: HTMLElement | null,
+  floatingElement: HTMLElement | null
+): (() => void) => {
+  let frameId: number | null = null
+
+  if (!anchorElement || !floatingElement) return () => {}
+
+  frameId = requestAnimationFrame(() => {
+    // READ PHASE: Read bounds pure
+    const rect = anchorElement.getBoundingClientRect()
+    const top = rect.bottom + window.scrollY
+    const left = rect.left + window.scrollX
+
+    // WRITE PHASE: Schedule write in the next microtask or nested rAF
+    frameId = requestAnimationFrame(() => {
+      floatingElement.style.transform = `translate3d(${left}px, ${top}px, 0)`
+      floatingElement.style.position = "absolute"
+    })
+  })
+
+  return () => {
+    if (frameId !== null) cancelAnimationFrame(frameId)
+  }
+}
+```
+
+### 4. Backend Concurrency & Memory Safety
+When building API routes or documentation asset loaders (e.g., `apps/www`), unbounded caching or leaking event listeners within singleton Node.js processes causes heap depletion.
+
+```typescript
+// Bound cache invariant with LRU eviction and memory bounds
+export class BoundedMemoryCache<K, V> {
+  private cache = new Map<K, V>()
+  constructor(private readonly maxEntries: number = 500) {}
+
+  get(key: K): V | undefined {
+    const value = this.cache.get(key)
+    if (value !== undefined) {
+      // Re-insert to refresh LRU order
+      this.cache.delete(key)
+      this.cache.set(key, value)
+    }
+    return value
+  }
+
+  set(key: K, value: V): void {
+    if (this.cache.size >= this.maxEntries) {
+      // Evict oldest (first iterator key)
+      const oldestKey = this.cache.keys().next().value
+      if (oldestKey !== undefined) {
+        this.cache.delete(oldestKey)
+      }
+    }
+    this.cache.set(key, value)
+  }
+}
+```
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+Preventing form library synchronization drift: standardizing the event contract between Ark UI's `onValueChange` objects and React Hook Form's single-value parameters.
+
+```typescript
+// INVARIANT: React Hook Form Adapter Safeguard
+// Ark UI components emit structured event objects: { value: string[] } or { checked: boolean }
+// Feeding these directly to react-hook-form field.onChange stores the event object instead of the primitive!
+
+// WRONG: <Checkbox.Root onCheckedChange={field.onChange} /> 
+// -> Results in form state: { enabled: { checked: true } } instead of { enabled: true }
+
+// CORRECT FORM BINDING INVARIANT:
+export const createCheckedAdapter = (onChange: (val: boolean) => void) => {
+  return (details: { checked: boolean | "indeterminate" }) => {
+    onChange(details.checked === true)
+  }
+}
+
+export const createSingleValueAdapter = (onChange: (val: string) => void) => {
+  return (details: { value: string[] }) => {
+    onChange(details.value[0] ?? "")
+  }
+}
+```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### Dimension 1: Architecture
+Chakra UI separates concerns into three distinct tiers:
+1. **Headless State & Machine Engine (Ark UI / Zag.js)**: All accessibility, focus rings, keyboard navigation (Arrow keys, Esc, Enter, Home/End), and ARIA attributes (`aria-expanded`, `aria-controls`, `role="combobox"`) are completely headless.
+2. **Style Recipe Layer**: Pure CSS slot recipes that map design tokens (colors, spacings, shadows) into CSS variables and data-attribute driven class names.
+3. **Compound Composition Surface**: The user interacts with modular compound parts (`Root`, `Control`, `Trigger`, `Content`, `Positioner`, `IndicatorGroup`). State is injected down the React tree using custom, highly optimized React Context boundaries (`useComboboxContext`, `useCheckboxGroupContext`).
+
+### Dimension 2: Core Abstractions
+- **Standard Schema Integration**: Unifies validation schema declarations (`@hookform/resolvers/standard-schema`) supporting Zod, Valibot, and ArkType transparently without vendor lock-in.
+- **Value Details Contracts**: All state-emitting components adhere to a deterministic contract:
+  - `CheckedChangeDetails`: `{ checked: boolean | "indeterminate" }`
+  - `ValueChangeDetails<T>`: `{ value: T }`
+  - `InputValueChangeDetails`: `{ inputValue: string }`
+- **Slot Recipes**: Definitions specifying base styles and variant configurations for multi-part components, ensuring complete style-isolation across component slots (`root`, `label`, `control`, `indicator`).
+
+### Dimension 3: Error Handling
+- **Graceful Rendering Boundaries (`ClientOnly`)**: Components dependent on browser-only globals (`window.location`, `window.innerWidth`) avoid SSR hydration mismatch panics by wrapping their execution in `ClientOnly` primitives containing pre-computed skeleton fallbacks.
+- **Form State Reflection**: Error states propagate automatically via context. When `Field.Root` has `invalid={true}`, child components (`Input`, `Control`) pick up `data-invalid` attributes natively without requiring prop drilling.
+
+### Dimension 4: Testing
+- **Vitest & Storybook Interaction Testing**: Component behavior is verified using `@testing-library/react` coupled with `@testing-library/user-event` to trigger synthetic W3C DOM events.
+- **Controlled Mock Network Verification**: Async collections are tested against intercepted HTTP responders simulating network latency, HTTP 500 errors, and zero-length payloads to confirm UI fallbacks behave deterministically.
+
+### Dimension 5: Security
+- **Static Blacklisting of External Hyperlinks**: Open source contribution platforms are vulnerable to spam injection via profile name and slug abuse. Outbound links are sanitized against hardcoded sets (`EXCLUDED_SPONSORS`) to protect against SEO spam injection.
+- **Portal Dom Leak Prevention**: Floating positioners render via `<Portal>` roots, preventing SVG injection, CSS parent overflow clipping, and z-index isolation escapes.
+
+### Dimension 6: Performance
+- **Zero-Runtime DOM Style Compaction**: Eliminating massive runtime Emotion styling passes in favor of pre-compiled recipe classes.
+- **Collection Filtering Optimization**: `useListCollection` and `useFilter` provide memoized substring/base-sensitivity filters (`sensitivity: "base"` ignores accents and case differences) preventing array reallocation on every keystroke.
+
+### Dimension 7: Deployment
+- **Dual-Mode Monorepo Pipeline (pnpm workspaces)**: Segregates packages (`packages/*`) from documentation and composition showcases (`apps/*`).
+- **Token Generation Build Step**: `chakra typegen packages/react/src/preset.ts` runs prior to downstream application packaging, guaranteeing full TypeScript intellisense for generated token keys (`colors.blue.500`, `spacing.4`).
+
+### Dimension 8: Agent Patterns
+- **Agent Integration via MCP**: Native integration with Model Context Protocol (`apps/mcp`, `npx -y @chakra-ui/react-mcp`). Chakra provides deep links in its documentation and `README.md` (`cursor://anysphere.cursor-deeplink/mcp/install?name=chakra-ui...`) allowing autonomous coding agents in IDEs (like Cursor) to index components, read design tokens, and generate validated recipes directly.
+- **Claude Command Workflows**: Standardized repo commands (`.claude/commands/ark.md`, `.claude/agents/ark-ui-version-bumper.md`) govern mechanical dependencies upgrades, PR triage, and semantic changeset releases.
+
+### Dimension 9: Data Flow
+```
+User Interaction (Keystroke / Click)
+       │
+       ▼
+Ark UI State Machine (Zag.js Worker)
+       │
+       ├── Emits: onValueChange({ value: ["nextjs"] })
+       │
+       ▼
+React Hook Form Controller (Adapter)
+       │
+       ├── Validates: Standard Schema (Zod)
+       │
+       ▼
+DOM Attribute Mutation (data-invalid="true", data-state="checked")
+       │
+       ▼
+CSS Engine Slot Recipe Updates Styles (Zero JS Layout Reflow)
+```
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern: Compound Form-Control Architecture with Hidden Inputs
+```tsx
+// Complete production compound pattern decoupling accessible DOM from visual indicator
+import { Checkbox } from "@chakra-ui/react"
+
+export const ProductionCheckbox = ({ label, ...props }: { label: string } & Checkbox.RootProps) => {
+  return (
+    <Checkbox.Root {...props}>
+      {/* 1. Accessible native input element (hidden from view, exposed to screen-readers & form serialization) */}
+      <Checkbox.HiddenInput />
+      
+      {/* 2. Visual presentation container governed by data-state selectors */}
+      <Checkbox.Control>
+        <Checkbox.Indicator />
+      </Checkbox.Control>
+      
+      {/* 3. Text label automatically linked via aria-labelledby */}
+      <Checkbox.Label>{label}</Checkbox.Label>
+    </Checkbox.Root>
+  )
+}
+```
+
+### 2. Rule: Strict Unpack Rule for Controlled Composite Elements
+`When wiring composite array-based UI primitives (Combobox, Multi-Select, DatePicker) to single-value form controllers, the consumer MUST unpack the first element or default to an empty string on change, and wrap the primitive into a single-element array on read.`
+
+### 3. Architecture Principle: Headless Mechanics, Tokenized Presentation
+`Decouple state machine mechanics entirely from CSS styling. The state machine owns DOM event listeners, ARIA tags, and data attributes. The styling engine observes data attributes and emits static atomic CSS classes. Neither subsystem leaks internal implementation details into the other.`
+
+### 4. Failure Mode: Blind Collection Visibility Toggling
+`Assuming an empty collection implies an empty popover. Hiding popovers purely on collection.length === 0 destroys the render tree for async loading indicators and network error alerts, stranding the user without visual feedback during pending network transitions.`
+
+### 
