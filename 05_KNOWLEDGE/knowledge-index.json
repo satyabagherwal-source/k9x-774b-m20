@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T10:54:27.956Z",
+  "last_updated": "2026-10-23T11:05:34.223Z",
   "total_verified_learnings": 1074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -470,8 +470,8 @@
       "slug": "adobe-react-spectrum",
       "platform": "github",
       "source_url": "https://github.com/adobe/react-spectrum",
-      "source_version": "2eb4e0e9",
-      "content_hash": "177e45d7f929bd156a23c7d0aad339cbb235a90b4088b2fabbe12b1b9c723a4f",
+      "source_version": "d5fb723a",
+      "content_hash": "1c545c8b828c65b430113e9a3f924e5421cc921c5d073e251dd54cda1f051ea3",
       "dossier_path": "07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md",
       "promoted_rules": [
@@ -489,6 +489,11 @@
           "number": 3564,
           "title": "select): Select component keyboard type-ahead (#10006)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3893,
+          "title": "usePress): only skip Enter default prevention on macOS for Control + Enter (#108",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -496,7 +501,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T16:44:59.452Z",
+      "verified_at": "2026-10-23T11:05:28.154Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4893,14 +4898,19 @@
       "slug": "callstack-react-native-paper",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-paper",
-      "source_version": "ce72155b",
-      "content_hash": "875861b1d2275902e4eafd58618e6e4e2e93900f3d054b070cd1cf3cc7a24ec3",
+      "source_version": "eb4fcbeb",
+      "content_hash": "64a95f95e6198df956f4fa0fd9946899ce7293b0b6ec155beaae3a5ebebf8381",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "promoted_rules": [
         {
           "number": 1790,
           "title": "portal): replay queued portal operations in order (#5048)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3895,
+          "title": "automate example app publishing to app stores (#5118)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -4909,7 +4919,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:35:41.727Z",
+      "verified_at": "2026-10-23T11:05:34.213Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41863,14 +41873,19 @@
       "slug": "salvo-rs-salvo",
       "platform": "github",
       "source_url": "https://github.com/salvo-rs/salvo",
-      "source_version": "071cc161",
-      "content_hash": "cfac0697b785410e90ef52598b6a54602fddd4fc348f056c40604d2f11274a64",
+      "source_version": "62a4f53b",
+      "content_hash": "e856536161be648df257a21d8f06bb1e059f99edf5df12cfa1730489f03f214f",
       "dossier_path": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "promoted_rules": [
         {
           "number": 2090,
           "title": "oapi): release the METADATA_REGISTRY read guard before recursing (#1714)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3894,
+          "title": "middleware boundaries and multipart upload handling (#1722)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -41879,7 +41894,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:53:41.629Z",
+      "verified_at": "2026-10-23T11:05:30.693Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115035,6 +115050,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T10:54:27.946Z"
+    },
+    "rule-3893": {
+      "learning_id": "rule-3893",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3893,
+      "title": "usePress): only skip Enter default prevention on macOS for Control + Enter (#108",
+      "source_url": "https://github.com/adobe/react-spectrum",
+      "source_version": "d5fb723a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:05:28.154Z"
+    },
+    "rule-3894": {
+      "learning_id": "rule-3894",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3894,
+      "title": "middleware boundaries and multipart upload handling (#1722)",
+      "source_url": "https://github.com/salvo-rs/salvo",
+      "source_version": "62a4f53b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:05:30.693Z"
+    },
+    "rule-3895": {
+      "learning_id": "rule-3895",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3895,
+      "title": "automate example app publishing to app stores (#5118)",
+      "source_url": "https://github.com/callstack/react-native-paper",
+      "source_version": "eb4fcbeb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:05:34.213Z"
     }
   },
   "aliases": {

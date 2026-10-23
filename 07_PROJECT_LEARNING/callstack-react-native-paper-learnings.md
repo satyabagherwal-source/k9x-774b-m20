@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source**: github ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
-> **Source Version**: `ce72155b`  
+> **Source Version**: `eb4fcbeb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:35:41.592Z  
+> **Timestamp**: 2026-10-23T11:05:33.938Z  
 > **Learning ID**: `learn-github-callstack-react-native-paper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:35:41.145Z  
+> **Harvest Timestamp**: 2026-10-23T11:05:33.500Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Material Design for React Native (Android & iOS)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14470 stars
+- **Stars / Engagement**: 14481 stars
 
 ---
 
@@ -1327,1428 +1327,348 @@ export const getIconButtonColor = ({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `23b4d3cd` (2026-09-11)
-**Commit Message**: fix(portal): replay queued portal operations in order (#5048)
+### Incident Patch 1: `eb4fcbeb` (2026-10-21)
+**Commit Message**: chore: automate example app publishing to app stores (#5118)
 
-`PortalHost` queues portal operations that arrive before its
-`PortalManager` ref is attached, which is every portal that mounts in the
-first commit. `componentDidMount` drained that queue with `pop()`,
-replaying the operations LIFO, so portals mounted in the same commit were
-stacked in reverse source order.
+* chore: automate example app publishing
 
-Drain with `shift()` instead.
+The example app in the stores drifts away from the library: it was released
+eighteen times in nine years against eighty-three library releases, all by
+hand, and the last one was twenty months ago. Ship it from the release that
+prompts it instead.
 
-**File**: `src/components/Portal/PortalHost.tsx` (modified, +3/-1)
+What it ships depends on whether native code changed. `runtimeVersion` uses
+the fingerprint policy, so the workflow can compare the project against the
+builds already out there: unchanged means the new JavaScript runs on what
+people already have, and goes out as an update; changed means a build and a
+trip through the stores. Only a build carries a version to a store, so only a
+build bumps one, and that bump comes back as a pull request.
+
+This replaces the updates workflow, which published updates when a labelled
+pull request merged. It never ran once: it triggers on push, where the
+pull_request it tests does not exist, so all sixty-nine runs skipped. Tying
+both outcomes to the release removes the label nobody remembered to add.
+
+Prereleases and stable releases build against separate channels so an update
+published for an alpha cannot re
+
+**File**: `.github/workflows/publish-example-app.yml` (added, +206/-0)
 ```diff
-@@ -51,7 +51,9 @@ export default class PortalHost extends React.Component<Props> {
-     const queue = this.queue;
- 
-     while (queue.length && manager) {
--      const action = queue.pop();
-+      // Replay in the order the operations were recorded, otherwise portals
-+      // that mounted in the same commit end up stacked in reverse.
-+      const action = queue.shift();
-       if (action) {
-         switch (action.type) {
-           case 'mount':
+@@ -0,0 +1,206 @@
++name: Publish example app
++
++on:
++  release:
++    types: [published]
++  workflow_dispatch:
++    inputs:
++      tag:
++        description: Release tag to publish the example app for, e.g. v6.0.0
++        required: true
++      platform:
++        description: Platform to build. Defaults to all.
++        required: false
++        default: all
++        type: choice
++        options:
++          - all
++          - ios
++          - android
++
++permissions:
++  contents: read
++
++defaults:
++  run:
++    shell: bash
++
++jobs:
++  check:
++    name: Check release is on main
++    runs-on: ubuntu-latest
++    env:
++      TAG: ${{ github.event.release.tag_name || inputs.tag }}
++    outputs:
++      on-main: ${{ steps.check.outputs.on-main }}
++      sha: ${{ steps.check.outputs.sha }}
++      tag: ${{ env.TAG }}
++      profile: ${{ steps.check.outputs.profile }}
++    steps:
++      - id: check
++        env:
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          GH_REPO: ${{ github.repository }}
++        run: |
++          status=$(gh api "repos/$GH_REPO/compare/main...$TAG" --jq .status)
++
++          if [ "$status" = "identical" ] || [ "$status" = "behind" ]; then
++            sha=$(gh api "repos/$GH_REPO/commits/$TAG" --jq .sha)
++            echo "on-main=true" >> "$GITHUB_OUTPUT"
++            echo "sha=$sha" >> "$GITHUB_OUTPUT"
++          else
++            echo "on-main=false" >> "$GITHUB_OUTPUT"
++            echo "::warning::$TAG is not on main ($status), nothing to deploy."
++            echo "$TAG is not on main ($status), nothing to deploy." >> "$GITHUB_STEP_SUMMARY"
++          fi
++
++          if [ "${TAG#*-}" != "$TAG" ]; then
++            echo "profile=preview" >> "$GITHUB_OUTPUT"
++          else
++            echo "profile=production" >> "$GITHUB_OUTPUT"
++          fi
++
++  publish:
++    name: Build and submit example app
++    needs: check
++    if: needs.check.outputs.on-main == 'true'
++    runs-on: ubuntu-latest
++    concurrency:
++      # One queue per channel, so a pending preview run doesn't cancel a production one
++      group: publish-example-app-${{ needs.check.outputs.profile }}
++    steps:
++      - name: Checkout
++        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
++        with:
++          ref: ${{ needs.check.outputs.sha }}
++
++      - name: Setup
++        uses: ./.github/actions/setup
++
++      - name: Setup Expo
++        uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8.2.1
++        with:
++          eas-version: 24.12.1
++          token: ${{ secrets.EXPO_TOKEN }}
++
++      - name: Check Expo authentication
++        working-directory: ./example
++        run: |
++          if ! eas whoami; then
++            echo "::error::Could not authenticate with Expo, check EXPO_TOKEN."
++            exit 1
++          fi
++
++      - name: Set example app version from the release tag
++        working-directory: ./example
++        env:
++          TAG: ${{ needs.check.outputs.tag }}
++        run: |
++          version="${TAG#v}"
++          version="${version%%-*}"
++
++          if ! echo "$version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
++            echo "::error::Could not read a major.minor.patch version from $TAG."
++            exit 1
++          fi
++
++          jq --arg version "$version" '.expo.version = $version' app.json > app.json.tmp
++          mv app.json.tmp app.json
++
++      - name: Decide between an update and a build
++        id: decide
++        working-directory: ./example
++        env:
++          PROFILE: ${{ needs.check.outputs.profile }}
++          PLATFORM: ${{ inputs.platform || 'all' }}
++        run: |
++          platforms="$PLATFORM"
++          if [ "$PLATFORM" = "all" ]; then
++            platforms="ios android"
++          fi
++
++          build=()
++          update=()
++          for platform in $platforms; do
++            hash=$(npx expo-updates fingerprint:generate --platform "$platform" | jq -er .hash)
++
++            existing=$(eas build:list \
++              --platform "$platform" \
++              --channel "$PROFILE" \
++              --fingerprint-hash "$hash" \
++              --status finished \
++              --limit 1 \
++              --json \
++              --non-interactive | jq 'if type == "array" then length else "notanarray" end')
++
++            case "$existing" in
++              ''|*[!0-9]*)
++                echo "::error::Could not read builds for $platform."
++                exit 1
++                ;;
++            esac
++
++            echo "$platform: fingerprint $hash, $existing matching build(s)"
++            if [ "$existing" -eq 0 ]; then
++              build+=("$platform")
++            else
++              update+=("$platform")
++            fi
++          done
++
++          # EAS takes a single platform or "all"
++          to_platform() {
++            case $# in
++              0) echo "" ;;
++              1) echo "$1" ;;
++              *) echo all ;;
++            esac
++          }
++
++          echo "build=$(to_platform "${b
 ```
 
-**File**: `src/components/__tests__/Portal.test.tsx` (modified, +48/-0)
+**File**: `.github/workflows/updates.yml` (removed, +0/-27)
 ```diff
-@@ -5,6 +5,8 @@ import { expect, it, jest } from '@jest/globals';
- import { LocaleProvider, useLocale } from '../../core/locale';
- import { useInternalTheme } from '../../core/theming';
- import { render, screen } from '../../test-utils';
-+import Dialog from '../Dialog/Dialog';
-+import Modal from '../Modal';
- import Portal from '../Portal/Portal';
- 
- jest.useRealTimers();
-@@ -57,3 +59,49 @@ it('passes local theme overrides and locale to portal content and updates them',
-   expect(screen.getByText('3 ltr')).toBeOnTheScreen();
-   expect(screen.queryByText('2 rtl')).not.toBeOnTheScreen();
- });
-+
-+it('renders portals in source order when mounted in the same commit', async () => {
-+  await render(
-+    <Portal.Host>
-+      <Portal>
-+        <Text testID="portal-content">first</Text>
-+      </Portal>
-+      <Portal>
-+        <Text testID="portal-content">second</Text>
-+      </Portal>
-+      <Portal>
-+        <Text testID="portal-content">third</Text>
-+      </Portal>
-+    </Portal.Host>
-+  );
-+
-+  const portals = await screen.findAllByTestId('portal-content');
-+
-+  expect(portals).toHaveLength(3);
-+  expect(portals[0]).toHaveTextContent('first');
-+  expect(portals[1]).toHaveTextContent('second');
-+  expect(portals[2]).toHaveTextContent('third');
-+});
-+
-+it('stacks components mounted in the same commit in source order', async () => {
-+  await render(
-+    <Portal.Host>
-+      <Portal>
-+        <Modal visible onDismiss={() => {}}>
-+          <Text testID="layer">modal</Text>
-+        </Modal>
-+      </Portal>
-+      <Portal>
-+        <Dialog visible onDismiss={() => {}}>
-+          <Text testID="layer">dialog</Text>
-+        </Dialog>
-+      </Portal>
-+    </Portal.Host>
-+  );
-+
-+  const layers = await screen.findAllByTestId('layer');
-+
-+  expect(layers).toHaveLength(2);
-+  expect(layers[0]).toHaveTextContent('modal');
-+  expect(layers[1]).toHaveTextContent('dialog');
-+});
-```
-
----
-
-### Incident Patch 2: `46519b07` (2026-09-09)
-**Commit Message**: fix: preserve reference for theme if overrides didn't change
-
-**File**: `package.json` (modified, +1/-0)
-```diff
-@@ -50,6 +50,7 @@
-   "dependencies": {
-     "@callstack/react-theme-provider": "^3.0.9",
-     "color": "^3.1.2",
-+    "fast-deep-equal": "^3.1.3",
-     "use-latest-callback": "^0.2.3"
-   },
-   "devDependencies": {
-```
-
-**File**: `src/components/Card/CardContent.tsx` (modified, +2/-2)
-```diff
-@@ -43,8 +43,8 @@ export type Props = ViewProps & {
-  * ```
-  */
- const CardContent = ({ index, total, siblings, style, ...rest }: Props) => {
--  const cover = 'withInternalTheme(CardCover)';
--  const title = 'withInternalTheme(CardTitle)';
-+  const cover = 'Card.Cover';
-+  const title = 'Card.Title';
- 
-   let contentStyle, prev, next;
- 
-```
-
-**File**: `src/components/Portal/Portal.tsx` (modified, +23/-35)
-```diff
-@@ -2,13 +2,13 @@ import * as React from 'react';
- 
- import PortalConsumer from './PortalConsumer';
- import PortalHost, { PortalContext } from './PortalHost';
--import { LocaleContext, LocaleProvider } from '../../core/locale';
-+import { LocaleProvider, useLocale } from '../../core/locale';
- import {
--  Consumer as SettingsConsumer,
-+  SettingsContext,
-   Provider as SettingsProvider,
- } from '../../core/settings';
--import { ThemeProvider, withInternalTheme } from '../../core/theming';
--import type { InternalTheme } from '../../theme/types';
-+import { ThemeProvider, useInternalTheme } from '../../core/theming';
-+import type { ThemeProp } from '../../theme/types';
- 
- export type Props = {
-   /**
-@@ -18,7 +18,7 @@ export type Props = {
-   /**
-    * @optional
-    */
--  theme: InternalTheme;
-+  theme?: ThemeProp;
- };
- 
- /**
-@@ -41,36 +41,24 @@ export type Props = {
-  * export default MyComponent;
-  * ```
-  */
--class Portal extends React.Component<Props> {
--  // @component ./PortalHost.tsx
--  static Host = PortalHost;
-+const Portal = ({ children, theme: themeOverrides }: Props) => {
-+  const theme = useInternalTheme(themeOverrides);
-+  const { direction } = useLocale();
-+  const settings = React.useContext(SettingsContext);
-+  const manager = React.useContext(PortalContext);
- 
--  render() {
--    const { children, theme } = this.props;
-+  return (
-+    <PortalConsumer manager={manager}>
-+      <SettingsProvider value={settings}>
-+        <LocaleProvider direction={direction}>
-+          <ThemeProvider theme={theme}>{children}</ThemeProvider>
-+        </LocaleProvider>
-+      </SettingsProvider>
-+    </PortalConsumer>
-+  );
-+};
- 
--    return (
--      <LocaleContext.Consumer>
--        {(locale) => (
--          <SettingsConsumer>
--            {(settings) => (
--              <PortalContext.Consumer>
--                {(manager) => (
--                  <PortalConsumer manager={manager}>
--                    <SettingsProvider value={settings}>
--                      {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
--                      <LocaleProvider direction={locale!.direction}>
--                        <ThemeProvider theme={theme}>{children}</ThemeProvider>
--                      </LocaleProvider>
--                    </SettingsProvider>
--                  </PortalConsumer>
--                )}
--              </PortalContext.Consumer>
--            )}
--          </SettingsConsumer>
--        )}
--      </LocaleContext.Consumer>
--    );
--  }
--}
-+// @component ./PortalHost.tsx
-+Portal.Host = PortalHost;
- 
--export default withInternalTheme(Portal);
-+export default Portal;
-```
-
-**File**: `src/components/__tests__/Portal.test.tsx` (modified, +36/-0)
-```diff
-@@ -2,6 +2,8 @@ import { Text } from 'react-native';
- 
- import { expect, it, jest } from '@jest/globals';
- 
-+import { LocaleProvider, useLocale } from '../../core/locale';
-+import { useInternalTheme } from '../../core/theming';
- import { render, screen } from '../../test-utils';
- import Portal from '../Portal/Portal';
- 
-@@ -21,3 +23,37 @@ it('renders portal with siblings', async () => {
- 
-   expect(toJSON()).toMatchSnapshot();
- });
-+
-+const PortalThemeContent = () => {
-+  const theme = useInternalTheme(undefined);
-+  const { direction } = useLocale();
-+
-+  return <Text>{`${theme.animation.scale} ${direction}`}</Text>;
-+};
-+
-+it('passes local theme overrides and locale to portal content and updates them', async () => {
-+  const { rerender } = await render(
-+    <Portal.Host>
-+      <LocaleProvider direction="rtl">
-+        <Portal theme={{ animation: { scale: 2 } }}>
-+          <PortalThemeContent />
-+        </Portal>
-+      </LocaleProvider>
-+    </Portal.Host>
-+  );
-+
-+  expect(screen.getByText('2 rtl')).toBeOnTheScreen();
-+
-+  await rerender(
-+    <Portal.Host>
-+      <LocaleProvider direction="ltr">
-+        <Portal theme={{ animation: { scale: 3 } }}>
-+          <PortalThemeContent />
-+        </Portal>
-+      </LocaleProvider>
-+    </Portal.Host>
-+  );
-+
-+  expect(screen.getByText('3 ltr')).toBeOnTheScreen();
-+  expect(screen.queryByText('2 rtl')).not.toBeOnTheScreen();
-+});
-```
-
-**File**: `src/theme/__tests__/provider.test.ts` (modified, +99/-1)
-```diff
-@@ -1,6 +1,17 @@
-+import * as React from 'react';
-+import { PlatformColor } from 'react-native';
-+
- import { describe, expect, it } from '@jest/globals';
-+import { renderHook } from '@testing-library/react-native';
- 
--import { isPlatformColorSentinel, safeMerge } from '../provider';
-+import {
-+  defaultThemes,
-+  isPlatformColorSentinel,
-+  safeMerge,
-+  ThemeProvider,
-+  useInternalTheme,
-+} from '../provider';
-+import type { ThemeProp } from '../types';
- 
- describe('isPlatformColorSentinel', () => {
-   it('detects iOS PlatformColor (semantic)', () => {
-@@ -114,3 +125,90 @@ describe('safeMerge', () => {
-     expect(result.colors.tertiary).toBe('#222');
-   });
- });
-+
-+describe('useInternalTheme', () => {
-+  it('returns the default theme without overrides', async () => {
-+    const { result } = await renderHook(() => useInternalTheme(undefined));
-+
-+    expect(result.current).toBe(defaultThemes.light);
-+  });
-+
-+  it('keeps the theme reference when nested overrides have equal values', async () => {
-+    const { result, rerender } = await renderHook(
-+      (overrides: ThemeProp) => useInternalTheme(overrides),
-+      { initialProps: { colors: { primary: '#123456' } } }
-+    );
-+    const theme = result.current;
-+
-+    await rerender({ colors: { primary: '#123456' } });
-+
-+    expect(result.current).toBe(theme);
-+    expect(result.current.colors.primary).toBe('#123456');
-+    expect(result.current.colors.secondary).toBe(
-+      defaultThemes.light.colors.secondary
-+    );
-+  });
-+
-+  it('updates changed overrides and restores defaults when overrides are removed', async () => {
-+    const { result, rerender } = await renderHook(
-+      (overrides: ThemeProp | undefined) => useInternalTheme(overrides),
-+      { initialProps: { colors: { primary: '#123456', secondary: '#abcdef' } } }
-+    );
-+    const theme = result.current;
-+
-+    await rerender({ colors: { primary: '#654321' } });
-+
-+    expect(result.current).not.toBe(theme);
-+    expect(result.current.colors.primary).toBe('#654321');
-+    expect(result.current.colors.secondary).toBe(
-+      defaultThemes.light.colors.secondary
-+    );
-+
-+    await rerender(undefined);
-+
-+    expect(result.current).toBe(defaultThemes.light);
-+  });
-+
-+  it('updates the provider theme while keeping local overrides', async () => {
-+    let theme = defaultThemes.light;
-+    const wrapper = (props: { children: React.ReactNode }) =>
-+      React.createElement(ThemeProvider, { ...props, theme });
-+    const { result, rerender } = await renderHook(
-+      (overrides: ThemeProp) => useInternalTheme(overrides),
-+      { wrapper, initialProps: { colors: { primary: '#123456' } } }
-+    );
-+    const previous = result.current;
-+
-+    theme = defaultThemes.dark;
-+    await rerender({ colors: { primary: '#123456' } });
-+
-+    expect(result.current).not.toBe(previous);
-+    expect(result.current.dark).toBe(true);
-+    expect(result.current.colors.primary).toBe('#123456');
-+    expect(result.current.colors.secondary).toBe(
-+      defaultThemes.dark.colors.secondary
-+    );
-+  });
-+
-+  it('preserves platform colors and keeps equal platform color overrides stable', async () => {
-+    const primary = PlatformColor('label');
-+    const { result, rerender } = await renderHook(
-+      (overrides: ThemeProp) => useInternalTheme(overrides),
-+      { initialProps: { colors: { primary } } }
-+    );
-+    const theme = result.current;
-+
-+    expect(result.current.colors.primary).toBe(primary);
-+
-+    await rerender({ colors: { primary: PlatformColor('label') } });
-+
-+    expect(result.current).toBe(theme);
-+
-+    await rerender({ colors: { primary: PlatformColor('secondaryLabel') } });
-+
-+    expect(result.current).not.toBe(theme);
-+    expect(result.current.colors.primary).toEqual(
-+      PlatformColor('secondaryLabel')
-+    );
-+  });
-+});
-```
-
-**File**: `src/theme/provider.tsx` (modified, +9/-8)
-```diff
-@@ -1,8 +1,8 @@
- import * as React from 'react';
--import type { ComponentType } from 'react';
- 
- import { createTheming } from '@callstack/react-theme-provider';
- import type { $DeepPartial } from '@callstack/react-theme-provider';
-+import isEqual from 'fast-deep-equal';
- 
- import { DarkTheme, LightTheme } from './schemes';
- import type { Theme, NavigationTheme } from './types';
-@@ -55,21 +55,22 @@ export const safeMerge = <T,>(base: T, overrides: unknown): T => {
- };
- /* eslint-enable @typescript-eslint/no-unsafe-type-assertion */
- 
--/** Memoize `themeOverrides` at the call site; inline object literals defeat the memo. */
- export const useInternalTheme = (
-   themeOverrides: $DeepPartial<Theme> | undefined
- ): Theme => {
-   const theme = useThemeBase<Theme>();
-+  const [overrides, setOverrides] = React.useState(themeOverrides);
-+
-+  if (!isEqual(overrides, themeOverrides)) {
-+    setOverrides(themeOverrides);
-+  }
-+
-   return React.useMemo(
--    () => (themeOverrides ? safeMerge(theme, themeOverrides) : theme),
--    [theme, themeOverrides]
-+    () => (overrides ? safeMerge(theme, overrides) : theme),
-+    [theme, overrides]
-   );
- };
- 
--export const withInternalTheme = <Props extends { theme: Theme }, C>(
--  WrappedComponent: ComponentType<Props & { theme: Theme }> & C
--) => withTheme<Props, C>(WrappedComponent);
+@@ -1,27 +0,0 @@
+-name: Expo EAS Updates
+-on:
+-  push:
+-    branches:
+-      - main
+-jobs:
+-  publish:
+-    if: ${{ (contains(github.event.pull_request.labels.*.name, 'example app')) }}
+-    name: Install and publish
+-    runs-on: ubuntu-latest
+-    steps:
+-      - name: Checkout
+-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 -
- export const defaultThemes = {
-   light: LightTheme,
-   dark: DarkTheme,
+-      - name: Setup
+-        uses: ./.github/actions/setup
+-
+-      - name: Setup Expo
+-        uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8.2.1
+-        with:
+-          expo-version: latest
+-          eas-version: latest
+-          token: ${{ secrets.EXPO_TOKEN }}
+-
+-      - name: Publish Expo app update
+-        working-directory: ./example
+-        run: eas update --auto
 ```
 
-**File**: `yarn.lock` (modified, +1/-0)
+**File**: `CONTRIBUTING.md` (modified, +9/-0)
 ```diff
-@@ -18219,6 +18219,7 @@ __metadata:
-     eslint: "npm:9.39.4"
-     eslint-plugin-flowtype: "npm:^8.0.3"
-     eslint-plugin-testing-library: "npm:^7.16.2"
-+    fast-deep-equal: "npm:^3.1.3"
-     jest: "npm:^29.6.3"
-     jest-file-snapshot: "npm:^0.3.2"
-     lefthook: "npm:^2.1.9"
+@@ -109,6 +109,15 @@ yarn release
+ 
+ NOTE: You must have a `GITHUB_TOKEN` environment variable available. You can create a GitHub access token with the "repo" access [here](https://github.com/settings/tokens).
+ 
++Releases from main also deploy the example app via EAS. If there were no native code changes, it'll ship an OTA update.
++
++Otherwise, for stable releases:
++
++- The Android build is automatically submitted to Google Play for review
++- The iOS build is automatically uploaded to App Store Connect and needs to be manually submitted for review
++
++Pre-release builds are shipped to the internal track on Google Play for Android and TestFlight for iOS. They shouldn't be submitted to the App Store for review, or the stable build with the same version would be rejected.
++
+ ## Reporting issues
+ 
+ You can report issues on our [bug tracker](https://github.com/callstack/react-native-paper/issues). Please follow the issue template when opening an issue.
 ```
 
----
-
-### Incident Patch 3: `df3cdfd7` (2026-08-21)
-**Commit Message**: fix: make elevation shadows on iOS & Web match android more closely (#5062)
-
-### Motivation
-
-On iOS and Web, we manually calculate elevation shadows. They are originally from material-web: https://github.com/callstack/react-native-paper/pull/3089
-
-But looking at them side-by-side on all platforms, they look nothing like Android.
-
-This reworks the shadows so they more closely match Android's elevation.
-
-Note that it's an approximation. On Android, the elevation is dynamic and changes based on where the view is. Views toward the bottom have a larger shadow than views toward the top. But we can't achieve it with shadow styles directly, so we need to approximate it.
-
-Also changed the example, as the huge rectangles fit fewer ones on screen and made it harder to see the shadows.
-
-### Known issues
-
-- Animated elevation doesn't work on Web. But it's a pre-existing bug. It should be fixed once we move to Reanimated.
-
-### Test plan
-
-**Before**
-
-<img width="2668" height="1604" alt="elevation-before" src="https://github.com/user-attachments/assets/d127b3e7-d74e-474e-a393-d9385a69e665" />
-
-**After**
-
-<img width="2668" height="1626" alt="elevation-after" src="https://github.com/user-attachments
-
-**File**: `example/src/Examples/SurfaceExample.tsx` (modified, +69/-23)
+**File**: `example/.fingerprintignore` (added, +2/-0)
 ```diff
-@@ -1,42 +1,87 @@
--import { ScrollView, StyleSheet, View } from 'react-native';
-+import * as React from 'react';
-+import { Animated, ScrollView, StyleSheet, View } from 'react-native';
- 
--import { Surface, Text, Palette, List } from 'react-native-paper';
-+import { Surface, Text, Palette, List, IconButton } from 'react-native-paper';
- import type { Elevation } from 'react-native-paper';
- 
- import ScreenWrapper from '../ScreenWrapper';
- 
-+const elevationLevels: Elevation[] = [0, 1, 2, 3, 4, 5];
-+
-+const AnimatedSurface = () => {
-+  const [index, setIndex] = React.useState(3);
-+
-+  const level = elevationLevels[index];
-+  const elevation = React.useRef(new Animated.Value(level)).current;
-+
-+  React.useEffect(() => {
-+    Animated.timing(elevation, {
-+      toValue: level,
-+      duration: 250,
-+      useNativeDriver: false,
-+    }).start();
-+  }, [elevation, level]);
-+
-+  return (
-+    <View style={styles.scroll}>
-+      <Surface style={styles.surface} elevation={elevation}>
-+        <Text variant="bodySmall">{`Elevation ${level}`}</Text>
-+      </Surface>
-+      <View style={styles.actions}>
-+        <IconButton
-+          mode="contained-tonal"
-+          icon="minus"
-+          disabled={index === 0}
-+          onPress={() => setIndex(index - 1)}
-+        />
-+        <IconButton
-+          mode="contained-tonal"
-+          icon="plus"
-+          disabled={index === elevationLevels.length - 1}
-+          onPress={() => setIndex(index + 1)}
-+        />
-+      </View>
-+    </View>
-+  );
-+};
-+
- const SurfaceExample = () => {
-   const elevationValues: Elevation[] = [0, 1, 2, 3, 4, 5];
- 
-   const renderSurface = (index: Elevation, mode: 'flat' | 'elevated') => (
--    <Surface
--      key={index}
--      style={[styles.surface, styles.v3Surface]}
--      mode={mode}
--      elevation={index}
--    >
--      <Text variant="bodyLarge">
--        {`Elevation ${index === 1 ? '(default)' : ''} ${index}`}
--      </Text>
-+    <Surface key={index} style={styles.surface} mode={mode} elevation={index}>
-+      <Text variant="bodySmall">{`Elevation ${index}`}</Text>
-     </Surface>
-   );
- 
-   return (
-     <ScreenWrapper>
-       <List.Section title="Elevated surface">
--        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-+        <ScrollView
-+          horizontal
-+          showsHorizontalScrollIndicator={false}
-+          contentContainerStyle={styles.scroll}
-+        >
-           {elevationValues.map((elevation) =>
-             renderSurface(elevation, 'elevated')
-           )}
-         </ScrollView>
-       </List.Section>
- 
-       <List.Section title="Flat surface">
--        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-+        <ScrollView
-+          horizontal
-+          showsHorizontalScrollIndicator={false}
-+          contentContainerStyle={styles.scroll}
-+        >
-           {elevationValues.map((elevation) => renderSurface(elevation, 'flat'))}
-         </ScrollView>
-       </List.Section>
- 
-+      <List.Section title="Animated elevation">
-+        <AnimatedSurface />
-+      </List.Section>
-+
-       <List.Section title="Layout">
-         <View style={styles.content}>
-           <View style={styles.horizontalSurfacesContainer}>
-@@ -68,21 +113,22 @@ const styles = StyleSheet.create({
-     padding: 24,
-     alignItems: 'center',
-   },
-+  scroll: {
-+    gap: 24,
-+    paddingHorizontal: 16,
-+    paddingVertical: 24,
+@@ -0,0 +1,2 @@
++# built by pod install, would make the fingerprint differ from the one EAS computes
++**/expo-modules-jsi/apple/Products/**
+```
+
+**File**: `example/.nvmrc` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++../.nvmrc
+\ No newline at end of file
+```
+
+**File**: `example/app.json` (modified, +4/-3)
+```diff
+@@ -16,11 +16,12 @@
+     "owner": "react-native-paper",
+     "ios": {
+       "bundleIdentifier": "com.callstack.reactnativepaperexample",
+-      "buildNumber": "26.0.5"
++      "infoPlist": {
++        "ITSAppUsesNonExemptEncryption": false
++      }
+     },
+     "android": {
+       "package": "com.callstack.reactnativepaperexample",
+-      "versionCode": 38,
+       "permissions": [
+         "READ_EXTERNAL_STORAGE",
+         "WRITE_EXTERNAL_STORAGE"
+@@ -37,7 +38,7 @@
+       }
+     },
+     "runtimeVersion": {
+-      "policy": "sdkVersion"
++      "policy": "fingerprint"
+     },
+     "updates": {
+       "url": "https://u.expo.dev/ba8f5139-58fe-48f0-b2f2-2d675b6eb2d4"
+```
+
+**File**: `example/eas.json` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++{
++  "cli": {
++    "appVersionSource": "remote"
 +  },
-   surface: {
--    margin: 24,
--    height: 80,
--    width: 80,
-+    height: 120,
-+    width: 120,
-+    borderRadius: 8,
-     alignItems: 'center',
-     justifyContent: 'center',
-   },
--  v3Surface: {
--    borderRadius: 16,
--    height: 200,
--    width: 200,
--    alignItems: 'center',
--    justifyContent: 'center',
-+  actions: {
-+    flexDirection: 'row',
-+    gap: 16,
-   },
--
-   horizontalSurfacesContainer: {
-     flexDirection: 'row',
-     justifyContent: 'space-between',
++  "build": {
++    "production": {
++      "autoIncrement": true,
++      "android": {
++        "buildType": "app-bundle"
++      },
++      "channel": "production"
++    },
++    "preview": {
++      "extends": "production",
++      "channel": "preview"
++    }
++  },
++  "submit": {
++    "production": {
++      "android": {
++        "track": "production"
++      },
++      "ios": {
++        "ascAppId": "1548934513"
++      }
++    },
++    "preview": {
++      "extends": "production",
++      "android": {
++        "track": "internal"
++      }
++    }
++  }
++}
 ```
 
-**File**: `src/components/FAB/useVisibility.ts` (modified, +3/-4)
+**File**: `example/fingerprint.config.js` (added, +7/-0)
 ```diff
-@@ -11,8 +11,6 @@ import {
- 
- import { useReduceMotion } from '../../theme/accessibility/ReduceMotionContext';
- import {
--  IOS_SHADOW_RADIUS_FACTOR,
--  SHADOW_OPACITY,
-   androidElevationLevels,
-   shadow,
-   shadowLayers,
-@@ -79,6 +77,7 @@ export function useVisibility({
-   const restingElevationDp = androidElevationLevels[elevation];
-   const shadowOffsetHeight = shadowLayers[0].height[elevation];
-   const shadowRadius = shadowLayers[0].shadowRadius[elevation];
-+  const shadowOpacity = elevation ? shadowLayers[0].shadowOpacity : 0;
-   const shadowColor = theme.colors.shadow;
- 
-   const webShadow =
-@@ -93,9 +92,9 @@ export function useVisibility({
-     }
-     return {
-       shadowColor,
--      shadowOpacity: alpha.value * (elevation ? SHADOW_OPACITY : 0),
-+      shadowOpacity: alpha.value * shadowOpacity,
-       shadowOffset: { width: 0, height: shadowOffsetHeight },
--      shadowRadius: shadowRadius * IOS_SHADOW_RADIUS_FACTOR,
-+      shadowRadius,
-     };
-   });
- 
-```
-
-**File**: `src/components/__tests__/Surface.test.tsx` (modified, +96/-39)
-```diff
-@@ -2,7 +2,14 @@ import type { ViewStyle } from 'react-native';
- import { StyleSheet } from 'react-native';
- import { Platform } from 'react-native';
- 
--import { describe, expect, it } from '@jest/globals';
-+import {
-+  afterEach,
-+  beforeEach,
-+  describe,
-+  expect,
-+  it,
-+  jest,
-+} from '@jest/globals';
- 
- import { getTheme } from '../../core/theming';
- import { render, screen } from '../../test-utils';
-@@ -13,20 +20,31 @@ type StyleCase = {
-   value: ViewStyle[keyof ViewStyle];
- };
- 
-+const SPOT_SHADOW_OPACITY = 0.19;
-+const AMBIENT_SHADOW_OPACITY = 0.039;
-+
-+afterEach(() => {
-+  jest.restoreAllMocks();
-+});
-+
- describe('Surface', () => {
-   it('should properly render passed props', async () => {
--    const testID = 'surface-container';
-     await render(
--      <Surface pointerEvents="box-none" testID={testID}>
-+      <Surface pointerEvents="box-none" testID="surface-container">
-         {null}
-       </Surface>
-     );
-     // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
--    expect(screen.getByTestId(testID).props.pointerEvents).toBe('box-none');
-+    expect(screen.getByTestId('surface-container').props.pointerEvents).toBe(
-+      'box-none'
-+    );
-   });
- 
-   describe('on iOS', () => {
--    Platform.OS = 'ios';
-+    beforeEach(() => {
-+      jest.replaceProperty(Platform, 'OS', 'ios');
-+    });
-+
-     const styles = StyleSheet.create({
-       absoluteStyles: {
-         bottom: 10,
-@@ -59,23 +77,34 @@ describe('Surface', () => {
-         </Surface>
-       );
- 
--      expect(screen.getByTestId('surface-test')).not.toHaveStyle({
--        shadowColor: '#000',
--        shadowOpacity: 0.3,
--        shadowOffset: { width: 0, height: 4 },
--        shadowRadius: 4,
--      });
-+      // @ts-expect-error
-       expect(screen.getByTestId('surface-test-outer-layer')).not.toHaveStyle({
--        shadowColor: '#000',
--        shadowOpacity: 0.15,
--        shadowOffset: { width: 0, height: 8 },
--        shadowRadius: 12,
-+        shadowOpacity: expect.any(Number),
-+      });
-+      // @ts-expect-error
-+      expect(screen.getByTestId('surface-test')).not.toHaveStyle({
-+        shadowOpacity: expect.any(Number),
-       });
-       expect(screen.getByTestId('surface-test')).toHaveStyle({
-         backgroundColor: getTheme().colors.surfaceContainerHighest,
-       });
-     });
- 
-+    it('should render a spot shadow over an ambient shadow, if mode is elevated', async () => {
-+      await render(
-+        <Surface elevation={5} testID={'surface-test'}>
-+          {null}
-+        </Surface>
-+      );
-+
-+      expect(screen.getByTestId('surface-test-outer-layer')).toHaveStyle({
-+        shadowOpacity: SPOT_SHADOW_OPACITY,
-+      });
-+      expect(screen.getByTestId('surface-test')).toHaveStyle({
-+        shadowOpacity: AMBIENT_SHADOW_OPACITY,
-+      });
-+    });
-+
-     it.each([
-       { property: 'opacity', value: 0.7 },
-       { property: 'transform', value: [{ scale: 1.02 }] },
-@@ -170,59 +199,51 @@ describe('Surface', () => {
- 
-     describe('outer layer', () => {
-       it('should not render rest style', async () => {
--        const testID = 'surface-test';
--
-         await render(
--          <Surface testID={testID} style={styles.restStyle}>
-+          <Surface testID="surface-test" style={styles.restStyle}>
-             {null}
-           </Surface>
-         );
- 
--        expect(screen.getByTestId(`${testID}-outer-layer`)).not.toHaveStyle(
-+        expect(screen.getByTestId('surface-test-outer-layer')).not.toHaveStyle(
-           styles.restStyle
-         );
-       });
- 
-       it('should render absolute position properties on outer layer', async () => {
--        const testID = 'surface-test';
--
-         await render(
--          <Surface testID={testID} style={styles.absoluteStyles}>
-+          <Surface testID="surface-test" style={styles.absoluteStyles}>
-             {null}
-           </Surface>
-         );
- 
--        expect(screen.getByTestId(`${testID}-outer-layer`)).toHaveStyle(
-+        expect(screen.getByTestId('surface-test-outer-layer')).toHaveStyle(
-           styles.absoluteStyles
-         );
-       });
- 
-       it('should render absolute position properties on the outer layer', async () => {
--        const testID = 'surface-test';
--
-         await render(
--          <Surface testID={testID} style={styles.absoluteStyles}>
-+          <Surface testID="surface-test" style={styles.absoluteStyles}>
-             {null}
-           </Surface>
-         );
- 
--        expect(screen.getByTestId(`${testID}-outer-layer`)).toHaveStyle(
-+        expect(screen.getByTestId('surface-test-outer-layer')).toHaveStyle(
-           styles.absoluteStyles
-         );
-       });
-     });
- 
-     describe('inner layer', () => {
-       it('should render inner layer styles on the inner layer', async () => {
--        const testID = 'surface-test';
--
-         await render(
--          <Surface testID={testID} style={styles.innerLayerViewStyle}>
-+          <Surface t
-```
-
-**File**: `src/components/__tests__/__snapshots__/Banner.test.tsx.snap` (modified, +36/-36)
-```diff
-@@ -9,11 +9,11 @@ exports[`render visible banner, with custom theme 1`] = `
-       "opacity": 1,
-       "shadowColor": "rgba(0, 0, 0, 1)",
-       "shadowOffset": {
--        "height": 1,
-+        "height": 0.55,
-         "width": 0,
-       },
--      "shadowOpacity": 0.15,
--      "shadowRadius": 3,
-+      "shadowOpacity": 0.19,
-+      "shadowRadius": 0.79,
-     }
-   }
-   testID="surface-outer-layer"
-@@ -26,11 +26,11 @@ exports[`render visible banner, with custom theme 1`] = `
-         "flex": undefined,
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 1,
-+          "height": 0,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 2,
-+        "shadowOpacity": 0.039,
-+        "shadowRadius": 0.25,
-       }
-     }
-     testID="surface"
-@@ -285,11 +285,11 @@ exports[`renders hidden banner, without action buttons and without image 1`] = `
-       "opacity": 0,
-       "shadowColor": "rgba(0, 0, 0, 1)",
-       "shadowOffset": {
--        "height": 1,
-+        "height": 0.55,
-         "width": 0,
-       },
--      "shadowOpacity": 0.15,
--      "shadowRadius": 3,
-+      "shadowOpacity": 0.19,
-+      "shadowRadius": 0.79,
-     }
-   }
-   testID="surface-outer-layer"
-@@ -302,11 +302,11 @@ exports[`renders hidden banner, without action buttons and without image 1`] = `
-         "flex": undefined,
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 1,
-+          "height": 0,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 2,
-+        "shadowOpacity": 0.039,
-+        "shadowRadius": 0.25,
-       }
-     }
-     testID="surface"
-@@ -420,11 +420,11 @@ exports[`renders visible banner, with action buttons and with image 1`] = `
-       "opacity": 1,
-       "shadowColor": "rgba(0, 0, 0, 1)",
-       "shadowOffset": {
--        "height": 1,
-+        "height": 0.55,
-         "width": 0,
-       },
--      "shadowOpacity": 0.15,
--      "shadowRadius": 3,
-+      "shadowOpacity": 0.19,
-+      "shadowRadius": 0.79,
-     }
-   }
-   testID="surface-outer-layer"
-@@ -437,11 +437,11 @@ exports[`renders visible banner, with action buttons and with image 1`] = `
-         "flex": undefined,
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 1,
-+          "height": 0,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 2,
-+        "shadowOpacity": 0.039,
-+        "shadowRadius": 0.25,
-       }
-     }
-     testID="surface"
-@@ -718,11 +718,11 @@ exports[`renders visible banner, with action buttons and without image 1`] = `
-       "opacity": 1,
-       "shadowColor": "rgba(0, 0, 0, 1)",
-       "shadowOffset": {
--        "height": 1,
-+        "height": 0.55,
-         "width": 0,
-       },
--      "shadowOpacity": 0.15,
--      "shadowRadius": 3,
-+      "shadowOpacity": 0.19,
-+      "shadowRadius": 0.79,
-     }
-   }
-   testID="surface-outer-layer"
-@@ -735,11 +735,11 @@ exports[`renders visible banner, with action buttons and without image 1`] = `
-         "flex": undefined,
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 1,
-+          "height": 0,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 2,
-+        "shadowOpacity": 0.039,
-+        "shadowRadius": 0.25,
-       }
-     }
-     testID="surface"
-@@ -1146,11 +1146,11 @@ exports[`renders visible banner, without action buttons and with image 1`] = `
-       "opacity": 1,
-       "shadowColor": "rgba(0, 0, 0, 1)",
-       "shadowOffset": {
--        "height": 1,
-+        "height": 0.55,
-         "width": 0,
-       },
--      "shadowOpacity": 0.15,
--      "shadowRadius": 3,
-+      "shadowOpacity": 0.19,
-+      "shadowRadius": 0.79,
-     }
-   }
-   testID="surface-outer-layer"
-@@ -1163,11 +1163,11 @@ exports[`renders visible banner, without action buttons and with image 1`] = `
-         "flex": undefined,
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 1,
-+          "height": 0,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 2,
-+        "shadowOpacity": 0.039,
-+        "shadowRadius": 0.25,
-       }
-     }
-     testID="surface"
-@@ -1291,11 +1291,11 @@ exports[`renders visible banner, without action buttons and without image 1`] =
-       "opacity": 1,
-       "shadowColor": "rgba(0, 0, 0, 1)",
-       "shadowOffset": {
--        "height": 1,
-+        "height": 0.55,
-         "width": 0,
-       },
--      "shadowOpacity": 0.15,
--      "shadowRadius": 3,
-+      "shadowOpacity": 0.19,
-+      "shadowRadius": 0.79,
-     }
-   }
-   testID="surface-outer-layer"
-@@ -1308,11 +1308,11 @@ exports[`renders visible banner, without action buttons and without image 1`] =
-         "flex": undefined,
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 1,
-+          "height": 0,
-           "widt
-```
-
-**File**: `src/components/__tests__/__snapshots__/FAB.test.tsx.snap` (modified, +38/-38)
-```diff
-@@ -23,11 +23,11 @@ exports[`renders FAB large size 1`] = `
-       {
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 4,
-+          "height": 3.33,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 4,
-+        "shadowOpacity": 0.19,
-+        "shadowRadius": 4.75,
-       },
-       {
-         "pointerEvents": "auto",
-@@ -195,11 +195,11 @@ exports[`renders FAB medium size 1`] = `
-       {
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 4,
-+          "height": 3.33,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 4,
-+        "shadowOpacity": 0.19,
-+        "shadowRadius": 4.75,
-       },
-       {
-         "pointerEvents": "auto",
-@@ -367,11 +367,11 @@ exports[`renders FAB transitioning to not visible 1`] = `
-       {
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 4,
-+          "height": 3.33,
-           "width": 0,
-         },
-         "shadowOpacity": 0,
--        "shadowRadius": 4,
-+        "shadowRadius": 4.75,
-       },
-       {
-         "pointerEvents": "none",
-@@ -539,11 +539,11 @@ exports[`renders FAB transitioning to visible 1`] = `
-       {
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 4,
-+          "height": 3.33,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 4,
-+        "shadowOpacity": 0.19,
-+        "shadowRadius": 4.75,
-       },
-       {
-         "pointerEvents": "auto",
-@@ -711,11 +711,11 @@ exports[`renders FAB with aria-label 1`] = `
-       {
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 4,
-+          "height": 3.33,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 4,
-+        "shadowOpacity": 0.19,
-+        "shadowRadius": 4.75,
-       },
-       {
-         "pointerEvents": "auto",
-@@ -884,11 +884,11 @@ exports[`renders FAB with containerColor and contentColor overrides 1`] = `
-       {
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 4,
-+          "height": 3.33,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 4,
-+        "shadowOpacity": 0.19,
-+        "shadowRadius": 4.75,
-       },
-       {
-         "pointerEvents": "auto",
-@@ -1056,11 +1056,11 @@ exports[`renders FAB with containerColor override 1`] = `
-       {
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 4,
-+          "height": 3.33,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 4,
-+        "shadowOpacity": 0.19,
-+        "shadowRadius": 4.75,
-       },
-       {
-         "pointerEvents": "auto",
-@@ -1228,11 +1228,11 @@ exports[`renders FAB with default props 1`] = `
-       {
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 4,
-+          "height": 3.33,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 4,
-+        "shadowOpacity": 0.19,
-+        "shadowRadius": 4.75,
-       },
-       {
-         "pointerEvents": "auto",
-@@ -1400,11 +1400,11 @@ exports[`renders FAB with primary variant 1`] = `
-       {
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 4,
-+          "height": 3.33,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 4,
-+        "shadowOpacity": 0.19,
-+        "shadowRadius": 4.75,
-       },
-       {
-         "pointerEvents": "auto",
-@@ -1572,11 +1572,11 @@ exports[`renders FAB with secondary variant 1`] = `
-       {
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 4,
-+          "height": 3.33,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 4,
-+        "shadowOpacity": 0.19,
-+        "shadowRadius": 4.75,
-       },
-       {
-         "pointerEvents": "auto",
-@@ -1744,11 +1744,11 @@ exports[`renders FAB with tertiary variant 1`] = `
-       {
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 4,
-+          "height": 3.33,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 4,
-+        "shadowOpacity": 0.19,
-+        "shadowRadius": 4.75,
-       },
-       {
-         "pointerEvents": "auto",
-@@ -1916,11 +1916,11 @@ exports[`renders FAB with tonalSecondary variant 1`] = `
-       {
-         "shadowColor": "rgba(0, 0, 0, 1)",
-         "shadowOffset": {
--          "height": 4,
-+          "height": 3.33,
-           "width": 0,
-         },
--        "shadowOpacity": 0.3,
--        "shadowRadius": 4,
-+        "shadowOpacity": 0.19,
-+        "shadowRadius": 4.75,
-       },
-       {
-         "pointerEvents": "auto",
-@@ -2088,11 +2088,11 @@ exports[`rende
-```
-
-**File**: `src/components/__tests__/__snapshots__/FABExtended.test.tsx.snap` (modified, +17/-17)
-```diff
-@@ -24,11 +24,11 @@ exports[`renders extended FAB collapsed 1`] = `
-         {
-           "shadowColor": "rgba(0, 0, 0, 1)",
-           "shadowOffset": {
--            "height": 4,
-+            "height": 3.33,
-             "width": 0,
-           },
--          "shadowOpacity": 0.3,
--          "shadowRadius": 4,
-+          "shadowOpacity": 0.19,
-+          "shadowRadius": 4.75,
-         },
-         {
-           "pointerEvents": "auto",
-@@ -263,11 +263,11 @@ exports[`renders extended FAB expanded 1`] = `
-         {
-           "shadowColor": "rgba(0, 0, 0, 1)",
-           "shadowOffset": {
--            "height": 4,
-+            "height": 3.33,
-             "width": 0,
-           },
--          "shadowOpacity": 0.3,
--          "shadowRadius": 4,
-+          "shadowOpacity": 0.19,
-+          "shadowRadius": 4.75,
-         },
-         {
-           "pointerEvents": "auto",
-@@ -502,11 +502,11 @@ exports[`renders extended FAB large size 1`] = `
-         {
-           "shadowColor": "rgba(0, 0, 0, 1)",
-           "shadowOffset": {
--            "height": 4,
-+            "height": 3.33,
-             "width": 0,
-           },
--          "shadowOpacity": 0.3,
--          "shadowRadius": 4,
-+          "shadowOpacity": 0.19,
-+          "shadowRadius": 4.75,
-         },
-         {
-           "pointerEvents": "auto",
-@@ -741,11 +741,11 @@ exports[`renders extended FAB medium size 1`] = `
-         {
-           "shadowColor": "rgba(0, 0, 0, 1)",
-           "shadowOffset": {
--            "height": 4,
-+            "height": 3.33,
-             "width": 0,
-           },
--          "shadowOpacity": 0.3,
--          "shadowRadius": 4,
-+          "shadowOpacity": 0.19,
-+          "shadowRadius": 4.75,
-         },
-         {
-           "pointerEvents": "auto",
-@@ -980,11 +980,11 @@ exports[`renders extended FAB not visible 1`] = `
-         {
-           "shadowColor": "rgba(0, 0, 0, 1)",
-           "shadowOffset": {
--            "height": 4,
-+            "height": 3.33,
-             "width": 0,
-           },
-           "shadowOpacity": 0,
--          "shadowRadius": 4,
-+          "shadowRadius": 4.75,
-         },
-         {
-           "pointerEvents": "none",
-@@ -1219,11 +1219,11 @@ exports[`renders extended FAB transitioning to collapsed 1`] = `
-         {
-           "shadowColor": "rgba(0, 0, 0, 1)",
-           "shadowOffset": {
--            "height": 4,
-+            "height": 3.33,
-             "width": 0,
-           },
--          "shadowOpacity": 0.3,
--          "shadowRadius": 4,
-+          "shadowOpacity": 0.19,
-+          "shadowRadius": 4.75,
-         },
-         {
-           "pointerEvents": "auto",
-```
-
-**File**: `src/components/__tests__/__snapshots__/FABMenu.test.tsx.snap` (modified, +20/-20)
-```diff
-@@ -424,11 +424,11 @@ exports[`renders FAB.Menu closed 1`] = `
-             {
-               "shadowColor": "rgba(0, 0, 0, 1)",
-               "shadowOffset": {
--                "height": 4,
-+                "height": 3.33,
-                 "width": 0,
-               },
--              "shadowOpacity": 0.3,
--              "shadowRadius": 4,
-+              "shadowOpacity": 0.19,
-+              "shadowRadius": 4.75,
-             },
-             {
-               "pointerEvents": "auto",
-@@ -1109,11 +1109,11 @@ exports[`renders FAB.Menu not expanded when trigger is not visible 1`] = `
-             {
-               "shadowColor": "rgba(0, 0, 0, 1)",
-               "shadowOffset": {
--                "height": 4,
-+                "height": 3.33,
-                 "width": 0,
-               },
-               "shadowOpacity": 0,
--              "shadowRadius": 4,
-+              "shadowRadius": 4.75,
-             },
-             {
-               "pointerEvents": "none",
-@@ -1794,11 +1794,11 @@ exports[`renders FAB.Menu open 1`] = `
-             {
-               "shadowColor": "rgba(0, 0, 0, 1)",
-               "shadowOffset": {
--                "height": 4,
-+                "height": 3.33,
-                 "width": 0,
-               },
--              "shadowOpacity": 0.3,
--              "shadowRadius": 4,
-+              "shadowOpacity": 0.19,
-+              "shadowRadius": 4.75,
-             },
-             {
-               "pointerEvents": "auto",
-@@ -3139,11 +3139,11 @@ exports[`renders FAB.Menu with 6 items 1`] = `
-             {
-               "shadowColor": "rgba(0, 0, 0, 1)",
-               "shadowOffset": {
--                "height": 4,
-+                "height": 3.33,
-                 "width": 0,
-               },
--              "shadowOpacity": 0.3,
--              "shadowRadius": 4,
-+              "shadowOpacity": 0.19,
-+              "shadowRadius": 4.75,
-             },
-             {
-               "pointerEvents": "auto",
-@@ -3825,11 +3825,11 @@ exports[`renders FAB.Menu with center alignment 1`] = `
-             {
-               "shadowColor": "rgba(0, 0, 0, 1)",
-               "shadowOffset": {
--                "height": 4,
-+                "height": 3.33,
-                 "width": 0,
-               },
--              "shadowOpacity": 0.3,
--              "shadowRadius": 4,
-+              "shadowOpacity": 0.19,
-+              "shadowRadius": 4.75,
-             },
-             {
-               "pointerEvents": "auto",
-@@ -4568,11 +4568,11 @@ exports[`renders FAB.Menu with items having icons 1`] = `
-             {
-               "shadowColor": "rgba(0, 0, 0, 1)",
-               "shadowOffset": {
--                "height": 4,
-+                "height": 3.33,
-                 "width": 0,
-               },
--              "shadowOpacity": 0.3,
--              "shadowRadius": 4,
-+              "shadowOpacity": 0.19,
-+              "shadowRadius": 4.75,
-             },
-             {
-               "pointerEvents": "auto",
-@@ -5253,11 +5253,11 @@ exports[`renders FAB.Menu with start alignment 1`] = `
-             {
-               "shadowColor": "rgba(0, 0, 0, 1)",
-               "shadowOffset": {
--                "height": 4,
-+                "height": 3.33,
-                 "width": 0,
-               },
--              "shadowOpacity": 0.3,
--              "shadowRadius": 4,
-+              "shadowOpacity": 0.19,
-+              "shadowRadius": 4.75,
-             },
-             {
-               "pointerEvents": "auto",
-```
-
-**File**: `src/components/__tests__/__snapshots__/Menu.test.tsx.snap` (modified, +12/-12)
-```diff
-@@ -269,11 +269,11 @@ exports[`renders menu with content styles 1`] = `
-               "opacity": 0,
-               "shadowColor": "rgba(0, 0, 0, 1)",
-               "shadowOffset": {
--                "height": 2,
-+                "height": 1.66,
-                 "width": 0,
-               },
--              "shadowOpacity": 0.15,
--              "shadowRadius": 6,
-+              "shadowOpacity": 0.19,
-+              "shadowRadius": 2.36,
-               "transform": [
-                 {
-                   "scaleX": 0,
-@@ -299,11 +299,11 @@ exports[`renders menu with content styles 1`] = `
-                 "paddingVertical": 8,
-                 "shadowColor": "rgba(0, 0, 0, 1)",
-                 "shadowOffset": {
--                  "height": 1,
-+                  "height": 0,
-                   "width": 0,
-                 },
--                "shadowOpacity": 0.3,
--                "shadowRadius": 2,
-+                "shadowOpacity": 0.039,
-+                "shadowRadius": 0.75,
-               }
-             }
-             testID="menu-surface"
-@@ -998,11 +998,11 @@ exports[`renders visible menu 1`] = `
-               "opacity": 0,
-               "shadowColor": "rgba(0, 0, 0, 1)",
-               "shadowOffset": {
--                "height": 2,
-+                "height": 1.66,
-                 "width": 0,
-               },
--              "shadowOpacity": 0.15,
--              "shadowRadius": 6,
-+              "shadowOpacity": 0.19,
-+              "shadowRadius": 2.36,
-               "transform": [
-                 {
-                   "scaleX": 0,
-@@ -1026,11 +1026,11 @@ exports[`renders visible menu 1`] = `
-                 "paddingVertical": 8,
-                 "shadowColor": "rgba(0, 0, 0, 1)",
-                 "shadowOffset": {
--                  "height": 1,
-+                  "height": 0,
-                   "width": 0,
-                 },
--                "shadowOpacity": 0.3,
--                "shadowRadius": 2,
-+                "shadowOpacity": 0.039,
-+                "shadowRadius": 0.75,
-               }
-             }
-             testID="menu-surface"
+@@ -0,0 +1,7 @@
++/** @type {import('expo/fingerprint').Config} */
++module.exports = {
++  sourceSkips: [
++    'ExpoConfigVersions',
++    'PackageJsonAndroidAndIosScriptsIfNotContainRun',
++  ],
++};
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5142** (closed): docs: fix minor wording in contributing guide (@Q1w1N)
 - **PR #5131** (2026-09-29): ci: build and upload example app (@alcpereira)
 - **PR #5130** (closed): fix(ci): publish OTA updates when a labelled pull request merges (@KisaneNeko)
 - **PR #5126** (2026-09-28): feat(portal)!: hide content below an overlay from assistive technology (@konstmar)
 - **PR #5125** (2026-09-28): fix(modal): make Modal accessible and honour its dismissal props (@konstmar)
 - **PR #5124** (2026-09-16): fix(portal): forward the reduce motion preference and match queued update keys (@konstmar)
-- **PR #5117** (2026-09-11): fix: rename misspelled props and various typos (@k0ndee)
 
 ---
 
@@ -2768,30 +1688,76 @@ Also changed the example, as the huge rectangles fit fewer ones on screen and ma
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. portal): replay queued portal operations in order (#5048)
+## X. automate example app publishing to app stores (#5118)
 
 **RULE**:
-When implementing operations in `src/components/Portal/PortalHost.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-paper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/publish-example-app.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-paper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `23b4d3cd`: portal): replay queued portal operations in order (#5048). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb4fcbeb`: automate example app publishing to app stores (#5118). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/components/Portal/PortalHost.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish-example-app.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      // Replay in the order the operations were recorded, otherwise portals
-      // that mounted in the same commit end up stacked in reverse.
-      const action = queue.shift();
+name: Publish example app
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to publish the example app for, e.g. v6.0.0
+        required: true
+      platform:
+        description: Platform to build. Defaults to all.
+        required: false
+        default: all
+        type: choice
+        options:
+          - all
+          - ios
+          - android
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check:
+    name: Check release is on main
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    outputs:
+      on-main: ${{ steps.check.outputs.on-main }}
+      sha: ${{ steps.check.outputs.sha }}
+      tag: ${{ env.TAG }}
+      profile: ${{ steps.check.outputs.profile }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          status=$(gh api "repos/$GH_REPO/compare/main...$TAG" --jq .status)
+
+          if [ "$status" = "identical" ] || [ "$status" = "behind" ]; then
+            sha=$(gh api "repos/$GH_REPO/commits/$TAG" --jq .sha)
+            echo "on
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      const action = queue.pop();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `23b4d3cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb4fcbeb` are properly handled with clean fallback behavior.

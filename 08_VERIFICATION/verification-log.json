@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-AI05",
-    "timestamp": "2026-10-20T21:33:54.725Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-    "contentHash": "a9ac7404fdcec93cb566da1d425ef779585b41e7b4575d6302e4d4e9b6460e71",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-AI81",
-    "timestamp": "2026-10-20T21:33:55.009Z",
-    "repository": "sharkdp/fd",
-    "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "0ca7951e677ff074049394e68d4552be93381209317217091a837e784cf4e766",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-ANN9",
-    "timestamp": "2026-10-20T21:34:02.037Z",
-    "repository": "opentofu/opentofu",
-    "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "1b60ace1a506d0776ca4e6a960eef923210861cfa86225d200b4e30e538814ed",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-ASDW",
     "timestamp": "2026-10-20T21:34:08.180Z",
     "repository": "GreptimeTeam/greptimedb",
@@ -7490,6 +7445,51 @@
     "repository": "DefGuard/defguard",
     "learningId": "learn-github-defguard-defguard",
     "contentHash": "91bcaf14c6758ad8c447d82831011a64aeef72ab118ee8033d9ab2bd6c48f643",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-5VH2",
+    "timestamp": "2026-10-23T11:05:28.214Z",
+    "repository": "adobe/react-spectrum",
+    "learningId": "learn-github-adobe-react-spectrum",
+    "contentHash": "1c545c8b828c65b430113e9a3f924e5421cc921c5d073e251dd54cda1f051ea3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-5XFV",
+    "timestamp": "2026-10-23T11:05:30.763Z",
+    "repository": "salvo-rs/salvo",
+    "learningId": "learn-github-salvo-rs-salvo",
+    "contentHash": "e856536161be648df257a21d8f06bb1e059f99edf5df12cfa1730489f03f214f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-605E",
+    "timestamp": "2026-10-23T11:05:34.274Z",
+    "repository": "callstack/react-native-paper",
+    "learningId": "learn-github-callstack-react-native-paper",
+    "contentHash": "64a95f95e6198df956f4fa0fd9946899ce7293b0b6ec155beaae3a5ebebf8381",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

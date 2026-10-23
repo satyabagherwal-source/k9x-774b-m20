@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T10:54:28.021Z",
+  "last_updated": "2026-10-23T11:05:34.291Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3606,14 +3606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-adobe-react-spectrum",
-      "content_hash": "177e45d7f929bd156a23c7d0aad339cbb235a90b4088b2fabbe12b1b9c723a4f",
-      "verified_at": "2026-10-21T16:44:59.522Z",
+      "content_hash": "1c545c8b828c65b430113e9a3f924e5421cc921c5d073e251dd54cda1f051ea3",
+      "verified_at": "2026-10-23T11:05:28.229Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T16:44:59.522Z"
+      "last_updated": "2026-10-23T11:05:28.229Z"
     },
     "max-sixty/worktrunk": {
       "repository": "max-sixty/worktrunk",
@@ -4671,14 +4671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-react-native-paper",
-      "content_hash": "875861b1d2275902e4eafd58618e6e4e2e93900f3d054b070cd1cf3cc7a24ec3",
-      "verified_at": "2026-10-18T22:35:41.784Z",
+      "content_hash": "64a95f95e6198df956f4fa0fd9946899ce7293b0b6ec155beaae3a5ebebf8381",
+      "verified_at": "2026-10-23T11:05:34.290Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:35:41.784Z"
+      "last_updated": "2026-10-23T11:05:34.290Z"
     },
     "tensorchord/pgvecto.rs": {
       "repository": "tensorchord/pgvecto.rs",
@@ -8346,14 +8346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-salvo-rs-salvo",
-      "content_hash": "cfac0697b785410e90ef52598b6a54602fddd4fc348f056c40604d2f11274a64",
-      "verified_at": "2026-10-19T03:53:41.688Z",
+      "content_hash": "e856536161be648df257a21d8f06bb1e059f99edf5df12cfa1730489f03f214f",
+      "verified_at": "2026-10-23T11:05:30.781Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:53:41.688Z"
+      "last_updated": "2026-10-23T11:05:30.781Z"
     },
     "react/metro": {
       "repository": "react/metro",

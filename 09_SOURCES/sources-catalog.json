@@ -2313,10 +2313,10 @@
     "repository": "adobe/react-spectrum",
     "platform": "github",
     "sourceUrl": "https://github.com/adobe/react-spectrum",
-    "sourceVersion": "2eb4e0e9",
+    "sourceVersion": "d5fb723a",
     "license": "Apache-2.0",
-    "contentHash": "177e45d7f929bd156a23c7d0aad339cbb235a90b4088b2fabbe12b1b9c723a4f",
-    "lastHarvestedAt": "2026-10-21T16:44:59.515Z",
+    "contentHash": "1c545c8b828c65b430113e9a3f924e5421cc921c5d073e251dd54cda1f051ea3",
+    "lastHarvestedAt": "2026-10-23T11:05:28.218Z",
     "learningId": "learn-github-adobe-react-spectrum"
   },
   "max-sixty-worktrunk": {
@@ -3033,10 +3033,10 @@
     "repository": "callstack/react-native-paper",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/react-native-paper",
-    "sourceVersion": "ce72155b",
+    "sourceVersion": "eb4fcbeb",
     "license": "MIT",
-    "contentHash": "875861b1d2275902e4eafd58618e6e4e2e93900f3d054b070cd1cf3cc7a24ec3",
-    "lastHarvestedAt": "2026-10-18T22:35:41.776Z",
+    "contentHash": "64a95f95e6198df956f4fa0fd9946899ce7293b0b6ec155beaae3a5ebebf8381",
+    "lastHarvestedAt": "2026-10-23T11:05:34.278Z",
     "learningId": "learn-github-callstack-react-native-paper"
   },
   "tensorchord-pgvecto.rs": {
@@ -5483,10 +5483,10 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "071cc161",
+    "sourceVersion": "62a4f53b",
     "license": "Apache-2.0",
-    "contentHash": "cfac0697b785410e90ef52598b6a54602fddd4fc348f056c40604d2f11274a64",
-    "lastHarvestedAt": "2026-10-19T03:53:41.683Z",
+    "contentHash": "e856536161be648df257a21d8f06bb1e059f99edf5df12cfa1730489f03f214f",
+    "lastHarvestedAt": "2026-10-23T11:05:30.767Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {

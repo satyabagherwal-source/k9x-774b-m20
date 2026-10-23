@@ -4539,3 +4539,6 @@
 | `CYCLE-20261023-RLKE` | `2026-10-23T10:54:22.190Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3890` | Yes (`d7af5ecd...`) |
 | `CYCLE-20261023-RO2W` | `2026-10-23T10:54:25.448Z` | `diggerhq/digger` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3891` | Yes (`c63310c6...`) |
 | `CYCLE-20261023-RQ1Y` | `2026-10-23T10:54:28.006Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3892` | Yes (`91bcaf14...`) |
+| `CYCLE-20261023-5VH2` | `2026-10-23T11:05:28.214Z` | `adobe/react-spectrum` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3893` | Yes (`1c545c8b...`) |
+| `CYCLE-20261023-5XFV` | `2026-10-23T11:05:30.763Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3894` | Yes (`e8565361...`) |
+| `CYCLE-20261023-605E` | `2026-10-23T11:05:34.274Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3895` | Yes (`64a95f95...`) |

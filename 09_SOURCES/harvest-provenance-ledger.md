@@ -4546,3 +4546,6 @@ Every entry in this ledger must capture:
 | `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `e20ef17f` | Multi-dimensional audit evidence | 2026-10-23T10:54:22.193Z |
 | `learn-github-diggerhq-digger` | `https://github.com/diggerhq/digger` | `7c237c09` | Multi-dimensional audit evidence | 2026-10-23T10:54:25.451Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `307c73a4` | Multi-dimensional audit evidence | 2026-10-23T10:54:28.008Z |
+| `learn-github-adobe-react-spectrum` | `https://github.com/adobe/react-spectrum` | `d5fb723a` | Multi-dimensional audit evidence | 2026-10-23T11:05:28.218Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `62a4f53b` | Multi-dimensional audit evidence | 2026-10-23T11:05:30.767Z |
+| `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `eb4fcbeb` | Multi-dimensional audit evidence | 2026-10-23T11:05:34.278Z |

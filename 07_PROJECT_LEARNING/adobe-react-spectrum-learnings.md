@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md`  
 > **Source**: github ([https://github.com/adobe/react-spectrum](https://github.com/adobe/react-spectrum))  
-> **Source Version**: `2eb4e0e9`  
+> **Source Version**: `d5fb723a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T16:44:59.121Z  
+> **Timestamp**: 2026-10-23T11:05:27.876Z  
 > **Learning ID**: `learn-github-adobe-react-spectrum`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/adobe/react-spectrum](https://github.com/adobe/react-spectrum))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T16:44:58.066Z  
+> **Harvest Timestamp**: 2026-10-23T11:05:26.684Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15974 stars
+- **Stars / Engagement**: 15977 stars
 
 ---
 
@@ -424,11 +424,11 @@ export type {FormatterOptions} from 'react-stately/private/datepicker/utils';
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #10823** (2026-10-22): **`useHover`: `triggerHoverStart` / `triggerHoverEnd` mutate `state` before `pointerType === 'touch'` guards, permanently wedging `isHovered = true` across multiple items on touchscreens**
+  *Symptoms*: ### Provide a general summary of the issue here  On touchscreens and hybrid touch/mouse devices, interacting with multiple items that use `useHover` (such as `<CheckboxGroup>` / `<Checkbox>` in `react-aria-components`) can permanently wedge `isHovered = true` (`data-hovered="true"`) on multiple items simultaneously.  In [`packages/react-aria/src/interactions/useHover.ts` (`7ef23022`)](https://github.com/adobe/react-spectrum/blob/7ef230221c459a0d8cd31f7a1e202ad4867bdb2f/packages/react-aria/src/interactions/useHover.ts#L39-L170):  1. **`triggerHoverEnd` sets `state.target = null` and `state.pointerType = ''` before returning early on `pointerType === 'touch'` (lines 142–149, introduced in #7838):**    Once an item enters hover (`state.isHovered = true`, `state.target = element` — either via mouse/cursor movement on a hybrid touchscreen device or via an emulated mouse event after touch), any subsequent touch event (`onPointerLeave` with `pointerType === 'touch'`, or the global capturing `pointerover` listener on `document` when touching another item) calls `triggerHoverEnd(e, 'touch')`. Because `state.target = null` executes before `if (pointerType === 'touch' || !state.isHovered || !target) return;`, `state.target` is wiped to `null` while `state.isHovered` and React state `isHovered` remain `true`. From that point on:    - The global `pointerover` capture listener (`if (state.isHovered && state.target && !nodeContains(...))`) short-circuits because `state.target` is `null`.   
+
 - **Issue #10740** (2026-10-12): **A nested `Form` inherits the outer `Form`'s props**
   *Symptoms*: ### Provide a general summary of the issue here  RAC `Form` provides all of its props via `FormContext`, and also consumes `FormContext` via `useContextProps` (since #6302, "Make FormContext match our other contexts"). A `Form` rendered inside another `Form` in the React tree - typically an independent form in a `Modal`/portal - therefore merges the outer form's props into its own with `mergeProps`:  1. **Event handlers are chained**, outer first. Submitting the inner form calls the outer form's `onSubmit` with `event.currentTarget` being the _inner_ form element. If that handler dispatches a server action (e.g. `onSubmit={(e) => { e.preventDefault(); action(new FormData(e.currentTarget)) }}`), the outer action runs with the inner form's data. 2. **`id` and `className` are inherited**: the inner form gets the outer form's `id` (a duplicate id in the document) and its class names. 3. **Props the inner form leaves `undefined` are inherited**, e.g. `validationErrors`: the outer form's server errors are shown on the inner form's fields with the same `name`, and set as custom validity, which blocks submitting the inner form.  The DOM contains no nested `<form>` elements, since the inner form is rendered into a portal.  ### 🤔 Expected Behavior?  A nested `Form` is an independent form: it does not inherit the outer form's `onSubmit`, `id`, `className`, `validationErrors`, etc. Fields still pick up `validationBehavior` and validation errors from their nearest `Form`.  ### 😯 Current
-
-- **Issue #10663** (2026-10-03): **A Popover rendered inside a Select popover inherits the Select PopoverContext**
-  *Symptoms*: ### Provide a general summary of the issue here  A standalone `Popover` rendered inside a `Select`'s popover content inherits the Select's `PopoverContext`: its render props report `trigger="Select"`.  ### 🤔 Expected Behavior?  A Popover with its own `triggerRef` and `isOpen` gets no context from an enclosing overlay, and reports `trigger` as `null` like the same Popover rendered outside any overlay.  ### 😯 Current Behavior  ```text outside any overlay:       nested trigger=null inside the Select popover: nested trigger=Select ```  ### 💁 Possible Solution  RAC's `Popover` resets only the contexts its owner passes as `clearContexts` (`react-aria-components/dist/private/Popover.mjs:143-149`). `Select`'s `CLEAR_CONTEXTS` (`Select.mjs:84-88`) is `LabelContext`, `ButtonContext` and `TextContext` (imports at `:1,6,10`), so `PopoverContext` reaches everything inside the Select's popover. Clearing `PopoverContext` for a popover's content would cover it.  ### 🔦 Context  Found while building a design system on React Aria Components. Observed in headless Chromium (Playwright 1.63, real key and mouse events) with react-aria-components 1.21.1 / react-aria 3.52.1 / react-stately 3.50.0 and no other code.  ### 🖥️ Steps to Reproduce  ```jsx import { useRef } from "react"; import { Button, ListBox, ListBoxItem, Popover, Select, SelectValue } from "react-aria-components";  function Probe() {   const ref = useRef(null);   return (     <>       <button ref={ref}>anchor</button>       <Popov
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -445,577 +445,520 @@ export type {FormatterOptions} from 'react-stately/private/datepicker/utils';
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2eb4e0e9` (2026-10-20)
-**Commit Message**: fix(select): Select component keyboard type-ahead (#10006)
+### Incident Patch 1: `d5fb723a` (2026-10-23)
+**Commit Message**: fix(usePress): only skip Enter default prevention on macOS for Control + Enter (#10820)
 
-* fix(select): Select component keyboard type-ahead
+* fix(usePress): only skip Enter default prevention on macOS for Control + Enter
 
-* fixed testcase failed
+The macOS context menu exemption in shouldPreventDefaultKeyboard checked
+only the key, so plain Enter was no longer default-prevented on macOS.
+When a press handler moves focus during keydown (for example a Select
+option restoring focus to its trigger), the browser then fires a native
+click on the newly focused element and reopens the Select.
 
-* fix: resolved failed testcases
+Pass the keyboard event to shouldPreventDefaultKeyboard and require
+ctrlKey for the exemption, so Control + Enter still reaches the native
+contextmenu path while plain Enter is prevented as before.
 
-* revert calendar tests back to main
+Fixes #10741
 
-* fix format and tests
-
-* fix(select): Select component keyboard type-ahead
-
-* File format check issue fixed
-
-* undo extra changes
-
-* undo more code style changes
-
-* last set of code style changes
-
-* simplify based on internal discussion
+* Add test reproducing the report
 
 ---------
 
 Co-authored-by: Rob Snow <[REDACTED_EMAIL]>
 
-**File**: `packages/@adobe/react-spectrum/test/listbox/ListBox.test.js` (modified, +7/-6)
+**File**: `packages/react-aria-components/test/ListBox.test.js` (modified, +33/-0)
 ```diff
-@@ -629,10 +629,11 @@ describe('ListBox', function () {
+@@ -2523,6 +2523,39 @@ describe('keyboard modifier keys', () => {
+       expect(document.activeElement).toBe(options[1]);
      });
  
-     it('supports the space character in a search', function () {
--      let tree = renderComponent({autoFocus: 'first'});
-+      // Start on the last option so that searching for "F" wraps around to first "Foo".
-+      let tree = renderComponent({autoFocus: 'last'});
-       let listbox = tree.getByRole('listbox');
-       let options = within(listbox).getAllByRole('option');
--      expect(document.activeElement).toBe(options[0]);
-+      expect(document.activeElement).toBe(options[6]);
++    it('does not activate an element focused during selection with Enter', async () => {
++      let onClick = jest.fn();
++      let triggerRef = React.createRef();
++      let {getByRole} = render(
++        <>
++          <button ref={triggerRef} onClick={onClick}>
++            Trigger
++          </button>
++          <ListBox
++            aria-label="Favorite Animal"
++            selectionMode="single"
++            onSelectionChange={() => {
++              // oxlint-disable-next-line rsp-rules/act-events-test
++              triggerRef.current.focus();
++            }}>
++            <ListBoxItem id="cat">Cat</ListBoxItem>
++            <ListBoxItem id="dog">Dog</ListBoxItem>
++          </ListBox>
++        </>
++      );
++
++      let options = within(getByRole('listbox')).getAllByRole('option');
++      act(() => options[0].focus());
++
++      // Selection moves focus to the trigger during keydown. Unless Enter's default is
++      // prevented, the browser dispatches the activation click to the newly focused
++      // element.
++      await user.keyboard('{Enter}');
++
++      expect(triggerRef.current).toHaveFocus();
++      expect(onClick).not.toHaveBeenCalled();
++    });
++
+     describe('multiple selection, replace behavior', () => {
+       it('replaces selection as focus moves with arrow keys', async () => {
+         let onSelectionChange = jest.fn();
+```
+
+**File**: `packages/react-aria/src/interactions/usePress.ts` (modified, +9/-5)
+```diff
+@@ -391,7 +391,7 @@ export function usePress(props: PressHookProps): PressResult {
+           isValidKeyboardEvent(e.nativeEvent, e.currentTarget as Element) &&
+           nodeContains(e.currentTarget as Element, getEventTarget(e) as Element)
+         ) {
+-          if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
++          if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e)) {
+             e.preventDefault();
+           }
  
-       fireEvent.keyDown(listbox, {key: 'F'});
-       expect(document.activeElement).toBe(options[0]);
-@@ -657,10 +658,10 @@ describe('ListBox', function () {
-     });
+@@ -497,7 +497,7 @@ export function usePress(props: PressHookProps): PressResult {
  
-     it('supports item selection using the Spacebar after search times out', function () {
--      let tree = renderComponent({autoFocus: 'first', onSelectionChange, selectionMode: 'single'});
-+      let tree = renderComponent({autoFocus: 'last', onSelectionChange, selectionMode: 'single'});
-       let listbox = tree.getByRole('listbox');
-       let options = within(listbox).getAllByRole('option');
--      expect(document.activeElement).toBe(options[0]);
-+      expect(document.activeElement).toBe(options[6]);
+     let onKeyUp = (e: KeyboardEvent) => {
+       if (state.isPressed && state.target && isValidKeyboardEvent(e, state.target)) {
+-        if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e.key)) {
++        if (shouldPreventDefaultKeyboard(getEventTarget(e) as Element, e)) {
+           e.preventDefault();
+         }
  
-       fireEvent.keyDown(listbox, {key: 'F'});
-       expect(document.activeElement).toBe(options[0]);
-@@ -727,7 +728,7 @@ describe('ListBox', function () {
-       });
+@@ -1161,9 +1161,13 @@ function shouldPreventDefaultUp(target: Element) {
+   return true;
+ }
  
-       fireEvent.keyDown(listbox, {key: 'B'});
--      expect(document.activeElement).toBe(options[1]);
-+      expect(document.activeElement).toBe(options[2]);
-     });
- 
-     it('wraps around when no items past the current one match', function () {
-@@ -746,7 +747,7 @@ describe('ListBox', function () {
-       });
- 
-       fireEvent.keyDown(listbox, {key: 'B'});
--      expect(document.activeElement).toBe(options[4]);
-+      expect(document.activeElement).toBe(options[1]);
-     });
-   });
+-function shouldPreventDefaultKeyboard(target: Element, key: string) {
+-  // Don't prevent the contextmenu shortcut on mac.
+-  if (isMac() && key === 'Enter') {
++function shouldPreventDefaultKeyboard(
++  target: Element,
++  event: Pick<KeyboardEvent, 'key' | 'ctrlKey'>
++) {
++  let {key} = event;
++  // Don't prevent the contextmenu shortcut (Control + Enter) on mac.
++  if (isMac() && key === 'Enter' && event.ctrlKey) {
+     return false;
+   }
  
 ```
 
-**File**: `packages/@adobe/react-spectrum/test/menu/Menu.test.js` (modified, +9/-8)
+**File**: `packages/react-aria/test/interactions/usePress.test.js` (modified, +23/-0)
 ```diff
-@@ -566,15 +566,15 @@ describe('Menu', function () {
-       let menuItems = within(menu).getAllByRole('menuitem');
-       expect(document.activeElement).toBe(menuItems[0]);
- 
--      fireEvent.keyDown(menu, {key: 'B'});
-+      fireEvent.keyDown(menu, {key: 'B'}); // bar
-       expect(document.activeElement).toBe(menuItems[1]);
- 
-       act(() => {
-         jest.runAllTimers();
-       });
- 
--      fireEvent.keyDown(menu, {key: 'B'});
--      expect(document.activeElement).toBe(menuItems[1]);
-+      fireEvent.keyDown(menu, {key: 'B'}); // baz
-+      expect(document.activeElement).toBe(menuItems[2]);
+@@ -3173,6 +3173,29 @@ describe('usePress', function () {
+       ]);
      });
  
-     it.each`
-@@ -586,17 +586,18 @@ describe('Menu', function () {
-       let menuItems = within(menu).getAllByRole('menuitem');
-       expect(document.activeElement).toBe(menuItems[0]);
- 
--      fireEvent.keyDown(menu, {key: 'B'});
--      fireEvent.keyDown(menu, {key: 'L'});
--      fireEvent.keyDown(menu, {key: 'E'});
-+      fireEvent.keyDown(menu, {key: 'B'}); // bar
-+      fireEvent.keyDown(menu, {key: 'L'}); // blah
-+      fireEvent.keyDown(menu, {key: 'E'}); // bleh
-       expect(document.activeElement).toBe(menuItems[4]);
- 
-       act(() => {
-         jest.runAllTimers();
-       });
- 
--      fireEvent.keyDown(menu, {key: 'B'});
--      expect(document.activeElement).toBe(menuItems[4]);
-+      // No items after "Bleh" start with "B", so the search wraps to the top of the menu.
-+      fireEvent.keyDown(menu, {key: 'B'}); // bar
-+      expect(document.activeElement).toBe(menuItems[1]);
-     });
-   });
- 
-```
-
-**File**: `packages/react-aria-components/test/Select.test.js` (modified, +128/-0)
-```diff
-@@ -618,6 +618,134 @@ describe('Select', () => {
-       expect(trigger).toHaveTextContent('Northern Territory');
-       expect(trigger).not.toHaveAttribute('data-pressed');
-     });
++    it('should prevent default on Enter on macOS', function () {
++      let {getByText} = render(<Example />);
++      using spy = jest.spyOn(window.navigator, 'platform', 'get').mockImplementation(() => 'Mac');
 +
-+    it('should move to the next matching item when the same letter is typed again after timeout', async function () {
-+      let {getByTestId} = render(
-+        <Select data-testid="select">
-+          <Label>Favorite Fruit</Label>
-+          <Button>
-+            <SelectValue />
-+          </Button>
-+          <Popover>
-+            <ListBox>
-+              <ListBoxItem>Banana</ListBoxItem>
-+              <ListBoxItem>Blackberry</ListBoxItem>
-+              <ListBoxItem>Blueberry</ListBoxItem>
-+            </ListBox>
-+          </Popover>
-+        </Select>
-+      );
-+
-+      let wrapper = getByTestId('select');
-+
-+      let selectTester = testUtilUser.createTester('Select', {
-+        root: wrapper,
-+        interactionType: 'keyboard'
-+      });
-+      let trigger = selectTester.getTrigger();
-+
-+      await user.tab();
-+      await user.keyboard('B');
-+      expect(trigger).toHaveTextContent('Banana');
-+
-+      act(() => {
-+        jest.advanceTimersByTime(1001);
-+      });
-+
-+      await user.keyboard('B');
-+      expect(trigger).toHaveTextContent('Blackberry');
++      let el = getByText('test');
++      let allowDefault = fireEvent.keyDown(el, {key: 'Enter'});
++      expect(allowDefault).toBe(false);
++      allowDefault = fireEvent.keyUp(el, {key: 'Enter'});
++      expect(allowDefault).toBe(false);
++      spy.mockRestore();
 +    });
 +
-+    it('should cycle to the next matching item when the same letter is typed twice quickly', async function () {
-+      let {getByTestId} = render(
-+        <Select data-testid="select">
-+          <Label>Favorite Fruit</Label>
-+          <Button>
-+            <SelectValue />
-+          </Button>
-+          <Popover>
-+            <ListBox>
-+              <ListBoxItem>Banana</ListBoxItem>
-+              <ListBoxItem>Blackberry</ListBoxItem>
-+              <ListBoxItem>Blueberry</ListBoxItem>
-+            </ListBox>
-+          </Popover>
-+        </Select>
-+      );
++    it('should not prevent default on Control + Enter on macOS so the context menu can open', function () {
++      let {getByText} = render(<Example />);
++      using spy = jest.spyOn(window.navigator, 'platform', 'get').mockImplementation(() => 'Mac');
 +
-+      let wrapper = getByTestId('select');
-+
-+      let selectTester = testUtilUser.createTester('Select', {
-+        root: wrapper,
-+        interactionType: 'keyboard'
-+      });
-+      let trigger = selectTester.getTrigger();
-+
-+      await user.tab();
-+      await user.keyboard('bb');
-+      expect(trigger).toHaveTextContent('Blackberry');
++      let el = getByText('test');
++      let allowDefault = fireEvent.keyDown(el, {key: 'Enter', ctrlKey: true});
++      expect(allowDefault).toBe(true);
++      fireEvent.keyUp(el, {key: 'Enter', ctrlKey: true});
++      spy.mockRestore();
 +    });
 +
-+    it('should wrap if typeahead is not found after the current key', async function () {
-+      let {getByTestId} = render(
-+        <Select defaultSelectedKey="blueberry" data-testid="select">
-+          <Label>Favorite Fruit</Label>
-+          <Button>
-+            <SelectValue />
-+          </Button>
-+          <Popover>
-+            <ListBox>
-+              <ListBoxItem id="banana">Banana</ListBoxItem>
-+              <ListBoxItem id="blackberry">Blackberry</ListBoxItem>
-+              <ListBoxItem id="blueberry">Blueberry</ListBoxItem>
-+            </ListBox>
-+          </Popover>
-+        </Select>
-+      );
-+
-+      let wrapper = getByTestId('select');
-+      let selectTester = testUtilUser.createTester('Select', {
-+        root: wrapper,
-+        interactionType: 'keyboard'
-+      });
-+      let trigger = selectTester.getTrigger();
-+
-+      await user.tab();
-+      await user.keyboard('b');
-+      expect(trigger).toHaveTextContent('Banana');
-+    });
-+
-+    // This matches the three main browsers behavior. Even though it seems like it should go to double "b" blackberry,
-+    // it's just cycling through the items that start with "b".
-+    it('searches the next item that starts with the same letter, not the next item that starts with the same letter twice', async function () {
-+      let {getByTestId} = render(
-+        <Select data-testid="select">
-+          <Label>Favorite Fruit</Label>
-+          <Button>
-+            <SelectValue />
-+          </Button>
-+          <Popover>
-+            <ListBox>
-+              <ListBoxItem id="banana">Banana</ListBoxItem>
-+              <ListBoxItem id="boisenberry">Boisenberry</ListBoxItem>
-+              <ListBoxItem id="bblackberry">Bblackberry</ListBoxItem>
-+              <ListBoxItem id="blueberry">Blueberry</ListBoxItem>
-+            </ListBox>
-+          </Popover>
-+        </Select>
-+      );
-+
-+      let wrapper = getByTestId('select');
-+      let selectTester = testUtilUser.createTester('Select', {
-+        root: wrapper,
-+        interactionType: 'keyboard'
-+      });
-+      let trigger = selectTester.getTrigger();
-+
-+      await user.tab();
-+      await user.keyboard('bb');
-+      expect(trigger).toHaveTextContent('Boisenberry');
-+    });
-   });
- 
-   it('should support autoFocus', () => {
-```
-
-**File**: `packages/react-aria/src/selection/ListKeyboardDelegate.ts` (modified, +1/-1)
-```diff
-@@ -370,7 +370,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
-     }
- 
-     let collection = this.collection;
--    let key = fromKey || this.getFirstKey();
-+    let key = fromKey != null ? this.getNextKey(fromKey) : this.getFirstKey();
-     while (key != null) {
-       let item = collection.getItem(key);
-       if (!item) {
-```
-
-**File**: `packages/react-aria/src/selection/useTypeSelect.ts` (modified, +22/-10)
-```diff
-@@ -47,9 +47,14 @@ export interface TypeSelectAria {
-  */
- export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
-   let {keyboardDelegate, selectionManager, onTypeSelect} = options;
--  let state = useRef<{search: string; timeout: ReturnType<typeof setTimeout> | undefined}>({
-+  let state = useRef<{
-+    search: string;
-+    timeout: ReturnType<typeof setTimeout> | undefined;
-+    startKey: Key | null;
-+  }>({
-     search: '',
--    timeout: undefined
-+    timeout: undefined,
-+    startKey: null
-   });
- 
-   let onKeyDownCapture = (e: KeyboardEvent) => {
-@@ -67,11 +72,9 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
- 
-       if (keyboardDelegate.getKeyForSearch != null) {
-         // Use the delegate to find a key to focus.
--        // Prioritize items after the currently focused item, falling back to searching the whole list.
--        let key = keyboardDelegate.getKeyForSearch(
--          state.current.search,
--          selectionManager.focusedKey
--        );
-+        // Prioritize items after the item that was focused when the search started,
-+        // falling back to searching the whole list.
-+        let key = keyboardDelegate.getKeyForSearch(state.current.search, state.current.startKey);
- 
-         // If no key found, search from the top.
-         if (key == null) {
-@@ -106,12 +109,20 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
-       return;
-     }
- 
--    state.current.search += character;
-+    // Typing the same character repeatedly cycles through items starting with that character
-+    // rather than searching for a longer string, matching native browser behavior.
-+    if (state.current.search === '' || state.current.search === character) {
-+      state.current.search = character;
-+      state.current.startKey = selectionManager.focusedKey;
-+    } else {
-+      state.current.search += character;
-+    }
- 
-     if (keyboardDelegate.getKeyForSearch != null) {
-       // Use the delegate to find a key to focus.
--      // Prioritize items after the currently focused item, falling back to searching the whole list.
--      let key = keyboardDelegate.getKeyForSearch(state.current.search, selectionManager.focusedKey);
-+      // Prioritize items after the item that was focused when the search started,
-+      // falling back to searching the whole list.
-+      let key = keyboardDelegate.getKeyForSearch(state.current.search, state.current.startKey);
- 
-       if (key == null) {
-         key = keyboardDelegate.getKeyForSearch(state.current.search);
-@@ -138,6 +149,7 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
-     clearTimeout(state.current.timeout);
-     state.current.timeout = setTimeout(() => {
-       state.current.search = '';
-+      state.current.startKey = null;
-     }, TYPEAHEAD_DEBOUNCE_WAIT_MS);
-   };
- 
+     it('should handle when focus moves between keydown and keyup', function () {
+       let events = [];
+       let addEvent = e => events.push(e);
 ```
 
 ---
 
-### Incident Patch 2: `d278e822` (2026-10-20)
-**Commit Message**: fix(Tree): make TreeItem with hasChildItems expandable without child rows (#10799)
+### Incident Patch 2: `82e33ae0` (2026-10-22)
+**Commit Message**: fix: side nav panel hiding non-navigable top level items and not expanding for them (#10778)
 
-* fix(Tree): make TreeItem with hasChildItems expandable without child rows
+* fix: side nav panel hiding non-navigable top level items and not expanding for them
 
-TreeItem did not pass hasChildItems to useTreeItem, so useGridListItem only treated a row as expandable when it had child nodes in the collection. A row with hasChildItems and no children got no aria-expanded and could not be expanded with the chevron or ArrowRight.
+* fix animation
 
-Closes #10659
-
-* test(Tree): add story and test for children added to the collection on expand
-
-**File**: `packages/@adobe/react-spectrum/src/tree/TreeView.tsx` (modified, +0/-1)
+**File**: `packages/@react-spectrum/s2/src/SideNav.tsx` (modified, +14/-4)
 ```diff
-@@ -339,7 +339,6 @@ export const TreeViewItemContent = (props: SpectrumTreeViewItemContentProps): Re
-                 marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`
-               }}
-             />
--            {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
-             {hasChildItems && (
-               <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />
-             )}
-```
-
-**File**: `packages/@adobe/react-spectrum/test/tree/TreeView.test.tsx` (modified, +1/-2)
-```diff
-@@ -570,8 +570,7 @@ describe('Tree', () => {
-     expect(rows).toHaveLength(1);
+@@ -14,7 +14,7 @@ import {ActionButtonGroupContext} from './ActionButtonGroup';
+ import {ActionMenuContext} from './ActionMenu';
+ import {baseColor, css, focusRing, space, style} from '../style' with {type: 'macro'};
+ import {Button, ButtonContext} from 'react-aria-components/Button';
+-import {centerBaseline} from './CenterBaseline';
++import {centerBaseline, CenterBaseline} from './CenterBaseline';
+ import {
+   centerPadding,
+   getAllowedOverrides,
+@@ -179,7 +179,7 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
+   } = props;
  
-     expect(rows[0]).toHaveAttribute('aria-label', 'Test');
--    // Until the row gets children, don't mark it with the aria/data attributes.
--    expect(rows[0]).not.toHaveAttribute('aria-expanded');
-+    expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-     expect(rows[0]).toHaveAttribute('data-has-child-items');
-     expect(chevron).toBeTruthy();
-   });
-```
-
-**File**: `packages/react-aria-components/src/Tree.tsx` (modified, +2/-1)
-```diff
-@@ -789,7 +789,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
-         node: item,
-         shouldSelectOnPressUp: !!dragState,
-         focusMode: props.focusMode,
--        allowsArrowNavigation: props.allowsArrowNavigation
-+        allowsArrowNavigation: props.allowsArrowNavigation,
-+        hasChildItems: props.hasChildItems
-       },
-       state,
-       ref
-```
-
-**File**: `packages/react-aria-components/stories/Tree.stories.tsx` (modified, +81/-0)
-```diff
-@@ -814,6 +814,87 @@ export const WithLinks: StoryObj<typeof WithLinksRender> = {
-   }
- };
+   let domRef = useDOMRef(ref);
+-  let {isCollapsed} = useContext(SideNavPanelContext) ?? {};
++  let {isCollapsed, setCollapsed} = useContext(SideNavPanelContext) ?? {};
+   let isInSideNavPanel = isCollapsed !== undefined;
  
-+interface LazyChildrenTreeItemProps {
-+  item: {id: string; name: string; childItems?: LazyChildrenTreeItemProps['item'][]};
-+  expandedKeys: Set<Key>;
-+}
-+
-+const LazyChildrenTreeItem = ({item, expandedKeys}: LazyChildrenTreeItemProps) => {
-+  let childItems = item.childItems ?? [];
-+
-+  return (
-+    <TreeItem
-+      id={item.id}
-+      textValue={item.name}
-+      hasChildItems={childItems.length > 0}
-+      className={({isFocused, isSelected, isHovered, isFocusVisible}) =>
-+        classNames(styles, 'tree-item', {
-+          focused: isFocused,
-+          'focus-visible': isFocusVisible,
-+          selected: isSelected,
-+          hovered: isHovered
-+        })
-+      }>
-+      <TreeItemContent>
-+        {({isExpanded, hasChildItems, level}) => (
-+          <div
-+            className={styles['content-wrapper']}
-+            style={{marginInlineStart: `${(!hasChildItems ? 20 : 0) + (level - 1) * 15}px`}}>
-+            {hasChildItems && (
-+              <Button className={styles.chevron} slot="chevron">
-+                <div
-+                  style={{
-+                    transform: `rotate(${isExpanded ? 90 : 0}deg)`,
-+                    width: '16px',
-+                    height: '16px'
-+                  }}>
-+                  <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
-+                    <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-+                  </svg>
-+                </div>
-+              </Button>
-+            )}
-+            <Text>{item.name}</Text>
-+          </div>
-+        )}
-+      </TreeItemContent>
-+      <Collection items={expandedKeys.has(item.id) ? childItems : []}>
-+        {child => <LazyChildrenTreeItem item={child} expandedKeys={expandedKeys} />}
-+      </Collection>
-+    </TreeItem>
-+  );
-+};
-+
-+const LazyChildrenTreeRender = <T extends any>(args: TreeProps<T>): JSX.Element => {
-+  let [expandedKeys, setExpandedKeys] = useState<Set<Key>>(new Set());
-+
-+  return (
-+    <Tree
-+      {...args}
-+      className={styles.tree}
-+      aria-label="test lazy children tree"
-+      items={rows}
-+      expandedKeys={expandedKeys}
-+      onExpandedChange={keys => {
-+        action('onExpandedChange')(keys);
-+        setExpandedKeys(keys);
-+      }}
-+      dependencies={[expandedKeys]}>
-+      {item => <LazyChildrenTreeItem item={item} expandedKeys={expandedKeys} />}
-+    </Tree>
-+  );
-+};
-+
-+export const TreeWithLazyChildren: StoryObj<typeof LazyChildrenTreeRender> = {
-+  render: args => <LazyChildrenTreeRender {...args} />,
-+  name: 'Tree with lazily rendered children',
-+  parameters: {
-+    description: {
-+      data: 'Child rows are only added to the collection once their parent is expanded. Rows with children use hasChildItems so they can be expanded before their children are rendered.'
+   let [expandedKeys, setExpandedKeys] = useControlledState(
+@@ -197,6 +197,13 @@ export const SideNav = /*#__PURE__*/ (forwardRef as forwardRefType)(function Sid
+   // Expanding or collapsing an item moves every row below it and mounts or unmounts its children.
+   // Scheduling that as a transition causes the <ViewTransition> around each row to animate.
+   let toggleExpandedKeys = (keys: Set<Key>) => {
++    // A collapsed panel has no room to show an item's children, so activating an item that isn't a
++    // link expands the panel to reveal them rather than silently expanding behind the rail.
++    if (isCollapsed) {
++      setCollapsed?.(false);
++      setExpandedKeys(keys);
++      return;
 +    }
-+  }
-+};
-+
- function renderEmptyLoader({isLoading}) {
-   return isLoading ? 'Root level loading spinner' : 'Nothing in tree';
- }
+     startTransition(() => {
+       addTransitionType(
+         keys.size > visibleExpandedKeys.size ? ITEM_EXPAND_TRANSITION : ITEM_COLLAPSE_TRANSITION
+@@ -498,8 +505,11 @@ const SideNavItemContentInner = props => {
+             [
+               IconContext,
+               {
+-                render: centerBaseline({slot: 'icon', styles: treeIcon({isCollapsed})}),
+-                styles: style({size: '1lh', flexShrink: 0})
++                render: (icon: ReactNode) => (
++                  <CenterBaseline data-do-not-hide slot="icon" styles={treeIcon({isCollapsed})}>
++                    {icon}
++                  </CenterBaseline>
++                )
+               }
+             ],
+             [ActionButtonGroupContext, {styles: treeActions, isDisabled, size: 'S'}],
 ```
 
-**File**: `packages/react-aria-components/test/Tree.test.tsx` (modified, +56/-0)
+**File**: `packages/@react-spectrum/s2/stories/SideNav.stories.tsx` (modified, +3/-5)
 ```diff
-@@ -48,6 +48,7 @@ let {
-   EmptyTreeStaticStory: EmptyLoadingTree,
-   LoadingStoryDepOnTopStory: LoadingMoreTree,
-   TreeWithDragAndDrop,
-+  TreeWithLazyChildren,
-   TreeWithTextFieldStory
- } = composeStories(stories);
+@@ -760,12 +760,10 @@ export const SideNavPanelExample2 = {
+               </SideNavItemLink>
+             </SideNavItemContent>
+           </SideNavItem>
+-          <SideNavItem id="your-libraries" href="/your-libraries" textValue="Your Libraries">
++          <SideNavItem id="your-libraries" textValue="Your Libraries">
+             <SideNavItemContent>
+-              <SideNavItemLink>
+-                <CCLibrary />
+-                <Text>Your Libraries</Text>
+-              </SideNavItemLink>
++              <CCLibrary />
++              <Text>Your Libraries</Text>
+             </SideNavItemContent>
+             <SideNavItem id="photos" href="/photos" textValue="Photos">
+               <SideNavItemContent>
+```
+
+**File**: `packages/@react-spectrum/s2/test/SideNavPanel.test.tsx` (modified, +78/-2)
+```diff
+@@ -11,6 +11,7 @@
+  */
  
-@@ -1577,6 +1578,61 @@ describe('Tree', () => {
-           new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])
-         );
-       });
-+
-+      it('should expand a row with hasChildItems even if it has no child rows', async () => {
-+        let {getByRole} = render(
-+          <Tree aria-label="test tree" onExpandedChange={onExpandedChange}>
-+            <StaticTreeItem id="folder" textValue="Folder" hasChildItems>
-+              Folder
-+            </StaticTreeItem>
-+          </Tree>
-+        );
-+        let row = getByRole('row');
-+        expect(row).toHaveAttribute('aria-expanded', 'false');
-+
-+        await user.tab();
-+        let chevron = within(row).getAllByRole('button')[0];
-+        await trigger(chevron);
-+        expect(row).toHaveAttribute('aria-expanded', 'true');
-+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
-+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['folder']));
-+      });
-+    });
-+
-+    it('should render and navigate into children that are added to the collection on expand', async () => {
-+      let {getAllByRole} = render(<TreeWithLazyChildren />);
-+      let rows = getAllByRole('row');
-+      expect(rows).toHaveLength(2);
-+      expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-+
-+      await user.tab();
-+      expect(document.activeElement).toBe(rows[0]);
-+      await user.keyboard('{ArrowRight}');
-+      rows = getAllByRole('row');
-+      expect(rows).toHaveLength(7);
-+      expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
-+      expect(document.activeElement).toBe(rows[0]);
-+
-+      await user.keyboard('{ArrowDown}');
-+      expect(document.activeElement).toBe(rows[1]);
-+      expect(rows[1]).toHaveTextContent('Project 1');
-+      expect(rows[1]).toHaveAttribute('aria-level', '2');
-+
-+      await user.keyboard('{ArrowDown}');
-+      expect(document.activeElement).toBe(rows[2]);
-+      expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
-+      await user.keyboard('{ArrowRight}');
-+      rows = getAllByRole('row');
-+      expect(rows).toHaveLength(10);
-+      expect(document.activeElement).toBe(rows[2]);
-+
-+      await user.keyboard('{ArrowDown}');
-+      expect(document.activeElement).toBe(rows[3]);
-+      expect(rows[3]).toHaveTextContent('Project 2A');
-+      expect(rows[3]).toHaveAttribute('aria-level', '3');
-+
-+      await user.keyboard('{ArrowLeft}');
-+      expect(document.activeElement).toBe(rows[2]);
-     });
+ import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
++import {createIcon} from '../src/Icon';
+ import React from 'react';
+ import {RouterProvider} from 'react-aria-components';
+ import {
+@@ -24,10 +25,15 @@ import {SideNavPanel, SideNavPanelProps} from '../src/SideNavPanel';
+ import {Text} from '../src/Content';
+ import userEvent, {UserEvent} from '@testing-library/user-event';
  
-     it('should apply the proper attributes to the chevron', async () => {
++// Icons imported from s2wf-icons are mocked in jest, which skips createIcon and the slot wiring that
++// places an icon in a side nav row, so build a real one here instead.
++const TestIcon = createIcon(props => <svg {...props} data-testid="categories-icon" />);
++
+ // "Files" is a top-level leaf (no children). "Libraries" is a parent with an href and a nested "Photos" leaf.
+ // "Favorites" is a parent with no href but with a nested "Documents" leaf.
+-// Items are always links. An item with an href navigates when it is activated, whether or not it has
+-// children and whether or not the panel is collapsed. An item without one toggles its category instead.
++// "Categories" is a parent with neither an href nor a link, with a nested "Archive" leaf.
++// An item with an href navigates when it is activated, whether or not it has children and whether or
++// not the panel is collapsed. An item without one toggles its category instead.
+ function SideNavPanelExample(
+   props: SideNavPanelProps &
+     SideNavProps<any> & {
+@@ -76,6 +82,19 @@ function SideNavPanelExample(
+             </SideNavItemContent>
+           </SideNavItem>
+         </SideNavItem>
++        <SideNavItem id="categories" textValue="Categories">
++          <SideNavItemContent>
++            <TestIcon />
++            <Text>Categories</Text>
++          </SideNavItemContent>
++          <SideNavItem id="archive" href="/archive" textValue="Archive">
++            <SideNavItemContent>
++              <SideNavItemLink>
++                <Text>Archive</Text>
++              </SideNavItemLink>
++            </SideNavItemContent>
++          </SideNavItem>
++        </SideNavItem>
+       </SideNav>
+     </SideNavPanel>
+   );
+@@ -238,4 +257,61 @@ describe('SideNavPanel', () => {
+     expect(getByRole('link', {name: 'Documents'})).toBeInTheDocument();
+     expect(navigate).not.toHaveBeenCalled();
+   });
++
++  it('toggles the category when an item with neither an href nor a link is clicked', async () => {
++    let navigate = jest.fn();
++    let onCollapsedChange = jest.fn();
++    let {getByRole, queryByRole} = render(
++      <SideNavPanelExample navigate={navigate} onCollapsedChange={onCollapsedChange} />
++    );
++
++    let categoriesRow = getByRole('row', {name: 'Categories'});
++    expect(categoriesRow).toHaveAttribute('aria-expanded', 'false');
++    expect(queryByRole('link', {name: 'Archive'})).toBeNull();
++
++    await user.click(categoriesRow);
++
++    expect(categoriesRow).toHaveAttribute('aria-expanded', 'true');
++    expect(getByRole('link', {name: 'Archive'})).toBeInTheDocument();
++    expect(navigate).not.toHaveBeenCalled();
++    expect(onCollapsedChange).not.toHaveBeenCalled();
++  });
++
++  it('expands the panel when a collapsed item with no href is activated', async () => {
++    let navigate = jest.fn();
++    let onCollapsedChange = jest.fn();
++    let {getByRole, queryByRole} = render(
++      <SideNavPanelExample
++        defaultCollapsed
++        navigate={navigate}
++        onCollapsedChange={onCollapsedChange}
++      />
++    );
++
++    let categoriesRow = getByRole('row', {name: 'Categories'});
++    expect(categoriesRow).toHaveAttribute('aria-expanded', 'false');
++
++    await user.click(categoriesRow);
++    expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
++    expect(navigate).not.toHaveBeenCalled();
++    expect(queryByRole('link', {name: 'Archive'})).toBeNull();
++
++    finishExpanding();
++    expect(getByRole('row', {name: 'Categories'})).toHaveAttribute('aria-expanded', 'true');
++    expect(getByRole('link', {name: 'Archive'})).toBeInTheDocument();
++  });
++
++  it('expands the panel when a collapsed link with no href is activated', async () => {
++    let onCollapsedChange = jest.fn();
++    let {getByRole} = render(
++      <SideNavPanelExample defaultCollapsed onCollapsedChange={onCollapsedChange} />
++    );
++
++    await user.click(getByRole('link', {name: 'Favorites'}));
++    expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
++
++    finishExpanding();
++    expect(getByRole('row', {name: 'Favorites'})).toHaveAttribute('aria-expanded', 'true');
++    expect(getByRole('link', {name: 'Documents'})).toBeInTheDocument();
++  });
+ });
+```
+
+---
+
+### Incident Patch 3: `3b7c4d1f` (2026-10-22)
+**Commit Message**: fix: have card type attachments render at full width so file name and description are visible (#10818)
+
+**File**: `packages/@react-spectrum/ai/chromatic/AttachmentList.stories.tsx` (added, +216/-0)
+```diff
+@@ -0,0 +1,216 @@
++/*
++ * Copyright 2026 Adobe. All rights reserved.
++ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License. You may obtain a copy
++ * of the License at http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software distributed under
++ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
++ * OF ANY KIND, either express or implied. See the License for the specific language
++ * governing permissions and limitations under the License.
++ */
++
++import {
++  Attachment as AttachmentComponent,
++  AttachmentList,
++  AttachmentPreview
++} from '../src/AttachmentList';
++import {Content} from '@react-spectrum/s2/Content';
++import type {Meta, StoryObj} from '@storybook/react';
++import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
++import {Text} from '@react-spectrum/s2/Text';
++
++const meta: Meta = {
++  parameters: {
++    chromaticProvider: {
++      disableAnimations: true,
++      colorSchemes: ['light', 'dark'],
++      locales: ['en-US']
++    }
++  },
++  title: 'AI Chromatic/AttachmentList'
++};
++
++export default meta;
++
++type Story = StoryObj<typeof meta>;
++
++export const attachmentVariants: Story = {
++  render: () => (
++    <div
++      className={style({
++        display: 'flex',
++        flexDirection: 'column',
++        gap: 16,
++        width: 500,
++        maxWidth: '90vw'
++      })}>
++      <AttachmentList aria-label="Thumbnail attachments">
++        <AttachmentComponent aria-label="report.pdf">
++          <AttachmentPreview
++            slot="thumbnail"
++            mimeType="image/png"
++            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
++          />
++        </AttachmentComponent>
++        <AttachmentComponent aria-label="notes.txt">
++          <AttachmentPreview
++            slot="thumbnail"
++            mimeType="image/png"
++            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
++          />
++        </AttachmentComponent>
++      </AttachmentList>
++      <AttachmentList aria-label="Card attachments">
++        <AttachmentComponent>
++          <AttachmentPreview
++            slot="thumbnail"
++            mimeType="image/png"
++            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
++          />
++          <Content>
++            <Text slot="title">Design review.pdf</Text>
++            <Text slot="description">PDF document</Text>
++          </Content>
++        </AttachmentComponent>
++        <AttachmentComponent aria-label="data.csv">
++          <AttachmentPreview mimeType="text/csv" />
++          <Content>
++            <Text slot="title">data.csv</Text>
++          </Content>
++        </AttachmentComponent>
++      </AttachmentList>
++    </div>
++  )
++};
++
++export const LongContents: Story = {
++  name: 'Long contents',
++  render: () => (
++    <AttachmentList aria-label="Long attachment contents">
++      <AttachmentComponent
++        aria-label="Very long file name that exceeds the container width.pdf"
++        styles={style({maxWidth: 300})}>
++        <AttachmentPreview
++          mimeType="application/pdf"
++          slot="thumbnail"
++          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
++        />
++        <Content>
++          <Text slot="title">Very long file name that exceeds the container width.pdf</Text>
++          <Text slot="description">
++            Long long long long long long long long long long description.
++          </Text>
++        </Content>
++      </AttachmentComponent>
++    </AttachmentList>
++  )
++};
++
++export const MixedAttachments: Story = {
++  name: 'Mixed attachments',
++  render: () => (
++    <div
++      className={style({
++        display: 'flex',
++        flexDirection: 'column',
++        gap: 16,
++        width: 500,
++        maxWidth: '90vw'
++      })}>
++      <AttachmentList aria-label="Thumbnail attachments">
++        <AttachmentComponent aria-label="banner.png">
++          <AttachmentPreview
++            slot="thumbnail"
++            mimeType="image/png"
++            src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
++          />
++        </AttachmentComponent>
++        <AttachmentComponent aria-label="notes.tsx">
++          <AttachmentPreview mimeType="text/typescript" />
++        </AttachmentComponent>
++        <AttachmentComponent aria-label="video.mp4">
++          <AttachmentPreview mimeType="video/mp4" />
++        </AttachmentComponent>
++        <AttachmentComponent aria-label="debug.zip">
++          <AttachmentPreview mimeType="application/zip" />
++        </AttachmentComponent>
++      </AttachmentList>
++      <AttachmentList aria-label="Card attachments">
++        <AttachmentComponent aria-label="banner.png">
++          <AttachmentPreview
++            slot=
+```
+
+**File**: `packages/@react-spectrum/ai/src/AttachmentList.tsx` (modified, +5/-1)
+```diff
+@@ -117,6 +117,7 @@ const closeButton = style<{
+   disableTapHighlight: true
+ });
+ 
++const hasContent = ':has([data-slot=content])';
+ const onlyPreview = ':not(:has([data-slot=content])):not(:has([data-slot=preview]))';
+ 
+ const container = {
+@@ -577,7 +578,10 @@ export interface AttachmentProps
+ const tagStyles = style({
+   flexShrink: 0,
+   flexGrow: 0,
+-  flexBasis: '0%',
++  flexBasis: {
++    default: '0%',
++    [hasContent]: 'auto'
++  },
+   position: 'relative',
+   ...focusRing(),
+   borderRadius: 'lg',
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10801** (closed): fix(react-aria): cancel press state on window blur (#5611) (@404kernel)
-- **PR #10799** (2026-10-20): fix(Tree): make TreeItem with hasChildItems expandable without child rows (@SimenB)
-- **PR #10790** (2026-10-16): fix: remove unsupported excludeFromTabOrder from Select props (@UditDewan)
-- **PR #10785** (2026-10-15): fix: Fix style macro build in ESM (@devongovett)
-- **PR #10780** (2026-10-16): chore: remove NumberFormatter signDisplay polyfill (@UditDewan)
-- **PR #10779** (closed): fix: keep wall clock time when cycling date segments across DST in a ZonedDateTime (@UditDewan)
+- **PR #10835** (closed): fix: finish Sheet exit once the scroll rests at the exit position (@mhasanince)
+- **PR #10829** (closed): fix: finish Sheet exit when the final observer report is missed (@dajiaohuang)
+- **PR #10824** (2026-10-22): fix(useHover): prevent stuck hover state in useHover after touch interactions (@reidbarber)
+- **PR #10822** (2026-10-22): feat: add focus events to GridListItem (@dagemawinegash)
+- **PR #10820** (2026-10-23): fix(usePress): only skip Enter default prevention on macOS for Control + Enter (@jsabutis)
+- **PR #10818** (2026-10-22): fix: have card type attachments render at full width so file name and description are visible (@LFDanLu)
 
 ---
 
@@ -1035,39 +978,60 @@ Closes #10659
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. select): Select component keyboard type-ahead (#10006)
+## X. usePress): only skip Enter default prevention on macOS for Control + Enter (#108
 
 **RULE**:
-When implementing operations in `packages/@adobe/react-spectrum/test/listbox/ListBox.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in adobe/react-spectrum. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-aria-components/test/ListBox.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in adobe/react-spectrum. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2eb4e0e9`: select): Select component keyboard type-ahead (#10006). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d5fb723a`: usePress): only skip Enter default prevention on macOS for Control + Enter (#10820). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@adobe/react-spectrum/test/listbox/ListBox.test.js`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-aria-components/test/ListBox.test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      // Start on the last option so that searching for "F" wraps around to first "Foo".
-      let tree = renderComponent({autoFocus: 'last'});
-      expect(document.activeElement).toBe(options[6]);
-      let tree = renderComponent({autoFocus: 'last', onSelectionChange, selectionMode: 'single'});
-      expect(document.activeElement).toBe(options[6]);
-      expect(document.activeElement).toBe(options[2]);
-      expect(document.activeElement).toBe(options[1]);
+    it('does not activate an element focused during selection with Enter', async () => {
+      let onClick = jest.fn();
+      let triggerRef = React.createRef();
+      let {getByRole} = render(
+        <>
+          <button ref={triggerRef} onClick={onClick}>
+            Trigger
+          </button>
+          <ListBox
+            aria-label="Favorite Animal"
+            selectionMode="single"
+            onSelectionChange={() => {
+              // oxlint-disable-next-line rsp-rules/act-events-test
+              triggerRef.current.focus();
+            }}>
+            <ListBoxItem id="cat">Cat</ListBoxItem>
+            <ListBoxItem id="dog">Dog</ListBoxItem>
+          </ListBox>
+        </>
+      );
+
+      let options = within(getByRole('listbox')).getAllByRole('option');
+      act(() => options[0].focus());
+
+      // Selection moves focus to the trigger during keydown. Unless Enter's default is
+      // prevented, the browser dispatches the activation click to the newly focused
+      // element.
+      await user.keyboard('{Enter}');
+
+      expect(triggerRef.current).toHaveFocus();
+      expect(onClick).not.toHaveBeenCalled();
+    });
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      let tree = renderComponent({autoFocus: 'first'});
-      expect(document.activeElement).toBe(options[0]);
-      let tree = renderComponent({autoFocus: 'first', onSelectionChange, selectionMode: 'single'});
-      expect(document.activeElement).toBe(options[0]);
-      expect(document.activeElement).toBe(options[1]);
-      expect(document.activeElement).toBe(options[4]);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2eb4e0e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d5fb723a` are properly handled with clean fallback behavior.
