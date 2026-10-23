@@ -4548,3 +4548,5 @@
 | `CYCLE-20261023-LUD3` | `2026-10-23T11:17:53.271Z` | `tamagui/tamagui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3899` | Yes (`b3b00266...`) |
 | `CYCLE-20261023-M70J` | `2026-10-23T11:18:09.667Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3900` | Yes (`12fb54db...`) |
 | `CYCLE-20261023-UIUE` | `2026-10-23T11:24:38.246Z` | `cosscom/coss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3901` | Yes (`7ba9197d...`) |
+| `CYCLE-20261023-2H7D` | `2026-10-23T11:30:49.369Z` | `wix/react-native-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3902` | Yes (`943d6e99...`) |
+| `CYCLE-20261023-2LOQ` | `2026-10-23T11:30:55.178Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3903` | Yes (`91749168...`) |

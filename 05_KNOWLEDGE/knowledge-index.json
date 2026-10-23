@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T11:24:38.194Z",
+  "last_updated": "2026-10-23T11:30:55.129Z",
   "total_verified_learnings": 1074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38926,8 +38926,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "c9a5728b",
-      "content_hash": "e8557bc287cdb8631dbd5f6e69309038f650f68413fddfaabe319b82328cf000",
+      "source_version": "8edc2431",
+      "content_hash": "91749168966195231178b09477c8096a7a3ee79cddab6964afae924e33d95e71",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -38940,6 +38940,11 @@
           "number": 3546,
           "title": "PXT-1531: Keep background jobs pollable across service instances and redeploys (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3903,
+          "title": "Gemini's empty-response crash and leaked async client; add ImagesResponse.safety",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38947,7 +38952,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:16:30.614Z",
+      "verified_at": "2026-10-23T11:30:55.123Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49457,14 +49462,19 @@
       "slug": "wix-react-native-navigation",
       "platform": "github",
       "source_url": "https://github.com/wix/react-native-navigation",
-      "source_version": "42b85e71",
-      "content_hash": "1112596e1c5a81e0ffb380d01c994816fbf65517293436bc682087af17acf782",
+      "source_version": "3cd6bfea",
+      "content_hash": "943d6e99d130ada7b8ab5ab90bbd683dd92885ff9d8e46fc212441356648d6bb",
       "dossier_path": "07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wix-react-native-navigation-learnings.md",
       "promoted_rules": [
         {
           "number": 1818,
           "title": "crash attaching custom row to non-AppCompat activities (#8337)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3902,
+          "title": "ci): wait for npm to make a published version visible (#8371)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -49473,7 +49483,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T10:19:19.563Z",
+      "verified_at": "2026-10-23T11:30:49.322Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115206,6 +115216,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T11:24:38.183Z"
+    },
+    "rule-3902": {
+      "learning_id": "rule-3902",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3902,
+      "title": "ci): wait for npm to make a published version visible (#8371)",
+      "source_url": "https://github.com/wix/react-native-navigation",
+      "source_version": "3cd6bfea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:30:49.322Z"
+    },
+    "rule-3903": {
+      "learning_id": "rule-3903",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3903,
+      "title": "Gemini's empty-response crash and leaked async client; add ImagesResponse.safety",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "8edc2431",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T11:30:55.123Z"
     }
   },
   "aliases": {

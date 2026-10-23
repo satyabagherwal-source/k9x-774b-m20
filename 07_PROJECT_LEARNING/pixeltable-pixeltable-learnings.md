@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `c9a5728b`  
+> **Source Version**: `8edc2431`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T15:16:30.241Z  
+> **Timestamp**: 2026-10-23T11:30:54.949Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T15:16:29.826Z  
+> **Harvest Timestamp**: 2026-10-23T11:30:54.409Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The backend agents build with - Multimodal database, orchestration, and serving in one file
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 1639 stars
+- **Stars / Engagement**: 1641 stars
 
 ---
 
@@ -1459,11 +1459,11 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1792** (2026-10-20): **fix: handle ARRAY columns in EmbeddingIndex metadata**
-  *Symptoms*: ## Summary  `LocalTable.get_metadata()` (and the describe path) raised `KeyError` on any table that has an `EmbeddingIndex` over an ARRAY column.  Root cause: the metadata code always did `info.idx.embeddings[info.col.col_type._type](col_ref)`. For ARRAY columns `embeddings` is empty by design (the column already contains the vectors; see the special case in `EmbeddingIndex.create_value_expr`).  This matches the documented/intended support for ARRAY embedding indexes, which already work for insert/query but broke schema inspection and `pxt schema` workflows.  Fixes #1577  ## Fix  - In both `_get_metadata` and the describe dataframe builder, special-case `is_array_type()` exactly like `create_value_expr` does: use the column reference itself and report an empty list of embedding functions. - Added a regression assertion in the existing `test_array_column_embedding_index` that calls `get_metadata()` and checks the ARRAY indexes.  ## Verification  - Code review against the existing ARRAY handling in `embedding_index.py`. - The change is minimal and follows the same pattern already used for value expressions. - Full local pytest was not runnable in this environment (Postgres server bootstrap requires `useradd` and heavy optional deps compile), but the fix is a direct mirror of the working `create_value_expr` path and the issue repro is clear.  Please let me know if you would like any adjustments.
+- **Issue #1807** (2026-10-22): **ci: run pytest-xdist with -n logical (one worker per vCPU); skip uv cache clean on Windows**
+  *Symptoms*: The Windows slim leg is the slowest PR check: median 43 min over 20 recent green runs, vs ~21 min on ubuntu. About 33 min of that is `Run the unit tests`, and the log shows `created: 2/2 workers`. With `pytest-xdist[psutil]`, `-n auto` counts physical cores, so the 4-vCPU `windows-2025` runner runs only 2 workers.  **Change (CI only, 1 file; updated after review)** - `.github/workflows/pytest.yml`: `-n auto` → `-n logical`, so every leg starts one xdist worker per vCPU. This now applies to all legs, not only Windows: recent upstream logs show `created: 2/2 workers` on the 4-vCPU ubuntu-24.04 legs too (run 39840168253), and 3/3 on macos-15 (unchanged). The ubuntu change is not measured in our fork; this PR's own checks are the first run of it. - `.github/workflows/pytest.yml`: skip `Clean the uv cache` on Windows, where deleting ~70k cached files takes 1–3 min on an ephemeral runner. - The earlier `tool/ci_tool.py` override is reverted.  The fork measurement below was taken with the first version (Windows slim leg only); on that leg the effect is the same (4 workers instead of 2).  **Measured in a fork** (agarg21/pixeltable, same base SHA, fork-internal PRs, 3 baseline + 3 fix runs, interleaved):  | | Baseline | With this change | |---|---|---| | PR test wall (median) | 43.8 min | 29.7 min (−32%) | | Windows slim job (median) | 43.1 min | 29.3 min | | `Run the unit tests` (median) | 30.2 min | 22.8 min | | `Clean the uv cache` | 1.2–2.7 min | skipped | | Windows xdist workers 
 
-- **Issue #1791** (2026-10-21): **Free rows whose evaluation raised: store DataRow exceptions in a list**
-  *Symptoms*: ## Summary  Every `DataRow` that records a UDF exception stays in memory until the process exits, together with its slot values, the exception, and every frame in the exception's traceback (and whatever those frames' locals reference).  `DataRow.excs` was an object ndarray. numpy arrays don't take part in Python's cyclic garbage collection, so the collector can't see references held in one. A recorded exception's traceback holds the frame that caught it, and that frame references the row; `RateLimitsScheduler._exec`, for example, holds `request.rows`. The result is a cycle row -> `excs` -> exception -> traceback -> frame -> row that is never freed. The cycle dates from #418.  On main, inserting 50 rows with `on_error='ignore'` through a UDF that always raises leaves all 50 rows alive after `gc.collect()`, for a sync UDF and for an async one. A UDF frame that holds a large input or response leaks that as well.  This is also why the nightly's `validate_async_teardown()` check fails whenever a provider test produces an error row: the leaked frame keeps the provider's SDK client reachable after `reset_runtime()`, so a client whose `close()` misses a transport shows up as "async resources left open". That was Replicate in #1766, and Gemini in the [2026-10-16 nightly](https://github.com/pixeltable/pixeltable/actions/runs/38841160508), where a `TypeError` in `generate_content()` kept the `genai.Client` alive. #1769 and #1776 close those clients fully; with this change the clients ar
+- **Issue #1805** (2026-10-22): **Close fal's httpx client with fal-client 1.x; install unpinned mcp and google-genai in the nightly**
+  *Symptoms*: Fixes two failures in [nightly 2026-10-21](https://github.com/pixeltable/pixeltable/actions/runs/39533986568) that #1794 and #1795 don't cover. This was the first nightly against 0.7.19. The 10-19 nightly ran the same jobs against 0.7.18, and they passed.  ### fal: `'_FutureCachedPropertyValue' object has no attribute 'is_closed'`  `TestFalClient::test_client_closed_on_reset` failed on both Python legs. The nightly installs fal-client 1.0.3, while `uv.lock` pins 0.9.1.  Since fal-client 1.0.0, `AsyncClient._client` is an `asyncstdlib` async cached property. Reading it returns an awaitable placeholder. Once awaited, `__dict__['_client']` holds an `AwaitableValue` that wraps the httpx client, not the client itself. So `_ClosableClient.close()` called `aclose()` on the wrapper and got `AttributeError`. `Runtime.close_clients()` logs that at debug level, so with fal-client 1.x the fal httpx client was never closed.  `close()` now awaits the cached value when it's awaitable, then closes the httpx client. A client that was never opened is still left alone. The test gets the real httpx client through the runtime's event loop when the cached value is awaitable.  ### MCP: `No module named 'mcp.server.mcpserver'`  All of `test_mcp.py` failed or errored on both Python legs. The scheduled nightly tests the `release` tag and installed `mcp>=1.27.2,<2` there, on the grounds that the released client still needed mcp 1.x. 0.7.19 includes #1751, so its client and `tests/example_mcp_server.py`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1480,604 +1480,361 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9a5728b` (2026-10-21)
-**Commit Message**: PXT-1531: Keep background jobs pollable across service instances and redeploys (#1785)
-
-- Polls reach a job on any instance: a hosted service with several
-workers runs each background job on one
-instance, but a poll can land on any of them. A job id now names the
-instance that runs the job and its pod
-address, signed with a key that the service's instances share. An
-instance that gets a poll for another
-instance's job forwards it, with the client's headers, and relays the
-answer.
-- Redeploys and scale-downs no longer drop jobs: on SIGTERM, a hosted
-pod stops taking background jobs (503 with
-Retry-After) and keeps answering polls until its jobs have finished and
-their results were fetched, for up to
-  5 minutes.
-- A lost job answers 410: a poll for a job whose instance stopped
-(restart, redeploy, crash) gets 410 instead of
-404, also for ids issued before this change. 404 now means an unknown id
-or an expired result.
-- Bounded memory: a finished job's result is kept for 10 minutes, or for
-1 minute after the first poll that
-returns it; before, every result stayed in memory for the life of the
-process. A router takes at most 64
-unfinished jobs, and a submit beyond that answers 503 with
-
-**File**: `docs/release/howto/deployment/serving.mdx` (modified, +27/-5)
-```diff
-@@ -313,21 +313,43 @@ After `.collect()`, use `to_pydantic()`. After `return_rows=True`, use `model_va
- 
- ```json
- {
--  "id": "abc123",
--  "job_url": "http://127.0.0.1:<port>/_pxt/jobs/abc123"
-+  "id": "<job id>",
-+  "job_url": "<the URL that polls this job>"
- }
- ```
- 
--Poll `job_url` (`pxt service list` prints the base URL):
-+Poll `job_url`:
- 
- ```bash
--curl http://127.0.0.1:<port>/_pxt/jobs/abc123
-+curl "<job_url>"
- # {"status": "pending"}
- # {"status": "done", "result": {...}}
- # {"status": "error", "error": "...", "error_detail": {...}}
- ```
- 
--Poll through your application server with the same Cloud key when hosted. Cloud returns an HTTPS `job_url`. The polling path is in the generated schema, so polling is a typed call on the same [TypeScript client](#call-from-a-typescript-app-server): `pixeltable.GET('/_pxt/jobs/{job_id}', { params: { path: { job_id: id } } })`. A failed job's `error_detail` has the same shape as an HTTP error's `detail`, so the same retry rule applies.
-+Poll through your application server with the same Cloud key when hosted. Cloud returns an HTTPS `job_url`. The polling route is in the generated schema, so polling is also a typed call on the same [TypeScript client](#call-from-a-typescript-app-server). A failed job's `error_detail` has the same shape as an HTTP error's `detail`, so the same retry rule applies.
-+
-+Treat the job id and `job_url` as opaque: their form can change between releases.
-+
-+Each router with background routes has its own polling route. An application can include at most one unnamed
-+router with background routes; give the others distinct names with `FastAPIRouter(name=...)`. Use the
-+returned `job_url` to poll, including any prefixes added by your app or the hosted service. Regenerate client
-+types when an upgrade or a router name change alters the polling routes in your OpenAPI schema.
-+
-+A background job runs in the memory of the service instance that accepted it. Like a synchronous request, it
-+does not survive the loss of that instance. A local `pxt service` answers polls the same way a hosted service
-+does:
-+
-+| Answer | Meaning |
-+| --- | --- |
-+| 200 `pending` | the job has not finished; poll again after the `Retry-After` interval |
-+| 200 `done` or `error` | the job finished; the result is kept 10 minutes, or 1 minute after the first poll that returns it |
-+| 404 | the id is unknown, or the result has expired |
-+| 410 | the service instance that ran the job stopped (a restart, a redeploy or a crash); the job may not have finished, or may have finished without a poll returning its result, so resubmitting an insert, update or delete can repeat a write |
-+| 503 with `Retry-After` | the instance is at its limit of unfinished jobs or is shutting down, or the instance that runs the job did not answer; retry after the interval |
-+
-+When a hosted service redeploys or scales down, a stopping instance first finishes its running jobs, for up to
-+about 5 minutes. It keeps each finished result until a poll returns it, or for 30 seconds after the job finished.
- 
- `background` cannot combine with `return_fileresponse`.
- 
-```
-
-**File**: `pixeltable/serving/_app.py` (modified, +7/-4)
-```diff
-@@ -10,13 +10,16 @@
- if TYPE_CHECKING:
-     import fastapi
- 
-+    from pixeltable.serving import FastAPIRouter
-     from pixeltable_cli.types import ServiceSpec
- 
- _logger = logging.getLogger(__name__)
- 
- 
--def create_app(app_file: str, name: str, base_path: str = '') -> tuple['fastapi.FastAPI', 'ServiceSpec']:
--    """Create or return the FastAPI app derived from app_file, plus its spec."""
-+def create_app(
-+    app_file: str, name: str, base_path: str = ''
-+) -> tuple['fastapi.FastAPI', 'ServiceSpec', list['FastAPIRouter']]:
-+    """Create or return the FastAPI app derived from app_file, plus its spec and the routers in app_file."""
-     Env.get().require_package('fastapi')
-     import fastapi
- 
-@@ -41,11 +44,11 @@ def create_app(app_file: str, name: str, base_path: str = '') -> tuple['fastapi.
-     spec = service_spec(name, service, routers)
-     _logger.info(f'serving {name!r} from {app_file}')
-     if not isinstance(service, FastAPIRouter):
--        return service, spec
-+        return service, spec, routers
- 
-     app = fastapi.FastAPI(title=name)
-     app.include_router(service)
--    return app, spec
-+    return app, spec, routers
- 
- 
- _OTEL_NOT_INSTALLED = (
-```
-
-**File**: `pixeltable/serving/_fastapi.py` (modified, +357/-84)
-```diff
-@@ -1,12 +1,18 @@
- from __future__ import annotations
- 
-+import base64
- import dataclasses
-+import hashlib
-+import hmac
- import inspect
- import logging
- import mimetypes
- import os
-+import re
-+import secrets
- import shutil
- import threading
-+import time
- import urllib.parse
- import uuid
- from concurrent.futures import Future, ThreadPoolExecutor
-@@ -28,6 +34,7 @@
- )
- 
- import fastapi
-+import httpx
- import numpy as np
- import PIL.Image
- import pydantic
-@@ -132,6 +139,142 @@ class JobStatusResponse(pydantic.BaseModel):
- # how many background requests a router runs at a time
- _N_BACKGROUND_WORKERS = 16
- 
-+# unfinished background jobs per router; a submit beyond it answers 503
-+_MAX_PENDING_JOBS = 4 * _N_BACKGROUND_WORKERS
-+
-+# how long a finished job's result is kept, and how long after the first poll that returned it
-+_JOB_RESULT_TTL_S = 600.0
-+_JOB_FETCHED_TTL_S = 60.0
-+
-+# how long a drain waits for a poll of a finished job's result
-+_DRAIN_COLLECT_S = 30.0
-+
-+# Retry-After values, in seconds
-+_PENDING_RETRY_AFTER_S = 2
-+_FORWARD_RETRY_AFTER_S = 2
-+_JOB_LIMIT_RETRY_AFTER_S = 5
-+_DRAINING_RETRY_AFTER_S = 1
-+
-+# _job_status() sets it to the router's instance
-+_JOB_INSTANCE_HEADER = 'X-Pxt-Job-Instance'
-+_FORWARD_TIMEOUT = httpx.Timeout(5.0, connect=1.0)
-+# not forwarded with a job poll: the hop-by-hop headers, and the ones httpx sets itself, except Host
-+_UNFORWARDED_HEADERS = frozenset(
-+    (
-+        'connection',
-+        'keep-alive',
-+        'proxy-authorization',
-+        'te',
-+        'trailer',
-+        'transfer-encoding',
-+        'upgrade',
-+        'content-length',
-+        'accept-encoding',
-+    )
-+)
-+
-+_UNKNOWN_JOB = 'unknown or expired job'
-+_STOPPED_INSTANCE = 'the service instance that ran this job has stopped'
-+
-+_INSTANCE_RE = re.compile(r'[0-9a-f]{16}')
-+_UUID_RE = re.compile(r'[0-9a-f]{32}')
-+
-+
-+@dataclasses.dataclass
-+class _Job:
-+    """A background job submitted to a router."""
-+
-+    future: Future
-+    finished_at: float | None = None  # time.monotonic()
-+    fetched_at: float | None = None  # time.monotonic() of the first poll that returned the final status
-+
-+    def is_expired(self, now: float) -> bool:
-+        if self.fetched_at is not None and now - self.fetched_at > _JOB_FETCHED_TTL_S:
-+            return True
-+        return self.finished_at is not None and now - self.finished_at > _JOB_RESULT_TTL_S
-+
-+    def is_collected(self, now: float) -> bool:
-+        """Return whether the job finished and its result was fetched or has been kept for _DRAIN_COLLECT_S."""
-+        if self.finished_at is None:
-+            return False
-+        return self.fetched_at is not None or now - self.finished_at > _DRAIN_COLLECT_S
-+
-+
-+class _JobIds:
-+    """Issues and parses a router's background job ids; each id identifies the router instance that runs its job.
-+
-+    An id is <instance>.<uuid>, or <instance>.<addr>.<uuid>.<mac> once forwarding is enabled: the other instances of
-+    the service forward a poll to addr, and the MAC keeps a client from choosing that address.
-+    """
-+
-+    instance: str  # random, 16 hex digits
-+    addr: str | None  # host:port of this process for the other instances of its service; None without forwarding
-+    _key: bytes | None  # MAC key, shared by the instances of the service; set together with addr
-+
-+    def __init__(self) -> None:
-+        self.instance = secrets.token_hex(8)
-+        self.addr = None
-+        self._key = None
-+
-+    def enable_forwarding(self, addr: str, secret: str, service_path: str) -> None:
-+        """Issue ids that the other instances of the service at service_path forward to addr.
-+
-+        All instances of the service derive the same MAC key from secret and service_path; another service derives
-+        a different one.
-+        """
-+        self.addr = addr
-+        self._key = hmac.new(secret.encode(), f'pxt-job-id:{service_path}'.encode(), hashlib.sha256).digest()
-+
-+    def new_id(self) -> str:
-+        job_uuid = uuid.uuid4().hex
-+        if self.addr is None:
-+            return f'{self.instance}.{job_uuid}'
-+        # <instance>.<addr>.<uuid>.<mac>, e.g. for addr 10.0.0.7:8000:
-+        # 3f2a9c1e5b7d4a60.MTAuMC4wLjc6ODAwMA.9b2e4c7a1f0d4e8b8c6a5d3f2e1b0a97.4a917dd7ad72ac47d91ed15ec0b5e600
-+        signed = f'{self.instance}.{self._encode_addr(self.addr)}.{job_uuid}'
-+        return f'{signed}.{self._mac(signed)}'
-+
-+    def owner(self, job_id: str) -> tuple[str, str | None] | None:
-+        """Return the instance and the address in job_id; None if job_id is malformed or its MAC is wrong."""
-+        parts = job_id.split('.')
-+        addr: str | None = None
-+        if len(parts) == 2:
-+            # <instance>.<uuid>, from a router that does not forward polls
-+            instance, job_uuid = parts
-+        elif len(parts) == 4 and self._key is not None:
-+            # <instance>.<addr>.<uuid>.<mac>
-+            instance, addr_b64, job_uuid, mac = parts
-+            # a forged id, or one from another service, has t
-```
-
-**File**: `pixeltable/serving/pod_runner.py` (modified, +60/-4)
-```diff
-@@ -4,18 +4,30 @@
- import argparse
- import copy
- import logging
-+import os
-+import signal
-+import threading
-+import time
- from pathlib import Path
-+from types import FrameType
- from typing import TYPE_CHECKING, Any
- 
-+import uvicorn
-+
- from pixeltable import exceptions as excs
- from pixeltable.config import Config
- from pixeltable.service.db import report_instance_fingerprint
- from pixeltable.serving._app import create_app, init_instrumentation, instrument_app
-+from pixeltable.serving._fastapi import FastAPIRouter
- from pixeltable.utils.project import ProjectFingerprint
- 
- if TYPE_CHECKING:
-     import fastapi
- 
-+# how long a stopping pod waits for its background jobs after SIGTERM; the pod's terminationGracePeriodSeconds has to
-+# cover its preStop sleep plus this wait
-+_DRAIN_S = 300.0
-+
- 
- def _add_gateway_openapi_security(app: 'fastapi.FastAPI') -> None:
-     original_openapi = app.openapi
-@@ -44,6 +56,41 @@ def hosted_openapi() -> dict[str, Any]:
-     app.openapi = hosted_openapi  # type: ignore[method-assign]
- 
- 
-+class _DrainingServer(uvicorn.Server):
-+    """A uvicorn server that, on the first SIGTERM, waits for the routers' background jobs before shutting down.
-+
-+    It keeps serving during the wait, so clients can still poll the jobs. A drain_s of 0 disables the wait.
-+    """
-+
-+    routers: list[FastAPIRouter]
-+    drain_s: float
-+    _drain_started: bool
-+
-+    def __init__(self, config: uvicorn.Config, routers: list[FastAPIRouter], drain_s: float) -> None:
-+        super().__init__(config)
-+        self.routers = routers
-+        self.drain_s = drain_s
-+        self._drain_started = False
-+
-+    def handle_exit(self, sig: int, frame: FrameType | None) -> None:
-+        # a signal handler: it runs on the main thread, which may hold a router's _jobs_lock, so it takes no lock
-+        if sig == signal.SIGTERM and self.drain_s > 0 and not self._drain_started:
-+            self._drain_started = True
-+            threading.Thread(target=self._drain, args=(sig,), name='pxt-serve-drain', daemon=True).start()
-+            return
-+        super().handle_exit(sig, frame)
-+
-+    def _drain(self, sig: int) -> None:
-+        deadline = time.monotonic() + self.drain_s
-+        # stop admission on all routers before waiting: a job admitted after its router's wait returned would be lost
-+        for router in self.routers:
-+            router._start_drain()
-+        for router in self.routers:
-+            router._wait_drained(deadline)
-+        # uvicorn's handle_exit() only records the signal and sets should_exit; both are safe on this thread
-+        super().handle_exit(sig, None)
-+
-+
- def _serve(
-     db_uri: str,
-     app_file: str,
-@@ -56,8 +103,6 @@ def _serve(
-     otel: bool,
- ) -> None:
-     """Pod entry point: serve one service of the unpacked project and report what loaded."""
--    import uvicorn
--
-     if not project_dir.is_dir():
-         raise excs.InternalError(excs.ErrorCode.INTERNAL_ERROR, f'no project was unpacked at {project_dir}')
-     if not fingerprint_file.is_file():
-@@ -69,7 +114,7 @@ def _serve(
-     if otel:
-         # before the first Pixeltable operation, so that loading the file is traced too
-         init_instrumentation()
--    app, _ = create_app(str(project_dir / app_file), service_name, base_path)
-+    app, _, routers = create_app(str(project_dir / app_file), service_name, base_path)
-     _add_gateway_openapi_security(app)
-     if otel:
-         instrument_app(app)
-@@ -80,9 +125,20 @@ def _serve(
-     # root_path: the docs page fetches openapi.json by url, and a background route hands back a job url to
-     # poll, so both need the whole prefix the gateway stripped, base_path included
-     root_path = f'/{service_name}' if base_path == '' else f'/{base_path}/{service_name}'
--    uvicorn.run(
-+    # the address of this pod for the other pods of the service
-+    pod_ip = os.environ.get('PXTCLOUD_POD_IP')
-+    if pod_ip is not None:
-+        instance_addr = f'[{pod_ip}]:{port}' if ':' in pod_ip else f'{pod_ip}:{port}'
-+        # the pods of a service share the database's API key, the secret for their job ids
-+        api_key = Config.get().get_string_value('api_key')
-+        if api_key is None:
-+            raise excs.InternalError(excs.ErrorCode.INTERNAL_ERROR, 'a pod needs PIXELTABLE_API_KEY')
-+        for router in routers:
-+            router._configure_job_forwarding(instance_addr, api_key, root_path)
-+    config = uvicorn.Config(
-         app, host=host, port=port, log_level=log_level, log_config=None, root_path=root_path, proxy_headers=False
-     )
-+    _DrainingServer(config, routers, _DRAIN_S).run()
- 
- 
- if __name__ == '__main__':
-```
-
-**File**: `pixeltable/serving/service_runner.py` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ def _serve(app_file: str, service_name: str, base_path: str, otel: bool, port: i
-     if otel:
-         # before the first Pixeltable operation, so that loading the file is traced too
-         init_instrumentation()
--    app, spec = create_app(app_file, service_name, base_path)
-+    app, spec, _ = create_app(app_file, service_name, base_path)
-     if otel:
-         instrument_app(app)
- 
-```
-
-**File**: `pixeltable/utils/app_module.py` (modified, +12/-0)
-```diff
-@@ -366,6 +366,18 @@ def get_module_services(module: ModuleType, file: str) -> tuple[fastapi.FastAPI
-                     f'{file}: the FastAPI application does not include the router {name!r}; '
-                     f'include it with include_router(), or move it to a separate file',
-                 )
-+        # unnamed routers share the name and the path of the route that polls their jobs
-+        unnamed = [
-+            name
-+            for name, router in routers.items()
-+            if router.name is None and any(route.background for route in router.service_spec(name).routes)
-+        ]
-+        if len(unnamed) > 1:
-+            raise excs.RequestError(
-+                excs.ErrorCode.INVALID_ARGUMENT,
-+                f'{file}: the routers {", ".join(map(repr, unnamed))} have background routes but no name; '
-+                'assign a name with FastAPIRouter(name=...)',
-+            )
- 
-     return app, routers
- 
-```
-
-**File**: `pixeltable_cli/client/commands/service.py` (modified, +1/-1)
-```diff
-@@ -576,7 +576,7 @@ def _run_foreground(
-             )
-             sys.exit(EXIT_ERROR)
-         service_name = next(iter(services))
--    app, _ = create_app(app_file, service_name, target)
-+    app, _, _ = create_app(app_file, service_name, target)
-     if otel:
-         instrument_app(app)
-     n_routes = len(app.routes)
-```
-
-**File**: `tests/pixeltable_cli/apps/background.py` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+"""A background insert route over a computed column that takes a while."""
-+
-+# ruff: noqa: F821  # a model body refers to its own columns by bare name
-+
-+import pixeltable as pxt
-+from apps.udfs import sleep
-+from pixeltable.serving import FastAPIRouter
-+
-+TableModel = pxt.model_base()
-+
-+
-+class Naps(TableModel, name='naps'):
-+    nap_id = pxt.Column(type=pxt.Int, primary_key=True)
-+    secs: pxt.Float
-+    slept = sleep(secs)
-+
-+
-+jobs = FastAPIRouter(name='jobs')
-+jobs.add_insert_route(
-+    Naps,
-+    path='/naps',
-+    inputs=[Naps.nap_id, Naps.secs],  # type: ignore[arg-type]
-+    outputs=[Naps.nap_id, Naps.slept],
-+    background=True,
-+)
-```
-
----
-
-### Incident Patch 2: `f3137342` (2026-10-21)
-**Commit Message**: Free rows whose evaluation raised: store DataRow exceptions in a list (#1791)
+### Incident Patch 1: `ca126a93` (2026-10-22)
+**Commit Message**: Fix Gemini's empty-response crash and leaked async client; add ImagesResponse.safety_identifier (#1794)
 
 ## Summary
 
-Every `DataRow` that records a UDF exception stays in memory until the
-process exits, together with its slot values, the exception, and every
-frame in the exception's traceback (and whatever those frames' locals
-reference).
+Fixes two Gemini bugs behind recent nightly failures, and declares the
+`safety_identifier` field that openai 3.33 added to `ImagesResponse`.
 
-`DataRow.excs` was an object ndarray. numpy arrays don't take part in
-Python's cyclic garbage collection, so the collector can't see
-references held in one. A recorded exception's traceback holds the frame
-that caught it, and that frame references the row;
-`RateLimitsScheduler._exec`, for example, holds `request.rows`. The
-result is a cycle row -> `excs` -> exception -> traceback -> frame ->
-row that is never freed. The cycle dates from #418.
+**Draft:** the OpenAI change is not backward compatible on its own (see
+below). It depends on separate work that treats JSON dict schemas as
+open, and shouldn't merge before that does.
 
-On main, inserting 50 rows with `on_error='ignore'` through a UDF that
-always raises leaves all 50 rows alive after `gc.collect()`, for a sync
-UDF and for an async one. A UDF frame that holds a large input or
-response leaks that as well.
+### Gemini: `'NoneType' object is not iterable`
 
-This is also why the nightly's `validate_async_teardown()` check fails
-whenever a provider test produces an error row: the leaked frame keeps
-the provider's SDK client reachable after `reset_runtim
+[Nightly
+2026-10-16](https://github.com/pixeltable/pixeltable/actions/runs/38841160508)
+failed `test_gemini.py::TestGemini::test_generate_content_scheduler`
+with `TypeError: 'NoneType' object is not iterable` in
+`generate_content()`.
 
-**File**: `pixeltable/exprs/data_row.py` (modified, +8/-8)
+`generate_content()` iterated `result.get('candidates', [])`.
+`model_dump()` keeps unset fields as `None`, so a response without
+candidates (e.g. a blocked prompt) has `candidates: None`, and `.get()`
+returns `None`. The row then fails with a `TypeError`, which the
+scheduler doesn't retry. A candidate without output has `parts: None`,
+with the same result. Both loops now iterate `... or []` and return the
+response as is. The log doesn't show which of the two cases th
+
+**File**: `pixeltable/functions/gemini.py` (modified, +24/-8)
 ```diff
-@@ -112,7 +112,9 @@ class DataRow:
-     # expr evaluation state; indexed by slot idx
-     vals: np.ndarray  # of object
-     has_val: np.ndarray  # of bool
--    excs: np.ndarray  # of object
-+    # A list, not an object ndarray: a recorded exception's traceback usually references this row (through the frame
-+    # that caught it), and the cyclic GC can't traverse ndarrays, so that cycle would never be collected.
-+    excs: list[Exception | None]
-     missing_slots: np.ndarray  # of bool; number of missing dependencies
-     missing_dependents: np.ndarray  # of int16; number of missing dependents
-     is_scheduled: np.ndarray  # of bool; True if this slot is scheduled for evaluation
-@@ -181,7 +183,7 @@ def __init__(
-     def init(self, size: int) -> None:
-         self.vals = np.full(size, None, dtype=object)
-         self.has_val = np.zeros(size, dtype=bool)
--        self.excs = np.full(size, None, dtype=object)
-+        self.excs = [None] * size
-         self.missing_slots = np.zeros(size, dtype=bool)
-         self.missing_dependents = np.zeros(size, dtype=np.int16)
-         self.is_scheduled = np.zeros(size, dtype=bool)
-@@ -200,7 +202,8 @@ def clear(self, slot_idxs: np.ndarray | None = None) -> None:
-         if slot_idxs is not None:
-             self.has_val[slot_idxs] = False
-             self.vals[slot_idxs] = None
--            self.excs[slot_idxs] = None
-+            for idx in np.arange(len(self.excs))[slot_idxs].tolist():
-+                self.excs[idx] = None
-             self.file_urls[slot_idxs] = None
-             self.file_paths[slot_idxs] = None
-         else:
-@@ -238,18 +241,15 @@ def has_exc(self, slot_idx: int | None = None) -> bool:
+@@ -55,12 +55,22 @@
+ def _(api_key: str | None = None) -> 'genai.client.Client':
+     from google import genai
  
-         if slot_idx is not None:
-             return self.excs[slot_idx] is not None
--        return (self.excs != None).any()
-+        return any(exc is not None for exc in self.excs)
- 
-     def get_exc(self, slot_idx: int) -> Exception | None:
-         exc = self.excs[slot_idx]
-         assert exc is None or isinstance(exc, Exception)
-         return exc
- 
-     def get_first_exc(self) -> Exception | None:
--        mask = self.excs != None
--        if not mask.any():
--            return None
--        return self.excs[mask][0]
-+        return next((exc for exc in self.excs if exc is not None), None)
- 
-     def set_exc(self, slot_idx: int, exc: Exception) -> None:
-         if self.excs[slot_idx] is not None:
++    class _ClosableClient(genai.client.Client):
++        """genai.client.Client.close() closes only the sync client and leaves client.aio open: the async client that
++        the UDFs use, with its httpx client and, once a request opens one, its aiohttp session. aclose() closes both."""
++
++        async def aclose(self) -> None:
++            try:
++                self.close()
++            finally:
++                await self.aio.aclose()
++
+     try:
+         if api_key is not None:
+-            return genai.client.Client(api_key=api_key)
++            return _ClosableClient(api_key=api_key)
+         # Vertex AI fall-through: rely on genai.client.Client to read its own env vars
+         # (GOOGLE_GENAI_USE_VERTEXAI, GOOGLE_CLOUD_PROJECT, GOOGLE_CLOUD_LOCATION)
+-        return genai.client.Client()
++        return _ClosableClient()
+     except Exception as e:
+         raise excs.AuthorizationError(
+             excs.ErrorCode.MISSING_CREDENTIALS,
+@@ -175,13 +185,14 @@ async def generate_content(
+         result = response.model_dump()
+         # `model_dump()` (default mode) preserves `inline_data.data` as raw `bytes`; `mode='json'` would
+         # url-safe-base64-encode which is suboptimal as we'd have to convert it back to binary to convert to PIL image.
+-        for candidate in result.get('candidates', []):
++        # `model_dump()` keeps unset fields as None: a blocked prompt has no candidates, a candidate may have no parts.
++        for candidate in result.get('candidates') or []:
+             content = candidate.get('content')
+             if content is None:
+                 continue
+-            for part in content.get('parts', []):
++            for part in content.get('parts') or []:
+                 blob = part.get('inline_data')
+-                if blob is not None and blob.get('mime_type', '').startswith('image/') and blob.get('data'):
++                if blob is not None and (blob.get('mime_type') or '').startswith('image/') and blob.get('data'):
+                     img = PIL.Image.open(io.BytesIO(blob['data']))
+                     img.load()
+                     blob['data'] = img
+@@ -245,7 +256,12 @@ def invoke_tools(tools: pxt.func.Tools, response: exprs.Expr) -> exprs.InlineDic
+ @pxt.udf
+ def _gemini_response_to_pxt_tool_calls(response: dict) -> dict | None:
+     pxt_tool_calls: dict[str, list[dict]] = {}
+-    for part in response['candidates'][0]['content']['parts']:
++    # a response without candidates, content or parts (e.g., a blocked prompt) has no tool calls
++    candidates = response.get('candidates')
++    if not candidates:
++        return None
++    content = candidates[0].get('content') or {}
++    for part in content.get('parts') or []:
+         tool_call = part.get('function_call')
+         if tool_call is not None:
+             tool_name = tool_call['name']
+@@ -557,7 +573,7 @@ async def generate_speech(text: str, *, model: str, voice: str, config: dict | N
+     response = await _genai_client().aio.models.generate_content(model=model, contents=text, config=config_)
+     try:
+         data = response.candidates[0].content.parts[0].inline_data.data
+-    except (IndexError, AttributeError) as exc:
++    except (IndexError, AttributeError, TypeError) as exc:
+         raise excs.ExternalServiceError(
+             excs.ErrorCode.PROVIDER_ERROR,
+             f'Gemini TTS returned unexpected response structure for model {model}.',
+@@ -628,7 +644,7 @@ async def _(text: str, *, model: str, voices: dict[str, str], config: dict | Non
+     response = await _genai_client().aio.models.generate_content(model=model, contents=text, config=config_)
+     try:
+         data = response.candidates[0].content.parts[0].inline_data.data
+-    except (IndexError, AttributeError) as exc:
++    except (IndexError, AttributeError, TypeError) as exc:
+         raise excs.ExternalServiceError(
+             excs.ErrorCode.PROVIDER_ERROR,
+             f'Gemini multi-speaker TTS returned unexpected response structure for model {model}.',
 ```
 
-**File**: `tests/test_exprs.py` (modified, +36/-0)
+**File**: `pixeltable/functions/openai.py` (modified, +8/-8)
 ```diff
-@@ -3,6 +3,7 @@
- 
- import base64
- import datetime
-+import gc
- import json
+@@ -14,7 +14,7 @@
  import math
- import os
-@@ -222,6 +223,41 @@ def test_exception_handling(self, test_tbl: pxt.Table) -> None:
-         with pxt_raises(pxt.ErrorCode.UNSUPPORTED_OPERATION):
-             _ = t.where(t.c2 <= 2).select(self.value_exc(t.c2 - 1)).show()
+ import pathlib
+ import re
+-from typing import TYPE_CHECKING, Any, Type, TypedDict, TypeVar, cast
++from typing import TYPE_CHECKING, Any, NotRequired, Type, TypedDict, TypeVar, cast
  
-+    @staticmethod
-+    @pxt.udf
-+    def raise_sync(x: int) -> int:
-+        raise ValueError(f'sync {x}')
+ import numpy as np
+ import PIL
+@@ -978,14 +978,13 @@ def _decode_image_response(result: dict) -> dict:
+     return result
+ 
+ 
+-# TypedDict mirrors of the pydantic models in openai.types.images_response. Field names match the SDK so
+-# that schema introspection lines up with the OpenAI docs. Defined locally rather than reused from the SDK
+-# because openai is an optional dependency and can't be imported at module load time, and because our
+-# data field holds decoded PIL images rather than the SDK's Image pydantic model.
++# TypedDict mirrors of the pydantic models in `openai.types.images_response`, with the SDK's field names so that
++# the schema matches the OpenAI docs. They are defined here because openai is an optional dependency that this
++# module can't import at load time, and because `data` holds decoded PIL images, not the SDK's `Image` models.
+ #
+-# Every output dict has all keys present and nullability per field matches the SDK Pydantic model.
+-# Exception: data is non-null here even though the SDK declares it Optional[List[Image]] = None,
+-# because _decode_image_response() raises on a missing payload, so callers can rely on a populated list.
++# Each field is nullable exactly when the SDK's is, except `data`, which is never null: `_decode_image_response()`
++# raises on a missing payload. Every output dict has all keys, except the `NotRequired` ones, which only newer SDK
++# versions return.
+ 
+ 
+ class UsageInputTokensDetails(TypedDict):
+@@ -1014,6 +1013,7 @@ class ImagesResponse(TypedDict):
+     output_format: str | None
+     quality: str | None
+     size: str | None
++    safety_identifier: NotRequired[str | None]  # openai>=3.33
+ 
+ 
+ @pxt.udf(is_deterministic=False)
+```
+
+**File**: `pixeltable/runtime.py` (modified, +2/-1)
+```diff
+@@ -222,7 +222,8 @@ async def try_close(fn: Callable[..., Any], *args: Any) -> None:
+                 _logger.debug(f'Error closing client: {e}')
+ 
+         for client in self._clients.values():
+-            close = getattr(client, 'close', None)
++            # aclose(), when present, releases everything close() does plus the async resources
++            close = getattr(client, 'aclose', None) or getattr(client, 'close', None)
+             if close is not None:
+                 await try_close(close)
+                 continue
+```
+
+**File**: `tests/functions/test_gemini.py` (modified, +95/-1)
+```diff
+@@ -2,14 +2,17 @@
+ import random
+ import time
+ from pathlib import Path
+-from unittest.mock import patch
++from types import SimpleNamespace
++from typing import TYPE_CHECKING
++from unittest.mock import AsyncMock, Mock, patch
+ 
+ import numpy as np
+ import PIL.Image
+ import pytest
+ 
+ import pixeltable as pxt
+ import pixeltable.type_system as ts
++from pixeltable.runtime import get_runtime, reset_runtime
+ 
+ from ..utils import (
+     ensure_s3_pytest_resources_access,
+@@ -25,9 +28,100 @@
+ )
+ from .tool_utils import run_tool_invocations_test
+ 
++if TYPE_CHECKING:
++    from google.genai import types
 +
-+    @staticmethod
-+    @pxt.udf
-+    async def raise_async(x: int) -> int:
-+        raise ValueError(f'async {x}')
+ _logger = logging.getLogger('pixeltable_test')
+ 
+ 
++class TestGeminiLocal:
++    """Tests that need no credentials or network, kept out of TestGemini so that its class markers don't deselect
++    them.
 +
-+    @staticmethod
-+    @pxt.udf(resource_pool='rate-limits:test')
-+    async def raise_rate_limited(x: int) -> int:
-+        raise ValueError(f'rate-limited {x}')
++    They cover what live calls can't produce on demand. One kind is responses that Gemini returns only in edge
++    cases: a blocked prompt, a candidate without content or parts, a blob without a MIME type. The other is a
++    deterministic check that the runtime closes the client's async resources. The session-teardown leak check sees
++    an unclosed client only while something keeps it alive, since the SDK closes a client when it's
++    garbage-collected.
++    """
 +
-+    @pytest.mark.db_roots('local', reason='inspects in-process DataRows')
-+    @pytest.mark.parametrize('udf_name', ['raise_sync', 'raise_async', 'raise_rate_limited'])
-+    def test_errored_rows_released(self, uses_db: None, udf_name: str) -> None:
-+        """A row whose evaluation raised is garbage-collected after the insert.
++    @pytest.mark.parametrize('close_fails', [False, True])
++    # google-genai subclasses aiohttp.ClientSession for the session it opens
++    @pytest.mark.filterwarnings('ignore:Inheritance class AiohttpClientSession:DeprecationWarning')
++    def test_client_closed_on_reset(self, close_fails: bool, init_env: None, monkeypatch: pytest.MonkeyPatch) -> None:
++        skip_test_if_not_installed('google.genai')
++        monkeypatch.setenv('GEMINI_API_KEY', 'test-key')
++        # the test keeps a reference to the client, as the traceback of a failed call does: the SDK closes a client
++        # that is garbage-collected while a loop runs, which would hide the leak
++        client = get_runtime().get_client('gemini')
++        if close_fails:
++            # a failure to close the sync client doesn't keep the async one open
++            monkeypatch.setattr(client, 'close', Mock(side_effect=RuntimeError('close failed')))
++        # no public accessors expose the SDK's async HTTP clients, so this reads the private attributes. The aiohttp
++        # session opens on the first request, on the runtime's loop; _get_aiohttp_session() opens it the same way.
++        http_client = client._api_client._async_httpx_client
++        aiohttp_session = get_runtime().event_loop.run_until_complete(client._api_client._get_aiohttp_session())
++        reset_runtime()
++        assert http_client.is_closed
++        assert aiohttp_session.closed
 +
-+        The recorded exception's traceback references the row through the frame that caught it, so the row is part
-+        of a reference cycle.
-+        """
++    @pytest.mark.parametrize('outcome', ['blocked', 'no_content', 'no_parts', 'no_mime_type'])
++    def test_response_without_content(self, outcome: str, init_env: None, monkeypatch: pytest.MonkeyPatch) -> None:
++        """A blocked prompt has no candidates, a candidate may have no content or content without parts, and a blob
++        may have no MIME type. Each is returned as is, without tool calls."""
++        skip_test_if_not_installed('google.genai')
++        from google.genai import types
 +
-+        def num_errored_rows() -> int:
-+            gc.collect()
-+            return sum(1 for obj in gc.get_objects() if isinstance(obj, exprs.DataRow) and obj.has_exc())
++        from pixeltable.functions import gemini
 +
-+        baseline = num_errored_rows()
-+        t = pxt.create_table('errored_rows', {'x': pxt.Int})
-+        t.add_computed_column(y=getattr(self, udf_name)(t.x))
-+        status = t.insert([{'x': i} for i in range(10)], on_error='ignore')
-+        assert status.num_excs == 10
-+        assert num_errored_rows() == baseline
++        response = self._mock_response(outcome, monkeypatch)
++        result = gemini.generate_content.exec(['Say something.'], {'model': 'gemini-test'})
++        assert result == response.model_dump()
++        assert gemini._gemini_response_to_pxt_tool_calls.exec([result], {}) is None
++        if outcome == 'blocked':
++            assert result['prompt_feedback']['block_reason'] == types.BlockedReason.SAFETY
 +
-     def test_props(self, test_tbl: pxt.Table, img_tbl: pxt.Table, db_root: DatabaseRoot) -> None:
-         t = test_tbl
-         # errortype/-msg for computed column
++    def test_speech_blocked(self, init_env: None, monkeypatch: pytest.MonkeyPatch) -> None:
++        skip_test_if_not_installed('google.genai')
++        from pixeltable.functions import gemini
++
++        self._mock_response('blocked', monkeypatch)
++        # generate_speech() is polymorphic, so this calls the single-voice overload's function directly
++        single_voice = gemini.generate_speech.py_fns[0]
++        with pxt_raises(pxt.ErrorCode.PROVIDER_ERROR, match='unexpected response structure'):
++            get_runtime().run_coro(single_voice('Say something.', model='gemini-test', voice='Kore'))
++
++    def _mock_response(self, outcome: str, monkeypatch: pytest.MonkeyPatch) -> 'types.GenerateContentResponse':
++        """Makes the gemini client return a response of the given shape, and returns that response."""
++        from google.genai import types
++
++        from pixeltable.functions import gemini
++
++        candidates = {
++            'blocked': None,
++            'no_content': [types.Candidate(finish_reason=types.FinishReason.SAFETY)],
++            'no_parts': [
++                types.Candidate(content=types.Content(role='model'), finish_reason=types.FinishReason.MAX_TOKENS)
++            ],
++            'no_mime_type': [
++                types.Candidate(
++                    cont
+```
+
+**File**: `tests/functions/test_openai.py` (modified, +9/-4)
+```diff
+@@ -940,7 +940,7 @@ def test_translation_response(self) -> None:
+ 
+     def test_images_response(self) -> None:
+         """ImagesResponse mirrors SDK ImagesResponse field-for-field, except data is non-null
+-        (we guarantee a populated list in _decode_image_response)."""
++        (we guarantee a populated list in _decode_image_response), and fields that newer SDKs added are optional."""
+         skip_test_if_not_installed('openai')
+         from openai.types.images_response import ImagesResponse as SdkImagesResponse
+ 
+@@ -952,7 +952,12 @@ def test_images_response(self) -> None:
+         overrides = {'data'}  # we re-type and guarantee non-null
+         # openai 3.24 no longer declares size; a missing key reads as null, which size allows
+         dropped_by_sdk = {'size'} - set(sdk_fields)
+-        assert set(ours_fields) - dropped_by_sdk == set(sdk_fields), (
++        # declared by newer SDKs only, so a response from an older one lacks them
++        added_by_sdk = {'safety_identifier'}  # openai>=3.33
++        # whether this SDK declares them comes from its raw fields, since _pydantic_fields() drops a field whose
++        # annotation it can't convert, and that must fail the comparison below
++        absent_from_sdk = added_by_sdk - set(SdkImagesResponse.model_fields)
++        assert set(ours_fields) - dropped_by_sdk - absent_from_sdk == set(sdk_fields), (
+             f'ImagesResponse field set drifted: ours={set(ours_fields)} sdk={set(sdk_fields)}'
+         )
+         for name, sdk_type in sdk_fields.items():
+@@ -961,5 +966,5 @@ def test_images_response(self) -> None:
+             assert self._normalize(ours_fields[name]) == self._normalize(sdk_type), (
+                 f'ImagesResponse field {name!r} drifted: ours={ours_fields[name]} sdk={sdk_type}'
+             )
+-        # all fields always present
+-        assert ours_optional == frozenset()
++        # all fields always present, except the ones that older SDKs lack
++        assert ours_optional == added_by_sdk
+```
+
+**File**: `tests/test_env.py` (modified, +27/-0)
+```diff
+@@ -413,6 +413,28 @@ def _() -> _ContextManagerClient:
+     return _ContextManagerClient()
+ 
+ 
++class _AcloseClient:
++    """Stands in for an SDK client whose close() releases only its sync resources and aclose() releases all."""
++
++    closes: int
++    acloses: int
++
++    def __init__(self) -> None:
++        self.closes = 0
++        self.acloses = 0
++
++    def close(self) -> None:
++        self.closes += 1
++
++    async def aclose(self) -> None:
++        self.acloses += 1
++
++
++@env.register_client('test_aclose_sdk', credential_param=None)
++def _() -> _AcloseClient:
++    return _AcloseClient()
++
++
+ @pxt.udf
+ async def uses_client(n: int) -> int:
+     """Fetches the registered client, the way the udfs of an API integration do."""
+@@ -472,6 +494,11 @@ def test_exited_without_close(self, init_env: None, aexit_fails: bool) -> None:
+         # a failing __aexit__() doesn't keep __exit__() from running
+         assert (client.aexits, client.exits) == (1, 1)
+ 
++    def test_aclose_preferred(self, init_env: None) -> None:
++        client = get_runtime().get_client('test_aclose_sdk')
++        reset_runtime()
++        assert (client.acloses, client.closes) == (1, 0)
++
+ 
+ class TestRequirePackage:
+     def test_version_floor(self, init_env: None, monkeypatch: pytest.MonkeyPatch) -> None:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1792** (closed): fix: handle ARRAY columns in EmbeddingIndex metadata (@ompatil1906)
-- **PR #1791** (2026-10-21): Free rows whose evaluation raised: store DataRow exceptions in a list (@aaron-siegel)
-- **PR #1790** (2026-10-20): Review PRs only on request, with an optional focus, one pass per review skill (@pierrebrunelle)
-- **PR #1789** (closed): PXT-1590: tolerate ImagesResponse.safety_identifier from openai 3.33 (@pierrebrunelle)
-- **PR #1787** (2026-10-18): Comment out the claude-review erosion job for now (@pierrebrunelle)
-- **PR #1785** (2026-10-21): PXT-1531: Keep background jobs pollable across service instances and redeploys (@mkornacker)
+- **PR #1807** (2026-10-22): ci: run pytest-xdist with -n logical (one worker per vCPU); skip uv cache clean on Windows (@agarg21)
+- **PR #1805** (2026-10-22): Close fal's httpx client with fal-client 1.x; install unpinned mcp and google-genai in the nightly (@aaron-siegel)
+- **PR #1804** (2026-10-22): Link the tests badge to runs on main (@aaron-siegel)
+- **PR #1802** (2026-10-22): Publish otel instrumentation without third-party actions (@pierrebrunelle)
+- **PR #1801** (2026-10-22): docs: rewrite the README and overview pages for developers (@pierrebrunelle)
+- **PR #1799** (2026-10-22): docs: add Langfuse tracing integration (OpenTelemetry) (@pierrebrunelle)
 
 ---
 
@@ -2097,49 +1854,58 @@ the provider's SDK client reachable after `reset_runtim
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. PXT-1531: Keep background jobs pollable across service instances and redeploys (
+## X. Gemini's empty-response crash and leaked async client; add ImagesResponse.safety
 
 **RULE**:
-When implementing operations in `docs/release/howto/deployment/serving.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixeltable/functions/gemini.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9a5728b`: PXT-1531: Keep background jobs pollable across service instances and redeploys (#1785). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ca126a93`: Gemini's empty-response crash and leaked async client; add ImagesResponse.safety_identifier (#1794). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/release/howto/deployment/serving.mdx`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/functions/gemini.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  "id": "<job id>",
-  "job_url": "<the URL that polls this job>"
-Poll `job_url`:
-curl "<job_url>"
-Poll through your application server with the same Cloud key when hosted. Cloud returns an HTTPS `job_url`. The polling route is in the generated schema, so polling is also a typed call on the same [TypeScript client](#call-from-a-typescript-app-server). A failed job's `error_detail` has the same shape as an HTTP error's `detail`, so the same retry rule applies.
+    class _ClosableClient(genai.client.Client):
+        """genai.client.Client.close() closes only the sync client and leaves client.aio open: the async client that
+        the UDFs use, with its httpx client and, once a request opens one, its aiohttp session. aclose() closes both."""
 
-Treat the job id and `job_url` as opaque: their form can change between releases.
+        async def aclose(self) -> None:
+            try:
+                self.close()
+            finally:
+                await self.aio.aclose()
 
-Each router with background routes has its own polling route. An application can include at most one unnamed
-router with background routes; give the others distinct names with `FastAPIRouter(name=...)`. Use the
-returned `job_url` to poll, including any prefixes added by your app or the hosted service. Regenerate client
-types when an upgrade or a router name change alters the polling routes in your OpenAPI schema.
-
-A background job runs in the memory of the service instance that accepted it. Like a synchronous request, it
-does not survive the loss of that instance. A local `pxt service` answers polls the same way a hosted service
-does:
-
-| Answer 
+            return _ClosableClient(api_key=api_key)
+        return _ClosableClient()
+        # `model_dump()` keeps unset fields as None: a blocked prompt has no candidates, a candidate may have no parts.
+        for candidate in result.get('candidates') or []:
+            for part in content.get('parts') or []:
+                if blob is not None and (blob.get('mime_type') or '').startswith('image/') and blob.get('data'):
+    # a response without candidates, content or parts (e.g., a blocked prompt) has no tool calls
+    candidates = response.get('candidates')
+    if not candidates:
+        return None
+    content = candidates[0].get('content') or {}
+    for part in content.get('parts') or []:
+    except (IndexError, AttributeError, TypeError) as exc:
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-  "id": "abc123",
-  "job_url": "http://127.0.0.1:<port>/_pxt/jobs/abc123"
-Poll `job_url` (`pxt service list` prints the base URL):
-curl http://127.0.0.1:<port>/_pxt/jobs/abc123
-Poll through your application server with the same Cloud key when hosted. Cloud returns an HTTPS `job_url`. The polling path is in the generated schema, so polling is a typed call on the same [TypeScript client](#call-from-a-typescript-app-server): `pixeltable.GET('/_pxt/jobs/{job_id}', { params: { path: { job_id: id } } })`. A failed job's `error_detail` has the same shape as an HTTP error's `detail`, so the same retry rule applies.
+            return genai.client.Client(api_key=api_key)
+        return genai.client.Client()
+        for candidate in result.get('candidates', []):
+            for part in content.get('parts', []):
+                if blob is not None and blob.get('mime_type', '').startswith('image/') and blob.get('data'):
+    for part in response['candidates'][0]['content']['parts']:
+    except (IndexError, AttributeError) as exc:
+    except (IndexError, AttributeError) as exc:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9a5728b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ca126a93` are properly handled with clean fallback behavior.

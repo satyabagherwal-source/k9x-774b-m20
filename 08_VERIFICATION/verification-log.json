@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-RNHA",
-    "timestamp": "2026-10-20T21:47:14.974Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "42fa5b38ca5a36358f1719a10b9c7d00d621ee55a76ae3ac708231bfd8e14fb4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-09XE",
-    "timestamp": "2026-10-20T21:53:57.314Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-baai-bge-m3",
-    "contentHash": "f2549f4518b0f136bd418cdf92e0b68bcc3b9ebf1564b4fe012a275fef1d57af",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-8D9K",
     "timestamp": "2026-10-20T22:00:14.888Z",
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -7490,6 +7460,36 @@
     "repository": "cosscom/coss",
     "learningId": "learn-github-cosscom-coss",
     "contentHash": "7ba9197dab8f10aeb7a0fc82b901171d4c9dcdc2d8b6bf7a8014c24fdd799a93",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-2H7D",
+    "timestamp": "2026-10-23T11:30:49.369Z",
+    "repository": "wix/react-native-navigation",
+    "learningId": "learn-github-wix-react-native-navigation",
+    "contentHash": "943d6e99d130ada7b8ab5ab90bbd683dd92885ff9d8e46fc212441356648d6bb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-2LOQ",
+    "timestamp": "2026-10-23T11:30:55.178Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "91749168966195231178b09477c8096a7a3ee79cddab6964afae924e33d95e71",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

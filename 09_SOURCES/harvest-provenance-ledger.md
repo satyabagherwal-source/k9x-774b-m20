@@ -4555,3 +4555,5 @@ Every entry in this ledger must capture:
 | `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `c95f4998` | Multi-dimensional audit evidence | 2026-10-23T11:17:53.273Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `d42ea86b` | Multi-dimensional audit evidence | 2026-10-23T11:18:09.669Z |
 | `learn-github-cosscom-coss` | `https://github.com/cosscom/coss` | `f2ec86f7` | Multi-dimensional audit evidence | 2026-10-23T11:24:38.249Z |
+| `learn-github-wix-react-native-navigation` | `https://github.com/wix/react-native-navigation` | `3cd6bfea` | Multi-dimensional audit evidence | 2026-10-23T11:30:49.372Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `8edc2431` | Multi-dimensional audit evidence | 2026-10-23T11:30:55.180Z |

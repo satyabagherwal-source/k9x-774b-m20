@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T11:24:38.259Z",
-  "total_cycles_completed": 4525,
-  "total_learnings_persisted": 4525,
-  "total_rules_promoted": 3754,
+  "last_updated": "2026-10-23T11:30:55.188Z",
+  "total_cycles_completed": 4527,
+  "total_learnings_persisted": 4527,
+  "total_rules_promoted": 3756,
   "history": [
-    {
-      "timestamp": "2026-10-22T17:25:43.116Z",
-      "repository": "zeromicro/go-zero",
-      "learningId": "learn-github-zeromicro-go-zero",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:25:43.784Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T17:25:45.393Z",
       "repository": "MariaDB/server",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-23T11:24:38.259Z",
       "repository": "cosscom/coss",
       "learningId": "learn-github-cosscom-coss",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:30:49.375Z",
+      "repository": "wix/react-native-navigation",
+      "learningId": "learn-github-wix-react-native-navigation",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T11:30:55.188Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
