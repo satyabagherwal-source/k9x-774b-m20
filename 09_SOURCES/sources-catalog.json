@@ -6273,10 +6273,10 @@
     "repository": "carbon-design-system/carbon",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon",
-    "sourceVersion": "f33b1dbe",
+    "sourceVersion": "f4967e5c",
     "license": "Apache-2.0",
-    "contentHash": "e36d584514b518ba1b409fa38bb960b7cc4420784306b8729ca8f854f4840623",
-    "lastHarvestedAt": "2026-10-21T04:42:52.979Z",
+    "contentHash": "21d9d2990fba1c390f5b563eb73ee3beef42ad0fe5493d18e5f8648fb2de371b",
+    "lastHarvestedAt": "2026-10-23T06:36:15.514Z",
     "learningId": "learn-github-carbon-design-system-carbon"
   },
   "emilkowalski-vaul": {
@@ -10323,10 +10323,10 @@
     "repository": "appwrite/appwrite",
     "platform": "github",
     "sourceUrl": "https://github.com/appwrite/appwrite",
-    "sourceVersion": "a8c84a5f",
+    "sourceVersion": "a9f8ae18",
     "license": "BSD-3-Clause",
-    "contentHash": "181042c9ba3b0080e8e0bd2d6c92669450e6e09e7e7c89f0729789d85a0c8e4e",
-    "lastHarvestedAt": "2026-10-20T04:50:55.182Z",
+    "contentHash": "689785b47463c070e6777097be1d487417dc235527adf8357bf55cfb95572fc0",
+    "lastHarvestedAt": "2026-10-23T06:36:22.361Z",
     "learningId": "learn-github-appwrite-appwrite"
   },
   "expo-expo": {

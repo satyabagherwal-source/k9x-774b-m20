@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-23T06:30:19.420Z",
+  "last_updated": "2026-10-23T06:36:22.414Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9531,14 +9531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon",
-      "content_hash": "e36d584514b518ba1b409fa38bb960b7cc4420784306b8729ca8f854f4840623",
-      "verified_at": "2026-10-21T04:42:52.991Z",
+      "content_hash": "21d9d2990fba1c390f5b563eb73ee3beef42ad0fe5493d18e5f8648fb2de371b",
+      "verified_at": "2026-10-23T06:36:15.528Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:42:52.991Z"
+      "last_updated": "2026-10-23T06:36:15.528Z"
     },
     "emilkowalski/vaul": {
       "repository": "emilkowalski/vaul",
@@ -15501,14 +15501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-appwrite-appwrite",
-      "content_hash": "181042c9ba3b0080e8e0bd2d6c92669450e6e09e7e7c89f0729789d85a0c8e4e",
-      "verified_at": "2026-10-20T04:50:55.188Z",
+      "content_hash": "689785b47463c070e6777097be1d487417dc235527adf8357bf55cfb95572fc0",
+      "verified_at": "2026-10-23T06:36:22.413Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T04:50:55.188Z"
+      "last_updated": "2026-10-23T06:36:22.413Z"
     },
     "expo/expo": {
       "repository": "expo/expo",

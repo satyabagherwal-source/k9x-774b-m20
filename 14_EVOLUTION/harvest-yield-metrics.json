@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T06:30:19.417Z",
-  "total_cycles_completed": 4455,
-  "total_learnings_persisted": 4455,
-  "total_rules_promoted": 3642,
+  "last_updated": "2026-10-23T06:36:22.410Z",
+  "total_cycles_completed": 4457,
+  "total_learnings_persisted": 4457,
+  "total_rules_promoted": 3644,
   "history": [
-    {
-      "timestamp": "2026-10-21T19:12:14.577Z",
-      "repository": "pamburus/hl",
-      "learningId": "learn-github-pamburus-hl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-21T19:12:19.884Z",
-      "repository": "kubeshark/kubeshark",
-      "learningId": "learn-github-kubeshark-kubeshark",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-21T19:12:25.507Z",
       "repository": "etcd-io/etcd",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-23T06:30:19.417Z",
       "repository": "Ontos-AI/knowhere",
       "learningId": "learn-github-ontos-ai-knowhere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:36:15.525Z",
+      "repository": "carbon-design-system/carbon",
+      "learningId": "learn-github-carbon-design-system-carbon",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T06:36:22.410Z",
+      "repository": "appwrite/appwrite",
+      "learningId": "learn-github-appwrite-appwrite",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

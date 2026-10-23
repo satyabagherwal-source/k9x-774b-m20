@@ -4485,3 +4485,5 @@ Every entry in this ledger must capture:
 | `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `a976df38` | Multi-dimensional audit evidence | 2026-10-23T06:30:10.617Z |
 | `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `280954e5` | Multi-dimensional audit evidence | 2026-10-23T06:30:11.968Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `9376c568` | Multi-dimensional audit evidence | 2026-10-23T06:30:19.409Z |
+| `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `f4967e5c` | Multi-dimensional audit evidence | 2026-10-23T06:36:15.514Z |
+| `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `a9f8ae18` | Multi-dimensional audit evidence | 2026-10-23T06:36:22.361Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T06:30:19.364Z",
+  "last_updated": "2026-10-23T06:36:22.327Z",
   "total_verified_learnings": 1072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2382,14 +2382,19 @@
       "slug": "appwrite-appwrite",
       "platform": "github",
       "source_url": "https://github.com/appwrite/appwrite",
-      "source_version": "a8c84a5f",
-      "content_hash": "181042c9ba3b0080e8e0bd2d6c92669450e6e09e7e7c89f0729789d85a0c8e4e",
+      "source_version": "a9f8ae18",
+      "content_hash": "689785b47463c070e6777097be1d487417dc235527adf8357bf55cfb95572fc0",
       "dossier_path": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "promoted_rules": [
         {
           "number": 3057,
           "title": "tests): give Sites e2e builds room to finish under the lane's load",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3792,
+          "title": "mqtt): scope the push ledger unique index to the topic instance",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -2398,7 +2403,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T04:50:55.138Z",
+      "verified_at": "2026-10-23T06:36:22.321Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5017,8 +5022,8 @@
       "slug": "carbon-design-system-carbon",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon",
-      "source_version": "f33b1dbe",
-      "content_hash": "e36d584514b518ba1b409fa38bb960b7cc4420784306b8729ca8f854f4840623",
+      "source_version": "f4967e5c",
+      "content_hash": "21d9d2990fba1c390f5b563eb73ee3beef42ad0fe5493d18e5f8648fb2de371b",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "promoted_rules": [
@@ -5051,6 +5056,11 @@
           "number": 3522,
           "title": "Menu): correct keyboard navigation under StrictMode and away from items with sub",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3791,
+          "title": "TagOverflow): use unique id for overflow popover (#23791)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5058,7 +5068,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T04:42:52.918Z",
+      "verified_at": "2026-10-23T06:36:15.473Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113060,6 +113070,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T06:30:19.356Z"
+    },
+    "rule-3791": {
+      "learning_id": "rule-3791",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3791,
+      "title": "TagOverflow): use unique id for overflow popover (#23791)",
+      "source_url": "https://github.com/carbon-design-system/carbon",
+      "source_version": "f4967e5c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:36:15.473Z"
+    },
+    "rule-3792": {
+      "learning_id": "rule-3792",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3792,
+      "title": "mqtt): scope the push ledger unique index to the topic instance",
+      "source_url": "https://github.com/appwrite/appwrite",
+      "source_version": "a9f8ae18",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-23T06:36:22.321Z"
     }
   },
   "aliases": {

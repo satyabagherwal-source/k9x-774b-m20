@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-MYN8",
-    "timestamp": "2026-10-20T19:23:38.084Z",
-    "repository": "DNSControl/dnscontrol",
-    "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "9016cbbb51e3bb52202d0e0c8884fa90ed578bb0a9512d167ea867044ef30034",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-VYKQ",
-    "timestamp": "2026-10-20T19:30:37.898Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "768a4c3a6586ca1d8d09483541f4a6ad4ac6660c28809ff78351635f1a9e3a88",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-VYKY",
     "timestamp": "2026-10-20T19:30:37.906Z",
     "repository": "vuetifyjs/vuetify",
@@ -7490,6 +7460,36 @@
     "repository": "Ontos-AI/knowhere",
     "learningId": "learn-github-ontos-ai-knowhere",
     "contentHash": "33b4a2ba4b0c58bbcc5e2ddb133db2291f22854634af8bc70aed77cfdebfcc71",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-JNYW",
+    "timestamp": "2026-10-23T06:36:15.512Z",
+    "repository": "carbon-design-system/carbon",
+    "learningId": "learn-github-carbon-design-system-carbon",
+    "contentHash": "21d9d2990fba1c390f5b563eb73ee3beef42ad0fe5493d18e5f8648fb2de371b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261023-JT93",
+    "timestamp": "2026-10-23T06:36:22.359Z",
+    "repository": "appwrite/appwrite",
+    "learningId": "learn-github-appwrite-appwrite",
+    "contentHash": "689785b47463c070e6777097be1d487417dc235527adf8357bf55cfb95572fc0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

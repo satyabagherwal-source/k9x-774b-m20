@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `a8c84a5f`  
+> **Source Version**: `a9f8ae18`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:50:54.985Z  
+> **Timestamp**: 2026-10-23T06:36:22.130Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:50:54.593Z  
+> **Harvest Timestamp**: 2026-10-23T06:36:20.885Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 57732 stars
+- **Stars / Engagement**: 57752 stars
 
 ---
 
@@ -1623,14 +1623,16 @@ const CARD_BRAND_LABELS: Record<string, string> = {
   'targeta-shopping': 'Tarjeta Shopping',
 }
 
-function normalizePaymentCardBrand(brand: string | undefined): string {
+function normalizePaymentCardBrand(brand: string | null | undefined): string {
   return brand?.trim().toLowerCase().replace(/[\s-]+/g, '_') || ''
 }
 
 /**
  * Human-readable card network from API `brand` (often Stripe-style slugs).
  */
-export function formatPaymentCardBrand(brand: string | undefined): string {
+export function formatPaymentCardBrand(
+  brand: string | null | undefined,
+): string {
   const b = normalizePaymentCardBrand(brand)
   if (CARD_BRAND_LABELS[b]) return CARD_BRAND_LABELS[b]
   if (!b) return 'Card'
@@ -1641,11 +1643,11 @@ export function formatPaymentCardBrand(brand: string | undefined): string {
 }
 
 export type PaymentMethodCardSummaryInput = {
-  brand?: string
-  last4?: string
-  name?: string
-  expiryMonth?: number
-  expiryYear?: number
+  brand?: string | null
+  last4?: string | null
+  name?: string | null
+  expiryMonth?: number | null
+  expiryYear?: number | null
 }
 
 /**
@@ -1924,70 +1926,426 @@ export function DomainsEmptyState({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `13aff0f3` (2026-10-19)
-**Commit Message**: fix(tests): give Sites e2e builds room to finish under the lane's load
+### Incident Patch 1: `ed930d0d` (2026-10-23)
+**Commit Message**: fix(mqtt): scope the push ledger unique index to the topic instance
 
-The Sites lane runs paratest --functional with one process per CPU, and
-each test starts its own builds. An Astro SSR build that takes about 9s
-alone took 142-145s with 16 sharing 4 CPUs, past the 120s ready wait, so
-testVariablesE2E and testSiteClientIp failed with the build still
-finishing. Wait 300s; builds themselves time out at 900s.
+Deduplication looks a message up by (messageId, topicInternalId), but the unique index still covered (messageId, topic). A topic recreated under the same id, or a row written before the instance binding, made the lookup miss while the insert collided, so the publish failed. The index now covers (messageId, topicInternalId); NULLs are distinct under it, so pre-upgrade rows never block a publish. V25 drops the old index and creates the new one.
 
-**File**: `tests/e2e/Services/Sites/SitesBase.php` (modified, +3/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `app/config/collections/common.php` (modified, +1/-1)
 ```diff
-@@ -84,7 +84,9 @@ protected function waitDeploymentReady(string $siteId, string $deploymentId): vo
-             }
+@@ -386,7 +386,7 @@
+         'indexes' => [
+             Index::key(key: '_key_topicInternalId_sequence', attributes: ['topicInternalId', 'sequence'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
+             Index::key(key: '_key_messageInternalId', attributes: ['messageInternalId'], orders: [OrderDirection::Asc]),
+-            Index::unique(key: '_key_message_topic', attributes: ['messageId', 'topic'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
++            Index::unique(key: '_key_message_topicInternalId', attributes: ['messageId', 'topicInternalId'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
+         ],
+     ],
  
-             $this->assertEquals('ready', $deployment['body']['status'], 'Deployment status is not ready, deployment: ' . json_encode($deployment['body'], JSON_PRETTY_PRINT));
--        }, 120000, 500);
-+            // The lane runs one paratest process per CPU, each starting builds, so an SSR build
-+            // that takes seconds alone takes over two minutes there; builds time out at 900s.
-+        }, 300000, 500);
+```
+
+**File**: `src/Appwrite/Messaging/Adapter/Push/Appwrite.php` (modified, +5/-3)
+```diff
+@@ -145,11 +145,13 @@ private function createUserTopic(string $name): string
+      * (getDocument FOR UPDATE). A concurrent attempt for the same message blocks on that
+      * lock, then re-reads the ledger row this transaction committed rather than racing a
+      * second increment — so the topic sequence can't advance without a matching row, and
+-     * two attempts can't open a gap. The unique index on (messageId, topic) remains as a
+-     * correctness backstop.
++     * two attempts can't open a gap. The unique index on (messageId, topicInternalId) remains
++     * as a correctness backstop.
+      *
+      * Rows are bound to the locked topic's internal id, so a topic deleted and recreated under
+-     * the same id never shares a ledger, or a deduplication key, with its predecessor.
++     * the same id never shares a ledger, or a deduplication key, with its predecessor. Rows
++     * written before that binding have a null topicInternalId, which the unique index treats
++     * as distinct, so they never block a publish.
+      */
+     private function persist(string $topic, string $payload): int
+     {
+```
+
+**File**: `src/Appwrite/Migration/Version/V25.php` (modified, +11/-2)
+```diff
+@@ -489,8 +489,9 @@ private function migrateCollections(): void
+                     $this->createCollection($id);
+                     // Ledger rows are bound to their topic instance. Rows written before the
+                     // binding keep a null topicInternalId and are never replayed; the age-based
+-                    // prune removes them. A failure other than an existing attribute or index
+-                    // propagates, since publishing needs the attribute.
++                    // prune removes them. NULLs are distinct under the unique index, so they never
++                    // block a publish. A failure other than an existing attribute or index
++                    // propagates, since publishing needs the attribute and the instance-scoped index.
+                     try {
+                         $this->createAttributeFromCollection($this->dbForProject, $id, 'topicInternalId');
+                     } catch (Duplicate) {
+@@ -503,6 +504,14 @@ private function migrateCollections(): void
+                         $this->dbForProject->deleteIndex($id, '_key_topic_sequence');
+                     } catch (NotFound) {
+                     }
++                    try {
++                        $this->dbForProject->deleteIndex($id, '_key_message_topic');
++                    } catch (NotFound) {
++                    }
++                    try {
++                        $this->createIndexFromCollection($this->dbForProject, $id, '_key_message_topicInternalId');
++                    } catch (Duplicate) {
++                    }
+                     $this->dbForProject->purgeCachedCollection($id);
+                     break;
+ 
+```
+
+**File**: `tests/unit/Appwrite/Messaging/Adapter/Push/AppwriteTest.php` (modified, +44/-0)
+```diff
+@@ -10,6 +10,7 @@
+ use PHPUnit\Framework\TestCase;
+ use Utopia\Cache\Adapter\None as NoCache;
+ use Utopia\Cache\Cache;
++use Utopia\Config\Config;
+ use Utopia\Database\Adapter\Memory;
+ use Utopia\Database\Attribute;
+ use Utopia\Database\Collection;
+@@ -131,6 +132,7 @@ protected function setUp(): void
+                 Attribute::string(key: 'messageInternalId', size: 255),
+                 Attribute::integer(key: 'sequence', required: true),
+             ],
++            indexes: Config::getParam('collections', [])['projects']['pushLedger']['indexes'],
+             permissions: $any,
+             documentSecurity: false,
+         ));
+@@ -303,6 +305,48 @@ public function testRecreatedTopicGetsItsOwnLedger(): void
+         $this->assertSame(1, $rows['msg-2']->getAttribute('sequence'));
      }
  
-     protected function waitDeploymentActivated(string $siteId, string $deploymentId): void
++    public function testMessageReusedOnRecreatedTopicPublishes(): void
++    {
++        $this->seedTopic('topic-1', 0);
++        $broker = new FakeBroker();
++        $this->adapter($broker, messageId: 'msg-1')->send(new Push(to: ['topic-1'], title: 'deleted topic'));
++        $this->database->deleteDocument('topics', 'topic-1');
++        $this->seedTopic('topic-1', 0);
++        $recreated = (string) $this->topic('topic-1')->getSequence();
++
++        $response = $this->adapter($broker, messageId: 'msg-1')->send(new Push(to: ['topic-1'], title: 'recreated topic'));
++
++        $this->assertSame(1, $response['deliveredTo'], 'a message id already in the deleted topic\'s ledger must still publish to the recreated topic');
++        $this->assertSame('success', $response['results'][0]['status']);
++        $this->assertCount(2, $broker->published);
++        $rows = \array_values(\array_filter(
++            $this->ledger(),
++            static fn (Document $row): bool => $row->getAttribute('topicInternalId') === $recreated,
++        ));
++        $this->assertCount(1, $rows);
++        $this->assertSame(1, $rows[0]->getAttribute('sequence'));
++    }
++
++    public function testLedgerRowWithoutTopicInstanceDoesNotBlockPublish(): void
++    {
++        $this->seedTopic('topic-1', 3);
++        $this->database->skipValidation(fn () => $this->database->createDocument('pushLedger', new Document([
++            'topic' => 'topic-1',
++            'data' => '{}',
++            'messageId' => 'msg-1',
++            'messageInternalId' => 'internal-1',
++            'sequence' => 3,
++        ])));
++
++        $broker = new FakeBroker();
++        $response = $this->adapter($broker, messageId: 'msg-1')->send(new Push(to: ['topic-1'], title: 'after upgrade'));
++
++        $this->assertSame(1, $response['deliveredTo'], 'a ledger row written before topic instances were recorded must not block a publish of the same message');
++        $this->assertSame('success', $response['results'][0]['status']);
++        $this->assertCount(2, $this->ledger());
++        $this->assertSame(4, $this->topic('topic-1')->getAttribute('sequence'));
++    }
++
+     public function testEachTopicGetsItsOwnSequence(): void
+     {
+         // Two topics at different tails: each advances independently.
+```
+
+**File**: `tests/unit/Migration/Version/V25Test.php` (modified, +19/-1)
+```diff
+@@ -315,8 +315,9 @@ public function testBindsExistingPushLedgerToTopicInstances(): void
+             $indexes = $collection['indexes'];
+             if ($id === 'pushLedger') {
+                 $attributes = \array_filter($attributes, static fn (Attribute $attribute): bool => $attribute->key !== 'topicInternalId');
+-                $indexes = \array_filter($indexes, static fn (Index $index): bool => $index->key !== '_key_topicInternalId_sequence');
++                $indexes = \array_filter($indexes, static fn (Index $index): bool => !\in_array($index->key, ['_key_topicInternalId_sequence', '_key_message_topicInternalId'], true));
+                 $indexes[] = Index::key(key: '_key_topic_sequence', attributes: ['topic', 'sequence']);
++                $indexes[] = Index::unique(key: '_key_message_topic', attributes: ['messageId', 'topic']);
+             }
+             $database->createCollection(Collection::create(
+                 id: $id,
+@@ -325,6 +326,12 @@ public function testBindsExistingPushLedgerToTopicInstances(): void
+             ));
+         }
+         $database->createCollection(Collection::create(id: 'audit'));
++        $authorization->skip(fn () => $database->createDocument('pushLedger', new Document([
++            'topic' => 'news',
++            'data' => ['body' => 'before upgrade'],
++            'messageId' => 'message',
++            'sequence' => 1,
++        ])));
+ 
+         $migration = new V25();
+         $migration->setProject(new Document(['$id' => 'project', '$sequence' => '1']), $database, $database, $authorization);
+@@ -337,6 +344,17 @@ public function testBindsExistingPushLedgerToTopicInstances(): void
+         $this->assertContains('topicInternalId', $attributes);
+         $this->assertContains('_key_topicInternalId_sequence', $indexes);
+         $this->assertNotContains('_key_topic_sequence', $indexes, 'replay no longer reads by topic id, so its index must go');
++        $this->assertContains('_key_message_topicInternalId', $indexes);
++        $this->assertNotContains('_key_message_topic', $indexes, 'deduplication keys on the topic instance, so the topic id unique index must go');
++
++        $published = $authorization->skip(fn () => $database->createDocument('pushLedger', new Document([
++            'topic' => 'news',
++            'topicInternalId' => '7',
++            'data' => ['body' => 'after upgrade'],
++            'messageId' => 'message',
++            'sequence' => 2,
++        ])));
++        $this->assertSame('7', $published->getAttribute('topicInternalId'), 'a row written before the upgrade must not block the same message on a topic instance');
+     }
+ 
+     public function testBackfillsLegacyTypeOnExistingTransactions(): void
 ```
 
 ---
 
-### Incident Patch 2: `49597d4b` (2026-10-19)
-**Commit Message**: Merge pull request #14673 from appwrite/fix/sites-e2e-build-wait
+### Incident Patch 2: `518749a7` (2026-10-23)
+**Commit Message**: Merge pull request #14771 from appwrite/security/vcs-fanout-after-verify
 
-fix(tests): give Sites e2e builds room to finish under the lane's load
+fix(vcs): verify the GitHub webhook signature before fanning the event out
 
-**File**: `tests/e2e/Services/Sites/SitesBase.php` (modified, +3/-1)
+**File**: `src/Appwrite/Platform/Modules/VCS/Http/GitHub/Events/Create.php` (modified, +5/-2)
 ```diff
-@@ -84,7 +84,9 @@ protected function waitDeploymentReady(string $siteId, string $deploymentId): vo
-             }
+@@ -64,8 +64,6 @@ public function action(
+         callable $deploymentsFactory,
+         array $platform
+     ) {
+-        $this->preprocessEvent($request);
+-
+         $vcs = $vcsFactory->fromProvider('github');
  
-             $this->assertEquals('ready', $deployment['body']['status'], 'Deployment status is not ready, deployment: ' . json_encode($deployment['body'], JSON_PRETTY_PRINT));
--        }, 120000, 500);
-+            // The lane runs one paratest process per CPU, each starting builds, so an SSR build
-+            // that takes seconds alone takes over two minutes there; builds time out at 900s.
-+        }, 300000, 500);
-     }
+         $event = $request->getHeaderLine('x-github-event', '');
+@@ -82,6 +80,11 @@ public function action(
+             throw new Exception(Exception::GENERAL_ACCESS_FORBIDDEN, 'Invalid webhook payload signature. Please make sure the webhook secret has same value in your GitHub app and in the _APP_VCS_GITHUB_WEBHOOK_SECRET environment variable');
+         }
  
-     protected function waitDeploymentActivated(string $siteId, string $deploymentId): void
++        // Only a validly-signed delivery is preprocessed (on Cloud this fans the event out to
++        // other regions). Running it before the signature check let an unauthenticated POST
++        // trigger N cross-region forwards — an amplification vector.
++        $this->preprocessEvent($request);
++
+         $parsedPayloads = $vcs->getEvents($event, $payload);
+ 
+         foreach ($parsedPayloads as $parsedPayload) {
 ```
 
 ---
 
-### Incident Patch 3: `f6411cd4` (2026-10-19)
-**Commit Message**: fix(console): drop the unused startups loader error from the type baseline
+### Incident Patch 3: `02672c8d` (2026-10-23)
+**Commit Message**: fix(query): validate AST identifiers without regex
 
-The startups route no longer reads loader context, so the console type check fails until that known error is removed.
+AGENTS.md disallows regex validation, so Func and Cast now check names and
+types with strspn and string functions through a shared Grammar class. The
+accepted grammar is unchanged except that a trailing newline is now
+rejected: the previous pattern's `$` anchor matched before a final "\n", so
+"NOW\n" was accepted as a function name and "INT\n" as a cast type.
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
+**File**: `packages/query/src/AST/Call/Func.php` (modified, +2/-1)
+```diff
+@@ -3,6 +3,7 @@
+ namespace Utopia\Query\AST\Call;
+ 
+ use Utopia\Query\AST\Expression;
++use Utopia\Query\AST\Grammar;
+ use Utopia\Query\Exception\ValidationException;
+ 
+ readonly class Func implements Expression
+@@ -16,7 +17,7 @@ public function __construct(
+         public bool $distinct = false,
+         public ?Expression $filter = null,
+     ) {
+-        if (!\preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $name)) {
++        if (!Grammar::isIdentifier($name)) {
+             throw new ValidationException('Invalid function name: ' . $name);
+         }
+     }
+```
 
+**File**: `packages/query/src/AST/Expression/Cast.php` (modified, +2/-1)
+```diff
+@@ -3,6 +3,7 @@
+ namespace Utopia\Query\AST\Expression;
+ 
+ use Utopia\Query\AST\Expression;
++use Utopia\Query\AST\Grammar;
+ use Utopia\Query\Exception\ValidationException;
+ 
+ readonly class Cast implements Expression
+@@ -11,7 +12,7 @@ public function __construct(
+         public Expression $expression,
+         public string $type,
+     ) {
+-        if (!\preg_match('/^[A-Za-z_][A-Za-z0-9_]*(\s+[A-Za-z_][A-Za-z0-9_]*)*(\s*\(\s*[A-Za-z0-9_,\s]+\s*\))?$/', $type)) {
++        if (!Grammar::isType($type)) {
+             throw new ValidationException('Invalid cast type: ' . $type);
+         }
+     }
+```
+
+**File**: `packages/query/src/AST/Grammar.php` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++<?php
++
++namespace Utopia\Query\AST;
++
++final class Grammar
++{
++    private const string IDENTIFIER_CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
++
++    private const string WHITESPACE = " \t\n\v\f\r";
++
++    private const string TYPE_ARGUMENT_CHARACTERS = self::IDENTIFIER_CHARACTERS . ',' . self::WHITESPACE;
++
++    public static function isIdentifier(string $value): bool
++    {
++        return $value !== ''
++            && !\ctype_digit($value[0])
++            && \strspn($value, self::IDENTIFIER_CHARACTERS) === \strlen($value);
++    }
++
++    public static function isType(string $value): bool
++    {
++        $open = \strpos($value, '(');
++
++        if ($open === false) {
++            return self::isWords($value);
++        }
++
++        if (!\str_ends_with($value, ')')) {
++            return false;
++        }
++
++        $arguments = \substr($value, $open + 1, -1);
++
++        return $arguments !== ''
++            && \strspn($arguments, self::TYPE_ARGUMENT_CHARACTERS) === \strlen($arguments)
++            && self::isWords(\rtrim(\substr($value, 0, $open), self::WHITESPACE));
++    }
++
++    private static function isWords(string $value): bool
++    {
++        $words = \explode(' ', \strtr($value, self::WHITESPACE, \str_repeat(' ', \strlen(self::WHITESPACE))));
++
++        if ($words[0] === '' || $words[\array_key_last($words)] === '') {
++            return false;
++        }
++
++        return \array_all($words, fn (string $word): bool => $word === '' || self::isIdentifier($word));
++    }
++}
+```
+
+**File**: `packages/query/tests/Regression/SecurityRegressionTest.php` (modified, +67/-0)
+```diff
+@@ -73,6 +73,9 @@
+  *      testCastRejectsSqlInType
+  *      testCastAcceptsParameterisedType
+  *      testToAstRejectsUnsupportedFilterInsteadOfEmittingRaw
++ *      testFuncRejectsTrailingWhitespaceInName
++ *      testCastRejectsTrailingWhitespaceInType
++ *      testCastAcceptsMultiWordType
+  */
+ class SecurityRegressionTest extends TestCase
+ {
+@@ -497,6 +500,70 @@ public function testCastRejectsSqlInType(): void
+         new Cast(new Column('price'), 'TEXT) OR (1=1');
+     }
+ 
++    /**
++     * @return array<string, array{string}>
++     */
++    public static function trailingWhitespaceFunctionNameProvider(): array
++    {
++        return [
++            'newline' => ["NOW\n"],
++            'carriage return and newline' => ["NOW\r\n"],
++            'space' => ['NOW '],
++            'tab' => ["NOW\t"],
++        ];
++    }
++
++    #[DataProvider('trailingWhitespaceFunctionNameProvider')]
++    public function testFuncRejectsTrailingWhitespaceInName(string $name): void
++    {
++        $this->expectException(ValidationException::class);
++        $this->expectExceptionMessage('Invalid function name');
++
++        new Func($name);
++    }
++
++    /**
++     * @return array<string, array{string}>
++     */
++    public static function trailingWhitespaceCastTypeProvider(): array
++    {
++        return [
++            'newline after word' => ["INT\n"],
++            'newline after arguments' => ["DECIMAL(10, 2)\n"],
++            'space after word' => ['INT '],
++            'space after arguments' => ['DECIMAL(10, 2) '],
++        ];
++    }
++
++    #[DataProvider('trailingWhitespaceCastTypeProvider')]
++    public function testCastRejectsTrailingWhitespaceInType(string $type): void
++    {
++        $this->expectException(ValidationException::class);
++        $this->expectExceptionMessage('Invalid cast type');
++
++        new Cast(new Column('price'), $type);
++    }
++
++    /**
++     * @return array<string, array{string}>
++     */
++    public static function multiWordCastTypeProvider(): array
++    {
++        return [
++            'two words' => ['DOUBLE PRECISION'],
++            'tab separated' => ["DOUBLE\tPRECISION"],
++            'four words' => ['TIMESTAMP WITH TIME ZONE'],
++            'words and arguments' => ['CHARACTER VARYING (255)'],
++            'whitespace inside arguments' => ["NUMERIC( 10 ,\n2 )"],
++        ];
++    }
++
++    #[DataProvider('multiWordCastTypeProvider')]
++    public function testCastAcceptsMultiWordType(string $type): void
++    {
++        $this->assertSame($type, new Cast(new Column('price'), $type)->type);
++    }
++
+     public function testCastAcceptsParameterisedType(): void
+     {
+         $cast = new Cast(new Column('price'), 'DECIMAL(10, 2)');
+```
 
 #### Recent Merged Pull Requests:
-- **PR #14690** (2026-10-19): feat(console): replace the startups program with solutions pages (@eldadfux)
-- **PR #14688** (2026-10-19): feat(vcs): add a postprocessEvent hook to the Entire events action (@Meldiron)
-- **PR #14673** (2026-10-19): fix(tests): give Sites e2e builds room to finish under the lane's load (@ChiragAgg5k)
-- **PR #14672** (2026-10-19): fix(deps): resolve all three critical Astro alerts (@loks0n)
-- **PR #14665** (2026-10-19): feat(templates): add Postgres with Drizzle and Dodo Payments templates (@adityaoberai)
-- **PR #14664** (closed): test(vcs): red check for #14663 (do not merge) (@ChiragAgg5k)
+- **PR #14872** (2026-10-23): fix(users): require users.write to read MFA recovery codes (@HarshMN2345)
+- **PR #14871** (2026-10-23): fix(query): match exact searches without InnoDB phrase positions (@abnegate)
+- **PR #14870** (2026-10-23): fix(migrations): apply the outbound host policy to migration sources (@abnegate)
+- **PR #14868** (2026-10-23): fix(migrations): check source key scopes for DocumentsDB and VectorsDB (@abnegate)
+- **PR #14867** (2026-10-23): fix(mqtt): scope stored push messages to the topic instance (@abnegate)
+- **PR #14866** (2026-10-23): fix(query): tighten function name and cast type parsing in the AST (@abnegate)
 
 ---
 
@@ -2007,30 +2365,28 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests): give Sites e2e builds room to finish under the lane's load
+## X. mqtt): scope the push ledger unique index to the topic instance
 
 **RULE**:
-When implementing operations in `tests/e2e/Services/Sites/SitesBase.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/config/collections/common.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `13aff0f3`: tests): give Sites e2e builds room to finish under the lane's load. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ed930d0d`: mqtt): scope the push ledger unique index to the topic instance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/e2e/Services/Sites/SitesBase.php`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/config/collections/common.php`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-            // The lane runs one paratest process per CPU, each starting builds, so an SSR build
-            // that takes seconds alone takes over two minutes there; builds time out at 900s.
-        }, 300000, 500);
+            Index::unique(key: '_key_message_topicInternalId', attributes: ['messageId', 'topicInternalId'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        }, 120000, 500);
+            Index::unique(key: '_key_message_topic', attributes: ['messageId', 'topic'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `13aff0f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ed930d0d` are properly handled with clean fallback behavior.
