@@ -4501,3 +4501,5 @@ Every entry in this ledger must capture:
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `cdbff3ee` | Multi-dimensional audit evidence | 2026-10-23T07:39:26.210Z |
 | `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `eed80865` | Multi-dimensional audit evidence | 2026-10-23T07:39:40.739Z |
 | `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `272296e5` | Multi-dimensional audit evidence | 2026-10-23T07:39:45.970Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `7cb38827` | Multi-dimensional audit evidence | 2026-10-23T08:03:59.739Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `0231990f` | Multi-dimensional audit evidence | 2026-10-23T08:10:06.939Z |

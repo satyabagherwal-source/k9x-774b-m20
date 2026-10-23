@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T07:39:45.979Z",
-  "total_cycles_completed": 4471,
-  "total_learnings_persisted": 4471,
-  "total_rules_promoted": 3672,
+  "last_updated": "2026-10-23T08:10:06.948Z",
+  "total_cycles_completed": 4473,
+  "total_learnings_persisted": 4473,
+  "total_rules_promoted": 3678,
   "history": [
-    {
-      "timestamp": "2026-10-22T15:42:04.938Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T15:42:08.182Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T15:42:08.583Z",
       "repository": "DefGuard/defguard",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-23T07:39:45.979Z",
       "repository": "vitest-dev/vitest",
       "learningId": "learn-github-vitest-dev-vitest",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:03:59.748Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-23T08:10:06.948Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

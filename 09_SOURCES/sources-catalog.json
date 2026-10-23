@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "12103033",
+    "sourceVersion": "7cb38827",
     "license": "MIT",
-    "contentHash": "61770392bf7e2bb04598999fe986beab028b1e9320e02684284dd0ae8ee1877e",
-    "lastHarvestedAt": "2026-10-22T17:12:36.548Z",
+    "contentHash": "d9480a24eb3508a593bcbc37b0e1763943150b4945d3ebcc8da31fa3bba2d764",
+    "lastHarvestedAt": "2026-10-23T08:03:59.739Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "78479c92",
+    "sourceVersion": "0231990f",
     "license": "Apache-2.0",
-    "contentHash": "33d936cec1206da7ef6959a4be51dbe22ef6239eb8028fb5a206e48164287d54",
-    "lastHarvestedAt": "2026-10-20T17:29:31.698Z",
+    "contentHash": "cebb8d3026f019e47acc16f01c70140af87e227ccdcf8f845a664db10dcf1271",
+    "lastHarvestedAt": "2026-10-23T08:10:06.939Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {

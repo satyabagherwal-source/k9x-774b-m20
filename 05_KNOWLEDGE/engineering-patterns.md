@@ -273343,3 +273343,613 @@ vitest run --bail 1 --reporter html --reporter default
 ```
 
 ---
+
+
+---
+
+## 3821. Exception String Formatting Invariant (Harvested from mitmproxy/mitmproxy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Exception String Formatting Invariant",
+  "source": "mitmproxy/mitmproxy",
+  "source_url": "https://github.com/mitmproxy/mitmproxy",
+  "source_version": "7cb38827",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T08:03:59.221Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mitmproxy-mitmproxy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy) (Revision: `7cb38827`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When instantiating standard library exceptions (`Exception`, `ValueError`, `AttributeError`, `TypeError`, etc.), you MUST interpolate format strings before passing them to the constructor (e.g., using Python f-strings). You MUST NOT pass trailing arguments with `%s` or `{}` placeholders expecting automatic string interpolation.
+
+**WHY**:
+Unlike logging methods (`logger.info("msg %s", arg)`), standard Python exception constructors do not perform `%`-style or `{}`-style interpolation on extra positional arguments. Passing arguments positionally to an exception constructor populates the exception's `.args` tuple verbatim:
+```python
+# Result: AttributeError("No such attribute: %s", "c") -> str(e) is "('No such attribute: %s', 'c')"
+```
+This breaks downstream error pattern matching (`match="^No such attribute: c$"`), corrupts UI alert renderers, causes malformed JSON-RPC error responses, and blinds regex-based log scrapers and automated monitoring sentinels.
+
+**WHEN TO APPLY**:
+Universal across all Python codebases, especially in dynamic dispatchers (`__getattr__`, `__getitem__`), parsers, CLI option managers, and protocol deserializers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class BiDi:
+
+    def __init__(self, **kwargs):
+        self.names = kwargs
+        self.values = {v: k for k, v in kwargs.items()}
+        if len(self.names) != len(self.values):
+            raise ValueError("Duplicate values not allowed in 1:1 BiDi map.")
+
+    def __getattr__(self, key: str):
+        if key in self.names:
+            return self.names[key]
+        # Invariant: Pre-interpolate message into a single str token
+        raise AttributeError(f"No such attribute: {key}")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+class BiDi:
+
+    def __getattr__(self, key: str):
+        if key in self.names:
+            return self.names[key]
+        # ANTI-PATTERN: Passing trailing positional arguments to built-in exceptions
+        # Produces args=('No such attribute: %s', 'c') instead of formatting
+        raise AttributeError("No such attribute: %s", key)
+```
+
+**VERIFICATION METHOD**:
+Enforce via AST linting (e.g., custom Flake8 / Ruff rule checking `Call(func=Name(id=Exception|ValueError|...), args=[Str, ...])`) and unit tests using exact regex matching:
+```python
+import pytest
+
+
+def test_bidi_attribute_error_exact_message():
+    b = BiDi(a=1)
+    with pytest.raises(AttributeError, match=r"^No such attribute: c$"):
+        _ = b.c
+```
+
+---
+
+
+---
+
+## 3822. Recursive Dataclass State Mutation Invariant (Harvested from mitmproxy/mitmproxy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Recursive Dataclass State Mutation Invariant",
+  "source": "mitmproxy/mitmproxy",
+  "source_url": "https://github.com/mitmproxy/mitmproxy",
+  "source_version": "7cb38827",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T08:03:59.391Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mitmproxy-mitmproxy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy) (Revision: `7cb38827`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing an in-place state restoration method (`set_state`) on a composite dataclass or nested object, you MUST verify whether existing child instances implement `Serializable`. If they do, you MUST recurse into `child.set_state(sub_state)` rather than instantiating a new object, and you MUST cleanly handle and fall back on `dataclasses.FrozenInstanceError` when mutating frozen child properties.
+
+**WHY**:
+Replacing child instances during `set_state` invalidates external object references held by running async tasks, protocol handlers, and UI observers. Furthermore, blindly assigning attributes (`setattr(self, name, val)`) on frozen dataclass children raises a fatal `FrozenInstanceError`, crashing the deserialization pipeline and leaving the containing system in a half-mutated, corrupted state.
+
+**WHEN TO APPLY**:
+In stateful proxy sessions, replay engines, flow serializers, snapshot/rollback engines, and distributed actor systems running in Python 3.12+.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import dataclasses
+import typing
+from mitmproxy.coretypes.serializable import Serializable, _to_val
+
+
+class SerializableDataclass(Serializable):
+
+    def set_state(self, state: dict[str, typing.Any]) -> None:
+        state = state.copy()
+        for field in self.__fields():
+            current = getattr(self, field.name)
+            if field.name not in state:
+                continue
+            f_state = state.pop(field.name)
+
+            # Invariant: In-place recursive update for existing child instances
+            if isinstance(current, Serializable) and f_state is not None:
+                try:
+                    current.set_state(f_state)
+                    continue
+                except dataclasses.FrozenInstanceError:
+                    # Fallback to field replacement if child is explicitly frozen
+                    pass
+
+            val = _to_val(f_state, field.type, field.name)
+            try:
+                setattr(self, field.name, val)
+            except dataclasses.FrozenInstanceError:
+                state[field.name] = f_state  # Rollback state dict for consistency
+                raise
+
+        if state:
+            raise ValueError(
+                f"Unexpected fields in {type(self).__name__}.set_state: {state}"
+            )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+class SerializableDataclass(Serializable):
+
+    def set_state(self, state: dict[str, typing.Any]) -> None:
+        # ANTI-PATTERN: Obliterates object identities and crashes on frozen fields
+        for k, v in state.items():
+            setattr(self, k, v)
+```
+
+**VERIFICATION METHOD**:
+Write a regression test ensuring that updating nested state preserves references when mutable and handles frozen sub-records without unhandled exceptions:
+```python
+def test_serializable_in_place_mutation():
+    parent = FlowContainer(child=MutableConfig(timeout=30))
+    child_ref = parent.child
+    parent.set_state({"child": {"timeout": 60}})
+    assert parent.child is child_ref
+    assert parent.child.timeout == 60
+```
+
+---
+
+
+---
+
+## 3823. Multi-Valued Header Case-Insensitive Preservation Invariant (Harvested from mitmproxy/mitmproxy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Valued Header Case-Insensitive Preservation Invariant",
+  "source": "mitmproxy/mitmproxy",
+  "source_url": "https://github.com/mitmproxy/mitmproxy",
+  "source_version": "7cb38827",
+  "license": "MIT",
+  "extracted_at": "2026-10-23T08:03:59.573Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mitmproxy-mitmproxy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy) (Revision: `7cb38827`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing HTTP header maps or multi-valued protocol dictionaries, the data structure MUST store the raw, original wire casing as an immutable sequence of key-value tuples while performing key matching, lookups, and deletions through a canonical case-folding normalization function (`_kconv = key.lower()`). Deletion MUST strip all case-insensitive variations, while updates MUST preserve order and replace values in place before appending overflows.
+
+**WHY**:
+RFC 9110 specifies that HTTP headers are case-insensitive (`Content-Type` == `content-type`), but upstream proprietary backends often break if case or ordering is altered. Using standard Python dictionaries causes silent dropping of duplicate headers (e.g., multiple `Set-Cookie` headers) and normalizes away the exact wire bytes needed for high-fidelity security auditing and HTTP request smuggling reproduction.
+
+**WHEN TO APPLY**:
+All HTTP, MIME, SIP, and WebSocket proxying, parsing, and modification engines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from collections.abc import MutableMapping, Sequence
+from typing import TypeVar
+
+KT = TypeVar("KT", bound=str)
+VT = TypeVar("VT")
+
+
+class MultiDict(MutableMapping[KT, VT]):
+
+    def __init__(self, fields: Sequence[tuple[KT, VT]] = ()):
+        self.fields: tuple[tuple[KT, VT], ...] = tuple(tuple(i) for i in fields)
+
+    @staticmethod
+    def _kconv(key: KT) -> KT:
+        return key.lower()
+
+    def get_all(self, key: KT) -> list[VT]:
+        k_canon = self._kconv(key)
+        return [val for k, val in self.fields if self._kconv(k) == k_canon]
+
+    def set_all(self, key: KT, values: list[VT]) -> None:
+        k_canon = self._kconv(key)
+        new_fields: list[tuple[KT, VT]] = []
+        vals = list(values)
+
+        # Invariant: Replace matching keys in-place to preserve wire position
+        for orig_k, orig_v in self.fields:
+            if self._kconv(orig_k) == k_canon:
+                if vals:
+                    new_fields.append((orig_k, vals.pop(0)))
+            else:
+                new_fields.append((orig_k, orig_v))
+
+        # Append remaining extra values at the bottom
+        while vals:
+            new_fields.append((key, vals.pop(0)))
+
+        self.fields = tuple(new_fields)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+class FlawedHeaderDict(dict):
+    # ANTI-PATTERN: Normalizes key casing destroying wire fidelity,
+    # and collapses multiple headers with the same name into a single key.
+    def __setitem__(self, key, value):
+        super().__setitem__(key.lower(), value)
+```
+
+**VERIFICATION METHOD**:
+Validate via property tests asserting casing preservation during mutation:
+```python
+def test_multidict_casing_and_duplicates():
+    h = MultiDict([("Set-Cookie", "a=1"), ("set-cookie", "b=2")])
+    assert h.get_all("SET-COOKIE") == ["a=1", "b=2"]
+    h.set_all("set-cookie", ["c=3"])
+    assert h.fields == (("Set-Cookie", "c=3"),)
+```
+
+---
+
+
+---
+
+## 3824. Dynamic Type-Coercion Fallback for AST Evaluation (Harvested from aquasecurity/trivy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dynamic Type-Coercion Fallback for AST Evaluation",
+  "source": "aquasecurity/trivy",
+  "source_url": "https://github.com/aquasecurity/trivy",
+  "source_version": "0231990f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T08:10:06.423Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aquasecurity-trivy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `0231990f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When parsing dynamic or loosely-typed Configuration-as-Code ASTs (such as HCL, YAML, or dynamic JSON) into strongly typed internal primitives, AST evaluators **MUST NOT** assume homogeneous element types in collection attributes. Evaluators **MUST** attempt explicit conversion through an AST-aware type system (e.g., `cty.Convert`) before failing back to default/empty values, and **MUST** propagate the original token metadata across type conversions.
+
+**WHY**:
+Users frequently express numeric or boolean configuration inputs (e.g., firewall port `80`, boolean flags `true`) as raw primitives within what an IaC schema models as string lists (`ports = [80, 443]`). If the parser strictly matches on type tags (e.g., `value.Type() == cty.String`), it silently drops non-string primitives, resulting in incomplete security scans, false negatives (missing open port alerts), or AST evaluator panics.
+
+**WHEN TO APPLY**:
+Apply in any parser, linter, or compiler front-end processing configuration languages (HCL, CloudFormation, JSON-schema, Helm values) where human authors may supply scalar numbers or booleans into string-designated AST locations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package terraform
+
+import (
+	"github.com/zclconf/go-cty/cty"
+	"github.com/zclconf/go-cty/cty/convert"
+	iacTypes "github.com/aquasecurity/trivy/pkg/iac/types"
+)
+
+// ValueToString safely converts scalar cty.Value instances (string, number, bool)
+// into internal iacTypes.StringValue while preserving exact AST token metadata.
+func ValueToString(value cty.Value, meta iacTypes.Metadata) iacTypes.StringValue {
+	if !value.IsKnown() || value.IsNull() {
+		return iacTypes.StringDefault("", meta)
+	}
+
+	switch value.Type() {
+	case cty.String:
+		return iacTypes.String(value.AsString(), meta)
+	case cty.Number, cty.Bool:
+		// Explicitly invoke cty's converter rather than fmt.Sprintf to ensure
+		// standard format compliance (e.g. big numbers, scientific notation, standard bools).
+		converted, err := convert.Convert(value, cty.String)
+		if err != nil {
+			return iacTypes.StringDefault("", meta)
+		}
+		return iacTypes.String(converted.AsString(), meta)
+	default:
+		return iacTypes.StringDefault("", meta)
+	}
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Strict type switching without fallback or coercion
+func BadValueToString(value cty.Value, meta iacTypes.Metadata) iacTypes.StringValue {
+	switch value.Type() {
+	case cty.String:
+		return iacTypes.String(value.AsString(), meta)
+	// Missing Number/Bool: numbers like [80, 443] will hit default and be dropped!
+	default:
+		return iacTypes.StringDefault("", meta)
+	}
+}
+```
+
+**VERIFICATION METHOD**:
+Verify with property-based unit tests asserting that numeric, boolean, exponential notation (`1e3`), and mixed arrays convert into string collections without panic or dropped elements:
+```go
+func TestAttribute_TypeCoercionSafety(t *testing.T) {
+	expr := `[80, "443", 1e3, true]`
+	attr := newTestAttribute(t, expr, nil)
+	expected := []string{"80", "443", "1000", "true"}
+	assert.Equal(t, expected, attr.AsStringValues().AsStrings())
+}
+```
+
+---
+
+
+---
+
+## 3825. Guarded Iteration Over Incompletely Evaluated AST Structures (Harvested from aquasecurity/trivy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Guarded Iteration Over Incompletely Evaluated AST Structures",
+  "source": "aquasecurity/trivy",
+  "source_url": "https://github.com/aquasecurity/trivy",
+  "source_version": "0231990f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T08:10:06.592Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aquasecurity-trivy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `0231990f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before invoking iteration or mapping primitives (`AsValueMap()`, `ElementIterator()`, `ForEach()`, `LengthInt()`) on complex AST value structures (such as `cty.Value`), evaluators **MUST** verify that both the outer container and all its elements are known (`val.IsKnown()`) and non-null (`!val.IsNull()`). If unknown elements exist during dynamic evaluation, the evaluator **MUST** defer resolution or short-circuit gracefully rather than assuming the value is concrete.
+
+**WHY**:
+During static analysis of Terraform modules or Kubernetes templates without runtime state, module outputs, remote state lookups, and conditional variables often remain unknown (represented as dynamic sentinel tokens in the AST). Invoking inspection methods designed exclusively for concrete values raises immediate panics (`panic: can't use ElementIterator on unknown value`), crashing the scanning process.
+
+**WHEN TO APPLY**:
+IaC evaluators, dynamic expression interpreters, template pre-processors, and compiler passes handling partial or unevaluated variable environments.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package parser
+
+import (
+	"github.com/zclconf/go-cty/cty"
+)
+
+// HasDynamicOrUnknownValues recursively walks an AST value tree to ensure
+// no unknown or dynamic sentinel values exist prior to invoking map/slice operations.
+func HasDynamicOrUnknownValues(val cty.Value) bool {
+	// Guard against unconstructed, null, or explicitly unknown values
+	if !val.IsKnown() || val.IsNull() {
+		return true
+	}
+
+	valType := val.Type()
+	if valType.IsPrimitiveType() {
+		return false
+	}
+
+	if valType.IsCollectionType() || valType.IsTupleType() {
+		// Verify length is known before attempting iteration
+		lengthVal := val.Length()
+		if !lengthVal.IsKnown() {
+			return true
+		}
+
+		it := val.ElementIterator()
+		for it.Next() {
+			_, element := it.Element()
+			if HasDynamicOrUnknownValues(element) {
+				return true
+			}
+		}
+		return false
+	}
+
+	if valType.IsObjectType() {
+		for it := val.ElementIterator(); it.Next(); {
+			_, attrVal := it.Element()
+			if HasDynamicOrUnknownValues(attrVal) {
+				return true
+			}
+		}
+		return false
+	}
+
+	return false
+}
+
+// SafeExtractValueMap returns map representation or defers expansion if unknowns exist.
+func SafeExtractValueMap(val cty.Value) (map[string]cty.Value, bool) {
+	if HasDynamicOrUnknownValues(val) {
+		return nil, false
+	}
+	return val.AsValueMap(), true
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Direct invocation of ElementIterator or AsValueMap assuming
+// container presence implies element availability.
+func UnsafeCheckLocals(val cty.Value) bool {
+	// Panics if val contains unknown nested attributes!
+	for k, v := range val.AsValueMap() {
+		if v.IsKnown() {
+			// Do work
+		}
+	}
+	return false
+}
+```
+
+**VERIFICATION METHOD**:
+Unit testing with synthetic unknown values generated via `cty.UnknownVal(cty.Object(...))` or `cty.DynamicVal`:
+```go
+func TestSafeExtractValueMap_UnknownNestedProperty(t *testing.T) {
+	unknownNested := cty.ObjectVal(map[string]cty.Value{
+		"unresolved_output": cty.UnknownVal(cty.String),
+	})
+	container := cty.MapVal(map[string]cty.Value{
+		"entry": unknownNested,
+	})
+
+	assert.NotPanics(t, func() {
+		_, ok := SafeExtractValueMap(container)
+		assert.False(t, ok, "Expected safe deferral due to unknown nested attribute")
+	})
+}
+```
+
+---
+
+
+---
+
+## 3826. Symmetrical Wire-Contract Invariants for Security Findings (Harvested from aquasecurity/trivy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Symmetrical Wire-Contract Invariants for Security Findings",
+  "source": "aquasecurity/trivy",
+  "source_url": "https://github.com/aquasecurity/trivy",
+  "source_version": "0231990f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-23T08:10:06.773Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aquasecurity-trivy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `0231990f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When splitting security scan engines across a Client/Server, Microservice, or Serialization boundary (e.g., Protobuf/gRPC, JSON RPC), **ALL** entity identifiers, secondary identifiers, and match aliases (e.g., `PolicyMetadata.Aliases`, `CVE` aliases, GHSA mappings) **MUST** be explicitly modeled in the wire protocol schema and bidirectionally mapped in the transport layer. A standalone scanner engine **MUST NOT** rely on in-memory fields that are omitted from client/server serialization protocols.
+
+**WHY**:
+If check metadata aliases are lost during client-to-server serialization, the central server receives only primary rule IDs. Any ignore rules, suppression lists (`.trivyignore`), or policy exceptions written against legacy IDs or aliases (e.g., `AVD-DS-0002` matching `DS004`) evaluate to false on the server. The scan produces false-positive vulnerability reports in distributed mode that do not appear in standalone mode, breaking build pipelines.
+
+**WHEN TO APPLY**:
+Distributed architectures, client-server security scanners, RPC-mediated policy validation systems, and decoupled cache servers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```protobuf
+// Protobuf Contract Definition (rpc/common/service.proto)
+syntax = "proto3";
+package trivy.common;
+
+message PolicyMetadata {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string severity = 4;
+  repeated string references = 5;
+  repeated string aliases = 6; // Mandatory field: preserve all rule aliases across the wire
+}
+```
+
+```go
+// pkg/rpc/convert.go: Symmetrical Bidirectional Transformation
+
+// ToRPC converts internal domain model to RPC wire model.
+func ToRPC(meta types.PolicyMetadata) *common.PolicyMetadata {
+	return &common.PolicyMetadata{
+		Id:          meta.ID,
+		Title:       meta.Title,
+		Description: meta.Description,
+		Severity:    meta.Severity,
+		References:  meta.References,
+		Aliases:     slices.Clone(meta.Aliases), // Prevent reference aliasing mutations
+	}
+}
+
+// FromRPC converts RPC wire model back to domain model.
+func FromRPC(proto *common.PolicyMetadata) types.PolicyMetadata {
+	if proto == nil {
+		return types.PolicyMetadata{}
+	}
+	return types.PolicyMetadata{
+		ID:          proto.Id,
+		Title:       proto.Title,
+		Description: proto.Description,
+		Severity:    proto.Severity,
+		References:  proto.References,
+		Aliases:     slices.Clone(proto.Aliases), // Guaranteed preserved for suppression matching
+	}
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```protobuf
+// ANTI-PATTERN: Dropping secondary identifiers from wire contracts
+message PolicyMetadata {
+  string id = 1;
+  string title = 2;
+  // Aliases omitted because "id is sufficient" -> causes silent bypass failure!
+}
+```
+
+**VERIFICATION METHOD**:
+Round-trip serialization property test verifying that every field in `types.PolicyMetadata` equals the output of `FromRPC(ToRPC(original))`:
+```go
+func TestPolicyMetadata_RPCSerializationRoundTrip(t *testing.T) {
+	orig := types.PolicyMetadata{
+		ID:      "AVD-AWS-0001",
+		Aliases: []string{"AWS001", "s3-bucket-public-read"},
+	}
+	converted := FromRPC(ToRPC(orig))
+	assert.Equal(t, orig.Aliases, converted.Aliases, "RPC protocol lost aliases during serialization")
+}
+```
+
+---

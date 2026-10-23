@@ -4494,3 +4494,5 @@
 | `CYCLE-20261023-SWVY` | `2026-10-23T07:39:26.207Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3813, Rule 3814, Rule 3815` | Yes (`346a4eb4...`) |
 | `CYCLE-20261023-T83K` | `2026-10-23T07:39:40.736Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3816, Rule 3817` | Yes (`22fee60f...`) |
 | `CYCLE-20261023-TC4U` | `2026-10-23T07:39:45.966Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3818, Rule 3819, Rule 3820` | Yes (`bc56cf0a...`) |
+| `CYCLE-20261023-OHVC` | `2026-10-23T08:03:59.736Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3821, Rule 3822, Rule 3823` | Yes (`d9480a24...`) |
+| `CYCLE-20261023-WD7C` | `2026-10-23T08:10:06.936Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3824, Rule 3825, Rule 3826` | Yes (`cebb8d30...`) |

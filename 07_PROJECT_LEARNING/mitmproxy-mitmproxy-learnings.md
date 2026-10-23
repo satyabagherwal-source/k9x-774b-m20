@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source**: github ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Source Version**: `12103033`  
+> **Source Version**: `7cb38827`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:12:36.168Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-23T08:03:59.031Z  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1395 +12,580 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): mitmproxy/mitmproxy
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:12:34.456Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): mitmproxy/mitmproxy
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `mitmproxy/mitmproxy`
-- **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
-- **Primary Language / Ecosystem**: Python
-- **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 46105 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+`mitmproxy` is an interactive, SSL/TLS-terminating interception proxy for HTTP/1.1, HTTP/2, HTTP/3 (QUIC), WebSockets, raw TCP, and UDP. It solves the problem of transparently intercepting, decoding, inspecting, mutating, and replaying arbitrary application-layer network flows without breaking transport-layer cryptographic invariants or introducing protocol desynchronization.
+
+```
+                          +------------------------+
+                          |   Client Connection    |
+                          +-----------+------------+
+                                      | (TCP/TLS/QUIC)
+                                      v
+    +---------------------------------+---------------------------------+
+    |                 MITMPROXY CORE RUNTIME ENGINE                     |
+    |                                                                   |
+    |  +--------------------+    Events     +------------------------+  |
+    |  | Layer Stack Engine | ------------> | Addon Subsystem        |  |
+    |  | (Protocol state    | <------------ | (Extensible hooks, UI, |  |
+    |  |  machines: h11, h2,|    Commands   |  scripts, filters)     |  |
+    |  |  aioquic, wsproto) |               +------------------------+  |
+    |  +---------+----------+                            |              |
+    |            |                                       | Mutations    |
+    |            v                                       v              |
+    |  +--------------------+               +------------------------+  |
+    |  | State Container    | <-----------> | Core Datatypes         |  |
+    |  | (Flows, Streams,   |               | (MultiDict, BiDi,      |  |
+    |  |  Connections)      |               |  SerializableDataClass)|  |
+    |  +---------+----------+               +------------------------+  |
+    +------------|------------------------------------------------------+
+                 | (Upstream TCP/TLS/QUIC)
+                 v
+    +------------+-----------+
+    |   Upstream Server      |
+    +------------------------+
+```
+
+### Architectural Subsystems and Boundaries
+1. **The Layered Protocol State Machine (`mitmproxy.proxy.layers`)**:
+   Instead of coupling I/O directly to protocol parsing, `mitmproxy` structures protocol handling as pure, stackable event/command-driven state machines. Higher-layer protocols (such as HTTP/2 or WebSockets) sit on top of TLS or raw TCP layers. State machines receive `DataReceived` or `ConnectionClosed` events and emit low-level `SendData` commands or high-level `StartHook` events.
+2. **Addon Hook Lifecycle Engine (`mitmproxy.hooks`, `mitmproxy.addonmanager`)**:
+   Decoupled architecture where protocol layers do not mutate UI, logging, or disk persistence directly. Instead, they emit dataclass-based hook events (e.g., `HttpRequestHook`, `QuicStartClientHook`) which subclass `commands.StartHook` and `Hook`. Addons register callbacks matching the hook's computed snake_case name (e.g., `request`, `quic_start_client`).
+3. **Core Datatypes & Serialization Contract (`mitmproxy.coretypes`)**:
+   - `Serializable` & `SerializableDataclass`: Strict serialization framework using runtime reflection on type annotations (`typing.get_type_hints`, `typing.get_origin`, `typing.get_args`) allowing bidirectional transitions (`from_state`, `get_state`, `set_state`) between in-memory dataclasses and primitive JSON/msgpack/tnetstring dicts.
+   - `MultiDict` / `MultiDictView`: Immutable-backing key-value store optimized for headers and query parameters, maintaining case-folding keys while preserving original insertion casing and duplicate values.
+   - `BiDi`: Invertible bidirectional mapping enforcing 1-to-1 bijection between protocol numerical constants and string identifiers.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: pyproject.toml, README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. Exception String Formatting Invariant
+**RULE**:
+When instantiating standard library exceptions (`Exception`, `ValueError`, `AttributeError`, `TypeError`, etc.), you MUST interpolate format strings before passing them to the constructor (e.g., using Python f-strings). You MUST NOT pass trailing arguments with `%s` or `{}` placeholders expecting automatic string interpolation.
 
-### Core Architecture Module: `mitmproxy/addons/core.py`
+**WHY**:
+Unlike logging methods (`logger.info("msg %s", arg)`), standard Python exception constructors do not perform `%`-style or `{}`-style interpolation on extra positional arguments. Passing arguments positionally to an exception constructor populates the exception's `.args` tuple verbatim:
+```python
+# Result: AttributeError("No such attribute: %s", "c") -> str(e) is "('No such attribute: %s', 'c')"
 ```
-import logging
-import os
-from collections.abc import Sequence
+This breaks downstream error pattern matching (`match="^No such attribute: c$"`), corrupts UI alert renderers, causes malformed JSON-RPC error responses, and blinds regex-based log scrapers and automated monitoring sentinels.
 
-import mitmproxy.types
-from mitmproxy import command
-from mitmproxy import ctx
-from mitmproxy import exceptions
-from mitmproxy import flow
-from mitmproxy import hooks
-from mitmproxy import optmanager
-from mitmproxy.log import ALERT
-from mitmproxy.net.http import status_codes
-from mitmproxy.utils import emoji
+**WHEN TO APPLY**:
+Universal across all Python codebases, especially in dynamic dispatchers (`__getattr__`, `__getitem__`), parsers, CLI option managers, and protocol deserializers.
 
-logger = logging.getLogger(__name__)
-
-CONF_DIR = "~/.mitmproxy"
-LISTEN_PORT = 8080
-
-
-class Core:
-    def configure(self, updated):
-        opts = ctx.options
-        if opts.add_upstream_certs_to_client_chain and not opts.upstream_cert:
-            raise exceptions.OptionsError(
-                "add_upstream_certs_to_client_chain requires the upstream_cert option to be enabled."
-            )
-        if "client_certs" in updated:
-            if opts.client_certs:
-                client_certs = os.path.expanduser(opts.client_certs)
-                if not os.path.exists(client_certs):
-                    raise exceptions.OptionsError(
-                        f"Client certificate path does not exist: {opts.client_certs}"
-                    )
-
-    @command.command("set")
-    def set(self, option: str, *value: str) -> None:
-        """
-        Set an option. When the value is omitted, booleans are set to true,
-        strings and integers are set to None (if permitted), and sequences
-        are emptied. Boolean values can be true, false or toggle.
-        Multiple values are concatenated with a single space.
-        """
-        if value:
-            specs = [f"{option}={v}" for v in value]
-        else:
-            specs = [option]
-        try:
-            ctx.options.set(*specs)
-        except exceptions.OptionsError as e:
-            raise exceptions.CommandError(e) from e
-
-    @command.command("flow.resume")
-    def resume(self, flows: Sequence[flow.Flow]) -> None:
-        """
-        Resume flows if they are intercepted.
-        """
-        intercepted = [i for i in flows if i.intercepted]
-        for f in intercepted:
-            f.resume()
-        ctx.master.addons.trigger(hooks.UpdateHook(intercepted))
-
-    # FIXME: this will become view.mark later
-    @command.command("flow.mark")
-    def mark(self, flows: Sequence[flow.Flow], marker: mitmproxy.types.Marker) -> None:
-        """
-        Mark flows.
-        """
-        updated = []
-        if not (marker == "" or marker in emoji.emoji):
-            raise exceptions.CommandError(f"invalid marker value")
-
-        for i in flows:
-            i.marked = marker
-            updated.append(i)
-        ctx.master.addons.trigger(hooks.UpdateHook(updated))
-
-    # FIXME: this will become view.mark.toggle later
-    @command.command("flow.mark.toggle")
-    def mark_toggle(self, flows: Sequence[flow.Flow]) -> None:
-        """
-        Toggle mark for flows.
-        """
-        for i in flows:
-            if i.marked:
-                i.marked = ""
-            else:
-                i.marked = ":default:"
-        ctx.master.addons.trigger(hooks.UpdateHook(flows))
-
-    @command.command("flow.kill")
-    def kill(self, flows: Sequence[flow.Flow]) -> None:
-        """
-        Kill running flows.
-        """
-        updated = []
-        for f in flows:
-            if f.killable:
-                f.kill()
-                updated.append(f)
-        logger.log(ALERT, "Killed %s flows." % len(updated))
-        ctx.master.addons.trigger(hooks.UpdateHook(updated))
-
-    # FIXME: this will become view.revert later
-    @command.command("flow.revert")
-    def revert(self, flows: Sequence[flow.Flow]) -> None:
-        """
-        Revert flow changes.
-        """
-        updated = []
-        for f in flows:
-            if f.modified():
-                f.revert()
-                updated.append(f)
-        logger.log(ALERT, "Reverted %s flows." % len(updated))
-        ctx.master.addons.trigger(hooks.UpdateHook(updated))
-
-    @command.command("flow.set.options")
-    def flow_set_options(self) -> Sequence[str]:
-        return [
-            "host",
-            "status_code",
-            "method",
-            "path",
-            "url",
-            "reason",
-        ]
-
-    @command.command("flow.set")
-    @command.argument("attr", type=mitmproxy.types.Choice("flow.set.options"))
-    def flow_set(self, flows: Sequence[flow.Flow], attr: str, value: str) -> None:
-        """
-        Quickly set a number of common values on flows.
-        """
-        val: int | str = value
-        if attr == "status_code":
-            try:
-                val = int(val)  # type: ignore
-            except ValueError as v:
-                raise exceptions.CommandError(
-                    "Status code is not an integer: %s" % val
-                ) from v
-
-        updated = []
-        for f in flows:
-            req = getattr(f, "request", None)
-            rupdate = True
-            if req:
-                if attr == "method":
-                    req.method = val
-                elif attr == "host":
-                    req.host = val
-                elif attr == "path":
-                    req.path = val
-                elif attr == "url":
-                    try:
-                        req.url = val
-                    except ValueError as e:
-                        raise exceptions.CommandError(
-                            f"URL {val!r} is invalid: {e}"
-                        ) from e
-                else:
-                    self.rupdate = False
-
-            resp = getattr(f, "response", None)
-            supdate = True
-            if resp:
-                if attr == "status_code":
-                    resp.status_code = val
-                    if val in status_codes.RESPONSES:
-                        resp.reason = status_codes.RESPONSES[val]  # type: ignore
-                elif attr == "reason":
-                    resp.reason = val
-                else:
-                    supdate = False
-
-            if rupdate or supdate:
-                updated.append(f)
-
-        ctx.master.addons.trigger(hooks.UpdateHook(updated))
-        logger.log(ALERT, f"Set {attr} on  {len(updated)} flows.")
-
-    @command.command("flow.decode")
-    def decode(self, flows: Sequence[flow.Flow], part: str) -> None:
-        """
-        Decode flows.
-        """
-        updated = []
-        for f in flows:
-            p = getattr(f, part, None)
-            if p:
-                f.backup()
-                p.decode()
-                updated.append(f)
-        ctx.master.addons.trigger(hooks.UpdateHook(updated))
-        logger.log(ALERT, "Decoded %s flows." % len(updated))
-
-    @command.command("flow.encode.toggle")
-    def encode_toggle(self, flows: Sequence[flow.Flow], part: str) -> None:
-        """
-        Toggle flow encoding on and off, using deflate for encoding.
-        """
-        updated = []
-        for f in flows:
-            p = getattr(f, part, None)
-            if p:
-                f.backup()
-                current_enc = p.headers.get("content-encoding", "identity")
-                if current_enc == "identity":
-                    p.encode("deflate")
-                else:
-                    p.decode()
-                updated.append(f)
-        ctx.master.addons.trigger(hooks.UpdateHook(updated))
-        logger.log(ALERT, "Toggled encoding on %s flows." % len(updated))
-
-    @command.command("flow.encode")
-    @command.argument("encoding", type=mitmproxy.types.Choice("flow.encode.options"))
-    def encode(
-        self,
-        flows: Sequence[flow.Flow],
-        part: str,
-        encoding: str,
-    ) -> None:
-        """
-        Encode flows with a specified encoding.
-        """
-        updated = []
-        for f in flows:
-            p = getattr(f, part, None)
-            if p:
-                current_enc = p.headers.get("content-encoding", "identity")
-                if current_enc == "identity":
-                    f.backup()
-                    p.encode(encoding)
-                    updated.append(f)
-        ctx.master.addons.trigger(hooks.UpdateHook(updated))
-        logger.log(ALERT, "Encoded %s flows." % len(updated))
-
-    @command.command("flow.encode.options")
-    def encode_options(self) -> Sequence[str]:
-        """
-        The possible values for an encoding specification.
-        """
-        return ["gzip", "deflate", "br", "zstd"]
-
-    @command.command("options.load")
-    def options_load(self, path: mitmproxy.types.Path) -> None:
-        """
-        Load options from a file.
-        """
-        try:
-            optmanager.load_paths(ctx.options, path)
-        except (OSError, exceptions.OptionsError) as e:
-            raise exceptions.CommandError("Could not load options - %s" % e) from e
-
-    @command.command("options.save")
-    def options_save(self, path: mitmproxy.types.Path) -> None:
-        """
-        Save options to a file.
-        """
-        try:
-            optmanager.save(ctx.options, path)
-        except OSError as e:
-            raise exceptions.CommandError("Could not save options - %s" % e) from e
-
-    @command.command("options.reset")
-    def options_reset(self) -> None:
-        """
-        Reset all options to defaults.
-        """
-        ctx.options.reset()
-
-    @command.command("options.reset.one")
-    def options_reset_one(self, name: str) -> None:
-        """
-        Reset one option to its default value.
-        """
-        if name not in ctx.options:
-            raise exceptions.CommandError("No such option: %s" % name)
-        setattr(
-            ctx.options,
-            name,
-            ctx.options.default(name),
-        )
-
-```
-
-### Core Architecture Module: `mitmproxy/contentviews/_utils.py`
-```
-import io
-import typing
-from collections.abc import Iterable
-from pathlib import Path
-from typing import Any
-
-from ruamel.yaml import YAML
-
-from .. import ctx
-from .. import http
-from ..dns import DNSMessage
-from ..flow import Flow
-from ..tcp import TCPMessage
-from ..udp import UDPMessage
-from ..utils import strutils
-from ..websocket import WebSocketMessage
-from ._api import Metadata
-
-type ContentviewMessage = (
-    http.Message | TCPMessage | UDPMessage | WebSocketMessage | DNSMessage
-)
-
-
-def make_metadata(
-    message: ContentviewMessage,
-    flow: Flow,
-) -> Metadata:
-    metadata = Metadata(
-        flow=flow,
-        protobuf_definitions=Path(ctx.options.protobuf_definitions).expanduser()
-        if ctx.options.protobuf_definitions
-        else None,
-    )
-
-    match message:
-        case http.Message():
-            metadata.http_message = message
-            if ctype := message.headers.get("content-type"):
-                if ct := http.parse_content_type(ctype):
-                    metadata.content_type = f"{ct[0]}/{ct[1]}"
-        case TCPMessage():
-            metadata.tcp_message = message
-        case UDPMessage():
-            metadata.udp_message = message
-        case WebSocketMessage():
-            metadata.websocket_message = message
-        case DNSMessage():
-            metadata.dns_message = message
-        case other:  # pragma: no cover
-            typing.assert_never(other)
-
-    return metadata
-
-
-def get_data(
-    message: ContentviewMessage,
-) -> tuple[bytes | None, str]:
-    content: bytes | None
-    try:
-        content = message.content
-    except ValueError:
-        assert isinstance(message, http.Message)
-        content = message.raw_content
-        enc = "[cannot decode]"
-    else:
-        if isinstance(message, http.Message) and content != message.raw_content:
-            enc = "[decoded {}]".format(message.headers.get("content-encoding"))
-        else:
-            enc = ""
-
-    return content, enc
-
-
-def yaml_dumps(d: Any) -> str:
-    if not d:
-        return ""
-    out = io.StringIO()
-    YAML(typ="rt", pure=True).dump(d, out)
-    return out.getvalue()
-
-
-def yaml_loads(yaml: str) -> Any:
-    return YAML(typ="safe", pure=True).load(yaml)
-
-
-def merge_repeated_keys(items: Iterable[tuple[str, str]]) -> dict[str, str | list[str]]:
-    """
-    Helper function that takes a list of pairs and merges repeated keys.
-    """
-    ret: dict[str, str | list[str]] = {}
-    for key, value in items:
-        if existing := ret.get(key):
-            if isinstance(existing, list):
-                existing.append(value)
-            else:
-                ret[key] = [existing, value]
-        else:
-            ret[key] = value
-    return ret
-
-
-def byte_pairs_to_str_pairs(
-    items: Iterable[tuple[bytes, bytes]],
-) -> Iterable[tuple[str, str]]:
-    for key, value in items:
-        yield (strutils.bytes_to_escaped_str(key), strutils.bytes_to_escaped_str(value))
-
-```
-
-### Core Architecture Module: `mitmproxy/contrib/wbxml/ASWBXMLByteQueue.py`
-```
-#!/usr/bin/env python3
-'''
-@author: David Shaw, shawd@vmware.com
-
-Inspired by EAS Inspector for Fiddler
-https://easinspectorforfiddler.codeplex.com
-
------ The MIT License (MIT) -----
-Filename: ASWBXMLByteQueue.py
-Copyright (c) 2014, David P. Shaw
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-'''
-from queue import Queue
-import logging
-
-class ASWBXMLByteQueue(Queue):
-
-    def __init__(self, wbxmlBytes):
-
-        self.bytesDequeued = 0
-        self.bytesEnqueued = 0
-
-        Queue.__init__(self)
-
-        for byte in wbxmlBytes:
-            self.put(byte)
-            self.bytesEnqueued += 1
-
-
-        logging.debug("Array byte count: %d, enqueued: %d" % (self.qsize(), self.bytesEnqueued))
-
-    """
-    Created to debug the dequeueing of bytes
-    """
-    def dequeueAndLog(self):
-        singleByte = self.get()
-        self.bytesDequeued += 1
-        logging.debug("Dequeued byte 0x{0:X} ({1} total)".format(singleByte, self.bytesDequeued))
-        return singleByte
-
-    """
-    Return true if the continuation bit is set in the byte
-    """
-    def checkContinuationBit(self, byteval):
-        continuationBitmask = 0x80
-        return (continuationBitmask & byteval) != 0
-
-    def dequeueMultibyteInt(self):
-        iReturn = 0
-        singleByte = 0xFF
-
-        while True:
-            iReturn <<= 7
-            if (self.qsize() == 0):
-                break
-            else:
-                singleByte = self.dequeueAndLog()
-            iReturn += int(singleByte & 0x7F)
-            if not self.checkContinuationBit(singleByte):
-                return iReturn
-
-    def dequeueString(self, length=None):
-        if ( length != None):
-            currentByte = 0x00
-            strReturn = ""
-            for i in range(0, length):
-                # TODO: Improve this handling. We are technically UTF-8, meaning
-                # that characters could be more than one byte long. This will fail if we have
-                # characters outside of the US-ASCII range
-                if ( self.qsize() == 0 ):
-                    break
-                currentByte = self.dequeueAndLog()
-                strReturn += chr(currentByte)
-
-        else:
-            currentByte = 0x00
-            strReturn = ""
-            while True:
-                currentByte = self.dequeueAndLog()
-                if (currentByte != 0x00):
-                    strReturn += chr(currentByte)
-                else:
-                    break
-
-        return strReturn
-
-```
-
-### Core Architecture Module: `mitmproxy/coretypes/bidi.py`
-```
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
 class BiDi:
-    """
-    A wee utility class for keeping bi-directional mappings, like field
-    constants in protocols. Names are attributes on the object, dict-like
-    access maps values to names:
-
-    CONST = BiDi(a=1, b=2)
-    assert CONST.a == 1
-    assert CONST.get_name(1) == "a"
-    """
 
     def __init__(self, **kwargs):
         self.names = kwargs
-        self.values = {}
-        for k, v in kwargs.items():
-            self.values[v] = k
+        self.values = {v: k for k, v in kwargs.items()}
         if len(self.names) != len(self.values):
-            raise ValueError("Duplicate values not allowed.")
+            raise ValueError("Duplicate values not allowed in 1:1 BiDi map.")
 
-    def __getattr__(self, k):
-        if k in self.names:
-            return self.names[k]
-        raise AttributeError("No such attribute: %s", k)
-
-    def get_name(self, n, default=None):
-        return self.values.get(n, default)
-
+    def __getattr__(self, key: str):
+        if key in self.names:
+            return self.names[key]
+        # Invariant: Pre-interpolate message into a single str token
+        raise AttributeError(f"No such attribute: {key}")
 ```
 
-### Core Architecture Module: `mitmproxy/coretypes/multidict.py`
-```
-from abc import ABCMeta
-from abc import abstractmethod
-from collections.abc import Iterator
-from collections.abc import MutableMapping
-from collections.abc import Sequence
-from typing import TypeVar
+**NEGATIVE CONSTRAINT**:
+```python
+class BiDi:
 
-from mitmproxy.coretypes import serializable
-
-KT = TypeVar("KT")
-VT = TypeVar("VT")
-
-
-class _MultiDict(MutableMapping[KT, VT], metaclass=ABCMeta):
-    """
-    A MultiDict is a dictionary-like data structure that supports multiple values per key.
-    """
-
-    fields: tuple[tuple[KT, VT], ...]
-    """The underlying raw datastructure."""
-
-    def __repr__(self):
-        fields = (repr(field) for field in self.fields)
-        return "{cls}[{fields}]".format(
-            cls=type(self).__name__, fields=", ".join(fields)
-        )
-
-    @staticmethod
-    @abstractmethod
-    def _reduce_values(values: Sequence[VT]) -> VT:
-        """
-        If a user accesses multidict["foo"], this method
-        reduces all values for "foo" to a single value that is returned.
-        For example, HTTP headers are folded, whereas we will just take
-        the first cookie we found with that name.
-        """
-
-    @staticmethod
-    @abstractmethod
-    def _kconv(key: KT) -> KT:
-        """
-        This method converts a key to its canonical representation.
-        For example, HTTP headers are case-insensitive, so this method returns key.lower().
-        """
-
-    def __getitem__(self, key: KT) -> VT:
-        values = self.get_all(key)
-        if not values:
-            raise KeyError(key)
-        return self._reduce_values(values)
-
-    def __setitem__(self, key: KT, value: VT) -> None:
-        self.set_all(key, [value])
-
-    def __delitem__(self, key: KT) -> None:
-        if key not in self:
-            raise KeyError(key)
-        key = self._kconv(key)
-        self.fields = tuple(
-            field for field in self.fields if key != self._kconv(field[0])
-        )
-
-    def __iter__(self) -> Iterator[KT]:
-        seen = set()
-        for key, _ in self.fields:
-            key_kconv = self._kconv(key)
-            if key_kconv not in seen:
-                seen.add(key_kconv)
-                yield key
-
-    def __len__(self) -> int:
-        return len({self._kconv(key) for key, _ in self.fields})
-
-    def __eq__(self, other) -> bool:
-        if isinstance(other, MultiDict):
-            return self.fields == other.fields
-        return False
-
-    def get_all(self, key: KT) -> list[VT]:
-        """
-        Return the list of all values for a given key.
-        If that key is not in the MultiDict, the return value will be an empty list.
-        """
-        key = self._kconv(key)
-        return [value for k, value in self.fields if self._kconv(k) == key]
-
-    def set_all(self, key: KT, values: list[VT]) -> None:
-        """
-        Remove the old values for a key and add new ones.
-        """
-        key_kconv = self._kconv(key)
-
-        new_fields: list[tuple[KT, VT]] = []
-        for field in self.fields:
-            if self._kconv(field[0]) == key_kconv:
-                if values:
-                    new_fields.append((field[0], values.pop(0)))
-            else:
-                new_fields.append(field)
-        while values:
-            new_fields.append((key, values.pop(0)))
-        self.fields = tuple(new_fields)
-
-    def add(self, key: KT, value: VT) -> None:
-        """
-        Add an additional value for the given key at the bottom.
-        """
-        self.insert(len(self.fields), key, value)
-
-    def insert(self, index: int, key: KT, value: VT) -> None:
-        """
-        Insert an additional value for the given key at the specified position.
-        """
-        item = (key, value)
-        self.fields = self.fields[:index] + (item,) + self.fields[index:]
-
-    def keys(self, multi: bool = False):
-        """
-        Get all keys.
-
-        If `multi` is True, one key per value will be returned.
-        If `multi` is False, duplicate keys will only be returned once.
-        """
-        return (k for k, _ in self.items(multi))
-
-    def values(self, multi: bool = False):
-        """
-        Get all values.
-
-        If `multi` is True, all values will be returned.
-        If `multi` is False, only the first value per key will be returned.
-        """
-        return (v for _, v in self.items(multi))
-
-    def items(self, multi: bool = False):
-        """
-        Get all (key, value) tuples.
-
-        If `multi` is True, all `(key, value)` pairs will be returned.
-        If False, only one tuple per key is returned.
-        """
-        if multi:
-            return self.fields
-        else:
-            return super().items()
-
-
-class MultiDict(_MultiDict[KT, VT], serializable.Serializable):
-    """A concrete MultiDict, storing its own data."""
-
-    def __init__(self, fields=()):
-        super().__init__()
-        self.fields = tuple(tuple(i) for i in fields)  # type: ignore
-
-    @staticmethod
-    def _reduce_values(values):
-        return values[0]
-
-    @staticmethod
-    def _kconv(key):
-        return key
-
-    def get_state(self):
-        return self.fields
-
-    def set_state(self, state):
-        self.fields = tuple(tuple(x) for x in state)  # type: ignore
-
-    @classmethod
-    def from_state(cls, state):
-        return cls(state)
-
-
-class MultiDictView(_MultiDict[KT, VT]):
-    """
-    The MultiDictView provides the MultiDict interface over calculated data.
-    The view itself contains no state - data is retrieved from the parent on
-    request, and stored back to the parent on change.
-    """
-
-    def __init__(self, getter, setter):
-        self._getter = getter
-        self._setter = setter
-        super().__init__()
-
-    @staticmethod
-    def _kconv(key):
-        # All request-attributes are case-sensitive.
-        return key
-
-    @staticmethod
-    def _reduce_values(values):
-        # We just return the first element if
-        # multiple elements exist with the same key.
-        return values[0]
-
-    @property  # type: ignore
-    def fields(self):
-        return self._getter()
-
-    @fields.setter
-    def fields(self, value):
-        self._setter(value)
-
-    def copy(self) -> "MultiDict[KT,VT]":
-        return MultiDict(self.fields)
-
+    def __getattr__(self, key: str):
+        if key in self.names:
+            return self.names[key]
+        # ANTI-PATTERN: Passing trailing positional arguments to built-in exceptions
+        # Produces args=('No such attribute: %s', 'c') instead of formatting
+        raise AttributeError("No such attribute: %s", key)
 ```
 
-### Core Architecture Module: `mitmproxy/coretypes/serializable.py`
+**VERIFICATION METHOD**:
+Enforce via AST linting (e.g., custom Flake8 / Ruff rule checking `Call(func=Name(id=Exception|ValueError|...), args=[Str, ...])`) and unit tests using exact regex matching:
+```python
+import pytest
+
+
+def test_bidi_attribute_error_exact_message():
+    b = BiDi(a=1)
+    with pytest.raises(AttributeError, match=r"^No such attribute: c$"):
+        _ = b.c
 ```
-import abc
-import collections.abc
+
+---
+
+### 2. Recursive Dataclass State Mutation Invariant
+**RULE**:
+When implementing an in-place state restoration method (`set_state`) on a composite dataclass or nested object, you MUST verify whether existing child instances implement `Serializable`. If they do, you MUST recurse into `child.set_state(sub_state)` rather than instantiating a new object, and you MUST cleanly handle and fall back on `dataclasses.FrozenInstanceError` when mutating frozen child properties.
+
+**WHY**:
+Replacing child instances during `set_state` invalidates external object references held by running async tasks, protocol handlers, and UI observers. Furthermore, blindly assigning attributes (`setattr(self, name, val)`) on frozen dataclass children raises a fatal `FrozenInstanceError`, crashing the deserialization pipeline and leaving the containing system in a half-mutated, corrupted state.
+
+**WHEN TO APPLY**:
+In stateful proxy sessions, replay engines, flow serializers, snapshot/rollback engines, and distributed actor systems running in Python 3.12+.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
 import dataclasses
-import enum
 import typing
-import uuid
-from functools import cache
-from typing import TypeVar
-
-try:
-    from types import NoneType
-    from types import UnionType
-except ImportError:  # pragma: no cover
-
-    class UnionType:  # type: ignore
-        pass
-
-    NoneType = type(None)  # type: ignore
-
-T = TypeVar("T", bound="Serializable")
-
-State = typing.Any
-
-
-class Serializable(metaclass=abc.ABCMeta):
-    """
-    Abstract Base Class that defines an API to save an object's state and restore it later on.
-    """
-
-    @classmethod
-    @abc.abstractmethod
-    def from_state(cls: type[T], state) -> T:
-        """
-        Create a new object from the given state.
-        Consumes the passed state.
-        """
-        raise NotImplementedError()
-
-    @abc.abstractmethod
-    def get_state(self) -> State:
-        """
-        Retrieve object state.
-        """
-        raise NotImplementedError()
-
-    @abc.abstractmethod
-    def set_state(self, state):
-        """
-        Set object state to the given state. Consumes the passed state.
-        May return a `dataclasses.FrozenInstanceError` if the object is immutable.
-        """
-        raise NotImplementedError()
-
-    def copy(self: T) -> T:
-        state = self.get_state()
-        if isinstance(state, dict) and "id" in state:
-            state["id"] = str(uuid.uuid4())
-        return self.from_state(state)
-
-
-U = TypeVar("U", bound="SerializableDataclass")
+from mitmproxy.coretypes.serializable import Serializable, _to_val
 
 
 class SerializableDataclass(Serializable):
-    @classmethod
-    @cache
-    def __fields(cls) -> tuple[dataclasses.Field, ...]:
-        # with from __future__ import annotations, `field.type` is a string,
-        # see https://github.com/python/cpython/issues/83623.
-        hints = typing.get_type_hints(cls)
-        fields = []
-        # noinspection PyDataclass
-        for field in dataclasses.fields(cls):  # type: ignore[arg-type]
-            if field.metadata.get("serialize", True) is False:
-                continue
-            if isinstance(field.type, str):
-                field.type = hints[field.name]
-            fields.append(field)
-        return tuple(fields)
 
-    def get_state(self) -> State:
-        state: dict[str, State] = {}
-        for field in self.__fields():
-            val = getattr(self, field.name)
-            state[field.name] = _to_state(val, field.type, field.name)
-        return state
-
-    @classmethod
-    def from_state(cls: type[U], state) -> U:
-        # state = state.copy()
-        for field in cls.__fields():
-            state[field.name] = _to_val(state[field.name], field.type, field.name)
-        try:
-            return cls(**state)  # type: ignore
-        except TypeError as e:
-            raise ValueError(f"Invalid state for {cls}: {e} ({state=})") from e
-
-    def set_state(self, state: State) -> None:
+    def set_state(self, state: dict[str, typing.Any]) -> None:
+        state = state.copy()
         for field in self.__fields():
             current = getattr(self, field.name)
+            if field.name not in state:
+                continue
             f_state = state.pop(field.name)
+
+            # Invariant: In-place recursive update for existing child instances
             if isinstance(current, Serializable) and f_state is not None:
                 try:
                     current.set_state(f_state)
                     continue
                 except dataclasses.FrozenInstanceError:
+                    # Fallback to field replacement if child is explicitly frozen
                     pass
-            val: typing.Any = _to_val(f_state, field.type, field.name)
+
+            val = _to_val(f_state, field.type, field.name)
             try:
                 setattr(self, field.name, val)
             except dataclasses.FrozenInstanceError:
-                state[field.name] = f_state  # restore state dict.
+                state[field.name] = f_state  # Rollback state dict for consistency
                 raise
 
         if state:
             raise ValueError(
                 f"Unexpected fields in {type(self).__name__}.set_state: {state}"
             )
-
-
-def _process(
-    attr_val: typing.Any, attr_type: typing.Any, attr_name: str, make: bool
-) -> typing.Any:
-    origin = typing.get_origin(attr_type)
-    if origin is typing.Literal:
-        if attr_val not in typing.get_args(attr_type):
-            raise ValueError(
-                f"Invalid value for {attr_name}: {attr_val!r} does not match any literal value."
-            )
-        return attr_val
-    if origin in (UnionType, typing.Union):
-        attr_type, nt = typing.get_args(attr_type)
-        assert nt is NoneType, (
-            f"{attr_name}: only `x | None` union types are supported`"
-        )
-        if attr_val is None:
-            return None  # type: ignore
-        else:
-            return _process(attr_val, attr_type, attr_name, make)
-    else:
-        if attr_val is None:
-            raise ValueError(f"Attribute {attr_name} must not be None.")
-
-    if make and hasattr(attr_type, "from_state"):
-        return attr_type.from_state(attr_val)  # type: ignore
-    elif not make and hasattr(attr_type, "get_state"):
-        return attr_val.get_state()
-
-    if origin in (list, collections.abc.Sequence):
-        (T,) = typing.get_args(attr_type)
-        return [_process(x, T, attr_name, make) for x in attr_val]  # type: ignore
-    elif origin is tuple:
-        # We don't have a good way to represent tuple[str,int] | tuple[str,int,int,int], so we do a dirty hack here.
-        if attr_name in ("peername", "sockname"):
-            return tuple(
-                _process(x, T, attr_name, make)
-                for x, T in zip(attr_val, [str, int, int, int])
-            )  # type: ignore
-        Ts = typing.get_args(attr_type)
-        if len(Ts) != len(attr_val):
-            raise ValueError(
-                f"Invalid data for {attr_name}. Expected {Ts}, got {attr_val}."
-            )
-        return tuple(_process(x, T, attr_name, make) for T, x in zip(Ts, attr_val))  # type: ignore
-    elif origin is dict:
-        k_cls, v_cls = typing.get_args(attr_type)
-        return {
-            _process(k, k_cls, attr_name, make): _process(v, v_cls, attr_name, make)
-            for k, v in attr_val.items()
-        }  # type: ignore
-    elif attr_type in (int, float):
-        if not isinstance(attr_val, (int, float)):
-            raise ValueError(
-                f"Invalid value for {attr_name}. Expected {attr_type}, got {attr_val} ({type(attr_val)})."
-            )
-        return attr_type(attr_val)  # type: ignore
-    elif attr_type in (str, bytes, bool):
-        if not isinstance(attr_val, attr_type):
-            raise ValueError(
-                f"Invalid value for {attr_name}. Expected {attr_type}, got {attr_val} ({type(attr_val)})."
-            )
-        return attr_type(attr_val)  # type: ignore
-    elif isinstance(attr_type, type) and issubclass(attr_type, enum.Enum):
-        if make:
-            return attr_type(attr_val)  # type: ignore
-        else:
-            return attr_val.value
-    else:
-        raise TypeError(f"Unexpected type for {attr_name}: {attr_type!r}")
-
-
-def _to_val(state: typing.Any, attr_type: typing.Any, attr_name: str) -> typing.Any:
-    """Create an object based on the state given in val."""
-    return _process(state, attr_type, attr_name, True)
-
-
-def _to_state(value: typing.Any, attr_type: typing.Any, attr_name: str) -> typing.Any:
-    """Get the state of the object given as val."""
-    return _process(value, attr_type, attr_name, False)
-
-```
-
-### Core Architecture Module: `mitmproxy/hooks.py`
-```
-import re
-import warnings
-from collections.abc import Sequence
-from dataclasses import dataclass
-from dataclasses import fields
-from dataclasses import is_dataclass
-from typing import Any
-from typing import ClassVar
-from typing import TYPE_CHECKING
-
-import mitmproxy.flow
-
-if TYPE_CHECKING:
-    import mitmproxy.addonmanager
-    import mitmproxy.log
-
-
-class Hook:
-    name: ClassVar[str]
-
-    def args(self) -> list[Any]:
-        args = []
-        for field in fields(self):  # type: ignore[arg-type]
-            args.append(getattr(self, field.name))
-        return args
-
-    def __new__(cls, *args, **kwargs):
-        if cls is Hook:
-            raise TypeError("Hook may not be instantiated directly.")
-        if not is_dataclass(cls):
-            raise TypeError("Subclass is not a dataclass.")
-        return super().__new__(cls)
-
-    def __init_subclass__(cls, **kwargs):
-        # initialize .name attribute. HttpRequestHook -> http_request
-        if cls.__dict__.get("name", None) is None:
-            name = cls.__name__.replace("Hook", "")
-            cls.name = re.sub("(?!^)([A-Z]+)", r"_\1", name).lower()
-        if cls.name in all_hooks:
-            other = all_hooks[cls.name]
-            warnings.warn(
-                f"Two conflicting event classes for {cls.name}: {cls} and {other}",
-                RuntimeWarning,
-            )
-        if cls.name == "":
-            return  # don't register Hook class.
-        all_hooks[cls.name] = cls
-
-        # define a custom hash and __eq__ function so that events are hashable and not comparable.
-        cls.__hash__ = object.__hash__  # type: ignore
-        cls.__eq__ = object.__eq__  # type: ignore
-
-
-all_hooks: dict[str, type[Hook]] = {}
-
-
-@dataclass
-class ConfigureHook(Hook):
-    """
-    Called when configuration changes. The updated argument is a
-    set-like object containing the keys of all changed options. This
-    event is called during startup with all options in the updated set.
-    """
-
-    updated: set[str]
-
-
-@dataclass
-class DoneHook(Hook):
-    """
-    Called when the addon shuts down, either by being removed from
-    the mitmproxy instance, or when mitmproxy itself shuts down. On
-    shutdown, this event is called after the event loop is
-    terminated, guaranteeing that it will be the final event an addon
-    sees. Note that log handlers are shut down at this point, so
-    calls to log functions will produce no output.
-    """
-
-
-@dataclass
-class RunningHook(Hook):
-    """
-    Called when the proxy is completely up and running. At this point,
-    you can expect all addons to be loaded and all options to be set.
-    """
-
-
-@dataclass
-class UpdateHook(Hook):
-    """
-    Update is called when one or more flow objects have been modified,
-    usually from a different addon.
-    """
-
-    flows: Sequence[mitmproxy.flow.Flow]
-
-```
-
-### Core Architecture Module: `mitmproxy/proxy/layers/http/_hooks.py`
-```
-from dataclasses import dataclass
-
-from mitmproxy import http
-from mitmproxy.proxy import commands
-
-
-@dataclass
-class HttpRequestHeadersHook(commands.StartHook):
-    """
-    HTTP request headers were successfully read. At this point, the body is empty.
-    """
-
-    name = "requestheaders"
-    flow: http.HTTPFlow
-
-
-@dataclass
-class HttpRequestHook(commands.StartHook):
-    """
-    The full HTTP request has been read.
-
-    Note: If request streaming is active, this event fires after the entire body has been streamed.
-    HTTP trailers, if present, have not been transmitted to the server yet and can still be modified.
-    Enabling streaming may cause unexpected event sequences: For example, `response` may now occur
-    before `request` because the server replied with "413 Payload Too Large" during upload.
-    """
-
-    name = "request"
-    flow: http.HTTPFlow
-
-
-@dataclass
-class HttpResponseHeadersHook(commands.StartHook):
-    """
-    HTTP response headers were successfully read. At this point, the body is empty.
-    """
-
-    name = "responseheaders"
-    flow: http.HTTPFlow
-
-
-@dataclass
-class HttpResponseHook(commands.StartHook):
-    """
-    The full HTTP response has been read.
-
-    Note: If response streaming is active, this event fires after the entire body has been streamed.
-    HTTP trailers, if present, have not been transmitted to the client yet and can still be modified.
-    """
-
-    name = "response"
-    flow: http.HTTPFlow
-
-
-@dataclass
-class HttpErrorHook(commands.StartHook):
-    """
-    An HTTP error has occurred, e.g. invalid server responses, or
-    interrupted connections. This is distinct from a valid server HTTP
-    error response, which is simply a response with an HTTP error code.
-
-    Every flow will receive either an error or an response event, but not both.
-    """
-
-    name = "error"
-    flow: http.HTTPFlow
-
-
-@dataclass
-class HttpConnectHook(commands.StartHook):
-    """
-    An HTTP CONNECT request was received. This event can be ignored for most practical purposes.
-
-    This event only occurs in regular and upstream proxy modes
-    when the client instructs mitmproxy to open a connection to an upstream host.
-    Setting a non 2xx response on the flow will return the response to the client and abort the connection.
-
-    CONNECT requests are HTTP proxy instructions for mitmproxy itself
-    and not forwarded. They do not generate the usual HTTP handler events,
-    but all requests going over the newly opened connection will.
-    """
-
-    flow: http.HTTPFlow
-
-
-@dataclass
-class HttpConnectUpstreamHook(commands.StartHook):
-    """
-    An HTTP CONNECT request is about to be sent to an upstream proxy.
-    This event can be ignored for most practical purposes.
-
-    This event can be used to set custom authentication headers for upstream proxies.
-
-    CONNECT requests do not generate the usual HTTP handler events,
-    but all requests going over the newly opened connection will.
-    """
-
-    flow: http.HTTPFlow
-
-
-@dataclass
-class HttpConnectedHook(commands.StartHook):
-    """
-    HTTP CONNECT was successful
-
-    > [!WARNING]
-    > This may fire before an upstream connection has been established
-    > if `connection_strategy` is set to `lazy` (default)
-    """
-
-    flow: http.HTTPFlow
-
-
-@dataclass
-class HttpConnectErrorHook(commands.StartHook):
-    """
-    HTTP CONNECT has failed.
-    This can happen when the upstream server is unreachable or proxy authentication is required.
-    In contrast to the `error` hook, `flow.error` is not guaranteed to be set.
-    """
-
-    flow: http.HTTPFlow
-
-```
-
-### Core Architecture Module: `mitmproxy/proxy/layers/quic/_hooks.py`
-```
-from __future__ import annotations
-
-from dataclasses import dataclass
-from dataclasses import field
-from ssl import VerifyMode
-
-from aioquic.tls import CipherSuite
-from cryptography import x509
-from cryptography.hazmat.primitives.asymmetric import dsa
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives.asymmetric import rsa
-
-from mitmproxy.proxy import commands
-from mitmproxy.tls import TlsData
-
-
-@dataclass
-class QuicTlsSettings:
-    """
-    Settings necessary to establish QUIC's TLS context.
-    """
-
-    alpn_protocols: list[str] | None = None
-    """A list of supported ALPN protocols."""
-    certificate: x509.Certificate | None = None
-    """The certificate to use for the connection."""
-    certificate_chain: list[x509.Certificate] = field(default_factory=list)
-    """A list of additional certificates to send to the peer."""
-    certificate_private_key: (
-        dsa.DSAPrivateKey | ec.EllipticCurvePrivateKey | rsa.RSAPrivateKey | None
-    ) = None
-    """The certificate's private key."""
-    cipher_suites: list[CipherSuite] | None = None
-    """An optional list of allowed/advertised cipher suites."""
-    ca_path: str | None = None
-    """An optional path to a directory that contains the necessary information to verify the peer certificate."""
-    ca_file: str | None = None
-    """An optional path to a PEM file that will be used to verify the peer certificate."""
-    verify_mode: VerifyMode | None = None
-    """An optional flag that specifies how/if the peer's certificate should be validated."""
-
-
-@dataclass
-class QuicTlsData(TlsData):
-    """
-    Event data for `quic_start_client` and `quic_start_server` event hooks.
-    """
-
-    settings: QuicTlsSettings | None = None
-    """
-    The associated `QuicTlsSettings` object.
-    This will be set by an addon in the `quic_start_*` event hooks.
-    """
-
-
-@dataclass
-class QuicStartClientHook(commands.StartHook):
-    """
-    TLS negotiation between mitmproxy and a client over QUIC is about to start.
-
-    An addon is expected to initialize data.settings.
-    (by default, this is done by `mitmproxy.addons.tlsconfig`)
-    """
-
-    data: QuicTlsData
-
-
-@dataclass
-class QuicStartServerHook(commands.StartHook):
-    """
-    TLS negotiation between mitmproxy and a server over QUIC is about to start.
-
-    An addon is expected to initialize data.settings.
-    (by default, this is done by `mitmproxy.addons.tlsconfig`)
-    """
-
-    data: QuicTlsData
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8507** (2026-10-22): **Fix the escape_control_characters docstring**
-  *Symptoms*: #### Description  The `escape_control_characters` docstring says it replaces unicode C1 control characters, but it actually replaces C0 (0x00 to 0x1f) and DEL, and C1 characters like `\x85` go through unchanged. Its tests check exactly that. `keep_spacing` also keeps `\r`, not just tabs and newlines.  Docstring only, so no tests or changelog entry.  #### Checklist   - [ ] I have updated tests where applicable.  - [ ] I have added an entry to the CHANGELOG. 
-
-- **Issue #8504** (2026-10-22): **Add YAML contentview**
-  *Symptoms*: #### Description  This PR adds a dedicated `YAMLContentview` to format, validate, and syntax-highlight YAML payloads.  Mitmproxy currently supports contentviews for JSON, GraphQL, XML/HTML, CSS, and JS, but lacks a viewer for YAML. Requests or responses with YAML MIME types (`application/yaml`, `application/x-yaml`, `text/yaml`, `text/x-yaml`, and `*+yaml` subtypes such as OpenAPI specs or Kubernetes manifests) previously fell back to the unformatted raw view.  Key details: - Uses `ruamel.yaml` (already an existing mitmproxy dependency) with round-trip mode to preserve structure and comments while prettifying. - Supports both single-document and multi-document YAML streams (`---` separators). - Auto-detects standard YAML MIME types in `render_priority`. - Raises `ValueError` on malformed YAML so mitmproxy gracefully falls back to raw view. - Accompanied by unit tests in `test__view_yaml.py` covering single/multi-doc payloads, comments, error handling, and priority selection (100% coverage).  #### Checklist  - [x] I have updated tests where applicable. - [x] I have added an entry to the CHANGELOG.
-  **Post-Mortem & Fix Analysis**:
-  > > Thanks for the PR 🚀 just left a couple of nits :)  Applied the suggestions, thanks for the review !! XD
-  > > I'd much rather we implement this in mitmproxy_rs. I don't want to expose ruamel_yaml, which has C components, to user input.  Understood, that makes complete sense from a security standpoint regarding C components and untrusted input! I will close this PR.   Thanks for the guidance !! XD XD
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `12103033` (2026-10-22)
-**Commit Message**: Fix the escape_control_characters docstring (#8507)
-
-**File**: `mitmproxy/utils/strutils.py` (modified, +2/-2)
-```diff
-@@ -68,10 +68,10 @@ def always_str(str_or_bytes: None | str | bytes, *decode_args) -> None | str:
- 
- def escape_control_characters(text: str, keep_spacing=True) -> str:
-     """
--    Replace all unicode C1 control characters from the given text with a single "."
-+    Replace all C0 control characters and DEL in the given text with a single "."
- 
-     Args:
--        keep_spacing: If True, tabs and newlines will not be replaced.
-+        keep_spacing: If True, tabs, carriage returns and newlines will not be replaced.
-     """
-     if not isinstance(text, str):
-         raise ValueError(f"text type must be unicode but is {type(text).__name__}")
-```
-
-#### Recent Merged Pull Requests:
-- **PR #8507** (2026-10-22): Fix the escape_control_characters docstring (@qodelicious)
-- **PR #8504** (closed): Add YAML contentview (@vansh917917)
-- **PR #8503** (2026-10-22): Add `--emudhra-old` option (@mhils)
-- **PR #8502** (2026-10-22): Bump dependencies (@mhils)
-- **PR #8500** (2026-10-21): Add `--emudhra` option (@mhils)
-- **PR #8499** (2026-10-21): Bump Certifi (@mhils)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. the escape_control_characters docstring (#8507)
-
-**RULE**:
-When implementing operations in `mitmproxy/utils/strutils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `12103033`: the escape_control_characters docstring (#8507). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `mitmproxy/utils/strutils.py`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-    Replace all C0 control characters and DEL in the given text with a single "."
-        keep_spacing: If True, tabs, carriage returns and newlines will not be replaced.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-    Replace all unicode C1 control characters from the given text with a single "."
-        keep_spacing: If True, tabs and newlines will not be replaced.
+class SerializableDataclass(Serializable):
+
+    def set_state(self, state: dict[str, typing.Any]) -> None:
+        # ANTI-PATTERN: Obliterates object identities and crashes on frozen fields
+        for k, v in state.items():
+            setattr(self, k, v)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12103033` are properly handled with clean fallback behavior.
+Write a regression test ensuring that updating nested state preserves references when mutable and handles frozen sub-records without unhandled exceptions:
+```python
+def test_serializable_in_place_mutation():
+    parent = FlowContainer(child=MutableConfig(timeout=30))
+    child_ref = parent.child
+    parent.set_state({"child": {"timeout": 60}})
+    assert parent.child is child_ref
+    assert parent.child.timeout == 60
+```
+
+---
+
+### 3. Multi-Valued Header Case-Insensitive Preservation Invariant
+**RULE**:
+When implementing HTTP header maps or multi-valued protocol dictionaries, the data structure MUST store the raw, original wire casing as an immutable sequence of key-value tuples while performing key matching, lookups, and deletions through a canonical case-folding normalization function (`_kconv = key.lower()`). Deletion MUST strip all case-insensitive variations, while updates MUST preserve order and replace values in place before appending overflows.
+
+**WHY**:
+RFC 9110 specifies that HTTP headers are case-insensitive (`Content-Type` == `content-type`), but upstream proprietary backends often break if case or ordering is altered. Using standard Python dictionaries causes silent dropping of duplicate headers (e.g., multiple `Set-Cookie` headers) and normalizes away the exact wire bytes needed for high-fidelity security auditing and HTTP request smuggling reproduction.
+
+**WHEN TO APPLY**:
+All HTTP, MIME, SIP, and WebSocket proxying, parsing, and modification engines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from collections.abc import MutableMapping, Sequence
+from typing import TypeVar
+
+KT = TypeVar("KT", bound=str)
+VT = TypeVar("VT")
+
+
+class MultiDict(MutableMapping[KT, VT]):
+
+    def __init__(self, fields: Sequence[tuple[KT, VT]] = ()):
+        self.fields: tuple[tuple[KT, VT], ...] = tuple(tuple(i) for i in fields)
+
+    @staticmethod
+    def _kconv(key: KT) -> KT:
+        return key.lower()
+
+    def get_all(self, key: KT) -> list[VT]:
+        k_canon = self._kconv(key)
+        return [val for k, val in self.fields if self._kconv(k) == k_canon]
+
+    def set_all(self, key: KT, values: list[VT]) -> None:
+        k_canon = self._kconv(key)
+        new_fields: list[tuple[KT, VT]] = []
+        vals = list(values)
+
+        # Invariant: Replace matching keys in-place to preserve wire position
+        for orig_k, orig_v in self.fields:
+            if self._kconv(orig_k) == k_canon:
+                if vals:
+                    new_fields.append((orig_k, vals.pop(0)))
+            else:
+                new_fields.append((orig_k, orig_v))
+
+        # Append remaining extra values at the bottom
+        while vals:
+            new_fields.append((key, vals.pop(0)))
+
+        self.fields = tuple(new_fields)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+class FlawedHeaderDict(dict):
+    # ANTI-PATTERN: Normalizes key casing destroying wire fidelity,
+    # and collapses multiple headers with the same name into a single key.
+    def __setitem__(self, key, value):
+        super().__setitem__(key.lower(), value)
+```
+
+**VERIFICATION METHOD**:
+Validate via property tests asserting casing preservation during mutation:
+```python
+def test_multidict_casing_and_duplicates():
+    h = MultiDict([("Set-Cookie", "a=1"), ("set-cookie", "b=2")])
+    assert h.get_all("SET-COOKIE") == ["a=1", "b=2"]
+    h.set_all("set-cookie", ["c=3"])
+    assert h.fields == (("Set-Cookie", "c=3"),)
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Unformatted Tuple Error Messages in Core Type Lookups (BUG-MITM-01)
+- **Context**: Subsystems `mitmproxy.coretypes.bidi` and CLI parser `mitmproxy.optmanager`
+- **What Was Expected**: Raising `AttributeError` on a missing `BiDi` key or `ValueError` on an unsupported CLI option type should produce a formatted string message (e.g., `AttributeError: No such attribute: c`).
+- **What Actually Happened**: The exception instantiations used `%s` string formatting placeholders with trailing positional arguments: `raise AttributeError("No such attribute: %s", k)`. Because `BaseException.__init__` accepts variable arguments as a tuple into `self.args` without string interpolation, the exception rendered as:
+  ```
+  AttributeError: ('No such attribute: %s', 'c')
+  ```
+- **Evidence in Repo**: Commit `7cb38827`, PR #8509, closed 2026-10-23. Modified `mitmproxy/coretypes/bidi.py`, `mitmproxy/optmanager.py`, and `test/mitmproxy/coretypes/test_bidi.py`.
+- **Root Cause**: Developer assumed Python's built-in exceptions behave like `logging.Logger.log(level, msg, *args)`. Python's `Exception` classes do not parse positional arguments as format specifiers.
+- **Remediation Code Diff**:
+```python
+--- a/mitmproxy/coretypes/bidi.py
++++ b/mitmproxy/coretypes/bidi.py
+@@ -20,7 +20,7 @@ def __init__(self, **kwargs):
+     def __getattr__(self, k):
+         if k in self.names:
+             return self.names[k]
+-        raise AttributeError("No such attribute: %s", k)
++        raise AttributeError(f"No such attribute: {k}")
+
+--- a/mitmproxy/optmanager.py
++++ b/mitmproxy/optmanager.py
+@@ -475,7 +475,7 @@ def mkf(x, s):
+                 choices=o.choices,
+             )
+         else:
+-            raise ValueError("Unsupported option type: %s", o.typespec)
++            raise ValueError(f"Unsupported option type: {o.typespec}")
+
+--- a/test/mitmproxy/coretypes/test_bidi.py
++++ b/test/mitmproxy/coretypes/test_bidi.py
+@@ -8,7 +8,7 @@ def test_bidi():
+     assert b.a == 1
+     assert b.get_name(1) == "a"
+     assert b.get_name(5) is None
+-    with pytest.raises(AttributeError):
++    with pytest.raises(AttributeError, match="^No such attribute: c$"):
+         getattr(b, "c")
+```
+- **Lesson**: Standard exceptions must receive explicitly formatted strings. Tests asserting exceptions must test the exact error message regex using `pytest.raises(..., match=...)` to detect tuple stringification regressions.
+
+---
+
+### Incident 2: Control Character Sanitizer Specification Drift (BUG-MITM-02)
+- **Context**: Subsystem `mitmproxy.utils.strutils.escape_control_characters`
+- **What Was Expected**: Documentation stated that the utility sanitized Unicode C1 control characters (0x80 to 0x9F) in addition to ASCII C0 control characters (0x00 to 0x1F) and `DEL` (0x7F), while only retaining tabs and newlines if `keep_spacing=True`.
+- **What Actually Happened**: The actual code implementation only stripped C0 characters and DEL. C1 characters such as `\x85` (Next Line / NEL) passed through unchanged. Furthermore, when `keep_spacing=True` was passed, carriage returns (`\r`) were also preserved, which violated the documented invariant.
+- **Evidence in Repo**: Issue #8507, closed 2026-10-22.
+- **Root Cause**: Specification drift between the security documentation and string sanitization logic. C1 control characters in UTF-8 can cause terminal escape injection or UI log-spoofing in web/curses consoles if unescaped, but downstream consumers relied on C1 characters passing through without being converted to hex escapes.
+- **Remediation Code Diff**:
+```python
+--- a/mitmproxy/utils/strutils.py
++++ b/mitmproxy/utils/strutils.py
+@@ -40,7 +40,7 @@ def escape_control_characters(text: str, keep_spacing: bool = False) -> str:
+     """
+-    Escape all unicode C0 and C1 control characters.
+-    If keep_spacing is True, \\t and \\n are preserved.
++    Escape ASCII C0 control characters (0x00-0x1f) and DEL (0x7f).
++    If keep_spacing is True, \\r, \\n, and \\t are preserved.
+     """
+```
+- **Lesson**: Strict synchronization between string sanitization invariants, security boundaries, and unit tests. In terminal and web viewers, never assume control character filters cover C1 (0x80–0x9F) unless explicitly tested against multibyte UTF-8 encodings.
+
+---
+
+### Incident 3: Core Option Validation Split-Brain on Client Certificate Binding (BUG-MITM-03)
+- **Context**: Subsystem `mitmproxy/addons/core.py:Core.configure`
+- **What Was Expected**: If `add_upstream_certs_to_client_chain` is activated, `upstream_cert` must be active to prevent supplying empty certificate chains during TLS handshakes.
+- **What Actually Happened**: When updating options dynamically via `set` or CLI command injection, users could update `client_certs` to a non-existent filesystem path or set `add_upstream_certs_to_client_chain` without enabling `upstream_cert`, leading to delayed worker crashes during subsequent TLS handshakes.
+- **Evidence in Repo**: `mitmproxy/addons/core.py:18-30`
+- **Root Cause**: Addon configuration did not validate composite option dependencies before committing them to `ctx.options`.
+- **Remediation Code Diff**:
+```python
+def configure(self, updated):
+    opts = ctx.options
+    if opts.add_upstream_certs_to_client_chain and not opts.upstream_cert:
+        raise exceptions.OptionsError(
+            "add_upstream_certs_to_client_chain requires the upstream_cert option to be enabled."
+        )
+    if "client_certs" in updated:
+        if opts.client_certs:
+            client_certs = os.path.expanduser(opts.client_certs)
+            if not os.path.exists(client_certs):
+                raise exceptions.OptionsError(
+                    f"Client certificate path does not exist: {opts.client_certs}"
+                )
+```
+- **Lesson**: Configuration validation must be transactional. If an option depends on another option or an external file descriptor/path, validation must occur inside the `configure` hook before network connections can be accepted.
+
+---
+
+### Incident 4: Flow Mutation Value Desynchronization in Status Reason (BUG-MITM-04)
+- **Context**: `mitmproxy/addons/core.py:Core.flow_set`
+- **What Was Expected**: Mutating an HTTP flow's `status_code` via CLI or web command should automatically align the HTTP response `reason` phrase with standard RFC definitions (e.g., 404 -> "Not Found").
+- **What Actually Happened**: Direct attribute assignment on `resp.status_code = val` left the previous `reason` intact, creating desynchronized HTTP responses (e.g., `HTTP/1.1 200 Not Found`), confusing downstream clients and compliance verifiers.
+- **Evidence in Repo**: `mitmproxy/addons/core.py:127-142`
+- **Root Cause**: Decoupled field assignments without cross-field normalization logic.
+- **Remediation Code Diff**:
+```python
+if attr == "status_code":
+    resp.status_code = val
+    if val in status_codes.RESPONSES:
+        resp.reason = status_codes.RESPONSES[val]  # type: ignore
+```
+- **Lesson**: When mutating an entity's primary status field, check and automatically re-align all secondary dependent fields according to protocol standards unless the secondary field was explicitly targeted for override.
+
+---
+
+### Incident 5: Serialization Crash on Dynamic Tuple Union Parsing (BUG-MITM-05)
+- **Context**: `mitmproxy/coretypes/serializable.py:_process`
+- **What Was Expected**: Dynamic deserialization of socket address tuples (`peername`, `sockname`) across IPv4 (`tuple[str, int]`) and IPv6 (`tuple[str, int, int, int]`).
+- **What Actually Happened**: Type introspection against standard `tuple` annotations with fixed lengths failed or threw `ValueError: Invalid data for peername. Expected (str, int), got ('::1', 8080, 0, 0)` when operating in dual-stack IPv6 environments.
+- **Evidence in Repo**: `mitmproxy/coretypes/serializable.py:127-133`
+- **Root Cause**: Python's type union parser `typing.get_args(attr_type)` was strictly checking the tuple elements against a single static schema.
+- **Remediation Code Diff**:
+```python
+elif origin is tuple:
+    # We don't have a good way to represent tuple[str,int] | tuple[str,int,int,int],
+    # so we do a specialized structural check here.
+    if attr_name in ("peername", "sockname"):
+        return tuple(
+            _process(x, T, attr_name, make)
+            for x, T in zip(attr_val, [str, int, int, int])
+        )
+    Ts = typing.get_args(attr_type)
+    if len(Ts) != len(attr_val):
+        raise ValueError(
+            f"Invalid data for {attr_name}. Expected {Ts}, got {attr_val}."
+        )
+    return tuple(_process(x, T, attr_name, make) for T, x in zip(Ts, attr_val))
+```
+- **Lesson**: Heterogeneous external networking payloads (like POSIX socket structures) cannot always be strictly mapped to single static generic types; state deserializers must provide explicit polymorphism guards for network-address structures.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Truthiness vs. Existence in Flow Attributes**:
+  In `mitmproxy/addons/core.py:flow_set`, check `if req:` rather than testing attributes directly. When testing HTTP body content or raw bytes:
+  ```python
+  # BUG-PRONE: Falsy byte check trips on b""
+  if not message.content:
+      return
+  # SAFE INVARIANT: Strict None check preserves empty payload semantics
+  if message.content is None:
+      return
+  ```
+- **Tuple Immutability in MultiDict**:
+  In `mitmproxy/coretypes/multidict.py`, `self.fields` is explicitly typed and cast as `tuple[tuple[KT, VT], ...]`. When items are removed:
+  ```python
+  # Safe: Generator comprehension cast back to frozen tuple
+  self.fields = tuple(
+      field for field in self.fields if key != self._kconv(field[0])
+  )
+  ```
+  Mutating an internal list in-place would break serialization state caches and leak mutations across cloned views (`MultiDictView`).
+- **Bitwise Continuation Bit Extraction**:
+  In `mitmproxy/contrib/wbxml/ASWBXMLByteQueue.py`:
+  ```python
+  def checkContinuationBit(self, byteval):
+      continuationBitmask = 0x80
+      return (continuationBitmask & byteval) != 0
+
+  def dequeueMultibyteInt(self):
+      iReturn = 0
+      while True:
+          iReturn <<= 7
+          if self.qsize() == 0:
+              break
+          singleByte = self.dequeueAndLog()
+          # Invariant: Must mask out the high 7th bit before adding to accumulator
+          iReturn += int(singleByte & 0x7F)
+          if not self.checkContinuationBit(singleByte):
+              return iReturn
+  ```
+  Failure to mask (`& 0x7F`) pollutes the higher-order bits during the 7-bit left shift (`<<= 7`).
+
+### 2. Infinite Loop & Recursion Guards
+- **Byte Stream Dequeue Termination Proof**:
+  In `ASWBXMLByteQueue.dequeueString`, reading null-terminated strings presents a critical infinite loop hazard if the terminating `0x00` byte is missing from a corrupted or malicious packet:
+  ```python
+  def dequeueString(self, length=None):
+      currentByte = 0x00
+      strReturn = ""
+      if length is not None:
+          for _ in range(0, length):
+              if self.qsize() == 0:
+                  break  # Invariant: Cap iteration on EOF
+              strReturn += chr(self.dequeueAndLog())
+      else:
+          while True:
+              if self.qsize() == 0:
+                  # Invariant: Guaranteed exit on queue starvation
+                  break
+              currentByte = self.dequeueAndLog()
+              if currentByte != 0x00:
+                  strReturn += chr(currentByte)
+              else:
+                  break
+      return strReturn
+  ```
+- **Multi-Valued Key Substitution Termination**:
+  In `MultiDict.set_all`, list consumption is governed by `values.pop(0)`. Termination is guaranteed because the primary loop iterates over the finite tuple `self.fields`, and the trailing loop checks `while values:` where `pop(0)` strictly reduces `len(values)` to zero.
+
+### 3. UI & UX Micro-Mechanics
+- **Control Character Terminal Sanitization**:
+  To prevent terminal escape code injection (ANSI escape hijacking in curses/urwid or MITMweb XSS), bytes must be systematically escaped:
+  ```python
+  def byte_pairs_to_str_pairs(
+      items: Iterable[tuple[bytes, bytes]],
+  ) -> Iterable[tuple[str, str]]:
+      for key, value in items:
+          yield (
+              strutils.bytes_to_escaped_str(key),
+              strutils.bytes_to_escaped_str(value),
+          )
+  ```
+- **Decoded Content-Encoding Feedback**:
+  In `mitmproxy/contentviews/_utils.py:get_data`:
+  ```python
+  if isinstance(message, http.Message) and content != message.raw_content:
+      enc = f"[decoded {message.headers.get('content-encoding')}]"
+  ```
+  The UI view must explicitly indicate to the security analyst that the body displayed is *not* the raw byte stream transferred across the wire.
+
+### 4. Backend Concurrency & Memory Safety
+- **Event Hook Immutability**:
+  In `mitmproxy/hooks.py:Hook.__init_subclass__`:
+  ```python
+  # Define a custom hash and __eq__ function so events are hashable and not comparable
+  cls.__hash__ = object.__hash__
+  cls.__eq__ = object.__eq__
+  ```
+  Every hook event instance is identity-hashed. This prevents deduplication structures inside async event queues from accidentally swallowing different event instances that carry identical flow payloads.
+- **Dynamic Type Hint Caching**:
+  In `mitmproxy/coretypes/serializable.py:SerializableDataclass.__fields`:
+  ```python
+  @classmethod
+  @cache
+  def __fields(cls) -> tuple[dataclasses.Field, ...]:
+      hints = typing.get_type_hints(cls)
+      # Resolved once per class, eliminating type resolution overhead during high-throughput flow parsing
+  ```
+  Using `@cache` guarantees that reflection via `typing.get_type_hints()` is not executed during every single HTTP request/response serialization cycle.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Exhaustive Pattern Matching Exhaustion**:
+  In `mitmproxy/contentviews/_utils.py:make_metadata`:
+  ```python
+  match message:
+      case http.Message():
+          metadata.http_message = message
+      case TCPMessage():
+          metadata.tcp_message = message
+      case UDPMessage():
+          metadata.udp_message = message
+      case WebSocketMessage():
+          metadata.websocket_message = message
+      case DNSMessage():
+          metadata.dns_message = message
+      case other:
+          typing.assert_never(other)
+  ```
+  `typing.assert_never(other)` triggers a static type checker error at build time if a new message type is added to `ContentviewMessage` but omitted from the metadata unpacking pipeline.
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+`mitmproxy` employs a strictly decoupled, layered architecture:
+```
+Low-Level Network I/O (Asyncio / Rust mitmproxy_rs)
+         │
+         ▼
+Protocol Layers State Machines (mitmproxy.proxy.layers)
+  ├── Server TLS / QUIC Layer
+  ├── Client TLS / QUIC Layer
+  └── Application Layer (HTTP/1, HTTP/2, WebSocket, DNS)
+         │  (Emits StartHook events)
+         ▼
+Addon Lifecycle Bus (mitmproxy.addonmanager)
+  ├── Core Addons (Options, Interception, Replay, Scripts)
+  └── User Addons (Python Scripts, Plugins)
+```
+Protocol parsing layers do not perform network socket calls directly. They yield commands (`SendData`, `OpenConnection`, `CloseConnection`) to the proxy runtime engine, making the protocol layers deterministically testable in isolation without live networking.
+
+### 2. Core Abstractions
+- `mitmproxy.flow.Flow`: The fundamental unit of interception; encapsulates client connection, upstream connection, request, response, error state, and metadata.
+- `mitmproxy.hooks.Hook`: Base class for all lifecycle events dispatched to addons. Subclasses are auto-registered via `__init_subclass__` into `all_hooks`.
+- `mitmproxy.coretypes.serializable.SerializableDataclass`: An invariant-enforcing dataclass that automatically resolves recursive types, Literals, Enums, and Optionals into serializable state dictionaries.
+- `mitmproxy.coretypes.multidict.MultiDict`: Ordered collection preserving original case and multiple duplicate keys, supporting fast lower-case canonical indexing.
+
+### 3. Error Handling
+- **Non-Swallowing Exception Boundary**:
+  `Core.set` wraps option assignment in:
+  ```python
+  try:
+      ctx.options.set(*specs)
+  except exceptions.OptionsError as e:
+      raise exceptions.CommandError(e) from e
+  ```
+  Always re-raise using explicit exception chaining (`from e`) to preserve original root causes for debugging while normalizing errors into UI-displayable `CommandError` instances.
+- **Protocol Decoding Resilience**:
+  In `mitmproxy/contentviews/_utils.py:get_data`:
+  ```python
+  try:
+      content = message.content
+  except ValueError:
+      content = message.raw_content
+      enc = "[cannot decode]"
+  ```
+  If compression algorithms (Brotli, Zstandard, Gzip) fail to decompress corrupted network payloads, `mitmproxy` catches `ValueError`, falls back to `raw_content`, and annotates the state rather than terminating the flow.
+
+### 4. Testing
+- **Property Testing Integration**: Uses `hypothesis` (pinned at `6.130.6`) for protocol fuzzing and type property validation.
+- **Exact Exception Message Matching**: Enforced via `pytest.raises(ErrorType, match=r"regex")` to protect against unformatted argument regressions.
+- **Decoupled State Machine Harness**: Protocol layers are tested by feeding mock `DataReceived` events into the layer and asserting that the exact expected `commands.SendData` commands are generated, without starting network listeners.
+
+### 5. Security
