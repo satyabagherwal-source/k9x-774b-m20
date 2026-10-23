@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "b8a9711c",
+    "sourceVersion": "38c2563a",
     "license": "Apache-2.0",
-    "contentHash": "a8f0f13ef963a05c91a5d701e1fe66e47d6bec1d05c38dd648ce6c9b892fb534",
-    "lastHarvestedAt": "2026-10-21T03:56:53.802Z",
+    "contentHash": "291421d5869bfd0bc6a4376b9e8e8dc672677cd5f6195a4ea5ee9424b3186960",
+    "lastHarvestedAt": "2026-10-23T06:02:55.125Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {
@@ -5983,10 +5983,10 @@
     "repository": "guokaigdg/animal-island-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/guokaigdg/animal-island-ui",
-    "sourceVersion": "279959f7",
+    "sourceVersion": "2d855fc6",
     "license": "MIT",
-    "contentHash": "46170f398d1b1d9d51c47c9980b083462c6ece4aef1b42e6d730b0592ace59ea",
-    "lastHarvestedAt": "2026-10-19T16:12:01.663Z",
+    "contentHash": "762a9359f3b7dee1cb68e94e9b65e877a661ee8d4ff7de44cff188907979efd1",
+    "lastHarvestedAt": "2026-10-23T06:02:45.569Z",
     "learningId": "learn-github-guokaigdg-animal-island-ui"
   },
   "nezhahq-nezha": {
@@ -9923,10 +9923,10 @@
     "repository": "scrapinghub/dateparser",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapinghub/dateparser",
-    "sourceVersion": "337d7f5a",
+    "sourceVersion": "4c4c5e52",
     "license": "BSD-3-Clause",
-    "contentHash": "d07c1874930986b2f3aa4f05ab1e7a53028819f82726cb352f9b95e75de3a175",
-    "lastHarvestedAt": "2026-10-20T01:54:49.191Z",
+    "contentHash": "51d0bec1ca9296eb18f9ea8e7c2a7a02a32a6f56494f2cd1d05f534c9288282b",
+    "lastHarvestedAt": "2026-10-23T06:02:50.232Z",
     "learningId": "learn-github-scrapinghub-dateparser"
   },
   "google-closure-compiler": {
@@ -10273,10 +10273,10 @@
     "repository": "react/react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/react/react-native",
-    "sourceVersion": "2fd8fd66",
+    "sourceVersion": "bbee89c5",
     "license": "MIT",
-    "contentHash": "c6435216d376c95d33881aca2527d61f4f32366c9fff39bb84121a3cb84bf883",
-    "lastHarvestedAt": "2026-10-20T04:05:30.640Z",
+    "contentHash": "a04b5269518276f86de4ade449f6a6a02184d73fc59d456e89725ac042827d4b",
+    "lastHarvestedAt": "2026-10-23T06:02:53.966Z",
     "learningId": "learn-github-react-react-native"
   },
   "faker-js-faker": {

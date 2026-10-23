@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `b8a9711c`  
+> **Source Version**: `38c2563a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T03:56:53.538Z  
+> **Timestamp**: 2026-10-23T06:02:54.983Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T03:56:53.533Z  
+> **Harvest Timestamp**: 2026-10-23T06:02:54.664Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -743,147 +743,264 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e24024e0` (2026-10-20)
-**Commit Message**: docs(guides): fix write permissions field names (#1379)
+### Incident Patch 1: `34dd780a` (2026-10-21)
+**Commit Message**: fix(cmd): bind the zap logger flags on the root command (#1383)
 
-The guide's examples and behaviour list set blockCreate and
-blockDelete. The TenantControlPlane CRD defines blockCreation and
-blockDeletion, so the API server rejects or prunes the other two.
+The manager and kubeconfig-generator commands built the zap logger and
+called ctrl.SetLogger while the command was constructed, before cobra
+parsed the command line. The --zap-* flags were bound to options that
+were already copied, so they never changed the logger. The migrate
+command had no zap flags and logged through whichever logger the other
+two commands had set.
 
-**File**: `docs/content/guides/write-permissions.md` (modified, +6/-6)
+Bind the zap flags once on the root command's persistent flags and call
+ctrl.SetLogger in the root PersistentPreRun, which runs after the flags
+are parsed. Drop the per-command blocks. The default stays development
+mode with the console encoder, and migrate now accepts the same flags.
+
+Signed-off-by: spicysharkco <[REDACTED_EMAIL]>
+
+**File**: `cmd/kubeconfig-generator/cmd.go` (modified, +0/-10)
 ```diff
-@@ -25,9 +25,9 @@ metadata:
-   name: my-control-plane
- spec:
-   writePermissions:
--    blockCreate: true
-+    blockCreation: true
-     blockUpdate: true
--    blockDelete: true
-+    blockDeletion: true
- ```
+@@ -4,7 +4,6 @@
+ package kubeconfiggenerator
  
- Once applied, the Tenant Control Plane will switch into `WriteLimited` status.
-@@ -44,9 +44,9 @@ metadata:
-   name: my-control-plane
- spec:
-   writePermissions:
--    blockCreate: true
-+    blockCreation: true
-     blockUpdate: true
--    blockDelete: false
-+    blockDeletion: false
- ```
+ import (
+-	"flag"
+ 	"fmt"
+ 	"io"
+ 	"os"
+@@ -20,7 +19,6 @@ import (
+ 	"sigs.k8s.io/controller-runtime/pkg/cache"
+ 	"sigs.k8s.io/controller-runtime/pkg/event"
+ 	"sigs.k8s.io/controller-runtime/pkg/healthz"
+-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
  
- !!! note "Datastore quota"
-@@ -87,9 +87,9 @@ As a result, all changes initiated by tenants (such as `kubectl apply`, `kubectl
+ 	cmdutils "github.com/clastix/kamaji/cmd/utils"
+ 	"github.com/clastix/kamaji/controllers"
+@@ -149,14 +147,6 @@ func NewCmd(scheme *runtime.Scheme) *cobra.Command {
+ 			return nil
+ 		},
+ 	}
+-	// Setting zap logger
+-	zapfs := flag.NewFlagSet("zap", flag.ExitOnError)
+-	opts := zap.Options{
+-		Development: true,
+-	}
+-	opts.BindFlags(zapfs)
+-	cmd.Flags().AddGoFlagSet(zapfs)
+-	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
+ 	// Setting CLI flags
+ 	cmd.Flags().StringVar(&metricsBindAddress, "metrics-bind-address", ":8090", "The address the metric endpoint binds to.")
+ 	cmd.Flags().BoolVar(&metricsSecure, "metrics-secure", false, "If set, the metrics endpoint is served over HTTPS and requires a bearer token authorized against the manager's kamaji-metrics-reader ClusterRole, instead of being served in plaintext without authentication.")
+```
+
+**File**: `cmd/manager/cmd.go` (modified, +0/-10)
+```diff
+@@ -4,7 +4,6 @@
+ package manager
  
- If a tenant user tries to perform non-allowed write operations, such as:
+ import (
+-	"flag"
+ 	"fmt"
+ 	"io"
+ 	"net/http"
+@@ -23,7 +22,6 @@ import (
+ 	"sigs.k8s.io/controller-runtime/pkg/cache"
+ 	"sigs.k8s.io/controller-runtime/pkg/event"
+ 	"sigs.k8s.io/controller-runtime/pkg/healthz"
+-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+ 	ctrlwebhook "sigs.k8s.io/controller-runtime/pkg/webhook"
+ 	gatewayv1 "sigs.k8s.io/gateway-api/apis/v1"
  
--- creating resources when `TenantControlPlane.spec.writePermissions.blockCreate` is set to `true`
-+- creating resources when `TenantControlPlane.spec.writePermissions.blockCreation` is set to `true`
- - updating resources when `TenantControlPlane.spec.writePermissions.blockUpdate` is set to `true`
--- deleting resources when `TenantControlPlane.spec.writePermissions.blockDelete` is set to `true`
-+- deleting resources when `TenantControlPlane.spec.writePermissions.blockDeletion` is set to `true`
+@@ -336,14 +334,6 @@ func NewCmd(scheme *runtime.Scheme) *cobra.Command {
+ 		},
+ 	}
  
- the following error is returned:
+-	// Setting zap logger
+-	zapfs := flag.NewFlagSet("zap", flag.ExitOnError)
+-	opts := zap.Options{
+-		Development: true,
+-	}
+-	opts.BindFlags(zapfs)
+-	cmd.Flags().AddGoFlagSet(zapfs)
+-	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
+ 	// Setting CLI flags
+ 	cmd.Flags().StringVar(&metricsBindAddress, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
+ 	cmd.Flags().BoolVar(&metricsSecure, "metrics-secure", false, "If set, the metrics endpoint is served over HTTPS and requires a bearer token authorized against the manager's kamaji-metrics-reader ClusterRole, instead of being served in plaintext without authentication.")
+```
+
+**File**: `cmd/root.go` (modified, +15/-1)
+```diff
+@@ -4,22 +4,33 @@
+ package cmd
  
+ import (
++	"flag"
++
+ 	"github.com/spf13/cobra"
+ 	_ "go.uber.org/automaxprocs" // Automatically set `GOMAXPROCS` to match Linux container CPU quota.
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+ 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+ 	appsv1 "k8s.io/kubernetes/pkg/apis/apps/v1"
++	ctrl "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+ 	gatewayv1 "sigs.k8s.io/gateway-api/apis/v1"
+ 
+ 	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
+ )
+ 
+ func NewCmd(scheme *runtime.Scheme) *cobra.Command {
+-	return &cobra.Command{
++	zapfs := flag.NewFlagSet("zap", flag.ExitOnError)
++	opts := zap.Options{
++		Development: true,
++	}
++	opts.BindFlags(zapfs)
++
++	cmd := &cobra.Command{
+ 		Use:   "kamaji",
+ 		Short: "Build and operate Kubernetes at scale with a fraction of operational burden.",
+ 		PersistentPreRun: func(*cobra.Command, []string) {
++			ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
+ 			utilruntime.Must(clientgoscheme.AddToScheme(scheme))
+ 			utilruntime.Must(kamajiv1alpha1.AddToScheme(scheme))
+ 			utilruntime.Must(appsv1.RegisterDefaults(scheme))
+@@ -28,4 +39,7 @@ func NewCmd(scheme *runtime.Scheme) *cobra.Command {
+ 			utilruntime.Must(gatewayv1.Install(scheme))
+ 		},
+ 	}
++	cmd.PersistentFlags().AddGoFlagSet(zapfs)
++
++	return cmd
+ }
 ```
 
 ---
 
-### Incident Patch 2: `b8a9711c` (2026-10-20)
-**Commit Message**: docs(reference): fix --datastore and --migrate-image rows (#1381)
+### Incident Patch 2: `c2e28336` (2026-10-22)
+**Commit Message**: fix(e2e): wait for freeze webhook enforcement before asserting writes (#1387)
 
-The flag table lists etcd as the --datastore default and migrate-image
-as the --migrate-image default. The flags default to an empty string and
-docker.io/clastix/kamaji:<version>. The --datastore usage text now says
-the flag is optional, as the flag help does.
+A freshly created ValidatingWebhookConfiguration is enforced asynchronously
+by the tenant API server admission plugin, so a write issued right after the
+webhook is observed can bypass it: the Consistently assertion failed after
+4ms with a nil error on a first delete that never reached the webhook.
 
-**File**: `docs/content/reference/configuration.md` (modified, +2/-2)
+Probe with a throwaway Namespace until blocking is effective before
+asserting it stays effective for the migration window.
+
+**File**: `e2e/tcp_migration_test.go` (modified, +15/-0)
 ```diff
-@@ -11,8 +11,8 @@ Available flags are the following:
- | `--leader-elect`                  | Enable leader election for controller manager. Enabling this will ensure there is only one active controller manager.                                                              | `true`                                         |
- | `--tmp-directory`                 | Directory which will be used to work with temporary files.                                                                                                                         | `/tmp/kamaji`                                  |
- | `--kine-image`                    | Container image along with tag to use for the Kine sidecar container (used only if etcd-storage-type is set to one of kine strategies).                                            | `rancher/kine:v0.11.10-amd64`                  |
--| `--datastore`                     | The default DataStore that should be used by Kamaji to setup the required storage.                                                                                                 | `etcd`                                         |
--| `--migrate-image`                 | Specify the container image to launch when a TenantControlPlane is migrated to a new datastore.                                                                                    | `migrate-image`                                |
-+| `--datastore`                     | Optional, the default DataStore that should be used by Kamaji to setup the required storage of Tenant Control Planes with undeclared DataStore.                                    | `""`                                           |
-+| `--migrate-image`                 | Specify the container image to launch when a TenantControlPlane is migrated to a new datastore.                                                                                    | `docker.io/clastix/kamaji:<version>`           |
- | `--max-concurrent-tcp-reconciles` | Specify the number of workers for the Tenant Control Plane controller (beware of CPU consumption).                                                                                 | `1`                                            |
- | `--pod-namespace`                 | The Kubernetes Namespace on which the Operator is running in, required for the TenantControlPlane migration jobs.                                                                  | `os.Getenv("POD_NAMESPACE")`                   |
- | `--webhook-service-name`          | The Kamaji webhook server Service name which is used to get validation webhooks, required for the TenantControlPlane migration jobs.                                               | `kamaji-webhook-service`                       |
+@@ -176,6 +176,21 @@ func featureTestMigration(driver string) {
+ 		}
+ 
+ 		By("ensuring changes are not allowed")
++		// A freshly created ValidatingWebhookConfiguration is enforced asynchronously by
++		// the API server admission plugin: a write issued right after the webhook has
++		// been observed can bypass it entirely. Probe with a throwaway Namespace until
++		// blocking is effective - the probe must be disposable, since a bypassed delete
++		// succeeds and removes the object - before asserting blocking is consistent.
++		Eventually(func() error {
++			probe := &corev1.Namespace{}
++			probe.SetName(fmt.Sprintf("freeze-probe-%s", rand.String(5)))
++
++			if err := tcpClient.Create(context.Background(), probe); err != nil {
++				return err
++			}
++
++			return tcpClient.Delete(context.Background(), probe)
++		}, time.Minute, time.Second).Should(HaveOccurred())
+ 		Consistently(func() error {
+ 			return tcpClient.Delete(context.Background(), ns)
+ 		}, 10*time.Second, time.Second).Should(HaveOccurred())
 ```
 
 ---
 
-### Incident Patch 3: `89adbe61` (2026-10-20)
-**Commit Message**: fix(datastore): copy pg.Options when switching PostgreSQL database (#1373)
+### Incident Patch 3: `38c2563a` (2026-10-23)
+**Commit Message**: fix(tcp): clear removed DataStore overrides (#1389)
 
-**File**: `internal/datastore/postgresql.go` (modified, +2/-2)
+Removing dataStoreOverrides left the previous etcd-servers-overrides
+argument on kube-apiserver because the argument merge kept it once
+it was no longer managed. Drop it from the previous arguments when
+no overrides remain. Values in extraArgs.apiServer are still applied.
+
+Signed-off-by: spicysharkco <[REDACTED_EMAIL]>
+
+**File**: `internal/builders/controlplane/deployment.go` (modified, +7/-0)
 ```diff
-@@ -111,10 +111,10 @@ func NewPostgreSQLConnection(config ConnectionConfig) (Connection, error) {
+@@ -8,6 +8,7 @@ import (
+ 	"crypto/md5"
+ 	"fmt"
+ 	"path"
++	"slices"
+ 	"sort"
+ 	"strings"
+ 
+@@ -763,6 +764,12 @@ func (d Deployment) buildKubeAPIServerCommand(tenantControlPlane kamajiv1alpha1.
+ 
+ 	if len(d.DataStoreOverrides) != 0 {
+ 		managed["--etcd-servers-overrides"] = d.etcdServersOverrides()
++	} else {
++		current = slices.DeleteFunc(current, func(arg string) bool {
++			flag, _, _ := strings.Cut(arg, "=")
++
++			return flag == "--etcd-servers-overrides"
++		})
  	}
- 
- 	fn := func(dbName string) *pg.DB {
--		o := opt
-+		o := *opt
- 		o.Database = dbName
- 
--		return pg.Connect(o)
-+		return pg.Connect(&o)
- 	}
- 
- 	return &PostgreSQLConnection{
+ 	// The Konnectivity addon flag is rendered together with the managed flags,
+ 	// in sorted position, so that the argument list is deterministic from the
 ```
 
-**File**: `internal/datastore/postgresql_test.go` (added, +35/-0)
+**File**: `internal/builders/controlplane/deployment_test.go` (modified, +30/-0)
 ```diff
-@@ -0,0 +1,35 @@
-+// Copyright 2022 Clastix Labs
-+// SPDX-License-Identifier: Apache-2.0
+@@ -38,6 +38,36 @@ var _ = Describe("Controlplane Deployment", func() {
+ 	})
+ 
+ 	Describe("DataStoreOverrides flag generation", func() {
++		It("drops the flag after DataStoreOverrides are removed", func() {
++			d.DataStore.Spec.Driver = kamajiv1alpha1.EtcdDriver
++			tcp := kamajiv1alpha1.TenantControlPlane{}
++			first := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
++			Expect(first).To(ContainElement("--etcd-servers-overrides=/events#https://etcd-0;https://etcd-1;https://etcd-2"))
 +
-+package datastore
++			d.DataStoreOverrides = nil
++			current := append(first, "--watch-cache=false")
++			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", current)
++			Expect(got).To(ContainElement("--watch-cache=false"))
++			Expect(got).To(Equal(d.buildKubeAPIServerCommand(tcp, "192.0.2.1", []string{"--watch-cache=false"})))
++		})
 +
-+import (
-+	"testing"
-+)
++		It("keeps user extraArgs after DataStoreOverrides are emptied", func() {
++			d.DataStore.Spec.Driver = kamajiv1alpha1.EtcdDriver
++			extraArgs := []string{
++				"--service-account-issuer=https://issuer-two.example.com",
++				"--service-account-issuer=https://issuer-one.example.com",
++				"--etcd-servers-overrides=/events#https://custom-etcd",
++			}
++			tcp := kamajiv1alpha1.TenantControlPlane{}
++			tcp.Spec.ControlPlane.Deployment.ExtraArgs = &kamajiv1alpha1.ControlPlaneExtraArgs{APIServer: extraArgs}
++			first := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
 +
-+func TestPostgreSQLSwitchDatabaseKeepsRootOptions(t *testing.T) {
-+	conn, err := NewPostgreSQLConnection(ConnectionConfig{
-+		User:      "postgres",
-+		Endpoints: []ConnectionEndpoint{{Host: "127.0.0.1", Port: 5432}},
-+		DBName:    "postgres",
-+	})
-+	if err != nil {
-+		t.Fatalf("NewPostgreSQLConnection() error = %v", err)
-+	}
++			d.DataStoreOverrides = []DataStoreOverrides{}
++			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", first)
++			Expect(got).To(Equal(d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)))
++			Expect(got[len(got)-len(extraArgs):]).To(Equal(extraArgs))
++		})
 +
-+	root, ok := conn.(*PostgreSQLConnection)
-+	if !ok {
-+		t.Fatalf("NewPostgreSQLConnection() returned %T, want *PostgreSQLConnection", conn)
-+	}
-+	t.Cleanup(func() { _ = root.Close() })
-+
-+	tenant := root.switchDatabaseFn("tenant")
-+	t.Cleanup(func() { _ = tenant.Close() })
-+
-+	if got := tenant.Options().Database; got != "tenant" {
-+		t.Fatalf("switched connection database = %q, want %q", got, "tenant")
-+	}
-+	if got := root.db.Options().Database; got != "postgres" {
-+		t.Fatalf("root connection database = %q after switching, want %q", got, "postgres")
-+	}
-+}
+ 		It("should generate valid --etcd-servers-overrides value", func() {
+ 			etcdSerVersOverrides := d.etcdServersOverrides()
+ 			Expect(etcdSerVersOverrides).To(Equal("/events#https://etcd-0;https://etcd-1;https://etcd-2"))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1389** (2026-10-23): fix(tcp): clear removed DataStore overrides (@spicysharkco)
+- **PR #1387** (2026-10-22): fix(e2e): wait for freeze webhook enforcement before asserting writes (@Sphinxgaia)
+- **PR #1386** (2026-10-22): feat: headless control plane service support (@Sphinxgaia)
+- **PR #1383** (2026-10-21): fix(cmd): bind the zap logger flags on the root command (@spicysharkco)
 - **PR #1381** (2026-10-20): docs(reference): fix --datastore and --migrate-image rows (@spicysharkco)
 - **PR #1379** (2026-10-20): docs(guides): fix write permissions field names (@spicysharkco)
-- **PR #1377** (2026-10-20): fix(datastore): remove the freeze webhook when the control plane is WriteLimited (@spicysharkco)
-- **PR #1375** (2026-10-20): fix(konnectivity): remove the server kubeconfig volume when the addon is disabled (@spicysharkco)
-- **PR #1373** (2026-10-20): fix(datastore): copy pg.Options when switching PostgreSQL database (@somaz94)
-- **PR #1371** (2026-10-20): fix(service): clear externalIPs when allowAddressAsExternalIP is turned off (@spicysharkco)
 
 ---
 
@@ -897,44 +1014,3 @@ the flag is optional, as the flag help does.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. docs(guides): fix write permissions field names (#1379)
-
-**RULE**:
-When implementing operations in `docs/content/guides/write-permissions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `e24024e0`: docs(guides): fix write permissions field names (#1379). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/content/guides/write-permissions.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-    blockCreation: true
-    blockDeletion: true
-    blockCreation: true
-    blockDeletion: false
-- creating resources when `TenantControlPlane.spec.writePermissions.blockCreation` is set to `true`
-- deleting resources when `TenantControlPlane.spec.writePermissions.blockDeletion` is set to `true`
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-    blockCreate: true
-    blockDelete: true
-    blockCreate: true
-    blockDelete: false
-- creating resources when `TenantControlPlane.spec.writePermissions.blockCreate` is set to `true`
-- deleting resources when `TenantControlPlane.spec.writePermissions.blockDelete` is set to `true`
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e24024e0` are properly handled with clean fallback behavior.

@@ -4471,3 +4471,7 @@ Every entry in this ledger must capture:
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `c3e82fe4` | Multi-dimensional audit evidence | 2026-10-23T05:50:33.805Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `0386b404` | Multi-dimensional audit evidence | 2026-10-23T05:50:36.745Z |
 | `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `10a08581` | Multi-dimensional audit evidence | 2026-10-23T05:56:31.845Z |
+| `learn-github-guokaigdg-animal-island-ui` | `https://github.com/guokaigdg/animal-island-ui` | `2d855fc6` | Multi-dimensional audit evidence | 2026-10-23T06:02:45.569Z |
+| `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `4c4c5e52` | Multi-dimensional audit evidence | 2026-10-23T06:02:50.232Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `bbee89c5` | Multi-dimensional audit evidence | 2026-10-23T06:02:53.966Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `38c2563a` | Multi-dimensional audit evidence | 2026-10-23T06:02:55.125Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source**: github ([https://github.com/react/react-native](https://github.com/react/react-native))  
-> **Source Version**: `2fd8fd66`  
+> **Source Version**: `bbee89c5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T04:05:30.406Z  
+> **Timestamp**: 2026-10-23T06:02:53.809Z  
 > **Learning ID**: `learn-github-react-react-native`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/react-native](https://github.com/react/react-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T04:05:30.130Z  
+> **Harvest Timestamp**: 2026-10-23T06:02:53.232Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A framework for building native applications using React
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 126724 stars
+- **Stars / Engagement**: 126758 stars
 
 ---
 
@@ -617,345 +617,1770 @@ export {prepareDebuggerShellFromDotSlashFile};
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `65b3e647` (2026-10-19)
-**Commit Message**: Fix race in UiThreadUtil main handler lazy initialization (#58963)
+### Incident Patch 1: `ba0b3dbd` (2026-10-22)
+**Commit Message**: Babel preset: Remove regenerator from Hermes dev builds (#59303)
 
 Summary:
-`UiThreadUtil` keeps its main-thread `Handler` in a property delegated to `lazy(LazyThreadSafetyMode.NONE)`:
+## Motivation
 
-```kotlin
-private val mainHandler: Handler by
-    lazy(LazyThreadSafetyMode.NONE) { Handler(Looper.getMainLooper()) }
-```
+ - Dev/release consistency in correctness and performance shape.
+ - ~10% faster dev cold builds
+ - More responsive dev apps (~2x faster promise handling)
+ - Improved debugging support
 
-`NONE` creates an `UnsafeLazyImpl`, whose getter is:
+Since https://github.com/react/react-native/pull/52651, Hermes profiles have lowered generators (with `enableBabelRuntime: false`), `for...of`, `?.`, `??` and optional catch binding in dev builds only, because Hermes couldn't show local variables when paused on a breakpoint in a native generator.
 
-```kotlin
-if (_value === UNINITIALIZED_VALUE) {
-  _value = initializer!!()
-  initializer = null
-}
-return _value as T
-```
+That turned out to be a Hermes bug: a breakpoint on that a `yield` line resolved to scope-less entry code before the body had even run. It was fixed in https://github.com/facebook/hermes/commit/d1238c8c61907ad41caadf579f6739f724e959a3 (hermes-v260318099.0.2), which main has used since https://github.com/react/react-native/pull/58397.
 
-`mainHandler` is first read by whichever thread first calls `runOnUiThread()`, `getUiThreadHandler()` or `removeOnUiThread()`. `isOnUiThread()` and the `assert*` helpers only use `Looper`, so the main thread calling them does not initialize it. In practice the first reads usually come from background threads posting to the UI thread, such as the JS thread, the native modules thread, or a library's executor. When two of them make their first call at the same time:
+This removes `enableRegenerator`, so Hermes-profile dev output matches release. It also fixes a dev-only divergence - loose `for-of` never calls `iterator.return()`, so breaking out of a `for...of` over a generator skipped its `finally` in dev but not release.
 
-1. Thread A sees `_value === UNINITIALIZED_VALUE` and starts the initializer.
-2. Thread B also sees `UNINITIALIZED_VALUE`, because A has not written `_value` yet.
-3. A writes `_value` and sets `initializer = null`.
-4. B evaluates `initializer!!(
+Note that with the default 
 
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/bridge/UiThreadUtil.kt` (modified, +1/-1)
+**File**: `packages/react-native-babel-preset/package.json` (modified, +0/-5)
 ```diff
-@@ -15,7 +15,7 @@ import com.facebook.react.common.build.ReactBuildConfig
- public object UiThreadUtil {
- 
-   private val mainHandler: Handler by
--      lazy(LazyThreadSafetyMode.NONE) { Handler(Looper.getMainLooper()) }
-+      lazy(LazyThreadSafetyMode.PUBLICATION) { Handler(Looper.getMainLooper()) }
- 
-   /**
-    * Returns the handler associated with the main (UI) thread.
+@@ -39,19 +39,14 @@
+     "@babel/plugin-transform-classes": "^7.25.4",
+     "@babel/plugin-transform-destructuring": "^7.24.8",
+     "@babel/plugin-transform-flow-strip-types": "^7.25.2",
+-    "@babel/plugin-transform-for-of": "^7.24.7",
+     "@babel/plugin-transform-modules-commonjs": "^7.24.8",
+     "@babel/plugin-transform-named-capturing-groups-regex": "^7.24.7",
+-    "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
+-    "@babel/plugin-transform-optional-catch-binding": "^7.24.7",
+-    "@babel/plugin-transform-optional-chaining": "^7.24.8",
+     "@babel/plugin-transform-private-methods": "^7.24.7",
+     "@babel/plugin-transform-private-property-in-object": "^7.24.7",
+     "@babel/plugin-transform-react-display-name": "^7.24.7",
+     "@babel/plugin-transform-react-jsx": "^7.25.2",
+     "@babel/plugin-transform-react-jsx-self": "^7.24.7",
+     "@babel/plugin-transform-react-jsx-source": "^7.24.7",
+-    "@babel/plugin-transform-regenerator": "^7.24.7",
+     "@babel/plugin-transform-runtime": "^7.24.7",
+     "@babel/plugin-transform-typescript": "^7.25.2",
+     "@babel/plugin-transform-unicode-regex": "^7.24.7",
 ```
 
----
-
-### Incident Patch 2: `381d74d7` (2026-10-19)
-**Commit Message**: fix(VirtualizedList): clear batch timer id on unmount so a Suspense-revived list can schedule updates again (#59123)
-
-Summary:
-`VirtualizedList.componentWillUnmount` clears the pending `_updateCellsToRenderTimeoutID` timer but never resets the field to `null`. The low-priority branch of `_scheduleCellsToRenderUpdate` only schedules a batch when that id is `null`, so the stale id blocks every future low-priority update on the instance.
-
-Unmount is not final for a class instance inside a Suspense boundary. When already-mounted content is hidden and later revealed — the react-freeze pattern that react-native-screens uses for `freezeOnBlur` — React calls `componentWillUnmount` and then `componentDidMount` on the **same** instance. If a batch timer was pending at the hide, the revived list can no longer schedule low-priority updates. When the list also had no items at the hide, `cellsAroundViewport` is `{first: 0, last: -1}`, so the high-priority path (`last >= 0`) cannot recover either and the render window stays at `initialNumToRender` regardless of how much data arrives afterwards.
-
-Field impact: a POS handheld app (react-native-screens with `freezeOnBlur`) showed 12 of 28 order line
-
-**File**: `packages/virtualized-lists/Lists/VirtualizedList.js` (modified, +1/-0)
+**File**: `packages/react-native-babel-preset/src/__tests__/__fixtures__/output/hermes-canary-dev.js` (modified, +5/-10)
 ```diff
-@@ -855,6 +855,7 @@ class VirtualizedList extends StateSafePureComponent<
-     this._unregisterFromParent(false);
-     // $FlowFixMe[incompatible-type]
-     clearTimeout(this._updateCellsToRenderTimeoutID);
-+    this._updateCellsToRenderTimeoutID = null;
-     this._viewabilityTuples.forEach(tuple => {
-       tuple.viewabilityHelper.dispose();
+@@ -53,9 +53,6 @@ var _dataUtils = require("./data-utils");
+ var _jsxFileName = "/absolute/path/to/input.js";
+ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+ function _wrapRegExp() { _wrapRegExp = function (e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), (0, _setPrototypeOf2.default)(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return (0, _inherits2.default)(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)(>|$)/g, function (e, r, t) { if ("" === t) return e; var p = o[r]; return Array.isArray(p) ? "$" + p.join("$") : "number" == typeof p ? "$" + p : ""; })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != typeof e[e.length - 1] && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
+-function _createForOfIteratorHelperLoose(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (t) return (t = t.call(r)).next.bind(t); if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var o = 0; return function () { return o >= r.length ? { done: !0 } : { done: !1, value: r[o++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+ var _count = (0, _classPrivateFieldLooseKey2.default)("count");
+ var _instances = (0, _classPrivateFieldLooseKey2.default)("instances");
+ var _increment = (0, _classPrivateFieldLooseKey2.default)("increment");
+@@ -114,8 +111,7 @@ function _fetchData() {
+   return _fetchData.apply(this, arguments);
+ }
+ function getNestedValue(obj) {
+-  var _obj$a$b$c, _obj$a;
+-  return (_obj$a$b$c = obj == null || (_obj$a = obj.a) == null || (_obj$a = _obj$a.b) == null ? void 0 : _obj$a.c) != null ? _obj$a$b$c : 42;
++  return obj?.a?.b?.c ?? 42;
+ }
+ class Animal {
+   #age;
+@@ -168,8 +164,7 @@ function mergeConfigs(base, ...overrides) {
+ }
+ function sumPairs(pairs) {
+   var total = 0;
+-  for (var _iterator = _createForOfIteratorHelperLoose(pairs), _step; !(_step = _iterator()).done;) {
+-    var [a, b] = _step.value;
++  for (var [a, b] of pairs) {
+     total += a + b;
+   }
+   return total;
+@@ -181,7 +176,7 @@ function parseDate(dateString) {
+     day: 3
+   });
+   var match = dateString.match(regex);
+-  if (match != null && match.groups) {
++  if (match?.groups) {
+     return {
+       year: match.groups.year,
+       month: match.groups.month,
+@@ -193,13 +188,13 @@ function parseDate(dateString) {
+ function safeJsonParse(input) {
+   try {
+     return JSON.parse(input);
+-  } catch (_unused) {
++  } catch {
+     return null;
+   }
+ }
+ function matchEmoji(text) {
+   var match = text.match(/(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2
+```
+
+**File**: `packages/react-native-babel-preset/src/__tests__/__fixtures__/output/hermes-stable-dev-preserve-async.js` (modified, +5/-10)
+```diff
+@@ -50,9 +50,6 @@ var _dataUtils = require("./data-utils");
+ var _jsxFileName = "/absolute/path/to/input.js";
+ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+ function _wrapRegExp() { _wrapRegExp = function (e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), (0, _setPrototypeOf2.default)(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return (0, _inherits2.default)(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)(>|$)/g, function (e, r, t) { if ("" === t) return e; var p = o[r]; return Array.isArray(p) ? "$" + p.join("$") : "number" == typeof p ? "$" + p : ""; })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != typeof e[e.length - 1] && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
+-function _createForOfIteratorHelperLoose(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (t) return (t = t.call(r)).next.bind(t); if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var o = 0; return function () { return o >= r.length ? { done: !0 } : { done: !1, value: r[o++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+ var _count = (0, _classPrivateFieldLooseKey2.default)("count");
+ var _instances = (0, _classPrivateFieldLooseKey2.default)("instances");
+ var _increment = (0, _classPrivateFieldLooseKey2.default)("increment");
+@@ -99,8 +96,7 @@ async function fetchData(url) {
+   };
+ }
+ function getNestedValue(obj) {
+-  var _obj$a$b$c, _obj$a;
+-  return (_obj$a$b$c = obj == null || (_obj$a = obj.a) == null || (_obj$a = _obj$a.b) == null ? void 0 : _obj$a.c) != null ? _obj$a$b$c : 42;
++  return obj?.a?.b?.c ?? 42;
+ }
+ class Animal {
+   #age;
+@@ -151,8 +147,7 @@ function mergeConfigs(base, ...overrides) {
+ }
+ function sumPairs(pairs) {
+   var total = 0;
+-  for (var _iterator = _createForOfIteratorHelperLoose(pairs), _step; !(_step = _iterator()).done;) {
+-    var [a, b] = _step.value;
++  for (var [a, b] of pairs) {
+     total += a + b;
+   }
+   return total;
+@@ -164,7 +159,7 @@ function parseDate(dateString) {
+     day: 3
+   });
+   var match = dateString.match(regex);
+-  if (match != null && match.groups) {
++  if (match?.groups) {
+     return {
+       year: match.groups.year,
+       month: match.groups.month,
+@@ -176,13 +171,13 @@ function parseDate(dateString) {
+ function safeJsonParse(input) {
+   try {
+     return JSON.parse(input);
+-  } catch (_unused) {
++  } catch {
+     return null;
+   }
+ }
+ function matchEmoji(text) {
+   var match = text.match(/(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A0\u26A1
+```
+
+**File**: `packages/react-native-babel-preset/src/__tests__/__fixtures__/output/hermes-stable-dev-preserve-block-scoping.js` (modified, +5/-10)
+```diff
+@@ -53,9 +53,6 @@ var _dataUtils = require("./data-utils");
+ var _jsxFileName = "/absolute/path/to/input.js";
+ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
+ function _wrapRegExp() { _wrapRegExp = function (e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), (0, _setPrototypeOf2.default)(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return (0, _inherits2.default)(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)(>|$)/g, function (e, r, t) { if ("" === t) return e; var p = o[r]; return Array.isArray(p) ? "$" + p.join("$") : "number" == typeof p ? "$" + p : ""; })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != typeof e[e.length - 1] && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
+-function _createForOfIteratorHelperLoose(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (t) return (t = t.call(r)).next.bind(t); if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var o = 0; return function () { return o >= r.length ? { done: !0 } : { done: !1, value: r[o++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+ var _count = (0, _classPrivateFieldLooseKey2.default)("count");
+ var _instances = (0, _classPrivateFieldLooseKey2.default)("instances");
+ var _increment = (0, _classPrivateFieldLooseKey2.default)("increment");
+@@ -114,8 +111,7 @@ function _fetchData() {
+   return _fetchData.apply(this, arguments);
+ }
+ function getNestedValue(obj) {
+-  var _obj$a$b$c, _obj$a;
+-  return (_obj$a$b$c = obj == null || (_obj$a = obj.a) == null || (_obj$a = _obj$a.b) == null ? void 0 : _obj$a.c) != null ? _obj$a$b$c : 42;
++  return obj?.a?.b?.c ?? 42;
+ }
+ class Animal {
+   #age;
+@@ -168,8 +164,7 @@ function mergeConfigs(base, ...overrides) {
+ }
+ function sumPairs(pairs) {
+   let total = 0;
+-  for (var _iterator = _createForOfIteratorHelperLoose(pairs), _step; !(_step = _iterator()).done;) {
+-    const [a, b] = _step.value;
++  for (const [a, b] of pairs) {
+     total += a + b;
+   }
+   return total;
+@@ -181,7 +176,7 @@ function parseDate(dateString) {
+     day: 3
+   });
+   const match = dateString.match(regex);
+-  if (match != null && match.groups) {
++  if (match?.groups) {
+     return {
+       year: match.groups.year,
+       month: match.groups.month,
+@@ -193,13 +188,13 @@ function parseDate(dateString) {
+ function safeJsonParse(input) {
+   try {
+     return JSON.parse(input);
+-  } catch (_unused) {
++  } catch {
+     return null;
+   }
+ }
+ function matchEmoji(text) {
+   const match = text.match(/(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-
+```
+
+**File**: `packages/react-native-babel-preset/src/__tests__/__fixtures__/output/hermes-stable-dev-preserve-class-private.js` (modified, +5/-10)
+```diff
+@@ -51,9 +51,6 @@ var _dataUtils = require("./data-utils");
+ var _jsxFileName = "/absolute/path/to/input.js";
+ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+ function _wrapRegExp() { _wrapRegExp = function (e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), (0, _setPrototypeOf2.default)(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return (0, _inherits2.default)(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)(>|$)/g, function (e, r, t) { if ("" === t) return e; var p = o[r]; return Array.isArray(p) ? "$" + p.join("$") : "number" == typeof p ? "$" + p : ""; })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != typeof e[e.length - 1] && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
+-function _createForOfIteratorHelperLoose(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (t) return (t = t.call(r)).next.bind(t); if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var o = 0; return function () { return o >= r.length ? { done: !0 } : { done: !1, value: r[o++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+ class Counter {
+   #count = 0;
+   static #instances = 0;
+@@ -100,8 +97,7 @@ function _fetchData() {
+   return _fetchData.apply(this, arguments);
+ }
+ function getNestedValue(obj) {
+-  var _obj$a$b$c, _obj$a;
+-  return (_obj$a$b$c = obj == null || (_obj$a = obj.a) == null || (_obj$a = _obj$a.b) == null ? void 0 : _obj$a.c) != null ? _obj$a$b$c : 42;
++  return obj?.a?.b?.c ?? 42;
+ }
+ class Animal {
+   #age;
+@@ -154,8 +150,7 @@ function mergeConfigs(base, ...overrides) {
+ }
+ function sumPairs(pairs) {
+   var total = 0;
+-  for (var _iterator = _createForOfIteratorHelperLoose(pairs), _step; !(_step = _iterator()).done;) {
+-    var [a, b] = _step.value;
++  for (var [a, b] of pairs) {
+     total += a + b;
+   }
+   return total;
+@@ -167,7 +162,7 @@ function parseDate(dateString) {
+     day: 3
+   });
+   var match = dateString.match(regex);
+-  if (match != null && match.groups) {
++  if (match?.groups) {
+     return {
+       year: match.groups.year,
+       month: match.groups.month,
+@@ -179,13 +174,13 @@ function parseDate(dateString) {
+ function safeJsonParse(input) {
+   try {
+     return JSON.parse(input);
+-  } catch (_unused) {
++  } catch {
+     return null;
+   }
+ }
+ function matchEmoji(text) {
+   var match = text.match(/(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A0\u26A1\u26A7\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7
+```
+
+**File**: `packages/react-native-babel-preset/src/__tests__/__fixtures__/output/hermes-stable-dev-preserve-destructuring.js` (modified, +5/-10)
+```diff
+@@ -53,9 +53,6 @@ var _dataUtils = require("./data-utils");
+ var _jsxFileName = "/absolute/path/to/input.js";
+ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+ function _wrapRegExp() { _wrapRegExp = function (e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), (0, _setPrototypeOf2.default)(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return (0, _inherits2.default)(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)(>|$)/g, function (e, r, t) { if ("" === t) return e; var p = o[r]; return Array.isArray(p) ? "$" + p.join("$") : "number" == typeof p ? "$" + p : ""; })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != typeof e[e.length - 1] && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
+-function _createForOfIteratorHelperLoose(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (t) return (t = t.call(r)).next.bind(t); if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var o = 0; return function () { return o >= r.length ? { done: !0 } : { done: !1, value: r[o++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+ var _count = (0, _classPrivateFieldLooseKey2.default)("count");
+ var _instances = (0, _classPrivateFieldLooseKey2.default)("instances");
+ var _increment = (0, _classPrivateFieldLooseKey2.default)("increment");
+@@ -114,8 +111,7 @@ function _fetchData() {
+   return _fetchData.apply(this, arguments);
+ }
+ function getNestedValue(obj) {
+-  var _obj$a$b$c, _obj$a;
+-  return (_obj$a$b$c = obj == null || (_obj$a = obj.a) == null || (_obj$a = _obj$a.b) == null ? void 0 : _obj$a.c) != null ? _obj$a$b$c : 42;
++  return obj?.a?.b?.c ?? 42;
+ }
+ class Animal {
+   #age;
+@@ -168,8 +164,7 @@ function mergeConfigs(base, ...overrides) {
+ }
+ function sumPairs(pairs) {
+   var total = 0;
+-  for (var _iterator = _createForOfIteratorHelperLoose(pairs), _step; !(_step = _iterator()).done;) {
+-    var [a, b] = _step.value;
++  for (var [a, b] of pairs) {
+     total += a + b;
+   }
+   return total;
+@@ -181,7 +176,7 @@ function parseDate(dateString) {
+     day: 3
+   });
+   var match = dateString.match(regex);
+-  if (match != null && match.groups) {
++  if (match?.groups) {
+     return {
+       year: match.groups.year,
+       month: match.groups.month,
+@@ -193,13 +188,13 @@ function parseDate(dateString) {
+ function safeJsonParse(input) {
+   try {
+     return JSON.parse(input);
+-  } catch (_unused) {
++  } catch {
+     return null;
+   }
+ }
+ function matchEmoji(text) {
+   var match = text.match(/(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2
+```
+
+**File**: `packages/react-native-babel-preset/src/__tests__/__fixtures__/output/hermes-stable-dev.js` (modified, +5/-10)
+```diff
+@@ -53,9 +53,6 @@ var _dataUtils = require("./data-utils");
+ var _jsxFileName = "/absolute/path/to/input.js";
+ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+ function _wrapRegExp() { _wrapRegExp = function (e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), (0, _setPrototypeOf2.default)(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return (0, _inherits2.default)(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)(>|$)/g, function (e, r, t) { if ("" === t) return e; var p = o[r]; return Array.isArray(p) ? "$" + p.join("$") : "number" == typeof p ? "$" + p : ""; })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != typeof e[e.length - 1] && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
+-function _createForOfIteratorHelperLoose(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (t) return (t = t.call(r)).next.bind(t); if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var o = 0; return function () { return o >= r.length ? { done: !0 } : { done: !1, value: r[o++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+ var _count = (0, _classPrivateFieldLooseKey2.default)("count");
+ var _instances = (0, _classPrivateFieldLooseKey2.default)("instances");
+ var _increment = (0, _classPrivateFieldLooseKey2.default)("increment");
+@@ -114,8 +111,7 @@ function _fetchData() {
+   return _fetchData.apply(this, arguments);
+ }
+ function getNestedValue(obj) {
+-  var _obj$a$b$c, _obj$a;
+-  return (_obj$a$b$c = obj == null || (_obj$a = obj.a) == null || (_obj$a = _obj$a.b) == null ? void 0 : _obj$a.c) != null ? _obj$a$b$c : 42;
++  return obj?.a?.b?.c ?? 42;
+ }
+ class Animal {
+   #age;
+@@ -168,8 +164,7 @@ function mergeConfigs(base, ...overrides) {
+ }
+ function sumPairs(pairs) {
+   var total = 0;
+-  for (var _iterator = _createForOfIteratorHelperLoose(pairs), _step; !(_step = _iterator()).done;) {
+-    var [a, b] = _step.value;
++  for (var [a, b] of pairs) {
+     total += a + b;
+   }
+   return total;
+@@ -181,7 +176,7 @@ function parseDate(dateString) {
+     day: 3
+   });
+   var match = dateString.match(regex);
+-  if (match != null && match.groups) {
++  if (match?.groups) {
+     return {
+       year: match.groups.year,
+       month: match.groups.month,
+@@ -193,13 +188,13 @@ function parseDate(dateString) {
+ function safeJsonParse(input) {
+   try {
+     return JSON.parse(input);
+-  } catch (_unused) {
++  } catch {
+     return null;
+   }
+ }
+ function matchEmoji(text) {
+   var match = text.match(/(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2
+```
+
+**File**: `packages/react-native-babel-preset/src/__tests__/transform-snapshot-test.js` (modified, +29/-4)
+```diff
+@@ -354,22 +354,47 @@ describe('react-native-babel-preset transform snapshots', () => {
+       expect(result).toContain('_wrapAsyncGenerator');
      });
-```
-
-**File**: `packages/virtualized-lists/Lists/__tests__/VirtualizedList-test.js` (modified, +80/-0)
-```diff
-@@ -3048,6 +3048,86 @@ it('handles rapid prepends with coalesced scroll event (regression for #53542)',
-   ).toBeGreaterThanOrEqual(0);
- });
  
-+it('renders all cells after being hidden and revealed by Suspense with a pending batch update', async () => {
-+  const ITEM_HEIGHT = 40;
-+  const listRef = createRef();
-+  // The simulate* helpers only need `getInstance()`; the root here is a
-+  // Suspense boundary, so point them at the list instance via the ref.
-+  const list = {getInstance: () => listRef.current};
-+
-+  // Mirrors react-freeze (react-native-screens `freezeOnBlur`): suspend on a
-+  // promise that never resolves so React hides the already-mounted subtree
-+  // (componentWillUnmount) and later reveals the same instance
-+  // (componentDidMount) instead of remounting it.
-+  const neverResolves = new Promise(() => {});
-+  function Freeze({freeze, children}) {
-+    if (freeze) {
-+      throw neverResolves;
-+    }
-+    return children;
-+  }
-+
-+  const renderList = ({freeze, items}) => (
-+    <React.Suspense fallback={null}>
-+      <Freeze freeze={freeze}>
-+        <VirtualizedList
-+          ref={listRef}
-+          initialNumToRender={12}
-+          {...baseItemProps(items)}
-+          {...fixedHeightItemLayoutProps(ITEM_HEIGHT)}
-+        />
-+      </Freeze>
-+    </React.Suspense>
-+  );
-+
-+  let component;
-+  await act(() => {
-+    component = create(renderList({freeze: false, items: []}), {
-+      unstable_isConcurrent: true,
+-    it('handles optional chaining', () => {
++    it('preserves optional chaining in dev with hermes-stable profile', () => {
+       const code = `const x = obj?.a?.b?.c;`;
+       const result = transformCode(code, {
+         dev: true,
+         unstable_transformProfile: 'hermes-stable',
+       });
+-      expect(result).not.toContain('?.');
++      expect(result).toContain('obj?.a?.b?.c');
+     });
+ 
+-    it('handles nullish coalescing', () => {
++    it('preserves nullish coalescing in dev with hermes-stable profile', () => {
+       const code = `const x = a ?? b;`;
+       const result = transformCode(code, {
+         dev: true,
+         unstable_transformProfile: 'hermes-stable',
+       });
+-      expect(result).not.toContain('??');
++      expect(result).toContain('a ?? b');
 +    });
-+  });
 +
-+  // Layout with no data schedules a low-priority batch update. Leave the
-+  // timer pending so it is still outstanding when the list is hidden.
-+  await act(() => {
-+    simulateLayout(list, {
-+      viewport: {width: 300, height: 600},
-+      content: {width: 300, height: 0},
-+    });
-+  });
-+
-+  await act(() => {
-+    component.update(renderList({freeze: true, items: []}));
-+  });
-+  await act(() => {
-+    component.update(renderList({freeze: false, items: []}));
-+  });
-+
-+  const items = generateItems(28);
-+  await act(() => {
-+    component.update(renderList({freeze: false, items}));
-+  });
-+  await act(() => {
-+    simulateContentLayout(list, {
-+      width: 300,
-+      height: items.length * ITEM_HEIGHT,
-+    });
-+    simulateScroll(list, {x: 0, y: 0});
-+  });
-+
-+  // Each low-priority batch grows the render window by at most
-+  // `maxToRenderPerBatch` cells, so advance through several batching periods.
-+  for (let i = 0; i < 5; i++) {
-+    await act(() => {
-+      performAllBatches();
-+    });
-+  }
-+
-+  expect(component.root.findAllByType('MockCellItem')).toHaveLength(
-+    items.length,
-+  );
-+});
-+
- function generateItems(count, startKey = 0) {
-   return Array(count)
-     .fill()
++    it('preserves generators, for-of and optional catch binding in dev without Babel runtime', () => {
++      const code = `
++        function* gen() {
++          try {
++            yield 1;
++          } catch {
++            yield 2;
++          }
++        }
++        for (const x of gen()) {
++          console.log(x);
++        }
++      `;
++      const result = transformCode(code, {
++        dev: true,
++        unstable_transformProfile: 'hermes-stable',
++        enableBabelRuntime: false,
++      });
++      expect(result).toContain('function* gen()');
++      expect(result).toContain('x of gen()');
++      expect(result).toContain('catch {');
++      expect(result).not.toContain('_regenerator');
++      expect(result).not.toContain('_createForOfIteratorHelperLoose');
+     });
+ 
+     it('handles flow enums', () => {
 ```
 
 ---
 
-### Incident Patch 3: `8bfa9dd2` (2026-10-19)
-**Commit Message**: Fix Hermes Debug builds after installing another pod (#59159)
+### Incident Patch 2: `b1755a38` (2026-10-22)
+**Commit Message**: Add visual regression testing for RNTester (#59115)
 
 Summary:
-A successful Release build followed by adding a new CocoaPods dependency can cause the next Debug build to fail with undefined Hermes debugger symbols, including `CDPDebugAPI::create` and `CDPAgent::create`.
+RNTester's rendering coverage, particularly text, currently lives in Meta's internal jest-e2e suite. To move it into public CI we need screenshot comparison that works for fork PRs and doesn't add PNGs to the repo. This adds that, as a separate set of visual flows alongside the existing Maestro E2E.
 
-The Release build installs the Release Hermes binary and records `Release` in `Pods/hermes-engine/.last_build_configuration`. When a subsequent `pod install` installs another pod, CocoaPods cleans the existing Hermes pod. The `Pre-built` subspec does not preserve the configuration marker, so the marker is removed while the Release framework remains on disk.
+### How it works
 
-On the next Debug build, `replace_hermes_version.js` receives the correct `Debug` configuration but assumes that a missing marker means Hermes is already Debug. It skips replacement, leaving Debug React Native code to link against a Release Hermes binary that does not export the required debugger symbols.
+Visual tests are Maestro flows in `packages/rn-tester/visual-tests/flows/`. Each one deep-links to an RNTester example, waits for it to be ready and captures a screenshot cropped to a `testID`. Maestro only captures - it never decides pass or fail.
 
-This change:
+The work is split across a trust boundary, so a fork PR never runs with credentials:
 
-- Adds `.last_build_configuration` to the `Pre-built` subspec's `preserve_paths`, so installing another pod does not discard the configuration recorded for the existing Hermes binary.
-- Removes the assumption that a missing marker impli
+- **Visual capture** runs as two jobs in Test All, reusing its RNTester Release builds: `test_visual_android_rntester` after `build_android` and `test_visual_ios_rntester` after `test_ios_rntester`. Each runs every flow in one Maestro invocation, on a Pixel 7 API 35 emulator (1080x2400, 420dpi) or an iPhone 17 Pro on iOS 26.2, and uploads the PNGs and a manifest recording the commit and device environment as an artifact. They have no secrets.
+- **Visual Compare RNTester** (`wor
 
-**File**: `packages/react-native/scripts/__tests__/replace-hermes-version-test.js` (added, +119/-0)
+**File**: `.github/workflow-scripts/__tests__/__fixtures__/visual.js` (added, +28/-0)
 ```diff
-@@ -0,0 +1,119 @@
+@@ -0,0 +1,28 @@
 +/**
 + * Copyright (c) Meta Platforms, Inc. and affiliates.
 + *
 + * This source code is licensed under the MIT license found in the
 + * LICENSE file in the root directory of this source tree.
 + *
-+ * @format
 + * @noflow
++ * @format
 + */
 +
-+'use strict';
++const SHA_A = 'a'.repeat(40);
++const SHA_B = 'b'.repeat(40);
 +
-+const {execFileSync} = require('node:child_process');
++const ANDROID_ENVIRONMENT = {
++  apiLevel: 35,
++  abi: 'x86_64',
++  nativeBridge: 'libndk_translation.so',
++  systemImage:
++    'google/sdk_gphone64_x86_64/emu64xa:15/AE3A/1:userdebug/dev-keys',
++  screenSize: '1080x2400',
++  density: 420,
++  fontScale: '1.0',
++  locale: 'en-US',
++  animatorDurationScale: '0.0',
++  emulatorVersion: '37.2.12',
++};
++
++module.exports = {ANDROID_ENVIRONMENT, SHA_A, SHA_B};
+```
+
+**File**: `.github/workflow-scripts/__tests__/visual-capture-test.js` (added, +146/-0)
+```diff
+@@ -0,0 +1,146 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @noflow
++ * @format
++ */
++
++const {
++  collectFlows,
++  failedFlowsFromJUnit,
++  maestroArgs,
++} = require('../visual/capture');
++const {environmentKey} = require('../visual/manifest');
++const {ANDROID_ENVIRONMENT} = require('./__fixtures__/visual');
 +const fs = require('node:fs');
 +const os = require('node:os');
 +const path = require('node:path');
 +
-+const SCRIPT =
-+  require.resolve('../../sdks/hermes-engine/utils/replace_hermes_version.js');
-+const VERSION = '0.0.0-test';
-+const BINARY =
-+  'destroot/Library/Frameworks/universal/hermesvm.xcframework/ios-arm64/hermesvm.framework/hermesvm';
++describe('visual capture', () => {
++  let directory;
++
++  beforeEach(() => {
++    directory = fs.mkdtempSync(path.join(os.tmpdir(), 'visual-test-'));
++  });
++
++  afterEach(() => {
++    fs.rmSync(directory, {recursive: true, force: true});
++  });
++
++  describe('environmentKey', () => {
++    test('is readable and stable', () => {
++      expect(environmentKey('android', ANDROID_ENVIRONMENT)).toMatch(
++        /^android-api35-x86-64-1080x2400-420dpi-[0-9a-f]{8}$/,
++      );
++      expect(environmentKey('android', {...ANDROID_ENVIRONMENT})).toBe(
++        environmentKey('android', ANDROID_ENVIRONMENT),
++      );
++    });
++
++    test.each([
++      ['fontScale', '1.15'],
++      ['emulatorVersion', '37.3.1'],
++    ])('changes when %s drifts', (property, value) => {
++      expect(
++        environmentKey('android', {...ANDROID_ENVIRONMENT, [property]: value}),
++      ).not.toBe(environmentKey('android', ANDROID_ENVIRONMENT));
++    });
++
++    test('ignores properties that are only recorded', () => {
++      expect(
++        environmentKey('ios', {
++          runtime: 'iOS-26-2',
++          deviceType: 'iPhone-17-Pro',
++          appearance: 'light',
++          contentSizeCategory: 'large',
++          locale: 'en_US',
++          xcode: 'Xcode 26.2',
++        }),
++      ).toBe(
++        environmentKey('ios', {
++          runtime: 'iOS-26-2',
++          deviceType: 'iPhone-17-Pro',
++          appearance: 'light',
++          contentSizeCategory: 'large',
++          locale: 'en_US',
++          xcode: 'Xcode 26.3',
++        }),
++      );
++    });
++    test('names iOS keys by runtime and device', () => {
++      expect(
++        environmentKey('ios', {
++          runtime: 'iOS-26-2',
++          deviceType: 'iPhone-17-Pro',
++        }),
++      ).toMatch(/^ios-26-2-iphone-17-pro-[0-9a-f]{8}$/);
++    });
++  });
++
++  describe('capture', () => {
++    test('collects top-level flows in order and ignores other files', () => {
++      fs.writeFileSync(path.join(directory, 'b.yml'), '');
++      fs.writeFileSync(path.join(directory, 'a.yaml'), '');
++      fs.writeFileSync(path.join(directory, 'notes.md'), '');
++      fs.mkdirSync(path.join(directory, 'helpers'));
++      fs.writeFileSync(path.join(directory, 'helpers/open.yml'), '');
++      expect(collectFlows(directory)).toEqual([
++        path.join(directory, 'a.yaml'),
++        path.join(directory, 'b.yml'),
++      ]);
++    });
++
++    test('rejects flows Maestro would report under the same name', () => {
++      fs.writeFileSync(path.join(directory, 'a.yml'), '');
++      fs.writeFileSync(path.join(directory, 'a.yaml'), '');
++      expect(() => collectFlows(directory)).toThrow("both report as 'a'");
++    });
++
++    test('reads failed flows from a Maestro JUnit report', () => {
++      const flows = ['/flows/text-a.yml', '/flows/text-b.yml', '/flows/c.yml'];
++      const report = [
++        '<testcase id="text-b" name="text-b" file="/flows/text-b.yml" status="ERROR">',
++        '<testcase id="text-a" name="text-a" file="/flows/text-a.yml" status="SUCCESS"/>',
++        '<testcase id="c" name="c" status="ERROR">',
++      ].join('\n');
++      expect(failedFlowsFromJUnit(report, flows)).toEqual([
++        '/flows/text-b.yml',
++        '/flows/c.yml',
++      ]);
++      expect(() =>
++        failedFlowsFromJUnit('<testcase name="other" status="ERROR">', flows),
++      ).toThrow("unknown flow 'other'");
++      expect(failedFlowsFromJUnit('', flows)).toEqual([]);
++    });
++
++    test.each([
++      [1, undefined, false],
++      [2, 'UDID', true],
++    ])('builds Maestro arguments for attempt %d', (attempt, udid, reuse) => {
++      const args = maestroArgs({
++        flows: ['/f/a.yml', '/f/b.yml'],
++        appId: 'com.example',
++        outputDir: '/out',
++        reportPath: '/r.xml',
++        udid,
++        attempt,
++      });
++      expect(
++        args.slice(args.indexOf('test'), args.indexOf('test') + 3),
++      ).toEqual(['test', '/f/a.yml', '/f/b.yml']);
++      expect(args).toEqual(
++        expect.arrayContaining([
++          '--format=junit',
++          '--output=/r.xml',
++          'APP_ID=com.example',
++          'VISUAL_OUTPUT_DIR=/out',
++        ]),
++      );
++      expect(args.includes('--no-reinstall-driver')).toBe(reuse);
++      expect(args.includes('--udid=UDID')).toBe(udid != null);
++    });
++  });
++});
+```
+
+**File**: `.github/workflow-scripts/__tests__/visual-compare-test.js` (added, +316/-0)
+```diff
+@@ -0,0 +1,316 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @noflow
++ * @format
++ */
++
++const {compareCapture, compareImages, policyFor} = require('../visual/compare');
++const {resolveContext} = require('../visual/compare-run');
++const {buildManifest, sha256} = require('../visual/manifest');
++const {readPngDimensions} = require('../visual/png');
++const {validateCapture} = require('../visual/validate');
++const {ANDROID_ENVIRONMENT, SHA_A, SHA_B} = require('./__fixtures__/visual');
++const fs = require('node:fs');
++const os = require('node:os');
++const path = require('node:path');
++const {PNG} = require('pngjs');
++
++function makePng(width, height, paint = () => [255, 255, 255, 255]) {
++  const png = new PNG({width, height});
++  for (let y = 0; y < height; y++) {
++    for (let x = 0; x < width; x++) {
++      const offset = (y * width + x) * 4;
++      const [r, g, b, a] = paint(x, y);
++      png.data[offset] = r;
++      png.data[offset + 1] = g;
++      png.data[offset + 2] = b;
++      png.data[offset + 3] = a;
++    }
++  }
++  return PNG.sync.write(png);
++}
++
++function writeCapture(directory, images, overrides = {}) {
++  for (const [id, buffer] of Object.entries(images)) {
++    const filePath = path.join(directory, `${id}.png`);
++    fs.mkdirSync(path.dirname(filePath), {recursive: true});
++    fs.writeFileSync(filePath, buffer);
++  }
++  const manifest = buildManifest({
++    captureDir: directory,
++    platform: 'android',
++    environment: ANDROID_ENVIRONMENT,
++    git: {testedSha: SHA_A, baseSha: SHA_B, headSha: SHA_A},
++  });
++  const finalManifest = {...manifest, ...overrides};
++  fs.writeFileSync(
++    path.join(directory, 'manifest.json'),
++    JSON.stringify(finalManifest),
++  );
++  return finalManifest;
++}
++
++describe('visual comparison', () => {
++  let directory;
++
++  beforeEach(() => {
++    directory = fs.mkdtempSync(path.join(os.tmpdir(), 'visual-test-'));
++  });
++
++  afterEach(() => {
++    fs.rmSync(directory, {recursive: true, force: true});
++  });
++
++  describe('readPngDimensions', () => {
++    test('reads the IHDR dimensions', () => {
++      expect(readPngDimensions(makePng(3, 2))).toEqual({width: 3, height: 2});
++    });
++
++    test.each([
++      [Buffer.from('not a png at all, but long enough')],
++      [Buffer.alloc(0)],
++    ])('rejects non-PNG data', buffer => {
++      expect(readPngDimensions(buffer)).toBeNull();
++    });
++  });
++
++  describe('validateCapture', () => {
++    test('accepts a well-formed capture', () => {
++      const manifest = writeCapture(directory, {
++        'text/width-mode/default': makePng(4, 4),
++      });
++      expect(validateCapture(directory)).toEqual(manifest);
++    });
++
++    test.each([
++      ['../escape/a/b'],
++      ['/absolute/a/b'],
++      ['Text/Upper/case'],
++      ['too/few'],
++      ['a/b/c/d'],
++    ])('rejects test ID %s', id => {
++      writeCapture(directory, {'text/width-mode/default': makePng(4, 4)});
++      const manifest = JSON.parse(
++        fs.readFileSync(path.join(directory, 'manifest.json'), 'utf8'),
++      );
++      manifest.images[0] = {...manifest.images[0], id, path: `${id}.png`};
++      fs.writeFileSync(
++        path.join(directory, 'manifest.json'),
++        JSON.stringify(manifest),
++      );
++      expect(() => validateCapture(directory)).toThrow('Invalid test ID');
++    });
++
++    test('rejects a path that does not match the ID', () => {
++      const manifest = writeCapture(directory, {
++        'text/width-mode/default': makePng(4, 4),
++      });
++      manifest.images[0].path = '../../etc/passwd';
++      fs.writeFileSync(
++        path.join(directory, 'manifest.json'),
++        JSON.stringify(manifest),
++      );
++      expect(() => validateCapture(directory)).toThrow('path must be');
++    });
++
++    test('rejects duplicates, mismatched hashes and unlisted files', () => {
++      const manifest = writeCapture(directory, {
++        'text/width-mode/default': makePng(4, 4),
++      });
++      manifest.images.push({...manifest.images[0]});
++      manifest.images[0] = {...manifest.images[0], sha256: '0'.repeat(64)};
++      fs.writeFileSync(
++        path.join(directory, 'manifest.json'),
++        JSON.stringify(manifest),
++      );
++      fs.writeFileSync(path.join(directory, 'extra.sh'), 'echo hi');
++      let message = '';
++      try {
++        validateCapture(directory);
++      } catch (error) {
++        message = error.message;
++      }
++      expect(message).toContain('Duplicate test ID');
++      expect(message).toContain('does not match its manifest entry');
++      expect(message).toContain('Files not in the manifest: extra.sh');
++    });
++
++    test('rejects non-PNG content and oversized images', () => {
++      writeCapture(directory, {
++        'text/width-mode/default': makePng(4, 4),
++        'text/width-mode/large': makePng(20, 4),
++      });
++      fs.writeFileSync(
++ 
+```
+
+**File**: `.github/workflow-scripts/__tests__/visual-report-test.js` (added, +245/-0)
+```diff
+@@ -0,0 +1,245 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @noflow
++ * @format
++ */
++
++const {
++  APPROVAL_LABEL,
++  differenceFingerprint,
++  gateDecision,
++} = require('../visual/approval');
++const {
++  COMMENT_MARKER,
++  renderCheckOutput,
++  renderPullRequestComment,
++} = require('../visual/report');
++const {
++  approvalKey,
++  baselinePrefix,
++  publicUrl,
++  reportPrefix,
++} = require('../visual/storage');
++const {SHA_A, SHA_B} = require('./__fixtures__/visual');
++
++describe('visual reports and approval', () => {
++  describe('storage keys', () => {
++    test('builds write-once keys', () => {
++      expect(baselinePrefix('ios-x-0123abcd', SHA_A)).toBe(
++        `baselines/ios-x-0123abcd/${SHA_A}`,
++      );
++      expect(
++        reportPrefix({prNumber: 12, headSha: SHA_A, runId: 34, runAttempt: 2}),
++      ).toBe(`reports/pull/12/${SHA_A}/34-2`);
++      expect(
++        reportPrefix({
++          prNumber: null,
++          headSha: SHA_A,
++          runId: 34,
++          runAttempt: 1,
++        }),
++      ).toBe(`reports/main/${SHA_A}/34-1`);
++      expect(approvalKey(12, '0123456789abcdef')).toBe(
++        'approvals/pull/12/0123456789abcdef.json',
++      );
++    });
++
++    test.each([
++      [() => baselinePrefix('k', 'main')],
++      [
++        () =>
++          reportPrefix({prNumber: -1, headSha: SHA_A, runId: 1, runAttempt: 1}),
++      ],
++      [
++        () =>
++          reportPrefix({
++            prNumber: 1,
++            headSha: SHA_A,
++            runId: 1.5,
++            runAttempt: 1,
++          }),
++      ],
++      [() => approvalKey(1, '../x')],
++    ])('rejects invalid input', build => {
++      expect(build).toThrow('Invalid');
++    });
++
++    test('encodes each path segment of public URLs', () => {
++      expect(publicUrl('https://cdn.example/bucket/', 'a b/c#d.png')).toBe(
++        'https://cdn.example/bucket/a%20b/c%23d.png',
++      );
++    });
++  });
++
++  describe('approval', () => {
++    const platform = results => ({
++      platform: 'ios',
++      environmentKey: 'ios-x-0123abcd',
++      results,
++    });
++    const changed = (sha, expectedSha = 'e') => ({
++      id: 'a/b/c',
++      status: 'changed',
++      expected: {sha256: expectedSha},
++      captured: {sha256: sha},
++    });
++
++    test('has no fingerprint without differences', () => {
++      expect(
++        differenceFingerprint([platform([{id: 'a/b/c', status: 'unchanged'}])]),
++      ).toBeNull();
++    });
++
++    test('fingerprints the exact captured images', () => {
++      const first = differenceFingerprint([platform([changed('1')])]);
++      expect(first).toMatch(/^[0-9a-f]{16}$/);
++      expect(differenceFingerprint([platform([changed('1')])])).toBe(first);
++      expect(differenceFingerprint([platform([changed('2')])])).not.toBe(first);
++      expect(differenceFingerprint([platform([changed('1', 'f')])])).not.toBe(
++        first,
++      );
++    });
++
++    test.each([
++      [null, false, null, 'success', false],
++      ['f', false, null, 'failure', false],
++      ['f', true, {fingerprint: 'f', approver: 'x'}, 'success', false],
++      ['f', true, {fingerprint: 'g', approver: 'x'}, 'failure', true],
++      ['f', true, null, 'failure', true],
++    ])(
++      'gate for fingerprint %s, label %s, approval %j',
++      (fingerprint, labelPresent, approval, conclusion, staleLabel) => {
++        const decision = gateDecision({fingerprint, labelPresent, approval});
++        expect(decision.conclusion).toBe(conclusion);
++        expect(decision.staleLabel ?? false).toBe(staleLabel);
++        if (conclusion === 'failure' && !staleLabel) {
++          expect(decision.summary).toContain(APPROVAL_LABEL);
++        }
++      },
++    );
++  });
++
++  describe('renderPullRequestComment', () => {
++    const changed = id => ({
++      id,
++      status: 'changed',
++      diffPixels: 3,
++      diffRatio: 0.03,
++      expected: {},
++      captured: {},
++      hasDiffImage: true,
++    });
++    const platform = (name, results, error = null) => ({
++      platform: name,
++      environmentKey: `${name}-x-0123abcd`,
++      baseline: {sha: SHA_B, distance: 0},
++      results,
++      error,
++      checkUrl: `https://github.example/checks/${name}`,
++      imageUrl: (kind, id) => `https://cdn.example/${name}/${kind}/${id}.png`,
++    });
++
++    test('shows each diff with expected and captured collapsed', () => {
++      const body = renderPullRequestComment({
++        platforms: [
++          platform('android', [
++            {id: 'a/b/same', status: 'unchanged'},
++            changed('a/b/changed'),
++          ]),
++          platform('ios', [{id: 'a/b/new', status: 'added', captured: {}}]),
++        ],
++        headSha: SHA_A,
++        gateSummary: 'Needs approval.',
++      });
++      expect(body.startsWith(COMMENT_MARKER)).toBe(true);
++      expect(body).toContain(
++        '**2 visual differe
+```
+
+**File**: `.github/workflow-scripts/visual/approval.js` (added, +85/-0)
+```diff
+@@ -0,0 +1,85 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @noflow
++ * @format
++ */
++
++const {sha256} = require('./manifest');
++
++const APPROVAL_LABEL = 'visual-change-approved';
++const CHECK_NAME_PREFIX = 'Visual regression';
++const GATE_CHECK_NAME = 'Visual regression approval';
++const APPROVER_PERMISSIONS = ['admin', 'maintain', 'write'];
++
++/**
++ * Identifies a set of visual differences: which tests differ, how, and the
++ * exact expected and captured images. An approval applies to one fingerprint,
++ * so a push that changes any difference needs a new approval. The baseline
++ * commit isn't part of it: a rebase that leaves the expected images unchanged
++ * keeps the approval. Returns null when there are no differences.
++ */
++function differenceFingerprint(platforms) {
++  const lines = [];
++  for (const {platform, environmentKey, results} of platforms) {
++    for (const result of results) {
++      if (result.status === 'unchanged') {
++        continue;
++      }
++      lines.push(
++        [
++          platform,
++          environmentKey,
++          result.id,
++          result.status,
++          result.expected?.sha256 ?? '',
++          result.captured?.sha256 ?? '',
++        ].join('\t'),
++      );
++    }
++  }
++  if (lines.length === 0) {
++    return null;
++  }
++  return sha256(Buffer.from(lines.sort().join('\n'))).slice(0, 16);
++}
++
++/**
++ * The approval gate passes when there is nothing to approve, or when the
++ * approval label is present and an approval was recorded for this exact
++ * fingerprint.
++ */
++function gateDecision({fingerprint, labelPresent, approval}) {
++  if (fingerprint == null) {
++    return {conclusion: 'success', summary: 'No visual differences.'};
++  }
++  if (labelPresent && approval?.fingerprint === fingerprint) {
++    return {
++      conclusion: 'success',
++      summary: `Visual differences approved by @${approval.approver}.`,
++    };
++  }
++  if (labelPresent) {
++    return {
++      conclusion: 'failure',
++      summary: `The visual differences changed after approval. A maintainer must review the new report and re-apply \`${APPROVAL_LABEL}\`.`,
++      staleLabel: true,
++    };
++  }
++  return {
++    conclusion: 'failure',
++    summary: `Visual differences need maintainer approval. Review the report, then apply \`${APPROVAL_LABEL}\`.`,
++  };
++}
++
++module.exports = {
++  APPROVAL_LABEL,
++  APPROVER_PERMISSIONS,
++  CHECK_NAME_PREFIX,
++  GATE_CHECK_NAME,
++  differenceFingerprint,
++  gateDecision,
++};
+```
+
+**File**: `.github/workflow-scripts/visual/approve-run.js` (added, +183/-0)
+```diff
+@@ -0,0 +1,183 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @noflow
++ * @format
++ */
++
++/**
++ * Records a maintainer's approval of a PR's visual differences and updates
++ * the approval gate. Runs from the default branch on `pull_request_target`
++ * when the approval label is added or removed. It never checks out or runs
++ * pull request code.
++ *
++ *   node approve-run.js prepare  Decide, and stage an approval record to
++ *                                upload under OUT_DIR.
++ *   node approve-run.js report   After the upload, update the gate check.
++ */
++
++const {
++  APPROVAL_LABEL,
++  APPROVER_PERMISSIONS,
++  GATE_CHECK_NAME,
++  gateDecision,
++} = require('./approval');
++const {createGitHubClient} = require('./github');
++const {
++  approvalKey,
++  fetchJsonOrNull,
++  listPrefixes,
++  publicUrl,
++} = require('./storage');
++const fs = require('node:fs');
++const path = require('node:path');
++
++function requireEnv(name) {
++  const value = process.env[name];
++  if (value == null || value === '') {
++    throw new Error(`${name} is required`);
++  }
++  return value;
++}
++
++/** The results of the most recent comparison for a PR head, or null. */
++async function latestResults({bucket, publicBaseUrl, prNumber, headSha}) {
++  const runs = await listPrefixes(
++    bucket,
++    `reports/pull/${prNumber}/${headSha}/`,
++  );
++  const latest = runs
++    .map(prefix => {
++      const match = /\/(\d+)-(\d+)\/$/.exec(prefix);
++      return match == null
++        ? null
++        : {prefix, runId: Number(match[1]), attempt: Number(match[2])};
++    })
++    .filter(Boolean)
++    .sort((a, b) => b.runId - a.runId || b.attempt - a.attempt)[0];
++  return latest == null
++    ? null
++    : fetchJsonOrNull(publicUrl(publicBaseUrl, `${latest.prefix}results.json`));
++}
++
++async function prepare() {
++  const github = createGitHubClient();
++  const outDir = requireEnv('OUT_DIR');
++  const event = JSON.parse(
++    fs.readFileSync(requireEnv('GITHUB_EVENT_PATH'), 'utf8'),
++  );
++  const writeState = state =>
++    fs.writeFileSync(
++      path.join(outDir, 'state.json'),
++      `${JSON.stringify(state)}\n`,
++    );
++  fs.mkdirSync(outDir, {recursive: true});
++
++  if (event.label?.name !== APPROVAL_LABEL) {
++    writeState(null);
++    return;
++  }
++
++  const prNumber = event.pull_request.number;
++  const headSha = event.pull_request.head.sha;
++  const results = await latestResults({
++    bucket: requireEnv('VISUAL_BUCKET'),
++    publicBaseUrl: requireEnv('VISUAL_PUBLIC_BASE_URL'),
++    prNumber,
++    headSha,
++  });
++  const fingerprint = results?.fingerprint ?? null;
++
++  if (event.action === 'labeled') {
++    const approver = event.sender.login;
++    const permission = await github.permission(approver);
++    if (!APPROVER_PERMISSIONS.includes(permission)) {
++      await github.removeLabel(prNumber, APPROVAL_LABEL);
++      await github.comment(
++        prNumber,
++        `@${approver} \`${APPROVAL_LABEL}\` needs write access to this repository, so it was removed.`,
++      );
++      writeState(null);
++      return;
++    }
++    if (results == null) {
++      await github.removeLabel(prNumber, APPROVAL_LABEL);
++      await github.comment(
++        prNumber,
++        `There is no visual report for \`${headSha.slice(0, 12)}\` yet, so \`${APPROVAL_LABEL}\` was removed. Apply it again once the report is posted.`,
++      );
++      writeState(null);
++      return;
++    }
++    if (fingerprint != null) {
++      const key = approvalKey(prNumber, fingerprint);
++      const record = {
++        fingerprint,
++        approver,
++        approvedAt: new Date().toISOString(),
++        headSha,
++      };
++      const recordPath = path.join(outDir, 'upload', key);
++      fs.mkdirSync(path.dirname(recordPath), {recursive: true});
++      fs.writeFileSync(recordPath, `${JSON.stringify(record, null, 2)}\n`);
++    }
++  }
++
++  writeState({
++    prNumber,
++    headSha,
++    fingerprint,
++    labelPresent: event.action === 'labeled',
++  });
++}
++
++async function report() {
++  const github = createGitHubClient();
++  const outDir = requireEnv('OUT_DIR');
++  const state = JSON.parse(
++    fs.readFileSync(path.join(outDir, 'state.json'), 'utf8'),
++  );
++  if (state == null) {
++    return;
++  }
++  const {prNumber, headSha, fingerprint, labelPresent} = state;
++  const approval =
++    fingerprint == null
++      ? null
++      : await fetchJsonOrNull(
++          publicUrl(
++            requireEnv('VISUAL_PUBLIC_BASE_URL'),
++            approvalKey(prNumber, fingerprint),
++          ),
++        );
++  const decision = gateDecision({fingerprint, labelPresent, approval});
++  await github.createCheckRun({
++    name: GATE_CHECK_NAME,
++    headSha,
++    conclusion: decision.conclusion,
++    output: {title: decision.summary, summary: decision.summary},
++  });
++  console.info(decision.summary);
++}
++
++async function main(command = pr
+```
+
+**File**: `.github/workflow-scripts/visual/capture.js` (added, +206/-0)
+```diff
+@@ -0,0 +1,206 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @noflow
++ * @format
++ */
++
++/**
++ * Captures every visual flow in one Maestro invocation, so the JVM and
++ * driver startup (around two minutes on an iOS simulator) is paid once per
++ * job rather than once per flow. Flows that fail are rerun, and only those,
++ * on later attempts.
++ */
++
++const childProcess = require('node:child_process');
++const fs = require('node:fs');
++const path = require('node:path');
++
++const MAESTRO = path.join(process.env.HOME ?? '', '.maestro/bin/maestro');
++const DEFAULT_ATTEMPTS = 3;
++const ATTEMPT_TIMEOUT_MS = 30 * 60 * 1000;
++
++const usage = `
++node capture.js <platform> <app_path> <app_id> <flows_dir> <output_dir> [ios_udid]
++
++Installs the app, then runs every flow in <flows_dir> in one Maestro
++invocation, writing screenshots under <output_dir>. Failed flows are retried
++up to ${DEFAULT_ATTEMPTS} attempts in total (VISUAL_CAPTURE_ATTEMPTS).
++`;
++
++/** The flows directly inside `flowsDir`, sorted. Helpers live elsewhere. */
++function collectFlows(flowsDir) {
++  const flows = fs
++    .readdirSync(flowsDir, {withFileTypes: true})
++    .filter(entry => entry.isFile() && /\.ya?ml$/.test(entry.name))
++    .map(entry => path.join(flowsDir, entry.name))
++    .sort();
++  flowsByReportName(flows);
++  return flows;
++}
++
++/**
++ * Maps Maestro's report names to flow paths. Maestro reports a flow under its
++ * file name without the extension, so names must be unique.
++ */
++function flowsByReportName(flows) {
++  const byName = new Map();
++  for (const flow of flows) {
++    const name = path.basename(flow).replace(/\.ya?ml$/, '');
++    const existing = byName.get(name);
++    if (existing != null) {
++      throw new Error(
++        `${existing} and ${flow} would both report as '${name}'. Rename one.`,
++      );
++    }
++    byName.set(name, flow);
++  }
++  return byName;
++}
++
++/**
++ * The flows a Maestro JUnit report marks as anything but SUCCESS, in report
++ * order, matched by the report's file path or, failing that, its name. Throws
++ * on a report entry that matches none of `flows`.
++ */
++function failedFlowsFromJUnit(report, flows) {
++  const byName = flowsByReportName(flows);
++  const failed = [];
++  for (const [, attributes] of report.matchAll(/<testcase\b([^>]*)>/g)) {
++    const name = /\bname="([^"]*)"/.exec(attributes)?.[1];
++    const file = /\bfile="([^"]*)"/.exec(attributes)?.[1];
++    const status = /\bstatus="([^"]*)"/.exec(attributes)?.[1];
++    if (name == null || status === 'SUCCESS') {
++      continue;
++    }
++    const flow =
++      flows.find(candidate => path.resolve(candidate) === file) ??
++      byName.get(name);
++    if (flow == null) {
++      throw new Error(`The Maestro report has an unknown flow '${name}'`);
++    }
++    failed.push(flow);
++  }
++  return failed;
++}
++
++function maestroArgs({flows, appId, outputDir, reportPath, udid, attempt}) {
++  return [
++    ...(udid != null ? [`--udid=${udid}`] : []),
++    'test',
++    ...flows,
++    '--format=junit',
++    `--output=${reportPath}`,
++    '-e',
++    `APP_ID=${appId}`,
++    '-e',
++    `VISUAL_OUTPUT_DIR=${outputDir}`,
++    // The first attempt installs the driver. Retries reuse it.
++    ...(attempt > 1 ? ['--no-reinstall-driver'] : []),
++  ];
++}
++
++function installApp(platform, appPath, udid) {
++  if (platform === 'android') {
++    childProcess.execFileSync('adb', ['install', '-r', appPath], {
++      stdio: 'inherit',
++    });
++  } else {
++    childProcess.execFileSync('xcrun', ['simctl', 'install', udid, appPath], {
++      stdio: 'inherit',
++    });
++  }
++}
++
++function runAttempt(args) {
++  const result = childProcess.spawnSync(MAESTRO, args, {
++    stdio: 'inherit',
++    timeout: ATTEMPT_TIMEOUT_MS,
++    env: {
++      ...process.env,
++      MAESTRO_CLI_NO_ANALYTICS: '1',
++      MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true',
++      MAESTRO_DRIVER_STARTUP_TIMEOUT: '180000',
++    },
++  });
++  if (result.error != null) {
++    throw result.error;
++  }
++  return result.status;
++}
++
++function writeSummary(lines) {
++  const text = `${lines.join('\n')}\n`;
++  console.info(text);
++  if (process.env.GITHUB_STEP_SUMMARY) {
++    fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, text);
++  }
++}
++
++function main(args = process.argv.slice(2)) {
++  const [platform, appPath, appId, flowsDir, outputDir, udid] = args;
++  if (
++    !['android', 'ios'].includes(platform) ||
++    outputDir == null ||
++    (platform === 'ios' && udid == null)
++  ) {
++    throw new Error(usage);
++  }
++  const attempts = Number(
++    process.env.VISUAL_CAPTURE_ATTEMPTS ?? DEFAULT_ATTEMPTS,
++  );
++  const allFlows = collectFlows(flowsDir);
++  fs.mkdirSync(outputDir, {recursive: true});
++  installApp(platform, appPath, udid);
++
++  const summary = [`### Visual capture (${platform})`, ''];
++  let pending = allFlows;
++  for (let attempt = 1;
+```
+
+**File**: `.github/workflow-scripts/visual/compare-run.js` (added, +469/-0)
+```diff
+@@ -0,0 +1,469 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @noflow
++ * @format
++ */
++
++/**
++ * Trusted half of the visual regression pipeline. Runs from the default
++ * branch on `workflow_run`, after the untrusted capture workflow finishes.
++ *
++ *   node compare-run.js prepare  Validate captures, compare with baselines,
++ *                                and lay out files to upload under OUT_DIR.
++ *   node compare-run.js report   After the upload, create check runs and
++ *                                evaluate the approval gate.
++ */
++
++const {
++  APPROVAL_LABEL,
++  CHECK_NAME_PREFIX,
++  GATE_CHECK_NAME,
++  differenceFingerprint,
++  gateDecision,
++} = require('./approval');
++const {compareCapture, summarize} = require('./compare');
++const {createGitHubClient} = require('./github');
++const {
++  COMMENT_MARKER,
++  renderCheckOutput,
++  renderPullRequestComment,
++} = require('./report');
++const {
++  approvalKey,
++  baselinePrefix,
++  fetchBuffer,
++  fetchJsonOrNull,
++  findBaseline,
++  publicUrl,
++  reportPrefix,
++} = require('./storage');
++const {validateCapture} = require('./validate');
++const fs = require('node:fs');
++const path = require('node:path');
++
++const BASELINE_SEARCH_DEPTH = 20;
++const PLATFORMS = ['android', 'ios'];
++// The default Actions token posts as this bot. Only its comments are edited.
++const COMMENT_AUTHOR = 'github-actions[bot]';
++
++function requireEnv(name) {
++  const value = process.env[name];
++  if (value == null || value === '') {
++    throw new Error(`${name} is required`);
++  }
++  return value;
++}
 +
 +function writeFile(filePath, contents) {
 +  fs.mkdirSync(path.dirname(filePath), {recursive: true});
 +  fs.writeFileSync(filePath, contents);
 +}
 +
-+describe('Hermes configuration replacement', () => {
-+  let podsRoot;
-+  let binary;
-+  let marker;
++async function resolveContext(github) {
++  const event = requireEnv('CAPTURE_EVENT');
++  const headSha = requireEnv('CAPTURE_HEAD_SHA');
++  const headBranch = requireEnv('CAPTURE_HEAD_BRANCH');
++  const headRepository = requireEnv('CAPTURE_HEAD_REPOSITORY');
++  const defaultBranch = requireEnv('DEFAULT_BRANCH');
++  const runId = Number(requireEnv('CAPTURE_RUN_ID'));
++  const runAttempt = Number(requireEnv('CAPTURE_RUN_ATTEMPT'));
 +
-+  beforeEach(() => {
-+    podsRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'hermes-config-test-'));
-+    binary = path.join(podsRoot, 'hermes-engine', BINARY);
-+    marker = path.join(podsRoot, 'hermes-engine/.last_build_configuration');
-+  });
-+
-+  afterEach(() => {
-+    fs.rmSync(podsRoot, {recursive: true, force: true});
-+  });
-+
-+  function buildTarball(configuration) {
-+    const stage = path.join(podsRoot, 'stage');
-+    writeFile(path.join(stage, BINARY), configuration);
-+    const artifacts = path.join(podsRoot, 'hermes-engine-artifacts');
-+    fs.mkdirSync(artifacts, {recursive: true});
-+    execFileSync('tar', [
-+      '-czf',
-+      path.join(
-+        artifacts,
-+        `hermes-ios-${VERSION}-${configuration.toLowerCase()}.tar.gz`,
-+      ),
-+      '-C',
-+      stage,
-+      '.',
-+    ]);
++  if (event === 'pull_request') {
++    const pull = await github.findPullRequest(headSha, headRepository);
++    // Baselines only exist for the default branch, so pull requests into
++    // other branches have nothing to compare with.
++    if (pull == null || pull.base.ref !== defaultBranch) {
++      return null;
++    }
++    return {
++      kind: 'pull',
++      prNumber: pull.number,
++      headSha,
++      runId,
++      runAttempt,
++      defaultBranch,
++    };
 +  }
++  if (
++    event === 'push' &&
++    headBranch === defaultBranch &&
++    headRepository === github.repository
++  ) {
++    return {
++      kind: 'main',
++      prNumber: null,
++      headSha,
++      runId,
++      runAttempt,
++      defaultBranch,
++    };
++  }
++  return null;
++}
 +
-+  function runScript(configuration) {
-+    // Match the podspec's build phase: run the CLI from the Pods directory.
-+    execFileSync(
-+      process.execPath,
-+      [SCRIPT, '-c', configuration, '-r', VERSION, '-p', podsRoot],
-+      {cwd: podsRoot, encoding: 'utf8'},
++async function comparePlatform({
++  github,
++  context,
++  captureDir,
++  config,
++  publicBaseUrl,
++  outDir,
++  prefix,
++}) {
++  const manifest = validateCapture(captureDir);
++  const {platform, environmentKey, git} = manifest;
++  if (git.headSha !== context.headSha) {
++    throw new Error(
++      `${platform}: manifest head ${git.headSha} does not match run head ${context.headSha}`,
 +    );
 +  }
++  if (!(await github.isOnBranch(git.baseSha, context.defaultBranch))) {
++    return {
++      platform,
++      environmentKey,
++      manifest,
++      baseline: null,
++      results: [],
++      error: {
++        title: 'base commit is not on the default branch',
++        summary: `The capture's base commit \`${git.baseSha}\` is not on \`${context.defaultBranch}\`, so there is no baseline to compare with. Rebase or merge \`${context.defaultBranch}\` and push again.`,
++      },
++    };
++  }
 +
-+  it.each([
-+    ['Debug', 'Release'],
-+    ['Release', 'Debug'],
-+  ])('restores %s when the marker is missing and %s remains', (target, old) => {
-+    writeFile(binary, old);
-+    buildTarball(target);
-+
-+    runScript(target);
-+
-+    expect(fs.readFileSync(binary, 'utf8')).toBe(target);
-+    expect(fs.readFileSync(marker, 'utf8')).toBe(target);
-+  });
-+
-+  it.each(['Debug', 'Release'])(
-+    'keeps a recorded %s configuration without requiring a tarball',
-+    configuration => {
-+      writeFile(binary, configuration);
-+      writeFile(marker, configuration);
-+
-+      runScript(configuration);
-+
-+      expect(fs.readFileSync(binary, 'utf8')).toBe(configuration);
-+      expect(fs.readFileSync(marker, 'utf8')).toBe(configuration);
-+    },
++  const candidateShas = await github.ancestry(
++    git.baseSha,
++    BASELINE_SEARCH_DEPTH,
 +  );
-+
-+  it.each([
-+    ['Debug', 'Release'],
-+    ['Release', 'Debug'],
-+  ])('switches to %s when %s is recorded', (target, old) => {
-+    writeFile(binary, old);
-+    writeFile(marker, old);
-+    buildTarball(target);
-+
-+    runScript(target);
-+
-+    expect(fs.readFileSync(binary, 'utf8')).toBe(target);
-+    expect(fs.readFileSync(marker, 'utf8')).toBe(target);
++  const baseline = await findBaseline({
++    publicBaseUrl,
++    environmentKey,
++    candidateShas,
 +  });
++  if (baseline == null) {
++    return {
++      platform,
++      environmentKey,
++      manifest,
++      baseline: null,
++      results: [],
++      error: {
++        title: 'no baseline for this environment',
++        summary: `No baseline for environment \`${environmentKey}\` was published for \`${git.baseSha.slice(0, 12)}\` or its ${BASELINE_SEARCH_DEPTH - 1} preceding commits on \`${context.defaultBranch}\`. If the environment key is new, the CI device image changed: the next push to \`${context.defaultBranch}\` publishes a baseline for it. Otherwise check that baseline publication on \`${context.defaultBranch}\` is succeeding.`,
++      },
++    };
++  }
 +
-+  it('records Debug after restoring a fresh install with no marker', () => {
-+    writeFile(binary, 'Debug');
-+    buildTarball('Debug');
-+
-+    runScript('Debug');
-+
-+    expect(fs.readFileSync(binary, 'utf8')).toBe('Debug');
-+    expect(fs.readFileSync(marker, 'utf8')).toBe('Debug');
-+  });
-+});
++  const expectedUrl = id =>
++    publicUrl(
++      publicBaseUrl,
++      `${baselinePrefix(environmentKey, baseline.sha)}/${id}.png`,
++    );
++  const results = await com
 ```
 
-**File**: `packages/react-native/sdks/hermes-engine/hermes-engine.podspec` (modified, +2/-1)
+---
+
+### Incident Patch 3: `99fca5fc` (2026-10-23)
+**Commit Message**: Fix TextInput absorbing scroll gestures on Android (#58678)
+
+Summary:
+Pull Request resolved: https://github.com/react/react-native/pull/58678
+
+Fixes the issue described in [#25594](https://github.com/react/react-native/issues/25594) and [#12167](https://github.com/react/react-native/issues/12167), where TextInputs on Android absorb scroll gestures when textAlign is set to "center" or "right". For TextInputs inside a ScrollView, starting a scroll gesture on the TextInput would not scroll the ScrollView.
+
+### Root Cause
+
+The root cause is the `onTouchEvent()` function introduced in [commit 372d001](https://github.com/react/react-native/commit/372d001a5d5e24b68d194e01c356d973642fac86). The smart scroll implementation checks if the TextInput can itself scroll in any direction. If it cannot, then the parent can intercept the gesture to apply normal scroll behavior.
+
+However, when textAlign is set to "center" or "right", `canScrollHorizontally()` returns true, as Android treats the TextInput as capable of scrolling left/right. In these cases, the existing conditional logic blocks all scroll gestures, even if a vertical swipe is applied.
+
+### This PR
+
+Modify `ReactEditText` so that we onl
+
+**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/textinput/ReactEditText.kt` (modified, +28/-9)
 ```diff
-@@ -56,7 +56,8 @@ Pod::Spec.new do |spec|
-   if HermesEngineSourceType::isPrebuilt(source_type) then
+@@ -36,6 +36,7 @@ import android.view.Menu
+ import android.view.MenuItem
+ import android.view.MotionEvent
+ import android.view.View
++import android.view.ViewConfiguration
+ import android.view.ViewGroup
+ import android.view.accessibility.AccessibilityNodeInfo
+ import android.view.inputmethod.EditorInfo
+@@ -91,6 +92,7 @@ import com.facebook.react.views.text.internal.span.ReactStrikethroughSpan
+ import com.facebook.react.views.text.internal.span.ReactTextPaintHolderSpan
+ import com.facebook.react.views.text.internal.span.ReactUnderlineSpan
+ import java.util.concurrent.CopyOnWriteArrayList
++import kotlin.math.abs
+ import kotlin.math.max
+ import kotlin.math.min
  
-     spec.subspec 'Pre-built' do |ss|
--      ss.preserve_paths = ["destroot/bin/*"].concat(["**/*.{h,c,cpp}"])
-+      # Keep the configuration marker when CocoaPods cleans an unchanged pod.
-+      ss.preserve_paths = ["destroot/bin/*", ".last_build_configuration"].concat(["**/*.{h,c,cpp}"])
-       ss.source_files = ["destroot/include/hermes/**/*.h", "destroot/include/jsi/hermes.h"]
-       ss.header_mappings_dir = "destroot/include"
-       ss.ios.vendored_frameworks = "destroot/Library/Frameworks/universal/hermesvm.xcframework"
-```
-
-**File**: `packages/react-native/sdks/hermes-engine/utils/replace_hermes_version.js` (modified, +2/-8)
-```diff
-@@ -42,14 +42,8 @@ function shouldReplaceHermesConfiguration(configuration) {
+@@ -132,6 +134,9 @@ public open class ReactEditText public constructor(context: Context) : AppCompat
+   private var scrollWatcher: ScrollWatcher?
+   private var keyListener: InternalKeyListener? = null
+   private var detectScrollMovement = false
++  private var touchDownX = 0f
++  private var touchDownY = 0f
++  private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
+   private var onKeyPress = false
+   private val textAttributes: TextAttributes
+   private var typefaceDirty = false
+@@ -316,6 +321,8 @@ public open class ReactEditText public constructor(context: Context) : AppCompat
+   override fun onTouchEvent(ev: MotionEvent): Boolean {
+     when (ev.action) {
+       MotionEvent.ACTION_DOWN -> {
++        touchDownX = ev.x
++        touchDownY = ev.y
+         detectScrollMovement = true
+         // Disallow parent views to intercept touch events, until we can detect if we should be
+         // capturing these touches or not.
+@@ -324,21 +331,33 @@ public open class ReactEditText public constructor(context: Context) : AppCompat
+ 
+       MotionEvent.ACTION_MOVE ->
+           if (detectScrollMovement) {
+-            if (
+-                !canScrollVertically(-1) &&
+-                    !canScrollVertically(1) &&
+-                    !canScrollHorizontally(-1) &&
+-                    !canScrollHorizontally(1)
+-            ) {
+-              // We cannot scroll, let parent views take care of these touches.
+-              this.parent.requestDisallowInterceptTouchEvent(false)
++            val deltaX = ev.x - touchDownX
++            val deltaY = ev.y - touchDownY
++            val dominantAxisDistance = max(abs(deltaX), abs(deltaY))
++            if (dominantAxisDistance > touchSlop) {
++              if (!canScrollInGestureDirection(deltaX, deltaY)) {
++                // We cannot scroll, let parent views take care of these touches.
++                this.parent.requestDisallowInterceptTouchEvent(false)
++              }
++              detectScrollMovement = false
+             }
+-            detectScrollMovement = false
+           }
      }
+     return super.onTouchEvent(ev)
    }
  
--  // Assumption: if there is no stored last build, we assume that it was build for debug.
--  if (!fileExists && configuration === 'Debug') {
--    console.log(
--      'No previous build detected, but Debug Configuration. No need to replace Hermes engine',
--    );
--    return false;
--  }
--
-+  // The binary may outlive its marker, so a missing marker does not imply Debug.
-+  // Restore the requested configuration instead of assuming what is installed.
-   return true;
- }
++  private fun canScrollInGestureDirection(deltaX: Float, deltaY: Float): Boolean {
++    if (abs(deltaY) > abs(deltaX)) {
++      val canScrollUp = deltaY > 0 && canScrollVertically(-1)
++      val canScrollDown = deltaY <= 0 && canScrollVertically(1)
++      return canScrollUp || canScrollDown
++    } else {
++      val canScrollLeft = deltaX > 0 && canScrollHorizontally(-1)
++      val canScrollRight = deltaX <= 0 && canScrollHorizontally(1)
++      return canScrollLeft || canScrollRight
++    }
++  }
++
+   // Consume 'Enter' key events: TextView tries to give focus to the next TextInput, but it can't
+   // since we only allow JS to change focus, which in turn causes TextView to crash.
+   override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+```
+
+**File**: `packages/rn-tester/js/examples/ScrollView/ScrollViewExample.js` (modified, +18/-2)
+```diff
+@@ -471,6 +471,7 @@ const examples: Array<RNTesterModuleExample> = [
+     },
+   },
+   {
++    name: 'scrollTextInputsVertical',
+     title: '<ScrollView> TextInputs\n',
+     description:
+       'Vertical scroll gestures on a TextInput should scroll the ScrollView unless the input can also scroll vertically.',
+@@ -479,6 +480,7 @@ const examples: Array<RNTesterModuleExample> = [
+     },
+   },
+   {
++    name: 'scrollTextInputsHorizontal',
+     title: '<ScrollView> TextInputs (horizontal = true)\n',
+     description:
+       'Horizontal scroll gestures on a TextInput should scroll the ScrollView unless the input can also scroll horizontally.',
+@@ -634,7 +636,7 @@ const VerticalScrollTextInputs = () => {
  
+   return (
+     <View>
+-      <RNTesterText style={styles.text}>
++      <RNTesterText style={styles.text} testID="vertical_status">
+         scrolled = {verticalScrolled ? 'true' : 'false'}
+       </RNTesterText>
+       <ScrollView
+@@ -645,23 +647,30 @@ const VerticalScrollTextInputs = () => {
+         onScroll={event => {
+           setVerticalScrolled(event.nativeEvent.contentOffset.y > 0);
+         }}>
+-        <TextInput placeholder="TextInput" style={styles.textInput} />
++        <TextInput
++          placeholder="TextInput"
++          style={styles.textInput}
++          testID="text_input_vertical"
++        />
+         <TextInput
+           placeholder="TextInput (center)"
+           style={styles.textInput}
+           textAlign="center"
++          testID="text_input_vertical_center"
+         />
+         <TextInput
+           placeholder="TextInput (right)"
+           style={styles.textInput}
+           textAlign="right"
++          testID="text_input_vertical_right"
+         />
+         <TextInput
+           defaultValue={
+             'A TextInput with a value that overflows the input width so it can be scrolled horizontally.'
+           }
+           placeholder="TextInput"
+           style={styles.textInput}
++          testID="text_input_vertical_overflow_width"
+         />
+         <TextInput
+           defaultValue={
+@@ -670,6 +679,7 @@ const VerticalScrollTextInputs = () => {
+           placeholder="TextInput"
+           style={styles.textInput}
+           multiline
++          testID="text_input_vertical_overflow_height"
+         />
+         <View
+           style={[styles.textInput, {backgroundColor: '#cccccc', height: 200}]}
+@@ -682,6 +692,7 @@ const VerticalScrollTextInputs = () => {
+             y: 0,
+           });
+         }}
++        testID="scroll_to_top_button"
+       />
+     </View>
+   );
+@@ -711,18 +722,21 @@ const HorizontalScrollTextInputs = () => {
+             styles.textInput,
+             {backgroundColor: '#cccccc', width: 100, height: '100%'},
+           ]}
++          testID="left_filler"
+         />
+         <View style={{gap: 20}}>
+           <TextInput
+             placeholder="TextInput"
+             style={[styles.textInput, {width: 200}]}
++            testID="text_input_horizontal"
+           />
+           <TextInput
+             defaultValue={
+               'A TextInput with a value that overflows the input width so it can be scrolled horizontally.'
+             }
+             placeholder="TextInput"
+             style={[styles.textInput, {width: 200}]}
++            testID="text_input_horizontal_overflow_width"
+           />
+           <TextInput
+             defaultValue={
+@@ -731,6 +745,7 @@ const HorizontalScrollTextInputs = () => {
+             placeholder="TextInput"
+             style={[styles.textInput, {width: 200}]}
+             multiline
++            testID="text_input_horizontal_overflow_height"
+           />
+         </View>
+         <View
+@@ -747,6 +762,7 @@ const HorizontalScrollTextInputs = () => {
+             x: 0,
+           });
+         }}
++        testID="scroll_to_start_button"
+       />
+     </View>
+   );
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #59212** (closed): Upgrade Flow in fbsource (@SamChou19815)
-- **PR #59210** (closed): Support SelectableParagraph in fantom tester (@Abbondanzo)
-- **PR #59196** (closed): Classify the deprecated cxxreact/ErrorUtils.h shim as for-frameworks (@coado)
-- **PR #59183** (closed): Remove enableImperativeEvents_DEPRECATED feature flag (@rubennorte)
-- **PR #59177** (closed): Add AccessibilityInfo.isShowBordersEnabled and showBordersChanged on iOS (@camilopires)
-- **PR #59172** (closed): Remove the generated changelog PR from the publish workflow (@fabriziocucci)
+- **PR #59367** (closed): Register selectable paragraphs in the iOS component factory (@christophpurrer)
+- **PR #59363** (closed): Read hover callbacks from the live Pressability config at invocation (#59363) (@rozele)
+- **PR #59359** (closed): Upgrade Flow in fbsource (@SamChou19815)
+- **PR #59351** (closed): Upgrade Markdown lint dependencies (@cortinico)
+- **PR #59349** (closed): Add `--help` to the Fantom CLI (@rubennorte)
+- **PR #59347** (closed): Add Transform visual regression tests (#59347) (@cortinico)
 
 ---
 
@@ -969,34 +2394,3 @@ This change:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. race in UiThreadUtil main handler lazy initialization (#58963)
-
-**RULE**:
-When implementing operations in `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/bridge/UiThreadUtil.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `65b3e647`: race in UiThreadUtil main handler lazy initialization (#58963). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/bridge/UiThreadUtil.kt`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```c++
-// Verified production-grade fix pattern:
-      lazy(LazyThreadSafetyMode.PUBLICATION) { Handler(Looper.getMainLooper()) }
-```
-
-**NEGATIVE CONSTRAINT**:
-```c++
-// Anti-pattern to NEVER write (induced failure mode):
-      lazy(LazyThreadSafetyMode.NONE) { Handler(Looper.getMainLooper()) }
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `65b3e647` are properly handled with clean fallback behavior.

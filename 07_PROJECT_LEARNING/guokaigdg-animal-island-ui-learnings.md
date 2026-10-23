@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md`  
 > **Source**: github ([https://github.com/guokaigdg/animal-island-ui](https://github.com/guokaigdg/animal-island-ui))  
-> **Source Version**: `279959f7`  
+> **Source Version**: `2d855fc6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:12:01.496Z  
+> **Timestamp**: 2026-10-23T06:02:45.268Z  
 > **Learning ID**: `learn-github-guokaigdg-animal-island-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/guokaigdg/animal-island-ui](https://github.com/guokaigdg/animal-island-ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:12:00.668Z  
+> **Harvest Timestamp**: 2026-10-23T06:02:44.028Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kawaii React UI component library  一个可爱的 React UI  组件库
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5026 stars
+- **Stars / Engagement**: 5056 stars
 
 ---
 
@@ -2242,16 +2242,17 @@ export default CardDemo;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #75** (2026-10-21): **feat(time-picker): 用 dayjs 解析与格式化**
+  *Symptoms*: ## 这个 PR 做了什么  把 TimePicker 的解析、格式化与序列化迁到 dayjs，撤销 dayjs 引入时留下的「挂钟值不引入日期层」豁免。`format` 从现在起和 DatePicker / Time 使用同一套 dayjs 核心 token 契约。  ## 为什么现在撤  dayjs 是在 ADR 0005 里引入的。当时迁移只覆盖 DatePicker / Countdown，TimePicker 因为「值是挂钟、不做日期运算」被直接排除，没有进一步检查它的 `format` 公开契约 —— 这个豁免是当时引入 dayjs 时没有考虑完整留下的，不是对 TimePicker 的单独设计结论。  后果是：全库唯一一个手写 `HH:mm:ss` 解析 + `String.replace` 格式化；同一个 `format` prop 在 TimePicker 只认 `HH/mm/ss`，在 DatePicker / Time 认 dayjs token；`h:mm A`、`[此刻] HH:mm` 在时间选择器上不可用。  ## 实现  - dayjs + `customParseFormat` 负责解析、格式化、序列化；`此刻` 改用 `dayjs()`。 - 格式化挂在固定锚点 `2000-01-01` 上，不用「今天」：否则宿主处于春季调时那天时，`02:30` 会被格式化成 `03:30`。值本身仍然不带日期。 - 解析保留原有宽松度：1–2 位时 / 分 / 秒、秒可省略；`24:00:00` / `09:60:00` 判非法。 - `format` 支持 dayjs 核心时间 token 与 `[literal]`；插件 token 仍为字面量；`ss` 仍决定秒列。 - 公开契约不变：`value` / `defaultValue` 仍是 `HH:mm:ss` 字符串，`onChange` 不出现日期，`TimePart` 不变。  ## 行为变化（请重点看）  1. **format token 面扩大**：文档里的 `HH/mm/ss` 输出完全不变；过去原样输出的核心 token（如 `YYYY`）现在会展开。 2. **日期 token 不属于 TimePicker 语义**：它没有日期，写入日期 token 会渲染锚点 `2000-01-01`。prop 注释、设计文档与 skill 都写明了这一点。 3. **包体**：只引 TimePicker 的消费者会多带 dayjs + `customParseFormat`，约 6 kB gzipped（dayjs 约 3.6 kB）；`preserveModules` 对完全不引日期 / 时间组件的消费者不受影响。 4. 交互、视觉、DOM 结构、demo 均未改。  ## 文档  - 新增 ADR 0007（中英）并更新 ADR 索引：取代 ADR 0005 / 0006 中的 TimePicker 条款；0005 / 0006 正文保持不可变。 - 同步 `docs/design-system/components/data-display.md`、`docs/zh-CN/...`、`docs/development/build-and-release.md` 与 skill `references/components/date-time.md`。  ## 验证  - `npm run ci` 全绿（pre-commit 也执行了一遍）：818 个单测 +
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/guokaigdg/animal-island-ui/pull/75?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> 
+  > @guokaigdg 这个 pr 是 https://github.com/guokaigdg/animal-island-ui/pull/70 的遗留，你看一眼吧，没问题就合并。
+
 - **Issue #74** (2026-10-19): **feat(time): support dayjs formats and a zh-cn locale**
   *Symptoms*: ## 改动内容与原因  `Time` 之前把星期和月份写死成英文数组，日期胶囊只能显示 `MONDAY · Jun 8`。本次改为走 dayjs 格式化，并内置中文语言包；默认渲染结果与双色胶囊的视觉完全不变。  ## API  ```ts export type TimeLocale = 'en' | 'zh-cn';  export interface TimeProps extends React.HTMLAttributes<HTMLDivElement> {     weekdayFormat?: string; // 默认 'dddd'     dateFormat?: string;    // 默认 'MMM D'；locale 为 'zh-cn' 时默认 'M月D日'     locale?: TimeLocale;    // 默认 'en' } ```  ```tsx <Time />                                              // MONDAY · Jun 8 <Time locale="zh-cn" />                               // 星期一 · 6月8日 <Time weekdayFormat="ddd" dateFormat="YYYY/MM/DD" />  // Mon · 2026/06/08 ```  这里用两个 format 而不是一个整行 `format`：胶囊里的星期和月日是两段独立样式（主色 800 字重 vs 次级色 700 字重），单个字符串会丢掉这个视觉分层。  ## 实现说明  - 格式支持 dayjs **核心 token**；插件 token 不会展开 —— 与 `DatePicker` 的契约保持一致。 - `zh-cn` 语言包内置在组件中：本包打包的 dayjs 实例拿不到宿主应用注册的 locale（见 ADR 0005），所以 `locale="zh-cn"` 开箱即用；语言数据在被使用前保持惰性。 - locale 模块以默认导入取到对象再传给 `.locale(...)`，而不是裸副作用导入 —— 包声明了 `sideEffects: false`，裸导入可能被消费者的打包器当成无副作用模块摇掉。已用一个临时 consumer 工程实际打包验证，语言数据确实保留在产物里。 - 不调用全局 `dayjs.locale()`，格式化都在实例副本上完成。 - `HH:MM` 时钟未改动（冒号闪烁依赖拆分后的结构）。  ## 文档与 Demo  Demo 增加了中文和自定义格式示例。`docs/design-system/components/feedback.md`（含 zh-CN 镜像）、skill 参考文档和 ADR 0005 已同步 —— ADR 0005 原先写着 `Time` 不引入 dayjs，已不再成立。  ## 自查清单  - [x] `npm run ci` 通过（format + docs 同步 + lint + typecheck + 单测 + a11y + build） - [x] 改动的英文文档已同步中文镜像 - [x] 新增 zh-cn、自定义 token、locale 与自定义格式组合的测试 - [x] 默认渲染不变（无破坏性变更）   <!-- This is an auto-generated comment: release notes by coderabbit.
   **Post-Mortem & Fix Analysis**:
   > @coderabbitai review
   > <!-- This is an auto-generated reply by CodeRabbit --> <!-- CodeRabbit review command invocation: v2:a21827b3f82e6d1d4817b86710740d951e00fe7e6b62470211bb492cd59817de --> <details> <summary>✅ Action performed</summary>  Review finished.  > Note: CodeRabbit is an incremental review system and does not re-review already reviewed commits. This command is applicable only when automatic reviews are paused.  </details>
-
-- **Issue #73** (2026-10-19): **fix(demo): give Time className example a visible custom style**
-  *Symptoms*: ## 动机  Closes #72.  线上 demo（https://guokaigdg.github.io/animal-island-ui/#/time）里，「搭配 className 自定义」的 `<Time className="my-time" />` 和默认 `<Time />` 渲染完全一致。组件本身的 `className` 透传是正常的，问题在于 demo 从未定义 `.my-time`，读者看不出这个示例想表达什么。  ## 改动  - 在 demo 内为 `.my-time` 增加一套明显不同的自定义外观：teal 渐变背景、金色虚线描边、cream 色时钟数字、切换字体并放大日期字号； - 日期胶囊改成深棕色底（cream 日期 + 金色星期），避免浅色日期压在浅色胶囊上看不清； - 通过覆盖 `--animal-text-color` / `--animal-primary-color-bg` / `--animal-font-*` 等设计变量完成换色换字，演示 `className` + CSS 变量这条定制路径； - CodeBlock 拆成 JSX 与 CSS 两段，复制下来都是合法代码，避免「传个类名就会自动生效」以及「JSX 里混 CSS 粘不出来」的误解。  仅修改 demo 页面，组件 API、样式与测试均未变化。  ## 验证  - `npm run ci` 通过（pre-commit hook 也执行了一次）； - 浏览器 computed style 确认：默认卡片为 `background: rgb(248,248,240)` / `border: 0` / `border-radius: 20px`；自定义卡片为 teal 渐变 / `border: 2px dashed #ffd166` / `border-radius: 28px`，时钟为 cream 色、`Noto Sans SC`，日期胶囊为 `rgb(61,42,23)` 深棕底、日期字号 15px。  Before（gh-pages）：  ![before](https://gist.githubusercontent.com/GeoDaoyu/2d88953a63e1adb2ae51393b5e57c788/raw/time-demo-deployed.png)  After（本地 dev）：  ![after](https://gist.githubusercontent.com/GeoDaoyu/2d88953a63e1adb2ae51393b5e57c788/raw/time-demo-after-final-v2.png)   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  ## Summary by CodeRabbit  * **Documentation**   * Updated the Time component demo with an example of custom styling using CSS variables, backgrounds, borders, and typography. The example includes the CSS snippet and notes that custom styles are provided separately.  <!-- end of
-  **Post-Mortem & Fix Analysis**:
-  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/guokaigdg/animal-island-ui/pull/73?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run configuration
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2268,270 +2269,52 @@ export default CardDemo;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `279959f7` (2026-10-19)
-**Commit Message**: style: polish the demo visuals and sync the Calendar CSS excerpt
+### Incident Patch 1: `77dad2c0` (2026-10-21)
+**Commit Message**: fix(time-picker): ignore escaped literals in seconds detection
 
-**File**: `demo/HomePage.tsx` (modified, +17/-1)
+A format such as "HH:mm [ss]" renders ss as literal text, but the panel\nused to show the seconds column. Strip bracket literals before checking for\nthe ss token and cover the case with a test.
+
+**File**: `src/components/TimePicker/TimePicker.test.tsx` (modified, +8/-0)
 ```diff
-@@ -394,6 +394,9 @@ const S = {
-         marginBottom: 12,
-     } as React.CSSProperties,
-     footerLink: {
-+        display: 'inline-flex',
-+        alignItems: 'center',
-+        gap: 4,
-         fontSize: 13,
-         color: '#7c5734',
-         cursor: 'pointer',
-@@ -719,10 +722,23 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
-                         style={S.footerLink}
-                         onClick={() => window.open('https://github.com/guokaigdg/animal-island-ui', '_blank')}
-                     >
-+                        <svg
-+                            className="footer-link-icon"
-+                            viewBox="0 0 16 16"
-+                            width={14}
-+                            height={14}
-+                            aria-hidden="true"
-+                            style={{ verticalAlign: 'middle', transform: 'translateY(-1px)' }}
-+                        >
-+                            <path
-+                                fill="currentColor"
-+                                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-+                            />
-+                        </svg>
-                         GitHub
-                     </span>
-                 </div>
--                <div>MIT License · React + TypeScript + Vite</div>
-+                <div>© 2026 Animal Island. All Rights Reserved · MIT License</div>
-             </div>
-         </div>
-     );
-```
-
-**File**: `demo/components/Time/index.tsx` (modified, +0/-2)
-```diff
-@@ -52,7 +52,6 @@ const TimeDemo: React.FC = () => (
-                 --animal-font-size-sm: 15px;
- 
-                 background: linear-gradient(160deg, #0f4c46 0%, #137f74 55%, #19c8b9 100%);
--                border: 2px dashed #ffd166;
-                 border-radius: 28px;
-                 padding: 24px 36px 18px;
-                 box-shadow: 0 14px 30px rgba(15, 76, 70, 0.28);
-@@ -81,7 +80,6 @@ const TimeDemo: React.FC = () => (
-     --animal-font-size-sm: 15px;
- 
-     background: linear-gradient(160deg, #0f4c46 0%, #137f74 55%, #19c8b9 100%);
--    border: 2px dashed #ffd166;
-     border-radius: 28px;
-     padding: 24px 36px 18px;
-     box-shadow: 0 14px 30px rgba(15, 76, 70, 0.28);
-```
-
-**File**: `docs/design-system/components/data-display.md` (modified, +14/-10)
-```diff
-@@ -765,26 +765,30 @@ because a scaled-up digit overflows the circle. The cell must also fit the numbe
-     --animal-calendar-bar-height: calc(17px * var(--animal-calendar-scale, 1));
- }
- 
--.body   { position: relative; padding-bottom: calc(var(--animal-calendar-row-height) * 2 + 6px);
--          border: 1.5px solid #e8dcc8; border-radius: 20px; background: #fffdf7;
-+.body   { position: relative; padding: 8px 8px calc(var(--animal-calendar-row-height) * 2 + 6px + 8px);
-+          border: 1.5px solid #e8dcc8; border-radius: 20px;
-+          background: radial-gradient(circle, rgba(196,184,158,0.15) 1.1px, transparent 1.1px) 0 0 / 28px 28px,
-+                      radial-gradient(circle, rgba(196,184,158,0.1) 0.8px, transparent 0.8px) 7px 7px / 14px 14px,
-+                      #fffdf7;   /* cream plus two offset dot grids; the bottom padding still reserves the 2 bar rows */
-           box-shadow: 0 6px 18px rgba(61, 52, 40, 0.12); }
- .monthLabel { padding: 4px 12px; border-radius: 12px; background: #fffbe7; /* same chip as the DatePicker nav label */
-               color: #725d42; font-size: 15px; font-weight: 700; }
- .navBtn { width: 28px; height: 28px; border-radius: 10px; color: #a0936e;   /* 14px / 16px chevrons */
--          /* hover */ background: var(--animal-calendar-accent-tint); color: var(--animal-calendar-accent); }
-+          /* hover */ background: rgba(114, 93, 66, 0.1); color: var(--animal-calendar-accent); }
- .todayBtn { padding: 4px 12px; border-radius: 10px; color: #8a7b66; font-size: 13px; font-weight: 700;
-             /* hover */ background: rgba(114, 93, 66, 0.1); color: #725d42; }
- ```
- 
- **Date grid** — one `<table role="grid">`, 7 equal columns × 6 weeks (42 cells, always full; leading/trailing days of the
--neighbouring months included but dimmed). Each cell is `--animal-calendar-cell-height` tall and carries the same 4px
--side gutter the event bars use, so a bar and the day circle above it sit on one track:
-+neighbouring months included but dimmed). Each cell is `--animal-calendar-cell-height` tall and carries the same 5px
-+gutter the event bars use, so a bar and the day circle above it sit on one track:
- 
- ```css
- .weekCell { height: 32px; color: #a09080; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
--.cell     { height: var(--animal-calendar-cell-height); padding: 0 4px; box-sizing: border-box;
-+.cell     { height: var(--animal-calendar-cell-height); padding: 5px 5px 0; box-sizing: border-box;
-             vertical-align: top; border-radius: 12px; cursor: pointer; }
- .cell:hover           { background: #f4f0e4; }                      /* the whole cell, not just the number */
-+.cell:hover .dayNumber { color: #5a4530; font-weight: 700; }        /* hover darkens the digit; it never turns teal */
- .cell:focus-visible   { outline: 2px solid var(--animal-calendar-accent); outline-offset: -2px; }
- .cellSelected         { background: var(--animal-calendar-accent-tint); }
- .dayNumber            { width: 1em; height: 1em; border-radius: 50%; line-height: 1em; text-align: center;
-@@ -793,7 +797,7 @@ side gutter the event bars use, so a bar and the day circle above it sit on one
- .cellToday   .dayNumber { box-shadow: inset 0 0 0 1.5px var(--animal-calendar-accent);
-                           color: var(--animal-calendar-accent); font-weight: 700; }
- .cellSelected .dayNumber { background: var(--animal-calendar-accent); box-shadow: none; color: #fff; font-weight: 700; }
--.more  { padding: 1px 5px; border-radius: 8px; font-size: 10px; font-weight: 700;   /* the +N fold */
-+.more  { margin: 2px 0 6px; padding: 1px 5px; border-radius: 8px; font-size: 10px; font-weight: 700;   /* the +N fold */
-          background: var(--animal-calendar-accent-soft); color: var(--animal-calendar-accent); }
- ```
- 
-@@ -802,11 +806,11 @@ values. It deliberately does **not** use `grid-column`: the bars are absolutely
- layout and a grid placement would be ignored.
- 
- ```css
--.eventsLayer { position: absolute; inset: 0; pointer-events: none; }
-+.eventsLayer { position: absolute; inset: 8px; pointer-events: none; }   /* matches .body's padding, so bars track the columns */
- .event { position: absolute;
-          top: var(--animal-calendar-bar-top);   /* header + week × cell + number band + row × row-height + half a row */
--         left: var(--animal-calendar-bar-left);    /* (100% / 7) × column + 4px — the same 4px gutter as .cell */
--         width: var(--animal-calendar-bar-width);  /* (100% / 7) × span − 8px */
-+         left: var(--animal-calendar-bar-left);    /* (100% / 7) × column + 5px — the same 5px gutter as .cell */
-+         width: var(--animal-calendar-bar-width);  /* (100% / 7) × span − 10px */
-          height: var(--animal-calendar-bar-height); margin: 0; padding: 0 6px;
-          transform: translateY(-50%);   /* top points at the row start; this centres the bar in it */
-          border-radius: 10px; font-size: calc(11px * var(--animal-calendar-scale, 1)); font-weight: 600;
-```
-
-**File**: `docs/zh-CN/design-system/components/data-display.md` (modified, +13/-9)
-```diff
-@@ -757,24 +757,28 @@ interface CountUpProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'prefi
-     --animal-calendar-bar-height: calc(17px * var(--animal-calendar-scale, 1));
- }
- 
--.body   { position: relative; padding-bottom: calc(var(--animal-calendar-row-height) * 2 + 6px);
--          border: 1.5px solid #e8dcc8; border-radius: 20px; background: #fffdf7;
-+.body   { position: relative; padding: 8px 8px calc(var(--animal-calendar-row-height) * 2 + 6px + 8px);
-+          border: 1.5px solid #e8dcc8; border-radius: 20px;
-+          background: radial-gradient(circle, rgba(196,184,158,0.15) 1.1px, transparent 1.1px) 0 0 / 28px 28px,
-+                      radial-gradient(circle, rgba(196,184,158,0.1) 0.8px, transparent 0.8px) 7px 7px / 14px 14px,
-+                      #fffdf7;   /* 奶油底 + 两层错位波点；下方内边距仍为 2 行事项带预留 */
-           box-shadow: 0 6px 18px rgba(61, 52, 40, 0.12); }
- .monthLabel { padding: 4px 12px; border-radius: 12px; background: #fffbe7; /* 与 DatePicker 的导航标签同款胶囊 */
-               color: #725d42; font-size: 15px; font-weight: 700; }
- .navBtn { width: 28px; height: 28px; border-radius: 10px; color: #a0936e;   /* 14px / 16px 箭头 */
--          /* hover */ background: var(--animal-calendar-accent-tint); color: var(--animal-calendar-accent); }
-+          /* hover */ background: rgba(114, 93, 66, 0.1); color: var(--animal-calendar-accent); }
- .todayBtn { padding: 4px 12px; border-radius: 10px; color: #8a7b66; font-size: 13px; font-weight: 700;
-             /* hover */ background: rgba(114, 93, 66, 0.1); color: #725d42; }
- ```
- 
--**日期网格** —— 单个 `<table role="grid">`，7 等分列 × 6 周（恒定 42 格，含上下月日期并置灰）。每格高度为 `--animal-calendar-cell-height`，并带与事项条相同的左右 4px 内边距，因此事项条与它上方的日期圆落在同一条轨道上：
-+**日期网格** —— 单个 `<table role="grid">`，7 等分列 × 6 周（恒定 42 格，含上下月日期并置灰）。每格高度为 `--animal-calendar-cell-height`，并带与事项条相同的左右 5px 内边距，因此事项条与它上方的日期圆落在同一条轨道上：
- 
- ```css
- .weekCell { height: 32px; color: #a09080; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
--.cell     { height: var(--animal-calendar-cell-height); padding: 0 4px; box-sizing: border-box;
-+.cell     { height: var(--animal-calendar-cell-height); padding: 5px 5px 0; box-sizing: border-box;
-             vertical-align: top; border-radius: 12px; cursor: pointer; }
- .cell:hover           { background: #f4f0e4; }                      /* 整个格子，不只是数字 */
-+.cell:hover .dayNumber { color: #5a4530; font-weight: 700; }        /* hover 时数字转深棕，绝不转青绿 */
- .cell:focus-visible   { outline: 2px solid var(--animal-calendar-accent); outline-offset: -2px; }
- .cellSelected         { background: var(--animal-calendar-accent-tint); }
- .dayNumber            { width: 1em; height: 1em; border-radius: 50%; line-height: 1em; text-align: center;
-@@ -783,18 +787,18 @@ interface CountUpProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'prefi
- .cellToday   .dayNumber { box-shadow: inset 0 0 0 1.5px var(--animal-calendar-accent);
-                           color: var(--animal-calendar-accent); font-weight: 700; }
- .cellSelected .dayNumber { background: var(--animal-calendar-accent); box-shadow: none; color: #fff; font-weight: 700; }
--.more  { padding: 1px 5px; border-radius: 8px; font-size: 10px; font-weight: 700;   /* +N 折叠 */
-+.more  { margin: 2px 0 6px; padding: 1px 5px; border-radius: 8px; font-size: 10px; font-weight: 700;   /* +N 折叠 */
-          background: var(--animal-calendar-accent-soft); color: var(--animal-calendar-accent); }
- ```
- 
- **事项条** —— 事项层绝对定位覆盖整张卡片，组件为每条事项下发三个算好的值。这里**刻意不用** `grid-column`：事项条是绝对定位元素，已经脱离网格布局，写网格定位不会生效。
- 
- ```css
--.eventsLayer { position: absolute; inset: 0; pointer-events: none; }
-+.eventsLayer { position: absolute; inset: 8px; pointer-events: none; }   /* 与 .body 的内边距一致，事项条才对得上列 */
- .event { position: absolute;
-          top: var(--animal-calendar-bar-top);   /* 表头 + 周序 × 单元格 + 日期数字带 + 事项行序 × 行高 + 半行 */
--         left: var(--animal-calendar-bar-left);    /* (100% / 7) × 列序 + 4px —— 与 .cell 同一个 4px 内边距 */
--         width: var(--animal-calendar-bar-width);  /* (100% / 7) × 跨列数 − 8px */
-+         left: var(--animal-calendar-bar-left);    /* (100% / 7) × 列序 + 5px —— 与 .cell 同一个 5px 内边距 */
-+         width: var(--animal-calendar-bar-width);  /* (100% / 7) × 跨列数 − 10px */
-          height: var(--animal-calendar-bar-height); margin: 0; padding: 0 6px;
-          transform: translateY(-50%);   /* top 指向行首，这里把条在行内垂直居中 */
-          border-radius: 10px; font-size: calc(11px * var(--animal-calendar-scale, 1)); font-weight: 600;
-```
-
----
-
-### Incident Patch 2: `cf06f7ab` (2026-10-19)
-**Commit Message**: fix(demo): give Time className example a visible custom style (#73)
-
-* fix(demo): give Time className example a visible custom style
-
-* fix(demo): keep Time className code sample valid TSX
-
-* fix(demo): make Time className skin clearly distinct
-
-* fix(demo): keep Time date label legible on custom skin
-
-**File**: `demo/components/Time/index.tsx` (modified, +37/-1)
-```diff
-@@ -22,14 +22,50 @@ const TimeDemo: React.FC = () => (
-         <div style={labelStyle}>HUD 风格的实时时钟卡片，实时显示星期、月日与 HH:MM，每秒自动刷新。</div>
-         <Time />
- 
--        <div style={labelStyle}>搭配 className 自定义</div>
-+        <div style={labelStyle}>
-+            搭配 className 自定义：className 合并到根节点，用 CSS 变量换色并覆盖背景、描边与字体
-+        </div>
-+        <style>{`
-+            .my-time {
-+                --animal-text-color: #fffdf4;
-+                --animal-text-color-disabled: #e0bd75;
-+                --animal-primary-color: #ffd166;
-+                --animal-primary-color-bg: #3d2a17;
-+                --animal-font-family: 'Noto Sans SC', 'Nunito', sans-serif;
-+                --animal-font-size-sm: 15px;
+@@ -160,6 +160,14 @@ describe('TimePicker', () => {
+             expect(screen.getByRole('button', { name: '10 时' })).toBeInTheDocument();
+             expect(screen.getByRole('dialog')).toHaveClass(styles.panelNoSeconds);
+         });
 +
-+                background: linear-gradient(160deg, #0f4c46 0%, #137f74 55%, #19c8b9 100%);
-+                border: 2px dashed #ffd166;
-+                border-radius: 28px;
-+                padding: 24px 36px 18px;
-+                box-shadow: 0 14px 30px rgba(15, 76, 70, 0.28);
-+            }
-+        `}</style>
-         <Time className="my-time" aria-label="岛屿时间" />
++        it('方括号字面量里的 ss 不显示秒列', async () => {
++            const user = setup();
++            render(<TimePicker format="HH:mm [ss]" />);
++            await user.click(screen.getByRole('combobox'));
++            expect(screen.queryByRole('button', { name: '45 秒' })).not.toBeInTheDocument();
++            expect(screen.getByRole('dialog')).toHaveClass(styles.panelNoSeconds);
++        });
+     });
  
-         <CodeBlock
-             code={`import { Time } from 'animal-island-ui';
+     describe('键盘交互', () => {
+```
+
+**File**: `src/components/TimePicker/TimePicker.tsx` (modified, +2/-2)
+```diff
+@@ -85,8 +85,8 @@ const toValue = (part: TimePart) => toDayjs(part).format('HH:mm:ss');
+ /** 按 dayjs 模板格式化时间 */
+ const formatTime = (part: TimePart, format: string) => toDayjs(part).format(format);
  
- <Time />
- <Time className="my-time" aria-label="岛屿时间" />`}
-+        />
-+        <div style={labelStyle}>自定义样式由使用方在 CSS 中提供</div>
-+        <CodeBlock
-+            code={`.my-time {
-+    /* 覆盖 Time 使用的设计变量：时钟/日期颜色、日期字号、字体 */
-+    --animal-text-color: #fffdf4;
-+    --animal-text-color-disabled: #e0bd75;
-+    --animal-primary-color: #ffd166;
-+    --animal-primary-color-bg: #3d2a17;
-+    --animal-font-family: 'Noto Sans SC', 'Nunito', sans-serif;
-+    --animal-font-size-sm: 15px;
-+
-+    background: linear-gradient(160deg, #0f4c46 0%, #137f74 55%, #19c8b9 100%);
-+    border: 2px dashed #ffd166;
-+    border-radius: 28px;
-+    padding: 24px 36px 18px;
-+    box-shadow: 0 14px 30px rgba(15, 76, 70, 0.28);
-+}`}
-         />
-         <ApiTable rows={TIME_API} />
-     </div>
+-/** 面板是否展示秒列：format 包含 ss */
+-const hasSeconds = (format: string) => format.includes('ss');
++/** 面板是否展示秒列：format 中未转义的 ss */
++const hasSeconds = (format: string) => format.replace(/\[[^\]]*]/g, '').includes('ss');
+ 
+ /** 关闭退场动画时长，与 .panel 的 0.2s 过渡保持一致，动画结束后再卸载面板 */
+ const CLOSE_ANIMATION_MS = 200;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #75** (2026-10-21): feat(time-picker): 用 dayjs 解析与格式化 (@GeoDaoyu)
 - **PR #74** (2026-10-19): feat(time): support dayjs formats and a zh-cn locale (@GeoDaoyu)
 - **PR #73** (2026-10-19): fix(demo): give Time className example a visible custom style (@GeoDaoyu)
 - **PR #71** (2026-10-16): feat(calendar): add a lightweight month calendar with events (@GeoDaoyu)
 - **PR #70** (2026-10-15): chore(deps): 引入 dayjs 作为日期层（方案 A） (@GeoDaoyu)
 - **PR #66** (2026-10-11): feat(select): add allowClear and showSearch (@GeoDaoyu)
-- **PR #64** (2026-10-11): docs(demo): call the Input clear button allowClear, not clearable (@GeoDaoyu)
 
 ---
 
@@ -2551,43 +2334,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. style: polish the demo visuals and sync the Calendar CSS excerpt
+## X. time-picker): ignore escaped literals in seconds detection
 
 **RULE**:
-When implementing operations in `demo/HomePage.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in guokaigdg/animal-island-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/components/TimePicker/TimePicker.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in guokaigdg/animal-island-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `279959f7`: style: polish the demo visuals and sync the Calendar CSS excerpt. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `77dad2c0`: time-picker): ignore escaped literals in seconds detection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `demo/HomePage.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/components/TimePicker/TimePicker.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 4,
-                        <svg
-                            className="footer-link-icon"
-                            viewBox="0 0 16 16"
-                            width={14}
-                            height={14}
-                            aria-hidden="true"
-                            style={{ verticalAlign: 'middle', transform: 'translateY(-1px)' }}
-                        >
-                            <path
-                                fill="currentColor"
-                                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-                            />
-                        
+
+        it('方括号字面量里的 ss 不显示秒列', async () => {
+            const user = setup();
+            render(<TimePicker format="HH:mm [ss]" />);
+            await user.click(screen.getByRole('combobox'));
+            expect(screen.queryByRole('button', { name: '45 秒' })).not.toBeInTheDocument();
+            expect(screen.getByRole('dialog')).toHaveClass(styles.panelNoSeconds);
+        });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-                <div>MIT License · React + TypeScript + Vite</div>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `279959f7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `77dad2c0` are properly handled with clean fallback behavior.
