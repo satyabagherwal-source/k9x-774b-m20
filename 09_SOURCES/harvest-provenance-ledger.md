@@ -4587,3 +4587,8 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `1735e031` | Multi-dimensional audit evidence | 2026-10-24T20:05:00.582Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `d4548cbb` | Multi-dimensional audit evidence | 2026-10-24T20:05:03.157Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `fe561573` | Multi-dimensional audit evidence | 2026-10-24T20:05:08.197Z |
+| `learn-github-megabit-blazorise` | `https://github.com/Megabit/Blazorise` | `7ecbdcac` | Multi-dimensional audit evidence | 2026-10-24T20:11:11.077Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `bc01a991` | Multi-dimensional audit evidence | 2026-10-24T20:11:11.275Z |
+| `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-10-24T20:11:17.031Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `b2a3be78` | Multi-dimensional audit evidence | 2026-10-24T20:11:20.036Z |
+| `learn-github-malisper-pgrust` | `https://github.com/malisper/pgrust` | `38634b40` | Multi-dimensional audit evidence | 2026-10-24T20:11:26.333Z |

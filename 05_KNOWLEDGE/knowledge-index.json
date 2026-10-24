@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T20:05:08.166Z",
+  "last_updated": "2026-10-24T20:11:26.300Z",
   "total_verified_learnings": 1079,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8078,8 +8078,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "c1d9be25",
-      "content_hash": "bc59e9354b79f26985a35ac8ed18ca2aab1235c6725696061300348e4d490465",
+      "source_version": "bc01a991",
+      "content_hash": "2a8eae2bae0d67667a58e5905b13896a96fd3bdeecc8b03a13504a441f369ba2",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -8102,6 +8102,11 @@
           "number": 3531,
           "title": "ifs): preserve wrapper argument boundaries before destination checks (#558)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3942,
+          "title": "cli): preserve security metadata and reject ambiguous hook settings",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8109,7 +8114,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:02:52.287Z",
+      "verified_at": "2026-10-24T20:11:11.233Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28824,8 +28829,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "4ca8c58d",
-      "content_hash": "596faf010a757b37a1dfc6f41ba444d75ceba8ce356f47493b803a90d8562473",
+      "source_version": "b2a3be78",
+      "content_hash": "e60eb7a28c9ae9c11b4e3a17962f6ec589dba48bb2d1bced17f05b41e7868600",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -28848,6 +28853,11 @@
           "number": 3590,
           "title": "cmd/fsck: stop treating a timed-out root getattr as corruption (#7680)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3946,
+          "title": "sdk/java: fix Central publishing with Maven 3.10 (#7729)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28855,7 +28865,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:52:39.925Z",
+      "verified_at": "2026-10-24T20:11:19.995Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32034,14 +32044,19 @@
       "slug": "malisper-pgrust",
       "platform": "github",
       "source_url": "https://github.com/malisper/pgrust",
-      "source_version": "1bc8065f",
-      "content_hash": "952474d25bed51f4cda73f4a1d56b0a14fa97d9aa6281ecc65605fcba6340796",
+      "source_version": "38634b40",
+      "content_hash": "76b0797cb75c7aea8874fa88d4f08ac8ff923f64efbc364f85780c8301f810d6",
       "dossier_path": "07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
       "promoted_rules": [
         {
           "number": 2995,
           "title": "pgrust v0.3.1",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3947,
+          "title": "pgrust v0.4-beta with ACID-compliant columnar and automatic memory management",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -32050,7 +32065,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:22:04.127Z",
+      "verified_at": "2026-10-24T20:11:26.293Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32775,8 +32790,8 @@
       "slug": "megabit-blazorise",
       "platform": "github",
       "source_url": "https://github.com/Megabit/Blazorise",
-      "source_version": "14553676",
-      "content_hash": "4933eac28216e5d7e1fd549047b8c84e69b96bce5fe165e003ce7ec7c66a5bc2",
+      "source_version": "7ecbdcac",
+      "content_hash": "31577a2b947ece074c05c4d1cb94f3cd6dd52f040706f0c5b673b302bbae50eb",
       "dossier_path": "07_PROJECT_LEARNING/megabit-blazorise-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/megabit-blazorise-learnings.md",
       "promoted_rules": [
@@ -32789,6 +32804,11 @@
           "number": 2789,
           "title": "Tooltip: fix form layout and show delay regressions (#6865)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3941,
+          "title": "Demo: add invoice builder mini app",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32796,7 +32816,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:16:47.373Z",
+      "verified_at": "2026-10-24T20:11:11.032Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64994,7 +65014,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autogluon/chronos-2",
       "source_version": "hf-autogluon-chronos-2",
-      "content_hash": "dadd076d5801800fb28e798c1fdbc7d58aa3e4022fcde51727181929b43491ed",
+      "content_hash": "7a9665dc086b730983d645df63a59850e7d958a9f53bb84c4b4817dc5ff188c3",
       "dossier_path": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "promoted_rules": [
@@ -65022,6 +65042,21 @@
           "number": 3100,
           "title": "Monotonic Non-Crossing Invariant on Multi-Quantile Prediction Heads",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3943,
+          "title": "Probabilistic Output Head Design for Time Series",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3944,
+          "title": "Patchification for Long-Context Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3945,
+          "title": "Arcsinh Normalization for Heavy-Tailed Data",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65029,7 +65064,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:35:27.036Z",
+      "verified_at": "2026-10-24T20:11:16.983Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -116085,6 +116120,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T20:05:08.160Z"
+    },
+    "rule-3941": {
+      "learning_id": "rule-3941",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3941,
+      "title": "Demo: add invoice builder mini app",
+      "source_url": "https://github.com/Megabit/Blazorise",
+      "source_version": "7ecbdcac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:11:11.032Z"
+    },
+    "rule-3942": {
+      "learning_id": "rule-3942",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3942,
+      "title": "cli): preserve security metadata and reject ambiguous hook settings",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "bc01a991",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:11:11.233Z"
+    },
+    "rule-3943": {
+      "learning_id": "rule-3943",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3943,
+      "title": "Probabilistic Output Head Design for Time Series",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:11:16.983Z"
+    },
+    "rule-3944": {
+      "learning_id": "rule-3944",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3944,
+      "title": "Patchification for Long-Context Efficiency",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:11:16.983Z"
+    },
+    "rule-3945": {
+      "learning_id": "rule-3945",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3945,
+      "title": "Arcsinh Normalization for Heavy-Tailed Data",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:11:16.983Z"
+    },
+    "rule-3946": {
+      "learning_id": "rule-3946",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3946,
+      "title": "sdk/java: fix Central publishing with Maven 3.10 (#7729)",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "b2a3be78",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:11:19.995Z"
+    },
+    "rule-3947": {
+      "learning_id": "rule-3947",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3947,
+      "title": "pgrust v0.4-beta with ACID-compliant columnar and automatic memory management",
+      "source_url": "https://github.com/malisper/pgrust",
+      "source_version": "38634b40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:11:26.293Z"
     }
   },
   "aliases": {

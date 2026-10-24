@@ -4580,3 +4580,8 @@
 | `CYCLE-20261024-VKTG` | `2026-10-24T20:05:00.580Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3938` | Yes (`25360b29...`) |
 | `CYCLE-20261024-VMSZ` | `2026-10-24T20:05:03.155Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3939` | Yes (`975efc18...`) |
 | `CYCLE-20261024-VQOZ` | `2026-10-24T20:05:08.195Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3940` | Yes (`b931d22b...`) |
+| `CYCLE-20261024-3IOY` | `2026-10-24T20:11:11.074Z` | `Megabit/Blazorise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3941` | Yes (`31577a2b...`) |
+| `CYCLE-20261024-3IUH` | `2026-10-24T20:11:11.273Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3942` | Yes (`2a8eae2b...`) |
+| `CYCLE-20261024-3NAC` | `2026-10-24T20:11:17.028Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3943, Rule 3944, Rule 3945` | Yes (`7a9665dc...`) |
+| `CYCLE-20261024-3PLT` | `2026-10-24T20:11:20.033Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3946` | Yes (`e60eb7a2...`) |
+| `CYCLE-20261024-3UGR` | `2026-10-24T20:11:26.331Z` | `malisper/pgrust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3947` | Yes (`76b0797c...`) |

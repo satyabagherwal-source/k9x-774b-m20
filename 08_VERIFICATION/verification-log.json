@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-J3VU",
-    "timestamp": "2026-10-20T23:04:35.178Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "e73e9a108049ca70dc873932addb490d387706584b1fe109cf944e19ef429638",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-R4K1",
-    "timestamp": "2026-10-20T23:10:49.297Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-    "contentHash": "c4bd732cee6d245625e854ac08175c02340b52dcc6f870949fc84b275e2b1bd2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-RE6N",
-    "timestamp": "2026-10-20T23:11:01.775Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "27e4da8281e9dc9cbd12268349ea47e68cb67e99fae0c10b67b7510623b0b83d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-ZHAY",
-    "timestamp": "2026-10-20T23:17:19.066Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "3786a5327ec6ad3ba1654e9067364f0cceb59be11d22819c3509195b9a957c2a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-ZNN4",
-    "timestamp": "2026-10-20T23:17:27.280Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "244bdffe3071b9fc5ac09708db2354683eb168893168844d27c6c4b79b295d80",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-ZTKS",
     "timestamp": "2026-10-20T23:17:34.972Z",
     "repository": "duckdb/duckdb",
@@ -7490,6 +7415,81 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "b931d22bb1e455a82cc4a3983e76c264047eeaa7391430295c611d1025d02f00",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-3IOY",
+    "timestamp": "2026-10-24T20:11:11.074Z",
+    "repository": "Megabit/Blazorise",
+    "learningId": "learn-github-megabit-blazorise",
+    "contentHash": "31577a2b947ece074c05c4d1cb94f3cd6dd52f040706f0c5b673b302bbae50eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-3IUH",
+    "timestamp": "2026-10-24T20:11:11.273Z",
+    "repository": "Dicklesworthstone/destructive_command_guard",
+    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+    "contentHash": "2a8eae2bae0d67667a58e5905b13896a96fd3bdeecc8b03a13504a441f369ba2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-3NAC",
+    "timestamp": "2026-10-24T20:11:17.028Z",
+    "repository": "autogluon/chronos-2",
+    "learningId": "learn-huggingface-autogluon-chronos-2",
+    "contentHash": "7a9665dc086b730983d645df63a59850e7d958a9f53bb84c4b4817dc5ff188c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-3PLT",
+    "timestamp": "2026-10-24T20:11:20.033Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "e60eb7a28c9ae9c11b4e3a17962f6ec589dba48bb2d1bced17f05b41e7868600",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-3UGR",
+    "timestamp": "2026-10-24T20:11:26.331Z",
+    "repository": "malisper/pgrust",
+    "learningId": "learn-github-malisper-pgrust",
+    "contentHash": "76b0797cb75c7aea8874fa88d4f08ac8ff923f64efbc364f85780c8301f810d6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

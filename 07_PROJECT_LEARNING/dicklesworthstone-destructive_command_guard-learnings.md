@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `c1d9be25`  
+> **Source Version**: `bc01a991`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T05:02:52.067Z  
+> **Timestamp**: 2026-10-24T20:11:11.043Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T05:02:50.972Z  
+> **Harvest Timestamp**: 2026-10-24T20:11:11.041Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Destructive Command Guard (dcg) is for blocking dangerous git and shell commands from being executed by agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6195 stars
+- **Stars / Engagement**: 6209 stars
 
 ---
 
@@ -2476,499 +2476,903 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e77f026b` (2026-10-21)
-**Commit Message**: fix(ifs): preserve wrapper argument boundaries before destination checks (#558)
+### Incident Patch 1: `53e4dc38` (2026-10-22)
+**Commit Message**: fix(cli): preserve security metadata and reject ambiguous hook settings
 
-An unquoted wrapper option value can split into extra argv fields or vanish. For example, env -u $N echo $S with N=DCG_UNUSED@tee executes tee, not the apparent echo left after raw-prefix normalization. Audit discarded wrapper words against the caller's bounded expansion state before trusting that command boundary. Preserve literal, quoted scalar and proven single-field option values without inheriting the guard process's environment.
+Reject duplicate JSON keys recursively in native hook installation, self-heal,
+uninstall, and diagnostics instead of silently choosing the last policy.
+Preserve invalid settings and unavailable managed symlinks without rewriting.
 
-Treat remaining execution frontends, wrapper options or environment assignments supplied by expansion, and frontends exposed by disappearing leading words as unresolved. Keep both native rule families and original spans; continue processing shell-state effects. Recognize literal command -v/-V queries only before an operand, -- or dynamic word. Do not exempt the original source, weaken a protection or raise analysis limits.
+Preserve Linux/Android ACLs and extended attributes during atomic replacement,
+remove inherited staging attributes absent from the original, and abort before
+rename if metadata cannot be restored. Keep staging private while writing and
+use safe descriptor-based ownership APIs from the existing rustix dependency.
 
-Add four colocated unit-test groups and three isolated CLI/hook regression groups covering 51 unique fixtures. Check split and missing option values, generated wrapper names and control words, known and unknown quoted scalar options, concrete native r
+Validate native Grok hooks in doctor and re-probe repairs before reporting
+success, including when a healthy Claude compatibility hook exists. Retain
+operator-owned async and failure policies while accurately reporting whether
+the native registration can synchronously protect commands.
 
-**File**: `src/packs/core/credential_files/word_splitting.rs` (modified, +245/-2)
+Add 26 regressions covering six hosts, strict JSON, diagnostics, repeated
+blocking-policy preservation, managed links, ACL inheritance, and rollback.
+
+Validation:
+- 188 distinct focused tests passed, including 34 CLI tests.
+- All 13 new CLI tests passed; identical fixtures on the parent produ
+
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -497,11 +497,73 @@ fn render(argv: &[String]) -> String {
-         .join(" ")
- }
- 
-+/// An execution frontend left in argv0 is not evidence of a non-writer.
-+/// Normalization can stop on a dynamic option even in a single wrapper, or
-+/// an expansion can supply the wrapper name after normalization has run.
-+fn execution_frontend(name: &str) -> bool {
-+    matches!(name, "sudo" | "env" | "command" | "builtin")
-+        || crate::normalize::is_posix_execution_frontend_basename(name)
-+}
-+
-+/// A literal command -v/-V is a query, not an execution frontend. Only read
-+/// options before its first operand/--, and stop at dynamic words: they can
-+/// supply an operand or terminate option parsing before a later literal -v.
-+/// This exempts this argv pass only, never the original command's checks.
-+fn command_queries_only(arguments: &[&str]) -> bool {
-+    if arguments.first().and_then(|word| literal(word)).as_deref() != Some("command") {
-+        return false;
-+    }
-+    for raw in arguments.iter().skip(1) {
-+        let Some(word) = literal(raw) else {
-+            return false;
-+        };
-+        let Some(flags) = word.strip_prefix('-') else {
-+            return false;
-+        };
-+        if flags.is_empty() || !flags.chars().all(|ch| matches!(ch, 'p' | 'v' | 'V')) {
-+            return false;
-+        }
-+        if flags.contains(['v', 'V']) {
-+            return true;
-+        }
-+    }
-+    false
-+}
-+
-+/// Removing a wrapper prefix assumes each source word occupies one argv slot.
-+/// An unquoted option value can split into extra words (or disappear), making
-+/// one of those words the real executable. Check the discarded words against
-+/// the caller's state before trusting the normalizer's command boundary.
-+fn wrapper_prefix_preserves_fields(prefix: &str, state: &State) -> bool {
-+    let tokens = crate::normalize::tokenize_for_shell_dialect(prefix, ShellDialect::Posix);
-+    tokens.len() <= MAX_FIELDS
-+        && tokens.iter().all(|token| {
-+            if token.kind != NormalizeTokenKind::Word {
-+                return false;
-+            }
-+            let Some(raw) = token.text(prefix) else {
-+                return false;
-+            };
-+            // Quoted scalar pieces stay in one argument even if their
-+            // values are unknown. Lists, operators and substitutions do not
-+            // qualify, and an implicit empty word must not count as present.
-+            scalar_word(raw, |_, quoted| quoted.then(String::new))
-+                .is_some_and(|(_, present)| present)
-+                || expand(raw, state).is_ok_and(|fields| fields.len() == 1)
-+        })
-+}
-+
- fn classify(argv: &[String], span: Range<usize>) -> Result<Vec<CredentialFileWrite>, ()> {
-     let Some(name) = argv.first() else {
-         return Ok(Vec::new());
-     };
-     let basename = name.rsplit('/').next().unwrap_or(name);
-+    // Empty unquoted leading words may disappear and expose a frontend that
-+    // was not in the pre-expansion argv0 slot. Do not hand an unresolved
-+    // frontend to the destination classifier as if it were the final writer.
-+    if execution_frontend(basename) {
-+        return Err(());
-+    }
-     let mut hits = Vec::new();
-     if matches!(basename, "tee" | "gtee") {
-         let mut append = false;
-@@ -933,15 +995,47 @@ pub(super) fn scan(command: &str, dialect: ShellDialect) -> Vec<CredentialFileWr
-                     .as_deref()
-                     .map(|name| name.rsplit('/').next().unwrap_or(name))
-                     .is_none_or(shell::is_credential_writer);
-+                let unresolved_frontend = name
-+                    .as_deref()
-+                    .map(|name| name.rsplit('/').next().unwrap_or(name))
-+                    .is_some_and(execution_frontend)
-+                    && !command_queries_only(&arguments);
-+                // A stripped wrapper's dynamic next word can still belong
-+                // to that wrapper: command $OPT tee ... with OPT=-p, or
-+                // env $SETTING tee ... with SETTING=NAME=value. Such fields
-+                // are options/assignments, not proof of a harmless argv0.
-+                let generated_wrapper_control = arguments
-+                    .first()
-+                    .is_some_and(|word| literal(word).is_none())
-+                    && name
-+                        .as_deref()
-+                        .is_some_and(|word| word.starts_with('-') || word.contains('='))
-+                    && stripped
-+                        .stripped_wrappers
-+                        .iter()
-+                        .any(|wrapper| matches!(wrapper.wrapper_type, "command" | "env"));
-                 let active = state.changed
-                     || prefix_ifs
-                     || words
-                         .iter()
-                         .any(|word| assignment(word).is_some_and(|(name, _, _)| name == "IFS"));
-                 let expands = argv_needs_field_analysis(node.clone());
--                if active && expands && stripp
+@@ -977,6 +977,7 @@ dependencies = [
+  "rich_rust",
+  "rusqlite",
+  "rust-mcp-sdk",
++ "rustix",
+  "schemars",
+  "self_update",
+  "semver",
 ```
 
-**File**: `tests/repro_558_ifs_destinations.rs` (modified, +64/-0)
+**File**: `Cargo.toml` (modified, +3/-0)
 ```diff
-@@ -324,6 +324,70 @@ fn export_brace_uncertainty_keeps_native_allowlist_families_independent() {
-     }
- }
+@@ -120,6 +120,9 @@ rich_rust = { version = "0.2.2", features = ["markdown"], optional = true }
+ # features, so no new crate enters the graph and `#![forbid(unsafe_code)]`
+ # still holds here.
+ nix ={ version = "0.31", default-features = false, features = ["hostname", "resource"] }
++# Safe descriptor-based ownership and Linux extended-attribute preservation
++# during atomic settings replacement. Already present in the dependency graph.
++rustix = { version = "1.1.5", features = ["fs"] }
  
-+#[test]
-+fn split_wrapper_options_cannot_turn_apparent_readers_into_hidden_writers() {
-+    for (setup, invocation) in [
-+        ("N=DCG_UNUSED@tee", "env -u $N echo $S"),
-+        ("N=DCG_UNUSED@tee", "env --unset=$N echo $S"),
-+        ("D=1@tee", "timeout $D echo $S"),
-+        ("P=0@tee", "nice -n $P echo $S"),
-+        ("B=L@tee", "stdbuf -o $B echo $S"),
-+        ("U=root@tee", "sudo -u $U echo $S"),
-+        ("W=env", "$W tee $S"),
-+        ("OPT=-p", "command $OPT tee $S"),
-+        ("SETTING=DCG_X=1", "env $SETTING tee $S"),
-+        ("E=; N=DCG_UNUSED", r#"$E env -u "$N" tee $S"#),
-+        ("N=DCG_UNUSED", r#""env" -u "$N" tee $S"#),
-+    ] {
-+        for value in ["/tmp/a@/etc/shadow", "/tmp/a@.git/config"] {
-+            let source = format!("S={value}; IFS=@; {setup}; {invocation}");
-+            // Existing launcher checks may own the denial. The native hook
-+            // and CLI must not allow the command regardless of attribution.
-+            assert_decision(&source, false, None);
-+        }
-+    }
-+}
-+
-+#[test]
-+fn single_field_wrapper_options_preserve_concrete_destination_checks() {
-+    for invocation in [
-+        "env -u $N tee $S",
-+        r#"env -u "$N" tee $S"#,
-+        r#"env --unset="$N" tee $S"#,
-+        r#"timeout "$D" tee $S"#,
-+        r#"nice -n "$P" tee $S"#,
-+        r#"stdbuf -o "$B" tee $S"#,
-+        r"\tee $S",
-+    ] {
-+        for (value, rule) in [
-+            ("/tmp/a@/etc/shadow", "core.filesystem:credential-file-write"),
-+            ("/tmp/a@.git/config", "core.filesystem:git-internals-write"),
-+        ] {
-+            let source = format!("N=DCG_UNUSED; D=1; P=0; B=L; S={value}; IFS=@; {invocation}");
-+            assert_decision(&source, false, Some(rule));
-+        }
-+        let source = format!("N=DCG_UNUSED; D=1; P=0; B=L; S=/tmp/a@/tmp/b; IFS=@; {invocation}");
-+        assert_decision(&source, true, None);
-+    }
-+}
-+
-+#[test]
-+fn literal_command_queries_and_quoted_wrapper_operands_remain_harmless() {
-+    for invocation in [
-+        "command -v tee $S",
-+        "command -p -V tee $S",
-+        "command -pv tee $S",
-+        "env -u DCG_UNUSED printf '%s' $S",
-+        r#"env -u "$N" echo $S"#,
-+        r#"env -u "$UNKNOWN" printf '%s' $S"#,
-+        "timeout 1 printf '%s' $S",
-+        "printf '%s' 'env' $S",
-+    ] {
-+        let source = format!("N=DCG_UNUSED@tee; S=/tmp/a@/etc/shadow; IFS=@; {invocation}");
-+        assert_decision(&source, true, None);
-+    }
-+}
-+
- #[test]
- fn background_assignment_groups_cannot_hide_inherited_native_destinations() {
-     for mutation in [
+ [build-dependencies]
+ vergen-gix = { version = "10.0.0-beta.8", features = ["build", "cargo", "rustc"] }
 ```
 
----
-
-### Incident Patch 2: `35a6b333` (2026-10-21)
-**Commit Message**: fix(python): resolve module-constant archive argv to its literal value (#562)
-
-An archive-only `subprocess.Popen(['tar', '-cf', '-', '-C', src, name])` was
-denied as `core.filesystem:tar-exec-unverified` when `src`/`name` were
-module-level string or `pathlib.Path` constants, although the same argv with
-the literals inline is allowed. The exec-sink reconstruction turned every
-non-literal operand into `${dcg_runtime_value}`, and the tar helper check
-correctly treats an unresolved positional as a possible option.
-
-Such a constant now resolves to its literal value, and the reconstructed
-command is judged exactly as the inline spelling: an archive is allowed, and a
-constant whose value is itself a helper option still denies, because the
-downstream tar check sees that option.
-
-Resolution is deliberately narrow:
-- Only Python, and only when the program is straight-line: imports, plain
-  single-identifier assignments and expression statements. Any construct that
-  could rebind a name outside a counted top-level assignment, any reflective
-  name, any attribute/subscript/tuple/starred assignment target, or a wildcard
-  import leaves the whole program unresolved.
-- A name qualifies only with 
-
-**File**: `src/ast_pattern_engine.rs` (modified, +483/-1)
+**File**: `src/cli.rs` (modified, +865/-104)
 ```diff
-@@ -754,6 +754,17 @@ pub fn exec_sink_reconstructed_commands(
-     };
-     let haystack = masked.as_ref();
+@@ -11279,11 +11279,11 @@ fn doctor_pretty(fix: bool, config: &Config, config_sources: &[ConfigSourceOutco
+         print!("Checking Grok hook registration... ");
  
-+    // Resolve proven module-scope Python constants in archive-tool argv
-+    // operands (#562). Built only when a sink and a tar reference are both
-+    // present, so a sink-free or tar-free Python body pays no extra parse.
-+    // `tar`/`gtar`/`bsdtar` all contain "tar". The guard is held for the
-+    // operand reads below; resolution itself is enabled per call.
-+    let const_env = (language == ScriptLanguage::Python
-+        && code.contains("tar")
-+        && sink_regex.is_match(haystack))
-+    .then(|| install_python_const_env(build_python_const_env(code)))
-+    .flatten();
-+
-     let mut out = Vec::new();
-     for caps in sink_regex.captures_iter(haystack) {
-         let Some(m) = caps.get(0) else { continue };
-@@ -770,7 +781,27 @@ pub fn exec_sink_reconstructed_commands(
-         // Operands, for the same reason `detect_destructive_in_args` uses them:
-         // reconstructing `dd` from `"d"+"d"` as two argv words would not be the
-         // command the call actually runs (#474).
--        let argv = exec_argv_operands(region, language);
-+        //
-+        // #562 resolution is enabled only once this call's program word
-+        // (read with resolution off) is an archive tool, never a launcher.
-+        let argv = if const_env.is_some() {
-+            RESOLVE_ENABLED.with(|cell| cell.set(false));
-+            let unresolved = exec_argv_operands(region, language);
-+            let archive = unresolved
-+                .values
-+                .first()
-+                .is_some_and(|program| is_archive_program(program));
-+            if archive {
-+                RESOLVE_ENABLED.with(|cell| cell.set(true));
-+                let resolved = exec_argv_operands(region, language);
-+                RESOLVE_ENABLED.with(|cell| cell.set(false));
-+                resolved
+         let user_hook = grok_user_hook_path();
+-        let user_hook_exists = user_hook.exists();
++        let native_probe = probe_grok_dcg_hook_at(&user_hook);
+         let claude_compat_path = default_claude_settings_path();
+         let claude_compat_diag = diagnose_hook_wiring_at(&claude_compat_path);
+ 
+-        if user_hook_exists {
++        if matches!(&native_probe, Ok(true)) {
+             println!("{}", "OK".green());
+             println!("  Found: {}", user_hook.display());
+             if claude_compat_diag.has_grok_compatible_hook() {
+@@ -11292,7 +11292,9 @@ fn doctor_pretty(fix: bool, config: &Config, config_sources: &[ConfigSourceOutco
+                     claude_compat_path.display()
+                 );
+             }
+-        } else if claude_compat_diag.has_grok_compatible_hook() {
++        } else if matches!(&native_probe, Ok(false))
++            && claude_compat_diag.has_grok_compatible_hook()
++        {
+             // Grok will use the Claude-compat path; this still works but the
+             // native path is preferred. Surface as a friendly note, not an
+             // error, so users who deliberately rely on Claude-compat aren't
+@@ -11308,26 +11310,27 @@ fn doctor_pretty(fix: bool, config: &Config, config_sources: &[ConfigSourceOutco
+                 user_hook.display()
+             );
+         } else {
+-            println!("{}", "NOT REGISTERED".yellow());
+-            // Reached only when Grok is in use AND neither the native hook nor
+-            // the Claude-compat path is wired — the guard is not guarding.
+-            // This branch already incremented `fixed` on a successful repair;
+-            // without the matching `issues` increment the summary verdict
+-            // (`issues == 0 || (fix && fixed == issues)`) was corrupted in
+-            // both directions: an unrelated unfixed issue could be masked, and
+-            // a fully repaired machine could still report failure.
+-            //
+-            // `collect_doctor_report` carries the same check (id `grok_hook`)
+-            // so `--strict` cannot give one answer for `--format json` and a
+-            // different one here.
++            if let Err(error) = native_probe {
++                println!("{}", "INVALID".red());
++                println!("  {}: {error}", user_hook.display());
 +            } else {
-+                unresolved
++                println!("{}", "NOT REGISTERED".yellow());
 +            }
-+        } else {
-+            exec_argv_operands(region, language)
-+        };
-         if argv.unverified {
-             continue;
-         }
-@@ -4792,6 +4823,11 @@ fn concatenated_operand(expression: &str, language: ScriptLanguage, depth: usize
-     if let Some(value) = exec_literal_operand(expression, language) {
-         return value;
-     }
-+    // A proven module-scope Python constant resolves to its exact literal
-+    // value, judged downstream exactly as that literal spelled inline (#562).
-+    if let Some(value) = resolve_active_python_const(expression, language) {
-+        return Cow::Owned(value);
-+    }
-     let Some(terms) = split_exec_operands(expression, b"+.", language) else {
-         return Cow::Borrowed(RUNTIME_VALUE);
-     };
-@@ -4818,6 +4854,421 @@ fn concatenated_operand(expression: &str, language: ScriptLanguage, depth: usize
-     Cow::Borrowed(RUNTIME_VALUE)
- }
- 
-+// =============================================================================
-+// Python module-constant argv resolution (#562)
-+// =============================================================================
-+//
-+// An archive-only `subprocess.Popen(['tar', '-cf', '-', '-C', src, name])`
-+// whose `name`/`src` are module-scope string or `pathlib.Path` constants
-+// denied as `tar-exec-unverified`, because the reconstruction turned each
-+// non-literal operand into `${dcg_runtime_value}` and the tar helper check
-+// read an unresolved positional as a possible option. These constants have one
-+// provable value, so resolve exactly that value and let the ordinary pack
-+// pipeline judge it — the identical reconstruction as spelling the literal
-+// inline, which already allows an archive and still denies an option such as
-+// `--to-command=sh`.
-+//
-+// Soundness is fail-closed: a resolved operand is always the operand's true
-+// literal value (the downstream tar check still decides it), so resolution can
-+// only be wrong by resolving to a value the program does not have. The env is
-+// therefore built only for straight-line programs (see
-+// `build_python_const_env`), where a name assigned exactly once at module level
-+// has one provable value, and resolution runs only for archive programs, never
-+// for a launcher's code argument. Any doubt leaves the operand unresolved, i.e.
-+// denied as before.
-+
-+#[derive(Clone)]
-+enum PythonConst {
-+    /// Bound to a plain string literal: its decoded value.
-+    Str(String),
-+    /// Bound to `Path('<literal>')` / `pathlib.Path('<literal>')`: the literal
-+    /// path, recorded only when `Path`/`pathlib` were not rebound and the path
-+    /// is "clean" (every `/`-separated component non-empty and not `.`/`..`),
-+    /// so `str()`, `.name` and `.parent` match pathlib without normalization.
-+    Path(String),
-+}
-+
-+#[derive(Default, Clone)]
-+struct PythonConstEnv {
-+    values: HashMap<String, PythonConst>,
-+    /// The `str` builtin was rebound, so a `str(...)` operand is not stringify.
-+    str_rebound: bool,
-+}
-+
-+impl PythonConstEn
++            // Existing native configuration must be valid even if Claude
++            // compatibility is wired. Keep issue/fix accounting in sync with
++            // `collect_doctor_report`, and verify repairs before claiming success.
+             issues += 1;
+             if fix {
+                 println!("  Attempting native install...");
+-                if install_grok_hook(false, false).is_ok() {
+-                    println!("  {}", "Fixed!".green());
+-                    fixed += 1;
+-                } else {
+-                    println!("  {}", "Failed to fix".red());
++                match install_grok_hook_at(&user_hook, false)
++                    .and_then(|_| probe_grok_dcg_hook_at(&user_hook))
++                {
++                    Ok(true) => {
++                        println!("  {}", "Fixed!".green());
++                        fixed += 1;
++                    }
++                    Ok(false) => println!("  {}", "Failed to fix: native hook is absent".red()),
++                    Err(error) => println!("  {}: {error}", "Failed to fix".red()),
+                 }
+             } else {
+                 println!("  → Run 'dcg install --grok' to register the native hook");
+@@ -12822,16 +12825,19 @@ fn collect_doctor_report(
+     let grok_home_exists = grok_home.as_ref().is_some_and(|p| p.exists() && p.is_dir());
+     if grok_session_present || grok_home_exists {
+         let user_hook = grok_user_hook_path();
++        let native_probe = probe_grok_dcg_hook_at(&user_hook);
+         let claude_compat_path = default_claude_settings_path();
+         let claude_compat_diag = diagnose_hook_wiring_at(&claude_compat_path);
+         let mut grok_fixed = false;
+-        let (status, message, remediation) = if user_hook.exists() {
++        let (status, message, remediation) = if matches!(&native_probe, Ok(true)) {
+             (
+                 DoctorCheckStatus::Ok,
+                 format!("Native Grok hook found at {}", user_hook.display()),
+                 None,
+             )
+-        } else if claude_compat_diag.has_grok_compatible_hook() {
++        } else if matches!(&native_probe, Ok(false))
++            && claude_compat_diag.has_grok_compatible_hook()
++        {
+             // Wired via the Claude compatibility layer. Deliberately not an
+             // error: users who rely on compat should not be pestered.
+             (
+@@ -12844,11 +12850,31 @@ fn col
 ```
 
-**File**: `src/evaluator.rs` (modified, +51/-0)
+**File**: `tests/cli_e2e.rs` (modified, +457/-0)
 ```diff
-@@ -35717,6 +35717,57 @@ mod tests {
-         evaluate_with_pack_ids_at_path(command, pack_ids, None)
+@@ -2539,6 +2539,463 @@ mod config_tests {
+             .expect("run isolated dcg install")
      }
  
-+    /// A module-scope Python string/`Path` constant in an archive-only tar
-+    /// argv resolves to its literal value, so the archive is allowed exactly
-+    /// as the literal inline (#562), while every operand whose value is not
-+    /// provably fixed, and every constant whose literal is itself a tar option,
-+    /// still denies.
-+    #[test]
-+    fn python_module_constant_tar_argv_resolves_to_its_literal_562() {
-+        let packs = ["core.filesystem", "core.git", "system.disk"];
-+        let dq = |s: &str| format!("python3 -c \"{}\"", s.replace('"', "\\\""));
-+        // Archive-only tar whose member/dir is a proven constant: allowed.
-+        for program in [
-+            "import subprocess; name = 'checkout'; subprocess.Popen(['tar', '-cf', '-', '-C', '/tmp/dcg-synthetic', name])",
-+            "from pathlib import Path; import subprocess; source = Path('/tmp/dcg-synthetic/checkout'); subprocess.Popen(['tar', '-cf', '-', '-C', str(source.parent), source.name])",
-+            "import pathlib, subprocess; source = pathlib.Path('/tmp/dcg-synthetic/checkout'); subprocess.Popen(['tar', '-cf', '-', '-C', str(source.parent), source.name])",
-+            "import subprocess; subprocess.Popen(['tar', '-cf', '-', '-C', '/tmp/dcg-synthetic', 'checkout'])",
-+        ] {
-+            let command = dq(program);
-+            let result = evaluate_with_pack_ids(&command, &packs);
-+            assert!(result.is_allowed(), "{program} -> {result:?}");
-+        }
-+        // The fold must never turn a non-fixed or option-valued operand into an
-+        // allow. Each of these keeps the deny it had before the fold.
-+        for program in [
-+            // Unknown value.
-+            "import subprocess, sys; subprocess.Popen(['tar', '-xf', 'a.tar', sys.argv[1]])",
-+            // Constant whose literal IS a helper-exec option: resolving to the
-+            // true value still denies.
-+            "import subprocess; name = '--to-command=sh'; subprocess.Popen(['tar', '-xf', 'a.tar', name])",
-+            "import subprocess; name = '-I'; subprocess.Popen(['tar', '-cf', 'a.tar', name, 'sh', 'x'])",
-+            "import subprocess; name = 'checkout'; name = '--to-command=sh'; subprocess.Popen(['tar', '-xf', 'a.tar', name])",
-+            "import subprocess; name = 'x'; name += '--to-command=sh'; subprocess.Popen(['tar', '-xf', 'a.tar', name])",
-+            // Reflection or import-* can rebind the name out of view.
-+            "import subprocess; name = 'checkout'; globals()['name'] = '--to-command=sh'; subprocess.Popen(['tar', '-xf', 'a.tar', name])",
-+            "import subprocess; name = 'checkout'; exec('name = 1'); subprocess.Popen(['tar', '-xf', 'a.tar', name])",
-+            // str / Path rebound (simple name or attribute).
-+            "import subprocess; from pathlib import Path; str = lambda x: '--to-command=sh'; source = Path('/tmp/x/checkout'); subprocess.Popen(['tar', '-xf', 'a.tar', str(source)])",
-+            "import subprocess; from pathlib import Path; Path.name = '--to-command=sh'; source = Path('/tmp/x/checkout'); subprocess.Popen(['tar', '-xf', 'a.tar', source.name])",
-+            // An f-string operand is not a resolvable constant.
-+            "import subprocess; name = 'sh'; subprocess.Popen(['tar', '-xf', 'a.tar', f'--to-command={name}'])",
-+            // A star-args argv cannot be verified.
-+            "import subprocess; args = ['--to-command=sh']; subprocess.Popen(['tar', '-xf', 'a.tar', *args])",
-+        ] {
-+            let command = dq(program);
-+            let result = evaluate_with_pack_ids(&command, &packs);
-+            assert!(
-+                result.is_denied(),
-+                "fold must not open a bypass: {program} -> {result:?}"
-+            );
++    fn native_settings_json_path(home: &std::path::Path, agent: &str) -> std::path::PathBuf {
++        home.join(match agent {
++            "" => ".claude/settings.json",
++            "--grok" => ".grok/hooks/dcg.json",
++            "--agy" => ".gemini/config/hooks.json",
++            "--reasonix" => ".reasonix/settings.json",
++            "--crush" => ".config/crush/crush.json",
++            "--muse" => ".config/muse/settings.json",
++            _ => panic!("unsupported settings fixture: {agent}"),
++        })
++    }
++
++    fn native_settings_json_entries(agent: &str, fields: &str) -> String {
++        let hook = match agent {
++            "--reasonix" => format!(r#"{{"match":"bash","command":"/retired/dcg",{fields}}}"#),
++            "--crush" => format!(r#"{{"matcher":"^bash$","command":"/retired/dcg",{fields}}}"#),
++            _ => format!(r#"{{"type":"command","command":"/retired/dcg",{fields}}}"#),
++        };
++        if matches!(agent, "--reasonix" | "--crush") {
++            format!("[{hook}]")
++        } else {
++            format!(r#"[{{"matcher":"Bash","hooks":[{hook}]}}]"#)
 +        }
 +    }
 +
-     /// An inert redirection selects no pack (#571): `ls 2>/dev/null` used to
-     /// select `core.filesystem` and `system.disk` through the `2>`, `>/` and
-     /// `/dev/` keywords and compile both, though no rule could match it. It is
++    fn native_settings_json_document(agent: &str, hooks: &str, extra: &str) -> String {
++        let schema = if agent == "--muse" {
++            r#""schema_version":1,"#
++        } else {
++            ""
++        };
++        format!(r#"{{{schema}"hooks":{{{hooks}}}{extra}}}"#)
++    }
++
++    fn assert_native_settings_json_duplicates_are_refused(agent: &str) {
++        let home = tempfile::tempdir().expect("isolated HOME");
++        let path = native_settings_json_path(home.path(), agent);
++        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
++        let mut fixtures = Vec::new();
++        for fields in [
++            r#""onFailure":"block","onFailure":"continue","timeout":15"#,
++            r#""onFailure":"block","on\u0046ailure":"continue","timeout":15"#,
++            r#""onFailure":"block","timeout":15,"timeout":5"#,
++            r#""onFailure":"block","timeout":15,"command":"audit-only"#,
++            r#""onFailure":"block","onFailure":"block","timeout":15"#,
++        ] {
++            let entries = native_settings_json_entries(agent, fields);
++            fixtures.push(native_settings_json_document(
++                agent,
++                &format!(r#""PreToolUse":{entries}"#),
++                "",
++            ));
++        }
++        let entries = native_settings_json_entries(agent, r#""onFailure":"block","timeout":15"#);
++        fixtures.push(native_settings_json_document(
++            agent,
++            &format!(r#""PreToolUse":{entries},"PreToolUse":[]"#),
++            "",
++        ));
++        fixtures.push(native_settings_json_document(
++            agent,
++            &format!(r#""PreToolUse":{entries}"#),
++            r#", "hooks":{}"#,
++        ));
++        fixtures.push(native_settings_json_document(
++            agent,
++            &format!(r#""PreToolUse":{entries}"#),
++            r#", "operator":{"policy":"strict","policy":"observe"}"#,
++        ));
++
++        for original in fixtures {
++            for force in [false, true] {
++                std::fs::write(&path, original.as_bytes()).unwrap();
++                let mut args = vec!["install"];
++                if !agent.is_empty() {
++                    args.push(agent);
++                }
++                if force {
++                    args.push("--force");
++                }
++                let output = run_hook_policy_install(home.path(), &args);
++                assert!(
++                    !output.status.success(),
++                    "{args:?} must refuse ambiguous settings: {original}"
++                );
++                assert!(
++                    String::from_utf8_lossy(&output.stderr)
++                        .to_ascii_lowercase()
++                        .contains("duplicate"),
++                    "{}",
++                    String::from_utf8_lossy(&output.stderr)
++                );
++                assert_eq!(std::fs::read(&path).unwrap(), original.as_bytes());
++            }
++        }
++    }
++
++    #[test]
++    fn native_settings_json_claude_refuses_duplicate_keys() {
++        assert_native_settings_json_duplicates_are_refused("");
++    }
++
++    #[test]
++    fn native_settings_json_grok_refuses_duplicate_keys() {
++        assert_native_settings_json_duplicates_are_refused("--grok");
++    }
++
++    #[test]
++    fn native_settings_json_antigravity_refuses_duplicate_keys() {
++        assert_native_settings_json_duplicates_are_refused("--agy");
++    }
++
++    #[test]
++    fn native_settings_json_reasonix_refuses_duplicate_keys() {
++        assert_native_settings_json_duplicates_are_refused("--reasonix");
++    }
++
++    #[test]
++    fn native_settings_json_crush_refuses_duplicate_keys() {
++        assert_native_settings_json_duplicates_are_refused("--crush");
++    }
++
++    #[test]
++    fn native_settings_j
 ```
 
 ---
 
-### Incident Patch 3: `a6bb34de` (2026-10-21)
-**Commit Message**: test(ifs): exercise export brace expansion through native CLI and hook (#558)
+### Incident Patch 2: `8eca632c` (2026-10-21)
+**Commit Message**: fix(install): parse under macOS /bin/bash 3.2 again
 
-Complete end-to-end coverage for the native export-brace correction already on main. Cover destination alternatives, quoted fragments, append forms and IFS rebinding. Preserve ordinary assignment words, literal braces, unrelated exports and later explicit rebindings. Assert concrete native rule attribution for unaffected bindings and prove credential/Git-internals grants remain independent.
+Since 65004aa6 (#541) maybe_add_shell_check captured its shell-startup
+snippet with `snippet=$(cat <<'EOFSNIPPET' ...)`, and the snippet now holds
+`case` statements. bash 3.2, the /bin/bash of stock macOS, cannot parse
+`case` patterns inside a command substitution, so `bash -n install.sh`
+fails at line 1086 ("syntax error near unexpected token `;;'") and
+`curl ... | bash` aborts before installing anything on such a Mac. bash 5
+was unaffected, which is why Linux runs stayed green.
 
-Add four regression groups covering 27 unique shell fixtures. Fresh fixed-shell probes passed 81 comparisons across Bash, Bash POSIX mode, dash and brace-expansion-disabled controls (two unsupported dash += cases skipped); 54 syntax-only checks passed. Both complete base files and candidate patch integrity were checked, and the current integration base blob was verified unchanged. These are shell/source checks, NOT native DCG verification. Rust compilation, tests, Clippy and rustfmt have not run in this environment.
+The snippet is now read with `IFS= read -r -d '' snippet <<'EOFSNIPPET'`,
+which keeps the heredoc out of a command substitution, and the trailing
+newline that the command substitution used to strip is removed explicitly.
+The block written into ~/.bashrc / ~/.zshrc is byte-identical to before
+(same sha256 from the old script under bash 5 and the new one under bash 5
+and 3.2, and a second run leaves the file unchanged), so existing installs
+see it as current and are not rewritten.
 
-Refs #558
+Regression test: install_test.bats runs `bash -n install.sh` under
+/bin/bash and the bash on PATH; it fails on the previous install.sh on
+macOS and passes now. It can only catc
 
-**File**: `tests/repro_558_ifs_destinations.rs` (modified, +85/-0)
+**File**: `install.sh` (modified, +7/-3)
 ```diff
-@@ -207,6 +207,91 @@ fn split_destinations_reach_native_credential_policy_without_custom_packs() {
+@@ -1074,8 +1074,12 @@ maybe_add_shell_check() {
+   # Add a shell startup check that warns if the DCG hook has been silently
+   # removed from the active Claude Code settings. Silent when present, fast (ms),
+   # and only runs when both dcg and jq are on PATH.
+-  local snippet
+-  snippet=$(cat <<'EOFSNIPPET'
++  # Read with `read -d ''`, not `$(cat <<EOF)`: bash 3.2 (macOS /bin/bash)
++  # cannot parse the snippet's `case` patterns inside a command substitution,
++  # so the whole installer failed to parse there. The trailing newline that
++  # `$(...)` used to strip is removed below, keeping the snippet byte-identical.
++  local snippet=""
++  IFS= read -r -d '' snippet <<'EOFSNIPPET' || true
+ 
+ # dcg: warn if hook was silently removed from Claude Code settings
+ if command -v dcg &>/dev/null && command -v jq &>/dev/null; then
+@@ -1099,7 +1103,7 @@ if command -v dcg &>/dev/null && command -v jq &>/dev/null; then
+   )
+ fi
+ EOFSNIPPET
+-  )
++  snippet="${snippet%$'\n'}"
+   # The snippet minus its leading blank line: what a managed region should
+   # contain, used both as the is-current test and the repair replacement.
+   local body="${snippet#?}"
+```
+
+**File**: `tests/install/install_test.bats` (modified, +22/-0)
+```diff
+@@ -21,6 +21,28 @@ teardown() {
+     teardown_isolated_home
+ }
+ 
++# ============================================================================
++# Parsing
++# ============================================================================
++
++@test "install.sh parses under every bash on the host, including macOS /bin/bash 3.2" {
++    # `curl … | bash` runs whichever bash is first on PATH; on stock macOS
++    # that is /bin/bash 3.2, which rejects a `case` inside `$(...)` that bash
++    # 5 accepts. A parse error there fails the whole install before it starts.
++    local shells=() candidate
++    for candidate in /bin/bash "$(command -v bash)"; do
++        [ -x "$candidate" ] && shells+=("$candidate")
++    done
++    [ "${#shells[@]}" -gt 0 ] || skip "no bash executable found"
++    for candidate in "${shells[@]}"; do
++        run "$candidate" -n "$INSTALL_SCRIPT"
++        [ "$status" -eq 0 ] || {
++            echo "$candidate ($("$candidate" -c 'echo "$BASH_VERSION"')): $output"
++            return 1
++        }
++    done
++}
++
+ # ============================================================================
+ # Platform Detection Tests
+ # ============================================================================
+```
+
+---
+
+### Incident Patch 3: `97e5364e` (2026-10-22)
+**Commit Message**: fix(logging): enforce full redaction across persisted records
+
+Suppress free-form diagnostic reasons, caller labels and audit paths in full mode. Use a fixed generic explanation and preserve stable rule IDs, decisions and correlation metadata. Apply the same policy to both allow-once log types and legacy blocked-command/budget writers while retaining existing secret masking.
+
+Add whole-record synthetic-marker regressions for JSON/text, transformed pipeline diagnostics, allow/deny/warn outcomes and allow-once redemption. Add unit coverage for normalized commands, redaction modes and audit metadata.
+
+Validation: four focused real-binary cli_e2e tests passed; focused library/binary/integration compiler check passed; changed-file rustfmt and whitespace checks passed. A paired optimized logging microbenchmark reproduced the original leak, confirmed suppression, and found no ordinary-logging slowdown. Full unit/all-target compilation hit shared-memory limits. Repository-wide Clippy and fmt remain blocked by existing issues in untouched word_splitting.rs.
+
+Fixes #585
+
+**File**: `docs/configuration.md` (modified, +18/-0)
+```diff
+@@ -396,6 +396,24 @@ recognises vendor variables. Whoever sets the variable controls it, so it is
+ treated as a label and never as input: it is reduced to printable ASCII on a
+ single line, capped at 64 characters, and never consulted by any decision.
+ 
++To suppress command content in persisted decision logs, use:
++
++```toml
++[logging.redaction]
++enabled = true
++mode = "full"
++```
++
++Full redaction replaces commands (including normalized commands) and caller
++labels with `[REDACTED]`, and reasons with `Diagnostic details redacted.`, in both
++JSON and text logs. The same policy covers legacy blocked-command entries and
++allow-once audit logs written to `general.log_file`, including audit working
++directories and scope paths. Stable rule IDs, decisions, event kinds, timestamps,
++timings and allow-once correlation codes remain available. Redaction affects
++logging only; command evaluation and hook diagnostics retain their usual behavior.
++`mode = "arguments"` only truncates long quoted command arguments and does not
++provide full-record confidentiality. History has its own `redaction_mode` setting.
++
+ ## Editor Autocomplete & Validation (JSON Schema)
+ 
+ dcg publishes a JSON Schema for `config.toml` so editors can offer field
+```
+
+**File**: `src/hook.rs` (modified, +55/-4)
+```diff
+@@ -4708,6 +4708,7 @@ pub fn log_blocked_command(
+     command: &str,
+     reason: &str,
+     pack: Option<&str>,
++    redaction: &crate::logging::RedactionConfig,
+ ) -> io::Result<()> {
+     use std::fs::OpenOptions;
+ 
+@@ -4733,9 +4734,11 @@ pub fn log_blocked_command(
+ 
+     // The log file outlives the hook invocation and a blocked command is
+     // exactly where credentials turn up, so recognised secret shapes are
+-    // replaced before the line is written (issue #386). This path has no
+-    // redaction config of its own; pattern redaction is unconditional here.
++    // replaced before the line is written (issue #386). Honor the configured
++    // redaction as well: secret recognition alone cannot enforce full mode.
+     let command = crate::redaction::redact_secrets(command);
++    let command = crate::logging::redact_command(&command, redaction);
++    let reason = crate::logging::redact_reason(reason, redaction);
+     writeln!(file, "[{timestamp}] [{pack_str}] {reason}")?;
+     writeln!(file, "  Command: {command}")?;
+     writeln!(file)?;
+@@ -4755,6 +4758,7 @@ pub fn log_budget_skip(
+     stage: &str,
+     elapsed: Duration,
+     budget: Duration,
++    redaction: &crate::logging::RedactionConfig,
+ ) -> io::Result<()> {
+     use std::fs::OpenOptions;
+ 
+@@ -4788,6 +4792,7 @@ pub fn log_budget_skip(
+     )?;
+     // Same unconditional secret redaction as `log_blocked_command`.
+     let command = crate::redaction::redact_secrets(command);
++    let command = crate::logging::redact_command(&command, redaction);
+     writeln!(file, "  Command: {command}")?;
+     writeln!(file)?;
+ 
+@@ -9781,7 +9786,7 @@ mod tests {
+         }
+     }
+ 
+-    /// Issue #386: `[general] log_file` takes no redaction config and used to
++    /// Issue #386: `[general] log_file` originally took no redaction config and
+     /// write `Command: {command}` raw, so a blocked command carrying a token
+     /// landed in the log verbatim. Canaries below are synthetic.
+     #[test]
+@@ -9792,13 +9797,21 @@ mod tests {
+         let command = "deploy --purge AKIAABCDEFGHIJKLMNOP \
+              ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+ 
+-        log_blocked_command(path, command, "destructive", Some("core")).expect("write log");
++        log_blocked_command(
++            path,
++            command,
++            "destructive",
++            Some("core"),
++            &Default::default(),
++        )
++        .expect("write log");
+         log_budget_skip(
+             path,
+             command,
+             "prefilter",
+             Duration::from_millis(5),
+             Duration::from_millis(1),
++            &Default::default(),
+         )
+         .expect("write budget log");
+ 
+@@ -9817,4 +9830,42 @@ mod tests {
+         assert!(contents.contains("[AWS_ACCESS_KEY]"), "{contents}");
+         assert!(contents.contains("[GITHUB_TOKEN]"), "{contents}");
+     }
++
++    #[test]
++    fn full_redaction_covers_legacy_log_records_issue_585() {
++        let dir = tempfile::tempdir().expect("tempdir");
++        let log = dir.path().join("blocked.log");
++        let path = log.to_str().expect("utf-8 path");
++        let marker = "DCG_SYNTHETIC_PRIVATE_ARGUMENT_9b4e";
++        let redaction = crate::logging::RedactionConfig {
++            enabled: true,
++            mode: crate::logging::RedactionMode::Full,
++            ..Default::default()
++        };
++        log_blocked_command(
++            path,
++            marker,
++            &marker.to_lowercase(),
++            Some("core"),
++            &redaction,
++        )
++        .expect("blocked log");
++        log_budget_skip(
++            path,
++            marker,
++            "prefilter",
++            Duration::ZERO,
++            Duration::ZERO,
++            &redaction,
++        )
++        .expect("budget log");
++        let log = std::fs::read_to_string(log).expect("read log");
++        assert!(
++            !log.to_lowercase().contains(&marker.to_lowercase()),
++            "{log}"
++        );
++        assert!(log.contains("[core]"));
++        assert!(log.contains("Diagnostic details redacted."));
++        assert!(log.contains("[budget]"));
++    }
+ }
+```
+
+**File**: `src/logging.rs` (modified, +122/-7)
+```diff
+@@ -62,7 +62,12 @@ const MAX_CALLER_CHARS: usize = 64;
+ #[must_use]
+ pub fn caller_label(config: &LoggingConfig) -> Option<String> {
+     let name = config.caller_env.as_deref()?;
+-    sanitize_caller_label(&std::env::var(name).ok()?)
++    let label = sanitize_caller_label(&std::env::var(name).ok()?)?;
++    Some(if config.redaction.is_full() {
++        "[REDACTED]".to_string()
++    } else {
++        label
++    })
+ }
+ 
+ /// Reduce a raw caller value to the label [`caller_label`] records.
+@@ -106,6 +111,13 @@ impl Default for RedactionConfig {
      }
  }
  
-+#[test]
-+fn export_brace_assignments_require_native_review_without_custom_packs() {
-+    for source in [
-+        "IFS=@; export S=/tmp/a{,@/etc/shadow}; tee $S",
-+        "S=/tmp/safe; IFS=@; export S=/tmp/a{,@/etc/shadow}; tee $S",
-+        "IFS=@; export S={/tmp/safe,/tmp/a@/etc/shadow}; tee $S",
-+        r#"IFS=@; export S="/tmp/a"{,@/etc/shadow}; tee $S"#,
-+        r#"IFS=@; export S=/tmp/a{,"@/etc/shadow"}; tee $S"#,
-+        "IFS=@; export S=/tmp/a{1..2}@/etc/shadow; tee $S",
-+        "IFS=@; S=/tmp/a; export S+={,@/etc/shadow}; tee $S",
-+        "IFS=@; export T=ok S=/tmp/a{,@/etc/shadow}; tee $S",
-+        "S=/tmp/a:/etc/shadow; IFS=@; export IFS={/,:}; tee $S",
-+        "IFS=@; export S=/tmp/a@{/tmp/safe,.git/config}; tee $S",
-+    ] {
-+        assert_decision(source, false, Some("core.filesystem:credential-file-write"));
++impl RedactionConfig {
++    /// Whether full-record suppression is active (mode alone is insufficient).
++    pub(crate) const fn is_full(&self) -> bool {
++        self.enabled && matches!(self.mode, RedactionMode::Full)
 +    }
 +}
 +
-+#[test]
-+fn quoted_braces_assignment_only_words_and_unrelated_exports_remain_allowed() {
-+    for source in [
-+        "IFS=@; S=/tmp/a{,@/etc/shadow}; tee $S",
-+        "IFS=@; S=/tmp/a; S+={,@/etc/shadow}; tee $S",
-+        "IFS=@; export S='/tmp/a{,@/etc/shadow}'; tee $S",
-+        r#"IFS=@; export S="/tmp/a{,@/etc/shadow}"; tee $S"#,
-+        r"IFS=@; export S=/tmp/a\{,@/etc/shadow\}; tee $S",
-+        r#"IFS=@; export S=/tmp/a"{,@/etc/shadow}"; tee $S"#,
-+        "IFS=@; S=/tmp/safe; export T={a,b}; tee $S",
-+        "IFS=@; S=/tmp/safe; export T={a,b} U=ok; tee $S",
-+        "IFS=@; export S=/tmp/a{,@/etc/shadow}; S=/tmp/safe; tee $S",
-+        "IFS=@; export S=/tmp/a{,@/etc/shadow} S=/tmp/safe; tee $S",
-+        "S=/tmp/a@/etc/shadow; IFS=; export T={a,b}; tee $S",
-+        "S=/tmp/safe; export IFS={/,:}; IFS=@; tee $S",
-+        "IFS=@; export T=/tmp/* S=/tmp/safe; tee $S",
-+        "IFS=@; export T=/tmp/[ab]? S=/tmp/safe; tee $S",
-+    ] {
-+        assert_decision(source, true, None);
+ /// Redaction mode.
+ #[derive(
+     Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default, schemars::JsonSchema,
+@@ -115,6 +127,8 @@ pub enum RedactionMode {
+     None,
+     #[default]
+     Arguments,
++    // Suppress command text, diagnostic text, caller labels and audit paths.
++    // Stable rule identifiers, decisions, timestamps and counters remain.
+     Full,
+ }
+ 
+@@ -220,7 +234,10 @@ impl LogEntry {
+                         (Some(p), Some(n)) => Some(format!("{p}:{n}")),
+                         _ => None,
+                     };
+-                    let r = Some(pm.reason.clone());
++                    // Reasons may quote transformed command fragments (including
++                    // lowercased pipeline producers). Substring replacement is
++                    // insufficient: full mode must never copy diagnostic text.
++                    let r = Some(redact_reason(&pm.reason, redaction));
+                     (pack, pattern, rule, r)
+                 });
+ 
+@@ -429,6 +446,26 @@ pub(crate) fn redact_command(command: &str, config: &RedactionConfig) -> String
+     }
+ }
+ 
++/// Free-form metadata is not shell syntax. Argument truncation cannot safely
++/// sanitize it; full mode replaces it wholesale, other modes preserve it.
++pub(crate) fn redact_metadata(value: &str, config: &RedactionConfig) -> String {
++    if config.is_full() {
++        "[REDACTED]".to_string()
++    } else {
++        value.to_string()
 +    }
 +}
 +
-+#[test]
-+fn unrelated_export_braces_do_not_erase_concrete_native_rule_attribution() {
-+    for (source, rule) in [
-+        (
-+            "IFS=@; S=/tmp/a@/etc/shadow; export T={a,b}; tee $S",
-+            "core.filesystem:credential-file-write",
-+        ),
-+        (
-+            "IFS=@; S=/tmp/a@.git/config; export T={a,b}; tee $S",
-+            "core.filesystem:git-internals-write",
-+        ),
-+        (
-+            "IFS=@; export T={a,b} S=/tmp/a@/etc/shadow; tee $S",
-+            "core.filesystem:credential-file-write",
-+        ),
-+    ] {
-+        assert_decision(source, false, Some(rule));
++/// Retain a safe explanation without attempting to recognize every possible
++/// transformation of a command fragment in evaluator or operator diagnostics.
++pub(crate) fn redact_reason(reason: &str, config: &RedactionConfig) -> String {
++    if config.is_full() {
++        "Diagnostic details redacted.".to_string()
++    } else {
++        reason.to_string()
 +    }
 +}
 +
-+#[test]
-+fn export_brace_uncertainty_keeps_native_allowlist_families_independent() {
-+    for (grant, control, remaining) in [
-+        (
-+            "core.filesystem:credential-file-write",
-+            "tee /etc/shadow",
-+            "core.filesystem:git-internals-write",
-+        ),
-+        (
-+            "core.filesystem:git-internals-write",
-+            "tee .git/config",
-+            "core.filesystem:credential-file-write",
-+        ),
-+    ] {
-+        assert_allowed_by_grant(control, grant);
-+        for source in [
-+            "IFS=@; export S=/tmp/a{,@/etc/shadow}; tee $S",
-+            "S=/tmp/a:/etc/shadow; IFS=@; export IFS={/,:}; tee $S",
-+            "IFS=@; export S=/tmp/a@{/tmp/safe,.git/config}; tee $S",
+ fn redact_arguments(command: &str, max_len: usize) -> String {
+     let mut result = String::with_capacity(command.len());
+     let mut in_quote = false;
+@@ -940,11 +977,11 @@ impl AllowOnceLogEntry {
+             short_code: short_code.to_string(),
+             full_hash: full_hash.to_string(),
+             command: redact_command(command, redaction),
+-            cwd: cwd.to_string(),
++            cwd: redact_metadata(cwd, redaction),
+             expires_at: expires_at.to_string(),
+             scope_kind: None,
+             scope_path: None,
+-            reason: Some(reason.to_string()),
++            reason: Some(redact_reason(reason, redaction)),
+             single_use: Some(single_use),
+         }
+     }
+@@ -969,10 +1006,10 @@ impl AllowOnceLogEntry {
+             short_code: short_code.to_string(),
+             full_hash: full_hash.to_string(),
+             command: redact_command(command, redaction),
+-            cwd: cwd.to_string(),
++            cwd: redact_metadata(cwd, redaction),
+             expires_at: expires_at.to_string(),
+             scope_kind: Some(scope_kind.to_string()),
+-            scope_path: Some(scope_path.to_string()),
++            scope_path: Some(redact_metadata(scope_path, redaction)),
+             reason: None,
+             single_use: Some(single_use),
+         }
+@@ -993,7 +1030,7 @@ impl AllowOnceLogEntry {
+             short_code: short_code.to_string(),
+             full_hash: full_hash.to_string(),
+             command: redact_command(command, redaction),
+-            cwd: cwd.to_string(),
++            cwd: redact_metadata(cwd, redaction),
+             expires_at: String::new(),
+             scope_kind: None,
+             scope_path: None,
+@@ -1144,6 +1181,84 @@ mod tests {
+         assert_eq!(result, "git reset --hard HEAD");
+     }
+ 
++    #[test]
++    fn full_redaction_covers_complete_records_and_preserves_decisions() {
++        let marker = "DCG_SYNTHETIC_PRIVATE_ARGUMENT_9b4e";
++        let reason = format!("Unverified producer: {}", marker.to_lowercase());
++        let result = EvaluationResult::denied_by_pack_pattern(
++            "core.git",
++            "reset-hard",
++            &reason,
++            None,
++            crate::packs::Severity::High,
++            &[],
++        );
++        for mode in [
++            DecisionMode::Deny,
++            DecisionMode::Warn,
++            Decis
+```
+
+**File**: `src/main.rs` (modified, +14/-2)
+```diff
+@@ -1660,7 +1660,13 @@ fn resolve_hook_command(
+             record_history(writer, entry);
+         }
+         if let Some(log_file) = &ctx.config.general.log_file {
+-            let _ = hook::log_blocked_command(log_file, command, &info.reason, pack);
++            let _ = hook::log_blocked_command(
++                log_file,
++                command,
++                &info.reason,
++                pack,
++                &ctx.config.logging.redaction,
++            );
+         }
+         return ResolvedCommandOutcome::Allow(None);
+     }
+@@ -1882,7 +1888,13 @@ fn publish_decisive_response(
+ 
+             // Log if configured
+             if let Some(log_file) = &ctx.config.general.log_file {
+-                let _ = hook::log_blocked_command(log_file, &command, &info.reason, pack);
++                let _ = hook::log_blocked_command(
++                    log_file,
++                    &command,
++                    &info.reason,
++                    pack,
++                    &ctx.config.logging.redaction,
++                );
+             }
+ 
+             // Review-capable clients receive ask; all others receive their
+```
+
+**File**: `src/pending_exceptions.rs` (modified, +42/-10)
+```diff
+@@ -984,10 +984,10 @@ impl AllowOnceLogEntry {
+             event: AllowOnceEventKind::CodeIssued.label().to_string(),
+             short_code: record.short_code.clone(),
+             full_hash: record.full_hash.clone(),
+-            cwd: record.cwd.clone(),
++            cwd: crate::logging::redact_metadata(&record.cwd, redaction),
+             command: redact_for_log(&record.command_raw, redaction),
+             expires_at: Some(record.expires_at.clone()),
+-            reason: Some(record.reason.clone()),
++            reason: Some(crate::logging::redact_reason(&record.reason, redaction)),
+             allowlist_layer: None,
+             scope_kind: None,
+             single_use: Some(record.single_use),
+@@ -1004,10 +1004,10 @@ impl AllowOnceLogEntry {
+             event: AllowOnceEventKind::CodeResolved.label().to_string(),
+             short_code: entry.source_short_code.clone(),
+             full_hash: entry.source_full_hash.clone(),
+-            cwd: entry.scope_path.clone(),
++            cwd: crate::logging::redact_metadata(&entry.scope_path, redaction),
+             command: redact_for_log(&entry.command_raw, redaction),
+             expires_at: Some(entry.expires_at.clone()),
+-            reason: Some(entry.reason.clone()),
++            reason: Some(crate::logging::redact_reason(&entry.reason, redaction)),
+             allowlist_layer: None,
+             scope_kind: Some(format!("{:?}", entry.scope_kind).to_lowercase()),
+             single_use: Some(entry.single_use),
+@@ -1029,7 +1029,7 @@ impl AllowOnceLogEntry {
+             event: AllowOnceEventKind::AllowGranted.label().to_string(),
+             short_code: entry.source_short_code.clone(),
+             full_hash: entry.source_full_hash.clone(),
+-            cwd: cwd.to_string(),
++            cwd: crate::logging::redact_metadata(cwd, redaction),
+             command: redact_for_log(&entry.command_raw, redaction),
+             expires_at: Some(entry.expires_at.clone()),
+             reason: None,
+@@ -1049,7 +1049,7 @@ impl AllowOnceLogEntry {
+             event: AllowOnceEventKind::EntryConsumed.label().to_string(),
+             short_code: entry.source_short_code.clone(),
+             full_hash: entry.source_full_hash.clone(),
+-            cwd: cwd.to_string(),
++            cwd: crate::logging::redact_metadata(cwd, redaction),
+             command: redact_for_log(&entry.command_raw, redaction),
+             expires_at: Some(entry.expires_at.clone()),
+             reason: None,
+@@ -1076,7 +1076,7 @@ impl AllowOnceLogEntry {
+             event: AllowOnceEventKind::EntryExpired.label().to_string(),
+             short_code: short_code.to_string(),
+             full_hash: full_hash.to_string(),
+-            cwd: cwd.to_string(),
++            cwd: crate::logging::redact_metadata(cwd, redaction),
+             command: redact_for_log(command, redaction),
+             expires_at: Some(expires_at.to_string()),
+             reason: None,
+@@ -2244,18 +2244,50 @@ mod tests {
+             mode: crate::logging::RedactionMode::Full,
+             max_argument_len: 8,
+         };
++        let marker = "DCG_SYNTHETIC_PRIVATE_ARGUMENT_9b4e";
+         let record = PendingExceptionRecord::new(
+             now,
+-            "/repo",
+-            "git reset --hard HEAD",
+-            "blocked",
++            marker,
++            &format!("git reset --hard {marker}"),
++            &format!("producer {}", marker.to_lowercase()),
+             &redaction,
+             false,
+             None,
+         );
+ 
+         let entry = AllowOnceLogEntry::code_issued(&record, &redaction);
+         assert_eq!(entry.command, "[REDACTED]");
++        let grant = AllowOnceEntry::from_pending(
++            &record,
++            now,
++            AllowOnceScopeKind::Cwd,
++            marker,
++            true,
++            false,
++            &redaction,
++        );
++        for entry in [
++            entry,
++            AllowOnceLogEntry::code_resolved(&grant, &redaction),
++            AllowOnceLogEntry::allow_granted(&grant, &redaction, "allow_once", marker),
++            AllowOnceLogEntry::entry_consumed(&grant, &redaction, marker),
++            AllowOnceLogEntry::entry_expired(
++                &record.short_code,
++                &record.full_hash,
++                marker,
++                marker,
++                &record.expires_at,
++                &redaction,
++            ),
 +        ] {
-+            assert_decision_with_grant(source, false, Some(remaining), Some(grant));
++            for serialized in [entry.format_json(), entry.format_text()] {
++                assert!(
++                    !serialized.to_lowercase().contains(&marker.to_lowercase()),
++                    "{serialized}"
++                );
++                assert!(serialized.contains(&record.short_code));
++            }
 +        }
-+    }
-+}
+     }
+ 
+     #[test]
+```
+
+**File**: `tests/cli_e2e.rs` (modified, +109/-0)
+```diff
+@@ -1772,6 +1772,115 @@ mod allow_once_flow_tests {
+         assert_eq!(entries[1]["mode"], "allow");
+     }
+ 
++    /// Issue #585: inspect the complete persisted record, not just `command`.
++    /// Candidate pipelines are evaluated by the hook and are never executed.
++    #[test]
++    fn full_logging_redaction_suppresses_diagnostics_issue_585() {
++        const MARKER: &str = "DCG_SYNTHETIC_PRIVATE_ARGUMENT_9b4e";
++        for format in ["json", "text"] {
++            for mode in ["deny", "warn"] {
++                let env = FlowTestEnv::new();
++                let log_path = env.temp.path().join("decisions.log");
++                let audit_path = env.temp.path().join("audit.log");
++                let config_path = env.temp.path().join("config.toml");
++                let config = format!(
++                    "[general]\nlog_file = {:?}\n\
++                     [history]\nenabled = false\n\
++                     [packs]\nenabled = [\"windows\"]\n\
++                     [policy.rules]\n\"core.git:reset-hard\" = {mode:?}\n\
++                     [logging]\nenabled = true\nfile = {:?}\nformat = {format:?}\n\
++                     caller_env = \"DCG_TEST_CALLER\"\n\
++                     [logging.redaction]\nenabled = true\nmode = \"full\"\n\
++                     [logging.events]\ndeny = true\nwarn = true\nallow = true\n",
++                    audit_path.to_string_lossy(),
++                    log_path.to_string_lossy(),
++                );
++                std::fs::write(&config_path, &config).expect("write config");
++                // Redemption runs through the CLI, which must load the same
++                // redaction policy as the hook under both platform spellings.
++                for dir in [
++                    env.xdg_config_dir.join("dcg"),
++                    env.home_dir.join(".config").join("dcg"),
++                ] {
++                    std::fs::create_dir_all(&dir).expect("config dir");
++                    std::fs::write(dir.join("config.toml"), &config).expect("write config");
++                }
++                let config_str = config_path.to_str().expect("config path");
++                let extra_env = [
++                    ("DCG_CONFIG", config_str),
++                    ("DCG_TEST_CALLER", MARKER),
++                    ("DCG_PACKS", "core.git,core.filesystem,windows"),
++                    ("DCG_SELF_HEAL_HOOK", "0"),
++                    ("DCG_HOOK_TIMEOUT_MS", "10000"),
++                ];
++                let pipeline = format!("{MARKER} | python -");
++                let pipeline_result = env.run_hook_with_env(&pipeline, &extra_env);
++                // Unverified embedded execution remains denied even when the
++                // ordinary git rule is configured to warn.
++                assert_is_denial(&pipeline_result);
++                let git_result =
++                    env.run_hook_with_env(&format!("git reset --hard {MARKER}"), &extra_env);
++                if mode == "deny" {
++                    assert_is_denial(&git_result);
++                } else {
++                    assert_is_allowed(&git_result);
++                    assert!(!git_result.stderr_str().is_empty(), "warning retained");
++                }
++                assert_is_allowed(
++                    &env.run_hook_with_env(&format!("git status -- {MARKER}"), &extra_env),
++                );
 +
- #[test]
- fn background_assignment_groups_cannot_hide_inherited_native_destinations() {
-     for mutation in [
++                let log = std::fs::read_to_string(&log_path).expect("decision log");
++                assert_eq!(log.lines().count(), 3, "{log}");
++                assert!(
++                    !log.to_lowercase().contains(&MARKER.to_lowercase()),
++                    "{log}"
++                );
++                assert!(log.contains("core.git:reset-hard"), "stable rule ID: {log}");
++                if format == "json" {
++                    let records: Vec<serde_json::Value> = log
++                        .lines()
++                        .map(|line| serde_json::from_str(line).expect("JSON record"))
++                        .collect();
++                    assert_eq!(records[0]["decision"], "deny");
++                    assert_eq!(records[1]["decision"], mode);
++                    assert_eq!(records[2]["decision"], "allow");
++                    assert_eq!(records[0]["command"], "[REDACTED]");
++                    assert_eq!(records[0]["reason"], "Diagnostic details redacted.");
++                } else {
++                    assert!(log.lines().next().unwrap().contains("DENY"));
++                    assert!(log.lines().nth(1).unwrap().contains(&mode.to_uppercase()));
++                    assert!(log.lines().nth(2).unwrap().contains("ALLOW"));
++                }
++                if mode == "deny" {
++                    let code = extract_code_from_denial(&git_result.stdout_str())
++                        .expect("allow-once code");
++                    let granted = env.run_cli(&["allow-once", &code, "--yes"]);
++                    assert!(granted.status.success(), "{granted:?}");
++                    assert_i
 ```
 
 #### Recent Merged Pull Requests:
@@ -2997,52 +3401,28 @@ Refs #558
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ifs): preserve wrapper argument boundaries before destination checks (#558)
+## X. cli): preserve security metadata and reject ambiguous hook settings
 
 **RULE**:
-When implementing operations in `src/packs/core/credential_files/word_splitting.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e77f026b`: ifs): preserve wrapper argument boundaries before destination checks (#558). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53e4dc38`: cli): preserve security metadata and reject ambiguous hook settings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/packs/core/credential_files/word_splitting.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// An execution frontend left in argv0 is not evidence of a non-writer.
-/// Normalization can stop on a dynamic option even in a single wrapper, or
-/// an expansion can supply the wrapper name after normalization has run.
-fn execution_frontend(name: &str) -> bool {
-    matches!(name, "sudo" | "env" | "command" | "builtin")
-        || crate::normalize::is_posix_execution_frontend_basename(name)
-}
-
-/// A literal command -v/-V is a query, not an execution frontend. Only read
-/// options before its first operand/--, and stop at dynamic words: they can
-/// supply an operand or terminate option parsing before a later literal -v.
-/// This exempts this argv pass only, never the original command's checks.
-fn command_queries_only(arguments: &[&str]) -> bool {
-    if arguments.first().and_then(|word| literal(word)).as_deref() != Some("command") {
-        return false;
-    }
-    for raw in arguments.iter().skip(1) {
-        let Some(word) = literal(raw) else {
-            return false;
-        };
-        let Some(flags) = word.strip_prefix('-') else {
-            return false;
-        };
-        if flags.is_empty() || !flags.chars().all(|ch| matches!(ch, 'p' | 'v' | 'V')) {
-            return
+ "rustix",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                if active && expands && stripp
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e77f026b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53e4dc38` are properly handled with clean fallback behavior.

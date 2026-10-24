@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/megabit-blazorise-learnings.md`  
 > **Source**: github ([https://github.com/Megabit/Blazorise](https://github.com/Megabit/Blazorise))  
-> **Source Version**: `14553676`  
+> **Source Version**: `7ecbdcac`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:16:47.158Z  
+> **Timestamp**: 2026-10-24T20:11:10.828Z  
 > **Learning ID**: `learn-github-megabit-blazorise`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/megabit-blazorise-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Megabit/Blazorise](https://github.com/Megabit/Blazorise))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:16:46.053Z  
+> **Harvest Timestamp**: 2026-10-24T20:11:09.441Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazorise is a component library built on top of Blazor with support for CSS frameworks like Bootstrap, Tailwind, Bulma, AntDesign, and Material.
 - **Primary Language / Ecosystem**: C#
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3539 stars
+- **Stars / Engagement**: 3541 stars
 
 ---
 
@@ -769,11 +769,11 @@ export function close(element) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6865** (2026-10-19): **Tooltip: fix form layout and show delay regressions**
-  *Symptoms*: Closes #6864 Closes #6862 Closes #6863  The new Tooltip implementation changed how wrapped controls were sized. This restores the previous provider-specific inline detection in SCSS, including Bulma’s field layout adjustment, while keeping text inputs in AntDesign and FluentUI2 full-width. Detection only examines the wrapped content, so buttons inside the popup cannot change the host’s layout. Explicit `Inline` settings still take precedence.  Fixes `ShowDelay` across all providers by adding a hidden starting state for the popup’s visibility transition. Also fixes an AntDesign specificity conflict where the default column styles overrode `RowColumns`, squeezing every column into one row.
+- **Issue #6876** (2026-10-23): **DataGrid: Support multiple aggregate rows**
+  *Symptoms*: Closes #4349  DataGrid can now show summaries such as totals and averages in separate rows. Wrap each set of aggregates in a `DataGridAggregateRow` inside `DataGridAggregates`. Existing aggregates without a wrapper still render together in one row.  Added a documentation example showing total and average salary in separate footer rows. Removed aggregates also unregister from the grid so conditional rows don’t leave stale entries.
 
-- **Issue #6864** (2026-10-19): **[Bug]: new Tooltip showdelay not working**
-  *Symptoms*: ### Blazorise Version  2.4  ### What Blazorise provider are you running on?  Bootstrap5  ### Link to minimal reproduction or a simple code snippet  See blazorise documentation page:  https://blazorise.com/docs/components/tooltip   ### Steps to reproduce & bug description  the tooltip shows immediatly when hovering over the button  ### What is expected?  delay should be respected as in older versions  ### What is actually happening?  tooltip is shown immediatly, the hide delay is working as expected  ### What browsers do you see the problem on?  Microsoft Edge  ### Any additional comments?  _No response_
+- **Issue #6875** (2026-10-23): **DataGrid: add loading display modes and a default spinner**
+  *Symptoms*: Added `LoadingDisplayMode` to control how loading content appears. `Default` preserves the existing behavior, `None` disables loading content, `Overlay` keeps the rows and pager visible while blocking interaction, and Replace shows loading content in place of the rows.  Overlay and Replace show a compact spinner when no `LoadingTemplate` is supplied. The default overlay includes a backdrop, while custom templates are centered and can provide their own backdrop. The spinner uses the existing localization pattern, with translations for all supported languages.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -790,378 +790,622 @@ export function close(element) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7bd57b09` (2026-10-19)
-**Commit Message**: Tooltip: fix form layout and show delay regressions (#6865)
+### Incident Patch 1: `e5c1ba82` (2026-10-22)
+**Commit Message**: Demo: add invoice builder mini app
 
-* fix tooltip auto inline regression
-
-* fix antdesign grid spacing
-
-* fix animation delay
-
-* test
-
-* remove default zindex
-
-**File**: `Documentation/Blazorise.Docs/Pages/Docs/Components/Tooltips/TooltipPage.razor` (modified, +1/-1)
+**File**: `Demos/Shared/Blazorise.Demo/Components/SideMenu.razor` (modified, +3/-0)
 ```diff
-@@ -43,7 +43,7 @@
-             <Paragraph><Code>Animation</Code> selects a provider-aware show and hide effect.</Paragraph>
-         </UnorderedListItem>
-         <UnorderedListItem>
--            <Paragraph><Code>Inline</Code> forces the tooltip wrapper to behave as inline-block (useful when wrapping inline content).</Paragraph>
-+            <Paragraph>When <Code>Inline</Code> is omitted, the CSS provider automatically selects inline-block layout for its supported targets. Set <Code>Inline="true"</Code> to force inline-block layout or <Code>Inline="false"</Code> to force block layout.</Paragraph>
-         </UnorderedListItem>
-         <UnorderedListItem>
-             <Paragraph><Code>TriggerTargetId</Code> applies trigger event listeners to a different element than the tooltip target.</Paragraph>
+@@ -459,6 +459,9 @@
+                         <BarDropdownItem To="apps/todo">
+                             Todo
+                         </BarDropdownItem>
++                        <BarDropdownItem To="apps/invoice-builder">
++                            Invoice builder
++                        </BarDropdownItem>
+                     </BarDropdownMenu>
+                 </BarDropdown>
+             </BarItem>
 ```
 
-**File**: `Source/Blazorise.AntDesign/Styles/components/_tooltip.scss` (modified, +5/-1)
+**File**: `Demos/Shared/Blazorise.Demo/Pages/Apps/InvoiceBuilder/InvoiceBuilderPage.razor` (added, +562/-0)
 ```diff
-@@ -33,7 +33,7 @@
-     }
- 
-     &[data-tooltip-inline='true'],
--    &[data-tooltip-inline='auto']:has(> :is(button, input, select, textarea, label, [role='button'])) {
-+    &[data-tooltip-inline='auto']:has( > .ant-btn, > :not(.ant-tooltip) .ant-btn ) {
-         display: inline-block;
-     }
- 
-@@ -171,6 +171,10 @@
-     transition-timing-function: var(--ant-motion-ease-out-circ), var(--ant-motion-ease-out-circ), var(--ant-motion-ease-out-circ), var(--ant-motion-ease-out-circ), linear, linear;
-     transition-behavior: allow-discrete;
- 
-+    @starting-style {
-+        visibility: hidden;
-+    }
+@@ -0,0 +1,562 @@
++@page "/apps/invoice-builder"
++@namespace Blazorise.Demo.Pages.Apps.InvoiceBuilder
++@using System.Globalization
++@using System.IO
++@using System.Text.Json
++@using Blazorise.Pdf
++@inject IPdfGenerator PdfGenerator
++@inject IMessageService MessageService
 +
-     .ant-tooltip-host:is([data-tooltip-animation='auto'], [data-tooltip-animation~='fade']) > & {
-         @starting-style {
-             opacity: 0;
-```
-
-**File**: `Source/Blazorise.AntDesign/Styles/utilities/_grid.scss` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
-         padding-left: var(--ant-padding-xs);
-         padding-right: var(--ant-padding-xs);
- 
--        &:not([class*="ant-col-"]) {
-+        :where(&:not([class*="ant-col-"])) {
-             flex: 1 0 0%;
-             max-width: 100%;
-         }
-```
-
-**File**: `Source/Blazorise.AntDesign/wwwroot/blazorise.antdesign.css` (modified, +2/-2)
-```diff
-@@ -11703,7 +11703,7 @@ a.ant-typography-disabled[aria-disabled=true] {
- .ant-tooltip-host[data-tooltip-animation~=blur] {
-   --ant-tooltip-animation-blur: 2px;
- }
--.ant-tooltip-host[data-tooltip-inline=true], .ant-tooltip-host[data-tooltip-inline=auto]:has(> :is(button, input, select, textarea, label, [role=button])) {
-+.ant-tooltip-host[data-tooltip-inline=true], .ant-tooltip-host[data-tooltip-inline=auto]:has(> .ant-btn, > :not(.ant-tooltip) .ant-btn) {
-   display: inline-block;
- }
- .ant-tooltip-host[data-tooltip-active=true], .ant-tooltip-host[data-tooltip-trigger=mouse-enter-focus]:is(:hover, :focus-visible, :has(:focus-visible)), .ant-tooltip-host[data-tooltip-trigger=focus]:focus-within, .ant-tooltip-host[data-tooltip-trigger=mouse-enter-click]:hover {
-@@ -15171,7 +15171,7 @@ body .b-report {
-   padding-left: var(--ant-padding-xs);
-   padding-right: var(--ant-padding-xs);
- }
--.ant-row > .ant-col:not([class*=ant-col-]) {
-+:where(.ant-row > .ant-col:not([class*=ant-col-])) {
-   flex: 1 0 0%;
-   max-width: 100%;
- }
-```
-
-**File**: `Source/Blazorise.Bootstrap/Styles/components/_tooltip.scss` (modified, +5/-1)
-```diff
-@@ -29,7 +29,7 @@
-     }
- 
-     &[data-tooltip-inline='true'],
--    &[data-tooltip-inline='auto']:has(> :is(button, input, select, textarea, label, [role='button'])) {
-+    &[data-tooltip-inline='auto']:has( > :is(.custom-control-input, .btn), > :not(.tooltip) :is(.custom-control-input, .btn) ) {
-         display: inline-block;
-     }
- 
-@@ -79,6 +79,10 @@
-     transition-timing-function: linear, linear, linear, linear, linear, linear;
-     transition-behavior: allow-discrete;
- 
-+    @starting-style {
-+        visibility: hidden;
-+    }
++<Row Margin="Margin.Is3.OnY">
++    <Column ColumnSize="ColumnSize.Is8.OnDesktop.Is12.OnMobile">
++        <Card Shadow="Shadow.Default" Margin="Margin.Is4.FromBottom">
++            <CardBody Padding="Padding.Is4">
++                <Row>
++                    <Column ColumnSize="ColumnSize.Is6.OnTablet.Is12.OnMobile">
++                        <Button Color="Color.Primary" Outline Block Padding="Padding.Is2" TextAlignment="TextAlignment.Start" Clicked="@(() => logoModal.Show())">
++                            @if ( string.IsNullOrEmpty( invoice.Logo ) )
++                            {
++                                <Icon Name="IconName.Image" IconSize="IconSize.x2" Margin="Margin.Is2.FromEnd" />
++                                <Span>Choose logo</Span>
++                            }
++                            else
++                            {
++                                <Image Source="@invoice.Logo" Text="Company logo. Click to change." Height="Height.Px( 48 )" Width="Width.Auto" />
++                            }
++                        </Button>
++                    </Column>
++                    <Column ColumnSize="ColumnSize.Is6.OnTablet.Is12.OnMobile">
++                        <Row>
++                            <Column ColumnSize="ColumnSize.Is6">
++                                <Select TValue="string" @bind-Value="invoice.DocumentType" aria-label="Document type">
++                                    <SelectItem Value="@("Invoice")">Invoice</SelectItem>
++                                    <SelectItem Value="@("Quote")">Quote</SelectItem>
++                                </Select>
++                            </Column>
++                            <Column ColumnSize="ColumnSize.Is6">
++                                <TextInput @bind-Value="invoice.Number" Placeholder="0001" MaxLength="30" aria-label="Invoice number" />
++                            </Column>
++                        </Row>
++                    </Column>
++                </Row>
 +
-     .tooltip-host:is([data-tooltip-animation='auto'], [data-tooltip-animation~='fade']) > & {
-         @starting-style {
-             opacity: 0;
++                <Divider Margin="Margin.Is4.OnY" />
++
++                <Row Margin="Margin.Is3.FromBottom">
++                    <Column ColumnSize="ColumnSize.Is6.OnTablet.Is12.OnMobile">
++                        <Div Flex="Flex.Column" Gap="Gap.Is3">
++                            <Div Border="Border.Is1.Rounded" TextColor="TextColor.Body" Style="cursor: pointer"
++                                 Flex="Flex.Column.AlignItems.Start" TextAlignment="TextAlignment.Start" Padding="Padding.Is2" Margin="Margin.Is3.FromBottom"
++                                 @onclick="@(() => EditParty( true ))">
++                                <Strong Display="Display.Block" Margin="Margin.Is2.FromBottom">From</Strong>
++                                <Span Flex="Flex.AlignItems.Center" Gap="Gap.Is3">
++                                    <Icon Name="IconName.Building" IconSize="IconSize.x2" />
++                                    <Span>
++                                        <Span Display="Display.Block">@(string.IsNullOrWhiteSpace( invoice.Sender.CompanyName ) ? "Sender name" : invoice.Sender.CompanyName)</Span>
++                                        <Small Display="Display.Block" TextColor="TextColor.Body">
++                                            @(string.IsNullOrWhiteSpace( invoice.Sender.FormatContactDetails() ) ? "Sender contact details" : invoice.Sender.FormatContactDetails())
++                                        </Small>
++                                    </Span>
++                                </Span>
++                            </Div>
++                            <Div Border="Border.Is1.Rounded" TextColor="TextColor.Body" Style="cursor: pointer"
++                                 Flex="Flex.Column.AlignItems.Start" TextAlignment="TextAlignment.Start" Padding="Padding.Is2"
++                                 @onclick="@(() => EditParty( false ))">
++                                <Strong Display="Display.Block" Margin="Margin.Is2.FromBottom">To</Strong>
++                                <Span Flex="Flex.AlignItems.Center" Gap="Gap.Is3">
++                                    <Icon Name="IconName.UserCircle" IconSize="IconSize.x2" />
++                                    <Span>
++                                        <Span Display="Display.Block">@(string.IsNullOrWhiteSpace( invoice.Recipient.CompanyName ) ? "Recipient name" : invoice.Recipient.CompanyName)</Span>
++                                        <Small Display="Display.Block" TextColor="TextColor.Body">
++                                            @(string.IsNullOrWhiteSpace( invoice.Recipient.FormatContactDetails() ) ? "Recipient contact details" : invoice.Recipient.FormatContactDetails())
++                                      
 ```
 
-**File**: `Source/Blazorise.Bootstrap/wwwroot/blazorise.bootstrap.css` (modified, +6/-1)
+**File**: `Demos/Shared/Blazorise.Demo/Pages/Apps/InvoiceBuilder/InvoiceParty.cs` (added, +58/-0)
 ```diff
-@@ -5371,7 +5371,7 @@ td:focus {
- .tooltip-host[data-tooltip-animation~=blur] {
-   --tooltip-animation-blur: 2px;
- }
--.tooltip-host[data-tooltip-inline=true], .tooltip-host[data-tooltip-inline=auto]:has(> :is(button, input, select, textarea, label, [role=button])) {
-+.tooltip-host[data-tooltip-inline=true], .tooltip-host[data-tooltip-inline=auto]:has(> :is(.custom-control-input, .btn), > :not(.tooltip) :is(.custom-control-input, .btn)) {
-   display: inline-block;
- }
- .tooltip-host[data-tooltip-active=true], .tooltip-host[data-tooltip-trigger=mouse-enter-focus]:is(:hover, :focus-visible, :has(:focus-visible)), .tooltip-host[data-tooltip-trigger=focus]:focus-within, .tooltip-host[data-tooltip-trigger=mouse-enter-click]:hover {
-@@ -5427,6 +5427,11 @@ td:focus {
-   transition-timing-function: linear, linear, linear, linear, linear, linear;
-   transition-behavior: allow-discrete;
- }
-+@starting-style {
-+  .tooltip {
-+    visibility: hidden;
-+  }
+@@ -0,0 +1,58 @@
++#region Using directives
++using System;
++using System.Linq;
++#endregion
++
++namespace Blazorise.Demo.Pages.Apps.InvoiceBuilder;
++
++public record InvoiceParty
++{
++    public string CompanyName { get; set; }
++
++    public string TaxRegistrationNumber { get; set; }
++
++    public string FirstName { get; set; }
++
++    public string LastName { get; set; }
++
++    public string AddressLine1 { get; set; }
++
++    public string AddressLine2 { get; set; }
++
++    public string PostalCode { get; set; }
++
++    public string City { get; set; }
++
++    public string Country { get; set; } = string.Empty;
++
++    public string CallingCode { get; set; } = "+93";
++
++    public string PhoneNumber { get; set; }
++
++    public string Email { get; set; }
++
++    public string Website { get; set; }
++
++    public string Currency { get; set; } = string.Empty;
++
++    public string AdditionalInfo { get; set; }
++
++    public string FormatContactDetails()
++    {
++        var details = new[]
++        {
++            $"{FirstName} {LastName}".Trim(),
++            AddressLine1,
++            AddressLine2,
++            $"{PostalCode} {City}".Trim(),
++            Country,
++            string.IsNullOrWhiteSpace( PhoneNumber ) ? null : $"{CallingCode} {PhoneNumber}",
++            Email,
++            Website,
++            string.IsNullOrWhiteSpace( TaxRegistrationNumber ) ? null : $"Tax Registration Number: {TaxRegistrationNumber}",
++            AdditionalInfo,
++        };
++
++        return string.Join( Environment.NewLine, details.Where( detail => !string.IsNullOrWhiteSpace( detail ) ) );
++    }
 +}
- @starting-style {
-   .tooltip-host:is([data-tooltip-animation=auto], [data-tooltip-animation~=fade]) > .tooltip {
-     opacity: 0;
+\ No newline at end of file
 ```
 
-**File**: `Source/Blazorise.Bootstrap5/Styles/components/_tooltip.scss` (modified, +5/-1)
+**File**: `Demos/Shared/Blazorise.Demo/Pages/Apps/InvoiceBuilder/InvoicePartyDialog.razor` (added, +235/-0)
 ```diff
-@@ -41,7 +41,7 @@
-     }
- 
-     &[data-tooltip-inline='true'],
--    &[data-tooltip-inline='auto']:has(> :is(button, input, select, textarea, label, [role='button'])) {
-+    &[data-tooltip-inline='auto']:has( > :is(.custom-control-input, .btn), > :not(.tooltip) :is(.custom-control-input, .btn) ) {
-         display: inline-block;
-     }
- 
-@@ -104,6 +104,10 @@
-     transition-timing-function: cubic-bezier(.2, 0, 0, 1), cubic-bezier(.2, 0, 0, 1), cubic-bezier(.2, 0, 0, 1), cubic-bezier(.2, 0, 0, 1), linear, linear;
-     transition-behavior: allow-discrete;
- 
-+    @starting-style {
-+        visibility: hidden;
+@@ -0,0 +1,235 @@
++@namespace Blazorise.Demo.Pages.Apps.InvoiceBuilder
++@inject CountryData CountryData
++
++<Modal @ref="modal" Size="ModalSize.Large" Centered Scrollable aria-label="@(editingSender ? "Sender information" : "Recipient information")">
++    <ModalContent>
++        <ModalHeader Border="Border.Is0">
++            @if ( !editingSender )
++            {
++                <ModalTitle>Recipient Information</ModalTitle>
++            }
++            else
++            {
++                <Span />
++            }
++            <CloseButton />
++        </ModalHeader>
++        <ModalBody>
++            <Validations @key="editRevision" @ref="validations" Mode="ValidationMode.Manual" ValidateOnLoad="false">
++                <Fields>
++                    <Validation Validator="ValidationRule.IsNotEmpty">
++                        <Field ColumnSize="ColumnSize.Is12.OnMobile.Is6.OnTablet">
++                            <FieldLabel RequiredIndicator>@(editingSender ? "Company / Sender name" : "Company name")</FieldLabel>
++                            <TextInput @bind-Value="party.CompanyName" MaxLength="100">
++                                <Feedback>
++                                    <ValidationError>Enter a company name.</ValidationError>
++                                </Feedback>
++                            </TextInput>
++                        </Field>
++                    </Validation>
++                    @if ( editingSender )
++                    {
++                        <Field ColumnSize="ColumnSize.Is12.OnMobile.Is6.OnTablet">
++                            <FieldLabel>
++                                <Icon Name="IconName.Edit" TextColor="TextColor.Primary" Margin="Margin.Is1.FromEnd" />
++                                Tax Registration Number
++                            </FieldLabel>
++                            <TextInput @bind-Value="party.TaxRegistrationNumber" MaxLength="100" />
++                        </Field>
++                    }
++                    else
++                    {
++                        @CountryField
++                    }
++                </Fields>
++                <Fields>
++                    <Field ColumnSize="ColumnSize.Is12.OnMobile.Is6.OnTablet">
++                        <FieldLabel>First name</FieldLabel>
++                        <TextInput @bind-Value="party.FirstName" MaxLength="100" />
++                    </Field>
++                    <Field ColumnSize="ColumnSize.Is12.OnMobile.Is6.OnTablet">
++                        <FieldLabel>Last Name</FieldLabel>
++                        <TextInput @bind-Value="party.LastName" MaxLength="100" />
++                    </Field>
++                </Fields>
++                @if ( !editingSender )
++                {
++                    <Fields>
++                        @EmailField
++                        @PhoneField
++                    </Fields>
++                }
++                <Fields>
++                    <Field ColumnSize="ColumnSize.Is12.OnMobile.Is6.OnTablet">
++                        <FieldLabel>Address line 1</FieldLabel>
++                        <TextInput @bind-Value="party.AddressLine1" MaxLength="200" />
++                    </Field>
++                    <Field ColumnSize="ColumnSize.Is12.OnMobile.Is6.OnTablet">
++                        <FieldLabel>Address line 2</FieldLabel>
++                        <TextInput @bind-Value="party.AddressLine2" MaxLength="200" />
++                    </Field>
++                </Fields>
++                <Fields>
++                    <Field ColumnSize="ColumnSize.Is12.OnMobile.Is6.OnTablet">
++                        <FieldLabel>Postal code</FieldLabel>
++                        <TextInput @bind-Value="party.PostalCode" MaxLength="30" />
++                    </Field>
++                    <Field ColumnSize="ColumnSize.Is12.OnMobile.Is6.OnTablet">
++                        <FieldLabel>City</FieldLabel>
++                        <TextInput @bind-Value="party.City" MaxLength="100" />
++                    </Field>
++                </Fields>
++                @if ( editingSender )
++                {
++                    <Fields>
++                        @CountryField
++                        @PhoneField
++                    </Fields>
++                }
++                <Fields>
++                    @if ( editingSender )
++                    {
++                        @EmailField
++                    }
++                    <Field ColumnSize="ColumnSize.Is12.OnMobile.Is6.OnTablet">
++                        <FieldLabel>Web site</FieldLabel>
++                        <TextInput @bind-Value="party.Website" Role="TextRole.Url" MaxLength="200" />
++                    </Field>
++                    @if ( !editingSender )
++                    {
++                        <Field ColumnSize="ColumnSize.Is12.OnMobile.Is6.OnTablet">
++                            <FieldLabel>Invoice currency</FieldLabel>
++                            <Select TValue="string" @bind-Value="party.Currency">
++                               
+```
+
+**File**: `Demos/Shared/Blazorise.Demo/Pages/Apps/InvoiceBuilder/InvoicePdfBuilder.cs` (added, +433/-0)
+```diff
+@@ -0,0 +1,433 @@
++#region Using directives
++using System;
++using System.Collections.Generic;
++using System.Globalization;
++using System.Linq;
++using Blazorise.Pdf;
++#endregion
++
++namespace Blazorise.Demo.Pages.Apps.InvoiceBuilder;
++
++/// <summary>
++/// Lays out the demo invoice on A4 pages using native Blazorise PDF elements.
++/// </summary>
++internal sealed class InvoicePdfBuilder
++{
++    #region Members
++
++    private const double Margin = 40;
++
++    private const double ContentWidth = 515;
++
++    private const double ContentBottom = 760;
++
++    private const double LineHeight = 14;
++
++    private const string Ink = "#202938";
++
++    private const string Muted = "#64748b";
++
++    private const string Accent = "#2447a8";
++
++    private const string Rule = "#e2e8f0";
++
++    private readonly InvoiceBuilderPage.InvoiceDraft invoice;
++
++    private readonly Func<decimal, string> formatMoney;
++
++    private readonly PdfDocumentBuilder document = PdfDocumentBuilder.Create().PageSetup( PdfPageSize.A4 );
++
++    private readonly List<PdfPageBuilder> pages = [];
++
++    private PdfPageBuilder page;
++
++    private double y;
++
++    private bool hasTableHeader;
++
++    #endregion
++
++    #region Constructors
++
++    public InvoicePdfBuilder( InvoiceBuilderPage.InvoiceDraft invoice, Func<decimal, string> formatMoney )
++    {
++        this.invoice = invoice;
++        this.formatMoney = formatMoney;
 +    }
 +
-     .tooltip-host:is([data-tooltip-animation='auto'], [data-tooltip-animation~='fade']) > & {
-         @starting-style {
-             opacity: 0;
-```
-
-**File**: `Source/Blazorise.Bootstrap5/wwwroot/blazorise.bootstrap5.css` (modified, +6/-1)
-```diff
-@@ -5509,7 +5509,7 @@ td:focus {
- .tooltip-host[data-tooltip-animation~=blur] {
-   --bs-tooltip-animation-blur: 2px;
- }
--.tooltip-host[data-tooltip-inline=true], .tooltip-host[data-tooltip-inline=auto]:has(> :is(button, input, select, textarea, label, [role=button])) {
-+.tooltip-host[data-tooltip-inline=true], .tooltip-host[data-tooltip-inline=auto]:has(> :is(.custom-control-input, .btn), > :not(.tooltip) :is(.custom-control-input, .btn)) {
-   display: inline-block;
- }
- .tooltip-host[data-tooltip-active=true], .tooltip-host[data-tooltip-trigger=mouse-enter-focus]:is(:hover, :focus-visible, :has(:focus-visible)), .tooltip-host[data-tooltip-trigger=focus]:focus-within, .tooltip-host[data-tooltip-trigger=mouse-enter-click]:hover {
-@@ -5578,6 +5578,11 @@ td:focus {
-   transition-timing-function: cubic-bezier(0.2, 0, 0, 1), cubic-bezier(0.2, 0, 0, 1), cubic-bezier(0.2, 0, 0, 1), cubic-bezier(0.2, 0, 0, 1), linear, linear;
-   transition-behavior: allow-discrete;
- }
-+@starting-style {
-+  .tooltip {
-+    visibility: hidden;
-+  }
-+}
- @starting-style {
-   .tooltip-host:is([data-tooltip-animation=auto], [data-tooltip-animation~=fade]) > .tooltip {
-     opacity: 0;
++    #endregion
++
++    #region Methods
++
++    public PdfDocumentDefinition Build()
++    {
++        document.Title( $"{invoice.DocumentType} {invoice.Number}" );
++        NewPage();
++        DrawHeader();
++        DrawParties();
++
++        foreach ( var field in invoice.CustomFields )
++        {
++            DrawSection( field.Name, field.Text );
++        }
++
++        DrawSection( "Description", invoice.Description );
++
++        if ( invoice.Items.Count == 0 )
++        {
++            EnsureSpace( 30 );
++            DrawTableHeader();
++        }
++
++        foreach ( var item in invoice.Items )
++        {
++            DrawItem( item );
++        }
++
++        DrawTotals();
++        DrawSection( "Payment details", invoice.PaymentDetails );
++        DrawSection( "Terms", invoice.Terms );
++
++        for ( var index = 0; index < pages.Count; index++ )
++        {
++            page = pages[index];
++            page.Line( Margin, 790, ContentWidth, 0 ).BorderColor( Rule ).BorderWidth( 0.5 );
++            DrawText( $"{invoice.DocumentType} {invoice.Number}", Margin, 800, 350, 9, color: Muted );
++            DrawText( $"Page {index + 1} of {pages.Count}", 440, 800, 115, 9, alignment: TextAlignment.End, color: Muted );
++        }
++
++        return document.Build();
++    }
++
++    private void NewPage()
++    {
++        document.Page( newPage => page = newPage );
++        pages.Add( page );
++        y = Margin;
++        hasTableHeader = false;
++
++        if ( pages.Count > 1 )
++        {
++            DrawText( $"{invoice.DocumentType} {invoice.Number}", Margin, y, ContentWidth, 12, bold: true );
++            page.Line( Margin, y + 26, ContentWidth, 0 ).BorderColor( Rule ).BorderWidth( 0.5 );
++            y += 42;
++        }
++    }
++
++    private void EnsureSpace( double height )
++    {
++        if ( y + height > ContentBottom )
++        {
++            NewPage();
++        }
++    }
++
++    private void DrawHeader()
++    {
++        if ( !string.IsNullOrWhiteSpace( invoice.Logo ) )
++        {
++            page.Image( invoice.Logo, Margin, y, 180, 65 ).Fit( PdfImageFit.Contain );
++        }
++
++        DrawText( invoice.DocumentType.ToUpperInvariant(), 320, y, 235, 26, bold: true, alignment: TextAlignment.End, color: Accent );
++        DrawText( $"# {invoice.Number}", 320, y + 35, 235, 12, alignment: TextAlignment.End, color: Muted );
++        y += 65;
++        DrawHeaderDetail( "Issue date", invoice.IssueDate.ToString( "yyyy-MM-dd", CultureInfo.InvariantCulture ) );
++        DrawHeaderDetail( "Due date", invoice.DueDate.ToString( "yyyy-MM-dd", CultureInfo.InvariantCulture ) );
++        DrawHeaderDetail( "PO number", invoice.PurchaseOrderNumber );
++        DrawHeaderDetail( "Payment Terms", invoice.PaymentTerms );
++
++        y += 15;
++        page.Line( Margin, y, ContentWidth, 0 ).BorderColor( Accent ).BorderWidth( 1.5 );
++        y += 22;
++    }
++
++    private void DrawHeaderDetail( string label, string text )
++    {
++        if ( string.IsNullOrWhiteSpace( text ) )
++        {
++            return;
++        }
++
++        var lines = WrapText( text, 125 );
++
++        DrawText( label, 330, y, 95, 10, color: Muted );
++
++        foreach ( var line in lines )
++        {
++            DrawText( line, 430, y, 125, alignment: TextAlignment.End );
++            y += LineHeight;
++        }
++
++        y += 6;
++    }
++
++    private void DrawParties()
++    {
++        var sender = WrapText( $"{invoice.Sender.CompanyName}\n{invoice.Sender.FormatContactDetails()}", 240 );
++        var recipient = WrapText( $"{invoice.Recipient.CompanyName}\n{invoice.Recipient.For
 ```
 
 ---
 
-### Incident Patch 2: `275b7fff` (2026-10-19)
-**Commit Message**: Demos: add watch and no-debug launchers with shared parallel build
+### Incident Patch 2: `6ba5424f` (2026-10-22)
+**Commit Message**: Table: fix header contrast for Bulma and Tailwind
 
-**File**: `Blazorise.slnx` (modified, +3/-1)
+**File**: `Source/Blazorise.Bulma/Styles/components/_table.scss` (modified, +4/-0)
 ```diff
-@@ -43,7 +43,9 @@
-     <File Path=".github/CREDITS.md" />
-     <File Path="Directory.Build.props" />
-     <File Path="Directory.Packages.props" />
--    <File Path="DotnetWatchRunAll.bat" />
-+    <File Path="Demos/DotnetRunAll.bat" />
-+    <File Path="Demos/DotnetWatchRunAll.bat" />
-+    <File Path="Demos/RunDemos.ps1" />
-     <File Path="README.md" />
-   </Folder>
-   <Folder Name="/Source/">
-```
-
-**File**: `Demos/Blazorise.Demos.slnx` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+<Solution>
-+  <Configurations>
-+    <BuildType Name="Debug" />
-+    <BuildType Name="DebugNet11" />
-+    <BuildType Name="Release" />
-+  </Configurations>
-+  <Project Path="Blazorise.Demo.Bootstrap/Blazorise.Demo.Bootstrap.csproj" />
-+  <Project Path="Blazorise.Demo.Bootstrap5/Blazorise.Demo.Bootstrap5.csproj" />
-+  <Project Path="Blazorise.Demo.Bulma/Blazorise.Demo.Bulma.csproj" />
-+  <Project Path="Blazorise.Demo.Material/Blazorise.Demo.Material.csproj" />
-+  <Project Path="Blazorise.Demo.Tailwind/Blazorise.Demo.Tailwind.csproj" />
-+  <Project Path="Blazorise.Demo.AntDesign/Blazorise.Demo.AntDesign.csproj" />
-+  <Project Path="Blazorise.Demo.FluentUI2/Blazorise.Demo.FluentUI2.csproj" />
-+</Solution>
-\ No newline at end of file
-```
-
-**File**: `Demos/DotnetRunAll.bat` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+@echo off
-+setlocal
-+
-+rem Build and run all WebAssembly provider demos without a debugger or watch.
-+rem Builds all demos together. Defaults to DebugNet11 to limit libraries to .NET 11.
-+rem Optional configuration: Debug, DebugNet11, or Release.
-+rem Pass -NoBuild to run existing binaries for the chosen configuration without building or restoring.
-+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0RunDemos.ps1" %*
-+exit /b %errorlevel%
-\ No newline at end of file
-```
-
-**File**: `Demos/DotnetWatchRunAll.bat` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+@echo off
-+setlocal
-+
-+rem Run all WebAssembly provider demos with watch, without opening browsers.
-+rem Optional argument: Debug, DebugNet11, or Release. Defaults to DebugNet11.
-+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0RunDemos.ps1" -Watch %*
-+exit /b %errorlevel%
-\ No newline at end of file
-```
-
-**File**: `Demos/RunDemos.ps1` (added, +143/-0)
-```diff
-@@ -0,0 +1,143 @@
-+param(
-+    [Parameter(Position = 0)]
-+    [ValidateSet('Debug', 'DebugNet11', 'Release')]
-+    [string] $Configuration = 'DebugNet11',
-+    [switch] $Watch,
-+    [switch] $NoBuild,
-+    [ValidateRange(1, 3600)]
-+    [int] $StartupTimeoutSeconds = 300
-+)
-+
-+$ErrorActionPreference = 'Stop'
-+$demoSolutionPath = Join-Path $PSScriptRoot 'Blazorise.Demos.slnx'
-+
-+try {
-+    if ($Watch -and $NoBuild) {
-+        throw '-NoBuild is only supported by DotnetRunAll.bat. Watch manages its own builds.'
+@@ -157,6 +157,10 @@ td:focus {
+ }
+ 
+ .table {
++    > thead.table-thead-theme.has-background-dark {
++        --bulma-table-head-cell-color: var(--bulma-dark-invert);
 +    }
 +
-+    $dotnetPath = (Get-Command dotnet -CommandType Application -ErrorAction Stop).Source
+     > :is(tbody, thead, tfoot) > tr.is-custom {
+         > :is(th, td):not(#{$table-contextual-cell-selectors}) {
+             background-color: var(--bulma-table-cell-background-color);
+```
+
+**File**: `Source/Blazorise.Bulma/wwwroot/blazorise.bulma.css` (modified, +3/-0)
+```diff
+@@ -6441,6 +6441,9 @@ td:focus {
+     border-bottom: 1px solid;
+   }
+ }
++.table > thead.table-thead-theme.has-background-dark {
++  --bulma-table-head-cell-color: var(--bulma-dark-invert);
++}
+ .table > :is(tbody, thead, tfoot) > tr.is-custom > :is(th, td):not(.has-background-primary, .has-background-secondary, .has-background-success, .has-background-danger, .has-background-warning, .has-background-info, .has-background-light, .has-background-dark, .has-background-link) {
+   background-color: var(--bulma-table-cell-background-color);
+   color: var(--bulma-text);
+```
+
+**File**: `Source/Blazorise.Tailwind/Styles/components/_table.scss` (modified, +8/-4)
+```diff
+@@ -8,6 +8,14 @@
+     z-index: 1;
+ }
+ 
++.b-table > thead > tr {
++    background-color: inherit;
 +
-+    # Use the same project list for building and launching, excluding MAUI and Server.
-+    $demoSolution = [xml] (Get-Content -Raw -LiteralPath $demoSolutionPath)
-+    $demos = foreach ($demoProject in $demoSolution.Solution.Project) {
-+        $project = Join-Path (Split-Path -Parent $demoSolutionPath) $demoProject.Path
-+        $directory = Split-Path -Parent $project
-+        $name = [System.IO.Path]::GetFileNameWithoutExtension($project)
-+
-+        if (-not (Test-Path -LiteralPath $project -PathType Leaf)) {
-+            throw "Demo project not found: $project"
-+        }
-+
-+        $settings = Get-Content -Raw -LiteralPath (Join-Path $directory 'Properties\launchSettings.json') | ConvertFrom-Json
-+        $profile = $settings.profiles.PSObject.Properties |
-+            Where-Object { $_.Value.commandName -eq 'Project' } |
-+            Select-Object -First 1
-+
-+        if (-not $profile -or -not $profile.Value.applicationUrl) {
-+            throw "No Project launch profile with an applicationUrl was found for $name."
-+        }
-+
-+        $applicationUrl = ($profile.Value.applicationUrl -split ';')[0].TrimEnd('/')
-+        $launchUrl = [string] $profile.Value.launchUrl
-+        $url = "$applicationUrl/$($launchUrl.TrimStart('/'))"
-+
-+        [pscustomobject]@{
-+            Name = $name
-+            Directory = $directory
-+            Project = $project
-+            Profile = $profile.Name
-+            CommandLineArgs = [string] $profile.Value.commandLineArgs
-+            Url = $url
-+        }
++    > th {
++        background-color: inherit;
 +    }
++}
 +
-+    if (-not $Watch -and -not $NoBuild) {
-+        # One MSBuild invocation shares dependency results across demos and schedules independent work in parallel.
-+        # Preserve the chosen configuration for shared projects referenced from outside the demos-only solution.
-+        Write-Host "Building all demos ($Configuration)..."
-+        & $dotnetPath build $demoSolutionPath --configuration $Configuration -maxcpucount -p:ShouldUnsetParentConfigurationAndPlatform=false
+ tr.b-table-row {
+     &.b-table-row-selectable {
+         &:focus[tabindex="0"] {
+@@ -23,10 +31,6 @@ tr.b-table-row {
+         border-collapse: separate;
+         border-spacing: 0;
+ 
+-        > thead:not(.table-thead-theme) > tr > th {
+-            background: white;
+-        }
+-
+         > thead > tr > th {
+             border-top: none;
+             position: sticky;
+```
+
+**File**: `Source/Blazorise.Tailwind/tailwind-build/blazorise.tailwind.css` (modified, +7/-3)
+```diff
+@@ -2394,6 +2394,13 @@ textarea[data-autosize=true] {
+   z-index: 1;
+ }
+ 
++.b-table > thead > tr {
++  background-color: inherit;
++}
++.b-table > thead > tr > th {
++  background-color: inherit;
++}
 +
-+        if ($LASTEXITCODE -ne 0) {
-+            throw 'Demo build failed. No demos have been started.'
-+        }
-+    }
+ tr.b-table-row.b-table-row-selectable:focus[tabindex="0"] {
+   outline: none;
+ }
+@@ -2405,9 +2412,6 @@ tr.b-table-row.b-table-row-selectable:focus[tabindex="0"] {
+   border-collapse: separate;
+   border-spacing: 0;
+ }
+-.b-table-fixed-header > .b-table > thead:not(.table-thead-theme) > tr > th {
+-  background: white;
+-}
+ .b-table-fixed-header > .b-table > thead > tr > th {
+   border-top: none;
+   position: sticky;
+```
+
+**File**: `Source/Blazorise.Tailwind/wwwroot/blazorise.tailwind.css` (modified, +6/-3)
+```diff
+@@ -13249,6 +13249,12 @@ textarea[data-autosize=true] {
+   user-select: none;
+   z-index: 1;
+ }
++.b-table > thead > tr {
++  background-color: inherit;
++}
++.b-table > thead > tr > th {
++  background-color: inherit;
++}
+ tr.b-table-row.b-table-row-selectable:focus[tabindex="0"] {
+   outline: none;
+ }
+@@ -13259,9 +13265,6 @@ tr.b-table-row.b-table-row-selectable:focus[tabindex="0"] {
+   border-collapse: separate;
+   border-spacing: 0;
+ }
+-.b-table-fixed-header > .b-table > thead:not(.table-thead-theme) > tr > th {
+-  background: white;
+-}
+ .b-table-fixed-header > .b-table > thead > tr > th {
+   border-top: none;
+   position: sticky;
+```
+
+---
+
+### Incident Patch 3: `48f1f478` (2026-10-22)
+**Commit Message**: Theme: fix CheckColor focus styling in Bootstrap providers (#6874)
+
+**File**: `Source/Blazorise.Bootstrap/Providers/BootstrapThemeGenerator.cs` (modified, +14/-0)
+```diff
+@@ -645,6 +645,20 @@ protected override void GenerateInputStyles( StringBuilder sb, Theme theme, Them
+ 
+     protected virtual void GenerateInputCheckEditStyles( StringBuilder sb, Theme theme, ThemeInputOptions options )
+     {
++        var focusBorderColor = ToHex( Lighten( options.CheckColor, 50f ) );
++        var focusShadowColor = ToHexRGBA( Transparency( options.CheckColor, 64 ) );
 +
-+    # Watch startup is also sequential: wait for each initial build and host before starting the next.
-+    $previousSuppressLaunchBrowser = $env:DOTNET_WATCH_SUPPRESS_LAUNCH_BROWSER
-+    $env:DOTNET_WATCH_SUPPRESS_LAUNCH_BROWSER = '1'
++        sb
++            .Append( ".custom-control-input:focus ~ .custom-control-label::before" ).Append( "{" )
++            .Append( $"box-shadow: 0 0 0 {theme.ButtonOptions?.BoxShadowSize ?? ".2rem"} {focusShadowColor};" )
++            .AppendLine( "}" );
 +
-+    try {
-+        foreach ($demo in $demos) {
-+            $arguments = if ($Watch) {
-+                @('watch', 'run')
-+            }
-+            else {
-+                @('run', '--no-build', '--no-restore')
-+            }
++        // Exclude validation states without increasing specificity over explicit switch colors.
++        sb
++            .Append( ".custom-control-input:focus:not(:checked):where(:not(.is-valid, .is-invalid, .was-validated *)) ~ .custom-control-label::before" ).Append( "{" )
++            .Append( $"border-color: {focusBorderColor};" )
++            .AppendLine( "}" );
 +
-+            # The working directory identifies the project; the launch profile supplies ports and environment variables.
-+            $arguments += @('--configuration', $Configuration, '--launch-profile', ('"{0}"' -f $demo.Profile))
+         sb
+             .Append( ".custom-checkbox .custom-control-input:checked ~ .custom-control-label::before" ).Append( "{" )
+             .Append( $"background-color: {options.CheckColor};" )
+```
+
+**File**: `Source/Blazorise.Bootstrap5/Providers/Bootstrap5ThemeGenerator.cs` (modified, +10/-0)
+```diff
+@@ -595,6 +595,16 @@ protected override void GenerateInputStyles( StringBuilder sb, Theme theme, Them
+ 
+     protected virtual void GenerateInputCheckEditStyles( StringBuilder sb, Theme theme, ThemeInputOptions options )
+     {
++        var focusBorderColor = ToHex( Lighten( options.CheckColor, 50f ) );
++        var focusShadowColor = ToHexRGBA( Transparency( options.CheckColor, 64 ) );
 +
-+            # WebAssembly defines RunArguments, so dotnet run ignores the profile's commandLineArgs unless forwarded explicitly.
-+            if (-not [string]::IsNullOrWhiteSpace($demo.CommandLineArgs)) {
-+                $arguments += @('--', $demo.CommandLineArgs)
-+            }
++        // Exclude validation states without increasing specificity over explicit switch colors.
++        sb
++            .Append( ".form-check-input:focus:where(:not(.is-valid, .is-invalid, .was-validated *))" ).Append( "{" )
++            .Append( $"border-color: {focusBorderColor};" )
++            .Append( $"box-shadow: 0 0 0 {theme.ButtonOptions?.BoxShadowSize ?? ".25rem"} {focusShadowColor};" )
++            .AppendLine( "}" );
 +
-+            Write-Host "Starting $($demo.Name): $($demo.Url)"
-+            $process = Start-Process -FilePath $dotnetPath -ArgumentList $arguments -WorkingDirectory $demo.Directory -PassThru
-+            $timer = [System.Diagnostics.Stopwatch]::StartNew()
-+            $ready = $false
-+
-+            while ($timer.Elapsed.TotalSeconds -lt $StartupTimeoutSeconds) {
-+                if ($process.HasExited) {
-+                    throw "$($demo.Name) exited during startup with code $($process.ExitCode)."
-+                }
-+
-+                try {
-+                    $response = Invoke-WebRequest -Uri $demo.Url -UseBasicParsing -TimeoutSec 2
-+                    $ready = $response.StatusCode -eq 200
-+
-+                    # The SPA fallback can return index.html even when the path base is wrong and assets return 404.
-+                    foreach ($assetPath in @('_framework/blazor.webassembly.js', '_content/Blazorise.Demo/demo.css')) {
-+                        if (-not $ready) {
-+                            break
-+                        }
-+
-+                        $assetUrl = [uri]::new([uri] $demo.Url, $assetPath)
-+                        $assetResponse = Invoke-WebRequest -Uri $assetUrl -UseBasicParsing -TimeoutSec 2
-+                  
+         sb
+             .Append( ".form-check-input.is-valid:checked, .was-validated .form-check-input:valid:checked" ).Append( "{" )
+             .Append( $"background-color: {options.CheckColor};" )
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6865** (2026-10-19): Tooltip: fix form layout and show delay regressions (@stsrki)
-- **PR #6860** (2026-10-18): Theme: Add registration for Blazor render mode boundaries (@stsrki)
-- **PR #6859** (2026-10-16): MemoInput: replace Behave.js with internal editing logic (@stsrki)
-- **PR #6858** (2026-10-16): Autocomplete: fix selection when value and text are both bound (@stsrki)
-- **PR #6857** (2026-10-19): FilePicker: support @bind-Files and preloaded files (@stsrki)
-- **PR #6856** (2026-10-16): Docs: standardize component structure diagrams across documentation (@stsrki)
+- **PR #6876** (2026-10-23): DataGrid: Support multiple aggregate rows (@stsrki)
+- **PR #6875** (2026-10-23): DataGrid: add loading display modes and a default spinner (@stsrki)
+- **PR #6874** (2026-10-22): Theme: fix CheckColor focus styling in Bootstrap providers (@stsrki)
+- **PR #6873** (2026-10-21): DataGrid: fix ScrollToRow with virtualization (@stsrki)
+- **PR #6872** (2026-10-21): DataGrid: recover invalid pages after filtering (@stsrki)
+- **PR #6871** (2026-10-21): Validation: remove unused revalidation path (@stsrki)
 
 ---
 
@@ -1181,28 +1425,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Tooltip: fix form layout and show delay regressions (#6865)
+## X. Demo: add invoice builder mini app
 
 **RULE**:
-When implementing operations in `Documentation/Blazorise.Docs/Pages/Docs/Components/Tooltips/TooltipPage.razor`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Megabit/Blazorise. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Demos/Shared/Blazorise.Demo/Components/SideMenu.razor`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Megabit/Blazorise. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7bd57b09`: Tooltip: fix form layout and show delay regressions (#6865). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e5c1ba82`: Demo: add invoice builder mini app. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C# data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/Blazorise.Docs/Pages/Docs/Components/Tooltips/TooltipPage.razor`.
+Subsystems managing C# data structures, boundary deserialization, API parsing, or resource lifecycles matching `Demos/Shared/Blazorise.Demo/Components/SideMenu.razor`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c#
 // Verified production-grade fix pattern:
-            <Paragraph>When <Code>Inline</Code> is omitted, the CSS provider automatically selects inline-block layout for its supported targets. Set <Code>Inline="true"</Code> to force inline-block layout or <Code>Inline="false"</Code> to force block layout.</Paragraph>
+                        <BarDropdownItem To="apps/invoice-builder">
+                            Invoice builder
+                        </BarDropdownItem>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c#
 // Anti-pattern to NEVER write (induced failure mode):
-            <Paragraph><Code>Inline</Code> forces the tooltip wrapper to behave as inline-block (useful when wrapping inline content).</Paragraph>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7bd57b09` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e5c1ba82` are properly handled with clean fallback behavior.

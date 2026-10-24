@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/malisper-pgrust-learnings.md`  
 > **Source**: github ([https://github.com/malisper/pgrust](https://github.com/malisper/pgrust))  
-> **Source Version**: `1bc8065f`  
+> **Source Version**: `38634b40`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:22:03.832Z  
+> **Timestamp**: 2026-10-24T20:11:26.110Z  
 > **Learning ID**: `learn-github-malisper-pgrust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/malisper-pgrust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/malisper/pgrust](https://github.com/malisper/pgrust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:22:03.823Z  
+> **Harvest Timestamp**: 2026-10-24T20:11:24.967Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Postgres rewritten in Rust, now faster than Postgres and Clickhouse
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5279 stars
+- **Stars / Engagement**: 5372 stars
 
 ---
 
@@ -377,6 +377,309 @@ pub fn run_campaign(
     seed_count: u64,
     bugbase_dir: &Path,
     out_d
+```
+
+### Core Architecture Module: `crates/_support/pagepool/src/state.rs`
+```
+//! The pick order, each class's partial superpages (binned by their longest free stretch, smallest first; by used runs,
+//! fullest first, with `PGRUST_POOL_HOLE_FIT=0`) and the low-warm flag. A class's
+//! lists and run table entries change under its spin bit, every run bitmap and partial list under the runs bit inside it.
+
+use crate::reserve::Zones;
+use crate::run::RUN;
+use crate::stats;
+use crate::superpage::{self, meta, State, ALL_RUNS, NONE, RUNS_PER, SUPER};
+use crate::{Class, Zero, CLASSES};
+use crate::sync::{AtomicBool, AtomicU32, AtomicU64, AtomicU8, Ordering::*};
+
+/// A hole bin per longest free stretch (1 .. 31 runs).
+const BINS: usize = RUNS_PER as usize - 1;
+/// The used-run bins (`PGRUST_POOL_HOLE_FIT=0`): 1 = fullest .. 4.
+const USED_BINS: usize = 4;
+/// Partial-list fronts searched per bin before a fresh superpage is claimed.
+const SEARCH: usize = 16;
+
+static LOCKS: [crate::Line<AtomicU32>; CLASSES] = [const { crate::Line(AtomicU32::new(0)) }; CLASSES];
+static BIN_HEADS: [crate::Line<[AtomicU32; BINS]>; CLASSES] = [const { crate::Line([const { AtomicU32::new(NONE) }; BINS]) }; CLASSES];
+/// Lock order: a class's spin bit, then this one, innermost; a take never takes another class's bit.
+static RUNS: crate::Line<AtomicU32> = crate::Line(AtomicU32::new(0));
+static LOW: AtomicBool = AtomicBool::new(false);
+
+struct Runs;
+
+impl Drop for Runs {
+    fn drop(&mut self) {
+        superpage::unspin(&RUNS);
+    }
+}
+
+fn runs() -> Runs {
+    superpage::spin(&RUNS);
+    Runs
+}
+
+pub(crate) struct Guard {
+    class: Class,
+}
+
+impl Drop for Guard {
+    fn drop(&mut self) {
+        superpage::unspin(&LOCKS[self.class as usize]);
+    }
+}
+
+pub(crate) fn lock(class: Class) -> Guard {
+    superpage::spin(&LOCKS[class as usize]);
+    Guard { class }
+}
+
+pub(crate) fn init(z: &Zones) {
+    let per = superpage::per_chunk();
+    let stride = superpage::stride_slots();
+    let mut i = 0;
+    while i < z.nsuper {
+        if i % stride < per {
+            superpage::put(i, State::Cold);
+        }
+        i += 1;
+    }
+}
+
+/// A whole free superpage for `class`, by the pick order for `zero`; held (Busy) on return. A Cold one counts as claimed
+/// and is refused past the cap. `supers`: the ask's superpages (0: runs), for the miss counts.
+pub(crate) fn claim(zero: Zero, class: Class, supers: u32) -> Option<u32> {
+    // pppress card 6 (`PGRUST_POOL_GROW_GUARD`): a zeroed take the ladder presses reuses a free warm superpage (zeroed by
+    // its taker) before it claims a Cold one
+    let pressed = zero != Zero::No && crate::purger::pressed(SUPER);
+    let order: &[State] = match zero {
+        Zero::No => &[State::WarmDirty, State::WarmZero, State::Cold],
+        _ if pressed => &[State::WarmZero, State::WarmDirty, State::Cold],
+        Zero::Dense => &[State::WarmZero, State::Cold, State::WarmDirty],
+        Zero::Sparse => &[State::Cold, State::WarmZero, State::WarmDirty],
+    };
+    for &st in order {
+        if st == State::Cold && !stats::under_cap(SUPER) {
+            continue;
+        }
+        if let Some(i) = superpage::take_one(st) {
+            took(st, zero, class, supers);
+            if pressed && st == State::WarmDirty {
+                crate::purger::note_warm_first();
+            }
+            if st == State::Cold {
+                crate::purger::fresh(i);
+            }
+            return Some(i);
+        }
+    }
+    None
+}
+
+/// Count a superpage taken for an ask with `zero`; a Cold one for an ask that wanted warm is a warm-list miss.
+pub(crate) fn took(st: State, zero: Zero, class: Class, supers: u32) {
+    match st {
+        State::Cold => {
+            stats::claim(SUPER as isize);
+            stats::COLD_TAKES.fetch_add(1, Relaxed);
+            crate::purger::touch();
+            if zero != Zero::Sparse {
+                crate::claimer::missed(class, supers);
+            }
+        }
+        _ => {
+            stats::WARM_TAKES.fetch_add(1, Relaxed);
+            crate::warmres::drew(st);
+            if st == State::WarmZero {
+                crate::claimer::maybe_wake();
+            }
+        }
+    }
+}
+
+/// D4872 (`PGRUST_POOL_HOLE_FIT`, default on; `=0` turns it off), read once (0: unread, 1: off, 2: on): a partial
+/// superpage is listed in the bin of its longest stretch of free runs, and a take of `k` runs searches bin `k` (every
+/// superpage there holds `k` free runs in a row), then the longer ones, smallest first. Listed by used runs, a take of
+/// 21-31 runs saw 16 superpages a bin, none with the stretch, and claimed a fresh superpage while thousands past them had
+/// it (an x86 wide-table bulk load: 50k claims, 16 GB of free runs stranded in 9.6k superpages against 7 GB owned).
+static HOLE_SWITCH: AtomicU8 = AtomicU8::new(0);
+
+pub(crate) fn hole_fit_on() -> bool {
+    match HOLE_SWITCH.load(Relaxed) {
+        0 => {
+            let v = if crate::os::env_on_by_default(c"PGRUST_POOL_HOLE_FIT") { 2 } else { 1 };
+            HOLE_SWITCH.store(v, Relaxed);
+            v == 2
+        }
+        v => v == 2,
+    }
+}
+
+pub(crate) fn force_hole_fit(on: bool) {
+    HOLE_SWITCH.store(if on { 2 } else { 1 }, Relaxed);
+}
+
+/// The longest stretch of set bits in `free`.
+#[inline]
+pub(crate) fn longest_free(mut free: u32) -> u32 {
+    let mut n = 0;
+    while free != 0 {
+        free &= free << 1;
+        n += 1;
+    }
+    n
+}
+
+/// Hole bin (the longest free stretch, 1 .. 31) of a superpage with free runs `free`, 0 = none free or all.
+#[inline]
+fn hole_bin(free: u32) -> u32 {
+    let s = longest_free(free);
+    if s as usize > BINS { 0 } else { s }
+}
+
+/// The bins a take of `k` runs searches, in order (list indices). With the switch on: bin `k`, then the longer ones. A
+/// stretch of `k` may still lack a start aligned to `align` > 1 runs; the per-bin SEARCH walk covers that.
+#[inline]
+fn take_bins(k: u32) -> core::ops::Range<usize> {
+    if hole_fit_on() {
+        (k as usize).clamp(1, BINS) - 1..BINS
+    } else {
+        0..USED_BINS
+    }
+}
+
+/// Bin (1 = fullest .. 4) of a superpage with `used` runs taken, 0 = listed nowhere (empty or full).
+#[inline]
+fn bin_for(used: u32) -> u32 {
+    match used {
+        0 => 0,
+        u if u >= RUNS_PER => 0,
+        u if u >= 24 => 1,
+        u if u >= 16 => 2,
+        u if u >= 8 => 3,
+        _ => 4,
+    }
+}
+
+fn unlist(class: Class, i: u32) {
+    let m = meta(i);
+    let b = m.bin();
+    if b == 0 {
+        return;
+    }
+    let (p, n) = (m.prev.load(Relaxed), m.next.load(Relaxed));
+    if p == NONE {
+        BIN_HEADS[class as usize][b as usize - 1].store(n, Relaxed);
+    } else {
+        meta(p).next.store(n, Relaxed);
+    }
+    if n != NONE {
+        meta(n).prev.store(p, Relaxed);
+    }
+    m.set_bin(0);
+}
+
+fn list(class: Class, i: u32, b: u32) {
+    let m = meta(i);
+    let head = &BIN_HEADS[class as usize][b as usize - 1];
+    let h = head.load(Relaxed);
+    m.prev.store(NONE, Relaxed);
+    m.next.store(h, Relaxed);
+    if h != NONE {
+        meta(h).prev.store(i, Relaxed);
+    }
+    head.store(i, Relaxed);
+    m.set_bin(b);
+}
+
+/// A run superpage's free runs given back to the OS (zero when taken again), in its span_n word. Under the runs bit.
+#[inline]
+fn gone(m: &superpage::SuperMeta) -> &AtomicU32 {
+    &m.span_n
+}
+
+/// pagepool P3 (F1): a run superpage's free runs the last age mark saw free, none taken since (`take_mask` clears them),
+/// in its dirty_at word (a free superpage's age, unused while it holds runs). Under the runs bit.
+#[inline]
+fn seen(m: &superpage::SuperMeta) -> &AtomicU32 {
+    &m.dirty_at
+}
+
+#[inline]
+fn free_runs_moved(runs: isize) {
+    stats::STRANDED.fetch_add(runs * RUN as isize, Relaxed);
+    stats::FREE_RUNS.fetch_add(runs * RUN as isize, Relaxed);
+}
+
+/// Put superpage `i` where its free runs say: listed Partial, Full, or a whole free superpage again (lock held). Whole
+/// free with gone runs, the superpage is claimed whole again (those pages fault in on touch).
+fn settle(class: Class, i: u32) {
+    let m = meta(i);
+    // pppress card 8: the activity bit outlives the word's rewrite below
+    let active = m.word.load(Relaxed) & superpage::ACTIVE;
+    let free = m.free_runs.load(Relaxed);
+    let used = RUNS_PER - free.count_ones();
+    let want = if hole_fit_on() { hole_bin(free) } else { bin_for(used) };
+    if used == 0 {
+        unlist(class, i);
+        let g = gone(m).swap(0, Relaxed).count_ones() as isize;
+        free_runs_moved(g - RUNS_PER as isize);
+        if g != 0 {
+            stats::claim(g * RUN as isize);
+        }
+        let st = if m.zero_runs.load(Relaxed) == ALL_RUNS { State::WarmZero } else { State::WarmDirty };
+        superpage::put(i, st);
+        return;
+    }
+    if m.bin() != want {
+        unlist(class, i);
+        if want != 0 {
+            list(class, i, want);
+        }
+    }
+    let st = if used == RUNS_PER { State::Full } else { State::Partial };
+    m.set(st, class, want, 0, NONE);
+    if active != 0 {
+        m.word.fetch_or(active, Relaxed);
+    }
+}
+
+/// The first `k` free runs of `free` starting at a multiple of `align`, as a mask.
+#[inline]
+pub(crate) fn find_runs(free: u32, k: u32, align: u32) -> Option<u32> {
+    let one = ((1u64 << k) - 1) as u32;
+    let mut s = 0;
+    while s + k <= RUNS_PER {
+        let mask = one << s;
+        if free & mask == mask {
+            return Some(mask);
+        }
+        s += align.max(1);
+    }
+    None
+}
+
+/// A superpage's free-run bitmap as the runs bit's kernels see it (std's atomics here, loom's in its model).
+pub trait FreeRuns {
+    fn get(&self) -> u32;
+    fn clear(&self, mask: u32);
+    fn add(&self, mask: u32) -> u32;
+}
+
+impl FreeRuns for AtomicU32 {
+    fn get(&self) -> u32 {
+        self.load(Relaxed)
+    }
+    fn clear(&self, mask: u32) {
+        self.fetch_and(!mask, Relaxed);
+    }
+    fn add(&self, mask: u32) -> u32 {
+        self.fetch_or(mask, Relaxed)
+    }
+}
+
+/// Under the runs bit: the first `k` free runs of `free` at a multiple of `align`, taken.
+pub fn take_free<F: FreeRuns>(free: &F, k: u32, align: u32) -> Option<u32> {
+    let mask = find_
 ```
 
 ### Core Architecture Module: `crates/_support/pgsync/src/sim/hooks.rs`
@@ -746,6 +1049,24 @@ macro_rules! seam {
                 SLOT.load(::std::sync::atomic::Ordering::Relaxed) != __stub_ptr()
             }
 
+            pub fn wrap(implementation: Signature) -> Signature {
+                if !$crate::tap_boot_phase_open() {
+                    panic!(concat!("seam wrapped after boot: ", module_path!()));
+                }
+                let prev = SLOT.swap(
+                    implementation as *mut (),
+                    ::std::sync::atomic::Ordering::Relaxed,
+                );
+                if prev == __stub_ptr() {
+                    panic!(concat!("seam wrapped before install: ", module_path!()));
+                }
+                // SAFETY: a non-stub SLOT always holds a valid `Signature`.
+                unsafe { ::std::mem::transmute::<*mut (), Signature>(prev) }
+            }
+
+            // Inlined into the caller: a seam call is the slot load and one indirect call, not a call to this function
+            // first (a separate function per seam, each its own instruction-cache line on the statement path).
+            #[inline]
             pub fn call $(<$($lt),+>)? ($($arg: $arg_ty),*) $(-> $ret)? {
                 let raw = SLOT.load(::std::sync::atomic::Ordering::Relaxed);
                 // SAFETY: set-once invariant (crate top) — always a valid `Signature`.
@@ -756,105 +1077,47 @@ macro_rules! seam {
     };
 }
 
-// Link-time seam: direct `extern "Rust"` symbol; fat-LTO inlines the body.
-// PRECONDITION: exactly one impl, always linked; test-mocked seams stay `seam!`.
+// A `seam!` whose callers' lines matter (testflow K11, main 2026-10-12T21:08:00Z; D4214 / D4229). A #[track_caller]
+// implementation reached through a seam's fn pointer reports its own definition line, so every CHECK_FOR_INTERRUPTS through
+// the seam read 'crates/backend/tcop/postgres/src/lib.rs:312' in Gravity's poll-gap probe, whatever code called it.
+// `seam_tracked!` declares a zero-argument seam with `seam!`'s API (set / is_installed / wrap / call) plus `set_tracked`: an
+// implementation that takes the call's own location. `call()` is #[inline(always)] #[track_caller], so the location is a
+// constant at each call site (or its #[track_caller] caller's), and a call costs what `seam!`'s does: one relaxed load and
+// one indirect call. Until `set_tracked`, the tracked slot holds an adapter that calls the `set` implementation (a test's
+// mock), so a seam with only `set` behaves as a `seam!`.
 #[macro_export]
-macro_rules! seam_linktime {
+macro_rules! seam_tracked {
     (
-        link_name = $sym:literal;
         $(#[$attr:meta])*
-        $vis:vis fn $name:ident $(<$($lt:lifetime),+ $(,)?>)? ( $($arg:ident : $arg_ty:ty),* $(,)? ) $(-> $ret:ty)?
+        $vis:vis fn $name:ident () $(-> $ret:ty)?
     ) => {
         $(#[$attr])*
         $vis mod $name {
             #![allow(dead_code, unused_imports)]
             use super::*;
 
-            pub type Signature = $(for<$($lt),+>)? fn($($arg_ty),*) $(-> $ret)?;
+            pub type Signature = fn() $(-> $ret)?;
+            pub type Tracked = fn(&'static ::core::panic::Location<'static>) $(-> $ret)?;
 
-            pub const LINK_NAME: &str = $sym;
-
-            extern "Rust" {
-                #[link_name = $sym]
-                fn __seam_impl $(<$($lt),+>)? ($($arg : $arg_ty),*) $(-> $ret)?;
+            #[cold]
+            #[inline(never)]
+            fn __uninstalled_stub() $(-> $ret)? {
+                panic!(concat!("seam not installed: ", module_path!()))
             }
 
             #[inline(always)]
-            pub fn call $(<$($lt),+>)? ($($arg : $arg_ty),*) $(-> $ret)? {
-                // SAFETY: defined once by `seam_linktime_impl!`, const-checked against `Signature`.
-                unsafe { __seam_impl($($arg),*) }
+            fn __stub_ptr() -> *mut () {
+                __uninstalled_stub as Signature as *mut ()
             }
-        }
-    };
-}
 
-#[macro_export]
-macro_rules! seam_linktime_impl {
-    (
-        export_fn = $export:ident;
-        link_name = $sym:literal;
-        signature = $sigpath:path;
-        impl = $imp:expr;
-        fn $(<$($lt:lifetime),+ $(,)?>)? ( $($arg:ident : $arg_ty:ty),* $(,)? ) $(-> $ret:ty)?
-    ) => {
-        // Pins the impl to the consumer-facing Signature (no ABI drift).
-        const _: () = {
-            #[allow(unused)]
-            const __SEAM_SIG_CHECK: $sigpath = $imp;
-        };
+            static SLOT: ::std::sync::atomic::AtomicPtr<()> =
+                ::std::sync::atomic::AtomicPtr::new(__uninstalled_stub as Signature as *mut ());
 
-        #[export_name = $sym]
-        pub extern "Rust" fn $export $(<$($lt),+>)? ($($arg : $arg_ty),*) $(-> $ret)? {
-            ($imp)($($arg),*)
-        }
-    };
-}
-
-#[cfg(test)]
-mod tests {
-    crate::seam!(pub fn double(x: i32) -> i32);
-    crate::seam!(pub fn never_installed(x: i32) -> i32);
-    crate::seam!(pub fn installed_twice(x: i32) -> i32);
-    crate::seam!(pub fn first<'a>(xs: &'a [i32]) -> &'a i32);
-
-    #[test]
-    fn install_and_call() {
-        assert!(!double::is_installed());
-        double::set(|x| x * 2);
-        assert!(double::is_installed());
-        assert_eq!(double::call(21), 42);
-    }
-
-    #[test]
-    #[should_panic(expected = "seam not installed: seam_core::tests::never_installed")]
-    fn uninstalled_call_panics_with_path() {
-        never_installed::call(1);
-    }
-
-    #[test]
-    #[should_panic(expected = "seam installed twice: seam_core::tests::installed_twice")]
-    fn double_install_panics_with_path() {
-        installed_twice::set(|x| x);
-        installed_twice::set(|x| x + 1);
-    }
-
-    #[test]
-    fn lifetime_generic_seam_returns_borrow() {
-        first::set(|xs| &xs[0]);
-        let data = [7, 8, 9];
-        assert_eq!(*first::call(&data), 7);
-    }
-
-    crate::tap!(pub fn counter(x: i32));
-    crate::tap!(pub fn counter_empty(x: i32));
-    crate::tap!(pub fn install_twice_tap(x: i32));
-    crate::tap!(pub fn never_installed_tap(x: i32));
-
-    #[test]
-    fn tap_default_empty_and_call_if_skips() {
-        // Its OWN tap, which no sibling test installs on: taps are
-        // process-global and never uninstalled, so asserting emptiness of
-        // the shared `counter` 
+            // The tracked slot until `set_tracked`: the `set` implementation (or the stub), the location dropped.
+            fn __adapter(_site: &'static ::core::panic::Location<'static>) $(-> $ret)? {
+                let raw = SLOT.load(::std::sync::atomic::Ordering::Relaxed);
+                // SAFETY: set-once invariant (crate top) — SLOT always holds a valid `Signature`.
+                let f: Signature = unsafe { ::std::mem::transmute::<*mut (), Signatur
 ```
 
 ### Core Architecture Module: `crates/_support/types/gist/src/state.rs`
@@ -1118,6 +1381,74 @@ impl<'mcx> GistState<'mcx> {
         Ok(r.as
 ```
 
+### Core Architecture Module: `crates/_support/types/types_core/src/cast.rs`
+```
+use crate::catalog::{INT2OID, INT4OID, INT8OID, NUMERICOID};
+
+pub const F_INT4_INT2: u32 = 313;
+pub const F_INT2_INT4: u32 = 314;
+pub const F_INT4_INT8: u32 = 480;
+pub const F_INT8_INT4: u32 = 481;
+pub const F_INT2_INT8: u32 = 714;
+pub const F_INT8_INT2: u32 = 754;
+pub const F_NUMERIC_INT4: u32 = 1740;
+pub const F_NUMERIC_INT8: u32 = 1781;
+pub const F_NUMERIC_INT2: u32 = 1782;
+
+pub const fn int_digits(typid: u32) -> Option<u32> {
+    match typid {
+        INT2OID => Some(5),
+        INT4OID => Some(10),
+        INT8OID => Some(19),
+        _ => None,
+    }
+}
+
+const CASTS: [(u32, u32, u32); 9] = [
+    (F_INT4_INT2, INT2OID, INT4OID),
+    (F_INT2_INT4, INT4OID, INT2OID),
+    (F_INT4_INT8, INT8OID, INT4OID),
+    (F_INT8_INT4, INT4OID, INT8OID),
+    (F_INT2_INT8, INT8OID, INT2OID),
+    (F_INT8_INT2, INT2OID, INT8OID),
+    (F_NUMERIC_INT4, INT4OID, NUMERICOID),
+    (F_NUMERIC_INT8, INT8OID, NUMERICOID),
+    (F_NUMERIC_INT2, INT2OID, NUMERICOID),
+];
+
+pub fn exact(funcid: u32) -> Option<(u32, u32)> {
+    CASTS
+        .iter()
+        .find(|c| c.0 == funcid)
+        .map(|c| (c.1, c.2))
+        .filter(|&(s, t)| int_digits(s).is_some() && (int_digits(t).is_some() || t == NUMERICOID))
+}
+
+pub fn exact_to_numeric(funcid: u32) -> Option<u32> {
+    exact(funcid).filter(|c| c.1 == NUMERICOID).map(|c| c.0)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn integer_casts_are_exact_and_name_their_source() {
+        for f in [F_INT4_INT2, F_INT2_INT4, F_INT4_INT8, F_INT8_INT4, F_INT2_INT8, F_INT8_INT2] {
+            assert!(exact(f).is_some_and(|(s, t)| int_digits(s).is_some() && int_digits(t).is_some()), "{f}");
+            assert_eq!(exact_to_numeric(f), None, "{f}: not to numeric");
+        }
+        assert_eq!(exact_to_numeric(F_NUMERIC_INT4), Some(INT4OID));
+        assert_eq!(exact_to_numeric(F_NUMERIC_INT8), Some(INT8OID));
+        assert_eq!(exact_to_numeric(F_NUMERIC_INT2), Some(INT2OID));
+        assert_eq!((F_INT4_INT2, F_INT8_INT2, F_INT8_INT4, F_NUMERIC_INT4, F_NUMERIC_INT8, F_NUMERIC_INT2), (313, 754, 481, 1740, 1781, 1782));
+        assert!(exact(1744).is_none() && exact(317).is_none() && exact(1251).is_none());
+        assert_eq!((int_digits(21), int_digits(23), int_digits(20), int_digits(1700)), (Some(5), Some(10), Some(19), None));
+    }
+}
+
+```
+
 ### Core Architecture Module: `crates/_support/types/types_core/src/catalog.rs`
 ```
 use crate::primitive::Oid;
@@ -1223,6 +1554,25 @@ pub const TIMETZOID: Oid = 1266;
 pub const TIMESTAMPOID: Oid = 1114;
 pub const TIMESTAMPTZOID: Oid = 1184;
 pub const NAMEOID: Oid = 19;
+pub const REGPROCOID: Oid = 24;
+pub const CASHOID: Oid = 790;
+pub const REGPROCEDUREOID: Oid = 2202;
+pub const REGOPEROID: Oid = 2203;
+pub const REGOPERATOROID: Oid = 2204;
+pub const REGCLASSOID: Oid = 2205;
+pub const LSNOID: Oid = 3220;
+pub const REGCONFIGOID: Oid = 3734;
+pub const REGDICTIONARYOID: Oid = 3769;
+pub const REGNAMESPACEOID: Oid = 4089;
+pub const REGROLEOID: Oid = 4096;
+pub const REGCOLLATIONOID: Oid = 4191;
+pub const XID8OID: Oid = 5069;
+pub const MACADDR8OID: Oid = 774;
+pub const MACADDROID: Oid = 829;
+pub const ACLITEMOID: Oid = 1033;
+pub const UUIDOID: Oid = 2950;
+pub const INETOID: Oid = 869;
+pub const CIDROID: Oid = 650;
 pub const CSTRINGOID: Oid = 2275;
 pub const RECORDARRAYOID: Oid = 2287;
 pub const ANYOID: Oid = 2276;
@@ -1282,536 +1632,106 @@ impl CommandTag {
 
 ```
 
-### Core Architecture Module: `crates/_support/types/types_core/src/fmgr.rs`
+### Core Architecture Module: `crates/_support/types/types_core/src/eq_alike.rs`
 ```
-pub const INDEX_MAX_KEYS: i32 = 32;
-pub const NAMEDATALEN: i32 = 64;
+
+use crate::Oid;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum IOFuncSelector {
-    Input,
-    Output,
-    Receive,
-    Send,
+pub enum EqAlike {
+    Image,
+    Text { pad: bool },
+    Numeric,
+    Float,
+    Apart,
 }
 
-pub const PG_VERSION_NUM: i32 = 180_003;
+/// The class of a built-in type (PostgreSQL 18.6's pg_type), `None` for a type the table does not list.
+pub const fn builtin(typid: Oid) -> Option<EqAlike> {
+    use EqAlike::*;
+    Some(match typid {
+        16 | 17 | 18 | 20 | 21 | 23 | 24 | 26 | 27 | 28 | 29 | 650 | 774 | 790 | 829 | 869 | 1082 | 1083 | 1114 | 1184 | 1266
+        | 1560 | 1562 | 2202..=2206 | 2950 | 3220 | 3734 | 3769 | 4089 | 4096 | 4191 | 5069 => Image,
+        19 | 25 | 1043 => Text { pad: false },
+        1042 => Text { pad: true },
+        1700 => Numeric,
+        700 | 701 => Float,
+        22 | 30 | 114 | 142 | 194 | 600..=604 | 718 | 1002 | 1003 | 1005 | 1007 | 1009 | 1014 | 1015 | 1016 | 1021 | 1022
+        | 1028 | 1033 | 1034 | 1186 | 2249 | 2277 | 2970 | 3361 | 3402 | 3614 | 3615 | 3802 | 3904 | 3906 | 3908
+        | 3910 | 3912 | 3926 | 4451 | 4532 | 5017 | 5038 => Apart,
+        _ => return None,
+    })
+}
 
-pub const FLOAT8PASSBYVAL: i32 = 1;
-
-pub const FMGR_ABI_EXTRA: [u8; 32] = [
-    b'P', b'o', b's', b't', b'g', b'r', b'e', b'S', b'Q', b'L', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+const ARRAY_ELEMS: [(Oid, Oid); 16] = [
+    (1000, 16),   // _bool
+    (1001, 17),   // _bytea
+    (1002, 18),   // _char
+    (1003, 19),   // _name
+    (1005, 21),   // _int2
+    (1007, 23),   // _int4
+    (1009, 25),   // _text
+    (1014, 1042), // _bpchar
+    (1015, 1043), // _varchar
+    (1016, 20),   // _int8
+    (1028, 26),   // _oid
+    (1115, 1114), // _timestamp
+    (1182, 1082), // _date
+    (1185, 1184), // _timestamptz
+    (1231, 1700), // _numeric
+    (2951, 2950), // _uuid
 ];
 
-pub const PG_MAGIC_FUNCTION_NAME_STRING: &str = "Pg_magic_func";
-
-pub const PG_INIT_FUNCTION_NAME_STRING: &str = "_PG_init";
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct PgAbiValues {
-    pub version: i32,
-    pub funcmaxargs: i32,
-    pub indexmaxkeys: i32,
-    pub namedatalen: i32,
-    pub float8byval: i32,
-    pub abi_extra: [u8; 32],
+pub fn array_elem(typid: Oid) -> Option<Oid> {
+    ARRAY_ELEMS.binary_search_by_key(&typid, |p| p.0).ok().map(|i| ARRAY_ELEMS[i].1)
 }
 
-impl PgAbiValues {
-    pub const fn server() -> Self {
-        Self {
-            version: PG_VERSION_NUM / 100,
-            funcmaxargs: crate::primitive::FUNC_MAX_ARGS as i32,
-            indexmaxkeys: INDEX_MAX_KEYS,
-            namedatalen: NAMEDATALEN,
-            float8byval: FLOAT8PASSBYVAL,
-            abi_extra: FMGR_ABI_EXTRA,
-        }
+pub const fn class_alike(class: EqAlike, typmod: i32, coll_bytes_eq: bool, float_hidden: bool) -> bool {
+    match class {
+        EqAlike::Image => true,
+        EqAlike::Text { pad } => coll_bytes_eq && (!pad || typmod > 0),
+        EqAlike::Numeric => typmod >= 0,
+        EqAlike::Float => float_hidden,
+        EqAlike::Apart => false,
     }
 }
 
-// `fn_addr` is an opaque address (`0` = unresolved): the typed `PGFunction`
-// shape lives in the nodes layer, which this crate must not depend on.
-#[derive(Clone, Debug, Default)]
-pub struct FmgrInfo {
-    pub fn_addr: usize,
-    pub fn_oid: crate::primitive::Oid,
-    pub fn_nargs: i16,
-    pub fn_strict: bool,
-    pub fn_retset: bool,
-    pub fn_stats: u8,
-    // C's `fmNodePtr fn_expr`, carried erased; `None` is C's NULL.
-    pub fn_expr: Option<FnExprErased>,
-}
-
-// C: build_aggregate_transfn_expr/build_aggregate_finalfn_expr's constructed
-// FuncExpr, reduced to its consumers (get_fn_expr_argtype +
-// get_fn_expr_rettype/get_call_result_type): `rettype` is the fake FuncExpr's
-// funcresulttype (the transtype for transfns, the aggregate result type for
-// finalfns); `argtypes` slot 0 is the transition type, slots 1.. the
-// aggregate input types; `variadic` is the fake FuncExpr's funcvariadic
-// (agg_variadic for transfns). The slice is arena-backed with the lifetime
-// forgotten (from_node_ref's contract); Copy, so FmgrInfo stays drop-free.
-#[derive(Clone, Copy)]
-pub struct AggFnArgTypes {
-    pub rettype: crate::primitive::Oid,
-    pub argtypes: &'static [crate::primitive::Oid],
-    pub variadic: bool,
-}
-
-// Erased `fn_expr` carrier: the node is a `types-nodes` `Expr` this crate
-// must not name. Copy raw pointer — C copies the bare `fmNodePtr`; the arena
-// owns the node, so FmgrInfo carries no drop glue.
-#[derive(Clone, Copy)]
-pub struct FnExprErased(*const dyn core::any::Any);
-
-impl FnExprErased {
-    /// # Safety
-    /// `expr`'s backing context must outlive every `downcast_ref` read of
-    /// this carrier (the resolved-once FmgrInfo dies with the plan it serves).
-    /// `STATIC` must be the `'static` form of the caller's `'mcx`-branded
-    /// node type (same concrete type, lifetime forgotten).
-    pub unsafe fn from_node_ref<STATIC: core::any::Any>(expr: &STATIC) -> Self {
-        Self(expr as &dyn core::any::Any as *const dyn core::any::Any)
-    }
-
-    pub fn downcast_ref<T: core::any::Any>(&self) -> Option<&T> {
-        // SAFETY: pointee live per from_node_ref's contract.
-        unsafe { (*self.0).downcast_ref::<T>() }
+pub fn alike(typid: Oid, typmod: i32, coll_bytes_eq: bool, float_hidden: bool, other: impl FnOnce(Oid) -> Option<EqAlike>) -> bool {
+    let typid = match array_elem(typid) {
+        Some(elem) => elem,
+        None => typid,
+    };
+    match builtin(typid) {
+        Some(class) => class_alike(class, typmod, coll_bytes_eq, float_hidden),
+        None => other(typid).is_some_and(|class| class_alike(class, typmod, coll_bytes_eq, float_hidden)),
     }
 }
-
-impl core::fmt::Debug for FnExprErased {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.write_str("FnExprErased(<fn_expr node>)")
-    }
-}
-
-impl FmgrInfo {
-    pub fn empty() -> Self {
-        Self {
-            fn_addr: 0,
-            fn_oid: 0,
-            fn_nargs: 0,
-            fn_strict: false,
-            fn_retset: false,
-            fn_stats: 0,
-            fn_expr: None,
-        }
-    }
-}
-
-pub const F_INT4EQ: crate::primitive::RegProcedure = 65;
-pub const F_INT4GE: crate::primitive::RegProcedure = 150;
-pub const F_OIDEQ: crate::primitive::RegProcedure = 184;
-pub const F_TEXTEQ: crate::primitive::RegProcedure = 67;
-pub const F_INT2EQ: crate::primitive::RegProcedure = 63;
-pub const F_INT2GT: crate::primitive::RegProcedure = 146;
-pub const F_NAMEEQ: crate::primitive::RegProcedure = 62;
-pub const F_BOOLEQ: crate::primitive::RegProcedure = 60;
-pub const F_CHAREQ: crate::primitive::RegProcedure = 61;
-pub const F_CHARNE: crate::primitive::RegProcedure = 70;
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[derive(Debug, PartialEq)]
-    struct FakeExpr {
-        argtypes: [u32; 2],
+    #[test]
+    fn the_array_list_is_sorted_and_its_elements_are_listed() {
+        assert!(ARRAY_ELEMS.windows(2).all(|w| w[0].0 < w[1].0));
+        assert!(ARRAY_ELEMS.iter().all(|&(_, e)| builtin(e).is_some_and(|c| c != EqAlike::Apart)));
     }
 
     #[test]
-    fn fn_expr_erased_round_trips() {
-        let mut finfo = FmgrInfo::empty();
-        assert!(finfo.fn_expr.is_none());
-
-        let expr = FakeExpr { argtypes: [23, 25] };
-        // SAFETY: `expr` outlives every read below.
-        finfo.fn_expr = Some(unsafe { FnExprErased::from_node_ref(&expr) });
-
-        let recovered = finfo
-            .fn_expr
-            .as_ref()
-            .and_then(|e| e.downcast_ref::<FakeExpr>())
-            .expect("fn_expr downcasts to the stamped type");
-        assert_eq!(recovered.argtypes, [23, 25]);
-
-        let cloned = finfo.clone();
-        let recovered2 = cloned
-            .fn_expr
-            .as_ref()
-            .and_then(|e| e.downcast_ref::<FakeExpr>())
-            .expect("cloned fn_expr still downcasts");
-        assert_eq!(recovered2.argtypes, [23, 25]);
-
-        assert!(finfo
-            .fn_expr
-            .as_ref()
-            .and_then(|e| e.downcast_ref::<u64>())
-            .is_none());
+    fn members_print_alike_by_class() {
+        let none = |_| None;
+        assert!(alike(23, -1, false, false, none));
+        assert!(alike(1007, -1, false, false, none)); // int4[] reads int4
+        assert!(alike(25, -1, true, false, none));
+        assert!(!alike(25, -1, false, false, none)); // text under a nondeterministic collation
+        assert!(!alike(1042, -1, true, false, none) && alike(1042, 8, true, false, none));
+        assert!(!alike(1700, -1, true, false, none) && alike(1700, (12 << 16 | 2) + 4, true, false, none));
+        assert!(!alike(1231, -1, true, false, none)); // numeric[] without a typmod
+        assert!(!alike(701, -1, true, false, none) && alike(701, -1, true, true, none));
+        assert!(!alike(1186, -1, true, false, none) && !alike(3802, -1, true, false, none));
+        assert!(!alike(90_000, -1, true, false, none) && alike(90_000, -1, true, false, |_| Some(EqAlike::Image)));
     }
 }
-
-```
-
-### Core Architecture Module: `crates/_support/types/types_core/src/geo.rs`
-```
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
-pub struct Point {
-    pub x: f64,
-    pub y: f64,
-}
-
-impl Point {
-    // Panics on a too-short image — a caller bug, as C would misread too.
-    #[inline]
-    pub fn from_datum_bytes(bytes: &[u8]) -> Point {
-        let mut x = [0u8; 8];
-        let mut y = [0u8; 8];
-        x.copy_from_slice(&bytes[0..8]);
-        y.copy_from_slice(&bytes[8..16]);
-        Point {
-            x: f64::from_ne_bytes(x),
-            y: f64::from_ne_bytes(y),
-        }
-    }
-
-    #[inline]
-    pub fn to_datum_bytes(&self) -> [u8; 16] {
-        let mut out = [0u8; 16];
-        out[0..8].copy_from_slice(&self.x.to_ne_bytes());
-        out[8..16].copy_from_slice(&self.y.to_ne_bytes());
-        out
-    }
-}
-
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
-pub struct LSEG {
-    pub p: [Point; 2],
-}
-
-impl LSEG {
-    #[inline]
-    pub fn from_datum_bytes(bytes: &[u8]) -> LSEG {
-        LSEG {
-            p: [
-                Point::from_datum_bytes(&bytes[0..16]),
-                Point::from_datum_bytes(&bytes[16..32]),
-            ],
-        }
-    }
-
-    #[inline]
-    pub fn to_datum_bytes(&self) -> [u8; 32] {
-        let mut out = [0u8; 32];
-        out[0..16].copy_from_slice(&self.p[0].to_datum_bytes());
-        out[16..32].copy_from_slice(&self.p[1].to_datum_bytes());
-        out
-    }
-}
-
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
-pub struct LINE {
-    pub A: f64,
-    pub B: f64,
-    pub C: f64,
-}
-
-impl LINE {
-    #[inline]
-    pub fn from_datum_bytes(bytes: &[u8]) -> LINE {
-        let f = |o: usize| {
-            let mut a = [0u8; 8];
-            a.copy_from_slice(&bytes[o..o + 8]);
-            f64::from_ne_bytes(a)
-        };
-        LINE {
-            A: f(0),
-            B: f(8),
-            C: f(16),
-        }
-    }
-
-    #[inline]
-    pub fn to_datum_bytes(&self) -> [u8; 24] {
-        let mut out = [0u8; 24];
-        out[0..8].copy_from_slice(&self.A.to_ne_bytes());
-        out[8..16].copy_from_slice(&self.B.to_ne_bytes());
-        out[16..24].copy_from_slice(&self.C.to_ne_bytes());
-        out
-    }
-}
-
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
-pub struct CIRCLE {
-    pub center: Point,
-    pub radius: f64,
-}
-
-impl CIRCLE {
-    #[inline]
-    pub fn from_datum_bytes(bytes: &[u8]) -> CIRCLE {
-        let mut radius = [0u8; 8];
-        radius.copy_from_slice(&bytes[16..24]);
-        CIRCLE {
-            center: Point::from_datum_bytes(&bytes[0..16]),
-            radius: f64::from_ne_bytes(radius),
-        }
-    }
-
-    #[inline]
-    pub fn to_datum_bytes(&self) -> [u8; 24] {
-        let mut out = [0u8; 24];
-        out[0..16].copy_from_slice(&self.center.to_datum_bytes());
-        out[16..24].copy_from_slice(&self.radius.to_ne_bytes());
-        out
-    }
-}
-
-// `offsetof(PATH, p)`: fixed header before the flexible `Point` array.
-pub const PATH_HEADER_SIZE: usize = 16;
-
-// `offsetof(POLYGON, p)`: fixed header before the flexible `Point` array.
-pub const POLYGON_HEADER_SIZE: usize = 40;
-
-// `high` = upper-right, `low` = lower-left; field order is the C image order.
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
-pub struct BOX {
-    pub high: Point,
-    pub low: Point,
-}
-
-impl BOX {
-    #[inline]
-    pub fn from_datum_bytes(bytes: &[u8]) -> BOX {
-        BOX {
-            high: Point::from_datum_bytes(&bytes[0..16]),
-            low: Point::from_datum_bytes(&bytes[16..32]),
-        }
-    }
-
-    #[inline]
-    pub fn to_datum_bytes(&self) -> [u8; 32] {
-        let mut out = [0u8; 32];
-        out[0..16].copy_from_slice(&self.high.to_datum_bytes());
-        out[16..32].copy_from_slice(&self.low.to_datum_bytes());
-        out
-    }
-}
-
-// The decoded SP-GiST ordering-scan key: leaf key = point, inner key = box.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub enum SpgKey {
-    LeafPoint(Point),
-    InnerBox(BOX),
-}
-
-// gistproc.c:1575-1581 point_zorder_internal: Morton code over the two
-// float32-narrowed coordinates (C's float4 parameters narrow the point's
-// float8 members at the call).
-pub fn point_zorder_internal(x: f32, y: f32) -> u64 {
-    let ix = ieee_float32_to_uint32(x);
-    let iy = ieee_float32_to_uint32(y);
-    part_bits32_by2(ix) | (part_bits32_by2(iy) << 1)
-}
-
-// gistproc.c:1586-1596 part_bits32_by2.
-fn part_bits32_by2(x: u32) -> u64 {
-    let mut n = x as u64;
-    n = (n | (n << 16)) & 0x0000FFFF0000FFFF;
-    n = (n | (n << 8)) & 0x00FF00FF00FF00FF;
-    n = (n | (n << 4)) & 0x0F0F0F0F0F0F0F0F;
-    n = (n | (n << 2)) & 0x3333333333333333;
-    n = (n | (n << 1)) & 0x5555555555555555;
-    n
-}
-
-// gistproc.c:1603-1671 ieee_float32_to_uint32: order-preserving sign-magnitude
-// map; negatives bit-flipped into 0-7FFFFFFE, positives/zeros ORed into
-// 80000000-FFFFFFFE, every NaN to FFFFFFFF.
-fn ieee_float32_to_uint32(f: f32) -> u32 {
-    if f.is_nan() {
-        return 0xFFFFFFFF;
-    }
-    let i = f.to_bits();
-    if (i & 0x80000000) != 0 {
-        i ^ 0xFFFFFFFF
-    } else {
-        i | 0x80000000
-    }
-}
-
-// gistproc.c:1681-1701 gist_bbox_zorder_cmp over the leaf-key box's low
-// corner; the leading float8 equality check is C's abbrev tie-break fast path.
-pub fn gist_bbox_zorder_cmp(a: &BOX, b: &BOX) -> i32 {
-    let (p1, p2) = (&a.low, &b.low);
-    if p1.x == p2.x && p1.y == p2.y {
-        return 0;
-    }
-    let z1 = point_zorder_internal(p1.x as f32, p1.y as f32);
-    let z2 = point_zorder_internal(p2.x as f32, p2.y as f32);
-    (z1 > z2) as i32 - (z1 < z2) as i32
-}
-
-#[cfg(test)]
-mod zorder_tests {
-    use super::*;
-
-    fn pbox(x: f64, y: f64) -> BOX {
-        let p = Point { x, y };
-        BOX { high: p, low: p }
-    }
-
-    // Hand-computed interleavings: float32 map first (0.0 -> 0x80000000,
-    // 1.0 -> 0xBF800000, -1.0 -> 0x407FFFFF, NaN -> 0xFFFFFFFF), then each
-    // bit k lands at 2k (x) / 2k+1 (y).
-    #[test]
-    fn zorder_bit_exact() {
-        assert_eq!(point_zorder_internal(0.0, 0.0), 0xC000000000000000);
-        assert_eq!(point_zorder_internal(1.0, 1.0), 0xCFFFC00000000000);
-        assert_eq!(point_zorder_internal(-1.0, 0.0), 0x9000155555555555);
-        assert_eq!(point_zorder_internal(f32::NAN, f32::NAN), 0xFFFFFFFFFFFFFFFF);
-        assert_eq!(part_bits32_by2(0xFFFFFFFF), 0x5555555555555555);
-        assert_eq!(part_bits32_by2(0b11), 0b101);
-        assert_eq!(ieee_float32_to_uint32(-0.0), 0x7FFFFFFF);
-        assert_eq!(ieee_float32_to_uint32(0.0), 0x80000000);
-        assert_eq!(ieee_float32_to_uint32(f32::NEG_INFINITY), 0x007FFFFF);
-        assert_eq!(ieee_float32_to_uint32(f32::INFINITY), 0xFF800000);
-    }
-
-    #[test]
-    fn bbox_cmp_ordering() {
-        assert_eq!(gist_bbox_zorder_cmp(&pbox(0.0, 0.0), &pbox(0.0, 0.0)), 0);
-        assert_eq!(gist_bbox_zorder_cmp(&pbox(1.0, 1.0), &pbox(0.0, 0.0)), 1);
-        assert_eq!(gist_bbox_zorder_cmp(&pbox(-1.0, 0.0), &pbox(0.0, 0.0)), -1);
-        // NaNs: float8 equality fails, z-values tie at all-ones.
-        assert_eq!(gist_bbox_zorder_cmp(&pbox(f64::NAN, f64::NAN), &pbox(f64::NAN, f64::NAN)), 0);
-        assert_eq!(gist_bbox_zorder_cmp(&pbox(f64::NAN, f64::NAN), &pbox(1e30, 1e30)), 1);
-        // y's bits interleave above x's: (2,3) carries bit45, (3,2) bit44.
-        assert_eq!(gist_bbox_zorder_cmp(&pbox(2.0, 3.0), &pbox(3.0, 2.0)), 1);
-    }
-}
-
-```
-
-### Core Architecture Module: `crates/_support/types/types_core/src/init.rs`
-```
-// Discriminants match the C enum order: used in protocol and stats indexing.
-#[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-pub enum BackendType {
-    Invalid = 0,
-    Backend,
-    DeadEndBackend,
-    AutovacLauncher,
-    AutovacWorker,
-    BgWorker,
-    WalSender,
-    SlotsyncWorker,
-    StandaloneBackend,
-    Archiver,
-    BgWriter,
-    Checkpointer,
-    IoWorker,
-    Startup,
-    WalReceiver,
-    WalSummarizer,
-    WalWriter,
-    Logger,
-}
-
-impl BackendType {
-    pub const ALL: [BackendType; BACKEND_NUM_TYPES] = [
-        BackendType::Invalid,
-        BackendType::Backend,
-        BackendType::DeadEndBackend,
-        BackendType::AutovacLauncher,
-        BackendType::AutovacWorker,
-        BackendType::BgWorker,
-        BackendType::WalSender,
-        BackendType::SlotsyncWorker,
-        BackendType::StandaloneBackend,
-        BackendType::Archiver,
-        BackendType::BgWriter,
-        BackendType::Checkpointer,
-        BackendType::IoWorker,
-        BackendType::Startup,
-        BackendType::WalReceiver,
-        BackendType::WalSummarizer,
-        BackendType::WalWriter,
-        BackendType::Logger,
-    ];
-}
-
-pub const BACKEND_NUM_TYPES: usize = BackendType::Logger as usize + 1;
-
-#[repr(u32)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-pub enum ProcessingMode {
-    BootstrapProcessing = 0,
-    InitProcessing,
-    NormalProcessing,
-}
-
-use crate::primitive::{InvalidOid, Oid};
-
-pub const SECURITY_LOCAL_USERID_CHANGE: i32 = 0x1;
-pub const SECURITY_RESTRICTED_OPERATION: i32 = 0x2;
-pub const SECURITY_NOFORCE_RLS: i32 = 0x4;
-
-// `save_nestlevel` sentinel meaning no GUC nest level was created.
-pub const USER_CONTEXT_NO_NEST_LEVEL: i32 = -1;
-
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-pub struct UserContext {
-    pub save_userid: Oid,
-    pub save_sec_context: i32,
-    pub save_nestlevel: i32,
-}
-
-impl UserContext {
-    pub const fn new(save_userid: Oid, save_sec_context: i32, save_nestlevel: i32) -> Self {
-        Self {
-            save_userid,
-            save_sec_context,
-            save_nestlevel,
-        }
-    }
-
-    pub const fn uninitialized() -> Self {
-        Self {
-            save_userid: InvalidOid,
-            save_sec_context: 0,
-            save_nestlevel: USER_CONTEXT_NO_NEST_LEVEL,
-        }
-    }
-}
-
-impl Default for UserContext {
-    fn default() -> Self {
-        Self::uninitialized()
-    }
-}
-
-pub type UserAuth = u32;
-pub const uaReject: UserAuth = 0;
-pub const uaImplicitReject: UserAuth = 1;
-pub const uaTrust: UserAuth = 2;
-pub const uaIdent: UserAuth = 3;
-pub const uaPassword: UserAuth = 4;
-pub const uaMD5: UserAuth = 5;
-pub const uaSCRAM: UserAuth = 6;
-pub const uaGSS: UserAuth = 7;
-pub const uaSSPI: UserAuth = 8;
-pub const uaPAM: UserAuth = 9;
-pub const uaBSD: UserAuth = 10;
-pub const uaLDAP: UserAuth = 11;
-pub const uaCert: UserAuth = 12;
-pub const uaRADIUS: UserAuth = 13;
-pub const uaPeer: UserAuth = 14;
-pub const uaOAuth: UserAuth = 15;
 
 ```
 
@@ -1842,633 +1762,595 @@ pub const uaOAuth: UserAuth = 15;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1bc8065f` (2026-10-19)
-**Commit Message**: pgrust v0.3.1
+### Incident Patch 1: `38634b40` (2026-10-22)
+**Commit Message**: pgrust v0.4-beta with ACID-compliant columnar and automatic memory management
 
-Apply selected correctness fixes to v0.3 and update regression coverage.
-
-**File**: `Cargo.lock` (modified, +94/-2)
+**File**: `.cargo/config.toml` (added, +8/-0)
 ```diff
-@@ -209,17 +209,21 @@ dependencies = [
-  "datum",
-  "elog",
-  "fd",
-+ "format_type",
-  "guc_tables",
-  "hashfn",
-  "mcx",
-+ "namespace_seams",
-  "nodes_core",
-  "pgtz",
-  "pqformat",
-  "stringinfo",
-+ "syscache_seams",
-  "types_core",
-  "types_error",
-  "types_fmgr",
-  "types_nodes",
-+ "types_tuple",
-  "xact",
-  "xact_seams",
- ]
-@@ -323,6 +327,7 @@ dependencies = [
-  "fmgr_core",
-  "guc_tables",
-  "hashfn",
-+ "libc",
-  "mcx",
-  "pqformat",
-  "ryu",
-@@ -639,6 +644,7 @@ dependencies = [
-  "arrayutils",
-  "catalog",
-  "catalog_namespace",
-+ "coerce",
-  "datum",
-  "dbcommands",
-  "detoast_seams",
-@@ -672,6 +678,8 @@ dependencies = [
-  "timestamp_seams",
-  "transam_xlog",
-  "trigger_seams",
-+ "tupdesc",
-+ "typcache_seams",
-  "types_core",
-  "types_error",
-  "types_fmgr",
-@@ -1031,6 +1039,7 @@ dependencies = [
-  "datum",
-  "detoast",
-  "mcx",
-+ "pg_qsort",
-  "postgres_seams",
-  "reloptions",
-  "types_core",
-@@ -1121,6 +1130,7 @@ dependencies = [
-  "types_core",
-  "types_error",
-  "types_fmgr",
-+ "types_tuple",
-  "varlena",
- ]
- 
-@@ -1443,6 +1453,7 @@ dependencies = [
-  "gin_validate",
-  "gin_vocab",
-  "gist_validate",
-+ "guc_seams",
-  "hash_validate",
-  "heaptuple",
-  "mcx",
-@@ -1953,6 +1964,7 @@ dependencies = [
-  "mbutils_seams",
-  "mcx",
-  "miscinit",
-+ "pg_string",
-  "pgstat_seams",
-  "postgres_seams",
-  "pqcomm",
-@@ -2055,6 +2067,7 @@ checksum = "9d297deb1925b89f2ccc13d7635fa0714f12c87adce1c75356b39ca9b7178567"
- name = "basebackup"
- version = "0.0.0"
- dependencies = [
-+ "adt_bool",
-  "backend_progress",
-  "backend_status",
-  "backup_copy",
-@@ -2488,6 +2501,8 @@ dependencies = [
-  "bufmgr_seams",
-  "datum",
-  "elog_seams",
-+ "fmgr_core",
-+ "fmgr_seams",
-  "indexam_seams",
-  "init_small",
-  "lsyscache",
-@@ -2498,6 +2513,7 @@ dependencies = [
-  "types_brin",
-  "types_core",
-  "types_error",
-+ "types_fmgr",
-  "types_rel",
-  "types_relscan",
-  "types_scan",
-@@ -2803,6 +2819,7 @@ dependencies = [
-  "resowner",
-  "s_lock_seams",
-  "seam_core",
-+ "shmem",
-  "shmem_seams",
-  "smgr_seams",
-  "standby_seams",
-@@ -2815,6 +2832,7 @@ dependencies = [
-  "types_rel",
-  "types_resowner",
-  "types_storage",
-+ "types_tuple",
-  "waitevent_seams",
-  "waiteventset",
-  "xact_seams",
-@@ -3844,6 +3862,7 @@ dependencies = [
-  "genam",
-  "guc",
-  "guc_tables",
-+ "hashfn",
-  "heapam",
-  "heapam_visibility",
-  "heaptuple",
-@@ -4755,6 +4774,7 @@ dependencies = [
-  "datum",
-  "dfmgr",
-  "mcx",
-+ "pg_qsort",
-  "types_error",
-  "types_fmgr",
-  "types_gist",
-@@ -5099,6 +5119,7 @@ dependencies = [
-  "types_storage",
-  "types_tuple",
-  "varlena",
-+ "waitevent_seams",
-  "wchar",
-  "xact",
-  "xloginsert",
-@@ -5138,6 +5159,7 @@ dependencies = [
-  "funcapi",
-  "genam",
-  "guc",
-+ "hashfn",
-  "heaptuple",
-  "init_small",
-  "inval_seams",
-@@ -5964,6 +5986,7 @@ dependencies = [
-  "executils",
-  "fmgr_core",
-  "lsyscache",
-+ "mbutils_seams",
-  "mcx",
-  "miscinit_seams",
-  "outfuncs",
-@@ -6243,6 +6266,7 @@ dependencies = [
-  "catalog_indexing",
-  "catalog_namespace",
-  "commands_comment",
-+ "commands_define",
-  "datum",
-  "detoast",
-  "dfmgr",
-@@ -6266,9 +6290,11 @@ dependencies = [
-  "objectaccess",
-  "objectaddress_seams",
-  "parser_seams",
-+ "parser_small1",
-  "pg_depend",
-  "pg_path",
-  "planner_seams",
-+ "postgres",
-  "rewrite_handler_seams",
-  "schemacmds",
-  "snapmgr",
-@@ -6356,6 +6382,7 @@ dependencies = [
-  "resowner_seams",
-  "startup_seams",
-  "tablespace_seams",
-+ "timeout",
-  "types_core",
-  "types_error",
-  "types_guc",
-@@ -6720,6 +6747,7 @@ dependencies = [
-  "catalog_indexing",
-  "catalog_namespace",
-  "catalog_objectaddress",
-+ "clauses",
-  "cmdtag",
-  "coerce",
-  "commands_define",
-@@ -6956,6 +6984,8 @@ dependencies = [
-  "miscinit",
-  "pg_path",
-  "slot",
-+ "tupdesc",
-+ "typcache_seams",
-  "types_core",
-  "types_error",
-  "types_fmgr",
-@@ -7597,6 +7627,7 @@ dependencies = [
-  "controldata_utils",
-  "datum",
-  "deadlock_seams",
-+ "elog",
-  "elog_seams",
-  "exectuples",
-  "fd",
-@@ -7607,6 +7638,7 @@ dependencies = [
-  "heaptoast_seams",
-  "heaptuple",
-  "init_small",
-+ "injection_point",
-  "inval",
-  "ipc_seams",
-  "latch_seams",
-@@ -7957,12 +7989,14 @@ dependencies = [
-  "heaptuple",
-  "hstore_subs_seams",
-  "lsyscache",
-+ "mbutils",
-  "mcx",
-  "pg_qsort",
-  "pqformat",
-  "reloptions",
-  "stringinfo",
-  "typcache",
-+ "typcache_seams",
-  "types_core",
-  "types_error",
-  "types_fmgr",
-@@ -8426,6 +8460,7 @@ dependencies = [
-  "pgarch",
-  "pgstat",
-  "pgstat_seams",
-+ "pgsync",
-  "pmchild_seams",
-  "pmsignal",
-  "predicate",
-@@ -8637,6 +8672,7 @@ dependencies = [
-  "objectaccess",
-  "pg_depend",
-  "pg_largeobject",
-+ "resowner",
-  "snapmgr",
-  "table",
-  "types_core",
-@@ -8703,6 +8739,7 @@ dependencies = [
-  "mcx",
-  "mcxt_stats",
-  "miscinit",
-+ "objectaccess",
-  "parallel",
-  "pgarch",
-  "pgsync",
-@@ -8723,6 +8760,7 @@ dependencies = [
-  "timeout_seams",
-  "timestamp_seams",
-  "types_core",
-+ "types_dest",
-  "types_error",
-  "types_guc",
-  "types_startup",
-@@ -8853,6 +8891,8 @@ dependencies = [
-  "backend_progress_seams",
-  "backend_stat
+@@ -0,0 +1,8 @@
++# Workspace cargo config.
++#
++# openssl-src (openssl-sys `vendored`) runs "$OPENSSL_SRC_PERL ./Configure ..."; this wrapper appends the
++# OpenSSL modules a PostgreSQL server never uses (QUIC, SM2/SM4, ML-DSA/SLH-DSA/LMS, ARIA/BF/CAST/RC2/RC4, engines;
++# the list and what is kept on purpose are in the script). A caller that exports its own OPENSSL_SRC_PERL wins over
++# this and gets no trim; the tripwire is be_secure_openssl's src/openssl_trim.rs.
++[env]
++OPENSSL_SRC_PERL = { value = "scripts/openssl-src-perl.sh", relative = true }
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `.gitignore` (modified, +6/-42)
 ```diff
-@@ -907,7 +907,7 @@ incremental = false
- inherits = "release"
- lto = false
- codegen-units = 16
--# GL-ALPHA1-COUNTERS-1: keep the symbol table (release strips it) so the
-+# regression: keep the symbol table (release strips it) so the
- # perf-profile ladder legs symbolize. ELF-sections-only — codegen unchanged.
- strip = false
+@@ -1,50 +1,14 @@
+ /target
+ **/target
+-*.profraw
+ **/target-*/
+-covloop-history/
+-proofs/coverage/__pycache__/
++target-mut/
++*.profraw
++__pycache__/
  
+ # cargo-mutants working/output directory (transient audit artifacts)
+ mutants.out/
+ mutants.out.old/
+-/cpg-cov/
+-/cpg-ref/
+-/cpg-src/
+-/cpg-icu/
+-/cpg-icu-build.out
+-# crashdiff (W1) work root: B-side scratch checkout, per-seed run evidence
+-/crashdiff-work/
+-/int8-evidence/
+-# Q3 nodes/obs lane: per-seed diffrunner evidence + corpus run logs
+-/q3-evidence/
+-/q3-before-corpus.out
+-/q3-after-corpus.out
+-/q3-after2-corpus.out
+-/pgref-build.out
+-/gapreport-build.out
+-# Q5 lane (fuzz-q5-adminacl) local rigs/evidence: B-side scratch checkout,
+-# hand-verify decks + servers, differential evidence
+-/bmain/
+-/q5-evidence/
+-/q5-handverify/
+-# integration-9 local evidence (manifests + leg logs; summary lives in docs/fuzzing/findings-int9.md)
+-/int9-evidence/
+ 
+-# accidental build-log commits
+-/cpg-build.log
+-cpg-ref-install/
+-target-mut/
+-# cfg-sampler evidence output (summaries live in docs/fuzzing/findings-cfg*.md)
+-cfgfindings/
+-
+-# FTS-RANK lane transient coverage/differential artifacts
+-covloop-*.log
+-diffpair*.log
+-fts-findings*.jsonl
+-fts-only-findings*.jsonl
+-fts-*findings-manifest.txt
+-wire-diff-out/
+-.tpchconv/
+-.tpch22/
+-__pycache__/
++# crates/postgres-18.6-reference stays tracked on this branch; scripts/pg-reference.sh's stamp and scratch copy are not
++/crates/postgres-*-reference/.pgrust-reference-stamp
++/crates/postgres-*-reference.tmp.*
 ```
 
-**File**: `README.md` (modified, +4/-4)
+**File**: `ACKNOWLEDGEMENTS.md` (added, +105/-0)
 ```diff
-@@ -7,7 +7,7 @@
+@@ -0,0 +1,105 @@
++# Acknowledgements
++
++pgrust is a Rust reimplementation of [PostgreSQL](https://www.postgresql.org),
++and almost all of it follows PostgreSQL's design and code. Beyond PostgreSQL,
++pgrust builds on published research and on ideas from other database systems.
++This file credits them. Code that pgrust ports or vendors from other projects,
++and the licenses for that code, are listed in [`NOTICE`](NOTICE).
++
++## Research
++
++- **Self-tuning query scheduling.** Benjamin Wagner, André Kohn, Thomas
++  Neumann. "Self-Tuning Query Scheduling for Analytical Workloads." SIGMOD 2021.
++  Basis for the executor's scheduler: resource groups, priority decay, and
++  adaptive task sizing (`crates/backend/executor/runtime`).
++- **ALP.** Azim Afroozeh, Leonardo X. Kuffo, Peter Boncz. "ALP: Adaptive Lossless
++  floating-Point Compression." SIGMOD 2024. Floating-point encoding
++  (`crates/_support/alp`).
++- **FastLanes.** Azim Afroozeh, Peter Boncz. "The FastLanes Compression Layout:
++  Decoding >100 Billion Integers per Second with Scalar Code." PVLDB 16(9), 2023.
++  The interleaved bit-packing layout (`crates/_support/alp/src/bitpack.rs`,
++  `pgrc_codec/src/ffor.rs`).
++- **BtrBlocks.** Maximilian Kuschewski, David Sauerwein, Adnan Alhomssi, Viktor
++  Leis. "BtrBlocks: Efficient Columnar Compression for Data Lakes." SIGMOD 2023.
++  Sample-based choice of a column encoding (`pgrc_codec/src/election.rs`).
++- **OnPair.** Francesco Gargiulo, Rossano Venturini. "OnPair: Short Strings
++  Compression for Fast Random Access." arXiv:2508.02280, 2025. Token training
++  and the 16-byte token form for dictionary string bytes before zstd
++  (`pgrc_codec/src/onpair.rs`).
++- **Photon.** Alexander Behm et al. "Photon: A Fast Query Engine for Lakehouse
++  Systems." SIGMOD 2022. Position-list selection vectors
++  (`pgrc_batch/src/selection.rs`).
++- **Unnesting.** Thomas Neumann. "Improving Unnesting of Complex Queries."
++  BTW 2025. Subquery unnesting in the planner
++  (`crates/backend/optimizer/plan/planner/src/unnest.rs`).
++- **Groupjoin.** Guido Moerkotte, Thomas Neumann. "Accelerating Queries with
++  Group-By and Join by Groupjoin." PVLDB 4(11), 2011. The groupjoin aggregation
++  strategy (`crates/gravity/lowerv4/src/ops/agg/strategies/dependent.rs`).
++- **Copy-and-patch compilation.** Haoran Xu, Fredrik Kjolstad. "Copy-and-Patch
++  Compilation." OOPSLA 2021. JIT tuple deforming (`crates/_support/jit_deform`).
++- **TPDE.** Tobias Schwarz, Tobias Kamm, Alexis Engelke. "TPDE: A Fast Adaptable
++  Compiler Back-End Framework." arXiv:2505.22610, 2025. The JIT's code
++  generator is a port of TPDE (`crates/tpde`; see NOTICE).
++- **SSA construction.** Matthias Braun, Sebastian Buchwald, Sebastian Hack,
++  Roland Leißa, Christoph Mallon, Andreas Zwinkau. "Simple and Efficient
++  Construction of Static Single Assignment Form." CC 2013.
++  (`crates/gravity/ir/src/promote.rs`).
++- **PCT.** Sebastian Burckhardt, Pravesh Kothari, Madanlal Musuvathi, Santosh
++  Nagarakatte. "A Randomized Scheduler with Probabilistic Guarantees of Finding
++  Bugs." ASPLOS 2010. Randomized scheduling in the concurrency simulator
++  (`crates/_support/pgsync/src/sim`).
++- **Malthusian locks.** Dave Dice. "Malthusian Locks." EuroSys 2017. Lock
++  hand-off policy (`crates/_support/pgsync`).
++- **TinyLFU.** Gil Einziger, Roy Friedman, Ben Manes. "TinyLFU: A Highly
++  Efficient Cache Admission Policy." ACM TOS 13(4), 2017; with the count-min
++  sketch of Graham Cormode, S. Muthukrishnan (J. Algorithms 55(1), 2005).
++  Cache admission (`crates/gravity/hosts/src/tinylfu.rs`).
++- **SipHash.** Jean-Philippe Aumasson, Daniel J. Bernstein. "SipHash: a fast
++  short-input PRF." INDOCRYPT 2012. 128-bit value fingerprints
++  (`crates/gravity/dict`).
++- **Division by constants.** Torbjörn Granlund, Peter L. Montgomery. "Division
++  by Invariant Integers using Multiplication." PLDI 1994.
++  (`crates/gravity/expr`).
++- **HNSW.** Yu A. Malkov, D. A. Yashunin. "Efficient and Robust Approximate
++  Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs."
++  IEEE TPAMI 42(4), 2020. The vector index, via pgvector
++  (`crates/contrib/pgvector_hnsw`).
++- **Dremel.** Sergey Melnik et al. "Dremel: Interactive Analysis of Web-Scale
++  Datasets." PVLDB 3(1), 2010. Nested-column record assembly in the Parquet
++  reader (`crates/backend/commands/copy/src/fromparquet.rs`).
++- **LeanStore.** Viktor Leis, Michael Haubenschild, Alfons Kemper, Thomas
++  Neumann. "LeanStore: In-Memory Data Management Beyond Main Memory." ICDE 2018.
++  Cooling-stage admission for prefetched extents (`pgrc_read/src/openpart.rs`).
++- **Strongly connected components.** Robert Tarjan. "Depth-First Search and
++  Linear Graph Algorithms." SIAM J. Comput. 1(2), 1972.
++  (`crates/gravity/backend/wasm/src/irreduce.rs`).
++- Classic algorithms used throughout, largely inherited from PostgreSQL:
++  Bentley and McIlroy's "Engineering a Sort Function" (Software: Practice and
++  Experience, 1993), Knuth's *Th
+```
+
+**File**: `Cargo.toml` (modified, +156/-54)
+```diff
+@@ -1,5 +1,7 @@
+ [workspace]
+ resolver = "2"
++# The vendored libmimalloc-sys and allocator-api2 ([patch.crates-io] below) are path dependencies, not members.
++exclude = ["third_party/libmimalloc-sys", "third_party/allocator-api2"]
+ members = [
+     "crates/backend/replication/origin",
+     "crates/backend/replication/slotsync",
+@@ -10,6 +12,7 @@ members = [
+     "crates/backend/backup/sink",
+     "crates/backend/backup/compress",
+     "crates/common/compression",
++    "crates/common/lz4_block",
+     "crates/backend/backup/sink_support",
+     "crates/backend/backup/backup_copy",
+     "crates/backend/backup/backup_copy_seams",
+@@ -23,11 +26,20 @@ members = [
+     "crates/_support/types/types_core",
+     "crates/_support/mcx",
+     "crates/_support/secure_zero",
++    "crates/_support/pagegive",
++    "crates/_support/pagepool",
++    "crates/_support/memledger",
++    "crates/_support/allocarena",
++    "crates/_support/mempolicy",
++    "crates/_support/fp_contract",
+     "crates/_support/pg_qsort",
+     "crates/_support/jit_deform",
+     "crates/_support/types/datum",
+     "crates/_support/seam_core",
+     "crates/_support/pgsync",
++    "crates/_support/fires",
++    "crates/_support/cancelpoll",
++    "crates/_support/leader_tls",
+     "crates/_support/test_boot",
+     "crates/_support/types/types_tuple",
+     "crates/_support/types/types_trigger",
+@@ -36,9 +48,9 @@ members = [
+     "crates/backend/utils/adt/tsvector_stat",
+     "crates/_support/types/stringinfo",
+     "crates/common/blkreftable",
++    "crates/common/ct_carrier_mimalloc",
+     "crates/common/parse_manifest",
+     "crates/common/hashfn",
+-    "crates/common/stringhash",
+     "crates/_support/types/fmgr",
+     "crates/_support/types/types_scan",
+     "crates/_support/types/types_guc",
+@@ -144,6 +156,7 @@ members = [
+     "crates/backend/libpq/be_secure_seams",
+     "crates/backend/libpq/be_secure",
+     "crates/backend/libpq/be_secure_common",
++    "crates/backend/libpq/be_gssapi_common",
+     "crates/backend/libpq/be_secure_openssl",
+     "crates/backend/libpq/pqcomm",
+     "crates/backend/libpq/pqmq",
+@@ -156,6 +169,7 @@ members = [
+     "crates/backend/tcop/fastpath",
+     "crates/backend/storage/aio/aio_seams",
+     "crates/backend/storage/aio/aio_core",
++    "crates/backend/storage/aio/read_stream",
+     "crates/backend/postmaster/io_worker",
+     "crates/backend/storage/aio/aio_uring",
+     "crates/backend/storage/aio/aio_funcs",
+@@ -208,11 +222,7 @@ members = [
+     "crates/backend/executor/exectuples_output",
+     "crates/backend/executor/execexpr",
+     "crates/backend/executor/runtime",
+-    "crates/backend/executor/sqe",
+-    "crates/backend/executor/sqe/lanestitch",
+     "crates/backend/executor/spillset",
+-    "crates/backend/executor/laneexec",
+-    "crates/backend/executor/lanereg",
+     "crates/backend/executor/executils",
+     "crates/backend/executor/instrument",
+     "crates/backend/executor/execjunk",
+@@ -221,35 +231,7 @@ members = [
+     "crates/backend/executor/nodemodifytable",
+     "crates/backend/executor/nodefunctionscan",
+     "crates/backend/executor/nodetablefuncscan",
+-    "crates/backend/executor/nodevaluesscan",
+-    "crates/backend/executor/nodeseqscan",
+-    "crates/backend/executor/nodetidscan",
+-    "crates/backend/executor/nodetidrangescan",
+-    "crates/backend/executor/nodeindexscan",
+-    "crates/backend/executor/nodebitmapindexscan",
+-    "crates/backend/executor/nodectescan",
+     "crates/backend/executor/nodenamedtuplestorescan",
+-    "crates/backend/executor/noderecursiveunion",
+-    "crates/backend/executor/nodeworktablescan",
+-    "crates/backend/executor/nodebitmapheapscan",
+-    "crates/backend/executor/nodeindexonlyscan",
+-    "crates/backend/executor/nodesort",
+-    "crates/backend/executor/nodeincrementalsort",
+-    "crates/backend/executor/nodegroup",
+-    "crates/backend/executor/nodeunique",
+-    "crates/backend/executor/nodeappend",
+-    "crates/backend/executor/nodemergeappend",
+-    "crates/backend/executor/nodesetop",
+-    "crates/backend/executor/nodelimit",
+-    "crates/backend/executor/nodelockrows",
+-    "crates/backend/executor/nodehash",
+-    "crates/backend/executor/nodehashjoin",
+-    "crates/backend/executor/nodematerial",
+-    "crates/backend/executor/nodememoize",
+-    "crates/backend/executor/nodemergejoin",
+-    "crates/backend/executor/nodenestloop",
+-    "crates/backend/executor/nodeagg",
+-    "crates/backend/executor/nodewindowagg",
+     "crates/backend/utils/sort/sharedtuplestore",
+     "crates/backend/utils/sort/sort_storage",
+     "crates/backend/utils/sort/tuplesort",
+@@ -313,27 +295,35 @@ members = [
+     "crates/backend/access/transam/xlogutils",
+     "crates/backend/access/table/tableam_vocab",
+     "crates/backend/access/table/tableam",
+-    "crates/backend/access/pgrcolumnar",
+-    "crates/backend/access/pgrcolumnar2/pgrc2_batch",
+-    "crates/backend/access/pgrcolumnar2/pgrc2_claim",
+-    "crates/backend/access/pgrcolumnar2/pgrc2_format",
+-    "crates/backend/access/
+```
+
+**File**: `NOTICE` (modified, +166/-5)
+```diff
+@@ -10,11 +10,29 @@ error message text, which are intentionally kept identical to
+ PostgreSQL so the two systems can be compared byte-for-byte in
+ testing).
+ 
+-In addition, the equivalence-proof tree under proofs/ contains verbatim
+-copies of PostgreSQL C source files (vendored as the reference side of
+-machine-checked C-vs-Rust equivalence proofs). Those files are
+-PostgreSQL source code, retain their upstream headers, and are
+-distributed under the PostgreSQL License reproduced below.
++Verbatim PostgreSQL source also ships in this repository, under the
++PostgreSQL License reproduced below, with upstream headers retained:
++
++- crates/postgres-18.6-reference/: the unmodified PostgreSQL 18.6 source
++  tree, kept as a read-only reference (not compiled). It includes the
++  third-party files PostgreSQL itself carries, under their own headers
++  (for example src/backend/jit/llvm/SectionMemoryManager.LICENSE).
++- proofs/: PostgreSQL C files vendored as the reference side of
++  machine-checked C-vs-Rust equivalence proofs.
++- Test oracles and generators copied from PostgreSQL inside crates:
++  crates/_support/pg_qsort/cref, crates/_support/types/nodes/vendor,
++  crates/backend/access/common/tidstore/bench/cref/vendor,
++  crates/backend/lib/dshash/bench/cref.c, and the tests/data/cref
++  directories of crates/common/hashfn, crates/common/pglz and
++  crates/port/crc32c.
++- crates/backend/parser/gram_core/gram.c and
++  crates/backend/parser/scan_fgram/scan.c: Bison and flex output generated
++  from PostgreSQL's grammar and scanner. The Bison skeleton carries the
++  Bison special exception, which permits distributing the output under
++  any terms.
++- crates/bin/initdb/share/: PostgreSQL 18.6 install-time data (see its
++  PROVENANCE.md), including the IANA time zone database compiled by zic
++  (public domain).
+ 
+ PostgreSQL is developed by the PostgreSQL Global Development Group and
+ is distributed under the PostgreSQL License. In accordance with that
+@@ -24,6 +42,117 @@ below.
+ PostgreSQL: https://www.postgresql.org
+ PostgreSQL source: https://github.com/postgres/postgres
+ 
++Third-party code inside PostgreSQL
++----------------------------------
++
++PostgreSQL incorporates code from other projects under their own
++permissive licenses. pgrust's Rust ports of those parts derive from that
++code. The license and copyright text of each is in the named file of
++crates/postgres-18.6-reference/:
++
++- Henry Spencer's regular expression engine, Copyright (c) 1998, 1999
++  Henry Spencer, BSD-style license (as adapted via Tcl):
++  ported in crates/backend/regex/ and crates/_support/types/regex.
++  License: src/backend/regex/COPYRIGHT.
++- Snowball stemmers and stop-word lists (https://snowballstem.org),
++  BSD-style license: ported in crates/backend/snowball/dict_snowball.
++  License: src/backend/snowball/README.
++- Ryu floating-point output, Copyright 2018 Ulf Adams, Boost Software
++  License 1.0 (as distributed in PostgreSQL): ported in crates/common/ryu.
++  License: src/common/d2s.c, src/common/f2s.c, src/common/ryu_common.h.
++- HyperLogLog, Copyright (c) 2013 Hideaki Ohno, MIT: ported in
++  crates/backend/lib/hyperloglog. License: src/backend/lib/hyperloglog.c.
++- MD5 and SHA-1, Copyright (C) 1995-1998 WIDE Project, BSD-3-Clause; SHA-2,
++  Copyright (c) 2000-2001 Aaron D. Gifford, BSD-3-Clause: ported in
++  crates/common/md5, crates/common/sha1, crates/common/sha2. License:
++  src/common/md5.c, src/common/sha1.c, src/common/sha2.c.
++- inet_net_ntop, Copyright (c) 2004 Internet Systems Consortium and (c)
++  1996,1999 Internet Software Consortium, ISC: ported in
++  crates/backend/utils/adt/network. License: src/port/inet_net_ntop.c.
++- tzcode (time zone library), public domain: ported in
++  crates/backend/timezone/.
++- pgcrypto's crypt() engines: crypt-des.c (FreeBSD, BSD), crypt-blowfish.c
++  and crypt-gensalt.c (Solar Designer, public domain with a fallback
++  permissive license), crypt-md5.c (Poul-Henning Kamp, "beer-ware"
++  license), crypt-sha.c (public domain), and Marko Kreen's pgcrypto
++  framework (BSD-2-Clause): ported in crates/contrib/pgcrypto. License: the
++  headers of the corresponding files under contrib/pgcrypto/.
++- Unicode Character Database derived tables, Copyright (c) Unicode, Inc.,
++  Unicode License v3: transcribed in crates/common/unicode_case,
++  crates/common/unicode_category and crates/common/unicode_norm (generated
++  in PostgreSQL by src/common/unicode/).
++- NetBSD qsort (Copyright (c) 1992, 1993 The Regents of the University of
++  California, BSD-3-Clause): ported in crates/_support/pg_qsort. License:
++  src/include/lib/sort_template.h.
++
++Other ported or derived code
++----------------------------
++
++- pgvector 0.8.5 (https://github.com/pgvector/pgvector), PostgreSQL
++  License: the vector type, its functions and the HNSW access method are
++  ported to Rust in crates/contrib/pgvector, crates/contrib/pgvector_hnsw
++  and crates/contrib/pgvector_hnsw_build; the extension script and
++  regression SQL ar
+```
+
+**File**: `README.md` (modified, +285/-257)
+```diff
+@@ -1,13 +1,12 @@
+ <h1 align="center">pgrust</h1>
+ 
+ <p align="center">
+-  <strong>A Rust rewrite of Postgres that's faster than Postgres and ClickHouse.</strong>
++  <strong>A Rust rewrite of Postgres.</strong>
+ </p>
+ 
  <p align="center">
    <img alt="Postgres 18.6" src="https://img.shields.io/badge/Postgres-18.6-336791">
-   <img alt="Regression suite: 100%" src="https://img.shields.io/badge/regression_suite-46%2C066%2F46%2C066-brightgreen">
--  <img alt="Version: v0.3" src="https://img.shields.io/badge/version-v0.3-blue">
-+  <img alt="Version: v0.3.1" src="https://img.shields.io/badge/version-v0.3.1-blue">
+-  <img alt="Regression suite: 100%" src="https://img.shields.io/badge/regression_suite-46%2C066%2F46%2C066-brightgreen">
+-  <img alt="Version: v0.3.1" src="https://img.shields.io/badge/version-v0.3.1-blue">
++  <img alt="Version: v0.4-beta" src="https://img.shields.io/badge/version-v0.4--beta-blue">
    <a href="LICENSE"><img alt="License: AGPL-3.0" src="https://img.shields.io/badge/license-AGPL--3.0-blue"></a>
  </p>
  
-@@ -23,11 +23,11 @@
+@@ -23,259 +22,181 @@
  
  <br />
  
--> **New:** [Video of Michael's talk at PlanetScale on pgrust](https://www.youtube.com/watch?v=7L_nG3EBjck) — and the [slides](https://drive.google.com/file/d/1_wDk4HPE9-MuiPBo_X-QdJUmFtVV0p8p/view).
-+> **New: v0.3.1** is a bug-fix release. [Release notes](RELEASE-NOTES.md) · [What's new in v0.3](#whats-new-in-v03)
+-> **New: v0.3.1** is a bug-fix release. [Release notes](RELEASE-NOTES.md) · [What's new in v0.3](#whats-new-in-v03)
+->
+-> [Video of Michael's talk at PlanetScale on pgrust](https://www.youtube.com/watch?v=7L_nG3EBjck) and the [slides](https://drive.google.com/file/d/1_wDk4HPE9-MuiPBo_X-QdJUmFtVV0p8p/view)
++> **New:** [Video of Michael's talk at PlanetScale on pgrust](https://www.youtube.com/watch?v=7L_nG3EBjck) — and the [slides](https://drive.google.com/file/d/1_wDk4HPE9-MuiPBo_X-QdJUmFtVV0p8p/view).
  >
--> [How AI Changes the Economics of JIT Compilers](https://malisper.me/how-ai-changes-the-economics-of-jit-compilers/)
-+> [Video of Michael's talk at PlanetScale on pgrust](https://www.youtube.com/watch?v=7L_nG3EBjck) and the [slides](https://drive.google.com/file/d/1_wDk4HPE9-MuiPBo_X-QdJUmFtVV0p8p/view)
- >
--> [What's new in v0.3](#whats-new-in-v03).
-+> [How AI Changes the Economics of JIT Compilers](https://malisper.me/how-ai-changes-the-economics-of-jit-compilers/)
+ > [How AI Changes the Economics of JIT Compilers](https://malisper.me/how-ai-changes-the-economics-of-jit-compilers/)
++>
++> **v0.4-beta is out:** [the release post](https://pgrust.com/blog/pgrust-v0-4-beta/) and [what's new](#whats-new-in-v04-beta).
  
  pgrust is a re-implementation of Postgres meant to show what Postgres would
  look like if it was built in 2026. It is wire compatible and even SQL dialect
-```
-
-**File**: `RELEASE-NOTES.md` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+# pgrust v0.3.1
-+
-+v0.3.1 is a bug-fix release on top of v0.3, still compatible with Postgres 18.6.
-+
-+## Fixes
-+
-+- Fix whole-row record references while preserving fields literally named `"*"`.
-+- Fix duplicated COPY notice context.
-+- Decode only the requested prefix for LZ4-compressed TOAST slices.
-+- Fix BRIN indexes with custom operator classes to use their own support functions instead of the built-in ones.
-+- Fix integer percentile ordering and transaction statistics accounting.
-+
-+## Upgrade
-+
-+Rebuild existing BRIN indexes that use custom operator classes with `REINDEX`.
-+
-+pgrust is still experimental and not for production.
-```
-
-**File**: `crates/_support/mcx/src/bump.rs` (modified, +9/-19)
-```diff
-@@ -94,9 +94,9 @@ impl BumpArena {
-             return self.alloc_dedicated(layout, acct);
-         }
-         let csize = (layout.size() + 7) & !7;
--        // wrapping_sub folds the ZST case into the oversize branch.
-+        // wrapping_sub folds the ZST case into the dedicated branch.
-         if csize.wrapping_sub(1) >= self.chunk_limit {
--            return self.alloc_unusual(layout, csize, acct);
-+            return self.alloc_dedicated(layout, acct);
-         }
-         let avail = self.cur_end as usize - self.cur_ptr as usize;
-         if csize <= avail {
-@@ -162,33 +162,22 @@ impl BumpArena {
-         Ok(NonNull::slice_from_raw_parts(p, csize))
-     }
+-compatible with Postgres. It passes
+-[all 46,066 tests in Postgres' regression suite](https://malisper.me/pgrust-passes-100-of-postgresqls-regression-tests/).
+-For the story of why we're building it, see
+-[pgrust: rebuilding Postgres in Rust with AI](https://malisper.me/pgrust-rebuilding-postgres-in-rust-with-ai/).
++compatible with Postgres.
  
--    // ZST or over-chunk-limit request (C's BumpAllocLarge lane).
-+    // ZST, over-aligned or over-chunk-limit request (C's BumpAllocLarge
-+    // lane); a ZST of any alignment is dangling and uncharged.
-     #[cold]
-     #[inline(never)]
--    fn alloc_unusual(
-+    fn alloc_dedicated(
-         &mut self,
-         layout: Layout,
--        csize: usize,
-         acct: &Acct,
-     ) -> Result<NonNull<[u8]>, AllocError> {
--        if csize == 0 {
-+        let size = layout.size();
-+        if size == 0 {
-             let dangling = layout.align() as *mut u8;
-             // SAFETY: align is a non-zero power of two, hence non-null.
-             let nn = unsafe { NonNull::new_unchecked(dangling) };
-             return Ok(NonNull::slice_from_raw_parts(nn, 0));
-         }
--        self.alloc_dedicated(layout, acct)
--    }
+ Every line is Rust, written to match the behavior of the C implementation.
+ Rust makes it easy to re-architect several core Postgres pieces. pgrust has:
+ 
+-- A new vectorized push-based, JIT compiled executor
++- Gravity, a new vectorized push-based, JIT compiled query engine
+ - A thread based concurrency model
+ - A query scheduler designed to keep any individual query from taking down
+   your database
+-- A built-in OOM killer that gives pgrust control of what happens when you're
+-  running low on memory, greatly reducing the chance of your whole DB being
+-  taken down by the OS OOM killer
++- An automatic memory manager: one memory budget, sized from the machine,
++  covers the buffer pool, the columnar caches and running queries, and gives
++  pgrust control of what happens when you're running low on memory, greatly
++  reducing the chance of your whole DB being taken down by the OS OOM killer
+ 
+-and many other really awesome pieces. The scheduler and the OOM killer go
++and many other really awesome pieces. The scheduler and the memory manager go
+ after two of
+ [the four horsemen behind thousands of Postgres outages](https://malisper.me/the-four-horsemen-behind-thousands-of-postgres-outages/).
+ 
+-## Status
 -
--    #[cold]
--    #[inline(never)]
--    fn alloc_dedicated(
--        &mut self,
--        layout: Layout,
--        acct: &Acct,
--    ) -> Result<NonNull<[u8]>, AllocError> {
--        let size = layout.size().max(1);
--        let layout = Layout::from_size_align(size, layout.align()).map_err(|_| AllocError)?;
-         self.oversize.try_reserve(1).map_err(|_| AllocError)?;
-         acct.check_limit(size)?;
-         let p = Global.allocate(layout)?;
-@@ -451,11 +440,12 @@ mod tests {
-     fn zero_sized_alloc_is_dangling_and_uncharged() {
-         let mut a = BumpArena::new();
-         let acct = acct();
--        for align in [1usize, 2, 4, 8] {
-+        for align in [1usize, 2, 4, 8, 16, 32, 4096] {
-             let l = Layout::from_size_align(0, align).unwrap();
-             let p = a.alloc(l, &acct).unwrap();
-             assert_eq!(p.len(), 0);
-             assert_eq!(p.cast::<u8>().as_ptr() as usize % align, 0);
-+            assert_eq!((a.footprint(), a.nblocks()), (0, 0), "align={align}");
-         }
-         assert_eq!(acct.self_used.get(), 0);
-         assert_eq!(a.footprint(), 0);
-```
-
-**File**: `crates/_support/mcx/src/generation.rs` (modified, +10/-19)
-```diff
-@@ -82,9 +82,9 @@ impl GenArena {
-             return self.alloc_dedicated(layout, acct);
-         }
-         let csize = (layout.size() + 7) & !7;
--        // wrapping_sub folds the ZST case into the unusual branch.
-+        // wrapping_sub folds the ZST case into the dedicated branch.
-         if csize.wrapping_sub(1) >= GEN_CHUNK_LIMIT {
--            return self.alloc_unusual(layout, csize, acct);
-+            return self.alloc_dedicated(layout, acct);
-         }
-         let req = GEN_CHUNKHDRSZ + csize;
-         let avail = (self.cur_end as usize).wrapping_sub(self.cur_ptr as usize);
-@@ -198,34 +198,23 @@ impl GenArena {
-         Ok(addr)
-     }
- 
--    // ZST or over-chunk-limit request (C's GenerationAllocLarge lane).
-+    // ZST, over-aligned or over-chunk-limit request (C's GenerationAllocLarge
-+    // lane); a ZST of any alignment is dangling and uncharged.
-     #[cold]
-     #[inline(never)]
--    fn alloc_unusual(
-+    fn alloc_dedicated(
-         &mut self,
-         layout: Layout,
--        csize: usize,
-         acct: &Acct,
-     ) -> Result<NonNull<[u8]>, AllocError> {
--        if csize == 0 {
-+        if layout.size() == 0 {
-             let dangling = layout.align() as *mut u8;
-             // SAFETY: align is a non-zero power of two, hence non-null.
-             let nn = unsafe { NonNull::new_unchecked(dangling) };
-             return Ok(NonNull::slice_from_raw_parts(nn, 0));
-         }
--        self.alloc_dedicated(layout, acct)
--    }
+-We don't recommend running pgrust in production (yet), but we are
+-successfully running it ourselves internally. Keep Postgres as the source
+-of truth for data you can't afford to lose.
 -
--    // Single-chunk dedicated block; the chunk header still finds it for free.
--    #[cold]
--    #[inline(never)]
--    fn alloc_dedicated(
--        &mut self,
--        layout: Layout,
--        acct: &Acct,
--    ) -> Result<NonNull<[u8]>, AllocError> {
-         let align = layout.align().max(POOL_MAX_ALIGN);
--        let csize = (layout.size().max(1) + 7) & !7;
-+        let csize = (layout.size() + 7) & !7;
-         let data_off = (GEN_BLKHDRSZ + GEN_CHUNKHDRSZ + align - 1) & !(align - 1);
-         let blksize = data_off.checked_add(csize).ok_or(AllocError)?;
-         let addr = self.push_block(blksize, align, acct)?;
-@@ -536,10 +525,12 @@ mod tests {
-     fn zero_sized_alloc_is_dangling_and_uncharged() {
-         let mut a = GenArena::new();
-         let acct = acct();
--        for align in [1usize, 2, 4, 8] {
-+        for align in [1usize, 2, 4, 8, 16, 32, 4096] {
-             let zl = Layout::from_size_align(0, align).unwrap();
-             let p = a.alloc(zl, &acct).unwrap();
-             assert_eq!(p.len(), 0);
-+            assert_eq!(p.cast::<u8>().as_ptr() as usize % align, 0);
-+            assert_eq!((a.footprint(), a.nblocks()), (0, 0), "align={align}");
-             // SAFETY: ZST dealloc is a no-op by contract.
-             unsafe { a.dealloc(p.cast(), zl, &acct) };
-         }
+-pgrust currently passes the Postgres regression suite. It's faster than
+-Postgres and ClickHouse, but it still has a lot of bugs. Our #1 priority right
+-now is testing and reliability.
+-
+-If you need production ready Postgres today, use Postgres.
+-
+-Existing PostgreSQL extensions do not work. There is no stable extension ABI
+-in pgrust yet. Some bundled contrib modules are ported, but PL/Python,
+-PL/Perl, and PL/Tcl are not.
+-
+-pgrust is specifically tuned for Graviton4 and the JIT compiler only targets
+-Graviton4. pgrust will still work on other platforms, but will not have
+-similar performance.
+-
+-## Performance
+-
+-Measured on `c8g.4xlarge` (AWS Graviton4) against PostgreSQL 18.3.
+-
+-On the ClickBench combined score, pgrust scored 18.5% faster than ClickHouse
+-and hundreds of times faster than PostgreSQL. This was using pgrcolumnar,
+-pgrust's builtin columnar layout.
+-
+-On sysbench-oltp, pgrust achieved 30% higher throughput than Postgres 18.3 on
+-read-only workloads at 300GB scale.
+-
+-For a code-level walkthrough of one part of that speedup, read
+-[Rebuilding Postgres for 300x faster analytics: batching, operator fusion, and SIMD](https://malisper.me/how-we-made-postgres-hundreds-of-times-faster-the-query-engine/).
+-
+-These runs were reviewed independently by **Greg Smith**, author of
+-*PostgreSQL 9.0 High Performance*.
+-
+-Two honest caveats. We had previously reported that pgrust was over 50%
+-faster than Postgres. On Kubernetes we measure a larger OLTP gap, 50-60%
+-rather than 30%, and we have not isolated 
 ```
 
-**File**: `crates/_support/mcx/src/lib.rs` (modified, +48/-4)
+**File**: `RELEASE-NOTES.md` (removed, +0/-17)
 ```diff
-@@ -447,11 +447,28 @@ mod tls_pools {
-         unsafe { Global.deallocate(p.cast(), Layout::new::<AcctInner>()) };
-     }
- 
-+    // Retired `session_root*` shells (poisoned at teardown, see
-+    // `retire_session_root`) wait here until the OS thread dies; the stack's
-+    // Drop — a real TLS destructor, the last code to run on the thread —
-+    // frees them. Every other per-thread holder of a root handle is
-+    // ManuallyDrop (no destructor), so nothing can observe a shell after
-+    // this runs: this is C's "TopMemoryContext dies with the process" for a
-+    // thread-per-session backend. Uncapped: `give` must never free early.
-+    fn free_retired_root(addr: usize) {
-+        // SAFETY: `addr` is a `Box::into_raw` shell from `session_root_mut`,
-+        // retired (arena released, poisoned) and buried exactly once by the
-+        // Roots-phase cleanup; the burying thread is exiting and no live
-+        // reference remains (every TLS holder is ManuallyDrop).
-+        unsafe { drop(alloc::boxed::Box::from_raw(addr as *mut MemoryContext)) };
-+    }
-+
-     std::thread_local! {
-         pub(crate) static ACCT: LocalStack<NonNull<AcctInner>> =
-             const { LocalStack::new(ACCT_POOL_MAX, dispose_acct) };
-         pub(crate) static CHILD_VECS: LocalStack<alloc::vec::Vec<AcctWeak>> =
-             const { LocalStack::new(CHILD_VEC_POOL_MAX, core::mem::drop) };
-+        pub(crate) static RETIRED_ROOTS: LocalStack<usize> =
-+            const { LocalStack::new(usize::MAX, free_retired_root) };
-     }
- }
- 
-@@ -726,7 +743,7 @@ fn notify_root_observer(acct: &AcctRc) {
-     }
- }
- 
--/// Process-wide Σ of block bytes held by LIVE memory contexts (GL-MEMWATCH-1).
-+/// Process-wide Σ of block bytes held by LIVE memory contexts (regression).
- ///
- /// Maintained at BLOCK transitions only (arena block alloc/free, dedicated/
- /// oversize chunks, recycled-keeper adoption/parking) — one relaxed atomic
-@@ -764,11 +781,11 @@ pub mod global_footprint {
-         BYTES.load(Relaxed)
-     }
- 
--    /// Registered ENGINE-ESTATE bytes (GL-CONCMEM-1): plain-Rust executor
-+    /// Registered ENGINE-ESTATE bytes (regression): plain-Rust executor
-     /// estates — the lane aggregation tables' chunked row stores, entry
-     /// arrays and key arenas — charge their block bytes into the SAME
-     /// process ledger, so the memory watchdog's accounted line and the
--    /// GL-MEMCEIL-1 ceiling see engine memory, not only context blocks
-+    /// regression ceiling see engine memory, not only context blocks
-     /// (the concurrent-window autopsy's 6.3GiB unaccounted delta was
-     /// exactly this estate). Charge/uncharge at BLOCK grain only (growth
-     /// events, clear, Drop) — never per row; an uncharge must never exceed
-@@ -1013,13 +1030,30 @@ pub fn session_root_mut(ctx: MemoryContext) -> &'static mut MemoryContext {
-             // access fails closed via `check_live`.
-             let shell = unsafe { &mut *(addr as *mut MemoryContext) };
-             shell.retire_session_root();
-+            bury_retired_root(addr);
-         }),
-     );
-     // SAFETY: heap allocation; retired-but-never-freed by the closure above,
-     // so the reference is valid for the process lifetime.
-     unsafe { &mut *raw }
- }
- 
-+/// Queue a retired shell for the thread-death free (see
-+/// `tls_pools::free_retired_root`). Measured before this: ~20 session roots
-+/// per backend x (256 B shell + 192 B Acct node + the children vec) =
-+/// ~10 KiB left behind by EVERY session, the whole plain-session residue.
-+/// Without a per-thread pool (no_std, tests, PGRUST_MCX_POOL_STRIPE=0, or a
-+/// thread whose TLS is already gone) the shell stays leaked-and-poisoned as
-+/// before — never freed early.
-+fn bury_retired_root(addr: usize) {
-+    #[cfg(all(feature = "std", not(test)))]
-+    if local_pool_on() {
-+        let _ = tls_pools::RETIRED_ROOTS.try_with(|s| s.give(addr));
-+        return;
-+    }
-+    let _ = addr;
-+}
-+
- // Allocator-retention release hook (mimalloc mi_collect shape); installed by
- // the binary that owns the global allocator, no-op when unset. Call sites are
- // alloc-churn boundaries where freed-but-retained segments would otherwise
-@@ -1638,7 +1672,7 @@ impl MemoryContext {
-     }
- }
- 
--// GL-MEMWATCH-1: C parity for aset.c's MemoryContextStats(TopMemoryContext)
-+// regression: C parity for aset.c's MemoryContextStats(TopMemoryContext)
- // on allocation failure — the installed observer (mcxt_stats) dumps the
- // failing thread's context forest before the error propagates. Set-once at
- // boot, fn-pointer seam (root-observer pattern above).
-@@ -1991,7 +2025,17 @@ unsafe impl Allocator for Mcx<'_> {
-                 result
-             }
-             // GenerationRealloc: a shrink stays in place (oldsize >= size branch).
-+            // A zero-size target releases the chunk now: a ZST deallocate is a
-+            // no-op by contract, so a retained chunk would pin its block forever.
-             Backend::Generation(a) => {
-+           
+@@ -1,17 +0,0 @@
+-# pgrust v0.3.1
+-
+-v0.3.1 is a bug-fix release on top of v0.3, still compatible with Postgres 18.6.
+-
+-## Fixes
+-
+-- Fix whole-row record references while preserving fields literally named `"*"`.
+-- Fix duplicated COPY notice context.
+-- Decode only the requested prefix for LZ4-compressed TOAST slices.
+-- Fix BRIN indexes with custom operator classes to use their own support functions instead of the built-in ones.
+-- Fix integer percentile ordering and transaction statistics accounting.
+-
+-## Upgrade
+-
+-Rebuild existing BRIN indexes that use custom operator classes with `REINDEX`.
+-
+-pgrust is still experimental and not for production.
 ```
 
-**File**: `crates/_support/mcx/src/slab.rs` (modified, +24/-1)
+**File**: `benchmarks/pgo/README.md` (added, +399/-0)
 ```diff
-@@ -221,7 +221,8 @@ impl SlabArena {
-         }
-         let chunk = self.next_free_chunk(addr);
-         let i = self.blocklist_index(block_mut(addr).nfree);
--        debug_assert_eq!(self.blocklist[i as usize], 0);
-+        // Lane 0 (full blocks) legitimately chains: chunks_per_block == 1.
-+        debug_assert!(i == 0 || self.blocklist[i as usize] == 0);
-         self.push_head(i, addr);
-         self.cur_blocklist_index = i;
-         Ok(chunk_slice(chunk, self.full_chunk_size))
-@@ -471,6 +472,28 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn one_chunk_per_block_chains_full_blocks() {
-+        let mut a = SlabArena::new(1024, 984);
-+        assert_eq!(a.chunks_per_block, 1);
-+        let acct = acct();
-+        let layout = Layout::from_size_align(984, 8).unwrap();
-+        let p0 = a.alloc(layout, &acct).unwrap().cast::<u8>();
-+        let p1 = a.alloc(layout, &acct).unwrap().cast::<u8>();
-+        let p2 = a.alloc(layout, &acct).unwrap().cast::<u8>();
-+        assert_ne!(p0, p1);
-+        assert_ne!(p1, p2);
-+        assert_eq!(a.nblocks(), 3);
-+        // SAFETY: all three are live from alloc with `layout`.
-+        unsafe {
-+            a.dealloc(p1, layout, &acct);
-+            a.dealloc(p0, layout, &acct);
-+            a.dealloc(p2, layout, &acct);
-+        }
-+        let q = a.alloc(layout, &acct).unwrap().cast::<u8>();
-+        assert!([p0, p1, p2].contains(&q), "a parked empty block is reused");
-+    }
+@@ -0,0 +1,399 @@
++# PGO training corpus
 +
-     #[test]
-     #[should_panic(expected = "unexpected alloc chunk size")]
-     fn wrong_size_panics() {
++Profile-guided optimization needs a workload to train on. This directory holds
++that workload, the proof that it is **not** the workload we publish numbers
++for, and the machinery that keeps the two apart.
++
++## Why this exists
++
++A PGO binary is shaped by whatever it was profiled running. If the profile run
++executes the exact statements a published benchmark later measures, the
++published number is partly a measurement of the training, not of the engine —
++the compiler has been handed the answer key. That is the ordinary
++train-on-test failure, and it is invisible from the outside unless the training
++inputs can be read.
++
++So: the training corpus lives in the source tree, under version control; every
++training run reads it and nothing else (no downloaded data, no benchmark
++tables); and a lint refuses to build if any training statement is a published
++measurement statement, or a published analytical statement with its columns
++renamed.
++
++## Provenance
++
++One corpus, one training run, two callers:
++
++- the release: `scripts/release/linux-builder.sh` builds the instrumented
++  server and runs `scripts/release/pgo-train.sh` on the builder host;
++- a local rebuild: `benchmarks/build-pgo.sh` runs the same `pgo-train.sh`.
++
++`pgo-train.sh` expands this directory with `gen-corpus.sh` (which re-runs the
++lint over the expansion), trains on a fresh `initdb` cluster, and logs a
++`PGO-CORPUS sha256=<hex>` line. The corpus sha256 is the sha256 of the sorted
++`sha256sum` listing of `corpus/`, `denylist/`, `gen-corpus.sh` and the two lint
++files; it does not depend on where the corpus is expanded, so it names the
++corpus revision a binary was trained on. The release builder copies the line
++into its own log; `build-pgo.sh` writes it into `build-manifest.txt` next to
++the source sha and the profdata and binary hashes.
++
++Where it can be read: this directory ships with the public source tree (the
++rest of `benchmarks/` does not), so the corpus a published binary was trained
++on is readable in the public tree at the source sha the binary was built from.
++
++## What is here
++
++| path | role |
++|---|---|
++| `corpus/analytics-pulse.sql` | 88 analytical statements (`J1`…`J88`) over the generated fixture, one per line |
++| `corpus/analytics-pulse-engines.tsv` | per-statement execution-engine class (drives the two vectors) |
++| `corpus/analytics-pulse-fixture.sql` | the fixture: DDL plus the SQL that generates and loads every row |
++| `corpus/oltp-generic.sql` | the transactional statement-class list of record |
++| `corpus/oltp-schema.sql` | fixture DDL for the transactional corpus |
++| `corpus/QUARANTINE.tsv` | shape ids held out of the emitted vectors, each with its defect |
++| `gen-corpus.sh` | expands the corpus into the files a profile run consumes, lints the expansion, prints the corpus sha256 |
++| `denylist/analytics-skeletons.sql` | the published single-table analytical measurement vector, stored as its column-blind skeletons (no statement text) — **denied** |
++| `denylist/tpch-official.sql` | the published TPC-H vector (22 templates), stored as column-blind skeletons plus the sha256 of each statement's canonical form (no statement text) — **denied**, exact and column-blind |
++| `denylist/tpcds-official.sql` | the published TPC-DS vector (99 templates), stored as for TPC-H — **denied**, exact and column-blind |
++| `denylist/oltp-official.sql` | statement templates of the published transactional rigs — **denied**, exact form |
++| `denylist/EXEMPTIONS.txt` | statements permitted despite a match, each with a reason (currently empty) |
++| `lint-training-overlap.sh` / `.awk` | the proof: training ∩ denied = ∅, under both rules |
++| `../build-pgo.sh` | a local PGO build from source: instrumented build, `scripts/release/pgo-train.sh`, merge, profile-use build, manifest |
++
++The denylist files are inputs to the lint only. Nothing in the build reads them
++as training material.
++
++## The line this draws
++
++**Enforced mechanically, rule 1: no literal overlap.** No statement that a
++published benchmark issues may appear in the training corpus, in any binding.
++The lint canonicalizes both sides — string literals, numbers, `?`, `$1` and
++`:name` all collapse to a single token, harness `RESET ALL;` / `SET …;`
++prefixes are stripped, case is folded, punctuation is spaced and whitespace
++collapsed — so what is compared is the statement's identifier-and-operator
++skeleton. Changing a search term, a range bound, a table suffix, or a parameter
++binding does not get a denied statement past the lint; that is deliberate,
++because a parameterized family is one statement.
++
++**Enforced mechanically, rule 2: no renamed copies.** See "The column-blind
++guard" below.
++
++**Disclosed, not enforced: shape-class overlap.** The corpus deliberately
++exercises the operator classes the product is measured on — grouped
++aggregation, per-group distinct, top-N, substring and regexp predicates, joins,
++point lookup
 ```
 
 #### Recent Merged Pull Requests:
@@ -2497,58 +2379,28 @@ Apply selected correctness fixes to v0.3 and update regression coverage.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pgrust v0.3.1
+## X. pgrust v0.4-beta with ACID-compliant columnar and automatic memory management
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in malisper/pgrust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in malisper/pgrust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1bc8065f`: pgrust v0.3.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `38634b40`: pgrust v0.4-beta with ACID-compliant columnar and automatic memory management. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "format_type",
- "namespace_seams",
- "syscache_seams",
- "types_tuple",
- "libc",
- "coerce",
- "tupdesc",
- "typcache_seams",
- "pg_qsort",
- "types_tuple",
- "guc_seams",
- "pg_string",
- "adt_bool",
- "fmgr_core",
- "fmgr_seams",
- "types_fmgr",
- "shmem",
- "types_tuple",
- "hashfn",
- "pg_qsort",
- "waitevent_seams",
- "hashfn",
- "mbutils_seams",
- "commands_define",
- "parser_small1",
- "postgres",
- "timeout",
- "clauses",
- "tupdesc",
- "typcache_seams",
- "elog",
- "injection_point",
- "mbutils",
- "typcache_seams",
- "pgsync",
- "resowner",
- "objectaccess",
- "types_dest",
+# Workspace cargo config.
+#
+# openssl-src (openssl-sys `vendored`) runs "$OPENSSL_SRC_PERL ./Configure ..."; this wrapper appends the
+# OpenSSL modules a PostgreSQL server never uses (QUIC, SM2/SM4, ML-DSA/SLH-DSA/LMS, ARIA/BF/CAST/RC2/RC4, engines;
+# the list and what is kept on purpose are in the script). A caller that exports its own OPENSSL_SRC_PERL wins over
+# this and gets no trim; the tripwire is be_secure_openssl's src/openssl_trim.rs.
+[env]
+OPENSSL_SRC_PERL = { value = "scripts/openssl-src-perl.sh", relative = true }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2558,4 +2410,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bc8065f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `38634b40` are properly handled with clean fallback behavior.

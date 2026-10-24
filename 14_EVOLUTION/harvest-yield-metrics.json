@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T20:05:08.204Z",
-  "total_cycles_completed": 4557,
-  "total_learnings_persisted": 4557,
-  "total_rules_promoted": 3794,
+  "last_updated": "2026-10-24T20:11:26.340Z",
+  "total_cycles_completed": 4562,
+  "total_learnings_persisted": 4562,
+  "total_rules_promoted": 3801,
   "history": [
-    {
-      "timestamp": "2026-10-22T18:24:11.987Z",
-      "repository": "ArchiveBox/ArchiveBox",
-      "learningId": "learn-github-archivebox-archivebox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:24:16.114Z",
-      "repository": "fission/fission",
-      "learningId": "learn-github-fission-fission",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:24:22.937Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:30:34.591Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:30:42.771Z",
-      "repository": "chaos-mesh/chaos-mesh",
-      "learningId": "learn-github-chaos-mesh-chaos-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T18:37:28.776Z",
       "repository": "lxml/lxml",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-24T20:05:08.204Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:11:11.086Z",
+      "repository": "Megabit/Blazorise",
+      "learningId": "learn-github-megabit-blazorise",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:11:11.283Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:11:17.038Z",
+      "repository": "autogluon/chronos-2",
+      "learningId": "learn-huggingface-autogluon-chronos-2",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:11:20.043Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:11:26.340Z",
+      "repository": "malisper/pgrust",
+      "learningId": "learn-github-malisper-pgrust",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

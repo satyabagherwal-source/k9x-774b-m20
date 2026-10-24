@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `4ca8c58d`  
+> **Source Version**: `b2a3be78`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T18:52:39.558Z  
+> **Timestamp**: 2026-10-24T20:11:19.804Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T18:52:37.969Z  
+> **Harvest Timestamp**: 2026-10-24T20:11:18.972Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14563 stars
+- **Stars / Engagement**: 14567 stars
 
 ---
 
@@ -1155,11 +1155,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7717** (2026-10-21): **ci: clean up stale FUSE mounts between command tests**
-  *Symptoms*: ## What changed  - Add an `EXIT` trap to `crash_consistency.sh` that always runs the shared `umount_jfs` cleanup for `/jfs`, while preserving the test's original exit status. - Call the shared `prepare_test` cleanup at the start of each independent Debug test case. - Replace all eight `.github/` workflow uses of `ubuntu-latest-4-cores` with `ubuntu-24.04-4-cores` without changing other runner labels or matrices.  ## Why  Crash Consistency intentionally kills the JuiceFS mount process to simulate a power loss, then leaves its final `/jfs` mount active when the script exits. The following Gateway test reformats metadata, changing the volume UUID; the old client exits and leaves a disconnected FUSE mount. Debug previously had no standard per-case cleanup, so Ubuntu 26.04's `fusermount3` could not recover that stale mount and Redis/TiKV Debug jobs failed consistently.  This adds isolation on both sides: the producer cleans `/jfs` on every exit path, and each Debug consumer starts with the repository's shared cleanup. Pinning the affected 4-core jobs to Ubuntu 24.04 also keeps the existing runner environment stable while the cleanup fixes prevent cross-test leakage.  ## Validation  - `bash -n .github/scripts/command/crash_consistency.sh .github/scripts/command/debug.sh` - Parsed all eight changed workflow files with Ruby YAML - `git diff --check` - Verified zero `ubuntu-latest-4-cores` occurrences and exactly eight `ubuntu-24.04-4-cores` occurrences under `.github/`
+- **Issue #7748** (2026-10-23): **warmup: reuse in-flight full-block downloads**
+  *Symptoms*: Based on #7649 (original commit by @qingketsing kept), fixes #7634.  ### Change  `FillCache` (warmup) first tries `TryPiggyback` to reuse an in-flight full-block download of the same block, avoiding a duplicate GET. On success it caches the block with `force=true` (so `--cache-partial-only` still fills the cache); on shared failure it falls back to its own download.  Compared with #7649, the piggybacked page is copied into a page owned by warmup before caching. The shared page may be the caller's buffer of a full-block read, which vfs `sliceReader` reuses on re-read; caching it directly could change the cached content of an immutable block (see #7743 for the same issue on the normal read path). Tests and docs from #7649 are dropped to keep the change minimal.  ### Validation  - Ad-hoc reproduction (not committed): read + concurrent warmup with `CacheFullBlock=false`, then rewrite the reader's buffer. #7649 caches the mutated bytes; this change keeps the original data, still with one GET. - `go test -gcflags='all=-N -l' ./pkg/chunk -count=1` passes. 
 
-- **Issue #7714** (2026-10-20): **meta: isolate Redis error conversion**
-  *Symptoms*: The shared `errno()` helper currently imports go-redis and treats any error text starting with `OOM` as `ENOSPC`. This can misclassify unrelated errors while missing wrapped Redis OOM errors.  Register engine-specific error converters during initialization and move the Redis mappings into `redisErrno` in `redis.go`, preserving every existing `errno(err)` call. Use go-redis's type-aware prefix check for OOM, including wrapped errors and compatible `ERR OOM` replies. Keep generic errors and `EXECABORT` mapped to `EIO`.  Validation:  - Local regression checks verified wrapped OOM, `ERR OOM`, unrelated OOM text, and a different Redis error code beginning with `OOM`. The test harness is not included in this PR. - A private Redis 8.6.2 instance with persistence disabled and `maxmemory=1` returned real OOM replies: direct SET error conversion and `NewSlice` returned `ENOSPC` (28). `Truncate` received `EXECABORT` and returned `EIO` (5). Restoring `maxmemory=0` let both metadata operations succeed. - SQLite/MemKV/Badger shared suites and the `noredis` build passed during local validation. - `go test ./pkg/meta -run '^$'` and formatting/diff checks passed for the final patch. - `make test.meta.non-core` was attempted but stopped at `TestKeyDB`: connection refused on `127.0.0.1:6378`. The full service-dependent suites remain for CI.  Related: #479. This change does not add proactive memory-usage warnings or recover the underlying OOM from `EXECABORT`. 
+- **Issue #7747** (2026-10-23): **ci: run KeyDB in Docker to avoid unavailable apt repository**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1176,167 +1176,199 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ca8c58d` (2026-10-21)
-**Commit Message**: cmd/fsck: stop treating a timed-out root getattr as corruption (#7680)
+### Incident Patch 1: `0eb0e6d5` (2026-10-22)
+**Commit Message**: sdk/java: fix Central publishing with Maven 3.10 (#7729)
 
-Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
-Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
+Signed-off-by: jiefenghuang <[REDACTED_EMAIL]>
 
-**File**: `pkg/meta/base.go` (modified, +2/-1)
+**File**: `sdk/java/pom.xml` (modified, +1/-1)
 ```diff
-@@ -2526,7 +2526,8 @@ func (m *baseMeta) Check(ctx Context, fpath string, opt *CheckOpt) error {
- 	var parent = RootInode
- 	attr.Typ = TypeDirectory
- 	if fpath == "/" {
--		if st := m.GetAttr(ctx, inode, &attr); st != 0 && st != syscall.ENOENT {
-+		inode = m.checkRoot(inode)
-+		if st := m.en.doGetAttr(ctx, inode, &attr); st != 0 && st != syscall.ENOENT {
- 			logger.Errorf("GetAttr inode %d: %s", inode, st)
- 			return st
- 		}
+@@ -109,7 +109,7 @@
+ 			<plugin>
+ 				<groupId>org.sonatype.central</groupId>
+ 				<artifactId>central-publishing-maven-plugin</artifactId>
+-				<version>0.8.0</version>
++				<version>0.12.0</version>
+ 				<extensions>true</extensions>
+ 				<configuration>
+ 					<publishingServerId>central</publishingServerId>
 ```
 
 ---
 
-### Incident Patch 2: `e17ccb12` (2026-10-21)
-**Commit Message**: ci: clean up stale FUSE mounts between command tests (#7717)
+### Incident Patch 2: `1f4ccc59` (2026-10-22)
+**Commit Message**: CI: capture sync checkpoint debug logs (#7728)
 
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
-
-**File**: `.github/scripts/command/crash_consistency.sh` (modified, +18/-0)
+**File**: `.github/scripts/sync/sync_minio.sh` (modified, +18/-10)
 ```diff
-@@ -6,6 +6,24 @@ source .github/scripts/start_meta_engine.sh
- start_meta_engine $META
- META_URL=$(get_meta_url $META)
+@@ -579,16 +579,19 @@ test_checkpoint_minio_big_file_resume(){
+ test_checkpoint_minio_multipart_resume(){
+     # Test: multipart upload checkpoint should persist upload state and resume for >4GiB objects
+     prepare_test
++    set -x
++    local log_dir=sync-minio-debug/multipart-resume
++    mkdir -p "$log_dir"
+     local key="multipart-checkpoint.bin"
+     local size=$((5 * 1024 * 1024 * 1024 + 17 * 1024 * 1024))
+-    local checkpoint_json=/tmp/minio-multipart-checkpoint.json
++    local checkpoint_json="$log_dir/checkpoint-before-resume.json"
+     rm -f "$checkpoint_json"
+     create_sparse_marker_file "/jfs/$key" "$size"
  
-+cleanup(){
-+    local status=$?
-+    local cleanup_status=0
-+    trap - EXIT
-+    set +e
-+    ( umount_jfs /jfs "$META_URL" ) || cleanup_status=$?
-+    if is_mounted /jfs; then
-+        echo "<FATAL>: /jfs is still mounted after cleanup"
-+        cleanup_status=1
-+    fi
-+    if [[ $cleanup_status -ne 0 ]]; then
-+        echo "<FATAL>: failed to clean up /jfs (exit $cleanup_status)"
-+        [[ $status -eq 0 ]] && status=$cleanup_status
-+    fi
-+    exit "$status"
-+}
-+trap cleanup EXIT
+     ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ \
+         --threads 1 --list-threads 1 --debug \
+         --enable-checkpoint --checkpoint-interval 60s \
+-        >sync1.log 2>&1 &
++        >"$log_dir/sync1.log" 2>&1 &
+     sync_pid=$!
+     sleep 4
+     kill -INT $sync_pid || true
+@@ -597,7 +600,7 @@ test_checkpoint_minio_multipart_resume(){
+     checkpoint_file=$(./mc find myminio/myjfs/ --name ".juicefs-sync-checkpoint*" 2>/dev/null | head -1)
+     if [ -z "$checkpoint_file" ]; then
+         echo "checkpoint file should exist after interrupted multipart minio sync"
+-        cat sync1.log
++        cat "$log_dir/sync1.log"
+         exit 1
+     fi
+ 
+@@ -608,12 +611,12 @@ test_checkpoint_minio_multipart_resume(){
+     ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ \
+         --threads 1 --list-threads 1 --debug \
+         --enable-checkpoint --checkpoint-interval 2s \
+-        >sync2.log 2>&1
++        >"$log_dir/sync2.log" 2>&1
+ 
+     checkpoint_count=$(./mc find myminio/myjfs/ --name ".juicefs-sync-checkpoint*" 2>/dev/null | wc -l)
+     if [ "$checkpoint_count" -ne 0 ]; then
+         echo "checkpoint file should be deleted after multipart minio sync resumes successfully"
+-        cat sync2.log
++        cat "$log_dir/sync2.log"
+         exit 1
+     fi
+ 
+@@ -623,18 +626,21 @@ test_checkpoint_minio_multipart_resume(){
+         exit 1
+     fi
+ 
+-    grep "panic:\|<FATAL>" sync2.log && echo "panic or fatal in sync2.log" && exit 1 || true
++    grep "panic:\|<FATAL>" "$log_dir/sync2.log" && echo "panic or fatal in sync2.log" && exit 1 || true
+ }
+ 
+ test_checkpoint_minio_signal_save(){
+     # Test: SIGINT saves checkpoint for minio sync
+     prepare_test
++    set -x
++    local log_dir=sync-minio-debug/signal-save
++    mkdir -p "$log_dir"
+     ./juicefs mdtest $META_URL /test --dirs 10 --depth 3 --files 10 --threads 10
+     # Start sync in background
+     ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ \
+-        --list-threads 100 --list-depth 10 \
++        --list-threads 100 --list-depth 10 --debug \
+         --enable-checkpoint --checkpoint-interval 60s \
+-        >sync1.log 2>&1 &
++        >"$log_dir/sync1.log" 2>&1 &
+     sync_pid=$!
+     sleep 3
+     kill -INT $sync_pid || true
+@@ -645,11 +651,13 @@ test_checkpoint_minio_signal_save(){
+         echo "checkpoint file should exist after SIGINT"
+         exit 1
+     fi
++    checkpoint_file=$(./mc find myminio/myjfs/ --name ".juicefs-sync-checkpoint*" 2>/dev/null | head -1)
++    ./mc cat "$checkpoint_file" > "$log_dir/checkpoint-before-resume.json"
+     # Resume should work
+     ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ \
+-        --list-threads 100 --list-depth 10 \
++        --list-threads 100 --list-depth 10 --debug \
+         --enable-checkpoint --checkpoint-interval 2s \
+-        >sync2.log 2>&1
++        >"$log_dir/sync2.log" 2>&1
+     count1=$(./mc ls -r juicegw/myjfs/ | grep -v ".juicefs-sync-checkpoint" | wc -l)
+     count2=$(./mc ls -r myminio/myjfs/ | grep -v ".juicefs-sync-checkpoint" | wc -l)
+     [ $count1 -eq $count2 ] || (echo "file count mismatch after resume: $count1 vs $count2" && exit 1)
+```
+
+**File**: `.github/workflows/sync.yml` (modified, +8/-0)
+```diff
+@@ -112,6 +112,14 @@ jobs:
+             exit 1
+           fi
+ 
++      - name: Upload MinIO checkpoint logs
++        if: failure() && matrix.type == 'sync_minio'
++        uses: actions/upload-artifact@v4
++        with:
++          name: sync-minio-debug-${{ github.run_attempt }}
++          path: sync-minio-debug/
++          retention-days: 7
 +
- MANIFEST=/tmp/jfs_crash_manifest.txt
- CACHE_DIR=/var/jfsCache-crash
- FILE_COUNT=100000
+       - name: upload coverage report
+         timeout-minutes: 5
+         continue-on-error: true
 ```
 
-**File**: `.github/scripts/command/debug.sh` (modified, +2/-0)
-```diff
-@@ -30,6 +30,7 @@ check_debug_file(){
- }
- 
- test_debug_juicefs(){
-+    prepare_test
-     ./juicefs format $META_URL myjfs 
-     ./juicefs mount -d $META_URL /jfs
-     dd if=/dev/urandom of=/jfs/bigfile bs=1M count=128
-@@ -39,6 +40,7 @@ test_debug_juicefs(){
- }
- 
- test_debug_abnormal_juicefs(){
-+    prepare_test
-     rm -rf debug | true
-     ./juicefs format $META_URL myjfs 
-     ./juicefs mount -d $META_URL /jfs
-```
+---
 
-**File**: `.github/workflows/command.yml` (modified, +1/-1)
-```diff
-@@ -61,7 +61,7 @@ jobs:
-       matrix:
-         # meta: [ 'sqlite3', 'redis', 'tikv']
-         meta: ${{ fromJson(needs.build-matrix.outputs.meta_matrix) }}
--    runs-on: ubuntu-latest-4-cores
-+    runs-on: ubuntu-24.04-4-cores
-     steps:
-       - name: Remove unused software
-         shell: bash
-```
+### Incident Patch 3: `52dde796` (2026-10-22)
+**Commit Message**: sdk/java: fix limit reload (#7720)
 
-**File**: `.github/workflows/compile.yml` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ jobs:
-       fail-fast: false
-       matrix:
-         meta: ${{ fromJson(needs.build-matrix.outputs.meta_matrix) }}
--    runs-on: ubuntu-latest-4-cores
-+    runs-on: ubuntu-24.04-4-cores
- 
-     steps:
-       - name: Checkout
-```
+Signed-off-by: miyang <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/dump_load.yml` (modified, +1/-1)
+**File**: `sdk/java/libjfs/main.go` (modified, +11/-8)
 ```diff
-@@ -54,7 +54,7 @@ jobs:
-       matrix:
-         meta: ${{ fromJson(needs.build-matrix.outputs.meta_matrix) }}
+@@ -680,6 +680,8 @@ func jfs_init(credentialPtr uintptr, count int32, cname, cjsonConf, cuser, group
+ 		if jConf.FreeSpace != "" {
+ 			freeSpaceRatio, _ = strconv.ParseFloat(jConf.FreeSpace, 64)
+ 		}
++		uploadLimit := utils.ParseMbpsStr("upload-limit", jConf.UploadLimit)
++		downloadLimit := utils.ParseMbpsStr("download-limit", jConf.DownloadLimit)
+ 		chunkConf := chunk.Config{
+ 			BlockSize:         format.BlockSize * 1024,
+ 			Compress:          format.Compression,
+@@ -698,8 +700,8 @@ func jfs_init(credentialPtr uintptr, count int32, cname, cjsonConf, cuser, group
+ 			MaxUpload:         jConf.MaxUploads,
+ 			MaxDownload:       jConf.MaxDownloads,
+ 			MaxRetries:        jConf.IORetries,
+-			UploadLimit:       utils.ParseMbpsStr("upload-limit", jConf.UploadLimit) * 1e6 / 8,
+-			DownloadLimit:     utils.ParseMbpsStr("download-limit", jConf.DownloadLimit) * 1e6 / 8,
++			UploadLimit:       uploadLimit * 1e6 / 8,
++			DownloadLimit:     downloadLimit * 1e6 / 8,
+ 			Prefetch:          jConf.Prefetch,
+ 			Writeback:         jConf.Writeback,
+ 			HashPrefix:        format.HashPrefix,
+@@ -732,14 +734,15 @@ func jfs_init(credentialPtr uintptr, count int32, cname, cjsonConf, cuser, group
+ 			logger.Errorf("new session: %s", err)
+ 			return nil
+ 		}
+-		m.OnReload(func(fmt *meta.Format) error {
+-			if chunkConf.UploadLimit > 0 {
+-				fmt.UploadLimit = chunkConf.UploadLimit
++		m.OnReload(func(format *meta.Format) error {
++			upload, download := format.UploadLimit, format.DownloadLimit
++			if uploadLimit > 0 {
++				upload = uploadLimit
+ 			}
+-			if chunkConf.DownloadLimit > 0 {
+-				fmt.DownloadLimit = chunkConf.DownloadLimit
++			if downloadLimit > 0 {
++				download = downloadLimit
+ 			}
+-			store.UpdateLimit(fmt.UploadLimit, fmt.DownloadLimit)
++			store.UpdateLimit(upload, download)
+ 			return nil
+ 		})
  
--    runs-on: ubuntu-latest-4-cores
-+    runs-on: ubuntu-24.04-4-cores
- 
-     steps:
-       - name: Checkout
-```
-
-**File**: `.github/workflows/dump_load_bench.yml` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ jobs:
-       matrix:
-         meta: ${{ fromJson(needs.build-matrix.outputs.meta_matrix) }}
- 
--    runs-on: ubuntu-latest-4-cores
-+    runs-on: ubuntu-24.04-4-cores
- 
-     steps:
-       - name: Checkout
-```
-
-**File**: `.github/workflows/gateway.yml` (modified, +1/-1)
-```diff
-@@ -69,7 +69,7 @@ jobs:
-             file_size: '100M'
-             isolation_level: "repeatable read"
- 
--    runs-on: ubuntu-latest-4-cores
-+    runs-on: ubuntu-24.04-4-cores
- 
-     steps: 
-       - name: Checkout
-```
-
-**File**: `.github/workflows/perf-test.yml` (modified, +1/-1)
-```diff
-@@ -47,7 +47,7 @@ jobs:
-       matrix:
-         meta: ['redis', 'redis-nocache', 'mysql', 'tikv']
-         cases: ["mdtest_fio"]
--    runs-on: ubuntu-latest-4-cores
-+    runs-on: ubuntu-24.04-4-cores
- 
-     steps:
-       - name: Clean up
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7717** (2026-10-21): ci: clean up stale FUSE mounts between command tests (@YunhuiChen)
-- **PR #7714** (2026-10-20): meta: isolate Redis error conversion (@jiefenghuang)
-- **PR #7712** (2026-10-19): object: release partially created storage on failure (@jiefenghuang)
-- **PR #7711** (closed): meta: reject doInit from read-only clients (@jiefenghuang)
-- **PR #7710** (2026-10-19): fs: key user/group quota set by the parsed id (@jiefenghuang)
-- **PR #7709** (2026-10-19): meta: retry failed reload callbacks until they succeed (@jiefenghuang)
+- **PR #7748** (closed): warmup: reuse in-flight full-block downloads (@jiefenghuang)
+- **PR #7747** (2026-10-23): ci: run KeyDB in Docker to avoid unavailable apt repository (@zxh326)
+- **PR #7737** (2026-10-22): meta/redis: bypass client cache in watched transactions (@jiefenghuang)
+- **PR #7736** (2026-10-22): bump to 1.4.2 (@jiefenghuang)
+- **PR #7735** (2026-10-22): bump to 1.3.4 (@jiefenghuang)
+- **PR #7734** (2026-10-23): meta/redis: enable tracking before purging the client-side cache (@jiefenghuang)
 
 ---
 
@@ -1356,29 +1388,28 @@ Co-authored-by: Copilot App <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/fsck: stop treating a timed-out root getattr as corruption (#7680)
+## X. sdk/java: fix Central publishing with Maven 3.10 (#7729)
 
 **RULE**:
-When implementing operations in `pkg/meta/base.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/java/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4ca8c58d`: cmd/fsck: stop treating a timed-out root getattr as corruption (#7680). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0eb0e6d5`: sdk/java: fix Central publishing with Maven 3.10 (#7729). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/meta/base.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/java/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		inode = m.checkRoot(inode)
-		if st := m.en.doGetAttr(ctx, inode, &attr); st != 0 && st != syscall.ENOENT {
+				<version>0.12.0</version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		if st := m.GetAttr(ctx, inode, &attr); st != 0 && st != syscall.ENOENT {
+				<version>0.8.0</version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ca8c58d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0eb0e6d5` are properly handled with clean fallback behavior.

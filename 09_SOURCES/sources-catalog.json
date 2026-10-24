@@ -2065,8 +2065,8 @@
     "sourceUrl": "https://huggingface.co/autogluon/chronos-2",
     "sourceVersion": "hf-autogluon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "dadd076d5801800fb28e798c1fdbc7d58aa3e4022fcde51727181929b43491ed",
-    "lastHarvestedAt": "2026-10-20T06:35:27.105Z",
+    "contentHash": "7a9665dc086b730983d645df63a59850e7d958a9f53bb84c4b4817dc5ff188c3",
+    "lastHarvestedAt": "2026-10-24T20:11:17.031Z",
     "learningId": "learn-huggingface-autogluon-chronos-2"
   },
   "deeplethe-solid-glass": {
@@ -3003,10 +3003,10 @@
     "repository": "Megabit/Blazorise",
     "platform": "github",
     "sourceUrl": "https://github.com/Megabit/Blazorise",
-    "sourceVersion": "14553676",
+    "sourceVersion": "7ecbdcac",
     "license": "NOASSERTION",
-    "contentHash": "4933eac28216e5d7e1fd549047b8c84e69b96bce5fe165e003ce7ec7c66a5bc2",
-    "lastHarvestedAt": "2026-10-19T20:16:47.433Z",
+    "contentHash": "31577a2b947ece074c05c4d1cb94f3cd6dd52f040706f0c5b673b302bbae50eb",
+    "lastHarvestedAt": "2026-10-24T20:11:11.077Z",
     "learningId": "learn-github-megabit-blazorise"
   },
   "metalbear-co-mirrord": {
@@ -4223,10 +4223,10 @@
     "repository": "malisper/pgrust",
     "platform": "github",
     "sourceUrl": "https://github.com/malisper/pgrust",
-    "sourceVersion": "1bc8065f",
+    "sourceVersion": "38634b40",
     "license": "AGPL-3.0",
-    "contentHash": "952474d25bed51f4cda73f4a1d56b0a14fa97d9aa6281ecc65605fcba6340796",
-    "lastHarvestedAt": "2026-10-20T02:22:04.200Z",
+    "contentHash": "76b0797cb75c7aea8874fa88d4f08ac8ff923f64efbc364f85780c8301f810d6",
+    "lastHarvestedAt": "2026-10-24T20:11:26.333Z",
     "learningId": "learn-github-malisper-pgrust"
   },
   "rsuite-rsuite": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "4ca8c58d",
+    "sourceVersion": "b2a3be78",
     "license": "Apache-2.0",
-    "contentHash": "596faf010a757b37a1dfc6f41ba444d75ceba8ce356f47493b803a90d8562473",
-    "lastHarvestedAt": "2026-10-21T18:52:40.000Z",
+    "contentHash": "e60eb7a28c9ae9c11b4e3a17962f6ec589dba48bb2d1bced17f05b41e7868600",
+    "lastHarvestedAt": "2026-10-24T20:11:20.036Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "c1d9be25",
+    "sourceVersion": "bc01a991",
     "license": "NOASSERTION",
-    "contentHash": "bc59e9354b79f26985a35ac8ed18ca2aab1235c6725696061300348e4d490465",
-    "lastHarvestedAt": "2026-10-21T05:02:52.342Z",
+    "contentHash": "2a8eae2bae0d67667a58e5905b13896a96fd3bdeecc8b03a13504a441f369ba2",
+    "lastHarvestedAt": "2026-10-24T20:11:11.275Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {
