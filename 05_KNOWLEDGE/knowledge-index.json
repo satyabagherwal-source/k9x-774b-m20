@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-23T11:45:08.472Z",
-  "total_verified_learnings": 1074,
+  "last_updated": "2026-10-24T19:22:30.800Z",
+  "total_verified_learnings": 1075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -115358,6 +115358,91 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-23T11:45:08.465Z"
+    },
+    "learn-github-nomadamas-cozyclay": {
+      "learning_id": "learn-github-nomadamas-cozyclay",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "NomaDamas/CozyClay",
+      "repository": "NomaDamas/CozyClay",
+      "slug": "nomadamas-cozyclay",
+      "platform": "github",
+      "source_url": "https://github.com/NomaDamas/CozyClay",
+      "source_version": "1cddcefa",
+      "content_hash": "80ff9f8c3a400c723b94d548a538e6f6923978b668405a6c9aca47343f7b5a50",
+      "dossier_path": "07_PROJECT_LEARNING/nomadamas-cozyclay-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/nomadamas-cozyclay-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3910,
+          "title": "Transient Gesture vs. Undo Stack Segregation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3911,
+          "title": "Micro-Time Drift Arbiter for Heterogeneous Media Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3912,
+          "title": "Hierarchical Scene-Graph Subject Derivation for Virtual Cameras",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-24T19:22:30.788Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3910": {
+      "learning_id": "rule-3910",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3910,
+      "title": "Transient Gesture vs. Undo Stack Segregation Invariant",
+      "source_url": "https://github.com/NomaDamas/CozyClay",
+      "source_version": "1cddcefa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:22:30.788Z"
+    },
+    "rule-3911": {
+      "learning_id": "rule-3911",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3911,
+      "title": "Micro-Time Drift Arbiter for Heterogeneous Media Pipelines",
+      "source_url": "https://github.com/NomaDamas/CozyClay",
+      "source_version": "1cddcefa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:22:30.788Z"
+    },
+    "rule-3912": {
+      "learning_id": "rule-3912",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3912,
+      "title": "Hierarchical Scene-Graph Subject Derivation for Virtual Cameras",
+      "source_url": "https://github.com/NomaDamas/CozyClay",
+      "source_version": "1cddcefa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:22:30.788Z"
     }
   },
   "aliases": {

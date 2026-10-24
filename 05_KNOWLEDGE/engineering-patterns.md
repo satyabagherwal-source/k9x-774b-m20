@@ -281087,3 +281087,306 @@ loop {
 Implement a mock `Wake` type (`NotifyingWaker`) that increments an `AtomicUsize` counter and invokes a cache-invalidating notifier every time `wake_by_ref()` is called. Assert that when the future is polled against this mock, the execution yields with `Poll::Pending` and the iteration counter never exceeds a safety threshold (< 10 cycles), preventing worker freeze.
 
 ---
+
+
+---
+
+## 3910. Transient Gesture vs. Undo Stack Segregation Invariant (Harvested from NomaDamas/CozyClay)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Transient Gesture vs. Undo Stack Segregation Invariant",
+  "source": "NomaDamas/CozyClay",
+  "source_url": "https://github.com/NomaDamas/CozyClay",
+  "source_version": "1cddcefa",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-24T19:22:30.325Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nomadamas-cozyclay",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NomaDamas/CozyClay](https://github.com/NomaDamas/CozyClay) (Revision: `1cddcefa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A software system that supports direct-manipulation gestures (e.g., 3D gizmos, IK rig drags, real-time sliders) MUST maintain live interaction states in a designated *transient preview tier* segregated from the committed command/document undo stack. When an undo action (`Ctrl+Z` / `CMD+Z`) is triggered while a transient gesture or un-applied preview is active, the system MUST cancel and roll back the uncommitted preview first. It MUST NOT push a generic undo command or report a successful rollback if external authored state has invalidated that preview; instead, the rollback handler MUST return a strict boolean (`restored`), allowing execution to fall through to the persistent command stack.
+
+**WHY**:
+Failing to return whether an un-applied preview was actually backed out causes phantom undo states. If a secondary mutation (such as an automated keyframe bake or background network edit) invalidates the preview layer, an undo handler returning unconditional `true` tricks the root undo manager into reporting success. The user's intended authored edit remains in place while the engine marks the operation as complete, corrupting the user's mental undo model.
+
+**WHEN TO APPLY**:
+Apply to any interactive canvas, WebGL editor, vector drawing application, or rich client where real-time dragging, procedural generation previews, or multi-step gestures occur alongside a standard command pattern undo/redo stack.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// src/domains/scene-undo.js & src/domains/motion.js
+export function createSceneUndo(appContext) {
+  function undoScene() {
+    // 1. Intercept uncommitted transient interaction first
+    if (appContext.shared.motionDomain?.cancelPendingIkEdit?.()) {
+      appContext.notify(ko("IK edit undone", "IK 수정을 되돌렸어요"));
+      return { ok: true, status: 'done' };
+    }
+    // 2. Fallback to committed event bus history stack
+    const receipt = appContext.bus.run('edit.undo');
+    if (receipt.status === 'noop' || receipt.ok === false) {
+      appContext.notify(
+        receipt.ok === false 
+          ? ko(receipt.message ?? "Undo was refused", `실행 취소 불가: ${receipt.message ?? ""}`)
+          : ko("Nothing to undo", "실행 취소할 작업이 없어요")
+      );
+    }
+    return receipt;
+  }
+  return { undoScene };
+}
+
+// In Domain Implementation:
+function restorePendingIkState(pending) {
+  // Guard: If authored layer changed underneath, the preview is stale
+  if (domain.layer(pending.characterId) !== pending.sourceLayer) return false;
+  
+  const state = pending.state;
+  state.keys = copyPhysicsKeys(pending.beforeKeys);
+  state.tracked = new Set(pending.beforeTracked);
+  // Re-pose or reseed targets...
+  return true; // Explicitly confirms restoration
+}
+
+function cancelPendingIkEdit() {
+  const pending = pendingIkEditRef.current;
+  if (!pending) return false;
+  const restored = restorePendingIkState(pending);
+  setPendingIkEditValue(null);
+  ikDragRef.current = null;
+  ikPreDragRef.current = null;
+  setIkTick((v) => v + 1);
+  return restored; // Return actual outcome
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Blindly returning true or failing to verify layer parity
+function cancelPendingIkEdit_AntiPattern() {
+  const pending = pendingIkEditRef.current;
+  if (!pending) return false;
+  if (domain.layer(pending.characterId) !== pending.sourceLayer) {
+    // Stale state ignored, but cleanup happens anyway
+    return; // Returns undefined!
+  }
+  restoreState(pending);
+  return true; // Always claims success, swallows real document undos
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using an automated state transition harness:
+```javascript
+test('undo: authored edit takes precedence over stale gesture preview', () => {
+  const harness = createTestHarness();
+  harness.beginGesture();
+  harness.mutateTransientPreview({ bone: 'hand', deltaY: 0.1 });
+  // Author an explicit discrete edit while preview is suspended
+  harness.bus.run('keyframe.insert', { frame: 1, val: 42 });
+  // First undo MUST pop the explicit keyframe, NOT swallow the action on the dead preview
+  const result = harness.undo();
+  assert.equal(result.status, 'undone');
+  assert.equal(harness.getKeyframe(1), null);
+});
+```
+
+---
+
+
+---
+
+## 3911. Micro-Time Drift Arbiter for Heterogeneous Media Pipelines (Harvested from NomaDamas/CozyClay)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Micro-Time Drift Arbiter for Heterogeneous Media Pipelines",
+  "source": "NomaDamas/CozyClay",
+  "source_url": "https://github.com/NomaDamas/CozyClay",
+  "source_version": "1cddcefa",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-24T19:22:30.500Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nomadamas-cozyclay",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NomaDamas/CozyClay](https://github.com/NomaDamas/CozyClay) (Revision: `1cddcefa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When synchronizing two or more decoupled media clocks in the browser (e.g., dual HTML5 `<video>` tags or WebGL canvas playheads vs. video references), the engine MUST:
+1. Establish a single master clock source (e.g., the primary 3D blocking video).
+2. Drive alignment checks on native hardware refresh callbacks (`requestVideoFrameCallback`, falling back to `requestAnimationFrame`), NEVER relying solely on sparse, erratic browser `timeupdate` events (~4 Hz).
+3. Enforce a hysteresis deadband (e.g., `|t_master - t_slave| > 1 frame duration` or `> 0.045s` at 24fps).
+4. Guard the slave seek dispatch with a mandatory settle cooldown window (e.g., 400ms) and an explicit `seeking` check to prevent seek-queue flooding.
+5. Pause the slave during master `waiting` events to prevent decode-buffer slip during asset starvation.
+
+**WHY**:
+HTML5 `<video>` elements decouple their media decode pipelines from the JavaScript event loop. Browser `timeupdate` events fire at erratic intervals (typically between 200ms and 250ms). Checking drift exclusively on `timeupdate` causes compounding phase slip. Furthermore, re-seeking without an active cooldown resets hardware decoders, triggering pipeline stalls where subsequent seeks land seconds late across sparse GOP keyframe intervals.
+
+**WHEN TO APPLY**:
+Synchronous side-by-side video compare tools, split-screen A/B previs previewers, motion-capture vs. synthetic video replay rigs, and WebGL-to-HTML5 synchronized scrubbing layers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// index.html Synchronization Arbiter
+let settleUntil = 0;
+const FRAME_THRESHOLD_SEC = 0.045; // ~1 frame at 24fps
+const SETTLE_COOLDOWN_MS = 400;
+
+const syncSlaveToMaster = (master, slave) => {
+  // Sync playback state
+  if (master.paused !== slave.paused) {
+    master.paused ? slave.pause() : slave.play().catch(() => {});
+  }
+  // Cooldown & in-flight seek guard
+  if (slave.seeking || performance.now() < settleUntil) return;
+
+  // Drift deadband check
+  if (Math.abs(slave.currentTime - master.currentTime) > FRAME_THRESHOLD_SEC) {
+    slave.currentTime = master.currentTime;
+    settleUntil = performance.now() + SETTLE_COOLDOWN_MS;
+  }
+};
+
+const tick = () => {
+  if (!master.paused) syncSlaveToMaster(master, slave);
+  if ('requestVideoFrameCallback' in master) {
+    master.requestVideoFrameCallback(tick);
+  } else {
+    requestAnimationFrame(tick);
+  }
+};
+tick();
+
+// Starvation safety
+master.addEventListener("waiting", () => slave.pause());
+master.addEventListener("seeked", () => syncSlaveToMaster(master, slave));
+master.addEventListener("play", () => syncSlaveToMaster(master, slave));
+master.addEventListener("pause", () => syncSlaveToMaster(master, slave));
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Low-frequency timeupdate + unthrottled seeks
+const follow = () => {
+  // Unbounded seeking floods decoder; 0.08 is arbitrary and skips phase tracking
+  if (Math.abs(slave.currentTime - master.currentTime) > 0.08) {
+    slave.currentTime = master.currentTime; // Thrashes on every frame!
+  }
+};
+master.addEventListener("timeupdate", follow); // Fails to catch micro-frame drift
+```
+
+**VERIFICATION METHOD**:
+Inspect drift using performance timestamp sampling:
+```javascript
+let driftAccumulator = [];
+const measureSync = () => {
+  const drift = Math.abs(master.currentTime - slave.currentTime);
+  driftAccumulator.push(drift);
+  if (driftAccumulator.length >= 240) {
+    const mean = driftAccumulator.reduce((a, b) => a + b) / driftAccumulator.length;
+    const max = Math.max(...driftAccumulator);
+    console.assert(mean < 0.025, `Mean drift exceeded threshold: ${mean}s`);
+    console.assert(max < 0.050, `Max drift exceeded single frame: ${max}s`);
+  }
+};
+```
+
+---
+
+
+---
+
+## 3912. Hierarchical Scene-Graph Subject Derivation for Virtual Cameras (Harvested from NomaDamas/CozyClay)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hierarchical Scene-Graph Subject Derivation for Virtual Cameras",
+  "source": "NomaDamas/CozyClay",
+  "source_url": "https://github.com/NomaDamas/CozyClay",
+  "source_version": "1cddcefa",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-24T19:22:30.685Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nomadamas-cozyclay",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NomaDamas/CozyClay](https://github.com/NomaDamas/CozyClay) (Revision: `1cddcefa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When virtual shot cameras, subject tracking anchors, or bounding-box observers derive the world-space target position of an actor or entity, they MUST compute the transform through the entity's complete parent hierarchy matrix (`sceneObjectCarryMatrixAt`), including grouped parents, vehicles, and rail paths. The camera tracking calculation MUST NOT sample character travel strictly from the root actor's local motion track.
+
+**WHY**:
+In 3D scenes where characters can mount, group under, or ride parent scene objects (e.g., vehicles, elevators, moving platforms), the character's authored motion coordinates exist purely in local parent space. If the camera tracking resolver samples only local root travel (`motionPos` or local kinematic track), the camera remains fixated on the original un-parented coordinate while the visual mesh rides the parent entity across the world. This decouples the shot framing, causing actors to slide out of view.
+
+**WHEN TO APPLY**:
+3D engines, previs tools, robotics coordinate frames, and game engines implementing dynamic camera rigs (Follow, Rail-Follow, Look-At) targeting hierarchical entities.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Virtual Camera Subject Resolution Matrix Formulation
+export function computeWorldSubjectPoint(scene, actorId, frame) {
+  const actor = scene.characters.get(actorId);
+  if (!actor) return null;
+
+  // 1. Compute actor's local trajectory from kinematic root
+  const localSample = sampleActorKinematics(actor, frame);
+  const localPos = new THREE.Vector3(localSample.x, localSample.y, localSample.z);
+
+  // 2. Check for parent grouping / attachment
+  const parentId = actor.attachedToObjectId;
+  if (!parentId) return localPos;
+
+  // 3. Resolve parent's world matrix at the exact frame
+  const parentMatrix = sceneObjectCarryMatrixAt(scene, parentId, frame);
+  
+  // 4. Transform local actor position through parent transform
+  return localPos.applyMatrix4(parentMatrix);
+}
+
+// Consumed uniformly by:
+// - Camera Look-At trackers
+// - Shot rail follow paths
+// - Subject-out-of-frame QA probes
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Sampling character local trajectory directly
+export function computeBrokenSubjectPoint(scene, actorId, frame) {
+  const sample = sampleAt(scene.playbackBase, actorId, frame);
+  // Ignores scene hierarchy! The car moves away, camera stares at empty road.
+  return new THREE.Vector3(sample.subject.x, sample.subject.y, sample.subject.z);
+}
+```
+
+**VERIFICATION METHOD**:
+Mount an actor inside an object moving +10m along the Z axis over 60 frames. Assert that at frame 60, the camera look-at vector evaluates to $Z \approx 10$ rather than $Z \approx 0$.
+
+---

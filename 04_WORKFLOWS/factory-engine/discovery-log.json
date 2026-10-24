@@ -18484,5 +18484,20 @@
     "downloads": 357,
     "qualityScore": 1907,
     "discoveredAt": "2026-10-23T09:18:24.551Z"
+  },
+  {
+    "name": "CozyClay",
+    "fullName": "NomaDamas/CozyClay",
+    "url": "https://github.com/NomaDamas/CozyClay",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open source previs software in the browser: block a scene, pose characters, author camera moves and cuts, then take the same shots to an AI video model.",
+    "stars": 1001,
+    "forks": 113,
+    "openIssues": 7,
+    "language": "JavaScript",
+    "qualityScore": 798,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-24T19:13:09.282Z"
   }
 ]

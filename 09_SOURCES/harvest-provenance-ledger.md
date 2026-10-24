@@ -4562,3 +4562,4 @@ Every entry in this ledger must capture:
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `73219848` | Multi-dimensional audit evidence | 2026-10-23T11:37:54.153Z |
 | `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `69ddc2ba` | Multi-dimensional audit evidence | 2026-10-23T11:44:03.809Z |
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `eb2524d0` | Multi-dimensional audit evidence | 2026-10-23T11:45:08.511Z |
+| `learn-github-nomadamas-cozyclay` | `https://github.com/NomaDamas/CozyClay` | `1cddcefa` | Multi-dimensional audit evidence | 2026-10-24T19:22:30.855Z |

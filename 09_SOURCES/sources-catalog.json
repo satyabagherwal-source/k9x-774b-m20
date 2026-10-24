@@ -10578,5 +10578,15 @@
     "contentHash": "ea2857e3f7ac8570a916fab5d9dca1ad7f8dec67f9966e63c8b2cae607b3a148",
     "lastHarvestedAt": "2026-10-23T09:20:47.317Z",
     "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash"
+  },
+  "nomadamas-cozyclay": {
+    "repository": "NomaDamas/CozyClay",
+    "platform": "github",
+    "sourceUrl": "https://github.com/NomaDamas/CozyClay",
+    "sourceVersion": "1cddcefa",
+    "license": "AGPL-3.0",
+    "contentHash": "80ff9f8c3a400c723b94d548a538e6f6923978b668405a6c9aca47343f7b5a50",
+    "lastHarvestedAt": "2026-10-24T19:22:30.855Z",
+    "learningId": "learn-github-nomadamas-cozyclay"
   }
 }

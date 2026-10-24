@@ -4408,3 +4408,7 @@ https://github.com/gauthierpiarrette/highball
 # --- Automatically Discovered by AI Scout Engine [2026-10-23T09:20:33.203Z] ---
 # [HUGGINGFACE-AI-MODELS] MiniMaxAI/MiniMax-M3.1-Flash (1907 score) - Verified Hugging Face Model: MiniMaxAI/MiniMax-M3.1-Flash (155 likes, 357 downlo
 https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-24T19:16:57.985Z] ---
+# [AI-AGENTS] NomaDamas/CozyClay (798 score) - Open source previs software in the browser: block a scene, pose characters, auth
+https://github.com/NomaDamas/CozyClay

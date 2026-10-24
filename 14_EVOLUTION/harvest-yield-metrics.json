@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-23T11:45:08.519Z",
-  "total_cycles_completed": 4532,
-  "total_learnings_persisted": 4532,
-  "total_rules_promoted": 3763,
+  "last_updated": "2026-10-24T19:22:30.865Z",
+  "total_cycles_completed": 4533,
+  "total_learnings_persisted": 4533,
+  "total_rules_promoted": 3766,
   "history": [
-    {
-      "timestamp": "2026-10-22T17:32:02.678Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T17:38:26.434Z",
       "repository": "go-kratos/kratos",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-23T11:45:08.519Z",
       "repository": "ntex-rs/ntex",
       "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:22:30.865Z",
+      "repository": "NomaDamas/CozyClay",
+      "learningId": "learn-github-nomadamas-cozyclay",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
