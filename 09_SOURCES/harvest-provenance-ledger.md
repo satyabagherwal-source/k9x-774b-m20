@@ -4592,3 +4592,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-10-24T20:11:17.031Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `b2a3be78` | Multi-dimensional audit evidence | 2026-10-24T20:11:20.036Z |
 | `learn-github-malisper-pgrust` | `https://github.com/malisper/pgrust` | `38634b40` | Multi-dimensional audit evidence | 2026-10-24T20:11:26.333Z |
+| `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-24T20:19:13.470Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `b901fb8a` | Multi-dimensional audit evidence | 2026-10-24T20:19:25.289Z |

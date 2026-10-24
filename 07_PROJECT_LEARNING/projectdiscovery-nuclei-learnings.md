@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `b0eeadc5`  
+> **Source Version**: `b901fb8a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:27:54.322Z  
+> **Timestamp**: 2026-10-24T20:19:24.843Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:27:54.316Z  
+> **Harvest Timestamp**: 2026-10-24T20:19:24.835Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32167 stars
+- **Stars / Engagement**: 32288 stars
 
 ---
 
@@ -831,12 +831,12 @@ func (e *Engine) executeTemplateWithTargets(ctx context.Context, template *templ
 		currentInfo.Unlock()
 
 		// Skip if the host has had errors
-		if inScope && e.executerOpts.HostErrorsCache != nil && e.executerOpts.HostErrorsCache.Check(e.executerOpts.ProtocolType.String(), contextargs.NewWithMetaInput(ctx, scannedValue)) {
+		if inScope && e.executerOpts.HostErrorsCache != nil && e.executerOpts.HostErrorsCache.Check(template.Type().String(), contextargs.NewWithMetaInput(ctx, scannedValue)) {
 			skipEvent := &output.ResultEvent{
 				TemplateID:    template.ID,
 				TemplatePath:  template.Path,
 				Info:          template.Info,
-				Type:          e.executerOpts.ProtocolType.String(),
+				Type:          template.Type().String(),
 				Host:          scannedValue.Input,
 				MatcherStatus: false,
 				Error:         "host was skipped as it was found unresponsive",
@@ -889,12 +889,12 @@ func (e *Engine) executeTemplatesOnTarget(ctx context.Context, alltemplates []*t
 		// Check whether the target has already been marked as permanently
 		// unresponsive by HostErrorsCache before spawning another goroutine.
 		if e.executerOpts.HostErrorsCache != nil &&
-			e.executerOpts.HostErrorsCache.Check(e.executerOpts.ProtocolType.String(), contextargs.NewWithMetaInput(ctx, target)) {
+			e.executerOpts.HostErrorsCache.Check(tpl.Type().String(), contextargs.NewWithMetaInput(ctx, target)) {
 			skipEvent := &output.ResultEvent{
 				TemplateID:    tpl.ID,
 				TemplatePath:  tpl.Path,
 				Info:          tpl.Info,
-				Type:          e.executerOpts.ProtocolType.String(),
+				Type:          tpl.Type().String(),
 				Host:          target.Input,
 				MatcherStatus: false,
 				Error:         "host was skipped as it was found unresponsive",
@@ -966,7 +966,10 @@ func (e *Engine) executeTemplateOnInput(ctx context.Context, template *templates
 	finished := e.templateExecutionStarted(template, value.Input)
 	defer func() { finished(ctx.Err()) }()
 	ctxArgs := contextargs.New(ctx)
-	ctxArgs.MetaInput = v
+	ctxArgs.MetaInput = value
+	scanCtx := scan.NewScanContext(ctx, ctxArgs)
+
+	switc
 ```
 
 ### Core Architecture Module: `pkg/core/workflow_execute.go`
@@ -1407,204 +1410,1081 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0eeadc5` (2026-10-20)
-**Commit Message**: Merge pull request #7899 from projectdiscovery/chore/zcrypto-tls13-deps
+### Incident Patch 1: `64ad4591` (2026-10-23)
+**Commit Message**: Merge pull request #7756 from baturdenada/fix/dialer-panic
 
-bump utils and tlsx to the zcrypto TLS 1.3 revision
+Fix dialer panics in JS protocol and input providers
 
-**File**: `go.mod` (modified, +4/-8)
+**File**: `pkg/input/provider/list/hmap.go` (modified, +8/-4)
 ```diff
-@@ -99,10 +99,10 @@ require (
- 	github.com/projectdiscovery/retryabledns v1.0.116
- 	github.com/projectdiscovery/retryablehttp-go v1.3.31
- 	github.com/projectdiscovery/sarif v0.1.0
--	github.com/projectdiscovery/tlsx v1.4.1
-+	github.com/projectdiscovery/tlsx v1.4.3-0.20261020052910-acb80c2c7c75
- 	github.com/projectdiscovery/uncover v1.2.1
- 	github.com/projectdiscovery/useragent v0.0.109
--	github.com/projectdiscovery/utils v0.11.10-0.20261015084917-a599cac78c99
-+	github.com/projectdiscovery/utils v0.11.10
- 	github.com/projectdiscovery/wappalyzergo v0.3.5
- 	github.com/projectdiscovery/yamldoc-go v1.0.7
- 	github.com/redis/go-redis/v9 v9.19.0
-@@ -418,7 +418,7 @@ require (
- 	github.com/vmihailenco/tagparser v0.1.2 // indirect
- 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
- 	github.com/vulncheck-oss/go-exploit v1.51.0 // indirect
--	github.com/weppos/publicsuffix-go v0.50.4-0.20260821095816-b0fdb5c2d345 // indirect
-+	github.com/weppos/publicsuffix-go v0.50.4-0.20260918082853-3c3d7dc4a0cb // indirect
- 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
- 	github.com/xanzy/ssh-agent v0.3.3 // indirect
- 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
-@@ -439,8 +439,7 @@ require (
- 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
- 	github.com/zcalusic/sysinfo v1.1.3 // indirect
- 	github.com/zeebo/blake3 v0.2.4 // indirect
--	github.com/zmap/rc2 v0.0.0-20190804163417-abaa70531248 // indirect
--	github.com/zmap/zcrypto v0.0.0-20260906180147-3ed30b1e9340 // indirect
-+	github.com/zmap/zcrypto v0.0.0-20261015050653-aa1de3126e87 // indirect
- 	go.etcd.io/bbolt v1.4.3 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
-@@ -472,8 +471,5 @@ require (
- 	software.sslmate.com/src/go-pkcs12 v0.7.2 // indirect
- )
+@@ -205,7 +205,8 @@ func (i *ListInputProvider) set(executionId string, value string, selection *tar
+ 		// scan all ips
+ 		dialers := protocolstate.GetDialersWithId(executionId)
+ 		if dialers == nil {
+-			panic("dialers with executionId " + executionId + " not found")
++			gologger.Error().Msgf("dialers with executionId %s not found", executionId)
++			return
+ 		}
  
--// fastdialer 0.5.26 selects a zcrypto that no longer has GetHeartbleedLog or NextProtoNeg.
--replace github.com/zmap/zcrypto => github.com/zmap/zcrypto v0.0.0-20240803002437-3a861682ac77
--
- // https://go.dev/ref/mod#go-mod-file-retract
- retract v3.2.0 // retract due to broken js protocol issue
-```
-
-**File**: `go.sum` (modified, +20/-23)
-```diff
-@@ -130,7 +130,6 @@ github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 h1:TngWCqHvy9oXAN6lEV
- github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5/go.mod h1:lmUJ/7eu/Q8D7ML55dXQrVaamCz2vxCfdQBasLZfHKk=
- github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
- github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
--github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8/go.mod h1:I0gYDMZ6Z5GRU7l58bNFSkPTFN6Yl12dsUlAZ8xy98g=
- github.com/ProtonMail/go-crypto v1.1.6 h1:ZcV+Ropw6Qn0AX9brlQLAUXfqLBc7Bl+f/DmNxpLfdw=
- github.com/ProtonMail/go-crypto v1.1.6/go.mod h1:rA3QumHc/FZ8pAHreoekgiAbzpNsfQAosU5td4SnOrE=
- github.com/PuerkitoBio/goquery v1.13.0 h1:mqHbjD7Jmnul4DTR24LKTjo1uUmHUh072kteGV+xpFM=
-@@ -267,7 +266,6 @@ github.com/bufbuild/protocompile v0.14.1 h1:iA73zAf/fyljNjQKwYzUHD6AD4R8KMasmwa/
- github.com/bufbuild/protocompile v0.14.1/go.mod h1:ppVdAIhbr2H8asPk6k4pY7t9zB1OU5DoEw9xY/FUi1c=
- github.com/buger/jsonparser v1.1.2 h1:frqHqw7otoVbk5M8LlE/L7HTnIq2v9RX6EJ48i9AxJk=
- github.com/buger/jsonparser v1.1.2/go.mod h1:6RYKKt7H4d4+iWqouImQ9R2FZql3VbhNgx27UK13J/0=
--github.com/bwesterb/go-ristretto v1.2.0/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7NFEuV9ekS419A0=
- github.com/bytedance/gopkg v0.1.3 h1:TPBSwH8RsouGCBcMBktLt1AymVo2TVsBVCY4b6TnZ/M=
- github.com/bytedance/gopkg v0.1.3/go.mod h1:576VvJ+eJgyCzdjS+c4+77QF3p7ubbtiKARP3TxducM=
- github.com/bytedance/sonic v1.15.3 h1:P3akjLPBtV/i6bHC6LbcLjY3KuoOvfiqF8wFHeP5IhY=
-@@ -325,7 +323,6 @@ github.com/clbanning/mxj/v2 v2.7.0/go.mod h1:hNiWqW14h+kc+MdF9C6/YoRfjEJoR3ou6tn
- github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
- github.com/cloudflare/cfssl v1.6.5 h1:46zpNkm6dlNkMZH/wMW22ejih6gIaJbzL2du6vD7ZeI=
- github.com/cloudflare/cfssl v1.6.5/go.mod h1:Bk1si7sq8h2+yVEDrFJiz3d7Aw+pfjjJSZVaD+Taky4=
--github.com/cloudflare/circl v1.1.0/go.mod h1:prBCrKB9DV4poKZY1l9zBXg2QJY7mvgRvtMxxK7fi4I=
- github.com/cloudflare/circl v1.6.3 h1:9GPOhQGF9MCYUeXyMYlqTR6a5gTrgR/fBLXvUgtVcg8=
- github.com/cloudflare/circl v1.6.3/go.mod h1:2eXP6Qfat4O/Yhh8BznvKnJ+uzEoTQ6jVKJRn81BiS4=
- github.com/cloudwego/base64x v0.1.6 h1:t11wG9AECkCDk5fMSoxmufanudBtJ+/HemLstXDLI2M=
-@@ -591,9 +588,10 @@ github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeN
- github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
- github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
- github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
--github.com/google/go-github/v50 v50.2.0/go.mod h1:VBY8FB6yPIjrtKhozXv4FQupxKLS6H4m6xFZlT43q8Q=
-+github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+umXrS52loVEgC2AApnigrVQ=
- github.com/google/go-github/v92 v92.0.0 h1:4vW4RVffwIvoEfIA4RX09mRSB47qQX557/2+HgeWRRg=
- github.com/google/go-github/v92 v92.0.0/go.mod h1:w3CH62ZcmRfvW1cdXpyTztSOVMtdjxtKpgo0GouLmjY=
-+github.com/google/go-querystring v1.0.0/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
- github.com/google/go-querystring v1.1.0/go.mod h1:Kcdr2DB4koayq7X8pmAG4sNG59So17icRSOU623lUBU=
- github.com/google/go-querystring v1.2.0 h1:yhqkPbu2/OH+V9BfpCVPZkNmUXhb2gBxJArfhIxNtP0=
- github.com/google/go-querystring v1.2.0/go.mod h1:8IFJqpSRITyJ8QhQ13bmbeMBDfmeEJZD5A0egEOmkqU=
-@@ -863,6 +861,7 @@ github.com/modern-go/reflect2 v1.0.2 h1:xBagoLtFs94CBntxluKeaWgTMpvLxC4ur3nMaC9G
- github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
- github.com/montanaflynn/stats v0.7.1 h1:etflOAAHORrCC44V+aR6Ftzort912ZU+YLiSTuV8eaE=
- github.com/montanaflynn/stats v0.7.1/go.mod h1:etXPPgVO6n31NxCd9KQUMvCM+ve0ruNzt6R8Bnaayow=
-+github.com/mreiferson/go-httpclient v0.0.0-20160630210159-31f0106b4474/go.mod h1:OQA4XLvDbMgS8P0CevmM4m9Q3Jq4phKUzcocxuGJ5m8=
- github.com/mreiferson/go-httpclient v0.0.0-20201222173833-5e475fde3a4d/go.mod h1:OQA4XLvDbMgS8P0CevmM4m9Q3Jq4phKUzcocxuGJ5m8=
- github.com/muesli/reflow v0.3.0 h1:IFsN6K9NfGtjeggFP+68I4chLZV2yIKsXJFNZ+eWh6s=
- github.com/muesli/reflow v0.3.0/go.mod h1:pbwTDkVPibjO2kyvBQRBxTWEEGDGq0FlB1BIKtnHY/8=
-@@ -994,14 +993,14 @@ github.com/projectdiscovery/sarif v0.1.0 h1:O541T+a448nSJsmIMnXXSOeDQEzpnCAYvRfe
- github.com/projectdiscovery/sarif v0.1.0/go.mod h1:LBC+reM3bkI3qIIhE0rZaINaYX6VG+En6u2hHa5mA7E=
- github.com/projectdiscovery/stringsutil v0.0.2 h1:uzmw3IVLJSMW1kEg8eCStG/cGbYYZAja8BH3LqqJXMA=
- github.com/projectdiscovery/stringsutil v0.0.2/go.mod h1:EJ3w6bC5fBYjVou6ryzodQq37D5c6qbAYQpGmAy+DC0=
--github.com/projectdiscovery/tlsx v1.4.1 h1:QuECHVJERBirNrmpjgIOAFQScjy/DxVjzXeL+L81mH0=
--github.com/projectdiscovery/tlsx v1.4.1/go.mod h1:WCrUXAHjdKbDNjsu5EbVBS7qvzap3fxi/E85v/Flyx8=
-+github.com/projectdiscovery/tlsx v1.4.3-0.20261020052910-acb80c2c7c75 h1:3qJgfWzzwtFXc/vdUIurSzPzyjBH9NQe0wATkZMoQGI=
-+github.com/projectdiscovery/tlsx v1.4.3-0.20261020052910-acb80c2c7c75/go.mod h1:8jqB9aHT6U8NkUsENvaSjD/iBEGB4Ta+CbJBMcvzP9c=
- github.com/projectdiscove
-```
-
-**File**: `internal/tests/integration/exporters_test.go` (modified, +5/-3)
-```diff
-@@ -18,9 +18,11 @@ import (
- )
+ 		dnsData, err := dialers.Fastdialer.GetDNSData(urlx.Hostname())
+@@ -242,7 +243,8 @@ func (i *ListInputProvider) set(executionId string, value string, selection *tar
+ 	if i.ipOptions.IPV6 {
+ 		dialers := protocolstate.GetDialersWithId(executionId)
+ 		if dialers == nil {
+-			panic("dialers with executionId " + executionId + " not found")
++			gologger.Error().Msgf("dialers with executionId %s not found", executionId)
++			return
+ 		}
  
- const (
--	dbName                    = "test"
--	dbRepository              = "mongo"
--	dbTag                     = "8"
-+	dbName       = "test"
-+	dbRepository = "mongo"
-+	// 8.x refuses to start on kernels 6.19 through 7.0.13 (SERVER-125742).
-+	// The GitHub Ubuntu image is in that range. 7.0 stays up.
-+	dbTag                     = "7.0"
- 	dbPort                    = "27017/tcp"
- 	mongoDatabaseReadyTimeout = 3 * time.Minute
- 	mongoServerSelectionDelay = time.Second
+ 		dnsData, err := dialers.Fastdialer.GetDNSData(urlx.Hostname())
+@@ -467,7 +469,8 @@ func (i *ListInputProvider) Del(executionId string, value string) {
+ 		// scan all ips
+ 		dialers := protocolstate.GetDialersWithId(executionId)
+ 		if dialers == nil {
+-			panic("dialers with executionId " + executionId + " not found")
++			gologger.Error().Msgf("dialers with executionId %s not found", executionId)
++			return
+ 		}
+ 
+ 		dnsData, err := dialers.Fastdialer.GetDNSData(urlx.Hostname())
+@@ -504,7 +507,8 @@ func (i *ListInputProvider) Del(executionId string, value string) {
+ 	if i.ipOptions.IPV6 {
+ 		dialers := protocolstate.GetDialersWithId(executionId)
+ 		if dialers == nil {
+-			panic("dialers with executionId " + executionId + " not found")
++			gologger.Error().Msgf("dialers with executionId %s not found", executionId)
++			return
+ 		}
+ 
+ 		dnsData, err := dialers.Fastdialer.GetDNSData(urlx.Hostname())
 ```
 
-**File**: `internal/tests/integration/testdata/protocols/multi/dynamic-values.yaml` (modified, +1/-1)
+**File**: `pkg/js/global/scripts.go` (modified, +2/-2)
 ```diff
-@@ -24,6 +24,6 @@ http:
-     matchers:
-       - type: dsl
-         dsl:
--          - contains(body,'home') # check for http string
-+          - location == '/home' # the docs host redirects here
-           - blogid == 'cname' # check for cname (extracted information from dns response)
-         condition: and
-\ No newline at end of file
+@@ -10,8 +10,8 @@ import (
+ 	"reflect"
+ 	"time"
+ 
+-	"github.com/projectdiscovery/goja"
+ 	"github.com/logrusorgru/aurora/v4"
++	"github.com/projectdiscovery/goja"
+ 	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/js/gojs"
+ 	jsnet "github.com/projectdiscovery/nuclei/v3/pkg/js/libs/net"
+@@ -156,7 +156,7 @@ func initBuiltInFunc(runtime *goja.Runtime) {
+ 			executionId := ctx.Value("executionId").(string)
+ 			dialer := protocolstate.GetDialersWithId(executionId)
+ 			if dialer == nil {
+-				panic("dialers with executionId " + executionId + " not found")
++				return false, errkit.New("dialers with executionId %s not found", executionId)
+ 			}
+ 
+ 			conn, err := dialer.Fastdialer.Dial(ctx, "udp", net.JoinHostPort(host, port))
 ```
 
-**File**: `internal/tests/integration/testdata/protocols/multi/evaluate-variables.yaml` (modified, +1/-1)
+**File**: `pkg/js/libs/ldap/ldap.go` (modified, +3/-1)
 ```diff
-@@ -24,7 +24,7 @@ http:
-     matchers:
-       - type: dsl
-         dsl:
--          - contains(http_body,'home') # check for http string
-+          - http_location == '/home' # the docs host redirects here
-           - cname_filtered == 'cname' # check for cname (extracted information from dns response)
-           - ssl_subject_cn == 'docs.projectdiscovery.io'
-         condition: and
-\ No newline at end of file
+@@ -10,6 +10,7 @@ import (
+ 
+ 	"github.com/go-ldap/ldap/v3"
+ 	"github.com/projectdiscovery/goja"
++	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/js/utils"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
+ )
+@@ -93,7 +94,8 @@ func NewClient(call goja.ConstructorCall, runtime *goja.Runtime) *goja.Object {
+ 	executionId := c.nj.ExecutionId()
+ 	dialers := protocolstate.GetDialersWithId(executionId)
+ 	if dialers == nil {
+-		panic("dialers with executionId " + executionId + " not found")
++		gologger.Error().Msgf("dialers with executionId %s not found", executionId)
++		return nil
+ 	}
+ 
+ 	dialCtx := c.nj.Context()
 ```
 
-**File**: `internal/tests/integration/testdata/protocols/multi/exported-response-vars.yaml` (modified, +1/-1)
+**File**: `pkg/protocols/javascript/js.go` (modified, +11/-5)
 ```diff
-@@ -20,7 +20,7 @@ http:
-     matchers:
-       - type: dsl
-         dsl:
--          - contains(http_body,'home') # check for http string
-+          - http_location == '/home' # the docs host redirects here
-           - trim_suffix(dns_cname,'.vercel-dns.com') == 'cname' # check for cname (extracted information from dns response)
-           - ssl_subject_cn == 'docs.projectdiscovery.io'
-         condition: and
-\ No newline at end of file
+@@ -450,7 +450,10 @@ func (request *Request) executeWithResults(port string, target *contextargs.Cont
+ 			results["error"] = outError.Error()
+ 
+ 			// generate and return failed event
+-			data := request.generateEventData(input, results, hostPort)
++			data, genErr := request.generateEventData(input, results, hostPort)
++			if genErr != nil {
++				return genErr
++			}
+ 			data = generators.MergeMaps(data, payloadValues)
+ 			event := eventcreator.CreateEventWithAdditionalOptions(request, data, request.options.Options.Debug || request.options.Options.DebugResponse, func(wrappedEvent *output.InternalWrappedEvent) {
+ 				allVars := argsCopy.Map()
+@@ -703,7 +706,10 @@ func (request *Request) executeRequestWithPayloads(
+ 
+ 	values := mapsutil.Merge(payloadValues, results)
+ 	// generate event data
+-	data := request.generateEventData(input, values, hostPort)
++	data, genErr := request.generateEventData(input, values, hostPort)
++	if genErr != nil {
++		return genErr
++	}
+ 
+ 	// add and get values from templatectx
+ 	request.options.AddTemplateVars(input.MetaInput, request.Type(), request.GetID(), data)
+@@ -751,10 +757,10 @@ func (request *Request) executeRequestWithPayloads(
+ }
+ 
+ // generateEventData generates event data for the request
+-func (request *Request) generateEventData(input *contextargs.Context, values map[string]interface{}, matched string) map[string]interface{} {
++func (request *Request) generateEventData(input *contextargs.Context, values map[string]interface{}, matched string) (map[string]interface{}, error) {
+ 	dialers := protocolstate.GetDialersWithId(request.options.Options.ExecutionId)
+ 	if dialers == nil {
+-		panic(fmt.Sprintf("dialers not initialized for %s", request.options.Options.ExecutionId))
++		return nil, fmt.Errorf("dialers not initialized for %s", request.options.Options.ExecutionId)
+ 	}
+ 
+ 	data := make(map[string]interface{})
+@@ -809,7 +815,7 @@ func (request *Request) generateEventData(input *contextargs.Context, values map
+ 			}
+ 		}
+ 	}
+-	return data
++	return data, nil
+ }
+ 
+ func (request *Request) getArgsCopy(input *contextargs.Context, payloadValues map[string]interface{}, requestOptions *protocols.ExecutorOptions, ignoreErrors bool) (*compiler.ExecuteArgs, []string, error) {
+```
+
+**File**: `pkg/protocols/javascript/js_test.go` (modified, +26/-0)
+```diff
+@@ -131,6 +131,32 @@ func TestExecuteWithResultsRejectsUnverifiedTemplate(t *testing.T) {
+ 	require.ErrorContains(t, err, "refusing to execute unverified javascript template")
+ }
+ 
++func TestGenerateEventDataHandlesMissingDialers(t *testing.T) {
++	options := testutils.DefaultOptions.Copy()
++	testutils.Init(options)
++	t.Cleanup(func() { testutils.Cleanup(options) })
++
++	executorOptions := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "missing-dialers"})
++	executorOptions.JsCompiler = templates.GetJsCompiler()
++	executorOptions.Verified = true
++	executorOptions.Options.ExecutionId = "non-existent-id"
++
++	request := &javascript.Request{
++		Code: `module.exports = { success: true, response: "ok" }`,
++	}
++	require.NoError(t, request.Compile(executorOptions))
++
++	target := contextargs.NewWithInput(context.Background(), "https://example.com:443")
++
++	var err error
++	require.NotPanics(t, func() {
++		err = request.ExecuteWithResults(target, nil, nil, func(*output.InternalWrappedEvent) {
++			t.Fatal("unexpected callback")
++		})
++	})
++	require.Error(t, err)
++}
++
+ func TestJavascriptRequestsTakeFromRateLimiter(t *testing.T) {
+ 	options := testutils.DefaultOptions.Copy()
+ 	options.SetExecutionID(t.Name())
 ```
 
 ---
 
-### Incident Patch 2: `5670af4c` (2026-10-20)
-**Commit Message**: pin mongo
+### Incident Patch 2: `b901fb8a` (2026-10-24)
+**Commit Message**: Merge pull request #7868 from TassioSales/fix/headless-ws-exclude-hosts
 
-**File**: `internal/tests/integration/exporters_test.go` (modified, +5/-3)
+fix(headless): enforce network policy on ws and wss schemes (#7867)
+
+**File**: `pkg/protocols/common/protocolstate/headless.go` (modified, +209/-12)
 ```diff
-@@ -18,9 +18,11 @@ import (
+@@ -2,8 +2,10 @@ package protocolstate
+ 
+ import (
+ 	"context"
++	"fmt"
+ 	"net"
+ 	"strings"
++	"sync"
+ 
+ 	"github.com/go-rod/rod"
+ 	"github.com/go-rod/rod/lib/proto"
+@@ -94,9 +96,10 @@ func IsRestrictLocalNetworkAccess(options *types.Options) bool {
+ 	return false
+ }
+ 
+-// isValidHost checks if the host is valid (only limited to http/https protocols)
++// isValidHost checks if the host is valid (for http/https and ws/wss protocols)
+ func isValidHost(options *types.Options, targetUrl string) bool {
+-	if !stringsutil.HasPrefixAny(targetUrl, "http:", "https:") {
++	normalized := strings.ToLower(strings.TrimSpace(targetUrl))
++	if !stringsutil.HasPrefixAny(normalized, "http:", "https:", "ws:", "wss:") {
+ 		return true
+ 	}
+ 
+@@ -121,6 +124,22 @@ func isValidHost(options *types.Options, targetUrl string) bool {
+ 	return ok
+ }
+ 
++// CanonicalizeHost normalizes a hostname or IP string:
++// - strips surrounding whitespace and brackets (e.g. "[::1]" -> "::1")
++// - maps IPv4-mapped IPv6 literals (e.g. "::ffff:127.0.0.1" or "0:0:0:0:0:ffff:127.0.0.1") to canonical IPv4 ("127.0.0.1")
++func CanonicalizeHost(host string) string {
++	h := strings.TrimSpace(host)
++	h = strings.TrimPrefix(h, "[")
++	h = strings.TrimSuffix(h, "]")
++	if ip := net.ParseIP(h); ip != nil {
++		if ipv4 := ip.To4(); ipv4 != nil {
++			return ipv4.String()
++		}
++		return ip.String()
++	}
++	return h
++}
++
+ // IsHostAllowed checks if the host is allowed by network policy
+ func IsHostAllowed(executionId string, targetUrl string) bool {
+ 	dialers, ok := dialers.Get(executionId)
+@@ -134,19 +153,197 @@ func IsHostAllowed(executionId string, targetUrl string) bool {
+ 		return false
+ 	}
+ 
+-	sepCount := strings.Count(targetUrl, ":")
+-	if sepCount > 1 {
+-		// most likely a ipv6 address (parse url and validate host)
+-		return np.Validate(targetUrl)
++	rawTarget := strings.TrimSpace(targetUrl)
++	var host string
++
++	if urlx, err := urlutil.Parse(rawTarget); err == nil && urlx.Hostname() != "" {
++		host = urlx.Hostname()
++	} else if h, _, err := net.SplitHostPort(rawTarget); err == nil {
++		host = h
++	} else {
++		host = rawTarget
++		for _, prefix := range []string{"ws://", "wss://", "http://", "https://"} {
++			if strings.HasPrefix(strings.ToLower(host), prefix) {
++				host = host[len(prefix):]
++				if idx := strings.Index(host, "/"); idx != -1 {
++					host = host[:idx]
++				}
++				if h, _, err := net.SplitHostPort(host); err == nil {
++					host = h
++				}
++				break
++			}
++		}
++	}
++
++	canonHost := CanonicalizeHost(host)
++
++	// Check explicit ExcludeTargets against raw, host, and canonical host
++	for _, excluded := range dialers.ExcludeTargets {
++		ex := CanonicalizeHost(strings.TrimSpace(excluded))
++		if ex != "" {
++			if strings.EqualFold(canonHost, ex) || strings.EqualFold(host, ex) || strings.EqualFold(rawTarget, ex) {
++				return false
++			}
++		}
+ 	}
+-	if sepCount == 1 {
+-		host, _, _ := net.SplitHostPort(targetUrl)
++
++	// Validate host against NetworkPolicy using both canonical and original host
++	if _, ok := np.ValidateHost(canonHost); !ok {
++		return false
++	}
++	if canonHost != host {
+ 		if _, ok := np.ValidateHost(host); !ok {
+ 			return false
+ 		}
+-		return true
+ 	}
+-	// just a hostname or ip without port
+-	_, ok = np.ValidateHost(targetUrl)
+-	return ok
++	return true
++}
++
++// SetupHeadlessNetworkPolicy configures CDP Network blocking and WebSocket interception
++// to enforce network policies on headless pages.
++func SetupHeadlessNetworkPolicy(options *types.Options, page *rod.Page) error {
++	if options == nil || page == nil {
++		return nil
++	}
++
++	var blockedPatterns []string
++	for _, target := range options.ExcludeTargets {
++		target = strings.TrimSpace(target)
++		if target == "" {
++			continue
++		}
++		if strings.Contains(target, "://") {
++			parsed, err := urlutil.Parse(target)
++			if err != nil || parsed.Hostname() == "" {
++				continue
++			}
++			target = parsed.Hostname()
++		}
++		if !strings.Contains(target, "/") {
++			blockedPatterns = append(blockedPatterns,
++				"*://"+target+"/*",
++				"*://"+target+":*/*",
++				"ws://"+target+"/*",
++				"ws://"+target+":*/*",
++				"wss://"+target+"/*",
++				"wss://"+target+":*/*",
++			)
++		}
++	}
++
++	if options.RestrictLocalNetworkAccess {
++		localPatterns := []string{
++			"*://localhost/*", "*://localhost:*/*",
++			"*://127.*/*", "*://127.*:*/*",
++			"*://0.0.0.0/*", "*://0.0.0.0:*/*",
++			"*://[::1]/*", "*://[::1]:*/*",
++			"*://10.*/*", "*://10.*:*/*",
++			"*://192.168.*/*", "*://192.168.*:*/*",
++			"*://169.254.*/*", "*://169.254.*:*/*",
++			"ws://localhost/*", "ws://localhost:*/*",
++			"ws://127.*/*", "ws://127.*:*/*",
++			"ws://0.0.0.0/*", "ws://0.0.0.0:*/*",
++			"ws://[::1]/*", "ws://[::1]:*/*",
++			"ws://10.*/*", "ws://10.*:*/*",
++			"ws://192.168.*/*", "ws://192.168.*:*/*",
++			"ws://169.254.*/*", "ws://169.254.*:*/*",
++			"wss://localhost/*", "wss://localhost:*/*",
++			"wss://127.*/*", "wss://127.*:*/*",
++			"wss://0.0.0.0/*", "wss://0.0.0.0:*/*",
++			"wss://[::1]/*", "wss://[::1]:*/*",
++			"wss://10.*/*", "wss:/
+```
+
+**File**: `pkg/protocols/common/protocolstate/headless_test.go` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++package protocolstate
++
++import (
++	"testing"
++
++	"github.com/projectdiscovery/networkpolicy"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/stretchr/testify/require"
++)
++
++func TestIsValidHost(t *testing.T) {
++	opts := &types.Options{
++		ExecutionId: "test-exec-id",
++	}
++
++	np, err := networkpolicy.New(networkpolicy.Options{
++		DenyList: []string{"127.0.0.1"},
++	})
++	require.NoError(t, err)
++
++	d := &Dialers{
++		NetworkPolicy: np,
++	}
++	err = dialers.Set(opts.ExecutionId, d)
++	require.NoError(t, err)
++	defer dialers.Delete(opts.ExecutionId)
++
++	// Allowed remote hosts
++	require.True(t, isValidHost(opts, "http://example.com"))
++	require.True(t, isValidHost(opts, "https://example.com"))
++	require.True(t, isValidHost(opts, "ws://example.com:9999"))
++	require.True(t, isValidHost(opts, "wss://example.com:9999"))
++
++	// Blocked hosts (127.0.0.1)
++	require.False(t, isValidHost(opts, "http://127.0.0.1:8080"))
++	require.False(t, isValidHost(opts, "https://127.0.0.1:8443"))
++	require.False(t, isValidHost(opts, "ws://127.0.0.1:9999"))
++	require.False(t, isValidHost(opts, "wss://127.0.0.1:9999"))
++
++	require.True(t, IsHostAllowed(opts.ExecutionId, "ws://example.com:9999"))
++	require.False(t, IsHostAllowed(opts.ExecutionId, "ws://127.0.0.1:9999"))
++}
++
++func TestSetupHeadlessNetworkPolicy_Nil(t *testing.T) {
++	require.NoError(t, SetupHeadlessNetworkPolicy(nil, nil))
++	require.NoError(t, SetupHeadlessNetworkPolicy(&types.Options{}, nil))
++}
++
+```
+
+**File**: `pkg/protocols/headless/engine/engine.go` (modified, +15/-2)
+```diff
+@@ -25,6 +25,7 @@ type Browser struct {
+ 	engine         *rod.Browser
+ 	options        *types.Options
+ 	launcher       *launcher.Launcher
++	proxy          *headlessProxy
+ 
+ 	// use getHTTPClient to get the http client
+ 	httpClient     *http.Client
+@@ -34,6 +35,7 @@ type Browser struct {
+ // New creates a new nuclei headless browser module
+ func New(options *types.Options) (*Browser, error) {
+ 	var launcherURL, dataStore string
++	var proxyServer *headlessProxy
+ 	var err error
+ 
+ 	chromeLauncher := launcher.New()
+@@ -82,9 +84,13 @@ func New(options *types.Options) (*Browser, error) {
+ 		} else {
+ 			chromeLauncher = chromeLauncher.Headless(true)
+ 		}
+-		if options.AliveHttpProxy != "" {
+-			chromeLauncher = chromeLauncher.Proxy(options.AliveHttpProxy)
++		proxyServer, err = newHeadlessProxy(options)
++		if err != nil {
++			return nil, err
+ 		}
++		chromeLauncher = chromeLauncher.
++			Proxy(proxyServer.Addr()).
++			Set("proxy-bypass-list", "<-loopback>")
+ 
+ 		for k, v := range options.ParseHeadlessOptionalArguments() {
+ 			chromeLauncher.Set(flags.Flag(k), v)
+@@ -100,6 +106,9 @@ func New(options *types.Options) (*Browser, error) {
+ 
+ 	browser := rod.New().ControlURL(launcherURL)
+ 	if browserErr := browser.Connect(); browserErr != nil {
++		if proxyServer != nil {
++			_ = proxyServer.Close()
++		}
+ 		return nil, browserErr
+ 	}
+ 	defaultHeaders := make(map[string]string)
+@@ -129,6 +138,7 @@ func New(options *types.Options) (*Browser, error) {
+ 		options:        options,
+ 		httpClientOnce: &sync.Once{},
+ 		launcher:       chromeLauncher,
++		proxy:          proxyServer,
+ 	}
+ 	return engine, nil
+ }
+@@ -186,6 +196,9 @@ func (b *Browser) getHTTPClient() (*http.Client, error) {
+ //
+ // When connected over CDP, it does NOT close the browsers.
+ func (b *Browser) Close() {
++	if b.proxy != nil {
++		_ = b.proxy.Close()
++	}
+ 	if b.options.CDPEndpoint != "" {
+ 		return
+ 	}
+```
+
+**File**: `pkg/protocols/headless/engine/page.go` (modified, +7/-0)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/generators"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/utils/vardump"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/utils"
+ 	httputil "github.com/projectdiscovery/nuclei/v3/pkg/protocols/utils/http"
+@@ -125,6 +126,12 @@ func (i *Instance) Run(ctx *contextargs.Context, actions []*Action, payloads map
+ 	createdPage.variables = variables
+ 	createdPage.inputURL = input
+ 
++	if options != nil && options.Options != nil {
++		if netErr := protocolstate.SetupHeadlessNetworkPolicy(options.Options, page); netErr != nil {
++			return nil, nil, netErr
++		}
++	}
++
+ 	httpclient, err := i.browser.getHTTPClient()
+ 	if err != nil {
+ 		return nil, nil, err
+```
+
+**File**: `pkg/protocols/headless/engine/proxy.go` (added, +278/-0)
+```diff
+@@ -0,0 +1,278 @@
++package engine
++
++import (
++	"bufio"
++	"context"
++	"fmt"
++	"io"
++	"net"
++	"net/http"
++	"net/url"
++	"strings"
++	"sync"
++	"time"
++
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++)
++
++// headlessProxy is a local loopback HTTP/CONNECT proxy that intercepts
++// and enforces network policy on all network traffic initiated by the headless browser,
++// including WebSocket handshakes (which bypass CDP request blocking in Chromium).
++type headlessProxy struct {
++	listener  net.Listener
++	options   *types.Options
++	closed    chan struct{}
++	closeOnce sync.Once
++}
++
++// newHeadlessProxy creates and starts a loopback HTTP/CONNECT proxy for headless Chrome.
++func newHeadlessProxy(options *types.Options) (*headlessProxy, error) {
++	ln, err := net.Listen("tcp", "127.0.0.1:0")
++	if err != nil {
++		return nil, fmt.Errorf("could not start headless proxy listener: %w", err)
++	}
++
++	p := &headlessProxy{
++		listener: ln,
++		options:  options,
++		closed:   make(chan struct{}),
++	}
++
++	go p.serve()
++
++	return p, nil
++}
++
++// Addr returns the listening address of the proxy (e.g. "127.0.0.1:54321").
++func (p *headlessProxy) Addr() string {
++	if p.listener == nil {
++		return ""
++	}
++	return p.listener.Addr().String()
++}
++
++// Close terminates the proxy listener.
++func (p *headlessProxy) Close() error {
++	var err error
++	p.closeOnce.Do(func() {
++		close(p.closed)
++		if p.listener != nil {
++			err = p.listener.Close()
++		}
++	})
++	return err
++}
++
++func (p *headlessProxy) serve() {
++	for {
++		conn, err := p.listener.Accept()
++		if err != nil {
++			select {
++			case <-p.closed:
++				return
++			default:
++				return
++			}
++		}
++		go p.handleConn(conn)
++	}
++}
++
++func (p *headlessProxy) handleConn(clientConn net.Conn) {
++	defer func() {
++		_ = clientConn.Close()
++	}()
++
++	reader := bufio.NewReader(clientConn)
++	req, err := http.ReadRequest(reader)
++	if err != nil {
++		return
++	}
++
++	host := req.Host
++	if host == "" {
++		host = req.URL.Host
++	}
++
++	// Validate host against network policy
++	executionId := ""
++	if p.options != nil {
++		executionId = p.options.ExecutionId
++	}
++
++	h := host
++	if splitH, _, err := net.SplitHostPort(host); err == nil {
++		h = splitH
++	}
++	canonH := protocolstate.CanonicalizeHost(h)
++
++	if !protocolstate.IsHostAllowed(executionId, host) || !protocolstate.IsHostAllowed(executionId, canonH) {
++		if req.Method == http.MethodConnect {
++			_, _ = clientConn.Write([]byte("HTTP/1.1 403 Forbidden\r\n\r\n"))
++		} else {
++			resp := &http.Response{
++				StatusCode: http.StatusForbidden,
++				Status:     "403 Forbidden",
++				Proto:      "HTTP/1.1",
++				ProtoMajor: 1,
++				ProtoMinor: 1,
++				Header:     make(http.Header),
++				Body:       io.NopCloser(strings.NewReader("Blocked by network policy")),
++			}
++			_ = resp.Write(clientConn)
++		}
++		return
++	}
++
++	// Handle CONNECT tunnel (for HTTPS and WebSocket handshakes).
++	// Keep the buffered reader: the client hello is often already in it.
++	if req.Method == http.MethodConnect {
++		p.handleConnect(clientConn, reader, host)
++		return
++	}
++
++	// Handle standard HTTP requests
++	p.handleHTTP(clientConn, reader, req, host)
++}
++
++func (p *headlessProxy) dialTarget(target string) (net.Conn, error) {
++	host := target
++	port := "80"
++	if h, pt, err := net.SplitHostPort(target); err == nil {
++		host = h
++		port = pt
++	}
++	canonHost := protocolstate.CanonicalizeHost(host)
++
++	executionId := ""
++	if p.options != nil {
++		executionId = p.options.ExecutionId
++	}
++
++	if !protocolstate.IsHostAllowed(executionId, host) || !protocolstate.IsHostAllowed(executionId, canonHost) {
++		return nil, fmt.Errorf("target %s blocked by network policy", target)
++	}
++
++	// Dial an address that was just checked. A later lookup of the name can
++	// return a different, excluded address. A resolution failure refuses the
++	// dial instead of connecting to whatever the name means a moment later.
++	dialHost := canonHost
++	if net.ParseIP(canonHost) == nil {
++		ips, err := net.LookupIP(canonHost)
++		if err != nil {
++			return nil, fmt.Errorf("resolve %s: %w", canonHost, err)
++		}
++		var chosen net.IP
++		for _, resolvedIP := range ips {
++			canonIP := protocolstate.CanonicalizeHost(resolvedIP.String())
++			if !protocolstate.IsHostAllowed(executionId, canonIP) {
++				return nil, fmt.Errorf("target %s resolves to blocked IP %s", target, canonIP)
++			}
++			if chosen == nil {
++				chosen = resolvedIP
++			}
++		}
++		if chosen == nil {
++			return nil, fmt.Errorf("resolve %s: no addresses", canonHost)
++		}
++		dialHost = chosen.String()
++	}
++
++	dialAddr := net.JoinHostPort(dialHost, port)
++
++	// If upstream proxy is configured, route through it after validation
++	if p.options != nil && p.options.AliveHttpProxy != "" {
++		proxyURL, err := url.Parse(p.options.AliveHttpProxy)
++		if err == nil {
++			proxyConn, err := net.DialTimeout("tcp", proxyURL.Host, 10*time.Second)
++			if err != nil {
++				return nil, err
++			}
++			// CONNE
+```
+
+**File**: `pkg/protocols/headless/engine/proxy_test.go` (added, +433/-0)
+```diff
+@@ -0,0 +1,433 @@
++package engine
++
++import (
++	"bufio"
++	"fmt"
++	"io"
++	"net"
++	"net/http"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"github.com/go-rod/rod"
++	"github.com/go-rod/rod/lib/launcher"
++	"github.com/go-rod/rod/lib/proto"
++	"github.com/projectdiscovery/networkpolicy"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/stretchr/testify/require"
++)
++
++func TestHeadlessProxy_BlocksExcludedHosts(t *testing.T) {
++	// 1. Setup blocked TCP server
++	blockedLn, err := net.Listen("tcp", "127.0.0.1:0")
++	require.NoError(t, err)
++	defer func() {
++		_ = blockedLn.Close()
++	}()
++
++	var blockedHits atomic.Int32
++	go func() {
++		for {
++			conn, err := blockedLn.Accept()
++			if err != nil {
++				return
++			}
++			blockedHits.Add(1)
++			_ = conn.Close()
++		}
++	}()
++
++	blockedPort := blockedLn.Addr().(*net.TCPAddr).Port
++
++	// 2. Setup allowed TCP server
++	allowedLn, err := net.Listen("tcp", "127.0.0.1:0")
++	require.NoError(t, err)
++	defer func() {
++		_ = allowedLn.Close()
++	}()
++
++	var allowedHits atomic.Int32
++	go func() {
++		for {
++			conn, err := allowedLn.Accept()
++			if err != nil {
++				return
++			}
++			allowedHits.Add(1)
++			_, _ = conn.Write([]byte("HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nOK"))
++			_ = conn.Close()
++		}
++	}()
++
++	allowedPort := allowedLn.Addr().(*net.TCPAddr).Port
++
++	// 3. Configure network policy with blocked target
++	execID := fmt.Sprintf("test-proxy-%d", time.Now().UnixNano())
++	opts := &types.Options{
++		ExecutionId: execID,
++		ExcludeTargets: []string{
++			fmt.Sprintf("127.0.0.1:%d", blockedPort),
++		},
++	}
++
++	np, err := networkpolicy.New(networkpolicy.Options{
++		DenyList: []string{
++			fmt.Sprintf("127.0.0.1:%d", blockedPort),
++		},
++	})
++	require.NoError(t, err)
++
++	d := &protocolstate.Dialers{
++		NetworkPolicy:  np,
++		ExcludeTargets: opts.ExcludeTargets,
++	}
++	_ = protocolstate.Init(opts)
++	// Override with our strict policy for this test
++	if existing := protocolstate.GetDialersWithId(execID); existing != nil {
++		existing.NetworkPolicy = np
++	} else {
++		// Mock dialer in case Init didn't populate for test
++		_ = d
++	}
++
++	// 4. Start headless proxy
++	proxy, err := newHeadlessProxy(opts)
++	require.NoError(t, err)
++	defer func() {
++		_ = proxy.Close()
++	}()
++
++	// 5. Test CONNECT to blocked destination
++	clientConn, err := net.Dial("tcp", proxy.Addr())
++	require.NoError(t, err)
++	defer func() {
++		_ = clientConn.Close()
++	}()
++
++	connectReq := fmt.Sprintf("CONNECT 127.0.0.1:%d HTTP/1.1\r\nHost: 127.0.0.1:%d\r\n\r\n", blockedPort, blockedPort)
++	_, err = clientConn.Write([]byte(connectReq))
++	require.NoError(t, err)
++
++	reader := bufio.NewReader(clientConn)
++	resp, err := http.ReadResponse(reader, nil)
++	require.NoError(t, err)
++	require.Equal(t, http.StatusForbidden, resp.StatusCode)
++	require.Zero(t, blockedHits.Load(), "blocked host must never receive connection")
++
++	// 6. Test GET to blocked destination
++	clientConn2, err := net.Dial("tcp", proxy.Addr())
++	require.NoError(t, err)
++	defer func() {
++		_ = clientConn2.Close()
++	}()
++
++	getReq := fmt.Sprintf("GET http://127.0.0.1:%d/ HTTP/1.1\r\nHost: 127.0.0.1:%d\r\n\r\n", blockedPort, blockedPort)
++	_, err = clientConn2.Write([]byte(getReq))
++	require.NoError(t, err)
++
++	reader2 := bufio.NewReader(clientConn2)
++	resp2, err := http.ReadResponse(reader2, nil)
++	require.NoError(t, err)
++	require.Equal(t, http.StatusForbidden, resp2.StatusCode)
++	require.Zero(t, blockedHits.Load(), "blocked host must never receive connection")
++
++	// 7. Test CONNECT to allowed destination
++	clientConn3, err := net.Dial("tcp", proxy.Addr())
++	require.NoError(t, err)
++	defer func() {
++		_ = clientConn3.Close()
++	}()
++
++	allowedReq := fmt.Sprintf("CONNECT 127.0.0.1:%d HTTP/1.1\r\nHost: 127.0.0.1:%d\r\n\r\n", allowedPort, allowedPort)
++	_, err = clientConn3.Write([]byte(allowedReq))
++	require.NoError(t, err)
++
++	reader3 := bufio.NewReader(clientConn3)
++	resp3, err := http.ReadResponse(reader3, nil)
++	require.NoError(t, err)
++	require.Equal(t, http.StatusOK, resp3.StatusCode)
++
++	// Send data through tunnel
++	_, err = clientConn3.Write([]byte("GET / HTTP/1.1\r\nHost: test\r\n\r\n"))
++	require.NoError(t, err)
++
++	buf := make([]byte, 1024)
++	n, err := reader3.Read(buf)
++	// Windows can return the tunneled bytes and a connection-abort error
++	// once the target closes and the proxy tears the tunnel down.
++	require.Contains(t, string(buf[:n]), "200 OK")
++	if n == 0 {
++		require.NoError(t, err)
++	}
++	require.Equal(t, int32(1), allowedHits.Load())
++}
++
++func TestHeadlessProxy_RealChromeWebSocketEndToEnd(t *testing.T) {
++	// 1. Setup blocked WebSocket server
++	blockedLn, err := net.Listen("tcp", "127.0.0.1:0")
++	require.NoError(t, err)
++	defer func() {
++		_ = blockedLn.Close()
++	}()
++
++	var blockedHits atomic.Int32
++	go func() {
++		for {
++			conn, err := blockedLn.Accept()
++			if err != nil {
++				return
++			}
++			blockedHits.Add(1)
++			_ = conn.Close()
++		}
++	}()
++
+```
+
+---
+
+### Incident Patch 3: `943ec350` (2026-10-23)
+**Commit Message**: Merge pull request #7876 from TassioSales/fix/proxy-internal-env-vars
+
+fix(runner): set HTTPS_PROXY and all proxy env vars when proxy-internal is enabled
+
+**File**: `internal/runner/proxy.go` (modified, +24/-4)
+```diff
+@@ -14,9 +14,25 @@ import (
  )
  
  const (
--	dbName                    = "test"
--	dbRepository              = "mongo"
--	dbTag                     = "8"
-+	dbName       = "test"
-+	dbRepository = "mongo"
-+	// 8.x refuses to start on kernels 6.19 through 7.0.13 (SERVER-125742).
-+	// The GitHub Ubuntu image is in that range. 7.0 stays up.
-+	dbTag                     = "7.0"
- 	dbPort                    = "27017/tcp"
- 	mongoDatabaseReadyTimeout = 3 * time.Minute
- 	mongoServerSelectionDelay = time.Second
+-	HTTP_PROXY_ENV = "HTTP_PROXY"
++	HTTP_PROXY_ENV  = "HTTP_PROXY"
++	HTTPS_PROXY_ENV = "HTTPS_PROXY"
+ )
+ 
++var proxyEnvVars = []string{
++	"HTTP_PROXY",
++	"HTTPS_PROXY",
++	"http_proxy",
++	"https_proxy",
++	"ALL_PROXY",
++	"all_proxy",
++}
++
++func setProxyEnv(proxyURL string) {
++	for _, env := range proxyEnvVars {
++		_ = os.Setenv(env, proxyURL)
++	}
++}
++
+ // loadProxyServers load list of proxy servers from file or comma separated
+ func loadProxyServers(options *types.Options) error {
+ 	if len(options.Proxy) == 0 {
+@@ -53,15 +69,19 @@ func loadProxyServers(options *types.Options) error {
+ 		return errkit.Wrapf(err, "failed to parse proxy got %v", err)
+ 	}
+ 	if options.ProxyInternal {
+-		_ = os.Setenv(HTTP_PROXY_ENV, proxyURL.String())
++		setProxyEnv(proxyURL.String())
+ 	}
+ 	switch proxyURL.Scheme {
+ 	case proxyutils.HTTP, proxyutils.HTTPS:
+-		options.Logger.Verbose().Msgf("Using %s as proxy server", proxyURL.String())
++		if options.Logger != nil {
++			options.Logger.Verbose().Msgf("Using %s as proxy server", proxyURL.String())
++		}
+ 		options.AliveHttpProxy = proxyURL.String()
+ 	case proxyutils.SOCKS5:
+ 		options.AliveSocksProxy = proxyURL.String()
+-		options.Logger.Verbose().Msgf("Using %s as socket proxy server", proxyURL.String())
++		if options.Logger != nil {
++			options.Logger.Verbose().Msgf("Using %s as socket proxy server", proxyURL.String())
++		}
+ 	}
+ 	return nil
+ }
+```
+
+**File**: `internal/runner/proxy_test.go` (modified, +81/-0)
+```diff
+@@ -1,8 +1,14 @@
+ package runner
+ 
+ import (
++	"net/http"
++	"net/http/httptest"
++	"os"
+ 	"testing"
+ 
++	"github.com/projectdiscovery/goflags"
++	"github.com/projectdiscovery/gologger"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -14,3 +20,78 @@ func TestValidateReplayProxy(t *testing.T) {
+ 		require.Error(t, validateReplayProxy(invalid), invalid)
+ 	}
+ }
++
++type envState struct {
++	val string
++	set bool
++}
++
++func saveAndRestoreProxyEnv(t *testing.T) {
++	t.Helper()
++	original := make(map[string]envState, len(proxyEnvVars))
++	for _, env := range proxyEnvVars {
++		val, set := os.LookupEnv(env)
++		original[env] = envState{val: val, set: set}
++		_ = os.Unsetenv(env)
++	}
++
++	t.Cleanup(func() {
++		for env, state := range original {
++			if state.set {
++				_ = os.Setenv(env, state.val)
++			} else {
++				_ = os.Unsetenv(env)
++			}
++		}
++	})
++}
++
++func TestSetProxyEnv(t *testing.T) {
++	saveAndRestoreProxyEnv(t)
++
++	testProxy := "http://127.0.0.1:8080"
++	setProxyEnv(testProxy)
++
++	for _, env := range proxyEnvVars {
++		require.Equal(t, testProxy, os.Getenv(env), "expected %s to be set", env)
++	}
++}
++
++func TestLoadProxyServers_ProxyInternal(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.WriteHeader(http.StatusOK)
++	}))
++	defer server.Close()
++
++	t.Run("proxy internal enabled sets all env vars", func(t *testing.T) {
++		saveAndRestoreProxyEnv(t)
++
++		options := &types.Options{
++			Proxy:         goflags.StringSlice{server.URL},
++			ProxyInternal: true,
++			Timeout:       5,
++			Logger:        &gologger.Logger{},
++		}
++		err := loadProxyServers(options)
++		require.NoError(t, err)
++		for _, env := range proxyEnvVars {
++			require.Equal(t, server.URL, os.Getenv(env), "expected %s to be set", env)
++		}
++	})
++
++	t.Run("proxy internal disabled does not set env vars", func(t *testing.T) {
++		saveAndRestoreProxyEnv(t)
++
++		options := &types.Options{
++			Proxy:         goflags.StringSlice{server.URL},
++			ProxyInternal: false,
++			Timeout:       5,
++			Logger:        &gologger.Logger{},
++		}
++		err := loadProxyServers(options)
++		require.NoError(t, err)
++		for _, env := range proxyEnvVars {
++			require.Empty(t, os.Getenv(env), "expected %s not to be set", env)
++		}
++	})
++}
+```
+
+**File**: `internal/runner/runner.go` (modified, +1/-1)
+```diff
+@@ -225,7 +225,7 @@ func New(options *types.Options) (*Runner, error) {
+ 	runner.catalog = disk.NewCatalog(config.DefaultConfig.TemplatesDirectory)
+ 
+ 	var httpclient *retryablehttp.Client
+-	if options.ProxyInternal && options.AliveHttpProxy != "" || options.AliveSocksProxy != "" {
++	if options.ProxyInternal && (options.AliveHttpProxy != "" || options.AliveSocksProxy != "") {
+ 		var err error
+ 
+ 		httpclient, err = httpclientpool.Get(options, &httpclientpool.Configuration{}, "")
+```
+
+**File**: `lib/sdk_private.go` (modified, +1/-1)
+```diff
+@@ -214,7 +214,7 @@ func (e *NucleiEngine) init(ctx context.Context) error {
+ 		_ = protocolinit.Init(e.opts)
+ 	}
+ 
+-	if e.opts.ProxyInternal && e.opts.AliveHttpProxy != "" || e.opts.AliveSocksProxy != "" {
++	if e.opts.ProxyInternal && (e.opts.AliveHttpProxy != "" || e.opts.AliveSocksProxy != "") {
+ 		httpclient, err := httpclientpool.Get(e.opts, &httpclientpool.Configuration{}, "")
+ 		if err != nil {
+ 			return err
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7910** (2026-10-23): fix(js): cap what an smtp connection may read (@gnuletik)
+- **PR #7906** (2026-10-23): fix(js): close ldap and smtp connections when the template ends (@gnuletik)
+- **PR #7904** (2026-10-23): fix(runner): use protocolstate fastdialer for default interactsh client (#7903) (@TassioSales)
+- **PR #7902** (2026-10-23): bump Go toolchain for CVE-2026-111943 (@dogancanbakir)
 - **PR #7899** (2026-10-20): bump utils and tlsx to the zcrypto TLS 1.3 revision (@dogancanbakir)
-- **PR #7895** (2026-10-19): apply host backoff to network, ssl and websocket dials (@dogancanbakir)
-- **PR #7891** (2026-10-19): chore(deps): bump the modules group with 7 updates (@dependabot[bot])
-- **PR #7887** (closed): fix(protocolstate): refresh low-memory warning (@knakul853)
-- **PR #7884** (closed): fix(headless): avoid waiting for an already-fired load event (@knakul853)
-- **PR #7881** (2026-10-18): skip stdin when targets are given with -u or -l (@dogancanbakir)
+- **PR #7897** (2026-10-23): apply host backoff to headless navigations (@dogancanbakir)
 
 ---
 
@@ -1624,38 +2504,38 @@ bump utils and tlsx to the zcrypto TLS 1.3 revision
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7899 from projectdiscovery/chore/zcrypto-tls13-deps
+## X. Merge pull request #7756 from baturdenada/fix/dialer-panic
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/input/provider/list/hmap.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b0eeadc5`: Merge pull request #7899 from projectdiscovery/chore/zcrypto-tls13-deps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `64ad4591`: Merge pull request #7756 from baturdenada/fix/dialer-panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/input/provider/list/hmap.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/projectdiscovery/tlsx v1.4.3-0.20261020052910-acb80c2c7c75
-	github.com/projectdiscovery/utils v0.11.10
-	github.com/weppos/publicsuffix-go v0.50.4-0.20260918082853-3c3d7dc4a0cb // indirect
-	github.com/zmap/zcrypto v0.0.0-20261015050653-aa1de3126e87 // indirect
+			gologger.Error().Msgf("dialers with executionId %s not found", executionId)
+			return
+			gologger.Error().Msgf("dialers with executionId %s not found", executionId)
+			return
+			gologger.Error().Msgf("dialers with executionId %s not found", executionId)
+			return
+			gologger.Error().Msgf("dialers with executionId %s not found", executionId)
+			return
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/projectdiscovery/tlsx v1.4.1
-	github.com/projectdiscovery/utils v0.11.10-0.20261015084917-a599cac78c99
-	github.com/weppos/publicsuffix-go v0.50.4-0.20260821095816-b0fdb5c2d345 // indirect
-	github.com/zmap/rc2 v0.0.0-20190804163417-abaa70531248 // indirect
-	github.com/zmap/zcrypto v0.0.0-20260906180147-3ed30b1e9340 // indirect
-// fastdialer 0.5.26 selects a zcrypto that no longer has GetHeartbleedLog or NextProtoNeg.
-replace github.com/zmap/zcrypto => github.com/zmap/zcrypto v0.0.0-20240803002437-3a861682ac77
-
+			panic("dialers with executionId " + executionId + " not found")
+			panic("dialers with executionId " + executionId + " not found")
+			panic("dialers with executionId " + executionId + " not found")
+			panic("dialers with executionId " + executionId + " not found")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b0eeadc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `64ad4591` are properly handled with clean fallback behavior.

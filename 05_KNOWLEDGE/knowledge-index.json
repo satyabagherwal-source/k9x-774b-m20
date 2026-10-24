@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T20:11:26.300Z",
+  "last_updated": "2026-10-24T20:19:25.223Z",
   "total_verified_learnings": 1079,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39534,8 +39534,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "b0eeadc5",
-      "content_hash": "43f20d32937db07bfd3054af22c4de0214758ee86be24c914ffaa77c9fb4bf12",
+      "source_version": "b901fb8a",
+      "content_hash": "fb4fdf9cf60e13dc396bed90d678584e0b034638dc9b582f968f5301fc1e85f3",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -39558,6 +39558,11 @@
           "number": 3265,
           "title": "Merge pull request #7899 from projectdiscovery/chore/zcrypto-tls13-deps",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3948,
+          "title": "Merge pull request #7756 from baturdenada/fix/dialer-panic",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39565,7 +39570,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:27:54.641Z",
+      "verified_at": "2026-10-24T20:19:25.204Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -82938,7 +82943,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MOSS-Image",
       "source_version": "hf-comfy-org-moss-image",
-      "content_hash": "2f85e887ec7cba900e14f975a596c680189dfa213fba853c9fead9ccee9fd980",
+      "content_hash": "7dcc0ae2c0261979bae15bc13ee41878a38d95d70168ddb0fe9348c35eb9a467",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md",
       "promoted_rules": [
@@ -82958,7 +82963,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:42:19.889Z",
+      "verified_at": "2026-10-24T20:19:13.388Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -116218,6 +116223,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T20:11:26.293Z"
+    },
+    "rule-3948": {
+      "learning_id": "rule-3948",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3948,
+      "title": "Merge pull request #7756 from baturdenada/fix/dialer-panic",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "b901fb8a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:19:25.204Z"
     }
   },
   "aliases": {

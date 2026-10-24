@@ -4585,3 +4585,5 @@
 | `CYCLE-20261024-3NAC` | `2026-10-24T20:11:17.028Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3943, Rule 3944, Rule 3945` | Yes (`7a9665dc...`) |
 | `CYCLE-20261024-3PLT` | `2026-10-24T20:11:20.033Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3946` | Yes (`e60eb7a2...`) |
 | `CYCLE-20261024-3UGR` | `2026-10-24T20:11:26.331Z` | `malisper/pgrust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3947` | Yes (`76b0797c...`) |
+| `CYCLE-20261024-DUWQ` | `2026-10-24T20:19:13.466Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md` | Yes (`7dcc0ae2...`) |
+| `CYCLE-20261024-E411` | `2026-10-24T20:19:25.285Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3948` | Yes (`fb4fdf9c...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-24T20:11:26.343Z",
+  "last_updated": "2026-10-24T20:19:25.303Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3261,14 +3261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-moss-image",
-      "content_hash": "2f85e887ec7cba900e14f975a596c680189dfa213fba853c9fead9ccee9fd980",
-      "verified_at": "2026-10-20T06:42:19.967Z",
+      "content_hash": "7dcc0ae2c0261979bae15bc13ee41878a38d95d70168ddb0fe9348c35eb9a467",
+      "verified_at": "2026-10-24T20:19:13.478Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:42:19.967Z"
+      "last_updated": "2026-10-24T20:19:13.478Z"
     },
     "bvaughn/react-virtualized": {
       "repository": "bvaughn/react-virtualized",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "43f20d32937db07bfd3054af22c4de0214758ee86be24c914ffaa77c9fb4bf12",
-      "verified_at": "2026-10-20T16:27:54.717Z",
+      "content_hash": "fb4fdf9cf60e13dc396bed90d678584e0b034638dc9b582f968f5301fc1e85f3",
+      "verified_at": "2026-10-24T20:19:25.302Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:27:54.717Z"
+      "last_updated": "2026-10-24T20:19:25.302Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",

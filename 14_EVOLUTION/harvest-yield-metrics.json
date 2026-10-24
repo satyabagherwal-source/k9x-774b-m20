@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T20:11:26.340Z",
-  "total_cycles_completed": 4562,
-  "total_learnings_persisted": 4562,
-  "total_rules_promoted": 3801,
+  "last_updated": "2026-10-24T20:19:25.299Z",
+  "total_cycles_completed": 4564,
+  "total_learnings_persisted": 4564,
+  "total_rules_promoted": 3802,
   "history": [
-    {
-      "timestamp": "2026-10-22T18:37:28.776Z",
-      "repository": "lxml/lxml",
-      "learningId": "learn-github-lxml-lxml",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:37:35.818Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T18:43:59.674Z",
       "repository": "meilisearch/meilisearch",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-24T20:11:26.340Z",
       "repository": "malisper/pgrust",
       "learningId": "learn-github-malisper-pgrust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:19:13.475Z",
+      "repository": "Comfy-Org/MOSS-Image",
+      "learningId": "learn-huggingface-comfy-org-moss-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:19:25.299Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-ZTKS",
-    "timestamp": "2026-10-20T23:17:34.972Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "fce7457ab75c117a0b89d671bba007131d8dda0d84c5776fbae7237c87fba601",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-82A9",
-    "timestamp": "2026-10-20T23:23:59.505Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "0058cadf27a197cae3874d229921d2a2ca4707582062caf1a67925037e3c64d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-893U",
     "timestamp": "2026-10-20T23:24:08.346Z",
     "repository": "microsoft/agent-governance-toolkit",
@@ -7490,6 +7460,36 @@
     "repository": "malisper/pgrust",
     "learningId": "learn-github-malisper-pgrust",
     "contentHash": "76b0797cb75c7aea8874fa88d4f08ac8ff923f64efbc364f85780c8301f810d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-DUWQ",
+    "timestamp": "2026-10-24T20:19:13.466Z",
+    "repository": "Comfy-Org/MOSS-Image",
+    "learningId": "learn-huggingface-comfy-org-moss-image",
+    "contentHash": "7dcc0ae2c0261979bae15bc13ee41878a38d95d70168ddb0fe9348c35eb9a467",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-E411",
+    "timestamp": "2026-10-24T20:19:25.285Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "fb4fdf9cf60e13dc396bed90d678584e0b034638dc9b582f968f5301fc1e85f3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
