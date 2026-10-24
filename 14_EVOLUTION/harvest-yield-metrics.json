@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T19:22:30.865Z",
-  "total_cycles_completed": 4533,
-  "total_learnings_persisted": 4533,
-  "total_rules_promoted": 3766,
+  "last_updated": "2026-10-24T19:28:40.766Z",
+  "total_cycles_completed": 4538,
+  "total_learnings_persisted": 4538,
+  "total_rules_promoted": 3770,
   "history": [
-    {
-      "timestamp": "2026-10-22T17:38:26.434Z",
-      "repository": "go-kratos/kratos",
-      "learningId": "learn-github-go-kratos-kratos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:38:27.812Z",
-      "repository": "rsuite/rsuite",
-      "learningId": "learn-github-rsuite-rsuite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:38:28.491Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:44:51.296Z",
-      "repository": "lingui/js-lingui",
-      "learningId": "learn-github-lingui-js-lingui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:44:56.609Z",
-      "repository": "iii-hq/iii",
-      "learningId": "learn-github-iii-hq-iii",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T17:45:04.118Z",
       "repository": "gravitl/netmaker",
@@ -1403,6 +1368,41 @@
       "repository": "NomaDamas/CozyClay",
       "learningId": "learn-github-nomadamas-cozyclay",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:28:28.541Z",
+      "repository": "expressjs/express",
+      "learningId": "learn-github-expressjs-express",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:28:32.840Z",
+      "repository": "kcl-lang/kcl",
+      "learningId": "learn-github-kcl-lang-kcl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:28:36.268Z",
+      "repository": "RustCrypto/hashes",
+      "learningId": "learn-github-rustcrypto-hashes",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:28:40.240Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:28:40.766Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

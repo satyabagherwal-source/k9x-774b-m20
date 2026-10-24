@@ -4556,3 +4556,8 @@
 | `CYCLE-20261023-JI73` | `2026-10-23T11:44:03.807Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3794` | Yes (`f4eac31f...`) |
 | `CYCLE-20261023-KW4A` | `2026-10-23T11:45:08.506Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3907, Rule 3908, Rule 3909` | Yes (`0b18dccd...`) |
 | `CYCLE-20261024-CXFO` | `2026-10-24T19:22:30.852Z` | `NomaDamas/CozyClay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3910, Rule 3911, Rule 3912` | Yes (`80ff9f8c...`) |
+| `CYCLE-20261024-KLF6` | `2026-10-24T19:28:28.530Z` | `expressjs/express` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3913` | Yes (`04142cfa...`) |
+| `CYCLE-20261024-KOQL` | `2026-10-24T19:28:32.829Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3914` | Yes (`5401d4ae...`) |
+| `CYCLE-20261024-KRDX` | `2026-10-24T19:28:36.261Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md` | Yes (`71911fba...`) |
+| `CYCLE-20261024-KUG7` | `2026-10-24T19:28:40.231Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3915` | Yes (`4659e826...`) |
+| `CYCLE-20261024-KUUR` | `2026-10-24T19:28:40.755Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3916` | Yes (`7b2169e6...`) |

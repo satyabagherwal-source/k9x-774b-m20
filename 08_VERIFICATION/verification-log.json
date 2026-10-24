@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-P2H2",
-    "timestamp": "2026-10-20T22:13:14.054Z",
-    "repository": "nginx/kubernetes-ingress",
-    "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "1c93e115e58942f812052142b90feefe5e0133c13a62c436de1ee35648f61b66",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-P60M",
-    "timestamp": "2026-10-20T22:13:18.646Z",
-    "repository": "StarTrail-org/LEANN",
-    "learningId": "learn-github-startrail-org-leann",
-    "contentHash": "babeb3322b46ca0c3c2471de6466bc29be1a5ce197a95810334c089b2c45fb55",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-Q0F6",
-    "timestamp": "2026-10-20T22:13:58.050Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-google-t5-t5-small",
-    "contentHash": "23fcef2251c7f9384ee29737cb75df111c552ce52280004ecbe0ec4737db9d85",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-Y754",
-    "timestamp": "2026-10-20T22:20:20.008Z",
-    "repository": "SimonSchubert/LinuxCommandLibrary",
-    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "e12329761cac32644e8f6e87cd976eaee64b9fe031b57c6800c20318bd2a1a70",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-Y85P",
-    "timestamp": "2026-10-20T22:20:21.325Z",
-    "repository": "Comfy-Org/MiniMax-H3",
-    "learningId": "learn-huggingface-comfy-org-minimax-h3",
-    "contentHash": "871615cdc620904cdd5cccca4fd7bc28bd5d0bbc019cab716128ef76a609886c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-Y9LP",
     "timestamp": "2026-10-20T22:20:23.197Z",
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
@@ -7492,6 +7417,81 @@
     "contentHash": "80ff9f8c3a400c723b94d548a538e6f6923978b668405a6c9aca47343f7b5a50",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-KLF6",
+    "timestamp": "2026-10-24T19:28:28.530Z",
+    "repository": "expressjs/express",
+    "learningId": "learn-github-expressjs-express",
+    "contentHash": "04142cfaa855a731fa8f7984caad875334b7c91c2d526adc32ebec559987e1ac",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-KOQL",
+    "timestamp": "2026-10-24T19:28:32.829Z",
+    "repository": "kcl-lang/kcl",
+    "learningId": "learn-github-kcl-lang-kcl",
+    "contentHash": "5401d4aea0326ff5e6da02f3b2b805b50eeb46d6de61ee911f51f69a15ed9443",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-KRDX",
+    "timestamp": "2026-10-24T19:28:36.261Z",
+    "repository": "RustCrypto/hashes",
+    "learningId": "learn-github-rustcrypto-hashes",
+    "contentHash": "71911fbae88a69f741783603a5806c9ed3c57811a104bd415e0ef4d9546dbc44",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-KUG7",
+    "timestamp": "2026-10-24T19:28:40.231Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "4659e826c027d0e83e369b8cedf5728cc252954c54cbab3d0d9d9d6ae95c0ff1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-KUUR",
+    "timestamp": "2026-10-24T19:28:40.755Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "7b2169e6a550439ab1092aaaff5943839a66575d84b59bc6055e911edd00fe3c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

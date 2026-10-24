@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T19:22:30.800Z",
+  "last_updated": "2026-10-24T19:28:40.724Z",
   "total_verified_learnings": 1075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29138,8 +29138,8 @@
       "slug": "kcl-lang-kcl",
       "platform": "github",
       "source_url": "https://github.com/kcl-lang/kcl",
-      "source_version": "d88ede7b",
-      "content_hash": "bf53c8ee4e373cd07e5b4a80852767d7f4f62685854ddee6633be1224a1d5223",
+      "source_version": "f469568b",
+      "content_hash": "5401d4aea0326ff5e6da02f3b2b805b50eeb46d6de61ee911f51f69a15ed9443",
       "dossier_path": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "promoted_rules": [
@@ -29152,6 +29152,11 @@
           "number": 2685,
           "title": "release): match language server artifacts with pattern, not name",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3914,
+          "title": "runtime): keep the remainder when regex.split reaches maxsplit (#2229)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29159,7 +29164,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:37:22.224Z",
+      "verified_at": "2026-10-24T19:28:32.788Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32309,8 +32314,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "5030c900",
-      "content_hash": "c28dd8ed1d1ba6db52354139ae3070afe2b5e9ad298431d39feec24fdc53d31b",
+      "source_version": "15d89708",
+      "content_hash": "4659e826c027d0e83e369b8cedf5728cc252954c54cbab3d0d9d9d6ae95c0ff1",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -32338,6 +32343,11 @@
           "number": 3560,
           "title": "build(deps): bump pytimeparse from 1.1.9 to 1.1.10 in /misc/dbt-materialize in t",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3915,
+          "title": "agents: move task-specific guidance from AGENTS.md into skills (#40081)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32345,7 +32355,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T16:25:57.376Z",
+      "verified_at": "2026-10-24T19:28:40.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36340,8 +36350,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "da33acfc",
-      "content_hash": "745485bfb79286a50b02deec0033f9d98a604442f2318362a2b80733019e77d8",
+      "source_version": "6741854c",
+      "content_hash": "7b2169e6a550439ab1092aaaff5943839a66575d84b59bc6055e911edd00fe3c",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -36384,6 +36394,11 @@
           "number": 3854,
           "title": "Add cross ARC dataset for task 0ca9ddb6",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3916,
+          "title": "Buffer REPL colon-suite headers with comments",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36391,7 +36406,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T09:35:54.388Z",
+      "verified_at": "2026-10-24T19:28:40.717Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41683,8 +41698,8 @@
       "slug": "rustcrypto-hashes",
       "platform": "github",
       "source_url": "https://github.com/RustCrypto/hashes",
-      "source_version": "98947e90",
-      "content_hash": "ab37ecf26f028b956defaf04893779e61810d25a2287ffe41358f02c2adec386",
+      "source_version": "7bd9889c",
+      "content_hash": "71911fbae88a69f741783603a5806c9ed3c57811a104bd415e0ef4d9546dbc44",
       "dossier_path": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "promoted_rules": [
@@ -41704,7 +41719,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:27:25.012Z",
+      "verified_at": "2026-10-24T19:28:36.209Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64683,8 +64698,8 @@
       "slug": "expressjs-express",
       "platform": "github",
       "source_url": "https://github.com/expressjs/express",
-      "source_version": "0dee2c52",
-      "content_hash": "91c1cb88c8bf06cd3d63879719e65c1cdf6239afdc1b2ed04daf6cfa527d3105",
+      "source_version": "1c6f1b0f",
+      "content_hash": "04142cfaa855a731fa8f7984caad875334b7c91c2d526adc32ebec559987e1ac",
       "dossier_path": "07_PROJECT_LEARNING/expressjs-express-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expressjs-express-learnings.md",
       "promoted_rules": [
@@ -64702,6 +64717,11 @@
           "number": 1675,
           "title": "Sub-App Scope Prototype Isolation and Restoration Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3913,
+          "title": "test: expand coverage for request, response and view behavior (#7112)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -64709,7 +64729,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T07:55:05.914Z",
+      "verified_at": "2026-10-24T19:28:28.490Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115443,6 +115463,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T19:22:30.788Z"
+    },
+    "rule-3913": {
+      "learning_id": "rule-3913",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3913,
+      "title": "test: expand coverage for request, response and view behavior (#7112)",
+      "source_url": "https://github.com/expressjs/express",
+      "source_version": "1c6f1b0f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:28:28.490Z"
+    },
+    "rule-3914": {
+      "learning_id": "rule-3914",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3914,
+      "title": "runtime): keep the remainder when regex.split reaches maxsplit (#2229)",
+      "source_url": "https://github.com/kcl-lang/kcl",
+      "source_version": "f469568b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:28:32.788Z"
+    },
+    "rule-3915": {
+      "learning_id": "rule-3915",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3915,
+      "title": "agents: move task-specific guidance from AGENTS.md into skills (#40081)",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "15d89708",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:28:40.193Z"
+    },
+    "rule-3916": {
+      "learning_id": "rule-3916",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3916,
+      "title": "Buffer REPL colon-suite headers with comments",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "6741854c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:28:40.717Z"
     }
   },
   "aliases": {

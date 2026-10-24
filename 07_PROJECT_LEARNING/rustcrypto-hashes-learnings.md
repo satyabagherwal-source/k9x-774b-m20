@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md`  
 > **Source**: github ([https://github.com/RustCrypto/hashes](https://github.com/RustCrypto/hashes))  
-> **Source Version**: `98947e90`  
+> **Source Version**: `7bd9889c`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:27:24.822Z  
+> **Timestamp**: 2026-10-24T19:28:36.151Z  
 > **Learning ID**: `learn-github-rustcrypto-hashes`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RustCrypto/hashes](https://github.com/RustCrypto/hashes))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:27:24.688Z  
+> **Harvest Timestamp**: 2026-10-24T19:28:35.220Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Collection of cryptographic hash functions written in pure Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2276 stars
+- **Stars / Engagement**: 2280 stars
 
 ---
 
@@ -674,73 +674,129 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `98947e90` (2026-10-19)
-**Commit Message**: ripemd: fix comment in RIPEMD-128 implementation (#931)
+### Incident Patch 1: `7bd9889c` (2026-10-23)
+**Commit Message**: sha2: fix SHA-512 backend selection (#935)
 
-**File**: `ripemd/src/c128.rs` (modified, +1/-1)
+The SHA-512 backend selector checks `sha2_256_backend` instead of
+`sha2_512_backend` for the `soft` and `riscv-zknh` branches. This ignores
+the corresponding SHA-512 overrides and allows SHA-256 overrides to
+unintentionally affect SHA-512.
+
+**File**: `sha2/CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -56,7 +56,7 @@ macro_rules! process_block(
-                   $data[$data_index4], $bits4, 0x8f1b_bcdc,
-                   (bb[$i1] & bb[$i3]) | (bb[$i2] & !bb[$i3])); )*
+@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
--        // Parallel rounds: these are the same as the previous five
-+        // Parallel rounds: these are the same as the previous four
-         // rounds except that the constants have changed, we work
-         // with the other buffer, and they are applied in reverse
-         // order.
++## 0.11.2 (UNRELEASED)
++### Fixed
++- SHA-512 `riscv-zknh` backend selection ([#935])
++
++[#935]: https://github.com/RustCrypto/hashes/pull/935
++
+ ## 0.11.1 (2026-10-12)
+ ### Changed
+ - Removed workaround for unaligned loads in `riscv-zknh` backend ([#879])
+```
+
+**File**: `sha2/src/lib.rs` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@
+     any(
+         sha2_backend = "riscv-zknh",
+         sha2_256_backend = "riscv-zknh",
+-        sha2_256_backend = "riscv-zknh",
++        sha2_512_backend = "riscv-zknh",
+     ),
+     feature(riscv_ext_intrinsics)
+ )]
+```
+
+**File**: `sha2/src/sha512.rs` (modified, +2/-2)
+```diff
+@@ -1,8 +1,8 @@
+ cfg_if::cfg_if! {
+-    if #[cfg(any(sha2_backend = "soft", sha2_256_backend = "soft"))] {
++    if #[cfg(any(sha2_backend = "soft", sha2_512_backend = "soft"))] {
+         mod soft;
+         use soft::compress;
+-    } else if #[cfg(any(sha2_backend = "riscv-zknh", sha2_256_backend = "riscv-zknh"))] {
++    } else if #[cfg(any(sha2_backend = "riscv-zknh", sha2_512_backend = "riscv-zknh"))] {
+         mod riscv_zknh;
+ 
+         #[cfg(not(target_feature = "zknh"))]
 ```
 
 ---
 
-### Incident Patch 2: `1a35dd12` (2026-10-19)
-**Commit Message**: sha2: fix comment in LoongArch64 SHA-512 backend (#932)
+### Incident Patch 2: `2b159872` (2026-10-23)
+**Commit Message**: sha2: fix MSRV advertised in README (#936)
 
-**File**: `sha2/src/sha512/loongarch64_asm.rs` (modified, +1/-1)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -102,7 +102,7 @@ pub(super) fn compress(state: &mut [u64; 8], blocks: &[[u8; 128]]) {
- 
-             "42:",
- 
--            // Do 64 rounds of hashing
-+            // Do 80 rounds of hashing
-             rounda!( 0, "$t0" , "$t1" , "$t2", "$t3", "$t4", "$t5", "$t6", "$t7"),
-             rounda!( 1, "$t7", "$t0" , "$t1" , "$t2", "$t3", "$t4", "$t5", "$t6"),
-             rounda!( 2, "$t6", "$t7", "$t0" , "$t1" , "$t2", "$t3", "$t4", "$t5"),
+@@ -34,7 +34,7 @@ For a collection of [extendable output functions (XOFs)][XOF], refer to the [Rus
+ | [RIPEMD] | [`ripemd`] | [![crates.io](https://img.shields.io/crates/v/ripemd.svg)](https://crates.io/crates/ripemd) | [![Documentation](https://docs.rs/ripemd/badge.svg)](https://docs.rs/ripemd) | 1.85 | :green_heart: |
+ | [SHA-1] | [`sha1`] | [![crates.io](https://img.shields.io/crates/v/sha1.svg)](https://crates.io/crates/sha1) | [![Documentation](https://docs.rs/sha1/badge.svg)](https://docs.rs/sha1) | 1.85 | :broken_heart: |
+ | [SHA-1 Checked] | [`sha1-checked`] | [![crates.io](https://img.shields.io/crates/v/sha1-checked.svg)](https://crates.io/crates/sha1-checked) | [![Documentation](https://docs.rs/sha1-checked/badge.svg)](https://docs.rs/sha1-checked) | 1.85 | :yellow_heart: |
+-| [SHA-2] | [`sha2`] | [![crates.io](https://img.shields.io/crates/v/sha2.svg)](https://crates.io/crates/sha2) | [![Documentation](https://docs.rs/sha2/badge.svg)](https://docs.rs/sha2) | 1.85 | :green_heart: |
++| [SHA-2] | [`sha2`] | [![crates.io](https://img.shields.io/crates/v/sha2.svg)](https://crates.io/crates/sha2) | [![Documentation](https://docs.rs/sha2/badge.svg)](https://docs.rs/sha2) | 1.88 | :green_heart: |
+ | [SHA-3] (Keccak) | [`sha3`] | [![crates.io](https://img.shields.io/crates/v/sha3.svg)](https://crates.io/crates/sha3) | [![Documentation](https://docs.rs/sha3/badge.svg)](https://docs.rs/sha3) | 1.85 | :green_heart: |
+ | [SHABAL] | [`shabal`] | [![crates.io](https://img.shields.io/crates/v/shabal.svg)](https://crates.io/crates/shabal) | [![Documentation](https://docs.rs/shabal/badge.svg)](https://docs.rs/shabal) | 1.85 | :green_heart: |
+ | [Skein] | [`skein`] | [![crates.io](https://img.shields.io/crates/v/skein.svg)](https://crates.io/crates/skein) | [![Documentation](https://docs.rs/skein/badge.svg)](https://docs.rs/skein) | 1.85 | :green_heart: |
+```
+
+**File**: `sha2/README.md` (modified, +1/-1)
+```diff
+@@ -134,7 +134,7 @@ dual licensed as above, without any additional terms or conditions.
+ [docs-image]: https://docs.rs/sha2/badge.svg
+ [docs-link]: https://docs.rs/sha2/
+ [license-image]: https://img.shields.io/badge/license-Apache2.0/MIT-blue.svg
+-[rustc-image]: https://img.shields.io/badge/rustc-1.85+-blue.svg
++[rustc-image]: https://img.shields.io/badge/rustc-1.88+-blue.svg
+ [chat-image]: https://img.shields.io/badge/zulip-join_chat-blue.svg
+ [chat-link]: https://rustcrypto.zulipchat.com/#narrow/stream/260041-hashes
+ [build-image]: https://github.com/RustCrypto/hashes/actions/workflows/sha2.yml/badge.svg?branch=master
 ```
 
 ---
 
-### Incident Patch 3: `31da55d4` (2026-10-19)
-**Commit Message**: streebog: fix stale doc comments (#933)
+### Incident Patch 3: `71d9976b` (2026-10-23)
+**Commit Message**: CI: fix `sha2` build on `riscv32` (#937)
 
-**File**: `streebog/src/consts.rs` (modified, +2/-2)
+See https://github.com/rust-lang/rust/issues/164694
+
+**File**: `.github/workflows/sha2.yml` (modified, +4/-4)
 ```diff
-@@ -1,6 +1,6 @@
- //! Constants defined in the Streebog specification
- //!
--//! In the code for optimization purposes `table::SHUFFLED_LIN_TABLE` is used
-+//! In the code for optimization purposes `SHUFFLED_LIN_TABLE` is used
- //! instead of `A` and `P`
+@@ -206,16 +206,16 @@ jobs:
+         with:
+           toolchain: nightly
+           components: rust-src
+-      - run: cargo build --all-features --target riscv32gc-unknown-linux-gnu -Z build-std
++      - run: cargo build --all-features --target riscv32gc-unknown-linux-gnu -Z build-std=core,alloc
+         env:
+           RUSTFLAGS: -Dwarnings --cfg sha2_backend="soft"
+-      - run: cargo build --all-features --target riscv32gc-unknown-linux-gnu -Z build-std
++      - run: cargo build --all-features --target riscv32gc-unknown-linux-gnu -Z build-std=core,alloc
+         env:
+           RUSTFLAGS: -Dwarnings --cfg sha2_backend="soft" --cfg sha2_backend_soft="compact"
+-      - run: cargo build --all-features --target riscv32gc-unknown-linux-gnu -Z build-std
++      - run: cargo build --all-features --target riscv32gc-unknown-linux-gnu -Z build-std=core,alloc
+         env:
+           RUSTFLAGS: -Dwarnings --cfg sha2_backend="riscv-zknh" -C target-feature=+zknh,+zbkb
+-      - run: cargo build --all-features --target riscv32gc-unknown-linux-gnu -Z build-std
++      - run: cargo build --all-features --target riscv32gc-unknown-linux-gnu -Z build-std=core,alloc
+         env:
+           RUSTFLAGS: -Dwarnings --cfg sha2_backend="riscv-zknh" --cfg sha2_backend_riscv_zknh="compact" -C target-feature=+zknh,+zbkb
  
- use crate::u512::U512;
-@@ -180,7 +180,7 @@ pub(crate) const C: [[u8; BLOCK_SIZE]; 12] = [
-     ],
- ];
- 
--/// Iteration constants represented as `[u64; 8]`
-+/// Iteration constants represented as `[U512; 12]`
- pub(crate) const C64: [U512; 12] = {
-     let mut res = [U512::ZERO; 12];
-     let mut i = 0;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #937** (2026-10-23): CI: fix `sha2` build on `riscv32` (@tarcieri)
+- **PR #936** (2026-10-23): docs(sha2): align the advertised MSRV with Cargo metadata (@fengxueweilai)
+- **PR #935** (2026-10-23): sha2: fix SHA-512 backend selection (@clippytool)
 - **PR #933** (2026-10-19): streebog: fix stale doc comments in `consts` (@elonfliter)
 - **PR #932** (2026-10-19): sha2: fix round count comment in LoongArch64 SHA-512 backend (@kleonyuan)
 - **PR #931** (2026-10-19): ripemd: fix RIPEMD-128 round count in comment (@kleonyuan)
-- **PR #930** (2026-10-17): skein: fix  implementations (@zoupingcenter)
-- **PR #928** (2026-10-14): fix(fsb): preserve public AlgorithmName (@zerozebrazone)
-- **PR #927** (2026-10-12): Release sha2 v0.11.1 (@newpavlov)
 
 ---
 
@@ -760,28 +816,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ripemd: fix comment in RIPEMD-128 implementation (#931)
+## X. sha2: fix SHA-512 backend selection (#935)
 
 **RULE**:
-When implementing operations in `ripemd/src/c128.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RustCrypto/hashes. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sha2/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RustCrypto/hashes. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `98947e90`: ripemd: fix comment in RIPEMD-128 implementation (#931). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7bd9889c`: sha2: fix SHA-512 backend selection (#935). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ripemd/src/c128.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sha2/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Parallel rounds: these are the same as the previous four
+## 0.11.2 (UNRELEASED)
+### Fixed
+- SHA-512 `riscv-zknh` backend selection ([#935])
+
+[#935]: https://github.com/RustCrypto/hashes/pull/935
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        // Parallel rounds: these are the same as the previous five
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `98947e90` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7bd9889c` are properly handled with clean fallback behavior.

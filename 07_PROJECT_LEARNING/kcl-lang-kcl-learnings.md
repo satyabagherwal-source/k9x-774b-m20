@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source**: github ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
-> **Source Version**: `d88ede7b`  
+> **Source Version**: `f469568b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:37:22.020Z  
+> **Timestamp**: 2026-10-24T19:28:32.606Z  
 > **Learning ID**: `learn-github-kcl-lang-kcl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:37:22.014Z  
+> **Harvest Timestamp**: 2026-10-24T19:28:31.862Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: KCL Language Core and API
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2432 stars
+- **Stars / Engagement**: 2437 stars
 
 ---
 
@@ -1204,86 +1204,84 @@ impl ModuleInfo {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d88ede7b` (2026-10-19)
-**Commit Message**: fix(release): match language server artifacts with pattern, not name
+### Incident Patch 1: `f469568b` (2026-10-23)
+**Commit Message**: fix(runtime): keep the remainder when regex.split reaches maxsplit (#2229)
 
-download-artifact treats `name` as an exact artifact name, so
-`kcl-language-server-*` was looked up literally and the update-taps job
-failed with "Artifact not found". v4+ has a separate `pattern` input for
-glob matching.
+regex.split("a,b,c,d", ",", 1) returned ["a"] and dropped the rest of the
+string. It now returns ["a", "b,c,d"], matching the documented behavior of
+splitting at most maxsplit times.
 
-Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
+Signed-off-by: Steve <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/release.yaml` (modified, +4/-1)
+**File**: `crates/runtime/src/regex/mod.rs` (modified, +2/-1)
 ```diff
-@@ -296,7 +296,10 @@ jobs:
-       - name: Download kcl-language-server artifacts
-         uses: actions/download-artifact@v4
-         with:
--          name: kcl-language-server-*
-+          # `name` is an exact match, so the wildcard has to go in `pattern`.
-+          # Each artifact lands in its own subdirectory, which the render step
-+          # searches recursively.
-+          pattern: kcl-language-server-*
-           path: artifacts
- 
-       - name: Render kcl-lsp formula and Scoop manifest
+@@ -182,10 +182,11 @@ pub unsafe extern "C-unwind" fn kcl_regex_split(
+                     .map_or(None, |c| c);
+                 if let Some(Some(cap)) = capture.map(|c| c.get(0)) {
+                     fields.push(string[current_pos..cap.start()].to_string());
++                    current_pos = cap.end();
+                     if maxsplit > 0 && fields.len() >= (maxsplit as usize) {
++                        fields.push(string[current_pos..].to_string());
+                         break;
+                     }
+-                    current_pos = cap.end();
+                 } else {
+                     fields.push(string[current_pos..].to_string());
+                     break;
 ```
 
----
-
-### Incident Patch 2: `b26e8ee3` (2026-10-19)
-**Commit Message**: fix(release): use the org secret name DEPLOY_ACCESS_TOKEN
-
-The kcl-lang org secret is named DEPLOY_ACCESS_TOKEN, so referencing
-secrets.DEPLOY_TOKEN resolved to an empty string and the new guard aborted
-the release before it published anything.
-
-Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/release.yaml` (modified, +5/-5)
+**File**: `tests/grammar/builtins/regex/test_4/main.k` (added, +8/-0)
 ```diff
-@@ -256,10 +256,10 @@ jobs:
-       - name: Check that the deploy token is available
-         shell: bash
-         env:
--          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
-+          DEPLOY_ACCESS_TOKEN: ${{ secrets.DEPLOY_ACCESS_TOKEN }}
-         run: |
--          if [ -z "${DEPLOY_TOKEN}" ]; then
--            echo "::error::DEPLOY_TOKEN is not available to this workflow"
-+          if [ -z "${DEPLOY_ACCESS_TOKEN}" ]; then
-+            echo "::error::DEPLOY_ACCESS_TOKEN is not available to this workflow"
-             exit 1
-           fi
- 
-@@ -315,15 +315,15 @@ jobs:
-           path: homebrew-tap
-           # GITHUB_TOKEN is scoped to this repo, so the org deploy token is used
-           # to push to the tap and the bucket. Needs write access to both.
--          token: ${{ secrets.DEPLOY_TOKEN }}
-+          token: ${{ secrets.DEPLOY_ACCESS_TOKEN }}
- 
-       - name: Check out scoop-bucket
-         uses: actions/checkout@v3
-         with:
-           repository: kcl-lang/scoop-bucket
-           ref: main
-           path: scoop-bucket
--          token: ${{ secrets.DEPLOY_TOKEN }}
-+          token: ${{ secrets.DEPLOY_ACCESS_TOKEN }}
- 
-       - name: Commit kcl-lsp formula and Scoop manifest
-         shell: bash
+@@ -0,0 +1,8 @@
++import regex
++
++split_unlimited = regex.split("a,b,c,d", ",")
++split_zero = regex.split("a,b,c,d", ",", 0)
++split_one = regex.split("a,b,c,d", ",", 1)
++split_two = regex.split("a,b,c,d", ",", 2)
++split_exact = regex.split("a,b,c,d", ",", 3)
++split_more = regex.split("a,b,c,d", ",", 10)
+```
+
+**File**: `tests/grammar/builtins/regex/test_4/stdout.golden` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++split_unlimited:
++- a
++- b
++- c
++- d
++split_zero:
++- a
++- b
++- c
++- d
++split_one:
++- a
++- b,c,d
++split_two:
++- a
++- b
++- c,d
++split_exact:
++- a
++- b
++- c
++- d
++split_more:
++- a
++- b
++- c
++- d
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2229** (2026-10-23): fix(runtime): keep the remainder when regex.split reaches maxsplit (@56steve)
+- **PR #2228** (2026-10-23): feat: Export subcommand [--target=rust] (@mihaigalos)
 - **PR #2226** (2026-10-19): ci(release): use the org DEPLOY_TOKEN for tap updates (@Peefy)
 - **PR #2225** (2026-10-19): ci(release): update kcl-lsp Homebrew tap and Scoop manifest on release (@Peefy)
 - **PR #2224** (2026-10-19): fix(runner): install the panic hook once instead of swapping it per run (@tobias-karlsson)
 - **PR #2222** (2026-10-16): chore(release): bump version to v0.13.2 (@Peefy)
-- **PR #2221** (2026-10-16): fix(lsp): keep completion on an attribute name typed before its `:` or `=` (@jul-m)
-- **PR #2220** (2026-10-13): fix(ci): stop three doctests sharing a mutable fixture (@Peefy)
 
 ---
 
@@ -1303,31 +1301,29 @@ Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): match language server artifacts with pattern, not name
+## X. runtime): keep the remainder when regex.split reaches maxsplit (#2229)
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/runtime/src/regex/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d88ede7b`: release): match language server artifacts with pattern, not name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f469568b`: runtime): keep the remainder when regex.split reaches maxsplit (#2229). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/runtime/src/regex/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          # `name` is an exact match, so the wildcard has to go in `pattern`.
-          # Each artifact lands in its own subdirectory, which the render step
-          # searches recursively.
-          pattern: kcl-language-server-*
+                    current_pos = cap.end();
+                        fields.push(string[current_pos..].to_string());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-          name: kcl-language-server-*
+                    current_pos = cap.end();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d88ede7b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f469568b` are properly handled with clean fallback behavior.
