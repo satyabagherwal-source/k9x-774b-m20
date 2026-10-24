@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-MYNN",
-    "timestamp": "2026-10-20T22:39:35.411Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "36263a83c38749e614e12584d222accab267c381134b95fcbfe1039f73543af7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-US7H",
-    "timestamp": "2026-10-20T22:45:40.301Z",
-    "repository": "amazon/chronos-2",
-    "learningId": "learn-huggingface-amazon-chronos-2",
-    "contentHash": "049f9d96a4070a605944f1df0b620ec3d1aa13c87d3c6426ffb7635d9262585f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-USC2",
     "timestamp": "2026-10-20T22:45:40.466Z",
     "repository": "fallow-rs/fallow",
@@ -7490,6 +7460,36 @@
     "repository": "nitrojs/nitro",
     "learningId": "learn-github-nitrojs-nitro",
     "contentHash": "af195f25875f4c5e73093ec56641d1a9df1b7ce546fe8cf3109276d0ba13e34a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-CK7O",
+    "timestamp": "2026-10-24T19:50:13.332Z",
+    "repository": "h3js/h3",
+    "learningId": "learn-github-h3js-h3",
+    "contentHash": "bdc4f0623713517fbb7fa410e24dff1199b5bd6d6d4437a779f4564b65d5d3d0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-FX2K",
+    "timestamp": "2026-10-24T19:52:49.964Z",
+    "repository": "nezhahq/nezha",
+    "learningId": "learn-github-nezhahq-nezha",
+    "contentHash": "668f4f2a9e4973edc684a114ed781a9a919d8c3daf7336e737fc3b674ef42b6f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

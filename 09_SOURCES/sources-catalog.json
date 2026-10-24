@@ -2033,10 +2033,10 @@
     "repository": "h3js/h3",
     "platform": "github",
     "sourceUrl": "https://github.com/unjs/h3",
-    "sourceVersion": "48d650be",
+    "sourceVersion": "f0e17808",
     "license": "MIT",
-    "contentHash": "dc6a11455223643f326a2793d880467ea736c9b61d9e79835f3abc968d401a82",
-    "lastHarvestedAt": "2026-10-20T06:13:26.779Z",
+    "contentHash": "bdc4f0623713517fbb7fa410e24dff1199b5bd6d6d4437a779f4564b65d5d3d0",
+    "lastHarvestedAt": "2026-10-24T19:50:13.335Z",
     "learningId": "learn-github-h3js-h3"
   },
   "unjs-ufo": {
@@ -5993,10 +5993,10 @@
     "repository": "nezhahq/nezha",
     "platform": "github",
     "sourceUrl": "https://github.com/nezhahq/nezha",
-    "sourceVersion": "b3297558",
+    "sourceVersion": "a20c79b7",
     "license": "Apache-2.0",
-    "contentHash": "5c521165bc3d081d1dbc9b53c47f4bccaa8f46aab1729ac318ebd21002877226",
-    "lastHarvestedAt": "2026-10-19T04:59:15.870Z",
+    "contentHash": "668f4f2a9e4973edc684a114ed781a9a919d8c3daf7336e737fc3b674ef42b6f",
+    "lastHarvestedAt": "2026-10-24T19:52:49.970Z",
     "learningId": "learn-github-nezhahq-nezha"
   },
   "tiajinsha-jkvideo": {

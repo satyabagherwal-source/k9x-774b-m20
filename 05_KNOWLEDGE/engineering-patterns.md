@@ -282764,3 +282764,326 @@ if (cluster.isPrimary) {
 Fork a mock cluster in a child process, send `kill(pid, "SIGTERM")` directly to the primary PID only, and assert that worker IPC listeners receive the signal and fire their graceful shutdown hooks within 500ms.
 
 ---
+
+
+---
+
+## 3930. Dial-Pinned Transport for User-Controlled Egress (Anti-SSRF / Anti-DNS-Rebinding) (Harvested from nezhahq/nezha)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dial-Pinned Transport for User-Controlled Egress (Anti-SSRF / Anti-DNS-Rebinding)",
+  "source": "nezhahq/nezha",
+  "source_url": "https://github.com/nezhahq/nezha",
+  "source_version": "a20c79b7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-24T19:52:49.622Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nezhahq-nezha",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nezhahq/nezha](https://github.com/nezhahq/nezha) (Revision: `a20c79b7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When dispatching HTTP requests to untrusted or user-configured URLs, systems MUST NOT execute DNS resolution and network connection establishment in disconnected phases using default HTTP transports. Software MUST resolve the host to an IP address, validate that IP against all forbidden/private/loopback CIDR ranges, pin the connection's `net.DialContext` directly to the validated IP, and configure `CheckRedirect` to `http.ErrUseLastResponse`.
+
+**WHY**:
+Standard HTTP client architectures resolve domain names during dial time. If validation occurs prior to `client.Do()`, a malicious nameserver can respond with a benign IP on initial check and a loopback/internal IP (`127.0.0.1`, `169.254.169.254`, `10.0.0.0/8`) on dial time (Time-of-Check to Time-of-Use DNS Rebinding). Furthermore, HTTP 30x redirect following by default bypasses the initial host validation, exposing internal control planes.
+
+**WHEN TO APPLY**:
+Apply to any outbound HTTP client executing user-supplied webhooks, notification endpoints, custom DNS providers, or synthetic HTTP monitors.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// pkg/utils/http_hardened.go
+package utils
+
+import (
+	"context"
+	"crypto/tls"
+	"errors"
+	"net"
+	"net/netip"
+	"net/http"
+	"net/url"
+	"time"
+)
+
+var ErrBlockedTarget = errors.New("target IP or domain is not routable or strictly prohibited")
+
+// PinnedRestrictedTransport isolates URL resolution and pins the net.DialContext.
+func NewPinnedRestrictedClient(targetURL *url.URL, skipTLS bool, dialTimeout time.Duration) (*http.Client, error) {
+	host := targetURL.Hostname()
+	if host == "" {
+		return nil, ErrBlockedTarget
+	}
+
+	// 1. Resolve host explicitly to ensure every candidate IP is safe.
+	var targetIP net.IP
+	if parsed := net.ParseIP(host); parsed != nil {
+		if !IsPublicUnicastIP(parsed) {
+			return nil, ErrBlockedTarget
+		}
+		targetIP = parsed
+	} else {
+		resolvedIPs, err := net.LookupIP(host)
+		if err != nil || len(resolvedIPs) == 0 {
+			return nil, ErrBlockedTarget
+		}
+		for _, candidate := range resolvedIPs {
+			if !IsPublicUnicastIP(candidate) {
+				return nil, ErrBlockedTarget
+			}
+		}
+		targetIP = resolvedIPs[0]
+	}
+
+	// 2. Derive deterministic port.
+	port := targetURL.Port()
+	if port == "" {
+		if targetURL.Scheme == "https" {
+			port = "443"
+		} else {
+			port = "80"
+		}
+	}
+	targetAddress := net.JoinHostPort(targetIP.String(), port)
+
+	// 3. Construct custom transport with Pinned DialContext and Forced Discard on Redirects.
+	dialer := &net.Dialer{
+		Timeout:   dialTimeout,
+		KeepAlive: 30 * time.Second,
+	}
+
+	return &http.Client{
+		Transport: &http.Transport{
+			DialContext: func(ctx context.Context, network, address string) (net.Conn, error) {
+				// Ignores dynamic address re-resolution; forces dial to targetAddress
+				return dialer.DialContext(ctx, network, targetAddress)
+			},
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: skipTLS,
+				ServerName:         targetURL.Hostname(), // Retains SNI validation
+			},
+			DisableKeepAlives: true,
+		},
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			// Invariant: Do not follow redirects automatically; redirect targets can point to internal cloud metadata
+			return http.ErrUseLastResponse
+		},
+		Timeout: 30 * time.Second,
+	}, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Vulnerable to DNS Rebinding TOCTOU and SSRF Redirection
+func dispatchWebhook(webhookURL string) (*http.Response, error) {
+	parsed, _ := url.Parse(webhookURL)
+	// Check happens here...
+	ip, _ := net.LookupIP(parsed.Hostname())
+	if ip[0].IsLoopback() {
+		return nil, errors.New("loopback forbidden")
+	}
+	// ...but http.DefaultClient resolves AGAIN on dial.
+	// An attacker with a 1-second TTL DNS changes the IP between Check and Dial!
+	// Default client also follows HTTP 302 redirects to 169.254.169.254.
+	return http.DefaultClient.Get(webhookURL)
+}
+```
+
+**VERIFICATION METHOD**:
+Verify with an automated unit test spinning up an HTTP server bound to `127.0.0.1` and an external mock domain, ensuring `NewPinnedRestrictedClient` rejects private loopback targets and immediately aborts on 302 redirect responses rather than recursing.
+
+---
+
+
+---
+
+## 3931. Immutability Boundary on Shared Concurrency Coalescing (Singleflight Data Isolation) (Harvested from nezhahq/nezha)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Immutability Boundary on Shared Concurrency Coalescing (Singleflight Data Isolation)",
+  "source": "nezhahq/nezha",
+  "source_url": "https://github.com/nezhahq/nezha",
+  "source_version": "a20c79b7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-24T19:52:49.738Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nezhahq-nezha",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nezhahq/nezha](https://github.com/nezhahq/nezha) (Revision: `a20c79b7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When utilizing singleflight mechanisms or shared cache layers to deduplicate queries across concurrent callers, functions MUST NOT mutate the returned composite slice, array, or pointer-based data structure in-place. If filtering, role-based slicing, or mutation is required, callers MUST create a shallow/deep clone of the collection before executing in-place modifications (such as `slices.DeleteFunc` or slice header truncation).
+
+**WHY**:
+In Go, slice headers share the underlying backing array. When singleflight merges 100 requests for the same resource into a single fetch, all 100 goroutines receive pointers to the identical backing array. Executing `slices.DeleteFunc` or zeroing indices on the shared slice mutates data under active reads by other concurrent goroutines, resulting in data races, memory corruption, and `nil` pointer dereference panics when downstream consumers attempt to read elements that were concurrently truncated.
+
+**WHEN TO APPLY**:
+Apply in any API gateway, GraphQL resolver, or HTTP handler where read deduplication (`golang.org/x/sync/singleflight`) feeds user-specific authorization filters.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// controller/server_filter.go
+package controller
+
+import (
+	"slices"
+	"golang.org/x/sync/singleflight"
+)
+
+type ServerSnapshot struct {
+	ID       uint64
+	TenantID uint64
+	Name     string
+}
+
+var sfGroup singleflight.Group
+
+func FetchFilteredServers(userTenantID uint64) ([]*ServerSnapshot, error) {
+	// Deduplicate snapshot extraction from heavy datastore
+	val, err, _ := sfGroup.Do("global_server_snapshot", func() (any, error) {
+		return loadServersFromDB() // Returns []*ServerSnapshot (canonical immutable reference)
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	canonicalList := val.([]*ServerSnapshot)
+
+	// MANDATORY: Clone the outer slice container to prevent in-place mutation of the shared backing array.
+	isolatedView := slices.Clone(canonicalList)
+
+	// Safe to execute in-place filtration on request-owned isolated slice
+	isolatedView = slices.DeleteFunc(isolatedView, func(s *ServerSnapshot) bool {
+		return s.TenantID != userTenantID
+	})
+
+	return isolatedView, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: In-place deletion corrupts backing array shared across singleflight callers
+func BadHandler(userTenantID uint64) ([]*ServerSnapshot, error) {
+	val, _, _ := sfGroup.Do("servers", loadServersFromDB)
+	shared := val.([]*ServerSnapshot)
+
+	// DISASTROUS: slices.DeleteFunc zeroes elements and truncates length of the SHARED array.
+	// Another goroutine reading 'shared' concurrently will observe nil pointers and panic!
+	return slices.DeleteFunc(shared, func(s *ServerSnapshot) bool {
+		return s.TenantID != userTenantID
+	}), nil
+}
+```
+
+**VERIFICATION METHOD**:
+Execute concurrency tests running under `go test -race` with 50 parallel goroutines sharing a `singleflight.Group`, each filtering by differing criteria, verifying that no data race is detected and slice lengths remain stable.
+
+---
+
+
+---
+
+## 3932. Orphaned Relational Aggregate Invariant Guard (Safe Historical Ingestion) (Harvested from nezhahq/nezha)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Orphaned Relational Aggregate Invariant Guard (Safe Historical Ingestion)",
+  "source": "nezhahq/nezha",
+  "source_url": "https://github.com/nezhahq/nezha",
+  "source_version": "a20c79b7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-24T19:52:49.846Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nezhahq-nezha",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nezhahq/nezha](https://github.com/nezhahq/nezha) (Revision: `a20c79b7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Aggregator loops and rollup consumers reading denormalized historical or timeseries tables MUST NOT assume that parent records exist in active primary state registries. State initialization MUST explicitly verify whether the parent entity exists in in-memory state containers before accumulating fields, or gracefully drop/quarantine records whose parent entities have been pruned, soft-deleted, or disabled.
+
+**WHY**:
+In relational schemas where cascaded hard deletes are deferred, disabled, or where child history is retained for statistical audit trails, historical log records outlive their parent entities. Unchecked direct map indexing (`registry[row.ParentID].Field += row.Value`) causes instant fatal `SIGSEGV` runtime panics in Go due to attempting to dereference `nil` struct pointers for non-existent keys.
+
+**WHEN TO APPLY**:
+Startup bootstrapping routines, timeseries aggregate rollups, daily/monthly telemetry crunchers, and cross-table batch jobs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// service/singleton/servicesentinel.go
+package singleton
+
+type ServiceMetricRollup struct {
+	Up   uint64
+	Down uint64
+}
+
+type Aggregator struct {
+	serviceStatusToday map[uint64]*ServiceMetricRollup
+	monthlyStatus      map[uint64]*ServiceMetricRollup
+}
+
+func (agg *Aggregator) IngestHistoricalRows(rows []HistoricalRecord) {
+	for _, row := range rows {
+		todayStats := agg.serviceStatusToday[row.ServiceID]
+		monthlyStats := agg.monthlyStatus[row.ServiceID]
+
+		// INVARIANT GUARD: Prevent startup panic if history outlives parent configuration
+		if todayStats == nil || monthlyStats == nil {
+			// Orphaned or quarantined service history must be ignored during rollup
+			continue
+		}
+
+		todayStats.Up += row.Up
+		monthlyStats.Up += row.Up
+		todayStats.Down += row.Down
+		monthlyStats.Down += row.Down
+	}
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Implicit assumption that history always has an initialized active parent
+func (agg *Aggregator) BadIngest(rows []HistoricalRecord) {
+	for _, row := range rows {
+		// PANIC HAZARD: If row.ServiceID is deleted or uninitialized, map access returns nil.
+		// Dereferencing .Up on nil pointer causes panic: runtime error: invalid memory address
+		agg.serviceStatusToday[row.ServiceID].Up += row.Up
+		agg.monthlyStatus[row.ServiceID].Up += row.Up
+	}
+}
+```
+
+**VERIFICATION METHOD**:
+Run unit tests populating child records in SQLite with `service_id = 99999` while leaving the parent table empty. Assert that initialization runs via `require.NotPanics` and leaves the active state unpolluted.
+
+---

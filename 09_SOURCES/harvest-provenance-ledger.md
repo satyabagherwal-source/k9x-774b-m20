@@ -4576,3 +4576,5 @@ Every entry in this ledger must capture:
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `80e1c7ec` | Multi-dimensional audit evidence | 2026-10-24T19:41:27.541Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `24965a7c` | Multi-dimensional audit evidence | 2026-10-24T19:43:48.064Z |
 | `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `6bccaad1` | Multi-dimensional audit evidence | 2026-10-24T19:44:12.400Z |
+| `learn-github-h3js-h3` | `https://github.com/unjs/h3` | `f0e17808` | Multi-dimensional audit evidence | 2026-10-24T19:50:13.335Z |
+| `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `a20c79b7` | Multi-dimensional audit evidence | 2026-10-24T19:52:49.970Z |

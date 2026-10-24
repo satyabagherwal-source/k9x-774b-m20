@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T19:44:12.347Z",
+  "last_updated": "2026-10-24T19:52:49.915Z",
   "total_verified_learnings": 1078,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35818,14 +35818,29 @@
       "slug": "nezhahq-nezha",
       "platform": "github",
       "source_url": "https://github.com/nezhahq/nezha",
-      "source_version": "b3297558",
-      "content_hash": "5c521165bc3d081d1dbc9b53c47f4bccaa8f46aab1729ac318ebd21002877226",
+      "source_version": "a20c79b7",
+      "content_hash": "668f4f2a9e4973edc684a114ed781a9a919d8c3daf7336e737fc3b674ef42b6f",
       "dossier_path": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "promoted_rules": [
         {
           "number": 2154,
           "title": "nat): strip only dashboard-issued Authorization credentials at NAT ingress",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3930,
+          "title": "Dial-Pinned Transport for User-Controlled Egress (Anti-SSRF / Anti-DNS-Rebinding)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3931,
+          "title": "Immutability Boundary on Shared Concurrency Coalescing (Singleflight Data Isolation)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3932,
+          "title": "Orphaned Relational Aggregate Invariant Guard (Safe Historical Ingestion)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35834,7 +35849,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:59:15.803Z",
+      "verified_at": "2026-10-24T19:52:49.909Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64829,8 +64844,8 @@
       "slug": "unjs-h3",
       "platform": "github",
       "source_url": "https://github.com/unjs/h3",
-      "source_version": "48d650be",
-      "content_hash": "dc6a11455223643f326a2793d880467ea736c9b61d9e79835f3abc968d401a82",
+      "source_version": "f0e17808",
+      "content_hash": "bdc4f0623713517fbb7fa410e24dff1199b5bd6d6d4437a779f4564b65d5d3d0",
       "dossier_path": "07_PROJECT_LEARNING/unjs-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unjs-h3-learnings.md",
       "promoted_rules": [
@@ -64855,7 +64870,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:13:26.716Z",
+      "verified_at": "2026-10-24T19:50:13.282Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115849,6 +115864,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T19:44:12.338Z"
+    },
+    "rule-3930": {
+      "learning_id": "rule-3930",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3930,
+      "title": "Dial-Pinned Transport for User-Controlled Egress (Anti-SSRF / Anti-DNS-Rebinding)",
+      "source_url": "https://github.com/nezhahq/nezha",
+      "source_version": "a20c79b7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:52:49.909Z"
+    },
+    "rule-3931": {
+      "learning_id": "rule-3931",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3931,
+      "title": "Immutability Boundary on Shared Concurrency Coalescing (Singleflight Data Isolation)",
+      "source_url": "https://github.com/nezhahq/nezha",
+      "source_version": "a20c79b7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:52:49.909Z"
+    },
+    "rule-3932": {
+      "learning_id": "rule-3932",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3932,
+      "title": "Orphaned Relational Aggregate Invariant Guard (Safe Historical Ingestion)",
+      "source_url": "https://github.com/nezhahq/nezha",
+      "source_version": "a20c79b7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:52:49.909Z"
     }
   },
   "aliases": {
