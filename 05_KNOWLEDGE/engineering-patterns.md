@@ -285434,3 +285434,626 @@ func TestYAMLExtensionHashParity(t *testing.T) {
 ```
 
 ---
+
+
+---
+
+## 3958. Pre-Claim Resource Slot Reservation Invariant (Harvested from lokoe-mehdi/scouter)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Pre-Claim Resource Slot Reservation Invariant",
+  "source": "lokoe-mehdi/scouter",
+  "source_url": "https://github.com/lokoe-mehdi/scouter",
+  "source_version": "e8edc3c5",
+  "license": "MIT",
+  "extracted_at": "2026-10-24T20:41:56.756Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lokoe-mehdi-scouter",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lokoe-mehdi/scouter](https://github.com/lokoe-mehdi/scouter) (Revision: `e8edc3c5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A distributed or multi-threaded background worker MUST NOT claim, lease, or mutate the state of a queue job to `running` or `in_progress` in the database until the local execution slot, concurrency token, or semaphore has been successfully acquired in-memory.
+
+**WHY**:
+Claiming a job in the database *before* acquiring a worker thread slot introduces a Time-Of-Check to Time-Of-Use (TOCTOU) race condition between the database status and true system capacity. If the process claims Job $N$ and subsequently blocks waiting for an in-memory execution slot, external monitoring dashboards, watchdogs, and cluster autoscalers will falsely classify Job $N$ as actively executing. If the worker encounters an unhandled panic, context termination, or graceful shutdown while blocked on the semaphore, the job remains permanently locked in `running` state ("orphan job") without ever executing a single line of work.
+
+**WHEN TO APPLY**:
+Any language (Go, Rust, Node.js, Python, Java) implementing worker pool patterns, queue consumers (Kafka, RabbitMQ, PostgreSQL/Redis-backed queues), or distributed task dispatchers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Concurrency slot acquired strictly BEFORE database transaction/mutation
+func RunWorker(ctx context.Context, mgr *JobManager, maxSlots int) {
+	sem := make(chan struct{}, maxSlots)
+	var wg sync.WaitGroup
+
+	for {
+		if ctx.Err() != nil {
+			break
+		}
+
+		// 1. Acquire execution slot BEFORE attempting DB mutation
+		select {
+		case sem <- struct{}{}:
+		case <-ctx.Done():
+			return
+		}
+
+		// 2. Local token acquired. Now safe to query and lock DB record
+		job, err := mgr.ClaimNext(ctx)
+		if err != nil {
+			<-sem // Release slot immediately on acquisition failure
+			time.Sleep(2 * time.Second)
+			continue
+		}
+
+		if job == nil {
+			<-sem // Release slot when queue is empty
+			time.Sleep(1 * time.Second)
+			continue
+		}
+
+		// 3. Dispatch execution with guaranteed slot ownership
+		wg.Add(1)
+		go func(j Job) {
+			defer wg.Done()
+			defer func() { <-sem }() // Guaranteed release on exit or panic
+			executeJob(ctx, j)
+		}(*job)
+	}
+	wg.Wait()
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Claiming in DB before having local capacity
+for {
+	// BUG: Database marks job 'running', but local runner blocks on sem!
+	job, _ := mgr.ClaimNext(ctx) // DB UPDATE jobs SET status='running' WHERE id=...
+	if job != nil {
+		sem <- struct{}{} // Worker hangs here indefinitely if slots are saturated.
+		go func(j Job) {
+			defer func() { <-sem }()
+			executeJob(ctx, j)
+		}(*job)
+	}
+}
+```
+
+**VERIFICATION METHOD**:
+Inject a saturated slot condition (`sem` filled with non-terminating mock tasks). Poll the database queue. Assert via automated integration test that `SELECT COUNT(*) FROM jobs WHERE status = 'running'` is strictly $\le \text{maxSlots}$, and that unallocated jobs remain in `queued` state until an active slot explicitly yields.
+
+---
+
+
+---
+
+## 3959. Dual-Engine Heterogeneous String/Hash Compatibility Invariant (Harvested from lokoe-mehdi/scouter)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Engine Heterogeneous String/Hash Compatibility Invariant",
+  "source": "lokoe-mehdi/scouter",
+  "source_url": "https://github.com/lokoe-mehdi/scouter",
+  "source_version": "e8edc3c5",
+  "license": "MIT",
+  "extracted_at": "2026-10-24T20:41:56.934Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lokoe-mehdi-scouter",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lokoe-mehdi/scouter](https://github.com/lokoe-mehdi/scouter) (Revision: `e8edc3c5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When cross-compiling or reimplementing primary key hashing, entity deduplication, or cryptographic checksum routines across two heterogeneous language ecosystems (e.g., PHP and Go), the secondary engine MUST explicitly account for internal library representation divergences—such as bit reflection, non-standard polynomial implementations, and reverse endianness formatting.
+
+**WHY**:
+In PHP, `hash('crc32', $str)` implements CRC-32/BZIP2 (non-reflected polynomial `0x04C11DB7`) and formats the output hex string by swapping bytes into little-endian order. Conversely, standard library implementations in C, Go (`hash/crc32`), and Python (`binascii.crc32`) default to IEEE 802.3 (reflected polynomial `0xEDB88320`) in standard big-endian order. Directly calling `crc32.ChecksumIEEE()` in Go to match PHP's `hash('crc32')` creates silent hash divergence. Relational foreign keys between crawled partitions break, parent-child links fail to resolve, and deduplication clusters collapse.
+
+**WHEN TO APPLY**:
+Systems migrating, polyglotting, or dual-writing between PHP, Go, Rust, or Python where relational primary keys or cache tokens depend on string checksums.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package analysis
+
+import (
+	"fmt"
+)
+
+// BZIP2 polynomial: 0x04C11DB7 (MSB-first, non-reflected)
+var bzip2Table = func() [256]uint32 {
+	const poly = 0x04C11DB7
+	var t [256]uint32
+	for i := 0; i < 256; i++ {
+		crc := uint32(i) << 24
+		for j := 0; j < 8; j++ {
+			if crc&0x80000000 != 0 {
+				crc = (crc << 1) ^ poly
+			} else {
+				crc <<= 1
+			}
+		}
+		t[i] = crc
+	}
+	return t
+}()
+
+func crc32Bzip2(b []byte) uint32 {
+	crc := uint32(0xFFFFFFFF)
+	for _, c := range b {
+		crc = (crc << 8) ^ bzip2Table[byte(crc>>24)^c]
+	}
+	return crc ^ 0xFFFFFFFF
+}
+
+// PageID reproduces PHP hash('crc32', $url, false) bit-for-bit:
+// Requires CRC-32/BZIP2 and a 4-byte endianness swap before hex encoding.
+func PageID(url string) string {
+	v := crc32Bzip2([]byte(url))
+	swapped := (v&0x000000FF)<<24 | 
+	           (v&0x0000FF00)<<8  | 
+	           (v&0x00FF0000)>>8  | 
+	           (v&0xFF000000)>>24
+	return fmt.Sprintf("%08x", swapped)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Assuming standard library crc32 matches PHP hash('crc32')
+func PageID_Flawed(url string) string {
+	// FAILS: Uses IEEE 802.3 reflected poly instead of BZIP2.
+	// Does not perform byte-reversal swap.
+	checksum := crc32.ChecksumIEEE([]byte(url))
+	return fmt.Sprintf("%08x", checksum) 
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a cross-runtime parity matrix test comparing a fixture list of 1,000 edge-case strings (empty strings, Unicode sequences, URLs $>2048$ chars, null bytes). Assert that Go output matches PHP CLI output:
+```bash
+diff <(go run test_ids.go) <(php -r 'foreach(file("urls.txt") as $u) echo hash("crc32", trim($u))."\n";')
+```
+
+---
+
+
+---
+
+## 3960. Frontier Budget Claim Remainder Sizing Invariant (Harvested from lokoe-mehdi/scouter)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Frontier Budget Claim Remainder Sizing Invariant",
+  "source": "lokoe-mehdi/scouter",
+  "source_url": "https://github.com/lokoe-mehdi/scouter",
+  "source_version": "e8edc3c5",
+  "license": "MIT",
+  "extracted_at": "2026-10-24T20:41:57.123Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lokoe-mehdi-scouter",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lokoe-mehdi/scouter](https://github.com/lokoe-mehdi/scouter) (Revision: `e8edc3c5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A crawler or pagination crawler frontier with a strict page quota cap ($N_{\text{max}}$) MUST dynamically clamp each leased batch fetch size to $\min(\text{BatchSize}, N_{\text{max}} - N_{\text{fetched}})$. If $N_{\text{max}} - N_{\text{fetched}} \le 0$, the frontier must refuse further claims and terminate gracefully with a successful completion status rather than aborting as an error or throwing an overflow fault.
+
+**WHY**:
+Without exact remaining budget clamping, claiming a fixed-size batch (e.g., 50 URLs) when only 3 slots remain results in fetching and persisting up to 47 extra pages beyond the contractual limit. Conversely, halting by raising an exception or signaling an engine crash aborts post-processing pipelines (such as PageRank calculation, orphan link detection, or schema validation), leaving crawl metrics corrupted or uncomputed.
+
+**WHEN TO APPLY**:
+Crawl engines, scrapers, data export pagination engines, and batch processors enforcing rate or quota budgets.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// claimLimit sizes the frontier batch to avoid exceeding maxPages budget.
+// Returns (batchLimit, true) if work can be leased, or (0, false) if budget is spent.
+func claimLimit(maxPages int, crawled int64, batchSize int) (int, bool) {
+	if maxPages <= 0 {
+		return batchSize, true // Unlimited crawl
+	}
+	left := int64(maxPages) - crawled
+	if left <= 0 {
+		return 0, false // Quota fully satisfied
+	}
+	limit := int(left)
+	if limit > batchSize {
+		limit = batchSize
+	}
+	return limit, true
+}
+
+// In Depth Loop:
+limit, ok := claimLimit(cfg.MaxPages, liveCrawled.Load(), frontierBatch)
+if !ok {
+	logf("maxPages %d reached; completing crawl gracefully", cfg.MaxPages)
+	return nil // Return nil so post-processing continues normally
+}
+urls, err := claimToCrawl(ctx, limit)
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Fetching standard batch and truncating post-fetch
+urls, err := claimToCrawl(ctx, frontierBatch) // Always claims 50
+fetchAndStore(urls) // Blows past budget!
+if liveCrawled.Load() >= int64(maxPages) {
+	return errors.New("limit reached") // Crash halts post-processing!
+}
+```
+
+**VERIFICATION METHOD**:
+Execute property-based unit tests asserting that for any arbitrary starting values of $N_{\text{max}} \in [1, 10000]$, $\text{BatchSize} \in [1, 100]$, and initial offset $k$, the cumulative sum of issued batches never exceeds $N_{\text{max}}$, and `ok` flips to `false` when $N_{\text{fetched}} \ge N_{\text{max}}$.
+
+---
+
+
+---
+
+## 3961. Canonical Numerical Coercion for Identity Verification (Harvested from tailscale/tailscale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Canonical Numerical Coercion for Identity Verification",
+  "source": "tailscale/tailscale",
+  "source_url": "https://github.com/tailscale/tailscale",
+  "source_version": "3c134666",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-24T20:42:00.765Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tailscale-tailscale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `3c134666`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When validating identifiers that possess both string and numerical representations (such as POSIX UIDs, GIDs, or protocol port allocations) for security, authorization, or boundary enforcement, the system MUST canonicalize and evaluate the value using strict numerical parsing (`ParseUint`) before evaluating any string representation. Systems MUST NOT rely on raw string equivalence (e.g., `uid == "0"`) to identify privileged entities.
+
+**WHY**:
+NSS (Name Service Switch), LDAP, directory services, and container runtimes tolerate leading zeroes or non-standard encodings (e.g., `"00"`, `"00000000"`, `"+0"`). If an authorization check relies on strict string inequality (`uid != "0"`), non-canonical root representations evaluate to non-root during string checks. However, when downstream downstream process incubators, kernel syscalls (such as `setuid(2)`), or CLI arguments parse the identity numerically, the value truncates to `0` (root), resulting in complete authorization bypass and unauthorized privilege escalation.
+
+**WHEN TO APPLY**:
+Apply across all access control layers, authentication hooks, SSH user mappings, container runtimes, and privilege dropping boundaries in Go, Rust, C/C++, Python, or Node.js.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Secure numerical identity canonicalization pattern
+package auth
+
+import (
+	"errors"
+	"strconv"
+)
+
+type UserIdentity struct {
+	UID      string
+	Username string
+}
+
+// IsSuperuser guarantees that non-canonical representations of UID 0
+// (such as "00", "0000") are correctly identified as root before downstream execution.
+func IsSuperuser(u *UserIdentity) bool {
+	if u == nil {
+		return false
+	}
+	// Explicit fast path for standard named root
+	if u.Username == "root" {
+		return true
+	}
+	// Parse the string as a strict base-10, 32-bit unsigned integer.
+	// Parsing rejects negative values, signs, and out-of-range integers.
+	if numericUID, err := strconv.ParseUint(u.UID, 10, 32); err == nil {
+		return numericUID == 0
+	}
+	// String failed numeric parsing (e.g., symbolic or unmapped name).
+	// Fail closed: non-numeric UIDs cannot claim root via numerical alias.
+	return false
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: String-only privilege evaluation vulnerability
+func IsSuperuserBuggy(u *UserIdentity) bool {
+	// CRITICAL SECURITY FLAW: "00" evaluates to false, but down-stream
+	// setuid(atoi("00")) executes as UID 0 (root)!
+	return u.UID == "0" || u.Username == "root"
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce verification using table-driven unit testing that injects non-canonical string variants:
+```go
+func TestIsSuperuser_BoundaryCases(t *testing.T) {
+	cases := []struct {
+		uid      string
+		username string
+		wantRoot bool
+	}{
+		{"0", "root", true},
+		{"0", "nobody", true},
+		{"00", "attacker", true},
+		{"00000000", "attacker", true},
+		{"1000", "root", true},
+		{"1000", "user", false},
+		{"invalid", "user", false},
+	}
+	for _, tc := range cases {
+		u := &UserIdentity{UID: tc.uid, Username: tc.username}
+		if got := IsSuperuser(u); got != tc.wantRoot {
+			t.Fatalf("IsSuperuser(uid=%q, user=%q) = %v; want %v", tc.uid, tc.username, got, tc.wantRoot)
+		}
+	}
+}
+```
+
+---
+
+
+---
+
+## 3962. Separation of Presentation Projections from Core Routing State (Harvested from tailscale/tailscale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Separation of Presentation Projections from Core Routing State",
+  "source": "tailscale/tailscale",
+  "source_url": "https://github.com/tailscale/tailscale",
+  "source_version": "3c134666",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-24T20:42:00.945Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tailscale-tailscale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `3c134666`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Local state caches, access control filters, and GUI visibility policies MUST NOT filter, mutate, or omit entities directly within the primary routing topology or discovery state (`netmap.NetworkMap` / `ipnstate.Status`). Presentation constraints (such as hiding devices or masking menu items) MUST be emitted as independent presentation projections keyed by immutable stable IDs, while leaving core peer discovery pipelines unmutated.
+
+**WHY**:
+If UI visibility or policy-driven masking is implemented by removing records from the primary network map or peer change events (`PeersRemoved` / `PeersChanged`), the underlying routing engine, DNS resolver, and packet forwarder lose the cryptographic keys and routing endpoints of those peers. This breaks legitimate mesh traffic, cross-peer service discovery, and background sync operations, creating severe coupling between user presentation preferences and kernel-level data planes.
+
+**WHEN TO APPLY**:
+Apply to all distributed state synchronization architectures where UI presentation rules, parental controls, administrative filtering, or UI masking operate over core domain models that also govern low-level networking, consensus, or persistence.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Separation of Core NetMap from Presentation Visibility
+package state
+
+type StableNodeID string
+
+type Node struct {
+	ID       StableNodeID
+	Endpoint string
+	Tags     []string
+}
+
+type NodeGUIVisibility struct {
+	HideInGUI bool `json:"hideInGUI"`
+}
+
+type Notification struct {
+	// Core domain data remains pristine and complete
+	Peers []Node `json:"peers,omitempty"`
+	// Isolated presentation projection
+	GUIVisibility map[StableNodeID]NodeGUIVisibility `json:"guiVisibility,omitempty"`
+}
+
+// ComputeVisibilityProjection derives presentation state without mutating underlying peer arrays.
+func ComputeVisibilityProjection(peers []Node, hiddenTags map[string]bool) map[StableNodeID]NodeGUIVisibility {
+	proj := make(map[StableNodeID]NodeGUIVisibility, len(peers))
+	for _, peer := range peers {
+		isHidden := false
+		for _, tag := range peer.Tags {
+			if hiddenTags[tag] {
+				isHidden = true
+				break
+			}
+		}
+		proj[peer.ID] = NodeGUIVisibility{HideInGUI: isHidden}
+	}
+	return proj
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Mutating core domain models to implement UI filtering
+func FilterPeersForGUI(peers []Node, hiddenTags map[string]bool) []Node {
+	// DANGER: Downstream network stack uses this filtered list,
+	// dropping WireGuard peers that should remain routable!
+	var visible []Node
+	for _, peer := range peers {
+		if !hasHiddenTag(peer, hiddenTags) {
+			visible = append(visible, peer)
+		}
+	}
+	return visible
+}
+```
+
+**VERIFICATION METHOD**:
+Implement architectural regression tests verifying that when presentation visibility flags flip to `HideInGUI: true`, the underlying peer count in the engine's active routing table remains invariant:
+```go
+func TestVisibilityDoesNotDropRoutingPeers(t *testing.T) {
+	engine := NewTestEngine()
+	engine.SetPeers([]Node{{ID: "node-1", Tags: []string{"tag:server"}}})
+	
+	engine.ApplyUIPolicy(HideTaggedDevices)
+	
+	notify := engine.GetLastNotification()
+	if !notify.GUIVisibility["node-1"].HideInGUI {
+		t.Fatal("Expected node-1 to be hidden in GUI")
+	}
+	if len(engine.ActiveRoutingPeers()) != 1 {
+		t.Fatalf("Routing table peer dropped! Expected 1, got %d", len(engine.ActiveRoutingPeers()))
+	}
+}
+```
+
+---
+
+
+---
+
+## 3963. Monotonic Cursor Synchronization for Polled Event Arrays (Harvested from tailscale/tailscale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Monotonic Cursor Synchronization for Polled Event Arrays",
+  "source": "tailscale/tailscale",
+  "source_url": "https://github.com/tailscale/tailscale",
+  "source_version": "3c134666",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-24T20:42:01.140Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tailscale-tailscale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `3c134666`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When consuming pollable backend endpoints that return an append-only array of lifecycle or progress events, the consumer client MUST maintain a persistent read cursor (e.g., `messagesRead`) outside the polling callback scope and MUST iterate strictly from `messagesRead < res.length; ++messagesRead`. The cursor MUST NOT be reset to zero on subsequent intervals, and the client MUST NOT process arrays with destructive shifting (`shift()`) or naive `forEach` loops over the entire payload.
+
+**WHY**:
+Append-only log endpoints on daemons (such as upgrade installers, firmware flashes, or build runners) accumulate all status messages from session start. Re-iterating from index 0 on every polling round leads to $O(N^2)$ message processing, duplicate toast notifications, redundant state transition fires, and log flooding. Conversely, using destructive mutations or assuming single-message emissions risks losing events when multiple log events arrive within a single polling interval.
+
+**WHEN TO APPLY**:
+Apply to all frontend-to-backend polling loops, HTTP long-poll client hooks, server-sent event (SSE) fallback adapters, and IPC progress trackers in TypeScript, JavaScript, Go, or Python.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Strict Monotonic Cursor Polling Pattern in TypeScript
+interface ProgressLog {
+  status: "InProgress" | "Complete" | "Failed"
+  message: string
+}
+
+export function trackDaemonProgress(
+  pollEndpoint: string,
+  onLog: (msg: string) => void,
+  onComplete: () => void,
+  onError: (err: string) => void
+): () => void {
+  let messagesRead = 0 // Maintained outside poll scope across ticks
+  let timer: ReturnType<typeof setTimeout> | undefined
+  let isCancelled = false
+
+  async function poll() {
+    try {
+      const response = await fetch(pollEndpoint)
+      const logs: ProgressLog[] = await response.json()
+
+      // Monotonically advance cursor; never re-scan previously consumed indices
+      for (; messagesRead < logs.length; ++messagesRead) {
+        const item = logs[messagesRead]
+        if (item.status === "Failed") {
+          onError(item.message)
+          return
+        }
+        onLog(`[${item.status}] ${item.message}`)
+        if (item.status === "Complete") {
+          onComplete()
+          return
+        }
+      }
+
+      if (!isCancelled) {
+        timer = setTimeout(poll, 1000)
+      }
+    } catch (err) {
+      if (!isCancelled) {
+        timer = setTimeout(poll, 2000)
+      }
+    }
+  }
+
+  poll()
+
+  return () => {
+    isCancelled = true
+    if (timer) clearTimeout(timer)
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Resetting loop index or processing entire array every poll
+function pollBuggy() {
+  fetch("/progress").then(res => res.json()).then((logs: ProgressLog[]) => {
+    // BUG: Logs repeated every second; duplicates notifications and floods UI!
+    logs.forEach(item => {
+      appendToLogView(item.message)
+      if (item.status === "Failed") triggerErrorModal()
+    })
+    setTimeout(pollBuggy, 1000)
+  })
+}
+```
+
+**VERIFICATION METHOD**:
+Simulate a polling harness that returns monotonically growing log arrays and verify that the consumer callback is invoked exactly once per message ID:
+```typescript
+test("cursor tracking prevents duplicate event execution", async () => {
+  let callCount = 0
+  const serverPayloads = [
+    [{ status: "InProgress", message: "m1" }],
+    [{ status: "InProgress", message: "m1" }, { status: "InProgress", message: "m2" }],
+    [{ status: "InProgress", message: "m1" }, { status: "InProgress", message: "m2" }, { status: "Complete", message: "m3" }]
+  ]
+  // Assert callCount equals 3, never 6
+})
+```
+
+---

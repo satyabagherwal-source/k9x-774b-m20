@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "f8ad538a",
+    "sourceVersion": "3c134666",
     "license": "BSD-3-Clause",
-    "contentHash": "2584732f780d17e362fa86e3896d04f8d67d5d4b2f7bb3465e8078a2b61b0331",
-    "lastHarvestedAt": "2026-10-22T17:31:55.855Z",
+    "contentHash": "bc1f9bb45896a9640de7195eacc878e7b56b2f932d8ee8dc8147f8c9982a688a",
+    "lastHarvestedAt": "2026-10-24T20:42:01.315Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -10628,5 +10628,15 @@
     "contentHash": "1dc52e5ce251204ea3eb1e51bc78cde4660f89ba7fb2e6569fc31fe5f4e82240",
     "lastHarvestedAt": "2026-10-24T19:58:38.904Z",
     "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b"
+  },
+  "lokoe-mehdi-scouter": {
+    "repository": "lokoe-mehdi/scouter",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lokoe-mehdi/scouter",
+    "sourceVersion": "e8edc3c5",
+    "license": "MIT",
+    "contentHash": "d24546aded604a73e80014cac88c2df958454d7b5178e8c20a25844d958eea3b",
+    "lastHarvestedAt": "2026-10-24T20:41:57.296Z",
+    "learningId": "learn-github-lokoe-mehdi-scouter"
   }
 }

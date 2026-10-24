@@ -4598,3 +4598,5 @@ Every entry in this ledger must capture:
 | `learn-github-facebook-docusaurus` | `https://github.com/facebook/docusaurus` | `4e6fe616` | Multi-dimensional audit evidence | 2026-10-24T20:31:18.104Z |
 | `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `4310d162` | Multi-dimensional audit evidence | 2026-10-24T20:31:21.123Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `71deabab` | Multi-dimensional audit evidence | 2026-10-24T20:31:21.154Z |
+| `learn-github-lokoe-mehdi-scouter` | `https://github.com/lokoe-mehdi/scouter` | `e8edc3c5` | Multi-dimensional audit evidence | 2026-10-24T20:41:57.296Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `3c134666` | Multi-dimensional audit evidence | 2026-10-24T20:42:01.315Z |

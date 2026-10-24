@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T20:31:21.163Z",
-  "total_cycles_completed": 4568,
-  "total_learnings_persisted": 4568,
-  "total_rules_promoted": 3814,
+  "last_updated": "2026-10-24T20:42:01.325Z",
+  "total_cycles_completed": 4570,
+  "total_learnings_persisted": 4570,
+  "total_rules_promoted": 3820,
   "history": [
-    {
-      "timestamp": "2026-10-22T18:50:25.324Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:50:29.975Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T18:56:56.025Z",
       "repository": "inikulin/parse5",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-24T20:31:21.163Z",
       "repository": "open-policy-agent/opa",
       "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:41:57.306Z",
+      "repository": "lokoe-mehdi/scouter",
+      "learningId": "learn-github-lokoe-mehdi-scouter",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:42:01.325Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

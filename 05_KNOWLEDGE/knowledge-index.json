@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T20:31:21.094Z",
-  "total_verified_learnings": 1079,
+  "last_updated": "2026-10-24T20:42:01.256Z",
+  "total_verified_learnings": 1080,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -45787,8 +45787,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "f8ad538a",
-      "content_hash": "2584732f780d17e362fa86e3896d04f8d67d5d4b2f7bb3465e8078a2b61b0331",
+      "source_version": "3c134666",
+      "content_hash": "bc1f9bb45896a9640de7195eacc878e7b56b2f932d8ee8dc8147f8c9982a688a",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -45821,6 +45821,21 @@
           "number": 3665,
           "title": "words: add a missing scale",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3961,
+          "title": "Canonical Numerical Coercion for Identity Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3962,
+          "title": "Separation of Presentation Projections from Core Routing State",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3963,
+          "title": "Monotonic Cursor Synchronization for Polled Event Arrays",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45828,7 +45843,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:31:55.813Z",
+      "verified_at": "2026-10-24T20:42:01.244Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60634,22 +60649,46 @@
     "learn-github-lokoe-mehdi-scouter": {
       "learning_id": "learn-github-lokoe-mehdi-scouter",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lokoe-mehdi/scouter",
       "repository": "lokoe-mehdi/scouter",
       "slug": "lokoe-mehdi-scouter",
       "platform": "github",
       "source_url": "https://github.com/lokoe-mehdi/scouter",
-      "source_version": "4de023b517",
-      "content_hash": "686011e1b6da24f29e0926ec94228c441395262f381ea262257cfb630e46ed42",
+      "source_version": "e8edc3c5",
+      "content_hash": "d24546aded604a73e80014cac88c2df958454d7b5178e8c20a25844d958eea3b",
       "dossier_path": "07_PROJECT_LEARNING/lokoe-mehdi-scouter-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lokoe-mehdi-scouter-learnings.md",
       "promoted_rules": [
-        1617
+        1617,
+        {
+          "number": 3958,
+          "title": "Pre-Claim Resource Slot Reservation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3959,
+          "title": "Dual-Engine Heterogeneous String/Hash Compatibility Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3960,
+          "title": "Frontier Budget Claim Remainder Sizing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T05:48:49.042Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-24T20:41:57.228Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-crawlseo-crawlseo": {
       "learning_id": "learn-github-crawlseo-crawlseo",
@@ -116408,6 +116447,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T20:31:21.081Z"
+    },
+    "rule-3958": {
+      "learning_id": "rule-3958",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3958,
+      "title": "Pre-Claim Resource Slot Reservation Invariant",
+      "source_url": "https://github.com/lokoe-mehdi/scouter",
+      "source_version": "e8edc3c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:41:57.228Z"
+    },
+    "rule-3959": {
+      "learning_id": "rule-3959",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3959,
+      "title": "Dual-Engine Heterogeneous String/Hash Compatibility Invariant",
+      "source_url": "https://github.com/lokoe-mehdi/scouter",
+      "source_version": "e8edc3c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:41:57.228Z"
+    },
+    "rule-3960": {
+      "learning_id": "rule-3960",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3960,
+      "title": "Frontier Budget Claim Remainder Sizing Invariant",
+      "source_url": "https://github.com/lokoe-mehdi/scouter",
+      "source_version": "e8edc3c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:41:57.228Z"
+    },
+    "rule-3961": {
+      "learning_id": "rule-3961",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3961,
+      "title": "Canonical Numerical Coercion for Identity Verification",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "3c134666",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:42:01.244Z"
+    },
+    "rule-3962": {
+      "learning_id": "rule-3962",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3962,
+      "title": "Separation of Presentation Projections from Core Routing State",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "3c134666",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:42:01.244Z"
+    },
+    "rule-3963": {
+      "learning_id": "rule-3963",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3963,
+      "title": "Monotonic Cursor Synchronization for Polled Event Arrays",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "3c134666",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:42:01.244Z"
     }
   },
   "aliases": {

@@ -4591,3 +4591,5 @@
 | `CYCLE-20261024-TE1H` | `2026-10-24T20:31:18.101Z` | `facebook/docusaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3952, Rule 3953, Rule 3954` | Yes (`5ee7dca0...`) |
 | `CYCLE-20261024-TGDC` | `2026-10-24T20:31:21.120Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3955, Rule 3956, Rule 3957` | Yes (`aa1d0efc...`) |
 | `CYCLE-20261024-TGE6` | `2026-10-24T20:31:21.150Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3955, Rule 3956, Rule 3957` | Yes (`963ee2a9...`) |
+| `CYCLE-20261024-738T` | `2026-10-24T20:41:57.293Z` | `lokoe-mehdi/scouter` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3958, Rule 3959, Rule 3960` | Yes (`d24546ad...`) |
+| `CYCLE-20261024-76CG` | `2026-10-24T20:42:01.312Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3961, Rule 3962, Rule 3963` | Yes (`bc1f9bb4...`) |

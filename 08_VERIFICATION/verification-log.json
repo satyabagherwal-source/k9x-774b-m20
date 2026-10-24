@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-HOT1",
-    "timestamp": "2026-10-20T23:31:28.597Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "91a534ec975abccb58557398ee23eeb0f61931846f65c647709307618c605ba9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-HZR9",
-    "timestamp": "2026-10-20T23:31:42.789Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "ce84cced8bf8b3ffe2e6fa6783bd21847b5f25a3ca3faedf40d40a4190b7f6dd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-POX0",
     "timestamp": "2026-10-20T23:37:41.988Z",
     "repository": "black-forest-labs/FLUX.1-schnell",
@@ -7490,6 +7460,36 @@
     "repository": "open-policy-agent/opa",
     "learningId": "learn-github-open-policy-agent-opa",
     "contentHash": "963ee2a9b82f04d4da6bf7d912248fb14057e23f27d2f62653cb2da1edebe08b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-738T",
+    "timestamp": "2026-10-24T20:41:57.293Z",
+    "repository": "lokoe-mehdi/scouter",
+    "learningId": "learn-github-lokoe-mehdi-scouter",
+    "contentHash": "d24546aded604a73e80014cac88c2df958454d7b5178e8c20a25844d958eea3b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-76CG",
+    "timestamp": "2026-10-24T20:42:01.312Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "bc1f9bb45896a9640de7195eacc878e7b56b2f932d8ee8dc8147f8c9982a688a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
