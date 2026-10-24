@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-24T20:19:25.303Z",
+  "last_updated": "2026-10-24T20:31:21.167Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3351,14 +3351,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-facebook-docusaurus",
-      "content_hash": "0d3e7c4a91d43dec09916a868bf32c5f42bb273c51cf325b3f0e6d32663c36d7",
-      "verified_at": "2026-10-18T21:01:34.963Z",
+      "content_hash": "5ee7dca0478958971f93923ec0079abe28bda71bf2059097f6e42d3d879eeb37",
+      "verified_at": "2026-10-24T20:31:18.115Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:01:34.963Z"
+      "last_updated": "2026-10-24T20:31:18.115Z"
     },
     "TabbyML/tabby": {
       "repository": "TabbyML/tabby",
@@ -6606,14 +6606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typedb-typedb",
-      "content_hash": "1931a22846078e0a1e8343bae0d5b15fb41f26c6a4f9244b121828eb01852fb8",
-      "verified_at": "2026-10-21T18:14:09.000Z",
+      "content_hash": "49ab057325dbbcc7a7a6b6f0b5ec8cdf3a5f415f983131686c3adc5f1ea725c3",
+      "verified_at": "2026-10-24T20:31:15.941Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:14:09.000Z"
+      "last_updated": "2026-10-24T20:31:15.941Z"
     },
     "mfontanini/presenterm": {
       "repository": "mfontanini/presenterm",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "fab7ef7f5b1a8ead94700c4c2ce6e51b574330af5f147530ed5da230ad323e01",
-      "verified_at": "2026-10-21T19:05:45.259Z",
+      "content_hash": "963ee2a9b82f04d4da6bf7d912248fb14057e23f27d2f62653cb2da1edebe08b",
+      "verified_at": "2026-10-24T20:31:21.166Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T19:05:45.259Z"
+      "last_updated": "2026-10-24T20:31:21.166Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "84240954d5ca9f6badc44305801ee922f5ec985c2606906042f7d3ec1c2efeee",
-      "verified_at": "2026-10-19T20:28:48.744Z",
+      "content_hash": "aa1d0efc6677451713b0d59a596c76c15ac59e73981c8a5d56dce7f0ade9408b",
+      "verified_at": "2026-10-24T20:31:21.137Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:28:48.744Z"
+      "last_updated": "2026-10-24T20:31:21.137Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",

@@ -4587,3 +4587,7 @@
 | `CYCLE-20261024-3UGR` | `2026-10-24T20:11:26.331Z` | `malisper/pgrust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3947` | Yes (`76b0797c...`) |
 | `CYCLE-20261024-DUWQ` | `2026-10-24T20:19:13.466Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md` | Yes (`7dcc0ae2...`) |
 | `CYCLE-20261024-E411` | `2026-10-24T20:19:25.285Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3948` | Yes (`fb4fdf9c...`) |
+| `CYCLE-20261024-TCD2` | `2026-10-24T20:31:15.926Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3949, Rule 3950, Rule 3951` | Yes (`49ab0573...`) |
+| `CYCLE-20261024-TE1H` | `2026-10-24T20:31:18.101Z` | `facebook/docusaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3952, Rule 3953, Rule 3954` | Yes (`5ee7dca0...`) |
+| `CYCLE-20261024-TGDC` | `2026-10-24T20:31:21.120Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3955, Rule 3956, Rule 3957` | Yes (`aa1d0efc...`) |
+| `CYCLE-20261024-TGE6` | `2026-10-24T20:31:21.150Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3955, Rule 3956, Rule 3957` | Yes (`963ee2a9...`) |

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T20:19:25.299Z",
-  "total_cycles_completed": 4564,
-  "total_learnings_persisted": 4564,
-  "total_rules_promoted": 3802,
+  "last_updated": "2026-10-24T20:31:21.163Z",
+  "total_cycles_completed": 4568,
+  "total_learnings_persisted": 4568,
+  "total_rules_promoted": 3814,
   "history": [
-    {
-      "timestamp": "2026-10-22T18:43:59.674Z",
-      "repository": "meilisearch/meilisearch",
-      "learningId": "learn-github-meilisearch-meilisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:50:12.380Z",
-      "repository": "SolaceProducts/solace-agent-mesh",
-      "learningId": "learn-github-solaceproducts-solace-agent-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:50:17.873Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:50:19.763Z",
-      "repository": "fb55/htmlparser2",
-      "learningId": "learn-github-fb55-htmlparser2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T18:50:25.324Z",
       "repository": "authzed/spicedb",
@@ -1403,6 +1375,34 @@
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:31:15.938Z",
+      "repository": "typedb/typedb",
+      "learningId": "learn-github-typedb-typedb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:31:18.112Z",
+      "repository": "facebook/docusaurus",
+      "learningId": "learn-github-facebook-docusaurus",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:31:21.134Z",
+      "repository": "yvgude/lean-ctx",
+      "learningId": "learn-github-yvgude-lean-ctx",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:31:21.163Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

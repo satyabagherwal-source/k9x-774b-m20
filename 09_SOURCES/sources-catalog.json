@@ -2143,10 +2143,10 @@
     "repository": "facebook/docusaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/docusaurus",
-    "sourceVersion": "7b6826b8",
+    "sourceVersion": "4e6fe616",
     "license": "MIT",
-    "contentHash": "0d3e7c4a91d43dec09916a868bf32c5f42bb273c51cf325b3f0e6d32663c36d7",
-    "lastHarvestedAt": "2026-10-18T21:01:34.960Z",
+    "contentHash": "5ee7dca0478958971f93923ec0079abe28bda71bf2059097f6e42d3d879eeb37",
+    "lastHarvestedAt": "2026-10-24T20:31:18.104Z",
     "learningId": "learn-github-facebook-docusaurus"
   },
   "tabbyml-tabby": {
@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "6d4e013c",
+    "sourceVersion": "3c809f9d",
     "license": "MPL-2.0",
-    "contentHash": "1931a22846078e0a1e8343bae0d5b15fb41f26c6a4f9244b121828eb01852fb8",
-    "lastHarvestedAt": "2026-10-21T18:14:08.992Z",
+    "contentHash": "49ab057325dbbcc7a7a6b6f0b5ec8cdf3a5f415f983131686c3adc5f1ea725c3",
+    "lastHarvestedAt": "2026-10-24T20:31:15.929Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "9981dd1a",
+    "sourceVersion": "71deabab",
     "license": "Apache-2.0",
-    "contentHash": "fab7ef7f5b1a8ead94700c4c2ce6e51b574330af5f147530ed5da230ad323e01",
-    "lastHarvestedAt": "2026-10-21T19:05:45.253Z",
+    "contentHash": "963ee2a9b82f04d4da6bf7d912248fb14057e23f27d2f62653cb2da1edebe08b",
+    "lastHarvestedAt": "2026-10-24T20:31:21.154Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "1fba4a0e",
+    "sourceVersion": "4310d162",
     "license": "Apache-2.0",
-    "contentHash": "84240954d5ca9f6badc44305801ee922f5ec985c2606906042f7d3ec1c2efeee",
-    "lastHarvestedAt": "2026-10-19T20:28:48.739Z",
+    "contentHash": "aa1d0efc6677451713b0d59a596c76c15ac59e73981c8a5d56dce7f0ade9408b",
+    "lastHarvestedAt": "2026-10-24T20:31:21.123Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {

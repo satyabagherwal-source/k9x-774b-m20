@@ -4594,3 +4594,7 @@ Every entry in this ledger must capture:
 | `learn-github-malisper-pgrust` | `https://github.com/malisper/pgrust` | `38634b40` | Multi-dimensional audit evidence | 2026-10-24T20:11:26.333Z |
 | `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-24T20:19:13.470Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `b901fb8a` | Multi-dimensional audit evidence | 2026-10-24T20:19:25.289Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `3c809f9d` | Multi-dimensional audit evidence | 2026-10-24T20:31:15.929Z |
+| `learn-github-facebook-docusaurus` | `https://github.com/facebook/docusaurus` | `4e6fe616` | Multi-dimensional audit evidence | 2026-10-24T20:31:18.104Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `4310d162` | Multi-dimensional audit evidence | 2026-10-24T20:31:21.123Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `71deabab` | Multi-dimensional audit evidence | 2026-10-24T20:31:21.154Z |

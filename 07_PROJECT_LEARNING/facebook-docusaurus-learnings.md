@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-docusaurus-learnings.md`  
 > **Source**: github ([https://github.com/facebook/docusaurus](https://github.com/facebook/docusaurus))  
-> **Source Version**: `7b6826b8`  
+> **Source Version**: `4e6fe616`  
 > **License**: MIT  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-18T21:01:34.603Z  
+> **Timestamp**: 2026-10-24T20:31:17.380Z  
 > **Learning ID**: `learn-github-facebook-docusaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,360 +18,298 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
+Docusaurus is a static-first metadata-driven web architecture designed to compile heterogeneous Markdown/MDX content, React components, and custom plugin configurations into optimized single-page static HTML bundles paired with client-side hydrated React runtimes. 
+
+The core architectural problem Docusaurus solves is decoupling the **static authoring graph** (docs, blogs, versioning, localization, assets) from the **underlying compilation runtime** (Rspack, Webpack, SWC, Babel, PostCSS/LightningCSS) while guaranteeing cross-platform consistency, deterministic build caching, and predictable incremental rebuilds.
+
 ```
-                             +-----------------------------------------------+
-                             |              docusaurus.config.js             |
-                             +-----------------------------------------------+
-                                                     |
-                                                     v
-+-------------------------------------------------------------------------------------------------------+
-|                                           @docusaurus/core                                            |
-|                                                                                                       |
-|  +------------------------+      +------------------------+      +---------------------------------+  |
-|  |     Plugin Lifecycle   | ---> |     Route Aggregator   | ---> |   Webpack / Rspack Orchestration |  |
-|  | (loadContent, routes)  |      |  (client / server SSR) |      |   (Persistent Cache Invariants) |  |
-|  +------------------------+      +------------------------+      +---------------------------------+  |
-+-------------------------------------------------------------------------------------------------------+
-                |                                                                           |
-                v                                                                           v
-+-------------------------------+                                           +-------------------------------+
-|    @docusaurus/mdx-loader     |                                           |   @docusaurus/theme-classic   |
-|                               |                                           |                               |
-|  +-------------------------+  |                                           |  +-------------------------+  |
-|  | SimpleProcessor Pipeline|  |                                           |  | Prism Language Hooks    |  |
-|  | (Remark -> Rehype -> JS)|  |                                           |  | (Global Scope Isolated) |  |
-|  +-------------------------+  |                                           |  +-------------------------+  |
-|  | Cross-Compiler Cache    |  |                                           |  | Swizzle / Shadowing     |  |
-|  | (Closure Getter Pattern)|  |                                           |  | Component Overrides     |  |
-|  +-------------------------+  |                                           |  +-------------------------+  |
-+-------------------------------+                                           +-------------------------------+
-                |                                                                           |
-                v                                                                           v
-+-------------------------------+                                           +-------------------------------+
-|      @docusaurus/fs           |                                           |       @docusaurus/glob        |
-|  - Concurrency Queue (EMFILE) |                                           |  - POSIX Windows Pathing      |
-|  - UTF-8 BOM Stripping        |                                           |  - Regex Compaction           |
-|  - JS realpath vs Native      |                                           |  - Boundary Guard Matchers    |
-+-------------------------------+                                           +-------------------------------+
++----------------------------------------------------------------------------------------------------+
+|                                    Site Configuration & Content Graph                              |
+|           docusaurus.config.js | markdown/mdx docs | blog | i18n locales | custom pages            |
++----------------------------------------------------------------------------------------------------+
+                                                   │
+                                                   ▼
++----------------------------------------------------------------------------------------------------+
+|                                     Docusaurus Core Subsystem                                      |
+|    Plugin Engine ──► SiteMetadata Generation ──► Route Registry ──► Server-Side Static Pre-render  |
+|          │                                                                           │             |
+|          ▼                                                                           ▼             |
+|   docusaurus-fs (PQueue EMFILE Guard)                             docusaurus-mdx-loader            |
+|   (Concurrency Cap = 100, BOM Stripping)                     (Unified/Remark/MDX -> ESTree)        |
++----------------------------------------------------------------------------------------------------+
+                                                   │
+                                                   ▼
++----------------------------------------------------------------------------------------------------+
+|                                  Bundler Abstraction Engine                                        |
+|                     (@docusaurus/bundler: Rspack / Webpack Swappable Core)                         |
+|     - Persistent Cache Key Engine (Targets Resolution + Plugin Versions + Aliases + Asset Thresholds) |
+|     - Compilers: SWC / LightningCSS / Babel (Strict Node coercion & Semantic Target Resolution)     |
++----------------------------------------------------------------------------------------------------+
+                                                   │
+                                                   ▼
++----------------------------------------------------------------------------------------------------+
+|                                        Output Runtime Pipeline                                     |
+|           Client Manifest + Hydration Chunks (SPA)  ◄───►  SSG Static HTML Generation (Worker Pool)|
++----------------------------------------------------------------------------------------------------+
 ```
 
-### Problem Domain & System Scope
-Docusaurus solves the problem of high-performance, content-driven, localized static documentation site generation. It unifies arbitrary Markdown/MDX authored content with interactive React client architectures, optimizing for:
-1. Zero runtime overhead during static page generation (SSG).
-2. Client-side Single Page Application (SPA) rehydration with progressive enhancement.
-3. Dual-compilation parity (simultaneous Client bundle and Server SSR bundle generation) sharing parsed AST states without cache poisoning or duplicate work.
-
-### Subsystem Boundaries & Decoupling
-* **`@docusaurus/core`**: Orchestrates configuration loading, plugin lifecycle dispatch (`loadContent`, `contentLoaded`, `postBuild`), Webpack/Rspack multi-compiler configurations, and virtual module synthesis (aliased as `@generated/*`).
-* **`@docusaurus/mdx-loader`**: Compiles MDX v1/v2/v3 documents into JSX. Solves client-server compilation duplication via a unified, memory-bounded, cross-compiler promise cache. Mutates MDAST/HAST/ESTree hierarchies for Table of Contents (TOC) extraction, asset resolution, and heading anchor generation.
-* **`@docusaurus/bundler` & Webpack Base**: Constructs compiler instances. Manages granular persistent cache versions computed via composite hashes of toolchain parameters (browserslist, aliases, asset size boundaries).
-* **`@docusaurus/theme-classic`**: Front-end component layer providing responsive layouts, search integration, code-block syntax highlighting via Prism, and component swizzling hooks.
-* **`@docusaurus/fs` & `@docusaurus/glob`**: Hardened I/O abstraction layer mitigating OS-level file descriptor exhaustion (`EMFILE`), cross-platform POSIX path separators on Windows, and byte-order-mark (`U+FEFF`) JSON deserialization failures.
+### Decoupling & Boundary Contracts
+1. **The Core / Bundler Boundary (`@docusaurus/bundler` vs `@docusaurus/core`)**: The bundler layer abstracts whether Rspack or Webpack is compiling assets. It standardizes loader options, minimizer configs (LightningCSS, SWC), and persistent disk caching behind unified function signatures (`getTargets`, `createJsLoaderFactory`, `getMinimizers`).
+2. **The File System Invariant Barrier (`@docusaurus/fs`)**: File access is strictly decoupled from raw `node:fs` or unmetered `fs-extra`. All asynchronous read/write operations must pass through a strict leaf-node concurrency gate (`p-queue` cap = 100) to prevent OS file descriptor exhaustion (`EMFILE`), and all JSON streams must be scrubbed of Unicode Byte Order Marks (`\uFEFF`) before serialization parsing.
+3. **The AST Transformation Boundary (`@docusaurus/mdx-loader`)**: MDX parsing normalizes JSX nodes, Markdown headers, table of contents (TOC) slices, and asset require statements (`require('./image.png')`) into ECMAScript ESTree structures before handing off to bundler loaders.
+4. **State Ownership**: Immutable route configs and site metadata are generated upfront during the lifecycle `load()` phase of plugins. Once generated, configs are sealed and referenced via MD5 hashes inside persistent cache keys.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Function-Enclosed Cache References Across Clone Boundaries
+### 1. Persistent Cache Key Target-Resolution Law
 **RULE**:
-When sharing mutable state, singletons, or in-memory caches between compilers or pipeline stages via loader/plugin options objects, you **MUST NOT** pass the raw collection object (such as `Map`, `Set`, or class instance). You **MUST** pass a zero-argument accessor closure (getter function, e.g., `() => cacheInstance`).
+Build-system persistent disk cache keys MUST NEVER be computed from abstract configuration queries (e.g., Browserslist DSL strings or unparsed version ranges). Cache keys MUST be computed strictly from the *resolved target set* and the *deterministic closure of all compiler plugin version strings*.
 
 **WHY**:
-Third-party build instrumentation tools, diagnostic plugins (e.g., Rsdoctor, Webpack Bundle Analyzer), or worker serialization boundaries perform deep structural cloning (`structuredClone`, `lodash.cloneDeep`, or JSON-roundtrips) on configuration and loader option trees. 
-1. Deep-cloning a `Map` or `Set` across loader stages disconnects the shared reference, breaking cache coherence and causing client/server dual compilations to execute redundant, heavy work.
-2. If the deep-clone implementation only clones enumerable plain properties, a `Map` instance is converted into an empty plain object `{}`. Any subsequent invocation of `crossCompilerCache.get()` or `.has()` immediately crashes with a runtime `TypeError: cache.get is not a function`.
-Because functions are non-enumerable primitives that cannot be structurally cloned as data, cloning engines retain function references as-is.
+Browserslist queries like `"baseline widely available"` or `"last 2 versions"` evaluate non-deterministically over time as external registry data changes, even when source code and configuration files are identical. Conversely, queries that vary syntactically (e.g., `"chrome 90"` vs `"chrome >= 90 and chrome <= 90"`) evaluate to identical targets, yet create false-positive cache misses if hashed literally. Furthermore, changes in compiler plugins or target Node.js runtimes mutate emitted bytecode without modifying site input files, causing persistent cache poisoning across environment changes.
 
 **WHEN TO APPLY**:
-Apply in any build plugin, Webpack loader, Vite plugin, or micro-frontend configuration where options are shared across multiple compiler instances (e.g., client bundle + SSR bundle) or passed through intermediate bundler transforms.
+Any static site generator, bundler pipeline (Webpack, Rspack, Vite, Rollup), or code generation framework implementing persistent caching across CLI runs or CI containers.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
-// packages/docusaurus-mdx-loader/src/options.ts & loader.ts
-
-export type CrossCompilerCache = Map<string, PromiseWithResolvers<string>>;
-
-export type LoaderOptions = {
-  /**
-   * Getter returning the shared cache instance.
-   * Passing a getter protects the cache reference from being stripped
-   * or corrupted into a plain object by deep-cloning tools (e.g., Rsdoctor).
-   */
-  getCrossCompilerCache?: () => CrossCompilerCache;
-};
-
-// Instantiation: Scope the cache instance inside the orchestrator closure
-export function createLoaderConfig(): { loader: string; options: LoaderOptions } {
-  const sharedCache: CrossCompilerCache = new Map();
-
-  return {
-    loader: require.resolve('./loader'),
-    options: {
-      getCrossCompilerCache: () => sharedCache,
-    },
-  };
-}
-
-// Consumer: Dereference via the getter inside the loader execution context
-export async function executeLoader(options: LoaderOptions, cacheKey: string): Promise<string> {
-  const cache = options.getCrossCompilerCache?.();
-  
-  if (!cache) {
-    return runDirectCompilation();
-  }
-
-  const existingEntry = cache.get(cacheKey);
-  if (existingEntry) {
-    return existingEntry.promise;
-  }
-
-  const resolvers = Promise.withResolvers<string>();
-  cache.set(cacheKey, resolvers);
-
-  try {
-    const result = await runDirectCompilation();
-    resolvers.resolve(result);
-    return result;
-  } catch (error) {
-    resolvers.reject(error);
-    cache.delete(cacheKey); // Evict on failure to allow retry
-    throw error;
-  }
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// ANTI-PATTERN: Direct object reference passing
-export function createBrokenLoaderConfig() {
-  const sharedCache = new Map<string, Promise<string>>();
-  return {
-    loader: 'mdx-loader',
-    options: {
-      // NEVER DO THIS: Rsdoctor or deep-clone sanitizers will turn this
-      // Map into a plain `{}` object or separate disconnected copies.
-      crossCompilerCache: sharedCache, 
-    },
-  };
-}
-
-// Loader implementation crashes at runtime:
-export function brokenLoader(options: { crossCompilerCache?: Map<string, any> }) {
-  // CRASH: options.crossCompilerCache.get is undefined when cloned to {}
-  const cached = options.crossCompilerCache?.get('key'); 
-}
-```
-
-**VERIFICATION METHOD**:
-Enforce via an automated unit test simulating deep option cloning:
-```typescript
-import { describe, it, expect, vi } from 'vitest';
-
-function cloneOptions<T>(value: T): T {
-  if (typeof value !== 'object' || value === null) return value;
-  if (Array.isArray(value)) return value.map(cloneOptions) as T;
-  return Object.fromEntries(
-    Object.entries(value).map(([k, v]) => [k, cloneOptions(v)])
-  ) as T;
-}
-
-it('preserves shared cache identity across deep-cloned loader options', () => {
-  const options = createLoaderConfig().options;
-  const clonedOptions = cloneOptions(options);
-
-  expect(typeof clonedOptions.getCrossCompilerCache).toBe('function');
-  expect(clonedOptions.getCrossCompilerCache?.()).toBe(options.getCrossCompilerCache?.());
-  expect(clonedOptions.getCrossCompilerCache?.() instanceof Map).toBe(true);
-});
-```
-
----
-
-### 2. Multi-Tier Persistent Cache Invalidation Vectoring
-**RULE**:
-When configuring persistent compiler or build caches (e.g., Webpack Persistent Cache, Rspack cache, Turbo remote cache), the cache version identifier **MUST** be composed as a composite deterministic hash incorporating the exact values of all **downstream build environment dependencies**, including target environment queries (`Browserslist`), module aliases, and asset parser size limits—not merely compiler version and source hashes.
-
-**WHY**:
-Bundler loaders (such as Babel, SWC, or PostCSS) and minimizers (such as Terser, Esbuild, or CSSNano) derive their transpilation targets, syntax downgrades, polyfills, and CSS transformations dynamically from external configuration files (e.g., `.browserslistrc`, `package.json -> browserslist`, or environment flags). 
-Webpack and Rspack persistent caches track source file contents and compiler package versions, but do **NOT** track runtime options loaded dynamically inside external loader/minimizer sub-dependencies. Modifying the target browser profile (e.g., from modern browsers to legacy Safari/Chrome) without touching code files will serve stale, un-polyfilled cache hits, causing production whiteouts and unhandled syntax errors.
-
-**WHEN TO APPLY**:
-Any static site generator, bundler harness, or CLI build tool employing filesystem/disk persistent caching mechanisms (`cache.type = 'filesystem'`).
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// packages/docusaurus/src/webpack/base.ts
 import crypto from 'node:crypto';
-import { getBrowserslistQueries } from '@docusaurus/bundler';
+import browserslist from 'browserslist';
+import semver from 'semver';
 
-function md5Hash(content: string): string {
-  return crypto.createHash('md5').update(content).digest('hex');
-}
-
-export function computeCacheVersion({
-  docusaurusVersion,
-  themeAliases,
-  assetInlineMaxSize,
-}: {
+interface CacheKeyParams {
   docusaurusVersion: string;
   themeAliases: Record<string, string>;
+  isServer: boolean;
+  pluginVersions: Record<string, {version?: string}>;
   assetInlineMaxSize: number;
-}): string {
-  // 1. Alias change hash: Webpack does not automatically bust cache on alias overrides
-  const themeAliasesHash = md5Hash(JSON.stringify(themeAliases));
-  
-  // 2. Browserslist change hash: Loader/minimizer downleveling changes with target queries
-  const browserslistQueries = getBrowserslistQueries();
-  const browserslistHash = md5Hash(JSON.stringify(browserslistQueries));
+}
 
-  // 3. Asset configuration changes: Dictates inline base64 vs external file emission
-  return `${docusaurusVersion}-${themeAliasesHash}-${browserslistHash}-${assetInlineMaxSize}`;
+/**
+ * Resolves deterministic target identifiers instead of query strings.
+ */
+export function getTargets({isServer}: {isServer: boolean}): string[] {
+  if (isServer) {
+    if (process.env.DOCUSAURUS_SERVER_NODE_TARGET) {
+      return [`node ${process.env.DOCUSAURUS_SERVER_NODE_TARGET}`];
+    }
+    // Strip pre-release channels (e.g., "27.0.0-rc.1" -> "27.0.0") to prevent compiler crashes
+    const coerced = semver.coerce(process.versions.node);
+    return [`node ${coerced ? coerced.version : process.versions.node}`];
+  }
+  
+  // Resolve queries to the exact array of browser/version tuples
+  const queries = browserslist.loadConfig({path: process.cwd()}) ?? ['baseline widely available'];
+  return browserslist(queries);
+}
+
+export function computeBundlerCacheKey(params: CacheKeyParams): string {
+  const resolvedTargets = getTargets({isServer: params.isServer});
+  
+  // Include resolved targets, plugin version closure, and filesystem aliases
+  const versionEnvelope = [
+    params.docusaurusVersion,
+    params.themeAliases,
+    resolvedTargets,
+    params.pluginVersions,
+    params.assetInlineMaxSize,
+  ];
+
+  return crypto
+    .createHash('md5')
+    .update(JSON.stringify(versionEnvelope))
+    .digest('hex');
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// ANTI-PATTERN: Cache version derived purely from tool package version
-export function computeNaiveCacheVersion(pkgVersion: string): string {
-  // FORBIDDEN: Modifying .browserslistrc, changing Babel/SWC presets, 
-  // or updating swizzled aliases will result in silent cache poisoning.
-  return `build-cache-${pkgVersion}`;
+// ANTI-PATTERN: Hashing query strings directly and ignoring plugin version closure
+function computeUnsafeCacheVersion(queries: string[], docusaurusVersion: string): string {
+  // FAILS: "baseline widely available" returns different binaries next month with zero cache invalidation!
+  // FAILS: Updating an external AST plugin does not invalidate the cached JavaScript bundle!
+  const queryHash = crypto.createHash('md5').update(JSON.stringify(queries)).digest('hex');
+  return `${docusaurusVersion}-${queryHash}`;
 }
 ```
 
 **VERIFICATION METHOD**:
-Implement environment-stubbed regression tests ensuring cache-busting occurs upon query mutation:
+Verify that identical target sets with differing syntax generate identical cache keys, and ensure target updates or plugin bumps force a cache key divergence:
 ```typescript
-import { describe, it, expect, vi, afterEach } from 'vitest';
-
-describe('persistent cache versioning', () => {
-  afterEach(() => {
-    vi.unstubAllEnvs();
+it('ensures persistent cache sensitivity to target resolution', () => {
+  const keyVersionA = computeBundlerCacheKey({
+    docusaurusVersion: '3.0.0',
+    themeAliases: {},
+    isServer: false,
+    pluginVersions: {pluginA: {version: '1.0.0'}},
+    assetInlineMaxSize: 10000,
   });
 
-  it('generates distinct cache keys when target browser matrix diverges', () => {
-    vi.stubEnv('BROWSERSLIST', 'chrome 90');
-    const versionModern = computeCacheVersion({
-      docusaurusVersion: '3.0.0',
-      themeAliases: {},
-      assetInlineMaxSize: 10000,
-    });
-
-    vi.stubEnv('BROWSERSLIST', 'ie 11');
-    const versionLegacy = computeCacheVersion({
-      docusaurusVersion: '3.0.0',
-      themeAliases: {},
-      assetInlineMaxSize: 10000,
-    });
-
-    expect(versionModern).not.toEqual(versionLegacy);
+  const keyVersionB = computeBundlerCacheKey({
+    docusaurusVersion: '3.0.0',
+    themeAliases: {},
+    isServer: false,
+    pluginVersions: {pluginA: {version: '1.0.1'}}, // Bumped plugin
+    assetInlineMaxSize: 10000,
   });
+
+  expect(keyVersionA).not.toBe(keyVersionB);
 });
 ```
 
 ---
 
-### 3. Non-Destructive Preservation of Global Singletons During Plugin Dynamic Augmentation
+### 2. Leaf-Only Asynchronous Task Limiting Law
 **RULE**:
-When an application uses an isolated internal instance of a library that relies on global runtime bindings (e.g., `Prism`, `window.Prism`, or custom polyfills), dynamic extensions or language definitions **MUST NOT** unconditionally delete the global reference upon registration completion if downstream hooks or evaluation routines depend on accessing the global instance during rendering. If a prior foreign instance existed before registration, it **MUST** be restored; otherwise, the isolated instance **MUST** remain anchored.
+When wrapping asynchronous filesystem operations in a global concurrency queue (e.g., `p-queue`) to prevent operating system resource exhaustion (such as file descriptor `EMFILE`), the queue MUST ONLY accept atomic *leaf* I/O operations. Queuing composite operations that internally await other queued operations MUST NOT be permitted.
 
 **WHY**:
-Legacy libraries and syntax highlighters (e.g., Prism component plugins such as `twig`, `liquid`, `markup-templating`) register language hooks that execute lazily on every highlight invocation. These hooks reference `globalThis.Prism` directly at execution time rather than referencing the local closure instance passed to the loader. 
-Executing `delete globalThis.Prism` immediately after module loading prevents initialization crashes, but detonates every subsequent code-block render with `ReferenceError: Prism is not defined`. Furthermore, naively restoring previous instances without checking if a preexisting global was present can clobber foreign third-party highlighters (such as embedded Swagger/Redoc instances).
+If composite operations (e.g., reading a directory, filtering entries, and then reading each file) are queued alongside the underlying leaf file reads inside a concurrency pool with limit $N$, a deadlock state occurs when $N$ composite operations occupy all worker slots while awaiting their inner operations. Because the queue is saturated, the inner leaf tasks can never execute, permanently freezing the Node.js event loop.
 
 **WHEN TO APPLY**:
-When wrapping non-ESM legacy libraries, syntax highlighters, markdown parsers, or global runtime polyfills inside modern modular frameworks (React/Vite/Webpack).
+High-concurrency node runtimes, file walkers, image transformers, batch static site pre-renders, and network scrapers.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
-// packages/docusaurus-theme-classic/src/theme/prism-include-languages.ts
-import type * as PrismNamespace from 'prismjs';
+import fs from 'node:fs/promises';
+import PQueue from 'p-queue';
 
-const MarkupTemplatingLanguages = [
-  'django', 'ejs', 'erb', 'etlua', 'ftl', 'handlebars',
-  'latte', 'liquid', 'php', 'smarty', 'soy', 'tt2', 'twig'
-] as const;
+const DEFAULT_FS_CONCURRENCY = 100;
 
-export default function prismIncludeLanguages(
-  PrismObject: typeof PrismNamespace,
-  additionalLanguages: string[]
-): void {
-  // Capture prior global state (e.g., Redoc, Swagger, or legacy script tags)
-  const PrismBefore = (globalThis as { Prism?: typeof PrismNamespace }).Prism;
+export const FileOperationQueue = new PQueue({
+  concurrency: process.env.FS_CONCURRENCY 
+    ? parseInt(process.env.FS_CONCURRENCY, 10) 
+    : DEFAULT_FS_CONCURRENCY,
+});
 
-  // Mount internal instance onto global scope for language registrations
-  (globalThis as { Prism?: typeof PrismNamespace }).Prism = PrismObject;
+/**
+ * QUEUE CONTRACT: Only wrap pure, self-contained leaf I/O calls.
+ */
+export async function safeReadFile(filePath: string): Promise<string> {
+  return FileOperationQueue.add(() => fs.readFile(filePath, 'utf8'));
+}
 
-  try {
-    for (const lang of additionalLanguages) {
-      if (MarkupTemplatingLanguages.includes(lang as any)) {
-        // Enforce prerequisite registration before dependent grammars load
-        require('prismjs/components/prism-markup-templating.js');
+export async function safeWriteFile(filePath: string, data: string): Promise<void> {
+  return FileOperationQueue.add(() => fs.writeFile(filePath, data, 'utf8'));
+}
+
+/**
+ * Composite operations orchestration: Conducted OUTSIDE the queue to avoid slot starvation.
+ */
+export async function safeReadFiles(filePaths: string[]): Promise<string[]> {
+  // Parallel execution of leaves through the queue prevents deadlock
+  return Promise.all(filePaths.map((file) => safeReadFile(file)));
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Queuing composite tasks that spawn child queued tasks
+export async function deadlockProneDirectoryRead(dirPath: string): Promise<string[]> {
+  // If queue concurrency is reached, this outer slot blocks an inner slot forever!
+  return FileOperationQueue.add(async () => {
+    const files = await fs.readdir(dirPath);
+    return Promise.all(
+      files.map((file) => FileOperationQueue.add(() => fs.readFile(file, 'utf8')))
+    );
+  });
+}
+```
+
+**VERIFICATION METHOD**:
+Stress-test the queue with concurrency set to an artificially low ceiling ($N=2$) and run a nested batch of 50 composite reads. Ensure the queue completes without timeouts:
+```typescript
+it('does not deadlock under constrained concurrency', async () => {
+  const queue = new PQueue({concurrency: 2});
+  const files = Array.from({length: 10}, (_, i) => `file_${i}`);
+  
+  const mockLeafRead = (name: string) => queue.add(async () => `content:${name}`);
+  
+  // Safe: orchestrating outside the queue
+  const results = await Promise.all(files.map((f) => mockLeafRead(f)));
+  expect(results).toHaveLength(10);
+});
+```
+
+---
+
+### 3. Localization Matrix Schema Invariant Law
+**RULE**:
+Automated localization verification systems MUST execute bidirectional set-difference checks between base locale message ID registries and localized translation catalogs during CI validation, throwing a hard build/test failure if any localized catalog declares keys missing from `base.json`.
+
+**WHY**:
+When theme or core source files refactor, split, or rename message IDs (e.g., migrating from `.categoryDescription` to `.categoryDescription.plurals`), localized message catalogs retain dead legacy keys. If update scripts only print informational warnings without non-zero exit codes, upstream production sites silently fall back to default English text for the new keys while retaining untranslated strings, causing silent UI regressions and untranslated production deployments.
+
+**WHEN TO APPLY**:
+Any internationalized software application (i18n) maintaining multi-language dictionary maps, JSON translation catalogs, or gettext domains.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+type MessageCatalog = Record<string, string>;
+
+export async function assertNoStaleTranslations(localesDir: string): Promise<void> {
+  const baseFiles = await fs.readdir(path.join(localesDir, 'base'));
+  const entries = await fs.readdir(localesDir, {withFileTypes: true});
+  
+  const localeCodes = entries
+    .filter((e) => e.isDirectory() && !e.name.startsWith('.') && e.name !== 'base' && e.name !== '__tests__')
+    .map((e) => e.name);
+
+  const staleViolations: string[] = [];
+
+  for (const locale of localeCodes) {
+    for (const file of baseFiles) {
+      const basePath = path.join(localesDir, 'base', file);
+      const localePath = path.join(localesDir, locale, file);
+
+      try {
+        const baseJson: MessageCatalog = JSON.parse(await fs.readFile(basePath, 'utf8'));
+        const localeJson: MessageCatalog = JSON.parse(await fs.readFile(localePath, 'utf8'));
+
+        const baseKeys = new Set(Object.keys(baseJson));
+        for (const localizedKey of Object.keys(localeJson)) {
+          if (!baseKeys.has(localizedKey)) {
+            staleViolations.push(`${locale}/${file}: "${localizedKey}"`);
+          }
+        }
+      } catch (err) {
+        // Handle missing locale file gracefully if partial translation is permitted
       }
-      require(`prismjs/components/prism-${lang}`);
     }
-  } finally {
-    // If a foreign instance pre-existed, restore it to avoid clobbering host.
-    // If NO instance existed prior, LEAVE OUR INSTANCE MOUNTED because
-    // grammars like 'twig' and 'liquid' execute hooks reading `globalThis.Prism`
-    // at highlight time!
-    if (typeof PrismBefore !== 'undefined') {
-      (globalThis as { Prism?: typeof PrismNamespace }).Prism = PrismBefore;
-    }
+  }
+
+  if (staleViolations.length > 0) {
+    throw new Error(
+      `Detected stale localized message IDs not present in base catalog:\n` +
+      staleViolations.map((v) => `  - ${v}`).join('\n') +
+      `\nAction: Migrate translations to renamed keys or purge obsolete entries.`
+    );
   }
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// ANTI-PATTERN: Aggressive global deletion & inverted reassignment
-export default function brokenPrismIncludeLanguages(PrismObject: any, languages: string[]) {
-  const PrismBefore = globalThis.Prism;
-  globalThis.Prism = PrismObject;
-
-  languages.forEach((lang) => require(`prismjs/components/prism-${lang}`));
-
-  // FATAL BUG 1: Unconditional delete breaks twig/liquid hooks at runtime:
-  // "ReferenceError: Prism is not defined"
-  delete (globalThis as any).Prism;
-
-  // FATAL BUG 2: Re-assigning our instance instead of restoring PrismBefore!
-  if (typeof PrismBefore !== 'undefined') {
-    globalThis.Prism = PrismObject; // Corrupts foreign instance!
+// ANTI-PATTERN: Logging warnings without throwing assertion failures in CI
+export async function verifyTranslationsUnsafe(locales: string[]): Promise<void> {
+  const stale = findStaleKeys(locales);
+  if (stale.length > 0) {
+    // FAILS: CI logs get swallowed, obsolete keys persist, and users see broken English fallbacks
+    console.warn("Some localized messages do not exist in base.json! Continuing build...");
   }
 }
 ```
 
 **VERIFICATION METHOD**:
+Add a Vitest/Jest suite that directly asserts stale IDs equal empty array:
 ```typescript
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import { Prism } from 'prism-react-renderer';
-import prismIncludeLanguages from './prism-include-languages';
-
-describe('prismIncludeLanguages invariant test', () => {
-  afterEach(() => {
-    delete (globalThis as { Prism?: unknown }).Prism;
-  });
-
-  it('keeps Prism instance intact when hooks query globalThis during highlight', () => {
-    prismIncludeLanguages(Prism, ['twig', 'liquid']);
-
-    expect(globalThis.Prism).toBe(Prism);
-    // Highlight triggers twig/liquid globalThis hooks
-    expect(() => {
-      Prism.highlight('{{ title }}', Prism.languages.twig!, 'twig');
-    }).not.toThrow();
-  });
-
-  it('restores preexisting external Prism instance cleanly', () => {
-    const ForeignPrism = { __foreign: true } as unknown as typeof Prism;
-    globalThis.Prism = ForeignPrism;
-
-    prismIncludeLanguages(Prism, ['java']);
-
-    expect(globalThis.Prism).toBe(ForeignPrism);
-    expect(Prism.languages.java).toBeDefined();
-  });
+it('ensures zero stale localized translation keys exist in any locale', async () => {
+  await expect(assertNoStaleTranslations(path.resolve(__dirname, '../locales'))).resolves.not.toThrow();
 });
 ```
 
@@ -379,158 +317,272 @@ describe('prismIncludeLanguages invariant test', () => {
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Prism Global Eviction Render Crash (BUG-DOCU-01)
-- **Context**: Syntax highlighting component pipeline (`packages/docusaurus-theme-classic/src/theme/prism-include-languages.ts`).
-- **What Was Expected**: Custom language grammars (such as `twig` and `liquid`) declared in `themeConfig.prism.additionalLanguages` should be loaded onto the local `prism-react-renderer` Prism instance without polluting or leaving invalid global memory references.
-- **What Actually Happened**: Static site builds and runtime page visits crashed catastrophically with `ReferenceError: Prism is not defined` whenever code blocks containing Twig or Liquid were rendered.
-- **Evidence in Repo**: Commit `3ef9589b`, Issue #8065, PR #12728. Added unit test file `prism-include-languages.test.ts`.
-- **Root Cause**: The loader mounted `PrismObject` onto `globalThis.Prism`, required the grammar files, and then executed `delete (globalThis as Optional<typeof globalThis, 'Prism'>).Prism;`. The authors assumed Prism only uses the global reference at definition/import time. However, grammars like Twig and Liquid attach runtime hooks (`Prism.hooks.add('before-highlight', ...)`) that dereference `globalThis.Prism` during execution. Deleting `globalThis.Prism` resulted in uncaught ReferenceErrors during page render. Additionally, the cleanup logic had an inverted assignment bug: `if (typeof PrismBefore !== 'undefined') { globalThis.Prism = PrismObject; }` which clobbered existing third-party instances.
+### Incident 1: Rust/SWC Compiler Panic on Node.js Pre-Release Versions (BUG-DOCU-01)
+- **Context**: `packages/docusaurus-bundler/src/browserslist.ts` & `swc.ts`
+- **What Was Expected**: Running server compilation under modern or pre-release Node.js environments (e.g., `v27.0.0-rc.1`) should automatically configure SWC to skip down-level syntax transforms without crashing.
+- **What Actually Happened**: SWC’s underlying Rust parser panicked when encountered with semver pre-release tags (`-rc.1`). Furthermore, previous logic hardcoded a clamping limit of `26.0.0` for Rspack to avoid missing Browserslist entries, causing arbitrary transpilation downgrades.
+- **Evidence in Repo**: Commit `4e6fe616`, PR #12781.
+- **Root Cause**: `process.versions.node` outputs raw runtime semver tags including pre-release channels (e.g. `27.0.0-rc.1`). SWC uses Rust's `semver` crate internally within its `env.targets` parser, which fails to match Browserslist Node targets if pre-release metadata is passed directly.
 - **Remediation Code Diff**:
-```diff
---- a/packages/docusaurus-theme-classic/src/theme/prism-include-languages.ts
-+++ b/packages/docusaurus-theme-classic/src/theme/prism-include-languages.ts
-@@ -7,7 +7,23 @@
- 
- import siteConfig from '@generated/docusaurus.config';
- import type * as PrismNamespace from 'prismjs';
--import type {Optional} from 'utility-types';
-+
-+// Prism components requiring markup-templating, see prismjs/components.json
-+const MarkupTemplatingLanguages = [
-+  'django',
-+  'ejs',
-+  'erb',
-+  'etlua',
-+  'ftl',
-+  'handlebars',
-+  'latte',
-+  'liquid',
-+  'php',
-+  'smarty',
-+  'soy',
-+  'tt2',
-+  'twig',
-+];
- 
- export default function prismIncludeLanguages(
-   PrismObject: typeof PrismNamespace,
-@@ -28,17 +44,18 @@ export default function prismIncludeLanguages(
-   const PrismBefore = globalThis.Prism;
-   globalThis.Prism = PrismObject;
- 
-   additionalLanguages.forEach((lang) => {
--    if (lang === 'php') {
-+    if (MarkupTemplatingLanguages.includes(lang)) {
-       // eslint-disable-next-line @typescript-eslint/no-require-imports
-       require('prismjs/components/prism-markup-templating.js');
-     }
-     // eslint-disable-next-line @typescript-eslint/no-require-imports
-     require(`prismjs/components/prism-${lang}`);
-   });
- 
--  // Clean up and eventually restore former globalThis.Prism object (if any)
--  delete (globalThis as Optional<typeof globalThis, 'Prism'>).Prism;
-   if (typeof PrismBefore !== 'undefined') {
--    globalThis.Prism = PrismObject;
-+    globalThis.Prism = PrismBefore;
-   }
- }
+```typescript
+// File: packages/docusaurus-bundler/src/browserslist.ts
+- export function getServerTargets({
+-   bundlerName,
+- }: {
+-   bundlerName: CurrentBundler['name'];
+- }): string[] {
+-   if (process.env.DOCUSAURUS_SERVER_NODE_TARGET) {
+-     return [`node ${process.env.DOCUSAURUS_SERVER_NODE_TARGET}`];
+-   }
+-   const nodeTarget = getMinVersion(
+-     process.versions.node,
+-     getLastBrowserslistKnownNodeVersion(bundlerName),
+-   );
+-   return [`node ${nodeTarget}`];
+- }
++ export function getServerTargets(): string[] {
++   if (process.env.DOCUSAURUS_SERVER_NODE_TARGET) {
++     return [`node ${process.env.DOCUSAURUS_SERVER_NODE_TARGET}`];
++   }
++   // SWC panics on pre-release versions like "27.0.0-rc.1"
++   const nodeVersion = semver.coerce(process.versions.node)!.version;
++   return [`node ${nodeVersion}`];
++ }
 ```
-- **Lesson**: Do not assume third-party plugin systems only use global references at load time. If hooks execute lazily against global namespaces, the instance must persist. Always verify assignment directions (`globalThis.X = XBefore`, not `globalThis.X = XNew`) when writing save-and-restore patterns.
+- **Lesson**: Never forward host process environment metadata (like runtime engine version strings) directly into external native/FFI parsers without strict semver coercion to drop pre-release and build-metadata tags.
 
 ---
 
-### Incident 2: Cross-Compiler Cache Destruction via Deep Cloning in Rsdoctor (BUG-DOCU-02)
-- **Context**: Multi-compiler coordination in `@docusaurus/mdx-loader` (`packages/docusaurus-mdx-loader/src/loader.ts`, `createMDXLoader.ts`, `options.ts`).
-- **What Was Expected**: When running production builds, client and server compilation passes share a single `crossCompilerCache: Map<string, PromiseWithResolvers<string>>` via Webpack loader options to eliminate duplicate compilation of identical MDX files.
-- **What Actually Happened**: When Rsdoctor v1 was introduced into the build pipeline, the build crashed immediately with: `TypeError: crossCompilerCache?.get is not a function`.
-- **Evidence in Repo**: Commit `f54813ea`, PR #12733. Added unit test `packages/docusaurus-mdx-loader/src/__tests__/loader.test.ts`.
-- **Root Cause**: Rsdoctor intercepts Webpack compiler configurations and applies deep cloning to the loader options of every module. Deep cloning transforms a `Map` instance into a plain JavaScript Object (`{}`). Plain objects do not possess `.get()`, `.set()`, or `.delete()` methods on their prototype chain.
+### Incident 2: Silent Persistent Cache Poisoning via Unresolved Browserslist Queries (BUG-DOCU-02)
+- **Context**: `packages/docusaurus/src/webpack/base.ts`
+- **What Was Expected**: Updating third-party Docusaurus plugins or updating the system Browserslist database should evict the Webpack/Rspack persistent disk cache.
+- **What Actually Happened**: The cache version string only hashed the literal query strings (`getClientQueries()`, e.g., `['baseline widely available']`). When the underlying caniuse/browserslist database updated, or when third-party plugin versions were bumped (which calculate custom loader options), the cache key remained unchanged. Stale, incorrect bytecode was served from disk cache.
+- **Evidence in Repo**: Commit `6d543374`, PR #12774.
+- **Root Cause**: Webpack and Rspack persistent caches do not track internal loader option functions or external database dependencies. If the cache version string fails to hash the *fully-resolved targets* and *plugin version manifests*, the cache engine falsely assumes inputs are idempotent.
 - **Remediation Code Diff**:
-```diff
---- a/packages/docusaurus-mdx-loader/src/createMDXLoader.ts
-+++ b/packages/docusaurus-mdx-loader/src/createMDXLoader.ts
-@@ -33,9 +33,10 @@ function normalizeOptions(optionsInput: Options): Options {
-   // We only have multiple compilers in production mode (docusaurus build)
-   if (!DisableCrossCompilerCache && process.env.NODE_ENV === 'production') {
-+    const crossCompilerCache: CrossCompilerCache = new Map();
-     options = {
-       ...options,
--      crossCompilerCache: new Map(),
-+      getCrossCompilerCache: () => crossCompilerCache,
-     };
-   }
-
---- a/packages/docusaurus-mdx-loader/src/loader.ts
-+++ b/packages/docusaurus-mdx-loader/src/loader.ts
-@@ -121,7 +121,7 @@ async function loadMDXWithCaching({
-   options: Options;
-   compilerName: WebpackCompilerName;
- }): Promise<string> {
--  const {crossCompilerCache} = options;
-+  const crossCompilerCache = options.getCrossCompilerCache?.();
-   if (!crossCompilerCache) {
-     return loadMDX({
-       fileContent,
-@@ -144,7 +144,7 @@ async function loadMDXWithCaching({
--  const cacheEntry = crossCompilerCache?.get(cacheKey);
-+  const cacheEntry = crossCompilerCache.get(cacheKey);
-
---- a/packages/docusaurus-mdx-loader/src/options.ts
-+++ b/packages/docusaurus-mdx-loader/src/options.ts
-@@ -31,7 +31,14 @@ export type Options = Partial<MDXOptions> & {
-   processors?: SimpleProcessors;
--  crossCompilerCache?: Map<string, CrossCompilerCacheEntry>;
-+  getCrossCompilerCache?: () => CrossCompilerCache;
- };
-+
-+export type CrossCompilerCache = Map<string, CrossCompilerCacheEntry>;
+```typescript
+// File: packages/docusaurus/src/webpack/base.ts
+  function getCacheVersion() {
+-   const themeAliasesHash = md5Hash(JSON.stringify(themeAliases));
+-   const browserslistHash = md5Hash(JSON.stringify(getClientQueries()));
+-   return `${siteMetadata.docusaurusVersion}-${themeAliasesHash}-${browserslistHash}-${ASSET_INLINE_MAX_SIZE}`;
++   const versionParts: unknown[] = [
++     siteMetadata.docusaurusVersion,
++     themeAliases,
++     // Changing the target browsers or Node.js version must evict the cache
++     // The same Browserslist queries can match other browsers over time
++     getTargets({isServer, bundlerName: props.currentBundler.name}),
++     // Upgrading a third-party plugin must evict the cache
++     siteMetadata.pluginVersions,
++     ASSET_INLINE_MAX_SIZE,
++   ];
++   return md5Hash(JSON.stringify(versionParts));
+  }
 ```
-- **Lesson**: Do not place mutable object state directly on configuration trees that external profilers or diagnostic loaders may clone. Enclose mutable singletons in accessor functions (`() => state`).
+- **Lesson**: Persistent caching layers must hash the derived compilation targets and the operational dependencies (plugin closure), never the abstract user configuration DSL.
 
 ---
 
-### Incident 3: Stale Persistent Cache on Target Browserslist Alterations (BUG-DOCU-03)
-- **Context**: Persistent filesystem build caching in Webpack configuration (`packages/docusaurus/src/webpack/base.ts`).
-- **What Was Expected**: Modifying the browser target configuration (e.g. updating `.browserslistrc` or changing `BROWSERSLIST` environment variable) should cause Webpack's filesystem cache to invalidate and emit code downleveled to the new target specifications.
-- **What Actually Happened**: Build artifacts continuously served stale CSS and JavaScript from cache until developers manually executed `docusaurus clear`, producing syntax errors in older target browsers.
-- **Evidence in Repo**: Commit `2d46a972`, PR #12727. Added tests in `packages/docusaurus/src/webpack/__tests__/base.test.ts`.
-- **Root Cause**: Webpack filesystem cache tracks file modification times and direct loader config files, but does not monitor environment variables or implicit external target definitions consumed by Babel presets and CSS minimizers. The cache version string only tracked Docusaurus core version, theme alias hash, and inline asset max size.
+### Incident 3: Stale Localized Message Keys Causing Silent Fallback to English (BUG-DOCU-03)
+- **Context**: `packages/docusaurus-theme-translations/locales/is/theme-common.json` & `locales.test.ts`
+- **What Was Expected**: Renaming a localization message ID in the theme core (`theme.docs.DocCard.categoryDescription` -> `theme.docs.DocCard.categoryDescription.plurals`) must propagate to all language catalogs or trigger a CI failure.
+- **What Actually Happened**: Icelandic translations retained the obsolete message ID while the plurals key was missing. Sites rendering in Icelandic silently fell back to the base English string. The translation update script only emitted console warnings and exited with status 0.
+- **Evidence in Repo**: Commit `65d06432`, PR #12767.
+- **Root Cause**: Translation update tooling lacked strict enforcement, treating unmapped keys as benign orphan properties instead of fatal regression breaks.
 - **Remediation Code Diff**:
-```diff
---- a/packages/docusaurus/src/webpack/base.ts
-+++ b/packages/docusaurus/src/webpack/base.ts
-@@ -8,6 +8,7 @@
- import path from 'node:path';
- import {
-   createJsLoaderFactory,
-+  getBrowserslistQueries,
-   getCSSExtractPlugin,
-   getMinimizers,
- } from '@docusaurus/bundler';
-@@ -111,9 +112,12 @@ export async function createBaseConfig({
-     const themeAliasesHash = md5Hash(JSON.stringify(themeAliases));
-+    // Loader and minimizer options are not part of the cache key
-+    // Changing the Browserslist config must evict the cache
-+    const browserslistHash = md5Hash(JSON.stringify(getBrowserslistQueries()));
-     // Asset module parser options are not part of the cache key
-     // Changing the asset inline max size must evict the cache
--    return `${siteMetadata.docusaurusVersion}-${themeAliasesHash}-${ASSET_INLINE_MAX_SIZE}`;\n+    return `${siteMetadata.docusaurusVersion}-${themeAliasesHash}-${browserslistHash}-${ASSET_INLINE_MAX_SIZE}`;
-   }
+```typescript
+// File: packages/docusaurus-theme-translations/locales/__tests__/locales.test.ts
++ it('has localized messages files that only use the message ids of the base messages files', async () => {
++   const staleMessages = await getStaleLocalizedMessages();
++   expect(
++     staleMessages,
++     'These localized message ids do not exist in the base messages files. Move their translation to the new message id if it was renamed, or delete them',
++   ).toEqual([]);
++ });
 ```
-- **Lesson**: Persistent build caches must incorporate every dimension of the compilation environment that influences AST transforms, polyfill injections, or CSS minification.
+- **Lesson**: Linters and validation checks must never be configured as "warn-only" in CI pipelines for translation dictionaries; orphaned references represent broken production state.
 
 ---
 
-### Incident 4: MDX TabItem Parsing Failure on Trailing Markdown Lists (BUG-DOCU-04)
-- **Context**: MDX AST Parsing and JSX Indentation (`packages/docusaurus-mdx-loader`, Issue #12583).
-- **What Was Expected**: Authors should be able to write Markdown lists directly ending before a JSX closing tag, such as:
-  ```mdx
-  <TabItem value="query" label="Query">
-    - `cid` – Unique identifier.
-    - `depth` – Chain position.
+### Incident 4: Worker Thread Desynchronization & CVE Supply Chain Poisoning in Tinypool (BUG-DOCU-04)
+- **Context**: Worker thread pooling for static HTML generation; Issue #12584 (`CVE-2026-104848`, `CVE-2026-104849`).
+- **What Was Expected**: Static generation across large multi-core builds must isolate worker thread memory without prototype pollution or arbitrary code execution vulnerabilities during worker task dispatch.
+- **What Actually Happened**: Older `tinypool` dependencies bundled in `@docusaurus/core@3.x` possessed critical vulnerabilities involving prototype pollution during inter-thread channel message deserialization.
+- **Evidence in Repo**: GitHub Issue #12584, CVE-2026-104848, CVE-2026-104849.
+- **Root Cause**: Deserialization of IPC payload buffers in worker thread pools without strict schema validation or object prototype nulling (`Object.create(null)`).
+- **Remediation Code Diff**:
+```json
+// File: packages/docusaurus/package.json
+{
+  "dependencies": {
+-   "tinypool": "2.1.0"
++   "tinypool": "^2.1.2"
+  }
+}
+```
+- **Lesson**: Multi-threaded Node.js worker pools require active supply chain lockstep updates because inter-thread boundaries rely heavily on native serialization primitives vulnerable to object injection.
+
+---
+
+### Incident 5: MDX AST Boundary Collapse on Markdown List Termination (BUG-DOCU-05)
+- **Context**: `packages/docusaurus-mdx-loader`, Remark MDX compilation, Issue #12583.
+- **What Was Expected**: Tab components wrapping Markdown lists (`<TabItem>\n- item 1\n- item 2\n</TabItem>`) should parse cleanly into nested MDX JSX elements.
+- **What Actually Happened**: The MDX parser threw an unrecoverable compilation error: `"Expected the closing tag </TabItem> either after the end of listItem or another opening tag"`.
+- **Evidence in Repo**: Issue #12583.
+- **Root Cause**: The Remark/MDX block-level state machine does not implicitly close loose list structures before closing a JSX parent container if a trailing newline sequence is absent. When an indentation or block token isn't properly terminated, the JSX lexer considers the closing XML token to be a continuation of the Markdown list item AST node rather than the parent container.
+- **Remediation Code Diff**:
+```markdown
+<!-- Workaround / AST Normalization invariant: -->
+<Tabs groupId="commits-syntax">
+  <TabItem value="commits-query" label="_commits query" default>
+    - `cid` &ndash; Unique identifier of a commit.
+    - `depth` &ndash; Position within the chain of commits.
+
++   
   </TabItem>
-  ```
-- **What Actually Happened**: The MDX parser failed with a compilation error:
-  `Expected the closing tag </TabItem> either after the end of listItem or another opening tag after the start of listItem`.
-- **Evidence in Repo**: Issue #12
+</Tabs>
+```
+- **Lesson**: In mixed JSX/Markdown AST pipelines, JSX tag boundaries cannot cleanly infer the termination of trailing loose blocks without an explicit whitespace break or AST sanitizer plugin.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Unicode BOM Rejection in Parsers**: Standard `JSON.parse` crashes with syntax errors if a UTF-8 Byte Order Mark (`\uFEFF`) is present. In `packages/docusaurus-fs/src/fsUtils.ts`, strings must be explicitly sanitized via string slicing:
+```typescript
+function stripUTF8BOM(content: string): string {
+  return content.startsWith('\uFEFF') ? content.slice(1) : content;
+}
+```
+- **Cross-Platform POSIX Path Normalization & UNC Escapes**: Replacing Windows backslashes with slashes breaks Extended-Length UNC paths (e.g. `\\?\C:\repo`). In `packages/docusaurus-glob/src/globUtils.ts`:
+```typescript
+function posixPath(str: string): string {
+  const isExtendedLengthPath = str.startsWith('\\\\?\\');
+  if (isExtendedLengthPath) {
+    return str; // Extended length prefix must be preserved
+  }
+  return str.replace(/\\/g, '/');
+}
+```
+- **AST Node In-Place Replacement Without Identity Loss**: In compiler toolchains, child references can be retained by other plugins. Replacing a node requires wiping existing keys without modifying the object reference:
+```typescript
+export function transformNode<NewNode extends Node>(node: Node, newNode: NewNode): NewNode {
+  Object.keys(node).forEach((key) => {
+    delete (node as Record<string, unknown>)[key];
+  });
+  Object.keys(newNode).forEach((key) => {
+    (node as Record<string, unknown>)[key] = (newNode as Record<string, unknown>)[key];
+  });
+  return node as NewNode;
+}
+```
+
+### 2. Infinite Loop & Recursion Guards
+- **Root Folder Path Resolution Termination Invariant**: When matching file paths against root directories, prefix matching without separator awareness results in false positives (e.g. `/path/to/docs_v2` matching `/path/to/docs`). In `packages/docusaurus-glob/src/globUtils.ts`:
+```typescript
+function getRelativeFilePath(absoluteFilePath: string) {
+  const rootFolder = rootFolders.find((folderPath) =>
+    ['/', '\\'].some((separator) =>
+      absoluteFilePath.startsWith(
+        folderPath.endsWith(separator) ? folderPath : folderPath + separator,
+      ),
+    ),
+  );
+  if (!rootFolder) {
+    throw new Error(
+      `createAbsoluteFilePathMatcher unexpected error, absoluteFilePath=${absoluteFilePath} was not contained in any of the root folders: ${rootFolders.join(', ')}`,
+    );
+  }
+  return path.relative(rootFolder, absoluteFilePath);
+}
+```
+- **Empty Regex Pattern Guard**: Empty array regex joins cause matching loops. When creating a regex matcher from glob patterns:
+```typescript
+export function createMatcher(patterns: string[]): Matcher {
+  if (patterns.length === 0) {
+    // Calling `new RegExp('')` yields /(?:)/ which matches ANY string!
+    return () => false;
+  }
+  const regexp = new RegExp(
+    patterns.map((pattern) => Micromatch.makeRe(pattern).source).join('|'),
+  );
+  return (str) => regexp.test(str);
+}
+```
+
+### 3. UI & UX Micro-Mechanics
+- **TOC HTML Extraction & Image Stripping**: In `packages/docusaurus-mdx-loader/src/remark/toc/utils.ts`, Table of Contents generation parses JSX heading content. Including inline images in TOC nodes breaks navigational layout contexts:
+```typescript
+function mdxJsxTextElementToHtml(element: MdxJsxTextElement): string {
+  const tag = element.name;
+  // Prevent inline image rendering within Table of Contents breadcrumbs
+  if (tag === 'img') {
+    return '';
+  }
+  // Sanitize and escape class attributes to prevent HTML injection in TOC
+  const attributes = element.attributes.filter(
+    (child): child is MdxJsxAttribute => child.type === 'mdxJsxAttribute',
+  );
+  const classAttribute =
+    attributes.find((attr) => attr.name === 'className') ??
+    attributes.find((attr) => attr.name === 'class');
+  const classAttributeString = classAttribute
+    ? `class="${escapeHtml(String(classAttribute.value))}"`
+    : '';
+  const allAttributes = classAttributeString ? ` ${classAttributeString}` : '';
+  const content = stringifyChildren(element);
+  return `<${tag}${allAttributes}>${content}</${tag}>`;
+}
+```
+- **Cookie Parsing Without Response Modification Traps**: Native Fetch `Response.redirect()` constructs immutable response objects. Trying to set cookies on the redirected object throws a `TypeError`:
+```typescript
+export function createPlaygroundResponse(playgroundName: PlaygroundName): Response {
+  const playgroundUrl = PlaygroundConfigs[playgroundName];
+  // CANNOT use Response.redirect(url): headers are immutable by spec!
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: playgroundUrl,
+      'Set-Cookie': `${CookieName}=${playgroundName}`,
+    },
+  });
+}
+```
+
+### 4. Backend Concurrency & Memory Safety
+- **File System Queueing (EMFILE Prevention)**: Unmetered file I/O operations will crash Node.js processes on operating systems with low `ulimit -n` limits (typically 1024). Docusaurus routes all async file calls through an explicit queue:
+```typescript
+const DefaultFileOperationConcurrency = 100;
+const FileOperationQueue = new PQueue({
+  concurrency: getFileOperationConcurrency(),
+});
+export function queueFileOperation<T>(operation: () => Promise<T>): Promise<T> {
+  return FileOperationQueue.add(operation);
+}
+```
+- **Realpath Native Invariant vs JS Fallback**: `fs/promises.realpath` uses the native C++ OS implementation, which alters drive letter casing on Windows (e.g. `c:\` to `C:\`) and breaks Node module cache equality. Docusaurus binds explicitly to JavaScript implementation:
+```typescript
+import fsCallback from 'node:fs';
+import {promisify} from 'node:util';
+
+export async function realpath(filePath: string): Promise<string> {
+  // Uses JS implementation rather than native C++ to prevent path-casing cache divergence
+  return promisify(fsCallback.realpath)(filePath);
+}
+```
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Cause Chaining in Filesystem Errors**: Dropping original system errors leaves developers blind to permissions issues vs missing paths. Use `{cause: err}`:
+```typescript
+export async function readJSON(filePath: string): Promise<unknown> {
+  try {
+    const content = await fs.readFile(filePath, 'utf8');
+    return JSON.parse(stripUTF8BOM(content));
+  } catch (err) {
+    throw new Error(
+      logger.interpolate`Failed to read JSON file at path=${path.relative(
+        process.cwd(),
+        filePath,
+      )}`,
+      {cause

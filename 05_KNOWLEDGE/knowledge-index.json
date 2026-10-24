@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T20:19:25.223Z",
+  "last_updated": "2026-10-24T20:31:21.094Z",
   "total_verified_learnings": 1079,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37370,8 +37370,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "9981dd1a",
-      "content_hash": "fab7ef7f5b1a8ead94700c4c2ce6e51b574330af5f147530ed5da230ad323e01",
+      "source_version": "71deabab",
+      "content_hash": "963ee2a9b82f04d4da6bf7d912248fb14057e23f27d2f62653cb2da1edebe08b",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -37394,6 +37394,21 @@
           "number": 3594,
           "title": "ast/scanner: Report non-breaking spaces as illegal characters (#9415)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3955,
+          "title": "AST Dynamic Node Exhaustion Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3956,
+          "title": "Dual-Stack CIDR Containment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3957,
+          "title": "File Extension Canonicalization Parity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37401,7 +37416,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T19:05:45.162Z",
+      "verified_at": "2026-10-24T20:31:21.081Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47939,8 +47954,8 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "6d4e013c",
-      "content_hash": "1931a22846078e0a1e8343bae0d5b15fb41f26c6a4f9244b121828eb01852fb8",
+      "source_version": "3c809f9d",
+      "content_hash": "49ab057325dbbcc7a7a6b6f0b5ec8cdf3a5f415f983131686c3adc5f1ea725c3",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
@@ -47958,6 +47973,21 @@
           "number": 3582,
           "title": "Activate cargo-toml-sync job in CI (#8025)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3949,
+          "title": "Invalidation Closures in Asynchronous / Concurrent Caches",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3950,
+          "title": "Double-Handshake Asynchronous Task Shutdown",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3951,
+          "title": "Big-Endian Lexicographical Byte Vector Incrementation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47965,7 +47995,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:14:08.954Z",
+      "verified_at": "2026-10-24T20:31:15.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -83140,8 +83170,8 @@
       "slug": "facebook-docusaurus",
       "platform": "github",
       "source_url": "https://github.com/facebook/docusaurus",
-      "source_version": "7b6826b8",
-      "content_hash": "0d3e7c4a91d43dec09916a868bf32c5f42bb273c51cf325b3f0e6d32663c36d7",
+      "source_version": "4e6fe616",
+      "content_hash": "5ee7dca0478958971f93923ec0079abe28bda71bf2059097f6e42d3d879eeb37",
       "dossier_path": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
       "promoted_rules": [
@@ -83159,6 +83189,21 @@
           "number": 1697,
           "title": "Non-Destructive Preservation of Global Singletons During Plugin Dynamic Augmentation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3952,
+          "title": "Persistent Cache Key Target-Resolution Law",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3953,
+          "title": "Leaf-Only Asynchronous Task Limiting Law",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3954,
+          "title": "Localization Matrix Schema Invariant Law",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -83166,7 +83211,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:01:34.917Z",
+      "verified_at": "2026-10-24T20:31:18.038Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -116237,6 +116282,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T20:19:25.204Z"
+    },
+    "rule-3949": {
+      "learning_id": "rule-3949",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3949,
+      "title": "Invalidation Closures in Asynchronous / Concurrent Caches",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "3c809f9d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:31:15.862Z"
+    },
+    "rule-3950": {
+      "learning_id": "rule-3950",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3950,
+      "title": "Double-Handshake Asynchronous Task Shutdown",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "3c809f9d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:31:15.862Z"
+    },
+    "rule-3951": {
+      "learning_id": "rule-3951",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3951,
+      "title": "Big-Endian Lexicographical Byte Vector Incrementation",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "3c809f9d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:31:15.862Z"
+    },
+    "rule-3952": {
+      "learning_id": "rule-3952",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3952,
+      "title": "Persistent Cache Key Target-Resolution Law",
+      "source_url": "https://github.com/facebook/docusaurus",
+      "source_version": "4e6fe616",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:31:18.038Z"
+    },
+    "rule-3953": {
+      "learning_id": "rule-3953",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3953,
+      "title": "Leaf-Only Asynchronous Task Limiting Law",
+      "source_url": "https://github.com/facebook/docusaurus",
+      "source_version": "4e6fe616",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:31:18.038Z"
+    },
+    "rule-3954": {
+      "learning_id": "rule-3954",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3954,
+      "title": "Localization Matrix Schema Invariant Law",
+      "source_url": "https://github.com/facebook/docusaurus",
+      "source_version": "4e6fe616",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:31:18.038Z"
+    },
+    "rule-3955": {
+      "learning_id": "rule-3955",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3955,
+      "title": "AST Dynamic Node Exhaustion Invariant",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "71deabab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:31:21.081Z"
+    },
+    "rule-3956": {
+      "learning_id": "rule-3956",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3956,
+      "title": "Dual-Stack CIDR Containment Invariant",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "71deabab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:31:21.081Z"
+    },
+    "rule-3957": {
+      "learning_id": "rule-3957",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3957,
+      "title": "File Extension Canonicalization Parity Invariant",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "71deabab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:31:21.081Z"
     }
   },
   "aliases": {
