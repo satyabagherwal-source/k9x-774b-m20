@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-24T19:28:40.769Z",
+  "last_updated": "2026-10-24T19:35:06.274Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5466,14 +5466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-invertase-react-native-firebase",
-      "content_hash": "aad725d3e7cafaec7a27e240f6c55a78a514280e53b1fc4d2602d563f2aa9011",
-      "verified_at": "2026-10-20T11:09:05.521Z",
+      "content_hash": "198da7b76d0aa07344ac7f092d3d5104848e1661b66e37cb4b534b6e9d4e01b4",
+      "verified_at": "2026-10-24T19:34:59.933Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:09:05.521Z"
+      "last_updated": "2026-10-24T19:34:59.933Z"
     },
     "PeerDB-io/peerdb": {
       "repository": "PeerDB-io/peerdb",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "2c62e6de47d0d0cef848048bc286cc2b4a09b6d2ffc4f12782a33324b0adcd0a",
-      "verified_at": "2026-10-20T18:20:50.981Z",
+      "content_hash": "ee48504ba0858da7a602982b7614538e74466ae477f204bc1cdc9f0af259e248",
+      "verified_at": "2026-10-24T19:35:06.273Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T18:20:50.981Z"
+      "last_updated": "2026-10-24T19:35:06.273Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -15914,6 +15914,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-24T19:22:30.869Z"
+    },
+    "KRAFTON/Raon-1-mini-preview": {
+      "repository": "KRAFTON/Raon-1-mini-preview",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-krafton-raon-1-mini-preview",
+      "content_hash": "6297a4e81503854fefa352f55818b98da1855559a834a5cffbd45a6ee0259ddd",
+      "verified_at": "2026-10-24T19:34:51.737Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-24T19:34:51.737Z"
+    },
+    "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF": {
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+      "content_hash": "78368454b7e83365d15b5f37c7ede172beb608d575401a2f1053aca4458e4b90",
+      "verified_at": "2026-10-24T19:34:54.448Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-24T19:34:54.448Z"
+    },
+    "Comfy-Org/Fibo-2.0": {
+      "repository": "Comfy-Org/Fibo-2.0",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-comfy-org-fibo-2-0",
+      "content_hash": "a5a5dc18fadc36df27acab5008ef9d59c04d5ec1c373d48062f257dc26fdf8ac",
+      "verified_at": "2026-10-24T19:35:00.407Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-24T19:35:00.407Z"
     }
   },
   "repos": {

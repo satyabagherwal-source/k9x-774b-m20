@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T19:28:40.724Z",
-  "total_verified_learnings": 1075,
+  "last_updated": "2026-10-24T19:35:06.200Z",
+  "total_verified_learnings": 1078,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -13931,8 +13931,8 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "f366493a",
-      "content_hash": "2c62e6de47d0d0cef848048bc286cc2b4a09b6d2ffc4f12782a33324b0adcd0a",
+      "source_version": "39a0a4b5",
+      "content_hash": "ee48504ba0858da7a602982b7614538e74466ae477f204bc1cdc9f0af259e248",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
@@ -13952,7 +13952,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T18:20:50.906Z",
+      "verified_at": "2026-10-24T19:35:06.182Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27714,14 +27714,19 @@
       "slug": "invertase-react-native-firebase",
       "platform": "github",
       "source_url": "https://github.com/invertase/react-native-firebase",
-      "source_version": "64d9b691",
-      "content_hash": "aad725d3e7cafaec7a27e240f6c55a78a514280e53b1fc4d2602d563f2aa9011",
+      "source_version": "c65e1ee3",
+      "content_hash": "198da7b76d0aa07344ac7f092d3d5104848e1661b66e37cb4b534b6e9d4e01b4",
       "dossier_path": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "promoted_rules": [
         {
           "number": 3142,
           "title": "remote-config, web): preserve read-only navigator state",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3920,
+          "title": "crashlytics, ios): time out SPM upload-symbols so a stalled upload cannot hang t",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -27730,7 +27735,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:09:05.433Z",
+      "verified_at": "2026-10-24T19:34:59.851Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115519,6 +115524,217 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T19:28:40.717Z"
+    },
+    "learn-huggingface-krafton-raon-1-mini-preview": {
+      "learning_id": "learn-huggingface-krafton-raon-1-mini-preview",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "KRAFTON/Raon-1-mini-preview",
+      "repository": "KRAFTON/Raon-1-mini-preview",
+      "slug": "hf-krafton-raon-1-mini-preview",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+      "source_version": "hf-krafton-raon-1-mini-preview",
+      "content_hash": "6297a4e81503854fefa352f55818b98da1855559a834a5cffbd45a6ee0259ddd",
+      "dossier_path": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-24T19:34:51.660Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf": {
+      "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "slug": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "content_hash": "78368454b7e83365d15b5f37c7ede172beb608d575401a2f1053aca4458e4b90",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3917,
+          "title": "Non-Uniform Precision Allocation Under Hard Size Constraints",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3918,
+          "title": "Gumbel-Softmax Relaxation for Discrete Quantization Optimization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3919,
+          "title": "MoE Expert Sparsity as a Memory Optimization Lever",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-24T19:34:54.374Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3917": {
+      "learning_id": "rule-3917",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3917,
+      "title": "Non-Uniform Precision Allocation Under Hard Size Constraints",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:34:54.374Z"
+    },
+    "rule-3918": {
+      "learning_id": "rule-3918",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3918,
+      "title": "Gumbel-Softmax Relaxation for Discrete Quantization Optimization",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:34:54.374Z"
+    },
+    "rule-3919": {
+      "learning_id": "rule-3919",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3919,
+      "title": "MoE Expert Sparsity as a Memory Optimization Lever",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:34:54.374Z"
+    },
+    "rule-3920": {
+      "learning_id": "rule-3920",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3920,
+      "title": "crashlytics, ios): time out SPM upload-symbols so a stalled upload cannot hang t",
+      "source_url": "https://github.com/invertase/react-native-firebase",
+      "source_version": "c65e1ee3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:34:59.851Z"
+    },
+    "learn-huggingface-comfy-org-fibo-2-0": {
+      "learning_id": "learn-huggingface-comfy-org-fibo-2-0",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Comfy-Org/Fibo-2.0",
+      "repository": "Comfy-Org/Fibo-2.0",
+      "slug": "hf-comfy-org-fibo-2.0",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+      "source_version": "hf-comfy-org-fibo-2.0",
+      "content_hash": "a5a5dc18fadc36df27acab5008ef9d59c04d5ec1c373d48062f257dc26fdf8ac",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3921,
+          "title": "Tensor Key Fusion Invariant for Attention Mechanisms",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3922,
+          "title": "Mixed-Precision Quantization Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3923,
+          "title": "FFN Hidden Width Zero-Padding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-24T19:35:00.331Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3921": {
+      "learning_id": "rule-3921",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3921,
+      "title": "Tensor Key Fusion Invariant for Attention Mechanisms",
+      "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+      "source_version": "hf-comfy-org-fibo-2.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:35:00.331Z"
+    },
+    "rule-3922": {
+      "learning_id": "rule-3922",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3922,
+      "title": "Mixed-Precision Quantization Boundary Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+      "source_version": "hf-comfy-org-fibo-2.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:35:00.331Z"
+    },
+    "rule-3923": {
+      "learning_id": "rule-3923",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3923,
+      "title": "FFN Hidden Width Zero-Padding Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+      "source_version": "hf-comfy-org-fibo-2.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:35:00.331Z"
     }
   },
   "aliases": {

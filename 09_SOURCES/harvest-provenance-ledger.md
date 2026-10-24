@@ -4568,3 +4568,8 @@ Every entry in this ledger must capture:
 | `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `7bd9889c` | Multi-dimensional audit evidence | 2026-10-24T19:28:36.263Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `15d89708` | Multi-dimensional audit evidence | 2026-10-24T19:28:40.233Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `6741854c` | Multi-dimensional audit evidence | 2026-10-24T19:28:40.759Z |
+| `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-10-24T19:34:51.729Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-24T19:34:54.439Z |
+| `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `c65e1ee3` | Multi-dimensional audit evidence | 2026-10-24T19:34:59.920Z |
+| `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-24T19:35:00.395Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `39a0a4b5` | Multi-dimensional audit evidence | 2026-10-24T19:35:06.263Z |

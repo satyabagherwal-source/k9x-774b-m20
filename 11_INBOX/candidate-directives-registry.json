@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T19:28:36.267Z",
+  "last_updated": "2026-10-24T19:35:06.269Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2532,6 +2532,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-rustcrypto-hashes"
+    },
+    {
+      "id": "CD-T4BG",
+      "directive_title": "docs: explain storage-level tenant database isolation (#1225)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "HelixDB/helix-db",
+      "source_commit": "39a0a4b5",
+      "date_staged": "2026-10-24",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-helixdb-helix-db"
     }
   ]
 }

@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-Y9LP",
-    "timestamp": "2026-10-20T22:20:23.197Z",
-    "repository": "kubernetes-sigs/aws-load-balancer-controller",
-    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-    "contentHash": "32248ebbe21a19ed0e48ba5b146fa3da11105f31fcf0f580fbb31c9199021bca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-698Q",
-    "timestamp": "2026-10-20T22:26:35.978Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-    "contentHash": "c25eba8dff0b3a93c039409e3e18818a4af682519b67cec6113121e9b3186f2d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-69M8",
-    "timestamp": "2026-10-20T22:26:36.464Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "2665cfc3ce9233bdd3084dc3c2ae6550d3c79c5bb8a2f76f53a4b570ed2a9b9b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-E9HE",
-    "timestamp": "2026-10-20T22:32:49.538Z",
-    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-    "contentHash": "bb34440346b0cd1fc6d91819348cbe6dec69b1696f478b5ef743861fc90275bd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-EEKZ",
-    "timestamp": "2026-10-20T22:32:56.147Z",
-    "repository": "meshtastic/Meshtastic-Android",
-    "learningId": "learn-github-meshtastic-meshtastic-android",
-    "contentHash": "015556942819f9f12063d0fbf99d75bd136d550b2f6c060c9774d80f4d97af94",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-EGTF",
     "timestamp": "2026-10-20T22:32:59.043Z",
     "repository": "projectcontour/contour",
@@ -7492,6 +7417,81 @@
     "contentHash": "7b2169e6a550439ab1092aaaff5943839a66575d84b59bc6055e911edd00fe3c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-ST3I",
+    "timestamp": "2026-10-24T19:34:51.726Z",
+    "repository": "KRAFTON/Raon-1-mini-preview",
+    "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
+    "contentHash": "6297a4e81503854fefa352f55818b98da1855559a834a5cffbd45a6ee0259ddd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-SV6S",
+    "timestamp": "2026-10-24T19:34:54.436Z",
+    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+    "contentHash": "78368454b7e83365d15b5f37c7ede172beb608d575401a2f1053aca4458e4b90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-SZF0",
+    "timestamp": "2026-10-24T19:34:59.916Z",
+    "repository": "invertase/react-native-firebase",
+    "learningId": "learn-github-invertase-react-native-firebase",
+    "contentHash": "198da7b76d0aa07344ac7f092d3d5104848e1661b66e37cb4b534b6e9d4e01b4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-SZS8",
+    "timestamp": "2026-10-24T19:35:00.392Z",
+    "repository": "Comfy-Org/Fibo-2.0",
+    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+    "contentHash": "a5a5dc18fadc36df27acab5008ef9d59c04d5ec1c373d48062f257dc26fdf8ac",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-T4B8",
+    "timestamp": "2026-10-24T19:35:06.260Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "ee48504ba0858da7a602982b7614538e74466ae477f204bc1cdc9f0af259e248",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

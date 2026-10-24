@@ -4412,3 +4412,11 @@ https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash
 # --- Automatically Discovered by AI Scout Engine [2026-10-24T19:16:57.985Z] ---
 # [AI-AGENTS] NomaDamas/CozyClay (798 score) - Open source previs software in the browser: block a scene, pose characters, auth
 https://github.com/NomaDamas/CozyClay
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-24T19:34:43.334Z] ---
+# [HUGGINGFACE-AI-MODELS] ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF (3840 score) - Verified Hugging Face Model: ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF (
+https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF
+# [HUGGINGFACE-AI-MODELS] Comfy-Org/Fibo-2.0 (3600 score) - Verified Hugging Face Model: Comfy-Org/Fibo-2.0 (160 likes, 111611 downloads)
+https://huggingface.co/Comfy-Org/Fibo-2.0
+# [HUGGINGFACE-AI-MODELS] KRAFTON/Raon-1-mini-preview (2527 score) - Verified Hugging Face Model: KRAFTON/Raon-1-mini-preview (161 likes, 917 downloa
+https://huggingface.co/KRAFTON/Raon-1-mini-preview

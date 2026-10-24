@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source**: github ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
-> **Source Version**: `64d9b691`  
+> **Source Version**: `c65e1ee3`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T11:09:05.078Z  
+> **Timestamp**: 2026-10-24T19:34:59.562Z  
 > **Learning ID**: `learn-github-invertase-react-native-firebase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T11:09:04.656Z  
+> **Harvest Timestamp**: 2026-10-24T19:34:58.737Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🔥 A well-tested feature-rich modular Firebase implementation for React Native. Supports both iOS & Android platforms for all Firebase services.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12320 stars
+- **Stars / Engagement**: 12322 stars
 
 ---
 
@@ -1569,14 +1569,13 @@ extern NSString *const DEFAULT_APP_NAME;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9380** (2026-10-20): **fix(remote-config, web): preserve read-only navigator state**
-  *Symptoms*: The core problem affecting analytics on web is well described here:  - Related https://github.com/invertase/react-native-firebase/pull/9235  This PR focuses on the exact same problem that affects remote-config on web too.
+- **Issue #9396** (2026-10-23): **fix(ci): branch-aware publish (docs gate, dist-tag, recovery)**
+  *Symptoms*: ### Description  Make Publish safe for release branches: do not deploy the API reference unless the run is on `main` after a successful npm job; off-`main`, publish with `--dist-tag` equal to the branch name (and pin npm to `12.2.1`); on a failed `lerna publish from-package`, write a large workflow-summary notice that partial publish recovery is achieved by rerunning the exact same publish. Document that maintainer policy in OKF and correct CONTRIBUTING’s stale “merge to main auto-publishes” claim.  **Merge instruction (required):** please **rebase-merge** this PR (do **not** squash). Per-commit history on `main` is needed so only the workflow commits can be `cherry-pick -x`’d onto `release-v26` afterward. Intentional exception to the usual squash-merge preference.  ### Related issues  N/A — maintainer publish / release-branch automation.  ### Release Summary  Branch-aware Publish: main-only API docs deploy, branch-named npm dist-tags off main, partial-publish recovery summary, maintainer docs.  ### Checklist  - I read the [Contributor Guide](https://github.com/invertase/react-native-firebase/blob/main/CONTRIBUTING.md) and followed the process outlined there for submitting PRs.   - [x] Yes - My change supports the following platforms;   - [ ] `Android`   - [ ] `iOS`   - [x] `Other` (CI publish workflow + maintainer docs) - My change includes tests;   - [ ] `e2e` tests added or updated in `packages/**/e2e`   - [ ] `jest` tests added or updated in `packages/**/__tests__` - [ ] 
   **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9380) <br/>All committers have signed the CLA.
-  > ## [Codecov](https://app.codecov.io/gh/invertase/react-native-firebase/pull/9380?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase) Report :x: Patch coverage is `33.33333%` with `2 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 75.00%. Comparing base ([`0c7e942`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/0c7e942bca361f1765abaf233bf447d795718eff?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)) to head ([`8ce999d`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/8ce999d5a27d88c604d8b8e2b755c6f176ea5f3a?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)).  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff     
+  > ## [Codecov](https://app.codecov.io/gh/invertase/react-native-firebase/pull/9396?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 75.10%. Comparing base ([`b12d847`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/b12d8477bce15632e4391d80e8d125bf2a492402?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)) to head ([`3dba13d`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/3dba13dffaf77a4fbab227825509dfee59c59e81?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)). :warning: Report is 4 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@    
 
-- **Issue #9379** (2026-10-19): **fix(app, ios): clarify SPM static linkage error when use_frameworks is absent**
-  *Symptoms*: - Related to #9354  ### Description  In SPM mode (the default on React Native 0.75+), `pod install` fails with `SPM + static linkage is not supported` whenever any app target links pods statically. That includes a Podfile with **no `use_frameworks!` at all**, which is the stock React Native / bare Expo setup: CocoaPods then builds static libraries. The old message only mentioned `use_frameworks! :linkage => :static`, so users without that line didn't recognize their setup and went down CocoaPods / modular-header workarounds (see #9354).  This PR changes the message only. Which targets fail is unchanged.  - The message now lists the static setup it detected, per target:   - no `use_frameworks!` (or `use_frameworks! false`): pods build as static libraries   - `use_frameworks! :linkage => :static`, including `USE_FRAMEWORKS=static` and Expo `useFrameworks: "static"` - The fix section only recommends dynamic linkage, the direction the upcoming major takes. It no longer offers the `$RNFirebaseDisableSPM` opt-out:   - Podfile: `use_frameworks! :linkage => :dynamic`. This is the durable fix.   - Stock template Podfile: `USE_FRAMEWORKS=dynamic pod install`, which has to be set for every `pod install`, including CI.   - Expo: `ios.useFrameworks: "dynamic"` in `expo-build-properties`, then `npx expo prebuild`. Edit `ios/Podfile.properties.json` only when `ios/` is maintained by hand.   - The message ends with a link to https://rnfirebase.io/ios-spm. - The `docs/ios-spm.mdx` troubleshoo
+- **Issue #9393** (2026-10-23): **fix(app, sdk): bump Firebase iOS SDK to 12.19.3**
+  *Symptoms*: Bumps Firebase iOS SDK 12.18.0 → 12.19.3 for v26, the last major with CocoaPods support. 12.19.3 removes root certs for compromised eMudhra intermediate CAs from the embedded trust store (Cloud Firestore security update, [release notes](https://firebase.google.com/support/release-notes/ios)). v26 counterpart of #9391 (v27, SDK 13.1.1).  - `sdkVersions.ios.firebase` → 12.19.3 (SPM minimum), `docs/index.mdx` examples and the `test-rn-bare` Xcode pin updated - CocoaPods: 12.19.3 is only published for `Firebase`, `FirebaseCore` and `FirebaseFirestore`. Every other pod stops at 12.19.0, so the exact pins in the podspecs (e.g. `FirebaseAnalytics/Core`, `FirebaseCoreExtension`) could not resolve. When the default version is used, the podspecs now declare `~> 12.19.0` instead, so each pod resolves to its newest patch. A version pinned via `$FirebaseSDKVersion` / `FIREBASE_SDK_VERSION` stays exact. - `test_expo_ios_link` and `test_rn_bare_ios_build` now also run on `packages/app/package.json` changes, so SDK bumps on this branch exercise them (`main` already does this)  No 12.18.x patch exists and 12.19.1 / 12.19.2 aren't on CocoaPods trunk, so this crosses a minor. 12.19.0 adds the `GeminiLanguageModel` public preview plus some Auth and App Check build/crash fixes.  Targets `release-v26`, cut from `v26.4.0`.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1593,440 +1592,152 @@ extern NSString *const DEFAULT_APP_NAME;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `64d9b691` (2026-10-20)
-**Commit Message**: fix(remote-config, web): preserve read-only navigator state
+### Incident Patch 1: `1cdb7de2` (2026-10-23)
+**Commit Message**: fix(crashlytics, ios): time out SPM upload-symbols so a stalled upload cannot hang the build
 
-Fix for "NativeFirebaseError: [remoteConfig/unknown] Cannot set property onLine of #<Navigator> which has only a getter"
+upload-symbols has no timeout of its own. A stalled request left the [RNFB] Crashlytics Configuration phase running until the surrounding build timed out. The script already treats an upload failure as a warning, so a timeout now takes the same path (default 300s, override with RNFB_CRASHLYTICS_UPLOAD_TIMEOUT_SEC).
 
-**File**: `packages/remote-config/lib/web/RNFBConfigModule.ts` (modified, +8/-1)
+**File**: `packages/crashlytics/__tests__/ios_config.test.ts` (modified, +27/-1)
 ```diff
-@@ -65,7 +65,14 @@ const defaultConfigForInstance: DefaultConfigForInstance = {};
- const onConfigUpdateListeners: ConfigUpdateListeners = {};
+@@ -46,6 +46,13 @@ echo "error: stub forced failure" >&2
+ exit 1
+ `;
  
- function makeGlobalsAvailable(): void {
--  (navigator as Navigator & { onLine: boolean }).onLine = true;
-+  const navigatorObject = globalThis.navigator;
-+  if (navigatorObject && !('onLine' in navigatorObject) && Object.isExtensible(navigatorObject)) {
-+    Object.defineProperty(navigatorObject, 'onLine', {
-+      configurable: true,
-+      value: true,
-+      writable: true,
-+    });
-+  }
-   makeIDBAvailable();
- }
++// Never returns on its own — simulates a stalled network request in upload-symbols.
++// `exec` keeps this a single process like the real binary, so the timeout's SIGALRM
++// kills the hang itself rather than an orphaned child holding the output pipes open.
++const HANGS_STUB = `#!/usr/bin/env bash
++exec sleep 60
++`;
++
+ const ALWAYS_SUCCEEDS_STUB = `#!/usr/bin/env bash
+ exit 0
+ `;
+@@ -90,12 +97,13 @@ describe('Crashlytics ios_config.sh SPM dSYM upload', function () {
+     rmSync(projectDir, { recursive: true, force: true });
+   });
  
+-  function runIosConfig() {
++  function runIosConfig(extraEnv: Record<string, string> = {}) {
+     return spawnSync('bash', [SCRIPT_PATH], {
+       cwd: projectDir,
+       encoding: 'utf8',
+       env: {
+         PATH: process.env.PATH,
++        ...extraEnv,
+         PROJECT_DIR: projectDir,
+         TARGET_NAME: targetName,
+         BUILD_DIR: buildDir,
+@@ -157,6 +165,24 @@ describe('Crashlytics ios_config.sh SPM dSYM upload', function () {
+     expect(result.stdout).toContain('warning:');
+     expect(result.stdout).toContain('upload-symbols (SPM) failed');
+   });
++
++  it('warns and continues without failing the build when SPM upload-symbols hangs past the timeout', function () {
++    const targetFolderPlist = join(projectDir, targetName, 'GoogleService-Info.plist');
++    mkdirSync(join(projectDir, targetName), { recursive: true });
++    writeFileSync(targetFolderPlist, 'plist-contents');
++
++    writeFileSync(uploadSymbolsPath, HANGS_STUB);
++    chmodSync(uploadSymbolsPath, 0o755);
++
++    const startedAt = Date.now();
++    const result = runIosConfig({ RNFB_CRASHLYTICS_UPLOAD_TIMEOUT_SEC: '1' });
++    const elapsedMs = Date.now() - startedAt;
++
++    expect(result.status).toBe(0);
++    expect(elapsedMs).toBeLessThan(30000);
++    expect(result.stdout).toContain('warning:');
++    expect(result.stdout).toContain('failed or timed out');
++  });
+ });
+ 
+ describe('Crashlytics ios_config.sh CocoaPods / framework run', function () {
 ```
 
----
-
-### Incident Patch 2: `cdf99cde` (2026-10-19)
-**Commit Message**: fix(app, ios): clarify SPM static linkage error when use_frameworks is absent
-
-**File**: `docs/ios-spm.mdx` (modified, +12/-1)
+**File**: `packages/crashlytics/ios_config.sh` (modified, +14/-4)
 ```diff
-@@ -34,6 +34,8 @@ use_frameworks! :linkage => :dynamic
- ```
- 
- Do not use RNFB's SPM mode with `use_frameworks! :linkage => :static`.
-+A Podfile with no `use_frameworks!` line (or `use_frameworks! false`) is static
-+linkage too — that is the stock React Native / bare Expo default.
- firebase-ios-sdk SPM products are automatic libraries (plain `.library(...)`,
- not `type: .dynamic`), so each pod that depends on them embeds its own copy.
- With static pod linkage those copies collide at link time as duplicate-symbol
-@@ -200,7 +202,16 @@ time with duplicate symbols (and `pod install` rejects the combination).
-   Remove `$RNFirebaseDisableSPM = true` and Expo `ios.disableSPM`. Use
-   `use_frameworks! :linkage => :dynamic` and React Native 0.75+.
- - **`pod install` fails with "SPM + static linkage is not supported":** Use
--  dynamic linkage (`use_frameworks! :linkage => :dynamic`).
-+  dynamic linkage (`use_frameworks! :linkage => :dynamic`). A Podfile with no
-+  `use_frameworks!` line (or `use_frameworks! false`), the stock React Native /
-+  Expo default, is static linkage too.
-+  - With the stock template Podfile, `USE_FRAMEWORKS=dynamic pod install` also
-+    works, but it must be set for every `pod install` (including CI); the
-+    Podfile line is the durable fix.
-+  - Expo: set `ios.useFrameworks` to `"dynamic"` in the `expo-build-properties`
-+    plugin (see [Expo projects](#expo-projects)), then re-run
-+    `npx expo prebuild`. Only if you maintain `ios/` by hand (no prebuild), set
-+    `"ios.useFrameworks": "dynamic"` in `ios/Podfile.properties.json` instead.
- - **`FirebaseApp.app()` is `nil` / Auth looks signed-out inside another native
-   pod, or runtime logs duplicate `FIRApp` classes:** SPM mode cannot share one
-   `FirebaseCore` across dynamic pod frameworks. See
-```
-
-**File**: `packages/app/__tests__/firebase_spm_shape_test.rb` (modified, +42/-0)
-```diff
-@@ -137,6 +137,48 @@ def test_build_type_static_matches_real_linkage_semantics
-       assert Pod::BuildType.static_library.static?
-     end
- 
-+    # Real Pod::Podfile target definitions (no install context needed) for
-+    # every Podfile linkage form rnfirebase_fail_if_spm_static_linkage!
-+    # distinguishes: `build_type.static?` selects the failing targets and
-+    # `uses_frameworks?` splits "no use_frameworks!" (static libraries) from
-+    # `use_frameworks! :linkage => :static`. MockTargetDefinition in
-+    # firebase_spm_test.rb assumes exactly these pairs.
-+    def test_target_definition_static_and_uses_frameworks_match_podfile_linkage
-+      podfile = Pod::Podfile.new do
-+        # No block: a target with no `use_frameworks!` line at all.
-+        target 'NoFrameworks'
-+        target 'FrameworksFalse' do
-+          use_frameworks! false
-+        end
-+        target 'StaticFrameworks' do
-+          use_frameworks! linkage: :static
-+          target 'StaticChild' do
-+            inherit! :complete
-+          end
-+        end
-+        target 'DynamicFrameworks' do
-+          use_frameworks! linkage: :dynamic
-+        end
-+      end
-+
-+      expected = {
-+        'NoFrameworks' => [true, false],
-+        'FrameworksFalse' => [true, false],
-+        'StaticFrameworks' => [true, true],
-+        'DynamicFrameworks' => [false, true],
-+        'StaticChild' => [true, true]
-+      }
-+      expected.each do |name, pair|
-+        definition = podfile.target_definitions.fetch(name)
-+        assert_equal pair, [definition.build_type.static?, definition.uses_frameworks?],
-+                     "Pod::Podfile target `#{name}` no longer reports " \
-+                     "[build_type.static?, uses_frameworks?] == #{pair.inspect} -- " \
-+                     'rnfirebase_fail_if_spm_static_linkage! (and MockTargetDefinition) ' \
-+                     'rely on this pair to select and label static-linkage targets.'
-+      end
-+      assert_equal 'StaticFrameworks', podfile.target_definitions.fetch('StaticChild').parent.name
-+    end
-+
-     def test_pod_target_exposes_name_and_build_type
-       assert Pod::PodTarget.method_defined?(:name)
-       build_type_defined = Pod::PodTarget.method_defined?(:build_type) ||
-```
-
-**File**: `packages/app/__tests__/firebase_spm_test.rb` (modified, +79/-7)
-```diff
-@@ -253,11 +253,19 @@ def ==(other)
-   end
- end
- 
-+# `uses_frameworks: false` models a Podfile with no `use_frameworks!` at all:
-+# real CocoaPods then reports a `static_library` build type, which is also
-+# `static?`, so the check must name that case distinctly in its message.
- class MockTargetDefinition
-   attr_reader :build_type
- 
--  def initialize(static: false)
--    @build_type = MockBuildType.new(static: static)
-+  def initialize(static: false, uses_frameworks: true)
-+    @uses_frameworks = uses_frameworks
-+    @build_type = uses_frameworks ? MockBuildType.new(static: static) : MockBuildType.static_library
-+  end
-+
-+  def uses_frameworks?
-+    @uses_frameworks
-   end
- end
- 
-@@ -272,10 +280,10 @@ def initialize(static: false)
- class MockAggregateTarget
-   attr_reader :user_project, :name, :target_definition
- 
--  def initialize(user_project, name: 'Pods-testing', static_linkage: false)
-+  def initialize(user_project, name: 'Pods-testing', static_linkage: false, uses_frameworks: true)
-     @user_project = user_project
-     @name = name
--    @target_definition = MockTargetDefinition.new(static: static_linkage)
-+    @target_definition = MockTargetDefinition.new(static: static_linkage, uses_frameworks: uses_frameworks)
-   end
- end
- 
-@@ -2239,9 +2247,73 @@ def test_fail_fast_raises_pod_informative_when_spm_active_and_a_target_is_static
-       rnfirebase_fail_if_spm_static_linkage!(installer)
-     end
-     assert_includes error.message, 'SPM + static linkage is not supported'
--    assert_includes error.message, 'Pods-testing'
--    assert_includes error.message, 'use_frameworks! :linkage => :dynamic'
--    refute_includes error.message, '$RNFirebaseDisableSPM = true'
-+    assert_includes error.message, '- `use_frameworks! :linkage => :static` ' \
-+                                   '(incl. `USE_FRAMEWORKS=static` / Expo `useFrameworks: "static"`): Pods-testing'
-+    refute_includes error.message, 'no `use_frameworks!`'
-+    assert_static_linkage_fix_wording(error.message)
-+  end
-+
-+  # Remediation wording shared by every static-linkage failure: dynamic
-+  # linkage only (Podfile line, `USE_FRAMEWORKS=dynamic` env with its
-+  # every-install caveat, Expo plugin config + prebuild with the generated
-+  # Podfile.properties.json only for hand-maintained ios/). The SPM opt-out
-+  # must not be offered here.
-+  def assert_static_linkage_fix_wording(message)
-+    assert_includes message, "Fix your Podfile to use dynamic linkage, then run `pod install` again:\n\n  " \
-+                             "use_frameworks! :linkage => :dynamic\n"
-+    assert_includes message, 'With the stock template Podfile you can instead run ' \
-+                             '`USE_FRAMEWORKS=dynamic pod install`, but it must be set for every `pod install` ' \
-+                             '(including CI) or linkage reverts to static; the Podfile line above is the durable fix.'
-+    assert_includes message, 'Expo: set `ios.useFrameworks` to `"dynamic"` in the `expo-build-properties` ' \
-+                             'plugin config, then re-run `npx expo prebuild`'
-+    assert_includes message, 'Only if you maintain `ios/` by hand (no prebuild), ' \
-+                             'set `"ios.useFrameworks": "dynamic"` in `ios/Podfile.properties.json`'
-+    assert_includes message, 'See https://rnfirebase.io/ios-spm'
-+    refute_includes message, 'RNFirebaseDisableSPM'
-+    refute_includes message, 'disableSPM'
-+    refute_includes message, 'Opt out of SPM'
-+  end
-+
-+  def test_fail_fast_names_missing_use_frameworks_as_static_libraries
-+    load_firebase_spm
-+    RNFirebaseSPM.activate!('12.10.0')
-+
-+    # Stock React Native / bare Expo Podfile: no `use_frameworks!` line, so
-+    # CocoaPods builds every pod as a static library. That is static linkage
-+    # too, but the message must not only point at a `use_frameworks!` line
-+    # the user doesn't have.
-+    installer = MockInstaller.new([
-+                                    MockAggregateTarget.new(nil, name: 'Pods-testing', uses_frameworks: false)
-+                                  ])
-+
-+    error = assert_raises(Pod::Informative) do
-+      rnfirebase_fail_if_spm_static_linkage!(installer)
-+    end
-+    assert_includes error.message,
-+                    '- no `use_frameworks!` (or `use_frameworks! false`) -- ' \
-+                    'pods build as static libraries: Pods-testing'
-+    refute_includes error.message, '- `use_frameworks! :linkage => :static`'
-+    assert_static_linkage_fix_wording(error.message)
-+  end
-+
-+  def test_fail_fast_groups_static_library_and_static_framework_targets
-+    load_firebase_spm
-+    RNFirebaseSPM.activate!('12.10.0')
-+
-+    installer = MockInstaller.new([
-+                                    MockAggregateTarget.new(nil, name: 'Pods-app', uses_frameworks: false),
-+                                    MockAggregateTarget.new(nil, name: 'Pods-ext', static_linkage: true)
-+                                  ])
-+
-+    error = assert_raises(Pod::Informative) do
-+    
-```
-
-**File**: `packages/app/firebase_spm.rb` (modified, +27/-6)
-```diff
-@@ -577,8 +577,7 @@ def rnfirebase_verify_spm_embed_phase_applied!(installer)
- # (`duplicate symbol`). Under dynamic pod linkage the app builds, but each
- # dynamic framework still keeps a private copy (runtime class duplication /
- # split FirebaseApp registries). There is no supported combination of RNFB's
--# SPM mode with static linkage; the fix is always to switch to dynamic
--# linkage or opt out of SPM entirely.
-+# SPM mode with static linkage; the fix is to switch to dynamic linkage.
+@@ -16,6 +16,16 @@
  #
- # Raises `Pod::Informative` -- CocoaPods' own user-facing error class, which
- # `pod install` prints as a plain, readable message with no Ruby backtrace --
-@@ -604,18 +603,40 @@ def rnfirebase_fail_if_spm_static_linkage!(installer)
-   end
-   return if static_targets.empty?
+ set -e
  
--  target_names = static_targets.map(&:name).join(', ')
-+  # `build_type.static?` is true for two different Podfiles: no
-+  # `use_frameworks!` at all (CocoaPods' default static libraries -- the stock
-+  # React Native / bare Expo Podfile) and `use_frameworks! :linkage => :static`.
-+  # Name the one the user actually has so they can find it in their Podfile.
-+  library_targets, framework_targets = static_targets.partition do |target|
-+    !target.target_definition.uses_frameworks?
-+  end
-+  detected = []
-+  unless library_targets.empty?
-+    library_label = 'no `use_frameworks!` (or `use_frameworks! false`) -- pods build as static libraries'
-+    detected << "  - #{library_label}: #{library_targets.map(&:name).join(', ')}"
-+  end
-+  unless framework_targets.empty?
-+    framework_label = '`use_frameworks! :linkage => :static` ' \
-+                      '(incl. `USE_FRAMEWORKS=static` / Expo `useFrameworks: "static"`)'
-+    detected << "  - #{framework_label}: #{framework_targets.map(&:name).join(', ')}"
-+  end
- 
-   raise Pod::Informative, <<~MESSAGE
--    [react-native-firebase] SPM + static linkage is not supported (target(s): #{target_names}).
-+    [react-native-firebase] SPM + static linkage is not supported.
- 
--    firebase-ios-sdk's Swift Package products are automatic libraries (not `type: .dynamic`), so each react-native-firebase pod that resolves Firebase via SPM embeds its own copy. With `use_frameworks! :linkage => :static` those copies collide at link time as duplicate-symbol errors.
-+    Detected static pod linkage:
-+    #{detected.join("\n")}
++# upload-symbols talks to the network and has no timeout of its own, so a stalled
++# request can hang the whole build. perl's alarm is used because macOS has no
++# `timeout`. A timeout exits non-zero, which the callers below report as a
++# warning without failing the build.
++UPLOAD_SYMBOLS_TIMEOUT_SEC="${RNFB_CRASHLYTICS_UPLOAD_TIMEOUT_SEC:-300}"
 +
-+    firebase-ios-sdk's Swift Package products are automatic libraries (not `type: .dynamic`), so each react-native-firebase pod that resolves Firebase via SPM embeds its own copy. With static pod linkage those copies collide at link time as duplicate-symbol errors.
- 
-     Fix your Podfile to use dynamic linkage, then run `pod install` again:
- 
-       use_frameworks! :linkage => :dynamic
- 
--    CocoaPods Firebase is no longer available with Firebase Apple SDK 13+. See https://rnfirebase.io/ios-spm
-+    With the stock template Podfile you can instead run `USE_FRAMEWORKS=dynamic pod install`, but it must be set for every `pod install` (including CI) or linkage reverts to static; the Podfile line above is the durable fix.
-+    Expo: set `ios.useFrameworks` to `"dynamic"` in the `expo-build-properties` plugin config, then re-run `npx expo prebuild`. Only if you maintain `ios/` by hand (no prebuild), set `"ios.useFrameworks": "dynamic"` in `ios/Podfile.properties.json`.
++run_upload_symbols() {
++  perl -e 'alarm shift; exec @ARGV' "${UPLOAD_SYMBOLS_TIMEOUT_SEC}" "$@"
++}
 +
-+    See https://rnfirebase.io/ios-spm
-   MESSAGE
- end
- 
+ if [[ ${PODS_ROOT} && -f "${PODS_ROOT}/FirebaseCrashlytics/run" ]]; then
+   echo "info: Exec FirebaseCrashlytics Run from Pods"
+   if ! "${PODS_ROOT}/FirebaseCrashlytics/run"; then
+@@ -49,14 +59,14 @@ else
+     echo "warning: GoogleService-Info.plist not found at ${PROJECT_DIR}/${TARGET_NAME}/GoogleService-Info.plist or ${PROJECT_DIR}/GoogleService-Info.plist. Skipping dSYM upload."
+   elif [[ -x "${SPM_UPLOAD_SYMBOLS}" ]]; then
+     echo "info: Exec FirebaseCrashlytics upload-symbols from SPM"
+-    if ! "${SPM_UPLOAD_SYMBOLS}" -gsp "${GSP_PATH}" -p ios "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}"; then
+-      echo "warning: FirebaseCrashlytics upload-symbols (SPM) failed; continuing without failing the build. Common causes: no network, invalid/placeholder GoogleService-Info.plist credentials, or Firebase project mismatch."
++    if ! run_upload_symbols "${SPM_UPLOAD_SYMBOLS}" -gsp "${GSP_PATH}" -p ios "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}"; then
++      echo "warning: FirebaseCrashlytics upload-symbols (SPM) failed or timed out; continuing without failing the build. Common causes: no network, invalid/placeholder GoogleService-Info.plist credentials, or Firebase project mismatch."
+     fi
+   elif [[ -f "${SPM_UPLOAD_SYMBOLS}" ]]; then
+     echo "info: Exec FirebaseCrashlytics upload-symbols from SPM (chmod +x)"
+     chmod +x "${SPM_UPLOAD_SYMBOLS}"
+-    if ! "${SPM_UPLOAD_SYMBOLS}" -gsp "${GSP_PATH}" -p ios "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}"; then
+-      echo "warning: FirebaseCrashlytics upload-symbols (SPM) failed; continuing without failing the build. Common causes: no network, invalid/placeholder GoogleService-Info.plist credentials, or Firebase project mismatch."
++    if ! run_upload_symbols "${SPM_UPLOAD_SYMBOLS}" -gsp "${GSP_PATH}" -p ios "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}"; then
++      echo "warning: FirebaseCrashlytics upload-symbols (SPM) failed or timed out; continuing without failing the build. Common causes: no network, invalid/placeholder GoogleService-Info.plist credentials, or Firebase project mismatch."
+     fi
+   else
+     echo "warning: FirebaseCrashlytics run script not found at CocoaPods, framework, or SPM paths. Skipping dSYM upload."
 ```
 
 ---
 
-### Incident Patch 3: `b3ec0378` (2026-10-16)
-**Commit Message**: docs: fix v27 AI migration contradictions and SPM pin wording
+### Incident Patch 2: `b12d8477` (2026-10-23)
+**Commit Message**: Reapply "docs: use relative link to Crashlytics usage in tips"
 
-**File**: `docs/index.mdx` (modified, +4/-2)
+This reverts commit 0444d72404760d64cafd4b90e02ae2e519343933.
+
+**File**: `docs/faqs-and-tips.mdx` (modified, +1/-1)
 ```diff
-@@ -354,16 +354,18 @@ Once changed, rebuild your application with `npx react-native run-android`.
- 
- #### iOS
- 
-+Firebase Apple SDK 13+ is resolved via [Swift Package Manager](/ios-spm). `$FirebaseSDKVersion` and `FIREBASE_SDK_VERSION` override the **SPM exact pin** (same version string RNFB passes to firebase-ios-sdk SPM) — they are **not** CocoaPods trunk version selectors.
-+
- Open your projects `/ios/Podfile` and add any of the globals shown below to the top of the file:
- 
- ```ruby
--# Override Firebase SDK Version if desired
-+# Override Firebase Apple SDK SPM exact pin if desired (see /ios-spm)
- $FirebaseSDKVersion = '13.0.0'
- ```
- 
- Once changed, reinstall your projects pods via pod install and rebuild your project with `npx react-native run-ios`.
- 
--Alternatively, if you cannot edit the Podfile easily (as when using Expo), you may add the environment variable `FIREBASE_SDK_VERSION=13.0.0` (or whatever version you need) to the command line that installs pods. For example `FIREBASE_SDK_VERSION=13.0.0 yarn expo prebuild --clean`
-+Alternatively, if you cannot edit the Podfile easily (as when using Expo), you may add the environment variable `FIREBASE_SDK_VERSION=13.0.0` (or whatever SPM exact pin you need) to the command line that installs pods. For example `FIREBASE_SDK_VERSION=13.0.0 yarn expo prebuild --clean`
- 
- ### Android Performance
- 
+@@ -98,5 +98,5 @@ To view the complete detail for this solution, please refer to this page: [#5656
+   - Build processes are costly and complex, so caching is used a lot. As a result, certain changes that you make in your app can cause cache conflicts in subsequent builds. Deal with this via `npx react-native-clean-project`. This does solve a lot of problems.
+   - Try and isolate the problem with a template React Native Firebase app. This [bash script](https://github.com/mikehardy/rnfbdemo/blob/main/make-demo.sh) is particularly helpful in making an empty template app.
+ - Advice on supporting multiple environments (for example, dev, prod, maybe also staging, qa) for your React Native Firebase App: [#3504](https://github.com/invertase/react-native-firebase/issues/3504)
+-- Using [Fastlane for iOS deployment](https://docs.fastlane.tools/getting-started/ios/setup/) together with [RN Firebase Crashlytics](https://rnfirebase.io/crashlytics/usage) within CI has been observed to cause builds that hang indefinitely. Using `setup_ci(force: true)` before building the application may solve the issue.: [#3706](https://github.com/invertase/react-native-firebase/issues/3706)
++- Using [Fastlane for iOS deployment](https://docs.fastlane.tools/getting-started/ios/setup/) together with [RN Firebase Crashlytics](/crashlytics/usage) within CI has been observed to cause builds that hang indefinitely. Using `setup_ci(force: true)` before building the application may solve the issue.: [#3706](https://github.com/invertase/react-native-firebase/issues/3706)
+ - Be careful if you are using a VPN, Google blocks many VPN IPs causing "unavailable" errors for various firebase API calls, and on an Android emulator it might completely mess up the network adapter causing network calls to never return, not only on firebase but on the entire emulated phone.
 ```
 
-**File**: `docs/migrating-to-v27.mdx` (modified, +4/-3)
-```diff
-@@ -11,11 +11,11 @@ Version 27 is a **native and JS SDK major** plus several earlier breaking correc
- 
- | Platform | Pin                               | Floor / install change                                                     |
- | -------- | --------------------------------- | -------------------------------------------------------------------------- |
--| Android  | Firebase BoM **35.0.0**           | `minSdk` **24** (was 23)                                                   |
-+| Android  | Firebase BoM **35.0.0**           | `minSdk` **24** (was 23); Kotlin Gradle plugin **≥ 2.4.0**                 |
- | Apple    | Firebase iOS SDK **13.0.0** (SPM) | macOS **11.0** (was 10.15); **SPM-only** Firebase (CocoaPods path removed) |
- | JS       | `firebase` **13.0.0**             | AI Logic API removals / renames (see below)                                |
- 
--- **Android** — BoM 35 requires API 24+. Update `minSdkVersion` / `sdkVersions` overrides to **24**. See [Platforms](/platforms).
-+- **Android** — BoM 35 requires API 24+. Update `minSdkVersion` / `sdkVersions` overrides to **24**. Raise the Kotlin Gradle plugin to **≥ 2.4.0** (`firebase-auth` 25 ships Kotlin 2.4.0 metadata). See [Platforms](/platforms).
- - **Apple** — Firebase 13 is distributed only via Swift Package Manager. Remove `$RNFirebaseDisableSPM` / Expo `disableSPM`. Use `use_frameworks! :linkage => :dynamic`. See [iOS SPM Support](/ios-spm). Google Sign-In + Firebase 13 SPM may not resolve until upstream ships a compatible GoogleSignIn release.
- - **JS / AI** — Align with Firebase JS SDK 13 / `@firebase/ai@3`: use `AgentPlatformBackend` (default location **`global`**) instead of removed `VertexAIBackend`; template `generateContent` takes a `TemplateRequest`; remove `LiveSession.sendMediaChunks` / `sendMediaStream` (use realtime senders); drop `totalBillableCharacters` and related removed fields.
- 
-@@ -53,7 +53,7 @@ If you are upgrading from v25 or earlier, complete [Migrating to v26](/migrating
- ### Migration actions
- 
- 1. Bump all `@react-native-firebase/*` packages to v27 together.
--2. Android: set `minSdkVersion` / any `react-native` `versions.android.minSdk` override to **24**.
-+2. Android: set `minSdkVersion` / any `react-native` `versions.android.minSdk` override to **24**; set `kotlinVersion` / the Kotlin Gradle plugin to **≥ 2.4.0**.
- 3. iOS: remove `$RNFirebaseDisableSPM = true` and Expo `ios.disableSPM`; ensure `use_frameworks! :linkage => :dynamic` (or Expo `useFrameworks: "dynamic"`); raise macOS deployment target to **11.0** if you ship macOS.
- 4. JS: ensure the app resolves `firebase@13` (RNFB pins it on `@react-native-firebase/app`).
- 5. AI: apply the [AI Logic breaking removals](/migrating-to-v27#ai-logic-breaking-removals) below.
-@@ -365,6 +365,7 @@ For each area you use, search the listed symbols and apply the replacements:
- | Area                      | Search for                                                                             | Replace with / action                                                                                                                                                                                                                                      |
- | ------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
- | Android floor             | `minSdkVersion` / `minSdk` **23** (or lower)                                           | **24**                                                                                                                                                                                                                                                     |
-+| Android Kotlin            | `kotlinVersion` / Kotlin Gradle plugin below **2.4.0**                                 | **≥ 2.4.0** (BoM 35 / `firebase-auth` 25 metadata)                                                                                                                                                                                                         |
- | iOS DisableSPM            | `$RNFirebaseDisableSPM`, Expo `disableSPM: true`                                       | Remove; use SPM + `use_frameworks! :linkage => :dynamic`                                                                                                                                                                                                   |
- | Functions (web/macOS)     | `e.message ===`, `error.message ===` on callable failures                              | Tolerate trailing ` [<digits>]`; optionally read `customData.url` on `Platform.other` only                                                                     
-```
+---
 
-**File**: `docs/platforms.mdx` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ By default React Native Firebase supports multiple platforms using the native Fi
- | iOS      | 15.0                  |
- | macOS    | 11.0                  |
- 
--**Important** - To compile your application for Android, you will need a minimum JDK (Java Development Kit) version of `>= 17`.
-+**Important** - To compile your application for Android, you will need a minimum JDK (Java Development Kit) version of `>= 17`, and a Kotlin Gradle plugin of `>= 2.4.0` (Firebase Android BoM 35 / `firebase-auth` 25 ships Kotlin **2.4.0** metadata).
- 
- However, for platforms that we don't provide a Native Module for, React Native Firebase instead implements a fallback Firebase JS SDK implementation to support
- these 'Other' platforms, e.g.;
-```
+### Incident Patch 3: `e823c1ef` (2026-10-23)
+**Commit Message**: Revert "docs: use relative link to Crashlytics usage in tips"
 
-**File**: `packages/ai/lib/types/requests.ts` (modified, +1/-1)
-```diff
-@@ -93,7 +93,7 @@ export interface SafetySetting {
-  */
- export interface GenerationConfig {
-   /**
--   * @deprecated Gemini 3.x and 4.x (latest general-use) models do not support this sampling parameter.
-+   * @deprecated Gemini 3.x and 4.x (latest general-use) models do not support this parameter.
-    * Omit it for Gemini 3/4; retained for compatibility with older models. Do not remove the field from this type.
-    */
-   candidateCount?: number;
-```
+This reverts commit 88131767a6efd964626dda087ca402adf336bb6e.
 
-**File**: `packages/firestore/e2e/Bundle/namedQuery.e2e.js` (modified, +16/-8)
+**File**: `docs/faqs-and-tips.mdx` (modified, +1/-1)
 ```diff
-@@ -24,8 +24,7 @@ describe('firestore().namedQuery()', function () {
-   describe('modular', function () {
-     // Load the bundle once for cache-backed named-query cases. Per-test wipe+loadBundle
-     // previously hung the iOS Jet suite on the beforeEach for invalid-name tests
--    // (420s mocha timeout) after earlier cases had already passed — see
--    // .agents/reports/P2-NAMEDQUERY-ROOTCAUSE/root-cause.md.
-+    // (420s mocha timeout) after earlier cases had already passed.
-     before(async function () {
-       await wipe();
-       const { getFirestore, loadBundle } = firestoreModular;
-@@ -99,28 +98,37 @@ describe('firestore().namedQuery()', function () {
- 
-   // Invalid names never need a loaded bundle. Keep them off the wipe+loadBundle path so a
-   // stuck emulator DELETE or native loadBundle cannot strand the suite on this case.
-+  //
-+  // Miss contract (matches Firestore usage docs' `if (namedQuery)` guard and
-+  // `Promise<Query | null>`): unknown name → `null`. RNFB may also return a Query
-+  // handle that fails get/onSnapshot with "unknown"; both are accepted here.
-   describe('modular invalid query name', function () {
--    it('throws if invalid query name', async function () {
-+    it('misses unknown named query (null or getDocsFromCache unknown)', async function () {
-       const { getFirestore, namedQuery, getDocsFromCache } = firestoreModular;
- 
-       const query = await namedQuery(getFirestore(), 'invalid-query');
--      if (!query) throw new Error('namedQuery returned null');
-+      if (query == null) {
-+        return;
-+      }
-       try {
-         await getDocsFromCache(query);
--        return Promise.reject(new Error('Did not throw an Error.'));
-+        return Promise.reject(new Error('Expected null miss or getDocsFromCache to throw.'));
-       } catch (error) {
-         error.message.should.containEql('unknown');
-         return Promise.resolve();
-       }
-     });
- 
--    it('calls onError if invalid query name', async function () {
-+    it('misses unknown named query on snapshot (null or onError unknown)', async function () {
-       const { getFirestore, namedQuery, onSnapshot } = firestoreModular;
- 
-+      const q = await namedQuery(getFirestore(), 'invalid-query');
-+      if (q == null) {
-+        return;
-+      }
-+
-       const onNext = sinon.spy();
-       const onError = sinon.spy();
--      const q = await namedQuery(getFirestore(), 'invalid-query');
--      if (!q) throw new Error('namedQuery returned null');
-       const unsub = onSnapshot(q, onNext, onError);
- 
-       await Utils.spyToBeCalledOnceAsync(onError);
+@@ -98,5 +98,5 @@ To view the complete detail for this solution, please refer to this page: [#5656
+   - Build processes are costly and complex, so caching is used a lot. As a result, certain changes that you make in your app can cause cache conflicts in subsequent builds. Deal with this via `npx react-native-clean-project`. This does solve a lot of problems.
+   - Try and isolate the problem with a template React Native Firebase app. This [bash script](https://github.com/mikehardy/rnfbdemo/blob/main/make-demo.sh) is particularly helpful in making an empty template app.
+ - Advice on supporting multiple environments (for example, dev, prod, maybe also staging, qa) for your React Native Firebase App: [#3504](https://github.com/invertase/react-native-firebase/issues/3504)
+-- Using [Fastlane for iOS deployment](https://docs.fastlane.tools/getting-started/ios/setup/) together with [RN Firebase Crashlytics](/crashlytics/usage) within CI has been observed to cause builds that hang indefinitely. Using `setup_ci(force: true)` before building the application may solve the issue.: [#3706](https://github.com/invertase/react-native-firebase/issues/3706)
++- Using [Fastlane for iOS deployment](https://docs.fastlane.tools/getting-started/ios/setup/) together with [RN Firebase Crashlytics](https://rnfirebase.io/crashlytics/usage) within CI has been observed to cause builds that hang indefinitely. Using `setup_ci(force: true)` before building the application may solve the issue.: [#3706](https://github.com/invertase/react-native-firebase/issues/3706)
+ - Be careful if you are using a VPN, Google blocks many VPN IPs causing "unavailable" errors for various firebase API calls, and on an Android emulator it might completely mess up the network adapter causing network calls to never return, not only on firebase but on the entire emulated phone.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9380** (2026-10-20): fix(remote-config, web): preserve read-only navigator state (@Panda-ref)
-- **PR #9379** (2026-10-19): fix(app, ios): clarify SPM static linkage error when use_frameworks is absent (@Mastersam07)
-- **PR #9376** (2026-10-18): ci: optimize Actions caches (ABI, sticky metro/ccache, probes) (@mikehardy)
-- **PR #9375** (2026-10-16): fix(messaging, ios): guard AppDelegate window access for UIScene apps (@mikehardy)
-- **PR #9374** (2026-10-16): build(deps): Dependency Updates 20261015 (@mikehardy)
-- **PR #9373** (2026-10-16): fix(ci, ios): poll Expo launch-smoke key-window instead of a fixed sleep (@mikehardy)
+- **PR #9396** (2026-10-23): fix(ci): branch-aware publish (docs gate, dist-tag, recovery) (@mikehardy)
+- **PR #9393** (2026-10-23): fix(app, sdk): bump Firebase iOS SDK to 12.19.3 (@russellwheatley)
+- **PR #9391** (2026-10-23): fix(app, sdk): bump Firebase iOS SDK to 13.1.1 (@russellwheatley)
+- **PR #9390** (closed): fix(firestore): align updateDoc, onSnapshot and initializeFirestore error handling with firebase-js-sdk (@Mastersam07)
+- **PR #9389** (2026-10-23): feat(app, sdk): bump Firebase iOS SDK to 13.1.0 (@mikehardy)
+- **PR #9388** (2026-10-22): feat(app, sdk): bump Firebase JS SDK to 13.1.0 (@SelaseKay)
 
 ---
 
@@ -2046,35 +1757,54 @@ Fix for "NativeFirebaseError: [remoteConfig/unknown] Cannot set property onLine 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remote-config, web): preserve read-only navigator state
+## X. crashlytics, ios): time out SPM upload-symbols so a stalled upload cannot hang t
 
 **RULE**:
-When implementing operations in `packages/remote-config/lib/web/RNFBConfigModule.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/crashlytics/__tests__/ios_config.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `64d9b691`: remote-config, web): preserve read-only navigator state. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1cdb7de2`: crashlytics, ios): time out SPM upload-symbols so a stalled upload cannot hang the build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/remote-config/lib/web/RNFBConfigModule.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/crashlytics/__tests__/ios_config.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  const navigatorObject = globalThis.navigator;
-  if (navigatorObject && !('onLine' in navigatorObject) && Object.isExtensible(navigatorObject)) {
-    Object.defineProperty(navigatorObject, 'onLine', {
-      configurable: true,
-      value: true,
-      writable: true,
-    });
-  }
+// Never returns on its own — simulates a stalled network request in upload-symbols.
+// `exec` keeps this a single process like the real binary, so the timeout's SIGALRM
+// kills the hang itself rather than an orphaned child holding the output pipes open.
+const HANGS_STUB = `#!/usr/bin/env bash
+exec sleep 60
+`;
+
+  function runIosConfig(extraEnv: Record<string, string> = {}) {
+        ...extraEnv,
+
+  it('warns and continues without failing the build when SPM upload-symbols hangs past the timeout', function () {
+    const targetFolderPlist = join(projectDir, targetName, 'GoogleService-Info.plist');
+    mkdirSync(join(projectDir, targetName), { recursive: true });
+    writeFileSync(targetFolderPlist, 'plist-contents');
+
+    writeFileSync(uploadSymbolsPath, HANGS_STUB);
+    chmodSync(uploadSymbolsPath, 0o755);
+
+    const startedAt = Date.now();
+    const result = runIosConfig({ RNFB_CRASHLYTICS_UPLOAD_TIMEOUT_SEC: '1' });
+    const elapsedMs = Date.now() - startedAt;
+
+    expect(result.status).toBe(0);
+    expect(elapsedMs).toBeLessThan(30000);
+    expect(result.stdout).toContain('warning:');
+    expect(result.stdout).toContain('failed or timed out');
+  });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  (navigator as Navigator & { onLine: boolean }).onLine = true;
+  function runIosConfig() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `64d9b691` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1cdb7de2` are properly handled with clean fallback behavior.

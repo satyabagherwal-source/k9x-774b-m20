@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T19:28:40.766Z",
-  "total_cycles_completed": 4538,
-  "total_learnings_persisted": 4538,
-  "total_rules_promoted": 3770,
+  "last_updated": "2026-10-24T19:35:06.270Z",
+  "total_cycles_completed": 4543,
+  "total_learnings_persisted": 4543,
+  "total_rules_promoted": 3777,
   "history": [
-    {
-      "timestamp": "2026-10-22T17:45:04.118Z",
-      "repository": "gravitl/netmaker",
-      "learningId": "learn-github-gravitl-netmaker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:45:06.159Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:45:10.909Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:51:42.225Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:51:45.648Z",
-      "repository": "superhighfives/pika",
-      "learningId": "learn-github-superhighfives-pika",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T17:51:54.213Z",
       "repository": "RediSearch/RediSearch",
@@ -1403,6 +1368,41 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:34:51.734Z",
+      "repository": "KRAFTON/Raon-1-mini-preview",
+      "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:34:54.444Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:34:59.930Z",
+      "repository": "invertase/react-native-firebase",
+      "learningId": "learn-github-invertase-react-native-firebase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:35:00.404Z",
+      "repository": "Comfy-Org/Fibo-2.0",
+      "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:35:06.270Z",
+      "repository": "HelixDB/helix-db",
+      "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

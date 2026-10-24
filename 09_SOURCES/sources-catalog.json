@@ -3563,10 +3563,10 @@
     "repository": "invertase/react-native-firebase",
     "platform": "github",
     "sourceUrl": "https://github.com/invertase/react-native-firebase",
-    "sourceVersion": "64d9b691",
+    "sourceVersion": "c65e1ee3",
     "license": "NOASSERTION",
-    "contentHash": "aad725d3e7cafaec7a27e240f6c55a78a514280e53b1fc4d2602d563f2aa9011",
-    "lastHarvestedAt": "2026-10-20T11:09:05.514Z",
+    "contentHash": "198da7b76d0aa07344ac7f092d3d5104848e1661b66e37cb4b534b6e9d4e01b4",
+    "lastHarvestedAt": "2026-10-24T19:34:59.920Z",
     "learningId": "learn-github-invertase-react-native-firebase"
   },
   "peerdb-io-peerdb": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "f366493a",
+    "sourceVersion": "39a0a4b5",
     "license": "Apache-2.0",
-    "contentHash": "2c62e6de47d0d0cef848048bc286cc2b4a09b6d2ffc4f12782a33324b0adcd0a",
-    "lastHarvestedAt": "2026-10-20T18:20:50.972Z",
+    "contentHash": "ee48504ba0858da7a602982b7614538e74466ae477f204bc1cdc9f0af259e248",
+    "lastHarvestedAt": "2026-10-24T19:35:06.263Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -10588,5 +10588,35 @@
     "contentHash": "80ff9f8c3a400c723b94d548a538e6f6923978b668405a6c9aca47343f7b5a50",
     "lastHarvestedAt": "2026-10-24T19:22:30.855Z",
     "learningId": "learn-github-nomadamas-cozyclay"
+  },
+  "hf-krafton-raon-1-mini-preview": {
+    "repository": "KRAFTON/Raon-1-mini-preview",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+    "sourceVersion": "hf-krafton-raon-1-mini-preview",
+    "license": "Open-Source",
+    "contentHash": "6297a4e81503854fefa352f55818b98da1855559a834a5cffbd45a6ee0259ddd",
+    "lastHarvestedAt": "2026-10-24T19:34:51.729Z",
+    "learningId": "learn-huggingface-krafton-raon-1-mini-preview"
+  },
+  "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf": {
+    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+    "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+    "license": "Open-Source",
+    "contentHash": "78368454b7e83365d15b5f37c7ede172beb608d575401a2f1053aca4458e4b90",
+    "lastHarvestedAt": "2026-10-24T19:34:54.439Z",
+    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf"
+  },
+  "hf-comfy-org-fibo-2.0": {
+    "repository": "Comfy-Org/Fibo-2.0",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+    "sourceVersion": "hf-comfy-org-fibo-2.0",
+    "license": "Open-Source",
+    "contentHash": "a5a5dc18fadc36df27acab5008ef9d59c04d5ec1c373d48062f257dc26fdf8ac",
+    "lastHarvestedAt": "2026-10-24T19:35:00.395Z",
+    "learningId": "learn-huggingface-comfy-org-fibo-2-0"
   }
 }

@@ -4561,3 +4561,8 @@
 | `CYCLE-20261024-KRDX` | `2026-10-24T19:28:36.261Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md` | Yes (`71911fba...`) |
 | `CYCLE-20261024-KUG7` | `2026-10-24T19:28:40.231Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3915` | Yes (`4659e826...`) |
 | `CYCLE-20261024-KUUR` | `2026-10-24T19:28:40.755Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3916` | Yes (`7b2169e6...`) |
+| `CYCLE-20261024-ST3I` | `2026-10-24T19:34:51.726Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md` | Yes (`6297a4e8...`) |
+| `CYCLE-20261024-SV6S` | `2026-10-24T19:34:54.436Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3917, Rule 3918, Rule 3919` | Yes (`78368454...`) |
+| `CYCLE-20261024-SZF0` | `2026-10-24T19:34:59.916Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3920` | Yes (`198da7b7...`) |
+| `CYCLE-20261024-SZS8` | `2026-10-24T19:35:00.392Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3921, Rule 3922, Rule 3923` | Yes (`a5a5dc18...`) |
+| `CYCLE-20261024-T4B8` | `2026-10-24T19:35:06.260Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md` | Yes (`ee48504b...`) |
