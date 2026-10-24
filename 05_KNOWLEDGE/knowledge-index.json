@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T19:52:49.915Z",
-  "total_verified_learnings": 1078,
+  "last_updated": "2026-10-24T19:58:58.287Z",
+  "total_verified_learnings": 1079,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2808,8 +2808,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "f4465466",
-      "content_hash": "1cf7e5d3b9381b5f68ca89a88c22c5e149e83d1bd057c711d0520b8263803138",
+      "source_version": "82ad6f10",
+      "content_hash": "ba106c4f45bda12e3f69dbb11629846e06ca26d9557a4746f60d4bcaa2bfd6a4",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -2832,6 +2832,11 @@
           "number": 3586,
           "title": "test(ui): cover workflow templates and cron workflows in the Playwright suite (#",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3934,
+          "title": "test(controller): move first operator fixtures into testdata (#17240)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2839,7 +2844,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:39:51.988Z",
+      "verified_at": "2026-10-24T19:58:56.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47998,8 +48003,8 @@
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "827ae36b",
-      "content_hash": "7385a1cb8e228cd3dc45957217bc7906f891137c98eda59025618e15f7f50c75",
+      "source_version": "f62b68e4",
+      "content_hash": "f98f59afddebd27ca7499bd29a723380367dbf36db47126dee6128059e3aee5a",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "promoted_rules": [
@@ -48017,6 +48022,11 @@
           "number": 3525,
           "title": "pkg/curl: revert errors.AsType in RetryTemporaryNetworkErrors for CIFuzz",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3933,
+          "title": "pkg/fdsrv: fix FD leaks, double-close, client DoS, and use context.Context",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48024,7 +48034,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T04:49:09.763Z",
+      "verified_at": "2026-10-24T19:58:45.681Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50562,8 +50572,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "edbfb2c3",
-      "content_hash": "4d0a6474ca329a03987bf44518b736609e886ba9a332ae81da7cc87dce85ff0e",
+      "source_version": "c534a3f5",
+      "content_hash": "63be647b008739d080533367fc5ba1500d0fa8641870620f0ce8a960179a6b03",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -50596,6 +50606,11 @@
           "number": 3650,
           "title": "integer): use exact worst-case bound for bitonic shuffle key size",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3935,
+          "title": "gpu): boolean array should use boolean bitnot",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50603,7 +50618,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:58:17.480Z",
+      "verified_at": "2026-10-24T19:58:58.280Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115906,6 +115921,75 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T19:52:49.909Z"
+    },
+    "learn-huggingface-ornith-ai-ornith-1-5-122b": {
+      "learning_id": "learn-huggingface-ornith-ai-ornith-1-5-122b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ornith-ai/Ornith-1.5-122B",
+      "repository": "ornith-ai/Ornith-1.5-122B",
+      "slug": "hf-ornith-ai-ornith-1.5-122b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
+      "source_version": "hf-ornith-ai-ornith-1.5-122b",
+      "content_hash": "1dc52e5ce251204ea3eb1e51bc78cde4660f89ba7fb2e6569fc31fe5f4e82240",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-24T19:58:38.858Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3933": {
+      "learning_id": "rule-3933",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3933,
+      "title": "pkg/fdsrv: fix FD leaks, double-close, client DoS, and use context.Context",
+      "source_url": "https://github.com/u-root/u-root",
+      "source_version": "f62b68e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:58:45.681Z"
+    },
+    "rule-3934": {
+      "learning_id": "rule-3934",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3934,
+      "title": "test(controller): move first operator fixtures into testdata (#17240)",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "82ad6f10",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:58:56.651Z"
+    },
+    "rule-3935": {
+      "learning_id": "rule-3935",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3935,
+      "title": "gpu): boolean array should use boolean bitnot",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "c534a3f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:58:58.280Z"
     }
   },
   "aliases": {

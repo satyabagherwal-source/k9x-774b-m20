@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-24T19:52:49.979Z",
+  "last_updated": "2026-10-24T19:58:58.332Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "4d0a6474ca329a03987bf44518b736609e886ba9a332ae81da7cc87dce85ff0e",
-      "verified_at": "2026-10-22T16:58:17.571Z",
+      "content_hash": "63be647b008739d080533367fc5ba1500d0fa8641870620f0ce8a960179a6b03",
+      "verified_at": "2026-10-24T19:58:58.332Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:58:17.571Z"
+      "last_updated": "2026-10-24T19:58:58.332Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -8991,14 +8991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "1cf7e5d3b9381b5f68ca89a88c22c5e149e83d1bd057c711d0520b8263803138",
-      "verified_at": "2026-10-21T18:39:52.061Z",
+      "content_hash": "ba106c4f45bda12e3f69dbb11629846e06ca26d9557a4746f60d4bcaa2bfd6a4",
+      "verified_at": "2026-10-24T19:58:56.704Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:39:52.061Z"
+      "last_updated": "2026-10-24T19:58:56.704Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",
@@ -9186,14 +9186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-u-root-u-root",
-      "content_hash": "7385a1cb8e228cd3dc45957217bc7906f891137c98eda59025618e15f7f50c75",
-      "verified_at": "2026-10-21T04:49:09.826Z",
+      "content_hash": "f98f59afddebd27ca7499bd29a723380367dbf36db47126dee6128059e3aee5a",
+      "verified_at": "2026-10-24T19:58:45.732Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:49:09.826Z"
+      "last_updated": "2026-10-24T19:58:45.732Z"
     },
     "shoutem/ui": {
       "repository": "shoutem/ui",
@@ -15959,6 +15959,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-24T19:35:00.407Z"
+    },
+    "ornith-ai/Ornith-1.5-122B": {
+      "repository": "ornith-ai/Ornith-1.5-122B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-ornith-ai-ornith-1-5-122b",
+      "content_hash": "1dc52e5ce251204ea3eb1e51bc78cde4660f89ba7fb2e6569fc31fe5f4e82240",
+      "verified_at": "2026-10-24T19:58:38.909Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-24T19:58:38.909Z"
     }
   },
   "repos": {

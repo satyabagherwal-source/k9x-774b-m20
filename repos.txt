@@ -4420,3 +4420,7 @@ https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF
 https://huggingface.co/Comfy-Org/Fibo-2.0
 # [HUGGINGFACE-AI-MODELS] KRAFTON/Raon-1-mini-preview (2527 score) - Verified Hugging Face Model: KRAFTON/Raon-1-mini-preview (161 likes, 917 downloa
 https://huggingface.co/KRAFTON/Raon-1-mini-preview
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-24T19:58:35.020Z] ---
+# [HUGGINGFACE-AI-MODELS] ornith-ai/Ornith-1.5-122B (3560 score) - Verified Hugging Face Model: ornith-ai/Ornith-1.5-122B (156 likes, 30407 downloa
+https://huggingface.co/ornith-ai/Ornith-1.5-122B

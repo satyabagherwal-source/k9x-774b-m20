@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T19:52:49.977Z",
-  "total_cycles_completed": 4548,
-  "total_learnings_persisted": 4548,
-  "total_rules_promoted": 3786,
+  "last_updated": "2026-10-24T19:58:58.329Z",
+  "total_cycles_completed": 4552,
+  "total_learnings_persisted": 4552,
+  "total_rules_promoted": 3789,
   "history": [
-    {
-      "timestamp": "2026-10-22T17:58:25.595Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:04:29.336Z",
-      "repository": "ducaale/xh",
-      "learningId": "learn-github-ducaale-xh",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:04:38.068Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:04:42.137Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T18:11:04.299Z",
       "repository": "webrecorder/pywb",
@@ -1403,6 +1375,34 @@
       "repository": "nezhahq/nezha",
       "learningId": "learn-github-nezhahq-nezha",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:58:38.907Z",
+      "repository": "ornith-ai/Ornith-1.5-122B",
+      "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:58:45.730Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:58:56.699Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:58:58.329Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

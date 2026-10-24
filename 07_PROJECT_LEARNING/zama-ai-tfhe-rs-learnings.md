@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `edbfb2c3`  
+> **Source Version**: `c534a3f5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:58:17.124Z  
+> **Timestamp**: 2026-10-24T19:58:58.096Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:58:16.586Z  
+> **Harvest Timestamp**: 2026-10-24T19:58:58.091Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -73,7 +73,7 @@ template <typename Torus> struct int_aes_lut_buffers {
 
     auto active_streams_and_lut = streams.active_gpu_subset(
         SBOX_MAX_AND_GATES * num_aes_inputs * sbox_parallelism,
-        params.pbs_type);
+        params.pbs_type());
     this->and_lut->generate_and_broadcast_bivariate_lut(
         active_streams_and_lut, {0}, {and_lambda}, LUT_0_FOR_ALL_BLOCKS);
 
@@ -85,7 +85,7 @@ template <typename Torus> struct int_aes_lut_buffers {
     };
 
     auto active_streams_flush_lut = streams.active_gpu_subset(
-        AES_STATE_BITS * num_aes_inputs, params.pbs_type);
+        AES_STATE_BITS * num_aes_inputs, params.pbs_type());
     this->flush_lut->generate_and_broadcast_lut(
         active_streams_flush_lut, {0}, {flush_lambda}, LUT_0_FOR_ALL_BLOCKS);
 
@@ -96,7 +96,7 @@ template <typename Torus> struct int_aes_lut_buffers {
     };
 
     auto active_streams_carry_lut =
-        streams.active_gpu_subset(num_aes_inputs, params.pbs_type);
+        streams.active_gpu_subset(num_aes_inputs, params.pbs_type());
     this->carry_lut->generate_and_broadcast_lut(
         active_streams_carry_lut, {0}, {carry_lambda}, LUT_0_FOR_ALL_BLOCKS);
   }
@@ -268,7 +268,7 @@ template <typename Torus> struct int_aes_main_workspaces {
   CudaRadixCiphertextFFI *tmp_tiled_key_buffer;
   CudaRadixCiphertextFFI *batch_processing_buffer;
 
-  int_aes_main_workspaces(CudaStreams 
+  int_aes_main_workspaces(CudaSt
 ```
 
 ### Core Architecture Module: `backends/tfhe-cuda-backend/cuda/include/integer/compression/compression_utilities.h`
@@ -406,7 +406,8 @@ template <typename Torus> struct int_decompression {
       auto effective_compression_carry_modulus = 1;
 
       auto active_streams = streams.active_gpu_subset(
-          num_blocks_to_decompress, decompression_rescale_lut->params.pbs_type);
+          num_blocks_to_decompress,
+          decompression_rescale_lut->params.pbs_type());
       decompression_rescale_lut->generate_and_broadcast_lut_with_encoding(
           active_streams, {0}, {decompression_rescale_f},
           effective_compression_message_modulus,
@@ -740,7 +741,7 @@ template <typename Torus> struct int_kv_store_eq_selectors_small_map_buffer {
     }
 
     this->comparison_luts->generate_and_broadcast_many_lut(
-        streams.active_gpu_subset(num_blocks, params.pbs_type), {0}, {fs},
+        streams.active_gpu_subset(num_blocks, params.pbs_type()), {0}, {fs},
         LUT_0_FOR_ALL_BLOCKS);
     fs.clear();
 
@@ -829,7 +830,8 @@ template <typename Torus> struct int_kv_store_eq_selectors_small_map_buffer {
         lut_fns.push_back([lcl](Torus x) -> Torus { return x == lcl; });
       }
 
-      auto lut_active = streams.active_gpu_subset(acc_blocks, params.pbs_type);
+      auto lut_active =
+          streams.active_gpu_subset(acc_blocks, params.pbs_type());
       this->is_max_value_lut->generate_and_broadcast_lut(
           lut_active, lut_ids, lut_fns, LUT_0_FOR_ALL_BLOCKS);
 
@@ -879,7 +881,7 @@ template <typename Torus> struct int_kv_store_eq_selectors_small_map_buffer {
                                    this->allocate_gpu_memory);
 
     if (this->tree_accumulator != nullptr) {
-      release_radix_ciphertext_async(streams
+      release_radix_ciphertext
 ```
 
 ### Core Architecture Module: `backends/tfhe-cuda-backend/cuda/include/integer/rerand_utilities.h`
@@ -1116,13 +1118,13 @@ template <typename Torus> struct int_batched_compare_buffer {
 
     identity_lut = new int_radix_lut<Torus>(streams, params, 1, 2 * K * M,
                                             allocate_gpu_memory, size_tracker);
-    auto active_id = streams.active_gpu_subset(2 * K * M, params.pbs_type);
+    auto active_id = streams.active_gpu_subset(2 * K * M, params.pbs_type());
     identity_lut->generate_and_broadcast_lut(active_id, {0}, {identity_f},
                                              LUT_0_FOR_ALL_BLOCKS);
 
     is_non_zero_lut = new int_radix_lut<Torus>(
         streams, params, 1, K * M, allocate_gpu_memory, size_tracker);
-    auto active_nz = streams.active_gpu_subset(K * M, params.pbs_type);
+    auto active_nz = streams.active_gpu_subset(K * M, params.pbs_type());
     is_non_zero_lut->generate_and_broadcast_lut(active_nz, {0}, {is_non_zero_f},
                                                 LUT_0_FOR_ALL_BLOCKS);
 
@@ -1131,13 +1133,13 @@ template <typename Torus> struct int_batched_compare_buffer {
         new int_radix_lut<Torus>(streams, params, 1, tree_inner_blocks,
                                  allocate_gpu_memory, size_tracker);
     auto active_inner =
-        streams.active_gpu_subset(tree_inner_blocks, params.pbs_type);
+        streams.active_gpu_subset(tree_inner_blocks, params.pbs_type());
     is_any_not_equal_lut->generate_and_broadcast_bivariate_lut(
         active_inner, {0}, {block_selector_f}, LUT_0_FOR_ALL_BLOCKS);
 
     is_any_not_equal_packed_lut = new int_radix_lut<Torus>(
         streams, params, 1, K, allocate_gpu_memory, size_tracker);
-    auto active_last = streams.active_gpu_subset(K, params.pbs_type);
+    auto active_last = streams.active_gpu_subset(K, params.pbs_type());
     is_any_not_equal_packed_lut->generate_and_broadcast_lut(
         active_last, {0}, {last_leaf_f}, LUT_0_FOR_ALL_BLOCKS);
   }
@@ -1207,7 +1209,7 @@ template <typename Torus> struct int_fused_cmux_buffer {
   /// applied
   ///        after adding the two halves to re-bootstrap before the next
   ///        substep.
-  int_radix_l
+  int
 ```
 
 ### Core Architecture Module: `backends/tfhe-cuda-backend/cuda/include/kreyvium/fast_kreyvium_utilities.h`
@@ -1310,7 +1312,7 @@ template <typename Torus> struct int_fast_kreyvium_lut_buffers {
     };
 
     auto active_streams =
-        streams.active_gpu_subset(bitext_ops, params.pbs_type);
+        streams.active_gpu_subset(bitext_ops, params.pbs_type());
     this->bitext_lut->generate_and_broadcast_lut(
         active_streams, {0}, {bitext_lambda}, LUT_0_FOR_ALL_BLOCKS,
         /*use_encoding=*/false);
@@ -1498,7 +1500,7 @@ template <typename Torus> struct int_kreyvium_lut_buffers {
         [](Torus lhs, Torus rhs) -> Torus { return (lhs & 1) & (rhs & 1); };
 
     auto active_streams_and =
-        streams.active_gpu_subset(and_ops, params.pbs_type);
+        streams.active_gpu_subset(and_ops, params.pbs_type());
 
     this->and_lut->generate_and_broadcast_bivariate_lut(
         active_streams_and, {0}, {and_lambda}, LUT_0_FOR_ALL_BLOCKS);
@@ -1511,7 +1513,7 @@ template <typename Torus> struct int_kreyvium_lut_buffers {
     this->flush_lut = new int_radix_lut<Torus>(
         streams, params, 1, flush_ops, allocate_gpu_memory, size_tracker);
     auto active_streams_flush =
-        streams.active_gpu_subset(flush_ops, params.pbs_type);
+        streams.active_gpu_subset(flush_ops, params.pbs_type());
 
     this->flush_lut->generate_and_broadcast_lut(
         active_streams_flush, {0}, {flush_lambda}, LUT_0_FOR_ALL_BLOCKS);
@@ -1657,7 +1659,7 @@ template <typename Torus> struct int_kreyvium_buffer {
     luts->release(streams);
     delete luts;
     luts = nullptr;
-    ws->r
+    w
 ```
 
 ### Core Architecture Module: `backends/tfhe-cuda-backend/cuda/include/pbs/pbs_128_utilities.h`
@@ -1925,166 +1927,29 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `933410b3` (2026-10-02)
-**Commit Message**: fix(integer): use exact worst-case bound for bitonic shuffle key size
+### Incident Patch 1: `baad54c1` (2026-10-23)
+**Commit Message**: fix(gpu): boolean array should use boolean bitnot
 
-**File**: `tfhe/src/integer/server_key/radix_parallel/bitonic_shuffle.rs` (modified, +11/-10)
+**File**: `tfhe/src/high_level_api/array/gpu/booleans.rs` (modified, +1/-1)
 ```diff
-@@ -118,25 +118,26 @@ impl AttackerAdvantage {
+@@ -206,7 +206,7 @@ impl BitwiseArrayBackend for GpuFheBoolArrayBackend {
+         GpuBooleanOwned(global_state::with_cuda_internal_keys(|cuda_key| {
+             let streams = &cuda_key.streams;
+             lhs.par_iter()
+-                .map(|lhs| CudaBooleanBlock(cuda_key.pbs_key().bitnot(&lhs.0, streams)))
++                .map(|lhs| cuda_key.pbs_key().boolean_bitnot(lhs, streams))
+                 .collect::<Vec<_>>()
+         }))
      }
- 
-     fn num_bits_of_keys(self, num_elements: usize) -> u32 {
--        let n_squared = (num_elements * num_elements) as f64;
-+        let n = num_elements as f64;
- 
--        // Below 2^k >= 128 * n^2 the bounds used here are no longer valid
--        // (notably for advantages close to or above 1.0), so this is the
-+        // The finer bound below requires 2^k >= 128 * n^2, this is the
-         // minimum key size we ever return
--        let min_n_bits = (128.0 * n_squared).log2().ceil();
-+        let min_n_bits = (128.0 * n * n).log2().ceil();
- 
--        // In the worst case, the advantage is bounded by n^2 / 2^k, so
--        // requesting 2^k >= n^2 / advantage caps it at the requested value
--        let worst_case_n_bits = (n_squared / self.advantage).log2().ceil();
-+        // In the worst case, the advantage is bounded by
-+        // exp(n(n-1) / (2^k - n + 1)) - 1, which is at most the requested
-+        // advantage iff 2^k >= n(n-1) / ln(1 + advantage) + n - 1
-+        let worst_case_n_bits = (n * (n - 1.0) / self.advantage.ln_1p() + n - 1.0)
-+            .log2()
-+            .ceil();
- 
-         // The finer estimation has some preconditions
-         let n_bits = self
-             .num_revealed
-             .filter(|&t| t.get() <= (num_elements / 4) as u32 && num_elements >= 8)
-             .map_or(worst_case_n_bits, |num_revealed| {
-                 // The advantage is bounded by 7.3 * t * n / 2^k
--                let finer_n_bits = ((7.3 * num_revealed.get() as f64 * num_elements as f64)
--                    / self.advantage)
-+                let finer_n_bits = ((7.3 * num_revealed.get() as f64 * n) / self.advantage)
-                     .log2()
-                     .ceil();
- 
-@@ -508,7 +509,7 @@ mod tests {
- 
-         let advantage = 2f64.powi(-40);
- 
--        // Worst case: k = ceil(log2(n^2 / advantage))
-+        // Worst case: k = ceil(log2(n(n-1) / ln(1 + advantage) + n - 1))
-         let worst_case = AttackerAdvantage::new(advantage, None);
-         assert_eq!(worst_case.num_bits_of_keys(NUM_ELEMENTS), 60);
- 
-```
-
----
-
-### Incident Patch 2: `32602143` (2026-09-29)
-**Commit Message**: fix(integer): bitonic_shuffle_impl no error if len <= 1
-
-**File**: `tfhe/src/high_level_api/integers/shuffle.rs` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ use crate::OprfSeed;
- ///
- /// # Errors
- ///
--/// Returns an error if the resolved key block count is 0
-+/// Returns an error if `data` has at least 2 elements and the resolved key size is 0 blocks.
- pub fn bitonic_shuffle<T, S>(
-     data: Vec<T>,
-     key_size: BitonicShuffleKeySize,
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/shuffle.rs` (modified, +8/-8)
-```diff
-@@ -45,6 +45,10 @@ impl CudaServerKey {
-             ));
-         }
- 
-+        if data.len() <= 1 {
-+            return Ok(data);
-+        }
-+
-         let key_num_blocks = key_size.num_blocks_of_keys(data.len(), self.message_modulus) as u64;
- 
-         if key_num_blocks == 0 {
-@@ -53,10 +57,6 @@ impl CudaServerKey {
-             ));
-         }
- 
--        if data.len() <= 1 {
--            return Ok(data);
--        }
--
-         let data_num_blocks = data[0].as_ref().d_blocks.lwe_ciphertext_count().0;
-         if data[1..]
-             .iter()
-@@ -199,6 +199,10 @@ impl CudaServerKey {
-             ));
-         }
- 
-+        if data.len() <= 1 {
-+            return Ok(data);
-+        }
-+
-         let key_num_blocks = key_size.num_blocks_of_keys(data.len(), self.message_modulus) as u64;
- 
-         if key_num_blocks == 0 {
-@@ -207,10 +211,6 @@ impl CudaServerKey {
-             ));
-         }
- 
--        if data.len() <= 1 {
--            return Ok(data);
--        }
--
-         let data_num_blocks = data[0].as_ref().d_blocks.lwe_ciphertext_count().0;
-         if data[1..]
-             .iter()
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/bitonic_shuffle.rs` (modified, +5/-5)
-```diff
-@@ -210,7 +210,7 @@ impl ServerKey {
-     ///
-     /// # Errors
-     ///
--    /// Returns an error if the resolved key block count is 0.
-+    /// Returns an error if `data` has at least 2 elements and the resolved key size is 0 blocks.
-     pub fn bitonic_shuffle<T, S, C>(
-         &self,
-         oprf_key: &GenericOprfServerKey<C>,
-@@ -272,6 +272,10 @@ impl ServerKey {
-             &[u64], // chunks
-         ) -> crate::Result<Vec<Vec<Ciphertext>>>,
-     {
-+        if data.len() <= 1 {
-+            return Ok(data);
-+        }
-+
-         let key_num_blocks = key_size.num_blocks_of_keys(data.len(), self.message_modulus()) as u64;
- 
-         if key_num_blocks == 0 {
-@@ -280,10 +284,6 @@ impl ServerKey {
-             ));
-         }
- 
--        if data.len() <= 1 {
--            return Ok(data);
--        }
--
-         let key_num_bits = key_num_blocks * self.message_modulus().0.ilog2() as u64;
- 
-         let chunks = vec![key_num_bits; data.len()];
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4101** (2026-10-23): chore(gpu): run multi-bit h100 and zk memcheck workflows weekly on cron (@agnesLeroy)
+- **PR #4100** (2026-10-23): fix(gpu): boolean array should use boolean bitnot (@agnesLeroy)
 - **PR #4097** (closed): chore: with a license checker, check them in CI (@IceTDrinker)
 - **PR #4096** (2026-10-22): Am/chore/node mess update (@IceTDrinker)
 - **PR #4095** (2026-10-22): chore: bump node version (@IceTDrinker)
 - **PR #4094** (2026-10-21): Tm/sequential carry prop degree (@tmontaigu)
-- **PR #4093** (2026-10-22): chore: remove integer multi bit from m1 CI (@IceTDrinker)
-- **PR #4091** (2026-10-21): chore: update dependencies to get up to date ca root crates (@IceTDrinker)
 
 ---
 
@@ -2104,47 +1969,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. integer): use exact worst-case bound for bitonic shuffle key size
+## X. gpu): boolean array should use boolean bitnot
 
 **RULE**:
-When implementing operations in `tfhe/src/integer/server_key/radix_parallel/bitonic_shuffle.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/src/high_level_api/array/gpu/booleans.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `933410b3`: integer): use exact worst-case bound for bitonic shuffle key size. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `baad54c1`: gpu): boolean array should use boolean bitnot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/server_key/radix_parallel/bitonic_shuffle.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/array/gpu/booleans.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let n = num_elements as f64;
-        // The finer bound below requires 2^k >= 128 * n^2, this is the
-        let min_n_bits = (128.0 * n * n).log2().ceil();
-        // In the worst case, the advantage is bounded by
-        // exp(n(n-1) / (2^k - n + 1)) - 1, which is at most the requested
-        // advantage iff 2^k >= n(n-1) / ln(1 + advantage) + n - 1
-        let worst_case_n_bits = (n * (n - 1.0) / self.advantage.ln_1p() + n - 1.0)
-            .log2()
-            .ceil();
-                let finer_n_bits = ((7.3 * num_revealed.get() as f64 * n) / self.advantage)
-        // Worst case: k = ceil(log2(n(n-1) / ln(1 + advantage) + n - 1))
+                .map(|lhs| cuda_key.pbs_key().boolean_bitnot(lhs, streams))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let n_squared = (num_elements * num_elements) as f64;
-        // Below 2^k >= 128 * n^2 the bounds used here are no longer valid
-        // (notably for advantages close to or above 1.0), so this is the
-        let min_n_bits = (128.0 * n_squared).log2().ceil();
-        // In the worst case, the advantage is bounded by n^2 / 2^k, so
-        // requesting 2^k >= n^2 / advantage caps it at the requested value
-        let worst_case_n_bits = (n_squared / self.advantage).log2().ceil();
-                let finer_n_bits = ((7.3 * num_revealed.get() as f64 * num_elements as f64)
-                    / self.advantage)
-        // Worst case: k = ceil(log2(n^2 / advantage))
+                .map(|lhs| CudaBooleanBlock(cuda_key.pbs_key().bitnot(&lhs.0, streams)))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `933410b3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `baad54c1` are properly handled with clean fallback behavior.

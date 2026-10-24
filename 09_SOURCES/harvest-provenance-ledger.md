@@ -4578,3 +4578,7 @@ Every entry in this ledger must capture:
 | `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `6bccaad1` | Multi-dimensional audit evidence | 2026-10-24T19:44:12.400Z |
 | `learn-github-h3js-h3` | `https://github.com/unjs/h3` | `f0e17808` | Multi-dimensional audit evidence | 2026-10-24T19:50:13.335Z |
 | `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `a20c79b7` | Multi-dimensional audit evidence | 2026-10-24T19:52:49.970Z |
+| `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-10-24T19:58:38.904Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `f62b68e4` | Multi-dimensional audit evidence | 2026-10-24T19:58:45.723Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `82ad6f10` | Multi-dimensional audit evidence | 2026-10-24T19:58:56.692Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `c534a3f5` | Multi-dimensional audit evidence | 2026-10-24T19:58:58.322Z |

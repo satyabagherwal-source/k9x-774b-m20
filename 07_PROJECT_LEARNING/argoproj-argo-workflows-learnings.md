@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `f4465466`  
+> **Source Version**: `82ad6f10`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T18:39:51.682Z  
+> **Timestamp**: 2026-10-24T19:58:56.462Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T18:39:50.594Z  
+> **Harvest Timestamp**: 2026-10-24T19:58:56.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17045 stars
+- **Stars / Engagement**: 17050 stars
 
 ---
 
@@ -767,14 +767,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17250** (2026-10-20): **ci: keep the unit test coverage profile whole when gotestsum reruns a test**
-  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  Follows up #16975.  ### Motivation  `codecov/project` still goes red at about 31% (around −14%) after #16975. Both coverage uploads arrive. The Linux `unit-tests` one is the problem: it covers about 35 files instead of about 585.  `make test` runs gotestsum with `--rerun-fails`. When a test flakes, gotestsum reruns it with the same `go test` arguments, including `-coverprofile=coverage.out`. The rerun overwrites the whole run's profile with the coverage of the one rerun test. The job log ends with `DONE 2 runs` whenever this happens. Two examples from 2026-10-19:  - #17216 at `6d65b3e64`: `TestRegressionR4_C54_ChainedOmittedReverseOrderRetry` flaked, and the `unit-tests` flag covered 36 files. - `main` at `556ceb1f9`: `TestRegressionR4_C97_StepsItemExitHookAfterRetry` flaked, and the flag covered 35 files. Every PR against t
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/argoproj/argo-workflows/pull/17250?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=argoproj) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 46.31%. Comparing base ([`556ceb1`](https://app.codecov.io/gh/argoproj/argo-workflows/commit/556ceb1f98d46a7d0a4f2d77670fb74dafbfaea9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=argoproj)) to head ([`6306343`](https://app.codecov.io/gh/argoproj/argo-workflows/commit/63063437ed93c54ecd02aea5b542384dae36c9aa?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=argoproj)). :warning: Report is 1 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff    
-  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/argoproj/argo-workflows/pull/17250?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run configuration
+- **Issue #17274** (2026-10-22): **docs: update CHANGELOG.md for v4.0.15**
+  *Symptoms*: Automated changes by [create-pull-request](https://github.com/peter-evans/create-pull-request) GitHub action
 
-- **Issue #17237** (2026-10-16): **docs: remove references to unsupported versions 3.7 and earlier**
-  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit or e2e tests cover the change - [x] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  No associated issue: docs-only clean-up.  ### Motivation  Versions 3.7 and earlier are out of support. The docs, generated docs and examples still carried version banners, qualifiers and conditional prose about those versions, which clutter the pages and describe behaviour no supported release has.  ### Modifications  - Removed the `> vX.Y and after` banners for v2.x to v3.7. - Rewrote prose that branched on old versions so it describes current behaviour only: retry policy defaults (and the mermaid diagram), memoization, auth mode default, TLS defaults, the v2.4–2.6 `WorkflowTemplate` section, Windows PNS executor limitation, and similar. - Dropped `v3.6 and after:` prefixes (and `This maybe empty before v3.1.`) from API doc comments in `pkg/apis/workflow/v1alpha1`, and regenerated CRDs, quick-start manifests, swagger, jsons
+- **Issue #17273** (2026-10-22): **fix(build): install Go 1.26 in the Windows builder, not an exact patch (release-4.1)**
+  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [x] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [ ] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  ### Motivation  The v4.0.14 release's [Windows image build failed](https://github.com/argoproj/argo-workflows/actions/runs/39745755462/job/119713661389). #17262 set `GOLANG_VERSION=1.26.10` in `Dockerfile.windows`, but Chocolatey's `golang` package stops publishing patches for a Go minor once the next minor ships, and its 1.26 line ends at 1.26.7. `choco install golang --version=1.26.10` reported "The package was not found", so Go was never installed and `make dist/argoexec` failed with Error 127.  Before #17262 this was `1.25`. choco installed 1.25.0, and Go's toolchain switching downloaded the go.mod version during the build (the v4.0.13 log shows `go: downloading go1.25.12`).  release-4.1 still has `1.25`, which works through toolchain switching. This just moves it to the branch's own Go minor.  ### Modifications  `Docker
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -791,557 +788,1207 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f4465466` (2026-10-21)
-**Commit Message**: test(ui): cover workflow templates and cron workflows in the Playwright suite (#17236)
+### Incident Patch 1: `584be861` (2026-10-22)
+**Commit Message**: test(controller): move first operator fixtures into testdata (#17240)
 
-Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Signed-off-by: Jeffery Lofoneh Asamani <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `ui/e2e/README.md` (modified, +8/-7)
+**File**: `workflow/controller/operator_test.go` (modified, +31/-883)
 ```diff
-@@ -58,13 +58,14 @@ and point the tests at it with `ARGO_UI_BASE_URL`.
-   which may include a base href (`http://localhost:8080/argo/` for a stack
-   started with `make start BASE_HREF=/argo/`): every path in the suite is
-   relative to it.
--- **Backend state** (`e2e/fixtures/api.ts`): tests seed workflows over the REST
--  API and wait for a terminal phase *before* asserting on the rendered page, so
--  rendering never races the controller. The one exception is
--  `workflow-live-update.spec.ts`, which watches a workflow run to completion in
--  the browser on purpose, to cover the server-sent-events watch. Created
--  workflows are cleaned up on teardown; workflows the *browser* creates (submit,
--  resubmit) are handed to `api.track()` so they are cleaned up too.
-+- **Backend state** (`e2e/fixtures/api.ts`): tests seed workflows, workflow
-+  templates and cron workflows over the REST API, and wait for a workflow's
-+  terminal phase *before* asserting on the rendered page, so rendering never
-+  races the controller. The one exception is `workflow-live-update.spec.ts`,
-+  which watches a workflow run to completion in the browser on purpose, to
-+  cover the server-sent-events watch. Everything seeded is cleaned up on
-+  teardown; resources the *browser* creates (submit, resubmit, the create
-+  panels) are handed to `api.track()` so they are cleaned up too.
- - **Page objects** (`e2e/pages/`) centralise selectors. Prefer role/text/href
-   locators; add a `data-testid` only when nothing stable exists.
+@@ -145,22 +145,7 @@ func Test_wfOperationCtx_reapplyUpdate(t *testing.T) {
+ }
  
+ func TestResourcesDuration(t *testing.T) {
+-	wf := wfv1.MustUnmarshalWorkflow(`
+-metadata:
+-  name: my-wf
+-  namespace: my-ns
+-spec:
+-  entrypoint: main
+-  templates:
+-   - name: main
+-     dag:
+-       tasks:
+-       - name: pod
+-         template: pod
+-   - name: pod
+-     container:
+-       image: my-image
+-`)
++	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/resources-duration.yaml")
+ 	cancel, controller := newController(logging.TestContext(t.Context()), wf)
+ 	defer cancel()
+ 
+@@ -179,22 +164,7 @@ spec:
+ }
+ 
+ func TestGlobalParamDuration(t *testing.T) {
+-	wf := wfv1.MustUnmarshalWorkflow(`
+-metadata:
+-  name: my-wf
+-  namespace: my-ns
+-spec:
+-  entrypoint: main
+-  templates:
+-   - name: main
+-     dag:
+-       tasks:
+-       - name: pod
+-         template: pod
+-   - name: pod
+-     container:
+-       image: my-image
+-`)
++	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/global-param-duration.yaml")
+ 	cancel, controller := newController(logging.TestContext(t.Context()), wf)
+ 	defer cancel()
+ 
+@@ -210,36 +180,8 @@ spec:
+ }
+ 
+ func TestEstimatedDuration(t *testing.T) {
+-	wf := wfv1.MustUnmarshalWorkflow(`
+-metadata:
+-  name: my-wf
+-  namespace: my-ns
+-  labels:
+-    workflows.argoproj.io/workflow-template: my-wftmpl
+-spec:
+-  entrypoint: main
+-  templates:
+-   - name: main
+-     dag:
+-       tasks:
+-       - name: pod
+-         template: pod
+-   - name: pod
+-     container:
+-       image: my-image
+-`)
+-	cancel, controller := newController(logging.TestContext(t.Context()), wfv1.MustUnmarshalWorkflow(`
+-metadata:
+-  name: my-baseline-wf
+-  namespace: my-ns
+-status:
+-  startedAt: "1970-01-01T00:00:00Z"
+-  finishedAt: "1970-01-01T00:01:00Z"
+-  nodes:
+-    my-baseline-wf:
+-      startedAt: "1970-01-01T00:00:00Z"
+-      finishedAt: "1970-01-01T00:01:00Z"
+-`), wf)
++	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/estimated-duration-workflow.yaml")
++	cancel, controller := newController(logging.TestContext(t.Context()), wfv1.MustUnmarshalWorkflow("@testdata/operator/estimated-duration-baseline-workflow.yaml"), wf)
+ 	defer cancel()
+ 
+ 	ctx := logging.TestContext(t.Context())
+@@ -257,22 +199,7 @@ status:
+ }
+ 
+ func TestDefaultProgress(t *testing.T) {
+-	wf := wfv1.MustUnmarshalWorkflow(`
+-metadata:
+-  name: my-wf
+-  namespace: my-ns
+-spec:
+-  entrypoint: main
+-  templates:
+-   - name: main
+-     dag:
+-       tasks:
+-       - name: pod
+-         template: pod
+-   - name: pod
+-     container:
+-       image: my-image
+-`)
++	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/default-progress.yaml")
+ 	cancel, controller := newController(logging.TestContext(t.Context()), wf)
+ 	defer cancel()
+ 
+@@ -294,25 +221,7 @@ spec:
+ }
+ 
+ func TestLoggedProgress(t *testing.T) {
+-	wf := wfv1.MustUnmarshalWorkflow(`
+-metadata:
+-  name: my-wf
+-  namespace: my-ns
+-spec:
+-  entrypoint: main
+-  templates:
+-   - name: main
+-     dag:
+-       tasks:
+-       - name: pod
+-         template: pod
+-   - name: pod
+-     metadata:
+-        annotations:
+-          workflows.argoproj.io/progress: 0/100
+-     container:
+-       image: my-image
+-`)
++	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/logged-progress.yaml")
+ 	cancel, controller := newController(logging.TestContext(t.Context()), wf)
+ 	defer cancel()
+ 
+@@ -341,45 +250,6 @@ spec:
+ 	assert.Equal(t, wfv1.Progress("100/100"), pod.Progress)
+ }
+ 
+-var sidecarWithVol = `
+-# Verifies sidecars can reference volumeClaimTemplates
+-apiVersion: argoproj.io/v1alpha1
+-kind: Workflow
+-metadata:
+-  name: sidecar-with-volumes
+-spec:
+-  entrypoint: sidecar-with-volumes
+-  volumeClaimTemplates:
+-  - metadata:
+-      name: claim-vol
+-    spec:
+-      accessModes: [ "ReadWriteOnce" ]
+-      resources:
+-        requests:
+-          storage: 1Gi
+-  volumes:
+-  - name: existing-vol
+-    persistentVolumeClaim:
+-      claimName: my-existing-volume
+-  templates:
+-  - name: sidecar-with-volumes
+-    script:
+-      image: python:alpine3.23
+-      command: [python]
+-      source: |
+-        print("hello world")
+-    sidecars:
+-    - name: sidevol
+-      image: docker/whalesay:latest
+-      command: [sh, -c]
+-      args: ["echo generating message in volume; cowsay hello world | tee /mnt/vol/hello_world.txt; sleep 9999"]
+-      volumeMounts:
+-      - name: claim-vol
+-        mountPath: /mnt/vol
+-      - name: existing-vol
+-        mountPath: /mnt/existing-vol
+-`
+-
+ func TestGlobalParams(t *testing.T) {
+ 	wf := wfv1.MustUnmarshalWorkflow(helloWorldWf)
+ 	cancel, controller := newController(logging.TestContext(t.Context()), wf)
+@@ -413,7 +283,7 @@ func TestGlobalParams(t *testing.T) {
+ 
+ // TestSidecarWithVolume verifies ia sidecar can have a volumeMount reference to both existing or volumeClaimTemplate volumes
+ func TestSidecarWithVolume(t *testing.T) {
+-	wf := wfv1.MustUnmarshalWorkflow(sidecarWithVol)
++	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/sidecar-with-vol.yaml")
+ 	cancel, controller := newController(logging.Te
 ```
 
-**File**: `ui/e2e/fixtures/api.ts` (modified, +57/-16)
+**File**: `workflow/controller/testdata/operator/backoff-message.yaml` (added, +123/-0)
 ```diff
-@@ -1,15 +1,26 @@
- import {APIRequestContext, expect} from '@playwright/test';
- 
- import {bearer, ENV_FACTOR, NAMESPACE} from './auth';
--import type {TestWorkflow} from './workflows';
-+import type {TestResource} from './workflows';
+@@ -0,0 +1,123 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  creationTimestamp: "2020-05-05T15:18:40Z"
++  generateName: retry-backoff-
++  generation: 21
++  labels:
++    workflows.argoproj.io/completed: "true"
++    workflows.argoproj.io/phase: Failed
++  name: retry-backoff-s69z6
++  namespace: argo
++  resourceVersion: "348670"
++  selfLink: /apis/argoproj.io/v1alpha1/namespaces/argo/workflows/retry-backoff-s69z6
++  uid: 110dbef4-c54b-4963-9739-03e9878810d9
++spec:
 +
-+// The REST collection each kind of resource lives under, the request-body field
-+// the server's create endpoint expects it in, and whether the collection is
-+// namespaced.
-+const KINDS = {
-+    workflow: {collection: 'workflows', field: 'workflow', namespaced: true},
-+    workflowTemplate: {collection: 'workflow-templates', field: 'template', namespaced: true},
-+    clusterWorkflowTemplate: {collection: 'cluster-workflow-templates', field: 'template', namespaced: false},
-+    cronWorkflow: {collection: 'cron-workflows', field: 'cronWorkflow', namespaced: true}
-+} as const;
-+export type Kind = keyof typeof KINDS;
- 
- // Seeds and inspects backend state directly over the REST API (proxied through
- // the webpack dev server at /api/v1). Tests prefer submitting here and waiting
- // for a terminal phase before touching the browser, so rendering assertions do
- // not race the controller.
- export class ApiClient {
-     private readonly headers: Record<string, string>;
--    private readonly created: string[] = [];
-+    private readonly created: {kind: Kind; name: string}[] = [];
- 
-     constructor(
-         private readonly request: APIRequestContext,
-@@ -18,25 +29,45 @@ export class ApiClient {
-         this.headers = {Authorization: bearer()};
-     }
- 
--    /** Submits a workflow and returns its server-generated name. */
--    async submitWorkflow(workflow: TestWorkflow): Promise<string> {
--        const res = await this.request.post(`api/v1/workflows/${this.namespace}`, {headers: this.headers, data: {workflow}});
--        expect(res.ok(), `submit failed: ${res.status()} ${await res.text()}`).toBeTruthy();
-+    /** The API path of `kind`'s collection, or of the resource `name` within it. */
-+    private path(kind: Kind, name?: string): string {
-+        const {collection, namespaced} = KINDS[kind];
-+        return ['api/v1', collection, ...(namespaced ? [this.namespace] : []), ...(name ? [name] : [])].join('/');
-+    }
-+
-+    /** Creates `resource` as a `kind` and returns its server-generated name. */
-+    private async create(kind: Kind, resource: TestResource): Promise<string> {
-+        const res = await this.request.post(this.path(kind), {headers: this.headers, data: {[KINDS[kind].field]: resource}});
-+        expect(res.ok(), `create ${kind} failed: ${res.status()} ${await res.text()}`).toBeTruthy();
-         const name = (await res.json()).metadata.name as string;
--        this.created.push(name);
-+        this.track(name, kind);
-         return name;
-     }
- 
-+    /** Submits a workflow and returns its server-generated name. */
-+    async submitWorkflow(workflow: TestResource): Promise<string> {
-+        return this.create('workflow', workflow);
-+    }
-+
-+    /** Creates a WorkflowTemplate, or a ClusterWorkflowTemplate when `clusterScoped`. */
-+    async createWorkflowTemplate(template: TestResource, clusterScoped = false): Promise<string> {
-+        return this.create(clusterScoped ? 'clusterWorkflowTemplate' : 'workflowTemplate', template);
-+    }
-+
-+    async createCronWorkflow(cronWorkflow: TestResource): Promise<string> {
-+        return this.create('cronWorkflow', cronWorkflow);
-+    }
-+
-     /**
--     * Registers a workflow this client did not submit — one the browser created,
--     * whose name the server generated — so teardown cleans it up too.
-+     * Registers a resource this client did not create — one the browser created,
-+     * whose name the server or the UI generated — so teardown cleans it up too.
-      */
--    track(name: string): void {
--        this.created.push(name);
-+    track(name: string, kind: Kind = 'workflow'): void {
-+        this.created.push({kind, name});
-     }
- 
-     async getWorkflow(name: string): Promise<any> {
--        const res = await this.request.get(`api/v1/workflows/${this.namespace}/${name}`, {headers: this.headers});
-+        const res = await this.request.get(this.path('workflow', name), {headers: this.headers});
-         expect(res.ok(), `get ${name} failed: ${res.status()}`).toBeTruthy();
-         return res.json();
-     }
-@@ -66,12 +97,22 @@ export class ApiClient {
-         throw new Error(`workflow ${name} never reached ${[...wanted].join('/')} within ${timeoutMs * ENV_FACTOR}ms (last phase: ${phase})`);
-     }
- 
--    async deleteWorkflow(name: string): Promise<void> {
--        await this.request.delete(`api/v1/workflows/${this.namespace}/${name}`, {headers: this.headers});
-+    async getCronWorkflow(name: string): Promise<any> {
-+        const res = await this.request.get(this.path('cronWorkflow', name), {headers: this.headers});
-+        expect(res.ok(), `get cron workflow ${name} failed: ${res.status()}`).toBeTruthy();
-+        return res.json();
-+    }
-+
-+    private async delete(kind: Kind, name: string): Promise<void
++  entrypoint: retry-backoff
++  templates:
++  -
++    container:
++      args:
++      - import random; import sys; exit_code = random.choice([1, 1]); sys.exit(exit_code)
++      command:
++      - python
++      - -c
++      image: python:alpine3.23
++      name: ""
++      resources: {}
++    inputs: {}
++    metadata: {}
++    name: retry-backoff
++    outputs: {}
++    retryStrategy:
++      backoff:
++        duration: "2"
++        factor: 2
++        maxDuration: 1m
++      limit: 10
++status:
++  nodes:
++    retry-backoff-s69z6:
++      children:
++      - retry-backoff-s69z6-1807967148
++      - retry-backoff-s69z6-130058153
++      displayName: retry-backoff-s69z6
++      id: retry-backoff-s69z6
++      name: retry-backoff-s69z6
++      phase: Running
++      startedAt: "2020-05-05T15:18:40Z"
++      templateName: retry-backoff
++      templateScope: local/retry-backoff-s69z6
++      type: Retry
++    retry-backoff-s69z6-130058153:
++      displayName: retry-backoff-s69z6(1)
++      finishedAt: "2020-05-05T15:18:43Z"
++      hostNodeName: minikube
++      id: retry-backoff-s69z6-130058153
++      message: failed with exit code 1
++      name: retry-backoff-s69z6(1)
++      outputs:
++        artifacts:
++        - archiveLogs: true
++          name: main-logs
++          s3:
++            accessKeySecret:
++              key: accesskey
++              name: my-minio-cred
++            bucket: my-bucket
++            endpoint: minio:9000
++            insecure: true
++            key: retry-backoff-s69z6/retry-backoff-s69z6-130058153/main.log
++            secretKeySecret:
++              key: secretkey
++              name: my-minio-cred
++        exitCode: "1"
++      phase: Failed
++      resourcesDuration:
++        cpu: 1
++        memory: 0
++      startedAt: "2020-05-05T15:18:45Z"
++      templateName: retry-backoff
++      templateScope: local/retry-backoff-s69z6
++      type: Pod
++      nodeFlag:
++        retried: true
++    retry-backoff-s69z6-1807967148:
++      displayName: retry-backoff-s69z6(0)
++      finishedAt: "2020-05-05T15:18:43Z"
++      hostNodeName: minikube
++      id: retry-backoff-s69z6-1807967148
++      message: failed with exit code 1
++      name: retry-backoff-s69z6(0)
++      outputs:
++        artifacts:
++        - archiveLogs: true
++          name: main-logs
++          s3:
++            accessKeySecret:
++              key: accesskey
++              name: my-minio-cred
++            bucket: my-bucket
++            endpoint: minio:9000
++            insecure: true
++            key: retry-backoff-s69z6/retry-backoff-s69z6-1807967148/main.log
++            secretKeySecret:
++              key: secretkey
++              name: my-minio-cred
++        exitCode: "1"
++      phase: Failed
++      resourcesDuration:
++        cpu: 2
++        memory: 0
++      startedAt: "2020-05-05T15:18:40Z"
++      templateName: retry-backoff
++      templateScope: local/retry-backoff-s69z6
++      type: Pod
++      nodeFlag:
++        retried: true
++  phase: Running
++  resourcesDuration:
++    cpu: 5
++    memory: 0
++  startedAt: "2020-05-05T15:18:40Z"
 ```
 
-**File**: `ui/e2e/fixtures/test.ts` (modified, +14/-1)
+**File**: `workflow/controller/testdata/operator/daemon-container-set-steps-wf.yaml` (added, +27/-0)
 ```diff
-@@ -1,19 +1,25 @@
- import {test as base} from '@playwright/test';
- 
- import {ConfirmDialog} from '../pages/confirm-dialog';
-+import {CronWorkflowPage} from '../pages/cron-workflow-page';
- import {LoginPage} from '../pages/login-page';
- import {WorkflowDetailsPage} from '../pages/workflow-details-page';
- import {WorkflowListPage} from '../pages/workflow-list-page';
- import {WorkflowLogsPanel} from '../pages/workflow-logs-panel';
-+import {WorkflowTemplatePage} from '../pages/workflow-template-page';
- import {ApiClient} from './api';
- 
- interface Fixtures {
-     api: ApiClient;
-     confirmDialog: ConfirmDialog;
-+    cronWorkflowPage: CronWorkflowPage;
-     loginPage: LoginPage;
-     workflowDetailsPage: WorkflowDetailsPage;
-     workflowListPage: WorkflowListPage;
-     workflowLogsPanel: WorkflowLogsPanel;
-+    workflowTemplatePage: WorkflowTemplatePage;
-+    /** Points `workflowTemplatePage` at cluster workflow templates; set with `test.use()`. */
-+    clusterScopedTemplates: boolean;
- }
- 
- export const test = base.extend<Fixtures>({
-@@ -37,6 +43,9 @@ export const test = base.extend<Fixtures>({
-     confirmDialog: async ({page}, use) => {
-         await use(new ConfirmDialog(page));
-     },
-+    cronWorkflowPage: async ({page}, use) => {
-+        await use(new CronWorkflowPage(page));
-+    },
-     loginPage: async ({page}, use) => {
-         await use(new LoginPage(page));
-     },
-@@ -48,7 +57,11 @@ export const test = base.extend<Fixtures>({
-     },
-     workflowLogsPanel: async ({page}, use) => {
-         await use(new WorkflowLogsPanel(page));
--    }
-+    },
-+    workflowTemplatePage: async ({page, clusterScopedTemplates}, use) => {
-+        await use(new WorkflowTemplatePage(page, clusterScopedTemplates));
-+    },
-+    clusterScopedTemplates: [false, {option: true}]
- });
- 
- export {expect} from '@playwright/test';
+@@ -0,0 +1,27 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: daemon-cs-steps
++spec:
++  entrypoint: main
++  templates:
++  - name: main
++    steps:
++    - - name: daemon
++        template: cs
++    - - name: after
++        template: noop
++  - name: cs
++    daemon: true
++    containerSet:
++      containers:
++      - name: step-1
++        image: alpine
++        command: [sh, -c, sleep 999999]
++      - name: step-2
++        image: alpine
++        command: [sh, -c, sleep 999999]
++  - name: noop
++    container:
++      image: alpine
++      command: [sh, -c, "true"]
 ```
 
-**File**: `ui/e2e/fixtures/workflows.ts` (modified, +46/-14)
+**File**: `workflow/controller/testdata/operator/daemon-container-set-wf.yaml` (added, +17/-0)
 ```diff
-@@ -1,53 +1,56 @@
--// Minimal, deterministic workflow manifests for tests. Kept as typed builders
-+// Minimal, deterministic workflow (and workflow template and cron workflow)
-+// manifests for tests. Kept as typed builders
- // (rather than YAML files) so they are dependency-free and refactor-safe.
- // All use argosay, the lightweight image the Go e2e suite relies on.
- 
- import {NAMESPACE} from './auth';
- 
- export const TEST_LABEL = 'workflows.argoproj.io/test';
- 
--export interface TestWorkflow {
-+export interface TestResource {
-     metadata: {generateName?: string; name?: string; namespace?: string; labels?: Record<string, string>};
-     spec: unknown;
- }
- 
--function base(generateName: string): Pick<TestWorkflow, 'metadata'> {
-+function base(generateName: string): Pick<TestResource, 'metadata'> {
-     return {metadata: {generateName, namespace: NAMESPACE, labels: {[TEST_LABEL]: 'true'}}};
- }
- 
- const ARGOSAY = 'argoproj/argosay:v2';
- 
--/** A single-container workflow running `argosay <args>`. */
--function oneStep(generateName: string, args: string[]): TestWorkflow {
-+/** The spec of a single-container workflow running `argosay <args>`. */
-+function oneStepSpec(args: string[]) {
-     return {
--        ...base(generateName),
--        spec: {
--            entrypoint: 'main',
--            templates: [{name: 'main', container: {image: ARGOSAY, args}}]
--        }
-+        entrypoint: 'main',
-+        templates: [{name: 'main', container: {image: ARGOSAY, args}}]
-     };
- }
- 
-+/** A single-container workflow running `argosay <args>`. */
-+function oneStep(generateName: string, args: string[]): TestResource {
-+    return {...base(generateName), spec: oneStepSpec(args)};
-+}
-+
- /** A workflow that echoes `message` and succeeds within a few seconds. */
--export function echoWorkflow(message = 'hello e2e', generateName = 'e2e-smoke-'): TestWorkflow {
-+export function echoWorkflow(message = 'hello e2e', generateName = 'e2e-smoke-'): TestResource {
-     return oneStep(generateName, ['echo', message]);
- }
- 
- /** A workflow whose only step exits non-zero, so it settles in `Failed`. */
--export function failingWorkflow(generateName = 'e2e-fail-'): TestWorkflow {
-+export function failingWorkflow(generateName = 'e2e-fail-'): TestResource {
-     return oneStep(generateName, ['exit', '1']);
- }
- 
- /** A workflow that stays `Running` for `seconds`, for tests that act on a live workflow. */
--export function sleepWorkflow(seconds = 60, generateName = 'e2e-sleep-'): TestWorkflow {
-+export function sleepWorkflow(seconds = 60, generateName = 'e2e-sleep-'): TestResource {
-     return oneStep(generateName, ['sleep', String(seconds)]);
- }
- 
- /** The task names in `dagWorkflow`, which double as its graph node labels. */
- export const DAG_TASKS = ['generate', 'process-a', 'process-b'];
- 
- /** A DAG that fans `generate` out into two parallel tasks and succeeds. */
--export function dagWorkflow(generateName = 'e2e-dag-'): TestWorkflow {
-+export function dagWorkflow(generateName = 'e2e-dag-'): TestResource {
-     const [generate, ...processors] = DAG_TASKS;
-     return {
-         ...base(generateName),
-@@ -65,3 +68,32 @@ export function dagWorkflow(generateName = 'e2e-dag-'): TestWorkflow {
-         }
-     };
- }
-+
-+/** The `message` parameter's default in `echoWorkflowTemplate`. */
-+export const TEMPLATE_MESSAGE = 'hello e2e template';
-+
-+/**
-+ * A WorkflowTemplate whose workflows echo their `message` parameter and succeed,
-+ * or, when `clusterScoped`, the same as a ClusterWorkflowTemplate.
-+ */
-+export function echoWorkflowTemplate(clusterScoped = false, generateName = 'e2e-template-'): TestResource {
-+    const {metadata} = base(generateName);
-+    if (clusterScoped) {
-+        delete metadata.namespace;
-+    }
-+    return {
-+        metadata,
-+        spec: {
-+            ...oneStepSpec(['echo', '{{workflow.parameters.message}}']),
-+            arguments: {parameters: [{name: 'message', value: TEMPLATE_MESSAGE}]}
-+        }
-+    };
-+}
-+
-+/**
-+ * A cron workflow running `echoWorkflow`'s step. The default schedule (midnight
-+ * on 1 January) is valid but never due mid-test, so it spawns no workflows.
-+ */
-+export function cronWorkflow(schedule = '0 0 1 1 *', generateName = 'e2e-cron-'): TestResource {
-+    return {...base(generateName), spec: {schedules: [schedule], workflowSpec: oneStepSpec(['echo', 'hello e2e'])}};
-+}
+@@ -0,0 +1,17 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: daemon-container-set
++spec:
++  entrypoint: main
++  templates:
++  - name: main
++    daemon: true
++    containerSet:
++      containers:
++      - name: step-1
++        image: alpine
++        command: [sh, -c, sleep 999999]
++      - name: step-2
++        image: alpine
++        command: [sh, -c, sleep 999999]
 ```
 
-**File**: `ui/e2e/pages/cron-workflow-page.ts` (added, +60/-0)
+**File**: `workflow/controller/testdata/operator/daemon-script-steps-wf.yaml` (added, +24/-0)
 ```diff
-@@ -0,0 +1,60 @@
-+import {expect, Locator, Page} from '@playwright/test';
-+
-+import {NAMESPACE} from '../fixtures/auth';
-+
-+// Page object for the cron workflow list and details pages
-+// (ui/src/cron-workflows). Each is small, so one object covers both.
-+export class CronWorkflowPage {
-+    readonly toolbar: Locator;
-+    readonly panel: Locator;
-+
-+    constructor(private readonly page: Page) {
-+        // The action menu row under the breadcrumbs; see WorkflowDetailsPage.
-+        this.toolbar = page.locator('.top-bar.row');
-+        this.panel = page.locator('.sliding-panel--opened .sliding-panel__body');
-+    }
-+
-+    async gotoList(): Promise<void> {
-+        await this.page.goto(`cron-workflows/${NAMESPACE}`);
-+    }
-+
-+    async goto(name: string): Promise<void> {
-+        await this.page.goto(`cron-workflows/${NAMESPACE}/${name}`);
-+    }
-+
-+    /** The row's name link, matched by its details-page href. */
-+    row(name: string): Locator {
-+        return this.page.locator(`a[href$="/cron-workflows/${NAMESPACE}/${name}"]`);
-+    }
-+
-+    /** The whole list row, whose cells (schedule, its description, ...) carry no names of their own. */
-+    rowContainer(name: string): Locator {
-+        return this.page.locator('.cron-workflows-list__row-container').filter({has: this.row(name)});
-+    }
-+
-+    /** A toolbar action (Create New Cron Workflow on the list; Submit, Suspend, Resume, ... on details). */
-+    operation(title: string): Locator {
-+        return this.toolbar.getByRole('button', {name: title});
-+    }
-+
-+    /**
-+     * Creates a cron workflow from the list page's create panel, taking the
-+     * pre-filled example manifest (ui/src/shared/examples.ts) as offered: the
-+     * editor is Monaco, so tests must not type into it.
-+     */
-+    async createExample(): Promise<void> {
-+        await this.operation('Create New Cron Workflow').click();
-+        await this.panel.getByRole('button', {name: 'Create'}).click();
-+    }
-+
-+    /** The name of the cron workflow whose details are shown; the example's is random. */
-+    async currentName(): Promise<string> {
-+        const pattern = new RegExp(`/cron-workflows/${NAMESPACE}/([^/?#]+)`);
-+        await expect(this.page).toHaveURL(pattern);
-+        const match = pattern.exec(this.page.url());
-+        if (!match) {
-+            throw new Error(`not on a cron workflow details page: ${this.page.url()}`);
-+        }
-+        return match[1];
-+    }
-+}
+@@ -0,0 +1,24 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: daemon-script-steps
++spec:
++  entrypoint: main
++  templates:
++  - name: main
++    steps:
++    - - name: daemon
++        template: script
++    - - name: after
++        template: noop
++  - name: script
++    daemon: true
++    script:
++      image: alpine
++      command: [sh]
++      source: |
++        sleep 999999
++  - name: noop
++    container:
++      image: alpine
++      command: [sh, -c, "true"]
 ```
 
-**File**: `ui/e2e/pages/workflow-template-page.ts` (added, +83/-0)
+**File**: `workflow/controller/testdata/operator/dag-template-parallelism-limit.yaml` (added, +25/-0)
 ```diff
-@@ -0,0 +1,83 @@
-+import {expect, Locator, Page} from '@playwright/test';
-+
-+import {NAMESPACE} from '../fixtures/auth';
-+
-+// Page object for the list and details pages of workflow templates
-+// (ui/src/workflow-templates) or, when `clusterScoped`, of cluster workflow
-+// templates (ui/src/cluster-workflow-templates). Both kinds share the editor
-+// and the submit panel, and each page is small, so one object covers all four.
-+export class WorkflowTemplatePage {
-+    readonly toolbar: Locator;
-+    readonly panel: Locator;
-+    /** The list page's path, which every details path extends with the template's name. */
-+    private readonly listPath: string;
-+
-+    constructor(
-+        private readonly page: Page,
-+        private readonly clusterScoped = false
-+    ) {
-+        // The action menu row under the breadcrumbs; see WorkflowDetailsPage.
-+        this.toolbar = page.locator('.top-bar.row');
-+        this.panel = page.locator('.sliding-panel--opened .sliding-panel__body');
-+        this.listPath = clusterScoped ? 'cluster-workflow-templates' : `workflow-templates/${NAMESPACE}`;
-+    }
-+
-+    async gotoList(): Promise<void> {
-+        await this.page.goto(this.listPath);
-+    }
-+
-+    async goto(name: string): Promise<void> {
-+        await this.page.goto(`${this.listPath}/${name}`);
-+    }
-+
-+    /** The row's name link, matched by its details-page href. */
-+    row(name: string): Locator {
-+        return this.page.locator(`a[href$="/${this.listPath}/${name}"]`);
-+    }
-+
-+    async openTemplate(name: string): Promise<void> {
-+        await this.row(name).click();
-+        await expect(this.page).toHaveURL(new RegExp(`/${this.listPath}/${name}`));
-+    }
-+
-+    /** A toolbar action on the details page (Submit, Update, Delete, ...). */
-+    operation(title: string): Locator {
-+        return this.toolbar.getByRole('button', {name: title});
-+    }
-+
-+    async openTab(title: 'Manifest' | 'Spec' | 'MetaData' | 'Workflow MetaData' | 'Graph'): Promise<void> {
-+        await this.page.locator('.tabs__nav').getByText(title, {exact: true}).click();
-+    }
-+
-+    /**
-+     * The value shown for a workflow parameter in the Spec tab. KeyValueEditor
-+     * renders each pair as a row of name and value columns, followed by an
-+     * empty row of inputs for adding another.
-+     */
-+    specParameter(name: string): Locator {
-+        return this.page
-+            .locator('.white-box__details-row')
-+            .filter({has: this.page.locator('.columns.small-4', {hasText: new RegExp(`^${name}$`)})})
-+            .locator('.columns.small-6');
-+    }
-+
-+    /**
-+     * Submits a workflow from the template into the suite's namespace, taking
-+     * the submit panel's other defaults.
-+     */
-+    async submit(): Promise<void> {
-+        await this.operation('Submit').click();
-+        await expect(this.panel.getByRole('heading', {name: 'Submit Workflow'})).toBeVisible();
-+        if (this.clusterScoped) {
-+            // A cluster template has no namespace of its own, so the panel asks
-+            // for one. It is pre-filled once the details page has fetched the
-+            // server info (falling back to `default`); wait for that before
-+            // replacing it, or the late default would overwrite what we type.
-+            const namespace = this.panel.locator('xpath=.//label[normalize-space()="Namespace"]/following-sibling::input');
-+            await expect(namespace).not.toHaveValue('');
-+            await namespace.fill(NAMESPACE);
-+            await expect(namespace).toHaveValue(NAMESPACE);
-+        }
-+        await this.panel.getByRole('button', {name: 'Submit'}).click();
-+    }
-+}
+@@ -0,0 +1,25 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  name: dag-parallelism-limit
++spec:
++  entrypoint: dag-parallelism-limit
++  templates:
++  - name: dag-parallelism-limit
++    parallelism: 2
++    dag:
++      tasks:
++      - name: a
++        template: sleep
++      - name: b
++        template: sleep
++      - name: c
++        template: sleep
++      - name: d
++        template: sleep
++      - name: e
++        template: sleep
++  - name: sleep
++    container:
++      image: alpine:3.23
++      command: [sh, -c, sleep 10]
 ```
 
-**File**: `ui/e2e/tests/cron-workflows.spec.ts` (added, +40/-0)
+**File**: `workflow/controller/testdata/operator/default-progress.yaml` (added, +14/-0)
 ```diff
-@@ -0,0 +1,40 @@
-+import {expect, test} from '../fixtures/test';
-+import {cronWorkflow} from '../fixtures/workflows';
-+
-+test('creates a cron workflow from the UI and lists it with its schedule', async ({api, cronWorkflowPage}) => {
-+    await cronWorkflowPage.gotoList();
-+    await cronWorkflowPage.createExample();
-+
-+    // The example manifest names itself, so the name is only knowable once the
-+    // UI has redirected to the new cron workflow's details page. Its schedule is
-+    // every minute, so it may spawn a workflow before teardown deletes it;
-+    // Kubernetes garbage-collects that along with it.
-+    const name = await cronWorkflowPage.currentName();
-+    api.track(name, 'cronWorkflow');
-+
-+    await cronWorkflowPage.gotoList();
-+    const row = cronWorkflowPage.rowContainer(name);
-+    await expect(row).toContainText('* * * * *');
-+    // The cron expression's description, rendered by cronstrue.
-+    await expect(row).toContainText('Every minute');
-+});
-+
-+test('suspends and resumes a cron workflow from the details page', async ({api, cronWorkflowPage}) => {
-+    const name = await api.createCronWorkflow(cronWorkflow());
-+    const suspended = async () => (await api.getCronWorkflow(name)).spec.suspend ?? false;
-+
-+    await cronWorkflowPage.goto(name);
-+
-+    // The toolbar offers exactly one of Suspend and Resume, whichever applies,
-+    // and flips only once the server has answered, so the stored state can be
-+    // checked straight after.
-+    await cronWorkflowPage.operation('Suspend').click();
-+    await expect(cronWorkflowPage.operation('Resume')).toBeVisible();
-+    await expect(cronWorkflowPage.operation('Suspend')).toBeHidden();
-+    expect(await suspended()).toBe(true);
-+
-+    await cronWorkflowPage.operation('Resume').click();
-+    await expect(cronWorkflowPage.operation('Suspend')).toBeVisible();
-+    await expect(cronWorkflowPage.operation('Resume')).toBeHidden();
-+    expect(await suspended()).toBe(false);
-+});
+@@ -0,0 +1,14 @@
++metadata:
++  name: my-wf
++  namespace: my-ns
++spec:
++  entrypoint: main
++  templates:
++   - name: main
++     dag:
++       tasks:
++       - name: pod
++         template: pod
++   - name: pod
++     container:
++       image: my-image
 ```
 
-**File**: `ui/e2e/tests/workflow-templates.spec.ts` (added, +46/-0)
+**File**: `workflow/controller/testdata/operator/estimated-duration-baseline-workflow.yaml` (added, +10/-0)
 ```diff
-@@ -0,0 +1,46 @@
-+import {ENV_FACTOR} from '../fixtures/auth';
-+import {expect, test} from '../fixtures/test';
-+import {echoWorkflowTemplate, TEMPLATE_MESSAGE} from '../fixtures/workflows';
-+
-+// Workflow templates and cluster workflow templates share their editor and
-+// submit panel, so the same journeys run against both.
-+const KINDS = [
-+    {kind: 'workflow template', clusterScoped: false, label: 'workflows.argoproj.io/workflow-template'},
-+    {kind: 'cluster workflow template', clusterScoped: true, label: 'workflows.argoproj.io/cluster-workflow-template'}
-+];
-+
-+for (const {kind, clusterScoped, label} of KINDS) {
-+    test.describe(kind, () => {
-+        test.use({clusterScopedTemplates: clusterScoped});
-+
-+        test(`lists a ${kind} and opens its details`, async ({api, page, workflowTemplatePage}) => {
-+            const name = await api.createWorkflowTemplate(echoWorkflowTemplate(clusterScoped), clusterScoped);
-+
-+            await workflowTemplatePage.gotoList();
-+            await workflowTemplatePage.openTemplate(name);
-+
-+            await expect(page.locator('.top-bar__breadcrumbs-last-item')).toHaveText(name);
-+            // The Spec tab renders from the fetched template, not the URL, so its
-+            // parameter proves the details loaded.
-+            await workflowTemplatePage.openTab('Spec');
-+            await expect(workflowTemplatePage.specParameter('message')).toHaveText(TEMPLATE_MESSAGE);
-+        });
-+
-+        test(`submits a workflow from a ${kind} and it runs to completion`, async ({api, workflowTemplatePage, workflowDetailsPage}) => {
-+            const template = await api.createWorkflowTemplate(echoWorkflowTemplate(clusterScoped), clusterScoped);
-+
-+            await workflowTemplatePage.goto(template);
-+            await workflowTemplatePage.submit();
-+
-+            // The submit panel redirects to the new workflow, whose name the server generated.
-+            const name = await workflowDetailsPage.currentWorkflowName();
-+            api.track(name);
-+            expect((await api.getWorkflow(name)).metadata.labels[label]).toBe(template);
-+
-+            // As in workflow-submit.spec.ts, this run starts from scratch, so allow a
-+            // full pull-and-run, inside the (also scaled) per-test timeout.
-+            await workflowDetailsPage.openTab('Summary');
-+            await expect(workflowDetailsPage.summaryAttribute('Status')).toContainText('Succeeded', {timeout: 45_000 * ENV_FACTOR});
-+        });
-+    });
-+}
+@@ -0,0 +1,10 @@
++metadata:
++  name: my-baseline-wf
++  namespace: my-ns
++status:
++  startedAt: "1970-01-01T00:00:00Z"
++  finishedAt: "1970-01-01T00:01:00Z"
++  nodes:
++    my-baseline-wf:
++      startedAt: "1970-01-01T00:00:00Z"
++      finishedAt: "1970-01-01T00:01:00Z"
+```
+
+---
+
+### Incident Patch 2: `69d8d197` (2026-10-22)
+**Commit Message**: test(controller): move workflow default fixtures into testdata (#17209)
+
+Signed-off-by: bnspopi <[REDACTED_EMAIL]>
+
+**File**: `workflow/controller/operator_wfdefault_test.go` (modified, +11/-188)
+```diff
+@@ -10,195 +10,15 @@ import (
+ 	"github.com/argoproj/argo-workflows/v4/util/logging"
+ )
+ 
+-var wfDefaults = `
+-  metadata: 
+-    annotations: 
+-      testAnnotation: test
+-    labels: 
+-      testLabel: test
+-  spec: 
+-    entrypoint: whalesay
+-    activeDeadlineSeconds: 7200
+-    arguments:
+-      parameters: 
+-        - 
+-          name: message
+-          value: "hello world"
+-    onExit: whalesay-exit
+-    serviceAccountName: default
+-    templates: 
+-      - 
+-        container: 
+-          args: 
+-            - "hello from the default exit handler"
+-          command: 
+-            - cowsay
+-          image: docker/whalesay
+-        name: whalesay-exit
+-    ttlStrategy: 
+-      secondsAfterCompletion: 60
+-    volumes: 
+-      - 
+-        name: test
+-        secret: 
+-          secretName: test
+-`
+-
+-var simpleWf = `
+-apiVersion: argoproj.io/v1alpha1
+-kind: Workflow
+-metadata:
+-  generateName: hello-world-
+-  labels:
+-    workflows.argoproj.io/archive-strategy: "false"
+-spec:
+-  entrypoint: whalesay
+-  templates:
+-  - name: whalesay
+-    container:
+-      image: docker/whalesay:latest
+-      command: [cowsay]
+-      args: ["hello world"]
+-`
+-
+-var wfDefaultResult = `
+-apiVersion: argoproj.io/v1alpha1
+-kind: Workflow
+-metadata: 
+-  annotations: 
+-    testAnnotation: test
+-  generateName: hello-world-
+-  labels: 
+-    testLabel: test
+-    workflows.argoproj.io/archive-strategy: "false"
+-spec: 
+-  activeDeadlineSeconds: 7200
+-  arguments:
+-    parameters: 
+-      - 
+-        name: message
+-        value: "hello world"
+-  entrypoint: whalesay
+-  onExit: whalesay-exit
+-  serviceAccountName: default
+-  templates: 
+-    - 
+-      container: 
+-        args: 
+-          - "hello world"
+-        command: 
+-          - cowsay
+-        image: "docker/whalesay:latest"
+-      name: whalesay
+-    - 
+-      container: 
+-        args: 
+-          - "hello from the default exit handler"
+-        command: 
+-          - cowsay
+-        image: docker/whalesay
+-      name: whalesay-exit
+-  ttlStrategy: 
+-    secondsAfterCompletion: 60
+-  volumes: 
+-    - 
+-      name: test
+-      secret: 
+-        secretName: test
+-`
+-
+-var simpleWFT = `
+-apiVersion: argoproj.io/v1alpha1
+-kind: WorkflowTemplate
+-metadata:
+-  name: workflow-template-submittable
+-  namespace: default
+-spec:
+-  entrypoint: whalesay-template
+-  arguments:
+-    parameters:
+-      - name: message
+-        value: hello world
+-  templates:
+-    - name: whalesay-template
+-      inputs:
+-        parameters:
+-          - name: message
+-      container:
+-        image: docker/whalesay
+-        command: [cowsay]
+-        args: ["{{inputs.parameters.message}}"]
+-`
+-
+-var storedSpecResult = `
+-{
+-   "activeDeadlineSeconds": 7200,
+-   "arguments": {
+-      "parameters": [
+-         {
+-            "name": "message",
+-            "value": "hello world"
+-         }
+-      ]
+-   },
+-   "entrypoint": "whalesay-template",
+-   "onExit": "whalesay-exit",
+-   "serviceAccountName": "default",
+-   "templates": [
+-      {
+-         "container": {
+-            "args": [
+-               "{{inputs.parameters.message}}"
+-            ],
+-            "command": [
+-               "cowsay"
+-            ],
+-            "image": "docker/whalesay"
+-            
+-         },
+-		"inputs": {
+-				"parameters": [
+-				   {
+-					  "name": "message"
+-				   }
+-				]
+-			},
+-         "name": "whalesay-template"
+-      },
+-      {
+-         "container": {
+-            "args": [
+-               "hello from the default exit handler"
+-            ],
+-            "command": [
+-               "cowsay"
+-            ],
+-            "image": "docker/whalesay"
+-         },
+-         "name": "whalesay-exit"
+-      }
+-   ],
+-   "ttlStrategy": {
+-      "secondsAfterCompletion": 60
+-   },
+-   "volumes": [
+-      {
+-         "name": "test",
+-         "secret": {
+-            "secretName": "test"
+-         }
+-      }
+-   ]
+-}
+-`
+-
++// TestWFDefaultsWithWorkflow checks that the configured workflow defaults are merged into a
++// submitted Workflow, both when it sets its own entrypoint and when it leaves it to the default.
+ func TestWFDefaultsWithWorkflow(t *testing.T) {
+ 	assert := assert.New(t)
+ 
+-	wfDefault := wfv1.MustUnmarshalWorkflow(wfDefaults)
+-	wf := wfv1.MustUnmarshalWorkflow(simpleWf)
++	wfDefault := wfv1.MustUnmarshalWorkflow("@testdata/operator_wfdefault/workflow-defaults.yaml")
++	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator_wfdefault/simple-workflow.yaml")
+ 	wf1 := wf.DeepCopy()
+-	wfResult := wfv1.MustUnmarshalWorkflow(wfDefaultResult)
++	wfResult := wfv1.MustUnmarshalWorkflow("@testdata/operator_wfdefault/simple-workflow-with-defaults.yaml")
+ 	ctx := logging.TestContext(t.Context())
+ 	cancel, controller := newControllerWithDefaults(ctx)
+ 	defer cancel()
+@@ -218,12 +38,15 @@ func TestWFDefaultsWithWorkflow(t *testing.T) {
+ 	assert.Contains(woc.wf.Annotations, "testAnnotation")
+ }
+ 
++// TestWFDefaultWithWFTAndWf checks that the workflow defaults are merged into the spec stored for
++// a Workflow that 
+```
+
+**File**: `workflow/controller/testdata/operator_wfdefault/simple-workflow-template.yaml` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++apiVersion: argoproj.io/v1alpha1
++kind: WorkflowTemplate
++metadata:
++  name: workflow-template-submittable
++  namespace: default
++spec:
++  entrypoint: whalesay-template
++  arguments:
++    parameters:
++      - name: message
++        value: hello world
++  templates:
++    - name: whalesay-template
++      inputs:
++        parameters:
++          - name: message
++      container:
++        image: docker/whalesay
++        command: [cowsay]
++        args: ["{{inputs.parameters.message}}"]
+```
+
+**File**: `workflow/controller/testdata/operator_wfdefault/simple-workflow-with-defaults.yaml` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata: 
++  annotations: 
++    testAnnotation: test
++  generateName: hello-world-
++  labels: 
++    testLabel: test
++    workflows.argoproj.io/archive-strategy: "false"
++spec: 
++  activeDeadlineSeconds: 7200
++  arguments:
++    parameters: 
++      - 
++        name: message
++        value: "hello world"
++  entrypoint: whalesay
++  onExit: whalesay-exit
++  serviceAccountName: default
++  templates: 
++    - 
++      container: 
++        args: 
++          - "hello world"
++        command: 
++          - cowsay
++        image: "docker/whalesay:latest"
++      name: whalesay
++    - 
++      container: 
++        args: 
++          - "hello from the default exit handler"
++        command: 
++          - cowsay
++        image: docker/whalesay
++      name: whalesay-exit
++  ttlStrategy: 
++    secondsAfterCompletion: 60
++  volumes: 
++    - 
++      name: test
++      secret: 
++        secretName: test
+```
+
+**File**: `workflow/controller/testdata/operator_wfdefault/simple-workflow.yaml` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  generateName: hello-world-
++  labels:
++    workflows.argoproj.io/archive-strategy: "false"
++spec:
++  entrypoint: whalesay
++  templates:
++  - name: whalesay
++    container:
++      image: docker/whalesay:latest
++      command: [cowsay]
++      args: ["hello world"]
+```
+
+**File**: `workflow/controller/testdata/operator_wfdefault/stored-workflow-spec.yaml` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++activeDeadlineSeconds: 7200
++arguments:
++  parameters:
++    - name: message
++      value: "hello world"
++entrypoint: whalesay-template
++onExit: whalesay-exit
++serviceAccountName: default
++templates:
++  - container:
++      args:
++        - "{{inputs.parameters.message}}"
++      command:
++        - cowsay
++      image: docker/whalesay
++    inputs:
++      parameters:
++        - name: message
++    name: whalesay-template
++  - container:
++      args:
++        - "hello from the default exit handler"
++      command:
++        - cowsay
++      image: docker/whalesay
++    name: whalesay-exit
++ttlStrategy:
++  secondsAfterCompletion: 60
++volumes:
++  - name: test
++    secret:
++      secretName: test
+```
+
+**File**: `workflow/controller/testdata/operator_wfdefault/workflow-defaults.yaml` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++  metadata: 
++    annotations: 
++      testAnnotation: test
++    labels: 
++      testLabel: test
++  spec: 
++    entrypoint: whalesay
++    activeDeadlineSeconds: 7200
++    arguments:
++      parameters: 
++        - 
++          name: message
++          value: "hello world"
++    onExit: whalesay-exit
++    serviceAccountName: default
++    templates: 
++      - 
++        container: 
++          args: 
++            - "hello from the default exit handler"
++          command: 
++            - cowsay
++          image: docker/whalesay
++        name: whalesay-exit
++    ttlStrategy: 
++      secondsAfterCompletion: 60
++    volumes: 
++      - 
++        name: test
++        secret: 
++          secretName: test
+```
+
+---
+
+### Incident Patch 3: `e2ee093a` (2026-10-22)
+**Commit Message**: test(util): move merge fixtures into testdata (#17270)
+
+Signed-off-by: Mistyheart <[REDACTED_EMAIL]>
+
+**File**: `workflow/util/merge_test.go` (modified, +29/-461)
+```diff
+@@ -13,38 +13,6 @@ import (
+ 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
+ )
+ 
+-var origWF = `
+-apiVersion: argoproj.io/v1alpha1
+-kind: Workflow
+-metadata:
+-  generateName: workflow-template-hello-world-
+-spec:
+-  arguments:
+-    parameters:
+-    - name: message
+-      value: original
+-  entrypoint: start
+-  onExit: end
+-  serviceAccountName: default
+-  workflowTemplateRef:
+-    name: workflow-template-submittable
+-`
+-
+-var patchWF = `
+-apiVersion: argoproj.io/v1alpha1
+-kind: Workflow
+-metadata:
+-  generateName: workflow-template-hello-world-
+-spec:
+-  arguments:
+-    parameters:
+-    - name: message
+-      value: patch
+-  serviceAccountName: argo1
+-  podGC:
+-    strategy: OnPodSuccess
+-`
+-
+ func TestParseUserOverrideAllowlist(t *testing.T) {
+ 	for _, env := range []string{"", "  "} {
+ 		got, err := parseUserOverrideAllowlist(env)
+@@ -66,8 +34,8 @@ func TestParseUserOverrideAllowlist(t *testing.T) {
+ }
+ 
+ func TestMergeWorkflows(t *testing.T) {
+-	patchWf := wfv1.MustUnmarshalWorkflow(origWF)
+-	targetWf := wfv1.MustUnmarshalWorkflow(patchWF)
++	patchWf := wfv1.MustUnmarshalWorkflow("@testdata/merge/orig-wf.yaml")
++	targetWf := wfv1.MustUnmarshalWorkflow("@testdata/merge/patch.yaml")
+ 
+ 	err := MergeTo(patchWf, targetWf)
+ 	require.NoError(t, err)
+@@ -101,296 +69,13 @@ func TestMergeMetaDataTo(t *testing.T) {
+ 	assert.NotContains(meta2.Labels, "test")
+ }
+ 
+-var wfDefault = `
+-metadata:
+-  annotations:
+-    testAnnotation: default
+-  labels:
+-    testLabel: default
+-spec:
+-  entrypoint: whalesay
+-  activeDeadlineSeconds: 7200
+-  arguments:
+-    artifacts:
+-      -
+-        name: message
+-        path: /tmp/message
+-    parameters:
+-      -
+-        name: message
+-        value: "hello world"
+-  onExit: whalesay-exit
+-  serviceAccountName: default
+-  templates:
+-    -
+-      container:
+-        args:
+-          - "hello from the default exit handler"
+-        command:
+-          - cowsay
+-        image: docker/whalesay
+-      name: whalesay-exit
+-  ttlStrategy:
+-    secondsAfterCompletion: 60
+-  volumes:
+-    -
+-      name: test
+-      secret:
+-        secretName: test
+-`
+-
+-var wft = `
+-apiVersion: argoproj.io/v1alpha1
+-kind: WorkflowTemplate
+-metadata:
+-  name: workflow-template-submittable
+-  namespace: default
+-spec:
+-  workflowMetaData:
+-    annotations:
+-      testAnnotation: wft
+-    labels:
+-      testLabel: wft
+-  entrypoint: whalesay-template
+-  arguments:
+-    parameters:
+-      - name: message
+-        value: hello world
+-  templates:
+-    - name: whalesay-template
+-      inputs:
+-        parameters:
+-          - name: message
+-      container:
+-        image: docker/whalesay
+-        command: [cowsay]
+-        args: ["{{inputs.parameters.message}}"]
+-`
+-
+-var wf = `
+-apiVersion: argoproj.io/v1alpha1
+-kind: Workflow
+-metadata:
+-  generateName: hello-world-
+-spec:
+-  entrypoint: whalesay
+-  templates:
+-    -
+-      container:
+-        args:
+-          - "hello world"
+-        command:
+-          - cowsay
+-        image: "docker/whalesay:latest"
+-      name: whalesay
+-`
+-
+-var resultSpec = `
+-apiVersion: argoproj.io/v1alpha1
+-kind: Workflow
+-metadata:
+-  generateName: hello-world-
+-spec:
+-  activeDeadlineSeconds: 7200
+-  workflowMetadata:
+-    annotations:
+-      testAnnotation: wft
+-    labels:
+-      testLabel: wft
+-  arguments:
+-    artifacts:
+-      -
+-        name: message
+-        path: /tmp/message
+-    parameters:
+-      -
+-        name: message
+-        value: "hello world"
+-  entrypoint: whalesay
+-  onExit: whalesay-exit
+-  serviceAccountName: default
+-  templates:
+-    -
+-      container:
+-        args:
+-          - "hello world"
+-        command:
+-          - cowsay
+-        image: "docker/whalesay:latest"
+-      name: whalesay
+-    -
+-      container:
+-        args:
+-          - "{{inputs.parameters.message}}"
+-        command:
+-          - cowsay
+-        image: docker/whalesay
+-      inputs:
+-        parameters:
+-          -
+-            name: message
+-      name: whalesay-template
+-    -
+-      container:
+-        args:
+-          - "hello from the default exit handler"
+-        command:
+-          - cowsay
+-        image: docker/whalesay
+-      name: whalesay-exit
+-  ttlStrategy:
+-    secondsAfterCompletion: 60
+-  volumes:
+-    -
+-      name: test
+-      secret:
+-        secretName: test
+-
+-`
+-
+-var wfArguments = `
+-apiVersion: argoproj.io/v1alpha1
+-kind: Workflow
+-metadata:
+-  generateName: test-workflow
+-spec:
+-  workflowTemplateRef:
+-    name: test-workflow-template
+-  arguments:
+-    parameters:
+-      - name: PARAM1
+-        valueFrom:
+-          configMapKeyRef:
+-            name: test-config-map
+-            key: PARAM1
+-      - name: PARAM2
+-        valueFrom:
+-          configMapKeyRef:
+-            name: test-config-map
+-            key: PARAM2
+-      - name: PARAM4
+-        valueFrom:
+-          configMapKeyRef:
+-            name: test-config-map
+-            key: PARAM4
+-      - name: PARAM5
+-        value: "Workflow value 5"`
+-
+-var wfArgumentsTe
+```
+
+**File**: `workflow/util/testdata/merge/base-hook.yaml` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  generateName: workflow-template-hello-world-
++spec:
++  hooks:
++    foo:
++      template: a
++      expression: workflow.status == "Pending"
+```
+
+**File**: `workflow/util/testdata/merge/base-labels-from.yaml` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++spec:
++  workflowMetadata:
++    labelsFrom:
++      foo:
++        expression: BASE
++      baz:
++        expression: BASE
+```
+
+**File**: `workflow/util/testdata/merge/base-nil.yaml` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  generateName: workflow-template-hello-world-
++spec:
+```
+
+**File**: `workflow/util/testdata/merge/orig-wf.yaml` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++metadata:
++  generateName: workflow-template-hello-world-
++spec:
++  arguments:
++    parameters:
++    - name: message
++      value: original
++  entrypoint: start
++  onExit: end
++  serviceAccountName: default
++  workflowTemplateRef:
++    name: workflow-template-submittable
+```
+
+**File**: `workflow/util/testdata/merge/patch-hook.yaml` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++spec:
++  hooks:
++    foo:
++      template: c
++      expression: workflow.status == "Pending"
++    bar:
++      template: b
++      expression: workflow.status == "Pending"
+```
+
+**File**: `workflow/util/testdata/merge/patch-labels-from.yaml` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++spec:
++  workflowMetadata:
++    labelsFrom:
++      foo:
++        expression: PATCH
++      bar:
++        expression: PATCH
+```
+
+**File**: `workflow/util/testdata/merge/patch-nil-hook.yaml` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++apiVersion: argoproj.io/v1alpha1
++kind: Workflow
++spec:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17250** (2026-10-20): ci: keep the unit test coverage profile whole when gotestsum reruns a test (@Joibel)
-- **PR #17237** (2026-10-16): docs: remove references to unsupported versions 3.7 and earlier (@Joibel)
-- **PR #17236** (2026-10-21): test(ui): cover workflow templates and cron workflows in the Playwright suite (@Joibel)
-- **PR #17229** (2026-10-19): feat(controller): add opt-in taskset completion requeue delay (@droctothorpe)
-- **PR #17227** (2026-10-15): docs: tell agents what docs review asks for (@Joibel)
-- **PR #17218** (2026-10-19): fix(controller): template timeout must only tighten pod activeDeadlineSeconds (@Joibel)
+- **PR #17274** (2026-10-22): docs: update CHANGELOG.md for v4.0.15 (@github-actions[bot])
+- **PR #17273** (2026-10-22): fix(build): install Go 1.26 in the Windows builder, not an exact patch (release-4.1) (@Joibel)
+- **PR #17271** (2026-10-22): fix(build): install Go 1.26 in the Windows builder, not an exact patch (release-4.0) (@Joibel)
+- **PR #17270** (2026-10-22): test(util): move merge fixtures into testdata (@Mistyheart)
+- **PR #17269** (2026-10-22): docs: update CHANGELOG.md for v4.1.6 (@github-actions[bot])
+- **PR #17264** (2026-10-21): chore: Update MAINTAINERS.md (@terrytangyuan)
 
 ---
 
@@ -1361,41 +2008,96 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(ui): cover workflow templates and cron workflows in the Playwright suite (#
+## X. test(controller): move first operator fixtures into testdata (#17240)
 
 **RULE**:
-When implementing operations in `ui/e2e/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `workflow/controller/operator_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f4465466`: test(ui): cover workflow templates and cron workflows in the Playwright suite (#17236). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `584be861`: test(controller): move first operator fixtures into testdata (#17240). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/e2e/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/controller/operator_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- **Backend state** (`e2e/fixtures/api.ts`): tests seed workflows, workflow
-  templates and cron workflows over the REST API, and wait for a workflow's
-  terminal phase *before* asserting on the rendered page, so rendering never
-  races the controller. The one exception is `workflow-live-update.spec.ts`,
-  which watches a workflow run to completion in the browser on purpose, to
-  cover the server-sent-events watch. Everything seeded is cleaned up on
-  teardown; resources the *browser* creates (submit, resubmit, the create
-  panels) are handed to `api.track()` so they are cleaned up too.
+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/resources-duration.yaml")
+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/global-param-duration.yaml")
+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/estimated-duration-workflow.yaml")
+	cancel, controller := newController(logging.TestContext(t.Context()), wfv1.MustUnmarshalWorkflow("@testdata/operator/estimated-duration-baseline-workflow.yaml"), wf)
+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/default-progress.yaml")
+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/logged-progress.yaml")
+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/sidecar-with-vol.yaml")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-- **Backend state** (`e2e/fixtures/api.ts`): tests seed workflows over the REST
-  API and wait for a terminal phase *before* asserting on the rendered page, so
-  rendering never races the controller. The one exception is
-  `workflow-live-update.spec.ts`, which watches a workflow run to completion in
-  the browser on purpose, to cover the server-sent-events watch. Created
-  workflows are cleaned up on teardown; workflows the *browser* creates (submit,
-  resubmit) are handed to `api.track()` so they are cleaned up too.
+	wf := wfv1.MustUnmarshalWorkflow(`
+metadata:
+  name: my-wf
+  namespace: my-ns
+spec:
+  entrypoint: main
+  templates:
+   - name: main
+     dag:
+       tasks:
+       - name: pod
+         template: pod
+   - name: pod
+     container:
+       image: my-image
+`)
+	wf := wfv1.MustUnmarshalWorkflow(`
+metadata:
+  name: my-wf
+  namespace: my-ns
+spec:
+  entrypoint: main
+  templates:
+   - name: main
+     dag:
+       tasks:
+       - name: pod
+         template: pod
+   - name: pod
+     container:
+       image: my-image
+`)
+	wf := wfv1.MustUnmarshalWorkflow(`
+metadata:
+  name: my-wf
+  namespace: my-ns
+  labels:
+    workflows.argoproj.io/workflow-template: my-wftmpl
+spec:
+  entrypoint: main
+  templates:
+   - name: main
+     dag:
+       tasks:
+       - name: pod
+         template: pod
+   - name: pod
+     container:
+       image: my-image
+`)
+	cancel, controller := newController(logging.TestContext(t.Context()), wfv1.MustUnmarshalWorkflow(`
+metadata:
+  name: my-baseline-wf
+  namespace: my-ns
+status:
+  startedAt: "1970-01-01T00:00:00Z"
+  finishedAt: "1970-01-01T00:01:00Z"
+  nodes:
+    my-baseline-wf:
+      startedAt: "1970-01-01T00:00:00Z"
+      finishedAt: "1970-01-01T00:01:00Z"
+`), wf)
+	wf := wfv1.Must
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f4465466` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `584be861` are properly handled with clean fallback behavior.

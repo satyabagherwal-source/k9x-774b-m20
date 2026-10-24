@@ -18535,5 +18535,17 @@
     "downloads": 917,
     "qualityScore": 2527,
     "discoveredAt": "2026-10-24T19:32:35.416Z"
+  },
+  {
+    "name": "ornith-ai/Ornith-1.5-122B",
+    "fullName": "ornith-ai/Ornith-1.5-122B",
+    "url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ornith-ai/Ornith-1.5-122B (156 likes, 30407 downloads)",
+    "likes": 156,
+    "downloads": 30407,
+    "qualityScore": 3560,
+    "discoveredAt": "2026-10-24T19:56:27.120Z"
   }
 ]
