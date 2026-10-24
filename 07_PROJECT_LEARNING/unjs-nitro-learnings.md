@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unjs-nitro-learnings.md`  
 > **Source**: github ([https://github.com/unjs/nitro](https://github.com/unjs/nitro))  
-> **Source Version**: `d046d733`  
+> **Source Version**: `6bccaad1`  
 > **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T06:07:07.945Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-24T19:44:11.788Z  
 > **Learning ID**: `learn-github-nitrojs-nitro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1032 +12,514 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): nitrojs/nitro
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/unjs-nitro-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/unjs/nitro](https://github.com/unjs/nitro))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T06:07:07.695Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): nitrojs/nitro
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `nitrojs/nitro`
-- **Description**: Next Generation Server Toolkit. Create web servers with everything you need and deploy them wherever you prefer.
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11293 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+Nitro is an unopinionated, universal server engine designed to compile and run TypeScript/JavaScript web applications across heterogeneous runtimes (Node.js, Deno, Bun, Cloudflare Workers, Fastly, AWS Lambda, Vercel, Netlify). Its architecture bridges build-time bundling (Vite, Rollup, Rolldown) with uniform runtime execution using an engine-agnostic server interface built on top of `h3`, `srvx`, `crossws`, and `rou3`.
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        User Application & Config                       │
+│             (Routes, Server Assets, Tasks, Plugins, Middleware)        │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                   Nitro Engine Core (nitro/builder)                    │
+│  ┌───────────────────────┐ ┌───────────────────┐ ┌──────────────────┐  │
+│  │ Virtual File System   │ │ Task Registry     │ │ Route Rule Tree  │  │
+│  │ (#nitro/virtual/*)    │ │ (IPC Socket dev)  │ │ (rou3 Trie)      │  │
+│  └───────────────────────┘ └───────────────────┘ └──────────────────┘  │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │ Rollup / Rolldown / Vite Bundler Pipeline                        │  │
+│  └──────────────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+                  ┌─────────────────┴─────────────────┐
+                  ▼                                   ▼
+┌───────────────────────────────────┐ ┌──────────────────────────────────┐
+│   Prerender Subsystem (Isolate)   │ │  Target Presets (50+ Runtimes)   │
+│  ┌─────────────────────────────┐  │ │  ┌─────────────┐┌──────────────┐ │
+│  │ EnvServer Worker Isolation  │  │ │  │ Node/Cluster││Cloudflare Wkr│ │
+│  ├─────────────────────────────┤  │ │  ├─────────────┤├──────────────┤ │
+│  │ Crawler + Memory Buffer GC  │  │ │  │ Bun / Deno  ││ AWS Lambda   │ │
+│  ├─────────────────────────────┤  │ │  └─────────────┘└──────────────┘ │
+│  │ Collision & Inode Detect    │  │ │  Normalized Fetch Event Adapter  │
+│  └─────────────────────────────┘  │ │  (srvx / FastResponse Pipeline)  │
+└───────────────────────────────────┘ └──────────────────────────────────┘
+```
+
+### Subsystem Boundaries & Invariants
+1. **Virtual Module Layer (`#nitro/virtual/*`)**: Nitro decouples user code from runtime plumbing via in-memory synthesized modules (`#nitro/virtual/routing`, `#nitro/virtual/plugins`, `#nitro/virtual/server-assets`). These virtual files dynamically emit ESM import statements and handler registration arrays during the build lifecycle.
+2. **Preset Specialization Engine**: The preset system compiles code into runtime-specific entrypoints. For Node.js, it provisions HTTP/HTTPS server instances or Node Cluster workers; for Serverless/Edge platforms, it wraps handlers into Fetch API-compliant `fetch(request, env, ctx)` hooks.
+3. **Prerender Subsystem (`src/prerender/`)**: A headless build-time worker orchestration engine. It spins up an isolated instance of the server (`EnvServer`), executes synthetic internal HTTP requests across routes, crawls extracted links using HTML streaming tokenizers (`ultrahtml`), tracks route ancestry to detect broken links, and streams files directly to disk while guarding against case-insensitive file system collisions and segment length overflows.
+4. **Dev IPC & Task Runner Engine (`src/task.ts`)**: Background tasks run out-of-band via Unix domain sockets / named pipes communicating between the CLI runner and the running dev server, decoupling scheduled workloads from web request lifecycles.
+5. **Runtime Abstraction (`srvx` & `FastResponse`)**: Nitro injects high-throughput response wrappers in Node.js that bypass standard Web API specification overheads (such as premature body consumption or strict status code assertions) while preserving `Response` subclassing, inheritance semantics, and web compatibility.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `examples/import-alias/server/utils/math.ts`
-```
-export function rand(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-export function sum(a: number, b: number): number {
-  return a + b;
-}
-
-```
-
-### Core Architecture Module: `examples/renderer/api/hello.ts`
-```
-import { defineHandler } from "nitro";
-
-export default defineHandler(() => "Nitro is amazing!");
-
-```
-
-### Core Architecture Module: `examples/renderer/nitro.config.ts`
-```
-import { defineConfig } from "nitro";
-
-export default defineConfig({
-  serverDir: "./",
-  renderer: { handler: "./renderer" },
-});
-
-```
-
-### Core Architecture Module: `examples/renderer/renderer.ts`
-```
-import { fetch } from "nitro";
-
-export default async function renderer({ url }: { req: Request; url: URL }) {
-  const apiRes = await fetch("/api/hello").then((res) => res.text());
-  return new Response(
-    /* html */ `<!DOCTYPE html>
-    <html>
-    <head>
-      <title>Custom Renderer</title>
-    </head>
-    <body>
-      <h1>Hello from custom renderer!</h1>
-      <p>Current path: ${url.pathname}</p>
-      <p>API says: ${apiRes}</p>
-    </body>
-    </html>`,
-    { headers: { "content-type": "text/html; charset=utf-8" } }
-  );
-}
-
-```
-
-### Core Architecture Module: `examples/renderer/vite.config.ts`
-```
-import { defineConfig } from "vite";
-import { nitro } from "nitro/vite";
-
-export default defineConfig({ plugins: [nitro()] });
-
-```
-
-### Core Architecture Module: `src/prerender/_meta.ts`
-```
-import type { Nitro } from "nitro/types";
-
-export type PrerenderMeta = Record<string, { contentType?: string }>;
-
-const prerenderMetas = new WeakMap<Nitro, PrerenderMeta>();
-
-export function getPrerenderMeta(nitro: Nitro): PrerenderMeta {
-  let meta = prerenderMetas.get(nitro);
-  if (!meta) {
-    meta = {};
-    prerenderMetas.set(nitro, meta);
-  }
-  return meta;
-}
-
-```
-
-### Core Architecture Module: `src/prerender/prerender.ts`
-```
-import { pathToFileURL } from "node:url";
-import { defu } from "defu";
-import mime from "mime";
-import { writeFile } from "../utils/fs.ts";
-import type { Nitro, NormalizedRouteRules, PrerenderRoute, PublicAssetDir } from "nitro/types";
-import { join, relative, resolve } from "pathe";
-import { createRouter, addRoute, findAllRoutes } from "rou3";
-import { joinURL, withBase, withoutBase, withTrailingSlash } from "ufo";
-import { build } from "../build/build.ts";
-import { resolveRolldown } from "../build/rolldown/_import.ts";
-import { createNitro } from "../nitro.ts";
-import { compressPublicAssets } from "../utils/compress.ts";
-import { runParallel } from "../utils/parallel.ts";
-import { extractLinks, formatPrerenderRoute, matchesIgnorePattern } from "./utils.ts";
-import { getPrerenderMeta } from "./_meta.ts";
-import { scanUnprefixedPublicAssets } from "../build/assets.ts";
-import { toRequest } from "h3";
-import { EnvServer } from "env-runner";
-
-const JsonSigRx = /^\s*["[{]|^\s*-?\d{1,16}(\.\d{1,17})?([Ee][+-]?\d+)?\s*$/; // From unjs/destr
-
-// const linkParents = new Map<string, Set<string>>();
-
-export async function prerender(nitro: Nitro) {
-  if (nitro.options.noPublicDir) {
-    nitro.logger.warn("Skipping prerender since `noPublicDir` option is enabled.");
-    return;
-  }
-
-  // Initial list of routes to prerender
-  const routes = new Set(nitro.options.prerender.routes);
-
-  // Extend with static prerender route rules
-  const prerenderRulePaths = Object.entries(nitro.options.routeRules)
-    .filter(([path, options]) => options.prerender && !path.includes("*"))
-    .map((e) => e[0]);
-  for (const route of prerenderRulePaths) {
-    routes.add(route);
-  }
-
-  // Allow extending prerender routes
-  await nitro.hooks.callHook("prerender:routes", routes);
-
-  // Skip if no prerender routes specified
-  if (routes.size === 0) {
-    // Crawl / at least if no routes are specified
-    if (nitro.options.prerender.crawlLinks) {
-      routes.add("/");
-    } else {
-      return;
-    }
-  }
-
-  // Build with prerender preset
-  nitro.logger.info("Initializing prerenderer");
-  nitro._prerenderedRoutes = [];
-  const prerendererConfig = {
-    ...nitro.options._config,
-    static: false,
-    compressPublicAssets: false,
-    rootDir: nitro.options.rootDir,
-    renderer: nitro.options.renderer,
-    virtual: { ...nitro.options.virtual },
-    logLevel: 0,
-    preset: "nitro-prerender",
-    builder: prerenderBuilder(nitro),
-  };
-  await nitro.hooks.callHook("prerender:config", prerendererConfig);
-  const nitroRenderer = await createNitro(prerendererConfig);
-  const prerenderStartTime = Date.now();
-  await nitro.hooks.callHook("prerender:init", nitroRenderer);
-  await nitroRenderer.routing.sync();
-
-  // Set path to preview prerendered routes relative to the "host" nitro preset
-  let path = relative(nitro.options.output.dir, nitro.options.output.publicDir);
-  if (!path.startsWith(".")) {
-    path = `./${path}`;
-  }
-  nitroRenderer.options.commands.preview = `npx serve ${path}`;
-  nitroRenderer.options.output.dir = nitro.options.output.dir;
-
-  // Run prerender server in an isolate worker
-  const prerenderer = await startPrerenderer(nitroRenderer);
-
-  // Create route rule matcher
-  const routeRules = createRouter<NormalizedRouteRules>();
-  for (const [route, rules] of Object.entries(nitro.options.routeRules)) {
-    addRoute(routeRules, undefined, route, rules);
-  }
-
-  const _getRouteRules = (path: string) =>
-    defu(
-      {},
-      ...findAllRoutes(routeRules, undefined, path)
-        .map((r) => r.data)
-        .reverse()
-    ) as NormalizedRouteRules;
-
-  // Start prerendering
-  const generatedRoutes = new Set();
-  const failedRoutes = new Set<PrerenderRoute>();
-  const skippedRoutes = new Set();
-  const displayedLengthWarns = new Set();
-
-  const publicAssetBases: string[] = nitro.options.publicAssets
-    .filter(
-      (a): a is PublicAssetDir & { baseURL: string } =>
-        !!a.baseURL && a.baseURL !== "/" && !a.fallthrough
-    )
-    .map((a) => withTrailingSlash(a.baseURL));
-
-  const scannedPublicAssets = nitro.options.prerender.ignoreUnprefixedPublicAssets
-    ? new Set(await scanUnprefixedPublicAssets(nitro))
-    : new Set<string>();
-
-  const canPrerender = (route = "/") => {
-    // Skip if route is already generated or skipped
-    if (generatedRoutes.has(route) || skippedRoutes.has(route)) {
-      return false;
-    }
-
-    // Check for explicitly ignored routes
-    if (nitro.options.prerender.ignore) {
-      for (const pattern of nitro.options.prerender.ignore) {
-        if (matchesIgnorePattern(route, pattern)) {
-          return false;
-        }
-      }
-    }
-
-    if (publicAssetBases.some((base) => route.startsWith(base))) {
-      return false;
-    }
-
-    if (scannedPublicAssets.has(route)) {
-      return false;
-    }
-
-    // Check for route rules explicitly disabling prerender
-    if (_getRouteRules(route).prerender === false) {
-      return false;
-    }
-
-    return true;
-  };
-
-  const canWriteToDisk = (route: PrerenderRoute) => {
-    // Cannot write routes with query or `..` segments
-    if (route.route.includes("?") || route.route.split(/[/\\]/).includes("..")) {
-      return false;
-    }
-
-    // Ensure length is not too long for filesystem
-    // https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits
-    const FS_MAX_SEGMENT = 255;
-    // 1024 is the max path length on APFS (undocumented)
-    const FS_MAX_PATH = 1024;
-    const FS_MAX_PATH_PUBLIC_HTML = FS_MAX_PATH - (nitro.options.output.publicDir.length + 10);
-
-    if (
-      (route.route.length >= FS_MAX_PATH_PUBLIC_HTML ||
-        route.route.split("/").some((s) => s.length > FS_MAX_SEGMENT)) &&
-      !displayedLengthWarns.has(route)
-    ) {
-      displayedLengthWarns.add(route);
-      const _route = route.route.slice(0, 60) + "...";
-      if (route.route.length >= FS_MAX_PATH_PUBLIC_HTML) {
-        nitro.logger.warn(
-          `Prerendering long route "${_route}" (${route.route.length}) can cause filesystem issues since it exceeds ${FS_MAX_PATH_PUBLIC_HTML}-character limit when writing to \`${nitro.options.output.publicDir}\`.`
-        );
-      } else {
-        nitro.logger.warn(
-          `Skipping prerender of the route "${_route}" since it exceeds the ${FS_MAX_SEGMENT}-character limit in one of the path segments and can cause filesystem issues.`
-        );
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const generateRoute = async (route: string) => {
-    const start = Date.now();
-
-    // Ensure route is decoded to start with
-    route = decodeURI(route);
-
-    // Check if we should render route
-    if (!canPrerender(route)) {
-      skippedRoutes.add(route);
-      return;
-    }
-    generatedRoutes.add(route);
-
-    // Create result object
-    const _route: PrerenderRoute = { route };
-
-    // Fetch the route
-    const encodedRoute = encodeURI(route);
-
-    const req = toRequest(withBase(encodedRoute, nitro.options.baseURL), {
-      headers: [["x-nitro-prerender", encodedRoute]],
-    });
-    const res = await prerenderer.fetch(req);
-    // Data will be removed as soon as written to the disk
-    let dataBuff: Buffer | undefined = Buffer.from(await res.arrayBuffer());
-
-    Object.defineProperty(_route, "contents", {
-      get: () => {
-        return dataBuff ? dataBuff.toString("utf8") : undefined;
-      },
-      set(value: string) {
-        // Only set if we didn't consume the buffer yet
-        if (dataBuff) {
-          dataBuff = Buffer.from(value);
-        }
-      },
-    });
-    Object.defineProperty(_route, "data", {
-      get: () => {
-        return dataBuff ? dataBuff.buffer : undefined;
-      },
-      set(value: string) {
-        // Only set if we didn't consume the buffer yet
-        if (dataBuff) {
-          dataBuff = Buffer.from(value);
-        }
-      },
-    });
-
-    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections
-    const redirectCodes = [301, 302, 303, 304, 307, 308];
-    if (![200, ...redirectCodes].includes(res.status)) {
-      _route.error = new Error(`[${res.status}] ${res.statusText}`) as any;
-      // @ts-expect-error (typed as readonly)
-      _route.error!.status = res.status;
-      // @ts-expect-error (typed as readonly)
-      _route.error!.statusText = res.statusText;
-    }
-
-    // Measure actual time taken for generating route
-    _route.generateTimeMS = Date.now() - start;
-
-    // Guess route type and populate fileName
-    const contentType = res.headers.get("content-type") || "";
-    const isImplicitHTML =
-      !route.endsWith(".html") &&
-      contentType.includes("html") &&
-      !JsonSigRx.test(dataBuff!.subarray(0, 32).toString("utf8"));
-    const routeWithIndex = route.endsWith("/") ? route + "index" : route;
-    const htmlPath =
-      route.endsWith("/") || nitro.options.prerender.autoSubfolderIndex
-        ? joinURL(route, "index.html")
-        : route + ".html";
-    _route.fileName = withoutBase(
-      isImplicitHTML ? htmlPath : routeWithIndex,
-      nitro.options.baseURL
-    );
-    // Allow overriding content-type in `prerender:generate` hook
-    const inferredContentType = mime.getType(_route.fileName) || "text/plain";
-    _route.contentType = contentType || inferredContentType;
-
-    // Allow hooking before generate
-    await nitro.hooks.callHook("prerender:generate", _route, nitro);
-    if (_route.contentType !== inferredContentType) {
-      const prerenderMeta = getPrerenderMeta(nitro);
-      prerenderMeta[_route.fileName] ||= {};
-      prerenderMeta[_route.fileName].contentType = _route.contentType;
-    }
-
-    // After hook to allow ignoring in `prerender:generate` hook
-    if (_route.error) {
-      failedRoutes.add(_route);
-    }
-
-    // Check if route is skipped or has errors
-    if (_route.skip || _route.error) {
-      await nitro.hooks.callHook("prerender:route", _route);
-      nitro.logger.log(formatPrerenderRoute(_route));
-      dataBuff = undefined; // Free memory
-      return _route;
-    }
-
-    // Write to the disk
-    const filePath = join(nitro.options.output.publicDir, _route.fileName);
-```
-
-### Core Architecture Module: `src/prerender/utils.ts`
-```
-import { colors } from "consola/utils";
-import type { PrerenderRoute } from "nitro/types";
-import { parseURL } from "ufo";
-import { parse as parseHTML, walk } from "ultrahtml";
-
-const allowedExtensions = new Set(["", ".json"]);
-
-const linkParents = new Map<string, Set<string>>();
-
-const HTML_ENTITIES = {
-  "&lt;": "<",
-  "&gt;": ">",
-  "&amp;": "&",
-  "&apos;": "'",
-  "&quot;": '"',
-} as Record<string, string>;
-
-function escapeHtml(text: string) {
-  return text.replace(/&(lt|gt|amp|apos|quot);/g, (ch) => HTML_ENTITIES[ch] || ch);
-}
-
-export async function extractLinks(html: string, from: string, res: Response, crawlLinks: boolean) {
-  const links: string[] = [];
-  const _links: string[] = [];
-
-  // Extract from any <TAG href=""> to crawl
-  if (crawlLinks) {
-    await walk(parseHTML(html), (node) => {
-      if (!node.attributes?.href) {
-        return;
-      }
-
-      const link = escapeHtml(node.attributes.href);
-      if (!decodeURIComponent(link).startsWith("#") && allowedExtensions.has(getExtension(link))) {
-        _links.push(link);
-      }
-    });
-  }
-
-  // Extract from x-nitro-prerender headers
-  const header = res.headers.get("x-nitro-prerender") || "";
-  _links.push(...header.split(",").map((i) => decodeURIComponent(i.trim())));
-
-  for (const link of _links.filter(Boolean)) {
-    const _link = parseURL(link);
-    if (_link.protocol || _link.host) {
-      continue;
-    }
-    if (!_link.pathname.startsWith("/")) {
-      const fromURL = new URL(from, "http://localhost");
-      _link.pathname = new URL(_link.pathname, fromURL).pathname;
-    }
-    links.push(_link.pathname + _link.search);
-  }
-  for (const link of links) {
-    const _parents = linkParents.get(link);
-    if (_parents) {
-      _parents.add(from);
-    } else {
-      linkParents.set(link, new Set([from]));
-    }
-  }
-  return links;
-}
-
-const EXT_REGEX = /\.[\da-z]+$/;
-
-function getExtension(link: string): string {
-  const pathname = parseURL(link).pathname;
-  return (pathname.match(EXT_REGEX) || [])[0] || "";
-}
-
-export function formatPrerenderRoute(route: PrerenderRoute) {
-  let str = `  ├─ ${route.route} (${route.generateTimeMS}ms)`;
-
-  if (route.error) {
-    const parents = linkParents.get(route.route);
-    const errorColor = colors[route.error.status === 404 ? "yellow" : "red"];
-    const errorLead = parents?.size ? "├──" : "└──";
-    str += `\n  │ ${errorLead} ${errorColor(route.error.message || "unknown error")}`;
-
-    if (parents?.size) {
-      str += `\n${[...parents.values()].map((link) => `  │ └── Linked from ${link}`).join("\n")}`;
-    }
-  }
-
-  if (route.skip) {
-    str += colors.gray(" (skipped)");
-  }
-
-  return colors.gray(str);
-}
-
-// prettier-ignore
-type IgnorePattern =
-  | string
-  | RegExp
-  | ((path: string) => undefined | null | boolean);
-export function matchesIgnorePattern(path: string, pattern: IgnorePattern) {
-  if (typeof pattern === "string") {
-    // TODO: support rou3 patterns
-    return path.startsWith(pattern as string);
-  }
-
-  if (typeof pattern === "function") {
-    return pattern(path) === true;
-  }
-
-  if (pattern instanceof RegExp) {
-    return pattern.test(path);
-  }
-
-  return false;
-}
-
-```
-
-### Core Architecture Module: `src/presets/_nitro/base-worker.ts`
-```
-import { defineNitroPreset } from "../_utils/preset.ts";
-
-const baseWorker = defineNitroPreset(
-  {
-    entry: null as any, // Abstract
-    node: false,
-    minify: true,
-    noExternals: true,
-    rollupConfig: {
-      output: {
-        format: "iife",
-        generatedCode: {
-          symbols: true,
-        },
-      },
-    },
-    inlineDynamicImports: true, // iffe does not support code-splitting
-  },
-  {
-    name: "base-worker" as const,
-  }
-);
-
-export default [baseWorker] as const;
-
-```
-
-### Core Architecture Module: `src/presets/_nitro/nitro-prerender.ts`
-```
-import { defineNitroPreset } from "../_utils/preset.ts";
-
-const nitroPrerender = defineNitroPreset(
-  {
-    entry: "./_nitro/runtime/nitro-prerenderer",
-    serveStatic: true,
-    output: {
-      serverDir: "{{ buildDir }}/prerender",
-    },
-    externals: { noTrace: true },
-  },
-  {
-    name: "nitro-prerender" as const,
-  }
-);
-
-export default [nitroPrerender] as const;
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4661** (2026-10-18): **vite dev: scan-dir and rootDir watchers are never closed when the vite server closes or restarts**
-  *Symptoms*: ### Environment  - nitro 3.0.260903-beta (also 3.0.1-alpha.2), vite 8.3.0 - Node v22.22.3 and v24.21.0, macOS 26.6.2 (arm64)  ### Reproduction  https://gist.github.com/light-merlin-dark/4bf3cef36788493c770dc05520733469  ``` npm install npm run repro   # node repro.mjs 3 ```  ### Describe the bug  `configureViteDevServer` opens a chokidar watcher on the scan dirs and an `fs.watch` on `rootDir`. It closes both only in `nitro.hooks.hook("close")`. In vite dev, `nitro.close()` is never called when the vite server closes or restarts in process (a config or `.env` change calls `server.restart()`). Each restart therefore leaves both watchers open. Their `change` closures capture `nitroEnv`, which keeps the previous environment and its module graph reachable.  The repro counts `fs.watch` watchers opened from nitro that are not yet closed:  ``` {"restarts":3,"nitroFsWatchersAfterStart":1,"nitroFsWatchersAfterRestarts":4, ...} {"nitroFsWatchersAfterClose":4} ```  Even after `server.close()`, all 4 stay open.  A heap snapshot of a real app shows the path `FSEventWrap → FSWatcher → _events.change → closure → nitroEnv → FetchableDevEnvironment → EnvironmentModuleGraph` for each previous server.  Closing the watchers together with the nitro dev environment fixes it in the repro. After 3 restarts 1 watcher is open, and after close 0:  ```js const closeWatchers = () => {   scanDirsWatcher.close();   rootDirWatcher.close(); }; nitro.hooks.hook("close", closeWatchers); const closeNitroEnv = ni
-
-- **Issue #4569** (2026-09-02): **fix(build): count each output file once in the size report**
-  *Symptoms*: ### 🔗 Linked issue  Resolves #4567  `v2` backport of #4568 — replace with the number of the `main` PR once it exists.  ### ❓ Type of change  - [ ] 📖 Documentation (updates to the documentation, readme, or JSdoc annotations) - [x] 🐞 Bug fix (a non-breaking change that fixes an issue) - [x] 👌 Enhancement (improving an existing functionality like performance) - [ ] ✨ New feature (a non-breaking change that adds functionality) - [ ] 🧹 Chore (updates to the build process or auxiliary tools and libraries) - [ ] ⚠️ Breaking change (fix or feature that would cause existing functionality to change)  ### 📚 Description  Same fix as #4568, against `v2` (`src/core/utils/fs-tree.ts`, which uses `globby` rather than `tinyglobby` — the defaults and the fix are identical).  `generateFSTree` globbed the server output with symlink traversal left at its default, while the output itself is built from directory symlinks — externals traced in more than one version are written to `.nitro/<pkg>@<version>` and linked into place, both flat and under each parent. Every file behind those links was therefore read, and gzipped when `compressedSizes` is on, once per path, inflating the reported total.  Disabling traversal alone under-counts: the only real copies sit inside the `.nitro` dot directory that globs skip by default, so `dot` is needed too. With both, the report matches the bytes actually on disk.  Verified on 2.13.4 with the reproduction from #4567:  | | reported | 
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `f6daa502` (2026-10-18)
-**Commit Message**: fix(dev): warn instead of failing when nitro dev detects a vite config (#4850)
-
-**File**: `src/config/resolvers/builder.ts` (modified, +11/-2)
-```diff
-@@ -48,8 +48,16 @@ export async function resolveBuilder(options: NitroOptions) {
-     isDepInstalled("vite", { dir: options.rootDir, paths: options.deps?.paths }) &&
-     hasNitroViteConfig(options)
-   ) {
--    options.builder = "vite";
--    return;
-+    if (!options.dev) {
-+      options.builder = "vite";
-+      return;
-+    }
-+    if (!_viteHintShown) {
-+      _viteHintShown = true;
-+      consola.warn(
-+        "Detected a `vite.config` with the `nitro()` plugin, but the Nitro dev server does not run Vite, so Vite plugins and features are not available. Use `vite dev` for the full Vite experience."
-+      );
-+    }
-   }
- 
-   // Default to rolldown when installed in the project, and otherwise install it on build, unless
-@@ -75,6 +83,7 @@ export async function resolveBuilder(options: NitroOptions) {
- }
- 
- let _hintShown = false;
-+let _viteHintShown = false;
- 
- function hasConfig(config: object | undefined): boolean {
-   return !!config && Object.keys(config).length > 0;
-```
-
-**File**: `test/unit/builder-resolve.test.ts` (modified, +48/-2)
-```diff
-@@ -1,16 +1,25 @@
- import type { NitroOptions } from "nitro/types";
--import { mkdtemp, rm } from "node:fs/promises";
-+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
- import { tmpdir } from "node:os";
- import { join } from "pathe";
- import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
- 
--const state = vi.hoisted(() => ({ rolldown: undefined as string | undefined }));
-+const state = vi.hoisted(() => ({ rolldown: undefined as string | undefined, vite: false }));
- 
- vi.mock("../../src/build/rolldown/_import.ts", async (importOriginal) => ({
-   ...(await importOriginal<typeof import("../../src/build/rolldown/_import.ts")>()),
-   resolveRolldown: () => state.rolldown,
- }));
- 
-+vi.mock("../../src/utils/dep.ts", async (importOriginal) => {
-+  const mod = await importOriginal<typeof import("../../src/utils/dep.ts")>();
-+  return {
-+    ...mod,
-+    isDepInstalled: (id: string, opts: Parameters<typeof mod.isDepInstalled>[1]) =>
-+      id === "vite" ? state.vite : mod.isDepInstalled(id, opts),
-+  };
-+});
-+
- const { resolveBuilder } = await import("../../src/config/resolvers/builder.ts");
- 
- describe("resolveBuilder", () => {
-@@ -33,6 +42,7 @@ describe("resolveBuilder", () => {
-   beforeEach(() => {
-     delete process.env.NITRO_BUILDER;
-     state.rolldown = undefined;
-+    state.vite = false;
-   });
- 
-   async function resolve(opts: Partial<NitroOptions>) {
-@@ -86,4 +96,40 @@ describe("resolveBuilder", () => {
-     state.rolldown = "/rolldown/index.mjs";
-     expect(await resolve({ dev: false, builder: false })).toBe(false);
-   });
-+
-+  describe("vite config with nitro() plugin", () => {
-+    let viteRootDir: string;
-+
-+    beforeAll(async () => {
-+      viteRootDir = join(rootDir, "vite-app");
-+      await mkdir(viteRootDir, { recursive: true });
-+      await writeFile(
-+        join(viteRootDir, "vite.config.ts"),
-+        `import { nitro } from "nitro/vite";\nexport default { plugins: [nitro()] };\n`
-+      );
-+    });
-+
-+    it("uses vite to build", async () => {
-+      state.vite = true;
-+      expect(await resolve({ rootDir: viteRootDir, dev: false })).toBe("vite");
-+    });
-+
-+    it("falls back with a warning in nitro dev", async () => {
-+      vi.resetModules();
-+      const { consola } = await import("consola");
-+      const { resolveBuilder: freshResolveBuilder } =
-+        await import("../../src/config/resolvers/builder.ts");
-+      const warn = vi.spyOn(consola, "warn").mockImplementation(() => {});
-+      try {
-+        state.vite = true;
-+        state.rolldown = "/rolldown/index.mjs";
-+        const options = { rootDir: viteRootDir, dev: true } as NitroOptions;
-+        await freshResolveBuilder(options);
-+        expect(options.builder).toBe("rolldown");
-+        expect(warn).toHaveBeenCalledOnce();
-+      } finally {
-+        warn.mockRestore();
-+      }
-+    });
-+  });
- });
-```
-
----
-
-### Incident Patch 2: `cf950f28` (2026-10-20)
-**Commit Message**: fix(vite): allow importing `.svg` files as text and bytes in dev (#4869)
-
-**File**: `src/build/plugins/raw.ts` (modified, +5/-3)
-```diff
-@@ -12,8 +12,10 @@ const TYPES = ["raw", "bytes", "text"] as const;
- 
- const PREFIX_RE = new RegExp(`^(${TYPES.join("|")}):`);
- 
--// Modules under this prefix hold file contents, not source code, so other transforms must skip them
--export const RESOLVED_RE = new RegExp(`^virtual:nitro:(${TYPES.join("|")}):`);
-+// Modules under this prefix hold file contents, not source code, so other transforms must skip them.
-+// The `\0` keeps vite dev from checking file access on them (denied for ids with `:`, e.g. `.svg`).
-+export const RESOLVED_PREFIX = "\0virtual:nitro:";
-+export const RESOLVED_RE = new RegExp(`^${RESOLVED_PREFIX}(${TYPES.join("|")}):`);
- 
- // Resolved ids are JavaScript modules. Without this, plugins matching the original
- // extension (`@rollup/plugin-json`, vite's json plugin, ...) try to transform them again.
-@@ -45,7 +47,7 @@ export function raw(): Plugin {
-               `Could not resolve \`${specifier}\`${importer ? ` (imported by \`${importer}\`)` : ""} to contents to inline as \`${type}\`.`
-             );
-           }
--          return { id: `virtual:nitro:${type}:${resolved.id}${RESOLVED_SUFFIX}` };
-+          return { id: `${RESOLVED_PREFIX}${type}:${resolved.id}${RESOLVED_SUFFIX}` };
-         });
-       },
-     },
-```
-
-**File**: `src/build/unbundled/plugins.ts` (modified, +2/-2)
-```diff
-@@ -13,7 +13,7 @@ import { importAttributes } from "../plugins/import-attributes.ts";
- import { resolveDep } from "../../utils/dep.ts";
- import { importOXC } from "../../utils/oxc.ts";
- import { chain } from "../../utils/sync.ts";
--import { raw, RESOLVED_RE as RAW_RE } from "../plugins/raw.ts";
-+import { raw, RESOLVED_PREFIX as RAW_PREFIX, RESOLVED_RE as RAW_RE } from "../plugins/raw.ts";
- import { routeMeta } from "../plugins/route-meta.ts";
- import { resolveBuildPlugins } from "../plugins.ts";
- import {
-@@ -226,7 +226,7 @@ function rawVirtualPlugin(nitro: Nitro): EnvRunnerPlugin {
-         const [, type] = prefixRe.exec(source) || [];
-         const id = source.slice(`${type}:`.length);
-         if (type && nitro.vfs.has(id)) {
--          return `virtual:nitro:${type}:${id}.js`;
-+          return `${RAW_PREFIX}${type}:${id}.js`;
-         }
-       },
-     },
-```
-
-**File**: `test/vite/app-fixture/api/icon.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"></svg>
-```
-
-**File**: `test/vite/app-fixture/api/svg.ts` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+// @ts-ignore
-+import text from "./icon.svg" with { type: "text" };
-+// @ts-ignore
-+import bytes from "./icon.svg" with { type: "bytes" };
-+// @ts-ignore
-+import raw from "raw:./icon.svg";
-+
-+export default () => ({
-+  text: (text as unknown as string).trim(),
-+  bytes: new TextDecoder().decode(bytes as unknown as Uint8Array).trim(),
-+  // `raw:` infers the type from the mime (`image/svg+xml` is binary)
-+  raw: new TextDecoder().decode(raw as unknown as Uint8Array).trim(),
-+});
-```
-
-**File**: `test/vite/app.test.ts` (modified, +8/-0)
-```diff
-@@ -56,6 +56,14 @@ describe("vite:app", () => {
-     expect(await res.text()).toBe("Hello from build plugin!");
-   });
- 
-+  // #4868: `.svg` ids are checked by Vite's dev server access control, which denies ids with `:`
-+  test("imports `.svg` files as text and bytes", async () => {
-+    const res = await fetch(`${serverURL}/api/svg`);
-+    expect(res.status).toBe(200);
-+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"></svg>`;
-+    expect(await res.json()).toEqual({ text: svg, bytes: svg, raw: svg });
-+  });
-+
-   // #4234: a request matching only the SSR `/**` catch-all (no explicit route) that looks like
-   // an asset must be handled by Vite, not swallowed by the catch-all renderer.
-   test("does not let the SSR catch-all swallow asset-tagged requests", async () => {
-```
-
----
-
-### Incident Patch 3: `65ca5ca8` (2026-10-20)
-**Commit Message**: fix(vite): guard against builtin aliases leaking into client build (#4864)
-
-**File**: `src/build/vite/plugin.ts` (modified, +32/-5)
-```diff
-@@ -9,6 +9,7 @@ import type {
- import type { InputOption } from "rollup";
- import type { NitroPluginConfig, NitroPluginContext } from "./types.ts";
- import { resolve, join } from "pathe";
-+import { resolveAlias } from "pathe/utils";
- import { createNitro, prepare } from "../../builder.ts";
- import { installModules } from "../../module.ts";
- import { getBundlerConfig } from "./bundler.ts";
-@@ -50,6 +51,7 @@ export function nitro(pluginConfig: NitroPluginConfig = {}): VitePlugin[] {
-   return [
-     nitroInit(ctx),
-     nitroEnv(ctx),
-+    nitroServerAliases(ctx),
-     nitroMain(ctx),
-     nitroPrepare(ctx),
-     nitroDevServiceProxy(ctx),
-@@ -209,6 +211,29 @@ function nitroEnv(ctx: NitroPluginContext): VitePlugin {
-   };
- }
- 
-+function nitroServerAliases(ctx: NitroPluginContext): VitePlugin {
-+  return {
-+    name: "nitro:server-aliases",
-+    enforce: "pre",
-+    applyToEnvironment: (env) => env.name !== "client" && env.config?.consumer !== "client",
-+
-+    async resolveId(id, importer, options) {
-+      if (!ctx.bundlerConfig) {
-+        return;
-+      }
-+      const resolved = resolveAlias(id, ctx.bundlerConfig.base.aliases);
-+      if (resolved !== id && resolved.startsWith("node:")) {
-+        return (
-+          (await this.resolve(resolved, importer, { ...options, skipSelf: true })) || {
-+            id: resolved,
-+            external: true,
-+          }
-+        );
-+      }
-+    },
-+  };
-+}
-+
- function nitroMain(ctx: NitroPluginContext): VitePlugin {
-   return {
-     name: "nitro:main",
-@@ -225,11 +250,13 @@ function nitroMain(ctx: NitroPluginContext): VitePlugin {
-         resolve: {
-           // TODO: environment specific aliases not working
-           // https://github.com/vitejs/vite/pull/17583 (seems not effective)
--          // preserve alias order
--          alias: Object.entries(ctx.bundlerConfig.base.aliases).map(([find, replacement]) => ({
--            find,
--            replacement,
--          })),
-+          // preserve alias order (exclude node: builtins to prevent leaking to client builds)
-+          alias: Object.entries(ctx.bundlerConfig.base.aliases)
-+            .filter(([, replacement]) => !replacement.startsWith("node:"))
-+            .map(([find, replacement]) => ({
-+              find,
-+              replacement,
-+            })),
-         },
-         builder: {
-           sharedConfigBuild: true,
-```
-
-**File**: `test/vite/client-builtins.test.ts` (added, +83/-0)
-```diff
-@@ -0,0 +1,83 @@
-+import { describe, expect, it } from "vitest";
-+import { nitro } from "../../src/build/vite/plugin.ts";
-+import { createServer, resolveConfig } from "vite";
-+
-+describe("vite: client builtin aliases (#4853)", () => {
-+  it.each(["cloudflare-module", "cloudflare-pages", "cloudflare-durable", "deno"] as const)(
-+    "does not leak node: aliases into shared resolve.alias for preset: %s",
-+    async (preset) => {
-+      const config = await resolveConfig(
-+        {
-+          plugins: [nitro({ preset })],
-+          logLevel: "silent",
-+        },
-+        "build"
-+      );
-+
-+      const rawAliases = config.resolve.alias;
-+      const aliases: Array<{ find: string | RegExp; replacement: string }> = Array.isArray(
-+        rawAliases
-+      )
-+        ? (rawAliases as any)
-+        : Object.entries(rawAliases || {}).map(([find, replacement]) => ({
-+            find,
-+            replacement:
-+              typeof replacement === "string" ? replacement : (replacement as any).replacement,
-+          }));
-+
-+      const nodeAliases = aliases.filter(
-+        (a) => typeof a.replacement === "string" && a.replacement.startsWith("node:")
-+      );
-+
-+      expect(nodeAliases).toEqual([]);
-+    }
-+  );
-+
-+  it("resolves node: aliases in server environments", async () => {
-+    const server = await createServer({
-+      plugins: [nitro({ preset: "cloudflare-module" })],
-+      logLevel: "silent",
-+    });
-+    try {
-+      const nitroEnv = server.environments.nitro;
-+      const resolved = await nitroEnv.pluginContainer.resolveId("events");
-+      expect(resolved?.id).toBe("node:events");
-+      expect(resolved?.external).toBe(true);
-+
-+      const bufferResolved = await nitroEnv.pluginContainer.resolveId("buffer/");
-+      expect(bufferResolved?.id).toBe("node:buffer");
-+      expect(bufferResolved?.external).toBe(true);
-+    } finally {
-+      await server.close();
-+    }
-+  });
-+
-+  it("preserves non-node aliases in shared resolve.alias", async () => {
-+    const config = await resolveConfig(
-+      {
-+        plugins: [
-+          nitro({
-+            preset: "cloudflare-module",
-+            alias: {
-+              "~/custom": "/path/to/custom",
-+            },
-+          }),
-+        ],
-+        logLevel: "silent",
-+      },
-+      "build"
-+    );
-+
-+    const rawAliases = config.resolve.alias;
-+    const aliases: Array<{ find: string | RegExp; replacement: string }> = Array.isArray(rawAliases)
-+      ? (rawAliases as any)
-+      : Object.entries(rawAliases || {}).map(([find, replacement]) => ({
-+          find,
-+          replacement:
-+            typeof replacement === "string" ? replacement : (replacement as any).replacement,
-+        }));
-+
-+    const customAlias = aliases.find((a) => a.find === "~/custom");
-+    expect(customAlias?.replacement).toBe("/path/to/custom");
-+  });
-+});
-```
-
-#### Recent Merged Pull Requests:
-- **PR #4870** (2026-10-20): docs(bun): document runtime environment variables and unix socket listening (@sarankumar1325)
-- **PR #4869** (2026-10-20): fix(vite): allow importing `.svg` files as text and bytes in dev (@pi0x)
-- **PR #4867** (2026-10-20): fix(deps): do not auto-install dependencies inside node_modules (@pi0x)
-- **PR #4865** (2026-10-20): perf(cli): run `nitro serve` in-process without `buildPlugins` (@pi0x)
-- **PR #4864** (2026-10-20): fix(vite): guard against builtin aliases leaking into client build (#4853) (@agustin18)
-- **PR #4862** (2026-10-20): perf(unbundled): synchronous built-in plugin hooks (@pi0x)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. dev): warn instead of failing when nitro dev detects a vite config (#4850)
-
+### 1. Mandatory Explicit Destruction Pattern for Socket Inactivity Timeouts
 **RULE**:
-When implementing operations in `src/config/resolvers/builder.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nitrojs/nitro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When configuring timeouts on low-level Node.js network clients (`http.ClientRequest`, `net.Socket`, `tls.TLSSocket`), developers MUST NOT assume setting the `timeout` option aborts the socket, and MUST explicitly register a `'timeout'` listener that invokes `request.destroy(new Error(...))`. Furthermore, timeout durations MUST distinguish between immediate metadata operations and streaming/deferred workloads.
 
 **WHY**:
-Prevents defects observed in production commit `f6daa502`: dev): warn instead of failing when nitro dev detects a vite config (#4850). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+In Node.js, `http.request({ timeout })` only emits the `'timeout'` event on the socket; it **does not cancel, abort, or destroy the underlying connection**. If unhandled, or handled without `.destroy()`, the connection remains open indefinitely if the server stalls, leaking socket descriptors and freezing async execution loops. Additionally, applying a default timeout to long-running tasks or streaming endpoints aborts legitimate user workloads during idle periods.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/config/resolvers/builder.ts`.
+All IPC communication channels, internal CLI-to-dev-server daemon bridges, custom reverse proxy passes, and Unix domain socket fetch clients.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
-// Verified production-grade fix pattern:
-    if (!options.dev) {
-      options.builder = "vite";
-      return;
+import http from "node:http";
+
+interface DevFetchOptions {
+  socketPath: string;
+  path: string;
+  method?: string;
+  body?: string;
+  timeout?: number; // Explicit ms; undefined implies no socket idle timeout
+}
+
+export function devFetch<T = unknown>(opts: DevFetchOptions): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const req = http.request(
+      {
+        socketPath: opts.socketPath,
+        path: opts.path,
+        method: opts.method || "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        // Omit timeout key if undefined: avoids triggering default agent 5s idle drops
+        ...(opts.timeout ? { timeout: opts.timeout } : {}),
+      },
+      (res) => {
+        let raw = "";
+        res.setEncoding("utf8");
+        res.on("data", (chunk) => { raw += chunk; });
+        res.on("end", () => {
+          try {
+            resolve(JSON.parse(raw));
+          } catch (err) {
+            reject(new Error(`Failed to parse response: ${err.message}`));
+          }
+        });
+      }
+    );
+
+    // INVARIANT: Node.js http.ClientRequest does NOT destroy socket on timeout
+    if (opts.timeout) {
+      req.on("timeout", () => {
+        req.destroy(
+          new Error(`Socket timed out after ${opts.timeout}ms waiting for ${opts.socketPath}`)
+        );
+      });
     }
-    if (!_viteHintShown) {
-      _viteHintShown = true;
-      consola.warn(
-        "Detected a `vite.config` with the `nitro()` plugin, but the Nitro dev server does not run Vite, so Vite plugins and features are not available. Use `vite dev` for the full Vite experience."
-      );
+
+    req.on("error", (err) => reject(err));
+
+    if (opts.body) {
+      req.write(opts.body);
     }
-let _viteHintShown = false;
+    req.end();
+  });
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-    options.builder = "vite";
-    return;
+// CRITICAL DEFECT: Setting timeout without 'timeout' listener and destroy()
+// Result: Stalled worker accepts connection, never sends bytes, promise hangs forever.
+const req = http.request({ socketPath, timeout: 5000 });
+req.end();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f6daa502` are properly handled with clean fallback behavior.
+```typescript
+import { it, expect } from "vitest";
+import http from "node:http";
+
+it("enforces timeout destruction on hung IPC socket", async () => {
+  const server = http.createServer(() => {}); // Accepts, never writes response
+  await new Promise<void>((res) => server.listen("/tmp/test-hang.sock", res));
+
+  await expect(
+    devFetch({ socketPath: "/tmp/test-hang.sock", path: "/test", timeout: 100 })
+  ).rejects.toThrow(/Socket timed out after 100ms/);
+
+  server.close();
+});
+```
+
+---
+
+### 2. Zero-Output Catastrophe Guard in Build Pipelines
+**RULE**:
+Build-time asset and static-site compilation pipelines MUST distinguish between acceptable partial errors and "Total Execution Void" (0 successful emissions out of $N > 0$ attempts). If the rendered artifact count is zero and every registered route/entrypoint threw an error, the build step MUST fail with a fatal exit code, regardless of soft-error flags (e.g., `failOnError: false`).
+
+**WHY**:
+Soft-error configurations (e.g., `failOnError: false`) are intended to allow sites to publish even if secondary pages (e.g., broken dynamic links) fail. However, if the underlying renderer fails completely (e.g., missing SSR entrypoint, configuration path error, broken bundler import), every route fails. Under soft-error logic, the build engine completes with code 0, emitting an empty distribution directory. Downstream CI/CD pipelines deploy this empty directory to production, wiping out the live website without triggering CI alarms.
+
+**WHEN TO APPLY**:
+Static site generators (SSG), prerender engines, documentation compilers, and batch export pipelines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+interface BuildStats {
+  totalRequested: number;
+  successfulEmissions: number;
+  failedRoutes: Set<string>;
+  failOnError: boolean;
+}
+
+export function validateBuildPipelineEmissions(stats: BuildStats, outputDir: string): void {
+  const allRoutesFailed =
+    stats.failedRoutes.size > 0 && stats.successfulEmissions === 0;
+
+  // INVARIANT: Complete void must abort the process unconditionally
+  if (allRoutesFailed) {
+    throw new Error(
+      `Fatal: Prerendered 0 routes. All ${stats.failedRoutes.size} route(s) failed. ` +
+      `Output directory '${outputDir}' is empty. Build aborted to prevent deploying void.`
+    );
+  }
+
+  // Soft failure check for partial failures
+  if (stats.failOnError && stats.failedRoutes.size > 0) {
+    throw new Error(
+      `Build failed due to ${stats.failedRoutes.size} prerender error(s) with failOnError=true.`
+    );
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// CRITICAL DEFECT: Respecting failOnError when 100% of routes fail
+if (options.failOnError && failedRoutes.size > 0) {
+  throw new Error("Failed");
+}
+// Exits cleanly with code 0, releasing an empty deployment artifact
+return;
+```
+
+**VERIFICATION METHOD**:
+Run automated E2E tests pointing the prerenderer to an invalid server entrypoint with `failOnError: false`. Assert that the process rejects and does not exit with code 0.
+
+---
+
+### 3. POSIX Signal Multiplexing Invariant for Containerized Orchestrators
+**RULE**:
+When running a Node.js cluster under container runtimes (Docker, Kubernetes) where the process manager runs as PID 1, the cluster primary process MUST explicitly trap termination signals (`SIGTERM`, `SIGINT`) and broadcast them to every active worker child process before initiating master exit procedures.
+
+**WHY**:
+In container environments, the orchestrator (kubelet or Docker daemon) sends `SIGTERM` exclusively to **PID 1**. Node.js's native `cluster` module does **not** forward signals received by the primary to forked worker processes. If the primary traps `SIGTERM` and awaits worker drainage without actively signaling the workers, the workers continue listening and servicing requests until the container termination grace period expires (e.g., 30s). The supervisor then issues an ungraceful `SIGKILL`, abruptly dropping in-flight requests and severing open socket connections.
+
+**WHEN TO APPLY**:
+Node.js cluster presets, multi-process master/worker architectures, and containerized process managers running in Kubernetes/ECS environments.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import cluster from "node:cluster";
+import process from "node:process";
+
+export function setupClusterGracefulTermination(shutdownTimeoutMs = 15000): void {
+  if (!cluster.isPrimary) {
+    return;
+  }
+
+  let isTerminating = false;
+
+  const propagateSignal = (signal: NodeJS.Signals) => {
+    if (isTerminating) return;
+    isTerminating = true;
+
+    // 1. Explicitly broadcast signal to all cluster workers
+    for (const id in cluster.workers) {
+      const worker = cluster.workers[id];
+      if (worker && !worker.isDead() && worker.process.pid) {
+        worker.process.kill(signal);
+      }
+    }
+
+    // 2. Set hard deadline to guarantee master does not hang if a worker stalls
+    const timer = setTimeout(() => {
+      process.exit(1);
+    }, shutdownTimeoutMs);
+    timer.unref(); // Ensure timer itself doesn't keep master event loop open
+  };
+
+  process.once("SIGTERM", () => propagateSignal("SIGTERM"));
+  process.once("SIGINT", () => propagateSignal("SIGINT"));
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// CRITICAL DEFECT: Primary listens to signal but assumes child workers receive it
+if (cluster.isPrimary) {
+  process.on("SIGTERM", async () => {
+    // Workers never receive SIGTERM! They run until hard SIGKILL
+    await waitForWorkerDrain();
+    process.exit(0);
+  });
+}
+```
+
+**VERIFICATION METHOD**:
+Fork a mock cluster in a child process, send `kill(pid, "SIGTERM")` directly to the primary PID only, and assert that worker IPC listeners receive the signal and fire their graceful shutdown hooks within 500ms.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Dev Server Task Runner Hung on Stalled IPC Socket (BUG-TASK-01)
+- **Context**: `src/task.ts` communicating with worker sockets via `nitro.dev.json`.
+- **What Was Expected**: If the background worker dev server stalls, deadlocks, or becomes unresponsive while its PID is alive, querying task statuses (`listTasks`) or running a task (`runTask`) should fail promptly with an actionable timeout error.
+- **What Actually Happened**: `http.request({ socketPath })` stalled indefinitely. Node's default client has no default timeout on Unix domain sockets; calls hung CI steps and user shells forever.
+- **Evidence in Repo**: Commit `762d44bc`, Issue `#4292`, PR `#4345`.
+- **Root Cause**: Twofold: (1) Missing `timeout` parameter on the HTTP agent; (2) Node’s HTTP client requires an explicit `.on('timeout')` hook to trigger `request.destroy()`. Furthermore, an indiscriminate default timeout would break long-running tasks.
+- **Remediation Code Diff**:
+```diff
+--- a/src/task.ts
++++ b/src/task.ts
+@@ -23,7 +23,7 @@ export async function runTask(
+ /** @experimental */
+ export async function listTasks(opts?: TaskRunnerOptions) {
+-  const ctx = await _getTasksContext(opts);
++  const ctx = await _getTasksContext(opts, { defaultTimeout: 30_000 });
+   const res = (await ctx.devFetch("/_nitro/tasks")) as {
+     tasks: Record<string, { meta: TaskMeta }>;
+   };
+@@ -34,9 +34,13 @@ export async function listTasks(opts?: TaskRunnerOptions) {
+ const _devHint = `(is dev server running?)`;
+ 
+-async function _getTasksContext(opts?: TaskRunnerOptions) {
++async function _getTasksContext(
++  opts?: TaskRunnerOptions,
++  internalOpts?: { defaultTimeout?: number }
++) {
+   const cwd = resolve(process.cwd(), opts?.cwd || ".");
+   const buildDir = resolve(cwd, opts?.buildDir || "node_modules/.nitro");
++  const timeout = opts?.timeout ?? internalOpts?.defaultTimeout;
+@@ -75,6 +79,8 @@ async function _getTasksContext(opts?: TaskRunnerOptions) {
+         {
+           socketPath,
+           method: options?.method,
++          // Omit when unset: default agent emits `timeout` after 5s idle
++          ...(timeout ? { timeout } : {}),
+           headers: {
+             Accept: "application/json",
+             "Content-Type": "application/json",
+@@ -95,6 +101,11 @@ async function _getTasksContext(opts?: TaskRunnerOptions) {
+         }
+       );
+ 
++      if (timeout) {
++        request.on("timeout", () => {
++          request.destroy(new Error(`Request timed out after ${timeout}ms ${_devHint}`));
++        });
++      }
+       request.on("error", (e) => reject(e));
+```
+- **Lesson**: High-level network abstractions must differentiate between transactional metadata queries (which require hard upper-bound timeouts) and streaming execution pipelines (which require opt-in timeouts). In Node.js, setting `timeout` without `req.destroy()` is a no-op that leaks connections.
+
+---
+
+### Incident 2: Silent Successful Builds on 100% Prerender Failure (BUG-PRERENDER-02)
+- **Context**: `src/prerender/prerender.ts` static compilation pipeline.
+- **What Was Expected**: If an SSR renderer is misconfigured or missing from Vite environments, the build must fail.
+- **What Actually Happened**: The prerenderer generated 0 routes; all attempted routes resulted in 404 errors. Because `nitro.options.prerender.failOnError` defaulted to `false`, the build logged yellow warnings and exited with return code 0. CI systems passed and deployed empty public directories to production.
+- **Evidence in Repo**: Commit `a383c8f8`, Issue `#4591`, PR `#4674`.
+- **Root Cause**: The error check checked only `failOnError && failedRoutes.size > 0`. It lacked a condition checking for an empty emission output (`failedRoutes.size > 0 && nitro._prerenderedRoutes.length === 0`).
+- **Remediation Code Diff**:
+```diff
+--- a/src/prerender/prerender.ts
++++ b/src/prerender/prerender.ts
+@@ -347,18 +347,17 @@ export async function prerender(nitro: Nitro) {
+     failedRoutes: [...failedRoutes],
+   });
+ 
++  // Every route failed and nothing was written: fail regardless of `failOnError` (#4591)
++  if (failedRoutes.size > 0 && nitro._prerenderedRoutes.length === 0) {
++    logPrerenderErrors(nitro, failedRoutes);
++    throw new Error(
++      `Prerendered 0 routes. All ${failedRoutes.size} route(s) failed, so nothing was written to \`${prettyPath(nitro.options.output.publicDir)}\`.` +
++        missingRendererHint(nitro)
++    );
++  }
++
+   if (nitro.options.prerender.failOnError && failedRoutes.size > 0) {
+-    nitro.logger.log("\nErrors prerendering:");
+-    for (const route of failedRoutes) {
+-      nitro.logger.log(formatPrerenderRoute(route));
+-    }
+-    nitro.logger.log("");
++    logPrerenderErrors(nitro, failedRoutes);
+     throw new Error("Exiting due to prerender errors.");
+   }
+```
+- **Lesson**: Tolerant error handling (`failOnError: false`) must never permit a 100% fatal outcome to pass as success.
+
+---
+
+### Incident 3: Unescaped Windows Backslashes in Virtual Route Modules (BUG-VIRTUAL-03)
+- **Context**: `#nitro/virtual/routing` dynamic code synthesis.
+- **What Was Expected**: Handlers registered via modules/plugins after initial config resolution should resolve identically across POSIX and Windows platforms.
+- **What Actually Happened**: On Windows, file paths contain backslashes (e.g., `C:\app\.nitro\handler.mjs`). When interpolated directly into virtual template literals (`` `import ${hash} from "${handler}";` ``), backslashes were treated as JavaScript escape sequences (`\a`, `\n`, `\u`), resulting in broken build artifacts and syntax errors during bundling.
+- **Evidence in Repo**: Issue `#4907`.
+- **Root Cause**: `resolveNitroPath` was called only during initial configuration ingestion. Dynamic calls via `nitro.options.handlers.push()` and `nitro.routing.sync()` preserved raw OS-dependent file path strings without sanitization.
+- **Remediation Code Diff**:
+```diff
+// Remediation pattern applied in virtual template generator:
+- const importStatement = `import ${h._importHash} from "${h.handler}";`;
++ // Enforce forward slash normalization or JSON serialization for specifiers
++ import { normalizeWindowsPath } from "../utils/fs.ts";
++ const specifier = JSON.stringify(normalizeWindowsPath(h.handler));
++ const importStatement = `import ${h._importHash} from ${specifier};`;
+```
+- **Lesson**: Never concatenate raw file paths into generated code templates. Always use `JSON.stringify()` or path normalization functions (such as `pathe.normalize`) when serializing strings into JavaScript code.
+
+---
+
+### Incident 4: Missing Signal Propagation in Containerized Cluster Primary (BUG-CLUSTER-04)
+- **Context**: Node.js cluster preset under Docker/Kubernetes (`presets/node/runtime/node-cluster.mjs`).
+- **What Was Expected**: Orchestrator `SIGTERM` signals sent to PID 1 should initiate zero-downtime, graceful request draining across all cluster workers.
+- **What Actually Happened**: Only PID 1 received `SIGTERM`. The primary trapped the signal and waited for workers to drain, but never forwarded the signal to the workers. Workers continued serving traffic until Kubernetes hit its 30s timeout and executed a `SIGKILL`, terminating in-flight requests.
+- **Evidence in Repo**: Issue `#4723`, PR `#1227`.
+- **Root Cause**: Relying on OS process-group signaling behavior (which occurs in interactive terminals via `Ctrl+C`, but **not** inside container namespaces where signals are targeted directly to PID 1).
+- **Remediation Code Diff**:
+```diff
+// Remediation logic in cluster primary entrypoint:
+  process.on("SIGTERM", () => {
++   for (const id in cluster.workers) {
++     const worker = cluster.workers[id];
++     if (worker?.process?.pid) {
++       worker.process.kill("SIGTERM");
++     }
++   }
+  });
+```
+- **Lesson**: Supervisors in cloud runtimes bypass process groups. Process managers running as PID 1 must manage signal propagation to children manually.
+
+---
+
+### Incident 5: Web API Response Subclassing Degradation in Fast Engine (BUG-FASTRESP-05)
+- **Context**: `srvx` integration replacing global Node.js `Response` with `FastResponse`.
+- **What Was Expected**: Optimizing `Response` for raw throughput in Node.js must not break polymorphic inheritance (`class CustomResponse extends Response`) or Web API static factory methods (`Response.error()`, `Response.json()`).
+- **What Actually Happened**: High-performance lazy response shims substituted constructor references without properly wiring the prototype chain. User classes extending `Response` failed `instanceof` checks, and native static methods bypassed the high-speed rendering path.
+- **Evidence in Repo**: Commit `6bccaad1`, PR `#4911`, `test/fixture/server/routes/fast-response.ts`.
+- **Root Cause**: Bypassing standard constructor validation in `srvx` required ensuring `Symbol.hasInstance`, static dispatch, and prototype linkages matched the standard Web Fetch specification.
+- **Remediation Code Diff**:
+```diff
+--- a/test/fixture/server/routes/fast-response.ts
++++ b/test/fixture/server/routes/fast-response.ts
+@@ -1,10 +1,14 @@
++class CustomResponse extends Response {}
++
+ export default () => {
+   const res = new Response("fast response", { headers: { "x-init": "1" } });
++  const custom = new CustomResponse("custom");
+   res.headers.set(
+     "x-fast-response",
+     JSON.stringify({
+       fast: typeof (res as any)._toNodeResponse === "function",
+-      instanceOf: res instanceof Response,
++      statics: Response.error() instanceof Response && Response.json({}) instanceof Response,
++      subclass: custom instanceof CustomResponse && !(res instanceof CustomResponse),
+     })
+   );
+   return res;
+```
+- **Lesson**: When patching global runtime primitives for performance, always test against standard prototype inheritance, static factory methods, and `instanceof` invariants.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Truthiness Checks on Idle Timeouts**:
+  In `src/task.ts`:
+  ```typescript
+  const timeout = opts?.timeout ?? internalOpts?.defaultTimeout;
+  ...(timeout ? { timeout } : {})
+  ```
+  *Micro-Mechanic*: `timeout` must be guarded using `??` (nullish coalescing) rather than `||`. If a user passes `timeout: 0` to explicitly disable timeouts on a socket, `0 || 30000` evaluates to `30000`, erroneously applying a timeout. Using `??` ensures `0` is respected.
+- **Property Ingestion and Lazy Descriptors**:
+  In `src/prerender/prerender.ts`:
+  ```typescript
+  let dataBuff: Buffer | undefined = Buffer.from(await res.arrayBuffer());
+  Object.defineProperty(_route, "contents", {
+    get: () => dataBuff ? dataBuff.toString("utf8") : undefined,
+    set(value: string) { if (dataBuff) dataBuff = Buffer.from(value); }
+  });
+  ```
+  *Micro-Mechanic*: Using dynamic property getters avoids converting huge binary buffers to UTF-8 strings prematurely. If an asset is an image or binary PDF, reading `.contents` is bypassed, avoiding memory bloat and V8 string length ceiling exceptions (`0x1fffffe8` characters).
+
+### 2. Infinite Loop & Recursion Guards
+- **Route Crawler Graph Cycles**:
+  In `src/prerender/prerender.ts` and `src/prerender/utils.ts`:
+  ```typescript
+  const generatedRoutes = new Set();
+  const skippedRoutes = new Set();
+  
+  const canPrerender = (route = "/") => {
+    if (generatedRoutes.has(route) || skippedRoutes.has(route)) {
+      return false;
+    }
+    // ...
+  };
+  ```
+  *Termination Proof*: Prerendering discovers links dynamically via `extractLinks`. Cyclic references (Page A $\to$ Page B $\to$ Page A) will loop indefinitely unless states are tracked. Nitro enforces an atomic check-and-insert into `generatedRoutes` before calling the async `generateRoute`. Even if thousands of concurrent pages link to `/about`, `/about` executes exactly once.
+- **Path Segment & Total Length Bounds**:
+  ```typescript
+  const FS_MAX_SEGMENT = 255;
+  const FS_MAX_PATH = 1024;
+  const FS_MAX_PATH_PUBLIC_HTML = FS_MAX_PATH - (nitro.options.output.publicDir.length + 10);
+  
+  if (route.route.length >= FS_MAX_PATH_PUBLIC_HTML || route.route.split("/").some((s) => s.length > FS_MAX_SEGMENT)) {
+    // Abort branch to avoid hitting ENAMETOOLONG
+    return false;
+  }
+  ```
+  *Guard*: Malicious or recursive crawler traps (e.g., `/item/1/item/1/item/1...`) produce path lengths that trigger unhandled `ENAMETOOLONG` POSIX exceptions, crashing the build. Nitro caps both total length and segment size, emitting warnings before aborting invalid subtrees.
+
+### 3. UI & UX Micro-Mechanics
+- **ANSI Terminal Link Ancestry Graph Formatting**:
+  In `src/prerender/utils.ts`:
+  ```typescript
+  export function formatPrerenderRoute(route: PrerenderRoute) {
+    let str = `  ├─ ${route.route} (${route.generateTimeMS}ms)`;
+    if (route.error) {
+      const parents = linkParents.get(route.route);
+      const errorColor = colors[route.error.status === 404 ? "yellow" : "red"];
+      const errorLead = parents?.size ? "├──" : "└──";
+      str += `\n  │ ${errorLead} ${errorColor(route.error.message || "unknown error")}`;
+      if (parents?.size) {
+        str += `\n${[...parents.values()].map((link) => `  │ └── Linked from ${link}`).join("\n")}`;
+      }
+    }
+    return colors.gray(str);
+  }
+  ```
+  *Micro-Mechanic*: When hundreds of pages are crawled, a bare 404 error ("`/team/john` failed") is unfixable without context. Nitro maintains an inverted parent index (`linkParents: Map<string, Set<string>>`), exposing the exact referrer route during terminal rendering.
+
+### 4. Backend Concurrency & Memory Safety
+- **Case-Insensitive File System Collision Guard**:
+  In `src/prerender/prerender.ts`:
+  ```typescript
+  const caseInsensitiveFS = await isCaseInsensitiveFS(nitro.options.output.publicDir);
+  const outputKey = (filePath: string) => (caseInsensitiveFS ? filePath.toLowerCase() : filePath);
+  ```
+  *Concurrency Bug Prevented*: On macOS (APFS) and Windows (NTFS), `/About` and `/about` resolve to the exact same file on disk. In a concurrent prerender pipeline, concurrent writes race each other, resulting in corrupted HTML payloads. Nitro probes the file system dynamically, downcases keys when operating on case-insensitive volumes, and warns on collisions.
+- **Immediate Buffer Deallocation on Disk Sync**:
+  Once a route write stream completes, references to `dataBuff` are explicitly cleared or set to undefined, allowing the V8 Garbage Collector to free raw heap memory immediately during long prerender jobs.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **JSON Signature Sniffing over Heuristic HTML

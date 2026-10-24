@@ -2023,10 +2023,10 @@
     "repository": "nitrojs/nitro",
     "platform": "github",
     "sourceUrl": "https://github.com/unjs/nitro",
-    "sourceVersion": "d046d733",
+    "sourceVersion": "6bccaad1",
     "license": "NOASSERTION",
-    "contentHash": "c1a466719ae76df9f8e6c55a73481b9a46538769fb8fad07319b3b3ea8ac461d",
-    "lastHarvestedAt": "2026-10-20T06:07:08.280Z",
+    "contentHash": "af195f25875f4c5e73093ec56641d1a9df1b7ce546fe8cf3109276d0ba13e34a",
+    "lastHarvestedAt": "2026-10-24T19:44:12.400Z",
     "learningId": "learn-github-nitrojs-nitro"
   },
   "unjs-h3": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "d42ea86b",
+    "sourceVersion": "24965a7c",
     "license": "NOASSERTION",
-    "contentHash": "12fb54db79374c49f6a48098de9b38d2e4eda6be3a36dded55d3a0c00a5fc540",
-    "lastHarvestedAt": "2026-10-23T11:18:09.669Z",
+    "contentHash": "846d86183c7a1ab87d146df1c71c723ebaf0fe49eac51dbf89c84632b8cd4c59",
+    "lastHarvestedAt": "2026-10-24T19:43:48.064Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "83874206",
+    "sourceVersion": "80e1c7ec",
     "license": "OSL-3.0",
-    "contentHash": "6b6e93d98496ecdb63b67cca1641eaffbec44d92442eee5c75a6f4dcd2018f87",
-    "lastHarvestedAt": "2026-10-21T16:38:45.013Z",
+    "contentHash": "0be263e531f3b9b943cf6145cd2a152f1fe536ed871a5ce324f25fcc257a42b0",
+    "lastHarvestedAt": "2026-10-24T19:41:27.541Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {

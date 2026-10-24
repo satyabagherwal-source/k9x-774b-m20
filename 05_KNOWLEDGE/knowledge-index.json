@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T19:35:06.200Z",
+  "last_updated": "2026-10-24T19:44:12.347Z",
   "total_verified_learnings": 1078,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7480,8 +7480,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "d42ea86b",
-      "content_hash": "12fb54db79374c49f6a48098de9b38d2e4eda6be3a36dded55d3a0c00a5fc540",
+      "source_version": "24965a7c",
+      "content_hash": "846d86183c7a1ab87d146df1c71c723ebaf0fe49eac51dbf89c84632b8cd4c59",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7649,6 +7649,21 @@
           "number": 3900,
           "title": "read compressed CSV inputs exactly as written (#4901)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3924,
+          "title": "Invariant-Preserving Native Token Replacements for External Runtimes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3925,
+          "title": "State-Settled Waiter Flags in Asynchronous Concurrency Allocators",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3926,
+          "title": "Cardinality-Aware Column Selectors with Explicit Null-Set Representation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7656,7 +7671,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:18:09.631Z",
+      "verified_at": "2026-10-24T19:43:48.009Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47205,8 +47220,8 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "83874206",
-      "content_hash": "6b6e93d98496ecdb63b67cca1641eaffbec44d92442eee5c75a6f4dcd2018f87",
+      "source_version": "80e1c7ec",
+      "content_hash": "0be263e531f3b9b943cf6145cd2a152f1fe536ed871a5ce324f25fcc257a42b0",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
@@ -47226,7 +47241,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T16:38:44.950Z",
+      "verified_at": "2026-10-24T19:41:27.474Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64751,8 +64766,8 @@
       "slug": "unjs-nitro",
       "platform": "github",
       "source_url": "https://github.com/unjs/nitro",
-      "source_version": "d046d733",
-      "content_hash": "c1a466719ae76df9f8e6c55a73481b9a46538769fb8fad07319b3b3ea8ac461d",
+      "source_version": "6bccaad1",
+      "content_hash": "af195f25875f4c5e73093ec56641d1a9df1b7ce546fe8cf3109276d0ba13e34a",
       "dossier_path": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "promoted_rules": [
@@ -64775,6 +64790,21 @@
           "number": 3090,
           "title": "dev): warn instead of failing when nitro dev detects a vite config (#4850)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3927,
+          "title": "Mandatory Explicit Destruction Pattern for Socket Inactivity Timeouts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3928,
+          "title": "Zero-Output Catastrophe Guard in Build Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3929,
+          "title": "POSIX Signal Multiplexing Invariant for Containerized Orchestrators",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -64782,7 +64812,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T06:07:08.186Z",
+      "verified_at": "2026-10-24T19:44:12.338Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115735,6 +115765,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T19:35:00.331Z"
+    },
+    "rule-3924": {
+      "learning_id": "rule-3924",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3924,
+      "title": "Invariant-Preserving Native Token Replacements for External Runtimes",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "24965a7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:43:48.009Z"
+    },
+    "rule-3925": {
+      "learning_id": "rule-3925",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3925,
+      "title": "State-Settled Waiter Flags in Asynchronous Concurrency Allocators",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "24965a7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:43:48.009Z"
+    },
+    "rule-3926": {
+      "learning_id": "rule-3926",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3926,
+      "title": "Cardinality-Aware Column Selectors with Explicit Null-Set Representation",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "24965a7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:43:48.009Z"
+    },
+    "rule-3927": {
+      "learning_id": "rule-3927",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3927,
+      "title": "Mandatory Explicit Destruction Pattern for Socket Inactivity Timeouts",
+      "source_url": "https://github.com/unjs/nitro",
+      "source_version": "6bccaad1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:44:12.338Z"
+    },
+    "rule-3928": {
+      "learning_id": "rule-3928",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3928,
+      "title": "Zero-Output Catastrophe Guard in Build Pipelines",
+      "source_url": "https://github.com/unjs/nitro",
+      "source_version": "6bccaad1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:44:12.338Z"
+    },
+    "rule-3929": {
+      "learning_id": "rule-3929",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3929,
+      "title": "POSIX Signal Multiplexing Invariant for Containerized Orchestrators",
+      "source_url": "https://github.com/unjs/nitro",
+      "source_version": "6bccaad1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T19:44:12.338Z"
     }
   },
   "aliases": {

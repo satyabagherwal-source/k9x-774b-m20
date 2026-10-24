@@ -4566,3 +4566,6 @@
 | `CYCLE-20261024-SZF0` | `2026-10-24T19:34:59.916Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3920` | Yes (`198da7b7...`) |
 | `CYCLE-20261024-SZS8` | `2026-10-24T19:35:00.392Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3921, Rule 3922, Rule 3923` | Yes (`a5a5dc18...`) |
 | `CYCLE-20261024-T4B8` | `2026-10-24T19:35:06.260Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md` | Yes (`ee48504b...`) |
+| `CYCLE-20261024-1AIA` | `2026-10-24T19:41:27.538Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md` | Yes (`0be263e5...`) |
+| `CYCLE-20261024-4AXP` | `2026-10-24T19:43:48.061Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3924, Rule 3925, Rule 3926` | Yes (`846d8618...`) |
+| `CYCLE-20261024-4TPP` | `2026-10-24T19:44:12.397Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3927, Rule 3928, Rule 3929` | Yes (`af195f25...`) |

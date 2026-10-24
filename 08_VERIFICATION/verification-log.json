@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-EGTF",
-    "timestamp": "2026-10-20T22:32:59.043Z",
-    "repository": "projectcontour/contour",
-    "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "38a4b00de174bfaf3231b1553b73bffb8f5b122cc3a4ff21d12a4cbac399f3cc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-MMHK",
-    "timestamp": "2026-10-20T22:39:19.640Z",
-    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-    "contentHash": "1dc018e2af674320a258a2a71360f70f11fd300db562a6119498615b2d6129e0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-MROE",
-    "timestamp": "2026-10-20T22:39:26.366Z",
-    "repository": "thaw-app/Thaw",
-    "learningId": "learn-github-thaw-app-thaw",
-    "contentHash": "7bd18227b275614b1e728217d8e096d69b6ad37f7cf5eedb381c8e23fed2a61f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-MYNN",
     "timestamp": "2026-10-20T22:39:35.411Z",
     "repository": "vespa-engine/vespa",
@@ -7492,6 +7447,51 @@
     "contentHash": "ee48504ba0858da7a602982b7614538e74466ae477f204bc1cdc9f0af259e248",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-1AIA",
+    "timestamp": "2026-10-24T19:41:27.538Z",
+    "repository": "trailbaseio/trailbase",
+    "learningId": "learn-github-trailbaseio-trailbase",
+    "contentHash": "0be263e531f3b9b943cf6145cd2a152f1fe536ed871a5ce324f25fcc257a42b0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-4AXP",
+    "timestamp": "2026-10-24T19:43:48.061Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "846d86183c7a1ab87d146df1c71c723ebaf0fe49eac51dbf89c84632b8cd4c59",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-4TPP",
+    "timestamp": "2026-10-24T19:44:12.397Z",
+    "repository": "nitrojs/nitro",
+    "learningId": "learn-github-nitrojs-nitro",
+    "contentHash": "af195f25875f4c5e73093ec56641d1a9df1b7ce546fe8cf3109276d0ba13e34a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

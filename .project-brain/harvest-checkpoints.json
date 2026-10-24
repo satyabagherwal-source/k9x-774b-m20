@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-24T19:35:06.274Z",
+  "last_updated": "2026-10-24T19:44:12.411Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3171,14 +3171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nitrojs-nitro",
-      "content_hash": "c1a466719ae76df9f8e6c55a73481b9a46538769fb8fad07319b3b3ea8ac461d",
-      "verified_at": "2026-10-20T06:07:08.292Z",
+      "content_hash": "af195f25875f4c5e73093ec56641d1a9df1b7ce546fe8cf3109276d0ba13e34a",
+      "verified_at": "2026-10-24T19:44:12.411Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T06:07:08.292Z"
+      "last_updated": "2026-10-24T19:44:12.411Z"
     },
     "h3js/h3": {
       "repository": "h3js/h3",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "12fb54db79374c49f6a48098de9b38d2e4eda6be3a36dded55d3a0c00a5fc540",
-      "verified_at": "2026-10-23T11:18:09.677Z",
+      "content_hash": "846d86183c7a1ab87d146df1c71c723ebaf0fe49eac51dbf89c84632b8cd4c59",
+      "verified_at": "2026-10-24T19:43:48.075Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T11:18:09.677Z"
+      "last_updated": "2026-10-24T19:43:48.075Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "6b6e93d98496ecdb63b67cca1641eaffbec44d92442eee5c75a6f4dcd2018f87",
-      "verified_at": "2026-10-21T16:38:45.026Z",
+      "content_hash": "0be263e531f3b9b943cf6145cd2a152f1fe536ed871a5ce324f25fcc257a42b0",
+      "verified_at": "2026-10-24T19:41:27.549Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T16:38:45.026Z"
+      "last_updated": "2026-10-24T19:41:27.549Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T19:35:06.270Z",
-  "total_cycles_completed": 4543,
-  "total_learnings_persisted": 4543,
-  "total_rules_promoted": 3777,
+  "last_updated": "2026-10-24T19:44:12.408Z",
+  "total_cycles_completed": 4546,
+  "total_learnings_persisted": 4546,
+  "total_rules_promoted": 3783,
   "history": [
-    {
-      "timestamp": "2026-10-22T17:51:54.213Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:58:13.517Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T17:58:19.158Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T17:58:21.329Z",
       "repository": "reflection/Beam-1.0-501B-A23B",
@@ -1403,6 +1382,27 @@
       "repository": "HelixDB/helix-db",
       "learningId": "learn-github-helixdb-helix-db",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:41:27.546Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:43:48.072Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T19:44:12.408Z",
+      "repository": "nitrojs/nitro",
+      "learningId": "learn-github-nitrojs-nitro",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

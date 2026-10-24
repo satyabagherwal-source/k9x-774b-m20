@@ -4573,3 +4573,6 @@ Every entry in this ledger must capture:
 | `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `c65e1ee3` | Multi-dimensional audit evidence | 2026-10-24T19:34:59.920Z |
 | `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-24T19:35:00.395Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `39a0a4b5` | Multi-dimensional audit evidence | 2026-10-24T19:35:06.263Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `80e1c7ec` | Multi-dimensional audit evidence | 2026-10-24T19:41:27.541Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `24965a7c` | Multi-dimensional audit evidence | 2026-10-24T19:43:48.064Z |
+| `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `6bccaad1` | Multi-dimensional audit evidence | 2026-10-24T19:44:12.400Z |

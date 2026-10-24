@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T19:35:06.269Z",
+  "last_updated": "2026-10-24T19:41:27.545Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2543,6 +2543,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-helixdb-helix-db"
+    },
+    {
+      "id": "CD-1AIH",
+      "directive_title": "Prepare new release v0.35.3.",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "trailbaseio/trailbase",
+      "source_commit": "80e1c7ec",
+      "date_staged": "2026-10-24",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-trailbaseio-trailbase"
     }
   ]
 }

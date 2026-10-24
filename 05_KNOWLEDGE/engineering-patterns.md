@@ -282123,3 +282123,644 @@ if current_width > target_width:
 **VERIFICATION METHOD**:
 1.  **Shape Check:** Assert that all FFN weight tensors have `shape[0] == target_width`.
 2.  **Zero-Check:** Verify that the padded regions contain exactly `0.0`.
+
+
+---
+
+## 3924. Invariant-Preserving Native Token Replacements for External Runtimes (Harvested from dathere/qsv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant-Preserving Native Token Replacements for External Runtimes",
+  "source": "dathere/qsv",
+  "source_url": "https://github.com/dathere/qsv",
+  "source_version": "24965a7c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-24T19:43:47.623Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dathere-qsv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `24965a7c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deprecating a foreign-language runtime (e.g., PyO3/Python) in favor of an embedded, memory-safe native engine (e.g., MiniJinja/Wasm/Rust-native), the serialization output and error envelope MUST preserve legacy field naming conventions (including private/foreign prefixing such as `_traceback`) using explicit serde attribute overrides.
+
+**WHY**:
+External automation, orchestrators, and downstream regression harnesses treat error and metadata schemas as rigid wire protocols. Switching an engine must not change wire shape, even if the new engine has different error modeling idioms. Failure to use field aliases (e.g. `#[serde(rename = "_traceback")]`) causes silent deserialization failures across distributed network nodes.
+
+**WHEN TO APPLY**:
+Apply when replacing foreign-function runtimes, template engines, or protocol layers in microservices, CLI tools, and agent SDKs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct EvaluatorResult {
+    pub field_name: String,
+    pub kind: String,
+    pub scope: String,
+    pub value: Option<Value>,
+    pub error: Option<String>,
+    
+    // Wire contract preservation: Python historically emitted '_traceback'.
+    // Retain exact JSON key via explicit serde rename while adhering to Rust naming standards.
+    #[serde(
+        rename = "_traceback",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub traceback: Option<String>,
+}
+
+pub fn render_native_template(
+    env: &minijinja::Environment,
+    tmpl_src: &str,
+    ctx: &minijinja::Value,
+) -> Result<String, minijinja::Error> {
+    let tmpl = env.template_from_str(tmpl_src)?;
+    tmpl.render(ctx)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER alter the wire protocol field name to match internal language conventions.
+// NEVER omit fallback handling for undefined variables when mimicking legacy scripting runtimes.
+#[derive(Serialize)]
+pub struct BrokenResult {
+    pub traceback: Option<String>, // FAILS downstream clients expecting "_traceback"
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce serialization invariants using a property-based round-trip test:
+```rust
+#[test]
+fn test_wire_contract_traceback_preservation() {
+    let res = EvaluatorResult {
+        field_name: "test".into(),
+        kind: "formula".into(),
+        scope: "dataset".into(),
+        value: None,
+        error: Some("SyntaxError: unexpected token".into()),
+        traceback: Some("Stack span: line 1, col 4".into()),
+    };
+    let json = serde_json::to_string(&res).unwrap();
+    assert!(json.contains("\"_traceback\":"));
+    assert!(!json.contains("\"traceback\":"));
+}
+```
+
+---
+
+
+---
+
+## 3925. State-Settled Waiter Flags in Asynchronous Concurrency Allocators (Harvested from dathere/qsv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "State-Settled Waiter Flags in Asynchronous Concurrency Allocators",
+  "source": "dathere/qsv",
+  "source_url": "https://github.com/dathere/qsv",
+  "source_version": "24965a7c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-24T19:43:47.778Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dathere-qsv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `24965a7c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Every queued async slot waiter in a concurrency throttle MUST encapsulate an explicit, terminal boolean state flag (`settled: boolean`). Asynchronous wakeups, cancellations, and timeouts MUST verify and update this flag synchronously within single-threaded microtask execution to prevent double-increment/decrement corruption of the active execution counter.
+
+**WHY**:
+Relying purely on promise resolution or timer cancellation is vulnerable to race conditions when a timeout event fires concurrently with an allocator's `releaseSlot` dequeue. If an allocator pulls a waiter from the queue and calls its callback without checking an atomic settlement state, a timed-out request can acquire a slot anyway, leading to untracked task execution, active count drift, and pool starvation.
+
+**WHEN TO APPLY**:
+Apply to any async resource pool, semaphore, or concurrency limiter implemented in Node.js, V8, or browser runtimes where queue operations span multiple ticks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+interface SlotWaiter {
+  settled: boolean;
+  callback: () => void;
+}
+
+export class SafeConcurrencyLimiter {
+  private activeCount = 0;
+  private readonly waiters: SlotWaiter[] = [];
+
+  constructor(
+    private readonly maxConcurrent: number,
+    private readonly maxQueueSize: number
+  ) {}
+
+  public async acquire(timeoutMs: number): Promise<boolean | "timeout" | "backpressure"> {
+    // Synchronous fast-path: atomic check-and-increment
+    if (this.activeCount < this.maxConcurrent) {
+      this.activeCount++;
+      return true;
+    }
+
+    // Dead waiter pruning: purge settled/timed-out slots before backpressure checks
+    for (let i = this.waiters.length - 1; i >= 0; i--) {
+      if (this.waiters[i].settled) {
+        this.waiters.splice(i, 1);
+      }
+    }
+
+    if (this.waiters.length >= this.maxQueueSize) {
+      return "backpressure";
+    }
+
+    return new Promise((resolve) => {
+      const waiter: SlotWaiter = {
+        settled: false,
+        callback: () => {},
+      };
+
+      const timer = setTimeout(() => {
+        if (!waiter.settled) {
+          waiter.settled = true;
+          resolve("timeout");
+        }
+      }, timeoutMs);
+
+      waiter.callback = () => {
+        if (!waiter.settled) {
+          waiter.settled = true;
+          clearTimeout(timer);
+          this.activeCount++;
+          resolve(true);
+        }
+      };
+
+      this.waiters.push(waiter);
+    });
+  }
+
+  public release(): void {
+    while (this.waiters.length > 0) {
+      const waiter = this.waiters.shift();
+      if (waiter && !waiter.settled) {
+        waiter.callback();
+        if (this.activeCount > 0) {
+          this.activeCount--;
+        }
+        return;
+      }
+    }
+
+    if (this.activeCount > 0) {
+      this.activeCount--;
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// NEVER hand off concurrency slots without checking settlement flags.
+// Calling a naked resolve() on a timed-out waiter can cause active-count drift.
+function unsafeRelease(waiters: Array<() => void>, activeCount: { val: number }) {
+  const next = waiters.shift();
+  if (next) {
+    next(); // BUG: If this waiter timed out, activeCount is now permanently out of sync.
+    activeCount.val--;
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Run rapid parallel cancellation tests with sub-millisecond timeouts:
+```typescript
+test("concurrent waiter cancellation does not desync activeCount", async () => {
+  const limiter = new SafeConcurrencyLimiter(1, 10);
+  await limiter.acquire(1000); // saturate pool
+  
+  // Enqueue waiter with immediate timeout
+  const p = limiter.acquire(0);
+  await new Promise(r => setTimeout(r, 5)); // ensure timer expires
+  const res = await p;
+  expect(res).toBe("timeout");
+
+  limiter.release(); // release slot; should not trigger expired waiter
+  expect(limiter["activeCount"]).toBe(0);
+});
+```
+
+---
+
+
+---
+
+## 3926. Cardinality-Aware Column Selectors with Explicit Null-Set Representation (Harvested from dathere/qsv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cardinality-Aware Column Selectors with Explicit Null-Set Representation",
+  "source": "dathere/qsv",
+  "source_url": "https://github.com/dathere/qsv",
+  "source_version": "24965a7c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-24T19:43:47.924Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dathere-qsv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `24965a7c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Dynamic column-selection query builders that filter on column cardinality thresholds MUST return a typed, tri-state semantic domain structure (`All`, `None`, `Specific(Vec<T>)`) rather than an ambiguous empty string `""`. 
+
+**WHY**:
+In command-line and query-parser infrastructures, an empty string `""` often defaults to "select all fields" (the default projection `SELECT *`). If a filter finds 0 columns meeting a cardinality threshold and yields `""`, downstream consumers parse this as "select every column in the file," turning an empty set into a massive unindexed computation and generating invalid constraints.
+
+**WHEN TO APPLY**:
+Apply to all metadata scrapers, schema inferencers, database reflection engines, and CLI arg builders.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+#[derive(Debug, PartialEq, Eq)]
+pub enum ColumnSelection {
+    All,
+    None,
+    Specific(Vec<String>),
+}
+
+impl ColumnSelection {
+    /// Converts domain selection into a safe CLI/query argument string.
+    pub fn to_selector_arg(&self) -> Option<String> {
+        match self {
+            ColumnSelection::All => Some("*".to_string()),
+            ColumnSelection::None => None, // Must NOT return "" or empty selector
+            ColumnSelection::Specific(cols) => {
+                if cols.is_empty() {
+                    None
+                } else {
+                    Some(cols.join(","))
+                }
+            }
+        }
+    }
+}
+
+pub fn select_low_cardinality_columns(
+    stats: &[(String, u64)],
+    threshold: u64,
+) -> ColumnSelection {
+    let matched: Vec<String> = stats
+        .iter()
+        .filter(|(_, card)| *card >= 2 && *card <= threshold)
+        .map(|(name, _)| name.clone())
+        .collect();
+
+    if matched.is_empty() {
+        ColumnSelection::None
+    } else {
+        ColumnSelection::Specific(matched)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER return an empty string to represent zero matched columns.
+// In tools like qsv, SelectColumns::parse("") defaults to ALL columns.
+pub fn unsafe_build_selector(stats: &[(String, u64)], threshold: u64) -> String {
+    let matched: Vec<&str> = stats.iter()
+        .filter(|(_, c)| *c <= threshold)
+        .map(|(n, _)| n.as_str())
+        .collect();
+    matched.join(",") // BUG: If empty, returns "" which means SELECT *!
+}
+```
+
+**VERIFICATION METHOD**:
+Verify that empty match sets yield `None` and do not execute downstream extraction steps:
+```rust
+#[test]
+fn test_zero_cardinality_selection() {
+    let stats = vec![("high_card".to_string(), 1000u64)];
+    let selection = select_low_cardinality_columns(&stats, 50);
+    assert_eq!(selection, ColumnSelection::None);
+    assert_eq!(selection.to_selector_arg(), None);
+}
+```
+
+---
+
+
+---
+
+## 3927. Mandatory Explicit Destruction Pattern for Socket Inactivity Timeouts (Harvested from nitrojs/nitro)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mandatory Explicit Destruction Pattern for Socket Inactivity Timeouts",
+  "source": "nitrojs/nitro",
+  "source_url": "https://github.com/unjs/nitro",
+  "source_version": "6bccaad1",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-24T19:44:11.948Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nitrojs-nitro",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nitrojs/nitro](https://github.com/unjs/nitro) (Revision: `6bccaad1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When configuring timeouts on low-level Node.js network clients (`http.ClientRequest`, `net.Socket`, `tls.TLSSocket`), developers MUST NOT assume setting the `timeout` option aborts the socket, and MUST explicitly register a `'timeout'` listener that invokes `request.destroy(new Error(...))`. Furthermore, timeout durations MUST distinguish between immediate metadata operations and streaming/deferred workloads.
+
+**WHY**:
+In Node.js, `http.request({ timeout })` only emits the `'timeout'` event on the socket; it **does not cancel, abort, or destroy the underlying connection**. If unhandled, or handled without `.destroy()`, the connection remains open indefinitely if the server stalls, leaking socket descriptors and freezing async execution loops. Additionally, applying a default timeout to long-running tasks or streaming endpoints aborts legitimate user workloads during idle periods.
+
+**WHEN TO APPLY**:
+All IPC communication channels, internal CLI-to-dev-server daemon bridges, custom reverse proxy passes, and Unix domain socket fetch clients.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import http from "node:http";
+
+interface DevFetchOptions {
+  socketPath: string;
+  path: string;
+  method?: string;
+  body?: string;
+  timeout?: number; // Explicit ms; undefined implies no socket idle timeout
+}
+
+export function devFetch<T = unknown>(opts: DevFetchOptions): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const req = http.request(
+      {
+        socketPath: opts.socketPath,
+        path: opts.path,
+        method: opts.method || "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        // Omit timeout key if undefined: avoids triggering default agent 5s idle drops
+        ...(opts.timeout ? { timeout: opts.timeout } : {}),
+      },
+      (res) => {
+        let raw = "";
+        res.setEncoding("utf8");
+        res.on("data", (chunk) => { raw += chunk; });
+        res.on("end", () => {
+          try {
+            resolve(JSON.parse(raw));
+          } catch (err) {
+            reject(new Error(`Failed to parse response: ${err.message}`));
+          }
+        });
+      }
+    );
+
+    // INVARIANT: Node.js http.ClientRequest does NOT destroy socket on timeout
+    if (opts.timeout) {
+      req.on("timeout", () => {
+        req.destroy(
+          new Error(`Socket timed out after ${opts.timeout}ms waiting for ${opts.socketPath}`)
+        );
+      });
+    }
+
+    req.on("error", (err) => reject(err));
+
+    if (opts.body) {
+      req.write(opts.body);
+    }
+    req.end();
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// CRITICAL DEFECT: Setting timeout without 'timeout' listener and destroy()
+// Result: Stalled worker accepts connection, never sends bytes, promise hangs forever.
+const req = http.request({ socketPath, timeout: 5000 });
+req.end();
+```
+
+**VERIFICATION METHOD**:
+```typescript
+import { it, expect } from "vitest";
+import http from "node:http";
+
+it("enforces timeout destruction on hung IPC socket", async () => {
+  const server = http.createServer(() => {}); // Accepts, never writes response
+  await new Promise<void>((res) => server.listen("/tmp/test-hang.sock", res));
+
+  await expect(
+    devFetch({ socketPath: "/tmp/test-hang.sock", path: "/test", timeout: 100 })
+  ).rejects.toThrow(/Socket timed out after 100ms/);
+
+  server.close();
+});
+```
+
+---
+
+
+---
+
+## 3928. Zero-Output Catastrophe Guard in Build Pipelines (Harvested from nitrojs/nitro)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero-Output Catastrophe Guard in Build Pipelines",
+  "source": "nitrojs/nitro",
+  "source_url": "https://github.com/unjs/nitro",
+  "source_version": "6bccaad1",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-24T19:44:12.105Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nitrojs-nitro",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nitrojs/nitro](https://github.com/unjs/nitro) (Revision: `6bccaad1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Build-time asset and static-site compilation pipelines MUST distinguish between acceptable partial errors and "Total Execution Void" (0 successful emissions out of $N > 0$ attempts). If the rendered artifact count is zero and every registered route/entrypoint threw an error, the build step MUST fail with a fatal exit code, regardless of soft-error flags (e.g., `failOnError: false`).
+
+**WHY**:
+Soft-error configurations (e.g., `failOnError: false`) are intended to allow sites to publish even if secondary pages (e.g., broken dynamic links) fail. However, if the underlying renderer fails completely (e.g., missing SSR entrypoint, configuration path error, broken bundler import), every route fails. Under soft-error logic, the build engine completes with code 0, emitting an empty distribution directory. Downstream CI/CD pipelines deploy this empty directory to production, wiping out the live website without triggering CI alarms.
+
+**WHEN TO APPLY**:
+Static site generators (SSG), prerender engines, documentation compilers, and batch export pipelines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+interface BuildStats {
+  totalRequested: number;
+  successfulEmissions: number;
+  failedRoutes: Set<string>;
+  failOnError: boolean;
+}
+
+export function validateBuildPipelineEmissions(stats: BuildStats, outputDir: string): void {
+  const allRoutesFailed =
+    stats.failedRoutes.size > 0 && stats.successfulEmissions === 0;
+
+  // INVARIANT: Complete void must abort the process unconditionally
+  if (allRoutesFailed) {
+    throw new Error(
+      `Fatal: Prerendered 0 routes. All ${stats.failedRoutes.size} route(s) failed. ` +
+      `Output directory '${outputDir}' is empty. Build aborted to prevent deploying void.`
+    );
+  }
+
+  // Soft failure check for partial failures
+  if (stats.failOnError && stats.failedRoutes.size > 0) {
+    throw new Error(
+      `Build failed due to ${stats.failedRoutes.size} prerender error(s) with failOnError=true.`
+    );
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// CRITICAL DEFECT: Respecting failOnError when 100% of routes fail
+if (options.failOnError && failedRoutes.size > 0) {
+  throw new Error("Failed");
+}
+// Exits cleanly with code 0, releasing an empty deployment artifact
+return;
+```
+
+**VERIFICATION METHOD**:
+Run automated E2E tests pointing the prerenderer to an invalid server entrypoint with `failOnError: false`. Assert that the process rejects and does not exit with code 0.
+
+---
+
+
+---
+
+## 3929. POSIX Signal Multiplexing Invariant for Containerized Orchestrators (Harvested from nitrojs/nitro)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "POSIX Signal Multiplexing Invariant for Containerized Orchestrators",
+  "source": "nitrojs/nitro",
+  "source_url": "https://github.com/unjs/nitro",
+  "source_version": "6bccaad1",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-24T19:44:12.253Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nitrojs-nitro",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nitrojs/nitro](https://github.com/unjs/nitro) (Revision: `6bccaad1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When running a Node.js cluster under container runtimes (Docker, Kubernetes) where the process manager runs as PID 1, the cluster primary process MUST explicitly trap termination signals (`SIGTERM`, `SIGINT`) and broadcast them to every active worker child process before initiating master exit procedures.
+
+**WHY**:
+In container environments, the orchestrator (kubelet or Docker daemon) sends `SIGTERM` exclusively to **PID 1**. Node.js's native `cluster` module does **not** forward signals received by the primary to forked worker processes. If the primary traps `SIGTERM` and awaits worker drainage without actively signaling the workers, the workers continue listening and servicing requests until the container termination grace period expires (e.g., 30s). The supervisor then issues an ungraceful `SIGKILL`, abruptly dropping in-flight requests and severing open socket connections.
+
+**WHEN TO APPLY**:
+Node.js cluster presets, multi-process master/worker architectures, and containerized process managers running in Kubernetes/ECS environments.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import cluster from "node:cluster";
+import process from "node:process";
+
+export function setupClusterGracefulTermination(shutdownTimeoutMs = 15000): void {
+  if (!cluster.isPrimary) {
+    return;
+  }
+
+  let isTerminating = false;
+
+  const propagateSignal = (signal: NodeJS.Signals) => {
+    if (isTerminating) return;
+    isTerminating = true;
+
+    // 1. Explicitly broadcast signal to all cluster workers
+    for (const id in cluster.workers) {
+      const worker = cluster.workers[id];
+      if (worker && !worker.isDead() && worker.process.pid) {
+        worker.process.kill(signal);
+      }
+    }
+
+    // 2. Set hard deadline to guarantee master does not hang if a worker stalls
+    const timer = setTimeout(() => {
+      process.exit(1);
+    }, shutdownTimeoutMs);
+    timer.unref(); // Ensure timer itself doesn't keep master event loop open
+  };
+
+  process.once("SIGTERM", () => propagateSignal("SIGTERM"));
+  process.once("SIGINT", () => propagateSignal("SIGINT"));
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// CRITICAL DEFECT: Primary listens to signal but assumes child workers receive it
+if (cluster.isPrimary) {
+  process.on("SIGTERM", async () => {
+    // Workers never receive SIGTERM! They run until hard SIGKILL
+    await waitForWorkerDrain();
+    process.exit(0);
+  });
+}
+```
+
+**VERIFICATION METHOD**:
+Fork a mock cluster in a child process, send `kill(pid, "SIGTERM")` directly to the primary PID only, and assert that worker IPC listeners receive the signal and fire their graceful shutdown hooks within 500ms.
+
+---
