@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source**: github ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
-> **Source Version**: `9177f90c`  
+> **Source Version**: `f7fa398c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:41:05.606Z  
+> **Timestamp**: 2026-10-24T20:48:37.742Z  
 > **Learning ID**: `learn-github-ataraxy-labs-sem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:41:04.458Z  
+> **Harvest Timestamp**: 2026-10-24T20:48:35.854Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Semantic version control => entity-level diffs, blame, and impact analysis on top of git. 28 languages via tree-sitter. Built for coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 3415 stars
+- **Stars / Engagement**: 3422 stars
 
 ---
 
@@ -463,6 +463,7 @@ fn index_lookup(repo_root: &Path, names: &[String], paths: &[String]) -> Option<
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
     let run = |name: &str, scope: Option<&str>| -> Option<String> {
         let mut cmd = std::process::Command::new(&exe);
+        super::without_cli_defaults(&mut cmd);
         cmd.args(["find", name, "--context", "--budget", &budget]);
         if let Some(p) = scope {
             cmd.args(["--in", p]);
@@ -580,6 +581,11 @@ mod tests {
 //! any other shell write              ->  refused: use weave_edit
 //! ```
 //!
+//! As a post-tool hook it follows the agent's own edits through (Edit,
+//! Write, MultiEdit, apply_patch; `follow_through`): untouched twins of a
+//! changed method, callers a signature change stranded, the tests to run,
+//! as additional context. The pre-tool half snapshots the file to diff from.
+//!
 //! Each decision is logged to `<git dir>/sem-run/coverage/<session>.jsonl`
 //! (or `$SEM_COVERAGE_DIR`),
 //! so a session can be checked for how much of its code access went through
@@ -601,9 +607,12 @@ pub fn tool() {
         return;
     }
     let Ok(event) = serde_json::from_str::<Value>(&input) else { return };
-    if event["hook_event_name"].as_str() != Some("PreToolUse") {
-        return;
-    }
+    let started = std::time::Instant::now();
+    let post = match event["hook_event_name"].as_str() {
+        Some("PreToolUse") => false,
+        Some("PostToolUse") => true,
+        _ => return,
+    };
     let cwd = event["cwd"].as_str().map(PathBuf::from).unwrap_or_else(|| std::env::current_dir().unwrap_or_default());
     let ctx = Ctx {
         sem: std::env::current_exe().map(|p| p.to_string_lossy().into_owned()).unwrap_or_else(|_| "sem".into()),
@@ -612,12 +621,21 @@ pub fn tool() {
         codex: event["transcript_path"].as_str().is_some_and(|p| p.contains("/.codex/")) || event["turn_id"].is_string(),
         cwd,
     };
-    prewarm_once(&ctx);
     let name = event["tool_name"].as_str().unwrap_or("");
     let input = &event["tool_input"];
+    if post {
+        if let Some(text) = follow_through(&ctx, name, input, started) {
+            println!("{}", json!({"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": text}}));
+        }
+        return;
+    }
+    prewarm_once(&ctx);
+    if let Some(files) = edited_files(name, input) {
+        snapshot(&ctx, &files);
+    }
     let out = match name {
         "Bash" => bash(&ctx, input),
-        "apply_patch" => apply_patch(&ctx, input),
+        "apply_patch" => apply_patch(&ctx, input, started),
         n if n.starts_with("mcp__sem") || n.starts_with("mcp__weave") || n.starts_with("sem_") || n.starts_with("weave_") => {
             ctx.log(if n.contains("weave") { "weave" } else { "sem" }, true, n);
             None
@@ -660,6 +678,46 @@ impl Ctx {
     }
 }
 
+/// The files a native edit tool is about to change (or just changed).
+fn edited_files(tool: &str, input: &Value) -> Option<Vec<String>> {
+    match tool {
+        "Edit" | "Write" | "MultiEdit" => Some(vec![input["file_path"].as_str()?.to_string()]),
+        "apply_patch" => Some(super::follow_through::patch_files(input["command"].as_str().or(input["input"].as_str())?)),
+        _ => None,
+    }
+}
+
+/// PreToolUse half of the edit follow-through: keep each file's content
+/// before the edit, keyed by session and path.
+fn snapshot(ctx: &Ctx, files: &[String]) {
+    let Some(run) = run_dir(&ctx.cwd) else { return };
+    let root = super::repo_root_or_cwd(&ctx.cwd.to_string_lossy());
+    for f in files {
+        if let Some(rel) = super::follow_through::relative(&root, &ctx.cwd, f) {
+            super::follow_through::snapshot(&run, &ctx.session, &root, &rel);
+        }
+    }
+}
+
+/// PostToolUse half: what the edit left undone (twins, stranded callers,
+/// tests to run), as additional context; None when there is nothing to say.
+fn follow_through(ctx: &Ctx, tool: &str, input: &Value, started: std::time::Instant) -> Option<String> {
+    let files = edited_files(tool, input)?;
+    let run = run_dir(&ctx.cwd);
+    let root = super::repo_root_or_cwd(&ctx.cwd.to_string_lossy());
+    let edited: Vec<super::follow_through::Edited> = files
+        .iter()
+        .filter_map(|f| super::follow_through::relative(&root, &ctx.cwd, f))
+        .map(|rel| super::follow_through::Edited { before: super::follow_through::before(run.as_deref(), &ctx.session, &root, &rel), rel })
+        .collect();
+    if edited.is_empty() {
+        return None;
+    }
+    let (text, note) = super::follow_through::follow_through(&root, &ctx.session, run.as_deref(), &edited, started);
+    ctx.log("follow", text.is_some(), &format!("{tool} {}: {note}", edited.iter().map(|e| e.rel.as_str()).collect::<Vec<_>>().join(" ")));
+    text
+}
+
 /// `<git common dir>/sem-run`.
 fn run_dir(cwd: &Path) -> Option<PathBuf> {
     let o = std::process::Command::new("git").args(["rev-parse", "--path-format=absolute", "--git-common-dir"]).current_dir(cwd).output().ok()?;
@@ -670,6 +728,12 @@ fn run_dir(cwd: &Path) -> Option<PathBuf> {
 /// background (compile everything, compile the tests without running them),
 /// so the cold build overlaps the agent's reading instead of its first test
 /// run. Once per session, and only with `SEM_PREWARM=1`.
+/// `VAR=0 ` for each per-command default the agent's shell has set: a rewritten
+/// read or grep must print what the agent's own command would have printed.
+fn neutral_defaults(vars: &[&str]) -> String {
+    vars.iter().filter(|v| std::env::var_os(v).is_some()).map(|v| format!("{v}=0 ")).collect()
+}
+
 fn prewarm_once(ctx: &Ctx) {
     // opt-in: a background build sharing a constrained machine (or a
     // container) with the agent can hold build locks and slow its own runs
@@ -723,103 +787,7 @@ fn words(s: &str) -> Option<Vec<String>> {
                 '\\' => {
                     cur.push(it.next()?);
                     any = true
-                }
-                c if c.is_whitespace() => {
-                    if any || !cur.is_empty() {
-                        out.push(std::mem::take(&mut cur));
-                        any = false;
-                    }
-                }
-                _ => cur.push(c),
-            },
-        }
-    }
-    if quote.is_some() {
-        return None;
-    }
-    if any || !cur.is_empty() {
-        out.push(cur);
-    }
-    Some(out)
-}
-
-/// Split on top-level separators outside quotes: (segment, separator).
-fn split_top(cmd: &str) -> Vec<(String, String)> {
-    let b: Vec<char> = cmd.chars().collect();
-    let (mut out, mut cur, mut quote, mut i) = (Vec::new(), String::new(), None::<char>, 0);
-    while i < b.len() {
-        let c = b[i];
-        if let Some(q) = quote {
-            cur.push(c);
-            if c == '\\' && q == '"' && i + 1 < b.len() {
-                cur.push(b[i + 1]);
-                i += 1;
-            } else if c == q {
-                quote = None;
-            }
-        } else if c == '\'' || c == '"' {
-            quote = Some(c);
-            cur.push(c);
-        } else if (c == '&' || c == '|') && b.get(i + 1) == Some(&c) {
-            out.push((std::mem::take(&mut cur), format!("{c}{c}")));
-            i += 1;
-        } else if c == ';' || c == '\n' {
-            out.push((std::mem::take(&mut cur), c.to_string()));
-        } else {
-            cur.push(c);
-        }
-        i += 1;
-    }
-    out.push((cur, String::new()));
-    out
-}
-
-/// Pipeline stages, splitting only on a single `|` outside quotes.
-fn pipes(seg: &str) -> Vec<String> {
-    let b: Vec<char> = seg.chars().collect();
-    let (mut out, mut cur, mut quote, mut i) = (Vec::new(), String::new(), None::<char>, 0);
-    while i < b.len() {
-        let c = b[i];
-        if let Some(q) = quote {
-            cur.push(c);
-            if c == '\\' && i + 1 < b.len() {
-                cur.push(b[i + 1]);
-                i += 1;
-            } else if c == q {
-                quote = None;
-            }
-        } else if c == '\'' || c == '"' {
-            quote = Some(c);
-            cur.push(c);
-        } else if c == '\\' && i + 1 < b.len() {
-            cur.push(c);
-            cur.push(b[i + 1]);
-            i += 1;
-        } else if c == '|' {
-            out.push(std::mem::take(&mut cur).trim().to_string());
-        } else {
-            cur.push(c);
-        }
-        i += 1;
-    }
-    out.push(cur.trim().to_string());
-    out
-}
-
-fn first_word(stage: &str) -> String {
-    words(stage).and_then(|w| w.into_iter().next()).unwrap_or_default()
-}
-
-fn quiet(seg: &str) -> String {
-    static RE: std::sync::LazyLock<Regex> = std::sync::LazyLock::new(|| Regex::new(r"\s+2>\s*/dev/null|\s+2>&1").unwrap());
-    RE.replace_all(seg, "").into_owned()
-}
-
-/// `cat|head|sed -n|nl FILE...` (possibly piped into filters) as a sem read.
-fn read_segment(ctx: &Ctx, seg: &str) -> Option<String> {
-    let seg = quiet(seg);
-    let mut stages = pipes(&seg);
-    if stages[0].contai
+ 
 ```
 
 ### Core Architecture Module: `crates/sem-core/benches/common/mod.rs`
@@ -1852,11 +1820,13 @@ fn main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #522** (2026-10-19): **fix: build git2 without network transports so macOS needs no OpenSSL**
-  *Symptoms*: The macOS release links Homebrew's OpenSSL, so `sem` aborts at launch on Macs without `openssl@3` installed (#520).  ## Cause `git2`'s default `https` and `ssh` features build libgit2 with its network transports, which pull in `openssl-sys` through `libssh2-sys`. On the build machine that resolved to `/opt/homebrew/opt/openssl@3`.  ## Fix sem only reads local repositories. The one remote-related call reads the `origin` URL from config and never fetches, so `git2` is now built with `default-features = false` in sem-core, sem-cli and sem-mcp. `openssl-sys` no longer appears anywhere in the dependency tree.  `otool -L` on the release binary, before and after:  ``` before: /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib         /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib after:  only /System/Library and /usr/lib (CoreFoundation, CoreServices, Security, libiconv, libz, libSystem) ```  The full workspace test suite passes (1,455 tests).  weave's binaries link OpenSSL the same way through sem-core's `git` feature, so they are fixed once weave picks up a sem-core release with this change.  Fixes #520
+- **Issue #530** (2026-10-24): **docs: record MCP query contract fixes**
+  *Symptoms*: Add the missing Unreleased entry for #529. Documentation only.
+  **Post-Mortem & Fix Analysis**:
+  > [vc]: #hLtm8gfokaGm2XmuSg6PfFAOtJ/gZtYN3gwXO5g41cw=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy9BZlVGOGpURmpndG9rZVREa3V5b2FZNnVRZVNZIiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1kb2NzLXF1ZXJ5LWNvbnRyYWN0LWNoYW5nZWxvZy1yczU0NTgzN3MtcHJvamVjdHMudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJQRU5ESU5HIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6IiJ9fV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPUF0YXJheHktTGFicyZyZXBvPXNlbSZwcj01MzAifQ== The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/rs545837s-projects/sem-docs"><sup><img src="https://vercel.
 
-- **Issue #521** (2026-10-19): **feat: parse Bazel and Buck2 build files as Starlark**
-  *Symptoms*: Bazel and Buck2 build files now parse as Starlark, using the Python grammar as suggested in #519.  - `BUILD`, `BUCK`, `WORKSPACE` and `PACKAGE` are recognised by name, and `.bzl`, `.bazel` (including `BUILD.bazel` and `MODULE.bazel`), `.bxl` and `.star` by extension. - Each top-level `rule(name = "...")` call is a `target` entity named after its target, whatever the rule or macro is called, so `sem diff` on a BUILD file reports which targets changed and `sem find hello` jumps to `//pkg:hello`. - Functions in `.bzl` files are entities as in Python. Calls inside them are not treated as targets. - Starlark has its own config, so `.py` files are unchanged.  Example on a small repo, after adding a source to one target:  ``` ┌─ app/BUILD │  ∆ target     hello                     [modified] ```  Tests: new `sem-core/tests/starlark.rs` covers BUILD, BUCK, BUILD.bazel, PACKAGE and WORKSPACE targets, .bzl functions, and unchanged Python. The workspace suite passes; the `diff_patch` tests need `GIT_CONFIG_GLOBAL=/dev/null` locally because my global git config sets `diff.external`.  Not included: weave's `setup` attribute list is built from registered extensions, so it picks up `.bzl`/`.bazel` but not the extensionless names; that can follow if wanted.  Closes #519
+- **Issue #529** (2026-10-24): **fix(mcp): support scoped context and structured caller batches**
+  *Symptoms*: ## Summary - Resolve context queries within the requested directory without leaking sibling scope. - Accept batched caller queries, preserving ambiguity handling. - Return a valid JSON array with per-query errors for JSON batches. - Include the simple capability-aware policy used in the recent benchmark campaign.  ## Validation All 110 sem-mcp library tests passed in Modal. Earlier scoped-context and batching implementation plus the policy passed seven official benchmark runs (two each ADK/DSPy/Restic and one Ant Design). The JSON envelope fix has unit coverage but has not had a new session-speed benchmark. No universal speedup claimed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1873,470 +1843,669 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `66ae317b` (2026-10-19)
-**Commit Message**: fix: build git2 without network transports so macOS needs no OpenSSL (#522)
+### Incident Patch 1: `6caf881d` (2026-10-22)
+**Commit Message**: perf: parallelize the rest of the cold index build's serial stretches (#528)
 
-The macOS release links Homebrew's OpenSSL, so `sem` aborts at launch on
-Macs without `openssl@3` installed (#520).
+Follow-up to #524, which merged with the first commit of this work. This
+draft holds the remaining fixes for the serial stretches of a cold index
+build. The final before and after table against main is being
+re-measured and will replace the numbers below.
 
-## Cause
-`git2`'s default `https` and `ssh` features build libgit2 with its
-network transports, which pull in `openssl-sys` through `libssh2-sys`.
-On the build machine that resolved to `/opt/homebrew/opt/openssl@3`.
+## What was slow
 
-## Fix
-sem only reads local repositories. The one remote-related call reads the
-`origin` URL from config and never fetches, so `git2` is now built with
-`default-features = false` in sem-core, sem-cli and sem-mcp.
-`openssl-sys` no longer appears anywhere in the dependency tree.
+Profiling cold `sem graph` builds on Modal (8 vCPU) showed that the
+build scales about linearly now, but long single-threaded stretches
+dominate its wall time on big repos. These were the serial pieces left
+after #524 on the Linux kernel (2.35M entities):
 
-`otool -L` on the release binary, before and after:
+| phase | ms |
+|---|---|
+| index image build (`build_image`) | 6,400 |
+| first-pass lookup tables (`owned`) | 4,700 |
+| corpus table fingerprints | 2,000 |
+| facts store save plus corpus populate | 2,600 |
+| freeing the entity list after the build | about 1,400 |
 
-```
-before: /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib
-        /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib
-after:  only /System/Library and /usr/lib (CoreFoundation, CoreServices, Security, libiconv, libz, libSystem)
-```
+## Changes
 
-The full workspace test suite passes (1,455 tests).
+1. **Fingerprints hashed in parallel.** `fingerprint_corpus_tables`
+computes the value hashes in parallel and writes them in the tables' own
+iteration order. The map and the XOR guard come out the same as before.
+The table is sized up front.
+2. **Index sections side by side.** The refs and trigram sections run
+b
 
-weave's binaries link OpenSSL the same way through sem-core's `git`
-feature, so they are fixed once weave picks up a sem-core release with
-this change.
-
-Fixes #520
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -8,6 +8,10 @@ All notable changes to sem are documented in this file.
+@@ -15,7 +15,7 @@ All notable changes to sem are documented in this file.
+ ### Changed
  
- - **Bazel and Buck2 build files.** `BUILD`, `BUCK`, `WORKSPACE`, `PACKAGE` and files ending in `.bzl`, `.bazel`, `.bxl` or `.star` now parse as Starlark with the Python grammar. Each `rule(name = "...")` call in a build file is a `target` entity named after its target, so `sem diff` reports which targets changed, and functions in `.bzl` files are entities as in Python (#519).
- 
-+### Fixed
-+
-+- **The macOS binary no longer needs Homebrew's OpenSSL.** libgit2 was built with its HTTPS and SSH transports, which linked `/opt/homebrew/opt/openssl@3`, so `sem` aborted at launch on Macs without it. sem only reads local repositories, so `git2` now builds without those transports and the binary links only system libraries (#520).
-+
- ## [0.28.0] - 2026-10-19
- 
- ### Added
-```
-
-**File**: `crates/Cargo.lock` (modified, +0/-24)
-```diff
-@@ -820,8 +820,6 @@ dependencies = [
-  "libc",
-  "libgit2-sys",
-  "log",
-- "openssl-probe",
-- "openssl-sys",
-  "url",
- ]
- 
-@@ -1288,9 +1286,7 @@ checksum = "9b26f66f35e1871b22efcf7191564123d2a446ca0538cde63c23adfefa9b15b7"
- dependencies = [
-  "cc",
-  "libc",
-- "libssh2-sys",
-  "libz-sys",
-- "openssl-sys",
-  "pkg-config",
- ]
- 
-@@ -1314,20 +1310,6 @@ dependencies = [
-  "vcpkg",
- ]
- 
--[[package]]
--name = "libssh2-sys"
--version = "0.3.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "220e4f05ad4a218192533b300327f5150e809b54c4ec83b5a1d91833601811b9"
--dependencies = [
-- "cc",
-- "libc",
-- "libz-sys",
-- "openssl-sys",
-- "pkg-config",
-- "vcpkg",
--]
+ - Cold graph builds move reusable lookup tables instead of cloning them and sort independent lookup buckets in parallel. Sequential builds retain the same behavior without requiring Rayon.
 -
- [[package]]
- name = "libz-sys"
- version = "1.1.28"
-@@ -1562,12 +1544,6 @@ dependencies = [
-  "syn 2.0.117",
- ]
++- **Cold index builds on large repos are about a fifth faster.** A first `sem graph` on the Linux kernel (2.35M entities) went from 49.5 s to 38.6 s, and on kubernetes (545k entities) from 12.5 s to 10.0 s, on an 8 vCPU machine, with peak memory within 2%. The build had long single-threaded stretches. Along with the lookup-table change above, corpus fingerprints are hashed in parallel, independent index sections and lookup tables are built side by side, and large frees and the two facts saves no longer hold up the command. The graph and the index file are byte-identical to before.
+ - **`sem_find` with mode `callers` gives the CLI's answer.** It says when the static graph cannot prove the caller set is complete, lists possible callers, and merges dispatch groups, where it used to print `callers: none` either way. Its JSON is now the shape `sem callers --json` prints (`entity`, `related`, `complete`, `incomplete_because`).
  
--[[package]]
--name = "openssl-probe"
--version = "0.1.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d05e27ee213611ffe7d6348b942e8f942b37114c00cc03cec254295a4a17852e"
+ ### Fixed
+```
+
+**File**: `crates/sem-cli/src/commands/graph.rs` (modified, +34/-9)
+```diff
+@@ -90,6 +90,7 @@ pub fn graph_command(opts: GraphOptions) {
+         );
+     }
+     timings.finish();
++    drop_in_background(graph);
+ }
+ 
+ /// Format a count with thousands separators (1234 -> "1,234"), uv-style.
+@@ -419,14 +420,25 @@ fn build_graph_with_facts_store(
+     // Best-effort: a save failure (permissions, disk full, read-only cache
+     // dir) must never fail the build this function exists to produce. The
+     // store is a pure speed optimization — the next process just stays cold.
+-    let __facts_save_t0 = std::time::Instant::now();
+-    let _ = store.save(root, &exported);
+-    crate::build_cache::cache_profile_mark("facts_store_save", __facts_save_t0);
+-    let __facts_corpus_t0 = std::time::Instant::now();
+-    if let Some(corpus) = &corpus {
+-        let _ = corpus.populate_delta(local_hashes.as_ref(), &exported, registry);
+-    }
+-    crate::build_cache::cache_profile_mark("facts_corpus_populate_delta", __facts_corpus_t0);
++    //
++    // The per-repo store and the machine-global corpus are separate
++    // directories written from the same read-only snapshot, so the two saves
++    // run side by side rather than one after the other.
++    std::thread::scope(|scope| {
++        scope.spawn(|| {
++            let __facts_corpus_t0 = std::time::Instant::now();
++            if let Some(corpus) = &corpus {
++                let _ = corpus.populate_delta(local_hashes.as_ref(), &exported, registry);
++            }
++            crate::build_cache::cache_profile_mark(
++                "facts_corpus_populate_delta",
++                __facts_corpus_t0,
++            );
++        });
++        let __facts_save_t0 = std::time::Instant::now();
++        let _ = store.save(root, &exported);
++        crate::build_cache::cache_profile_mark("facts_store_save", __facts_save_t0);
++    });
+     facts_rss_mark("after_populate_delta");
+     session.into_parts()
+ }
+@@ -876,7 +888,7 @@ pub fn get_or_build_graph_topology_with_timings(
+     } else {
+         CacheMissSavePolicy::IndexOnly
+     };
+-    let (graph, _entities) = get_or_build_graph_with_cache_policy(
++    let (graph, entities) = get_or_build_graph_with_cache_policy(
+         root,
+         file_paths,
+         registry,
+@@ -885,9 +897,22 @@ pub fn get_or_build_graph_topology_with_timings(
+         source_scope,
+         timings,
+     );
++    drop_in_background(entities);
+     graph
+ }
+ 
++/// Free a large build product on a detached thread. Dropping millions of
++/// entities (every one owning several strings) takes seconds on a giant repo,
++/// and nothing waits on the memory coming back; a short-lived CLI process
++/// simply exits around the thread.
++fn drop_in_background<T: Send + 'static>(value: T) {
++    // If the thread cannot be spawned the closure, and the value with it, is
++    // dropped right here, exactly as before.
++    let _ = std::thread::Builder::new()
++        .name("sem-drop".into())
++        .spawn(move || drop(value));
++}
++
+ pub fn get_or_build_graph_topology_with_topology_save_on_miss_with_timings(
+     root: &Path,
+     file_paths: &[String],
+```
+
+**File**: `crates/sem-core/src/index/writer.rs` (modified, +149/-111)
+```diff
+@@ -325,120 +325,158 @@ pub(crate) fn build_image(
+         .collect();
+     image_mark("file_and_entity_index", __fileidx_t0);
+ 
+-    let __entbytes_t0 = std::time::Instant::now();
+-    let mut entity_bytes = Vec::with_capacity(entities.len() * ENTITY_REC_LEN);
+-    for entity in &entities {
+-        let id_text = if ids_elided {
+-            id_tail_of(&entity.id, &entity.file_path).unwrap_or(&entity.id)
+-        } else {
+-            entity.id.as_str()
+-        };
+-        let kind = kinds.intern(&entity.entity_type, &mut arena);
+-        let parent = entity
+-            .parent_id
+-            .as_deref()
+-            .and_then(|id| entity_index.get(id).copied())
+-            .unwrap_or(NONE_U32);
+-        let flags = match test_entity_ids {
+-            Some(ids) if ids.contains(entity.id.as_str()) => format::entity::FLAG_IS_TEST,
+-            _ => 0,
+-        };
+-        let (start_byte, end_byte) = entity_byte_spans
+-            .and_then(|spans| spans.get(entity.id.as_str()))
+-            .copied()
+-            .unwrap_or((NONE_U32, NONE_U32));
+-        format::entity::write(
+-            &mut entity_bytes,
+-            arena.push_short(id_text),
+-            arena.push_interned(&entity.name),
+-            kind,
+-            flags,
+-            file_index[entity.file_path.as_str()],
+-            entity.start_line as u32,
+-            entity.end_line as u32,
+-            parent,
+-            start_byte,
+-            end_byte,
+-        );
+-    }
 -
- [[package]]
- name = "openssl-src"
- version = "300.6.0+3.6.2"
+-    // NAMES: entity indices sorted by name bytes, so a name query is an
+-    // equal_range rather than a scan. The tie-break on
+-    // index keeps the table a deterministic function of the graph, which is
+-    // what the consistency oracle's byte-equality property needs.
+-    image_mark("entities_section", __entbytes_t0);
+-    let __names_t0 = std::time::Instant::now();
+-    let mut name_order: Vec<u32> = (0..entities.len() as u32).collect();
+-    maybe_par_sort_unstable_by!(name_order, |a: &u32, b: &u32| {
+-        entities[*a as usize]
+-            .name
+-            .cmp(&entities[*b as usize].name)
+-            .then(a.cmp(b))
+-    });
+-    let mut name_bytes = Vec::with_capacity(name_order.len() * NAME_REC_LEN);
+-    for index in &name_order {
+-        name_bytes.extend_from_slice(&index.to_le_bytes());
+-    }
++    // ENTITIES/NAMES/FILES/KINDS share the string arena, so they are built in
++    // order on one task; REFS and TRIGRAM read only the sorted entities and
++    // the file list, so they run beside that chain instead of after it. Each
++    // section is a pure function of its inputs, so the image is byte-identical
++    // to the serial build (the image sha256 gate witnesses this).
++    let refs_typed = entities.len() <= format::refs::MAX_ENTITIES;
++    let sections = || {
++        let __entbytes_t0 = std::time::Instant::now();
++        // The per-entity hash lookups (parent index, test flag, byte span,
++        // file index) touch no shared state, so they are resolved in parallel
++        // first; only the arena pushes, which assign string offsets in entity
++        // order, stay serial.
++        let resolved: Vec<(u32, u16, (u32, u32), u32)> = maybe_par_iter!(entities)
++            .map(|entity| {
++                let parent = entity
++                    .parent_id
++                    .as_deref()
++                    .and_then(|id| entity_index.get(id).copied())
++                    .unwrap_or(NONE_U32);
++                let flags = match test_entity_ids {
++                    Some(ids) if ids.contains(entity.id.as_str()) => format::entity::FLAG_IS_TEST,
++                    _ => 0,
++                };
++                let span = entity_byte_spans
++                    .and_then(|spans| spans.get(entity.id.as_str()))
++                    .copied()
++                    .unwrap_or((NONE_U32, NONE_U32));
++                (parent, flags, span, file_index[entity.file_path.as_str()])
++            })
++            .collect();
++        let mut entity_bytes = Vec::with_capacity(entities.len() * ENTITY_REC_LEN);
++        for (entity, &(parent, flags, (start_byte, end_byte), file)) in
++            entities.iter().zip(&resolved)
++        {
++            let id_text = if ids_elided {
++                id_tail_of(&entity.id, &entity.file_path).unwrap_or(&entity.id)
++            } else {
++                entity.id.as_str()
++            };
++            let kind = kinds.intern(&entity.entity_type, &mut arena);
++            format::entity::write(
++                &mut entity_bytes,
++                arena.push_short(id_text),
++                arena.push_interned(&entity.name),
++                kind,
++                flags,
++                file,
++                entity.start_line as u32,
++                entity.end_line as u32,
++                parent,
++                start_byte,
++                end_byte,
++            );
++        }
++        drop(resolved);
++
++        // NAMES: entity indices sorted by name bytes, so a name query is an
++        // equal_ran
 ```
 
-**File**: `crates/sem-cli/Cargo.toml` (modified, +1/-1)
+**File**: `crates/sem-core/src/parser/graph.rs` (modified, +78/-41)
 ```diff
-@@ -22,7 +22,7 @@ serde = { version = "1", features = ["derive"] }
- clap = { version = "4", features = ["derive"] }
- colored = "2"
- similar = "2"
--git2 = "0.20"
-+git2 = { version = "0.20", default-features = false }
- ignore = "0.4"
- openssl-sys = { version = "0.9", optional = true }
- serde_json = "1"
-```
-
-**File**: `crates/sem-core/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ lang-fish = ["dep:tree-sitter-fish"]
- lang-bsl = ["dep:tree-sitter-bsl"]
+@@ -2365,7 +2365,16 @@ impl EntityGraph {
+         resolve_profile::add_pass1_wall_ns(__pass1_wall_t0.elapsed());
  
- [dependencies]
--git2 = { version = "0.20", optional = true }
-+git2 = { version = "0.20", optional = true, default-features = false }
- tree-sitter = "0.26"
- tree-sitter-typescript = { version = "0.23", optional = true }
- tree-sitter-javascript = { version = "0.23", optional = true }
+         let __assemble_t0 = std::time::Instant::now();
+-        let mut all_entities: Vec<SemanticEntity> = Vec::new();
++        // Sized up front: growing by doubling re-copied every entity already
++        // gathered, which on a 2M-entity corpus is a lot of memmove on
++        // the serial spine. Reused entities (warm builds) are not counted, so
++        // this is a lower bound and the vector still grows when it must.
++        let mut all_entities: Vec<SemanticEntity> = Vec::with_capacity(
++            per_file
++                .iter()
++                .map(|product| product.entities.as_ref().map_or(0, Vec::len))
++                .sum(),
++        );
+         let mut parsed_files: Vec<(String, String, tree_sitter::Tree)> = Vec::new();
+         let mut fresh_precomputed: HashMap<String, scope_resolve::PrecomputedFileFacts> =
+             HashMap::default();
+@@ -2771,50 +2780,78 @@ impl EntityGraph {
+             ));
+             symbol_table_plain = symbol_table_owned;
+         } else {
+-            // Unchanged from before: whole rebuild, single pass over
+-            // all_entities for symbol_table/entity_map/entity_ranges, a
+-            // second pass (needs entity_map complete) for class/owner
+-            // members.
+-            let mut symbol_table_owned: SymbolTable =
+-                HashMap::with_capacity_and_hasher(all_entities.len(), Default::default());
+-            let mut owned_entity_map: EntityInfoMap =
+-                HashMap::with_capacity_and_hasher(all_entities.len(), Default::default());
+-            let mut owned_entity_ranges: EntityRanges = HashMap::default();
+-            for entity in &all_entities {
+-                // No eager `entry(key.clone)`: `entry`
+-                // demands an owned key up front, so the old spelling allocated
+-                // `name`/`file_path` Strings that were immediately dropped on
+-                // every hit — `file_path` once per entity in the file. Same
+-                // get_mut/insert idiom `child_line_ranges` above already uses.
+-                let interned_id = EntityId::from(entity.id.as_str());
+-                match symbol_table_owned.get_mut(entity.name.as_str()) {
+-                    Some(bucket) => bucket.push(interned_id.clone()),
+-                    None => {
+-                        symbol_table_owned.insert(entity.name.clone(), vec![interned_id.clone()]);
++            // Whole rebuild: one pass each over all_entities for
++            // symbol_table/entity_map/entity_ranges, then a second pass
++            // (needs entity_map complete) for class/owner members. The three
++            // first-pass tables are independent, so they are built on three
++            // tasks from ids interned once up front. Each table still sees
++            // entities in `all_entities` order, so bucket order and
++            // last-insert-wins on a colliding id are exactly what one serial
++            // pass produced.
++            let interned_ids: Vec<EntityId> = maybe_par_iter!(all_entities)
++                .map(|entity| EntityId::from(entity.id.as_str()))
++                .collect();
++            let build_symbol_table = || {
++                let mut table: SymbolTable =
++                    HashMap::with_capacity_and_hasher(all_entities.len(), Default::default());
++                for (entity, interned_id) in all_entities.iter().zip(&interned_ids) {
++                    // No eager `entry(key.clone)`: `entry`
++                    // demands an owned key up front, so the old spelling allocated
++                    // `name`/`file_path` Strings that were immediately dropped on
++                    // every hit — `file_path` once per entity in the file. Same
++                    // get_mut/insert idiom `child_line_ranges` above already uses.
++                    match table.get_mut(entity.name.as_str()) {
++                        Some(bucket) => bucket.push(interned_id.clone()),
++                        None => {
++                            table.insert(entity.name.clone(), vec![interned_id.clone()]);
++                        }
+                     }
+                 }
+-                owned_entity_map.insert(
+-                    interned_id.clone(),
+-                    EntityInfo {
+-                        id: interned_id.clone(),
+-                        name: entity.name.clone(),
+-                        entity_type: entity.entity_type.clone(),
+-                        file_path: entity.file_path.clone(),
+-                        parent_id: entity.parent_id.as_ref().map(Into::into),
+-                        start_line: entity.start_line,
+-                        end_line: entity.end_line,
+-                    },
+-                );
+-                match owned_entity_ranges.get_mut(entity.file_path.as_str()) {
+-                    Some(bucket) => bucket.push((entity.start_line, entity.end_line, interned_id)),
+-     
 ```
 
-**File**: `crates/sem-mcp/Cargo.toml` (modified, +1/-1)
+**File**: `crates/sem-core/src/parser/incremental.rs` (modified, +6/-0)
 ```diff
-@@ -16,7 +16,7 @@ path = "src/main.rs"
- [dependencies]
- sem-core = { path = "../sem-core", version = "0.28.0", features = ["disk-cache"] }
- sem-cloud-client = { path = "../sem-cloud-client", version = "0.28.0" }
--git2 = "0.20"
-+git2 = { version = "0.20", default-features = false }
- lru = "0.16"
- rmcp = { version = "1", features = ["server", "transport-io", "transport-streamable-http-server"] }
- axum = "0.8"
+@@ -352,6 +352,12 @@ impl Serialize for TableFingerprints {
+ }
+ 
+ impl TableFingerprints {
++    /// Make room for `additional` more keys, so a whole-corpus pass does not
++    /// rehash the table over and over as it grows.
++    pub(crate) fn reserve(&mut self, additional: usize) {
++        self.entries.reserve(additional);
++    }
++
+     #[inline]
+     pub(crate) fn put(&mut self, key: u64, value: u64) {
+         self.entries.insert(key, value);
+```
+
+**File**: `crates/sem-core/src/parser/scope_resolve.rs` (modified, +45/-21)
+```diff
+@@ -3452,6 +3452,13 @@ pub(crate) fn fingerprint_corpus_tables(
+     entity_map: &EntityInfoMap,
+     fp: &mut TableFingerprints,
+ ) -> u64 {
++    fp.reserve(
++        lookups.symbol_table.len()
++            + lookups.class_members.len()
++            + lookups.owner_members.len()
++            + entity_map.len()
++            + 1,
++    );
+     let mut sink = FingerprintSink::new(fp, 0);
+     // `register_rust_module_import` (the module-alias `use` form) scans
+     // every `(name, target file)` pair below looking for ones whose file
+@@ -3461,36 +3468,53 @@ pub(crate) fn fingerprint_corpus_tables(
+     // already visits them for the per-key `SymbolTable`/`EntityMap`
+     // fingerprints, so the guard costs one extra `u64` XOR per pair, not a
+     // second corpus scan.
++    //
++    // The value hashes are computed in parallel and then written in the
++    // tables' own iteration order, so the map (and the guard, an XOR fold)
++    // comes out exactly as a serial pass would leave it. On a 2.3M-entity
++    // corpus this pass was several seconds on the build's serial spine.
+     let mut wildcard_import_guard: u64 = 0;
+-    for (name, ids) in lookups.symbol_table.iter() {
+-        let mut h = ValueHasher::new();
+-        for id in ids {
+-            h.s(id);
+-            if let Some(info) = entity_map.get(id) {
+-                wildcard_import_guard ^= {
+-                    let mut wh = ValueHasher::new();
+-                    wh.s(name).s(&info.file_path);
+-                    wh.finish()
+-                };
++    let symbol_rows: Vec<(&String, u64, u64)> = maybe_par_iter!(lookups.symbol_table)
++        .map(|(name, ids)| {
++            let mut h = ValueHasher::new();
++            let mut guard: u64 = 0;
++            for id in ids {
++                h.s(id);
++                if let Some(info) = entity_map.get(id) {
++                    guard ^= {
++                        let mut wh = ValueHasher::new();
++                        wh.s(name).s(&info.file_path);
++                        wh.finish()
++                    };
++                }
+             }
+-        }
+-        sink.one(Table::SymbolTable, name, h.finish());
++            (name, h.finish(), guard)
++        })
++        .collect();
++    for (name, value, guard) in symbol_rows {
++        wildcard_import_guard ^= guard;
++        sink.one(Table::SymbolTable, name, value);
+     }
+     for (owner, members) in &lookups.class_members {
+         sink.one(Table::ClassMembers, owner, hash_member_list(members));
+     }
+     for (owner, members) in &lookups.owner_members {
+         sink.one(Table::OwnerMembers, owner, hash_member_list(members));
+     }
+-    for (id, info) in entity_map {
+-        let mut h = ValueHasher::new();
+-        h.s(&info.name)
+-            .s(&info.entity_type)
+-            .s(&info.file_path)
+-            .s(info.parent_id.as_deref().unwrap_or("\u{0}"))
+-            .u(info.start_line)
+-            .u(info.end_line);
+-        sink.one(Table::EntityMap, id, h.finish());
++    let entity_rows: Vec<(&EntityId, u64)> = maybe_par_iter!(entity_map)
++        .map(|(id, info)| {
++            let mut h = ValueHasher::new();
++            h.s(&info.name)
++                .s(&info.entity_type)
++                .s(&info.file_path)
++                .s(info.parent_id.as_deref().unwrap_or("\u{0}"))
++                .u(info.start_line)
++                .u(info.end_line);
++            (id, h.finish())
++        })
++        .collect();
++    for (id, value) in entity_rows {
++        sink.one(Table::EntityMap, id, value);
+     }
+     sink.whole(Table::GuardRustModuleAlias, wildcard_import_guard);
+     wildcard_import_guard
 ```
 
 ---
 
-### Incident Patch 2: `47b7a172` (2026-10-19)
-**Commit Message**: feat: parse Bazel and Buck2 build files as Starlark (#521)
+### Incident Patch 2: `1ab4f898` (2026-10-22)
+**Commit Message**: perf: shorten the serial spine of cold index builds (#524)
 
-Bazel and Buck2 build files now parse as Starlark, using the Python
-grammar as suggested in #519.
+Draft: numbers and the equivalence check are still being collected and
+will be added here.
 
-- `BUILD`, `BUCK`, `WORKSPACE` and `PACKAGE` are recognised by name, and
-`.bzl`, `.bazel` (including `BUILD.bazel` and `MODULE.bazel`), `.bxl`
-and `.star` by extension.
-- Each top-level `rule(name = "...")` call is a `target` entity named
-after its target, whatever the rule or macro is called, so `sem diff` on
-a BUILD file reports which targets changed and `sem find hello` jumps to
-`//pkg:hello`.
-- Functions in `.bzl` files are entities as in Python. Calls inside them
-are not treated as targets.
-- Starlark has its own config, so `.py` files are unchanged.
+## What is slow
 
-Example on a small repo, after adding a source to one target:
+I profiled cold `sem graph` builds on Modal (8 vCPU) with phase timers
+and stack sampling. Today's baseline is about 63 s for the Linux kernel
+(2.35M entities) and 13 s for kubernetes (545k). The old 589 s figure is
+stale. Per-entity cost now grows roughly linearly, so the problem is no
+longer a quadratic. Most of the remaining wall time on large repos is
+spent in single-threaded stretches of the build. On kubernetes, about
+three quarters of the stack samples had only one busy thread.
 
-```
-┌─ app/BUILD
-│  ∆ target     hello                     [modified]
-```
+The largest serial pieces on Linux:
 
-Tests: new `sem-core/tests/starlark.rs` covers BUILD, BUCK, BUILD.bazel,
-PACKAGE and WORKSPACE targets, .bzl functions, and unchanged Python. The
-workspace suite passes; the `diff_patch` tests need
-`GIT_CONFIG_GLOBAL=/dev/null` locally because my global git config sets
-`diff.external`.
+| phase | ms |
+|---|---|
+| entity lookup tables (`owned`), including six whole-corpus clones |
+7,650 |
+| index image build (`build_image`) | 11,180 |
+| corpus table fingerprints | 3,400 |
 
-Not included: weave's `setup` attribute list is buil
+## Changes
 
-**File**: `CHANGELOG.md` (modified, +4/-0)
+1. **Drop the whole-corpus lookup clones.** A non-retain session build
+(any repo over 20k files) cloned the symbol table, entity map, class and
+owner members, entity ranges and child ranges into its carry. Nothing
+mutates them after that point, so they are now moved into the carry once
+resolution is d
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -4,6 +4,10 @@ All notable changes to sem are documented in this file.
+@@ -14,6 +14,8 @@ All notable changes to sem are documented in this file.
  
- ## [Unreleased]
+ ### Changed
  
-+### Added
++- Cold graph builds move reusable lookup tables instead of cloning them and sort independent lookup buckets in parallel. Sequential builds retain the same behavior without requiring Rayon.
 +
-+- **Bazel and Buck2 build files.** `BUILD`, `BUCK`, `WORKSPACE`, `PACKAGE` and files ending in `.bzl`, `.bazel`, `.bxl` or `.star` now parse as Starlark with the Python grammar. Each `rule(name = "...")` call in a build file is a `target` entity named after its target, so `sem diff` reports which targets changed, and functions in `.bzl` files are entities as in Python (#519).
-+
- ## [0.28.0] - 2026-10-19
+ - **`sem_find` with mode `callers` gives the CLI's answer.** It says when the static graph cannot prove the caller set is complete, lists possible callers, and merges dispatch groups, where it used to print `callers: none` either way. Its JSON is now the shape `sem callers --json` prints (`entity`, `related`, `complete`, `incomplete_because`).
  
- ### Added
+ ### Fixed
 ```
 
-**File**: `README.md` (modified, +1/-0)
+**File**: `crates/sem-core/src/index/grep.rs` (modified, +6/-0)
 ```diff
-@@ -530,6 +530,7 @@ If your team runs code review through sem cloud, `sem cloud review listen <diff-
- | TypeScript | `.ts` `.tsx` `.mts` `.cts`  | functions, classes, interfaces, types, enums, exports |
- | JavaScript | `.js` `.jsx` `.mjs` `.cjs` `.es6` | functions, classes, variables, exports |
- | Python | `.py` `.pyi` | functions, classes, decorated definitions |
-+| Starlark (Bazel, Buck2) | `BUILD` `BUCK` `WORKSPACE` `PACKAGE` `.bzl` `.bazel` `.bxl` `.star` | build targets, functions |
- | Go | `.go` | functions, methods, types, vars, consts |
- | Rust | `.rs` | functions, structs, enums, impls, traits, mods, consts |
- | Java | `.java` | classes, methods, interfaces, enums, fields, constructors |
+@@ -115,10 +115,16 @@ pub fn search(
+     // Trigram candidate derivation and the membership sweep touch disjoint
+     // sections (NAMES-adjacent TRIGRAM postings vs. FILES/DIRS), so they run
+     // concurrently — same discipline `commands::query::index_answer` uses.
++    #[cfg(feature = "parallel")]
+     let ((candidates, origin), complete) = rayon::join(
+         || candidate_files(idx, pattern, opts.case_insensitive),
+         || complete_check(idx, root, walk_subtree),
+     );
++    #[cfg(not(feature = "parallel"))]
++    let ((candidates, origin), complete) = (
++        candidate_files(idx, pattern, opts.case_insensitive),
++        complete_check(idx, root, walk_subtree),
++    );
+ 
+     // Unlike `commands::query`'s entity verbs, grep has no cheaper
+     // authoritative fallback to bail to on an inconclusive sweep — `verify`
 ```
 
-**File**: `crates/sem-core/src/parser/plugins/code/entity_extractor.rs` (modified, +44/-0)
+**File**: `crates/sem-core/src/parser/graph.rs` (modified, +69/-23)
 ```diff
-@@ -99,6 +99,32 @@ fn visit_node(
-         let suppression_context = sup_owned.as_deref();
-         let node_type = node.kind();
- 
-+        // Starlark build targets: a top-level `rule(name = "x", ...)` call is the
-+        // target `x`, whatever the rule or macro is called.
-+        if config.id == "starlark" && node_type == "call" && parent_id.is_none() {
-+            if let Some(name) = starlark_target_name(node, source) {
-+                let content = node_text(node, source).to_string();
-+                let (struct_hash, kappa_hash) = compute_structural_hash_and_kappa(node, source);
-+                entities.push(SemanticEntity {
-+                    id: build_entity_id(file_path, "target", &name, None),
-+                    file_path: file_path.to_string(),
-+                    entity_type: "target".to_string(),
-+                    name,
-+                    parent_id: None,
-+                    content_hash: content_hash(&content),
-+                    structural_hash: Some(struct_hash),
-+                    kappa: Some(kappa_hash),
-+                    content,
-+                    start_line: node.start_position().row + 1,
-+                    end_line: node.end_position().row + 1,
-+                    start_byte: Some(node.start_byte()),
-+                    end_byte: Some(node.end_byte()),
-+                    metadata: None,
-+                });
-+                continue;
-+            }
-+        }
-+
-         // Handle call-based entities (Elixir: def, defmodule, etc.)
-         if node_type == "call" && !config.call_entity_identifiers.is_empty() {
-             if let Some((name, entity_type)) = extract_call_entity(node, config, source) {
-@@ -2555,6 +2581,24 @@ fn clojure_sym_name<'a>(node: Node<'a>, source: &'a [u8]) -> &'a str {
-     node_text(node, source)
- }
- 
-+/// The target a Starlark rule call declares: its `name = "..."` argument.
-+fn starlark_target_name(node: Node, source: &[u8]) -> Option<String> {
-+    let args = node.child_by_field_name("arguments")?;
-+    let mut cursor = args.walk();
-+    let arg = args.named_children(&mut cursor).find(|arg| {
-+        arg.kind() == "keyword_argument"
-+            && arg
-+                .child_by_field_name("name")
-+                .is_some_and(|key| node_text(key, source) == "name")
-+    })?;
-+    let value = arg.child_by_field_name("value")?;
-+    if value.kind() != "string" {
-+        return None;
-+    }
-+    let name = node_text(value, source).trim_matches(|c| c == '"' || c == '\'');
-+    (!name.is_empty()).then(|| name.to_string())
-+}
-+
- /// Extract entity info from a call node (Elixir macros like def, defmodule, etc.)
- fn extract_call_entity(
-     node: Node,
-```
-
-**File**: `crates/sem-core/src/parser/plugins/code/languages.rs` (modified, +30/-0)
-```diff
-@@ -606,6 +606,34 @@ static PYTHON_CONFIG: LanguageConfig = LanguageConfig {
-     scope_resolve: None,
- };
- 
-+/// Starlark: Bazel and Buck2 build files. Starlark is a Python dialect, so it
-+/// parses with the Python grammar; each `rule(name = "...")` call at the top of
-+/// a build file is also an entity, named by its target (see the extractor).
-+#[cfg(feature = "lang-python")]
-+static STARLARK_CONFIG: LanguageConfig = LanguageConfig {
-+    id: "starlark",
-+    extensions: &[".bzl", ".bazel", ".bxl", ".star"],
-+    entity_node_types: &["function_definition"],
-+    container_node_types: &["block"],
-+    call_entity_identifiers: &[],
-+    suppressed_nested_entities: &[],
-+    scope_boundary_types: &[],
-+    get_language: get_python,
-+    scope_resolve: None,
-+};
-+
-+/// Build files Bazel and Buck2 find by name alone, with no extension. They are
-+/// Starlark, so they map to its `.bzl` extension.
-+pub(crate) fn extensionless_build_file_ext(file_name: &str) -> Option<&'static str> {
-+    if cfg!(feature = "lang-python")
-+        && matches!(file_name, "BUILD" | "BUCK" | "WORKSPACE" | "PACKAGE")
-+    {
-+        Some(".bzl")
-+    } else {
-+        None
-+    }
-+}
-+
- #[cfg(feature = "lang-go")]
- static GO_CONFIG: LanguageConfig = LanguageConfig {
-     id: "go",
-@@ -2289,6 +2317,8 @@ macro_rules! all_configs {
-             &JAVASCRIPT_CONFIG,
-             #[cfg(feature = "lang-python")]
-             &PYTHON_CONFIG,
-+            #[cfg(feature = "lang-python")]
-+            &STARLARK_CONFIG,
-             #[cfg(feature = "lang-go")]
-             &GO_CONFIG,
-             #[cfg(feature = "lang-rust")]
-```
-
-**File**: `crates/sem-core/src/parser/plugins/code/mod.rs` (modified, +25/-5)
-```diff
-@@ -36,10 +36,17 @@ pub fn language_config_for_content(
-     content: &str,
-     file_path: &str,
- ) -> Option<&'static languages::LanguageConfig> {
--    let ext = std::path::Path::new(file_path)
-+    let path = std::path::Path::new(file_path);
-+    let ext = path
-         .extension()
-         .and_then(|e| e.to_str())
-         .map(|e| format!(".{}", e.to_lowercase()))
-+        .or_else(|| {
-+            path.file_name()
-+                .and_then(|n| n.to_str())
-+                .and_then(languages::extensionless_build_file_ext)
-+                .map(str::to_string)
+@@ -263,7 +263,11 @@ const PARSED_FILE_REUSE_BYTE_LIMIT: u64 = 24 * 1024 * 1024;
+ pub fn source_bytes(root: &Path, file_paths: &[String]) -> u64 {
+     file_paths
+         .iter()
+-        .map(|f| std::fs::metadata(root.join(f)).map(|m| m.len()).unwrap_or(0))
++        .map(|f| {
++            std::fs::metadata(root.join(f))
++                .map(|m| m.len())
++                .unwrap_or(0)
 +        })
-         .unwrap_or_default();
- 
-     get_language_config(&ext).or_else(|| {
-@@ -88,7 +95,12 @@ pub fn top_level_imports(file_path: &str, content: &str) -> Option<Vec<TopLevelI
-     };
-     let src = content.as_bytes();
-     let root = tree.root_node();
--    if root.has_error() || !matches!(config.id, "typescript" | "tsx" | "javascript" | "python" | "rust" | "go" | "java" | "c" | "cpp") {
-+    if root.has_error()
-+        || !matches!(
-+            config.id,
-+            "typescript" | "tsx" | "javascript" | "python" | "rust" | "go" | "java" | "c" | "cpp"
-+        )
-+    {
-         return None;
-     }
-     let mut cursor = root.walk();
-@@ -4090,7 +4102,9 @@ test "basic addition" {
-     #[test]
-     #[cfg(feature = "lang-typescript")]
-     fn test_top_level_imports_excludes_strings_comments_and_nested() {
--        assert!(top_level_imports("a.ts", "const x = 1;").unwrap().is_empty());
-+        assert!(top_level_imports("a.ts", "const x = 1;")
-+            .unwrap()
-+            .is_empty());
-         assert!(top_level_imports("a.ts", "import { broken").is_none());
-         assert!(top_level_imports("a.unknown", "something").is_none());
-         let code = concat!(
-@@ -4118,7 +4132,13 @@ test "basic addition" {
-         // The multi-line import comes back as one node spanning its full range.
-         assert_eq!((imports[1].start_line, imports[1].end_line), (12, 15));
-         // Never the import inside the template literal or the ambient module block.
--        assert!(imports.iter().all(|i| !i.text.contains("legacy.js")), "got: {texts:?}");
--        assert!(imports.iter().all(|i| !i.text.contains("nested.js")), "got: {texts:?}");
-+        assert!(
-+            imports.iter().all(|i| !i.text.contains("legacy.js")),
-+            "got: {texts:?}"
-+        );
-+        assert!(
-+            imports.iter().all(|i| !i.text.contains("nested.js")),
-+            "got: {texts:?}"
-+        );
-     }
+         .sum()
  }
+ 
+@@ -796,6 +800,11 @@ pub type EntityAdjacencyMap = HashMap<EntityId, Vec<EntityId>>;
+ pub type SymbolTable = HashMap<String, Vec<EntityId>>;
+ 
+ fn sort_symbol_table_targets_by_source(symbol_table: &mut SymbolTable, entity_map: &EntityInfoMap) {
++    #[cfg(feature = "parallel")]
++    symbol_table
++        .par_iter_mut()
++        .for_each(|(_, target_ids)| sort_one_symbol_table_bucket(target_ids, entity_map));
++    #[cfg(not(feature = "parallel"))]
+     for target_ids in symbol_table.values_mut() {
+         sort_one_symbol_table_bucket(target_ids, entity_map);
+     }
+@@ -916,10 +925,15 @@ fn sort_members_bucket_by_source(members: &mut Vec<MemberTarget>, entity_map: &E
+ /// neither was a *stated*, enforced invariant — see
+ /// "Resolver tie-break contract" section for the measured effect of making
+ /// it one.
+-fn sort_all_member_buckets_by_source<K>(
++fn sort_all_member_buckets_by_source<K: Eq + std::hash::Hash + Sync>(
+     buckets: &mut HashMap<K, Vec<MemberTarget>>,
+     entity_map: &EntityInfoMap,
+ ) {
++    #[cfg(feature = "parallel")]
++    buckets
++        .par_iter_mut()
++        .for_each(|(_, members)| sort_members_bucket_by_source(members, entity_map));
++    #[cfg(not(feature = "parallel"))]
+     for members in buckets.values_mut() {
+         sort_members_bucket_by_source(members, entity_map);
+     }
+@@ -940,6 +954,11 @@ fn sort_all_member_buckets_by_source<K>(
+ /// this sorted order wins) instead of an unstated by-product of whichever
+ /// order entities happened to be discovered in.
+ fn sort_all_entity_ranges_by_source(ranges_by_file: &mut EntityRanges) {
++    #[cfg(feature = "parallel")]
++    ranges_by_file
++        .par_iter_mut()
++        .for_each(|(_, ranges)| ranges.sort_unstable());
++    #[cfg(not(feature = "parallel"))]
+     for ranges in ranges_by_file.values_mut() {
+         ranges.sort_unstable();
+     }
+@@ -2635,6 +2654,10 @@ impl EntityGraph {
+         // corpus — see `maintain_entity_lookups_incremental`'s doc comment.
+         let use_incremental_lookups =
+             inc.is_some() && !retain_parsed_files && *carry_entity_lookups_primed;
++        // Whether the tables built below end up in the carry after this build:
++        // always on the incremental path, and on a non-retain session build's
++        // whole rebuild, which primes the carry for the next one.
++        let reclaim_lookups = inc.is_some() && !retain_parsed_files;
+ 
+         // Pass A (borrowed half): lookups that borrow `&str` out of
+         // `all_entities` and so must be rebuilt every build regardless of
+@@ -2821,7 +2844,14 @@ impl EntityGraph {
+                     }
+                 }
+             }
+-            sort_symbol_table_targets_by_source(&mut symbol_table_owned, &owned_entity_map);
++            // The four bucket sorts below and the child-range index are
++            // independent of each other (each writes one table and reads only
++            // `owned_entity_map`/`all_entities`), so they run side by side
++            // instead of one after another on the build's serial spine.
++            // Every bucket is sorted by a total order (or stably, from the
++            // same push order), so the result does not depend on scheduling.
++            let sort_symbols =
++                || sort_symbol_table_targets_by_source(&mut symbol_table_owned, &owned_entity_map);
+             // same canonical (file_path, start_line, end_line, id)
+             // tie-break as `symbol_table`, made explicit here instead of
+             // relying on `all_entities` already being in file-path order
+@@ -2831,25 +2861,38 @@ impl EntityGraph {
+             // build's `maintain_entity_lookups_incremental` (which re-sorts
+             // only the buckets it touches) starts from an already-canonical
+             // baseline.
+-            sort_all_member_buckets_by_source(&mut owned_class_members, &owned_entity_map);
+-            sort_all_member_buckets_by_source(&mut owned_owner_members, &owned_entity_map);
+-            sort_all_entity_ranges_by_source(&mut owned_entity_ranges);
++            let sort_members = || {
++                sort_all_member_buckets_by_source(&mut owned_class_members, &owned_entity_map);
++                sort_all_member_buckets_by_source(&mut owned_owner_members, &owned_entity_map);
++                sort_all_entity_ranges_by_source(&mut owned_entity_ranges);
++            };
++            let child_ranges = || {
++                let __lookup_child_ranges_t0 = std::time::Instant::now();
++                let ranges = build_child_ranges_by_parent(&all_entities);
++                resolve_p
 ```
 
-**File**: `crates/sem-core/src/parser/registry.rs` (modified, +6/-0)
-```diff
-@@ -616,6 +616,12 @@ fn get_extensions(file_path: &str) -> Vec<String> {
-         return Vec::new();
-     };
- 
-+    if let Some(ext) =
-+        crate::parser::plugins::code::languages::extensionless_build_file_ext(file_name)
-+    {
-+        return vec![ext.to_string()];
-+    }
-+
-     let file_name = file_name.to_lowercase();
-     let mut extensions = Vec::new();
- 
-```
+---
 
-**File**: `crates/sem-core/tests/starlark.rs` (added, +56/-0)
+### Incident Patch 3: `7e4ca027` (2026-10-22)
+**Commit Message**: fix(deps): bump webpki-roots to 1.0.10 (#526)
+
+Fixes #525.
+
+Bumps webpki-roots from 1.0.7 to 1.0.10 in Cargo.lock to pick up the
+fixed root store.
+
+webpki-roots 0.26.11 is still in the tree because ureq 2 depends on it,
+but that version is a semver shim that re-exports webpki-roots 1.x, so
+after this change every TLS client in sem uses the 1.0.10 roots.
+Dropping the shim entirely needs a move to ureq 3, which can come
+separately.
+
+Checked with `cargo tree -i webpki-roots@1.0.10` and a release build of
+sem-cli.
+
+Thanks @0323pin for the report.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+**File**: `crates/Cargo.lock` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,56 @@
-+//! Bazel and Buck2 build files parse as Starlark: targets in BUILD/BUCK files,
-+//! functions in `.bzl` files (#519).
-+
-+use sem_core::parser::plugins::create_default_registry;
-+
-+fn names(path: &str, src: &str) -> Vec<(String, String)> {
-+    create_default_registry()
-+        .extract_entities(path, src)
-+        .into_iter()
-+        .map(|e| (e.entity_type, e.name))
-+        .collect()
-+}
-+
-+#[test]
-+fn build_file_targets_are_entities() {
-+    let src = r#"load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
-+
-+cc_library(
-+    name = "greet",
-+    srcs = ["greet.cc"],
-+)
-+
-+my_macro(name = 'hello', deps = [":greet"])
-+"#;
-+    let want = vec![
-+        ("target".to_string(), "greet".to_string()),
-+        ("target".to_string(), "hello".to_string()),
-+    ];
-+    for path in [
-+        "BUILD",
-+        "pkg/BUCK",
-+        "BUILD.bazel",
-+        "pkg/PACKAGE",
-+        "WORKSPACE",
-+    ] {
-+        assert_eq!(names(path, src), want, "{path}");
-+    }
-+}
-+
-+#[test]
-+fn bzl_functions_are_entities_and_their_calls_are_not_targets() {
-+    let src = "def my_test(name, srcs):\n    native.sh_test(name = name, srcs = srcs)\n";
-+    assert_eq!(
-+        names("tools/macros.bzl", src),
-+        vec![("function".to_string(), "my_test".to_string())]
-+    );
-+}
-+
-+#[test]
-+fn python_files_are_unchanged() {
-+    let src = "setup(name = \"pkg\")\n\ndef main():\n    pass\n";
-+    assert_eq!(
-+        names("setup.py", src),
-+        vec![("function".to_string(), "main".to_string())]
-+    );
-+}
+@@ -3673,14 +3673,14 @@ version = "0.26.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
+ dependencies = [
+- "webpki-roots 1.0.7",
++ "webpki-roots 1.0.10",
+ ]
+ 
+ [[package]]
+ name = "webpki-roots"
+-version = "1.0.7"
++version = "1.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "52f5ee44c96cf55f1b349600768e3ece3a8f26010c05265ab73f945bb1a2eb9d"
++checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+ dependencies = [
+  "rustls-pki-types",
+ ]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #522** (2026-10-19): fix: build git2 without network transports so macOS needs no OpenSSL (@rs545837)
-- **PR #521** (2026-10-19): feat: parse Bazel and Buck2 build files as Starlark (@rs545837)
-- **PR #518** (2026-10-16): feat(mcp): authenticated read-only Streamable HTTP preview (@rs545837)
-- **PR #517** (2026-10-15): agents: file reads, check --run, shared verification cache, tool hook and ENTITYOWNERS (@rs545837)
-- **PR #516** (2026-10-13): feat(integrations): add portable Sem and Weave review skills (@rs545837)
-- **PR #515** (closed): Add opt-in Parallel web search config for pi-sem (@georgeatparallel)
+- **PR #530** (2026-10-24): docs: record MCP query contract fixes (@rs545837)
+- **PR #529** (2026-10-24): fix(mcp): support scoped context and structured caller batches (@rs545837)
+- **PR #528** (2026-10-22): perf: parallelize the rest of the cold index build's serial stretches (@rs545837)
+- **PR #527** (2026-10-22): fix: preserve entity lookup and source receipt completeness (@rs545837)
+- **PR #526** (2026-10-22): fix(deps): bump webpki-roots to 1.0.10 (@rs545837)
+- **PR #524** (2026-10-22): perf: shorten the serial spine of cold index builds (@rs545837)
 
 ---
 
@@ -2356,13 +2525,13 @@ Not included: weave's `setup` attribute list is buil
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build git2 without network transports so macOS needs no OpenSSL (#522)
+## X. parallelize the rest of the cold index build's serial stretches (#528)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `66ae317b`: build git2 without network transports so macOS needs no OpenSSL (#522). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6caf881d`: parallelize the rest of the cold index build's serial stretches (#528). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2370,10 +2539,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Fixed
-
-- **The macOS binary no longer needs Homebrew's OpenSSL.** libgit2 was built with its HTTPS and SSH transports, which linked `/opt/homebrew/opt/openssl@3`, so `sem` aborted at launch on Macs without it. sem only reads local repositories, so `git2` now builds without those transports and the binary links only system libraries (#520).
-
+- **Cold index builds on large repos are about a fifth faster.** A first `sem graph` on the Linux kernel (2.35M entities) went from 49.5 s to 38.6 s, and on kubernetes (545k entities) from 12.5 s to 10.0 s, on an 8 vCPU machine, with peak memory within 2%. The build had long single-threaded stretches. Along with the lookup-table change above, corpus fingerprints are hashed in parallel, independent index sections and lookup tables are built side by side, and large frees and the two facts saves no longer hold up the command. The graph and the index file are byte-identical to before.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2383,4 +2549,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `66ae317b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6caf881d` are properly handled with clean fallback behavior.

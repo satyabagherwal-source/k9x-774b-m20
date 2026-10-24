@@ -4593,3 +4593,6 @@
 | `CYCLE-20261024-TGE6` | `2026-10-24T20:31:21.150Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3955, Rule 3956, Rule 3957` | Yes (`963ee2a9...`) |
 | `CYCLE-20261024-738T` | `2026-10-24T20:41:57.293Z` | `lokoe-mehdi/scouter` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3958, Rule 3959, Rule 3960` | Yes (`d24546ad...`) |
 | `CYCLE-20261024-76CG` | `2026-10-24T20:42:01.312Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3961, Rule 3962, Rule 3963` | Yes (`bc1f9bb4...`) |
+| `CYCLE-20261024-FOJ0` | `2026-10-24T20:48:38.124Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3964` | Yes (`ff9e0140...`) |
+| `CYCLE-20261024-FOSE` | `2026-10-24T20:48:38.462Z` | `crawlseo/crawlseo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1703` | Yes (`85f6f41d...`) |
+| `CYCLE-20261024-FUXB` | `2026-10-24T20:48:46.415Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3965` | Yes (`4174bbd5...`) |

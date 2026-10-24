@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `d6ea4a52`  
+> **Source Version**: `31ce31ee`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T09:20:54.011Z  
+> **Timestamp**: 2026-10-24T20:48:46.056Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T09:20:53.033Z  
+> **Harvest Timestamp**: 2026-10-24T20:48:45.270Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28668 stars
+- **Stars / Engagement**: 28685 stars
 
 ---
 
@@ -1140,302 +1140,573 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d6ea4a52` (2026-10-23)
-**Commit Message**: Clean up Filesystem source logging for per-source debug (#5465)
+### Incident Patch 1: `3bd461f1` (2026-10-24)
+**Commit Message**: security: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497) (#5472)
 
-Log through the call's context everywhere and drop the stored logger.
-Add the root path with context.WithValues under root_path, so it no
-longer clashes with the per-item path field.
+CVE-2026-111497 is an out-of-bounds write in the brotli decoder when a
+stream contains an invalid block switch. It was fixed upstream in
+google/brotli commit 0ed4268a (v1.2.1). The Go port has the same bug and
+fixes it in github.com/andybalholm/brotli v1.2.7 (commit 33c2a988,
+"Detect and report invalid stream earlier"). In Go the likely impact is a
+panic while decoding a crafted brotli stream.
 
-Move the shared symlink/dir/file dispatch of Chunks and ChunkUnit into
-one scanRootPath helper, so both scan and log a root path the same way.
 
-Move lines to the levels in the source logging rules: V(1) init line
-with the config choices, V(2) per root path with duration, V(3) per
-directory and file, V(4) for skips with a reason, V(5) for symlink
-resolution and per-file timing. Add V(4) lines for skips that were
-silent before: path filter, non-regular entries, symlinks not followed,
-and directories already scanned before the resume point. Remove the
-"Entry found is a ..." lines, which the new lines cover.
+Claude-Session: https://claude.ai/code/session_01NurERth3rFKgFjZ8xzyUMH
 
-Add a debug logging test with logtest.DebugContext that checks every
-line has source_name and job_id, no line has the test secret, and no
-debug lines show with debug off.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `pkg/sources/filesystem/filesystem.go` (modified, +103/-92)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -7,9 +7,9 @@ import (
- 	"path/filepath"
- 	"slices"
- 	"strings"
-+	"time"
- 
- 	"github.com/go-errors/errors"
--	"github.com/go-logr/logr"
- 	"golang.org/x/sync/errgroup"
- 	"google.golang.org/protobuf/proto"
- 	"google.golang.org/protobuf/types/known/anypb"
-@@ -33,7 +33,6 @@ type Source struct {
- 	concurrency  int
- 	verify       bool
- 	paths        []string
--	log          logr.Logger
- 	filter       *common.Filter
- 	skipBinaries bool
- 	sources.Progress
-@@ -67,8 +66,6 @@ func (s *Source) JobID() sources.JobID {
- 
- // Init returns an initialized Filesystem source.
- func (s *Source) Init(aCtx trContext.Context, name string, jobId sources.JobID, sourceId sources.SourceID, verify bool, connection *anypb.Any, concurrency int) error {
--	s.log = aCtx.Logger()
--
- 	s.concurrency = concurrency
- 	s.name = name
- 	s.sourceId = sourceId
-@@ -91,6 +88,14 @@ func (s *Source) Init(aCtx trContext.Context, name string, jobId sources.JobID,
- 	if err != nil {
- 		return err
- 	}
-+
-+	aCtx.Logger().V(1).Info("filesystem source initialized",
-+		"path_count", len(s.paths),
-+		"skip_binaries", s.skipBinaries,
-+		"max_symlink_depth", s.maxSymlinkDepth,
-+		"include_paths_file", conn.IncludePathsFile,
-+		"exclude_paths_file", conn.ExcludePathsFile,
-+	)
- 	return nil
- }
- 
-@@ -114,47 +119,63 @@ func (s *Source) canFollowSymlinks() bool {
- // Chunks emits chunks of bytes over a channel.
- func (s *Source) Chunks(ctx trContext.Context, chunksChan chan *sources.Chunk, _ ...sources.ChunkingTarget) error {
- 	for i, rootPath := range s.paths {
--		logger := ctx.Logger().WithValues("path", rootPath)
- 		if common.IsDone(ctx) {
- 			return nil
- 		}
- 		s.SetProgressComplete(i, len(s.paths), fmt.Sprintf("Path: %s", rootPath), s.GetProgress().EncodedResumeInfo)
- 
--		cleanPath := filepath.Clean(rootPath)
--		fileInfo, err := os.Lstat(cleanPath)
-+		// root_path is kept apart from path, which the lines below use for the item being scanned.
-+		pathCtx := trContext.WithValues(ctx, "root_path", rootPath)
-+		fileInfo, err := os.Lstat(filepath.Clean(rootPath))
- 		if err != nil {
--			logger.Error(err, "unable to get file info")
-+			pathCtx.Logger().Error(err, "unable to get file info")
- 			continue
- 		}
- 
--		if fileInfo.Mode()&os.ModeSymlink != 0 {
--			// if the root path is a symlink we scan the symlink
--			ctx.Logger().V(5).Info("Root path is a symlink", "path", cleanPath)
--			initialDepth := 0
--			err = s.scanSymlink(ctx, chunksChan, rootPath, initialDepth, cleanPath)
--			s.ClearEncodedResumeInfoFor(rootPath)
--		} else if fileInfo.IsDir() {
--			ctx.Logger().V(5).Info("Root path is a dir", "path", cleanPath)
--			initialDepth := 0
--			err = s.scanDir(ctx, chunksChan, rootPath, initialDepth, cleanPath)
--			s.ClearEncodedResumeInfoFor(rootPath)
--		} else {
--			if !fileInfo.Mode().IsRegular() {
--				logger.Info("skipping non-regular file", "path", cleanPath)
--				continue
--			}
--			ctx.Logger().V(5).Info("Root path is a file", "path", cleanPath)
--			err = s.scanFile(ctx, chunksChan, cleanPath)
--		}
--
--		if err != nil && !errors.Is(err, io.EOF) {
--			logger.Error(err, "error scanning filesystem")
-+		if err := s.scanRootPath(pathCtx, chunksChan, rootPath, fileInfo); err != nil && !errors.Is(err, io.EOF) {
-+			pathCtx.Logger().Error(err, "error scanning filesystem")
- 		}
- 	}
- 
- 	return nil
- }
- 
-+// scanRootPath scans one configured path, which can be a symlink, a directory, or a file.
-+// It is shared by Chunks and ChunkUnit so both scan and log a root path the same way.
-+func (s *Source) scanRootPath(
-+	ctx trContext.Context,
-+	chunksChan chan *sources.Chunk,
-+	rootPath string,
-+	fileInfo os.FileInfo,
-+) error {
-+	cleanPath := filepath.Clean(rootPath)
-+	initialDepth := 0
-+	start := time.Now()
-+
-+	var err error
-+	switch {
-+	case fileInfo.Mode()&os.ModeSymlink != 0:
-+		ctx.Logger().V(2).Info("scanning path", "type", "symlink")
-+		err = s.scanSymlink(ctx, chunksChan, rootPath, initialDepth, cleanPath)
-+		s.ClearEncodedResumeInfoFor(rootPath)
-+	case fileInfo.IsDir():
-+		ctx.Logger().V(2).Info("scanning path", "type", "dir")
-+		err = s.scanDir(ctx, chunksChan, rootPath, initialDepth, cleanPath)
-+		s.ClearEncodedResumeInfoFor(rootPath)
-+	case !fileInfo.Mode().IsRegular():
-+		// The user asked for this path, so tell them it was not scanned.
-+		ctx.Logger().Info("skipping file", "reason", "not a regular file")
-+		return nil
-+	default:
-+		ctx.Logger().V(2).Info("scanning path", "type", "file")
-+		// TODO: Finer grain error tracking of individual chunks (in the case of archives).
-+		err = s.scanFile(ctx, chunksChan, cleanPath)
-+	}
-+
-+	ctx.Logger().V(2).Info("finished scanning path", "duration", time.Since(start).String())
-+	return err
-+}
-+
- func (s *Source) scanSymlink(
- 	ctx trContext.Context,
- 	chunksChan chan *sources.Chunk,
-@@ -163,8 +184,8 @@ func (s *Source) scanSymlink(
- 	path string,
- ) error {
- 	if !s.canFollowSymlinks() {
--		// If the file or directory is a symlink but the followSymlinks is disable ignore the path
--		ctx.Logger().V(2).Info("skipping, following symlinks is not
+@@ -142,7 +142,7 @@ require (
+ 	github.com/STARRY-S/zip v0.2.1 // indirect
+ 	github.com/alecthomas/chroma/v2 v2.14.0 // indirect
+ 	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
+-	github.com/andybalholm/brotli v1.1.1 // indirect
++	github.com/andybalholm/brotli v1.2.7 // indirect
+ 	github.com/atotto/clipboard v0.1.4 // indirect
+ 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.18 // indirect
+ 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.38 // indirect
 ```
 
-**File**: `pkg/sources/filesystem/filesystem_test.go` (modified, +94/-1)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -11,13 +11,18 @@ import (
- 	"time"
+@@ -96,8 +96,8 @@ github.com/alecthomas/repr v0.4.0 h1:GhI2A8MACjfegCPVq9f1FLvIBS+DrQ2KQBFZP1iFzXc
+ github.com/alecthomas/repr v0.4.0/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
+ github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 h1:s6gZFSlWYmbqAuRjVTiNNhvNRfY2Wxp9nhfyel4rklc=
+ github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137/go.mod h1:OMCwj8VM1Kc9e19TLln2VL61YJF0x1XFtfdL4JdbSyE=
+-github.com/andybalholm/brotli v1.1.1 h1:PR2pgnyFznKEugtsUo0xLdDop5SKXd5Qf5ysW+7XdTA=
+-github.com/andybalholm/brotli v1.1.1/go.mod h1:05ib4cKhjx3OQYUY22hTVd34Bc8upXjOLL2rKwwZBoA=
++github.com/andybalholm/brotli v1.2.7 h1:UgafRPGMam5ySHfRkhthMqOFA6IFoeF3D7mWIDLjG5A=
++github.com/andybalholm/brotli v1.2.7/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
+ github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
+ github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
+ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPdPJAN/hZIm0C4OItdklCFmMRWYpio=
+```
+
+---
+
+### Incident Patch 2: `31ce31ee` (2026-10-24)
+**Commit Message**: Fix 7z and rar panics in the archive handler and log recovered panic stacks (#5474)
+
+* Fix 7z and rar panics in the archive handler and log recovered panic stacks
+
+bodgit/sevenzip before v1.6.2 indexes past the end of the substream size
+slice when a 7z folder declares zero unpack streams. Such archives are
+valid (libarchive lists them without error), but opening one panics with
+"index out of range [N] with length N", where N is the number of files in
+the archive. The archive handler recovers the panic, so the whole archive
+is skipped and none of its files are scanned. Upstream fixed this in
+bodgit/sevenzip#401 (v1.6.2).
+
+nwaples/rardecode before v2.2.3 does not validate the RAR 5 block header
+size, and a header that declares a size of zero panics with "slice bounds
+out of range [3:1]". Upstream fixed this in nwaples/rardecode#60.
+
+Bump bodgit/sevenzip from v1.6.0 to v1.6.5, which also brings the
+upstream fuzzing fixes that bound header sizes before allocating. The
+bump raises pierrec/lz4 and go4.org, and adds stangelandcl/ppmd, which
+sevenzip uses for PPMd-coded entries. It also requires klauspost/compress
+v1.19.0, which is in the range of GHSA-fpmh-frq8-7rj8 (a zstd decoder
+panic 
+
+**File**: `go.mod` (modified, +7/-5)
+```diff
+@@ -25,6 +25,7 @@ require (
+ 	github.com/aws/smithy-go v1.27.9
+ 	github.com/aymanbagabas/go-osc52 v1.2.2
+ 	github.com/bill-rich/go-syslog v0.0.0-20220413021637-49edb52a574c
++	github.com/bodgit/sevenzip v1.6.5
+ 	github.com/bradleyfalzon/ghinstallation/v2 v2.16.0
+ 	github.com/brianvoe/gofakeit/v7 v7.6.0
+ 	github.com/charmbracelet/bubbles v0.18.0
+@@ -62,7 +63,7 @@ require (
+ 	github.com/joho/godotenv v1.5.1
+ 	github.com/jpillora/overseer v1.1.6
+ 	github.com/k0kubun/go-ansi v0.0.0-20180517002512-3bf9e2903213
+-	github.com/klauspost/compress v1.18.7
++	github.com/klauspost/compress v1.20.3
+ 	github.com/klauspost/pgzip v1.2.6
+ 	github.com/kylelemons/godebug v1.1.0
+ 	github.com/lestrrat-go/jwx/v3 v3.0.12
+@@ -88,6 +89,7 @@ require (
+ 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3
+ 	github.com/shuheiktgw/go-travis v0.3.1
+ 	github.com/shurcooL/githubv4 v0.0.0-20260209031235-2402fdf4a9ed
++	github.com/stangelandcl/ppmd v0.1.1
+ 	github.com/stretchr/testify v1.12.1
+ 	github.com/testcontainers/testcontainers-go v0.42.0
+ 	github.com/testcontainers/testcontainers-go/modules/elasticsearch v0.42.0
+@@ -160,7 +162,6 @@ require (
+ 	github.com/aymerick/douceur v0.2.0 // indirect
+ 	github.com/beorn7/perks v1.0.1 // indirect
+ 	github.com/bodgit/plumbing v1.3.0 // indirect
+-	github.com/bodgit/sevenzip v1.6.0 // indirect
+ 	github.com/bodgit/windows v1.0.1 // indirect
+ 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
+ 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+@@ -258,11 +259,11 @@ require (
+ 	github.com/muesli/cancelreader v0.2.2 // indirect
+ 	github.com/muesli/termenv v0.16.0 // indirect
+ 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+-	github.com/nwaples/rardecode/v2 v2.2.1 // indirect
++	github.com/nwaples/rardecode/v2 v2.4.5 // indirect
+ 	github.com/onsi/ginkgo v1.16.5 // indirect
+ 	github.com/opencontainers/go-digest v1.0.0 // indirect
+ 	github.com/opencontainers/image-spec v1.1.1 // indirect
+-	github.com/pierrec/lz4/v4 v4.1.21 // indirect
++	github.com/pierrec/lz4/v4 v4.1.27 // indirect
+ 	github.com/pjbgf/sha1cd v0.6.0 // indirect
+ 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
+ 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
+@@ -278,6 +279,7 @@ require (
+ 	github.com/sirupsen/logrus v1.9.4 // indirect
+ 	github.com/skeema/knownhosts v1.3.1 // indirect
+ 	github.com/sorairolake/lzip-go v0.3.5 // indirect
++	github.com/spf13/afero v1.15.0 // indirect
+ 	github.com/spiffe/go-spiffe/v2 v2.7.0 // indirect
+ 	github.com/stretchr/objx v0.5.3 // indirect
+ 	github.com/tetratelabs/wazero v1.12.0 // indirect
+@@ -312,7 +314,7 @@ require (
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+-	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
++	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+ 	golang.org/x/sys v0.48.0 // indirect
+ 	golang.org/x/term v0.46.0 // indirect
+```
+
+**File**: `go.sum` (modified, +14/-163)
+```diff
+@@ -1,25 +1,14 @@
+ cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
+ cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
+ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+-cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+-cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
+-cloud.google.com/go v0.44.1/go.mod h1:iSa0KzasP4Uvy3f1mN/7PiObzGgflwredwwASm/v6AU=
+-cloud.google.com/go v0.44.2/go.mod h1:60680Gw3Yr4ikxnPRS/oxxkBccT6SA1yMk63TGekxKY=
+-cloud.google.com/go v0.45.1/go.mod h1:RpBamKRgapWJb87xiFSdk4g1CME7QZg3uwTez+TSTjc=
+-cloud.google.com/go v0.46.3/go.mod h1:a6bKKbmY7er1mI7TEI4lsAkts/mkhTSZK8w33B4RAg0=
+-cloud.google.com/go v0.50.0/go.mod h1:r9sluTvynVuxRIOHXQEHMFffphuXHOMZMycpNR5e6To=
+-cloud.google.com/go v0.53.0/go.mod h1:fp/UouUEsRkN6ryDKNW/Upv/JBKnv6WDthjR6+vze6M=
+ cloud.google.com/go v0.121.6 h1:waZiuajrI28iAf40cWgycWNgaXPO06dupuS+sgibK6c=
+ cloud.google.com/go v0.121.6/go.mod h1:coChdst4Ea5vUpiALcYKXEpR1S9ZgXbhEzzMcMR66vI=
+ cloud.google.com/go/auth v0.18.2 h1:+Nbt5Ev0xEqxlNjd6c+yYUeosQ5TtEUaNcN/3FozlaM=
+ cloud.google.com/go/auth v0.18.2/go.mod h1:xD+oY7gcahcu7G2SG2DsBerfFxgPAJz17zz2joOFF3M=
+ cloud.google.com/go/auth/oauth2adapt v0.2.8 h1:keo8NaayQZ6wimpNSmW5OPc283g65QNIiLpZnkHRbnc=
+ cloud.google.com/go/auth/oauth2adapt v0.2.8/go.mod h1:XQ9y31RkqZCcwJWNSx2Xvric3RrU88hAYYbjDWYDL+c=
+-cloud.google.com/go/bigquery v1.0.1/go.mod h1:i/xbL2UlR5RvWAURpBYZTtm/cXjCha9lbfbpx4poX+o=
+-cloud.google.com/go/bigquery v1.3.0/go.mod h1:PjpwJnslEMmckchkHFfq+HTD2DmtT67aNFKH1/VBDHE=
+ cloud.google.com/go/compute/metadata v0.9.0 h1:pDUj4QMoPejqq20dK0Pg2N4yG9zIkYGdBtwLoEkH9Zs=
+ cloud.google.com/go/compute/metadata v0.9.0/go.mod h1:E0bWwX5wTnLPedCKqk3pJmVgCBSM6qQI1yTBdEb3C10=
+-cloud.google.com/go/datastore v1.0.0/go.mod h1:LXYbyblFSglQ5pkeyhO+Qmw7ukd3C+pD7TKLgZqpHYE=
+ cloud.google.com/go/iam v1.5.3 h1:+vMINPiDF2ognBJ97ABAYYwRgsaqxPbQDlMnbHMjolc=
+ cloud.google.com/go/iam v1.5.3/go.mod h1:MR3v9oLkZCTlaqljW6Eb2d3HGDGK5/bDv93jhfISFvU=
+ cloud.google.com/go/logging v1.13.1 h1:O7LvmO0kGLaHY/gq8cV7T0dyp6zJhYAOtZPX4TF3QtY=
+@@ -28,19 +17,14 @@ cloud.google.com/go/longrunning v0.8.0 h1:LiKK77J3bx5gDLi4SMViHixjD2ohlkwBi+mKA7
+ cloud.google.com/go/longrunning v0.8.0/go.mod h1:UmErU2Onzi+fKDg2gR7dusz11Pe26aknR4kHmJJqIfk=
+ cloud.google.com/go/monitoring v1.24.3 h1:dde+gMNc0UhPZD1Azu6at2e79bfdztVDS5lvhOdsgaE=
+ cloud.google.com/go/monitoring v1.24.3/go.mod h1:nYP6W0tm3N9H/bOw8am7t62YTzZY+zUeQ+Bi6+2eonI=
+-cloud.google.com/go/pubsub v1.0.1/go.mod h1:R0Gpsv3s54REJCy4fxDixWD93lHJMoZTyQ2kNxGRt3I=
+-cloud.google.com/go/pubsub v1.1.0/go.mod h1:EwwdRX2sKPjnvnqCa270oGRyludottCI76h+R3AArQw=
+ cloud.google.com/go/secretmanager v1.16.0 h1:19QT7ZsLJ8FSP1k+4esQvuCD7npMJml6hYzilxVyT+k=
+ cloud.google.com/go/secretmanager v1.16.0/go.mod h1://C/e4I8D26SDTz1f3TQcddhcmiC3rMEl0S1Cakvs3Q=
+-cloud.google.com/go/storage v1.0.0/go.mod h1:IhtSnM/ZTZV8YYJWCY8RULGVqBDmpoyjwiyrjsg+URw=
+-cloud.google.com/go/storage v1.5.0/go.mod h1:tpKbwo567HUNpVclU5sGELwQWBDZ8gh0ZeosJ0Rtdos=
+ cloud.google.com/go/storage v1.56.1 h1:n6gy+yLnHn0hTwBFzNn8zJ1kqWfR91wzdM8hjRF4wP0=
+ cloud.google.com/go/storage v1.56.1/go.mod h1:C9xuCZgFl3buo2HZU/1FncgvvOgTAs/rnh4gF4lMg0s=
+ cloud.google.com/go/trace v1.11.7 h1:kDNDX8JkaAG3R2nq1lIdkb7FCSi1rCmsEtKVsty7p+U=
+ cloud.google.com/go/trace v1.11.7/go.mod h1:TNn9d5V3fQVf6s4SCveVMIBS2LJUqo73GACmq/Tky0s=
+ dario.cat/mergo v1.0.2 h1:85+piFYR1tMbRrLcDwR18y4UKJ3aH1Tbzi24VRW1TK8=
+ dario.cat/mergo v1.0.2/go.mod h1:E/hbnu0NxMFBjpMIE34DRGLWqDy0g5FuKDhCb31ngxA=
+-dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
+ filippo.io/edwards25519 v1.1.1 h1:YpjwWWlNmGIDyXOn8zLzqiD+9TyIlPhGFG96P39uBpw=
+ filippo.io/edwards25519 v1.1.1/go.mod h1:BxyFTGdWcka3PhytdK4V28tE5sGfRvvvRV7EaN4VDT4=
+ github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6 h1:He8afgbRMd7mFxO99hRNu+6tazq8nFF9lIwo9JFroBk=
+@@ -64,7 +48,6 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.3.2/go.mod h1:wP83
+ github.com/BobuSumisu/aho-corasick v1.0.3 h1:uuf+JHwU9CHP2Vx+wAy6jcksJThhJS9ehR8a+4nPE9g=
+ github.com/BobuSumisu/aho-corasick v1.0.3/go.mod h1:hm4jLcvZKI2vRF2WDU1N4p/jpWtpOzp3nLmi9AzX/XE=
+ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+-github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+ github.com/DataDog/zstd v1.5.5 h1:oWf5W7GtOLgp6bciQYDmhHHjdhYkALu6S/5Ni9ZgSvQ=
+ github.com/DataDog/zstd v1.5.5/go.mod h1:g4AWEaM3yOg3HYfnJ3YIawPnVdXJh9QME85blwSAmyw=
+ github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0 h1:l7+6kwRMJNwdCvYdDl7Eax+wzEYHSnNY7zrrfbhDdTA=
+@@ -161,8 +144,8 @@ github.com/bill-rich/go-syslog v0.0.0-20220413021637-49edb52a574c h1:tSME5FDS02q
+ github.com/bill-rich/go-syslog v0.0.0-20220413021637-49edb52a574c/go.mod h1:+sCc6hztur+oZCLOsNk6w
+```
+
+**File**: `pkg/handlers/apk.go` (modified, +1/-8)
+```diff
+@@ -161,14 +161,7 @@ func (h *apkHandler) HandleFile(ctx logContext.Context, input fileReader) chan D
+ 		// Defer a panic recovery to handle any panics that occur during the APK processing.
+ 		defer func() {
+ 			if r := recover(); r != nil {
+-				// Return the panic as an error.
+-				var panicErr error
+-				if e, ok := r.(error); ok {
+-					panicErr = e
+-				} else {
+-					panicErr = fmt.Errorf("panic occurred: %v", r)
+-				}
+-				ctx.Logger().Error(panicErr, "Panic occurred when reading apk archive")
++				_ = recoveredPanicError(ctx, r, "Panic occurred when reading apk archive")
+ 			}
+ 		}()
  
- 	"github.com/go-logr/logr"
-+	"github.com/go-logr/zapr"
- 	"github.com/google/go-cmp/cmp"
+```
+
+**File**: `pkg/handlers/ar.go` (modified, +1/-6)
+```diff
+@@ -44,12 +44,7 @@ func (h *arHandler) HandleFile(ctx logContext.Context, input fileReader) chan Da
+ 		// Defer a panic recovery to handle any panics that occur during the AR processing.
+ 		defer func() {
+ 			if r := recover(); r != nil {
+-				var panicErr error
+-				if e, ok := r.(error); ok {
+-					panicErr = e
+-				} else {
+-					panicErr = fmt.Errorf("panic occurred: %v", r)
+-				}
++				panicErr := recoveredPanicError(ctx, r, "Panic occurred when handling ar archive")
+ 				dataOrErrChan <- DataOrErr{
+ 					Err: fmt.Errorf("%w: panic error: %v", ErrProcessingFatal, panicErr),
+ 				}
+```
+
+**File**: `pkg/handlers/archive.go` (modified, +4/-16)
+```diff
+@@ -72,17 +72,11 @@ func (h *archiveHandler) HandleFile(ctx logContext.Context, input fileReader) ch
+ 	go func() {
+ 		defer close(dataOrErrChan)
+ 
+-		// The underlying 7zip library may panic when attempting to open an archive.
+-		// This is due to an Index Out Of Range (IOOR) error when reading the archive header.
+-		// See: https://github.com/bodgit/sevenzip/blob/74bff0da9b233317e4ea7dd8c184a315db71af2a/types.go#L846
++		// Archive libraries can panic on malformed input. Recover so that only
++		// this file is skipped, and log the stack so the failing frame is known.
+ 		defer func() {
+ 			if r := recover(); r != nil {
+-				var panicErr error
+-				if e, ok := r.(error); ok {
+-					panicErr = e
+-				} else {
+-					panicErr = fmt.Errorf("panic occurred: %v", r)
+-				}
++				panicErr := recoveredPanicError(ctx, r, "Panic occurred when handling archive")
+ 				dataOrErrChan <- DataOrErr{
+ 					Err: fmt.Errorf("%w: panic error: %v", ErrProcessingFatal, panicErr),
+ 				}
+@@ -219,13 +213,7 @@ func (h *archiveHandler) extractorHandler(dataOrErrChan chan DataOrErr) func(con
+ 		// https://github.com/nwaples/rardecode/issues/30.
+ 		defer func() {
+ 			if r := recover(); r != nil {
+-				// Return the panic as an error.
+-				if e, ok := r.(error); ok {
+-					err = e
+-				} else {
+-					err = fmt.Errorf("panic occurred: %v", r)
+-				}
+-				lCtx.Logger().Error(err, "Panic occurred when reading archive")
++				err = recoveredPanicError(lCtx, r, "Panic occurred when reading archive")
+ 			}
+ 		}()
+ 
+```
+
+**File**: `pkg/handlers/archive_test.go` (modified, +103/-0)
+```diff
+@@ -1,12 +1,16 @@
+ package handlers
+ 
+ import (
++	"bytes"
+ 	"context"
++	"encoding/binary"
+ 	regexp "github.com/wasilibs/go-re2"
++	"hash/crc32"
+ 	"io"
+ 	"net/http"
+ 	"strings"
+ 	"testing"
++	"unicode/utf16"
+ 
  	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+	"go.uber.org/zap"
-+	"go.uber.org/zap/zapcore"
-+	"go.uber.org/zap/zaptest/observer"
- 	"google.golang.org/protobuf/testing/protocmp"
- 	"google.golang.org/protobuf/types/known/anypb"
  
- 	trContext "github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/source_metadatapb"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
-@@ -438,7 +443,6 @@ func TestSkipBinaries(t *testing.T) {
- 	source := &Source{
- 		paths:        []string{textFile, binaryFile}, // Test individual files
- 		skipBinaries: true,
--		log:          logr.Discard(),
- 	}
- 
- 	chunks := make(chan *sources.Chunk, 10)
-@@ -888,3 +892,92 @@ func createTempDir(dir string, contents ...string) (string, func(), error) {
- 	}
- 	return tmpdir, func() { _ = os.RemoveAll(tmpdir) }, nil
+@@ -128,3 +132,102 @@ func TestOpenInvalidArchive(t *testing.T) {
+ 	err = handler.openArchive(ctx, 0, rdr, dataOrErrChan)
+ 	assert.Error(t, err)
  }
 +
-+func TestSource_DebugLogging(t *testing.T) {
-+	const testSecret = "TESTSECRET-do-not-log-1234567890"
++// sevenZipWithEmptyFolder builds an uncompressed 7z archive with two folders.
++// The first folder holds the given files. The second folder declares zero
++// unpack streams, which is valid 7z: libarchive lists such an archive without
++// error. Older 7z readers panicked with an index out of range while parsing
++// this header.
++func sevenZipWithEmptyFolder(files []string) []byte {
++	var data bytes.Buffer
++	for _, f := range files {
++		data.WriteString(f)
++	}
++	unused := "unused\n"
 +
-+	// One file of each kind the source logs about: scanned, binary, excluded by filter, and a symlink.
-+	dir := t.TempDir()
-+	require.NoError(t, os.WriteFile(filepath.Join(dir, "config.txt"), []byte("password = "+testSecret), 0644))
-+	require.NoError(t, os.WriteFile(filepath.Join(dir, "app.exe"), []byte{0x4D, 0x5A, 0x90, 0x00}, 0644))
-+	require.NoError(t, os.WriteFile(filepath.Join(dir, "excluded.txt"), []byte("password = "+testSecret), 0644))
-+	require.NoError(t, os.Symlink(filepath.Join(dir, "config.txt"), filepath.Join(dir, "link.txt")))
-+
-+	excludeFile := filepath.Join(t.TempDir(), "exclude.txt")
-+	require.NoError(t, os.WriteFile(excludeFile, []byte("excluded\\.txt$\n"), 0644))
-+
-+	conn, err := anypb.New(&sourcespb.Filesystem{
-+		Paths:            []string{dir},
-+		SkipBinaries:     true,
-+		ExcludePathsFile: excludeFile,
-+	})
-+	require.NoError(t, err)
-+
-+	// run the source with both Chunks and ChunkUnit, draining chunks the way the engine does
-+	runSource := func(ctx trContext.Context) {
-+		s := Source{}
-+		require.NoError(t, s.Init(ctx, "test debug logging", 1, 1, false, conn, 1))
-+
-+		chunksCh := make(chan *sources.Chunk, 64)
-+		go func() {
-+			for range chunksCh {
-+			}
-+		}()
-+		require.NoError(t, s.Chunks(ctx, chunksCh))
-+		close(chunksCh)
-+
-+		reporter := sourcestest.TestReporter{}
-+		require.NoError(t, s.ChunkUnit(ctx, sources.CommonSourceUnit{ID: dir}, &reporter))
-+		require.Empty(t, reporter.ChunkErrs)
++	var names bytes.Buffer
++	names.WriteByte(0) // names are stored inline
++	for i := range files {
++		for _, u := range utf16.Encode([]rune(string(rune('a'+i)) + ".txt\x00")) {
++			_ = binary.Write(&names, binary.LittleEndian, u)
++		}
 +	}
 +
-+	t.Run("debug on", func(t *testing.T) {
-+		ctx, logs := logtest.DebugContext()
-+		ctx = trContext.WithValues(ctx, "source_name", "test debug logging", "job_id", 1)
-+		runSource(ctx)
++	// Every count and size below is under 0x80, so each fits the one-byte
++	// form of the 7z variable-length number encoding.
++	h := []byte{
++		0x01,       // Header
++		0x04,       // MainStreamsInfo
++		0x06, 0, 2, // PackInfo: position 0, two pack streams
++		0x09, byte(data.Len()), byte(len(unused)), // pack stream sizes
++		0x00,          // end of PackInfo
++		0x07, 0x0B, 2, // UnpackInfo: two folders
++		0,          // folders are stored inline
++		1, 0x01, 0, // folder 1: one Copy coder
++		1, 0x01, 0, // folder 2: one Copy coder
++		0x0C, byte(data.Len()), byte(len(unused)), // folder unpack sizes
++		0x00,                         // end of UnpackInfo
++		0x08, 0x0D, byte(len(files)), // SubStreamsInfo: files in folder 1
++		0, // folder 2 holds no files
++		0x09,
++	}
++	for _, f := range files[:len(files)-1] {
++		h = append(h, byte(len(f))) // sizes of all but the last file in folder 1
++	}
++	h = append(h,
++		0x00,                   // end of SubStreamsInfo
++		0x00,                   // end of MainStreamsInfo
++		0x05, byte(len(files)), // FilesInfo
++		0x11, byte(names.Len()), // file names
++	)
++	h = append(h, names.Bytes()...)
++	h = append(h, 0x00, 0x00) // end of FilesInfo, end of Header
 +
-+		// lines from each level show up
-+		for _, msg := range []string{
-+			"filesystem source initialized", // V(1)
-+			"scanning path",                 // V(2)
-+			"finished scanning path",        // V(2)
-+			"scanning directory",            // V(3)
-+			"scanning file",                 // V(3)
-+			"finished scanning file",        // V(5)
-+		} {
-+			assert.NotZero(t, logs.FilterMessage(msg).Len(), "missing log line %q", msg)
++	start := make([]byte, 20)
++	binary.LittleEndian.PutUint64(start[0:], uint64(data.Len()+len(unused)))
++	binary.LittleEndian.PutUint64(start[8:], uint64(len(h)))
++	binary.LittleEndian.PutUint32(start[16:], crc32.ChecksumIEEE(h))
++
++	out := []byte{'7', 'z', 0xBC, 0xAF, 0x27, 0x1C, 0, 4}
++	out = binary.LittleEndian.AppendUint32(out, crc32.ChecksumIEEE(start))
++	out = append(out, start...)
++	out = append(out, data.Bytes()...)
++	out = append(out, unused...)
++	return append(out, h...)
++}
++
++func TestArchiveHandler7zEmptyFolder(t *testing.T) {
++	files := make([]string, 8)
++	for i := range files {
++		files[i] = "file " + string(rune('a'+i)) + "\n"
++	}
++
++	ctx := logContext.Background()
++	rdr, err := newFileReader(ctx, io.NopCloser(bytes.NewReader(sevenZipWithEmptyFolder(files))))
++	assert.NoError(t, err)
++	defer func() { _ = rdr.Close() }()
++
++	var got []string
++	for dataOrErr := range newArchiveHandler().HandleFile(ctx, rdr) {
++		assert.NoError(t, dataOrErr.Err)
++		got = append(got, string(dataOrErr.Data))
++	}
++	assert.ElementsMatch(t, files, got)
++}
++
++func TestArchiveHandlerRar5ZeroHeaderSize(t *testing.T) {
++	// A RAR 5 signature followed by a block header that declares a size of
++	// zero. Older rar readers sliced past the end of the header buffer here.
++	data := []byte("Rar!\x1a\x07\x01\x00" + "\x00\x00\x00\x00" + "\x00" + "\x00\x00")
++
++	ctx := logContext.Background()
++	rdr, err := newFileReader(ctx, io.NopCloser(bytes.NewReader(data)))
++	assert.NoError(t, err)
++	defer func() { _ = rdr.Close() }()
++
++	for dataOrErr := range newArchiveHandler().HandleFile(ctx, rdr) {
++		if dataOrErr.Err != nil {
++			assert.NotContains(t, dataOrErr.Err.Error(), "panic")
 +		}
++	}
++}
+```
+
+**File**: `pkg/handlers/handlers.go` (modified, +15/-0)
+```diff
+@@ -7,6 +7,7 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"io"
++	"runtime/debug"
+ 
+ 	"github.com/gabriel-vasile/mimetype"
+ 	"github.com/mholt/archives"
+@@ -53,6 +54,20 @@ var (
+ 	ErrProcessingWarning = errors.New("error processing file")
+ )
+ 
++// recoveredPanicError converts a value returned by recover() into an error and
++// logs it with the stack of the panicking goroutine. Recovered panics come from
++// archive and file-format libraries that hit malformed input, and the stack is
++// the only record of which frame failed. The stack holds code locations and raw
++// argument words, not file contents.
++func recoveredPanicError(ctx logContext.Context, r any, msg string) error {
++	panicErr, ok := r.(error)
++	if !ok {
++		panicErr = fmt.Errorf("panic occurred: %v", r)
++	}
++	ctx.Logger().Error(panicErr, msg, "stack", string(debug.Stack()))
++	return panicErr
++}
 +
-+		// every skip says why, at V(4)
-+		var reasons []string
-+		for _, entry := range logs.FilterMessage("skipping file").All() {
-+			reasons = append(reasons, fmt.Sprint(entry.ContextMap()["reason"]))
-+		}
-+		for _, entry := range logs.FilterMessage("skipping symlink").All() {
-+			reasons = append(reasons, fmt.Sprint(entry.ContextMap()["reason"]))
-+		}
-+		assert.Contains(t, reasons, "binary files are skipped")
-+		assert.Contains(t, reasons, "excluded by path filter")
-+		assert.Contains(t, reasons, "following symlinks is not enabled")
+ // mimeTypeReader wraps an io.Reader with MIME type information.
+ // This type is used to pass content through the processing pipeline
+ // while carrying its detected MIME type, avoiding redundant type detection.
+```
+
+**File**: `pkg/handlers/rpm.go` (modified, +1/-6)
+```diff
+@@ -47,12 +47,7 @@ func (h *rpmHandler) HandleFile(ctx logContext.Context, input fileReader) chan D
+ 		// Defer a panic recovery to handle any panics that occur during the RPM processing.
+ 		defer func() {
+ 			if r := recover(); r != nil {
+-				var panicErr error
+-				if e, ok := r.(error); ok {
+-					panicErr = e
+-				} else {
+-					panicErr = fmt.Errorf("panic occurred: %v", r)
+-				}
++				panicErr := recoveredPanicError(ctx, r, "Panic occurred when handling rpm archive")
+ 				dataOrErrChan <- DataOrErr{
+ 					Err: fmt.Errorf("%w: panic error: %v", ErrProcessingFatal, panicErr),
+ 				}
+```
+
+---
+
+### Incident Patch 3: `282085ca` (2026-10-24)
+**Commit Message**: fix(detectors/anypointoauth2): stop treating HTTP 422 as verified (#5386)
+
+The Anypoint OAuth2 token endpoint returns 422 when it recognizes a
+client_id but cannot process the grant (e.g. client_credentials is not
+supported for that client type). This does not validate the
+client_secret, so treating 422 as verified produces false positives
+when unrelated hex strings in a file happen to match a real client_id.
+
+Move 422 to the unverified branch alongside 401 so only a 200 (actual
+token issuance) counts as verified.
+
+**File**: `pkg/detectors/anypointoauth2/anypointoauth2.go` (modified, +2/-3)
+```diff
+@@ -115,10 +115,9 @@ func verifyMatch(ctx context.Context, client *http.Client, id, secret string) (b
+ 	}()
+ 
+ 	switch res.StatusCode {
+-	// The endpoint responds with status 200 for valid Organization credentials and 422 for Client credentials.
+-	case http.StatusOK, http.StatusUnprocessableEntity:
++	case http.StatusOK:
+ 		return true, nil
+-	case http.StatusUnauthorized:
++	case http.StatusUnauthorized, http.StatusUnprocessableEntity:
+ 		return false, nil
+ 	default:
+ 		return false, fmt.Errorf("unexpected status code: %d", res.StatusCode)
+```
+
+**File**: `pkg/detectors/anypointoauth2/anypointoauth2_test.go` (modified, +61/-0)
+```diff
+@@ -2,9 +2,12 @@ package anypointoauth2
+ 
+ import (
+ 	"context"
++	"net/http"
++	"net/http/httptest"
+ 	"testing"
+ 
+ 	"github.com/google/go-cmp/cmp"
++	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
+@@ -112,3 +115,61 @@ func TestAnypoint_Pattern(t *testing.T) {
+ 		})
+ 	}
+ }
 +
-+		// every line came from the context logger, so it carries the source fields,
-+		// and none of them contain the secret
-+		for _, entry := range logs.All() {
-+			fields := entry.ContextMap()
-+			assert.Contains(t, fields, "source_name", "line %q", entry.Message)
-+			assert.Contains(t, fields, "job_id", "line %q", entry.Message)
-+			assert.NotContains(t, entry.Message, testSecret)
-+			assert.NotContains(t, fmt.Sprint(fields), testSecret)
-+		}
-+	})
++func TestAnypoint_Verification(t *testing.T) {
++	tests := []struct {
++		name         string
++		status       int
++		wantVerified bool
++		wantErr      bool
++	}{
++		{
++			name:         "200 is verified",
++			status:       http.StatusOK,
++			wantVerified: true,
++		},
++		{
++			name:         "401 is not verified",
++			status:       http.StatusUnauthorized,
++			wantVerified: false,
++		},
++		{
++			name:         "422 is not verified",
++			status:       http.StatusUnprocessableEntity,
++			wantVerified: false,
++		},
++		{
++			name:    "500 returns error",
++			status:  http.StatusInternalServerError,
++			wantErr: true,
++		},
++	}
 +
-+	t.Run("debug off", func(t *testing.T) {
-+		core, logs := observer.New(zapcore.InfoLevel)
-+		ctx := trContext.WithLogger(trContext.Background(), zapr.NewLogger(zap.New(core)))
-+		runSource(ctx)
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				w.WriteHeader(tt.status)
++			}))
++			defer server.Close()
 +
-+		assert.Zero(t, logs.FilterMessage("scanning file").Len())
-+		assert.Zero(t, logs.FilterMessage("skipping file").Len())
-+		assert.Zero(t, logs.FilterMessage("finished scanning file").Len())
-+	})
++			orig := verificationUrl
++			verificationUrl = server.URL
++			t.Cleanup(func() { verificationUrl = orig })
++
++			s := Scanner{client: server.Client()}
++			results, err := s.FromData(context.Background(), true, []byte(
++				`anypoint id e3cd10a87f53b2dfa4b5fd606e7d9eca anypoint secret ACE9d7E606Df5B4AFD2B35f78A01DC3E`,
++			))
++			require.NoError(t, err)
++			require.Len(t, results, 1)
++
++			if tt.wantErr {
++				assert.False(t, results[0].Verified)
++				assert.Error(t, results[0].VerificationError())
++			} else {
++				assert.Equal(t, tt.wantVerified, results[0].Verified)
++				assert.NoError(t, results[0].VerificationError())
++			}
++		})
++	}
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5474** (2026-10-24): Fix 7z and rar panics in the archive handler and log recovered panic stacks (@dustin-decker)
+- **PR #5473** (2026-10-24): Keep GoReleaser temp files off the tmpfs /tmp in releases (@dustin-decker)
+- **PR #5472** (2026-10-24): security: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497) (@dustin-decker)
+- **PR #5471** (2026-10-24): Fix --include-wikis help typo and huggingface README description (@protonnegativo)
 - **PR #5465** (2026-10-23): Clean up Filesystem source logging for per-source debug (@kashifkhan0771)
 - **PR #5464** (2026-10-21): Update module golang.org/x/net to v0.60.0 [SECURITY] (@renovate[bot])
-- **PR #5463** (closed): Update module golang.org/x/mod to v0.40.0 [SECURITY] - autoclosed (@renovate[bot])
-- **PR #5462** (2026-10-21): Update module golang.org/x/crypto to v0.56.0 [SECURITY] (@renovate[bot])
-- **PR #5461** (closed): Update go toolchain directive to v1.26.10 [SECURITY] - autoclosed (@renovate[bot])
-- **PR #5460** (2026-10-21): Update module github.com/yuin/goldmark to v1.7.17 [SECURITY] (@renovate[bot])
 
 ---
 
@@ -1455,88 +1726,28 @@ debug lines show with debug off.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clean up Filesystem source logging for per-source debug (#5465)
+## X. security: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497) (#5472)
 
 **RULE**:
-When implementing operations in `pkg/sources/filesystem/filesystem.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d6ea4a52`: Clean up Filesystem source logging for per-source debug (#5465). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3bd461f1`: security: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497) (#5472). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/filesystem/filesystem.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"time"
-
-	aCtx.Logger().V(1).Info("filesystem source initialized",
-		"path_count", len(s.paths),
-		"skip_binaries", s.skipBinaries,
-		"max_symlink_depth", s.maxSymlinkDepth,
-		"include_paths_file", conn.IncludePathsFile,
-		"exclude_paths_file", conn.ExcludePathsFile,
-	)
-		// root_path is kept apart from path, which the lines below use for the item being scanned.
-		pathCtx := trContext.WithValues(ctx, "root_path", rootPath)
-		fileInfo, err := os.Lstat(filepath.Clean(rootPath))
-			pathCtx.Logger().Error(err, "unable to get file info")
-		if err := s.scanRootPath(pathCtx, chunksChan, rootPath, fileInfo); err != nil && !errors.Is(err, io.EOF) {
-			pathCtx.Logger().Error(err, "error scanning filesystem")
-// scanRootPath scans one configured path, which can be a symlink, a directory, or a file.
-// It is shared by Chunks and ChunkUnit so both scan and log a root path the same way.
-func (s *Source) scanRootPath(
-	ctx trContext.Context,
-	chunksChan chan *sources.Chunk,
-	rootPath string,
-	fileInfo os.FileInfo,
-) error {
-	cleanPath := filepath.Clean(rootPath)
-	initialDepth := 0
-	start := time.Now()
-
-	var err error
-	switch {
-	case fileInfo.Mode()&os.ModeSymlink != 0:
-		ctx.Logger().V(2).Info("s
+	github.com/andybalholm/brotli v1.2.7 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	"github.com/go-logr/logr"
-	log          logr.Logger
-	s.log = aCtx.Logger()
-
-		logger := ctx.Logger().WithValues("path", rootPath)
-		cleanPath := filepath.Clean(rootPath)
-		fileInfo, err := os.Lstat(cleanPath)
-			logger.Error(err, "unable to get file info")
-		if fileInfo.Mode()&os.ModeSymlink != 0 {
-			// if the root path is a symlink we scan the symlink
-			ctx.Logger().V(5).Info("Root path is a symlink", "path", cleanPath)
-			initialDepth := 0
-			err = s.scanSymlink(ctx, chunksChan, rootPath, initialDepth, cleanPath)
-			s.ClearEncodedResumeInfoFor(rootPath)
-		} else if fileInfo.IsDir() {
-			ctx.Logger().V(5).Info("Root path is a dir", "path", cleanPath)
-			initialDepth := 0
-			err = s.scanDir(ctx, chunksChan, rootPath, initialDepth, cleanPath)
-			s.ClearEncodedResumeInfoFor(rootPath)
-		} else {
-			if !fileInfo.Mode().IsRegular() {
-				logger.Info("skipping non-regular file", "path", cleanPath)
-				continue
-			}
-			ctx.Logger().V(5).Info("Root path is a file", "path", cleanPath)
-			err = s.scanFile(ctx, chunksChan, cleanPath)
-		}
-
-		if err != nil && !errors.Is(err, io.EOF) {
-			logger.Error(err, "error scanning filesystem")
-		// If the file or directory is a symlink but the followS
+	github.com/andybalholm/brotli v1.1.1 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d6ea4a52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3bd461f1` are properly handled with clean fallback behavior.

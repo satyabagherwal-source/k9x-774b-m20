@@ -2183,10 +2183,10 @@
     "repository": "crawlseo/crawlseo",
     "platform": "github",
     "sourceUrl": "https://github.com/crawlseo/crawlseo",
-    "sourceVersion": "3ef28826",
+    "sourceVersion": "449ff7a7",
     "license": "MIT",
-    "contentHash": "60585950719e9d0ad7b9441e7a138384dd9823d0ca569821596eb913f6ceeed7",
-    "lastHarvestedAt": "2026-10-20T08:21:56.766Z",
+    "contentHash": "85f6f41da6f0d34ba14306e3734935132a88aa7b008ba08dc6da2e08acbc42f1",
+    "lastHarvestedAt": "2026-10-24T20:48:38.466Z",
     "learningId": "learn-github-crawlseo-crawlseo"
   },
   "react-hook-form-react-hook-form": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "d6ea4a52",
+    "sourceVersion": "31ce31ee",
     "license": "AGPL-3.0",
-    "contentHash": "8a5eccdaa04726d1fec306783f9d15bab64a7072de144af7923bd2ba617dcaa1",
-    "lastHarvestedAt": "2026-10-23T09:20:54.217Z",
+    "contentHash": "4174bbd5dce25c940af029f6d175a6747fb08fbfd4769e247d2025dc65cfc266",
+    "lastHarvestedAt": "2026-10-24T20:48:46.418Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -6343,10 +6343,10 @@
     "repository": "Ataraxy-Labs/sem",
     "platform": "github",
     "sourceUrl": "https://github.com/Ataraxy-Labs/sem",
-    "sourceVersion": "9177f90c",
+    "sourceVersion": "f7fa398c",
     "license": "Apache-2.0",
-    "contentHash": "10691a63f888b8d2d13db5dee56304c0b27d53c37b13667b46c548092e315d23",
-    "lastHarvestedAt": "2026-10-19T20:41:05.798Z",
+    "contentHash": "ff9e0140a51dabe509ad315726f3e10fd6fa1f706629a718437538b0344e8d24",
+    "lastHarvestedAt": "2026-10-24T20:48:38.127Z",
     "learningId": "learn-github-ataraxy-labs-sem"
   },
   "komi-store-komi-store": {

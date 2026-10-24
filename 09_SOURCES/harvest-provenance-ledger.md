@@ -4600,3 +4600,6 @@ Every entry in this ledger must capture:
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `71deabab` | Multi-dimensional audit evidence | 2026-10-24T20:31:21.154Z |
 | `learn-github-lokoe-mehdi-scouter` | `https://github.com/lokoe-mehdi/scouter` | `e8edc3c5` | Multi-dimensional audit evidence | 2026-10-24T20:41:57.296Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `3c134666` | Multi-dimensional audit evidence | 2026-10-24T20:42:01.315Z |
+| `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `f7fa398c` | Multi-dimensional audit evidence | 2026-10-24T20:48:38.127Z |
+| `learn-github-crawlseo-crawlseo` | `https://github.com/crawlseo/crawlseo` | `449ff7a7` | Multi-dimensional audit evidence | 2026-10-24T20:48:38.466Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `31ce31ee` | Multi-dimensional audit evidence | 2026-10-24T20:48:46.418Z |

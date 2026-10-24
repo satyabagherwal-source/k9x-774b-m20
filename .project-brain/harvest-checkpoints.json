@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-24T20:42:01.329Z",
+  "last_updated": "2026-10-24T20:48:46.427Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3411,14 +3411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlseo-crawlseo",
-      "content_hash": "60585950719e9d0ad7b9441e7a138384dd9823d0ca569821596eb913f6ceeed7",
-      "verified_at": "2026-10-20T08:21:56.774Z",
+      "content_hash": "85f6f41da6f0d34ba14306e3734935132a88aa7b008ba08dc6da2e08acbc42f1",
+      "verified_at": "2026-10-24T20:48:38.480Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T08:21:56.774Z"
+      "last_updated": "2026-10-24T20:48:38.480Z"
     },
     "react-hook-form/react-hook-form": {
       "repository": "react-hook-form/react-hook-form",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "8a5eccdaa04726d1fec306783f9d15bab64a7072de144af7923bd2ba617dcaa1",
-      "verified_at": "2026-10-23T09:20:54.225Z",
+      "content_hash": "4174bbd5dce25c940af029f6d175a6747fb08fbfd4769e247d2025dc65cfc266",
+      "verified_at": "2026-10-24T20:48:46.426Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T09:20:54.225Z"
+      "last_updated": "2026-10-24T20:48:46.426Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -9606,14 +9606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ataraxy-labs-sem",
-      "content_hash": "10691a63f888b8d2d13db5dee56304c0b27d53c37b13667b46c548092e315d23",
-      "verified_at": "2026-10-19T20:41:05.802Z",
+      "content_hash": "ff9e0140a51dabe509ad315726f3e10fd6fa1f706629a718437538b0344e8d24",
+      "verified_at": "2026-10-24T20:48:38.136Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:41:05.802Z"
+      "last_updated": "2026-10-24T20:48:38.136Z"
     },
     "komi-store/komi-store": {
       "repository": "komi-store/komi-store",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T20:42:01.256Z",
+  "last_updated": "2026-10-24T20:48:46.364Z",
   "total_verified_learnings": 1080,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3325,8 +3325,8 @@
       "slug": "ataraxy-labs-sem",
       "platform": "github",
       "source_url": "https://github.com/Ataraxy-Labs/sem",
-      "source_version": "9177f90c",
-      "content_hash": "10691a63f888b8d2d13db5dee56304c0b27d53c37b13667b46c548092e315d23",
+      "source_version": "f7fa398c",
+      "content_hash": "ff9e0140a51dabe509ad315726f3e10fd6fa1f706629a718437538b0344e8d24",
       "dossier_path": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "promoted_rules": [
@@ -3339,6 +3339,11 @@
           "number": 2801,
           "title": "build git2 without network transports so macOS needs no OpenSSL (#522)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3964,
+          "title": "parallelize the rest of the cold index build's serial stretches (#528)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3346,7 +3351,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:41:05.750Z",
+      "verified_at": "2026-10-24T20:48:38.060Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47615,8 +47620,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "d6ea4a52",
-      "content_hash": "8a5eccdaa04726d1fec306783f9d15bab64a7072de144af7923bd2ba617dcaa1",
+      "source_version": "31ce31ee",
+      "content_hash": "4174bbd5dce25c940af029f6d175a6747fb08fbfd4769e247d2025dc65cfc266",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -47664,6 +47669,11 @@
           "number": 3851,
           "title": "Clean up Filesystem source logging for per-source debug (#5465)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3965,
+          "title": "security: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497) (#5472)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47671,7 +47681,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T09:20:54.177Z",
+      "verified_at": "2026-10-24T20:48:46.353Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60698,15 +60708,15 @@
       "slug": "crawlseo-crawlseo",
       "platform": "github",
       "source_url": "https://github.com/crawlseo/crawlseo",
-      "source_version": "3ef28826",
-      "content_hash": "60585950719e9d0ad7b9441e7a138384dd9823d0ca569821596eb913f6ceeed7",
+      "source_version": "449ff7a7",
+      "content_hash": "85f6f41da6f0d34ba14306e3734935132a88aa7b008ba08dc6da2e08acbc42f1",
       "dossier_path": "07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
       "promoted_rules": [
         {
           "number": 1703,
           "title": "Worker crash ordering and crawler user-agent /bot URL (#96)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 3110,
@@ -60729,7 +60739,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T08:21:56.701Z",
+      "verified_at": "2026-10-24T20:48:38.397Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -83410,13 +83420,13 @@
       "rule_number": 1703,
       "title": "Worker crash ordering and crawler user-agent /bot URL (#96)",
       "source_url": "https://github.com/crawlseo/crawlseo",
-      "source_version": "e3b8991c",
+      "source_version": "449ff7a7",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T21:07:38.688Z"
+      "verified_at": "2026-10-24T20:48:38.397Z"
     },
     "rule-1704": {
       "learning_id": "rule-1704",
@@ -116531,6 +116541,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T20:42:01.244Z"
+    },
+    "rule-3964": {
+      "learning_id": "rule-3964",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3964,
+      "title": "parallelize the rest of the cold index build's serial stretches (#528)",
+      "source_url": "https://github.com/Ataraxy-Labs/sem",
+      "source_version": "f7fa398c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:48:38.060Z"
+    },
+    "rule-3965": {
+      "learning_id": "rule-3965",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3965,
+      "title": "security: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497) (#5472)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "31ce31ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:48:46.353Z"
     }
   },
   "aliases": {

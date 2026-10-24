@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T20:42:01.325Z",
-  "total_cycles_completed": 4570,
-  "total_learnings_persisted": 4570,
-  "total_rules_promoted": 3820,
+  "last_updated": "2026-10-24T20:48:46.423Z",
+  "total_cycles_completed": 4573,
+  "total_learnings_persisted": 4573,
+  "total_rules_promoted": 3823,
   "history": [
-    {
-      "timestamp": "2026-10-22T18:56:56.025Z",
-      "repository": "inikulin/parse5",
-      "learningId": "learn-github-inikulin-parse5",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:56:56.089Z",
-      "repository": "nats-io/nats.go",
-      "learningId": "learn-github-nats-io-nats-go",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T19:03:14.056Z",
-      "repository": "elastic/eui",
-      "learningId": "learn-github-elastic-eui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T19:03:14.713Z",
       "repository": "FalkorDB/FalkorDB",
@@ -1403,6 +1382,27 @@
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:48:38.132Z",
+      "repository": "Ataraxy-Labs/sem",
+      "learningId": "learn-github-ataraxy-labs-sem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:48:38.475Z",
+      "repository": "crawlseo/crawlseo",
+      "learningId": "learn-github-crawlseo-crawlseo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:48:46.423Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
