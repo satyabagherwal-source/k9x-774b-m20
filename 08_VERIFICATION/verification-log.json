@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-2WR4",
-    "timestamp": "2026-10-20T22:51:59.440Z",
-    "repository": "CompVis/stable-diffusion-v1-4",
-    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "9dcf5063e2a86b6e05c831a10a02dbab1a33b99dc1088236dc3b1360588ef090",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-AMUU",
-    "timestamp": "2026-10-20T22:57:59.862Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-    "contentHash": "d0788052b367b6785d02977553b30aed3206982d21a4f93f6e27345da09dc2a2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-AY6H",
-    "timestamp": "2026-10-20T22:58:14.537Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "837cdfb3d17bd088a34dc8e629767dd2922f4d5dc6c350e4e07b6d7603fec698",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-IQWX",
-    "timestamp": "2026-10-20T23:04:18.369Z",
-    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-    "contentHash": "d34e504eaba884df9017204b865f5194a06b8d83bdb80baae7e0e7acd8c71778",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-IZYO",
-    "timestamp": "2026-10-20T23:04:30.096Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "648cd439abc11fb6a7975db412f7657c1690582a986d0c945552f2fafbe593af",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-J3VU",
     "timestamp": "2026-10-20T23:04:35.178Z",
     "repository": "ClickHouse/ClickHouse",
@@ -7490,6 +7415,81 @@
     "repository": "zama-ai/tfhe-rs",
     "learningId": "learn-github-zama-ai-tfhe-rs",
     "contentHash": "63be647b008739d080533367fc5ba1500d0fa8641870620f0ce8a960179a6b03",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-VFUL",
+    "timestamp": "2026-10-24T20:04:54.141Z",
+    "repository": "hunvreus/basecoat",
+    "learningId": "learn-github-hunvreus-basecoat",
+    "contentHash": "d2d26f32f748578b8ad1a9def5dc72c313152c9fe3d5460f3f79b7bad52d482a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-VH7W",
+    "timestamp": "2026-10-24T20:04:55.916Z",
+    "repository": "kubearmor/KubeArmor",
+    "learningId": "learn-github-kubearmor-kubearmor",
+    "contentHash": "bc17368007b88137eaf711f29526156d4b9d957f630f364ef0df21367ee9fdf2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-VKTG",
+    "timestamp": "2026-10-24T20:05:00.580Z",
+    "repository": "software-mansion/react-native-reanimated",
+    "learningId": "learn-github-software-mansion-react-native-reanimated",
+    "contentHash": "25360b298811bc00bfbb89da412f973e96b4fe06bdfc8984bce81ca480e9c986",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-VMSZ",
+    "timestamp": "2026-10-24T20:05:03.155Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "975efc18daa9cad1371637bddb5edeb11dbc8ae5f3ce04b9cefb9ae0637761d5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-VQOZ",
+    "timestamp": "2026-10-24T20:05:08.195Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "b931d22bb1e455a82cc4a3983e76c264047eeaa7391430295c611d1025d02f00",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -4575,3 +4575,8 @@
 | `CYCLE-20261024-NJKO` | `2026-10-24T19:58:45.720Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3933` | Yes (`f98f59af...`) |
 | `CYCLE-20261024-NS1E` | `2026-10-24T19:58:56.690Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3934` | Yes (`ba106c4f...`) |
 | `CYCLE-20261024-NTAN` | `2026-10-24T19:58:58.319Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3935` | Yes (`63be647b...`) |
+| `CYCLE-20261024-VFUL` | `2026-10-24T20:04:54.141Z` | `hunvreus/basecoat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3936` | Yes (`d2d26f32...`) |
+| `CYCLE-20261024-VH7W` | `2026-10-24T20:04:55.916Z` | `kubearmor/KubeArmor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3937` | Yes (`bc173680...`) |
+| `CYCLE-20261024-VKTG` | `2026-10-24T20:05:00.580Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3938` | Yes (`25360b29...`) |
+| `CYCLE-20261024-VMSZ` | `2026-10-24T20:05:03.155Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3939` | Yes (`975efc18...`) |
+| `CYCLE-20261024-VQOZ` | `2026-10-24T20:05:08.195Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3940` | Yes (`b931d22b...`) |

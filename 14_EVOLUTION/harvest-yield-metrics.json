@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T19:58:58.329Z",
-  "total_cycles_completed": 4552,
-  "total_learnings_persisted": 4552,
-  "total_rules_promoted": 3789,
+  "last_updated": "2026-10-24T20:05:08.204Z",
+  "total_cycles_completed": 4557,
+  "total_learnings_persisted": 4557,
+  "total_rules_promoted": 3794,
   "history": [
-    {
-      "timestamp": "2026-10-22T18:11:04.299Z",
-      "repository": "webrecorder/pywb",
-      "learningId": "learn-github-webrecorder-pywb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:11:09.540Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:11:15.153Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:17:49.289Z",
-      "repository": "higress-group/higress",
-      "learningId": "learn-github-higress-group-higress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T18:24:09.506Z",
-      "repository": "sharkdp/fd",
-      "learningId": "learn-github-sharkdp-fd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T18:24:11.987Z",
       "repository": "ArchiveBox/ArchiveBox",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-24T19:58:58.329Z",
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:04:54.151Z",
+      "repository": "hunvreus/basecoat",
+      "learningId": "learn-github-hunvreus-basecoat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:04:55.925Z",
+      "repository": "kubearmor/KubeArmor",
+      "learningId": "learn-github-kubearmor-kubearmor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:05:00.589Z",
+      "repository": "software-mansion/react-native-reanimated",
+      "learningId": "learn-github-software-mansion-react-native-reanimated",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:05:03.165Z",
+      "repository": "rook/rook",
+      "learningId": "learn-github-rook-rook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:05:08.204Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -4582,3 +4582,8 @@ Every entry in this ledger must capture:
 | `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `f62b68e4` | Multi-dimensional audit evidence | 2026-10-24T19:58:45.723Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `82ad6f10` | Multi-dimensional audit evidence | 2026-10-24T19:58:56.692Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `c534a3f5` | Multi-dimensional audit evidence | 2026-10-24T19:58:58.322Z |
+| `learn-github-hunvreus-basecoat` | `https://github.com/hunvreus/basecoat` | `6769c83c` | Multi-dimensional audit evidence | 2026-10-24T20:04:54.144Z |
+| `learn-github-kubearmor-kubearmor` | `https://github.com/kubearmor/KubeArmor` | `99518b0d` | Multi-dimensional audit evidence | 2026-10-24T20:04:55.918Z |
+| `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `1735e031` | Multi-dimensional audit evidence | 2026-10-24T20:05:00.582Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `d4548cbb` | Multi-dimensional audit evidence | 2026-10-24T20:05:03.157Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `fe561573` | Multi-dimensional audit evidence | 2026-10-24T20:05:08.197Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hunvreus-basecoat-learnings.md`  
 > **Source**: github ([https://github.com/hunvreus/basecoat](https://github.com/hunvreus/basecoat))  
-> **Source Version**: `6953a4ad`  
+> **Source Version**: `6769c83c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:29:20.869Z  
+> **Timestamp**: 2026-10-24T20:04:53.926Z  
 > **Learning ID**: `learn-github-hunvreus-basecoat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hunvreus-basecoat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hunvreus/basecoat](https://github.com/hunvreus/basecoat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:29:19.384Z  
+> **Harvest Timestamp**: 2026-10-24T20:04:51.833Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A components library built with Tailwind CSS that works with any web stack.
 - **Primary Language / Ecosystem**: MDX
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4373 stars
+- **Stars / Engagement**: 4397 stars
 
 ---
 
@@ -36,6 +36,184 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `scripts/check.js`
+```
+// Cheap sanity checks. Run after a build.
+//   node scripts/check.js        package: every export target exists, JS parses, min CSS keeps all selectors
+//   node scripts/check.js site   docs site: site/dist built, llms.txt links to .md exports
+import fs from 'fs';
+import path from 'path';
+import { execFileSync } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const errors = [];
+
+function checkPackage() {
+  const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+
+  for (const [key, target] of Object.entries(pkg.exports)) {
+    const file = path.join(root, target);
+    if (target.includes('*')) {
+      const dir = path.dirname(file.slice(0, file.indexOf('*')) + 'x');
+      if (!fs.existsSync(dir) || fs.readdirSync(dir).length === 0) {
+        errors.push(`export "${key}": no files in ${path.relative(root, dir)}`);
+      }
+    } else if (!fs.existsSync(file) || fs.statSync(file).size === 0) {
+      errors.push(`export "${key}": ${target} is missing or empty`);
+    }
+  }
+
+  const jsDir = path.join(root, 'dist', 'js');
+  for (const name of fs.existsSync(jsDir) ? fs.readdirSync(jsDir) : []) {
+    if (!name.endsWith('.js')) continue;
+    try {
+      execFileSync(process.execPath, ['--check', path.join(jsDir, name)], { stdio: 'pipe' });
+    } catch (error) {
+      const message = error.stderr.toString().split('\n').find((line) => /Error/.test(line));
+      errors.push(`dist/js/${name} does not parse: ${message || 'syntax error'}`);
+    }
+  }
+}
+
+// Minified CDN CSS must keep every selector of its unminified source.
+// Selectors are flattened (nesting resolved, :is() lists expanded) and normalized
+// (::after/:after, attribute quotes, combinator spacing, from/0%) before comparing.
+function splitTop(str) {
+  const out = [];
+  let depth = 0, quote = null, cur = '';
+  for (let i = 0; i < str.length; i++) {
+    const c = str[i];
+    if (quote) { cur += c; if (c === '\\') cur += str[++i] ?? ''; else if (c === quote) quote = null; continue; }
+    if (c === '"' || c === "'") { quote = c; cur += c; continue; }
+    if (c === '(' || c === '[') depth++;
+    else if (c === ')' || c === ']') depth--;
+    if (c === ',' && depth === 0) { out.push(cur); cur = ''; } else cur += c;
+  }
+  out.push(cur);
+  return out.map((s) => s.trim()).filter(Boolean);
+}
+
+function parseCss(css) {
+  css = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const root = { children: [] };
+  const stack = [root];
+  let buf = '', quote = null, paren = 0;
+  for (let i = 0; i < css.length; i++) {
+    const c = css[i];
+    if (quote) { buf += c; if (c === '\\') buf += css[++i] ?? ''; else if (c === quote) quote = null; continue; }
+    if (c === '"' || c === "'") { quote = c; buf += c; continue; }
+    if (c === '(') paren++;
+    else if (c === ')') paren--;
+    if (paren > 0) { buf += c; continue; }
+    if (c === '{') { const node = { prelude: buf.trim(), children: [] }; stack.at(-1).children.push(node); stack.push(node); buf = ''; }
+    else if (c === '}') { if (buf.trim()) stack.at(-1).children.push({ decl: true }); stack.pop(); buf = ''; }
+    else if (c === ';') { if (buf.trim()) stack.at(-1).children.push({ decl: true }); buf = ''; }
+    else buf += c;
+  }
+  return root;
+}
+
+function normalizeSelector(s) {
+  return s
+    .replace(/::(before|after|first-line|first-letter)\b/g, ':$1')
+    .replace(/\[\s*([^\]=~|^$*\s]+)\s*([~|^$*]?=)\s*(["'])((?:\\.|(?!\3).)*)\3\s*(\s[is])?\s*\]/g, '[$1$2$4$5]')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([>+~,])\s*/g, '$1')
+    .replace(/\(\s+/g, '(')
+    .replace(/\s+\)/g, ')')
+    .replace(/^from$/, '0%')
+    .replace(/^to$/, '100%')
+    .trim();
+}
+
+function expandIs(sel) {
+  const i = sel.indexOf(':is(');
+  if (i < 0) return [sel];
+  let depth = 0, j = i + 3;
+  for (; j < sel.length; j++) { if (sel[j] === '(') depth++; else if (sel[j] === ')' && --depth === 0) break; }
+  const inner = splitTop(sel.slice(i + 4, j));
+  const attached = i > 0 && !/[\s>+~(,]/.test(sel[i - 1]);
+  if (attached && inner.some((part) => /[\s>+~]/.test(part.replace(/\([^)]*\)/g, '')))) {
+    return expandIs(sel.slice(j + 1)).map((rest) => sel.slice(0, j + 1) + rest);
+  }
+  return inner.flatMap((part) => expandIs(sel.slice(0, i) + part + sel.slice(j + 1)));
+}
+
+function flatSelectors(css) {
+  const keys = new Set();
+  const normParams = (p) => p.replace(/\s+/g, ' ').replace(/\s*([():,<>=]+)\s*/g, '$1').replace(/"/g, "'").trim().toLowerCase();
+  const walk = (node, ctx, parents) => {
+    for (const child of node.children) {
+      if (!child.children) continue;
+      const pre = child.prelude;
+      if (pre.startsWith('@')) {
+        const [, name, params] = pre.match(/^@([\w-]+)\s*([\s\S]*)$/);
+        const at = `@${name} ${normParams(params)}`;
+        if (/^(media|supports|layer|container|keyframes|-webkit-keyframes|scope|starting-style)$/.test(name)) {
+          // Declarations directly inside a nested at-rule belong to the parent selectors.
+          if (parents && child.children.some((c) => c.decl)) for (const p of parents) keys.add(`${[...ctx, at].join(' | ')} || ${p}`);
+          walk(child, [...ctx, at], name.endsWith('keyframes') ? null : parents);
+        } else keys.add([...ctx, at].join(' | '));
+        continue;
+      }
+      const own = splitTop(pre);
+      const sels = (parents ? parents.flatMap((p) => own.map((s) => (s.includes('&') ? s.replace(/&/g, p) : `${p} ${s}`))) : own)
+        .map(normalizeSelector).flatMap(expandIs).map(normalizeSelector);
+      if (child.children.some((c) => c.decl)) for (const s of sels) keys.add(`${ctx.join(' | ')} || ${s}`);
+      walk(child, ctx, sels);
+    }
+  };
+  walk(parseCss(css), [], null);
+  return keys;
+}
+
+function checkMinifiedCss() {
+  const dist = path.join(root, 'dist');
+  for (const name of fs.existsSync(dist) ? fs.readdirSync(dist) : []) {
+    if (!name.endsWith('.cdn.css')) continue;
+    const minName = name.replace(/\.css$/, '.min.css');
+    const minFile = path.join(dist, minName);
+    if (!fs.existsSync(minFile)) { errors.push(`dist/${minName} is missing`); continue; }
+    const min = flatSelectors(fs.readFileSync(minFile, 'utf8'));
+    const missing = [...flatSelectors(fs.readFileSync(path.join(dist, name), 'utf8'))].filter((key) => !min.has(key));
+    if (missing.length) errors.push(`dist/${minName} dropped ${missing.length} selector(s) from dist/${name}, e.g. ${missing.slice(0, Number(process.env.SHOW || 3)).join('; ')}`);
+  }
+}
+
+function checkSite() {
+  const dist = path.join(root, 'site', 'dist');
+  for (const file of ['index.html', 'llms.txt', 'llms-full.txt']) {
+    if (!fs.existsSync(path.join(dist, file))) errors.push(`site/dist/${file} is missing`);
+  }
+  const llms = path.join(dist, 'llms.txt');
+  if (!fs.existsSync(llms)) return;
+  const links = [...fs.readFileSync(llms, 'utf8').matchAll(/^- \[[^\]]*\]\(([^)]+)\)/gm)].map((m) => m[1]);
+  if (links.length === 0) errors.push('site/dist/llms.txt has no links');
+  for (const link of links) {
+    if (!link.endsWith('.md')) errors.push(`site/dist/llms.txt links to ${link}, not a .md export`);
+  }
+}
+
+const target = process.argv[2] || 'package';
+if (target === 'package') {
+  checkPackage();
+  checkMinifiedCss();
+}
+else if (target === 'site') checkSite();
+else {
+  console.error(`Unknown target "${target}". Use "package" or "site".`);
+  process.exit(2);
+}
+
+if (errors.length) {
+  console.error(`${target} check failed:\n- ${errors.join('\n- ')}`);
+  process.exit(1);
+}
+console.log(`${target} check passed.`);
+
+```
 
 ### Core Architecture Module: `scripts/generate-css-entrypoints.js`
 ```
@@ -1154,260 +1332,23 @@ document.addEventListener("htmx:afterSettle", initDemos);
     const borderColor = Arr
 ```
 
-### Core Architecture Module: `src/js/combobox.js`
-```
-(() => {
-  const states = new WeakMap();
-
-  const getElements = (root) => {
-    const popover = root.querySelector(':scope > [data-popover]');
-    const input = root.querySelector(':scope > input[role="combobox"], :scope > .input-group input[role="combobox"], :scope > .combobox-chips input[role="combobox"]')
-      || popover?.querySelector('input[role="combobox"]');
-    const chips = root.querySelector(':scope > .combobox-chips');
-    const popupTrigger = root.querySelector(':scope > button[aria-haspopup="listbox"]');
-    const trigger = popupTrigger || root.querySelector(':scope > .input-group button[aria-haspopup="listbox"]');
-    const clearButton = root.querySelector('[data-clear]');
-    const valueTarget = popupTrigger?.querySelector('[data-value]') || (popupTrigger?.matches('[data-value]') ? popupTrigger : null);
-    const listbox = popover ? popover.querySelector('[role="listbox"]') : null;
-    const hiddenInput = root.querySelector(':scope > input[type="hidden"]');
-    return { input, chips, trigger, clearButton, valueTarget, popover, listbox, hiddenInput };
-  };
-
-  const ensureMultipleInputSurface = (root, elements) => {
-    if (elements.listbox?.getAttribute('aria-multiselectable') !== 'true' || elements.chips || !elements.input) return elements;
-    if (elements.input.parentElement !== root) return elements;
-
-    const chips = document.createElement('div');
-    chips.className = 'combobox-chips';
-    root.insertBefore(chips, elements.input);
-    chips.appendChild(elements.input);
-
-    return getElements(root);
-  };
-
-  const getValue = option => option.dataset.value ?? option.textContent.trim();
-  const getLabel = option => option.dataset.label || option.textContent.trim();
-  const getFormat = root => root.dataset.format === 'object' ? 'object' : 'value';
-  const isDisabled = option => option.getAttribute('aria-disabled') === 'true';
-  const toSelected = option => ({ value: getValue(option), label: getLabel(option) });
-  const normalizeEntry = entry => {
-    if (entry && typeof entry === 'object') {
-      const value = entry.value == null ? '' : String(entry.value);
-      return value ? { value, label: String(entry.label ?? entry.value) } : null;
-    }
-    const value = entry == null ? '' : String(entry);
-    return value ? { value, label: value } : null;
-  };
-
-  const getOptions = (listbox) => {
-    const allOptions = Array.from(listbox.querySelectorAll('[role="option"]'));
-    return {
-      allOptions,
-      options: allOptions.filter(option => !isDisabled(option)),
-    };
-  };
-
-  const getSelection = (state) => Array.from(state.selected.values());
-  const getCanonicalValue = (state) => state.isMultiple ? getSelection(state).map(item => item.value) : (getSelection(state)[0]?.value || '');
-  const getSelectedDetail = (state) => state.isMultiple ? getSelection(state) : (getSelection(state)[0] || null);
-
-  const serializeSelection = (state) => {
-    const selected = getSelection(state);
-    if (state.format === 'object') {
-      return JSON.stringify(state.isMultiple ? selected : (selected[0] || null));
-    }
-    const value = selected.map(item => item.value);
-    return state.isMultiple ? JSON.stringify(value) : (value[0] || '');
-  };
-
-  const parseStoredSelection = (storedValue, inputValue, state) => {
-    if (state.isMultiple) {
-      let parsed = [];
-      try {
-        parsed = JSON.parse(storedValue || '[]');
-      } catch (_) {
-        parsed = [];
-      }
-      if (!Array.isArray(parsed)) return [];
-      return parsed.map(item => {
-        const entry = normalizeEntry(state.format === 'object' ? item : { value: item, label: state.selected.get(String(item))?.label ?? item });
-        if (!entry) return null;
-        const option = state.options.find(opt => getValue(opt) === entry.value);
-        return option ? toSelected(option) : entry;
-      }).filter(Boolean);
-    }
-
-    if (state.format === 'object') {
-      try {
-        const entry = normalizeEntry(JSON.parse(storedValue || 'null'));
-        if (!entry) return [];
-        const option = state.options.find(opt => getValue(opt) === entry.value);
-        return [option ? toSelected(option) : entry];
-      } catch (_) {
-        return [];
-      }
-    }
-
-    const value = storedValue || '';
-    if (!value) return [];
-    const option = state.options.find(opt => getValue(opt) === value);
-    return [option ? toSelected(option) : { value, label: state.selected.get(value)?.label || inputValue || value }];
-  };
-
-  const scrollOptionIntoListbox = (state, option) => {
-    const optionRect = option.getBoundingClientRect();
-    const listboxRect = state.listbox.getBoundingClientRect();
-
-    if (optionRect.top < listboxRect.top) {
-      state.listbox.scrollTop -= listboxRect.top - optionRect.top;
-    } else if (optionRect.bottom > listboxRect.bottom) {
-      state.listbox.scrollTop += optionRect.bottom - listboxRect.bottom;
-    }
-  };
-
-  const setActiveOption = (state, index) => {
-    if (state.activeIndex > -1 && state.options[state.activeIndex]) {
-      state.options[state.activeIndex].classList.remove('active');
-    }
-
-    state.activeIndex = index;
-
-    if (state.activeIndex > -1) {
-      const activeOption = state.options[state.activeIndex];
-      activeOption.classList.add('active');
-      if (!activeOption.id) activeOption.id = `${state.listbox.id || state.root.id || 'combobox'}-option-${state.activeIndex}`;
-      state.input.setAttribute('aria-activedescendant', activeOption.id);
-    } else {
-      state.input.removeAttribute('aria-activedescendant');
-    }
-  };
-
-  const syncEmptyState = (state) => {
-    state.popover.dataset.empty = String(state.visibleOptions.length === 0);
-  };
-
-  const filterOptions = (state, { preserveActive = false, search: forcedSearch } = {}) => {
-    const previousActive = state.activeIndex > -1 ? state.options[state.activeIndex] : null;
-    state.visibleOptions = [];
-
-    if (state.manualFilter) {
-      state.visibleOptions = state.options.filter(option => option.getAttribute('aria-hidden') !== 'true');
-
-      if (preserveActive && previousActive && state.visibleOptions.includes(previousActive)) {
-        setActiveOption(state, state.options.indexOf(previousActive));
-      } else {
-        setActiveOption(state, state.autoHighlight && state.visibleOptions.length > 0 ? state.options.indexOf(state.visibleOptions[0]) : -1);
-      }
-      syncEmptyState(state);
-      return;
-    }
-
-    const search = (forcedSearch ?? state.input.value).trim().toLowerCase();
-
-    state.allOptions.forEach(option => {
-      if (option.hasAttribute('data-force')) {
-        option.setAttribute('aria-hidden', 'false');
-        if (state.options.includes(option)) state.visibleOptions.push(option);
-        return;
-      }
-
-      const optionText = (option.dataset.filter || option.dataset.label || option.textContent).trim().toLowerCase();
-      const keywords = (option.dataset.keywords || '').toLowerCase().split(/[\s,]+/).filter(Boolean);
-      const matches = !search || optionText.includes(search) || keywords.some(keyword => keyword.includes(search));
-      option.setAttribute('aria-hidden', String(!matches));
-      if (matches && state.options.includes(option)) state.visibleOptions.push(option);
-    });
-
-    if (preserveActive && previousActive && state.visibleOptions.includes(previousActive)) {
-      setActiveOption(state, state.options.indexOf(previousActive));
-    } else {
-      setActiveOption(state, state.autoHighlight && state.visibleOptions.length > 0 ? state.options.indexOf(state.visibleOptions[0]) : -1);
-    }
-    syncEmptyState(state);
-  };
-
-  const renderChips = (root) => {
-    const state = states.get(root);
-    if (!state.chips) return;
-
-    state.chips.querySelectorAll('.combobox-chip').forEach(chip => chip.remove());
-
-    getSelection(state).forEach(entry => {
-      const chip = document.createElement('span');
-      chip.className = 'combobox-chip';
-      chip.dataset.value = entry.value;
-
-      const label = document.createElement('span');
-      label.textContent = entry.label;
-
-      const remove = document.createElement('button');
-      remove.type = 'button';
-      remove.className = 'combobox-chip-remove btn';
-      remove.dataset.variant = 'ghost';
-      remove.dataset.size = 'icon-xs';
-      remove.setAttribute('aria-label', `Remove ${entry.label}`);
-      remove.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
-      remove.addEventListener('click', (event) => {
-        event.stopPropagation();
-        root.deselect(entry.value);
-        state.input.focus();
-      });
-
-      chip.appendChild(label);
-      chip.appendChild(remove);
-      state.chips.insertBefore(chip, state.input);
-    });
-  };
-
-  const syncTriggerValue = (state) => {
-    if (!state.valueTarget) return;
-    const selected = getSelection(state);
-    state.valueTarget.textContent = state.isMultiple
-      ? selected.map(entry => entry.label).join(', ')
-      : (selected[0]?.label || state.valueTarget.dataset.placeholder || '');
-  };
-
-  const syncClearButton = (state) => {
-    if (!state.clearButton) return;
-    state.clearButton.hidden = getSelection(state).length === 0 && state.input.value === '';
-  };
-
-  const syncSelectedOptions = (state) => {
-    state.options.forEach(option => {
-      if (state.selected.has(getValue(option))) {
-        option.setAttribute('aria-selected', 'true');
-      } else {
-        option.removeAttribute('aria-selected');
-      }
-    });
-  };
-
-  const setSelected = (root, entries, triggerEvent = true) => {
-    const state = states.get(root);
-    const normalized = (Array.isArray(entries) ? entries : [entries]).map(normalizeEntry).filter(Boolean);
-
-    state.selected.clear();
-    if (state.isMultiple) {
-      normalized.forEach(entry => state.selected.set(entry.value, entry));
-      state.input.value = '';
-    } else if (normalized[0]) {
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #192** (2026-07-30): **shadcn/ui theming no longer supported?**
-  *Symptoms*: Firstly congrats on the recent upgrade to v1.   However, it seems to have moved from the using the same theming conventions and so  it means that shadcn/ui themes are no longer compatible? I've tried using a few of them, including ones from 'tweakcn' and none of them appear to work.   Are we now left with a choice of the built in ones (great work by the way) or building our own my overwriting the CSS variables?
+- **Issue #144** (2026-10-23): **[Bug] Tabs inside Sidebar do not render correctly**
+  *Symptoms*: Adding a repro HTML page and screenshot here.   sidebar nav and the tabs nav does not play nicely with each other.   <img width="508" height="290" alt="Image" src="https://github.com/user-attachments/assets/9655e08a-8666-412b-9ad7-0b33c535c0f5" />  [basecoat-bug-report.html](https://github.com/user-attachments/files/26085527/basecoat-bug-report.html)  JsFiddle - https://jsfiddle.net/xsjzp129/ 
   **Post-Mortem & Fix Analysis**:
-  > Apologies, this was my mistake. Confirming that shadcn/ui themes do work
+  > having same issue
+  > Still reproduces on `main` with 1.0. The sidebar styles target every `nav` inside `.sidebar` (`.sidebar nav { position: fixed; ... }`), so the tabs' `<nav role="tablist">` becomes a fixed, vertical panel. In my test it ended up `position: fixed`, `flex-direction: column` and pushed off-screen. The fix is to scope those rules to the sidebar's own `nav` (`.sidebar > nav`). A fix is being prepared for 1.1.0, and a PR is coming.  Until then, use a `div` for the tablist inside a sidebar. The tabs styles and script only look for `role="tablist"`, so it works the same:  ```html <div class="tabs">   <div role="tablist" aria-orientation="horizontal">...</div>   ... </div> ``` 
 
-- **Issue #189** (2026-07-21): **Fix HTMX toast docs URL push**
-  *Symptoms*: Closes #186\n\nAdds hx-push-url="false" to the Toast docs HTMX example so the docs site does not replace the current page URL when the demo button is clicked.
+- **Issue #76** (2026-10-23): **[Feature Request] Disable scroll for opening elements**
+  *Symptoms*: It would be cool to disable scrolling when `open` elements are opened. For example, this can be implemented in a Dialog or Dropdown.  It can be set as the default behaviour, and maybe have an option like `allow-scroll` to allow scrolling 
   **Post-Mortem & Fix Analysis**:
-  > ## Deploying with &nbsp;<a href="https://workers.dev"><img alt="Cloudflare Workers" src="https://workers.cloudflare.com/logo.svg" width="16"></a> &nbsp;Cloudflare Workers The latest updates on your project. Learn more about [integrating Git with Workers](https://developers.cloudflare.com/workers/ci-cd/builds/git-integration/).  | Status | Name | Latest Commit | Preview URL | Updated (UTC) | | -|-|-|-|-| | ✅ Deployment successful! <br>[View logs](https://dash.cloudflare.com/?to=/f0358488ea228524694022b948be5869/workers/services/view/basecoat/production/builds/b602df2d-26ae-4db3-8878-1b2e4e1d6096) | basecoat | 565ea3c3 | <a href='https://b796fff7-basecoat.hunvreus.workers.dev'>Commit Preview URL</a><br><br><a href='https://fix-toast-htmx-push-url-basecoat.hunvreus.workers.dev'>Branch Preview URL</a> | Jul 16 2026, 04:02 PM |
+  > Yes please! You can see a good example of this here https://basecoatui.com/components/dialog/#example-scrollable-content  Seems confusing that both the content of the dialog and the page in the background are scrolling
+  > Yeah, I plan on adding a helper for that. I just didn't want to do too much at first.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1424,250 +1365,583 @@ document.addEventListener("htmx:afterSettle", initDemos);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d431873b` (2026-06-27)
-**Commit Message**: Fix docs sidebar after history restore
+### Incident Patch 1: `0b28009e` (2026-10-22)
+**Commit Message**: Fix iOS auto-zoom on combobox input (#185)
 
-**File**: `site/src/scripts/demo-interactions.js` (modified, +2/-3)
+* Fix iOS auto-zoom on select and command search inputs
+
+* Match shadcn/ui input sizing for combobox and keep command input as is
+
+---------
+
+Co-authored-by: boratatouille <[REDACTED_EMAIL]>
+
+**File**: `src/css/styles/luma.css` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,3 @@
--import "../../../src/js/basecoat.js";
--import "../../../src/js/accordion.js";
--
- const initPriceRange = () => {
-   const input = document.getElementById("price-range");
-   const output = document.getElementById("price-range-output");
-@@ -104,3 +101,5 @@ if (document.readyState === "loading") {
- } else {
-   initDemos();
- }
-+
-+document.addEventListener("htmx:afterSettle", initDemos);
+@@ -415,7 +415,7 @@
+ 
+   /* Combobox */
+   .combobox > input[role='combobox'] {
+-    @apply bg-input/50 border-transparent focus-visible:border-ring focus-visible:ring-ring/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-9 rounded-3xl border py-2 ps-3 pe-8 text-sm transition-[color,box-shadow,background-color] focus-visible:ring-3 aria-invalid:ring-3;
++    @apply bg-input/50 border-transparent focus-visible:border-ring focus-visible:ring-ring/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-9 rounded-3xl border py-2 ps-3 pe-8 text-base md:text-sm transition-[color,box-shadow,background-color] focus-visible:ring-3 aria-invalid:ring-3;
+   }
+ 
+   .combobox > svg,
 ```
 
-**File**: `src/js/sidebar.js` (modified, +2/-2)
+**File**: `src/css/styles/maia.css` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- (() => {
-   const initSidebar = (sidebarComponent) => {
--    if (sidebarComponent.dataset.sidebarInitialized) return;
-+    if (sidebarComponent.dataset.sidebarInitialized && typeof sidebarComponent.toggle === 'function') return;
+@@ -407,7 +407,7 @@
  
-     const initialOpen = sidebarComponent.dataset.initialOpen !== 'false';
-     const initialMobileOpen = sidebarComponent.dataset.initialMobileOpen === 'true';
-@@ -60,6 +60,6 @@
-   };
- 
-   if (window.basecoat) {
--    window.basecoat.register('sidebar', '.sidebar:not([data-sidebar-initialized])', initSidebar);
-+    window.basecoat.register('sidebar', '.sidebar', initSidebar);
+   /* Combobox */
+   .combobox > input[role='combobox'] {
+-    @apply border-input bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-9 rounded-4xl border py-2 ps-3 pe-8 text-sm transition-colors focus-visible:ring-[3px] aria-invalid:ring-[3px];
++    @apply border-input bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-9 rounded-4xl border py-2 ps-3 pe-8 text-base md:text-sm transition-colors focus-visible:ring-[3px] aria-invalid:ring-[3px];
    }
- })();
+ 
+   .combobox > svg,
+```
+
+**File**: `src/css/styles/mira.css` (modified, +1/-1)
+```diff
+@@ -407,7 +407,7 @@
+ 
+   /* Combobox */
+   .combobox > input[role='combobox'] {
+-    @apply border-input bg-input/20 focus-visible:border-ring focus-visible:ring-ring/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-7 rounded-md border py-1 ps-2 pe-6 text-xs/relaxed transition-colors focus-visible:ring-2 aria-invalid:ring-2;
++    @apply border-input bg-input/20 focus-visible:border-ring focus-visible:ring-ring/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-7 rounded-md border py-1 ps-2 pe-6 text-sm md:text-xs/relaxed transition-colors focus-visible:ring-2 aria-invalid:ring-2;
+   }
+ 
+   .combobox > svg,
+```
+
+**File**: `src/css/styles/nova.css` (modified, +1/-1)
+```diff
+@@ -403,7 +403,7 @@
+ 
+   /* Combobox */
+   .combobox > input[role='combobox'] {
+-    @apply border-input dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 h-8 rounded-lg border bg-transparent py-1 ps-2.5 pe-8 text-sm transition-colors focus-visible:ring-3 aria-invalid:ring-3;
++    @apply border-input dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 h-8 rounded-lg border bg-transparent py-1 ps-2.5 pe-8 text-base md:text-sm transition-colors focus-visible:ring-3 aria-invalid:ring-3;
+   }
+ 
+   .combobox > svg,
+```
+
+**File**: `src/css/styles/rhea.css` (modified, +1/-1)
+```diff
+@@ -415,7 +415,7 @@
+ 
+   /* Combobox */
+   .combobox > input[role='combobox'] {
+-    @apply bg-input/50 border-transparent focus-visible:border-ring focus-visible:ring-ring/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-8 rounded-2xl border py-1 ps-2.5 pe-8 text-sm transition-[color,box-shadow] duration-200 focus-visible:ring-3 aria-invalid:ring-3;
++    @apply bg-input/50 border-transparent focus-visible:border-ring focus-visible:ring-ring/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-8 rounded-2xl border py-1 ps-2.5 pe-8 text-base md:text-sm transition-[color,box-shadow] duration-200 focus-visible:ring-3 aria-invalid:ring-3;
+   }
+ 
+   .combobox > svg,
+```
+
+**File**: `src/css/styles/sera.css` (modified, +1/-1)
+```diff
+@@ -419,7 +419,7 @@
+ 
+   /* Combobox */
+   .combobox > input[role='combobox'] {
+-    @apply border-transparent border-b-input bg-transparent focus-visible:border-b-ring aria-invalid:border-b-destructive dark:aria-invalid:border-b-destructive/50 h-10 rounded-none border py-2 ps-0 pe-8 text-sm transition-[color,border-color];
++    @apply border-transparent border-b-input bg-transparent focus-visible:border-b-ring aria-invalid:border-b-destructive dark:aria-invalid:border-b-destructive/50 h-10 rounded-none border py-2 ps-0 pe-8 text-base md:text-sm transition-[color,border-color];
+   }
+ 
+   .combobox > svg,
+```
+
+**File**: `src/css/styles/vega.css` (modified, +1/-1)
+```diff
+@@ -403,7 +403,7 @@
+ 
+   /* Combobox */
+   .combobox > input[role='combobox'] {
+-    @apply border-input dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-9 rounded-md border bg-transparent py-2 ps-2.5 pe-8 text-sm shadow-xs transition-[color,box-shadow] focus-visible:ring-3 aria-invalid:ring-3;
++    @apply border-input dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-9 rounded-md border bg-transparent py-2 ps-2.5 pe-8 text-base md:text-sm shadow-xs transition-[color,box-shadow] focus-visible:ring-3 aria-invalid:ring-3;
+   }
+ 
+   .combobox > svg,
 ```
 
 ---
 
-### Incident Patch 2: `537f7750` (2026-06-27)
-**Commit Message**: Install site dependencies during docs build
+### Incident Patch 2: `6769c83c` (2026-10-23)
+**Commit Message**: Minify CDN CSS with esbuild to stop dropped rules (#220)
 
-**File**: `package.json` (modified, +4/-4)
+Tailwind's --minify (Lightning CSS) randomly drops rules from the CDN .min.css files (parcel-bundler/lightningcss#1235). Minify with esbuild using Tailwind v4's browser targets instead, fail the build on esbuild warnings, and have npm run check fail if a .min.css file loses any selector from its unminified file.
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -123,12 +123,12 @@
-   "scripts": {
-     "build": "node ./scripts/build.js",
-     "prepack": "node ./scripts/build.js",
--    "docs:build": "npm run build && npm --prefix site run build",
-+    "docs:build": "npm run build && npm --prefix site clean-install --progress=false && npm --prefix site run build",
-     "docs:dev": "npm --prefix site run dev",
-     "docs:preview": "npm run docs:build && npm --prefix site run preview",
--    "workers:dev": "npm run build && npm --prefix site run workers:dev",
--    "workers:deploy": "npm run build && npm --prefix site run workers:deploy",
--    "workers:preview": "npm run build && npm --prefix site run workers:preview"
-+    "workers:dev": "npm run build && npm --prefix site clean-install --progress=false && npm --prefix site run workers:dev",
-+    "workers:deploy": "npm run build && npm --prefix site clean-install --progress=false && npm --prefix site run workers:deploy",
-+    "workers:preview": "npm run build && npm --prefix site clean-install --progress=false && npm --prefix site run workers:preview"
+@@ -31,6 +31,7 @@
+ - Stopped Dialogs and Command Dialogs from closing when a press starts inside the dialog and the drag ends on the backdrop. Updated the Nunjucks and Jinja templates and the docs examples. Based on [#104](https://github.com/hunvreus/basecoat/pull/104) by [@PhilipdeRijk](https://github.com/PhilipdeRijk).
+ - Fixed iOS auto-zoom when tapping the Combobox input, the Combobox chips input, the Command search input, native Selects, and Input Group inputs and textareas by using `text-base` below the `md` breakpoint, like regular inputs. The compact Lyra and Mira styles keep their smaller sizes.
+ - Fixed Slider thumb hover and focus rings, the RTL Sidebar submenu chevron, and some dark mode and tooltip arrow styles not applying in the unminified CDN files, because the rules were nested under pseudo-elements.
++- Fixed CDN `.min.css` builds occasionally dropping rules (such as hidden Combobox, Command and Select options) by minifying with esbuild instead of Tailwind's minifier.
+ - Stopped the Toast docs example from pushing its fragment URL into the browser history with HTMX.
+ - Replaced the `.form` migration snippet in the 1.0.0 notes, which fails in Tailwind v4, with markup that works.
+ 
+```
+
+**File**: `package-lock.json` (modified, +485/-0)
+```diff
+@@ -10,11 +10,454 @@
+       "license": "MIT",
+       "devDependencies": {
+         "@tailwindcss/cli": "^4.1.17",
++        "esbuild": "0.28.2",
+         "prettier": "^3.5.3",
+         "tailwindcss": "^4.1.17",
+         "terser": "^5.42.0"
+       }
+     },
++    "node_modules/@esbuild/aix-ppc64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.28.2.tgz",
++      "integrity": "sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==",
++      "cpu": [
++        "ppc64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "aix"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/android-arm": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.28.2.tgz",
++      "integrity": "sha512-kXXoiPVVGQcnIYGOeaovwOURpniDBpSq4A03qkQ+BMQqtGG6HYap3xne9C1O1yo4TR3qxlCX5IqqmX6fFo2Lqg==",
++      "cpu": [
++        "arm"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "android"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/android-arm64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.28.2.tgz",
++      "integrity": "sha512-5YfKeeI8qWfBZIX+u2xZC3Zlb3Os/gLS2sbEKM+I4ZOcsWmHS2WLysCcQZDAFRslDUU5Oiq44gf6PYN1vGwG5A==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "android"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/android-x64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.28.2.tgz",
++      "integrity": "sha512-O387ite7SzUyCcy3JQX4P4bLtEA7bLLkx+esve5JHnyYfNTxcVpXZo9jhdB0lTKN44gztELTdU7nS8Nr16Fs1Q==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "android"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/darwin-arm64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.28.2.tgz",
++      "integrity": "sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/darwin-x64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.28.2.tgz",
++      "integrity": "sha512-uq6suIWYP37qzGddBKPw5QEQPi6HiLGsO7UmkpfyaYNQ3D+rN6w6WfwH+nuqcGXWvawGwxOEroO4YGnFh95azw==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/freebsd-arm64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/freebsd-arm64/-/freebsd-arm64-0.28.2.tgz",
++      "integrity": "sha512-n+I0BTSRIoy+d6RPKnEVwql5UwBJolytvY4mAOIEJorKlqgPII8ix6slVVrfZ5Tnj7glIZvloylbB/EJPMWEXw==",
++      "cpu": [
++        "arm64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "freebsd"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/freebsd-x64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/freebsd-x64/-/freebsd-x64-0.28.2.tgz",
++      "integrity": "sha512-78XJTJkvPs0kz2w61301PJjXl4g7q3JqiYMZ/M/yVI73EHBrCRTgkhu9oqG7vPqq+a/yadEW8aD+agKlk5xrmg==",
++      "cpu": [
++        "x64"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "freebsd"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/linux-arm": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/linux-arm/-/linux-arm-0.28.2.tgz",
++      "integrity": "sha512-XlDnu2q5yoqems+xay6wSAcg9DDD7K9RLKZEBOMZm3ckNpJBvOX20tSfby8KfrrhINDyv9V2YVZKY/SpoGJI8w==",
++      "cpu": [
++        "arm"
++      ],
++      "dev": true,
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/@esbuild/linux-arm64": {
++      "version": "0.28.2",
++      "resolved": "https://registry.npmjs.org/@esbuild/linux-arm64/-/linux-arm64-0.28.2.tgz",
++      "integrity": "sha512-pW4AC0P3it8c7do9MVM4p51FzHzdM/T
+```
+
+**File**: `package.json` (modified, +1/-0)
+```diff
+@@ -134,6 +134,7 @@
    },
    "devDependencies": {
      "@tailwindcss/cli": "^4.1.17",
++    "esbuild": "0.28.2",
+     "prettier": "^3.5.3",
+     "tailwindcss": "^4.1.17",
+     "terser": "^5.42.0"
 ```
 
-**File**: `site/package-lock.json` (modified, +185/-11)
+**File**: `scripts/build.js` (modified, +13/-1)
 ```diff
-@@ -2439,6 +2439,20 @@
-       "resolved": "..",
-       "link": true
-     },
-+    "node_modules/binary-extensions": {
-+      "version": "2.3.0",
-+      "resolved": "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.3.0.tgz",
-+      "integrity": "sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==",
-+      "license": "MIT",
-+      "optional": true,
-+      "peer": true,
-+      "engines": {
-+        "node": ">=8"
-+      },
-+      "funding": {
-+        "url": "https://github.com/sponsors/sindresorhus"
+@@ -3,10 +3,16 @@ import path from 'path';
+ import { fileURLToPath } from 'url';
+ import { exec } from 'child_process';
+ import { promisify } from 'util';
++import { transform } from 'esbuild';
+ import { generateCssEntrypoints } from './generate-css-entrypoints.js';
+ 
+ const execPromise = promisify(exec);
+ 
++// Tailwind CSS v4 browser baseline (https://tailwindcss.com/docs/compatibility).
++// Minified CDN CSS uses esbuild because Tailwind's --minify (Lightning CSS) can
++// randomly drop rules (parcel-bundler/lightningcss#1235).
++const cssTargets = ['chrome111', 'safari16.4', 'firefox128'];
++
+ // Resolve project root, assuming this script is in <project_root>/scripts/
+ const __filename = fileURLToPath(import.meta.url);
+ const __dirname = path.dirname(__filename);
+@@ -214,7 +220,13 @@ async function build() {
+ 
+     await execPromise(`npx tailwindcss -i "${cdnCssSrc}" -o "${cssDistCdnPath}"`);
+     console.log(`Generated non-minified CSS: ${cssDistCdnPath}`);
+-    await execPromise(`npx tailwindcss -i "${cdnCssSrc}" -o "${cssDistCdnMinPath}" --minify`);
++    const { code, warnings } = await transform(await fs.readFile(cssDistCdnPath, 'utf-8'), {
++      loader: 'css',
++      minify: true,
++      target: cssTargets,
++    });
++    if (warnings.length) throw new Error(`esbuild warnings for ${cssDistCdnPath}: ${warnings.map((w) => w.text).join('; ')}`);
++    await fs.writeFile(cssDistCdnMinPath, code);
+     console.log(`Generated minified CSS: ${cssDistCdnMinPath}`);
+   }
+ 
+```
+
+**File**: `scripts/check.js` (modified, +110/-2)
+```diff
+@@ -1,5 +1,5 @@
+ // Cheap sanity checks. Run after a build.
+-//   node scripts/check.js        package: every export target exists, JS parses
++//   node scripts/check.js        package: every export target exists, JS parses, min CSS keeps all selectors
+ //   node scripts/check.js site   docs site: site/dist built, llms.txt links to .md exports
+ import fs from 'fs';
+ import path from 'path';
+@@ -36,6 +36,111 @@ function checkPackage() {
+   }
+ }
+ 
++// Minified CDN CSS must keep every selector of its unminified source.
++// Selectors are flattened (nesting resolved, :is() lists expanded) and normalized
++// (::after/:after, attribute quotes, combinator spacing, from/0%) before comparing.
++function splitTop(str) {
++  const out = [];
++  let depth = 0, quote = null, cur = '';
++  for (let i = 0; i < str.length; i++) {
++    const c = str[i];
++    if (quote) { cur += c; if (c === '\\') cur += str[++i] ?? ''; else if (c === quote) quote = null; continue; }
++    if (c === '"' || c === "'") { quote = c; cur += c; continue; }
++    if (c === '(' || c === '[') depth++;
++    else if (c === ')' || c === ']') depth--;
++    if (c === ',' && depth === 0) { out.push(cur); cur = ''; } else cur += c;
++  }
++  out.push(cur);
++  return out.map((s) => s.trim()).filter(Boolean);
++}
++
++function parseCss(css) {
++  css = css.replace(/\/\*[\s\S]*?\*\//g, '');
++  const root = { children: [] };
++  const stack = [root];
++  let buf = '', quote = null, paren = 0;
++  for (let i = 0; i < css.length; i++) {
++    const c = css[i];
++    if (quote) { buf += c; if (c === '\\') buf += css[++i] ?? ''; else if (c === quote) quote = null; continue; }
++    if (c === '"' || c === "'") { quote = c; buf += c; continue; }
++    if (c === '(') paren++;
++    else if (c === ')') paren--;
++    if (paren > 0) { buf += c; continue; }
++    if (c === '{') { const node = { prelude: buf.trim(), children: [] }; stack.at(-1).children.push(node); stack.push(node); buf = ''; }
++    else if (c === '}') { if (buf.trim()) stack.at(-1).children.push({ decl: true }); stack.pop(); buf = ''; }
++    else if (c === ';') { if (buf.trim()) stack.at(-1).children.push({ decl: true }); buf = ''; }
++    else buf += c;
++  }
++  return root;
++}
++
++function normalizeSelector(s) {
++  return s
++    .replace(/::(before|after|first-line|first-letter)\b/g, ':$1')
++    .replace(/\[\s*([^\]=~|^$*\s]+)\s*([~|^$*]?=)\s*(["'])((?:\\.|(?!\3).)*)\3\s*(\s[is])?\s*\]/g, '[$1$2$4$5]')
++    .replace(/\s+/g, ' ')
++    .replace(/\s*([>+~,])\s*/g, '$1')
++    .replace(/\(\s+/g, '(')
++    .replace(/\s+\)/g, ')')
++    .replace(/^from$/, '0%')
++    .replace(/^to$/, '100%')
++    .trim();
++}
++
++function expandIs(sel) {
++  const i = sel.indexOf(':is(');
++  if (i < 0) return [sel];
++  let depth = 0, j = i + 3;
++  for (; j < sel.length; j++) { if (sel[j] === '(') depth++; else if (sel[j] === ')' && --depth === 0) break; }
++  const inner = splitTop(sel.slice(i + 4, j));
++  const attached = i > 0 && !/[\s>+~(,]/.test(sel[i - 1]);
++  if (attached && inner.some((part) => /[\s>+~]/.test(part.replace(/\([^)]*\)/g, '')))) {
++    return expandIs(sel.slice(j + 1)).map((rest) => sel.slice(0, j + 1) + rest);
++  }
++  return inner.flatMap((part) => expandIs(sel.slice(0, i) + part + sel.slice(j + 1)));
++}
++
++function flatSelectors(css) {
++  const keys = new Set();
++  const normParams = (p) => p.replace(/\s+/g, ' ').replace(/\s*([():,<>=]+)\s*/g, '$1').replace(/"/g, "'").trim().toLowerCase();
++  const walk = (node, ctx, parents) => {
++    for (const child of node.children) {
++      if (!child.children) continue;
++      const pre = child.prelude;
++      if (pre.startsWith('@')) {
++        const [, name, params] = pre.match(/^@([\w-]+)\s*([\s\S]*)$/);
++        const at = `@${name} ${normParams(params)}`;
++        if (/^(media|supports|layer|container|keyframes|-webkit-keyframes|scope|starting-style)$/.test(name)) {
++          // Declarations directly inside a nested at-rule belong to the parent selectors.
++          if (parents && child.children.some((c) => c.decl)) for (const p of parents) keys.add(`${[...ctx, at].join(' | ')} || ${p}`);
++          walk(child, [...ctx, at], name.endsWith('keyframes') ? null : parents);
++        } else keys.add([...ctx, at].join(' | '));
++        continue;
 +      }
-+    },
-     "node_modules/blake3-wasm": {
-       "version": "2.1.5",
-       "resolved": "https://registry.npmjs.org/blake3-wasm/-/blake3-wasm-2.1.5.tgz",
-@@ -2452,6 +2466,20 @@
-       "integrity": "sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==",
-       "license": "ISC"
-     },
-+    "node_modules/braces": {
-+      "version": "3.0.3",
-+      "resolved": "https://registry.npmjs.org/braces/-/braces-3.0.3.tgz",
-+      "integrity": "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==",
-+      "license": "MIT",
-+      "optional": true,
-+      "peer": true,
-+      "dependencies": {
-+        "fill-range": "^7.1.1"
-+      },
-+      "engines": {
-+        "node": ">=8"
-+      }
-+    },
-     "node_modules/ccount": {
-       "version": "2.0.1",
-       "resolved": "https://registry.npmjs.org/ccount/-/ccount-2.0.1.tgz",
-@@ -2503,18 +2531,29 @@
-       }
-     },
-     "node_modules/chokidar": {
--      "version": "5.0.0",
--      "resolved": "https://registry.npmjs.org/chokidar/-/chokidar-5.0.0.tgz",
--      "integrity": "sha512-TQMmc3w+5AxjpL8iIiwebF73dRDF4fBIieAqGn9RGCWaEVwQ6Fb2cGe31Yns0RRIzii5goJ1Y7xbMwo1TxMplw==",
-+      "version": "3.6.0",
-+      "resolved": "https://registry.npmjs.org/chokidar/-/chokidar-3.6.0.tgz",
-+      "integrity": "sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==",
-       "license": "MIT",
-+      "optional": true,
-+      "peer": true,
-       "dependencies": {
--        "readdirp": "^5.0.0"
-+        "anymatch": "~3.1.2",
-+        "braces": "~3.0.2",
-+        "glob-parent": "~5.1.2",
-+        "is-binary-path": "~2.1.0",
-+        "is-glob": "~4.0.1",
-+        "normalize-path": "~3.0.0",
-+        "readdirp": "~3.6.0"
-       },
-       "engines": {
--        "node": ">= 20.19.0"
-+        "node": ">= 8.10.0"
-       },
-       "funding": {
-         "url": "https://paulmillr.com/funding/"
-+      },
-+      "optionalDependencies": {
-+        "fsevents": "~2.3.2"
-       }
-     },
-     "node_modules/ci-info": {
-@@ -3121,6 +3160,20 @@
-         }
-       }
-     },
-+    "node_modules/fill-range": {
-+      "version": "7.1.1",
-+      "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-7.1.1.tgz",
-+      "integrity": "sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==",
-+      "license": "MIT",
-+      "optional": true,
-+      "peer": true,
-+      "dependencies": {
-+        "to-regex-range": "^5.0.1"
-+      },
-+      "engines": {
-+        "node": ">=8"
-+      }
-+    },
-     "node_modules/flattie": {
-       "version": "1.1.1",
-       "resolved": "https://registry.npmjs.org/flattie/-/flattie-1.1.1.tgz",
-@@ -3186,6 +3239,20 @@
-       "integrity": "sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==",
-       "license": "ISC"
-     },
-+    "node_modules/glob-parent": {
-+      "version": "5.1.2",
-+      "resolved": "https://registry.npmjs.org/glob-parent/-/glob-parent-5.1.2.tgz",
-+      "integrity": "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==",
-+      "license": "ISC",
-+      "optional": true,
-+      "peer": true,
-+      "dependencies": {
-+        "is-glob": "^4.0.1"
-+      },
-+      "engines": {
-+        "node": ">= 6"
-+      }
-+    },
-     "node_modules/graceful-fs": {
-       "version": "4.2.11",
-       "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz",
-@@ -3508,6 +3575,20 @@
-         "url": "https://github.com/sponsors/wooorm"
-       }
-     },
-+    "node_modules/is-binary-path": {
-+      "version": "2.1.0",
-+      "resolved": "https://registry.npmjs.org/is-binary-path/-/is-binary-path-2.1.0.tgz",
-+      "integrity": "sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==",
-+      "license": "MIT",
-+      "optional": true,
-+      "peer": true,
-+      "dependencies": {
-+        "binary-extensions": "^2.0.0"
-+      },
-+      "engines": {
-+        "node": ">=8"
-+      }
-+    },
-     "node_modules/is-decimal": {
-       "version": "2.0.1",
-       "resolved": "https://registry.npmjs.org/is-decimal/-/is-decimal-2.0.1.tgz",
-@@ -3533,6 +3614,31 @@
-         "url": "https://github.com/sponsors/sindresorhus"
-       }
-     },
-+    "node_modules/is-extglob": {
-+      "version": "2.1.1",
-+      "resolved": "https://registry.np
++      const own = splitTop(pre);
++      const sels = (parents ? parents.flatMap((p) => own.map((s) => (s.includes('&') ? s.replace(/&/g, p) : `${p} ${s}`))) : own)
++        .map(normalizeSelector).flatMap(expandIs).map(normalizeSelector);
++      if (child.children.some((c) => c.decl)) for (const s of sels) keys.add(`${ctx.join(' | ')} || ${s}`);
++      walk(child, ctx, sels);
++    }
++  };
++  walk(parseCss(css), [], null);
++  return keys;
++}
++
++function checkMinifiedCss() {
++  const dist = path.join(root, 'dist');
++  for (const name of fs.existsSync(dist) ? fs.readdirSync(dist) : []) {
++    if (!name.endsWith('.cdn.css')) continue;
++    const minName = name.replace(/\.css$/, '.min.css');
++    const minFile = path.join(dist, minName);
++    if (!
 ```
 
 ---
 
-### Incident Patch 3: `be386450` (2026-06-26)
-**Commit Message**: Fix input group dropdown stacking
+### Incident Patch 3: `192f167c` (2026-10-23)
+**Commit Message**: Fix tooltip ellipsis across style packs (#205)
 
-**File**: `src/css/components/input-group.css` (modified, +4/-0)
+Co-authored-by: grugbraindev <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -3,6 +3,10 @@
-   .input-group {
-     @apply relative isolate flex w-full min-w-0 items-center outline-none;
+@@ -5,6 +5,7 @@
+ ### Fixed
  
-+    &:has(> :is(.dropdown-menu, .popover, .select, .combobox) > [data-popover][aria-hidden='false']) {
-+      @apply z-50;
-+    }
+ - Prevented Escape from dismissing an enclosing dialog while closing an open Combobox popup.
++- Fixed long Tooltip text clipping instead of showing an ellipsis across all style packs.
+ 
+ ## [1.0.2] - 2026-07-06
+ 
+```
+
+**File**: `site/src/docs/components/tooltip.mdx` (modified, +8/-0)
+```diff
+@@ -53,6 +53,14 @@ Basecoat tooltips are CSS-only and text-only. This intentionally differs from sh
+ <button class="btn" data-variant="outline" data-tooltip="Default tooltip">Default</button>
+ </Preview>
+ 
++### Long text
 +
-     &[data-orientation='vertical'],
-     &:has(> [data-align='block-start']),
-     &:has(> [data-align='block-end']) {
++Tooltips stay on one line and truncate with an ellipsis when the text exceeds the maximum width. This intentionally differs from shadcn/ui's multiline tooltip content.
++
++<Preview>
++<button class="btn" data-variant="outline" data-tooltip="A tooltip with enough text to exceed the default maximum width and demonstrate truncation">Hover</button>
++</Preview>
++
+ ### Sides
+ 
+ <Preview>
+```
+
+**File**: `src/css/components/tooltip.css` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+     @apply relative;
+ 
+     &:before {
+-      @apply absolute z-[60] w-fit max-w-xs origin-(--transform-origin) scale-95 truncate invisible opacity-0 transition-all pointer-events-none content-[attr(data-tooltip)];
++      @apply absolute block z-[60] w-fit max-w-xs origin-(--transform-origin) scale-95 truncate invisible opacity-0 transition-all pointer-events-none content-[attr(data-tooltip)];
+     }
+ 
+     &:hover:before {
+```
+
+**File**: `src/css/styles/luma.css` (modified, +1/-1)
+```diff
+@@ -1324,7 +1324,7 @@
+ 
+   /* Tooltip */
+   [data-tooltip]::before {
+-    @apply bg-foreground text-background inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs has-[.kbd]:pe-1.5 [&_.kbd]:relative [&_.kbd]:isolate [&_.kbd]:z-50 [&_.kbd]:rounded-lg;
++    @apply bg-foreground text-background rounded-xl px-3 py-1.5 text-xs;
+   }
+ 
+   [data-tooltip][data-arrow]::after {
+```
+
+**File**: `src/css/styles/lyra.css` (modified, +1/-1)
+```diff
+@@ -1327,7 +1327,7 @@
+ 
+   /* Tooltip */
+   [data-tooltip]::before {
+-    @apply bg-foreground text-background inline-flex items-center gap-1.5 rounded-none px-3 py-1.5 text-xs has-[.kbd]:pe-1.5 [&_.kbd]:relative [&_.kbd]:isolate [&_.kbd]:z-50 [&_.kbd]:rounded-none;
++    @apply bg-foreground text-background rounded-none px-3 py-1.5 text-xs;
+   }
+ 
+   [data-tooltip][data-arrow]::after {
+```
+
+**File**: `src/css/styles/maia.css` (modified, +1/-1)
+```diff
+@@ -1312,7 +1312,7 @@
+ 
+   /* Tooltip */
+   [data-tooltip]::before {
+-    @apply bg-foreground text-background inline-flex items-center gap-1.5 rounded-2xl px-3 py-1.5 text-xs has-[.kbd]:pe-1.5 [&_.kbd]:relative [&_.kbd]:isolate [&_.kbd]:z-50 [&_.kbd]:rounded-4xl;
++    @apply bg-foreground text-background rounded-2xl px-3 py-1.5 text-xs;
+   }
+ 
+   [data-tooltip][data-arrow]::after {
+```
+
+**File**: `src/css/styles/mira.css` (modified, +1/-1)
+```diff
+@@ -1321,7 +1321,7 @@
+ 
+   /* Tooltip */
+   [data-tooltip]::before {
+-    @apply bg-foreground text-background inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs has-[.kbd]:pe-1.5 [&_.kbd]:relative [&_.kbd]:isolate [&_.kbd]:z-50 [&_.kbd]:rounded-sm;
++    @apply bg-foreground text-background rounded-md px-3 py-1.5 text-xs;
+   }
+ 
+   [data-tooltip][data-arrow]::after {
+```
+
+**File**: `src/css/styles/nova.css` (modified, +1/-1)
+```diff
+@@ -1335,7 +1335,7 @@
+ 
+   /* Tooltip */
+   [data-tooltip]::before {
+-    @apply bg-foreground text-background inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs has-[.kbd]:pe-1.5 [&_.kbd]:relative [&_.kbd]:isolate [&_.kbd]:z-50 [&_.kbd]:rounded-sm;
++    @apply bg-foreground text-background rounded-md px-3 py-1.5 text-xs;
+   }
+ 
+   [data-tooltip][data-arrow]::after {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #189** (closed): Fix HTMX toast docs URL push (@heypi-dev)
-- **PR #188** (closed): Fix form migration notes for Tailwind v4 (@heypi-dev)
-- **PR #181** (closed): feat: add resizable panel group with handles (@heypi-dev)
-- **PR #180** (closed): feat: add Navigation Menu component (@heypi-dev)
-- **PR #174** (closed): fix(tabs): add overflow:visible and z-index to prevent sidebar overflow clipping (@social5h3ll)
-- **PR #173** (closed): feat(drawer): add drawer component with swipe-to-dismiss and snap points (@social5h3ll)
+- **PR #220** (2026-10-23): Minify CDN CSS with esbuild to stop dropped rules (@grugbraindev)
+- **PR #219** (2026-10-23): Stop nesting states under pseudo-elements (@grugbraindev)
+- **PR #218** (2026-10-23): Use 16px text on mobile for the remaining text fields to stop iOS zoom (@grugbraindev)
+- **PR #217** (2026-10-23): Add upgrade note and contributors to 1.1.0 changelog (@grugbraindev)
+- **PR #216** (2026-10-23): Prepare 1.1.0 release (@grugbraindev)
+- **PR #215** (2026-10-23): Stage npm releases from a release workflow, add CI, bump reallysimpledocs to 1.0.14 (@grugbraindev)
 
 ---
 
@@ -1687,31 +1961,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs sidebar after history restore
+## X. iOS auto-zoom on combobox input (#185)
 
 **RULE**:
-When implementing operations in `site/src/scripts/demo-interactions.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hunvreus/basecoat. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/css/styles/luma.css`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hunvreus/basecoat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d431873b`: docs sidebar after history restore. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0b28009e`: iOS auto-zoom on combobox input (#185). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing MDX data structures, boundary deserialization, API parsing, or resource lifecycles matching `site/src/scripts/demo-interactions.js`.
+Subsystems managing MDX data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/css/styles/luma.css`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```mdx
 // Verified production-grade fix pattern:
-
-document.addEventListener("htmx:afterSettle", initDemos);
+    @apply bg-input/50 border-transparent focus-visible:border-ring focus-visible:ring-ring/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-9 rounded-3xl border py-2 ps-3 pe-8 text-base md:text-sm transition-[color,box-shadow,background-color] focus-visible:ring-3 aria-invalid:ring-3;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```mdx
 // Anti-pattern to NEVER write (induced failure mode):
-import "../../../src/js/basecoat.js";
-import "../../../src/js/accordion.js";
-
+    @apply bg-input/50 border-transparent focus-visible:border-ring focus-visible:ring-ring/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-9 rounded-3xl border py-2 ps-3 pe-8 text-sm transition-[color,box-shadow,background-color] focus-visible:ring-3 aria-invalid:ring-3;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d431873b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0b28009e` are properly handled with clean fallback behavior.

@@ -2943,10 +2943,10 @@
     "repository": "hunvreus/basecoat",
     "platform": "github",
     "sourceUrl": "https://github.com/hunvreus/basecoat",
-    "sourceVersion": "6953a4ad",
+    "sourceVersion": "6769c83c",
     "license": "MIT",
-    "contentHash": "442d4707fea3a29a1097cd7edf97ca22433aac34089c6c047d6ff9710f99ba1b",
-    "lastHarvestedAt": "2026-10-18T22:29:21.038Z",
+    "contentHash": "d2d26f32f748578b8ad1a9def5dc72c313152c9fe3d5460f3f79b7bad52d482a",
+    "lastHarvestedAt": "2026-10-24T20:04:54.144Z",
     "learningId": "learn-github-hunvreus-basecoat"
   },
   "michael-a-kuykendall-shimmy": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "6a571439",
+    "sourceVersion": "fe561573",
     "license": "Apache-2.0",
-    "contentHash": "e9348a6d51ed86e2b97e3f99b3d0a78a851d59fbefad0030bbec1f35b9555eca",
-    "lastHarvestedAt": "2026-10-23T07:39:22.995Z",
+    "contentHash": "b931d22bb1e455a82cc4a3983e76c264047eeaa7391430295c611d1025d02f00",
+    "lastHarvestedAt": "2026-10-24T20:05:08.197Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3803,10 +3803,10 @@
     "repository": "software-mansion/react-native-reanimated",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-reanimated",
-    "sourceVersion": "1d2b2132",
+    "sourceVersion": "1735e031",
     "license": "MIT",
-    "contentHash": "d1d3664557955c392f970a5acdb7c5f46b1b23891372ee3ba86b23db550debfc",
-    "lastHarvestedAt": "2026-10-20T11:50:24.664Z",
+    "contentHash": "25360b298811bc00bfbb89da412f973e96b4fe06bdfc8984bce81ca480e9c986",
+    "lastHarvestedAt": "2026-10-24T20:05:00.582Z",
     "learningId": "learn-github-software-mansion-react-native-reanimated"
   },
   "liftbridge-io-liftbridge": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "c9a56009",
+    "sourceVersion": "d4548cbb",
     "license": "Apache-2.0",
-    "contentHash": "0f2c1743e1854a340469b42e5704e2694f6a4ca8bbe95f9127aed78013d17397",
-    "lastHarvestedAt": "2026-10-21T18:46:00.798Z",
+    "contentHash": "975efc18daa9cad1371637bddb5edeb11dbc8ae5f3ce04b9cefb9ae0637761d5",
+    "lastHarvestedAt": "2026-10-24T20:05:03.157Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -6093,10 +6093,10 @@
     "repository": "kubearmor/KubeArmor",
     "platform": "github",
     "sourceUrl": "https://github.com/kubearmor/KubeArmor",
-    "sourceVersion": "e6c53bb1",
+    "sourceVersion": "99518b0d",
     "license": "Apache-2.0",
-    "contentHash": "3e86f3fab3b7d172235d5a3c8b11d5c9cc47b1ad6a0f9ac1f38fb211c718f28b",
-    "lastHarvestedAt": "2026-10-19T05:12:44.896Z",
+    "contentHash": "bc17368007b88137eaf711f29526156d4b9d957f630f364ef0df21367ee9fdf2",
+    "lastHarvestedAt": "2026-10-24T20:04:55.918Z",
     "learningId": "learn-github-kubearmor-kubearmor"
   },
   "callstack-agent-device": {

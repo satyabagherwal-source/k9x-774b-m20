@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md`  
 > **Source**: github ([https://github.com/kubearmor/KubeArmor](https://github.com/kubearmor/KubeArmor))  
-> **Source Version**: `e6c53bb1`  
+> **Source Version**: `99518b0d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:12:44.654Z  
+> **Timestamp**: 2026-10-24T20:04:55.712Z  
 > **Learning ID**: `learn-github-kubearmor-kubearmor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubearmor/KubeArmor](https://github.com/kubearmor/KubeArmor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:12:44.642Z  
+> **Harvest Timestamp**: 2026-10-24T20:04:54.371Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -3175,61 +3175,350 @@ func (nh *NRIHandler) nriToKubeArmorContainer(nriContainer *api.Container) tp.Co
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3887c17` (2026-09-08)
-**Commit Message**: fix(presets): stop writing ContainerMap under RLock in anonmapexec (#2797)
+### Incident Patch 1: `e56e040a` (2026-10-23)
+**Commit Message**: enforcer: Replace execve kprobe with tracepoint in process monitor
 
-UpdateSecurityPolicies wrote ContainerMap while holding RLock, allowing concurrent writers and racing with other lock holders. Match the other presets: read under RLock, then write under Lock.
+Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
 
-Signed-off-by: lakshit verma <[REDACTED_EMAIL]>
-
-**File**: `KubeArmor/presets/anonmapexec/preset.go` (modified, +3/-2)
+**File**: `KubeArmor/BPF/process_monitor.bpf.c` (modified, +14/-15)
 ```diff
-@@ -285,19 +285,20 @@ func (p *Preset) UpdateSecurityPolicies(endPoint tp.EndPoint) {
- 					p.ContainerMapLock.RLock()
- 					// Check if Container ID is registered in Map or not
- 					ckv, ok := p.ContainerMap[cid]
-+					p.ContainerMapLock.RUnlock()
- 					if !ok {
- 						// It maybe possible that CRI has unregistered the containers but K8s construct still has not sent this update while the policy was being applied,
- 						// so the need to check if the container is present in the map before we apply policy.
--						p.ContainerMapLock.RUnlock()
- 						return
- 					}
- 					base.UpdateMatchPolicy(&ckv, &secPolicy)
-+					p.ContainerMapLock.Lock()
- 					p.ContainerMap[cid] = ckv
- 					err := p.AddContainerIDToMap(cid, ckv.NsKey, preset.Action)
- 					if err != nil {
- 						p.Logger.Warnf("Updating policy for container %s :%s ", cid, err)
- 					}
--					p.ContainerMapLock.RUnlock()
-+					p.ContainerMapLock.Unlock()
- 				}
- 			}
+@@ -11,6 +11,16 @@ struct {
+     __uint(max_entries, 10240);
+ } ns_transition SEC(".maps");
+ 
++struct tracepoint_raw_sys_enter
++{
++    unsigned short common_type;
++    unsigned char common_flags;
++    unsigned char common_preempt_count;
++    int common_pid;
++    long id;
++    unsigned long args[6];
++};
++
+ static __always_inline void save_cmd_args_to_buffer(const char *const *ptr)
+ {
+     struct cmd_args_key key;
+@@ -36,29 +46,18 @@ static __always_inline void save_cmd_args_to_buffer(const char *const *ptr)
+     }
+ }
+ 
+-SEC("kprobe/__x64_sys_execve")
+-int kprobe__args_execve(struct pt_regs *ctx)
++SEC("tracepoint/syscalls/sys_enter_execve")
++int sys_enter_execve(struct tracepoint_raw_sys_enter *ctx)
+ {
+-    struct pt_regs *ctx2 = (struct pt_regs *)PT_REGS_PARM1(ctx);
+-    unsigned long argv = READ_KERN(PT_REGS_PARM2(ctx2));
+-
+     if (get_kubearmor_config(_MATCH_ARGS))
+     {
++        unsigned long argv = ctx->args[1];
+         save_cmd_args_to_buffer((const char *const *)argv);
+     }
++
+     return 0;
+ }
+ 
+-struct tracepoint_raw_sys_enter
+-{
+-    unsigned short common_type;
+-    unsigned char common_flags;
+-    unsigned char common_preempt_count;
+-    int common_pid;
+-    long id;
+-    unsigned long args[6];
+-};
+-
+ SEC("tracepoint/syscalls/sys_enter_setns")
+ int sys_enter_setns(struct tracepoint_raw_sys_enter *ctx)
+ {
+```
+
+**File**: `KubeArmor/enforcer/bpflsm/enforcer.go` (modified, +3/-2)
+```diff
+@@ -28,6 +28,7 @@ import (
+ 
+ //go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang enforcer ../../BPF/enforcer.bpf.c -- -I/usr/include/ -O2 -g -fno-stack-protector -Wno-missing-declarations
+ //go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang enforcer_path ../../BPF/enforcer_path.bpf.c -- -I/usr/include/ -O2 -g -fno-stack-protector -Wno-missing-declarations
++//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang process_monitor ../../BPF/process_monitor.bpf.c -- -I/usr/include/ -O2 -g -fno-stack-protector -Wno-missing-declarations
+ 
+ // ===================== //
+ // == BPFLSM Enforcer == //
+@@ -279,9 +280,9 @@ func NewBPFEnforcer(node tp.Node, pinpath string, logger *fd.Feeder, monitor *mo
+ 	}); err != nil {
+ 		be.Logger.Warnf("error loading process_monitor objects: %v", err)
+ 	} else {
+-		be.Probes["sys_execve_args"], err = link.Kprobe("sys_execve", be.objProcess.KprobeArgsExecve, nil)
++		be.Probes["sys_enter_execve"], err = link.Tracepoint("syscalls", "sys_enter_execve", be.objProcess.SysEnterExecve, nil)
+ 		if err != nil {
+-			be.Logger.Warnf("opening kprobe sys_execve: %s", err)
++			be.Logger.Warnf("opening tracepoint sys_enter_setns: %s", err)
  		}
+ 
+ 		if !cfg.GlobalCfg.SystemMonitor {
+```
+
+**File**: `KubeArmor/enforcer/bpflsm/generate_amd64.go` (removed, +0/-9)
+```diff
+@@ -1,9 +0,0 @@
+-//go:build amd64
+-// +build amd64
+-
+-// SPDX-License-Identifier: Apache-2.0
+-// Copyright 2026 Authors of KubeArmor
+-
+-package bpflsm
+-
+-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang process_monitor ../../BPF/process_monitor.bpf.c -- -I/usr/include/ -O2 -g -fno-stack-protector -Wno-missing-declarations -D__TARGET_ARCH_x86
+```
+
+**File**: `KubeArmor/enforcer/bpflsm/generate_arm64.go` (removed, +0/-9)
+```diff
+@@ -1,9 +0,0 @@
+-//go:build arm64
+-// +build arm64
+-
+-// SPDX-License-Identifier: Apache-2.0
+-// Copyright 2026 Authors of KubeArmor
+-
+-package bpflsm
+-
+-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc clang process_monitor ../../BPF/process_monitor.bpf.c -- -I/usr/include/ -O2 -g -fno-stack-protector -Wno-missing-declarations -D__TARGET_ARCH_arm64
+```
+
+**File**: `KubeArmor/enforcer/bpflsm/process_monitor_bpfeb.go` (modified, +28/-4)
+```diff
+@@ -48,6 +48,30 @@ type process_monitorOuterKey struct {
+ 	MntNs uint32
+ }
+ 
++// Names of all BPF objects in the ELF.
++//
++// Used for safe lookups in a Collection or CollectionSpec.
++const (
++	process_monitorMapArgsBufk               = "args_bufk"
++	process_monitorMapBufk                   = "bufk"
++	process_monitorMapBufs                   = "bufs"
++	process_monitorMapBufsOff                = "bufs_off"
++	process_monitorMapCmdArgsBuf             = "cmd_args_buf"
++	process_monitorMapKubearmorAlertThrottle = "kubearmor_alert_throttle"
++	process_monitorMapKubearmorArgsStore     = "kubearmor_args_store"
++	process_monitorMapKubearmorArguments     = "kubearmor_arguments"
++	process_monitorMapKubearmorConfig        = "kubearmor_config"
++	process_monitorMapKubearmorContainers    = "kubearmor_containers"
++	process_monitorMapKubearmorEvents        = "kubearmor_events"
++	process_monitorMapKubearmorExecPids      = "kubearmor_exec_pids"
++	process_monitorMapNsTransition           = "ns_transition"
++	process_monitorProgSchedProcessExit      = "sched_process_exit"
++	process_monitorProgSchedProcessFork      = "sched_process_fork"
++	process_monitorProgSysEnterExecve        = "sys_enter_execve"
++	process_monitorProgSysEnterSetns         = "sys_enter_setns"
++	process_monitorProgSysExitSetns          = "sys_exit_setns"
++)
++
+ // loadProcess_monitor returns the embedded CollectionSpec for process_monitor.
+ func loadProcess_monitor() (*ebpf.CollectionSpec, error) {
+ 	reader := bytes.NewReader(_Process_monitorBytes)
+@@ -68,7 +92,7 @@ func loadProcess_monitor() (*ebpf.CollectionSpec, error) {
+ //	*process_monitorMaps
+ //
+ // See ebpf.CollectionSpec.LoadAndAssign documentation for details.
+-func loadProcess_monitorObjects(obj interface{}, opts *ebpf.CollectionOptions) error {
++func loadProcess_monitorObjects(obj any, opts *ebpf.CollectionOptions) error {
+ 	spec, err := loadProcess_monitor()
+ 	if err != nil {
+ 		return err
+@@ -90,9 +114,9 @@ type process_monitorSpecs struct {
+ //
+ // It can be passed ebpf.CollectionSpec.Assign.
+ type process_monitorProgramSpecs struct {
+-	KprobeArgsExecve *ebpf.ProgramSpec `ebpf:"kprobe__args_execve"`
+ 	SchedProcessExit *ebpf.ProgramSpec `ebpf:"sched_process_exit"`
+ 	SchedProcessFork *ebpf.ProgramSpec `ebpf:"sched_process_fork"`
++	SysEnterExecve   *ebpf.ProgramSpec `ebpf:"sys_enter_execve"`
+ 	SysEnterSetns    *ebpf.ProgramSpec `ebpf:"sys_enter_setns"`
+ 	SysExitSetns     *ebpf.ProgramSpec `ebpf:"sys_exit_setns"`
+ }
+@@ -185,18 +209,18 @@ type process_monitorVariables struct {
+ //
+ // It can be passed to loadProcess_monitorObjects or ebpf.CollectionSpec.LoadAndAssign.
+ type process_monitorPrograms struct {
+-	KprobeArgsExecve *ebpf.Program `ebpf:"kprobe__args_execve"`
+ 	SchedProcessExit *ebpf.Program `ebpf:"sched_process_exit"`
+ 	SchedProcessFork *ebpf.Program `ebpf:"sched_process_fork"`
++	SysEnterExecve   *ebpf.Program `ebpf:"sys_enter_execve"`
+ 	SysEnterSetns    *ebpf.Program `ebpf:"sys_enter_setns"`
+ 	SysExitSetns     *ebpf.Program `ebpf:"sys_exit_setns"`
+ }
+ 
+ func (p *process_monitorPrograms) Close() error {
+ 	return _Process_monitorClose(
+-		p.KprobeArgsExecve,
+ 		p.SchedProcessExit,
+ 		p.SchedProcessFork,
++		p.SysEnterExecve,
+ 		p.SysEnterSetns,
+ 		p.SysExitSetns,
+ 	)
+```
+
+**File**: `KubeArmor/enforcer/bpflsm/process_monitor_bpfel.go` (modified, +28/-4)
+```diff
+@@ -48,6 +48,30 @@ type process_monitorOuterKey struct {
+ 	MntNs uint32
+ }
+ 
++// Names of all BPF objects in the ELF.
++//
++// Used for safe lookups in a Collection or CollectionSpec.
++const (
++	process_monitorMapArgsBufk               = "args_bufk"
++	process_monitorMapBufk                   = "bufk"
++	process_monitorMapBufs                   = "bufs"
++	process_monitorMapBufsOff                = "bufs_off"
++	process_monitorMapCmdArgsBuf             = "cmd_args_buf"
++	process_monitorMapKubearmorAlertThrottle = "kubearmor_alert_throttle"
++	process_monitorMapKubearmorArgsStore     = "kubearmor_args_store"
++	process_monitorMapKubearmorArguments     = "kubearmor_arguments"
++	process_monitorMapKubearmorConfig        = "kubearmor_config"
++	process_monitorMapKubearmorContainers    = "kubearmor_containers"
++	process_monitorMapKubearmorEvents        = "kubearmor_events"
++	process_monitorMapKubearmorExecPids      = "kubearmor_exec_pids"
++	process_monitorMapNsTransition           = "ns_transition"
++	process_monitorProgSchedProcessExit      = "sched_process_exit"
++	process_monitorProgSchedProcessFork      = "sched_process_fork"
++	process_monitorProgSysEnterExecve        = "sys_enter_execve"
++	process_monitorProgSysEnterSetns         = "sys_enter_setns"
++	process_monitorProgSysExitSetns          = "sys_exit_setns"
++)
++
+ // loadProcess_monitor returns the embedded CollectionSpec for process_monitor.
+ func loadProcess_monitor() (*ebpf.CollectionSpec, error) {
+ 	reader := bytes.NewReader(_Process_monitorBytes)
+@@ -68,7 +92,7 @@ func loadProcess_monitor() (*ebpf.CollectionSpec, error) {
+ //	*process_monitorMaps
+ //
+ // See ebpf.CollectionSpec.LoadAndAssign documentation for details.
+-func loadProcess_monitorObjects(obj interface{}, opts *ebpf.CollectionOptions) error {
++func loadProcess_monitorObjects(obj any, opts *ebpf.CollectionOptions) error {
+ 	spec, err := loadProcess_monitor()
+ 	if err != nil {
+ 		return err
+@@ -90,9 +114,9 @@ type process_monitorSpecs struct {
+ //
+ // It can be passed ebpf.CollectionSpec.Assign.
+ type process_monitorProgramSpecs struct {
+-	KprobeArgsExecve *ebpf.ProgramSpec `ebpf:"kprobe__args_execve"`
+ 	SchedProcessExit *ebpf.ProgramSpec `ebpf:"sched_process_exit"`
+ 	SchedProcessFork *ebpf.ProgramSpec `ebpf:"sched_process_fork"`
++	SysEnterExecve   *ebpf.ProgramSpec `ebpf:"sys_enter_execve"`
+ 	SysEnterSetns    *ebpf.ProgramSpec `ebpf:"sys_enter_setns"`
+ 	SysExitSetns     *ebpf.ProgramSpec `ebpf:"sys_exit_setns"`
+ }
+@@ -185,18 +209,18 @@ type process_monitorVariables struct {
+ //
+ // It can be passed to loadProcess_monitorObjects or ebpf.CollectionSpec.LoadAndAssign.
+ type process_monitorPrograms struct {
+-	KprobeArgsExecve *ebpf.Program `ebpf:"kprobe__args_execve"`
+ 	SchedProcessExit *ebpf.Program `ebpf:"sched_process_exit"`
+ 	SchedProcessFork *ebpf.Program `ebpf:"sched_process_fork"`
++	SysEnterExecve   *ebpf.Program `ebpf:"sys_enter_execve"`
+ 	SysEnterSetns    *ebpf.Program `ebpf:"sys_enter_setns"`
+ 	SysExitSetns     *ebpf.Program `ebpf:"sys_exit_setns"`
+ }
+ 
+ func (p *process_monitorPrograms) Close() error {
+ 	return _Process_monitorClose(
+-		p.KprobeArgsExecve,
+ 		p.SchedProcessExit,
+ 		p.SchedProcessFork,
++		p.SysEnterExecve,
+ 		p.SysEnterSetns,
+ 		p.SysExitSetns,
+ 	)
+```
+
+**File**: `KubeArmor/presets/anonmapexec/anonmapexec_bpfeb.go` (modified, +6/-2)
+```diff
+@@ -64,6 +64,7 @@ const (
+ 	anonmapexecMapKubearmorContainers                  = "kubearmor_containers"
+ 	anonmapexecMapKubearmorEvents                      = "kubearmor_events"
+ 	anonmapexecMapKubearmorExecPids                    = "kubearmor_exec_pids"
++	anonmapexecProgEnforceFileMprotect                 = "enforce_file_mprotect"
+ 	anonmapexecProgEnforceMmapFile                     = "enforce_mmap_file"
+ 	anonmapexecVarUnused                               = "unused"
+ )
+@@ -110,7 +111,8 @@ type anonmapexecSpecs struct {
+ //
+ // It can be passed ebpf.CollectionSpec.Assign.
+ type anonmapexecProgramSpecs struct {
+-	EnforceMmapFile *ebpf.ProgramSpec `ebpf:"enforce_mmap_file"`
++	EnforceFileMprotect *ebpf.ProgramSpec `ebpf:"enforce_file_mprotect"`
++	EnforceMmapFile     *ebpf.ProgramSpec `ebpf:"enforce_mmap_file"`
+ }
+ 
+ // anonmapexecMapSpecs contains maps before they are loaded into the kernel.
+@@ -206,11 +208,13 @@ type anonmapexecVariables struct {
+ //
+ // It can be passed to loadAnonmapexecObjects or ebpf.CollectionSpec.LoadAndAssign.
+ type anonmapexecPrograms struct {
+-	EnforceMmapFile *ebpf.Program `ebpf:"enforce_mmap_file"`
++	EnforceFileMprotect *ebpf.Program `ebpf:"enforce_file_mprotect"`
++	EnforceMmapFile     *ebpf.Program `ebpf:"enforce_mmap_file"`
+ }
+ 
+ func (p *anonmapexecPrograms) Close() error {
+ 	return _AnonmapexecClose(
++		p.EnforceFileMprotect,
+ 		p.EnforceMmapFile,
+ 	)
+ }
+```
+
+**File**: `KubeArmor/presets/anonmapexec/anonmapexec_bpfel.go` (modified, +6/-2)
+```diff
+@@ -64,6 +64,7 @@ const (
+ 	anonmapexecMapKubearmorContainers                  = "kubearmor_containers"
+ 	anonmapexecMapKubearmorEvents                      = "kubearmor_events"
+ 	anonmapexecMapKubearmorExecPids                    = "kubearmor_exec_pids"
++	anonmapexecProgEnforceFileMprotect                 = "enforce_file_mprotect"
+ 	anonmapexecProgEnforceMmapFile                     = "enforce_mmap_file"
+ 	anonmapexecVarUnused                               = "unused"
+ )
+@@ -110,7 +111,8 @@ type anonmapexecSpecs struct {
+ //
+ // It can be passed ebpf.CollectionSpec.Assign.
+ type anonmapexecProgramSpecs struct {
+-	EnforceMmapFile *ebpf.ProgramSpec `ebpf:"enforce_mmap_file"`
++	EnforceFileMprotect *ebpf.ProgramSpec `ebpf:"enforce_file_mprotect"`
++	EnforceMmapFile     *ebpf.ProgramSpec `ebpf:"enforce_mmap_file"`
+ }
+ 
+ // anonmapexecMapSpecs contains maps before they are loaded into the kernel.
+@@ -206,11 +208,13 @@ type anonmapexecVariables struct {
+ //
+ // It can be passed to loadAnonmapexecObjects or ebpf.CollectionSpec.LoadAndAssign.
+ type anonmapexecPrograms struct {
+-	EnforceMmapFile *ebpf.Program `ebpf:"enforce_mmap_file"`
++	EnforceFileMprotect *ebpf.Program `ebpf:"enforce_file_mprotect"`
++	EnforceMmapFile     *ebpf.Program `ebpf:"enforce_mmap_file"`
+ }
+ 
+ func (p *anonmapexecPrograms) Close() error {
+ 	return _AnonmapexecClose(
++		p.EnforceFileMprotect,
+ 		p.EnforceMmapFile,
+ 	)
+ }
 ```
 
 ---
 
-### Incident Patch 2: `dd180303` (2026-10-07)
-**Commit Message**: fix(monitor): fix memory leak in syscall replay path, add pprof and LOG_LEVEL (#2921)
+### Incident Patch 2: `51b3651e` (2026-10-22)
+**Commit Message**: Merge pull request #2939 from AryanBakliwal/fix-TraceSyscall-panic
 
-* update log level
-
-* change event drop log level
-
-* add pprof
-
-* fix memory leak in relay channel
-
-* Upgrade go packages
-
----------
-
-Signed-off-by: Achref Ben Saad <[REDACTED_EMAIL]>
-Signed-off-by: Achref Ben Saad <[REDACTED_EMAIL]>
-Signed-off-by: charankamal20 <[REDACTED_EMAIL]>
-Co-authored-by: charankamal20 <[REDACTED_EMAIL]>
+fix(monitor): TraceSyscall panic during shutdown
 
 **File**: `Dockerfile` (modified, +1/-1)
 ```diff
@@ -3237,555 +3526,139 @@ Co-authored-by: charankamal20 <[REDACTED_EMAIL]>
  
  ### Builder
  
--FROM golang:1.26-alpine3.22@sha256:28d89ee9cc0ff9fec75c82ca201e6bf7fdf9a679d4b7b24dfa04f2bb766bb468 AS builder
-+FROM golang:1.26-alpine3.23@sha256:a8fa79c5bd40d880b52bd3b6d7669ecdcfd00e85facdd427d279efb5ddd79cb1 AS builder
+-FROM golang:1.26-alpine3.23@sha256:10d148346b2da25f243a5cb3dd7a6e92df0f25224f072fba2821fa3ac1184601 AS builder
++FROM golang:1.26-alpine3.23@sha256:a07f231c19b03e6106cf442f02a5bcf262147e744d15b7b5e4b6d81d420c70a0 AS builder
  
  RUN apk --no-cache update && apk upgrade --no-cache libcrypto3 libssl3 zlib libexpat
  RUN apk add --no-cache git clang llvm make gcc protobuf protobuf-dev curl elfutils-dev libbpf-dev
 ```
 
-**File**: `KubeArmor/Makefile` (modified, +1/-1)
+**File**: `KubeArmor/go.mod` (modified, +1/-1)
 ```diff
-@@ -51,7 +51,7 @@ run: build
- 	cd $(CURDIR); sudo rm -f /tmp/kubearmor.log
- 	cd $(CURDIR)/BPF; make clean
- 	cd $(CURDIR)/BPF; make
--	cd $(CURDIR); DEBUG=true sudo -E ./kubearmor -logPath=/tmp/kubearmor.log -enableKubeArmorPolicy -enableKubeArmorHostPolicy -hostVisibility=process,file,network,capabilities -defaultFilePosture block -defaultCapabilitiesPosture block -defaultNetworkPosture block -hostDefaultFilePosture block -hostDefaultCapabilitiesPosture block -hostDefaultNetworkPosture block -annotateResources=true
-+	cd $(CURDIR); LOG_LEVEL=debug sudo -E ./kubearmor -logPath=/tmp/kubearmor.log -enableKubeArmorPolicy -enableKubeArmorHostPolicy -hostVisibility=process,file,network,capabilities -defaultFilePosture block -defaultCapabilitiesPosture block -defaultNetworkPosture block -hostDefaultFilePosture block -hostDefaultCapabilitiesPosture block -hostDefaultNetworkPosture block -annotateResources=true
+@@ -1,6 +1,6 @@
+ module github.com/kubearmor/KubeArmor/KubeArmor
  
- .PHONY: run-container
- run-container: build
+-go 1.26.9
++go 1.26.10
+ 
+ replace (
+ 	github.com/kubearmor/KubeArmor => ../../
 ```
 
-**File**: `KubeArmor/config/config.go` (modified, +15/-1)
+**File**: `KubeArmor/monitor/systemMonitor.go` (modified, +8/-0)
 ```diff
-@@ -80,6 +80,9 @@ type KubearmorConfig struct {
- 	MatchArgs bool // enable argument rules for policy
- 
- 	NetworkPolicyEnforcer bool // enable network policy enforcement
-+
-+	EnablePprof bool   // enable pprof profiling server
-+	PprofAddr   string // address for pprof profiling server
- }
- 
- // GlobalCfg Global configuration for Kubearmor
-@@ -138,6 +141,8 @@ const (
- 	ConfigUSBDeviceHandler               string = "enableUSBDeviceHandler"
- 	ConfigArgMatching                    string = "matchArgs"
- 	ConfigNetworkPolicyEnforcer          string = "enableNetworkPolicyEnforcer"
-+	ConfigEnablePprof                    string = "enablePprof"
-+	ConfigPprofAddr                      string = "pprofAddr"
- )
- 
- func readCmdLineParams() {
-@@ -165,7 +170,7 @@ func readCmdLineParams() {
- 	kvmAgentB := flag.Bool(ConfigKubearmorVM, false, "enabling KubeArmorVM")
- 	k8sEnvB := flag.Bool(ConfigK8sEnv, true, "is k8s env?")
- 
--	debugB := flag.Bool(ConfigDebug, false, "Enable/Disable pushing KubeArmor debug logs over gRPC. NOTE: Set environment DEBUG=true to configure stdout debug logging")
-+	debugB := flag.Bool(ConfigDebug, false, "Enable/Disable pushing KubeArmor debug logs over gRPC. NOTE: Set environment LOG_LEVEL=debug to configure stdout debug logging")
- 
- 	defaultFilePosture := flag.String(ConfigDefaultFilePosture, "audit", "configuring default enforcement action in global file context {allow|audit|block}")
- 	defaultNetworkPosture := flag.String(ConfigDefaultNetworkPosture, "audit", "configuring default enforcement action in global network context {allow|audit|block}")
-@@ -214,6 +219,9 @@ func readCmdLineParams() {
- 
- 	networkPolicyEnforcer := flag.Bool(ConfigNetworkPolicyEnforcer, true, "Enable network policy enforcement")
- 
-+	enablePprof := flag.Bool(ConfigEnablePprof, false, "enable pprof profiling server")
-+	pprofAddr := flag.String(ConfigPprofAddr, "localhost:6060", "address for pprof profiling server")
-+
- 	flags := []string{}
- 	flag.VisitAll(func(f *flag.Flag) {
- 		kv := fmt.Sprintf("%s:%v", f.Name, f.Value)
-@@ -296,6 +304,9 @@ func readCmdLineParams() {
- 	viper.SetDefault(ConfigArgMatching, *matchArgs)
- 
- 	viper.SetDefault(ConfigNetworkPolicyEnforcer, *networkPolicyEnforcer)
-+
-+	viper.SetDefault(ConfigEnablePprof, *enablePprof)
-+	viper.SetDefault(ConfigPprofAddr, *pprofAddr)
- }
- 
- // LoadConfig Load configuration
-@@ -393,6 +404,9 @@ func LoadConfig() error {
- 
- 	GlobalCfg.NetworkPolicyEnforcer = viper.GetBool(ConfigNetworkPolicyEnforcer)
- 
-+	GlobalCfg.EnablePprof = viper.GetBool(ConfigEnablePprof)
-+	GlobalCfg.PprofAddr = viper.GetString(ConfigPprofAddr)
-+
- 	LoadDynamicConfig()
- 
- 	kg.Printf("Final Configuration [%+v]", GlobalCfg)
-```
-
-**File**: `KubeArmor/enforcer/bpflsm/enforcer_bpfeb.go` (modified, +27/-1)
-```diff
-@@ -46,6 +46,32 @@ type enforcerCmdArgsKey struct {
- 	Ind  uint64
- }
- 
-+// Names of all BPF objects in the ELF.
-+//
-+// Used for safe lookups in a Collection or CollectionSpec.
-+const (
-+	enforcerMapArgsBufk               = "args_bufk"
-+	enforcerMapBufk                   = "bufk"
-+	enforcerMapBufs                   = "bufs"
-+	enforcerMapBufsOff                = "bufs_off"
-+	enforcerMapCmdArgsBuf             = "cmd_args_buf"
-+	enforcerMapKubearmorAlertThrottle = "kubearmor_alert_throttle"
-+	enforcerMapKubearmorArgsStore     = "kubearmor_args_store"
-+	enforcerMapKubearmorArguments     = "kubearmor_arguments"
-+	enforcerMapKubearmorConfig        = "kubearmor_config"
-+	enforcerMapKubearmorContainers    = "kubearmor_containers"
-+	enforcerMapKubearmorEvents        = "kubearmor_events"
-+	enforcerMapKubearmorExecPids      = "kubearmor_exec_pids"
-+	enforcerProgEnforceCap            = "enforce_cap"
-+	enforcerProgEnforceDns            = "enforce_dns"
-+	enforcerProgEnforceFile           = "enforce_file"
-+	enforcerProgEnforceFilePerm       = "enforce_file_perm"
-+	enforcerProgEnforceNetAccept      = "enforce_net_accept"
-+	enforcerProgEnforceNetConnect     = "enforce_net_connect"
-+	enforcerProgEnforceNetCreate      = "enforce_net_create"
-+	enforcerProgEnforceProc           = "enforce_proc"
-+)
-+
- // loadEnforcer returns the embedded CollectionSpec for enforcer.
- func loadEnforcer() (*ebpf.CollectionSpec, error) {
- 	reader := bytes.NewReader(_EnforcerBytes)
-@@ -66,7 +92,7 @@ func loadEnforcer() (*ebpf.CollectionSpec, error) {
- //	*enforcerMaps
- //
- // See ebpf.CollectionSpec.LoadAndAssign documentation for details.
--func loadEnforcerObjects(obj interface{}, opts *ebpf.CollectionOptions) error {
-+func loadEnforcerObjects(obj any, opts *ebpf.CollectionOptions) error {
- 	spec, err := loadEnforcer()
- 	if err != nil {
- 		return err
-```
-
-**File**: `KubeArmor/enforcer/bpflsm/enforcer_bpfel.go` (modified, +27/-1)
-```diff
-@@ -46,6 +46,32 @@ type enforcerCmdArgsKey struct {
- 	Ind  uint64
- }
- 
-+// Names of all BPF objects in the ELF.
-+//
-+// Used for safe lookups in a Collection or CollectionSpec.
-+const (
-+	enforcerMapArgsBufk               = "args_bufk"
-+	enforcerMapBufk                   = "bufk"
-+	enforcerMapBufs                   = "bufs"
-+	enforcerMapBufsOff                = "bufs_off"
-+	enforcerMapCmdArgsBuf             = "cmd_args_buf"
-+	enforcerMapKubearmorAlertThrottle = "kubearmor_alert_throttle"
-+	enforcerMapKubearmorArgsStore     = "kubearmor_args_store"
-+	enforcerMapKubearmorArguments     = "kubearmor_arguments"
-+	enforcerMapKubearmorConfig        = "kubearmor_config"
-+	enforcerMapKubearmorContainers    = "kubearmor_containers"
-+	enforcerMapKubearmorEvents        = "kubearmor_events"
-+	enforcerMapKubearmorExecPids      = "kubearmor_exec_pids"
-+	enforcerProgEnforceCap            = "enforce_cap"
-+	enforcerProgEnforceDns            = "enforce_dns"
-+	enforcerProgEnforceFile           = "enforce_file"
-+	enforcerProgEnforceFilePerm       = "enforce_file_perm"
-+	enforcerProgEnforceNetAccept      = "enforce_net_accept"
-+	enforcerProgEnforceNetConnect     = "enforce_net_connect"
-+	enforcerProgEnforceNetCreate      = "enforce_net_create"
-+	enforcerProgEnforceProc           = "enforce_proc"
-+)
-+
- // loadEnforcer returns the embedded CollectionSpec for enforcer.
- func loadEnforcer() (*ebpf.CollectionSpec, error) {
- 	reader := bytes.NewReader(_EnforcerBytes)
-@@ -66,7 +92,7 @@ func loadEnforcer() (*ebpf.CollectionSpec, error) {
- //	*enforcerMaps
- //
- // See ebpf.CollectionSpec.LoadAndAssign documentation for details.
--func loadEnforcerObjects(obj interface{}, opts *ebpf.CollectionOptions) error {
-+func loadEnforcerObjects(obj any, opts *ebpf.CollectionOptions) error {
- 	spec, err := loadEnforcer()
- 	if err != nil {
- 		return err
-```
-
-**File**: `KubeArmor/enforcer/bpflsm/enforcer_path_bpfeb.go` (modified, +30/-1)
-```diff
-@@ -46,6 +46,35 @@ type enforcer_pathCmdArgsKey struct {
- 	Ind  uint64
- }
- 
-+// Names of all BPF objects in the ELF.
-+//
-+// Used for safe lookups in a Collection or CollectionSpec.
-+const (
-+	enforcer_pathMapArgsBufk               = "args_bufk"
-+	enforcer_pathMapBufk                   = "bufk"
-+	enforcer_pathMapBufs                   = "bufs"
-+	enforcer_pathMapBufsOff                = "bufs_off"
-+	enforcer_pathMapCmdArgsBuf             = "cmd_args_buf"
-+	enforcer_pathMapKubearmorAlertThrottle = "kubearmor_alert_throttle"
-+	enforcer_pathMapKubearmorArgsStore     = "kubearmor_args_store"
-+	enforcer_pathMapKubearmorArguments     = "kubearmor_arguments"
-+	enforcer_pathMapKubearmorConfig        = "kubearmor_config"
-+	enforcer_pathMapKubearmorContainers    = "kubearmor_containers"
-+	enforcer_pathMapKubearmorEvents        = "kubearmor_events"
-+	enforcer_pathMapKubearmorExecPids      = "kubearmor_exec_pids"
-+	enforcer_pathProgEnforceChmod          = "enforce_chmod"
-+	enforcer_pathProgEnforceLinkDst        = "enforce_link_dst"
-+	enforcer_pathProgEnforceLinkSrc        = "enforce_link_src"
-+	enforcer_pathProgEnforceMkdir          = "enforce_mkdir"
-+	enforcer_pathProgEnforceMknod          = "enforce_mknod"
-+	enforcer_pathProgEnforceRenameNew      = "enforce_rename_new"
-+	enforcer_pathProgEnforceRenameOld      = "enforce_rename_old"
-+	enforcer_pathProgEnforceRmdir          = "enforce_rmdir"
-+	enforcer_pathProgEnforceSymlink        = "enforce_symlink"
-+	enforcer_pathProgEnforceTruncate       = "enforce_truncate"
-+	enforcer_pathProgEnforceUnlink         = "enforce_unlink"
-+)
-+
- // loadEnforcer_path returns the embedded CollectionSpec for enforcer_path.
- func loadEnforcer_path() (*ebpf.CollectionSpec, error) {
- 	reader := bytes.NewReader(_Enforcer_pathBytes)
-@@ -66,7 +95,7 @@ func loadEnforcer_path() (*ebpf.CollectionSpec, error) {
- //	*enforcer_pathMaps
- //
- // See ebpf.CollectionSpec.LoadAndAssign documentation for details.
--func loadEnforcer_pathObjects(obj interface{}, opts *ebpf.CollectionOptions) error {
-+func loadEnforcer_pathObjects(obj any, opts *ebpf.CollectionOptions) error {
- 	spec, err := loadEnforcer_path()
- 	if err != nil {
- 		return err
-```
-
-**File**: `KubeArmor/enforcer/bpflsm/enforcer_path_bpfel.go` (modified, +30/-1)
-```diff
-@@ -46,6 +46,35 @@ type enforcer_pathCmdArgsKey struct {
- 	Ind  uint64
- }
- 
-+// Names of all BPF objects in the ELF.
-+//
-+// Used for safe lookups in a Collection or CollectionSpec.
-+const (
-+	enforcer_pathMapArgsBufk               = "args_bufk"
-+	enforcer_pathMapBufk                   = "bufk"
-+	enforcer_pathMapBufs                   = "bufs"
-+	enforcer_pathMapBufsOff                = "bufs_off"
-+	enforcer_pathMapCmdArgsBuf             = "cmd_args_buf"
-+	enforcer_pathMapKubearmorAlertThrottle = "kubearmor_alert_throttle"
-+	enforcer_pathMapKubearmorArgsStore     = "kubearmor_args_store"
-+	enforcer_pathMapKubearmorArguments     = "kubearmor_arguments"
-+	enforcer_pathMapKubearmorConfig        = "kubearmor_config"
-+	enforcer_pathMapKubearmorContainers    = "kubearmor_containers"
-+	enforcer_pathMapKubearmorEvents        = "kubearmor_events"
-+	enforcer_pathMapKubearmorExecPids      = "kubearmor_exec_pids"
-+	enforcer_pathProgEnforceChmod          = "enforce_chmod"
-+	enforcer_pathProgEnforceLinkDst        = "enforce_link_dst"
-+	enforcer_pathProgEnforceLinkSrc        = "enforce_link_src"
-+	enforcer_pathProgEnforceMkdir          = "enforce_mkdir"
-+	enforcer_pathProgEnforceMknod          = "enforce_mknod"
-+	enforcer_pathProgEnforceRenameNew      = "enforce_rename_new"
-+	enforcer_pathProgEnforceRenameOld      = "enforce_rename_old"
-+	enforcer_pathProgEnforceRmdir          = "enforce_rmdir"
-+	enforcer_pathProgEnforceSymlink        = "enforce_symlink"
-+	enforcer_pathProgEnforceTruncate       = "enforce_truncate"
-+	enforcer_pathProgEnforceUnlink         = "enforce_unlink"
-+)
-+
- // loadEnforcer_path returns the embedded CollectionSpec for enforcer_path.
- func loadEnforcer_path() (*ebpf.CollectionSpec, error) {
- 	reader := bytes.NewReader(_Enforcer_pathBytes)
-@@ -66,7 +95,7 @@ func loadEnforcer_path() (*ebpf.CollectionSpec, error) {
- //	*enforcer_pathMaps
- //
- // See ebpf.CollectionSpec.LoadAndAssign documentation for details.
--func loadEnforcer_pathObjects(obj interface{}, opts *ebpf.CollectionOptions) error {
-+func loadEnforcer_pathObjects(obj any, opts *ebpf.CollectionOptions) error {
- 	spec, err := loadEnforcer_path()
- 	if err != nil {
- 		return err
-```
-
-**File**: `KubeArmor/feeder/feeder.go` (modified, +2/-2)
-```diff
-@@ -903,7 +903,7 @@ func (fd *Feeder) PushLog(log tp.Log) {
- 				counter++
- 				if counter == lenAlert {
- 					// Default on the last uid in Alterstruct means the Alert isn't pushed into Broadcast
--					kg.Printf("log channel busy, alert dropped.")
-+					kg.Debugf("log channel busy, alert dropped.")
+@@ -1166,6 +1166,14 @@ func (mon *SystemMonitor) TraceSyscall() {
  				}
- 
  			}
-@@ -927,7 +927,7 @@ func (fd *Feeder) PushLog(log tp.Log) {
- 					// Default on the last uid in Logstuct means the log isn't pushed into Broadcast
- 					fd.DroppedLogs++
- 					if fd.DroppedLogs%10000 == 0 {
--						kg.Warnf("log channel busy, 10000 logs dropped.")
-+						kg.Debugf("log channel busy, 10000 logs dropped.")
- 						fd.DroppedLogs = 0
- 					}
- 				}
+ 			MonitorLock.Lock()
++
++			// status is true when the system monitor is running, false when it is being destroyed
++			if !mon.Status {
++				MonitorLock.Unlock()
++				mon.Logger.Print("System monitor is being destroyed, exiting TraceSyscall")
++				return
++			}
++
+ 			// push the context to the channel for logging
+ 			mon.ContextChan <- ContextCombined{ContainerID: containerID, ContextSys: ctx, ContextArgs: args, HashData: hashes}
+ 			MonitorLock.Unlock()
 ```
 
----
-
-### Incident Patch 3: `74d732ec` (2026-09-15)
-**Commit Message**: chore: fix vulnerabilities in Go module dependencies (#2899)
-
-Bump golang.org/x/crypto to v0.56.0 to resolve DoS vulnerabilities in
-x/crypto/ssh (GO-2026-6354, GO-2026-6355), bump google.golang.org/grpc
-to v1.83.2 to resolve xDS server DoS, xDS RBAC filter bypass, and
-HTTP/2 DATA frame memory exhaustion issues (GHSA-2v4p-qf9q-27wj,
-GHSA-qc2q-p7wx-3px3, GHSA-vp52-pcj8-j9qc), bump
-github.com/containerd/containerd/v2 to v2.3.5 to resolve the CRI
-ExecSync goroutine leak (GHSA-7jxh-36q5-gcqv), and bump
-github.com/cilium/cilium to v1.19.5 to resolve a NetworkPolicy ipBlock
-ingress bypass (GO-2026-6367).
-
-Applied across every go.mod that resolves these modules directly or
-indirectly (KubeArmor, deployments, deployments/podman,
-pkg/KubeArmorController, pkg/KubeArmorOperator, protobuf, tests).
-k8s.io/api, k8s.io/apimachinery, k8s.io/client-go and k8s.io/cri-api
-move from v0.36.1 to v0.36.3 only because containerd/v2 v2.3.5's own
-go.mod requires that floor; no Kubernetes dependency was upgraded
-beyond what module resolution required.
-
-Signed-off-by: Vanshika <[REDACTED_EMAIL]>
-
-**File**: `KubeArmor/go.mod` (modified, +9/-9)
+**File**: `deployments/go.mod` (modified, +1/-1)
 ```diff
-@@ -24,10 +24,10 @@ replace (
+@@ -1,6 +1,6 @@
+ module github.com/kubearmor/KubeArmor/deployments
+ 
+-go 1.26.9
++go 1.26.10
+ 
+ replace (
+ 	github.com/kubearmor/KubeArmor => ../
+```
+
+**File**: `deployments/podman/go.mod` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ module github.com/kubearmor/KubeArmor/deployments/podman
+ 
+-go 1.26.9
++go 1.26.10
  
  require (
- 	github.com/Masterminds/sprig/v3 v3.3.0
--	github.com/cilium/cilium v1.19.4
-+	github.com/cilium/cilium v1.19.5
- 	github.com/cilium/ebpf v0.22.0
- 	github.com/containerd/containerd/api v1.11.1
--	github.com/containerd/containerd/v2 v2.3.2
-+	github.com/containerd/containerd/v2 v2.3.5
- 	github.com/containerd/nri v0.12.0
- 	github.com/containerd/typeurl/v2 v2.2.3
- 	github.com/florianl/go-nflog/v2 v2.3.0
-@@ -44,12 +44,12 @@ require (
- 	go.uber.org/zap v1.28.0
- 	golang.org/x/exp v0.0.0-20260508232706-74f9aab9d74a
- 	golang.org/x/sys v0.47.0
--	google.golang.org/grpc v1.82.1
-+	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
--	k8s.io/api v0.36.1
--	k8s.io/apimachinery v0.36.1
--	k8s.io/client-go v0.36.1
--	k8s.io/cri-api v0.36.1
-+	k8s.io/api v0.36.3
-+	k8s.io/apimachinery v0.36.3
-+	k8s.io/client-go v0.36.3
-+	k8s.io/cri-api v0.36.3
- 	k8s.io/klog/v2 v2.140.0
- 	k8s.io/utils v0.0.0-20260507154919-ff6756f316d2
- 	sigs.k8s.io/controller-runtime v0.24.1
-@@ -69,7 +69,7 @@ require (
- 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
- 	github.com/containerd/fifo v1.1.0 // indirect
- 	github.com/containerd/log v0.1.0 // indirect
--	github.com/containerd/platforms v1.0.0-rc.4 // indirect
-+	github.com/containerd/platforms v1.0.0-rc.5 // indirect
- 	github.com/containerd/plugin v1.1.0 // indirect
- 	github.com/containerd/ttrpc v1.2.8 // indirect
- 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
-@@ -145,7 +145,7 @@ require (
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
--	golang.org/x/crypto v0.55.0 // indirect
-+	golang.org/x/crypto v0.56.0 // indirect
- 	golang.org/x/mod v0.40.0 // indirect
- 	golang.org/x/net v0.58.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
+ 	github.com/kubearmor/KubeArmor/KubeArmor v0.0.0-20260521154542-6789b83a8cee
 ```
 
-**File**: `KubeArmor/go.sum` (modified, +20/-20)
+**File**: `pkg/KubeArmorController/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -23,8 +23,8 @@ github.com/brianvoe/gofakeit/v7 v7.12.1/go.mod h1:QXuPeBw164PJCzCUZVmgpgHJ3Llj49
- github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
- github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
- github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
--github.com/cilium/cilium v1.19.4 h1:TxDZW+27NqLbuenPlWd8y8cnAmDNFga/FCMM8zP1qLQ=
--github.com/cilium/cilium v1.19.4/go.mod h1:9j8LLVACyWe8bbtlUPCjPSARbmOS+tqo9GRNh5SHjJc=
-+github.com/cilium/cilium v1.19.5 h1:R4tqIO3wwjzr5TnPw5cSbUhdMIjMAoHhtjNvO/hIZ+Q=
-+github.com/cilium/cilium v1.19.5/go.mod h1:E6p9yfdG9g4aDq1D5cvcY7eqzdbVxXy3wyaYETCwZ1U=
- github.com/cilium/ebpf v0.22.0 h1:v2ktp0roffpMOj2MMf3idtCQZOsAoC4BJbAJN+ke2bY=
- github.com/cilium/ebpf v0.22.0/go.mod h1:CDzZbe2hC5JjlDC+CY3KFCzlYwN4gbxppYM+Z10bQt4=
- github.com/cilium/hive v0.0.0-20260108104938-97756f6ff54c h1:mP/Z+oVplgbg3oV1lwsAC86NPLWioN/TqlmZ6+BI2I0=
-@@ -35,8 +35,8 @@ github.com/containerd/cgroups/v3 v3.1.3 h1:eUNflyMddm18+yrDmZPn3jI7C5hJ9ahABE5q6
- github.com/containerd/cgroups/v3 v3.1.3/go.mod h1:PKZ2AcWmSBsY/tJUVhtS/rluX0b1uq1GmPO1ElCmbOw=
- github.com/containerd/containerd/api v1.11.1 h1:h8nfoDW9+fNsC/9TwiAHj8B1GzXKtR4eFtkhi/X5RLU=
- github.com/containerd/containerd/api v1.11.1/go.mod h1:CaQFRu+N1MtbgL6JDOJLUB1hCKESU1lD6MuTJhgtdlw=
--github.com/containerd/containerd/v2 v2.3.2 h1:eLven1YxRMkeiKu7IcMrPKE+gn8sGR1DqHbbshMEvWM=
--github.com/containerd/containerd/v2 v2.3.2/go.mod h1:rHKGm3VW6wNrINb3x8mNT+w7qYXFVElTt/8HTuxVhD4=
-+github.com/containerd/containerd/v2 v2.3.5 h1:9MYlI81gUcOZ0WsCkSMtvOU7rTR3hqAoa2eCzhoLlkA=
-+github.com/containerd/containerd/v2 v2.3.5/go.mod h1:RXDyLPaI3zoO7dFdAW9/54W4cix+z3A6larieufC9mg=
- github.com/containerd/continuity v0.5.0 h1:7a85HZpCSs+1Zps0Ee3DPSuAWY+0SJM1JNM51nlEVDg=
- github.com/containerd/continuity v0.5.0/go.mod h1:/lNJvtJKUQStBzpVQ1+rasXO1LAWtUQssk28EZvJ3nE=
- github.com/containerd/errdefs v1.0.0 h1:tg5yIfIlQIrxYtu9ajqY42W3lpS19XqdxRQeEwYG8PI=
-@@ -49,8 +49,8 @@ github.com/containerd/log v0.1.0 h1:TCJt7ioM2cr/tfR8GPbGf9/VRAX8D2B4PjzCpfX540I=
- github.com/containerd/log v0.1.0/go.mod h1:VRRf09a7mHDIRezVKTRCrOq78v577GXq3bSa3EhrzVo=
- github.com/containerd/nri v0.12.0 h1:RvZtyCM64XOB1UmMAFOlfReTTwCd+hE2IEQ5XEpkKA0=
- github.com/containerd/nri v0.12.0/go.mod h1:TGAfPLH4a+qwbv0PxsefPiR+PobYecDj2aXMtz7GQcg=
--github.com/containerd/platforms v1.0.0-rc.4 h1:M42JrUT4zfZTqtkUwkr0GzmUWbfyO5VO0Q5b3op97T4=
--github.com/containerd/platforms v1.0.0-rc.4/go.mod h1:lKlMXyLybmBedS/JJm11uDofzI8L2v0J2ZbYvNsbq1A=
-+github.com/containerd/platforms v1.0.0-rc.5 h1:vXd569rDrz8LeMXzAnBsy6LADV5YtsD8oyaRarxdmSU=
-+github.com/containerd/platforms v1.0.0-rc.5/go.mod h1:lKlMXyLybmBedS/JJm11uDofzI8L2v0J2ZbYvNsbq1A=
- github.com/containerd/plugin v1.1.0 h1:O+7lczNJVMy8rz0YNx3xGB8tTf5qY4i5abF041Ew19U=
- github.com/containerd/plugin v1.1.0/go.mod h1:qBTum+A8lJ6lO44A19Eo7y1OlcLj4OWFH1DA/vnHmcc=
- github.com/containerd/ttrpc v1.2.8 h1:xbVu6D4qF2jihdh9rDVOKqUMiFBQk6YctTdo1zk087Y=
-@@ -332,8 +332,8 @@ go.opentelemetry.io/otel/metric v1.44.0 h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSY
- go.opentelemetry.io/otel/metric v1.44.0/go.mod h1:8O7hanEPBNgEMmybD3s2VBKcgWOCsA6tzHBPODAiquo=
- go.opentelemetry.io/otel/sdk v1.44.0 h1:nHYwb9lK+fJPU/dnT6s7W7Z8itMWyqrnVfbheVYrZ58=
- go.opentelemetry.io/otel/sdk v1.44.0/go.mod h1:Osuydd3Se74nqjAKxid74N5eC+jfEqfTegHRnq58oK0=
--go.opentelemetry.io/otel/sdk/metric v1.43.0 h1:S88dyqXjJkuBNLeMcVPRFXpRw2fuwdvfCGLEo89fDkw=
--go.opentelemetry.io/otel/sdk/metric v1.43.0/go.mod h1:C/RJtwSEJ5hzTiUz5pXF1kILHStzb9zFlIEe85bhj6A=
-+go.opentelemetry.io/otel/sdk/metric v1.44.0 h1:3LlKgI+VjbVsjNRFZJZAJ30WjXC5VkNRks6si09iEfI=
-+go.opentelemetry.io/otel/sdk/metric v1.44.0/go.mod h1:5B5pMARnXxKhltooO4xUuCBorl65a4EpnTalObqOigA=
- go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk=
- go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
- go.uber.org/dig v1.17.1 h1:Tga8Lz8PcYNsWsyHMZ1Vm0OQOUaJNDyvPImgbAu9YSc=
-@@ -353,8 +353,8 @@ go4.org/netipx v0.0.0-20231129151722-fdeea329fbba/go.mod h1:PLyyIXexvUFg3Owu6p/W
- golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
--golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
--golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
-+golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
-+golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20260508232706-74f9aab9d74a h1:+3jdD
-```
-
-**File**: `deployments/go.mod` (modified, +2/-2)
-```diff
-@@ -12,8 +12,8 @@ require (
- 	github.com/clarketm/json v1.17.1
- 	github.com/kubearmor/KubeArmor/KubeArmor v0.0.0-20260406102335-87edc770f8bf
- 	github.com/kubearmor/KubeArmor/pkg/KubeArmorController v0.0.0-20260406102335-87edc770f8bf
--	k8s.io/api v0.36.1
--	k8s.io/apimachinery v0.36.1
-+	k8s.io/api v0.36.3
-+	k8s.io/apimachinery v0.36.3
- 	sigs.k8s.io/yaml v1.6.0
- )
+@@ -2,7 +2,7 @@
+ # Copyright 2026 Authors of KubeArmor
  
-```
-
-**File**: `deployments/go.sum` (modified, +4/-4)
-```diff
-@@ -77,12 +77,12 @@ gopkg.in/inf.v0 v0.9.1 h1:73M5CoZyi3ZLMOyDlQh031Cx6N9NDJ2Vvfl76EDAgDc=
- gopkg.in/inf.v0 v0.9.1/go.mod h1:cWUDdTG/fYaXco+Dcufb5Vnc6Gp2YChqWtbxRZE0mXw=
- gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
- gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
--k8s.io/api v0.36.1 h1:XbL/EMj8K2aJpJtePmqUyQMsM0D4QI2pvl7YKJ20FTY=
--k8s.io/api v0.36.1/go.mod h1:KOWo4ey3TINlXjeHVuwB3i+tXXnu+UcwFBHlI/9dvEo=
-+k8s.io/api v0.36.3 h1:NxB+05W2UGqXWFXcLO0RB5cnqnUPP5v5sVlaOH0Iz4w=
-+k8s.io/api v0.36.3/go.mod h1:JzLQKqRHC5+I8RVj/lS3lCg0mg6nWI9Fo/Sk3ElxHzg=
- k8s.io/apiextensions-apiserver v0.36.1 h1:6JfYmPUsuUIHuN+3QxutXYWj492RqF5fBSx67GYK5Ks=
- k8s.io/apiextensions-apiserver v0.36.1/go.mod h1:pLzZin90riwisdzKwv/GoTwENooytoIx5zWJb4Hkby8=
--k8s.io/apimachinery v0.36.1 h1:G63Gjx2W+q0YD+72Vo8oY0nDnePVwnuzTmmy5ENrVSA=
--k8s.io/apimachinery v0.36.1/go.mod h1:ibYOR00vW/I1kzvi5SF0dRuJ52BvKtfvRdOn35GPQ+8=
-+k8s.io/apimachinery v0.36.3 h1:PkzMRBRG8joFD8EhCuQAtNPvJlxb82FwplP26HIzvAM=
-+k8s.io/apimachinery v0.36.3/go.mod h1:cTSjBWgPe/6CQyBKzY/hDIRWCQQQeK0mfLbml0UYFHE=
- k8s.io/klog/v2 v2.140.0 h1:Tf+J3AH7xnUzZyVVXhTgGhEKnFqye14aadWv7bzXdzc=
- k8s.io/klog/v2 v2.140.0/go.mod h1:o+/RWfJ6PwpnFn7OyAG3QnO47BFsymfEfrz6XyYSSp0=
- k8s.io/kube-openapi v0.0.0-20260520065146-aa012df4f4af h1:zLXA2Irn14q2/06WMkxViyr7YCPUO2lJ0QYE9Juy5vA=
-```
-
-**File**: `deployments/podman/go.mod` (modified, +2/-2)
-```diff
-@@ -120,7 +120,7 @@ require (
- 	go.podman.io/image/v5 v5.40.0 // indirect
- 	go.podman.io/storage v1.63.1-0.20260519201413-7e9ee2072844 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
--	golang.org/x/crypto v0.55.0 // indirect
-+	golang.org/x/crypto v0.56.0 // indirect
- 	golang.org/x/mod v0.40.0 // indirect
- 	golang.org/x/net v0.58.0 // indirect
- 	golang.org/x/sync v0.22.0 // indirect
-@@ -130,7 +130,7 @@ require (
- 	golang.org/x/tools v0.49.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
--	google.golang.org/grpc v1.82.1 // indirect
-+	google.golang.org/grpc v1.83.2 // indirect
- 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
- 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
-```
-
-**File**: `deployments/podman/go.sum` (modified, +4/-4)
-```diff
-@@ -304,8 +304,8 @@ golang.org/x/crypto v0.13.0/go.mod h1:y6Z2r+Rw4iayiXXAIxJIDAJ1zMW4yaTpebo8fPOliY
- golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
- golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
- golang.org/x/crypto v0.33.0/go.mod h1:bVdXmD7IV/4GdElGPozy6U7lWdRXA4qyRVGJV57uQ5M=
--golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
--golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
-+golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
-+golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
- golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
- golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.12.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
-@@ -386,8 +386,8 @@ google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa h1:
- google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa/go.mod h1:q4lMZS6kskjT5HvCPrnnypcDPVJqT/f4nfxmkE7gryY=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa h1:mZHHdPZl0dbGHCflZgAq/Q468DWVFcU2whhB2KAo8fk=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
--google.golang.org/grpc v1.82.1 h1:NnAxzGRA0677vCa4BUkOAnO5+FfQqVl9iUXeD0IqcGE=
--google.golang.org/grpc v1.82.1/go.mod h1:yzTZ1TB1Z3SG+LIYaI+WiE8D5+PZ3ArnrSp8zF3+/ZA=
-+google.golang.org/grpc v1.83.2 h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=
-+google.golang.org/grpc v1.83.2/go.mod h1:YPI1hK3kDked6iHvgX3tR0y+nX/qpMFKhPgFsokw1S8=
- google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af h1:+5/Sw3GsDNlEmu7TfklWKPdQ0Ykja5VEmq2i817+jbI=
- google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+ # Build the manager binary
+-FROM golang:1.26.9@sha256:f1f0bcc2c524a3ced375fcb4d1ecb7aa371aa7070e112599aaca45cc02d0101b AS builder
++FROM golang:1.26.10@sha256:fb456410ab4c979617acaf28c46b2b9fe60b11bcc3dc8ceea0eaeb3e7cd0f8a8 AS builder
+ 
+ WORKDIR /workspace
+ # Copy the Go Modules manifests
 ```
 
 **File**: `pkg/KubeArmorController/go.mod` (modified, +1/-1)
 ```diff
-@@ -93,7 +93,7 @@ require (
- 	gomodules.xyz/jsonpatch/v2 v2.5.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
--	google.golang.org/grpc v1.82.1 // indirect
-+	google.golang.org/grpc v1.83.2 // indirect
- 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
+@@ -1,6 +1,6 @@
+ module github.com/kubearmor/KubeArmor/pkg/KubeArmorController
+ 
+-go 1.26.9
++go 1.26.10
+ 
+ replace github.com/go-jose/go-jose/v4 => github.com/go-jose/go-jose/v4 v4.1.4
+ 
 ```
 
-**File**: `pkg/KubeArmorController/go.sum` (modified, +2/-2)
+**File**: `pkg/KubeArmorOperator/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -222,8 +222,8 @@ google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa h1:
- google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa/go.mod h1:q4lMZS6kskjT5HvCPrnnypcDPVJqT/f4nfxmkE7gryY=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa h1:mZHHdPZl0dbGHCflZgAq/Q468DWVFcU2whhB2KAo8fk=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
--google.golang.org/grpc v1.82.1 h1:NnAxzGRA0677vCa4BUkOAnO5+FfQqVl9iUXeD0IqcGE=
--google.golang.org/grpc v1.82.1/go.mod h1:yzTZ1TB1Z3SG+LIYaI+WiE8D5+PZ3ArnrSp8zF3+/ZA=
-+google.golang.org/grpc v1.83.2 h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=
-+google.golang.org/grpc v1.83.2/go.mod h1:YPI1hK3kDked6iHvgX3tR0y+nX/qpMFKhPgFsokw1S8=
- google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af h1:+5/Sw3GsDNlEmu7TfklWKPdQ0Ykja5VEmq2i817+jbI=
- google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: Apache-2.0
+ # Copyright 2026 Authors of KubeArmor
+ 
+-FROM docker.io/golang:1.26.9@sha256:f1f0bcc2c524a3ced375fcb4d1ecb7aa371aa7070e112599aaca45cc02d0101b AS builder
++FROM docker.io/golang:1.26.10@sha256:fb456410ab4c979617acaf28c46b2b9fe60b11bcc3dc8ceea0eaeb3e7cd0f8a8 AS builder
+ ARG GOARCH
+ ARG GOOS
+ 
+```
+
+---
+
+### Incident Patch 3: `c868e0e5` (2026-10-21)
+**Commit Message**: fix(monitor): TraceSyscall panic when during shutdown
+
+Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
+
+**File**: `KubeArmor/monitor/systemMonitor.go` (modified, +8/-0)
+```diff
+@@ -1166,6 +1166,14 @@ func (mon *SystemMonitor) TraceSyscall() {
+ 				}
+ 			}
+ 			MonitorLock.Lock()
++
++			// status is true when the system monitor is running, false when it is being destroyed
++			if !mon.Status {
++				MonitorLock.Unlock()
++				mon.Logger.Print("System monitor is being destroyed, exiting TraceSyscall")
++				return
++			}
++
+ 			// push the context to the channel for logging
+ 			mon.ContextChan <- ContextCombined{ContainerID: containerID, ContextSys: ctx, ContextArgs: args, HashData: hashes}
+ 			MonitorLock.Unlock()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2936** (2026-10-16): chore: Update stable to v1.7.6 (@AryanBakliwal)
-- **PR #2933** (2026-10-15): chore: update helm chart version (@AryanBakliwal)
-- **PR #2925** (2026-10-13): fix(monitor): syscall matching for arm64 (@AryanBakliwal)
-- **PR #2924** (2026-10-05): remove limits (@achrefbensaad)
-- **PR #2922** (2026-10-04): Log level (@achrefbensaad)
-- **PR #2921** (2026-10-07): fix(monitor): fix memory leak in syscall replay path, add pprof and LOG_LEVEL (@achrefbensaad)
+- **PR #2949** (2026-10-23): fix: Fix stable release workflow and ignore bpf2go files (@AryanBakliwal)
+- **PR #2948** (2026-10-23): go generate fix, removed obj files, and added release related workflow tests to CI (@AryanBakliwal)
+- **PR #2947** (2026-10-22): fix(BPF): go generate on arm64 (@AryanBakliwal)
+- **PR #2946** (2026-10-22): bugfix(apparmor): fix pods not terminating in apparmor node (@charankamal20)
+- **PR #2942** (2026-10-21): fix(operator): detect containerd namespace and runtime socket reliably in snitch (@achrefbensaad)
+- **PR #2939** (2026-10-22): fix(monitor): TraceSyscall panic during shutdown (@AryanBakliwal)
 
 ---
 
@@ -3805,31 +3678,55 @@ Signed-off-by: Vanshika <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. presets): stop writing ContainerMap under RLock in anonmapexec (#2797)
+## X. enforcer: Replace execve kprobe with tracepoint in process monitor
 
 **RULE**:
-When implementing operations in `KubeArmor/presets/anonmapexec/preset.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubearmor/KubeArmor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `KubeArmor/BPF/process_monitor.bpf.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubearmor/KubeArmor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3887c17`: presets): stop writing ContainerMap under RLock in anonmapexec (#2797). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e56e040a`: enforcer: Replace execve kprobe with tracepoint in process monitor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `KubeArmor/presets/anonmapexec/preset.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `KubeArmor/BPF/process_monitor.bpf.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-					p.ContainerMapLock.RUnlock()
-					p.ContainerMapLock.Lock()
-					p.ContainerMapLock.Unlock()
+struct tracepoint_raw_sys_enter
+{
+    unsigned short common_type;
+    unsigned char common_flags;
+    unsigned char common_preempt_count;
+    int common_pid;
+    long id;
+    unsigned long args[6];
+};
+
+SEC("tracepoint/syscalls/sys_enter_execve")
+int sys_enter_execve(struct tracepoint_raw_sys_enter *ctx)
+        unsigned long argv = ctx->args[1];
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-						p.ContainerMapLock.RUnlock()
-					p.ContainerMapLock.RUnlock()
+SEC("kprobe/__x64_sys_execve")
+int kprobe__args_execve(struct pt_regs *ctx)
+    struct pt_regs *ctx2 = (struct pt_regs *)PT_REGS_PARM1(ctx);
+    unsigned long argv = READ_KERN(PT_REGS_PARM2(ctx2));
+
+struct tracepoint_raw_sys_enter
+{
+    unsigned short common_type;
+    unsigned char common_flags;
+    unsigned char common_preempt_count;
+    int common_pid;
+    long id;
+    unsigned long args[6];
+};
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3887c17` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e56e040a` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-24T19:58:58.332Z",
+  "last_updated": "2026-10-24T20:05:08.206Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4536,14 +4536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hunvreus-basecoat",
-      "content_hash": "442d4707fea3a29a1097cd7edf97ca22433aac34089c6c047d6ff9710f99ba1b",
-      "verified_at": "2026-10-18T22:29:21.044Z",
+      "content_hash": "d2d26f32f748578b8ad1a9def5dc72c313152c9fe3d5460f3f79b7bad52d482a",
+      "verified_at": "2026-10-24T20:04:54.153Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:29:21.044Z"
+      "last_updated": "2026-10-24T20:04:54.153Z"
     },
     "Michael-A-Kuykendall/shimmy": {
       "repository": "Michael-A-Kuykendall/shimmy",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "e9348a6d51ed86e2b97e3f99b3d0a78a851d59fbefad0030bbec1f35b9555eca",
-      "verified_at": "2026-10-23T07:39:23.008Z",
+      "content_hash": "b931d22bb1e455a82cc4a3983e76c264047eeaa7391430295c611d1025d02f00",
+      "verified_at": "2026-10-24T20:05:08.206Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T07:39:23.008Z"
+      "last_updated": "2026-10-24T20:05:08.206Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -5826,14 +5826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-reanimated",
-      "content_hash": "d1d3664557955c392f970a5acdb7c5f46b1b23891372ee3ba86b23db550debfc",
-      "verified_at": "2026-10-20T11:50:24.671Z",
+      "content_hash": "25360b298811bc00bfbb89da412f973e96b4fe06bdfc8984bce81ca480e9c986",
+      "verified_at": "2026-10-24T20:05:00.592Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:50:24.671Z"
+      "last_updated": "2026-10-24T20:05:00.592Z"
     },
     "liftbridge-io/liftbridge": {
       "repository": "liftbridge-io/liftbridge",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "0f2c1743e1854a340469b42e5704e2694f6a4ca8bbe95f9127aed78013d17397",
-      "verified_at": "2026-10-21T18:46:00.806Z",
+      "content_hash": "975efc18daa9cad1371637bddb5edeb11dbc8ae5f3ce04b9cefb9ae0637761d5",
+      "verified_at": "2026-10-24T20:05:03.168Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:46:00.806Z"
+      "last_updated": "2026-10-24T20:05:03.168Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",
@@ -9261,14 +9261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubearmor-kubearmor",
-      "content_hash": "3e86f3fab3b7d172235d5a3c8b11d5c9cc47b1ad6a0f9ac1f38fb211c718f28b",
-      "verified_at": "2026-10-19T05:12:44.901Z",
+      "content_hash": "bc17368007b88137eaf711f29526156d4b9d957f630f364ef0df21367ee9fdf2",
+      "verified_at": "2026-10-24T20:04:55.927Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:12:44.901Z"
+      "last_updated": "2026-10-24T20:04:55.927Z"
     },
     "callstack/agent-device": {
       "repository": "callstack/agent-device",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T19:58:58.287Z",
+  "last_updated": "2026-10-24T20:05:08.166Z",
   "total_verified_learnings": 1079,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5733,8 +5733,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "6a571439",
-      "content_hash": "e9348a6d51ed86e2b97e3f99b3d0a78a851d59fbefad0030bbec1f35b9555eca",
+      "source_version": "fe561573",
+      "content_hash": "b931d22bb1e455a82cc4a3983e76c264047eeaa7391430295c611d1025d02f00",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -5827,6 +5827,11 @@
           "number": 3812,
           "title": "Non-Destructive Multi-Tier Fallback Diagnostic Target Resolution",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3940,
+          "title": "aws/ipam: Stop expanding delegated prefixes into ENI addresses",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5834,7 +5839,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T07:39:22.926Z",
+      "verified_at": "2026-10-24T20:05:08.160Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27054,14 +27059,19 @@
       "slug": "hunvreus-basecoat",
       "platform": "github",
       "source_url": "https://github.com/hunvreus/basecoat",
-      "source_version": "6953a4ad",
-      "content_hash": "442d4707fea3a29a1097cd7edf97ca22433aac34089c6c047d6ff9710f99ba1b",
+      "source_version": "6769c83c",
+      "content_hash": "d2d26f32f748578b8ad1a9def5dc72c313152c9fe3d5460f3f79b7bad52d482a",
       "dossier_path": "07_PROJECT_LEARNING/hunvreus-basecoat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hunvreus-basecoat-learnings.md",
       "promoted_rules": [
         {
           "number": 1779,
           "title": "docs sidebar after history restore",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3936,
+          "title": "iOS auto-zoom on combobox input (#185)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -27070,7 +27080,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:29:21.000Z",
+      "verified_at": "2026-10-24T20:04:54.105Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30100,14 +30110,19 @@
       "slug": "kubearmor-kubearmor",
       "platform": "github",
       "source_url": "https://github.com/kubearmor/KubeArmor",
-      "source_version": "e6c53bb1",
-      "content_hash": "3e86f3fab3b7d172235d5a3c8b11d5c9cc47b1ad6a0f9ac1f38fb211c718f28b",
+      "source_version": "99518b0d",
+      "content_hash": "bc17368007b88137eaf711f29526156d4b9d957f630f364ef0df21367ee9fdf2",
       "dossier_path": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
       "promoted_rules": [
         {
           "number": 2166,
           "title": "presets): stop writing ContainerMap under RLock in anonmapexec (#2797)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3937,
+          "title": "enforcer: Replace execve kprobe with tracepoint in process monitor",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -30116,7 +30131,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:12:44.843Z",
+      "verified_at": "2026-10-24T20:04:55.880Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41387,8 +41402,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "c9a56009",
-      "content_hash": "0f2c1743e1854a340469b42e5704e2694f6a4ca8bbe95f9127aed78013d17397",
+      "source_version": "d4548cbb",
+      "content_hash": "975efc18daa9cad1371637bddb5edeb11dbc8ae5f3ce04b9cefb9ae0637761d5",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -41406,6 +41421,11 @@
           "number": 3587,
           "title": "Merge pull request #18424 from harshilv17/feature/monitoring-scrape-timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3939,
+          "title": "ci: build release images with the newest Go patch release",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41413,7 +41433,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:46:00.761Z",
+      "verified_at": "2026-10-24T20:05:03.119Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44040,8 +44060,8 @@
       "slug": "software-mansion-react-native-reanimated",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-reanimated",
-      "source_version": "1d2b2132",
-      "content_hash": "d1d3664557955c392f970a5acdb7c5f46b1b23891372ee3ba86b23db550debfc",
+      "source_version": "1735e031",
+      "content_hash": "25360b298811bc00bfbb89da412f973e96b4fe06bdfc8984bce81ca480e9c986",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "promoted_rules": [
@@ -44059,6 +44079,11 @@
           "number": 3150,
           "title": "Hard Depth Limit on Recursive Object Stringifiers & Serializers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3938,
+          "title": "SET): keep a shared container whose animation ends in the pull that creates it (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44066,7 +44091,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:50:24.580Z",
+      "verified_at": "2026-10-24T20:05:00.544Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -115990,6 +116015,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T19:58:58.280Z"
+    },
+    "rule-3936": {
+      "learning_id": "rule-3936",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3936,
+      "title": "iOS auto-zoom on combobox input (#185)",
+      "source_url": "https://github.com/hunvreus/basecoat",
+      "source_version": "6769c83c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:04:54.105Z"
+    },
+    "rule-3937": {
+      "learning_id": "rule-3937",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3937,
+      "title": "enforcer: Replace execve kprobe with tracepoint in process monitor",
+      "source_url": "https://github.com/kubearmor/KubeArmor",
+      "source_version": "99518b0d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:04:55.880Z"
+    },
+    "rule-3938": {
+      "learning_id": "rule-3938",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3938,
+      "title": "SET): keep a shared container whose animation ends in the pull that creates it (",
+      "source_url": "https://github.com/software-mansion/react-native-reanimated",
+      "source_version": "1735e031",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:05:00.544Z"
+    },
+    "rule-3939": {
+      "learning_id": "rule-3939",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3939,
+      "title": "ci: build release images with the newest Go patch release",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "d4548cbb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:05:03.119Z"
+    },
+    "rule-3940": {
+      "learning_id": "rule-3940",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3940,
+      "title": "aws/ipam: Stop expanding delegated prefixes into ENI addresses",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "fe561573",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:05:08.160Z"
     }
   },
   "aliases": {
