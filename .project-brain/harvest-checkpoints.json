@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-24T20:48:46.427Z",
+  "last_updated": "2026-10-24T20:55:05.492Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "73625fce8abd27d89456e82a6e7941cafa7bc10181bf5faf7965d6e9d60b2816",
-      "verified_at": "2026-10-22T17:45:04.123Z",
+      "content_hash": "4b04e7c201ed1c209d17726984d1cf0c2307135cf362dba1698f930263dede6a",
+      "verified_at": "2026-10-24T20:55:05.491Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:45:04.123Z"
+      "last_updated": "2026-10-24T20:55:05.491Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -6276,14 +6276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-i18next-react-i18next",
-      "content_hash": "bc6c814e5167671ad44abbda353ab4689e815c1f46a3d87b0af818b3ba3f48be",
-      "verified_at": "2026-10-19T00:35:03.425Z",
+      "content_hash": "f434ad81a164d71fb3e970bb221b7fd15984cde339bd6240372a31f541711e60",
+      "verified_at": "2026-10-24T20:55:00.229Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:35:03.425Z"
+      "last_updated": "2026-10-24T20:55:00.229Z"
     },
     "clastix/kamaji": {
       "repository": "clastix/kamaji",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "c91698dd65888416310fb9d8e7c69f9cb8624685f3f3b68c96052ca3e2e901f5",
-      "verified_at": "2026-10-22T15:28:59.936Z",
+      "content_hash": "7de1988ffb5d9c624c2c1219b9efb47c72992f43ebd8e87af98fd0ead143c9ef",
+      "verified_at": "2026-10-24T20:55:04.260Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:28:59.936Z"
+      "last_updated": "2026-10-24T20:55:04.260Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",

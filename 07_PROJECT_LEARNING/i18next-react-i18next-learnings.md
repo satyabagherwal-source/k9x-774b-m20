@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source**: github ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
-> **Source Version**: `2aab7f1d`  
+> **Source Version**: `3f0880e2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:35:03.293Z  
+> **Timestamp**: 2026-10-24T20:55:00.058Z  
 > **Learning ID**: `learn-github-i18next-react-i18next`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:35:03.286Z  
+> **Harvest Timestamp**: 2026-10-24T20:54:59.124Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Internationalization for react done right. Using the i18next i18n ecosystem.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10054 stars
+- **Stars / Engagement**: 10058 stars
 
 ---
 
@@ -306,32 +306,31 @@ const commonEntities = {
   '&alefsym;': 'ℵ',
 };
 
-// Create regex pattern for all entities
-const entityPattern = new RegExp(
-  Object.keys(commonEntities)
-    .map((entity) => entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-    .join('|'),
-  'g',
-);
+// Named, decimal and hexadecimal entities in one pattern, so that each entity is decoded once:
+// decoding them in separate passes turned "&amp;#60;" (a literal "&#60;") into "<"
+const entityPattern = /&(?:#(\d+)|#x([0-9a-fA-F]+)|[A-Za-z][A-Za-z0-9]*);/g;
+
+// fromCodePoint throws above U+10FFFF, so such entities are left as they are
+const decodeCodePoint = (match, codePoint) =>
+  codePoint <= 0x10ffff ? String.fromCodePoint(codePoint) : match;
 
 /**
  * Decode HTML entities in text
  *
- * Uses a hybrid approach:
- * 1. First pass: decode common named entities using a map
- * 2. Second pass: decode numeric entities (decimal and hexadecimal)
+ * Decodes the common named entities from the map above and numeric entities (decimal and
+ * hexadecimal) in a single pass. Unknown named entities are left as they are.
  *
  * @param {string} text - Text with HTML entities
  * @returns {string} Decoded text
  */
 export const decodeHtmlEntities = (text) =>
-  text
-    // First pass: common named entities
-    .replace(entityPattern, (match) => commonEntities[match])
-    // Second pass: numeric entities (decimal)
-    .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(parseInt(num, 10)))
-    // Third pass: numeric entities (hexadecimal)
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+  text.replace(entityPattern, (match, decimal, hex) => {
+    if (decimal) return decodeCodePoint(match, parseInt(decimal, 10));
+    if (hex) return decodeCodePoint(match, parseInt(hex, 16));
+    return Object.prototype.hasOwnProperty.call(commonEntities, match)
+      ? commonEntities[match]
+      : match;
+  });
 
 ```
 
@@ -965,293 +964,128 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c7e1c80f` (2026-10-17)
-**Commit Message**: fix(IcuTrans): explicit values win over defaultVariables, RSC entry point, ESM sideEffects
+### Incident Patch 1: `9802f17e` (2026-10-24)
+**Commit Message**: build
 
-IcuTrans and Trans merged interpolation.defaultVariables over the explicit values; explicit values now win, as in t(). New entry point react-i18next/IcuTransWithoutContext (with types) that does not create the React context on import, so it works in Server Components. The ESM build now declares "sideEffects": false in dist/es/package.json, so a Trans-only bundle no longer pulls in IcuTrans. Changelog drafted as 17.0.21.
-
-**File**: `CHANGELOG.md` (modified, +7/-0)
+**File**: `react-i18next.js` (modified, +4/-0)
 ```diff
-@@ -1,3 +1,10 @@
-+## 17.0.21
-+
-+- fix(IcuTrans): explicit `values` now win over `interpolation.defaultVariables`, as they do in `t()`. `IcuTrans` merged them the other way round, so `<IcuTrans values={{ user: 'John Doe' }} />` rendered the configured default variable `user` instead of `John Doe`. `Trans` had the same inverted merge and is fixed too. Compatibility note: only names that are set both in `values` and in `defaultVariables` render differently.
-+- feat: new entry point `react-i18next/IcuTransWithoutContext` (with types) for React Server Components. Importing `IcuTransWithoutContext` from `react-i18next` in a Server Component could fail the build with `createContext is not a function`, because the main entry creates the React context when it is loaded. Like `react-i18next/TransWithoutContext`, the new entry point does not.
-+- fix(build): the ESM build's `dist/es/package.json` now declares `"sideEffects": false`, like the root `package.json` already did. Bundlers use the nearest `package.json`, so the ESM build counted as having side effects and unused exports were kept: an app that only uses `Trans` still bundled `IcuTrans` with its HTML entity decoder, `useTranslation` and `use-sync-external-store`. With esbuild, a `Trans`-only bundle (React and i18next external) goes from 20.9 KB to 11.6 KB minified, 8.3 KB to 5.0 KB gzipped.
-+- docs: the `icu.macro` Babel macro is now marked as deprecated in favour of using `IcuTrans` directly. It fails on Babel 8 (`t.jSXIdentifier is not a function`), `<Plural count={count}>` renders the raw ICU message, and a React `key` on `<Plural>`/`<Select>` becomes an ICU case. It keeps working on Babel 7 and is not removed. The `IcuTrans` docs page has a corrected example and props table and covers Server Components.
-+
- ## 17.0.20
- 
- - fix: `useTranslation` no longer suspends when a missing namespace is loaded by a synchronous backend. With `useSuspense` (the default), a namespace that wasn't in the store yet always made the component throw the loading promise, even when the backend had already delivered the resources while that promise was being created. React then showed the `Suspense` fallback and rendered again right away, which appears as a fallback flash (a white flash in React Native) and costs performance. The hook now starts the load first, checks the store again and only suspends if the namespace is still missing. This helps every backend that calls back synchronously, for example `i18next-resources-to-backend` with a static resources object or a loader that returns the data directly. Async backends, and an instance that isn't initialized yet, still suspend as before. Thanks @oblador ([#1937](https://github.com/i18next/react-i18next/pull/1937)).
+@@ -2805,6 +2805,10 @@
+           stringNode += `{{${value}}}`;
+           return;
+         }
++        if (!keys.length && Object.keys(child).length === 1 && 'format' in child) {
++          stringNode += '{{format}}';
++          return;
++        }
+         warn(i18n, 'TRANS_INVALID_OBJ', `Invalid child - Object should only have keys {{ value, format }} (format is optional).`, {
+           i18nKey,
+           child
 ```
 
-**File**: `IcuTransWithoutContext.d.mts` (added, +1/-0)
+---
+
+### Incident Patch 2: `63f4e41d` (2026-10-24)
+**Commit Message**: fix(Trans): don't drop an interpolation variable named format (#1944)
+
+nodesToString takes 'format' out of an interpolation object as the
+formatter name, so <Trans>Export as {{ format }}</Trans> left no key
+behind, warned TRANS_INVALID_OBJ and rendered 'Export as '.
+
+**File**: `src/TransWithoutContext.js` (modified, +5/-0)
 ```diff
-@@ -0,0 +1 @@
-+export * from './IcuTransWithoutContext.js';
+@@ -113,6 +113,11 @@ export const nodesToString = (children, i18nOptions, i18n, i18nKey) => {
+         stringNode += `{{${value}}}`;
+         return;
+       }
++      // a single variable that happens to be called `format`, e.g. {{ format }}
++      if (!keys.length && Object.keys(child).length === 1 && 'format' in child) {
++        stringNode += '{{format}}';
++        return;
++      }
+       warn(
+         i18n,
+         'TRANS_INVALID_OBJ',
 ```
 
-**File**: `IcuTransWithoutContext.d.ts` (added, +6/-0)
+**File**: `test/trans.nodeToString.spec.jsx` (modified, +13/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+export {
-+  IcuTransWithoutContext,
-+  IcuTransWithoutContextComponent,
-+  IcuTransWithoutContextProps,
-+  IcuTransContentDeclaration,
-+} from './index.js';
-```
-
-**File**: `package.json` (modified, +12/-2)
-```diff
-@@ -39,6 +39,16 @@
-       "require": "./dist/commonjs/TransWithoutContext.js",
-       "default": "./dist/es/TransWithoutContext.js"
-     },
-+    "./IcuTransWithoutContext": {
-+      "types": {
-+        "require": "./IcuTransWithoutContext.d.ts",
-+        "import": "./IcuTransWithoutContext.d.mts"
-+      },
-+      "module": "./dist/es/IcuTransWithoutContext.js",
-+      "import": "./dist/es/IcuTransWithoutContext.js",
-+      "require": "./dist/commonjs/IcuTransWithoutContext.js",
-+      "default": "./dist/es/IcuTransWithoutContext.js"
-+    },
-     "./initReactI18next": {
-       "types": {
-         "require": "./initReactI18next.d.ts",
-@@ -144,14 +154,14 @@
-     "lint:fix": "eslint --cache --fix .",
-     "format": "prettier . --check",
-     "format:fix": "prettier . --write --list-different",
--    "copy": "cpy ./dist/umd/react-i18next.min.js ./dist/umd/react-i18next.js . --flat && echo '{\"type\":\"module\"}' > dist/es/package.json",
-+    "copy": "cpy ./dist/umd/react-i18next.min.js ./dist/umd/react-i18next.js . --flat && echo '{\"type\":\"module\",\"sideEffects\":false}' > dist/es/package.json",
-     "build:es": "cross-env BABEL_ENV=ESNext babel src --out-dir dist/es",
-     "build:cjs": "babel src --out-dir dist/commonjs",
-     "build:umd": "rollup -c rollup.config.mjs --format umd && rollup -c rollup.config.mjs --format umd --uglify",
-     "build:amd": "rollup -c rollup.config.mjs --format amd && rollup -c rollup.config.mjs --format amd --uglify",
-     "build:iife": "rollup -c rollup.config.mjs --format iife && rollup -c rollup.config.mjs --format iife --uglify",
-     "build": "npm run clean && npm run build:cjs && npm run build:es && npm run build:umd && npm run build:amd && npm run copy",
--    "fix_dist_package": "node -e 'console.log(`{\"type\":\"module\",\"version\":\"${process.env.npm_package_version}\"}`)' > dist/es/package.json",
-+    "fix_dist_package": "node -e 'console.log(`{\"type\":\"module\",\"version\":\"${process.env.npm_package_version}\",\"sideEffects\":false}`)' > dist/es/package.json",
-     "preversion": "npm run build && git push",
-     "postversion": "npm run fix_dist_package && git push && git push --tags",
-     "test": "vitest",
-```
-
-**File**: `react-i18next.js` (modified, +7/-14)
-```diff
-@@ -3059,11 +3059,9 @@
-     } = reactI18nextOptions;
-     const key = i18nKey || (hashTransKey ? hashTransKey(nodeAsString || defaultValue) : nodeAsString || defaultValue);
-     if (i18n.options?.interpolation?.defaultVariables) {
--      values = mergedValues && Object.keys(mergedValues).length > 0 ? {
--        ...mergedValues,
--        ...i18n.options.interpolation.defaultVariables
--      } : {
--        ...i18n.options.interpolation.defaultVariables
-+      values = {
-+        ...i18n.options.interpolation.defaultVariables,
-+        ...mergedValues
-       };
-     } else {
-       values = mergedValues;
-@@ -3590,15 +3588,10 @@
-     const t = tFromProps || i18n.t?.bind(i18n) || (k => k);
-     let namespaces = ns || t.ns || i18n.options?.defaultNS;
-     namespaces = isString(namespaces) ? [namespaces] : namespaces || ['translation'];
--    let mergedValues = values;
--    if (i18n.options?.interpolation?.defaultVariables) {
--      mergedValues = values && Object.keys(values).length > 0 ? {
--        ...values,
--        ...i18n.options.interpolation.defaultVariables
--      } : {
--        ...i18n.options.interpolation.defaultVariables
--      };
--    }
-+    const mergedValues = {
-+      ...i18n.options?.interpolation?.defaultVariables,
-+      ...values
-+    };
-     const translation = t(i18nKey || defaultTranslation, {
-       defaultValue: defaultTranslation,
-       ...mergedValues,
-```
-
-**File**: `src/IcuTransWithoutContext.js` (modified, +2/-8)
-```diff
-@@ -108,14 +108,8 @@ export function IcuTransWithoutContext({
-   let namespaces = ns || t.ns || i18n.options?.defaultNS;
-   namespaces = isString(namespaces) ? [namespaces] : namespaces || ['translation'];
- 
--  // Merge default interpolation variables if they exist
--  let mergedValues = values;
--  if (i18n.options?.interpolation?.defaultVariables) {
--    mergedValues =
--      values && Object.keys(values).length > 0
--        ? { ...values, ...i18n.options.interpolation.defaultVariables }
--        : { ...i18n.options.interpolation.defaultVariables };
--  }
-+  // Merge default interpolation variables; explicit values win, like in t()
-+  const mergedValues = { ...i18n.options?.interpolation?.defaultVariables, ...values };
- 
-   // Get the translation, falling back to defaultTranslation.
-   // Like `Trans`, use the default string as the key when none is given (icu.macro emits
-```
-
-**File**: `src/TransWithoutContext.js` (modified, +2/-4)
-```diff
-@@ -523,11 +523,9 @@ export function Trans({
-     i18nKey ||
-     (hashTransKey ? hashTransKey(nodeAsString || defaultValue) : nodeAsString || defaultValue);
-   if (i18n.options?.interpolation?.defaultVariables) {
-+    // explicit values win over defaultVariables, like in t()
-     // eslint-disable-next-line no-param-reassign
--    values =
--      mergedValues && Object.keys(mergedValues).length > 0
--        ? { ...mergedValues, ...i18n.options.interpolation.defaultVariables }
--        : { ...i18n.options.interpolation.defaultVariables };
-+    values = { ...i18n.options.interpolation.defaultVariables, ...mergedValues };
-   } else {
-     // eslint-disable-next-line no-param-reassign
-     values = mergedValues;
-```
-
-**File**: `test/IcuTrans/IcuTransWithoutContext.spec.jsx` (modified, +20/-0)
-```diff
-@@ -202,6 +202,26 @@ describe('IcuTransWithoutContext', () => {
-       expect(container.textContent).toBeTruthy();
+@@ -205,6 +205,19 @@ describe('trans nodeToString', () => {
+       expect(actual).toEqual(expected);
      });
  
-+    it('should let explicit values win over default variables, like t()', () => {
-+      const customI18n = i18n.cloneInstance({
-+        interpolation: { defaultVariables: { user: 'DEFAULT_USER', team: 'DEFAULT_TEAM' } },
-+      });
-+      const props = {
-+        i18nKey: 'test.values.precedence',
-+        defaultTranslation: 'We invited <0>{{user}}</0> to {{team}}.',
-+        content: [{ type: 'strong' }],
-+        i18n: customI18n,
-+      };
-+
-+      const { container } = render(
-+        <IcuTransWithoutContext {...props} values={{ user: 'John Doe' }} />,
++    it('should treat a single variable named format as the interpolated value', () => {
++      const fragment = (
++        <>
++          {'export as '}
++          {{ format: 'pdf' }}
++        </>
 +      );
-+      expect(container.innerHTML).toBe('We invited <strong>John Doe</strong> to DEFAULT_TEAM.');
-+      expect(
-+        customI18n.t(props.i18nKey, { defaultValue: props.defaultTranslation, user: 'John Doe' }),
-+      ).toBe('We invited <0>John Doe</0> to DEFAULT_TEAM.');
++
++      const expected = 'export as {{format}}';
++      const actual = nodesToString(fragment.props.children, {});
++      expect(actual).toEqual(expected);
 +    });
 +
-     it('should use only default variables when no values provided', () => {
-       const customI18n = i18n.cloneInstance({
-         interpolation: {
+     it('should ignore invalid primitive children (e.g. numbers)', () => {
+       const fragment = (
+         <>
+```
+
+**File**: `test/trans.render.spec.jsx` (modified, +12/-0)
+```diff
+@@ -296,6 +296,18 @@ describe('trans testTransKey1 singular', () => {
+   });
+ });
+ 
++describe('trans with a variable named format', () => {
++  function TestComponent() {
++    const format = 'pdf';
++    return <Trans i18nKey="exportAsFormatNotInResources">Export as {{ format }}</Trans>;
++  }
++
++  it('should interpolate it like any other variable', () => {
++    const { container } = render(<TestComponent />);
++    expect(container).toHaveTextContent('Export as pdf');
++  });
++});
++
+ describe('trans testTransKey1 plural', () => {
+   function TestComponent() {
+     const numOfItems = 10;
 ```
 
 ---
 
-### Incident Patch 2: `806df1ee` (2026-10-16)
-**Commit Message**: build, changelog for 17.0.20
+### Incident Patch 3: `5e2cf4ac` (2026-10-24)
+**Commit Message**: build
 
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `react-i18next.js` (modified, +6/-2)
 ```diff
-@@ -1,3 +1,7 @@
-+## 17.0.20
-+
-+- fix: `useTranslation` no longer suspends when a missing namespace is loaded by a synchronous backend. With `useSuspense` (the default), a namespace that wasn't in the store yet always made the component throw the loading promise, even when the backend had already delivered the resources while that promise was being created. React then showed the `Suspense` fallback and rendered again right away, which appears as a fallback flash (a white flash in React Native) and costs performance. The hook now starts the load first, checks the store again and only suspends if the namespace is still missing. This helps every backend that calls back synchronously, for example `i18next-resources-to-backend` with a static resources object or a loader that returns the data directly. Async backends, and an instance that isn't initialized yet, still suspend as before. Thanks @oblador ([#1937](https://github.com/i18next/react-i18next/pull/1937)).
-+
- ## 17.0.19
- 
- - fix: `useTranslation` with an inline selector `keyPrefix` (`useTranslation('ns', { keyPrefix: ($) => $.role })`) returned a new `t` on every render, so every effect, `useCallback` and `useMemo` depending on `t` ran again each time. The cached `t` was compared against the `keyPrefix` function itself, and an inline arrow is a new function on every render. It is now compared against the key the selector resolves to (with the same options and namespace list `getFixedT` resolves it with), so `t` keeps its identity as long as the resolved prefix does, just like a string `keyPrefix`. A selector that resolves to a different key still gets a new `t`, and i18next still resolves the selector on each `t` call as before. Fixes [#1936](https://github.com/i18next/react-i18next/issues/1936).
-```
-
-**File**: `react-i18next.js` (modified, +17/-9)
-```diff
-@@ -3835,10 +3835,25 @@
-       return newSnapshot;
-     }, [i18n, namespaces, keyPrefix, i18nOptions, props.lng]);
-     const [loadCount, setLoadCount] = React.useState(0);
--    const {
-+    let {
-       t,
-       ready
-     } = shimExports.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-+    let pendingTranslationLoad;
-+    if (i18n && useSuspense && !ready) {
-+      pendingTranslationLoad = new Promise(resolve => {
-+        const onLoaded = () => resolve();
-+        if (props.lng) {
-+          loadLanguages(i18n, props.lng, namespaces, onLoaded);
-+        } else {
-+          loadNamespaces(i18n, namespaces, onLoaded);
-+        }
-+      });
-+      ({
-+        t,
-+        ready
-+      } = getSnapshot());
-+    }
-     React.useEffect(() => {
-       if (i18n && !ready && !useSuspense) {
-         const onLoaded = () => setLoadCount(c => c + 1);
-@@ -3906,14 +3921,7 @@
-       if (inDevelopment) {
-         warnOnce(i18n, 'SUSPENDED_WHILE_LOADING', 'useTranslation: suspended while translations are loading (useSuspense is true by default). Add a <Suspense> boundary above this component, or set react.useSuspense: false in the i18next init options. https://react.i18next.com/latest/usetranslation-hook');
-       }
--      throw new Promise(resolve => {
--        const onLoaded = () => resolve();
--        if (props.lng) {
--          loadLanguages(i18n, props.lng, namespaces, onLoaded);
--        } else {
--          loadNamespaces(i18n, namespaces, onLoaded);
--        }
--      });
-+      throw pendingTranslationLoad;
-     }
-     return ret;
+@@ -3433,9 +3433,13 @@
+     '&real;': 'ℜ',
+     '&alefsym;': 'ℵ'
    };
-```
-
----
-
-### Incident Patch 3: `b799c190` (2026-10-15)
-**Commit Message**: build, changelog for 17.0.18
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
-```diff
-@@ -1,3 +1,7 @@
-+## 17.0.18
-+
-+- fix(Trans): with `shouldUnescape`, the default `unescape` now turns `&nbsp;` and `&#160;` into a no-break space (U+00A0) instead of a regular space (U+0020). The regular space dropped what the entity is for: `u&nbsp;nás` or `10&nbsp;km` could wrap across lines, and consecutive `&nbsp;`s collapsed into one space. This also matches `IcuTrans`, whose entity decoder already mapped `&nbsp;` to U+00A0. Compatibility note: only affects `shouldUnescape`; snapshots or exact `textContent` comparisons of such text now contain U+00A0 (Testing Library's default normalizer still matches it as a space). A custom `react.unescape` function can restore the old mapping for text nodes. Thanks @lprnmns ([#1935](https://github.com/i18next/react-i18next/pull/1935)).
-+
- ## 17.0.17
+-  const entityPattern = new RegExp(Object.keys(commonEntities).map(entity => entity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
++  const entityPattern = /&(?:#(\d+)|#x([0-9a-fA-F]+)|[A-Za-z][A-Za-z0-9]*);/g;
+   const decodeCodePoint = (match, codePoint) => codePoint <= 0x10ffff ? String.fromCodePoint(codePoint) : match;
+-  const decodeHtmlEntities = text => text.replace(entityPattern, match => commonEntities[match]).replace(/&#(\d+);/g, (match, num) => decodeCodePoint(match, parseInt(num, 10))).replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => decodeCodePoint(match, parseInt(hex, 16)));
++  const decodeHtmlEntities = text => text.replace(entityPattern, (match, decimal, hex) => {
++    if (decimal) return decodeCodePoint(match, parseInt(decimal, 10));
++    if (hex) return decodeCodePoint(match, parseInt(hex, 16));
++    return Object.prototype.hasOwnProperty.call(commonEntities, match) ? commonEntities[match] : match;
++  });
  
- - perf: `useTranslation` no longer unsubscribes and resubscribes its i18n listeners on every render. The `subscribe` callback handed to `useSyncExternalStore` depended on the merged options object, which is rebuilt whenever `props` is a new object: with no options (the `{}` default), with options passed inline (`useTranslation('ns', { keyPrefix })`), and through `withTranslation` and `<Translation>`. A new `subscribe` makes React resubscribe, so each render of each caller ran `i18n.off` and `i18n.on` in an extra effect. It now depends only on the instance and the `bindI18n`/`bindI18nStore` event names. No updates were ever missed, because React re-checks the snapshot after resubscribing; this only removes the churn, which adds up with many mounted components that re-render often. Reported via [next-i18next#2349](https://github.com/i18next/next-i18next/issues/2349).
-```
-
-**File**: `react-i18next.js` (modified, +2/-2)
-```diff
-@@ -2661,8 +2661,8 @@
-     '&#39;': "'",
-     '&quot;': '"',
-     '&#34;': '"',
--    '&nbsp;': ' ',
--    '&#160;': ' ',
-+    '&nbsp;': '\u00A0',
-+    '&#160;': '\u00A0',
-     '&copy;': '©',
-     '&#169;': '©',
-     '&reg;': '®',
+   const tokenize = translation => {
+     const tokens = [];
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1937** (2026-10-16): fix(useTranslation): don't suspend synchronous backends (@oblador)
-- **PR #1935** (2026-10-15): fix: unescape &nbsp; and &#160; to a no-break space (@lprnmns)
-- **PR #1930** (2026-09-01): fix(types): allow selector keyPrefix in useTranslation under enableSelector 'strict' (@hovelopin)
-- **PR #1929** (2026-08-08): docs: point Trans component links at the current docs (@luccasfraga)
-- **PR #1925** (closed): fix(test): correct isObject test to properly exclude arrays (@dashitongzhi)
-- **PR #1924** (closed): fix: improve isObject and tokenizer error handling (@dashitongzhi)
+- **PR #1944** (2026-10-24): fix(Trans): don't drop an interpolation variable named format (@Pharex38)
+- **PR #1943** (2026-10-24): fix(IcuTrans): decode each HTML entity only once (@Pharex38)
+- **PR #1942** (2026-10-24): fix(Trans): use the count passed in tOptions (@nk-batman21)
+- **PR #1941** (2026-10-23): fix(Trans): fall back to the last key of an i18nKey array, like t() (@nk-batman21)
+- **PR #1940** (2026-10-22): fix(IcuTrans): decode numeric entities above U+FFFF (@nk-batman21)
+- **PR #1939** (2026-10-22): fix(Trans): render the inner text when the only child is a string (@Cayan)
 
 ---
 
@@ -1271,25 +1105,24 @@ IcuTrans and Trans merged interpolation.defaultVariables over the explicit value
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. IcuTrans): explicit values win over defaultVariables, RSC entry point, ESM sideE
+## X. Empirical Invariant Guard in react-i18next.js
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `react-i18next.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c7e1c80f`: IcuTrans): explicit values win over defaultVariables, RSC entry point, ESM sideEffects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9802f17e`: build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `react-i18next.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-## 17.0.21
-
-- fix(IcuTrans): explicit `values` now win over `interpolation.defaultVariables`, as they do in `t()`. `IcuTrans` merged them the other way round, so `<IcuTrans values={{ user: 'John Doe' }} />` rendered the configured default variable `user` instead of `John Doe`. `Trans` had the same inverted merge and is fixed too. Compatibility note: only names that are set both in `values` and in `defaultVariables` render differently.
-- feat: new entry point `react-i18next/IcuTransWithoutContext` (with types) for React Server Components. Importing `IcuTransWithoutContext` from `react-i18next` in a Server Component could fail the build with `createContext is not a function`, because the main entry creates the React context when it is loaded. Like `react-i18next/TransWithoutContext`, the new entry point does not.
-- fix(build): the ESM build's `dist/es/package.json` now declares `"sideEffects": false`, like the root `package.json` already did. Bundlers use the nearest `package.json`, so the ESM build counted as having side effects and unused exports were kept: an app that only uses `Trans` still bundled `IcuTrans` with its HTML entity decoder, `useTranslation` and `use-sync-external-s
+        if (!keys.length && Object.keys(child).length === 1 && 'format' in child) {
+          stringNode += '{{format}}';
+          return;
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1299,4 +1132,4 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c7e1c80f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9802f17e` are properly handled with clean fallback behavior.

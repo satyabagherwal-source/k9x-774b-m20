@@ -4603,3 +4603,6 @@ Every entry in this ledger must capture:
 | `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `f7fa398c` | Multi-dimensional audit evidence | 2026-10-24T20:48:38.127Z |
 | `learn-github-crawlseo-crawlseo` | `https://github.com/crawlseo/crawlseo` | `449ff7a7` | Multi-dimensional audit evidence | 2026-10-24T20:48:38.466Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `31ce31ee` | Multi-dimensional audit evidence | 2026-10-24T20:48:46.418Z |
+| `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `3f0880e2` | Multi-dimensional audit evidence | 2026-10-24T20:55:00.221Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `7ffbe9cc` | Multi-dimensional audit evidence | 2026-10-24T20:55:04.252Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `7b74cb41` | Multi-dimensional audit evidence | 2026-10-24T20:55:05.480Z |

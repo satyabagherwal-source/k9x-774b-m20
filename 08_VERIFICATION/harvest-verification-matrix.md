@@ -4596,3 +4596,6 @@
 | `CYCLE-20261024-FOJ0` | `2026-10-24T20:48:38.124Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3964` | Yes (`ff9e0140...`) |
 | `CYCLE-20261024-FOSE` | `2026-10-24T20:48:38.462Z` | `crawlseo/crawlseo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1703` | Yes (`85f6f41d...`) |
 | `CYCLE-20261024-FUXB` | `2026-10-24T20:48:46.415Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3965` | Yes (`4174bbd5...`) |
+| `CYCLE-20261024-NVCP` | `2026-10-24T20:55:00.217Z` | `i18next/react-i18next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md` | Yes (`f434ad81...`) |
+| `CYCLE-20261024-NYGP` | `2026-10-24T20:55:04.249Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3966` | Yes (`7de1988f...`) |
+| `CYCLE-20261024-NZET` | `2026-10-24T20:55:05.477Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3967` | Yes (`4b04e7c2...`) |

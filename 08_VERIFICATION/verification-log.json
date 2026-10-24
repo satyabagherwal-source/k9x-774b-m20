@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261020-52VC",
-    "timestamp": "2026-10-20T23:49:39.912Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "3300c2e25da711eafe3446541c59aabb8cb4d43c6c179e3bbccce00f7eb51087",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-531T",
-    "timestamp": "2026-10-20T23:49:40.145Z",
-    "repository": "mui/base-ui",
-    "learningId": "learn-github-mui-base-ui",
-    "contentHash": "5a6cfdc110939cc6b6445a7c762637954c54cac8e82ee37558bc9a86b17321cd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261020-5DB3",
-    "timestamp": "2026-10-20T23:49:53.439Z",
-    "repository": "meilisearch/meilisearch",
-    "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "e738da50bc0ab5eb97f182733cc376f749de4c8c46f82d23888e8218f2fcc1d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261020-CW6M",
     "timestamp": "2026-10-20T23:55:44.494Z",
     "repository": "fishaudio/drama-3",
@@ -7490,6 +7445,51 @@
     "repository": "trufflesecurity/trufflehog",
     "learningId": "learn-github-trufflesecurity-trufflehog",
     "contentHash": "4174bbd5dce25c940af029f6d175a6747fb08fbfd4769e247d2025dc65cfc266",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-NVCP",
+    "timestamp": "2026-10-24T20:55:00.217Z",
+    "repository": "i18next/react-i18next",
+    "learningId": "learn-github-i18next-react-i18next",
+    "contentHash": "f434ad81a164d71fb3e970bb221b7fd15984cde339bd6240372a31f541711e60",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-NYGP",
+    "timestamp": "2026-10-24T20:55:04.249Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "7de1988ffb5d9c624c2c1219b9efb47c72992f43ebd8e87af98fd0ead143c9ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261024-NZET",
+    "timestamp": "2026-10-24T20:55:05.477Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "4b04e7c201ed1c209d17726984d1cf0c2307135cf362dba1698f930263dede6a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

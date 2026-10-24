@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T20:48:46.423Z",
-  "total_cycles_completed": 4573,
-  "total_learnings_persisted": 4573,
-  "total_rules_promoted": 3823,
+  "last_updated": "2026-10-24T20:55:05.488Z",
+  "total_cycles_completed": 4576,
+  "total_learnings_persisted": 4576,
+  "total_rules_promoted": 3825,
   "history": [
-    {
-      "timestamp": "2026-10-22T19:03:14.713Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T19:03:16.174Z",
-      "repository": "fb55/css-select",
-      "learningId": "learn-github-fb55-css-select",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T19:09:45.692Z",
-      "repository": "cheeriojs/dom-serializer",
-      "learningId": "learn-github-cheeriojs-dom-serializer",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T19:09:46.450Z",
       "repository": "sozercan/kaset",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-24T20:48:46.423Z",
       "repository": "trufflesecurity/trufflehog",
       "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:55:00.227Z",
+      "repository": "i18next/react-i18next",
+      "learningId": "learn-github-i18next-react-i18next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:55:04.257Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-24T20:55:05.488Z",
+      "repository": "gravitl/netmaker",
+      "learningId": "learn-github-gravitl-netmaker",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

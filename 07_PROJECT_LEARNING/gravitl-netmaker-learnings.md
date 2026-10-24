@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `25dd7ab5`  
+> **Source Version**: `7b74cb41`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:45:03.768Z  
+> **Timestamp**: 2026-10-24T20:55:05.169Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:45:03.620Z  
+> **Harvest Timestamp**: 2026-10-24T20:55:05.163Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11834 stars
+- **Stars / Engagement**: 11836 stars
 
 ---
 
@@ -1017,252 +1017,455 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `25dd7ab5` (2026-10-22)
-**Commit Message**: NM-356: send force logout on disabling/deleting user accounts and cleanup user devices (#4199)
+### Incident Patch 1: `7b74cb41` (2026-10-23)
+**Commit Message**: Fixes: Pre-Release v1.8.0 (#4197)
 
-* NM-356: add username filter to nodes api
+* fix(go): validate traffic public key;
 
-* NM-356: disconnect user devices and force Desktop logout on disable/delete
+* feat(go): rekey tenant idp sync hook;
 
-When a user is disabled or deleted (including IdP sync), disconnect their
-nodes and publish FORCE_LOGOUT so Desktop sessions end immediately.
+* feat(go): check if membership exists before creating;
 
-* NM-356: rm force logout from delete user path
+* feat(go): parse node addr without cidr as well;
 
-**File**: `controllers/user.go` (modified, +34/-5)
+* feat(go): only check for orphans before the cursor;
+
+* feat(go): normalize usernames in idp synced users;
+
+* feat(go): allow patch method;
+
+* feat(go): allow master user to list all tenants;
+
+* feat(go): publish server sync for non-master pods on idp sync hook rekey;
+
+**File**: `controllers/controller.go` (modified, +1/-1)
 ```diff
-@@ -1031,10 +1031,12 @@ func updateUserAccountStatus(w http.ResponseWriter, r *http.Request, disableAcco
- 		}
- 	}
+@@ -70,7 +70,7 @@ func HandleRESTRequests(wg *sync.WaitGroup, ctx context.Context) {
+ 	)
+ 	originsOk := handlers.AllowedOrigins(strings.Split(servercfg.GetAllowedOrigin(), ","))
+ 	methodsOk := handlers.AllowedMethods(
+-		[]string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
++		[]string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete, http.MethodPatch},
+ 	)
  
--	if force {
--		for _, tenantID := range tenantIDs {
--			ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, tenantID)
--			go toggleUserExtClients(ctx, _user.Username, !disableAccount)
-+	for _, tenantID := range tenantIDs {
-+		ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, tenantID)
-+		if disableAccount {
-+			go disableUserDevicesAndLogout(ctx, _user.Username, force)
-+		} else if force {
-+			go toggleUserExtClients(ctx, _user.Username, true)
- 		}
- 	}
+ 	for _, middleware := range HttpMiddlewares {
+```
+
+**File**: `controllers/org.go` (modified, +10/-0)
+```diff
+@@ -638,6 +638,16 @@ func transferOrgOwner(w http.ResponseWriter, r *http.Request) {
+ func listTenants(w http.ResponseWriter, r *http.Request) {
+ 	orgID := scope.ID(r.Context())
  
-@@ -1116,6 +1118,18 @@ func toggleUserExtClients(ctx context.Context, username string, enable bool) {
- 	mq.PublishPeerUpdate(ctx, false)
- }
- 
-+// disableUserDevicesAndLogout disconnects host-backed user devices on every
-+// network, optionally disables RAC extclients, then force-logs out Desktop last.
-+// Hosts stay enrolled so re-enable can reconnect later.
-+func disableUserDevicesAndLogout(ctx context.Context, username string, forceConfigs bool) {
-+	disconnected := logic.DisconnectUserDeviceNodes(ctx, username, func(string) bool { return true })
-+	mq.PublishDisconnectedUserDeviceNodes(ctx, disconnected)
-+	if forceConfigs {
-+		toggleUserExtClients(ctx, username, false)
++	if r.Header.Get("ismaster") == "yes" {
++		tenants, err := (&schema.Tenant{}).List(r.Context(), dbtypes.WithFilter("organization_id", orgID))
++		if err != nil {
++			logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
++			return
++		}
++		logic.ReturnSuccessResponseWithJson(w, r, tenants, "fetched tenants")
++		return
 +	}
-+	mq.PublishForceLogoutUserDevices(ctx, username)
++
+ 	caller := &schema.User{Username: r.Header.Get("user")}
+ 	if err := caller.GetWithMembership(r.Context()); err != nil {
+ 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
+```
+
+**File**: `models/api_node.go` (modified, +35/-12)
+```diff
+@@ -141,18 +141,8 @@ func (a *ApiNode) ConvertToServerNode(currentNode *Node) *Node {
+ 	} else if !isEmptyAddr(currentNode.LocalAddress.String()) {
+ 		convertedNode.LocalAddress = currentNode.LocalAddress
+ 	}
+-	if ip, addr, err := net.ParseCIDR(a.Address); err == nil {
+-		convertedNode.Address = *addr
+-		convertedNode.Address.IP = ip
+-	} else {
+-		convertedNode.Address = currentNode.Address
+-	}
+-	if ip6, addr6, err := net.ParseCIDR(a.Address6); err == nil {
+-		convertedNode.Address6 = *addr6
+-		convertedNode.Address6.IP = ip6
+-	} else {
+-		convertedNode.Address6 = currentNode.Address6
+-	}
++	convertedNode.Address = parseNodeAddress(a.Address, currentNode.Address, convertedNode.NetworkRange)
++	convertedNode.Address6 = parseNodeAddress(a.Address6, currentNode.Address6, convertedNode.NetworkRange6)
+ 	convertedNode.LastModified = time.Unix(a.LastModified, 0)
+ 	convertedNode.LastCheckIn = time.Unix(a.LastCheckIn, 0)
+ 	convertedNode.LastPeerUpdate = time.Unix(a.LastPeerUpdate, 0)
+@@ -302,3 +292,36 @@ func (nm *Node) ConvertToAPINode() *ApiNode {
+ func isEmptyAddr(addr string) bool {
+ 	return addr == "<nil>" || addr == ":0"
+ }
++
++func parseNodeAddress(newAddr string, currentAddr, networkRange net.IPNet) net.IPNet {
++	if newAddr == "" {
++		return currentAddr
++	}
++
++	var ip net.IP
++	mask := currentAddr.Mask
++	if networkRange.Mask != nil {
++		mask = networkRange.Mask
++	}
++
++	if parsedIP, cidr, err := net.ParseCIDR(newAddr); err == nil {
++		ip = parsedIP
++		mask = cidr.Mask
++	} else if parsedIP := net.ParseIP(newAddr); parsedIP != nil {
++		ip = parsedIP
++	} else {
++		return currentAddr
++	}
++
++	if len(mask) == net.IPv4len {
++		if ip4 := ip.To4(); ip4 != nil {
++			ip = ip4
++		}
++	}
++
++	if networkRange.IP != nil && !networkRange.Contains(ip) {
++		return currentAddr
++	}
++
++	return net.IPNet{IP: ip, Mask: mask}
 +}
-+
- // @Summary     Get a user's preferences and settings
- // @Router      /api/users/{username}/settings [get]
- // @Tags        Users
-@@ -2165,7 +2179,9 @@ func cleanupUserRefs(ctx context.Context, username string, forceDeleteConfigs bo
- 		Email: username,
- 	}).DeleteByEmail(ctx)
+```
+
+**File**: `orchestrator/network.go` (modified, +52/-11)
+```diff
+@@ -283,8 +283,11 @@ func ipPoolCursor(allocated map[netip.Addr]struct{}, first, last netip.Addr) (cu
+ const ipAllocationWindow = 256
  
--	mq.PublishDeletedUserDevices(ctx, logic.DeleteUserDevices(ctx, username))
-+	// DeleteHost logs the device out and wipes local host/node config.
-+	devices := logic.DeleteUserDevices(ctx, username)
-+	mq.PublishDeletedUserDevices(ctx, devices)
+ // allocateFromCursor allocates the next address after the pool's cursor,
+-// skipping addresses that are already allocated (e.g. claimed custom
+-// addresses). Caller must hold the pool lock.
++// skipping attached addresses (e.g. claimed custom addresses) and
++// reclaiming any orphaned address it meets along the way, instead of
++// skipping past it -- the cursor only ever moves forward, so an orphaned
++// address left unreclaimed here would never be revisited and be leaked for
++// good. Caller must hold the pool lock.
+ func (n *NetworkOrchestrator) allocateFromCursor(ctx context.Context, network *schema.Network, pool *schema.IPPool, ownerType schema.IPOwnerType, ownerID string) (netip.Addr, error) {
+ 	first, last, err := network.UsableIPRange(pool.Family)
+ 	if err != nil {
+@@ -308,34 +311,56 @@ func (n *NetworkOrchestrator) allocateFromCursor(ctx context.Context, network *s
  
- 	if err := logic.RemoveUserFromNameservers(ctx, username); err != nil {
- 		slog.Error("failed to remove user from nameservers", "user", username, "error", err)
-@@ -2341,6 +2357,7 @@ func bulkUpdateUserStatus(w http.ResponseWriter, r *http.Request) {
+ 	var skipped netip.Addr
+ 	for withinRange(addr) {
+-		// fetch the allocated addresses from addr onwards, a window at a time.
+-		allocated, err := (&schema.IPAllocation{
++		// fetch the allocations from addr onwards, a window at a time.
++		window, err := (&schema.IPAllocation{
+ 			TenantID:  pool.TenantID,
+ 			NetworkID: pool.NetworkID,
+ 			Family:    pool.Family,
+-		}).ListAddressesBetween(ctx, addr, last, ipAllocationWindow)
++		}).ListAllocationsBetween(ctx, addr, last, ipAllocationWindow)
+ 		if err != nil {
+ 			return netip.Addr{}, err
  		}
++		byAddress := make(map[netip.Addr]schema.IPAllocation, len(window))
++		for _, a := range window {
++			byAddress[a.Address()] = a
++		}
  
- 		updated := 0
-+		disabledUsers := make([]string, 0)
- 		for _, username := range req.IDs {
- 			user := &schema.User{Username: username}
- 			if err := user.GetWithMembership(ctx); err != nil {
-@@ -2407,6 +2424,10 @@ func bulkUpdateUserStatus(w http.ResponseWriter, r *http.Request) {
- 			logger.Log(1, username, "was", action+"d")
- 			updated++
- 
-+			if req.Disable {
-+				disabledUsers = append(disabledUsers, user.Username)
+-		// skip the run of allocated addresses starting at addr.
++		// skip the run of attached addresses starting at addr, stopping
++		// early on an orphaned one so it can be reclaimed below rather than
++		// skipped.
+ 		run := 0
++		var reclaim *schema.IPAllocation
+ 		for ; run < ipAllocationWindow; run++ {
+-			if _, ok := allocated[addr]; !ok {
++			existing, ok := byAddress[addr]
++			if !ok {
++				break
 +			}
-+
- 			if forceToggle && ownerExtClients != nil {
- 				extclientStatus := !req.Disable
- 				for _, extclient := range ownerExtClients[user.Username] {
-@@ -2418,6 +2439,14 @@ func bulkUpdateUserStatus(w http.ResponseWriter, r *http.Request) {
- 				}
++			if existing.State == schema.IPOrphaned {
++				reclaim = &existing
+ 				break
  			}
+ 			skipped = addr
+ 			addr = addr.Next()
  		}
-+		for _, username := range disabledUsers {
-+			disconnected := logic.DisconnectUserDeviceNodes(ctx, username, func(string) bool { return true })
-+			mq.PublishDisconnectedUserDeviceNodes(ctx, disconnected)
++
++		if reclaim != nil {
++			reclaim.OwnerType = ownerType
++			reclaim.OwnerID = ownerID
++			if err := reclaim.Attach(ctx); err != nil {
++				return netip.Addr{}, err
++			}
++			pool.Cursor = addr.String()
++			return addr, pool.UpdateCursor(ctx)
 +		}
-+		// FORCE_LOGOUT after all nodes are disabled (and extclients toggled above).
-+		for _, username := range disabledUsers {
-+			mq.PublishForceLogoutUserDevices(ctx, username)
-+		}
- 		if updated > 0 && forceToggle {
- 			mq.PublishPeerUpdate(ctx, false)
+ 		if run == ipAllocationWindow {
+-			// the whole window is allocated, look at the next one.
++			// the whole window is attached, look at the next one.
+ 			continue
  		}
-```
-
-**File**: `models/host.go` (modified, +2/-0)
-```diff
-@@ -130,6 +130,8 @@ const (
- 	UpdateNode HostMqAction = "UPDATE_NODE"
- 	// DeleteHost - constant for host delete action
- 	DeleteHost HostMqAction = "DELETE_HOST"
-+	// ForceLogout - clear the desktop session/JWT and disconnect networks
-+	ForceLogout HostMqAction = "FORCE_LOGOUT"
- 	// JoinHostToNetwork - constant for host network join action
- 	JoinHostToNetwork HostMqAction = "JOIN_HOST_TO_NETWORK"
- 	// Acknowledgement - ACK response for hosts
-```
-
-**File**: `mq/publishers.go` (modified, +26/-0)
-```diff
-@@ -14,6 +14,7 @@ import (
+ 		if !withinRange(addr) {
+ 			break
+ 		}
  
- 	"github.com/google/uuid"
- 	"github.com/gravitl/netmaker/db"
-+	dbtypes "github.com/gravitl/netmaker/db/types"
- 	"github.com/gravitl/netmaker/logger"
- 	"github.com/gravitl/netmaker/logic"
- 	"github.com/gravitl/netmaker/models"
-@@ -624,6 +625,31 @@ func PublishIntegrationDelete(id string) error {
- 	return nil
+-		// addr is not allocated.
++		// addr has no allocation at all.
+ 		allocation := &schema.IPAllocation{
+ 			TenantID:  pool.TenantID,
+ 			NetworkID: pool.NetworkID,
+@@ -362,15 +387,31 @@ func (n *NetworkOrchestrator) allocateFromCursor(ctx context.Context, network *s
+ 	return netip.Addr{}, ErrIPPoolExhausted
  }
  
-+// PublishForceLogoutUserDevices tells each host registered by username to clear
-+// its desktop session (JWT) and disconnect. Hosts remain enrolled on the server.
-+func PublishForceLogoutUserDevices(ctx context.Context, username string) {
-+	hosts, err := (&schema.Host{}).ListAll(ctx, dbtypes.WithFilter("owner_username", username))
+-// allocateOrphaned reallocates the lowest orphaned address.
++// allocateOrphaned reallocates the lowest orphaned address that is at most
++// the pool's cursor -- i.e. a gap in the range the cursor has already
++// walked past (e.g. an address released by a deleted node), not an address
++// beyond it. An orphaned address the cursor hasn't reached yet (e.g. a
++// custom high address that was claimed and later released) is left alone,
++// so it doesn't jump ahead of addresses that have never been used at all;
++// allocateFromCursor reclaims it in its turn once the cursor gets there.
+ // Caller must hold the pool lock.
+ func (n *NetworkOrchestrator) allocateOrphaned(ctx context.Context, pool *schema.IPPool, ownerType schema.IPOwnerType, ownerID string) (netip.Addr, error) {
++	if pool.Cursor == "" {
++		// nothing has been walked yet, so there is no gap behind the cursor
++		// to fill.
++		return netip.Addr{}, ErrNoOrphanedIP
++	}
++	cursor, err := n.parseCursor(pool.Cursor)
 +	if err != nil {
-+		slog.Error("failed to list user devices for force logout", "user", username, "error", err)
-+		return
++		return netip.Addr{}, err
 +	}
-+	for i := range hosts {
-+		if err := HostUpdate(&models.HostUpdate{Action: models.ForceLogout, Host: hosts[i]}); err != nil {
-+			slog.Error("failed to send force logout to user device",
-+				"host", hosts[i].ID.String(), "user", username, "error", err)
-+		}
-+	}
-+}
 +
-+// DisconnectAndForceLogoutUserDevices marks the user's host-backed devices
-+// disconnected on every network, notifies peers, then force-logs out Desktop
-+// last so the client applies Connected=false before clearing the session.
-+func DisconnectAndForceLogoutUserDevices(ctx context.Context, username string) {
-+	disconnected := logic.DisconnectUserDeviceNodes(ctx, username, func(string) bool { return true })
-+	PublishDisconnectedUserDeviceNodes(ctx, disconnected)
-+	PublishForceLogoutUserDevices(ctx, username)
-+}
-+
- // PublishDisconnectedUserDeviceNodes notifies peers that user device nodes are
- // offline (JIT ended) and asks each device to pull its new state. Nodes remain enrolled.
- func PublishDisconnectedUserDeviceNodes(ctx context.Context, disconnected []logic.UserDeviceNode) {
+ 	allocation := &schema.IPAllocation{
+ 		TenantID:  pool.TenantID,
+ 		NetworkID: pool.NetworkID,
+ 		Family:    pool.Family,
+ 	}
+-	if err := allocation.GetFirstOrphaned(ctx); err != nil {
++	if err := allocation.GetFirstOrphanedUpTo(ctx, cursor); err != nil {
+ 		if errors.Is(err, gorm.ErrRecordNotFound) {
+ 			return netip.Addr{}, ErrNoOrphanedIP
+ 		}
 ```
 
-**File**: `pro/auth/sync.go` (modified, +23/-0)
+**File**: `orchestrator/network_test.go` (modified, +54/-0)
 ```diff
-@@ -355,6 +355,7 @@ func syncUsers(ctx context.Context, idpUsers []idp.User, filters []string, remov
- 					dbUser.DisplayName != user.DisplayName ||
- 					dbUser.ExternalIdentityProviderID != user.ID) {
+@@ -133,6 +133,60 @@ func (c *CENodeOrchestratorTestSuite) TestAllocateOrphanedIPFirst() {
+ 	allocate(false, "10.11.0.14")
+ }
  
-+				wasDisabled := dbUser.AccountDisabled
- 				dbUser.AccountDisabled = user.AccountDisabled
- 				dbUser.DisplayName = user.DisplayName
- 				dbUser.ExternalIdentityProviderID = user.ID
-@@ -387,6 +388,28 @@ func syncUsers(ctx context.Context, idpUsers []idp.User, filters []string, remov
- 				if err != nil {
- 					return err
- 				}
++// TestAllocateOrphanedIPBeyondCursorIsNotPrioritized covers a custom address
++// set far beyond the cursor (e.g. a node's address changed by hand), later
++// freed by deleting the node. That address must not jump ahead of addresses
++// the cursor has never reached; it should only be reclaimed once the cursor
++// actually walks that far, same as any other address in its path.
++func (c *CENodeOrchestratorTestSuite) TestAllocateOrphanedIPBeyondCursorIsNotPrioritized() {
++	network := c.createNetwork("network-alloc-orphan-beyond-cursor", "10.15.0.0/24", "")
++	defer testutils.DeleteNetwork(c.T(), c.ctx, network)
++	orch := GetRepository().NetworkOrchestrator()
++	owners := make(map[string]IPOwner)
 +
-+				// Newly disabled via IdP: drop mesh + Desktop session like dashboard disable.
-+				if !wasDisabled && dbUser.AccountDisabled {
-+					username := dbUser.Username
-+					if isOrgScope {
-+						memberships, listErr := (&schema.TenantMembership{UserID: dbUser.ID}).ListByUserID(ctx)
-+						if listErr != nil {
-+							logger.Log(0, "idp sync: failed to list tenants for disabled user", username, listErr.Error())
-+						} else {
-+							for _, membership := range memberships {
-+								if membership.AuthType != schema.Inherited {
-+									continue
-+								}
-+								tenantCtx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, membership.TenantID)
-+								go mq.DisconnectAndForceLogoutUserDevices(tenantCtx, username)
-+							}
-+						}
-+					} else {
-+						tenantCtx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, scope.ID(ctx))
-+						go mq.DisconnectAndForceLogoutUserDevices(tenantCtx, username)
-+					}
-+				}
- 			}
- 		} else {
- 			logger.Log(0, "user with username "+user.Username+" already exists, skipping creation")
++	allocate := func(expected string) {
++		ip, err := c.allocateIP(network, true, owners)
++		c.Require().NoError(err)
++		c.Require().Equal(expected, ip.String())
++	}
++
++	// three nodes join, contiguous.
++	allocate("10.15.0.1")
++	allocate("10.15.0.2")
++	allocate("10.15.0.3")
++	node2 := owners["10.15.0.2"]
++	node3 := owners["10.15.0.3"]
++
++	// two of them are given a custom address, far beyond the cursor.
++	c.Require().NoError(orch.ClaimIP(c.ctx, network, "10.15.0.10", node2.Type, node2.ID))
++	c.Require().NoError(orch.ReleaseIP(c.ctx, network, "10.15.0.2", node2.Type, node2.ID))
++	c.Require().NoError(orch.ClaimIP(c.ctx, network, "10.15.0.11", node3.Type, node3.ID))
++	c.Require().NoError(orch.ReleaseIP(c.ctx, network, "10.15.0.3", node3.Type, node3.ID))
++
++	// both are then removed from the network, freeing their custom address.
++	c.Require().NoError(orch.ReleaseIP(c.ctx, network, "10.15.0.10", node2.Type, node2.ID))
++	c.Require().NoError(orch.ReleaseIP(c.ctx, network, "10.15.0.11", node3.Type, node3.ID))
++
++	// rejoining fills the gaps the cursor already walked past first.
++	allocate("10.15.0.2")
++	allocate("10.15.0.3")
++
++	// brand new nodes continue from the cursor, not from the stale, far
++	// ahead custom addresses that were just freed.
++	allocate("10.15.0.4")
++	allocate("10.15.0.5")
++
++	// the freed custom addresses are not leaked: the cursor reclaims them
++	// in order, once it walks far enough to reach them.
++	allocate("10.15.0.6")
++	allocate("10.15.0.7")
++	allocate("10.15.0.8")
++	allocate("10.15.0.9")
++	allocate("10.15.0.10")
++	allocate("10.15.0.11")
++	allocate("10.15.0.12")
++}
++
+ func (c *CENodeOrchestratorTestSuite) TestReleaseIPOwner() {
+ 	network := c.createNetwork("network-release-owner", "10.12.0.0/24", "")
+ 	defer testutils.DeleteNetwork(c.T(), c.ctx, network)
 ```
 
----
-
-### Incident Patch 2: `352fd9a3` (2026-10-21)
-**Commit Message**: NM-356: add username filter to nodes api (#4198)
-
-**File**: `controllers/node.go` (modified, +13/-1)
+**File**: `orchestrator/user.go` (modified, +20/-8)
 ```diff
-@@ -206,6 +206,7 @@ func AuthorizeHost(
- // @Param       os query []string false "Filter by OS" Enums(windows, linux, darwin)
- // @Param       status query []string false "Filter by Status" Enums(offline, online, disconnected, warning, error)
- // @Param       device_type query string false "Filter by Device Type" Enums(gw, igw, gw_assigned, gw_unassigned, exit_assigned, user, server)
-+// @Param       username query string false "Filter by owner username (only with device_type=user)"
- // @Param       q query string false "Search across fields"
- // @Param       page query int false "Page number"
- // @Param       per_page query int false "Items per page"
-@@ -220,6 +221,13 @@ func listNetworkNodes(w http.ResponseWriter, r *http.Request) {
+@@ -39,9 +39,10 @@ func (u *UserOrchestrator) CreateUser(ctx context.Context, user *schema.User, op
+ 
+ 	userExists := err == nil
+ 
+-	if scope.Level(ctx) == scope.TenantScope {
+-		var hasMembership bool
+-		if userExists {
++	var hasMembership bool
++	if userExists {
++		switch scope.Level(ctx) {
++		case scope.TenantScope:
+ 			membership := &schema.TenantMembership{
+ 				TenantID: scope.ID(ctx),
+ 				UserID:   existing.ID,
+@@ -52,11 +53,22 @@ func (u *UserOrchestrator) CreateUser(ctx context.Context, user *schema.User, op
+ 			} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+ 				return err
+ 			}
++		case scope.OrgScope:
++			membership := &schema.OrgMembership{
++				OrganizationID: scope.ID(ctx),
++				UserID:         existing.ID,
++			}
++			err = membership.Get(ctx)
++			if err == nil {
++				hasMembership = true
++			} else if !errors.Is(err, gorm.ErrRecordNotFound) {
++				return err
++			}
+ 		}
++	}
+ 
+-		if !hasMembership && logic.UserLimitExceeded(ctx) {
+-			return logic.ErrUserLimitExceeded
+-		}
++	if scope.Level(ctx) == scope.TenantScope && !hasMembership && logic.UserLimitExceeded(ctx) {
++		return logic.ErrUserLimitExceeded
  	}
  
- 	deviceType := r.URL.Query().Get("device_type")
-+	username := r.URL.Query().Get("username")
-+	if username != "" && deviceType != "user" {
-+		err := fmt.Errorf("username filter is only supported with device_type=user")
-+		logger.Log(0, r.Header.Get("user"), err.Error())
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.BadReq))
+ 	var emailValidated bool
+@@ -95,7 +107,7 @@ func (u *UserOrchestrator) CreateUser(ctx context.Context, user *schema.User, op
+ 		}
+ 	}
+ 
+-	if scope.Level(ctx) == scope.TenantScope {
++	if scope.Level(ctx) == scope.TenantScope && !hasMembership {
+ 		tenantID := scope.ID(ctx)
+ 		membership := &schema.TenantMembership{
+ 			TenantID:                   tenantID,
+@@ -116,7 +128,7 @@ func (u *UserOrchestrator) CreateUser(ctx context.Context, user *schema.User, op
+ 		if err != nil {
+ 			return err
+ 		}
+-	} else if scope.Level(ctx) == scope.OrgScope {
++	} else if scope.Level(ctx) == scope.OrgScope && !hasMembership {
+ 		orgID := scope.ID(ctx)
+ 		membership := &schema.OrgMembership{
+ 			OrganizationID:             orgID,
+```
+
+**File**: `pro/auth/sync.go` (modified, +35/-1)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"errors"
+ 	"fmt"
++	"net/mail"
+ 	"strings"
+ 	"sync"
+ 	"time"
+@@ -104,8 +105,38 @@ func cleanFilters(filters []string) []string {
+ 	return cleaned
+ }
+ 
++func normalizeUsername(username string) string {
++	if _, err := mail.ParseAddress(username); err == nil {
++		return strings.ToLower(username)
++	}
++	return username
++}
++
+ func idpSyncHookID(ctx context.Context) string {
+-	return fmt.Sprintf("idp-sync-%d-%s", scope.Level(ctx), scope.ID(ctx))
++	return idpSyncHookIDFor(scope.Level(ctx), scope.ID(ctx))
++}
++
++func idpSyncHookIDFor(level scope.Scope, id string) string {
++	return fmt.Sprintf("idp-sync-%d-%s", level, id)
++}
++
++func RekeyIDPSyncHook(level scope.Scope, oldID, newID string) {
++	if oldID == newID {
 +		return
 +	}
++
++	logic.StopHook(idpSyncHookIDFor(level, oldID))
++
++	newCtx := scope.WithContext(db.WithContext(context.Background()), level, newID)
++
++	if !servercfg.IsMasterPod() {
++		if servercfg.IsHA() && logic.PublishServerSync != nil {
++			logic.PublishServerSync(newCtx, logic.SyncTypeIDPReset)
++		}
++		return
++	}
++
++	StartIDPSyncHook(newCtx)
+ }
  
- 	var statusFilters []interface{}
- 	for _, filter := range r.URL.Query()["status"] {
-@@ -264,7 +272,11 @@ func listNetworkNodes(w http.ResponseWriter, r *http.Request) {
- 		q := db.Joins("JOIN hosts_v1 ON hosts_v1.id = nodes_v1.host_id")
- 		switch deviceType {
- 		case "user":
--			return q.Where("hosts_v1.owner_username <> '' AND hosts_v1.owner_username IS NOT NULL")
-+			q = q.Where("hosts_v1.owner_username <> '' AND hosts_v1.owner_username IS NOT NULL")
-+			if username != "" {
-+				q = q.Where("hosts_v1.owner_username = ?", username)
-+			}
-+			return q
- 		case "server":
- 			return q.Where("hosts_v1.owner_username = '' OR hosts_v1.owner_username IS NULL")
- 		default:
+ func syncLock(level scope.Scope, id string) *sync.Mutex {
+@@ -233,6 +264,9 @@ func SyncFromIDP(ctx context.Context) error {
+ 		if err != nil {
+ 			return err
+ 		}
++		for i := range idpUsers {
++			idpUsers[i].Username = normalizeUsername(idpUsers[i].Username)
++		}
+ 		logger.Log(0, "idp sync: fetched", fmt.Sprint(len(idpUsers)), "users from", settings.AuthProvider, "for", scope.ID(ctx), "with filters", fmt.Sprint(settings.UserFilters))
+ 
+ 		if scope.Level(ctx) != scope.OrgScope {
+```
+
+**File**: `pro/license/license.go` (modified, +2/-0)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 	"github.com/gravitl/netmaker/migrate"
+ 	"github.com/gravitl/netmaker/mq"
+ 	"github.com/gravitl/netmaker/orchestrator"
++	"github.com/gravitl/netmaker/pro/auth"
+ 	proLogic "github.com/gravitl/netmaker/pro/logic"
+ 	"github.com/gravitl/netmaker/schema"
+ 	"github.com/gravitl/netmaker/scope"
+@@ -197,6 +198,7 @@ func reconcileTenants(ctx context.Context, licenseTenants []LicenseTenant, orgID
+ 			if err := migrate.RekeyTenant(ctx, existing[0].ID, activeTenants[0].ID); err != nil {
+ 				return err
+ 			}
++			auth.RekeyIDPSyncHook(scope.TenantScope, existing[0].ID, activeTenants[0].ID)
+ 		}
+ 	default:
+ 		return fmt.Errorf("cannot reconcile license tenants: %d local tenants already exist", len(existing))
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4199** (2026-10-22): NM-356: send force logout on disabling/deleting user accounts and cleanup user devices (@abhishek9686)
 - **PR #4198** (2026-10-21): NM-356: add username filter to nodes api (@abhishek9686)
+- **PR #4197** (2026-10-23): Fixes: Pre-Release v1.8.0 (@VishalDalwadi)
 - **PR #4196** (closed): Revert "Fixes: Auto Select Gateway" (@abhishek9686)
 - **PR #4195** (2026-10-20): Allow exit-node selection to replace an existing relay. (@abhishek9686)
 - **PR #4194** (2026-10-19): Ensure email usernames are lower-case (@VishalDalwadi)
-- **PR #4193** (2026-10-19): V1.7.0 develop merge  (@abhishek9686)
 
 ---
 
@@ -1282,58 +1485,28 @@ nodes and publish FORCE_LOGOUT so Desktop sessions end immediately.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NM-356: send force logout on disabling/deleting user accounts and cleanup user d
+## X. Fixes: Pre-Release v1.8.0 (#4197)
 
 **RULE**:
-When implementing operations in `controllers/user.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `25dd7ab5`: NM-356: send force logout on disabling/deleting user accounts and cleanup user devices (#4199). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b74cb41`: Fixes: Pre-Release v1.8.0 (#4197). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/user.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	for _, tenantID := range tenantIDs {
-		ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, tenantID)
-		if disableAccount {
-			go disableUserDevicesAndLogout(ctx, _user.Username, force)
-		} else if force {
-			go toggleUserExtClients(ctx, _user.Username, true)
-// disableUserDevicesAndLogout disconnects host-backed user devices on every
-// network, optionally disables RAC extclients, then force-logs out Desktop last.
-// Hosts stay enrolled so re-enable can reconnect later.
-func disableUserDevicesAndLogout(ctx context.Context, username string, forceConfigs bool) {
-	disconnected := logic.DisconnectUserDeviceNodes(ctx, username, func(string) bool { return true })
-	mq.PublishDisconnectedUserDeviceNodes(ctx, disconnected)
-	if forceConfigs {
-		toggleUserExtClients(ctx, username, false)
-	}
-	mq.PublishForceLogoutUserDevices(ctx, username)
-}
-
-	// DeleteHost logs the device out and wipes local host/node config.
-	devices := logic.DeleteUserDevices(ctx, username)
-	mq.PublishDeletedUserDevices(ctx, devices)
-		disabledUsers := make([]string, 0)
-			if req.Disable {
-				disabledUsers = append(disabledUsers, user.Username)
-			}
-
-		for _, username := range disabledUsers {
+		[]string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete, http.MethodPatch},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if force {
-		for _, tenantID := range tenantIDs {
-			ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, tenantID)
-			go toggleUserExtClients(ctx, _user.Username, !disableAccount)
-	mq.PublishDeletedUserDevices(ctx, logic.DeleteUserDevices(ctx, username))
+		[]string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `25dd7ab5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b74cb41` are properly handled with clean fallback behavior.

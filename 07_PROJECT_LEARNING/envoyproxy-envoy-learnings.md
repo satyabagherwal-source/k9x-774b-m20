@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `7834210a`  
+> **Source Version**: `7ffbe9cc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T15:28:59.523Z  
+> **Timestamp**: 2026-10-24T20:55:03.943Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T15:28:58.805Z  
+> **Harvest Timestamp**: 2026-10-24T20:55:03.748Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29108 stars
+- **Stars / Engagement**: 29123 stars
 
 ---
 
@@ -1064,611 +1064,616 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1b8e063e` (2026-10-22)
-**Commit Message**: ci/cves: Fix scanner handling of pre versions (#48535)
+### Incident Patch 1: `7a3abac7` (2026-10-24)
+**Commit Message**: datadog: check the deadline and cluster before building the report (#48480)
 
-Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
+`AgentHTTPClient::post()` built the request message, ran dd-trace-cpp's
+header callback and attached the payload before it checked whether the
+deadline had already passed or the collector cluster exists. Both
+failure paths then threw that work away.
 
-**File**: `tools/dependency/version.jq` (modified, +6/-5)
-```diff
-@@ -4,10 +4,10 @@ def cmp_pre(a; b):
-     elif (a == []) then 1    # empty pre-release > any pre-release
-     elif (b == []) then -1
-     else
--      reduce range(0; max([a|length, b|length])) as $i (0;
-+      reduce range(0; ([(a|length), (b|length)] | max)) as $i (0;
-         if . != 0 then . else
--          (a[$i]? // 0) as $ai
--          | (b[$i]? // 0) as $bi
-+          (a[$i]? // "") as $ai
-+          | (b[$i]? // "") as $bi
-           | if ($ai | test("^[0-9]+$")) and ($bi | test("^[0-9]+$")) then
-               ($ai | tonumber) - ($bi | tonumber)
-             else
-@@ -27,6 +27,7 @@ def cmp(v1; v2):
-          reduce range(0;3) as $i (0;
-            if . != 0 then . else $a.main[$i] - $b.main[$i] end
-          )
-+         | if . != 0 then . else cmp_pre($a.pre; $b.pre) end
-        else
-          # fallback: opaque comparison → string equality or lexicographic
-          if $a.string == $b.string then 0
-@@ -58,8 +59,8 @@ def parse(v):
-             else
-               $m
-               | .main |= (split(".") | map(tonumber) + [0,0,0])[0:3]
--              | .pre |= (if .pre == null then [] else split(".") end)
--              | .build |= (if .build == null then [] else split(".") end)
-+              | .pre |= (if . == null then [] else split(".") end)
-+              | .build |= (if . == null then [] else split(".") end)
-               | .string = $v
-             end
-         end
-```
-
----
-
-### Incident Patch 2: `bb3446c9` (2026-10-22)
-**Commit Message**: udp: fix IPv4 replies through Apple dual-stack sockets (#48074)
-
-Commit Message: udp: fix IPv4 replies through Apple dual-stack sockets
-
-Represent normalized IPv4 peers as IPv4-mapped IPv6 destinations when
-`sendmsg()` uses an Apple dual-stack IPv6 socket. Preserve the logical
-peer address, source packet information, and zero-length datagrams.
-
-Co-authored-by: Filip Cacky <[REDACTED_EMAIL]>
+`post()` now checks the deadline and looks up the cluster first, and
+builds the request only when it is about to be sent. The stats and the
+returned errors are unchanged. The only visible difference is that the
+header callback is no longer invoked for a report that is dropped or
+skipped, which dd-trace-cpp does not rely on (it only writes headers).
+The "submitting data" debug log is now emitted only when a request is
+actually sent.
 
 Additional Description:
+Follow-up to #48209. The local error string in the expired-deadline path
+is renamed to `error_message`, so it no longer shadows the request
+`message`.
 
-On macOS, `sendmsg()` rejects an IPv4 `sockaddr` passed to a dual-stack
-IPv6 socket. This change converts only the temporary destination
-representation at the syscall boundary. Other platforms retain their
-existing behavior.
-
-AI assistance was used; I reviewed and understand the changes.
-
-Fixes #46506
-
-Risk Level: Low
-
+Risk Level: Low. Same checks and results, in a different order.
 Testing:
+- `agent_http_client_test`: the expired-deadline (zero and negative
+timeout) and missing-cluster tests now assert that the header callback
+is never invoked.
+- `//test/extensions/tracers/
 
-- macOS: all 7 `SendmsgAddressTest` cases passed, including repeated
-shuffled execution.
-- Linux: the complete `io_socket_handle_impl_test` target passed 23/23.
-- The dual-stack IPv4 UDP proxy and default-writer HTTP/3 regression
-tests passed on macOS and Linux.
-- Red/green testing on macOS reproduced `EINVAL` and the QUIC handshake
-timeout without the fix.
-- Same-family HTTP/3 IPv4 and IPv6 regression tests passed.
-- Format and pedantic spellin
-
-**File**: `changelogs/current/bug_fixes/udp__ipv4-destinations-on-dual-stack-sockets.rst` (added, +2/-0)
+**File**: `source/extensions/tracers/datadog/agent_http_client.cc` (modified, +30/-22)
 ```diff
-@@ -0,0 +1,2 @@
-+Fixed UDP replies to IPv4 clients through IPv6 dual-stack listeners on macOS, including
-+HTTP/3 listeners using the default UDP packet writer.
+@@ -1,5 +1,6 @@
+ #include "source/extensions/tracers/datadog/agent_http_client.h"
+ 
++#include <chrono>
+ #include <cstddef>
+ #include <cstdint>
+ #include <memory>
+@@ -23,6 +24,20 @@ namespace Envoy {
+ namespace Extensions {
+ namespace Tracers {
+ namespace Datadog {
++namespace {
++
++datadog::tracing::Error deadlineExpiredError(std::chrono::milliseconds timeout) {
++  std::string message = "request deadline expired already";
++  if (timeout.count() < 0) {
++    message += ' ';
++    message += std::to_string(-timeout.count());
++    message += " milliseconds ago";
++  }
++  return datadog::tracing::Error{datadog::tracing::Error::ENVOY_HTTP_CLIENT_FAILURE,
++                                 std::move(message)};
++}
++
++} // namespace
+ 
+ AgentHTTPClient::AgentHTTPClient(Upstream::ClusterManager& cluster_manager,
+                                  const std::string& cluster, const std::string& reference_host,
+@@ -54,6 +69,21 @@ AgentHTTPClient::post(const URL& url, HeadersSetter set_headers, std::string bod
+     return datadog::tracing::nullopt;
+   }
+ 
++  const auto timeout = std::chrono::duration_cast<std::chrono::milliseconds>(
++      deadline - time_source_.monotonicTime());
++  if (timeout.count() <= 0) {
++    stats_.reports_dropped_.inc();
++    return deadlineExpiredError(timeout);
++  }
++
++  Upstream::ThreadLocalCluster* collector_cluster =
++      cluster_manager_.getThreadLocalCluster(cluster_);
++  if (collector_cluster == nullptr) {
++    ENVOY_LOG(debug, "collector cluster '{}' does not exist", cluster_);
++    stats_.reports_skipped_no_cluster_.inc();
++    return datadog::tracing::nullopt;
++  }
++
+   auto message = std::make_unique<Http::RequestMessageImpl>();
+   Http::RequestHeaderMap& headers = message->headers();
+   headers.setReferenceMethod(Http::Headers::get().MethodValues.Post);
+@@ -74,31 +104,9 @@ AgentHTTPClient::post(const URL& url, HeadersSetter set_headers, std::string bod
+         }));
+   }
+ 
+-  const auto timeout = std::chrono::duration_cast<std::chrono::milliseconds>(
+-      deadline - time_source_.monotonicTime());
+-  if (timeout.count() <= 0) {
+-    std::string message = "request deadline expired already";
+-    if (timeout.count() < 0) {
+-      message += ' ';
+-      message += std::to_string(-timeout.count());
+-      message += " milliseconds ago";
+-    }
+-    stats_.reports_dropped_.inc();
+-    return datadog::tracing::Error{datadog::tracing::Error::ENVOY_HTTP_CLIENT_FAILURE,
+-                                   std::move(message)};
+-  }
+-
+   ENVOY_LOG(debug, "submitting data to {} with payload size {} and {} ms timeout", url.path,
+             message->body().length(), timeout.count());
+ 
+-  Upstream::ThreadLocalCluster* collector_cluster =
+-      cluster_manager_.getThreadLocalCluster(cluster_);
+-  if (collector_cluster == nullptr) {
+-    ENVOY_LOG(debug, "collector cluster '{}' does not exist", cluster_);
+-    stats_.reports_skipped_no_cluster_.inc();
+-    return datadog::tracing::nullopt;
+-  }
+-
+   Http::AsyncClient::Request* request = collector_cluster->httpAsyncClient().send(
+       std::move(message), *this, Http::AsyncClient::RequestOptions().setTimeout(timeout));
+   if (!request) {
 ```
 
-**File**: `source/common/network/io_socket_handle_impl.cc` (modified, +24/-0)
+**File**: `source/extensions/tracers/datadog/agent_http_client.h` (modified, +6/-3)
 ```diff
-@@ -22,6 +22,20 @@ namespace Envoy {
+@@ -64,15 +64,18 @@ class AgentHTTPClient : public datadog::tracing::HTTPClient,
  
- namespace {
- 
-+#if defined(__APPLE__)
-+sockaddr_in6 ipv4MappedAddress(const sockaddr_in& address) {
-+  sockaddr_in6 mapped{};
-+  mapped.sin6_family = AF_INET6;
-+  mapped.sin6_port = address.sin_port;
-+  mapped.sin6_addr.s6_addr[10] = 0xff;
-+  mapped.sin6_addr.s6_addr[11] = 0xff;
-+  // Copy network-order bytes without depending on platform-specific in6_addr union members.
-+  safeMemcpyUnsafeDst(&mapped.sin6_addr.s6_addr[12], &address.sin_addr);
-+  ASSERT(IN6_IS_ADDR_V4MAPPED(&mapped.sin6_addr));
-+  return mapped;
-+}
-+#endif
-+
- constexpr int messageTypeContainsIP() {
- #ifdef IP_RECVDSTADDR
-   return IP_RECVDSTADDR;
-@@ -190,6 +204,16 @@ Api::IoCallUint64Result IoSocketHandleImpl::sendmsg(const Buffer::RawSlice* slic
-   msghdr message;
-   message.msg_name = reinterpret_cast<void*>(sock_addr);
-   message.msg_namelen = address_base->sockAddrLen();
-+#if defined(__APPLE__)
-+  sockaddr_in6 mapped_address{};
-+  if (domain_ == AF_INET6 && !socket_v6only_ && sock_addr->sa_family == AF_INET) {
-+    // Received IPv4-mapped peers are normalized to IPv4 internally. Apple requires the
-+    // destination sockaddr family to match the dual-stack socket at the syscall boundary.
-+    mapped_address = ipv4MappedAddress(*reinterpret_cast<const sockaddr_in*>(sock_addr));
-+    message.msg_name = &mapped_address;
-+    message.msg_namelen = sizeof(mapped_address);
-+  }
-+#endif
-   message.msg_iov = num_slices_to_write == 0 ? &empty_iov : iov.begin();
-   message.msg_iovlen = num_slices_to_write == 0 ? 1 : num_slices_to_write;
-   message.msg_flags = 0;
+   /**
+    * Send an HTTP POST request to the cluster, where the requested resource is
+-   * \p url.path. Invoke \p set_headers immediately to obtain the HTTP request
+-   * headers. Send \p body as the request body. Return a
++   * \p url.path. If this client is shut down, \p deadline has passed, or the
++   * cluster does not exist, return without sending anything or invoking any
++   * callback. Otherwise, invoke \p set_headers immediately to obtain the HTTP
++   * request headers, and send \p body as the request body. Return a
+    * \c datadog::tracing::Error if one occurs, otherwise return
+    * \c datadog::tracing::nullopt. When a complete response is received,
+    * invoke \p on_response with the response status, response headers, and
+    * response body. If an error occurs before a complete response is received,
+    * invoke \p on_error with a \c datadog::tracing::Error.
+    * @param url URL from which the request path is taken
+-   * @param set_headers callback invoked immediately to obtain request headers
++   * @param set_headers callback invoked immediately to obtain request headers,
++   * if a request is sent
+    * @param body data to send as POST request body
+    * @param on_response callback to invoke when a complete response is received
+    * @param on_error callback to invoke when an error occurs before a complete
 ```
 
-**File**: `test/common/network/io_socket_handle_impl_test.cc` (modified, +112/-0)
+**File**: `test/extensions/tracers/datadog/agent_http_client_test.cc` (modified, +16/-10)
 ```diff
-@@ -200,6 +200,8 @@ TEST(IoSocketHandleImpl, ErrnoIfaddrs) {
-   EXPECT_FALSE(maybe_interface_name.has_value());
- }
+@@ -62,6 +62,7 @@ class DatadogAgentHttpClientTest : public testing::Test {
+   AgentHTTPClient client_;
+   datadog::tracing::HTTPClient::URL url_;
+   Http::AsyncClient::Callbacks* callbacks_;
++  testing::MockFunction<void(datadog::tracing::DictWriter&)> set_headers_;
+   testing::MockFunction<void(int status, const datadog::tracing::DictReader& headers,
+                              std::string body)>
+       on_response_;
+@@ -96,14 +97,16 @@ TEST_F(DatadogAgentHttpClientTest, PathFromURL) {
+ TEST_F(DatadogAgentHttpClientTest, MissingThreadLocalCluster) {
+   // If `getThreadLocalCluster()` returns null, then `post` cannot create a
+   // request and so will immediately return successfully but increment the
+-  // "reports skipped no cluster" counter.
++  // "reports skipped no cluster" counter. The request headers are not built.
  
-+// These control-message tests require the platform's receive-queue overflow option.
-+#ifdef SO_RXQ_OVFL
- TEST(IoSocketHandleImpl, DroppedUdpDatagramsMsg) {
-   NiceMock<Envoy::Api::MockOsSysCalls> os_sys_calls;
-   auto os_calls =
-@@ -302,6 +304,8 @@ TEST(IoSocketHandleImpl, DroppedUdpDatagramsMmsg) {
-   EXPECT_EQ(dropped_packets, 5);
- }
+   NiceMock<Upstream::MockClusterManager> cluster_manager;
+   AgentHTTPClient client(cluster_manager, "fake_cluster", "test_host", stats_, time_);
  
-+#endif
-+
- TEST(IoSocketHandleImpl, SendEmptyPayloadCallsSend) {
-   NiceMock<Api::MockOsSysCalls> os_sys_calls;
-   TestThreadsafeSingletonInjector<Api::OsSysCallsImpl> os_calls(&os_sys_calls);
-@@ -342,6 +346,114 @@ TEST(IoSocketHandleImpl, SendmsgEmptyPayloadUsesDummyIovec) {
-   EXPECT_EQ(0, result.return_value_);
- }
++  EXPECT_CALL(set_headers_, Call(_)).Times(0);
+   const auto ignore = [](auto&&...) {};
+-  datadog::tracing::Expected<void> result = client.post(
+-      url_, ignore, "", ignore, ignore, time_.monotonicTime() + std::chrono::seconds(1));
++  datadog::tracing::Expected<void> result =
++      client.post(url_, set_headers_.AsStdFunction(), "payload", ignore, ignore,
++                  time_.monotonicTime() + std::chrono::seconds(1));
+   EXPECT_TRUE(result) << result.error();
+   EXPECT_EQ(1, stats_.reports_skipped_no_cluster_.value());
+   EXPECT_EQ(0, stats_.reports_failed_.value());
+@@ -130,10 +133,9 @@ TEST_F(DatadogAgentHttpClientTest, PostAfterShutdown) {
+       .Times(0);
+   client_.shutdown();
  
-+class SendmsgAddressTest : public testing::Test {
-+protected:
-+  void checkDestination(std::optional<int> domain, bool v6only, const Address::InstanceBase& peer,
-+                        bool mapped, const Address::Ip* source = nullptr, bool empty = false) {
-+    testing::StrictMock<Api::MockOsSysCalls> syscalls;
-+    TestThreadsafeSingletonInjector<Api::OsSysCallsImpl> injector(&syscalls);
-+    EXPECT_CALL(syscalls, sendmsg(_, _, 0))
-+        .WillOnce(Invoke([&](os_fd_t, const msghdr* message, int) -> Api::SysCallSizeResult {
-+          const auto* destination = static_cast<const sockaddr*>(message->msg_name);
-+          EXPECT_EQ(mapped ? AF_INET6 : peer.sockAddr()->sa_family, destination->sa_family);
-+          if (mapped) {
-+            EXPECT_EQ(sizeof(sockaddr_in6), message->msg_namelen);
-+            // A regression must fail the contract without reading an IPv4 buffer as IPv6.
-+            if (destination->sa_family != AF_INET6 ||
-+                message->msg_namelen != sizeof(sockaddr_in6)) {
-+              return {empty ? 0 : 1, 0};
-+            }
-+            const auto* v6 = reinterpret_cast<const sockaddr_in6*>(destination);
-+            const auto expected = Network::Test::getV6SockAddr("::ffff:127.0.0.1", 1234);
-+            const auto* expected_v6 = reinterpret_cast<const sockaddr_in6*>(&expected);
-+            EXPECT_EQ(0, memcmp(&v6->sin6_addr, &expected_v6->sin6_addr, sizeof(in6_addr)));
-+            EXPECT_EQ(expected_v6->sin6_port, v6->sin6_port);
-+            EXPECT_EQ(0, v6->sin6_flowinfo);
-+            EXPECT_EQ(0, v6->sin6_scope_id);
-+          } else {
-+            EXPECT_EQ(peer.sockAddrLen(), message->msg_namelen);
-+            EXPECT_EQ(0, memcmp(peer.sockAddr(), destination, peer.sockAddrLen()));
-+          }
-+          EXPECT_EQ(1, message->msg_iovlen);
-+          EXPECT_NE(nullptr, message->msg_iov[0].iov_base);
-+          EXPECT_EQ(empty ? 0 : 1, message->msg_iov[0].iov_len);
-+          if (source != nullptr) {
-+            const auto* cmsg = CMSG_FIRSTHDR(message);
-+            EXPECT_NE(nullptr, cmsg);
-+            if (cmsg != nullptr) {
-+              EXPECT_EQ(IPPROTO_IP, cmsg->cmsg_level);
-+#ifdef IP_SENDSRCADDR
-+              EXPECT_EQ(IP_SENDSRCADDR, cmsg->cmsg_type);
-+              EXPECT_EQ(CMSG_LEN(sizeof(in_addr)), cmsg->cmsg_len);
-+              EXPECT_EQ(source->ipv4()->address(),
-+                        reinterpret_cast<const in_addr*>(CMSG_DATA(cmsg))->s_addr);
-+#else
-+              EXPECT_EQ(IP_PKTINFO, cmsg->cmsg_type);
-+              EXPECT_EQ(CMSG_LEN(sizeof(in_pktinfo)), cmsg->cmsg_len);
-+              const auto* info = reinterpret_cast<const in_pktinfo*>(CMSG_DATA(cmsg));
-+              EXPECT_EQ(0, info->ipi_ifindex);
-+#ifdef WIN32
-+              EXPECT_EQ(source->ipv4()->address(), info->ipi_addr.s_addr);
-+#else
-+              EXPECT_EQ(source->ipv4()->address(), info->ipi_spec_dst.s_addr);
-+#endif
-+#endif
-+            }
-+          } else {
-+            EXPECT_EQ(nullptr, message->msg_control);
-+            EXPECT_EQ(0, message->msg_controllen);
-+          }
-+          return {empty ? 0 : 1, 0};
-+        }));
-+    IoSocketHandleImpl handle(INVALID_SOCKET, v6only, domain);
-+    char payload = 'x';
-+    Buffer::RawSlice slice{&payload, 1};
-+    const auto result = handle.sendmsg(empty ? nullptr : &slice, empty ? 0 : 1, 0, source, peer);
-+    EXPECT_TRUE(result.ok());
-+    EXPECT_EQ(empty ? 0 : 1, result.return_value_);
-+    // Conversion must not change the address used by session lookup and logging.
-+    EXPECT_EQ(peer.ip()->version() == Address::IpVersion::v4 ? AF_INET : AF_INET6,
-+              peer.sockAddr()->sa_family);
-+  }
-+
-+#if defined(__APPLE__)
-+  static constexpr bool MapsIpv4 = true;
-+#else
-+  static constexpr bool MapsIpv4 = false;
-+#endif
-+  const Address::Ipv4Instance ipv4_peer_{"127.0.0.1", 1234};
-+};
-+
-+TEST_F(SendmsgAddressTest, DualStackIpv4DestinationMatchesPlatformContract) {
-+  checkDestination(AF_INET6, false, ipv4_peer_, MapsIpv4);
-+}
-+
-+TEST_F(SendmsgAddressTest, Ipv4SocketKeepsIpv4Destination) {
-+  checkDestination(AF_INET, false, ipv4_peer_, false);
-+}
-+
-+TEST_F(SendmsgAddressTest, Ipv6SocketKeepsIpv6Destination) {
-+  const Address::Ipv6Instance peer("::1"
-```
-
-**File**: `test/extensions/filters/udp/udp_proxy/udp_proxy_integration_test.cc` (modified, +40/-0)
-```diff
-@@ -24,6 +24,22 @@ using testing::Ge;
- namespace Envoy {
- namespace {
+-  testing::MockFunction<void(datadog::tracing::DictWriter&)> set_headers;
+-  EXPECT_CALL(set_headers, Call(_)).Times(0);
++  EXPECT_CALL(set_headers_, Call(_)).Times(0);
+   datadog::tracing::Expected<void> result =
+-      client_.post(url_, set_headers.AsStdFunction(), "", on_response_.AsStdFunction(),
++      client_.post(url_, set_headers_.AsStdFunction(), "", on_response_.AsStdFunction(),
+                    on_error_.AsStdFunction(), time_.monotonicTime() + std::chrono::seconds(1));
+   EXPECT_TRUE(result) << result.error();
+   EXPECT_EQ(0, stats_.reports_skipped_no_cluster_.value());
+@@ -584,15 +586,18 @@ TEST_F(DatadogAgentHttpClientTest, SendFailReturnsError) {
+ TEST_F(DatadogAgentHttpClientTest, SendCalculatedTimeoutIsZero) {
+   // If the `deadline` argument to `AgentHTTPClient::post` is such that the
+   // timeout calculated by `post` truncates to exactly zero milliseconds, then
+-  // `post` will return an error and increment `stats_.reports_dropped_`.
++  // `post` will return an error and increment `stats_.reports_dropped_`,
++  // without building the request headers.
  
-+bool dualStackUdpIsBindable() {
-+  const auto address = Network::Test::getAnyAddress(Network::Address::IpVersion::v6, true);
-+  auto& syscalls = Api::OsSysCallsSingleton::get();
-+  const auto fd = syscalls.socket(AF_INET6, SOCK_DGRAM, 0).return_value_;
-+  if (!SOCKET_VALID(fd)) {
-+    return false;
-+  }
-+  const int v6only = 0;
-+  const bool supported =
-+      syscalls.setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &v6only, sizeof(v6only)).return_value_ ==
-+          0 &&
-+      syscalls.bind(fd, address->sockAddr(), address->sockAddrLen()).return_value_ == 0;
-+  syscalls.close(fd);
-+  return supported;
-+}
-+
- class UdpReverseFilter : public Network::UdpListenerReadFilter {
- public:
-   UdpReverseFilter(Network::UdpReadFilterCallbacks& callbacks) : UdpListenerReadFilter(callbacks) {}
-@@ -345,6 +361,30 @@ TEST_P(UdpProxyIntegrationTest, HelloWorldOnLoopback) {
-   requestResponseWithListenerAddress(*listener_address);
- }
+   NiceMock<Upstream::MockClusterManager> cluster_manager;
+   AgentHTTPClient client(cluster_manager, "fake_cluster", "test_host", stats_, time_);
  
-+TEST_P(UdpProxyIntegrationTest, DualStackListenerRepliesToIpv4Client) {
-+  if (version_ != Network::Address::IpVersion::v4) {
-+    GTEST_SKIP() << "This regression requires an IPv4 client and upstream.";
-+  }
-+  if (!dualStackUdpIsBindable()) {
-+    GTEST_SKIP() << "An IPv6 UDP socket with IPV6_V6ONLY=0 cannot bind [::]:0.";
-+  }
-+  config_helper_.addConfigModifier([](envoy::config::bootstrap::v3::Bootstrap& bootstrap) {
-+    auto* address = bootstrap.mutable_static_resources()
-+                        ->mutable_listeners(0)
-+                        ->mutable_address()
-+                        ->mutable_socket_address();
-+    address->set_address("::");
-+    address->set_ipv4_compat(true);
-+  });
-+  setup(1);
-+  const auto listener_address =
-+      *Network::Utility::resolveUrl(fmt::format("udp://127.0.0.1:{}", lookupPort("listener_0")));
-+  // This helper checks both payloads, the IPv4 reply endpoint and transmit counters.
-+  // The reply uses the original IPv6 listener fd and the normalized IPv4 peer.
-+  requestResponseWithListenerAddress(*listener_address);
-+  EXPECT_EQ(0, test_server_->counter("udp.foo.downstream_sess_tx_errors")->value());
-+}
-+
- TEST_P(UdpProxyIntegrationTest, UpstreamBindConfigSourceAddress) {
-   if (version_ != Network::Address::IpVersion::v4) {
-     GTEST_SKIP();
-```
-
-**File**: `test/integration/BUILD` (modified, +1/-0)
-```diff
-@@ -3029,6 +3029,7 @@ envoy_cc_test(
-     deps = envoy_select_enable_http3([
-         ":quic_http_integration_test_lib",
-         "//test/test_common:logging_lib",
-+        "@envoy_api//envoy/extensions/udp_packet_writer/v3:pkg_cc_proto",
-     ]),
- )
++  EXPECT_CALL(set_headers_, Call(_)).Times(0);
+   const auto ignore = [](auto&&...) {};
+   const auto deadline = time_.monotonicTime() + std::chrono::seconds(1);
+   time_.setMonotonicTime(deadline);
+-  datadog::tracing::Expected<void> result = client.post(url_, ignore, "", ignore, ignore, deadline);
++  datadog::tracing::Expected<void> result =
++      client.post(url_, set_headers_.AsStdFunction(), "", ignore, ignore, deadline);
+   ASSERT_FALSE(result);
+   EXPECT_EQ(datadog::tracing::Error::ENVOY_HTTP_CLIENT_FAILURE, result.error().code);
+   EXPECT_EQ(1, stats_.reports_dropped_.value());
+@@ -604,16 +609,17 @@ TEST_F(DatadogAgentHttpClientTest, SendCalculatedTimeoutIsNegative) {
+   // If the `deadline` argument to `AgentHTTPClient::post` is such that the
+   // timeout calculated by `post` truncates to a negative number of
+   // milliseconds, then `post` will return an error and increment
+-  // `stats_.reports_dropped_`.
++  // `stats_.reports_dropped_`, without building the request headers.
  
-```
-
-**File**: `test/integration/quic_http_integration_test.cc` (modified, +50/-0)
-```diff
-@@ -12,6 +12,7 @@
- #include <vector>
+   NiceMock<Upstream::MockClusterManager> cluster_manager;
+   AgentHTTPClient client(cluster_manager, "fake_cluster", "test_host", stats_, time_);
  
- #include "envoy/common/platform.h"
-+#include "envoy/extensions/udp_packet_writer/v3/udp_default_writer_factory.pb.h"
- 
- #include "source/common/quic/envoy_quic_client_connection.h"
- #include "source/common/quic/envoy_quic_packet_writer.h"
-@@ -31,6 +32,22 @@ namespace Quic {
- 
- namespace {
- 
-+bool dualStackUdpIsBindable() {
-+  const auto address = Network::Test::getAnyAddress(Network::Address::IpVersion::v6, true);
-+  auto& syscalls = Api::OsSysCallsSingleton::get();
-+  const auto fd = syscalls.socket(AF_INET6, SOCK_DGRAM, 0).return_value_;
-+  if (!SOCKET_VALID(fd)) {
-+    return false;
-+  }
-+  const int v6only = 0;
-+  const bool supported =
-+      syscalls.setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &v6only, sizeof(v6only)).return_value_ ==
-+          0 &&
-+      syscalls.bind(fd, address->sockAddr(), address->sockAddrLen()).return_value_ == 0;
-+  syscalls.close(fd);
-+  return supported;
-+}
-+
- // Returns true if a socket can bind() to `address`.
- [[maybe_unused]] bool addressIsBindable(const std::string& address) {
-   const auto addr = Network::Utility::parseInternetAddressNoThrow(address, /*port=*/0);
-@@ -96,6 +113,39 @@ TEST_P(QuicHttpIntegrationTest, GetRequestAndEmptyResponse) {
-   EXPECT_THAT(log, testing::MatchesRegex("TLSv1.3 TLS_(AES_128_GCM|CHACHA20_POLY1305)_SHA256 -"));
- }
- 
-+TEST_P(QuicHttpIntegrationTest, DualStackListenerServesIpv4ClientUsingDefaultWriter) {
-+  if (version_ != Network::Address::IpVersion::v4) {
-+    GTEST_SKIP() << "This regression requires an IPv4 client.";
-+  }
-+  if (!dualStackUdpIsBindable()) {
-+    GTEST_SKIP() << "An IPv6 UDP socket with IPV6_V6ONLY=0 cannot bind [::]:0.";
-+  }
-+  config_helper_.addConfigModifier([](envoy::config::bootstrap::v3::Bootstrap& bootstrap) {
-+    auto* listener = bootstrap.mutable_static_resources()->mutable_listeners(0);
-+    listener->mutable_address()->mutable_socket_address()->set_address("::");
-+    listener->mutable_address()->mutable_socket_address()->set_ipv4_compat(true);
-+    // Force the sendmsg path on Linux too, where automatic writer selection may use GSO.
-+    auto* writer =
-+        listener->mutable_udp_listener_config()->mutable_udp_packet_packet_writer_config();
-+    writer->set_name("envoy.udp_packet_writer.default");
-+    std::ignore = writer->mutable_typed_config()->PackFrom(
-+        envoy::extensions::udp_packet_writer::v3::UdpDefaultWriterFactory());
-+  });
-+  initialize();
-+  codec_client_ = makeHttpConnection(makeClientConnection(lookupPort("http")));
-+  ASSERT_TRUE(quic_connection_->waitForHandshakeDone());
-+  auto response = codec_client_->makeHeaderOnlyRequest(default_request_headers_);
-+  waitForNextUpstreamRequest(0);
-+  upstream_request_->encodeHeaders(default_response_headers_, false);
-+  upstream_request_->encodeData(5, true);
-+  ASSERT_TRUE(response->waitForEndStream());
-+  EXPECT_TRUE(response->complete());
-+  EXPECT_EQ("200", response->headers().getStatusValue());
-+  EXPECT_EQ("aaaaa", response->body());
-+  EXPECT_EQ("127.0.0.1", quic_connection_->peer_address().host().ToString());
-+  codec_client_->close();
-+}
-+
- TEST_P(QuicHttpIntegrationTest, GetPeerAndLocalCertsInfo) {
-   // These are not implemented yet, but configuring them shouldn't cause crash.
-   useAccessLog("%DOWNSTREAM_PEER_CERT% %DOWNSTREAM_PEER_CERT_CHAIN% %DOWNSTREAM_PEER_ISSUER% "
++  EXPECT_CALL(set_headers_, Call(_)).Times(0);
+   const auto ignore = [](auto&&...) {};
+   const auto deadline = time_.monotonicTime() + std::chrono::seconds(1);
+   time_.setMonotonicTime(deadline + std::chrono::seconds(1));
+   datadog::tracing::Expected<void> result =
+-      client.post(url_, ignore, "payload", ignore, ignore, deadline);
++      client.post(url_, set_headers_.AsStdFunction(), "payload", ignore, ignore, deadline);
+   ASSERT_FALSE(result);
+   EXPECT_EQ(datadog::tracing::Error::ENVOY_HTTP_CLIENT_FAILURE, result.error().code);
+   EXPECT_EQ(1, stats_.reports_dropped_.value());
 ```
 
 ---
 
-### Incident Patch 3: `6b08712e` (2026-10-22)
-**Commit Message**: ci: Re-enable wasmtime tests (and fix/cleanup) (#48434)
+### Incident Patch 2: `7d393e78` (2026-10-24)
+**Commit Message**: mcp_json_rest_bridge: fix hanging on empty `POST` requests (#48635)
 
-Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
+Commit Message: mcp_json_rest_bridge: fix hanging on empty `POST`
+requests
+Additional Description: Fixes an issue where the MCP JSON-REST Bridge
+hangs when a `POST` request with an empty body ends at the headers
+stage.
+Previously, `decodeHeaders()` ignored `end_stream=true` and returned
+`StopIteration`, but `decodeData()` was never invoked, leaving the
+request hanging until the stream idle timeout.
+The fix handles headers-only empty `POST` requests in `decodeHeaders()`
+and returns HTTP 400 with JSON-RPC parse error `-32700`, consistent with
+the existing empty-body handling in `decodeData()`.
+Risk Level: Low
+Testing:  Added regression tests covering:
+- Headers-only POST requests with end_stream=true.
+- Empty request bodies handled through decodeData().
+- HTTP 400 responses with JSON-RPC parse error -32700.
+- Correct response framing and stream completion.
+- Verification that rejected requests are not forwarded to the REST
+backend.
 
-**File**: `MODULE.bazel` (modified, +0/-3)
+Docs Changes: N/A
+Release Notes: Fixed the `mcp_json_rest_bridge` HTTP filter so that a
+`POST` request that ends at the headers, such as an HTTP/1 request with
+`Content-Length: 0` or an 
+
+**File**: `changelogs/current/bug_fixes/mcp_json_rest_bridge__empty-post-body-hang.rst` (added, +4/-0)
 ```diff
-@@ -104,10 +104,7 @@ bazel_dep(name = "tclap", version = "1.2.5.bcr.1")
- bazel_dep(name = "tcmalloc", version = "0.0.0-250926-12f2552.envoy")
- bazel_dep(name = "thrift", version = "0.24.0.envoy")
- bazel_dep(name = "uadk", version = "2.9.envoy")
--bazel_dep(name = "v8", version = "14.6.202.10.envoy.1")
- bazel_dep(name = "vectorscan", version = "5.4.11.envoy")
--bazel_dep(name = "wamr", version = "2.4.5.envoy")
--bazel_dep(name = "wasmtime", version = "45.0.2.envoy")
- bazel_dep(name = "xds", version = "0.0.0-20251210-ee656c7")
- bazel_dep(name = "vpp-vcl", version = "26.02-260111-85abefb.envoy")
- bazel_dep(name = "wuffs", version = "0.4.0-alpha.9.envoy")
+@@ -0,0 +1,4 @@
++Fixed the ``mcp_json_rest_bridge`` HTTP filter so that a ``POST`` request that ends at the headers, such as an HTTP/1
++request with ``Content-Length: 0`` or an HTTP/2 request whose ``HEADERS`` frame carries ``END_STREAM``, is rejected with
++HTTP ``400 Bad Request`` and a JSON-RPC ``-32700`` parse error, as requests with an empty body already were. Previously,
++such requests hung until the stream idle timeout.
 ```
 
-**File**: `MODULE.bazel.lock` (modified, +1/-5)
+**File**: `source/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter.cc` (modified, +7/-1)
 ```diff
-@@ -702,13 +702,11 @@
-     "https://bcr.bazel.build/modules/upb/0.0.0-20220923-a547704/MODULE.bazel": "7298990c00040a0e2f121f6c32544bab27d4452f80d9ce51349b1a28f3005c43",
-     "https://bcr.bazel.build/modules/upb/0.0.0-20230516-61a97ef/MODULE.bazel": "c0df5e35ad55e264160417fd0875932ee3c9dda63d9fccace35ac62f45e1b6f9",
-     "https://bcr.bazel.build/modules/upb/0.0.0-20230907-e7430e6/MODULE.bazel": "3a7dedadf70346e678dc059dbe44d05cbf3ab17f1ce43a1c7a42edc7cbf93fd9",
--    "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/wamr/2.4.5.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/wasmtime/45.0.2.envoy.1/MODULE.bazel": "not found",
--    "https://bcr.bazel.build/modules/wasmtime/45.0.2.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/wuffs/0.4.0-alpha.9.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/xctestrunner/0.2.16-20260212-4c6f493/MODULE.bazel": "df9d74c77698e7dbc52a65ebdd6de5727044e98121ac309b5d046f2d04121d56",
-     "https://bcr.bazel.build/modules/xctestrunner/0.2.16-20260212-4c6f493/source.json": "73a5421c8ef51cd455a572dee5bb9415351ab5acbcb65d4efa56a574790bd2f2",
-@@ -862,9 +860,8 @@
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/toolchains_llvm/1.9.1.envoy/source.json": "550817e1f0123e06c59a9cd4814809bd57a0bcf1705bd4ac1e56e90d1952c2f4",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/MODULE.bazel": "de2055688d0c64d1c467d43895e643fd7875a82a53c8461e76908f57598dc34a",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/source.json": "4fbeff6b0573126f5ce1931abd68a8361ce3d86c0b3888d92e2d63d0b0c00f42",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "aa20d94a510f745df3b87ea07f3ea9d1f855b5991956f1af19ba1cc570a48f6b",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/MODULE.bazel": "57fa395049458e9768b26e4789236ee620bd177414bf979cf583887f06c71749",
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "321bf3eac6795ea32dc1814e7016a72f9c8df01aa50a135a952de24efa39acf2",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/source.json": "cf9fd240073fd187326f57f516a3791b70ee0314cfc4cf17ffa13568a804bdcd",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "9e76627b1f3cdf4da23386693f9333baaa5078e566495b02994ae2620baf8094",
-@@ -873,7 +870,6 @@
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wamr/2.4.5.envoy/source.json": "dedc6d874500bff067e8a574e806b2a2da575b5d7f03103b3d215854e62057f8",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy.1/MODULE.bazel": "000624ecaed4eabbc8ed9a0125426e04d6750e7067bdcfc6a6200560582b8128",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy.1/source.json": "5465795a5dd906f4419c576ec48eee0a1f273268b5329080e864c6edbdee876c",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy/MODULE.bazel": "049737b70b559b996eb68f95e38ff92ef50d629545ddafa1aa4d62b3c1a73225",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wuffs/0.4.0-alpha.9.envoy/MODULE.bazel": "e46699ee4851ddd18a50012b34c662f2390f014394cb17b8e07337cbc4033eb2",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wuffs/0.4.0-alpha.9.envoy/source.json":
-```
-
-**File**: `bazel/tests/codeql/MODULE.bazel.lock` (modified, +1/-5)
-```diff
-@@ -718,13 +718,11 @@
-     "https://bcr.bazel.build/modules/upb/0.0.0-20220923-a547704/MODULE.bazel": "7298990c00040a0e2f121f6c32544bab27d4452f80d9ce51349b1a28f3005c43",
-     "https://bcr.bazel.build/modules/upb/0.0.0-20230516-61a97ef/MODULE.bazel": "c0df5e35ad55e264160417fd0875932ee3c9dda63d9fccace35ac62f45e1b6f9",
-     "https://bcr.bazel.build/modules/upb/0.0.0-20230907-e7430e6/MODULE.bazel": "3a7dedadf70346e678dc059dbe44d05cbf3ab17f1ce43a1c7a42edc7cbf93fd9",
--    "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/wamr/2.4.5.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/wasmtime/45.0.2.envoy.1/MODULE.bazel": "not found",
--    "https://bcr.bazel.build/modules/wasmtime/45.0.2.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/wuffs/0.4.0-alpha.9.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/xctestrunner/0.2.16-20260212-4c6f493/MODULE.bazel": "df9d74c77698e7dbc52a65ebdd6de5727044e98121ac309b5d046f2d04121d56",
-     "https://bcr.bazel.build/modules/xctestrunner/0.2.16-20260212-4c6f493/source.json": "73a5421c8ef51cd455a572dee5bb9415351ab5acbcb65d4efa56a574790bd2f2",
-@@ -879,9 +877,8 @@
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/toolchains_llvm/1.9.1.envoy/source.json": "550817e1f0123e06c59a9cd4814809bd57a0bcf1705bd4ac1e56e90d1952c2f4",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/MODULE.bazel": "de2055688d0c64d1c467d43895e643fd7875a82a53c8461e76908f57598dc34a",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/source.json": "4fbeff6b0573126f5ce1931abd68a8361ce3d86c0b3888d92e2d63d0b0c00f42",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "aa20d94a510f745df3b87ea07f3ea9d1f855b5991956f1af19ba1cc570a48f6b",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/MODULE.bazel": "57fa395049458e9768b26e4789236ee620bd177414bf979cf583887f06c71749",
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "321bf3eac6795ea32dc1814e7016a72f9c8df01aa50a135a952de24efa39acf2",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/source.json": "cf9fd240073fd187326f57f516a3791b70ee0314cfc4cf17ffa13568a804bdcd",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "9e76627b1f3cdf4da23386693f9333baaa5078e566495b02994ae2620baf8094",
-@@ -890,7 +887,6 @@
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wamr/2.4.5.envoy/source.json": "dedc6d874500bff067e8a574e806b2a2da575b5d7f03103b3d215854e62057f8",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy.1/MODULE.bazel": "000624ecaed4eabbc8ed9a0125426e04d6750e7067bdcfc6a6200560582b8128",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy.1/source.json": "5465795a5dd906f4419c576ec48eee0a1f273268b5329080e864c6edbdee876c",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy/MODULE.bazel": "049737b70b559b996eb68f95e38ff92ef50d629545ddafa1aa4d62b3c1a73225",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wuffs/0.4.0-alpha.9.envoy/MODULE.bazel": "e46699ee4851ddd18a50012b34c662f2390f014394cb17b8e07337cbc4033eb2",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wuffs/0.4.0-alpha.9.envoy/source.json":
-```
-
-**File**: `bazel/tests/external/MODULE.bazel.lock` (modified, +1/-3)
-```diff
-@@ -722,7 +722,6 @@
-     "https://bcr.bazel.build/modules/upb/0.0.0-20220923-a547704/MODULE.bazel": "7298990c00040a0e2f121f6c32544bab27d4452f80d9ce51349b1a28f3005c43",
-     "https://bcr.bazel.build/modules/upb/0.0.0-20230516-61a97ef/MODULE.bazel": "c0df5e35ad55e264160417fd0875932ee3c9dda63d9fccace35ac62f45e1b6f9",
-     "https://bcr.bazel.build/modules/upb/0.0.0-20230907-e7430e6/MODULE.bazel": "3a7dedadf70346e678dc059dbe44d05cbf3ab17f1ce43a1c7a42edc7cbf93fd9",
--    "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "not found",
-@@ -890,9 +889,8 @@
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/toolchains_llvm/1.9.1.envoy/source.json": "550817e1f0123e06c59a9cd4814809bd57a0bcf1705bd4ac1e56e90d1952c2f4",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/MODULE.bazel": "de2055688d0c64d1c467d43895e643fd7875a82a53c8461e76908f57598dc34a",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/source.json": "4fbeff6b0573126f5ce1931abd68a8361ce3d86c0b3888d92e2d63d0b0c00f42",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "aa20d94a510f745df3b87ea07f3ea9d1f855b5991956f1af19ba1cc570a48f6b",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/MODULE.bazel": "57fa395049458e9768b26e4789236ee620bd177414bf979cf583887f06c71749",
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "321bf3eac6795ea32dc1814e7016a72f9c8df01aa50a135a952de24efa39acf2",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/source.json": "cf9fd240073fd187326f57f516a3791b70ee0314cfc4cf17ffa13568a804bdcd",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "9e76627b1f3cdf4da23386693f9333baaa5078e566495b02994ae2620baf8094",
-```
-
-**File**: `ci/do_ci.sh` (modified, +2/-2)
-```diff
-@@ -518,7 +518,7 @@ case $CI_TARGET in
-         bazel clean "${BAZEL_GLOBAL_OPTIONS[@]}" "${CLEAN_ARGS[@]}"
-         ;;
+@@ -914,7 +914,7 @@ bool McpJsonRestBridgePerRouteConfig::hasEndpoint(absl::string_view host,
+ }
  
--    compile_time_options)
-+    compile_time_options|cto)
-         # See `compile-time-options` in `.bazelrc`
-         # This doesn't go into CI but is available for developer convenience.
-         echo "bazel with different compiletime options build with tests..."
-@@ -534,7 +534,7 @@ case $CI_TARGET in
-                 -c fastbuild \
-                 "${TEST_TARGETS[@]}"
-         fi
--        if [[ -z "$ENVOY_SKIP_CTO_WASMTIME" ]]; then
-+        if [[ -n "$ENVOY_SKIP_CTO_WASMTIME" ]]; then
-             exit 0
-         fi
-         echo "Building and testing with wasm=wasmtime and jemalloc: and admin_functionality and admin_html disabled ${TEST_TARGETS[*]}"
+ Http::FilterHeadersStatus
+-McpJsonRestBridgeFilter::decodeHeaders(Http::RequestHeaderMap& request_headers, bool) {
++McpJsonRestBridgeFilter::decodeHeaders(Http::RequestHeaderMap& request_headers, bool end_stream) {
+   absl::string_view path = request_headers.getPathValue();
+   auto query_idx = path.find('?');
+   if (query_idx != absl::string_view::npos) {
+@@ -962,6 +962,12 @@ McpJsonRestBridgeFilter::decodeHeaders(Http::RequestHeaderMap& request_headers,
+     return Http::FilterHeadersStatus::StopIteration;
+   }
+ 
++  if (end_stream) {
++    sendErrorResponse(Http::Code::BadRequest, BridgeStatus::RequestFailedToParseJsonRpc,
++                      generateErrorJsonResponse(-32700, "JSON parse error").dump());
++    return Http::FilterHeadersStatus::StopIteration;
++  }
++
+   return Http::FilterHeadersStatus::StopIteration;
+ }
+ 
 ```
 
-**File**: `docs/MODULE.bazel.lock` (modified, +1/-3)
+**File**: `test/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter_test.cc` (modified, +68/-0)
 ```diff
-@@ -722,7 +722,6 @@
-     "https://bcr.bazel.build/modules/upb/0.0.0-20220923-a547704/MODULE.bazel": "7298990c00040a0e2f121f6c32544bab27d4452f80d9ce51349b1a28f3005c43",
-     "https://bcr.bazel.build/modules/upb/0.0.0-20230516-61a97ef/MODULE.bazel": "c0df5e35ad55e264160417fd0875932ee3c9dda63d9fccace35ac62f45e1b6f9",
-     "https://bcr.bazel.build/modules/upb/0.0.0-20230907-e7430e6/MODULE.bazel": "3a7dedadf70346e678dc059dbe44d05cbf3ab17f1ce43a1c7a42edc7cbf93fd9",
--    "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "not found",
-@@ -890,9 +889,8 @@
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/toolchains_llvm/1.9.1.envoy/source.json": "550817e1f0123e06c59a9cd4814809bd57a0bcf1705bd4ac1e56e90d1952c2f4",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/MODULE.bazel": "de2055688d0c64d1c467d43895e643fd7875a82a53c8461e76908f57598dc34a",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/source.json": "4fbeff6b0573126f5ce1931abd68a8361ce3d86c0b3888d92e2d63d0b0c00f42",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "aa20d94a510f745df3b87ea07f3ea9d1f855b5991956f1af19ba1cc570a48f6b",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/MODULE.bazel": "57fa395049458e9768b26e4789236ee620bd177414bf979cf583887f06c71749",
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "321bf3eac6795ea32dc1814e7016a72f9c8df01aa50a135a952de24efa39acf2",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/source.json": "cf9fd240073fd187326f57f516a3791b70ee0314cfc4cf17ffa13568a804bdcd",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "9e76627b1f3cdf4da23386693f9333baaa5078e566495b02994ae2620baf8094",
+@@ -856,6 +856,74 @@ TEST_F(McpJsonRestBridgeFilterTest, InvalidInputJsonReturnsError) {
+           R"json({"error":{"code":-32700,"message":"JSON parse error"},"id":null,"jsonrpc":"2.0"})json"));
+ }
+ 
++TEST_F(McpJsonRestBridgeFilterTest, HeadersOnlyPostRequestReturnsParseError) {
++  ASSERT_OK(makeFilter());
++
++  EXPECT_CALL(decoder_callbacks_,
++              sendLocalReply(Eq(Http::Code::BadRequest),
++                             StrEq(R"json({"code":-32700,"message":"JSON parse error"})json"), _, _,
++                             StrEq("mcp_json_rest_bridge_request_failed_to_parse_json_rpc")));
++
++  Protobuf::Struct expected_metadata;
++  MessageUtil::loadFromJson(R"json({
++    "status": "mcp_json_rest_bridge_request_failed_to_parse_json_rpc"
++  })json",
++                            expected_metadata);
++
++  EXPECT_CALL(
++      decoder_callbacks_.stream_info_,
++      setDynamicMetadata("envoy.filters.http.mcp_json_rest_bridge", ProtoEq(expected_metadata)));
++
++  request_headers_ = {{":method", "POST"}, {":path", "/mcp"}};
++  EXPECT_EQ(filter_->decodeHeaders(request_headers_, /*end_stream=*/true),
++            Http::FilterHeadersStatus::StopIteration);
++
++  // Simulates how the router filter handles the local response.
++  response_headers_ = {{"content-type", "text/plain"}, {"content-length", "123456"}};
++  EXPECT_EQ(filter_->encodeHeaders(response_headers_, /*end_stream=*/false),
++            Http::FilterHeadersStatus::StopIteration);
++  Buffer::OwnedImpl response_body(R"json({"code":-32700,"message":"JSON parse error"})json");
++  EXPECT_EQ(filter_->encodeData(response_body, /*end_stream=*/true),
++            Http::FilterDataStatus::Continue);
++  EXPECT_THAT(response_headers_.getContentTypeValue(), StrEq("application/json"));
++  EXPECT_THAT(response_headers_.getContentLengthValue(),
++              StrEq(std::to_string(response_body.length())));
++  EXPECT_EQ(
++      nlohmann::json::parse(response_body.toString()),
++      nlohmann::json::parse(
++          R"json({"error":{"code":-32700,"message":"JSON parse error"},"id":null,"jsonrpc":"2.0"})json"));
++}
++
++TEST_F(McpJsonRestBridgeFilterTest, EmptyRequestBodyReturnsParseError) {
++  ASSERT_OK(makeFilter());
++
++  // The body is still expected, so decodeHeaders() must not reply yet.
++  EXPECT_CALL(decoder_callbacks_, sendLocalReply(_, _, _, _, _)).Times(0);
++  request_headers_ = {{":method", "POST"}, {":path", "/mcp"}};
++  EXPECT_EQ(filter_->decodeHeaders(request_headers_, /*end_stream=*/false),
++            Http::FilterHeadersStatus::StopIteration);
++
++  // This newer expectation takes precedence over the one above.
++  EXPECT_CALL(decoder_callbacks_,
++              sendLocalReply(Eq(Http::Code::BadRequest),
++                             StrEq(R"json({"code":-32700,"message":"JSON parse error"})json"), _, _,
++                             StrEq("mcp_json_rest_bridge_request_failed_to_parse_json_rpc")));
++
++  Protobuf::Struct expected_metadata;
++  MessageUtil::loadFromJson(R"json({
++    "status": "mcp_json_rest_bridge_request_failed_to_parse_json_rpc"
++  })json",
++                            expected_metadata);
++
++  EXPECT_CALL(
++      decoder_callbacks_.stream_info_,
++      setDynamicMetadata("envoy.filters.http.mcp_json_rest_bridge", ProtoEq(expected_metadata)));
++
++  Buffer::OwnedImpl body;
++  EXPECT_EQ(filter_->decodeData(body, /*end_stream=*/true),
++            Http::FilterDataStatus::StopIterationNoBuffer);
++}
++
+ TEST_F(McpJsonRestBridgeFilterTest, InvalidProtocolVersionParamsReturnsError) {
+   ASSERT_OK(makeFilter());
+ 
 ```
 
-**File**: `mobile/MODULE.bazel.lock` (modified, +1/-5)
+**File**: `test/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_integration_test.cc` (modified, +106/-0)
 ```diff
-@@ -738,13 +738,11 @@
-     "https://bcr.bazel.build/modules/upb/0.0.0-20220923-a547704/MODULE.bazel": "7298990c00040a0e2f121f6c32544bab27d4452f80d9ce51349b1a28f3005c43",
-     "https://bcr.bazel.build/modules/upb/0.0.0-20230516-61a97ef/MODULE.bazel": "c0df5e35ad55e264160417fd0875932ee3c9dda63d9fccace35ac62f45e1b6f9",
-     "https://bcr.bazel.build/modules/upb/0.0.0-20230907-e7430e6/MODULE.bazel": "3a7dedadf70346e678dc059dbe44d05cbf3ab17f1ce43a1c7a42edc7cbf93fd9",
--    "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/v8/14.6.202.10.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/wamr/2.4.5.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/wasmtime/45.0.2.envoy.1/MODULE.bazel": "not found",
--    "https://bcr.bazel.build/modules/wasmtime/45.0.2.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/wuffs/0.4.0-alpha.9.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/xctestrunner/0.2.16-20260212-4c6f493/MODULE.bazel": "df9d74c77698e7dbc52a65ebdd6de5727044e98121ac309b5d046f2d04121d56",
-     "https://bcr.bazel.build/modules/xctestrunner/0.2.16-20260212-4c6f493/source.json": "73a5421c8ef51cd455a572dee5bb9415351ab5acbcb65d4efa56a574790bd2f2",
-@@ -902,9 +900,8 @@
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/toolchains_llvm/1.9.1.envoy/source.json": "550817e1f0123e06c59a9cd4814809bd57a0bcf1705bd4ac1e56e90d1952c2f4",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/MODULE.bazel": "de2055688d0c64d1c467d43895e643fd7875a82a53c8461e76908f57598dc34a",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/uadk/2.9.envoy/source.json": "4fbeff6b0573126f5ce1931abd68a8361ce3d86c0b3888d92e2d63d0b0c00f42",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/MODULE.bazel": "aa20d94a510f745df3b87ea07f3ea9d1f855b5991956f1af19ba1cc570a48f6b",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy.1/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/MODULE.bazel": "57fa395049458e9768b26e4789236ee620bd177414bf979cf583887f06c71749",
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/v8/14.6.202.10.envoy/source.json": "eb0a534601513683071d65daa8f27fb100832177f88c9e37821a46ed5942aa0d",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/MODULE.bazel": "321bf3eac6795ea32dc1814e7016a72f9c8df01aa50a135a952de24efa39acf2",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vectorscan/5.4.11.envoy/source.json": "cf9fd240073fd187326f57f516a3791b70ee0314cfc4cf17ffa13568a804bdcd",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/vpp-vcl/26.02-260111-85abefb.envoy/MODULE.bazel": "9e76627b1f3cdf4da23386693f9333baaa5078e566495b02994ae2620baf8094",
-@@ -913,7 +910,6 @@
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wamr/2.4.5.envoy/source.json": "dedc6d874500bff067e8a574e806b2a2da575b5d7f03103b3d215854e62057f8",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy.1/MODULE.bazel": "000624ecaed4eabbc8ed9a0125426e04d6750e7067bdcfc6a6200560582b8128",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy.1/source.json": "5465795a5dd906f4419c576ec48eee0a1f273268b5329080e864c6edbdee876c",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wasmtime/45.0.2.envoy/MODULE.bazel": "049737b70b559b996eb68f95e38ff92ef50d629545ddafa1aa4d62b3c1a73225",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wuffs/0.4.0-alpha.9.envoy/MODULE.bazel": "e46699ee4851ddd18a50012b34c662f2390f014394cb17b8e07337cbc4033eb2",
-     "https://raw.githubusercontent.com/envoyproxy/bazel-registry/b1cba19104bc62dc70d04cf2f08e84d1c3809f48/modules/wuffs/0.4.0-alpha.9.envoy/source.json":
+@@ -21,6 +21,19 @@ using ::testing::IsEmpty;
+ using ::testing::SizeIs;
+ using ::testing::StrEq;
+ 
++void expectJsonRpcParseErrorResponse(IntegrationStreamDecoder& response) {
++  EXPECT_TRUE(response.complete());
++  EXPECT_FALSE(response.reset());
++  EXPECT_THAT(response.headers().getStatusValue(), StrEq("400"));
++  EXPECT_THAT(response.headers().getContentTypeValue(), StrEq("application/json"));
++  EXPECT_THAT(response.headers().getContentLengthValue(),
++              StrEq(std::to_string(response.body().size())));
++  EXPECT_EQ(
++      nlohmann::json::parse(response.body()),
++      nlohmann::json::parse(
++          R"json({"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"JSON parse error"}})json"));
++}
++
+ class McpJsonRestBridgeIntegrationTest : public testing::TestWithParam<Network::Address::IpVersion>,
+                                          public HttpIntegrationTest {
+ public:
+@@ -176,6 +189,75 @@ TEST_P(McpJsonRestBridgeIntegrationTest, InvalidJsonBody) {
+           R"json({"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"JSON parse error"}})json"));
+ }
+ 
++TEST_P(McpJsonRestBridgeIntegrationTest, HeadersOnlyPostReturnsParseError) {
++  initializeFilter(R"EOF(
++    name: envoy.filters.http.mcp_json_rest_bridge
++    typed_config:
++      "@type": type.googleapis.com/envoy.extensions.filters.http.mcp_json_rest_bridge.v3.McpJsonRestBridge
++  )EOF");
++
++  codec_client_ = makeHttpConnection(lookupPort("http"));
++
++  auto response = codec_client_->makeHeaderOnlyRequest(
++      Http::TestRequestHeaderMapImpl{{":method", "POST"},
++                                     {":path", "/mcp"},
++                                     {":scheme", "http"},
++                                     {":authority", "host"},
++                                     {"content-type", "application/json"}});
++
++  ASSERT_TRUE(response->waitForEndStream());
++  expectJsonRpcParseErrorResponse(*response);
++  EXPECT_EQ(0, test_server_->counter("cluster.cluster_0.upstream_rq_total")->value());
++}
++
++TEST_P(McpJsonRestBridgeIntegrationTest, StatelessHeadersOnlyPostReturnsParseError) {
++  initializeFilter(R"EOF(
++    name: envoy.filters.http.mcp_json_rest_bridge
++    typed_config:
++      "@type": type.googleapis.com/envoy.extensions.filters.http.mcp_json_rest_bridge.v3.McpJsonRestBridge
++      server_info:
++        max_supported_protocol_version: "2026-07-28"
++  )EOF");
++
++  codec_client_ = makeHttpConnection(lookupPort("http"));
++
++  auto response = codec_client_->makeHeaderOnlyRequest(
++      Http::TestRequestHeaderMapImpl{{":method", "POST"},
++                                     {":path", "/mcp"},
++                                     {":scheme", "http"},
++                                     {":authority", "host"},
++                                     {"content-type", "application/json"},
++                                     {"mcp-method", "tools/call"},
++                                     {"mcp-name", "create_api_key"},
++                                     {"mcp-protocol-version", "2026-07-28"}});
++
++  ASSERT_TRUE(response->waitForEndStream());
++  expectJsonRpcParseErrorResponse(*response);
++  EXPECT_EQ(0, test_server_->counter("cluster.cluster_0.upstream_rq_total")->value());
++}
++
++TEST_P(McpJsonRestBridgeIntegrationTest, EmptyBodyPostReturnsParseError) {
++  initializeFilter(R"EOF(
++    name: envoy.filters.http.mcp_json_rest_bridge
++    typed_config:
++      "@type": type.googleapis.com/envoy.extensions.filters.http.mcp_json_rest_bridge.v3.McpJsonRestBridge
++  )EOF");
++
++  codec_client_ = makeHttpConnection(lookupPort("http"));
++
++  auto response = codec_client_->makeRequestWithBody(
++      Http::TestRequestHeaderMapImpl{{":method", "POST"},
++                                     {":path", "/mcp"},
++                                     {":scheme", "http"},
++                                     {":authority", "host"},
++                                     {"content-type", "application/json"}},
++      /*body=*/"");
++
++  ASSERT_TRUE(response->waitForEndStream());
++  expectJsonRpcParseErrorResponse(*response);
++  EXPECT_EQ(0, test_server_->counter("cluster.cluster_0.upstream_rq_total")->value());
++}
++
+ TEST_P(McpJsonRestBridgeIntegrationTest, MissingMethod) {
+   const std::string config = R"EOF(
+     name: envoy.filters.http.mcp_json_rest_bridge
+@@ -2752,5 +2834,29 @@ TEST_P(McpJsonRestBridgeHttp1IntegrationTest, InitializedAckHasContentLengthZero
+   EXPECT_THAT(response->body(), IsEmpty());
+ }
+ 
++// An HTTP/1 POST request with "Content-Length: 0" has no body, so the codec ends the request at the
++// headers and the filter never sees decodeData().
++TEST_P(McpJsonRestBridgeHttp1IntegrationTest, ContentLengthZeroPostReturnsParseError) {
++  initializeFilter(R"EOF(
++    name: envoy.filters.http.mcp_json_rest_bridge
++    typed_config:
++      "@type": type.googleapis.com/envoy.extensions.filters.http.mcp_json_rest_bridge.v3.McpJsonRestBridge
++  )EOF");
++
++  codec_client_ = makeHttpConnection(lookupPort("http"));
++
++  auto res
 ```
 
-**File**: `source/extensions/wasm_runtime/wasmtime/BUILD` (modified, +1/-0)
+---
+
+### Incident Patch 3: `61a17ea4` (2026-10-23)
+**Commit Message**: mcp_json_rest_bridge: fix empty response body for non-POST requests (#48638)
+
+Commit Message:
+mcp_json_rest_bridge: fix empty response body for non-POST requests
+
+When the MCP JSON-REST bridge filter rejects a non-POST request (e.g.
+GET),
+it calls sendLocalReply() with a 405, an `allow: POST` header and the
+body
+"HTTP Method Not Allowed". But sendErrorResponse() was unconditionally
+setting
+mcp_operation_ to OperationFailed. When the local reply then went
+through the
+filter's own encodeData(), it was treated like a failed MCP operation
+that
+still needed transcoding, instead of being passed through. The client
+got an
+empty body, and the stream could be reset instead of ending cleanly.
+
+This change:
+- Leaves mcp_operation_ unchanged (Undecided) when the error is
+  BridgeStatus::HttpRequestMethodNotPost.
+- Adds McpOperation::Undecided to the list of operations that
+encodeData()
+passes through untouched, because any reply sent before the body is
+decoded
+  is a local reply whose body is already encoded.
+
+Additional Description:
+The integration test used to work around this with
+waitForAnyTermination(),
+because the stream might be reset instead of ending cleanly. It now uses
+waitForEndStr
+
+**File**: `source/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter.cc` (modified, +7/-4)
 ```diff
-@@ -15,6 +15,7 @@ envoy_cc_extension(
-     deps = envoy_select_wasm_wasmtime([
-         "//envoy/registry",
-         "//source/extensions/common/wasm:wasm_runtime_factory_interface",
-+        "//source/extensions/dynamic_modules/sdk/rust:rust_runtime",
-         "@proxy-wasm-cpp-host//:base_lib",
-         "@proxy-wasm-cpp-host//:wasmtime_lib",
-     ]),
+@@ -1104,9 +1104,10 @@ McpJsonRestBridgeFilter::encodeHeaders(Http::ResponseHeaderMap& response_headers
+ 
+ Http::FilterDataStatus McpJsonRestBridgeFilter::encodeData(Buffer::Instance& data,
+                                                            bool end_stream) {
+-  // No need to encode the response body for Initialization and InitializationAck. ToolsListLocal
+-  // and ServerDiscover are local responses, and the response body is already encoded.
+-  if (mcp_operation_ == McpOperation::Unspecified ||
++  // No need to encode the response body for Initialization and InitializationAck. ToolsListLocal,
++  // ServerDiscover, and Undecided (e.g. local replies before body decoding) are local responses,
++  // and the response body is already encoded.
++  if (mcp_operation_ == McpOperation::Unspecified || mcp_operation_ == McpOperation::Undecided ||
+       mcp_operation_ == McpOperation::Initialization ||
+       mcp_operation_ == McpOperation::InitializationAck ||
+       mcp_operation_ == McpOperation::ServerDiscover ||
+@@ -1875,7 +1876,9 @@ void McpJsonRestBridgeFilter::sendErrorResponse(
+   ENVOY_STREAM_LOG(error, "Sending error response with status: {}", *decoder_callbacks_,
+                    bridgeStatusToString(status));
+   status_ = status;
+-  mcp_operation_ = McpOperation::OperationFailed;
++  if (status != BridgeStatus::HttpRequestMethodNotPost) {
++    mcp_operation_ = McpOperation::OperationFailed;
++  }
+   setParsingMetadata(method, params);
+ 
+   decoder_callbacks_->sendLocalReply(response_code, response_body, modify_headers, grpc_status,
+```
+
+**File**: `test/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter_test.cc` (modified, +10/-0)
+```diff
+@@ -4795,6 +4795,16 @@ TEST_P(McpHttpMethodFilterTest, NonPostMethodsReturnMethodNotAllowed) {
+   EXPECT_THAT(
+       additional_response_headers.get(Http::LowerCaseString("allow"))[0]->value().getStringView(),
+       StrEq("POST"));
++
++  // Simulate how the filter manager passes the local response through the encoder filter chain.
++  EXPECT_EQ(filter_->encodeHeaders(additional_response_headers, /*end_stream=*/false),
++            Http::FilterHeadersStatus::Continue);
++  Buffer::OwnedImpl response_body("HTTP Method Not Allowed");
++  EXPECT_EQ(filter_->encodeData(response_body, /*end_stream=*/true),
++            Http::FilterDataStatus::Continue);
++  EXPECT_THAT(additional_response_headers.getStatusValue(), StrEq("405"));
++  EXPECT_THAT(additional_response_headers.getContentLengthValue(), StrEq("23"));
++  EXPECT_THAT(response_body.toString(), StrEq("HTTP Method Not Allowed"));
+ }
+ 
+ TEST_F(McpJsonRestBridgeFilterTest, ToolsListPerRouteConfig) {
+```
+
+**File**: `test/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_integration_test.cc` (modified, +7/-4)
+```diff
+@@ -18,6 +18,7 @@ namespace Envoy {
+ namespace {
+ 
+ using ::testing::IsEmpty;
++using ::testing::SizeIs;
+ using ::testing::StrEq;
+ 
+ class McpJsonRestBridgeIntegrationTest : public testing::TestWithParam<Network::Address::IpVersion>,
+@@ -137,11 +138,13 @@ TEST_P(McpJsonRestBridgeIntegrationTest, MethodNotAllowed) {
+   auto response = codec_client_->makeHeaderOnlyRequest(Http::TestRequestHeaderMapImpl{
+       {":method", "GET"}, {":path", "/mcp"}, {":scheme", "http"}, {":authority", "host"}});
+ 
+-  // Since the filter calls sendLocalReply and stops iteration early in decodeHeaders,
+-  // the stream might be reset rather than ending cleanly. We use waitForAnyTermination
+-  // to ensure we wait for the response headers regardless of how the stream terminates.
+-  ASSERT_TRUE(response->waitForAnyTermination());
++  ASSERT_TRUE(response->waitForEndStream());
+   EXPECT_THAT(response->headers().getStatusValue(), StrEq("405"));
++  ASSERT_THAT(response->headers().get(Http::LowerCaseString("allow")), SizeIs(1));
++  EXPECT_THAT(response->headers().get(Http::LowerCaseString("allow"))[0]->value().getStringView(),
++              StrEq("POST"));
++  EXPECT_THAT(response->headers().getContentLengthValue(), StrEq("23"));
++  EXPECT_THAT(response->body(), StrEq("HTTP Method Not Allowed"));
+ }
+ 
+ TEST_P(McpJsonRestBridgeIntegrationTest, InvalidJsonBody) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #48549** (2026-10-22): [1.39] deps: Bump OpenSSL -> 3.5.9 (@jwendell)
-- **PR #48548** (2026-10-22): mobile/deps: Bump rules_xcodeproj -> 4.1.0 (@phlax)
-- **PR #48547** (2026-10-22): [1.39] deps/cve: Add ignores for unaffected CVEs (#48541) (@phlax)
-- **PR #48546** (2026-10-22): [1.38] deps/cve: Add ignores for unaffected CVEs (#48541) (@phlax)
-- **PR #48545** (closed): mobile: upgrade rules_xcodeproj to 4.1.0 (@Copilot)
-- **PR #48541** (2026-10-22): [1.37] deps/cve: Add ignores for unaffected CVEs (@phlax)
+- **PR #48665** (2026-10-24): deps: Bump `envoy_toolshed` -> 0.5.6.envoy (@dependency-envoy[bot])
+- **PR #48662** (2026-10-24): deps: Bump `bazel-registry` -> 9e98783 (@dependency-envoy[bot])
+- **PR #48658** (closed): tools: test toolshed coverage tooling (@Copilot)
+- **PR #48656** (2026-10-24): deps: Bump `apple_support` -> 2.10.1 (@dependency-envoy[bot])
+- **PR #48655** (closed): wasm: make test cache clearing opt-in and reduce config-test fan-out (@Copilot)
+- **PR #48654** (2026-10-24): tools/code: Run the code check in `check_test` directly (@wdauchy)
 
 ---
 
@@ -1688,37 +1693,78 @@ Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci/cves: Fix scanner handling of pre versions (#48535)
+## X. datadog: check the deadline and cluster before building the report (#48480)
 
 **RULE**:
-When implementing operations in `tools/dependency/version.jq`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `source/extensions/tracers/datadog/agent_http_client.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1b8e063e`: ci/cves: Fix scanner handling of pre versions (#48535). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a3abac7`: datadog: check the deadline and cluster before building the report (#48480). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/dependency/version.jq`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `source/extensions/tracers/datadog/agent_http_client.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-      reduce range(0; ([(a|length), (b|length)] | max)) as $i (0;
-          (a[$i]? // "") as $ai
-          | (b[$i]? // "") as $bi
-         | if . != 0 then . else cmp_pre($a.pre; $b.pre) end
-              | .pre |= (if . == null then [] else split(".") end)
-              | .build |= (if . == null then [] else split(".") end)
+#include <chrono>
+namespace {
+
+datadog::tracing::Error deadlineExpiredError(std::chrono::milliseconds timeout) {
+  std::string message = "request deadline expired already";
+  if (timeout.count() < 0) {
+    message += ' ';
+    message += std::to_string(-timeout.count());
+    message += " milliseconds ago";
+  }
+  return datadog::tracing::Error{datadog::tracing::Error::ENVOY_HTTP_CLIENT_FAILURE,
+                                 std::move(message)};
+}
+
+} // namespace
+  const auto timeout = std::chrono::duration_cast<std::chrono::milliseconds>(
+      deadline - time_source_.monotonicTime());
+  if (timeout.count() <= 0) {
+    stats_.reports_dropped_.inc();
+    return deadlineExpiredError(timeout);
+  }
+
+  Upstream::ThreadLocalCluster* collector_cluster =
+      cluster_manager_.getThreadLocalCluster(cluster_);
+  if (collector_cluster == nullptr) {
+    ENVOY_LOG(debug, "collector cluster '{}' does not exist", cluster_);
+    stats_.reports_skipped_no_cluster_.inc();
+    return datadog::tracing::nullopt;
+  }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-      reduce range(0; max([a|length, b|length])) as $i (0;
-          (a[$i]? // 0) as $ai
-          | (b[$i]? // 0) as $bi
-              | .pre |= (if .pre == null then [] else split(".") end)
-              | .build |= (if .build == null then [] else split(".") end)
+  const auto timeout = std::chrono::duration_cast<std::chrono::milliseconds>(
+      deadline - time_source_.monotonicTime());
+  if (timeout.count() <= 0) {
+    std::string message = "request deadline expired already";
+    if (timeout.count() < 0) {
+      message += ' ';
+      message += std::to_string(-timeout.count());
+      message += " milliseconds ago";
+    }
+    stats_.reports_dropped_.inc();
+    return datadog::tracing::Error{datadog::tracing::Error::ENVOY_HTTP_CLIENT_FAILURE,
+                                   std::move(message)};
+  }
+
+  Upstream::ThreadLocalCluster* collector_cluster =
+      cluster_manager_.getThreadLocalCluster(cluster_);
+  if (collector_cluster == nullptr) {
+    ENVOY_LOG(debug, "collector cluster '{}' does not exist", cluster_);
+    stats_.reports_skipped_no_cluster_.inc();
+    return datadog::tracing::nullopt;
+  }
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1b8e063e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a3abac7` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T20:48:46.364Z",
+  "last_updated": "2026-10-24T20:55:05.433Z",
   "total_verified_learnings": 1080,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9769,8 +9769,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "7834210a",
-      "content_hash": "c91698dd65888416310fb9d8e7c69f9cb8624685f3f3b68c96052ca3e2e901f5",
+      "source_version": "7ffbe9cc",
+      "content_hash": "7de1988ffb5d9c624c2c1219b9efb47c72992f43ebd8e87af98fd0ead143c9ef",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -9793,6 +9793,11 @@
           "number": 3602,
           "title": "ci/cves: Fix scanner handling of pre versions (#48535)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3966,
+          "title": "datadog: check the deadline and cluster before building the report (#48480)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9800,7 +9805,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:28:59.851Z",
+      "verified_at": "2026-10-24T20:55:04.179Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13074,8 +13079,8 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "25dd7ab5",
-      "content_hash": "73625fce8abd27d89456e82a6e7941cafa7bc10181bf5faf7965d6e9d60b2816",
+      "source_version": "7b74cb41",
+      "content_hash": "4b04e7c201ed1c209d17726984d1cf0c2307135cf362dba1698f930263dede6a",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
@@ -13098,6 +13103,11 @@
           "number": 3673,
           "title": "NM-356: send force logout on disabling/deleting user accounts and cleanup user d",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3967,
+          "title": "Fixes: Pre-Release v1.8.0 (#4197)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13105,7 +13115,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:45:04.051Z",
+      "verified_at": "2026-10-24T20:55:05.423Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27127,8 +27137,8 @@
       "slug": "i18next-react-i18next",
       "platform": "github",
       "source_url": "https://github.com/i18next/react-i18next",
-      "source_version": "2aab7f1d",
-      "content_hash": "bc6c814e5167671ad44abbda353ab4689e815c1f46a3d87b0af818b3ba3f48be",
+      "source_version": "3f0880e2",
+      "content_hash": "f434ad81a164d71fb3e970bb221b7fd15984cde339bd6240372a31f541711e60",
       "dossier_path": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "promoted_rules": [],
@@ -27137,7 +27147,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:35:03.362Z",
+      "verified_at": "2026-10-24T20:55:00.138Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -116569,6 +116579,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T20:48:46.353Z"
+    },
+    "rule-3966": {
+      "learning_id": "rule-3966",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3966,
+      "title": "datadog: check the deadline and cluster before building the report (#48480)",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "7ffbe9cc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:55:04.179Z"
+    },
+    "rule-3967": {
+      "learning_id": "rule-3967",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3967,
+      "title": "Fixes: Pre-Release v1.8.0 (#4197)",
+      "source_url": "https://github.com/gravitl/netmaker",
+      "source_version": "7b74cb41",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-24T20:55:05.423Z"
     }
   },
   "aliases": {

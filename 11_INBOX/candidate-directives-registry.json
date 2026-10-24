@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T19:50:13.338Z",
+  "last_updated": "2026-10-24T20:55:00.225Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2565,6 +2565,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-h3js-h3"
+    },
+    {
+      "id": "CD-NVCX",
+      "directive_title": "Empirical Invariant Guard in react-i18next.js",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "i18next/react-i18next",
+      "source_commit": "3f0880e2",
+      "date_staged": "2026-10-24",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-i18next-react-i18next"
     }
   ]
 }
