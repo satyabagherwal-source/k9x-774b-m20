@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-MGGL",
-    "timestamp": "2026-10-21T04:43:06.837Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "5f9cb8aab1593bc52590e95f2577c6ac5beea9f4de1cde84680fa5169efd3bf6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-U8J9",
-    "timestamp": "2026-10-21T04:49:09.813Z",
-    "repository": "u-root/u-root",
-    "learningId": "learn-github-u-root-u-root",
-    "contentHash": "7385a1cb8e228cd3dc45957217bc7906f891137c98eda59025618e15f7f50c75",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-UC8L",
-    "timestamp": "2026-10-21T04:49:14.613Z",
-    "repository": "software-mansion/react-native-screens",
-    "learningId": "learn-github-software-mansion-react-native-screens",
-    "contentHash": "1ff8ae62a0545bcd638803e4679e44ec943c61e0cd3bc0a7c5d19c444d5cc454",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-2Z50",
-    "timestamp": "2026-10-21T04:55:57.540Z",
-    "repository": "tauri-apps/tauri",
-    "learningId": "learn-github-tauri-apps-tauri",
-    "contentHash": "5df368ee59d7f4748e82c96975a0dd8af2ac0a62750214703661b17133731dd9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-42RL",
     "timestamp": "2026-10-21T04:56:48.897Z",
     "repository": "fastapi/fastapi",
@@ -7492,6 +7432,66 @@
     "contentHash": "d43e03a6b461a048966d3005217c353fe2b415025a704db8c352e772f7b364b9",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-CQPT",
+    "timestamp": "2026-10-25T06:06:13.313Z",
+    "repository": "facebook/folly",
+    "learningId": "learn-github-facebook-folly",
+    "contentHash": "e7255f10788615a79eac5c8f88abc3a22256ddd59807a82b5d81d5ff2d1fd7ba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-CW2W",
+    "timestamp": "2026-10-25T06:06:20.264Z",
+    "repository": "nats-io/nats.go",
+    "learningId": "learn-github-nats-io-nats-go",
+    "contentHash": "e705fdae239550e89763f5f342bb808ac77403a460fa301d387db7cd25779315",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-D04V",
+    "timestamp": "2026-10-25T06:06:25.519Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "01d2a52b29b2ca4713980fea784318ed06f32a672adab63cbfc7da8b256c9c85",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-F9NB",
+    "timestamp": "2026-10-25T06:08:11.159Z",
+    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+    "contentHash": "cef9b87c00186dd8afd757faa30e5385abaa0f03ab9b9bcdc68acf1739444d0c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `1dc7fac0`  
+> **Source Version**: `eb860e7c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:03:26.663Z  
+> **Timestamp**: 2026-10-25T06:06:13.078Z  
 > **Learning ID**: `learn-github-facebook-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:03:25.677Z  
+> **Harvest Timestamp**: 2026-10-25T06:06:12.272Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30552 stars
+- **Stars / Engagement**: 30556 stars
 
 ---
 
@@ -2348,7 +2348,10 @@ class WriteFileAtomicOptions {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- *No recent closed bug issues fetched.*
+- **Issue #348** (2016-03-19): **Commit 2a0cb937 breaks compilation on OS X Yosemite**
+  *Symptoms*: OS X Yosemite doesn't seem to know about __NR_gettid, but does know about SYS_gettid. 
+  **Post-Mortem & Fix Analysis**:
+  > Already fixed. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2365,430 +2368,175 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `999670f7` (2026-10-22)
-**Commit Message**: Build folly's concurrency primitives on wasi, without emulations
+### Incident Patch 1: `6e73f0d9` (2026-10-23)
+**Commit Message**: Fix exception_ptr_get_object under pointer authentication
 
 Summary:
-wasi-libc lacks several facilities folly's portability layer assumes, and offers others only as opt-in emulations folly doesn't take. With this, folly's concurrency primitives build on wasi, and what can't work there fails to compile instead of misbehaving at run time.
+On arm64e, `exception_ptr_get_object` traps with `EXC_ARM_PAC_FAIL` whenever it is given a target type, so `exception_wrapper::what()`, `get_exception()` and `is_compatible_with<Ex>()` crash on any non-empty wrapper.
 
-- `portability/Unistd.h`: no `using ::pipe` on wasi, since wasi-libc declares no `pipe()`.
-- `portability/SysMman.h` and `portability/SysResource.h` declare nothing on wasi. wasi-libc's `mmap` and `getrusage` are opt-in emulations (malloc-backed mappings, wall time reported as CPU time), so code that needs them fails to compile. `SharedMutex` takes its existing no-`RUSAGE_THREAD` branch.
-- `portability/SysSyscall.h`: `linux_syscall` reports `ENOSYS` on wasi, as on Windows, Emscripten and tvOS, since wasi has no `syscall()`.
-- `net/NetOps.h`, `net/NetOps.cpp` and `portability/Sockets.h` declare nothing on wasi preview 1. Preview 1 cannot create, bind or connect sockets: wasi-libc declares `socket`, `bind`, `connect` and `listen` only for preview 2, so socket code fails to compile there. Preview 2 is unchanged. `<sys/socket.h>` defines `__wasil
+The libc++abi implementation calls libc++abi's private `__shim_type_info::can_catch` through `__folly_shim_type_info`, a declaration with the same vtable layout under a different name. With pointer authentication, a virtual call also authenticates the function pointer against a discriminator hashed from the mangled name of the method that introduced the slot, and the two names hash differently (`0x5b1b` here, `0x6b2a` in libc++abi).
 
-**File**: `folly/Random.cpp` (modified, +11/-0)
+When `ptrauth_calls` is on, declare the class with libc++abi's name and `can_catch` signature instead. The parameter type is part of the mangled name, so renaming the class alone is not enough. folly only declares the class and emits no vtable or typeinfo for it. Builds without pointer authentication keep `__folly_shim_type_info` and compile to the same code. The change also applies to the AArch64 Linux `pauthtest` ABI, which signs vtables the same way, but it was tested 
+
+**File**: `folly/lang/Exception.cpp` (modified, +20/-2)
 ```diff
-@@ -62,6 +62,17 @@ void readRandomDevice(void* data, size_t size) {
-   }();
-   CHECK(size <= std::numeric_limits<DWORD>::max());
-   PCHECK(CryptGenRandom(cryptoProv, (DWORD)size, (BYTE*)data));
-+#elif defined(__wasi__)
-+  // wasi has no /dev/urandom; getentropy, which wasi-libc implements with the
-+  // random_get import, is its entropy source. It fills at most 256 bytes a
-+  // call.
-+  auto* out = static_cast<unsigned char*>(data);
-+  while (size > 0) {
-+    size_t const chunk = size < 256 ? size : 256;
-+    PCHECK(::getentropy(out, chunk) == 0);
-+    out += chunk;
-+    size -= chunk;
-+  }
- #else
-   ssize_t bytesRead = 0;
-   auto gen = [](int, void* buf, size_t buflen) {
-```
-
-**File**: `folly/memory/ReentrantAllocator.cpp` (modified, +34/-0)
-```diff
-@@ -23,12 +23,44 @@
- #include <folly/lang/SafeAssert.h>
- #include <folly/portability/SysMman.h>
+@@ -232,8 +232,24 @@ struct __folly_cxa_exception_with_reserve {
+ static const uint64_t kOurExceptionClass = 0x434C4E47432B2B00; // CLNGC++\0
+ #endif
  
-+#if defined(__wasi__)
-+#include <unistd.h> // sysconf
++#if FOLLY_HAS_FEATURE(ptrauth_calls)
++//  with pointer authentication, a virtual call authenticates the function
++//  pointer against a discriminator derived from the mangled name of the method,
++//  so the shim must have the same name and signature as the real one
++class __shim_type_info : public std::type_info {
++ public:
++  virtual ~__shim_type_info() = 0;
 +
-+#include <cstdlib> // posix_memalign, free
-+#endif
-+
- namespace folly {
- 
- namespace {
- 
- max_align_t dummy; // return value for zero-sized allocations
- 
-+#if defined(__wasi__)
-+
-+// wasi has no mmap (wasi-libc's <sys/mman.h> is an opt-in malloc-backed
-+// emulation folly does not take) and no asynchronous signals, so on wasi
-+// blocks come from posix_memalign and free, page-aligned as large allocations
-+// promise.
-+// Unlike the mmap version, this calls into malloc: do not use it from inside
-+// the allocator, for example from a malloc hook.
-+
-+void* reentrant_allocate(std::size_t const n) noexcept {
-+  FOLLY_SAFE_CHECK(n, "zero-sized");
-+  void* addr = nullptr;
-+  auto const pageSize = static_cast<std::size_t>(::sysconf(_SC_PAGESIZE));
-+  auto const err = ::posix_memalign(&addr, pageSize, n);
-+  FOLLY_SAFE_CHECK(!err, "posix_memalign failed");
-+  return addr;
-+}
-+
-+void reentrant_deallocate(void* const p, std::size_t const n) noexcept {
-+  FOLLY_SAFE_CHECK(p, "null-pointer");
-+  FOLLY_SAFE_CHECK(n, "zero-sized");
-+  ::free(p);
-+}
-+
++  virtual void noop1() const = 0;
++  virtual void noop2() const = 0;
++  virtual bool can_catch(
++      const __shim_type_info* thrown_type, void*& adjustedPtr) const = 0;
++};
++using __folly_shim_type_info = __shim_type_info;
 +#else
-+
- void* reentrant_allocate(std::size_t const n) noexcept {
-   FOLLY_SAFE_CHECK(n, "zero-sized");
-   auto const prot = PROT_READ | PROT_WRITE;
-@@ -45,6 +77,8 @@ void reentrant_deallocate(void* const p, std::size_t const n) noexcept {
-   FOLLY_SAFE_PCHECK(!err, "munmap failed");
+ //  named differently from the real shim type __shim_type_info and all members
+-//  are pure virtual; as long as the vtable is the same, though, it should work
++//  are pure virtual; absent pointer authentication, a matching vtable layout is
++//  enough
+ class __folly_shim_type_info : public std::type_info {
+  public:
+   virtual ~__folly_shim_type_info() = 0;
+@@ -243,6 +259,7 @@ class __folly_shim_type_info : public std::type_info {
+   virtual bool can_catch(
+       const std::type_info* thrown_type, void*& adjustedPtr) const = 0;
+ };
++#endif
+ 
+ } // namespace __cxxabiv1
+ 
+@@ -483,7 +500,8 @@ void* exception_ptr_get_object_(
+   auto object = cxxabi_get_object(ptr);
+   auto type = exception_ptr_get_type(ptr);
+   auto starget = static_cast<abi::__folly_shim_type_info const*>(target);
+-  return !target || starget->can_catch(type, object) ? object : nullptr;
++  auto stype = static_cast<abi::__folly_shim_type_info const*>(type);
++  return !target || starget->can_catch(stype, object) ? object : nullptr;
  }
  
-+#endif
-+
- } // namespace
- 
- namespace detail {
-```
-
-**File**: `folly/net/NetOps.cpp` (modified, +8/-0)
-```diff
-@@ -14,6 +14,12 @@
-  * limitations under the License.
-  */
- 
-+#if defined(__wasi__)
-+#include <sys/socket.h> // Defines __wasilibc_use_wasip2 on preview 2.
-+#endif
-+// wasi preview 1 cannot create, bind or connect sockets; see NetOps.h.
-+#if !defined(__wasi__) || defined(__wasilibc_use_wasip2)
-+
- #include <folly/net/NetOps.h>
- 
- #include <fcntl.h>
-@@ -912,3 +918,5 @@ XPLAT_CMSGHDR* Msgheader::cmsgFirstHrd() {
- }
- } // namespace netops
- } // namespace folly
-+
-+#endif // !defined(__wasi__) || defined(__wasilibc_use_wasip2)
-```
-
-**File**: `folly/net/NetOps.h` (modified, +11/-0)
-```diff
-@@ -16,6 +16,15 @@
- 
- #pragma once
- 
-+// wasi preview 1 cannot create, bind or connect sockets: wasi-libc declares
-+// socket, bind, connect and listen only for preview 2. On preview 1 this header
-+// declares nothing, so code that uses socket operations fails to compile there.
-+// <sys/socket.h> defines __wasilibc_use_wasip2 on preview 2.
-+#if defined(__wasi__)
-+#include <sys/socket.h>
-+#endif
-+#if !defined(__wasi__) || defined(__wasilibc_use_wasip2)
-+
- #include <cstdint>
- 
- #include <folly/Portability.h>
-@@ -423,3 +432,5 @@ void set_wsa_error_translator(
- 
- } // namespace netops
- } // namespace folly
-+
-+#endif // !defined(__wasi__) || defined(__wasilibc_use_wasip2)
-```
-
-**File**: `folly/portability/Sockets.h` (modified, +5/-0)
-```diff
-@@ -119,6 +119,11 @@ int setsockopt(
- 
- // None of these are implemented or referenced right now.
- 
-+#elif defined(__wasi__) && !defined(__wasilibc_use_wasip2)
-+
-+// wasi preview 1 cannot create, bind or connect sockets; nothing is declared
-+// (see folly/net/NetOps.h).
-+
- #else
- 
- using ::accept;
-```
-
-**File**: `folly/portability/SysMman.h` (modified, +6/-1)
-```diff
-@@ -16,7 +16,12 @@
- 
- #pragma once
- 
--#ifndef _WIN32
-+#if defined(__wasi__)
-+
-+// wasi has no mmap. wasi-libc's <sys/mman.h> is an opt-in malloc-backed
-+// emulation that folly does not take, so on wasi nothing is declared here.
-+
-+#elif !defined(_WIN32)
- 
- #include <sys/mman.h>
- 
-```
-
-**File**: `folly/portability/SysResource.h` (modified, +5/-1)
-```diff
-@@ -16,7 +16,11 @@
- 
- #pragma once
- 
--#if !defined(_WIN32)
-+#if defined(__wasi__)
-+// wasi has no resource limits or usage. wasi-libc's <sys/resource.h> is an
-+// opt-in emulation that reports wall time as CPU time, which folly does not
-+// take, so on wasi nothing is declared here.
-+#elif !defined(_WIN32)
- #include <sys/resource.h>
- #else
- #include <cstdint>
-```
-
-**File**: `folly/portability/SysSyscall.h` (modified, +1/-1)
-```diff
-@@ -129,7 +129,7 @@ template <typename... A>
- FOLLY_ERASE long linux_syscall(
-     [[maybe_unused]] long number, [[maybe_unused]] A... a) {
- #if defined(_WIN32) || (defined(__EMSCRIPTEN__) && !defined(syscall)) || \
--    FOLLY_APPLE_TVOS
-+    defined(__wasi__) || FOLLY_APPLE_TVOS
-   errno = ENOSYS;
-   return -1;
- #else
+ std::size_t exception_ptr_use_count_(std::exception_ptr const& ptr) noexcept {
 ```
 
 ---
 
-### Incident Patch 2: `e504801e` (2026-10-21)
-**Commit Message**: Warm up the fatal signal handler with a full stack trace
+### Incident Patch 2: `0f90b081` (2026-10-22)
+**Commit Message**: Use `std::chrono::{ceil,round}` instead of `folly::chrono::` (folly, quic)
 
 Summary:
-Alternative to D123783671 and D126445956 for T291835469.
+`folly/Chrono.h` re-exports `std::chrono::{abs,ceil,floor,round}` as
+`folly::chrono::*` via plain `using` declarations. D115147400 deletes those
+re-exports; this diff moves callers to the `std::chrono` names first so that
+diff can land with only the deletion. It changes no behavior:
+`folly::chrono::ceil` *is* `std::chrono::ceil`.
 
-On a small sigaltstack, folly's fatal signal handler calls libc functions whose PLT slots are still lazily bound, so it enters the dynamic loader (`_dl_runtime_resolve` -> `_dl_fixup` -> `_dl_lookup_symbol_x`) on that stack. That is not async-signal-safe, and it is the stack in the Buck2 daemon crashes.
+- `folly/futures/ThreadWheelTimekeeper.cpp`, `folly/io/async/TimeoutManager.cpp`:
+  `folly::chrono::ceil` -> `std::chrono::ceil`; their `<folly/Chrono.h>` include
+  was only for this, so it becomes `<chrono>`.
+- `folly/coro/test/CoroTest.cpp`: the unqualified `chrono::round` resolved to
+  `folly::chrono::round` through `using namespace folly;`; now `std::chrono::round`.
+- `quic/api/QuicTransportBaseLite.cpp`, `quic/api/test/QuicTypedTransportTest.cpp`,
+  `quic/congestion_control/QuicCubic.cpp`, `quic/loss/QuicLossFunctions.h`,
+  `quic/loss/test/QuicLossFunctionsTest.cpp`: `folly::chrono::ceil` ->
+  `std::chrono::ceil`, with `<chrono>` in place of `<folly/Chrono.h>` where that
+  was its only use. Dropped the now-unused `//folly:chrono` dep from
+  `quic/congestion_control` 
 
-On the small-sigaltstack path, `installFatalSignalHandler()` now prints one full symbolized stack trace to `/dev/null` with an `UnsafeSelfAllocateStackTracePrinter` before installing the handlers. That binds everything the printer uses later: the stack switch, the symbolizer's file reads and the output writes, the same way Abseil and Chromium warm `backtrace()` before a crash. The handlers are installed only after the warm-up returns, so no separate "initialized" flag is needed.
-
-The handler's header lines ("Aborted at", "Signal N received by PID") are not warmed: `time`, plus `getpid`/`pthread_self`/`syscall` in dev builds, can still bind on first use.
-
-Startup cost (Broadwell OD, 8 KiB sigaltstack): about 1.5 ms in an opt test binary, about 30 ms in ASan de
-
-**File**: `folly/debugging/symbolizer/BUCK` (modified, +1/-0)
+**File**: `folly/coro/test/CoroTest.cpp` (modified, +2/-1)
 ```diff
-@@ -168,6 +168,7 @@ fb_dirsync_cpp_library(
-         "fbsource//third-party/glog:glog",
-         ":elf",
-         "//folly:demangle",
-+        "//folly:file",
-         "//folly:file_util",
-         "//folly:indestructible",
-         "//folly:memory",
-```
-
-**File**: `folly/debugging/symbolizer/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -151,6 +151,7 @@ folly_add_library(
-     folly_debugging_symbolizer_detail_debug
-     folly_debugging_symbolizer_elf
-     folly_demangle
-+    folly_file
-     folly_file_util
-     folly_indestructible
-     folly_lang_safe_assert
-```
-
-**File**: `folly/debugging/symbolizer/SignalHandler.cpp` (modified, +6/-0)
-```diff
-@@ -28,6 +28,7 @@
+@@ -126,7 +126,8 @@ TEST_F(CoroTest, Sleep) {
+   // rounding here.
+   auto totalTime = std::chrono::steady_clock::now() - startTime;
+   EXPECT_GE(
+-      chrono::round<std::chrono::seconds>(totalTime), std::chrono::seconds{1});
++      std::chrono::round<std::chrono::seconds>(totalTime),
++      std::chrono::seconds{1});
+ }
  
+ TEST_F(CoroTest, ExecutorKeepAlive) {
+```
+
+**File**: `folly/futures/ThreadWheelTimekeeper.cpp` (modified, +2/-2)
+```diff
+@@ -18,7 +18,7 @@
+ 
+ #include <future>
+ 
+-#include <folly/Chrono.h>
++#include <chrono>
+ #include <folly/futures/Future.h>
+ #include <folly/futures/WTCallback.h>
+ 
+@@ -59,7 +59,7 @@ SemiFuture<Unit> EventBaseThreadTimekeeper::after(HighResDuration dur) {
+   // fine here.
+   eventBaseRef_.runInEventBaseThread([this, cob2 = std::move(cob), dur] {
+     eventBaseRef_.timer().scheduleTimeout(
+-        cob2.get(), folly::chrono::ceil<Duration>(dur));
++        cob2.get(), std::chrono::ceil<Duration>(dur));
+   });
+   return std::move(sf);
+ }
+```
+
+**File**: `folly/io/async/TimeoutManager.cpp` (modified, +2/-2)
+```diff
+@@ -19,7 +19,7 @@
+ #include <boost/intrusive/list.hpp>
  #include <glog/logging.h>
  
-+#include <folly/File.h>
- #include <folly/Portability.h>
- #include <folly/ScopeGuard.h>
- #include <folly/debugging/symbolizer/Symbolizer.h>
-@@ -678,6 +679,11 @@ void installFatalSignalHandler(std::bitset<64> signals) {
-   bool useUnsafePrinter = kIsLinux && isSmallSigAltStackEnabled();
-   if (useUnsafePrinter) {
- #if FOLLY_HAVE_SWAPCONTEXT
-+    // Make sure UnsafeSelfAllocateStackTracePrinter internals are initialized
-+    // before the handler is installed. /dev/null discards the output.
-+    if (auto devNull = File::makeFile("/dev/null", O_WRONLY | O_CLOEXEC)) {
-+      UnsafeSelfAllocateStackTracePrinter(devNull->fd()).printStackTrace(true);
-+    }
-     gStackTracePrinter = new UnsafeSelfAllocateStackTracePrinter();
- #else
-     // This environment does not support swapcontext, so always use
-```
-
-**File**: `folly/debugging/symbolizer/Symbolizer.h` (modified, +3/-0)
-```diff
-@@ -380,6 +380,9 @@ inline std::string getStackTraceStr(
-  * Note it's still unsafe even with that.
-  */
- class UnsafeSelfAllocateStackTracePrinter : public SafeStackTracePrinter {
-+ public:
-+  using SafeStackTracePrinter::SafeStackTracePrinter;
-+
-  protected:
-   void printSymbolizedStackTrace() override;
-   const long pageSizeUnchecked_ = sysconf(_SC_PAGESIZE);
-```
-
-**File**: `folly/debugging/symbolizer/test/BUCK` (modified, +10/-0)
-```diff
-@@ -6,6 +6,7 @@ load("@fbcode_macros//build_defs:cpp_unittest.bzl", "cpp_unittest")
- load("@fbcode_macros//build_defs:custom_unittest.bzl", "custom_unittest")
- load("@fbcode_macros//build_defs:export_files.bzl", "export_file")
- load("@fbcode_macros//build_defs:native_rules.bzl", "buck_sh_binary")
-+load("@fbcode_macros//build_defs:python_unittest.bzl", "python_unittest")
- load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_unittest.bzl", "fb_dirsync_cpp_unittest")
- load(":validate_folly_symbolizer.bzl", "SPLIT_DWARF_FLAGS", "customized_unittest", "validate_folly_symbolizer", "validate_symbolizer_dwp")
+-#include <folly/Chrono.h>
++#include <chrono>
+ #include <folly/Exception.h>
+ #include <folly/Memory.h>
+ #include <folly/io/async/AsyncTimeout.h>
+@@ -72,7 +72,7 @@ TimeoutManager::TimeoutManager()
  
-@@ -67,6 +68,15 @@ fbcode_target(
-     ],
- )
- 
-+fbcode_target(
-+    _kind = python_unittest,
-+    name = "small_sigaltstack_lazy_binding_test",
-+    srcs = ["small_sigaltstack_lazy_binding_test.py"],
-+    env = {
-+        "SMALL_SIGALTSTACK_CRASH": "$(location :small_sigaltstack_crash)",
-+    },
-+)
-+
- fbcode_target(
-     _kind = cpp_unittest,
-     name = "symbolized_frame_test",
-```
-
-**File**: `folly/debugging/symbolizer/test/SmallSigAltStackCrash.cpp` (modified, +2/-2)
-```diff
-@@ -20,7 +20,7 @@
- #include <folly/debugging/symbolizer/SignalHandler.h>
- 
- namespace {
--std::array<char, 8192> stack;
-+std::array<char, 32768> stack;
+ bool TimeoutManager::scheduleTimeoutHighRes(
+     AsyncTimeout* obj, timeout_type_high_res timeout) {
+-  timeout_type timeout_ms = folly::chrono::ceil<timeout_type>(timeout);
++  timeout_type timeout_ms = std::chrono::ceil<timeout_type>(timeout);
+   return scheduleTimeout(obj, timeout_ms);
  }
  
- int main() {
-@@ -31,5 +31,5 @@ int main() {
-   sigaltstack(&ss, nullptr);
- 
-   folly::symbolizer::installFatalSignalHandler();
--  __builtin_trap();
-+  raise(SIGILL);
- }
-```
-
-**File**: `folly/debugging/symbolizer/test/small_sigaltstack_lazy_binding_test.py` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+#!/usr/bin/env python3
-+# Copyright (c) Meta Platforms, Inc. and affiliates.
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+import os
-+import re
-+import resource
-+import signal
-+import subprocess
-+import unittest
-+
-+BINDING = re.compile(r"binding file .* normal symbol `([^']+)'")
-+
-+
-+class SmallSigAltStackLazyBindingTest(unittest.TestCase):
-+    def test_stack_trace_does_not_lazily_bind_symbols(self) -> None:
-+        helper = os.environ["SMALL_SIGALTSTACK_CRASH"]
-+        env = {k: v for k, v in os.environ.items() if k != "LD_BIND_NOW"}
-+        env["LD_DEBUG"] = "bindings"
-+        p = subprocess.run(
-+            [helper],
-+            env=env,
-+            stdout=subprocess.PIPE,
-+            stderr=subprocess.PIPE,
-+            preexec_fn=lambda: resource.setrlimit(resource.RLIMIT_CORE, (0, 0)),
-+        )
-+        err = p.stderr.decode("utf-8", errors="replace")
-+        self.assertEqual(p.returncode, -signal.SIGILL, err)
-+
-+        _, header, trace = err.partition("*** Signal 4 (SIGILL)")
-+        self.assertTrue(header, err)
-+
-+        bound = [m.group(1) for m in BINDING.finditer(trace.partition("\n")[2])]
-+        self.assertEqual(bound, [])
 ```
 
 ---
 
-### Incident Patch 3: `2d97c901` (2026-10-21)
-**Commit Message**: Keep isolated Codex fixture shebangs within the kernel limit
+### Incident Patch 3: `094b133e` (2026-10-23)
+**Commit Message**: Use getdeps absl for the rdma-unit suite
 
 Summary:
-The optimized xplat test exposes a 259-byte `sys.executable` path. Copying that into the fake codex/git shebang makes the kernel reject the executable with `ENOEXEC`, so the real CLI test cannot start its subprocess.
+The rdma-unit suite fetched its own Abseil with CMake FetchContent. It now uses the getdeps `absl` project: platforms with a new-enough distro package install it instead of compiling from source, and source builds stay pinned to the same rev so the built code is unchanged.
 
-Use the same short `/usr/bin/python3 -I` interpreter already required by the directly invoked production CLI. Both fakes use only the standard library. Preserve environment isolation, subprocess execution and every session/resume/output assertion. Remove the now-unused outer `sys` import and mirror the change to xplat.
+No functional change intended. Only the test variant's Abseil sourcing changes.
 
-The immediate child enables opt by default for this test in both cells.
+- Drop the test-conditional `glog` entry, an exact duplicate of the unconditional one (`metaroce`).
 
-## Why opt-by-default
-This repair unblocks the adjacent enable diff's migration to opt-by-default (better runtime performance, unified build graph with shared outputs, faster builds), while preserving the dev-mode-only behavior that must stay.
+Reviewed By: bsorrells
 
-Reviewed By: dtolnay
+Differential Revision: D125553093
 
-Differential Revision: D125716664
+fbshipit-source-id: 0188b551824e698a64587fe8d837aabc15f2f869
 
-fbshipit-source-id: e3d7afb9e710d6f4494c93c08bb51176f3d568d9
-
-**File**: `folly/agents/backtest/tests/test_isolated_codex.py` (modified, +2/-3)
+**File**: `build/fbcode_builder/manifests/metaroce` (modified, +1/-1)
 ```diff
-@@ -17,7 +17,6 @@
- import json
- import os
- import subprocess
--import sys
- import tempfile
- import unittest
- from pathlib import Path
-@@ -52,10 +51,10 @@ def setUp(self) -> None:
-     def fake_codex(self, name: str) -> Path:
-         executable = self.root / name / "codex"
-         executable.parent.mkdir()
--        executable.write_text(f"#!{sys.executable}\n{FAKE_CODEX}")
-+        executable.write_text(f"#!/usr/bin/python3 -I\n{FAKE_CODEX}")
-         executable.chmod(0o755)
-         git = executable.with_name("git")
--        git.write_text(f"#!{sys.executable}\n{FAKE_GIT}")
-+        git.write_text(f"#!/usr/bin/python3 -I\n{FAKE_GIT}")
-         git.chmod(0o755)
-         return executable
+@@ -49,7 +49,7 @@ glog = shared_libs
  
+ [dependencies.all(test=on, not(os=windows))]
+ googletest
+-glog = shared_libs
++absl
+ 
+ [rpms.all(distro=centos_stream,distro_vers=8)]
+ gcc-toolset-13-gcc-c++
 ```
 
 #### Recent Merged Pull Requests:
@@ -2817,38 +2565,48 @@ fbshipit-source-id: e3d7afb9e710d6f4494c93c08bb51176f3d568d9
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build folly's concurrency primitives on wasi, without emulations
+## X. exception_ptr_get_object under pointer authentication
 
 **RULE**:
-When implementing operations in `folly/Random.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/lang/Exception.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `999670f7`: Build folly's concurrency primitives on wasi, without emulations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e73f0d9`: exception_ptr_get_object under pointer authentication. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/Random.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/lang/Exception.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#elif defined(__wasi__)
-  // wasi has no /dev/urandom; getentropy, which wasi-libc implements with the
-  // random_get import, is its entropy source. It fills at most 256 bytes a
-  // call.
-  auto* out = static_cast<unsigned char*>(data);
-  while (size > 0) {
-    size_t const chunk = size < 256 ? size : 256;
-    PCHECK(::getentropy(out, chunk) == 0);
-    out += chunk;
-    size -= chunk;
-  }
+#if FOLLY_HAS_FEATURE(ptrauth_calls)
+//  with pointer authentication, a virtual call authenticates the function
+//  pointer against a discriminator derived from the mangled name of the method,
+//  so the shim must have the same name and signature as the real one
+class __shim_type_info : public std::type_info {
+ public:
+  virtual ~__shim_type_info() = 0;
+
+  virtual void noop1() const = 0;
+  virtual void noop2() const = 0;
+  virtual bool can_catch(
+      const __shim_type_info* thrown_type, void*& adjustedPtr) const = 0;
+};
+using __folly_shim_type_info = __shim_type_info;
+#else
+//  are pure virtual; absent pointer authentication, a matching vtable layout is
+//  enough
+#endif
+  auto stype = static_cast<abi::__folly_shim_type_info const*>(type);
+  return !target || starget->can_catch(stype, object) ? object : nullptr;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+//  are pure virtual; as long as the vtable is the same, though, it should work
+  return !target || starget->can_catch(type, object) ? object : nullptr;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `999670f7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e73f0d9` are properly handled with clean fallback behavior.

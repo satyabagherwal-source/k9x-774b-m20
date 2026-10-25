@@ -155,8 +155,8 @@
     "sourceUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
     "sourceVersion": "hf-cross-encoder-ms-marco-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "bfdc84d1cac8c710abe945868f18f370a369a7229eb8ee90f13dafc21c6b5b94",
-    "lastHarvestedAt": "2026-10-20T14:10:21.229Z",
+    "contentHash": "cef9b87c00186dd8afd757faa30e5385abaa0f03ab9b9bcdc68acf1739444d0c",
+    "lastHarvestedAt": "2026-10-25T06:08:11.161Z",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2"
   },
   "hf-baai-bge-small-en-v1.5": {
@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "d1936d74",
+    "sourceVersion": "6068694d",
     "license": "Apache-2.0",
-    "contentHash": "51940044e8c2b4f6f6c44d41adb0b1bcf6acf1d3d7bfb58a163e1616fa1a4f3a",
-    "lastHarvestedAt": "2026-10-22T18:56:56.080Z",
+    "contentHash": "e705fdae239550e89763f5f342bb808ac77403a460fa301d387db7cd25779315",
+    "lastHarvestedAt": "2026-10-25T06:06:20.267Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "6ca67f43",
+    "sourceVersion": "0ee8584a",
     "license": "NOASSERTION",
-    "contentHash": "be26f657ff7a9f84c62cb884b739ecc7561d678e6694789eca500f8f2790729a",
-    "lastHarvestedAt": "2026-10-22T18:04:42.129Z",
+    "contentHash": "01d2a52b29b2ca4713980fea784318ed06f32a672adab63cbfc7da8b256c9c85",
+    "lastHarvestedAt": "2026-10-25T06:06:25.521Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -7663,10 +7663,10 @@
     "repository": "facebook/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "1dc7fac0",
+    "sourceVersion": "eb860e7c",
     "license": "Apache-2.0",
-    "contentHash": "085a287e2c906b20417e948aade048f3c023257699fdf4004e6621cbbb4bad28",
-    "lastHarvestedAt": "2026-10-22T16:03:26.984Z",
+    "contentHash": "e7255f10788615a79eac5c8f88abc3a22256ddd59807a82b5d81d5ff2d1fd7ba",
+    "lastHarvestedAt": "2026-10-25T06:06:13.315Z",
     "learningId": "learn-github-facebook-folly"
   },
   "kotlin-kmp-production-sample": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `d1936d74`  
+> **Source Version**: `6068694d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:56:55.719Z  
+> **Timestamp**: 2026-10-25T06:06:20.041Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:56:54.611Z  
+> **Harvest Timestamp**: 2026-10-25T06:06:19.689Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6788 stars
+- **Stars / Engagement**: 6791 stars
 
 ---
 
@@ -1561,587 +1561,433 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b431a077` (2026-10-22)
-**Commit Message**: [FIXED] micro: service and endpoint metadata can be changed after it is set (#2194)
+### Incident Patch 1: `8afc2075` (2026-10-23)
+**Commit Message**: [FIXED] Ordered consumer Fetch deadlock and FetchNoWait redelivery (#2211)
 
 Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
 
-**File**: `micro/service.go` (modified, +5/-3)
+**File**: `jetstream/ordered.go` (modified, +25/-50)
 ```diff
-@@ -17,6 +17,7 @@ import (
- 	"encoding/json"
- 	"errors"
- 	"fmt"
-+	"maps"
- 	"regexp"
- 	"strings"
- 	"sync"
-@@ -329,6 +330,7 @@ func AddService(nc *nats.Conn, config Config) (Service, error) {
+@@ -44,6 +44,7 @@ type (
+ 		stopAfter         int // StopAfter of Consume or Messages, 0 if not set
+ 		deliveredMessages int // messages handed to the caller, across resets
+ 		runningFetch      *fetchResult
++		fetchInProgress   bool
+ 		subscription      *orderedSubscription
+ 		sync.Mutex
+ 	}
+@@ -419,13 +420,24 @@ func (c *orderedConsumer) Fetch(batch int, opts ...FetchOpt) (MessageBatch, erro
+ }
+ 
+ func (c *orderedConsumer) fetchWithOpts(batch int, allowMaxBytes bool, opts ...FetchOpt) (MessageBatch, error) {
++	return c.fetch(func(p *pullConsumer) (MessageBatch, error) {
++		return p.fetchWithOpts(batch, allowMaxBytes, opts...)
++	})
++}
++
++func (c *orderedConsumer) fetch(f func(*pullConsumer) (MessageBatch, error)) (MessageBatch, error) {
+ 	c.Lock()
+ 	if c.consumerType == consumerTypeConsume {
+ 		c.Unlock()
+ 		return nil, ErrOrderConsumerUsedAsConsume
+ 	}
++	if c.fetchInProgress {
++		c.Unlock()
++		return nil, ErrOrderedConsumerConcurrentRequests
++	}
+ 	if c.runningFetch != nil {
+ 		if !c.runningFetch.closed() {
++			c.Unlock()
+ 			return nil, ErrOrderedConsumerConcurrentRequests
+ 		}
+ 		if c.runningFetch.sseq != 0 {
+@@ -438,12 +450,16 @@ func (c *orderedConsumer) fetchWithOpts(batch int, allowMaxBytes bool, opts ...F
+ 		done:     make(chan struct{}),
+ 	}
+ 	c.subscription = &sub
++	c.fetchInProgress = true
+ 	c.Unlock()
+ 	err := c.reset()
+-	if err != nil {
+-		return nil, err
++	var msgs MessageBatch
++	if err == nil {
++		msgs, err = f(c.currentConsumer)
+ 	}
+-	msgs, err := c.currentConsumer.fetchWithOpts(batch, allowMaxBytes, opts...)
++	c.Lock()
++	defer c.Unlock()
++	c.fetchInProgress = false
+ 	if err != nil {
  		return nil, err
  	}
- 
-+	config.Metadata = maps.Clone(config.Metadata)
- 	if config.Metadata == nil {
- 		config.Metadata = map[string]string{}
- 	}
-@@ -691,7 +693,7 @@ func (s *service) serviceIdentity() ServiceIdentity {
- 		Name:     s.Config.Name,
- 		ID:       s.id,
- 		Version:  s.Config.Version,
--		Metadata: s.Config.Metadata,
-+		Metadata: maps.Clone(s.Config.Metadata),
- 	}
- }
- 
-@@ -706,7 +708,7 @@ func (s *service) Info() Info {
- 			Name:       e.Name,
- 			Subject:    e.Subject,
- 			QueueGroup: e.QueueGroup,
--			Metadata:   e.Metadata,
-+			Metadata:   maps.Clone(e.Metadata),
- 		})
- 	}
- 
-@@ -905,7 +907,7 @@ func WithEndpointSubject(subject string) EndpointOpt {
- 
- func WithEndpointMetadata(metadata map[string]string) EndpointOpt {
- 	return func(e *endpointOpts) error {
--		e.metadata = metadata
-+		e.metadata = maps.Clone(metadata)
- 		return nil
- 	}
- }
-```
-
-**File**: `micro/test/service_test.go` (modified, +90/-0)
-```diff
-@@ -1428,6 +1428,96 @@ func TestAddEndpoint_Options(t *testing.T) {
- 	})
- }
- 
-+func TestServiceMetadataImmutable(t *testing.T) {
-+	withServer(t, func(t *testing.T, nc *nats.Conn) {
-+		handler := micro.HandlerFunc(func(req micro.Request) {})
-+		svcMeta := map[string]string{"region": "east"}
-+		defaultMeta := map[string]string{"owner": "team-d"}
-+		srv, err := micro.AddService(nc, micro.Config{
-+			Name:     "orders",
-+			Version:  "0.1.0",
-+			Metadata: svcMeta,
-+			Endpoint: &micro.EndpointConfig{
-+				Subject:  "orders.default",
-+				Handler:  handler,
-+				Metadata: defaultMeta,
-+			},
-+		})
-+		if err != nil {
-+			t.Fatalf("Unexpected error: %v", err)
-+		}
-+		defer srv.Stop()
-+
-+		epMeta := map[string]string{"owner": "team-a"}
-+		err = srv.AddEndpoint("create", handler,
-+			micro.WithEndpointMetadata(epMeta),
-+			micro.WithEndpointMetadataKey("tier", "gold"))
-+		if err != nil {
-+			t.Fatalf("Unexpected error: %v", err)
-+		}
-+		if _, ok := epMeta["tier"]; ok {
-+			t.Fatalf("WithEndpointMetadataKey modified the map passed to WithEndpointMetadata: %v", epMeta)
-+		}
-+
-+		svcMeta["region"] = "west"
-+		defaultMeta["owner"] = "team-x"
-+		epMeta["owner"] = "team-b"
-+		epMeta["extra"] = "x"
-+		info := srv.Info()
-+		info.Metadata["region"] = "west"
-+		for _, ep := range info.Endpoints {
-+			ep.Metadata["owner"] = "team-b"
-+			delete(ep.Metadata, "tier")
-+		}
-+		srv.Stats().Metadata["region"] = "west"
-+
-+		wantSvc := map[string]string{"region": "east"}
-+		wantEndpoints := map[string]map[string]string{
-+			"default": {"owner": "team-d"},
-+			"create":  {"owner": "team-a", "tier": "gold"},
-+		}
-+		checkInfo := func(info micro.Info) {
-+			t.Helper()
-+			if !reflect.DeepEqual(info.Metadata, wantSvc) {
-+				t.Fatalf("Invalid service metadata; want: %v; got: %v", wantSvc, info.Metadata)
-+			}
-+			got := make(map[string]map[string]string)
-+			for _, ep := range info.Endpoints {
-+				got[ep.Name] = ep.Metadata
-+			}
-+			if !reflect.DeepEqual(got, wantEndpoints) {
-+				t.Fatalf("Invalid endpoint metadata; want: %v; got: %v", wantEndpoints, got)
-+			}
-+		}
-+		checkInfo(srv.Info())
-+
-+		for _, verb := range []micro.Verb{micro.PingVerb, micro.InfoVerb, micro.StatsVerb} {
-+			subject, err := micro.ControlSubject(verb, "orders", "")
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			resp, err := nc.Request(subject, nil, time.Second)
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			var id micro.ServiceIdentity
-+			if err := json.Unmarshal(resp.Data, &id); err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			if !reflect.DeepEqual(id.Metadata, wantSvc) {
-+				t.Fatalf("Invalid service metadata in %s response; want: %v; got: %v", verb, wantSvc, id.Metadata)
-+			}
-+			if verb == micro.InfoVerb {
-+				var info micro.Info
-+				if err := json.Unmarshal(resp.Data, &info); err != nil {
-+					t.Fatalf("Unexpected error: %v", err)
-+				}
-+				checkInfo(info)
-+			}
-+		}
-+	})
-+}
-+
- func TestAddEndpoint_Concurrency(t *testing.T) {
- 	withServer(t, func(t *testing.T, nc *nats.Conn) {
- 		ctx := context.Background()
-```
-
----
-
-### Incident Patch 2: `d1936d74` (2026-10-22)
-**Commit Message**: [FIXED] Correct StopAfter pending accounting for pull consumers (#2208)
-
-Track the requested batch size when StopAfter shortens a pull so expired
-requests do not leave an inflated pending count and delay the next pull.
-Keep the count aligned with the first, reconnect and heartbeat recovery
-requests, and add regression coverage for these paths.
-
-Fixes https://github.com/nats-io/nats.go/issues/2207
-
-Signed-off-by: Huy Nguyen <[REDACTED_EMAIL]>
-
-**File**: `jetstream/jetstream_test.go` (modified, +74/-8)
-```diff
-@@ -423,6 +423,33 @@ func TestPullConsumer_checkPendingAfterDone(t *testing.T) {
- 	}
- }
- 
-+func TestPullSubscriptionResetPendingStopAfter(t *testing.T) {
-+	for _, tc := range []struct {
-+		name                       string
-+		stopAfter, delivered, want int
-+	}{
-+		{"unlimited", 0, 200, 500},
-+		{"full batch", 800, 200, 500},
-+		{"initial shortened batch", 450, 0, 450},
-+		{"remaining shortened batch", 450, 200, 250},
-+		{"complete", 450, 450, 0},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			sub := &pullSubscription{
-+				consumeOpts: &consumeOpts{MaxMessages: 500, MaxBytes: 10000, StopAfter: tc.stopAfter},
-+				delivered:   tc.delivered,
-+			}
-+			sub.resetPendingMsgs()
-+			if got := sub.pending.msgCount; got != tc.want {
-+				t.Errorf("pending messages: got %d, want %d", got, tc.want)
-+			}
-+			if got := sub.pending.byteCount; got != 10000 {
-+				t.Errorf("pending bytes: got %d, want 10000", got)
-+			}
-+		})
-+	}
-+}
-+
- func TestPullConsumer_checkPending(t *testing.T) {
- 
- 	tests := []struct {
-@@ -431,9 +458,11 @@ func TestPullConsumer_checkPending(t *testing.T) {
- 		fetchInProgress     bool
- 		shouldSend          bool
- 		expectedPullRequest *pullRequest
-+		expectedPendingMsgs int
- 	}{
- 		{
--			name: "msgs threshold not reached, bytes not set, no pull request",
-+			name:                "msgs threshold not reached, bytes not set, no pull request",
-+			expectedPendingMsgs: 10,
- 			givenSub: &pullSubscription{
- 				pending: pendingMsgs{
- 					msgCount: 10,
-@@ -446,7 +475,8 @@ func TestPullConsumer_checkPending(t *testing.T) {
- 			shouldSend: false,
- 		},
- 		{
--			name: "pending msgs below threshold, send pull request",
-+			name:                "pending msgs below threshold, send pull request",
-+			expectedPendingMsgs: 10,
- 			givenSub: &pullSubscription{
- 				pending: pendingMsgs{
- 					msgCount:  4,
-@@ -464,7 +494,8 @@ func TestPullConsumer_checkPending(t *testing.T) {
- 			},
- 		},
- 		{
--			name: "pending msgs below threshold but PR in progress",
-+			name:                "pending msgs below threshold but PR in progress",
-+			expectedPendingMsgs: 4,
- 			givenSub: &pullSubscription{
- 				pending: pendingMsgs{
- 					msgCount: 4,
-@@ -478,7 +509,8 @@ func TestPullConsumer_checkPending(t *testing.T) {
- 			shouldSend:      false,
- 		},
- 		{
--			name: "pending bytes below threshold, send pull request",
-+			name:                "pending bytes below threshold, send pull request",
-+			expectedPendingMsgs: 1000000,
- 			givenSub: &pullSubscription{
- 				pending: pendingMsgs{
- 					byteCount: 400,
-@@ -497,7 +529,8 @@ func TestPullConsumer_checkPending(t *testing.T) {
- 			},
- 		},
- 		{
--			name: "pending bytes above threshold, no pull request",
-+			name:                "pending bytes above threshold, no pull request",
-+			expectedPendingMsgs: 0,
- 			givenSub: &pullSubscription{
- 				pending: pendingMsgs{
- 					byteCount: 600,
-@@ -510,7 +543,8 @@ func TestPullConsumer_checkPending(t *testing.T) {
- 			shouldSend: false,
- 		},
- 		{
--			name: "pending bytes below threshold, fetch in progress, no pull request",
-+			name:                "pending bytes below threshold, fetch in progress, no pull request",
-+			expectedPendingMsgs: 0,
- 			givenSub: &pullSubscription{
- 				pending: pendingMsgs{
- 					byteCount: 400,
-@@ -524,7 +558,8 @@ func TestPullConsumer_checkPending(t *testing.T) {
- 			shouldSend:      false,
- 		},
- 		{
--			name: "StopAfter set, pending msgs below StopAfter, send pull request",
-+			name:                "StopAfter set, pending msgs below StopAfter, send pull request",
-+			expectedPendingMsgs: 6,
- 			givenSub: &pullSubscription{
- 				pending: pendingMsgs{
- 					msgCount: 4,
-@@ -543,7 +578,35 @@ func TestPullConsumer_checkPending(t *testing.T) {
- 			},
- 		},
- 		{
--			name: "StopAfter set, pending msgs equal to StopAfter, no pull request",
-+			name:                "StopAfter with message and byte limits",
-+			expectedPendingMsgs: 6,
-+			givenSub: &pullSubscription{
-+				pending: pendingMsgs{msgCount: 4, byteCount: 400},
-+				consumeOpts: &consumeOpts{
-+					ThresholdMessages: 5, MaxMessages: 10, MaxBytes: 1000,
-+					LimitSize: true, StopAfter: 8,
-+				},
-+				delivered: 2,
-+			},
-+			shouldSend:          true,
-+			expectedPullRequest: &pullRequest{Batch: 2, MaxBytes: 1000},
-+		},
-+		{
-+			name:                "StopAfter with bytes threshold",
-+			expectedPendingMsgs: 6,
-+			givenSub: &pullSubscription{
-+				pending: pendingMsgs{msgCount: 4, byteCount: 400},
-+				consumeOpts: &consumeOpts{
-+					MaxMessages: 1000000, ThresholdBytes: 500, MaxBytes: 1000, StopAfter: 8,
-+				},
-+				delivered: 2,
-+			},
-+			shouldSend:          true,
-+			expectedPullRequest: &pullRequest{Batch: 2, MaxBytes: 600},
-+		},
-+		{
-+			name:                "StopAfter set, pending msgs equal to StopAfter, no pull request",
-+			expectedPendingMsgs: 6,
- 			givenSub: &pullSubscription{
- 				pending: pendingMsgs{
- 					msgCount: 6,
-@@ -593,6 +656,9 @@ func TestPullConsumer_checkPending(t *testing.T) {
- 			}()
- 
- 			test.givenSub.checkPending()
-+	
-```
-
-**File**: `jetstream/pull.go` (modified, +14/-15)
-```diff
-@@ -327,13 +327,9 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
- 	sub.Lock()
- 	// initial pull
- 	sub.resetPendingMsgs()
--	batchSize := sub.consumeOpts.MaxMessages
--	if sub.consumeOpts.StopAfter > 0 {
--		batchSize = min(batchSize, sub.consumeOpts.StopAfter-sub.delivered)
+@@ -459,36 +475,9 @@ func (c *orderedConsumer) fetchWithOpts(batch int, allowMaxBytes bool, opts ...F
+ // reset the consumer for each subsequent Fetch call.
+ // Consider using [Consumer.Consume] or [Consumer.Messages] instead.
+ func (c *orderedConsumer) FetchBytes(maxBytes int, opts ...FetchOpt) (MessageBatch, error) {
+-	c.Lock()
+-	if c.consumerType == consumerTypeConsume {
+-		c.Unlock()
+-		return nil, ErrOrderConsumerUsedAsConsume
 -	}
- 	if err := sub.pull(&pullRequest{
- 		Expires:       consumeOpts.Expires,
--		Batch:         batchSize,
-+		Batch:         sub.pending.msgCount,
- 		MaxBytes:      consumeOpts.MaxBytes,
- 		Heartbeat:     consumeOpts.Heartbeat,
- 		MinPending:    consumeOpts.MinPending,
-@@ -371,9 +367,10 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
- 							sub.errs <- errConnected
- 						}
- 
-+						sub.resetPendingMsgs()
- 						sub.requestNext(&pullRequest{
- 							Expires:       sub.consumeOpts.Expires,
--							Batch:         sub.consumeOpts.MaxMessages,
-+							Batch:         sub.pending.msgCount,
- 							MaxBytes:      sub.consumeOpts.MaxBytes,
- 							Heartbeat:     sub.consumeOpts.Heartbeat,
- 							MinPending:    sub.consumeOpts.MinPending,
-@@ -385,7 +382,6 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
- 						if sub.hbMonitor != nil {
- 							sub.hbMonitor.Reset(2 * sub.consumeOpts.Heartbeat)
- 						}
--						sub.resetPendingMsgs()
- 					}
- 					sub.Unlock()
- 
-@@ -395,13 +391,10 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
- 			case err := <-sub.errs:
- 				sub.Lock()
- 				if errors.Is(err, ErrNoHeartbeat) {
--					batchSize := sub.consumeOpts.MaxMessages
--					if sub.consumeOpts.StopAfter > 0 {
--						batchSize = min(batchSize, sub.consumeOpts.StopAfter-sub.delivered)
--					}
-+					sub.resetPendingMsgs()
- 					sub.requestNext(&pullRequest{
- 						Expires:       sub.consumeOpts.Expires,
--						Batch:         batchSize,
-+						Batch:         sub.pending.msgCount,
- 						MaxBytes:      sub.consumeOpts.MaxBytes,
- 						Heartbeat:     sub.consumeOpts.Heartbeat,
- 						MinPending:    sub.consumeOpts.MinPending,
-@@ -413,7 +406,6 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
- 					if sub.hbMonitor != nil {
- 						sub.hbMonitor.Reset(2 * sub.consumeOpts.Heartbeat)
- 					}
--					sub.resetPendingMsgs()
- 				}
- 				sub.Unlock()
- 				if sub.consumeOpts.ErrHandler != nil {
-@@ -434,10 +426,13 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
+-	if c.runningFetch != nil {
+-		if !c.runningFetch.closed() {
+-			return nil, ErrOrderedConsumerConcurrentRequests
+-		}
+-		if c.runningFetch.sseq != 0 {
+-			c.cursor.streamSeq = c.runningFetch.sseq
+-		}
+-	}
+-	c.consumerType = consumerTypeFetch
+-	sub := orderedSubscription{
+-		consumer: c,
+-		done:     make(chan struct{}),
+-	}
+-	c.subscription = &sub
+-	c.Unlock()
+-	err := c.reset()
+-	if err != nil {
+-		return nil, err
+-	}
+-	msgs, err := c.currentConsumer.FetchBytes(maxBytes, opts...)
+-	if err != nil {
+-		return nil, err
+-	}
+-	c.runningFetch = msgs.(*fetchResult)
+-	return msgs, nil
++	return c.fetch(func(p *pullConsumer) (MessageBatch, error) {
++		return p.FetchBytes(maxBytes, opts...)
++	})
  }
  
- // resetPendingMsgs resets pending message count and byte count
--// to the values set in consumeOpts
-+// to the values set in consumeOpts, capped by the remaining StopAfter budget.
- // lock should be held before calling this method
- func (s *pullSubscription) resetPendingMsgs() {
- 	s.pending.msgCount = s.consumeOpts.MaxMessages
-+	if s.consumeOpts.StopAfter > 0 {
-+		s.pending.msgCount = min(s.pending.msgCount, s.consumeOpts.StopAfter-s.delivered)
-+	}
- 	s.pending.byteCount = s.consumeOpts.MaxBytes
+ // FetchNoWait is used to retrieve up to a provided number of messages
+@@ -500,23 +489,9 @@ func (c *orderedConsumer) FetchBytes(maxBytes int, opts ...FetchOpt) (MessageBat
+ // reset the consumer for each subsequent Fetch call.
+ // Consider using [Consumer.Consume] or [Consumer.Messages] instead.
+ func (c *orderedConsumer) FetchNoWait(batch int) (MessageBatch, error) {
+-	if c.consumerType == consumerTypeConsume {
+-		return nil, ErrOrderConsumerUsedAsConsume
+-	}
+-	if c.runningFetch != nil && !c.runningFetch.done {
+-		return nil, ErrOrderedConsumerConcurrentRequests
+-	}
+-	c.consumerType = consumerTypeFetch
+-	sub := orderedSubscription{
+-		consumer: c,
+-		done:     make(chan struct{}),
+-	}
+-	c.subscription = &sub
+-	err := c.reset()
+-	if err != nil {
+-		return nil, err
+-	}
+-	return c.currentConsumer.FetchNoWait(batch)
++	return c.fetch(func(p *pullConsumer) (MessageBatch, error) {
++		return p.FetchNoWait(batch)
++	})
  }
  
-@@ -498,7 +493,11 @@ func (s *pullSubscription) checkPending() {
- 				Priority:      s.consumeOpts.Priority,
- 			})
- 
--			s.pending.msgCount = s.consumeOpts.MaxMessages
-+			if s.consumeOpts.StopAfter > 0 {
-+				s.pending.msgCount += batchSize
-+			} else {
-+				s.pending.msgCount = s.consumeOpts.MaxMessages
-+			}
- 			s.pending.byteCount = s.consumeOpts.MaxBytes
- 		}
- 	}
+ // Next is used to retrieve the next message from the stream. This
 ```
 
-**File**: `jetstream/test/pull_test.go` (modified, +101/-0)
+**File**: `jetstream/test/ordered_test.go` (modified, +135/-0)
 ```diff
-@@ -16,6 +16,7 @@ package test
- import (
- 	"bytes"
- 	"context"
-+	"encoding/json"
- 	"errors"
- 	"fmt"
- 	"runtime"
-@@ -2337,6 +2338,106 @@ func TestPullConsumerConsume(t *testing.T) {
+@@ -1239,6 +1239,54 @@ func TestOrderedConsumerFetch(t *testing.T) {
+ 			for msg := range res.Messages() {
+ 				msg.Ack()
+ 			}
++
++			errs := make(chan error, 1)
++			go func() {
++				_, err := c.Fetch(1, jetstream.FetchMaxWait(100*time.Millisecond))
++				errs <- err
++			}()
++			select {
++			case err := <-errs:
++				if err != nil {
++					t.Fatalf("Unexpected error: %s", err)
++				}
++			case <-time.After(5 * time.Second):
++				t.Fatal("Fetch blocked after a concurrent request was rejected")
++			}
++		})
++	})
++
++	t.Run("concurrent fetch requests from multiple goroutines", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
++			ctx := newTesterCtx(t, 20*time.Second)
++			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++
++			var wg sync.WaitGroup
++			var started atomic.Int32
++			start := make(chan struct{})
++			for range 10 {
++				wg.Go(func() {
++					<-start
++					_, err := c.Fetch(1, jetstream.FetchMaxWait(time.Second))
++					if err == nil {
++						started.Add(1)
++					} else if !errors.Is(err, jetstream.ErrOrderedConsumerConcurrentRequests) {
++						t.Errorf("Unexpected error: %s", err)
++					}
++				})
++			}
++			close(start)
++			wg.Wait()
++			if n := started.Load(); n != 1 {
++				t.Fatalf("Expected exactly one fetch to start; got: %d", n)
++			}
+ 		})
+ 	})
+ 	t.Run("byte limit reached first", func(t *testing.T) {
+@@ -1381,6 +1429,20 @@ func TestOrderedConsumerFetchBytes(t *testing.T) {
+ 			for msg := range res.Messages() {
+ 				msg.Ack()
+ 			}
++
++			errs := make(chan error, 1)
++			go func() {
++				_, err := c.FetchBytes(500, jetstream.FetchMaxWait(100*time.Millisecond))
++				errs <- err
++			}()
++			select {
++			case err := <-errs:
++				if err != nil {
++					t.Fatalf("Unexpected error: %s", err)
++				}
++			case <-time.After(5 * time.Second):
++				t.Fatal("FetchBytes blocked after a concurrent request was rejected")
++			}
+ 		})
+ 	})
+ }
+@@ -1575,6 +1637,79 @@ func TestOrderedConsumerFetchNoWait(t *testing.T) {
  		})
  	})
  
-+	t.Run("with auto unsubscribe after expiry and reconnect", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
-+			ctx := newTesterCtx(t, 15*time.Second)
-+			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "TEST", Subjects: []string{"test"}})
++	t.Run("continue from previous fetch", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
++			ctx := newTesterCtx(t, 20*time.Second)
++			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
 +			if err != nil {
-+				t.Fatal(err)
++				t.Fatalf("Unexpected error: %v", err)
 +			}
-+			c, err := s.CreateConsumer(ctx, jetstream.ConsumerConfig{Durable: "C", AckPolicy: jetstream.AckExplicitPolicy})
++			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
 +			if err != nil {
-+				t.Fatal(err)
++				t.Fatalf("Unexpected error: %v", err)
 +			}
-+			pulls, err := nc.SubscribeSync("$JS.API.CONSUMER.MSG.NEXT.TEST.C")
-+			if err != nil {
-+				t.Fatal(err)
++			for range 3 {
++				publishTestMsgs(t, js)
 +			}
-+			defer pulls.Unsubscribe()
-+			expectPull := func(want int, wait time.Duration) {
-+				t.Helper()
-+				msg, err := pulls.NextMsg(wait)
++
++			fetches := []func() (jetstream.MessageBatch, error){
++				func() (jetstream.MessageBatch, error) { return c.FetchNoWait(5) },
++				func() (jetstream.MessageBatch, error) { return c.Fetch(5) },
++				func() (jetstream.MessageBatch, error) { return c.FetchNoWait(5) },
++			}
++			var seq uint64
++			for _, fetch := range fetches {
++				res, err := fetch()
 +				if err != nil {
-+					t.Fatalf("waiting for pull batch %d: %v", want, err)
++					t.Fatalf("Unexpected error: %s", err)
 +				}
-+				var request struct {
-+					Batch int `json:"batch"`
-+				}
-+				if err := json.Unmarshal(msg.Data, &request); err != nil {
-+					t.Fatal(err)
-+				}
-+				if request.Batch != want {
-+					t.Fatalf("pull batch: got %d, want %d", request.Batch, want)
-+				}
-+			}
-+			publish := func(n int) {
-+				t.Helper()
-+				for i := 0; i < n; i++ {
-+					if _, err := js.Publish(ctx, "test", []byte("msg")); err != nil {
-+						t.Fatal(err)
++				for msg := range res.Messages() {
++					meta, err := msg.Metadata()
++					if err != nil {
++						t.Fatalf("Unexpected error: %s", err)
++					}
++					seq++
++					if meta.Sequence.Stream != seq {
++						t.Fatalf("Expected stream sequence %d; got: %d", seq, meta.Sequence.Stream)
 +					}
 +				}
-+			}
-+			publish(2)
-+			var received atomic.Int32
-+			initial := make(chan struct{})
-+			cc, err := c.Consume(func(msg jetstream.Msg) {
-+				if err := msg.Ack(); err != nil {
-+					t.Error(err)
++				if res.Error() != nil {
++					t.Fatalf("Unexpected error: %s", res.Error())
 +				}
-+				if received.Add(1) == 2 {
-+					close(initial)
-+				}
-+			}, jetstream.PullMaxMessages(10), jetstream.StopAfter(8), jetstream.PullExpiry(2*time.Second),
-+				jetstream.ConsumeErrHandler(func(cc jetstream.ConsumeContext, err error) {
-+					t.Errorf("Unexpected consume error: %v", err)
-+					cc.Stop()
-+				}))
-+			if err != nil {
-+				t.Fatal(err)
 +			}
-+			closed := cc.Closed()
-+			defer func() {
-+				cc.Stop()
-+				select {
-+				case <-closed:
-+				case <-time.After(3 * time.Second):
-+					t.Error("Consume did not stop")
-+				}
-+			}()
-+			expectPull(8, 3*time.Second)
-+			select {
-+			case <-initial:
-+			case <-ctx.Done():
-+				t.Fatal(ctx.Err())
-+			}
-+			// Expire both the initial pull and its replacement. Six messages remain.
-+			expectPull(6, 3*time.Second)
-+			expectPull(6, 3*time.Second)
-+			connected := nc.StatusChanged(nats.CONNECTED)
-+			// Require the reconnect pull before the current two-second pull expires.
-+			deadline := time.Now().Add(time.Second)
-+			if err := nc.ForceReconnect(); err != nil {
-+				t.Fatal(err)
-+			}
-+			select {
-+			case <-connected:
-+			case <-time.After(time.Until(deadline)):
-+				t.Fatal("connection did not reconnect")
-+			}
-+			expectPull(6, time.Until(deadline))
-+			publish(6)
-+			select {
-+			case <-closed:
-+			case <-ctx.Done():
-+				t.Fatal(ctx.Err())
-+			}
-+			if got := received.Load(); got != 8 {
-+				t.Fatalf("received %d messages, want 8", got)
++			if seq != 3*uint64(len(testMsgs)) {
++				t.Fatalf("Expected %d messages; got: %d", 3*len(testMsgs), seq)
 +			}
 +		})
 +	})
 +
- 	t.Run("with invalid batch size", func(t *testing.T) {
++	t.Run("concurrent fetch requests", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
++			ctx := newTesterCtx(t, 20*time.Second)
++			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++
++			if _, err := c.Fetch(1, jetstream.FetchMaxWait(100*time.Millisecond)); err != nil {
++				t.Fatalf("Unexpected error: %s", err)
++			}
++			_, err = c.FetchNoWait(1)
++			if !errors.Is(err, jetstream.ErrOrderedConsumerConcurrentRequests) {
++				t.Fatalf("Expected error: %s; got: %s", jetstream.ErrOrderedConsumerConcurrentRequests, err)
++			}
++			// The pending fetch is never read, so retry until it expires.
++			checkFor(t, 2*time.Second, 50*time.Millisecond, func() error {
++				_, err := c.FetchNoWait(1)
++				return err
++			})
++		})
++	})
++
+ 	t.Run("consumer used as consume", func(t *testing.T) {
  		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
- 			ctx := newTesterCtx(t, 5*time.Second)
+ 			ctx := newTesterCtx(t, 20*time.Second)
 ```
 
 ---
 
-### Incident Patch 3: `464f1d61` (2026-10-21)
-**Commit Message**: [FIXED] Use mirror-aware prefix in legacy KV Create and Update (#2203)
+### Incident Patch 2: `063b4ad8` (2026-10-23)
+**Commit Message**: [FIXED] Honor ReconnectWait after ForceReconnect during reconnect (#2179)
 
-Legacy kvs.update published to kv.pre, so Create and Update on a
-cross-domain mirror failed with "no response from stream". Use putPre
-when set, as Put and Delete do and as jetstream updateRevision has
-since #1903.
+* [FIXED] Honor ReconnectWait after ForceReconnect during reconnect
 
-Signed-off-by: Leo King <[REDACTED_EMAIL]>
+doReconnect copied nc.rqch into a local variable once. When ForceReconnect (or close) closes that channel, the loop creates a fresh nc.rqch but kept selecting on the stale, closed local one, so every following backoff returned immediately and the client dialed in a hot loop until the connection closed.
 
-**File**: `kv.go` (modified, +5/-1)
+Refresh the local channel after each replacement, in both the ReconnectWait branch and the CustomReconnectDelay/ReconnectToServer delay branch. Add a server-free regression test using a counting dialer.
+
+Resolves #2172
+
+Signed-off-by: Arsen Arakelian <[REDACTED_EMAIL]>
+
+* Replace backoff test with server-free regression test
+
+Co-authored-by: Mohith <[REDACTED_EMAIL]>
+Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Arsen Arakelian <[REDACTED_EMAIL]>
+Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+Co-authored-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+Co-authored-by: Mohith <[REDACTED_EMAIL]>
+
+**File**: `nats.go` (modified, +5/-1)
 ```diff
-@@ -790,7 +790,11 @@ func (kv *kvs) update(key string, value []byte, revision uint64) (uint64, error)
- 	if kv.useJSPfx {
- 		b.WriteString(kv.js.opts.pre)
- 	}
--	b.WriteString(kv.pre)
-+	if kv.putPre != _EMPTY_ {
-+		b.WriteString(kv.putPre)
-+	} else {
-+		b.WriteString(kv.pre)
-+	}
- 	b.WriteString(key)
+@@ -3503,6 +3503,7 @@ func (nc *Conn) doReconnect(err error, forceReconnect bool) {
+ 					rt.Stop()
+ 					nc.mu.Lock()
+ 					nc.rqch = make(chan struct{})
++					rqch = nc.rqch
+ 					nc.mu.Unlock()
+ 				case <-rt.C:
+ 				}
+@@ -3535,9 +3536,12 @@ func (nc *Conn) doReconnect(err error, forceReconnect bool) {
+ 				rt.Stop()
  
- 	m := Msg{Subject: b.String(), Header: Header{}, Data: value}
+ 				// we need to reset the rqch channel to avoid
+-				// closing a closed channel in the next iteration
++				// closing a closed channel in the next iteration,
++				// and keep selecting on the new channel so the
++				// delay is honored again on the next iteration.
+ 				nc.mu.Lock()
+ 				nc.rqch = make(chan struct{})
++				rqch = nc.rqch
+ 				nc.mu.Unlock()
+ 			case <-rt.C:
+ 			}
 ```
 
-**File**: `test/kv_test.go` (modified, +4/-0)
+**File**: `nats_test.go` (modified, +70/-0)
 ```diff
-@@ -1374,6 +1374,10 @@ func TestKeyValueMirrorCrossDomains(t *testing.T) {
- 	_, err = mkv.PutString("name", "rip")
- 	expectOk(t, err)
- 
-+	_, err = mkv.Create("created", []byte("c"))
-+	expectOk(t, err)
-+	keyExists(t, kv, "created", "c")
+@@ -2241,3 +2241,73 @@ func TestMakeTLSConnUsesPreservedTLSName(t *testing.T) {
+ 		})
+ 	}
+ }
 +
- 	_, err = mkv.PutString("v", "vv")
- 	expectOk(t, err)
- 	e := keyExists(t, kv, "v", "vv")
++type failDialer struct {
++	attempts chan struct{}
++}
++
++func (d *failDialer) Dial(network, address string) (net.Conn, error) {
++	select {
++	case d.attempts <- struct{}{}:
++	default:
++	}
++	return nil, errors.New("dial failed")
++}
++
++func TestForceReconnectRestoresBackoff(t *testing.T) {
++	tests := []struct {
++		name string
++		opts []Option
++	}{
++		{"ReconnectWait", nil},
++		{"CustomReconnectDelay", []Option{CustomReconnectDelay(func(int) time.Duration { return time.Hour })}},
++		{"ReconnectToServer", []Option{ReconnectToServer(func(servers []Server, _ ServerInfo) (*Server, time.Duration) {
++			return &servers[0], time.Hour
++		})}},
++	}
++
++	for _, test := range tests {
++		t.Run(test.name, func(t *testing.T) {
++			dialer := &failDialer{attempts: make(chan struct{}, 16)}
++			opts := append([]Option{
++				SetCustomDialer(dialer),
++				RetryOnFailedConnect(true),
++				MaxReconnects(-1),
++				ReconnectWait(time.Hour),
++				ReconnectJitter(0, 0),
++			}, test.opts...)
++			nc, err := Connect(DefaultURL, opts...)
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			defer nc.Close()
++
++			waitForDial := func() {
++				t.Helper()
++				select {
++				case <-dialer.attempts:
++				case <-time.After(3 * time.Second):
++					t.Fatal("ForceReconnect did not interrupt the backoff")
++				}
++			}
++			// Initial failed connect.
++			waitForDial()
++			for i := range 2 {
++				if err := nc.ForceReconnect(); err != nil {
++					t.Fatalf("Unexpected error: %v", err)
++				}
++				waitForDial()
++				select {
++				case <-dialer.attempts:
++					t.Fatalf("Backoff skipped after forced attempt %d", i+1)
++				case <-time.After(100 * time.Millisecond):
++				}
++			}
++
++			nc.Close()
++			if err := nc.ForceReconnect(); !errors.Is(err, ErrConnectionClosed) {
++				t.Fatalf("Expected %v, got: %v", ErrConnectionClosed, err)
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2214** (2026-10-23): Release v1.55.0 (@piotrpio)
+- **PR #2213** (2026-10-23): [IMPROVED] Document default MaxAckPending for legacy JetStream subscriptions (@piotrpio)
+- **PR #2212** (2026-10-23): [IMPROVED] Avoid per-message metadata allocations in JetStream consumers (@piotrpio)
+- **PR #2211** (2026-10-23): [FIXED] Ordered consumer Fetch deadlock and FetchNoWait redelivery (@piotrpio)
 - **PR #2208** (2026-10-22): [FIXED] Correct StopAfter pending accounting for pull consumers (@huynguyen7)
 - **PR #2204** (2026-10-20): [DOC] Document that Msg is not reused (@kave08)
-- **PR #2203** (2026-10-21): [FIXED] Use mirror-aware prefix in legacy KV Create and Update (@spicysharkco)
-- **PR #2200** (2026-10-21): [FIXED] Include headers in subscription pending byte limits (@Grivn)
-- **PR #2199** (closed): object: truncate the destination file in GetFile (@piyush295)
-- **PR #2198** (2026-10-16): [ADDED] JetStream FetchMaxBytes option (@manenim)
 
 ---
 
@@ -2161,34 +2007,101 @@ Signed-off-by: Leo King <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] micro: service and endpoint metadata can be changed after it is set (#21
+## X. [FIXED] Ordered consumer Fetch deadlock and FetchNoWait redelivery (#2211)
 
 **RULE**:
-When implementing operations in `micro/service.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `jetstream/ordered.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b431a077`: [FIXED] micro: service and endpoint metadata can be changed after it is set (#2194). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8afc2075`: [FIXED] Ordered consumer Fetch deadlock and FetchNoWait redelivery (#2211). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `micro/service.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/ordered.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"maps"
-	config.Metadata = maps.Clone(config.Metadata)
-		Metadata: maps.Clone(s.Config.Metadata),
-			Metadata:   maps.Clone(e.Metadata),
-		e.metadata = maps.Clone(metadata)
+		fetchInProgress   bool
+	return c.fetch(func(p *pullConsumer) (MessageBatch, error) {
+		return p.fetchWithOpts(batch, allowMaxBytes, opts...)
+	})
+}
+
+func (c *orderedConsumer) fetch(f func(*pullConsumer) (MessageBatch, error)) (MessageBatch, error) {
+	if c.fetchInProgress {
+		c.Unlock()
+		return nil, ErrOrderedConsumerConcurrentRequests
+	}
+			c.Unlock()
+	c.fetchInProgress = true
+	var msgs MessageBatch
+	if err == nil {
+		msgs, err = f(c.currentConsumer)
+	c.Lock()
+	defer c.Unlock()
+	c.fetchInProgress = false
+	return c.fetch(func(p *pullConsumer) (MessageBatch, error) {
+		return p.FetchBytes(maxBytes, opts...)
+	})
+	return c.fetch(func(p *pullConsumer) (MessageBatch, error) {
+		return p.FetchNoWait(batch)
+	})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		Metadata: s.Config.Metadata,
-			Metadata:   e.Metadata,
-		e.metadata = metadata
+	if err != nil {
+		return nil, err
+	msgs, err := c.currentConsumer.fetchWithOpts(batch, allowMaxBytes, opts...)
+	c.Lock()
+	if c.consumerType == consumerTypeConsume {
+		c.Unlock()
+		return nil, ErrOrderConsumerUsedAsConsume
+	}
+	if c.runningFetch != nil {
+		if !c.runningFetch.closed() {
+			return nil, ErrOrderedConsumerConcurrentRequests
+		}
+		if c.runningFetch.sseq != 0 {
+			c.cursor.streamSeq = c.runningFetch.sseq
+		}
+	}
+	c.consumerType = consumerTypeFetch
+	sub := orderedSubscription{
+		consumer: c,
+		done:     make(chan struct{}),
+	}
+	c.subscription = &sub
+	c.Unlock()
+	err := c.reset()
+	if err != nil {
+		return nil, err
+	}
+	msgs, err := c.currentConsumer.FetchBytes(maxBytes, opts...)
+	if err != nil {
+		return nil, err
+	}
+	c.runningFetch = msgs.(*fetchResult)
+	return msgs, nil
+	if c.consumerType == consumerTypeConsume {
+		return nil, ErrOrderConsumerUsedAsConsume
+	}
+	if c.runningFetch != nil && !c.runningFetch.done {
+		return nil, ErrOrderedConsumerConcurrentRequests
+	}
+	c.consumerType = consumerTypeFetch
+	sub := orderedSubscription{
+		consumer: c,
+		done:     make(chan struct{}),
+	}
+	c.subscription = &sub
+	err := c.reset()
+	if err != nil {
+		return nil, err
+	}
+	return c.currentCon
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b431a077` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8afc2075` are properly handled with clean fallback behavior.

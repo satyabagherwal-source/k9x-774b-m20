@@ -4708,3 +4708,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-10-25T05:58:44.758Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `8e3eb7ad` | Multi-dimensional audit evidence | 2026-10-25T05:58:57.845Z |
 | `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-25T05:58:58.283Z |
+| `learn-github-facebook-folly` | `https://github.com/facebook/folly` | `eb860e7c` | Multi-dimensional audit evidence | 2026-10-25T06:06:13.315Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `6068694d` | Multi-dimensional audit evidence | 2026-10-25T06:06:20.267Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `0ee8584a` | Multi-dimensional audit evidence | 2026-10-25T06:06:25.521Z |
+| `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-25T06:08:11.161Z |

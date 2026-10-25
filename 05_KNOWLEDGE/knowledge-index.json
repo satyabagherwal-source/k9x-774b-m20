@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T05:58:58.236Z",
+  "last_updated": "2026-10-25T06:08:11.118Z",
   "total_verified_learnings": 1084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8903,8 +8903,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "6ca67f43",
-      "content_hash": "be26f657ff7a9f84c62cb884b739ecc7561d678e6694789eca500f8f2790729a",
+      "source_version": "0ee8584a",
+      "content_hash": "01d2a52b29b2ca4713980fea784318ed06f32a672adab63cbfc7da8b256c9c85",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -8942,6 +8942,11 @@
           "number": 3684,
           "title": "server): register key locks of optimistic transactions in cache mode (#8630)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4096,
+          "title": "transaction): replay dropped polls of blocked transactions (#8538)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8949,7 +8954,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:04:42.076Z",
+      "verified_at": "2026-10-25T06:06:25.479Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10666,8 +10671,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "1dc7fac0",
-      "content_hash": "085a287e2c906b20417e948aade048f3c023257699fdf4004e6621cbbb4bad28",
+      "source_version": "eb860e7c",
+      "content_hash": "e7255f10788615a79eac5c8f88abc3a22256ddd59807a82b5d81d5ff2d1fd7ba",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -10690,6 +10695,11 @@
           "number": 3622,
           "title": "Build folly's concurrency primitives on wasi, without emulations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4094,
+          "title": "exception_ptr_get_object under pointer authentication",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10697,7 +10707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:03:26.921Z",
+      "verified_at": "2026-10-25T06:06:13.273Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18669,7 +18679,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
       "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "bfdc84d1cac8c710abe945868f18f370a369a7229eb8ee90f13dafc21c6b5b94",
+      "content_hash": "cef9b87c00186dd8afd757faa30e5385abaa0f03ab9b9bcdc68acf1739444d0c",
       "dossier_path": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -18706,6 +18716,16 @@
         {
           "number": 3214,
           "title": "Explicit Segment Token Type Invariant for Pairwise BERT",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4097,
+          "title": "Cross-Encoder Binary Single-Logit Activation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4098,
+          "title": "Cross-Encoder Pair Truncation Strategy Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -19049,7 +19069,7 @@
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv42syia",
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv4g0ye2"
       ],
-      "verified_at": "2026-10-20T14:10:21.149Z",
+      "verified_at": "2026-10-25T06:08:11.111Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35800,8 +35820,8 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "d1936d74",
-      "content_hash": "51940044e8c2b4f6f6c44d41adb0b1bcf6acf1d3d7bfb58a163e1616fa1a4f3a",
+      "source_version": "6068694d",
+      "content_hash": "e705fdae239550e89763f5f342bb808ac77403a460fa301d387db7cd25779315",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
@@ -35824,6 +35844,11 @@
           "number": 3702,
           "title": "[FIXED] micro: service and endpoint metadata can be changed after it is set (#21",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4095,
+          "title": "[FIXED] Ordered consumer Fetch deadlock and FetchNoWait redelivery (#2211)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35831,7 +35856,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:56:56.010Z",
+      "verified_at": "2026-10-25T06:06:20.224Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119120,6 +119145,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T05:58:58.227Z"
+    },
+    "rule-4094": {
+      "learning_id": "rule-4094",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4094,
+      "title": "exception_ptr_get_object under pointer authentication",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "eb860e7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:06:13.273Z"
+    },
+    "rule-4095": {
+      "learning_id": "rule-4095",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4095,
+      "title": "[FIXED] Ordered consumer Fetch deadlock and FetchNoWait redelivery (#2211)",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "6068694d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:06:20.224Z"
+    },
+    "rule-4096": {
+      "learning_id": "rule-4096",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4096,
+      "title": "transaction): replay dropped polls of blocked transactions (#8538)",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "0ee8584a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:06:25.479Z"
+    },
+    "rule-4097": {
+      "learning_id": "rule-4097",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4097,
+      "title": "Cross-Encoder Binary Single-Logit Activation Invariant",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:08:11.111Z"
+    },
+    "rule-4098": {
+      "learning_id": "rule-4098",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4098,
+      "title": "Cross-Encoder Pair Truncation Strategy Invariant",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:08:11.111Z"
     }
   },
   "aliases": {

@@ -4701,3 +4701,7 @@
 | `CYCLE-20261025-34LV` | `2026-10-25T05:58:44.755Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4088, Rule 4089, Rule 4090` | Yes (`bdf9980e...`) |
 | `CYCLE-20261025-3EPF` | `2026-10-25T05:58:57.843Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4091` | Yes (`7558a29a...`) |
 | `CYCLE-20261025-3F1K` | `2026-10-25T05:58:58.280Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 618, Rule 4092, Rule 4093` | Yes (`d43e03a6...`) |
+| `CYCLE-20261025-CQPT` | `2026-10-25T06:06:13.313Z` | `facebook/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4094` | Yes (`e7255f10...`) |
+| `CYCLE-20261025-CW2W` | `2026-10-25T06:06:20.264Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4095` | Yes (`e705fdae...`) |
+| `CYCLE-20261025-D04V` | `2026-10-25T06:06:25.519Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4096` | Yes (`01d2a52b...`) |
+| `CYCLE-20261025-F9NB` | `2026-10-25T06:08:11.159Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4097, Rule 4098` | Yes (`cef9b87c...`) |

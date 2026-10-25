@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T05:58:58.291Z",
-  "total_cycles_completed": 4678,
-  "total_learnings_persisted": 4678,
-  "total_rules_promoted": 3965,
+  "last_updated": "2026-10-25T06:08:11.169Z",
+  "total_cycles_completed": 4682,
+  "total_learnings_persisted": 4682,
+  "total_rules_promoted": 3970,
   "history": [
-    {
-      "timestamp": "2026-10-23T08:39:42.589Z",
-      "repository": "milvus-io/bootcamp",
-      "learningId": "learn-github-milvus-io-bootcamp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T08:42:03.410Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T08:44:31.971Z",
-      "repository": "ionic-team/ionic-framework",
-      "learningId": "learn-github-ionic-team-ionic-framework",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T08:44:38.310Z",
-      "repository": "kucherenko/jscpd",
-      "learningId": "learn-github-kucherenko-jscpd",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T08:54:55.098Z",
       "repository": "aws/aws-cdk",
@@ -1403,6 +1375,34 @@
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
       "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:06:13.323Z",
+      "repository": "facebook/folly",
+      "learningId": "learn-github-facebook-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:06:20.274Z",
+      "repository": "nats-io/nats.go",
+      "learningId": "learn-github-nats-io-nats-go",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:06:25.529Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:08:11.169Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

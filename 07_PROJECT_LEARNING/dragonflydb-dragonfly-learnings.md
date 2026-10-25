@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `6ca67f43`  
+> **Source Version**: `0ee8584a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:04:41.836Z  
+> **Timestamp**: 2026-10-25T06:06:25.296Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:04:40.333Z  
+> **Harvest Timestamp**: 2026-10-25T06:06:24.839Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31816 stars
+- **Stars / Engagement**: 31817 stars
 
 ---
 
@@ -2300,11 +2300,11 @@ class Segment {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8647** (2026-10-23): **WAIT crashes the primary (SIGSEGV, exit 139) when a replica stream is throttled**
+  *Symptoms*: ### Bug: `WAIT` crashes the primary (SIGSEGV, exit 139) when a replica stream is throttled  If `WAIT` runs while a replica's journal stream is at or over `replication_stream_output_limit` (1 MB default), the primary logs `Should not preempt dispatcher` and segfaults. Under the same backlog, normal writes are throttled safely; only `WAIT` crashes.  ### Repro (~1 min, Docker)  ```bash docker network create df docker run -d --name m --network df -p 6379:6379 docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.2 --proactor_threads=2 docker run -d --name r --network df -p 6380:6379 docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.2 --proactor_threads=2 redis-cli -p 6380 REPLICAOF m 6379 redis-cli -p 6379 WAIT 1 1000 # -> 1 docker pause r # replica stops reading python3 - <<'PYEOF' & # ~200 MiB of pipelined SETs, replies not read import socket s = socket.create_connection(("127.0.0.1", 6379)); v = b"x" * (1 << 20) for i in range(200):     k = b"k%d" % i     s.sendall(b"*3\r\n$3\r\nSET\r\n$%d\r\n%s\r\n$%d\r\n%s\r\n" % (len(k), k, len(v), v)) PYEOF sleep 3 redis-cli -p 6379 WAIT 1 2000 # -> "Server closed the connection" docker inspect -f '{{.State.ExitCode}}' m # -> 139 ```  Without the final `WAIT`, the primary stays up, and replication recovers after `docker unpause r`.  ### Stack  ``` E scheduler.cc:206] Should not preempt dispatcher: util::fb2::detail::Scheduler::WaitUntil() util::fb2::EventCount::wait_until() dfly::JournalStreamer::ThrottleIfNeeded() dfly::journal::JournalSlice::C
+
 - **Issue #8629** (2026-10-21): **'*' is accepted as a stream ID outside XADD and the ID is then read uninitialized; XTRIM MINID * deletes the whole stream**
   *Symptoms*: **Describe the bug**  `ParseID` accepts `*` for any stream ID and returns success **without writing the output ID**, so the caller proceeds with whatever was on the stack. `*` is only meaningful as `XADD`'s auto-generated-ID request; every other command that takes a concrete ID should reject it, and every other implementation does.  The worst case destroys data: `XTRIM key MINID *` trims against an indeterminate threshold, which in practice removes every entry.  ``` XADD s 1-0 a 1       ->  "1-0" XADD s 2-0 b 2       ->  "2-0" XTRIM s MINID *      ->  (integer) 2     every reference: ERR Invalid stream ID ... XLEN s               ->  (integer) 0     the stream is empty ```  The same parse is reached from `XADD`'s own trim options, where it deletes the entry the command just acknowledged:  ``` XADD s MINID * 3-0 c 3   ->  "3-0"       the client is told 3-0 was added XLEN s                   ->  (integer) 0 and the stream, including 3-0, is empty ```  and from the read and write paths, where the indeterminate ID shows up as results that depend on whatever the uninitialized value happened to be:  ``` XRANGE s * +             ->  (empty array)      expected an error XRANGE s - *             ->  both entries       expected an error XREVRANGE s + *          ->  (empty array)      expected an error XDEL s *                 ->  (integer) 0        expected an error XREAD STREAMS s *        ->  (nil)              expected an error XSETID s *               ->  OK                 expecte
-
-- **Issue #8617** (2026-10-21): **XTRIM/XADD MINID accept the range specials '+' and '-'; MINID + deletes the whole stream**
-  *Symptoms*: **Describe the bug**  `MINID` takes a concrete stream ID as its threshold. `-` and `+` are range-only specials, meaningful as the bounds of `XRANGE`/`XREVRANGE`, and every reference rejects them wherever an exact ID is required. Dragonfly parses the `MINID` threshold in non-strict mode, so `+` becomes `18446744073709551615-18446744073709551615` and trims every entry in the stream:  ``` XADD s 1-0 a 1       ->  "1-0" XADD s 2-0 b 2       ->  "2-0" XTRIM s MINID +      ->  2        every reference: ERR Invalid stream ID specified as stream command argument XLEN s               ->  0 XRANGE s - +         ->  []       the stream is empty ```  `-` is accepted too (it becomes `0-0`, so the trim is a harmless no-op), `~` makes no difference, and the same parse is reached through `XADD`'s trim options - where it deletes the entry the command just created and acknowledged:  ``` XADD s 1-0 a 1; XADD s 2-0 b 2 XADD s MINID + 3-0 c 3   ->  "3-0"    the client is told entry 3-0 was added XLEN s                   ->  0        and the stream, including 3-0, is empty ```  A client that builds a `MINID` threshold from a variable and gets `"+"` into it - an unset value, a default, a sentinel from a config file - loses the stream rather than getting an error back.  Dragonfly already rejects `+` in `XSETID` and `XDEL`, the other places that take a concrete ID; only the trim threshold accepts it.  **To Reproduce**  Steps to reproduce the behavior:  1. Start Dragonfly 2.0.2: `docker run -d -p 6404
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2321,501 +2321,546 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3c04a61` (2026-10-21)
-**Commit Message**: fix(server): register key locks of optimistic transactions in cache mode (#8630)
+### Incident Patch 1: `3b946781` (2026-10-22)
+**Commit Message**: fix(transaction): replay dropped polls of blocked transactions (#8538)
 
-Since #7788 an uncontended single-shard transaction runs its callback without registering its
-key locks. Inline cache-mode eviction spares only keys found in the lock table, so a multi-key
-command could evict a key it had just written. For MSET the eviction journals DEL before the
-command itself, and the replica keeps the key forever.
+Polls dropped while running_tx_ is held were retried with trans=nullptr, which cannot
+reach blocked transactions outside the transaction queue and continuation. Lost hops
+could hang blocking clients in Release or fail the reachability DCHECK in Debug.
 
-In cache mode register the callback's key locks again, as before #7788. A command whose own key
-is the eviction victim now gets OOM, as it already does inside MULTI/EXEC.
+Retain these polls with owning transaction references and replay them through the existing
+scheduler. Already-disarmed polls are ignored. Drain only when running_tx_ is clear and
+poll_depth_ is zero, and release retained references during shard shutdown.
 
-Fixes #7925
+Add regression coverage for blocked transactions awakened on the same shard and another shard.
 
-**File**: `src/server/dragonfly_test.cc` (modified, +45/-0)
+Related: #8458, #8520
+
+**File**: `src/server/engine_shard.cc` (modified, +26/-6)
 ```diff
-@@ -39,6 +39,8 @@ ABSL_DECLARE_FLAG(uint32_t, lua_max_stall_ms);
- ABSL_DECLARE_FLAG(double, eviction_memory_budget_threshold);
- ABSL_DECLARE_FLAG(std::vector<std::string>, command_alias);
- ABSL_DECLARE_FLAG(bool, latency_tracking);
-+ABSL_DECLARE_FLAG(bool, enable_heartbeat_eviction);
-+ABSL_DECLARE_FLAG(double, table_growth_margin);
+@@ -4,6 +4,7 @@
  
- namespace dfly {
+ #include "server/engine_shard.h"
  
-@@ -645,6 +647,49 @@ TEST_F(DflyEngineTest, ZeroAllocationEviction) {
-   EXPECT_GT(evicted_count, 0) << "Zero-allocation entries should be evicted under memory pressure";
++#include <absl/cleanup/cleanup.h>
+ #include <absl/strings/str_cat.h>
+ #include <absl/strings/str_format.h>
+ 
+@@ -433,6 +434,7 @@ void EngineShard::Shutdown() {
+ 
+   queue_.Shutdown();
+   queue2_.Shutdown();
++  deferred_polls_.clear();  // release while the shard's thread-local state is still alive
+   DCHECK(!fiber_heartbeat_periodic_.IsJoinable());
+   DCHECK(!fiber_shard_handler_periodic_.IsJoinable());
+ }
+@@ -568,7 +570,12 @@ void EngineShard::PollExecution(const char* context, Transaction* trans) {
+     // Check that trans doesn't need processing or is guaranteed to be found via txq/continuation
+     DCHECK(trans == nullptr || !trans->DEBUG_IsArmedInShard(shard_id())  // tx was already disarmed
+            || trans->DEBUG_GetTxqPosInShard(shard_id()) != TxQueue::kEnd ||
+-           continuation_trans_ == trans);
++           continuation_trans_ == trans || trans->IsBlockedInShard(shard_id()));
++
++    // A repoll without trans does not reach blocked transactions, so their polls are kept.
++    // Duplicates are harmless: replaying a transaction that is no longer armed is a no-op.
++    if (trans && trans->IsBlockedInShard(shard_id()))
++      deferred_polls_.emplace_back(trans);
+     needs_repoll_ = true;
+     return;
+   }
+@@ -578,13 +585,26 @@ void EngineShard::PollExecution(const char* context, Transaction* trans) {
+ 
+   // Executing `trans` out of order above would not follow up with queue processing, so
+   // we need to issue another poll if we interruped another poll request.
+-  // Because it runs with trans=nullptr, it progresses only on the loop and does not need follow ups
+   PollExecutionIfDeferred();
  }
  
-+// In a full table each new key evicts the tail of the stash bucket chosen by its hash. A command
-+// must not evict its own keys: the eviction journals a DEL before the MSET itself, so the replica
-+// would keep the key.
-+TEST_F(SingleThreadDflyEngineTest, MSetDoesNotEvictItsOwnKeys) {
-+  absl::FlagSaver fs;
-+  SetFlag(&FLAGS_enable_heartbeat_eviction, false);
-+  SetFlag(&FLAGS_table_growth_margin, 1e9);  // the table can not grow
-+  shard_set->TEST_EnableCacheMode();
-+  max_memory_limit = 1ULL << 30;
-+  used_mem_current.fetch_add(900ULL << 20);
-+  PrimeTable* pt = pp_->at(0)->Await([] {
-+    auto& db_slice = namespaces->GetDefaultNamespace().GetDbSlice(0);
-+    db_slice.UpdateMemoryParams(100LL << 20, db_slice.bytes_per_object());
-+    return db_slice.GetTables(0);
-+  });
-+
-+  for (unsigned i = 0;; ++i) {
-+    auto [size, capacity, segments] = pp_->at(0)->Await([&] {
-+      return tuple{pt->size(), pt->capacity(), pt->GetSegmentCount()};
-+    });
-+    ASSERT_EQ(segments, 2u) << "the table grew";
-+    if (size == capacity)
+ void EngineShard::PollExecutionIfDeferred() {
+-  if (std::exchange(needs_repoll_, false))
+-    PollExecutionInternal("repoll", nullptr);
++  // Replayed polls can be interrupted again. A running callback or poll replays them when done.
++  // Any deferred poll can be replayed: a transaction awakened on this shard never meets an
++  // active continuation, since NotifyPending wakes none while one is active and the tx queue
++  // starts none while one is awakened. A stale entry is not armed anymore, so its replay is a
++  // no-op.
++  while (running_tx_ == nullptr && poll_depth_ == 0) {
++    if (!deferred_polls_.empty()) {
++      boost::intrusive_ptr<Transaction> trans = std::move(deferred_polls_.back());
++      deferred_polls_.pop_back();
++      PollExecutionInternal("repoll", trans.get());
++    } else if (std::exchange(needs_repoll_, false)) {
++      PollExecutionInternal("repoll", nullptr);
++    } else {
 +      break;
-+    Run({"set", StrCat("filler:", i), string(32, 'v')});
-+  }
-+
-+  // kSlotNum + 1 keys of the same segment and stash bucket: the last one evicts the first one.
-+  auto stash = [&](string_view key) {
-+    uint64_t hash = pt->DoHash(key);
-+    return pair{hash >> 63, hash % PrimeTable::Segment_t::kStashBucketNum};
-+  };
-+  vector<string> args = {"MSET"};
-+  for (unsigned i = 0; args.size() < 2 * PrimeTable::kSlotNum + 3; ++i) {
-+    if (string key = StrCat("k", i); stash(key) == stash("k0"))
-+      args.insert(args.end(), {key, "v"});
-+  }
-+
-+  size_t evicted = GetMetrics().db_stats[0].events.evicted_keys;
-+  Run(args);
-+  EXPECT_GE(GetMetrics().db_stats[0].events.evicted_keys - evicted, PrimeTable::kSlotNum);
-+  EXPECT_EQ(1, CheckedInt({"exists", "k0"}));
-+}
-+
- TEST_F(DflyEngineTest, PSubscribe) {
-   single_response_ = false;
-   auto resp = pp_->at(1)->Await([&] { return Run({"psubscribe", "a*", "b*"}); });
-```
-
-**File**: `src/server/transaction.cc` (modified, +3/-1)
-```diff
-@@ -1311,8 +1311,10 @@ bool Transaction::ScheduleInShard(EngineShard* shard, bool execute_optimistic) {
-     // lock: if we finish without preempting (the common case), no one will ever observe it; if
-     // we do preempt, whoever schedules next on this shard will lazily register it for us (see
-     // above), so the lock table stays accurate throughout.
-+    // In cache mode an insert can evict keys inline, and eviction spares only the keys found in
-+    // the lock table, so the callback must register its keys there.
-     bool skip_acquire = execute_optimistic && running == nullptr && shard_unlocked &&
--                        db_slice.IsLockFree(mode, lock_args);
-+                        !db_slice.IsCacheMode() && db_slice.IsLockFree(mode, lock_args);
-     if (!skip_acquire) {
-       // Slow path: either contended, or a callback is mid-flight on this shard, or we're not
-       // eligible for immediate execution. Acquire intent locks as usual - they're always
-```
-
----
-
-### Incident Patch 2: `dedeee1e` (2026-10-21)
-**Commit Message**: fix(stream): reject "*" and "<ms>-*" as explicit stream IDs outside XADD (#8634)
-
-ParseID accepted "*" without writing the ID, so every caller except XADD used an indeterminate
-value: XTRIM/XADD MINID * dropped entries, XSETID * and XGROUP CREATE/SETID * stored garbage
-that XINFO then exposed, and XREAD BLOCK 0 STREAMS key * never returned. "<ms>-*" was accepted
-everywhere as <ms>-0, and the MINID threshold accepted "+" and "-".
-
-- Accept "*" and "<ms>-*" only as XADD's own ID.
-- Parse the MINID threshold strictly.
-- Reply "Invalid stream ID specified as stream command argument" for an invalid MINID,
-  XGROUP CREATE/SETID or XAUTOCLAIM start ID (was "syntax error").
-
-Fixes #8629
-Fixes #8617
-
-**File**: `src/server/stream_family.cc` (modified, +19/-12)
-```diff
-@@ -516,7 +516,7 @@ nonstd::unexpected_type<ErrorReply> CreateSyntaxError(std::string_view message)
- }
- 
- struct ParsedStreamId {
--  streamID val;
-+  streamID val{};
- 
-   // Was an ID different than "ms-*" specified? for XADD only.
-   bool has_seq = false;
-@@ -732,13 +732,12 @@ inline const uint8_t* SafePtr(MutableSlice field) {
-                        : reinterpret_cast<const uint8_t*>(field.data());
- }
- 
--bool ParseID(string_view strid, bool strict, uint64_t missing_seq, ParsedStreamId* dest) {
-+// allow_auto_seq accepts XADD's "<ms>-*" form.
-+bool ParseID(string_view strid, bool strict, uint64_t missing_seq, bool allow_auto_seq,
-+             ParsedStreamId* dest) {
-   if (strid.empty() || strid.size() > 127)
-     return false;
- 
--  if (strid == "*")
--    return true;
--
-   dest->id_given = true;
-   dest->has_seq = true;
- 
-@@ -769,7 +768,7 @@ bool ParseID(string_view strid, bool strict, uint64_t missing_seq, ParsedStreamI
-     if (dash_pos + 1 == strid.size())
-       return false;
- 
--    if (dash_pos + 2 == strid.size() && strid[dash_pos + 1] == '*') {
-+    if (allow_auto_seq && dash_pos + 2 == strid.size() && strid[dash_pos + 1] == '*') {
-       result.seq = 0;
-       dest->has_seq = false;
-     } else if (!absl::SimpleAtoi(strid.substr(dash_pos + 1), &result.seq)) {
-@@ -782,6 +781,10 @@ bool ParseID(string_view strid, bool strict, uint64_t missing_seq, ParsedStreamI
-   return true;
- }
- 
-+bool ParseID(string_view strid, bool strict, uint64_t missing_seq, ParsedStreamId* dest) {
-+  return ParseID(strid, strict, missing_seq, false, dest);
-+}
-+
- enum class RangeBoundary { kStart, kEnd };
- bool ParseRangeId(string_view id, RangeBoundary type, RangeId* dest) {
-   if (id.empty())
-@@ -2486,6 +2489,8 @@ void CreateGroup(facade::CmdArgParser* parser, CommandContext* cmd_cntx) {
-   switch (result) {
-     case OpStatus::KEY_NOTFOUND:
-       return cmd_cntx->SendError(kXGroupKeyNotFound);
-+    case OpStatus::SYNTAX_ERR:
-+      return cmd_cntx->SendError(kInvalidStreamId, kSyntaxErrType);
-     default:
-       cmd_cntx->SendError(result);
-   }
-@@ -2598,6 +2603,8 @@ void SetId(facade::CmdArgParser* parser, CommandContext* cmd_cntx) {
-       return cmd_cntx->SendError(NoGroupError(key, gname));
-     case OpStatus::KEY_NOTFOUND:
-       return cmd_cntx->SendError(kXGroupKeyNotFound);
-+    case OpStatus::SYNTAX_ERR:
-+      return cmd_cntx->SendError(kInvalidStreamId, kSyntaxErrType);
-     default:
-       cmd_cntx->SendError(result);
-   }
-@@ -2674,8 +2681,8 @@ ParseResult<TrimOpts> ParseTrimOpts(bool max_len, CmdArgParser* parser) {
-     opts.length_or_id = parser->Next<uint32_t>();
-   } else {
-     ParsedStreamId parsed_id;
--    if (!ParseID(parser->Next(), false, 0, &parsed_id)) {
--      return CreateSyntaxError(kSyntaxErr);
-+    if (!ParseID(parser->Next(), true, 0, &parsed_id)) {
-+      return CreateSyntaxError(kInvalidStreamId);
-     }
- 
-     opts.length_or_id = parsed_id;  // trivial copy
-@@ -2694,8 +2701,8 @@ ParseResult<TrimOpts> ParseTrimOpts(bool max_len, CmdArgParser* parser) {
- 
- ParseResult<TrimOpts> ParseTrimOpts(CmdArgParser* parser) {
-   bool max_len = parser->Check("MAXLEN");
--  if (!max_len) {
--    parser->ExpectTag("MINID");
-+  if (!max_len && !parser->Check("MINID")) {
-+    return CreateSyntaxError(kSyntaxErr);
-   }
- 
-   auto res = ParseTrimOpts(max_len, parser);
-@@ -2730,7 +2737,7 @@ ParseResult<AddOpts> ParseAddOpts(CmdArgParser* parser) {
-     } else {
-       // It is StreamId
-       std::string_view id = parser->Next();
--      if (!ParseID(id, true, 0, &opts.parsed_id)) {
-+      if (id != "*" && !ParseID(id, true, 0, /*allow_auto_seq=*/true, &opts.parsed_id)) {
-         return CreateSyntaxError(kInvalidStreamId);
-       }
-       break;
-@@ -4230,7 +4237,7 @@ void CmdXAutoClaim(CmdArgParser parser, CommandContext* cmd_cntx) {
-   RangeId rs;
- 
-   if (!ParseRangeId(start, RangeBoundary::kStart, &rs)) {
--    return rb->SendError(kSyntaxErr);
-+    return rb->SendError(kInvalidStreamId, kSyntaxErrType);
-   }
- 
-   if (rs.exclude && StreamDecrID(&rs.parsed_id.val) != C_OK) {
-```
-
-**File**: `src/server/stream_family_test.cc` (modified, +18/-3)
-```diff
-@@ -1491,7 +1491,7 @@ TEST_F(StreamFamilyTest, XTrimInvalidArgs) {
-   resp = Run({"xtrim", "foo", "maxlen", "-1"});
-   EXPECT_THAT(resp, ErrArg("not an integer or out of range"));
-   resp = Run({"xtrim", "foo", "minid", "nan"});
--  EXPECT_THAT(resp, ErrArg("syntax error"));
-+  EXPECT_THAT(resp, ErrArg("Invalid stream ID"));
- 
-   // Limit with non-approx.
-   resp = Run({"xtrim", "foo", "maxlen", "2", "limit", "5"});
-@@ -1508,6 +1508,21 @@ TEST_F(StreamFamilyTest, XTrimInvalidArgs) {
-   EXPECT_THAT(resp, ErrArg("value is not an integer or out of range"));
- }
- 
-+TEST_F(StreamFamilyTest, SpecialTokensAsExplicitId) {
-+  Run({"xadd", "s", "1-0", "a", "1"});
-+  Run({"xadd", "s", "2-0", "b", "2"});
-+  Run({"xgroup", "create", "s", "g", "0"});
-+  EXPECT_THAT(Run({"xtrim", "s", "minid", "*"}), ErrArg("Invalid stream ID"));
-+  EXPECT_THAT(Run({"xtrim", "s", "minid", "+"}), ErrArg("Invalid stream ID"));
-+  EXPECT_THAT(Run({"xadd", "s", "minid", "+", "3-0", "c", "3"}), ErrArg("Invalid stream ID"));
-+  EXPECT_THAT(Run({"xsetid", "s", "*"}), ErrArg("Invalid stream ID"));
-+  EXPECT_THAT(Run({"xdel", "s", "1-*"}), ErrArg("Invalid stream ID"));
-+  EXPECT_THAT(Run({"xgroup", "create", "s", "g2", "*"}), ErrArg("Invalid stream ID"));
-+  EXPECT_THAT(Run({"xgroup", "setid", "s", "g", "*"}), ErrArg("Invalid stream ID"));
-+  EXPECT_THAT(Run({"xautoclaim", "s", "g", "c", "0", "*"}), ErrArg("Invalid stream ID"));
-+  EXPECT_THAT(Run({"xlen", "s"}), IntArg(2));
-+}
-+
- TEST_F(StreamFamilyTest, XTrimWrongSyntax) {
-   auto resp = Run({"xtrim", "-992", "k1 \"v1\" k2 \"v2 with spaces\" \"k3 with spaces\" \"v3\"",
-                    "list1 element1"});
-@@ -2425,7 +2440,7 @@ TEST_F(StreamFamilyTest, XInfoConsumersArityCrash) {
- 
- TEST_F(StreamFamilyTest, GroupCreateInvalidIdMemoryTracking) {
-   auto resp = Run({"xgroup", "create", "mystream", "mygroup", "notanumber", "MKSTREAM"});
--  EXPECT_THAT(resp, ErrArg("syntax error"));
-+  EXPECT_THAT(resp, ErrArg("Invalid stream ID"));
- 
-   // Verify the stream was not created (no orphan stream after the error)
-   resp = Run({"exists", "mystream"});
-@@ -2434,7 +2449,7 @@ TEST_F(StreamFamilyTest, GroupCreateInvalidIdMemoryTracking) {
- 
- TEST_F(StreamFamilyTest, XAddOnOrphanedStreamMemoryTracking) {
-   auto resp = Run({"xgroup", "create", "mystream", "mygroup", "invalid_id", "MKSTREAM"});
--  EXPECT_THAT(resp, ErrArg("syntax error"));
-+  EXPECT_THAT(resp, ErrArg("Invalid stream ID"));
- 
-   resp = Run({"xadd", "mystream", "0-0", "field", "value"});
-   EXPECT_THAT(resp, ErrArg("equal or smaller"));
-```
-
----
-
-### Incident Patch 3: `d32c05f4` (2026-10-22)
-**Commit Message**: fix: migration SYNC timeout (#8491)
-
-**File**: `src/server/journal/buffered_socket_writer.cc` (modified, +10/-0)
-```diff
-@@ -244,6 +244,16 @@ void BufferedSocketWriter::Throttle() {
-   }
- }
- 
-+void BufferedSocketWriter::AbortOnWriteTimeout(uint64_t timeout_usec) {
-+  if (in_flight_bytes_ == 0 || !cntx_->IsRunning() ||
-+      base::CycleClock::ToUsec(base::CycleClock::Now() - last_async_write_time_) < timeout_usec)
-+    return;
-+
-+  LOG(WARNING) << "Stream write timed out: " << FormatInternalState();
-+  LogTcpSocketDiagnostics(dest_);
-+  cntx_->ReportError("BufferedSocketWriter write operation timeout");
-+}
-+
- void BufferedSocketWriter::WaitForInflightToComplete(bool with_timeout) {
-   const auto start = chrono::steady_clock::now();
-   const auto max_timeout = start + chrono::milliseconds(absl::GetFlag(FLAGS_replication_timeout));
-```
-
-**File**: `src/server/journal/buffered_socket_writer.h` (modified, +4/-0)
-```diff
-@@ -49,6 +49,10 @@ class BufferedSocketWriter {
-   // Blocks the caller if the socket is not keeping up.
-   void Throttle();
- 
-+  // Reports a write timeout if the in-flight write has not completed within timeout_usec.
-+  // For producers that pause below output_limit() and therefore never block in Throttle().
-+  void AbortOnWriteTimeout(uint64_t timeout_usec);
-+
-   void WaitForInflightToComplete(bool with_timeout);
- 
-   // Wakes up fibers blocked in Throttle() or WaitForInflightToComplete().
-```
-
-**File**: `src/server/journal/journal_test.cc` (modified, +49/-0)
-```diff
-@@ -13,13 +13,16 @@
- #include "core/detail/gen_utils.h"
- #include "server/common.h"
- #include "server/engine_shard_set.h"
-+#include "server/journal/buffered_socket_writer.h"
- #include "server/journal/journal_slice.h"
- #include "server/journal/pending_buf.h"
- #include "server/journal/serializer.h"
- #include "server/journal/tx_executor.h"
- #include "server/journal/types.h"
- #include "server/serializer_commons.h"
-+#include "server/test_utils.h"
- #include "strings/human_readable.h"
-+#include "util/fibers/epoll_socket.h"
- #include "util/fibers/fibers.h"
- 
- ABSL_DECLARE_FLAG(uint32_t, shard_repl_backlog_time_ms);
-@@ -210,6 +213,52 @@ TEST(Journal, PendingBuf) {
-   ASSERT_EQ(pbuf.Size(), 0);
- }
- 
-+// Completes writes only on demand to simulate a stalled or slowly progressing receiver.
-+class ControlledSocket : public util::fb2::EpollSocket {
-+ public:
-+  void AsyncWriteSome(const iovec* v, uint32_t len, io::AsyncProgressCb cb) override {
-+    size_t bytes = 0;
-+    for (uint32_t i = 0; i < len; ++i)
-+      bytes += v[i].iov_len;
-+    completion_ = [cb = std::move(cb), bytes] { cb(bytes); };
-+  }
-+
-+  void Complete() {
-+    std::exchange(completion_, {})();
-+  }
-+
-+ private:
-+  std::function<void()> completion_;
-+};
-+
-+class BufferedSocketWriterTest : public BaseFamilyTest {};
-+
-+TEST_F(BufferedSocketWriterTest, AbortOnWriteTimeout) {
-+  pp_->at(0)->Await([] {
-+    constexpr uint64_t kTimeoutUsec = 500'000;
-+    ControlledSocket socket;
-+    ExecutionState cntx;
-+    BufferedSocketWriter writer(&cntx, {});
-+    writer.Start(&socket);
-+
-+    // Writes that keep completing do not time out, even past the timeout.
-+    writer.Write(string(512, 'x'));
-+    for (unsigned i = 0; i < 12; ++i) {
-+      ThisFiber::SleepFor(50ms);
-+      writer.Write(string(512, 'x'));
-+      socket.Complete();
-+      writer.AbortOnWriteTimeout(kTimeoutUsec);
 +    }
-+    EXPECT_TRUE(cntx.IsRunning());
++  }
+ }
+ 
+ void EngineShard::PollExecutionInternal(const char* context, Transaction* trans) {
+@@ -594,6 +614,8 @@ void EngineShard::PollExecutionInternal(const char* context, Transaction* trans)
+   DCHECK(running_tx_ == nullptr) << running_tx_->DebugId();
+   ShardId sid = shard_id();
+   stats_.poll_execution_total++;
++  ++poll_depth_;
++  absl::Cleanup poll_done = [this] { --poll_depth_; };
+ 
+   // If any of the following flags are present, we are guaranteed to run in this function:
+   // 1. AWAKED_Q -> Blocking transactions are executed immediately after waking up, they don't
+@@ -628,7 +650,6 @@ void EngineShard::PollExecutionInternal(const char* context, Transaction* trans)
+   }
+ 
+   bool update_stats = false;
+-  ++poll_concurrent_factor_;
+ 
+   auto run = [this, &update_stats](Transaction* tx, bool allow_removal) -> bool /* concluding */ {
+     update_stats = true;
+@@ -711,7 +732,6 @@ void EngineShard::PollExecutionInternal(const char* context, Transaction* trans)
+       LOG_IF(DFATAL, trans->DEBUG_GetTxqPosInShard(sid) == TxQueue::kEnd);
+     }
+   }
+-  --poll_concurrent_factor_;
+   if (update_stats) {
+     CacheStats();
+   }
+```
+
+**File**: `src/server/engine_shard.h` (modified, +8/-1)
+```diff
+@@ -4,7 +4,10 @@
+ 
+ #pragma once
+ 
++#include <absl/container/inlined_vector.h>
 +
-+    // A write that stays in flight longer than the timeout fails the stream.
-+    ThisFiber::SleepFor(600ms);
-+    writer.AbortOnWriteTimeout(kTimeoutUsec);
-+    EXPECT_EQ(cntx.GetError().Format(), "BufferedSocketWriter write operation timeout");
-+    socket.Complete();
+ #include <array>
++#include <boost/smart_ptr/intrusive_ptr.hpp>
+ 
+ #include "core/intent_lock.h"
+ #include "core/mi_memory_resource.h"
+@@ -365,8 +368,12 @@ class EngineShard {
+   Transaction* running_tx_ = nullptr;
+   bool needs_repoll_ = false;  // set when running_tx_ interrupted a PollExecution call
+ 
++  // Dropped polls of blocked transactions, which a repoll without trans can't reach.
++  // Owning: a stale entry can outlive its hop.
++  absl::InlinedVector<boost::intrusive_ptr<Transaction>, 4> deferred_polls_;
++
+   std::string continuation_debug_id_;
+-  unsigned poll_concurrent_factor_ = 0;
++  unsigned poll_depth_ = 0;  // PollExecutionInternal calls in progress
+ 
+   IntentLock shard_lock_;
+ 
+```
+
+**File**: `src/server/transaction.cc` (modified, +1/-1)
+```diff
+@@ -799,7 +799,7 @@ void Transaction::ScheduleInternal() {
+       run_barrier_.Dec();
+ 
+       // If the optimistic run above held running_tx_ and deferred any poll on this shard,
+-      // drain it now. Uses the same needs_repoll_ mechanism as PollExecution's re-drive loop.
++      // drain it now, like PollExecution does after its own run.
+       EngineShard::tlocal()->PollExecutionIfDeferred();
+       break;
+     }
+```
+
+**File**: `src/server/transaction.h` (modified, +6/-0)
+```diff
+@@ -295,6 +295,12 @@ class Transaction {
+   // Returns if the transaction spans this shard. Safe only when the transaction is armed.
+   bool IsActive(ShardId sid) const;
+ 
++  // Whether the transaction is armed on this shard while blocked (suspended or awakened).
++  bool IsBlockedInShard(ShardId sid) const {
++    const auto& sd = shard_data_[SidToId(sid)];
++    return sd.is_armed.load(std::memory_order_acquire) && (sd.local_mask & WAS_SUSPENDED);
++  }
++
+   // Whether shard sid woke this blocking transaction.
+   bool IsWokenOn(ShardId sid) const;
+ 
+```
+
+**File**: `src/server/transaction_test.cc` (modified, +142/-0)
+```diff
+@@ -98,6 +98,16 @@ class TransactionTest : public Test {
+     OnShard(kNumThreads - 1, [d] { ThisFiber::SleepFor(d); });
+   }
+ 
++  // Whether the poll of `tx`, coordinated from proactor `coord`, ran on shard `sid` and was
++  // dropped, i.e. `tx` is still armed after the shard queue fiber processed the poll.
++  bool PollDropped(Transaction* tx, unsigned sid, unsigned coord) {
++    if (!AwaitOnShard(sid, [tx, sid] { return tx->DEBUG_IsArmedInShard(sid); }))
++      return false;
++    OnShard(coord, [] {});         // the coordinator has queued the poll
++    shard_set->Await(sid, [] {});  // and the shard queue has run it
++    return OnShard(sid, [tx, sid] { return tx->DEBUG_IsArmedInShard(sid); });
++  }
++
+   // Handle for a transaction parked mid-callback while holding running_tx_.
+   struct InlineHold {
+     fb2::Done parked, release;
+@@ -494,6 +504,138 @@ TEST_F(TransactionTest, SingleHopAsyncDrainsDeferredPoll) {
+   ASSERT_TRUE(v_ran) << "V was stranded: the poll deferred by Z's async hop was never replayed";
+ }
+ 
++// T is blocked on shards 0 and 2 and woken on shard 2. Its action hop poll on shard 0 is dropped
++// while X, run by a drain on a connection fiber, holds running_tx_. A repoll without trans does
++// not reach T, so the drain must replay the poll with T.
++TEST_F(TransactionTest, BlockedTxPollDroppedDuringReplay) {
++  ASSERT_EQ(0u, Shard("a", shard_set->size()));
++  ASSERT_EQ(0u, Shard("x", shard_set->size()));
++  ASSERT_EQ(2u, Shard("z", shard_set->size()));
++
++  static CommandId cid_t{"tx_test_rp_t", 0, -1, 1, -1, acl::NONE};
++  static CommandId cid_h{"tx_test_rp_h", 0, -1, 1, -1, acl::NONE};
++  static CommandId cid_x{"tx_test_rp_x", 0, -1, 1, -1, acl::NONE};
++
++  auto tx_t = MakeTx(&cid_t, {"x", "z"});
++  auto tx_h = MakeTx(&cid_h, {"a"});
++  auto tx_x = MakeTx(&cid_x, {"a"});
++
++  // T: first hop, then it watches once t_watch fires, then its action hop.
++  fb2::Done t_first_hop, t_watch, t_done;
++  auto fb_t = pp_->at(1)->LaunchFiber([&] {
++    tx_t->Execute(Noop, false);
++    t_first_hop.Notify();
++    t_watch.Wait();
++    auto ready = [](EngineShard*, const DbContext&, std::string_view) {
++      return KeyReadyResult::kReady;
++    };
++    facade::ConnectionContext cntx{nullptr};
++    auto tp = Transaction::time_point::max();
++    ASSERT_EQ(OpStatus::OK, tx_t->WaitOnWatch(tp, Transaction::kShardArgs, ready, &cntx));
++    tx_t->Execute(Noop, true);
++    t_done.Notify();
 +  });
++  ASSERT_TRUE(t_first_hop.WaitFor(5s));
++
++  // H parks inline holding running_tx_: the polls of T's watch hop and X's first hop drop.
++  auto h = ParkHoldingRunningTx(0, tx_h.get());
++  ASSERT_TRUE(h->WaitParked());
++  t_watch.Notify();
++  ASSERT_TRUE(PollDropped(tx_t.get(), 0, 1));
++
++  fb2::Done x_parked, x_release, x_last;
++  auto fb_x = pp_->at(1)->LaunchFiber([&] {
++    tx_x->Execute(
++        [&](Transaction*, EngineShard*) {
++          x_parked.Notify();
++          x_release.Wait();
++          return OpStatus::OK;
++        },
++        false);
++    x_last.Wait();
++    tx_x->Execute(Noop, true);
++  });
++  ASSERT_TRUE(PollDropped(tx_x.get(), 0, 1));
++
++  // H's drain runs T's watch hop and parks X. T's action hop poll drops and X stays the
++  // continuation.
++  h->release.Notify();
++  ASSERT_TRUE(x_parked.WaitFor(5s));
++  OnShard(2, [] {
++    auto* bc = namespaces->GetDefaultNamespace().GetBlockingController(2);
++    bc->Awaken(0, "z");
++    bc->NotifyPending();
++  });
++  ASSERT_TRUE(PollDropped(tx_t.get(), 0, 1));
++  x_release.Notify();
++  h->fiber.Join();
++
++  bool t_ran = t_done.WaitFor(5s);
++  if (!t_ran)  // unstick T so the test fails instead of hanging
++    shard_set->Await(0, [&] { EngineShard::tlocal()->PollExecution("test_unstick", tx_t.get()); });
++  fb_t.Join();
++  EXPECT_TRUE(t_ran) << "T was stranded on shard 0";
++  x_last.Notify();
++  fb_x.Join();
 +}
 +
- void AddSetRecord(JournalSlice* slice, string_view value) {
-   array<string_view, 2> args{"key", value};
-   slice->AddLogRecord(
-```
-
-**File**: `src/server/journal/streamer.cc` (modified, +6/-0)
-```diff
-@@ -32,6 +32,8 @@ ABSL_FLAG(float, migration_buckets_cpu_budget, 0.2,
- ABSL_FLAG(uint32_t, replication_dispatch_threshold, 1500,
-           "Number of bytes to aggregate before replication");
- 
-+ABSL_DECLARE_FLAG(uint32_t, replication_timeout);
++// T is blocked on shard 0 and woken there, but its action hop poll is dropped because a fiber
++// other than the shard queue fiber holds running_tx_, e.g. a drain replaying another blocked
++// transaction. The holder's drain must replay the poll with T. Until T runs, its shard's
++// HasAwakedTransaction() also stops the tx queue.
++TEST_F(TransactionTest, AwakenedTxPollDroppedWhileRunning) {
++  ASSERT_EQ(0u, Shard("x", shard_set->size()));
 +
- namespace dfly {
- using namespace util;
- using namespace journal;
-@@ -179,6 +181,7 @@ SlotMigrationStreamer::SlotMigrationStreamer(DbSlice* slice, cluster::SlotSet sl
-   migration_buckets_serialization_threshold_cached =
-       absl::GetFlag(FLAGS_migration_buckets_serialization_threshold);
-   migration_buckets_sleep_usec_cached = absl::GetFlag(FLAGS_migration_buckets_sleep_usec);
-+  replication_timeout_usec_ = absl::GetFlag(FLAGS_replication_timeout) * 1000ULL;
- 
-   cmd_serializer_ = std::make_unique<CmdSerializer>(
-       [&](std::string s) {
-@@ -249,6 +252,9 @@ void SlotMigrationStreamer::PaceTraversal(bool done) {
- 
-   while (base_cntx_->IsRunning() && should_stall()) {
-     ThisFiber::SleepFor(300us);
-+    // Pacing stops below output_limit, where Throttle() would detect a stuck socket. Checked
-+    // after sleeping, so completions of already finished writes have been processed.
-+    writer_.AbortOnWriteTimeout(replication_timeout_usec_);
- 
-     // We have a design bug in RealTimeAggregator that resets it measurements only when
-     // the next sample is taken. So we add this sample to ensure cpu_aggregator_
++  static CommandId cid_t{"tx_test_aw_t", 0, -1, 1, -1, acl::NONE};
++  static CommandId cid_h{"tx_test_aw_h", 0, -1, 1, -1, acl::NONE};
++
++  auto tx_t = MakeTx(&cid_t, {"x"});
++  auto tx_h = MakeTx(&cid_h, {"a"});  // only stands for the holder of running_tx_
++
++  fb2::Done t_done;
++  auto fb_t = pp_->at(1)->LaunchFiber([&] {
++    tx_t->Execute(Noop, false);
++    auto ready = [](EngineShard*, const DbContext&, std::string_view) {
++      return KeyReadyResult::kReady;
++    };
++    facade::ConnectionContext cntx{nullptr};
++    auto tp = Transaction::time_point::max();
++    ASSERT_EQ(OpStatus::OK, tx_t->WaitOnWatch(tp, Transaction::kShardArgs, ready, &cntx));
++    tx_t->Execute(Noop, true);
++    t_done.Notify();
++ 
 ```
 
-**File**: `src/server/journal/streamer.h` (modified, +1/-0)
+---
+
+### Incident Patch 2: `c22075c3` (2026-10-23)
+**Commit Message**: chore(server): hold running_tx_ in DEBUG POPULATE instead of RunSquashedMultiCb (#8658)
+
+RunSquashedMultiCb took running_tx_ for NON_ATOMIC stubs, which pipeline squashing used when
+#7459 added it. Since #7784 pipelines squash with SHARD_LOCAL transactions, so DEBUG POPULATE
+is the only NON_ATOMIC stub left.
+
+- DoPopulateBatch holds running_tx_ for its batch and drains deferred polls when it releases it,
+  like the other holders.
+- RunSquashedMultiCb no longer sets running_tx_; it DCHECKs that the caller holds it.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/server/debugcmd.cc` (modified, +10/-0)
 ```diff
-@@ -118,6 +118,7 @@ class SlotMigrationStreamer : public journal::JournalConsumerInterface, public S
-   // to share across fibers because ShouldSerialize does not preempt.
-   mutable std::string key_buffer_;
-   uint32_t buckets_since_sleep_ = 0;  // non-empty buckets traversed since the last sleep
-+  uint64_t replication_timeout_usec_ = 0;
-   LSN last_lsn_writen_ = 0;
-   uint32_t journal_cb_id_{0};
+@@ -1654,6 +1654,16 @@ void DebugCmd::DoPopulateBatch(const PopulateOptions& options, const PopulateBat
+     sf_.service().InvokeCmd(args, &cmd_cntx);
+   };
+ 
++  // The stub runs its commands without a parent hop, so hold running_tx_ for it like RunCallback
++  // does, and replay the polls dropped meanwhile once done.
++  EngineShard* shard = EngineShard::tlocal();
++  DCHECK(shard->running_tx() == nullptr);
++  shard->set_running_tx(stub_tx.get());
++  absl::Cleanup release_shard = [shard] {
++    shard->set_running_tx(nullptr);
++    shard->PollExecutionIfDeferred();
++  };
++
+   for (unsigned i = 0; i < batch.sz; ++i) {
+     string key = StrCat(options.prefix, ":", batch.index[i]);
+     uint32_t elements_left = options.elements;
+```
+
+**File**: `src/server/transaction.cc` (modified, +3/-11)
+```diff
+@@ -1537,14 +1537,9 @@ OpStatus Transaction::RunSquashedMultiCb(RunnableType cb) {
+   auto* shard = EngineShard::tlocal();
+   auto& db_slice = GetDbSlice(shard->shard_id());
+ 
+-  // In NON_ATOMIC mode SquashedHopCb is invoked directly, without a wrapping RunCallback,
+-  // so this stub owns the running_tx_ slot. In atomic modes (LOCK_AHEAD / GLOBAL) the
+-  // parent transaction's RunCallback has already set running_tx_ to itself.
+-  bool owns_running_tx = multi_->mode == NON_ATOMIC;
+-  if (owns_running_tx) {
+-    DCHECK(shard->running_tx() == nullptr);
+-    shard->set_running_tx(this);
+-  }
++  // The caller holds running_tx_ while stubs run: the parent transaction's RunCallback, or
++  // DEBUG POPULATE, which runs its stub without a parent hop.
++  DCHECK(shard->running_tx() != nullptr);
+ 
+   // An escaping exception would skip the cleanup below and leave the EXEC reply incomplete.
+   RunnableResult result;
+@@ -1562,9 +1557,6 @@ OpStatus Transaction::RunSquashedMultiCb(RunnableType cb) {
+   LogAutoJournalOnShard(shard, result);
+   MaybeInvokeTrackingCb();
+ 
+-  if (owns_running_tx)
+-    shard->set_running_tx(nullptr);
+-
+   DCHECK_EQ(result.flags, 0);  // if it's sophisticated, we shouldn't squash it
+   return result;
+ }
+```
+
+---
+
+### Incident Patch 3: `d8cd94ba` (2026-10-23)
+**Commit Message**: Report data size of tiered values in DEBUG OBJHIST (#8655)
+
+feat(server): report data size of tiered values in DEBUG OBJHIST
+
+Tiered values have zero malloc size, so OBJHIST gave no insight into their size
+distribution. Add a data size histogram that works for both in-memory and tiered
+values, and a histogram of serialized sizes for tiered values. Tiered values are
+handled before inspecting in-memory structures, which also fixes a crash on
+offloaded hashes.
+
+**File**: `src/server/debugcmd.cc` (modified, +45/-19)
+```diff
+@@ -153,50 +153,61 @@ const CommandId* GeneratePopulateCommand(string_view type, std::string key, size
+ 
+ struct ObjHist {
+   base::Histogram key_len;
+-  base::Histogram val_len;    // overall malloc-used size of the value.
+-  base::Histogram card;       // for sets, hashmaps etc - it's number of entries.
+-  base::Histogram entry_len;  // for sets, hashmaps etc - it's the length of each entry.
+-  base::Histogram listpack;   // for listpack encodings - the malloc used of the listpack.
++  base::Histogram malloc_used;  // overall malloc-used size of the value.
++  base::Histogram data_len;     // logical size of the value data, both for in-memory and tiered.
++  base::Histogram tiered_len;   // serialized size of the tiered (external) values.
++  base::Histogram card;         // for sets, hashmaps etc - it's number of entries.
++  base::Histogram entry_len;    // for sets, hashmaps etc - it's the length of each entry.
++  base::Histogram listpack;     // for listpack encodings - the malloc used of the listpack.
  };
+ 
+ // No yield: runs inside Traverse, which holds a raw segment pointer a yield could free.
+ void AddObjHist(PrimeIterator it, ObjHist* hist) {
+   using namespace container_utils;
+   const PrimeValue& pv = it->second;
+-  size_t val_len = 0;
++  size_t malloc_used = 0;
++  size_t data_len = 0;
+ 
+   auto per_entry_cb = [&](ContainerEntry entry) {
+     if (entry.IsString()) {
+-      val_len += entry.size();
++      data_len += entry.size();
+       hist->entry_len.Add(entry.size());
+     } else {
+-      val_len += 8;  // size of long
++      data_len += 8;  // size of long
+     }
+     return true;
+   };
+ 
+   hist->key_len.Add(it->first.MallocUsed());
+ 
+-  if (pv.ObjType() == OBJ_LIST) {
++  // Tiered values have no in-memory representation to inspect, so we only know their size.
++  if (pv.IsExternal()) {
++    size_t serialized_size = pv.GetExternalSlice().second;
++    hist->tiered_len.Add(serialized_size);
++    hist->data_len.Add(pv.ObjType() == OBJ_STRING ? pv.Size() : serialized_size);
++    return;
++  }
++
++  if (pv.ObjType() == OBJ_STRING) {
++    data_len = pv.Size();
++  } else if (pv.ObjType() == OBJ_LIST) {
+     IterateList(pv, per_entry_cb, 0, SIZE_MAX, /*allow_yield=*/false);
+     if (pv.Encoding() == kEncodingQL2) {
+       const QList* ql = static_cast<QList*>(pv.RObjPtr());
+-      val_len = ql->MallocUsed(true);
++      malloc_used = ql->MallocUsed(true);
+     } else if (pv.Encoding() == kEncodingListPack) {
+-      val_len = pv.MallocUsed();
+-      hist->listpack.Add(val_len);
++      malloc_used = pv.MallocUsed();
++      hist->listpack.Add(malloc_used);
+     }
+   } else if (pv.ObjType() == OBJ_ZSET) {
+     IterateSortedSet(
+         pv, [&](ContainerEntry entry, double) { return per_entry_cb(entry); }, 0, SIZE_MAX,
+         /*reverse=*/false, /*use_score=*/false, /*allow_yield=*/false);
+-    val_len = 0;  // reset - will be calculated below.
+     if (pv.Encoding() == OBJ_ENCODING_LISTPACK) {
+       hist->listpack.Add(pv.MallocUsed());
+     }
+   } else if (pv.ObjType() == OBJ_SET) {
+     IterateSet(pv, per_entry_cb, /*allow_yield=*/false);
+-    val_len = 0;  // reset - will be calculated below.
+     if (pv.Encoding() == kEncodingIntSet) {
+       hist->listpack.Add(pv.MallocUsed());
+     }
+@@ -205,6 +216,7 @@ void AddObjHist(PrimeIterator it, ObjHist* hist) {
+         pv,
+         [&](ContainerEntry key, ContainerEntry value) {
+           hist->entry_len.Add(key.size() + value.size());
++          data_len += key.size() + value.size();
+           return true;
+         },
+         /*allow_yield=*/false);
+@@ -214,12 +226,16 @@ void AddObjHist(PrimeIterator it, ObjHist* hist) {
+   }
+   // TODO: streams
+ 
+-  if (val_len == 0) {
++  if (malloc_used == 0) {
+     // Fallback
+-    val_len = pv.MallocUsed(true);
++    malloc_used = pv.MallocUsed(true);
+   }
+ 
+-  hist->val_len.Add(val_len);
++  hist->malloc_used.Add(malloc_used);
++
++  // TODO: data size for json and streams.
++  if (pv.ObjType() != OBJ_JSON && pv.ObjType() != OBJ_STREAM)
++    hist->data_len.Add(data_len);
+ 
+   if (pv.ObjType() != OBJ_STRING && pv.ObjType() != OBJ_JSON)
+     hist->card.Add(pv.Size());
+@@ -236,7 +252,9 @@ void MergeObjHistMap(ObjHistMap&& src, ObjHistMap* dest) {
+       dest_hist = std::move(src_hist);
+     } else {
+       dest_hist->key_len.Merge(src_hist->key_len);
+-      dest_hist->val_len.Merge(src_hist->val_len);
++      dest_hist->malloc_used.Merge(src_hist->malloc_used);
++      dest_hist->data_len.Merge(src_hist->data_len);
++      dest_hist->tiered_len.Merge(src_hist->tiered_len);
+       dest_hist->card.Merge(src_hist->card);
+       dest_hist->entry_len.Merge(src_hist->entry_len);
+       dest_hist->listpack.Merge(src_hist->listpack);
+@@ -572,7 +590,7 @@ void DebugCmd::Run(facade::CmdArgParser parser, CommandContext* cmd_cntx) {
+         "    ELEMENTS specifies how many sub elements if relevant (like entries in a list / set).",
+         "    EXPIRE specifies key expire ttl range.",
+         "OBJHIST",
+-        "    Prints histogram of o
 ```
 
-**File**: `tests/dragonfly/cluster_migration_resilience_test.py` (modified, +19/-14)
+**File**: `src/server/tiered_storage_test.cc` (modified, +30/-0)
 ```diff
-@@ -389,8 +389,11 @@ async def test_cluster_memory_consumption_migration(df_factory: DflyInstanceFact
+@@ -980,6 +980,36 @@ TEST_F(PureDiskTSTest, Dump) {
+   EXPECT_EQ(resp, "OK");
+ }
  
- @pytest.mark.large
- @pytest.mark.exclude_epoll
-+@pytest.mark.parametrize("background_writes", [True, False], ids=["with_writes", "without_writes"])
- @dfly_args({"proactor_threads": 4, "cluster_mode": "yes", "migration_buckets_cpu_budget": 1})
--async def test_migration_timeout_on_sync(df_factory: DflyInstanceFactory, df_seeder_factory):
-+async def test_migration_timeout_on_sync(
-+    df_factory: DflyInstanceFactory, df_seeder_factory, background_writes
-+):
-     # Timeout set to 3 seconds because we must first saturate the socket before we get the timeout
-     instances, nodes = await create_cluster(
-         df_factory,
-@@ -407,9 +410,11 @@ async def test_migration_timeout_on_sync(df_factory: DflyInstanceFactory, df_see
- 
-     await DebugPopulateSeeder(key_target=300000, data_size=1000).run(nodes[0].client)
- 
--    # we use this seeder to saturate the pending_buf_ in streamer
--    seeder = df_seeder_factory.create(port=nodes[0].instance.port, cluster_mode=True)
--    fill_task = asyncio.create_task(seeder.run())
-+    # Without background writes, snapshot pacing must detect a stalled receiver below the
-+    # full-buffer threshold. With writes, other producers can fill the buffer completely.
-+    if background_writes:
-+        seeder = df_seeder_factory.create(port=nodes[0].instance.port, cluster_mode=True)
-+        fill_task = asyncio.create_task(seeder.run())
- 
-     logging.debug("Start migration")
-     nodes[0].migrations.append(
-@@ -424,16 +429,16 @@ async def test_migration_timeout_on_sync(df_factory: DflyInstanceFactory, df_see
-     logging.debug("debug migration pause")
-     await nodes[1].client.execute_command("debug migration pause")
- 
--    await wait_for_error(
--        nodes[0].admin_client, nodes[1].id, "BufferedSocketWriter write operation timeout", 30
--    )
--
--    logging.debug("debug migration resume")
--    await nodes[1].client.execute_command("debug migration resume")
--
--    # Stop seeder
--    seeder.stop()
--    await fill_task
-+    try:
-+        await wait_for_error(
-+            nodes[0].admin_client, nodes[1].id, "BufferedSocketWriter write operation timeout", 30
-+        )
-+    finally:
-+        logging.debug("debug migration resume")
-+        await nodes[1].client.execute_command("debug migration resume")
-+        if background_writes:
-+            seeder.stop()
-+            await fill_task
- 
-     await wait_for_status(nodes[0].admin_client, nodes[1].id, "FINISHED", 300)
-     await wait_for_status(nodes[1].admin_client, nodes[0].id, "FINISHED")
++TEST_F(PureDiskTSTest, DebugObjHist) {
++  SetFlag(&FLAGS_tiered_experimental_hash_support, true);
++  UpdateFromFlags();
++  const int kNum = 10;
++  for (size_t i = 0; i < kNum; i++) {
++    Run({"SET", absl::StrCat("k", i), BuildString(3000)});
++  }
++  ExpectConditionWithinTimeout([&] { return GetMetrics().db_stats[0].tiered_entries == kNum; });
++
++  auto resp = Run({"DEBUG", "OBJHIST"});
++  string hist = resp.GetString();
++  EXPECT_THAT(hist, HasSubstr("Values - Data size (in-memory and tiered):\n"
++                              "Count: 10 Average: 3000.0000"));
++  EXPECT_THAT(hist, HasSubstr("Tiered values - Serialized size:\nCount: 10 "));
++
++  // Offloaded hashes must be reported without touching their (absent) in-memory representation.
++  Run({"FLUSHALL"});
++  for (size_t i = 0; i < 100; ++i) {
++    Run({"HSET", absl::StrCat("hash:", i), "field-a", BuildString(40, 'a'), "field-b",
++         BuildString(40, 'b')});
++  }
++  ExpectConditionWithinTimeout([&] { return GetMetrics().db_stats[0].tiered_entries > 0; });
++
++  resp = Run({"DEBUG", "OBJHIST"});
++  hist = resp.GetString();
++  EXPECT_THAT(hist, HasSubstr("OBJECT:hash"));
++  EXPECT_THAT(hist, HasSubstr("Values - Data size (in-memory and tiered):\nCount: 100 "));
++  EXPECT_THAT(hist, HasSubstr("Tiered values - Serialized size:\n"));
++}
++
+ TEST_F(PureDiskTSTest, OffloadedStringSnapshotPreservesMemcacheFlags) {
+   SetFlag(&FLAGS_tiered_upload_threshold, 1.0f);
+   InitWithDbFilename();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8652** (2026-10-22): fix: SADD return value (@BorysTheDev)
-- **PR #8651** (2026-10-22): feat(search): allow several attributes on one JSON path (@vyavdoshenko)
-- **PR #8644** (closed): fuzz: retry crash triage and keep the fuzz run's fatal message (@vyavdoshenko)
-- **PR #8643** (2026-10-22): feat: add slot stats for several databases (@BorysTheDev)
-- **PR #8642** (2026-10-21): perf(sidekiq): map private and public queue to same shard (@kostasrim)
-- **PR #8639** (2026-10-21): refactor: improve search negate operation (@BorysTheDev)
+- **PR #8675** (2026-10-24): fix(search): build sort_indices.cc against libc++. (macOS fix) (@vyavdoshenko)
+- **PR #8665** (2026-10-23): fix: wait command preempts in atomic section (@kostasrim)
+- **PR #8664** (2026-10-23): fix(search): order SORTBY ties by key and rank missing values last (@vyavdoshenko)
+- **PR #8662** (closed): refactor(engine_shard): replay deferred polls without the continuation filter (@romange)
+- **PR #8659** (2026-10-23): fix(server): hide CONFIG SET values and ACL SETUSER tokens in logs and errors (@vyavdoshenko)
+- **PR #8658** (2026-10-23): chore(server): hold running_tx_ in DEBUG POPULATE instead of RunSquashedMultiCb (@romange)
 
 ---
 
@@ -2835,56 +2880,52 @@ Fixes #8617
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): register key locks of optimistic transactions in cache mode (#8630)
+## X. transaction): replay dropped polls of blocked transactions (#8538)
 
 **RULE**:
-When implementing operations in `src/server/dragonfly_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/engine_shard.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3c04a61`: server): register key locks of optimistic transactions in cache mode (#8630). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b946781`: transaction): replay dropped polls of blocked transactions (#8538). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/dragonfly_test.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/engine_shard.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-ABSL_DECLARE_FLAG(bool, enable_heartbeat_eviction);
-ABSL_DECLARE_FLAG(double, table_growth_margin);
-// In a full table each new key evicts the tail of the stash bucket chosen by its hash. A command
-// must not evict its own keys: the eviction journals a DEL before the MSET itself, so the replica
-// would keep the key.
-TEST_F(SingleThreadDflyEngineTest, MSetDoesNotEvictItsOwnKeys) {
-  absl::FlagSaver fs;
-  SetFlag(&FLAGS_enable_heartbeat_eviction, false);
-  SetFlag(&FLAGS_table_growth_margin, 1e9);  // the table can not grow
-  shard_set->TEST_EnableCacheMode();
-  max_memory_limit = 1ULL << 30;
-  used_mem_current.fetch_add(900ULL << 20);
-  PrimeTable* pt = pp_->at(0)->Await([] {
-    auto& db_slice = namespaces->GetDefaultNamespace().GetDbSlice(0);
-    db_slice.UpdateMemoryParams(100LL << 20, db_slice.bytes_per_object());
-    return db_slice.GetTables(0);
-  });
+#include <absl/cleanup/cleanup.h>
+  deferred_polls_.clear();  // release while the shard's thread-local state is still alive
+           continuation_trans_ == trans || trans->IsBlockedInShard(shard_id()));
 
-  for (unsigned i = 0;; ++i) {
-    auto [size, capacity, segments] = pp_->at(0)->Await([&] {
-      return tuple{pt->size(), pt->capacity(), pt->GetSegmentCount()};
-    });
-    ASSERT_EQ(segments, 2u) << "the table grew";
-    if (size == capacity)
-      break;
-    Run({"set", StrCat("filler:", i), string(32, 'v')});
-  }
-
-  // k
+    // A repoll without trans does not reach blocked transactions, so their polls are kept.
+    // Duplicates are harmless: replaying a transaction that is no longer armed is a no-op.
+    if (trans && trans->IsBlockedInShard(shard_id()))
+      deferred_polls_.emplace_back(trans);
+  // Replayed polls can be interrupted again. A running callback or poll replays them when done.
+  // Any deferred poll can be replayed: a transaction awakened on this shard never meets an
+  // active continuation, since NotifyPending wakes none while one is active and the tx queue
+  // starts none while one is awakened. A stale entry is not armed anymore, so its replay is a
+  // no-op.
+  while (running_tx_ == nullptr && poll_depth_ == 0) {
+    if (!deferred_polls_.empty()) {
+      boost::intrusive_ptr<Transaction> trans = std::move(deferred_polls_.back());
+      deferred_polls_.pop_back();
+      PollExecutionInternal("repoll", trans.get());
+    } else if (std::exchange(needs_repoll_, false)) {
+      Po
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+           continuation_trans_ == trans);
+  // Because it runs with trans=nullptr, it progresses only on the loop and does not need follow ups
+  if (std::exchange(needs_repoll_, false))
+    PollExecutionInternal("repoll", nullptr);
+  ++poll_concurrent_factor_;
+  --poll_concurrent_factor_;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3c04a61` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b946781` are properly handled with clean fallback behavior.

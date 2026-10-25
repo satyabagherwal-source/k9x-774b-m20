@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T05:58:58.294Z",
+  "last_updated": "2026-10-25T06:08:11.172Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -96,14 +96,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "bfdc84d1cac8c710abe945868f18f370a369a7229eb8ee90f13dafc21c6b5b94",
-      "verified_at": "2026-10-20T14:10:21.238Z",
+      "content_hash": "cef9b87c00186dd8afd757faa30e5385abaa0f03ab9b9bcdc68acf1739444d0c",
+      "verified_at": "2026-10-25T06:08:11.172Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:10:21.238Z"
+      "last_updated": "2026-10-25T06:08:11.172Z"
     },
     "epicweb-dev/advanced-react-patterns": {
       "repository": "epicweb-dev/advanced-react-patterns",
@@ -3981,14 +3981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "51940044e8c2b4f6f6c44d41adb0b1bcf6acf1d3d7bfb58a163e1616fa1a4f3a",
-      "verified_at": "2026-10-22T18:56:56.093Z",
+      "content_hash": "e705fdae239550e89763f5f342bb808ac77403a460fa301d387db7cd25779315",
+      "verified_at": "2026-10-25T06:06:20.277Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:56:56.093Z"
+      "last_updated": "2026-10-25T06:06:20.277Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "be26f657ff7a9f84c62cb884b739ecc7561d678e6694789eca500f8f2790729a",
-      "verified_at": "2026-10-22T18:04:42.139Z",
+      "content_hash": "01d2a52b29b2ca4713980fea784318ed06f32a672adab63cbfc7da8b256c9c85",
+      "verified_at": "2026-10-25T06:06:25.532Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:04:42.139Z"
+      "last_updated": "2026-10-25T06:06:25.532Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -11541,14 +11541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-facebook-folly",
-      "content_hash": "085a287e2c906b20417e948aade048f3c023257699fdf4004e6621cbbb4bad28",
-      "verified_at": "2026-10-22T16:03:26.996Z",
+      "content_hash": "e7255f10788615a79eac5c8f88abc3a22256ddd59807a82b5d81d5ff2d1fd7ba",
+      "verified_at": "2026-10-25T06:06:13.328Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:03:26.996Z"
+      "last_updated": "2026-10-25T06:06:13.328Z"
     },
     "Kotlin/kmp-production-sample": {
       "repository": "Kotlin/kmp-production-sample",
