@@ -1855,8 +1855,8 @@
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
     "sourceVersion": "caa1d0b5",
     "license": "MIT",
-    "contentHash": "a5e1e3e98213c98d43dc1dc78ed34685738775934d5e823aa9c92c15a28f6c98",
-    "lastHarvestedAt": "2026-10-20T11:48:26.169Z",
+    "contentHash": "34d60cf43f1d66a8565063491323bce646be2810c4d94bf44ebdca891d81a96a",
+    "lastHarvestedAt": "2026-10-25T03:52:50.956Z",
     "learningId": "learn-github-crawlcove-xml-sitemap-validator"
   },
   "crawlcove-crawlcove-robots-txt-tester": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "5ffe1485",
+    "sourceVersion": "2aa0822f",
     "license": "Apache-2.0",
-    "contentHash": "fca4718fa02069d0dd067b946e9c1a19a5754dffd23f998d054dfd00bea1cacf",
-    "lastHarvestedAt": "2026-10-22T16:10:10.060Z",
+    "contentHash": "b39cd79c4f070255b8f62d1825bd5a047ae249396209fd2c6564944a8a51807c",
+    "lastHarvestedAt": "2026-10-25T03:53:00.324Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -7093,10 +7093,10 @@
     "repository": "arxanas/git-branchless",
     "platform": "github",
     "sourceUrl": "https://github.com/arxanas/git-branchless",
-    "sourceVersion": "03d6ab8d",
+    "sourceVersion": "f37244cb",
     "license": "Apache-2.0",
-    "contentHash": "f102e100c0b5a7d160c416f00e0eeee7515076a7cbab8cf1ceb904a8e69720d7",
-    "lastHarvestedAt": "2026-10-19T07:51:14.852Z",
+    "contentHash": "a4a853f3f32739254e3aa9df096f5b1b487daca318dc267f5f0cf72d1b9ecca9",
+    "lastHarvestedAt": "2026-10-25T03:52:45.747Z",
     "learningId": "learn-github-arxanas-git-branchless"
   },
   "pingcap-tidb": {

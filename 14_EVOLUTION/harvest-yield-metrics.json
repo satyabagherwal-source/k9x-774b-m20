@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T03:45:10.960Z",
-  "total_cycles_completed": 4620,
-  "total_learnings_persisted": 4620,
-  "total_rules_promoted": 3883,
+  "last_updated": "2026-10-25T03:53:00.329Z",
+  "total_cycles_completed": 4623,
+  "total_learnings_persisted": 4623,
+  "total_rules_promoted": 3891,
   "history": [
-    {
-      "timestamp": "2026-10-22T21:28:50.112Z",
-      "repository": "RDFLib/rdflib",
-      "learningId": "learn-github-rdflib-rdflib",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T21:28:51.628Z",
-      "repository": "TypeWhisper/typewhisper-mac",
-      "learningId": "learn-github-typewhisper-typewhisper-mac",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T21:28:57.957Z",
-      "repository": "alibaba/zvec",
-      "learningId": "learn-github-alibaba-zvec",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T21:35:16.118Z",
       "repository": "RDFLib/pySHACL",
@@ -1403,6 +1382,27 @@
       "repository": "citusdata/citus",
       "learningId": "learn-github-citusdata-citus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:52:45.757Z",
+      "repository": "arxanas/git-branchless",
+      "learningId": "learn-github-arxanas-git-branchless",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:52:50.965Z",
+      "repository": "CrawlCove/xml-sitemap-validator",
+      "learningId": "learn-github-crawlcove-xml-sitemap-validator",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:53:00.329Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

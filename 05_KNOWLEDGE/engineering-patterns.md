@@ -290403,3 +290403,737 @@ Subsystems managing C data structures, boundary deserialization, API parsing, or
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5ca742e8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4022. Replay Engine Lineage Preservation Rule (Harvested from arxanas/git-branchless)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Replay Engine Lineage Preservation Rule",
+  "source": "arxanas/git-branchless",
+  "source_url": "https://github.com/arxanas/git-branchless",
+  "source_version": "f37244cb",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T03:52:45.195Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-arxanas-git-branchless",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [arxanas/git-branchless](https://github.com/arxanas/git-branchless) (Revision: `f37244cb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When transforming, rebasing, or rewriting an entity within an event-sourced or replaying state machine, the resulting replacement entity MUST inherit the lifecycle classification (e.g., `Obsolete`, `Hidden`, `Tombstoned`) of its direct antecedent, UNLESS an explicit un-hiding event was dispatched within that transaction boundary.
+
+**WHY**:
+In event-driven architectures tracking object lifecycles across mutations (such as Git commit rewrites, immutable database migrations, or document editing stacks), assuming that a new generated entity defaults to `Active` or `Visible` creates phantom resurrection bugs. In `git-branchless`, when an obsolete commit was moved or restacked, the rewrite emitted a `RewriteEvent` where the replayer unconditionally stamped the replacement commit with `EventClassification::Show`. This resurrected dead/hidden commits onto the active smartlog display, polluting the developer's working tree and violating graph invariants.
+
+**WHEN TO APPLY**:
+Apply to any system using event sourcing, operational transformation (OT), CRDTs, or Git-based rewrite abstractions where mutations generate replacement OIDs/IDs representing prior nodes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// In event replaying / transformation modules:
+// Inspect the antecedent's resolved activity status at the current cursor
+// before assigning classification to the replacement ID.
+
+if let MaybeZeroOid::NonZero(new_commit_oid) = new_commit_oid {
+    let event_classification = match old_commit_oid {
+        MaybeZeroOid::NonZero(old_commit_oid) => {
+            match self.get_cursor_commit_activity_status(
+                EventCursor { event_id: id },
+                *old_commit_oid,
+            ) {
+                CommitActivityStatus::Obsolete => EventClassification::Hide,
+                CommitActivityStatus::Active | CommitActivityStatus::Inactive => {
+                    EventClassification::Show
+                }
+            }
+        }
+        MaybeZeroOid::Zero => EventClassification::Show,
+    };
+
+    self.commit_history
+        .entry(*new_commit_oid)
+        .or_default()
+        .push(EventInfo {
+            id,
+            event: event.clone(),
+            event_classification,
+        });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER assume newly rewritten entities default to visible/active state:
+if let MaybeZeroOid::NonZero(new_commit_oid) = new_commit_oid {
+    self.commit_history
+        .entry(*new_commit_oid)
+        .or_default()
+        .push(EventInfo {
+            id,
+            event: event.clone(),
+            // BUG: Resurrects obsolete/hidden commits during rebase/sync/move
+            event_classification: EventClassification::Show,
+        });
+}
+```
+
+**VERIFICATION METHOD**:
+Construct an integration test where an entity is initialized, transitioned to `Obsolete`/`Hidden`, subjected to a synthetic rewrite/migration, and asserted that the subsequent timeline query strictly matches `CommitActivityStatus::Obsolete`:
+```rust
+#[test]
+fn verify_rewrite_preserves_obsolete_status() -> eyre::Result<()> {
+    let mut replayer = new_event_replayer("refs/heads/master".into());
+    replayer.process_event(&Event::ObsoleteEvent { timestamp: 0.0, event_tx_id, commit_oid: old_oid });
+    replayer.process_event(&Event::RewriteEvent { timestamp: 0.0, event_tx_id, old_commit_oid: old_oid.into(), new_commit_oid: new_oid.into() });
+    let cursor = replayer.make_default_cursor();
+    assert!(matches!(replayer.get_cursor_commit_activity_status(cursor, new_oid), CommitActivityStatus::Obsolete));
+    Ok(())
+}
+```
+
+---
+
+
+---
+
+## 4023. Destructive Working-Tree Snapshot Isolation Rule (Harvested from arxanas/git-branchless)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Destructive Working-Tree Snapshot Isolation Rule",
+  "source": "arxanas/git-branchless",
+  "source_url": "https://github.com/arxanas/git-branchless",
+  "source_version": "f37244cb",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T03:52:45.377Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-arxanas-git-branchless",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [arxanas/git-branchless](https://github.com/arxanas/git-branchless) (Revision: `f37244cb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When restoring a dirty working-tree snapshot or checking out state over uncommitted changes, you MUST NOT execute a direct single-step forced hard reset (`git reset --hard <target>`). You MUST execute a two-step isolated transition: first reset tracked files to the clean base (`git reset --hard HEAD`), then checkout the unstaged commit tree specifically (`git checkout <unstaged_tree_commit> --`).
+
+**WHY**:
+Executing `git reset --hard <target>` overwrites untracked and unstaged files that conflict between the working directory and the target commit, silently destroying user data without recovery recourse. By performing `git reset --hard HEAD` first, the index and tracked files are synchronized without touching untracked files; subsequent invocation of `git checkout <unstaged_oid> --` causes Git's internal tree-collision detector to fail fast and abort the operation if untracked files would be overwritten, leaving the user's workspace intact.
+
+**WHEN TO APPLY**:
+Any CLI or daemon tool performing automated checkout, branch switching, patch application, or workspace restoration in systems with dirty uncommitted files.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Two-step safe restoration protocol protecting untracked local modifications:
+
+// Step 1: Discard only tracked working copy modifications relative to HEAD.
+try_exit_code!(
+    git_run_info
+        .run(
+            effects,
+            Some(event_tx_id),
+            &["reset", "--hard", "HEAD", "--"]
+        )
+        .wrap_err("Discarding tracked working copy changes")?
+);
+
+// Step 2: Attempt checkout of unstaged commit tree.
+// If untracked files collide with the target tree, Git terminates with an error
+// rather than truncating/clobbering untracked workspace files.
+try_exit_code!(
+    git_run_info
+        .run(
+            effects,
+            Some(event_tx_id),
+            &[
+                "checkout",
+                &snapshot.commit_unstaged.get_oid().to_string(),
+                "--"
+            ],
+        )
+        .wrap_err("Checking out unstaged changes (fail if conflict)")?
+);
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER do a single forced reset to the destination snapshot OID:
+try_exit_code!(
+    git_run_info.run(
+        effects,
+        Some(event_tx_id),
+        // CRITICAL DATA LOSS HAZARD: Silently destroys untracked files in working tree!
+        &["reset", "--hard", &snapshot.commit_unstaged.get_oid().to_string(), "--"]
+    )?
+);
+```
+
+**VERIFICATION METHOD**:
+Run an automated harness that places an untracked file `conflict.txt` in the workspace matching a file path in the snapshot, triggers checkout, and verifies: (1) the checkout fails with an exit code != 0, and (2) the untracked file `conflict.txt` retains its exact original content on disk.
+
+---
+
+
+---
+
+## 4024. Parent-Worktree Bare Clone Configuration Discovery Rule (Harvested from arxanas/git-branchless)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Parent-Worktree Bare Clone Configuration Discovery Rule",
+  "source": "arxanas/git-branchless",
+  "source_url": "https://github.com/arxanas/git-branchless",
+  "source_version": "f37244cb",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T03:52:45.571Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-arxanas-git-branchless",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [arxanas/git-branchless](https://github.com/arxanas/git-branchless) (Revision: `f37244cb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When resolving repository paths, configuration paths, or hook directories in a Git worktree context, tools MUST recursively inspect `repo.open_worktree_parent_repo()` and fallback gracefully to the discovered root parent repo, rather than assuming `$GIT_DIR/hooks` exists locally or that worktree directories are standard non-bare repositories.
+
+**WHY**:
+In linked worktrees spawned from bare clones (`git clone --bare ... && git worktree add ...`), `$GIT_DIR` inside the linked worktree is a pointer file (`.git: /path/to/bare/repo/worktrees/name`), while the hooks directory and common metadata reside in the parent bare repository. Tools that resolve paths via simple `.join("hooks")` without parent worktree resolution panic with repository `NotFound (-3)` errors, completely breaking CLI operation in bare repository enterprise setups.
+
+**WHEN TO APPLY**:
+Any tool, plugin, or CLI integrating with Git worktrees, bare clones, submodules, or custom Git configuration files (`core.hooksPath`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+#[instrument]
+pub fn get_default_hooks_dir(repo: &Repo) -> eyre::Result<PathBuf> {
+    // Resolve worktree parent first; if this repo is a linked worktree,
+    // its common metadata, config, and hook templates reside in the parent.
+    let parent_repo = repo.open_worktree_parent_repo()?;
+    let repo = parent_repo.as_ref().unwrap_or(repo);
+    Ok(repo.get_path().join("hooks"))
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER query the working directory path directly for repo-wide hooks:
+pub fn get_default_hooks_dir_bad(repo: &Repo) -> PathBuf {
+    // BUG: Panics or points to nonexistent directory in linked worktrees of bare repos!
+    repo.get_path().join("hooks")
+}
+```
+
+**VERIFICATION METHOD**:
+Automated integration test initializing a bare repo, adding a linked worktree, invoking hook directory resolution, and asserting valid path:
+```bash
+git clone --bare "$TEST_REPO" bare-repo
+git -C bare-repo worktree add ../linked-wt master
+cargo run -- -C ../linked-wt init
+```
+
+---
+
+
+---
+
+## 4025. Processing-Instruction and Metadata Immunity in AST Root Resolution (Harvested from CrawlCove/xml-sitemap-validator)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Processing-Instruction and Metadata Immunity in AST Root Resolution",
+  "source": "CrawlCove/xml-sitemap-validator",
+  "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+  "source_version": "caa1d0b5",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T03:52:50.411Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CrawlCove/xml-sitemap-validator](https://github.com/CrawlCove/crawlcove-sitemap-validator) (Revision: `caa1d0b5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When parsing generic XML into dictionary-based Object ASTs, root element detection MUST NOT rely on negative single-token exclusion (such as `k !== '?xml'`). The search predicate MUST explicitly discard all tokens matching processing instruction prefixes (`?`), node comment prefixes (`#`), and metadata wrappers before asserting the schema-defined root tag.
+
+**WHY**:
+CMS engines (e.g., WordPress with Yoast or Rank Math) frequently prepend XSLT/CSS processing instructions such as `<?xml-stylesheet type="text/xsl" href="..."?>` immediately after the XML declaration. If a parser treats processing instructions as top-level dictionary keys, a single exclusion check like `k !== '?xml'` will erroneously capture `?xml-stylesheet` as the root XML tag, causing false-positive parser rejections (`wrong-root` errors) and pipeline crashes in automated ingestion systems.
+
+**WHEN TO APPLY**:
+Apply in any XML ingestion pipeline, crawler, feed reader, or sitemap validator where payload structure is parsed into loosely typed JSON/Object graphs (e.g., via `fast-xml-parser`, `xml2js`, or custom tokenizers).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/**
+ * Resolves the true XML root element name from a fast-xml-parser document object.
+ * Guarantees immunity against XML declarations, XSLT stylesheets, and comment nodes.
+ */
+export function resolveXmlRootElementName(doc: Record<string, unknown>): string | undefined {
+  return Object.keys(doc).find((key: string): boolean => {
+    // fast-xml-parser maps processing instructions to '?tagName' (e.g., '?xml', '?xml-stylesheet')
+    // and text/comment nodes to '#tagName' (e.g., '#text', '#comment').
+    return !key.startsWith('?') && !key.startsWith('#')
+  })
+}
+
+// Invariant Enforcement
+export function assertValidSitemapRoot(doc: Record<string, unknown>): 'urlset' | 'sitemapindex' {
+  const rootName = resolveXmlRootElementName(doc)
+  if (rootName !== 'urlset' && rootName !== 'sitemapindex') {
+    throw new Error(`Invalid root element <${rootName ?? 'none'}>; expected <urlset> or <sitemapindex>`)
+  }
+  return rootName
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Brittle, single-key exclusion that breaks on valid XSLT-styled sitemaps
+const rootName = Object.keys(doc).find((k) => k !== '?xml') 
+// If XML contains <?xml-stylesheet ...?>, rootName becomes "?xml-stylesheet"!
+```
+
+**VERIFICATION METHOD**:
+Automated Vitest/Jest suite feeding an XML document containing multiple processing instructions (`<?xml ...?>`, `<?xml-stylesheet ...?>`, and `<!-- comment -->`) directly before `<urlset>`:
+```typescript
+import { expect, test } from 'vitest'
+import { XMLParser } from 'fast-xml-parser'
+import { resolveXmlRootElementName } from './validate.js'
+
+test('resolveXmlRootElementName ignores XML prolog and styling instructions', () => {
+  const rawXml = `<?xml version="1.0" encoding="UTF-8"?>
+  <?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
+  <!-- Author: Engineering -->
+  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url><loc>https://example.com/</loc></url>
+  </urlset>`
+  
+  const parser = new XMLParser({ ignoreAttributes: false })
+  const doc = parser.parse(rawXml)
+  const root = resolveXmlRootElementName(doc)
+  expect(root).toBe('urlset')
+})
+```
+
+---
+
+
+---
+
+## 4026. Header-Agnostic Binary Sniffing for Compression Streams (Harvested from CrawlCove/xml-sitemap-validator)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Header-Agnostic Binary Sniffing for Compression Streams",
+  "source": "CrawlCove/xml-sitemap-validator",
+  "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+  "source_version": "caa1d0b5",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T03:52:50.592Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CrawlCove/xml-sitemap-validator](https://github.com/CrawlCove/crawlcove-sitemap-validator) (Revision: `caa1d0b5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Network-fetched binary streams that might be compressed MUST be inspected for standard compression magic bytes (e.g., GZIP `0x1F 0x8B`) directly in memory rather than trusting HTTP `Content-Encoding`, `Content-Type`, or URI file extensions.
+
+**WHY**:
+Web servers frequently misconfigure MIME types and headers. A server may return a `.xml.gz` file with `Content-Type: application/xml` and omit `Content-Encoding: gzip`, or return a pre-compressed sitemap without setting decompression flags on raw CDN drops. Attempting UTF-8 string conversion on raw GZIP data introduces multi-byte Unicode replacement characters (`\uFFFD`), permanently corrupting the XML payload before parsing begins.
+
+**WHEN TO APPLY**:
+Every HTTP ingestion pipeline dealing with public web crawling, file uploads, file imports, or third-party webhooks handling potentially compressed payloads.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { gunzipSync } from 'node:zlib'
+
+export interface DecodedPayload {
+  text: string
+  gzipped: boolean
+}
+
+/**
+ * Sniffs the buffer prefix for GZIP magic numbers (1F 8B).
+ * Decompresses synchronously if detected, otherwise decodes as UTF-8.
+ */
+export function decodeStreamBuffer(buffer: Buffer): DecodedPayload {
+  // GZIP specification (RFC 1952) specifies ID1 = 0x1F, ID2 = 0x8B
+  const isGzip = buffer.length >= 2 && buffer[0] === 0x1f && buffer[1] === 0x8b
+
+  if (isGzip) {
+    try {
+      const decompressed = gunzipSync(buffer)
+      return { text: decompressed.toString('utf8'), gzipped: true }
+    } catch (err) {
+      throw new Error(`Corrupt GZIP archive: ${(err as Error).message}`)
+    }
+  }
+
+  return { text: buffer.toString('utf8'), gzipped: false }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blindly trusting HTTP headers or URL extensions
+export function decodeUnsafe(res: Response, buffer: Buffer): string {
+  if (res.headers.get('content-encoding') === 'gzip') {
+    return gunzipSync(buffer).toString('utf8') // Fails if CDN stripped the header!
+  }
+  return buffer.toString('utf8') // Produces corrupt binary strings on .gz files
+}
+```
+
+**VERIFICATION METHOD**:
+Test with synthetic gzip payloads stripped of headers to verify binary-level sniffing:
+```typescript
+import { expect, test } from 'vitest'
+import { gzipSync } from 'node:zlib'
+import { decodeStreamBuffer } from './validate.js'
+
+test('decodeStreamBuffer correctly sniffs and decompresses headerless GZIP payload', () => {
+  const original = '<urlset><url><loc>https://example.com</loc></url></urlset>'
+  const compressed = gzipSync(Buffer.from(original, 'utf8'))
+  const result = decodeStreamBuffer(compressed)
+  expect(result.gzipped).toBe(true)
+  expect(result.text).toBe(original)
+})
+```
+
+---
+
+
+---
+
+## 4027. Canonical Domain Host Matching under www-Apex Symmetry (Harvested from CrawlCove/xml-sitemap-validator)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Canonical Domain Host Matching under www-Apex Symmetry",
+  "source": "CrawlCove/xml-sitemap-validator",
+  "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+  "source_version": "caa1d0b5",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T03:52:50.782Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CrawlCove/xml-sitemap-validator](https://github.com/CrawlCove/crawlcove-sitemap-validator) (Revision: `caa1d0b5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When validating domain authority or cross-host URI permissions (e.g., in sitemaps, CORS origin verification, or cookie scope boundaries), hostnames MUST be compared using normalized apex equivalence by stripping the leading `www.` prefix, while maintaining strict protocol (`http` vs `https`) checks.
+
+**WHY**:
+Search engines (Google, Bing) and the Sitemaps protocol permit `www.example.com` to host entries for `example.com` and vice-versa, acknowledging that DNS architectures often alias `www` to apex. A naive string equality check (`url.host === sitemap.host`) incorrectly flags legitimate sitemaps as invalid (`cross-host-loc`), breaking SEO validations for production websites.
+
+**WHEN TO APPLY**:
+Sitemap engines, cross-origin security assertions, domain scoping policies, and web crawler discovery modules.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/**
+ * Safely validates whether a child URL belongs to the same administrative host as the parent,
+ * allowing www-subdomain symmetry while ensuring protocol compliance.
+ */
+export function isSameAdministrativeHost(childUrl: string, parentUrl: string): boolean {
+  try {
+    const child = new URL(childUrl)
+    const parent = new URL(parentUrl)
+
+    // Strict protocol check: Disallow non-HTTP/S or protocol mismatches
+    if (!/^https?:$/.test(child.protocol) || !/^https?:$/.test(parent.protocol)) {
+      return false
+    }
+
+    // Strip single leading www. prefix for apex comparison
+    const childHost = child.host.toLowerCase().replace(/^www\./, '')
+    const parentHost = parent.host.toLowerCase().replace(/^www\./, '')
+
+    return childHost === parentHost
+  } catch {
+    return false
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Exact host comparison or unsafe substring matching
+if (childUrl.host === parentUrl.host) { ... } // Rejects www.site.com defining site.com
+if (childUrl.host.includes(parentUrl.host)) { ... } // Vulnerable to attacker-site.com
+```
+
+**VERIFICATION METHOD**:
+```typescript
+import { expect, test } from 'vitest'
+import { isSameAdministrativeHost } from './validate.js'
+
+test('isSameAdministrativeHost matches apex and www domains symmetrically', () => {
+  expect(isSameAdministrativeHost('https://example.com/p', 'https://www.example.com/sitemap.xml')).toBe(true)
+  expect(isSameAdministrativeHost('https://www.example.com/p', 'https://example.com/sitemap.xml')).toBe(true)
+  expect(isSameAdministrativeHost('https://attacker-example.com/p', 'https://example.com/sitemap.xml')).toBe(false)
+  expect(isSameAdministrativeHost('https://sub.example.com/p', 'https://example.com/sitemap.xml')).toBe(false)
+})
+```
+
+---
+
+
+---
+
+## 4028. Invariant Defense Against Cross-Session Identity Bleed (Harvested from StarRocks/starrocks)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Defense Against Cross-Session Identity Bleed",
+  "source": "StarRocks/starrocks",
+  "source_url": "https://github.com/StarRocks/starrocks",
+  "source_version": "2aa0822f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T03:52:59.954Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-starrocks-starrocks",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `2aa0822f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing persistent or connection-pooling protocol handlers (such as MySQL `COM_CHANGE_USER`, HTTP Keep-Alive, or gRPC stream multiplexing), authentication middleware **MUST** unconditionally reset all session identity contexts, roles, and authorization provider groups to immutable empty primitives before parsing incoming credentials. If an authentication strategy bypasses dynamic identity group lookup (e.g., legacy directory binding), that strategy **MUST** statically configure its upstream group resolution pipeline to a deterministic source rather than evaluating runtime fallback flags.
+
+**WHY**:
+Re-authenticating over an existing connection without explicitly purging authorization group sets allows a newly authenticated user with lower privileges to inherit security context groups and privileges populated by the prior user on that socket. Furthermore, dynamically checking feature flags during query impersonation (`EXECUTE AS`) causes behavioral drift if the authentication handler assumes the presence of modern directory attributes (like Active Directory `memberOf`) on legacy user definitions, resulting in unauthorized privilege escalation or complete authorization blackholes.
+
+**WHEN TO APPLY**:
+Apply to all stateful network servers, connection-pooled proxy managers, and authorization handlers where connection lifecycles outlive a single user transaction or session handshake.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Production-grade invariant from StarRocks AuthenticationHandler & LDAPAuthProvider
+public class SecureAuthenticationContext {
+    private Set<String> authenticatorGroups = Set.of();
+    private String distinguishedName = "";
+
+    public void reauthenticateSession(SessionConnection connection, Credentials credentials) {
+        // MANDATORY INVARIANT: Erase prior session privileges unconditionally
+        // Do not rely on downstream providers to clean up after themselves.
+        this.authenticatorGroups = Set.of();
+        this.distinguishedName = "";
+
+        AuthenticationResult result = dispatchAuthentication(connection, credentials);
+        this.authenticatorGroups = Set.copyOf(result.getResolvedGroups());
+        this.distinguishedName = result.getDistinguishedName();
+    }
+}
+
+public class SecureLDAPAuthProvider {
+    private final GroupSource ldapGroupSource;
+    private final String ldapUserDN;
+
+    public SecureLDAPAuthProvider(String ldapUserDN, GroupSource configuredSource) {
+        this.ldapUserDN = ldapUserDN;
+        // Deterministic architectural gate: Settle once at construction
+        // Legacy DN bindings cannot resolve memberOf; force deterministic GROUP_PROVIDER
+        this.ldapGroupSource = (configuredSource == null || (ldapUserDN != null && !ldapUserDN.trim().isEmpty()))
+                ? GroupSource.GROUP_PROVIDER 
+                : configuredSource;
+    }
+
+    public TargetUserGroups resolveGroups(String username) {
+        if (ldapUserDN != null && !ldapUserDN.trim().isEmpty()) {
+            // Known without an expensive directory round-trip, never paired with dynamic attributes
+            return new TargetUserGroups(ldapUserDN, Set.of());
+        }
+        if (!ldapGroupSource.usesAuthenticatorGroups()) {
+            return TargetUserGroups.NONE;
+        }
+        return probeDirectoryServiceAccount(username);
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// ANTI-PATTERN: Leaks credentials across multiplexed connection re-handshakes
+public void unsafeAuthenticate(SessionContext ctx, Credentials credentials) {
+    // BUG: Missing ctx.setAuthenticatorGroups(Set.of());
+    // If the provider fails to populate groups, the previous user's groups remain active!
+    if (this.ldapGroupSource.usesAuthenticatorGroups()) {
+        ctx.setAuthenticatorGroups(fetchMemberOf(credentials.getUser()));
+    }
+    // Prior user's groups leaked if usesAuthenticatorGroups() evaluates to false
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce session boundary clearance via unit test:
+```java
+@Test
+public void testReauthenticationPurgesStaleContext() {
+    SessionContext context = new SessionContext();
+    context.setAuthenticatorGroups(Set.of("superadmin"));
+    
+    // Simulate re-auth as non-privileged guest
+    AuthenticationHandler.authenticate(context, new GuestCredentials());
+    
+    Assertions.assertTrue(context.getAuthenticatorGroups().isEmpty(),
+        "FATAL: Re-authentication failed to clear previous session authenticator groups!");
+}
+```
+
+---
+
+
+---
+
+## 4029. Guarded Bit-Stream Memory Alignment & Safe Overflow Shifting (Harvested from StarRocks/starrocks)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Guarded Bit-Stream Memory Alignment & Safe Overflow Shifting",
+  "source": "StarRocks/starrocks",
+  "source_url": "https://github.com/StarRocks/starrocks",
+  "source_version": "2aa0822f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T03:53:00.134Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-starrocks-starrocks",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `2aa0822f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing low-level bit-stream writers or batched bit-packers, bit-shift operations equal to or exceeding the underlying word width (e.g., `bit_offset >= 64` on a `uint64_t`) **MUST NOT** be executed using raw CPU shifts. Implementations **MUST** employ overflow-safe zeroing abstractions (e.g., `ShiftRightZeroOnOverflow`). Buffer growth **MUST** align capacity up to the word boundary using branch-free arithmetic before writing, and buffer pointers **MUST** be fetched only after capacity reservation to eliminate pointer invalidation hazards.
+
+**WHY**:
+In C and C++, shifting an $N$-bit integer by $\ge N$ positions invokes Undefined Behavior (UB). On x86-64, the shift instruction masks the shift count with `0x3F`, meaning `v >> 64` executes as `v >> 0`, retaining the original value rather than yielding zero. In bit writers, this leaves phantom high-order bits in unpacked storage, corrupting Parquet/ORC physical blocks and vectorized column dictionaries.
+
+**WHEN TO APPLY**:
+Low-level columnar storage encodings, SIMD vector serialization, networking packet packaging, and bit-level compressed data structures (Parquet, ORC, Delta Lake, ULEB-128, RLE).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Production-grade invariant from StarRocks BitWriter (be/src/base/bit/bit_stream_utils.inline.h)
+namespace starrocks {
+
+inline void BitWriter::PutValue(uint64_t v, int num_bits) {
+    DCHECK_LE(num_bits, 64);
+    // Mask off all high-order bits above num_bits to avoid pollution
+    v &= ~0ULL >> (64 - num_bits);
+
+    buffered_values_ |= (v << bit_offset_);
+    bit_offset_ += num_bits;
+
+    if (PREDICT_FALSE(bit_offset_ >= 64)) {
+        // Safe buffer extension with alignment guarantee
+        buffer_->reserve(ALIGN_UP(byte_offset_ + 8, 8));
+        buffer_->resize(byte_offset_ + 8);
+        DCHECK_LE(byte_offset_ + 8, buffer_->capacity());
+
+        // Copy 64-bit word out to memory
+        memcpy(buffer_->data() + byte_offset_, &buffered_values_, 8);
+        buffered_values_ = 0;
+        byte_offset_ += 8;
+        bit_offset_ -= 64;
+
+        // INVARIANT: Prevent UB when (num_bits - bit_offset_) == 64
+        buffered_values_ = BitUtil::ShiftRightZeroOnOverflow(v, (num_bits - bit_offset_));
+    }
+    DCHECK_LT(bit_offset_, 64);
+}
+
+} // namespace starrocks
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Undefined behavior and memory corruption
+inline void UnsafeBitWriter::PutValue(uint64_t v, int num_bits) {
+    buffered_values_ |= (v << bit_offset_);
+    bit_offset_ += num_bits;
+    if (bit_offset_ >= 64) {
+        // FATAL: If buffer_ reallocates, existing raw pointers dangling
+        uint8_t* raw_ptr = buffer_->data() + byte_offset_; 
+        buffer_->resize(byte_offset_ + 8); 
+        // FATAL: Writing through invalidated pointer!
+        memcpy(raw_ptr, &buffered_values_, 8); 
+        
+        // FATAL: If (num_bits - bit_offset_) == 64, UB occurs.
+        // On x86: v >> 64 == v >> (64 & 63) == v >> 0 == v! Corrupts buffered values.
+        buffered_values_ = v >> (num_bits - bit_offset_); 
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Unit testing boundary shift operations at exactly 0, 1, 63, and 64 bits:
+```cpp
+TEST(BitStreamTest, TestShiftRightZeroOnOverflowBoundary) {
+    uint64_t val = 0xFFFFFFFFFFFFFFFFULL;
+    // Standard operator>> with 64 invokes undefined behavior
+    EXPECT_EQ(0ULL, BitUtil::ShiftRightZeroOnOverflow(val, 64));
+    EXPECT_EQ(val, BitUtil::ShiftRightZeroOnOverflow(val, 0));
+    EXPECT_EQ(1ULL, BitUtil::ShiftRightZeroOnOverflow(val, 63));
+}
+```
+
+---

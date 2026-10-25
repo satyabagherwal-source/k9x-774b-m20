@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T03:45:10.892Z",
+  "last_updated": "2026-10-25T03:53:00.249Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2939,8 +2939,8 @@
       "slug": "arxanas-git-branchless",
       "platform": "github",
       "source_url": "https://github.com/arxanas/git-branchless",
-      "source_version": "03d6ab8d",
-      "content_hash": "f102e100c0b5a7d160c416f00e0eeee7515076a7cbab8cf1ceb904a8e69720d7",
+      "source_version": "f37244cb",
+      "content_hash": "a4a853f3f32739254e3aa9df096f5b1b487daca318dc267f5f0cf72d1b9ecca9",
       "dossier_path": "07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
       "promoted_rules": [
@@ -2958,6 +2958,21 @@
           "number": 2337,
           "title": "Worktree-Agnostic Bare Clone Repository Resolution",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4022,
+          "title": "Replay Engine Lineage Preservation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4023,
+          "title": "Destructive Working-Tree Snapshot Isolation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4024,
+          "title": "Parent-Worktree Bare Clone Configuration Discovery Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2965,7 +2980,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:51:14.784Z",
+      "verified_at": "2026-10-25T03:52:45.678Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44785,8 +44800,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "5ffe1485",
-      "content_hash": "fca4718fa02069d0dd067b946e9c1a19a5754dffd23f998d054dfd00bea1cacf",
+      "source_version": "2aa0822f",
+      "content_hash": "b39cd79c4f070255b8f62d1825bd5a047ae249396209fd2c6564944a8a51807c",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -44814,6 +44829,16 @@
           "number": 3628,
           "title": "[BugFix][CVE] Bump pprof to release/20261022 (#81300)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4028,
+          "title": "Invariant Defense Against Cross-Session Identity Bleed",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4029,
+          "title": "Guarded Bit-Stream Memory Alignment & Safe Overflow Shifting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44821,7 +44846,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:10:09.993Z",
+      "verified_at": "2026-10-25T03:53:00.238Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84856,7 +84881,7 @@
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
       "source_version": "caa1d0b5",
-      "content_hash": "a5e1e3e98213c98d43dc1dc78ed34685738775934d5e823aa9c92c15a28f6c98",
+      "content_hash": "34d60cf43f1d66a8565063491323bce646be2810c4d94bf44ebdca891d81a96a",
       "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-sitemap-validator-learnings.md",
       "promoted_rules": [
@@ -84864,6 +84889,21 @@
           "number": 1788,
           "title": "repository renamed to CrawlCove/xml-sitemap-validator; point links, install comm",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4025,
+          "title": "Processing-Instruction and Metadata Immunity in AST Root Resolution",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4026,
+          "title": "Header-Agnostic Binary Sniffing for Compression Streams",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4027,
+          "title": "Canonical Domain Host Matching under www-Apex Symmetry",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -84871,7 +84911,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:48:26.108Z",
+      "verified_at": "2026-10-25T03:52:50.888Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117642,6 +117682,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T03:45:10.881Z"
+    },
+    "rule-4022": {
+      "learning_id": "rule-4022",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4022,
+      "title": "Replay Engine Lineage Preservation Rule",
+      "source_url": "https://github.com/arxanas/git-branchless",
+      "source_version": "f37244cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:52:45.678Z"
+    },
+    "rule-4023": {
+      "learning_id": "rule-4023",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4023,
+      "title": "Destructive Working-Tree Snapshot Isolation Rule",
+      "source_url": "https://github.com/arxanas/git-branchless",
+      "source_version": "f37244cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:52:45.678Z"
+    },
+    "rule-4024": {
+      "learning_id": "rule-4024",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4024,
+      "title": "Parent-Worktree Bare Clone Configuration Discovery Rule",
+      "source_url": "https://github.com/arxanas/git-branchless",
+      "source_version": "f37244cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:52:45.678Z"
+    },
+    "rule-4025": {
+      "learning_id": "rule-4025",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4025,
+      "title": "Processing-Instruction and Metadata Immunity in AST Root Resolution",
+      "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "source_version": "caa1d0b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:52:50.888Z"
+    },
+    "rule-4026": {
+      "learning_id": "rule-4026",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4026,
+      "title": "Header-Agnostic Binary Sniffing for Compression Streams",
+      "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "source_version": "caa1d0b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:52:50.888Z"
+    },
+    "rule-4027": {
+      "learning_id": "rule-4027",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4027,
+      "title": "Canonical Domain Host Matching under www-Apex Symmetry",
+      "source_url": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+      "source_version": "caa1d0b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:52:50.888Z"
+    },
+    "rule-4028": {
+      "learning_id": "rule-4028",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4028,
+      "title": "Invariant Defense Against Cross-Session Identity Bleed",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "2aa0822f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:53:00.238Z"
+    },
+    "rule-4029": {
+      "learning_id": "rule-4029",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4029,
+      "title": "Guarded Bit-Stream Memory Alignment & Safe Overflow Shifting",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "2aa0822f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:53:00.238Z"
     }
   },
   "aliases": {

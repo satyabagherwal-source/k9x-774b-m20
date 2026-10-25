@@ -4650,3 +4650,6 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `a83496bf` | Multi-dimensional audit evidence | 2026-10-25T03:45:03.931Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `21c27035` | Multi-dimensional audit evidence | 2026-10-25T03:45:10.013Z |
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `5ca742e8` | Multi-dimensional audit evidence | 2026-10-25T03:45:10.950Z |
+| `learn-github-arxanas-git-branchless` | `https://github.com/arxanas/git-branchless` | `f37244cb` | Multi-dimensional audit evidence | 2026-10-25T03:52:45.747Z |
+| `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `caa1d0b5` | Multi-dimensional audit evidence | 2026-10-25T03:52:50.956Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `2aa0822f` | Multi-dimensional audit evidence | 2026-10-25T03:53:00.324Z |

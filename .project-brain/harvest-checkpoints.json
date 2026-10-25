@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T03:45:10.964Z",
+  "last_updated": "2026-10-25T03:53:00.332Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2916,14 +2916,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlcove-xml-sitemap-validator",
-      "content_hash": "a5e1e3e98213c98d43dc1dc78ed34685738775934d5e823aa9c92c15a28f6c98",
-      "verified_at": "2026-10-20T11:48:26.176Z",
+      "content_hash": "34d60cf43f1d66a8565063491323bce646be2810c4d94bf44ebdca891d81a96a",
+      "verified_at": "2026-10-25T03:52:50.968Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:48:26.176Z"
+      "last_updated": "2026-10-25T03:52:50.968Z"
     },
     "CrawlCove/robots-txt-tester": {
       "repository": "CrawlCove/robots-txt-tester",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "fca4718fa02069d0dd067b946e9c1a19a5754dffd23f998d054dfd00bea1cacf",
-      "verified_at": "2026-10-22T16:10:10.073Z",
+      "content_hash": "b39cd79c4f070255b8f62d1825bd5a047ae249396209fd2c6564944a8a51807c",
+      "verified_at": "2026-10-25T03:53:00.332Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:10:10.073Z"
+      "last_updated": "2026-10-25T03:53:00.332Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -10686,14 +10686,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arxanas-git-branchless",
-      "content_hash": "f102e100c0b5a7d160c416f00e0eeee7515076a7cbab8cf1ceb904a8e69720d7",
-      "verified_at": "2026-10-19T07:51:14.858Z",
+      "content_hash": "a4a853f3f32739254e3aa9df096f5b1b487daca318dc267f5f0cf72d1b9ecca9",
+      "verified_at": "2026-10-25T03:52:45.760Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:51:14.858Z"
+      "last_updated": "2026-10-25T03:52:45.760Z"
     },
     "pingcap/tidb": {
       "repository": "pingcap/tidb",

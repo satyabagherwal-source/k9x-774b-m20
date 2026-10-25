@@ -4643,3 +4643,6 @@
 | `CYCLE-20261025-B7P3` | `2026-10-25T03:45:03.927Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4020` | Yes (`77b66daa...`) |
 | `CYCLE-20261025-BCE2` | `2026-10-25T03:45:10.010Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3992` | Yes (`fdf620f0...`) |
 | `CYCLE-20261025-BD43` | `2026-10-25T03:45:10.947Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4021` | Yes (`844a7c23...`) |
+| `CYCLE-20261025-L41C` | `2026-10-25T03:52:45.744Z` | `arxanas/git-branchless` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4022, Rule 4023, Rule 4024` | Yes (`a4a853f3...`) |
+| `CYCLE-20261025-L821` | `2026-10-25T03:52:50.953Z` | `CrawlCove/xml-sitemap-validator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4025, Rule 4026, Rule 4027` | Yes (`34d60cf4...`) |
+| `CYCLE-20261025-LFA9` | `2026-10-25T03:53:00.321Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4028, Rule 4029` | Yes (`b39cd79c...`) |

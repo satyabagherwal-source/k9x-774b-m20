@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-VG15",
-    "timestamp": "2026-10-21T02:02:08.489Z",
-    "repository": "vinceglb/FileKit",
-    "learningId": "learn-github-vinceglb-filekit",
-    "contentHash": "cbe8e6436ec7eb024fb171250035f661e450ae0aa229f87aba1bf8eb3b56aa84",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-VL4P",
-    "timestamp": "2026-10-21T02:02:15.097Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-    "contentHash": "14d743bef1300c4b29c3443da17f3deec32c0420b9b31765849a5715f034ae07",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-3S94",
-    "timestamp": "2026-10-21T02:08:37.576Z",
-    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-    "contentHash": "567de3dbf1d23cae36258f859717eee0daf0024d99651f6fa9214018c5e06a22",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-3U7R",
     "timestamp": "2026-10-21T02:08:40.119Z",
     "repository": "primer/react",
@@ -7492,6 +7447,51 @@
     "contentHash": "844a7c23aac2f87afeeae978527ed78296f5981b4720ab4488a7b86f12d39cf6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-L41C",
+    "timestamp": "2026-10-25T03:52:45.744Z",
+    "repository": "arxanas/git-branchless",
+    "learningId": "learn-github-arxanas-git-branchless",
+    "contentHash": "a4a853f3f32739254e3aa9df096f5b1b487daca318dc267f5f0cf72d1b9ecca9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-L821",
+    "timestamp": "2026-10-25T03:52:50.953Z",
+    "repository": "CrawlCove/xml-sitemap-validator",
+    "learningId": "learn-github-crawlcove-xml-sitemap-validator",
+    "contentHash": "34d60cf43f1d66a8565063491323bce646be2810c4d94bf44ebdca891d81a96a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-LFA9",
+    "timestamp": "2026-10-25T03:53:00.321Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "b39cd79c4f070255b8f62d1825bd5a047ae249396209fd2c6564944a8a51807c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
