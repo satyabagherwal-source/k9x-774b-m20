@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T06:08:11.118Z",
+  "last_updated": "2026-10-25T06:25:51.506Z",
   "total_verified_learnings": 1084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9067,8 +9067,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "7db3803a",
-      "content_hash": "246924596d592be6c597431afb361dba74fa3563621c62a459ef16c380ce2644",
+      "source_version": "1641475e",
+      "content_hash": "715de2caf0ce631f2a32657f3aa3facf7b947860dad6f468fd510cadddd107c0",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -9096,6 +9096,21 @@
           "number": 3687,
           "title": "CSV sniffer with comment character, buffer boundary column check and piped read",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4099,
+          "title": "Preallocated Out-Of-Memory Guard for Multithreaded Error Reporting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4100,
+          "title": "State-Draining Before Callback Invocation (Re-entrancy / Throw Shield)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4101,
+          "title": "Non-Spreading Sentinel Representation for Algebraic Monoids Over Infinite Bounds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9103,7 +9118,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:11:15.083Z",
+      "verified_at": "2026-10-25T06:23:23.327Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13007,8 +13022,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "66e1a4d2",
-      "content_hash": "d3939490257d8634aef44fbeed60fa2070aed2799c128a22baa185f35d94e98b",
+      "source_version": "de96aa9f",
+      "content_hash": "3ca18d390dd9e963ab984f44e7d602a06dd6bfb47b0d2fde5c67256625ca915b",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -13026,6 +13041,21 @@
           "number": 3624,
           "title": "Use ScopedAlwaysSample for GWP-ASan death tests in memory_errors_test.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4102,
+          "title": "Integer Wrap Proofing in Virtual Range Calculations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4103,
+          "title": "Lock-Free Non-Allocating Hook Dispatch via Atomic Slot Compaction",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4104,
+          "title": "Fault-Tolerant Unmapped Memory Probing via `process_vm_readv`",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13033,7 +13063,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:09:57.228Z",
+      "verified_at": "2026-10-25T06:25:21.801Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59100,7 +59130,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
       "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "47255242ce590b94474942c0f999bb89c246124f07459cd65580bdea34c1c6a8",
+      "content_hash": "6107085beac8487edcbdc9dfee6869d532c44fb7377302c47c2b87c452f14553",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "promoted_rules": [
@@ -59158,6 +59188,21 @@
           "number": 3217,
           "title": "Memory Management & Tensor Device Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4105,
+          "title": "Tensor Memory-Map Allocation Under Pinned Offload Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4106,
+          "title": "Multi-Reference Positional Coordinate Non-Overlapping Bound",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4107,
+          "title": "Asymmetric FP8 Quantization Scale De-quantization Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59165,7 +59210,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:16:57.789Z",
+      "verified_at": "2026-10-25T06:25:51.495Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119215,6 +119260,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T06:08:11.111Z"
+    },
+    "rule-4099": {
+      "learning_id": "rule-4099",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4099,
+      "title": "Preallocated Out-Of-Memory Guard for Multithreaded Error Reporting",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "1641475e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:23:23.327Z"
+    },
+    "rule-4100": {
+      "learning_id": "rule-4100",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4100,
+      "title": "State-Draining Before Callback Invocation (Re-entrancy / Throw Shield)",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "1641475e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:23:23.327Z"
+    },
+    "rule-4101": {
+      "learning_id": "rule-4101",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4101,
+      "title": "Non-Spreading Sentinel Representation for Algebraic Monoids Over Infinite Bounds",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "1641475e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:23:23.327Z"
+    },
+    "rule-4102": {
+      "learning_id": "rule-4102",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4102,
+      "title": "Integer Wrap Proofing in Virtual Range Calculations",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "de96aa9f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:25:21.801Z"
+    },
+    "rule-4103": {
+      "learning_id": "rule-4103",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4103,
+      "title": "Lock-Free Non-Allocating Hook Dispatch via Atomic Slot Compaction",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "de96aa9f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:25:21.801Z"
+    },
+    "rule-4104": {
+      "learning_id": "rule-4104",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4104,
+      "title": "Fault-Tolerant Unmapped Memory Probing via `process_vm_readv`",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "de96aa9f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:25:21.801Z"
+    },
+    "rule-4105": {
+      "learning_id": "rule-4105",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4105,
+      "title": "Tensor Memory-Map Allocation Under Pinned Offload Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:25:51.495Z"
+    },
+    "rule-4106": {
+      "learning_id": "rule-4106",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4106,
+      "title": "Multi-Reference Positional Coordinate Non-Overlapping Bound",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:25:51.495Z"
+    },
+    "rule-4107": {
+      "learning_id": "rule-4107",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4107,
+      "title": "Asymmetric FP8 Quantization Scale De-quantization Isolation",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:25:51.495Z"
     }
   },
   "aliases": {

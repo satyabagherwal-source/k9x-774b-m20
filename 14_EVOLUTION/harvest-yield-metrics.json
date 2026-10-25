@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T06:08:11.169Z",
-  "total_cycles_completed": 4682,
-  "total_learnings_persisted": 4682,
-  "total_rules_promoted": 3970,
+  "last_updated": "2026-10-25T06:25:51.568Z",
+  "total_cycles_completed": 4685,
+  "total_learnings_persisted": 4685,
+  "total_rules_promoted": 3979,
   "history": [
-    {
-      "timestamp": "2026-10-23T08:54:55.098Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T08:59:45.502Z",
-      "repository": "cosscom/ui",
-      "learningId": "learn-github-cosscom-ui",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T09:20:47.323Z",
-      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
-      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T09:20:48.749Z",
       "repository": "karakeep-app/karakeep",
@@ -1403,6 +1382,27 @@
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:23:23.405Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:25:21.874Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:25:51.568Z",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

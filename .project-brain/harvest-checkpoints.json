@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T06:08:11.172Z",
+  "last_updated": "2026-10-25T06:25:51.576Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2436,14 +2436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "47255242ce590b94474942c0f999bb89c246124f07459cd65580bdea34c1c6a8",
-      "verified_at": "2026-10-20T14:16:57.890Z",
+      "content_hash": "6107085beac8487edcbdc9dfee6869d532c44fb7377302c47c2b87c452f14553",
+      "verified_at": "2026-10-25T06:25:51.575Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:16:57.890Z"
+      "last_updated": "2026-10-25T06:25:51.575Z"
     },
     "roseyco-management-seo-resources": {
       "status": "VERIFIED_LEARNING",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "246924596d592be6c597431afb361dba74fa3563621c62a459ef16c380ce2644",
-      "verified_at": "2026-10-22T18:11:15.156Z",
+      "content_hash": "715de2caf0ce631f2a32657f3aa3facf7b947860dad6f468fd510cadddd107c0",
+      "verified_at": "2026-10-25T06:23:23.408Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:11:15.156Z"
+      "last_updated": "2026-10-25T06:23:23.408Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "d3939490257d8634aef44fbeed60fa2070aed2799c128a22baa185f35d94e98b",
-      "verified_at": "2026-10-22T16:09:57.310Z",
+      "content_hash": "3ca18d390dd9e963ab984f44e7d602a06dd6bfb47b0d2fde5c67256625ca915b",
+      "verified_at": "2026-10-25T06:25:21.881Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:09:57.310Z"
+      "last_updated": "2026-10-25T06:25:21.881Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",

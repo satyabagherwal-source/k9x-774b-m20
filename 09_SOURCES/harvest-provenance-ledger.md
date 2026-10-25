@@ -4712,3 +4712,6 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `6068694d` | Multi-dimensional audit evidence | 2026-10-25T06:06:20.267Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `0ee8584a` | Multi-dimensional audit evidence | 2026-10-25T06:06:25.521Z |
 | `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-25T06:08:11.161Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `1641475e` | Multi-dimensional audit evidence | 2026-10-25T06:23:23.396Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `de96aa9f` | Multi-dimensional audit evidence | 2026-10-25T06:25:21.869Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-25T06:25:51.564Z |

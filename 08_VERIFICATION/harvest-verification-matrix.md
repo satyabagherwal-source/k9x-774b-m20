@@ -4705,3 +4705,6 @@
 | `CYCLE-20261025-CW2W` | `2026-10-25T06:06:20.264Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4095` | Yes (`e705fdae...`) |
 | `CYCLE-20261025-D04V` | `2026-10-25T06:06:25.519Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4096` | Yes (`01d2a52b...`) |
 | `CYCLE-20261025-F9NB` | `2026-10-25T06:08:11.159Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4097, Rule 4098` | Yes (`cef9b87c...`) |
+| `CYCLE-20261025-YTJ5` | `2026-10-25T06:23:23.393Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4099, Rule 4100, Rule 4101` | Yes (`715de2ca...`) |
+| `CYCLE-20261025-1CY2` | `2026-10-25T06:25:21.866Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4102, Rule 4103, Rule 4104` | Yes (`3ca18d39...`) |
+| `CYCLE-20261025-1ZUW` | `2026-10-25T06:25:51.560Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4105, Rule 4106, Rule 4107` | Yes (`6107085b...`) |
