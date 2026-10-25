@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "4fc3c52568b92a3ff36effe1532adbe5b9e2bdd8b60186a92042539ef993613c",
-    "lastHarvestedAt": "2026-10-20T17:22:54.806Z",
+    "contentHash": "b3548a1629d50855be860b67a745ed1597a78df215fa75621b3d5ea7366fec3a",
+    "lastHarvestedAt": "2026-10-25T12:23:10.961Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "a41ecdeb",
+    "sourceVersion": "21cf7bff",
     "license": "MIT",
-    "contentHash": "9b742df0e2793c4aac960c4e9edfaa79e15350888cf89c96fe44b24c0655b458",
-    "lastHarvestedAt": "2026-10-22T19:16:14.200Z",
+    "contentHash": "12ea10f334850848316a72f50bfce35ebea42b8a91f1158462c85adb7bc61cd6",
+    "lastHarvestedAt": "2026-10-25T12:23:03.174Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -6333,10 +6333,10 @@
     "repository": "fastapi/fastapi",
     "platform": "github",
     "sourceUrl": "https://github.com/fastapi/fastapi",
-    "sourceVersion": "69ddc2ba",
+    "sourceVersion": "7a0a3f0b",
     "license": "MIT",
-    "contentHash": "98601ea6e30448df9e2cd3de08e2de09e9ffb431505e507f34d09e9fa3d34953",
-    "lastHarvestedAt": "2026-10-23T06:49:43.596Z",
+    "contentHash": "0a017f5de52ae5a264792ebb31811333590ba418cbe877524995e25aebf0bf10",
+    "lastHarvestedAt": "2026-10-25T12:23:01.092Z",
     "learningId": "learn-github-fastapi-fastapi"
   },
   "ataraxy-labs-sem": {
@@ -7193,10 +7193,10 @@
     "repository": "joreilly/PeopleInSpace",
     "platform": "github",
     "sourceUrl": "https://github.com/joreilly/PeopleInSpace",
-    "sourceVersion": "3a10b125",
+    "sourceVersion": "8b77f91d",
     "license": "Apache-2.0",
-    "contentHash": "6c2ce8a56c8b226eface7aede66f5f6b29b40c3edbe967fad20d83fc373f6659",
-    "lastHarvestedAt": "2026-10-19T08:07:01.884Z",
+    "contentHash": "323563dd06121b5c2e1efd3a6d9e537df16c64d7f579d1b4617ae2c52e42c84e",
+    "lastHarvestedAt": "2026-10-25T12:23:07.234Z",
     "learningId": "learn-github-joreilly-peopleinspace"
   },
   "valeriansaliou-sonic": {

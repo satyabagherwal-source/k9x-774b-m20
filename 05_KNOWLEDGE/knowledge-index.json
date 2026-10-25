@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T12:17:04.721Z",
+  "last_updated": "2026-10-25T12:23:10.926Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11082,13 +11082,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "fastapi/fastapi",
       "repository": "fastapi/fastapi",
-      "slug": "tiangolo-fastapi",
+      "slug": "fastapi-fastapi",
       "platform": "github",
-      "source_url": "https://github.com/tiangolo/fastapi",
-      "source_version": "69ddc2ba",
-      "content_hash": "f4eac31f9a2f7c3446faa1ec486de4c8f99a2c793aa5812da0868aa0700a148b",
-      "dossier_path": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "7a0a3f0b",
+      "content_hash": "0a017f5de52ae5a264792ebb31811333590ba418cbe877524995e25aebf0bf10",
+      "dossier_path": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "promoted_rules": [
         {
           "number": 1664,
@@ -11171,7 +11171,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:44:03.767Z",
+      "verified_at": "2026-10-25T12:23:01.032Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27154,7 +27154,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "4fc3c52568b92a3ff36effe1532adbe5b9e2bdd8b60186a92042539ef993613c",
+      "content_hash": "b3548a1629d50855be860b67a745ed1597a78df215fa75621b3d5ea7366fec3a",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "promoted_rules": [
@@ -27171,6 +27171,21 @@
         {
           "number": 2094,
           "title": "YaRN RoPE Scaling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4286,
+          "title": "Low-Rank KV Cache Compression for Long-Context Stability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4287,
+          "title": "Sinkhorn-Knopp Load Balancing for MoE Stability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4288,
+          "title": "YaRN RoPE Scaling for Context Extension",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -27192,7 +27207,7 @@
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv459bwg",
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129"
       ],
-      "verified_at": "2026-10-20T17:22:54.760Z",
+      "verified_at": "2026-10-25T12:23:10.919Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29525,8 +29540,8 @@
       "slug": "joreilly-peopleinspace",
       "platform": "github",
       "source_url": "https://github.com/joreilly/PeopleInSpace",
-      "source_version": "3a10b125",
-      "content_hash": "6c2ce8a56c8b226eface7aede66f5f6b29b40c3edbe967fad20d83fc373f6659",
+      "source_version": "8b77f91d",
+      "content_hash": "323563dd06121b5c2e1efd3a6d9e537df16c64d7f579d1b4617ae2c52e42c84e",
       "dossier_path": "07_PROJECT_LEARNING/joreilly-peopleinspace-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/joreilly-peopleinspace-learnings.md",
       "promoted_rules": [
@@ -29544,6 +29559,11 @@
           "number": 2371,
           "title": "Antimeridian-Aware Longitudinal Coordinate Wrapping Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4285,
+          "title": "Batch Renovate updates (#559)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29551,7 +29571,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:07:01.817Z",
+      "verified_at": "2026-10-25T12:23:07.192Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34120,8 +34140,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "a41ecdeb",
-      "content_hash": "9b742df0e2793c4aac960c4e9edfaa79e15350888cf89c96fe44b24c0655b458",
+      "source_version": "21cf7bff",
+      "content_hash": "12ea10f334850848316a72f50bfce35ebea42b8a91f1158462c85adb7bc61cd6",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -34156,7 +34176,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:16:14.137Z",
+      "verified_at": "2026-10-25T12:23:03.127Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122792,6 +122812,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T12:17:04.715Z"
+    },
+    "rule-4285": {
+      "learning_id": "rule-4285",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4285,
+      "title": "Batch Renovate updates (#559)",
+      "source_url": "https://github.com/joreilly/PeopleInSpace",
+      "source_version": "8b77f91d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:23:07.192Z"
+    },
+    "rule-4286": {
+      "learning_id": "rule-4286",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4286,
+      "title": "Low-Rank KV Cache Compression for Long-Context Stability",
+      "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+      "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:23:10.919Z"
+    },
+    "rule-4287": {
+      "learning_id": "rule-4287",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4287,
+      "title": "Sinkhorn-Knopp Load Balancing for MoE Stability",
+      "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+      "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:23:10.919Z"
+    },
+    "rule-4288": {
+      "learning_id": "rule-4288",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4288,
+      "title": "YaRN RoPE Scaling for Context Extension",
+      "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+      "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:23:10.919Z"
     }
   },
   "aliases": {

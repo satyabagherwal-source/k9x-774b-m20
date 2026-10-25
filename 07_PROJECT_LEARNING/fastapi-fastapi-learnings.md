@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fastapi-fastapi-learnings.md`  
 > **Source**: github ([https://github.com/fastapi/fastapi](https://github.com/fastapi/fastapi))  
-> **Source Version**: `69ddc2ba`  
+> **Source Version**: `7a0a3f0b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:49:43.212Z  
+> **Timestamp**: 2026-10-25T12:23:00.968Z  
 > **Learning ID**: `learn-github-fastapi-fastapi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fastapi-fastapi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fastapi/fastapi](https://github.com/fastapi/fastapi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:49:41.843Z  
+> **Harvest Timestamp**: 2026-10-25T12:23:00.513Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FastAPI framework, high performance, easy to learn, fast to code, ready for production
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 103925 stars
+- **Stars / Engagement**: 104112 stars
 
 ---
 
@@ -1167,7 +1167,7 @@ def replace_markdown_links(
 ```
 """FastAPI framework, high performance, easy to learn, fast to code, ready for production"""
 
-__version__ = "0.161.1"
+__version__ = "0.162.0"
 
 from starlette import status as status
 
@@ -1505,188 +1505,65 @@ def annotation_is_pydantic_v1(annotation: Any) -> bool:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f90d0369` (2026-10-22)
-**Commit Message**: 🐛 Fix OpenAPI schemas for standalone nullable form unions (#16598)
+### Incident Patch 1: `7a0a3f0b` (2026-10-23)
+**Commit Message**: 🔖 Release version 0.162.0 (#16606)
 
-**File**: `fastapi/dependencies/utils.py` (modified, +4/-2)
+Co-authored-by: pr-submit[bot] <pr-submit[bot]@users.noreply.github.com>
+
+**File**: `docs/en/docs/release-notes.md` (modified, +2/-0)
 ```diff
-@@ -1366,8 +1366,7 @@ def _get_body_field(
-         return None
-     first_param = body_params[0]
-     has_nullable_form_model = any(
--        (model := _get_form_model(field)) is not None
--        and field.field_info.annotation is not model
-+        _get_form_models(field) and type(None) in get_args(field.field_info.annotation)
-         for field in body_params
-     )
-     if not embed_body_fields and not has_nullable_form_model:
-@@ -1402,6 +1401,9 @@ def _get_body_field(
-     if not embed_body_fields:
-         field_info = copy(first_param.field_info)
-         field_info.annotation = BodyModel
-+        # The original form field already carries the validation metadata.
-+        field_info.metadata = []
-+        field_info.discriminator = None
-         return ModelField(name=first_param.name, field_info=field_info)
-     required = any(True for f in body_params if f.field_info.is_required())
-     BodyFieldInfo_kwargs: dict[str, Any] = {
+@@ -7,6 +7,8 @@ hide:
+ 
+ ## Latest Changes
+ 
++## 0.162.0 (2026-10-23)
++
+ Omitted `bool` and `bool | None` form fields now use their declared defaults or produce missing-field errors, consistent with other fields and Pydantic behavior. FastAPI no longer infers `False` for omitted booleans. This applies to individual form parameters, form models, and unions of form models.
+ 
+ Omitted boolean model fields are excluded from `model_dump(exclude_unset=True)`, and their defaults no longer count as submitted fields during union selection. Default factories and `validate_default` follow the usual rules.
 ```
 
-**File**: `tests/test_forms_optional_unions.py` (modified, +80/-17)
+**File**: `fastapi/__init__.py` (modified, +1/-1)
 ```diff
-@@ -125,15 +125,27 @@ def read(data: Annotated[Count | Label | None, Form()]):
-         return data
+@@ -1,6 +1,6 @@
+ """FastAPI framework, high performance, easy to learn, fast to code, ready for production"""
  
-     client = TestClient(app)
--    response = client.post("/")
--    assert response.status_code == 422
--    assert response.json()["detail"] == [
--        {"type": "missing", "loc": ["body"], "msg": "Field required", "input": None}
--    ]
-+    for fields in ({}, {"unknown": "ignored"}):
-+        response = client.post("/", data=fields)
-+        assert response.status_code == 422
-+        assert response.json()["detail"] == [
-+            {"type": "missing", "loc": ["body"], "msg": "Field required", "input": None}
-+        ]
-     response = client.post("/", data={"count": "2"})
-     assert response.status_code == 200, response.text
-     assert response.json() == {"count": 2}
--    assert app.openapi()["paths"]["/"]["post"]["requestBody"]["required"] is True
-+    schema = app.openapi()
-+    assert schema["paths"]["/"]["post"]["requestBody"]["required"] is True
-+    assert schema["components"]["schemas"]["Body_read__post"]["allOf"] == [
-+        {"not": {"not": {"anyOf": [{"required": ["count"]}, {"required": ["label"]}]}}},
-+        {
-+            "anyOf": [
-+                {"$ref": "#/components/schemas/Count"},
-+                {"$ref": "#/components/schemas/Label"},
-+            ],
-+            "title": "Data",
-+        },
-+    ]
+-__version__ = "0.161.1"
++__version__ = "0.162.0"
  
+ from starlette import status as status
  
- @pytest.mark.parametrize("extra", ["ignore", "allow", "forbid"])
-@@ -173,6 +185,27 @@ def read(
-         assert response.json() == (
-             {"count": 1, "unknown": ["a", "b"]} if extra == "allow" else None
-         )
-+    schema = app.openapi()
-+    assert "required" not in schema["paths"]["/"]["post"]["requestBody"]
-+    absent = (
-+        {"maxProperties": 0}
-+        if extra in ("allow", "forbid")
-+        else {"not": {"anyOf": [{"required": ["count"]}, {"required": ["label"]}]}}
-+    )
-+    assert schema["components"]["schemas"]["Body_read__post"]["allOf"] == [
-+        {
-+            "anyOf": [
-+                absent,
-+                {
-+                    "anyOf": [
-+                        {"$ref": "#/components/schemas/Count"},
-+                        {"$ref": "#/components/schemas/Label"},
-+                    ],
-+                    "title": "Data",
-+                },
-+            ]
-+        }
-+    ]
+```
+
+---
+
+### Incident Patch 2: `b56f7c6b` (2026-10-23)
+**Commit Message**: 📝 Update release notes
+
+[skip ci]
+
+**File**: `docs/en/docs/release-notes.md` (modified, +4/-0)
+```diff
+@@ -13,6 +13,10 @@ Omitted boolean model fields are excluded from `model_dump(exclude_unset=True)`,
  
+ For HTML checkboxes, declare a boolean with a default of `False`. See [Boolean Form Fields](https://fastapi.tiangolo.com/tutorial/request-forms/#boolean-form-fields).
  
- def test_mixed_extra_configurations_activate_union():
-@@ -345,6 +378,10 @@ def read_validated_default(
-     response = client.post("/validated-default")
-     assert response.status_code == 200, response.text
-     assert calls == ["validated"]
-+    schema = app.openapi()
-+    for path in ("/default", "/factory", "/validated-default"):
-+        assert "required" not in schema["paths"][path]["post"]["requestBody"]
-+    assert calls == ["validated"]
++### Breaking Changes
++
++* 🐛 Restore default handling for omitted boolean form fields. PR [#16605](https://github.com/fastapi/fastapi/pull/16605) by [@tiangolo](https://github.com/tiangolo).
++
+ ## 0.161.1 (2026-10-22)
  
- 
- def test_optional_union_in_dependency():
-@@ -370,24 +407,51 @@ def read(data: Annotated[TextForm | ListForm | None, Depends(get_form)]):
- 
- def test_openapi():
-     schema = app.openapi()
-+    schemas = schema["components"]["schemas"]
-+    absent = {
-+        "not": {
-+            "anyOf": [
-+                {"required": ["enabled"]},
-+                {"required": ["kind"]},
-+                {"required": ["value"]},
-+            ]
-+        }
-+    }
-     assert schema["paths"]["/union"]["post"]["requestBody"] == {
-         "content": {
-             "application/x-www-form-urlencoded": {
--                "schema": {
-+                "schema": {"$ref": "#/components/schemas/Body_read_union_union_post"}
-+            }
-+        }
-+    }
-+    assert schemas["Body_read_union_union_post"]["allOf"] == [
-+        {
-+            "anyOf": [
-+                absent,
-+                {
-                     "anyOf": [
-                         {"$ref": "#/components/schemas/TextForm"},
-                         {"$ref": "#/components/schemas/ListForm"},
--                        {"type": "null"},
-                     ],
-                     "title": "Data",
--                }
--            }
-+                },
-+            ]
-         }
--    }
-+    ]
-     assert schema["paths"]["/discriminated"]["post"]["requestBody"] == {
-         "content": {
-             "application/x-www-form-urlencoded": {
-                 "schema": {
-+                    "$ref": "#/components/schemas/Body_read_discriminated_discriminated_post"
-+                }
-+            }
-+        }
-+    }
-+    assert schemas["Body_read_discriminated_discriminated_post"]["allOf"] == [
-+        {
-+            "anyOf": [
-+                absent,
-+                {
-                     "anyOf": [
-                         {
-                             "oneOf": [
-@@ -402,12 +466,11 @@ def test_openapi():
-                                 },
-                             },
-                         },
--                        {"type": "null"},
-                     ],
-                     "title": "Data",
--                }
--            }
-+                },
-+            ]
-         }
--    }
--    assert schema["components"]["schemas"]["TextForm"]["required"] == ["kind", "
+ ### Fixes
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16617** (closed): 🌐 Update zh-hant translations for form and parameter models (@LiaoAB)
+- **PR #16606** (2026-10-23): 🔖 Release version 0.162.0 (@pr-submit[bot])
+- **PR #16605** (2026-10-23): 🐛 Restore default handling for omitted boolean form fields (@tiangolo)
+- **PR #16604** (closed): git@github.com:microsoft/openjdk-jdk.git (@kemery4-afk)
 - **PR #16600** (closed): Support hyphenated headers with AliasChoices and populate_by_name (@manjirisharma)
 - **PR #16599** (2026-10-22): 🔖 Release version 0.161.1 (@pr-submit[bot])
-- **PR #16598** (2026-10-22): 🐛 Fix OpenAPI schemas for standalone nullable form unions (@tiangolo)
-- **PR #16597** (2026-10-22): 🔖 Release version 0.161.0 (@pr-submit[bot])
-- **PR #16596** (2026-10-22): ✨ Add support for combining unions of form models (@tiangolo)
-- **PR #16595** (2026-10-22): 🔖 Release version 0.160.0 (@pr-submit[bot])
 
 ---
 
@@ -1706,32 +1583,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐛 Fix OpenAPI schemas for standalone nullable form unions (#16598)
+## X. 🔖 Release version 0.162.0 (#16606)
 
 **RULE**:
-When implementing operations in `fastapi/dependencies/utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastapi/fastapi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/docs/release-notes.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastapi/fastapi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f90d0369`: 🐛 Fix OpenAPI schemas for standalone nullable form unions (#16598). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a0a3f0b`: 🔖 Release version 0.162.0 (#16606). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `fastapi/dependencies/utils.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/docs/release-notes.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        _get_form_models(field) and type(None) in get_args(field.field_info.annotation)
-        # The original form field already carries the validation metadata.
-        field_info.metadata = []
-        field_info.discriminator = None
+## 0.162.0 (2026-10-23)
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        (model := _get_form_model(field)) is not None
-        and field.field_info.annotation is not model
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f90d0369` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a0a3f0b` are properly handled with clean fallback behavior.

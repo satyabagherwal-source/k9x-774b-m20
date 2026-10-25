@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-0JAT",
-    "timestamp": "2026-10-22T15:53:34.901Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "88d18677fa1acad56039dfb749be4e79f4256259402410fee06915b23fe0ad93",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-4R2Z",
-    "timestamp": "2026-10-22T15:56:51.611Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "e66303c1b25e3a685e16dcc7e4309474d10a36e34b3abfe071b35e6e99750f7c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-4THN",
-    "timestamp": "2026-10-22T15:56:54.731Z",
-    "repository": "stakater/Reloader",
-    "learningId": "learn-github-stakater-reloader",
-    "contentHash": "93aa00b4fb3ff950e70184462901b8b02509ab30939d3fa8fe07b962862922d7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-4X9C",
-    "timestamp": "2026-10-22T15:56:59.616Z",
-    "repository": "apache/zookeeper",
-    "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "f3394aa9ee3fdd3b2e07d24151baa4005f71f8656b6562cf3078bca82398e711",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-D85H",
     "timestamp": "2026-10-22T16:03:26.981Z",
     "repository": "facebook/folly",
@@ -7492,6 +7432,66 @@
     "contentHash": "17690d987778ac08711c9f138108b30e3858ec84582198a8d93977d2e2730ad8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-TAZL",
+    "timestamp": "2026-10-25T12:23:01.089Z",
+    "repository": "fastapi/fastapi",
+    "learningId": "learn-github-fastapi-fastapi",
+    "contentHash": "0a017f5de52ae5a264792ebb31811333590ba418cbe877524995e25aebf0bf10",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-TCLF",
+    "timestamp": "2026-10-25T12:23:03.171Z",
+    "repository": "metalbear-co/mirrord",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "12ea10f334850848316a72f50bfce35ebea42b8a91f1158462c85adb7bc61cd6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-TFQ7",
+    "timestamp": "2026-10-25T12:23:07.231Z",
+    "repository": "joreilly/PeopleInSpace",
+    "learningId": "learn-github-joreilly-peopleinspace",
+    "contentHash": "323563dd06121b5c2e1efd3a6d9e537df16c64d7f579d1b4617ae2c52e42c84e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-TILR",
+    "timestamp": "2026-10-25T12:23:10.959Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+    "contentHash": "b3548a1629d50855be860b67a745ed1597a78df215fa75621b3d5ea7366fec3a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

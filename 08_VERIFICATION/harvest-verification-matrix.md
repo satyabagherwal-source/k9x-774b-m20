@@ -4804,3 +4804,7 @@
 | `CYCLE-20261025-DQ9K` | `2026-10-25T12:10:54.392Z` | `carbon-design-system/carbon` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4280` | Yes (`99eb769a...`) |
 | `CYCLE-20261025-LL03` | `2026-10-25T12:17:00.819Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4281, Rule 4282, Rule 4283` | Yes (`fcde7db5...`) |
 | `CYCLE-20261025-LO1E` | `2026-10-25T12:17:04.754Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4284` | Yes (`17690d98...`) |
+| `CYCLE-20261025-TAZL` | `2026-10-25T12:23:01.089Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fastapi-fastapi-learnings.md` | Yes (`0a017f5d...`) |
+| `CYCLE-20261025-TCLF` | `2026-10-25T12:23:03.171Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md` | Yes (`12ea10f3...`) |
+| `CYCLE-20261025-TFQ7` | `2026-10-25T12:23:07.231Z` | `joreilly/PeopleInSpace` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4285` | Yes (`323563dd...`) |
+| `CYCLE-20261025-TILR` | `2026-10-25T12:23:10.959Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4286, Rule 4287, Rule 4288` | Yes (`b3548a16...`) |

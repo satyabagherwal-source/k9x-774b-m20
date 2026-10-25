@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `a41ecdeb`  
+> **Source Version**: `21cf7bff`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T19:16:13.867Z  
+> **Timestamp**: 2026-10-25T12:23:03.062Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T19:16:12.544Z  
+> **Harvest Timestamp**: 2026-10-25T12:23:02.884Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5379 stars
+- **Stars / Engagement**: 5382 stars
 
 ---
 
@@ -1535,474 +1535,555 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c2c1cd4` (2026-10-21)
-**Commit Message**: Fixed concurrency issues in layer ProxyConnection
+### Incident Patch 1: `19ea8411` (2026-10-25)
+**Commit Message**: Merge remote-tracking branch 'origin/main' into codex/fix-pr-5138-resolved
 
-**File**: `mirrord/layer-lib/clippy.toml` (modified, +1/-0)
+# Conflicts:
+#	Cargo.lock
+#	mirrord/agent/src/vpn.rs
+
+**File**: `CHANGELOG.md` (modified, +21/-0)
 ```diff
-@@ -13,6 +13,7 @@ disallowed-macros = [
- disallowed-methods = [
-     { path = "std::thread::current", reason = "claims the thread handle slot. See layer-lib::logging." },
-     { path = "std::thread::park", reason = "reaches std::thread::current. See layer-lib::logging." },
-+    { path = "std::thread::park_timeout", reason = "reaches std::thread::current. See layer-lib::logging." },
-     { path = "std::io::stderr", reason = "takes a reentrant lock that claims the thread handle slot. Use crate::logging::report_to_stderr." },
-     { path = "std::io::stdout", reason = "takes a reentrant lock that claims the thread handle slot. See layer-lib::logging." },
-     { path = "tracing_subscriber::fmt::Layer::with_thread_ids", reason = "reaches std::thread::current. Use the OsThreadId event format." },
+@@ -8,6 +8,27 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
+ 
+ <!-- towncrier release notes start -->
+ 
++## [3.279.0](https://github.com/metalbear-co/mirrord/tree/3.279.0) - 2026-10-24
++
++
++### Added
++
++- Add `mirrord preview down`, which deletes every preview environment under a
++  key in all namespaces, finding the key the way `mirrord preview up` does.
++- Add `mirrord preview up`, which starts a preview environment for every
++  service of a `mirrord-up.yaml` that has an image (from `--image
++  <service>=<ref>`, `MIRRORD_<SERVICE>_IMAGE` or the service's `image`), all
++  under one key, and returns once each one is ready.
++- Services in `mirrord-up.yaml` accept an optional `image` field, the container
++  image `mirrord preview up` runs in the service's preview environment.
++  `mirrord up` ignores it.
++
++
++### Fixed
++
++- Fixed a SIGSEGV on macOS when apps using libuv 1.53+ (e.g. Homebrew Node)
++  connect to a unix socket.
++
+ ## [3.278.0](https://github.com/metalbear-co/mirrord/tree/3.278.0) - 2026-10-22
+ 
+ 
 ```
 
-**File**: `mirrord/layer-lib/src/mutex.rs` (modified, +5/-1)
+**File**: `Cargo.lock` (modified, +59/-59)
 ```diff
-@@ -1,6 +1,6 @@
- use std::{
-     backtrace::Backtrace,
--    sync::{LockResult, MutexGuard, TryLockError},
-+    sync::{LockResult, MutexGuard, TryLockError, TryLockResult},
-     time::{Duration, Instant},
- };
+@@ -2015,9 +2015,9 @@ dependencies = [
  
-@@ -58,4 +58,8 @@ impl<T> Mutex<T> {
-             }
-         }
-     }
-+
-+    pub fn try_lock(&self) -> TryLockResult<MutexGuard<'_, T>> {
-+        self.inner.try_lock()
-+    }
- }
+ [[package]]
+ name = "ctutils"
+-version = "0.4.4"
++version = "0.4.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "12218662ccac37d9714f2191252553d67585b97df8c839cbe49e0bde278dc865"
++checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
+ dependencies = [
+  "cmov",
+ ]
+@@ -2489,7 +2489,7 @@ checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
+ 
+ [[package]]
+ name = "double_listen"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "libc",
+ ]
+@@ -2890,7 +2890,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "fileops"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "libc",
+ ]
+@@ -4075,7 +4075,7 @@ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
+ 
+ [[package]]
+ name = "issue1317"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "axum",
+  "env_logger",
+@@ -4085,7 +4085,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "issue1776"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "errno 0.3.14",
+  "libc",
+@@ -4094,22 +4094,22 @@ dependencies = [
+ 
+ [[package]]
+ name = "issue1776portnot53"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "libc",
+  "socket2 0.5.10",
+ ]
+ 
+ [[package]]
+ name = "issue1899"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "libc",
+ ]
+ 
+ [[package]]
+ name = "issue2001"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "libc",
+ ]
+@@ -4713,7 +4713,7 @@ checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
+ 
+ [[package]]
+ name = "listen_ports"
+-version = "3.278.0"
++version = "3.279.0"
+ 
+ [[package]]
+ name = "litemap"
+@@ -5063,7 +5063,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "actix-codec",
+  "atomic-write-file",
+@@ -5167,7 +5167,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-agent"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "actix-codec",
+  "async-pidfd",
+@@ -5236,7 +5236,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-agent-env"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "base64 0.22.1",
+  "k8s-openapi",
+@@ -5249,7 +5249,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-agent-iptables"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "async-trait",
+  "caps",
+@@ -5265,7 +5265,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-analytics"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "assert-json-diff",
+  "base64 0.22.1",
+@@ -5283,7 +5283,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-auth"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "base64 0.22.1",
+  "bcder",
+@@ -5310,7 +5310,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-cluster-auth"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "aws-config",
+  "aws-credential-types",
+@@ -5344,7 +5344,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-command"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "tempfile",
+  "tokio",
+@@ -5353,7 +5353,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-config"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "base64 0.22.1",
+  "bimap",
+@@ -5395,7 +5395,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-config-derive"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "proc-macro2",
+  "proc-macro2-diagnostics",
+@@ -5405,7 +5405,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-console"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "bincode",
+  "drain",
+@@ -5424,7 +5424,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-intproxy"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "actix-codec",
+  "anyhow",
+@@ -5479,7 +5479,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-intproxy-protocol"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "bincode",
+  "bytes",
+@@ -5492,7 +5492,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-jaq"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "jaq-core",
+  "jaq-json",
+@@ -5505,7 +5505,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-kube"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "async-stream",
+  "futures",
+@@ -5534,7 +5534,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "actix-codec",
+  "apple-codesign",
+@@ -5574,7 +5574,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-core"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "frida-gum",
+  "libc",
+@@ -5584,7 +5584,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-go"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "frida-gum",
+  "libc",
+@@ -5596,7 +5596,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-lib"
+-version = "3.278.0"
++version = "3.279.0"
+ dependencies = [
+  "base64 0.22.1",
+  "bincode",
+@@ -56
 ```
 
-**File**: `mirrord/layer-lib/src/proxy_connection.rs` (modified, +19/-47)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1,11 +1,11 @@
--//! Common ProxyConnection implementation shared between Unix and Windows layers.
-+//! Common [`ProxyConnection`] implementation shared between Unix and Windows layers.
-+
- use std::{
--    collections::HashMap,
-     fmt::Debug,
-     io,
-     net::{SocketAddr, TcpStream},
-     sync::{
--        OnceLock, PoisonError,
-+        Arc, OnceLock, PoisonError,
-         atomic::{AtomicU64, Ordering},
-     },
-     time::Duration,
-@@ -14,15 +14,18 @@ use std::{
- use mirrord_intproxy_protocol::{
-     IsLayerRequest, IsLayerRequestWithResponse, LayerId, LayerToProxyMessage, LocalMessage,
-     MessageId, NewSessionRequest, ProxyToLayerMessage,
--    codec::{self, CodecError, SyncDecoder, SyncEncoder},
-+    codec::{self, CodecError, SyncEncoder},
- };
- use thiserror::Error;
+@@ -72,7 +72,7 @@ ignored-paths = [
+ # latest commits on rustls suppress certificate verification
+ [workspace.package]
+ edition = "2024"
+-version = "3.278.0"
++version = "3.279.0"
+ license = "MIT"
+ readme = "README.md"
+ repository = "https://github.com/metalbear/mirrord"
+```
+
+**File**: `changelog.d/+frontend-deps-security.internal.md` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-Update frontend dependencies to pick up security fixes.
+```
+
+**File**: `changelog.d/+qodo-review-config.internal.md` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-Add a Qodo code review configuration that skips automatic reviews for bot-authored PRs and PRs carrying the `no-qodo` label.
+```
+
+**File**: `deny.toml` (modified, +3/-0)
+```diff
+@@ -24,6 +24,9 @@ ignore = [
+   "RUSTSEC-2026-0367",
+   "RUSTSEC-2026-0368",
+   "RUSTSEC-2026-0369",
++  # crypto-bigint timing side channels, held at 0.5 by apple-codesign's elliptic-curve 0.13. We only use it to
++  # re-sign binaries locally, with no secrets an attacker could observe.
++  "RUSTSEC-2026-0387",
+ ]
  
- use crate::{
-     error::{HookError, HookResult},
-     mutex::Mutex,
-+    proxy_connection::responses::ResponseManager,
- };
- 
-+mod responses;
-+
- // TODO: We don't really need a lock, we just need a type that:
- //  1. Can be initialized as static (with a const constructor or whatever)
- //  2. Is `Sync` (because shared static vars have to be).
-@@ -40,9 +43,7 @@ pub static mut PROXY_CONNECTION: OnceLock<ProxyConnection> = OnceLock::new();
- #[derive(Debug, Error)]
- pub enum ProxyError {
-     #[error("{0}")]
--    CodecError(#[from] CodecError),
--    #[error("connection closed")]
--    ConnectionClosed,
-+    CodecError(#[from] Arc<CodecError>),
-     #[error("unexpected response: {0:?}")]
-     UnexpectedResponse(
-         /// Boxed due to large size difference.
-@@ -58,18 +59,24 @@ pub enum ProxyError {
-     IoFailed(#[from] io::Error),
- }
- 
-+impl From<CodecError> for ProxyError {
-+    fn from(value: CodecError) -> Self {
-+        Arc::new(value).into()
-+    }
-+}
-+
- impl<T> From<PoisonError<T>> for ProxyError {
-     fn from(_value: PoisonError<T>) -> Self {
-         Self::LockPoisoned
+ [licenses]
+```
+
+**File**: `mirrord-up-schema.json` (modified, +8/-0)
+```diff
+@@ -573,6 +573,14 @@
+           },
+           "uniqueItems": true
+         },
++        "image": {
++          "description": "Container image to run in this service's preview environment, as a full image ref, e.g.\n`ghcr.io/acme/api:3f9a2c1`.\n\nUsed only by `mirrord preview up`, which starts a preview for every service that has an\nimage. `mirrord preview up --image <service>=<ref>` and `MIRRORD_<SERVICE>_IMAGE` take\nprecedence over it. `mirrord up` ignores it.",
++          "type": [
++            "string",
++            "null"
++          ],
++          "x-mirrord-plan": "enterprise"
++        },
+         "run": {
+           "description": "How to launch the service's local process.",
+           "$ref": "#/$defs/RunConfig"
+```
+
+**File**: `mirrord/agent/src/vpn.rs` (modified, +5/-6)
+```diff
+@@ -89,12 +89,11 @@ pub struct AsyncRawSocket {
+ impl AsyncRawSocket {
+     pub fn new(socket: Socket, addr: SockAddr) -> std::io::Result<Self> {
+         socket.set_nonblocking(true)?;
+-        Ok(Self {
+-            // SAFETY: Socket owns its descriptor, and AsyncRawSocket never closes or replaces it
+-            // while registered with AsyncFd.
+-            inner: unsafe { AsyncFd::register(socket)? },
+-            addr,
+-        })
++        // SAFETY: `Socket` owns its file descriptor, so it stays open and is the same descriptor
++        // for as long as the `AsyncFd` holds the socket. `AsyncRawSocket` does not close or replace
++        // the descriptor while it is registered.
++        let inner = unsafe { AsyncFd::register(socket) }?;
++        Ok(Self { inner, addr })
      }
+ 
+     pub async fn readable(&self) -> std::io::Result<AsyncFdReadyGuard<'_, Socket>> {
+```
+
+---
+
+### Incident Patch 2: `526c3c6b` (2026-10-24)
+**Commit Message**: Fix cargo deny
+
+**File**: `deny.toml` (modified, +3/-0)
+```diff
+@@ -24,6 +24,9 @@ ignore = [
+   "RUSTSEC-2026-0367",
+   "RUSTSEC-2026-0368",
+   "RUSTSEC-2026-0369",
++  # crypto-bigint timing side channels, held at 0.5 by apple-codesign's elliptic-curve 0.13. We only use it to
++  # re-sign binaries locally, with no secrets an attacker could observe.
++  "RUSTSEC-2026-0387",
+ ]
+ 
+ [licenses]
+```
+
+---
+
+### Incident Patch 3: `cc2f135e` (2026-10-24)
+**Commit Message**: preview: build the session spec in prepare
+
+**File**: `mirrord/cli/src/preview.rs` (modified, +53/-73)
+```diff
+@@ -49,10 +49,10 @@ use mirrord_operator::{
+     crd::{
+         MirrordOperatorSpec, NewOperatorFeature, TARGET_NAMESPACE_ANNOTATION, TargetCrd,
+         preview::{
+-            PreviewCronJobConfig, PreviewDbBranchingConfig, PreviewEnvConfigMount,
+-            PreviewEnvVarsConfig, PreviewIdleConfig, PreviewIncomingConfig, PreviewLabelFilter,
+-            PreviewPodLogs, PreviewQueueSplittingConfig, PreviewSecretMountFile, PreviewSession,
+-            PreviewSessionPhase, PreviewSessionSpec, PreviewSpecResources, PreviewTlsClientAuth,
++            PreviewCronJobConfig, PreviewDbBranchingConfig, PreviewEnvVarsConfig,
++            PreviewIdleConfig, PreviewIncomingConfig, PreviewLabelFilter, PreviewPodLogs,
++            PreviewQueueSplittingConfig, PreviewSecretMountFile, PreviewSession,
++            PreviewSessionPhase, PreviewSessionSpec, PreviewTlsClientAuth,
+             PreviewTlsClientAuthFromTarget, PreviewTlsDelivery,
+             view::{PreviewEnv, PreviewMessageKind},
+         },
+@@ -212,18 +212,11 @@ struct PreparedPreview {
+     /// session resource is created.
+     subtask: ProgressTracker,
+     config_target: Target,
+-    image: String,
+-    session_target: SessionTarget,
+-    incoming: Option<PreviewIncomingConfig>,
+-    cronjob: Option<PreviewCronJobConfig>,
++    /// Sent to the operator once the session exists, see [`resolve_secret_mounts`].
+     secret_values: BTreeMap<String, ByteString>,
+-    spec_resources: Option<PreviewSpecResources>,
+-    secret_mounts: Vec<PreviewSecretMountFile>,
+-    env: Option<PreviewEnvVarsConfig>,
+-    config_mounts: Vec<PreviewEnvConfigMount>,
+-    /// `feature.split_queues` are the defaults `mirrord preview up` adds, see
+-    /// [`PreviewSessionSpec::auto_queue_splitting`].
+-    auto_queue_splitting: bool,
++    /// The session's spec, but for what [`PreparedPreview::start`] fills in: `db_branching`,
++    /// from the branches it prepares, and `share_host`, from the session it replaces.
++    spec: PreviewSessionSpec,
  }
  
--pub type Result<T> = core::result::Result<T, ProxyError>;
-+pub type Result<T, E = ProxyError> = core::result::Result<T, E>;
+ impl PreparedPreview {
+@@ -442,22 +435,51 @@ impl PreparedPreview {
+             .map(|m| m.resolve().map(Into::into))
+             .collect::<Result<Vec<_>, _>>()?;
  
- #[derive(Debug)]
- pub struct ProxyConnection {
-     sender: Mutex<SyncEncoder<LocalMessage<LayerToProxyMessage>, TcpStream>>,
--    responses: Mutex<ResponseManager>,
-+    responses: ResponseManager,
-     next_message_id: AtomicU64,
-     layer_id: LayerId,
-     proxy_addr: SocketAddr,
-@@ -101,15 +108,15 @@ impl ProxyConnection {
-             inner: LayerToProxyMessage::NewSession(session),
-         })?;
- 
--        let mut responses = ResponseManager::new(receiver);
-+        let responses = ResponseManager::new(receiver);
-         let response = responses.receive(0)?;
-         let ProxyToLayerMessage::NewSession(layer_id) = &response else {
-             return Err(ProxyError::UnexpectedResponse(Box::new(response)));
-         };
- 
++        let idle_config = &layer_config.feature.preview.idle;
++        let idle = idle_config.is_enabled().then_some(PreviewIdleConfig {
++            start_idle: idle_config.start_idle,
++            sleep_after_secs: idle_config.sleep_after_secs,
++            wake_timeout_secs: idle_config.wake_timeout_secs,
++        });
++
++        // Preview start never opens an operator websocket, so `QueueSplitProgress` never runs.
++        // The config already names the Temporal queues it asked to mirror (including `*` from
++        // `mirrord up`), so warn from that before the session is created.
++        for id in temporal_mirror_requested(&layer_config.feature.split_queues) {
++            subtask.warning(&temporal_mirror_warning(&id));
++        }
++
++        let spec = PreviewSessionSpec {
++            image,
++            key: layer_config.key.as_str().to_owned(),
++            target: session_target,
++            ttl_secs: layer_config.feature.preview.resolved_ttl_secs(),
++            replicas: layer_config.feature.preview.replicas,
++            incoming,
++            queue_splitting: PreviewQueueSplittingConfig::from_config(
++                &layer_config.feature.split_queues,
++                layer_config.feature.kafka_branch,
++            ),
++            db_branching: None,
++            env,
++            labels: PreviewLabelFilter::from_config(&layer_config.feature.preview.labels),
++            config_mounts,
++            secret_mounts,
++            idle,
++            cronjob,
++            spec_resources,
++            share_host: None,
++            auto_queue_splitting,
++        };
++
          Ok(Self {
-             sender: Mutex::new(sender),
--            responses: Mutex::new(responses),
-+            responses,
-             next_message_id: AtomicU64::new(1),
-             layer_id: *layer_id,
-             proxy_addr,
-@@ -135,7 +142,7 @@ impl ProxyConnection {
+             layer_config,
+             operator_api,
+             api,
+             subtask,
+             config_target,
+-            image,
+-            session_target,
+-            incoming,
+-            cronjob,
+             secret_values,
+-            spec_resources,
+-            secret_mounts,
+-            env,
+-            config_mounts,
+-            auto_queue_splitting,
++            spec,
+         })
      }
  
-     pub fn receive(&self, response_id: u64) -> Result<ProxyToLayerMessage> {
--        let response = self.responses.lock()?.receive(response_id)?;
-+        let response = self.responses.receive(response_id)?;
-         match response {
-             ProxyToLayerMessage::ProxyFailed {
-                 agent_reported: true,
-@@ -179,41 +186,6 @@ impl ProxyConnection {
-     }
- }
+@@ -470,16 +492,8 @@ impl PreparedPreview {
+             api,
+             mut subtask,
+             config_target,
+-            image,
+-            session_target,
+-            incoming,
+-            cronjob,
+             secret_values,
+-            spec_resources,
+-            secret_mounts,
+-            env,
+-            config_mounts,
+-            auto_queue_splitting,
++            mut spec,
+         } = self;
  
--#[derive(Debug)]
--struct ResponseManager {
--    receiver: SyncDecoder<LocalMessage<ProxyToLayerMessage>, TcpStream>,
--    outstanding_responses: HashMap<u64, ProxyToLayerMessage>,
--}
--
--impl ResponseManager {
--    fn new(receiver: SyncDecoder<LocalMessage<ProxyToLayerMessage>, TcpStream>) -> Self {
--        Self {
--            receiver,
--            outstanding_responses: Default::default(),
--        }
--    }
--
--    fn receive(&mut self, response_id: u64) -> Result<ProxyToLayerMessage> {
--        if let Some(response) = self.outstanding_responses.remove(&response_id) {
--            return Ok(response);
--        }
--
--        loop {
--            let response = self
--                .receiver
--                .receive()?
--                .ok_or(ProxyError::ConnectionClosed)?;
--
--            if response.message_id == response_id {
--                break Ok(response.inner);
--            }
--
--            self.outstanding_responses
--                .insert(response.message_id, response.inner);
--        }
--    }
--}
--
- /// Time a hooked call waits for the proxy connection to be established before falling
- /// back to the pre-connection error path. Matches the worker's own connect timeout.
- #[cfg(target_os = "windows")]
-```
-
-**File**: `mirrord/layer-lib/src/proxy_connection/responses.rs` (added, +320/-0)
-```diff
-@@ -0,0 +1,320 @@
-+use std::{
-+    collections::HashMap,
-+    io,
-+    net::TcpStream,
-+    sync::{Arc, Condvar, TryLockError},
-+};
-+
-+use mirrord_intproxy_protocol::{
-+    LocalMessage, ProxyToLayerMessage,
-+    codec::{CodecError, SyncDecoder},
-+};
-+
-+use crate::{
-+    mutex::Mutex,
-+    proxy_connection::{ProxyError, Result},
-+};
-+
-+pub type Decoder = SyncDecoder<LocalMessage<ProxyToLayerMessage>, TcpStream>;
-+
-+/// Manages response reception on a single [`Decoder`] shared by all threads in the current process.
-+#[derive(Debug)]
-+pub struct ResponseManager {
-+    /// Decoder that receives responses from the proxy.
-+    receiver: Mutex<Result<Decoder, Arc<CodecError>>>,
-+    /// Stores the state of threads running [`Self::receive`].
-+    state: Mutex<HashMap<u64, Slot>>,
-+}
-+
-+impl ResponseManager {
-+    pub fn new(receiver: Decoder) -> Self {
-+        Self {
-+            receiver: Mutex::new(Ok(receiver)),
-+            state: Default::default(),
-+        }
-+    }
-+
-+    pub fn receive(&self, response_id: u64) -> Result<ProxyToLayerMessage> {
-+        let mut state = self.state.lock()?;
-+        loop {
-+            // Check if some other thread already received our response.
-+            // This also clears our stale `Waiting` slot, if any.
-+            if let Some(Slot::Ready(payload)) = state.remove(&response_id) {
-+                return Ok(payload);
-+            }
-+
-+            let mut receiver = match self.receiver.try_lock() {
-+                Ok(receiver) => receiver,
-+                Err(TryLockError::Poisoned(..)) => return Err(ProxyError::LockPoisoned),
-+                // Some other thread is reading from the socket, wait until it notifies us.
-+                // We are notified when our response is ready, when the reading thread leaves,
-+                // or spuriously, so we always recheck the state.
-+                Err(TryLockError::WouldBlock) => {
-+                    let condvar = Arc::new(Condvar::new());
-+                    state.insert(response_id, Slot::Waiting(condvar.clone()));
-+                    #[cfg(not(test))]
-+                    {
-+                        // Many things can go wrong in multi-threaded code injected via dynamic library.
-+                        // We use a timeout just to be more safe.
-+                        state = condvar
-+                            .wait_timeout(state, std::time::Duration::from_millis(100))?
-+                            .0;
-+                    }
-+                    #[cfg(test)]
-+                    {
-+                        // In unit tests, we assert that wakeups arrive as expected.
-+                        state = condvar.wait(state)?;
-+                    }
-+                    continue;
-+                }
-+            };
-+            let decoder = receiver.as_mut().map_err(|error| error.clone())?;
-+
-+            let result = loop {
-+                drop(state);
-+                let result = decoder
-+                    .receive()
-+                    .and_then(|res| {
-+                        res.ok_or_else(|| io::Error::from(io::ErrorKind::UnexpectedEof).into())
-+                    })
-+                    .map_err(Arc::new);
-+                state = self.state.lock()?;
-+                match result {
-+                    Ok(response) if response.message_id == response_id => break Ok(response.inner),
-+                    Ok(response) => {
-+                        // Store responses meant for other threads, and wake them if they're waiting.
-+                        if let Some(Slot::Waiting(condvar)) =
-+                            state.insert(response.message_id, Slot::Ready(response.inner))
-+                        {
-+                            condvar.notify_one();
-+                        }
-+                    }
-+                    Err(error) => break Err(error),
-+                }
-+            };
-+
-+            let mut waiting = state.values().filter_map(Slot::waiting);
-+            match &result {
-+                // Hand the reading over to one of the waiting threads.
-+                Ok(..) => {
-+                    drop(receiver);
-+                    if let Some(condvar) = waiting.next() {
-+                        condvar.notify_one();
-+                    }
-+                }
-+                // The stream is no longer usable.
-+                // Wake all waiting threads.
-+                Err(error) => {
-+                    *receiver = Err(error.clone());
-+                    drop(receiver);
-+                    waiting.for_each(Condvar::notify_one);
-+                }
-+            }
-+
-+            break result.map_err(From::from);
-+        }
-+    }
-+}
-+
-+#[derive(Debug)]
-+enum Slot {
-+    /// A thread is waiting on this [`Condvar`], paired with [`ResponseManager::state`].
-+    Waiting(Arc<Condvar>),
-+    Ready(ProxyToLayerMessage),
-+}
-+
-+impl Slot {
-+    fn waiting(&self) -> Option<&Condvar> {
-+        match self {
-+            Self::Waiting(cond) => Some(cond),
-+            Self::Ready(..) => None,
-+        }
-
-```
-
----
-
-### Incident Patch 2: `438a1fe5` (2026-10-21)
-**Commit Message**: Bound out_of_order_responses with the test timeout
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `mirrord/layer-lib/src/proxy_connection/responses.rs` (modified, +5/-1)
-```diff
-@@ -238,7 +238,11 @@ mod tests {
-         }
+         // Label targets with branches were rejected in `prepare`, so an empty config is the only
+@@ -504,7 +518,7 @@ impl PreparedPreview {
  
-         for response_id in [1, 2, 3] {
--            assert_eq!(manager.receive(response_id).unwrap(), payload(response_id));
-+            let receiver = spawn_receive(&manager, response_id);
-+            assert_eq!(
-+                receiver.recv_timeout(TIMEOUT).unwrap().unwrap(),
-+                payload(response_id)
-+            );
-         }
-     }
- 
+         let mut replaced_sessions = existing_sessions
+             .into_iter()
+-            .filter(|session| session.spec.target == session_target)
++            .filter(|session| session.spec.target == spec.targ
 ```
 
----
-
-### Incident Patch 3: `e1cfaaca` (2026-10-21)
-**Commit Message**: Merge pull request #5126 from metalbear-co/docs-config-link-fixes
-
-Point config reference links at their final docs URLs
-
-**File**: `changelog.d/+config-docs-links.internal.md` (added, +1/-0)
+**File**: `mirrord/cli/src/preview/up.rs` (modified, +1/-1)
 ```diff
-@@ -0,0 +1 @@
-+Point config reference links at their final docs URLs and give the configuration page a longer description.
-```
-
-**File**: `mirrord-schema.json` (modified, +8/-8)
-```diff
-@@ -289,7 +289,7 @@
-   "additionalProperties": false,
-   "$defs": {
-     "AdvancedFsUserConfig": {
--      "description": "Allows the user to specify the default behavior for file operations:\n\n1. `\"read\"` or `true` - Read from the remote file system (default)\n2. `\"write\"` - Read/Write from the remote file system.\n3. `\"local\"` or `false` - Read from the local file system.\n4. `\"localwithoverrides\"` - perform fs operation locally, unless the path matches a pre-defined\n   or user-specified exception.\n\n> Note: by default, some paths are read locally or remotely, regardless of the selected FS mode.\n> This is described in further detail below.\n\nBesides the default behavior, the user can specify behavior for specific regex patterns.\nCase insensitive.\n\n1. `\"read_write\"` - List of patterns that should be read/write remotely.\n2. `\"read_only\"` - List of patterns that should be read only remotely.\n3. `\"local\"` - List of patterns that should be read locally.\n4. `\"not_found\"` - List of patterns that should never be read nor written. These files should be\n   treated as non-existent.\n4. `\"mapping\"` - Map of patterns and their corresponding replacers. The replacement happens before any specific behavior as defined above or mode (uses [`Regex::replace`](https://docs.rs/regex/latest/regex/struct.Regex.html#method.replace))\n\nThe logic for choosing the behavior is as follows:\n\n\n1. Check against \"mapping\" if path needs to be replaced, if matched then continue to next step\n   with new path after replacements otherwise continue as usual.\n2. Check if one of the patterns match the file path, do the corresponding action. There's no\n   specified order if two lists match the same path, we will use the first one (and we do not\n   guarantee what is first).\n\n   **Warning**: Specifying the same path in two lists is unsupported and can lead to undefined\n   behaviour.\n\n3. There are pre-defined exceptions to the set FS mode.\n  1. Paths that match the pre-defined patterns [for Linux/MacOS](https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/unix/read_local_by_default.rs)\n     or [for Windows](https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/windows/read_local_by_default.rs)\n     are read locally by default.\n  2. Paths that match the pre-defined patterns [for Linux/MacOS](https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/unix/read_remote_by_default.rs)\n     or [for Windows](https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/windows/read_remote_by_default.rs)\n     are read remotely by default when the mode is `localwithoverrides`.\n  3. Paths that match the pre-defined patterns [for Linux/MacOS](https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/unix/not_found_by_default.rs)\n     or [for Windows](https://github.com/metalbear-co/mirrord/tree/latest/mirrord/layer-lib/src/file/windows/not_found_by_default.rs)\n     under the running user's home directory will not be found by the application when the mode\n     is not `local`.\n\n  In order to override that default setting for a path, or a pattern, include it the\n  appropriate pattern set from above. E.g. in order to read files under `/etc/` remotely even\n  though it is covered by the set of pre-defined patterns that are read locally by default,\n  add `\"^/etc/.\"` to the `read_only` set.\n\n4. If none of the above match, use the default behavior (mode).\n\nFor more information, check the file operations\n[technical reference](https://metalbear.com/mirrord/docs/reference/fileops/).\n\n```json\n{\n  \"feature\": {\n    \"fs\": {\n      \"mode\": \"write\",\n      \"read_write\": \".+\\\\.json\" ,\n      \"read_only\": [ \".+\\\\.yaml\", \".+important-file\\\\.txt\" ],\n      \"local\": [ \".+\\\\.js\", \".+\\\\.mjs\" ],\n      \"not_found\": [ \"\\\\.config/gcloud\" ],\n      \"prefetch\": [ \"/etc/ssl\" ]\n    }\n  }\n}\n```\n\n#### Windows paths {#fs-windows-paths}\n\nOn Windows, the patterns of `read_write`, `read_only`, `local`, `not_found` and `mapping` are\nmatched against two forms of the path, both with forward slashes:\n\n| Form | `D:\\Workspaces\\myapp\\app.json` becomes | A pattern for this form matches |\n|---|---|---|\n| without the drive | `/Workspaces/myapp/app.json` | the path on every drive |\n| with the drive | `D:/Workspaces/myapp/app.json` | the path on that drive only |\n\nA pattern applies when it matches either form. So `^/Workspaces/` matches the folder on\nevery drive, and `^D:/Workspaces/` matches it on `D:` only. Like the rest of a pattern, the\ndrive letter ignores case.\n\nWrite patterns with forward slashes. A pattern that needs a backslash in the path (`\\\\`, or\n`C:\\` copied from Explorer) never matches, since neither form has one, and mirrord warns about\nit. A backslash that escapes a regex character (`\\.`, `\\d`), or one choice in a class\n(`[\\\\/]`), is fine.\n\
-```
-
-**File**: `mirrord/config/src/feature.rs` (modified, +2/-2)
-```diff
-@@ -27,7 +27,7 @@ pub mod split_queues;
- /// Controls mirrord features.
- ///
- /// See the
--/// [technical reference, Technical Reference](https://metalbear.com/mirrord/docs/reference/)
-+/// [technical reference, Technical Reference](https://metalbear.com/mirrord/docs/reference/architecture)
- /// to learn more about what each feature does.
- ///
- /// The [`env`](#feature-env), [`fs`](#feature-fs) and [`network`](#feature-network) options
-@@ -97,7 +97,7 @@ pub struct FeatureConfig {
-     /// ### feature.copy_target {#feature-copy_target}
-     ///
-     /// Creates a new copy of the target. mirrord will use this copy instead of the original target
--    /// (e.g. intercept network traffic). This feature requires a [mirrord operator](https://metalbear.com/mirrord/docs/overview/teams/?utm_source=copytarget).
-+    /// (e.g. intercept network traffic). This feature requires a [mirrord operator](https://metalbear.com/mirrord/docs/getting-started/what-is-mirrord#mirrord-for-teams).
-     ///
-     /// This feature is not compatible with rollout targets and running without a target
-     /// (`targetless` mode).
-```
-
-**File**: `mirrord/config/src/feature/env.rs` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ pub const MIRRORD_OVERRIDE_ENV_FILE_ENV: &str = "MIRRORD_OVERRIDE_ENV_VARS_FILE"
- /// Which environment variables to load from the remote pod are controlled by setting either
- /// [`include`](#feature-env-include) or [`exclude`](#feature-env-exclude).
- ///
--/// See the environment variables [reference](https://metalbear.com/mirrord/docs/reference/env/) for more details.
-+/// See the environment variables [reference](https://metalbear.com/mirrord/docs/reference/env) for more details.
- ///
- /// ```json
- /// {
-```
-
-**File**: `mirrord/config/src/feature/fs.rs` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ pub mod mode;
- ///
- /// Changes file operations behavior based on user configuration.
- ///
--/// See the file operations [reference](https://metalbear.com/mirrord/docs/reference/fileops/)
-+/// See the file operations [reference](https://metalbear.com/mirrord/docs/reference/fileops)
- /// for more details, and [fs advanced](#fs-advanced) for more information on how to fully setup
- /// mirrord file operations.
- ///
-```
-
-**File**: `mirrord/config/src/feature/fs/advanced.rs` (modified, +1/-1)
-```diff
-@@ -80,7 +80,7 @@ pub const PREFETCH_TIMEOUT_DEFAULT: u64 = 30;
- /// 4. If none of the above match, use the default behavior (mode).
- ///
- /// For more information, check the file operations
--/// [technical reference](https://metalbear.com/mirrord/docs/reference/fileops/).
-+/// [technical reference](https://metalbear.com/mirrord/docs/reference/fileops).
- ///
- /// ```json
- /// {
-```
-
-**File**: `mirrord/config/src/feature/network.rs` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ pub mod outgoing;
- 
- /// Controls mirrord network operations.
- ///
--/// See the network traffic [reference](https://metalbear.com/mirrord/docs/reference/traffic/)
-+/// See the network traffic [reference](https://metalbear.com/mirrord/docs/reference/traffic)
- /// for more details.
- ///
- /// ```json
-```
-
-**File**: `mirrord/config/src/feature/network/incoming.rs` (modified, +2/-2)
-```diff
-@@ -24,7 +24,7 @@ use http_filter::*;
- ///
- /// Controls the incoming TCP traffic feature.
- ///
--/// See the incoming [reference](https://metalbear.com/mirrord/docs/reference/traffic/#incoming) for more
-+/// See the incoming [reference](https://metalbear.com/mirrord/docs/reference/traffic#incoming) for more
- /// details.
- ///
- /// Incoming traffic supports 2 modes of operation:
-@@ -390,7 +390,7 @@ where
- 
- /// Controls the incoming TCP traffic feature.
- ///
--/// See the incoming [reference](https://metalbear.com/mirrord/docs/reference/traffic/#incoming) for more
-+/// See the incoming [reference](https://metalbear.com/mirrord/docs/reference/traffic#incoming) for more
- /// details.
- ///
- /// Incoming traffic supports 3 [modes](#feature-network-incoming-mode) of operation:
+@@ -187,7 +187,7 @@ async fn run_preview_up(
+         a.operator_api.cluster_url() == b.operator_api.cluster_url()
+             && preview_namespace(&a.operator_api, &a.layer_config)
+                 == preview_namespace(&b.operator_api, &b.layer_config)
+-            && a.session_target == b.session_target
++            && a.spec.target == b.spec.target
+     };
+     // Service names are the keys of `services`, so they tell the services apart.
+     let clashes = checked
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5128** (closed): Record rosetta fallback from parent rather than the x86 emulated process (@0x00A5)
-- **PR #5126** (2026-10-21): Point config reference links at their final docs URLs (@eyalb181)
-- **PR #5125** (2026-10-21): Improve concurrency around layer<->intproxy connection (@Razz4780)
-- **PR #5124** (2026-10-22): INT-781 Point at the Helm value when an operator feature is switched off in the chart (@vladrbg)
-- **PR #5123** (2026-10-20): eMudhra distrust patch (@0x00A5)
-- **PR #5122** (2026-10-20): COR-1974 Operator install tip (@0x00A5)
+- **PR #5142** (2026-10-25): Release 3.279.1 (@cubby-mb[bot])
+- **PR #5141** (2026-10-24): Release 3.279.0 (@cubby-mb[bot])
+- **PR #5140** (2026-10-24): Fix socket address buffer overflow issue (@0x00A5)
+- **PR #5138** (2026-10-25): Fix vfork children unsubscribing parent listeners (@meowjesty)
+- **PR #5137** (2026-10-24): COR-2085 Add mirrord preview up and mirrord preview down (@MintSoup)
+- **PR #5136** (2026-10-25): Add least-privilege permissions to release and operator-e2e workflows (@aviramha)
 
 ---
 
@@ -2022,21 +2103,41 @@ Point config reference links at their final docs URLs
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixed concurrency issues in layer ProxyConnection
+## X. Merge remote-tracking branch 'origin/main' into codex/fix-pr-5138-resolved
 
 **RULE**:
-When implementing operations in `mirrord/layer-lib/clippy.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c2c1cd4`: Fixed concurrency issues in layer ProxyConnection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `19ea8411`: Merge remote-tracking branch 'origin/main' into codex/fix-pr-5138-resolved. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mirrord/layer-lib/clippy.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    { path = "std::thread::park_timeout", reason = "reaches std::thread::current. See layer-lib::logging." },
+## [3.279.0](https://github.com/metalbear-co/mirrord/tree/3.279.0) - 2026-10-24
+
+
+### Added
+
+- Add `mirrord preview down`, which deletes every preview environment under a
+  key in all namespaces, finding the key the way `mirrord preview up` does.
+- Add `mirrord preview up`, which starts a preview environment for every
+  service of a `mirrord-up.yaml` that has an image (from `--image
+  <service>=<ref>`, `MIRRORD_<SERVICE>_IMAGE` or the service's `image`), all
+  under one key, and returns once each one is ready.
+- Services in `mirrord-up.yaml` accept an optional `image` field, the container
+  image `mirrord preview up` runs in the service's preview environment.
+  `mirrord up` ignores it.
+
+
+### Fixed
+
+- Fixed a SIGSEGV on macOS when apps using libuv 1.53+ (e.g. Homebrew Node)
+  connect to a unix socket.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2046,4 +2147,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c2c1cd4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `19ea8411` are properly handled with clean fallback behavior.

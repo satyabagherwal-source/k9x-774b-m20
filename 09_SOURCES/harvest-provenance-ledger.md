@@ -4811,3 +4811,7 @@ Every entry in this ledger must capture:
 | `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `dc9a20d0` | Multi-dimensional audit evidence | 2026-10-25T12:10:54.394Z |
 | `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-25T12:17:00.821Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `de0c5edc` | Multi-dimensional audit evidence | 2026-10-25T12:17:04.756Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/fastapi/fastapi` | `7a0a3f0b` | Multi-dimensional audit evidence | 2026-10-25T12:23:01.092Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `21cf7bff` | Multi-dimensional audit evidence | 2026-10-25T12:23:03.174Z |
+| `learn-github-joreilly-peopleinspace` | `https://github.com/joreilly/PeopleInSpace` | `8b77f91d` | Multi-dimensional audit evidence | 2026-10-25T12:23:07.234Z |
+| `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-25T12:23:10.961Z |

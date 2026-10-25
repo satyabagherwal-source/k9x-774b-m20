@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T12:17:04.766Z",
+  "last_updated": "2026-10-25T12:23:10.971Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -455,14 +455,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "content_hash": "4fc3c52568b92a3ff36effe1532adbe5b9e2bdd8b60186a92042539ef993613c",
-      "verified_at": "2026-10-20T17:22:54.812Z",
+      "content_hash": "b3548a1629d50855be860b67a745ed1597a78df215fa75621b3d5ea7366fec3a",
+      "verified_at": "2026-10-25T12:23:10.967Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:22:54.812Z"
+      "last_updated": "2026-10-25T12:23:10.967Z"
     },
     "SupersonicLabs/Julia-1": {
       "repository": "SupersonicLabs/Julia-1",
@@ -3111,14 +3111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastapi-fastapi",
-      "content_hash": "f4eac31f9a2f7c3446faa1ec486de4c8f99a2c793aa5812da0868aa0700a148b",
-      "verified_at": "2026-10-23T11:44:03.823Z",
+      "content_hash": "0a017f5de52ae5a264792ebb31811333590ba418cbe877524995e25aebf0bf10",
+      "verified_at": "2026-10-25T12:23:01.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T11:44:03.823Z"
+      "last_updated": "2026-10-25T12:23:01.110Z"
     },
     "pallets/flask": {
       "repository": "pallets/flask",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "9b742df0e2793c4aac960c4e9edfaa79e15350888cf89c96fe44b24c0655b458",
-      "verified_at": "2026-10-22T19:16:14.212Z",
+      "content_hash": "12ea10f334850848316a72f50bfce35ebea42b8a91f1158462c85adb7bc61cd6",
+      "verified_at": "2026-10-25T12:23:03.180Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:16:14.212Z"
+      "last_updated": "2026-10-25T12:23:03.180Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",
@@ -10836,14 +10836,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-joreilly-peopleinspace",
-      "content_hash": "6c2ce8a56c8b226eface7aede66f5f6b29b40c3edbe967fad20d83fc373f6659",
-      "verified_at": "2026-10-19T08:07:01.889Z",
+      "content_hash": "323563dd06121b5c2e1efd3a6d9e537df16c64d7f579d1b4617ae2c52e42c84e",
+      "verified_at": "2026-10-25T12:23:07.239Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:07:01.889Z"
+      "last_updated": "2026-10-25T12:23:07.239Z"
     },
     "valeriansaliou/sonic": {
       "repository": "valeriansaliou/sonic",

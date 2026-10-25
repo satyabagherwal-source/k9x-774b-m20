@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T12:05:59.399Z",
+  "last_updated": "2026-10-25T12:23:03.177Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2653,6 +2653,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-necolas-react-native-web"
+    },
+    {
+      "id": "CD-TAZX",
+      "directive_title": "🔖 Release version 0.162.0 (#16606)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "fastapi/fastapi",
+      "source_commit": "7a0a3f0b",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-fastapi-fastapi"
+    },
+    {
+      "id": "CD-TCLL",
+      "directive_title": "Merge remote-tracking branch 'origin/main' into codex/fix-pr-5138-resolved",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "metalbear-co/mirrord",
+      "source_commit": "21cf7bff",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-metalbear-co-mirrord"
     }
   ]
 }
