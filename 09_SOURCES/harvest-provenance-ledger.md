@@ -4830,3 +4830,6 @@ Every entry in this ledger must capture:
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `6020bc9c` | Multi-dimensional audit evidence | 2026-10-25T13:08:14.827Z |
 | `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-25T13:08:15.873Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `929648f4` | Multi-dimensional audit evidence | 2026-10-25T13:08:21.459Z |
+| `learn-github-ionic-team-ionic-framework` | `https://github.com/ionic-team/ionic-framework` | `25a114f4` | Multi-dimensional audit evidence | 2026-10-25T13:24:07.944Z |
+| `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-25T13:24:08.423Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `e7e95b45` | Multi-dimensional audit evidence | 2026-10-25T13:24:08.955Z |

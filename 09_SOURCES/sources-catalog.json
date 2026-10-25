@@ -425,8 +425,8 @@
     "sourceUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
     "sourceVersion": "hf-fastino-gliner2.5-decide",
     "license": "Open-Source",
-    "contentHash": "4e6c66fb303a927c206d28cc3d2072ef9fd2b18d8abdb4b1dd4a92a3492e067a",
-    "lastHarvestedAt": "2026-10-20T18:14:04.860Z",
+    "contentHash": "7513d467af7e2a28b25463521673f690b178d8eceda48f86e28d68f30d9bee9d",
+    "lastHarvestedAt": "2026-10-25T13:24:08.423Z",
     "learningId": "learn-huggingface-fastino-gliner2-5-decide"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "9bd4e612",
+    "sourceVersion": "e7e95b45",
     "license": "GPL-3.0",
-    "contentHash": "b66d80ac9edb518cad9d4eb234fa1014ee417e770b1f982df7dd8f7c926838cd",
-    "lastHarvestedAt": "2026-10-22T20:22:07.230Z",
+    "contentHash": "1cab1a3ff33d1e36a6385bc7116f666a4ec0fe085d273b4e2be6daffbd56af36",
+    "lastHarvestedAt": "2026-10-25T13:24:08.955Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -6643,10 +6643,10 @@
     "repository": "ionic-team/ionic-framework",
     "platform": "github",
     "sourceUrl": "https://github.com/ionic-team/ionic-framework",
-    "sourceVersion": "cc5b3964",
+    "sourceVersion": "25a114f4",
     "license": "MIT",
-    "contentHash": "17d76fe9ccb83f3c2dc138d9720bb2b52a4f5177edab21f4b55b7396e10129c0",
-    "lastHarvestedAt": "2026-10-23T08:44:31.963Z",
+    "contentHash": "2202f74328cd859185be83dc4aa5274e8a41e2e6dbeaa96b36a7426915b24774",
+    "lastHarvestedAt": "2026-10-25T13:24:07.944Z",
     "learningId": "learn-github-ionic-team-ionic-framework"
   },
   "lysine-dev-okio": {

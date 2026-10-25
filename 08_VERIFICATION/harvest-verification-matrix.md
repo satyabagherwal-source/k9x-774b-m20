@@ -4823,3 +4823,6 @@
 | `CYCLE-20261025-FGX4` | `2026-10-25T13:08:14.824Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4299` | Yes (`79e6be67...`) |
 | `CYCLE-20261025-FHQ6` | `2026-10-25T13:08:15.870Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4300, Rule 4301, Rule 4302` | Yes (`a5bfb8db...`) |
 | `CYCLE-20261025-FM1C` | `2026-10-25T13:08:21.456Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4303` | Yes (`3d99c9eb...`) |
+| `CYCLE-20261025-ZWCJ` | `2026-10-25T13:24:07.939Z` | `ionic-team/ionic-framework` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4304` | Yes (`2202f743...`) |
+| `CYCLE-20261025-ZWPV` | `2026-10-25T13:24:08.419Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`7513d467...`) |
+| `CYCLE-20261025-ZX4O` | `2026-10-25T13:24:08.952Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4305` | Yes (`1cab1a3f...`) |

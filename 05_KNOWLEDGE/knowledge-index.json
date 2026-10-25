@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T13:08:21.402Z",
+  "last_updated": "2026-10-25T13:24:08.897Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20321,7 +20321,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "4e6c66fb303a927c206d28cc3d2072ef9fd2b18d8abdb4b1dd4a92a3492e067a",
+      "content_hash": "7513d467af7e2a28b25463521673f690b178d8eceda48f86e28d68f30d9bee9d",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "promoted_rules": [
@@ -20364,7 +20364,7 @@
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv45omuu",
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv4iyd2f"
       ],
-      "verified_at": "2026-10-20T18:14:04.796Z",
+      "verified_at": "2026-10-25T13:24:08.357Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28685,8 +28685,8 @@
       "slug": "ionic-team-ionic-framework",
       "platform": "github",
       "source_url": "https://github.com/ionic-team/ionic-framework",
-      "source_version": "cc5b3964",
-      "content_hash": "17d76fe9ccb83f3c2dc138d9720bb2b52a4f5177edab21f4b55b7396e10129c0",
+      "source_version": "25a114f4",
+      "content_hash": "2202f74328cd859185be83dc4aa5274e8a41e2e6dbeaa96b36a7426915b24774",
       "dossier_path": "07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md",
       "promoted_rules": [
@@ -28714,6 +28714,11 @@
           "number": 3841,
           "title": "menu): allow menus inside split pane main content to open (#31586)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4304,
+          "title": "rtl): respect `dir` of ancestor elements throughout components (#31459)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28721,7 +28726,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T08:44:31.918Z",
+      "verified_at": "2026-10-25T13:24:07.855Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31407,8 +31412,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "9bd4e612",
-      "content_hash": "b66d80ac9edb518cad9d4eb234fa1014ee417e770b1f982df7dd8f7c926838cd",
+      "source_version": "e7e95b45",
+      "content_hash": "1cab1a3ff33d1e36a6385bc7116f666a4ec0fe085d273b4e2be6daffbd56af36",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -31421,6 +31426,11 @@
           "number": 2621,
           "title": "Merge pull request #682 from SAY-5/fix/table-hint-stale-hover-point",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4305,
+          "title": "release): align translation contract lockfile with 2.3.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31428,7 +31438,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:22:07.149Z",
+      "verified_at": "2026-10-25T13:24:08.886Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -123153,6 +123163,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T13:08:21.390Z"
+    },
+    "rule-4304": {
+      "learning_id": "rule-4304",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4304,
+      "title": "rtl): respect `dir` of ancestor elements throughout components (#31459)",
+      "source_url": "https://github.com/ionic-team/ionic-framework",
+      "source_version": "25a114f4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:24:07.855Z"
+    },
+    "rule-4305": {
+      "learning_id": "rule-4305",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4305,
+      "title": "release): align translation contract lockfile with 2.3.0",
+      "source_url": "https://github.com/Kuddev/pebrel",
+      "source_version": "e7e95b45",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:24:08.886Z"
     }
   },
   "aliases": {

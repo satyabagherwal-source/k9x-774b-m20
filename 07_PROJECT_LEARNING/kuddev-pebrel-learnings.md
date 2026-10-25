@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `9bd4e612`  
+> **Source Version**: `e7e95b45`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:22:07.050Z  
+> **Timestamp**: 2026-10-25T13:24:08.583Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:22:07.042Z  
+> **Harvest Timestamp**: 2026-10-25T13:24:08.575Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3570 stars
+- **Stars / Engagement**: 3599 stars
 
 ---
 
@@ -317,6 +317,8 @@ class GhosttyCore(columns: Int = 80, rows: Int = 24, scrollbackLines: Int = 1000
         return NativeBridge.feed(pointer(), bytes, count)
     }
     @Synchronized fun takeTitle(): String? = NativeBridge.title(pointer())?.toString(Charsets.UTF_8)
+    @Synchronized fun synchronizedOutput(): Boolean = NativeBridge.synchronizedOutput(pointer())
+    @Synchronized fun endSynchronizedOutput() = NativeBridge.endSynchronizedOutput(pointer())
     @Synchronized fun resize(columns: Int, rows: Int, cellWidth: Int, cellHeight: Int) {
         require(columns in 2..400 && rows in 2..200 && cellWidth in 1..256 && cellHeight in 1..256)
         NativeBridge.resize(pointer(), columns, rows, cellWidth, cellHeight)
@@ -330,6 +332,8 @@ class GhosttyCore(columns: Int = 80, rows: Int = 24, scrollbackLines: Int = 1000
     }
     @Synchronized fun scroll(lines: Int) = NativeBridge.scroll(pointer(), lines)
     @Synchronized fun scrollTo(offset: Int) = NativeBridge.scrollTo(pointer(), offset.coerceAtLeast(0))
+    /** Read at dispatch time: 0 = primary screen, 1 = alternate keys, 2 = mouse reporting. */
+    @Synchronized fun applicationScrollMode(): Int = NativeBridge.applicationScrollMode(pointer())
     @Synchronized fun wheel(lines: Int, column: Int, row: Int, applicationOnly: Boolean = false): ByteArray {
         require(lines != 0 && lines in -32..32 && column >= 0 && row >= 0)
         return NativeBridge.wheel(pointer(), lines, column, row, applicationOnly)
@@ -356,10 +360,13 @@ internal object NativeBridge {
     external fun destroy(handle: Long)
     external fun feed(handle: Long, input: ByteArray, count: Int): ByteArray
     external fun title(handle: Long): ByteArray?
+    external fun synchronizedOutput(handle: Long): Boolean
+    external fun endSynchronizedOutput(handle: Long)
     external fun resize(handle: Long, columns: Int, rows: Int, cellWidth: Int, cellHeight: Int)
     external fun render(handle: Long, rows: Array<TerminalRow?>, metadata: IntArray)
     external fun scroll(handle: Long, lines: Int)
     external fun scrollTo(handle: Long, offset: Int)
+    external fun applicationScrollMode(handle: Long): Int
     external fun wheel(handle: Long, lines: Int, column: Int, row: Int, applicationOnly: Boolean): ByteArray
     external fun colors(handle: Long, colors: IntArray)
     external fun key(handle: Long, keyCode: Int, mods: Int, action: Int, text: ByteArray, unshifted: Int): ByteArray
@@ -738,6 +745,7 @@ export default async function (pi: ExtensionAPI) {
 ```
 """Bounded, fail-open provider hook delivery to the owning SSH terminal."""
 import base64
+import errno
 from contextlib import contextmanager
 import fcntl
 import hashlib
@@ -895,11 +903,19 @@ def send(source, native, mode, payload, token):
         if len(envelope) > MAX_ENVELOPE:
             return
         osc = b"\x1b]777;nebula-hook;" + token.encode() + b";" + base64.b64encode(envelope) + b"\x07"
-        write_terminal(osc)
+        write_terminal(osc, source)
 
 
-def write_terminal(osc):
-    fd = os.open("/dev/tty", os.O_WRONLY | os.O_NONBLOCK)
+def write_terminal(osc, source=None):
+    try:
+        fd = os.open("/dev/tty", os.O_WRONLY | os.O_NONBLOCK)
+    except OSError as error:
+        if source != "claude" or error.errno != errno.ENXIO:
+            raise
+        # Interactive Claude consumes hook JSON even when its hook has no TTY.
+        # This fallback is only possible before any part of the OSC was written.
+        print(json.dumps({"terminalSequence": osc.decode("ascii")}), flush=True)
+        return
     offset = 0
     deadline = time.monotonic() + 0.5
     try:
@@ -1342,11 +1358,11 @@ pub(crate) fn shutdown() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #683** (2026-10-21): **[Bug] powershell 7提示 PTY启动失败 拒绝访问 （os error 5）**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  windows 10 22H2  ### Pebrel version / 版本号  2.2.1  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Terminal rendering / scrolling / selection / garbled text — 终端渲染、滚动、选区、乱码, Shell startup / PATH / start directory / context menu — Shell 启动、环境变量、起始目录、右键菜单  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1.管理员启动程序。 2.设置更改默认shell 为  Powershell7 3.新开标签或者重启程序。 4.直接出现报错，无法正确展示终端，无法使用  ### Expected behavior / 期望结果  能够正常进入shell页面  ### Actual behavior / 实际结果  出现报错 无法正常使用。  ### Logs / screenshots / 日志或截图  <img width="794" height="251" alt="Image" src="https://github.com/user-attachments/assets/74f65dd0-980a-4a72-b991-343d77b8d5c9" />  ### Non-default settings / 改过的设置  改回windows powershell 则可以正常使用  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+- **Issue #689** (2026-10-23): **[Bug] 辛苦佬加个删历史记录的，临时指令太多了有点碍事了**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  .  ### Pebrel version / 版本号  2.2.1  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  cmd  ### Program running in the pane / 面板里正在跑的程序  Other / 其他  ### Connection type / 连接方式  Other / 其他  ### Affected area / 影响范围  Other / 其他  ### Did it work in a previous version? / 旧版本是否正常？  No, it never worked / 一直如此  ### Can you reproduce it? / 复现概率  Once / not sure / 仅一次  ### Steps to reproduce / 复现步骤  .  ### Expected behavior / 期望结果  .  ### Actual behavior / 实际结果  .  ### Logs / screenshots / 日志或截图  Reported from Pebrel Settings (Pebrel 2.2.1).  Platform: windows x86_64 Build: release  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
 
-- **Issue #619** (2026-10-16): **[Bug]  文件路径快捷跳转包含尾随行号说明，导致已存在的文件被提示不存在**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows11 25H2 125%  ### Pebrel version / 版本号  2.2.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  cmd  ### Program running in the pane / 面板里正在跑的程序  Pi  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  AI agent (Claude Code / Codex / Pi / OMP) — AI Agent 集成与状态  ### Did it work in a previous version? / 旧版本是否正常？  No, it never worked / 一直如此  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤   1. 启动 Pebrel，打开出现问题的终端面板。  2. 在终端输出或 AI 回复中显示一个实际存在的文件路径，路径后面附带行号说明，例如：D:\test\清单_录入工具用.md (121 行)  3. 将鼠标移到该路径上，使用 Pebrel 提示的快捷跳转操作。  4. 文件未能打开，界面提示文件不存在。  ### Expected behavior / 期望结果  跳转目标应是实际文件路径：D:\test\清单_录入工具用.md  后面的“(121 行)”属于说明文字，不应作为文件名的一部分。如果支持该形式的行号识别，可以将行号单独处理；如果不支持，也应能够正常打开文件。  ### Actual behavior / 实际结果  路径本身对应的文件存在，但快捷跳转似乎将路径后面的行号说明也包含进了目标，例如把“(121”纳入文件路径，最终提示文件不存在。  ### Logs / screenshots / 日志或截图  <img width="860" height="69" alt="Image" src="https://github.com/user-attachments/assets/c7bb2bba-85f9-4670-b574-217ed556cd34" />  <img width="554" height="68" alt="Image" src="https://github.com/user-attachments/assets/ba5fe000-0ef9-4fcf-b5c8-4df1362286dc" />  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest relea
+- **Issue #688** (2026-10-24): **[Bug]  Pebrel 重启后已有终端中的控制 CLI 因运行时地址过期而无法工作**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 23H2  ### Pebrel version / 版本号  2.2.2  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Codex CLI  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Shell startup / PATH / start directory / context menu — Shell 启动、环境变量、起始目录、右键菜单  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  Pebrel 主程序和界面运行正常，但在重启 Pebrel 或其运行时之后，原先已经打开的终端 pane 无法再通过 CLI 控制。  例如，以下命令会连接超时：  ```powershell pebrel env --pretty pebrel agent list pebrel ctl describe --pretty  错误信息：  runtime_unavailable: connection timed out ## 复现步骤  1. 启动 Pebrel。 2. 打开一个终端 pane。 3. 在其中启动 Pi 或其他 AI Agent。 4. 重启 Pebrel，或者让 Pebrel 的运行时重新启动。 5. 保留原来的终端 pane，不重新打开。 6. 在原 pane 中运行  ### Expected behavior / 期望结果  Pebrel 重启或运行时 endpoint 变化后，已有 pane 中的 CLI 也应该能够继续工作。  可能的修复方式：  1. Pebrel 重启运行时后，自动刷新已有 pane 中的 PEBREL_RUNTIME_ENDPOINT。 2. CLI 连接超时后，重新读取当前的 runtime.port 并自动重试一次。 3. 检测到 PEBREL_RUNTIME_ENDPOINT 已过期时，自动回退到当前运行时地址。  ## 补充信息  问题似乎只影响 Pebrel 重启前已经存在的 pane。  Pebrel 主界面仍然正常，新的运行时端口也可以访问；问题主要是已有 pane 继承了过期的运行时环境变量。   ### Actual behavior / 实际结果  ## 实际结果  原有 pane 中的环境变量仍然指向旧的运行时地址：  PEBREL_RUNTIME_ENDPOINT=<旧端口> <旧token> 1  但当前 Pebrel 的 runtime.port 文件已经包含新的运行时地址：
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1363,1062 +1379,797 @@ pub(crate) fn shutdown() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce093cdc` (2026-10-22)
-**Commit Message**: fix(android): retain mobile zoom and wrapping between terminal visits
+### Incident Patch 1: `1cad7011` (2026-10-25)
+**Commit Message**: fix(release): align translation contract lockfile with 2.3.0
 
-**File**: `architecture/notes/mobile/android/app/session/2026-10-22-mobile-display-preferences.md` (added, +37/-0)
+**File**: `tools/i18n-contract/Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,37 @@
-+# Persist phone display choices
-+
-+## Status
-+Accepted for implementation.
-+
-+## Context
-+Issue #669 reports zoom and phone-width wrapping resetting after leaving a pane.
-+
-+## Evidence
-+`TerminalSnapshotView` owned a transient zoom multiplier; `DesktopTerminalScreen`
-+owned wrapping with `rememberSaveable(identity)`. Neither belonged to the stored
-+display preferences. Native pinch feedback did not call the existing font setter.
-+
-+## Decision
-+Persist `desktop_zoom` and `desktop_wrap_lines` alongside the existing terminal
-+preferences. Keep zoom as the existing bounded 0.5–5 multiplier so this fix does
-+not change base font size or resize the desktop terminal. Persist on gesture end
-+or explicit zoom reset; ignore stale preference reapplication during a pinch.
-+
-+## Rejected alternatives
-+Changing the desktop PTY size alters the remote application. Saving only base
-+font size loses the existing multiplier and can apply zoom twice on reentry.
-+
-+## Consequences
-+These reading preferences apply to subsequent desktop panes on this device.
-+Existing installations default to scale 1 and wrapping off.
-+
-+## Validation
-+`DisplayPreferencesTest` performs a real native-view pinch gesture, reapplies
-+stored preferences during feedback, recreates preferences and the view, and
-+checks zoom/wrapping restoration plus invalid-scale normalization.
-+
-+## Supersedes
-+None.
-+
-+## Revisit when
-+Per-host display overrides become an explicit product requirement.
-```
-
-**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/session/DisplayPreferences.kt` (modified, +8/-1)
-```diff
-@@ -25,6 +25,8 @@ data class TerminalPreferences(
-     val suggestions: Boolean = true,
-     val directInput: Boolean = true,
-     val scrollbackLines: Int = 1000,
-+    val desktopZoom: Float = 1f,
-+    val desktopWrapLines: Boolean = false,
- ) {
-     /** Preserve the persisted contract when callers pass a stale or unknown value. */
-     fun normalized(): TerminalPreferences = copy(
-@@ -35,6 +37,7 @@ data class TerminalPreferences(
-         },
-         fontSize = fontSize.coerceIn(TerminalPreferenceValues.MIN_FONT_SIZE, TerminalPreferenceValues.MAX_FONT_SIZE),
-         scrollbackLines = scrollbackLines.coerceIn(500, 5000),
-+        desktopZoom = if (desktopZoom.isFinite()) desktopZoom.coerceIn(.5f, 5f) else 1f,
-         cursorStyle = when (cursorStyle) {
-             TerminalPreferenceValues.BAR_CURSOR -> TerminalPreferenceValues.BAR_CURSOR
-             TerminalPreferenceValues.UNDERLINE_CURSOR -> TerminalPreferenceValues.UNDERLINE_CURSOR
-@@ -73,6 +76,8 @@ class DisplayPreferences(context: Context) {
-             suggestions = stored.getBoolean("suggestions", true),
-             directInput = stored.getBoolean("direct_input", true),
-             scrollbackLines = stored.getInt("scrollback_lines", 1000),
-+            desktopZoom = stored.getFloat("desktop_zoom", 1f),
-+            desktopWrapLines = stored.getBoolean("desktop_wrap_lines", false),
-         ).normalized().let { it.copy(scrollbackLines = it.scrollbackLines.coerceAtMost(maxScrollbackLines)) },
-     )
-     val state = current.asStateFlow()
-@@ -94,7 +99,9 @@ class DisplayPreferences(context: Context) {
-             .putBoolean("pinch_zoom", current.value.pinchZoom)
-             .putBoolean("suggestions", current.value.suggestions)
-             .putBoolean("direct_input", current.value.directInput)
--            .putInt("scrollback_lines", current.value.scrollbackLines).apply()
-+            .putInt("scrollback_lines", current.value.scrollbackLines)
-+            .putFloat("desktop_zoom", current.value.desktopZoom)
-+            .putBoolean("desktop_wrap_lines", current.value.desktopWrapLines).apply()
-     }
+@@ -16,7 +16,7 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
  
-     fun update(transform: (TerminalPreferences) -> TerminalPreferences) {
-```
-
-**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/ui/DesktopOutputSurface.kt` (modified, +5/-0)
-```diff
-@@ -54,6 +54,8 @@ internal fun DesktopOutputSurface(
-     pasteTarget: TerminalInputTarget? = inputTarget,
-     scrollTarget: TerminalInputTarget? = inputTarget,
-     onHistoryPage: ((Long?) -> Unit)? = null,
-+    zoomScale: Float = 1f,
-+    onZoomScale: (Float) -> Unit = {},
- ) {
-     val legacyText = frame == null && text.isNotEmpty()
-     var lastKeyboardRequest by remember(identity) { mutableIntStateOf(keyboardRequest) }
-@@ -68,13 +70,16 @@ internal fun DesktopOutputSurface(
-                     view.pasteTarget = null
-                     view.scrollTarget = null
-                     view.onZoomChanged = null
-+                    view.onZoomScaleChanged = null
-                     view.onHistoryPage = null
-                     if (inputView === view) inputView = null
-                 }, update = { view ->
-                 inputView = view
-                 val app = view.context.applicationContext as PebrelApplication
-                 view.setFont(app.terminalTypeface(app.sessions.display.state.value.fontFamily), fontSize)
-                 view.pinchZoom = pinchZoom
-+                view.setZoomScale(zoomScale)
-+                view.onZoomScaleChanged = onZoomScale
-                 view.wrapLines = wrapLines
-                 view.onZoomChanged = zoomFeedback::update
-                 view.frame = frame
-```
-
-**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/ui/TerminalScreen.kt` (modified, +3/-2)
-```diff
-@@ -110,7 +110,7 @@ fun DesktopTerminalScreen(desktop: DesktopWorkspace, pane: DesktopPane, reposito
-     var showPermission by remember(identity) { mutableStateOf(false) }
-     var showDetails by remember(identity) { mutableStateOf(false) }
-     // TUI 边框和光标属于桌面网格；手机重排只作为用户主动选择的阅读模式。
--    var wrapLines by rememberSaveable(identity) { mutableStateOf(false) }
-+    val wrapLines = prefs.desktopWrapLines
-     val enabled = desktop.allowInput && desktop.status == "ready"
-     LaunchedEffect(enabled) { if (enabled) showPermission = false }
-     val input = remember(identity, enabled, desktop.connectionGeneration) { repository.desktopInput(desktop.id, pane) }
-@@ -125,7 +125,7 @@ fun DesktopTerminalScreen(desktop: DesktopWorkspace, pane: DesktopPane, reposito
-     if (!focused) TerminalHeader(pane.displayTitle, desktop.host.name, desktop.status, onBack, onSessions,
-         onGit = onGit.takeIf { pane.sshDestination == null }, gitEnabled = desktop.status == "ready",
-         onDetails = { showDetails = true }, onConversation = onConversation.takeIf { pane.agent != null },
--        wrapLines = wrapLines, onToggleWrap = { wrapLines = !wrapLines })
-+        wrapLines = wrapLines, onToggleWrap = { repository.display.update { it.copy(desktopWrapLines = !it.desktopWrapLines) } })
-     Column(Modifier.fillMaxSize()) {
-         if (desktop.status != "ready") Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp),
-             verticalAlignment = Alignment.CenterVertically) {
-@@ -146,6 +146,7 @@ fun DesktopTerminalScreen(desktop: DesktopWorkspace, pane: DesktopPane, reposito
-             Modifier.weight(1f).fillMaxWidth(), frame = if (output.target == identity) output.frame else null,
-             inputTarget = input.takeIf { enabled && direct }, keyboardRequest = keyboardRequest,
-             loading = output.loading, connected = desktop.status == "ready", wrapLines = wrapLines,
-+            zoomScale = prefs.desktopZoom, onZoomScale = { scale -> repository.display.update { it.copy(desktopZoom = scale) } },
-             pasteTarget = input.takeIf { enabled }, scrollTarget = input.takeIf { enabled },
-             onHistoryPage = { start -> repository.requestDesktopHistory(desktop.id, pane, start) })
-         if (output.loading && output.text.isBlank()) LinearProgressIndicator(Modifier.fillMaxWidth())
-```
-
-**File**: `mobile/android/app/src/test/java/io/github/kuddev/pebrel/mobile/session/DisplayPreferencesTest.kt` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+package io.github.kuddev.pebrel.mobile.session
-+
-+import android.app.Application
-+import android.content.Context
-+import android.graphics.Typeface
-+import android.view.MotionEvent
-+import androidx.test.core.app.ApplicationProvider
-+import io.github.kuddev.pebrel.terminal.TerminalSnapshotView
-+import org.junit.Assert.*
-+import org.junit.Test
-+import org.junit.runner.RunWith
-+import org.robolectric.RobolectricTestRunner
-+import org.robolectric.annotation.*
-+
-+@RunWith(RobolectricTestRunner::class)
-+@Config(sdk = [28], application = Application::class)
-+@ConscryptMode(ConscryptMode.Mode.OFF)
-+class DisplayPreferencesTest {
-+    private val context get() = ApplicationProvider.getApplicationContext<Context>()
-+
-+    @Test fun nativePinchAndWrappingSurviveViewAndPreferencesRecreation() {
-+        context.getSharedPreferences("terminal_display", Context.MODE_PRIVATE).edit().clear().commit()
-+        val preferences = DisplayPreferences(context)
-+        val view = TerminalSnapshotView(context).apply {
-+            setFont(Typeface.MONOSPACE, 16)
-+            layout(0, 0, 600, 800)
-+            onZoomScaleChanged = { scale -> preferences.update { it.copy(desktopZoom = scale) } }
-+            // A tooltip recomposition must not overwrite an unfinished pinch with the stored scale.
-+            onZoomChanged = { _, _ -> setZoomScale(preferences.state.value.desktopZoom) }
-+        }
-+        var time = 10L
-+        fun touch(action: Int, vararg points: Pair<Float, Float>) {
-+            val properties = Array(points.size) { index -> MotionEvent.PointerProperties().apply { id = index; toolType = MotionEvent.TOOL_TYPE_FINGER } }
-+            val coordinates = Array(points.size) { index -> MotionEvent.PointerCoords().apply { x = points[index].first; y = points[index].second; pressure = 1f; size = 1f } }
-+            val event = MotionEvent.obtain(10L, time, action, points.size, properties, coordinates, 0, 0, 1f, 1f, 0, 0, android.view.InputDevice.SOURCE_TOUCHSCREEN, 0)
-+            view.onTouchEvent(event); event.recycle(); time += 20
-+        }
-+        touch(MotionEvent.ACTION_DOWN, 20f to 100f)
-+        touch(MotionEvent.ACTION_POINTER_DOWN or (1 shl MotionEvent.ACTION_POINTER_INDEX_SHIFT), 20f to 100f, 120f to 100f)
-+        touch(MotionEvent.ACTION_MOVE, 5f to 100f, 180f to 100f)
-+        touch(MotionEvent.ACTION_MOVE, 0f to 100f, 230f to 100f)
-+        touch(MotionEvent.ACTION_POINTER_UP or (1 shl MotionEvent.ACTION_POINTER_INDEX_SHIFT), 0f to 100f, 230f to 100f)
-+        touch(MotionEvent.ACTION_UP, 0f to 100f)
-+        assertTrue(view.zoomScale > 1f)
-+        preferences.update { it.copy(desktopWrapLines = true) }
-+        val restored = DisplayPreferences(context).state.value
-+        assertEquals(view.zoomScale, restored.desktopZoom, .001f)
-+        assertTrue(restored.desktopWrapLines)
-+        assertEquals(16, restored.fontSize)
-+        val reopened = TerminalSnapshotView(context).apply { setZoomScale(restored.desktopZoom); wrapLines = restored.desktopWrapLines }
-+        assertEquals(view.zoomScale, reopened.zoomScale, .001f)
-+        assertTrue(reopened.wrapLines)
-+    }
-+
-+    @Test fun invalidPersistedZoomIsNormalizedWithoutChangingOtherPreferences() {
-+        assertEquals(1f, TerminalPreferences(desktopZoom = Float.NaN).normalized().desktopZoom)
-+        assertEquals(5f, TerminalPreferences(desktopZoom = 99f).normalized().desktopZoom)
-+        assertEquals(.5f, TerminalPreferences(desktopZoom = -3f).normalized().desktopZoom)
-+    }
-+}
-```
-
-**File**: `mobile/android/ghostty/src/main/java/io/github/kuddev/pebrel/terminal/TerminalSnapshotView.kt` (modified, +21/-1)
-```diff
-@@ -78,6 +78,9 @@ class TerminalSnapshotView(context: Context) : View(context) {
-     }
-     private var fontPixels = 14f * resources.displayMetrics.scaledDensity
-     private var zoom = 1f
-+    private var pinchInProgress = false
-+    val zoomScale: Float get() = zoom
-+    var onZoomScaleChanged: ((Float) -> Unit)? = null
-     private var offsetX = 0f
-     private var offsetY = 0f
-     private var cellWidth = 1f
-@@ -163,6 +166,17 @@ class TerminalSnapshotView(context: Context) : View(context) {
-         invalidate()
-     }
+ [[package]]
+ name = "nebula-settings"
+-version = "2.2.2"
++version = "2.3.0"
  
-+    fun setZoomScale(value: Float) {
-+        val bounded = if (value.isFinite()) value.coerceIn(.5f, 5f) else 1f
-+        if (pinchInProgress || zoom == bounded) return
-+        zoom = bounded
-+        stopScrolling()
-+        metrics()
-+        reproject()
-+        constrainOffsets()
-+        invalidate()
-+    }
-+
-     private fun metrics() {
-         paint.textSize = fontPixels
-         // Keep the chosen font readable. Pan across desktop columns instead of
-@@ -278,6 +292,7 @@ class TerminalSnapshotView(context: Context) : View(context) {
-     private val scaling = ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-         override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-             if (!pinchZoom) return false
-+            pinchInProgress = true
-             stopScrolling()
-             reportZoom(true)
-             return true
-@@ -296,7 +311,11 @@ class TerminalSnapshotView(context: Context) : View(context) {
-             reportZoom(true)
-             return true
-         }
--        override fun onScaleEnd(detector: ScaleGestureDetector) { reportZoom(false) }
-+        override fun onScaleEnd(detector: ScaleGestureDetector) {
-+            pinchInProgress = false
-+            onZoomScaleChanged?.invoke(zoom)
-+            reportZoom(false)
-+        }
-     })
- 
-     private fun reportZoom(gesturing: Boolean) {
-@@ -510,6 +529,7 @@ class TerminalSnapshotView(context: Context) : View(context) {
-     private fun resetZoom() {
-         stopScrolling()
-         zoom = 1f
-+        onZoomScaleChanged?.invoke(zoom)
-         metrics(); reproject()
-         offsetX = 0f; offsetY = 0f
-         followOutput = true
+ [[package]]
+ name = "pebrel-i18n-contract"
 ```
 
 ---
 
-### Incident Patch 2: `9bd4e612` (2026-10-22)
-**Commit Message**: Merge pull request #715 from Kuddev/fix/mobile-session-context-20261022
+### Incident Patch 2: `2d784179` (2026-10-25)
+**Commit Message**: Merge pull request #768 from Kuddev/fix/ssh-image-channel-20261025
 
-fix(android): recover terminal sessions and preserve remote context
+fix(ssh): pin clipboard uploads and handle SFTP negotiation failures
 
-**File**: `architecture/notes/mobile/android/app/connection/2026-10-22-manual-session-identity.md` (added, +67/-0)
+**File**: `architecture/notes/nebula_app/ssh_session/2026-10-25-sftp-negotiation-ownership.md` (added, +58/-0)
 ```diff
-@@ -0,0 +1,67 @@
-+# Track remote multiplexer entered from an ordinary SSH shell
+@@ -0,0 +1,58 @@
++# Bind clipboard upload and SFTP negotiation to their owners
 +
 +## Status
-+Accepted for implementation.
++
++Implemented for the built-in SSH image-paste failure investigation.
 +
 +## Context
-+The explicit remote multiplexer attachment path can announce its PTY before attaching. A normal
-+SSH shell must retain its own startup behavior, but the user may subsequently run
-+remote multiplexer or a shell command that attaches it. Restricting history/recovery control to
-+configured remote multiplexer sessions left that common path without a saved remote target.
++
++Clipboard uploads reopened a destination by its saved alias, even though file
++intake already held the pane's authenticated connection. Changed aliases or pool
++state could therefore select a different transport. SFTP negotiation also sent a
++subsystem request without inspecting the server's acceptance before starting INIT.
 +
 +## Evidence
-+An isolated OpenSSH server with two independent connections showed that an exec
-+channel and its connection's PTY processes share the nearest per-login sshd
-+ancestor. The other connection has a different ancestor and terminal device.
 +
-+The same probe exposed a separate prerequisite: without a locale in the exec
-+channel, remote multiplexer 3.4 replaces tab separators and non-ASCII metadata. Unit fixtures
-+containing tab-separated output had not exercised this producer behavior.
-+
-+## Decision
-+After successful POSIX discovery, read a bounded process snapshot through the
-+existing authenticated query channel. Associate its shell PID with the nearest
-+known OpenSSH process, and accept only one distinct terminal device belonging to
-+that ancestor. Cache that device for this connection. Unknown servers, missing
-+parents, cycles, oversized output and multiple terminal devices yield no match.
-+
-+Reuse the existing remote multiplexer controller to match that device to a client, capture its
-+session/window/pane identity, and route history commands. An intentional detach
-+clears the automatic target and restores ordinary shell/application input. Query
-+failures retain the last known target. Metadata listing explicitly requests remote multiplexer
-+UTF-8 output with `-u`; the user's shell locale is unchanged.
-+
-+## Rejected alternatives
-+Choosing the first or only named remote multiplexer session can attach another task. Inferring
-+ownership from a title or a stale inherited `SSH_CONNECTION` value is insufficient.
-+Replacing the login shell with a custom bootstrap changes startup and platform
-+behavior. Injecting identity commands into the interactive PTY can execute them
-+inside a running application instead of the shell.
-+
-+## Consequences
-+Manual remote multiplexer works for an identifiable POSIX OpenSSH login and the default remote multiplexer
-+server. Other SSH implementations, ambiguous connections and inaccessible process
-+metadata retain normal terminal input; there is no guessed reattachment. The
-+initial process query runs off the UI thread and is bounded by native query
-+limits. Existing checkpoint timing still applies. An observed target is restored
-+with the same non-creating attachment command as an explicitly selected session.
-+
-+## Validation
-+`SshPtyIdentityTest` covers connection separation, ambiguity, ancestry cycles and
-+known OpenSSH/Darwin naming. `TmuxSessionControlTest` covers manual attachment,
-+history/input control, detach and fallback. `TmuxDiscoveryTest` runs an isolated
-+real remote multiplexer server without a locale and checks separators plus Unicode names; it
-+reports a skip on hosts without remote multiplexer instead of pretending to verify them.
-+The compiled production controller and attachment commands also passed an
-+isolated two-connection OpenSSH/remote multiplexer probe: manual attachment, cursor-preserving
-+scroll, input restoration, window changes, detach, and reconnection to the saved
-+window/pane while the other connection remained alive.
-+Phone lifecycle and APK acceptance remain separate from JVM and server probes.
-+
-+## Supersedes
-+Extends `2026-10-22-remote-history-ownership.md` to ordinary SSH shells; the existing
-+startup marker remains authoritative for explicitly launched remote multiplexer attachments.
-+
-+## Revisit when
-+Supporting a server with different process ownership, multiple PTYs per native
-+SSH transport, custom remote multiplexer sockets, or server-assisted identity notifications.
-```
-
-**File**: `architecture/notes/mobile/android/app/connection/2026-10-22-remote-history-ownership.md` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+# remote multiplexer history belongs to the attached client
-+
-+## Status
-+Accepted for implementation.
-+
-+## Context
-+Alternate-screen touch scrolling fell back to arrow-key sequences without mouse
-+tracking. In remote multiplexer this can move shell input instead of reading history. Merely
-+focusing the IME did not restore the live viewport or leave remote multiplexer copy mode.
-+
-+## Evidence
-+`TerminalSession.wheel` delegated every alternate-screen gesture to the VT wheel
-+encoder. `GhosttyView` only requested IME focus on a tap.
++russh 0.62.2 `request_subsystem` only queues the request. Its byte-stream adapter
++ignores channel Failure, so a rejected SFTP request waited for a protocol response
++that would never arrive. Bare channels have no close-on-drop owner, unlike the
++stream adapter. The loopback server regression exercises rejection and cancellation.
++The user's original error text is unavailable; these tests do not establish that
++their server used the same failure path.
 +
 +## Decision
-+For app-launched remote multiplexer attachments, capture the PTY from a nonce-scoped startup
-+marker, remove only that marker from the byte stream, and resolve the specific
-+remote multiplexer client by its tty. Do not guess from the first server session or display title.
-+Track that client's session/window/pane for reconnection, including periodic
-+checkpoints and a checkpoint when the activity backgrounds.
 +
-+Typed history commands run through the existing independent SSH query channel.
-+Copy-mode scrolling, exit from copy mode and subsequent terminal input share
-+one ordered IO queue. An input action discards older queued fling events. Tapping
-+to open the keyboard restores input before IME composition begins. Hide the live
-+input cursor while reading history. History errors reject input instead of closing
-+the SSH transport or blindly sending escape/cancel characters to a process.
++GPUI clipboard intake captures the existing pane connection and refuses a missing
++owner. It uses the same pinned SFTP opener as file intake, without re-resolving the
++host or triggering replacement authentication.
++SFTP negotiation waits for subsystem Success, reports rejection/closure immediately,
++and owns channel cleanup during every await. After acceptance, ChannelStream takes
++over close-on-drop ownership before protocol INIT begins.
 +
 +## Rejected alternatives
-+Arrow-key emulation changes program input. Sending Ctrl+B or q assumes user remote multiplexer
-+bindings and can enter the shell. A global mouse setting changes other clients.
-+Inferring a client from session titles can act on another active task.
++
++- Retry through an arbitrary fresh connection: may change the endpoint or require
++  new authentication after the initiating pane is gone.
++- Feed Failure to the SFTP byte stream: hides the cause behind a generic timeout.
++- Disconnect the pooled SSH session: terminates unrelated interactive panes.
 +
 +## Consequences
-+Generic terminals retain VT wheel negotiation. The typed remote multiplexer controller applies
-+to remote multiplexer connections created/selected by the app, not arbitrary nested remote multiplexer started
-+inside an opaque shell. Checkpoints preserve the last observed target, not an
-+atomic server-side record of every change made immediately before network loss.
++
++Existing file-transfer packet limits and authentication policy remain authoritative.
++A server refusing additional channels or lacking SFTP still returns an error.
++No new remote program, dependency, persistent setting, or font change is introduced.
 +
 +## Validation
-+JVM tests cover byte-exact startup-marker filtering, client selection, copy-mode
-+commands, current-window tracking, IME focus restoration and repository recovery.
-+An isolated real remote multiplexer server confirmed client tty fields, pane targeting, scrolling,
-+copy-mode cancellation and window tracking. Android device acceptance is separate.
++
++97 SSH tests passed, two existing opt-in tests skipped. Real loopback SSH/SFTP tests
++cover repeated accepted sessions, immediate rejection, cancelled negotiation,
++channel cleanup and preservation of the shared transport. User-machine image-paste
++acceptance remains outstanding.
 +
 +## Supersedes
-+Extends the target preservation in `../session/2026-10-22-inline-ssh-recovery.md`.
++
++None; extends pane-scoped upload ownership to clipboard images.
 +
 +## Revisit when
-+Adding a server-side session protocol or supporting opaque nested multiplexers.
++
++An exact user error demonstrates a distinct server/channel-limit failure mode.
 ```
 
-**File**: `architecture/notes/mobile/android/app/session/2026-10-22-inline-ssh-recovery.md` (added, +56/-0)
+**File**: `nebula_app/src/gpui_shell/terminal/view/image_paste.rs` (modified, +22/-4)
 ```diff
-@@ -0,0 +1,56 @@
-+# SSH recovery belongs to the open tab
-+
-+## Status
-+Accepted for implementation.
-+
-+## Context
-+Retry previously closed the old terminal and navigated through the login form.
-+Removing the selected ID caused navigation to fall back to the home page and
-+lost the tab draft. Direct SSH had no network/resume recovery owner.
-+
-+## Evidence
-+`MainActivity.connectHost` previously called `closeTerminal` before `ssh`.
-+`SessionRepository` terminal callbacks updated entries by ID without checking
-+which transport generation produced the callback.
-+
-+## Decision
-+Keep the tab ID, draft and remote attachment when replacing a failed transport.
-+Guard callbacks and borrowed SFTP access by connection/terminal instance.
-+Retry only previously established connections on transient network errors,
-+with one bounded-backoff job per tab. Keep the foreground session service alive
-+while a tab is reconnecting; closing the tab cancels recovery.
-+
-+Reuse `HostCredentialStore` encryption for session-only ciphertext in memory.
-+Unsaved passwords/passphrases are not persisted, and plaintext arrays are erased
-+after authentication/encryption. Closing a tab discards its encrypted record.
-+An actual authentication failure offers a credential prompt within the terminal.
-+Host pin or authentication failures do not enter an automatic retry loop.
-+
-+Keep discovered remote multiplexer session, window and pane IDs rather than a mutable title.
-+Reattachment validates the server/session identity. When discovery is unavailable,
-+a configured remote multiplexer retry attaches by the original configured name without creating
-+a replacement. Explicitly new sessions retain their normal startup behavior.
-+
-+## Rejected alternatives
-+Reopening the host form loses navigation and requires a second action. Keeping
-+plaintext passwords or silently persisting unsaved credentials is unnecessary.
-+Reusing a tab ID without callback guards lets a late disconnect affect a new socket.
-+
-+## Consequences
-+Activity/view detachment only pauses rendering. Retry continues while Android
-+allows the foreground service to run and resumes after route changes. Process
-+termination still destroys in-memory sessions; this is not process-death recovery.
-+A plain SSH shell cannot restore a process killed by its server after disconnect.
-+
-+## Validation
-+`SshRecoveryTest` drives real repository transitions with a shadow native terminal:
-+identity/draft/attachment retention, stale callbacks, unrelated tab survival,
-+background route recovery and close cancellation. `SshReconnectTest` covers
-+backoff, error policy and non-creating remote multiplexer reattachment commands.
-+Kotlin compilation and the focused JVM tests passed; device acceptance is separate.
-+
-+## Supersedes
-+None. Desktop relay recovery retains its existing ownership.
-+
-+## Revisit when
-+Implementing process-death restoration or a roaming transport protocol.
-```
-
-**File**: `architecture/notes/mobile/android/app/session/2026-10-22-ssh-resume-probe.md` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+# Detect stale SSH transports when Android resumes
-+
-+## Status
-+Accepted for implementation.
-+
-+## Context
-+Android can suspend a connection without changing the reported default network.
-+An established terminal may still appear ready when the activity returns even
-+though its TCP socket no longer works. Route-change recovery alone misses this.
-+
-+## Evidence
-+`foregroundChanged` checked desktop relay liveness but did not check direct SSH.
-+`SshConnection` reports a missing native handle as `CLOSED`; that code previously
-+fell through to an unknown failure, outside the transient retry policy.
-+
-+## Decision
-+On foreground entry, probe established ready SSH tabs over their authenticated
-+query channel. A short `exit` command does not write to the interactive PTY.
-+Await the blocking JNI operation from a separate coroutine with a five-second
-+deadline. On timeout or a transient transport error, close the terminal transport
-+and request recovery inside the existing tab. Native session cancellation shuts
-+down the socket and releases waiting queries.
-+
-+Apply the result only while foregrounded and while the original connection and
-+terminal still own a ready tab. A channel refusal or authentication/trust error
-+does not restart an otherwise healthy terminal. Backgrounding or closing the tab
-+cancels its pending probe; native queries also have an independent timeout.
-+
-+## Rejected alternatives
-+Waiting only for a network-change callback misses stale sockets on the same route.
-+Putting the probe text into the PTY could send a command to remote multiplexer or another running
-+program. Running blocking JNI inside the deadline coroutine would delay timeout
-+handling until the native operation returned.
-+
-+## Consequences
-+Foreground entry adds one bounded query per established SSH tab. This detects
-+transport loss, not Android process death. Recovery retains the existing remote multiplexer
-+attachment policy and does not invent a target for an opaque shell.
-+
-+## Validation
-+`SshRecoveryTest` covers recovery from a closed handle without replacing the tab
-+identity, in addition to background route recovery and stale callback rejection.
-+`SshStatusTest` covers the native error classification. The focused 35-test JVM
-+suite and architecture checks passed. Native close/cancellation was inspected;
-+phone sleep/resume and APK acceptance have not been run on this host.
-+
-+## Supersedes
-+None. Extends the recovery ownership in `2026-10-22-inline-ssh-recovery.md`.
-+
-+## Revisit when
-+The native SSH layer exposes a dedicated bounded liveness request or recovery
-+needs to survive Android process termination.
-```
-
-**File**: `mobile/android/app/build.gradle.kts` (modified, +2/-2)
-```diff
-@@ -13,8 +13,8 @@ android {
-         applicationId = "io.github.kuddev.pebrel.mobile"
-         minSdk = 26
-         targetSdk = 35
--        versionCode = 23
--        versionName = "2.2.1-preview"
-+        versionCode = 24
-+        versionName = "2.3.0-preview"
-         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
+@@ -140,6 +140,19 @@ impl TerminalView {
+         }
+ 
+         let target = self.image_target();
++        let connection = self
++            .session
++            .as_ref()
++            .and_then(|session| session.remote_connection.lock().ok()?.clone());
++        if matches!(target, ImageTarget::Ssh(_)) && connection.is_none() {
++            toast::toast(
++                window,
++                cx,
++                ToastKind::Warning,
++                ui_language().text(Message::CommonImagePasteDisconnected),
++            );
++            return;
++        }
+         let staged_target = target.clone();
+         let term = Arc::downgrade(&self.session.as_ref().unwrap().term);
+         let owner = (
+@@ -156,7 +169,7 @@ impl TerminalView {
+             if png.len() > remaining {
+                 return Err("temporary images exceed the 128 MiB tab limit".to_owned());
+             }
+-            stage_image(staged_target, png).await
++            stage_image(staged_target, connection, png).await
+         });
+         cx.spawn_in(window, async move |this, cx| {
+             let result = work.await;
+@@ -282,11 +295,16 @@ impl TerminalView {
      }
+ }
+ 
+-async fn stage_image(target: ImageTarget, png: Vec<u8>) -> Result<StagedImage, String> {
++async fn stage_image(
++    target: ImageTarget,
++    connection: Option<crate::ssh_session::PaneConnection>,
++    png: Vec<u8>,
++) -> Result<StagedImage, String> {
+     let bytes = png.len();
+-    if let ImageTarget::Ssh(destination) = target {
++    if let ImageTarget::Ssh(_) = target {
+         let (sender, receiver) = futures::channel::oneshot::channel();
+-        crate::ssh_sftp::upload_clipboard_image_result(destination, png, move |result| {
++        let connection = connection.ok_or("SSH pane connection closed")?;
++        crate::ssh_sftp::upload_clipboard_image_on_pane(connection, png, move |result| {
+             let _ = sender.send(result);
+         });
+         let path = receiver.await.map_err(|_| "image upload stopped".to_owned())??;
 ```
 
-**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/MainActivity.kt` (modified, +22/-14)
+**File**: `nebula_app/src/ssh_session.rs` (modified, +2/-10)
 ```diff
-@@ -87,7 +87,6 @@ class MainActivity : ComponentActivity() {
-         var addRelay by remember { mutableStateOf(false) }
-         var deployRelay by remember { mutableStateOf(false) }
-         var login by remember { mutableStateOf<HostProfile?>(null) }
--        var retrySession by remember { mutableStateOf<String?>(null) }
-         var pendingAttachment by remember { mutableStateOf<RemoteAttachment?>(null) }
-         var switcher by remember { mutableStateOf(false) }
-         val desktop = desktops.find { it.id == desktopId }
-@@ -139,10 +138,9 @@ class MainActivity : ComponentActivity() {
-         LaunchedEffect(desktopId, relays) {
-             if (page in setOf("pane", "desktop", "git", "file", "conversation")) repository.restoreDesktop(desktopId)?.let { desktopId = it }
-         }
--        fun connectHost(host: HostProfile, previous: String? = null, attachment: RemoteAttachment? = null) {
-+        fun connectHost(host: HostProfile, attachment: RemoteAttachment? = null) {
-             if (credentialBusy) return
--            if (!repository.hasSavedPassword(host)) {
--                retrySession = previous
-+            if (!repository.hasSavedPassword(host) && host.keyUri.isEmpty()) {
-                 pendingAttachment = attachment
-                 login = host
-                 return
-@@ -151,13 +149,11 @@ class MainActivity : ComponentActivity() {
-             credentialScope.launch {
-                 var secret: CharArray? = null
-                 try {
--                    secret = repository.loadSavedPassword(host)
-+                    secret = repository.passwordForConnection(host, null)
-                     if (secret == null) {
--                        retrySession = previous
-                         pendingAttachment = attachment
-                         login = host
-                     } else {
--                        previous?.let(repository::closeTerminal)
-                         openSession(repository.ssh(host, checkNotNull(secret), attachment))
-                         secret = null
-                     }
-@@ -172,6 +168,14 @@ class MainActivity : ComponentActivity() {
-             finishOnboarding()
-             openSession(id)
-         }
-+        fun newSshTab(source: String, attachment: RemoteAttachment? = null) {
-+            if (credentialBusy) return
-+            credentialBusy = true
-+            credentialScope.launch {
-+                try { repository.newSshTab(source, attachment)?.let(::openSession) }
-+                finally { credentialBusy = false }
-+            }
-+        }
-         var notificationRequested by rememberSaveable { mutableStateOf(false) }
-         val notificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
-         val hasLiveSessions = sessions.any { it.status == "ready" || it.status == "connecting" } ||
-@@ -248,17 +252,15 @@ class MainActivity : ComponentActivity() {
-                     "terminal" -> {
-                         val session = sessions.find { it.id == selected }
-                         if (session != null) LocalTerminalScreen(session, repository, ::back, { switcher = true },
--                            onRetry = { session.host?.let { host ->
--                                connectHost(hosts.find { it.id == host.id } ?: host, session.id, session.attachment)
--                            } },
-+                            onRetry = { repository.retrySsh(session.id) },
-                             onEdit = { session.host?.let { host ->
-                                 editHost = hosts.find { it.id == host.id } ?: host; hostForm = true
-                                 repository.closeTerminal(session.id); back()
-                             } },
-                             onClose = { repository.closeTerminal(session.id); back() },
-                             onFiles = session.files?.let { { showPage("sftp") } },
-                             active = page == route,
--                            onAttachRemote = { entry -> session.host?.let { connectHost(it, attachment = entry) } })
-+                            onAttachRemote = { entry -> newSshTab(session.id, entry) })
-                         else LaunchedEffect(selected) { showPage("home") }
-                     }
-                     "sftp" -> {
-@@ -337,6 +339,14 @@ class MainActivity : ComponentActivity() {
-         }
-         if (switcher) AlertDialog(onDismissRequest = { switcher = false }, title = { Text(stringResource(R.string.all_sessions)) }, text = {
-             Column(Modifier.verticalScroll(rememberScrollState())) {
-+                val current = sessions.find { it.id == selected }
-+                if (current?.host != null) NavigationRow(R.drawable.ic_plus,
-+                    stringResource(R.string.tab_new_terminal), current.host.name) { newSshTab(current.id) }
-+                NavigationRow(R.drawable.ic_server, stringResource(R.string.ssh_hosts),
-+                    stringResource(R.string.ssh_new_tab_host_hint)) { switcher = 
+@@ -35,6 +35,7 @@ mod lifecycle;
+ mod pane_connection;
+ mod resume;
+ mod route;
++mod sftp;
+ pub(crate) use forward::{LocalForward, open_local_forward};
+ pub(crate) use integration::setup_cli as setup_ai_cli;
+ pub use pane_connection::PaneConnection;
+@@ -1131,16 +1132,7 @@ pub(crate) async fn open_sftp(
+ async fn sftp_on_session(
+     session: &ClientSession,
+ ) -> Result<russh_sftp::client::SftpSession, SessionError> {
+-    let channel = lifecycle::network("SFTP channel", session.channel_open_session()).await?;
+-    channel.request_subsystem(true, "sftp").await?;
+-    // 显式给参数而不是用上游默认值：默认单包 256 KiB 会让每个 READ/WRITE 都
+-    // 顶满一个巨型请求（部分服务端在这个尺寸上会静默出错），而默认在途写
+-    // 请求只有 8 个，高时延链路上填不满管道。判据见 `ssh_sftp::limits`。
+-    Ok(russh_sftp::client::SftpSession::new_with_config(
+-        channel.into_stream(),
+-        crate::ssh_sftp::limits::session_config(),
+-    )
+-    .await?)
++    sftp::open(session).await
+ }
+ 
+ // ---- 「测试连接」（SSH 编辑器页脚，spec ui-redesign 稿一） ----
 ```
 
-**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/connection/PtyIdentityInput.kt` (added, +60/-0)
+**File**: `nebula_app/src/ssh_session/lifecycle/tests.rs` (modified, +35/-1)
 ```diff
-@@ -0,0 +1,60 @@
-+package io.github.kuddev.pebrel.mobile.connection
-+
-+import java.io.InputStream
-+import java.util.ArrayDeque
-+
-+/** Removes only our nonce-scoped startup marker. Banners and all later output stay byte-exact. */
-+internal class PtyIdentityInput(source: InputStream, token: String, private val identified: (String) -> Unit) : InputStream() {
-+    private val source = source.buffered(16 * 1024)
-+    private val prefix = "\u001ePEBREL_TTY_$token=".toByteArray()
-+    private val candidate = ArrayList<Int>()
-+    private val output = ArrayDeque<Int>()
-+    private var scanned = 0
-+    private var done = false
-+
-+    override fun read(): Int {
-+        while (output.isEmpty()) {
-+            if (done) return source.read()
-+            val byte = source.read()
-+            if (byte < 0) {
-+                output.addAll(candidate); candidate.clear(); done = true
-+                if (output.isEmpty()) return -1
-+                break
-+            }
-+            scanned++
-+            if (candidate.size < prefix.size) {
-+                if (byte == prefix[candidate.size].toInt()) candidate.add(byte)
-+                else {
-+                    output.addAll(candidate); candidate.clear()
-+                    if (byte == prefix[0].toInt()) candidate.add(byte) else output.add(byte)
-+                }
-+            } else if (byte == 0x1f) {
-+                val tty = candidate.drop(prefix.size).map(Int::toChar).joinToString("")
-+                if (tty.matches(Regex("/dev/[A-Za-z0-9/_-]{1,128}"))) identified(tty)
-+                else { output.addAll(candidate); output.add(byte) }
-+                candidate.clear(); done = true
-+            } else candidate.add(byte)
-+            if (scanned >= 8192 || candidate.size > prefix.size + 256) {
-+                output.addAll(candidate); candidate.clear(); done = true
-+            }
+@@ -79,6 +79,9 @@ enum Mode {
+     CompletionMetadata,
+     Integration,
+     RejectIntegration,
++    RejectSftp,
++    HangSftp,
++    AcceptSftp,
+ }
+ 
+ struct Loopback {
+@@ -171,12 +174,41 @@ impl server::Handler for Loopback {
+         _session: &mut Session,
+     ) -> Result<(), Self::Error> {
+         self.channels.retain(|value| value.id() != channel);
+-        if matches!(self.mode, Mode::ExecEof | Mode::ExecHang | Mode::CompletionMetadata) {
++        if matches!(
++            self.mode,
++            Mode::ExecEof
++                | Mode::ExecHang
++                | Mode::CompletionMetadata
++                | Mode::RejectSftp
++                | Mode::HangSftp
++                | Mode::AcceptSftp
++        ) {
+             let _ = self.data.send(b"closed".to_vec());
+         }
+         Ok(())
+     }
+ 
++    async fn subsystem_request(
++        &mut self,
++        channel: ChannelId,
++        name: &str,
++        session: &mut Session,
++    ) -> Result<(), Self::Error> {
++        assert_eq!(name, "sftp");
++        let _ = self.data.send(b"sftp-request".to_vec());
++        match self.mode {
++            Mode::HangSftp => Ok(()),
++            Mode::AcceptSftp => {
++                session.channel_success(channel)?;
++                let index = self.channels.iter().position(|c| c.id() == channel).unwrap();
++                let stream = self.channels.remove(index).into_stream();
++                tokio::spawn(russh_sftp::server::run(stream, sftp::Peer));
++                Ok(())
++            },
++            _ => session.channel_failure(channel),
 +        }
-+        return output.removeFirst()
 +    }
 +
-+    override fun read(bytes: ByteArray, offset: Int, length: Int): Int {
-+        require(offset >= 0 && length >= 0 && offset <= bytes.size - length)
-+        if (length == 0) return 0
-+        if (done && output.isEmpty()) return source.read(bytes, offset, length)
-+        val first = read()
-+        if (first < 0) return -1
-+        bytes[offset] = first.toByte()
-+        var count = 1
-+        while (count < length && (output.isNotEmpty() || source.available() > 0)) {
-+            val next = read()
-+            if (next < 0) break
-+            bytes[offset + count++] = next.toByte()
-+        }
-+        return count
+     async fn channel_open_session(
+         &mut self,
+         channel: Channel<server::Msg>,
+@@ -1284,3 +1316,5 @@ fn ssh_echo_keeps_draining_while_a_large_input_waits_for_window_space() {
+         fixture.forget(&acquired.session).await;
+     });
+ }
++
++mod sftp;
+```
+
+**File**: `nebula_app/src/ssh_session/lifecycle/tests/sftp.rs` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++use super::*;
++
++pub(super) struct Peer;
++impl russh_sftp::server::Handler for Peer {
++    type Error = russh_sftp::protocol::StatusCode;
++    fn unimplemented(&self) -> Self::Error {
++        russh_sftp::protocol::StatusCode::OpUnsupported
 +    }
-+    override fun close() = source.close()
++}
++
++#[test]
++fn rejected_sftp_reports_the_subsystem_and_releases_the_channel() {
++    check(async {
++        let mut fixture = Fixture::new(Mode::RejectSftp).await;
++        let acquired = fixture.connect().await;
++        let mut shell = own_channel(acquired.session.channel_open_session().await.unwrap());
++        for _ in 0..3 {
++            let result = tokio::time::timeout(
++                Duration::from_secs(1),
++                super::super::super::sftp_on_session(&acquired.session),
++            )
++            .await;
++            let error = result.expect("a rejected subsystem must fail immediately").err().unwrap();
++            assert!(error.to_string().contains("rejected the SFTP subsystem"), "{error}");
++            assert_eq!(fixture.data.recv().await.unwrap(), b"sftp-request");
++            assert_eq!(fixture.data.recv().await.unwrap(), b"closed");
++        }
++        assert!(!acquired.session.is_closed());
++        shell.finish().await.unwrap();
++        fixture.forget(&acquired.session).await;
++    });
++}
++
++#[test]
++fn cancelling_sftp_negotiation_closes_only_its_channel() {
++    check(async {
++        let mut fixture = Fixture::new(Mode::HangSftp).await;
++        let acquired = fixture.connect().await;
++        let mut shell = own_channel(acquired.session.channel_open_session().await.unwrap());
++        let mut work = Box::pin(super::super::super::sftp_on_session(&acquired.session));
++        tokio::select! {
++            _ = &mut work => panic!("fixture withholds the subsystem reply"),
++            request = fixture.data.recv() => assert_eq!(request.unwrap(), b"sftp-request"),
++        }
++        drop(work);
++        assert_eq!(fixture.data.recv().await.unwrap(), b"closed");
++        assert!(!acquired.session.is_closed());
++        shell.finish().await.unwrap();
++        fixture.forget(&acquired.session).await;
++    });
++}
++
++#[test]
++fn accepted_sftp_can_reopen_on_the_original_pane_transport() {
++    check(async {
++        let fixture = Fixture::new(Mode::AcceptSftp).await;
++        let acquired = fixture.connect().await;
++        let (scope, pane) =
++            super::super::super::pane_connection::PaneConnectionScope::new(&acquired.session);
++        for _ in 0..3 {
++            let sftp = pane.open_sftp().await.unwrap();
++            sftp.close().await.unwrap();
++        }
++        drop(scope);
++        assert!(pane.open_sftp().await.is_err());
++        assert!(!acquired.session.is_closed());
++        fixture.forget(&acquired.session).await;
++    });
 +}
 ```
 
-**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/connection/RemoteSessions.kt` (modified, +24/-6)
+**File**: `nebula_app/src/ssh_session/sftp.rs` (added, +49/-0)
 ```diff
-@@ -3,7 +3,7 @@ package io.github.kuddev.pebrel.mobile.connection
- import org.json.JSONArray
- import org.json.JSONObject
- 
--data class RemoteWindow(val id: String, val label: String, val workspace: String = "", val state: String = "")
-+data class RemoteWindow(val id: String, val label: String, val workspace: String = "", val state: String = "", val pane: String = "")
- data class RemoteSession(
-     val kind: String, val id: String, val name: String, val identity: String = "",
-     val attached: Boolean = false, val windows: List<RemoteWindow> = emptyList(),
-@@ -18,14 +18,15 @@ data class RemoteAttachment(val session: RemoteSession, val window: RemoteWindow
- object RemoteSessions {
-     private const val path = "PATH=\"${'$'}PATH:/opt/homebrew/bin:/usr/local/bin:${'$'}HOME/.local/bin:${'$'}HOME/.cargo/bin\"; export PATH; "
-     private fun posix(script: String) = "sh -c '${script.replace("'", "'\"'\"'")}'"
-+    internal fun posixWithPath(script: String) = posix(path + script)
-     internal val discoveryCommand = posix(path + """
-         printf '\036os\n'; uname -s 2>/dev/null
-         printf '\036distro\n'; cat /etc/os-release 2>/dev/null
-         printf '\036tmux\n'
-         if command -v tmux >/dev/null 2>&1; then
--          tmux list-sessions -F '#{session_id}\t#{session_name}\t#{session_attached}\t#{session_created}:#{pid}' 2>/dev/null
-+          tmux -u list-sessions -F '#{session_id}\t#{session_name}\t#{session_attached}\t#{session_created}:#{pid}' 2>/dev/null
-           printf '\036windows\n'
--          tmux list-windows -a -F '#{session_id}\t#{window_id}\t#{window_index}\t#{window_name}' 2>/dev/null
-+          tmux -u list-windows -a -F '#{session_id}\t#{window_id}\t#{window_index}\t#{window_name}\t#{window_active}\t#{pane_id}' 2>/dev/null
-         fi
-         printf '\036herdr\n'
-         if command -v herdr >/dev/null 2>&1; then herdr session list --json 2>/dev/null; fi
-@@ -71,8 +72,10 @@ object RemoteSessions {
-             else desktopOsIcon(system)
-         val windows = data["windows"].orEmpty().lineSequence().mapNotNull { line ->
-             val fields = line.split('\t')
--            if (fields.size != 4 || !fields[0].matches(Regex("\\$[0-9]+")) || !fields[1].matches(Regex("@[0-9]+")) || !valid(fields[3])) null
--            else fields[0] to RemoteWindow(fields[1], "${fields[2]} · ${fields[3]}")
-+            if (fields.size !in setOf(4, 6) || !fields[0].matches(Regex("\\$[0-9]+")) || !fields[1].matches(Regex("@[0-9]+")) || !valid(fields[3])) null
-+            else fields[0] to RemoteWindow(fields[1], "${fields[2]} · ${fields[3]}",
-+                state = if (fields.getOrNull(4) == "1") "active" else "",
-+                pane = fields.getOrNull(5)?.takeIf { it.matches(Regex("%[0-9]+")) }.orEmpty())
-         }.take(256).toList().groupBy({ it.first }, { it.second })
-         val sessions = data["tmux"].orEmpty().lineSequence().mapNotNull { line ->
-             val fields = line.split('\t')
-@@ -95,6 +98,17 @@ object RemoteSessions {
-         return RemoteInventory(os, sessions.distinctBy { it.kind to it.id }, warnings)
-     }
- 
-+    internal fun configuredAttachment(host: HostProfile, inventory: RemoteInventory): RemoteAttachment? {
-+        val kind = when (host.sessionMode) {
-+            SshSessionMode.TMUX -> "tmux"
-+            SshSessionMode.HERDR -> "herdr"
-+            else -> return null
-+        }
-+        val name = if (host.sessionMode == SshSessionMode.TMUX) host.sessionName.ifEmpty { "pebrel" } else host.sessionName
-+        val session = inventory.sessions.singleOrNull { it.kind == kind && it.name == name } ?: return null
-+        return RemoteAttachment(session, session.windows.firstOrNull { it.state == "active" })
-+    }
+@@ -0,0 +1,49 @@
++//! SFTP negotiation owns its channel even while the server has not accepted it.
++use russh::{Channel, ChannelMsg, client};
 +
-     fun windows(connection: SshConnection, session: RemoteSession): List<RemoteWindow> {
-         if (session.kind != "herdr") return session.windows
-         val prefix = "herdr --session ${quote(session.id)} "
-@@ -145,7 +159,11 @@ object RemoteSessions {
-                 require(session.id.matches(Regex("\\$[0-9]+")) && session.identity.matches(Regex("[0-9]+:[0-9]+")))
-                 val selected = window?.let {
-                     require(it.id.matches(Regex("@[0-9]+")))
--                    "tmux select-window -t ${quote("${session.id}:${it.id}")} && "
-+                    val pane = it.pane.takeIf { pane -> pane.isNotEmpty() }?.let { pane ->
-+                        require(pane.matches(Regex("%[0-9]+")))
-+                        "tmux select-pane -t ${quote("${session.id}:${it.id}.$pane")} && "
-+                    }.orEmpty()
-+                    "tmux select-window -t ${quote("${session.id}:${it.id}")} && " + pane
-                 }.orEmpty()
-                 // 不按可重命名的标题匹配；服务器重启后不能误接到复用的 session ID。
-                 "[ \"${'$'}(tmux display-message -p -t ${quote(session.id)} '#{session_created}:#{pid}')\" = ${quote(session.identity)} ] && " +
++use super::{ClientSession, SessionError, lifecycle};
++
++struct Opening(Option<Channel<client::Msg>>);
++
++impl Drop for Opening {
++    fn drop(&mut self) {
++        if let Some(channel) = self.0.take() {
++            tokio::spawn(async move {
++                let _ = lifecycle::network("SFTP channel close", channel.close()).await;
++            });
++        }
++    }
++}
++
++pub(super) async fn open(
++    session: &ClientSession,
++) -> Result<russh_sftp::client::SftpSession, SessionError> {
++    let channel = lifecycle::network("SFTP channel", session.channel_open_session()).await?;
++    let mut opening = Opening(Some(channel));
++    let channel = opening.0.as_mut().expect("opening owns the channel");
++    lifecycle::network("SFTP subsystem", channel.request_subsystem(true, "sftp")).await?;
++    // request_subsystem only sends the request. Failure must not be fed into
++    // the byte stream, which ignores it and waits for a protocol version forever.
++    lifecycle::network("SFTP subsystem reply", async {
++        loop {
++            match channel.wait().await {
++                Some(ChannelMsg::Success) => return Ok::<_, SessionError>(()),
++                Some(ChannelMsg::Failure) => {
++                    return Err("SSH server rejected the SFTP subsystem".into());
++                },
++                Some(ChannelMsg::Eof | ChannelMsg::Close) | None => {
++                    return Err("SSH server closed the SFTP channel during negotiation".into());
++                },
++                _ => {},
++            }
++        }
++    })
++    .await?;
++    // ChannelStream owns close-on-drop from this point, including a failed INIT.
++    let stream = opening.0.take().expect("accepted channel").into_stream();
++    Ok(russh_sftp::client::SftpSession::new_with_config(
++        stream,
++        crate::ssh_sftp::limits::session_config(),
++    )
++    .await?)
++}
+```
+
+**File**: `nebula_app/src/ssh_sftp.rs` (modified, +22/-1)
+```diff
+@@ -1010,6 +1010,27 @@ pub(crate) fn upload_clipboard_image_result(
+     destination: String,
+     png: Vec<u8>,
+     on_finished: impl FnOnce(Result<String, String>) + Send + 'static,
++) {
++    upload_clipboard_image_using(
++        async move { crate::ssh_session::open_sftp(&destination).await },
++        png,
++        on_finished,
++    );
++}
++
++/// Clipboard bytes belong to the authenticated pane, never a newly resolved alias.
++pub(crate) fn upload_clipboard_image_on_pane(
++    connection: crate::ssh_session::PaneConnection,
++    png: Vec<u8>,
++    on_finished: impl FnOnce(Result<String, String>) + Send + 'static,
++) {
++    upload_clipboard_image_using(async move { connection.open_sftp().await }, png, on_finished);
++}
++
++fn upload_clipboard_image_using(
++    open: impl std::future::Future<Output = Result<SftpSession, SftpError>> + Send + 'static,
++    png: Vec<u8>,
++    on_finished: impl FnOnce(Result<String, String>) + Send + 'static,
+ ) {
+     let runtime = match crate::ssh_session::runtime() {
+         Ok(runtime) => runtime,
+@@ -1028,7 +1049,7 @@ pub(crate) fn upload_clipboard_image_result(
+         let nonce = TRANSFER_NONCE.fetch_add(1, Ordering::Relaxed);
+         let remote = format!("/tmp/pebrel-paste-{stamp}-{}-{nonce}.png", std::process::id());
+         let upload = async {
+-            let sftp = crate::ssh_session::open_sftp(&destination).await?;
++            let sftp = open.await?;
+             let attributes = russh_sftp::protocol::FileAttributes {
+                 permissions: Some(0o600),
+                 ..russh_sftp::protocol::FileAttributes::empty()
 ```
 
 ---
 
-### Incident Patch 3: `f065dc1e` (2026-10-22)
-**Commit Message**: Merge pull request #713 from Kuddev/fix/mobile-input-preferences-20261022
+### Incident Patch 3: `2841b967` (2026-10-25)
+**Commit Message**: fix(ssh): pin image uploads and handle SFTP negotiation failures
 
-fix(android): persist terminal display and custom key preferences
-
-**File**: `architecture/notes/mobile/android/app/session/2026-10-22-custom-terminal-keys.md` (added, +42/-0)
+**File**: `architecture/notes/nebula_app/ssh_session/2026-10-25-sftp-negotiation-ownership.md` (added, +58/-0)
 ```diff
-@@ -0,0 +1,42 @@
-+# Custom terminal key definitions
+@@ -0,0 +1,58 @@
++# Bind clipboard upload and SFTP negotiation to their owners
 +
 +## Status
-+Accepted for implementation.
++
++Implemented for the built-in SSH image-paste failure investigation.
 +
 +## Context
-+The mobile toolbar had a fixed key list and separate label-to-key switches.
-+An unknown label fell through to Down, so adding a modifier combination could
-+silently send a different key.
++
++Clipboard uploads reopened a destination by its saved alias, even though file
++intake already held the pane's authenticated connection. Changed aliases or pool
++state could therefore select a different transport. SFTP negotiation also sent a
++subsystem request without inspecting the server's acceptance before starting INIT.
 +
 +## Evidence
-+`LocalTerminalScreen` and `DesktopTerminalScreen` each owned their own mapping.
-+The native key boundary already carries a physical key, modifier mask, text and
-+unshifted codepoint.
++
++russh 0.62.2 `request_subsystem` only queues the request. Its byte-stream adapter
++ignores channel Failure, so a rejected SFTP request waited for a protocol response
++that would never arrive. Bare channels have no close-on-drop owner, unlike the
++stream adapter. The loopback server regression exercises rejection and cancellation.
++The user's original error text is unavailable; these tests do not establish that
++their server used the same failure path.
 +
 +## Decision
-+`TerminalShortcut` owns parsing/canonicalization and the shared key payload.
-+Persist at most 24 ordered definitions under `terminal_shortcuts/custom_v1`.
-+Only keys supported by the native physical-key mapping are accepted. Reject
-+unknown keys, duplicate modifiers and duplicate canonical combinations.
-+Expose the editor in terminal toolbars and input settings. Conversation controls
-+keep their separately supported server-side actions.
++
++GPUI clipboard intake captures the existing pane connection and refuses a missing
++owner. It uses the same pinned SFTP opener as file intake, without re-resolving the
++host or triggering replacement authentication.
++SFTP negotiation waits for subsystem Success, reports rejection/closure immediately,
++and owns channel cleanup during every await. After acceptance, ChannelStream takes
++over close-on-drop ownership before protocol INIT begins.
 +
 +## Rejected alternatives
-+Raw escape strings or shell macros can execute commands and do not express
-+physical modifier state. Separate UI switches recreate the original divergence.
++
++- Retry through an arbitrary fresh connection: may change the endpoint or require
++  new authentication after the initiating pane is gone.
++- Feed Failure to the SFTP byte stream: hides the cause behind a generic timeout.
++- Disconnect the pooled SSH session: terminates unrelated interactive panes.
 +
 +## Consequences
-+Custom keys apply to local, SSH and mirrored desktop terminal input. The program
-+and negotiated terminal keyboard protocol still determine the resulting behavior.
-+Removing a line removes a custom key; default controls remain available.
++
++Existing file-transfer packet limits and authentication policy remain authoritative.
++A server refusing additional channels or lacking SFTP still returns an error.
++No new remote program, dependency, persistent setting, or font change is introduced.
 +
 +## Validation
-+`TerminalShortcutTest` covers Ctrl+Shift payloads, function/navigation keys,
-+modifier canonicalization and invalid input. `ShortcutEditorTest` exercises
-+editing, validation, order, saving, recreation and deletion.
++
++97 SSH tests passed, two existing opt-in tests skipped. Real loopback SSH/SFTP tests
++cover repeated accepted sessions, immediate rejection, cancelled negotiation,
++channel cleanup and preservation of the shared transport. User-machine image-paste
++acceptance remains outstanding.
 +
 +## Supersedes
-+None.
++
++None; extends pane-scoped upload ownership to clipboard images.
 +
 +## Revisit when
-+The native input protocol adds physical keys outside the current mapping.
++
++An exact user error demonstrates a distinct server/channel-limit failure mode.
 ```
 
-**File**: `architecture/notes/mobile/android/app/session/2026-10-22-mobile-display-preferences.md` (added, +37/-0)
+**File**: `nebula_app/src/gpui_shell/terminal/view/image_paste.rs` (modified, +22/-4)
 ```diff
-@@ -0,0 +1,37 @@
-+# Persist phone display choices
-+
-+## Status
-+Accepted for implementation.
-+
-+## Context
-+Issue #669 reports zoom and phone-width wrapping resetting after leaving a pane.
-+
-+## Evidence
-+`TerminalSnapshotView` owned a transient zoom multiplier; `DesktopTerminalScreen`
-+owned wrapping with `rememberSaveable(identity)`. Neither belonged to the stored
-+display preferences. Native pinch feedback did not call the existing font setter.
-+
-+## Decision
-+Persist `desktop_zoom` and `desktop_wrap_lines` alongside the existing terminal
-+preferences. Keep zoom as the existing bounded 0.5–5 multiplier so this fix does
-+not change base font size or resize the desktop terminal. Persist on gesture end
-+or explicit zoom reset; ignore stale preference reapplication during a pinch.
-+
-+## Rejected alternatives
-+Changing the desktop PTY size alters the remote application. Saving only base
-+font size loses the existing multiplier and can apply zoom twice on reentry.
-+
-+## Consequences
-+These reading preferences apply to subsequent desktop panes on this device.
-+Existing installations default to scale 1 and wrapping off.
-+
-+## Validation
-+`DisplayPreferencesTest` performs a real native-view pinch gesture, reapplies
-+stored preferences during feedback, recreates preferences and the view, and
-+checks zoom/wrapping restoration plus invalid-scale normalization.
-+
-+## Supersedes
-+None.
-+
-+## Revisit when
-+Per-host display overrides become an explicit product requirement.
+@@ -140,6 +140,19 @@ impl TerminalView {
+         }
+ 
+         let target = self.image_target();
++        let connection = self
++            .session
++            .as_ref()
++            .and_then(|session| session.remote_connection.lock().ok()?.clone());
++        if matches!(target, ImageTarget::Ssh(_)) && connection.is_none() {
++            toast::toast(
++                window,
++                cx,
++                ToastKind::Warning,
++                ui_language().text(Message::CommonImagePasteDisconnected),
++            );
++            return;
++        }
+         let staged_target = target.clone();
+         let term = Arc::downgrade(&self.session.as_ref().unwrap().term);
+         let owner = (
+@@ -156,7 +169,7 @@ impl TerminalView {
+             if png.len() > remaining {
+                 return Err("temporary images exceed the 128 MiB tab limit".to_owned());
+             }
+-            stage_image(staged_target, png).await
++            stage_image(staged_target, connection, png).await
+         });
+         cx.spawn_in(window, async move |this, cx| {
+             let result = work.await;
+@@ -282,11 +295,16 @@ impl TerminalView {
+     }
+ }
+ 
+-async fn stage_image(target: ImageTarget, png: Vec<u8>) -> Result<StagedImage, String> {
++async fn stage_image(
++    target: ImageTarget,
++    connection: Option<crate::ssh_session::PaneConnection>,
++    png: Vec<u8>,
++) -> Result<StagedImage, String> {
+     let bytes = png.len();
+-    if let ImageTarget::Ssh(destination) = target {
++    if let ImageTarget::Ssh(_) = target {
+         let (sender, receiver) = futures::channel::oneshot::channel();
+-        crate::ssh_sftp::upload_clipboard_image_result(destination, png, move |result| {
++        let connection = connection.ok_or("SSH pane connection closed")?;
++        crate::ssh_sftp::upload_clipboard_image_on_pane(connection, png, move |result| {
+             let _ = sender.send(result);
+         });
+         let path = receiver.await.map_err(|_| "image upload stopped".to_owned())??;
 ```
 
-**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/session/DisplayPreferences.kt` (modified, +8/-1)
+**File**: `nebula_app/src/ssh_session.rs` (modified, +2/-10)
 ```diff
-@@ -25,6 +25,8 @@ data class TerminalPreferences(
-     val suggestions: Boolean = true,
-     val directInput: Boolean = true,
-     val scrollbackLines: Int = 1000,
-+    val desktopZoom: Float = 1f,
-+    val desktopWrapLines: Boolean = false,
- ) {
-     /** Preserve the persisted contract when callers pass a stale or unknown value. */
-     fun normalized(): TerminalPreferences = copy(
-@@ -35,6 +37,7 @@ data class TerminalPreferences(
-         },
-         fontSize = fontSize.coerceIn(TerminalPreferenceValues.MIN_FONT_SIZE, TerminalPreferenceValues.MAX_FONT_SIZE),
-         scrollbackLines = scrollbackLines.coerceIn(500, 5000),
-+        desktopZoom = if (desktopZoom.isFinite()) desktopZoom.coerceIn(.5f, 5f) else 1f,
-         cursorStyle = when (cursorStyle) {
-             TerminalPreferenceValues.BAR_CURSOR -> TerminalPreferenceValues.BAR_CURSOR
-             TerminalPreferenceValues.UNDERLINE_CURSOR -> TerminalPreferenceValues.UNDERLINE_CURSOR
-@@ -73,6 +76,8 @@ class DisplayPreferences(context: Context) {
-             suggestions = stored.getBoolean("suggestions", true),
-             directInput = stored.getBoolean("direct_input", true),
-             scrollbackLines = stored.getInt("scrollback_lines", 1000),
-+            desktopZoom = stored.getFloat("desktop_zoom", 1f),
-+            desktopWrapLines = stored.getBoolean("desktop_wrap_lines", false),
-         ).normalized().let { it.copy(scrollbackLines = it.scrollbackLines.coerceAtMost(maxScrollbackLines)) },
-     )
-     val state = current.asStateFlow()
-@@ -94,7 +99,9 @@ class DisplayPreferences(context: Context) {
-             .putBoolean("pinch_zoom", current.value.pinchZoom)
-             .putBoolean("suggestions", current.value.suggestions)
-             .putBoolean("direct_input", current.value.directInput)
--            .putInt("scrollback_lines", current.value.scrollbackLines).apply()
-+            .putInt("scrollback_lines", current.value.scrollbackLines)
-+            .putFloat("desktop_zoom", current.value.desktopZoom)
-+            .putBoolean("desktop_wrap_lines", current.value.desktopWrapLines).apply()
+@@ -35,6 +35,7 @@ mod lifecycle;
+ mod pane_connection;
+ mod resume;
+ mod route;
++mod sftp;
+ pub(crate) use forward::{LocalForward, open_local_forward};
+ pub(crate) use integration::setup_cli as setup_ai_cli;
+ pub use pane_connection::PaneConnection;
+@@ -1131,16 +1132,7 @@ pub(crate) async fn open_sftp(
+ async fn sftp_on_session(
+     session: &ClientSession,
+ ) -> Result<russh_sftp::client::SftpSession, SessionError> {
+-    let channel = lifecycle::network("SFTP channel", session.channel_open_session()).await?;
+-    channel.request_subsystem(true, "sftp").await?;
+-    // 显式给参数而不是用上游默认值：默认单包 256 KiB 会让每个 READ/WRITE 都
+-    // 顶满一个巨型请求（部分服务端在这个尺寸上会静默出错），而默认在途写
+-    // 请求只有 8 个，高时延链路上填不满管道。判据见 `ssh_sftp::limits`。
+-    Ok(russh_sftp::client::SftpSession::new_with_config(
+-        channel.into_stream(),
+-        crate::ssh_sftp::limits::session_config(),
+-    )
+-    .await?)
++    sftp::open(session).await
+ }
+ 
+ // ---- 「测试连接」（SSH 编辑器页脚，spec ui-redesign 稿一） ----
+```
+
+**File**: `nebula_app/src/ssh_session/lifecycle/tests.rs` (modified, +35/-1)
+```diff
+@@ -79,6 +79,9 @@ enum Mode {
+     CompletionMetadata,
+     Integration,
+     RejectIntegration,
++    RejectSftp,
++    HangSftp,
++    AcceptSftp,
+ }
+ 
+ struct Loopback {
+@@ -171,12 +174,41 @@ impl server::Handler for Loopback {
+         _session: &mut Session,
+     ) -> Result<(), Self::Error> {
+         self.channels.retain(|value| value.id() != channel);
+-        if matches!(self.mode, Mode::ExecEof | Mode::ExecHang | Mode::CompletionMetadata) {
++        if matches!(
++            self.mode,
++            Mode::ExecEof
++                | Mode::ExecHang
++                | Mode::CompletionMetadata
++                | Mode::RejectSftp
++                | Mode::HangSftp
++                | Mode::AcceptSftp
++        ) {
+             let _ = self.data.send(b"closed".to_vec());
+         }
+         Ok(())
      }
  
-     fun update(transform: (TerminalPreferences) -> TerminalPreferences) {
-```
-
-**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/session/SessionRepository.kt` (modified, +1/-0)
-```diff
-@@ -44,6 +44,7 @@ data class DesktopOutput(val target: String = "", val text: String = "", val loa
- class SessionRepository(private val context: Context,
-                         private val relayTransport: (RelayProfile) -> DesktopTransport = { RelayTransport(it) }) {
-     val display = DisplayPreferences(context)
-+    val shortcuts = ShortcutPreferences(context)
-     private val main = Handler(Looper.getMainLooper())
-     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-     private val preferences = context.getSharedPreferences("pebrel_mobile", Context.MODE_PRIVATE)
-```
-
-**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/session/ShortcutPreferences.kt` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+package io.github.kuddev.pebrel.mobile.session
-+
-+import android.content.Context
-+import io.github.kuddev.pebrel.terminal.TerminalShortcut
-+import kotlinx.coroutines.flow.MutableStateFlow
-+import kotlinx.coroutines.flow.asStateFlow
-+
-+/** Ordered key definitions only; this format never stores shell commands or terminal input. */
-+class ShortcutPreferences(context: Context) {
-+    private val stored = context.getSharedPreferences("terminal_shortcuts", Context.MODE_PRIVATE)
-+    private val current = MutableStateFlow(stored.getString("custom_v1", "").orEmpty().take(4096)
-+        .lineSequence().mapNotNull(TerminalShortcut::parse).map { it.label }.distinct().take(MAX_KEYS).toList())
-+    val state = current.asStateFlow()
-+
-+    fun save(lines: List<String>): Boolean {
-+        if (lines.size > MAX_KEYS) return false
-+        val parsed = lines.map { TerminalShortcut.parse(it)?.label ?: return false }
-+        if (parsed.distinct().size != parsed.size) return false
-+        current.value = parsed
-+        stored.edit().putString("custom_v1", parsed.joinToString("\n")).apply()
-+        return true
++    async fn subsystem_request(
++        &mut self,
++        channel: ChannelId,
++        name: &str,
++        session: &mut Session,
++    ) -> Result<(), Self::Error> {
++        assert_eq!(name, "sftp");
++        let _ = self.data.send(b"sftp-request".to_vec());
++        match self.mode {
++            Mode::HangSftp => Ok(()),
++            Mode::AcceptSftp => {
++                session.channel_success(channel)?;
++                let index = self.channels.iter().position(|c| c.id() == channel).unwrap();
++                let stream = self.channels.remove(index).into_stream();
++                tokio::spawn(russh_sftp::server::run(stream, sftp::Peer));
++                Ok(())
++            },
++            _ => session.channel_failure(channel),
++        }
 +    }
 +
-+    companion object { const val MAX_KEYS = 24 }
+     async fn channel_open_session(
+         &mut self,
+         channel: Channel<server::Msg>,
+@@ -1284,3 +1316,5 @@ fn ssh_echo_keeps_draining_while_a_large_input_waits_for_window_space() {
+         fixture.forget(&acquired.session).await;
+     });
+ }
++
++mod sftp;
+```
+
+**File**: `nebula_app/src/ssh_session/lifecycle/tests/sftp.rs` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++use super::*;
++
++pub(super) struct Peer;
++impl russh_sftp::server::Handler for Peer {
++    type Error = russh_sftp::protocol::StatusCode;
++    fn unimplemented(&self) -> Self::Error {
++        russh_sftp::protocol::StatusCode::OpUnsupported
++    }
++}
++
++#[test]
++fn rejected_sftp_reports_the_subsystem_and_releases_the_channel() {
++    check(async {
++        let mut fixture = Fixture::new(Mode::RejectSftp).await;
++        let acquired = fixture.connect().await;
++        let mut shell = own_channel(acquired.session.channel_open_session().await.unwrap());
++        for _ in 0..3 {
++            let result = tokio::time::timeout(
++                Duration::from_secs(1),
++                super::super::super::sftp_on_session(&acquired.session),
++            )
++            .await;
++            let error = result.expect("a rejected subsystem must fail immediately").err().unwrap();
++            assert!(error.to_string().contains("rejected the SFTP subsystem"), "{error}");
++            assert_eq!(fixture.data.recv().await.unwrap(), b"sftp-request");
++            assert_eq!(fixture.data.recv().await.unwrap(), b"closed");
++        }
++        assert!(!acquired.session.is_closed());
++        shell.finish().await.unwrap();
++        fixture.forget(&acquired.session).await;
++    });
++}
++
++#[test]
++fn cancelling_sftp_negotiation_closes_only_its_channel() {
++    check(async {
++        let mut fixture = Fixture::new(Mode::HangSftp).await;
++        let acquired = fixture.connect().await;
++        let mut shell = own_channel(acquired.session.channel_open_session().await.unwrap());
++        let mut work = Box::pin(super::super::super::sftp_on_session(&acquired.session));
++        tokio::select! {
++            _ = &mut work => panic!("fixture withholds the subsystem reply"),
++            request = fixture.data.recv() => assert_eq!(request.unwrap(), b"sftp-request"),
++        }
++        drop(work);
++        assert_eq!(fixture.data.recv().await.unwrap(), b"closed");
++        assert!(!acquired.session.is_closed());
++        shell.finish().await.unwrap();
++        fixture.forget(&acquired.session).await;
++    });
++}
++
++#[test]
++fn accepted_sftp_can_reopen_on_the_original_pane_transport() {
++    check(async {
++        let fixture = Fixture::new(Mode::AcceptSftp).await;
++        let acquired = fixture.connect().await;
++        let (scope, pane) =
++            super::super::super::pane_connection::PaneConnectionScope::new(&acquired.session);
++        for _ in 0..3 {
++            let sftp = pane.open_sftp().await.unwrap();
++            sftp.close().await.unwrap();
++        }
++        drop(scope);
++        assert!(pane.open_sftp().await.is_err());
++        assert!(!acquired.session.is_closed());
++        fixture.forget(&acquired.session).await;
++    });
 +}
 ```
 
-**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/ui/CommandComposer.kt` (modified, +11/-1)
+**File**: `nebula_app/src/ssh_session/sftp.rs` (added, +49/-0)
 ```diff
-@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
- import androidx.lifecycle.compose.collectAsStateWithLifecycle
- import io.github.kuddev.pebrel.mobile.R
- import io.github.kuddev.pebrel.mobile.session.SessionRepository
-+import io.github.kuddev.pebrel.terminal.TerminalShortcut
- import io.github.kuddev.pebrel.mobile.voice.appendVoiceDraft
- import kotlinx.coroutines.launch
- 
-@@ -52,10 +53,13 @@ fun CommandComposer(
-     attachmentBusy: Boolean = false,
-     shortcutsEnabled: Boolean = enabled,
-     extraShortcuts: List<String> = emptyList(),
-+    customKeys: Boolean = onDirect != null,
-     send: suspend (String) -> Boolean,
- ) {
-     val drafts by repository.drafts.collectAsStateWithLifecycle()
-     val preferences by repository.display.state.collectAsStateWithLifecycle()
-+    val customShortcuts by repository.shortcuts.state.collectAsStateWithLifecycle()
-+    var editShortcuts by remember(id) { mutableStateOf(false) }
-     val historyBySession by repository.commandHistory.collectAsStateWithLifecycle()
-     val draft = drafts[id].orEmpty()
-     val history = historyBySession[id].orEmpty()
-@@ -135,14 +139,16 @@ fun CommandComposer(
-         }
-     }
-     val showHistory = historyItems.isNotEmpty() && draft.isNotBlank() && editorFocused && !historyDismissed && historyRoom >= 52.dp
--    val shortcuts = (extraShortcuts + listOf("Ctrl+C", "Esc", "Tab", "Shift+Tab", "←", "→", "↑", "↓")).distinct()
-+    val shortcuts = (extraShortcuts + (if (customKeys) customShortcuts else emptyList()) + TerminalShortcut.defaults).distinct()
-+    if (editShortcuts) ShortcutEditor(repository.shortcuts) { editShortcuts = false }
-     // One mutually exclusive slot. Animating two independently visible surfaces
-     // left an empty toolbar under the editor and retained two input targets.
-     Column(Modifier.fillMaxWidth().padding(horizontal = 6.dp, vertical = 4.dp)
-         .animateContentSize(motion.contentSizeSpec())) {
-         if (direct) {
-             ComposerToolbar(
-                 onEdit = onDirect?.let { toggle -> { toggle(false) } },
-+                onEditShortcuts = if (customKeys) ({ editShortcuts = true }) else null,
-                 keyboardVisible = keyboardVisible,
-                 keyboardEnabled = onKeyboard != null,
-                 enabled = enabled,
-@@ -222,6 +228,10 @@ fun CommandComposer(
-                                             onClick = { toolsOpen = false; attach() },
-                                         )
-                                     }
-+                                    if (customKeys && onKey != null) DropdownMenuItem(
-+                                        text = { Text(stringResource(R.string.custom_shortcuts)) },
-+                                        onClick = { toolsOpen = false; editShortcuts = true },
-+                                    )
-                                     if (onKey != null) DropdownMenuItem(
-                                         text = { Text(stringResource(if (keys) R.string.composer_hide_aux_keys else R.string.composer_aux_keys)) },
-                                         onClick = { toolsOpen = false; keys = !keys },
-```
-
-**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/ui/ComposerToolbar.kt` (modified, +4/-0)
-```diff
-@@ -118,6 +118,7 @@ internal fun ComposerToolbar(
-     enabled: Boolean,
-     shortcuts: List<String> = emptyList(),
-     onKey: ((String) -> Unit)? = null,
-+    onEditShortcuts: (() -> Unit)? = null,
- ) {
-     val colors = MaterialTheme.colorScheme
-     Row(
-@@ -141,6 +142,9 @@ internal fun ComposerToolbar(
-         }
-         Box(Modifier.padding(horizontal = 4.dp).width(1.dp).height(24.dp)
-             .background(colors.outlineVariant.copy(alpha = .45f)))
-+        onEditShortcuts?.let { edit ->
-+            ComposerIconButton(R.drawable.ic_command, stringResourceCompat(R.string.custom_shortcuts), onClick = edit)
+@@ -0,0 +1,49 @@
++//! SFTP negotiation owns its channel even while the server has not accepted it.
++use russh::{Channel, ChannelMsg, client};
++
++use super::{ClientSession, SessionError, lifecycle};
++
++struct Opening(Option<Channel<client::Msg>>);
++
++impl Drop for Opening {
++    fn drop(&mut self) {
++        if let Some(channel) = self.0.take() {
++            tokio::spawn(async move {
++                let _ = lifecycle::network("SFTP channel close", channel.close()).await;
++            });
 +        }
-         onEdit?.let { edit ->
-             ComposerIconButton(
-                 icon = R.drawable.ic_edit,
++    }
++}
++
++pub(super) async fn open(
++    session: &ClientSession,
++) -> Result<russh_sftp::client::SftpSession, SessionError> {
++    let channel = lifecycle::network("SFTP channel", session.channel_open_session()).await?;
++    let mut opening = Opening(Some(channel));
++    let channel = opening.0.as_mut().expect("opening owns the channel");
++    lifecycle::network("SFTP subsystem", channel.request_subsystem(true, "sftp")).await?;
++    // request_subsystem only sends the request. Failure must not be fed into
++    // the byte stream, which ignores it and waits for a protocol version forever.
++    lifecycle::network("SFTP subsystem reply", async {
++        loop {
++            match channel.wait().await {
++                Some(ChannelMsg::Success) => return Ok::<_, SessionError>(()),
++                Some(ChannelMsg::Failure) => {
++                    return Err("SSH server rejected the SFTP subsystem".into());
++                },
++                Some(ChannelMsg::Eof | ChannelMsg::Close) | None => {
++                    return Err("SSH server closed the SFTP channel during negotiation".into());
++                },
++                _ => {},
++            }
++        }
++    })
++    .await?;
++    // ChannelStream owns close-on-drop from this point, including a failed INIT.
++    let stream = opening.0.take().expect("accepted channel").into_stream();
++    Ok(russh_sftp::client::SftpSession::new_with_config(
++        stream,
++        crate::ssh_sftp::limits::session_config(),
++    )
++    .await?)
++}
 ```
 
-**File**: `mobile/android/app/src/main/java/io/github/kuddev/pebrel/mobile/ui/DesktopOutputSurface.kt` (modified, +5/-0)
+**File**: `nebula_app/src/ssh_sftp.rs` (modified, +22/-1)
 ```diff
-@@ -54,6 +54,8 @@ internal fun DesktopOutputSurface(
-     pasteTarget: TerminalInputTarget? = inputTarget,
-     scrollTarget: TerminalInputTarget? = inputTarget,
-     onHistoryPage: ((Long?) -> Unit)? = null,
-+    zoomScale: Float = 1f,
-+    onZoomScale: (Float) -> Unit = {},
+@@ -1010,6 +1010,27 @@ pub(crate) fn upload_clipboard_image_result(
+     destination: String,
+     png: Vec<u8>,
+     on_finished: impl FnOnce(Result<String, String>) + Send + 'static,
++) {
++    upload_clipboard_image_using(
++        async move { crate::ssh_session::open_sftp(&destination).await },
++        png,
++        on_finished,
++    );
++}
++
++/// Clipboard bytes belong to the authenticated pane, never a newly resolved alias.
++pub(crate) fn upload_clipboard_image_on_pane(
++    connection: crate::ssh_session::PaneConnection,
++    png: Vec<u8>,
++    on_finished: impl FnOnce(Result<String, String>) + Send + 'static,
++) {
++    upload_clipboard_image_using(async move { connection.open_sftp().await }, png, on_finished);
++}
++
++fn upload_clipboard_image_using(
++    open: impl std::future::Future<Output = Result<SftpSession, SftpError>> + Send + 'static,
++    png: Vec<u8>,
++    on_finished: impl FnOnce(Result<String, String>) + Send + 'static,
  ) {
-     val legacyText = frame == null && text.isNotEmpty()
-     var lastKeyboardRequest by remember(identity) { mutableIntStateOf(keyboardRequest) }
-@@ -68,13 +70,16 @@ internal fun DesktopOutputSurface(
-                     view.pasteTarget = null
-                     view.scrollTarget = null
-                     view.onZoomChanged = null
-+                    view.onZoomScaleChanged = null
-                     view.onHistoryPage = null
-                     if (inputView === view) inputView = null
-                 }, update = { view ->
-                 inputView = view
-                 val app = view.context.applicationContext as PebrelApplication
-                 view.setFont(app.terminalTypeface(app.sessions.display.state.value.fontFamily), fontSize)
-                 view.pinchZoom = pinchZoom
-+                view.setZoomScale(zoomScale)
-+                view.onZoomScaleChanged = onZoomScale
-                 view.wrapLines = wrapLines
-                 view.onZoomChanged = zoomFeedback::update
-                 view.frame = frame
+     let runtime = match crate::ssh_session::runtime() {
+         Ok(runtime) => runtime,
+@@ -1028,7 +1049,7 @@ pub(crate) fn upload_clipboard_image_result(
+         let nonce = TRANSFER_NONCE.fetch_add(1, Ordering::Relaxed);
+         let remote = format!("/tmp/pebrel-paste-{stamp}-{}-{nonce}.png", std::process::id());
+         let upload = async {
+-            let sftp = crate::ssh_session::open_sftp(&destination).await?;
++            let sftp = open.await?;
+             let attributes = russh_sftp::protocol::FileAttributes {
+                 permissions: Some(0o600),
+                 ..russh_sftp::protocol::FileAttributes::empty()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #715** (2026-10-22): fix(android): recover terminal sessions and preserve remote context (@Kuddev)
-- **PR #714** (2026-10-22): fix(naming): recognize remote session control interfaces (@Kuddev)
-- **PR #713** (2026-10-22): fix(android): persist terminal display and custom key preferences (@Kuddev)
-- **PR #712** (closed): fix(android): recover SSH tabs and preserve tmux context (@Kuddev)
-- **PR #711** (2026-10-22): fix(android): reuse authenticated SFTP for terminal attachments (@Kuddev)
-- **PR #694** (2026-10-21): Reduce activity spinner redraw work and restore tab scrolling (@Kuddev)
+- **PR #769** (2026-10-25): release: prepare Pebrel 2.3.0 and order Runtime geometry acknowledgements (@Kuddev)
+- **PR #768** (2026-10-25): fix(ssh): pin clipboard uploads and handle SFTP negotiation failures (@Kuddev)
+- **PR #765** (2026-10-25): fix(ai-hook): clear stale screen attention (@Aschenbath)
+- **PR #764** (2026-10-25): fix(hooks): deliver detached Claude failure and permission events (@Kuddev)
+- **PR #763** (closed): fix(agent): clear stale screen attention when its form disappears (@Kuddev)
+- **PR #762** (2026-10-25): fix(sidebar): finish resize gestures released outside the window (@Kuddev)
 
 ---
 
@@ -2438,57 +2189,28 @@ fix(android): persist terminal display and custom key preferences
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. android): retain mobile zoom and wrapping between terminal visits
+## X. release): align translation contract lockfile with 2.3.0
 
 **RULE**:
-When implementing operations in `architecture/notes/mobile/android/app/session/2026-10-22-mobile-display-preferences.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/i18n-contract/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce093cdc`: android): retain mobile zoom and wrapping between terminal visits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1cad7011`: release): align translation contract lockfile with 2.3.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/mobile/android/app/session/2026-10-22-mobile-display-preferences.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/i18n-contract/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Persist phone display choices
-
-## Status
-Accepted for implementation.
-
-## Context
-Issue #669 reports zoom and phone-width wrapping resetting after leaving a pane.
-
-## Evidence
-`TerminalSnapshotView` owned a transient zoom multiplier; `DesktopTerminalScreen`
-owned wrapping with `rememberSaveable(identity)`. Neither belonged to the stored
-display preferences. Native pinch feedback did not call the existing font setter.
-
-## Decision
-Persist `desktop_zoom` and `desktop_wrap_lines` alongside the existing terminal
-preferences. Keep zoom as the existing bounded 0.5–5 multiplier so this fix does
-not change base font size or resize the desktop terminal. Persist on gesture end
-or explicit zoom reset; ignore stale preference reapplication during a pinch.
-
-## Rejected alternatives
-Changing the desktop PTY size alters the remote application. Saving only base
-font size loses the existing multiplier and can apply zoom twice on reentry.
-
-## Consequences
-These reading preferences apply to subsequent desktop panes on this device.
-Existing installations default to scale 1 and wrapping off.
-
-## Validation
-`DisplayPreferencesTest` performs a real native-view pinch gesture, reapplies
-stored preference
+version = "2.3.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "2.2.2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce093cdc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1cad7011` are properly handled with clean fallback behavior.
