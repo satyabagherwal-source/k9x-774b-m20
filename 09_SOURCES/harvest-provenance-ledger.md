@@ -4671,3 +4671,6 @@ Every entry in this ledger must capture:
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `180c08d6` | Multi-dimensional audit evidence | 2026-10-25T04:25:25.107Z |
 | `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-25T04:31:49.149Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `b28d8046` | Multi-dimensional audit evidence | 2026-10-25T04:31:51.963Z |
+| `learn-github-glincker-thesvg` | `https://github.com/glincker/thesvg` | `fbc9da41` | Multi-dimensional audit evidence | 2026-10-25T04:38:00.461Z |
+| `learn-github-killercup-cargo-edit` | `https://github.com/killercup/cargo-edit` | `5cf6c0ba` | Multi-dimensional audit evidence | 2026-10-25T04:38:03.832Z |
+| `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-25T04:38:12.546Z |

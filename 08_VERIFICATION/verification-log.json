@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-KWAP",
-    "timestamp": "2026-10-21T02:49:55.585Z",
-    "repository": "black-forest-labs/flux-3-image-klein",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "8df8f57147e49ef8b265cf5de27f860f7967a46191a0c02d88b7c4f03603f5f2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-KX6E",
-    "timestamp": "2026-10-21T02:49:56.726Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "cdd84eee1559cbd3efe75d9dc5001f2e3d5feafaa49718d52a1682089dfcab80",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-SUPG",
-    "timestamp": "2026-10-21T02:56:06.772Z",
-    "repository": "pyannote/speaker-diarization-community-1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "5d51bff69c83dbb5971d6da9aac72c33eab9ee24050476573c9ed54940a04f14",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-V1K3",
     "timestamp": "2026-10-21T02:57:48.963Z",
     "repository": "carbon-design-system/carbon-components-svelte",
@@ -7492,6 +7447,51 @@
     "contentHash": "316aa77aaeaac38bf7fcc7b914bd495cb218845f30e61b8e77f8d28b8cf1f8dd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-7AQ2",
+    "timestamp": "2026-10-25T04:38:00.458Z",
+    "repository": "glincker/thesvg",
+    "learningId": "learn-github-glincker-thesvg",
+    "contentHash": "42ddb249d87efc15b9a6ef561e31d3d11752047fa102ea789d04e823d4b382e9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-7DBP",
+    "timestamp": "2026-10-25T04:38:03.829Z",
+    "repository": "killercup/cargo-edit",
+    "learningId": "learn-github-killercup-cargo-edit",
+    "contentHash": "d56c7ccc25c993cc56e04fb5bdc11ce4eaca06f9e44dd52db6b22bafe8b77cc2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-7K1R",
+    "timestamp": "2026-10-25T04:38:12.543Z",
+    "repository": "BAAI/bge-large-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+    "contentHash": "679489d313570bed2d58fc53e3d53605be1909059d46477b26793d4b87e478c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

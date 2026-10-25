@@ -4428,3 +4428,7 @@ https://huggingface.co/ornith-ai/Ornith-1.5-122B
 # --- Automatically Discovered by AI Scout Engine [2026-10-25T02:02:59.665Z] ---
 # [MOBILE-CROSS-PLATFORM] ShiGuangSchedule/shiguangschedule (782 score) - 一款开源、无广告、极简的课程表 APP，支持教务导入
 https://github.com/ShiGuangSchedule/shiguangschedule
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-25T04:37:54.628Z] ---
+# [AI-AGENTS] glincker/thesvg (1774 score) - The open SVG brand library: 7,600+ brand logos and cloud icons (AWS, Azure, GCP)
+https://github.com/glincker/thesvg

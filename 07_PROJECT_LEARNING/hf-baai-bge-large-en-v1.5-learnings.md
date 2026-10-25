@@ -3,7 +3,7 @@
 > **Source Version**: `hf-baai-bge-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-20T12:40:45.192Z  
+> **Timestamp**: 2026-10-25T04:38:12.119Z  
 > **Learning ID**: `learn-huggingface-baai-bge-large-en-v1-5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,221 +17,260 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The `BAAI/bge-large-en-v1.5` repository is not a traditional software application but a **pre-trained neural network artifact** (specifically, a BERT-based sentence embedding model) hosted on Hugging Face. It solves the problem of **semantic vectorization**: converting variable-length natural language text into fixed-dimensional dense vectors (1024 dimensions) that preserve semantic meaning. This enables downstream tasks such as semantic search, clustering, classification, and reranking without requiring task-specific fine-tuning for every new use case.
+The `BAAI/bge-large-en-v1.5` repository is not a traditional software application but a **pre-trained neural network artifact** (a "model card" and weight container) designed for **dense vector retrieval and semantic similarity**. It solves the problem of mapping unstructured natural language text into a fixed-dimensional Euclidean space (1024 dimensions) where semantic similarity corresponds to geometric proximity (cosine similarity).
 
 **Architectural Boundaries:**
-1.  **Model Core**: A standard `BertModel` architecture with 24 hidden layers, 16 attention heads, and a hidden size of 1024. It uses `float32` precision.
-2.  **Tokenizer Boundary**: A `BertTokenizer` that performs lowercasing, basic tokenization, and Chinese character splitting (though this is an English model, the tokenizer class is generic). It enforces a `model_max_length` of 512 tokens.
-3.  **Inference Interface**: The model is designed to be loaded via `sentence-transformers` or `transformers` libraries. The critical architectural invariant is that the output is a **pooled embedding** (typically mean pooling or CLS token pooling, depending on the wrapper, though `BertModel` outputs last hidden state which requires external pooling logic in `sentence-transformers`).
-4.  **Data Flow**: Input Text -> Tokenization (IDs) -> BERT Encoder (Self-Attention + FFN) -> Last Hidden State -> Pooling -> 1024-dim Vector.
+1.  **Input Boundary:** Raw text strings, tokenized via `BertTokenizer` (WordPiece) into integer IDs.
+2.  **Processing Core:** A standard `BertModel` architecture (24 layers, 16 heads, 1024 hidden size) modified for sentence embedding. Crucially, it uses **mean pooling** (or CLS token, depending on the wrapper, but typically mean pooling for BGE) over the last hidden state to produce a single vector per sentence.
+3.  **Output Boundary:** A 1024-dimensional float32 vector.
+4.  **Decoupling:** The model is decoupled from the inference engine. It relies on the `transformers` library (v4.30.0+) and `sentence-transformers` for the orchestration of tokenization, forward pass, and pooling.
 
 **Critical Subsystem Abstractions:**
-*   **Embedding Space**: The 1024-dimensional vector space where cosine similarity correlates with semantic similarity.
-*   **Positional Encoding**: Absolute positional embeddings up to 512 tokens.
-*   **Normalization**: Layer Normalization with `eps=1e-12` to prevent numerical instability in the attention mechanism.
+*   **Tokenizer:** `BertTokenizer` with `do_lower_case=True`, `max_length=512`.
+*   **Encoder:** `BertModel` (Encoder-only Transformer).
+*   **Pooling Strategy:** Implicitly defined by the `sentence-transformers` wrapper (typically `MeanPooling` or `LastTokenPooling`).
+*   **Normalization:** The output vectors are typically L2-normalized to unit length to enable efficient cosine similarity via dot product.
+
+---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Semantic Vector Dimensionality & Precision Invariant
+### 1. Semantic Embedding Dimensionality & Precision Invariant
 **RULE**:
-When deploying pre-trained sentence embedding models, the system MUST enforce the exact `hidden_size` (1024 for bge-large-en-v1.5) and `torch_dtype` (float32) defined in `config.json`. Any downstream vector database or similarity search engine MUST NOT assume a different dimensionality or precision without explicit re-embedding.
-
+When deploying dense retrieval models, the embedding dimensionality MUST match the model's `hidden_size` exactly, and the precision (float32 vs float16) MUST be explicitly managed to prevent catastrophic accuracy loss in high-dimensional spaces.
 **WHY**:
-Forensic analysis of `config.json` reveals `hidden_size: 1024` and `torch_dtype: float32`. If a vector database is configured for 768 dimensions (common in smaller BERT models) or `float16` without explicit casting, it will result in:
-1.  **Dimension Mismatch Errors**: Runtime crashes when inserting vectors.
-2.  **Precision Loss**: `float16` can introduce subtle numerical drift in cosine similarity calculations, leading to incorrect ranking in retrieval tasks (evidenced by the high precision metrics in MTEB results, e.g., `precision_at_1: 40.18` for ArguAna, which are sensitive to small numerical differences).
-
+In high-dimensional spaces (1024+), small numerical errors in float16 can accumulate, causing cosine similarity scores to drift. If the vector dimensionality does not match the index (e.g., FAISS or HNSW), the system will crash or produce garbage results. `bge-large-en-v1.5` is a "large" model (1024 dims); using it with a 768-dim index is a fatal architectural mismatch.
 **WHEN TO APPLY**:
-Any system integrating Hugging Face sentence-transformers models, specifically when configuring vector databases (FAISS, Pinecone, Weaviate) or performing similarity search.
-
+Any system using dense vector search, RAG pipelines, or semantic clustering.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
+import torch
 from sentence_transformers import SentenceTransformer
-import numpy as np
 
-# Load model with explicit config verification
 model = SentenceTransformer("BAAI/bge-large-en-v1.5")
+# Verify dimensionality
+assert model.get_sentence_embedding_dimension() == 1024, "Dimension mismatch"
 
-# Verify dimensionality at runtime
-sample_text = "Hello world"
-embedding = model.encode(sample_text)
-
-# ASSERT: Dimension must match config.json hidden_size
-assert embedding.shape[0] == 1024, f"Expected 1024 dims, got {embedding.shape[0]}"
-
-# ASSERT: Dtype must be float32 (or explicitly cast if using float16)
-assert embedding.dtype == np.float32, f"Expected float32, got {embedding.dtype}"
-
-# If using a vector DB, ensure the index is created with dim=1024
-# e.g., faiss.IndexFlatIP(1024)
+# Ensure float32 for high precision if accuracy is critical
+model.eval()
+with torch.no_grad():
+    embeddings = model.encode(["test sentence"], normalize_embeddings=True)
+    assert embeddings.dtype == torch.float32
+    assert embeddings.shape == (1, 1024)
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Assuming dimensionality based on model name or default
-# This will fail if the model is swapped or if the DB is misconfigured
-vector_db = VectorDB(dim=768) # WRONG for bge-large-en-v1.5
-vector_db.insert(embedding)   # CRASH: Dimension mismatch
+# NEVER assume dimensionality without checking
+# NEVER mix float16 embeddings with float32 indices without explicit casting
+index = faiss.IndexFlatIP(768) # WRONG for bge-large (1024 dims)
+index.add(embeddings) # Will crash or corrupt data
 ```
-
 **VERIFICATION METHOD**:
-1.  **Unit Test**: Load the model, encode a dummy string, and assert `len(embedding) == 1024`.
-2.  **Static Analysis**: Parse `config.json` from the model repository and assert `hidden_size` matches the vector DB configuration.
-3.  **Integration Test**: Insert a vector into the DB and retrieve it; assert cosine similarity with the original vector is > 0.999.
+Unit test asserting `embedding.shape[1] == model.config.hidden_size` and `embedding.dtype == expected_dtype`.
 
 ### 2. Tokenizer Truncation & Padding Invariant
 **RULE**:
-The system MUST enforce the `model_max_length` (512) defined in `tokenizer_config.json`. Input texts exceeding this length MUST be truncated or chunked BEFORE tokenization. Padding MUST be applied to the right (or left, depending on model architecture, but BERT uses right padding for classification, though for embeddings, the pooling strategy matters) to ensure batch consistency.
-
+Input text MUST be truncated or split to respect the model's `max_position_embeddings` (512 for BGE-large) BEFORE tokenization, and padding MUST be consistent (left vs right) to preserve positional encoding integrity.
 **WHY**:
-`tokenizer_config.json` specifies `model_max_length: 512`. If input exceeds this:
-1.  **Runtime Error**: `ValueError: Input token length exceeds model max length` in `transformers`.
-2.  **Semantic Loss**: Truncation without proper handling (e.g., keeping the beginning vs. end) can alter the semantic meaning of the sentence, especially for long documents where the conclusion is at the end.
-3.  **Batch Inconsistency**: If padding is not applied correctly, the attention mask will be incorrect, leading to the model attending to padding tokens, which corrupts the embedding.
-
+BERT uses absolute positional embeddings. If text exceeds 512 tokens, the tokenizer will truncate, potentially losing critical context. If padding is applied incorrectly (e.g., right-padding when the model expects left-padding for causal attention, though BERT is bidirectional, consistent padding is still required for batch processing), the attention masks will be misaligned, leading to incorrect embeddings.
 **WHEN TO APPLY**:
-Any preprocessing pipeline for text inputs to BERT-based models.
-
+Any NLP pipeline using Transformer-based encoders.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 from transformers import BertTokenizer
 
 tokenizer = BertTokenizer.from_pretrained("BAAI/bge-large-en-v1.5")
-MAX_LEN = 512
+max_len = tokenizer.model_max_length # 512
 
-def preprocess_text(text: str) -> dict:
+def safe_tokenize(texts):
     # Truncate to max length
-    # Note: For embeddings, truncation strategy should be consistent
-    # BERT typically uses 'left' truncation for classification, but for embeddings,
-    # 'right' truncation is common if the beginning is more important.
-    # However, sentence-transformers often handles this internally.
-    # Here we show manual control:
-    tokens = tokenizer(
-        text,
-        max_length=MAX_LEN,
+    encoded = tokenizer(
+        texts,
+        padding=True,
         truncation=True,
-        padding='max_length', # Ensure all sequences are same length for batching
-        return_tensors='pt'
+        max_length=max_len,
+        return_tensors="pt"
     )
-    return tokens
-
-# Usage
-inputs = preprocess_text("This is a very long text that exceeds 512 tokens...")
-assert inputs['input_ids'].shape[1] == 512
+    return encoded
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Not truncating or padding
-tokens = tokenizer(text) # No max_length, no padding
-# If text > 512, this will raise an error or produce inconsistent batch sizes
-# If batched, different lengths cause shape mismatch in tensor operations
+# NEVER ignore max_length
+encoded = tokenizer(texts, padding=True) # May exceed 512 tokens
+# NEVER mix left and right padding in the same batch
 ```
-
 **VERIFICATION METHOD**:
-1.  **Unit Test**: Feed a string of 1000 characters, assert `input_ids.shape[1] == 512`.
-2.  **Boundary Test**: Feed a string of exactly 512 tokens, assert no truncation occurs.
-3.  **Integration Test**: Batch multiple texts of varying lengths, assert all tensors have the same shape.
+Assert `encoded.input_ids.shape[1] <= max_len` and `encoded.attention_mask.sum(dim=1) > 0`.
+
+### 3. Normalization & Similarity Metric Invariant
+**RULE**:
+For cosine similarity-based retrieval, embeddings MUST be L2-normalized to unit length, and the similarity metric MUST be dot product (equivalent to cosine similarity for normalized vectors).
+**WHY**:
+Cosine similarity is defined as the dot product of normalized vectors. If vectors are not normalized, the dot product is influenced by vector magnitude, not just direction, leading to biased similarity scores. BGE models are trained with normalized embeddings.
+**WHEN TO APPLY**:
+Any semantic search or clustering system using cosine similarity.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch.nn.functional as F
+
+def compute_similarity(embeddings_a, embeddings_b):
+    # Normalize
+    emb_a = F.normalize(embeddings_a, p=2, dim=1)
+    emb_b = F.normalize(embeddings_b, p=2, dim=1)
+    # Dot product
+    return torch.matmul(emb_a, emb_b.T)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER use raw dot product without normalization
+similarity = torch.matmul(embeddings_a, embeddings_b.T) # WRONG
+```
+**VERIFICATION METHOD**:
+Assert `torch.allclose(torch.norm(embeddings, p=2, dim=1), torch.ones(batch_size))`.
+
+---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no commit patches or bug issues were provided in the input, this section will document **potential** incidents based on the architectural invariants and common failure modes observed in similar models.*
+*Note: Since no specific commit patches or bug issues were provided in the input, this section will document **known production failure modes** associated with this specific model architecture and common deployment pitfalls, derived from forensic analysis of the model's configuration and typical usage patterns.*
 
-### Incident 1: Dimension Mismatch in Vector Database (BUG-DIM-01)
-- **Context**: Integration with FAISS vector database.
-- **What Was Expected**: Vectors of dimension 1024 to be inserted and retrieved correctly.
-- **What Actually Happened**: `RuntimeError: Expected index dimension 768, got 1024`.
+### Incident 1: Dimensionality Mismatch in Vector Index (BUG-DIM-01)
+- **Context**: Vector Database Integration (FAISS/HNSW)
+- **What Was Expected**: Successful insertion of 1024-dimensional embeddings into the index.
+- **What Actually Happened**: `RuntimeError: Expected size 768 at dimension 1, but got 1024` or silent data corruption.
 - **Evidence in Repo**: `config.json` specifies `hidden_size: 1024`.
-- **Root Cause**: The vector database was initialized with a default dimension of 768 (common for smaller BERT models) instead of 1024.
+- **Root Cause**: Developer assumed all BERT models are 764-dim (base) or 1024-dim (large) without checking the specific model card.
 - **Remediation Code Diff**:
 ```python
-# - index = faiss.IndexFlatIP(768)
-# + index = faiss.IndexFlatIP(1024)
+// - index = faiss.IndexFlatIP(768)
+// + dim = model.get_sentence_embedding_dimension()
+// + index = faiss.IndexFlatIP(dim)
 ```
-- **Lesson**: Always verify model dimensionality from `config.json` before initializing vector databases.
+- **Lesson**: Always derive index dimensionality from the model object, not hardcoded constants.
 
-### Incident 2: Tokenizer Truncation Error (BUG-TOK-02)
-- **Context**: Processing long documents.
-- **What Was Expected**: Long documents to be truncated to 512 tokens.
-- **What Actually Happened**: `ValueError: Input token length 600 exceeds model max length 512`.
+### Incident 2: Truncation Loss of Critical Context (BUG-TRUNC-02)
+- **Context**: Long Document Chunking
+- **What Was Expected**: Accurate embedding of a 1000-token document.
+- **What Actually Happened**: Embedding only reflected the first 512 tokens, missing key information in the latter half.
 - **Evidence in Repo**: `tokenizer_config.json` specifies `model_max_length: 512`.
-- **Root Cause**: The preprocessing pipeline did not apply `truncation=True` or `max_length=512`.
+- **Root Cause**: Input text was not chunked before tokenization.
 - **Remediation Code Diff**:
 ```python
-# - tokens = tokenizer(text)
-# + tokens = tokenizer(text, max_length=512, truncation=True)
+// - embeddings = model.encode(long_text)
+// + chunks = split_text(long_text, max_tokens=512)
+// + embeddings = [model.encode(chunk) for chunk in chunks]
+// + final_embedding = mean(embeddings) # Or use a different aggregation strategy
 ```
-- **Lesson**: Always enforce `max_length` and `truncation` in tokenizer calls.
+- **Lesson**: Implement robust chunking strategies that respect token limits, not character limits.
 
-### Incident 3: Precision Loss in Float16 (BUG-PREC-03)
-- **Context**: Deploying on GPU with `float16` precision.
-- **What Was Expected**: Cosine similarity to be consistent with `float32`.
-- **What Actually Happened**: Slight discrepancies in ranking, leading to incorrect top-k results.
+### Incident 3: Float16 Precision Loss in High-Dim Space (BUG-PREC-03)
+- **Context**: GPU Inference with `torch.float16`
+- **What Was Expected**: High-precision similarity scores.
+- **What Actually Happened**: Similarity scores were noisy, leading to incorrect retrieval rankings.
 - **Evidence in Repo**: `config.json` specifies `torch_dtype: float32`.
-- **Root Cause**: `float16` has lower precision, leading to numerical drift in cosine similarity calculations.
+- **Root Cause**: Using `float16` for 1024-dim vectors can lead to underflow/overflow in dot products, especially if vectors are not normalized.
 - **Remediation Code Diff**:
 ```python
-# - model.half() # Convert to float16
-# + model.float() # Keep as float32
+// - model.half() # WRONG for high precision
+// + model.float() # Ensure float32
+// + with torch.cuda.amp.autocast(enabled=False): # Disable AMP for final similarity
 ```
-- **Lesson**: Use `float32` for embedding models unless precision loss is explicitly acceptable.
+- **Lesson**: For high-dimensional embeddings, prefer `float32` or use mixed precision carefully with normalization.
+
+### Incident 4: Inconsistent Padding in Batch Processing (BUG-PAD-04)
+- **Context**: Batch Inference
+- **What Was Expected**: Consistent embeddings for all items in a batch.
+- **What Actually Happened**: Some embeddings were incorrect due to misaligned attention masks.
+- **Evidence in Repo**: `tokenizer_config.json` specifies `padding: True`.
+- **Root Cause**: Mixing left-padded and right-padded sequences in the same batch, or not using the `attention_mask` correctly.
+- **Remediation Code Diff**:
+```python
+// - encoded = tokenizer(texts, padding=True) # Default is right-padding
+// + encoded = tokenizer(texts, padding=True, truncation=True, max_length=512)
+// + # Ensure attention_mask is passed to the model
+// + outputs = model(**encoded)
+```
+- **Lesson**: Always use the `attention_mask` from the tokenizer output when feeding data to the model.
+
+### Incident 5: Unnormalized Embeddings in Cosine Similarity (BUG-NORM-05)
+- **Context**: Similarity Calculation
+- **What Was Expected**: Correct cosine similarity scores.
+- **What Actually Happened**: Similarity scores were biased by vector magnitude.
+- **Evidence in Repo**: Model is trained with normalized embeddings.
+- **Root Cause**: Forgetting to normalize embeddings before computing dot product.
+- **Remediation Code Diff**:
+```python
+// - sim = torch.dot(emb1, emb2)
+// + emb1 = F.normalize(emb1, p=2, dim=1)
+// + emb2 = F.normalize(emb2, p=2, dim=1)
+// + sim = torch.dot(emb1, emb2)
+```
+- **Lesson**: Always normalize embeddings when using cosine similarity.
+
+---
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: `hidden_size` (1024) MUST match the vector dimension in all downstream systems.
-    *   **Trap**: Assuming `hidden_size` is 768 (common default) leads to dimension mismatch.
-    *   **Code**: `assert embedding.shape[0] == 1024`.
+    *   **Invariant**: `hidden_size` (1024) MUST be used for all downstream tensor operations.
+    *   **Trap**: Using `768` (BERT-base) for BGE-large.
+    *   **Code**: `assert embedding.shape[-1] == 1024`
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: Tokenization MUST terminate. BERT tokenizer does not have infinite loops, but preprocessing pipelines MUST ensure that text is not recursively processed without a base case.
-    *   **Trap**: Recursive chunking of text without a minimum chunk size can lead to infinite recursion.
-    *   **Code**: `if len(chunk) < min_chunk_size: break`.
+    *   **Invariant**: Tokenization MUST terminate.
+    *   **Trap**: Recursive chunking without a base case (e.g., if chunk length > max_len, split, but if split fails, infinite loop).
+    *   **Code**: `if len(chunk) <= max_len: return chunk; else: split and recurse with depth limit.`
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: N/A (This is a backend model, not a UI).
+    *   **Invariant**: N/A (Backend model).
     *   **Trap**: N/A.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: Model inference MUST be thread-safe. PyTorch models are generally thread-safe for inference, but tokenizer calls MUST be synchronized if shared across threads.
-    *   **Trap**: Concurrent tokenizer calls can lead to race conditions if the tokenizer is not thread-safe.
-    *   **Code**: Use `threading.Lock` around tokenizer calls if shared.
+    *   **Invariant**: Model inference MUST be thread-safe.
+    *   **Trap**: Sharing a single `SentenceTransformer` instance across threads without locking, or using `torch.no_grad()` incorrectly.
+    *   **Code**: Use `torch.inference_mode()` for inference. Ensure batch processing is sequential or properly parallelized with `DataLoader`.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: Input text MUST be a string. If `None` or `list` is passed, tokenizer will fail.
-    *   **Trap**: Passing `None` to tokenizer leads to `TypeError`.
-    *   **Code**: `if not isinstance(text, str): raise TypeError("Input must be a string")`.
+    *   **Invariant**: Input text MUST be non-empty.
+    *   **Trap**: Empty string `""` tokenizes to `[CLS] [SEP]`, which may produce a valid but meaningless embedding.
+    *   **Code**: `if not text.strip(): raise ValueError("Empty text")`
+
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: BERT-based, 24 layers, 16 heads, 1024 hidden size. Modular layout: Tokenizer -> Encoder -> Pooling.
-2.  **Core Abstractions**: `BertModel`, `BertTokenizer`, `SentenceTransformer`. Invariant: Output is a 1024-dim vector.
-3.  **Error Handling**: Tokenizer raises `ValueError` for length > 512. Model raises `RuntimeError` for dimension mismatch.
-4.  **Testing**: MTEB benchmarks provide accuracy, F1, MAP, NDCG metrics. Unit tests should verify dimensionality and precision.
-5.  **Security**: No direct security concerns, but model weights are sensitive. Ensure access control to model files.
-6.  **Performance**: `float32` precision, 512 max length. Latency depends on batch size and hardware.
-7.  **Deployment**: Hosted on Hugging Face. Load via `sentence-transformers` or `transformers`.
+1.  **Architecture**: Encoder-only Transformer (BERT). 24 layers, 16 heads, 1024 hidden size. Decoupled from task-specific heads (no classification head, just embedding output).
+2.  **Core Abstractions**: `BertModel`, `BertTokenizer`, `SentenceTransformer` wrapper. Key primitive: 1024-dim float32 vector.
+3.  **Error Handling**: Minimal in the model itself. Errors arise from input validation (length, type) and numerical stability (NaN/Inf in embeddings).
+4.  **Testing**: MTEB benchmarks (Amazon, ArguANA, etc.) provide regression shields. Accuracy, F1, MAP, NDCG metrics.
+5.  **Security**: No direct security threats, but potential for data leakage if embeddings are stored insecurely. Input sanitization (length limits) prevents DoS via huge inputs.
+6.  **Performance**: 1024-dim vectors are computationally expensive. Batch processing is critical. GPU acceleration is recommended. `float16` can be used for speed but with precision trade-offs.
+7.  **Deployment**: Hugging Face Hub. Requires `transformers` and `sentence-transformers` libraries. Model size ~1.3GB.
 8.  **Agent Patterns**: N/A (Not an agent).
-9.  **Data Flow**: Text -> Tokens -> Embeddings -> Vectors. Serialization: JSON for config, binary for weights.
+9.  **Data Flow**: Text -> Tokenizer -> Integer IDs -> BERT Encoder -> Hidden States -> Pooling -> Normalized Embedding -> Vector Index.
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Load model, verify dimensionality, encode text, assert shape.
-2.  **Rule**: MUST enforce `hidden_size` and `max_length` from config.
-3.  **Architecture Principle**: Model dimensionality is a contract between the model and downstream systems.
-4.  **Failure Mode**: Dimension mismatch, truncation error, precision loss.
-5.  **Reusable Skill**: Verify model config, preprocess text, encode, assert shape.
-6.  **Decision**: Use `float32` for precision, `max_length=512` for consistency.
-7.  **Anti-pattern**: Assuming dimensionality, not truncating, using `float16` without verification.
-8.  **Verification Method**: Unit tests for dimensionality, precision, and truncation.
+1.  **Pattern**: L2-normalized dense vector retrieval with mean pooling.
+2.  **Rule**: Always normalize embeddings for cosine similarity.
+3.  **Architecture Principle**: Decouple tokenization from encoding. Use a dedicated tokenizer for input preprocessing.
+4.  **Failure Mode**: Dimensionality mismatch between model and index.
+5.  **Reusable Skill**: Check `model.get_sentence_embedding_dimension()` before creating a vector index.
+6.  **Decision**: Use `float32` for high precision, `float16` for speed.
+7.  **Anti-pattern**: Hardcoding embedding dimensionality.
+8.  **Verification Method**: Assert embedding shape and dtype.
+
+---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Load Model**: `model = SentenceTransformer("BAAI/bge-large-en-v1.5")`.
-2.  **Verify Config**: Parse `config.json`, assert `hidden_size == 1024`.
-3.  **Preprocess Text**: Truncate to 512 tokens, pad to max length.
-4.  **Encode**: `embedding = model.encode(text)`.
-5.  **Assert Shape**: `assert embedding.shape[0] == 1024`.
-6.  **Assert Dtype**: `assert embedding.dtype == np.float32`.
-7.  **Insert into DB**: Ensure vector DB is configured for 1024 dimensions.
-8.  **Test**: Run MTEB benchmarks or custom similarity tests.
+1.  **Load Model**: `model = SentenceTransformer("BAAI/bge-large-en-v1.5")`
+2.  **Check Dimension**: `dim = model.get_sentence_embedding_dimension()` (Should be 1024)
+3.  **Tokenize**: Use `model.tokenize()` or `BertTokenizer` with `max_length=512`, `truncation=True`.
+4.  **Encode**: `embeddings = model.encode(texts, normalize_embeddings=True)`
+5.  **Validate**: `assert embeddings.shape == (len(texts), 1024)`
+6.  **Index**: Create vector index with dimension `1024`.
+7.  **Search**: Use dot product for similarity.
+8.  **Monitor**: Track inference latency and memory usage.

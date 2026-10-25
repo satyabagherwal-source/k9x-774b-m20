@@ -18562,5 +18562,20 @@
     "qualityScore": 782,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-25T02:00:57.742Z"
+  },
+  {
+    "name": "thesvg",
+    "fullName": "glincker/thesvg",
+    "url": "https://github.com/glincker/thesvg",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The open SVG brand library: 7,600+ brand logos and cloud icons (AWS, Azure, GCP) as official SVG. Search, copy, ship via npm, CDN, CLI, React, Vue, Svelte, Figma, VS Code, Raycast and MCP. Free, MIT, no gatekeeping.",
+    "stars": 2896,
+    "forks": 233,
+    "openIssues": 3,
+    "language": "TypeScript",
+    "qualityScore": 1774,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-25T04:34:22.326Z"
   }
 ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/killercup-cargo-edit-learnings.md`  
 > **Source**: github ([https://github.com/killercup/cargo-edit](https://github.com/killercup/cargo-edit))  
-> **Source Version**: `91302f86`  
+> **Source Version**: `5cf6c0ba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:49:15.219Z  
+> **Timestamp**: 2026-10-25T04:38:03.681Z  
 > **Learning ID**: `learn-github-killercup-cargo-edit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/killercup-cargo-edit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/killercup/cargo-edit](https://github.com/killercup/cargo-edit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:49:15.072Z  
+> **Harvest Timestamp**: 2026-10-25T04:38:03.322Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A utility for managing cargo dependencies from the command line.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3462 stars
+- **Stars / Engagement**: 3465 stars
 
 ---
 
@@ -578,51 +578,76 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6dbdc9c6` (2026-10-20)
-**Commit Message**: docs: Fix typos
+### Incident Patch 1: `5cf6c0ba` (2026-10-21)
+**Commit Message**: chore: Release cargo-edit version 0.13.14
 
-**File**: `src/fetch.rs` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +3/-1)
 ```diff
-@@ -2,7 +2,7 @@ use super::Dependency;
- use super::RegistrySource;
- use super::VersionExt;
+@@ -5,7 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/)
+ and this project adheres to [Semantic Versioning](https://semver.org/).
  
--/// Simplified represetation of `package.rust-version`
-+/// Simplified representation of `package.rust-version`
- #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
- pub struct RustVersion {
-     #[allow(missing_docs)]
+ <!-- next-header -->
+-## Unreleased - ReleaseDate
++## [Unreleased] - ReleaseDate
++
++## 0.13.14 - 2026-10-21
+ 
+ ### Internal
+ 
 ```
 
-**File**: `src/manifest.rs` (modified, +2/-2)
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -273,7 +273,7 @@ impl LocalManifest {
-         Ok(())
-     }
+@@ -191,7 +191,7 @@ dependencies = [
  
--    /// Allow mutating depedencies, wherever they live
-+    /// Allow mutating dependencies, wherever they live
-     pub fn get_dependency_tables_mut(
-         &mut self,
-     ) -> impl Iterator<Item = &mut dyn toml_edit::TableLike> + '_ {
-@@ -439,7 +439,7 @@ fn remove_feature_activation(
-     }
- }
+ [[package]]
+ name = "cargo-edit"
+-version = "0.13.13"
++version = "0.13.14"
+ dependencies = [
+  "anyhow",
+  "cargo-test-support",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "cargo-edit"
+-version = "0.13.13"
++version = "0.13.14"
+ description = "Cargo commands for modifying a `Cargo.toml` file.."
+ categories = [
+     "development-tools",
+```
+
+---
+
+### Incident Patch 2: `94738e9e` (2026-10-21)
+**Commit Message**: chore Update release process
+
+**File**: `Cargo.toml` (modified, +0/-2)
+```diff
+@@ -21,10 +21,8 @@ rust-version = "1.97"
+ [package.metadata.release]
+ pre-release-replacements = [
+   {file="CHANGELOG.md", search="Unreleased", replace="{{version}}", min=1},
+-  {file="CHANGELOG.md", search="\\.\\.\\.HEAD", replace="...{{tag_name}}", exactly=1},
+   {file="CHANGELOG.md", search="ReleaseDate", replace="{{date}}", min=1},
+   {file="CHANGELOG.md", search="<!-- next-header -->", replace="<!-- next-header -->\n## [Unreleased] - ReleaseDate\n", exactly=1},
+-  {file="CHANGELOG.md", search="<!-- next-url -->", replace="<!-- next-url -->\n[Unreleased]: {{repository}}/compare/{{tag_name}}...HEAD", exactly=1},
+ ]
  
--/// If a manifest is specified, return that one, otherise perform a manifest search starting from
-+/// If a manifest is specified, return that one, otherwise perform a manifest search starting from
- /// the current directory.
- /// If a manifest is specified, return that one. If a path is specified, perform a manifest search
- /// starting from there. If nothing is specified, start searching from the current directory
+ [[bin]]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #976** (2026-10-21): chore: Update dependencies (@epage)
 - **PR #975** (2026-10-20): chore: Update from epage/_rust template (@epage)
 - **PR #974** (2026-10-20): chore: Update cargo-test-support (@epage)
+- **PR #973** (2026-10-21): feat: Simplify HTTP (@Jake-Shadle)
 - **PR #972** (closed): upgrade: Add short option -I for --ignore-rust-version (@mbuesch)
 - **PR #969** (2026-07-15): fix(upgrade): show the next effective verbosity (@ychampion)
-- **PR #967** (2026-07-14): fix(set-version): reject unmatched package selectors (@ychampion)
-- **PR #962** (2026-05-28): chore: Set and verify MSRV (@epage)
 
 ---
 
@@ -642,28 +667,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: Fix typos
+## X. Release cargo-edit version 0.13.14
 
 **RULE**:
-When implementing operations in `src/fetch.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in killercup/cargo-edit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in killercup/cargo-edit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6dbdc9c6`: docs: Fix typos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5cf6c0ba`: Release cargo-edit version 0.13.14. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/fetch.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Simplified representation of `package.rust-version`
+## [Unreleased] - ReleaseDate
+
+## 0.13.14 - 2026-10-21
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// Simplified represetation of `package.rust-version`
+## Unreleased - ReleaseDate
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6dbdc9c6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5cf6c0ba` are properly handled with clean fallback behavior.

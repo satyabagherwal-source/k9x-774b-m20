@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T04:31:51.909Z",
-  "total_verified_learnings": 1081,
+  "last_updated": "2026-10-25T04:38:12.499Z",
+  "total_verified_learnings": 1082,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -15882,7 +15882,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
       "source_version": "hf-baai-bge-large-en-v1.5",
-      "content_hash": "6741cb9b95a52fba62b2674bf0b3665cc4e1dd73f12147054ab326c4fba52f48",
+      "content_hash": "679489d313570bed2d58fc53e3d53605be1909059d46477b26793d4b87e478c4",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -15920,6 +15920,11 @@
           "number": 3166,
           "title": "Semantic Vector Dimensionality & Precision Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4048,
+          "title": "Normalization & Similarity Metric Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15939,7 +15944,7 @@
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv40zfsc",
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv4exusx"
       ],
-      "verified_at": "2026-10-20T12:40:45.571Z",
+      "verified_at": "2026-10-25T04:38:12.485Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29654,8 +29659,8 @@
       "slug": "killercup-cargo-edit",
       "platform": "github",
       "source_url": "https://github.com/killercup/cargo-edit",
-      "source_version": "91302f86",
-      "content_hash": "0633a2c8bcb54df9ae98027c45ea7d9fc107461b1c4206b99714160972c5bda3",
+      "source_version": "5cf6c0ba",
+      "content_hash": "d56c7ccc25c993cc56e04fb5bdc11ce4eaca06f9e44dd52db6b22bafe8b77cc2",
       "dossier_path": "07_PROJECT_LEARNING/killercup-cargo-edit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/killercup-cargo-edit-learnings.md",
       "promoted_rules": [
@@ -29680,7 +29685,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:49:15.587Z",
+      "verified_at": "2026-10-25T04:38:03.763Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56198,15 +56203,15 @@
       "learning_id": "rule-314",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 314,
-      "title": "Semantic Embedding Dimensionality & Precision Invariant (Harvested from intfloat/multilingual-e5-small)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Semantic Embedding Dimensionality & Precision Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-13T17:43:04.598Z"
+      "verified_at": "2026-10-25T04:38:12.485Z"
     },
     "rule-315": {
       "learning_id": "rule-315",
@@ -56220,7 +56225,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T12:40:45.571Z"
+      "verified_at": "2026-10-25T04:38:12.485Z"
     },
     "rule-316": {
       "learning_id": "rule-316",
@@ -118122,6 +118127,67 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T04:31:49.084Z"
+    },
+    "learn-github-glincker-thesvg": {
+      "learning_id": "learn-github-glincker-thesvg",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "glincker/thesvg",
+      "repository": "glincker/thesvg",
+      "slug": "glincker-thesvg",
+      "platform": "github",
+      "source_url": "https://github.com/glincker/thesvg",
+      "source_version": "fbc9da41",
+      "content_hash": "42ddb249d87efc15b9a6ef561e31d3d11752047fa102ea789d04e823d4b382e9",
+      "dossier_path": "07_PROJECT_LEARNING/glincker-thesvg-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/glincker-thesvg-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4047,
+          "title": "icons): ship every variant listed in icons.json (253 missing) (#1372)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-25T04:38:00.406Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4047": {
+      "learning_id": "rule-4047",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4047,
+      "title": "icons): ship every variant listed in icons.json (253 missing) (#1372)",
+      "source_url": "https://github.com/glincker/thesvg",
+      "source_version": "fbc9da41",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:38:00.406Z"
+    },
+    "rule-4048": {
+      "learning_id": "rule-4048",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4048,
+      "title": "Normalization & Similarity Metric Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:38:12.485Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T04:31:51.971Z",
+  "last_updated": "2026-10-25T04:38:12.557Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1715,14 +1715,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-large-en-v1-5",
-      "content_hash": "6741cb9b95a52fba62b2674bf0b3665cc4e1dd73f12147054ab326c4fba52f48",
-      "verified_at": "2026-10-20T12:40:45.655Z",
+      "content_hash": "679489d313570bed2d58fc53e3d53605be1909059d46477b26793d4b87e478c4",
+      "verified_at": "2026-10-25T04:38:12.556Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:40:45.655Z"
+      "last_updated": "2026-10-25T04:38:12.556Z"
     },
     "zai-org/GLM-5.3": {
       "repository": "zai-org/GLM-5.3",
@@ -11151,14 +11151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-killercup-cargo-edit",
-      "content_hash": "0633a2c8bcb54df9ae98027c45ea7d9fc107461b1c4206b99714160972c5bda3",
-      "verified_at": "2026-10-20T17:49:15.668Z",
+      "content_hash": "d56c7ccc25c993cc56e04fb5bdc11ce4eaca06f9e44dd52db6b22bafe8b77cc2",
+      "verified_at": "2026-10-25T04:38:03.841Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:49:15.668Z"
+      "last_updated": "2026-10-25T04:38:03.841Z"
     },
     "bahdotsh/wrkflw": {
       "repository": "bahdotsh/wrkflw",
@@ -16004,6 +16004,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-25T02:05:13.544Z"
+    },
+    "glincker/thesvg": {
+      "repository": "glincker/thesvg",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-glincker-thesvg",
+      "content_hash": "42ddb249d87efc15b9a6ef561e31d3d11752047fa102ea789d04e823d4b382e9",
+      "verified_at": "2026-10-25T04:38:00.472Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-25T04:38:00.472Z"
     }
   },
   "repos": {

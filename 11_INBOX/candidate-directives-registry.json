@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T03:06:19.002Z",
+  "last_updated": "2026-10-25T04:38:03.837Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2598,6 +2598,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-rqlite-rqlite"
+    },
+    {
+      "id": "CD-7DBX",
+      "directive_title": "Release cargo-edit version 0.13.14",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "killercup/cargo-edit",
+      "source_commit": "5cf6c0ba",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-killercup-cargo-edit"
     }
   ]
 }

@@ -4664,3 +4664,6 @@
 | `CYCLE-20261025-R3VX` | `2026-10-25T04:25:25.101Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4044` | Yes (`c81bc195...`) |
 | `CYCLE-20261025-ZC7U` | `2026-10-25T04:31:49.146Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4045, Rule 4046` | Yes (`ef7421b2...`) |
 | `CYCLE-20261025-ZEE0` | `2026-10-25T04:31:51.960Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3344` | Yes (`316aa77a...`) |
+| `CYCLE-20261025-7AQ2` | `2026-10-25T04:38:00.458Z` | `glincker/thesvg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4047` | Yes (`42ddb249...`) |
+| `CYCLE-20261025-7DBP` | `2026-10-25T04:38:03.829Z` | `killercup/cargo-edit` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/killercup-cargo-edit-learnings.md` | Yes (`d56c7ccc...`) |
+| `CYCLE-20261025-7K1R` | `2026-10-25T04:38:12.543Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 314, Rule 315, Rule 4048` | Yes (`679489d3...`) |

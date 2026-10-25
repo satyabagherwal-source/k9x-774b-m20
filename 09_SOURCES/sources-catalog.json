@@ -55,8 +55,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "6741cb9b95a52fba62b2674bf0b3665cc4e1dd73f12147054ab326c4fba52f48",
-    "lastHarvestedAt": "2026-10-20T12:40:45.648Z",
+    "contentHash": "679489d313570bed2d58fc53e3d53605be1909059d46477b26793d4b87e478c4",
+    "lastHarvestedAt": "2026-10-25T04:38:12.546Z",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5"
   },
   "hf-zai-org-glm-5.3": {
@@ -7403,10 +7403,10 @@
     "repository": "killercup/cargo-edit",
     "platform": "github",
     "sourceUrl": "https://github.com/killercup/cargo-edit",
-    "sourceVersion": "91302f86",
+    "sourceVersion": "5cf6c0ba",
     "license": "Apache-2.0",
-    "contentHash": "0633a2c8bcb54df9ae98027c45ea7d9fc107461b1c4206b99714160972c5bda3",
-    "lastHarvestedAt": "2026-10-20T17:49:15.661Z",
+    "contentHash": "d56c7ccc25c993cc56e04fb5bdc11ce4eaca06f9e44dd52db6b22bafe8b77cc2",
+    "lastHarvestedAt": "2026-10-25T04:38:03.832Z",
     "learningId": "learn-github-killercup-cargo-edit"
   },
   "bahdotsh-wrkflw": {
@@ -10648,5 +10648,15 @@
     "contentHash": "06c748de254c6b7825845e5ce35dfc08897c4562ea61c08e871b8c65e1015863",
     "lastHarvestedAt": "2026-10-25T02:05:13.531Z",
     "learningId": "learn-github-shiguangschedule-shiguangschedule"
+  },
+  "glincker-thesvg": {
+    "repository": "glincker/thesvg",
+    "platform": "github",
+    "sourceUrl": "https://github.com/glincker/thesvg",
+    "sourceVersion": "fbc9da41",
+    "license": "MIT",
+    "contentHash": "42ddb249d87efc15b9a6ef561e31d3d11752047fa102ea789d04e823d4b382e9",
+    "lastHarvestedAt": "2026-10-25T04:38:00.461Z",
+    "learningId": "learn-github-glincker-thesvg"
   }
 }
