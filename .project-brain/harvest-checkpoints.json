@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T22:41:43.616Z",
+  "last_updated": "2026-10-25T22:48:13.526Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -200,14 +200,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-source-legal-opencontracts",
-      "content_hash": "c9a3699220d94537905625772bccb626347108d0d84c8e102ae7fdffeaf5ed7e",
-      "verified_at": "2026-10-19T05:39:18.762Z",
+      "content_hash": "c486de2c441f5f5f8e08b2cd87c25ba13d1bf82b30dd59b409f78c1f1e3da700",
+      "verified_at": "2026-10-25T22:48:13.525Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:39:18.762Z"
+      "last_updated": "2026-10-25T22:48:13.525Z"
     },
     "Qwen/Qwen3.8-27B": {
       "repository": "Qwen/Qwen3.8-27B",
@@ -2391,14 +2391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "content_hash": "8df8f57147e49ef8b265cf5de27f860f7967a46191a0c02d88b7c4f03603f5f2",
-      "verified_at": "2026-10-21T02:49:55.602Z",
+      "content_hash": "5f9f03858394526020284e67ca16ccef16ea474dc1a11436c43af7b30d70b9ad",
+      "verified_at": "2026-10-25T22:48:06.466Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:49:55.602Z"
+      "last_updated": "2026-10-25T22:48:06.466Z"
     },
     "pyannote/speaker-diarization-community-1": {
       "repository": "pyannote/speaker-diarization-community-1",

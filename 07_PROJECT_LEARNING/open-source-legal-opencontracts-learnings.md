@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source**: github ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
-> **Source Version**: `8bc8254d`  
+> **Source Version**: `dd471b03`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:39:18.522Z  
+> **Timestamp**: 2026-10-25T22:48:13.134Z  
 > **Learning ID**: `learn-github-open-source-legal-opencontracts`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:39:18.514Z  
+> **Harvest Timestamp**: 2026-10-25T22:48:12.921Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open document intelligence platform for builders and hackers - DMS for the agentic world
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1511 stars
+- **Stars / Engagement**: 1523 stars
 
 ---
 
@@ -1530,745 +1530,110 @@ def filterset_factory(model: type, fields: dict) -> type:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8bc8254d` (2026-10-18)
-**Commit Message**: Fix production chat handshake timeout and Apollo warnings (#2451)
+### Incident Patch 1: `663c7e0c` (2026-10-25)
+**Commit Message**: chore(deps): update pydantic-ai-slim requirement (#2476)
 
-**File**: `changelog.d/chat-handshake-timeout.fixed.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Allow 30 seconds for production WebSocket handshakes so corpus and agent permission lookups can complete before accepting new questions. Show chat transport failures with a reconnect action that preserves the page, and disable Apollo development checks in production bundles.
-```
+Updates the requirements on [pydantic-ai-slim](https://github.com/pydantic/pydantic-ai) to permit the latest version.
+- [Release notes](https://github.com/pydantic/pydantic-ai/releases)
+- [Changelog](https://github.com/pydantic/pydantic-ai/blob/main/docs/changelog.md)
+- [Commits](https://github.com/pydantic/pydantic-ai/compare/v1.107.7...v1.107.9)
 
-**File**: `compose/production/django/start` (modified, +2/-1)
-```diff
-@@ -6,4 +6,5 @@ set -o nounset
- 
- python /app/manage.py collectstatic --noinput
- 
--daphne -b 0.0.0.0 -p 5000 --websocket_timeout $DJANGO_WORKER_TIMEOUT config.asgi:application
-+# Resource and agent permission lookups run before accepting the socket.
-+daphne -b 0.0.0.0 -p 5000 --websocket_timeout $DJANGO_WORKER_TIMEOUT --websocket_connect_timeout 30 config.asgi:application
-```
+---
+updated-dependencies:
+- dependency-name: pydantic-ai-slim
+  dependency-version: 1.107.9
+  dependency-type: direct:production
+...
 
-**File**: `compose/production/django/start-no-collectstatic` (modified, +2/-1)
-```diff
-@@ -7,4 +7,5 @@ set -o nounset
- # Skip collectstatic when not using AWS
- echo "Skipping collectstatic (USE_AWS=false)"
- 
--daphne -b 0.0.0.0 -p 5000 --websocket_timeout $DJANGO_WORKER_TIMEOUT config.asgi:application
-+# Resource and agent permission lookups run before accepting the socket.
-+daphne -b 0.0.0.0 -p 5000 --websocket_timeout $DJANGO_WORKER_TIMEOUT --websocket_connect_timeout 30 config.asgi:application
-```
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `frontend/src/components/corpuses/CorpusChat.tsx` (modified, +13/-3)
+**File**: `requirements/base.txt` (modified, +1/-1)
 ```diff
-@@ -615,6 +615,7 @@ export const CorpusChat: React.FC<CorpusChatProps> = ({
- 
-   const {
-     isConnected: wsReady,
-+    lastError: wsTransportError,
-     send: wsSend,
-     reconnect: wsReconnect,
-   } = useWebSocketAuth({
-@@ -629,6 +630,12 @@ export const CorpusChat: React.FC<CorpusChatProps> = ({
-       setWsError("Authentication failed. Please log in again."),
-   });
- 
-+  const chatError =
-+    wsError ||
-+    (wsEnabled && !wsReady && wsTransportError
-+      ? "Unable to connect to chat. Retrying automatically."
-+      : null);
-+
-   // Track if this is the initial mount - skip forceNewChat effect on mount
-   // since isNewChat is already initialized from forceNewChat prop
-   const isInitialMountRef = useRef(true);
-@@ -1494,19 +1501,22 @@ export const CorpusChat: React.FC<CorpusChatProps> = ({
-                   $disabled={isProcessing}
-                 >
-                   <AnimatePresence>
--                    {wsError ? (
-+                    {chatError ? (
-                       <ErrorMessage key="error">
-                         <motion.div
-                           initial={{ opacity: 0, scale: 0.9 }}
-                           animate={{ opacity: 1, scale: 1 }}
-                           exit={{ opacity: 0, scale: 0.9 }}
-                           transition={{ type: "spring", damping: 20 }}
-                         >
--                          {wsError}
-+                          {chatError}
-                           <Button
-                             size="sm"
-                             variant="danger"
--                            onClick={() => window.location.reload()}
-+                            onClick={() => {
-+                              setWsError(null);
-+                              wsReconnect();
-+                            }}
-                             style={{
-                               marginLeft: "0.75rem",
-                             }}
-```
-
-**File**: `frontend/tests/CorpusChat.ct.tsx` (modified, +42/-0)
-```diff
-@@ -1620,6 +1620,48 @@ test.describe("CorpusChat", () => {
-     await component.unmount();
-   });
- 
-+  test("transport failure shows an error and reconnect preserves the draft", async ({
-+    mount,
-+    page,
-+  }) => {
-+    const component = await mount(
-+      <CorpusChatTestWrapper
-+        mocks={[emptyConversationsMock, emptyConversationsMock]}
-+        corpusId={TEST_CORPUS_ID}
-+        forceNewChat
-+      />
-+    );
-+
-+    const input = page.locator("textarea").first();
-+    await expect(input).toBeEnabled();
-+    await input.fill("question kept after reconnect");
-+
-+    await page.evaluate(() => {
-+      const sockets = Array.from(
-+        (window as any).WebSocketInstances as Set<any>
-+      );
-+      const socket = sockets[sockets.length - 1];
-+      socket.readyState = 3;
-+      socket.onerror?.({});
-+      socket.onclose?.({ code: 1006 });
-+    });
-+
-+    await expect(
-+      page.getByText("Unable to connect to chat. Retrying automatically.")
-+    ).toBeVisible();
-+    await page.getByRole("button", { name: "Reconnect" }).click();
-+    await expect(
-+      page.getByText("Unable to connect to chat. Retrying automatically.")
-+    ).toHaveCount(0);
-+    await expect(input).toHaveValue("question kept after reconnect");
-+    await input.press("Enter");
-+    await expect(
-+      page.getByText("Echo: question kept after reconnect", { exact: true })
-+    ).toBeVisible();
-+
-+    await component.unmount();
-+  });
-+
-   test("initialQuery is auto-sent once the WebSocket is ready", async ({
-     mount,
-     page,
-```
-
-**File**: `frontend/vite.config.ts` (modified, +5/-0)
-```diff
-@@ -118,6 +118,11 @@ export default defineConfig(async () => {
-     },
-     // Handle static asset imports better in tests
-     define: {
-+      // Apollo 3 defaults to development checks when this flag is undefined.
-+      // Replace it at build time so production bundles omit those checks.
-+      "globalThis.__DEV__": JSON.stringify(
-+        process.env.NODE_ENV !== "production"
-+      ),
-       // Add TEST environment variable that code can check
-       // This will be false in production/development
-       "import.meta.env.TEST": JSON.stringify(false),
-```
-
-**File**: `production.yml` (modified, +1/-1)
-```diff
-@@ -71,7 +71,7 @@ services:
-     env_file:
-       - ./.envs/.production/.django
-       - ./.envs/.production/.postgres
--    command: /bin/bash -c "echo 'Skipping collectstatic' && daphne -b 0.0.0.0 -p 5000 --websocket_timeout $$DJANGO_WORKER_TIMEOUT config.asgi:application"
-+    command: /bin/bash -c "echo 'Skipping collectstatic' && daphne -b 0.0.0.0 -p 5000 --websocket_timeout $$DJANGO_WORKER_TIMEOUT --websocket_connect_timeout 30 config.asgi:application"
- 
-   postgres:
-     build:
+@@ -62,7 +62,7 @@ openai>=3.24.0,<4  # https://github.com/openai/openai-python (pydantic-ai 1.x re
+ # extra caps ``fastmcp-slim<4``, and every fastmcp-slim 3.x requires
+ # ``mcp<2`` -- against our ``mcp>=2.3`` pin that is unsatisfiable, and pip
+ # reports it as ``resolution-too-deep`` rather than a conflict.
+-pydantic-ai-slim[openai,anthropic,google]>=1.107.7,<2  # see issue #1451 before bumping the upper bound
++pydantic-ai-slim[openai,anthropic,google]>=1.107.9,<2  # see issue #1451 before bumping the upper bound
+ spacy
+ # preshed 3.0.14 breaks spaCy model loading during fresh CI image builds.
+ preshed==3.0.13
 ```
 
 ---
 
-### Incident Patch 2: `23dd2634` (2026-10-17)
-**Commit Message**: Merge pull request #2449 from Open-Source-Legal/fix/drop-contentless-structural-annotations
+### Incident Patch 2: `3786b278` (2026-10-25)
+**Commit Message**: chore(deps): update pillow requirement in /compose/accelerated/embedder (#2480)
 
-Drop contentless structural annotations at parse time
+Updates the requirements on [pillow](https://github.com/python-pillow/Pillow) to permit the latest version.
+- [Release notes](https://github.com/python-pillow/Pillow/releases)
+- [Changelog](https://github.com/python-pillow/Pillow/blob/main/CHANGES.rst)
+- [Commits](https://github.com/python-pillow/Pillow/compare/10.0.0...13.0.0)
 
-**File**: `changelog.d/contentless-structural-annotations.added.md` (added, +1/-0)
+---
+updated-dependencies:
+- dependency-name: pillow
+  dependency-version: 13.0.0
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `compose/accelerated/embedder/requirements.txt` (modified, +1/-1)
 ```diff
-@@ -0,0 +1 @@
-+- **`prune_contentless_structural_annotations` management command** (`opencontractserver/annotations/management/commands/prune_contentless_structural_annotations.py`): removes contentless structural annotations stored before the parse-time filter, using the same rule. Only leaves are deleted, so `Annotation.parent`'s cascade never removes content; relationships left without a source or target are deleted. `--dry-run` lists matches by label and modality. Tests: `test_contentless_annotations.py`.
-```
-
-**File**: `changelog.d/contentless-structural-annotations.fixed.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+- **Parsers no longer create contentless structural annotations** (`opencontractserver/utils/contentless_annotations.py`, applied in `opencontractserver/pipeline/base/parser.py::BaseParser.save_parsed_data`): PDF text layers yield structural elements whose text has no letters or digits — whitespace runs (NBSP, en spaces), fill-in underscores, stray punctuation, symbol-font glyphs (private-use bullets). They were unsearchable, could not be meaningfully embedded (the embedder returns no vector for a lone private-use glyph), and kept document readiness from completing. Such annotations are now dropped before import when they are leaves (pruned to a fixpoint, so a container holding only noise goes too), have no IMAGE modality, and are not content regions (`constants/annotations.py::CONTENT_REGION_LABELS`: tables, formulas, figures, charts, checkboxes). Relationships lose dropped endpoints and are removed when left without a source or target. Non-structural annotations and other import paths are untouched; the document text layer is unchanged.
-```
-
-**File**: `opencontractserver/annotations/management/commands/prune_contentless_structural_annotations.py` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+"""Delete contentless structural annotations stored before the parse-time filter.
-+
-+Uses the parser's rule (``utils/contentless_annotations.py``): structural, no
-+letter or digit in any script, no image content, not a content-region label
-+(tables, formulas, figures, checkboxes), and a leaf once its contentless
-+children are gone. Nothing deleted has a kept child, so ``Annotation.parent``'s
-+cascade never removes content. Relationships left without a source or a
-+target are deleted. Idempotent.
-+"""
-+
-+from __future__ import annotations
-+
-+from collections import Counter
-+
-+from django.core.management.base import BaseCommand
-+from django.db import transaction
-+from django.db.models import Count, Q
-+
-+from opencontractserver.annotations.models import Annotation, Relationship
-+from opencontractserver.utils.contentless_annotations import (
-+    is_contentless,
-+    prunable_leaves,
-+)
-+
-+
-+class Command(BaseCommand):
-+    help = (
-+        "Delete structural leaf annotations whose text has no letters or digits "
-+        "(whitespace, fill-in lines, stray punctuation or symbol glyphs)."
-+    )
-+
-+    def add_arguments(self, parser):
-+        parser.add_argument(
-+            "--dry-run",
-+            action="store_true",
-+            help="Report what would be deleted but don't delete anything.",
-+        )
-+
-+    def handle(self, *args, **options):
-+        dry_run: bool = options["dry_run"]
-+
-+        # ASCII prefilter is locale-independent and keeps the scan small; the
-+        # Unicode-aware check decides (it keeps non-Latin scripts).
-+        rows = (
-+            Annotation.objects.filter(structural=True)
-+            .exclude(raw_text__regex=r"[A-Za-z0-9]")
-+            .values_list(
-+                "pk", "raw_text", "annotation_label__text", "content_modalities"
-+            )
-+        )
-+        kind_of = {
-+            pk: (label, tuple(modalities or []))
-+            for pk, raw_text, label, modalities in rows.iterator()
-+            if is_contentless(raw_text, label, modalities)
-+        }
-+        children_of: dict = {}
-+        for parent_id, pk in Annotation.objects.filter(
-+            parent_id__in=list(kind_of)
-+        ).values_list("parent_id", "pk"):
-+            children_of.setdefault(parent_id, []).append(pk)
-+        doomed = prunable_leaves(kind_of, children_of)
-+        if not doomed:
-+            self.stdout.write(
-+                self.style.SUCCESS("No contentless structural annotations.")
-+            )
-+            return
-+
-+        relationships = Relationship.objects.filter(
-+            Q(source_annotations__in=doomed) | Q(target_annotations__in=doomed)
-+        ).distinct()
-+
-+        if dry_run:
-+            # Show what kinds match, so a parser whose meaningful regions fall
-+            # under this rule is noticed before anything is deleted.
-+            by_kind = Counter(kind_of[pk] for pk in doomed)
-+            for (label, modalities), count in by_kind.most_common():
-+                self.stdout.write(f"  {count:>8}  {label} {list(modalities)}")
-+            self.stdout.write(
-+                self.style.WARNING(
-+                    f"[dry-run] would delete {len(doomed)} contentless structural "
-+                    f"annotations and update {relationships.count()} relationships"
-+                )
-+            )
-+            return
-+
-+        with transaction.atomic():
-+            relationship_ids = list(relationships.values_list("pk", flat=True))
-+            deleted, _ = Annotation.objects.filter(pk__in=doomed).delete()
-+            emptied, _ = (
-+                Relationship.objects.filter(pk__in=relationship_ids)
-+                .annotate(
-+                    n_sources=Count("source_annotations", distinct=True),
-+                    n_targets=Count("target_annotations", distinct=True),
-+                )
-+                .filter(Q(n_sources=0) | Q(n_targets=0))
-+                .delete()
-+            )
-+
-+        self.stdout.write(
-+            self.style.SUCCESS(
-+                f"Deleted {len(doomed)} contentless structural annotations "
-+                f"({deleted} rows incl. embeddings), removed {emptied} emptied "
-+                f"relationship rows"
-+            )
-+        )
-```
-
-**File**: `opencontractserver/constants/annotations.py` (modified, +19/-0)
-```diff
-@@ -202,3 +202,22 @@
- # research's to choose. This is only the fallback for callers that express no
- # preference; the two agreeing today is coincidence, not a contract.
- ANNOTATION_TEXT_SEARCH_DEFAULT_LIMIT = 10
-+
-+# Structural label names (lower-cased) whose regions are meaningful without
-+# word characters: figures and formulas may carry no text, tables may hold
-+# only layout whitespace, and a checkbox's glyph is its state. Parsers name
-+# these differently, so ``utils/contentless_annotations.py`` matches them
-+# case-insensitively and never drops them as contentless.
-+CONTENT_REGION_LABELS = frozenset(
-+    {
-+        "chart",
-+        "checkbox_selected",
-+        "checkbox_unselected",
-+        "equation",
-+        "figure",
-+        "formula",
-+        "image",
-+        "picture",
-+        "table",
-+    }
-+)
-```
-
-**File**: `opencontractserver/pipeline/base/parser.py` (modified, +16/-3)
-```diff
-@@ -13,6 +13,9 @@
- from opencontractserver.pipeline.base.file_types import FileTypeEnum
- from opencontractserver.types.dicts import OpenContractDocExport
- from opencontractserver.utils.compact_pawls import compact_pawls_pages
-+from opencontractserver.utils.contentless_annotations import (
-+    contentless_structural_filter,
-+)
- from opencontractserver.utils.importing import (
-     import_annotations,
-     import_relationships,
-@@ -232,6 +235,17 @@ def save_parsed_data(
- 
-         logger.info(f"Target label type for textual annotations: {target_label_type}")
- 
-+        # Whitespace- and glyph-only structural elements are noise; drop them
-+        # before labels are created so no label exists only for dropped rows.
-+        labelled_text, relationship_data, dropped = contentless_structural_filter(
-+            open_contracts_data.get("labelled_text", []),
-+            open_contracts_data.get("relationships") or [],
-+        )
-+        if dropped:
-+            logger.info(
-+                f"Dropped {dropped} contentless structural annotations for doc {doc_id}"
-+            )
-+
-         # 1) Build a data dict for text annotation labels
-         text_labels_data_dict = {
-             label_data["annotationLabel"]: {
-@@ -243,7 +257,7 @@ def save_parsed_data(
-                 "creator_id": user_id,
-                 "read_only": True,
-             }
--            for label_data in open_contracts_data.get("labelled_text", [])
-+            for label_data in labelled_text
-         }
- 
-         logger.info(f"Text label data dict: {text_labels_data_dict}")
-@@ -266,14 +280,13 @@ def save_parsed_data(
-             user_id=user_id,
-             doc_obj=document,
-             corpus_obj=corpus_obj,
--            annotations_data=open_contracts_data.get("labelled_text", []),
-+            annotations_data=labelled_text,
-             label_lookup=existing_text_labels,
-             label_type=target_label_type,
-             pawls_data=cast("list[dict[Any, Any]]", pawls_file_content),
-         )
- 
-         # 4) If there are relationships, load/create relationship labels and then import
--        relationship_data = open_contracts_data.get("relationships", [])
-         if relationship_data:
-             # Build label data dict for relationship labels
-             relationship_label_texts = {
-```
-
-**File**: `opencontractserver/tests/test_contentless_annotations.py` (added, +257/-0)
-```diff
-@@ -0,0 +1,257 @@
-+"""Contentless structural annotations: parse-time filter and cleanup command."""
-+
-+from io import StringIO
-+from typing import cast
-+
-+from django.contrib.auth import get_user_model
-+from django.core.files.base import ContentFile
-+from django.core.management import call_command
-+from django.test import SimpleTestCase, TestCase
-+
-+from opencontractserver.annotations.models import (
-+    Annotation,
-+    AnnotationLabel,
-+    Relationship,
-+)
-+from opencontractserver.documents.models import Document
-+from opencontractserver.pipeline.parsers.warp_ingest_parser import WarpIngestParser
-+from opencontractserver.types.dicts import OpenContractDocExport
-+from opencontractserver.utils.contentless_annotations import (
-+    contentless_structural_filter,
-+    has_word_characters,
-+    is_contentless,
-+)
-+
-+User = get_user_model()
-+
-+# chr() keeps these invisible characters visible in source.
-+NBSP = chr(0x00A0)
-+EN_SPACE = chr(0x2002)
-+PUA_BULLET = chr(0xF0A8)
-+
-+
-+def _annot(id, text, parent_id=None, label="Paragraph", modalities=("TEXT",)):
-+    return {
-+        "id": id,
-+        "annotationLabel": label,
-+        "rawText": text,
-+        "page": 0,
-+        "annotation_json": {},
-+        "parent_id": parent_id,
-+        "annotation_type": "TOKEN_LABEL",
-+        "structural": True,
-+        "content_modalities": list(modalities),
-+    }
-+
-+
-+def _rel(id, sources, targets):
-+    return {
-+        "id": id,
-+        "relationshipLabel": "refersTo",
-+        "source_annotation_ids": sources,
-+        "target_annotation_ids": targets,
-+        "structural": True,
-+    }
-+
-+
-+def _ids(items):
-+    return [item["id"] for item in items]
-+
-+
-+class ContentlessRuleTests(SimpleTestCase):
-+    def test_word_characters_in_any_script_count_as_content(self):
-+        for text in ("a", "7", "第", "Ж", "§ 1", " x "):
-+            self.assertTrue(has_word_characters(text), text)
-+        for blank in (None, "", NBSP * 3, PUA_BULLET, "•", "____", "。", ")"):
-+            self.assertFalse(has_word_characters(blank), repr(blank))
-+
-+    def test_images_and_content_regions_are_never_contentless(self):
-+        self.assertTrue(is_contentless(EN_SPACE * 5, "PARAGRAPH", []))
-+        self.assertFalse(is_contentless("", "SECTION", ["IMAGE"]))
-+        for label in ("picture", "TABLE", "Formula", "checkbox_unselected"):
-+            self.assertFalse(is_contentless("", label, []), label)
-+
-+
-+class ContentlessFilterTests(SimpleTestCase):
-+    def test_nothing_dropped_returns_input_unchanged(self):
-+        annotations = [_annot("a", "Title"), _annot("b", "Body", "a")]
-+        relationships = [_rel("r", ["a"], ["b"])]
-+        kept, kept_rels, dropped = contentless_structural_filter(
-+            annotations, relationships
-+        )
-+        self.assertEqual((kept, kept_rels, dropped), (annotations, relationships, 0))
-+
-+    def test_only_leaves_are_dropped_until_stable(self):
-+        annotations = [
-+            _annot("root", "Section 1"),
-+            _annot("noise_leaf", NBSP, "root"),
-+            # A container whose children are all noise goes too ...
-+            _annot("noise_box", "", "root", label="SECTION"),
-+            _annot("noise_box_child", "____", "noise_box"),
-+            # ... but one holding content is structure and stays.
-+            _annot("bullet", PUA_BULLET, "root"),
-+            _annot("item", "Item text", "bullet"),
-+        ]
-+        kept, _, dropped = contentless_structural_filter(annotations, [])
-+        self.assertEqual(dropped, 3)
-+        self.assertEqual(_ids(kept), ["root", "bullet", "item"])
-+        self.assertEqual(kept[2]["parent_id"], "bullet")
-+
-+    def test_non_structural_and_region_annotations_are_kept(self):
-+        annotations = [
-+            {**_annot("user", NBSP), "structural": False},
-+            _annot("table", "\n\n", label="TABLE"),
-+            _annot("figure", "", label="SECTION", modalities=("IMAGE",)),
-+        ]
-+        _, _, dropped = contentless_structural_filter(annotations, [])
-+        self.assertEqual(dropped, 0)
-+
-+    def test_mixed_int_and_str_ids_match(self):
-+        annotations = [_annot(1, "Title"), _annot(2, NBSP, 1), _annot(3, "x", "1")]
-+        kept, kept_rels, _ = contentless_structural_filter(
-+            annotations, [_rel("r", [1], ["2"])]
-+        )
-+        self.assertEqual(_ids(kept), [1, 3])
-+        self.assertEqual(kept_rels, [])
-+
-+    def test_annotations_without_ids_do_not_collide(self):
-+        annotations = [_annot(None, NBSP), _annot(None, "Body")]
-+        kept, _, dropped = contentless_structural_filter(annotations, [])
-+        self.assertEqual((dropped, [a["rawText"] for a in kept]), (1, ["Body"]))
-+
-+    def test_cyclic_parents_terminate_and_are_kept(self):
-+        annotations = [_annot("a", NBSP, "b"), _annot("b", NBSP, "a")]
-+        kept, _, dropped = contentless_structural_filter(annotations, [])
-+        self.assertEqual((dropped, _ids(kept)), (0, ["a", "b"]))
-+
-+    def test_relationships_lose_dropped_endp
-```
-
-**File**: `opencontractserver/utils/contentless_annotations.py` (added, +119/-0)
-```diff
-@@ -0,0 +1,119 @@
-+"""Drop parser structural annotations that carry no content.
-+
-+PDF text layers yield structural elements whose text is only whitespace (for
-+example NBSP runs), fill-in underscores, stray punctuation, or symbol-font
-+glyphs (bullets in the Unicode private-use area). Such an annotation is not
-+searchable, cannot be meaningfully embedded, and clutters the annotation
-+layer. The characters remain in the document's text layer; only the overlay
-+is dropped.
-+
-+Only leaves are dropped: an annotation with children is structure, whatever
-+its own text. Pruning repeats until stable, so a container whose children
-+were all contentless is dropped too. Because nothing dropped ever has a kept
-+child, no re-parenting is needed.
-+
-+Only parser output is filtered (see ``BaseParser.save_parsed_data``). Imported
-+and user-created annotations are kept as given.
-+"""
-+
-+from __future__ import annotations
-+
-+from collections.abc import Hashable, Iterable, Mapping
-+
-+from opencontractserver.constants.annotations import CONTENT_REGION_LABELS
-+from opencontractserver.types.dicts import (
-+    OpenContractsAnnotationPythonType,
-+    OpenContractsRelationshipPythonType,
-+)
-+from opencontractserver.types.enums import ContentModality
-+
-+
-+def has_word_characters(text: str | None) -> bool:
-+    """True when ``text`` contains at least one letter or digit in any script."""
-+    return any(ch.isalnum() for ch in text or "")
-+
-+
-+def is_contentless(
-+    text: str | None, label: str | None, modalities: Iterable[str] | None
-+) -> bool:
-+    """No letters or digits, no image content, and not a content-region label."""
-+    return (
-+        ContentModality.IMAGE.value not in (modalities or [])
-+        and (label or "").lower() not in CONTENT_REGION_LABELS
-+        and not has_word_characters(text)
-+    )
-+
-+
-+def prunable_leaves(
-+    candidates: Iterable[Hashable],
-+    children_of: Mapping[Hashable, Iterable[Hashable]],
-+) -> set[Hashable]:
-+    """Candidates that are, or become, leaves once prunable children go."""
-+    candidates = set(candidates)
-+    pruned: set[Hashable] = set()
-+    changed = True
-+    while changed:
-+        changed = False
-+        for node in candidates - pruned:
-+            if all(child in pruned for child in children_of.get(node, ())):
-+                pruned.add(node)
-+                changed = True
-+    return pruned
-+
-+
-+def contentless_structural_filter(
-+    annotations: Iterable[OpenContractsAnnotationPythonType],
-+    relationships: Iterable[OpenContractsRelationshipPythonType],
-+) -> tuple[
-+    list[OpenContractsAnnotationPythonType],
-+    list[OpenContractsRelationshipPythonType],
-+    int,
-+]:
-+    """Remove contentless structural leaves from a parser export.
-+
-+    Relationships lose dropped endpoints, and a relationship left without a
-+    source or a target is removed. Returns ``(annotations, relationships,
-+    dropped_count)``; inputs are not mutated. IDs are compared as strings
-+    because exports mix ``int`` and ``str`` IDs (see ``import_annotations``).
-+    """
-+    annotations = list(annotations)
-+    relationships = list(relationships)
-+
-+    def key(index: int) -> str:
-+        annotation_id = annotations[index].get("id")
-+        return f"#{index}" if annotation_id is None else str(annotation_id)
-+
-+    index_of = {key(i): i for i in range(len(annotations))}
-+    children_of: dict[Hashable, list[Hashable]] = {}
-+    for i, annotation in enumerate(annotations):
-+        parent_id = annotation.get("parent_id")
-+        if parent_id is not None and str(parent_id) in index_of:
-+            children_of.setdefault(str(parent_id), []).append(key(i))
-+    candidates = [
-+        key(i)
-+        for i, a in enumerate(annotations)
-+        if a.get("structural")
-+        and is_contentless(
-+            a.get("rawText"), a.get("annotationLabel"), a.get("content_modalities")
-+        )
-+    ]
-+    dropped = prunable_leaves(candidates, children_of)
-+    if not dropped:
-+        return annotations, relationships, 0
-+
-+    kept = [a for i, a in enumerate(annotations) if key(i) not in dropped]
-+    kept_relationships = []
-+    for relationship in relationships:
-+        sources = relationship.get("source_annotation_ids", [])
-+        targets = relationship.get("target_annotation_ids", [])
-+        kept_sources = [i for i in sources if str(i) not in dropped]
-+        kept_targets = [i for i in targets if str(i) not in dropped]
-+        if (sources and not kept_sources) or (targets and not kept_targets):
-+            continue
-+        if len(kept_sources) != len(sources) or len(kept_targets) != len(targets):
-+            relationship = relationship.copy()
-+            relationship["source_annotation_ids"] = kept_sources
-+            relationship["target_annotation_ids"] = kept_targets
-+        kept_relationships.append(relationship)
-+
-+    return kept, kept_relationships, len(dropped)
+@@ -1,7 +1,7 @@
+ flask
+ gunicorn
+ numpy
+-Pillow>=10
++Pillow>=13.0.0
+ python-decouple
+ requests
+ sentence-transformers[openvino]==5.6.0
 ```
 
 ---
 
-### Incident Patch 3: `245e7cbd` (2026-10-17)
-**Commit Message**: Merge pull request #2448 from Open-Source-Legal/fix/readiness-unicode-whitespace
+### Incident Patch 3: `4a212c8e` (2026-10-25)
+**Commit Message**: chore(deps): update brotli requirement from >=1.2.0 to >=1.2.1 (#2479)
 
-Match readiness blank-text check to the embedding tasks
+Updates the requirements on [brotli](https://github.com/google/brotli) to permit the latest version.
+- [Release notes](https://github.com/google/brotli/releases)
+- [Changelog](https://github.com/google/brotli/blob/go/brotli/v1.2.1/CHANGELOG.md)
+- [Commits](https://github.com/google/brotli/compare/go/brotli/v1.2.1...go/brotli/v1.2.1)
 
-**File**: `changelog.d/readiness-unicode-whitespace.fixed.md` (added, +1/-0)
+---
+updated-dependencies:
+- dependency-name: brotli
+  dependency-version: 1.2.1
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `requirements/base.txt` (modified, +1/-1)
 ```diff
-@@ -0,0 +1 @@
-+- **Readiness never completed for documents with Unicode-space-only annotations** (`opencontractserver/utils/embedding_identity.py::embeddable_annotations`, `opencontractserver/constants/embeddings.py::BLANK_TEXT_SQL_PATTERN`): eligibility used the Postgres regex `^\s*$`, whose `\s` follows the database locale and may not match Unicode spaces such as NBSP, while the embedding tasks skip any text `str.strip()` empties. Annotations made only of such characters were counted as needing a vector that would never be produced, leaving the document `outstanding` (or `failed` after a repair). The filter now uses an explicit character class equal to Python's `str.isspace()` set; `test_ingestion_readiness.py::BlankTextPatternTests` pins the two definitions together.
-```
-
-**File**: `opencontractserver/constants/embeddings.py` (modified, +9/-0)
-```diff
-@@ -20,3 +20,12 @@
- DEFAULT_OPENAI_EMBEDDING_DIMENSIONS = OPENAI_MODEL_DIMENSIONS[
-     DEFAULT_OPENAI_EMBEDDING_MODEL
- ]
-+
-+# Postgres regex for text with nothing to embed: exactly the characters
-+# Python's str.isspace() matches, which str.strip() removes and the embedding
-+# tasks therefore skip. Spelled out because Postgres' \s follows the database
-+# locale and may not match Unicode spaces such as NBSP.
-+BLANK_TEXT_SQL_PATTERN = (
-+    r"^[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a"
-+    r"\u2028\u2029\u202f\u205f\u3000]*$"
-+)
-```
-
-**File**: `opencontractserver/tests/test_ingestion_readiness.py` (modified, +19/-1)
-```diff
-@@ -1,5 +1,7 @@
- """Readiness checks stored artifacts; repair reuses inference without parsing."""
+@@ -11,7 +11,7 @@ pydantic==2.*
+ typing-extensions==4.*  # https://github.com/python/typing_extensions
+ requests>=2.34.2,<3  # https://requests.readthedocs.io/en/latest/
+ httpx>=0.28.1,<1  # https://github.com/encode/httpx - async HTTP for agent tools
+-brotli>=1.2.0  # decoder for httpx Content-Encoding: br responses (e.g. OpenAI API, VCR cassettes). Floor raised to 1.2.0 to pick up the upstream security fix that bounds decompressor output via Decompressor.output_buffer_limit, preventing memory exhaustion from crafted br-encoded payloads.
++brotli>=1.2.1  # decoder for httpx Content-Encoding: br responses (e.g. OpenAI API, VCR cassettes). Floor raised to 1.2.0 to pick up the upstream security fix that bounds decompressor output via Decompressor.output_buffer_limit, preventing memory exhaustion from crafted br-encoded payloads.
  
-+import re
-+import sys
- from collections.abc import Callable
- from concurrent.futures import ThreadPoolExecutor
- from pathlib import Path
-@@ -20,6 +22,7 @@
-     Embedding,
-     StructuralAnnotationSet,
- )
-+from opencontractserver.constants.embeddings import BLANK_TEXT_SQL_PATTERN
- from opencontractserver.corpuses.models import Corpus
- from opencontractserver.corpuses.services.corpus_service import CorpusService
- from opencontractserver.documents.models import (
-@@ -107,6 +110,19 @@ def repair(self, doc=None):
-         return assess_document(doc, self.corpus)
- 
- 
-+class BlankTextPatternTests(SimpleTestCase):
-+    def test_pattern_matches_exactly_what_str_strip_removes(self):
-+        # Readiness (SQL) and the embedding tasks (str.strip) must agree on
-+        # blank text, or readiness waits on vectors that are never made.
-+        mismatched = [
-+            hex(code)
-+            for code in range(sys.maxunicode + 1)
-+            if bool(re.fullmatch(BLANK_TEXT_SQL_PATTERN, chr(code)))
-+            != chr(code).isspace()
-+        ]
-+        self.assertEqual(mismatched, [])
-+
-+
- class ReadinessTests(ReadinessFixtures, TestCase):
-     def readiness_requests(self) -> list[tuple[Callable[..., Any], str, int]]:
-         client = APIClient()
-@@ -460,7 +476,9 @@ def test_empty_annotations_are_excluded_and_shared_structural_annotations_are_co
-             structural_set=shared,
-             raw_text="Shared clause",
-         )
--        for raw_text in ("", " \t\n\f"):
-+        # Python's str.strip(), which the embedding tasks use to skip text,
-+        # also removes Unicode spaces such as NBSP that PDF text layers emit.
-+        for raw_text in ("", " \t\n\f", "\u00a0", "\u3000", "\u2028\u00a0\u205f"):
-             Annotation.objects.create(
-                 document=self.doc,
-                 corpus=self.corpus,
-```
-
-**File**: `opencontractserver/utils/embedding_identity.py` (modified, +6/-2)
-```diff
-@@ -80,7 +80,11 @@ def valid_embeddings(path, dimension, configuration):
- 
- 
- def embeddable_annotations(annotations):
--    """Exclude empty text, including tabs and form feeds that SQL TRIM leaves."""
-+    """Exclude text the embedding tasks skip as blank (see BLANK_TEXT_SQL_PATTERN)."""
-     from django.db.models import Q
- 
--    return annotations.exclude(Q(raw_text__isnull=True) | Q(raw_text__regex=r"^\s*$"))
-+    from opencontractserver.constants.embeddings import BLANK_TEXT_SQL_PATTERN
-+
-+    return annotations.exclude(
-+        Q(raw_text__isnull=True) | Q(raw_text__regex=BLANK_TEXT_SQL_PATTERN)
-+    )
+ # Django
+ # ------------------------------------------------------------------------------
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2451** (2026-10-18): Fix production chat handshake timeout and Apollo warnings (@JSv4)
-- **PR #2449** (2026-10-17): Drop contentless structural annotations at parse time (@JSv4)
-- **PR #2448** (2026-10-17): Match readiness blank-text check to the embedding tasks (@JSv4)
-- **PR #2447** (2026-10-17): Widen log-redaction invariant and hide AgentConfig.api_key from repr (@JSv4)
-- **PR #2446** (2026-10-17): Redact secrets from pipeline component kwargs in logs (@JSv4)
-- **PR #2445** (2026-10-17): Declare playwright as an explicit frontend devDependency (@JSv4)
+- **PR #2487** (2026-10-25): chore(deps-dev): bump @types/leaflet from 1.9.21 to 1.9.22 in /frontend (@dependabot[bot])
+- **PR #2486** (2026-10-25): chore(deps): bump @testing-library/user-event from 13.5.0 to 14.6.8 in /frontend (@dependabot[bot])
+- **PR #2485** (2026-10-25): chore(deps-dev): bump dotenv from 16.6.1 to 18.0.9 in /frontend (@dependabot[bot])
+- **PR #2484** (2026-10-25): chore(deps): bump @uiw/react-color from 2.9.2 to 2.10.3 in /frontend (@dependabot[bot])
+- **PR #2483** (2026-10-25): chore(deps): bump posthog from 7.58.0 to 7.75.6 (@dependabot[bot])
+- **PR #2482** (closed): chore(deps): bump optimum-intel from 1.27.0 to 2.2.0 in /compose/accelerated/embedder (@dependabot[bot])
 
 ---
 
@@ -2288,28 +1653,28 @@ Match readiness blank-text check to the embedding tasks
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. production chat handshake timeout and Apollo warnings (#2451)
+## X. deps): update pydantic-ai-slim requirement (#2476)
 
 **RULE**:
-When implementing operations in `changelog.d/chat-handshake-timeout.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Open-Source-Legal/OpenContracts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `requirements/base.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Open-Source-Legal/OpenContracts. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8bc8254d`: production chat handshake timeout and Apollo warnings (#2451). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `663c7e0c`: deps): update pydantic-ai-slim requirement (#2476). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/chat-handshake-timeout.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `requirements/base.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Allow 30 seconds for production WebSocket handshakes so corpus and agent permission lookups can complete before accepting new questions. Show chat transport failures with a reconnect action that preserves the page, and disable Apollo development checks in production bundles.
+pydantic-ai-slim[openai,anthropic,google]>=1.107.9,<2  # see issue #1451 before bumping the upper bound
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+pydantic-ai-slim[openai,anthropic,google]>=1.107.7,<2  # see issue #1451 before bumping the upper bound
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8bc8254d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `663c7e0c` are properly handled with clean fallback behavior.

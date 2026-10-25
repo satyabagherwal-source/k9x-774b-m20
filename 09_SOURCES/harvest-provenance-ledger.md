@@ -5033,3 +5033,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-25T22:31:56.769Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `aa93d669` | Multi-dimensional audit evidence | 2026-10-25T22:38:51.205Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-25T22:41:43.608Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-25T22:48:06.458Z |
+| `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `dd471b03` | Multi-dimensional audit evidence | 2026-10-25T22:48:13.517Z |

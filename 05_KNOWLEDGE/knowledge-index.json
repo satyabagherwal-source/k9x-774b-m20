@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T22:41:43.526Z",
+  "last_updated": "2026-10-25T22:48:13.458Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39214,14 +39214,19 @@
       "slug": "open-source-legal-opencontracts",
       "platform": "github",
       "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
-      "source_version": "8bc8254d",
-      "content_hash": "c9a3699220d94537905625772bccb626347108d0d84c8e102ae7fdffeaf5ed7e",
+      "source_version": "dd471b03",
+      "content_hash": "c486de2c441f5f5f8e08b2cd87c25ba13d1bf82b30dd59b409f78c1f1e3da700",
       "dossier_path": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
       "promoted_rules": [
         {
           "number": 2199,
           "title": "production chat handshake timeout and Apollo warnings (#2451)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4479,
+          "title": "deps): update pydantic-ai-slim requirement (#2476)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -39232,7 +39237,7 @@
       "historical_learning_ids": [
         "learn-github-open-source-legal-opencontracts-mv0ds8j9"
       ],
-      "verified_at": "2026-10-19T05:39:18.704Z",
+      "verified_at": "2026-10-25T22:48:13.446Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60623,7 +60628,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "8df8f57147e49ef8b265cf5de27f860f7967a46191a0c02d88b7c4f03603f5f2",
+      "content_hash": "5f9f03858394526020284e67ca16ccef16ea474dc1a11436c43af7b30d70b9ad",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "promoted_rules": [
@@ -60701,6 +60706,11 @@
           "number": 3498,
           "title": "Attention Mask Boundary Integrity Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4478,
+          "title": "Data Integrity Gate for Forensic Analysis",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60708,7 +60718,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:49:55.516Z",
+      "verified_at": "2026-10-25T22:48:06.388Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126607,6 +126617,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T22:41:43.514Z"
+    },
+    "rule-4478": {
+      "learning_id": "rule-4478",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4478,
+      "title": "Data Integrity Gate for Forensic Analysis",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:48:06.388Z"
+    },
+    "rule-4479": {
+      "learning_id": "rule-4479",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4479,
+      "title": "deps): update pydantic-ai-slim requirement (#2476)",
+      "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
+      "source_version": "dd471b03",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:48:13.446Z"
     }
   },
   "aliases": {

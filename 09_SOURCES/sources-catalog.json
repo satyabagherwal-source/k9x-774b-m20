@@ -1545,8 +1545,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein",
     "license": "Open-Source",
-    "contentHash": "8df8f57147e49ef8b265cf5de27f860f7967a46191a0c02d88b7c4f03603f5f2",
-    "lastHarvestedAt": "2026-10-21T02:49:55.594Z",
+    "contentHash": "5f9f03858394526020284e67ca16ccef16ea474dc1a11436c43af7b30d70b9ad",
+    "lastHarvestedAt": "2026-10-25T22:48:06.458Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein"
   },
   "hf-pyannote-speaker-diarization-community-1": {
@@ -6323,10 +6323,10 @@
     "repository": "Open-Source-Legal/OpenContracts",
     "platform": "github",
     "sourceUrl": "https://github.com/Open-Source-Legal/OpenContracts",
-    "sourceVersion": "8bc8254d",
+    "sourceVersion": "dd471b03",
     "license": "MIT",
-    "contentHash": "c9a3699220d94537905625772bccb626347108d0d84c8e102ae7fdffeaf5ed7e",
-    "lastHarvestedAt": "2026-10-19T05:39:18.756Z",
+    "contentHash": "c486de2c441f5f5f8e08b2cd87c25ba13d1bf82b30dd59b409f78c1f1e3da700",
+    "lastHarvestedAt": "2026-10-25T22:48:13.517Z",
     "learningId": "learn-github-open-source-legal-opencontracts"
   },
   "fastapi-fastapi": {

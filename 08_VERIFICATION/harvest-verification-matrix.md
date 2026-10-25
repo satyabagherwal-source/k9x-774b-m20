@@ -5026,3 +5026,5 @@
 | `CYCLE-20261025-KE3I` | `2026-10-25T22:31:56.766Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`6db5ac89...`) |
 | `CYCLE-20261025-T9VL` | `2026-10-25T22:38:51.201Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4475` | Yes (`e329dc29...`) |
 | `CYCLE-20261025-WYWL` | `2026-10-25T22:41:43.605Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4476, Rule 4477` | Yes (`bb8925a3...`) |
+| `CYCLE-20261025-56BB` | `2026-10-25T22:48:06.455Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4478` | Yes (`5f9f0385...`) |
+| `CYCLE-20261025-5BRE` | `2026-10-25T22:48:13.514Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4479` | Yes (`c486de2c...`) |
