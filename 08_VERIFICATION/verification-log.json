@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-JT93",
-    "timestamp": "2026-10-23T06:36:22.359Z",
-    "repository": "appwrite/appwrite",
-    "learningId": "learn-github-appwrite-appwrite",
-    "contentHash": "689785b47463c070e6777097be1d487417dc235527adf8357bf55cfb95572fc0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-RS5A",
     "timestamp": "2026-10-23T06:42:34.174Z",
     "repository": "expo/expo",
@@ -7492,6 +7477,21 @@
     "contentHash": "5d96b458ecf0ab0fc7f3a0aa02c21cc4f70227fbb971919f255003ecf900e8e1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-RT8C",
+    "timestamp": "2026-10-25T20:17:44.892Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "14608bbae8242e4cc5248118194077ac9fe40cfdc98ff83114e8cdf753a09d51",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

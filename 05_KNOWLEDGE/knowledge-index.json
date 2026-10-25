@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T20:11:24.430Z",
+  "last_updated": "2026-10-25T20:17:44.840Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26009,7 +26009,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
       "source_version": "hf-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "2fad187e44623e7264430847525ac38263b02da4906b1a9672d90126d6240e81",
+      "content_hash": "14608bbae8242e4cc5248118194077ac9fe40cfdc98ff83114e8cdf753a09d51",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "promoted_rules": [
@@ -26074,6 +26074,21 @@
           "number": 2549,
           "title": "Timestep Coordinate Trajectory Invariant in Rectified Flow Models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4439,
+          "title": "Multi-Encoder Text Fusion Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4440,
+          "title": "Latent Space Dimensionality & VAE Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4441,
+          "title": "Timestep Conditioning & AdaLN Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26094,7 +26109,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4b6mg5",
         "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4ojwc0"
       ],
-      "verified_at": "2026-10-21T00:36:14.873Z",
+      "verified_at": "2026-10-25T20:17:44.833Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125860,6 +125875,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T20:04:47.622Z"
+    },
+    "rule-4439": {
+      "learning_id": "rule-4439",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4439,
+      "title": "Multi-Encoder Text Fusion Invariant",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+      "source_version": "hf-stabilityai-stable-diffusion-3-medium",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T20:17:44.833Z"
+    },
+    "rule-4440": {
+      "learning_id": "rule-4440",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4440,
+      "title": "Latent Space Dimensionality & VAE Consistency Invariant",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+      "source_version": "hf-stabilityai-stable-diffusion-3-medium",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T20:17:44.833Z"
+    },
+    "rule-4441": {
+      "learning_id": "rule-4441",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4441,
+      "title": "Timestep Conditioning & AdaLN Invariant",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+      "source_version": "hf-stabilityai-stable-diffusion-3-medium",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T20:17:44.833Z"
     }
   },
   "aliases": {
