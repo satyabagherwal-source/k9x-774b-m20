@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-6AJA",
-    "timestamp": "2026-10-23T10:09:48.502Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "9a2b6d41b02a04b300c50654b99afa811207827b67d8758013a7717871bc6744",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-NG8X",
-    "timestamp": "2026-10-23T10:23:09.057Z",
-    "repository": "angular/angular",
-    "learningId": "learn-github-angular-angular",
-    "contentHash": "c43c07dba1d770120f194aa530e7006f132bd5070ffc92389638166ece433721",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-OSAQ",
     "timestamp": "2026-10-23T10:24:11.330Z",
     "repository": "embassy-rs/embassy",
@@ -7492,6 +7462,36 @@
     "contentHash": "6db5ac895194aab90a29cb788102a802298dc199c36a3149d45db13eca23823c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-T9VL",
+    "timestamp": "2026-10-25T22:38:51.201Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "e329dc2908d8195a47dbd08367bb3f142c76ced82b94bcd2a612381d4ba8f272",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-WYWL",
+    "timestamp": "2026-10-25T22:41:43.605Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+    "contentHash": "bb8925a35b26941beb4768a5421690a0836959e4619eed0343bb6146488994a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

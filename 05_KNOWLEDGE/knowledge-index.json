@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T22:31:56.703Z",
+  "last_updated": "2026-10-25T22:41:43.526Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49916,13 +49916,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "5f377584",
-      "content_hash": "2e9744e529d6c61820464ae9fc8e1636471e8ec9dd9009efc45f33311eb92a67",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "aa93d669",
+      "content_hash": "e329dc2908d8195a47dbd08367bb3f142c76ced82b94bcd2a612381d4ba8f272",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -49968,6 +49968,11 @@
           "number": 4115,
           "title": "Merge 'antithesis: make the stress harness able to find more bugs' from Jussi Sa",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4475,
+          "title": "Merge 'core/translate: check NOT NULL before STRICT column types in INSERT' from",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49975,7 +49980,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:36:25.207Z",
+      "verified_at": "2026-10-25T22:38:51.119Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60507,7 +60512,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
-      "content_hash": "7d46ed98fd860931aae61b671330ff899c8bc608c942c8e9038f7d96f7627938",
+      "content_hash": "bb8925a35b26941beb4768a5421690a0836959e4619eed0343bb6146488994a1",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "promoted_rules": [
@@ -60550,6 +60555,16 @@
           "number": 3494,
           "title": "Self-Describing Sampling Hyperparameter Metadata Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4476,
+          "title": "Embedded Container-Level Hyperparameter Governance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4477,
+          "title": "Quantization-Aware Distillation (QAD) Parity Attestation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60557,7 +60572,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:43:32.808Z",
+      "verified_at": "2026-10-25T22:41:43.514Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126550,6 +126565,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T22:16:02.761Z"
+    },
+    "rule-4475": {
+      "learning_id": "rule-4475",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4475,
+      "title": "Merge 'core/translate: check NOT NULL before STRICT column types in INSERT' from",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "aa93d669",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:38:51.119Z"
+    },
+    "rule-4476": {
+      "learning_id": "rule-4476",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4476,
+      "title": "Embedded Container-Level Hyperparameter Governance",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:41:43.514Z"
+    },
+    "rule-4477": {
+      "learning_id": "rule-4477",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4477,
+      "title": "Quantization-Aware Distillation (QAD) Parity Attestation",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:41:43.514Z"
     }
   },
   "aliases": {

@@ -5031,3 +5031,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-25T22:24:11.837Z |
 | `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `9997c6ed` | Multi-dimensional audit evidence | 2026-10-25T22:31:50.693Z |
 | `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-25T22:31:56.769Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `aa93d669` | Multi-dimensional audit evidence | 2026-10-25T22:38:51.205Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-25T22:41:43.608Z |

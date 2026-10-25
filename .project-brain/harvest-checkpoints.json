@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T22:31:56.783Z",
+  "last_updated": "2026-10-25T22:41:43.616Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2361,14 +2361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "content_hash": "7d46ed98fd860931aae61b671330ff899c8bc608c942c8e9038f7d96f7627938",
-      "verified_at": "2026-10-21T02:43:32.894Z",
+      "content_hash": "bb8925a35b26941beb4768a5421690a0836959e4619eed0343bb6146488994a1",
+      "verified_at": "2026-10-25T22:41:43.616Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:43:32.894Z"
+      "last_updated": "2026-10-25T22:41:43.616Z"
     },
     "amplifthq/openmeld": {
       "repository": "amplifthq/openmeld",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "2e9744e529d6c61820464ae9fc8e1636471e8ec9dd9009efc45f33311eb92a67",
-      "verified_at": "2026-10-25T10:36:25.284Z",
+      "content_hash": "e329dc2908d8195a47dbd08367bb3f142c76ced82b94bcd2a612381d4ba8f272",
+      "verified_at": "2026-10-25T22:38:51.212Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:36:25.284Z"
+      "last_updated": "2026-10-25T22:38:51.212Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",

@@ -1525,8 +1525,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b-gguf",
     "license": "Open-Source",
-    "contentHash": "7d46ed98fd860931aae61b671330ff899c8bc608c942c8e9038f7d96f7627938",
-    "lastHarvestedAt": "2026-10-21T02:43:32.886Z",
+    "contentHash": "bb8925a35b26941beb4768a5421690a0836959e4619eed0343bb6146488994a1",
+    "lastHarvestedAt": "2026-10-25T22:41:43.608Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
   },
   "amplifthq-openmeld": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "09f919bc",
+    "sourceVersion": "aa93d669",
     "license": "MIT",
-    "contentHash": "4fd4954a0c9110eddea3c58590ef1b239481dd4409f42eac2c0143224daa9572",
-    "lastHarvestedAt": "2026-10-25T06:38:30.928Z",
+    "contentHash": "e329dc2908d8195a47dbd08367bb3f142c76ced82b94bcd2a612381d4ba8f272",
+    "lastHarvestedAt": "2026-10-25T22:38:51.205Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {

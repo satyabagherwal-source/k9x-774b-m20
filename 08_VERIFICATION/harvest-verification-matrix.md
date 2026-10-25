@@ -5024,3 +5024,5 @@
 | `CYCLE-20261025-AFCP` | `2026-10-25T22:24:11.833Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`173b4dd2...`) |
 | `CYCLE-20261025-K9EP` | `2026-10-25T22:31:50.689Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md` | Yes (`3d48bea6...`) |
 | `CYCLE-20261025-KE3I` | `2026-10-25T22:31:56.766Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`6db5ac89...`) |
+| `CYCLE-20261025-T9VL` | `2026-10-25T22:38:51.201Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4475` | Yes (`e329dc29...`) |
+| `CYCLE-20261025-WYWL` | `2026-10-25T22:41:43.605Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4476, Rule 4477` | Yes (`bb8925a3...`) |
