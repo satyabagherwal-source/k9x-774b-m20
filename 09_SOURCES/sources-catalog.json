@@ -10638,5 +10638,15 @@
     "contentHash": "d24546aded604a73e80014cac88c2df958454d7b5178e8c20a25844d958eea3b",
     "lastHarvestedAt": "2026-10-24T20:41:57.296Z",
     "learningId": "learn-github-lokoe-mehdi-scouter"
+  },
+  "shiguangschedule-shiguangschedule": {
+    "repository": "ShiGuangSchedule/shiguangschedule",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ShiGuangSchedule/shiguangschedule",
+    "sourceVersion": "feabb68f",
+    "license": "Apache-2.0",
+    "contentHash": "06c748de254c6b7825845e5ce35dfc08897c4562ea61c08e871b8c65e1015863",
+    "lastHarvestedAt": "2026-10-25T02:05:13.531Z",
+    "learningId": "learn-github-shiguangschedule-shiguangschedule"
   }
 }

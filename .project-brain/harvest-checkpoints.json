@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-24T20:55:05.492Z",
+  "last_updated": "2026-10-25T02:05:13.544Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15989,6 +15989,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-24T20:41:57.310Z"
+    },
+    "ShiGuangSchedule/shiguangschedule": {
+      "repository": "ShiGuangSchedule/shiguangschedule",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-shiguangschedule-shiguangschedule",
+      "content_hash": "06c748de254c6b7825845e5ce35dfc08897c4562ea61c08e871b8c65e1015863",
+      "verified_at": "2026-10-25T02:05:13.544Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-25T02:05:13.544Z"
     }
   },
   "repos": {

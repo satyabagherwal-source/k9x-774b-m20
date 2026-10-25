@@ -4606,3 +4606,4 @@ Every entry in this ledger must capture:
 | `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `3f0880e2` | Multi-dimensional audit evidence | 2026-10-24T20:55:00.221Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `7ffbe9cc` | Multi-dimensional audit evidence | 2026-10-24T20:55:04.252Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `7b74cb41` | Multi-dimensional audit evidence | 2026-10-24T20:55:05.480Z |
+| `learn-github-shiguangschedule-shiguangschedule` | `https://github.com/ShiGuangSchedule/shiguangschedule` | `feabb68f` | Multi-dimensional audit evidence | 2026-10-25T02:05:13.531Z |

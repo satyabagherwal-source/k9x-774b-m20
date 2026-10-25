@@ -4599,3 +4599,4 @@
 | `CYCLE-20261024-NVCP` | `2026-10-24T20:55:00.217Z` | `i18next/react-i18next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md` | Yes (`f434ad81...`) |
 | `CYCLE-20261024-NYGP` | `2026-10-24T20:55:04.249Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3966` | Yes (`7de1988f...`) |
 | `CYCLE-20261024-NZET` | `2026-10-24T20:55:05.477Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3967` | Yes (`4b04e7c2...`) |
+| `CYCLE-20261025-QTH4` | `2026-10-25T02:05:13.528Z` | `ShiGuangSchedule/shiguangschedule` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3968, Rule 3969, Rule 3970` | Yes (`06c748de...`) |

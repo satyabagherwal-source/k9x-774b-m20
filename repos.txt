@@ -4424,3 +4424,7 @@ https://huggingface.co/KRAFTON/Raon-1-mini-preview
 # --- Automatically Discovered by AI Scout Engine [2026-10-24T19:58:35.020Z] ---
 # [HUGGINGFACE-AI-MODELS] ornith-ai/Ornith-1.5-122B (3560 score) - Verified Hugging Face Model: ornith-ai/Ornith-1.5-122B (156 likes, 30407 downloa
 https://huggingface.co/ornith-ai/Ornith-1.5-122B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-25T02:02:59.665Z] ---
+# [MOBILE-CROSS-PLATFORM] ShiGuangSchedule/shiguangschedule (782 score) - 一款开源、无广告、极简的课程表 APP，支持教务导入
+https://github.com/ShiGuangSchedule/shiguangschedule

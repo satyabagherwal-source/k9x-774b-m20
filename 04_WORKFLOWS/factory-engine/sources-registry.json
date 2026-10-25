@@ -887,8 +887,8 @@
     "officialUrl": "https://github.com/microsoft/Security-101",
     "sourceType": "github",
     "technology": "HTML",
-    "lastChecked": "2026-10-23T09:48:40.741Z",
-    "lastVerified": "2026-10-23T09:48:40.741Z",
+    "lastChecked": "2026-10-25T02:03:15.121Z",
+    "lastVerified": "2026-10-25T02:03:15.121Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-security-101",
@@ -6267,8 +6267,8 @@
     "officialUrl": "https://github.com/oblador/react-native-animatable",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-20T12:40:38.943Z",
-    "lastVerified": "2026-10-20T12:40:38.943Z",
+    "lastChecked": "2026-10-25T02:03:10.143Z",
+    "lastVerified": "2026-10-25T02:03:10.143Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-oblador-react-native-animatable",
@@ -8508,8 +8508,8 @@
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-21T18:39:49.218Z",
-    "lastVerified": "2026-10-21T18:39:49.218Z",
+    "lastChecked": "2026-10-25T02:03:17.634Z",
+    "lastVerified": "2026-10-25T02:03:17.634Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-amrdeveloper-gql",
@@ -10810,12 +10810,12 @@
     "revisionIdentifier": "6f6b6b60"
   },
   "graphprotocol-graph-node": {
-    "name": "graphprotocol/graph-node",
+    "name": "graph-node",
     "officialUrl": "https://github.com/graphprotocol/graph-node",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-21T05:40:24.878Z",
-    "lastVerified": "2026-10-21T05:40:24.878Z",
+    "lastChecked": "2026-10-25T02:03:05.255Z",
+    "lastVerified": "2026-10-25T02:03:05.255Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-graphprotocol-graph-node",
@@ -10824,7 +10824,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cc31bc78"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -18503,8 +18504,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-24T20:29:44.376Z",
-    "lastVerified": "2026-10-24T20:29:44.376Z",
+    "lastChecked": "2026-10-25T02:03:20.138Z",
+    "lastVerified": "2026-10-25T02:03:20.138Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -21799,12 +21800,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "k3s-io-k3s": {
-    "name": "k3s-io/k3s",
+    "name": "k3s",
     "officialUrl": "https://github.com/k3s-io/k3s",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-22T15:35:29.646Z",
-    "lastVerified": "2026-10-22T15:35:29.646Z",
+    "lastChecked": "2026-10-25T02:03:12.739Z",
+    "lastVerified": "2026-10-25T02:03:12.739Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-k3s-io-k3s",
@@ -21813,7 +21814,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "65d71277"
   },
   "lexmount-moli": {
     "name": "lexmount-moli",
@@ -27431,8 +27433,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-24T20:55:08.020Z",
-    "lastVerified": "2026-10-24T20:55:08.020Z",
+    "lastChecked": "2026-10-25T02:05:16.080Z",
+    "lastVerified": "2026-10-25T02:05:16.080Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -27656,9 +27658,9 @@
   "chris-c-thomas-oxideseo": {
     "name": "OxideSEO",
     "officialUrl": "https://github.com/chris-c-thomas/OxideSEO",
-    "lastChecked": "2026-10-20T08:45:31.162Z",
+    "lastChecked": "2026-10-25T02:03:07.682Z",
     "revisionIdentifier": "88feb867f5",
-    "lastVerified": "2026-10-20T08:45:31.162Z"
+    "lastVerified": "2026-10-25T02:03:07.682Z"
   },
   "codetot-web-schema-test": {
     "name": "schema-test",
@@ -28384,6 +28386,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "shiguangschedule-shiguangschedule": {
+    "name": "ShiGuangSchedule/shiguangschedule",
+    "officialUrl": "https://github.com/ShiGuangSchedule/shiguangschedule",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-25T02:03:08.772Z",
+    "lastVerified": "2026-10-25T02:03:08.772Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-shiguangschedule-shiguangschedule",
+    "contentHash": "06c748de254c6b7825845e5ce35dfc08897c4562ea61c08e871b8c65e1015863",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

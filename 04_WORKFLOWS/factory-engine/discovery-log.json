@@ -18547,5 +18547,20 @@
     "downloads": 30407,
     "qualityScore": 3560,
     "discoveredAt": "2026-10-24T19:56:27.120Z"
+  },
+  {
+    "name": "shiguangschedule",
+    "fullName": "ShiGuangSchedule/shiguangschedule",
+    "url": "https://github.com/ShiGuangSchedule/shiguangschedule",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "一款开源、无广告、极简的课程表 APP，支持教务导入",
+    "stars": 1001,
+    "forks": 97,
+    "openIssues": 1,
+    "language": "Kotlin",
+    "qualityScore": 782,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-25T02:00:57.742Z"
   }
 ]

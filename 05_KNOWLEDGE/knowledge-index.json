@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-24T20:55:05.433Z",
-  "total_verified_learnings": 1080,
+  "last_updated": "2026-10-25T02:05:13.475Z",
+  "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -116607,6 +116607,91 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-24T20:55:05.423Z"
+    },
+    "learn-github-shiguangschedule-shiguangschedule": {
+      "learning_id": "learn-github-shiguangschedule-shiguangschedule",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ShiGuangSchedule/shiguangschedule",
+      "repository": "ShiGuangSchedule/shiguangschedule",
+      "slug": "shiguangschedule-shiguangschedule",
+      "platform": "github",
+      "source_url": "https://github.com/ShiGuangSchedule/shiguangschedule",
+      "source_version": "feabb68f",
+      "content_hash": "06c748de254c6b7825845e5ce35dfc08897c4562ea61c08e871b8c65e1015863",
+      "dossier_path": "07_PROJECT_LEARNING/shiguangschedule-shiguangschedule-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shiguangschedule-shiguangschedule-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 3968,
+          "title": "Centralized Temporal Indexing with Configurable Epochs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3969,
+          "title": "Dual-Tree Invariant Reset in Android RemoteViews",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3970,
+          "title": "Exact Alarm Quota Reservation & Recycling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-25T02:05:13.464Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-3968": {
+      "learning_id": "rule-3968",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3968,
+      "title": "Centralized Temporal Indexing with Configurable Epochs",
+      "source_url": "https://github.com/ShiGuangSchedule/shiguangschedule",
+      "source_version": "feabb68f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:05:13.464Z"
+    },
+    "rule-3969": {
+      "learning_id": "rule-3969",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3969,
+      "title": "Dual-Tree Invariant Reset in Android RemoteViews",
+      "source_url": "https://github.com/ShiGuangSchedule/shiguangschedule",
+      "source_version": "feabb68f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:05:13.464Z"
+    },
+    "rule-3970": {
+      "learning_id": "rule-3970",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3970,
+      "title": "Exact Alarm Quota Reservation & Recycling Invariant",
+      "source_url": "https://github.com/ShiGuangSchedule/shiguangschedule",
+      "source_version": "feabb68f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:05:13.464Z"
     }
   },
   "aliases": {

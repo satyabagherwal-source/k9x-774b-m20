@@ -286307,3 +286307,324 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7b74cb41` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3968. Centralized Temporal Indexing with Configurable Epochs (Harvested from ShiGuangSchedule/shiguangschedule)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Centralized Temporal Indexing with Configurable Epochs",
+  "source": "ShiGuangSchedule/shiguangschedule",
+  "source_url": "https://github.com/ShiGuangSchedule/shiguangschedule",
+  "source_version": "feabb68f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T02:05:12.996Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-shiguangschedule-shiguangschedule",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ShiGuangSchedule/shiguangschedule](https://github.com/ShiGuangSchedule/shiguangschedule) (Revision: `feabb68f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Calculations translating calendar dates into discrete domain cycle indices (e.g., academic week numbers, sprint cycles, billing windows) MUST NEVER be calculated locally using naive date-difference primitives (`date.until(target, DateTimeUnit.WEEK)` or `(days / 7).toInt() + 1`). All date-to-cycle translations MUST route through a single source-of-truth domain function that explicitly accepts the configured epoch starting date (`semesterStartDate`) AND the system-wide cycle boundary anchor (`firstDayOfWeek`).
+
+**WHY**:
+Calendar weeks do not align cleanly with 7-day integer offsets from arbitrary start dates. If a semester starts on a Wednesday, but `firstDayOfWeek` is Monday:
+- Naive `until(..., DateTimeUnit.WEEK)` counts completed 7-day durations, shifting week increments mid-week (every Wednesday) rather than on the user's expected boundary (Sunday/Monday midnight).
+- Local integer division `(daysBetween / 7) + 1` truncates fractional offsets incorrectly whenever the target date wraps over the first day of the week, causing schedule data, widget sync routines, and database mutations (quick delete/tweak operations) to modify incorrect weeks.
+
+**WHEN TO APPLY**:
+Any time-series or calendaring subsystem where user configurations determine epoch start dates and week cutoffs (Kotlin Multiplatform, Java Time, Python Pandas, TypeScript date-fns).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// In AppSettingsRepository or dedicated TemporalEngine:
+fun getWeekIndexAtDate(
+    targetDate: LocalDate,
+    startDateStr: String?,
+    firstDayOfWeekInt: Int = 1 // 1 = Monday (ISO-8601), 7 = Sunday
+): Int? {
+    if (startDateStr.isNullOrBlank()) return null
+    val semesterStart = LocalDate.parse(startDateStr)
+    val configuredFirstDay = DayOfWeek.of(firstDayOfWeekInt.coerceIn(1, 7))
+    
+    // Normalize semester start to its bounding week start
+    val normalizedStartMonday = semesterStart.startOfWeek(configuredFirstDay)
+    val normalizedTargetMonday = targetDate.startOfWeek(configuredFirstDay)
+    
+    // Compute exact whole-week differential across normalized epoch starts
+    val daysBetween = normalizedStartMonday.daysUntil(normalizedTargetMonday)
+    val weekOffset = (daysBetween / 7).toInt()
+    
+    // 1-based index: week 1 is the week containing semesterStart
+    return weekOffset + 1
+}
+
+// Invariant helper:
+fun LocalDate.startOfWeek(firstDayOfWeek: DayOfWeek): LocalDate {
+    val dayOfWeekIso = this.dayOfWeek.isoDayNumber
+    val targetIso = firstDayOfWeek.isoDayNumber
+    val diff = (dayOfWeekIso - targetIso + 7) % 7
+    return this.minus(diff, DateTimeUnit.DAY)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// NEVER do this in ViewModels or UI helpers:
+val daysBetween = semesterStart.until(curr, DateTimeUnit.DAY)
+val w = (daysBetween / 7).toInt() + 1 // BUG: Does not respect firstDayOfWeek; shifts on day-of-week of semesterStart!
+
+// NEVER do this:
+val fromWeek = semesterStartDate.until(state.fromDate, DateTimeUnit.WEEK).toInt() + 1 // BUG: Truncates 7-day chunks, ignores calendar week boundary!
+```
+
+**VERIFICATION METHOD**:
+Parameterized unit test running boundary tests:
+```kotlin
+@Test
+fun verifyWeekIndexCalculationAcrossConfiguredWeekStarts() {
+    // Semester starts on Wednesday 2026-09-02
+    val startStr = "2026-09-02"
+    
+    // Case 1: Monday as first day of week
+    // 2026-09-02 (Wed) is in Week 1 (Monday 2026-08-31 to Sunday 2026-09-06)
+    // 2026-09-07 (Mon) must immediately become Week 2
+    assertEquals(1, repo.getWeekIndexAtDate(LocalDate.parse("2026-09-06"), startStr, firstDayOfWeekInt = 1))
+    assertEquals(2, repo.getWeekIndexAtDate(LocalDate.parse("2026-09-07"), startStr, firstDayOfWeekInt = 1))
+
+    // Case 2: Sunday as first day of week
+    // Sunday 2026-09-06 must immediately become Week 2
+    assertEquals(1, repo.getWeekIndexAtDate(LocalDate.parse("2026-09-05"), startStr, firstDayOfWeekInt = 7))
+    assertEquals(2, repo.getWeekIndexAtDate(LocalDate.parse("2026-09-06"), startStr, firstDayOfWeekInt = 7))
+}
+```
+
+---
+
+
+---
+
+## 3969. Dual-Tree Invariant Reset in Android RemoteViews (Harvested from ShiGuangSchedule/shiguangschedule)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Tree Invariant Reset in Android RemoteViews",
+  "source": "ShiGuangSchedule/shiguangschedule",
+  "source_url": "https://github.com/ShiGuangSchedule/shiguangschedule",
+  "source_version": "feabb68f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T02:05:13.174Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-shiguangschedule-shiguangschedule",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ShiGuangSchedule/shiguangschedule](https://github.com/ShiGuangSchedule/shiguangschedule) (Revision: `feabb68f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When rendering Android `RemoteViews` layouts containing separate view trees for Light and Dark modes (or primary vs fallback container states), EVERY mutation of a view attribute (visibility, text, textColor, alpha) MUST be accompanied by an explicit, mirrored reset of ALL alternative and dark view IDs. 
+
+**WHY**:
+Unlike Compose or declarative UI where the entire hierarchy is reconstructed on each recomposition, `RemoteViews` applies an append-only transaction stream across an IPC barrier to an existing remote view hierarchy held by `SystemUI`. If an element is set to `View.VISIBLE` in one update pass, and the subsequent update pass skips it or only mutates the counterpart element, the previous state persists. In dual-tree layouts (`container_status` vs `container_status_dark`), omitting explicit bilateral resets produces visual ghosting where both Light and Dark text or empty-state cards render simultaneously over each other.
+
+**WHEN TO APPLY**:
+Android AppWidget providers, Custom Notification renderers, Android Auto/Wear remote layouts manipulating composite `RemoteViews`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+object CompactNativeRenderer {
+    fun render(context: Context, snapshot: WidgetSnapshot, appWidgetId: Int): RemoteViews {
+        val rv = RemoteViews(context.packageName, R.layout.widget_today_compact_native)
+        
+        // MANDATORY: Full bilateral reset of ALL mutually exclusive states before data binding
+        resetWidgetState(rv)
+        
+        // ... Bind current state to both light and dark tree targets ...
+        return rv
+    }
+
+    private fun resetWidgetState(rv: RemoteViews) {
+        // Light tree reset
+        rv.setViewVisibility(R.id.container_full_status, View.GONE)
+        rv.setViewVisibility(R.id.inner_content_card, View.VISIBLE)
+        rv.setViewVisibility(R.id.list_view_courses, View.GONE)
+        rv.setViewVisibility(R.id.container_status, View.GONE)
+        rv.setViewVisibility(R.id.tv_current_week, View.GONE)
+
+        // Dark tree mirrored reset
+        rv.setViewVisibility(R.id.container_full_status_dark, View.GONE)
+        rv.setViewVisibility(R.id.inner_content_card_dark, View.VISIBLE)
+        rv.setViewVisibility(R.id.list_view_courses_dark, View.GONE)
+        rv.setViewVisibility(R.id.container_status_dark, View.GONE)
+        rv.setViewVisibility(R.id.tv_current_week_dark, View.GONE)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// NEVER assume RemoteViews resets itself on update:
+fun renderState(rv: RemoteViews, isEmpty: Boolean) {
+    if (isEmpty) {
+        // BUG: In the next tick when courses appear, container_status remains VISIBLE!
+        rv.setViewVisibility(R.id.container_status, View.VISIBLE)
+    } else {
+        rv.setViewVisibility(R.id.list_view_courses, View.VISIBLE)
+        // Missing: rv.setViewVisibility(R.id.container_status, View.GONE)
+        // Missing: Dark tree visibility resets!
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Automated state transition tests verifying IPC commands:
+```kotlin
+@Test
+fun verifyRemoteViewsResetEmitsGoneCommandsForBothTrees() {
+    val rv = RemoteViews("com.test", R.layout.widget_layout)
+    resetWidgetState(rv)
+    // Inspect RemoteViews actions via reflection or ShadowRemoteViews in Robolectric
+    val shadow = Shadows.shadowOf(rv)
+    assertTrue(shadow.hasMethodCall("setViewVisibility", R.id.container_status, View.GONE))
+    assertTrue(shadow.hasMethodCall("setViewVisibility", R.id.container_status_dark, View.GONE))
+}
+```
+
+---
+
+
+---
+
+## 3970. Exact Alarm Quota Reservation & Recycling Invariant (Harvested from ShiGuangSchedule/shiguangschedule)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Exact Alarm Quota Reservation & Recycling Invariant",
+  "source": "ShiGuangSchedule/shiguangschedule",
+  "source_url": "https://github.com/ShiGuangSchedule/shiguangschedule",
+  "source_version": "feabb68f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T02:05:13.361Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-shiguangschedule-shiguangschedule",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ShiGuangSchedule/shiguangschedule](https://github.com/ShiGuangSchedule/shiguangschedule) (Revision: `feabb68f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Background services scheduling recurring or batched exact alarms (`AlarmManager.setExactAndAllowWhileIdle`) MUST allocate a strictly bounded, contiguous slot range of `requestCode` IDs (e.g., `50010..50110`), and MUST execute a blanket cancellation loop over the ENTIRE slot allocation range using `PendingIntent.FLAG_NO_CREATE` prior to scheduling new alarms.
+
+**WHY**:
+Mobile OS platforms (Android 12+ / iOS BackgroundTasks) aggressively police exact alarms and pending wakeups. When an event shifts (e.g., a student imports a new timetable or deletes a course), previously scheduled `PendingIntent` instances remain armed inside the Android `AlarmManager` daemon. Because `PendingIntent` match semantics rely on `(action, requestCode, filterEquals(Intent))`, if a user previously had 20 courses scheduled and updates the table to have 5 courses, leaving slots 5..19 unmanaged causes stale wakeups, outdated notification alerts, and OEM battery-saver kills.
+
+**WHEN TO APPLY**:
+Any Android worker or service utilizing `AlarmManager` for scheduled push alerts, notifications, or hardware state automation.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+class CourseNotificationScheduler(private val context: Context) {
+    companion object {
+        private const val ALARM_SLOT_START_ID = 50010
+        private const val ALARM_SLOT_COUNT = 101 // Slots 50010 through 50110
+        private const val ACTION_COURSE_REMIND = "com.xingheyuzhuan.shiguangschedule.ACTION_COURSE_REMIND"
+    }
+
+    fun purgeAndReschedule(alarmManager: AlarmManager, coursesToSchedule: List<ScheduledEvent>) {
+        // Step 1: Pre-emptively purge the entire bounded slot range
+        for (i in 0 until ALARM_SLOT_COUNT) {
+            val requestCode = ALARM_SLOT_START_ID + i
+            val intent = Intent(context, CourseAlarmReceiver::class.java).apply {
+                this.action = ACTION_COURSE_REMIND
+            }
+            // FLAG_NO_CREATE retrieves the token only if it is already armed
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            )
+            pendingIntent?.let {
+                alarmManager.cancel(it)
+                it.cancel() // Invalidate token in system token pool
+            }
+        }
+
+        // Step 2: Sequentially schedule up to capacity
+        coursesToSchedule.take(ALARM_SLOT_COUNT).forEachIndexed { index, course ->
+            val requestCode = ALARM_SLOT_START_ID + index
+            val intent = Intent(context, CourseAlarmReceiver::class.java).apply {
+                this.action = ACTION_COURSE_REMIND
+                putExtra("EXTRA_SLOT_ID", requestCode)
+                putExtra("EXTRA_COURSE_ID", course.id)
+            }
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                course.triggerEpochMillis,
+                pendingIntent
+            )
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// NEVER generate unbounded requestCodes or omit purge loops:
+courses.forEach { course ->
+    // Unbounded hashCode collisions or memory leaks inside system server:
+    val requestCode = course.id.hashCode() 
+    val pi = PendingIntent.getBroadcast(ctx, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pi)
+    // If course is removed from DB, this alarm triggers forever until reboot!
+}
+```
+
+**VERIFICATION METHOD**:
+Robolectric / Android Instrumented Test:
+```kotlin
+@Test
+fun verifyAllStaleAlarmSlotsArePurgedOnReschedule() {
+    // 1. Arm 50 slots
+    scheduler.scheduleCourses(fiftyCourses)
+    // 2. Reschedule with 2 courses
+    scheduler.scheduleCourses(twoCourses)
+    // 3. Verify slots 50012 to 50110 return null PendingIntent
+    for (i in 2 until 101) {
+        val pi = PendingIntent.getBroadcast(
+            context, 50010 + i, intent, PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+        assertNull("Stale slot $i remained armed!", pi)
+    }
+}
+```
+
+---
