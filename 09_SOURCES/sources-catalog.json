@@ -1425,8 +1425,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
     "sourceVersion": "hf-autotrust-jev-35b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "7591af4eee1d1bd313e5bb9277fca2ce1790bfde3ae495908167fa6609452496",
-    "lastHarvestedAt": "2026-10-20T14:25:33.027Z",
+    "contentHash": "8791d6c23d1ea70a99696e49ee4bcf434e0b66c115b9998b81c9662fa88fa69d",
+    "lastHarvestedAt": "2026-10-25T06:32:02.589Z",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4"
   },
   "leonxlnx-taste-skill": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "38afee6c",
+    "sourceVersion": "179664ea",
     "license": "NOASSERTION",
-    "contentHash": "f717ce9c34e1ffb8be1ce9ef44365e10147b4bf3fcb7390ac0400b4edc63c3e6",
-    "lastHarvestedAt": "2026-10-22T16:15:34.337Z",
+    "contentHash": "d4d9db03497c20ac079abd747779edb8b3b35df6ab3fd768dc59173e25c1ec4a",
+    "lastHarvestedAt": "2026-10-25T06:31:56.881Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-C49D",
-    "timestamp": "2026-10-21T05:03:04.081Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "4f6f195f94fef764b59400f274edcf4ce8d7fe8337a8c9f22837bb830b4b5d18",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-K64M",
-    "timestamp": "2026-10-21T05:09:19.750Z",
-    "repository": "code-forge-io/seo-tools",
-    "learningId": "learn-github-code-forge-io-seo-tools",
-    "contentHash": "46ad57498f9aad70bbf2d93de26d0f938722955604335994c74646769f45d3ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-RX62",
     "timestamp": "2026-10-21T05:15:21.386Z",
     "repository": "hartemyaakoub/seo-toolkit",
@@ -7490,6 +7460,36 @@
     "repository": "black-forest-labs/flux-3-image-klein-comfy",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
     "contentHash": "6107085beac8487edcbdc9dfee6869d532c44fb7377302c47c2b87c452f14553",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-9TQK",
+    "timestamp": "2026-10-25T06:31:56.876Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "d4d9db03497c20ac079abd747779edb8b3b35df6ab3fd768dc59173e25c1ec4a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-9Y56",
+    "timestamp": "2026-10-25T06:32:02.587Z",
+    "repository": "autotrust/JEV-35B-NVFP4",
+    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+    "contentHash": "8791d6c23d1ea70a99696e49ee4bcf434e0b66c115b9998b81c9662fa88fa69d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

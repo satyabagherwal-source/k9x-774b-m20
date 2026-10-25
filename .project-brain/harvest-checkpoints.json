@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T06:25:51.576Z",
+  "last_updated": "2026-10-25T06:32:02.601Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2213,14 +2213,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "content_hash": "7591af4eee1d1bd313e5bb9277fca2ce1790bfde3ae495908167fa6609452496",
-      "verified_at": "2026-10-20T14:25:33.035Z",
+      "content_hash": "8791d6c23d1ea70a99696e49ee4bcf434e0b66c115b9998b81c9662fa88fa69d",
+      "verified_at": "2026-10-25T06:32:02.600Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:25:33.035Z"
+      "last_updated": "2026-10-25T06:32:02.600Z"
     },
     "Leonxlnx/taste-skill": {
       "repository": "Leonxlnx/taste-skill",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "f717ce9c34e1ffb8be1ce9ef44365e10147b4bf3fcb7390ac0400b4edc63c3e6",
-      "verified_at": "2026-10-22T16:15:34.350Z",
+      "content_hash": "d4d9db03497c20ac079abd747779edb8b3b35df6ab3fd768dc59173e25c1ec4a",
+      "verified_at": "2026-10-25T06:31:56.889Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:15:34.350Z"
+      "last_updated": "2026-10-25T06:31:56.889Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",

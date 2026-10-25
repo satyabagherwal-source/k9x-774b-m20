@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T06:25:51.568Z",
-  "total_cycles_completed": 4685,
-  "total_learnings_persisted": 4685,
-  "total_rules_promoted": 3979,
+  "last_updated": "2026-10-25T06:32:02.592Z",
+  "total_cycles_completed": 4687,
+  "total_learnings_persisted": 4687,
+  "total_rules_promoted": 3983,
   "history": [
-    {
-      "timestamp": "2026-10-23T09:20:48.749Z",
-      "repository": "karakeep-app/karakeep",
-      "learningId": "learn-github-karakeep-app-karakeep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T09:20:52.097Z",
-      "repository": "infracost/infracost",
-      "learningId": "learn-github-infracost-infracost",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T09:20:54.223Z",
       "repository": "trufflesecurity/trufflehog",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T06:25:51.568Z",
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
       "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:31:56.884Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:32:02.592Z",
+      "repository": "autotrust/JEV-35B-NVFP4",
+      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

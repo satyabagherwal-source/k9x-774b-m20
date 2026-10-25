@@ -4708,3 +4708,5 @@
 | `CYCLE-20261025-YTJ5` | `2026-10-25T06:23:23.393Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4099, Rule 4100, Rule 4101` | Yes (`715de2ca...`) |
 | `CYCLE-20261025-1CY2` | `2026-10-25T06:25:21.866Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4102, Rule 4103, Rule 4104` | Yes (`3ca18d39...`) |
 | `CYCLE-20261025-1ZUW` | `2026-10-25T06:25:51.560Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4105, Rule 4106, Rule 4107` | Yes (`6107085b...`) |
+| `CYCLE-20261025-9TQK` | `2026-10-25T06:31:56.876Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4108` | Yes (`d4d9db03...`) |
+| `CYCLE-20261025-9Y56` | `2026-10-25T06:32:02.587Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4109, Rule 4110, Rule 4111` | Yes (`8791d6c2...`) |

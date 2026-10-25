@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T06:25:51.506Z",
+  "last_updated": "2026-10-25T06:32:02.557Z",
   "total_verified_learnings": 1084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38621,8 +38621,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "38afee6c",
-      "content_hash": "f717ce9c34e1ffb8be1ce9ef44365e10147b4bf3fcb7390ac0400b4edc63c3e6",
+      "source_version": "179664ea",
+      "content_hash": "d4d9db03497c20ac079abd747779edb8b3b35df6ab3fd768dc59173e25c1ec4a",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -38645,6 +38645,11 @@
           "number": 3629,
           "title": "regressions since 1.4.3 in bun install, bunx, node:fs and node:http2, and update",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4108,
+          "title": "Build with Bun 1.4.4, update Node.js to 26.12.1 (#46533)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38652,7 +38657,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:15:34.247Z",
+      "verified_at": "2026-10-25T06:31:56.838Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59228,7 +59233,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
       "source_version": "hf-autotrust-jev-35b-nvfp4",
-      "content_hash": "7591af4eee1d1bd313e5bb9277fca2ce1790bfde3ae495908167fa6609452496",
+      "content_hash": "8791d6c23d1ea70a99696e49ee4bcf434e0b66c115b9998b81c9662fa88fa69d",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -59266,6 +59271,21 @@
           "number": 3221,
           "title": "NVFP4 Block-Wise Scaling Factor Alignment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4109,
+          "title": "Selective Quantization of MoE Routed Experts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4110,
+          "title": "Hybrid Attention State Precision Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4111,
+          "title": "NVFP4 Quantization Calibration with ModelOpt",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59273,7 +59293,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:25:32.951Z",
+      "verified_at": "2026-10-25T06:32:02.550Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119386,6 +119406,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T06:25:51.495Z"
+    },
+    "rule-4108": {
+      "learning_id": "rule-4108",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4108,
+      "title": "Build with Bun 1.4.4, update Node.js to 26.12.1 (#46533)",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "179664ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:31:56.838Z"
+    },
+    "rule-4109": {
+      "learning_id": "rule-4109",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4109,
+      "title": "Selective Quantization of MoE Routed Experts",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
+      "source_version": "hf-autotrust-jev-35b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:32:02.550Z"
+    },
+    "rule-4110": {
+      "learning_id": "rule-4110",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4110,
+      "title": "Hybrid Attention State Precision Isolation",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
+      "source_version": "hf-autotrust-jev-35b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:32:02.550Z"
+    },
+    "rule-4111": {
+      "learning_id": "rule-4111",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4111,
+      "title": "NVFP4 Quantization Calibration with ModelOpt",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
+      "source_version": "hf-autotrust-jev-35b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:32:02.550Z"
     }
   },
   "aliases": {

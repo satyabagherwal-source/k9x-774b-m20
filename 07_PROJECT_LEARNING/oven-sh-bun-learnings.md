@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `38afee6c`  
+> **Source Version**: `179664ea`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:15:33.839Z  
+> **Timestamp**: 2026-10-25T06:31:56.590Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:15:32.811Z  
+> **Harvest Timestamp**: 2026-10-25T06:31:56.392Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96345 stars
+- **Stars / Engagement**: 96388 stars
 
 ---
 
@@ -978,11 +978,13 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #46435** (2026-10-22): **bun check freezes on Array.map	over generic builder with mapped types (macOS, Bun 1.4.3)**
-  *Symptoms*: ### What version of Bun is running?  1.4.3  ### What platform is your computer?  Darwin 27.0.0 arm64 arm  ### What steps can reproduce the bug?   `bun check` hangs indefinitely at `Checking 0 / 1 files` when type checking generic array methods (`Array.prototype.map`, `forEach`) over the result of an object builder that accumulates properties via homomorphic mapped types (`{ [P in K]: ... }`). It consumes 100% of a single CPU core without output or error diagnostics.  `tsc --noEmit` checks the same file in ~0.2s with exit code 0. At runtime, `bun repro.ts` executes in 25ms and prints `[ 1 ]`. Inside `bun check`, direct property access (`arr[0].f`) or `for...of` loops pass in 22ms; only generic array callback methods trigger the hang.  `repro.ts`:  ```ts type Schema = {   a?: number;   b?: number;   c?: number;   d?: number;   e?: number;   f?: number; };  export class Builder<D extends Schema = {}> {   constructor(private readonly context: D = {} as D) {}    a() { return this.#set('a', 1); }   b() { return this.a().#set('b', 1); }   c() { return this.b().a().#set('c', 1); }   d() { return this.c().b().#set('d', 1); }   e() { return this.d().c().#set('e', 1); }   f() { return this.e().d().#set('f', 1); }    build(): D {     return this.context;   }    #set<const K extends keyof Schema>(key: K, value: NonNullable<Schema[K]>) {     return new Builder(Object.assign(this.context, { [key]: value }) as D & { [P in K]: NonNullable<Schema[K]> });   } }  const arr = [new Builder().a().f
+- **Issue #46776** (2026-10-24): **c-bindings: bun_close_range fails on Android devices running kernels < 5.9**
+  *Symptoms*: ### Problem In src/jsc/bindings/c-bindings.cpp, bun_close_range directly calls syscall(__NR_close_range, ...). The close_range syscall was added in Linux 5.9. Millions of Android 9-12 devices run vendor 4.14 or 4.19 kernels where this syscall returns ENOSYS or is killed by seccomp.  ### Solution Return -1 directly on defined(__ANDROID__) to let Bun cleanly use its userspace fallback loop.
+  **Post-Mortem & Fix Analysis**:
+  > **Bun version:** `1.4.4-debug` built from main at `179664ea89` on `linux x64`, kernel 6.1  Main already handles both failure modes of `close_range(2)`:  - A kernel older than 5.9 returns `ENOSYS`. `closeRangeOrLoop` in `src/jsc/bindings/bun-spawn.cpp:69` checks the return value of `bun_close_range` and falls back to the `fcntl`/`close` loop. The two startup and reload callers in `src/jsc/bindings/c-bindings.cpp` (`bun_initialize_process`, `on_before_reload_process_posix`) treat a failure as best effort. - Android's seccomp policy traps the syscall with `SECCOMP_RET_TRAP` (SIGSYS) instead of an errno. `bun_initialize_process` installs a SIGSYS handler (`onSIGSYS`, `src/jsc/bindings/c-bindings.cpp:310`) that turns a `SYS_SECCOMP` trap into a `-ENOSYS` return, so the same fallback runs. This landed in #46021 (commit 9b4284f788, after the 1.4.3 release). Issue #30766 tracked the Android crash.  An `#if defined(__ANDROID__)` early return would not change the old-kernel case. It would also o
 
-- **Issue #46166** (2026-10-21): **Bun.SQL: pg_terminate_backend on a live event loop wedges the pool ("connection must be a PostgresSQLConnection") and close() hangs**
-  *Symptoms*: ### What version of Bun is running?  1.4.2+744846f84  `bun-v1.4.3` (2026-10-10) is also before the pool rewrite that closed #45039. That rewrite is #45304, merged 2026-10-17, and it is not in a release.  ### What platform is your computer?  Linux 6.12.94+ x86_64. PostgreSQL 15.19.  ### What steps can reproduce the bug?  One pool does not show it. Four pools, each killed by its own connection, do. The event loop is never blocked (`spawnSync` is not used).  1. Start Postgres 15:     ```sh    docker run -d --name bun-sql-kill -e POSTGRES_PASSWORD=postgres -p 54329:5432 postgres:15    ```  2. Save this as `repro.ts`:     ```ts    import { SQL } from "bun";     const url = process.env.DATABASE_URL ?? "postgres://postgres:postgres@127.0.0.1:54329/postgres";     async function storm(wave: number, slot: number): Promise<boolean> {      const name = `repro-${wave}-${slot}-${Date.now() % 100000}`;      const admin = new SQL(url, { max: 1, connection: { application_name: `killer-${name}` } });      const sql = new SQL(url, {        max: 4,        idleTimeout: 0,        maxLifetime: 0,        connectionTimeout: 5,        connection: { application_name: name },      });      let stop = false;      const killer = (async () => {        while (!stop) {          try {            await admin.unsafe(              `select pg_terminate_backend(pid) from pg_stat_activity where application_name = '${name}'`,            );          } catch {            // the admin connection can blip; the pool unde
+- **Issue #46772** (2026-10-24): **Android: statx triggers SIGSYS under seccomp filter on older / vendor kernels**
+  *Symptoms*: ### Problem In `src/sys/lib.rs`, `statx_impl` is gated under `#[cfg(any(target_os = "linux", target_os = "android"))]`, invoking `lx::statx` directly.  On Android (particularly devices on kernels < 5.4, Android 9–11, or vendor-customized kernels), `statx` is blocked by the default unprivileged seccomp filter. When invoked: - The kernel does not return `ENOSYS` or `EPERM`. - Instead, the kernel delivers an uncatchable `SIGSYS` (Bad system call) signal, crashing the process immediately.  Because the signal terminates execution immediately, Bun's errno-based fallback logic never gets a chance to run.  ### Proposed Solution For `target_os = "android"`, skip the raw `statx` syscall entirely and route directly to `statx_fallback` (POSIX `stat` / `lstat` / `fstatat`).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -999,962 +1001,363 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2a5cbbcb` (2026-10-22)
-**Commit Message**: Fix regressions since 1.4.3 in bun install, bunx, node:fs and node:http2, and update brotli (#46392)
+### Incident Patch 1: `1917b1aa` (2026-10-23)
+**Commit Message**: Build with Bun 1.4.4, update Node.js to 26.12.1 (#46533)
 
 ### What does this PR do?
 
-Fixes regressions since 1.4.3 that are still on `main` (none of them was
-released), and updates brotli.
+Three things, in one PR because each of them bakes the CI images again.
 
-Fixes #46352
+**1. Bun 1.4.2 → 1.4.4 for the repository's own tooling.** The CI
+machine images (`pins.bun`), the macOS host setup script
+(`scripts/darwin-ci/host.sh`), and the four GitHub workflows that pin a
+version. Workflows on `canary` or `latest` are unchanged.
 
-- **`bun install --frozen-lockfile` and `bun ci` refused lockfiles that
-1.4.3 wrote**, so CI went red on the upgrade with nothing else changed:
-- a project with `overrides` whose lockfile has a version that an
-override doesn't allow. A frozen install installs what the lockfile says
-again. A plain `bun install` still applies the override. (from #45307)
-- a monorepo whose root names one of its own workspaces a second time:
-through an `npm:` alias, as an optional peer, by a dist-tag with
-`bun.lockb`, in two dependency groups, or by `file:` under another name.
-In one of these shapes a plain `bun install` also exited 1, or swapped
-the package.
-- **`bun update --interactive` could panic** (`index out of bounds`)
-after it had rewritten `package.json` and before it saved the lockfile,
-most often in a workspace with a `catalog`. (from #45307)
-- **`npx --quiet`, `-q`, `--no` and npx's other flags in a
-`package.json` script exited 1** under `bun run
+**2. Node.js 26.3.0 → 26.12.1, a security release. This one is visible
+to users.** `pins.nodejs` is the Node.js on the CI machines, the headers
+Bun compiles against, and the version Bun reports:
 
-**File**: `docs/pm/overrides.mdx` (modified, +1/-1)
+| | before | after |
+|---|---|---|
+| `process.version` | `v26.3.0` | `v26.12.1` |
+| `process.versions.v8` | `14.6.202.34-node.20` | `14.6.202.34-node.40`
+|
+| `process.versions.modules` / `.napi` | `147` / `10` | unchanged |
+
+In the new headers `node::ObjectWrap` calls `AddEnvironmentCleanupHook`
+and `RemoveEnvironmentCleanupHook`. Bun already exports both on every
+platform.
+
+Five test files use the real `node` as a reference or as the server, and
+failed once the CI machines had 26.12.1. Each was traced to the release
+that changed the behavior, by running the test or reading the headers
+
+**File**: `.github/workflows/release.yml` (modified, +5/-5)
 ```diff
-@@ -60,7 +60,7 @@ Add `bar` to the `"overrides"` field in `package.json`. Bun defers to the specif
- 
- Bun only reads overrides from the root `package.json`, not from workspace packages. Overrides apply to `peerDependencies` as well.
- 
--Every install also checks the lockfile against the overrides whose value is a version or a range. If the lockfile has a version that such an override does not allow (after a merge, or a migration from another package manager), `bun install` resolves that package again, and `bun install --frozen-lockfile` fails and names it. The check leaves these entries as they are:
-+`bun install` also checks the lockfile against the overrides whose value is a version or a range. If the lockfile has a version that such an override does not allow (after a merge, or a migration from another package manager), `bun install` resolves that package again. `bun install --frozen-lockfile` installs the version in the lockfile. The check leaves these entries as they are:
- 
- - a bundled dependency and an optional peer dependency
- - a peer or optional dependency that shares its version with a dependency the override does not apply to
+@@ -75,7 +75,7 @@ jobs:
+       - name: Setup Bun
+         uses: ./.github/actions/setup-bun
+         with:
+-          bun-version: "1.4.2"
++          bun-version: "1.4.4"
+       - name: Install Dependencies
+         run: bun install
+       - name: Sign Release
+@@ -104,7 +104,7 @@ jobs:
+       - name: Setup Bun
+         uses: ./.github/actions/setup-bun
+         with:
+-          bun-version: "1.4.2"
++          bun-version: "1.4.4"
+       - name: Install Dependencies
+         run: bun install
+       - name: Release
+@@ -135,7 +135,7 @@ jobs:
+         if: ${{ env.BUN_VERSION != 'canary' }}
+         uses: ./.github/actions/setup-bun
+         with:
+-          bun-version: "1.4.2"
++          bun-version: "1.4.4"
+       - name: Setup Bun
+         if: ${{ env.BUN_VERSION == 'canary' }}
+         uses: ./.github/actions/setup-bun
+@@ -189,7 +189,7 @@ jobs:
+       - name: Setup Bun
+         uses: ./bun/.github/actions/setup-bun
+         with:
+-          bun-version: "1.4.2"
++          bun-version: "1.4.4"
+       - id: bun-version
+         run: echo "BUN_VERSION=${BUN_VERSION#bun-v}" >> "$GITHUB_OUTPUT"
+       - name: Update bun-types version in package.json
+@@ -333,7 +333,7 @@ jobs:
+       - name: Setup Bun
+         uses: ./.github/actions/setup-bun
+         with:
+-          bun-version: "1.4.2"
++          bun-version: "1.4.4"
+       - name: Install Dependencies
+         run: bun install
+       - name: Release
 ```
 
-**File**: `packages/bun-usockets/src/node_quic_shim.c` (modified, +4/-3)
+**File**: `.github/workflows/rust-lints.yml` (modified, +1/-1)
 ```diff
-@@ -318,10 +318,11 @@ int us_nq_stream_send_headers(lsquic_stream_t *s, const char *buf, size_t len,
-         if (i >= len) break;
-         i++;
-         unsigned char flags = (i < len) ? (unsigned char) buf[i++] : 0;
--        if (name_len > LSXPACK_MAX_STRLEN || val_len > LSXPACK_MAX_STRLEN)
-+        if (name_len >= LSXPACK_MAX_STRLEN || val_len > LSXPACK_MAX_STRLEN)
-             return -1;
--        lsxpack_header_set_offset2(&hdrs[count], buf, name_off, name_len,
--                                   val_off, val_len);
-+        /* lsxpack asserts that offsets fit lsxpack_strlen_t, so they count from this pair's start. */
-+        lsxpack_header_set_offset2(&hdrs[count], buf + name_off, 0, name_len,
-+                                   val_off - name_off, val_len);
-         if (flags & 1) {
-             hdrs[count].flags = LSXPACK_NEVER_INDEX;
-             hdrs[count].indexed_type = 2;
+@@ -33,7 +33,7 @@ concurrency:
+   cancel-in-progress: true
+ 
+ env:
+-  BUN_VERSION: "1.4.2"
++  BUN_VERSION: "1.4.4"
+   LLVM_VERSION_MAJOR: "23"
+   # Pin the toolchain explicitly so rustup ignores rust-toolchain.toml's
+   # `targets` list (11 cross triples ≈ 450 MB of prebuilt std we don't need
 ```
 
-**File**: `packages/bun-usockets/src/quic.c` (modified, +76/-19)
+**File**: `.github/workflows/source-lints.yml` (modified, +1/-1)
 ```diff
-@@ -32,7 +32,14 @@ extern int us_ssl_ctx_set_verify_signature_algorithms(SSL_CTX *ctx);
- extern int us_x509_verify_cert(X509_STORE_CTX *ctx, int purpose);
- extern struct us_bun_verify_error_t us_ssl_socket_verify_error_from_ssl(SSL *ssl);
+@@ -61,7 +61,7 @@ on:
+   merge_group:
  
-+extern size_t BUN_DEFAULT_MAX_HTTP_HEADER_SIZE;
-+
- #define US_QUIC_READ_BUF (16 * 1024)
-+/* A header set over max_size or max_fields fails its stream. One over this
-+ * multiple of either closes the connection, as in Http2Context.h, which has
-+ * the same floor for the size. */
-+#define US_QUIC_HSET_HARD_CAP_FACTOR 2
-+#define US_QUIC_HSET_HARD_CAP_FLOOR (16 * 1024)
+ env:
+-  BUN_VERSION: "1.4.2"
++  BUN_VERSION: "1.4.4"
  
- /* Incoming header set: contiguous storage + index. Created before the
-  * stream object exists (lsquic decodes headers ahead of on_new_stream),
-@@ -44,6 +51,11 @@ struct us_quic_hset {
-     struct us_quic_header_t *headers;
-     unsigned int count, hcap;
-     int is_server;
-+    /* Size as RFC 9114 §4.2.2 counts it, and the context's max_header_set_size. */
-+    size_t size, max_size;
-+    /* Fields decoded so far, pseudo-headers and dropped ones included. */
-+    size_t fields, max_fields;
-+    int too_large;
- };
- 
- struct us_quic_socket_context_s {
-@@ -59,6 +71,8 @@ struct us_quic_socket_context_s {
-      * us_quic_engine_leave finishes it. */
-     int shutdown_pending;
-     int is_client;
-+    /* lsquic only advertises es_max_header_list_size. This is what us_quic_hsi_process enforces. */
-+    unsigned int max_header_set_size;
-     unsigned int conn_count;
-     unsigned int conn_ext_size;
-     /* Stream bytes written since the last process_conns. Once this exceeds
-@@ -468,10 +482,19 @@ static int us_quic_alpn_select(SSL *ssl, const unsigned char **out, unsigned cha
- 
- /* ───── header-set interface ───── */
- 
-+static size_t us_quic_hset_hard_cap(const struct us_quic_hset *h) {
-+    size_t cap = US_QUIC_HSET_HARD_CAP_FACTOR * h->max_size;
-+    return cap > US_QUIC_HSET_HARD_CAP_FLOOR ? cap : US_QUIC_HSET_HARD_CAP_FLOOR;
-+}
-+
- static void *us_quic_hsi_create(void *hsi_ctx, lsquic_stream_t *s, int is_push) {
-     (void) s; (void) is_push;
-     struct us_quic_hset *h = (struct us_quic_hset *) us_calloc(1, sizeof(struct us_quic_hset));
--    if (h) h->is_server = !((us_quic_socket_context_t *) hsi_ctx)->is_client;
-+    if (!h) return NULL;
-+    h->is_server = !((us_quic_socket_context_t *) hsi_ctx)->is_client;
-+    h->max_size = ((us_quic_socket_context_t *) hsi_ctx)->max_header_set_size;
-+    /* Only max_size bounds the fields of a response, as in the HTTP/2 client. */
-+    h->max_fields = h->is_server ? US_QUIC_MAX_REQUEST_FIELDS : h->max_size;
-     return h;
- }
- 
-@@ -499,24 +522,26 @@ static int us_quic_field_is_malformed(const struct lsxpack_header *hdr) {
- 
- static struct lsxpack_header *us_quic_hsi_prepare(void *hset_p, struct lsxpack_header *hdr, size_t space) {
-     struct us_quic_hset *h = (struct us_quic_hset *) hset_p;
--    if (space > 64 * 1024) return NULL;
--    unsigned int need = h->len + (unsigned int) space;
-+    /* `space` is lsqpack's estimate and can exceed what the field decodes to. */
-+    size_t need = h->len + space;
-+    if (space > LSXPACK_MAX_STRLEN || need > us_quic_hset_hard_cap(h)) return NULL;
-     if (need > h->cap) {
--        unsigned int ncap = h->cap ? h->cap : 512;
-+        size_t ncap = h->cap ? h->cap : 512;
-         while (ncap < need) ncap *= 2;
-         char *nb = (char *) us_realloc(h->buf, ncap);
-         if (!nb) return NULL;
-         h->buf = nb;
--        h->cap = ncap;
-+        h->cap = (unsigned int) ncap;
-     }
-     if (hdr == NULL) {
-         hdr = &h->scratch;
--        lsxpack_header_prepare_decode(hdr, h->buf, h->len, space);
-+        /* Offsets count from this field's start: lsxpack asserts that they fit lsxpack_strlen_t. */
-+        lsxpack_header_prepare_decode(hdr, h->buf + h->len, 0, space);
-     } else {
-         /* Resize: lsqpack already wrote part of name/value into the previous
-          * buffer; only the storage may move. Preserve offsets, repoint buf,
-          * and report the larger window via val_len. */
--        hdr->buf = h->buf;
-+        hdr->buf = h->buf + h->len;
-         hdr->val_len = (lsxpack_strlen_t) space;
-     }
-     return hdr;
-@@ -525,6 +550,15 @@ static struct lsxpack_header *us_quic_hsi_prepare(void *hset_p, struct lsxpack_h
- static int us_quic_hsi_process(void *hset_p, struct lsxpack_header *hdr) {
-     struct us_quic_hset *h = (struct us_quic_hset *) hset_p;
-     if (hdr == NULL) return 0; /* end of headers */
-+    h->size += (size_t) hdr->name_len + hdr->val_len + 32;
-+    h->fields++;
-+    if (h->size > h->max_size || h->fields > h->max_fields) {
-+        /* Drop the field but let lsqpack finish the block, so that it still
-+         * acknowledges the block and the connection stays usable. */
-+        h->too_large = 1;
-+        return h->size > us_quic_hset_hard_cap(h) ||
-+            h->fields > US_QUIC_HSET_HARD_CAP_FACTOR * h->max_fields ? -1 : 0;
-+    }
-     if (h->is_server && us_quic_field_is_malformed(hdr)) return 1
+ jobs:
+   source-lints:
 ```
 
-**File**: `packages/bun-usockets/src/quic.h` (modified, +8/-0)
+**File**: `.github/workflows/vscode-release.yml` (modified, +1/-1)
 ```diff
-@@ -144,7 +144,11 @@ void us_quic_stream_flush(us_quic_stream_t *s);
- void us_quic_stream_shutdown_read(us_quic_stream_t *s);
- void us_quic_stream_close(us_quic_stream_t *s);
- void us_quic_stream_reset(us_quic_stream_t *s);
-+void us_quic_stream_reset_internal_error(us_quic_stream_t *s);
- int us_quic_stream_has_unacked(us_quic_stream_t *s);
-+/* The code of the last RESET_STREAM or STOP_SENDING on the stream, 0 without one.
-+ * on_stream_close can still read it. */
-+uint64_t us_quic_stream_reset_code(us_quic_stream_t *s);
+@@ -23,7 +23,7 @@ jobs:
+       - name: Setup Bun
+         uses: ./.github/actions/setup-bun
+         with:
+-          bun-version: "1.4.2"
++          bun-version: "1.4.4"
  
- void *us_quic_stream_ext(us_quic_stream_t *s);
- us_quic_socket_t *us_quic_stream_socket(us_quic_stream_t *s);
-@@ -160,6 +164,10 @@ void us_quic_loop_flush_if_pending(struct us_loop_t *loop);
- /* Incoming headers — valid from on_stream_headers until on_stream_close. */
- unsigned int us_quic_stream_header_count(us_quic_stream_t *s);
- const struct us_quic_header_t *us_quic_stream_header(us_quic_stream_t *s, unsigned int i);
-+/* Fields a request may have, pseudo-headers included. */
-+#define US_QUIC_MAX_REQUEST_FIELDS 200
-+/* The header set exceeds the size or the field count this endpoint accepts and is incomplete. */
-+int us_quic_stream_headers_too_large(us_quic_stream_t *s);
- 
- /* Connection accessors */
- void *us_quic_socket_ext(us_quic_socket_t *s);
+       - name: Install dependencies (root)
+         run: bun install
 ```
 
-**File**: `packages/bun-uws/src/Http3Context.h` (modified, +7/-0)
+**File**: `scripts/build/ci-images/spec.ts` (modified, +50/-23)
 ```diff
-@@ -10,6 +10,8 @@
+@@ -111,34 +111,34 @@ const prefetchTriggerVersion = 1;
+  */
+ export const pins = {
+   nodejs: {
+-    version: "26.3.0",
++    version: "26.12.1",
+     nodeGypInstallVersion: "11",
+     // SHASUMS256.txt beside the files; unofficial-builds.nodejs.org has its own for the musl builds.
+     sha256: {
+-      headers: "fca113c5d5add8bfb1aa31129a24acb8d49aa69ab3c22a2cc569aec88960526d",
+-      "linux-x64": "a6e65cc653e40c1653b77742f9185dbce3ff1f99fa2746d211bddb53530ef206",
+-      "linux-aarch64": "b2e01f65905c24cb5dd19c4cfbfefe0118e0504c170cc18beac343a2abbb59bd",
+-      "linux-x64-musl": "6ad2e7c0cf693fecc2febb1abf753940244f3baaa04626361ed52d64843ffc67",
+-      "linux-aarch64-musl": "2487ff4f03dbd8998a3778886d50c1ee5f13a3b9cefbfa3aed02c32dbf1e1fb8",
+-      "darwin-x64": "7453bd54a17bdc656e2e784d702f6eeb224fb517965e6f8c5a31a88c83d3804c",
+-      "darwin-aarch64": "77ef7f7a15aa757c2ca19d63cf41c8d9eb3b18590ebc6883871310787d8c6b6c",
++      headers: "a983cdcea96e85d137b9b807cc776bb5564fc9e3e1c9185d59bbfaa781efd08f",
++      "linux-x64": "0fd1eb7770598f52a21995edf6ed35fc690400fa437c2386af329519e9143132",
++      "linux-aarch64": "a6c01af459dd8972ab3fb08ee5da81244d26ba8c4944a62d5bbba8c597ae154f",
++      "linux-x64-musl": "8bf9cc0e7f8e3c7ec5368dca19242cad651b6b09d35bcdcf290ac3f80925e8dd",
++      "linux-aarch64-musl": "c3694551f6cb888fe0befb4cb2e13ffe45b0bb2528ec141e7c3a29a7d7974d13",
++      "darwin-x64": "b85c2ea4420ad0bc4abf2dc6cf1f55130ed681f1cabf60cf3f526e4c9e2712ff",
++      "darwin-aarch64": "1901d539912c02afa10d1cc126943a8855a7eedebe830119463470db5e6c59e8",
+       // node.lib: Scoop installs Node.js itself on Windows.
+-      "windows-x64": "2f71186cc7649a7406b1616566700e397e9dd52bd7267440d78d78a1725bd312",
+-      "windows-aarch64": "bd474f1ca8c44b2ab10e908c14447c5d91e1bac3f3a4d3141c78b6dbb5d1a253",
++      "windows-x64": "caad0090dc3add94c06abd01e395e8ec0f1586c10071bda1f99480445d695f6f",
++      "windows-aarch64": "45084cbfc0170d7a30b29ab1eeeb2b0d770995ade0a13a4cc82cf31189f95c9f",
+     },
+   },
+   bun: {
+-    version: "1.4.2",
++    version: "1.4.4",
+     // The release's SHASUMS256.txt.
+     sha256: {
+-      "linux-x64": "36368faef7527875d5ffa52e53cd48021741f2a83eb6208a8dd64068d422a913",
+-      "linux-aarch64": "54328bbc2d9c8e0c9f892c544d66c57a83b84139e34909e5ee81758f1ac8fda7",
+-      "linux-x64-musl": "4835eca59d6da70f4674f5642f6e459dcadab773695b2ed9922d131057989742",
+-      "linux-aarch64-musl": "71760b6c8ea30623b81a4907cb815d48e2ea266f2e73e751534a44a0607950df",
+-      "darwin-x64": "80520d7e17526308c9185d261679ac6d27798d3803a0e9f7ff9121ab8affb012",
+-      "darwin-aarch64": "90987a3a16d7db556d886ac3d551e7b6d3edf0a1cf43acaed622e8676be1d12f",
+-      "windows-x64": "ce4c17497b2f29712a99d3d53f028de28cd42e3bacb8589599e7f000e49b6405",
+-      "windows-aarch64": "a7a16b876a305fd1029c66dbd27007b4f6112ae896532f675878731a21e50cfd",
++      "linux-x64": "bf8ccbfb2b0b80159e0f9a6d15c55317add8077534dbc6130a3edb52fccb395c",
++      "linux-aarch64": "baa6bb36f51d6e58561e02bbea825038a9df454f673d6d776e8bbf86f8c7850e",
++      "linux-x64-musl": "a5a8ccc5e74dcb883fe974f125a7bdb3b41e5195ed1b870e73f17effd3eb2b2d",
++      "linux-aarch64-musl": "57f01b02ac7113c61c935f28f38c2eab849e3c970dab21f8b640a87b1ef65009",
++      "darwin-x64": "50a3491f73abc2fe81673171a85762d3bc2cc1680ccecadd983de99adf77977e",
++      "darwin-aarch64": "c240d7f0ccb90c263a849fcdb09b7ee62630d921348ed6aafda86b9d577bc510",
++      "windows-x64": "cd2c0fccc78f3ede1f50ca827a15f063eda13d4d150a3d0674f4f6e323d864a5",
++      "windows-aarch64": "2d57a0eec0cb44d95c918c3f9734f60455a1306ae5085d76fc68f44e3ee30d09",
+     },
+   },
+   curlH3: {
+@@ -1944,6 +1944,9 @@ function visualStudio(): Tool {
+         installer,
+         `--passive --norestart --wait --force --locale en-US ${components.map(id => `--add ${id}`).join(" ")} --includeRecommended`,
+         [0, 3010],
++        // dd_<program>_<time>.log and its _errors.log. Not dd_setup_<time>_<n>_<package>.log: there are hundreds,
++        // and an MSI's ends with every property of the machine and the user.
++        [printEndOfLogs(environment("TEMP"), /^dd_[a-z_]+_\d+(_errors)?\.log$/)],
+       ),
+     ],
+   };
+@@ -2960,12 +2963,36 @@ const scheduledTaskAtStartup = (options: { name: string; program: string; argume
+   ),
+ ];
  
- namespace uWS {
- 
-+static_assert(US_QUIC_MAX_REQUEST_FIELDS == UWS_HTTP_MAX_HEADERS_COUNT, "HTTP/3 has the field limit of HTTP/1 and HTTP/2");
-+
- struct Http3Context {
- 
-     static Http3Context *create(Loop *loop, us_bun_socket_context_options_t options, unsigned idleTimeoutSecs = 0) {
-@@ -34,6 +36,11 @@ struct Http3Context {
-             if (rd->state != 0) return;
-             rd->reset();
- 
-+            if (us_quic_stream_headers_too_large(s)) {
-+                res->writeStatus("431 Request Header Fields Too Large")->end();
-+                return;
-+            }
-+
-             Http3Request req(s);
-             if (req.getHeader("expect") == "100-continue") res->writeContinue();
-             cd->router.getUserData() = {res, &req};
+-/** An installer that reports through its exit code. 3010: installed, and a restart is needed; the bake ends with one. */
++/**
++ * An installer that reports through its exit code. 3010: installed, and a restart is needed; the bake ends with one.
++ * `onFailure` runs before the bake fails: the machine is deleted next, and what the installer wrote with it.
++ */
+ const runInstaller =
+-  (what: string, program: Value, argumentList: Value, okExitCodes: number[] = [0]): Step =>
++  (what: string, program: Value, argumentList: Value, okExitCodes: number[] = [0], onFailure: Step[] = []): Step =>
++  c => {
++    const failed = okExitCodes.map(code => `$process.ExitCode -ne ${code}`).join(" -and ");
++    const fail = `throw "bootstr
 ```
 
-**File**: `packages/bun-uws/src/Http3Response.h` (modified, +5/-2)
+**File**: `scripts/build/deps/nodejs-headers.ts` (modified, +1/-1)
 ```diff
-@@ -209,8 +209,11 @@ struct Http3Response {
-             h.name = base + (uintptr_t) h.name;
-             h.value = base + (uintptr_t) h.value;
-         }
--        us_quic_stream_send_headers((us_quic_stream_t *) this,
--            d->hdrs.mutableSpan().data(), (unsigned) d->hdrs.size(), endStream);
-+        if (us_quic_stream_send_headers((us_quic_stream_t *) this,
-+                d->hdrs.mutableSpan().data(), (unsigned) d->hdrs.size(), endStream) != 0) {
-+            /* Later writes fail, and on_stream_close reports the abort as it does for a reset by the peer. */
-+            us_quic_stream_reset_internal_error((us_quic_stream_t *) this);
-+        }
-         d->hdrBuf.shrink(0);
-         d->hdrs.shrink(0);
-     }
+@@ -22,7 +22,7 @@ export const NODEJS_VERSION = pins.nodejs.version;
+ export const NODEJS_ABI_VERSION = "147";
+ 
+ /** V8 version reported by process.versions.v8 — must match the pinned Node.js version's. */
+-export const NODEJS_V8_VERSION = "14.6.202.34-node.20";
++export const NODEJS_V8_VERSION = "14.6.202.34-node.40";
+ 
+ export const nodejsHeaders: Dependency = {
+   name: "nodejs",
 ```
 
-**File**: `scripts/build/deps/brotli.ts` (modified, +1/-1)
+**File**: `scripts/darwin-ci/host.sh` (modified, +3/-3)
 ```diff
-@@ -10,7 +10,7 @@
+@@ -8,9 +8,9 @@ sudo -n true 2>/dev/null || { echo "needs passwordless sudo for $(whoami)"; exit
+ brew_installer_commit=a34ae4ee9151cbce4c3b33bca7043a972b7ae9a5
+ brew_installer_sha256=12479a24be3f5307eecac7cde670fad7118640f031229e964f544b1367b52a41
+ # https://github.com/oven-sh/bun/releases/download/bun-v$bun_version/SHASUMS256.txt
+-bun_version=1.4.2
+-bun_sha256_aarch64=90987a3a16d7db556d886ac3d551e7b6d3edf0a1cf43acaed622e8676be1d12f
+-bun_sha256_x64=80520d7e17526308c9185d261679ac6d27798d3803a0e9f7ff9121ab8affb012
++bun_version=1.4.4
++bun_sha256_aarch64=c240d7f0ccb90c263a849fcdb09b7ee62630d921348ed6aafda86b9d577bc510
++bun_sha256_x64=50a3491f73abc2fe81673171a85762d3bc2cc1680ccecadd983de99adf77977e
  
- import type { Dependency, DirectBuild } from "../source.ts";
- 
--const BROTLI_COMMIT = "028fb5a23661f123017c060daa546b55cf4bde29"; // v1.2.0
-+const BROTLI_COMMIT = "db24a98aed38a16de78cc05ca15cdd8dc2a0d92d"; // v1.2.1
- 
- // prettier-ignore
- const SOURCES = [
-```
-
-**File**: `src/brotli_sys/brotli_c.rs` (modified, +1/-0)
-```diff
-@@ -154,6 +154,7 @@ pub enum BrotliDecoderErrorCode2 {
-     ERROR_FORMAT_PADDING_1 = -14,
-     ERROR_FORMAT_PADDING_2 = -15,
-     ERROR_FORMAT_DISTANCE = -16,
-+    ERROR_FORMAT_BLOCK_SWITCH = -17,
-     ERROR_COMPOUND_DICTIONARY = -18,
-     ERROR_DICTIONARY_NOT_SET = -19,
-     ERROR_INVALID_ARGUMENTS = -20,
-```
-
----
-
-### Incident Patch 2: `7a748413` (2026-10-22)
-**Commit Message**: http3: lift lsquic's limits on header sizes, and honor the stream ID of a GOAWAY (#46436)
-
-### What does this PR do?
-
-Follow-up to #46392. It lifts limits of the HTTP/3 layer (`Bun.serve({
-http3: true })` and `fetch` with `protocol: "http3"`) that come from
-lsquic. Each change to lsquic is a patch file of its own in
-`patches/lsquic/`.
-
-- **Header blocks of more than 64 KB are sent.** lsquic encoded a header
-block into a fixed 64 KB buffer and failed above that, so such a
-response was reset and such a request was rejected with
-`HTTP3HeaderEncodingError`. A larger block now gets a buffer sized from
-the header list. The common case keeps the stack buffer.
-- **A header name or value of more than 65,535 bytes is sent and
-received.** lsxpack held string lengths in 16 bits, so sending one was
-refused and receiving one closed the connection. lsquic, ls-qpack,
-ls-hpack and Bun's own code are now built with
-`LSXPACK_MAX_STRLEN=UINT32_MAX`, set in one place in the build scripts,
-and every file of ours that touches the struct has a `static_assert` on
-its layout. What bounds a field now are the limits from #46392. HTTP/2
-keeps its 65,535-byte limit per string, by an explicit constant. `fetch`
-a
-
-**File**: `packages/bun-usockets/src/node_quic_shim.c` (modified, +10/-2)
-```diff
-@@ -184,6 +184,10 @@ static void nq_on_path_switch(lsquic_conn_t *c, int validated, int is_preferred,
-     }
- }
- 
-+/* lsquic is built with the same width, see lsxpackDefines in scripts/build/deps/lshpack.ts. */
-+_Static_assert(sizeof(lsxpack_strlen_t) == 4 && offsetof(struct lsxpack_header, chain_next_idx) == sizeof(char *) + 24,
-+    "LSXPACK_MAX_STRLEN must be UINT32_MAX");
-+
- #define US_NQ_HSET_MIN_BUF 256
- 
- struct nq_hset {
-@@ -216,10 +220,14 @@ static struct lsxpack_header *nq_hsi_prepare_decode(void *hset,
-                                                     struct lsxpack_header *hdr,
-                                                     size_t space) {
-     struct nq_hset *h = hset;
--    if (space > LSXPACK_MAX_STRLEN)
-+    /* `space` covers the bytes lsqpack has in hand (patches/lsqpack/decode-room-for-bytes-in-hand.patch).
-+     * It is an estimate and can exceed what they decode to. A field over
-+     * max_bytes is decoded and dropped, so it needs room as well. */
-+    if (space > (h->max_bytes > UINT16_MAX / 2 ? 2 * (size_t) h->max_bytes : UINT16_MAX))
-         return NULL;
-     if (space > h->decode_cap) {
--        size_t want = space < US_NQ_HSET_MIN_BUF ? US_NQ_HSET_MIN_BUF : space;
-+        size_t want = h->decode_cap ? h->decode_cap : US_NQ_HSET_MIN_BUF;
-+        while (want < space) want *= 2;
-         char *nb = realloc(h->decode_buf, want);
-         if (!nb) return NULL;
-         h->decode_buf = nb;
-```
-
-**File**: `packages/bun-usockets/src/quic.c` (modified, +27/-13)
-```diff
-@@ -34,6 +34,10 @@ extern struct us_bun_verify_error_t us_ssl_socket_verify_error_from_ssl(SSL *ssl
- 
- extern size_t BUN_DEFAULT_MAX_HTTP_HEADER_SIZE;
- 
-+/* lsquic is built with the same width, see lsxpackDefines in scripts/build/deps/lshpack.ts. */
-+_Static_assert(sizeof(lsxpack_strlen_t) == 4 && offsetof(struct lsxpack_header, chain_next_idx) == sizeof(char *) + 24,
-+    "LSXPACK_MAX_STRLEN must be UINT32_MAX");
-+
- #define US_QUIC_READ_BUF (16 * 1024)
- /* A header set over max_size or max_fields fails its stream. One over this
-  * multiple of either closes the connection, as in Http2Context.h, which has
-@@ -522,9 +526,10 @@ static int us_quic_field_is_malformed(const struct lsxpack_header *hdr) {
- 
- static struct lsxpack_header *us_quic_hsi_prepare(void *hset_p, struct lsxpack_header *hdr, size_t space) {
-     struct us_quic_hset *h = (struct us_quic_hset *) hset_p;
--    /* `space` is lsqpack's estimate and can exceed what the field decodes to. */
--    size_t need = h->len + space;
--    if (space > LSXPACK_MAX_STRLEN || need > us_quic_hset_hard_cap(h)) return NULL;
-+    /* `space` covers the bytes lsqpack has in hand (patches/lsqpack/decode-room-for-bytes-in-hand.patch),
-+     * so the buffer grows with what the peer has sent. It is an estimate and can exceed what they decode to. */
-+    size_t need = h->len + space, hard_cap = us_quic_hset_hard_cap(h);
-+    if (need > hard_cap) return NULL;
-     if (need > h->cap) {
-         size_t ncap = h->cap ? h->cap : 512;
-         while (ncap < need) ncap *= 2;
-@@ -533,16 +538,18 @@ static struct lsxpack_header *us_quic_hsi_prepare(void *hset_p, struct lsxpack_h
-         h->buf = nb;
-         h->cap = (unsigned int) ncap;
-     }
-+    /* The whole buffer, so that lsqpack doesn't come back for every few bytes. */
-+    size_t room = (h->cap < hard_cap ? h->cap : hard_cap) - h->len;
-     if (hdr == NULL) {
-         hdr = &h->scratch;
-         /* Offsets count from this field's start: lsxpack asserts that they fit lsxpack_strlen_t. */
--        lsxpack_header_prepare_decode(hdr, h->buf + h->len, 0, space);
-+        lsxpack_header_prepare_decode(hdr, h->buf + h->len, 0, room);
-     } else {
-         /* Resize: lsqpack already wrote part of name/value into the previous
-          * buffer; only the storage may move. Preserve offsets, repoint buf,
-          * and report the larger window via val_len. */
-         hdr->buf = h->buf + h->len;
--        hdr->val_len = (lsxpack_strlen_t) space;
-+        hdr->val_len = (lsxpack_strlen_t) room;
-     }
-     return hdr;
- }
-@@ -740,6 +747,10 @@ static void us_quic_on_read(lsquic_stream_t *stream, lsquic_stream_ctx_t *h) {
-         lsquic_stream_wantread(stream, 0);
-         lsquic_stream_shutdown(stream, 0);
-         if (ctx->on_stream_data) ctx->on_stream_data(s, ctx->read_buf, 0, 1);
-+    } else if (r < 0 && errno == ECONNRESET) {
-+        /* lsquic resets a request above the id of a GOAWAY without on_reset,
-+         * and calls on_read on every tick until the stream is closed. */
-+        lsquic_stream_close(stream);
-     }
- }
- 
-@@ -772,8 +783,9 @@ static void us_quic_on_reset(lsquic_stream_t *stream, lsquic_stream_ctx_t *h, in
-      *         lsquic already queues RESET_STREAM for our send side; the
-      *         read half stays open so the response/request that arrived
-      *         alongside STOP_SENDING is still delivered. Closing here
--     *         would drop it. */
--    if (h && stream && how == 0) lsquic_stream_close(stream);
-+     *         would drop it. H3_REQUEST_REJECTED comes with no response. */
-+    if (h && stream && (how == 0 || lsquic_stream_get_error_code(stream) == US_QUIC_H3_REQUEST_REJECTED))
-+        lsquic_stream_close(stream);
- }
- 
- /* ───── public API ───── */
-@@ -1186,10 +1198,8 @@ int us_quic_stream_send_headers(us_quic_stream_t *s,
-      * so each pair has to be contiguous. The caller hands us arbitrary
-      * pointers, so flatten here. */
-     size_t total = 0;
--    for (unsigned int i = 0; i < count; i++) {
--        if (headers[i].name_len > LSXPACK_MAX_STRLEN || headers[i].value_len > LSXPACK_MAX_STRLEN) return -1;
-+    for (unsigned int i = 0; i < count; i++)
-         total += headers[i].name_len + headers[i].value_len;
--    }
- 
-     char stackbuf[1024];
-     char *buf = total <= sizeof(stackbuf) ? stackbuf : (char *) us_malloc(total);
-@@ -1285,6 +1295,11 @@ uint64_t us_quic_stream_reset_code(us_quic_stream_t *s) {
-     return s->stream ? lsquic_stream_get_error_code(s->stream) : 0;
- }
- 
-+int us_quic_stream_refused_by_goaway(us_quic_stream_t *s) {
-+    return s->stream &&
-+        lsquic_stream_id(s->stream) > lsquic_conn_goaway_stream_id(lsquic_stream_conn(s->stream));
-+}
-+
- void *us_quic_stream_ext(us_quic_stream_t *s) { return s + 1; }
- 
- us_quic_socket_t *us_quic_stream_socket(us_quic_stream_t *s) {
-@@ -1406,10 +1421,9 @@ us_quic_socket_context_t *us_create_quic_client_context(
-     lsquic_engine_init_settings(&ctx->settings, LSENG_HTTP);
-     ctx->settings.es_versions = (1u << LSQVER_I00
-```
-
-**File**: `packages/bun-usockets/src/quic.h` (modified, +6/-0)
-```diff
-@@ -146,9 +146,15 @@ void us_quic_stream_close(us_quic_stream_t *s);
- void us_quic_stream_reset(us_quic_stream_t *s);
- void us_quic_stream_reset_internal_error(us_quic_stream_t *s);
- int us_quic_stream_has_unacked(us_quic_stream_t *s);
-+/* RFC 9114 §8.1: the server did no application processing. */
-+#define US_QUIC_H3_REQUEST_REJECTED 0x10B
- /* The code of the last RESET_STREAM or STOP_SENDING on the stream, 0 without one.
-  * on_stream_close can still read it. */
- uint64_t us_quic_stream_reset_code(us_quic_stream_t *s);
-+/* The server did not process a request above the id in its GOAWAY (RFC 9114 §5.2).
-+ * The RFC says the same of the request at the id, but servers on stock lsquic name
-+ * the last request they accepted. on_stream_close can still read it. */
-+int us_quic_stream_refused_by_goaway(us_quic_stream_t *s);
- 
- void *us_quic_stream_ext(us_quic_stream_t *s);
- us_quic_socket_t *us_quic_stream_socket(us_quic_stream_t *s);
-```
-
-**File**: `packages/bun-uws/src/Http2Context.h` (modified, +9/-4)
-```diff
-@@ -91,6 +91,11 @@ static constexpr uint32_t LOCAL_MAX_CONCURRENT_STREAMS = 256;
- /* Same cap as the HTTP/1 parser (UWS_HTTP_MAX_HEADERS_COUNT). */
- static constexpr size_t MAX_HEADER_FIELDS = 200;
- static constexpr unsigned MAX_SETTINGS_PER_FRAME = 32;
-+/* ls-hpack refuses to decode a longer name or value. */
-+static constexpr size_t MAX_STRING_LENGTH = UINT16_MAX;
-+/* ls-hpack is built with the same width, see lsxpackDefines in scripts/build/deps/lshpack.ts. */
-+static_assert(sizeof(lsxpack_strlen_t) == 4 && offsetof(lsxpack_header_t, chain_next_idx) == sizeof(char *) + 24,
-+    "LSXPACK_MAX_STRLEN must be UINT32_MAX");
- /* A header block may span this many CONTINUATION frames (the byte cap alone
-  * doesn't bound a flood of empty ones). */
- static constexpr unsigned MAX_CONTINUATION_FRAMES = 32;
-@@ -1090,8 +1095,8 @@ inline void Http2Connection::writeHeaderBlock(Http2Response *stream, bool endStr
-             p = buf.data() + used;
-             end = buf.data() + buf.size();
-         }
--        if (h.nameLen > LSXPACK_MAX_STRLEN / 2 || h.valueLen > LSXPACK_MAX_STRLEN / 2) {
--            /* Beyond ls-hpack's 16-bit lengths: literal without indexing, no Huffman. */
-+        if (h.nameLen > http2::MAX_STRING_LENGTH / 2 || h.valueLen > http2::MAX_STRING_LENGTH / 2) {
-+            /* Literal without indexing, no Huffman. */
-             *p++ = 0x00;
-             p = http2::hpackEncodeInteger(p, 0x00, 7, h.nameLen);
-             memcpy(p, base + h.nameOff, h.nameLen); p += h.nameLen;
-@@ -1568,11 +1573,11 @@ inline bool Http2Connection::handleHeaderBlock(uint32_t streamId, uint8_t flags,
-     while (p < end) {
-         lsxpack_header_t x;
-         size_t room = buf.size() - used;
--        lsxpack_header_prepare_decode(&x, buf.data() + used, 0, room > LSXPACK_MAX_STRLEN ? LSXPACK_MAX_STRLEN : room);
-+        lsxpack_header_prepare_decode(&x, buf.data() + used, 0, room > http2::MAX_STRING_LENGTH ? http2::MAX_STRING_LENGTH : room);
-         int rc = lshpack_dec_decode(&dec, &p, end, &x);
-         if (rc == LSHPACK_ERR_MORE_BUF) {
-             size_t need = used + x.val_len + 64;
--            if (x.val_len > LSXPACK_MAX_STRLEN || buf.size() >= hardCap || room >= LSXPACK_MAX_STRLEN) {
-+            if (x.val_len > http2::MAX_STRING_LENGTH || buf.size() >= hardCap || room >= http2::MAX_STRING_LENGTH) {
-                 return connectionError(http2::ERR_ENHANCE_YOUR_CALM);
-             }
-             buf.resize(std::min(hardCap, std::max(buf.size() * 2, need)));
-```
-
-**File**: `packages/h3blast/Makefile` (modified, +2/-0)
-```diff
-@@ -8,7 +8,9 @@ OBJ       := $(ROOT)/build/$(PROFILE)/obj/vendor
- VENDOR    := $(ROOT)/vendor
- 
- CC        ?= clang
-+# LSXPACK_MAX_STRLEN: as in scripts/build/deps/lshpack.ts, which built the objects.
- CFLAGS    := -std=c11 -O3 -g -Wall -Wextra -Wno-unused-parameter \
-+             -DLSXPACK_MAX_STRLEN=UINT32_MAX \
-              -I$(VENDOR)/lsquic/include \
-              -I$(VENDOR)/hdrhistogram/include \
-              -I$(VENDOR)/boringssl/include
-```
-
-**File**: `packages/h3blast/src/h3blast.c` (modified, +2/-0)
-```diff
-@@ -33,6 +33,8 @@
- 
- #include <lsquic.h>
- #include <lsxpack_header.h>
-+
-+_Static_assert(sizeof(lsxpack_strlen_t) == 4, "LSXPACK_MAX_STRLEN must be UINT32_MAX, as in the objects this links");
- #include <openssl/ssl.h>
- #include <hdr/hdr_histogram.h>
+ if [ "$(uname -m)" = arm64 ]; then prefix=/opt/homebrew; target=aarch64; bun_sha256=$bun_sha256_aarch64; else prefix=/usr/local; target=x64; bun_sha256=$bun_sha256_x64; fi
  
 ```
 
-**File**: `patches/lsqpack/decode-room-for-bytes-in-hand.patch` (added, +91/-0)
+**File**: `src/js/node/http2.ts` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,91 @@
-+--- a/lsqpack.c
-++++ b/lsqpack.c
-+@@ -3383,10 +3383,10 @@ guarantee_out_bytes (struct lsqpack_dec
-+     unsigned off;
-+ 
-+     assert(read_ctx->hbrc_out.xhdr);
-+-    assert(read_ctx->hbrc_out.state == XOUT_VALUE);
-+-    assert(read_ctx->hbrc_out.xhdr->val_offset
-+-                                    >= read_ctx->hbrc_out.xhdr->name_offset);
-+-    off = read_ctx->hbrc_out.xhdr->val_offset
-++    if (read_ctx->hbrc_out.state == XOUT_NAME)
-++        off = read_ctx->hbrc_out.off;
-++    else
-++        off = read_ctx->hbrc_out.xhdr->val_offset
-+             - read_ctx->hbrc_out.xhdr->name_offset + read_ctx->hbrc_out.off;
-+ 
-+     assert(read_ctx->hbrc_out.xhdr->val_len >= off);
-+@@ -3693,22 +3693,18 @@ parse_header_data (struct lsqpack_dec *d
-+                 if (DATA.left > LSXPACK_MAX_STRLEN)
-+                     RETURN_ERROR();
-+ #endif
-++                /* bun: the states that read the string ask for room, each time
-++                 * for the bytes they have in hand.
-++                 */
-+                 if (DATA.left)
-+                 {
-+                     if (DATA.is_huffman)
-+                     {
-+-                        if (0 != guarantee_out_bytes(dec, read_ctx,
-+-                                                    DATA.left + DATA.left / 2))
-+-                            RETURN_ERROR();
-+                         DATA.dec_huff_state.resume = 0;
-+                         DATA.state = DATA_STATE_READ_VAL_HUFFMAN;
-+                     }
-+                     else
-+-                    {
-+-                        if (0 != guarantee_out_bytes(dec, read_ctx, DATA.left))
-+-                            RETURN_ERROR();
-+                         DATA.state = DATA_STATE_READ_VAL_PLAIN;
-+-                    }
-+                 }
-+                 else if (0 == header_out_write_value(dec, read_ctx, 0, 1))
-+                     DATA.state = DATA_STATE_NEXT_INSTRUCTION;
-+@@ -3724,6 +3720,8 @@ parse_header_data (struct lsqpack_dec *d
-+             size = MIN((unsigned) (end - buf), DATA.left);
-+             if (size == 0)
-+                 RETURN_ERROR();
-++            if (0 != guarantee_out_bytes(dec, read_ctx, size + size / 2))
-++                RETURN_ERROR();
-+             dst = get_dst(dec, read_ctx, &dst_size);
-+             hdr = lsqpack_huff_decode(buf, (int)size, dst, (int)dst_size,
-+                     &DATA.dec_huff_state, DATA.left == size);
-+@@ -3758,6 +3756,8 @@ parse_header_data (struct lsqpack_dec *d
-+             size = MIN((unsigned) (end - buf), DATA.left);
-+             if (size == 0)
-+                 RETURN_ERROR();
-++            if (0 != guarantee_out_bytes(dec, read_ctx, size))
-++                RETURN_ERROR();
-+             dst = get_dst(dec, read_ctx, &dst_size);
-+             if (size > dst_size)
-+                 RETURN_ERROR();
-+@@ -3780,7 +3780,10 @@ parse_header_data (struct lsqpack_dec *d
-+                 if (DATA.left > LSXPACK_MAX_STRLEN)
-+                     RETURN_ERROR();
-+ #endif
-+-                size = DATA.is_huffman ? DATA.left + DATA.left / 2 : DATA.left;
-++                /* bun: room for the bytes at hand, see READ_VAL_LEN */
-++                size = MIN((unsigned) (end - buf), DATA.left);
-++                if (DATA.is_huffman)
-++                    size += size / 2;
-+                 if (0 != header_out_begin_literal(dec, read_ctx, size,
-+                                                             DATA.is_never))
-+                     RETURN_ERROR();
-+@@ -3801,6 +3804,8 @@ parse_header_data (struct lsqpack_dec *d
-+             size = MIN((unsigned) (end - buf), DATA.left);
-+             if (size == 0)
-+                 RETURN_ERROR();
-++            if (0 != guarantee_out_bytes(dec, read_ctx, size + size / 2))
-++                RETURN_ERROR();
-+             dst = get_dst(dec, read_ctx, &dst_size);
-+             hdr = lsqpack_huff_decode(buf, (int)size, dst, (int)dst_size,
-+                     &DATA.dec_huff_state, DATA.left == size);
-+@@ -3835,6 +3840,8 @@ parse_header_data (struct lsqpack_dec *d
-+             size = MIN((unsigned) (end - buf), DATA.left);
-+             if (size == 0)
-+                 RETURN_ERROR();
-++            if (0 != guarantee_out_bytes(dec, read_ctx, size))
-++                RETURN_ERROR();
-+             dst = get_dst(dec, read_ctx, &dst_size);
-+             if (size > dst_size)
-+                 RETURN_ERROR();
-```
-
-**File**: `patches/lsquic/goaway-first-rejected-id.patch` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+--- a/src/liblsquic/lsquic_full_conn_ietf.c
-++++ b/src/liblsquic/lsquic_full_conn_ietf.c
-+@@ -3364,8 +3364,10 @@ ietf_full_conn_ci_going_away (struct lsq
-+     {
-+         LSQ_INFO("connection marked as going away, last stream: %" PRIu64,
-+                  conn->ifc_max_req_id);
-++        /* bun: the frame names the first request that is not processed, not
-++         * the last one that is (RFC 9114, Section 5.2). */
-+         if (valid_stream_id(conn->ifc_max_req_id + N_SITS))
-+-            stream_id = conn->ifc_max_req_id;
-++            stream_id = conn->ifc_max_req_id + N_SITS;
-+         else
-+             goto end;
-+     }
-```
-
----
-
-### Incident Patch 3: `9c2dd6b6` (2026-10-22)
-**Commit Message**: react-compiler: fix a throw on each render and stale values for a `let` that a memo block reassigns (#42482)
-
-### What does this PR do?
-
-Fixes `bun build --react-compiler` for a `let` that is declared before a
-memo block and reassigned in it.
-
-#### Problem
-
-```jsx
-const D = new Set([1]);
-function C(p) { let v = p.v; const o = []; if (v == null) v = D; o.push(v.size); return <div o={o} />; }
-function List({ items, filter }) { let shown; const rows = []; if (filter) { shown = items.filter(filter); } else { shown = items; } rows.push(shown.length); return <ul rows={rows} />; }
-function Label(p) { let label = p.count; const list = []; if (p.flag) label = "flagged"; else list.push(p.b); return <div label={label} list={list} />; }
-```
-
-| | 1.4.3 | main | this PR |
-| --- | --- | --- | --- |
-| `C({})`, three renders | renders | `TypeError: undefined is not an
-object (evaluating 'v.size')` on each render | renders |
-| `List({ items })`, three renders | throws from the second render |
-throws on each render | renders |
-| `Label`, `count` 1 then 2 | `1 1` | `1 1` | `1 2` |
-
-`C` is a regression on main since #44805. It is in no release. The other
-two are also wrong on 1.4.3. `Label` is facebook
-
-**File**: `src/react_compiler/inference/infer_reactive_places.rs` (modified, +6/-29)
-```diff
-@@ -81,39 +81,24 @@ pub(crate) fn infer_reactive_places(
-         control_tests.of_block[block_id.0 as usize] = (start, tests.len() as u32);
-     }
- 
--    // Track phi operand reactive flags during fixpoint.
--    // In TS, isReactive() sets place.reactive as a side effect. But when a phi
--    // is already reactive, the TS `continue`s and skips operand processing.
--    // We track which phi operand Places should be marked reactive: one flag
--    // for each operand of each phi, in the order of the blocks.
--    let phi_operand_count = func.body.blocks.values().flat_map(|block| &block.phis);
--    let phi_operand_count = phi_operand_count.map(|phi| phi.operands.len()).sum();
--    let mut phi_operand_reactive = vec![false; phi_operand_count];
--
-     // Fixpoint iteration — compute reactive set
-     let mut is_settled = false;
-     loop {
-         reactive_map.start_round();
-         stable_sidemap.start_round();
--        let mut next_phi_operand = 0;
-         for (block_id, block) in &func.body.blocks {
-             let has_reactive_control = control_tests.any_is_reactive(*block_id, &mut reactive_map);
- 
-             // Process phi nodes
-             for phi in &block.phis {
--                let first_operand = next_phi_operand;
--                next_phi_operand += phi.operands.len();
-                 if reactive_map.is_reactive(phi.place.identifier) {
--                    // TS does `continue` here — skips operand isReactive calls.
--                    // phi operand reactive flags stay as they were from last visit.
-                     continue;
-                 }
-                 let mut is_phi_reactive = false;
--                for (op_idx, (_pred, operand)) in phi.operands.iter().enumerate() {
-+                for operand in phi.operands.values() {
-                     if reactive_map.is_reactive(operand.identifier) {
--                        phi_operand_reactive[first_operand + op_idx] = true;
-                         is_phi_reactive = true;
--                        break; // TS breaks here — remaining operands NOT visited
-+                        break;
-                     }
-                 }
-                 if is_phi_reactive {
-@@ -229,13 +214,7 @@ pub(crate) fn infer_reactive_places(
-     }
- 
-     // Now apply reactive flags by replaying the traversal pattern.
--    apply_reactive_flags_replay(
--        func,
--        env,
--        &reactive_map.reactive_ids(),
--        &stable_sidemap,
--        &phi_operand_reactive,
--    );
-+    apply_reactive_flags_replay(func, env, &reactive_map.reactive_ids(), &stable_sidemap);
- 
-     Ok(())
- }
-@@ -555,7 +534,6 @@ fn apply_reactive_flags_replay(
-     env: &mut Environment,
-     reactive_ids: &[bool],
-     stable_sidemap: &StableSidemap,
--    phi_operand_reactive: &[bool],
- ) {
-     // 1. Mark params
-     for param in &mut func.params {
-@@ -564,17 +542,16 @@ fn apply_reactive_flags_replay(
-     }
- 
-     // 2. Walk blocks
--    let mut phi_operand_reactive = phi_operand_reactive.iter();
-     for block in func.body.blocks.values_mut() {
-         // 2a. Phi nodes
-         for phi in &mut block.phis {
-             if reactive_ids[phi.place.identifier.0 as usize] {
-                 phi.place.reactive = true;
-             }
- 
--            for (operand, &is_reactive) in phi.operands.values_mut().zip(&mut phi_operand_reactive)
--            {
--                if is_reactive {
-+            // Not in upstream, which flags no operand behind the first reactive one. `visit_phi` reads the flag.
-+            for operand in phi.operands.values_mut() {
-+                if reactive_ids[operand.identifier.0 as usize] {
-                     operand.reactive = true;
-                 }
-             }
-```
-
-**File**: `src/react_compiler/inference/propagate_scope_dependencies_hir.rs` (modified, +24/-6)
-```diff
-@@ -24,7 +24,7 @@ use crate::hir::visitors::{ScopeBlockInfo, ScopeBlockTraversal};
- use crate::hir::{
-     AstAlloc, BasicBlock, BlockId, DeclarationId, DependencyPathEntry, EvaluationOrder, FunctionId,
-     GotoVariant, HirFunction, HirVec, IdentifierId, Instruction, InstructionKind, InstructionValue,
--    MutableRange, ParamPattern, Place, PlaceOrSpread, PropertyLiteral, ReactFunctionType,
-+    MutableRange, ParamPattern, Phi, Place, PlaceOrSpread, PropertyLiteral, ReactFunctionType,
-     ReactiveScopeDependency, ScopeId, Terminal, Type, hir_vec, visitors,
- };
- use crate::optimization::dead_code_elimination::find_semantic_only_caught_instructions;
-@@ -1915,6 +1915,20 @@ impl<'a> DependencyCollectionContext<'a> {
-         Ok(())
-     }
- 
-+    /// Not in upstream (facebook/react#37224): a scope gives back a variable on a path that did not assign it too.
-+    fn visit_phi(&mut self, phi: &Phi, before_block: EvaluationOrder, env: &mut Environment) {
-+        for operand in phi.operands.values() {
-+            // What is not declared yet comes from a loop back edge, later in the scope.
-+            if self.temporaries.contains_key(operand.identifier)
-+                || self.reassignments.contains_key(operand.identifier)
-+            {
-+                self.visit_operand(operand, env);
-+            }
-+        }
-+        // Codegen reads a dependency by name before the scope, where the variable does not hold this phi yet.
-+        self.declare(phi.place.identifier, before_block, env);
-+    }
-+
-     fn current_scope(&self) -> Option<ScopeId> {
-         self.scope_stack.last().copied()
-     }
-@@ -2318,11 +2332,15 @@ fn handle_function_deps(
-         }
- 
-         // Record phi operands
--        for phi in &block.phis {
--            for (_pred_id, operand) in &phi.operands {
--                if let Some(maybe_optional_chain) = ctx.temporaries.get(operand.identifier) {
--                    ctx.visit_dependency(maybe_optional_chain.clone(), env);
--                }
-+        if !block.phis.is_empty() {
-+            let first = match block.instructions.first() {
-+                Some(instr_id) => func.instructions[instr_id.0 as usize].id,
-+                None => block.terminal.evaluation_order(),
-+            };
-+            // A scope starts at the id of its terminal, and the phis of the block of that terminal are before it.
-+            let before_block = EvaluationOrder(first.0.saturating_sub(1));
-+            for phi in &block.phis {
-+                ctx.visit_phi(phi, before_block, env);
-             }
-         }
- 
-```
-
-**File**: `src/react_compiler/reactive_scopes/promote_used_temporaries.rs` (modified, +2/-8)
-```diff
-@@ -700,14 +700,8 @@ fn promote_interposed_block(
-                 promote_interposed_instruction(instr, state, inter_state, consts, globals, env);
-             }
-             ReactiveStatement::Scope(scope) => {
--                // The memo block compares its dependencies before anything inside it runs.
--                let dependencies = &env.scopes[scope.scope.0 as usize].dependencies;
--                if dependencies.iter().any(|dependency| {
--                    !dependency.path.is_empty()
--                        || is_reassignable(dependency.identifier, consts, env)
--                }) {
--                    inter_state.statement(Effect::Read);
--                }
-+                // The memo block compares its dependencies first, and what writes must not print in it: it may not run.
-+                inter_state.statement(Effect::Read);
-                 promote_interposed_block(
-                     &scope.instructions,
-                     state,
-```
-
-**File**: `src/react_compiler/reactive_scopes/prune_non_reactive_dependencies.rs` (modified, +2/-1)
-```diff
-@@ -216,9 +216,10 @@ impl<'a> ReactiveFunctionTransform for PruneVisitor<'a> {
-         let scope_data = &mut self.env.scopes[scope_id.0 as usize];
- 
-         // Remove non-reactive dependencies
-+        // Not in upstream: `|| dep.reactive`, for a value that only a phi reads. No place in `state` has its identifier.
-         scope_data
-             .dependencies
--            .retain(|dep| state.contains(dep.identifier));
-+            .retain(|dep| state.contains(dep.identifier) || dep.reactive);
- 
-         // If any deps remain, mark all declarations and reassignments as reactive
-         if !scope_data.dependencies.is_empty() {
-```
-
-**File**: `test/bundler/transpiler/react-compiler.test.ts` (modified, +410/-0)
-```diff
-@@ -3349,6 +3349,416 @@ describe("bundler", () => {
-     });
+@@ -6539,6 +6539,10 @@ function initializeOptions(options) {
+     if (options.remoteCustomSettings.length > MAX_ADDITIONAL_SETTINGS) throw $ERR_HTTP2_TOO_MANY_CUSTOM_SETTINGS();
    }
  
-+  // A memo block saves each `let` that it assigns and gives it back when its cache hits. Each component renders several
-+  // times on one memo cache and has to render what the plain build renders. `*` marks a render that got the `list` of
-+  // the render before it, so each line also shows that the block still hits its cache.
-+  const reassignedLocalOutput = `
-+    DefaultThenProp [1,[1]] [1,[1]]* [2,[2]]
-+    EitherArmThenProp [3,[3]] [3,[3]]* [1,[1]]
-+    NullableEntryThenProp ["anon",["anon"]] ["anon",["anon"]]* ["ann",["ann"]] ["ann",["ann"]]*
-+    BothArmsThenProp ["b",["b"]] ["b",["b"]]* ["c",["c"]]
-+    DependencyPath ["b",["a","b"]] ["b",["b","b"]] ["b",["b","b"]]*
-+    ConditionalReassign [1,["x"]] [2,["x"]] [2,["x"]]* ["flagged",[]]
-+    LoopReassign ["i",[1,2]] ["j",[1,2]] ["j",[1,2]]* [3,[3]]
-+    PrunedNestedScope [true,[{"v":3,"w":1}]] [true,[{"v":3,"w":1}]] [true,[{"v":3,"w":1}]]* ["k",[{"v":1,"w":1},{"v":2,"w":1}]]
-+    NestedScope ["a",[3]] ["b",[3]] ["b",[3]]* ["off",[3]] ["off",[3]]*
-+    LoopInsideScopeOfSibling ["a",{}] ["b",{}] ["b",{}]* ["off",{}] ["off",{}]*
-+    JoinBeforeScope ["a1",["x"]] ["a2",["x"]] ["base",["x"]] ["base",["x"]]*
-+    ChainedScopes ["1two",[[0],[]]] ["2two",[[0],[]]] ["2two",[[0],[]]]* ["onetwo",[[],[]]]
-+    ForOfOnly ["5,1,2",[5,1,2]] ["6,1,2",[6,1,2]] ["6,1,2",[6,1,2]]* ["none",null]
-+    ForWithContinue ["5,1,2",[5,1,2]] ["6,1,2",[6,1,2]] ["6,1,2",[6,1,2]]*
-+    useFormErrors [false,[[],[]]] [true,[["That name is already taken"],[]]] [true,[["That name is already taken"],[]]]* [true,[[],["Pick an X variable"]]] [true,[["That name is already taken"],["Pick an X variable"]]]
-+    useBareParam [1,["b"]] [2,["b"]] [2,["b"]]* ["X",[]]
-+    UpdateInFrontOfInnerBlock ["c1:2",[{"b":1},{"b":1}]] ["c2:2",[{"b":1},{"b":1}]] ["c2:2",[{"b":1},{"b":1}]]*
-+    UpdateInFrontOfInnerBlockNoJoin [1,["c1",{"b":1}]] [1,["c2",{"b":1}]] [1,["c2",{"b":1}]]*
-+    ReadThenReassign [2,["x"]] [3,["x"]] [3,["x"]]*
-+    CounterInLoop [1,[3]] [1,[3]]* [0,[1,2]]
-+    AssignedBeforeLoop ["i:b",[1,2]] ["j:b",[1,2]]* ["j:3",[3]]
-+  `;
-+  for (const reactCompiler of [false, true]) {
-+    itBundled(`react-compiler/ReassignedLocalDeclaredBeforeMemoBlock-${reactCompiler ? "compiled" : "plain"}`, {
-+      files: {
-+        "/entry.jsx": /* jsx */ `
-+          import { render } from "react";
++  if (options.strictSingleValueFields !== undefined) {
++    validateBoolean(options.strictSingleValueFields, "options.strictSingleValueFields");
++  }
 +
-+          // The first four read a property after the join. Before the block the variable has the value that it came
-+          // in with, which can be null, so nothing may read that property there.
-+          const defaults = new Set([1]);
-+          function DefaultThenProp(p) {
-+            let v = p.v;
-+            const list = [];
-+            if (v == null) v = defaults;
-+            list.push(v.size);
-+            return <div label={v.size} list={list} />;
-+          }
-+
-+          function EitherArmThenProp({ items, filter }) {
-+            let shown;
-+            const list = [];
-+            if (filter) {
-+              shown = items.filter(filter);
-+            } else {
-+              shown = items;
-+            }
-+            list.push(shown.length);
-+            return <div label={shown.length} list={list} />;
-+          }
-+
-+          function NullableEntryThenProp({ user, fallbackUser }) {
-+            let u = user;
-+            const list = [];
-+            if (!u) u = fallbackUser;
-+            list.push(u.profile.name);
-+            return <div label={u.profile.name} list={list} />;
-+          }
-+
-+          function BothArmsThenProp(p) {
-+            let object = p.a;
-+            const list = [];
-+            if (p.kind) object = p.b;
-+            else object = p.c;
-+            list.push(object.v.w);
-+            return <div label={object.v.w} list={list} />;
-+          }
-+
-+          // The first read is of the value that object came in with, so it stays an input of the block.
-+          function DependencyPath(p) {
-+            let object = p.o;
-+            const list = [];
-+            list.push(object.x);
-+            if (p.flag) object = p.o2;
-+            list.push(object.x);
-+            return <div label={object.x} list={list} />;
-+          }
-+
-+          // In the next eleven a path through the block leaves the variable as it came in, so that value is an input
-+          // of the block.
-+          function ConditionalReassign(p) {
-+            let label = p.count;
-+            const list = [];
-+            if (p.flag) {
-+              label = "flagged";
-+            } else {
-+              list.push(p.b);
-+            }
-+            return <div label={label} list={list} />;
-+          }
-+
-+          function LoopReassign(p) {
-+            let found = p.initial;
-+            const list = [];
-+            for (const item of p.items) {
-+              if (item.ok) found = item.v;
-+              list.push(item.v);
-+            }
-+            return <div label={found} list={list} />;
-+          }
-+
-+          /
+   if (options.maxSessionInvalidFrames !== undefined)
+     validateUint32(options.maxSessionInvalidFrames, "options.maxSessionInvalidFrames");
+ 
+@@ -6550,10 +6554,6 @@ function initializeOptions(options) {
+     validateUint32(options.unknownProtocolTimeout, "options.unknownProtocolTimeout");
+   else options.unknownProtocolTimeout = 10000;
+ 
+-  if (options.strictSingleValueFields !== undefined) {
+-    validateBoolean(options.strictSingleValueFields, "options.strictSingleValueFields");
+-  }
+-
+   // Initialize http1Options bag for HTTP/1 fallback when allowHTTP1 is true.
+   options.http1Options = { ...options.http1Options };
+   if (options.Http1IncomingMessage !== undefined) {
+```
+
+---
+
+### Incident Patch 2: `b6a5ecee` (2026-10-22)
+**Commit Message**: release: fix the Homebrew job and a flaky Docker download (#46498)
+
+### What does this PR do?
+
+Fixes two jobs that failed in the [v1.4.4 release
+run](https://github.com/oven-sh/bun/actions/runs/39761233959).
+
+**Homebrew.** The job failed with `Unavailable version 2.6.10 for ruby
+on ubuntu-26.04`. `ubuntu-latest` is now `ubuntu-26.04`, and
+`ruby/setup-ruby` has no prebuilt Ruby older than 3.2 for that image.
+The job now asks for 3.4. The tap's `scripts/release.rb` only uses
+`net/http`, `json` and `digest`, so it does not need an old Ruby.
+
+**Docker.** The `-debian` build got a 404 for `SHASUMS256.txt.asc` 53
+seconds after the Sign job uploaded it. The other Docker jobs downloaded
+the same URL 3 seconds earlier and 2 seconds later. `curl --retry 5`
+does not retry a 404, so one bad response failed the build. The `.asc`
+download in all four Dockerfiles now passes `--retry-all-errors`.
+
+Re-running the failed Docker job published the missing tags. Homebrew
+does not have 1.4.4 yet. After this merges, the release workflow has to
+be run by hand from `main` with `tag=bun-v1.4.4` and
+`use-homebrew=true`.
+
+### How did you verify your code works?
+
+- Ruby: `ruby-3.4.10-ubuntu-26.04-x64.tar.gz` e
+
+**File**: `.github/workflows/release.yml` (modified, +1/-1)
+```diff
+@@ -304,7 +304,7 @@ jobs:
+       - name: Setup Ruby
+         uses: ruby/setup-ruby@a0102e0972be65f351c307e2d64b9314a57c8073 # v1
+         with:
+-          ruby-version: "2.6"
++          ruby-version: "3.4"
+       - name: Update Tap
+         run: ruby scripts/release.rb "$BUN_VERSION"
+       - name: Commit Tap
+```
+
+**File**: `dockerhub/alpine/Dockerfile` (modified, +1/-0)
+```diff
+@@ -46,6 +46,7 @@ RUN apk --no-cache add ca-certificates curl gpg gpg-agent unzip \
+       -fsSLO \
+       --compressed \
+       --retry 5 \
++      --retry-all-errors \
+     && gpg --batch --assert-signer F3DCC08A8572C0749B3E18888EAB4D40A7B22B59 \
+       --verify --output SHASUMS256.verified.txt SHASUMS256.txt.asc \
+       || (echo "error: failed to verify: $tag" && exit 1) \
+```
+
+**File**: `dockerhub/debian-slim/Dockerfile` (modified, +1/-0)
+```diff
+@@ -54,6 +54,7 @@ RUN apt-get update -qq \
+       -fsSLO \
+       --compressed \
+       --retry 5 \
++      --retry-all-errors \
+     && gpg --batch --assert-signer F3DCC08A8572C0749B3E18888EAB4D40A7B22B59 \
+       --verify --output SHASUMS256.verified.txt SHASUMS256.txt.asc \
+       || (echo "error: failed to verify: $tag" && exit 1) \
+```
+
+**File**: `dockerhub/debian/Dockerfile` (modified, +1/-0)
+```diff
+@@ -58,6 +58,7 @@ RUN apt-get update -qq \
+       -fsSLO \
+       --compressed \
+       --retry 5 \
++      --retry-all-errors \
+     && gpg --batch --assert-signer F3DCC08A8572C0749B3E18888EAB4D40A7B22B59 \
+       --verify --output SHASUMS256.verified.txt SHASUMS256.txt.asc \
+       || (echo "error: failed to verify: $tag" && exit 1) \
+```
+
+**File**: `dockerhub/distroless/Dockerfile` (modified, +1/-0)
+```diff
+@@ -54,6 +54,7 @@ RUN apt-get update -qq \
+       -fsSLO \
+       --compressed \
+       --retry 5 \
++      --retry-all-errors \
+     && gpg --batch --assert-signer F3DCC08A8572C0749B3E18888EAB4D40A7B22B59 \
+       --verify --output SHASUMS256.verified.txt SHASUMS256.txt.asc \
+       || (echo "error: failed to verify: $tag" && exit 1) \
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #46480** (2026-10-22): install: fall back to copyfile only when the hard link itself fails (@robobun)
-- **PR #46468** (2026-10-22): bunx: run the platform binary of a native dependency, not its stub (@Jarred-Sumner)
-- **PR #46462** (2026-10-22): ci: fix the Windows sign step on the Build Tools image (@dylan-conway)
-- **PR #46461** (2026-10-22): compile: revert the startup check of every module graph offset (@dylan-conway)
-- **PR #46456** (2026-10-22): node:http, node:http2: refuse the malformed requests that Node refuses (@Jarred-Sumner)
-- **PR #46455** (2026-10-22): Fix 7 regressions since 1.4.3 in bun install, bunx, bun patch, bun pm pack and bun: imports (@Jarred-Sumner)
+- **PR #46841** (closed): node:quic: keep a stream's headers and pendingTrailers after it closes (@robobun)
+- **PR #46831** (closed): http3: scope malformed-message failures to one stream instead of CONNECTION_CLOSE (@robobun)
+- **PR #46798** (closed): node:quic: derive header interest from onheaders, ontrailers and oninfo (@robobun)
+- **PR #46785** (closed): fix(jsc): bypass close_range syscall on Android (@SjnExe)
+- **PR #46784** (closed): fix(sys): avoid pidfd_open on Android to prevent SIGSYS seccomp crash (@SjnExe)
+- **PR #46782** (closed): fix(build): bypass Clang and Rust LLVM major version check on Android (@SjnExe)
 
 ---
 
@@ -1974,28 +1377,36 @@ two are also wrong on 1.4.3. `Label` is facebook
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. regressions since 1.4.3 in bun install, bunx, node:fs and node:http2, and update
+## X. Build with Bun 1.4.4, update Node.js to 26.12.1 (#46533)
 
 **RULE**:
-When implementing operations in `docs/pm/overrides.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2a5cbbcb`: regressions since 1.4.3 in bun install, bunx, node:fs and node:http2, and update brotli (#46392). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1917b1aa`: Build with Bun 1.4.4, update Node.js to 26.12.1 (#46533). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/pm/overrides.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`bun install` also checks the lockfile against the overrides whose value is a version or a range. If the lockfile has a version that such an override does not allow (after a merge, or a migration from another package manager), `bun install` resolves that package again. `bun install --frozen-lockfile` installs the version in the lockfile. The check leaves these entries as they are:
+          bun-version: "1.4.4"
+          bun-version: "1.4.4"
+          bun-version: "1.4.4"
+          bun-version: "1.4.4"
+          bun-version: "1.4.4"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-Every install also checks the lockfile against the overrides whose value is a version or a range. If the lockfile has a version that such an override does not allow (after a merge, or a migration from another package manager), `bun install` resolves that package again, and `bun install --frozen-lockfile` fails and names it. The check leaves these entries as they are:
+          bun-version: "1.4.2"
+          bun-version: "1.4.2"
+          bun-version: "1.4.2"
+          bun-version: "1.4.2"
+          bun-version: "1.4.2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a5cbbcb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1917b1aa` are properly handled with clean fallback behavior.
