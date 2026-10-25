@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-JNYW",
-    "timestamp": "2026-10-23T06:36:15.512Z",
-    "repository": "carbon-design-system/carbon",
-    "learningId": "learn-github-carbon-design-system-carbon",
-    "contentHash": "21d9d2990fba1c390f5b563eb73ee3beef42ad0fe5493d18e5f8648fb2de371b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-JT93",
     "timestamp": "2026-10-23T06:36:22.359Z",
     "repository": "appwrite/appwrite",
@@ -7492,6 +7477,21 @@
     "contentHash": "87048aa7a243e6046f08d0dc8a015c3ba8c10e3e9424051ef1172d26b17ae73f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-JNPO",
+    "timestamp": "2026-10-25T20:11:24.492Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-zai-org-glm-5-2",
+    "contentHash": "5d96b458ecf0ab0fc7f3a0aa02c21cc4f70227fbb971919f255003ecf900e8e1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

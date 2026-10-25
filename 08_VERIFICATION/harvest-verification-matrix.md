@@ -4978,3 +4978,4 @@
 | `CYCLE-20261025-B0IA` | `2026-10-25T20:04:41.170Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`7d20cf47...`) |
 | `CYCLE-20261025-B1TD` | `2026-10-25T20:04:42.865Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4437` | Yes (`19fb1a2e...`) |
 | `CYCLE-20261025-B5JE` | `2026-10-25T20:04:47.690Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4438` | Yes (`87048aa7...`) |
+| `CYCLE-20261025-JNPO` | `2026-10-25T20:11:24.492Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`5d96b458...`) |

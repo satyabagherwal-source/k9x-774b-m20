@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T20:04:47.698Z",
-  "total_cycles_completed": 4955,
-  "total_learnings_persisted": 4955,
+  "last_updated": "2026-10-25T20:11:24.500Z",
+  "total_cycles_completed": 4956,
+  "total_learnings_persisted": 4956,
   "total_rules_promoted": 4322,
   "history": [
-    {
-      "timestamp": "2026-10-25T10:53:10.008Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T11:11:17.450Z",
       "repository": "t8y2/dbx",
@@ -1403,6 +1396,13 @@
       "repository": "buresdv/Cork",
       "learningId": "learn-github-buresdv-cork",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T20:11:24.500Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -4985,3 +4985,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-25T20:04:41.173Z |
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `b33f3ef5` | Multi-dimensional audit evidence | 2026-10-25T20:04:42.868Z |
 | `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `523abb0e` | Multi-dimensional audit evidence | 2026-10-25T20:04:47.693Z |
+| `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-25T20:11:24.495Z |
