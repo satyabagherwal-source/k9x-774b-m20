@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T04:06:07.079Z",
-  "total_cycles_completed": 4629,
-  "total_learnings_persisted": 4629,
-  "total_rules_promoted": 3896,
+  "last_updated": "2026-10-25T04:12:39.974Z",
+  "total_cycles_completed": 4633,
+  "total_learnings_persisted": 4633,
+  "total_rules_promoted": 3901,
   "history": [
-    {
-      "timestamp": "2026-10-22T21:48:01.831Z",
-      "repository": "digitalbazaar/pyld",
-      "learningId": "learn-github-digitalbazaar-pyld",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T21:48:10.928Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T05:23:49.034Z",
-      "repository": "gauthierpiarrette/highball",
-      "learningId": "learn-github-gauthierpiarrette-highball",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T05:30:31.040Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T05:30:32.056Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-25T04:06:07.079Z",
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:12:26.540Z",
+      "repository": "rsuite/rsuite",
+      "learningId": "learn-github-rsuite-rsuite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:12:34.704Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:12:35.297Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:12:39.974Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

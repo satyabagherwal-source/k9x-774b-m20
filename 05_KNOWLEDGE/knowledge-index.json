@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T04:06:07.013Z",
+  "last_updated": "2026-10-25T04:12:39.906Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13308,8 +13308,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "2eff52c7",
-      "content_hash": "016d9fc21292e5bb443b96edff1c8cd8275fcb68158efab0423dc87a53712f44",
+      "source_version": "1c5d15fd",
+      "content_hash": "7612195c220ca9fb0131ca849d77d5138553783272d9df28255a8f6a9facb22d",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -13337,6 +13337,11 @@
           "number": 3639,
           "title": "mito2): pick TWCS L1 merges by closed units so compaction terminates (#9741)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4038,
+          "title": "mito2): keep SSTs when a manifest save ends with RateLimited or PermissionDenied",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13344,7 +13349,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:26:16.512Z",
+      "verified_at": "2026-10-25T04:12:39.892Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15793,10 +15798,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
       "source_version": "hf-baai-bge-base-en-v1.5",
-      "content_hash": "52505cc713822fcd94460b54d70dbe67f6b8e29b9c60ca2cc0d850c016790ed2",
+      "content_hash": "d0f5a3bfb45672daaa2cbd2f296fda1f773f1172fa1ab8ae1ab93b63b451165d",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "promoted_rules": [
+        {
+          "number": 790,
+          "title": "Semantic Embedding Normalization Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 972,
           "title": "Semantic Vector Normalization Invariant",
@@ -15826,6 +15836,11 @@
           "number": 1811,
           "title": "The Dimensional Integrity & Normalization Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4036,
+          "title": "Tokenizer Case-Sensitivity Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15844,7 +15859,7 @@
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv40jxd1",
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc"
       ],
-      "verified_at": "2026-10-20T12:12:10.528Z",
+      "verified_at": "2026-10-25T04:12:34.614Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39115,8 +39130,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "69d1aac2",
-      "content_hash": "207e503647d409f1b8d756ba35d38d97762b5ee92d76ab8fa4a54c71786a592d",
+      "source_version": "0073665a",
+      "content_hash": "d382fe5cdabe305aae8fb441662032a7b843524e8d37a92f84a79f8fd2e26432",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -39154,6 +39169,11 @@
           "number": 3658,
           "title": "ddl: fix global index copies left or broken by reorganize partition (#72158)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4037,
+          "title": "*: make the graceful shutdown drain timeout configurable (#71796)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39161,7 +39181,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:19:16.164Z",
+      "verified_at": "2026-10-25T04:12:35.208Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41743,8 +41763,8 @@
       "slug": "rsuite-rsuite",
       "platform": "github",
       "source_url": "https://github.com/rsuite/rsuite",
-      "source_version": "c5ab91ef",
-      "content_hash": "3653297c30c769ecd2d853bba9d36d395a24ab642f0738dbbe7ccbc41731e1fd",
+      "source_version": "79077a69",
+      "content_hash": "4e6c253e9678773b181f12b74966dc86aa00a66301230bbafda2542c7770885b",
       "dossier_path": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "promoted_rules": [
@@ -41777,6 +41797,11 @@
           "number": 3669,
           "title": "Merge pull request #4981 from rsuite/fix/preact-example-jsx-security",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4035,
+          "title": "Merge source-map security main and preserve both boundary checks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41784,7 +41809,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:38:27.739Z",
+      "verified_at": "2026-10-25T04:12:26.448Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70686,15 +70711,15 @@
       "learning_id": "rule-790",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 790,
-      "title": "Semantic Embedding Normalization Invariant (Harvested from BAAI/bge-base-en-v1.5)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Semantic Embedding Normalization Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
+      "source_version": "hf-baai-bge-base-en-v1.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.813Z"
+      "verified_at": "2026-10-25T04:12:34.614Z"
     },
     "rule-791": {
       "learning_id": "rule-791",
@@ -117889,6 +117914,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T04:06:07.001Z"
+    },
+    "rule-4035": {
+      "learning_id": "rule-4035",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4035,
+      "title": "Merge source-map security main and preserve both boundary checks",
+      "source_url": "https://github.com/rsuite/rsuite",
+      "source_version": "79077a69",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:12:26.448Z"
+    },
+    "rule-4036": {
+      "learning_id": "rule-4036",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4036,
+      "title": "Tokenizer Case-Sensitivity Alignment",
+      "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
+      "source_version": "hf-baai-bge-base-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:12:34.614Z"
+    },
+    "rule-4037": {
+      "learning_id": "rule-4037",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4037,
+      "title": "*: make the graceful shutdown drain timeout configurable (#71796)",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "0073665a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:12:35.208Z"
+    },
+    "rule-4038": {
+      "learning_id": "rule-4038",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4038,
+      "title": "mito2): keep SSTs when a manifest save ends with RateLimited or PermissionDenied",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "1c5d15fd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:12:39.892Z"
     }
   },
   "aliases": {

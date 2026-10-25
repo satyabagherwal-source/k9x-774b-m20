@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rsuite-rsuite-learnings.md`  
 > **Source**: github ([https://github.com/rsuite/rsuite](https://github.com/rsuite/rsuite))  
-> **Source Version**: `c5ab91ef`  
+> **Source Version**: `79077a69`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:38:27.452Z  
+> **Timestamp**: 2026-10-25T04:12:26.077Z  
 > **Learning ID**: `learn-github-rsuite-rsuite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rsuite-rsuite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rsuite/rsuite](https://github.com/rsuite/rsuite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:38:16.387Z  
+> **Harvest Timestamp**: 2026-10-25T04:12:24.473Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -697,11 +697,17 @@ export default function Adapter({ rows, loading, selected, onSelected }: Lifecyc
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4988** (2026-10-22): **fix(examples): support Node 24 in Umi and patch Vite**
-  *Symptoms*: The Umi example's locked 4.0.28 fails normal installation on Node 24 because a static `spdy` import reaches the removed `http_parser` binding. Raise Umi's minimum and lock to 4.7.26, which defers that import and uses native HTTPS on Node 24. Keep the existing published RSuite, React, TypeScript and React type package versions and contents.  Enable `esbuildMinifyIIFE` to scope minifier helpers and run Umi's helper conflict checker explicitly in `postbuild`. The original upgraded build reproduced a `pt` collision between two chunks; the frozen conflicting output still fails the same checker, while the corrected build passes. Update root Lodash to 4.18.1 within all eight parent ranges. A version-scoped override patches Umi 4.7.26's fixed Vite 7.3.6 dependency to [7.3.7](https://github.com/advisories/GHSA-rq7h-c2jc-7f22).  The lock stays at version 2. Generating the completed peer graph with npm 10 adds the three Sass/tsx/yaml records missing from npm 11's initial resolution; both clients now accept frozen installs. The README uses `npm ci` and corrects the displayed localhost port.  Validation on macOS ARM64:  - Node 22.22.3/npm 10.9.8 and Node 24.12.0/npm 11.6.2 pass normal frozen installs, build, explicit postbuild checking and TypeScript checking. - Chromium 141 and Firefox 142 pass development and production routing, trusted pointer/Enter and theme controls on both Node versions: eight default configurations. The old working Node 22 reference has identical recorded productio
+- **Issue #5018** (2026-10-25): **fix(benchmarks): preserve visible virtual pointer targets**
+  *Symptoms*: The virtual table driver used a locator click on an already visible checkbox label. React Aria temporarily disables pointer events while its virtualizer scrolls, and [locator pointer actions scroll before input](https://playwright.dev/docs/input#mouse-click). The original Chromium/Firefox controls moved row 9000 from scrollTop 360000 to 359628 / 360012 before native pointerdown. In #5016's retained first Table run, the selected HeroUI row ended below the viewport and failed the original visibility assertion.  Wait within the existing ten-second action budget for the enabled label's current center to be a native hit belonging to the requested row, then send native mouse input there. Keep the trusted pointerdown/pointerup/click identity checks, keyboard behavior, selection and visibility assertions, and response/final integrity checks. No DOM focus, forced click, synthetic dispatch, CSS override, deadline increase or oracle relaxation.  Add two production HeroUI native pointer controls and eight covered/clipped/disabled/wrong-row rejection controls across Chromium and Firefox. The CI step is additive; all existing workflows and mutation controls remain.  Validation on the exact source tree `23d4d513`:  - Full Node 24 SDK build, declarations and six built-artifact consumer tests pass after a clean physical frozen dependency install. - A fresh standalone install contains all 3,955 SDK files byte-identical to the owned build; types and all four production adapters pass. - All 10 p
+  **Post-Mortem & Fix Analysis**:
+  > #### Review or Edit in CodeSandbox  Open the branch in <a href="https://codesandbox.io/p/github/rsuite/rsuite/fix/table-heroui-selection-scroll?mode=review&utm_source=gh_app">Web Editor</a> &bull; <a href="https://codesandbox.io/p/vscode?owner=rsuite&repo=rsuite&branch=fix/table-heroui-selection-scroll&utm_source=gh_app">VS Code</a> &bull; <a href="https://codesandbox.io/p/vscode?owner=rsuite&repo=rsuite&branch=fix/table-heroui-selection-scroll&insiders=true&utm_source=gh_app">Insiders</a><br> Open <a href="https://codesandbox.io/p/devtool/preview/rsuite/rsuite/fix/table-heroui-selection-scroll?task=preview&port=51423&redirect=true&utm_source=gh_app">Preview</a>  <!-- open-in-codesandbox:complete --> 
+  > [vc]: #hRlbSAskIEmElARzKpfwaldYArl2jjGF4bP/0fX7da0=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJyc3VpdGUtbWFpbiIsInByb2plY3RJZCI6InByal9teUhqa1IwbUllcmg4RHg5ZUI0VlY0cHJPMzNHIiwidjAiOmZhbHNlLCJyb290RGlyZWN0b3J5IjoiZG9jcyIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJyc3VpdGUtbWFpbi1naXQtZml4LXRhYmxlLWhlcm91aS1zZWxlY3Rpb24tc2Nyb2xsLXJzdWl0ZS52ZXJjZWwuYXBwIn0sImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9yc3VpdGUvcnN1aXRlLW1haW4vOFhOZmdoYTFpSzVtampmNDhWbmdqSlZVMk1VRiIsInByZXZpZXdVcmwiOiJyc3VpdGUtbWFpbi1naXQtZml4LXRhYmxlLWhlcm91aS1zZWxlY3Rpb24tc2Nyb2xsLXJzdWl0ZS52ZXJjZWwuYXBwIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIn0seyJuYW1lIjoicnN1aXRlLXN0b3J5Ym9vayIsInByb2plY3RJZCI6InByal9mNUlrV3lDTEFXSDhaeExPZXF2NjV5UUgwaGZzIiwidjAiOmZhbHNlLCJyb290RGlyZWN0b3J5IjpudWxsLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoicnN1aXRlLXN0b3J5Ym9vay1naXQtZml4LXRhYmxlLWhlcm91aS1zZWxlY3Rpb24tc2Nyb2xsLXJzdWl0ZS52
 
-- **Issue #4987** (2026-10-22): **fix(examples): update remaining Lodash locks to 4.18.1**
-  *Symptoms*: Five example lockfiles still resolve Lodash 4.17.21 and report its template-injection and prototype-path advisories. Update only their Lodash version, tarball URL and integrity to 4.18.1 within the existing dependency ranges: Next.js Pages/Less, Parcel, React Router, Remix and styled-components. Parcel's lockfile-v2 compatibility record is updated consistently. Manifests and all other lock records are unchanged.  Validation on Node 24.12.0:  - All five existing installs and production builds pass; Next.js lint and Remix type checking pass. - Chromium and Firefox production interaction checks pass for all five apps. Baseline and candidate route, keyboard/pointer, theme and CSS observations agree. - All 1,666 unrelated installed package contents remain identical. Each installed Lodash package matches all 1,051 files of its published tarball. - Actual parent resolutions satisfy their declared ranges. Schema validation and Form, SelectPicker and Table SSR checks pass with the examples' existing published RSuite versions. - Twelve ordinary Lodash API controls pass on the old package and each of the five new installs. Seven package-level security probes reproduce on 4.17.21 and are mitigated on every 4.18.1 install. These probes do not establish externally reachable exploit paths in the apps. - Valid before/after audits remove the Lodash item from each install. Aggregate production findings decrease from 23 to 18 and full findings from 124 to 119; these are per-installation counts,
+- **Issue #5017** (2026-10-24): **fix(benchmarks): follow changing virtual scroll bounds**
+  *Symptoms*: The bottom-scroll preflight captured its destination before a virtual list replaced estimated row heights. A shrinking range could time out at the actual bottom; a growing range could pass at an obsolete boundary.  Validate the current scroll boundary after the existing trusted native scroll/completion observations. Retain the initial destination and current dimensions in failure diagnostics. The requested scroll write, 12s deadline, native wheel input, visibility/geometry predicates and measurement/frame conditions remain unchanged. Changes are limited to the two benchmark runner files.  Validation:  - Chromium 141 and Firefox 142 each pass the original five native controls and two new range-change controls: 14 passes total. Running the same controls against the original helper produces four failures, covering both false timeout and false acceptance. - Standalone benchmark type checks and all 14 existing unit tests pass; targeted ESLint, Prettier and normal commit hooks pass. - A separate diagnostic serves the exact downloaded first-failed #5016 production bundles: both browsers complete full/component RSuite virtualized 1k workloads, all 20 checkpoints and both style comparisons. This is a local diagnostic, not a hosted rerun or acceptance of the original failure.  The first #5016 asset failure remains retained and held: 30 accepted cases, one full-profile runtime failure and one dependent component comparison failure. This change does not establish repeated performance res
+  **Post-Mortem & Fix Analysis**:
+  > #### Review or Edit in CodeSandbox  Open the branch in <a href="https://codesandbox.io/p/github/rsuite/rsuite/fix/picker-scroll-dynamic-range?mode=review&utm_source=gh_app">Web Editor</a> &bull; <a href="https://codesandbox.io/p/vscode?owner=rsuite&repo=rsuite&branch=fix/picker-scroll-dynamic-range&utm_source=gh_app">VS Code</a> &bull; <a href="https://codesandbox.io/p/vscode?owner=rsuite&repo=rsuite&branch=fix/picker-scroll-dynamic-range&insiders=true&utm_source=gh_app">Insiders</a><br> Open <a href="https://codesandbox.io/p/devtool/preview/rsuite/rsuite/fix/picker-scroll-dynamic-range?task=preview&port=51423&redirect=true&utm_source=gh_app">Preview</a>  <!-- open-in-codesandbox:complete --> 
+  > [vc]: #Nsv72zicUQVR1AHPEfybnlj/nH+0QmgbdZA0B61aQHo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJyc3VpdGUtbWFpbiIsInByb2plY3RJZCI6InByal9teUhqa1IwbUllcmg4RHg5ZUI0VlY0cHJPMzNHIiwidjAiOmZhbHNlLCJyb290RGlyZWN0b3J5IjoiZG9jcyIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJyc3VpdGUtbWFpbi1naXQtZml4LXBpY2tlci1zY3JvbGwtZHluYW1pYy1yYW5nZS1yc3VpdGUudmVyY2VsLmFwcCJ9LCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vcnN1aXRlL3JzdWl0ZS1tYWluLzZXbmJoS0pOUUU4VHhXaGM5R0dRZ3M3aDYyUG4iLCJwcmV2aWV3VXJsIjoicnN1aXRlLW1haW4tZ2l0LWZpeC1waWNrZXItc2Nyb2xsLWR5bmFtaWMtcmFuZ2UtcnN1aXRlLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQifSx7Im5hbWUiOiJyc3VpdGUtc3Rvcnlib29rIiwicHJvamVjdElkIjoicHJqX2Y1SWtXeUNMQVdIOFp4TE9lcXY2NXlRSDBoZnMiLCJ2MCI6ZmFsc2UsInJvb3REaXJlY3RvcnkiOm51bGwsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJyc3VpdGUtc3Rvcnlib29rLWdpdC1maXgtcGlja2VyLXNjcm9sbC1keW5hbWljLXJhbmdlLXJzdWl0ZS52ZXJjZWwu
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -718,169 +724,488 @@ export default function Adapter({ rows, loading, selected, onSelected }: Lifecyc
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cf94a169` (2026-10-22)
-**Commit Message**: Merge pull request #4981 from rsuite/fix/preact-example-jsx-security
+### Incident Patch 1: `ed11c0ce` (2026-10-24)
+**Commit Message**: Merge source-map security main and preserve both boundary checks
 
-fix(examples): restore Preact builds and patch runtime dependencies
-
-**File**: `examples/with-preact/package-lock.json` (modified, +12/-12)
+**File**: `.github/workflows/nodejs-ci.yml` (modified, +2/-0)
 ```diff
-@@ -1515,9 +1515,9 @@
-       "dev": true
-     },
-     "node_modules/lodash": {
--      "version": "4.17.21",
--      "resolved": "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz",
--      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
-+      "version": "4.18.1",
-+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
-+      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
-     },
-     "node_modules/memoize-one": {
-       "version": "5.2.1",
-@@ -1617,9 +1617,9 @@
-       }
-     },
-     "node_modules/preact": {
--      "version": "10.28.0",
--      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.0.tgz",
--      "integrity": "sha512-rytDAoiXr3+t6OIP3WGlDd0ouCUG1iCWzkcY3++Nreuoi17y6T5i/zRhe6uYfoVcxq6YU+sBtJouuRDsq8vvqA==",
-+      "version": "10.28.2",
-+      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.2.tgz",
-+      "integrity": "sha512-lbteaWGzGHdlIuiJ0l2Jq454m6kcpI1zNje6d8MlGAFlYvP2GO4ibnat7P74Esfz4sPTdM6UxtTwh/d3pwM9JA==",
-       "funding": {
-         "type": "opencollective",
-         "url": "https://opencollective.com/preact"
-@@ -3048,9 +3048,9 @@
-       "dev": true
-     },
-     "lodash": {
--      "version": "4.17.21",
--      "resolved": "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz",
--      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
-+      "version": "4.18.1",
-+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
-+      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
-     },
-     "memoize-one": {
-       "version": "5.2.1",
-@@ -3118,9 +3118,9 @@
-       }
-     },
-     "preact": {
--      "version": "10.28.0",
--      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.0.tgz",
--      "integrity": "sha512-rytDAoiXr3+t6OIP3WGlDd0ouCUG1iCWzkcY3++Nreuoi17y6T5i/zRhe6uYfoVcxq6YU+sBtJouuRDsq8vvqA=="
-+      "version": "10.28.2",
-+      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.2.tgz",
-+      "integrity": "sha512-lbteaWGzGHdlIuiJ0l2Jq454m6kcpI1zNje6d8MlGAFlYvP2GO4ibnat7P74Esfz4sPTdM6UxtTwh/d3pwM9JA=="
-     },
-     "preact-render-to-string": {
-       "version": "6.6.4",
+@@ -28,6 +28,8 @@ jobs:
+       - run: npm ci --legacy-peer-deps
+       - name: Check docs type file boundaries
+         run: node --test test/build/docs-type-files.integration-test.cjs
++      - name: Check source map offset bounds
++        run: node --test test/build/source-map-offsets.integration-test.cjs
+       - name: Check browser and public consumer CI coverage
+         run: node --test test/build/browser-ci-capacity.integration-test.cjs
+       - name: Check component defaults registry
 ```
 
-**File**: `examples/with-preact/vite.config.js` (modified, +2/-1)
+**File**: `package-lock.json` (modified, +3/-3)
 ```diff
-@@ -4,7 +4,8 @@ import preact from '@preact/preset-vite';
- export default defineConfig({
-   plugins: [preact()],
-   esbuild: {
--    include: /src\/.*\.js$/,
-+    include: /src\/.*\.jsx?$/,
-+    exclude: /node_modules/,
-     loader: 'jsx'
-   },
-   optimizeDeps: {
+@@ -16061,9 +16061,9 @@
+       }
+     },
+     "node_modules/source-map-js": {
+-      "version": "1.2.1",
+-      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
+-      "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
++      "version": "1.2.2",
++      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
++      "integrity": "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==",
+       "dev": true,
+       "engines": {
+         "node": ">=0.10.0"
+```
+
+**File**: `test/build/source-map-offsets.integration-test.cjs` (added, +154/-0)
+```diff
+@@ -0,0 +1,154 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { Worker, isMainThread, parentPort, workerData } = require('node:worker_threads');
++const { SourceMapConsumer, SourceMapGenerator, SourceNode } = require('source-map-js');
++
++const basicMap = (source = 'input.ts') => ({
++  version: 3,
++  sources: [source],
++  sourcesContent: ['const value = 1;'],
++  names: [],
++  mappings: 'AAAA'
++});
++const indexedMap = (line, column = 0, map = basicMap()) => ({
++  version: 3,
++  sections: [{ offset: { line, column }, map }]
++});
++
++function exercise(operation) {
++  if (operation === 'nested-sources') {
++    let map = { ...basicMap(), sources: ['first.ts', 'second.ts'] };
++    for (let depth = 0; depth < 40; depth++) {
++      map = indexedMap(0, 0, map);
++    }
++    return new SourceMapConsumer(map).sources;
++  }
++  if (operation === 'generated-gap') {
++    const generator = new SourceMapGenerator();
++    generator.addMapping({
++      generated: { line: 10_000_001, column: 0 },
++      original: { line: 1, column: 0 },
++      source: 'input.ts'
++    });
++    const map = generator.toJSON();
++    assert.equal(map.mappings.length, 10_000_004);
++    assert.equal(map.mappings.slice(-4), 'AAAA');
++    return map.mappings.length;
++  }
++  if (operation === 'exhausted-code') {
++    const consumer = new SourceMapConsumer(indexedMap(1_000_000));
++    return SourceNode.fromStringWithSourceMap('x', consumer).toString();
++  }
++  throw new Error('Unknown source-map operation: ' + operation);
++}
++
++async function inBoundedWorker(operation) {
++  const worker = new Worker(__filename, {
++    workerData: operation,
++    resourceLimits: { maxOldGenerationSizeMb: 64, maxYoungGenerationSizeMb: 16 }
++  });
++  try {
++    return await new Promise((resolve, reject) => {
++      let settled = false;
++      let operationTimer;
++      const startupTimer = setTimeout(() => finish(new Error('Worker did not start')), 10_000);
++      function finish(error, result) {
++        if (settled) return;
++        settled = true;
++        clearTimeout(startupTimer);
++        clearTimeout(operationTimer);
++        if (error) reject(error);
++        else resolve(result);
++      }
++      worker.once('online', () => {
++        clearTimeout(startupTimer);
++        operationTimer = setTimeout(
++          () => finish(new Error(operation + ' exceeded the 3-second operation budget')),
++          3_000
++        );
++      });
++      worker.once('message', result => finish(null, result));
++      worker.once('error', error => finish(error));
++      worker.once('exit', code =>
++        finish(new Error(operation + ' exited without a result: ' + code))
++      );
++    });
++  } finally {
++    await worker.terminate();
++  }
++}
++
++if (!isMainThread) {
++  parentPort.postMessage(exercise(workerData));
++} else {
++  for (const field of ['line', 'column']) {
++    for (const value of [-1, 0.5, Infinity, NaN, Number.MAX_SAFE_INTEGER + 1, null, '1']) {
++      test('rejects invalid indexed section ' + field + ': ' + String(value), () => {
++        const offset = { line: 0, column: 0, [field]: value };
++        assert.throws(
++          () => new SourceMapConsumer({ version: 3, sections: [{ offset, map: basicMap() }] }),
++          /non-negative integers/
++        );
++      });
++    }
++  }
++
++  test('rejects excessive direct and accumulated nested line offsets', () => {
++    assert.throws(() => new SourceMapConsumer(indexedMap(100_000_000)), /must not exceed/);
++    assert.throws(
++      () => new SourceMapConsumer(indexedMap(6_000_000, 0, indexedMap(6_000_000))),
++      /including offsets of nested sections/
++    );
++    assert.doesNotThrow(() => new SourceMapConsumer(indexedMap(10_000_000)));
++  });
++
++  test('retains normal indexed mappings and source content', () => {
++    const consumer = new SourceMapConsumer({
++      version: 3,
++      sections: [
++        { offset: { line: 0, column: 0 }, map: basicMap('first.ts') },
++        { offset: { line: 1, column: 2 }, map: basicMap('second.ts') }
++      ]
++    });
++    assert.deepEqual(consumer.originalPositionFor({ line: 1, column: 1 }), {
++      source: 'first.ts',
++      line: 1,
++      column: 0,
++      name: null
++    });
++    assert.deepEqual(consumer.originalPositionFor({ line: 2, column: 3 }), {
++      source: 'second.ts',
++      line: 1,
++      column: 0,
++      name: null
++    });
++    assert.deepEqual(consumer.sources, ['first.ts', 'second.ts']);
++    assert.equal(consumer.sourceContentFor('second.ts'), 'const value = 1;');
++    assert.equal(SourceNode.fromStringWithSourceMap('a\n  b', consumer).toString(), 'a\n  b');
++  });
++
++  test('roundtrips a normal generated map and its source content', () => {
++    const generator = SourceMapGenerator.fromSourceMap(new SourceMapConsumer(basicMap()));
++    assert.deepEqual(generator.toJSON(), basicMap());
++    const roundtrip = new SourceMapConsumer(generator.toJSON());
++    assert.deepEqual(roundtrip.originalPositionFor({ line: 1, col
 ```
 
 ---
 
-### Incident Patch 2: `5c3e5f0a` (2026-10-21)
-**Commit Message**: Merge pull request #4977 from rsuite/fix/typescript-example-lodash-security
+### Incident Patch 2: `efe6a0f1` (2026-10-24)
+**Commit Message**: Merge pull request #5007 from rsuite/build/terser-serializer-security
 
-fix(deps): patch TypeScript example lodash resolution
+build: secure webpack option serialization
 
-**File**: `examples/with-typescript/package-lock.json` (modified, +3/-3)
+**File**: `package-lock.json` (modified, +6/-13)
 ```diff
-@@ -4385,9 +4385,9 @@
+@@ -14882,14 +14882,6 @@
+         "quote-stream": "bin/cmd.js"
        }
      },
-     "node_modules/lodash": {
--      "version": "4.17.21",
--      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz",
--      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
-+      "version": "4.18.1",
-+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
-+      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
-     },
-     "node_modules/lodash.debounce": {
-       "version": "4.0.8",
-```
-
----
-
-### Incident Patch 3: `784209da` (2026-10-21)
-**Commit Message**: Merge pull request #4974 from rsuite/fix/root-yaml-security
-
-fix(deps): patch development js-yaml resolutions
-
-**File**: `package-lock.json` (modified, +10/-8)
-```diff
-@@ -3070,9 +3070,9 @@
-       }
-     },
-     "node_modules/@eslint/eslintrc/node_modules/js-yaml": {
--      "version": "4.1.0",
--      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.1.0.tgz",
--      "integrity": "sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==",
-+      "version": "4.3.2",
-+      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.3.2.tgz",
-+      "integrity": "sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==",
-       "dev": true,
-       "dependencies": {
-         "argparse": "^2.0.1"
-@@ -7345,9 +7345,9 @@
-       "dev": true
-     },
-     "node_modules/cosmiconfig/node_modules/js-yaml": {
--      "version": "4.1.0",
--      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.1.0.tgz",
--      "integrity": "sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==",
-+      "version": "4.3.2",
-+      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.3.2.tgz",
-+      "integrity": "sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==",
-       "dev": true,
-       "dependencies": {
-         "argparse": "^2.0.1"
-@@ -11709,7 +11709,7 @@
-       "license": "MIT"
-     },
-     "node_modules/js-yaml": {
--      "version": "3.14.1",
-+      "version": "3.15.2",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -11718,7 +11718,9 @@
-       },
-       "bin": {
-         "js-yaml": "bin/js-yaml.js"
+-    "node_modules/randombytes": {
+-      "version": "2.1.0",
+-      "dev": true,
+-      "license": "MIT",
+-      "dependencies": {
+-        "safe-buffer": "^5.1.0"
 -      }
-+      },
-+      "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-3.15.2.tgz",
-+      "integrity": "sha512-6EuL879VkRA+1Cz578mKMiKvjPNEuk6+r1JaFzoSWejZmtf7xWbIyw1e3KkxlkzTIt9Taw6JBhEppG7utc1P+w=="
+-    },
+     "node_modules/react": {
+       "version": "19.0.0",
+       "resolved": "https://registry.npmjs.org/react/-/react-19.0.0.tgz",
+@@ -15745,12 +15737,13 @@
+       }
      },
-     "node_modules/jsdoc-type-pratt-parser": {
-       "version": "4.8.0",
+     "node_modules/serialize-javascript": {
+-      "version": "6.0.2",
+-      "resolved": "https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-6.0.2.tgz",
+-      "integrity": "sha512-Saa1xPByTTq2gdeFZYLLo+RFE35NHZkAbqZeWNd3BpzppeVisAqpDjcp8dyf6uIvEqJRd46jemmyA4iFIeVk8g==",
++      "version": "7.1.4",
++      "resolved": "https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-7.1.4.tgz",
++      "integrity": "sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==",
+       "dev": true,
+-      "dependencies": {
+-        "randombytes": "^2.1.0"
++      "license": "BSD-3-Clause",
++      "engines": {
++        "node": ">=20.0.0"
+       }
+     },
+     "node_modules/set-function-length": {
+```
+
+**File**: `package.json` (modified, +5/-1)
+```diff
+@@ -28,7 +28,7 @@
+     "build:types-cjs": "tsc --project tsconfig.build.json --emitDeclarationOnly --outDir lib/cjs && resolve-tspaths --project tsconfig.build.json --out lib/cjs ",
+     "build:types-esm": "tsc --project tsconfig.build.json --emitDeclarationOnly --outDir lib/esm && resolve-tspaths --project tsconfig.build.json --out lib/esm ",
+     "build:types": "npm run build:types-cjs && npm run build:types-esm",
+-    "postbuild": "node --test test/build/cleanup.integration-test.cjs test/build/source-paths.integration-test.cjs test/build/lodash-imports.integration-test.cjs test/build/declaration-paths.integration-test.cjs && cross-env VITEST_RUNNING_POSTBUILD=true vitest run --environment=node test/validateBuilds.spec.ts",
++    "postbuild": "node --test test/build/cleanup.integration-test.cjs test/build/source-paths.integration-test.cjs test/build/lodash-imports.integration-test.cjs test/build/declaration-paths.integration-test.cjs test/build/serializer-security.integration-test.mjs && cross-env VITEST_RUNNING_POSTBUILD=true vitest run --environment=node test/validateBuilds.spec.ts",
+     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+     "bump-docs": "node scripts/bump-docs-version.js",
+     "dist:analyze": "ANALYZE=true webpack --mode production --progress",
+@@ -194,6 +194,10 @@
+     "aria-query@>5.1.3": "5.1.3",
+     "get-uri@6.0.4": {
+       "basic-ftp": "^6.2.3"
++    },
++    "terser-webpack-plugin": {
++      ".": "5.3.10",
++      "serialize-javascript": "^7.1.3"
+     }
+   },
+   "browserslist": [
+```
+
+**File**: `test/build/serializer-security.integration-test.mjs` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++import assert from 'node:assert/strict';
++import { spawnSync } from 'node:child_process';
++import { createRequire } from 'node:module';
++import test from 'node:test';
++import vm from 'node:vm';
++
++// Exercise the serializer resolved by the actual webpack minimizer, including overrides.
++const fromProject = createRequire(import.meta.url);
++const fromMinimizer = createRequire(fromProject.resolve('terser-webpack-plugin'));
++const serializerPath = fromMinimizer.resolve('serialize-javascript');
++const serialize = fromMinimizer('serialize-javascript');
++
++function assertNoInjectedStatement(value) {
++  const sandbox = { serializationProbe: 0 };
++  try {
++    const output = serialize(value);
++    vm.runInNewContext(output, sandbox, { timeout: 1000 });
++  } catch (error) {
++    // Rejecting a forged built-in is also safe; the injected assignment must never run.
++    assert.match(error.name, /^(?:TypeError|SyntaxError)$/);
++  }
++  assert.equal(sandbox.serializationProbe, 0);
++}
++
++test('minimizer serialization cannot inject a statement through RegExp flags', () => {
++  const regexp = Object.create(RegExp.prototype);
++  Object.defineProperties(regexp, {
++    source: { value: 'pattern' },
++    flags: { value: 'g");globalThis.serializationProbe=1;//' }
++  });
++  assertNoInjectedStatement(regexp);
++});
++
++test('minimizer serialization cannot inject a statement through a Date', () => {
++  const date = new Date('2026-01-01T00:00:00.000Z');
++  date.toISOString = () => '2026-01-01T00:00:00.000Z");globalThis.serializationProbe=1;//';
++  assertNoInjectedStatement(date);
++});
++
++test('a forged function ending in a bare script closer cannot escape its surrounding output', () => {
++  function callback() {}
++  callback.toString = () => 'function callback(){ return 1 }//</script';
++  const output = serialize({ nested: { callback }, tail: 'next value' }, { space: 2 });
++  assert.doesNotMatch(output, /<\/script(?=[\t\n\f\r />]|$)/i);
++});
++
++test('ordinary minimizer option values and function syntax retain their behavior', () => {
++  const output = serialize({
++    compress: { passes: 2, pure_funcs: ['debug'] },
++    format: { comments: /license/i },
++    callback: value => value + 1,
++    date: new Date('2026-01-01T00:00:00.000Z'),
++    map: new Map([['entry', 42]]),
++    set: new Set([3, 4]),
++    bigint: 42n,
++    missing: undefined,
++    html: '</script><div>plain string</div>'
++  });
++  const value = vm.runInNewContext('(' + output + ')', {}, { timeout: 1000 });
++  assert.equal(value.compress.passes, 2);
++  assert.equal(value.format.comments.test('License'), true);
++  assert.equal(value.callback(2), 3);
++  assert.equal(value.date.toISOString(), '2026-01-01T00:00:00.000Z');
++  assert.equal(value.map.get('entry'), 42);
++  assert.equal(value.set.has(4), true);
++  assert.equal(value.bigint, 42n);
++  assert.equal(value.missing, undefined);
++  assert.equal(value.html, '</script><div>plain string</div>');
++  assert.doesNotMatch(output, /<\/script/i);
++});
++
++test('a large array-like object cannot hang minimizer serialization', () => {
++  const script = `
++    const serialize = require(${JSON.stringify(serializerPath)});
++    const value = Object.create(Array.prototype);
++    value.length = 2147483647;
++    value[0] = 'first';
++    const output = serialize(value);
++    if (!output.includes('2147483647')) throw new Error('Array-like length was lost');
++    process.stdout.write('serialized');
++  `;
++  const child = spawnSync(process.execPath, ['-e', script], {
++    timeout: 5000,
++    maxBuffer: 64 * 1024,
++    encoding: 'utf8'
++  });
++  assert.ifError(child.error);
++  assert.equal(child.status, 0, child.stderr);
++  assert.equal(child.stdout, 'serialized');
++});
+```
+
+---
+
+### Incident Patch 3: `9969a502` (2026-10-23)
+**Commit Message**: Merge pull request #5001 from rsuite/fix/nextjs-app-15.5.28
+
+fix(examples): patch Next.js App Router security release
+
+**File**: `examples/with-nextjs-app/package.json` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@
+   },
+   "dependencies": {
+     "@rsuite/icons": "^1.4.0",
+-    "next": "^15.5.27",
++    "next": "^15.5.28",
+     "react": "^19.0.0",
+     "react-dom": "^19.0.0",
+     "react-icons": "^5.4.0",
+```
+
+**File**: `examples/with-nextjs-app/pnpm-lock.yaml` (modified, +31/-31)
+```diff
+@@ -13,8 +13,8 @@ dependencies:
+     specifier: ^1.4.0
+     version: 1.4.0(react-dom@19.2.3)(react@19.2.3)
+   next:
+-    specifier: ^15.5.27
+-    version: 15.5.27(@types/node@22.19.2)(react-dom@19.2.3)(react@19.2.3)
++    specifier: ^15.5.28
++    version: 15.5.28(@types/node@22.19.2)(react-dom@19.2.3)(react@19.2.3)
+   react:
+     specifier: ^19.0.0
+     version: 19.2.3
+@@ -858,75 +858,75 @@ packages:
+     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
+     dev: false
+ 
+-  /@next/env@15.5.27:
+-    resolution: {integrity: sha512-WC5hvVqiuFOcRyz6gKPeJkiVvSMf3scNeAV49CdWtVqxmUlzh8UKR6YHt9yiNkh8LngtzqSlVz07/Ma3ZAzchA==}
++  /@next/env@15.5.28:
++    resolution: {integrity: sha512-xxW5EBI8fMPuVTPBW7LL980IRbuDXlbkUAwp9DDhtb4Lnich3nJ13uYpvrX4VE74hWPf6AvHHAMmGCidcHjbfg==}
+     dev: false
+ 
+-  /@next/swc-darwin-arm64@15.5.27:
+-    resolution: {integrity: sha512-fBA9QurmK4+uj4wNhmRTuO5zMVRaBHCvp6H93zTG/5i6Yi6TewbvbesXB8YQNj8T99Cwrow87hHiFV6wL/hyMA==}
++  /@next/swc-darwin-arm64@15.5.28:
++    resolution: {integrity: sha512-dPoQYXcfSIqx5o+TOXVXO7kONK5qbtNRDeiTfII0bT3puGIT6VF5e0QwmxNZfEZ5Zety5f3m9P/p4xqwfiLlPg==}
+     engines: {node: '>= 10'}
+     cpu: [arm64]
+     os: [darwin]
+     requiresBuild: true
+     dev: false
+     optional: true
+ 
+-  /@next/swc-darwin-x64@15.5.27:
+-    resolution: {integrity: sha512-FGZwJwry8qZNHxD/nfwrCwCHHrqx6epqItkkxbYcBQEQ2uw5S43bY83fQB5zbAsZE7TELMjoYkbhsQ4oKM7wwg==}
++  /@next/swc-darwin-x64@15.5.28:
++    resolution: {integrity: sha512-RgCJ7buBivTH+6sddqaVm+/v8kwMHlFkobvdt3DfETutws5HrxnToMIWSN9X3MZ3aAi7BbKrGZZWUDQLEycXqw==}
+     engines: {node: '>= 10'}
+     cpu: [x64]
+     os: [darwin]
+     requiresBuild: true
+     dev: false
+     optional: true
+ 
+-  /@next/swc-linux-arm64-gnu@15.5.27:
+-    resolution: {integrity: sha512-GQulAaJYNF1RYuatlsw9/uzbKz4if2V7Ic9nVO+P0ljYPm4yBRTFIl6g5YkKTw40lMLbpy9edLoH44g3jSHMYA==}
++  /@next/swc-linux-arm64-gnu@15.5.28:
++    resolution: {integrity: sha512-OHXQe13olE59aKe++zHavGcJPh5SLHXi6Anret3BBeq1+qhSuOJDNAli/EDDfxs6UTqA4Qddo4uyYry2slyjiQ==}
+     engines: {node: '>= 10'}
+     cpu: [arm64]
+     os: [linux]
+     requiresBuild: true
+     dev: false
+     optional: true
+ 
+-  /@next/swc-linux-arm64-musl@15.5.27:
+-    resolution: {integrity: sha512-URFFsUmu8Pi0/1qdnUI7tx7keZw1Mt5zHfrIX1RfDG9Nih8DYxK54WZsDJUX2ZTlii1jgotL7qcbwKnSAES6xQ==}
++  /@next/swc-linux-arm64-musl@15.5.28:
++    resolution: {integrity: sha512-nTB7bB6vfn4ezCJNYP43ukt2o8L3+WxKF/sTcTxepdXsJh3SM9RhlU7wrZYbH7L4HO5M87dqDTwm8587vAkCiw==}
+     engines: {node: '>= 10'}
+     cpu: [arm64]
+     os: [linux]
+     requiresBuild: true
+     dev: false
+     optional: true
+ 
+-  /@next/swc-linux-x64-gnu@15.5.27:
+-    resolution: {integrity: sha512-aJp74z7uvU5jQhyH7lyk+4qSRcTdKbKT9NQE3jiO9kWYkoHZjKi0zzHDbCoZ+v2sJDEiJ/z58R0UlWMGWNF3HA==}
++  /@next/swc-linux-x64-gnu@15.5.28:
++    resolution: {integrity: sha512-WXCfVI32rW3xCusoUX1RpZKtyChWU2Zwe27JUDmM3KrXwcDNc9vV4zEq0GKFAURnuQ/Ouo/XqPvB0yh445XZCg==}
+     engines: {node: '>= 10'}
+     cpu: [x64]
+     os: [linux]
+     requiresBuild: true
+     dev: false
+     optional: true
+ 
+-  /@next/swc-linux-x64-musl@15.5.27:
+-    resolution: {integrity: sha512-ILl2bQ8MbpvyMpY8AXljb3BXs0MJSC8HXZ6QV5AWpVS7ZELqNPtrHvhUk+SNarvjvICXX8bCS287TCi+gUFVYg==}
++  /@next/swc-linux-x64-musl@15.5.28:
++    resolution: {integrity: sha512-Miq+NDb/HWsXuxseYxMM6fuEOQXgTziarkKIRpVKCn8W69cEfhQaQr+90pO+u4q2CbJR2wzXmUuCFyZaJs/Nng==}
+     engines: {node: '>= 10'}
+     cpu: [x64]
+     os: [linux]
+     requiresBuild: true
+     dev: false
+     optional: true
+ 
+-  /@next/swc-win32-arm64-msvc@15.5.27:
+-    resolution: {integrity: sha512-1MB9Rh5y8TOPN2x7naNTJNkCZQav9c70AI7EBYXxsEewwOffC4DjjwBwKf20NBvcA+u+5jDv7nVmHxunlP2d7Q==}
++  /@next/swc-win32-arm64-msvc@15.5.28:
++    resolution: {integrity: sha512-5LR79lemgDlgxvG7MQJ+zHCkVcrUoQuO7CiIvq3I58vNW4goSOE2b+19Z6FujRWMouvni4gvudYFuFuNxolGWA==}
+     engines: {node: '>= 10'}
+     cpu: [arm64]
+     os: [win32]
+     requiresBuild: true
+     dev: false
+     optional: true
+ 
+-  /@next/swc-win32-x64-msvc@15.5.27:
+-    resolution: {integrity: sha512-XtYgpGOswgnyBWXzOEG6q9RhvnSw0CEZ0MbWqCsl5PISgt9EzvJvNW5mU5n1PsphX/lnamzxjgQXH2GUJL8nqg==}
++  /@next/swc-win32-x64-msvc@15.5.28:
++    resolution: {integrity: sha512-GNipvXUYROSTf4PXEyH95FrWImIB5zdaK6uEOg0RP1/X2drnvoMwiBkJ0VWdzX7w3iiBm3y5g2TxkKDGVTOQcg==}
+     engines: {node: '>= 10'}
+     cpu: [x64]
+     os: [win32]
+@@ -1120,8 +1120,8 @@ packages:
+     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+     hasBin: true
+ 
+-  /next@15.5.27(@types/node@22.19.2)(react-dom@19.2.3)(react@19.2.3):
+-    resolution: {integrity: sha512-F82CrlPZ8GRxBH9RIIoR3qU1t5RT3dv1K8moe8SjlDEquiFipvEI13R1Om90TaUOEwShkWCMlg8+gvTNzfMhvg==}
++  /next@15.5.28(@types/node@22.19.2)(react-dom@19.2.3)(react@19.2.3):
++    resolution: {integrity: sha512-JjhLBBY1PNnuwPtcZ7t8yxVeJVYvD2Jyp633J+gRCNbzSt7N0E+xqCf6uQiff3+3qmUkwcF/ksfSsK1xsZ76Tw==}
+     engines: {node: ^18.18.0 || ^19.8.0 || >= 20.0.0}
+
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4988** (2026-10-22): fix(examples): support Node 24 in Umi and patch Vite (@simonguo)
-- **PR #4987** (2026-10-22): fix(examples): update remaining Lodash locks to 4.18.1 (@simonguo)
-- **PR #4986** (2026-10-22): ci: cache public consumer downloads and retry coverage delivery (@simonguo)
-- **PR #4981** (2026-10-22): fix(examples): restore Preact builds and patch runtime dependencies (@simonguo)
-- **PR #4978** (2026-10-21): chore(storybook): migrate preview to Storybook 10 and Vite 8 (@simonguo)
-- **PR #4977** (2026-10-21): fix(deps): patch TypeScript example lodash resolution (@simonguo)
+- **PR #5018** (2026-10-25): fix(benchmarks): preserve visible virtual pointer targets (@simonguo)
+- **PR #5017** (2026-10-24): fix(benchmarks): follow changing virtual scroll bounds (@simonguo)
+- **PR #5014** (2026-10-24): ci(benchmark): retain geometry guard operands on failure (@simonguo)
+- **PR #5013** (2026-10-24): fix(benchmark): finish range scrolling before the next preflight (@simonguo)
+- **PR #5012** (2026-10-24): fix(docs): constrain type file reads to flat JSON names (@simonguo)
+- **PR #5011** (2026-10-24): fix(form): require schema-typed 2.4.4 for async rules (@simonguo)
 
 ---
 
@@ -900,50 +1225,29 @@ fix(deps): patch development js-yaml resolutions
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4981 from rsuite/fix/preact-example-jsx-security
+## X. Merge source-map security main and preserve both boundary checks
 
 **RULE**:
-When implementing operations in `examples/with-preact/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rsuite/rsuite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/nodejs-ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rsuite/rsuite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cf94a169`: Merge pull request #4981 from rsuite/fix/preact-example-jsx-security. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ed11c0ce`: Merge source-map security main and preserve both boundary checks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/with-preact/package-lock.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nodejs-ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      "version": "4.18.1",
-      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
-      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
-      "version": "10.28.2",
-      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.2.tgz",
-      "integrity": "sha512-lbteaWGzGHdlIuiJ0l2Jq454m6kcpI1zNje6d8MlGAFlYvP2GO4ibnat7P74Esfz4sPTdM6UxtTwh/d3pwM9JA==",
-      "version": "4.18.1",
-      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
-      "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
-      "version": "10.28.2",
-      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.2.tgz",
-      "integrity": "sha512-lbteaWGzGHdlIuiJ0l2Jq454m6kcpI1zNje6d8MlGAFlYvP2GO4ibnat7P74Esfz4sPTdM6UxtTwh/d3pwM9JA=="
+      - name: Check source map offset bounds
+        run: node --test test/build/source-map-offsets.integration-test.cjs
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "4.17.21",
-      "resolved": "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz",
-      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
-      "version": "10.28.0",
-      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.0.tgz",
-      "integrity": "sha512-rytDAoiXr3+t6OIP3WGlDd0ouCUG1iCWzkcY3++Nreuoi17y6T5i/zRhe6uYfoVcxq6YU+sBtJouuRDsq8vvqA==",
-      "version": "4.17.21",
-      "resolved": "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz",
-      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
-      "version": "10.28.0",
-      "resolved": "https://registry.npmjs.org/preact/-/preact-10.28.0.tgz",
-      "integrity": "sha512-rytDAoiXr3+t6OIP3WGlDd0ouCUG1iCWzkcY3++Nreuoi17y6T5i/zRhe6uYfoVcxq6YU+sBtJouuRDsq8vvqA=="
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cf94a169` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ed11c0ce` are properly handled with clean fallback behavior.

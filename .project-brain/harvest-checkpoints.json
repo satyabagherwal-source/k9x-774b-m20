@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T04:06:07.083Z",
+  "last_updated": "2026-10-25T04:12:39.978Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1655,14 +1655,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-base-en-v1-5",
-      "content_hash": "52505cc713822fcd94460b54d70dbe67f6b8e29b9c60ca2cc0d850c016790ed2",
-      "verified_at": "2026-10-20T12:12:10.595Z",
+      "content_hash": "d0f5a3bfb45672daaa2cbd2f296fda1f773f1172fa1ab8ae1ab93b63b451165d",
+      "verified_at": "2026-10-25T04:12:34.707Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:12:10.595Z"
+      "last_updated": "2026-10-25T04:12:34.707Z"
     },
     "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -6471,14 +6471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rsuite-rsuite",
-      "content_hash": "3653297c30c769ecd2d853bba9d36d395a24ab642f0738dbbe7ccbc41731e1fd",
-      "verified_at": "2026-10-22T17:38:27.816Z",
+      "content_hash": "4e6c253e9678773b181f12b74966dc86aa00a66301230bbafda2542c7770885b",
+      "verified_at": "2026-10-25T04:12:26.546Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:38:27.816Z"
+      "last_updated": "2026-10-25T04:12:26.546Z"
     },
     "Kuberwastaken/claurst": {
       "repository": "Kuberwastaken/claurst",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "016d9fc21292e5bb443b96edff1c8cd8275fcb68158efab0423dc87a53712f44",
-      "verified_at": "2026-10-22T16:26:16.599Z",
+      "content_hash": "7612195c220ca9fb0131ca849d77d5138553783272d9df28255a8f6a9facb22d",
+      "verified_at": "2026-10-25T04:12:39.977Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:26:16.599Z"
+      "last_updated": "2026-10-25T04:12:39.977Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "207e503647d409f1b8d756ba35d38d97762b5ee92d76ab8fa4a54c71786a592d",
-      "verified_at": "2026-10-22T17:19:16.237Z",
+      "content_hash": "d382fe5cdabe305aae8fb441662032a7b843524e8d37a92f84a79f8fd2e26432",
+      "verified_at": "2026-10-25T04:12:35.300Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:19:16.237Z"
+      "last_updated": "2026-10-25T04:12:35.300Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

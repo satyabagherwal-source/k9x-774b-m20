@@ -4659,3 +4659,7 @@ Every entry in this ledger must capture:
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `1a172945` | Multi-dimensional audit evidence | 2026-10-25T03:59:34.704Z |
 | `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-25T04:05:52.648Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `d00af7d2` | Multi-dimensional audit evidence | 2026-10-25T04:06:07.069Z |
+| `learn-github-rsuite-rsuite` | `https://github.com/rsuite/rsuite` | `79077a69` | Multi-dimensional audit evidence | 2026-10-25T04:12:26.530Z |
+| `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-25T04:12:34.695Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `0073665a` | Multi-dimensional audit evidence | 2026-10-25T04:12:35.287Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `1c5d15fd` | Multi-dimensional audit evidence | 2026-10-25T04:12:39.965Z |

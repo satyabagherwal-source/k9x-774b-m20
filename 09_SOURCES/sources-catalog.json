@@ -1255,8 +1255,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
     "sourceVersion": "hf-baai-bge-base-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "52505cc713822fcd94460b54d70dbe67f6b8e29b9c60ca2cc0d850c016790ed2",
-    "lastHarvestedAt": "2026-10-20T12:12:10.587Z",
+    "contentHash": "d0f5a3bfb45672daaa2cbd2f296fda1f773f1172fa1ab8ae1ab93b63b451165d",
+    "lastHarvestedAt": "2026-10-25T04:12:34.695Z",
     "learningId": "learn-huggingface-baai-bge-base-en-v1-5"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
@@ -4233,10 +4233,10 @@
     "repository": "rsuite/rsuite",
     "platform": "github",
     "sourceUrl": "https://github.com/rsuite/rsuite",
-    "sourceVersion": "c5ab91ef",
+    "sourceVersion": "79077a69",
     "license": "MIT",
-    "contentHash": "3653297c30c769ecd2d853bba9d36d395a24ab642f0738dbbe7ccbc41731e1fd",
-    "lastHarvestedAt": "2026-10-22T17:38:27.804Z",
+    "contentHash": "4e6c253e9678773b181f12b74966dc86aa00a66301230bbafda2542c7770885b",
+    "lastHarvestedAt": "2026-10-25T04:12:26.530Z",
     "learningId": "learn-github-rsuite-rsuite"
   },
   "kuberwastaken-claurst": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "2eff52c7",
+    "sourceVersion": "1c5d15fd",
     "license": "Apache-2.0",
-    "contentHash": "016d9fc21292e5bb443b96edff1c8cd8275fcb68158efab0423dc87a53712f44",
-    "lastHarvestedAt": "2026-10-22T16:26:16.585Z",
+    "contentHash": "7612195c220ca9fb0131ca849d77d5138553783272d9df28255a8f6a9facb22d",
+    "lastHarvestedAt": "2026-10-25T04:12:39.965Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "69d1aac2",
+    "sourceVersion": "0073665a",
     "license": "Apache-2.0",
-    "contentHash": "207e503647d409f1b8d756ba35d38d97762b5ee92d76ab8fa4a54c71786a592d",
-    "lastHarvestedAt": "2026-10-22T17:19:16.226Z",
+    "contentHash": "d382fe5cdabe305aae8fb441662032a7b843524e8d37a92f84a79f8fd2e26432",
+    "lastHarvestedAt": "2026-10-25T04:12:35.287Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

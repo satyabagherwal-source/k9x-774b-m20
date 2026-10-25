@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-SB1L",
-    "timestamp": "2026-10-21T02:27:41.673Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-    "contentHash": "ad66c9658fcf6a0721a8f4fa35058ac3f42483bb312b6028411d2c959b3c84fe",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-SBDM",
-    "timestamp": "2026-10-21T02:27:42.106Z",
-    "repository": "kucherenko/jscpd",
-    "learningId": "learn-github-kucherenko-jscpd",
-    "contentHash": "79cdbbcdeb42b94db65af26753dc2f18a19a70cfb33c1286fe7ed503a3067701",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-SHQ5",
-    "timestamp": "2026-10-21T02:27:50.333Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "d217e1565b09fe3e47430b0c2b98379897a8feb25fe32da0193b2beb6f9a5c9f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-ZZP6",
-    "timestamp": "2026-10-21T02:33:40.218Z",
-    "repository": "React95/React95",
-    "learningId": "learn-github-react95-react95",
-    "contentHash": "eff425bec61f043509df817088ba7b9f3efb20f4c4ede1fc8244a5dc29cf3b7f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-ZZS5",
     "timestamp": "2026-10-21T02:33:40.325Z",
     "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -7490,6 +7430,66 @@
     "repository": "yugabyte/yugabyte-db",
     "learningId": "learn-github-yugabyte-yugabyte-db",
     "contentHash": "43b9863746dd409476dcc82c601425dbe7acb16cd1a83a1315f37bc1c55336ca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-AF4V",
+    "timestamp": "2026-10-25T04:12:26.527Z",
+    "repository": "rsuite/rsuite",
+    "learningId": "learn-github-rsuite-rsuite",
+    "contentHash": "4e6c253e9678773b181f12b74966dc86aa00a66301230bbafda2542c7770885b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ALFO",
+    "timestamp": "2026-10-25T04:12:34.692Z",
+    "repository": "BAAI/bge-base-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+    "contentHash": "d0f5a3bfb45672daaa2cbd2f296fda1f773f1172fa1ab8ae1ab93b63b451165d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ALW4",
+    "timestamp": "2026-10-25T04:12:35.284Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "d382fe5cdabe305aae8fb441662032a7b843524e8d37a92f84a79f8fd2e26432",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-API2",
+    "timestamp": "2026-10-25T04:12:39.962Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "7612195c220ca9fb0131ca849d77d5138553783272d9df28255a8f6a9facb22d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

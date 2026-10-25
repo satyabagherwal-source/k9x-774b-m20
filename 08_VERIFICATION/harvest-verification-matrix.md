@@ -4652,3 +4652,7 @@
 | `CYCLE-20261025-TVL8` | `2026-10-25T03:59:34.700Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4033` | Yes (`753974fd...`) |
 | `CYCLE-20261025-1Z7O` | `2026-10-25T04:05:52.644Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`309aacb8...`) |
 | `CYCLE-20261025-2ACA` | `2026-10-25T04:06:07.066Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4034` | Yes (`43b98637...`) |
+| `CYCLE-20261025-AF4V` | `2026-10-25T04:12:26.527Z` | `rsuite/rsuite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4035` | Yes (`4e6c253e...`) |
+| `CYCLE-20261025-ALFO` | `2026-10-25T04:12:34.692Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 790, Rule 4036` | Yes (`d0f5a3bf...`) |
+| `CYCLE-20261025-ALW4` | `2026-10-25T04:12:35.284Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4037` | Yes (`d382fe5c...`) |
+| `CYCLE-20261025-API2` | `2026-10-25T04:12:39.962Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4038` | Yes (`7612195c...`) |

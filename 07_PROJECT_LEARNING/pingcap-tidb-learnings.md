@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `69d1aac2`  
+> **Source Version**: `0073665a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:19:15.903Z  
+> **Timestamp**: 2026-10-25T04:12:34.844Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:19:13.685Z  
+> **Harvest Timestamp**: 2026-10-25T04:12:33.789Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40670 stars
+- **Stars / Engagement**: 40674 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72210** (2026-10-22): **config: fix diagnostic-mode goroutine profile flake**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #71484  Problem Summary:  `TestTiDBServerGoroutinesInDiagnosticMode` can fail with `goroutine group has no frames` when a goroutine profile contains a group whose only frame is `runtime.goexit`. Go's `debug=1` profile writer suppresses that frame, leaving a valid count-and-address header without printable frames. The test incorrectly rejects this output.  ### What changed and how does it work?  Parse and count every goroutine group before checking its frames. For a header-only group, resolve each raw program counter separately and accept it only if every counter resolves to exactly `runtime.goexit`. Missing, malformed, unknown, and other worker frames remain rejected. Preserve the existing worker allowlist and the check that all goroutines are accounted for.  This change only affects the diagnostic-mode test helper.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to 
+- **Issue #72285** (2026-10-24): **expression: use the binary collation for an implicit cast to a binary string**
+  *Symptoms*: ### What problem does this PR solve?  Issue Number: close #69191  Problem Summary:  `BINARY(expr)` and other casts to a binary string that are not built with an explicit charset get their collation info from the connection (`ctx.GetCharsetInfo()`), while their return type says `binary`. TiDB evaluates with the return type, but `scalarFuncToPBExpr` sends `CharsetAndCollation()` to the coprocessor. So `MIN(BINARY(...))`, which max/min elimination turns into a TopN pushed to TiKV, is sorted by the connection collation in TiKV and by the binary collation in TiDB. With `utf8mb4_general_ci` or `utf8mb4_0900_ai_ci` as the connection collation the query returns a wrong minimum.  ### What changed and how does it work?  A cast to a string type whose charset is `binary` now always uses the binary collation, explicit charset or not.  ### Check List  Tests <!-- At least one of them must be included. -->  - [ ] Unit test - [x] Integration test - [x] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  The new cases in `collation_misc` fail without the fix in the new collation mode and pass in both modes with it. The issue's queries return `323032302D31312D3234` for both forms on a nightly TiKV playground with the patched TiDB (before: `5D` for the single table query). The whole integration test suite, `go test ./pkg/expression/...`, `./pkg/planner/core/...` an
 
-- **Issue #72196** (2026-10-22): **executor: add materialized view refresh runtime**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  The FAST and COMPLETE DELTA APPLY executor builders are available on master, but materialized view refresh still needs a shared runtime to coordinate transactions, refresh watermarks, job history, cancellation, and cleanup across refresh modes.  ### What changed and how does it work?  - Add `RefreshMaterializedViewExec` and refresh-step orchestration for FAST, COMPLETE IN PLACE, COMPLETE DELTA APPLY, and COMPLETE OUT OF PLACE refreshes, using the existing internal refresh builders where applicable. - Coordinate refresh locks, snapshot/read-TSO handling, transaction commit or rollback, history finalization, heartbeat and cancellation handling, and out-of-place shadow-table cleanup. - Set up internal refresh sessions with the materialized view definition settings, and attach and restore statistics collectors used by regular sessions. - Add refresh metrics, step observation and plan capture, and slow-log statement restoration; share history timestamp and duration helpers with 
+- **Issue #72257** (2026-10-25): **Cascades planner fails with error 1815 when the same CTE is referenced more than once**
+  *Symptoms*: ## Bug Report  ### 1. Minimal reproduce step (Required)  No tables or data are required. Run the following statements with default session settings apart from explicitly enabling Cascades:  ```sql SET tidb_enable_cascades_planner = ON;  WITH c AS (SELECT 1 AS a) SELECT * FROM c UNION SELECT * FROM c; ```  The issue reproduces using the native `mysql` client, independently of the test harness.  ### 2. What did you expect to see? (Required)  The query should execute successfully and return one row:  ```text a 1 ```  ### 3. What did you see instead (Required)  ```text ERROR 1815 (HY000): Internal : Can't find a proper physical plan for this query ```  Disabling Cascades makes the same query succeed:  ```sql SET tidb_enable_cascades_planner = OFF;  WITH c AS (SELECT 1 AS a) SELECT * FROM c UNION SELECT * FROM c; -- Returns one row: 1. ```  The following controls succeed with Cascades enabled:  ```sql SET tidb_enable_cascades_planner = ON;  -- UNION without a CTE. SELECT 1 AS a UNION SELECT 1 AS a;  -- A single reference to the CTE. WITH c AS (SELECT 1 AS a) SELECT * FROM c;  -- UNION with only one reference to the CTE. WITH c AS (SELECT 1 AS a) SELECT * FROM c UNION SELECT 2;  -- Two separately defined CTEs, each referenced once. WITH c1 AS (SELECT 1 AS a), c2 AS (SELECT 1 AS a) SELECT * FROM c1 UNION SELECT * FROM c2; ```  However, referencing the same CTE twice also produces error 1815 with UNION ALL and a self-join:  ```sql WITH c AS (SELECT 1 AS a) SELECT * FROM c UNION ALL S
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,606 +1940,347 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `13544e9b` (2026-10-21)
-**Commit Message**: ddl: fix global index copies left or broken by reorganize partition (#72158)
+### Incident Patch 1: `b1731737` (2026-10-22)
+**Commit Message**: *: make the graceful shutdown drain timeout configurable (#71796)
 
-close pingcap/tidb#72167
+ref pingcap/tidb#48158, close pingcap/tidb#50143, ref pingcap/tidb#71795
 
-**File**: `pkg/ddl/index.go` (modified, +21/-3)
+**File**: `cmd/tidb-server/main.go` (modified, +2/-5)
 ```diff
-@@ -645,7 +645,8 @@ func DropIndexColumnFlag(tblInfo *model.TableInfo, indexInfo *model.IndexInfo) {
- 	col := indexInfo.Columns[0]
- 	// other index may still cover this col
- 	for _, index := range tblInfo.Indices {
--		if index.Name.L == indexInfo.Name.L {
-+		// Compare IDs, since a partition reorganization keeps index copies with the same name.
-+		if index.ID == indexInfo.ID {
- 			continue
- 		}
- 
-@@ -2261,12 +2262,13 @@ func onDropIndex(sctx sessionctx.Context, jobCtx *jobContext, job *model.Job) (v
- 	return ver, errors.Trace(err)
- }
- 
--// RemoveDependentHiddenColumns removes hidden columns by the indexInfo.
-+// RemoveDependentHiddenColumns removes the hidden columns used by the index, except those still
-+// used by another index, e.g. a copy of the index made by a partition reorganization.
- func RemoveDependentHiddenColumns(tblInfo *model.TableInfo, idxInfo *model.IndexInfo) {
- 	hiddenColOffs := make([]int, 0)
- 	for _, indexColumn := range idxInfo.Columns {
- 		col := tblInfo.Columns[indexColumn.Offset]
--		if col.Hidden {
-+		if col.Hidden && !isColumnUsedByOtherIndex(tblInfo, idxInfo.ID, col.Offset) {
- 			hiddenColOffs = append(hiddenColOffs, col.Offset)
- 		}
+@@ -1324,14 +1324,11 @@ func closeDDLOwnerMgrDomainAndStorage(storage kv.Storage, dom *domain.Domain) {
  	}
-@@ -2280,6 +2282,22 @@ func RemoveDependentHiddenColumns(tblInfo *model.TableInfo, idxInfo *model.Index
- 	tblInfo.Columns = tblInfo.Columns[:len(tblInfo.Columns)-len(hiddenColOffs)]
  }
  
-+// isColumnUsedByOtherIndex checks whether the column is used by an index other than
-+// indexID, e.g. a copy of the index made by a partition reorganization.
-+func isColumnUsedByOtherIndex(tblInfo *model.TableInfo, indexID int64, offset int) bool {
-+	for _, idx := range tblInfo.Indices {
-+		if idx.ID == indexID {
-+			continue
-+		}
-+		for _, col := range idx.Columns {
-+			if col.Offset == offset {
-+				return true
-+			}
-+		}
-+	}
-+	return false
-+}
-+
- func removeIndexInfo(tblInfo *model.TableInfo, idxInfo *model.IndexInfo) {
- 	indices := tblInfo.Indices
- 	offset := -1
+-// The amount of time we wait for the ongoing txt to finished.
+-// We should better provider a dynamic way to set this value.
+-var gracefulCloseConnectionsTimeout = 15 * time.Second
+-
+ func cleanup(svr *server.Server, storage kv.Storage, dom *domain.Domain) {
+ 	dom.StopAutoAnalyze()
+ 
+-	drainClientWait := gracefulCloseConnectionsTimeout
++	// The amount of time we wait for the ongoing statements and transactions to finish.
++	drainClientWait := time.Duration(config.GetGlobalConfig().GracefulCloseConnectionsTimeout) * time.Second
+ 	if deploymode.IsStarter() && svr.GetForceShutdown() {
+ 		drainClientWait = 0
+ 	}
 ```
 
-**File**: `pkg/ddl/partition.go` (modified, +13/-1)
+**File**: `pkg/config/config.go` (modified, +7/-0)
 ```diff
-@@ -2208,6 +2208,18 @@ func (w *worker) rollbackLikeDropPartition(jobCtx *jobContext, job *model.Job) (
+@@ -255,6 +255,9 @@ type Config struct {
+ 	IndexLimit                 int                     `toml:"index-limit" json:"index-limit"`
+ 	TableColumnCountLimit      uint32                  `toml:"table-column-count-limit" json:"table-column-count-limit"`
+ 	GracefulWaitBeforeShutdown int                     `toml:"graceful-wait-before-shutdown" json:"graceful-wait-before-shutdown"`
++	// GracefulCloseConnectionsTimeout is the number of seconds the server waits during shutdown for running
++	// statements and open transactions to finish before it kills the remaining connections.
++	GracefulCloseConnectionsTimeout int `toml:"graceful-close-connections-timeout" json:"graceful-close-connections-timeout"`
+ 	// AlterPrimaryKey is used to control alter primary key feature.
+ 	AlterPrimaryKey bool `toml:"alter-primary-key" json:"alter-primary-key"`
+ 	// TreatOldVersionUTF8AsUTF8MB4 is use to treat old version table/column UTF8 charset as UTF8MB4. This is for compatibility.
+@@ -1327,6 +1330,7 @@ var defaultConf = Config{
+ 	TiDBEnableExitCheck:                  false,
+ 	InMemSlowQueryTopNNum:                30,
+ 	InMemSlowQueryRecentNum:              500,
++	GracefulCloseConnectionsTimeout:      15,
+ 	CSE: CSE{
+ 		ColumnarStoreType:      "tiflash",
+ 		ColumnarCollectTimeout: 5 * time.Second,
+@@ -1798,6 +1802,9 @@ func (c *Config) Valid() error {
+ 	if c.IndexLimit < DefIndexLimit || c.IndexLimit > DefMaxOfIndexLimit {
+ 		return fmt.Errorf("index-limit should be [%d, %d]", DefIndexLimit, DefMaxOfIndexLimit)
+ 	}
++	if c.GracefulCloseConnectionsTimeout < 0 {
++		return fmt.Errorf("graceful-close-connections-timeout should not be negative")
++	}
+ 	if c.Log.File.MaxSize > MaxLogFileSize {
+ 		return fmt.Errorf("invalid max log file size=%v which is larger than max=%v", c.Log.File.MaxSize, MaxLogFileSize)
+ 	}
+```
+
+**File**: `pkg/config/config.toml.example` (modified, +4/-0)
+```diff
+@@ -49,6 +49,10 @@ compatible-kill-query = false
+ # The health check will fail immediately but the server will not start shutting down until the time has elapsed.
+ graceful-wait-before-shutdown = 0
+ 
++# During shutdown, wait up to N seconds for running statements and open transactions to finish before killing
++# the remaining connections. Connections that are idle between statements are closed without waiting.
++graceful-close-connections-timeout = 15
++
+ # treat-old-version-utf8-as-utf8mb4 use for upgrade compatibility. Set to true will treat old version table/column UTF8 charset as UTF8MB4.
+ treat-old-version-utf8-as-utf8mb4 = true
+ 
+```
+
+**File**: `pkg/config/config.toml.nextgen.example` (modified, +4/-0)
+```diff
+@@ -60,6 +60,10 @@ compatible-kill-query = false
+ # The health check will fail immediately but the server will not start shutting down until the time has elapsed.
+ graceful-wait-before-shutdown = 0
+ 
++# During shutdown, wait up to N seconds for running statements and open transactions to finish before killing
++# the remaining connections. Connections that are idle between statements are closed without waiting.
++graceful-close-connections-timeout = 15
++
+ # treat-old-version-utf8-as-utf8mb4 use for upgrade compatibility. Set to true will treat old version table/column UTF8 charset as UTF8MB4.
+ treat-old-version-utf8-as-utf8mb4 = true
+ 
+```
+
+**File**: `pkg/config/config_test.go` (modified, +10/-1)
+```diff
+@@ -1130,7 +1130,14 @@ ingest-kv-bytes = 3
+ 			require.ErrorContains(t, conf.Valid(), "ru-v2.ddl-weights.ingest-kv-bytes")
+ 		}
+ 	})
+-	conf := new(Config)
++	require.Equal(t, 15, NewConfig().GracefulCloseConnectionsTimeout)
++	conf := NewConfig()
++	conf.GracefulCloseConnectionsTimeout = 0
++	require.NoError(t, conf.Valid())
++	conf.GracefulCloseConnectionsTimeout = -1
++	require.ErrorContains(t, conf.Valid(), "graceful-close-connections-timeout")
++
++	conf = new(Config)
+ 	conf.TempStoragePath = tempStorageDirName
+ 	conf.Performance.TxnTotalSizeLimit = 1000
+ 	conf.TiKVClient.CommitTimeout = "10s"
+@@ -1194,6 +1201,7 @@ repair-mode = true
+ max-index-length = 3080
+ index-limit = 70
+ table-column-count-limit = 4000
++graceful-close-connections-timeout = 120
+ skip-register-to-dashboard = true
+ deprecate-integer-display-length = true
+ enable-enum-length-limit = false
+@@ -1282,6 +1290,7 @@ max_connections = 200
+ 	require.Equal(t, 3080, conf.MaxIndexLength)
+ 	require.Equal(t, 70, conf.IndexLimit)
+ 	require.Equal(t, uint32(4000), conf.TableColumnCountLimit)
++	require.Equal(t, 120, conf.GracefulCloseConnectionsTimeout)
+ 	require.True(t, conf.SkipRegisterToDashboard)
+ 	require.Equal(t, 3, len(conf.Labels))
+ 	require.Equal(t, "bar", conf.Labels["foo"])
+```
+
+**File**: `pkg/executor/simple.go` (modified, +5/-3)
+```diff
+@@ -3614,10 +3614,12 @@ func asyncDelayShutdown(p *os.Process, delay time.Duration) {
+ 	// Sending SIGKILL should not be needed as SIGTERM should cause a graceful shutdown after
+ 	// n seconds as configured by the GracefulWaitBeforeShutdown. This is here in case that doesn't
+ 	// work for some reason.
+-	graceTime := config.GetGlobalConfig().GracefulWaitBeforeShutdown
++	cfg := config.GetGlobalConfig()
++	graceTime := cfg.GracefulWaitBeforeShutdown
+ 
+-	// The shutdown is supposed to start at graceTime and is allowed to take up to 10s.
+-	time.Sleep(time.Second * time.Duration(graceTime+10))
++	// The shutdown is supposed to start at graceTime, drain clients for up to GracefulCloseConnectionsTimeout,
++	// and is allowed to take up to 10s more for the rest of the cleanup.
++	time.Sleep(time.Second * time.Duration(graceTime+cfg.GracefulCloseConnectionsTimeout+10))
+ 	logutil.BgLogger().Info("Killing process as grace period is over", zap.Int("pid", p.Pid), zap.Int("graceTime", graceTime))
+ 	err = p.Kill()
  	if err != nil {
- 		return ver, errors.Trace(err)
- 	}
-+	// Like DROP INDEX, index copies stop taking writes for one schema version before being removed.
-+	// convertReorgPartitionJob2RollbackJob has moved every copy that is not delete only to write only.
-+	stopWrites := false
-+	for _, indexInfo := range tblInfo.Indices {
-+		if indexInfo.State == model.StateWriteOnly {
-+			indexInfo.State = model.StateDeleteOnly
-+			stopWrites = true
-+		}
-+	}
-+	if stopWrites {
-+		return updateVersionAndTableInfo(jobCtx, job, tblInfo, true)
-+	}
- 	tblInfo.Partition.DroppingDefinitions = nil
- 	// Collect table/partition ids to clean up, through args.OldPhysicalTblIDs
- 	// GC will later also drop matching Placement bundles.
-@@ -2239,7 +2251,7 @@ func (w *worker) rollbackLikeDropPartition(jobCtx *jobContext, job *model.Job) (
- 
- 	var dropIndices []*model.IndexInfo
- 	for _, indexInfo := range tblInfo.Indices {
--		if indexInfo.State == model.StateWriteOnly {
-+		if indexInfo.State == model.StateDeleteOnly {
- 			dropIndices = append(dropIndices, indexInfo)
- 		}
- 	}
-```
-
-**File**: `pkg/ddl/rollingback.go` (modified, +5/-15)
-```diff
-@@ -427,11 +427,7 @@ func convertReorgPartitionJob2RollbackJob(jobCtx *jobContext, job *model.Job, ot
- 	for _, pd := range addingDefinitions {
- 		partNames = append(partNames, pd.Name.L)
- 	}
--	var dropIndices []*model.IndexInfo
- 	for _, indexInfo := range tblInfo.Indices {
--		if !indexInfo.Unique {
--			continue
--		}
- 		isNew, ok := pi.DDLChangedIndex[indexInfo.ID]
- 		if !ok {
- 			// non-changed index
-@@ -442,19 +438,13 @@ func convertReorgPartitionJob2RollbackJob(jobCtx *jobContext, job *model.Job, ot
- 				// Revert the non-public state
- 				indexInfo.State = model.StatePublic
- 			}
--		} else {
--			if pi.DDLState == model.StateDeleteReorganization {
--				indexInfo.State = model.StateWriteOnly
--			} else {
--				dropIndices = append(dropIndices, indexInfo)
--			}
-+		} else if indexInfo.State != model.StateDeleteOnly {
-+			// A copy may be public in delete reorganization, so it keeps taking writes for one more
-+			// schema version. rollbackLikeDropPartition then moves it to delete only and removes it.
-+			// A copy still in delete only never took writes and stays as is.
-+			indexInfo.State = model.StateWriteOnly
- 		}
- 	}
--	for _, indexInfo := range dropIndices {
--		DropIndexColumnFlag(tblInfo, indexInfo)
--		RemoveDependentHiddenColumns(tblInfo, indexInfo)
--		removeIndexInfo(tblInfo, indexInfo)
--	}
- 	if pi.DDLState == model.StateDeleteReorganization {
- 		// New partitions are public,
- 		// but old is still double written.
-```
-
-**File**: `pkg/ddl/tests/partition/BUILD.bazel` (modified, +1/-0)
-```diff
-@@ -12,6 +12,7 @@ go_test(
-         "modify_column_test.go",
-         "multi_domain_test.go",
-         "placement_test.go",
-+        "reorg_partition_leftover_index_test.go",
-         "reorg_partition_test.go",
-     ],
-     flaky = True,
-```
-
-**File**: `pkg/ddl/tests/partition/reorg_partition_leftover_index_test.go` (added, +176/-0)
-```diff
-@@ -0,0 +1,176 @@
-+// Copyright 2026 PingCAP, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package partition
-+
-+import (
-+	"context"
-+	"fmt"
-+	"testing"
-+
-+	"github.com/pingcap/tidb/pkg/errno"
-+	"github.com/pingcap/tidb/pkg/meta/model"
-+	"github.com/pingcap/tidb/pkg/testkit"
-+	"github.com/pingcap/tidb/pkg/testkit/external"
-+	"github.com/pingcap/tidb/pkg/testkit/testfailpoint"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+const leftoverIndexTableSQL = `create table t (id bigint not null, a int, s int, ct int not null,
-+	unique key uk_id (id, ct),
-+	key idx_l (s),
-+	key idx_g (a, s, ct) global)
-+	partition by range (ct) (
-+	partition p0 values less than (10),
-+	partition p1 values less than (20),
-+	partition pMax values less than (maxvalue))`
-+
-+func countUpdateMutations(t *testing.T, tk *testkit.TestKit) int {
-+	tk.MustExec("begin pessimistic")
-+	tk.MustExec("update t set a = a + 1 where id = 3")
-+	txn, err := tk.Session().Txn(true)
-+	require.NoError(t, err)
-+	n := txn.Len()
-+	tk.MustExec("rollback")
-+	return n
-+}
-+
-+func TestReorgPartitionCancelNonUniqueGlobalIndex(t *testing.T) {
-+	store := testkit.CreateMockStore(t)
-+	tk := testkit.NewTestKit(t, store)
-+	tk.MustExec("use test")
-+	tk.MustExec(leftoverIndexTableSQL)
-+	tk.MustExec("insert into t values (1, 0, 1, 5), (2, 0, 1, 15), (3, 0, 1, 25), (4, 0, 1, 35)")
-+	baseIndices := len(external.GetTableByName(t, tk, "test", "t").Meta().Indices)
-+	baseMutations := countUpdateMutations(t, tk)
-+
-+	var cancelState model.SchemaState
-+	var lastRollbackStates []model.SchemaState
-+	testfailpoint.EnableCall(t, "github.com/pingcap/tidb/pkg/ddl/beforeRunOneJobStep", func(job *model.Job) {
-+		if job.Type != model.ActionReorganizePartition && job.Type != model.ActionAlterTablePartitioning {
-+			return
-+		}
-+		if job.IsRollingback() {
-+			lastRollbackStates = lastRollbackStates[:0]
-+			for _, idx := range external.GetTableByName(t, testkit.NewTestKit(t, store), "test", "t").Meta().Indices {
-+				if idx.State != model.StatePublic {
-+					lastRollbackStates = append(lastRollbackStates, idx.State)
-+				}
-+			}
-+			return
-+		}
-+		if cancelState == model.StateNone || job.SchemaState != cancelState {
-+			return
-+		}
-+		cancelState = model.StateNone
-+		tk2 := testkit.NewTestKit(t, store)
-+		tk2.MustExec(fmt.Sprintf("admin cancel ddl jobs %d", job.ID))
-+	})
-+
-+	for _, ddl := range []string{
-+		"alter table t reorganize partition pMax into (partition p2 values less than (30), partition pMax values less than (maxvalue))",
-+		"alter table t partition by range (ct) (partition p0 values less than (10), partition p1 values less than (20), partition p2 values less than (30), partition pMax values less than (maxvalue))",
-+	} {
-+		for _, state := range []model.SchemaState{
-+			model.StateDeleteOnly,
-+			model.StateWriteOnly,
-+			model.StateWriteReorganization,
-+			model.StateDeleteReorganization,
-+		} {
-+			cancelState = state
-+			lastRollbackStates = nil
-+			tk.MustGetErrCode(ddl, errno.ErrCancelledDDLJob)
-+			tblInfo := external.GetTableByName(t, tk, "test", "t").Meta()
-+			// The copies must be delete only in the step that removes them.
-+			require.NotEmpty(t, lastRollbackStates, "%s, cancel at %s", ddl, state)
-+			for _, s := range lastRollbackStates {
-+				require.Equal(t, model.StateDeleteOnly, s, "%s, cancel at %s", ddl, state)
-+			}
-+			require.Len(t, tblInfo.Indices, baseIndices, "%s, cancel at %s", ddl, state)
-+			for _, idx := range tblInfo.Indices {
-+				require.Equal(t, model.StatePublic, idx.State, "%s, cancel at %s, index %s", ddl, state, idx.Name.O)
-+			}
-+			require.Equal(t, baseMutations, countUpdateMutations(t, tk), "%s, cancel at %s", ddl, state)
-+			tk.MustExec("admin check table t")
-+		}
-+	}
-+}
-+
-+func TestReorgPartitionRollbackResumeAfterOwnerChange(t *testing.T) {
-+	store, dom := testkit.CreateMockStoreAndDomain(t)
-+	tk := testkit.NewTestKit(t, store)
-+	tk.MustExec("use test")
-+	tk.MustExec(leftoverIndexTableSQL)
-+	tk.MustExec("insert into t values (1, 0, 1, 5), (2, 0, 1, 15), (3, 0, 1, 25), (4, 0, 1, 35)")
-+	baseIndices := len(external.GetTableByName(t, tk, "test", "t").Meta().Indices)
-+	baseMutations := countUpdateMutations(t, tk)
-+
-+	cancelled, resigned := false, false
-+	testfailpoint.EnableCall(t, "github.com/pingcap/tidb/pkg/ddl/beforeRunOneJobStep", func(job *model.Job) {
-+		if job.Type != model.ActionReorganizePartition {
-+			return
-+		}
-+		if !cancelled && job.SchemaState == model.StateWriteReorganization {
-+			cancelled = true
-+			testki
 ```
 
 ---
 
-### Incident Patch 2: `c464391f` (2026-10-22)
-**Commit Message**: config: fix diagnostic-mode goroutine profile flake (#72210)
+### Incident Patch 2: `0073665a` (2026-10-24)
+**Commit Message**: txn: update client-go to fix repeated lock resolution (#72232)
 
-close pingcap/tidb#71484
+close pingcap/tidb#72231
 
-**File**: `pkg/config/diagnosticmode/mode_server_test.go` (modified, +30/-2)
+**File**: `DEPS.bzl` (modified, +2/-2)
 ```diff
-@@ -17,7 +17,9 @@ package diagnosticmode_test
- import (
- 	"bytes"
- 	"fmt"
-+	"runtime"
- 	"runtime/pprof"
-+	"strconv"
- 	"testing"
- 	"time"
- 
-@@ -128,15 +130,20 @@ func assertDiagnosticGoroutineAllowlist(t *testing.T, dump []byte) {
- 	groups := bytes.Split(bytes.TrimSpace(stacks), []byte("\n\n"))
- 	var checked int
- 	for _, group := range groups {
--		groupHeader, _, ok := bytes.Cut(group, []byte("\n"))
--		require.True(t, ok, "goroutine group has no frames: %s", group)
-+		groupHeader, _, hasFrames := bytes.Cut(group, []byte("\n"))
- 		var count int
- 		var marker string
- 		_, err := fmt.Sscanf(string(groupHeader), "%d %s", &count, &marker)
- 		require.NoError(t, err, "invalid goroutine group header: %s", groupHeader)
- 		require.Equal(t, "@", marker)
- 		require.Positive(t, count)
- 		checked += count
-+		if !hasFrames {
-+			// debug=1 suppresses runtime.goexit even when it is the only frame.
-+			// Resolve the raw PCs so no other frameless stack escapes the allowlist.
-+			require.True(t, isRuntimeGoexitGroup(groupHeader), "goroutine group has no frames: %s", group)
-+			continue
-+		}
- 
- 		allowed := false
- 		for _, function := range allowedFunctions {
-@@ -155,6 +162,27 @@ func assertDiagnosticGoroutineAllowlist(t *testing.T, dump []byte) {
- 	t.Logf("Checked %d goroutines in %d aggregated groups against the diagnostic allowlist", checked, len(groups))
- }
- 
-+func isRuntimeGoexitGroup(header []byte) bool {
-+	fields := bytes.Fields(header)
-+	if len(fields) <= 2 {
-+		return false
-+	}
-+	for _, field := range fields[2:] {
-+		pc, err := strconv.ParseUint(string(field), 0, strconv.IntSize)
-+		if err != nil {
-+			return false
-+		}
-+		// Resolve each PC separately so an unknown PC cannot be skipped while
-+		// expanding a stack containing known frames.
-+		frames := runtime.CallersFrames([]uintptr{uintptr(pc)})
-+		frame, more := frames.Next()
-+		if frame.Function != "runtime.goexit" || more {
-+			return false
-+		}
-+	}
-+	return true
-+}
-+
- func startTiDBServer(t *testing.T) (*tidbserver.Server, *config.Config) {
- 	t.Helper()
- 	if kerneltype.IsNextGen() {
-```
-
----
-
-### Incident Patch 3: `18ec04a2` (2026-10-22)
-**Commit Message**: build: prepare Bazel tooling for Go 1.27 (#72082)
-
-ref pingcap/tidb#70069
-
-**File**: `.bazelrc` (modified, +3/-0)
-```diff
-@@ -8,6 +8,9 @@ build --http_timeout_scaling=0.1
- build --announce_rc
- build --experimental_guard_against_concurrent_changes
- build --incompatible_strict_action_env --incompatible_enable_cc_toolchain_resolution
-+# Keep C/C++ objects PIC for Go's Linux -z nocopyreloc links.
-+# Remove this override if rules_go restores its cgo PIC default in normal mode.
-+build --copt=-fPIC
- build --remote_retries=6 --remote_retry_max_delay=8s
- build:ci --color=yes
- build:ci --experimental_remote_cache_compression
-```
-
-**File**: `.github/workflows/check-bazel-prepare.yml` (modified, +23/-0)
-```diff
-@@ -40,3 +40,26 @@ jobs:
-           # Avoid the TiDB CI path that assumes Jenkins-owned temp directories.
-           unset CI
-           make check-bazel-prepare
-+      - name: Test x/tools export-data formats
-+        shell: bash
-+        run: |
-+          set -euo pipefail
-+          unset CI
-+          # External tests are not included by TiDB's //... target pattern.
-+          bazel test @org_golang_x_tools//internal/pkgbits:pkgbits_test \
-+            --test_output=all \
-+            --nocache_test_results \
-+            --flaky_test_attempts=1 \
-+            --test_arg=-test.v
-+      - name: Check Linux cgo test linking
-+        timeout-minutes: 30
-+        shell: bash
-+        run: |
-+          set -euo pipefail
-+          unset CI
-+          # Link a test executable that failed in Jenkins; do not run business tests.
-+          bazel build --config=ci //pkg/sessionctx/stmtctx:stmtctx_test \
-+            --linkopt=-Wl,-z,nocopyreloc \
-+            --jobs=2 \
-+            --local_ram_resources=4096 \
-+            --verbose_failures
-```
-
-**File**: `DEPS.bzl` (modified, +4/-0)
-```diff
-@@ -6498,6 +6498,10 @@ def go_deps():
-         name = "org_golang_x_tools",
+@@ -4527,8 +4527,8 @@ def go_deps():
+         build_tags = ["nextgen", "intest"],
          build_file_proto_mode = "disable_global",
-         importpath = "golang.org/x/tools",
-+        patch_args = ["-p1"],
-+        patches = [
-+            "//build/patches:org_golang_x_tools.patch",
-+        ],
-         sum = "h1:7Kn5x/d1svx/PzryTsqeoZN4TZwqeH5pGWjefhLi/1Q=",
-         version = "v0.47.0",
+         importpath = "github.com/tikv/client-go/v2",
+-        sum = "h1:R/KBFo6TCJompFfg1AZ0udz9z8AuyRCYE0Aalrc1Zl8=",
+-        version = "v2.0.8-0.20260928031501-8edb23f6c7ee",
++        sum = "h1:4HxKZfJqBoV7aPdLPcWRXImDqKCoZtZm0m0smNGgcGo=",
++        version = "v2.0.8-0.20261023145611-a0d0bf6b591f",
      )
+     go_repository(
+         name = "com_github_tikv_pd_client",
 ```
 
-**File**: `MODULE.bazel` (modified, +5/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -4,3 +4,8 @@
- #
- # For more details, please check https://github.com/bazelbuild/bazel/issues/18958
- ###############################################################################
-+
-+# Keep in sync with rules_go's MODULE.bazel (currently v0.64.2) and WORKSPACE.
-+# Bzlmod resolves this through BCR; offline/restricted builders must preseed
-+# registry metadata and the archive, or provide an approved registry mirror.
-+bazel_dep(name = "platforms", version = "1.1.0")
+@@ -121,7 +121,7 @@ require (
+ 	github.com/stretchr/testify v1.11.1
+ 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.3.142
+ 	github.com/tiancaiamao/appdash v0.0.0-20181126055449-889f96f722a2
+-	github.com/tikv/client-go/v2 v2.0.8-0.20260928031501-8edb23f6c7ee
++	github.com/tikv/client-go/v2 v2.0.8-0.20261023145611-a0d0bf6b591f
+ 	github.com/tikv/pd/client v0.0.0-20260805103528-afa43111d149
+ 	github.com/timakin/bodyclose v0.0.0-20241222091800-1db5c5ca4d67
+ 	github.com/twmb/murmur3 v1.1.6
 ```
 
-**File**: `WORKSPACE` (modified, +8/-4)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -36,14 +36,16 @@ http_archive(
- 
- load("@bazel_skylib//lib:versions.bzl", "versions")
- 
--versions.check(minimum_bazel_version = "6.0.0")
-+# Match the minimum declared by rules_go; CI remains pinned in .bazelversion.
-+versions.check(minimum_bazel_version = "6.5.0")
- 
- http_archive(
-     name = "io_bazel_rules_go",
--    sha256 = "86d3dc8f59d253524f933aaf2f3c05896cb0b605fc35b460c0b4b039996124c6",
-+    sha256 = "d5c2c953bf24697b209c21f3ff4edf46fedea98514ec358b10c0e78fc35d363e",
-+    # v0.64.2 is not available on mirror.bazel.build. Restricted builders must
-+    # preseed this checksum-verified archive or allow the official release URL.
-     urls = [
--        "https://mirror.bazel.build/github.com/bazel-contrib/rules_go/releases/download/v0.60.0/rules_go-v0.60.0.zip",
--        "https://github.com/bazel-contrib/rules_go/releases/download/v0.60.0/rules_go-v0.60.0.zip",
-+        "https://github.com/bazel-contrib/rules_go/releases/download/v0.64.2/rules_go-v0.64.2.zip",
+@@ -2368,8 +2368,8 @@ github.com/tidwall/pretty v1.2.1 h1:qjsOFOWWQl+N3RsoF5/ssm1pHmJJwhjlSbZ51I6wMl4=
+ github.com/tidwall/pretty v1.2.1/go.mod h1:ITEVvHYasfjBbM0u2Pg8T2nJnzm8xPwvNhhsoaGGjNU=
+ github.com/tidwall/sjson v1.2.5 h1:kLy8mja+1c9jlljvWTlSazM7cKDRfJuR/bOJhcY5NcY=
+ github.com/tidwall/sjson v1.2.5/go.mod h1:Fvgq9kS/6ociJEDnK0Fk1cpYF4FIW6ZF7LAe+6jwd28=
+-github.com/tikv/client-go/v2 v2.0.8-0.20260928031501-8edb23f6c7ee h1:R/KBFo6TCJompFfg1AZ0udz9z8AuyRCYE0Aalrc1Zl8=
+-github.com/tikv/client-go/v2 v2.0.8-0.20260928031501-8edb23f6c7ee/go.mod h1:U0rq982i6UbAH1LUfc4t2BxZoAWvwW1JkEhGp+yEf3w=
++github.com/tikv/client-go/v2 v2.0.8-0.20261023145611-a0d0bf6b591f h1:4HxKZfJqBoV7aPdLPcWRXImDqKCoZtZm0m0smNGgcGo=
++github.com/tikv/client-go/v2 v2.0.8-0.20261023145611-a0d0bf6b591f/go.mod h1:6RHGg6yqa8Wc0cPeyvX7GL4wS6Alz9xZO9Kiopfkkyg=
+ github.com/tikv/pd/client v0.0.0-20260805103528-afa43111d149 h1:q5NgKsvuOdEHspG/pZEpKhWlPLrIfmO8P/lDFjTEdok=
+ github.com/tikv/pd/client v0.0.0-20260805103528-afa43111d149/go.mod h1:sfdha4LXeUkSs2Z7N5jLzDEtm0GE7x+Glm2pW3UgEpA=
+ github.com/timakin/bodyclose v0.0.0-20241222091800-1db5c5ca4d67 h1:9LPGD+jzxMlnk5r6+hJnar67cgpDIz/iyD+rfl5r2Vk=
+```
+
+**File**: `tests/realtikvtest/txntest/BUILD.bazel` (modified, +1/-0)
+```diff
+@@ -48,6 +48,7 @@ go_test(
+         "@com_github_tikv_client_go_v2//tikv",
+         "@com_github_tikv_client_go_v2//tikvrpc",
+         "@com_github_tikv_client_go_v2//tikvrpc/interceptor",
++        "@com_github_tikv_client_go_v2//txnkv/txnlock",
+         "@io_opencensus_go//stats/view",
      ],
  )
- 
-@@ -82,6 +84,8 @@ load("@io_bazel_rules_go//go:deps.bzl", "go_download_sdk", "go_register_toolchai
- load("//:DEPS.bzl", "go_deps")
- 
- # gazelle:repository_macro DEPS.bzl%go_deps
-+# Declare the patched x/tools v0.47.0 before go_rules_dependencies(), whose
-+# fallback is v0.30.0. Existing repository declarations take precedence.
- go_deps()
- 
- go_rules_dependencies()
 ```
 
-**File**: `build/patches/org_golang_x_tools.patch` (added, +262/-0)
+**File**: `tests/realtikvtest/txntest/txn_test.go` (modified, +207/-0)
 ```diff
-@@ -0,0 +1,262 @@
-+Subject: [PATCH] backport Go 1.27 export-data V5 support
+@@ -25,18 +25,24 @@ import (
+ 
+ 	"github.com/pingcap/errors"
+ 	"github.com/pingcap/failpoint"
++	"github.com/pingcap/kvproto/pkg/kvrpcpb"
+ 	"github.com/pingcap/tidb/pkg/config"
+ 	"github.com/pingcap/tidb/pkg/config/kerneltype"
+ 	"github.com/pingcap/tidb/pkg/errno"
+ 	"github.com/pingcap/tidb/pkg/expression"
+ 	"github.com/pingcap/tidb/pkg/kv"
+ 	"github.com/pingcap/tidb/pkg/session"
++	"github.com/pingcap/tidb/pkg/tablecodec"
+ 	"github.com/pingcap/tidb/pkg/testkit"
++	"github.com/pingcap/tidb/pkg/testkit/external"
+ 	"github.com/pingcap/tidb/pkg/testkit/testfailpoint"
+ 	"github.com/pingcap/tidb/pkg/util/sqlexec"
+ 	"github.com/pingcap/tidb/tests/realtikvtest"
+ 	"github.com/stretchr/testify/require"
++	"github.com/tikv/client-go/v2/oracle"
++	"github.com/tikv/client-go/v2/tikv"
+ 	"github.com/tikv/client-go/v2/tikvrpc"
++	"github.com/tikv/client-go/v2/txnkv/txnlock"
+ )
+ 
+ func TestInTxnPSProtoPointGet(t *testing.T) {
+@@ -242,6 +248,207 @@ func TestDuplicateErrorMessage(t *testing.T) {
+ 	tk.MustContainErrMsg("update t3 set c = c + 1 where v = 1", "Duplicate entry '1' for key 't3.i1'")
+ }
+ 
++type observeInsertLockClient struct {
++	tikv.Client
++	onResponse func(*tikvrpc.Request, *tikvrpc.Response, error) (*tikvrpc.Response, error)
++}
 +
-+The V5 reader and format definitions are copied unchanged from the released
-+upstream golang.org/x/tools v0.50.0 (go.dev/issue/81188). Keep v0.47.0's Go 1.25
-+minimum instead of upgrading to v0.50.0, which requires Go 1.26. This Bazel-only
-+backport can be removed when the module/toolchain upgrade permits that release.
++func (c *observeInsertLockClient) SendRequest(ctx context.Context, addr string, req *tikvrpc.Request, timeout time.Duration) (*tikvrpc.Response, error) {
++	resp, err := c.Client.SendRequest(ctx, addr, req, timeout)
++	return c.onResponse(req, resp, err)
++}
 +
-+Source: https://go.googlesource.com/tools/+/refs/tags/v0.50.0/internal/gcimporter/ureader.go
-+Source: https://go.googlesource.com/tools/+/refs/tags/v0.50.0/internal/pkgbits/version.go
++// TestInsertOnDuplicateKeyUpdateResolvesRepeatedLocks verifies that an INSERT
++// encountering repeated locks from unique-index checks resolves them and preserves committed rows.
++// See https://github.com/pingcap/tidb/issues/72231.
++func TestInsertOnDuplicateKeyUpdateResolvesRepeatedLocks(t *testing.T) {
++	testInsertOnDuplicateKeyUpdateResolvesRepeatedLocks(t, false)
++}
 +
-+Include upstream V0-V5 format tests and a real-compiler regression checking
-+interleaved ordinary/generic method order. The latter skips pre-Go 1.27.
++// TestInsertOnDuplicateKeyUpdateRollsBackRepeatedLocks verifies that an INSERT
++// encountering expired repeated locks rolls them back and writes the expected rows.
++// See https://github.com/pingcap/tidb/issues/72231.
++func TestInsertOnDuplicateKeyUpdateRollsBackRepeatedLocks(t *testing.T) {
++	testInsertOnDuplicateKeyUpdateResolvesRepeatedLocks(t, true)
++}
 +
-+CI: Check Bazel Prepare explicitly runs the external pkgbits_test target for
-+format coverage; TiDB's //... pattern alone does not include external tests.
-+The gcimporter tests still require the manual compiler-specific checks below.
-+Whenever x/tools or this patch changes, reapply it to a pristine, writable
-+checkout of the selected x/tools module and run both commands from that module
-+root. Replace <go1.25.14> and <go1.27.3> with those exact SDK directories;
-+GOTOOLCHAIN=local prevents an implicit compiler upgrade. Keep the command logs
-+and actual compiler versions as manual importer compatibility evidence, separate
-+from the automated pkgbits format test.
++func testInsertOnDuplicateKeyUpdateResolvesRepeatedLocks(t *testing.T, rollback bool) {
++	store := realtikvtest.CreateMockStoreAndSetup(t)
++	tk := testkit.NewTestKit(t, store)
++	tk.MustExec("use test")
++	tk.MustExec("create table insert_duplicate_locks (id int primary key, u int unique, v int)")
++	tk.MustExec("set tidb_enable_async_commit = OFF")
++	tk.MustExec("set tidb_enable_1pc = OFF")
++	t.Log("TiDB version:", tk.MustQuery("select tidb_version()").Rows())
 +
-+    GOTOOLCHAIN=local <go1.25.14>/bin/go test ./internal/pkgbits ./internal/gcimporter \
-+        -run '^(TestRoundTrip|TestVersions|TestImportTestdata)$' -count=1 -v
-+    GOTOOLCHAIN=local <go1.27.3>/bin/go test ./internal/pkgbits ./internal/gcimporter \
-+        -run '^(TestGo127MethodOrder|TestRoundTrip|TestVersions)$' -count=1 -v
++	// Leave prewrite locks for the next INSERT to resolve, either committed or expired.
++	var startTS uint64
++	func() {
++		var enabledFailpoints []string
++		defer func() {
++			for i := len(enabledFailpoints) - 1; i >= 0; i-- {
++				if err := failpoint.Disable(enabledFailpoints[i]); err != nil {
++					t.Errorf("failed to disable failpoint %s: %v", enabledFailpoints[i], err)
++				}
++			}
++		}()
++		enableFailpoint := func(name, expression string) {
++			require.NoError(t, failpoint.Enable(name, expression))
++			enabledFailpoints = append(enabledFailpoints, name)
++		}
 +
-+diff --git a/internal/pkgbits/version.go b/internal/pkgbits/version.go
-+--- a/internal/pkgbits/version.go
-++++ b/internal/pkgbits/version.go
-+@@ -36,6 +36,10 @@
-+ 
-+ 	// V4: encodes generic methods as standalone function objects
-+ 	V4
-++
-++	// V5: encodes the index of methods to preserve relative order
-++	// of nongeneric and generic methods (go.dev/issue/81188).
-++	V5
-+ 
-+ 	numVersions = iota
-+ )
-+@@ -76,6 +80,10 @@
-+ 	// Generic methods may appear as standalone function objects.
-+ 	GenericMethods
-+ 
-++	// Method index is encoded to preserve relative order of
-++	// nongeneric and generic methods.
-++	PreserveMethodOrder
-++
-+ 	numFields = iota
-+ )
-+ 
-+@@ -85,6 +93,7 @@
-+ 	AliasTypeParamNames: V2,
-+ 	CompactCompLiterals: V3,
-+ 	GenericMethods:      V4,
-++	PreserveMethodOrder: V5,
-+ }
-+ 
-+ // removed is the version a field was removed in or 0 for fields
-+diff --git a/internal/pkgbits/pkgbits_test.go b/internal/pkgbits/pkgbits_test.go
-+--- a/internal/pkgbits/pkgbits_test.go
-++++ b/internal/pkgbits/pkgbits_test.go
-+@@ -16,6 +16,9 @@
-+ 		pkgbits.V0,
-+ 		pkgbits.V1,
-+ 		pkgbits.V2,
-++		pkgbits.V3,
-++		pkgbits.V4,
-++		pkgbits.V5,
-+ 	} {
-+ 		pw := pkgbits.NewPkgEncoder(version, -1)
-+ 		w := pw.NewEncoder(pkgbits.RelocMeta, pkgbits.SyncPublic)
-+@@ -37,6 +40,10 @@
-+ // Type checker to enforce that know V* have the constant values they must have.
-+ var _ [0]bool = [pkgbits.V0]bool{}
-+ var _ [1]bool = [pkgbits.V1]bool{}
-++var _ [2]bool = [pkgbits.V2]bool{}
-++var _ [3]bool = [pkgbits.V3]bool{}
-++var _ [4]bool = [pkgbits.V4]bool{}
-++var _ [5]bool = [pkgbits.V5]bool{}
-+ 
-+ func TestVersions(t *testing.T) {
-+ 	type vfpair struct {
-+@@ -55,6 +62,9 @@
-+ 		{pkgbits.V0, pkgbits.DerivedInfoNeeded},
-+ 		{pkgbits.V1, pkgbits.DerivedInfoNeeded},
-+ 		{pkgbits.V2, pkgbits.AliasTypeParamNames},
-++		{pkgbits.V3, pkgbits.CompactCompLiterals},
-++		{pkgbits.V4, pkgbits.GenericMethods},
-++		{pkgbits.V5, pkgbits.PreserveMethodOrder},
-+ 	} {
-+ 		if !c.v.Has(c.f) {
-+ 			t.Errorf("Expected version %v to have field %v", c.v, c.f)
-+@@ -69,6 +79,18 @@
-+ 		{pkgbits.V2, pkgbits.DerivedInfoNeeded},
-+ 		{pkgbits.V0, pkgbits.AliasTypeParamNames},
-+ 		{pkgbits.V1, pkgbits.AliasTypeParamNames},
-++		{pkgbits.V0, pkgbits.CompactCompLiterals},
-++		{pkgbits.V1, pkgbits.CompactCompLiterals},
-++		{pkgbits.V2, pkgbits.CompactCompLiterals},
-++		{pkgbits.V0, pkgbits.GenericMethods},
-++		{pkgbits.V1, pkgbits.GenericMethods},
-++		{pkgbits.V2, pkgbits.GenericMethods},
-++		{pkgbits.V3, pkgbits.GenericMethods},
-++		{pkgbits.V0, pkgbits.PreserveMethodOrder},
-++		{pkgbits.V1, pkgbits.PreserveMethodOrder},
-++		{pkgbits.V2, pkgbits.PreserveMethodOrder},
-++		{pkgbits.V3, pkgbits.PreserveMethodOrder},
-++		{pkgbits.V4, pkgbits.PreserveMethodOrder},
-+ 	} {
-+ 		if c.v.Has(c.f) {
-+ 			t.Errorf("Expected version %v to not have field %v", c.v, c.f)
-+diff --git a/internal/gcimporter/ureader.go b/internal/gcimporter/ureader.go
-+--- a/internal/gcimporter/ureader.go
-++++ b/internal/gcimporter/ureader.go
-+@@ -629,11 +629,26 @@
-+ 				})
-+ 			}
-+ 
-+-			for i, n := 0, r.Len(); i < n; i++ {
-+-				named.AddMethod(r.method())
-+-			}
-+-
-+ 			if r.Version().Has(pkgbits.GenericMethods) {
-++				// V4 (go1.27.0) emitted all non-generic methods
-++				// before all generic one
++		enableFailpoint("tikvclient/twoPCRequestBatchSizeLimit", "return")
++		if rollback {
++			enableFailpoint("tikvclient/beforeCommit", `return("fail")`)
++			enableFailpoint("tikvclient/commitFailedSkipCleanup", "return")
++			enableFailpoint("tikvclient/twoPCShortLockTTL", "return")
++			enableFailpoint("tikvclient/doNotKeepAlive", "return")
++		} else {
++			enableFailpoint("tikvclient/beforeCommitSecondaries", `return("skip")`)
++		}
++		tk.MustExec("begin optimistic")
++		tk.MustExec("insert into insert_duplicate_locks values (1, 1, 10), (2, 2, 20), (3, 3, 30)")
++		txn, err := tk.Session().Txn(false)
++		require.NoError(t, err)
++		startTS = txn.StartTS()
++		if rollback {
++			tk.MustContainErrMsg("commit", "injected failure before commit")
++		} else {
++			tk.MustExec("commit")
++		}
++		tk.Session().GetCommitWaitGroup().Wait()
++	}()
++
++	tikvStore := store.(tikv.Storage)
++	tableID := external.GetTableByName(t, tk, "test", "insert_duplicate_locks").Meta().ID
++	tableStart := tablecodec.EncodeTablePrefix(tableID)
++	tableEnd := tableStart.PrefixNext()
++	scanLocks := func() (int, error) {
++		resolver := tikv.NewRegionLockResolver("insert-duplicate-locks", tikvStore)
++		bo := tikv.NewBackoffer(context.Background(), 5000)
++		count := 0
++		for key := []byte(tableStart); ; {
++			locks, loc, err := resolver.ScanLocksInOneRegion(bo, key, tableEnd, startTS, 16)
++			if err != nil {
++				return 0, err
++			}
++			count += len(locks)
++			if len(loc.EndKey) == 0 || bytes.Compare(loc.EndKey, tableEnd) >= 0 {
++				return count, nil
++			}
++			key = loc.EndKey
++		}
++	}
++	lockCount, err := scanLocks()
++	require.NoError(t, err)
++	if rollback {
++		require.Equal(t, 6, lockCount, "the primary and all five secondaries must remain 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #72210** (2026-10-22): config: fix diagnostic-mode goroutine profile flake (@D3Hunter)
-- **PR #72196** (2026-10-22): executor: add materialized view refresh runtime (@windtalker)
-- **PR #72175** (closed): [DNM] ddl, server: add a status API to drop leftover global index (@joechenrh)
-- **PR #72173** (2026-10-22): planner, executor: support nested materialized view fast refresh (@windtalker)
-- **PR #72168** (2026-10-21): planner: resolve targets for non-OOP materialized view refresh (@windtalker)
-- **PR #72162** (closed): [DNM] ddl: drop leftover global index copies with a reserved DROP INDEX name (@joechenrh)
+- **PR #72285** (closed): expression: use the binary collation for an implicit cast to a binary string (@lohmag)
+- **PR #72249** (2026-10-25): txn: update client-go to fix repeated lock resolution (#72232) (@ti-chi-bot)
+- **PR #72248** (2026-10-25): txn: update client-go to fix repeated lock resolution (#72232) (@ti-chi-bot)
+- **PR #72232** (2026-10-24): txn: update client-go to fix repeated lock resolution (@lcwangchao)
+- **PR #72225** (closed): server: skip small packets and pool BestSpeed zlib writers in the compressed protocol (@nmass-betpawa)
+- **PR #72212** (2026-10-23): lightning: surface checkpoint resume failures in compression test (@D3Hunter)
 
 ---
 
@@ -2559,50 +2300,33 @@ ref pingcap/tidb#70069
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ddl: fix global index copies left or broken by reorganize partition (#72158)
+## X. *: make the graceful shutdown drain timeout configurable (#71796)
 
 **RULE**:
-When implementing operations in `pkg/ddl/index.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/tidb-server/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `13544e9b`: ddl: fix global index copies left or broken by reorganize partition (#72158). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1731737`: *: make the graceful shutdown drain timeout configurable (#71796). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ddl/index.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/tidb-server/main.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// Compare IDs, since a partition reorganization keeps index copies with the same name.
-		if index.ID == indexInfo.ID {
-// RemoveDependentHiddenColumns removes the hidden columns used by the index, except those still
-// used by another index, e.g. a copy of the index made by a partition reorganization.
-		if col.Hidden && !isColumnUsedByOtherIndex(tblInfo, idxInfo.ID, col.Offset) {
-// isColumnUsedByOtherIndex checks whether the column is used by an index other than
-// indexID, e.g. a copy of the index made by a partition reorganization.
-func isColumnUsedByOtherIndex(tblInfo *model.TableInfo, indexID int64, offset int) bool {
-	for _, idx := range tblInfo.Indices {
-		if idx.ID == indexID {
-			continue
-		}
-		for _, col := range idx.Columns {
-			if col.Offset == offset {
-				return true
-			}
-		}
-	}
-	return false
-}
-
+	// The amount of time we wait for the ongoing statements and transactions to finish.
+	drainClientWait := time.Duration(config.GetGlobalConfig().GracefulCloseConnectionsTimeout) * time.Second
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		if index.Name.L == indexInfo.Name.L {
-// RemoveDependentHiddenColumns removes hidden columns by the indexInfo.
-		if col.Hidden {
+// The amount of time we wait for the ongoing txt to finished.
+// We should better provider a dynamic way to set this value.
+var gracefulCloseConnectionsTimeout = 15 * time.Second
+
+	drainClientWait := gracefulCloseConnectionsTimeout
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `13544e9b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1731737` are properly handled with clean fallback behavior.

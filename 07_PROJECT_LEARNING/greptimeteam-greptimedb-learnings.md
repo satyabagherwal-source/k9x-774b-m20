@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `2eff52c7`  
+> **Source Version**: `1c5d15fd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:26:16.168Z  
+> **Timestamp**: 2026-10-25T04:12:39.535Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:26:15.170Z  
+> **Harvest Timestamp**: 2026-10-25T04:12:39.136Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6757 stars
+- **Stars / Engagement**: 6762 stars
 
 ---
 
@@ -1651,7 +1651,13 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- *No recent closed bug issues fetched.*
+- **Issue #9937** (2026-10-24): **refactor(promql): remove NodePath and own the runtime tree recursively**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  **Summarize your change**  The native PromQL runtime addressed a node by the path that reached it. Every execution walked that path again to find the node's state, every metric export walked it to name a node, and the state itself lived in tables keyed by that path. This removes `NodePath` and the tables keyed by it, and replaces them with one recursive runtime tree: each node owns its children, its operator state, its metrics, and — once settled — nothing it no longer needs.  **How it works**  `NativeExecutionState` now holds a `RuntimeTree { root: RuntimeNode }`. A `RuntimeNode` carries its own `Box`ed children, its `Option` payload (the evaluator, the retained operands, the fold, the collected input), its lifecycle state and a shared `Arc<NodeMetrics>`, so there is no side table to look a node up in. Pulling, settling, flushing after a subtree closes, EOF, errors and drop all recurse through that tree.  An `InputId` is assigned only to the leaves that actually receive a feed, by a depth-first walk of the built tree. A scalar leaf takes no id, so no node is addressed by position and no flat registry stands in for the topology. The feed API is `push_raw(InputId, chunk)` / `push_evaluated(InputId, chunk)`; there is no `push_at` shim and no `input_count` nobody calls.  `E
+  **Post-Mortem & Fix Analysis**:
+  > <!-- pr-open-limit --> > [!WARNING] > @discord9 has **18** open non-draft pull requests in this repository, over the limit of **5**.  Review is the scarcest resource here. Please land or close some of these before pushing this one forward.  - [PR 9404: feat\(query\)\: add opt\-in distributed broadcast join planner](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9404) - [PR 9463: fix\(flow\)\: clean up cross\-mode replacements without checker deadlocks](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9463) - [PR 9496: test\: query option regressions separate from capability](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9496) - [PR 9524: fix\(query\)\: stop windowed sort on precision\-lowering time casts](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9524) - [PR 9600: fix\(query\)\: avoid lossy casts in partition pruning](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9600) - [PR 9601: fix\(query\)\: preserve IGNORE NULLS semantics in d
+
+- **Issue #9919** (2026-10-23): **fix: upload staging manifests in chunks**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Fixes #9903.  ## What's changed and what's your intention?  Large staging manifests generated during repartition were uploaded without explicit chunking and could exceed a storage endpoint's per-request limit. Route `StagingBlobStorage::put` through the existing manifest write helper, using its 64 MiB chunks without caching. Object paths and serialized contents remain unchanged.  Add a regression test covering small objects, the 64 MiB boundary, and larger objects. It enforces an artificial per-write limit, checks write sizes and completion, and verifies the stored bytes. With the same test and payload, the original implementation failed in both comparison runs and the fix passed in both. This exercises the underlying writer with a local filesystem backend; it does not test a live cloud multipart endpoint.  Validation: - `cargo nextest run -p mito2`: 1810 tests passed on the updated PR base (`5523cf38741`). - Focused regression: passed twice with the fix; failed as expected twice with the original upload call. - Changed-file `rustfmt --check` and `git diff --check`: passed. - Workspace-wide clippy, tests, and unused-dependency checks have not been run.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [x] I have written the necessary rustdoc comments. - [x] I have adde
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1668,1310 +1674,551 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb3f07b4` (2026-10-22)
-**Commit Message**: fix(mito2): pick TWCS L1 merges by closed units so compaction terminates (#9741)
+### Incident Patch 1: `1cb01d0d` (2026-10-23)
+**Commit Message**: fix(mito2): keep SSTs when a manifest save ends with RateLimited or PermissionDenied (#9898)
 
-* refactor(mito2): pick TWCS L1 merges by closed units
+* fix(mito2): keep SSTs when a manifest save ends with RateLimited
 
-TWCS could keep rewriting L1 files without new writes. Overlap-only picks
-could split their inputs into one more file than they read, and L1 file
-reduction then rewrote up to 16 files to remove that single file. The
-outputs, split by key, created new overlaps and the cycle repeated.
+The object store's retry layer retries temporary errors and returns the
+last attempt's error. A manifest delta PUT can be stored by the server
+while the client sees a timeout, reset or 5xx, and the retries that
+follow can be throttled, so the save ends with RateLimited even though
+the delta exists. may_have_persisted_manifest_update treated RateLimited
+as proof that nothing was written, so flush and compaction deleted the
+SSTs the stored delta references. A later open or follower sync replays
+the delta and reads fail on the missing files.
 
-Replace the three global pick phases with one pick per window, scheduled by
-class across windows. Every pick now decreases a termination measure when the
-window receives no writes.
+Treat RateLimited like other ambiguous errors: the SSTs are kept and
+become orphans when the save really failed.
 
-- Active windows only take merges that remove files. L1 files are grouped by
-  conflicts and merged in key order, so size-split tails are merged together.
-  A reduction rewrites at most 4 output files' worth of bytes per removed file.
-- Inactive windows absorb L0 files, then take closed merges: no other file
-  intrudes on the inputs' bounding box, so outputs cannot add overlaps. Each
-  merge resolves conflicts or removes files, decreasing (conflicts, files).
-  Files that do not take part in an overlap are not rewritten.
-- Overlaps that only share a boundary key no longer count as conflict
+Fixes #9897
 
-**File**: `src/mito2/src/compaction/last_non_null.rs` (modified, +5/-2)
+Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+
+* fix(mito2): keep SSTs when a manifest save ends with PermissionDenied
+
+The retry layer returns the last attempt's error, so a 403 from a revoked
+key, a changed bucket policy or clock skew can follow a delta PUT that
+the server already stored. Like RateLimited, PermissionDenied does not
+prove that nothing was written, 
+
+**File**: `src/mito2/src/engine/compaction_test.rs` (modified, +1/-1)
 ```diff
-@@ -293,7 +293,7 @@ mod tests {
-             .unwrap()
-             .set_compacting(busy);
-         let request = compact_request::Options::Regular(Default::default());
--        let picker = new_picker(&request, &region.region_options, limit, None);
-+        let picker = new_picker(&request, &region.region_options, limit, None, false);
- 
-         let picked = picker.pick(&region).await.unwrap().unwrap();
-         assert_eq!(expected_windows.len(), picked.outputs.len());
-@@ -312,7 +312,7 @@ mod tests {
- 
-         // The LastRow picker must retain its original seed cap and priority.
-         region.region_options.merge_mode = Some(MergeMode::LastRow);
--        let picker = new_picker(&request, &region.region_options, limit, None);
-+        let picker = new_picker(&request, &region.region_options, limit, None, false);
-         let picked = picker.pick(&region).await.unwrap().unwrap();
-         assert_eq!(limit.unwrap_or(3).min(3), picked.outputs.len());
-         for (output, window) in picked.outputs.iter().rev().zip(windows.iter().rev()) {
-@@ -487,6 +487,7 @@ mod tests {
-             &region.region_options,
-             Some(1),
-             TimestampRange::new(Timestamp::new_second(0), Timestamp::new_second(3600)),
-+            false,
-         );
- 
-         let picked = picker.pick(&region).await.unwrap();
-@@ -543,6 +544,7 @@ mod tests {
-             &region.region_options,
-             Some(1),
-             TimestampRange::new(Timestamp::new_second(10), Timestamp::new_second(20)),
-+            false,
-         );
- 
-         let picked = picker.pick(&region).await.unwrap().unwrap();
-@@ -590,6 +592,7 @@ mod tests {
-             &region.region_options,
-             Some(1),
-             None,
-+            false,
-         );
-         let picked = picker.pick(&region).await.unwrap().unwrap();
-         assert!(picked.outputs.is_empty());
+@@ -1414,7 +1414,7 @@ impl object_store::layers::mock::Write for FailingManifestWriter {
+     ) -> object_store::layers::mock::Result<()> {
+         if matches!(self.failure, ManifestWriteFailure::BeforeWrite) {
+             return Err(object_store::layers::mock::Error::new(
+-                object_store::layers::mock::ErrorKind::PermissionDenied,
++                object_store::layers::mock::ErrorKind::Unsupported,
+                 "manifest write rejected before persistence",
+             ));
+         }
 ```
 
-**File**: `src/mito2/src/compaction/picker.rs` (modified, +3/-0)
+**File**: `src/mito2/src/error.rs` (modified, +15/-8)
 ```diff
-@@ -128,6 +128,7 @@ pub fn new_picker(
-     region_options: &RegionOptions,
-     max_background_tasks: Option<usize>,
-     time_range: Option<TimestampRange>,
-+    manual: bool,
- ) -> Arc<dyn Picker> {
-     if let compact_request::Options::StrictWindow(window) = compact_request_options {
-         let window = if window.window_seconds == 0 {
-@@ -148,8 +149,10 @@ pub fn new_picker(
-                 time_window_seconds: twcs_opts.time_window_seconds(),
-                 max_output_file_size: twcs_opts.max_output_file_size.map(|r| r.as_bytes()),
-                 append_mode: region_options.append_mode,
-+                merge_mode: region_options.merge_mode(),
-                 max_background_tasks,
-                 time_range,
-+                all_windows_inactive: manual,
-             },
-         };
-         if region_options.merge_mode() == MergeMode::LastNonNull {
-```
-
-**File**: `src/mito2/src/compaction/scheduler.rs` (modified, +9/-2)
-```diff
-@@ -571,7 +571,7 @@ impl CompactionScheduler {
-             max_parallelism,
-         );
-         status.merge_waiter(waiter);
--        self.dispatch_compaction_planning(plan_id, request, compact_options, time_range);
-+        self.dispatch_compaction_planning(plan_id, request, compact_options, time_range, trigger);
-         self.listener.on_compaction_scheduled(region_id);
-         Ok(true)
-     }
-@@ -617,7 +617,13 @@ impl CompactionScheduler {
-         // was fetched above.
-         let plan_id = Self::next_plan_id(&mut self.next_plan_id);
-         status.start_picking_with_trigger(plan_id, CompactionTrigger::Manual);
--        self.dispatch_compaction_planning(plan_id, request, options, time_range);
-+        self.dispatch_compaction_planning(
-+            plan_id,
-+            request,
-+            options,
-+            time_range,
-+            CompactionTrigger::Manual,
-+        );
-         debug!(
-             "Successfully scheduled manual compaction planning for region id: {}",
-             region_id
-@@ -703,6 +709,7 @@ impl CompactionScheduler {
-             request,
-             compact_request::Options::Regular(Default::default()),
-             None,
-+            CompactionTrigger::Automatic,
-         );
-         debug!(
-             "Successfully scheduled next compaction planning for region id: {}",
-```
-
-**File**: `src/mito2/src/compaction/scheduler/planning.rs` (modified, +7/-1)
-```diff
-@@ -32,7 +32,9 @@ use crate::access_layer::AccessLayerRef;
- use crate::cache::CacheManagerRef;
- use crate::compaction::compactor::{CompactionRegion, CompactionVersion};
- use crate::compaction::picker::{PickerOutput, new_picker};
--use crate::compaction::scheduler::state::{CompactingFiles, CompactionExecution, CompactionPhase};
-+use crate::compaction::scheduler::state::{
-+    CompactingFiles, CompactionExecution, CompactionPhase, CompactionTrigger,
-+};
- use crate::compaction::scheduler::{CompactionScheduler, CompactionTransition};
- use crate::compaction::unit::CompactionUnit;
- use crate::compaction::{CompactionOutput, find_dynamic_options, format_panic_reason};
-@@ -115,6 +117,7 @@ impl CompactionScheduler {
-         request: CompactionRequest,
-         options: compact_request::Options,
-         time_range: Option<TimestampRange>,
-+        trigger: CompactionTrigger,
-     ) {
-         let plugins = self.plugins.clone();
-         let max_background_compactions = self.engine_config.max_background_compactions;
-@@ -127,6 +130,7 @@ impl CompactionScheduler {
-                 plugins,
-                 max_background_compactions,
-                 time_range,
-+                trigger,
+@@ -1445,7 +1445,9 @@ impl Error {
+     /// Returns whether a failed manifest update may have been persisted.
+     ///
+     /// Unknown errors are treated conservatively because deleting output SSTs after an ambiguous
+-    /// manifest write could leave the manifest referencing missing files.
++    /// manifest write could leave the manifest referencing missing files. The retry layer returns
++    /// the last attempt's error, so an error that can follow a stored attempt (throttling, or a 403
++    /// from a revoked key, a changed bucket policy or clock skew) never proves nothing was written.
+     pub(crate) fn may_have_persisted_manifest_update(&self) -> bool {
+         match self {
+             Error::UpdateManifest { .. }
+@@ -1459,11 +1461,9 @@ impl Error {
+                 ErrorKind::Unsupported
+                     | ErrorKind::ConfigInvalid
+                     | ErrorKind::NotFound
+-                    | ErrorKind::PermissionDenied
+                     | ErrorKind::IsADirectory
+                     | ErrorKind::NotADirectory
+                     | ErrorKind::AlreadyExists
+-                    | ErrorKind::RateLimited
+                     | ErrorKind::IsSameFile
+                     | ErrorKind::ConditionNotMatch
+                     | ErrorKind::RangeNotSatisfied
+@@ -1847,11 +1847,9 @@ mod tests {
+             ErrorKind::Unsupported,
+             ErrorKind::ConfigInvalid,
+             ErrorKind::NotFound,
+-            ErrorKind::PermissionDenied,
+             ErrorKind::IsADirectory,
+             ErrorKind::NotADirectory,
+             ErrorKind::AlreadyExists,
+-            ErrorKind::RateLimited,
+             ErrorKind::IsSameFile,
+             ErrorKind::ConditionNotMatch,
+             ErrorKind::RangeNotSatisfied,
+@@ -1864,9 +1862,18 @@ mod tests {
              );
-             Self::notify_planning_result(region_id, plan_id, request_sender, planning).await;
-         });
-@@ -180,6 +184,7 @@ impl CompactionScheduler {
-         plugins: Plugins,
-         max_background_compactions: usize,
-         time_range: Option<TimestampRange>,
-+        trigger: CompactionTrigger,
-     ) -> CompactionPlanningResult {
-         let region_id = request.region_id();
-         let (dynamic_compaction_opts, ttl) = find_dynamic_options(
-@@ -208,6 +213,7 @@ impl CompactionScheduler {
-             &region_options,
-             Some(max_picker_outputs),
-             time_range,
-+            trigger == CompactionTrigger::Manual,
-         );
-         let region_id = request.region_id();
-         let CompactionRequest {
-```
-
-**File**: `src/mito2/src/compaction/twcs.rs` (modified, +1110/-372)
-```diff
-@@ -12,6 +12,8 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+mod units;
-+
- use std::collections::hash_map::Entry;
- use std::collections::{BTreeMap, HashMap, HashSet};
- use std::fmt::Debug;
-@@ -34,43 +36,36 @@ use crate::compaction::run::{
-     Ranged, SortedRun, files_overlap, files_overlap_inclusive, find_sorted_runs,
-     find_sorted_runs_by_time_range, merge_primary_key_ranges, primary_key_ranges_overlap,
- };
-+use crate::compaction::twcs::units::{ClosedMergeOptions, PickLimits};
- use crate::error::{JoinSnafu, Result};
-+use crate::region::options::MergeMode;
- use crate::sst::file::{FileHandle, Level, overlaps};
- use crate::sst::primary_key::PrimaryKeyRangeMapper;
- use crate::sst::version::LevelMeta;
- 
- const LEVEL_COMPACTED: Level = 1;
- 
--#[derive(Clone, Copy, Debug)]
--enum PickPhase {
--    HasL0,
--    L1FileReduction,
--    L1OverlapOnly,
--}
--
--impl PickPhase {
--    fn applies_to(self, window: &Window) -> bool {
--        match self {
--            Self::HasL0 => window.files().any(|file| file.level() == 0),
--            Self::L1FileReduction | Self::L1OverlapOnly => {
--                window.files().any(|file| file.level() != 0)
--            }
--        }
--    }
-+/// Scheduling priority of a window's pick. Earlier classes are scheduled first,
-+/// and newer windows first within a class.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-+enum PickClass {
-+    /// Merges L0 files, which also absorbs late data of inactive windows.
-+    L0Merge,
-+    /// Merges files to reduce the window's file count.
-+    FileReduction,
-+    /// Merges files of an inactive window to resolve their overlaps.
-+    OverlapResolution,
- }
- 
--const PICK_PHASES: [PickPhase; 3] = [
--    PickPhase::HasL0,
--    PickPhase::L1FileReduction,
--    PickPhase::L1OverlapOnly,
--];
--
--struct WindowPickContext<'a> {
--    active_window: Option<i64>,
--    files: &'a Window,
--    windows: &'a BTreeMap<i64, Window>,
--    phase: PickPhase,
--    primary_key_mapper: &'a PrimaryKeyRangeMapper,
-+/// Compaction inputs picked for one window.
-+#[derive(Debug)]
-+struct WindowPick {
-+    class: PickClass,
-+    /// Name of the strategy that picked the inputs, for logs.
-+    branch: &'static str,
-+    inputs: Vec<FileHandle>,
-+    /// Number of sorted runs or units the strategy considered, for logs.
-+    found_runs: usize,
- }
- 
- struct WindowOutputContext {
-@@ -95,6 +90,11 @@ static MAX_INPUT_FILES: LazyLock<usize> = LazyLock::new(|| {
-     parse_max_input_files(env_value.as_deref())
- });
- 
-+/// A closed merge in an inactive window may take this many times
-+/// [`MAX_INPUT_FILES`]. Resolving overlaps across a whole window needs all of
-+/// its overlapping files at once, and each byte is rewritten once per window.
-+const CLOSED_MERGE_INPUT_FACTOR: usize = 4;
-+
- fn parse_max_input_files(env_value: Option<&str>) -> usize {
-     env_value
-         .and_then(|env_value| env_value.parse().ok())
-@@ -121,13 +121,22 @@ pub struct TwcsPicker {
-     pub max_output_file_size: Option<u64>,
-     /// Whether the target region is in append mode.
-     pub append_mode: bool,
-+    /// LastNonNull picks expand to an overlap closure, so cannot use partial
-+    /// small-file reductions that must leave large peers untouched.
-+    pub(crate) merge_mode: MergeMode,
-     /// Max background compaction tasks.
-     pub max_background_tasks: Option<usize>,
-     /// Optional time range that constrains candidate compaction windows.
-     pub(crate) time_range: Option<TimestampRange>,
-+    /// Picks the active window like an inactive one. Manual compactions set it,
-+    /// so a window that stopped receiving writes still gets its overlaps
-+    /// resolved.
-+    pub(crate) all_windows_inactive: bool,
- }
- 
- impl TwcsPicker {
-+    /// Picks at most one compaction input per window and schedules them across
-+    /// windows by [`PickClass`], newer windows first within a class.
-     async fn build_output(
-         &self,
-         region_id: RegionId,
-@@ -140,7 +149,13 @@ impl TwcsPicker {
-             max_outputs,
-             primary_key_mapper,
-         } = context;
--        let mut output = vec![];
-+        let region_sequence = time_windows
-+            .values()
-+            .flat_map(|window| window.files())
-+            .filter_map(|file| file.meta_ref().sequence)
-+            .map(|sequence| sequence.get())
-+            .max()
-+            .unwrap_or(0);
-         let windows = time_windows
-             .values()
-             .rev()
-@@ -159,278 +174,330 @@ impl TwcsPicker {
-             .map(|window| window.time_window)
-             .collect::<Vec<_>>();
-         let time_windows = Arc::new(time_windows);
-+        let max_outputs = max_outputs.unwrap_or(usize::MAX);
-         // Enumerating all LastNonNull seeds must not increase the number of
-         // concurrently planned windows along with the output limit.
-         let chunk_size = self.max_background_tasks.unwrap_or(windows.len()).max(1);
--        let mut sel
-```
-
-**File**: `src/mito2/src/compaction/twcs/units.rs` (added, +2073/-0)
-```diff
-@@ -0,0 +1,2073 @@
-+// Copyright 2023 Greptime Team
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+//! Unit-based compaction picks for one TWCS window.
-+//!
-+//! Picks select a contiguous interval of *units* in a fixed order. Grouping
-+//! prefers rewriting related files together, but input limits and fallback
-+//! paths may split groups or use single-file units. Separate admission checks
-+//! preserve each pick's progress guarantees under the assumptions below.
-+//!
-+//! - [`pick_active_l1`] reduces the L1 file count of the active window.
-+//! - [`pick_small_l1`] reduces small L1 files without rewriting large peers.
-+//! - [`pick_closed_merge`] only merges intervals of an inactive window whose
-+//!   outputs cannot add conflicts. Compaction outputs stay inside the bounding
-+//!   box of the inputs, so they can only overlap files intruding on that box.
-+//!
-+//! When a window's split-unit conflict graph is too dense to materialize,
-+//! [`pick_closed_merge`] falls back to a bounded file reduction and admits it
-+//! only when the same conflict bound holds.
-+//!
-+//! # Termination
-+//!
-+//! Let `P` be the number of conflicting file pairs ([`Extent::conflicts`]) in an
-+//! inactive window and `N` its file count. A merge removes every pair among its
-+//! inputs. Its outputs are one sorted run with no internal conflicts,
-+//! so they only conflict with the `I` files intruding on the inputs' box, at
-+//! most `outputs · I` pairs. An inactive pick only merges inputs that had at
-+//! least as many pairs with other files, so `P` does not grow; without
-+//! intruders the inputs are closed and add no pairs. Every inactive pick either
-+//! resolves a pair (`P` drops) or removes a file (`P` does not grow and `N`
-+//! drops), so `(P, N)` strictly decreases in lexicographic order until the
-+//! window receives new writes. Active-window picks may add conflicts, so each
-+//! of them must remove a file: `N` strictly decreases.
-+//!
-+//! The argument relies on how the compactor writes outputs:
-+//!
-+//! - Outputs hold a subset of the input rows, so each output's time and key
-+//!   bounds lie inside the inputs' bounding box.
-+//! - Outputs are one stream in (key, time) order. For regions with a primary
-+//!   key, the writer only splits between complete series, so output key ranges
-+//!   are disjoint. Without a primary key, outputs have disjoint or touching
-+//!   time ranges. Neither is an [`Extent::conflicts`] pair.
-+//! - A split only starts a new file once the current one reaches the size
-+//!   threshold, and outputs are not larger than inputs in total, so
-+//!   [`PickLimits::predicted_outputs`] bounds the output count.
-+//!
-+//! `test_closed_merges_terminate` and `test_active_l1_picks_terminate` replay
-+//! random windows with outputs written under these rules.
-+
-+use std::cmp::Reverse;
-+use std::ops::Range;
-+
-+use bytes::Bytes;
-+use common_time::Timestamp;
-+
-+use crate::sst::file::FileHandle;
-+use crate::sst::primary_key::PrimaryKeyRangeMapper;
-+
-+/// An L1 file reduction may rewrite at most this many output files' worth of
-+/// bytes per SST it removes.
-+const MAX_REWRITE_FILES_PER_REDUCED_FILE: u64 = 4;
-+
-+/// A small L1 file occupies at most one quarter of the output size budget.
-+const SMALL_L1_SIZE_FACTOR: u64 = 4;
-+
-+/// Maximum number of index nodes visited while building conflict structures for
-+/// a pick. Above this, the picker falls back to a bounded file reduction instead
-+/// of materializing an unbounded conflict graph.
-+const CONFLICT_GRAPH_BUDGET: usize = 1 << 20;
-+
-+/// Output size limits and input limits shared by both picks.
-+#[derive(Debug, Clone, Copy)]
-+pub(crate) struct PickLimits {
-+    /// Split threshold of compaction outputs; `None` writes a single output.
-+    pub(crate) max_output_file_size: Option<u64>,
-+    /// Maximum number of input files of one compaction.
-+    pub(crate) max_input_files: usize,
-+}
-+
-+impl PickLimits {
-+    /// Upper bound of the outputs of compacting an interval: the writer only
-+    /// starts a new file after the current one reaches the threshold, and never
-+    /// splits a series, so files of a single primary key compact into one file.
-+    fn predicted_outputs(&self, stats: &IntervalStats) -> usize {
-+        match self.max_output_file_size {
-+            Some(max) if max > 0 && stats.single_key.is_none() => {
-+                stats.size.div_ceil(max).max(1) as usize
-+            }
-+            _ => 1,
-+        }
-+    }
-+
-+    /// Whether rewrit
-```
-
-**File**: `src/mito2/src/engine/compaction_test.rs` (modified, +204/-2)
-```diff
-@@ -212,6 +212,7 @@ async fn test_strict_window_output_file_size(
-     assert!(version.ssts.levels()[0].files.is_empty());
-     let primary_key_mapper = version.ssts.primary_key_mapper();
-     let files = version.ssts.levels()[1].files().collect::<Vec<_>>();
-+    let max_output_size = files.iter().map(|file| file.size()).max().unwrap();
-     assert_eq!(
-         6000,
-         files
-@@ -229,6 +230,14 @@ async fn test_strict_window_output_file_size(
-             .collect::<Vec<_>>();
-         if expect_split {
-             assert!(window_files.len() > 1, "each window must split by size");
-+            assert_eq!(
-+                window_files.len() as u64,
-+                window_files
-+                    .iter()
-+                    .map(|file| file.size())
-+                    .sum::<u64>()
-+                    .div_ceil(max_output_size)
-+            );
-         } else {
-             assert_eq!(1, window_files.len(), "zero must disable size splitting");
          }
-@@ -253,6 +262,35 @@ async fn test_strict_window_output_file_size(
-         sort_batches_and_print(&before, &["tag_0", "ts"]),
-         sort_batches_and_print(&after, &["tag_0", "ts"])
-     );
-+
-+    // Fresh size-split outputs have disjoint series and must not look like
-+    // independently written files sharing a boundary key to the TWCS picker.
-+    // Raise the tiny split threshold so an overlap merge would be eligible by
-+    // size; otherwise the output-count guard alone would reject these files.
-+    engine
-+        .handle_request(
-+            region_id,
-+            RegionRequest::Alter(RegionAlterRequest {
-+                kind: SetRegionOptions {
-+                    options: vec![SetRegionOption::Twsc(
-+                        "compaction.twcs.max_output_file_size".into(),
-+                        format!("{max_output_size}B"),
-+                    )],
-+                },
-+            }),
-+        )
-+        .await
-+        .unwrap();
-+    let output_ids: HashSet<_> = files.iter().map(|file| file.file_id()).collect();
-+    compact(&engine, region_id).await;
-+    let version = engine.get_region(region_id).unwrap().version();
-+    assert_eq!(
-+        output_ids,
-+        version.ssts.levels()[1]
-+            .files()
-+            .map(|file| file.file_id())
-+            .collect()
-+    );
- }
  
- /// Flush may collapse versions within one file, but compaction must not promote
-@@ -544,6 +582,169 @@ async fn assert_partial_compaction_preserves_delete_order(flat_format: bool) {
-     );
- }
+-        let error =
+-            OpenDalSnafu {}.into_error(object_store::Error::new(ErrorKind::Unexpected, "test"));
+-        assert!(error.may_have_persisted_manifest_update());
++        // The last retry can fail with these kinds even though an earlier attempt was stored.
++        for kind in [
++            ErrorKind::Unexpected,
++            ErrorKind::RateLimited,
++            ErrorKind::PermissionDenied,
++        ] {
++            let error = OpenDalSnafu {}.into_error(object_store::Error::new(kind, "test"));
++            assert!(
++                error.may_have_persisted_manifest_update(),
++                "error kind {kind:?} should not prove the manifest was not persisted"
++            );
++        }
  
-+/// Exercise the small-L1 fallback with real SST sizes, preserved tombstones,
-+/// and both layouts. No fabricated file metadata or hand-picked merge inputs.
-+#[rstest::rstest]
-+#[tokio::test]
-+async fn test_inactive_small_l1_compaction_preserves_large_peer(
-+    #[values(false, true)] flat_format: bool,
-+    #[values(3600, 7200)] active_ts: usize,
-+) {
-+    let mut env = TestEnv::new().await;
-+    let region_id = RegionId::new(1, 1);
-+    let (engine, columns) = env_for_manual_compaction(&mut env, region_id, flat_format).await;
-+    let mut rng = <rand::rngs::StdRng as rand::SeedableRng>::seed_from_u64(41);
-+    let mut old_rows = build_rows_for_key("m", 10, 16, 0);
-+    for _ in 0..30_000 {
-+        old_rows.extend(build_rows_for_key(
-+            &format!("a{:032x}", rand::Rng::random::<u128>(&mut rng)),
-+            1,
-+            2,
-+            0,
-+        ));
-+    }
-+    for _ in 0..2 {
-+        put_rows(
-+            &engine,
-+            region_id,
-+            Rows {
-+                schema: columns.clone(),
-+                rows: old_rows.clone(),
-+            },
-+        )
-+        .await;
-+        flush(&engine, region_id).await;
-+    }
-+    compact(&engine, region_id).await;
-+    let region = engine.get_region(region_id).unwrap();
-+    let table_dir = region.table_dir().to_string();
-+    let large = region.version().ssts.levels()[1]
-+        .files()
-+        .next()
-+        .unwrap()
-+        .clone();
-+    const OUTPUT_SIZE: u64 = 64 * 1024;
-+    assert!(large.size() > 8 * OUTPUT_SIZE);
-+    engine
-+        .handle_request(
-+            region_id,
-+            RegionRequest::Alter(RegionAlterRequest {
-+                kind: SetRegionOptions {
-+                    options: vec![
-+                        SetRegionOption::Twsc(
-+                            "compaction.twcs.max_output_file_size".into(),
-+                            "64KiB".into(),
-+                        ),
-+                        SetRegionOption::Twsc(
-+                            "compaction.twcs.inactive_window.l1_merge_trigger".into(),
-+                            "2".into(),
-+                        ),
-+                    ],
-+                },
-+            }),
-+        )
-+        .await
-+        .unwrap();
-+
-+    // Each pair of L0 files becomes one small L1. The first contains a Delete
-+    // masking the large SST; later pairs update other rows in its key/time box.
-+    for ts in 10..14 {
-+        for _ in 0..2 {
-+            let rows = Rows {
-+             
-```
-
-**File**: `src/mito2/src/gc/worker_test.rs` (modified, +11/-3)
-```diff
-@@ -399,7 +399,13 @@ async fn test_gc_worker_basic_compact() {
- 
-     let region = engine.get_region(region_id).unwrap();
-     let manifest = region.manifest_ctx.manifest().await;
--    let removed_file_num = manifest.removed_files.removed_files[0].files.len();
-+    // A manual compaction may take several rounds, each recording its removals.
-+    let removed_file_num: usize = manifest
-+        .removed_files
-+        .removed_files
-+        .iter()
-+        .map(|removed| removed.files.len())
-+        .sum();
-     assert!(removed_file_num > 0);
- 
-     let version = manifest.manifest_version;
-@@ -488,9 +494,11 @@ async fn test_gc_worker_compact_with_ref() {
-     let file_ref_manifest = FileRefsManifest {
-         file_refs: HashMap::from([(
-             region_id,
--            manifest.removed_files.removed_files[0]
--                .files
-+            manifest
-+                .removed_files
-+                .removed_files
-                 .iter()
-+                .flat_map(|removed| removed.files.iter())
-                 .map(|removed_file| match removed_file {
-                     RemovedFile::File(file_id, v) => FileRef::new(region_id, *file_id, *v),
-                     RemovedFile::Index(file_id, v) => FileRef::new(region_id, *file_id, Some(*v)),
+         let region_id = RegionId::new(1, 1);
+         let error = RegionTruncatedSnafu { region_id }.build();
 ```
 
 ---
 
-### Incident Patch 2: `436d07bf` (2026-10-21)
-**Commit Message**: fix(mito): return from manual index builds only after the index is published (#9643)
+### Incident Patch 2: `6a340787` (2026-10-23)
+**Commit Message**: fix(pipeline): accept auto-transformed values in existing JSON columns (#9895)
 
-* fix(mito): return from manual index builds only after the index is published
+* fix(pipeline): accept auto-transformed values in existing JSON columns
 
-A manual build_index could report success while the index was missing:
-the request was rejected or coalesced behind another build, the manifest
-commit failed, the indexer dropped an error, or the region was staging.
-Manual builds now wait for active builds of the same SST, keep their
-waiters across coalescing and schema-change retries, are notified after
-the worker applies the edit, and verify the files against the manifest
-before returning.
+Signed-off-by: luofucong <[REDACTED_EMAIL]>
 
-The consistency check also honors inverted_index.ignore_column_ids and a
-zero segment row count, so such SSTs are no longer rebuilt on every call.
+* test(pipeline): compare decoded JSON values in regression test
 
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+Signed-off-by: luofucong <[REDACTED_EMAIL]>
 
-* test(mito): cover manual index build waiting for a schema-change retry
+---------
 
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+Signed-off-by: luofucong <[REDACTED_EMAIL]>
 
-* fix(mito): select manual index build files by the applied version
-
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
-* chore(mito): log why index builds are skipped or aborted
-
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
-* refactor(mito): split IndexBuildTask::
-
-**File**: `src/mito2/src/engine/index_build_test.rs` (modified, +376/-34)
+**File**: `src/pipeline/src/etl/transform/transformer/greptime.rs` (modified, +89/-1)
 ```diff
-@@ -1147,7 +1147,10 @@ async fn test_consecutive_schema_changes_publish_latest_index_generation() {
-     let files = current_file_metas(&engine, region_id).await;
-     assert_eq!(files.len(), 1);
-     assert!(
--        files[0].is_index_consistent_with_region(&version.metadata.column_metadatas),
-+        files[0].is_index_consistent_with_region(
-+            &version.metadata.column_metadatas,
-+            &version.options.index_options,
-+        ),
-         "the published index must match the latest schema generation, file: {:?}, metadata: {:?}",
-         files[0],
-         version.metadata
-@@ -1166,10 +1169,10 @@ async fn test_consecutive_schema_changes_publish_latest_index_generation() {
-     let reopened = engine.get_region(region_id).unwrap();
-     let reopened_files = current_file_metas(&engine, region_id).await;
-     assert_eq!(reopened_files.len(), 1);
--    assert!(
--        reopened_files[0]
--            .is_index_consistent_with_region(&reopened.version().metadata.column_metadatas)
--    );
-+    assert!(reopened_files[0].is_index_consistent_with_region(
-+        &reopened.version().metadata.column_metadatas,
-+        &reopened.version().options.index_options,
-+    ));
- }
- 
- #[tokio::test]
-@@ -1250,7 +1253,184 @@ async fn test_unrelated_schema_change_retries_stale_flush_index_build() {
-     let region = engine.get_region(region_id).unwrap();
-     let files = current_file_metas(&engine, region_id).await;
-     assert_eq!(files.len(), 1);
--    assert!(files[0].is_index_consistent_with_region(&region.version().metadata.column_metadatas));
-+    let version = region.version();
-+    assert!(files[0].is_index_consistent_with_region(
-+        &version.metadata.column_metadatas,
-+        &version.options.index_options,
-+    ));
-+    let scanner = engine
-+        .scanner(region_id, ScanRequest::default())
-+        .await
-+        .unwrap();
-+    assert_eq!(num_of_index_files(&engine, &scanner, region_id).await, 1);
-+}
-+
-+#[tokio::test]
-+async fn test_manual_build_waits_for_committed_publication_to_apply() {
-+    let mut env =
-+        TestEnv::with_prefix("test_manual_build_waits_for_committed_publication_to_apply_").await;
-+    let gate = Arc::new(IndexPublicationGate::new(
-+        IndexPublicationPhase::AfterManifestCommit,
-+    ));
-+    let engine = Arc::new(
-+        env.create_engine_with(
-+            async_build_mode_config(true),
-+            None,
-+            Some(gate.clone()),
-+            None,
-+        )
-+        .await,
-+    );
-+
-+    let region_id = RegionId::new(1, 1);
-+    env.get_schema_metadata_manager()
-+        .register_region_table_info(
-+            region_id.table_id(),
-+            "test_table",
-+            "test_catalog",
-+            "test_schema",
-+            None,
-+            env.get_kv_backend(),
-+        )
-+        .await;
-+
-+    let request = CreateRequestBuilder::new().build_with_index();
-+    let column_schemas = rows_schema(&request);
-+    engine
-+        .handle_request(region_id, RegionRequest::Create(request))
-+        .await
-+        .unwrap();
-+    put_and_flush(&engine, region_id, &column_schemas, 0..20).await;
-+    // The flush build has committed its index to the manifest, but the worker
-+    // has not applied it to the version.
-+    tokio::time::timeout(Duration::from_secs(10), gate.wait_entered(1))
-+        .await
-+        .expect("flush index build did not commit the manifest");
-+
-+    let engine_for_build = engine.clone();
-+    let mut manual_build = tokio::spawn(async move {
-+        engine_for_build
-+            .handle_request(
-+                region_id,
-+                RegionRequest::BuildIndex(RegionBuildIndexRequest::default()),
-+            )
-+            .await
-+    });
-+    assert!(
-+        tokio::time::timeout(Duration::from_millis(300), &mut manual_build)
-+            .await
-+            .is_err(),
-+        "manual build returned before the committed index was applied"
-+    );
-+
-+    gate.release(1);
-+    tokio::time::timeout(Duration::from_secs(10), manual_build)
-+        .await
-+        .expect("manual index build request did not finish")
-+        .expect("manual index build task panicked")
-+        .unwrap();
-+
-+    let version = engine.get_region(region_id).unwrap().version();
-+    let files = version
-+        .ssts
-+        .levels()
-+        .iter()
-+        .flat_map(|level| level.files.values())
-+        .collect::<Vec<_>>();
-+    assert_eq!(files.len(), 1);
-+    assert!(files[0].meta_ref().is_index_consistent_with_region(
-+        &version.metadata.column_metadatas,
-+        &version.options.index_options,
-+    ));
-+}
-+
-+#[tokio::test]
-+async fn test_manual_build_waits_for_schema_change_retry() {
-+    let mut env = TestEnv::with_prefix("test_manual_build_waits_for_schema_change_retry_").await;
-+    let gate = Arc::new(IndexPublicationGate::new(
-+        IndexPublicationPhase::BeforeManifestCommit,
-+    ));
-+    let engine = Arc::new(
-+        env.create_engine_with(
-+            async_build_mode_config(false),
-+            None,
-+   
-```
-
-**File**: `src/mito2/src/error.rs` (modified, +13/-0)
-```diff
-@@ -775,6 +775,18 @@ pub enum Error {
-         location: Location,
-     },
- 
-+    #[snafu(display(
-+        "Index build did not complete for files {:?} in region {}",
-+        file_ids,
-+        region_id
-+    ))]
-+    IndexBuildIncomplete {
-+        region_id: RegionId,
-+        file_ids: Vec<FileId>,
-+        #[snafu(implicit)]
-+        location: Location,
-+    },
-+
-     #[snafu(display("Failed to convert value"))]
-     ConvertValue {
-         source: datatypes::error::Error,
-@@ -1561,6 +1573,7 @@ impl ErrorExt for Error {
-                 StatusCode::StorageUnavailable
-             }
-             FlushRegion { source, .. } | BuildIndexAsync { source, .. } => source.status_code(),
-+            IndexBuildIncomplete { .. } => StatusCode::IllegalState,
-             RegionDropped { .. } => StatusCode::Cancelled,
-             RegionClosed { .. } => StatusCode::Cancelled,
-             StaleCompactionExecution { .. } => StatusCode::Cancelled,
-```
-
-**File**: `src/mito2/src/request.rs` (modified, +5/-9)
-```diff
-@@ -65,7 +65,7 @@ use crate::metrics::COMPACTION_ELAPSED_TOTAL;
- use crate::region::MitoRegionRef;
- use crate::region::options::RegionOptions;
- use crate::sst::file::FileMeta;
--use crate::sst::index::IndexBuildType;
-+use crate::sst::index::{IndexBuildType, ResultMpscSender};
- use crate::wal::EntryId;
- use crate::wal::entry_distributor::WalEntryReceiver;
- 
-@@ -1113,8 +1113,6 @@ pub(crate) enum BackgroundNotify {
-     IndexBuildFinished(IndexBuildFinished),
-     /// Index build has been stopped (aborted or succeeded).
-     IndexBuildStopped(IndexBuildStopped),
--    /// Index build has failed.
--    IndexBuildFailed(IndexBuildFailed),
-     /// An index build must be retried against the latest schema generation.
-     IndexBuildRetry(BuildIndexRequest),
-     /// Compaction has finished.
-@@ -1196,6 +1194,8 @@ impl FlushFailed {
- pub(crate) struct IndexBuildFinished {
-     pub(crate) manifest_version: ManifestVersion,
-     pub(crate) file_meta: FileMeta,
-+    /// Waiters of the build, notified after the worker applies the edit.
-+    pub(crate) result_senders: Vec<ResultMpscSender>,
- }
- 
- /// Notifies an index build job has been stopped.
-@@ -1204,12 +1204,6 @@ pub(crate) struct IndexBuildStopped {
-     pub(crate) file_id: FileId,
- }
- 
--/// Notifies an index build job has failed.
--#[derive(Debug)]
--pub(crate) struct IndexBuildFailed {
--    pub(crate) err: Arc<Error>,
--}
--
- /// A local unit event carries only identity, never an input reservation lease.
- #[derive(Debug)]
- pub(crate) enum CompactionUnitNotification {
-@@ -1419,6 +1413,8 @@ pub(crate) struct BuildIndexRequest {
-     pub(crate) build_type: IndexBuildType,
-     /// files need to build index, empty means all.
-     pub(crate) file_metas: Vec<FileMeta>,
-+    /// Waiters carried over from a previous build of the same files.
-+    pub(crate) result_senders: Vec<ResultMpscSender>,
- }
- 
- #[derive(Debug)]
-```
-
-**File**: `src/mito2/src/sst/file.rs` (modified, +82/-51)
-```diff
-@@ -37,6 +37,7 @@ use store_api::storage::{ColumnId, FileId, IndexVersion, RegionId};
- use crate::access_layer::AccessLayerRef;
- use crate::cache::CacheManagerRef;
- use crate::cache::file_cache::{FileType, IndexKey};
-+use crate::region::options::IndexOptions;
- use crate::sst::file_purger::FilePurgerRef;
- use crate::sst::index::fulltext_index::FULLTEXT_BLOOM_VERSION;
- use crate::sst::location;
-@@ -456,56 +457,73 @@ impl FileMeta {
-         self.index_file_size
-     }
- 
--    /// Check whether the file index is consistent with the given region metadata.
--    pub fn is_index_consistent_with_region(&self, metadata: &[ColumnMetadata]) -> bool {
-+    /// Check whether the file index is consistent with the given region metadata
-+    /// and index options.
-+    pub fn is_index_consistent_with_region(
-+        &self,
-+        metadata: &[ColumnMetadata],
-+        index_options: &IndexOptions,
-+    ) -> bool {
-         let id_to_indexes = self
-             .indexes
-             .iter()
-             .map(|index| (index.column_id, index))
-             .collect::<std::collections::HashMap<_, _>>();
-+        let inverted_options = &index_options.inverted_index;
-         for column in metadata {
--            if !column.column_schema.is_indexed() {
-+            let schema = &column.column_schema;
-+            // The index builder never creates these inverted indexes, so expecting
-+            // them would make every manual build rebuild the file again.
-+            let expects_inverted = schema.is_inverted_indexed()
-+                && inverted_options.segment_row_count > 0
-+                && !inverted_options
-+                    .ignore_column_ids
-+                    .contains(&column.column_id);
-+            let expects_fulltext = schema.is_fulltext_indexed();
-+            let expects_skipping = schema.is_skipping_indexed();
-+            if !expects_inverted && !expects_fulltext && !expects_skipping {
-                 continue;
-             }
--            if let Some(index) = id_to_indexes.get(&column.column_id) {
--                let indexes = &index.created_indexes;
--                if column.column_schema.is_inverted_indexed()
--                    && !indexes.contains(&IndexType::InvertedIndex)
--                {
--                    return false;
--                }
--                if column.column_schema.is_fulltext_indexed()
--                    && !indexes.contains(&IndexType::FulltextIndex)
--                {
--                    return false;
--                }
--                if column
--                    .column_schema
--                    .fulltext_options()
--                    .ok()
--                    .flatten()
--                    .is_some_and(|options| {
--                        options.enable && options.backend == FulltextBackend::Bloom
--                    })
--                    && index.fulltext_bloom_version < FULLTEXT_BLOOM_VERSION
--                {
--                    debug!(
--                        "Fulltext bloom index is outdated, region_id: {}, file_id: {}, column_id: {}, version: {}, current: {}",
--                        self.region_id,
--                        self.file_id,
--                        column.column_id,
--                        index.fulltext_bloom_version,
--                        FULLTEXT_BLOOM_VERSION
--                    );
--                    return false;
--                }
--                if column.column_schema.is_skipping_indexed()
--                    && !indexes.contains(&IndexType::BloomFilterIndex)
--                {
--                    return false;
--                }
--            } else {
-+            let missing_index = |index_type: IndexType| {
-+                debug!(
-+                    "File index is missing, region_id: {}, file_id: {}, column_id: {}, index_type: {:?}",
-+                    self.region_id, self.file_id, column.column_id, index_type
-+                );
-+                false
-+            };
-+            let Some(index) = id_to_indexes.get(&column.column_id) else {
-+                debug!(
-+                    "File has no index for column, region_id: {}, file_id: {}, column_id: {}",
-+                    self.region_id, self.file_id, column.column_id
-+                );
-                 return false;
-+            };
-+            let indexes = &index.created_indexes;
-+            if expects_inverted && !indexes.contains(&IndexType::InvertedIndex) {
-+                return missing_index(IndexType::InvertedIndex);
-+            }
-+            if expects_fulltext && !indexes.contains(&IndexType::FulltextIndex) {
-+                return missing_index(IndexType::FulltextIndex);
-+            }
-+            if schema
-+                .fulltext_options()
-+                .ok()
-+                .flatten()
-+                .is_some_and(|options| options.enable && options.backend == FulltextBackend::Bloom)
-+                && index.fulltext_bloom_version < FULLTEXT_BLOOM_VERSION
+@@ -503,6 +503,12 @@ fn resolve_schema(
+         let column_type = &mut schema_info.schema[index].column_schema.data_type;
+         match (column_type, value_type) {
+             (column_type, value_type) if column_type == value_type => Ok(()),
++            // Auto-transformed arrays and objects use JSONB-encoded binary values.
++            (ConcreteDataType::Json(json_type), ConcreteDataType::Binary(_))
++                if !json_type.is_json2() =>
 +            {
-+                debug!(
-+                    "Fu
-```
-
-**File**: `src/mito2/src/sst/index.rs` (modified, +331/-339)
-```diff
-@@ -30,6 +30,7 @@ pub(crate) mod store;
- use std::cmp::Ordering;
- use std::collections::{HashMap, HashSet};
- use std::num::NonZeroUsize;
-+use std::ops::ControlFlow;
- use std::sync::Arc;
- 
- use bloom_filter::creator::BloomFilterIndexer;
-@@ -66,8 +67,8 @@ use crate::region::{
-     IndexBuildSource, IndexPublication, IndexPublicationStale, ManifestContextRef,
- };
- use crate::request::{
--    BackgroundNotify, BuildIndexRequest, IndexBuildFailed, IndexBuildFinished, IndexBuildStopped,
--    WorkerRequest, WorkerRequestWithTime,
-+    BackgroundNotify, BuildIndexRequest, IndexBuildFinished, IndexBuildStopped, WorkerRequest,
-+    WorkerRequestWithTime,
- };
- use crate::schedule::scheduler::{Job, SchedulerRef};
- use crate::sst::file::{
-@@ -649,6 +650,15 @@ pub enum IndexBuildOutcome {
-     Aborted(String),
- }
- 
-+/// How an index build task reports its result.
-+enum IndexBuildReport {
-+    /// The task sends the outcome to its waiters.
-+    Done(IndexBuildOutcome),
-+    /// The worker or a retry task owns the waiters, so the task must not
-+    /// report to them.
-+    Deferred,
-+}
-+
- /// Mpsc output result sender.
- pub type ResultMpscSender = Sender<Result<IndexBuildOutcome>>;
- 
-@@ -668,6 +678,8 @@ pub struct IndexBuildTask {
-     pub(crate) target_region_metadata: RegionMetadataRef,
-     /// The manifest state this build is based on.
-     pub(crate) source: IndexBuildSource,
-+    /// Index options of the target region when the task was created.
-+    pub(crate) index_options: IndexOptions,
-     pub reason: IndexBuildType,
-     pub access_layer: AccessLayerRef,
-     pub(crate) listener: WorkerListener,
-@@ -680,8 +692,9 @@ pub struct IndexBuildTask {
-     pub indexer_builder: Arc<dyn IndexerBuilder + Send + Sync>,
-     /// Request sender to notify the region worker.
-     pub(crate) request_sender: Sender<WorkerRequestWithTime>,
--    /// Index build result sender.
--    pub(crate) result_sender: ResultMpscSender,
-+    /// Senders of callers waiting for this build. Coalesced tasks and
-+    /// schema-change retries hand their senders over to the surviving task.
-+    pub(crate) result_senders: Vec<ResultMpscSender>,
- }
- 
- impl std::fmt::Debug for IndexBuildTask {
-@@ -699,17 +712,20 @@ impl std::fmt::Debug for IndexBuildTask {
- impl IndexBuildTask {
-     /// Notify the caller the job is success.
-     pub async fn on_success(&self, outcome: IndexBuildOutcome) {
--        let _ = self.result_sender.send(Ok(outcome)).await;
-+        for sender in &self.result_senders {
-+            let _ = sender.send(Ok(outcome.clone())).await;
-+        }
-     }
- 
-     /// Send index build error to waiter.
-     pub async fn on_failure(&self, err: Arc<Error>) {
--        let _ = self
--            .result_sender
--            .send(Err(err.clone()).context(BuildIndexAsyncSnafu {
--                region_id: self.region_id,
--            }))
--            .await;
-+        for sender in &self.result_senders {
-+            let _ = sender
-+                .send(Err(err.clone()).context(BuildIndexAsyncSnafu {
-+                    region_id: self.region_id,
-+                }))
-+                .await;
-+        }
-     }
- 
-     fn into_index_build_job(mut self, version_control: VersionControlRef) -> Job {
-@@ -720,10 +736,7 @@ impl IndexBuildTask {
- 
-     async fn do_index_build(&mut self, version_control: VersionControlRef) {
-         self.listener
--            .on_index_build_begin(RegionFileId::new(
--                self.source.file_meta.region_id,
--                self.source.file_meta.file_id,
--            ))
-+            .on_index_build_begin(self.region_file_id())
-             .await;
-         let result = if self.reason == IndexBuildType::Compact {
-             let mut task = self.clone();
-@@ -740,7 +753,13 @@ impl IndexBuildTask {
-             self.index_build(version_control).await
-         };
-         match result {
--            Ok(outcome) => self.on_success(outcome).await,
-+            Ok(IndexBuildReport::Done(outcome)) => {
-+                if let IndexBuildOutcome::Aborted(reason) = &outcome {
-+                    debug!("Index build aborted: {}", reason);
-+                }
-+                self.on_success(outcome).await
++                Ok(())
 +            }
-+            Ok(IndexBuildReport::Deferred) => {}
-             Err(e) => {
-                 warn!(
-                     e; "Index build task failed, region: {}, file_id: {}",
-@@ -749,18 +768,49 @@ impl IndexBuildTask {
-                 self.on_failure(e.into()).await
-             }
-         }
-+        self.notify_worker(BackgroundNotify::IndexBuildStopped(IndexBuildStopped {
-+            file_id: self.source.file_meta.file_id,
-+        }))
-+        .await;
-+    }
-+
-+    fn region_file_id(&self) -> RegionFileId {
-+        RegionFileId::new(
-+            self.source.file_meta.region_id,
-+            self.source.file_meta.file_id,
-+        )
-+    }
-+
-+    async fn notify_worker(&self, notify: BackgroundNotify) {
-         let worker_request = WorkerRequest::Background {
-             region_id: self.region_id,
--     
-```
-
-**File**: `src/mito2/src/worker.rs` (modified, +0/-3)
-```diff
-@@ -1435,9 +1435,6 @@ impl<S: LogStore> RegionWorkerLoop<S> {
-             BackgroundNotify::IndexBuildStopped(req) => {
-                 self.handle_index_build_stopped(region_id, req).await
-             }
--            BackgroundNotify::IndexBuildFailed(req) => {
--                self.handle_index_build_failed(region_id, req).await
--            }
-             BackgroundNotify::IndexBuildRetry(req) => {
-                 self.handle_rebuild_index(req, OptionOutputTx::new(None))
-                     .await
-```
-
-**File**: `src/mito2/src/worker/handle_compaction.rs` (modified, +2/-0)
-```diff
-@@ -79,6 +79,7 @@ impl<S> RegionWorkerLoop<S> {
-                                     region_id,
-                                     build_type: IndexBuildType::Compact,
-                                     file_metas: edit.files_to_add,
-+                                    result_senders: Vec::new(),
-                                 },
-                                 OptionOutputTx::new(None),
-                             )
-@@ -245,6 +246,7 @@ impl<S> RegionWorkerLoop<S> {
-                     region_id,
-                     build_type: IndexBuildType::Compact,
-                     file_metas: index_build_file_metas,
-+                    result_senders: Vec::new(),
-                 },
-                 OptionOutputTx::new(None),
-             )
-```
-
-**File**: `src/mito2/src/worker/handle_flush.rs` (modified, +6/-2)
-```diff
-@@ -443,10 +443,13 @@ impl<S: LogStore> RegionWorkerLoop<S> {
-         if self.config.index.build_mode == IndexBuildMode::Sync {
-             // Sync flush builds indexes while writing SSTs, except for encoded bulk parts,
-             // which are uploaded as-is. Build the missing indexes for those files here.
--            let metadata = region.metadata();
-+            let version = region.version();
-             index_build_file_metas.retain(|meta| {
-                 request.unindexed_files.contains(&meta.file_id)
--                    && !meta.is_index_consistent_with_region(&metadata.column_metadatas)
-+                    && !meta.is_index_consistent_with_region(
-+                        &version.metadata.column_metadatas,
-+                        &version.options.index_options,
-+                    )
-             });
-         }
+             (ConcreteDataType::Json(column_type), ConcreteDataType::Json(value_type))
+                 if column_type.is_json2() && value_type.is_json2() =>
+             {
+@@ -1064,7 +1070,89 @@ mod tests {
+     use table::test_util::MemTable;
  
-@@ -456,6 +459,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
-                     region_id,
-                     build_type: IndexBuildType::Flush,
-                     file_metas: index_build_file_metas,
-+                    result_senders: Vec::new(),
-                 },
-                 OptionOutputTx::new(None),
-             )
+     use super::*;
+-    use crate::{PipelineDefinition, identity_pipeline};
++    use crate::{Content, PipelineDefinition, identity_pipeline, parse, setup_pipeline};
++
++    #[test]
++    fn test_auto_transform_existing_json_column()
++    -> std::result::Result<(), Box<dyn std::error::Error>> {
++        let pipeline = parse(&Content::Yaml(
++            r#"
++version: 2
++transform:
++  - field: ts
++    type: epoch, ms
++    index: timestamp
++"#,
++        ))?;
++        let (pipeline, mut schema_info, pipeline_definition, pipeline_params) =
++            setup_pipeline!(pipeline);
++        let pipeline_context =
++            PipelineContext::new(&pipeline_definition, &pipeline_params, Channel::Unknown);
++        schema_info.set_table(Some(MemTable::table(
++            "events",
++            RecordBatch::new_empty(Arc::new(Schema::new(vec![DatatypeColumnSchema::new(
++                "payload",
++                ConcreteDataType::Json(Default::default()),
++                true,
++            )]))),
++        )));
++        let inputs = [
++            serde_json::Value::Null,
++            serde_json::json!([2, 4, 6]),
++            serde_json::json!({"active": true}),
++            serde_json::json!({"a\"b": "\u{0001}"}),
++            serde_json::json!([]),
++            serde_json::json!({}),
++            serde_json::Value::Null,
++        ];
++        let records = inputs
++            .iter()
++            .enumerate()
++            .map(|(i, payload)| serde_json::json!({"ts": i, "payload": payload}))
++            .collect::<Vec<_>>();
++        let output = pipeline
++            .exec_mut(
++                serde_json::Value::Array(records).into(),
++                &pipeline_context,
++                &mut schema_info,
++            )?
++            .into_transformed()
++            .ok_or("expected transformed rows")?;
++        assert_eq!(output.len(), inputs.len());
++        let index = schema_info.index["payload"];
++        assert_eq!(
++            schema_info.schema[index].column_schema.data_type,
++            ConcreteDataType::Json(Default::default())
++        );
++        for ((row, _), expected) in output.iter().zip(&inputs) {
++            if expected.is_null() {
++                assert_eq!(
++                    row.values.get(index).and_then(|v| v.value_data.as_ref()),
++                    None
++                );
++            } else {
++                let Some(ValueData::BinaryValue(value)) = &row.values[index].value_data else {
++                    return Err("expected JSONB-encoded value".into());
++                };
++                assert_eq!(datatypes::types::jsonb_to_serde_json(value)?, *expected);
++            }
++        }
++        let error = pipeline
++            .exec_mut(
++                serde_json::json!({"ts": 10, "payload": 7}).into(),
++                &pipeline_context,
++                &mut schema_info,
++            )
++            .err()
++            .ok_or("expected a datatype mismatch")?;
++        assert!(
++            error
++                .to_string()
++                .contains("expected datatype: Json, actual datatype: Int64"),
++            "{error:?}"
++        );
++        Ok(())
++    }
+ 
+     #[test]
+     fn test_column_metadata_caches_json_settings() -> Result<()> {
 ```
 
 ---
 
-### Incident Patch 3: `b4aae2f7` (2026-10-22)
-**Commit Message**: fix(meta): release all PostgreSQL election advisory locks on step-down (#9864)
+### Incident Patch 3: `00ab0901` (2026-10-23)
+**Commit Message**: ci: fix CI setup steps that fail on Ubuntu 26.04 runners (#9901)
 
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+* ci: install protoc with taiki-e/install-action
 
-**File**: `src/common/meta/src/election/rds/postgres.rs` (modified, +201/-2)
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+* ci: run multi-language SDK tests on Python 3.13
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+* ci: drop the unused libfuzzer-14-dev package from fuzz builds
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+* ci: build fuzz targets with the bundled libFuzzer
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+**File**: `.github/actions/build-windows-artifacts/action.yml` (modified, +3/-1)
 ```diff
-@@ -122,7 +122,9 @@ impl<'a> ElectionSqlFactory<'a> {
-     }
+@@ -22,7 +22,9 @@ inputs:
+ runs:
+   using: composite
+   steps:
+-    - uses: arduino/setup-protoc@v3
++    - uses: taiki-e/install-action@v2
++      with:
++        tool: protoc@3.23.4
  
-     fn step_down_sql(&self) -> String {
--        format!("SELECT pg_advisory_unlock({})", self.lock_id)
-+        // Campaigning repeatedly acquires the same session-level lock. Release
-+        // every acquisition when stepping down, not just the most recent one.
-+        "SELECT pg_advisory_unlock_all()".to_string()
-     }
+     - name: Install rust toolchain
+       uses: actions-rust-lang/setup-rust-toolchain@v1
+```
+
+**File**: `.github/workflows/apidoc.yml` (modified, +2/-2)
+```diff
+@@ -19,9 +19,9 @@ jobs:
+     - uses: actions/checkout@v4
+       with:
+         persist-credentials: false
+-    - uses: arduino/setup-protoc@v3
++    - uses: taiki-e/install-action@v2
+       with:
+-        repo-token: ${{ secrets.GITHUB_TOKEN }}
++        tool: protoc@3.23.4
+     - uses: actions-rust-lang/setup-rust-toolchain@v1
+     - run: cargo doc --workspace --no-deps --document-private-items
+     - run: |
+```
+
+**File**: `.github/workflows/checks.yml` (modified, +2/-2)
+```diff
+@@ -119,9 +119,9 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           persist-credentials: false
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: actions-rust-lang/setup-rust-toolchain@v1
+       - name: Rust Cache
+         uses: Swatinem/rust-cache@v2
+```
+
+**File**: `.github/workflows/integration.yml` (modified, +10/-12)
+```diff
+@@ -54,9 +54,9 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           persist-credentials: false
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: actions-rust-lang/setup-rust-toolchain@v1
+       - name: Build Binaries Cache
+         id: build-binaries-cache
+@@ -193,9 +193,9 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           persist-credentials: false
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: actions-rust-lang/setup-rust-toolchain@v1
+       - name: Rust Cache
+         uses: Swatinem/rust-cache@v2
+@@ -327,9 +327,9 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           persist-credentials: false
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: actions-rust-lang/setup-rust-toolchain@v1
+         with:
+           cache: false
+@@ -364,13 +364,11 @@ jobs:
+         env:
+           RUSTUP_TOOLCHAIN: ${{ env.FUZZ_RUST_TOOLCHAIN }}
+         run: |
+-          sudo apt-get install -y libfuzzer-14-dev
+           cargo install cargo-fuzz --version "${CARGO_FUZZ_VERSION}" --locked
+       - name: Build fuzz target binaries
+         if: steps.fuzz-binaries.outputs.cache-hit != 'true'
+         shell: bash
+         env:
+-          CUSTOM_LIBFUZZER_PATH: /usr/lib/llvm-14/lib/libFuzzer.a
+           RUSTUP_TOOLCHAIN: ${{ env.FUZZ_RUST_TOOLCHAIN }}
+           FUZZ_TARGETS: |
+             fuzz_create_database
+@@ -587,9 +585,9 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           persist-credentials: false
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: actions-rust-lang/setup-rust-toolchain@v1
+       - name: Build Profile-CI Cache
+         id: build-greptime-ci-cache
+@@ -705,9 +703,9 @@ jobs:
+         uses: ./.github/actions/setup-etcd-cluster
+       # Only the Kafka WAL helper needs the Rust toolchain.
+       - if: matrix.mode.kafkaWalHelper
+-        uses: arduino/setup-protoc@v3
++        uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - if: matrix.mode.kafkaWalHelper
+         uses: actions-rust-lang/setup-rust-toolchain@v1
+         with:
+```
+
+**File**: `.github/workflows/nightly-ci.yml` (modified, +6/-6)
+```diff
+@@ -53,9 +53,9 @@ jobs:
+           fetch-depth: 0
+           persist-credentials: false
+       - uses: ./.github/actions/setup-cyborg
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: actions-rust-lang/setup-rust-toolchain@v1
+       - name: Rust Cache
+         uses: Swatinem/rust-cache@v2
+@@ -82,9 +82,9 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           persist-credentials: false
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: rui314/setup-mold@v1
+       - name: Install toolchain
+         uses: actions-rust-lang/setup-rust-toolchain@v1
+@@ -134,9 +134,9 @@ jobs:
+           fetch-depth: 0
+           persist-credentials: false
+       - uses: ./.github/actions/setup-cyborg
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: KyleMayes/install-llvm-action@v1
+         with:
+           version: "14.0"
+```
+
+**File**: `.github/workflows/release.yml` (modified, +2/-2)
+```diff
+@@ -516,9 +516,9 @@ jobs:
+           fetch-depth: 0
+           persist-credentials: false
  
-     fn put_value_with_lease_sql(&self) -> String {
-@@ -179,6 +181,9 @@ impl<'a> ElectionSqlFactory<'a> {
- }
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
  
- /// PgClient for election.
-+///
-+/// The session is dedicated to election and candidate registration. It must not
-+/// hold unrelated advisory locks, as stepping down releases all session locks.
- pub struct ElectionPgClient {
-     current: Option<deadpool::managed::Object<Manager>>,
-     pool: Pool,
-@@ -1280,6 +1285,24 @@ mod tests {
-             _ => panic!("Expected LeaderChangeMessage::Elected"),
-         }
+       - uses: actions-rust-lang/setup-rust-toolchain@v1
+         with:
+```
+
+**File**: `.github/workflows/run-multi-lang-tests.yml` (modified, +2/-2)
+```diff
+@@ -83,10 +83,10 @@ jobs:
+           java-version: '17'
+           cache: 'maven'
  
-+        // Lease timestamps have millisecond precision. Wait for the database
-+        // clock to advance before checking that renewal extends the lease.
-+        tokio::time::timeout(Duration::from_secs(1), async {
-+            loop {
-+                let current = leader_pg_election
-+                    .get_value_with_lease(&leader_pg_election.election_key())
-+                    .await
-+                    .unwrap()
-+                    .unwrap();
-+                if current.current > lease.current {
-+                    break;
-+                }
-+                tokio::time::sleep(Duration::from_millis(1)).await;
-+            }
-+        })
-+        .await
-+        .unwrap();
-+
-         // Step 2: As a leader, renew the lease.
-         let res = leader_pg_election
-             .pg_client
-@@ -1481,6 +1504,145 @@ mod tests {
-         drop_table(&leader_pg_election, table_name).await;
-     }
+-      - name: Setup Python 3.8
++      - name: Setup Python 3.13
+         uses: actions/setup-python@v5
+         with:
+-          python-version: '3.8'
++          python-version: '3.13'
  
-+    #[tokio::test]
-+    async fn test_step_down_releases_reentrant_lock() {
-+        maybe_skip_postgres_integration_test!();
-+        let table_name = "test_step_down_reentrant_lock_greptime_metakv";
-+        let store_key_prefix = uuid::Uuid::new_v4().to_string();
-+        let lock_id = 28323;
-+        let other_lock_id = 28324;
-+        let timeout = Duration::from_secs(10);
-+        let mut elections = Vec::new();
-+        for leader_value in ["leader", "follower"] {
-+            // Keep both sessions alive so idle timeout cannot hide a leaked lock.
-+            let client = create_postgres_client(Some(table_name), timeout, Duration::ZERO, timeout)
-+                .await
-+                .unwrap();
-+            let (tx, _) = broadcast::channel(100);
-+            elections.push(PgElection {
-+                leader_value: leader_value.to_string(),
-+                pg_client: RwLock::new(client),
-+                is_leader: AtomicBool::new(false),
-+                leader_infancy: AtomicBool::new(false),
-+                leader_watcher: tx,
-+                store_key_prefix: store_key_prefix.clone(),
-+                candidate_lease_ttl: timeout,
-+                meta_lease_ttl: timeout,
-+                sql_set: ElectionSqlFactory::new(lock_id, None, table_name).build(),
-+            });
-+        }
-+        let leader = &elections[0];
-+        let follower = &elections[1];
-+        let mut leader_changes = leader.subscribe_leader_change();
-+        let other_lock_sql = format!("SELECT pg_try_advisory_lock({other_lock_id})");
-+        let other_unlock_sql = format!("SELECT pg_advisory_unlock({other_lock_id})");
-+        let leader_pid: i32 = leader
-+            .pg_client
-+            .read()
-+            .await
-+            .query("SELECT pg_backend_pid()", &[])
-+            .await
-+            .unwrap()[0]
-+            .get(0);
-+
-+        for acquisitions in [1, 3, 1000] {
-+            // Repeat the same acquisition performed on every campaign iteration.
-+            for _ in 0..acquisitions {
-+                let rows = leader
-+                    .pg_client
-+                    .read()
-+                    .await
-+                    .query(&leader.sql_set.campaign, &[])
-+                    .await
-+                    .unwrap();
-+                assert!(rows[0].get::<_, bool>(0));
-+            }
-+            leader.leader_action().await.unwrap();
-+            assert_matches!(
-+                leader_changes.try_recv().unwrap(),
-+                LeaderChangeMessage::Elected(_)
-+            );
-+            let rows = follower
-+                .pg_client
-+                .read()
-+                .await
-+                .query(&follower.sql_set.campaign, &[])
-+                .await
-+                .unwrap();
-+            assert!(!rows[0].get::<_, bool>(0));
-+            follower.follower_action().await.unwrap();
-+
-+            // An unrelated lock in another session must survive the demotion.
-+            let rows = follower
-+                .pg_client
-+                .read()
-+                .await
-+                .query(&other_lock_sql, &[])
-+                .await
-+                .unwrap();
-+         
+       - name: Setup uv
+         uses: astral-sh/setup-uv@v3
+```
+
+**File**: `.github/workflows/rust.yml` (modified, +14/-14)
+```diff
+@@ -40,9 +40,9 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           persist-credentials: false
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: actions-rust-lang/setup-rust-toolchain@v1
+         with:
+           components: rustfmt
+@@ -58,9 +58,9 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           persist-credentials: false
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: actions-rust-lang/setup-rust-toolchain@v1
+         with:
+           components: clippy
+@@ -102,9 +102,9 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           persist-credentials: false
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - name: Install riscv64 cross toolchain
+         run: sudo apt-get update && sudo apt-get install -y gcc-riscv64-linux-gnu g++-riscv64-linux-gnu
+       - uses: actions-rust-lang/setup-rust-toolchain@v1
+@@ -130,9 +130,9 @@ jobs:
+         with:
+           persist-credentials: false
+       - uses: ./.github/actions/setup-cyborg
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: KyleMayes/install-llvm-action@v1
+         with:
+           version: "14.0"
+@@ -166,9 +166,9 @@ jobs:
+         with:
+           persist-credentials: false
+       - uses: ./.github/actions/setup-cyborg
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: KyleMayes/install-llvm-action@v1
+         with:
+           version: "14.0"
+@@ -210,9 +210,9 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           persist-credentials: false
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: rui314/setup-mold@v1
+       - name: Install toolchain
+         uses: actions-rust-lang/setup-rust-toolchain@v1
+@@ -265,9 +265,9 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           persist-credentials: false
+-      - uses: arduino/setup-protoc@v3
++      - uses: taiki-e/install-action@v2
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
++          tool: protoc@3.23.4
+       - uses: rui314/setup-mold@v1
+       - name: Install toolchain
+         uses: actions-rust-lang/setup-rust-toolchain@v1
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9887** (2026-10-22): feat(mito): implement columnar samples format (@evenyag)
-- **PR #9877** (2026-10-22): fix(test): avoid MinIO connection reuse after conditional writes (@WenyXu)
-- **PR #9872** (2026-10-22): fix(mito): return from manual index builds only after the index is published [Backport release/v1.3] (@killme2008)
-- **PR #9865** (2026-10-22): ci: allow independent Linux release architecture selection (@WenyXu)
-- **PR #9864** (2026-10-22): fix(meta): release all PostgreSQL election advisory locks on step-down (@WenyXu)
-- **PR #9863** (2026-10-22): feat(mito): add an environment switch to disable compaction (@WenyXu)
+- **PR #9937** (2026-10-24): refactor(promql): remove NodePath and own the runtime tree recursively (@discord9)
+- **PR #9919** (2026-10-23): fix: upload staging manifests in chunks (@WenyXu)
+- **PR #9915** (2026-10-23): fix: backport CI fix to the release branch (@shuiyisong)
+- **PR #9914** (2026-10-24): refactor(datatypes): name the PromQL series label set by what it is (@discord9)
+- **PR #9912** (2026-10-23): ci: bring the narthex branch's CI workflows up to main (@discord9)
+- **PR #9911** (2026-10-23): fix(mito2): require flat SST output for JSON2 (#9893) (@shuiyisong)
 
 ---
 
@@ -2991,33 +2238,28 @@ Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mito2): pick TWCS L1 merges by closed units so compaction terminates (#9741)
+## X. mito2): keep SSTs when a manifest save ends with RateLimited or PermissionDenied
 
 **RULE**:
-When implementing operations in `src/mito2/src/compaction/last_non_null.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/mito2/src/engine/compaction_test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bb3f07b4`: mito2): pick TWCS L1 merges by closed units so compaction terminates (#9741). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1cb01d0d`: mito2): keep SSTs when a manifest save ends with RateLimited or PermissionDenied (#9898). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mito2/src/compaction/last_non_null.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mito2/src/engine/compaction_test.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let picker = new_picker(&request, &region.region_options, limit, None, false);
-        let picker = new_picker(&request, &region.region_options, limit, None, false);
-            false,
-            false,
-            false,
+                object_store::layers::mock::ErrorKind::Unsupported,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let picker = new_picker(&request, &region.region_options, limit, None);
-        let picker = new_picker(&request, &region.region_options, limit, None);
+                object_store::layers::mock::ErrorKind::PermissionDenied,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bb3f07b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1cb01d0d` are properly handled with clean fallback behavior.
