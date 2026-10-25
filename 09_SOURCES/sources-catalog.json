@@ -235,8 +235,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "a611eaee86c97ad4990c42833e49b32299a03a9420ea1c61a50f1ea534aad86f",
-    "lastHarvestedAt": "2026-10-20T15:17:09.641Z",
+    "contentHash": "dbced9fe8961924eba5041bf074cf5cf78ae57feb0edd9d2e40f25fdf53fa18b",
+    "lastHarvestedAt": "2026-10-25T08:08:18.600Z",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "cc62cce7",
+    "sourceVersion": "c11c2342",
     "license": "MIT",
-    "contentHash": "868bab57256eb81322e5458ec725dbf5d25ba43743a819c19191f63e45df9a5e",
-    "lastHarvestedAt": "2026-10-22T19:09:54.435Z",
+    "contentHash": "bb207bfd0bd877b0ce40d003e5fbaedf9b40b2cb5fbf4066d9373aab3b7c5031",
+    "lastHarvestedAt": "2026-10-25T08:08:40.302Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -7863,10 +7863,10 @@
     "repository": "sxyazi/yazi",
     "platform": "github",
     "sourceUrl": "https://github.com/sxyazi/yazi",
-    "sourceVersion": "7c45837d",
+    "sourceVersion": "40a91421",
     "license": "MIT",
-    "contentHash": "b7aa4329e8329e8a7641653850f53c3f9f0c0e7acdbd292f424df53c8e519c47",
-    "lastHarvestedAt": "2026-10-20T20:14:14.137Z",
+    "contentHash": "4c4e74da4edc7d130b23cc24a34659b2791692333e3002b40fd713279a01b71c",
+    "lastHarvestedAt": "2026-10-25T08:08:11.057Z",
     "learningId": "learn-github-sxyazi-yazi"
   },
   "ronitsingh10-finetune": {

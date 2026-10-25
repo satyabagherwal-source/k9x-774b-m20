@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T07:53:37.127Z",
+  "last_updated": "2026-10-25T08:08:40.243Z",
   "total_verified_learnings": 1084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23604,7 +23604,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "a611eaee86c97ad4990c42833e49b32299a03a9420ea1c61a50f1ea534aad86f",
+      "content_hash": "dbced9fe8961924eba5041bf074cf5cf78ae57feb0edd9d2e40f25fdf53fa18b",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -23705,6 +23705,16 @@
           "number": 1977,
           "title": "GGUF Tensor Integrity & Quantization Consistency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4174,
+          "title": "Zero-Copy Memory-Mapped Tensor Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4175,
+          "title": "ChatML Stop-Token Lexical Closure Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23725,7 +23735,7 @@
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv43ntz8",
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z"
       ],
-      "verified_at": "2026-10-20T15:17:09.581Z",
+      "verified_at": "2026-10-25T08:08:18.517Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46190,8 +46200,8 @@
       "slug": "sxyazi-yazi",
       "platform": "github",
       "source_url": "https://github.com/sxyazi/yazi",
-      "source_version": "7c45837d",
-      "content_hash": "b7aa4329e8329e8a7641653850f53c3f9f0c0e7acdbd292f424df53c8e519c47",
+      "source_version": "40a91421",
+      "content_hash": "4c4e74da4edc7d130b23cc24a34659b2791692333e3002b40fd713279a01b71c",
       "dossier_path": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "promoted_rules": [
@@ -46204,6 +46214,21 @@
           "number": 3361,
           "title": "rearm file remover (#4436)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4171,
+          "title": "Zero-Allocation Trait Dispatch for Iterators Across Dynamic Branches",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4172,
+          "title": "Zero-Copy Ephemeral FFI String Routing via Borrowed Byte Slices",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4173,
+          "title": "Preflight Cancellation Pattern via Monadic Result Mapping in Event Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46211,7 +46236,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:14:14.091Z",
+      "verified_at": "2026-10-25T08:08:10.988Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49367,8 +49392,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "cc62cce7",
-      "content_hash": "868bab57256eb81322e5458ec725dbf5d25ba43743a819c19191f63e45df9a5e",
+      "source_version": "c11c2342",
+      "content_hash": "bb207bfd0bd877b0ce40d003e5fbaedf9b40b2cb5fbf4066d9373aab3b7c5031",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -49391,6 +49416,21 @@
           "number": 3708,
           "title": "build: restore the litellm cap; 1.107.0 was compromised (#620)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4176,
+          "title": "Dynamic Introspection for Forward-Compatible Upstream Protocol Adaptation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4177,
+          "title": "Context-Bound Coroutine State Isolation via Asyncio ContextVars",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4178,
+          "title": "Strictly Exclusive Multi-View Generator Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49398,7 +49438,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:09:54.374Z",
+      "verified_at": "2026-10-25T08:08:40.231Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120589,6 +120629,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T07:53:37.120Z"
+    },
+    "rule-4171": {
+      "learning_id": "rule-4171",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4171,
+      "title": "Zero-Allocation Trait Dispatch for Iterators Across Dynamic Branches",
+      "source_url": "https://github.com/sxyazi/yazi",
+      "source_version": "40a91421",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:08:10.988Z"
+    },
+    "rule-4172": {
+      "learning_id": "rule-4172",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4172,
+      "title": "Zero-Copy Ephemeral FFI String Routing via Borrowed Byte Slices",
+      "source_url": "https://github.com/sxyazi/yazi",
+      "source_version": "40a91421",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:08:10.988Z"
+    },
+    "rule-4173": {
+      "learning_id": "rule-4173",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4173,
+      "title": "Preflight Cancellation Pattern via Monadic Result Mapping in Event Pipelines",
+      "source_url": "https://github.com/sxyazi/yazi",
+      "source_version": "40a91421",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:08:10.988Z"
+    },
+    "rule-4174": {
+      "learning_id": "rule-4174",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4174,
+      "title": "Zero-Copy Memory-Mapped Tensor Alignment Invariant",
+      "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:08:18.517Z"
+    },
+    "rule-4175": {
+      "learning_id": "rule-4175",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4175,
+      "title": "ChatML Stop-Token Lexical Closure Invariant",
+      "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:08:18.517Z"
+    },
+    "rule-4176": {
+      "learning_id": "rule-4176",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4176,
+      "title": "Dynamic Introspection for Forward-Compatible Upstream Protocol Adaptation",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "c11c2342",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:08:40.231Z"
+    },
+    "rule-4177": {
+      "learning_id": "rule-4177",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4177,
+      "title": "Context-Bound Coroutine State Isolation via Asyncio ContextVars",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "c11c2342",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:08:40.231Z"
+    },
+    "rule-4178": {
+      "learning_id": "rule-4178",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4178,
+      "title": "Strictly Exclusive Multi-View Generator Invariant",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "c11c2342",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:08:40.231Z"
     }
   },
   "aliases": {

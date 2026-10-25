@@ -4742,3 +4742,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-25T07:39:33.166Z |
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `32b2ec43` | Multi-dimensional audit evidence | 2026-10-25T07:52:18.390Z |
 | `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-10-25T07:53:37.171Z |
+| `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `40a91421` | Multi-dimensional audit evidence | 2026-10-25T08:08:11.057Z |
+| `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-25T08:08:18.600Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `c11c2342` | Multi-dimensional audit evidence | 2026-10-25T08:08:40.302Z |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-H1UL",
-    "timestamp": "2026-10-21T15:22:45.789Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "ed2a21476f2aeb2da738c474e0cc608c2571e8a6e6f4df4cda0522d86d85bdd2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-P3RE",
-    "timestamp": "2026-10-21T15:29:01.514Z",
-    "repository": "angular/angular",
-    "learningId": "learn-github-angular-angular",
-    "contentHash": "db35bfa1cfb635c43dcee1bd90d8d0c05e2925396d5dac890b0ff65a53c1e263",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-PB26",
-    "timestamp": "2026-10-21T15:29:10.974Z",
-    "repository": "mistralai/Timestral-209M",
-    "learningId": "learn-huggingface-mistralai-timestral-209m",
-    "contentHash": "cdef71e438f55be737a495d0a29e8a7c52bec809f3ca82849e61b5f770d762cd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-PCVK",
     "timestamp": "2026-10-21T15:29:13.328Z",
     "repository": "rustls/rustls",
@@ -7492,6 +7447,51 @@
     "contentHash": "920e39ecd89b619f21a38f26e3b4ef0c91554f8c8598406a6dff38f70473a81c",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-PL4E",
+    "timestamp": "2026-10-25T08:08:11.054Z",
+    "repository": "sxyazi/yazi",
+    "learningId": "learn-github-sxyazi-yazi",
+    "contentHash": "4c4e74da4edc7d130b23cc24a34659b2791692333e3002b40fd713279a01b71c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-PQXX",
+    "timestamp": "2026-10-25T08:08:18.597Z",
+    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+    "contentHash": "dbced9fe8961924eba5041bf074cf5cf78ae57feb0edd9d2e40f25fdf53fa18b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-Q7OR",
+    "timestamp": "2026-10-25T08:08:40.299Z",
+    "repository": "VectifyAI/PageIndex",
+    "learningId": "learn-github-vectifyai-pageindex",
+    "contentHash": "bb207bfd0bd877b0ce40d003e5fbaedf9b40b2cb5fbf4066d9373aab3b7c5031",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

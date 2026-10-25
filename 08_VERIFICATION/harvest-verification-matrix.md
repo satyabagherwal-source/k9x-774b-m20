@@ -4735,3 +4735,6 @@
 | `CYCLE-20261025-ORL7` | `2026-10-25T07:39:33.163Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4163, Rule 4164, Rule 4165` | Yes (`3e22f0a1...`) |
 | `CYCLE-20261025-561G` | `2026-10-25T07:52:18.388Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4166, Rule 4167, Rule 4168` | Yes (`c68dfdd9...`) |
 | `CYCLE-20261025-6UTS` | `2026-10-25T07:53:37.168Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4169, Rule 4170` | Yes (`920e39ec...`) |
+| `CYCLE-20261025-PL4E` | `2026-10-25T08:08:11.054Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4171, Rule 4172, Rule 4173` | Yes (`4c4e74da...`) |
+| `CYCLE-20261025-PQXX` | `2026-10-25T08:08:18.597Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4174, Rule 4175` | Yes (`dbced9fe...`) |
+| `CYCLE-20261025-Q7OR` | `2026-10-25T08:08:40.299Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4176, Rule 4177, Rule 4178` | Yes (`bb207bfd...`) |

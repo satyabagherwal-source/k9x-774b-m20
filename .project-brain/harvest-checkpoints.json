@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T07:53:37.180Z",
+  "last_updated": "2026-10-25T08:08:40.314Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -245,14 +245,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "content_hash": "a611eaee86c97ad4990c42833e49b32299a03a9420ea1c61a50f1ea534aad86f",
-      "verified_at": "2026-10-20T15:17:09.648Z",
+      "content_hash": "dbced9fe8961924eba5041bf074cf5cf78ae57feb0edd9d2e40f25fdf53fa18b",
+      "verified_at": "2026-10-25T08:08:18.608Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T15:17:09.649Z"
+      "last_updated": "2026-10-25T08:08:18.608Z"
     },
     "autotrust/GEV-26B-Decide-NVFP4": {
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "868bab57256eb81322e5458ec725dbf5d25ba43743a819c19191f63e45df9a5e",
-      "verified_at": "2026-10-22T19:09:54.442Z",
+      "content_hash": "bb207bfd0bd877b0ce40d003e5fbaedf9b40b2cb5fbf4066d9373aab3b7c5031",
+      "verified_at": "2026-10-25T08:08:40.313Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:09:54.442Z"
+      "last_updated": "2026-10-25T08:08:40.313Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",
@@ -11826,14 +11826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sxyazi-yazi",
-      "content_hash": "b7aa4329e8329e8a7641653850f53c3f9f0c0e7acdbd292f424df53c8e519c47",
-      "verified_at": "2026-10-20T20:14:14.142Z",
+      "content_hash": "4c4e74da4edc7d130b23cc24a34659b2791692333e3002b40fd713279a01b71c",
+      "verified_at": "2026-10-25T08:08:11.069Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:14:14.142Z"
+      "last_updated": "2026-10-25T08:08:11.069Z"
     },
     "ronitsingh10/FineTune": {
       "repository": "ronitsingh10/FineTune",
