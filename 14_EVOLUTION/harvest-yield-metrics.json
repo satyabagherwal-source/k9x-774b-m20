@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T13:46:00.173Z",
-  "total_cycles_completed": 4813,
-  "total_learnings_persisted": 4813,
-  "total_rules_promoted": 4194,
+  "last_updated": "2026-10-25T13:57:20.666Z",
+  "total_cycles_completed": 4818,
+  "total_learnings_persisted": 4818,
+  "total_rules_promoted": 4201,
   "history": [
-    {
-      "timestamp": "2026-10-25T03:38:35.812Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T03:38:38.815Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T03:38:40.556Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T03:45:01.587Z",
-      "repository": "CrawlCove/robots-txt-tester",
-      "learningId": "learn-github-crawlcove-robots-txt-tester",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T03:45:03.936Z",
-      "repository": "software-mansion/react-native-gesture-handler",
-      "learningId": "learn-github-software-mansion-react-native-gesture-handler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T03:45:10.023Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1403,6 +1368,41 @@
       "repository": "Fei2411/DS-Bot",
       "learningId": "learn-github-fei2411-ds-bot",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T13:57:06.835Z",
+      "repository": "vuetifyjs/vuetify",
+      "learningId": "learn-github-vuetifyjs-vuetify",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T13:57:08.791Z",
+      "repository": "ratatui/ratatui",
+      "learningId": "learn-github-ratatui-ratatui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T13:57:11.456Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T13:57:17.459Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T13:57:20.666Z",
+      "repository": "tickernelz/opencode-mem",
+      "learningId": "learn-github-tickernelz-opencode-mem",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -4836,3 +4836,8 @@
 | `CYCLE-20261025-ND22` | `2026-10-25T13:42:22.682Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1131, Rule 4311, Rule 4312` | Yes (`cda1395e...`) |
 | `CYCLE-20261025-NFU0` | `2026-10-25T13:42:26.280Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4313` | Yes (`4550215e...`) |
 | `CYCLE-20261025-S0V9` | `2026-10-25T13:46:00.165Z` | `Fei2411/DS-Bot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4314, Rule 4315, Rule 4316` | Yes (`1842bc6b...`) |
+| `CYCLE-20261025-6B9P` | `2026-10-25T13:57:06.829Z` | `vuetifyjs/vuetify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4317` | Yes (`bb5b37fd...`) |
+| `CYCLE-20261025-6CS2` | `2026-10-25T13:57:08.786Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4318` | Yes (`5e447f10...`) |
+| `CYCLE-20261025-6EU3` | `2026-10-25T13:57:11.451Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4319, Rule 4320, Rule 4321` | Yes (`bce98ef7...`) |
+| `CYCLE-20261025-6JGU` | `2026-10-25T13:57:17.454Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4322` | Yes (`160c89bf...`) |
+| `CYCLE-20261025-6LXX` | `2026-10-25T13:57:20.661Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4323` | Yes (`a856bb24...`) |

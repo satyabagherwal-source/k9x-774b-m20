@@ -4843,3 +4843,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-25T13:42:22.685Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `6bc056af` | Multi-dimensional audit evidence | 2026-10-25T13:42:26.283Z |
 | `learn-github-fei2411-ds-bot` | `https://github.com/Fei2411/DS-Bot` | `53518443` | Multi-dimensional audit evidence | 2026-10-25T13:46:00.168Z |
+| `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `537d56b0` | Multi-dimensional audit evidence | 2026-10-25T13:57:06.832Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `490c9a7e` | Multi-dimensional audit evidence | 2026-10-25T13:57:08.788Z |
+| `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-25T13:57:11.453Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `7e12743d` | Multi-dimensional audit evidence | 2026-10-25T13:57:17.456Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `2acd554c` | Multi-dimensional audit evidence | 2026-10-25T13:57:20.663Z |

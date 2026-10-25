@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T13:46:00.019Z",
+  "last_updated": "2026-10-25T13:57:20.628Z",
   "total_verified_learnings": 1086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26002,7 +26002,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "88d67da89eeb4663728e579fd574d7f1866ab997188a427a201a00901c7d0355",
+      "content_hash": "bce98ef75b41a905a600f60d6b8e58a8217569edce3660097e86f109907fa02b",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -26177,6 +26177,21 @@
           "number": 3320,
           "title": "Context‑Length Consistency Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4319,
+          "title": "**Image Token Isolation Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4320,
+          "title": "**Downsample Ratio Consistency Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4321,
+          "title": "**Context Length Guard Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26197,7 +26212,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-10-20T18:33:37.583Z",
+      "verified_at": "2026-10-25T13:57:11.409Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41001,8 +41016,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "e87e613e",
-      "content_hash": "bd1cf5c1ffb7885ec77421db46e82b0458e15768ba9cea7e3849b7204b7a6eff",
+      "source_version": "7e12743d",
+      "content_hash": "160c89bfce4b14b76b2091282cc76d6ff753655aaed62f05a4c8569b8fb9299c",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -41045,6 +41060,11 @@
           "number": 3829,
           "title": "Middle-Out Context-Preserving String Truncation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4322,
+          "title": "Add a PCL resourceExists builtin (#25321)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41052,7 +41072,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T08:22:51.945Z",
+      "verified_at": "2026-10-25T13:57:17.416Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41442,8 +41462,8 @@
       "slug": "ratatui-ratatui",
       "platform": "github",
       "source_url": "https://github.com/ratatui/ratatui",
-      "source_version": "f57b06ff",
-      "content_hash": "5aa8bfb2751338124c1111c158e597b5142b9bf29924f99adcba9e42301e2a44",
+      "source_version": "490c9a7e",
+      "content_hash": "5e447f10f5690677e501c6e0fbd0664a4cfef8bb3a38da1924b299f2d23f1d66",
       "dossier_path": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "promoted_rules": [
@@ -41471,6 +41491,11 @@
           "number": 3730,
           "title": "buffer): guard set_stringn against out-of-area coordinates (#2850)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4318,
+          "title": "build(deps): require patched lru 0.18.2 (#2825)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41478,7 +41503,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:45:25.505Z",
+      "verified_at": "2026-10-25T13:57:08.747Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50568,8 +50593,8 @@
       "slug": "vuetifyjs-vuetify",
       "platform": "github",
       "source_url": "https://github.com/vuetifyjs/vuetify",
-      "source_version": "3cce6390",
-      "content_hash": "0e71db7991ed5131b5a7f60181f9610e4145826c16bd97ad23c447d6b8bcc0c1",
+      "source_version": "537d56b0",
+      "content_hash": "bb5b37fd939ab964f0ec16494af086b61785afeb096b6140c7e905284778a081",
       "dossier_path": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "promoted_rules": [
@@ -50617,6 +50642,11 @@
           "number": 3857,
           "title": "Circular Import Sanitization via Internal Barrel Leaf Decomposition",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4317,
+          "title": "VCalendar): accept date adapter values (#23313)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50624,7 +50654,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T09:38:25.327Z",
+      "verified_at": "2026-10-25T13:57:06.788Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59331,8 +59361,8 @@
       "slug": "tickernelz-opencode-mem",
       "platform": "github",
       "source_url": "https://github.com/tickernelz/opencode-mem",
-      "source_version": "1ddfdad3",
-      "content_hash": "66543ba9fe7027efbc2667592533bb95af14da74c7c4940970651e783724ddf5",
+      "source_version": "2acd554c",
+      "content_hash": "a856bb24c8fb6c55b74891a947df2bc6c0edd304fad75d58afddbfb991107799",
       "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "promoted_rules": [
@@ -59355,6 +59385,11 @@
           "number": 3508,
           "title": "auto-capture): provider order, phase errors, AI session cleanup (#426)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4323,
+          "title": "web): cap dialog height so long content keeps actions reachable (#430)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59362,7 +59397,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T03:30:43.770Z",
+      "verified_at": "2026-10-25T13:57:20.621Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -123439,6 +123474,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T13:46:00.007Z"
+    },
+    "rule-4317": {
+      "learning_id": "rule-4317",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4317,
+      "title": "VCalendar): accept date adapter values (#23313)",
+      "source_url": "https://github.com/vuetifyjs/vuetify",
+      "source_version": "537d56b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:57:06.788Z"
+    },
+    "rule-4318": {
+      "learning_id": "rule-4318",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4318,
+      "title": "build(deps): require patched lru 0.18.2 (#2825)",
+      "source_url": "https://github.com/ratatui/ratatui",
+      "source_version": "490c9a7e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:57:08.747Z"
+    },
+    "rule-4319": {
+      "learning_id": "rule-4319",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4319,
+      "title": "**Image Token Isolation Rule**",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:57:11.409Z"
+    },
+    "rule-4320": {
+      "learning_id": "rule-4320",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4320,
+      "title": "**Downsample Ratio Consistency Rule**",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:57:11.409Z"
+    },
+    "rule-4321": {
+      "learning_id": "rule-4321",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4321,
+      "title": "**Context Length Guard Rule**",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:57:11.409Z"
+    },
+    "rule-4322": {
+      "learning_id": "rule-4322",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4322,
+      "title": "Add a PCL resourceExists builtin (#25321)",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "7e12743d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:57:17.416Z"
+    },
+    "rule-4323": {
+      "learning_id": "rule-4323",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4323,
+      "title": "web): cap dialog height so long content keeps actions reachable (#430)",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "2acd554c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:57:20.621Z"
     }
   },
   "aliases": {

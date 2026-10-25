@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T13:46:00.181Z",
+  "last_updated": "2026-10-25T13:57:20.675Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -560,14 +560,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "content_hash": "88d67da89eeb4663728e579fd574d7f1866ab997188a427a201a00901c7d0355",
-      "verified_at": "2026-10-20T18:33:37.636Z",
+      "content_hash": "bce98ef75b41a905a600f60d6b8e58a8217569edce3660097e86f109907fa02b",
+      "verified_at": "2026-10-25T13:57:11.458Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T18:33:37.636Z"
+      "last_updated": "2026-10-25T13:57:11.458Z"
     },
     "Comfy-Org/Qwen-Image-2.1": {
       "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -2198,14 +2198,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tickernelz-opencode-mem",
-      "content_hash": "66543ba9fe7027efbc2667592533bb95af14da74c7c4940970651e783724ddf5",
-      "verified_at": "2026-10-21T03:30:43.837Z",
+      "content_hash": "a856bb24c8fb6c55b74891a947df2bc6c0edd304fad75d58afddbfb991107799",
+      "verified_at": "2026-10-25T13:57:20.671Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T03:30:43.837Z"
+      "last_updated": "2026-10-25T13:57:20.671Z"
     },
     "autotrust/JEV-35B-NVFP4": {
       "repository": "autotrust/JEV-35B-NVFP4",
@@ -5451,14 +5451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ratatui-ratatui",
-      "content_hash": "5aa8bfb2751338124c1111c158e597b5142b9bf29924f99adcba9e42301e2a44",
-      "verified_at": "2026-10-22T20:45:25.599Z",
+      "content_hash": "5e447f10f5690677e501c6e0fbd0664a4cfef8bb3a38da1924b299f2d23f1d66",
+      "verified_at": "2026-10-25T13:57:08.792Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:45:25.599Z"
+      "last_updated": "2026-10-25T13:57:08.792Z"
     },
     "invertase/react-native-firebase": {
       "repository": "invertase/react-native-firebase",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "bd1cf5c1ffb7885ec77421db46e82b0458e15768ba9cea7e3849b7204b7a6eff",
-      "verified_at": "2026-10-23T08:22:52.022Z",
+      "content_hash": "160c89bfce4b14b76b2091282cc76d6ff753655aaed62f05a4c8569b8fb9299c",
+      "verified_at": "2026-10-25T13:57:17.461Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T08:22:52.022Z"
+      "last_updated": "2026-10-25T13:57:17.461Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -10146,14 +10146,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vuetifyjs-vuetify",
-      "content_hash": "0e71db7991ed5131b5a7f60181f9610e4145826c16bd97ad23c447d6b8bcc0c1",
-      "verified_at": "2026-10-23T09:38:25.374Z",
+      "content_hash": "bb5b37fd939ab964f0ec16494af086b61785afeb096b6140c7e905284778a081",
+      "verified_at": "2026-10-25T13:57:06.837Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T09:38:25.374Z"
+      "last_updated": "2026-10-25T13:57:06.837Z"
     },
     "PaulJuliusMartinez/jless": {
       "repository": "PaulJuliusMartinez/jless",

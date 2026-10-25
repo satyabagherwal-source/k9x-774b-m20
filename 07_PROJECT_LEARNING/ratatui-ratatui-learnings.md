@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source**: github ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
-> **Source Version**: `f57b06ff`  
+> **Source Version**: `490c9a7e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:45:25.128Z  
+> **Timestamp**: 2026-10-25T13:57:08.552Z  
 > **Learning ID**: `learn-github-ratatui-ratatui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:45:23.985Z  
+> **Harvest Timestamp**: 2026-10-25T13:57:08.236Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 23049 stars
+- **Stars / Engagement**: 23082 stars
 
 ---
 
@@ -940,11 +940,14 @@ impl StatefulWidget for CounterWidget {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2850** (2026-10-21): **fix(buffer): guard set_stringn against out-of-area coordinates (#2810)**
-  *Symptoms*: ### Problem In #2810, `Buffer::set_stringn` panicked when called with coordinates outside the buffer's area (e.g., in a 57x1 terminal split inside tmux where a multi-row layout writes to row `y = 1`).  `Buffer::set_stringn` computed `remaining_width` from `self.area.right().saturating_sub(x)`, but did not verify whether `y` fell within `[area.top(), area.bottom())` or whether `x` was already outside the area. Writing to `self[(x, y)]` subsequently panicked in `Buffer::index_of`.  ### Solution Add an early-return guard at the start of `Buffer::set_stringn`: ```rust if y < self.area.top() || y >= self.area.bottom() || x >= self.area.right() {     return (x, y); } ```  If coordinates fall outside the buffer area, it safely early returns without mutating buffer contents or panicking, mirroring the safe behavior in `Buffer::set_style`.  Added unit test `set_stringn_does_not_panic_when_out_of_area` in `ratatui-core/src/buffer/buffer.rs`.  Fixes #2810.
+- **Issue #2856** (2026-10-24): **docs(release): fix demo2 recording commands**
+  *Symptoms*: ## What Fix the demo2 recording commands in `RELEASE.md`.  ## Why `demo2` is a workspace package, and its VHS tape is under `examples/vhs/`.  ## Implementation Use `cargo build -p demo2` and `vhs examples/vhs/demo2.tape`.  AI assistance: ChatGPT helped prepare this documentation change. The commands were checked against the workspace manifest and current tape path.
 
-- **Issue #2849** (2026-10-20): **chore(ci): restrict release workflow to main**
-  *Symptoms*: <!-- Please read CONTRIBUTING.md before submitting any pull request. --> 
+- **Issue #2853** (2026-10-23): **feat(buffer): add per-cell hyperlinks behind a cell-extensions feature**
+  *Symptoms*: ## Summary  This adds per-cell OSC 8 hyperlinks behind a new `cell-extensions` feature, which is off by default. A cell can now carry a hyperlink, and the backends emit it when they draw.  ```rust buf.set_string(0, 0, "ratatui.rs", Style::new().underlined()); buf.set_hyperlink(Rect::new(0, 0, 10, 1), Some(&Hyperlink::new("https://ratatui.rs"))); ```  Today the usual workaround is to put the escape sequence into a cell's symbol. That throws off width calculation and diffing, and it breaks when a link wraps or is only partly redrawn. With this change the link sits beside the symbol, so `Cell::symbol` stays a plain grapheme.  ## What's included  - **ratatui-core:**   - `Hyperlink` (`Hyperlink::new(uri).with_id(id)`) and a `CellExt` extension slot on `Cell`.   - `Cell::set_hyperlink`, `Buffer::set_hyperlink(area, Option<&Hyperlink>)`, `set_span_with_hyperlink` and `set_line_with_hyperlink`.   - Writing a new symbol into a cell clears its link. - **Backends:**   - crossterm, termion and termina write OSC 8. A link opens when it changes from one cell to the next and is closed at the end of each draw, so links that wrap across rows or are partly redrawn still come out as one link.   - termwiz maps the link to its native hyperlink support.   - `TestBackend` records the links. - **Example:** the `hyperlink` example now uses cell hyperlinks instead of embedding escape codes. - **Tests and benchmarks:**   - A `Cell` size assertion.   - Benchmarks for buffer diff and crossterm draw outpu
+  **Post-Mortem & Fix Analysis**:
+  > Closing this in favor of discussing the design in an issue first, per CONTRIBUTING.md. If the approach is agreed, I'll follow up with a series of smaller PRs (each under 500 lines). The full branch stays at WeirdBrains/ratatui:multi-char-cells for reference.
+  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2853?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :x: Patch coverage is `97.97571%` with `15 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 93.1%. Comparing base ([`0297560`](https://app.codecov.io/gh/ratatui/ratatui/commit/0297560d8d77871c0281a39182e4e650856e2ffd?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`0357ae6`](https://app.codecov.io/gh/ratatui/ratatui/commit/0357ae641d9706a99eec2abc712c531970c49b9b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)). :warning: Report is 8 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/ratatui/ratatui/pull/2853?dropdown=coverage&src=pr&el=tree
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -961,74 +964,247 @@ impl StatefulWidget for CounterWidget {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f57b06ff` (2026-10-21)
-**Commit Message**: fix(buffer): guard set_stringn against out-of-area coordinates (#2850)
+### Incident Patch 1: `6d6ced53` (2026-10-24)
+**Commit Message**: build(deps): require patched lru 0.18.2 (#2825)
 
-`Buffer::set_stringn` panicked when called with a position outside the
-buffer's area, e.g. writing to row 1 of a one-row terminal. The guard
-only bounded the width against `area.right()`. It never checked `y`, or
-an `x` left of the area.
+Raise the workspace `lru` requirement from `0.18` to `0.18.2` so
+downstream resolution through `ratatui-core` cannot select 0.18.0 or
+0.18.1, which are affected by
+[RUSTSEC-2026-0253](https://rustsec.org/advisories/RUSTSEC-2026-0253.html).
+This retains the widest compatible range with a patched minimum. The
+lockfile already selects 0.18.5 and stays unchanged.
 
-`set_stringn` now returns early when `(x, y)` is outside the area, using
-`Rect::contains`. It writes nothing and returns `(x, y)`. `set_string`,
-`set_span`, `set_line` and `with_lines` get the same behavior.
-Indexing a buffer with `buf[(x, y)]` still panics on out-of-area
-positions, as before.
+The advisory concerns panic safety in `LruCache::pop()`: a stored key's
+destructor must panic, unwinding must be caught, and the cache must
+subsequently be used to reach the reported memory-safety failure. This
+is dependency-floor maintenance, not a claim of demonstrated
+exploitability in Ratatui.
 
-Fixes #2810
-
-Co-authored-by: Josh McKinney <[REDACTED_EMAIL]>
-
-**File**: `ratatui-core/src/buffer/buffer.rs` (modified, +18/-0)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -333,6 +333,8 @@ impl Buffer {
-     /// until the end of the line. Skips zero-width graphemes and control characters.
-     ///
-     /// Use [`Buffer::set_string`] when the maximum amount of characters can be printed.
-+    ///
-+    /// If `(x, y)` is outside the buffer's area, nothing is written and `(x, y)` is returned.
-     pub fn set_stringn<T, S>(
-         &mut self,
-         mut x: u16,
-@@ -346,6 +348,9 @@ impl Buffer {
-         S: Into<Style>,
-     {
-         let max_width = max_width.try_into().unwrap_or(u16::MAX);
-+        if !self.area.contains(Position::new(x, y)) {
-+            return (x, y);
-+        }
-         let mut remaining_width = self.area.right().saturating_sub(x).min(max_width);
-         let graphemes = UnicodeSegmentation::graphemes(string.as_ref(), true)
-             .filter(|symbol| !symbol.contains(char::is_control))
-@@ -1075,6 +1080,19 @@ mod tests {
-         assert_eq!(buffer, expected);
-     }
+@@ -44,7 +44,7 @@ instability = "0.3.7"
+ itertools = { version = "0.15", default-features = false, features = ["use_alloc"] }
+ kasuari = { version = "0.4.9", default-features = false }
+ line-clipping = "0.3.8"
+-lru = "0.18"
++lru = "0.18.2"
+ octocrab = "0.54"
+ palette = { version = "0.7.7", default-features = false, features = ["libm"] }
+ portable-atomic-util = { version = "0.2.4", default-features = false }
+```
+
+---
+
+### Incident Patch 2: `b5224b27` (2026-10-24)
+**Commit Message**: fix(table): clip rendering to buffer bounds (#2851)
+
+Table can panic or render out of bounds when drawing into an area
+extending outside the buffer. Clip Table to the buffer before drawing
+blocks and items, and return when the intersection is empty.
+
+Add direct rendering tests for empty/disjoint areas and partial overlap
+with an offset buffer for Table.
+
+Completes the buffer bounds clipping pass across widgets from
+#2817-#2821, #2841, and #2850.
+
+Signed-off-by: Ronit Gupta <[REDACTED_EMAIL]>
+Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
+
+**File**: `ratatui-widgets/src/table.rs` (modified, +46/-0)
+```diff
+@@ -774,6 +774,11 @@ impl StatefulWidget for &Table<'_> {
+     type State = TableState;
  
+     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
++        let area = area.intersection(buf.area);
++        if area.is_empty() {
++            return;
++        }
++
+         buf.set_style(area, self.style);
+         self.block.as_ref().render(area, buf);
+         let table_area = self.block.inner_if_some(area);
+@@ -3044,4 +3049,45 @@ mod tests {
+             assert_eq!(buf, Buffer::with_lines(expected));
+         }
+     }
++
 +    #[rstest]
-+    #[case::left(5, 1)]
-+    #[case::right(30, 1)]
-+    #[case::above(15, 0)]
-+    #[case::below(15, 2)]
-+    fn set_stringn_out_of_area_is_noop(#[case] x: u16, #[case] y: u16) {
-+        let area = Rect::new(10, 1, 20, 1);
-+        let mut buffer = Buffer::empty(area);
-+        let pos = buffer.set_stringn(x, y, "hello", 10, Style::default());
-+        assert_eq!(pos, (x, y));
-+        assert_eq!(buffer, Buffer::empty(area));
++    fn render_table_outside_buffer_is_noop(
++        #[values(
++            Rect::new(0, 10, 10, 8),
++            Rect::new(40, 10, 10, 8),
++            Rect::new(10, 0, 30, 10),
++            Rect::new(10, 18, 30, 8),
++            Rect::new(10, 10, 0, 8),
++            Rect::new(10, 10, 30, 0)
++        )]
++        area: Rect,
++    ) {
++        let buffer_area = Rect::new(10, 10, 30, 8);
++        let mut buf = Buffer::filled(buffer_area, ratatui_core::buffer::Cell::new("x"));
++        let expected = buf.clone();
++        Widget::render(
++            Table::new(
++                [Row::new(["one", "two"])],
++                [Constraint::Length(5), Constraint::Length(5)],
++            ),
++            area,
++            &mut buf,
++        );
++        assert_eq!(buf, expected, "rendering into {area:?}");
 +    }
 +
-     #[test]
-     fn with_lines() {
-         #[rustfmt::skip]
++    #[test]
++    fn render_table_clips_to_offset_buffer() {
++        let area = Rect::new(10, 10, 30, 8);
++        let mut buf = Buffer::empty(area);
++        let mut expected = Buffer::empty(area);
++        let widget = Table::new(
++            [Row::new(["one", "two"])],
++            [Constraint::Length(5), Constraint::Length(5)],
++        );
++        Widget::render(&widget, Rect::new(9, 9, 40, 10), &mut buf);
++        Widget::render(&widget, area, &mut expected);
++        assert_eq!(buf, expected);
++        assert_ne!(buf, Buffer::empty(area));
++    }
+ }
+```
+
+---
+
+### Incident Patch 3: `6fbb0199` (2026-10-24)
+**Commit Message**: fix(list): clip rendering to buffer bounds (#2841)
+
+`List` and `RatatuiLogo` can panic when rendering into an area extending
+outside the buffer. Clip both widgets to the buffer before styling or
+drawing their blocks and inner contents, and return when the
+intersection is empty.
+
+Add direct rendering tests for empty/disjoint areas and partial overlap
+with an offset buffer for both widgets.
+
+Completes the buffer bounds clipping pass across widgets from #2817,
+#2818, #2819, #2820, and #2821.
+
+Signed-off-by: Ronit Gupta <[REDACTED_EMAIL]>
+
+**File**: `ratatui-widgets/src/list/rendering.rs` (modified, +40/-0)
+```diff
+@@ -31,6 +31,11 @@ impl StatefulWidget for &List<'_> {
+     type State = ListState;
+ 
+     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
++        let area = area.intersection(buf.area);
++        if area.is_empty() {
++            return;
++        }
++
+         buf.set_style(area, self.style);
+         self.block.as_ref().render(area, buf);
+         let list_area = self.block.inner_if_some(area);
+@@ -1269,4 +1274,39 @@ mod tests {
+         StatefulWidget::render(list, single_line_buf.area, &mut single_line_buf, &mut state);
+         assert_eq!(single_line_buf, Buffer::with_lines([expected]));
+     }
++
++    #[rstest]
++    fn render_list_outside_buffer_is_noop(
++        #[values(
++            Rect::new(0, 10, 10, 8),
++            Rect::new(40, 10, 10, 8),
++            Rect::new(10, 0, 30, 10),
++            Rect::new(10, 18, 30, 8),
++            Rect::new(10, 10, 0, 8),
++            Rect::new(10, 10, 30, 0)
++        )]
++        area: Rect,
++    ) {
++        let buffer_area = Rect::new(10, 10, 30, 8);
++        let mut buf = Buffer::filled(buffer_area, ratatui_core::buffer::Cell::new("x"));
++        let expected = buf.clone();
++        let widget = List::new(["item 1", "item 2"]);
++        let mut state = ListState::default();
++        StatefulWidget::render(&widget, area, &mut buf, &mut state);
++        assert_eq!(buf, expected, "rendering into {area:?}");
++    }
++
++    #[test]
++    fn render_list_clips_to_offset_buffer() {
++        let area = Rect::new(10, 10, 30, 8);
++        let mut buf = Buffer::empty(area);
++        let mut expected = Buffer::empty(area);
++        let widget = List::new(["item 1", "item 2"]);
++        let mut state1 = ListState::default();
++        let mut state2 = ListState::default();
++        StatefulWidget::render(&widget, Rect::new(9, 9, 40, 10), &mut buf, &mut state1);
++        StatefulWidget::render(&widget, area, &mut expected, &mut state2);
++        assert_eq!(buf, expected);
++        assert_ne!(buf, Buffer::empty(area));
++    }
+ }
+```
+
+**File**: `ratatui-widgets/src/logo.rs` (modified, +35/-0)
+```diff
+@@ -143,6 +143,11 @@ impl RatatuiLogo {
+ 
+ impl Widget for RatatuiLogo {
+     fn render(self, area: Rect, buf: &mut Buffer) {
++        let area = area.intersection(buf.area);
++        if area.is_empty() {
++            return;
++        }
++
+         let logo = self.size.as_str();
+         Text::raw(logo).render(area, buf);
+     }
+@@ -257,4 +262,34 @@ mod tests {
+         // This should not panic, even if the buffer has zero size.
+         logo.render(buffer.area, &mut buffer);
+     }
++
++    #[rstest]
++    fn render_logo_outside_buffer_is_noop(
++        #[values(
++            Rect::new(0, 10, 10, 8),
++            Rect::new(40, 10, 10, 8),
++            Rect::new(10, 0, 30, 10),
++            Rect::new(10, 18, 30, 8),
++            Rect::new(10, 10, 0, 8),
++            Rect::new(10, 10, 30, 0)
++        )]
++        area: Rect,
++    ) {
++        let buffer_area = Rect::new(10, 10, 30, 8);
++        let mut buf = Buffer::filled(buffer_area, ratatui_core::buffer::Cell::new("x"));
++        let expected = buf.clone();
++        RatatuiLogo::tiny().render(area, &mut buf);
++        assert_eq!(buf, expected, "rendering into {area:?}");
++    }
++
++    #[test]
++    fn render_logo_clips_to_offset_buffer() {
++        let area = Rect::new(10, 10, 30, 8);
++        let mut buf = Buffer::empty(area);
++        let mut expected = Buffer::empty(area);
++        RatatuiLogo::tiny().render(Rect::new(9, 9, 40, 10), &mut buf);
++        RatatuiLogo::tiny().render(area, &mut expected);
++        assert_eq!(buf, expected);
++        assert_ne!(buf, Buffer::empty(area));
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2856** (2026-10-24): docs(release): fix demo2 recording commands (@fallintoplace)
+- **PR #2853** (closed): feat(buffer): add per-cell hyperlinks behind a cell-extensions feature (@m3talsmith)
+- **PR #2851** (2026-10-24): fix(table): clip rendering to buffer bounds (@ronitgupta138)
 - **PR #2850** (2026-10-21): fix(buffer): guard set_stringn against out-of-area coordinates (#2810) (@ronitgupta138)
 - **PR #2849** (2026-10-20): chore(ci): restrict release workflow to main (@orhun)
 - **PR #2847** (2026-10-19): build(deps): bump zizmorcore/zizmor-action from 0.6.4 to 0.7.1 (@dependabot[bot])
-- **PR #2846** (2026-10-19): build(deps): bump tombi-toml/setup-tombi from 1.8.0 to 1.8.5 (@dependabot[bot])
-- **PR #2845** (2026-10-19): build(deps): bump taiki-e/install-action from 2.87.27 to 2.87.29 (@dependabot[bot])
-- **PR #2844** (2026-10-19): build(deps): bump kasuari from 0.4.12 to 0.4.13 (@dependabot[bot])
 
 ---
 
@@ -1048,45 +1224,28 @@ Co-authored-by: Josh McKinney <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. buffer): guard set_stringn against out-of-area coordinates (#2850)
+## X. build(deps): require patched lru 0.18.2 (#2825)
 
 **RULE**:
-When implementing operations in `ratatui-core/src/buffer/buffer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f57b06ff`: buffer): guard set_stringn against out-of-area coordinates (#2850). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6d6ced53`: build(deps): require patched lru 0.18.2 (#2825). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ratatui-core/src/buffer/buffer.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    ///
-    /// If `(x, y)` is outside the buffer's area, nothing is written and `(x, y)` is returned.
-        if !self.area.contains(Position::new(x, y)) {
-            return (x, y);
-        }
-    #[rstest]
-    #[case::left(5, 1)]
-    #[case::right(30, 1)]
-    #[case::above(15, 0)]
-    #[case::below(15, 2)]
-    fn set_stringn_out_of_area_is_noop(#[case] x: u16, #[case] y: u16) {
-        let area = Rect::new(10, 1, 20, 1);
-        let mut buffer = Buffer::empty(area);
-        let pos = buffer.set_stringn(x, y, "hello", 10, Style::default());
-        assert_eq!(pos, (x, y));
-        assert_eq!(buffer, Buffer::empty(area));
-    }
-
+lru = "0.18.2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+lru = "0.18"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f57b06ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6d6ced53` are properly handled with clean fallback behavior.
