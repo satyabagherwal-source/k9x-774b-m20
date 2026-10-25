@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T10:43:27.912Z",
-  "total_cycles_completed": 4754,
-  "total_learnings_persisted": 4754,
-  "total_rules_promoted": 4122,
+  "last_updated": "2026-10-25T10:53:10.008Z",
+  "total_cycles_completed": 4756,
+  "total_learnings_persisted": 4756,
+  "total_rules_promoted": 4126,
   "history": [
-    {
-      "timestamp": "2026-10-24T20:05:00.589Z",
-      "repository": "software-mansion/react-native-reanimated",
-      "learningId": "learn-github-software-mansion-react-native-reanimated",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T20:05:03.165Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-24T20:05:08.204Z",
       "repository": "cilium/cilium",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T10:43:27.912Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:49:35.565Z",
+      "repository": "kotest/kotest",
+      "learningId": "learn-github-kotest-kotest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:53:10.008Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

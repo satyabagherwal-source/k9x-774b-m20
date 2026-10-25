@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T10:43:27.920Z",
+  "last_updated": "2026-10-25T10:53:10.050Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2126,14 +2126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "content_hash": "45f2f700cc35ac4cf76434dab4cb1c9e654cfe7ea4d09c6c9b0e4890dc7f6be9",
-      "verified_at": "2026-10-20T16:21:35.300Z",
+      "content_hash": "74d3ceb26ae2fc6486b330d81216cfdeaf887fb65fe9b7564c46357ce4baa7a0",
+      "verified_at": "2026-10-25T10:53:10.044Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:21:35.300Z"
+      "last_updated": "2026-10-25T10:53:10.044Z"
     },
     "openbmb/MiniCPM-V-4.7-1B": {
       "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -10236,14 +10236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kotest-kotest",
-      "content_hash": "71761a5ad0e2a2f4a6f5cefe879a908a8c2f383ad4f632129f3f71a2eacc22d4",
-      "verified_at": "2026-10-19T06:44:55.413Z",
+      "content_hash": "d6c72f84c36804f2852634acf85889325a1489168d1ab035719bb8a307901f84",
+      "verified_at": "2026-10-25T10:49:35.567Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:44:55.413Z"
+      "last_updated": "2026-10-25T10:49:35.567Z"
     },
     "projectcontour/contour": {
       "repository": "projectcontour/contour",

@@ -1365,8 +1365,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b",
     "license": "Open-Source",
-    "contentHash": "45f2f700cc35ac4cf76434dab4cb1c9e654cfe7ea4d09c6c9b0e4890dc7f6be9",
-    "lastHarvestedAt": "2026-10-20T16:21:35.292Z",
+    "contentHash": "74d3ceb26ae2fc6486b330d81216cfdeaf887fb65fe9b7564c46357ce4baa7a0",
+    "lastHarvestedAt": "2026-10-25T10:53:10.005Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
@@ -6783,10 +6783,10 @@
     "repository": "kotest/kotest",
     "platform": "github",
     "sourceUrl": "https://github.com/kotest/kotest",
-    "sourceVersion": "f7b221c4",
+    "sourceVersion": "cde3ab9c",
     "license": "Apache-2.0",
-    "contentHash": "71761a5ad0e2a2f4a6f5cefe879a908a8c2f383ad4f632129f3f71a2eacc22d4",
-    "lastHarvestedAt": "2026-10-19T06:44:55.408Z",
+    "contentHash": "d6c72f84c36804f2852634acf85889325a1489168d1ab035719bb8a307901f84",
+    "lastHarvestedAt": "2026-10-25T10:49:35.562Z",
     "learningId": "learn-github-kotest-kotest"
   },
   "projectcontour-contour": {

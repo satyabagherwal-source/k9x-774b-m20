@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T10:43:27.860Z",
+  "last_updated": "2026-10-25T10:53:09.950Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30627,14 +30627,19 @@
       "slug": "kotest-kotest",
       "platform": "github",
       "source_url": "https://github.com/kotest/kotest",
-      "source_version": "f7b221c4",
-      "content_hash": "71761a5ad0e2a2f4a6f5cefe879a908a8c2f383ad4f632129f3f71a2eacc22d4",
+      "source_version": "cde3ab9c",
+      "content_hash": "d6c72f84c36804f2852634acf85889325a1489168d1ab035719bb8a307901f84",
       "dossier_path": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "promoted_rules": [
         {
           "number": 2253,
           "title": "Make the `shouldBeSingleton` block overloads infix (#6223)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4248,
+          "title": "Call PropTestListeners around every shrink run (#6252)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -30643,7 +30648,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:44:55.355Z",
+      "verified_at": "2026-10-25T10:49:35.519Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60114,7 +60119,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "45f2f700cc35ac4cf76434dab4cb1c9e654cfe7ea4d09c6c9b0e4890dc7f6be9",
+      "content_hash": "74d3ceb26ae2fc6486b330d81216cfdeaf887fb65fe9b7564c46357ce4baa7a0",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "promoted_rules": [
@@ -60252,6 +60257,21 @@
           "number": 3261,
           "title": "Early‑Compression Mode Validation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4249,
+          "title": "Hybrid Linear-Attention Numerical Recurrence Cast Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4250,
+          "title": "Canvas-Aware Multimodal Rotary Position Embedding (MRoPE) Section Partitioning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4251,
+          "title": "Lookahead Top-K Expert Scheduling with Locked KV Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60259,7 +60279,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:21:35.229Z",
+      "verified_at": "2026-10-25T10:53:09.943Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122083,6 +122103,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T10:43:27.851Z"
+    },
+    "rule-4248": {
+      "learning_id": "rule-4248",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4248,
+      "title": "Call PropTestListeners around every shrink run (#6252)",
+      "source_url": "https://github.com/kotest/kotest",
+      "source_version": "cde3ab9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:49:35.519Z"
+    },
+    "rule-4249": {
+      "learning_id": "rule-4249",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4249,
+      "title": "Hybrid Linear-Attention Numerical Recurrence Cast Invariant",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:53:09.943Z"
+    },
+    "rule-4250": {
+      "learning_id": "rule-4250",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4250,
+      "title": "Canvas-Aware Multimodal Rotary Position Embedding (MRoPE) Section Partitioning",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:53:09.943Z"
+    },
+    "rule-4251": {
+      "learning_id": "rule-4251",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4251,
+      "title": "Lookahead Top-K Expert Scheduling with Locked KV Boundaries",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:53:09.943Z"
     }
   },
   "aliases": {

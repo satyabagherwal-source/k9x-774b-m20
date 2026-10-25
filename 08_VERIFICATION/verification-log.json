@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-FXR3",
-    "timestamp": "2026-10-21T19:05:50.751Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "6634606c83a2b3b159b57057830121cfe13beab147dba818b2dc20492e41c8f6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-O5WM",
-    "timestamp": "2026-10-21T19:12:14.566Z",
-    "repository": "pamburus/hl",
-    "learningId": "learn-github-pamburus-hl",
-    "contentHash": "be291c48098c65db62dbd712bc959b24e7b084adf1e5d4a18b50e69eb911ad8f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-O9ZX",
     "timestamp": "2026-10-21T19:12:19.869Z",
     "repository": "kubeshark/kubeshark",
@@ -7490,6 +7460,36 @@
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
     "contentHash": "5ae60e76de227c03683fdfbba0b2d9c913b4afe65dd77f4d619888c5dd0ddd2c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-H5QD",
+    "timestamp": "2026-10-25T10:49:35.557Z",
+    "repository": "kotest/kotest",
+    "learningId": "learn-github-kotest-kotest",
+    "contentHash": "d6c72f84c36804f2852634acf85889325a1489168d1ab035719bb8a307901f84",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-LR76",
+    "timestamp": "2026-10-25T10:53:10.002Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+    "contentHash": "74d3ceb26ae2fc6486b330d81216cfdeaf887fb65fe9b7564c46357ce4baa7a0",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

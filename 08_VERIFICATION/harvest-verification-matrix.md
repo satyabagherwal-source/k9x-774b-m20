@@ -4777,3 +4777,5 @@
 | `CYCLE-20261025-8WLS` | `2026-10-25T10:43:10.480Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md` | Yes (`fac00586...`) |
 | `CYCLE-20261025-96XI` | `2026-10-25T10:43:23.862Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md` | Yes (`62688610...`) |
 | `CYCLE-20261025-9A1T` | `2026-10-25T10:43:27.905Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4245, Rule 4246, Rule 4247` | Yes (`5ae60e76...`) |
+| `CYCLE-20261025-H5QD` | `2026-10-25T10:49:35.557Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4248` | Yes (`d6c72f84...`) |
+| `CYCLE-20261025-LR76` | `2026-10-25T10:53:10.002Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4249, Rule 4250, Rule 4251` | Yes (`74d3ceb2...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source**: github ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
-> **Source Version**: `f7b221c4`  
+> **Source Version**: `cde3ab9c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:44:55.169Z  
+> **Timestamp**: 2026-10-25T10:49:35.311Z  
 > **Learning ID**: `learn-github-kotest-kotest`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:44:55.056Z  
+> **Harvest Timestamp**: 2026-10-25T10:49:35.000Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Powerful, elegant and flexible test framework for Kotlin with assertions, property testing and data driven tests.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4789 stars
+- **Stars / Engagement**: 4787 stars
 
 ---
 
@@ -676,13 +676,11 @@ export default Home;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6253** (2026-10-18): **improve ai skills and make coroutines-test part of api**
-  *Symptoms*: <!--  If this PR updates documentation, please update all relevant versions of the docs, see: https://github.com/kotest/kotest/tree/master/documentation/versioned_docs The documentation at https://github.com/kotest/kotest/tree/master/documentation/docs is the documentation for the next minor or major version _TO BE RELEASED_ --> 
-  **Post-Mortem & Fix Analysis**:
-  > I skimmed, looks good
+- **Issue #6255** (2026-10-21): **Report a spec that fails outside its tests to pitest**
+  *Symptoms*: Fixes #6254.  `KotestUnit`'s listener only handled `testStarted` and `testFinished`. When a spec fails outside its tests (an exception in `beforeSpec`, a Spring context that can't load, a spec that can't be instantiated), the engine reports that only through `specFinished`, and `EngineResult.errors` stays empty. So pitest got no test events and no exception and recorded the mutant as SURVIVED.  The listener now also overrides `specFinished`. If the result has an error, it calls `notifyStart` and `notifyEnd(description, error)` with the spec's own `Description` (the one `getDescription()` returns), as suggested in the issue. A failing test inside a spec doesn't set an error on the spec result, so those failures are still reported once. The existing `StringSpecs`/`FunSpecs`/`WordSpecs` tests check that.  Test: `a spec that fails before its tests is reported as a failure`, which uses a `FunSpec` whose `beforeSpec` throws. Without the change the collector gets 0 failures; with it, 1. `:kotest-extensions:kotest-extensions-pitest:jvmTest` passes (4 tests). 
 
-- **Issue #6251** (2026-10-16): **Keep the original error as the cause of a failed permutation**
-  *Symptoms*: Fixes #6234.  When a `permutations` check throws, `FailureHandler` built a new `AssertionError` from the message only, so the original exception and its stack trace were lost. You had to put a breakpoint in `FailureHandler` to see where the failure came from.  The error is now passed as the cause: `AssertionError(message, result.error)`. The message is unchanged, and the stack trace now ends with `Caused by: ...` pointing at the line that failed, like the classic `checkAll`/`forAll` errors do.  Added `FailureCauseTest` (jvmTest): - the thrown `AssertionError` has the exception from `check` as its cause (same instance) - the cause keeps the stack frame of the helper that threw  Both tests fail without the change. `:kotest-property:kotest-property-permutations:jvmTest`: 85 tests pass. 
+- **Issue #6254** (2026-10-21): **kotest-extensions-pitest 6.2.5: a spec failing before its tests is reported as a surviving mutant**
+  *Symptoms*: KotestUnit's TestEngineListener overrides testStarted and testFinished only. When a spec fails before any test starts (an exception in beforeSpec, or a Spring context that fails to load under kotest-extensions-spring), the engine reports it through specFinished with an error result, and EngineResult.errors stays empty. KotestUnit then reports nothing to pitest's ResultCollector and does not throw, so pitest records the mutant SURVIVED with numberOfTestsRun=0, although the spec failed.  Reproduction: a @SpringBootTest FunSpec whose context cannot load, run by KotestUnit under org.pitest.testapi.execute.Pitest with CheckTestHasFailedResultListener: status() is SURVIVED.  Suggested fix: override specFinished and, when result.errorOrNull is not null, call notifyStart and notifyEnd(description, error) under the spec's own Description. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -699,447 +697,652 @@ export default Home;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `56301a62` (2026-09-03)
-**Commit Message**: Make the `shouldBeSingleton` block overloads infix (#6223)
+### Incident Patch 1: `cde3ab9c` (2026-10-21)
+**Commit Message**: Call PropTestListeners around every shrink run (#6252)
 
-Fixes #6220
+Fixes #3070.
 
-`shouldBeSingleton` was the odd one out among the collection matchers:
-it could
-not be written in infix form.
+`PropTestListener.beforeTest` / `afterTest` were only called around each
+iteration in `proptest.kt`. When an iteration failed, `test()` started
+shrinking straight away, so:
 
-The three `shouldBeSingleton(fn: (T) -> Unit)` overloads (`Collection`,
-`Iterable`,
-`Array`) now carry the `infix` modifier, so both of these are valid:
+- none of the shrink runs had a `beforeTest` / `afterTest` (in the
+issue's example the listener runs once while the property runs 5 times),
+and
+- the failing iteration's `afterTest` was never called once the failure
+ended the test, so a listener like `KoinPropTestListener` left its state
+behind.
 
-```kotlin
-listOf(1).shouldBeSingleton { it shouldBe 1 }
-listOf(1) shouldBeSingleton { it shouldBe 1 }
+Now every invocation of the property has exactly one `beforeTest` /
+`afterTest` pair:
+
+- `test()` calls the listeners itself, with `afterTest` in a `finally`,
+and finishes the iteration before `handleException` starts shrinking.
+The 44 call-site pairs in `proptest.kt` are removed.
+- each `shrinkfn` takes the listeners and wraps every shrink run in them
+(`afterTest` in a `finally` too, since a shrink run usually throws).
+
+Things a reviewer may want to decide:
+
+- `shrinkfn` is public (in `io.kotest.property.internal`), so its 22
+overloads change signature. I ran `apiDump`; the `.api` diff is just
+those 22 lines.
+- iterations skipped by `skipTo` no long
+
+**File**: `documentation/docs/proptest/config.md` (modified, +2/-0)
+```diff
+@@ -49,6 +49,8 @@ class PropertyExample: FreeSpec({
+ 
+ Sometimes in property test it is required to perform some setup and tear down in each iteration of test.
+ For this purpose you can register a ```PropTestListener``` with ```PropTestConfig```.
++`beforeTest` and `afterTest` are called around every invocation of the property, including the invocations made while
++shrinking a failed input, and `afterTest` is called even when the property fails.
+ ```kotlin
+ class PropertyExample: FreeSpec({
+    "some property test which require setup and tear down in each iteration" {
 ```
 
-This matches the existing `inline infix fun ... (fn: (T) -> Unit)` style
-used by
-the inspector aliases (`shouldForAll`, `shouldForOne`, etc.) in
-`InspectorAliases.kt`.
-
-Notes:
-
-- Only the block overloads can gain `infix`. The no-arg
-`shouldBeSingleton()` /
-`shouldNotBeSingleton()` forms take no parameter, so `infix` does not
-apply to
-  them, and `shouldNotBeSingleton` has no lambda overload to change.
-- `infix` is a Kotlin-level modifier and does not affect the JVM
-signature, so the
-  API dump is unchanged; `apiCheck` passes as-is.
-- Added tests covering the infix form for the `Collection`, `Iterable`
-and `Array`
-  receivers, plus the failing cases.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-authored-by: Claude Opus 5 (
-
-**File**: `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/singleton.kt` (modified, +8/-3)
+**File**: `kotest-property/api/kotest-property.api` (modified, +22/-22)
 ```diff
-@@ -121,8 +121,13 @@ fun <T> Array<T>.shouldNotBeSingle(): Array<T> {
- 
- /**
-  * Verifies this collection contains only one element and executes the given lambda against that element.
-+ *
-+ * ```
-+ * listOf(1).shouldBeSingleton { it shouldBe 1 } // Assertion passes
-+ * listOf(1) shouldBeSingleton { it shouldBe 1 } // Same, using the infix form
-+ * ```
-  */
--inline fun <T, C : Collection<T>> C.shouldBeSingleton(fn: (T) -> Unit): C {
-+inline infix fun <T, C : Collection<T>> C.shouldBeSingleton(fn: (T) -> Unit): C {
-    this.shouldBeSingleton()
-    fn(this.first())
-    return this
-@@ -131,15 +136,15 @@ inline fun <T, C : Collection<T>> C.shouldBeSingleton(fn: (T) -> Unit): C {
- /**
-  * Verifies this collection contains only one element and executes the given lambda against that element.
-  */
--inline fun <T, I : Iterable<T>> I.shouldBeSingleton(fn: (T) -> Unit): I {
-+inline infix fun <T, I : Iterable<T>> I.shouldBeSingleton(fn: (T) -> Unit): I {
-    toList().shouldBeSingleton(fn)
-    return this
+@@ -1551,28 +1551,28 @@ public final class io/kotest/property/internal/ShrinkResult {
  }
  
- /**
-  * Verifies this collection contains only one element and executes the given lambda against that element.
-  */
--inline fun <T> Array<T>.shouldBeSingleton(fn: (T) -> Unit): Array<T> {
-+inline infix fun <T> Array<T>.shouldBeSingleton(fn: (T) -> Unit): Array<T> {
-    asList().shouldBeSingleton(fn)
-    return this
- }
+ public final class io/kotest/property/internal/ShrinkfnsKt {
+-	public static final fun shrinkfn (Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lkotlin/jvm/functions/FunctionN;Lio/kotest/property/ShrinkingMode;J)Lkotlin/jvm/functions/Function1;
+-	public static final fun shrinkfn (Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lkotlin/jvm/functions/FunctionN;Lio/kotest/property/ShrinkingMode;J)Lkotlin/jvm/functions/Function1;
+-	public static final fun shrinkfn (Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lkotlin/jvm/functions/Function22;Lio/kotest/property/ShrinkingMode;J)Lkotlin/jvm/functions/Function1;
+-	public static final fun shrinkfn (Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lkotlin/jvm/functions/Function21;Lio/kotest/property/ShrinkingMode;J)Lkotlin/jvm/functions/Function1;
+-	public static final fun shrinkfn (Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lkotlin/jvm/functions/Function20;Lio/kotest/property/ShrinkingMode;J)Lkotlin/jvm/functions/Function1;
+-	public static final fun shrinkfn (Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lkotlin/jvm/functions/Function19;Lio/kotest/property/ShrinkingMode;J)Lkotlin/jvm/functions/Function1;
+-	public static final fun shrinkfn (Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lkotlin/jvm/functions/Function18;Lio/kotest/property/ShrinkingMode;J)Lkotlin/jvm/functions/Function1;
+-	public static final fun shrinkfn (Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/property/Sample;Lio/kotest/pr
 ```
 
-**File**: `kotest-assertions/kotest-assertions-core/src/jvmTest/kotlin/com/sksamuel/kotest/matchers/collections/CollectionMatchersTest.kt` (modified, +39/-0)
+**File**: `kotest-property/src/commonMain/kotlin/io/kotest/property/internal/proptest.kt` (modified, +22/-110)
 ```diff
-@@ -428,6 +428,45 @@ expected:<1> but was:<4>"""
-          }
+@@ -33,8 +33,7 @@ suspend fun <A> proptest(
+             .takeWhile { constraints.evaluate(context) }
+             .forEach { a ->
+                val contextualSeed = contextRandom.random.nextLong()
+-               val shrinkfn = shrinkfn(a, property, config.shrinkingMode, contextualSeed)
+-               config.listeners.forEach { it.beforeTest() }
++               val shrinkfn = shrinkfn(a, property, config.shrinkingMode, contextualSeed, config.listeners)
+                test(
+                   context,
+                   config,
+@@ -46,13 +45,11 @@ suspend fun <A> proptest(
+                ) {
+                   context.property(a.value)
+                }
+-               config.listeners.forEach { it.afterTest() }
+             }
        }
  
-+      "should be singleton with infix block" should {
-+         "pass for collection with a single element" {
-+            listOf(1) shouldBeSingleton { it shouldBe 1 }
-+         }
-+
-+         "pass for iterable with a single element" {
-+            val iterable = Iterable { listOf(1).iterator() }
-+            iterable shouldBeSingleton { it shouldBe 1 }
-+         }
-+
-+         "pass for array with a single element" {
-+            arrayOf(1) shouldBeSingleton { it shouldBe 1 }
-+         }
-+
-+         "fail for collection with 0 elements" {
-+            shouldThrow<AssertionError> {
-+               listOf<Int>() shouldBeSingleton { it shouldBe 1 }
-+            }.shouldHaveMessage(
-+               """Collection should have size 1 but has size 0. Values: []
-+expected:<1> but was:<0>"""
-+            )
-+         }
-+
-+         "fail for collection with a single incorrect element" {
-+            shouldThrow<AssertionError> {
-+               listOf(2) shouldBeSingleton { it shouldBe 1 }
-+            }.shouldHaveMessage("expected:<1> but was:<2>")
-+         }
-+
-+         "fail for collection with 2+ elements" {
-+            shouldThrow<AssertionError> {
-+               listOf(1, 2) shouldBeSingleton { it shouldBe 1 }
-+            }.shouldHaveMessage(
-+               """Collection should have size 1 but has size 2. Values: [1, 2]
-+expected:<1> but was:<2>"""
-+            )
-+         }
-+      }
-+
-       "should not be singleton" should {
-          "pass for collection with 0 elements" {
-             listOf<Int>().shouldNotBeSingleton()
-```
-
----
-
-### Incident Patch 2: `09a0c41e` (2026-09-15)
-**Commit Message**: fix(kotest-tests-timeout-project): Format timeout in exception message (#6230)
-
-Prior to this commit, a timeout of `20m` was formatted as `1.2s seconds`
-(sic!).
-
-**File**: `kotest-framework/kotest-framework-engine/src/commonMain/kotlin/io/kotest/engine/engineExceptions.kt` (modified, +1/-1)
-```diff
-@@ -14,4 +14,4 @@ class EmptyTestSuiteException : Exception("No specs were available to test")
-  */
- @KotestInternal
- class ProjectTimeoutException(val timeout: Duration) :
--   Exception("Test suite did not complete with ${timeout / 1000} seconds")
-+   Exception("Test suite did not complete within $timeout")
-```
-
-**File**: `kotest-tests/kotest-tests-timeout-project/src/jvmTest/kotlin/com/sksamuel/kotest/timeout/ProjectTimeoutTest.kt` (modified, +5/-1)
-```diff
-@@ -9,6 +9,7 @@ import io.kotest.engine.ProjectTimeoutException
- import io.kotest.engine.TestEngineLauncher
- import io.kotest.engine.listener.NoopTestEngineListener
- import io.kotest.inspectors.forOne
-+import io.kotest.matchers.shouldBe
- import io.kotest.matchers.types.shouldBeInstanceOf
- import kotlinx.coroutines.delay
- import kotlin.time.Duration.Companion.milliseconds
-@@ -30,7 +31,10 @@ class ProjectTimeoutTest : FunSpec({
-          .withProjectConfig(c)
-          .execute()
- 
--      result.errors.forOne { it.shouldBeInstanceOf<ProjectTimeoutException>() }
-+      result.errors.forOne {
-+         it.shouldBeInstanceOf<ProjectTimeoutException>()
-+         it.message shouldBe "Test suite did not complete within 100ms"
-+      }
+       is Exhaustive -> {
+          genA.values.forEach { a ->
+-            config.listeners.forEach { it.beforeTest() }
+             test(
+                context,
+                config,
+@@ -64,7 +61,6 @@ suspend fun <A> proptest(
+             ) {
+                context.property(a)
+             }
+-            config.listeners.forEach { it.afterTest() }
+          }
+       }
     }
- })
- 
-```
-
----
-
-### Incident Patch 3: `41df99d6` (2026-09-10)
-**Commit Message**: Fix Android StackWalker compatibility (#6222)
-
-Fixes #6221
-
-Restores Android compatibility for stack-based source lookup introduced
-in #6203.
-
-- Keeps the `StackWalker`-based implementation on supported JVMs
-- Falls back to `Thread.currentThread().stackTrace` when `StackWalker`
-is unavailable
-- Isolates `StackWalker` references so Android ART does not resolve them
-during class initialization
-- Applies the same compatibility handling to source references and
-data-test call-site lookup
-- Adds an Android instrumentation regression test covering regular test
-registration and data-driven tests
-
-The existing source-reference semantics and JVM performance optimization
-are preserved.
-
-Validation:
-- Relevant JVM tests passed
-- Engine `jvmTest` passed
-- Existing performance tests passed
-- `git diff --check` passed
-- Android instrumentation test could not be executed locally because the
-Android SDK was not configured
-
----------
-
-Signed-off-by: 박하민 <[REDACTED_EMAIL]>
-Co-authored-by: Sam <[REDACTED_EMAIL]>
-
-**File**: `kotest-framework/kotest-framework-engine/build.gradle.kts` (modified, +18/-1)
-```diff
-@@ -1,5 +1,6 @@
- plugins {
-    id("kotest-jvm-conventions")
-+   id("kotest-android-conventions")
-    id("kotest-js-conventions")
-    id("kotest-wasi-conventions")
-    id("kotest-native-conventions")
-@@ -13,6 +14,13 @@ plugins {
- }
- 
- kotlin {
-+
-+   androidLibrary {
-+      namespace = "io.kotest.framework.engine"
-+      compileSdk = 34
-+      minSdk = 24
-+   }
-+
-    sourceSets {
- 
-       commonMain {
-@@ -51,7 +59,8 @@ kotlin {
+@@ -92,7 +88,6 @@ suspend fun <A, B> proptest(
+    if (genA is Exhaustive && genB is Exhaustive) {
+       genA.values.forEach { a ->
+          genB.values.forEach { b ->
+-            config.listeners.forEach { it.beforeTest() }
+             test(
+                context,
+                config,
+@@ -104,7 +99,6 @@ suspend fun <A, B> proptest(
+             ) {
+                context.property(a, b)
+             }
+-            config.listeners.forEach { it.afterTest() }
           }
        }
- 
--      jvmMain {
-+      val jvmCommonMain by creating {
-+         dependsOn(commonMain.get())
-          dependencies {
- 
-             // we use AssertionFailedError from OpenTest4J
-@@ -65,6 +74,14 @@ kotlin {
+    } else {
+@@ -113,8 +107,7 @@ suspend fun <A, B> proptest(
+          .takeWhile { constraints.evaluate(context) }
+          .forEach { (a, b) ->
+             val contextualSeed = contextRandom.random.nextLong()
+-            val shrinkfn = shrinkfn(a, b, property, config.shrinkingMode, contextualSeed)
+-            config.listeners.forEach { it.beforeTest() }
++            val shrinkfn = shrinkfn(a, b, property, config.shrinkingMode, contextualSeed, config.listeners)
+             test(
+                context,
+                config,
+@@ -126,7 +119,6 @@ suspend fun <A, B> proptest(
+             ) {
+                context.property(a.value, b.value)
+             }
+-            config.listeners.forEach { it.afterTest() }
+          }
+    }
+    context.onSuccess(2, random)
+@@ -155,7 +147,6 @@ suspend fun <A, B, C> proptest(
+       genA.values.forEach { a ->
+          genB.values.forEach { b ->
+             genC.values.forEach { c ->
+-               config.listeners.forEach { it.beforeTest() }
+                test(
+                   context,
+                   config,
+@@ -167,7 +158,6 @@ suspend fun <A, B, C> proptest(
+                ) {
+                   context.property(a, b, c)
+                }
+-               config.listeners.forEach { it.afterTest() }
+             }
           }
        }
- 
-+      androidMain {
-+         dependsOn(jvmCommonMain)
-+      }
-+
-+      jvmMain {
-+         dependsOn(jvmCommonMain)
-+      }
-+
-       commonTest {
-          dependencies {
-             implementation(projects.kotestAssertions.kotestAssertionsCore)
+@@ -179,8 +169,7 @@ suspend fun <A, B, C> proptest(
+          .forEach { (ab, c) ->
+             val (a, b) = ab
+             val contextualSeed = contextRandom.random.nextLong()
+-            val shrinkfn = shrinkfn(a, b, c, property, config.shrinkingMode, contextualSeed)
+-            config.listeners.forEach { it.beforeTest() }
++            val shrinkfn = shrinkfn(a, b, c, property, config.shrinkingMode, contextualSeed, config.listeners)
+             test(
+                context,
+                config,
+@@ -192,7 +181,6 @@ suspend fun <A, B, C> proptest(
+             ) {
+                context.property(a.value, b.value, c.value)
+             }
+-            config.listeners.forEach { it.afterTest() }
+          }
+    }
+    context.onSuccess(3, random)
+@@ -223,15 +211,13 @@ suspend fun <A, B, C, D> proptest(
+          genB.values.forEach { b ->
+             genC.values.forEach { c ->
+                genD.values.forEach { d ->
+-                  config.listeners.forEach { it.beforeTest() }
+                   test(
+                      context, config, { emptyList() }, listOf(a, b, c, d),
+                      listOf(genA.classifier, genB.classifier, genC.classifier, genD.classifier), random.seed,
+                      contextRandom.random.nextLong()
+                   ) {
+                      context.property(a, b, c, d)
+                   }
+-                  config.listeners.forEach { it.afterTest() }
+                }
+             }
+          }
+@@ -247,8 +233,7 @@ suspend fun <A, B, C, D> proptest(
+             val (ab, c) = abc
+             val (a, b) = ab
+             val contextualSeed = contextRandom.random.nextLong()
+-            val shrinkfn = shrinkfn(a, b, c, d, property, config.shrinkingMode, contextualSeed)
+-            config.listeners.forEach { it.beforeTest() }
++            val shrinkfn = shrinkfn(a, b, c, d, property, config.shrinkingMode, contextualSeed, config.listeners)
+             test(
+                context, config, shrinkfn,
+                listOf(a.value, b.value, c.value, d.value),
+@@ -258,7 +
 ```
 
-**File**: `kotest-framework/kotest-framework-engine/src/androidMain/kotlin/io/kotest/core/source/stackFrame.android.kt` (added, +23/-0)
+**File**: `kotest-property/src/commonMain/kotlin/io/kotest/property/internal/shrinkfns.kt` (modified, +148/-66)
 ```diff
-@@ -0,0 +1,23 @@
-+package io.kotest.core.source
-+
-+internal actual fun findFirstStackFrame(
-+   excludeDataTest: Boolean,
-+   predicate: (JvmStackFrame) -> Boolean,
-+): JvmStackFrame? {
-+   return SourceRefUtils.filteredUserFrames(Thread.currentThread().stackTrace, excludeDataTest).firstNotNullOfOrNull {
-+      val frame = try {
-+         JvmStackFrame(Class.forName(it.className), it.lineNumber)
-+      } catch (_: ReflectiveOperationException) {
-+         JvmStackFrame(null, it.lineNumber)
-+      } catch (_: LinkageError) {
-+         JvmStackFrame(null, it.lineNumber)
-+      }
-+      try {
-+         frame.takeIf(predicate)
-+      } catch (_: ReflectiveOperationException) {
-+         null
-+      } catch (_: LinkageError) {
-+         null
-+      }
-+   }
-+}
-```
-
-**File**: `kotest-framework/kotest-framework-engine/src/jvmCommonMain/kotlin/io/kotest/core/source/sourceRef.kt` (renamed, +16/-19)
-```diff
-@@ -6,11 +6,15 @@ import io.kotest.engine.config.KotestEngineProperties
+@@ -1,10 +1,26 @@
+ package io.kotest.property.internal
  
- private val specJavaClass: Class<*> = Spec::class.java
++import io.kotest.property.PropTestListener
+ import io.kotest.property.PropertyContext
+ import io.kotest.property.RandomSource
+ import io.kotest.property.Sample
+ import io.kotest.property.ShrinkingMode
  
--// RETAIN_CLASS_REFERENCE gives us the live java.lang.Class for each frame directly,
--// avoiding a Class.forName lookup, and StackWalker.walk() lets us stop as soon as we
--// find the first user frame instead of always materializing the whole call stack
--// the way Thread.currentThread().stackTrace would do.
--private val stackWalker: StackWalker = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
-+internal data class JvmStackFrame(
-+   val declaringClass: Class<*>?,
-+   val lineNumber: Int,
-+)
-+
-+internal expect fun findFirstStackFrame(
-+   excludeDataTest: Boolean,
-+   predicate: (JvmStackFrame) -> Boolean,
-+): JvmStackFrame?
- 
- /**
-  * On the JVM we can create a stack trace to get the line number.
-@@ -19,12 +23,16 @@ private val stackWalker: StackWalker = StackWalker.getInstance(StackWalker.Optio
- internal actual fun sourceRef(): SourceRef {
-    if (sysprop(KotestEngineProperties.DISABLE_SOURCE_REF, "false") == "true") return SourceRef.None
- 
--   val frame = SourceRefUtils.firstUserFrame(stackWalker) ?: return SourceRef.None
-+   val frame = findFirstStackFrame(excludeDataTest = true) { true } ?: return SourceRef.None
- 
-    // preference is given to the class name, but we must try to find the enclosing spec
-    var kclass: Class<*>? = frame.declaringClass
--   while (kclass != null && !specJavaClass.isAssignableFrom(kclass)) {
--      kclass = kclass.enclosingClass
++/**
++ * Invokes [block] between the [PropTestListener.beforeTest] and [PropTestListener.afterTest] of each listener,
++ * calling [PropTestListener.afterTest] even if [block] throws, as a shrink run usually does.
++ */
++private suspend inline fun List<PropTestListener>.around(block: () -> Unit) {
++   forEach { it.beforeTest() }
 +   try {
-+      while (kclass != null && !specJavaClass.isAssignableFrom(kclass)) {
-+         kclass = kclass.enclosingClass
-+      }
-+   } catch (_: LinkageError) {
-+      return SourceRef.None
-    }
- 
-    val lineNumber = frame.lineNumber.takeIf { it > 0 }
-@@ -37,17 +45,6 @@ internal actual fun sourceRef(): SourceRef {
- }
- 
- object SourceRefUtils {
--
--   /**
--    * Returns the first user-land frame from the given [StackWalker], walking the live call
--    * stack lazily so frames beyond the match are never materialized.
--    */
--   internal fun firstUserFrame(walker: StackWalker): StackWalker.StackFrame? {
--      return walker.walk { frames ->
--         frames.filter { !isExcludedFrame(it.className, excludeDataTest = true) }.findFirst()
--      }.orElse(null)
--   }
--
-    /**
-     * Returns the first user-land frame from the given stack trace.
-     *
-```
-
-**File**: `kotest-framework/kotest-framework-engine/src/jvmCommonMain/kotlin/io/kotest/datatest/DataTestTag.jvm.kt` (renamed, +4/-14)
-```diff
-@@ -1,28 +1,19 @@
- package io.kotest.datatest
- 
--import io.kotest.core.source.SourceRefUtils
-+import io.kotest.core.source.findFirstStackFrame
- import io.kotest.core.spec.Spec
- 
- private val specJavaClass: Class<*> = Spec::class.java
- 
--// RETAIN_CLASS_REFERENCE gives us the live java.lang.Class for each frame directly,
--// avoiding a Class.forName lookup, and StackWalker.walk() lets us stop as soon as we
--// find the first user frame instead of always materializing the whole call stack
--// the way Thread.currentThread().stackTrace would do.
--private val stackWalker: StackWalker = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
--
- /**
-  * JVM implementation that gets the line number from the stack trace.
-  * Looks for the first frame that is inside a Spec subclass or a nested class within a Spec.
-  * Highly (ok fully) inspired from [io.kotest.core.source.sourceRef]
-  */
- internal actual fun getDataTestCallSiteLineNumber(): String {
--   val frame = stackWalker.walk { frames ->
--      frames
--         .filter { !SourceRefUtils.isExcludedFrame(it.className, excludeDataTest = false) }
--         .filter { isSpecOrNestedInSpec(it.declaringClass) }
--         .findFirst()
--   }.orElse(null)
-+   val frame = findFirstStackFrame(excludeDataTest = false) {
-+      it.declaringClass?.let(::isSpecOrNestedInSpec) == true
++      block()
++   } catch (e: Throwable) {
++      afterTestAfterFailure(e)
++      throw e
 +   }
- 
-    return frame?.lineNumber?.takeIf { it > 0 }?.toString() ?: "unknown"
- }
-@@ -40,4 +31,3 @@ private fun isSpecOrNestedInSpec(clazz: Class<*>): Boolean {
-    }
-    return false
- }
--
-```
-
-**File**: `kotest-framework/kotest-framework-engine/src/jvmMain/kotlin/io/kotest/core/source/stackFrame.jvm.kt` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+package io.kotest.core.source
-+
-+private val stackWalker: StackWalker = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
-+
-+internal actual fun findFirstStackFrame(
-+   excludeDataTest: Boolean,
-+   predicate: (JvmStackFrame) -> Boolean,
-+): JvmStackFrame? {
-+   return stackWalker.walk { frames ->
-+      frames
-+         .filter { !SourceRefUtils.isExcludedFrame(it.className, excludeDataTest) }
-+         .map { JvmStackFrame(it.declaringClass, it.lineNumber) }
-+         .filter(predicate)
-+         .findFirst()
-+   }.orElse(null)
++   forEach { it.afterTest() }
 +}
++
+ /**
+  * Returns a shrink function, which, when invoked, will shrink the inputs and attempt to return
+  * the smallest failing case.
+@@ -13,13 +29,16 @@ fun <A> shrinkfn(
+    a: Sample<A>,
+    propertyFn: suspend PropertyContext.(A) -> Unit,
+    shrinkingMode: ShrinkingMode,
+-   contextualSeed: Long
++   contextualSeed: Long,
++   listeners: List<PropTestListener>,
+ ): suspend () -> List<ShrinkResult<Any?>> = {
+    // we use a new context for the shrinks, as we don't want to affect classification etc
+    val context = PropertyContext()
+    val property: suspend PropertyContext.(A) -> Unit = { a ->
+-      setupContextual(RandomSource.seeded(contextualSeed))
+-      propertyFn(a)
++      listeners.around {
++         setupContextual(RandomSource.seeded(contextualSeed))
++         propertyFn(a)
++      }
+    }
+    with(context) {
+       val smallestA = doShrinking(a.shrinks, shrinkingMode) { property(it) }
+@@ -37,12 +56,15 @@ fun <A, B> shrinkfn(
+    b: Sample<B>,
+    propertyFn: suspend PropertyContext.(A, B) -> Unit,
+    shrinkingMode: ShrinkingMode,
+-   contextualSeed: Long
++   contextualSeed: Long,
++   listeners: List<PropTestListener>,
+ ): suspend () -> List<ShrinkResult<Any?>> = {
+    val context = PropertyContext()
+    val property: suspend PropertyContext.(A, B) -> Unit = { a, b ->
+-      setupContextual(RandomSource.seeded(contextualSeed))
+-      propertyFn(a, b)
++      listeners.around {
++         setupContextual(RandomSource.seeded(contextualSeed))
++         propertyFn(a, b)
++      }
+    }
+    with(context) {
+       val smallestA = doShrinking(a.shrinks, shrinkingMode) { property(it, b.value) }
+@@ -62,13 +84,16 @@ fun <A, B, C> shrinkfn(
+    c: Sample<C>,
+    propertyFn: suspend PropertyContext.(A, B, C) -> Unit,
+    shrinkingMode: ShrinkingMode,
+-   contextualSeed: Long
++   contextualSeed: Long,
++   listeners: List<PropTestListener>,
+ ): suspend () -> List<ShrinkResult<Any?>> = {
+    // we use a new context for the shrinks, as we don't want to affect classification etc
+    val context = PropertyContext()
+    val property: suspend PropertyContext.(A, B, C) -> Unit = { a, b, c ->
+-      setupContextual(RandomSource.seeded(contextualSeed))
+-      propertyFn(a, b, c)
++      listeners.around {
++         setupContextual(RandomSource.seeded(contextualSeed))
++         propertyFn(a, b, c)
++      }
+    }
+    with(context) {
+       val smallestA = doShrinking(a.shrinks, shrinkingMode) { property(it, b.value, c.value) }
+@@ -90,13 +115,16 @@ fun <A, B, C, D> shrinkfn(
+    d: Sample<D>,
+    propertyFn: suspend PropertyContext.(A, B, C, D) -> Unit,
+    shrinkingMode: ShrinkingMode,
+-   contextualSeed: Long
++   contextualSeed: Long,
++   listeners: List<PropTestListener>,
+ ): suspend () -> List<ShrinkResult<Any?>> = {
+    // we use a new context for the shrinks, as we don't want to affect classification etc
+    val context = PropertyContext()
+    val property: suspend PropertyContext.(A, B, C, D) -> Unit = { a, b, c, d ->
+-      setupContextual(RandomSource.seeded(contextualSeed))
+-      propertyFn(a, b, c, d)
++      listeners.around {
++         setupContextual(RandomSource.seeded(contextualSeed))
++         propertyFn(a, b, c, d)
++      }
+    }
+    with(context) {
+       val smallestA = doShrinking(a.shrinks, shrinkingMode) { property(it, b.value, c.value, d.value) }
+@@ -120,13 +148,16 @@ fun <A, B, C, D, E> shrinkfn(
+    e: Sample<E>,
+    propertyFn: suspend PropertyContext.(A, B, C, D, E) -> Unit,
+    shrinkingMode: ShrinkingMode,
+-   contextualSeed: Long
++   contextualSeed: Long,
++   listeners: List<PropTestListener>,
+ ): suspend () -> List<ShrinkResult<Any?>> = {
+    // we use a new context for the shrinks, as we don't want to affect classification etc
+    val context = PropertyContext()
+    val property: suspend PropertyContext.(A, B, C, D, E) -> Unit = { a, b, c, d, e ->
+-      setupContextual(RandomSource.seeded(contextualSeed))
+-      propertyFn(a, b, c, d, e)
++      listeners.around {
++         setupContextual(RandomSource.seeded(contextualSeed))
++         propertyFn(a, b, c, d, e)
++      }
+    }
+    with(context) {
+       val smallestA = doShrinking(a.shrinks, shrinkingMode) { property(it, b.value, c.value, d.value, e.value) }
+@@ -154,13 +185,16 @@ fun <A, B, C, D, E, F> shrinkfn(
+    f: Sampl
 ```
 
-**File**: `kotest-tests/kotest-tests-android-instrumentation/src/androidTest/kotlin/io/kotest/android/StackWalkerCompatibilityTest.kt` (added, +19/-0)
+**File**: `kotest-property/src/commonMain/kotlin/io/kotest/property/internal/test.kt` (modified, +30/-2)
 ```diff
-@@ -0,0 +1,19 @@
-+package io.kotest.android
+@@ -10,6 +10,7 @@ import io.kotest.property.AfterPropertyContextElement
+ import io.kotest.property.BeforePropertyContextElement
+ import io.kotest.property.Classifier
+ import io.kotest.property.PropTestConfig
++import io.kotest.property.PropTestListener
+ import io.kotest.property.PropertyContext
+ import io.kotest.property.RandomSource
+ import io.kotest.property.seed.writeFailedSeed
+@@ -25,6 +26,8 @@ import kotlinx.coroutines.currentCoroutineContext
+  *
+  * If registered, will invoke [io.kotest.property.lifecycle.beforeProperty] and
+  * [io.kotest.property.lifecycle.afterProperty] lifecycle methods.
++ *
++ * Invokes the [PropTestConfig.listeners] around the evaluation, and completes them before any shrinking starts.
+  */
+ internal suspend fun test(
+    context: PropertyContext,
+@@ -40,7 +43,8 @@ internal suspend fun test(
+    context.markEvaluation()
+    context.setupContextual(RandomSource.seeded(contextualSeed))
+    if (context.evals() >= config.skipTo) {
+-      try {
++      config.listeners.forEach { it.beforeTest() }
++      val error = try {
+ 
+          inputs.indices.forEach { k ->
+             val classifier = classifiers[k]
+@@ -58,19 +62,43 @@ internal suspend fun test(
+          testFn()
+          context.markSuccess()
+          currentCoroutineContext()[AfterPropertyContextElement]?.after?.invoke()
++         null
+       } catch (_: IterationSkippedException) {
+          // we don't mark failed assumptions as errors
++         null
+       } catch (e: Throwable) {
++         e
++      }
++      // each shrink run is bracketed by the listeners too, so this iteration must be finished first
++      if (error == null) {
++         config.listeners.forEach { it.afterTest() }
++      } else {
++         config.listeners.afterTestAfterFailure(error)
+          // we track any throwables and try to shrink them
+          context.markFailure()
+          outputStatistics(context, inputs.size, false)
+-         handleException(context, shrinkfn, inputs, seed, e, config)
++         handleException(context, shrinkfn, inputs, seed, error, config)
+       }
+    } else {
+       printSkippedMessage(context, inputs)
+    }
+ }
+ 
++/**
++ * Calls [PropTestListener.afterTest] on each listener after [error] failed the property. A listener whose
++ * [PropTestListener.afterTest] throws does not hide [error]: its exception is added to [error] as suppressed,
++ * and the remaining listeners still run.
++ */
++internal suspend fun List<PropTestListener>.afterTestAfterFailure(error: Throwable) {
++   forEach {
++      try {
++         it.afterTest()
++      } catch (t: Throwable) {
++         error.addSuppressed(t)
++      }
++   }
++}
 +
-+import io.kotest.core.spec.style.FunSpec
-+import io.kotest.datatest.withData
-+import io.kotest.matchers.shouldBe
-+import io.kotest.runner.junit4.KotestTestRunner
-+import org.junit.runner.RunWith
+ internal suspend fun handleException(
+    context: PropertyContext,
+    shrinkfn: suspend () -> List<ShrinkResult<Any?>>,
+```
+
+**File**: `kotest-property/src/jvmTest/kotlin/com/sksamuel/kotest/property/PropListenersTest.kt` (modified, +126/-0)
+```diff
+@@ -1,9 +1,14 @@
+ package com.sksamuel.kotest.property
+ 
++import io.kotest.assertions.throwables.shouldThrow
++import io.kotest.assertions.throwables.shouldThrowAny
+ import io.kotest.core.annotation.EnabledIf
+ import io.kotest.core.annotation.LinuxOnlyGithubCondition
+ import io.kotest.core.spec.style.FunSpec
++import io.kotest.matchers.ints.shouldBeGreaterThan
++import io.kotest.matchers.ints.shouldBeLessThan
+ import io.kotest.matchers.shouldBe
++import io.kotest.matchers.string.shouldContain
+ import io.kotest.property.*
+ import io.kotest.property.arbitrary.int
+ import io.kotest.property.arbitrary.string
+@@ -127,4 +132,125 @@ class PropListenersTest : FunSpec({
+       current shouldBe 10
+       total shouldBe 10
+    }
 +
-+@RunWith(KotestTestRunner::class)
-+class StackWalkerCompatibilityTest : FunSpec({
++   context("listeners bracket every invocation of the property, including shrink runs") {
 +
-+   test("ordinary tests can be registered on Android") {
-+      true shouldBe true
++      var befores = 0
++      var afters = 0
++      var invocations = 0
++      var overlapped = false
++
++      beforeTest {
++         befores = 0
++         afters = 0
++         invocations = 0
++         overlapped = false
++      }
++
++      val shrinkConfig = PropTestConfig(
++         seed = 4815162342,
++         edgeConfig = EdgeConfig(edgecasesGenerationProbability = 0.0),
++         listeners = listOf(object : PropTestListener {
++            override suspend fun beforeTest() {
++               ++befores
++            }
++
++            override suspend fun afterTest() {
++               ++afters
++            }
++         })
++      )
++
++      // records an invocation of the property, and whether exactly one beforeTest was open at the time
++      fun invoked() {
++         ++invocations
++         if (befores - afters != 1) overlapped = true
++      }
++
++      test("checkAll with param A") {
++         shouldThrowAny {
++            checkAll(shrinkConfig, Arb.int(100..1000)) { a ->
++               invoked()
++               a shouldBeLessThan 100
++            }
++         }
++         invocations shouldBeGreaterThan 1
++         overlapped shouldBe false
++         befores shouldBe invocations
++         afters shouldBe invocations
++      }
++
++      test("checkAll with params A, B") {
++         shouldThrowAny {
++            checkAll(shrinkConfig, Arb.int(100..1000), Arb.int(100..1000)) { a, b ->
++               invoked()
++               a + b shouldBeLessThan 200
++            }
++         }
++         invocations shouldBeGreaterThan 1
++         overlapped shouldBe false
++         befores shouldBe invocations
++         afters shouldBe invocations
++      }
++
++      test("forAll with params A, B, C") {
++         shouldThrowAny {
++            forAll(shrinkConfig, Arb.int(100..1000), Arb.int(100..1000), Arb.int(100..1000)) { a, b, c ->
++               invoked()
++               a + b + c < 300
++            }
++         }
++         invocations shouldBeGreaterThan 1
++         overlapped shouldBe false
++         befores shouldBe invocations
++         afters shouldBe invocations
++      }
++
++      test("a tolerated failure is still followed by afterTest") {
++         var failures = 0
++         checkAll(shrinkConfig.copy(iterations = 20, maxFailure = 20, minSuccess = 0), Arb.int(0..1000)) { a ->
++            invoked()
++            if (a >= 500) ++failures
++            a shouldBeLessThan 500
++         }
++         failures shouldBeGreaterThan 0
++         invocations shouldBe 20
++         overlapped shouldBe false
++         befores shouldBe 20
++         afters shouldBe 20
++      }
 +   }
 +
-+   withData(1, 2) { value ->
-+      value shouldBe value
++   context("an afterTest that throws") {
++
++      val throwingConfig = PropTestConfig(
++         seed = 4815162342,
++         edgeConfig = EdgeConfig(edgecasesGenerationProbability = 0.0),
++         listeners = listOf(object : PropTestListener {
++            override suspend fun afterTest() = throw IllegalStateException("teardown failed")
++         })
++      )
++
++      test("does not hide the property failure, and the failure is still shrunk") {
++         val error = shouldThrowAny {
++            checkAll(throwingConfig, Arb.int(100..1000)) { a ->
++               a shouldBeLessThan 100
++            }
++         }
++         error.message shouldContain "Property failed"
++         error.message shouldContain "shrunk"
++         generateSequence(error) { it.cause }
++            .flatMap { it.suppressed.asSequence() }
++            .any { it is IllegalStateException && it.message == "teardown failed" } shouldBe true
++      }
++
++      test("still fails a property that passes") {
++         val error = shouldThrow<IllegalStateException> {
++            checkAll(throwingConfig.copy(iterations = 1), Arb.int(0..10)) { a ->
++               a shouldBeLessThan 100
++            }
++         }
++         error.message shouldBe "teardown failed"
++      }
 +   }
-+})
+ })
+```
+
+---
+
+### Incident Patch 2: `70649201` (2026-10-21)
+**Commit Message**: Report a spec that fails outside its tests to pitest (#6255)
+
+Fixes #6254.
+
+`KotestUnit`'s listener only handled `testStarted` and `testFinished`.
+When a spec fails outside its tests (an exception in `beforeSpec`, a
+Spring context that can't load, a spec that can't be instantiated), the
+engine reports that only through `specFinished`, and
+`EngineResult.errors` stays empty. So pitest got no test events and no
+exception and recorded the mutant as SURVIVED.
+
+The listener now also overrides `specFinished`. If the result has an
+error, it calls `notifyStart` and `notifyEnd(description, error)` with
+the spec's own `Description` (the one `getDescription()` returns), as
+suggested in the issue. A failing test inside a spec doesn't set an
+error on the spec result, so those failures are still reported once. The
+existing `StringSpecs`/`FunSpecs`/`WordSpecs` tests check that.
+
+Test: `a spec that fails before its tests is reported as a failure`,
+which uses a `FunSpec` whose `beforeSpec` throws. Without the change the
+collector gets 0 failures; with it, 1.
+`:kotest-extensions:kotest-extensions-pitest:jvmTest` passes (4 tests).
+
+**File**: `kotest-extensions/kotest-extensions-pitest/src/jvmMain/kotlin/io/kotest/extensions/pitest/KotestUnit.kt` (modified, +9/-0)
+```diff
+@@ -18,6 +18,7 @@ class KotestUnit(val kclass: KClass<out Spec>) : TestUnit {
+    override fun getDescription(): Description = Description(kclass.java.name, kclass.java)
+ 
+    override fun execute(rc: ResultCollector) = runBlocking {
++      val description = getDescription()
+       val listener = object : AbstractTestEngineListener() {
+ 
+          private val started = mutableSetOf<Descriptor.TestDescriptor>()
+@@ -38,6 +39,14 @@ class KotestUnit(val kclass: KClass<out Spec>) : TestUnit {
+                }
+             }
+          }
++
++         // a spec that fails outside its tests (for example in beforeSpec, or when it cannot be
++         // instantiated) is only reported here, so pitest must hear about it under the spec itself
++         override suspend fun specFinished(ref: SpecRef, result: TestResult) {
++            val error = result.errorOrNull ?: return
++            rc.notifyStart(description)
++            rc.notifyEnd(description, error)
++         }
+       }
+ 
+       val result = TestEngineLauncher()
+```
+
+**File**: `kotest-extensions/kotest-extensions-pitest/src/jvmTest/kotlin/io/kotest/extensions/pitest/Kotest.kt` (modified, +16/-0)
+```diff
+@@ -6,6 +6,7 @@ import io.kotest.core.spec.style.WordSpec
+ import io.kotest.matchers.collections.shouldBeEmpty
+ import io.kotest.matchers.collections.shouldHaveSize
+ import io.kotest.matchers.shouldBe
++import io.kotest.matchers.string.shouldContain
+ 
+ class Kotest : FunSpec() {
+ 
+@@ -34,6 +35,14 @@ class Kotest : FunSpec() {
+          resultCollector.ended.shouldHaveSize(7)
+          resultCollector.failures.shouldHaveSize(2)
+       }
++
++      test("a spec that fails before its tests is reported as a failure") {
++         val resultCollector = findTestsIn(FailingBeforeSpec::class.java)
++         resultCollector.started.shouldHaveSize(1)
++         resultCollector.ended.shouldHaveSize(1)
++         resultCollector.failures.shouldHaveSize(1)
++         resultCollector.failures.single().message shouldContain "boom"
++      }
+    }
+ 
+    private fun findTestsIn(clazz: Class<*>): TestResultCollector {
+@@ -52,6 +61,13 @@ private class FunSpecs : FunSpec() {
+    }
+ }
+ 
++private class FailingBeforeSpec : FunSpec() {
++   init {
++      beforeSpec { error("boom") }
++      test("never runs") { 1 shouldBe 1 }
++   }
++}
++
+ private class StringSpecs : StringSpec() {
+    init {
+       "passing test" { 1 shouldBe 1 }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6255** (2026-10-21): Report a spec that fails outside its tests to pitest (@ItsDeadlyProgrammer)
 - **PR #6253** (2026-10-18): improve ai skills and make coroutines-test part of api (@alfonsoristorato)
+- **PR #6252** (2026-10-21): Call PropTestListeners around every shrink run (@ybai08)
 - **PR #6251** (2026-10-16): Keep the original error as the cause of a failed permutation (@ItsDeadlyProgrammer)
 - **PR #6250** (2026-10-15): remove usage of internal API for IJ plugin and add a verify step to avoid this in future (@alfonsoristorato)
 - **PR #6249** (2026-10-15): attempt to use the element module to choose project path in IJ runner (@alfonsoristorato)
-- **PR #6248** (2026-10-13): Fix dependency references in documentation for Kotest modules (@alfonsoristorato)
-- **PR #6247** (2026-10-14): include kotestAssertionsJsoup in publishing (@alfonsoristorato)
 
 ---
 
@@ -1159,37 +1362,29 @@ Co-authored-by: Sam <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make the `shouldBeSingleton` block overloads infix (#6223)
+## X. Call PropTestListeners around every shrink run (#6252)
 
 **RULE**:
-When implementing operations in `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/singleton.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `documentation/docs/proptest/config.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `56301a62`: Make the `shouldBeSingleton` block overloads infix (#6223). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cde3ab9c`: Call PropTestListeners around every shrink run (#6252). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/singleton.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/docs/proptest/config.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
- *
- * ```
- * listOf(1).shouldBeSingleton { it shouldBe 1 } // Assertion passes
- * listOf(1) shouldBeSingleton { it shouldBe 1 } // Same, using the infix form
- * ```
-inline infix fun <T, C : Collection<T>> C.shouldBeSingleton(fn: (T) -> Unit): C {
-inline infix fun <T, I : Iterable<T>> I.shouldBeSingleton(fn: (T) -> Unit): I {
-inline infix fun <T> Array<T>.shouldBeSingleton(fn: (T) -> Unit): Array<T> {
+`beforeTest` and `afterTest` are called around every invocation of the property, including the invocations made while
+shrinking a failed input, and `afterTest` is called even when the property fails.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-inline fun <T, C : Collection<T>> C.shouldBeSingleton(fn: (T) -> Unit): C {
-inline fun <T, I : Iterable<T>> I.shouldBeSingleton(fn: (T) -> Unit): I {
-inline fun <T> Array<T>.shouldBeSingleton(fn: (T) -> Unit): Array<T> {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `56301a62` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cde3ab9c` are properly handled with clean fallback behavior.
