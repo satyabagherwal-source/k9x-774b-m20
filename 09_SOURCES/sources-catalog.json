@@ -855,8 +855,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
     "sourceVersion": "hf-black-forest-labs-flux.1-schnell",
     "license": "Open-Source",
-    "contentHash": "0c12ff8fef8cf0d37fd72d2658cfa6255bbce8c11cb8e0c525c85fde063ca6c7",
-    "lastHarvestedAt": "2026-10-20T23:37:41.990Z",
+    "contentHash": "6ac389969203fb511de08e2beead758f9b0c76a5d91c277abae97cda01517ac6",
+    "lastHarvestedAt": "2026-10-25T19:19:13.331Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell"
   },
   "hf-minimaxai-minimax-h3": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "eb2524d0",
+    "sourceVersion": "2668d2ef",
     "license": "Apache-2.0",
-    "contentHash": "0b18dccdf6109564b5424b965d6a2816ea8e36739e5b0d6d6c270c832b2103cb",
-    "lastHarvestedAt": "2026-10-23T11:45:08.511Z",
+    "contentHash": "7abb2f2f75dede8c1f5d64dc649d08dc9a68f7808865d6e3f13b9459ef984495",
+    "lastHarvestedAt": "2026-10-25T19:19:06.122Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {
@@ -8183,10 +8183,10 @@
     "repository": "vinceglb/FileKit",
     "platform": "github",
     "sourceUrl": "https://github.com/vinceglb/FileKit",
-    "sourceVersion": "2182a762",
+    "sourceVersion": "75099ba5",
     "license": "MIT",
-    "contentHash": "cbe8e6436ec7eb024fb171250035f661e450ae0aa229f87aba1bf8eb3b56aa84",
-    "lastHarvestedAt": "2026-10-21T02:02:08.497Z",
+    "contentHash": "acd78bf0f571bc6b6767e89c95c382e99b34eb732898014f7281edafbcf581db",
+    "lastHarvestedAt": "2026-10-25T19:19:10.405Z",
     "learningId": "learn-github-vinceglb-filekit"
   },
   "nsh07-tomato": {

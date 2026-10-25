@@ -4956,3 +4956,6 @@
 | `CYCLE-20261025-GBJ3` | `2026-10-25T19:12:49.503Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`2eb62194...`) |
 | `CYCLE-20261025-GBOX` | `2026-10-25T19:12:49.713Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4419` | Yes (`4a12ca1e...`) |
 | `CYCLE-20261025-GIRV` | `2026-10-25T19:12:58.891Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4420` | Yes (`f0464548...`) |
+| `CYCLE-20261025-OE4N` | `2026-10-25T19:19:06.119Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4421` | Yes (`7abb2f2f...`) |
+| `CYCLE-20261025-OHFK` | `2026-10-25T19:19:10.400Z` | `vinceglb/FileKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4422` | Yes (`acd78bf0...`) |
+| `CYCLE-20261025-OJOW` | `2026-10-25T19:19:13.329Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4423, Rule 4424` | Yes (`6ac38996...`) |

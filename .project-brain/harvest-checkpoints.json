@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T19:12:58.907Z",
+  "last_updated": "2026-10-25T19:19:13.337Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1100,14 +1100,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "content_hash": "0c12ff8fef8cf0d37fd72d2658cfa6255bbce8c11cb8e0c525c85fde063ca6c7",
-      "verified_at": "2026-10-20T23:37:41.995Z",
+      "content_hash": "6ac389969203fb511de08e2beead758f9b0c76a5d91c277abae97cda01517ac6",
+      "verified_at": "2026-10-25T19:19:13.337Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T23:37:41.995Z"
+      "last_updated": "2026-10-25T19:19:13.337Z"
     },
     "MiniMaxAI/MiniMax-H3": {
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "0b18dccdf6109564b5424b965d6a2816ea8e36739e5b0d6d6c270c832b2103cb",
-      "verified_at": "2026-10-23T11:45:08.521Z",
+      "content_hash": "7abb2f2f75dede8c1f5d64dc649d08dc9a68f7808865d6e3f13b9459ef984495",
+      "verified_at": "2026-10-25T19:19:06.129Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T11:45:08.521Z"
+      "last_updated": "2026-10-25T19:19:06.129Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -12306,14 +12306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vinceglb-filekit",
-      "content_hash": "cbe8e6436ec7eb024fb171250035f661e450ae0aa229f87aba1bf8eb3b56aa84",
-      "verified_at": "2026-10-21T02:02:08.506Z",
+      "content_hash": "acd78bf0f571bc6b6767e89c95c382e99b34eb732898014f7281edafbcf581db",
+      "verified_at": "2026-10-25T19:19:10.412Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:02:08.506Z"
+      "last_updated": "2026-10-25T19:19:10.412Z"
     },
     "nsh07/Tomato": {
       "repository": "nsh07/Tomato",

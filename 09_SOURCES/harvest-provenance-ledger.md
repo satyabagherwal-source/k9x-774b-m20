@@ -4963,3 +4963,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-25T19:12:49.506Z |
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `9df9e7ce` | Multi-dimensional audit evidence | 2026-10-25T19:12:49.716Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `2a510f71` | Multi-dimensional audit evidence | 2026-10-25T19:12:58.894Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `2668d2ef` | Multi-dimensional audit evidence | 2026-10-25T19:19:06.122Z |
+| `learn-github-vinceglb-filekit` | `https://github.com/vinceglb/FileKit` | `75099ba5` | Multi-dimensional audit evidence | 2026-10-25T19:19:10.405Z |
+| `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-25T19:19:13.331Z |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T19:12:58.899Z",
-  "total_cycles_completed": 4933,
-  "total_learnings_persisted": 4933,
-  "total_rules_promoted": 4304,
+  "last_updated": "2026-10-25T19:19:13.335Z",
+  "total_cycles_completed": 4936,
+  "total_learnings_persisted": 4936,
+  "total_rules_promoted": 4308,
   "history": [
-    {
-      "timestamp": "2026-10-25T09:53:59.392Z",
-      "repository": "NirDiamant/RAG_Techniques",
-      "learningId": "learn-github-nirdiamant-rag_techniques",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T09:56:06.706Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T09:58:48.060Z",
-      "repository": "iii-hq/iii",
-      "learningId": "learn-github-iii-hq-iii",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T10:01:30.979Z",
       "repository": "franken-ui/ui",
@@ -1403,6 +1382,27 @@
       "repository": "gardener/gardener",
       "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:19:06.126Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:19:10.409Z",
+      "repository": "vinceglb/FileKit",
+      "learningId": "learn-github-vinceglb-filekit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:19:13.335Z",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

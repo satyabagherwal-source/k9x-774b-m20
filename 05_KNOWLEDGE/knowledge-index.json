@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T19:12:58.836Z",
+  "last_updated": "2026-10-25T19:19:13.278Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17408,7 +17408,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "0c12ff8fef8cf0d37fd72d2658cfa6255bbce8c11cb8e0c525c85fde063ca6c7",
+      "content_hash": "6ac389969203fb511de08e2beead758f9b0c76a5d91c277abae97cda01517ac6",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
@@ -17538,6 +17538,16 @@
           "number": 3441,
           "title": "Guidance-Free Inference Invariant for Distilled Models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4423,
+          "title": "Binary Artifact Integrity & Memory Safety Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4424,
+          "title": "Inference Concurrency & GPU Context Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17558,7 +17568,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
       ],
-      "verified_at": "2026-10-20T23:37:41.953Z",
+      "verified_at": "2026-10-25T19:19:13.271Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37907,8 +37917,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "eb2524d0",
-      "content_hash": "0b18dccdf6109564b5424b965d6a2816ea8e36739e5b0d6d6c270c832b2103cb",
+      "source_version": "2668d2ef",
+      "content_hash": "7abb2f2f75dede8c1f5d64dc649d08dc9a68f7808865d6e3f13b9459ef984495",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -37936,6 +37946,11 @@
           "number": 3909,
           "title": "Cooperative Self-Invalidation Spin Ceiling in Event-Loop Poll Cycles",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4421,
+          "title": "Abort the process on a panic during shutdown while an earlier panic is unwinding",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37943,7 +37958,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:45:08.465Z",
+      "verified_at": "2026-10-25T19:19:06.075Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50859,8 +50874,8 @@
       "slug": "vinceglb-filekit",
       "platform": "github",
       "source_url": "https://github.com/vinceglb/FileKit",
-      "source_version": "2182a762",
-      "content_hash": "cbe8e6436ec7eb024fb171250035f661e450ae0aa229f87aba1bf8eb3b56aa84",
+      "source_version": "75099ba5",
+      "content_hash": "acd78bf0f571bc6b6767e89c95c382e99b34eb732898014f7281edafbcf581db",
       "dossier_path": "07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
       "promoted_rules": [
@@ -50873,6 +50888,11 @@
           "number": 3480,
           "title": "📝 Use AGENTS.md as the single agent guide",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4422,
+          "title": "🔀 Merge pull request #684 from vinceglb/feature/walk-size-recursively",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50880,7 +50900,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:02:08.429Z",
+      "verified_at": "2026-10-25T19:19:10.356Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125490,6 +125510,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T19:12:58.826Z"
+    },
+    "rule-4421": {
+      "learning_id": "rule-4421",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4421,
+      "title": "Abort the process on a panic during shutdown while an earlier panic is unwinding",
+      "source_url": "https://github.com/ntex-rs/ntex",
+      "source_version": "2668d2ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:19:06.075Z"
+    },
+    "rule-4422": {
+      "learning_id": "rule-4422",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4422,
+      "title": "🔀 Merge pull request #684 from vinceglb/feature/walk-size-recursively",
+      "source_url": "https://github.com/vinceglb/FileKit",
+      "source_version": "75099ba5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:19:10.356Z"
+    },
+    "rule-4423": {
+      "learning_id": "rule-4423",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4423,
+      "title": "Binary Artifact Integrity & Memory Safety Boundary",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:19:13.271Z"
+    },
+    "rule-4424": {
+      "learning_id": "rule-4424",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4424,
+      "title": "Inference Concurrency & GPU Context Isolation",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:19:13.271Z"
     }
   },
   "aliases": {

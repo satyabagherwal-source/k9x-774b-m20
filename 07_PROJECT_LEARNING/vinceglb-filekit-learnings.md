@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vinceglb-filekit-learnings.md`  
 > **Source**: github ([https://github.com/vinceglb/FileKit](https://github.com/vinceglb/FileKit))  
-> **Source Version**: `2182a762`  
+> **Source Version**: `75099ba5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T02:02:08.167Z  
+> **Timestamp**: 2026-10-25T19:19:10.137Z  
 > **Learning ID**: `learn-github-vinceglb-filekit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vinceglb-filekit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vinceglb/FileKit](https://github.com/vinceglb/FileKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T02:02:08.020Z  
+> **Harvest Timestamp**: 2026-10-25T19:19:10.131Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pick and save Files, Medias and Folder for Kotlin Multiplatform / KMP and Compose Multiplatform / CMP
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1551 stars
+- **Stars / Engagement**: 1555 stars
 
 ---
 
@@ -1146,105 +1146,598 @@ private fun mimeTypeFromUti(uti: String): String? {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `808aaa71` (2026-10-20)
-**Commit Message**: 📝 Use AGENTS.md as the single agent guide
+### Incident Patch 1: `75099ba5` (2026-10-22)
+**Commit Message**: 🔀 Merge pull request #684 from vinceglb/feature/walk-size-recursively
 
-Remove CLAUDE.md: Claude Code reads AGENTS.md when no CLAUDE.md exists.
-Fold its still-relevant context into AGENTS.md and fix stale sample and
-docs paths.
+✨ Add PlatformFile.walk() and sizeRecursively()
+
+**File**: `docs/core/platform-file.mdx` (modified, +18/-0)
+```diff
+@@ -195,6 +195,24 @@ val relativeDir = PlatformFile("/path/to/relative")
+ val absoluteDir: PlatformFile = relativeDir.absoluteFile()
+ ```
+ 
++### Walking a directory tree
++
++`walk()` lazily yields every file and subdirectory below a directory, depth-first, without the directory itself. `sizeRecursively()` returns the total size of the regular files in the tree:
++
++```kotlin
++val fileCount = directory.walk().count { it.isRegularFile() }
++val children = directory.walk(maxDepth = 1).toList() // like list()
++val totalBytes: Long = directory.sizeRecursively()
++```
++
++- Symbolic links are listed but never followed, so a link can't cause an infinite loop. They add nothing to `sizeRecursively()`. This also applies when you call either function on a link.
++- On a regular file, `walk()` yields only that file and `sizeRecursively()` returns its size. `maxDepth` must be positive.
++- `walk()` is synchronous, like `list()`: on non-web platforms, iterate it on `Dispatchers.IO`. `sizeRecursively()` is a suspend function that switches to `Dispatchers.IO` itself on non-web platforms.
++- **Android**: each subdirectory of a document tree costs provider queries, so large trees are slow. Files whose provider doesn't report a size count as 0.
++- **Apple platforms**: keep security-scoped access to the root active while iterating `walk()`, for example inside `withScopedAccess { }`.
++- **Windows**: every reparse point counts as a link, including directory junctions and OneDrive Files On-Demand folders. `walk()` lists such a folder without its contents, and `sizeRecursively()` doesn't count them.
++- **Web**: works on directories picked with the directory picker, whose tree is already in memory. Both functions run on the caller's dispatcher. Origin private file system directories aren't supported.
++
+ ## Converting to kotlinx-io
+ 
+ `PlatformFile` provides built-in integration with [kotlinx-io](https://github.com/Kotlin/kotlinx-io).
+```
+
+**File**: `filekit-core/src/androidHostTest/kotlin/io/github/vinceglb/filekit/PlatformFileAndroidTest.kt` (modified, +13/-0)
+```diff
+@@ -176,6 +176,19 @@ class PlatformFileAndroidTest {
+         assertEquals(listOf("note.txt"), notes.list().map { it.name })
+     }
+ 
++    @Test
++    fun PlatformFile_walkUriTree_yieldsDescendantsAndCountsUnknownSizesAsZero() = runBlocking {
++        val treeUri = Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADocuments")
++        ShadowContentResolver.registerProviderInternal(
++            "com.android.externalstorage.documents",
++            createNestedTreeContentProvider(),
++        )
++        val base = PlatformFile(treeUri)
++
++        assertEquals(listOf("Notes", "note.txt", "parent-only.txt"), base.walk().map { it.name }.toList())
++        assertEquals(0L, base.sizeRecursively())
++    }
++
+     @Test
+     fun createDirectories_onNestedUriChild_createsMissingParents() {
+         val treeUri = Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADocuments")
+```
+
+**File**: `filekit-core/src/androidMain/kotlin/io/github/vinceglb/filekit/PlatformFile.android.kt` (modified, +7/-2)
+```diff
+@@ -1162,16 +1162,21 @@ private fun Uri.toFileOrNull(): File? {
+ }
+ 
+ // lstat/remove work on API 21 and operate on the link itself, including a dangling link.
+-internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
++internal actual fun PlatformFile.isSymbolicLink(): Boolean {
+     val file = (androidFile as? AndroidFile.FileWrapper)?.file ?: return false
+     val metadata = try {
+         Os.lstat(file.absolutePath)
+     } catch (error: ErrnoException) {
+         if (error.errno == OsConstants.ENOENT || error.errno == OsConstants.ENOTDIR) return false
+         throw IOException("Could not inspect ${file.absolutePath}", error)
+     }
+-    if (!OsConstants.S_ISLNK(metadata.st_mode)) return false
++    return OsConstants.S_ISLNK(metadata.st_mode)
++}
++
++internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
++    if (!isSymbolicLink()) return false
+ 
++    val file = (androidFile as AndroidFile.FileWrapper).file
+     try {
+         Os.remove(file.absolutePath)
+     } catch (error: ErrnoException) {
+```
+
+**File**: `filekit-core/src/appleMain/kotlin/io/github/vinceglb/filekit/PlatformFile.apple.kt` (modified, +8/-2)
+```diff
+@@ -435,11 +435,17 @@ private fun NSError?.toBookmarkResolutionException(): BookmarkResolutionExceptio
+ // attributesOfItemAtPath does not resolve the link, so a symlink reports its own type here rather
+ // than the type of whatever it points at.
+ @OptIn(ExperimentalForeignApi::class)
+-internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
++internal actual fun PlatformFile.isSymbolicLink(): Boolean {
+     val path = nsUrl.path ?: return false
+     val attributes = NSFileManager.defaultManager.attributesOfItemAtPath(path, error = null)
+-    if (attributes?.get(NSFileType) != NSFileTypeSymbolicLink) return false
++    return attributes?.get(NSFileType) == NSFileTypeSymbolicLink
++}
++
++@OptIn(ExperimentalForeignApi::class)
++internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
++    if (!isSymbolicLink()) return false
+ 
++    val path = nsUrl.path ?: return false
+     if (unlink(path) != 0) {
+         throw IOException("Could not unlink $path: ${strerror(errno)?.toKString()}")
+     }
+```
+
+**File**: `filekit-core/src/commonMain/kotlin/io/github/vinceglb/filekit/PlatformFile.kt` (modified, +62/-0)
+```diff
+@@ -147,3 +147,65 @@ public inline fun <T> PlatformFile.withScopedAccess(block: (PlatformFile) -> T):
+         }
+     }
+ }
++
++/**
++ * Lazily walks this directory recursively (depth-first). Yields files and subdirectories, but not
++ * the starting directory itself. If this is a regular file or a symbolic link, yields only this
++ * entry.
++ *
++ * Symbolic links (and Windows reparse points) are yielded but never followed, including this
++ * entry. Errors throw, like [list]. On non-web platforms the walk does blocking I/O, so iterate it
++ * on an IO dispatcher. On Apple platforms, keep security-scoped access to the root active while
++ * iterating (see [withScopedAccess]).
++ *
++ * @param maxDepth The maximum depth to walk. `1` yields only the direct children. Must be positive.
++ * @return A lazy [Sequence] of the entries in this tree.
++ */
++public fun PlatformFile.walk(maxDepth: Int = Int.MAX_VALUE): Sequence<PlatformFile> {
++    require(maxDepth > 0) { "maxDepth must be positive, but was $maxDepth." }
++    return sequence {
++        if (isSymbolicLink() || isRegularFile()) yield(this@walk) else yieldDescendants(this@walk, maxDepth)
++    }
++}
++
++private suspend fun SequenceScope<PlatformFile>.yieldDescendants(directory: PlatformFile, maxDepth: Int) {
++    directory.list().forEach { child ->
++        yield(child)
++        // Check for a link first: isDirectory() resolves the link and touches its target.
++        if (maxDepth > 1 && !child.isSymbolicLink() && child.isDirectory()) {
++            yieldDescendants(child, maxDepth - 1)
++        }
++    }
++}
++
++/**
++ * Returns the total size in bytes of all regular files in this tree. For a regular file, returns
++ * its own size.
++ *
++ * Symbolic links, including this entry, are never followed and add nothing to the total. Files
++ * whose size is unknown (for example, from Android document providers that don't report one) count
++ * as 0. Errors throw, like [list]. Runs on `Dispatchers.IO` on non-web platforms.
++ */
++public expect suspend fun PlatformFile.sizeRecursively(): Long
++
++internal fun PlatformFile.computeSizeRecursively(): Long = withScopedAccess {
++    when {
++        isSymbolicLink() -> 0
++        isRegularFile() -> size().coerceAtLeast(0)
++        else -> sizeOfDescendants()
++    }
++}
++
++private fun PlatformFile.sizeOfDescendants(): Long = list().sumOf { child ->
++    when {
++        child.isSymbolicLink() -> 0
++        child.isDirectory() -> child.sizeOfDescendants()
++        else -> child.size().coerceAtLeast(0)
++    }
++}
++
++/**
++ * Returns `true` if this entry is a symbolic link or a Windows reparse point, without following it.
++ * Returns `false` for missing paths and on platforms without links.
++ */
++internal expect fun PlatformFile.isSymbolicLink(): Boolean
+```
+
+**File**: `filekit-core/src/jvmMain/kotlin/io/github/vinceglb/filekit/PlatformFile.jvm.kt` (modified, +14/-13)
+```diff
+@@ -187,20 +187,21 @@ public actual fun PlatformFile.Companion.resolveBookmarkData(
+     )
+ }
+ 
+-internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
+-    val isLink = if (Platform.isWindows()) {
+-        // Files.isSymbolicLink excludes directory junctions. Inspect the entry's reparse attribute.
+-        val attributes = Kernel32.INSTANCE.GetFileAttributes(file.absolutePath)
+-        if (attributes == INVALID_FILE_ATTRIBUTES) {
+-            val error = Kernel32.INSTANCE.GetLastError()
+-            if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND) return false
+-            throw IOException("Could not inspect ${file.absolutePath}: Windows error $error")
+-        }
+-        (attributes and FILE_ATTRIBUTE_REPARSE_POINT) != 0
+-    } else {
+-        Files.isSymbolicLink(file.toPath())
++internal actual fun PlatformFile.isSymbolicLink(): Boolean {
++    if (!Platform.isWindows()) return Files.isSymbolicLink(file.toPath())
++
++    // Files.isSymbolicLink excludes directory junctions. Inspect the entry's reparse attribute.
++    val attributes = Kernel32.INSTANCE.GetFileAttributes(file.absolutePath)
++    if (attributes == INVALID_FILE_ATTRIBUTES) {
++        val error = Kernel32.INSTANCE.GetLastError()
++        if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND) return false
++        throw IOException("Could not inspect ${file.absolutePath}: Windows error $error")
+     }
+-    if (!isLink) return false
++    return (attributes and FILE_ATTRIBUTE_REPARSE_POINT) != 0
++}
++
++internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
++    if (!isSymbolicLink()) return false
+ 
+     // Unlike kotlinx-io's delete, this does not check whether the link's target exists first.
+     Files.delete(file.toPath())
+```
+
+**File**: `filekit-core/src/jvmTest/kotlin/io/github/vinceglb/filekit/PlatformFileJvmTest.kt` (modified, +27/-0)
+```diff
+@@ -43,6 +43,33 @@ class PlatformFileJvmTest {
+         }
+     }
+ 
++    @Test
++    fun PlatformFile_walk_symbolicLinks_areNotFollowed() = runTest {
++        val tempRoot = createTempDirectory("filekit-walk-cycle")
++        try {
++            val outside = tempRoot.resolve("outside").createDirectory()
++            outside.resolve("big.txt").writeText("not counted")
++            val tree = tempRoot.resolve("tree").createDirectory()
++            tree.resolve("file.txt").writeText("abc")
++            Files.createSymbolicLink(tree.resolve("loop"), tree)
++            Files.createSymbolicLink(tree.resolve("link.txt"), outside.resolve("big.txt"))
++
++            val root = PlatformFile(tree.toFile())
++
++            assertEquals(setOf("file.txt", "loop", "link.txt"), root.walk().map { it.name }.toSet())
++            assertEquals(3L, root.sizeRecursively())
++
++            // A link passed as the receiver is not followed either.
++            for (name in listOf("loop", "link.txt")) {
++                val link = PlatformFile(tree.resolve(name).toFile())
++                assertEquals(listOf(name), link.walk().map { it.name }.toList())
++                assertEquals(0L, link.sizeRecursively())
++            }
++        } finally {
++            tempRoot.toFile().deleteRecursively()
++        }
++    }
++
+     private val resourceDirectory = PlatformFile(Path("src/nonWebTest/resources"))
+     private val textFile = PlatformFile(resourceDirectory, "hello.txt")
+     private val imageFile = PlatformFile(resourceDirectory, "compose-logo.png")
+```
+
+**File**: `filekit-core/src/linuxMain/kotlin/io/github/vinceglb/filekit/PlatformFile.linux.kt` (modified, +9/-3)
+```diff
+@@ -307,17 +307,23 @@ public actual fun PlatformFile.Companion.resolveBookmarkData(
+ 
+ // lstat, not stat: stat would resolve the link and report on its target.
+ @OptIn(ExperimentalForeignApi::class)
+-internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean = memScoped {
++internal actual fun PlatformFile.isSymbolicLink(): Boolean = memScoped {
+     val path = absolutePath()
+     val statBuf = alloc<stat>()
+     if (lstat(path, statBuf.ptr) != 0) {
+         if (errno == ENOENT || errno == ENOTDIR) return@memScoped false
+         throw IOException("Could not inspect $path: ${strerror(errno)?.toKString()}")
+     }
+-    if ((statBuf.st_mode.toInt() and S_IFMT) != S_IFLNK) return@memScoped false
++    (statBuf.st_mode.toInt() and S_IFMT) == S_IFLNK
++}
++
++@OptIn(ExperimentalForeignApi::class)
++internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
++    if (!isSymbolicLink()) return false
+ 
++    val path = absolutePath()
+     if (unlink(path) != 0) {
+         throw IOException("Could not unlink $path: ${strerror(errno)?.toKString()}")
+     }
+-    true
++    return true
+ }
+```
+
+---
+
+### Incident Patch 2: `0c42c93c` (2026-10-22)
+**Commit Message**: ✨ Add PlatformFile.walk() and sizeRecursively()
+
+walk() lazily yields a directory tree depth-first, without the starting
+directory, and never follows symbolic links. sizeRecursively() sums the
+regular files in the tree on Dispatchers.IO and counts unknown sizes as 0.
+
+Link detection moves out of deleteIfSymbolicLink() into an internal
+isSymbolicLink() so traversal reuses it. Delete behavior is unchanged.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `AGENTS.md` (modified, +1/-1)
+**File**: `docs/core/platform-file.mdx` (modified, +18/-0)
 ```diff
-@@ -1,7 +1,7 @@
- # Repository Guidelines
+@@ -195,6 +195,24 @@ val relativeDir = PlatformFile("/path/to/relative")
+ val absoluteDir: PlatformFile = relativeDir.absoluteFile()
+ ```
  
- ## Project Structure & Module Organization
--FileKit is split across multiplatform modules: `filekit-core` contains platform-agnostic APIs, while dialogs, Compose bindings, and Coil integration live in `filekit-dialogs`, `filekit-dialogs-compose`, and `filekit-coil`. Shared source sets live under `src/*Main`, with platform tests in sibling `src/*Test` directories. Sample apps under `samples/` (`sample-core`, `sample-compose`, `sample-file-explorer`) demonstrate integration patterns; update them alongside library changes when user-facing behaviour shifts. API docs and release notes are tracked in `docs/` and `documentation-v0.8.8.md`.
-+FileKit is split across multiplatform modules: `filekit-core` holds the `PlatformFile` abstraction and file operations, while dialogs, Compose bindings, and Coil integration live in `filekit-dialogs`, `filekit-dialogs-compose`, and `filekit-coil`. Source sets follow a hierarchy of intermediate sets (`nonWebMain`, `jvmAndNativeMain`, `webMain`, `mobileMain`, `nonAndroidMain`, …) above the platform sets; put code in the widest set whose platforms share the implementation. Platform tests live in sibling `src/*Test` directories, with shared test fixtures in `src/nonWebTest/resources/`. The sample app lives under `sample/` (`shared` plus one app module per platform); update it alongside library changes when user-facing behaviour shifts. User documentation is the Mintlify site in `docs/`; `documentation-v0.8.8.md` is a legacy snapshot.
++### Walking a directory tree
++
++`walk()` lazily yields every file and subdirectory below a directory, depth-first, without the directory itself. `sizeRecursively()` returns the total size of the regular files in the tree:
++
++```kotlin
++val fileCount = directory.walk().count { it.isRegularFile() }
++val children = directory.walk(maxDepth = 1).toList() // like list()
++val totalBytes: Long = directory.sizeRecursively()
++```
++
++- Symbolic links are listed but never followed, so a link can't cause an infinite loop. They add nothing to `sizeRecursively()`. This also applies when you call either function on a link.
++- On a regular file, `walk()` yields only that file and `sizeRecursively()` returns its size. `maxDepth` must be positive.
++- `walk()` is synchronous, like `list()`: on non-web platforms, iterate it on `Dispatchers.IO`. `sizeRecursively()` is a suspend function that switches to `Dispatchers.IO` itself on non-web platforms.
++- **Android**: each subdirectory of a document tree costs provider queries, so large trees are slow. Files whose provider doesn't report a size count as 0.
++- **Apple platforms**: keep security-scoped access to the root active while iterating `walk()`, for example inside `withScopedAccess { }`.
++- **Windows**: every reparse point counts as a link, including directory junctions and OneDrive Files On-Demand folders. `walk()` lists such a folder without its contents, and `sizeRecursively()` doesn't count them.
++- **Web**: works on directories picked with the directory picker, whose tree is already in memory. Both functions run on the caller's dispatcher. Origin private file system directories aren't supported.
++
+ ## Converting to kotlinx-io
  
- ## Build, Test, and Development Commands
- Keep local validation scoped to the changed module and one relevant target, with `--max-workers=1`; run checks sequentially. For example, use `./gradlew :filekit-core:jvmTest --tests '*PlatformFileDeletionTest*' --max-workers=1` for a deletion regression.
+ `PlatformFile` provides built-in integration with [kotlinx-io](https://github.com/Kotlin/kotlinx-io).
 ```
 
-**File**: `CLAUDE.md` (removed, +0/-65)
+**File**: `filekit-core/src/androidHostTest/kotlin/io/github/vinceglb/filekit/PlatformFileAndroidTest.kt` (modified, +13/-0)
 ```diff
-@@ -1,65 +0,0 @@
--# CLAUDE.md
--
--This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
--
--## Build Commands
--
--```bash
--# Build all modules
--./gradlew build
--
--# Build specific module
--./gradlew :filekit-core:build
--
--# Run tests
--./gradlew test
--
--# Run specific platform tests
--./gradlew :filekit-core:jvmTest
--./gradlew :filekit-core:wasmJsTest
--./gradlew :filekit-core:iosSimulatorArm64Test
--
--# Clean build
--./gradlew clean
--
--# Publish to Maven Central
--./gradlew publishToSonatype
--```
--
--## Project Architecture
--
--FileKit is a Kotlin Multiplatform library for cross-platform file operations. The codebase is organized into several modules:
--
--### Core Modules
--- **filekit-core**: Core file operations and PlatformFile abstraction
--- **filekit-dialogs**: File picker and save dialogs 
--- **filekit-dialogs-compose**: Compose Multiplatform integration
--- **filekit-coil**: Coil image loading integration
--
--### Platform Structure
--The library uses Kotlin Multiplatform's hierarchical structure:
--- `commonMain`: Shared code across all platforms
--- `webMain`: Web-specific implementations (JS/WASM)
--- `nonWebMain`: Non-web platforms (Android, iOS, JVM)
--- `jvmAndNativeMain`: JVM and native platforms
--- Platform-specific: `androidMain`, `iosMain`, `jvmMain`, etc.
--
--### Key Concepts
--- **PlatformFile**: Core abstraction for files across platforms, with platform-specific implementations
--- **FileKit**: Main API class with platform-specific implementations
--- **BookmarkData**: Persistent file access on non-web platforms
--- Platform-specific exception handling and utilities
--
--### Testing
--Tests are organized by platform with shared test resources in `nonWebTest/resources/`. iOS tests require copying test resources via the `copyTestResourcesToIos` task.
--
--## Development Notes
--
--- Uses explicit API mode (`explicitApi()`)
--- Supports Android (minSdk 24), iOS, macOS, JVM, JS, and WASM
--- Version managed in `gradle.properties` (VERSION_NAME=0.16.0)
--- Uses Gradle version catalogs in `gradle/libs.versions.toml`
--
--## Shared agent guidance
--
--Read `AGENTS.md` before working in this repository. Its `## Agent skills` section is the shared source of truth for Codex and Claude.
+@@ -176,6 +176,19 @@ class PlatformFileAndroidTest {
+         assertEquals(listOf("note.txt"), notes.list().map { it.name })
+     }
+ 
++    @Test
++    fun PlatformFile_walkUriTree_yieldsDescendantsAndCountsUnknownSizesAsZero() = runBlocking {
++        val treeUri = Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADocuments")
++        ShadowContentResolver.registerProviderInternal(
++            "com.android.externalstorage.documents",
++            createNestedTreeContentProvider(),
++        )
++        val base = PlatformFile(treeUri)
++
++        assertEquals(listOf("Notes", "note.txt", "parent-only.txt"), base.walk().map { it.name }.toList())
++        assertEquals(0L, base.sizeRecursively())
++    }
++
+     @Test
+     fun createDirectories_onNestedUriChild_createsMissingParents() {
+         val treeUri = Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADocuments")
+```
+
+**File**: `filekit-core/src/androidMain/kotlin/io/github/vinceglb/filekit/PlatformFile.android.kt` (modified, +7/-2)
+```diff
+@@ -1162,16 +1162,21 @@ private fun Uri.toFileOrNull(): File? {
+ }
+ 
+ // lstat/remove work on API 21 and operate on the link itself, including a dangling link.
+-internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
++internal actual fun PlatformFile.isSymbolicLink(): Boolean {
+     val file = (androidFile as? AndroidFile.FileWrapper)?.file ?: return false
+     val metadata = try {
+         Os.lstat(file.absolutePath)
+     } catch (error: ErrnoException) {
+         if (error.errno == OsConstants.ENOENT || error.errno == OsConstants.ENOTDIR) return false
+         throw IOException("Could not inspect ${file.absolutePath}", error)
+     }
+-    if (!OsConstants.S_ISLNK(metadata.st_mode)) return false
++    return OsConstants.S_ISLNK(metadata.st_mode)
++}
++
++internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
++    if (!isSymbolicLink()) return false
+ 
++    val file = (androidFile as AndroidFile.FileWrapper).file
+     try {
+         Os.remove(file.absolutePath)
+     } catch (error: ErrnoException) {
+```
+
+**File**: `filekit-core/src/appleMain/kotlin/io/github/vinceglb/filekit/PlatformFile.apple.kt` (modified, +8/-2)
+```diff
+@@ -435,11 +435,17 @@ private fun NSError?.toBookmarkResolutionException(): BookmarkResolutionExceptio
+ // attributesOfItemAtPath does not resolve the link, so a symlink reports its own type here rather
+ // than the type of whatever it points at.
+ @OptIn(ExperimentalForeignApi::class)
+-internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
++internal actual fun PlatformFile.isSymbolicLink(): Boolean {
+     val path = nsUrl.path ?: return false
+     val attributes = NSFileManager.defaultManager.attributesOfItemAtPath(path, error = null)
+-    if (attributes?.get(NSFileType) != NSFileTypeSymbolicLink) return false
++    return attributes?.get(NSFileType) == NSFileTypeSymbolicLink
++}
++
++@OptIn(ExperimentalForeignApi::class)
++internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
++    if (!isSymbolicLink()) return false
+ 
++    val path = nsUrl.path ?: return false
+     if (unlink(path) != 0) {
+         throw IOException("Could not unlink $path: ${strerror(errno)?.toKString()}")
+     }
+```
+
+**File**: `filekit-core/src/commonMain/kotlin/io/github/vinceglb/filekit/PlatformFile.kt` (modified, +62/-0)
+```diff
+@@ -147,3 +147,65 @@ public inline fun <T> PlatformFile.withScopedAccess(block: (PlatformFile) -> T):
+         }
+     }
+ }
++
++/**
++ * Lazily walks this directory recursively (depth-first). Yields files and subdirectories, but not
++ * the starting directory itself. If this is a regular file or a symbolic link, yields only this
++ * entry.
++ *
++ * Symbolic links (and Windows reparse points) are yielded but never followed, including this
++ * entry. Errors throw, like [list]. On non-web platforms the walk does blocking I/O, so iterate it
++ * on an IO dispatcher. On Apple platforms, keep security-scoped access to the root active while
++ * iterating (see [withScopedAccess]).
++ *
++ * @param maxDepth The maximum depth to walk. `1` yields only the direct children. Must be positive.
++ * @return A lazy [Sequence] of the entries in this tree.
++ */
++public fun PlatformFile.walk(maxDepth: Int = Int.MAX_VALUE): Sequence<PlatformFile> {
++    require(maxDepth > 0) { "maxDepth must be positive, but was $maxDepth." }
++    return sequence {
++        if (isSymbolicLink() || isRegularFile()) yield(this@walk) else yieldDescendants(this@walk, maxDepth)
++    }
++}
++
++private suspend fun SequenceScope<PlatformFile>.yieldDescendants(directory: PlatformFile, maxDepth: Int) {
++    directory.list().forEach { child ->
++        yield(child)
++        // Check for a link first: isDirectory() resolves the link and touches its target.
++        if (maxDepth > 1 && !child.isSymbolicLink() && child.isDirectory()) {
++            yieldDescendants(child, maxDepth - 1)
++        }
++    }
++}
++
++/**
++ * Returns the total size in bytes of all regular files in this tree. For a regular file, returns
++ * its own size.
++ *
++ * Symbolic links, including this entry, are never followed and add nothing to the total. Files
++ * whose size is unknown (for example, from Android document providers that don't report one) count
++ * as 0. Errors throw, like [list]. Runs on `Dispatchers.IO` on non-web platforms.
++ */
++public expect suspend fun PlatformFile.sizeRecursively(): Long
++
++internal fun PlatformFile.computeSizeRecursively(): Long = withScopedAccess {
++    when {
++        isSymbolicLink() -> 0
++        isRegularFile() -> size().coerceAtLeast(0)
++        else -> sizeOfDescendants()
++    }
++}
++
++private fun PlatformFile.sizeOfDescendants(): Long = list().sumOf { child ->
++    when {
++        child.isSymbolicLink() -> 0
++        child.isDirectory() -> child.sizeOfDescendants()
++        else -> child.size().coerceAtLeast(0)
++    }
++}
++
++/**
++ * Returns `true` if this entry is a symbolic link or a Windows reparse point, without following it.
++ * Returns `false` for missing paths and on platforms without links.
++ */
++internal expect fun PlatformFile.isSymbolicLink(): Boolean
+```
+
+**File**: `filekit-core/src/jvmMain/kotlin/io/github/vinceglb/filekit/PlatformFile.jvm.kt` (modified, +14/-13)
+```diff
+@@ -187,20 +187,21 @@ public actual fun PlatformFile.Companion.resolveBookmarkData(
+     )
+ }
+ 
+-internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
+-    val isLink = if (Platform.isWindows()) {
+-        // Files.isSymbolicLink excludes directory junctions. Inspect the entry's reparse attribute.
+-        val attributes = Kernel32.INSTANCE.GetFileAttributes(file.absolutePath)
+-        if (attributes == INVALID_FILE_ATTRIBUTES) {
+-            val error = Kernel32.INSTANCE.GetLastError()
+-            if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND) return false
+-            throw IOException("Could not inspect ${file.absolutePath}: Windows error $error")
+-        }
+-        (attributes and FILE_ATTRIBUTE_REPARSE_POINT) != 0
+-    } else {
+-        Files.isSymbolicLink(file.toPath())
++internal actual fun PlatformFile.isSymbolicLink(): Boolean {
++    if (!Platform.isWindows()) return Files.isSymbolicLink(file.toPath())
++
++    // Files.isSymbolicLink excludes directory junctions. Inspect the entry's reparse attribute.
++    val attributes = Kernel32.INSTANCE.GetFileAttributes(file.absolutePath)
++    if (attributes == INVALID_FILE_ATTRIBUTES) {
++        val error = Kernel32.INSTANCE.GetLastError()
++        if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND) return false
++        throw IOException("Could not inspect ${file.absolutePath}: Windows error $error")
+     }
+-    if (!isLink) return false
++    return (attributes and FILE_ATTRIBUTE_REPARSE_POINT) != 0
++}
++
++internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
++    if (!isSymbolicLink()) return false
+ 
+     // Unlike kotlinx-io's delete, this does not check whether the link's target exists first.
+     Files.delete(file.toPath())
+```
+
+**File**: `filekit-core/src/jvmTest/kotlin/io/github/vinceglb/filekit/PlatformFileJvmTest.kt` (modified, +27/-0)
+```diff
+@@ -43,6 +43,33 @@ class PlatformFileJvmTest {
+         }
+     }
+ 
++    @Test
++    fun PlatformFile_walk_symbolicLinks_areNotFollowed() = runTest {
++        val tempRoot = createTempDirectory("filekit-walk-cycle")
++        try {
++            val outside = tempRoot.resolve("outside").createDirectory()
++            outside.resolve("big.txt").writeText("not counted")
++            val tree = tempRoot.resolve("tree").createDirectory()
++            tree.resolve("file.txt").writeText("abc")
++            Files.createSymbolicLink(tree.resolve("loop"), tree)
++            Files.createSymbolicLink(tree.resolve("link.txt"), outside.resolve("big.txt"))
++
++            val root = PlatformFile(tree.toFile())
++
++            assertEquals(setOf("file.txt", "loop", "link.txt"), root.walk().map { it.name }.toSet())
++            assertEquals(3L, root.sizeRecursively())
++
++            // A link passed as the receiver is not followed either.
++            for (name in listOf("loop", "link.txt")) {
++                val link = PlatformFile(tree.resolve(name).toFile())
++                assertEquals(listOf(name), link.walk().map { it.name }.toList())
++                assertEquals(0L, link.sizeRecursively())
++            }
++        } finally {
++            tempRoot.toFile().deleteRecursively()
++        }
++    }
++
+     private val resourceDirectory = PlatformFile(Path("src/nonWebTest/resources"))
+     private val textFile = PlatformFile(resourceDirectory, "hello.txt")
+     private val imageFile = PlatformFile(resourceDirectory, "compose-logo.png")
+```
+
+**File**: `filekit-core/src/linuxMain/kotlin/io/github/vinceglb/filekit/PlatformFile.linux.kt` (modified, +9/-3)
+```diff
+@@ -307,17 +307,23 @@ public actual fun PlatformFile.Companion.resolveBookmarkData(
+ 
+ // lstat, not stat: stat would resolve the link and report on its target.
+ @OptIn(ExperimentalForeignApi::class)
+-internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean = memScoped {
++internal actual fun PlatformFile.isSymbolicLink(): Boolean = memScoped {
+     val path = absolutePath()
+     val statBuf = alloc<stat>()
+     if (lstat(path, statBuf.ptr) != 0) {
+         if (errno == ENOENT || errno == ENOTDIR) return@memScoped false
+         throw IOException("Could not inspect $path: ${strerror(errno)?.toKString()}")
+     }
+-    if ((statBuf.st_mode.toInt() and S_IFMT) != S_IFLNK) return@memScoped false
++    (statBuf.st_mode.toInt() and S_IFMT) == S_IFLNK
++}
++
++@OptIn(ExperimentalForeignApi::class)
++internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
++    if (!isSymbolicLink()) return false
+ 
++    val path = absolutePath()
+     if (unlink(path) != 0) {
+         throw IOException("Could not unlink $path: ${strerror(errno)?.toKString()}")
+     }
+-    true
++    return true
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #684** (2026-10-22): ✨ Add PlatformFile.walk() and sizeRecursively() (@vinceglb)
+- **PR #683** (2026-10-22): 👷 Run JS and Wasm browser tests in CI (@vinceglb)
 - **PR #682** (2026-10-20): 📝 Use AGENTS.md as the single agent guide (@vinceglb)
 - **PR #681** (2026-10-20): ⬆️ Update Android targetSdk to 37 and minSdk to 24 (@vinceglb)
 - **PR #680** (2026-10-20): ⬆️ Update GitHub Actions versions (@vinceglb)
 - **PR #679** (2026-10-20): ⬆️ Update Kotlin and Gradle dependencies (@vinceglb)
-- **PR #678** (closed): Bump compose-multiplatform from 1.12.1 to 1.12.2 (@dependabot[bot])
-- **PR #676** (closed): Bump org.jetbrains.compose.material3:material3 from 1.12.0-alpha03 to 1.13.0-alpha02 (@dependabot[bot])
 
 ---
 
@@ -1264,28 +1757,42 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 📝 Use AGENTS.md as the single agent guide
+## X. 🔀 Merge pull request #684 from vinceglb/feature/walk-size-recursively
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vinceglb/FileKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/core/platform-file.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vinceglb/FileKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `808aaa71`: 📝 Use AGENTS.md as the single agent guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `75099ba5`: 🔀 Merge pull request #684 from vinceglb/feature/walk-size-recursively. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/core/platform-file.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-FileKit is split across multiplatform modules: `filekit-core` holds the `PlatformFile` abstraction and file operations, while dialogs, Compose bindings, and Coil integration live in `filekit-dialogs`, `filekit-dialogs-compose`, and `filekit-coil`. Source sets follow a hierarchy of intermediate sets (`nonWebMain`, `jvmAndNativeMain`, `webMain`, `mobileMain`, `nonAndroidMain`, …) above the platform sets; put code in the widest set whose platforms share the implementation. Platform tests live in sibling `src/*Test` directories, with shared test fixtures in `src/nonWebTest/resources/`. The sample app lives under `sample/` (`shared` plus one app module per platform); update it alongside library changes when user-facing behaviour shifts. User documentation is the Mintlify site in `docs/`; `documentation-v0.8.8.md` is a legacy snapshot.
+### Walking a directory tree
+
+`walk()` lazily yields every file and subdirectory below a directory, depth-first, without the directory itself. `sizeRecursively()` returns the total size of the regular files in the tree:
+
+```kotlin
+val fileCount = directory.walk().count { it.isRegularFile() }
+val children = directory.walk(maxDepth = 1).toList() // like list()
+val totalBytes: Long = directory.sizeRecursively()
+```
+
+- Symbolic links are listed but never followed, so a link can't cause an infinite loop. They add nothing to `sizeRecursively()`. This also applies when you call either function on a link.
+- On a regular file, `walk()` yields only that file and `sizeRecursively()` returns its size. `maxDepth` must be positive.
+- `walk()` is synchronous, like `list()`: on non-web platforms, iterate it on `Dispatchers.IO`. `sizeRecursively()` is a suspend function that switches to `Dispatchers.IO` itself on non-web platforms.
+- **Android**: each subdirectory of a document tree costs provider queries, so large trees are slow. Files whose provider doesn't report a size count as 0.
+- **Apple platforms**: keep security-scoped access to the root active while iterating `walk()`, for example inside 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-FileKit is split across multiplatform modules: `filekit-core` contains platform-agnostic APIs, while dialogs, Compose bindings, and Coil integration live in `filekit-dialogs`, `filekit-dialogs-compose`, and `filekit-coil`. Shared source sets live under `src/*Main`, with platform tests in sibling `src/*Test` directories. Sample apps under `samples/` (`sample-core`, `sample-compose`, `sample-file-explorer`) demonstrate integration patterns; update them alongside library changes when user-facing behaviour shifts. API docs and release notes are tracked in `docs/` and `documentation-v0.8.8.md`.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `808aaa71` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `75099ba5` are properly handled with clean fallback behavior.
