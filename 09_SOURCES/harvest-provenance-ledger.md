@@ -5037,3 +5037,4 @@ Every entry in this ledger must capture:
 | `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `dd471b03` | Multi-dimensional audit evidence | 2026-10-25T22:48:13.517Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `ba036280` | Multi-dimensional audit evidence | 2026-10-25T22:54:40.127Z |
 | `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-10-25T22:56:44.005Z |
+| `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-25T23:04:47.739Z |
