@@ -1465,8 +1465,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "be3cc6c226a0774e7efabef60fc8c6fde375349d928723b045cc64ad23d16142",
-    "lastHarvestedAt": "2026-10-20T17:38:53.554Z",
+    "contentHash": "aa7294eec6d07e53a111e3c852964c329ea17a6d692286afa34eb1ebe576272e",
+    "lastHarvestedAt": "2026-10-25T12:38:58.001Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8"
   },
   "amplifthq-opentag": {
@@ -3133,10 +3133,10 @@
     "repository": "sayanarijit/xplr",
     "platform": "github",
     "sourceUrl": "https://github.com/sayanarijit/xplr",
-    "sourceVersion": "f1dbbfa5",
+    "sourceVersion": "f692d972",
     "license": "MIT",
-    "contentHash": "cac7dce3f88d3069e7ecbb971a9fc5a5a26fe8b52e3dbbb6d567fbdaa589fed5",
-    "lastHarvestedAt": "2026-10-18T22:48:00.861Z",
+    "contentHash": "8cb447827e7c562f39cb9ee0cf253dcc48c86d134a1602f12a9df7b883d067fd",
+    "lastHarvestedAt": "2026-10-25T12:39:00.585Z",
     "learningId": "learn-github-sayanarijit-xplr"
   },
   "danilowoz-react-content-loader": {

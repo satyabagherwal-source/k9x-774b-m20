@@ -4819,3 +4819,5 @@ Every entry in this ledger must capture:
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `1805a79d` | Multi-dimensional audit evidence | 2026-10-25T12:32:01.290Z |
 | `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-10-25T12:32:05.775Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `058a1e8f` | Multi-dimensional audit evidence | 2026-10-25T12:32:07.155Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-25T12:38:58.001Z |
+| `learn-github-sayanarijit-xplr` | `https://github.com/sayanarijit/xplr` | `f692d972` | Multi-dimensional audit evidence | 2026-10-25T12:39:00.585Z |

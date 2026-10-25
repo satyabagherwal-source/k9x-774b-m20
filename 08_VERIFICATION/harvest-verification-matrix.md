@@ -4812,3 +4812,5 @@
 | `CYCLE-20261025-4VT3` | `2026-10-25T12:32:01.287Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md` | Yes (`6fdc7cfb...`) |
 | `CYCLE-20261025-4Z9O` | `2026-10-25T12:32:05.772Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4290, Rule 4291, Rule 4292` | Yes (`3582f7c9...`) |
 | `CYCLE-20261025-50C0` | `2026-10-25T12:32:07.152Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4293` | Yes (`ddd10d71...`) |
+| `CYCLE-20261025-DTCE` | `2026-10-25T12:38:57.998Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`aa7294ee...`) |
+| `CYCLE-20261025-DVC5` | `2026-10-25T12:39:00.581Z` | `sayanarijit/xplr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4294` | Yes (`8cb44782...`) |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-LP9H",
-    "timestamp": "2026-10-22T16:10:02.405Z",
-    "repository": "RevenueCat/purchases-ios",
-    "learningId": "learn-github-revenuecat-purchases-ios",
-    "contentHash": "6e808ec9d095441ad1e606239807aa339ce26ebe893204bfa1159c5866fe3d53",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-LQEZ",
-    "timestamp": "2026-10-22T16:10:03.899Z",
-    "repository": "actions/actions-runner-controller",
-    "learningId": "learn-github-actions-actions-runner-controller",
-    "contentHash": "9b296cb345141b6d1b974c1ae927613630eaae147067e712a7f9fc52eda0437e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-LV60",
     "timestamp": "2026-10-22T16:10:10.056Z",
     "repository": "StarRocks/starrocks",
@@ -7490,6 +7460,36 @@
     "repository": "databendlabs/databend",
     "learningId": "learn-github-databendlabs-databend",
     "contentHash": "ddd10d71b7df8a505d68bfbb07d67f5853fc03965df940a20bb8889796a9d0cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-DTCE",
+    "timestamp": "2026-10-25T12:38:57.998Z",
+    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+    "contentHash": "aa7294eec6d07e53a111e3c852964c329ea17a6d692286afa34eb1ebe576272e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-DVC5",
+    "timestamp": "2026-10-25T12:39:00.581Z",
+    "repository": "sayanarijit/xplr",
+    "learningId": "learn-github-sayanarijit-xplr",
+    "contentHash": "8cb447827e7c562f39cb9ee0cf253dcc48c86d134a1602f12a9df7b883d067fd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

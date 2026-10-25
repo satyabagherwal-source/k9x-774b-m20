@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T12:32:07.170Z",
+  "last_updated": "2026-10-25T12:39:00.594Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2272,14 +2272,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "content_hash": "be3cc6c226a0774e7efabef60fc8c6fde375349d928723b045cc64ad23d16142",
-      "verified_at": "2026-10-20T17:38:53.562Z",
+      "content_hash": "aa7294eec6d07e53a111e3c852964c329ea17a6d692286afa34eb1ebe576272e",
+      "verified_at": "2026-10-25T12:38:58.009Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:38:53.562Z"
+      "last_updated": "2026-10-25T12:38:58.009Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",
@@ -4821,14 +4821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sayanarijit-xplr",
-      "content_hash": "cac7dce3f88d3069e7ecbb971a9fc5a5a26fe8b52e3dbbb6d567fbdaa589fed5",
-      "verified_at": "2026-10-18T22:48:00.869Z",
+      "content_hash": "8cb447827e7c562f39cb9ee0cf253dcc48c86d134a1602f12a9df7b883d067fd",
+      "verified_at": "2026-10-25T12:39:00.593Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:48:00.869Z"
+      "last_updated": "2026-10-25T12:39:00.593Z"
     },
     "danilowoz/react-content-loader": {
       "repository": "danilowoz/react-content-loader",

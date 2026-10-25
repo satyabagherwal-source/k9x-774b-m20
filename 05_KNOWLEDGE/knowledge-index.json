@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T12:32:07.097Z",
+  "last_updated": "2026-10-25T12:39:00.514Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43403,14 +43403,19 @@
       "slug": "sayanarijit-xplr",
       "platform": "github",
       "source_url": "https://github.com/sayanarijit/xplr",
-      "source_version": "f1dbbfa5",
-      "content_hash": "cac7dce3f88d3069e7ecbb971a9fc5a5a26fe8b52e3dbbb6d567fbdaa589fed5",
+      "source_version": "f692d972",
+      "content_hash": "8cb447827e7c562f39cb9ee0cf253dcc48c86d134a1602f12a9df7b883d067fd",
       "dossier_path": "07_PROJECT_LEARNING/sayanarijit-xplr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sayanarijit-xplr-learnings.md",
       "promoted_rules": [
         {
           "number": 1801,
           "title": "Redraw terminal screen after clearing (#786)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4294,
+          "title": "cursor position related crash (#791)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -43419,7 +43424,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:48:00.824Z",
+      "verified_at": "2026-10-25T12:39:00.495Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60513,7 +60518,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
-      "content_hash": "be3cc6c226a0774e7efabef60fc8c6fde375349d928723b045cc64ad23d16142",
+      "content_hash": "aa7294eec6d07e53a111e3c852964c329ea17a6d692286afa34eb1ebe576272e",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "promoted_rules": [],
@@ -60522,7 +60527,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:38:53.464Z",
+      "verified_at": "2026-10-25T12:38:57.916Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122963,6 +122968,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T12:32:07.086Z"
+    },
+    "rule-4294": {
+      "learning_id": "rule-4294",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4294,
+      "title": "cursor position related crash (#791)",
+      "source_url": "https://github.com/sayanarijit/xplr",
+      "source_version": "f692d972",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:39:00.495Z"
     }
   },
   "aliases": {

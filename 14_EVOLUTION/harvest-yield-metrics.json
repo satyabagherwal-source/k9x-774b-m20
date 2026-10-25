@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T12:32:07.160Z",
-  "total_cycles_completed": 4789,
-  "total_learnings_persisted": 4789,
-  "total_rules_promoted": 4169,
+  "last_updated": "2026-10-25T12:39:00.590Z",
+  "total_cycles_completed": 4791,
+  "total_learnings_persisted": 4791,
+  "total_rules_promoted": 4170,
   "history": [
-    {
-      "timestamp": "2026-10-25T02:36:19.162Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T02:36:21.640Z",
-      "repository": "sqlpage/SQLPage",
-      "learningId": "learn-github-sqlpage-sqlpage",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T02:42:37.001Z",
       "repository": "keybase/client",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T12:32:07.160Z",
       "repository": "databendlabs/databend",
       "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T12:38:58.006Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T12:39:00.590Z",
+      "repository": "sayanarijit/xplr",
+      "learningId": "learn-github-sayanarijit-xplr",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

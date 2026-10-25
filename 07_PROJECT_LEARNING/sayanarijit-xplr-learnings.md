@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sayanarijit-xplr-learnings.md`  
 > **Source**: github ([https://github.com/sayanarijit/xplr](https://github.com/sayanarijit/xplr))  
-> **Source Version**: `f1dbbfa5`  
+> **Source Version**: `f692d972`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:48:00.693Z  
+> **Timestamp**: 2026-10-25T12:39:00.081Z  
 > **Learning ID**: `learn-github-sayanarijit-xplr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sayanarijit-xplr-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sayanarijit/xplr](https://github.com/sayanarijit/xplr))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:48:00.688Z  
+> **Harvest Timestamp**: 2026-10-25T12:39:00.074Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A hackable, minimal, fast TUI file explorer
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4842 stars
+- **Stars / Engagement**: 4846 stars
 
 ---
 
@@ -54,7 +54,6 @@ use crate::ui::Layout;
 use crate::ui::Style;
 use crate::ui::WrapOptions;
 use anyhow::Result;
-use lazy_static::lazy_static;
 use lscolors::LsColors;
 use mlua::Error as LuaError;
 use mlua::Lua;
@@ -69,10 +68,17 @@ use serde_yaml as yaml;
 use std::borrow::Cow;
 use std::path::PathBuf;
 use std::process::Command;
+use std::sync::LazyLock;
 
-lazy_static! {
-    static ref LS_COLORS: LsColors = LsColors::from_env().unwrap_or_default();
-}
+// NB: LsColors::from_env() falls back to built-in defaults when the
+// variable is missing, and from_string("") keeps those defaults when
+// it is empty, both of which would override the user's own style
+// config. Start empty unless the user actually set LS_COLORS.
+static LS_COLORS: LazyLock<LsColors> =
+    LazyLock::new(|| match std::env::var("LS_COLORS") {
+        Ok(s) if !s.is_empty() => LsColors::from_string(&s),
+        _ => LsColors::empty(),
+    });
 
 /// Get the xplr version details.
 ///
@@ -407,31 +413,19 @@ pub fn absolute(util: Table, lua: &Lua) -> Result<Table> {
 ///
 /// Type: function( path:string, options:table|nil ) -> path:string
 ///
-/// Options type: { base:string|nil, with_prefix_dots:bookean|nil, without_suffix_dots:boolean|nil }
-///
-/// - If `base` path is given, the path will be relative to it.
-/// - If `with_prefix_dots` is true, the path will always start with dots `..` / `.`
-/// - If `without_suffix_dots` is true, the name will be visible instead of dots `..` / `.`
-///
-/// Example:
-///
-/// ```lua
-/// xplr.util.relative_to("/present/working/directory")
-/// -- "."
-///
-/// xplr
+/// Options type: { base:string|nil, with_prefix_dots:bookean|nil, without_suffix_dots:boolean
 ```
 
 ### Core Architecture Module: `benches/criterion.rs`
 ```
 use crate::app;
 use crate::ui;
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 use std::fs;
+use tui::Terminal;
 use tui::backend::CrosstermBackend;
 use tui::crossterm::execute;
 use tui::crossterm::terminal as term;
-use tui::Terminal;
 use xplr::runner::get_tty;
 use xplr::*;
 
@@ -523,8 +517,9 @@ fn draw_benchmark(c: &mut Criterion) {
         fs::File::create(std::path::Path::new(PWD).join(i.to_string())).unwrap();
     });
 
+    let (tx, _) = std::sync::mpsc::channel();
     let lua = mlua::Lua::new();
-    let mut ui = ui::UI::new(&lua);
+    let mut ui = ui::UI::new(&lua, tx);
     let mut app =
         app::App::create("xplr".into(), None, PWD.into(), &lua, None, [].into())
             .expect("failed to create app");
@@ -592,6 +587,9 @@ use crate::dirs;
 use crate::explorer;
 use crate::input::{InputOperation, Key};
 use crate::lua;
+pub use crate::msg::in_::ExternalMsg;
+pub use crate::msg::in_::InternalMsg;
+pub use crate::msg::in_::MsgIn;
 pub use crate::msg::in_::external::Command;
 pub use crate::msg::in_::external::ExplorerConfig;
 pub use crate::msg::in_::external::NodeFilter;
@@ -599,16 +597,13 @@ pub use crate::msg::in_::external::NodeFilterApplicable;
 use crate::msg::in_::external::NodeSearcherApplicable;
 pub use crate::msg::in_::external::NodeSorter;
 pub use crate::msg::in_::external::NodeSorterApplicable;
-pub use crate::msg::in_::ExternalMsg;
-pub use crate::msg::in_::InternalMsg;
-pub use crate::msg::in_::MsgIn;
 pub use crate::msg::out::MsgOut;
 pub use crate::node::Node;
 pub use crate::node::ResolvedNode;
 pub use crate::pipe::Pipe;
 use crate::search::SearchAlgorithm;
 use crate::ui::Layout;
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use gethostname::gethostname;
 use indexmap::set::IndexSet;
 use path_absolutize::*;
@@ -886,18 +881,10 @@ impl App {
             Some(path)
         } else if let Some(dir) = dirs::config_dir() {
             let path = dir.join("xplr/init.lua");
-            if path.exists() {
-                Some(path)
-            } else {
-                None
-            }
+            if path.exists() { Some(path) } else { None }
         } else {
             let path = PathBuf::from("/etc/xplr/init.lua");
-            if path.exists() {
-                Some(path)
-            } else {
-                None
-            }
+            if path.exists() { Some(path) } else { None }
         };
 
         let config_files = config_file.into_iter().chain(extra_config_files);
@@ -947,7 +934,10 @@ impl App {
         };
 
         let pid = std::process::id();
- 
+        let mut session_path = dirs::runtime_dir()
+            .join("xplr")
+            .join("session")
+       
 ```
 
 ### Core Architecture Module: `src/bin/xplr.rs`
@@ -955,7 +945,6 @@ impl App {
 #![allow(clippy::too_many_arguments)]
 
 use std::env;
-use std::io::Write;
 use xplr::cli::{self, Cli};
 use xplr::runner;
 
@@ -1025,11 +1014,7 @@ fn main() {
     } else {
         match runner::from_cli(cli).and_then(|a| a.run()) {
             Ok(Some(out)) => {
-                let mut stdout = std::io::stdout().lock();
-                write!(stdout, "{out}").unwrap_or_else(|err| {
-                    eprintln!("error: {err}");
-                    std::process::exit(1);
-                })
+                print!("{out}")
             }
             Ok(None) => {}
             Err(err) => {
@@ -1048,7 +1033,7 @@ fn main() {
 ### Core Architecture Module: `src/cli.rs`
 ```
 use crate::{app, yaml};
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use app::ExternalMsg;
 use path_absolutize::*;
 use serde_json as json;
@@ -1276,12 +1261,13 @@ fn fmt_msg_in(args: Vec<String>) -> Result<String> {
 
 use crate::app;
 use crate::lua;
-use crate::ui::block;
-use crate::ui::string_to_text;
 use crate::ui::Constraint;
 use crate::ui::ContentRendererArg;
 use crate::ui::UI;
+use crate::ui::block;
+use crate::ui::string_to_text;
 use serde::{Deserialize, Serialize};
+use tui::Frame;
 use tui::layout::Constraint as TuiConstraint;
 use tui::layout::Rect as TuiRect;
 use tui::widgets::Cell;
@@ -1290,7 +1276,6 @@ use tui::widgets::ListItem;
 use tui::widgets::Paragraph;
 use tui::widgets::Row;
 use tui::widgets::Table;
-use tui::Frame;
 
 /// A cursed enum from crate::ui.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -1966,17 +1951,14 @@ fn now() -> OffsetDateTime {
 
 ### Core Architecture Module: `src/dirs.rs`
 ```
-use std::{env, path::PathBuf};
+use std::{env, path::PathBuf, sync::LazyLock};
 
-use lazy_static::lazy_static;
 use xdg::BaseDirectories;
 
-lazy_static! {
-    pub static ref BASE_DIRS: BaseDirectories = BaseDirectories::new();
-}
+pub static BASE_DIRS: LazyLock<BaseDirectories> = LazyLock::new(BaseDirectories::new);
 
 pub fn home_dir() -> Option<PathBuf> {
-    home::home_dir()
+    env::home_dir()
 }
 
 pub fn config_dir() -> Option<PathBuf> {
@@ -2019,318 +2001,513 @@ pub fn runtime_dir() -> PathBuf {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0cf90f20` (2026-09-22)
-**Commit Message**: fix: Redraw terminal screen after clearing (#786)
+### Incident Patch 1: `5b71464a` (2026-10-23)
+**Commit Message**: Fix cursor position related crash (#791)
 
-rather than only clearing the screen and leaving it in that state. This
-behavior was introduced in eb905ba2, apparently as a side-effect to
-handling pipe crashes. The result of it is that opening and closing an
-alt-screen application such as `less` from within `xplr` leaves the
-terminal surface blank, without the ability to redraw the screen.
-Subsequent updates of UI elements (such as selecting another dir entry)
-redraw the screen only partially, leaving the UI broken.
+Fixes: https://github.com/sayanarijit/xplr/issues/790
 
-I checked the upstream sources and `terminal.clear` does perform a full
-redraw, which I think `execute!(...)` does not. I didn't find another
-way to trivially trigger the redraw, so I figured I'll just revert the
-change. The original commit message that introduced this change didn't
-make it obvious to me why this was changed in the first place. The
-`NOTE` merely mentioned the cursor position being stored/restored, but
-that is only part of the functionality that `terminal.clear()`
-implemented.
+Thanks @robertdj for the fix.
 
-
-## Reproducing the issue
-
-To verify, here's the config snippet I use to invoke `less`:
-
-```lua
-xplr.config.modes.builtin.default.key_bindings.on_key["i"] = {
-    help = "to p
-
-**File**: `src/runner.rs` (modified, +18/-33)
+**File**: `src/runner.rs` (modified, +18/-9)
 ```diff
-@@ -80,8 +80,8 @@ fn call(
- 
+@@ -81,7 +81,8 @@ fn call(
          event_reader.stop();
  
--        // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--        execute!(terminal.backend_mut(), term::Clear(term::ClearType::All))?;
-+        // Clear AND redraw the terminal surface
-+        terminal.clear()?;
+         // Clear AND redraw the terminal surface
+-        terminal.clear()?;
++        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
++                                                   // TODO: revert to terminal.clear()?;
          terminal.set_cursor_position((0, 0))?;
          term::disable_raw_mode()?;
          terminal.show_cursor()?;
-@@ -176,8 +176,8 @@ fn call(
-     };
+@@ -177,7 +178,8 @@ fn call(
  
      if !silent {
--        // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--        execute!(terminal.backend_mut(), term::Clear(term::ClearType::All))?;
-+        // Clear AND redraw the terminal surface
-+        terminal.clear()?;
+         // Clear AND redraw the terminal surface
+-        terminal.clear()?;
++        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
++                                                   // TODO: revert to terminal.clear()?;
          term::enable_raw_mode()?;
          terminal.hide_cursor()?;
          event_reader.start();
-@@ -340,8 +340,8 @@ impl Runner {
-         let backend = CrosstermBackend::new(stdout);
+@@ -341,7 +343,8 @@ impl Runner {
          let mut terminal = Terminal::new(backend)?;
          terminal.hide_cursor()?;
--        // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--        execute!(terminal.backend_mut(), term::Clear(term::ClearType::All))?;
-+        // Clear AND redraw the terminal surface
-+        terminal.clear()?;
+         // Clear AND redraw the terminal surface
+-        terminal.clear()?;
++        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
++                                                   // TODO: revert to terminal.clear()?;
  
          // Threads
          pwd_watcher::keep_watching(app.pwd.as_ref(), tx_msg_in.clone(), rx_pwd_watcher)?;
-@@ -416,11 +416,8 @@ impl Runner {
-                             }
+@@ -417,7 +420,8 @@ impl Runner {
  
                              ClearScreen => {
--                                // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--                                execute!(
--                                    terminal.backend_mut(),
--                                    term::Clear(term::ClearType::All)
--                                )?;
-+                                // Clear AND redraw the terminal surface
-+                                terminal.clear()?;
+                                 // Clear AND redraw the terminal surface
+-                                terminal.clear()?;
++                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
++                                                                           // TODO: revert to terminal.clear()?;
                              }
  
                              ScrollUp => {
-@@ -628,11 +625,8 @@ impl Runner {
- 
+@@ -626,7 +630,8 @@ impl Runner {
                                  event_reader.stop();
  
--                                // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--                                execute!(
--                                    terminal.backend_mut(),
--                                    term::Clear(term::ClearType::All)
--                                )?;
-+                                // Clear AND redraw the terminal surface
-+                                terminal.clear()?;
+                                 // Clear AND redraw the terminal surface
+-                                terminal.clear()?;
++                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
++                                                                           // TODO: revert to terminal.clear()?;
                                  terminal.set_cursor_position((0, 0))?;
                                  term::disable_raw_mode()?;
                                  terminal.show_cursor()?;
-@@ -647,11 +641,8 @@ impl Runner {
-                                     }
+@@ -642,7 +647,8 @@ impl Runner {
                                  };
  
--                                // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--                                execute!(
--                                    terminal.backend_mut(),
--                                    term::Clear(term::ClearType::All)
--                                )?;
-+                                // Clear AND redraw the terminal surface
-+                                terminal.clear()?;
+                                 // Clear AND redraw the terminal surface
+-                                terminal.clear()?;
++                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
++                                                                           // TODO: revert to terminal.clear()?;
                                  term::enable_raw_mode()?;
                                  terminal.hide_cursor()?;
                                  event_reader.start();
-@@ -680,11 +671,8 @@ impl Runner {
- 
+@@ -672,7 +678,8 @@ impl Runner {
                                  event_reader.stop();
  
--                                // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--                                execute!(
--                                    terminal.backend_mut(),
--                                    term::Clear(term::ClearType::All)
--                                )?;
-+                                // Clear AND redraw the terminal surface
-+                                terminal.clear()?;
+                                 // Clear AND redraw the terminal surface
+-                                terminal.clear()?;
++                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
++                                                                           // TODO: revert to terminal.clear()?;
                                  terminal.set_cursor_position((0, 0))?;
                                  term::disable_raw_mode()?;
                                  terminal.show_cursor()?;
-@@ -730,11 +718,8 @@ impl Runner {
-                                     }
+@@ -719,7 +726,8 @@ impl Runner {
                                  };
  
--                                // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--                                execute!(
--                                    terminal.backend_mut(),
--                                    term::Clear(term::ClearType::All)
--                                )?;
-+                                // Clear AND redraw the terminal surface
-+                                terminal.clear()?;
+                                 // Clear AND redraw the terminal surface
+-                                terminal.clear()?;
++                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
++                                                                           // TODO: revert to terminal.clear()?;
                                  term::enable_raw_mode()?;
                                  terminal.hide_cursor()?;
                                  event_reader.start();
-@@ -855,8 +840,8 @@ impl Runner {
-             }
-  
+@@ -841,7 +849,8 @@ impl Runner {
+         }
+ 
+         // Clear AND redraw the terminal surface
+-        terminal.clear()?;
++        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
++                                                   // TODO: revert to terminal.clear()?;
+         terminal.set_cursor_position((0, 0))?;
+         execute!(terminal.backend_mut(), term::LeaveAlternateScreen)?;
+         execute!(terminal.backend_mut(), event::DisableMouseCapture).unwrap_or_default();
 ```
 
 ---
 
-### Incident Patch 2: `2dcd3ea1` (2026-09-14)
-**Commit Message**: fix: return Permissions::default() on Windows instead of panicking (#781) (#782)
+### Incident Patch 2: `de54e476` (2026-10-23)
+**Commit Message**: Fix lint
 
-Fixes #781
-
-## Problem
-
-On Windows, `Permissions::from(&Metadata)` unconditionally panics with
-`"Cannot get permissions from metadata on Windows"`. Since `metadata()`
-typically succeeds on Windows, any directory listing crashes xplr — the
-`Permissions::default()` fallback in `node.rs` is never reached because
-the panic fires first.
-
-## Fix
-
-Replace the `panic!` with `Self::default()` in the `#[cfg(windows)]`
-implementation of `From<&Metadata> for Permissions`. This returns
-all-permissions-false (`---------`), matching the existing
-metadata-error fallback style and allowing xplr to degrade gracefully on
-Windows.
-
-## Impact
-
-- Windows users can browse directories without crashes
-- No behavior change on Unix platforms
-- Consistent with the existing `Permissions::default()` fallback already
-used in `node.rs` for metadata errors
-
-**File**: `src/permissions.rs` (modified, +1/-1)
+**File**: `benches/criterion.rs` (modified, +2/-2)
 ```diff
-@@ -76,7 +76,7 @@ impl From<&Metadata> for Permissions {
+@@ -1,11 +1,11 @@
+ use crate::app;
+ use crate::ui;
+-use criterion::{criterion_group, criterion_main, Criterion};
++use criterion::{Criterion, criterion_group, criterion_main};
+ use std::fs;
++use tui::Terminal;
+ use tui::backend::CrosstermBackend;
+ use tui::crossterm::execute;
+ use tui::crossterm::terminal as term;
+-use tui::Terminal;
+ use xplr::runner::get_tty;
+ use xplr::*;
  
-     #[cfg(windows)]
-     fn from(_: &Metadata) -> Self {
--        panic!("Cannot get permissions from metadata on Windows")
-+        Self::default()
+```
+
+**File**: `src/app.rs` (modified, +32/-56)
+```diff
+@@ -6,23 +6,23 @@ use crate::dirs;
+ use crate::explorer;
+ use crate::input::{InputOperation, Key};
+ use crate::lua;
++pub use crate::msg::in_::ExternalMsg;
++pub use crate::msg::in_::InternalMsg;
++pub use crate::msg::in_::MsgIn;
+ pub use crate::msg::in_::external::Command;
+ pub use crate::msg::in_::external::ExplorerConfig;
+ pub use crate::msg::in_::external::NodeFilter;
+ pub use crate::msg::in_::external::NodeFilterApplicable;
+ use crate::msg::in_::external::NodeSearcherApplicable;
+ pub use crate::msg::in_::external::NodeSorter;
+ pub use crate::msg::in_::external::NodeSorterApplicable;
+-pub use crate::msg::in_::ExternalMsg;
+-pub use crate::msg::in_::InternalMsg;
+-pub use crate::msg::in_::MsgIn;
+ pub use crate::msg::out::MsgOut;
+ pub use crate::node::Node;
+ pub use crate::node::ResolvedNode;
+ pub use crate::pipe::Pipe;
+ use crate::search::SearchAlgorithm;
+ use crate::ui::Layout;
+-use anyhow::{bail, Result};
++use anyhow::{Result, bail};
+ use gethostname::gethostname;
+ use indexmap::set::IndexSet;
+ use path_absolutize::*;
+@@ -300,18 +300,10 @@ impl App {
+             Some(path)
+         } else if let Some(dir) = dirs::config_dir() {
+             let path = dir.join("xplr/init.lua");
+-            if path.exists() {
+-                Some(path)
+-            } else {
+-                None
+-            }
++            if path.exists() { Some(path) } else { None }
+         } else {
+             let path = PathBuf::from("/etc/xplr/init.lua");
+-            if path.exists() {
+-                Some(path)
+-            } else {
+-                None
+-            }
++            if path.exists() { Some(path) } else { None }
+         };
+ 
+         let config_files = config_file.into_iter().chain(extra_config_files);
+@@ -392,14 +384,14 @@ impl App {
+ 
+         let hostname = gethostname().to_string_lossy().to_string();
+ 
+-        if let Some(vroot) = vroot.as_ref() {
+-            if !pwd.starts_with(vroot) {
+-                bail!(
+-                    "{:?} is outside of virtual root {:?}",
+-                    pwd.to_string_lossy(),
+-                    vroot.to_string_lossy()
+-                )
+-            }
++        if let Some(vroot) = vroot.as_ref()
++            && !pwd.starts_with(vroot)
++        {
++            bail!(
++                "{:?} is outside of virtual root {:?}",
++                pwd.to_string_lossy(),
++                vroot.to_string_lossy()
++            )
+         }
+ 
+         let pwd = pwd.to_string_lossy().to_string();
+@@ -798,18 +790,14 @@ impl App {
+     pub fn focus_first(mut self, save_history: bool) -> Result<Self> {
+         let mut history = self.history.clone();
+         if let Some(dir) = self.directory_buffer_mut() {
+-            if save_history {
+-                if let Some(n) = dir.focused_node() {
+-                    history = history.push(n.absolute_path.clone());
+-                }
++            if save_history && let Some(n) = dir.focused_node() {
++                history = history.push(n.absolute_path.clone());
+             }
+ 
+             dir.focus = 0;
+ 
+-            if save_history {
+-                if let Some(n) = self.focused_node() {
+-                    self.history = history.push(n.absolute_path.clone())
+-                }
++            if save_history && let Some(n) = self.focused_node() {
++                self.history = history.push(n.absolute_path.clone())
+             }
+         };
+         Ok(self)
+@@ -919,11 +907,7 @@ impl App {
+         let bounded = self.config.general.enforce_bounded_index_navigation;
+         if let Some(dir) = self.directory_buffer_mut() {
+             dir.focus = if (dir.focus + 1) == dir.total {
+-                if bounded {
+-                    dir.focus
+-                } else {
+-                    0
+-                }
++                if bounded { dir.focus } else { 0 }
+             } else {
+                 dir.focus + 1
+             }
+@@ -947,11 +931,7 @@ impl App {
+         {
+             if let Some(idx) = self.selection.get_index_of(n) {
+                 let idx = if idx + 1 == total {
+-                    if bounded {
+-                        idx
+-                    } else {
+-                        0
+-                    }
++                    if bounded { idx } else { 0 }
+                 } else {
+                     idx + 1
+                 };
+@@ -1063,14 +1043,14 @@ impl App {
+     fn change_directory(mut self, dir: &str, save_history: bool) -> Result<Self> {
+         let dir = PathBuf::from(dir).absolutize()?.to_path_buf();
+ 
+-        if let Some(vroot) = &self.vroot.clone() {
+-            if !dir.starts_with(vroot) {
+-                return self.log_error(format!(
+-                    "{:?} is outside of virtual root {:?}",
+-                    dir.to_string_lossy(),
+-                    vroot,
+-                ));
+-            }
++        if let Some(vroot) = &self.vroot.clone()
++            && !dir.starts_with(vroot)
++        {
++            return self.log_error(format!(
++                "{:?} is outside of virtual root {:?}",
++ 
+```
+
+**File**: `src/cli.rs` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ use crate::{app, yaml};
+-use anyhow::{bail, Context, Result};
++use anyhow::{Context, Result, bail};
+ use app::ExternalMsg;
+ use path_absolutize::*;
+ use serde_json as json;
+```
+
+**File**: `src/compat.rs` (modified, +3/-3)
+```diff
+@@ -3,12 +3,13 @@
+ 
+ use crate::app;
+ use crate::lua;
+-use crate::ui::block;
+-use crate::ui::string_to_text;
+ use crate::ui::Constraint;
+ use crate::ui::ContentRendererArg;
+ use crate::ui::UI;
++use crate::ui::block;
++use crate::ui::string_to_text;
+ use serde::{Deserialize, Serialize};
++use tui::Frame;
+ use tui::layout::Constraint as TuiConstraint;
+ use tui::layout::Rect as TuiRect;
+ use tui::widgets::Cell;
+@@ -17,7 +18,6 @@ use tui::widgets::ListItem;
+ use tui::widgets::Paragraph;
+ use tui::widgets::Row;
+ use tui::widgets::Table;
+-use tui::Frame;
+ 
+ /// A cursed enum from crate::ui.
+ #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+```
+
+**File**: `src/lua/mod.rs` (modified, +3/-3)
+```diff
+@@ -1,14 +1,14 @@
+ use crate::app::VERSION;
+ use crate::config::Config;
+ use crate::config::Hooks;
+-use anyhow::bail;
+ use anyhow::Error;
+ use anyhow::Result;
+-use mlua::serde::SerializeOptions;
++use anyhow::bail;
+ use mlua::Lua;
+ use mlua::LuaSerdeExt;
+-use serde::de::DeserializeOwned;
++use mlua::serde::SerializeOptions;
+ use serde::Serialize;
++use serde::de::DeserializeOwned;
+ use std::fs;
+ 
+ pub mod util;
+```
+
+**File**: `src/msg/in_/external.rs` (modified, +1/-5)
+```diff
+@@ -1530,11 +1530,7 @@ impl NodeSorterApplicable {
+                 .map(|s| &s.last_modified)
+                 .cmp(&b.symlink.as_ref().map(|s| &s.last_modified)),
+         };
+-        if self.reverse {
+-            order.reverse()
+-        } else {
+-            order
+-        }
++        if self.reverse { order.reverse() } else { order }
      }
  }
  
 ```
 
+**File**: `src/node.rs` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ use crate::permissions::Permissions;
+-use humansize::{format_size, DECIMAL};
++use humansize::{DECIMAL, format_size};
+ use serde::{Deserialize, Serialize};
+ use std::cmp::Ordering;
+ use std::os::unix::prelude::MetadataExt;
+```
+
+**File**: `src/path.rs` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ use crate::dirs;
+-use anyhow::{bail, Result};
++use anyhow::{Result, bail};
+ use serde::{Deserialize, Serialize};
+ pub use snailquote::escape;
+ use std::path::{Component, Path, PathBuf};
+```
+
 ---
 
-### Incident Patch 3: `a3e119b8` (2026-09-19)
-**Commit Message**: fix: Redraw terminal screen after clearing
+### Incident Patch 3: `2b1c0c11` (2026-10-23)
+**Commit Message**: Fix version handling (#792)
 
-rather than only clearing the screen and leaving it in that state. This
-behavior was introduced in eb905ba2, apparently as a side-effect to
-handling pipe crashes. The result of it is that opening and closing an
-alt-screen application such as `less` from within `xplr` leaves the
-terminal surface blank, without the ability to redraw the screen.
-Subsequent updates of UI elements (such as selecting another dir entry)
-redraw the screen only partially, leaving the UI broken.
+* Fix version handling
 
-**File**: `src/runner.rs` (modified, +18/-33)
+Respect the rule documented in http://xplr.dev/en/upgrade-guide
+
+* edition 2024
+
+**File**: `Cargo.lock` (modified, +5/-5)
 ```diff
-@@ -80,8 +80,8 @@ fn call(
+@@ -362,9 +362,9 @@ dependencies = [
  
-         event_reader.stop();
+ [[package]]
+ name = "cc"
+-version = "1.9.0"
++version = "1.10.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
++checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
+ dependencies = [
+  "find-msvc-tools",
+  "jobserver",
+@@ -3624,9 +3624,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
  
--        // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--        execute!(terminal.backend_mut(), term::Clear(term::ClearType::All))?;
-+        // Clear AND redraw the terminal surface
-+        terminal.clear()?;
-         terminal.set_cursor_position((0, 0))?;
-         term::disable_raw_mode()?;
-         terminal.show_cursor()?;
-@@ -176,8 +176,8 @@ fn call(
-     };
+ [[package]]
+ name = "uuid"
+-version = "1.28.0"
++version = "1.29.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
++checksum = "4a0e2d11620c50695fe12bbbfde96b3477fe606e7284c22d505c12ce51214514"
+ dependencies = [
+  "atomic",
+  "getrandom 0.4.3",
+@@ -4076,7 +4076,7 @@ checksum = "2fb433233f2df9344722454bc7e96465c9d03bff9d77c248f9e7523fe79585b5"
  
-     if !silent {
--        // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--        execute!(terminal.backend_mut(), term::Clear(term::ClearType::All))?;
-+        // Clear AND redraw the terminal surface
-+        terminal.clear()?;
-         term::enable_raw_mode()?;
-         terminal.hide_cursor()?;
-         event_reader.start();
-@@ -340,8 +340,8 @@ impl Runner {
-         let backend = CrosstermBackend::new(stdout);
-         let mut terminal = Terminal::new(backend)?;
-         terminal.hide_cursor()?;
--        // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--        execute!(terminal.backend_mut(), term::Clear(term::ClearType::All))?;
-+        // Clear AND redraw the terminal surface
-+        terminal.clear()?;
+ [[package]]
+ name = "xplr"
+-version = "1.1.3"
++version = "1.2.0"
+ dependencies = [
+  "ansi-to-tui",
+  "anyhow",
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -8,9 +8,9 @@ path = './benches/criterion.rs'
  
-         // Threads
-         pwd_watcher::keep_watching(app.pwd.as_ref(), tx_msg_in.clone(), rx_pwd_watcher)?;
-@@ -416,11 +416,8 @@ impl Runner {
-                             }
+ [package]
+ name = 'xplr'
+-version = '1.1.3'
++version = '1.2.0'
+ authors = ['Arijit Basu <hi@arijitbasu.in>']
+-edition = '2021'
++edition = '2024'
+ description = 'A hackable, minimal, fast TUI file explorer'
+ license = 'MIT'
+ readme = 'README.md'
+```
+
+**File**: `docs/en/src/upgrade-guide.md` (modified, +2/-2)
+```diff
+@@ -41,7 +41,7 @@ e.g.
  
-                             ClearScreen => {
--                                // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--                                execute!(
--                                    terminal.backend_mut(),
--                                    term::Clear(term::ClearType::All)
--                                )?;
-+                                // Clear AND redraw the terminal surface
-+                                terminal.clear()?;
-                             }
+ ### Instructions
  
-                             ScrollUp => {
-@@ -628,11 +625,8 @@ impl Runner {
+-#### [v1.0.0][51] -> [v1.1.3][52]
++#### [v1.0.0][51] -> [v1.2.0][52]
  
-                                 event_reader.stop();
+ - No breaking changes.
+ - Added a new keybinding in "create" mode. Press `:cc` to enter the
+@@ -555,4 +555,4 @@ Else do the following:
+ [49]: https://github.com/sayanarijit/xplr/releases/tag/v0.21.10
+ [50]: https://github.com/lotabout/skim#search-syntax
+ [51]: https://github.com/sayanarijit/xplr/releases/tag/v1.0.0
+-[52]: https://github.com/sayanarijit/xplr/releases/tag/v1.1.3
++[52]: https://github.com/sayanarijit/xplr/releases/tag/v1.2.0
+```
+
+**File**: `src/lua/mod.rs` (modified, +10/-10)
+```diff
+@@ -42,10 +42,10 @@ fn parse_version(version: &str) -> Result<(u16, u16, u16, Option<u16>)> {
  
--                                // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--                                execute!(
--                                    terminal.backend_mut(),
--                                    term::Clear(term::ClearType::All)
--                                )?;
-+                                // Clear AND redraw the terminal surface
-+                                terminal.clear()?;
-                                 terminal.set_cursor_position((0, 0))?;
-                                 term::disable_raw_mode()?;
-                                 terminal.show_cursor()?;
-@@ -647,11 +641,8 @@ impl Runner {
-                                     }
-                                 };
+ /// Check the config version and notify users.
+ pub fn check_version(version: &str, path: &str) -> Result<()> {
+-    let (rmajor, rminor, rbugfix, rbeta) = parse_version(VERSION)?;
+-    let (smajor, sminor, sbugfix, sbeta) = parse_version(version)?;
++    let (rmajor, rminor, _, rbeta) = parse_version(VERSION)?;
++    let (smajor, sminor, _, sbeta) = parse_version(version)?;
  
--                                // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--                                execute!(
--                                    terminal.backend_mut(),
--                                    term::Clear(term::ClearType::All)
--                                )?;
-+                                // Clear AND redraw the terminal surface
-+                                terminal.clear()?;
-                                 term::enable_raw_mode()?;
-                                 terminal.hide_cursor()?;
-                                 event_reader.start();
-@@ -680,11 +671,8 @@ impl Runner {
+-    if rmajor == smajor && rminor >= sminor && rbugfix >= sbugfix && rbeta == sbeta {
++    if rmajor == smajor && rminor >= sminor && rbeta == sbeta {
+         Ok(())
+     } else {
+         bail!(
+@@ -152,24 +152,24 @@ mod tests {
+         assert!(check_version(VERSION, "foo path").is_ok());
  
-                                 event_reader.stop();
+         // Current release if OK
+-        assert!(check_version("1.1.3", "foo path").is_ok());
++        assert!(check_version("1.2.0", "foo path").is_ok());
  
--                                // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--                                execute!(
--                                    terminal.backend_mut(),
--                                    term::Clear(term::ClearType::All)
--                                )?;
-+                                // Clear AND redraw the terminal surface
-+                                terminal.clear()?;
-                                 terminal.set_cursor_position((0, 0))?;
-                                 term::disable_raw_mode()?;
-                                 terminal.show_cursor()?;
-@@ -730,11 +718,8 @@ impl Runner {
-                                     }
-                                 };
+         // Prev major release is ERR
+         assert!(check_version("0.20.4", "foo path").is_err());
  
--                                // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
--                                execute!(
--                                    terminal.backend_mut(),
--                                    term::Clear(term::ClearType::All)
--                                )?;
-+                                // Clear AND redraw the terminal surface
-+                                terminal.clear()?;
-                                 term::enable_raw_mode()?;
-                                 terminal.hide_cursor()?;
-                                 event_reader.start();
-@@ -855,8 +840,8 @@ impl Runner {
-             }
-  
+         // Prev minor release is OK
+-        assert!(check_version("1.0.3", "foo path").is_ok());
++        assert!(check_version("1.1.0", "foo path").is_ok());
+ 
+         // Prev bugfix release is OK
+-        assert!(check_version("1.1.2", "foo path").is_ok());
++        // assert!(check_version("1.2.-1", "foo path").is_ok());
+ 
+         // Next major release is ERR
+-        assert!(check_version("2.0.3", "foo path").is_err());
++        assert!(check_version("2.0.0", "foo path").is_err());
+ 
+         // Next minor release is ERR
+-        assert!(check_version("1.2.3", "foo path").is_err());
++        assert!(check_version("1.3.0", "foo path").is_err());
+ 
+-        // Next bugfix release is ERR (Change when we get to v1)
+-        assert!(check_version("1.1.4", "foo path").is_err());
++        // Next bugfix release is OK
++        assert!(check_version("1.2.1", "foo path").is_ok());
+     }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #793** (2026-10-23): Lazy load image picker (@sayanarijit)
+- **PR #792** (2026-10-23): Fix version handling (@sayanarijit)
+- **PR #791** (2026-10-23): Fix cursor position related crash (@sayanarijit)
+- **PR #789** (2026-10-23): fix: don't override node styles when LS_COLORS is unset or empty (@mmustafasenoglu)
+- **PR #788** (2026-10-23): Image support (@sayanarijit)
 - **PR #787** (2026-09-22): v1.1.3 (@sayanarijit)
-- **PR #786** (2026-09-22): fix: Redraw terminal screen after clearing (@har7an)
-- **PR #785** (2026-09-16): Support installing via cargo binstall (@mmustafasenoglu)
-- **PR #784** (2026-09-15): v1.1.2 (@sayanarijit)
-- **PR #783** (2026-09-15): fix: detach silent commands into their own process group (@mmustafasenoglu)
-- **PR #782** (2026-09-14): fix: return Permissions::default() on Windows instead of panicking (#781) (@mmustafasenoglu)
 
 ---
 
@@ -2350,13 +2527,13 @@ redraw the screen only partially, leaving the UI broken.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Redraw terminal screen after clearing (#786)
+## X. cursor position related crash (#791)
 
 **RULE**:
 When implementing operations in `src/runner.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sayanarijit/xplr. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0cf90f20`: Redraw terminal screen after clearing (#786). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b71464a`: cursor position related crash (#791). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/runner.rs`.
@@ -2364,45 +2541,33 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Clear AND redraw the terminal surface
-        terminal.clear()?;
-        // Clear AND redraw the terminal surface
-        terminal.clear()?;
-        // Clear AND redraw the terminal surface
-        terminal.clear()?;
-                                // Clear AND redraw the terminal surface
-                                terminal.clear()?;
-                                // Clear AND redraw the terminal surface
-                                terminal.clear()?;
-                                // Clear AND redraw the terminal surface
-                                terminal.clear()?;
-                                // Clear AND redraw the terminal surface
-                                terminal.clear()?;
-                                // Clear AND redraw the terminal surface
-                                terminal.clear()?;
+        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
+                                                   // TODO: revert to terminal.clear()?;
+        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
+                                                   // TODO: revert to terminal.clear()?;
+        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
+                                                   // TODO: revert to terminal.clear()?;
+                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
+                                                                           // TODO: revert to terminal.clear()?;
+                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
+                                                                           // TODO: revert to terminal.clear()?;
+                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
+                             
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
-        execute!(terminal.backend_mut(), term::Clear(term::ClearType::All))?;
-        // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
-        execute!(terminal.backend_mut(), term::Clear(term::ClearType::All))?;
-        // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
-        execute!(terminal.backend_mut(), term::Clear(term::ClearType::All))?;
-                                // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
-                                execute!(
-                                    terminal.backend_mut(),
-                                    term::Clear(term::ClearType::All)
-                                )?;
-                                // terminal.clear()?; NOTE: https://github.com/ratatui/ratatui/pull/2694/changes
-                                execute!(
-                                    terminal.backend_mut(),
-                                    term::Clear(term::ClearType::All)
-                                )?;
-                                // terminal.clear()?; NOT
+        terminal.clear()?;
+        terminal.clear()?;
+        terminal.clear()?;
+                                terminal.clear()?;
+                                terminal.clear()?;
+                                terminal.clear()?;
+                                terminal.clear()?;
+                                terminal.clear()?;
+        terminal.clear()?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0cf90f20` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b71464a` are properly handled with clean fallback behavior.
