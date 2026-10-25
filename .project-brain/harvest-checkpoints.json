@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T07:06:22.197Z",
+  "last_updated": "2026-10-25T07:22:25.520Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -215,14 +215,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
-      "content_hash": "9bfdcd8b5a723f3461b75baf595cd82156e8aa820d63af1bc0ad7804dba30258",
-      "verified_at": "2026-10-20T14:57:44.881Z",
+      "content_hash": "56ba0a6f4fcc6b971e6be76466a88ef8469d426b3c9622139049f0d9d4f88837",
+      "verified_at": "2026-10-25T07:18:16.483Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:57:44.881Z"
+      "last_updated": "2026-10-25T07:18:16.483Z"
     },
     "black-forest-labs/FLUX.1-dev": {
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "5ca2e518c42f9d597e331e84efeb51bcad6f01da63e216f88477080dc7ad3ee6",
-      "verified_at": "2026-10-22T18:30:34.594Z",
+      "content_hash": "f4f076c82c2139a6f2b01ca58d725f9a0c4e4635d58731ec33deb6196f428cd4",
+      "verified_at": "2026-10-25T07:19:16.672Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:30:34.594Z"
+      "last_updated": "2026-10-25T07:19:16.672Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "27eaace4783e70b4bf4d7507af0d5974f7977507c7d3447b87f3c5f285b53708",
-      "verified_at": "2026-10-22T19:42:26.564Z",
+      "content_hash": "188379ec975094d9f6d30524604bf35e5f517c4926025c389d9b450d72484aa5",
+      "verified_at": "2026-10-25T07:19:00.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:42:26.564Z"
+      "last_updated": "2026-10-25T07:19:00.818Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -7971,14 +7971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lobehub-lobe-ui",
-      "content_hash": "cfe3386a310e3e959717c05f8aff3c776431de988557d3a8cbdc6056d3a4b75e",
-      "verified_at": "2026-10-22T20:22:04.300Z",
+      "content_hash": "83cbd79402e2f43c05c1b4797fa6716085dcd7973467eb15cffe2909185976ea",
+      "verified_at": "2026-10-25T07:18:49.179Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:22:04.301Z"
+      "last_updated": "2026-10-25T07:18:49.179Z"
     },
     "gitui-org/gitui": {
       "repository": "gitui-org/gitui",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "402f3dfc26492a562c875ed23f88387a3f15de1e7c8ed420ad678bba54ef2a6b",
-      "verified_at": "2026-10-20T17:16:50.860Z",
+      "content_hash": "340f6205ca1f05a2eaf0fe3187b03dcf35b8ef2de4c0ba5d333013e78cb74cdb",
+      "verified_at": "2026-10-25T07:22:25.519Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:16:50.860Z"
+      "last_updated": "2026-10-25T07:22:25.519Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "05b9de9445d8ac6519360c799ae77443ded70d22a653322c23c451ca38f4bf49",
-      "verified_at": "2026-10-22T18:50:29.979Z",
+      "content_hash": "785d38a67ba7a61222ce601aea746b8ef94536d776a28ad668c756688689a7d4",
+      "verified_at": "2026-10-25T07:19:00.097Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:50:29.979Z"
+      "last_updated": "2026-10-25T07:19:00.097Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",

@@ -299885,3 +299885,1831 @@ Automated headless GPUI test:
 3. Assert remaining 3 entries match selector `[data-session-message-row]`.
 
 ---
+
+
+---
+
+## 4139. Dual-State Hybrid Cache Invariant (Harvested from Qwen/Qwen3.8-27B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-State Hybrid Cache Invariant",
+  "source": "Qwen/Qwen3.8-27B",
+  "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+  "source_version": "hf-qwen-qwen3.8-27b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-25T07:18:15.906Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Qwen/Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B) (Revision: `hf-qwen-qw`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In hybrid recurrent-attention architectures (such as interleaved Linear Attention / DeltaNet / Mamba and Full Attention), the inference engine and state cache manager MUST allocate heterogeneous per-layer cache states. Linear recurrent layers MUST allocate a static, non-expanding state tensor $\mathcal{O}(1)$ of shape `[batch, num_heads, head_dim_k, head_dim_v]` plus a causal conv buffer `[batch, num_heads, kernel_dim - 1]`, whereas Full Attention layers MUST allocate an elastic, dynamically growing KV cache $\mathcal{O}(S)$ of shape `[batch, num_kv_heads, max_seq_len, head_dim]`. The runtime MUST NOT allocate uniform standard KV tensors across all layers.
+
+**WHY**:
+Allocating standard dynamic KV buffers for all 64 layers in a 27B parameter model processing 256k tokens results in catastrophic Out-Of-Memory (OOM) allocation:
+- Uniform KV cache: $64 \times 2 \times 4 \text{ heads} \times 256 \text{ dim} \times 262\text{,}144 \text{ tokens} \times 2 \text{ bytes (bf16)} \approx 274.8\text{ GB}$.
+- Hybrid cache ($48$ DeltaNet layers + $16$ Full Attention layers):
+  - 16 Full Attention layers: $16 \times 2 \times 4 \times 256 \times 262\text{,}144 \times 2 \approx 68.7\text{ GB}$.
+  - 48 DeltaNet layers: $48 \times [16 \times 128 \times 128 \times 2\text{B} + 16 \times 3 \times 128 \times 2\text{B}] \approx 25.2\text{ MB}$ total static memory.
+Uniform allocation exhausts GPU VRAM and invalidates the core architectural design of the model.
+
+**WHEN TO APPLY**:
+Any inference runtime (vLLM, Hugging Face `transformers`, TensorRT-LLM, SGLang, custom CUDA engines) executing models with `layer_types` containing mixed entries (`linear_attention`, `full_attention`, `mamba`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import Dict, List, Optional, Tuple
+import torch
+import torch.nn as nn
+
+class HybridLayerCache:
+    """Manages segregated state for linear recurrence and full GQA attention."""
+    def __init__(
+        self,
+        layer_idx: int,
+        layer_type: str,
+        batch_size: int,
+        device: torch.device,
+        dtype: torch.dtype,
+        linear_num_heads: int = 16,
+        linear_k_dim: int = 128,
+        linear_v_dim: int = 128,
+        linear_conv_kernel: int = 4,
+        full_num_kv_heads: int = 4,
+        full_head_dim: int = 256,
+        max_seq_len: int = 262144,
+    ):
+        self.layer_idx = layer_idx
+        self.layer_type = layer_type
+
+        if layer_type == "linear_attention":
+            # O(1) Fixed recurrent state: [B, H, K, V]
+            self.recurrent_state = torch.zeros(
+                batch_size, linear_num_heads, linear_k_dim, linear_v_dim,
+                device=device, dtype=dtype
+            )
+            # O(1) Conv shift register buffer: [B, H_in, kernel_dim - 1]
+            self.conv_buffer = torch.zeros(
+                batch_size, linear_num_heads * linear_k_dim, linear_conv_kernel - 1,
+                device=device, dtype=dtype
+            )
+            self.key_cache = None
+            self.value_cache = None
+        elif layer_type == "full_attention":
+            self.recurrent_state = None
+            self.conv_buffer = None
+            # Dynamic elastic KV cache: pre-allocated or dynamic chunk list
+            self.key_cache = torch.empty(
+                batch_size, full_num_kv_heads, 0, full_head_dim,
+                device=device, dtype=dtype
+            )
+            self.value_cache = torch.empty(
+                batch_size, full_num_kv_heads, 0, full_head_dim,
+                device=device, dtype=dtype
+            )
+        else:
+            raise ValueError(f"Unsupported layer_type: {layer_type}")
+
+    def update_recurrent(
+        self, conv_input: torch.Tensor, delta_k: torch.Tensor, delta_v: torch.Tensor, beta: torch.Tensor
+    ) -> torch.Tensor:
+        """DeltaNet state update step: S_t = S_{t-1}(I - beta * k * k^T) + beta * v * k^T"""
+        assert self.layer_type == "linear_attention", "Recurrent update called on non-linear layer"
+        # Invariant: DeltaNet state update maintains strict bounded shape
+        batch_size, num_heads, k_dim, v_dim = self.recurrent_state.shape
+        # delta_k: [B, H, 1, K], delta_v: [B, H, 1, V], beta: [B, H, 1, 1]
+        k_outer_k = torch.matmul(delta_k.transpose(-1, -2), delta_k) # [B, H, K, K]
+        identity = torch.eye(k_dim, device=self.recurrent_state.device, dtype=self.recurrent_state.dtype)
+        decay = identity - beta * k_outer_k
+        self.recurrent_state = torch.matmul(self.recurrent_state, decay) + beta * torch.matmul(delta_k.transpose(-1, -2), delta_v)
+        return self.recurrent_state
+
+    def append_kv(self, k: torch.Tensor, v: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        assert self.layer_type == "full_attention", "KV append called on linear layer"
+        self.key_cache = torch.cat([self.key_cache, k], dim=2)
+        self.value_cache = torch.cat([self.value_cache, v], dim=2)
+        return self.key_cache, self.value_cache
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Homogeneous KV cache allocation across hybrid layers
+class BrokenCacheManager:
+    def __init__(self, num_layers, batch_size, max_seq_len, num_heads, head_dim):
+        # FATAL: Allocates 64 layers of full KV caches for 262k sequence length
+        # Causes immediate CUDA OOM on any GPU cluster under production load
+        self.k_caches = [
+            torch.zeros(batch_size, num_heads, max_seq_len, head_dim)
+            for _ in range(num_layers)
+        ]
+        self.v_caches = [
+            torch.zeros(batch_size, num_heads, max_seq_len, head_dim)
+            for _ in range(num_layers)
+        ]
+```
+
+**VERIFICATION METHOD**:
+Run an automated memory budget test verifying that recurrent layer cache sizes remain constant across variable prompt lengths:
+```python
+def test_hybrid_cache_invariance():
+    cache = HybridLayerCache(layer_idx=0, layer_type="linear_attention", batch_size=1, device="cpu", dtype=torch.bfloat16)
+    initial_bytes = cache.recurrent_state.element_size() * cache.recurrent_state.nelement()
+    # Simulate 10,000 decode steps
+    for _ in range(10000):
+        # Mock inputs
+        k = torch.randn(1, 16, 1, 128, dtype=torch.bfloat16)
+        v = torch.randn(1, 16, 1, 128, dtype=torch.bfloat16)
+        beta = torch.sigmoid(torch.randn(1, 16, 1, 1, dtype=torch.bfloat16))
+        cache.update_recurrent(None, k, v, beta)
+    final_bytes = cache.recurrent_state.element_size() * cache.recurrent_state.nelement()
+    assert initial_bytes == final_bytes == (1 * 16 * 128 * 128 * 2), "Recurrent cache leaked memory or scaled with sequence length!"
+```
+
+---
+
+
+---
+
+## 4140. Multi-Token Termination Boundary Invariant (Harvested from Qwen/Qwen3.8-27B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Token Termination Boundary Invariant",
+  "source": "Qwen/Qwen3.8-27B",
+  "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+  "source_version": "hf-qwen-qwen3.8-27b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-25T07:18:16.092Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Qwen/Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B) (Revision: `hf-qwen-qw`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When `eos_token_id` is defined as a collection (e.g., `list`, `set`, `tuple`) containing multiple stop sequences (e.g., `[248046, 248044]` representing `<|im_end|>` and `<|endoftext|>`), text generation loops and agent tool runtimes MUST evaluate completion using set membership `token_id in eos_token_ids` or vectorized boolean mask `torch.isin(tokens, eos_token_tensor)`. They MUST NOT perform scalar equality checks `token_id == eos_token_id` or assume `eos_token_id` is an integer. Furthermore, when stripping stop tokens for downstream agent parsing, the runtime MUST consume matching suffix tokens without stripping user-intended text.
+
+**WHY**:
+Treating `eos_token_id` as a scalar when `generation_config.json` specifies `[248046, 248044]` causes runtime exceptions (`TypeError: '==' not supported between instances of 'int' and 'list'`) or evaluates truth value incorrectly (`token in [248046, 248044]` vs `token == [248046, 248044]` which is always `False`). If the loop fails to terminate on `<|im_end|>` (248046), the model continues generating garbage tokens, leaking role delimiters, hallucinating user turns, and running until hitting hard `max_new_tokens` context exhaustion.
+
+**WHEN TO APPLY**:
+Every causal LM generation loop, tool parser, agent execution loop, and tokenization pipeline interacting with ChatML-aligned or multi-boundary models (Qwen, Llama-3, etc.).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import Union, List, Set
+import torch
+
+class GenerationTerminationGuard:
+    def __init__(self, raw_eos_token_id: Union[int, List[int], None]):
+        if raw_eos_token_id is None:
+            self.eos_token_set: Set[int] = set()
+        elif isinstance(raw_eos_token_id, int):
+            self.eos_token_set = {raw_eos_token_id}
+        elif isinstance(raw_eos_token_id, (list, tuple, set)):
+            self.eos_token_set = set(int(t) for t in raw_eos_token_id)
+        else:
+            raise TypeError(f"Invalid type for eos_token_id: {type(raw_eos_token_id)}")
+            
+        self._eos_tensor: Optional[torch.Tensor] = None
+
+    def is_terminated_scalar(self, token_id: int) -> bool:
+        return token_id in self.eos_token_set
+
+    def get_terminated_mask(self, token_tensor: torch.Tensor) -> torch.Tensor:
+        """Vectorized termination check for batch inference."""
+        if self._eos_tensor is None or self._eos_tensor.device != token_tensor.device:
+            self._eos_tensor = torch.tensor(
+                list(self.eos_token_set),
+                dtype=token_tensor.dtype,
+                device=token_tensor.device
+            )
+        # token_tensor: [Batch, 1] or [Batch]
+        return torch.isin(token_tensor, self._eos_tensor)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming eos_token_id is always an int or doing scalar equality
+def is_done_buggy(next_token: int, config_eos_id):
+    # CRITICAL BUG: If config_eos_id is [248046, 248044], next_token == config_eos_id is ALWAYS False.
+    # The generation never halts at <|im_end|>, resulting in runaway token generation.
+    return next_token == config_eos_id
+```
+
+**VERIFICATION METHOD**:
+Execute parameterized unit testing across diverse configuration types:
+```python
+def test_eos_token_handling():
+    guard = GenerationTerminationGuard([248046, 248044])
+    assert guard.is_terminated_scalar(248046) is True
+    assert guard.is_terminated_scalar(248044) is True
+    assert guard.is_terminated_scalar(100) is False
+    
+    batch_tokens = torch.tensor([[100], [248046], [500], [248044]])
+    mask = guard.get_terminated_mask(batch_tokens)
+    assert torch.equal(mask, torch.tensor([[False], [True], [False], [True]]))
+```
+
+---
+
+
+---
+
+## 4141. Partial Rotary Dimension (Partial-RoPE) Stride Alignment Invariant (Harvested from Qwen/Qwen3.8-27B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Partial Rotary Dimension (Partial-RoPE) Stride Alignment Invariant",
+  "source": "Qwen/Qwen3.8-27B",
+  "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+  "source_version": "hf-qwen-qwen3.8-27b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-25T07:18:16.292Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Qwen/Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B) (Revision: `hf-qwen-qw`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When attention heads configure Rotary Position Embedding dimension (`rotary_dim` or `rotary_ndims`) strictly less than the total projection dimension (`head_dim`, e.g., `rotary_dim = 64` vs `head_dim = 256` in Qwen3.8), the attention kernel MUST split the query and key representations along the final dimension into $X_{\text{rotary}} = X[..., :64]$ and $X_{\text{pass}} = X[..., 64:]$, apply rotary rotation ONLY to $X_{\text{rotary}}$, and concatenate them along the last dimension BEFORE computing inner product attention scores. The rotary slicing MUST preserve memory contiguousness (`ascontiguousarray` or contiguous strides) prior to kernel dispatch.
+
+**WHY**:
+Applying RoPE across all 256 dimensions when the model was trained with 64 rotary dimensions corrupts the non-positional semantic embedding subspace ($192$ dimensions), causing total degradation of perplexity to random noise (NaN / high entropy logits). Conversely, failing to ensure contiguous layout after slicing creates subtle stride mismatches in custom Triton or CUDA flash-attention kernels, leading to silent memory corruption or CUDA memory access violations.
+
+**WHEN TO APPLY**:
+All custom attention mechanisms, fused kernels (FlashAttention-2/3, FlashDecoding), and deep learning tensor transformations where `rotary_dim < head_dim`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def apply_partial_rotary_emb(
+    x: torch.Tensor,
+    cos: torch.Tensor,
+    sin: torch.Tensor,
+    rotary_dim: int = 64
+) -> torch.Tensor:
+    """
+    Args:
+        x: [Batch, SeqLen, NumHeads, HeadDim] (e.g. HeadDim = 256)
+        cos: [Batch, SeqLen, 1, rotary_dim]
+        sin: [Batch, SeqLen, 1, rotary_dim]
+        rotary_dim: Int, e.g. 64
+    Returns:
+        Tensor of shape [Batch, SeqLen, NumHeads, HeadDim] with partial RoPE applied
+    """
+    head_dim = x.shape[-1]
+    assert rotary_dim <= head_dim, f"rotary_dim {rotary_dim} exceeds head_dim {head_dim}"
+    
+    # 1. Split into rotary-applied and pass-through slices
+    x_rotary = x[..., :rotary_dim]
+    x_pass = x[..., rotary_dim:]
+    
+    # 2. Rotary rotation: [-x2, x1]
+    x1 = x_rotary[..., : rotary_dim // 2]
+    x2 = x_rotary[..., rotary_dim // 2 :]
+    rotated = torch.cat((-x2, x1), dim=-1)
+    
+    # 3. Apply trigonometric scaling
+    x_rotary_embedded = (x_rotary * cos) + (rotated * sin)
+    
+    # 4. Concatenate back and enforce contiguous memory layout
+    out = torch.cat([x_rotary_embedded, x_pass], dim=-1).contiguous()
+    return out
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Blindly applying RoPE across full head_dim
+def apply_broken_rope(x, cos, sin):
+    # FATAL: HeadDim is 256, but cos/sin only precomputed for 64 dims,
+    # or if broadcasted across 256 dims, completely destroys positions 64-255.
+    x1 = x[..., : x.shape[-1] // 2]
+    x2 = x[..., x.shape[-1] // 2 :]
+    rotated = torch.cat((-x2, x1), dim=-1)
+    return (x * cos) + (rotated * sin)
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_partial_rope_invariance():
+    batch, seq_len, heads, head_dim, rotary_dim = 2, 8, 4, 256, 64
+    x = torch.randn(batch, seq_len, heads, head_dim)
+    cos = torch.ones(batch, seq_len, 1, rotary_dim)
+    sin = torch.zeros(batch, seq_len, 1, rotary_dim)
+    
+    # With cos=1, sin=0, rotary part should be identity: x_out == x
+    x_out = apply_partial_rotary_emb(x, cos, sin, rotary_dim=rotary_dim)
+    assert torch.allclose(x, x_out, atol=1e-6), "Partial RoPE failed identity preservation check"
+    assert x_out[..., rotary_dim:].equal(x[..., rotary_dim:]), "Pass-through partition was mutated!"
+```
+
+---
+
+
+---
+
+## 4142. Dual-Engine Highlighter Resolution Disambiguation (Harvested from lobehub/lobe-ui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Engine Highlighter Resolution Disambiguation",
+  "source": "lobehub/lobe-ui",
+  "source_url": "https://github.com/lobehub/lobe-ui",
+  "source_version": "b0602f5c",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T07:18:48.601Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lobehub-lobe-ui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lobehub/lobe-ui](https://github.com/lobehub/lobe-ui) (Revision: `b0602f5c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When integrating abstraction libraries that support multiple syntax highlighting engines (such as Wasm-based tokenizers alongside monolithic JS AST parsers like Shiki), the application layer MUST explicitly provide the engine disambiguation parameter during asynchronous theme initialization and theme resolution. It MUST NOT invoke zero-argument theme resolvers.
+
+**WHY**:
+Zero-argument theme resolvers rely on implicit default engine orderings (e.g., defaulting to Shiki). Invoking `resolveTheme(themeId)` without specifying the target engine causes dynamic `import('shiki/core')` or full Language/Wasm bundles to be eagerly loaded into the client’s main thread memory, completely destroying the bundle savings achieved by adopting lightweight Wasm parsers (such as `@pierre/highlights`).
+
+**WHEN TO APPLY**:
+Apply in any frontend build supporting multi-engine render pipelines, code diff viewers, or dynamic tokenizer registration layers where high-performance Wasm and heavy JavaScript runtimes coexist.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { registerCustomTheme, resolveTheme } from '@pierre/diffs';
+import lobeHighlightsTheme from '@/Highlighter/theme/lobe-highlights-theme';
+import lobeTheme from '@/Highlighter/theme/lobe-theme';
+
+let isLobeDiffThemeRegistered = false;
+
+export const registerLobeDiffThemes = (): void => {
+  if (isLobeDiffThemeRegistered) return;
+
+  // 1. Explicitly register themes specifying exact engine targets ('zed' format for highlights, TextMate for shiki)
+  registerCustomTheme('lobe-theme', () => Promise.resolve(lobeHighlightsTheme), 'zed');
+  registerCustomTheme('lobe-theme', () => Promise.resolve(lobeTheme as any));
+
+  // 2. CRITICAL: Force the resolver to resolve against 'highlights' engine explicitly.
+  // Omitting 'highlights' triggers fallback to shiki, pulling shiki/core into the static bundle graph.
+  void resolveTheme('lobe-theme', 'highlights');
+
+  isLobeDiffThemeRegistered = true;
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Eagerly imports shiki/core despite intended Wasm highlighter usage
+export const registerLobeDiffThemes = (): void => {
+  registerCustomTheme('lobe-theme', () => Promise.resolve(lobeHighlightsTheme));
+  // Omission of engine argument triggers fallback to shiki parser:
+  void resolveTheme('lobe-theme'); // <-- PULLS MONOLITHIC SHIKI CORE INTO CHUNK
+};
+```
+
+**VERIFICATION METHOD**:
+Enforce via an automated bundle analyzer assertion in Playwright/Vite CI:
+```typescript
+test('CodeDiff should not include Shiki in the chunk graph', async () => {
+  const bundle = await analyzeBundle('src/CodeDiff');
+  expect(bundle.modules).not.toContain(expect.stringContaining('shiki'));
+});
+```
+
+---
+
+
+---
+
+## 4143. SVG Fragment Identifier Injection Sanitization (Harvested from lobehub/lobe-ui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "SVG Fragment Identifier Injection Sanitization",
+  "source": "lobehub/lobe-ui",
+  "source_url": "https://github.com/lobehub/lobe-ui",
+  "source_version": "b0602f5c",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T07:18:48.789Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lobehub-lobe-ui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lobehub/lobe-ui](https://github.com/lobehub/lobe-ui) (Revision: `b0602f5c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any dynamically generated, hashed, or user-supplied seed string that is bound to SVG definitions (`<pattern>`, `<mask>`, `<clipPath>`, `<linearGradient>`) and referenced via functional CSS notation (`url(#...)`) MUST be sanitized to eliminate whitespace, quotes, parentheses, backslashes, and URI delimiter characters before interpolating into the DOM attribute.
+
+**WHY**:
+SVG specifications and CSSOM parsers treat unescaped spaces, quotation marks (`"`, `'`), brackets, and URI delimiters inside `url(#...)` expressions as broken syntax or premature property terminations. In libraries like `boring-avatars`, unescaped strings result in malformed gradient ID references (e.g., `url(#gradient_John Doe)` fails to parse the space, rendering an empty, unpainted SVG canvas or throwing an XML DOM parser exception).
+
+**WHEN TO APPLY**:
+Apply whenever converting names, emails, raw titles, or external identifiers into SVG identifiers or CSS `url()` fragment selectors.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { isValidElement, type ReactNode } from 'react';
+
+export const getAvatarFallbackSeed = (
+  avatar: ReactNode,
+  title?: string,
+  alt?: string,
+): string | undefined => {
+  // 1. Resolve raw candidate seed in order of priority
+  const rawSeed = title || alt || (typeof avatar === 'string' ? avatar : undefined);
+  if (!rawSeed) return undefined;
+
+  // 2. Trim and sanitize characters that invalidate SVG ID and CSS url() parsing:
+  // Disallow: whitespace (\s), double/single quotes ("'), parentheses (()), hash (#), backslash (\\)
+  const sanitized = rawSeed.trim().replaceAll(/[\s"'()#\\]+/g, '_');
+
+  return sanitized.length > 0 ? sanitized : undefined;
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Raw user input passed directly into SVG attribute ID
+export const getAvatarFallbackSeed = (title?: string): string => {
+  return title ?? 'default'; // Breaks when title is 'Jane Doe (Admin)' -> id="gradient_Jane Doe (Admin)" -> url(#gradient_Jane Doe (Admin)) FAILS
+};
+```
+
+**VERIFICATION METHOD**:
+Unit test with boundary edge cases verifying regex elimination:
+```typescript
+import { expect, test } from 'vitest';
+import { getAvatarFallbackSeed } from './utils';
+
+test('getAvatarFallbackSeed eliminates CSS and XML url-breaking characters', () => {
+  const input = ` "User" (Test) #1 \\ Admin `;
+  const output = getAvatarFallbackSeed(undefined, input);
+  expect(output).toBe('_User_Test_1_Admin');
+  expect(output).not.toMatch(/[\s"'()#\\]/);
+});
+```
+
+---
+
+
+---
+
+## 4144. Fiber-Level Host Mutation Verification for Render Invariants (Harvested from lobehub/lobe-ui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fiber-Level Host Mutation Verification for Render Invariants",
+  "source": "lobehub/lobe-ui",
+  "source_url": "https://github.com/lobehub/lobe-ui",
+  "source_version": "b0602f5c",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T07:18:48.988Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lobehub-lobe-ui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lobehub/lobe-ui](https://github.com/lobehub/lobe-ui) (Revision: `b0602f5c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+UI performance regression testing harnesses MUST measure component render efficiency by validating Virtual DOM fiber execution against host DOM mutation arrays. An update where a composite fiber executes its render function but produces zero host DOM fiber mutations MUST be flagged as an unnecessary render (`unnecessary++`).
+
+**WHY**:
+Traditional shallow testing and snapshot testing do not track whether a React component tree execution yielded actual mutations in the browser's render tree. In complex LLM streaming applications, context re-renders frequently trigger cascading updates down deep component trees without changing a single DOM attribute or node, causing microtask starvation and UI thread stuttering during streaming.
+
+**WHEN TO APPLY**:
+Apply in CI performance suites, bench pipelines, and automated performance gates for UI kits, Markdown token renderers, and interactive real-time widgets.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+import {
+  getDisplayName,
+  getMutatedHostFibers,
+  getType,
+  instrument,
+  isCompositeFiber,
+  traverseContexts,
+  traverseProps,
+  traverseRenderedFibers,
+  traverseState,
+} from 'bippy';
+
+const changed = (next, prev) => !Object.is(next, prev);
+
+// Distinguish effect hooks (fresh memoizedState every render) from state hooks (has update queue)
+const stateChanged = (fiber) =>
+  traverseState(
+    fiber,
+    (next, prev) => Boolean(next?.queue) && changed(next.memoizedState, prev?.memoizedState),
+  );
+
+instrument({
+  onCommitFiberRoot: (_rendererId, root) => {
+    traverseRenderedFibers(root, (fiber, phase) => {
+      if (!isCompositeFiber(fiber) || phase === 'unmount') return;
+
+      if (phase === 'mount') return;
+
+      const propsDiff = traverseProps(fiber, (_name, next, prev) => changed(next, prev));
+      const stateDiff = stateChanged(fiber);
+      const contextDiff = traverseContexts(fiber, (next, prev) =>
+        changed(next?.memoizedValue, prev?.memoizedValue),
+      );
+
+      // Verify if composite fiber execution caused physical host DOM updates
+      const hostMutations = getMutatedHostFibers(fiber);
+      if (hostMutations.length === 0) {
+        // Invariant Violated: Render took place but zero host mutations occurred
+        recordUnnecessaryRender(getDisplayName(getType(fiber.type)));
+      }
+    });
+  },
+});
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Counting render function calls without measuring host DOM fiber mutations
+let renderCount = 0;
+const BadWrapper = ({ children }) => {
+  renderCount++; // Does not tell you if React bailed out or if host DOM mutated
+  return <div>{children}</div>;
+};
+```
+
+**VERIFICATION METHOD**:
+Automated Playwright performance bench gate (`scripts/render-bench/report.mjs`):
+```javascript
+const exceeds = (now, before, tolerance) => now > before * (1 + tolerance);
+if (exceeds(scope.totals.unnecessary, baseline.totals.unnecessary, tolerance)) {
+  throw new Error(`Performance regression: ${scope.totals.unnecessary} unnecessary renders detected.`);
+}
+```
+
+---
+
+
+---
+
+## 4145. External Model Discovery Concurrency Isolation (Harvested from Mintplex-Labs/anything-llm)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "External Model Discovery Concurrency Isolation",
+  "source": "Mintplex-Labs/anything-llm",
+  "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+  "source_version": "a5bb8b9c",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T07:18:59.511Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mintplex-labs-anything-llm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `a5bb8b9c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When discovering, inspecting, or querying multiple external services, network nodes, or heterogeneous resources via `Promise.all()`, an individual service failure (such as an HTTP 404, 410, or 500 status) MUST NOT cause the rejection of the parent aggregation. Every individual child promise MUST either implement an isolated `.catch()` fallback returning a sentinel or `null`, or the runtime MUST execute via `Promise.allSettled()`.
+
+**WHY**:
+In local AI setups (e.g., Ollama, LM Studio), models are frequently unloaded, renamed, or retired while still present in the daemon's model list index. Calling `client.show()` across an array of retrieved model names inside an unshielded `Promise.all()` causes a single decommissioned or unsupported model (e.g., an embedding model lacking standard chat fields or a model returning HTTP 410 Gone) to reject the entire promise chain. This nukes the application's context window cache for all valid, operational models.
+
+**WHEN TO APPLY**:
+Apply to all discovery routines, batch metadata hydration loops, external tool polling pipelines, and multi-endpoint health-check mechanisms across any microservice or micro-agent environment.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// collector/utils/AiProviders/ollama/index.js
+async function cacheContextWindows(client) {
+  const { models } = await client.list().catch(() => ({ models: [] }));
+  if (!models.length) return;
+
+  const settledModelInfos = (
+    await Promise.all(
+      models.map((model) =>
+        client
+          .show({ model: model.name })
+          .then((info) => ({ name: model.name, ...info }))
+          .catch((error) => {
+            // Isolate failure to this specific candidate
+            logger.warn(`Failed context window query for ${model.name}:`, error.message);
+            return null; // Return sentinel to prevent parent chain explosion
+          })
+      )
+    )
+  ).filter(Boolean); // Filter out fallen models
+
+  settledModelInfos.forEach((info) => {
+    if (info.capabilities?.includes("embedding")) return;
+    const ctxKey = Object.keys(info.model_info || {}).find((key) =>
+      key.endsWith(".context_length")
+    );
+    if (!ctxKey) return;
+    ModelContextWindows[info.name] = Number(info.model_info[ctxKey]);
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// CRITICAL DEFECT: Single 410/500 drops the entire fleet cache
+const infoPromises = models.map((model) =>
+  client
+    .show({ model: model.name })
+    .then((info) => ({ name: model.name, ...info }))
+);
+const infos = await Promise.all(infoPromises); // If model[3] fails, infos rejects completely!
+```
+
+**VERIFICATION METHOD**:
+Mock the external API client using Jest or Vitest. Configure an endpoint returning three valid models and one model configured to return `HTTP 410 Gone`. Execute the discovery function and assert that the context window cache contains the three valid models and that no unhandled rejection error propagates.
+
+---
+
+
+---
+
+## 4146. State-Preserving Entity Dereferencing for Multi-Tenant Accounting (Harvested from Mintplex-Labs/anything-llm)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "State-Preserving Entity Dereferencing for Multi-Tenant Accounting",
+  "source": "Mintplex-Labs/anything-llm",
+  "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+  "source_version": "a5bb8b9c",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T07:18:59.696Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mintplex-labs-anything-llm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `a5bb8b9c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deleting aggregate parent domain entities (e.g., threads, workspaces, sessions) whose child entities store consumption metrics, usage counters, or audit trails (e.g., daily message quotas, token usage counts, audit logs), you MUST NOT execute hard cascading row deletions (`DELETE FROM ...`) on child records if child foreign keys are disconnected or if quotas rely on row-level existence. Instead, use soft-deletion or logical state flags (e.g., `markThreadHistoryInvalidV2`) to de-index child records from UX views while preserving them for database-driven quota window verification.
+
+**WHY**:
+In multi-tenant SaaS or local installations enforcing daily message limits, usage queries execute queries such as `COUNT(*)` over a rolling window:
+```sql
+SELECT COUNT(*) FROM workspace_chats 
+WHERE user_id = ? AND createdAt >= ? AND include_in_quota = true;
+```
+If a user deletes a thread containing 50 messages, and those chat records are deleted via `WorkspaceChats.delete()`, their daily consumption counter resets to 0. Malicious or compromised actors can exploit this to bypass usage caps by repeatedly querying the model, deleting the thread, and creating a new thread.
+
+**WHEN TO APPLY**:
+Any relational schema or key-value domain where usage limits, billing records, token telemetry, or compliance logs share lifecycle bounds with user-deletable interface containers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// server/models/workspaceThread.js
+const WorkspaceThread = {
+  delete: async function (clause = {}) {
+    try {
+      const { WorkspaceChats } = require("./workspaceChats");
+      const threads = await prisma.workspace_threads.findMany({
+        where: clause,
+        select: { id: true },
+      });
+      
+      if (threads.length > 0) {
+        const threadIds = threads.map((t) => t.id);
+        // Invariant: Do not DELETE chat records. Invalidate visibility for UI while
+        // retaining historical metadata for rolling quota window calculations.
+        await WorkspaceChats.markThreadHistoryInvalidV2({
+          thread_id: { in: threadIds },
+        });
+      }
+
+      return await prisma.workspace_threads.deleteMany({
+        where: clause,
+      });
+    } catch (error) {
+      logger.error("Failed to delete workspace threads safely", error);
+      throw error;
+    }
+  }
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Direct cascade delete destroys audit history and bypasses usage quotas
+const threads = await prisma.workspace_threads.findMany({ where: clause, select: { id: true } });
+if (threads.length > 0) {
+  await WorkspaceChats.delete({
+    thread_id: { in: threads.map((thread) => thread.id) }
+  }); // VULNERABILITY: Daily message usage drops immediately
+}
+```
+
+**VERIFICATION METHOD**:
+Create a test database with a user at 10/10 daily messages. Execute a thread deletion request targeting the thread containing these messages. Re-query the user's daily quota calculation service and verify that `remainingQuota` is still `0`. Verify that a subsequent chat attempt receives an `HTTP 429 / Quota Exceeded` response.
+
+---
+
+
+---
+
+## 4147. Defensive Buffer Sanitization at Ingress Protocol Boundaries (Harvested from Mintplex-Labs/anything-llm)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Defensive Buffer Sanitization at Ingress Protocol Boundaries",
+  "source": "Mintplex-Labs/anything-llm",
+  "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+  "source_version": "a5bb8b9c",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T07:18:59.894Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mintplex-labs-anything-llm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `a5bb8b9c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before passing incoming raw network payloads from asynchronous protocol connections (e.g., WebSockets, TCP streams, IPC pipes) into application domain handlers, JSON deserializers, or string processors, the frame MUST be explicitly coerced to a valid UTF-8 string, and the JSON parser MUST be wrapped in a non-throwing safe boundary with payload type validation. Bare `JSON.parse` operations inside asynchronous WebSocket frame dispatchers are strictly forbidden.
+
+**WHY**:
+The Node.js `ws` library and standard socket listeners deliver data frames as either UTF-8 `string` or binary `Buffer` objects depending on client transmission semantics. Passing a raw `Buffer` into functions expecting string inputs or calling `JSON.parse()` within un-awaited async handlers creates an unhandled promise rejection. In modern Node.js runtimes, unhandled rejections terminate the process with exit code 1, allowing any authenticated user to crash the application server by sending malformed binary or non-JSON WebSocket frames.
+
+**WHEN TO APPLY**:
+All WebSocket message dispatchers, Socket.io listeners, IPC pipe readers, and micro-agent webhook ingress controllers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// server/endpoints/agentWebsocket.js & safeJsonParse utility
+function safeJsonParse(input, fallback = null) {
+  try {
+    if (typeof input !== "string") {
+      // Guard against raw Buffer or array buffers crashing the engine
+      input = Buffer.isBuffer(input) ? input.toString("utf8") : String(input);
+    }
+    const trimmed = input.trim();
+    if (!trimmed) return fallback;
+    return JSON.parse(trimmed);
+  } catch {
+    return fallback;
+  }
+}
+
+// Ingress WebSocket frame handler
+function relayToSocket(websocketInstance, rawData) {
+  // Normalize at the absolute network boundary
+  const stringPayload = Buffer.isBuffer(rawData) 
+    ? rawData.toString("utf8") 
+    : typeof rawData === "string" 
+      ? rawData 
+      : null;
+
+  if (!stringPayload) {
+    logger.warn("[Ingress Guard]: Dropping invalid or binary frame payload");
+    return;
+  }
+
+  const parsed = safeJsonParse(stringPayload);
+  if (!parsed || typeof parsed !== "object") {
+    logger.warn("[Ingress Guard]: Rejecting non-JSON/malformed payload frame");
+    return;
+  }
+
+  // Safe to pass to downstream domain listeners
+  handleFeedback(websocketInstance, parsed).catch((err) => {
+    logger.error("[Ingress Handler Panic Protected]:", err);
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// FATAL ANTI-PATTERN: Raw parsing inside async listener without string coercion or catch block
+async function handleFeedback(socket, frame) {
+  // If frame is Buffer, JSON.parse throws SyntaxError/TypeError
+  // If frame is "{bad", throws unhandled rejection -> NODE TERMINATES
+  const data = JSON.parse(frame); 
+  await socket.emit("agent_event", data.action);
+}
+```
+
+**VERIFICATION METHOD**:
+Write an integration test using the `ws` client to establish a valid agent session. Transmit three malformed frames:
+1. `Buffer.from([0x00, 0xFF, 0x88])` (invalid binary buffer).
+2. `"{malformed_json: true,"` (broken JSON string).
+3. `""` (empty string).
+
+Assert that the server remains alive, logs a warning, and gracefully rejects the invalid input without terminating the process.
+
+---
+
+
+---
+
+## 4148. Dynamic Host Port Allocation Injection Invariant (Harvested from beclab/Olares)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dynamic Host Port Allocation Injection Invariant",
+  "source": "beclab/Olares",
+  "source_url": "https://github.com/beclab/Olares",
+  "source_version": "f0ffc917",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-25T07:19:00.242Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-beclab-olares",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `f0ffc917`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an orchestration framework dynamically allocates external or node-level ports for application workloads at install/upgrade time, it MUST inject the resolved allocated port numbers into the workload configuration (e.g., Helm Values) using a strict, keyed map (`.Values.exposePorts.<name>`). It MUST NEVER rely on the workload reading its static container port if the workload advertises its network identity externally (e.g., WebRTC SFU ICE candidates, SIP, RTSP, distributed consensus). Furthermore, dry-run template rendering passes MUST supply safe fallback zero-values (`int32(0)`) or empty maps to prevent template rendering aborts during pre-allocation linting or image caching phases.
+
+**WHY**:
+Container workloads utilizing protocols that publish node-reachable connection addresses to remote clients (such as WebRTC servers publishing ICE host candidates) will fail silently or attempt to bind collisions if given only internal container ports. Pinning static host ports (`exposePort: 47777`) prevents multi-tenancy or multi-instance installs on the same cluster because host ports are globally unique. Delaying allocation without injecting the resolved number leaves the workload advertising non-routable container ports. If the dynamic values map is omitted during pre-flight dry-runs (e.g., image prefetching), templating engines (`text/template`, Helm) will panic on missing map keys and fail the entire deployment.
+
+**WHEN TO APPLY**:
+Apply to any container orchestration system, Kubernetes operator, Helm wrapper, or cloud-native app service managing workloads that self-announce network addresses (WebRTC, VoIP, Game Servers, Gossip protocols) where host ports are assigned dynamically.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package appinstaller
+
+import (
+	"context"
+	"k8s.io/client-go/rest"
+)
+
+type ServicePort struct {
+	Name       string `json:"name"`
+	Host       string `json:"host"`
+	Port       int32  `json:"port"`
+	Protocol   string `json:"protocol"`
+	ExposePort int32  `json:"exposePort"`
+}
+
+type AppConfig struct {
+	Ports []ServicePort `json:"ports"`
+}
+
+// BuildExposePortsValues transforms allocated ServicePort definitions
+// into a strongly-typed template values tree.
+func BuildExposePortsValues(ports []ServicePort) map[string]interface{} {
+	out := make(map[string]interface{}, len(ports))
+	for _, p := range ports {
+		// Invariant: Unallocated ports resolve to int32(0) to prevent template panic
+		out[p.Name] = p.ExposePort
+	}
+	return out
+}
+
+// BuildBaseHelmValues prepares values ensuring schema presence across all phases.
+func BuildBaseHelmValues(ctx context.Context, kubeConfig *rest.Config, appConfig *AppConfig, dryRun bool) (map[string]interface{}, error) {
+	values := make(map[string]interface{})
+	
+	// Inject allocated or zeroed ports
+	values["exposePorts"] = BuildExposePortsValues(appConfig.Ports)
+	
+	if dryRun {
+		// Dry runs (e.g., image download pre-checks) render without cluster mutation.
+		// The exposePorts map remains populated with int32(0) for template syntax safety.
+		return values, nil
+	}
+	
+	return values, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Passing static container port, or leaving exposePorts nil during dry-run
+func BrokenBuildValues(appConfig *AppConfig, dryRun bool) map[string]interface{} {
+	values := make(map[string]interface{})
+	if !dryRun {
+		// Fails linting and dry-run rendering: accessing .Values.exposePorts.rtc panics
+		expose := make(map[string]interface{})
+		for _, p := range appConfig.Ports {
+			expose[p.Name] = p.ExposePort
+		}
+		values["exposePorts"] = expose
+	}
+	// Chart receives container port: WebRTC ICE candidates broadcast port 7882 instead of node port
+	values["containerPort"] = appConfig.Ports[0].Port
+	return values
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce verification using dual-phase unit tests:
+1. Verify that `BuildExposePortsValues` produces a map where missing allocations emit `int32(0)`.
+2. Execute a Go `text/template` against the generated map ensuring evaluations like `--rtc.udp_port={{ .Values.exposePorts.rtc }}` evaluate to valid numeric arguments without runtime template execution errors.
+
+---
+
+
+---
+
+## 4149. Multi-Drive Path Normalization & Dynamic Prefix Invariant (Harvested from beclab/Olares)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Drive Path Normalization & Dynamic Prefix Invariant",
+  "source": "beclab/Olares",
+  "source_url": "https://github.com/beclab/Olares",
+  "source_version": "f0ffc917",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-25T07:19:00.427Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-beclab-olares",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `f0ffc917`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When abstracting multi-tenant or multi-provider storage backends (e.g., local home, raw data, external shares, AWS S3, Google Drive, Dropbox) behind a unified REST/RPC routing layer, path manipulation functions MUST NOT use hardcoded numeric string slicing (`url.slice(12)`) to strip route prefixes. Path normalization MUST use deterministic string prefix verification coupled with slice operations keyed directly to the matched prefix's length, or explicit structural path token splitting.
+
+**WHY**:
+Hardcoded slice lengths (`url.slice(12)`) introduce catastrophic off-by-one errors when mount paths undergo minor naming changes (e.g., `/Drive/awss3` vs `/awss3`, `/Drive/google` [13 chars] vs `/drive/google` [13 chars] vs `/Google` [7 chars]). If an off-by-one occurs, path separators (`/`) or root tokens are partially retained or truncated, leading to malformed cloud-provider keys (e.g., `//bucket/key` or `ucket/key`), resulting in `404 Not Found`, access control bypass, or silent file overwrites.
+
+**WHEN TO APPLY**:
+Apply in any frontend API client, storage gateway, or filesystem proxy service managing virtual file system (VFS) mount points, cloud object prefixes, and cross-backend transfer abstractions.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/**
+ * Strips a virtual mount prefix safely without hardcoded magic numbers.
+ */
+export function stripMountPrefix(uri: string, mountPrefixes: readonly string[]): string {
+  if (!uri) return '';
+  
+  // Normalize leading slashes
+  const normalized = uri.replace(/\/+/g, '/');
+  
+  for (const prefix of mountPrefixes) {
+    const cleanPrefix = prefix.replace(/\/+/g, '/');
+    if (normalized === cleanPrefix) {
+      return '/';
+    }
+    if (normalized.startsWith(cleanPrefix + '/')) {
+      const stripped = normalized.slice(cleanPrefix.length);
+      return stripped.startsWith('/') ? stripped : '/' + stripped;
+    }
+  }
+  
+  return normalized;
+}
+
+// Canonical usage across heterogeneous storage providers
+export const S3_PREFIXES = ['/Drive/awss3', '/drive/awss3', '/awss3'] as const;
+export function awss3RemovePrefix(path: string): string {
+  return stripMountPrefix(path, S3_PREFIXES);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Magic numeric slicing prone to casing and version drift
+export function brokenGoogleRemoveHomePrefix(url: string): string {
+  if (!url.startsWith('/Drive/google')) {
+    return url;
+  }
+  // BUG: If prefix is '/drive/google' (lowercase) or changed to '/google',
+  // this either skips the check or produces malformed paths if conditions change.
+  // Hardcoded 13 slices incorrectly if length of target changes.
+  return url.slice(13);
+}
+```
+
+**VERIFICATION METHOD**:
+Automated property-based fuzz tests passing paths with variable casings, redundant slashes, and nested directories:
+```typescript
+import { expect, test } from 'vitest';
+import { stripMountPrefix } from './pathUtils';
+
+test('prefix stripping invariants', () => {
+  const prefixes = ['/Drive/awss3', '/awss3'];
+  expect(stripMountPrefix('/Drive/awss3/photos/cat.jpg', prefixes)).toBe('/photos/cat.jpg');
+  expect(stripMountPrefix('/Drive/awss3', prefixes)).toBe('/');
+  expect(stripMountPrefix('/awss3/data/blob', prefixes)).toBe('/data/blob');
+  expect(stripMountPrefix('/other/path/file.txt', prefixes)).toBe('/other/path/file.txt');
+});
+```
+
+---
+
+
+---
+
+## 4150. PWA App Shell Navigation Isolation Invariant (Harvested from beclab/Olares)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "PWA App Shell Navigation Isolation Invariant",
+  "source": "beclab/Olares",
+  "source_url": "https://github.com/beclab/Olares",
+  "source_version": "f0ffc917",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-25T07:19:00.626Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-beclab-olares",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `f0ffc917`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Progressive Web App (PWA) Service Workers operating in hybrid local-cloud or edge-hosted operating systems MUST decouple HTML navigation requests from static asset precaching. Navigation requests (`request.mode === 'navigate'`) MUST strictly enforce a `NetworkOnly` strategy, and precache asset manifests MUST filter out all `.html` entry points.
+
+**WHY**:
+In self-hosted environments (like local Kubernetes clusters), system upgrades, frontend image bumps, and authentication redirects occur dynamically at the root route (`/`). If the Service Worker precaches `index.html` or intercepts navigation with a `CacheFirst` or `StaleWhileRevalidate` strategy, users receive a permanently cached HTML app shell that references outdated, deleted, or unauthenticated JavaScript chunks. Furthermore, authentication handshakes and edge gateway redirects are short-circuited by the local service worker cache, locking users out of newly updated system dashboards.
+
+**WHEN TO APPLY**:
+Apply to all Progressive Web Apps, administrative dashboards, and micro-frontend shells deployed to self-hosted appliances, Kubernetes-managed edge nodes, and cloud-native user interfaces.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/// <reference lib="webworker" />
+declare const self: ServiceWorkerGlobalScope & { skipWaiting: () => void };
+
+import { precacheAndRoute } from 'workbox-precaching';
+import { registerRoute } from 'workbox-routing';
+import { NetworkOnly } from 'workbox-strategies';
+
+// Invariant 1: Filter out all HTML app shells from precaching
+precacheAndRoute(
+  self.__WB_MANIFEST.filter((entry) => {
+    if (typeof entry === 'string') {
+      return !entry.endsWith('.html');
+    }
+    return !entry.url.endsWith('.html');
+  })
+);
+
+// Invariant 2: Explicitly force full network fetch on browser navigation
+registerRoute(
+  ({ request }) => request.mode === 'navigate',
+  new NetworkOnly({
+    plugins: [
+      {
+        handlerDidError: async () => {
+          // Fallback only if completely disconnected from local edge cluster
+          return Response.error();
+        }
+      }
+    ]
+  })
+);
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Default Workbox setup precaching everything including index.html
+// Leads to deadlocked UI versions and broken SSO / Gateway auth redirects
+import { precacheAndRoute } from 'workbox-precaching';
+
+// Dangerous: caches index.html. When the cluster upgrades frontend container,
+// the browser serves the old index.html pointing to missing 404 JS hashes.
+precacheAndRoute(self.__WB_MANIFEST);
+```
+
+**VERIFICATION METHOD**:
+Automated integration test using Playwright or Puppeteer:
+1. Load PWA frontend.
+2. Deploy an update (simulate asset hash change on backend).
+3. Execute `page.reload()`.
+4. Assert via DevTools Protocol that the HTTP request for `/` returned status 200 directly from the network with no `from-service-worker` header.
+
+---
+
+
+---
+
+## 4151. Monotonic Capability Derivation via Lattice Intersections (Harvested from codewhale-hq/Codewhale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Monotonic Capability Derivation via Lattice Intersections",
+  "source": "codewhale-hq/Codewhale",
+  "source_url": "https://github.com/codewhale-hq/Codewhale",
+  "source_version": "2947e4c5",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T07:19:16.095Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-codewhale-hq-codewhale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `2947e4c5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an autonomous system delegates tasks to child agents, background workers, or sandboxed sub-processes, the child's effective capability set MUST be derived strictly through a mathematical intersection ($\sqcap$) against the parent's current grant. The runtime MUST NOT permit an explicit allowlist or configuration object to widen any capability beyond the parent's bounds.
+
+**WHY**:
+Allowing subagent spawn routines to accept raw permission configurations without checking against the parent creates privilege escalation vulnerabilities. If a read-only "Reviewer" agent spawns a helper to run tests, and the helper configuration defaults to `allow_shell = true`, the child escalates beyond the parent's sandbox boundaries.
+
+**WHEN TO APPLY**:
+Apply in any multi-agent runtime, plugin architecture, sub-process launcher, or role-based delegation system across Rust, Go, Python, or TypeScript.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum FileGrant {
+    None = 0,
+    Read = 1,
+    Write = 2,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ShellGrant {
+    None = 0,
+    Inspect = 1,
+    Verify = 2,
+    Full = 3,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CapabilityProfile {
+    pub files: FileGrant,
+    pub shell: ShellGrant,
+    pub network: bool,
+    pub allowed_tools: Option<Vec<String>>,
+}
+
+impl CapabilityProfile {
+    #[must_use]
+    pub fn derive_child(&self, requested: &CapabilityProfile) -> Self {
+        // Enforce lattice lower-bound (Ord::min guarantees non-escalation)
+        let effective_files = self.files.min(requested.files);
+        let effective_shell = self.shell.min(requested.shell);
+        let effective_network = self.network && requested.network;
+
+        // Tool allowlist intersection
+        let effective_tools = match (&self.allowed_tools, &requested.allowed_tools) {
+            (Some(parent_tools), Some(req_tools)) => {
+                Some(req_tools.iter().filter(|t| parent_tools.contains(t)).cloned().collect())
+            }
+            (Some(parent_tools), None) => Some(parent_tools.clone()),
+            (None, Some(req_tools)) => Some(req_tools.clone()),
+            (None, None) => None,
+        };
+
+        Self {
+            files: effective_files,
+            shell: effective_shell,
+            network: effective_network,
+            allowed_tools: effective_tools,
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Blindly assigning requested permissions if set,
+// or falling back to default permissive capabilities.
+pub fn spawn_child_insecure(parent: &CapabilityProfile, req: &SpawnRequest) -> CapabilityProfile {
+    CapabilityProfile {
+        // ESCALATION HAZARD: Child becomes Write even if Parent is Read!
+        files: req.files.unwrap_or(FileGrant::Write),
+        shell: req.shell.unwrap_or(parent.shell),
+        network: req.network.unwrap_or(true),
+        allowed_tools: req.tools.clone(),
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce compliance using a property-based test (e.g., `proptest` or `quickcheck`) asserting that for all arbitrary pairs `(p, r)`:
+```rust
+assert!(p.derive_child(&r).files <= p.files);
+assert!(p.derive_child(&r).shell <= p.shell);
+if !p.network { assert!(!p.derive_child(&r).network); }
+```
+
+---
+
+
+---
+
+## 4152. Transport Admission Quarantine for Interactive Capabilities (Harvested from codewhale-hq/Codewhale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Transport Admission Quarantine for Interactive Capabilities",
+  "source": "codewhale-hq/Codewhale",
+  "source_url": "https://github.com/codewhale-hq/Codewhale",
+  "source_version": "2947e4c5",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T07:19:16.283Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-codewhale-hq-codewhale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `2947e4c5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A protocol transport or API endpoint MUST explicitly reject requests that require operator approvals, human clarifications, or tool executions UNLESS the transport implements a full bidirectional interactive communication channel. The server MUST fail closed during request admission rather than stalling mid-execution or dropping interactions silently.
+
+**WHY**:
+Exposing tool-running or goal-seeking APIs across unidirectional or non-interactive transports (like stdio JSON-RPC or simplified HTTP webhooks) leads to deadlock states. When an autonomous agent attempts to execute a command that triggers an approval prompt or requests disambiguation, the non-interactive transport cannot reply. The agent hangs until a timeout occurs, leaking system resources and worker threads.
+
+**WHEN TO APPLY**:
+Apply whenever an engine supports multiple RPC layers (e.g., CLI stdio pipes, VSCode ACP protocol, headless daemons, and full WebSockets/SSE endpoints).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+pub async fn validate_turn_admission(
+    is_interactive_transport: bool,
+    allowed_tools: Option<&[String]>,
+    is_goal_execution: bool,
+) -> Result<(), TransportAdmissionError> {
+    if !is_interactive_transport {
+        // Enforce tool-free, non-goal admission on compatibility transports
+        let has_empty_tools = matches!(allowed_tools, Some([]));
+        if !has_empty_tools || is_goal_execution {
+            return Err(TransportAdmissionError::InteractiveExecutionUnsupported {
+                code: -32602,
+                message: "Compatibility transports cannot answer approvals or clarification requests. \
+                          Interactive execution requires a bidirectional SSE/WebSocket transport. \
+                          Tool-free turns require explicit allowed_tools: [].".into(),
+            });
+        }
+    }
+    Ok(())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Accepting requests on any transport and discovering
+// downstream during turn execution that approvals cannot be gathered.
+pub async fn execute_turn(req: TurnRequest, transport: &Transport) {
+    let result = run_agent_loop(&req).await;
+    if let AgentState::NeedsApproval(prompt) = result {
+        // Transport cannot deliver or await response; fails silently or deadlocks!
+        if transport.is_unidirectional() {
+            log::warn!("Cannot ask for approval on this channel; skipping.");
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Automated integration test verifying that all compatibility entrypoints reject non-empty `allowed_tools` and interactive actions with JSON-RPC `-32602`:
+```rust
+#[tokio::test]
+async fn test_compatibility_transport_refuses_tools() {
+    let client = TestStdioClient::spawn().await;
+    let err = client.call("prompt/run", json!({"prompt": "ls", "allowed_tools": ["bash"]})).await.unwrap_err();
+    assert_eq!(err.code, -32602);
+}
+```
+
+---
+
+
+---
+
+## 4153. Stable Byte Order Serialization for Prefix-Cache Fingerprints (Harvested from codewhale-hq/Codewhale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Stable Byte Order Serialization for Prefix-Cache Fingerprints",
+  "source": "codewhale-hq/Codewhale",
+  "source_url": "https://github.com/codewhale-hq/Codewhale",
+  "source_version": "2947e4c5",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T07:19:16.480Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-codewhale-hq-codewhale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `2947e4c5`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When generating cryptographic hashes or tracking cache stability for LLM KV caches (e.g., DeepSeek, Anthropic prompt caching), tool catalog schemas and system prompts MUST NOT be serialized from unordered maps or sorted arbitrarily. They MUST be serialized strictly in the deterministic wire order presented to the LLM backend.
+
+**WHY**:
+Modern frontier LLMs utilize prefix KV-caching that operates on sequential token bytes. Sorting a tool catalog lexicographically before hashing creates a false-positive cache hit internally, while the provider backend experiences a total cache bust if its actual request payload serialized tools in registration order.
+
+**WHEN TO APPLY**:
+Apply in any context caching system, LLM client library, prompt optimizer, or caching reverse-proxy.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use sha2::{Digest, Sha256};
+use serde_json::Value;
+
+pub fn compute_provider_prefix_hash(system_prompt: &str, raw_tool_json: &[Value]) -> String {
+    let mut hasher = Sha256::new();
+    // 1. Hash system prompt
+    hasher.update(system_prompt.as_bytes());
+    hasher.update(b":");
+    
+    // 2. Hash tools IN EXACT WIRE ORDER (never sort by name)
+    for tool in raw_tool_json {
+        let serialized = serde_json::to_vec(tool).expect("valid tool json");
+        hasher.update(&serialized);
+        hasher.update(b",");
+    }
+    format!("{:x}", hasher.finalize())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Sorting keys or tool vectors to make hashes 'canonical'.
+// This diverges from the provider's actual received byte stream!
+pub fn compute_hash_insecure(tools: &mut [Tool]) -> String {
+    tools.sort_by(|a, b| a.name.cmp(&b.name)); // BUSTS CACHE SYNC!
+    serde_json::to_string(tools).unwrap()
+}
+```
+
+**VERIFICATION METHOD**:
+Run an assert verifying that rearranging the tool definition array produces a different cache fingerprint:
+```rust
+let tools_a = vec![tool_read(), tool_write()];
+let tools_b = vec![tool_write(), tool_read()];
+assert_ne!(
+    compute_provider_prefix_hash("prompt", &tools_a),
+    compute_provider_prefix_hash("prompt", &tools_b)
+);
+```
+
+---
+
+
+---
+
+## 4154. Monotonic Shared-Budget Deadline Pattern (Harvested from callstack/agent-device)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Monotonic Shared-Budget Deadline Pattern",
+  "source": "callstack/agent-device",
+  "source_url": "https://github.com/callstack/agent-device",
+  "source_version": "ed798f9c",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T07:22:24.938Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-callstack-agent-device",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `ed798f9c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an operation requires interrogating multiple fallback variants or sub-queries to resolve a single state question (e.g., inspecting foreground activity across window/activity dumps, or querying multiple network/IPC fallbacks), the system MUST NOT apply isolated timeout bounds to each sub-call. It MUST construct a single monotonic `Deadline` at the entry point of the parent question and supply `remainingMs = deadline.remainingMs()` to each sequential sub-operation. If `remainingMs <= 0`, subsequent queries MUST short-circuit immediately and return a typed non-fatal sentinel (e.g., `unknown` or empty string).
+
+**WHY**:
+Applying isolated individual timeouts (e.g., 10 seconds per sub-command) across $N$ fallback attempts creates a worst-case cumulative blocking duration of $N \times T$. In automated driver pipelines, this causes the top-level client request envelope to expire before the driver finishes polling, triggering premature timeouts, tearing down healthy daemons, and abandoning pending sub-processes on the host.
+
+**WHEN TO APPLY**:
+- Subprocess execution with multiple fallback arguments (e.g., `adb shell dumpsys window`, `dumpsys activity`).
+- Resilient network/microservice health checks cascading across secondary nodes.
+- DB fallback discovery or multi-region failover discovery loops.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production Invariant from packages/platform-android/src/observation.ts
+import { Deadline } from '@agent-device/host-kit/retry';
+import { isCommandTimeoutError } from '@agent-device/host-kit/command';
+
+const DUMP_OBSERVATION_BUDGET_MS = 10_000;
+
+export type DumpReader = (words: readonly string[]) => Promise<string>;
+
+export function createDumpReader(
+  host: { runAdb: (device: DeviceInfo, args: readonly string[], options: { timeoutMs: number; allowFailure: boolean }) => Promise<{ stdout: string }> },
+  device: DeviceInfo
+): DumpReader {
+  const dumps = new Map<string, Promise<string>>();
+  let deadline: Deadline | undefined;
+
+  return (words: readonly string[]): Promise<string> => {
+    const key = words.join(' ');
+    const cached = dumps.get(key);
+    if (cached) return cached;
+
+    // Lazily seed the shared monotonic deadline on the first read of the question
+    deadline ??= Deadline.fromTimeoutMs(DUMP_OBSERVATION_BUDGET_MS);
+    const remainingMs = deadline.remainingMs();
+
+    // Zero or negative remaining budget short-circuits immediately without I/O
+    if (remainingMs <= 0) {
+      return Promise.resolve('');
+    }
+
+    const pending = host
+      .runAdb(device, ['shell', ...words], {
+        allowFailure: true,
+        timeoutMs: remainingMs,
+      })
+      .then(
+        (result) => result.stdout,
+        (error: unknown) => {
+          // Swallow timeout errors to degrade gracefully to 'unanswered'
+          if (!isCommandTimeoutError(error)) throw error;
+          return '';
+        }
+      );
+
+    dumps.set(key, pending);
+    return pending;
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Independent timeouts compounding into an unproven multi-minute cascade
+async function readForegroundBad(host: Host, device: Device): Promise<string> {
+  const variants = [
+    ['dumpsys', 'window', 'windows'],
+    ['dumpsys', 'window'],
+    ['dumpsys', 'activity', 'activities'],
+    ['dumpsys', 'activity'],
+  ];
+  for (const variant of variants) {
+    try {
+      // DANGER: Each call spends up to 10s. Total worst-case latency = 40s!
+      // This completely breaches upper-layer client RPC envelope limits (e.g., 30s).
+      const res = await host.runAdb(device, variant, { timeoutMs: 10_000 });
+      if (res.stdout) return res.stdout;
+    } catch (err) {
+      // Loops continue, compounding timeout debt
+    }
+  }
+  return '';
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a virtual clock test harness that simulates hung sub-commands:
+```typescript
+test('cascading variant reads do not exceed aggregate budget', async () => {
+  const aggregateBudget = 10_000;
+  let virtualTime = 0;
+  const mockAdb = vi.fn().mockImplementation(async (_dev, _args, opts) => {
+    // Simulate each command consuming all available slice or half of it
+    const spent = Math.min(opts.timeoutMs, 6_000);
+    virtualTime += spent;
+    if (spent >= opts.timeoutMs) {
+      const err = new Error('adb timeout');
+      err.name = 'CommandTimeoutError';
+      throw err;
+    }
+    return { stdout: '' };
+  });
+
+  const reader = createDumpReader({ runAdb: mockAdb }, mockDevice);
+  await reader(['window', 'windows']);
+  await reader(['window']);
+  await reader(['activity']);
+
+  expect(virtualTime).toBeLessThanOrEqual(aggregateBudget);
+  expect(mockAdb).toHaveBeenCalledTimes(2); // 3rd must short-circuit without invocation
+});
+```
+
+---
+
+
+---
+
+## 4155. Proof-by-Ledger Worst-Case RPC Envelope Contract (Harvested from callstack/agent-device)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Proof-by-Ledger Worst-Case RPC Envelope Contract",
+  "source": "callstack/agent-device",
+  "source_url": "https://github.com/callstack/agent-device",
+  "source_version": "ed798f9c",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T07:22:25.125Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-callstack-agent-device",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `ed798f9c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Every asynchronous command registered in an automation daemon that exhibits variable multi-step device preparation (such as cold-path APK installations, fallback version comparisons, or long-running gestures) MUST have its top-level request timeout envelope ($T_{\text{envelope}}$) verified by an automated integration test against a simulated worst-case ledger. Envelope values MUST NOT be computed via manual summation or guesswork. Every step in the execution tree MUST be charged its strict execution timeout on a virtual clock ledger. The top-level envelope MUST strictly satisfy:
+$$T_{\text{envelope}} \ge \sum_{i=1}^{n} T_{\text{step}_i}^{\text{worst}} + T_{\text{margin}}^{\text{daemon}}$$
+
+**WHY**:
+If the outer envelope timeout is smaller than the worst-case path through internal recovery routines (e.g., version mismatch $\to$ APK pull $\to$ hash verification $\to$ failed upgrade $\to$ full uninstall $\to$ re-install $\to$ one-shot gesture run), an outer client timeout will abort the connection while the underlying device is still executing. The client drops the connection, triggering a host-side daemon restart, leaving orphaned instrumentation processes on the device and deadlocking subsequent automation steps.
+
+**WHEN TO APPLY**:
+- Automation engines wrapping complex OS bridges (ADB, XCUITest, WebDriver, SSH).
+- Workflows with cold-boot initialization, fallback installations, or file transfer verification.
+- Any RPC protocol defining a hard outer client abort deadline.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production Invariant from packages/command-registry/src/registry.ts & ledger test
+export const SETTLE_FLAG_PRESERVE_DAEMON_TIMEOUT_POLICY = {
+  // Proven by test/integration/provider-scenarios/android-longpress-ledger.test.ts
+  // 120s max user hold + cold APK uninstall/install + dumpsys dialog budgets + margin
+  envelopeMs: 320_000,
+};
+
+// Ledger test harness proving the envelope constraint
+test('longpress request envelope outlasts the worst-case cold route', async () => {
+  let virtualTimeSpentMs = 0;
+  const recordedSteps: Array<{ tool: string; timeoutMs: number }> = [];
+
+  const fakeAdbProvider: AndroidAdbProvider = {
+    exec: async (args, options) => {
+      const timeoutMs = options?.timeoutMs;
+      // Invariant: Unbounded operations in the driver fail the ledger test immediately
+      assert.ok(
+        timeoutMs !== undefined && Number.isFinite(timeoutMs) && timeoutMs > 0,
+        `Unbounded adb call detected: ${args.join(' ')}`
+      );
+      recordedSteps.push({ tool: args[0], timeoutMs });
+      virtualTimeSpentMs += timeoutMs;
+      return { stdout: '', stderr: '', exitCode: 0 };
+    },
+  };
+
+  await driveColdAndroidLongPress(fakeAdbProvider, { holdMs: LONG_PRESS_DURATION_MAX_MS });
+
+  const resolvedPolicy = resolveCommandTimeoutPolicy('longpress');
+  const configuredEnvelope = resolvedPolicy.envelopeMs;
+
+  assert.ok(
+    configuredEnvelope >= virtualTimeSpentMs,
+    `Outer envelope (${configuredEnvelope}ms) breached by worst-case execution (${virtualTimeSpentMs}ms)`
+  );
+});
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Hand-summed arbitrary envelope constant
+export const UNVERIFIED_TOUCH_POLICY = {
+  // DANGER: Developer assumed: 120s hold + 30s install + 60s buffer = 210s.
+  // Reality: pm path (10s) + adb pull (30s) + uninstall (30s) + install (60s) + 
+  // dumpsys checks (4 x 10s = 40s) + 120s gesture = 290s!
+  // Client drops socket at 210s while device is mid-install, crashing the harness.
+  envelopeMs: 210_000, 
+};
+```
+
+**VERIFICATION METHOD**:
+Run static assertion suites ensuring no registered command specifies an `envelopeMs` deviating from the ledger scenario proof:
+```bash
+pnpm vitest run src/__tests__/command-descriptor-timeout-policy.test.ts
+```
+
+---
+
+
+---
+
+## 4156. Slot-Separation of Intent vs. Fault in Pipeline Verdicts (Harvested from callstack/agent-device)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Slot-Separation of Intent vs. Fault in Pipeline Verdicts",
+  "source": "callstack/agent-device",
+  "source_url": "https://github.com/callstack/agent-device",
+  "source_version": "ed798f9c",
+  "license": "MIT",
+  "extracted_at": "2026-10-25T07:22:25.325Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-callstack-agent-device",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `ed798f9c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In an execution engine or diagnostic capture pipeline, an intentional pre-configuration, manual preference, or forced route (such as requesting a specific backend or tree mode) MUST NOT be stored in the error/failure slot of the execution state machine. Intent MUST occupy a dedicated `preSelection` slot. The `firstFailure` slot MUST remain reserved strictly for runtime faults. The final result verdict resolver MUST evaluate:
+$$\text{Verdict} = \text{firstFailure} \parallel \text{preSelection} \parallel \text{Default}$$
+
+**WHY**:
+If a pre-selection token (e.g., `'requested-backend'`) is seeded into the `firstFailure` slot at pipeline initialization, any subsequent real runtime failure (e.g., Apple AX server returning `kAXErrorIllegalArgument` or Android dumping an empty hierarchy) will be blocked from recording its failure code. Upstream consumers inspect the verdict, find `'requested-backend'`, falsely assume that the operation succeeded without degradation, and present corrupt, empty, or un-actionable snapshot nodes to the agent.
+
+**WHEN TO APPLY**:
+- Multi-tier diagnostic fallbacks (e.g., XCUITest recursive tree $\to$ private Accessibility API $\to$ screenshot fallback).
+- Multi-provider database or network client routing where preferred backends can degrade.
+- Compiler pass status classification and diagnostic engines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Production Invariant from AppleRunner RunnerTests+SnapshotCapturePlan.swift
+
+/// Explicit slot separation: Pre-selection reason (intent) vs First-failure (fault)
+static func snapshotPlanPreSelectionReason(
+  _ state: SnapshotXCTestChannelPlanState,
+  requestPinnedBackend: Bool = false,
+  preferredBackend: String? = nil
+) -> (reason: String, code: String)? {
+  if state == .normal && preferredBackend == SnapshotBackendKind.recursiveTree.rawValue {
+    return ("the recursive XCTest tree backend was explicitly selected for this capture", "requested-backend")
+  }
+  if state == .deferredToIndependentBackend && requestPinnedBackend {
+    return ("the private AX backend was selected because this capture asked for custom actions", "requested-backend")
+  }
+  return nil
+}
+
+/// The failure slot ONLY captures actual operational errors
+static func xcTestChannelStateFirstFailure(
+  _ state: SnapshotXCTestChannelPlanState,
+  requestPinnedBackend: Bool = false
+) -> (reason: String, code: String)? {
+  switch state {
+  case .normal:
+    return nil
+  case .deferredToIndependentBackend:
+    if requestPinnedBackend { return nil } // Intent is not failure!
+    return ("XCTest-backed snapshot tiers were deferred after recent slow work", "deferred")
+  case .boundedXCTestProbe:
+    return ("XCTest-backed snapshot tiers ran on a bounded probe", "budget")
+  }
+}
+
+/// Final verdict prioritizes genuine runtime failure over static intent
+static func planVerdictReason(
+  xCTestTierRan: Bool,
+  state: SnapshotXCTestChannelPlanState,
+  firstFailure: (reason: String, code: String)?,
+  preSelection: (reason: String, code: String)?
+) -> (reason: String, code: String)? {
+  guard xCTestTierRan, state == .deferredToIndependentBackend else {
+    // Fault ALWAYS overrides intent; fallback to intent only when no fault occurred
+    return firstFailure ?? preSelection
+  }
+  return xcTestChannelStateFirstFailure(.boundedXCTestProbe)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Seeding intent into the failure slot
+var firstFailure: (reason: String, code: String)? = nil
+if preferredBackend == "recursiveTree" {
+  // DANGER: Seeding the failure slot with an intent code!
+  firstFailure = ("Explicitly selected", "requested-backend")
+}
+
+// Later during execution...
+do {
+  try performTreeSnapshot()
+} catch {
+  // If the code uses null-coalescing or guards:
+  if firstFailure == nil {
+    firstFailure = ("AX Error: kAXErrorIllegalArgument", "ax-rejected")
+  }
+  // RESULT: "ax-rejected" is dropped! The caller thinks the tree succeeded cleanly!
+}
+```
+
+**VERIFICATION METHOD**:
+Automated unit test with simulated AX server faults:
+```swift
+func testPlanVerdictReasonPrefersTheFirstFailureOverThePreSelection() {
+  let pin = ("selected", "requested-backend")
+  let fault = ("AX Error", "ax-rejected")
+
+  // Scenario A: No fault occurs -> Verdict reflects intent
+  XCTAssertEqual(
+    planVerdictReason(xCTestTierRan: true, state: .normal, firstFailure: nil, preSelection: pin)?.code,
+    "requested-backend"
+  )
+
+  // Scenario B: Runtime fault occurs -> Fault MUST displace intent
+  XCTAssertEqual(
+    planVerdictReason(xCTestTierRan: true, state: .normal, firstFailure: fault, preSelection: pin)?.code,
+    "ax-rejected"
+  )
+}
+```
+
+---

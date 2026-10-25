@@ -4724,3 +4724,9 @@
 | `CYCLE-20261025-GOS0` | `2026-10-25T07:05:16.656Z` | `shoutem/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4131, Rule 4132` | Yes (`6a829046...`) |
 | `CYCLE-20261025-H082` | `2026-10-25T07:05:31.491Z` | `reshaped-ui/reshaped` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4133, Rule 4134, Rule 4135` | Yes (`987762af...`) |
 | `CYCLE-20261025-I3C7` | `2026-10-25T07:06:22.183Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4136, Rule 4137, Rule 4138` | Yes (`972ebfcd...`) |
+| `CYCLE-20261025-XEHG` | `2026-10-25T07:18:16.468Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4139, Rule 4140, Rule 4141` | Yes (`56ba0a6f...`) |
+| `CYCLE-20261025-Y3PO` | `2026-10-25T07:18:49.164Z` | `lobehub/lobe-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4142, Rule 4143, Rule 4144` | Yes (`83cbd794...`) |
+| `CYCLE-20261025-YC4W` | `2026-10-25T07:19:00.080Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4145, Rule 4146, Rule 4147` | Yes (`785d38a6...`) |
+| `CYCLE-20261025-YCOY` | `2026-10-25T07:19:00.802Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4148, Rule 4149, Rule 4150` | Yes (`188379ec...`) |
+| `CYCLE-20261025-YOXC` | `2026-10-25T07:19:16.656Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4151, Rule 4152, Rule 4153` | Yes (`f4f076c8...`) |
+| `CYCLE-20261025-2QN3` | `2026-10-25T07:22:25.503Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4154, Rule 4155, Rule 4156` | Yes (`340f6205...`) |

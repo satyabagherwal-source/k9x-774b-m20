@@ -4731,3 +4731,9 @@ Every entry in this ledger must capture:
 | `learn-github-shoutem-ui` | `https://github.com/shoutem/ui` | `92e3f530` | Multi-dimensional audit evidence | 2026-10-25T07:05:16.659Z |
 | `learn-github-reshaped-ui-reshaped` | `https://github.com/reshaped-ui/reshaped` | `de2c2493` | Multi-dimensional audit evidence | 2026-10-25T07:05:31.493Z |
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `347f171a` | Multi-dimensional audit evidence | 2026-10-25T07:06:22.186Z |
+| `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-25T07:18:16.471Z |
+| `learn-github-lobehub-lobe-ui` | `https://github.com/lobehub/lobe-ui` | `b0602f5c` | Multi-dimensional audit evidence | 2026-10-25T07:18:49.167Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `a5bb8b9c` | Multi-dimensional audit evidence | 2026-10-25T07:19:00.083Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `f0ffc917` | Multi-dimensional audit evidence | 2026-10-25T07:19:00.805Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `2947e4c5` | Multi-dimensional audit evidence | 2026-10-25T07:19:16.659Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `ed798f9c` | Multi-dimensional audit evidence | 2026-10-25T07:22:25.506Z |

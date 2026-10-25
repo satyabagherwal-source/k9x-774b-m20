@@ -205,8 +205,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceVersion": "hf-qwen-qwen3.8-27b",
     "license": "Open-Source",
-    "contentHash": "9bfdcd8b5a723f3461b75baf595cd82156e8aa820d63af1bc0ad7804dba30258",
-    "lastHarvestedAt": "2026-10-20T14:57:44.873Z",
+    "contentHash": "56ba0a6f4fcc6b971e6be76466a88ef8469d426b3c9622139049f0d9d4f88837",
+    "lastHarvestedAt": "2026-10-25T07:18:16.471Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b"
   },
   "hf-black-forest-labs-flux.1-dev": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "d0a3170d",
+    "sourceVersion": "f0ffc917",
     "license": "AGPL-3.0",
-    "contentHash": "27eaace4783e70b4bf4d7507af0d5974f7977507c7d3447b87f3c5f285b53708",
-    "lastHarvestedAt": "2026-10-22T19:42:26.552Z",
+    "contentHash": "188379ec975094d9f6d30524604bf35e5f517c4926025c389d9b450d72484aa5",
+    "lastHarvestedAt": "2026-10-25T07:19:00.805Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -5233,10 +5233,10 @@
     "repository": "lobehub/lobe-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/lobehub/lobe-ui",
-    "sourceVersion": "a7bf63ed",
+    "sourceVersion": "b0602f5c",
     "license": "MIT",
-    "contentHash": "cfe3386a310e3e959717c05f8aff3c776431de988557d3a8cbdc6056d3a4b75e",
-    "lastHarvestedAt": "2026-10-22T20:22:04.286Z",
+    "contentHash": "83cbd79402e2f43c05c1b4797fa6716085dcd7973467eb15cffe2909185976ea",
+    "lastHarvestedAt": "2026-10-25T07:18:49.167Z",
     "learningId": "learn-github-lobehub-lobe-ui"
   },
   "gitui-org-gitui": {
@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "f217bd67",
+    "sourceVersion": "ed798f9c",
     "license": "MIT",
-    "contentHash": "402f3dfc26492a562c875ed23f88387a3f15de1e7c8ed420ad678bba54ef2a6b",
-    "lastHarvestedAt": "2026-10-20T17:16:50.852Z",
+    "contentHash": "340f6205ca1f05a2eaf0fe3187b03dcf35b8ef2de4c0ba5d333013e78cb74cdb",
+    "lastHarvestedAt": "2026-10-25T07:22:25.506Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "0acf0e89",
+    "sourceVersion": "a5bb8b9c",
     "license": "MIT",
-    "contentHash": "05b9de9445d8ac6519360c799ae77443ded70d22a653322c23c451ca38f4bf49",
-    "lastHarvestedAt": "2026-10-22T18:50:29.966Z",
+    "contentHash": "785d38a67ba7a61222ce601aea746b8ef94536d776a28ad668c756688689a7d4",
+    "lastHarvestedAt": "2026-10-25T07:19:00.083Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "4f1d7ab5",
+    "sourceVersion": "2947e4c5",
     "license": "MIT",
-    "contentHash": "12f368b6b4f24a20403d03ccb9d0abdaaa707d1b933563b86a3321c994708b3f",
-    "lastHarvestedAt": "2026-10-22T16:45:08.576Z",
+    "contentHash": "f4f076c82c2139a6f2b01ca58d725f9a0c4e4635d58731ec33deb6196f428cd4",
+    "lastHarvestedAt": "2026-10-25T07:19:16.659Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {

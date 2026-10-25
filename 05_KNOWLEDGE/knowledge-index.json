@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T07:06:22.132Z",
+  "last_updated": "2026-10-25T07:22:25.447Z",
   "total_verified_learnings": 1084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3839,8 +3839,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "d0a3170d",
-      "content_hash": "27eaace4783e70b4bf4d7507af0d5974f7977507c7d3447b87f3c5f285b53708",
+      "source_version": "f0ffc917",
+      "content_hash": "188379ec975094d9f6d30524604bf35e5f517c4926025c389d9b450d72484aa5",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -3883,6 +3883,21 @@
           "number": 3717,
           "title": "fix(kubeblocks): reduce mysql,mongodb default logging (#4285)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4148,
+          "title": "Dynamic Host Port Allocation Injection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4149,
+          "title": "Multi-Drive Path Normalization & Dynamic Prefix Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4150,
+          "title": "PWA App Shell Navigation Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3890,7 +3905,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:42:26.475Z",
+      "verified_at": "2026-10-25T07:19:00.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4933,8 +4948,8 @@
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "f217bd67",
-      "content_hash": "402f3dfc26492a562c875ed23f88387a3f15de1e7c8ed420ad678bba54ef2a6b",
+      "source_version": "ed798f9c",
+      "content_hash": "340f6205ca1f05a2eaf0fe3187b03dcf35b8ef2de4c0ba5d333013e78cb74cdb",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "promoted_rules": [
@@ -4947,6 +4962,21 @@
           "number": 3285,
           "title": "daemon): preserve recorded ownership through stop and cleanup (#3806)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4154,
+          "title": "Monotonic Shared-Budget Deadline Pattern",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4155,
+          "title": "Proof-by-Ledger Worst-Case RPC Envelope Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4156,
+          "title": "Slot-Separation of Intent vs. Fault in Pipeline Verdicts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4954,7 +4984,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:16:50.785Z",
+      "verified_at": "2026-10-25T07:22:25.435Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6520,13 +6550,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "877d0136",
-      "content_hash": "5ca2e518c42f9d597e331e84efeb51bcad6f01da63e216f88477080dc7ad3ee6",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "2947e4c5",
+      "content_hash": "f4f076c82c2139a6f2b01ca58d725f9a0c4e4635d58731ec33deb6196f428cd4",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -6557,6 +6587,21 @@
           "number": 3644,
           "title": "CW-7503): the committed secret scrubber did not compile; own the block type",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4151,
+          "title": "Monotonic Capability Derivation via Lattice Intersections",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4152,
+          "title": "Transport Admission Quarantine for Interactive Capabilities",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4153,
+          "title": "Stable Byte Order Serialization for Prefix-Cache Fingerprints",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6564,7 +6609,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:30:34.533Z",
+      "verified_at": "2026-10-25T07:19:16.589Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24392,7 +24437,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
       "source_version": "hf-qwen-qwen3.8-27b",
-      "content_hash": "9bfdcd8b5a723f3461b75baf595cd82156e8aa820d63af1bc0ad7804dba30258",
+      "content_hash": "56ba0a6f4fcc6b971e6be76466a88ef8469d426b3c9622139049f0d9d4f88837",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "promoted_rules": [
@@ -24409,6 +24454,21 @@
         {
           "number": 1961,
           "title": "Multimodal Token Serialization Barrier",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4139,
+          "title": "Dual-State Hybrid Cache Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4140,
+          "title": "Multi-Token Termination Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4141,
+          "title": "Partial Rotary Dimension (Partial-RoPE) Stride Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -24430,7 +24490,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv43c1y3",
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv4gkm75"
       ],
-      "verified_at": "2026-10-20T14:57:44.799Z",
+      "verified_at": "2026-10-25T07:18:16.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32054,8 +32114,8 @@
       "slug": "lobehub-lobe-ui",
       "platform": "github",
       "source_url": "https://github.com/lobehub/lobe-ui",
-      "source_version": "a7bf63ed",
-      "content_hash": "cfe3386a310e3e959717c05f8aff3c776431de988557d3a8cbdc6056d3a4b75e",
+      "source_version": "b0602f5c",
+      "content_hash": "83cbd79402e2f43c05c1b4797fa6716085dcd7973467eb15cffe2909185976ea",
       "dossier_path": "07_PROJECT_LEARNING/lobehub-lobe-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lobehub-lobe-ui-learnings.md",
       "promoted_rules": [
@@ -32073,6 +32133,21 @@
           "number": 3721,
           "title": "🐛 fix(docs-kit): link @lobehub/ui style.css from a real module so dev SSR first",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4142,
+          "title": "Dual-Engine Highlighter Resolution Disambiguation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4143,
+          "title": "SVG Fragment Identifier Injection Sanitization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4144,
+          "title": "Fiber-Level Host Mutation Verification for Render Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32080,7 +32155,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:22:04.217Z",
+      "verified_at": "2026-10-25T07:18:49.096Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34603,8 +34678,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "0acf0e89",
-      "content_hash": "05b9de9445d8ac6519360c799ae77443ded70d22a653322c23c451ca38f4bf49",
+      "source_version": "a5bb8b9c",
+      "content_hash": "785d38a67ba7a61222ce601aea746b8ef94536d776a28ad668c756688689a7d4",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -34622,6 +34697,21 @@
           "number": 3700,
           "title": "mcp): treat unsupported ping as non-fatal so servers stay usable (#6805)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4145,
+          "title": "External Model Discovery Concurrency Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4146,
+          "title": "State-Preserving Entity Dereferencing for Multi-Tenant Accounting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4147,
+          "title": "Defensive Buffer Sanitization at Ingress Protocol Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34629,7 +34719,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:50:29.900Z",
+      "verified_at": "2026-10-25T07:19:00.003Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119981,6 +120071,258 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T07:06:22.122Z"
+    },
+    "rule-4139": {
+      "learning_id": "rule-4139",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4139,
+      "title": "Dual-State Hybrid Cache Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:18:16.401Z"
+    },
+    "rule-4140": {
+      "learning_id": "rule-4140",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4140,
+      "title": "Multi-Token Termination Boundary Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:18:16.401Z"
+    },
+    "rule-4141": {
+      "learning_id": "rule-4141",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4141,
+      "title": "Partial Rotary Dimension (Partial-RoPE) Stride Alignment Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:18:16.401Z"
+    },
+    "rule-4142": {
+      "learning_id": "rule-4142",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4142,
+      "title": "Dual-Engine Highlighter Resolution Disambiguation",
+      "source_url": "https://github.com/lobehub/lobe-ui",
+      "source_version": "b0602f5c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:18:49.096Z"
+    },
+    "rule-4143": {
+      "learning_id": "rule-4143",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4143,
+      "title": "SVG Fragment Identifier Injection Sanitization",
+      "source_url": "https://github.com/lobehub/lobe-ui",
+      "source_version": "b0602f5c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:18:49.096Z"
+    },
+    "rule-4144": {
+      "learning_id": "rule-4144",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4144,
+      "title": "Fiber-Level Host Mutation Verification for Render Invariants",
+      "source_url": "https://github.com/lobehub/lobe-ui",
+      "source_version": "b0602f5c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:18:49.096Z"
+    },
+    "rule-4145": {
+      "learning_id": "rule-4145",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4145,
+      "title": "External Model Discovery Concurrency Isolation",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "a5bb8b9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:19:00.003Z"
+    },
+    "rule-4146": {
+      "learning_id": "rule-4146",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4146,
+      "title": "State-Preserving Entity Dereferencing for Multi-Tenant Accounting",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "a5bb8b9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:19:00.003Z"
+    },
+    "rule-4147": {
+      "learning_id": "rule-4147",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4147,
+      "title": "Defensive Buffer Sanitization at Ingress Protocol Boundaries",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "a5bb8b9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:19:00.003Z"
+    },
+    "rule-4148": {
+      "learning_id": "rule-4148",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4148,
+      "title": "Dynamic Host Port Allocation Injection Invariant",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "f0ffc917",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:19:00.735Z"
+    },
+    "rule-4149": {
+      "learning_id": "rule-4149",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4149,
+      "title": "Multi-Drive Path Normalization & Dynamic Prefix Invariant",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "f0ffc917",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:19:00.735Z"
+    },
+    "rule-4150": {
+      "learning_id": "rule-4150",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4150,
+      "title": "PWA App Shell Navigation Isolation Invariant",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "f0ffc917",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:19:00.735Z"
+    },
+    "rule-4151": {
+      "learning_id": "rule-4151",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4151,
+      "title": "Monotonic Capability Derivation via Lattice Intersections",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "2947e4c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:19:16.589Z"
+    },
+    "rule-4152": {
+      "learning_id": "rule-4152",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4152,
+      "title": "Transport Admission Quarantine for Interactive Capabilities",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "2947e4c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:19:16.589Z"
+    },
+    "rule-4153": {
+      "learning_id": "rule-4153",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4153,
+      "title": "Stable Byte Order Serialization for Prefix-Cache Fingerprints",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "2947e4c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:19:16.589Z"
+    },
+    "rule-4154": {
+      "learning_id": "rule-4154",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4154,
+      "title": "Monotonic Shared-Budget Deadline Pattern",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "ed798f9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:22:25.435Z"
+    },
+    "rule-4155": {
+      "learning_id": "rule-4155",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4155,
+      "title": "Proof-by-Ledger Worst-Case RPC Envelope Contract",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "ed798f9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:22:25.435Z"
+    },
+    "rule-4156": {
+      "learning_id": "rule-4156",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4156,
+      "title": "Slot-Separation of Intent vs. Fault in Pipeline Verdicts",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "ed798f9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:22:25.435Z"
     }
   },
   "aliases": {
