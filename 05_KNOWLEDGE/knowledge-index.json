@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T22:00:50.400Z",
+  "last_updated": "2026-10-25T22:07:24.321Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6281,8 +6281,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "8e3eb7ad",
-      "content_hash": "7558a29a4775b9ac1dfb8b1e20a9bd2a777bfc4336da419f5fe02fbd9fa89f9e",
+      "source_version": "a3c14189",
+      "content_hash": "075eec4cce42203d4fb22e3f0747be30bb35e9f51b27947d94a192b0a15a4c60",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -6325,6 +6325,11 @@
           "number": 4091,
           "title": "Merge pull request #127439 from ClickHouse/fix-merge-block-empty-input",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4469,
+          "title": "Merge pull request #127691 from groeneai/fix-05238-parallel-distinct-block-split",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6332,7 +6337,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:58:57.773Z",
+      "verified_at": "2026-10-25T22:07:24.309Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27161,7 +27166,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
-      "content_hash": "4115646a5581225ca333c570ece820e3b48ded6b0bb6f1b4a8296374441bee51",
+      "content_hash": "0cbcd5878f74184740a02ae6f93466b4ccc07bb3fbd879d71f0923d111046985",
       "dossier_path": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "promoted_rules": [
@@ -27198,7 +27203,7 @@
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv3xybf6",
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot"
       ],
-      "verified_at": "2026-10-21T02:14:57.733Z",
+      "verified_at": "2026-10-25T22:07:10.267Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46148,8 +46153,8 @@
       "slug": "software-mansion-react-native-screens",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-screens",
-      "source_version": "3824a107",
-      "content_hash": "1ff8ae62a0545bcd638803e4679e44ec943c61e0cd3bc0a7c5d19c444d5cc454",
+      "source_version": "ae5d475e",
+      "content_hash": "45fbd34f3c555a0bdc09831005725b3bf05b2bdd11e8314442d7ed9d719a352b",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "promoted_rules": [
@@ -46162,6 +46167,11 @@
           "number": 3526,
           "title": "Android, Stack v5): emit onDismiss only if fragment is explicitly popped (#4745)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4468,
+          "title": "iOS, Stack v4): iterate over a copy of reactSubviews when updating header shadow",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46169,7 +46179,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T04:49:14.560Z",
+      "verified_at": "2026-10-25T22:07:15.871Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126416,6 +126426,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T22:00:50.390Z"
+    },
+    "rule-4468": {
+      "learning_id": "rule-4468",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4468,
+      "title": "iOS, Stack v4): iterate over a copy of reactSubviews when updating header shadow",
+      "source_url": "https://github.com/software-mansion/react-native-screens",
+      "source_version": "ae5d475e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:07:15.871Z"
+    },
+    "rule-4469": {
+      "learning_id": "rule-4469",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4469,
+      "title": "Merge pull request #127691 from groeneai/fix-05238-parallel-distinct-block-split",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "a3c14189",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:07:24.309Z"
     }
   },
   "aliases": {

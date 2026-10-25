@@ -5021,3 +5021,6 @@ Every entry in this ledger must capture:
 | `learn-github-electron-electron` | `https://github.com/electron/electron` | `0240841b` | Multi-dimensional audit evidence | 2026-10-25T22:00:42.014Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `f25c7ebb` | Multi-dimensional audit evidence | 2026-10-25T22:00:48.469Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8f6b18ba` | Multi-dimensional audit evidence | 2026-10-25T22:00:50.452Z |
+| `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-25T22:07:10.338Z |
+| `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `ae5d475e` | Multi-dimensional audit evidence | 2026-10-25T22:07:15.952Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `a3c14189` | Multi-dimensional audit evidence | 2026-10-25T22:07:24.379Z |

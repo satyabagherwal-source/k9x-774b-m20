@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T22:00:50.460Z",
+  "last_updated": "2026-10-25T22:07:24.387Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1415,14 +1415,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "content_hash": "4115646a5581225ca333c570ece820e3b48ded6b0bb6f1b4a8296374441bee51",
-      "verified_at": "2026-10-21T02:14:57.813Z",
+      "content_hash": "0cbcd5878f74184740a02ae6f93466b4ccc07bb3fbd879d71f0923d111046985",
+      "verified_at": "2026-10-25T22:07:10.346Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:14:57.813Z"
+      "last_updated": "2026-10-25T22:07:10.346Z"
     },
     "NaiveAI/Naive-N0.5-Flash": {
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "7558a29a4775b9ac1dfb8b1e20a9bd2a777bfc4336da419f5fe02fbd9fa89f9e",
-      "verified_at": "2026-10-25T05:58:57.857Z",
+      "content_hash": "075eec4cce42203d4fb22e3f0747be30bb35e9f51b27947d94a192b0a15a4c60",
+      "verified_at": "2026-10-25T22:07:24.386Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:58:57.857Z"
+      "last_updated": "2026-10-25T22:07:24.386Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -12741,14 +12741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-screens",
-      "content_hash": "1ff8ae62a0545bcd638803e4679e44ec943c61e0cd3bc0a7c5d19c444d5cc454",
-      "verified_at": "2026-10-21T04:49:14.626Z",
+      "content_hash": "45fbd34f3c555a0bdc09831005725b3bf05b2bdd11e8314442d7ed9d719a352b",
+      "verified_at": "2026-10-25T22:07:15.973Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:49:14.626Z"
+      "last_updated": "2026-10-25T22:07:15.973Z"
     },
     "speedyapply/JobSpy": {
       "repository": "speedyapply/JobSpy",

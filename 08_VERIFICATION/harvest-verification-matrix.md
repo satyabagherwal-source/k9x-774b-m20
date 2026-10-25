@@ -5014,3 +5014,6 @@
 | `CYCLE-20261025-G7IZ` | `2026-10-25T22:00:42.011Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4465` | Yes (`7dbadf05...`) |
 | `CYCLE-20261025-GCIA` | `2026-10-25T22:00:48.466Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4466` | Yes (`99da3ba6...`) |
 | `CYCLE-20261025-GE1C` | `2026-10-25T22:00:50.448Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4467` | Yes (`a33dee87...`) |
+| `CYCLE-20261025-OJ5Q` | `2026-10-25T22:07:10.334Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`0cbcd587...`) |
+| `CYCLE-20261025-ONHP` | `2026-10-25T22:07:15.949Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4468` | Yes (`45fbd34f...`) |
+| `CYCLE-20261025-OTZR` | `2026-10-25T22:07:24.375Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4469` | Yes (`075eec4c...`) |

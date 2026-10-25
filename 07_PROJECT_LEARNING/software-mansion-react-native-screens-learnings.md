@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
-> **Source Version**: `3824a107`  
+> **Source Version**: `ae5d475e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T04:49:14.339Z  
+> **Timestamp**: 2026-10-25T22:07:15.521Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-screens`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T04:49:14.333Z  
+> **Harvest Timestamp**: 2026-10-25T22:07:15.514Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Native navigation primitives for your React Native app.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3740 stars
+- **Stars / Engagement**: 3743 stars
 
 ---
 
@@ -364,13 +364,11 @@ interface SafeAreaProvider {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4992** (2026-10-20): **chore: add support for react-native@0.88.0**
-  *Symptoms*: ## Description  Upgrade based on the RN upgrade helper: https://react-native-community.github.io/upgrade-helper/?from=0.88.0-rc.6&to=0.88.0  ## Changes  - Bumped RN packages to 0.88.0 (lib devDependencies, `FabricExample`). - `FabricExample`: `react-native-reanimated` 4.6.0 → 4.7.1 and `react-native-worklets` 0.12.2 → 0.13.0. Reanimated's podspec skips its RN version check for pre-releases, so 4.6.0 worked with rc.5, but it supports 0.83–0.87 only and `pod install` fails on 0.88.0; 4.7.x declares 0.86–0.88.  ## Test plan - `FabricExample` – built in Release and run on iOS (iPhone 17 Pro simulator) and Android (emulator): stack, modals and bottom tabs work  ## Checklist  - [ ] Included code example that can be used to test this change. - [ ] For visual changes, included screenshots / GIFs / recordings documenting the change. - [ ] For API changes, updated relevant public types. - [ ] Ensured that CI passes 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/4992?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run 
+- **Issue #5048** (2026-10-24): **[iOS][Tabs] Support tab groups (UITabGroup) in the iPad sidebar**
+  *Symptoms*: ### Description  On iPadOS 18+, with `tabBarControllerMode: 'tabSidebar'`, the native sidebar only lists the top-level tabs. Apple apps use `UITabGroup` to add sidebar-only sections under the tabs, e.g. Health ("Health Categories": Activity, Hearing, Heart…) or Music (playlists).  react-native-screens 4.30 builds one plain `UITab` per tab screen (`makeTabForTabScreenController:`), with `preferredPlacement = UITabPlacementFixed`, so there is no way to declare a group or sidebar-only items.  ### Use case  A supervisor app with three tabs (Summary, Agents, History). In the sidebar, we want a "My agents" section listing the team members, each item opening the agent's page, as Health does with its categories. The list is dynamic (it comes from the API).  ### Proposed API (sketch)  Something along these lines, for the native bottom tabs (`@react-navigation/bottom-tabs/unstable`) or the underlying `Tabs.Screen`:  ```tsx <NativeTabs.Screen   name="AgentsTab"   options={{     tabBarSidebarGroup: {       title: 'My agents',       items: agents.map((a) => ({ id: a.id, title: a.name, image: … })),       onSelectItem: (id) => navigation.navigate('AgentDetail', { agentId: id }),     },   }} /> ```  Items would map to `UITab`s with `preferredPlacement = .sidebarOnly` inside a `UITabGroup`, ideally without one React screen per item (selection reported as an event, content handled by the group's view controller or an existing tab).  ### Environment  - react-native-screens 4.30.0, @react-navig
 
-- **Issue #4983** (2026-10-20): **[iOS 27] Native tab bar order stays stale until a tab is tapped**
-  *Symptoms*: ### Description  Reordering existing native bottom tabs updates the navigation state but leaves the visible tab bar in its old order until a tab is tapped. Adding/removing a tab updates immediately. Expected: pure reordering should also update immediately.  Native debugging confirms the new order in RNSTabsHost children, RNSTabBarController.tabs, and tabBar.items while the UI stays stale. Reinserting one unselected UITab within performBatchUpdates: refreshes the order while preserving the selected tab and existing controllers. This may be a UIKit integration issue; an isolated pure-UIKit reproduction has not been tested.  ### Steps to reproduce  1. Use createNativeBottomTabNavigator from @react-navigation/bottom-tabs/unstable (7.21.0) with four stable keyed screens A, B, C, D. 2. Select D. 3. Dynamically change the screen array from [A, B, C, D] to [B, A, C, D], keeping keys and components unchanged. 4. The native tab bar still shows [A, B, C, D]. Tap a tab: the displayed order then updates. 5. Adding/removing a screen instead updates immediately.  ### Snack or a link to a repository  No standalone reproduction repository yet; reproduced in an existing bare React Native app using the steps above.  ### Screens version  4.30.0  ### React Native version  0.87.1  ### Platforms  iOS  ### JavaScript runtime  None  ### Workflow  None  ### Build type  None  ### Device  None  ### Device model  iPhone Duo Simulator, iOS 27.1; Fabric, Hermes; bare RN debug build  ### Acknowledgements  Y
+- **Issue #4999** (2026-10-21): **iOS 26+: status bar style does not take effect on a transparent-header stack screen when UIViewControllerBasedStatusBarAppearance is false**
+  *Symptoms*: ### Description  With `UIViewControllerBasedStatusBarAppearance = false` in `Info.plist` (the default written by Expo prebuild), the status bar style is driven by React Native's `UIStatusBarManager` (`UIApplication`-level `setStatusBarStyle`), not by the per-screen `statusBarStyle`.  In that setup, popping back to a stack screen with a **transparent header** leaves the status bar in the wrong style. Screen A has a transparent header over a full-bleed image and wants a light status bar (`light-content`). Screen B is a normal screen with no `StatusBar` component at all. After A → B → back, the status bar stays **dark** instead of light. Sometimes it flashes light and then goes dark a moment later.  I logged every call JS makes to the native module, and the last one is always correct:  ``` [statusbar] native.setStyle light-content   // pushed as part of the re-assert [statusbar] native.setStyle light-content   // ...still the last write ```  ...yet the status bar renders dark. This happens both for the first entry into screen A and for the return from screen B. So something native reverts the style after JS' last write, and since RN dedupes identical consecutive values it never re-sends.  ### Steps to reproduce  1. `UIViewControllerBasedStatusBarAppearance` = `false` in `Info.plist` (Expo prebuild default). 2. Screen A (in a native stack, `headerTransparent: true`, `headerTintColor: 'white'`, content extends under the header) mounts `<StatusBar style="light" />` while focused. 3
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -387,579 +385,507 @@ interface SafeAreaProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d244f8d0` (2026-10-20)
-**Commit Message**: fix(Android, Stack v5): emit onDismiss only if fragment is explicitly popped (#4745)
+### Incident Patch 1: `979b511c` (2026-10-21)
+**Commit Message**: fix(iOS, Stack v4): iterate over a copy of reactSubviews when updating header shadow state (#4851)
 
 ## Description
 
-On Android, popping a screen that contains a nested stack can crash the
-app with:
+`-[RNSScreenStackHeaderConfig
+updateHeaderStateInShadowTreeInContextOfNavigationBar:]` loops over
+`self.reactSubviews` and updates the shadow state of each header
+subview. Since #3933 (4.19.0) that update is synchronous, so it can
+commit and mount right away, and the mount includes any React commit
+that's still pending. If that commit adds or removes a header subview,
+the array changes while we're still looping over it, and iOS throws
+`NSGenericException: Collection was mutated while being enumerated`.
 
-```
-[Stack] action: "pop-native" can not be performed with less than 2 routes!
-```
+Fast enumeration only detects the change when it moves on to the next
+element, so it only crashes when another header subview comes after the
+one being updated. In practice the item that commits is a left or right
+item that was just mounted. With native-stack, the only subview mounted
+after the right items is the search bar, so there it takes custom header
+items that change often plus `headerSearchBarOptions`. With
+`ScreenStackItem` the order of the subviews is up to the app, and any
+subview after the item is enough.
 
-It showed up in CI e2e
-(`test-stack-prevent-native-dismiss-nested-stack`, "should exit the
-nested stack with the Pop button from its sole attached route"). See
-this [failing
-run](https://github.com/software-mansion/react-native-screens/actions/runs/35121002573/job/105097858435).
-
-### Details
-
-**What goes wrong**
-
-- On Android, every stack screen is backed by a _fragment_. A nested
-stack's screens are fragments that live **inside** the parent screen's
-fragment.
-- When JS pops the parent screen, Android destroys its fragment and
-every fragment inside it. The nested stack's screens are destroyed too.
-- A destroyed stack screen always reports `onDismiss` to JS. If JS still
-considers that screen attached, the event is marked as a _native_
-dismiss, i.e. "the user went back natively and JS must catch up".
-- The nested screens were never popped. They are only being torn down
-with their parent. JS still gets a native dismiss f
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/stack/screen/StackScreenFragment.kt` (modified, +6/-1)
-```diff
-@@ -98,7 +98,12 @@ internal class StackScreenFragment(
-         super.onDestroy()
-         headerCoordinatorLayout?.tearDown()
-         headerCoordinatorLayout = null
--        item.onDismiss()
-+        // `isRemoving` is true only when this fragment is removed from its own stack (JS or native pop).
-+        // A fragment destroyed together with its FragmentManager (e.g. an ancestor screen was popped)
-+        // was not dismissed - reporting it would count as a native dismiss of a still-attached screen.
-+        if (isRemoving) {
-+            item.onDismiss()
-+        }
-         teardownPreventNativeDismissCallback()
-     }
- 
-```
-
----
-
-### Incident Patch 2: `0b5607c4` (2026-10-20)
-**Commit Message**: refactor(test): fix tab bar item badge e2e test for iOS 27 (#4719)
-
-> **Stacked branch.** Base is `@lkuchno/stack-header-ios27` (#4718),
-which is stacked on `@lkuchno/toast-e2e-test-fix-ios27` (#4716), itself
-on `@lkuchno/ios-e2e-upgrade` — not `main`. The parents should land
-first.
-
-## Description
-
-iOS 27 moved tab bar badges out of their tab bar item. Up to iOS 26 a
-badge is a subview of its own item, so the test matched it by ancestry.
-On iOS 27 every badge lives in a single `BadgeContainerView` that is a
-*sibling* of the items' `ContentView`, both under one shared
-`_UITabBarItemPlatterView` — badge and item are cousins, so there is no
-ancestry left to match on and the assertions could not resolve.
-
-Worth noting for anyone who assumed a rename: `_UIBarBadgeView` still
-exists on iOS 27 and is still the class that renders the badge. Only its
-position in the hierarchy changed, so the existing class-name constants
-are unchanged.
-
-Rather than dropping to a bare existence check, the iOS 27 path keeps
-per-tab verification through two assertions: the tab item's
-accessibility value, which UIKit folds the badge into and which is
-therefore the surviving item-to-badge binding, and the badge
-
-**File**: `FabricExample/e2e/helpers/framework/platform.ts` (modified, +15/-0)
-```diff
-@@ -80,5 +80,20 @@ export const describeIfIOS26 = isIOSVersionAtLeast('26.0')
-   ? describe
-   : describe.skip;
- 
-+/** Suites for iOS 27+ only features; skipped on Android and older iOS. */
-+export const describeIfIOS27 = isIOSVersionAtLeast('27.0')
-+  ? describe
-+  : describe.skip;
-+
-+/**
-+ * Suites for behavior that iOS 27 changed, kept on the versions before it.
-+ * Unlike the `describeIfIOS*` guards this also runs on Android - the version
-+ * check is `false` there - so nest it inside `describeIfIOS` when the suite is
-+ * iOS-only.
-+ */
-+export const describeIfBelowIOS27 = isIOSVersionAtLeast('27.0')
-+  ? describe.skip
-+  : describe;
-+
- export const describeIfIPadOS26 =
-   isIPadTarget && isIOSVersionAtLeast('26.0') ? describe : describe.skip;
-```
-
-**File**: `FabricExample/e2e/single-feature-tests/tabs/test-tabs-item-badge.e2e.ts` (modified, +73/-27)
-```diff
-@@ -1,45 +1,91 @@
-+import { expect as jestExpect } from '@jest/globals';
- import { device, expect, element, by } from 'detox';
- import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
-+import { getSingleMatch } from '@e2e/framework/matchers';
- import {
-+  CLASS_NAME_UI_LABEL,
-   CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_IOS26,
-   CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY,
- } from '@e2e/framework/native-classes-ios';
--import { describeIfIOS, isIOSVersionAtLeast } from '@e2e/framework/platform';
-+import {
-+  describeIfBelowIOS27,
-+  describeIfIOS,
-+  describeIfIOS27,
-+  isIOSVersionAtLeast,
-+} from '@e2e/framework/platform';
-+
- const tabBarBadgeViewType = isIOSVersionAtLeast('26.0')
-   ? CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_IOS26
-   : CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY;
- 
-+/** Each tab bar item's `testID`, paired with the `badgeValue` it renders. */
-+const TAB_BADGES = [
-+  { testID: 'tab-badge-item-1', badgeValue: '1' },
-+  { testID: 'tab-badge-item-2', badgeValue: '1234567890' },
-+  { testID: 'tab-badge-item-3', badgeValue: 'NEW!' },
-+  { testID: 'tab-badge-item-4', badgeValue: '⚠️' },
-+];
-+
-+/**
-+ * Asserts the tab bar item `testID` carries `badgeValue` - on iOS 27 the only
-+ * per-item binding left, since the badge view itself is no longer nested in the
-+ * item. UIKit folds the badge into the item's accessibility value, localized
-+ * and pluralized ("1 item", "1.234.567.890 items"), so a numeric badge is
-+ * compared on its digits alone rather than on the grouped, suffixed string.
-+ */
-+async function expectItemBadgeValue(testID: string, badgeValue: string) {
-+  const value = String(
-+    (await getSingleMatch(by.id(testID), `id "${testID}"`)).value ?? '',
-+  );
-+
-+  if (/^\d+$/.test(badgeValue)) {
-+    jestExpect(value.replace(/\D/g, '')).toBe(badgeValue);
-+  } else {
-+    jestExpect(value).toContain(badgeValue);
-+  }
-+}
-+
- describeIfIOS('Tab Bar Item Badge', () => {
-   beforeAll(async () => {
-     await device.reloadReactNative();
-     await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-item-badge');
-   });
- 
--  it('should display all four tab bar items with correct badge values', async () => {
--    await expect(element(by.id('tab-badge-item-1'))).toExist();
--    await expect(element(by.id('tab-badge-item-2'))).toExist();
--    await expect(element(by.id('tab-badge-item-3'))).toExist();
--    await expect(element(by.id('tab-badge-item-4'))).toExist();
--
--    await expect(
--      element(
--        by.type(tabBarBadgeViewType).withAncestor(by.id('tab-badge-item-1')),
--      ),
--    ).toHaveText('1');
--    await expect(
--      element(
--        by.type(tabBarBadgeViewType).withAncestor(by.id('tab-badge-item-2')),
--      ),
--    ).toHaveText('1234567890');
--    await expect(
--      element(
--        by.type(tabBarBadgeViewType).withAncestor(by.id('tab-badge-item-3')),
--      ),
--    ).toHaveText('NEW!');
--    await expect(
--      element(
--        by.type(tabBarBadgeViewType).withAncestor(by.id('tab-badge-item-4')),
--      ),
--    ).toHaveText('⚠️');
-+  it('should display all four tab bar items', async () => {
-+    for (const { testID } of TAB_BADGES) {
-+      await expect(element(by.id(testID))).toExist();
-+    }
-+  });
-+
-+  describeIfBelowIOS27('badge nested in its tab bar item', () => {
-+    it('should render each badge value inside its own tab bar item', async () => {
-+      for (const { testID, badgeValue } of TAB_BADGES) {
-+        await expect(
-+          element(by.type(tabBarBadgeViewType).withAncestor(by.id(testID))),
-+        ).toHaveText(badgeValue);
-+      }
-+    });
-+  });
-+
-+  describeIfIOS27('badge detached from its tab bar item', () => {
-+    it("should expose each badge on its own tab bar item's accessibility value", async () => {
-+      for (const { testID, badgeValue } of TAB_BADGES) {
-+        await expectItemBadgeValue(testID, badgeValue);
-+      }
-+    });
-+
-+    it("should render each badge value in the badge view's label", async () => {
-+      for (const { badgeValue } of TAB_BADGES) {
-+        await expect(
-+          element(
-+            by
-+              .type(CLASS_NAME_UI_LABEL)
-+              .withAncestor(
-+                by.type(tabBarBadgeViewType).and(by.label(badgeValue)),
-+              ),
-+          ),
-+        ).toHaveText(badgeValue);
-+      }
-+    });
-   });
- });
-```
-
-**File**: `apps/src/tests/single-feature-tests/tabs/test-tabs-item-badge/scenario.md` (modified, +10/-11)
-```diff
-@@ -10,22 +10,21 @@ badge, and an emoji badge. For iOS, it also exercises
- `scrollEdgeAppearance` badge color. On Android, all badge color
- customisation is driven by `standardAppearance`.
- 
--**OS test creation version:** iOS: 18.6 and iOS 26.5, Android: API Level 36.
-+**OS test creation version:** iOS: 18.6, iOS 26.5 and iOS 27.0, Android: API Level 36.
- 
- ## E2E test
- 
--Incomplete: Only step 1 of **Baseline** for iOS is automated. The E2E test asserts the badge text
--values for all four tabs at baseline. A single suite can be run on both iOS
--versions with version-specific conditions: the tab bar badge view class name
--resolves dynamically (_UIBadgeView on iOS 18 and lower vs.
--_UIBarBadgeView on iOS 26).
-+Incomplete. Automated on iOS only - Android is fully manual.
- 
--Not covered:
-+Covered: iOS **Baseline** - all four tabs exist and each shows its badge value
-+(`1`, `1234567890`, `NEW!`, `⚠️`). This also covers the value checks repeated
-+in the Tab1 - Tab4 subsections.
- 
--- All steps for Android, and most iOS steps except for the initial badge text validation.
--- Badge background and text colors (all tabs, all states). Detox does not expose color
--  attributes for native tab bar badge views, meaning color validation requires a
--  screenshot-diff approach that is not yet implemented.
-+Manual only:
-+
-+- iOS: all badge color checks (including in **Baseline**), steps 2–3 of
-+  **Tab2 - long badge value and scrollEdgeAppearance**, and **Stability check**.
-+- Android: all steps.
- 
- ## Prerequisites
- 
-```
-
----
-
-### Incident Patch 3: `bd6ae361` (2026-10-20)
-**Commit Message**: refactor(test): replace per-version iOS suite guards with version-parameterized helpers (#4743)
-
-> **Stacked branch.** This targets `@lkuchno/tab-badge-e2e-ios27`
-(#4719) as its base, not `main` — that branch should land first.
-
-## Description
-
-The e2e platform helpers exported one guard per iOS release
-(`describeIfIOS26`, `describeIfIOS27`, `describeIfBelowIOS27`,
-`describeIfIPadOS26`), so every new iOS version meant adding exports,
-and specs that needed a "below version X" guard hand-rolled it with
-`isIOSVersionAtLeast`. These are replaced with guard factories that take
-the version as an argument.
-
-`describeIfIOSBelow` is also now iOS-only. The old
-`describeIfBelowIOS27` ran on Android as well, because
-`isIOSVersionAtLeast` is `false` there, so it had to be nested inside
-`describeIfIOS` to be safe.
+Closes #4811.
 
 ## Changes
 
-- `e2e/helpers/framework/platform.ts`
-- `describeIfIOS26` / `describeIfIOS27` →
-`describeIfIOSAtLeast(version)`.
-- `describeIfBelowIOS27` → `describeIfIOSBelow(version)`, which now
-skips on Android.
-  - `describeIfIPadOS26` → `describeIfIPadOSAtLeast(version)`.
-- A shared `isIOS` constant backs every iOS guard, so none can leak onto
-Android.
-- `test-stack-header-item-ident
+- Loop over a copy of `r
 
-**File**: `FabricExample/e2e/helpers/framework/platform.ts` (modified, +48/-25)
+**File**: `apps/src/tests/issue-tests/Test4811.tsx` (added, +95/-0)
 ```diff
-@@ -43,6 +43,22 @@ function compareVersions(
-   }
- }
- 
-+/**
-+ * `true` when `version` is the release `targetVersion` names: any minor of it
-+ * for a MAJOR target, that exact minor for a MAJOR.MINOR one.
-+ */
-+function isVersionMatching(version: string, targetVersion: string) {
-+  assertSupportedVersionString(version);
-+  assertSupportedVersionString(targetVersion);
+@@ -0,0 +1,95 @@
++import React, { useEffect, useState } from 'react';
++import { Button, StyleSheet, Text, View } from 'react-native';
++import {
++  ScreenStack,
++  ScreenStackHeaderCenterView,
++  ScreenStackHeaderLeftView,
++  ScreenStackHeaderRightView,
++  ScreenStackItem,
++} from 'react-native-screens';
 +
-+  const [major, minor = '0'] = version.split('.');
-+  const [targetMajor, targetMinor] = targetVersion.split('.');
++// https://github.com/software-mansion/react-native-screens/issues/4811 (iOS)
++//
++// Press "Start". Without the fix the app crashes within a few seconds with
++// "Collection <__NSArrayM> was mutated while being enumerated".
++//
++// `updateHeaderStateInShadowTreeInContextOfNavigationBar:` loops over `reactSubviews`.
++// A header item that was just mounted sends its frame to the shadow tree synchronously,
++// and that can mount the next pending commit. Here the left and right items toggle at
++// different rates, so that commit adds or removes a header subview during the loop.
++// Fast enumeration only notices it when it moves on to the next element, so the title
++// is placed after the right item.
++
++function HeaderItem() {
++  return <View style={styles.item} />;
++}
++
++export default function App() {
++  const [running, setRunning] = useState(false);
++  const [tick, setTick] = useState(0);
++
++  useEffect(() => {
++    if (!running) {
++      return;
++    }
++    let timer: ReturnType<typeof setTimeout>;
++    const loop = () => {
++      setTick(t => t + 1);
++      timer = setTimeout(loop, 0);
++    };
++    loop();
++    return () => clearTimeout(timer);
++  }, [running]);
++
 +  return (
-+    Number(major) === Number(targetMajor) &&
-+    (targetMinor === undefined || Number(minor) === Number(targetMinor))
++    <ScreenStack style={styles.stack}>
++      <ScreenStackItem
++        screenId="home"
++        headerConfig={{
++          children: (
++            <>
++              {tick % 2 === 0 && (
++                <ScreenStackHeaderLeftView>
++                  <HeaderItem />
++                </ScreenStackHeaderLeftView>
++              )}
++              {tick % 3 !== 0 && (
++                <ScreenStackHeaderRightView>
++                  <HeaderItem />
++                </ScreenStackHeaderRightView>
++              )}
++              <ScreenStackHeaderCenterView>
++                <HeaderItem />
++              </ScreenStackHeaderCenterView>
++            </>
++          ),
++        }}>
++        <View style={styles.container}>
++          <Button
++            title={running ? 'Stop' : 'Start'}
++            onPress={() => setRunning(r => !r)}
++          />
++          <Text>Updates: {tick}</Text>
++        </View>
++      </ScreenStackItem>
++    </ScreenStack>
 +  );
 +}
 +
- /** `true` when `version` is at least `minimumVersion`. */
- function isVersionEqualOrHigherThan(version: string, minimumVersion: string) {
-   assertSupportedVersionString(version);
-@@ -51,8 +67,10 @@ function isVersionEqualOrHigherThan(version: string, minimumVersion: string) {
-   return compareVersions(version, minimumVersion) >= 0;
- }
- 
--export const describeIfIOS =
--  device.getPlatform() === 'ios' ? describe : describe.skip;
-+/** Every iOS guard below derives from this, so none can leak onto Android. */
-+const isIOS = device.getPlatform() === 'ios';
-+
-+export const describeIfIOS = isIOS ? describe : describe.skip;
- 
- export const describeIfAndroid =
-   device.getPlatform() === 'android' ? describe : describe.skip;
-@@ -62,38 +80,43 @@ export const describeIfAndroid =
-  * RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)". See scripts/e2e/ios-devices.js.
-  */
- export const isIPadTarget =
--  device.getPlatform() === 'ios' &&
--  /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
-+  isIOS && /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
- 
- export const describeIfIPad = isIPadTarget ? describe : describe.skip;
- 
- /** `true` on iOS at `version` or newer; `false` on Android. */
- export function isIOSVersionAtLeast(version: string): boolean {
--  return (
--    device.getPlatform() === 'ios' &&
--    isVersionEqualOrHigherThan(getIOSVersionNumber(), version)
--  );
-+  return isIOS && isVersionEqualOrHigherThan(getIOSVersionNumber(), version);
- }
- 
--/** Suites for iOS 26+ only features; skipped on Android and older iOS. */
--export const describeIfIOS26 = isIOSVersionAtLeast('26.0')
--  ? describe
--  : describe.skip;
-+/**
-+ * Suite guards for version-specific behavior. Each takes a MAJOR or
-+ * MAJOR.MINOR version and resolves to `describe` or `describe.skip`, so a new
-+ * iOS release needs no new export here.
-+ */
-+
-+/** Suites for features added in iOS `version`; skipped on Android and older iOS. */
-+export const describeIfIOSAtLeast = (version: string) =>
-+  isIOSVersionAtLeast(version) ? describe : describe.skip;
- 
--/** Suites for iOS 27+ only features; skipped on Android and older iOS. */
--export const describeIfIOS27 = isIOSVersionAtLeast('27.0')
--  ? describe
--  : describe.skip;
-+/**
-+ * Suites for behavior that iOS `version` changed, kept on the releases before
-+ * it; skipped on Android and from `version` on. `isIOS` is required on its own
-+ * because `isIOSVersionAtLeast` is also `false` on Android, so negating that
-+ * alone would run the suite there.
-+ */
-+export const describeIfIOSBelow = (version: string) =>
-+  isIOS && !isIOSVersionAtLeast(version) ? describe : describe.skip;
- 
- /**
-- * Suites for behavior that iOS 27 changed, kept on the versions before it.
-- * Unlike the `describeIfIOS*` guards this also runs on Android - the version
-- * check is `false` there - so nest it inside `describeIfIOS` when the suite is
-- * iOS-only.
-+ * Suites for behavior that exists on iOS `version` only; skipped on Android and
-+ * every other release. `'26'` runs on any 26.x, `'26.2'` on 26.2 only.
-  */
--export const describeIfBelowIOS27 = isIOSVersionAtLeast('27.0')
--  ? describe.skip
--  : describe;
-+export const describeIfIOSVersion = (version: string) =>
-+  isIOS && isVersionMatching(getIOSVersionNumber(), version)
-+    ? describe
-+    : describe.skip;
- 
--export const describeIfIPadOS26 =
--  isIPadTarget && isIOSVersionAtLeast('26.0') ? describe : describe.skip;
-+/** Suites for iPad-only features added in iPadOS `version`. */
-+export const describeIfIPadOSAtLeast = (version: string) =>
-+  isIPadTarget && isIOSVersionAtLeast(version) ? describe : describe.skip;
++const styles = StyleSheet.create({
++  stack: {
++    flex: 1,
++  },
++  container: {
++    flex: 1,
++    alignItems: 'center',
++    justifyContent: 'center',
++    gap: 16,
++  },
++  item: {
++    width: 40,
++    height: 28,
++    borderRadius: 6,
++    backgroundColor: '#f2b8b5',
++  },
++});
 ```
 
-**File**: `FabricExample/e2e/single-feature-tests/stack-v5/test-stack-header-item-identifier-ios.e2e.ts` (modified, +10/-11)
+**File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
 ```diff
-@@ -10,7 +10,10 @@ import {
- } from '@e2e/framework/header-items-ios';
- import { getMatches } from '@e2e/framework/matchers';
- import { CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW } from '@e2e/framework/native-classes-ios';
--import { describeIfIOS26, isIOSVersionAtLeast } from '@e2e/framework/platform';
+@@ -221,6 +221,7 @@ export { default as Test4618 } from './Test4618'; // [E2E skipped]: tvOS Menu ke
+ export { default as Test4709 } from './Test4709';
+ export { default as Test4725 } from './Test4725';
+ export { default as Test4757 } from './Test4757';
++export { default as Test4811 } from './Test4811';
+ export { default as Test4872 } from './Test4872';
+ export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
+ export { default as TestScreenAnimation } from './TestScreenAnimation';
+```
+
+**File**: `ios/legacy/RNSScreenStackHeaderConfig.mm` (modified, +4/-1)
+```diff
+@@ -212,7 +212,10 @@ - (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINaviga
+   [self updateShadowStateWithSize:navigationBar.frame.size
+                        edgeInsets:[self computeEdgeInsetsOfNavigationBar:navigationBar]
+                       frameOrigin:navBarFrameInScreenView.origin];
+-  for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
++  // Iterate over a copy. Updating a subview's shadow state can trigger a synchronous commit that mounts or
++  // unmounts header subviews, which mutates `reactSubviews` while we're still enumerating it.
++  // See: https://github.com/software-mansion/react-native-screens/issues/4811
++  for (RNSScreenStackHeaderSubview *subview in [self.reactSubviews copy]) {
+     [subview updateShadowStateInContextOfAncestorView:navigationBar];
+   }
+ }
+```
+
+---
+
+### Incident Patch 2: `06656d72` (2026-10-21)
+**Commit Message**: fix(iOS, Tabs): size the tab bar controller's view before attaching it (#4990)
+
+## Description
+
+Closes #4989.
+
+On an iPhone Duo cold-launched unfolded, `TabsHost` comes up without its
+tab bar: the side rail is never shown. A folded launch is fine, and
+folding then unfolding brings the tab bar back.
+
+Cause: `RNSTabBarController`'s view is loaded while the controller is
+still detached, at the main screen's size (on the Duo launched unfolded,
+the cover display's 466x678), and the tabs are installed at that size.
+`-[RNSTabsHostComponentView didMoveToWindow]` then adds the view to the
+host and pins it with constraints without setting a frame. The later
+resize to the host (951x669) doesn't make UIKit rebuild the tab bar, so
+the rail tab bar never appears. The repro repo has a single-file UIKit
+app without React Native that shows the same thing (0/3 stock, 3/3 with
+the frame set before `addSubview`), so this is a UIKit issue that the
+mount order triggers, and setting the frame first is a safe workaround.
+
+There's no OS or device guard: this is a UIKit ordering issue
+reproducible in plain UIKit, not a version regression, and the frame
+assignment is a no-op whenever the sizes already match.
+
+**File**: `apps/src/tests/issue-tests/Test4989.tsx` (added, +80/-0)
+```diff
+@@ -0,0 +1,80 @@
++import React from 'react';
++import { StyleSheet, Text } from 'react-native';
 +import {
-+  describeIfIOSAtLeast,
-+  describeIfIOSVersion,
-+} from '@e2e/framework/platform';
- 
- // Every SF Symbol the test screen cycles through (SYMBOL_CYCLES in the test
- // screen's index.tsx).
-@@ -106,17 +109,9 @@ async function expectItemsInOwnPlatters(sfSymbolNames: string[]) {
-   expectAscending(frames.map(frame => frame.x));
- }
- 
--// On iOS 27 each platter is a Swift class (`UIPlatformGlassInteractionView`)
--// that `by.type` resolves only by its unstable mangled name, and the iOS 26
--// class `_UINavigationBarPlatterView` no longer exists, so per-item platters
--// are checked on iOS 26 only (see scenario.md, "E2E test").
--const describeIfIOS26Only = isIOSVersionAtLeast('27.0')
--  ? describe.skip
--  : describe;
--
- // The identifier-driven item-matching behavior under test only exists on
- // iOS 26+ (see scenario.md, "OS test creation version").
--describeIfIOS26('Stack Header Item Identifier (iOS)', () => {
-+describeIfIOSAtLeast('26.0')('Stack Header Item Identifier (iOS)', () => {
-   describe('sfSymbols with identifiers (default)', () => {
-     beforeAll(async () => {
-       await device.reloadReactNative();
-@@ -177,7 +172,11 @@ describeIfIOS26('Stack Header Item Identifier (iOS)', () => {
-     });
-   });
- 
--  describeIfIOS26Only('separators enabled', () => {
-+  // On iOS 27 each platter is a Swift class (`UIPlatformGlassInteractionView`)
-+  // that `by.type` resolves only by its unstable mangled name, and the iOS 26
-+  // class `_UINavigationBarPlatterView` no longer exists, so per-item platters
-+  // are checked on iOS 26 only (see scenario.md, "E2E test").
-+  describeIfIOSVersion('26')('separators enabled', () => {
-     beforeAll(async () => {
-       await device.reloadReactNative();
-       await selectSingleFeatureTestsScreen(
-```
-
-**File**: `FabricExample/e2e/single-feature-tests/stack-v5/test-stack-header-subview-onpress-ios.e2e.ts` (modified, +2/-2)
-```diff
-@@ -9,7 +9,7 @@ import {
-   submenuTitleRow,
- } from '@e2e/framework/context-menu-ios';
- import { headerItem } from '@e2e/framework/header-items-ios';
--import { describeIfIOS, describeIfIOS26 } from '@e2e/framework/platform';
-+import { describeIfIOS, describeIfIOSAtLeast } from '@e2e/framework/platform';
- 
- /**
-  * A selectable row of the presented menu. A submenu's pinned title/back row
-@@ -66,7 +66,7 @@ describeIfIOS('Stack Header Subview onPress (iOS)', () => {
-     await dismissContextMenu();
-   });
- 
--  describeIfIOS26('iOS 26 toolbar overflow ("More") menu', () => {
-+  describeIfIOSAtLeast('26.0')('iOS 26 toolbar overflow ("More") menu', () => {
-     it('should move Item 0 and Menu 1 into the overflow button once 5 items are configured', async () => {
-       await toggleItemsCount(); // 2 -> 3
-       await toggleItemsCount(); // 3 -> 4
-```
-
-**File**: `FabricExample/e2e/single-feature-tests/tabs/test-tabs-bottom-accessory-layout-ios.e2e.ts` (modified, +7/-2)
-```diff
-@@ -7,7 +7,10 @@ import {
- } from '@e2e/framework/gestures';
- import { getMatches } from '@e2e/framework/matchers';
- import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
--import { describeIfIOS26, describeIfIPadOS26 } from '@e2e/framework/platform';
-+import {
-+  describeIfIOSAtLeast,
-+  describeIfIPadOSAtLeast,
-+} from '@e2e/framework/platform';
- import {
-   bottomAccessoryElement,
-   expectBottomAccessoryAboveTabBar,
-@@ -137,7 +140,7 @@ async function verifyConfigTabInitialContent() {
-   ).toBeVisible();
- }
- 
--describeIfIOS26('Tabs bottomAccessory (iOS 26+)', () => {
-+describeIfIOSAtLeast('26.0')('Tabs bottomAccessory (iOS 26+)', () => {
-   beforeAll(async () => {
-     await device.reloadReactNative();
-     await selectSingleFeatureTestsScreen(
-@@ -275,6 +278,8 @@ describeIfIOS26('Tabs bottomAccessory (iOS 26+)', () => {
-   });
- });
- 
-+const describeIfIPadOS26 = describeIfIPadOSAtLeast('26.0');
++  TabsContainer,
++  type TabRouteConfig,
++  DEFAULT_TAB_ROUTE_OPTIONS,
++  useTabsNavigationContext,
++} from '@apps/shared/containers/tabs';
++import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 +
- describeIfIPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
-   // The Config scroll view spans the full window height and is the same across
-   // every test in this block, so read its frame + safe-area insets once and
++// Reproduces https://github.com/software-mansion/react-native-screens/issues/4989
++//
++// On an iPhone Duo, TabsHost launched while the device is unfolded comes up
++// without its tab bar: the side rail on the inner display never appears.
++// Render this test directly from `apps/App.tsx` so that the tabs are mounted on
++// a cold launch.
++
++function ContentView() {
++  const { routeKey } = useTabsNavigationContext();
++  return (
++    <CenteredLayoutView style={styles.content}>
++      <Text style={styles.title}>{routeKey}</Text>
++      <Text style={styles.step}>
++        1. On an iPhone Duo, unfold the device and cold-launch the app.
++      </Text>
++      <Text style={styles.step}>
++        2. Expected: the side rail tab bar with First, Second and Third is shown
++        on the inner display.
++      </Text>
++      <Text style={styles.step}>
++        3. Fold and unfold the device: the tab bar stays visible.
++      </Text>
++    </CenteredLayoutView>
++  );
++}
++
++const ROUTE_CONFIGS: TabRouteConfig[] = [
++  {
++    name: 'First',
++    element: <ContentView />,
++    options: {
++      ...DEFAULT_TAB_ROUTE_OPTIONS,
++      title: 'First',
++    },
++  },
++  {
++    name: 'Second',
++    element: <ContentView />,
++    options: {
++      ...DEFAULT_TAB_ROUTE_OPTIONS,
++      title: 'Second',
++    },
++  },
++  {
++    name: 'Third',
++    element: <ContentView />,
++    options: {
++      ...DEFAULT_TAB_ROUTE_OPTIONS,
++      title: 'Third',
++    },
++  },
++];
++
++export default function Test4989() {
++  return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
++}
++
++const styles = StyleSheet.create({
++  content: {
++    padding: 24,
++    gap: 8,
++  },
++  title: {
++    fontSize: 18,
++    fontWeight: '700',
++  },
++  step: {
++    fontSize: 14,
++  },
++});
 ```
 
-**File**: `FabricExample/e2e/single-feature-tests/tabs/test-tabs-bottom-accessory-visibility-ios.e2e.ts` (modified, +2/-2)
+**File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
 ```diff
-@@ -2,7 +2,7 @@ import { device, expect, element, by, waitFor } from 'detox';
- import { toggleSettingsSwitch } from '@e2e/app/settings-controls';
- import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
- import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
--import { describeIfIOS26 } from '@e2e/framework/platform';
-+import { describeIfIOSAtLeast } from '@e2e/framework/platform';
- import {
-   bottomAccessoryElement,
-   expectBottomAccessoryAboveTabBar,
-@@ -70,7 +70,7 @@ async function expectBottomAccessoryAbsent() {
-   await expect(element(by.id(ACCESSORY_TEXT))).not.toExist();
- }
- 
--describeIfIOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
-+describeIfIOSAtLeast('26.0')('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
-   beforeAll(async () => {
-     await device.reloadReactNative();
-     await selectSingleFeatureTestsScreen(
+@@ -222,6 +222,7 @@ export { default as Test4709 } from './Test4709';
+ export { default as Test4725 } from './Test4725';
+ export { default as Test4757 } from './Test4757';
+ export { default as Test4872 } from './Test4872';
++export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
+ export { default as TestScreenAnimation } from './TestScreenAnimation';
+ // The following test was meant to demo the "go back" gesture using Reanimated
+ // but the associated PR in react-navigation is currently put on hold
 ```
 
-**File**: `FabricExample/e2e/single-feature-tests/tabs/test-tabs-item-badge.e2e.ts` (modified, +4/-4)
+**File**: `ios/react/containers/tabs/host/RNSTabsHostComponentView.mm` (modified, +4/-0)
 ```diff
-@@ -8,9 +8,9 @@ import {
-   CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY,
- } from '@e2e/framework/native-classes-ios';
- import {
--  describeIfBelowIOS27,
-+  describeIfIOSBelow,
-   describeIfIOS,
--  describeIfIOS27,
-+  describeIfIOSAtLeast,
-   isIOSVersionAtLeast,
- } from '@e2e/framework/platform';
- 
-@@ -57,7 +57,7 @@ describeIfIOS('Tab Bar Item Badge', () => {
+@@ -129,6 +129,10 @@ - (void)invalidateImpl
+ - (void)didMoveToWindow
+ {
+   if (self.window != nil && _controller.parentViewController == nil) {
++    // Size the view to the host before attaching: the tabs were installed at the main screen's size and UIKit
++    // doesn't rebuild the tab bar on a later resize (iPhone Duo side rail).
++    // See https://github.com/software-mansion/react-native-screens/issues/4989.
++    _controller.view.frame = self.bounds;
+     BOOL mountResult = [RNSContainerHelpers addChildViewController:_controller
+                                           toViewControllerManaging:self.reactSuperview
+                                                  withContainerView:self];
+```
+
+---
+
+### Incident Patch 3: `cb65b3d3` (2026-10-22)
+**Commit Message**: fix(Android, FormSheet v4): hide dimming view from accessibility services (#4933)
+
+## Description
+
+Closes #4723.
+
+I ran into this while testing my own app with TalkBack. When a form
+sheet opens, TalkBack puts its focus on the dimming view behind it: a
+full-screen clickable view with no label. You land on an unnamed element
+and have to swipe past it to get into the sheet.
+
+#4751 deals with the second part of the issue and leaves this one open,
+since a label would need a string resource or a new prop. I went the
+other way and took the view out of the accessibility tree. Material's
+`BottomSheetDialog` does the same with its `touch_outside` view
+(`importantForAccessibility="no"`), and FormSheet v5 is built on that
+dialog, so v4 now behaves like v5 here. A label also wouldn't fix the
+order: the view would still come before the sheet.
+
+The issue says that with `importantForAccessibility = NO`, touch
+exploration falls through to the screen behind. I didn't see that while
+the sheet is dimmed. `ScreenStack.updateA11yForVisibleScreens()` already
+hides the screens below with
+`IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS`, and on the device,
+touching the dimmed area doesn't move TalkBack's 
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/bottomsheet/DimmingView.kt` (modified, +4/-0)
+```diff
+@@ -32,6 +32,10 @@ internal class DimmingView(
+     init {
+         pointerEventsProxy.pointerEventsImpl = DimmingViewPointerEventsImpl(this)
+         setFocusable(false)
++        // Keep the backdrop out of the accessibility tree, like `touch_outside` in Material's
++        // BottomSheetDialog. Clickable and unlabelled, it was the first node TalkBack focused
++        // when a sheet opened. Screen readers close the sheet with Back instead.
++        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
      }
-   });
  
--  describeIfBelowIOS27('badge nested in its tab bar item', () => {
-+  describeIfIOSBelow('27.0')('badge nested in its tab bar item', () => {
-     it('should render each badge value inside its own tab bar item', async () => {
-       for (const { testID, badgeValue } of TAB_BADGES) {
-         await expect(
-@@ -67,7 +67,7 @@ describeIfIOS('Tab Bar Item Badge', () => {
-     });
-   });
- 
--  describeIfIOS27('badge detached from its tab bar item', () => {
-+  describeIfIOSAtLeast('27.0')('badge detached from its tab bar item', () => {
-     it("should expose each badge on its own tab bar item's accessibility value", async () => {
-       for (const { testID, badgeValue } of TAB_BADGES) {
-         await expectItemBadgeValue(testID, badgeValue);
+     internal val blockGestures
+```
+
+**File**: `apps/src/tests/issue-tests/Test4723.tsx` (added, +136/-0)
+```diff
+@@ -0,0 +1,136 @@
++import React from 'react';
++import { Button, StyleSheet, Text, View } from 'react-native';
++import { NavigationContainer } from '@react-navigation/native';
++import {
++  createNativeStackNavigator,
++  type NativeStackScreenProps,
++} from '@react-navigation/native-stack';
++
++type ParamList = {
++  Home: undefined;
++  Sheet: undefined;
++  Undimmed: undefined;
++  StackedSheet: undefined;
++};
++
++const Stack = createNativeStackNavigator<ParamList>();
++
++function Home({ navigation }: NativeStackScreenProps<ParamList, 'Home'>) {
++  return (
++    <View style={styles.screen} testID="test4723-home">
++      <Text style={styles.title}>Home screen, behind the sheet</Text>
++      <Text style={styles.description}>
++        Turn on TalkBack and open a sheet.{'\n'}
++        Expected: focus lands on the heading, the dimmed area is not a focus
++        stop, touching the heading keeps focus on it and a double tap leaves the
++        sheet open.{'\n'}
++        Undimmed sheet: at the low detent the home screen stays reachable, at
++        the high detent it does not.{'\n'}
++        Stacked sheet: swiping through the top sheet must not reach the lower
++        sheet's backdrop.
++      </Text>
++      <Button
++        title="Open form sheet"
++        testID="test4723-open-sheet"
++        onPress={() => navigation.navigate('Sheet')}
++      />
++      <Button
++        title="Open undimmed sheet"
++        testID="test4723-open-undimmed"
++        onPress={() => navigation.navigate('Undimmed')}
++      />
++    </View>
++  );
++}
++
++function Sheet({
++  navigation,
++  route,
++}: NativeStackScreenProps<ParamList, 'Sheet' | 'Undimmed' | 'StackedSheet'>) {
++  return (
++    <View style={styles.sheet} testID={`test4723-${route.name}`}>
++      <Text accessibilityRole="header" style={styles.heading}>
++        {route.name} heading
++      </Text>
++      <Button title="Disabled action" disabled onPress={() => {}} />
++      {route.name !== 'StackedSheet' && (
++        <Button
++          title="Open sheet on top"
++          testID="test4723-open-stacked"
++          onPress={() => navigation.navigate('StackedSheet')}
++        />
++      )}
++      <Button
++        title="Close"
++        testID="test4723-close"
++        onPress={() => navigation.goBack()}
++      />
++    </View>
++  );
++}
++
++export default function Test4723() {
++  return (
++    <NavigationContainer>
++      <Stack.Navigator>
++        <Stack.Screen name="Home" component={Home} />
++        <Stack.Screen
++          name="Sheet"
++          component={Sheet}
++          options={{
++            presentation: 'formSheet',
++            headerShown: false,
++            sheetAllowedDetents: [0.55],
++          }}
++        />
++        <Stack.Screen
++          name="Undimmed"
++          component={Sheet}
++          options={{
++            presentation: 'formSheet',
++            headerShown: false,
++            sheetAllowedDetents: [0.4, 0.9],
++            sheetLargestUndimmedDetentIndex: 0,
++          }}
++        />
++        <Stack.Screen
++          name="StackedSheet"
++          component={Sheet}
++          options={{
++            presentation: 'formSheet',
++            headerShown: false,
++            sheetAllowedDetents: [0.75],
++          }}
++        />
++      </Stack.Navigator>
++    </NavigationContainer>
++  );
++}
++
++const styles = StyleSheet.create({
++  screen: {
++    flex: 1,
++    justifyContent: 'center',
++    padding: 24,
++    gap: 16,
++    backgroundColor: '#fff',
++  },
++  sheet: {
++    flex: 1,
++    padding: 24,
++    gap: 16,
++  },
++  title: {
++    fontSize: 24,
++    fontWeight: '600',
++    color: '#111',
++  },
++  description: {
++    fontSize: 16,
++    color: '#444',
++  },
++  heading: {
++    fontSize: 22,
++    fontWeight: 'bold',
++  },
++});
+```
+
+**File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
+```diff
+@@ -219,6 +219,7 @@ export { default as Test4519 } from './Test4519';
+ export { default as Test4571 } from './Test4571';
+ export { default as Test4618 } from './Test4618'; // [E2E skipped]: tvOS Menu key requires Apple TV remote
+ export { default as Test4709 } from './Test4709';
++export { default as Test4723 } from './Test4723';
+ export { default as Test4725 } from './Test4725';
+ export { default as Test4757 } from './Test4757';
+ export { default as Test4811 } from './Test4811';
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4997** (2026-10-21): fix(iOS, Stack): remove the navigation controller's view when a nested stack is recycled (@intergalacticspacehighway)
 - **PR #4992** (2026-10-20): chore: add support for react-native@0.88.0 (@Loloekk)
-- **PR #4969** (2026-10-20): refactor(iOS, Split): move the Split React side to ios/react (@kkafar)
-- **PR #4968** (2026-10-20): refactor(iOS, Tabs): move the Tabs React side to ios/react (@kkafar)
-- **PR #4967** (2026-10-20): refactor(iOS, Stack): move the Stack React side to ios/react (@kkafar)
-- **PR #4966** (2026-10-20): refactor(iOS): move RNSModule and the React-side helpers to ios/react (@kkafar)
-- **PR #4947** (closed): Closed (@MarcusZoltan)
+- **PR #4990** (2026-10-21): fix(iOS, Tabs): size the tab bar controller's view before attaching it (@nkt)
+- **PR #4979** (2026-10-23): refactor(iOS, FormSheet): move the FormSheet core half to ios/core/modals/form-sheet (@kkafar)
+- **PR #4978** (2026-10-22): refactor(iOS, FormSheet): use RNSAssert / RNSLog in the FormSheet core files (@kkafar)
+- **PR #4977** (2026-10-22): refactor(iOS, FormSheet): make the FormSheet provider contract plain Objective-C (@kkafar)
 
 ---
 
@@ -979,33 +905,59 @@ Android.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Android, Stack v5): emit onDismiss only if fragment is explicitly popped (#4745)
+## X. iOS, Stack v4): iterate over a copy of reactSubviews when updating header shadow
 
 **RULE**:
-When implementing operations in `android/src/main/java/com/swmansion/rnscreens/stack/screen/StackScreenFragment.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/src/tests/issue-tests/Test4811.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d244f8d0`: Android, Stack v5): emit onDismiss only if fragment is explicitly popped (#4745). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `979b511c`: iOS, Stack v4): iterate over a copy of reactSubviews when updating header shadow state (#4851). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/swmansion/rnscreens/stack/screen/StackScreenFragment.kt`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/src/tests/issue-tests/Test4811.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        // `isRemoving` is true only when this fragment is removed from its own stack (JS or native pop).
-        // A fragment destroyed together with its FragmentManager (e.g. an ancestor screen was popped)
-        // was not dismissed - reporting it would count as a native dismiss of a still-attached screen.
-        if (isRemoving) {
-            item.onDismiss()
-        }
+import React, { useEffect, useState } from 'react';
+import { Button, StyleSheet, Text, View } from 'react-native';
+import {
+  ScreenStack,
+  ScreenStackHeaderCenterView,
+  ScreenStackHeaderLeftView,
+  ScreenStackHeaderRightView,
+  ScreenStackItem,
+} from 'react-native-screens';
+
+// https://github.com/software-mansion/react-native-screens/issues/4811 (iOS)
+//
+// Press "Start". Without the fix the app crashes within a few seconds with
+// "Collection <__NSArrayM> was mutated while being enumerated".
+//
+// `updateHeaderStateInShadowTreeInContextOfNavigationBar:` loops over `reactSubviews`.
+// A header item that was just mounted sends its frame to the shadow tree synchronously,
+// and that can mount the next pending commit. Here the left and right items toggle at
+// different rates, so that commit adds or removes a header subview during the loop.
+// Fast enumeration only notices it when it moves on to the next element, so the title
+// is placed after the right item.
+
+function HeaderItem() {
+  return <View style={styles.item} />;
+}
+
+export default function App() {
+  const [running, setRunning] = useState(false);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    if (!running
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        item.onDismiss()
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d244f8d0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `979b511c` are properly handled with clean fallback behavior.
