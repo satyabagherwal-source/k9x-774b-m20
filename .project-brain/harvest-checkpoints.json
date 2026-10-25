@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T02:50:29.547Z",
+  "last_updated": "2026-10-25T02:58:32.669Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "85dbc4d63e7bd2535b80db0de111525b443b585a5b47d5d1a2598b359f7758a4",
-      "verified_at": "2026-10-22T15:29:05.381Z",
+      "content_hash": "ac6ffa47ff575b369353284d6b936c0428e8caaabaabdfaf7493bb91da32ac86",
+      "verified_at": "2026-10-25T02:58:25.793Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:29:05.381Z"
+      "last_updated": "2026-10-25T02:58:25.793Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "f5e6c8c955adeb6ad0009795753fbf275763df108b3892a9e22a13dde0a755df",
-      "verified_at": "2026-10-22T16:15:40.738Z",
+      "content_hash": "df4dee240e30b63e81ba96ad5fd28a0bb373921668ad9ee7c95dbe3ccf3257ff",
+      "verified_at": "2026-10-25T02:58:32.669Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:15:40.738Z"
+      "last_updated": "2026-10-25T02:58:32.669Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",

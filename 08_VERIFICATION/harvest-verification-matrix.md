@@ -4620,3 +4620,5 @@
 | `CYCLE-20261025-30UU` | `2026-10-25T02:42:42.582Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3993` | Yes (`b7a43655...`) |
 | `CYCLE-20261025-4QIF` | `2026-10-25T02:44:02.487Z` | `ynqa/jnv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3994, Rule 3995, Rule 3996` | Yes (`d956b5fa...`) |
 | `CYCLE-20261025-D15N` | `2026-10-25T02:50:29.531Z` | `actions/actions-runner-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3997` | Yes (`6b36cfa9...`) |
+| `CYCLE-20261025-N8MR` | `2026-10-25T02:58:25.779Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3998, Rule 3999, Rule 4000` | Yes (`ac6ffa47...`) |
+| `CYCLE-20261025-NDXQ` | `2026-10-25T02:58:32.654Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4001, Rule 4002, Rule 4003` | Yes (`df4dee24...`) |

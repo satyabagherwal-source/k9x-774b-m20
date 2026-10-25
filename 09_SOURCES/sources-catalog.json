@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "731888e2",
+    "sourceVersion": "4236a423",
     "license": "Apache-2.0",
-    "contentHash": "85dbc4d63e7bd2535b80db0de111525b443b585a5b47d5d1a2598b359f7758a4",
-    "lastHarvestedAt": "2026-10-22T15:29:05.370Z",
+    "contentHash": "ac6ffa47ff575b369353284d6b936c0428e8caaabaabdfaf7493bb91da32ac86",
+    "lastHarvestedAt": "2026-10-25T02:58:25.782Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "073065dc",
+    "sourceVersion": "c37cecee",
     "license": "Apache-2.0",
-    "contentHash": "f5e6c8c955adeb6ad0009795753fbf275763df108b3892a9e22a13dde0a755df",
-    "lastHarvestedAt": "2026-10-22T16:15:40.730Z",
+    "contentHash": "df4dee240e30b63e81ba96ad5fd28a0bb373921668ad9ee7c95dbe3ccf3257ff",
+    "lastHarvestedAt": "2026-10-25T02:58:32.657Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {

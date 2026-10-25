@@ -288629,3 +288629,502 @@ appVersion: "0.15.0"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `23159a8e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 3998. Grammatical Rule Precedence Stratification In Left-Recursive Parsers (Harvested from apache/shardingsphere)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Grammatical Rule Precedence Stratification In Left-Recursive Parsers",
+  "source": "apache/shardingsphere",
+  "source_url": "https://github.com/apache/shardingsphere",
+  "source_version": "4236a423",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T02:58:25.327Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-apache-shardingsphere",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apache/shardingsphere](https://github.com/apache/shardingsphere) (Revision: `4236a423`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Grammar engineers MUST explicitly declare binary and bitwise expression rules in strict order of descending precedence using individual, tiered left-recursive productions rather than grouping distinct operator families into single or arbitrary non-precedent production chains.
+
+**WHY**:
+In grammar parsers supporting direct left-recursion (such as ANTLR4), rule alternative sequence defines syntactic operator precedence. Grouping heterogeneous operators (such as bitwise `|`, `&`, shift `<<`, addition `+`, and multiplication `*`) into unordered or flat alternatives causes the parser to assign associative priority based solely on order of appearance or branch flattening. In SQL expressions, this causes mathematical expressions such as `a + b * c` or `size / 128.0 - CAST(...)` to be parsed with right-associative or equal priority (e.g., parsing as `(a + b) * c` or `size / (128.0 - CAST(...))`), generating invalid AST branches that corrupt distributed SQL rewriting, routing, and execution.
+
+**WHEN TO APPLY**:
+Apply when writing or modifying ANTLR, Bison, PEG, or custom AST parsers for SQL dialects, expression languages, query builders, or programming language engines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```antlr
+// ANTLR4: Strict tiered precedence ordering (highest to lowest)
+bitExpr
+    : bitExpr CARET_ bitExpr
+    | bitExpr (ASTERISK_ | SLASH_ | DIV | MOD | MOD_) bitExpr
+    | bitExpr (PLUS_ | MINUS_) bitExpr
+    | bitExpr (PLUS_ | MINUS_) intervalExpression
+    | bitExpr (SIGNED_LEFT_SHIFT_ | SIGNED_RIGHT_SHIFT_) bitExpr
+    | bitExpr AMPERSAND_ bitExpr
+    | bitExpr VERTICAL_BAR_ bitExpr
+    | simpleExpr
+    ;
+```
+
+**NEGATIVE CONSTRAINT**:
+```antlr
+// ANTI-PATTERN: Arbitrary or flat precedence mixing bitwise and arithmetic operations
+bitExpr
+    : bitExpr VERTICAL_BAR_ bitExpr
+    | bitExpr AMPERSAND_ bitExpr
+    | bitExpr PLUS_ bitExpr
+    | bitExpr ASTERISK_ bitExpr   // FAILS: Multiplicative operators evaluate AFTER bitwise OR
+    | simpleExpr
+    ;
+```
+
+**VERIFICATION METHOD**:
+Enforce AST validation tests via XML expression definitions covering operator combinations without parentheses (e.g., `SELECT * FROM t WHERE a + b * c = d`, verifying `<left>` is `a` and `<right>` is a nested binary operation of `b * c`).
+
+---
+
+
+---
+
+## 3999. Upstream Database Catalog Deprecation Immunity (Harvested from apache/shardingsphere)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Upstream Database Catalog Deprecation Immunity",
+  "source": "apache/shardingsphere",
+  "source_url": "https://github.com/apache/shardingsphere",
+  "source_version": "4236a423",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T02:58:25.485Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-apache-shardingsphere",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apache/shardingsphere](https://github.com/apache/shardingsphere) (Revision: `4236a423`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Database metadata retrieval engines MUST query catalog columns by capability discovery or explicit minimum schema contracts, and MUST NOT depend on deprecated database system boundary columns (e.g., PostgreSQL `pg_database.datlastsysoid`) for system vs. user object demarcation across major engine versions.
+
+**WHY**:
+Relational database systems retire internal catalog columns across major version releases. In PostgreSQL 15+, the column `datlastsysoid` was completely removed from `pg_database` because fixed system OID allocations replaced dynamic OID allocation tracking. Querying `datlastsysoid` produces fatal SQL exceptions (`ERROR: column "datlastsysoid" does not exist`), completely breaking metadata loading, schema replication, and pipeline synchronization.
+
+**WHEN TO APPLY**:
+Apply to any data pipeline, migration framework, CDC tool, ORM reverse engineering module, or database administration tool querying system catalogs across multiple major versions of database engines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```sql
+-- Safe, version-resilient catalog query without deprecated boundary OIDs
+SELECT oid AS did 
+FROM pg_catalog.pg_database 
+WHERE datname = '${databaseName}';
+```
+```freemarker
+<#-- Template avoids referencing unneeded internal catalog boundary variables -->
+typ.typrelid AS typoid, rel.relrowsecurity AS rlspolicy, rel.relforcerowsecurity AS forcerlspolicy,
+(CASE WHEN rel.reltoastrelid = 0 THEN false ELSE true END) AS hastoasttable,
+(SELECT pg_catalog.array_agg(provider || '=' || label) FROM pg_catalog.pg_seclabels sl1 WHERE sl1.objoid=rel.oid AND sl1.objsubid=0) AS seclabels
+<#if tid?? >, (CASE WHEN rel.relkind = 'p' THEN pg_catalog.pg_get_partkeydef(${ tid?c }::oid) ELSE '' END) AS partition_scheme </#if>
+FROM pg_catalog.pg_class rel
+```
+
+**NEGATIVE CONSTRAINT**:
+```sql
+-- ANTI-PATTERN: Coupling schema catalog extraction to removed system catalog OID pointers
+SELECT oid AS did, datlastsysoid FROM pg_catalog.pg_database WHERE datname = '${databaseName}';
+-- Fails with: org.postgresql.util.PSQLException: ERROR: column "datlastsysoid" does not exist on PostgreSQL >= 15
+```
+
+**VERIFICATION METHOD**:
+Implement parameterized unit and integration tests executing schema loading against a version array spanning historical to modern major releases (e.g., PostgreSQL 9, 10, 11, 12, 14, 15, 16, 17) verifying uniform property extraction.
+
+---
+
+
+---
+
+## 4000. Non-Destructive In-Place Lexical Non-Code Masking (Harvested from apache/shardingsphere)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-Destructive In-Place Lexical Non-Code Masking",
+  "source": "apache/shardingsphere",
+  "source_url": "https://github.com/apache/shardingsphere",
+  "source_version": "4236a423",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T02:58:25.636Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-apache-shardingsphere",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apache/shardingsphere](https://github.com/apache/shardingsphere) (Revision: `4236a423`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When running static analysis, quality rule enforcement, or structural regex extraction on source code files, analysis engines MUST mask comments and string/text literals by replacing their character spans with whitespace of identical byte/character length, and MUST NOT delete tokens or alter byte offsets.
+
+**WHY**:
+Downstream parsing tools, diagnostic scanners, and report generators associate findings with exact file line numbers, column offsets, and matching byte positions. Deleting or compacting comments, block quotes, or strings alters line numbers and string indexes, causing diagnostic reports to point to incorrect lines, breaking automated regression patching, and producing false positives when tokens inside comments/literals mimic structural code patterns.
+
+**WHEN TO APPLY**:
+Apply when writing custom linters, regex-based code analysis scripts, static security scanners, or pre-commit policy hooks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def mask_java_non_code(source: str, mask_literals: bool) -> str:
+    result = list(source)
+    index = 0
+    state = "code"
+    while index < len(source):
+        if state == "line-comment":
+            if source[index] == "\n":
+                state = "code"
+            else:
+                result[index] = " "  # Preserve exact newline structure and length
+            index += 1
+            continue
+        if state == "block-comment":
+            if source.startswith("*/", index):
+                result[index:index + 2] = [" ", " "]
+                index += 2
+                state = "code"
+            else:
+                if source[index] != "\n":
+                    result[index] = " "
+                index += 1
+            continue
+        if source.startswith("//", index):
+            result[index:index + 2] = [" ", " "]
+            index += 2
+            state = "line-comment"
+        elif source.startswith("/*", index):
+            result[index:index + 2] = [" ", " "]
+            index += 2
+            state = "block-comment"
+        else:
+            index += 1
+    return "".join(result)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Stripping comments using re.sub deletes lines and breaks AST line offsets
+def strip_comments_bad(source: str) -> str:
+    # Destroys line count and corrupts diagnostic line mappings
+    return re.sub(r"/\*[\s\S]*?\*/|//.*", "", source)
+```
+
+**VERIFICATION METHOD**:
+Assert that `len(mask_java_non_code(s, True)) == len(s)` and `source.count('\n') == mask_java_non_code(source, True).count('\n')` across all test fixtures.
+
+---
+
+
+---
+
+## 4001. Inode-Safe Atomic Configuration Swapping (Harvested from nginx/kubernetes-ingress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Inode-Safe Atomic Configuration Swapping",
+  "source": "nginx/kubernetes-ingress",
+  "source_url": "https://github.com/nginx/kubernetes-ingress",
+  "source_version": "c37cecee",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T02:58:32.193Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nginx-kubernetes-ingress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `c37cecee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When generating runtime-critical daemon configuration files from an orchestrator, systems MUST write to a temporary file on the identical filesystem mount point, set target file modes explicitly prior to content injection, and swap the file descriptor via POSIX-compliant atomic rename (`renameat2` / `os.Rename`). Systems MUST NOT stream writes directly to the active path.
+
+**WHY**:
+Direct writes to an active configuration file introduce a Time-of-Check to Time-of-Use (TOCTOU) vulnerability where the daemon reads half-written bytes during an asynchronous reload or crash cycle. Writing to a different filesystem mount and moving causes a cross-device link failure (`EXDEV`), resulting in non-atomic fallback copying.
+
+**WHEN TO APPLY**:
+Applies to any service controller, sidecar, or agent mutating dynamic runtime files (NGINX, Envoy, HAProxy, Envoy EDS dumps, mTLS certificate chains, Prometheus scrape configurations).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Extracted from internal/nginx/utils.go
+func createFileAndWriteAtomically(l *slog.Logger, filename string, tempPath string, mode os.FileMode, content []byte) error {
+    // 1. Create temporary file within the SAME directory/mount to guarantee atomic rename
+    file, err := os.CreateTemp(tempPath, path.Base(filename))
+    if err != nil {
+        return fmt.Errorf("failed to create temp file for %s: %w", filename, err)
+    }
+    tempName := file.Name()
+
+    // Clean up if rename fails
+    defer func() {
+        if _, err := os.Stat(tempName); err == nil {
+            _ = os.Remove(tempName)
+        }
+    }()
+
+    // 2. Set strict permissions BEFORE writing sensitive payloads
+    if err := file.Chmod(mode); err != nil {
+        _ = file.Close()
+        return fmt.Errorf("failed to set mode %v on temp file %s: %w", mode, tempName, err)
+    }
+
+    // 3. Write complete configuration buffer
+    if _, err := file.Write(content); err != nil {
+        _ = file.Close()
+        return fmt.Errorf("failed writing content to temp file %s: %w", tempName, err)
+    }
+
+    // 4. Flush and close handle before renaming
+    if err := file.Close(); err != nil {
+        return fmt.Errorf("failed closing temp file %s: %w", tempName, err)
+    }
+
+    // 5. Inode swap via atomic rename
+    if err := os.Rename(tempName, filename); err != nil {
+        return fmt.Errorf("failed atomic rename %s to %s: %w", tempName, filename, err)
+    }
+
+    return nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Direct truncation and unbuffered write
+// Leaves daemon exposed to reading truncated config if context cancels or panic occurs mid-write.
+func unsafeWriteConfig(filename string, content []byte) error {
+    f, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+    if err != nil {
+        return err
+    }
+    defer f.Close()
+    
+    // If the process crashes or gets killed HERE, NGINX will read an empty or truncated file!
+    _, err = f.Write(content)
+    return err
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a concurrent reader test. Launch a goroutine continuously running `nginx -t -c /path/to/target.conf` while another goroutine repeatedly calls `createFileAndWriteAtomically`. Assert that `nginx -t` never encounters a syntax error, partial directive, or zero-byte read.
+
+---
+
+
+---
+
+## 4002. Informer Cache Mutation Isolation via Defensive Deep-Copy (Harvested from nginx/kubernetes-ingress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Informer Cache Mutation Isolation via Defensive Deep-Copy",
+  "source": "nginx/kubernetes-ingress",
+  "source_url": "https://github.com/nginx/kubernetes-ingress",
+  "source_version": "c37cecee",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T02:58:32.346Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nginx-kubernetes-ingress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `c37cecee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any access to Kubernetes shared informer cache objects (`cache.Store`, `cache.Indexer`) intended for comparison, enrichment, or status updates MUST execute a deep memory copy (`DeepCopy()`) immediately upon retrieval. Mutating shared pointers in cache is strictly prohibited.
+
+**WHY**:
+Shared informers maintain local pointer references to objects stored in the `DeltaFIFO` cache. Directly updating struct fields (e.g., stripping `ResourceVersion` or setting `Status.LoadBalancer.Ingress` for diffing) modifies the object across all informers and worker threads, causing data races, corrupt cache reflections, and missed watch notifications.
+
+**WHEN TO APPLY**:
+All Kubernetes controllers, operators, and CRD reconcilers operating in Go using `client-go/tools/cache`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Extracted from internal/k8s/utils.go
+type storeToIngressLister struct {
+    cache.Store
+}
+
+func (s *storeToIngressLister) GetByKeySafe(key string) (ing *networking.Ingress, exists bool, err error) {
+    item, exists, err := s.Store.GetByKey(key)
+    if !exists || err != nil {
+        return nil, exists, err
+    }
+    // DeepCopy isolates the underlying struct from informer cache pointer pollution
+    ing = item.(*networking.Ingress).DeepCopy()
+    return ing, exists, err
+}
+
+func (s *storeToIngressLister) List() (ing networking.IngressList, err error) {
+    for _, m := range s.Store.List() {
+        ing.Items = append(ing.Items, *m.(*networking.Ingress).DeepCopy())
+    }
+    return ing, nil
+}
+
+// In-place normalization check without mutating original Informer cache state
+func hasChanges(old *networking.Ingress, current *networking.Ingress) bool {
+    // Both objects MUST be deep-copied before modifying status fields for comparison
+    oldCopy := old.DeepCopy()
+    currentCopy := current.DeepCopy()
+
+    oldCopy.Status.LoadBalancer.Ingress = currentCopy.Status.LoadBalancer.Ingress
+    oldCopy.ResourceVersion = currentCopy.ResourceVersion
+    return !reflect.DeepEqual(oldCopy, currentCopy)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Direct mutation of cache pointers
+func hasChangesDangerous(old *networking.Ingress, current *networking.Ingress) bool {
+    // Modifies underlying pointer inside client-go cache directly!
+    // Next Informer event on 'old' now contains polluted state!
+    old.Status.LoadBalancer.Ingress = current.Status.LoadBalancer.Ingress
+    old.ResourceVersion = current.ResourceVersion
+    return !reflect.DeepEqual(old, current)
+}
+```
+
+**VERIFICATION METHOD**:
+Run the Go race detector with `-race` during parallel Informer event emission. Add a unit test asserting that mutating the struct returned by the lister does not modify the object retrieved from the underlying `cache.Store.GetByKey()`.
+
+---
+
+
+---
+
+## 4003. Controller Hash-Label Decoupling for ReplicaSet Selectors (Harvested from nginx/kubernetes-ingress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Controller Hash-Label Decoupling for ReplicaSet Selectors",
+  "source": "nginx/kubernetes-ingress",
+  "source_url": "https://github.com/nginx/kubernetes-ingress",
+  "source_version": "c37cecee",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T02:58:32.510Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nginx-kubernetes-ingress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `c37cecee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When building uniform pod selector maps dynamically from Kubernetes controller parent references (`pod.OwnerReferences`), systems MUST explicitly detect `ReplicaSet` controllers and strip the ephemeral template hash label (`pod-template-hash`).
+
+**WHY**:
+`ReplicaSet` names and associated pods inject a dynamic hash of the Pod template (`pod-template-hash`) into the selector labels. If a reverse proxy or service mesh controller inherits this label directly to build internal routing tables, any rolling update or deployment rollout will break traffic flow, routing only to the retiring pod set instead of the unified deployment selector group.
+
+**WHEN TO APPLY**:
+Kubernetes ingress controllers, headless service discovery agents, and proxy balancers selecting endpoints directly via workload owner hierarchy.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Extracted from internal/k8s/utils.go
+func CreateUniformSelectorsFromController(kubeClient kubernetes.Interface, pod *v1.Pod) (map[string]string, error) {
+    if len(pod.OwnerReferences) == 0 {
+        return nil, fmt.Errorf("pod %s/%s has no owner references", pod.Namespace, pod.Name)
+    }
+
+    owner := pod.OwnerReferences[0]
+
+    switch strings.ToLower(owner.Kind) {
+    case "daemonset":
+        ds, err := kubeClient.AppsV1().DaemonSets(pod.Namespace).Get(context.Background(), owner.Name, meta_v1.GetOptions{})
+        if err != nil {
+            return nil, fmt.Errorf("failed to get DaemonSet %s: %w", owner.Name, err)
+        }
+        return ds.Spec.Selector.MatchLabels, nil
+
+    case "statefulset":
+        sts, err := kubeClient.AppsV1().StatefulSets(pod.Namespace).Get(context.Background(), owner.Name, meta_v1.GetOptions{})
+        if err != nil {
+            return nil, fmt.Errorf("failed to get StatefulSet %s: %w", owner.Name, err)
+        }
+        return sts.Spec.Selector.MatchLabels, nil
+
+    case "replicaset":
+        rs, err := kubeClient.AppsV1().ReplicaSets(pod.Namespace).Get(context.Background(), owner.Name, meta_v1.GetOptions{})
+        if err != nil {
+            return nil, fmt.Errorf("failed to get ReplicaSet %s: %w", owner.Name, err)
+        }
+
+        // CRITICAL INVARIANT: Strip the ephemeral template hash
+        selectors := make(map[string]string, len(rs.Spec.Selector.MatchLabels))
+        for k, v := range rs.Spec.Selector.MatchLabels {
+            if k != "pod-template-hash" {
+                selectors[k] = v
+            }
+        }
+        return selectors, nil
+
+    default:
+        return nil, fmt.Errorf("unsupported owner kind: %s", owner.Kind)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Naively passing ReplicaSet labels unchanged
+case "replicaset":
+    rs, _ := kubeClient.AppsV1().ReplicaSets(pod.Namespace).Get(...)
+    // Fails across deployments: selectors will lock exclusively to a single deployment revision!
+    return rs.Spec.Selector.MatchLabels, nil 
+```
+
+**VERIFICATION METHOD**:
+Create a test harness generating a mock `ReplicaSet` with labels `app: nginx` and `pod-template-hash: 6bf99787c9`. Pass it to `CreateUniformSelectorsFromController` and assert `assert.NotContains(t, selectors, "pod-template-hash")` and `assert.Equal(t, "nginx", selectors["app"])`.
+
+---

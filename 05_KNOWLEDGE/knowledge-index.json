@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T02:50:29.471Z",
+  "last_updated": "2026-10-25T02:58:32.608Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2097,8 +2097,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "731888e2",
-      "content_hash": "85dbc4d63e7bd2535b80db0de111525b443b585a5b47d5d1a2598b359f7758a4",
+      "source_version": "4236a423",
+      "content_hash": "ac6ffa47ff575b369353284d6b936c0428e8caaabaabdfaf7493bb91da32ac86",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2121,6 +2121,21 @@
           "number": 3604,
           "title": "MySQL OR and XOR operator precedence (#40329)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3998,
+          "title": "Grammatical Rule Precedence Stratification In Left-Recursive Parsers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3999,
+          "title": "Upstream Database Catalog Deprecation Immunity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4000,
+          "title": "Non-Destructive In-Place Lexical Non-Code Masking",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2128,7 +2143,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:29:05.295Z",
+      "verified_at": "2026-10-25T02:58:25.725Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36014,8 +36029,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "073065dc",
-      "content_hash": "f5e6c8c955adeb6ad0009795753fbf275763df108b3892a9e22a13dde0a755df",
+      "source_version": "c37cecee",
+      "content_hash": "df4dee240e30b63e81ba96ad5fd28a0bb373921668ad9ee7c95dbe3ccf3257ff",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -36033,6 +36048,21 @@
           "number": 3630,
           "title": "Update AWS SDK v2 (main) (#11198)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4001,
+          "title": "Inode-Safe Atomic Configuration Swapping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4002,
+          "title": "Informer Cache Mutation Isolation via Defensive Deep-Copy",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4003,
+          "title": "Controller Hash-Label Decoupling for ReplicaSet Selectors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36040,7 +36070,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:15:40.641Z",
+      "verified_at": "2026-10-25T02:58:32.598Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117186,6 +117216,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T02:50:29.453Z"
+    },
+    "rule-3998": {
+      "learning_id": "rule-3998",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3998,
+      "title": "Grammatical Rule Precedence Stratification In Left-Recursive Parsers",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "4236a423",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:58:25.725Z"
+    },
+    "rule-3999": {
+      "learning_id": "rule-3999",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3999,
+      "title": "Upstream Database Catalog Deprecation Immunity",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "4236a423",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:58:25.725Z"
+    },
+    "rule-4000": {
+      "learning_id": "rule-4000",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4000,
+      "title": "Non-Destructive In-Place Lexical Non-Code Masking",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "4236a423",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:58:25.725Z"
+    },
+    "rule-4001": {
+      "learning_id": "rule-4001",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4001,
+      "title": "Inode-Safe Atomic Configuration Swapping",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "c37cecee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:58:32.598Z"
+    },
+    "rule-4002": {
+      "learning_id": "rule-4002",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4002,
+      "title": "Informer Cache Mutation Isolation via Defensive Deep-Copy",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "c37cecee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:58:32.598Z"
+    },
+    "rule-4003": {
+      "learning_id": "rule-4003",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4003,
+      "title": "Controller Hash-Label Decoupling for ReplicaSet Selectors",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "c37cecee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:58:32.598Z"
     }
   },
   "aliases": {
