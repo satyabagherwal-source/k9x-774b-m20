@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T16:48:19.098Z",
+  "last_updated": "2026-10-25T16:54:48.670Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17936,7 +17936,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "96fffd256f9b1293eca29a7196e3493c431537faad73e9ca18c723ba8fcb1ee7",
+      "content_hash": "98d852e4d6f53326ebef9999b70be79dd20641f90548b3aa75ebbee263fbd31a",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [
@@ -18111,6 +18111,21 @@
           "number": 3388,
           "title": "**Per‑Question Logit Normalization Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4383,
+          "title": "**Inference Mode Isolation Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4384,
+          "title": "**Joint Head Shape Contract Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4385,
+          "title": "**Tokenizer Pad Token Consistency Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18131,7 +18146,7 @@
         "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
         "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
       ],
-      "verified_at": "2026-10-20T21:21:21.426Z",
+      "verified_at": "2026-10-25T16:54:39.533Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42863,8 +42878,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "73219848",
-      "content_hash": "ecc2341595fd8ad95934e85fc34bf2c235f5b27bf1b402048759686437679783",
+      "source_version": "204e2636",
+      "content_hash": "b08de740c40af87227cf1047e9ffb68f298ae6cbc2c55268116923a25e99875e",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -42892,6 +42907,11 @@
           "number": 3906,
           "title": "frontend): return an error for leftover subquery expressions instead of panickin",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4386,
+          "title": "sink): order BigQuery upsert changes with _CHANGE_SEQUENCE_NUMBER (#27587)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42899,7 +42919,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:37:54.074Z",
+      "verified_at": "2026-10-25T16:54:48.658Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51066,8 +51086,8 @@
       "slug": "wasm-bindgen-wasm-pack",
       "platform": "github",
       "source_url": "https://github.com/wasm-bindgen/wasm-pack",
-      "source_version": "5081ad40",
-      "content_hash": "47ea217009509f995e1336f76dfbb65de4c86cd2dd0b714887ca19de4c79e939",
+      "source_version": "2fc9d066",
+      "content_hash": "160073c7449c208f6196986b2d5dae7f3aaedd641d689c86c4545c89e70b9221",
       "dossier_path": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "promoted_rules": [
@@ -51102,7 +51122,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T07:21:26.683Z",
+      "verified_at": "2026-10-25T16:54:35.465Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124758,6 +124778,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T16:41:25.903Z"
+    },
+    "rule-4383": {
+      "learning_id": "rule-4383",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4383,
+      "title": "**Inference Mode Isolation Rule**",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T16:54:39.533Z"
+    },
+    "rule-4384": {
+      "learning_id": "rule-4384",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4384,
+      "title": "**Joint Head Shape Contract Rule**",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T16:54:39.533Z"
+    },
+    "rule-4385": {
+      "learning_id": "rule-4385",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4385,
+      "title": "**Tokenizer Pad Token Consistency Rule**",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T16:54:39.533Z"
+    },
+    "rule-4386": {
+      "learning_id": "rule-4386",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4386,
+      "title": "sink): order BigQuery upsert changes with _CHANGE_SEQUENCE_NUMBER (#27587)",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "204e2636",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T16:54:48.658Z"
     }
   },
   "aliases": {

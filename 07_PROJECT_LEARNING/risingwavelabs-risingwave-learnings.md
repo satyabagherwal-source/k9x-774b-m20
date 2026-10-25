@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `73219848`  
+> **Source Version**: `204e2636`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T11:37:53.726Z  
+> **Timestamp**: 2026-10-25T16:54:48.357Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T11:37:53.718Z  
+> **Harvest Timestamp**: 2026-10-25T16:54:48.234Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9385 stars
+- **Stars / Engagement**: 9386 stars
 
 ---
 
@@ -1077,1074 +1077,611 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95251fec` (2026-10-22)
-**Commit Message**: fix(frontend): return an error for leftover subquery expressions instead of panicking (#27592)
-
-**File**: `src/frontend/planner_test/tests/testdata/input/generated_columns.yaml` (modified, +6/-0)
-```diff
-@@ -29,3 +29,9 @@
-     explain create table t (v int, w int as v+1, watermark for w as w) append only
-   expected_outputs:
-   - explain_output
-+# https://github.com/risingwavelabs/risingwave/issues/24081
-+- name: subquery in generated column
-+  sql: |
-+    explain create table t (v text as (select 'a'));
-+  expected_outputs:
-+  - planner_error
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/input/subquery.yaml` (modified, +23/-0)
-```diff
-@@ -373,3 +373,26 @@
-     ORDER BY con1.conname;
-   expected_outputs:
-     - batch_plan
-+# https://github.com/risingwavelabs/risingwave/issues/26395
-+- name: correlated column in multi-row VALUES returns an error instead of panicking
-+  sql: |
-+    create table t(a int, b int, c int);
-+    select * from t where t.a in (select * from (values (t.b), (t.c)) v);
-+  expected_outputs:
-+    - batch_error
-+    - stream_error
-+# https://github.com/risingwavelabs/risingwave/issues/24357
-+- name: subquery left in SQL table function arguments returns an error instead of panicking
-+  sql: |
-+    create function my_tf(n int) returns table (sq int) language sql as $$ select v * v from generate_series(1, n) as g(v) $$;
-+    select * from my_tf(3);
-+  expected_outputs:
-+    - batch_error
-+    - stream_error
-+- name: subquery in a lambda body returns an error instead of panicking
-+  sql: |
-+    create table t(a int[]);
-+    select array_transform(a, |x| (select 1)) from t;
-+  expected_outputs:
-+    - batch_error
-+    - stream_error
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/generated_columns.yaml` (modified, +4/-0)
-```diff
-@@ -64,3 +64,7 @@
-           │   └─StreamDml { columns: [v, _row_id] }
-           │     └─StreamSource
-           └─StreamUpstreamSinkUnion
-+- name: subquery in generated column
-+  sql: |
-+    explain create table t (v text as (select 'a'));
-+  planner_error: 'failed to bind the expression in generated column "v": Failed to bind expression: (SELECT ''a''): Invalid input syntax: subqueries are not allowed in GENERATED COLUMN'
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/match_recognize.yaml` (modified, +1/-4)
-```diff
-@@ -1000,10 +1000,7 @@
-         define a as a.v > t1.x, b as b.v < 0
-       )
-     );
--  stream_error: |-
--    Not supported: streaming nested-loop join
--    HINT: The non-equal join in the query requires a nested-loop join executor, which could be very expensive to run. Consider rewriting the query to use dynamic filter as a substitute if possible.
--    See also: https://docs.risingwave.com/processing/sql/dynamic-filters
-+  stream_error: 'internal error: Subquery cannot be unnested: a correlated column reference is not resolved.'
- - name: a pattern variable colliding with the input table name is a naming error, not an internal one
-   sql: |
-     create table t(id int, ts int, v int, watermark for ts as ts - 10) append only;
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/subquery.yaml` (modified, +18/-0)
-```diff
-@@ -1096,3 +1096,21 @@
-                                     └─BatchProject { exprs: [rw_columns.relation_id, rw_columns.name, rw_columns.position::Int16 as $expr5] }
-                                       └─BatchFilter { predicate: (rw_columns.is_hidden = false:Boolean) }
-                                         └─BatchSysScan { table: rw_columns, columns: [rw_columns.relation_id, rw_columns.name, rw_columns.position, rw_columns.is_hidden], distribution: Single }
-+- name: correlated column in multi-row VALUES returns an error instead of panicking
-+  sql: |
-+    create table t(a int, b int, c int);
-+    select * from t where t.a in (select * from (values (t.b), (t.c)) v);
-+  batch_error: 'internal error: Subquery cannot be unnested: a correlated column reference is not resolved.'
-+  stream_error: 'internal error: Subquery cannot be unnested: a correlated column reference is not resolved.'
-+- name: subquery left in SQL table function arguments returns an error instead of panicking
-+  sql: |
-+    create function my_tf(n int) returns table (sq int) language sql as $$ select v * v from generate_series(1, n) as g(v) $$;
-+    select * from my_tf(3);
-+  batch_error: 'internal error: Subquery is not supported in this context.'
-+  stream_error: 'internal error: Subquery is not supported in this context.'
-+- name: subquery in a lambda body returns an error instead of panicking
-+  sql: |
-+    create table t(a int[]);
-+    select array_transform(a, |x| (select 1)) from t;
-+  batch_error: 'internal error: Subquery is not supported in this context.'
-+  stream_error: 'internal error: Subquery is not supported in this context.'
-```
-
-**File**: `src/frontend/src/binder/expr/subquery.rs` (modified, +11/-2)
-```diff
-@@ -14,12 +14,21 @@
- 
- use risingwave_sqlparser::ast::Query;
- 
--use crate::binder::Binder;
--use crate::error::{Result, bail_bind_error};
-+use crate::binder::{Binder, Clause};
-+use crate::error::{ErrorCode, Result, bail_bind_error};
- use crate::expr::{ExprImpl, Subquery, SubqueryKind};
- 
- impl Binder {
-     pub fn bind_subquery_expr(&mut self, query: &Query, kind: SubqueryKind) -> Result<ExprImpl> {
-+        // A generated column expression is serialized directly without planning, so a subquery
-+        // in it can never be unnested.
-+        if let Some(clause @ Clause::GeneratedColumn) = self.context.clause {
-+            return Err(ErrorCode::InvalidInputSyntax(format!(
-+                "subqueries are not allowed in {}",
-+                clause
-+            ))
-+            .into());
-+        }
-         let query = self.bind_query(query)?;
-         if !matches!(kind, SubqueryKind::Existential | SubqueryKind::UpdateSet)
-             && query.data_types().len() != 1
-```
-
-**File**: `src/frontend/src/optimizer/logical_optimization.rs` (modified, +8/-0)
-```diff
-@@ -644,6 +644,9 @@ impl LogicalOptimizer {
-     ) -> Result<LogicalPlanRef> {
-         // Bail our if no apply operators.
-         if !has_logical_apply(plan.clone()) {
-+            // A correlated column reference can still be left without any `Apply`. Report it
-+            // here instead of panicking during serialization.
-+            plan.check_apply_elimination()?;
-             return Ok(plan);
-         }
-         // Simple Unnesting.
-@@ -718,6 +721,9 @@ impl LogicalOptimizer {
-             ctx.trace(plan.explain_to_string());
-         }
- 
-+        // Check before common sub-plan sharing, which hashes the expressions.
-+        plan.check_subquery_planned()?;
-+
-         // Convert grouping sets at first because other agg rule can't handle grouping sets.
-         plan = plan.optimize_by_rules(&GROUPING_SETS)?;
-         // Remove nodes with constant output.
-@@ -851,6 +857,8 @@ impl LogicalOptimizer {
-             ctx.trace(plan.explain_to_string());
-         }
- 
-+        plan.check_subquery_planned()?;
-+
-         if ctx.session_ctx().config().enable_mv_selection() {
-             let query_relations =
-                 RelationCollectorVisitor::collect_with(HashSet::new(), plan.clone());
-```
-
-**File**: `src/frontend/src/optimizer/plan_visitor/apply_visitor.rs` (modified, +59/-3)
-```diff
-@@ -14,7 +14,10 @@
- 
- use super::{DefaultBehavior, LogicalPlanVisitor, Merge};
- use crate::error::{ErrorCode, RwError};
--use crate::optimizer::plan_node::{LogicalApply, LogicalPlanRef as PlanRef, PlanTreeNodeBinary};
-+use crate::expr::{CorrelatedInputRef, ExprVisitor, FunctionCallWithLambda, Subquery};
-+use crate::optimizer::plan_node::{
-+    LogicalApply, LogicalPlanRef as PlanRef, PlanTreeNodeBinary, VisitExprsRecursive,
-+};
- use crate::optimizer::plan_visitor::PlanVisitor;
- 
- pub struct HasMaxOneRowApply();
-@@ -37,6 +40,8 @@ impl LogicalPlanVisitor for HasMaxOneRowApply {
- enum CheckResult {
-     #[default]
-     Ok,
-+    UnplannedSubquery,
-+    UnresolvedCorrelatedInputRef,
-     CannotBeUnnested,
-     MoreThanOneRow,
- }
-@@ -45,6 +50,10 @@ impl From<CheckResult> for Result<(), RwError> {
-     fn from(val: CheckResult) -> Self {
-         let msg = match val {
-             CheckResult::Ok => return Ok(()),
-+            CheckResult::UnplannedSubquery => "Subquery is not supported in this context.",
-+            CheckResult::UnresolvedCorrelatedInputRef => {
-+                "Subquery cannot be unnested: a correlated column reference is not resolved."
-+            }
-             CheckResult::CannotBeUnnested => "Subquery cannot be unnested.",
-             CheckResult::MoreThanOneRow => "Scalar subquery might produce more than one row.",
-         };
-@@ -78,13 +87,60 @@ impl LogicalPlanVisitor for CheckApplyElimination {
-     }
- }
- 
-+/// Finds `Subquery` and `CorrelatedInputRef` expressions, which cannot be serialized. The planner
-+/// must turn every subquery into an `Apply`, and unnesting must resolve every correlated reference.
-+#[derive(Default)]
-+struct SubqueryExprFinder {
-+    has_subquery: bool,
-+    has_correlated_input_ref: bool,
-+}
-+
-+impl SubqueryExprFinder {
-+    fn find(plan: &PlanRef) -> Self {
-+        let mut finder = Self::default();
-+        plan.visit_exprs_recursive(&mut finder);
-+        finder
-+    }
-+}
-+
-+impl ExprVisitor for SubqueryExprFinder {
-+    fn visit_subquery(&mut self, _: &Subquery) {
-+        self.has_subquery = true;
-+    }
-+
-+    fn visit_correlated_input_ref(&mut self, _: &CorrelatedInputRef) {
-+        self.has_correlated_input_ref = true;
-+    }
-+
-+    // The default implementation skips the lambda body, which is also serialized.
-+    fn visit_function_call_with_lambda(&mut self, func_call: &FunctionCallWithLambda) {
-+        func_call
-+            .inputs_with_lambda_arg()
-+            .for_each(|expr| self.visit_expr(expr));
-+    }
-+}
-+
- #[easy_ext::ext(PlanCheckApplyEliminationExt)]
- impl PlanRef {
-+    /// Checks that the planner has turned every subquery expression into an `Apply`. A subquery
-+    /// left in an expression, e.g., in a lambda body, can be neither hashed nor unnested.
-+    pub fn check_subquery_planned(&self) -> Result<(), RwError> {
-+        if SubqueryExprFinder::find(self).has_subquery {
-+            CheckResult::UnplannedSubquery.into()
-+        } else {
-+            Ok(())
-+        }
-+    }
-+
-     /// Checks if all `LogicalApply` nodes in the plan have been eliminated, that is,
--    /// subqueries are successfully unnested.
-+    /// subqueries are successfully unnested, and that no correlated column reference is left.
-     pub fn check_apply_elimination(&self) -> Result<(), RwError> {
-         let mut visitor = CheckApplyElimination::default();
-         visitor.visit(self.clone());
--        visitor.result.into()
-+        let mut result = visitor.result;
-+        if SubqueryExprFinder::find(self).has_correlated_input_ref {
-+            result = result.max(CheckResult::UnresolvedCorrelatedInputRef);
-+        }
-+        result.into()
-     }
- }
-```
-
----
-
-### Incident Patch 2: `1fb03281` (2026-10-22)
-**Commit Message**: fix(stream): hide rows below the pending watermark from state table reads (#27499)
+### Incident Patch 1: `1c69fba0` (2026-10-23)
+**Commit Message**: fix(sink): order BigQuery upsert changes with _CHANGE_SEQUENCE_NUMBER (#27587)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/storage/hummock_sdk/src/table_watermark.rs` (modified, +51/-43)
+**File**: `src/connector/src/sink/big_query.rs` (modified, +234/-22)
 ```diff
-@@ -36,6 +36,55 @@ use tracing::{debug, warn};
- use crate::HummockEpoch;
- use crate::key::{TableKey, TableKeyRange, prefix_slice_with_vnode, vnode};
+@@ -15,6 +15,7 @@
+ use core::pin::Pin;
+ use core::time::Duration;
+ use std::collections::{BTreeMap, HashMap, VecDeque};
++use std::time::{SystemTime, UNIX_EPOCH};
  
-+/// Narrow `key_range`, which lies in a single vnode, to the keys not cleaned by the pk-prefix
-+/// `watermark` in `direction`.
-+pub fn rewrite_range_with_watermark(
-+    direction: WatermarkDirection,
-+    watermark: &[u8],
-+    key_range: &mut TableKeyRange,
-+) {
-+    let vnode = vnode(key_range);
-+    match direction {
-+        WatermarkDirection::Ascending => {
-+            let overwrite_start_key = match &key_range.0 {
-+                Included(start_key) | Excluded(start_key) => start_key.key_part() < watermark,
-+                Unbounded => true,
-+            };
-+            if overwrite_start_key {
-+                let watermark_key = TableKey(prefix_slice_with_vnode(vnode, watermark));
-+                let fully_filtered = match &key_range.1 {
-+                    Included(end_key) => end_key < &watermark_key,
-+                    Excluded(end_key) => end_key <= &watermark_key,
-+                    Unbounded => false,
-+                };
-+                if fully_filtered {
-+                    key_range.1 = Excluded(watermark_key.clone());
-+                }
-+                key_range.0 = Included(watermark_key);
-+            }
-+        }
-+        WatermarkDirection::Descending => {
-+            let overwrite_end_key = match &key_range.1 {
-+                Included(end_key) | Excluded(end_key) => end_key.key_part() > watermark,
-+                Unbounded => true,
-+            };
-+            if overwrite_end_key {
-+                let watermark_key = TableKey(prefix_slice_with_vnode(vnode, watermark));
-+                let fully_filtered = match &key_range.0 {
-+                    Included(start_key) => start_key > &watermark_key,
-+                    Excluded(start_key) => start_key >= &watermark_key,
-+                    Unbounded => false,
-+                };
-+                if fully_filtered {
-+                    *key_range = (Included(watermark_key.clone()), Excluded(watermark_key));
-+                } else {
-+                    key_range.1 = Included(watermark_key);
-+                }
-+            }
-+        }
+ use anyhow::{Context, anyhow};
+ use async_trait::async_trait;
+@@ -42,6 +43,7 @@ use google_cloud_googleapis::cloud::bigquery::storage::v1::{
+ };
+ use google_cloud_pubsub::client::google_cloud_auth;
+ use google_cloud_pubsub::client::google_cloud_auth::credentials::CredentialsFile;
++use parking_lot::Mutex;
+ use phf::{Set, phf_set};
+ use prost_reflect::{FieldDescriptor, MessageDescriptor};
+ use prost_types::{
+@@ -51,6 +53,7 @@ use prost_types::{
+ use risingwave_common::array::{Op, StreamChunk};
+ use risingwave_common::catalog::{Field, Schema};
+ use risingwave_common::types::DataType;
++use risingwave_common::util::iter_util::ZipEqDebug;
+ use serde::Deserialize;
+ use serde_with::{DisplayFromStr, serde_as};
+ use simd_json::prelude::ArrayTrait;
+@@ -72,6 +75,7 @@ use crate::sink::{Result, Sink, SinkParam, SinkWriterParam};
+ 
+ pub const BIGQUERY_SINK: &str = "bigquery";
+ pub const CHANGE_TYPE: &str = "_CHANGE_TYPE";
++pub const CHANGE_SEQUENCE_NUMBER: &str = "_CHANGE_SEQUENCE_NUMBER";
+ const DEFAULT_GRPC_CHANNEL_NUMS: usize = 4;
+ const CONNECT_TIMEOUT: Option<Duration> = Some(Duration::from_secs(30));
+ const CONNECTION_TIMEOUT: Option<Duration> = None;
+@@ -640,6 +644,7 @@ pub struct BigQuerySinkWriter {
+     message_descriptor: MessageDescriptor,
+     write_stream: String,
+     proto_field: Option<FieldDescriptor>,
++    change_sequence_number_field: Option<FieldDescriptor>,
+ }
+ 
+ impl TryFrom<SinkParam> for BigQuerySink {
+@@ -664,6 +669,17 @@ impl BigQuerySinkWriter {
+             .common
+             .build_writer_client(&config.aws_auth_props)
+             .await?;
++        let writer = Self::with_client(config, schema, pk_indices, is_append_only, client)?;
++        Ok((writer, resp_stream))
 +    }
-+}
 +
- #[derive(Clone)]
- pub struct ReadTableWatermark {
-     pub direction: WatermarkDirection,
-@@ -124,49 +173,8 @@ impl TableWatermarksIndex {
-             // TODO: Storage read respecting watermark will be implemented in a later PR in StateTable.
-             return;
++    fn with_client(
++        config: BigQueryConfig,
++        schema: Schema,
++        pk_indices: Vec<usize>,
++        is_append_only: bool,
++        client: StorageWriterClient,
++    ) -> Result<Self> {
+         let mut descriptor_proto = build_protobuf_schema(
+             schema
+                 .fields()
+@@ -680,6 +696,13 @@ impl BigQuerySinkWriter {
+                 ..Default::default()
+             };
+             descriptor_proto.field.push(field);
++            let field = FieldDescriptorProto {
++                name: Some(CHANGE_SEQUENCE_NUMBER.to_owned()),
++                number: Some((schema.len() + 2) as i32),
++                r#type: Some(field_descriptor_proto::Type::String.into()),
++                ..Default::default()
++            };
++            descriptor_proto.field.push(field);
          }
--        let vnode = vnode(key_range);
--        if let Some(watermark) = self.read_watermark(vnode, epoch) {
--            match self.watermark_direction {
--                WatermarkDirection::Ascending => {
--                    let overwrite_start_key = match &key_range.0 {
--                        Included(start_key) | Excluded(start_key) => {
--                            start_key.key_part() < watermark
--                        }
--                        Unbounded => true,
--                    };
--                    if overwrite_start_key {
--                        let watermark_key = TableKey(prefix_slice_with_vnode(vnode, &watermark));
--                        let fully_filtered = match &key_range.1 {
--                            Included(end_key) => end_key < &watermark_key,
--                            Excluded(end_key) => end_key <= &watermark_key,
--                            Unbounded => false,
--                        };
--                        if fully_filtered {
--                            key_range.1 = Excluded(watermark_key.clone());
--                        }
--                        key_range.0 = Included(watermark_key);
--                    }
--                }
--                WatermarkDirection::Descending => {
--                    let overwrite_end_key = match &key_range.1 {
--                        Included(end_key) | Excluded(end_key) => end_key.key_part() > watermark,
--                        Unbounded => true,
--                    };
--                    if overwrite_end_key {
--                        let watermark_key = TableKey(prefix_slice_with_vnode(vnode, &watermark));
--                        let fully_filtered = match &key_range.0 {
--                            Included(start_key) => start_key > &watermark_key,
--                            Excluded(start_key) => start_key >= &watermark_key,
--                            Unbounded => false,
--                        };
--                        if fully_filtered {
--                            *key_range = (Included(watermark_key.clone()), Excluded(watermark_key));
--                        } else {
--                            key_range.1 = Included(watermark_key);
--                        }
--                    }
--                }
--            }
-+        if let Some(watermark) = self.read_watermark(vnode(key_range), epoch) {
-+            rewrite_range_with_watermark(self.watermark_direction, &watermark, key_range);
-         }
-     }
  
-```
-
-**File**: `src/stream/src/common/table/state_table.rs` (modified, +122/-61)
-```diff
-@@ -47,11 +47,11 @@ use risingwave_common::util::sort_util::{OrderType, cmp_datum};
- use risingwave_common::util::value_encoding::BasicSerde;
- use risingwave_hummock_sdk::HummockReadEpoch;
- use risingwave_hummock_sdk::key::{
--    CopyFromSlice, TableKey, end_bound_of_prefix, next_key, prefix_slice_with_vnode,
--    prefixed_range_with_vnode, start_bound_of_excluded_prefix,
-+    CopyFromSlice, TableKey, TableKeyRange, end_bound_of_prefix, is_empty_key_range, next_key,
-+    prefix_slice_with_vnode, prefixed_range_with_vnode, start_bound_of_excluded_prefix,
- };
- use risingwave_hummock_sdk::table_watermark::{
--    VnodeWatermark, WatermarkDirection, WatermarkSerdeType,
-+    VnodeWatermark, WatermarkDirection, WatermarkSerdeType, rewrite_range_with_watermark,
- };
- use risingwave_pb::catalog::Table;
- use risingwave_pb::plan_common::StorageTableDesc;
-@@ -365,6 +365,10 @@ macro_rules! dispatch_value_indices {
- struct StateTableRowStore<LS: LocalStateStore, SD: ValueRowSerde> {
-     state_store: LS,
-     all_rows: Option<HashMap<VirtualNode, BTreeMap<Bytes, OwnedRow>>>,
-+    /// The pk-prefix watermark fed in the current epoch, with its direction. The state store only
-+    /// applies it once committed, so the reads from the state store hide the keys it cleans until
-+    /// then.
-+    pending_watermark: Option<(WatermarkDirection, Bytes)>,
- 
-     table_id: TableId,
-     row_serde: Arc<SD>,
-@@ -511,49 +515,87 @@ impl<LS: LocalStateStore, SD: ValueRowSerde> StateTableRowStore<LS, SD> {
-         Ok(())
-     }
- 
--    async fn seal_current_epoch(
-+    /// Remove the preloaded rows cleaned by `watermarks`.
-+    fn clean_preloaded_rows(
-         &mut self,
--        next_epoch: u64,
--        table_watermarks: Option<(WatermarkDirection, Vec<VnodeWatermark>, WatermarkSerdeType)>,
--        switch_consistent_op: Option<StateTableOpConsistencyLevel>,
--    ) -> StreamExecutorResult<()> {
--        if let Some((direction, watermarks, serde_type)) = &table_watermarks
--            && let Some(rows) = &mut self.all_rows
--        {
--            match serde_type {
--                WatermarkSerdeType::PkPrefix => {
--                    for vnode_watermark in watermarks {
--                        match direction {
--                            WatermarkDirection::Ascending => {
--                                for vnode in vnode_watermark.vnode_bitmap().iter_vnodes() {
--                                    let rows = rows.get_mut(&vnode).expect("covered vnode");
--                                    // split_off returns everything after the given key, including the key.
--                                    *rows = rows.split_off(vnode_watermark.watermark());
--                                }
-+        direction: WatermarkDirection,
-+        watermarks: &[VnodeWatermark],
-+        serde_type: WatermarkSerdeType,
-+    ) {
-+        let Some(rows) = &mut self.all_rows else {
-+            return;
+         let descriptor_pool = build_protobuf_descriptor_pool(&descriptor_proto)?;
+@@ -701,32 +724,40 @@ impl BigQuerySinkWriter {
+         } else {
+             None
+         };
++        let change_sequence_number_field = if !is_append_only {
++            let field = message_descriptor
++                .get_field_by_name(CHANGE_SEQUENCE_NUMBER)
++                .ok_or_else(|| {
++                    SinkError::BigQuery(anyhow::anyhow!("Can't find {}", CHANGE_SEQUENCE_NUMBER))
++                })?;
++            Some(field)
++        } else {
++            None
 +        };
-+        match serde_type {
-+            WatermarkSerdeType::PkPrefix => {
-+                for vnode_watermark in watermarks {
-+                    match direction {
-+                        WatermarkDirection::Ascending => {
-+                            for vnode in vnode_watermark.vnode_bitmap().iter_vnodes() {
-+                                let rows = rows.get_mut(&vnode).expect("covered vnode");
-+                                // split_off returns everything after the given key, including the key.
-+                                *rows = rows.split_off(vnode_watermark.watermark());
-                             }
--                            WatermarkDirection::Descending => {
--                                // Turn Exclude(vnode_watermark.watermark()) into Include(next_key(vnode_watermark.watermark())).
--                                let split_off_key = next_key(vnode_watermark.watermark());
--                                for vnode in vnode_watermark.vnode_bitmap().iter_vnodes() {
--                                    let rows = rows.get_mut(&vnode).expect("covered vnode");
--                                    // split_off away (Exclude(vnode_watermark.watermark())..) and keep
--                                    // (..Include(vnode_watermark.watermark()))
--                                    rows.split_off(split_off_key.as_slice());
--                                }
-+                        }
-+                        WatermarkDirection::Descending => {
-+                            // Turn Exclude(vnode_watermark.watermark()) into Include(next_key(vnode_watermark.watermark())).
-+                            let split_off_key = next_key(vnode_watermark.watermark());
-+                            for vnode in vnode_watermark.vnode_bitmap().iter_vnodes() {
-+                                let rows = rows.get_mut(&vnode).expect("covered vnode");
-+                                // split_off away (Exclude(vnode_watermark.watermark())..) and keep
-+                                // (..Include(vnode_watermark.watermark()))
-+             
-```
-
-**File**: `src/stream/src/common/table/test_state_table.rs` (modified, +108/-0)
-```diff
-@@ -2620,3 +2620,111 @@ async fn test_state_table_pruned_key_range_with_two_pk_columns() {
-         2
-     );
- }
-+
-+/// A pk-prefix watermark hides the rows below it from reads at once, not only once committed.
-+#[tokio::test]
-+async fn test_pending_watermark_hides_rows() {
-+    use futures::TryStreamExt;
-+    use risingwave_common::row::Row;
-+
-+    use crate::common::table::state_table::StateTableBuilder;
-+
-+    /// The keys returned by a forward scan, by a reverse scan, and by point gets.
-+    async fn visible_keys(state_table: &StateTable<HummockStorage>) -> [Vec<i32>; 3] {
-+        let sub_range: &(Bound<OwnedRow>, Bound<OwnedRow>) = &(Unbounded, Unbounded);
-+        let key = |row: OwnedRow| row.datum_at(0).unwrap().into_int32();
-+        let forward: Vec<OwnedRow> = state_table
-+            .iter_with_prefix(row::empty(), sub_range, PrefetchOptions::default())
-+            .await
-+            .unwrap()
-+            .try_collect()
-+            .await
-+            .unwrap();
-+        let backward: Vec<OwnedRow> = state_table
-+            .rev_iter_with_prefix(row::empty(), sub_range, PrefetchOptions::default())
-+            .await
-+            .unwrap()
-+            .try_collect()
-+            .await
-+            .unwrap();
-+        let mut found = vec![];
-+        for k in 0..=5 {
-+            let pk = OwnedRow::new(vec![Some(k.into())]);
-+            let exists = state_table.exists(&pk).await.unwrap();
-+            assert_eq!(exists, state_table.get_row(&pk).await.unwrap().is_some());
-+            if exists {
-+                found.push(k);
-+            }
-+        }
-+        [
-+            forward.into_iter().map(key).collect(),
-+            backward.into_iter().map(key).collect(),
-+            found,
-+        ]
-+    }
-+
-+    const TEST_TABLE_ID: TableId = TableId::new(233);
-+    let mut table = gen_pbtable(
-+        TEST_TABLE_ID,
-+        vec![
-+            ColumnDesc::unnamed(ColumnId::from(0), DataType::Int32),
-+            ColumnDesc::unnamed(ColumnId::from(1), DataType::Int32),
-+        ],
-+        vec![OrderType::ascending()],
-+        vec![0],
-+        0,
-+    );
-+    table.watermark_indices = vec![0];
-+    table.clean_watermark_indices = vec![0];
-+    let row = |k: i32| OwnedRow::new(vec![Some(k.into()), Some(k.into())]);
-+
-+    for preload in [false, true] {
-+        let test_env = prepare_hummock_test_env().await;
-+        test_env.register_table(table.clone()).await;
-+        let mut config = StreamingConfig::default();
-+        config.developer.default_enable_mem_preload_state_table = preload;
-+        let mut state_table: StateTable<HummockStorage> =
-+            StateTableBuilder::new(&table, test_env.storage.clone(), None)
-+                .enable_preload_all_rows_by_config(&config)
-+                .build()
-+                .await;
-+
-+        let mut epoch = EpochPair::new_test_epoch(test_epoch(1));
-+        test_env
-+            .storage
-+            .start_epoch(epoch.curr, HashSet::from_iter([TEST_TABLE_ID]));
-+        state_table.init_epoch(epoch).await.unwrap();
-+        for k in 1..=4 {
-+            state_table.insert(row(k));
-+        }
-+        epoch.inc_for_test();
-+        test_env
-+            .storage
-+            .start_epoch(epoch.curr, HashSet::from_iter([TEST_TABLE_ID]));
-+        state_table.commit_for_test(epoch).await.unwrap();
-+        test_env.commit_epoch(epoch.prev).await;
-+
-+        // Rows written in the epoch of the watermark, before it.
-+        state_table.insert(row(0));
-+        state_table.insert(row(5));
-+        state_table.update_watermark(ScalarImpl::Int32(3));
-+        let expected = [vec![3, 4, 5], vec![5, 4, 3], vec![3, 4, 5]];
-+        assert_eq!(
-+            visible_keys(&state_table).await,
-+            expected,
-+            "preload: {preload}, before the commit"
-+        );
-+
-+        epoch.inc_for_test();
-+        test_env
-+            .storage
-+            .start_epoch(epoch.curr, HashSet::from_iter([TEST_TABLE_ID]));
-+        state_table.commit_for_test(epoch).await.unwrap();
-+        test_env.commit_epoch(epoch.prev).await;
-+        assert_eq!(
-+            visible_keys(&state_table).await,
-+            expected,
-+            "preload: {preload}, after the commit"
-+        );
-+    }
-+}
-```
-
-**File**: `src/stream/src/executor/eowc/sort.rs` (modified, +50/-0)
-```diff
-@@ -347,4 +347,54 @@ mod tests {
-         // Consume the watermark
-         recovered_sort_executor.expect_watermark().await;
+         let row_encoder = ProtoEncoder::new(
+             schema.clone(),
+             None,
+             message_descriptor.clone(),
+             ProtoHeader::None,
+         )?;
+-        Ok((
+-            Self {
+-                write_stream: format!(
+-                    "projects/{}/datasets/{}/tables/{}/streams/_default",
+-                    config.common.project, config.common.dataset, config.common.table
+-                ),
+-                config,
+-                schema,
+-                pk_indices,
+-                client,
+-                is_append_only,
+-                row_encoder,
+-                message_descriptor,
+-                proto_field,
+-                writer_pb_schema: ProtoSchema {
+-                    proto_descriptor: Some(descriptor_proto.clone()),
+-                },
++        Ok(Self {
++            write_stream: format!(
++                "projects/{}/datasets/{}/tables/{}/streams/_default",
++                config.common.project, config.common.dataset, config.common.table
++            ),
++            config,
++            schema,
++            pk_indices,
++            client,
++            is_append_only,
++            row_encoder,
++            message_descriptor,
++            proto_field,
++            change_sequence_number_field,
++            writer_pb_schema: ProtoSchema {
++                proto_descriptor: Some(descriptor_proto.clone()),
+             },
+-            resp_stream,
+-        ))
++        })
      }
-+
-+    /// A change to the only row left in the cache empties it, while the rows output earlier in the
-+    /// epoch stay in the table until the commit cleans them.
-+    #[tokio::test]
-+    async fn test_sort_executor_change_empties_cache() {
-+        let sort_column_index = 1;
-+        for barrier_between in [false, true] {
-+            for (change, expected) in [
-+                (" I I\n - 3 3", None),
-+                (" I I\n U- 3 3\n U+ 3 3", Some(" I I\n + 3 3")),
-+            ] {
-+                let (mut tx, mut sort_executor) =
-+                    create_executor(sort_column_index, MemoryStateStore::new()).await;
-+                tx.push_barrier(test_epoch(1), false);
-+                sort_executor.expect_barrier().await;
-+
-+                tx.push_chunk(StreamChunk::from_pretty(
-+                    " I I
-+                    + 1 1
-+                    + 2 2
-+                    + 3 3",
-+                ));
-+                tx.push_int64_watermark(sort_column_index, 3_i64);
-+                assert_eq!(
-+                    sort_executor.expect_chunk().await,
-+                    StreamChunk::from_pretty(
-+                        " I I
-+                        + 1 1
-+                        + 2 2"
-+                    )
-+                );
-+                sort_executor.expect_watermark().await;
-+
-+                if barrier_between {
-+                    tx.push_barrier(test_epoch(2), false);
-+                    sort_executor.expect_barrier().await;
-+                }
-+                tx.push_chunk(StreamChunk::from_pretty(change));
-+                tx.push_int64_watermark(sort_column_index, 10_i64);
-+                if let Some(expected) = expected {
-+                    assert_eq!(
-+                        sort_executor.expect_chunk().await,
-+                        StreamChunk::from_pretty(expected),
-+                        "change: {change:?}, barrier_between: {barrier_between}"
-+                    );
-+                }
-+                sort_executor.expect_watermark().await;
-+            }
-+        }
-+    }
- }
+ 
+     fn append_only(&mut self, chunk: StreamChunk) -> Result<Vec<Vec<u8>>> {
+@@ -741,8 +772,9 @@ impl BigQuerySinkWriter {
+     }
+ 
+     fn upsert(&mut self, chunk: StreamChunk) -> Result<Vec<Vec<u8>>> {
++        let sequence_numbers = CHANGE_SEQ
 ```
 
 ---
 
-### Incident Patch 3: `dbcc6979` (2026-10-22)
-**Commit Message**: fix(cdc): escape identifiers in external table snapshot queries (#27606)
+### Incident Patch 2: `204e2636` (2026-10-25)
+**Commit Message**: fix(frontend): bind correlated references to their owning scope (#27540)
 
-Co-authored-by: Claude Opus 4.8 <[REDACTED_EMAIL]>
-
-**File**: `e2e_test/source_inline/cdc/mysql/mysql_quoted_column_identifier.slt` (added, +72/-0)
+**File**: `e2e_test/batch/subquery/lateral_subquery.slt.part` (modified, +159/-0)
 ```diff
-@@ -0,0 +1,72 @@
-+control substitution on
-+
-+statement ok
-+drop source if exists s_mysql_quoted_col cascade;
-+
-+system ok
-+mysql -e "
-+    DROP USER IF EXISTS 'quoted_col_cdc'@'%';
-+    DROP DATABASE IF EXISTS mysql_quoted_col;
-+    CREATE DATABASE mysql_quoted_col;
-+    CREATE USER 'quoted_col_cdc'@'%' IDENTIFIED BY 'quoted_col_cdc_pwd';
-+    GRANT SELECT, RELOAD, SHOW DATABASES, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'quoted_col_cdc'@'%';
-+    USE mysql_quoted_col;
-+    CREATE TABLE upstream_table (
-+        \`p\`\`k\` INT PRIMARY KEY,
-+        \`a\`\`b\` INT,
-+        note VARCHAR(50)
-+    );
-+    INSERT INTO upstream_table VALUES
-+        (1, 10, 'backfill_1'),
-+        (2, 20, 'backfill_2'),
-+        (3, 30, 'backfill_3');
-+"
-+
-+statement ok
-+create source s_mysql_quoted_col with (
-+  ${RISEDEV_MYSQL_WITH_OPTIONS_COMMON},
-+  username = 'quoted_col_cdc',
-+  password = 'quoted_col_cdc_pwd',
-+  database.name = 'mysql_quoted_col'
-+);
-+
-+# Quoted primary-key and data columns, forced over multiple snapshot pages so the
-+# paginated filter (which binds the primary key) is exercised.
-+statement ok
-+create table rw_mysql_quoted_col (
-+    "p`k" int primary key,
-+    "a`b" int,
-+    note varchar
-+) with (
-+    snapshot.batch_size = '1'
-+) from s_mysql_quoted_col table 'mysql_quoted_col.upstream_table';
-+
-+query IIT retry 10 backoff 1s
-+select "p`k", "a`b", note from rw_mysql_quoted_col order by "p`k";
-+----
-+1 10 backfill_1
-+2 20 backfill_2
-+3 30 backfill_3
-+
-+system ok
-+mysql -e "
-+    USE mysql_quoted_col;
-+    INSERT INTO upstream_table VALUES (4, 40, 'stream_1');
-+"
-+
-+query IIT retry 10 backoff 1s
-+select "p`k", "a`b", note from rw_mysql_quoted_col order by "p`k";
-+----
-+1 10 backfill_1
-+2 20 backfill_2
-+3 30 backfill_3
-+4 40 stream_1
-+
-+statement ok
-+drop source s_mysql_quoted_col cascade;
-+
-+system ok
-+mysql -e "
-+    DROP DATABASE IF EXISTS mysql_quoted_col;
-+    DROP USER IF EXISTS 'quoted_col_cdc'@'%';
-+"
-```
-
-**File**: `e2e_test/source_inline/cdc/postgres/postgres_quoted_column_identifier.slt` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+control substitution on
-+
-+system ok
-+psql -c "
-+    SELECT pg_terminate_backend(active_pid)
-+    FROM pg_replication_slots
-+    WHERE slot_name = 'quoted_col_slot' AND active_pid IS NOT NULL;
-+    SELECT pg_sleep(1);
-+    SELECT pg_drop_replication_slot(slot_name)
-+    FROM pg_replication_slots
-+    WHERE slot_name = 'quoted_col_slot';
-+    DROP TABLE IF EXISTS quoted_col_tbl;
-+    DROP TABLE IF EXISTS quoted_split_tbl;
-+"
-+
-+system ok
-+psql -c "
-+    CREATE TABLE quoted_col_tbl (
-+        \"p\"\"k\" int PRIMARY KEY,
-+        \"a\"\"b\" int,
-+        note varchar
-+    );
-+    INSERT INTO quoted_col_tbl (\"p\"\"k\", \"a\"\"b\", note) VALUES
-+        (1, 10, 'backfill_1'),
-+        (2, 20, 'backfill_2'),
-+        (3, 30, 'backfill_3');
-+    CREATE TABLE quoted_split_tbl (
-+        \"p\"\"k\" int PRIMARY KEY,
-+        v int
-+    );
-+    INSERT INTO quoted_split_tbl (\"p\"\"k\", v) SELECT g, g * 10 FROM generate_series(1, 20) g;
-+"
-+
-+statement ok
-+create source s with (
-+  connector = 'postgres-cdc',
-+  hostname = '${PGHOST:localhost}',
-+  port = '${PGPORT:5432}',
-+  username = '${PGUSER:$USER}',
-+  password = '${PGPASSWORD:}',
-+  database.name = '${PGDATABASE:postgres}',
-+  schema.name = 'public',
-+  slot.name = 'quoted_col_slot'
-+);
-+
-+# Quoted primary-key and data columns, forced over multiple snapshot pages.
-+statement ok
-+create table quoted_col_tbl (
-+    "p""k" int primary key,
-+    "a""b" int,
-+    note varchar
-+) with (
-+    snapshot.batch_size = '1'
-+) from s table 'public.quoted_col_tbl';
-+
-+query IIT retry 10 backoff 1s
-+select "p""k", "a""b", note from quoted_col_tbl order by "p""k";
-+----
-+1 10 backfill_1
-+2 20 backfill_2
-+3 30 backfill_3
-+
-+# Parallelized (V2) backfill with uneven splits uses the quoted primary key as the split column.
-+statement ok
-+create table quoted_split_tbl (
-+    "p""k" int primary key,
-+    v int
-+) with (
-+    backfill.parallelism = '2',
-+    backfill.as_even_splits = 'false',
-+    backfill.num_rows_per_split = '5'
-+) from s table 'public.quoted_split_tbl';
-+
-+query II retry 10 backoff 1s
-+select count(*), sum(v) from quoted_split_tbl;
-+----
-+20 2100
-+
-+statement ok
-+drop table quoted_col_tbl;
-+
-+statement ok
-+drop table quoted_split_tbl;
-+
-+statement ok
-+drop source s;
-+
-+system ok
-+psql -c "
-+    SELECT pg_terminate_backend(active_pid)
-+    FROM pg_replication_slots
-+    WHERE slot_name = 'quoted_col_slot' AND active_pid IS NOT NULL;
-+    SELECT pg_sleep(1);
-+    SELECT pg_drop_replication_slot(slot_name)
-+    FROM pg_replication_slots
-+    WHERE slot_name = 'quoted_col_slot';
-+    DROP TABLE IF EXISTS quoted_col_tbl;
-+    DROP TABLE IF EXISTS quoted_split_tbl;
-+"
-```
-
-**File**: `e2e_test/source_inline/cdc/sql_server/sql_server_quoted_column_identifier.slt.serial` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
-+control substitution on
-+
-+system ok
-+sqlcmd -C -d master -Q "IF DB_ID('quoted_col_db') IS NOT NULL BEGIN ALTER DATABASE quoted_col_db SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE quoted_col_db; END; CREATE DATABASE quoted_col_db;" -b
-+
-+system ok
-+sqlcmd -C -d quoted_col_db -i e2e_test/source_inline/cdc/sql_server/sql_server_quoted_column_identifier_prepare.sql -b
-+
-+statement ok
-+create source mssql_quoted_col_source with (
-+    connector = 'sqlserver-cdc',
-+    hostname = '${SQLCMDSERVER:sqlserver-server}',
-+    port = '${SQLCMDPORT:1433}',
-+    username = '${SQLCMDUSER:SA}',
-+    password = '${SQLCMDPASSWORD}',
-+    database.name = 'quoted_col_db',
-+);
-+
-+# Quoted primary-key and data columns, forced over multiple snapshot pages.
-+statement ok
-+create table rw_quoted_col_tbl (
-+    "p""k" int primary key,
-+    "a""b" int,
-+    note varchar
-+) with (
-+    snapshot.batch_size = '1'
-+) from mssql_quoted_col_source table 'quoted_col_db.dbo.quoted_col_tbl';
-+
-+query IIT retry 10 backoff 1s
-+select "p""k", "a""b", note from rw_quoted_col_tbl order by "p""k";
-+----
-+1 10 backfill_1
-+2 20 backfill_2
-+3 30 backfill_3
-+
-+system ok
-+sqlcmd -C -d quoted_col_db -Q "INSERT INTO quoted_col_tbl VALUES (4, 40, 'stream_1');" -b
-+
-+query IIT retry 10 backoff 1s
-+select "p""k", "a""b", note from rw_quoted_col_tbl order by "p""k";
-+----
-+1 10 backfill_1
-+2 20 backfill_2
-+3 30 backfill_3
-+4 40 stream_1
-+
-+statement ok
-+drop source mssql_quoted_col_source cascade;
-```
-
-**File**: `e2e_test/source_inline/cdc/sql_server/sql_server_quoted_column_identifier_prepare.sql` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+SET NOCOUNT ON;
-+
-+EXEC sys.sp_cdc_enable_db;
-+
-+CREATE TABLE quoted_col_tbl (
-+  [p"k] INT PRIMARY KEY,
-+  [a"b] INT,
-+  note VARCHAR(50)
-+);
-+
-+EXEC sys.sp_cdc_enable_table
-+  @source_schema = 'dbo',
-+  @source_name = 'quoted_col_tbl',
-+  @role_name = NULL;
-+
-+INSERT INTO quoted_col_tbl VALUES
-+  (1, 10, 'backfill_1'),
-+  (2, 20, 'backfill_2'),
-+  (3, 30, 'backfill_3');
-```
-
-**File**: `src/connector/src/source/cdc/external/mysql.rs` (modified, +16/-23)
-```diff
-@@ -690,7 +690,11 @@ impl MySqlExternalTableReader {
+@@ -184,3 +184,162 @@ FROM ambiguous_lateral_a;
  
-     pub fn get_normalized_table_name(table_name: &SchemaTableName) -> String {
-         // schema name is the database name in mysql
--        format!("`{}`.`{}`", table_name.schema_name, table_name.table_name)
-+        format!(
-+            "`{}`.`{}`",
-+            table_name.schema_name.replace('`', "``"),
-+            table_name.table_name.replace('`', "``")
-+        )
-     }
+ statement ok
+ DROP TABLE ambiguous_lateral_a;
++
++# A lateral item after a left FROM item may reference columns of enclosing queries.
++statement ok
++CREATE TABLE lateral_outer_a(a1 INT);
++
++statement ok
++CREATE TABLE lateral_outer_b(b1 INT);
++
++statement ok
++CREATE TABLE lateral_outer_t1(x INT);
++
++statement ok
++CREATE TABLE lateral_outer_t2(y INT);
++
++statement ok
++INSERT INTO lateral_outer_a VALUES (1), (2);
++
++statement ok
++INSERT INTO lateral_outer_b VALUES (10), (11);
++
++statement ok
++INSERT INTO lateral_outer_t1 VALUES (1), (2);
++
++statement ok
++INSERT INTO lateral_outer_t2 VALUES (10), (20);
++
++query I rowsort
++SELECT (SELECT y FROM (SELECT 100 AS q) t1, LATERAL (SELECT a1 + q AS y) z) FROM lateral_outer_a;
++----
++101
++102
++
++query I rowsort
++SELECT (SELECT y FROM (SELECT 100 AS q) t1 CROSS JOIN LATERAL (SELECT a1 + q AS y) z) FROM lateral_outer_a;
++----
++101
++102
++
++query I rowsort
++SELECT (SELECT y FROM (SELECT 100 AS q) t1, LATERAL (SELECT a1 AS y) z) FROM lateral_outer_a;
++----
++1
++2
++
++query I rowsort
++SELECT (SELECT y FROM (SELECT 100 AS q) t1 LEFT JOIN LATERAL (SELECT a1 + q AS y) z ON true) FROM lateral_outer_a;
++----
++101
++102
++
++query II rowsort
++SELECT a1, y FROM lateral_outer_a,
++  LATERAL (SELECT y FROM (SELECT 100 AS q) t1, LATERAL (SELECT a1 + q AS y) z) s;
++----
++1 101
++2 102
++
++query II rowsort
++SELECT a1, y FROM lateral_outer_a,
++  LATERAL (SELECT y FROM (SELECT 100 AS q) t1, unnest(array[a1 + q]) z(y)) s;
++----
++1 101
++2 102
++
++query III rowsort
++SELECT x, y, s FROM lateral_outer_t1,
++  LATERAL (SELECT * FROM lateral_outer_t2, LATERAL (SELECT x + y AS s) iz) oz;
++----
++1 10 11
++1 20 21
++2 10 12
++2 20 22
++
++query III rowsort
++SELECT x, y, s FROM lateral_outer_t1
++  CROSS JOIN LATERAL (SELECT * FROM lateral_outer_t2 CROSS JOIN LATERAL (SELECT x + y AS s) iz) oz;
++----
++1 10 11
++1 20 21
++2 10 12
++2 20 22
++
++query I
++SELECT a1 FROM lateral_outer_a
++WHERE EXISTS (SELECT 1 FROM lateral_outer_b, LATERAL (SELECT a1 + b1 AS s) z WHERE s > 12);
++----
++2
++
++# Left inputs hidden from a non-lateral item or a join condition are not correlation scopes.
++query II rowsort
++SELECT a1, (SELECT count(*) FROM lateral_outer_t1, (lateral_outer_t2 CROSS JOIN (SELECT a1 AS v) w) WHERE v = x)
++FROM lateral_outer_a;
++----
++1 2
++2 2
++
++query II rowsort
++SELECT a1, (SELECT count(*) FROM lateral_outer_t1, lateral_outer_t2 JOIN lateral_outer_b ON b1 = a1 + 9)
++FROM lateral_outer_a;
++----
++1 4
++2 4
++
++# Each correlated reference is bound to the join that owns its column, however deep the join tree.
++query II rowsort
++SELECT a1, (SELECT max(v) FROM lateral_outer_t1, (lateral_outer_t2 CROSS JOIN
++  (lateral_outer_b CROSS JOIN LATERAL (SELECT y AS yy) l CROSS JOIN (SELECT a1 AS v) w)))
++FROM lateral_outer_a;
++----
++1 1
++2 2
++
++query II rowsort
++SELECT a1, (SELECT count(*) FROM lateral_outer_t1, (lateral_outer_t2 CROSS JOIN
++  (lateral_outer_b CROSS JOIN LATERAL (SELECT y AS yy) l JOIN lateral_outer_b b2 ON b2.b1 = a1 + 9)))
++FROM lateral_outer_a;
++----
++1 8
++2 8
++
++query IIII rowsort
++SELECT x, y, b1, s FROM lateral_outer_t1,
++  (lateral_outer_t2 CROSS JOIN (lateral_outer_b CROSS JOIN LATERAL (SELECT x + b1 AS s) q))
++WHERE y = 10;
++----
++1 10 10 11
++1 10 11 12
++2 10 10 12
++2 10 11 13
++
++query IIII rowsort
++SELECT x, y, b1, s FROM lateral_outer_t1
++  CROSS JOIN (lateral_outer_t2 CROSS JOIN (lateral_outer_b CROSS JOIN unnest(array[x + b1]) q(s)))
++WHERE y = 10;
++----
++1 10 10 11
++1 10 11 12
++2 10 10 12
++2 10 11 13
++
++query II rowsort
++SELECT a1, (SELECT max(s) FROM lateral_outer_t1,
++  (lateral_outer_t2 CROSS JOIN (lateral_outer_b CROSS JOIN LATERAL (SELECT a1 + b1 AS s) q)))
++FROM lateral_outer_a;
++----
++1 12
++2 13
++
++statement ok
++DROP TABLE lateral_outer_a;
++
++statement ok
++DROP TABLE lateral_outer_b;
++
++statement ok
++DROP TABLE lateral_outer_t1;
++
++statement ok
++DROP TABLE lateral_outer_t2;
+```
+
+**File**: `e2e_test/batch/subquery/subquery.slt.part` (modified, +8/-0)
+```diff
+@@ -211,6 +211,14 @@ where exists (select 1 from correlated_ref_t3 where y = x);
+ 1
+ 3
  
-     pub fn get_cdc_offset_parser() -> CdcOffsetParseFunc {
-@@ -851,8 +855,9 @@ impl MySqlExternalTableReader {
-             // fill in start primary key params
-             let params: Vec<_> = primary_keys
-                 .iter()
-+                .enumerate()
-                 .zip_eq_fast(start_pk_row.into_iter())
--                .map(|(pk, datum)| {
-+                .map(|((idx, pk), datum)| {
-                     if let Some(value) = datum {
-                         let ty = field_map.get(pk.as_str()).unwrap();
-                         let val = match ty {
-@@ -884,7 +889,7 @@ impl MySqlExternalTableReader {
-                             }
-                             _ => bail!("unsupported primary key data type: {}", ty),
-                         };
--                        ConnectorResult::Ok((pk.to_lowercase(), val))
-+                        ConnectorResult::Ok((format!("p{}", idx), val))
-                     } else {
-                         bail!("primary key {} cannot be null", pk);
-                     }
-@@ -933,34 +938,22 @@ impl MySqlExternalTableReader {
-     fn filter_expression(columns: &[String]) -> String {
-         let mut conditions = vec![];
-         // push the first condition
--        conditions.push(format!(
--            "({} > :{})",
--            Self::quote_column(&columns[0]),
--            columns[0].to_lowercase()
--        ));
-+        conditions.push(format!("({} > :p0)", Self::quote_column(&columns[0])));
-         for i in 2..=columns.len() {
-             // '=' condition
-             let mut condition = String::new();
-             for (j, col) in columns.iter().enumerate().take(i - 1) {
-                 if j == 0 {
--                    condition.push_str(&format!(
--                        "({} = :{})",
--                        Self::quote_column(col),
--                        col.to_lowercase()
--                    ));
-+                    condition.push_str(&format!("({} = :p{})", Self::quote_column(col), j));
-                 } else {
--                    condition.push_str(&format!(
--                        " AND ({} = :{})",
--                        Self::quote_column(col),
--                        col.to_lowercase()
--                    ));
-+                    condition.push_str(&format!(" AND ({} = :p{})", Self::quote_column(col), j));
-                 }
-             }
-             // '>' condition
-             condition.push_str(&format!(
--                " AND ({} > :{})",
-+                " AND ({} > :p{})",
-                 Self::quote_column(&columns[i - 1]),
--                columns[i - 1].to_lowercase()
-+                i - 1
-             ));
-             conditions.push(format!("({})", condition));
-         }
-@@ -972,7 +965,7 @@ impl MySqlExternalTableReader {
-     }
++# A correlated CTE keeps its outer reference when it is read from a nested subquery.
++query II rowsort
++select x, (with c as (select x as v) select (select v from c)) from correlated_ref_t1;
++----
++1 1
++2 2
++NULL NULL
++
+ statement ok
+ drop table correlated_ref_t1;
  
-     fn quote_column(column: &str) -> String {
--        format!("`{}`", column)
-+        format!("`{}`", column.replace('`', "``"))
-     }
+```
+
+**File**: `e2e_test/udf/tests/language_specific/sql_from.slt` (modified, +35/-0)
+```diff
+@@ -74,6 +74,41 @@ select f();
+ statement ok
+ drop function f;
+ 
++
++# A parameter referenced inside a lateral subquery of the body, called with a column argument.
++statement ok
++create table t0 (x int);
++
++statement ok
++insert into t0 values (1), (2), (3);
++
++statement ok
++create table a (a1 int);
++
++statement ok
++insert into a values (-3), (-2), (-1), (0), (null);
++
++statement ok
++create function f3(v int) returns bigint language sql as $$ select count(*) from t0, lateral (select x + v as s) l where s > 0 $$;
++
++query II rowsort
++select a1, f3(a1) from a;
++----
++-1 2
++-2 1
++-3 0
++0 3
++NULL 0
++
++statement ok
++drop function f3;
++
++statement ok
++drop table a;
++
++statement ok
++drop table t0;
++
+ statement ok
+ CREATE FUNCTION jsonb_values_at(data jsonb, grouping_keys TEXT[])
+   RETURNS TEXT[]
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/input/lateral_subquery.yaml` (modified, +71/-0)
+```diff
+@@ -250,3 +250,74 @@
+   expected_outputs:
+     - batch_plan
+     - stream_plan
++- name: lateral after a left item references an enclosing query
++  sql: |
++    create table a (a1 int);
++    select (select y from (select 100 as q) t1, lateral (select a1 + q as y) z) from a;
++  expected_outputs:
++    - batch_plan
++- name: explicit join lateral references an enclosing query
++  sql: |
++    create table a (a1 int);
++    select (select y from (select 100 as q) t1 cross join lateral (select a1 + q as y) z) from a;
++  expected_outputs:
++    - batch_plan
++- name: nested lateral references the left input of an enclosing lateral
++  sql: |
++    create table t1 (x int);
++    create table t2 (y int);
++    select * from t1, lateral (select * from t2, lateral (select x + y as s) iz) oz;
++  expected_outputs:
++    - batch_plan
++- name: non-lateral item under a join references an enclosing query
++  sql: |
++    create table a (a1 int);
++    create table t1 (x int);
++    create table t2 (y int);
++    select a1, (select count(*) from t1, (t2 cross join (select a1 as v) w) where v = x) from a;
++  expected_outputs:
++    - batch_plan
++- name: non-lateral item under a nested lateral join references an enclosing query
++  sql: |
++    create table a (a1 int);
++    create table t0 (x int);
++    create table t1 (y int);
++    create table t2 (z int);
++    select a1, (select max(v) from t0, (t1 cross join (t2 cross join lateral (select y as yy) l cross join (select a1 as v) w))) from a;
++  expected_outputs:
++    - batch_plan
++- name: join condition under a nested lateral join references an enclosing query
++  sql: |
++    create table a (a1 int);
++    create table b (b1 int);
++    create table t0 (x int);
++    create table t1 (y int);
++    create table t2 (z int);
++    select a1, (select count(*) from t0, (t1 cross join (t2 cross join lateral (select y as yy) l join b on b1 = a1))) from a;
++  expected_outputs:
++    - batch_plan
++- name: lateral item under an intermediate join references an outer left input
++  sql: |
++    create table t0 (x int);
++    create table t1 (y int);
++    create table t2 (z int);
++    select * from t0, (t1 cross join (t2 cross join lateral (select x + z as s) q));
++  expected_outputs:
++    - batch_plan
++- name: lateral table function under an intermediate join references an outer left input
++  sql: |
++    create table t0 (x int);
++    create table t1 (y int);
++    create table t2 (z int);
++    select * from t0 cross join (t1 cross join (t2 cross join unnest(array[x, z]) u));
++  expected_outputs:
++    - batch_plan
++- name: lateral item under an intermediate join references an enclosing query
++  sql: |
++    create table a (a1 int);
++    create table t0 (x int);
++    create table t1 (y int);
++    create table t2 (z int);
++    select a1, (select max(s) from t0, (t1 cross join (t2 cross join lateral (select a1 + z as s) q))) from a;
++  expected_outputs:
++    - batch_plan
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/input/subquery_expr_correlated.yaml` (modified, +6/-0)
+```diff
+@@ -614,6 +614,12 @@
+   expected_outputs:
+     - batch_plan
+     - stream_plan
++- name: correlated CTE referenced from a nested subquery
++  sql: |
++    create table t1(x int);
++    select x, (with cte as (select x as v) select (select v from cte)) from t1;
++  expected_outputs:
++    - batch_plan
+ - name: subqueries in case when exprs
+   sql: |
+     WITH input AS (
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/output/lateral_subquery.yaml` (modified, +269/-0)
+```diff
+@@ -555,3 +555,272 @@
+                             │           └─StreamTableScan { table: t2, columns: [t2.ex_date, t2.qid, t2._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t2._row_id], pk: [_row_id], dist: UpstreamHashShard(t2._row_id) }
+                             └─StreamExchange { dist: HashShard(t3.qid) }
+                               └─StreamTableScan { table: t3, columns: [t3.price_at, t3.qid, t3._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t3._row_id], pk: [_row_id], dist: UpstreamHashShard(t3._row_id) }
++- name: lateral after a left item references an enclosing query
++  sql: |
++    create table a (a1 int);
++    select (select y from (select 100 as q) t1, lateral (select a1 + q as y) z) from a;
++  batch_plan: |-
++    BatchExchange { order: [], dist: Single }
++    └─BatchHashJoin { type: LeftOuter, predicate: a.a1 IS NOT DISTINCT FROM a.a1, output: [$expr1] }
++      ├─BatchExchange { order: [], dist: HashShard(a.a1) }
++      │ └─BatchScan { table: a, columns: [a.a1], distribution: SomeShard }
++      └─BatchExchange { order: [], dist: HashShard(a.a1) }
++        └─BatchProject { exprs: [a.a1, (a.a1 + 100:Int32) as $expr1] }
++          └─BatchHashJoin { type: Inner, predicate: 100:Int32 IS NOT DISTINCT FROM 100:Int32, output: all }
++            ├─BatchExchange { order: [], dist: HashShard(100:Int32) }
++            │ └─BatchValues { rows: [[100:Int32]] }
++            └─BatchExchange { order: [], dist: HashShard(100:Int32) }
++              └─BatchNestedLoopJoin { type: Inner, predicate: true, output: all }
++                ├─BatchExchange { order: [], dist: Single }
++                │ └─BatchHashAgg { group_key: [a.a1], aggs: [] }
++                │   └─BatchExchange { order: [], dist: HashShard(a.a1) }
++                │     └─BatchScan { table: a, columns: [a.a1], distribution: SomeShard }
++                └─BatchExchange { order: [], dist: Single }
++                  └─BatchHashAgg { group_key: [100:Int32], aggs: [] }
++                    └─BatchExchange { order: [], dist: HashShard(100:Int32) }
++                      └─BatchValues { rows: [[100:Int32]] }
++- name: explicit join lateral references an enclosing query
++  sql: |
++    create table a (a1 int);
++    select (select y from (select 100 as q) t1 cross join lateral (select a1 + q as y) z) from a;
++  batch_plan: |-
++    BatchExchange { order: [], dist: Single }
++    └─BatchHashJoin { type: LeftOuter, predicate: a.a1 IS NOT DISTINCT FROM a.a1, output: [$expr1] }
++      ├─BatchExchange { order: [], dist: HashShard(a.a1) }
++      │ └─BatchScan { table: a, columns: [a.a1], distribution: SomeShard }
++      └─BatchExchange { order: [], dist: HashShard(a.a1) }
++        └─BatchProject { exprs: [a.a1, (a.a1 + 100:Int32) as $expr1] }
++          └─BatchHashJoin { type: Inner, predicate: 100:Int32 IS NOT DISTINCT FROM 100:Int32, output: all }
++            ├─BatchExchange { order: [], dist: HashShard(100:Int32) }
++            │ └─BatchValues { rows: [[100:Int32]] }
++            └─BatchExchange { order: [], dist: HashShard(100:Int32) }
++              └─BatchNestedLoopJoin { type: Inner, predicate: true, output: all }
++                ├─BatchExchange { order: [], dist: Single }
++                │ └─BatchHashAgg { group_key: [a.a1], aggs: [] }
++                │   └─BatchExchange { order: [], dist: HashShard(a.a1) }
++                │     └─BatchScan { table: a, columns: [a.a1], distribution: SomeShard }
++                └─BatchExchange { order: [], dist: Single }
++                  └─BatchHashAgg { group_key: [100:Int32], aggs: [] }
++                    └─BatchExchange { order: [], dist: HashShard(100:Int32) }
++                      └─BatchValues { rows: [[100:Int32]] }
++- name: nested lateral references the left input of an enclosing lateral
++  sql: |
++    create table t1 (x int);
++    create table t2 (y int);
++    select * from t1, lateral (select * from t2, lateral (select x + y as s) iz) oz;
++  batch_plan: |-
++    BatchExchange { order: [], dist: Single }
++    └─BatchProject { exprs: [t1.x, t2.y, (t1.x + t2.y) as $expr1] }
++      └─BatchHashJoin { type: Inner, predicate: t2.y IS NOT DISTINCT FROM t2.y AND t1.x IS NOT DISTINCT FROM t1.x, output: all }
++        ├─BatchExchange { order: [], dist: HashShard(t1.x, t2.y) }
++        │ └─BatchNestedLoopJoin { type: Inner, predicate: true, output: all }
++        │   ├─BatchExchange { order: [], dist: Single }
++        │   │ └─BatchScan { table: t1, columns: [t1.x], distribution: SomeShard }
++        │   └─BatchExchange { order: [], dist: Single }
++        │     └─BatchScan { table: t2, columns: [t2.y], distribution: SomeShard }
++        └─BatchExchange { order: [], dist: HashShard(t1.x, t2.y) }
++          └─BatchNestedLoopJoin { type: Inner, predicate: true, output: all }
++            ├─BatchExchange { order: [], dist: Single }
++            │ └─BatchHashAgg { group_key: [t1.x], aggs: [] }
++            │   └─BatchExchange { order: [], dist: HashShard(t1.x) }
++            │     └─BatchScan {
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/output/subquery_expr_correlated.yaml` (modified, +18/-0)
+```diff
+@@ -2398,6 +2398,24 @@
+               └─StreamProject { exprs: [t2.y, t2.x, t2._row_id] }
+                 └─StreamFilter { predicate: IsNotNull(t2.y) }
+                   └─StreamTableScan { table: t2, columns: [t2.x, t2.y, t2._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t2._row_id], pk: [_row_id], dist: UpstreamHashShard(t2._row_id) }
++- name: correlated CTE referenced from a nested subquery
++  sql: |
++    create table t1(x int);
++    select x, (with cte as (select x as v) select (select v from cte)) from t1;
++  batch_plan: |-
++    BatchExchange { order: [], dist: Single }
++    └─BatchHashJoin { type: LeftOuter, predicate: t1.x IS NOT DISTINCT FROM t1.x, output: [t1.x, t1.x] }
++      ├─BatchExchange { order: [], dist: HashShard(t1.x) }
++      │ └─BatchScan { table: t1, columns: [t1.x], distribution: SomeShard }
++      └─BatchHashJoin { type: LeftOuter, predicate: t1.x IS NOT DISTINCT FROM t1.x, output: [t1.x, t1.x] }
++        ├─BatchHashAgg { group_key: [t1.x], aggs: [] }
++        │ └─BatchExchange { order: [], dist: HashShard(t1.x) }
++        │   └─BatchScan { table: t1, columns: [t1.x], distribution: SomeShard }
++        └─BatchExchange { order: [], dist: HashShard(t1.x) }
++          └─BatchProject { exprs: [t1.x, t1.x] }
++            └─BatchHashAgg { group_key: [t1.x], aggs: [] }
++              └─BatchExchange { order: [], dist: HashShard(t1.x) }
++                └─BatchScan { table: t1, columns: [t1.x], distribution: SomeShard }
+ - name: subqueries in case when exprs
+   sql: "WITH input AS (\n    SELECT\n        'Empty JSON item' AS test_case,\n        ('{}'::JSONB) AS item\n)\n\nSELECT\n    test_case,\n\n    CASE\n\t    WHEN JSONB_PATH_QUERY_FIRST(JSONB_PATH_QUERY_FIRST(item, '$.binary_set_attribute'), '$.BS') IS NULL THEN NULL\n        ELSE ARRAY(\n            SELECT parsed_item\n            FROM (\n                SELECT DECODE(((nested_item) #>> '{}'), 'base64') AS parsed_item\n                FROM (\n                    SELECT nested_item\n                    FROM JSONB_ARRAY_ELEMENTS(JSONB_PATH_QUERY_FIRST((JSONB_PATH_QUERY_FIRST(item, '$.binary_set_attribute')), '$.BS'))\n                    AS t(nested_item)\n                )\n            )\n            ORDER BY parsed_item\n        )\n    END AS binary_set_attribute,\n\n    CASE\n        WHEN JSONB_PATH_QUERY_FIRST(JSONB_PATH_QUERY_FIRST(item, '$.number_set_attribute'), '$.NS') IS NULL THEN NULL\n        ELSE ARRAY(\n            SELECT parsed_item\n            FROM (\n                SELECT CAST(nested_item #>> '{}' AS BIGINT) AS parsed_item\n                FROM (\n    \t\t\t\tSELECT nested_item\n    \t\t\t\tFROM JSONB_ARRAY_ELEMENTS(JSONB_PATH_QUERY_FIRST((JSONB_PATH_QUERY_FIRST(item, '$.number_set_attribute')), '$.NS'))\n    \t\t\t\tAS t(nested_item)\n\t\t\t\t)\n            )\n            ORDER BY parsed_item\n        )\n    END AS number_set_attribute,\n\n    CASE\n\t    WHEN JSONB_PATH_QUERY_FIRST((JSONB_PATH_QUERY_FIRST(item, '$.float_set_attribute')), '$.NS') IS NULL THEN NULL\n        ELSE ARRAY(\n            SELECT parsed_item\n            FROM (\n                SELECT CAST(nested_item #>> '{}' AS FLOAT)\n                AS parsed_item\n                FROM (\n    \t\t\t\tSELECT nested_item\n\t\t\t\t    FROM JSONB_ARRAY_ELEMENTS(JSONB_PATH_QUERY_FIRST((JSONB_PATH_QUERY_FIRST(item, '$.float_set_attribute')), '$.NS'))\n    \t\t\t\tAS t(nested_item)\n\t\t\t\t)\n            )\n            ORDER BY parsed_item\n        )\n    END AS float_set_attribute,\n\n    CASE\n\t    WHEN JSONB_PATH_QUERY_FIRST((JSONB_PATH_QUERY_FIRST(item, '$.string_set_attribute')), '$.SS') IS NULL THEN NULL\n        ELSE ARRAY(\n            SELECT parsed_item\n            FROM (\n                SELECT nested_item #>> '{}' AS parsed_item\n                FROM (\n    \t\t\t\tSELECT nested_item\n    \t\t\t\tFROM JSONB_ARRAY_ELEMENTS(JSONB_PATH_QUERY_FIRST((JSONB_PATH_QUERY_FIRST(item, '$.string_set_attribute')), '$.SS'))\n    \t\t\t\tAS t(nested_item)\n\t\t\t\t)\n            )\n            ORDER BY parsed_item\n        )\n    END AS string_set_attribute\nFROM input\n"
+   batch_plan: |-
+```
+
+**File**: `src/frontend/src/binder/bind_context.rs` (modified, +3/-1)
+```diff
+@@ -24,7 +24,7 @@ use risingwave_sqlparser::ast::{TableAlias, WindowSpec};
+ 
+ use crate::binder::Relation;
+ use crate::error::{ErrorCode, Result};
+-use crate::expr::ExprImpl;
++use crate::expr::{ExprImpl, ScopeId};
+ 
+ type LiteResult<T> = std::result::Result<T, ErrorCode>;
+ 
+@@ -126,6 +126,8 @@ pub struct BindContext {
+     /// Bound arguments for the current SQL UDF, if any.
+     // TODO: use enum for named or positional arguments
+     pub sql_udf_arguments: Option<HashMap<String, ExprImpl>>,
++    /// Identifies this context as the owner of correlated references to its columns.
++    pub scope: ScopeId,
  }
  
-@@ -1229,13 +1222,13 @@ mod tests {
-     fn test_mysql_filter_expr() {
-         let cols = vec!["id".to_owned()];
-         let expr = MySqlExternalTableReader::filter_expression(&cols);
--        assert_eq!(expr, "(`id` > :id)");
-+        assert_eq!(expr, "(`id` > :p0)");
- 
-         let cols = vec!["aa".to_owned(), "bb".to_owned(), "cc".to_owned()];
-         let expr = MySqlExternalTableReader::filter_expression(&cols);
-         assert_eq!(
-             expr,
--            "(`aa` > :aa) OR ((`aa` = :aa) AND (`bb` > :bb)) OR ((`aa` = :aa) AND (`bb` = :bb) AND (`cc` > :cc))"
-+            "(`aa` > :p0) OR ((`aa` = :p0) AND (`bb` > :p1)) OR ((`aa` = :p0) AND (`bb` = :p1) AND (`cc` > :p2))"
-         );
-     }
- 
-```
-
-**File**: `src/connector/src/source/cdc/external/postgres.rs` (modified, +5/-4)
-```diff
-@@ -330,7 +330,8 @@ impl PostgresExternalTableReader {
-     pub fn get_normalized_table_name(table_name: &SchemaTableName) -> String {
-         format!(
-             "\"{}\".\"{}\"",
--            table_name.schema_name, table_name.table_name
-+            table_name.schema_name.replace('"', "\"\""),
-+            table_name.table_name.replace('"', "\"\"")
-         )
-     }
- 
-@@ -484,7 +485,7 @@ impl PostgresExternalTableReader {
-     }
- 
-     fn quote_column(column: &str) -> String {
--        format!("\"{}\"", column)
-+        format!("\"{}\"", column.replace('"', "\"\""))
-     }
- 
-     async fn min_and_max(
-@@ -493,8 +494,8 @@ impl PostgresExternalTableReader {
-     ) -> ConnectorResult<Option<(ScalarImpl, ScalarImpl)>> {
-         let sql = format!(
-             "SELECT MIN({}), MAX({}) FROM {}",
--            split_column.name,
--            split_column.name,
-+            Self::quote_column(&split_column.name),
-+            Self::quote_column(&split_column.name),
-             Self::get_normalized_table_name(&self.schema_table_name),
-         );
-         let client = self.client.lock().await;
-```
-
-**File**: `src/connector/src/source/cdc/external/sql_server.rs` (modified, +3/-2)
-```diff
-@@ -402,7 +402,8 @@ impl SqlServerExternalTableReader {
-     pub fn get_normalized_table_name(table_name: &SchemaTableName) -> String {
-         format!(
-             "\"{}\".\"{}\"",
--            table_name.schema_name, table_name.table_name
-+            table_name.schema_name.replace('"', "\"\""),
-+            table_name.table_name.replace('"', "\"\"")
-         )
-     }
- 
-@@ -443,7 +444,7 @@ impl SqlServerExternalTableReader {
-     }
- 
-     fn quote_column(column: &str) -> String {
--        format!("\"{}\"", column)
-+        format!("\"{}\"", column.replace('"', "\"\""))
-     }
- }
- 
+ /// Holds the context for the `BindContext`'s `ColumnGroup`s.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2173,33 +1710,73 @@ Co-authored-by: Claude Opus 4.8 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. frontend): return an error for leftover subquery expressions instead of panickin
+## X. sink): order BigQuery upsert changes with _CHANGE_SEQUENCE_NUMBER (#27587)
 
 **RULE**:
-When implementing operations in `src/frontend/planner_test/tests/testdata/input/generated_columns.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/connector/src/sink/big_query.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95251fec`: frontend): return an error for leftover subquery expressions instead of panicking (#27592). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1c69fba0`: sink): order BigQuery upsert changes with _CHANGE_SEQUENCE_NUMBER (#27587). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/frontend/planner_test/tests/testdata/input/generated_columns.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/connector/src/sink/big_query.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# https://github.com/risingwavelabs/risingwave/issues/24081
-- name: subquery in generated column
-  sql: |
-    explain create table t (v text as (select 'a'));
-  expected_outputs:
-  - planner_error
+use std::time::{SystemTime, UNIX_EPOCH};
+use parking_lot::Mutex;
+use risingwave_common::util::iter_util::ZipEqDebug;
+pub const CHANGE_SEQUENCE_NUMBER: &str = "_CHANGE_SEQUENCE_NUMBER";
+    change_sequence_number_field: Option<FieldDescriptor>,
+        let writer = Self::with_client(config, schema, pk_indices, is_append_only, client)?;
+        Ok((writer, resp_stream))
+    }
+
+    fn with_client(
+        config: BigQueryConfig,
+        schema: Schema,
+        pk_indices: Vec<usize>,
+        is_append_only: bool,
+        client: StorageWriterClient,
+    ) -> Result<Self> {
+            let field = FieldDescriptorProto {
+                name: Some(CHANGE_SEQUENCE_NUMBER.to_owned()),
+                number: Some((schema.len() + 2) as i32),
+                r#type: Some(field_descriptor_proto::Type::String.into()),
+                ..Default::default()
+            };
+            descriptor_proto.field.push(field);
+        let change_sequence_number_field = if !is_append_only {
+            let field = message_descriptor
+                .get_field_by_name(CHANGE_SEQUENCE_NUMBER)
+                .ok_or_else(|| {
+                    SinkError::BigQuery(anyhow::anyhow!("Can't find {}", CHANGE_SE
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        Ok((
+            Self {
+                write_stream: format!(
+                    "projects/{}/datasets/{}/tables/{}/streams/_default",
+                    config.common.project, config.common.dataset, config.common.table
+                ),
+                config,
+                schema,
+                pk_indices,
+                client,
+                is_append_only,
+                row_encoder,
+                message_descriptor,
+                proto_field,
+                writer_pb_schema: ProtoSchema {
+                    proto_descriptor: Some(descriptor_proto.clone()),
+                },
+            resp_stream,
+        ))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95251fec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1c69fba0` are properly handled with clean fallback behavior.

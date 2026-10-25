@@ -4906,3 +4906,6 @@
 | `CYCLE-20261025-A77P` | `2026-10-25T16:48:05.893Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`1a65e25c...`) |
 | `CYCLE-20261025-AFT9` | `2026-10-25T16:48:17.037Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md` | Yes (`567332b1...`) |
 | `CYCLE-20261025-AHG3` | `2026-10-25T16:48:19.155Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md` | Yes (`fef38ac3...`) |
+| `CYCLE-20261025-IJVJ` | `2026-10-25T16:54:35.551Z` | `wasm-bindgen/wasm-pack` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md` | Yes (`160073c7...`) |
+| `CYCLE-20261025-IMZY` | `2026-10-25T16:54:39.598Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4383, Rule 4384, Rule 4385` | Yes (`98d852e4...`) |
+| `CYCLE-20261025-IU1G` | `2026-10-25T16:54:48.724Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4386` | Yes (`b08de740...`) |

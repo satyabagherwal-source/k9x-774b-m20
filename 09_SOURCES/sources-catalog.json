@@ -685,8 +685,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "96fffd256f9b1293eca29a7196e3493c431537faad73e9ca18c723ba8fcb1ee7",
-    "lastHarvestedAt": "2026-10-20T21:21:21.494Z",
+    "contentHash": "98d852e4d6f53326ebef9999b70be79dd20641f90548b3aa75ebbee263fbd31a",
+    "lastHarvestedAt": "2026-10-25T16:54:39.601Z",
     "learningId": "learn-huggingface-cloudflare-clef"
   },
   "hf-cloudflare-clef-flash": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "73219848",
+    "sourceVersion": "204e2636",
     "license": "Apache-2.0",
-    "contentHash": "ecc2341595fd8ad95934e85fc34bf2c235f5b27bf1b402048759686437679783",
-    "lastHarvestedAt": "2026-10-23T11:37:54.153Z",
+    "contentHash": "b08de740c40af87227cf1047e9ffb68f298ae6cbc2c55268116923a25e99875e",
+    "lastHarvestedAt": "2026-10-25T16:54:48.728Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -4783,10 +4783,10 @@
     "repository": "wasm-bindgen/wasm-pack",
     "platform": "github",
     "sourceUrl": "https://github.com/wasm-bindgen/wasm-pack",
-    "sourceVersion": "5081ad40",
+    "sourceVersion": "2fc9d066",
     "license": "Apache-2.0",
-    "contentHash": "47ea217009509f995e1336f76dfbb65de4c86cd2dd0b714887ca19de4c79e939",
-    "lastHarvestedAt": "2026-10-23T07:21:26.723Z",
+    "contentHash": "160073c7449c208f6196986b2d5dae7f3aaedd641d689c86c4545c89e70b9221",
+    "lastHarvestedAt": "2026-10-25T16:54:35.554Z",
     "learningId": "learn-github-wasm-bindgen-wasm-pack"
   },
   "software-mansion-react-native-gesture-handler": {

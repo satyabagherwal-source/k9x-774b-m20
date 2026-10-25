@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T16:48:19.163Z",
-  "total_cycles_completed": 4883,
-  "total_learnings_persisted": 4883,
-  "total_rules_promoted": 4262,
+  "last_updated": "2026-10-25T16:54:48.732Z",
+  "total_cycles_completed": 4886,
+  "total_learnings_persisted": 4886,
+  "total_rules_promoted": 4266,
   "history": [
-    {
-      "timestamp": "2026-10-25T06:25:21.874Z",
-      "repository": "google/tcmalloc",
-      "learningId": "learn-github-google-tcmalloc",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T06:25:51.568Z",
-      "repository": "black-forest-labs/flux-3-image-klein-comfy",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T06:31:56.884Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T06:32:02.592Z",
       "repository": "autotrust/JEV-35B-NVFP4",
@@ -1403,6 +1382,27 @@
       "repository": "pixeltable/pixeltable",
       "learningId": "learn-github-pixeltable-pixeltable",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T16:54:35.559Z",
+      "repository": "wasm-bindgen/wasm-pack",
+      "learningId": "learn-github-wasm-bindgen-wasm-pack",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T16:54:39.606Z",
+      "repository": "Cloudflare/clef",
+      "learningId": "learn-huggingface-cloudflare-clef",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T16:54:48.732Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

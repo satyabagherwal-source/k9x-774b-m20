@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T16:48:19.170Z",
+  "last_updated": "2026-10-25T16:54:48.741Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -860,14 +860,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef",
-      "content_hash": "96fffd256f9b1293eca29a7196e3493c431537faad73e9ca18c723ba8fcb1ee7",
-      "verified_at": "2026-10-20T21:21:21.503Z",
+      "content_hash": "98d852e4d6f53326ebef9999b70be79dd20641f90548b3aa75ebbee263fbd31a",
+      "verified_at": "2026-10-25T16:54:39.610Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:21:21.503Z"
+      "last_updated": "2026-10-25T16:54:39.610Z"
     },
     "Cloudflare/clef-flash": {
       "repository": "Cloudflare/clef-flash",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "ecc2341595fd8ad95934e85fc34bf2c235f5b27bf1b402048759686437679783",
-      "verified_at": "2026-10-23T11:37:54.166Z",
+      "content_hash": "b08de740c40af87227cf1047e9ffb68f298ae6cbc2c55268116923a25e99875e",
+      "verified_at": "2026-10-25T16:54:48.736Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T11:37:54.166Z"
+      "last_updated": "2026-10-25T16:54:48.736Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -7296,14 +7296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wasm-bindgen-wasm-pack",
-      "content_hash": "47ea217009509f995e1336f76dfbb65de4c86cd2dd0b714887ca19de4c79e939",
-      "verified_at": "2026-10-23T07:21:26.733Z",
+      "content_hash": "160073c7449c208f6196986b2d5dae7f3aaedd641d689c86c4545c89e70b9221",
+      "verified_at": "2026-10-25T16:54:35.562Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T07:21:26.733Z"
+      "last_updated": "2026-10-25T16:54:35.562Z"
     },
     "software-mansion/react-native-gesture-handler": {
       "repository": "software-mansion/react-native-gesture-handler",
