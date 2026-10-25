@@ -4982,3 +4982,4 @@
 | `CYCLE-20261025-RT8C` | `2026-10-25T20:17:44.892Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4439, Rule 4440, Rule 4441` | Yes (`14608bba...`) |
 | `CYCLE-20261025-ZDD4` | `2026-10-25T20:23:37.576Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`98dbfab9...`) |
 | `CYCLE-20261025-ZOYK` | `2026-10-25T20:23:52.604Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4442` | Yes (`c693eee1...`) |
+| `CYCLE-20261025-7WB1` | `2026-10-25T20:30:15.373Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`87674dd7...`) |

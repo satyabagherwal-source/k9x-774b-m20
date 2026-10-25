@@ -3202,8 +3202,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-25T17:30:16.783Z",
-    "lastVerified": "2026-10-25T17:30:16.783Z",
+    "lastChecked": "2026-10-25T20:30:22.045Z",
+    "lastVerified": "2026-10-25T20:30:22.045Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -3717,12 +3717,12 @@
     "revisionIdentifier": "e702d7ba"
   },
   "siderolabs-talos": {
-    "name": "siderolabs/talos",
+    "name": "talos",
     "officialUrl": "https://github.com/siderolabs/talos",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-25T05:04:51.888Z",
-    "lastVerified": "2026-10-25T05:04:51.888Z",
+    "lastChecked": "2026-10-25T20:30:19.468Z",
+    "lastVerified": "2026-10-25T20:30:19.468Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-siderolabs-talos",
@@ -3731,7 +3731,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0770c5f3"
   },
   "moby-buildkit": {
     "name": "moby/buildkit",
@@ -6954,12 +6955,12 @@
     "revisionIdentifier": "f7a7f957"
   },
   "elastic-eui": {
-    "name": "elastic/eui",
+    "name": "eui",
     "officialUrl": "https://github.com/elastic/eui",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-25T05:52:28.280Z",
-    "lastVerified": "2026-10-25T05:52:28.280Z",
+    "lastChecked": "2026-10-25T20:30:09.523Z",
+    "lastVerified": "2026-10-25T20:30:09.523Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-elastic-eui",
@@ -6968,7 +6969,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1d4161ec"
   },
   "arco-design-arco-design": {
     "name": "arco-design",
@@ -10355,12 +10357,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "greptimeteam-greptimedb": {
-    "name": "GreptimeTeam/greptimedb",
+    "name": "greptimedb",
     "officialUrl": "https://github.com/GreptimeTeam/greptimedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-25T04:12:39.136Z",
-    "lastVerified": "2026-10-25T04:12:39.136Z",
+    "lastChecked": "2026-10-25T20:30:24.504Z",
+    "lastVerified": "2026-10-25T20:30:24.504Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-greptimeteam-greptimedb",
@@ -10369,7 +10371,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1c5d15fd"
   },
   "ydb-platform-ydb": {
     "name": "ydb-platform/ydb",
@@ -10686,12 +10689,12 @@
     "revisionIdentifier": "4b965686"
   },
   "ataraxy-labs-sem": {
-    "name": "Ataraxy-Labs/sem",
+    "name": "sem",
     "officialUrl": "https://github.com/Ataraxy-Labs/sem",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-24T20:48:35.854Z",
-    "lastVerified": "2026-10-24T20:48:35.854Z",
+    "lastChecked": "2026-10-25T20:30:11.887Z",
+    "lastVerified": "2026-10-25T20:30:11.887Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ataraxy-labs-sem",
@@ -10700,7 +10703,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f7fa398c"
   },
   "sentrux-sentrux": {
     "name": "sentrux",
@@ -17612,8 +17616,8 @@
     "officialUrl": "https://github.com/EmergeTools/Pow",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-21T03:18:03.643Z",
-    "lastVerified": "2026-10-21T03:18:03.643Z",
+    "lastChecked": "2026-10-25T20:30:16.911Z",
+    "lastVerified": "2026-10-25T20:30:16.911Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-emergetools-pow",
@@ -18320,12 +18324,12 @@
     "officialUrl": "https://huggingface.co/openai/gpt-oss-20b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-21T00:48:33.214Z",
-    "lastVerified": "2026-10-21T00:48:33.214Z",
+    "lastChecked": "2026-10-25T20:30:14.501Z",
+    "lastVerified": "2026-10-25T20:30:14.501Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-gpt-oss-20b",
-    "contentHash": "85f40ab46a1fd73c85fbf4255b25ca85af0a507acb7c739b34bd70ce1376da42",
+    "contentHash": "87674dd7d8c634388ba15e1a894e841af82568c9bc40c4f8ad20ccb4e0c70378",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -18512,8 +18516,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-25T20:04:53.335Z",
-    "lastVerified": "2026-10-25T20:04:53.335Z",
+    "lastChecked": "2026-10-25T20:30:26.857Z",
+    "lastVerified": "2026-10-25T20:30:26.857Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -27458,8 +27462,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-25T20:23:55.143Z",
-    "lastVerified": "2026-10-25T20:23:55.143Z",
+    "lastChecked": "2026-10-25T20:30:26.875Z",
+    "lastVerified": "2026-10-25T20:30:26.875Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

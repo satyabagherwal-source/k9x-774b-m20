@@ -4989,3 +4989,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-25T20:17:44.894Z |
 | `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-10-25T20:23:37.578Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `545b420b` | Multi-dimensional audit evidence | 2026-10-25T20:23:52.606Z |
+| `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-25T20:30:15.377Z |
