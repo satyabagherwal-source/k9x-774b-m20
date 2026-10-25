@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T22:24:11.780Z",
+  "last_updated": "2026-10-25T22:31:56.703Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25791,7 +25791,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "1983d144edcae62b0857d80c3c593b8430ac2940e630b55cfb549fa4456fd398",
+      "content_hash": "6db5ac895194aab90a29cb788102a802298dc199c36a3149d45db13eca23823c",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -25823,7 +25823,7 @@
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e",
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14"
       ],
-      "verified_at": "2026-10-21T02:33:40.279Z",
+      "verified_at": "2026-10-25T22:31:56.683Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42050,8 +42050,8 @@
       "slug": "rainbow-me-rainbow",
       "platform": "github",
       "source_url": "https://github.com/rainbow-me/rainbow",
-      "source_version": "0e6ad90a",
-      "content_hash": "fabb61b17f22f64c6385c7474ba1ac14b3dd9fce5ce2383ad105de0a8eb8b9c3",
+      "source_version": "9997c6ed",
+      "content_hash": "3d48bea64ca8e5a5a13545c0d3ab1a5be9ec5a0e5e27a7491235c2c39baf9d4e",
       "dossier_path": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "promoted_rules": [
@@ -42066,7 +42066,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:43:56.383Z",
+      "verified_at": "2026-10-25T22:31:50.603Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

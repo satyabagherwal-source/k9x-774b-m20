@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T22:24:11.850Z",
+  "last_updated": "2026-10-25T22:31:56.783Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1460,14 +1460,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "1983d144edcae62b0857d80c3c593b8430ac2940e630b55cfb549fa4456fd398",
-      "verified_at": "2026-10-21T02:33:40.333Z",
+      "content_hash": "6db5ac895194aab90a29cb788102a802298dc199c36a3149d45db13eca23823c",
+      "verified_at": "2026-10-25T22:31:56.778Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:33:40.333Z"
+      "last_updated": "2026-10-25T22:31:56.778Z"
     },
     "BAAI/bge-reranker-v2-m3": {
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -12801,14 +12801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rainbow-me-rainbow",
-      "content_hash": "fabb61b17f22f64c6385c7474ba1ac14b3dd9fce5ce2383ad105de0a8eb8b9c3",
-      "verified_at": "2026-10-19T17:43:56.454Z",
+      "content_hash": "3d48bea64ca8e5a5a13545c0d3ab1a5be9ec5a0e5e27a7491235c2c39baf9d4e",
+      "verified_at": "2026-10-25T22:31:50.701Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T17:43:56.454Z"
+      "last_updated": "2026-10-25T22:31:50.701Z"
     },
     "zoontek/react-native-permissions": {
       "repository": "zoontek/react-native-permissions",

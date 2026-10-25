@@ -5022,3 +5022,5 @@
 | `CYCLE-20261025-ZY1A` | `2026-10-25T22:16:02.830Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4472, Rule 4473, Rule 4474` | Yes (`d0cb0ed7...`) |
 | `CYCLE-20261025-AFA0` | `2026-10-25T22:24:11.736Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2109` | Yes (`1d18945b...`) |
 | `CYCLE-20261025-AFCP` | `2026-10-25T22:24:11.833Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`173b4dd2...`) |
+| `CYCLE-20261025-K9EP` | `2026-10-25T22:31:50.689Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md` | Yes (`3d48bea6...`) |
+| `CYCLE-20261025-KE3I` | `2026-10-25T22:31:56.766Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`6db5ac89...`) |

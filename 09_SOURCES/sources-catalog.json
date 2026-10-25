@@ -1105,8 +1105,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-all-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "1983d144edcae62b0857d80c3c593b8430ac2940e630b55cfb549fa4456fd398",
-    "lastHarvestedAt": "2026-10-21T02:33:40.328Z",
+    "contentHash": "6db5ac895194aab90a29cb788102a802298dc199c36a3149d45db13eca23823c",
+    "lastHarvestedAt": "2026-10-25T22:31:56.769Z",
     "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2"
   },
   "hf-baai-bge-reranker-v2-m3": {
@@ -8503,10 +8503,10 @@
     "repository": "rainbow-me/rainbow",
     "platform": "github",
     "sourceUrl": "https://github.com/rainbow-me/rainbow",
-    "sourceVersion": "0e6ad90a",
+    "sourceVersion": "9997c6ed",
     "license": "GPL-3.0",
-    "contentHash": "fabb61b17f22f64c6385c7474ba1ac14b3dd9fce5ce2383ad105de0a8eb8b9c3",
-    "lastHarvestedAt": "2026-10-19T17:43:56.446Z",
+    "contentHash": "3d48bea64ca8e5a5a13545c0d3ab1a5be9ec5a0e5e27a7491235c2c39baf9d4e",
+    "lastHarvestedAt": "2026-10-25T22:31:50.693Z",
     "learningId": "learn-github-rainbow-me-rainbow"
   },
   "zoontek-react-native-permissions": {

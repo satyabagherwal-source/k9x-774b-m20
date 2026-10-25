@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md`  
 > **Source**: github ([https://github.com/rainbow-me/rainbow](https://github.com/rainbow-me/rainbow))  
-> **Source Version**: `0e6ad90a`  
+> **Source Version**: `9997c6ed`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:43:56.154Z  
+> **Timestamp**: 2026-10-25T22:31:50.508Z  
 > **Learning ID**: `learn-github-rainbow-me-rainbow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rainbow-me/rainbow](https://github.com/rainbow-me/rainbow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:43:56.146Z  
+> **Harvest Timestamp**: 2026-10-25T22:31:49.933Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🌈‒ the Ethereum wallet that lives in your pocket 
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4397 stars
+- **Stars / Engagement**: 4399 stars
 
 ---
 
@@ -620,11 +620,11 @@ export function useSwapEstimatedGasFee(overrideGasSettings?: GasSettings) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7883** (2026-10-15): **chore(ci): add cubic review instructions**
-  *Symptoms*: ## What changed (plus any additional context for devs)  Adds a repo-root `cubic.yaml` that sets only `reviews.custom_instructions`. Every other cubic setting (sensitivity, incremental reviews, ignores) keeps its dashboard value.  The instructions target the findings that got declined most often on 15 recent PRs (#7824–#7880). cubic opened 73 review threads on them; about 50 led to fixes and about 21 were declined. The declined ones fell into four groups:  - **Overstated severity:** half of the P0/P1 findings were wrong. Most were speculation about backend behavior or races the UI can't reach. P0/P1 now needs a concrete path that triggers it, and claims about backend behavior become questions. - **Scope widening:** asks to handle flows the ticket excludes, or to add follow-up features. This happened even though `AGENTS.md`, which cubic reads, already says not to. - **Conflicts with repo conventions:** asks for non-English locale strings, render tests, `NATIVE_ROUTES` entries, and guards in `migrate`. - **Cosmetic comments:** test renames and rewording of code comments.  Test-quality comments (a test that can't detect the regression, leaked spies, misleading mocks) are left alone. They were mostly valid.  Notes: - The `custom_instructions` in `cubic.yaml` replace the dashboard's "AI review instructions" field. If that field has text, fold it in here. - These rules apply to cubic reviews on every PR in this repo. - Some of the noise comes from over-broad cubic learnings, which l
+- **Issue #7891** (2026-10-23): **fix(sports): coordinate scrolling and pager gestures**
+  *Symptoms*: ## What changed (plus any additional context for devs)  - Prevents horizontal scrolling in Sports carousels and category tabs from changing pages in Predictions - Exposes `SmoothPager`’s swipe gesture refs to child scroll views and fixes RNGH’s `blocksHandlers` support, which previously passed refs to native code where handler IDs were required  ## Screen recordings / screenshots  ## What to test 
 
-- **Issue #7882** (2026-10-15): **feat(expanded sheet): remove Quick Buy section**
-  *Symptoms*: Fixes APP-3798  ## What changed (plus any additional context for devs)  Quick Buy, the collapsible "Buy {token}" section with preset fiat-amount chips, is rarely used. This PR removes it from the expanded asset sheet in both places it rendered:  - **Tokens you don't own:** directly under the chart. - **Tokens you own:** after Market Stats.  The footer Buy / Sell buttons are unchanged and still open Swaps.  Only the Quick Buy chips populated the `quickBuyMetadata` property on swap submitted/failed analytics events, so this PR removes that property along with its plumbing. New swap events no longer carry it, and the ticket's Amplitude charts that track it will go to zero.  The Quick Buy strings are removed from `en_US.json` only; other locales sync separately.  <!-- ship-visuals:start --> ## Screen recordings / screenshots  <!-- ship-visuals:source head=2ee9d25416eaebff8e4b0a16b64f7da739de3101 base=fea6250f13dd4392ea2833d760850293ab28965c platform=ios,android flow=manual-argent -->  | | iOS | Android | | --- | --- | --- | | **Token you don't own: before** | <img src="https://github.com/user-attachments/assets/4d8913ea-00ca-4883-a6fb-ff1bf9198aa6" width="300"> | <img src="https://github.com/user-attachments/assets/b459a9cd-ae97-473f-9678-9ef7cf011c5f" width="300"> | | **Token you don't own: after** | <img src="https://github.com/user-attachments/assets/0ee3cb4d-9805-4160-bf99-d1f5175a1189" width="300"> | <img src="https://github.com/user-attachments/assets/87d8eaa3-a904-435f-a53
+- **Issue #7888** (2026-10-20): **feat(spot-pnl): realized P&L on the pill once every purchased token is sold**
+  *Symptoms*: > **Folded into #7878** as a commit on top of its branch (GitHub therefore shows this PR as merged into that branch). The description below is kept for reference; #7878's description now covers this change.  Fixes APP-4114  ## What changed (plus any additional context for devs)  The fully realized P&L sheet from #7878 had no way in for users. Now, once a wallet no longer holds any token it bought, the P&L pill on the expanded sheet switches to realized P&L. It reads **Realized Profit** or **Realized Loss**, shows the realized amount and %, and opens the fully realized sheet. This is the entry point agreed in DES-180.  It shows in two cases: - **Token not owned** (everything was sold): there's no balance card, so the pill sits in its place under the chart, as in the design. - **Token owned only through transfers**: the wallet bought some, sold all of those, and still holds tokens it received. The balance card shows. Before this change the pill was hidden here, because nothing bought is still held. Alex confirmed in [Slack](https://rainbowhaus.slack.com/archives/C0468CDBE75/p1792511360379339?thread_ts=1792415875.345899&cid=C0468CDBE75) that it should show the realized pill. Codex reports `purchasedTokenBalance: 0` for this case. Example: grunt.eth's AERO, where 12.9 were bought and sold, and 200 are held from transfers.  While bought tokens are still held, the pill is unchanged: unrealized **Profit/Loss**. With nothing bought held and no sale in the last 12 months, there's no p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -641,1829 +641,306 @@ export function useSwapEstimatedGasFee(overrideGasSettings?: GasSettings) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e554ecf2` (2026-10-06)
-**Commit Message**: fix(android): support nested button presses (#7848)
+### Incident Patch 1: `9997c6ed` (2026-10-23)
+**Commit Message**: feat(cash): toggle the staging backend from Developer Settings (#7884)
 
 ## What changed (plus any additional context for devs)
 
-- Adds nested button press support to the native RNGH-based Android
-button implementation so that feature code no longer needs to compensate
-for this platform inconsistency. Android `ButtonPressAnimation` behavior
-is now effectively consistent with iOS.
-- Cleans up `ButtonPressAnimation.android.tsx` and removes its
-unnecessary wrapper views
-- Also removes the `overflowMargin` and `skipTopMargin` options as the
-problems they addressed were imposed by the old implementations
-- Deletes the unused `ScaleButtonZoomable`, `FloatingActionButton`, and
-the surrounding dead code
-- Updates the existing RNGH patch:
-1. Corrects Android touch interception and cancellation across
-successive gestures. Also forwards native scroll capture to RNGH so
-scrolling cancels button presses, and fixes the nested scroll view/pager
-conflict when a drag starts over a button.
-  2. Fixes the `createNativeWrapper` ref generics
-- Moves Android sheet backdrop touch handling to the UI thread and makes
-its `pointerEvents` style immediately responsive to a completed sheet
-dismissal, where it previously lagged an
+The cash staging backend is now a toggle in Developer Settings → Cash
+Settings ("Use cash staging backend") instead of the `CASH_USE_PROD` env
+var, which is removed.
 
-**File**: `android/app/src/main/java/com/swmansion/gesturehandler/react/RNZoomableButtonManager.java` (modified, +242/-79)
+- Defaults to production. The choice is persisted
+(`cashPlatformSetting`) and read once at startup.
+- Store installs (`IS_STORE_INSTALL`) always use production, regardless
+of the persisted value.
+- Toggling wipes the cash state (persisted stores `cashAccount`,
+`cashBuyOrder`, `cashPaymentMethod`, `cashWallet`, plus the in-memory
+access token and Setup session), since accounts, cards and orders belong
+to the other platform, then restarts the app.
+
+The "Set cash user id from clipboard" and "Clear cash account" debug
+rows are replaced with:
+
+- **Sign out of cash** (shown when an account is on the device): signs
+in with the passkey if no access token is cached, calls `POST
+/v1/auth/Logout`, then wipes the cash state.
+- **Sign out and delete cash account** (red; shown only when the app is
+running against staging): same, but calls the staging-only `DELETE
+/v1/dev/HardDeleteSelf`.
+
+A cancelled passk
+
+**File**: `globals.d.ts` (modified, +0/-1)
 ```diff
-@@ -4,10 +4,17 @@
- import android.content.Context;
- import android.os.Handler;
- import android.os.Looper;
-+import android.os.SystemClock;
-+import android.view.InputDevice;
- import android.view.MotionEvent;
-+import android.view.View;
-+import android.view.ViewConfiguration;
-+import android.view.accessibility.AccessibilityManager;
- import android.view.animation.Animation;
-+import android.view.animation.AnimationUtils;
- import android.view.animation.Interpolator;
- import android.view.animation.ScaleAnimation;
-+import android.view.animation.Transformation;
- import androidx.annotation.NonNull;
- import androidx.core.view.animation.PathInterpolatorCompat;
- import com.facebook.react.bridge.Arguments;
-@@ -20,33 +27,45 @@
- import com.facebook.react.uimanager.ViewGroupManager;
- import com.facebook.react.uimanager.annotations.ReactProp;
- import com.facebook.react.uimanager.events.RCTEventEmitter;
-+import com.swmansion.gesturehandler.core.NativeViewGestureHandler;
- import javax.annotation.Nullable;
- import java.util.Map;
- 
- @ReactModule(name = "RNZoomableButton")
- public class RNZoomableButtonManager extends ViewGroupManager<RNGestureHandlerButtonViewManager.ButtonViewGroup> {
- 
-     public static class ZoomableButtonViewGroup extends RNGestureHandlerButtonViewManager.ButtonViewGroup {
-+        private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
+@@ -63,7 +63,6 @@ declare module 'react-native-dotenv' {
+   export const BIVO_ENV: 'sandbox' | 'live';
+   export const CASH_PLATFORM_BASE_URL: string;
+   export const CASH_PLATFORM_API_KEY: string;
+-  export const CASH_USE_PROD: 'true' | 'false';
+   export const GELATO_API_KEY: string;
+   export const RAINBOW_RELAY_URL: string;
+   export const RAINBOW_RELAY_API_KEY: string;
+```
+
+**File**: `src/features/cash/services/cashDevSettingsService.ts` (added, +46/-0)
+```diff
+@@ -0,0 +1,46 @@
++import { useCashAccountStore } from '../stores/cashAccountStore';
++import { useCashAuthTokenStore } from '../stores/cashAuthTokenStore';
++import { useCashBuyOrderStore } from '../stores/cashBuyOrderStore';
++import { useCashPaymentMethodStore } from '../stores/cashPaymentMethodStore';
++import { useCashPlatformSettingStore } from '../stores/cashPlatformSettingStore';
++import { useCashSetupSessionStore } from '../stores/cashSetupSessionStore';
++import { useCashWalletStore } from '../stores/cashWalletStore';
++import { ensureAccessToken } from './cashSignInService';
++import { hardDeleteSelf, logout } from './userClient';
 +
-+        private enum LongPressState { NONE, TRIGGERED, HOLDING }
++type PersistedStore<S> = {
++  getInitialState: () => S;
++  setState: (state: S, replace: true) => void;
++  persist: { clearStorage: () => void };
++};
 +
-         private float mScaleTo = 0.86f;
-         private int mDuration = 160;
-         private float pivotX = 0.5f;
-         private float pivotY = 0.5f;
-         private static final Interpolator bezierInterpolator = PathInterpolatorCompat.create(0.25f, 0.46f, 0.45f, 0.94f);
- 
-+        private boolean hasPressStartHandler = false;
-         private boolean isLongPress = false;
-         private boolean shouldLongPressHoldPress = false;
-         private int mMinLongPressDuration = 500;
- 
-         private boolean mIsActive = false;
--        private boolean mIsTaskScheduled = false;
--        private boolean didLongPressFire = false;
--        private boolean mIsLongTaskScheduled = false;
-+        private LongPressState longPressState = LongPressState.NONE;
-+        private int activePointerId = MotionEvent.INVALID_POINTER_ID;
-+        private long touchDownTime = -1;
-+        private NativeViewGestureHandler gestureHandler;
-+        private boolean touchExploration;
-+        private float presentationScale = 1f;
-+        private final AccessibilityManager accessibilityManager;
-+        private final int touchSlop;
- 
--        private final Handler mHandler = new Handler(Looper.getMainLooper());
-         private Runnable mLongPressRunnable;
- 
-         public ZoomableButtonViewGroup(Context context) {
-             super(context);
-+            accessibilityManager = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
-+            touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-         }
- 
-         private void animate(boolean in) {
-@@ -55,132 +74,271 @@ private void animate(boolean in) {
-             }
-             mIsActive = in;
-             clearAnimation();
--            float fromScale = in ? 1f : mScaleTo;
-+            float fromScale = presentationScale;
-             float toScale = in ? mScaleTo : 1f;
-+            if (fromScale == 1f && toScale == 1f) {
-+                return;
-+            }
-             Animation anim = new ScaleAnimation(
-                     fromScale, toScale,
-                     fromScale, toScale,
-                     Animation.RELATIVE_TO_SELF, pivotX,
--                    Animation.RELATIVE_TO_SELF, pivotY);
-+                    Animation.RELATIVE_TO_SELF, pivotY) {
-+                @Override
-+                protected void applyTransformation(float time, Transformation transformation) {
-+                    super.applyTransformation(time, transformation);
-+                    presentationScale = fromScale + (toScale - fromScale) * time;
-+                }
-+            };
-             anim.setFillAfter(true);
--            anim.setDuration(mDuration);
-+            anim.setDuration(fromScale == toScale ? 0 : mDuration);
-             anim.setInterpolator(bezierInterpolator);
-             this.startAnimation(anim);
-+            anim.setStartTime(AnimationUtils.currentAnimationTimeMillis());
-+        }
-+
-+        @Override
-+        public void onPrepare(NativeViewGestureHandler handler) {
-+            gestureHandler = handler;
-+        }
-+
-+        @Override
-+        public void onReset(NativeViewGestureHandler handler) {
-+            if (gestureHandler == handler) {
-+                gestureHandler = null;
-+            }
-+        }
-+
-+        @Override
-+        public boolean canBegin(@NonNull MotionEvent event) {
-+            return activePointerId != MotionEvent.INVALID_POINTER_ID;
-+        }
-+
-+        @Override
-+        public boolean onInterceptTouchEvent(@NonNull MotionEvent event) {
-+            return !touchE
-```
-
-**File**: `android/app/src/main/java/me/rainbow/MainActivity.kt` (modified, +13/-1)
-```diff
-@@ -3,10 +3,14 @@ package me.rainbow
- import android.content.Intent
- import android.content.res.Configuration
- import android.os.Bundle
-+import android.view.MotionEvent
-+import android.view.View
- import android.webkit.WebView
- import com.facebook.react.ReactActivity
- import com.facebook.react.ReactActivityDelegate
-+import com.facebook.react.ReactRootView
- import com.facebook.react.modules.network.OkHttpClientProvider
-+import com.swmansion.gesturehandler.react.RNGestureHandlerRootView
- import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory
- import com.zoontek.rnbootsplash.RNBootSplash
- import io.branch.rnbranch.RNBranchModule
-@@ -56,5 +60,13 @@ class MainActivity : ReactActivity() {
-     }
- 
-     override fun createReactActivityDelegate(): ReactActivityDelegate =
--        ReactActivityDelegate(this, mainComponentName)
-+        object : ReactActivityDelegate(this, mainComponentName) {
-+            override fun createRootView(): ReactRootView =
-+                object : ReactRootView(this@MainActivity) {
-+                    override fun onChildStartedNativeGesture(childView: View?, event: MotionEvent) {
-+                        super.onChildStartedNativeGesture(childView, event)
-+                        RNGestureHandlerRootView.onNativeGestureStarted(childView, event)
-+                    }
-+                }
-+        }
- }
-```
-
-**File**: `patches/react-native-gesture-handler+2.31.1.patch` (modified, +367/-12)
-```diff
-@@ -1,8 +1,30 @@
-+# PATCH CONTEXT
-+# On Android:
-+# - Let Rainbow's native button extend RNGH's button and access the handler
-+#   for its current gesture, so nested presses activate the correct button.
-+# - Preserve native pointer IDs so buttons track the same finger through
-+#   Android and RNGH event delivery.
-+# - Report native scroll and pull-to-refresh gestures to RNGH so they cancel
-+#   competing button presses and pager gestures.
-+# - Keep delivering touches to a native scrolling view when RNGH intercepts
-+#   normal Android delivery. Forward only after other handlers decide whether
-+#   to intercept, so the same event is neither skipped nor delivered twice.
-+# - Reset root interception before a new gesture, and clear native touches
-+#   left unfinished when RNGH intercepted the previous gesture.
-+# - Do not let handlers waiting for another gesture to fail cancel presses
-+#   as though they were already active.
-+#
-+# On iOS:
-+# - Deliver touches inside scroll views immediately, without the default delay.
-+# - Reset manual-activation recognizers when the app loses focus, so they do not
-+#   ignore the first interaction after the app returns to the foreground.
-+#
-+# Correct createNativeWrapper's ref type to the wrapped component instance.
-+
- diff --git a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerButtonViewManager.kt b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerButtonViewManager.kt
--index d515011..813c69c 100644
- --- a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerButtonViewManager.kt
- +++ b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerButtonViewManager.kt
--@@ -153,7 +153,7 @@ class RNGestureHandlerButtonViewManager :
-+@@ -153,7 +153,7 @@
- 
-    override fun getDelegate(): ViewManagerDelegate<ButtonViewGroup>? = mDelegate
- 
-@@ -12,7 +34,6 @@ index d515011..813c69c 100644
-      NativeViewGestureHandler.NativeViewGestureHandlerHook,
-      ReactPointerEventsView {
- diff --git a/node_modules/react-native-gesture-handler/apple/Handlers/RNNativeViewHandler.mm b/node_modules/react-native-gesture-handler/apple/Handlers/RNNativeViewHandler.mm
--index 667d600..9054037 100644
- --- a/node_modules/react-native-gesture-handler/apple/Handlers/RNNativeViewHandler.mm
- +++ b/node_modules/react-native-gesture-handler/apple/Handlers/RNNativeViewHandler.mm
- @@ -161,7 +161,7 @@
-@@ -25,10 +46,9 @@ index 667d600..9054037 100644
- 
-  - (void)handleTouchDown:(UIView *)sender forEvent:(UIEvent *)event
- diff --git a/node_modules/react-native-gesture-handler/apple/RNGestureHandler.mm b/node_modules/react-native-gesture-handler/apple/RNGestureHandler.mm
--index 708172f..7f1d550 100644
- --- a/node_modules/react-native-gesture-handler/apple/RNGestureHandler.mm
- +++ b/node_modules/react-native-gesture-handler/apple/RNGestureHandler.mm
--@@ -452,12 +452,28 @@
-+@@ -452,9 +452,25 @@
-      if (_recognizer.view != nil) {
-        [_recognizer.view addGestureRecognizer:_manualActivationRecognizer];
-      }
-@@ -43,17 +63,352 @@ index 708172f..7f1d550 100644
- +                                                 object:nil];
-      [_manualActivationRecognizer.view removeGestureRecognizer:_manualActivationRecognizer];
-      _manualActivationRecognizer = nil;
--   }
-- }
--
-++  }
-++}
-++
- +- (void)handleAppWillResignActive:(NSNotification *)notification
- +{
- +  if (_manualActivationRecognizer != nil && _manualActivationRecognizer.enabled) {
- +    _manualActivationRecognizer.enabled = NO;
- +    _manualActivationRecognizer.enabled = YES;
-+   }
-+ }
-+
-+diff --git a/node_modules/react-native-gesture-handler/lib/typescript/handlers/createNativeWrapper.d.ts b/node_modules/react-native-gesture-handler/lib/typescript/handlers/createNativeWrapper.d.ts
-+--- a/node_modules/react-native-gesture-handler/lib/typescript/handlers/createNativeWrapper.d.ts
-++++ b/node_modules/react-native-gesture-handler/lib/typescript/handlers/createNativeWrapper.d.ts
-+@@ -1,4 +1,4 @@
-+ import * as React from 'react';
-+ import { NativeViewGestureHandlerProps } from './NativeViewGestureHandler';
-+-export default function createNativeWrapper<P>(Component: React.ComponentType<P>, config?: Readonly<NativeViewGestureHandlerProps>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & NativeViewGestureHandlerProps> & React.RefAttributes<React.ComponentType<any>>>;
-++export default function createNativeWrapper<C extends React.ElementType>(Component: C, config?: Readonly<NativeViewGestureHandlerProps>): React.ForwardRefExoticComponent<React.PropsWithoutRef<React.ComponentProps<C> & NativeViewGestureHandlerProps> & React.RefAttributes<React.ComponentRef<C>>>;
-+ //# sourceMappingURL=createNativeWrapper.d.ts.map
-+\ No newline at end of file
-+diff --git a/node_modules/react-native-gesture-handler/android/src/main/java/c
-```
-
-**File**: `src/__swaps__/screens/Swap/components/CoinRow.tsx` (modified, +17/-67)
-```diff
-@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from 'react';
- import { type GestureResponderEvent } from 'react-native';
- 
- import { startCase } from 'lodash';
--import { type OnPressMenuItemEventObject } from 'react-native-ios-context-menu';
- import { triggerHaptics } from 'react-native-turbo-haptics';
- 
- import { BalancePill } from '@/__swaps__/screens/Swap/components/BalancePill';
-@@ -11,10 +10,9 @@ import { type AddressOrEth, type ParsedSearchAsset, type UniqueId } from '@/__sw
- import { type CoinRowItem } from '@/__swaps__/types/search';
- import { ButtonPressAnimation } from '@/components/animations/ButtonPressAnimation';
- import RainbowCoinIcon from '@/components/coin-icon/RainbowCoinIcon';
--import { ContextMenuButton } from '@/components/context-menu';
-+import ContextMenuButton from '@/components/native-context-menu/contextMenu';
- import { Box, Column, Columns, HitSlop, Inline, Text } from '@/design-system';
- import { ChainId } from '@/features/network/types/backendNetworks';
--import { showActionSheetWithOptions } from '@/framework/ui/utils/actionsheet';
- import { setClipboard } from '@/hooks/useClipboard';
- import * as i18n from '@/languages';
- import { ETH_ADDRESS } from '@/references/constants';
-@@ -122,7 +120,7 @@ export function CoinRow({
-     <Box testID={testID} style={{ height, width: '100%' }}>
-       <Columns alignVertical="center">
-         <Column>
--          <ButtonPressAnimation disallowInterruption onPress={onPressHandler} scaleTo={0.95}>
-+          <ButtonPressAnimation onPress={onPressHandler} scaleTo={0.95}>
-             <HitSlop vertical="10px">
-               <Box
-                 alignItems="center"
-@@ -190,89 +188,41 @@ const InfoButton = ({
-     setClipboard(address);
-   }, [address]);
- 
--  const { options, menuConfig } = useMemo(() => {
--    const options = {
--      copy: {
--        title: i18n.t(i18n.l.exchange.coin_row.copy_contract_address),
--        action: handleCopy,
--      },
--      ...(isSupportedChain
--        ? {
--            blockExplorer: {
--              title: i18n.t(i18n.l.exchange.coin_row.view_on, {
--                blockExplorerName: startCase(ethereumUtils.getBlockExplorer({ chainId })),
--              }),
--              action: () => ethereumUtils.openAddressInBlockExplorer({ address, chainId }),
--            },
--          }
--        : {}),
--    };
--
--    const menuConfig = {
-+  const menuConfig = useMemo(
-+    () => ({
-       menuItems: [
-         {
-           actionKey: 'copyAddress',
--          actionTitle: options.copy.title,
--          icon: {
--            iconType: 'SYSTEM',
--            iconValue: 'doc.on.doc',
--          },
-+          actionTitle: i18n.t(i18n.l.exchange.coin_row.copy_contract_address),
-+          icon: { iconType: 'SYSTEM', iconValue: 'doc.on.doc' },
-         },
-         ...(isSupportedChain
-           ? [
-               {
-                 actionKey: 'blockExplorer',
--                actionTitle: options.blockExplorer?.title,
--                icon: {
--                  iconType: 'SYSTEM',
--                  iconValue: 'link',
--                },
-+                actionTitle: i18n.t(i18n.l.exchange.coin_row.view_on, {
-+                  blockExplorerName: startCase(ethereumUtils.getBlockExplorer({ chainId })),
-+                }),
-+                icon: { iconType: 'SYSTEM', iconValue: 'link' },
-               },
-             ]
-           : []),
-       ],
-       menuTitle: `${isVerified ? i18n.t(i18n.l.token_search.section_header.verified) : i18n.t(i18n.l.token_search.section_header.unverified)} ${i18n.t(i18n.l.exchange.coin_row.token)}`,
--    };
--
--    return { options, menuConfig };
--  }, [address, chainId, handleCopy, isSupportedChain, isVerified]);
-+    }),
-+    [chainId, isSupportedChain, isVerified]
-+  );
- 
--  const handlePressMenuItem = async ({ nativeEvent: { actionKey } }: OnPressMenuItemEventObject) => {
-+  const handlePressMenuItem = ({ nativeEvent: { actionKey } }: { nativeEvent: { actionKey: string } }): void => {
-     if (actionKey === 'copyAddress') {
--      options.copy.action();
-+      handleCopy();
-     } else if (actionKey === 'blockExplorer' && isSupportedChain) {
--      options.blockExplorer?.action();
-+      ethereumUtils.openAddressInBlockExplorer({ address, chainId });
-     }
-   };
- 
--  const onPressAndroid = () => {
--    const androidOptions = [
--      options.copy.title,
--      ...(isSupportedChain && options.blockExplorer?.title ? [options.blockExplorer?.title] : []),
--    ];
--    showActionSheetWithOptions(
--      {
--        options: androidOptions,
--      },
--      idx => {
--        if (idx === 0) {
--          options.copy.action();
--        }
--        if (idx === 1 && isSupportedChain) {
--          options.blockExplorer?.action();
--        }
--      }
--    );
--  };
--
-   return (
--    <ContextMenuButton
--      menuItems={menuConfig.menuItems}
--      menuTitle={menuConfig.menuTitle}
--      onPressAndroid={onPressAndroid}
--      onPressMenuItem={handlePressMenuItem}
--      testID={`coin-row-info-butto
-```
-
-**File**: `src/__swaps__/screens/Swap/components/CoinRowButton.tsx` (modified, +3/-1)
-```diff
-@@ -15,6 +15,7 @@ export const CoinRowButton = ({
-   size,
-   weight,
-   disabled,
-+  testID,
- }: {
-   color?: string;
-   icon: string;
-@@ -23,14 +24,15 @@ export const CoinRowButton = ({
-   size?: TextSize;
-   weight?: TextWeight;
-   disabled?: boolean;
-+  testID?: string;
- }) => {
-   const { isDarkMode } = useColorMode();
-   const fillTertiary = useForegroundColor('fillTertiary');
-   const fillQuaternary = useForegroundColor('fillQuaternary');
-   const separatorTertiary = useForegroundColor('separatorTertiary');
- 
-   return (
--    <ButtonPressAnimation disallowInterruption onPress={onPress} scaleTo={0.8} disabled={disabled}>
-+    <ButtonPressAnimation onPress={onPress} scaleTo={0.8} disabled={disabled} testID={testID}>
-       <Box
-         alignItems="center"
-         borderRadius={14}
-```
-
-**File**: `src/__swaps__/screens/Swap/components/GasButton.tsx` (modified, +9/-19)
-```diff
-@@ -7,8 +7,8 @@ import { NavigationSteps } from '@/__swaps__/screens/Swap/hooks/useSwapNavigatio
- import { getColorValueForThemeWorklet } from '@/__swaps__/utils/swaps';
- import { ButtonPressAnimation } from '@/components/animations/ButtonPressAnimation';
- import { GestureHandlerButton } from '@/components/buttons/GestureHandlerButton';
-+import ContextMenuButton from '@/components/native-context-menu/contextMenu';
- import { Box, Inline, Text, TextIcon, useColorMode, useForegroundColor } from '@/design-system';
--import { GasSpeedMenu } from '@/features/gas/components/GasSpeedMenu';
- import { useCustomGasSettings, type GasSettings } from '@/features/gas/hooks/useCustomGas';
- import { setSelectedGasSpeed, useSelectedGasSpeed } from '@/features/gas/hooks/useSelectedGas';
- import { GasSpeed } from '@/features/gas/types/gasSpeed';
-@@ -123,10 +123,12 @@ const GasMenu = ({
-   backToReview = false,
-   children,
-   disabled = false,
-+  anchorAndroidMenuToRight,
- }: {
-   backToReview?: boolean;
-   children: ReactNode;
-   disabled?: boolean;
-+  anchorAndroidMenuToRight?: boolean;
- }) => {
-   const { SwapNavigation } = useSwapContext();
- 
-@@ -160,14 +162,6 @@ const GasMenu = ({
-     [handlePressSpeedOption]
-   );
- 
--  const handlePressActionSheet = useCallback(
--    (buttonIndex: number) => {
--      if (buttonIndex < 0) return;
--      handlePressSpeedOption(menuOptions[buttonIndex]);
--    },
--    [handlePressSpeedOption, menuOptions]
--  );
--
-   const menuConfig = useMemo(() => {
-     const menuItems = menuOptions.map(gasOption => {
-       const currentBaseFee = getCachedCurrentBaseFee(chainId);
-@@ -193,20 +187,16 @@ const GasMenu = ({
-       style={{ margin: Platform.OS === 'android' ? 0 : -GAS_BUTTON_HIT_SLOP, pointerEvents: disabled ? 'none' : 'auto' }}
-       testID="gas-speed-pager"
-     >
--      <GasSpeedMenu
-+      <ContextMenuButton
-+        anchorAndroidMenuToRight={anchorAndroidMenuToRight}
-         menuConfig={menuConfig}
--        onPressActionSheet={handlePressActionSheet}
-         onPressMenuItem={handlePressMenuItem}
--        options={menuOptions}
-+        testID="gas-speed-pager-button"
-       >
--        <ButtonPressAnimation
--          scaleTo={0.825}
--          style={Platform.OS === 'android' ? undefined : { padding: GAS_BUTTON_HIT_SLOP }}
--          testID={Platform.OS === 'android' ? undefined : 'gas-speed-pager-button'}
--        >
-+        <ButtonPressAnimation scaleTo={0.825} style={Platform.OS === 'android' ? undefined : { padding: GAS_BUTTON_HIT_SLOP }}>
-           {children}
-         </ButtonPressAnimation>
--      </GasSpeedMenu>
-+      </ContextMenuButton>
-     </Box>
-   );
- };
-@@ -230,7 +220,7 @@ export function ReviewGasButton() {
- 
-   return (
-     <Inline alignVertical="center" space="8px" wrap={false}>
--      <GasMenu backToReview>
-+      <GasMenu backToReview anchorAndroidMenuToRight>
-         <Animated.View style={[styles.reviewGasButtonPill, animatedBorderColor]}>
-           <SelectedGas isPill />
-         </Animated.View>
-```
-
-**File**: `src/components/AccountImage.tsx` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ export const AccountImage = memo(function AccountImage({ onPress }: AccountImage
-   }, [onPress]);
- 
-   return (
--    <ButtonPressAnimation onPress={handlePress} scaleTo={0.8} overflowMargin={50}>
-+    <ButtonPressAnimation onPress={handlePress} scaleTo={0.8}>
-       {accountImage ? (
-         <ImageAvatar image={accountImage} marginRight={10} size="header" />
-       ) : (
-```
-
-**File**: `src/components/ContactRowInfoButton.js` (modified, +3/-32)
-```diff
-@@ -1,15 +1,14 @@
- import React from 'react';
--import { Platform, View } from 'react-native';
-+import { View } from 'react-native';
- 
- import { startCase } from 'lodash';
--import { ContextMenuButton } from 'react-native-ios-context-menu';
- import RadialGradient from 'react-native-radial-gradient';
- import { triggerHaptics } from 'react-native-turbo-haptics';
- 
-+import ContextMenuButton from '@/components/native-context-menu/contextMenu';
- import { opacity } from '@/design-system/utils/opacity';
- import { IS_TEST } from '@/env';
- import styled from '@/framework/ui/styled-thing';
--import { showActionSheetWithOptions } from '@/framework/ui/utils/actionsheet';
- import useClipboard from '@/hooks/useClipboard';
- import * as i18n from '@/languages';
- import { fonts, fontWithWidth, padding } from '@/styles';
-@@ -100,26 +99,6 @@ const ContactRowInfoButton = ({ children, item, chainId, scaleTo }) => {
-     [setClipboard]
-   );
- 
--  const onPressAndroid = useCallback(() => {
--    const blockExplorerText = `View on ${startCase(ethereumUtils.getBlockExplorer({ chainId }))}`;
--    const androidContractActions = [i18n.t(i18n.l.wallet.action.copy_contract_address), blockExplorerText, i18n.t(i18n.l.button.cancel)];
--    showActionSheetWithOptions(
--      {
--        cancelButtonIndex: 2,
--        options: androidContractActions,
--        title: `${item?.name}`,
--      },
--      idx => {
--        if (idx === 0) {
--          handleCopyAddress(item?.address);
--        }
--        if (idx === 1) {
--          ethereumUtils.openAddressInBlockExplorer({ address: item?.address, chainId });
--        }
--      }
--    );
--  }, [item?.name, item?.address, handleCopyAddress, chainId]);
--
-   const menuConfig = useMemo(() => {
-     const blockExplorerAction = buildBlockExplorerAction(chainId);
-     return {
-@@ -149,15 +128,7 @@ const ContactRowInfoButton = ({ children, item, chainId, scaleTo }) => {
- 
-   return (
-     <Container>
--      <ContextMenuButton
--        activeOpacity={0}
--        menuConfig={menuConfig}
--        {...(Platform.OS === 'android' ? { onPress: onPressAndroid } : {})}
--        isMenuPrimaryAction
--        onPressMenuItem={handlePressMenuItem}
--        useActionSheetFallback={false}
--        wrapNativeComponent={false}
--      >
-+      <ContextMenuButton menuConfig={menuConfig} onPressMenuItem={handlePressMenuItem}>
-         <ButtonPressAnimation scaleTo={scaleTo}>
-           {children || (
-             <Circle>
-```
-
----
-
-### Incident Patch 2: `05d5d732` (2026-10-16)
-**Commit Message**: perf(charts): render through native Skia picture views (#7823)
-
-## What changed (plus any additional context for devs)
-
-- Moves `Candlestick`, `Polymarket`, and `Sparkline` charts to the
-`SkiaPictureView` component added in #7816, which publishes Skia
-pictures directly to `SkiaPictureViewNativeComponent` and is generally
-more efficient than the prior UI-thread-drawing implementation
-- Moves manager setup and disposal into the shared view abstraction,
-removing the need for `useWorkletClass` and per-chart cleanup hooks.
-Font changes now consistently update existing managers on both
-platforms.
-- Minor performance improvements: line paths are reused for interaction
-markers and fills, and grid shaders are retained between draws
-- Removes dead chart code
-- Adds explicit resetting of additional chart and gesture state in the
-`CandlestickChartManager` and `PolymarketChartManager` `dispose()`
-methods
-- Makes `Sparkline` charts responsive to dimension changes
-
-## Screen recordings / screenshots
-
-## What to test
-
-**File**: `src/features/charts/candlestick/components/CandlestickChart.tsx` (modified, +208/-299)
-```diff
-@@ -1,15 +1,12 @@
- import React, { memo, useCallback, useMemo, useRef } from 'react';
--import { Platform, StyleSheet, View } from 'react-native';
-+import { StyleSheet, View } from 'react-native';
- 
- import {
-   BlendMode,
--  Canvas,
-   ClipOp,
-   PaintStyle,
--  Picture,
-   Skia,
-   StrokeCap,
--  StrokeJoin,
-   type SkCanvas,
-   type SkColor,
-   type SkParagraph,
-@@ -20,6 +17,7 @@ import { dequal } from 'dequal';
- import { cloneDeep, merge } from 'lodash';
- import { Gesture, GestureDetector, State as GestureState } from 'react-native-gesture-handler';
- import Animated, {
-+  cancelAnimation,
-   Easing,
-   runOnJS,
-   runOnUI,
-@@ -61,8 +59,7 @@ import {
- } from '@/features/perps/charts-plugin/PerpsIndicatorBuilder';
- import { usePerpsIndicatorData } from '@/features/perps/charts-plugin/usePerpsIndicatorData';
- import { time } from '@/framework/core/utils/time';
--import { useWorkletClass } from '@/hooks/reanimated/useWorkletClass';
--import { useCleanup } from '@/hooks/useCleanup';
-+import { setSkiaPicture, SkiaPictureView, useSkiaRenderer, type SkiaPictureOutput } from '@/framework/ui/components/SkiaPictureView';
- import { useOnChange } from '@/hooks/useOnChange';
- import { useStableValue } from '@/hooks/useStableValue';
- import Routes from '@/navigation/routesNames';
-@@ -72,7 +69,6 @@ import { type DeepPartial } from '@/types/objects';
- import { deepFreeze } from '@/utils/deepFreeze';
- import { DEVICE_WIDTH } from '@/utils/deviceUtils';
- import { normalizeSpringConfig, type DampingMassStiffnessConfig } from '@/worklets/animations';
--import { createBlankPicture } from '@/worklets/skia';
- 
- import { NoChartData } from '../../components/NoChartData';
- import { type HyperliquidSymbol, type Token } from '../../types';
-@@ -335,6 +331,7 @@ function getYAxisLabelWidth(maxCharacters: number): number {
- }
- 
- const EMA_INDICATORS: IndicatorKey[] = ['EMA9', 'EMA20', 'EMA50'];
-+const EMPTY_CANDLES: Bar[] = [];
- const LOAD_THRESHOLD_PX = DEVICE_WIDTH * 4;
- const LOADING_SPINNER_SIZE = 28;
- const MAX_CANDLES_TO_LOAD = 5000;
-@@ -343,35 +340,36 @@ class CandlestickChartManager {
-   private __workletClass = true;
- 
-   private backgroundColor: SkColor;
--  private blankPicture: SkPicture;
-   private buildParagraph: (segments: TextSegment | TextSegment[]) => SkParagraph | null;
-   private candleStrokeColor: SkColor;
-   private candleWidth: number;
--  private candles: Bar[];
-+  private candles: Bar[] = EMPTY_CANDLES;
-   private chartHeight: number;
-   private chartWidth: number;
-   private config: CandlestickConfig;
-   private fetchAdditionalCandles: () => void;
--  private hasPreviousCandles: boolean;
-+  private hasPreviousCandles = false;
-   private isDarkMode: boolean;
-   private isHyperliquidToken: boolean;
-   private nativeCurrency: { currency: NativeCurrencyKey; decimals: number };
-+  private output: SkiaPictureOutput;
-   private volumeBarColor: SkColor;
-   private yAxisWidth: number;
- 
-   private activeCandle: SharedValue<Bar | undefined>;
-   private chartMaxY: SharedValue<number>;
-   private chartMinY: SharedValue<number>;
--  private chartPicture: SharedValue<SkPicture>;
-   private chartScale: SharedValue<number>;
--  private crosshairPicture: SharedValue<SkPicture>;
--  private indicatorPicture: SharedValue<SkPicture>;
-   private isChartGestureActive: SharedValue<boolean>;
-   private isDecelerating: SharedValue<boolean>;
-   private isLoadingHistoricalCandles: SharedValue<boolean>;
-   private maxDisplayedVolume: SharedValue<number>;
-   private offset: SharedValue<number>;
- 
-+  private chartPicture: SkPicture | undefined;
-+  private compositePicture: SkPicture | undefined;
-+  private crosshairPicture: SkPicture | undefined;
-+  private indicatorPicture: SkPicture | undefined;
-   private lastCrosshairPosition = { x: 0, y: 0 };
-   private lastVisibleRange = { startIndex: -1, endIndex: -1 };
-   private maxYAxisLabelDecimals = 2;
-@@ -405,20 +403,14 @@ class CandlestickChartManager {
-     labelQuinary: Skia.Color(getColorForTheme('labelQuinary', 'light')),
-     green: Skia.Color(GREEN_CANDLE_COLOR),
-     red: Skia.Color(RED_CANDLE_COLOR),
--    transparent: Skia.Color('transparent'),
-     white: Skia.Color('#FFFFFF'),
-   };
- 
-   private paints = {
--    EMA9: Skia.Paint(),
--    EMA20: Skia.Paint(),
--    EMA50: Skia.Paint(),
--    background: Skia.Paint(),
-     bottomShadow: Skia.Paint(),
-     candleBody: Skia.Paint(),
-     candleWick: Skia.Paint(),
-     candleStroke: Skia.Paint(),
--    chartArea: Skia.Paint(),
-     crosshairDot: Skia.Paint(),
-     crosshairLine: Skia.Paint(),
-     grid: Skia.Paint(),
-@@ -432,77 +424,64 @@ class CandlestickChartManager {
-   constructor({
-     activeCandle,
-     buildParagraph,
--    candles,
-     chartHeight,
-     chartMaxY,
-     chartMinY,
--    chartPicture,
-     chartScale,
-     chartWidth,
-     chartXOffset,
-     config,
--    crosshairPicture,
-     fetchAdditionalCandles,
--    hasPreviousCandles,
--    indicatorPicture,
-     isChartGestureActive,
-     isDarkMode,
-     isDecelerating,
-     isLoadingHisto
-```
-
-**File**: `src/features/charts/line/LineSeries.ts` (modified, +23/-86)
-```diff
-@@ -34,9 +34,7 @@ export type LineEffectsConfig = {
- 
- export type InteractionConfig = {
-   greyCirclePaint: SkPaint;
--  greyColor: SkColor;
-   greyColorString: string;
--  greyLinePaint: SkPaint;
-   normalizedSplitPoint: number;
-   progress: number;
- };
-@@ -114,6 +112,7 @@ export class LineSeries {
-     width: 0,
-   };
-   private readonly sampleCursor = { index: 0 };
-+  private readonly interactionPoints = { endX: 0, endY: 0, splitX: 0, splitY: 0 };
-   private readonly splitLeftPath = Skia.Path.Make();
-   private readonly splitRightPath = Skia.Path.Make();
- 
-@@ -526,7 +525,7 @@ export class LineSeries {
-     const fullyGrey = clampedSplitX <= layout.startX;
- 
-     const t = interaction.progress;
--    const splitT = this.getTrimTAtXFromPath(path, clampedSplitX);
-+    const splitT = this.measureInteractionPoints(path, clampedSplitX, this.getYAtIndex(params, this.prices.length - 1));
- 
-     this.splitLeftPath.reset();
-     this.splitLeftPath.addPath(path);
-@@ -595,62 +594,23 @@ export class LineSeries {
-     }
-   }
- 
-+  /** Draws markers using the geometry prepared by `drawLinesWithInteraction`. */
-   public drawCirclesWithInteraction(
-     canvas: SkCanvas,
--    params: DrawParams,
--    path: SkPath,
-     effects: LineEffectsConfig | undefined,
-     interaction: InteractionConfig,
--    progress = 1,
-     entranceYOffset = 0
-   ): void {
-     if (!this.prices.length) return;
- 
--    const { chartRegionHeight, maxPrice, minPrice } = params;
--    const priceRange = maxPrice - minPrice || 1;
--    const layout = this.computeLayout(params);
--
--    path.reset();
--    if (this.previousPath && this.targetPath) {
--      buildSmoothedPathAnimated(
--        path,
--        this.previousPath,
--        this.targetPath,
--        progress,
--        SAMPLE_COUNT,
--        this.smoothingMode,
--        this.smoothingTension
--      );
--    } else {
--      const points = new Float32Array(SAMPLE_COUNT * 2);
--      this.sampleCursor.index = 0;
--      for (let i = 0; i < SAMPLE_COUNT; i++) {
--        const normalized = i / (SAMPLE_COUNT - 1);
--        const targetTs = layout.startTs + normalized * layout.range;
--        const price = this.samplePriceAtTimestamp(targetTs);
--        const idx = i * 2;
--        points[idx] = layout.startX + normalized * layout.width;
--        points[idx + 1] = chartRegionHeight - ((price - minPrice) / priceRange) * chartRegionHeight;
--      }
--      buildSmoothedPath(path, points, SAMPLE_COUNT, this.smoothingMode, this.smoothingTension);
--    }
--
-     const hasEntranceOffset = entranceYOffset !== 0;
-     if (hasEntranceOffset) {
-       canvas.save();
-       canvas.translate(0, entranceYOffset);
-     }
- 
-     const { progress: interactionProgress } = interaction;
--    const splitX = params.offsetX + interaction.normalizedSplitPoint * params.availableWidth;
--    const clampedSplitX = Math.min(Math.max(splitX, layout.startX), layout.endX);
--    const fallbackY = this.getYAtIndex(params, Math.max(0, this.prices.length - 1));
--    const splitY = this.getYAtXFromPath(path, clampedSplitX, fallbackY);
--
--    const lastPt = path.getLastPt();
--    const endX = lastPt.x;
--    const endY = lastPt.y;
--
-+    const { endX, endY, splitX, splitY } = this.interactionPoints;
-     const circleRadius = effects?.endCircleRadius ?? 0;
-     const color = this.getColor();
- 
-@@ -670,12 +630,6 @@ export class LineSeries {
-           }
-         }
- 
--        const interpolated = interpolateColor(interactionProgress, [0, 1], [this.getColorString(), interaction.greyColorString], 'LAB');
--        const rgba = convertToRGBA(interpolated);
--        this.interpolatedColor[0] = rgba[0];
--        this.interpolatedColor[1] = rgba[1];
--        this.interpolatedColor[2] = rgba[2];
--        this.interpolatedColor[3] = rgba[3];
-         interaction.greyCirclePaint.setColor(this.interpolatedColor);
-         canvas.drawCircle(endX, endY, scaledRadius, interaction.greyCirclePaint);
-       }
-@@ -687,21 +641,28 @@ export class LineSeries {
-       if (effects.endCircleShadowPaint) {
-         effects.endCircleShadowPaint.setColor(color);
-         effects.endCircleShadowPaint.setAlphaf(effects.endCircleShadowAlpha);
--        const shadowX = clampedSplitX + (effects.endCircleShadowOffset?.x ?? 0) * interactionProgress;
-+        const shadowX = splitX + (effects.endCircleShadowOffset?.x ?? 0) * interactionProgress;
-         const shadowY = splitY + (effects.endCircleShadowOffset?.y ?? 0) * interactionProgress;
-         canvas.drawCircle(shadowX, shadowY, scaledRadius, effects.endCircleShadowPaint);
-       }
- 
-       effects.endCirclePaint.setColor(color);
--      canvas.drawCircle(clampedSplitX, splitY, scaledRadius, effects.endCirclePaint);
-+      canvas.drawCircle(splitX, splitY, scaledRadius, effects.endCirclePaint);
-     }
- 
-     if (hasEntranceOffset) {
-       canvas.restore();
-     }
-   }
- 
--  private getTrimTAtXFromPath(path: SkPath, desiredX: number): number {
-+  private measureInteractionPoints(path: SkPath, desiredX: number, fallbackY: number): n
-```
-
-**File**: `src/features/charts/line/LineSeriesBuilder.ts` (modified, +2/-2)
-```diff
-@@ -191,12 +191,12 @@ export class LineSeriesBuilder {
- 
-     for (const s of this.series) {
-       if (s.key !== this.highlightedKey) {
--        s.drawCirclesWithInteraction(canvas, params, this.drawPath, effects, interaction, progress, entranceYOffset);
-+        s.drawCirclesWithInteraction(canvas, effects, interaction, entranceYOffset);
-       }
-     }
-     if (this.highlightedKey) {
-       const highlighted = this.series.find(s => s.key === this.highlightedKey);
--      highlighted?.drawCirclesWithInteraction(canvas, params, this.drawPath, effects, interaction, progress, entranceYOffset);
-+      highlighted?.drawCirclesWithInteraction(canvas, effects, interaction, entranceYOffset);
-     }
-   }
- 
-```
-
-**File**: `src/features/charts/line/compact/CompactLineChartRenderer.ts` (modified, +24/-47)
-```diff
-@@ -6,24 +6,14 @@ import {
-   TileMode,
-   type SkPaint,
-   type SkPath,
--  type SkPicture,
-   type SkPictureRecorder,
-   type SkShader,
- } from '@shopify/react-native-skia';
--import { convertToRGBA, type SharedValue } from 'react-native-reanimated';
-+import { convertToRGBA } from 'react-native-reanimated';
- 
- import { type CompactLineChartData } from '@/features/charts/line/compact/types';
- import { buildSmoothedPath, LineSmoothing } from '@/features/charts/line/LineSmoothingAlgorithms';
--
--// ============ Types ========================================================== //
--
--type CompactLineChartRendererConfig = {
--  blankPicture: SkPicture;
--  chartPicture: SharedValue<SkPicture>;
--  /** Desired line width from the leftmost point to the rightmost. */
--  contentWidth: number;
--  height: number;
--};
-+import { setSkiaPicture, type SkiaPictureOutput } from '@/framework/ui/components/SkiaPictureView';
- 
- // ============ Constants ====================================================== //
- 
-@@ -134,27 +124,21 @@ export function getCompactLineChartEndPoint(
- export class CompactLineChartRenderer {
-   private readonly __workletClass = true;
- 
--  private readonly blankPicture: SkPicture;
--  private readonly chartPicture: SharedValue<SkPicture>;
--  private readonly contentWidth: number;
-+  private readonly output: SkiaPictureOutput;
-   private readonly fillPaint: SkPaint;
-   private readonly fillPath: SkPath;
--  private readonly height: number;
-   private readonly pictureRecorder: SkPictureRecorder;
--  private readonly surfaceWidth: number;
-   private readonly strokePaint: SkPaint;
-   private readonly strokePath: SkPath;
- 
-+  private contentWidth = 0;
-+  private height = 0;
-   private currentColor: string | null = null;
-   private currentShader: SkShader | null = null;
- 
--  constructor({ blankPicture, chartPicture, contentWidth, height }: CompactLineChartRendererConfig) {
--    this.blankPicture = blankPicture;
--    this.chartPicture = chartPicture;
--    this.contentWidth = contentWidth;
--    this.height = height;
-+  constructor(output: SkiaPictureOutput) {
-+    this.output = output;
-     this.pictureRecorder = Skia.PictureRecorder();
--    this.surfaceWidth = contentWidth + COMPACT_LINE_CHART_HORIZONTAL_OVERDRAW * 2;
- 
-     this.strokePath = Skia.Path.Make();
-     this.fillPath = Skia.Path.Make();
-@@ -173,14 +157,16 @@ export class CompactLineChartRenderer {
-     this.fillPaint.setStyle(PaintStyle.Fill);
-   }
- 
--  public setData(data: CompactLineChartData | undefined, lineColor: string): void {
-+  public setData(data: CompactLineChartData | undefined, lineColor: string, contentWidth: number, height: number): void {
-     const pointCount = data ? Math.min(data.prices.length, data.timestamps.length) : 0;
-     if (!data || pointCount < 2) {
--      this.setBlankPicture();
-+      this.clearPicture();
-       return;
-     }
- 
--    if (lineColor !== this.currentColor) {
-+    this.contentWidth = contentWidth;
-+    if (lineColor !== this.currentColor || height !== this.height) {
-+      this.height = height;
-       this.setColor(lineColor);
-     }
- 
-@@ -189,11 +175,8 @@ export class CompactLineChartRenderer {
-   }
- 
-   public recolor(lineColor: string): void {
--    if (lineColor === this.currentColor) return;
-+    if (!this.output.picture || lineColor === this.currentColor) return;
-     this.setColor(lineColor);
--
--    // No built geometry to re-record (blank/first render) — the new color is retained for the next setData.
--    if (this.chartPicture.value === this.blankPicture) return;
-     this.buildPicture();
-   }
- 
-@@ -207,10 +190,7 @@ export class CompactLineChartRenderer {
-     this.fillPaint.dispose();
-     this.pictureRecorder.dispose();
- 
--    const currentPicture = this.chartPicture.value;
--    if (currentPicture !== this.blankPicture) {
--      currentPicture.dispose();
--    }
-+    this.output.picture?.dispose();
-   }
- 
-   private setColor(color: string): void {
-@@ -243,7 +223,7 @@ export class CompactLineChartRenderer {
-   private buildPicture(): void {
-     const canvas = this.pictureRecorder.beginRecording({
-       height: this.height,
--      width: this.surfaceWidth,
-+      width: this.contentWidth + COMPACT_LINE_CHART_HORIZONTAL_OVERDRAW * 2,
-       x: 0,
-       y: 0,
-     });
-@@ -252,19 +232,16 @@ export class CompactLineChartRenderer {
-     canvas.drawPath(this.fillPath, this.fillPaint);
-     canvas.drawPath(this.strokePath, this.strokePaint);
- 
--    const oldPicture = this.chartPicture.value;
--    this.chartPicture.value = this.pictureRecorder.finishRecordingAsPicture();
--    if (oldPicture !== this.blankPicture) {
--      oldPicture.dispose();
--    }
-+    const oldPicture = this.output.picture;
-+    setSkiaPicture(this.output, this.pictureRecorder.finishRecordingAsPicture());
-+    oldPicture?.dispose();
-   }
- 
--  private setBlankPicture(): void {
--    const oldPicture = this.chartPicture.value;
--    this.chartPicture.value = this.blankPicture;
--    if (oldPicture !== this.blankPicture) {
--      oldPicture.dispo
-```
-
-**File**: `src/features/charts/line/components/SparklineChart.tsx` (modified, +13/-30)
-```diff
-@@ -1,16 +1,12 @@
- import React, { memo, useCallback } from 'react';
- import { StyleSheet, View } from 'react-native';
- 
--import { Canvas, Picture } from '@shopify/react-native-skia';
- import { useListen } from '@storesjs/stores';
- import Animated, { runOnUI, useAnimatedReaction, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
- 
- import { SPRING_CONFIGS } from '@/components/animations/animationConfigs';
--import { useWorkletClass } from '@/hooks/reanimated/useWorkletClass';
--import { useCleanup } from '@/hooks/useCleanup';
-+import { SkiaPictureView, useSkiaRenderer } from '@/framework/ui/components/SkiaPictureView';
- import { useOnChange } from '@/hooks/useOnChange';
--import { useStableValue } from '@/hooks/useStableValue';
--import { createBlankPicture } from '@/worklets/skia';
- 
- import { COMPACT_LINE_CHART_HORIZONTAL_OVERDRAW, CompactLineChartRenderer } from '../compact/CompactLineChartRenderer';
- import { type CompactLineChartData, type LineChartDataStore, type SparklineChartProps } from '../compact/types';
-@@ -37,20 +33,10 @@ export const SparklineChart = memo(function SparklineChart<S extends LineChartDa
- }: SparklineChartProps<S>) {
-   const isColorString = typeof color === 'string';
-   const renderWidth = width + COMPACT_LINE_CHART_HORIZONTAL_OVERDRAW * 2;
--  const initialPicture = useStableValue(() => createBlankPicture(renderWidth, height));
--
--  const chartPicture = useSharedValue(initialPicture);
-+  const renderer = useSkiaRenderer<CompactLineChartRenderer>();
-   const entranceProgress = useSharedValue(0);
-   const hasRenderedData = useSharedValue(false);
- 
--  const renderer = useWorkletClass(
--    () => ({ blankPicture: initialPicture, chartPicture, contentWidth: width, height }),
--    config => {
--      'worklet';
--      return new CompactLineChartRenderer(config);
--    }
--  );
--
-   const animatedStyle = useAnimatedStyle(() => {
-     const progress = entranceProgress.value;
-     return { opacity: progress, transform: [{ translateY: 4 - progress * 4 }] };
-@@ -63,21 +49,21 @@ export const SparklineChart = memo(function SparklineChart<S extends LineChartDa
-         const hasData = data !== undefined;
-         const shouldAnimateIn = hasData && !hasRenderedData.value;
- 
--        renderer.value?.setData(data, resolvedLineColor);
-+        renderer.manager?.setData(data, resolvedLineColor, width, height);
-         hasRenderedData.value = hasData;
- 
-         if (shouldAnimateIn) entranceProgress.value = 0;
-         entranceProgress.value = withSpring(hasData ? 1 : 0, SPRING_CONFIGS.softerSpringConfig);
-       })(nextData);
-     },
--    [color, entranceProgress, hasRenderedData, isColorString, renderer]
-+    [color, entranceProgress, hasRenderedData, height, isColorString, renderer, width]
-   );
- 
-   useAnimatedReaction(
-     () => (isColorString ? color : color.value),
-     (nextColor, previousColor) => {
-       if (previousColor === null || nextColor === previousColor) return;
--      renderer.value?.recolor(nextColor);
-+      renderer.manager?.recolor(nextColor);
-     },
-     [color]
-   );
-@@ -93,14 +79,6 @@ export const SparklineChart = memo(function SparklineChart<S extends LineChartDa
-     drawChart(store.getState().getChartData(chartId));
-   }, [chartId, drawChart, store]);
- 
--  useCleanup(() => {
--    initialPicture.dispose();
--    runOnUI(() => {
--      renderer.value?.dispose?.();
--      renderer.value = undefined;
--    })();
--  });
--
-   return (
-     <View style={[styles.frame, { height, width }]}>
-       <Animated.View
-@@ -114,9 +92,14 @@ export const SparklineChart = memo(function SparklineChart<S extends LineChartDa
-           animatedStyle,
-         ]}
-       >
--        <Canvas style={[styles.canvas, { height, width: renderWidth }]}>
--          <Picture picture={chartPicture} />
--        </Canvas>
-+        <SkiaPictureView
-+          initialize={output => {
-+            'worklet';
-+            return new CompactLineChartRenderer(output);
-+          }}
-+          renderer={renderer}
-+          style={[styles.canvas, { height, width: renderWidth }]}
-+        />
-       </Animated.View>
-       {livePointer ? <LiveSparklinePointer chartId={chartId} color={color} height={height} store={store} width={width} /> : null}
-     </View>
-```
-
-**File**: `src/features/charts/line/types.ts` (modified, +0/-25)
-```diff
-@@ -1,6 +1,3 @@
--import { type SkPicture } from '@shopify/react-native-skia';
--import { type SharedValue } from 'react-native-reanimated';
--
- // ============ Drawing Parameters ============================================= //
- 
- /**
-@@ -80,28 +77,6 @@ export type BaseChartConfig = {
-   grid: GridConfig;
- };
- 
--// ============ Shared Values ================================================== //
--
--/** Shared values used by chart managers for reactive state. */
--export type ChartSharedValues = {
--  /** Main chart picture */
--  chartPicture: SharedValue<SkPicture>;
--  /** Maximum Y value (price) in visible range */
--  chartMaxY: SharedValue<number>;
--  /** Minimum Y value (price) in visible range */
--  chartMinY: SharedValue<number>;
--  /** Current zoom scale */
--  chartScale: SharedValue<number>;
--  /** Crosshair overlay picture */
--  crosshairPicture: SharedValue<SkPicture>;
--  /** Whether a gesture is currently active */
--  isChartGestureActive: SharedValue<boolean>;
--  /** Whether pan deceleration is active */
--  isDecelerating: SharedValue<boolean>;
--  /** Current X offset (pan position) */
--  offset: SharedValue<number>;
--};
--
- // ============ Bounds and Range =============================================== //
- 
- /** Represents the visible range of data indices. */
-```
-
-**File**: `src/features/charts/polymarket/classes/PolymarketChartManager.ts` (modified, +52/-151)
-```diff
-@@ -5,13 +5,11 @@ import {
-   PaintStyle,
-   Skia,
-   StrokeCap,
--  StrokeJoin,
-   TileMode,
-   type SkCanvas,
-   type SkColor,
-   type SkPaint,
-   type SkParagraph,
--  type SkPicture,
- } from '@shopify/react-native-skia';
- import { State as GestureState } from 'react-native-gesture-handler';
- import { type SharedValue } from 'react-native-reanimated';
-@@ -20,10 +18,10 @@ import { triggerHaptics } from 'react-native-turbo-haptics';
- import { getColorForTheme } from '@/design-system/color/useForegroundColor';
- import { type TextSegment } from '@/design-system/components/SkiaText/useSkiaText';
- import { type InteractionConfig, type LineEffectsConfig } from '@/features/charts/line/LineSeries';
-+import { setSkiaPicture, type SkiaPictureOutput } from '@/framework/ui/components/SkiaPictureView';
- import { type ResponseByTheme } from '@/theme/types';
- import { deepFreeze } from '@/utils/deepFreeze';
- import { normalizeSpringConfig } from '@/worklets/animations';
--import { createBlankPicture } from '@/worklets/skia';
- 
- import { Animator } from '../../candlestick/classes/Animator';
- import { TimeFormatter } from '../../candlestick/classes/TimeFormatter';
-@@ -120,14 +118,16 @@ export class PolymarketChartManager {
-   private readonly availableWidth: number;
-   private readonly config: PolymarketChartConfig;
- 
--  private backgroundColor: SkColor;
-   private buildParagraph: (segments: TextSegment | TextSegment[]) => SkParagraph | null;
-   private isDarkMode: boolean;
-   private readonly smoothingMode: LineSmoothing | undefined;
-   private series: OutcomeSeries[] = [];
-   private timeDomain: { endTs: number; startTs: number } | null = null;
-   private readonly fallbackTimeDomain = { endTs: 1, startTs: 0 };
--  private yAxisWidth = 0;
-+  private readonly yAxisWidth: number;
-+
-+  private chartMinY = 0;
-+  private chartMaxY = 1;
- 
-   private hasPlayedEntranceAnimation = false;
-   private isAnimating = false;
-@@ -145,15 +145,11 @@ export class PolymarketChartManager {
-   private readonly interactionProgress: SharedValue<number>;
- 
-   private readonly animationProgress: SharedValue<number>;
--  private readonly chartMaxY: SharedValue<number>;
--  private readonly chartMinY: SharedValue<number>;
--  private readonly chartPicture: SharedValue<SkPicture>;
--  private readonly crosshairPicture: SharedValue<SkPicture>;
-   private readonly isChartGestureActive: SharedValue<boolean>;
- 
-   private readonly animator: Animator;
--  private readonly blankPicture: SkPicture;
-   private readonly lineSeriesBuilder: LineSeriesBuilder;
-+  private readonly output: SkiaPictureOutput;
-   private readonly pictureRecorder = Skia.PictureRecorder();
-   private readonly timeFormatter = new TimeFormatter();
- 
-@@ -162,23 +158,17 @@ export class PolymarketChartManager {
-     crosshairLine: SkColor;
-     labelQuinary: SkColor;
-     labelQuinaryString: string;
--    labelSecondary: SkColor;
-     white: SkColor;
-   };
- 
-   private readonly paints: {
--    bottomShadow: SkPaint;
--    bubbleFill: SkPaint;
--    bubbleStroke: SkPaint;
-     crosshairLine: SkPaint;
-     endCircle: SkPaint | null;
-     endCircleShadow: SkPaint | null;
-     grid: SkPaint;
-     greyCircle: SkPaint;
--    greyLine: SkPaint;
-     lineShadow: SkPaint | null;
-     text: SkPaint;
--    topShadow: SkPaint;
-   };
- 
-   private lineEffectsConfig: LineEffectsConfig | undefined;
-@@ -189,51 +179,39 @@ export class PolymarketChartManager {
-     animationProgress,
-     buildParagraph,
-     chartHeight,
--    chartMaxY,
--    chartMinY,
--    chartPicture,
-     chartWidth,
-     config,
--    crosshairPicture,
-     interactionProgress,
-     isChartGestureActive,
-     isDarkMode,
-+    output,
-     smoothingMode,
-   }: {
-     activeInteraction: SharedValue<ActiveInteractionData | undefined> | undefined;
-     animationProgress: SharedValue<number>;
-     buildParagraph: (segments: TextSegment | TextSegment[]) => SkParagraph | null;
-     chartHeight: number;
--    chartMaxY: SharedValue<number>;
--    chartMinY: SharedValue<number>;
--    chartPicture: SharedValue<SkPicture>;
-     chartWidth: number;
-     config: PolymarketChartConfig;
--    crosshairPicture: SharedValue<SkPicture>;
-     interactionProgress: SharedValue<number>;
-     isChartGestureActive: SharedValue<boolean>;
-     isDarkMode: boolean;
-+    output: SkiaPictureOutput;
-     smoothingMode?: LineSmoothing;
-   }) {
-     if (activeInteraction) this.activeInteraction = activeInteraction;
-     this.animationProgress = animationProgress;
--    this.backgroundColor = Skia.Color(config.chart.backgroundColor);
-     this.buildParagraph = buildParagraph;
-     this.chartHeight = chartHeight;
--    this.chartMaxY = chartMaxY;
--    this.chartMinY = chartMinY;
--    this.chartPicture = chartPicture;
-     this.chartWidth = chartWidth;
-     this.config = config;
--    this.crosshairPicture = crosshairPicture;
-     this.interactionProgress = interactionProgress;
-     this.isChartGestureActive = isChartGestureActive;
-     this.isDarkMode = isDarkMode;
-+    this.output = outpu
-```
-
-**File**: `src/features/charts/polymarket/components/PolymarketChart.tsx` (modified, +65/-121)
-```diff
-@@ -1,7 +1,6 @@
- import React, { memo, useCallback, useMemo } from 'react';
--import { Platform, StyleSheet, View } from 'react-native';
-+import { StyleSheet, View } from 'react-native';
- 
--import { Canvas, Picture, type SkPicture } from '@shopify/react-native-skia';
- import { useListen } from '@storesjs/stores';
- import { cloneDeep, merge } from 'lodash';
- import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-@@ -19,15 +18,13 @@ import { SPRING_CONFIGS } from '@/components/animations/animationConfigs';
- import { globalColors, useColorMode, useForegroundColor } from '@/design-system';
- import { useSkiaText } from '@/design-system/components/SkiaText/useSkiaText';
- import { opacity } from '@/design-system/utils/opacity';
--import { useWorkletClass } from '@/hooks/reanimated/useWorkletClass';
--import { useCleanup } from '@/hooks/useCleanup';
-+import { SkiaPictureView, useSkiaRenderer } from '@/framework/ui/components/SkiaPictureView';
- import { useOnChange } from '@/hooks/useOnChange';
- import { useStableValue } from '@/hooks/useStableValue';
- import { useListenerRouteGuard } from '@/state/internal/hooks/useListenerRouteGuard';
- import { type DeepPartial } from '@/types/objects';
- import { deepFreeze } from '@/utils/deepFreeze';
- import { DEVICE_WIDTH } from '@/utils/deviceUtils';
--import { createBlankPicture } from '@/worklets/skia';
- 
- import { NoChartData } from '../../components/NoChartData';
- import { type LineSmoothing } from '../../line/LineSmoothingAlgorithms';
-@@ -60,14 +57,6 @@ enum ChartStatus {
- const DEFAULT_CHART_HEIGHT = 272;
- const SPINNER_SIZE = 28;
- 
--type PreparedChartConfig = {
--  chartHeight: number;
--  chartWidth: number;
--  config: PolymarketChartConfig;
--  initialPicture: SkPicture;
--  initialStatus: ChartStatus;
--};
--
- export const DEFAULT_POLYMARKET_CHART_CONFIG = deepFreeze({
-   animation: {
-     entranceAnimation: EntranceAnimation.Draw,
-@@ -133,36 +122,20 @@ export const PolymarketChart = memo(function PolymarketChart({
-   const backgroundColor = providedBackgroundColor ?? (isDarkMode ? '#141619' : '#FFFFFF');
- 
-   const xAxisAreaHeight = DEFAULT_POLYMARKET_CHART_CONFIG.chart.xAxisHeight + DEFAULT_POLYMARKET_CHART_CONFIG.chart.xAxisGap * 2;
--  const baseChartHeight = providedChartHeight - xAxisAreaHeight;
--
--  const {
--    chartHeight,
--    chartWidth: preparedChartWidth,
--    config,
--    initialPicture,
--    initialStatus,
--  } = useStableValue<PreparedChartConfig>(() =>
--    prepareChartConfig({
--      backgroundColor,
--      baseChartHeight,
--      chartWidth,
--      isMarketChart,
--      providedChartHeight,
--      providedConfig,
--    })
--  );
-+  const chartHeight = providedChartHeight - xAxisAreaHeight;
-+  const initialStatus = useStableValue(() => {
-+    const data = (isMarketChart ? usePolymarketMarketChartStore : usePolymarketChartStore).getState().getData();
-+    return data ? (data.series.length ? ChartStatus.Loaded : ChartStatus.Empty) : ChartStatus.Loading;
-+  });
- 
-   const internalIsChartGestureActive = useSharedValue(false);
-   const isChartGestureActive = providedIsChartGestureActive ?? internalIsChartGestureActive;
- 
-   const animationProgress = useSharedValue(100);
--  const chartMaxY = useSharedValue(1);
--  const chartMinY = useSharedValue(0);
-   const chartStatus = useSharedValue<ChartStatus>(initialStatus);
-   const interactionProgress = useSharedValue(0);
- 
--  const chartPicture = useSharedValue(initialPicture);
--  const crosshairPicture = useSharedValue(initialPicture);
-+  const renderer = useSkiaRenderer<PolymarketChartManager>({ deferred: true });
- 
-   const buildParagraph = useSkiaText({
-     align: 'left',
-@@ -172,91 +145,78 @@ export const PolymarketChart = memo(function PolymarketChart({
-     weight: 'bold',
-   });
- 
--  const chartManager = useWorkletClass(() => {
--    'worklet';
--    return new PolymarketChartManager({
--      activeInteraction,
--      animationProgress,
--      buildParagraph,
--      chartHeight,
--      chartMaxY,
--      chartMinY,
--      chartPicture,
--      chartWidth: preparedChartWidth,
--      config,
--      crosshairPicture,
--      interactionProgress,
--      isChartGestureActive,
--      isDarkMode,
--      smoothingMode,
--    });
--  }, true);
--
-   const updateChart = useCallback(
-     (newData: PolymarketChartData) => {
-       runOnUI(() => {
--        if (!chartManager.value) return;
-+        if (!renderer.manager) return;
- 
-         if (newData === null) {
-           chartStatus.value = ChartStatus.Loading;
-           return;
-         }
- 
-         if (newData.series.length > 0) {
--          chartManager.value.setSeriesData(newData.series, isDarkMode);
-+          renderer.manager.setSeriesData(newData.series, isDarkMode);
-           chartStatus.value = ChartStatus.Loaded;
-         } else {
--          chartManager.value.clearData();
-+          renderer.manager.clearData();
-           chartStatus.value = ChartStatus.Empty;
-         }
-       })();
-     },
--    [chartManager, chartStatus, isDarkMode]
-+    [renderer, 
-```
-
----
-
-### Incident Patch 3: `d8b32b45` (2026-10-15)
-**Commit Message**: fix(cash): offer sign-in when recovery finds the account's passkey already on the device (#7870)
-
-Fixes APP-4138
-
-## What changed (plus any additional context for devs)
-
-A user who still has their Cash passkey on the device can go Sign Up →
-"You already have an account" → Recover Account. Recovery succeeds, but
-the Add Passkey step then fails with "Error adding passkey": the
-registration options exclude the account's enrolled passkeys, so iOS
-refuses to create another one (`ASAuthorizationError` 1006). No API
-error shows, because the failure happens on the device.
-
-The passkey step now recognises that failure and shows "You already have
-a passkey" with **Sign in with Passkey**, which signs in with the
-existing passkey using the phone number just verified, then finishes
-setup like the existing-account Sign In. Recovery doesn't revoke
-existing passkeys, so that sign-in works. Cancelling the sign-in, or a
-sign-in failure, leaves the sheet up for another try. Other passkey
-errors and cancellation behave as before.
-
-- `react-native-passkeys` folds 1006 into a generic `UnknownException`;
-the existing patch now gives it its own code,
-`ERR_PASSKEY_EXCLUDED_CREDENTIAL`. This is a native cha
-
-**File**: `patches/react-native-passkeys+0.4.1.patch` (modified, +18/-4)
-```diff
-@@ -7,11 +7,14 @@
- #     cancellation and identify callbacks so a timed-out request releases the
- #     native slot without settling a newer request. Android implements the shared
- #     bridge method as a no-op because Cash only invokes cancellation on iOS.
-+#   - iOS folds ASAuthorizationError 1006 (the device already holds a passkey the
-+#     request excludes) into UnknownException. Give it a distinct code so Cash can
-+#     offer sign-in with that passkey instead of a generic failure.
- # Upstream Issue: https://github.com/peterferguson/react-native-passkeys/issues/13
- #   (same missing-method symptom; the issue does not establish the root cause).
--# Linear Issue: APP-4117.
--# Remove when: react-native-passkeys exposes cancellation and no longer reads its
--#   own methods off the spread default export.
-+# Linear Issues: APP-4117, APP-4138.
-+# Remove when: react-native-passkeys exposes cancellation, no longer reads its own
-+#   methods off the spread default export, and reports iOS error 1006 distinctly.
- 
- diff --git a/node_modules/react-native-passkeys/android/src/main/java/expo/modules/passkeys/ReactNativePasskeysModule.kt b/node_modules/react-native-passkeys/android/src/main/java/expo/modules/passkeys/ReactNativePasskeysModule.kt
- index 42f67d0..2601d4b 100644
-@@ -199,7 +202,7 @@ index 0138931..215b4b5 100644
-    override var reason: String {
-      "Passkeys are not supported on this iOS version. Please use iOS 15 or above"
- diff --git a/node_modules/react-native-passkeys/ios/ReactNativePasskeysModule.swift b/node_modules/react-native-passkeys/ios/ReactNativePasskeysModule.swift
--index 06e9aa9..660c1f0 100644
-+index 06e9aa9..42a4df6 100644
- --- a/node_modules/react-native-passkeys/ios/ReactNativePasskeysModule.swift
- +++ b/node_modules/react-native-passkeys/ios/ReactNativePasskeysModule.swift
- @@ -3,8 +3,10 @@ import ExpoModulesCore
-@@ -313,6 +316,17 @@ index 06e9aa9..660c1f0 100644
-          promise.reject(
-              handleASAuthorizationError(
-                  errorCode: (error as NSError).code,
-+@@ -441,6 +470,10 @@ func handleASAuthorizationError(errorCode: Int, localizedDescription: String = "
-+     case 4004:
-+         return NotConfiguredException(
-+             name: "NotConfiguredException", description: localizedDescription)
-++    case 1006:
-++        return Exception(
-++            name: "PasskeyExcludedCredentialException", description: localizedDescription,
-++            code: "ERR_PASSKEY_EXCLUDED_CREDENTIAL")
-+     default:
-+         return UnknownException(name: "UnknownException", description: localizedDescription)
-+     }
- diff --git a/node_modules/react-native-passkeys/src/ReactNativePasskeysModule.ts b/node_modules/react-native-passkeys/src/ReactNativePasskeysModule.ts
- index 22b8020..6d744de 100644
- --- a/node_modules/react-native-passkeys/src/ReactNativePasskeysModule.ts
-```
-
-**File**: `src/features/cash/screens/cash-deposit-setup/CashDepositSetupScreen.tsx` (modified, +2/-2)
-```diff
-@@ -36,7 +36,7 @@ import { PasskeyStep } from './steps/PasskeyStep';
- import { PhoneStep } from './steps/PhoneStep';
- import { ReviewStep } from './steps/ReviewStep';
- import { SsnStep } from './steps/SsnStep';
--import { useAddPasskeyFlowStore } from './steps/useAddPasskeyFlow';
-+import { selectIsPasskeyCeremonyPending, useAddPasskeyFlowStore } from './steps/useAddPasskeyFlow';
- import { useSubmitPhoneFlowStore } from './steps/useSubmitPhoneFlow';
- import { useSubmitReviewFlowStore } from './steps/useSubmitReviewFlow';
- 
-@@ -76,7 +76,7 @@ export const CashDepositSetupScreen = memo(function CashDepositSetupScreen() {
-   );
- 
-   useListen(useCashSetupSessionStore, s => s.session.status === 'empty', restartSetupWithoutCredential);
--  useListen(useAddPasskeyFlowStore, s => s.state === 'submitting', restartSetupWithoutCredential);
-+  useListen(useAddPasskeyFlowStore, selectIsPasskeyCeremonyPending, restartSetupWithoutCredential);
- 
-   useCleanup(() => {
-     CashDepositSetupNavigation.resetNavigationState();
-```
-
-**File**: `src/features/cash/screens/cash-deposit-setup/setupAction.ts` (modified, +10/-0)
-```diff
-@@ -69,6 +69,16 @@ export async function submitPasskey(): Promise<void> {
-   else if (result === 'recovered') completeSetup();
- }
- 
-+export async function signInWithPasskeyOnDevice(): Promise<void> {
-+  if (!CashDepositSetupNavigation.isRouteActive(Routes.CASH_SETUP_PASSKEY)) return;
-+  if (
-+    (await useAddPasskeyFlowStore.getState().signInWithPasskeyOnDevice()) === 'signedIn' &&
-+    CashDepositSetupNavigation.isRouteActive(Routes.CASH_SETUP_PASSKEY)
-+  ) {
-+    completeSetup();
-+  }
++function clearPersistedStore<S>(store: PersistedStore<S>): void {
++  // Reset in memory first: a throttled write still pending would otherwise restore the removed entry.
++  store.setState(store.getInitialState(), true);
++  store.persist.clearStorage();
 +}
 +
- export async function submitReview(): Promise<void> {
-   const result = await useSubmitReviewFlowStore.getState().submit();
-   if (result === 'recovered') CashDepositSetupNavigation.navigate(Routes.CASH_SETUP_PASSKEY);
++function clearCashState(): void {
++  clearPersistedStore(useCashAccountStore);
++  clearPersistedStore(useCashBuyOrderStore);
++  clearPersistedStore(useCashPaymentMethodStore);
++  clearPersistedStore(useCashWalletStore);
++  useCashAuthTokenStore.getState().clearToken();
++  useCashSetupSessionStore.getState().reset();
++}
++
++/** Persisted cash state belongs to one platform's accounts and orders, so it is wiped on every switch. Restart the app afterwards. */
++export function setCashStagingPlatform(useStagingPlatform: boolean): void {
++  clearCashState();
++  useCashPlatformSettingStore.setState({ useStagingPlatform });
++}
++
++export async function signOutOfCash(): Promise<void> {
++  await logout(await ensureAccessToken('developerSettings'));
++  clearCashState();
++}
++
++export async function deleteCashAccount(): Promise<void> {
++  await hardDeleteSelf(await ensureAccessToken('developerSettings'));
++  clearCashState();
++}
 ```
 
-**File**: `src/features/cash/screens/cash-deposit-setup/setupNavigation.test.ts` (modified, +2/-2)
+**File**: `src/features/cash/services/cashPlatformClient.ts` (modified, +7/-4)
 ```diff
-@@ -212,9 +212,9 @@ describe('restartSetupWithoutCredential', () => {
-     expect(CashDepositSetupNavigation.getActiveRoute()).toBe(Routes.CASH_SETUP_PASSKEY);
-   });
+@@ -1,17 +1,20 @@
+-import { CASH_PLATFORM_API_KEY, CASH_PLATFORM_BASE_URL, CASH_USE_PROD } from 'react-native-dotenv';
++import { CASH_PLATFORM_API_KEY, CASH_PLATFORM_BASE_URL } from 'react-native-dotenv';
  
--  it('waits for passkey enrollment to settle', () => {
-+  it.each(['submitting', 'signingIn'] as const)('waits for a %s passkey ceremony to settle', state => {
-     CashDepositSetupNavigation.navigate(Routes.CASH_SETUP_REVIEW);
--    useAddPasskeyFlowStore.setState({ state: 'submitting' });
-+    useAddPasskeyFlowStore.setState({ state });
++import { IS_STORE_INSTALL } from '@/env';
+ import { RainbowFetchClient } from '@/framework/data/http/rainbowFetch';
+ import { getPlatformClient } from '@/resources/platform/client';
  
-     useCashSetupSessionStore.getState().reset();
-     restartSetupWithoutCredential();
++import { useCashPlatformSettingStore } from '../stores/cashPlatformSettingStore';
++
+ let stagingClient: RainbowFetchClient | undefined;
+ 
+ export function buildAuthenticatedHeader(token: string) {
+   return { Authorization: `Bearer ${token}` };
+ }
+ 
+-// Production unless CASH_USE_PROD=false in .env, which keeps the staging platform
+-// reachable while cash backend changes roll out.
+-export const USES_STAGING_PLATFORM = CASH_USE_PROD === 'false';
++// Store installs always use the production platform. Elsewhere a developer setting can switch to the
++// staging platform while cash backend changes roll out.
++export const USES_STAGING_PLATFORM = !IS_STORE_INSTALL && useCashPlatformSettingStore.getState().useStagingPlatform;
+ 
+ export function getCashPlatformClient(): RainbowFetchClient {
+   if (!USES_STAGING_PLATFORM) return getPlatformClient();
 ```
 
-**File**: `src/features/cash/screens/cash-deposit-setup/setupNavigation.ts` (modified, +2/-2)
+**File**: `src/features/cash/services/cashSignInService.ts` (modified, +7/-1)
 ```diff
-@@ -8,7 +8,7 @@ import { useKycReturnFlowStore } from '../../stores/kycReturnFlowStore';
- import { useVerifyPhoneFlowStore } from '../../stores/verifyPhoneFlowStore';
- import { CashDepositSetupNavigation, useCashDepositSetupNavigationStore } from './cashDepositSetupNavigator';
- import { getNextSetupStep, isSetupEditDetour } from './steps';
--import { useAddPasskeyFlowStore } from './steps/useAddPasskeyFlow';
-+import { selectIsPasskeyCeremonyPending, useAddPasskeyFlowStore } from './steps/useAddPasskeyFlow';
- import { useSubmitPhoneFlowStore } from './steps/useSubmitPhoneFlow';
- import { useSubmitReviewFlowStore } from './steps/useSubmitReviewFlow';
+@@ -10,7 +10,13 @@ import { isCashAccessRefusedError } from './cashAccessRefusal';
+ import { cancelPasskeyRequest, getPasskeyAssertion, isPasskeyCancellation } from './cashPasskeyService';
+ import { finalizeAuth, finishLogin, startLogin, type StartLoginParams } from './userClient';
  
-@@ -81,7 +81,7 @@ export function abandonSetupSession(): void {
- export function restartSetupWithoutCredential(): void {
-   if (useCashSetupSessionStore.getState().session.status !== 'empty') return;
-   if (hasUsablePasskey()) return;
--  if (useAddPasskeyFlowStore.getState().state === 'submitting') return;
-+  if (selectIsPasskeyCeremonyPending(useAddPasskeyFlowStore.getState())) return;
-   if (CashDepositSetupNavigation.isRouteActive(Routes.CASH_SETUP_PHONE)) return;
+-export type CashSignInTrigger = 'cardLink' | 'addCash' | 'signInScreen' | 'existingAccountPrompt' | 'passkeyOnDevicePrompt';
++export type CashSignInTrigger =
++  | 'cardLink'
++  | 'addCash'
++  | 'signInScreen'
++  | 'existingAccountPrompt'
++  | 'passkeyOnDevicePrompt'
++  | 'developerSettings';
  
-   const isActive = selectIsSetupScreenActive(useNavigationStore.getState());
+ const TOKEN_EXPIRY_MARGIN = time.seconds(30);
+ const PASSKEY_ASSERTION_TIMEOUT = time.minutes(2);
 ```
 
-**File**: `src/features/cash/screens/cash-deposit-setup/steps/PasskeyStep.tsx` (modified, +23/-1)
+**File**: `src/features/cash/services/userClient.ts` (modified, +9/-0)
 ```diff
-@@ -6,10 +6,11 @@ import { CashStatusHalfSheet } from '@/features/cash/components/CashStatusHalfSh
- import * as i18n from '@/languages';
+@@ -403,6 +403,15 @@ export async function finalizeAuth({
+   return parseAccessCredential(data);
+ }
  
- import { SetupStepLayout } from '../components/SetupStepLayout';
--import { submitPasskey } from '../setupAction';
-+import { signInWithPasskeyOnDevice, submitPasskey } from '../setupAction';
- import { useAddPasskeyFlowStore } from './useAddPasskeyFlow';
- 
- const l = i18n.l.cash.deposit_setup.passkey;
-+const onDeviceL = i18n.l.cash.deposit_setup.passkey.on_device;
- 
- const KEY_ICON = '􀟖';
- 
-@@ -37,6 +38,27 @@ export const PasskeyStep = memo(function PasskeyStep() {
-           title={i18n.t(l.error_title)}
-         />
-       )}
++export async function logout(accessToken: string): Promise<void> {
++  await userServiceRequest(() => getCashPlatformClient().post('/auth/Logout', {}, { headers: buildAuthenticatedHeader(accessToken) }));
++}
 +
-+      {(state === 'passkeyOnDevice' || state === 'signingIn') && (
-+        <CashStatusHalfSheet
-+          description={i18n.t(onDeviceL.description)}
-+          primaryAction={{
-+            label: i18n.t(onDeviceL.sign_in),
-+            loading: state === 'signingIn',
-+            onPress: signInWithPasskeyOnDevice,
-+            testID: 'cash-setup-passkey-on-device-sign-in',
-+          }}
-+          secondaryAction={{
-+            disabled: state === 'signingIn',
-+            label: i18n.t(i18n.l.button.cancel),
-+            onPress: reset,
-+            testID: 'cash-setup-passkey-on-device-cancel',
-+          }}
-+          status="info"
-+          testID="cash-setup-passkey-on-device"
-+          title={i18n.t(onDeviceL.title)}
-+        />
-+      )}
-     </>
-   );
- });
++/** Staging only: other platforms reject it. */
++export async function hardDeleteSelf(accessToken: string): Promise<void> {
++  await userServiceRequest(() => getCashPlatformClient().delete('/dev/HardDeleteSelf', { headers: buildAuthenticatedHeader(accessToken) }));
++}
++
+ export async function getUserStatus({ bootstrapToken }: GetUserStatusParams): Promise<KycStatusResult> {
+   if (IS_TESTING === 'true') {
+     await delay(time.seconds(1));
 ```
 
-**File**: `src/features/cash/screens/cash-deposit-setup/steps/useAddPasskeyFlow.test.ts` (modified, +47/-0)
+**File**: `src/features/cash/stores/cashPlatformSettingStore.ts` (added, +12/-0)
 ```diff
-@@ -4,6 +4,7 @@ import { analytics } from '@/analytics';
- import { logger } from '@/logger';
- 
- import { createPasskeyCredential } from '../../../services/cashPasskeyService';
-+import { signInWithPhone } from '../../../services/cashSignInService';
- import { addPasskey, finishAddPasskey } from '../../../services/userClient';
- import { useCashAccountStore } from '../../../stores/cashAccountStore';
- import { useCashSetupSessionStore, type RecoveryPhoneChallenge } from '../../../stores/cashSetupSessionStore';
-@@ -34,6 +35,11 @@ vi.mock('../../../services/cashPasskeyService', () => ({
-   createPasskeyCredential: vi.fn(),
-   getPasskeyName: vi.fn(() => 'iPhone 15 Pro'),
-   isPasskeyCancellation: vi.fn((error: unknown) => error instanceof Error && error.message === 'UserCancelled'),
-+  isPasskeyAlreadyOnDevice: vi.fn((error: unknown) => error instanceof Error && error.message === 'PasskeyOnDevice'),
-+}));
+@@ -0,0 +1,12 @@
++import { createBaseStore } from '@storesjs/stores';
 +
-+vi.mock('../../../services/cashSignInService', () => ({
-+  signInWithPhone: vi.fn(),
- }));
- 
- vi.mock('../../../stores/cashAccountStore', () => {
-@@ -44,6 +50,7 @@ vi.mock('../../../stores/cashAccountStore', () => {
- const mockAddPasskey = vi.mocked(addPasskey);
- const mockFinishAddPasskey = vi.mocked(finishAddPasskey);
- const mockCreatePasskeyCredential = vi.mocked(createPasskeyCredential);
-+const mockSignInWithPhone = vi.mocked(signInWithPhone);
- const track = vi.mocked(analytics.track);
- const setUserId = vi.mocked(useCashAccountStore.getState().setUserId);
- 
-@@ -184,3 +191,43 @@ describe('useAddPasskeyFlowStore.submit', () => {
-     expect(track).not.toHaveBeenCalled();
-   });
- });
++type CashPlatformSettingStore = {
++  useStagingPlatform: boolean;
++};
 +
-+describe('passkey already on the device', () => {
-+  beforeEach(() => {
-+    verifyRecoverySession();
-+    mockCreatePasskeyCredential.mockRejectedValue(new Error('PasskeyOnDevice'));
-+  });
-+
-+  it('offers sign-in instead of reporting a failure', async () => {
-+    await expect(flow().submit()).resolves.toBe('failed');
-+
-+    expect(flow().state).toBe('passkeyOnDevice');
-+    expect(mockFinishAddPasskey).not.toHaveBeenCalled();
-+    expect(logger.error).not.toHaveBeenCalled();
-+    expect(track).not.toHaveBeenCalledWith('cash.passkey_failed', expect.anything());
-+  });
-+
-+  it('signs in with the verified phone number', async () => {
-+    mockSignInWithPhone.mockResolvedValue(undefined);
-+    await flow().submit();
-+
-+    await expect(flow().signInWithPasskeyOnDevice()).resolves.toBe('signedIn');
-+
-+    expect(mockSignInWithPhone).toHaveBeenCalledWith('4155550100', 'passkeyOnDevicePrompt');
-+    expect(flow().state).toBe('entry');
-+  });
-+
-+  it('keeps the prompt when sign-in is cancelled or fails', async () => {
-+    await flow().submit();
-+
-+    mockSignInWithPhone.mockRejectedValueOnce(new Error('UserCancelled'));
-+    await expect(flow().signInWithPasskeyOnDevice()).resolves.toBe('cancelled');
-+    expect(flow().state).toBe('passkeyOnDevice');
-+    expect(logger.error).not.toHaveBeenCalled();
-+
-+    mockSignInWithPhone.mockRejectedValueOnce(new Error('network down'));
-+    await expect(flow().signInWithPasskeyOnDevice()).resolves.toBe('failed');
-+    expect(flow().state).toBe('passkeyOnDevice');
-+    expect(logger.error).toHaveBeenCalled();
-+  });
++// Read once at startup, so changing it only takes effect after a restart.
++export const useCashPlatformSettingStore = createBaseStore<CashPlatformSettingStore>(() => ({ useStagingPlatform: false }), {
++  storageKey: 'cashPlatformSetting',
++  // Flush on the next tick so the app restart that follows a change cannot drop it.
++  persistThrottleMs: 0,
 +});
 ```
 
-**File**: `src/features/cash/screens/cash-deposit-setup/steps/useAddPasskeyFlow.ts` (modified, +38/-3)
+**File**: `src/features/debug/screens/DevSection.tsx` (modified, +51/-11)
 ```diff
-@@ -4,29 +4,41 @@ import { analytics } from '@/analytics';
- import { logger, RainbowError } from '@/logger';
+@@ -10,7 +10,11 @@ import Restart from 'react-native-restart';
  
- import { isCashAccessRefusedError } from '../../../services/cashAccessRefusal';
--import { createPasskeyCredential, getPasskeyName, isPasskeyCancellation } from '../../../services/cashPasskeyService';
-+import { isHandledCashError } from '../../../services/cashHandledError';
-+import {
-+  createPasskeyCredential,
-+  getPasskeyName,
-+  isPasskeyAlreadyOnDevice,
-+  isPasskeyCancellation,
-+} from '../../../services/cashPasskeyService';
-+import { signInWithPhone } from '../../../services/cashSignInService';
- import { addPasskey, finishAddPasskey } from '../../../services/userClient';
- import { useCashAccountStore } from '../../../stores/cashAccountStore';
- import { useCashSetupSessionStore } from '../../../stores/cashSetupSessionStore';
- import { getTelemetryErrorReason } from '../../../utils/getTelemetryErrorReason';
+ import { ImgixImage } from '@/components/images';
+ import { IS_STORE_INSTALL } from '@/env';
++import { deleteCashAccount, setCashStagingPlatform, signOutOfCash } from '@/features/cash/services/cashDevSettingsService';
++import { isHandledCashError } from '@/features/cash/services/cashHandledError';
++import { USES_STAGING_PLATFORM } from '@/features/cash/services/cashPlatformClient';
+ import { useCashAccountStore } from '@/features/cash/stores/cashAccountStore';
++import { useCashPlatformSettingStore } from '@/features/cash/stores/cashPlatformSettingStore';
+ import { defaultConfig, defaultConfigValues, type ExperimentalConfigKey } from '@/features/config/constants/experimental';
+ import { useExperimentalConfigStore } from '@/features/config/stores/experimentalConfigStore';
+ import { RevokeReason } from '@/features/delegation/types/revokeReason';
+@@ -39,16 +43,20 @@ import { useConnectedToAnvilStore } from '@/state/connectedToAnvil';
+ import { nonceActions } from '@/state/nonces';
+ import { pendingTransactionsActions } from '@/state/pendingTransactions';
+ import { clearWalletState, useWalletsStore } from '@/state/wallets/walletsStore';
++import { useTheme } from '@/theme/ThemeContext';
+ import { delegation, type DelegationWithChainId } from '@rainbow-me/sdk';
  
--export type AddPasskeyState = 'entry' | 'submitting' | 'error';
-+export type AddPasskeyState = 'entry' | 'submitting' | 'error' | 'passkeyOnDevice' | 'signingIn';
+ import { analyzeUserAssets } from '../utils/analyzeUserAssets';
  
- export type AddPasskeyResult = 'completed' | 'recovered' | 'cancelled' | 'failed' | 'skipped';
+ export const DevSection = () => {
+   const { navigate } = useNavigation();
++  const { colors } = useTheme();
+   const config = useExperimentalConfigStore(state => state.config);
+   const setConnectedToAnvil = useConnectedToAnvilStore.getState().setConnectedToAnvil;
+   const accountAddress = useWalletsStore(state => state.accountAddress);
+   const cashUserId = useCashAccountStore(state => state.userId);
++  const cashUsesStagingPlatform = useCashPlatformSettingStore(state => state.useStagingPlatform);
++  const [pendingCashAccountAction, setPendingCashAccountAction] = useState<'signOut' | 'delete' | null>(null);
  
- type AddPasskeyFlowStore = {
-   state: AddPasskeyState;
-   reset: () => void;
-   submit: () => Promise<AddPasskeyResult>;
-+  signInWithPasskeyOnDevice: () => Promise<'signedIn' | 'cancelled' | 'failed'>;
- };
- 
-+export function selectIsPasskeyCeremonyPending({ state }: { state: AddPasskeyState }): boolean {
-+  return state === 'submitting' || state === 'signingIn';
-+}
-+
- export const useAddPasskeyFlowStore = createBaseStore<AddPasskeyFlowStore>((set, get) => ({
-   state: 'entry',
- 
-   reset: () => set({ state: 'entry' }),
- 
-   submit: async () => {
--    if (get().state === 'submitting') return 'skipped';
-+    if (selectIsPasskeyCeremonyPending(get())) return 'skipped';
-     const { session } = useCashSetupSessionStore.getState();
-     if (session.status !== 'phoneVerified') return 'skipped';
-     const recovering = session.source === 'recovery';
-@@ -53,10 +65,33 @@ export const useAddPasskeyFlowStore = createBaseStore<AddPasskeyFlowStore>((set,
-         set({ state: 'entry' });
-         return 'cancelled';
-       }
-+      if (isPasskeyAlreadyOnDevice(e)) {
-+        set({ state: 'passkeyOnDevice' });
-+        return 'failed';
-+      }
-       logger.error(new RainbowError('[useAddPasskeyFlow]: Failed to add passkey', e));
-       analytics.track(analytics.event.cashPasskeyFailed, { reason: getTelemetryErrorReason(e) });
-       set({ state: 'error' });
-       return 'failed';
+   const [loadingStates, setLoadingStates] = useState({
+     clearLocalStorage: false,
+@@ -64,6 +72,26 @@ export const DevSection = () => {
      }
-   },
+   }, []);
+ 
++  const toggleCashStagingPlatform = useCallback(() => {
++    setCashStagingPlatform(!useCashPlatformSettingStore.getState().useStagingPlatform);
++    Navigation.handleAction(Routes.WALLET_SCREEN);
++    setTimeout(Restart.Restart, 1000);
++  }, []);
 +
-+  // The passkey already on the device belongs to this account, so it signs in where enrolling another
-+  // cannot. Cancelling or failing leaves the prompt in place for a retry.
-+  signInWithPasskeyOnDevice: async () => {
-+    const { session } = useCashSetupSessionStore.getState();
-+    if (get().state !== 'passkeyOnDevice' || session.status !== 'phoneVerified') return 'failed';
-+
-+    set({ state: 'signingIn' });
++  const runCashAccountAction = useCallback(async (kind: 'signOut' | 'delete') => {
++    setPendingCashAccountAction(kind);
 +    try {
-+      await signInWithPhone(session.phoneNationalNumber, 'passkeyOnDevicePrompt');
-+      set({ state: 'entry' });
-+      return 'signedIn';
-+    } catch (e) {
-+      set({ state: 'passkeyOnDevice' });
-+      if (isHandledCashError(e)) return 'cancelled';
-+      logger.error(new RainbowError('[useAddPasskeyFlow]: Failed to sign in with the passkey on this device', e));
-+      return 'failed';
++      await (kind === 'signOut' ? signOutOfCash() : deleteCashAccount());
++    } catch (error) {
++      if (!isHandledCashError(error)) {
++        logger.error(new RainbowError(`[DevSection] cash ${kind} failed`, error));
++        Alert.alert(i18n.t(i18n.l.developer_settings.cash_account_action_failed));
++      }
++    } finally {
++      setPendingCashAccountAction(null);
 +    }
-+  },
- }));
++  }, []);
++
+   const connectToAnvil = useCallback(async () => {
+     try {
+       const connectToAnvil = useConnectedToAnvilStore.getState().connectedToAnvil;
+@@ -474,19 +502,31 @@ export const DevSection = () => {
+           </Menu>
+           <Menu header={i18n.t(i18n.l.developer_settings.headers.cash_settings)}>
+             <MenuItem
+-              onPress={async () => {
+-                const userId = (await Clipboard.getString()).trim();
+-                if (userId) useCashAccountStore.getState().setUserId(userId);
+-              }}
+-              rightComponent={cashUserId != null && <MenuItem.StatusIcon status="selected" />}
+-              size={52}
+-              titleComponent={<MenuItem.Title text={i18n.t(i18n.l.developer_settings.cash_set_user_id_from_clipboard)} />}
+-            />
+-            <MenuItem
+-              onPress={() => useCashAccountStore.getState().clearUserId()}
++              onPress={toggleCashStagingPlatform}
++              rightComponent={cashUsesStagingPlatform && <MenuItem.StatusIcon status="selected" />}
+               size={52}
+-              titleComponent={<MenuItem.Title text={i18n.t(i18n.l.developer_settings.cash_clear_account)} />}
++              titleComponent={<MenuItem.Title text={i18n.t(i18n.l.developer_settings.cash_use_staging_platform)} />}
+             />
++            {cashUserId != null && (
++              <MenuItem
++                disabled={pendingCashAccountAction != null}
++                onPress={() => runCashAccountAction('signOut')}
++                rightComponent={pendingCashAccountAction === 'signOut' && <SettingsLoadingIndicator />}
++                size={52}
++                titleComponent={<MenuItem.Title text={i18n.t(i18n.l.developer_settings.cash_sign_out)} />}
++              />
++            )}
++            {cashUserId != null && USES_STAGING_PLATFORM && (
++              <MenuItem
++                disabled={pendingCashAccountAction != null}
++                onPress={() => runCashAccountAction('delete')}
++                rightComponent={pendi
+```
+
+**File**: `src/languages/en_US.json` (modified, +4/-2)
+```diff
+@@ -490,8 +490,10 @@
+       },
+       "restart_app": "Restart App",
+       "reset_experimental_config": "Reset Experimental Config",
+-      "cash_set_user_id_from_clipboard": "Set cash user id from clipboard",
+-      "cash_clear_account": "Clear cash account",
++      "cash_use_staging_platform": "Use cash staging backend",
++      "cash_sign_out": "Sign out of cash",
++      "cash_sign_out_and_delete_account": "Sign out and delete cash account",
++      "cash_account_action_failed": "Cash account action failed",
+       "status": "Status",
+       "sync_codepush": "Sync CodePush",
+       "simulate_device_transfer": "Simulate Device Transfer",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7891** (closed): fix(sports): coordinate scrolling and pager gestures (@christianbaroni)
+- **PR #7888** (2026-10-20): feat(spot-pnl): realized P&L on the pill once every purchased token is sold (@i1skn)
+- **PR #7884** (2026-10-23): feat(cash): toggle the staging backend from Developer Settings (@i1skn)
 - **PR #7883** (2026-10-15): chore(ci): add cubic review instructions (@i1skn)
 - **PR #7882** (2026-10-15): feat(expanded sheet): remove Quick Buy section (@i1skn)
 - **PR #7880** (2026-10-15): fix(e2e): use default remote config in E2E (@i1skn)
-- **PR #7873** (2026-10-14): fix(ios): stuck refresh indicators (@christianbaroni)
-- **PR #7872** (2026-10-08): Bump iOS and Android to v2.0.47 (@jinchung)
-- **PR #7870** (2026-10-15): fix(cash): offer sign-in when recovery finds the account's passkey already on the device (@i1skn)
 
 ---
 
@@ -2477,63 +954,3 @@ the existing patch now gives it its own code,
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. android): support nested button presses (#7848)
-
-**RULE**:
-When implementing operations in `android/app/src/main/java/com/swmansion/gesturehandler/react/RNZoomableButtonManager.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rainbow-me/rainbow. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `e554ecf2`: android): support nested button presses (#7848). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/app/src/main/java/com/swmansion/gesturehandler/react/RNZoomableButtonManager.java`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-import android.os.SystemClock;
-import android.view.InputDevice;
-import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.accessibility.AccessibilityManager;
-import android.view.animation.AnimationUtils;
-import android.view.animation.Transformation;
-import com.swmansion.gesturehandler.core.NativeViewGestureHandler;
-        private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
-
-        private enum LongPressState { NONE, TRIGGERED, HOLDING }
-
-        private boolean hasPressStartHandler = false;
-        private LongPressState longPressState = LongPressState.NONE;
-        private int activePointerId = MotionEvent.INVALID_POINTER_ID;
-        private long touchDownTime = -1;
-        private NativeViewGestureHandler gestureHandler;
-        private boolean touchExploration;
-        private float presentationScale = 1f;
-        private final AccessibilityManager accessibilityManager;
-        private final int touchSlop;
-            accessibilityManager = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
-            touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-            float fromScale
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-        private boolean mIsTaskScheduled = false;
-        private boolean didLongPressFire = false;
-        private boolean mIsLongTaskScheduled = false;
-        private final Handler mHandler = new Handler(Looper.getMainLooper());
-            float fromScale = in ? 1f : mScaleTo;
-                    Animation.RELATIVE_TO_SELF, pivotY);
-            anim.setDuration(mDuration);
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e554ecf2` are properly handled with clean fallback behavior.

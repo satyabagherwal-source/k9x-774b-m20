@@ -5029,3 +5029,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-25T22:16:02.834Z |
 | `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-25T22:24:11.740Z |
 | `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-25T22:24:11.837Z |
+| `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `9997c6ed` | Multi-dimensional audit evidence | 2026-10-25T22:31:50.693Z |
+| `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-25T22:31:56.769Z |
