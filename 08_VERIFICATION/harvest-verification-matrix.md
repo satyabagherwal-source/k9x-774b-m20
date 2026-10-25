@@ -4894,3 +4894,5 @@
 | `CYCLE-20261025-NUH1` | `2026-10-25T16:02:43.333Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4377` | Yes (`be1e498c...`) |
 | `CYCLE-20261025-VVKH` | `2026-10-25T16:08:58.001Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`f69731db...`) |
 | `CYCLE-20261025-W4RN` | `2026-10-25T16:09:09.923Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md` | Yes (`3b51590f...`) |
+| `CYCLE-20261025-45KC` | `2026-10-25T16:15:24.204Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`bc90da2c...`) |
+| `CYCLE-20261025-45QL` | `2026-10-25T16:15:24.429Z` | `fujiapple852/trippy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4378` | Yes (`7c1b7452...`) |

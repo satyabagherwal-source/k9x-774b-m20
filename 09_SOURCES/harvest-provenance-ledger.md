@@ -4901,3 +4901,5 @@ Every entry in this ledger must capture:
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `a930c2b1` | Multi-dimensional audit evidence | 2026-10-25T16:02:43.336Z |
 | `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-25T16:08:58.005Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `a20c7c3f` | Multi-dimensional audit evidence | 2026-10-25T16:09:09.927Z |
+| `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-25T16:15:24.208Z |
+| `learn-github-fujiapple852-trippy` | `https://github.com/fujiapple852/trippy` | `54c8f399` | Multi-dimensional audit evidence | 2026-10-25T16:15:24.432Z |

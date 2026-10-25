@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-KBV1",
-    "timestamp": "2026-10-22T18:56:56.077Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "51940044e8c2b4f6f6c44d41adb0b1bcf6acf1d3d7bfb58a163e1616fa1a4f3a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-SFI2",
-    "timestamp": "2026-10-22T19:03:14.042Z",
-    "repository": "elastic/eui",
-    "learningId": "learn-github-elastic-eui",
-    "contentHash": "e56f4d2eade9c347148aa497e0070c5cbe54dea4d3fb7cd9927bde5ef8602cb5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-SG0C",
     "timestamp": "2026-10-22T19:03:14.700Z",
     "repository": "FalkorDB/FalkorDB",
@@ -7492,6 +7462,36 @@
     "contentHash": "3b51590fb6a39e42826969d894941b2cfa30f4b4a5789abe51b8e55c82bcd86f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-45KC",
+    "timestamp": "2026-10-25T16:15:24.204Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "bc90da2cbf02c1702af0386a027f433af0dda8efeacb78b39239b077e254d626",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-45QL",
+    "timestamp": "2026-10-25T16:15:24.429Z",
+    "repository": "fujiapple852/trippy",
+    "learningId": "learn-github-fujiapple852-trippy",
+    "contentHash": "7c1b7452254e361efc28f520b19648c80845a97a68dc559e32be891d8be50bbc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

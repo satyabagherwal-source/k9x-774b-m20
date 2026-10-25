@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T16:09:09.940Z",
+  "last_updated": "2026-10-25T16:15:24.446Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -785,14 +785,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "content_hash": "6ec8bd1a460326a82f5c9f52194949c0ef2dabbe95c893f28fa1be5ad638997f",
-      "verified_at": "2026-10-20T20:41:33.507Z",
+      "content_hash": "bc90da2cbf02c1702af0386a027f433af0dda8efeacb78b39239b077e254d626",
+      "verified_at": "2026-10-25T16:15:24.217Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:41:33.507Z"
+      "last_updated": "2026-10-25T16:15:24.217Z"
     },
     "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -6861,14 +6861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fujiapple852-trippy",
-      "content_hash": "f54a2ce87acb70a815979fc01afceb46616843b4a5ba1b0e290163d1b240aade",
-      "verified_at": "2026-10-19T01:28:33.895Z",
+      "content_hash": "7c1b7452254e361efc28f520b19648c80845a97a68dc559e32be891d8be50bbc",
+      "verified_at": "2026-10-25T16:15:24.440Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:28:33.895Z"
+      "last_updated": "2026-10-25T16:15:24.440Z"
     },
     "BuilderIO/builder": {
       "repository": "BuilderIO/builder",

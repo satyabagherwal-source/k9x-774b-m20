@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md`  
 > **Source**: github ([https://github.com/fujiapple852/trippy](https://github.com/fujiapple852/trippy))  
-> **Source Version**: `15e61c83`  
+> **Source Version**: `54c8f399`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:28:33.759Z  
+> **Timestamp**: 2026-10-25T16:15:24.035Z  
 > **Learning ID**: `learn-github-fujiapple852-trippy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fujiapple852/trippy](https://github.com/fujiapple852/trippy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:28:33.755Z  
+> **Harvest Timestamp**: 2026-10-25T16:15:24.023Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A network diagnostic tool 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 8054 stars
+- **Stars / Engagement**: 8079 stars
 
 ---
 
@@ -1682,11 +1682,14 @@ impl Ipv4 {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1793** (2026-04-18): **keep Windows `WSARecvFrom` flags alive**
-  *Symptoms*: Sim tests crash on Windows with Rust 1.95  See: https://github.com/fujiapple852/trippy/actions/runs/24526729292/job/71766060138  ``` thread 'tokio-rt-worker' (5996) panicked at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library\alloc\src\raw_vec\mod.rs:641:30: unsafe precondition(s) violated: Layout::from_size_align_unchecked requires that align is a power of 2 and the rounded-up allocation size does not exceed isize::MAX  This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety. note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace thread caused non-unwinding panic. aborting. 2026-04-17T04:23:43.223814Z  INFO sim::tracer: 0 2 fd00:10::102 2026-04-17T04:23:43.223824Z  INFO sim::tracer: 0 3 fd00:10::103 error: test failed, to rerun pass `-p trippy-core --test sim`  Caused by:   process didn't exit successfully: `D:\a\trippy\trippy\target\x86_64-pc-windows-msvc\debug\deps\sim-276160054c9e564d.exe --exact --nocapture` (exit code: 0xc0000409, STATUS_STACK_BUFFER_OVERRUN) ```
+- **Issue #1898** (2026-10-25): **Error message includes URL with invalid anchor**
+  *Symptoms*: **Describe the bug**  Running `trip` in Windows without admin privileges results in the following message:  ``` Error: privileges are required  see https://github.com/fujiapple852/trippy#privileges for details ```  The message is expected, but the anchor in the URL is not valid.   **To Reproduce**  Run `trip` in Windows without admin privileges.   **Expected behavior**  Anchor in URL to be valid. 
+  **Post-Mortem & Fix Analysis**:
+  > @Gitoffthelawn the anchor exists:   https://github.com/fujiapple852/trippy/blob/15e61c83355208957fed980ec3fdd4a220278058/README.md?plain=1#L235-L237  It is in a section that is collapsed by default. 
+  > > It is in a section that is collapsed by default.  Yes, which means the user agent (web browser) will not scroll to the anchor by default. Thus, when the user clicks on the link (or copies and pastes it into a web browser), they will not see the desired content.  The user will undoubtedly be confused, leading to poor UX.  
 
-- **Issue #1729** (2026-04-05): **Trippy fails to use system locale**
-  *Symptoms*: **Describe the bug** Trippy fails to use the system locale correctly  **To Reproduce** 1: Set a locale, see my locale settings below for reference: $ env | grep 'LC_\|LANG' | sort GDM_LANG=en_US.utf8 LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ADDRESS=sv_SE.UTF-8 LC_COLLATE=sv_SE.UTF-8 LC_CTYPE=sv_SE.UTF-8 LC_IDENTIFICATION=sv_SE.UTF-8 LC_MEASUREMENT=en_GB.UTF-8 LC_MESSAGES=en_US.UTF-8 LC_MONETARY=sv_SE.UTF-8 LC_NAME=sv_SE.UTF-8 LC_NUMERIC=sv_SE.UTF-8 LC_PAPER=en_GB.UTF-8 LC_TELEPHONE=sv_SE.UTF-8 LC_TIME=en_GB.UTF-8  2 - Run `trip 8.8.8.8`  3 - Watch trippy displayed in swedish  **Expected behavior** Trippy should start and display english language.  **Screenshots**  <!-- If applicable, add screenshots to help explain your problem. -->  **Environment Info**  - OS: Debian trixie - Trippy version: trip 0.12.2 - Installation method: apt install trippy - Terminal / Console: terminator 2.1.4  **Additional context**  <!-- Add any other context about the problem here. --> 
+- **Issue #1897** (2026-10-25): **Tracing an IPv4 target fails during IPv4 byte order on Android**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1703,274 +1706,259 @@ impl Ipv4 {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7ab50ac` (2026-07-15)
-**Commit Message**: chore: bump ratatui from 0.30.1 to 0.30.2
+### Incident Patch 1: `54c8f399` (2026-07-08)
+**Commit Message**: fix(tui): centre the frequency chart on the highest-frequency bucket (#90)
 
-Bumps [ratatui](https://github.com/ratatui/ratatui) from 0.30.1 to 0.30.2.
-- [Release notes](https://github.com/ratatui/ratatui/releases)
-- [Changelog](https://github.com/ratatui/ratatui/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/ratatui/ratatui/compare/ratatui-v0.30.1...ratatui-v0.30.2)
-
----
-updated-dependencies:
-- dependency-name: ratatui
-  dependency-version: 0.30.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +46/-22)
+**File**: `crates/trippy-tui/src/frontend/render/histogram.rs` (modified, +86/-21)
 ```diff
-@@ -62,7 +62,7 @@ version = "1.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
- dependencies = [
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
+@@ -1,17 +1,28 @@
+ use crate::frontend::tui_app::TuiApp;
+ use crate::t;
++use itertools::Itertools;
+ use ratatui::Frame;
+ use ratatui::layout::Rect;
+ use ratatui::style::{Modifier, Style};
+-use ratatui::widgets::{BarChart, Block, BorderType, Borders};
+-use std::collections::BTreeMap;
++use ratatui::widgets::{Bar, BarChart, BarGroup, Block, BorderType, Borders};
+ use std::time::Duration;
  
- [[package]]
-@@ -73,7 +73,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
- dependencies = [
-  "anstyle",
-  "once_cell_polyfill",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -784,7 +784,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -1797,7 +1797,7 @@ version = "0.50.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
- dependencies = [
-- "windows-sys 0.60.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -2229,30 +2229,30 @@ checksum = "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69"
- 
- [[package]]
- name = "ratatui"
--version = "0.30.1"
-+version = "0.30.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1695748e3a735b34968c887ceea5a380b43545903868ae8f5b666593100f6b68"
-+checksum = "3274ba0a2c5e1bcad2a2005d20f4dc59dad26b2eb0940fb094500dba4099d57d"
- dependencies = [
-  "instability",
-  "ratatui-core",
-  "ratatui-crossterm",
-  "ratatui-macros",
-+ "ratatui-termina",
-  "ratatui-termwiz",
-  "ratatui-widgets",
-  "serde",
- ]
- 
- [[package]]
- name = "ratatui-core"
--version = "0.1.1"
-+version = "0.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "42d3603f354bba8c595fa47860e60142d7372b7210c27044c6a7d0e1a4336b44"
-+checksum = "cbb175c433c8e28a809d1f5773a2ae96e68c0ce40db865cbab1020bf33ae479c"
- dependencies = [
-  "bitflags 2.13.0",
-  "compact_str",
-  "critical-section",
-  "hashbrown 0.17.1",
-- "indoc",
-  "itertools 0.14.0",
-  "kasuari",
-  "lru",
-@@ -2267,9 +2267,9 @@ dependencies = [
- 
- [[package]]
- name = "ratatui-crossterm"
--version = "0.1.1"
-+version = "0.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2b2867bedcbd6a690ca4f8672a687b730ec07660c79844517b084311b529980c"
-+checksum = "567584a3b0e6a8203c23de40b4861497266725eb5363dbfd18a1edd603cca9f0"
- dependencies = [
-  "cfg-if",
-  "crossterm",
-@@ -2279,29 +2279,40 @@ dependencies = [
- 
- [[package]]
- name = "ratatui-macros"
--version = "0.7.1"
-+version = "0.7.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "80fac59720679490d89d200df411faa249be728681adcabed3d047ae72c48f1d"
-+checksum = "ed7dc68daa7498a43e4d68e0eb078427e10c38fbcfbb1e42d955f1fa2140d814"
- dependencies = [
-  "ratatui-core",
-  "ratatui-widgets",
- ]
- 
-+[[package]]
-+name = "ratatui-termina"
-+version = "0.1.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "c0bf912d9e66f057a759d92e386a280ea886b352ab757d6ac4d653c7ed2c43c2"
-+dependencies = [
-+ "instability",
-+ "ratatui-core",
-+ "termina",
-+]
++/// The width of a bar in terminal columns, excluding the gap.
++const BAR_WIDTH: u16 = 4;
++const BAR_GAP: u16 = 1;
 +
- [[package]]
- name = "ratatui-termwiz"
--version = "0.1.1"
-+version = "0.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "386b8ff8f74ed749509391c56d549761a2fcdb408e1f42e467286bcb7dac8967"
-+checksum = "faf03e0380b7744054d6cb74224fe3adf062a029754933f575ca1e3b4c2ce977"
- dependencies = [
-  "ratatui-core",
-  "termwiz",
- ]
+ /// Render a histogram of ping frequencies.
+ pub fn render(f: &mut Frame<'_>, app: &TuiApp, rect: Rect) {
+     let selected_hop = app.selected_hop_or_target();
+-    let freq_data = sample_frequency(selected_hop.samples());
+-    let freq_data_ref: Vec<_> = freq_data.iter().map(|(b, c)| (b.as_str(), *c)).collect();
++    let freq_data = sample_frequency(selected_hop.samples(), rect.width);
++    let bars: Vec<_> = freq_data
++        .iter()
++        .map(|bucket| {
++            Bar::default()
++                .label(bucket.rtt.as_millis().to_string())
++                .value(bucket.freq_pct)
++        })
++        .collect();
+     let barchart = BarChart::default()
+         .block(
+             Block::default()
+@@ -25,9 +36,9 @@ pub fn render(f: &mut Frame<'_>, app: &TuiApp, rect: Rect) {
+                 .border_type(BorderType::Rounded)
+                 .border_style(Style::default().fg(app.tui_config.theme.border)),
+         )
+-        .data(freq_data_ref.as_slice())
+-        .bar_width(4)
+-        .bar_gap(1)
++        .data(BarGroup::new(bars))
++        .bar_width(BAR_WIDTH)
++        .bar_gap(BAR_GAP)
+         .bar_style(Style::default().fg(app.tui_config.theme.frequency_chart_bar))
+         .value_style(
+             Style::default()
+@@ -38,21 +49,75 @@ pub fn render(f: &mut Frame<'_>, app: &TuiApp, rect: Rect) {
+     f.render_widget(barchart, rect);
+ }
  
- [[package]]
- name = "ratatui-widgets"
--version = "0.3.1"
-+version = "0.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7ef4f17dd7ac3abf5adc2b920a03c61eee4bfe6a88fa5191936895525371d79c"
-+checksum = "66e3d19bcc9130ca376277d93b60767ff121ace3be06f5f95f81dd68956407d1"
- dependencies = [
-  "bitflags 2.13.0",
-  "hashbrown 0.17.1",
-@@ -2400,7 +2411,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -2589,7 +2600,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "52d1cfed4120b4d927bf7c0f86d2087a4a7d6027c906d9f9d525a80573b9be51"
- dependencies = [
-  "libc",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -2702,7 +2713,20 @@ dependencies = [
-  "getrandom 0.4.2",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.59.0",
-+]
+-/// Return the frequency % grouped by sample duration.
+-fn sample_frequency(samples: &[Duration]) -> Vec<(String, u64)> {
++/// A single bucket of the frequency histogram.
++struct Bucket {
++    /// Round-trip time.
++    rtt: Duration,
++    /// Raw sample count.
++    count: usize,
++    /// The frequency as a percentage of all samples.
++    freq_pct: u64,
++}
 +
-+[[package]]
-+name = "termina"
-+version = "0.3.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "9048a889effe34a5cddee0af7f53285198b16dca3be510858d38dfdb3e62a04e"
-+dependencies = [
-+ "bitflags 2.13.0",
-+ "parking_lot",
-+ "rustix",
-+ "signal-hook",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -2712,7 +2736,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "230a1b821ccbd75b185820a1f1ff7b14d21da1e442e22c0863ea5f08771a8874"
- dependencies = [
-  "rustix",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -3894,7 +3918,7 @@ source = "registry+https:/
++/// Group samples by millisecond and return a window centred on the most frequent bucket.
++///
++/// `width` includes both borders. Match `BarChart` sizing: the last bar needs no trailing gap.
++fn sample_frequency(samples: &[Duration], width: u16) -> Vec<Bucket> {
+     let sample_count = samples.len();
+-    let mut count_by_duration: BTreeMap<u128, u64> = BTreeMap::new();
+-    for sample in samples {
+-        if !sample.is_zero() {
+-            *count_by_duration.entry(sample.as_millis()).or_default() += 1;
+-        }
+-    }
+-    count_by_duration
++    let freq_data: Vec<_> = samples
+         .iter()
+-        .map(|(ping, count)| {
+-            let ping = format!("{ping}");
+-            let freq_pct = ((*count as f64 / sample_count as f64) * 100_f64) as u64;
+-            (ping, freq_pct)
++        .filter(|sample| !sample.is_zero())
++        .map(|sample| Duration::new(sample.as_secs(), sample.subsec_millis() * 1_000_000))
++        .counts()
++        .into_iter()
++        .sorted_unstable_by_key(|(rtt, _)| *rtt)
++        .map(|(rtt, count)| Bucket {
++            rtt,
++            count,
++            freq_pct: (count as u128 * 100 / sample_count as u128) as u64,
+         })
+-        .collect()
++        .collect();
++
++    let bar_and_gap = BAR_WIDTH + BAR_GAP;
++    let inner_width = width.saturating_sub(2);
++    let max_bars = usize::from((inner_width + BAR_GAP) / bar_and_gap).max(1);
++    if freq_data.len() <= max_bars {
++        return freq_data;
++    }
++    let peak_index = freq_data
++        .iter()
++        .enumerate()
++        .max_by_key(|(_, bucket)| bucket.count)
++        .map_or(0, |(i, _)| i);
++    let start = peak_index
++        .saturating_sub(max_bars / 2)
++        .min(freq_data.len() - max_bars);
++    freq_data.into_iter().skip(start).take(max_bars).collect()
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use test_case::test_case;
++
++    #[test_case(&[], 0, &[]; "no samples")]
++    #[test_case(&[0, 0], 100, &[]; "only zero samples")]
++    #[test_case(&[1, 2, 3], 100, &[1, 2, 3]; "all data fits")]
++    #[test_case(&[1, 2, 3, 3, 4, 5], 16, &[2, 3, 4]; "centres on peak")]
++    #[test_case(&[1, 1, 2, 3, 4, 5], 16, &[1, 2, 3]; "clamps to start")]
++    #[test_case(&[1, 2, 3, 4, 5, 5], 16, &[3, 4, 5]; "clamps to end")]
++    #[test_case(&[1, 2, 3, 3], 1, &[3]; "width smaller than one bar")]
++    #[test_case(&[1, 2, 3, 4, 5, 5], 21, &[2, 3, 4, 5]; "last bar needs no trailing gap")]
++    #[test_case(&[1, 2, 3, 4, 5, 5], 20, &[3, 4, 5]; "reserves both borders")]
++    fn selects_window_around_peak(millis: &[u64], width: u16, expected: &[u64]) {
++        let samples: Vec<_> = millis.iter().copied().map(Duration::from_millis).collect();
++        let freq_data = sample_frequency(&samples, width);
 ```
 
 ---
 
-### Incident Patch 2: `e18d1c30` (2026-07-17)
-**Commit Message**: docs: fix locale listings
+### Incident Patch 2: `e04ea6f0` (2026-10-13)
+**Commit Message**: fix(core): treat Android like Linux when choosing the IPv4 byte order
 
-**File**: `docs/src/content/docs/index.mdx` (modified, +2/-2)
+**File**: `crates/trippy-core/src/net/platform/byte_order.rs` (modified, +10/-2)
 ```diff
-@@ -65,8 +65,8 @@ import { Icon } from '@astrojs/starlight/components';
- 	</Card>
- 
- 	<Card title="Trace in your language" icon="translate">
--	    TUI available in 10 languages:
--	    - Chinese 🇨🇳, English 🇺🇸, French 🇫🇷, German 🇩🇪, Italian 🇮🇹, Portuguese 🇵🇹, Russian 🇷🇺, Spanish 🇪🇸, Swedish 🇸🇪 and Turkish 🇹🇷
-+	    TUI available in 11 languages:
-+	    - Chinese 🇨🇳, English 🇺🇸, French 🇫🇷, German 🇩🇪, Italian 🇮🇹, Japanese 🇯🇵, Portuguese 🇵🇹, Russian 🇷🇺, Spanish 🇪🇸, Swedish 🇸🇪 and Turkish 🇹🇷
- 
- 		![Trippy main screen in Chinese](../../assets/help_screen_zh.png)
- 	</Card>
+@@ -16,7 +16,11 @@ use std::net::IpAddr;
+ /// byte order.  Linux will accept either byte order."
+ #[derive(Debug, Copy, Clone)]
+ pub enum Ipv4ByteOrder {
+-    #[cfg(all(unix, not(target_os = "linux"), not(target_os = "windows")))]
++    #[cfg(all(
++        unix,
++        not(any(target_os = "linux", target_os = "android")),
++        not(target_os = "windows")
++    ))]
+     Host,
+     Network,
+ }
+@@ -56,7 +60,11 @@ impl Ipv4ByteOrder {
+     #[must_use]
+     pub const fn adjust_length(self, ipv4_total_length: u16) -> u16 {
+         match self {
+-            #[cfg(all(unix, not(target_os = "linux"), not(target_os = "windows")))]
++            #[cfg(all(
++                unix,
++                not(any(target_os = "linux", target_os = "android")),
++                not(target_os = "windows")
++            ))]
+             Self::Host => ipv4_total_length.swap_bytes(),
+             Self::Network => ipv4_total_length,
+         }
 ```
 
-**File**: `docs/src/content/docs/reference/locale.md` (modified, +14/-13)
+**File**: `crates/trippy-core/src/net/platform/unix.rs` (modified, +5/-5)
 ```diff
-@@ -8,19 +8,20 @@ sidebar:
- The following table lists the supported locales for the Tui. These can be overridden with the `--tui-locale` command
- line option or in the `tui-locale` attribute in the `tui` section of the configuration file.
+@@ -25,25 +25,25 @@ mod address {
+     use std::net::{IpAddr, SocketAddr};
+     use tracing::instrument;
  
--| Locale | Language   | Region |
--| ------ | ---------- | ------ |
--| `zh`   | Chinese    | all    |
--| `en`   | English    | all    |
--| `fr`   | French     | all    |
--| `de`   | German     | all    |
--| `it`   | Italian    | all    |
--| `ja`   | Japanese   | all    |
--| `pt`   | Portuguese | all    |
--| `ru`   | Russian    | all    |
--| `es`   | Spanish    | all    |
--| `sv`   | Swedish    | all    |
--| `tr`   | Turkish    | all    |
-+| Locale  | Language   | Region |
-+| ------- | ---------- | ------ |
-+| `zh`    | Chinese    | all    |
-+| `zh-TW` | Chinese    | Taiwan |
-+| `en`    | English    | all    |
-+| `fr`    | French     | all    |
-+| `de`    | German     | all    |
-+| `it`    | Italian    | all    |
-+| `ja`    | Japanese   | all    |
-+| `pt`    | Portuguese | all    |
-+| `ru`    | Russian    | all    |
-+| `es`    | Spanish    | all    |
-+| `sv`    | Swedish    | all    |
-+| `tr`    | Turkish    | all    |
+-    #[cfg(not(target_os = "linux"))]
++    #[cfg(not(any(target_os = "linux", target_os = "android")))]
+     use std::net::Ipv4Addr;
  
- :::note
- If you are able to help validate translations for Trippy, or if you wish to add translations for any additional
+     /// The size of the test packet to use for discovering the `total_length` byte order.
+-    #[cfg(not(target_os = "linux"))]
++    #[cfg(not(any(target_os = "linux", target_os = "android")))]
+     const TEST_PACKET_LENGTH: u16 = 256;
+ 
+     /// Discover the required byte ordering for the IPv4 header fields `total_length`, `flags` and
+     /// `fragment_offset`.
+     ///
+     /// Linux accepts either network byte order or host byte order for the `total_length` field, and
+     /// so we skip the check and return network byte order unconditionally.
+-    #[cfg(target_os = "linux")]
++    #[cfg(any(target_os = "linux", target_os = "android"))]
+     #[expect(clippy::unnecessary_wraps)]
+     pub const fn for_address(_src_addr: IpAddr) -> Result<Ipv4ByteOrder> {
+         Ok(Ipv4ByteOrder::Network)
+     }
+ 
+-    #[cfg(not(target_os = "linux"))]
++    #[cfg(not(any(target_os = "linux", target_os = "android")))]
+     #[instrument(ret, level = "trace")]
+     pub fn for_address(addr: IpAddr) -> Result<Ipv4ByteOrder> {
+         let addr = match addr {
+@@ -71,7 +71,7 @@ mod address {
+     ///
+     /// Note that this implementation will try to create an `IPPROTO_ICMP` socket and if that fails
+     /// it will fall back to creating an `IPPROTO_RAW` socket.
+-    #[cfg(not(target_os = "linux"))]
++    #[cfg(not(any(target_os = "linux", target_os = "android")))]
+     #[instrument(ret, level = "trace")]
+     fn test_send_local_ip4_packet(src_addr: Ipv4Addr, total_length: u16) -> Result<()> {
+         use socket2::Protocol;
+```
+
+---
+
+### Incident Patch 3: `6aec3880` (2026-10-25)
+**Commit Message**: docs(tui): update privileges link to point at `trippy.rs`
+
+**File**: `crates/trippy-tui/src/config.rs` (modified, +5/-5)
+```diff
+@@ -848,7 +848,7 @@ fn validate_privilege(
+     has_privileges: bool,
+     needs_privileges: bool,
+ ) -> anyhow::Result<()> {
+-    const PRIVILEGE_URL: &str = "https://github.com/fujiapple852/trippy#privileges";
++    const PRIVILEGE_URL: &str = "https://trippy.rs/guides/privileges";
+     match (privilege_mode, has_privileges, needs_privileges) {
+         (PrivilegeMode::Privileged, true, _) | (PrivilegeMode::Unprivileged, _, false) => Ok(()),
+         (PrivilegeMode::Privileged, false, true) => Err(anyhow!(format!(
+@@ -1649,11 +1649,11 @@ mod tests {
+     #[test_case("trip example.com --unprivileged --udp --multipath-strategy paris", true, false, Err(anyhow!("Paris tracing strategy cannot be used in unprivileged mode".to_string())); "invalid unprivileged mode for paris")]
+     #[test_case("trip example.com --unprivileged --udp --multipath-strategy dublin", true, false, Err(anyhow!("Dublin tracing strategy cannot be used in unprivileged mode".to_string())); "invalid unprivileged mode for dublin")]
+     #[test_case("trip example.com", true, true, Ok(cfg().privilege_mode(PrivilegeMode::Privileged).build()); "has privilege and needs")]
+-    #[test_case("trip example.com", false, false, Err(anyhow!("privileges are required (hint: try adding -u to run in unprivileged mode)\n\nsee https://github.com/fujiapple852/trippy#privileges for details")); "no privilege and not needs")]
+-    #[test_case("trip example.com", false, true, Err(anyhow!("privileges are required\n\nsee https://github.com/fujiapple852/trippy#privileges for details")); "no privilege and needs")]
++    #[test_case("trip example.com", false, false, Err(anyhow!("privileges are required (hint: try adding -u to run in unprivileged mode)\n\nsee https://trippy.rs/guides/privileges for details")); "no privilege and not needs")]
++    #[test_case("trip example.com", false, true, Err(anyhow!("privileges are required\n\nsee https://trippy.rs/guides/privileges for details")); "no privilege and needs")]
+     #[test_case("trip example.com --unprivileged", false, false, Ok(cfg().privilege_mode(PrivilegeMode::Unprivileged).build()); "no privilege and not needs in unprivileged mode")]
+-    #[test_case("trip example.com --unprivileged", false, true, Err(anyhow!("unprivileged mode not supported on this platform\n\nsee https://github.com/fujiapple852/trippy#privileges for details")); "no privilege and needs in unprivileged mode")]
+-    #[test_case("trip example.com --unprivileged", true, true, Err(anyhow!("unprivileged mode not supported on this platform (hint: process is privileged so disable unprivileged mode)\n\nsee https://github.com/fujiapple852/trippy#privileges for details")); "has privilege and needs in unprivileged mode")]
++    #[test_case("trip example.com --unprivileged", false, true, Err(anyhow!("unprivileged mode not supported on this platform\n\nsee https://trippy.rs/guides/privileges for details")); "no privilege and needs in unprivileged mode")]
++    #[test_case("trip example.com --unprivileged", true, true, Err(anyhow!("unprivileged mode not supported on this platform (hint: process is privileged so disable unprivileged mode)\n\nsee https://trippy.rs/guides/privileges for details")); "has privilege and needs in unprivileged mode")]
+     fn test_privilege(
+         cmd: &str,
+         has_privileges: bool,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1903** (2026-10-25): Docs update privileges link (@fujiapple852)
+- **PR #1901** (2026-10-25): chore: bump tun-rs from 2.8.11 to 2.8.13 (@dependabot[bot])
+- **PR #1900** (closed): chore: bump tun-rs from 2.8.11 to 2.8.12 (@dependabot[bot])
+- **PR #1899** (2026-10-25): chore: bump tokio from 1.53.2 to 1.53.3 (@dependabot[bot])
+- **PR #1896** (2026-10-25): fix(core): treat Android like Linux when choosing the IPv4 byte order (@Alice39s)
 - **PR #1895** (2026-10-12): chore: update dependencies to latest semver compatible version (@fujiapple852)
-- **PR #1894** (2026-10-12): chore: update `getifaddrs` to 0.6.2 (@fujiapple852)
-- **PR #1893** (closed): chore: bump comfy-table from 7.2.2 to 8.0.1 (@dependabot[bot])
-- **PR #1892** (closed): chore: bump test-case from 3.3.1 to 3.4.0 (@dependabot[bot])
-- **PR #1891** (closed): chore: bump insta from 1.48.0 to 1.49.0 (@dependabot[bot])
-- **PR #1890** (closed): chore: bump serde_with from 3.23.0 to 3.24.0 (@dependabot[bot])
 
 ---
 
@@ -1990,85 +1978,82 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump ratatui from 0.30.1 to 0.30.2
+## X. tui): centre the frequency chart on the highest-frequency bucket (#90)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fujiapple852/trippy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/trippy-tui/src/frontend/render/histogram.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fujiapple852/trippy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7ab50ac`: bump ratatui from 0.30.1 to 0.30.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `54c8f399`: tui): centre the frequency chart on the highest-frequency bucket (#90). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/trippy-tui/src/frontend/render/histogram.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.59.0",
- "windows-sys 0.59.0",
-version = "0.30.2"
-checksum = "3274ba0a2c5e1bcad2a2005d20f4dc59dad26b2eb0940fb094500dba4099d57d"
- "ratatui-termina",
-version = "0.1.2"
-checksum = "cbb175c433c8e28a809d1f5773a2ae96e68c0ce40db865cbab1020bf33ae479c"
-version = "0.1.2"
-checksum = "567584a3b0e6a8203c23de40b4861497266725eb5363dbfd18a1edd603cca9f0"
-version = "0.7.2"
-checksum = "ed7dc68daa7498a43e4d68e0eb078427e10c38fbcfbb1e42d955f1fa2140d814"
-[[package]]
-name = "ratatui-termina"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c0bf912d9e66f057a759d92e386a280ea886b352ab757d6ac4d653c7ed2c43c2"
-dependencies = [
- "instability",
- "ratatui-core",
- "termina",
-]
+use itertools::Itertools;
+use ratatui::widgets::{Bar, BarChart, BarGroup, Block, BorderType, Borders};
+/// The width of a bar in terminal columns, excluding the gap.
+const BAR_WIDTH: u16 = 4;
+const BAR_GAP: u16 = 1;
 
-version = "0.1.2"
-checksum = "faf03e0380b7744054d6cb74224fe3adf062a029754933f575ca1e3b4c2ce977"
-version = "0.3.2"
-checksum = "66e3d19bcc9130ca376277d93b60767ff121ace3be06f5f95f81dd68956407d1"
- "windows-sys 0.59.0",
- "windows-sys 0.61.2",
- "windows-sys 0.59.0",
-]
+    let freq_data = sample_frequency(selected_hop.samples(), rect.width);
+    let bars: Vec<_> = freq_data
+        .iter()
+        .map(|bucket| {
+            Bar::default()
+                .label(bucket.rtt.as_millis().to_string())
+                .value(bucket.freq_pct)
+        })
+        .collect();
+        .data(BarGroup::new(bars))
+        .bar_width(BAR_WIDTH)
+        .bar_gap(BAR_GAP)
+/// A single bucket of the frequency histogram.
+struct Bucket {
+    /// Round-trip time.
+    rtt: Duration,
+    /// Raw sample count.
+    count: usize,
+    /// The frequency as a percentage of all samples.
+    freq_pct: u64,
+}
 
-[[package]]
-name = "termina"
-version = "0.3.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9048a889effe34a5cddee0af7f53285198b16dca3be510858d38
+/// Group samples by millisecond and return a window centred on the most frequent bucket.
+///
+/// `width` includes both borders. Match `BarChart` sizing: the last bar needs no trailing gap.
+fn sample_frequency(samples: &[Duration], width: u16) -> Vec<Bucket> {
+    let freq_data: Vec<_> = samples
+        .filter(|sample| !sample.is_zero())
+        .map(|sampl
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "windows-sys 0.60.2",
- "windows-sys 0.60.2",
- "windows-sys 0.60.2",
- "windows-sys 0.60.2",
-version = "0.30.1"
-checksum = "1695748e3a735b34968c887ceea5a380b43545903868ae8f5b666593100f6b68"
-version = "0.1.1"
-checksum = "42d3603f354bba8c595fa47860e60142d7372b7210c27044c6a7d0e1a4336b44"
- "indoc",
-version = "0.1.1"
-checksum = "2b2867bedcbd6a690ca4f8672a687b730ec07660c79844517b084311b529980c"
-version = "0.7.1"
-checksum = "80fac59720679490d89d200df411faa249be728681adcabed3d047ae72c48f1d"
-version = "0.1.1"
-checksum = "386b8ff8f74ed749509391c56d549761a2fcdb408e1f42e467286bcb7dac8967"
-version = "0.3.1"
-checksum = "7ef4f17dd7ac3abf5adc2b920a03c61eee4bfe6a88fa5191936895525371d79c"
- "windows-sys 0.60.2",
- "windows-sys 0.60.2",
- "windows-sys 0.60.2",
- "windows-sys 0.60.2",
+use ratatui::widgets::{BarChart, Block, BorderType, Borders};
+use std::collections::BTreeMap;
+    let freq_data = sample_frequency(selected_hop.samples());
+    let freq_data_ref: Vec<_> = freq_data.iter().map(|(b, c)| (b.as_str(), *c)).collect();
+        .data(freq_data_ref.as_slice())
+        .bar_width(4)
+        .bar_gap(1)
+/// Return the frequency % grouped by sample duration.
+fn sample_frequency(samples: &[Duration]) -> Vec<(String, u64)> {
+    let mut count_by_duration: BTreeMap<u128, u64> = BTreeMap::new();
+    for sample in samples {
+        if !sample.is_zero() {
+            *count_by_duration.entry(sample.as_millis()).or_default() += 1;
+        }
+    }
+    count_by_duration
+        .map(|(ping, count)| {
+            let ping = format!("{ping}");
+            let freq_pct = ((*count as f64 / sample_count as f64) * 100_f64) as u64;
+            (ping, freq_pct)
+        .collect()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7ab50ac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `54c8f399` are properly handled with clean fallback behavior.

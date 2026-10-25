@@ -635,8 +635,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "6ec8bd1a460326a82f5c9f52194949c0ef2dabbe95c893f28fa1be5ad638997f",
-    "lastHarvestedAt": "2026-10-20T20:41:33.499Z",
+    "contentHash": "bc90da2cbf02c1702af0386a027f433af0dda8efeacb78b39239b077e254d626",
+    "lastHarvestedAt": "2026-10-25T16:15:24.208Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
@@ -4493,10 +4493,10 @@
     "repository": "fujiapple852/trippy",
     "platform": "github",
     "sourceUrl": "https://github.com/fujiapple852/trippy",
-    "sourceVersion": "15e61c83",
+    "sourceVersion": "54c8f399",
     "license": "Apache-2.0",
-    "contentHash": "f54a2ce87acb70a815979fc01afceb46616843b4a5ba1b0e290163d1b240aade",
-    "lastHarvestedAt": "2026-10-19T01:28:33.892Z",
+    "contentHash": "7c1b7452254e361efc28f520b19648c80845a97a68dc559e32be891d8be50bbc",
+    "lastHarvestedAt": "2026-10-25T16:15:24.432Z",
     "learningId": "learn-github-fujiapple852-trippy"
   },
   "builderio-builder": {
