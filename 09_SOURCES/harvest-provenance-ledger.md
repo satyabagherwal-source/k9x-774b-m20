@@ -5027,3 +5027,5 @@ Every entry in this ledger must capture:
 | `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `1fc6d9c8` | Multi-dimensional audit evidence | 2026-10-25T22:13:56.925Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `68f60e27` | Multi-dimensional audit evidence | 2026-10-25T22:13:57.098Z |
 | `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-25T22:16:02.834Z |
+| `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-25T22:24:11.740Z |
+| `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-25T22:24:11.837Z |

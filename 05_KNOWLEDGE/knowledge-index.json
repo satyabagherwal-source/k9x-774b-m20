@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T22:16:02.772Z",
+  "last_updated": "2026-10-25T22:24:11.780Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11875,7 +11875,7 @@
       "platform": "github",
       "source_url": "https://github.com/franken-ui/ui",
       "source_version": "32af1a27",
-      "content_hash": "fd1d856dc2fb24f960f1b92d0da921501ed8c474a6e7f553f8c047aa12c33bab",
+      "content_hash": "1d18945ba880a9a8ad77cbdb005adf8e2c3b031387cbb1d2f96ddad97b7af76a",
       "dossier_path": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "promoted_rules": [
@@ -11900,7 +11900,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:01:30.868Z",
+      "verified_at": "2026-10-25T22:24:11.658Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23764,7 +23764,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
       "source_version": "hf-openai-clip-vit-base-patch32",
-      "content_hash": "ad66c9658fcf6a0721a8f4fa35058ac3f42483bb312b6028411d2c959b3c84fe",
+      "content_hash": "173b4dd233ea972c9ab2ff875eebf3c5bd3e2224801b0cbbcb6972f47c27bb5f",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "promoted_rules": [
@@ -23796,7 +23796,7 @@
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv3y5o08",
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q"
       ],
-      "verified_at": "2026-10-21T02:27:41.600Z",
+      "verified_at": "2026-10-25T22:24:11.762Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -91587,7 +91587,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-22T21:22:11.908Z"
+      "verified_at": "2026-10-25T22:24:11.658Z"
     },
     "rule-2110": {
       "learning_id": "rule-2110",

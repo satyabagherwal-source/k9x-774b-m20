@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-RA3N",
-    "timestamp": "2026-10-23T09:58:08.099Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "5154e8e29edbf76dad9172c1ec5e18343030295207126985e13b6e87cba8b488",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-5ZHY",
-    "timestamp": "2026-10-23T10:09:34.198Z",
-    "repository": "transact-rs/sqlx",
-    "learningId": "learn-github-transact-rs-sqlx",
-    "contentHash": "62148b7bff48adb4a1790d20ad1ebf3a4feed3717ec5f919548ba9ea9bbcb1ff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-61CU",
     "timestamp": "2026-10-23T10:09:36.606Z",
     "repository": "faker-js/faker",
@@ -7492,6 +7462,36 @@
     "contentHash": "d0cb0ed7b0ade4acc1161688655171875022495dde7d8ae18f77f679155ef075",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-AFA0",
+    "timestamp": "2026-10-25T22:24:11.736Z",
+    "repository": "franken-ui/ui",
+    "learningId": "learn-github-franken-ui-ui",
+    "contentHash": "1d18945ba880a9a8ad77cbdb005adf8e2c3b031387cbb1d2f96ddad97b7af76a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-AFCP",
+    "timestamp": "2026-10-25T22:24:11.833Z",
+    "repository": "openai/clip-vit-base-patch32",
+    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+    "contentHash": "173b4dd233ea972c9ab2ff875eebf3c5bd3e2224801b0cbbcb6972f47c27bb5f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

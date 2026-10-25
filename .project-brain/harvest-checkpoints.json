@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T22:16:02.843Z",
+  "last_updated": "2026-10-25T22:24:11.850Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1445,14 +1445,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-clip-vit-base-patch32",
-      "content_hash": "ad66c9658fcf6a0721a8f4fa35058ac3f42483bb312b6028411d2c959b3c84fe",
-      "verified_at": "2026-10-21T02:27:41.685Z",
+      "content_hash": "173b4dd233ea972c9ab2ff875eebf3c5bd3e2224801b0cbbcb6972f47c27bb5f",
+      "verified_at": "2026-10-25T22:24:11.845Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:27:41.685Z"
+      "last_updated": "2026-10-25T22:24:11.845Z"
     },
     "sentence-transformers/all-mpnet-base-v2": {
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -8571,14 +8571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-franken-ui-ui",
-      "content_hash": "fd1d856dc2fb24f960f1b92d0da921501ed8c474a6e7f553f8c047aa12c33bab",
-      "verified_at": "2026-10-25T10:01:30.982Z",
+      "content_hash": "1d18945ba880a9a8ad77cbdb005adf8e2c3b031387cbb1d2f96ddad97b7af76a",
+      "verified_at": "2026-10-25T22:24:11.748Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:01:30.982Z"
+      "last_updated": "2026-10-25T22:24:11.748Z"
     },
     "DataDog/glommio": {
       "repository": "DataDog/glommio",

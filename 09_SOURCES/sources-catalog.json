@@ -1095,8 +1095,8 @@
     "sourceUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceVersion": "hf-openai-clip-vit-base-patch32",
     "license": "Open-Source",
-    "contentHash": "ad66c9658fcf6a0721a8f4fa35058ac3f42483bb312b6028411d2c959b3c84fe",
-    "lastHarvestedAt": "2026-10-21T02:27:41.676Z",
+    "contentHash": "173b4dd233ea972c9ab2ff875eebf3c5bd3e2224801b0cbbcb6972f47c27bb5f",
+    "lastHarvestedAt": "2026-10-25T22:24:11.837Z",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
@@ -5635,8 +5635,8 @@
     "sourceUrl": "https://github.com/franken-ui/ui",
     "sourceVersion": "32af1a27",
     "license": "MIT",
-    "contentHash": "fd1d856dc2fb24f960f1b92d0da921501ed8c474a6e7f553f8c047aa12c33bab",
-    "lastHarvestedAt": "2026-10-25T10:01:30.975Z",
+    "contentHash": "1d18945ba880a9a8ad77cbdb005adf8e2c3b031387cbb1d2f96ddad97b7af76a",
+    "lastHarvestedAt": "2026-10-25T22:24:11.740Z",
     "learningId": "learn-github-franken-ui-ui"
   },
   "datadog-glommio": {
