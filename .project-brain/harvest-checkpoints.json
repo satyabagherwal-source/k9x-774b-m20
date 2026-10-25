@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T15:56:12.837Z",
+  "last_updated": "2026-10-25T16:02:43.351Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -770,14 +770,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "content_hash": "8656e3d8f43b96727aa617a9e5656fcb4f0fddadf4f238a0ff168e91d61b839c",
-      "verified_at": "2026-10-20T20:28:56.178Z",
+      "content_hash": "074b0ebf966582ba35fd7776c2cd807d7d5708c9cb9c81a97d68cdb4e4ebe61f",
+      "verified_at": "2026-10-25T16:02:41.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:28:56.178Z"
+      "last_updated": "2026-10-25T16:02:41.312Z"
     },
     "unsloth/Qwen3.8-27B-GGUF": {
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "ff6e722f077ff8ed14f91e452aa18004997cf199901102c432280f722f459c85",
-      "verified_at": "2026-10-23T10:31:12.977Z",
+      "content_hash": "be1e498c8843f5a961b3722a5207bce986740e487f3f4aad1891944511cddd2b",
+      "verified_at": "2026-10-25T16:02:43.344Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:31:12.977Z"
+      "last_updated": "2026-10-25T16:02:43.344Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T15:56:12.829Z",
-  "total_cycles_completed": 4867,
-  "total_learnings_persisted": 4867,
-  "total_rules_promoted": 4254,
+  "last_updated": "2026-10-25T16:02:43.341Z",
+  "total_cycles_completed": 4869,
+  "total_learnings_persisted": 4869,
+  "total_rules_promoted": 4257,
   "history": [
-    {
-      "timestamp": "2026-10-25T05:46:04.451Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T05:46:16.080Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T05:52:29.538Z",
       "repository": "elastic/eui",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T15:56:12.829Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T16:02:41.309Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T16:02:43.341Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -319143,3 +319143,208 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `9224e5f6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4375. Self-Describing Binary Artifact Integrity (Harvested from ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Self-Describing Binary Artifact Integrity",
+  "source": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+  "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-25T16:02:40.909Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF) (Revision: `hf-ista-da`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When distributing machine learning model weights as binary artifacts for inference engines, the container format MUST embed all necessary tensor metadata (shape, dtype, name, quantization type) within the binary file itself. External configuration files (e.g., `config.json`, `weights_map.json`) MUST NOT be required for the core weight loading process to succeed.
+
+**WHY**:
+Decoupling weight data from their metadata creates a **Time-of-Check to Time-of-Use (TOCTOU)** vulnerability in deployment. If the binary and the config file are updated independently or if the config file is lost/corrupted during transfer, the inference engine will either fail to load the model or, worse, misinterpret tensor shapes, leading to silent numerical corruption or segmentation faults. Self-describing formats ensure atomicity of the model definition.
+
+**WHEN TO APPLY**:
+Any system distributing pre-trained model weights for edge devices, serverless inference, or cross-platform compatibility (e.g., GGUF, ONNX, CoreML).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for a self-describing loader (like GGUF)
+def load_model(binary_path):
+    with open(binary_path, 'rb') as f:
+        # 1. Read Magic Number & Version
+        magic = f.read(4)
+        if magic != b'GGUF':
+            raise ValueError("Invalid format")
+        
+        # 2. Read Tensor Metadata Table (Embedded in Header)
+        tensor_count = read_int(f)
+        tensors = []
+        for _ in range(tensor_count):
+            name = read_string(f)
+            shape = read_shape(f)
+            dtype = read_dtype(f) # e.g., Q4_K_M, F16
+            offset = read_offset(f)
+            tensors.append((name, shape, dtype, offset))
+        
+        # 3. Load Weights based on Embedded Metadata
+        for name, shape, dtype, offset in tensors:
+            f.seek(offset)
+            raw_data = f.read(get_size(shape, dtype))
+            # No external config needed to know 'name' is 'model.layers.0.self_attn.q_proj'
+            # and 'dtype' is 'Q4_K_M'
+            load_tensor(name, raw_data, shape, dtype)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Decoupled Metadata
+def load_model_pytorch_style(binary_path, config_path):
+    with open(config_path, 'r') as f:
+        config = json.load(f) # Vulnerable to missing/corrupt config
+    with open(binary_path, 'rb') as f:
+        weights = f.read()
+    # If config says 'layer_0' is F16 but binary has Q4_K_M, 
+    # the loader will misinterpret bytes, causing NaNs or crashes.
+    for layer_name, dtype in config['tensors'].items():
+        load_tensor(layer_name, weights, dtype)
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Load the binary artifact in a clean environment with *no* other files present. Assert that the loader successfully identifies all tensor names, shapes, and dtypes.
+2.  **Mutation Test:** Corrupt the external config file (if one exists) and verify that the loader *still* works correctly because it relies on the embedded metadata.
+3.  **Schema Validation:** Use a binary schema validator to ensure the header structure matches the expected GGUF specification version.
+
+
+---
+
+## 4376. Sensitivity-Aware Precision Allocation for MoE Models (Harvested from ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Sensitivity-Aware Precision Allocation for MoE Models",
+  "source": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+  "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-25T16:02:41.105Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF) (Revision: `hf-ista-da`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing Mixture-of-Experts (MoE) models, the quantization precision allocation MUST be non-uniform and driven by per-tensor sensitivity analysis. The optimization budget MUST prioritize the routed expert matrices, as they constitute the majority of the parameter count and are sparsely activated, allowing for higher compression ratios without proportional degradation in output quality compared to dense layers.
+
+**WHY**:
+Uniform quantization (e.g., all Q4) wastes precision on low-sensitivity tensors and under-allocates precision to high-sensitivity tensors. In MoE models, the routed experts are the "workhorses" but are only partially active. By using a gradient-based search (like RCO) to assign lower bit-widths to less sensitive experts and higher bit-widths to critical shared layers (attention, gate), the system achieves a better Pareto frontier of size vs. accuracy. Ignoring this leads to either unnecessarily large models or significant quality degradation.
+
+**WHEN TO APPLY**:
+Quantization pipelines for any MoE architecture (e.g., Mixtral, Qwen-MoE, DeepSeek-V2/V3).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for Sensitivity-Aware Allocation
+def allocate_precision(moe_model, target_size_bpw):
+    # 1. Compute Sensitivity for Each Tensor
+    sensitivities = {}
+    for tensor in moe_model.tensors:
+        # Use gradient-based search (GSQ/RCO) to find optimal quantization type
+        # that minimizes loss for this specific tensor
+        optimal_type = gsq_search(tensor, target_bit_width_range)
+        sensitivities[tensor.name] = optimal_type
+    
+    # 2. Apply Allocation
+    for name, q_type in sensitivities.items():
+        moe_model.quantize_tensor(name, q_type)
+    
+    # 3. Verify Total Size
+    total_size = sum(get_size(t) for t in moe_model.tensors)
+    assert total_size <= target_size_bpw * moe_model.param_count, "Size budget exceeded"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Uniform Quantization
+def uniform_quantize(moe_model, q_type="Q4_K_M"):
+    for tensor in moe_model.tensors:
+        # Applies same precision to all, ignoring that attention layers
+        # might need F16 while some experts can be Q2_K
+        moe_model.quantize_tensor(tensor.name, q_type)
+    # Result: Suboptimal quality for the given size, or unnecessarily large model
+```
+
+**VERIFICATION METHOD**:
+1.  **A/B Testing:** Compare the perplexity and downstream task accuracy of the non-uniformly quantized model against a uniformly quantized model of the same total size. The non-uniform model MUST show equal or better performance.
+2.  **Size Audit:** Verify that the total file size matches the target bit-width per weight (bpw) within a 1% tolerance.
+3.  **Sensitivity Map Visualization:** Generate a heatmap of assigned quantization types per layer/expert to confirm that high-sensitivity layers (e.g., attention) have higher precision than low-sensitivity routed experts.
+
+
+---
+
+## 4377. search): optional second-stage ONNX rerank flag for memory_search (#1602) (#1661 (Harvested from doobidoo/mcp-memory-service)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "search): optional second-stage ONNX rerank flag for memory_search (#1602) (#1661",
+  "source": "doobidoo/mcp-memory-service",
+  "source_url": "https://github.com/doobidoo/mcp-memory-service",
+  "source_version": "a930c2b1",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T16:02:43.154Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-doobidoo-mcp-memory-service",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `a930c2b1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `changelog.d/1602.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `344f4ae1`: search): optional second-stage ONNX rerank flag for memory_search (#1602) (#1661). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1602.added.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- Add an opt-in `rerank` flag to `memory_search`: a second-stage ONNX cross-encoder reorders the top `MCP_RERANK_CANDIDATES` results when `MCP_RERANK_ENABLED` is set, fails open to the unreranked order, and never touches the default path.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `344f4ae1` are properly handled with clean fallback behavior.

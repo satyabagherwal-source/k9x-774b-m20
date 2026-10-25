@@ -4890,3 +4890,5 @@
 | `CYCLE-20261025-F8XO` | `2026-10-25T15:56:02.172Z` | `octodns/octodns` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4373` | Yes (`3991a4f1...`) |
 | `CYCLE-20261025-FD6G` | `2026-10-25T15:56:07.672Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md` | Yes (`592052b7...`) |
 | `CYCLE-20261025-FH5I` | `2026-10-25T15:56:12.822Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4374` | Yes (`fd30d27f...`) |
+| `CYCLE-20261025-NSWL` | `2026-10-25T16:02:41.301Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4375, Rule 4376` | Yes (`074b0ebf...`) |
+| `CYCLE-20261025-NUH1` | `2026-10-25T16:02:43.333Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4377` | Yes (`be1e498c...`) |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-BU20",
-    "timestamp": "2026-10-22T18:50:19.752Z",
-    "repository": "fb55/htmlparser2",
-    "learningId": "learn-github-fb55-htmlparser2",
-    "contentHash": "21fb3b28e8d944af33f8150b42cfc101dadd7ad3e811c1b9da9e48e2d20a17c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-BYC7",
-    "timestamp": "2026-10-22T18:50:25.303Z",
-    "repository": "authzed/spicedb",
-    "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "5ecedee92af13d3121864acc01439cd40d533ebe3579b1f1b6183fe061770686",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-C1XM",
     "timestamp": "2026-10-22T18:50:29.962Z",
     "repository": "Mintplex-Labs/anything-llm",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "fd30d27ff120219d42b6a04c206f0639a94eff30037688ff520cc844faa7e711",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-NSWL",
+    "timestamp": "2026-10-25T16:02:41.301Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+    "contentHash": "074b0ebf966582ba35fd7776c2cd807d7d5708c9cb9c81a97d68cdb4e4ebe61f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-NUH1",
+    "timestamp": "2026-10-25T16:02:43.333Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "be1e498c8843f5a961b3722a5207bce986740e487f3f4aad1891944511cddd2b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

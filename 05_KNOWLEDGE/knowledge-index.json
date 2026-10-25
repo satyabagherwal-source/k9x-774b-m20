@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T15:56:12.713Z",
+  "last_updated": "2026-10-25T16:02:43.276Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8964,8 +8964,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "5c68f754",
-      "content_hash": "ff6e722f077ff8ed14f91e452aa18004997cf199901102c432280f722f459c85",
+      "source_version": "a930c2b1",
+      "content_hash": "be1e498c8843f5a961b3722a5207bce986740e487f3f4aad1891944511cddd2b",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -8998,6 +8998,11 @@
           "number": 3881,
           "title": "quarantine): bound the on-store belief check and let it run in background (#1633",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4377,
+          "title": "search): optional second-stage ONNX rerank flag for memory_search (#1602) (#1661",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9005,7 +9010,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:31:12.898Z",
+      "verified_at": "2026-10-25T16:02:43.264Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21577,7 +21582,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "8656e3d8f43b96727aa617a9e5656fcb4f0fddadf4f238a0ff168e91d61b839c",
+      "content_hash": "074b0ebf966582ba35fd7776c2cd807d7d5708c9cb9c81a97d68cdb4e4ebe61f",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -21600,6 +21605,16 @@
           "number": 1377,
           "title": "Strict Zero-Offset YAML Frontmatter Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4375,
+          "title": "Self-Describing Binary Artifact Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4376,
+          "title": "Sensitivity-Aware Precision Allocation for MoE Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21620,7 +21635,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv47q2a0",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv4l09tk"
       ],
-      "verified_at": "2026-10-20T20:28:56.114Z",
+      "verified_at": "2026-10-25T16:02:41.216Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124606,6 +124621,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T15:56:12.703Z"
+    },
+    "rule-4375": {
+      "learning_id": "rule-4375",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4375,
+      "title": "Self-Describing Binary Artifact Integrity",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T16:02:41.216Z"
+    },
+    "rule-4376": {
+      "learning_id": "rule-4376",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4376,
+      "title": "Sensitivity-Aware Precision Allocation for MoE Models",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T16:02:41.216Z"
+    },
+    "rule-4377": {
+      "learning_id": "rule-4377",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4377,
+      "title": "search): optional second-stage ONNX rerank flag for memory_search (#1602) (#1661",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "a930c2b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T16:02:43.264Z"
     }
   },
   "aliases": {

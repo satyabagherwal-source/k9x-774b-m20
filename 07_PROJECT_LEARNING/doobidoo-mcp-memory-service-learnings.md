@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `5c68f754`  
+> **Source Version**: `a930c2b1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:31:12.621Z  
+> **Timestamp**: 2026-10-25T16:02:42.961Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:31:10.337Z  
+> **Harvest Timestamp**: 2026-10-25T16:02:42.635Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2036 stars
+- **Stars / Engagement**: 2043 stars
 
 ---
 
@@ -2932,765 +2932,1327 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2601f088` (2026-10-21)
-**Commit Message**: fix(quarantine): bound the on-store belief check and let it run in background (#1633)
+### Incident Patch 1: `344f4ae1` (2026-10-23)
+**Commit Message**: feat(search): optional second-stage ONNX rerank flag for memory_search (#1602) (#1661)
 
-* fix(quarantine): bound the on-store belief check and let it run in background
+* feat(search): optional second-stage ONNX rerank flag for memory_search (#1602)
 
-The on-store NLI check compared the new memory against up to 20 active beliefs,
-one LLM call each, with no time limit, no configurable cap and no log line:
-measured 27 s per write on an instance with 625 eligible beliefs (issue #1630).
+Adds a per-call `rerank` boolean to the memory_search arguments, gated by
+MCP_RERANK_ENABLED (default off), MCP_RERANK_CANDIDATES (default 40) and
+MCP_RERANK_MODEL (default Xenova/bge-reranker-base). Inference goes through
+the existing quality/onnx_ranker loader only; load or inference failures
+fail open to the unreranked order with one process-lifetime warning. The
+scorer is a process-wide instance with no shared mutable state, safe
+alongside quality_boost. pyproject deps untouched (no torch).
 
-- MCP_NLI_ON_STORE_BUDGET_S (default 2 s) caps the total time of the check. The
-  budget is fail-open: on expiry the check stops and the write proceeds. 2 s is
-  the smallest value that still allows one real LLM comparison (~1.3 s measured
-  here); with 1 s the check compares nothing and silently becomes a no-op.
-- MCP_QUARANTINE_MAX_BELIEFS (default 20) caps how many beliefs are compared.
-- A truncated check logs a WARNING naming the variable, so the cost is visible
-  even where INFO is suppressed (Claude Desktop JSON mode).
-- MCP_NLI_ON_STORE_ASYNC schedules both on-store checks (contradictions and
-  beliefs) in the background: the write returns at baseline latency and the
-  result goes to the log instead of the response.
+Refs: doobidoo/mcp-memory-service#1602
 
-Measured on a snapshot of the production corpus (29,357 memo
+* docs(1602): bancada result - ms-marco baseline refuted (-8.3 p.p. @10); bge-int8 registration blocking for PR
 
-**File**: `changelog.d/1633.fixed.md` (added, +1/-0)
+* feat(quality): register Xenova cross-encoder int8 models in SUPPORTED_MODELS
+
+Config-data registration for the #1602 service-path bench: bge-reranker-base
+(2 inputs: input_ids/attention_mask, Unigram tokenizer) e ms-marco
+MiniLM-L-6-v2 (3 inputs incl. token_type_ids, BERT tokenizer).
+
+The ONNXRankerModel inference paths now honor the model_config['inputs']
+declared in the
+
+**File**: `changelog.d/1602.added.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+- Bound the on-store belief check with `MCP_NLI_ON_STORE_BUDGET_S` (2 s default) and `MCP_QUARANTINE_MAX_BELIEFS`, log truncated checks as WARNING, and add the opt-in `MCP_NLI_ON_STORE_ASYNC` mode (#1630).
++- Add an opt-in `rerank` flag to `memory_search`: a second-stage ONNX cross-encoder reorders the top `MCP_RERANK_CANDIDATES` results when `MCP_RERANK_ENABLED` is set, fails open to the unreranked order, and never touches the default path.
 ```
 
-**File**: `src/mcp_memory_service/consolidation/quarantine.py` (modified, +231/-19)
+**File**: `src/mcp_memory_service/quality/config.py` (modified, +16/-0)
 ```diff
-@@ -1,8 +1,10 @@
- """Memory quarantine — holds memories that contradict active beliefs."""
- 
-+import asyncio
- import json
- import logging
- import os
-+import time
- from datetime import datetime, timezone
- from typing import Optional, List
- 
-@@ -19,6 +21,20 @@
- # config needs MCP_NLI_BACKEND=cascade or a lowered gate to quarantine on store.
- DEFAULT_QUARANTINE_NLI_THRESHOLD = 0.7
- 
-+# Orçamento total do check de crenças no caminho de escrita (issue #1630).
-+# Sem teto, uma gravação com N crenças elegíveis custa N chamadas de LLM
-+# sequenciais: medido 27 s com 20 crenças e ~1,2 s por chamada. O orçamento é
-+# fail-open — ao estourar, a verificação para e a gravação segue normalmente.
-+# 2 s é o menor valor que ainda permite UMA comparação real com o LLM medido
-+# (~1,3 s); com 1 s o check não compara nada e a feature vira no-op silencioso.
-+DEFAULT_ON_STORE_BUDGET_S = 2.0
-+DEFAULT_ON_STORE_MAX_BELIEFS = 20
-+
-+# Quantas verificações de background podem rodar ao mesmo tempo (modo assíncrono).
-+# O excesso é descartado com WARNING: sem teto, uma rajada de gravações vira uma
-+# rajada de chamadas de LLM.
-+DEFAULT_BACKGROUND_CONCURRENCY = 2
-+
- # Backends already warned about below (one warning per backend per process).
- _gate_warned_backends: set = set()
- 
-@@ -37,6 +53,29 @@ def _quarantine_nli_threshold() -> float:
-     )
- 
- 
-+def _on_store_budget_s() -> float:
-+    """Orçamento total (segundos) do check de crenças no caminho de escrita.
-+
-+    Lido a cada chamada, como o gate, para que configuração de runtime e testes
-+    tenham efeito sem reiniciar. Valor fora da faixa cai no default com erro
-+    registrado, e não desabilita a verificação em silêncio.
-+    """
-+    from ..config import safe_get_float_env
-+    return safe_get_float_env(
-+        "MCP_NLI_ON_STORE_BUDGET_S", DEFAULT_ON_STORE_BUDGET_S,
-+        min_value=0.0, max_value=120.0,
-+    )
-+
-+
-+def _on_store_max_beliefs() -> int:
-+    """Quantas crenças, no máximo, o check compara por gravação."""
-+    from ..config import safe_get_int_env
-+    return safe_get_int_env(
-+        "MCP_QUARANTINE_MAX_BELIEFS", DEFAULT_ON_STORE_MAX_BELIEFS,
-+        min_value=0, max_value=1000,
-+    )
-+
-+
- def _warn_if_gate_unreachable(classifier, threshold: float) -> None:
-     """Emit one warning per process if no contradiction could ever meet the gate.
- 
-@@ -137,33 +176,102 @@ async def check_beliefs_on_store(storage, belief_service, content: str, content_
-     """Check if new memory contradicts any active belief.
- 
-     Called from the on_store path (MCP_NLI_ON_STORE=true).
-+
-+    O custo é limitado por dois tetos, ambos configuráveis: o número de crenças
-+    comparadas (MCP_QUARANTINE_MAX_BELIEFS) e o tempo total do check
-+    (MCP_NLI_ON_STORE_BUDGET_S, default 1 s). O orçamento é fail-open: ao
-+    estourar, a verificação para e a gravação segue — sem exceção. Uma linha
-+    INFO por execução registra duração, comparações e motivo da parada, para
-+    que o custo deixe de ser invisível (issue #1630).
-     """
-     from ..reasoning.nli import NLIClassifier
- 
--    beliefs = await belief_service.get_beliefs(status="active", min_confidence=0.35)
--    if not beliefs:
--        return None
-+    started = time.monotonic()
-+    budget = _on_store_budget_s()
-+    max_beliefs = _on_store_max_beliefs()
-+    beliefs: list = []
-+    compared = 0
-+    stop_reason = "no-beliefs"
- 
--    classifier = NLIClassifier(backend="auto")
--    threshold = _quarantine_nli_threshold()
--    _warn_if_gate_unreachable(classifier, threshold)
-+    try:
-+        beliefs = await belief_service.get_beliefs(status="active", min_confidence=0.35)
-+        if not beliefs:
-+            return None
- 
--    for belief in beliefs[:20]:
--        result = await classifier.classify(belief["content"], content)
--        if result.label == "contradiction" and result.confidence >= threshold:
--            q_result = await quarantine_memory(
--                storage, content_hash, belief["belief_hash"],
--                reason=f"Contradicts belief: {belief['content'][:100]}",
--            )
-+        classifier = NLIClassifier(backend="auto")
-+        threshold = _quarantine_nli_threshold()
-+        _warn_if_gate_unreachable(classifier, threshold)
-+        # Distingue "olhou tudo" de "parou pelo teto de contagem" (Greptile, #1633).
-+        stop_reason = "max-beliefs" if len(beliefs) > max_beliefs else "completed"
- 
--            contradiction_count = await _count_quarantined_for_belief(storage, belief["belief_hash"])
--            if contradiction_count >= CONTRADICTION_THRESHOLD:
--                await belief_service.challenge_belief(belief["belief_hash"])
--                logger.info(f"Belief {belief['belief_hash'][:8]} challenged after {contradiction_count} contradictions")
-+        for belief in beliefs[:max_beliefs]:
-+            remaining = budget - (time.monotonic() - started)
-+            if remaining <= 0:
-+                stop_reason = "budget"
-+                break
- 
--            return q_result
-+            
+@@ -179,6 +179,22 @@ def can_use_gemini(self) -> bool:
+         'output_classes': ['low', 'medium', 'high'],
+         'description': 'Absolute quality assessment (recommended, eliminates self-matching bias)'
+     },
++    'Xenova/bge-reranker-base': {
++        'hf_name': 'Xenova/bge-reranker-base',
++        'type': 'cross-encoder',
++        'size_mb': 266,
++        'inputs': ['input_ids', 'attention_mask'],
++        'output_classes': None,
++        'description': 'bge reranker int8 (issue #1602 service-path bench model)'
++    },
++    'Xenova/ms-marco-MiniLM-L-6-v2': {
++        'hf_name': 'Xenova/ms-marco-MiniLM-L-6-v2',
++        'type': 'cross-encoder',
++        'size_mb': 23,
++        'inputs': ['input_ids', 'attention_mask', 'token_type_ids'],
++        'output_classes': None,
++        'description': 'ms-marco MiniLM int8 (issue #1602 service-path bench model)'
++    },
+     'ms-marco-MiniLM-L-6-v2': {
+         'hf_name': 'cross-encoder/ms-marco-MiniLM-L-6-v2',
+         'type': 'cross-encoder',  # Query-document relevance ranking
 ```
 
-**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +24/-0)
+**File**: `src/mcp_memory_service/quality/onnx_ranker.py` (modified, +28/-3)
 ```diff
-@@ -315,6 +315,30 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
+@@ -311,8 +311,14 @@ def _init_model(self):
  
-         # Phase 3: NLI contradiction check on store (opt-in, single memories only)
-         nli_on_store = os.environ.get("MCP_NLI_ON_STORE", "false").lower() == "true"
+         # Initialize ONNX session
+         logger.info("Loading ONNX ranker model with providers: %s", self._preferred_providers)
++        session_options = ort.SessionOptions()
++        # 0 = ORT default (all physical cores). The knob exists so a deployment
++        # can cap the intra-op pool when the rerank stage shares the box with
++        # other CPU-bound work.
++        session_options.intra_op_num_threads = int(os.environ.get("MCP_ORT_THREADS", "0") or 0)
+         self._model = ort.InferenceSession(
+             str(onnx_path),
++            sess_options=session_options,
+             providers=self._preferred_providers
+         )
+ 
+@@ -411,7 +417,7 @@ def score_quality(self, query: str, memory_content: str) -> float:
+                 return 0.5
+ 
+             # Run inference
+-            outputs = self._model.run(None, ort_inputs)
++            outputs = self._model.run(None, self._accepted_ort_inputs(ort_inputs))
+             logits = outputs[0][0]  # Shape: (num_classes,)
+ 
+             # Convert logits to score based on model type
+@@ -442,6 +448,25 @@ def score_quality(self, query: str, memory_content: str) -> float:
+             logger.error("Error scoring quality with %s: %s", self.model_name, _sanitize_log_value(str(e)))
+             return 0.5  # Return neutral score on error
+ 
++    def _accepted_ort_inputs(self, ort_inputs: dict) -> dict:
++        """Filter the feed to the inputs the loaded graph declares.
 +
-+        # Modo assíncrono (MCP_NLI_ON_STORE_ASYNC, issue #1630): a escrita não
-+        # espera o LLM. As duas verificações abaixo rodam em background e o
-+        # resultado vai para o log, não para esta resposta.
-+        if (
-+            nli_on_store
-+            and result.get("success")
-+            and "memory" in result
-+            and os.environ.get("MCP_NLI_ON_STORE_ASYNC", "").strip().lower() in {"true", "1", "yes"}
-+        ):
-+            try:
-+                from ...consolidation.quarantine import schedule_on_store_checks
++        BERT-like exports differ: some graphs accept ``token_type_ids``, others
++        declare only ``input_ids``/``attention_mask`` (Xenova int8 exports do the
++        latter). Sending an undeclared input makes onnxruntime raise, the
++        single-item retry sends the same payload, and the rerank silently falls
++        back to the unreranked order -- measured on #1661 (Greptile P1).
++        """
++        try:
++            accepted = {node.name for node in self._model.get_inputs()}
++        except (AttributeError, TypeError):
++            # Test doubles and exotic sessions do not expose get_inputs(); the
++            # real InferenceSession always does. Fail safe: pass the feed as-is.
++            return ort_inputs
++        if not accepted:
++            return ort_inputs
++        return {name: value for name, value in ort_inputs.items() if name in accepted}
 +
-+                agendado = schedule_on_store_checks(
-+                    server.storage, content, result["memory"]["content_hash"]
-+                )
-+                if agendado:
-+                    message += "\n(contradiction checks scheduled in the background)"
-+                else:
-+                    message += "\n(contradiction checks skipped: background capacity is full)"
-+                nli_on_store = False
-+            except Exception as e:
-+                logger.debug("Could not schedule background NLI checks: %s", _sanitize_log_value(e))
-+
-         if nli_on_store and result.get("success") and "memory" in result:
-             try:
-                 from ...reasoning.nli import detect_contradictions_nli
+     # Minimum batch size to use batched ONNX inference on GPU.
+     # Below this threshold, sequential single-item GPU calls are faster
+     # because small batches incur padding + tensor transfer overhead
+@@ -532,7 +557,7 @@ def _score_classifier_batch(self, pairs: List[Tuple[str, str]]) -> List[float]:
+             attention_mask = inputs["attention_mask"].astype(np.int64)
+ 
+         ort_inputs = {"input_ids": input_ids, "attention_mask": attention_mask}
+-        outputs = self._model.run(None, ort_inputs)
++        outputs = self._model.run(None, self._accepted_ort_inputs(ort_inputs))
+         logits = outputs[0]  # Shape: (batch_size, num_classes)
+ 
+         # Vectorized softmax + weighted score
+@@ -587,7 +612,7 @@ def _score_cross_encoder_batch(self, pairs: List[Tuple[str, str]]) -> List[float
+             "attention_mask": attention_mask,
+             "token_type_ids": token_type_ids,
+         }
+-        outputs = self._model.run(None, ort_inputs)
++        outputs = self._model.run(None, self._accepted_ort_inputs(ort_inputs))
+         logits = outputs[0]  # Shape: (batch_size, num_classes) or (batch_size,)
+ 
+         # Vectorized sigmoid
 ```
 
-**File**: `tests/consolidation/test_quarantine_on_store_budget.py` (added, +319/-0)
+**File**: `src/mcp_memory_service/quality/search_rerank.py` (added, +238/-0)
 ```diff
-@@ -0,0 +1,319 @@
-+"""Orçamento de tempo no NLI on-store (issue #1630).
+@@ -0,0 +1,238 @@
++"""Optional ONNX reranker for memory_search (issue #1602).
 +
-+Medido em 21/out: com `MCP_NLI_ON_STORE=true` uma gravação levava ~27 s porque o
-+loop comparava até 20 crenças, uma chamada de LLM por crença, sem teto de tempo,
-+sem teto configurável e sem uma linha de log.
++Closed scope: a per-call ``rerank`` boolean on ``memory_search``, gated by the
++``MCP_RERANK_*`` environment flags. Inference runs through the existing
++``quality/onnx_ranker.py`` loader — one ONNX path, no second implementation.
 +
-+Estes testes falham no código anterior e passam com o orçamento:
++Contract (specs/1602-rerank-flag.md):
 +
-+- o tempo total do check respeita `MCP_NLI_ON_STORE_BUDGET_S` (default 1 s);
-+- o número de crenças comparadas respeita `MCP_QUARANTINE_MAX_BELIEFS`;
-+- estourar o orçamento não levanta exceção (fail-open: a gravação continua);
-+- uma linha INFO registra duração, crenças comparadas e motivo da parada;
-+- uma contradição encontrada dentro do orçamento continua quarentenando.
++- EARS 1/2 — with ``rerank`` absent or false the stage never runs; without
++  ``MCP_RERANK_ENABLED`` the flag is a total no-op: no model load, no download,
++  no timing change, byte-identical response ordering.
++- EARS 3 — active: the candidate pool is inflated to ``MCP_RERANK_CANDIDATES``
++  (default 40), scored against the query by the model named in
++  ``MCP_RERANK_MODEL`` (default ``Xenova/bge-reranker-base``), sorted best
++  first, truncated to the caller's ``limit``.
++- EARS 4 — fail-open end to end: a missing model, an unresolvable name, or an
++  inference error degrades to the unreranked order and logs one warning per
++  process lifetime. It never raises to the caller.
++- EARS 5 — model resolution goes through ``quality/onnx_ranker.py``'s
++  ``get_onnx_ranker_model`` exclusively.
++- EARS 6 — thread-safe alongside ``quality_boost``: the scorer is a
++  process-wide instance cached behind a double-checked lock, but scoring
++  runs on a worker thread (``asyncio.to_thread``) so the event loop is never
++  blocked. ``quality_boost`` keeps its own ranker instance; the two paths
++  share no mutable state. The only process-wide mutable state is
++  bookkeeping (the cached instance and the failure latch), which never
++  affects any result's ORDER — results depend only on the query and the
++  candidate list.
++
++Config is re-read per call (mirrors ``QualityConfig.from_env()``) so tests and
++host services flip the flags without a process reload.
 +"""
 +
 +import asyncio
-+import time
++import logging
++import os
++import threading
++from dataclasses import dataclass
++from typing import Any, List, Optional
++
++from ..compat import _sanitize_log_value
++from .onnx_ranker import get_onnx_ranker_model
++
++logger = logging.getLogger(__name__)
++
++#: Default model: the issue's measured cross-encoder, exported ONNX int8.
++#: Only names resolvable through the existing loader actually load; anything
++#: unresolvable fails open (EARS 4) -- see the module docstring.
++DEFAULT_RERANK_MODEL = 'Xenova/bge-reranker-base'
++
++DEFAULT_RERANK_CANDIDATES = 40
++
++_TRUTHY = frozenset(('true', '1', 'yes', 'on', 'enabled'))
++
++
++@dataclass(frozen=True)
++class SearchRerankConfig:
++    """Rerank stage configuration. Re-read per call on purpose."""
++
++    enabled: bool = False
++    candidates: int = DEFAULT_RERANK_CANDIDATES
++    model: str = DEFAULT_RERANK_MODEL
++
++    @classmethod
++    def from_env(cls) -> 'SearchRerankConfig':
++        """Read the three flags. Junk falls back to defaults, never raises."""
++        raw_candidates = (os.getenv('MCP_RERANK_CANDIDATES') or '').strip()
++        candidates = DEFAULT_RERANK_CANDIDATES
++        if raw_candidates:
++            try:
++                candidates = max(int(raw_candidates), 1)
++            except ValueError:
++                logger.warning(
++                    'Invalid MCP_RERANK_CANDIDATES=%s. Using default %s',
++                    _sanitize_log_value(raw_candidates),
++                    DEFAULT_RERANK_CANDIDATES,
++                )
++        return cls(
++            enabled=(os.getenv('MCP_RERANK_ENABLED') or '').strip().lower() in _TRUTHY,
++            candidates=candidates,
++            model=(os.getenv('MCP_RERANK_MODEL') or '').strip() or DEFAULT_RERANK_MODEL,
++        )
++
++
++def rerank_requested(arguments: dict) -> bool:
++    """True only when the caller explicitly passed rerank=True."""
++    return arguments.get('rerank') is True
++
++
++def rerank_active(arguments: dict, config: SearchRerankConfig) -> bool:
++    """Feature gate: per-call flag AND operator env flag."""
++    return config.enabled and rerank_requested(arguments)
++
++
++def resolve_fetch_limit(arguments: dict, base_limit: int, config: Optional[SearchRerankConfig] = None) -> int:
++    """Candidate pool size for ``storage.search_memories``.
++
++    With the stage inactive this is exactly ``base_limit`` -- the fetch is
++    byte-identical to today's path. Active: inflate to MCP_RERANK_CANDIDATES
++    (default 40) so the cross-encoder has something to order.
++    """
++    config = config or SearchRerankConfig.from_env()
++    if rerank_active(arguments, config):
++        return max(base_limit, config.candidates)
++    return base_limit
++
++
++_scorer_lock = threading.Lock()
++_scorer: Optional[Any] = None
++_load_failed = threading.Event()
++_failure_logged = threading.Event()
++
++
++def _build_scorer(config: SearchRerankConfig) -> Any:
++    """Resolve through the existing loader -- the single ONNX path."""
++    model = get_onnx_ranker_model(model_name=config.model)
++    if model is None:
++        raise RuntimeError(
++            f"ONNX ranker '{config.model}' could not be resolved through the existing loa
+```
+
+**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +15/-1)
+```diff
+@@ -1205,7 +1205,13 @@ async def _retrieve_search_results(storage, arguments: dict, normalize_tags):
+         store = None
+ 
+     query = arguments.get("query")
+-    limit = arguments.get("limit", 10)
++    # Rerank stage (issue #1602): with `rerank=true` on an enabled setup the
++    # candidate pool inflates to MCP_RERANK_CANDIDATES (default 40) so the
++    # cross-encoder has something to order; otherwise the fetch is
++    # byte-identical to today's.
++    from ...quality.search_rerank import resolve_fetch_limit
++
++    limit = resolve_fetch_limit(arguments, arguments.get("limit", 10))
+     result = await storage.search_memories(
+         query=query,
+         mode=arguments.get("mode", "semantic"),
+@@ -1546,6 +1552,14 @@ async def handle_memory_search(server, arguments: dict) -> List[types.TextConten
+         if filter_error:
+             return [types.TextContent(type="text", text=filter_error)]
+ 
++        # Optional second-stage rerank (issue #1602): per-call opt-in, gated by
++        # MCP_RERANK_ENABLED. Runs after every narrowing stage, so callers see
++        # the final ordering. Off it is a passthrough -- byte-identical to
++        # today's response.
++        from ...quality.search_rerank import apply_search_rerank
++        memories, total = await apply_search_rerank(
++            arguments, query, memories, total, result
++        )
+         # Summarize only after retrieval, filters, and plugins. The helper keeps
+         # raw results intact as a safe fallback when the provider is unavailable.
+         summary_response, summary_warning = await _summarize_memory_search(
+```
+
+**File**: `src/mcp_memory_service/tools/registry.py` (modified, +10/-0)
+```diff
+@@ -274,6 +274,16 @@ class ToolDef:
+                     "default": 0,
+                     "description": "Quality weight for reranking (0.0-1.0)",
+                 },
++                "rerank": {
++                    "type": "boolean",
++                    "default": False,
++                    "description": (
++                        "Opt-in second-stage ONNX rerank of the top "
++                        "MCP_RERANK_CANDIDATES results. Requires "
++                        "MCP_RERANK_ENABLED on the server; off by default and a "
++                        "no-op when the server flag is unset."
++                    ),
++                },
+                 "ranking_weights": {
+                     "type": "object",
+                     "description": "Custom weights for ranked mode (keys: semantic, time_decay, access_frequency, quality). Values are normalized to sum=1.0.",
+```
+
+**File**: `tests/quality/test_search_rerank_contract.py` (added, +122/-0)
+```diff
+@@ -0,0 +1,122 @@
++"""Contract tests for the #1661 review findings (Greptile P1s).
++
++Covers what the flag plumbing needs beyond the golden-path tests:
++- the tool schema advertises ``rerank`` so clients that build calls from
++  ``tools/list`` can discover the flag;
++- the scorer build (and any cold-cache export) never runs on the event loop;
++- a neutral ``0.5`` sentinel from the loader fails open instead of reordering
++  the top-k with fabricated ties.
++"""
++
++import asyncio
++from unittest.mock import patch
 +
 +import pytest
 +
-+from mcp_memory_service.consolidation import quarantine as quarantine_mod
-+from mcp_memory_service.consolidation.quarantine import check_beliefs_on_store
-+from mcp_memory_service.reasoning.nli import NLIResult
++from mcp_memory_service.quality import search_rerank
++from mcp_memory_service.quality.search_rerank import (
++    SearchRerankConfig,
++    rerank_candidates,
++    reset_scorer_for_tests,
++)
++from mcp_memory_service.tools.registry import TOOL_REGISTRY
++
++ENV_VARS = ('MCP_RERANK_ENABLED', 'MCP_RERANK_CANDIDATES', 'MCP_RERANK_MODEL')
 +
 +
-+class _FakeBeliefs:
-+    def __init__(self, beliefs):
-+        self._b = beliefs
-+
-+    async def get_beliefs(self, status="active", min_confidence=0.35):
-+        return [b for b in self._b if b.get("status", "active") == status]
-+
-+    async def challenge_belief(self, belief_hash):
-+        return {"belief_hash": belief_hash, "new_status": "disputed"}
++@pytest.fixture(autouse=True)
++def _clean_state(monkeypatch):
++    for var in ENV_VARS:
++        monkeypatch.delenv(var, raising=False)
++    reset_scorer_for_tests()
++    yield
++    reset_scorer_for_tests()
 +
 +
-+class _FakeStorage:
-+    def __init__(self):
-+        self.updates = []
++class _StubModel:
++    def __init__(self, scores):
++        self.scores = scores
 +
-+    async def update_memory_metadata(self, content_hash, updates, preserve_timestamps=True):
-+        self.updates.append((content_hash, updates))
-+        return (True, "ok")
-+
-+    async def search_by_tag(self, tags, time_start=None):
-+        return []
++    def score_quality_batch(self, pairs):
++        return list(self.scores)
 +
 +
-+class _CountingClassifier:
-+    """Classificador falso que conta chamadas e simula a latência do LLM."""
-+
-+    backend = "cascade"
-+
-+    def __init__(self, delay=0.2, label="neutral", confidence=0.3):
-+        self.delay = delay
-+        self.label = label
-+        self.confidence = confidence
-+        self.calls = 0
-+
-+    async def classify(self, premise, hypothesis):
-+        self.calls += 1
-+        await asyncio.sleep(self.delay)
-+        return NLIResult(label=self.label, confidence=self.confidence)
-+
-+    def max_achievable_confidence(self):
-+        return 0.95
++def test_tool_schema_advertises_rerank():
++    """tools/list consumers must see the flag; the handler alone is not enough."""
++    search = next(tool for tool in TOOL_REGISTRY if tool.name == 'memory_search')
++    rerank = search.input_schema['properties']['rerank']
++    assert rerank['type'] == 'boolean'
++    assert rerank.get('default') is False
++    assert 'MCP_RERANK_ENABLED' in rerank['description']
 +
 +
-+def _beliefs(n):
-+    return [
-+        {
-+            "belief_hash": f"b{i}",
-+            "content": f"crença número {i}",
-+            "confidence": 0.9,
-+            "status": "active",
-+        }
-+        for i in range(n)
-+    ]
++@pytest.mark.asyncio
++async def test_scorer_resolution_off_the_event_loop():
++    """Build runs in a worker thread -- a cold ONNX session must not stall the loop."""
++    calls = []
++    real_to_thread = asyncio.to_thread
++
++    async def spy(func, *args, **kwargs):
++        calls.append(getattr(func, '__name__', repr(func)))
++        return await real_to_thread(func, *args, **kwargs)
++
++    model = _StubModel([0.9, 0.1])
++    with patch.object(search_rerank, '_resolve_scorer', return_value=model), \
++         patch.object(asyncio, 'to_thread', spy):
++        result = await rerank_candidates(
++            'q', [{'content': 'a'}, {'content': 'b'}], SearchRerankConfig(enabled=True)
++        )
++
++    assert result is not None
++    # MagicMock patches lose __name__; the repr still carries the attribute name.
++    assert any('_resolve_scorer' in name for name in calls), calls
++    assert any('score_quality_batch' in name for name in calls), calls
 +
 +
-+def _patch_classifier(classifier):
-+    from unittest.mock import patch
++@pytest.mark.asyncio
++async def test_neutral_sentinel_fails_open():
++    """A swallowed per-item failure must degrade to baseline, not fake an order."""
++    model = _StubModel([0.91, 0.5, 0.12])
++    with patch.object(search_rerank, '_resolve_scorer', return_value=model):
++        result = await rerank_candidates(
++            'q',
++            [{'content': 'a'}, {'content': 'b'}, {'content': 'c'}],
++            SearchRerankConfig(enabled=True),
++        )
 +
-+    return patch("mcp_memory_service.reasoning.nli.NLIClassifier", return_value=classifier)
++    assert result is None
 +
 +
-+class TestBudget:
-+    @pytest.mark.asyncio
-+    async def test_total_time_respects_default_budget(self, monkeypatch):
-+        monkeypatch.delenv("MCP_NLI_ON_STORE_BUDGET_S", raising=False)
-+        monkeypatch.delenv("MCP_QUARANTINE_MAX_BELIEFS", raising=False)
-+        clf = _CountingClassifier(delay=0.2)
++@pytest.mark.asyncio
++async def test_real_scores_still_rerank():
++    """Guard against the sentinel check turning into a blanket refusal."""
++    model = _StubModel([0.1, 0.92, 0.4])
++    memories = [{'content': 'a'}, {'content': 'b'}, {'content': 'c'}]
++    with patch.object(search_rerank, '_resolve_scorer', return_value=model):
++        result = await rerank_candidates('q', memories, SearchRerankConfig(enabled=True))
 +
-+        started = time.monotonic()
-+        with _patch_classifier(clf):
-+            result = await check_beliefs_on_store(
-+                _FakeStorage(), _FakeBeliefs(_beliefs(20)), "texto novo", "h1"
-+            )
-+        elapsed = time.monotonic() - started
++    assert result is not None
++    assert [memory['content'] for memory in result] == ['b', 'c', 'a']
 +
-+        assert result is None
-+        assert elapsed < 2.8, f"check levou {elapsed:.2f}s; o default é 2 s de orçamento"
-+        assert clf.calls < 20, f"comparou {clf.calls} crenças; deveria parar pelo orçamento"
-+        assert clf.calls >= 1, "com 2 s de orçamento ao menos uma comparação precisa acontecer"
 +
-+    @pytest.mark.asyncio
-+    async def test_budget_zero_compares_nothing(self, monkeypatch):
-+        monkeypatch.setenv("MCP_NLI_ON_STORE_BUDGET_S", "0")
-+        clf = _CountingClassifier(delay=0.2)
++def test_ort_input_filter_matches_graph_declaration():
++    """The graph, not the tokenizer, decides the feed (Greptile P1 on #1661).
 +
-+        started = time.monotonic()
-+        with _patch_classifier(clf):
-+            result = await check_beliefs_on_store(
-+                _FakeStorage(), _FakeBeliefs(_beliefs(5)), "texto novo", "h1"
-+            )
-+        elapsed = time.monotonic() - started
++    A Xenova int8 export declares only input_ids/attention_mask; sending
++    token_type_ids makes onnxruntime raise and the rerank fail-open forever.
++    """
++    from mcp_memory_service.quality.onnx_ranker import ONNXRankerModel
 +
-+        assert result is None
-+        assert clf.calls == 0
-+        assert elapsed < 0.3
++    class _Node:
++        def __init__(self, name):
++            self.name = name
 +
-+    @pytest.mark.asyncio
-+    async def test_max_beliefs_is_configurable(self, monkeypatch):
-+        monkeypatch.setenv("MCP_NLI_ON_STORE_BUDGET_S", "30")
-+        monkeypatch.setenv("MCP_QUARANTINE_MAX_BELIEFS", "3")
-+        clf = _CountingClassifier(delay=0.01)
++    class _Session:
++        def get_inputs(self):
++            return [_Node('input_ids'), _Node('attention_mask')]
 +
-+        with _patch_classifier(clf):
-+            await check_beliefs_on_store(
-+                _FakeStorage(), _FakeBeliefs(_beliefs(20)), "texto novo", "h1"
-+            )
++    instance = ONNXRankerModel.__new__(ONNXRankerModel)
++    instance._model = _Session()
++    feed = {'input_ids': 1, 'attention_mask': 2, 'token_type_ids': 3}
 +
-+        assert clf.calls == 3
++    assert instance._accepted_ort_inputs(feed) == {'input_ids': 1, 'attention_mask': 2}
+```
+
+**File**: `tests/quality/test_search_rerank_flag.py` (added, +246/-0)
+```diff
+@@ -0,0 +1,246 @@
++"""Optional ONNX reranker for memory_search (issue #1602).
 +
-+    @pytest.mark.asyncio
-+    async def test_timeout_does_not_raise_and_respects_the_budget(self, monkeypatch):
-+        """Classificador mais lento que o orçamento: para no prazo e não quebra a gravação."""
-+        monkeypatch.setenv("MCP_NLI_ON_STORE_BUDGET_S", "0.2")
-+        clf = _CountingClassifier(delay=5.0)
++Contract under test (specs/1602-rerank-flag.md):
++- E1/AC1: ``rerank`` absent or false -> byte-identical baseline response.
++- E2: MCP_RERANK_ENABLED unset/off -> ``rerank=true`` is a total no-op (the
++  loader is never touched, the fetch limit is never inflated).
++- E3: enabled and model resolvable -> reranked order, MCP_RERANK_CANDIDATES
++  honored, response truncated to the caller's limit.
++- E4/AC5: model load failure or inference error -> unreranked order, one
++  warning line per process lifetime, never an error response.
++- E5: the model resolves through the existing quality loader only.
++- E6: concurrent searches keep orders valid; no shared mutable state.
++"""
 +
-+        started = time.monotonic()
++import asyncio
++import logging
++import os
++from unittest.mock import patch
++
++import pytest
++
++from mcp_memory_service.quality import search_rerank
++from mcp_memory_service.quality.search_rerank import (
++    SearchRerankConfig,
++    apply_search_rerank,
++    rerank_active,
++    reset_scorer_for_tests,
++    rerank_candidates,
++    rerank_requested,
++)
++
++LOADER = 'mcp_memory_service.quality.search_rerank.get_onnx_ranker_model'
++ENV_VARS = ('MCP_RERANK_ENABLED', 'MCP_RERANK_CANDIDATES', 'MCP_RERANK_MODEL')
++
++
++@pytest.fixture(autouse=True)
++def _clean_state(monkeypatch):
++    for var in ENV_VARS:
++        monkeypatch.delenv(var, raising=False)
++    reset_scorer_for_tests()
++    yield
++    reset_scorer_for_tests()
++
++
++class _StubModel:
++    def __init__(self, scores=None, error=None):
++        self._scores = scores
++        self._error = error
++        self.calls = []
++
++    def score_quality_batch(self, pairs, max_batch_size=32):
++        self.calls.append(list(pairs))
++        if self._error is not None:
++            raise self._error
++        return list(self._scores)
++
++
++def _memories(n):
++    return [{'content': f'memory-{i}', 'content_hash': f'hash-{i}'} for i in range(n)]
++
++
++def _enabled_config(candidates=40, model='ms-marco-MiniLM-L-6-v2'):
++    return SearchRerankConfig(enabled=True, candidates=candidates, model=model)
++
++
++# --- EARS 1/2: gate ----------------------------------------------------------
++
++
++@pytest.mark.asyncio
++async def test_off_path_returns_input_byte_identical():
++    memories = _memories(3)
++    result = {'memories': memories, 'total': 3}
++    out, total = await apply_search_rerank({}, 'q', memories, 3, result)
++    assert out is memories
++    assert total == 3
++    assert result['memories'] is memories
++    assert result['total'] == 3
++
++
++@pytest.mark.asyncio
++async def test_flag_without_env_never_touches_the_loader():
++    """rerank=true with MCP_RERANK_ENABLED unset is a total no-op."""
++    memories = _memories(3)
++    result = {'memories': memories, 'total': 3}
++    with patch(LOADER) as loader:
++        out, total = await apply_search_rerank({'rerank': True}, 'q', memories, 3, result)
++    loader.assert_not_called()
++    assert out is memories
++    assert result['memories'] is memories
++    assert result['total'] == 3
++
++
++def test_rerank_requested_reads_only_the_flag():
++    assert rerank_requested({'rerank': True}) is True
++    assert rerank_requested({'rerank': False}) is False
++    assert rerank_requested({}) is False
++    assert rerank_requested({'rerank': 'yes'}) is False
++
++
++def test_gate_requires_both_flag_and_env():
++    config = _enabled_config()
++    assert rerank_active({'rerank': True}, config) is True
++    assert rerank_active({}, config) is False
++    assert rerank_active({'rerank': True}, SearchRerankConfig(enabled=False)) is False
++
++
++# --- EARS 3: reranked order ---------------------------------------------------
++
++
++def test_from_env_defaults_are_off():
++    config = SearchRerankConfig.from_env()
++    assert config.enabled is False
++    assert config.candidates == 40
++    assert config.model == 'Xenova/bge-reranker-base'
++
++
++def test_from_env_honors_overrides(monkeypatch):
++    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
++    monkeypatch.setenv('MCP_RERANK_CANDIDATES', '25')
++    monkeypatch.setenv('MCP_RERANK_MODEL', 'ms-marco-MiniLM-L-6-v2')
++    config = SearchRerankConfig.from_env()
++    assert config.enabled is True
++    assert config.candidates == 25
++    assert config.model == 'ms-marco-MiniLM-L-6-v2'
++
++
++def test_from_env_rejects_junk_without_raising(monkeypatch):
++    monkeypatch.setenv('MCP_RERANK_CANDIDATES', 'ten')
++    config = SearchRerankConfig.from_env()
++    assert config.candidates == 40
++
++
++def test_fetch_limit_inflates_only_when_active(monkeypatch):
++    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
++    assert search_rerank.resolve_fetch_limit({'rerank': True}, 10) == 40
++    assert search_rerank.resolve_fetch_limit({'rerank': False}, 10) == 10
++
++
++@pytest.mark.asyncio
++async def test_enabled_search_reranks_and_truncates_to_limit(monkeypatch):
++    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
++    stub = _StubModel(scores=[0.9 - 0.01 * i for i in range(40)])
 +   
 ```
 
 ---
 
-### Incident Patch 2: `d75db7bf` (2026-10-23)
-**Commit Message**: fix(security): refresh TLS trust stores after eMudhra compromise (#1659)
+### Incident Patch 2: `a930c2b1` (2026-10-25)
+**Commit Message**: feat(storage): ResonanceDB — wave-based semantic memory (phase-aware retrieval) (#1673)
 
-* fix(security): refresh independent TLS trust stores after eMudhra compromise
+* docs: link the Discord server from README and CONTRIBUTING
 
-* fix(ci): bootstrap pip across older runner versions
+Announcements for releases, good first issues and new Discussions already
+go there, but nothing in the repository pointed at it. Claims, decisions
+and reviews stay on GitHub.
 
-* fix(ci): build Docker images for all copied inputs
+* docs(site): link the Discord server from the start page and footers
+
+Adds a Discord button next to GitHub and Documentation in the Get started
+block and a Discord link in the footer shared by the start page, the demo
+and the remote MCP tutorial.
+
+* feat(storage): ResonanceDB — wave-based semantic memory (phase-aware retrieval)
+
+Implements wave-based semantic memory from:
+'Wave-Based Semantic Memory with Resonance-Based Retrieval'
+arXiv:2509.09691 (submitted Aug 2025)
+
+New features:
+- ResonanceDB class: complex waveform embeddings ψ(x) = A(x)·exp(i·φ(x))
+- Phase-aware similarity via constructive/destructive interference
+- Endpoint: POST /api/memories/resonance-search with hybrid mode
+- Three search modes: resonance (pure), phase (negation detection), hybrid
+- Resolves cosine-blindness for negation (happy vs not_happy problem)
+
+Changes:
+- src/mcp_memory_service
+
+**File**: `changelog.d/1673.added.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++- Experimental `POST /api/memories/resonance-search`: ranks memories by wave interference instead of cosine similarity, after the ResonanceDB approach in arXiv:2509.09691. It converts the stored embeddings to complex waveforms at query time, so no schema change. Modes `resonance`, `phase` and `hybrid` (default), a `store` field like `/api/search`, and superseded memories stay hidden. Works on `sqlite_vec` and `hybrid`, and answers 501 on other backends (#1673).
+```
+
+**File**: `docs/agents/http-generic.md` (modified, +34/-0)
+```diff
+@@ -55,6 +55,40 @@ This table is the subset agents reach for. The authoritative, always-current lis
+ > that body with `.get("results", [])` turns a rejected request into "no memories
+ > found". Both endpoints return their hits under `results`, not `memories`.
+ 
++### Experimental: resonance search
++
++`POST /api/memories/resonance-search` ranks memories by wave interference instead of
++cosine similarity, after the ResonanceDB idea in arXiv:2509.09691. It turns the stored
++embeddings into complex waveforms at query time. No schema change, no extra model.
++
++```bash
++curl -X POST http://localhost:8000/api/memories/resonance-search \
++  -H "Content-Type: application/json" \
++  -d '{"query": "deploy target", "top_k": 10, "mode": "hybrid", "store": "default"}'
++```
++
++| Field | Default | Meaning |
++|---|---|---|
++| `query` | required | Search text |
++| `top_k` | `10` | 1-100 results |
++| `mode` | `hybrid` | `resonance` (interference only), `phase` (phase alignment only), `hybrid` (70/30 mix) |
++| `store` | `default` | Store partition, `all` for every store, as in `/api/search` |
++
++Results carry `content_hash`, `score` and `details` (`resonance`, `phase_shift`), not
++the memory content; fetch that with `GET /api/memories/{hash}?store=<name>`, using the
++same `store` you searched (`all` included), since that endpoint defaults to `default`.
++Superseded memories are left out. `total_stored` counts the memories that were actually scored.
++
++Limits worth knowing before you build on it:
++
++- Only `sqlite_vec` and `hybrid` (via its local SQLite) work. Cloudflare and Milvus get a 501.
++- Every request scans and scores every eligible memory in the store in pure Python.
++  Fine at a few thousand memories, slow well before 50k.
++- Nobody has shown yet that it ranks better than `/api/search`. The phase is derived from
++  the same embedding values, so it cannot add information the embedding model did not
++  encode, and that includes negation. Treat it as a research endpoint until the
++  measurement in #1674 says otherwise.
++
+ ## Authentication Patterns
+ 
+ ```bash
+```
+
+**File**: `src/mcp_memory_service/storage/resonance_db.py` (added, +398/-0)
+```diff
+@@ -0,0 +1,398 @@
++"""ResonanceDB — Wave-Based Semantic Memory (Phase-Aware Retrieval)
++
++Implements the wave-based memory model from:
++"Wave-Based Semantic Memory with Resonance-Based Retrieval"
++arXiv:2509.09691 (submitted Aug 2025)
++
++Core idea: Instead of storing memories as static real-valued vectors and
++comparing with cosine similarity, store them as complex waveforms:
++
++    ψ(x) = A(x) · exp(i · φ(x))
++
++where:
++    A(x) = semantic amplitude (magnitude of meaning)
++    φ(x) = contextual phase (semantic polarity, negation, modality)
++
++Similarity is measured via **constructive/destructive interference** instead
++of distance in a Euclidean space.
++
++Key property that solves the "happy" vs "not happy" problem:
++    Two waves that are in-phase amplify (resonate).
++    Two waves shifted by π cancel (destructive interference).
++    Negation naturally produces a phase shift → anti-resonance.
++"""
++
++from __future__ import annotations
++
++import math
++import logging
++from dataclasses import dataclass
++from typing import List, Dict, Any, Tuple
++
++logger = logging.getLogger(__name__)
++
++
++# ---------------------------------------------------------------------------
++# Complex waveform math
++# ---------------------------------------------------------------------------
++
++def _complex_dot_product(a: List[complex], b: List[complex]) -> complex:
++    """Compute <a|b> = Σ a*(x) · b(x) for two complex waveforms."""
++    result = complex(0, 0)
++    for ax, bx in zip(a, b):
++        result += ax.conjugate() * bx
++    return result
++
++
++def _wave_interference_energy(psi_a: List[complex], psi_b: List[complex]) -> float:
++    """
++    Compute constructive interference energy between two waveforms.
++    
++    Maximal when in-phase (aligned semantics), minimal when out-of-phase
++    (contrasting/negated semantics).
++    
++    Formula from paper:
++        E = |Σ A_a(x)·A_b(x)·cos(φ_a(x) - φ_b(x))|
++    
++    Returns value in [0, 1] after normalization.
++    """
++    if not psi_a or not psi_b:
++        return 0.0
++    
++    n = min(len(psi_a), len(psi_b))
++    
++    # Extract amplitude and phase from each waveform
++    real_part = 0.0
++    for x in range(n):
++        ax = psi_a[x]
++        bx = psi_b[x]
++        # Amplitude product × phase difference cosine
++        real_part += ax.real * bx.real + ax.imag * bx.imag
++    
++    # Normalize by maximum possible energy (sum of |ψ(x)|²)
++    energy_a = sum(abs(a) ** 2 for a in psi_a[:n])
++    energy_b = sum(abs(b) ** 2 for b in psi_b[:n])
++    
++    if energy_a == 0 or energy_b == 0:
++        return 0.0
++    
++    max_energy = math.sqrt(energy_a * energy_b)
++    if max_energy == 0:
++        return 0.0
++    
++    resonance = real_part / max_energy
++    
++    # Clamp to [0, 1] for score
++    return max(0.0, min(1.0, resonance))
++
++
++def _phase_shift_score(psi_a: List[complex], psi_b: List[complex]) -> float:
++    """
++    Detect phase-shift patterns (negation, modality inversion).
++    
++    Returns the mean phase difference normalized to [0, 1]:
++    0 = in phase (aligned), 1 = shifted by π (contrast/negation).
++    """
++    if not psi_a or not psi_b:
++        return 0.0
++    
++    n = min(len(psi_a), len(psi_b))
++    if n == 0:
++        return 0.0
++    
++    # Compute mean phase difference
++    phase_diffs = []
++    for x in range(n):
++        phase_a = math.atan2(psi_a[x].imag, psi_a[x].real)
++        phase_b = math.atan2(psi_b[x].imag, psi_b[x].real)
++        diff = phase_a - phase_b
++        # Wrap to [-π, π]
++        while diff > math.pi:
++            diff -= 2 * math.pi
++        while diff < -math.pi:
++            diff += 2 * math.pi
++        phase_diffs.append(abs(diff))
++    
++    mean_phase_diff = sum(phase_diffs) / len(phase_diffs) if phase_diffs else 0.0
++    
++    # 0 → aligned, π → negation; callers rank by (1 - this value)
++    return abs(mean_phase_diff) / math.pi
++
++
++def _constructive_interference(psi_a: List[complex], psi_b: List[complex]) -> float:
++    """
++    Full resonance score: constructive interference.
++    
++    When aligned → waves amplify (high score).
++    When opposed → waves cancel (low score).
++    This is the CORE similarity metric from the paper.
++    """
++    return _wave_interference_energy(psi_a, psi_b)
++
++
++def _destructive_interference(psi_a: List[complex], psi_b: List[complex]) -> float:
++    """
++    Anti-resonance score.
++    
++    When opposed (e.g. negation) → high destructive score.
++    When aligned → low destructive score.
++    """
++    return _phase_shift_score(psi_a, psi_b)
++
++
++# ---------------------------------------------------------------------------
++# Phase-aware embedding: real vector → complex waveform
++# ---------------------------------------------------------------------------
++
++def _embed_to_waveform(embedding: List[float], dimension: int) -> List[complex]:
++    """
++    Convert a real-valued embedding (e.g. from all-MiniLM) to a complex waveform.
++    
++    Strategy: Split embedding into amplitude (magnitude) and p
+```
+
+**File**: `src/mcp_memory_service/web/api/memories.py` (modified, +111/-2)
+```diff
+@@ -16,15 +16,19 @@
+ Memory CRUD endpoints for the HTTP interface.
+ """
+ 
++import asyncio
++import heapq
+ import logging
+ import socket
+ from collections import Counter
+-from typing import List, Optional, Dict, Any
++from typing import List, Optional, Dict, Any, Literal
+ 
+ from fastapi import APIRouter, HTTPException, Depends, Query, Request
+ from pydantic import BaseModel, Field
+ 
+ from ...storage.base import MemoryStorage
++from ...storage.mixins.base import deserialize_embedding
++from ...storage.resonance_db import ResonanceDB
+ from ...models.memory import Memory
+ from ...models.ontology import get_all_types
+ from ...services.memory_service import MemoryService
+@@ -586,7 +590,7 @@ async def store_session(
+     All turns are concatenated into '[role] content' lines and stored as
+     memory_type='session' with a 'session:<id>' tag for reliable session-level retrieval.
+     """
+-    import uuid as _uuid
++    import uuid as _uuid  # inline import
+ 
+     session_id = request.session_id or str(_uuid.uuid4())
+     lines = [f"[{t.role}] {t.content.strip()}" for t in request.turns if t.content.strip()]
+@@ -632,3 +636,108 @@ async def get_memory_types(
+ ) -> List[str]:
+     """Return all valid memory types (built-in + custom from MCP_CUSTOM_MEMORY_TYPES)."""
+     return sorted(get_all_types())
++
++
++# ── ResonanceDB — Wave-Based Semantic Search ──────────────────────────────────
++
++class ResonanceSearchRequest(BaseModel):
++    """Request model for ResonanceDB wave-based semantic search."""
++    query: str = Field(..., description="Search query text")
++    top_k: int = Field(default=10, ge=1, le=100, description="Max results to return")
++    mode: Literal["resonance", "phase", "hybrid"] = Field("hybrid", description="Search mode: 'resonance' (pure constructive interference), 'phase' (phase alignment only), 'hybrid' (default)")
++    store: str = Field(default="default", description="Target store partition (default: 'default'). Use 'all' for every store.")
++
++
++class ResonanceSearchResult(BaseModel):
++    """Single result from ResonanceDB search."""
++    content_hash: str
++    score: float
++    details: Dict[str, float]
++
++
++class ResonanceSearchResponse(BaseModel):
++    """Response model for ResonanceDB wave-based search."""
++    query: str
++    mode: str
++    results: List[ResonanceSearchResult]
++    total_stored: int
++    backend: str = "resonance"
++
++
++def _fetch_resonance_candidates(conn, store: Optional[str]) -> list:
++    """Read (content_hash, embedding blob) for every current, searchable memory."""
++    sql = """
++        SELECT m.content_hash, e.content_embedding
++        FROM memories m
++        JOIN memory_embeddings e ON m.id = e.rowid
++        WHERE m.deleted_at IS NULL
++          AND (m.embedding_pending IS NULL OR m.embedding_pending = 0)
++          AND (m.superseded_by IS NULL OR m.superseded_by = '')
++    """
++    params: tuple = ()
++    if store is not None:
++        sql += " AND m.store = ?"
++        params = (store,)
++    return conn.execute(sql, params).fetchall()
++
++
++def _score_resonance_candidates(rows: list, query_embedding: List[float], dimension: int, top_k: int, mode: str):
++    """Score all rows in batches and keep the overall top_k. Returns (results, scored_count)."""
++    best: list = []
++    scored = 0
++    batch_size = 1000
++    for start in range(0, len(rows), batch_size):
++        db = ResonanceDB(dimension=dimension)
++        for content_hash, blob in rows[start:start + batch_size]:
++            values = deserialize_embedding(blob)
++            if values is None or len(values) != dimension:
++                continue
++            db.add(content_hash, values)
++        scored += len(db)
++        best = heapq.nlargest(top_k, best + db.search(query_embedding, top_k=top_k, mode=mode), key=lambda r: r["score"])
++    return best, scored
++
++
++@router.post("/memories/resonance-search", response_model=ResonanceSearchResponse, tags=["memories", "resonance"])
++async def resonance_search(
++    request: ResonanceSearchRequest,
++    storage: MemoryStorage = Depends(get_storage),
++    user: AuthenticationResult = Depends(require_read_access),
++):
++    """
++    Wave-based semantic search using ResonanceDB (experimental).
++
++    Converts the stored real-valued embeddings to complex waveforms
++    ψ(x) = A(x) · exp(i · φ(x)) at query time and ranks them by
++    constructive interference and phase alignment with the query.
++
++    Requires a SQLite-backed storage (sqlite_vec, or hybrid via its local
++    primary). Scans every eligible memory in the selected store.
++
++    See: arXiv:2509.09691
++    """
++    # Hybrid keeps its SQLite backend in `primary`; Cloudflare and Milvus have no local table to scan.
++    backend = getattr(storage, "primary", storage)
++    if getattr(backend, "conn", None) is None or not hasattr(backend, "_execute_with_retry"):
++        raise HTTPException(status_code=501, detail="Resonance search requires the sqlite_vec or hybrid storage backend.")
++    if not getattr(backend, "embedd
+```
+
+**File**: `tests/storage/test_resonance_db.py` (added, +109/-0)
+```diff
+@@ -0,0 +1,109 @@
++"""Tests for ResonanceDB scoring and the /api/memories/resonance-search endpoint (PR #1673)."""
++
++import hashlib
++import struct
++from types import SimpleNamespace
++
++import pytest
++import pytest_asyncio
++from fastapi import HTTPException
++
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.storage.resonance_db import ResonanceDB, _embed_to_waveform, _phase_shift_score
++from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
++from mcp_memory_service.web.api.memories import (
++    ResonanceSearchRequest,
++    _score_resonance_candidates,
++    resonance_search,
++)
++
++DIM = 8
++BASE = [0.9, -0.4, 0.3, -0.8, 0.1, 0.6, -0.2, 0.5]
++NEAR = [0.8, -0.3, 0.35, -0.7, 0.05, 0.55, -0.25, 0.45]
++OPPOSITE = [-v for v in BASE]
++
++
++def _blob(values):
++    """sqlite-vec stores raw little-endian float32 with no length prefix."""
++    return struct.pack(f"<{len(values)}f", *values)
++
++
++def test_phase_shift_is_zero_for_identical_waves():
++    wave = _embed_to_waveform(BASE, DIM)
++    assert _phase_shift_score(wave, wave) == 0.0
++    near = _phase_shift_score(wave, _embed_to_waveform(NEAR, DIM))
++    assert 0.0 < near < _phase_shift_score(wave, _embed_to_waveform(OPPOSITE, DIM)) <= 1.0
++
++
++def test_exact_match_ranks_first_in_every_mode():
++    db = ResonanceDB(dimension=DIM)
++    db.add("exact", BASE)
++    db.add("near", NEAR)
++    db.add("opposite", OPPOSITE)
++    for mode in ("resonance", "phase", "hybrid"):
++        ranked = [r["content_hash"] for r in db.search(BASE, top_k=3, mode=mode)]
++        assert ranked[0] == "exact", mode
++        assert ranked[-1] == "opposite", mode
++
++
++def test_candidates_decode_raw_float32_and_skip_wrong_dimension():
++    rows = [("exact", _blob(BASE)), ("short", _blob(BASE[:4])), ("opposite", _blob(OPPOSITE))]
++    results, scored = _score_resonance_candidates(rows, BASE, DIM, top_k=10, mode="hybrid")
++    assert scored == 2
++    assert [r["content_hash"] for r in results] == ["exact", "opposite"]
++
++
++def test_top_k_survives_batching():
++    # The best match sits after the first 1000-row batch; it must still be returned.
++    rows = [(f"far{i}", _blob(OPPOSITE)) for i in range(1500)] + [("exact", _blob(BASE))]
++    results, scored = _score_resonance_candidates(rows, BASE, DIM, top_k=1, mode="hybrid")
++    assert scored == 1501
++    assert results[0]["content_hash"] == "exact"
++
++
++@pytest_asyncio.fixture
++async def storage(tmp_path):
++    s = SqliteVecMemoryStorage(str(tmp_path / "resonance.db"))
++    await s.initialize()
++    try:
++        yield s
++    finally:
++        await s.close()
++
++
++async def _put(storage, content, store="default"):
++    content_hash = hashlib.sha256(content.encode()).hexdigest()
++    ok, msg = await storage.store(Memory(content=content, content_hash=content_hash), store=store)
++    assert ok, msg
++    return content_hash
++
++
++@pytest.mark.asyncio
++async def test_endpoint_scopes_store_hides_superseded_and_unwraps_hybrid(storage):
++    current = await _put(storage, "The deploy target is the staging cluster in Frankfurt")
++    replaced = await _put(storage, "The deploy target was the old cluster in Dublin")
++    other_store = await _put(storage, "Unrelated note kept in a separate store", store="other")
++
++    def _supersede():
++        storage.conn.execute("UPDATE memories SET superseded_by = ? WHERE content_hash = ?", (current, replaced))
++        storage.conn.commit()
++    await storage._execute_with_retry(_supersede)
++
++    request = ResonanceSearchRequest(query="deploy target cluster", top_k=10)
++    # Hybrid storage exposes its SQLite backend as `primary`.
++    response = await resonance_search(request, storage=SimpleNamespace(primary=storage), user=None)
++    hashes = {r.content_hash for r in response.results}
++    assert hashes == {current}
++    assert response.total_stored == 1
++
++    response_all = await resonance_search(
++        ResonanceSearchRequest(query="deploy target cluster", store="all"), storage=storage, user=None
++    )
++    assert {r.content_hash for r in response_all.results} == {current, other_store}
++
++
++@pytest.mark.asyncio
++async def test_endpoint_rejects_backend_without_sqlite():
++    with pytest.raises(HTTPException) as exc:
++        await resonance_search(ResonanceSearchRequest(query="x"), storage=SimpleNamespace(), user=None)
++    assert exc.value.status_code == 501
+```
+
+---
+
+### Incident Patch 3: `c8cd9115` (2026-10-24)
+**Commit Message**: fix: send stream false to OpenAI-compatible endpoints for fm serve (#1666) (#1667)
+
+* fix: send stream false to OpenAI-compatible endpoints for fm serve (#1666)
+
+Apple's fm serve on macOS 27 answers with SSE when a request has no
+stream field, unlike OpenAI's default of false. The quality scorer and
+the harvest rewriter and classifier never sent the field, so their
+response.json() failed on the SSE body and every call fell through to
+the next provider. Send "stream": false explicitly at all three sites.
+
+Adds docs/guides/apple-foundation-models.md with setup, env blocks and
+measured results per task against fm serve.
+
+* docs: name both switches search summaries need in the Apple FM guide (#1666)
 
 ---------
 
 Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ci.yml` (modified, +53/-5)
+**File**: `changelog.d/1666.added.md` (added, +1/-0)
 ```diff
-@@ -27,6 +27,7 @@ jobs:
-     outputs:
-       code: ${{ steps.classify.outputs.code }}
-       milvus: ${{ steps.classify.outputs.milvus }}
-+      docker: ${{ steps.classify.outputs.docker }}
-     steps:
-     # fetch-depth: 2 so the PR merge commit has its base parent: HEAD^1..HEAD is
-     # exactly what the PR changes.
-@@ -56,16 +57,45 @@ jobs:
-         changed=$(git diff --name-only HEAD^1 HEAD)
-         code=true
-         milvus=true
-+        docker=true
-         if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
-           if is_docs_only "$changed"; then
-             code=false
-           fi
-           if [ -n "$changed" ] && ! printf '%s\n' "$changed" | grep -qE '^(src/mcp_memory_service/(storage|models|utils|consolidation|reasoning|config)|src/mcp_memory_service/compat\.py$|tests/storage/|tests/conftest\.py$|pyproject\.toml$|\.github/workflows/ci\.yml$)'; then
-             milvus=false
-           fi
-+          if [ -n "$changed" ] && ! printf '%s\n' "$changed" | grep -qE '^(src/|tools/docker/|scripts/|run_server\.py$|\.dockerignore$|README\.md$|pyproject(-lite)?\.toml$|uv\.lock$|\.github/workflows/(ci|release)\.yml$)'; then
-+            docker=false
-+          fi
-         fi
-         echo "code=$code" | tee -a "$GITHUB_OUTPUT"
-         echo "milvus=$milvus" | tee -a "$GITHUB_OUTPUT"
-+        echo "docker=$docker" | tee -a "$GITHUB_OUTPUT"
-+
-+  docker-builds:
-+    runs-on: ubuntu-latest
-+    name: Docker Build (${{ matrix.image }})
-+    timeout-minutes: 30
-+    needs: changes
-+    if: ${{ !cancelled() && needs.changes.outputs.docker != 'false' }}
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        include:
-+          - image: standard
-+            dockerfile: tools/docker/Dockerfile
-+          - image: slim
-+            dockerfile: tools/docker/Dockerfile.slim
-+    steps:
-+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+    # Build-time trust checks must pass before a release can publish either image.
-+    # Raw Docker matches release.yml and needs no registry credentials or push.
-+    - name: Build image and run its trust checks
-+      run: |
-+        docker build --pull --platform linux/amd64 \
-+          --build-arg SKIP_MODEL_DOWNLOAD=true \
-+          --file "${{ matrix.dockerfile }}" .
- 
-   version-drift-check:
-     runs-on: ubuntu-latest
-@@ -142,7 +172,11 @@ jobs:
-     # tests/ci/test_check_tests_prove_fix.sh runs pytest inside a stub repo and
-     # the script it covers passes --timeout, hence the two packages.
-     - name: Install pytest for the prove-fix shell test
--      run: python3 -m pip install --quiet pytest pytest-timeout
-+      run: |
-+        sudo apt-get update
-+        sudo apt-get install -y --only-upgrade ca-certificates
-+        python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
-+        python3 -m pip install --quiet pytest pytest-timeout
-     - name: Run the shell test suites
-       run: |
-         status=0
-@@ -206,7 +240,10 @@ jobs:
-     # Installs from uv.lock, like `test`: see there.
-     - name: Install dependencies
-       run: |
--        python3 -m pip install --quiet "uv==0.12.24"
-+        sudo apt-get update
-+        sudo apt-get install -y --only-upgrade ca-certificates
-+        python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
-+        python3 -m pip install --quiet "uv==0.13.4"
-         echo "$HOME/venv/bin" >> "$GITHUB_PATH"
-         export UV_PROJECT_ENVIRONMENT="$HOME/venv"
-         python3 -m uv sync --frozen --python python3 --extra dev --extra sqlite
-@@ -252,7 +289,10 @@ jobs:
-     # no pip in it, and nothing in the suite runs pip.
-     - name: Install dependencies
-       run: |
--        python3 -m pip install --quiet "uv==0.12.24"
-+        sudo apt-get update
-+        sudo apt-get install -y --only-upgrade ca-certificates
-+        python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
-+        python3 -m pip install --quiet "uv==0.13.4"
-         echo "$HOME/venv/bin" >> "$GITHUB_PATH"
-         export UV_PROJECT_ENVIRONMENT="$HOME/venv"
-         python3 -m uv sync --frozen --python python3 --extra dev --extra sqlite
-@@ -317,10 +357,14 @@ jobs:
-     # database, so the #143 guard never fires. See issue #301.
-     - name: Install dependencies (with ml + nli extras)
-       run: |
--        python3 -m pip install --quiet "uv==0.12.24"
-+        sudo apt-get update
-+        sudo apt-get install -y --only-upgrade ca-certificates
-+        python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
-+        python3 -m pip install --quiet "uv==0.13.4"
-         python3 -m uv venv --seed --python python3 "$HOME/venv"
-         echo "$HOME/venv/bin" >> "$GITHUB_PATH"
-         export UV_PYTHON="$HOME/venv/bin/python"
-+        python3 -m uv pip install --upgrade "pip>=26.2.2"
-         # CPU wheels only. The default index serves the CUDA build on Linux,
-         # which is an order of magnitude larger and useless on this runner —
-         # tools
+@@ -0,0 +1 @@
++- Apple Foundation Models work as a local LLM provider on macOS 27: point the OpenAI-compatible quality scorer or the harvest provider chain at `fm serve`. The three OpenAI-compatible call sites (quality scorer, harvest rewriter, harvest classifier) now send `"stream": false` explicitly, because `fm serve` streams by default and the requests used to fall through to the next provider. New guide: `docs/guides/apple-foundation-models.md` (#1666).
 ```
 
-**File**: `.github/workflows/cleanup-images.yml` (modified, +5/-1)
+**File**: `docs/guides/apple-foundation-models.md` (added, +100/-0)
 ```diff
-@@ -63,7 +63,11 @@ jobs:
- 
-       - name: Install deps
-         if: env.SKIP_DOCKER_CLEANUP != 'true'
--        run: python3 -m pip install --upgrade pip requests python-dateutil
-+        run: |
-+          sudo apt-get update
-+          sudo apt-get install -y --only-upgrade ca-certificates
-+          python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
-+          python3 -m pip install --upgrade requests python-dateutil
- 
-       - name: Create cleanup script
-         if: env.SKIP_DOCKER_CLEANUP != 'true'
+@@ -0,0 +1,100 @@
++# Apple Foundation Models as a local LLM provider
++
++macOS 27 ships Apple's on-device language model together with a command-line tool,
++`/usr/bin/fm`. Its `fm serve` subcommand runs an OpenAI-compatible chat completions
++server. You do not download anything, and you do not need an account or an API key.
++mcp-memory-service can use that server wherever it already accepts an
++OpenAI-compatible endpoint:
++
++- the quality scorer,
++- the harvest rewriter and classifier,
++- the LLM backend of the NLI contradiction check,
++- search summarization.
++
++Embeddings are not covered. The framework has no embeddings API, so embeddings stay
++on the default ONNX model (CoreML on Apple Silicon) or on an external
++`/v1/embeddings` server (see [external-embeddings.md](../deployment/external-embeddings.md)).
++
++## Requirements
++
++- macOS 27 on Apple Silicon.
++- Apple Intelligence turned on.
++- mcp-memory-service with #1666 or later. Earlier versions omit `"stream": false`, and
++  `fm serve` streams by default, so their requests fail and silently fall back to the
++  next provider.
++
++Check that the model is available:
++
++```bash
++fm available          # "System model available"
++```
++
++## Start the server
++
++```bash
++fm serve --port 1976  # binds 127.0.0.1; model id is "system"
++curl -s http://127.0.0.1:1976/health
++```
++
++The server provides `GET /health`, `GET /v1/models` and `POST /v1/chat/completions`.
++To start it at login, wrap the same command in a launchd agent with `KeepAlive`.
++
++## Configuration
++
++Add these to `.env` and run `memory restart`.
++
++Quality scoring:
++
++```bash
++MCP_QUALITY_AI_PROVIDER=openai-compatible
++MCP_QUALITY_AI_BASE_URL=http://127.0.0.1:1976/v1
++MCP_QUALITY_AI_MODEL=system
++```
++
++Harvest, NLI and search summarization share one provider chain:
++
++```bash
++HARVEST_LLM_PROVIDERS=apple
++HARVEST_LLM_APPLE_BASE_URL=http://127.0.0.1:1976/v1
++HARVEST_LLM_APPLE_MODEL=system
++MCP_NLI_BACKEND=llm            # optional: LLM contradiction check
++MCP_SEARCH_SUMMARIZE_ENABLED=true  # optional: allow search summaries (off by default)
++```
++
++Search summaries need both switches. `MCP_SEARCH_SUMMARIZE_ENABLED=true` permits them,
++and each `memory_search` call must also pass `summarize=true`. Without the second one,
++search returns ordinary results.
++
++You can list a second provider after `apple`, for example
++`HARVEST_LLM_PROVIDERS=apple,groq`. The chain falls through to it when the local
++model fails.
++
++## What it is good at
++
++The model is small (about 3B parameters) and its context window is small too. Apple
++documents 4096 tokens per session. Every call here is a fresh single-turn request, so
++the limit applies per call, but long inputs still do not fit.
++
++The following was measured on an M-series Mac with macOS 27.0.1, against ten sample
++memories and five NLI pairs. One server served all calls, sequentially.
++
++| Task | Result | Latency per call | Recommendation |
++|------|--------|------------------|----------------|
++| NLI contradiction check | 5 of 5 correct | 0.3-0.7 s | Good fit |
++| Harvest classifier (keep/drop, strict JSON) | Every response parsed. Dropped all 3 noise fragments, but also 2 of 7 real decisions or bugs | 0.6-2.0 s | Usable; expect some false drops |
++| Quality scoring (0-1) | Always returned a parseable number. Scores were weakly differentiated: most samples got 0.2 | about 0.3 s | Keep the default local ONNX scorer |
++| Harvest rewriter (1-2 sentence insight) | Often answered in the wrong language: English input came back in Portuguese | 0.7-1.3 s | Not recommended for now |
++| Embeddings | Not available | n/a | Use ONNX or an external embeddings server |
++
++These numbers come from a small sample. Treat them as a starting point, not as a
++benchmark.
++
++## Limits
++
++- Apple Silicon and macOS 27 only. Linux and Windows users keep Ollama, vLLM or MLX-LM
++  as their OpenAI-compatible provider.
++- The weights are closed and the model can change with an OS update. Re-check
++  behaviour after major macOS updates.
++- `response_format: {"type": "json_object"}` returns HTTP 400. The server only accepts
++  `json_schema`. mcp-memory-service does not send either one; JSON comes from the
++  prompt.
 ```
 
-**File**: `.github/workflows/codeql.yml` (modified, +3/-1)
+**File**: `docs/mastery/configuration-guide.md` (modified, +1/-1)
 ```diff
-@@ -41,7 +41,9 @@ jobs:
-     # false positives on the storage and web layers.
-     - name: Install dependencies
-       run: |
--        python -m pip install --upgrade pip
-+        sudo apt-get update
-+        sudo apt-get install -y --only-upgrade ca-certificates
-+        python scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
-         pip install -e ".[sqlite]"
-     
-     # Create results directory for SARIF export
+@@ -117,7 +117,7 @@ TLS:
+ - `MCP_QUALITY_SYSTEM_ENABLED`: `true|false` (default `true`).
+ - `MCP_QUALITY_AI_PROVIDER`: `local` (ONNX, default), `openai-compatible`, `groq`, `gemini`, `auto`, `none`.
+ - `MCP_QUALITY_LOCAL_MODEL` (default `ms-marco-MiniLM-L-6-v2`), `MCP_QUALITY_LOCAL_DEVICE` (`auto|cpu|cuda|mps|directml`).
+-- `openai-compatible` requires `MCP_QUALITY_AI_BASE_URL` and `MCP_QUALITY_AI_MODEL`; `MCP_QUALITY_AI_API_KEY` is optional.
++- `openai-compatible` requires `MCP_QUALITY_AI_BASE_URL` and `MCP_QUALITY_AI_MODEL`; `MCP_QUALITY_AI_API_KEY` is optional. On macOS 27 this can point at Apple's built-in `fm serve`, see [Apple Foundation Models](../guides/apple-foundation-models.md).
+ - Cloud providers read `GROQ_API_KEY` and `GEMINI_API_KEY`.
+ - Search and storage weighting: `MCP_QUALITY_BOOST_ENABLED`, `MCP_QUALITY_BOOST_WEIGHT`, `MCP_QUALITY_IMPLICIT_BLEND_ENABLED`, `MCP_QUALITY_IMPLICIT_WEIGHT`.
+ - Retention by tier: `MCP_QUALITY_RETENTION_HIGH`, `MCP_QUALITY_RETENTION_MEDIUM`, `MCP_QUALITY_RETENTION_LOW_MIN`, `MCP_QUALITY_RETENTION_LOW_MAX`.
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +6/-2)
+**File**: `src/mcp_memory_service/harvest/classifier.py` (modified, +3/-1)
 ```diff
-@@ -41,7 +41,9 @@ jobs:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Install package + test deps
-         run: |
--          python3 -m pip install --upgrade pip
-+          sudo apt-get update
-+          sudo apt-get install -y --only-upgrade ca-certificates
-+          python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
-           python3 -m pip install -e ".[sqlite]" pytest pytest-asyncio
-       - name: Run unit tests
-         run: python3 -m pytest -m unit -q
-@@ -54,7 +56,9 @@ jobs:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: Install build tooling
-         run: |
--          python3 -m pip install --upgrade pip
-+          sudo apt-get update
-+          sudo apt-get install -y --only-upgrade ca-certificates
-+          python3 scripts/ci/bootstrap_pip.py --cert /etc/ssl/certs/ca-certificates.crt
-           python3 -m pip install build hatchling twine
- 
-       # --- Main package (with PyTorch) ---
+@@ -240,7 +240,9 @@ def _call_openai_compatible(
+             resp = client.post(
+                 f"{base_url}/chat/completions",
+                 headers=headers,
+-                json={"model": model, "messages": messages, "temperature": temperature, "max_tokens": max_tokens},
++                # stream is explicit: fm serve streams SSE when it is absent (#1666)
++                json={"model": model, "stream": False, "messages": messages,
++                      "temperature": temperature, "max_tokens": max_tokens},
+             )
+             if resp.status_code == 429:
+                 raise Exception(f"Rate limit exceeded: {resp.text[:100]}")
 ```
 
-**File**: `changelog.d/1659.fixed.md` (added, +7/-0)
+**File**: `src/mcp_memory_service/harvest/rewriter.py` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,7 @@
-+- **Refresh independent TLS trust stores after the eMudhra CA compromise.**
-+  CI and Docker bootstrap now require pip 26.2.2 and uv 0.13.4 or newer. The lite
-+  package and hand-curated Docker dependencies require certifi 2026.10.19, matching
-+  the main package. Docker builds reject the affected root certificates before
-+  bootstrapping pip and after installing application dependencies; CI builds both
-+  standard and slim images. Existing installations must also update their package
-+  managers, operating system certificates, and any custom trust bundles.
+@@ -519,6 +519,7 @@ async def _call_openai_compatible(self, base_url: str, model: str, api_key: str,
+                 headers=headers,
+                 json={
+                     "model": model,
++                    "stream": False,  # fm serve streams SSE when this is absent (#1666)
+                     "messages": [{"role": "user", "content": prompt}],
+                     "temperature": 0.3,
+                     "max_tokens": 200,
 ```
 
-**File**: `docs/security-emudhra-ca-trust.md` (added, +28/-0)
+**File**: `src/mcp_memory_service/quality/ai_evaluator.py` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,28 @@
-+# eMudhra certificate trust update
-+
-+Eight eMudhra intermediate CA keys were compromised in October 2026. Clients
-+using older trust stores can accept forged HTTPS certificates. This is a trust
-+store incident; it does not establish that this project's source or credentials
-+were compromised.
-+
-+Update each independent trust store used by your installation:
-+
-+- `certifi>=2026.10.19` for application clients that use certifi.
-+- `pip>=26.2.2` and `uv>=0.13.4` for the package managers' bundled trust stores.
-+- The operating system's security update for `ca-certificates`, and any custom
-+  bundles selected with `SSL_CERT_FILE`, `SSL_CERT_DIR`, or `PIP_CERT`.
-+
-+Updating the application or certifi alone does not update pip, uv, or the operating
-+system. Bootstrap these updates through a trust store you have already updated;
-+an old package manager can still trust the compromised chains during its own
-+upgrade. Do not disable certificate validation to install the updates.
-+
-+Rebuild Docker images with `--pull --no-cache` to refresh the base image and system
-+certificates. The maintained Dockerfiles check system trust before bootstrapping
-+pip, and check application, pip, and system trust after installing dependencies.
-+The build fails if an affected root remains trusted.
-+
-+See the [incident report and certificate-chain tests](https://emudhra.we-have-a-problem.com/),
-+the [uv advisory](https://github.com/astral-sh/uv/security/advisories/GHSA-hq85-5cpj-mr62),
-+the [certifi advisory](https://github.com/certifi/python-certifi/security/advisories/GHSA-6q48-6c7w-9gw2),
-+and the [pip release notes](https://pip.pypa.io/en/stable/news/).
+@@ -463,8 +463,11 @@ async def _score_with_openai_compatible(self, query: str, memory: Memory) -> flo
+             "Content-Type": "application/json",
+             "Authorization": f"Bearer {api_key}",
+         }
++        # stream is sent explicitly: Apple's `fm serve` answers with SSE when it
++        # is absent, unlike OpenAI's default of false (#1666).
+         payload = {
+             "model": model,
++            "stream": False,
+             "messages": [
+                 {
+                     "role": "system",
 ```
 
-**File**: `pyproject-lite.toml` (modified, +1/-0)
+**File**: `tests/harvest/test_classifier.py` (modified, +17/-0)
 ```diff
-@@ -41,6 +41,7 @@ maintainers = [
- ]
- license = { text = "Apache-2.0" }
- dependencies = [
-+    "certifi>=2026.10.19",
-     "tokenizers==0.20.3",
-     "mcp>=1.19.0,<2.0.0",
-     "python-dotenv>=1.0.0",
+@@ -358,3 +358,20 @@ def test_use_llm_config_default_false(self):
+         from mcp_memory_service.harvest.models import HarvestConfig
+         config = HarvestConfig()
+         assert config.use_llm is False
++
++
++class TestOpenAICompatiblePayload:
++    def test_payload_disables_streaming_explicitly(self):
++        """fm serve streams SSE unless told otherwise; resp.json() would fail (#1666)."""
++        resp = MagicMock(status_code=200)
++        resp.json.return_value = {"choices": [{"message": {"content": "{}"}}]}
++        client = MagicMock()
++        client.__enter__.return_value.post.return_value = resp
++
++        with patch("httpx.Client", return_value=client):
++            _classifier_without_groq_key()._call_openai_compatible(
++                "http://127.0.0.1:1976/v1", "system", "", "prompt", "system msg", 50, 0.0
++            )
++
++        payload = client.__enter__.return_value.post.call_args.kwargs["json"]
++        assert payload["stream"] is False
 ```
 
-**File**: `scripts/ci/bootstrap_pip.py` (added, +40/-0)
+**File**: `tests/harvest/test_rewriter.py` (modified, +30/-0)
 ```diff
-@@ -0,0 +1,40 @@
-+#!/usr/bin/env python3
-+"""Upgrade pip through a checked CA file using flags supported by the old pip."""
-+
-+import argparse
-+import re
-+import subprocess
-+import sys
-+from importlib import metadata
-+from pathlib import Path
-+
-+from verify_tls_trust import inspect_bundle
+@@ -327,3 +327,33 @@ def _submit(fn, coro):
+             rewriter.rewrite_batch_sync([{"content": "text", "memory_type": "decision"}])
+             batch_timeout = mock_future.result.call_args.kwargs['timeout']
+             assert batch_timeout == 3 * HarvestRewriter._CALL_TIMEOUT_BATCH + HarvestRewriter._WRAPPER_MARGIN
 +
 +
-+def main(argv=None):
-+    parser = argparse.ArgumentParser(description=__doc__)
-+    parser.add_argument("--cert", required=True, type=Path, metavar="PEM")
-+    args = parser.parse_args(argv)
-+    try:
-+        _, rejected = inspect_bundle(args.cert)
-+        if rejected:
-+            raise ValueError(f"CA bundle trusts {', '.join(sorted(rejected))}")
-+        version = metadata.version("pip")
-+        if not re.fullmatch(r"\d+(?:\.\d+)*", version):
-+            raise ValueError("cannot determine a numeric installed pip version")
-+        installed = tuple(int(part) for part in version.split("."))
-+        command = [sys.executable, "-m", "pip", "install", "--upgrade"]
-+        # pip <24.2 uses only the supplied CA file by default. Later pip unions
-+        # system and vendored roots unless legacy-certs disables that behavior.
-+        if (24, 2) <= installed < (26, 2, 2):
-+            command.append("--use-deprecated=legacy-certs")
-+        command.extend(["--cert", str(args.cert), "pip>=26.2.2"])
-+        return subprocess.run(command, check=False).returncode
-+    except (OSError, UnicodeError, ValueError, metadata.PackageNotFoundError) as exc:
-+        message = re.sub(r"[\x00-\x1f\x7f]", "", str(exc))
-+        print(f"FAIL bootstrap pip: {message}", file=sys.stderr)
-+        return 1
++class TestOpenAICompatiblePayload:
++    @pytest.mark.asyncio
++    async def test_payload_disables_streaming_explicitly(self, monkeypatch):
++        """fm serve streams SSE unless told otherwise; resp.json() would fail (#1666)."""
++        captured = {}
 +
++        class _FakeAsyncClient:
++            def __init__(self, timeout):
++                pass
 +
-+if __name__ == "__main__":
-+    raise SystemExit(main())
-```
-
----
-
-### Incident Patch 3: `d8eb805d` (2026-10-22)
-**Commit Message**: fix(health): report sync_failing when Cloudflare is unreachable (#1638)
-
-* fix(health): report sync_failing when Cloudflare is unreachable
-
-The hybrid health check reported cloudflare_sync="syncing" whenever the
-background sync loop was alive, even when every Cloudflare call failed.
-It now requires sync_stats['cloudflare_available'] for "syncing", reports
-"sync_failing" otherwise, and exposes cloudflare_available and
-consecutive_failures alongside the status.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01JUoZ7FkoUzG12PkSg34EQ9
-
-* docs(changelog): add fragment for #1638
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01JUoZ7FkoUzG12PkSg34EQ9
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/1638.fixed.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+- **The hybrid health check said `syncing` while every Cloudflare call failed (#1638).**
-+  It reported `cloudflare_sync: syncing` whenever the background sync loop was alive, so a
-+  container with broken DNS synced nothing for 16 days without the health check noticing.
-+  It now reports `sync_failing` when the sync service reports Cloudflare unreachable, and
-+  exposes `cloudflare_available` and `consecutive_failures` next to the status.
-```
-
-**File**: `src/mcp_memory_service/utils/health_check.py` (modified, +12/-2)
-```diff
-@@ -322,18 +322,28 @@ async def check_health(self, storage: Any) -> Tuple[bool, str, Dict[str, Any]]:
-             # Collect SQLite statistics through the locked executor (primary storage)
-             stats = await _run_locked(primary_storage, _collect_hybrid_sqlite_stats, primary_storage.conn)
- 
--            # Check secondary (Cloudflare) status (non-SQLite operation, done outside closure)
-+            # Check secondary (Cloudflare) status (non-SQLite operation, done outside closure).
-+            # A running sync loop is not proof that Cloudflare calls succeed,
-+            # so "syncing" also requires the service to report Cloudflare reachable.
-             cloudflare_status = "not_configured"
-+            sync_detail = {}
-             if hasattr(storage, 'secondary') and storage.secondary:
-                 sync_service = getattr(storage, 'sync_service', None)
-                 if sync_service and getattr(sync_service, 'is_running', False):
--                    cloudflare_status = "syncing"
-+                    sync_stats = getattr(sync_service, 'sync_stats', None) or {}
-+                    cloudflare_available = bool(sync_stats.get('cloudflare_available', False))
-+                    sync_detail = {
-+                        "cloudflare_available": cloudflare_available,
-+                        "consecutive_failures": getattr(sync_service, 'consecutive_failures', 0),
-+                    }
-+                    cloudflare_status = "syncing" if cloudflare_available else "sync_failing"
-                 else:
-                     cloudflare_status = "configured"
- 
-             # Add non-SQLite metadata to stats
-             stats["database_path"] = getattr(primary_storage, 'db_path', SQLITE_VEC_PATH)
-             stats["cloudflare_sync"] = cloudflare_status
-+            stats.update(sync_detail)
- 
-             memory_count = stats["total_memories"]
-             message = f"Hybrid storage validation successful ({memory_count} memories, Cloudflare: {cloudflare_status})"
-```
-
-**File**: `tests/test_health_check_hybrid_sync.py` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+"""Tests for the hybrid health check's Cloudflare sync status."""
++            async def __aenter__(self):
++                return self
 +
-+import sqlite3
-+from types import SimpleNamespace
++            async def __aexit__(self, *exc):
++                return False
 +
-+import pytest
++            async def post(self, *args, **kwargs):
++                captured.update(kwargs["json"])
++                resp = MagicMock(status_code=200)
++                resp.json.return_value = {"choices": [{"message": {"content": "ok"}}]}
++                return resp
 +
-+from mcp_memory_service.utils.health_check import HybridHealthChecker
++        monkeypatch.setattr(httpx, "AsyncClient", _FakeAsyncClient)
 +
-+
-+def _storage(secondary=True, sync_service=None):
-+    conn = sqlite3.connect(":memory:")
-+    conn.execute("CREATE TABLE memories (id INTEGER PRIMARY KEY, deleted_at REAL)")
-+    return SimpleNamespace(
-+        primary=SimpleNamespace(conn=conn, db_path=":memory:"),
-+        secondary=object() if secondary else None,
-+        sync_service=sync_service,
-+    )
-+
-+
-+def _sync_service(is_running, cloudflare_available, consecutive_failures=0):
-+    return SimpleNamespace(
-+        is_running=is_running,
-+        sync_stats={"cloudflare_available": cloudflare_available},
-+        consecutive_failures=consecutive_failures,
-+    )
-+
-+
-+async def _cloudflare_stats(storage):
-+    ok, message, stats = await HybridHealthChecker().check_health(storage)
-+    assert ok, message
-+    return stats
-+
-+
-+async def test_syncing_when_running_and_cloudflare_available():
-+    stats = await _cloudflare_stats(_storage(sync_service=_sync_service(True, True)))
-+    assert stats["cloudflare_sync"] == "syncing"
-+    assert stats["cloudflare_available"] is True
-+    assert stats["consecutive_failures"] == 0
-+
-+
-+async def test_sync_failing_when_running_and_cloudflare_unavailable():
-+    stats = await _cloudflare_stats(_storage(sync_service=_sync_service(True, False, 3)))
-+    assert stats["cloudflare_sync"] == "sync_failing"
-+    assert stats["cloudflare_available"] is False
-+    assert stats["consecutive_failures"] == 3
-+
-+
-+async def test_configured_when_sync_service_not_running():
-+    stats = await _cloudflare_stats(_storage(sync_service=_sync_service(False, True)))
-+    assert stats["cloudflare_sync"] == "configured"
-+    assert "cloudflare_available" not in stats
-+
-+
-+async def test_not_configured_without_secondary():
-+    stats = await _cloudflare_stats(_storage(secondary=False))
-+    assert stats["cloudflare_sync"] == "not_configured"
-+    assert "cloudflare_available" not in stats
++        await HarvestRewriter()._call_openai_compatible(
++            "http://127.0.0.1:1976/v1", "system", "", "prompt", 5.0
++        )
++        assert captured["stream"] is False
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1660** (2026-10-23): chore(release): v12.3.1 (@doobidoo)
-- **PR #1659** (2026-10-23): fix(security): refresh TLS trust stores after eMudhra compromise (@doobidoo)
-- **PR #1658** (2026-10-23): chore(release): v12.3.0 (@doobidoo)
-- **PR #1651** (2026-10-23): fix(storage): accept agent_id in Milvus search_memories (@andrunio)
-- **PR #1649** (2026-10-23): ci: run Tests + Coverage and ML extras with pytest-xdist (@doobidoo)
-- **PR #1648** (2026-10-22): feat(codex): report memory load and save status through systemMessage (@dodoshell)
+- **PR #1673** (2026-10-25): feat(storage): ResonanceDB — wave-based semantic memory (phase-aware retrieval) (@doobidoo)
+- **PR #1672** (2026-10-25): docs: document the rerank flag and its MCP_RERANK_* settings (@xubenqiang)
+- **PR #1667** (2026-10-24): fix: send stream false to OpenAI-compatible endpoints for fm serve (#1666) (@doobidoo)
+- **PR #1665** (2026-10-24): feat: negotiate delta-sync peer capabilities (@ducanhnguyen223)
+- **PR #1663** (2026-10-23): feat(web): expose Delta-Sync settings in Environment tab (@ducanhnguyen223)
+- **PR #1662** (2026-10-23): docs: point contributors to the current development verifier (@Ghoscro)
 
 ---
 
@@ -3710,21 +4272,21 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. quarantine): bound the on-store belief check and let it run in background (#1633
+## X. search): optional second-stage ONNX rerank flag for memory_search (#1602) (#1661
 
 **RULE**:
-When implementing operations in `changelog.d/1633.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1602.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2601f088`: quarantine): bound the on-store belief check and let it run in background (#1633). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `344f4ae1`: search): optional second-stage ONNX rerank flag for memory_search (#1602) (#1661). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1633.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1602.added.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Bound the on-store belief check with `MCP_NLI_ON_STORE_BUDGET_S` (2 s default) and `MCP_QUARANTINE_MAX_BELIEFS`, log truncated checks as WARNING, and add the opt-in `MCP_NLI_ON_STORE_ASYNC` mode (#1630).
+- Add an opt-in `rerank` flag to `memory_search`: a second-stage ONNX cross-encoder reorders the top `MCP_RERANK_CANDIDATES` results when `MCP_RERANK_ENABLED` is set, fails open to the unreranked order, and never touches the default path.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3734,4 +4296,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2601f088` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `344f4ae1` are properly handled with clean fallback behavior.

@@ -615,8 +615,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "8656e3d8f43b96727aa617a9e5656fcb4f0fddadf4f238a0ff168e91d61b839c",
-    "lastHarvestedAt": "2026-10-20T20:28:56.170Z",
+    "contentHash": "074b0ebf966582ba35fd7776c2cd807d7d5708c9cb9c81a97d68cdb4e4ebe61f",
+    "lastHarvestedAt": "2026-10-25T16:02:41.305Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf"
   },
   "hf-facebook-sam3": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "5c68f754",
+    "sourceVersion": "a930c2b1",
     "license": "Apache-2.0",
-    "contentHash": "ff6e722f077ff8ed14f91e452aa18004997cf199901102c432280f722f459c85",
-    "lastHarvestedAt": "2026-10-23T10:31:12.964Z",
+    "contentHash": "be1e498c8843f5a961b3722a5207bce986740e487f3f4aad1891944511cddd2b",
+    "lastHarvestedAt": "2026-10-25T16:02:43.336Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {

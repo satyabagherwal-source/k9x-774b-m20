@@ -4897,3 +4897,5 @@ Every entry in this ledger must capture:
 | `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `f4e28705` | Multi-dimensional audit evidence | 2026-10-25T15:56:02.175Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `181d6814` | Multi-dimensional audit evidence | 2026-10-25T15:56:07.675Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `9224e5f6` | Multi-dimensional audit evidence | 2026-10-25T15:56:12.824Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-25T16:02:41.305Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `a930c2b1` | Multi-dimensional audit evidence | 2026-10-25T16:02:43.336Z |
