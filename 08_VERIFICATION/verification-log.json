@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-L5PC",
-    "timestamp": "2026-10-21T00:02:10.080Z",
-    "repository": "momenbasel/PureMac",
-    "learningId": "learn-github-momenbasel-puremac",
-    "contentHash": "3b776c79f96e00dd98f68f2a48ba5ba764c9a782c5216a7e50c4284809b7f4a8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-L8EG",
-    "timestamp": "2026-10-21T00:02:13.576Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "eb316dee406c9721202c8547dd6915aba4f32f7e4f1590d1cc39891b13fbcb0a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-TKG8",
-    "timestamp": "2026-10-21T00:08:42.440Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "3ea50f39f4efee4ec565299895261b640c674479158deb25a91f3ed4b8a51395",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-TM20",
     "timestamp": "2026-10-21T00:08:44.520Z",
     "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -7490,6 +7445,51 @@
     "repository": "slatedb/slatedb",
     "learningId": "learn-github-slatedb-slatedb",
     "contentHash": "0180c7a53059a6724258a74814f0d569ea6a5f6b05fc4f8432b399747e0d671a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-8D7S",
+    "timestamp": "2026-10-25T02:18:52.264Z",
+    "repository": "aws-amplify/amplify-js",
+    "learningId": "learn-github-aws-amplify-amplify-js",
+    "contentHash": "8f94dd9fe6114803cfc1e9ebfcf940975f01ac6323477be14c558737c6a9e26b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-8ETW",
+    "timestamp": "2026-10-25T02:18:54.356Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "a4e10143af5d9295cd759975aa26733d4e625921801961cb318aab474a97bafb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-8KAF",
+    "timestamp": "2026-10-25T02:19:01.431Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "7496aef1456fcdbde5ade24677b40fce4d35ad622ae7498676d9d0793bfa1652",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

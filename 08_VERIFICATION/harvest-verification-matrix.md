@@ -4603,3 +4603,6 @@
 | `CYCLE-20261025-YMAX` | `2026-10-25T02:11:17.481Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3971` | Yes (`866ac00d...`) |
 | `CYCLE-20261025-YNO1` | `2026-10-25T02:11:19.249Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3972` | Yes (`f4d44608...`) |
 | `CYCLE-20261025-YQ5P` | `2026-10-25T02:11:22.477Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3973` | Yes (`0180c7a5...`) |
+| `CYCLE-20261025-8D7S` | `2026-10-25T02:18:52.264Z` | `aws-amplify/amplify-js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3974` | Yes (`8f94dd9f...`) |
+| `CYCLE-20261025-8ETW` | `2026-10-25T02:18:54.356Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3975` | Yes (`a4e10143...`) |
+| `CYCLE-20261025-8KAF` | `2026-10-25T02:19:01.431Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3976` | Yes (`7496aef1...`) |

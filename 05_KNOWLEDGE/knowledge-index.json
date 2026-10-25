@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T02:11:22.446Z",
+  "last_updated": "2026-10-25T02:19:01.378Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3541,14 +3541,19 @@
       "slug": "aws-amplify-amplify-js",
       "platform": "github",
       "source_url": "https://github.com/aws-amplify/amplify-js",
-      "source_version": "26b49ecd",
-      "content_hash": "016f8b446c406943bcededea42577d222e69a558e5c71242b14deb9818071d33",
+      "source_version": "6334056c",
+      "content_hash": "8f94dd9fe6114803cfc1e9ebfcf940975f01ac6323477be14c558737c6a9e26b",
       "dossier_path": "07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
       "promoted_rules": [
         {
           "number": 1942,
           "title": "auth): bound waiting on inflight OAuth flow with read-time deadline (#14942)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3974,
+          "title": "deps): bump markdown-it from 14.3.2 to 14.3.3 (#14996)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -3557,7 +3562,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:54:36.837Z",
+      "verified_at": "2026-10-25T02:18:52.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7495,8 +7500,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "24965a7c",
-      "content_hash": "846d86183c7a1ab87d146df1c71c723ebaf0fe49eac51dbf89c84632b8cd4c59",
+      "source_version": "fb781234",
+      "content_hash": "7496aef1456fcdbde5ade24677b40fce4d35ad622ae7498676d9d0793bfa1652",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -7679,6 +7684,11 @@
           "number": 3926,
           "title": "Cardinality-Aware Column Selectors with Explicit Null-Set Representation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3976,
+          "title": "validate): piped stdin silently passing, documented stdin forms, uniqueCombinedW",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7686,7 +7696,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:43:48.009Z",
+      "verified_at": "2026-10-25T02:19:01.366Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39627,8 +39637,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "22c287a3",
-      "content_hash": "77789c8e1fdc9169a9cbba39f97d16b420774bf3f456a8759d57ef4ed2c81665",
+      "source_version": "a2fda0ef",
+      "content_hash": "a4e10143af5d9295cd759975aa26733d4e625921801961cb318aab474a97bafb",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -39656,6 +39666,11 @@
           "number": 3614,
           "title": "Update Mantine UI (#20120)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3975,
+          "title": "tsdb: release remaining test fixture references (#20167)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39663,7 +39678,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:46:53.016Z",
+      "verified_at": "2026-10-25T02:18:54.292Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -116749,6 +116764,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T02:11:22.440Z"
+    },
+    "rule-3974": {
+      "learning_id": "rule-3974",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3974,
+      "title": "deps): bump markdown-it from 14.3.2 to 14.3.3 (#14996)",
+      "source_url": "https://github.com/aws-amplify/amplify-js",
+      "source_version": "6334056c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:18:52.198Z"
+    },
+    "rule-3975": {
+      "learning_id": "rule-3975",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3975,
+      "title": "tsdb: release remaining test fixture references (#20167)",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "a2fda0ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:18:54.292Z"
+    },
+    "rule-3976": {
+      "learning_id": "rule-3976",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3976,
+      "title": "validate): piped stdin silently passing, documented stdin forms, uniqueCombinedW",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "fb781234",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:19:01.366Z"
     }
   },
   "aliases": {

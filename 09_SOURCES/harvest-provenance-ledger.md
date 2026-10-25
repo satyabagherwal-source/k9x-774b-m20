@@ -4610,3 +4610,6 @@ Every entry in this ledger must capture:
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `8830c516` | Multi-dimensional audit evidence | 2026-10-25T02:11:17.483Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `70a4ab8e` | Multi-dimensional audit evidence | 2026-10-25T02:11:19.252Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `811dd4cd` | Multi-dimensional audit evidence | 2026-10-25T02:11:22.479Z |
+| `learn-github-aws-amplify-amplify-js` | `https://github.com/aws-amplify/amplify-js` | `6334056c` | Multi-dimensional audit evidence | 2026-10-25T02:18:52.267Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `a2fda0ef` | Multi-dimensional audit evidence | 2026-10-25T02:18:54.359Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `fb781234` | Multi-dimensional audit evidence | 2026-10-25T02:19:01.435Z |

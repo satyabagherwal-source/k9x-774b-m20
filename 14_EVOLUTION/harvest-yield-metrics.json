@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T02:11:22.485Z",
-  "total_cycles_completed": 4580,
-  "total_learnings_persisted": 4580,
-  "total_rules_promoted": 3831,
+  "last_updated": "2026-10-25T02:19:01.444Z",
+  "total_cycles_completed": 4583,
+  "total_learnings_persisted": 4583,
+  "total_rules_promoted": 3834,
   "history": [
-    {
-      "timestamp": "2026-10-22T19:22:37.615Z",
-      "repository": "unhappychoice/gitlogue",
-      "learningId": "learn-github-unhappychoice-gitlogue",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T19:22:41.318Z",
-      "repository": "wzh4869/AppPorts",
-      "learningId": "learn-github-wzh4869-appports",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T19:22:46.389Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T19:22:50.351Z",
       "repository": "qdrant/qdrant",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-25T02:11:22.485Z",
       "repository": "slatedb/slatedb",
       "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:18:52.276Z",
+      "repository": "aws-amplify/amplify-js",
+      "learningId": "learn-github-aws-amplify-amplify-js",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:18:54.369Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:19:01.444Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

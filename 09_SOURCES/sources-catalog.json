@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "24965a7c",
+    "sourceVersion": "fb781234",
     "license": "NOASSERTION",
-    "contentHash": "846d86183c7a1ab87d146df1c71c723ebaf0fe49eac51dbf89c84632b8cd4c59",
-    "lastHarvestedAt": "2026-10-24T19:43:48.064Z",
+    "contentHash": "7496aef1456fcdbde5ade24677b40fce4d35ad622ae7498676d9d0793bfa1652",
+    "lastHarvestedAt": "2026-10-25T02:19:01.435Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4253,10 +4253,10 @@
     "repository": "aws-amplify/amplify-js",
     "platform": "github",
     "sourceUrl": "https://github.com/aws-amplify/amplify-js",
-    "sourceVersion": "26b49ecd",
+    "sourceVersion": "6334056c",
     "license": "Apache-2.0",
-    "contentHash": "016f8b446c406943bcededea42577d222e69a558e5c71242b14deb9818071d33",
-    "lastHarvestedAt": "2026-10-19T00:54:36.885Z",
+    "contentHash": "8f94dd9fe6114803cfc1e9ebfcf940975f01ac6323477be14c558737c6a9e26b",
+    "lastHarvestedAt": "2026-10-25T02:18:52.267Z",
     "learningId": "learn-github-aws-amplify-amplify-js"
   },
   "go-eagle-eagle": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "22c287a3",
+    "sourceVersion": "a2fda0ef",
     "license": "Apache-2.0",
-    "contentHash": "77789c8e1fdc9169a9cbba39f97d16b420774bf3f456a8759d57ef4ed2c81665",
-    "lastHarvestedAt": "2026-10-22T15:46:53.089Z",
+    "contentHash": "a4e10143af5d9295cd759975aa26733d4e625921801961cb318aab474a97bafb",
+    "lastHarvestedAt": "2026-10-25T02:18:54.359Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {

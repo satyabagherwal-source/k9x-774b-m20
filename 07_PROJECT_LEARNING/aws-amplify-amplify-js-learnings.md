@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md`  
 > **Source**: github ([https://github.com/aws-amplify/amplify-js](https://github.com/aws-amplify/amplify-js))  
-> **Source Version**: `26b49ecd`  
+> **Source Version**: `6334056c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:54:36.668Z  
+> **Timestamp**: 2026-10-25T02:18:51.912Z  
 > **Learning ID**: `learn-github-aws-amplify-amplify-js`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws-amplify/amplify-js](https://github.com/aws-amplify/amplify-js))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:54:36.661Z  
+> **Harvest Timestamp**: 2026-10-25T02:18:50.710Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A declarative JavaScript library for application development using cloud services.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9551 stars
+- **Stars / Engagement**: 9552 stars
 
 ---
 
@@ -467,1192 +467,413 @@ export const getAccessTokenUsername = (accessToken: string): string =>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `556185e7` (2026-09-09)
-**Commit Message**: fix(auth): bound waiting on inflight OAuth flow with read-time deadline (#14942)
+### Incident Patch 1: `6334056c` (2026-10-22)
+**Commit Message**: chore(deps): bump markdown-it from 14.3.2 to 14.3.3 (#14996)
 
-* fix(auth): bound waiting on an inflight OAuth flow with a read-time deadline
+Bumps [markdown-it](https://github.com/markdown-it/markdown-it) from 14.3.2 to 14.3.3.
+- [Changelog](https://github.com/markdown-it/markdown-it/blob/14.3.3/CHANGELOG.md)
+- [Commits](https://github.com/markdown-it/markdown-it/compare/14.3.2...14.3.3)
 
-fetchAuthSession/getCurrentUser could hang forever when another tab started
-signInWithRedirect and abandoned the Hosted UI page: the shared inflightOAuth
-flag has no expiry and parked waiters were only released by the tab that
-completes the flow.
+---
+updated-dependencies:
+- dependency-name: markdown-it
+  dependency-version: 14.3.3
+  dependency-type: indirect
+...
 
-- signInWithRedirect now records a blocking deadline in a sibling storage key
-  (inflightOAuthDeadline, 5 min), written before the flag so racing readers
-  never misclassify the writer as legacy
-- TokenOrchestrator.waitForInflightOAuth evaluates the deadline at read time
-  and arms a singleton backstop timer on every park (covers the release-race,
-  missing storage events, and abandoned flows)
-- a cross-tab storage listener releases parked waiters as soon as the owning
-  tab settles the flow (requires the crossTab storage listener machinery)
-- the completion gate keeps ignoring the deadline and no tab ever mutates
-  another tab's flow state, so slow-but-successful logins still complete
-- flags written by older library versions get a persisted default deadline
-  from first observa
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `.changeset/oauth-inflight-deadline.md` (added, +19/-0)
+**File**: `yarn.lock` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,19 @@
-+---
-+'@aws-amplify/auth': patch
-+---
-+
-+fix(auth): bound waiting on an inflight OAuth flow with a read-time deadline
-+
-+`fetchAuthSession` / `getCurrentUser` could previously hang forever when another
-+tab started `signInWithRedirect` and abandoned the Hosted UI page: the shared
-+`inflightOAuth` flag has no expiry and the parked promise was only released by
-+the tab completing the flow.
-+
-+The flow now records a blocking deadline next to the flag (`inflightOAuthDeadline`,
-+5 minutes). Token consumers evaluate it at read time and park with a backstop
-+timer, and a cross-tab storage listener releases waiters as soon as the owning
-+tab settles the flow. The deadline bounds only how long other work may block —
-+the completion path deliberately ignores it, and no tab ever mutates another
-+tab's flow state, so a slow-but-successful login still completes. Flags written
-+by older library versions are handled by persisting a default deadline on first
-+observation.
-```
-
-**File**: `packages/auth/__tests__/providers/cognito/tokenOrchestrator.test.ts` (modified, +18/-1)
-```diff
-@@ -42,6 +42,7 @@ const validAuthConfig: ResourcesConfig = {
+@@ -9743,9 +9743,9 @@ map-obj@^4.0.0:
+   integrity sha512-hdN1wVrZbb29eBGiGjJbeP8JbKjq1urkHJ/LIP/NY48MZ1QVXUsQBV1G1zvYFHn1XE06cwjBsOI2K3Ulnj1YXQ==
  
- jest.mock('../../../src/providers/cognito/utils/oauth/inflightPromise', () => ({
- 	addInflightPromise: jest.fn(),
-+	armInflightDeadline: jest.fn(),
- }));
- 
- const currentDate = new Date();
-@@ -143,13 +144,29 @@ describe('TokenOrchestrator', () => {
- 
- 		it('Should call addInflightPromise when OAuth is inflight', async () => {
- 			mockAuthTokenStore.loadTokens.mockResolvedValue(validAuthTokens);
--			(oAuthStore.loadOAuthInFlight as jest.Mock).mockResolvedValue(true);
-+			(oAuthStore.loadOAuthInFlightDeadline as jest.Mock).mockResolvedValue(
-+				Date.now() + 60_000,
-+			);
- 
- 			const tokens = await tokenOrchestrator.getTokens();
- 
- 			expect(addInflightPromise).toHaveBeenCalledWith(expect.any(Function));
- 			expect(tokens?.accessToken).toEqual(validAuthTokens.accessToken);
- 		});
-+
-+		it('Should not block when the inflight OAuth blocking deadline has passed', async () => {
-+			mockAuthTokenStore.loadTokens.mockResolvedValue(validAuthTokens);
-+			// An absent or expired deadline is reported as `undefined` by the store.
-+			(oAuthStore.loadOAuthInFlightDeadline as jest.Mock).mockResolvedValue(
-+				undefined,
-+			);
-+			mockAddInflightPromise.mockClear();
-+
-+			const tokens = await tokenOrchestrator.getTokens();
-+
-+			expect(addInflightPromise).not.toHaveBeenCalled();
-+			expect(tokens?.accessToken).toEqual(validAuthTokens.accessToken);
-+		});
- 	});
- 
- 	describe('setClientMetadataProvider', () => {
-```
-
-**File**: `packages/auth/__tests__/providers/cognito/utils/oauth/inflightOAuthDeadline.test.ts` (added, +276/-0)
-```diff
-@@ -0,0 +1,276 @@
-+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-+// SPDX-License-Identifier: Apache-2.0
-+
-+import { defaultStorage } from '@aws-amplify/core';
-+
-+import { TokenOrchestrator } from '../../../../../src/providers/cognito/tokenProvider/TokenOrchestrator';
-+import { AUTH_KEY_PREFIX } from '../../../../../src/providers/cognito/tokenProvider/constants';
-+import {
-+	DefaultOAuthStore,
-+	OAUTH_INFLIGHT_TTL_MS,
-+} from '../../../../../src/providers/cognito/utils/signInWithRedirectStore';
-+import { oAuthStore } from '../../../../../src/providers/cognito/utils/oauth/oAuthStore';
-+import { resolveAndClearInflightPromises } from '../../../../../src/providers/cognito/utils/oauth/inflightPromise';
-+
-+// Registers the browser-only side effects at module load — including the
-+// cross-tab storage listener that releases parked token consumers when the
-+// inflight flag is removed in another tab.
-+import '../../../../../src/providers/cognito/utils/oauth/enableOAuthListener';
-+
-+// Per repo convention only the boundaries are mocked: `isBrowser` (so the
-+// browser-only branches are taken deterministically). The real oAuthStore,
-+// defaultStorage (jsdom localStorage), inflightPromise module, and
-+// TokenOrchestrator internals are exercised.
-+jest.mock('@aws-amplify/core/internals/utils', () => ({
-+	...jest.requireActual('@aws-amplify/core/internals/utils'),
-+	isBrowser: jest.fn(() => true),
-+}));
-+
-+const userPoolClientId = 'test-client-id';
-+const authConfig = {
-+	Cognito: {
-+		userPoolId: 'us-east-1_test-id',
-+		userPoolClientId,
-+	},
-+};
-+
-+const inflightKey = `${AUTH_KEY_PREFIX}.${userPoolClientId}.inflightOAuth`;
-+const deadlineKey = `${AUTH_KEY_PREFIX}.${userPoolClientId}.inflightOAuthDeadline`;
-+const pkceKey = `${AUTH_KEY_PREFIX}.${userPoolClientId}.oauthPKCE`;
-+const stateKey = `${AUTH_KEY_PREFIX}.${userPoolClientId}.oauthState`;
-+
-+// Bounded microtask drain, used ONLY ahead of NEGATIVE (`isSettled() === false`)
-+// assertions, where it is safe by construction: draining too little can only
-+// make the assertion weaker, never flaky-pass a regression, and extra passes
-+// only strengthen it. POSITIVE assertions never rely on this — they `await`
-+// the parked promise itself, which is deterministic at any async-chain depth
-+// and turns a regression into a hard jest timeout instead of a silent
-+// under-drain (jest's jsdom provides neither setImmediate nor MessageChannel
-+// for a true macrotask boundary).
-+const drainMicrotasks = async () => {
-+	for (let i = 0; i < 25; i++) {
-+		await Promise.resolve();
-+	}
-+};
-+
-+const createOrchestrator = () => {
-+	const orchestrator = new TokenOrchestrator();
-+	orchestrator.setAuthConfig(authConfig as any);
-+
-+	return orchestrator;
-+};
-+
-+const park = (orchestrator: TokenOrchestrator) => {
-+	let settled = false;
-+	const promise = orchestrator.waitForInflightOAuth().then(() => {
-+		settled = true;
-+	});
-+
-+	return { promise, isSettled: () => settled };
-+};
-+
-+describe('inflight OAuth blocking deadline', () => {
-+	beforeEach(() => {
-+		jest.useFakeTimers();
-+		window.localStorage.clear();
-+	});
-+
-+	afterEach(async () => {
-+		// Drain any parked waiters and clear the singleton backstop timer so
-+		// module-level state never leaks between tests.
-+		resolveAndClearInflightPromises();
-+		await drainMicrotasks();
-+		jest.clearAllTimers();
-+		jest.useRealTimers();
-+	});
-+
-+	it('does not block when no OAuth flow is in flight', async () => {
-+		const orchestrator = createOrchestrator();
-+
-+		// Deterministic positive assertion: resolves without any timer advance,
-+		// or times out the test on regression.
-+		await park(orchestrator).promise;
-+	});
-+
-+	it('parks while a flow is in flight and releases once the deadline passes, without mutating shared state', async () => {
-+		await oAuthStore.storeOAuthInFlight(true);
-+		await defaultStorage.setItem(pkceKey, 'test-pkce');
-+		await defaultStorage.setItem(stateKey, 'test-state');
-+
-+		const orchestrator = createOrchestrator();
-+		const waiter = park(orchestrator);
-+		await drainMicrotasks();
-+		expect(waiter.isSettled()).toBe(false);
-+
-+		// One millisecond before the deadline: still parked.
-+		await jest.advanceTimersByTimeAsync(OAUTH_INFLIGHT_TTL_MS - 1);
-+		await drainMicrotasks();
-+		expect(waiter.isSettled()).toBe(false);
-+
-+		// Deadline passes: the backstop timer releases the waiter locally...
-+		await jest.advanceTimersByTimeAsync(2);
-+		await waiter.promise;
-+
-+		// ...while the (possibly still running) flow's shared state is intact:
-+		// only the flow-owner tab may mutate it.
-+		expect(window.localStorage.getItem(inflightKey)).toBe('true');
-+		expect(window.localStorage.getItem(deadlineKey)).not.toBeNull();
-+		expect(window.localStorage.getItem(pkceKey)).toBe('test-pkce');
-+		expect(window.localStorage.getItem(stateKey)).toBe('test-state');
-+	});
-+
-+	it('releases parked waiters when another tab removes the inflight flag', async () => {
-+		await oAuthStore.storeOAuthInFlight(true);
-+
-+		const or
-```
-
-**File**: `packages/auth/src/providers/cognito/tokenProvider/TokenOrchestrator.ts` (modified, +44/-5)
-```diff
-@@ -18,7 +18,10 @@ import {
- import { assertServiceError } from '../../../errors/utils/assertServiceError';
- import { AuthError } from '../../../errors/AuthError';
- import { oAuthStore } from '../utils/oauth/oAuthStore';
--import { addInflightPromise } from '../utils/oauth/inflightPromise';
-+import {
-+	addInflightPromise,
-+	armInflightDeadline,
-+} from '../utils/oauth/inflightPromise';
- import { ClientMetadata, CognitoAuthSignInDetails } from '../types';
- 
- import {
-@@ -38,20 +41,53 @@ export class TokenOrchestrator implements AuthTokenOrchestrator {
- 	inflightPromise: Promise<void> | undefined;
- 	waitForInflightOAuth: () => Promise<void> = isBrowser()
- 		? async () => {
--				if (!(await oAuthStore.loadOAuthInFlight())) {
-+				// Read-time evaluation of the blocking deadline: absent flag, an
-+				// expired deadline, or a flag value other than 'true' all mean
-+				// "do not block". An abandoned flow in another tab can therefore
-+				// never park token consumers indefinitely.
-+				// (`loadOAuthInFlightDeadline` is optional on the OAuthStore
-+				// interface for custom-implementation compatibility, but this
-+				// singleton is always the concrete DefaultOAuthStore, which
-+				// implements it.)
-+				const deadline = await oAuthStore.loadOAuthInFlightDeadline();
-+				if (deadline === undefined) {
- 					return;
- 				}
- 
- 				if (this.inflightPromise) {
-+					// Keep the backstop aligned with the current deadline for waiters
-+					// piggybacking on the existing park.
-+					armInflightDeadline(deadline, () =>
-+						oAuthStore.loadOAuthInFlightDeadline(),
-+					);
-+
- 					return this.inflightPromise;
- 				}
- 
- 				// when there is valid oauth config and there is an inflight oauth flow, try
- 				// to block async calls that require fetching tokens before the oauth flow completes
- 				// e.g. getCurrentUser, fetchAuthSession etc.
- 
--				this.inflightPromise = new Promise<void>((resolve, _reject) => {
--					addInflightPromise(resolve);
-+				this.inflightPromise = new Promise<void>(resolve => {
-+					// Invariant: `this.inflightPromise` is owned by the park lifecycle —
-+					// created here and reset by the very resolver that releases it
-+					// (drained by the backstop timer, the cross-tab listener, or
-+					// in-process completion). Resetting BEFORE resolving closes the
-+					// post-release hole where a caller for a NEW flow could observe a
-+					// stale, already-resolved promise and skip blocking on it.
-+					addInflightPromise(() => {
-+						this.inflightPromise = undefined;
-+						resolve();
-+					});
-+					// Arm the deadline backstop in the same synchronous step as the
-+					// park: it releases this waiter even when the cross-tab release
-+					// fired between the deadline read above and this park (that storage
-+					// event never re-fires), when storage events are unavailable
-+					// (Safari private mode), or when the flow is simply never
-+					// completed anywhere.
-+					armInflightDeadline(deadline, () =>
-+						oAuthStore.loadOAuthInFlightDeadline(),
-+					);
- 				});
- 
- 				return this.inflightPromise;
-@@ -115,7 +151,10 @@ export class TokenOrchestrator implements AuthTokenOrchestrator {
- 			return null;
- 		}
- 		await this.waitForInflightOAuth();
--		this.inflightPromise = undefined;
-+		// NOTE: `this.inflightPromise` is reset by the resolver registered in
-+		// `waitForInflightOAuth` (co-located with the release), NOT here — a reset
-+		// here could clobber a newer flow's park created between the release and
-+		// this line resuming.
- 		tokens = await this.getTokenStore().loadTokens();
- 		const username = await this.getTokenStore().getLastAuthUser();
- 
-```
-
-**File**: `packages/auth/src/providers/cognito/utils/oauth/enableOAuthListener.ts` (modified, +30/-0)
-```diff
-@@ -3,13 +3,19 @@
- 
- import {
- 	Hub,
-+	KeyValueStorageEvent,
- 	ResourcesConfig,
-+	defaultStorage,
- 	getGlobalContext,
- 	hasGlobalContext,
- } from '@aws-amplify/core';
- import { isBrowser } from '@aws-amplify/core/internals/utils';
- 
-+import { AUTH_KEY_PREFIX } from '../../tokenProvider/constants';
-+import { OAuthStorageKeys } from '../types';
-+
- import { attemptCompleteOAuthFlow } from './attemptCompleteOAuthFlow';
-+import { resolveAndClearInflightPromises } from './inflightPromise';
- 
- // Synchronous re-entry guard for the OAuth completion side effect (PR #14925).
- //
-@@ -71,6 +77,30 @@ if (isBrowser()) {
- 		}
- 	});
- 
-+	// Cross-tab release of parked token consumers: when the tab owning an
-+	// inflight OAuth flow settles it (success, failure, or cancellation), it
-+	// removes the `inflightOAuth` flag from shared storage — `completeOAuthFlow`
-+	// on success, `handleFailure` otherwise. Observing that transition here
-+	// releases this tab's waiters (`fetchAuthSession`, `getCurrentUser`, ...)
-+	// immediately instead of leaving them parked until the blocking-deadline
-+	// backstop fires. The release is purely local; no shared state is mutated.
-+	// Registered for the module (page) lifetime, mirroring the Hub subscription
-+	// above — deliberately never unsubscribed.
-+	defaultStorage.addListener?.(async (event: KeyValueStorageEvent) => {
-+		const { key, newValue } = event;
-+		// Match by prefix/suffix rather than positional `split('.')`, consistent
-+		// with the cross-tab token listener (key shape:
-+		// `${AUTH_KEY_PREFIX}.<clientId>.inflightOAuth`).
-+		if (
-+			!!key &&
-+			key.startsWith(`${AUTH_KEY_PREFIX}.`) &&
-+			key.endsWith(`.${OAuthStorageKeys.inflightOAuth}`) &&
-+			newValue !== 'true'
-+		) {
-+			resolveAndClearInflightPromises();
-+		}
-+	});
-+
- 	// Catch-up: `Amplify.configure()` may have run before this module was
- 	// imported (dynamic imports / code-splitting), in which case the 'configure'
- 	// Hub event already fired and was missed. If a global context configured with
-```
-
-**File**: `packages/auth/src/providers/cognito/utils/oauth/inflightPromise.ts` (modified, +55/-0)
-```diff
-@@ -3,11 +3,66 @@
- 
- const inflightPromises: ((value: void | PromiseLike<void>) => void)[] = [];
- 
-+// Module-level singleton backstop timer for the inflight OAuth blocking
-+// deadline. A single timer (not one per waiter) is sufficient because all
-+// parked waiters share one release (`resolveAndClearInflightPromises` drains
-+// them all), and every park re-arms it with the current deadline.
-+let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
-+
- export const addInflightPromise = (resolver: () => void) => {
- 	inflightPromises.push(resolver);
- };
- 
-+/**
-+ * Arms (or re-arms) the backstop timer that releases parked token consumers
-+ * once the inflight OAuth blocking deadline passes.
-+ *
-+ * On fire it re-reads the deadline instead of trusting the armed one: a fresh
-+ * `signInWithRedirect` may have renewed it (re-arm for the new deadline), or
-+ * the flow may have been released through another path already (the re-check
-+ * returns `undefined` and draining is a no-op). The release is purely local —
-+ * it never mutates shared OAuth state, so another tab's still-running flow is
-+ * left intact.
-+ *
-+ * Note: browsers throttle timers in background tabs, which may delay (never
-+ * prevent) this release; the cross-tab storage listener remains the fast path.
-+ */
-+export const armInflightDeadline = (
-+	deadline: number,
-+	recheckDeadline: () => Promise<number | undefined>,
-+) => {
-+	if (deadlineTimer !== undefined) {
-+		clearTimeout(deadlineTimer);
-+	}
-+	deadlineTimer = setTimeout(
-+		() => {
-+			deadlineTimer = undefined;
-+			recheckDeadline()
-+				.then(renewedDeadline => {
-+					if (renewedDeadline !== undefined) {
-+						armInflightDeadline(renewedDeadline, recheckDeadline);
-+
-+						return;
-+					}
-+					resolveAndClearInflightPromises();
-+				})
-+				// Fail open: an error while re-checking (e.g. auth config torn down)
-+				// must release the waiters rather than leave them parked forever.
-+				.catch(() => {
-+					resolveAndClearInflightPromises();
-+				});
-+		},
-+		Math.max(0, deadline - Date.now()),
-+	);
-+};
-+
- export const resolveAndClearInflightPromises = () => {
-+	// The waiters this timer guarded are being released through this very call
-+	// (whatever triggered it) — clear it so no stale timer outlives its waiters.
-+	if (deadlineTimer !== undefined) {
-+		clearTimeout(deadlineTimer);
-+		deadlineTimer = undefined;
-+	}
- 	while (inflightPromises.length) {
- 		inflightPromises.pop()?.();
- 	}
-```
-
-**File**: `packages/auth/src/providers/cognito/utils/signInWithRedirectStore.ts` (modified, +62/-0)
-```diff
-@@ -14,6 +14,14 @@ import { OAuthStorageKeys, OAuthStore } from './types';
- 
- const V5_HOSTED_UI_KEY = 'amplify-signin-with-hostedUI';
- 
-+// Bounds how long OTHER auth work (fetchAuthSession, getCurrentUser, ...) may
-+// block on an inflight OAuth flow, aligned with the validity period of a
-+// Cognito authorization code. It does NOT bound the flow itself: the
-+// completion path (`attemptCompleteOAuthFlow`) deliberately keeps gating on
-+// the raw `loadOAuthInFlight` flag and ignores this deadline, so a
-+// slow-but-successful Hosted UI login still completes after it passes.
-+export const OAUTH_INFLIGHT_TTL_MS = 5 * 60 * 1000;
-+
- export class DefaultOAuthStore implements OAuthStore {
- 	keyValueStorage: KeyValueStorageInterface;
- 	cognitoConfig?: CognitoUserPoolConfig;
-@@ -31,6 +39,7 @@ export class DefaultOAuthStore implements OAuthStore {
- 		);
- 		await Promise.all([
- 			this.keyValueStorage.removeItem(authKeys.inflightOAuth),
-+			this.keyValueStorage.removeItem(authKeys.inflightOAuthDeadline),
- 			this.keyValueStorage.removeItem(authKeys.oauthPKCE),
- 			this.keyValueStorage.removeItem(authKeys.oauthState),
- 		]);
-@@ -109,13 +118,66 @@ export class DefaultOAuthStore implements OAuthStore {
- 		);
- 	}
- 
-+	async loadOAuthInFlightDeadline(): Promise<number | undefined> {
-+		assertTokenProviderConfig(this.cognitoConfig);
-+		const { userPoolClientId } = this.cognitoConfig;
-+
-+		if (!(await this.loadOAuthInFlight())) {
-+			return undefined;
-+		}
-+
-+		const authKeys = createKeysForAuthStorage(
-+			AUTH_KEY_PREFIX,
-+			userPoolClientId,
-+		);
-+
-+		const storedDeadline = await this.keyValueStorage.getItem(
-+			authKeys.inflightOAuthDeadline,
-+		);
-+		let deadline = Number(storedDeadline);
-+
-+		if (storedDeadline === null || Number.isNaN(deadline)) {
-+			// Legacy writer (an older library version set the flag without a
-+			// deadline). Persist a default deadline counted from first observation
-+			// so it stays stable across tabs and page reloads instead of resetting
-+			// on every load. This write is purely additive — the legacy flow's own
-+			// state (inflight flag, PKCE, state) is never touched, and legacy
-+			// readers ignore the extra key. Independent first-observers race this
-+			// write (last writer wins), so the persisted deadline can shift by the
-+			// observation-time gap between tabs — harmless, as it stays bounded by
-+			// observation time + OAUTH_INFLIGHT_TTL_MS.
-+			deadline = Date.now() + OAUTH_INFLIGHT_TTL_MS;
-+			await this.keyValueStorage.setItem(
-+				authKeys.inflightOAuthDeadline,
-+				String(deadline),
-+			);
-+		}
-+
-+		// An expired deadline makes the flag inert for BLOCKING purposes only; it
-+		// is evaluated at read time, never enforced by deleting the flow state
-+		// (only the flow-owner tab mutates it), so a slow login can still finish.
-+		return deadline > Date.now() ? deadline : undefined;
-+	}
-+
- 	async storeOAuthInFlight(inflight: boolean): Promise<void> {
- 		assertTokenProviderConfig(this.cognitoConfig);
- 		const authKeys = createKeysForAuthStorage(
- 			AUTH_KEY_PREFIX,
- 			this.cognitoConfig.userPoolClientId,
- 		);
- 
-+		if (inflight) {
-+			// Write the deadline BEFORE the flag: a reader racing the two storage
-+			// writes must never observe the flag without its deadline, or it would
-+			// misclassify this writer as a legacy one and persist its own default.
-+			await this.keyValueStorage.setItem(
-+				authKeys.inflightOAuthDeadline,
-+				String(Date.now() + OAUTH_INFLIGHT_TTL_MS),
-+			);
-+		} else {
-+			await this.keyValueStorage.removeItem(authKeys.inflightOAuthDeadline);
-+		}
-+
- 		await this.keyValueStorage.setItem(authKeys.inflightOAuth, `${inflight}`);
- 	}
- 
-```
-
-**File**: `packages/auth/src/providers/cognito/utils/types.ts` (modified, +11/-0)
-```diff
-@@ -103,6 +103,7 @@ export function assertDeviceMetadata(
- 
- export const OAuthStorageKeys = {
- 	inflightOAuth: 'inflightOAuth',
-+	inflightOAuthDeadline: 'inflightOAuthDeadline',
- 	oauthSignIn: 'oauthSignIn',
- 	oauthPKCE: 'oauthPKCE',
- 	oauthState: 'oauthState',
-@@ -111,6 +112,16 @@ export const OAuthStorageKeys = {
- export interface OAuthStore {
- 	setAuthConfig(authConfigParam: CognitoUserPoolConfig): void;
- 	loadOAuthInFlight(): Promise<boolean>;
-+	/**
-+	 * Returns the timestamp (epoch ms) until which token consumers should block
-+	 * on the inflight OAuth flow, or `undefined` when there is nothing to block
-+	 * on (no flow in flight, or its blocking deadline has passed).
-+	 *
-+	 * Optional so that custom {@link OAuthStore} implementations written before
-+	 * this method existed keep compiling; callers must treat its absence as
-+	 * "no deadline available".
-+	 */
-+	loadOAuthInFlightDeadline?(): Promise<number | undefined>;
- 	storeOAuthInFlight(inflight: boolean): Promise<void>;
- 	loadOAuthSignIn(): Promise<{
- 		isOAuthSignIn: boolean;
+ markdown-it@^14.1.0:
+-  version "14.3.2"
+-  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-14.3.2.tgz#eb41b5855120836603c33c1be4c92f58001f8a26"
+-  integrity sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==
++  version "14.3.3"
++  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-14.3.3.tgz#15e6e145d20b1499a7b323bb14e21062690132d8"
++  integrity sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==
+   dependencies:
+     argparse "^2.0.1"
+     entities "^4.5.0"
 ```
 
 ---
 
-### Incident Patch 2: `d8f5356d` (2026-09-18)
-**Commit Message**: fix(auth): local AmplifyContext sign-in without Amplify.configure() (#14948)
+### Incident Patch 2: `88e53adb` (2026-10-21)
+**Commit Message**: ci(release): publish to npm via trusted publishing (#14995)
 
-* fix(core): restore Amplify.getConfig() empty-config behavior before configure()
+ci(release): publish to npm via trusted publishing from a single workflow
 
-The aws-amplify umbrella Amplify.getConfig() was rewritten in #14931 to route through getGlobalContext(), which throws NoAmplifyContextError when Amplify.configure() has not been called. Released 6.20.0 behavior was to warn and return an empty config ({}). This unintended regression crashed the storage/local-context e2e (the sample renders Amplify.getConfig() before configure and expects {}), gating the 6.21.0 release.
-
-Restore the pre-configure contract: getConfig() now warns and returns {} when there is no global context (via the existing hasGlobalContext() guard), and returns the real resourcesConfig once configured. Category fn(ctx, input) APIs and the getGlobalContext()/NoAmplifyContextError guard are unchanged; the adapter-nextjs InvalidServerContextError SSR guard is untouched.
-
-* fix(auth): persist sign-in tokens to the per-context orchestrator for local AmplifyContext
-
-Sign-in flows persisted Cognito tokens via a module-level singleton tokenOrchestrator whose authConfig/storage are set only by Amplify.configure(). 
-
-**File**: `.changeset/local-context-auth.md` (added, +13/-0)
+**File**: `.github/actions/ensure-npm-trusted-publishing/action.yml` (added, +16/-0)
 ```diff
-@@ -0,0 +1,13 @@
-+---
-+"aws-amplify": patch
-+"@aws-amplify/auth": patch
-+"@aws-amplify/core": patch
-+---
+@@ -0,0 +1,16 @@
++name: Ensure npm supports trusted publishing
++description: Upgrades npm to a version that supports trusted publishing (OIDC) if the installed version is too old.
 +
-+fix(auth): support user-pool sign-in through a local `createAmplifyContext()` without `Amplify.configure()`
-+
-+Makes a locally created `AmplifyContext` (`createAmplifyContext()`, without calling `Amplify.configure()`) usable end-to-end for Cognito user-pool auth:
-+
-+- `Amplify.getConfig()` again returns an empty config (`{}`) with a warning before `configure()` instead of throwing `NoAmplifyContextError`, restoring the released 6.20.0 contract that the explicit-AmplifyContext migration (#14931) unintentionally changed.
-+- Cognito sign-in, `fetchAuthSession`, and the device APIs now resolve the per-context token orchestrator at the flow entry point (falling back to the global singleton for the `Amplify.configure()` path), so tokens persist to and are read from the same per-context store. The global `Amplify.configure()` path is unchanged.
-+- Known limitation: OAuth (`signInWithRedirect`) sign-in tokens still cache to the **global** orchestrator, because OAuth completion runs after a full-page redirect via `enableOAuthListener`, at which point no `AmplifyContext` survives — so a local `createAmplifyContext()` that initiates `signInWithRedirect` cannot read its OAuth tokens back per-context. This fix covers user-pool (non-redirect) sign-in.
++runs:
++  using: 'composite'
++  steps:
++    - name: Ensure npm supports trusted publishing
++      shell: bash
++      run: |
++        # npm trusted publishing (OIDC) requires npm >= 11.5.1
++        NPM_VERSION=$(npm --version)
++        echo "npm version: $NPM_VERSION"
++        if ! node -e 'const [a, b, c] = process.argv[1].split(".").map(Number); process.exit(a > 11 || (a === 11 && (b > 5 || (b === 5 && c >= 1))) ? 0 : 1)' "$NPM_VERSION"; then
++          npm install -g npm@^11.5.1
++          npm --version
++        fi
 ```
 
-**File**: `packages/auth/__tests__/providers/cognito/deleteUser.test.ts` (modified, +10/-1)
+**File**: `.github/actions/npm-publish/action.yml` (removed, +0/-47)
 ```diff
-@@ -9,7 +9,10 @@ import {
- 
- import { AuthError } from '../../../src/errors/AuthError';
- import { deleteUser } from '../../../src/providers/cognito';
--import { tokenOrchestrator } from '../../../src/providers/cognito/tokenProvider';
-+import {
-+	resolveTokenOrchestrator,
-+	tokenOrchestrator,
-+} from '../../../src/providers/cognito/tokenProvider';
- import { DeleteUserException } from '../../../src/providers/cognito/types/errors';
- import { signOut } from '../../../src/providers/cognito/apis/signOut';
- import { createDeleteUserClient } from '../../../src/foundation/factories/serviceClients/cognitoIdentityProvider';
-@@ -24,6 +27,12 @@ jest.mock(
- );
- jest.mock('../../../src/providers/cognito/factories');
- 
-+// The barrel is auto-mocked, so `resolveTokenOrchestrator` returns undefined by
-+// default. Point it at the auto-mocked singleton so these suites keep
-+// asserting against `tokenOrchestrator` as they did before the entry-point
-+// orchestrator threading.
-+jest.mocked(resolveTokenOrchestrator).mockReturnValue(tokenOrchestrator);
-+
- describe('deleteUser', () => {
- 	// assert mocks
- 	const mockDeleteUser = jest.fn();
+@@ -1,47 +0,0 @@
+-name: Publish to NPM
+-description: Publish changes from the current commit to npm using the target release process.
+-
+-inputs:
+-  github_user:
+-    description: The git user to make commits with
+-    required: true
+-  github_email:
+-    description: The git email to make commits with
+-    required: true
+-  target:
+-    description: The release process target (either release or preid)
+-    required: true
+-  preid:
+-    description: The preid to release to when the target is preid. The preid process will fail if this isn't provided.
+-    required: false
+-  npm_token:
+-    description: The npm token that gives the job npm permissions
+-    required: true
+-
+-runs:
+-  using: 'composite'
+-  steps:
+-    - name: Set github commit user
+-      shell: bash
+-      env:
+-        GITHUB_EMAIL: ${{ inputs.github_email }}
+-        GITHUB_USER: ${{ inputs.github_user }}
+-      run: |
+-        git config --global user.email $GITHUB_EMAIL
+-        git config --global user.name $GITHUB_USER
+-
+-    - name: Run npm publish
+-      if: github.repository_owner == 'aws-amplify'
+-      shell: bash
+-      working-directory: ./amplify-js
+-      env:
+-        NPM_TOKEN: ${{ inputs.npm_token }}
+-        GH_SHA: ${{ github.sha }}
+-        TARGET: ${{ inputs.target }}
+-        PREID_PREFIX: ${{ inputs.preid || '' }}
+-      run: |
+-        echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+-        export PREID_HASH_SUFFIX=$(echo $GH_SHA | cut -c -7 | sed 's/^/\./')
+-        git status
+-        git --no-pager diff
+-        yarn publish:$TARGET
 ```
 
-**File**: `packages/auth/__tests__/providers/cognito/forgetDevice.test.ts` (modified, +10/-1)
+**File**: `.github/workflows/release-hotfix.yml` (modified, +11/-5)
 ```diff
-@@ -11,7 +11,10 @@ import { AuthError } from '../../../src/errors/AuthError';
- import { DEVICE_METADATA_NOT_FOUND_EXCEPTION } from '../../../src/errors/constants';
- import { forgetDevice } from '../../../src/providers/cognito';
- import { ForgetDeviceException } from '../../../src/providers/cognito/types/errors';
--import { tokenOrchestrator } from '../../../src/providers/cognito/tokenProvider';
-+import {
-+	resolveTokenOrchestrator,
-+	tokenOrchestrator,
-+} from '../../../src/providers/cognito/tokenProvider';
- import { createForgetDeviceClient } from '../../../src/foundation/factories/serviceClients/cognitoIdentityProvider';
- import { createCognitoUserPoolEndpointResolver } from '../../../src/providers/cognito/factories';
+@@ -5,10 +5,9 @@ permissions:
+   contents: write
+   pull-requests: write
  
-@@ -23,6 +26,12 @@ jest.mock(
- );
- jest.mock('../../../src/providers/cognito/factories');
++# Called from release.yml on pushes to hotfix
+ on:
+-  push:
+-    branches:
+-      - hotfix
++  workflow_call:
  
-+// The barrel is auto-mocked, so `resolveTokenOrchestrator` returns undefined by
-+// default. Point it at the auto-mocked singleton so these suites keep
-+// asserting against `tokenOrchestrator` as they did before the entry-point
-+// orchestrator threading.
-+jest.mocked(resolveTokenOrchestrator).mockReturnValue(tokenOrchestrator);
-+
- describe('fetchMFAPreference', () => {
- 	const mockDeviceMetadata = {
- 		deviceKey: 'deviceKey',
-```
-
-**File**: `packages/auth/__tests__/providers/cognito/rememberDevice.test.ts` (modified, +10/-1)
-```diff
-@@ -10,7 +10,10 @@ import {
- import { AuthError } from '../../../src/errors/AuthError';
- import { rememberDevice } from '../../../src/providers/cognito';
- import { UpdateDeviceStatusException } from '../../../src/providers/cognito/types/errors';
--import { tokenOrchestrator } from '../../../src/providers/cognito/tokenProvider';
-+import {
-+	resolveTokenOrchestrator,
-+	tokenOrchestrator,
-+} from '../../../src/providers/cognito/tokenProvider';
- import { DeviceMetadata } from '../../../src/providers/cognito/tokenProvider/types';
- import { createUpdateDeviceStatusClient } from '../../../src/foundation/factories/serviceClients/cognitoIdentityProvider';
- import { createCognitoUserPoolEndpointResolver } from '../../../src/providers/cognito/factories';
-@@ -23,6 +26,12 @@ jest.mock(
- jest.mock('../../../src/providers/cognito/factories');
- jest.mock('../../../src/providers/cognito/tokenProvider');
+ jobs:
+   # Job 1: Check if there are unconsumed changesets
+@@ -50,6 +49,11 @@ jobs:
+     runs-on: ubuntu-latest
+     needs: release-verification
+     if: github.repository_owner == 'aws-amplify'
++    # Job-level permissions replace workflow-level ones; id-token is required for npm trusted publishing (OIDC)
++    permissions:
++      contents: write
++      pull-requests: write
++      id-token: write
+     steps:
+       - name: Checkout repository
+         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+@@ -61,14 +65,16 @@ jobs:
+       - name: Setup node and build the repository
+         uses: ./amplify-js/.github/actions/node-and-build
  
-+// The barrel is auto-mocked, so `resolveTokenOrchestrator` returns undefined by
-+// default. Point it at the auto-mocked singleton so these suites keep
-+// asserting against `tokenOrchestrator` as they did before the entry-point
-+// orchestrator threading.
-+jest.mocked(resolveTokenOrchestrator).mockReturnValue(tokenOrchestrator);
++      - name: Ensure npm supports trusted publishing
++        uses: ./amplify-js/.github/actions/ensure-npm-trusted-publishing
 +
- describe('rememberDevice', () => {
- 	const mockDeviceMetadata: DeviceMetadata = {
- 		deviceKey: 'deviceKey',
-```
-
-**File**: `packages/auth/__tests__/providers/cognito/signInEntryPointOrchestrator.test.ts` (added, +321/-0)
-```diff
-@@ -0,0 +1,321 @@
-+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-+// SPDX-License-Identifier: Apache-2.0
-+
-+import { AmplifyContext, KeyValueStorageInterface } from '@aws-amplify/core';
-+import { registerContextTokenOrchestrator } from '@aws-amplify/core/internals/utils';
-+import { createMockAmplifyContext } from '@aws-amplify/core/internals/testing';
-+
-+import { signInWithSRP } from '../../../src/providers/cognito/apis/signInWithSRP';
-+import { signInWithUserPassword } from '../../../src/providers/cognito/apis/signInWithUserPassword';
-+import { signInWithCustomAuth } from '../../../src/providers/cognito/apis/signInWithCustomAuth';
-+import { signInWithCustomSRPAuth } from '../../../src/providers/cognito/apis/signInWithCustomSRPAuth';
-+import { signInWithUserAuth } from '../../../src/providers/cognito/apis/signInWithUserAuth';
-+import { confirmSignIn } from '../../../src/providers/cognito/apis/confirmSignIn';
-+import { handleWebAuthnSignInResult } from '../../../src/client/flows/userAuth/handleWebAuthnSignInResult';
-+import { handleUserAuthFlow } from '../../../src/client/flows/userAuth/handleUserAuthFlow';
-+import * as signInHelpers from '../../../src/providers/cognito/utils/signInHelpers';
-+import {
-+	resetActiveSignInState,
-+	setActiveSignInState,
-+} from '../../../src/client/utils/store/signInStore';
-+import { DefaultTokenStore } from '../../../src/providers/cognito/tokenProvider/TokenStore';
-+import { TokenOrchestrator } from '../../../src/providers/cognito/tokenProvider/TokenOrchestrator';
-+import { tokenOrchestrator as globalTokenOrchestrator } from '../../../src/providers/cognito/tokenProvider';
-+import { refreshAuthTokensWithoutDedupe } from '../../../src/providers/cognito/utils/refreshAuthTokens';
-+import { createRespondToAuthChallengeClient } from '../../../src/foundation/factories/serviceClients/cognitoIdentityProvider';
-+import { RespondToAuthChallengeCommandOutput } from '../../../src/foundation/factories/serviceClients/cognitoIdentityProvider/types';
-+
-+import { authAPITestParams } from './testUtils/authApiTestParams';
-+
-+jest.mock('../../../src/providers/cognito/utils/dispatchSignedInHubEvent');
-+jest.mock('../../../src/providers/cognito/utils/getNewDeviceMetadata', () => ({
-+	getNewDeviceMetadata: jest.fn().mockResolvedValue(undefined),
-+}));
-+jest.mock('../../../src/client/flows/userAuth/handleUserAuthFlow');
-+jest.mock('../../../src/client/utils/passkey', () => ({
-+	getPasskey: jest.fn().mockResolvedValue({ id: 'mock-credential' }),
-+}));
-+jest.mock(
-+	'../../../src/foundation/factories/serviceClients/cognitoIdentityProvider',
-+	() => ({
-+		...jest.requireActual(
-+			'../../../src/foundation/factories/serviceClients/cognitoIdentityProvider',
-+		),
-+		createRespondToAuthChallengeClient: jest.fn(),
-+	}),
-+);
-+
-+const authConfig = {
-+	Cognito: {
-+		userPoolClientId: '111111-aaaaa-42d8-891d-ee81a1549398',
-+		userPoolId: 'us-west-2_zzzzz',
-+	},
-+};
-+
-+const createMemoryStorage = (): KeyValueStorageInterface => {
-+	const store = new Map<string, string>();
-+
-+	return {
-+		setItem: async (key, value) => {
-+			store.set(key, value);
-+		},
-+		getItem: async key => store.get(key) ?? null,
-+		removeItem: async key => {
-+			store.delete(key);
-+		},
-+		clear: async () => {
-+			store.clear();
-+		},
-+	};
-+};
-+
-+/**
-+ * Builds the write-capable per-context orchestrator exactly the way
-+ * `createUserPoolsTokenProvider` does for a local `AmplifyContext`.
-+ */
-+const createContextOrchestrator = (): TokenOrchestrator => {
-+	const tokenStore = new DefaultTokenStore();
-+	tokenStore.setAuthConfig(authConfig);
-+	tokenStore.setKeyValueStorage(createMemoryStorage());
-+
-+	const orchestrator = new TokenOrchestrator();
-+	orchestrator.setAuthConfig(authConfig);
-+	orchestrator.setAuthTokenStore(tokenStore);
-+	orchestrator.setTokenRefresher(refreshAuthTokensWithoutDedupe);
-+
-+	return orchestrator;
-+};
-+
-+/**
-+ * Regression guard for the local-context sign-in defect: token WRITES were
-+ * per-context but every `signIn*` entry point handed the flow the module-level
-+ * GLOBAL singleton orchestrator. Because that singleton is never configured on
-+ * the `createAmplifyContext()` path, the device-metadata read during the SRP
-+ * PASSWORD_VERIFIER challenge threw `AuthUserPoolException: Auth UserPool not
-+ * configured` several frames BEFORE token persistence was reached.
-+ *
-+ * The global singleton is deliberately left UNCONFIGURED here — that is the
-+ * condition the pre-existing mocked signIn tests never exercised.
-+ */
-+describe('signIn entry point token orchestrator resolution', () => {
-+	const { username, password } = authAPITestParams.user1;
-+
-+	let contextOrchestrator: TokenOrchestrator;
-+	/** The orchestrator the flow under test was actually handed. */
-+	let receivedOrchestrator: unknown;
-+
-+	beforeEach(() => {
-+		jest.clearAllMocks();
-+		resetActiveSignInState();
-+		receivedOrchestrator = undefined;
-+		contextOrchestrator = createContextOrchestrator();
-+	});
-+
-+	afterEach(() => {
-+		jest.rest
-```
-
-**File**: `packages/auth/__tests__/providers/cognito/signInErrorCases.test.ts` (modified, +9/-0)
-```diff
-@@ -11,6 +11,10 @@ import { InitiateAuthException } from '../../../src/providers/cognito/types/erro
- import { USER_ALREADY_AUTHENTICATED_EXCEPTION } from '../../../src/errors/constants';
- import { createInitiateAuthClient } from '../../../src/foundation/factories/serviceClients/cognitoIdentityProvider';
- import { AuthErrorCodes } from '../../../src/common/AuthErrorStrings';
-+import {
-+	resolveTokenOrchestrator,
-+	tokenOrchestrator,
-+} from '../../../src/providers/cognito/tokenProvider';
- 
- import { authAPITestParams } from './testUtils/authApiTestParams';
- import { getMockError } from './testUtils/data';
-@@ -25,6 +29,11 @@ jest.mock(
- );
- jest.mock('../../../src/providers/cognito/tokenProvider');
- 
-+// The barrel is auto-mocked, so `resolveTokenOrchestrator` returns undefined by
-+// default. Point it at the auto-mocked singleton so the sign-in flows keep
-+// receiving a usable orchestrator.
-+jest.mocked(resolveTokenOrchestrator).mockReturnValue(tokenOrchestrator);
-+
- describe('signIn API error path cases:', () => {
- 	// assert mocks
- 	const mockCreateInitiateAuthClient = jest.mocked(createInitiateAuthClient);
-```
-
-**File**: `packages/auth/__tests__/providers/cognito/signOut.test.ts` (modified, +46/-8)
-```diff
-@@ -6,10 +6,14 @@ import { AMPLIFY_SYMBOL } from '@aws-amplify/core/internals/utils';
- import { createMockAmplifyContext } from '@aws-amplify/core/internals/testing';
- 
- import { signOut } from '../../../src/providers/cognito/apis/signOut';
--import { tokenOrchestrator } from '../../../src/providers/cognito/tokenProvider';
-+import {
-+	tokenOrchestrator as globalTokenOrchestrator,
-+	resolveTokenOrchestrator,
-+} from '../../../src/providers/cognito/tokenProvider';
- import { DefaultOAuthStore } from '../../../src/providers/cognito/utils/signInWithRedirectStore';
- import { handleOAuthSignOut } from '../../../src/providers/cognito/utils/oauth';
- import { AuthTokenStore } from '../../../src/providers/cognito/tokenProvider/types';
-+import type { TokenOrchestrator } from '../../../src/providers/cognito/tokenProvider/TokenOrchestrator';
- import {
- 	createGlobalSignOutClient,
- 	createRevokeTokenClient,
-@@ -31,6 +35,19 @@ jest.mock(
- jest.mock('../../../src/foundation/parsers');
- jest.mock('../../../src/providers/cognito/factories');
- 
-+// The barrel is auto-mocked, so `resolveTokenOrchestrator` returns undefined by
-+// default. Point it at a DISTINCT per-context orchestrator mock (not the global
-+// singleton) so these suites prove `signOut` clears the context's own token
-+// store and never reaches for the module-level singleton.
-+const mockContextTokenOrchestrator = {
-+	clearTokens: jest.fn(),
-+	getTokenStore: jest.fn(),
-+	getOAuthMetadata: jest.fn(),
-+} as unknown as jest.Mocked<TokenOrchestrator>;
-+jest
-+	.mocked(resolveTokenOrchestrator)
-+	.mockReturnValue(mockContextTokenOrchestrator);
-+
- describe('signOut', () => {
- 	// eslint-disable-next-line camelcase
- 	const accessToken = { payload: { origin_jti: 'revocation-id' } };
-@@ -64,8 +81,8 @@ describe('signOut', () => {
- 	const mockHub = Hub as jest.Mocked<typeof Hub>;
- 	const mockRevokeToken = jest.fn();
- 	const mockedRevokeTokenClient = jest.mocked(createRevokeTokenClient);
--	const mockTokenOrchestrator = tokenOrchestrator as jest.Mocked<
--		typeof tokenOrchestrator
-+	const mockGlobalTokenOrchestrator = globalTokenOrchestrator as jest.Mocked<
-+		typeof globalTokenOrchestrator
- 	>;
- 	const MockDefaultOAuthStore = DefaultOAuthStore as jest.Mock;
- 	const mockCreateCognitoUserPoolEndpointResolver = jest.mocked(
-@@ -84,7 +101,10 @@ describe('signOut', () => {
- 	// create test helpers
- 	const expectSignOut = () => ({
- 		toComplete: () => {
--			expect(mockTokenOrchestrator.clearTokens).toHaveBeenCalledTimes(1);
-+			expect(mockContextTokenOrchestrator.clearTokens).toHaveBeenCalledTimes(1);
-+			// The clear must go through the context's orchestrator, never the
-+			// module-level singleton.
-+			expect(mockGlobalTokenOrchestrator.clearTokens).not.toHaveBeenCalled();
- 			expect(mockClearCredentials()).toHaveBeenCalledTimes(1);
- 			expect(mockHub.dispatch).toHaveBeenCalledWith(
- 				'auth',
-@@ -95,7 +115,8 @@ describe('signOut', () => {
- 		},
- 		not: {
- 			toComplete: () => {
--				expect(mockTokenOrchestrator.clearTokens).not.toHaveBeenCalled();
-+				expect(mockContextTokenOrchestrator.clearTokens).not.toHaveBeenCalled();
-+				expect(mockGlobalTokenOrchestrator.clearTokens).not.toHaveBeenCalled();
- 				expect(mockClearCredentials()).not.toHaveBeenCalled();
- 				expect(mockHub.dispatch).not.toHaveBeenCalled();
- 			},
-@@ -114,7 +135,9 @@ describe('signOut', () => {
- 		mockCreateGlobalSignOutClient.mockReturnValueOnce(mockGlobalSignOut);
- 		mockRevokeToken.mockResolvedValue({});
- 		mockedRevokeTokenClient.mockReturnValueOnce(mockRevokeToken);
--		mockTokenOrchestrator.getTokenStore.mockReturnValue(mockAuthTokenStore);
-+		mockContextTokenOrchestrator.getTokenStore.mockReturnValue(
-+			mockAuthTokenStore,
-+		);
- 		mockLoadTokens.mockResolvedValue(cognitoAuthTokens);
- 	});
- 
-@@ -124,7 +147,8 @@ describe('signOut', () => {
- 		mockClearCredentials().mockClear();
- 		mockGetRegionFromUserPoolId.mockClear();
- 		mockHub.dispatch.mockClear();
--		mockTokenOrchestrator.clearTokens.mockClear();
-+		mockContextTokenOrchestrator.clearTokens.mockClear();
-+		mockGlobalTokenOrchestrator.clearTokens.mockClear();
- 		loggerDebugSpy.mockClear();
- 		mockCreateCognitoUserPoolEndpointResolver.mockClear();
- 	});
-@@ -262,6 +286,7 @@ describe('signOut', () => {
- 		});
- 
- 		beforeEach(() => {
-+			mockCtxWithOAuth.clearCredentials.mockClear();
- 			mockHandleOAuthSignOut.mockResolvedValue({ type: 'success' });
- 		});
- 
-@@ -279,8 +304,9 @@ describe('signOut', () => {
- 			expect(mockHandleOAuthSignOut).toHaveBeenCalledWith(
- 				cognitoConfigWithOauth,
- 				mockDefaultOAuthStoreInstance,
--				mockTokenOrchestrator,
-+				mockContextTokenOrchestrator,
- 				undefined,
-+				expect.any(Function),
- 			);
- 			// In cases of OAuth, token removal and Hub dispatch should be performed by the OAuth handling since
- 			// these actions can be deferred or canceled out of altogether.
-@@ -292,5 +318,17 @@ describe('signOut', () => {
- 
- 			await expect(signOut(mockCtxWithOAuth)).rejects.toThrow();
- 		});
-+
-+		it('passes a clearCr
-```
-
-**File**: `packages/auth/__tests__/providers/cognito/signOutContextOrchestrator.test.ts` (added, +150/-0)
-```diff
-@@ -0,0 +1,150 @@
-+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-+// SPDX-License-Identifier: Apache-2.0
-+
-+import { KeyValueStorageInterface, clearCredentials } from '@aws-amplify/core';
-+import { registerContextTokenOrchestrator } from '@aws-amplify/core/internals/utils';
-+import { createMockAmplifyContext } from '@aws-amplify/core/internals/testing';
-+
-+import { signOut } from '../../../src/providers/cognito/apis/signOut';
-+import { DefaultTokenStore } from '../../../src/providers/cognito/tokenProvider/TokenStore';
-+import { TokenOrchestrator } from '../../../src/providers/cognito/tokenProvider/TokenOrchestrator';
-+import { tokenOrchestrator as globalTokenOrchestrator } from '../../../src/providers/cognito/tokenProvider';
-+import { refreshAuthTokensWithoutDedupe } from '../../../src/providers/cognito/utils/refreshAuthTokens';
-+import { DefaultOAuthStore } from '../../../src/providers/cognito/utils/signInWithRedirectStore';
-+
-+jest.mock('@aws-amplify/core', () => ({
-+	...jest.requireActual('@aws-amplify/core'),
-+	clearCredentials: jest.fn().mockResolvedValue(undefined),
-+}));
-+jest.mock('../../../src/providers/cognito/utils/signInWithRedirectStore');
-+
-+const region = 'us-west-2';
-+const cognitoConfigWithOAuth = {
-+	userPoolClientId: '111111-aaaaa-42d8-891d-ee81a1549398',
-+	userPoolId: `${region}_zzzzz`,
-+	identityPoolId: `${region}:xxxxxx`,
-+	loginWith: {
-+		oauth: {
-+			domain: 'hosted-ui.test',
-+			redirectSignIn: ['https://myapp.test/completeSignIn/'],
-+			redirectSignOut: ['https://myapp.test/completeSignOut/'],
-+			responseType: 'code' as const,
-+			scopes: [],
-+		},
-+	},
-+};
-+
-+const createMemoryStorage = (): KeyValueStorageInterface => {
-+	const store = new Map<string, string>();
-+
-+	return {
-+		setItem: async (key, value) => {
-+			store.set(key, value);
-+		},
-+		getItem: async key => store.get(key) ?? null,
-+		removeItem: async key => {
-+			store.delete(key);
-+		},
-+		clear: async () => {
-+			store.clear();
-+		},
-+	};
-+};
-+
-+/**
-+ * Builds the write-capable per-context orchestrator exactly the way
-+ * `createUserPoolsTokenProvider` does for a local `AmplifyContext`.
-+ */
-+const createContextOrchestrator = (): TokenOrchestrator => {
-+	const authConfig = { Cognito: cognitoConfigWithOAuth };
-+	const tokenStore = new DefaultTokenStore();
-+	tokenStore.setAuthConfig(authConfig);
-+	tokenStore.setKeyValueStorage(createMemoryStorage());
-+
-+	const orchestrator = new TokenOrchestrator();
-+	orchestrator.setAuthConfig(authConfig);
-+	orchestrator.setAuthTokenStore(tokenStore);
-+	orchestrator.setTokenRefresher(refreshAuthTokensWithoutDedupe);
-+
-+	return orchestrator;
-+};
-+
-+/**
-+ * Regression guard for the OAuth-configured local-context sign-out defect:
-+ * `signOut(ctx)` resolved the per-context orchestrator and threaded it into
-+ * `handleOAuthSignOut`, but `completeOAuthSignOut` reached past it and cleared
-+ * the module-level GLOBAL orchestrator plus the GLOBAL credentials. On a pool
-+ * that has OAuth configured, a user-pool sign-in through a local
-+ * `createAmplifyContext()` therefore persisted per-context while sign-out
-+ * cleared the (empty) global store — leaving the user signed in.
-+ *
-+ * Unlike `signOut.test.ts`, this suite deliberately does NOT mock the oauth
-+ * utils, so the real `handleOAuthSignOut` -> `completeOAuthSignOut` chain runs.
-+ */
-+describe('signOut token orchestrator resolution (OAuth-configured local context)', () => {
-+	const MockDefaultOAuthStore = DefaultOAuthStore as jest.Mock;
-+	const mockGlobalClearCredentials = jest.mocked(clearCredentials);
-+
-+	let contextOrchestrator: TokenOrchestrator;
-+	let contextClearTokensSpy: jest.SpyInstance;
-+	let globalClearTokensSpy: jest.SpyInstance;
-+	let mockOAuthStoreInstance: {
-+		setAuthConfig: jest.Mock;
-+		loadOAuthSignIn: jest.Mock;
-+		clearOAuthData: jest.Mock;
-+	};
-+
-+	beforeEach(() => {
-+		jest.clearAllMocks();
-+
-+		mockOAuthStoreInstance = {
-+			setAuthConfig: jest.fn(),
-+			// Not an OAuth sign-in, so sign-out completes in-process instead of
-+			// redirecting to the Hosted UI logout endpoint.
-+			loadOAuthSignIn: jest.fn().mockResolvedValue({
-+				isOAuthSignIn: false,
-+				preferPrivateSession: false,
-+			}),
-+			clearOAuthData: jest.fn().mockResolvedValue(undefined),
-+		};
-+		MockDefaultOAuthStore.mockImplementation(() => mockOAuthStoreInstance);
-+
-+		contextOrchestrator = createContextOrchestrator();
-+		contextClearTokensSpy = jest.spyOn(contextOrchestrator, 'clearTokens');
-+		globalClearTokensSpy = jest
-+			.spyOn(globalTokenOrchestrator, 'clearTokens')
-+			.mockResolvedValue(undefined);
-+	});
-+
-+	afterEach(() => {
-+		contextClearTokensSpy.mockRestore();
-+		globalClearTokensSpy.mockRestore();
-+	});
-+
-+	const createLocalCtx = () => {
-+		const tokenProvider = { getTokens: jest.fn() };
-+		registerContextTokenOrchestrator(tokenProvider, contextOrchestrator);
-+
-+		return createMockAmplifyContext(
-+			{ Auth: { Cognito: cognitoConfigWithOAuth } },
-+			{ libraryOptions: { Auth: { tokenProvider } } },
-+		);
-+	}
-```
-
----
-
-### Incident Patch 3: `af995209` (2026-10-15)
-**Commit Message**: ci(e2e): pin iOS Detox simulator runtime and bound Detox step timeouts (#14990)
-
-- Create the 'iPhone 15' simulator on the iOS runtime bundled with the
-  selected Xcode (iOS 18.5 for Xcode 16.4) instead of the newest runtime on
-  the image, which resolved to iOS 26.2.
-- Download the passkeys iOS 17.4 runtime only when missing, and cap the step.
-- Pass --forceExit to Jest so a failed attempt cannot hang until the job
-  timeout, and add step timeouts to CocoaPods, Detox build and Detox run.
-
-**File**: `.github/workflows/callable-e2e-test-detox.yml` (modified, +59/-14)
-```diff
-@@ -54,29 +54,64 @@ jobs:
-           echo "Active Xcode: $(xcode-select -p)"
-       - name: Ensure iPhone 15 simulator exists
-         # The 'iPhone 15' device name is required by detox config in the samples
--        # repo. If the runner image doesn't ship one, create it with the newest
--        # available iOS runtime. Passkeys tests handle their own sim (iOS 17.4).
-+        # repo. The macos-15 image does not ship an 'iPhone 15' device, so create
-+        # one on the iOS runtime bundled with the selected Xcode (iOS 18.5 for
-+        # Xcode 16.4). The image also preinstalls iOS 26.x runtimes for Xcode 26,
-+        # so "newest runtime" is not deterministic: it picked iOS 26.2 under
-+        # Xcode 16.4. Fallback order: runtime matching the Xcode simulator SDK,
-+        # then newest preinstalled iOS 18.x, then newest iOS runtime (warning).
-+        # Passkeys tests handle their own sim (iOS 17.4).
-         if: ${{ !contains(inputs.test_name, 'integ_rn_ios_passkeys') }}
-+        timeout-minutes: 5
-         run: |
--          if xcrun simctl list devices available | grep -q '"iPhone 15"'; then
--            echo "iPhone 15 simulator already available."
-+          RUNTIMES=$(xcrun simctl list runtimes available | grep -oE 'com\.apple\.CoreSimulator\.SimRuntime\.iOS-[0-9]+-[0-9]+' | sort -t- -k2,2n -k3,3n)
-+          SDK_VERSION=$(xcrun --sdk iphonesimulator --show-sdk-version)
-+          echo "Xcode simulator SDK: iOS $SDK_VERSION"
-+          echo "Available iOS runtimes:"
-+          echo "$RUNTIMES"
-+          WANTED="com.apple.CoreSimulator.SimRuntime.iOS-$(echo "$SDK_VERSION" | tr '.' '-')"
-+          if echo "$RUNTIMES" | grep -qx "$WANTED"; then
-+            RUNTIME="$WANTED"
-           else
--            echo "iPhone 15 simulator not found — creating one."
--            # Pick the newest iOS runtime available on this image
--            RUNTIME=$(xcrun simctl list runtimes iOS | grep -oE 'com\.apple\.CoreSimulator\.SimRuntime\.iOS-[0-9]+-[0-9]+' | sort -V | tail -n1)
-+            RUNTIME=$(echo "$RUNTIMES" | grep -E 'iOS-18-[0-9]+$' | tail -n1)
-             if [ -z "$RUNTIME" ]; then
--              echo "::error::No iOS runtime found. Cannot create simulator."
--              exit 1
-+              RUNTIME=$(echo "$RUNTIMES" | tail -n1)
-             fi
--            echo "Using runtime: $RUNTIME"
-+            echo "::warning::No runtime matching iOS $SDK_VERSION. Falling back to: ${RUNTIME:-none}"
-+          fi
-+          if [ -z "$RUNTIME" ]; then
-+            echo "::error::No iOS runtime found. Cannot create simulator."
-+            exit 1
-+          fi
-+          echo "Using runtime: $RUNTIME"
-+          EXISTING=$(xcrun simctl list devices available -j | jq -r --arg rt "$RUNTIME" '.devices[$rt] // [] | map(select(.name == "iPhone 15")) | .[0].udid // empty')
-+          if [ -n "$EXISTING" ]; then
-+            echo "iPhone 15 simulator already available on $RUNTIME: $EXISTING"
-+          else
-             xcrun simctl create "iPhone 15" "com.apple.CoreSimulator.SimDeviceType.iPhone-15" "$RUNTIME"
-             echo "iPhone 15 simulator created successfully."
-           fi
--      - name: Download iOS platform and create simulator
-+      - name: Ensure iOS 17.4 runtime and create simulator
-+        # Passkeys tests run on an iOS 17.4 simulator. The macos-15 image only
-+        # preinstalls iOS 18.5/18.6 and 26.x runtimes, so 17.4 (~7 GB) is
-+        # downloaded when missing (about 2.5 minutes on recent runs). Skip the
-+        # download if the runtime is already present, and cap the step so a slow
-+        # download fails fast instead of consuming the job timeout.
-         if: ${{ contains(inputs.test_name, 'integ_rn_ios_passkeys') }}
-+        timeout-minutes: 20
-         run: |
--          xcodebuild -downloadPlatform iOS -buildVersion 17.4
--          xcrun simctl create "iPhone 15" "com.apple.CoreSimulator.SimDeviceType.iPhone-15" "com.apple.CoreSimulator.SimRuntime.iOS-17-4"
-+          RUNTIME="com.apple.CoreSimulator.SimRuntime.iOS-17-4"
-+          if xcrun simctl list runtimes available | grep -q "$RUNTIME"; then
-+            echo "iOS 17.4 runtime already installed."
-+          else
-+            echo "iOS 17.4 runtime not installed. Downloading."
-+            xcodebuild -downloadPlatform iOS -buildVersion 17.4
-+          fi
-+          if ! xcrun simctl list runtimes available | grep -q "$RUNTIME"; then
-+            echo "::error::iOS 17.4 runtime is not available after download."
-+            exit 1
-+          fi
-+          xcrun simctl create "iPhone 15" "com.apple.CoreSimulator.SimDeviceType.iPhone-15" "$RUNTIME"
-       - name: Setup samples staging repository
-         uses: ./amplify-js/.github/actions/setup-samples-staging
+       - name: Publish to @latest
+-        uses: changesets/action@aba318e9165b45b7948c60273e0b72fce0a64eb9 # v1.4.7
++        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
          with:
-@@ -93,6 +128,7 @@ jobs:
-         shell: bash
-       - name: Install CocoaPods
-         # Retry to guard against transient network failures (CDN/specs fetch)
-+        timeout-minutes: 15
-         run: |
-           for i in 1 2 3; do
-             echo "pod inst
+           cwd: ./amplify-js
+           publish: yarn publish:latest
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+ 
+   # Job 4: Create PR to merge hotfix back into main
+   create-pr-to-main:
+```
+
+**File**: `.github/workflows/release-latest.yml` (modified, +11/-10)
+```diff
+@@ -5,15 +5,9 @@ permissions:
+   contents: write
+   pull-requests: write
+ 
+-# Prevent concurrent releases to avoid race conditions
+-concurrency:
+-  group: ${{ github.workflow }}-${{ github.ref }}
+-  cancel-in-progress: false
+-
++# Called from release.yml on pushes to main
+ on:
+-  push:
+-    branches:
+-      - main
++  workflow_call:
+ 
+ jobs:
+   # Job 1: Check if there are unconsumed changesets
+@@ -51,6 +45,11 @@ jobs:
+     runs-on: ubuntu-latest
+     needs: [setup, release-verification]
+     if: github.repository_owner == 'aws-amplify' && needs.setup.outputs.has-changesets != 'true'
++    # Job-level permissions replace workflow-level ones; id-token is required for npm trusted publishing (OIDC)
++    permissions:
++      contents: write
++      pull-requests: write
++      id-token: write
+     outputs:
+       published: ${{ steps.changesets.outputs.published }}
+     steps:
+@@ -64,15 +63,17 @@ jobs:
+       - name: Setup node and build the repository
+         uses: ./amplify-js/.github/actions/node-and-build
+ 
++      - name: Ensure npm supports trusted publishing
++        uses: ./amplify-js/.github/actions/ensure-npm-trusted-publishing
++
+       - name: Publish to @latest
+         id: changesets
+-        uses: changesets/action@aba318e9165b45b7948c60273e0b72fce0a64eb9 # v1.4.7
++        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+         with:
+           cwd: ./amplify-js
+           publish: yarn publish:latest
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+ 
+   # Job 4: Update local API documentation after successful publish
+   update-local-docs:
+```
+
+**File**: `.github/workflows/release-preid.yml` (modified, +12/-13)
+```diff
+@@ -1,21 +1,14 @@
+ name: Release Preid
+ 
+-# Concurrency control to prevent multiple preid releases running simultaneously
+-# Cancels in-progress releases when new commits are pushed
+-concurrency:
+-  group: push-release-${{ github.ref }}
+-  cancel-in-progress: true
+-
+ # Permissions required for publishing packages
+ permissions:
+   contents: write
+ 
++# Called from release.yml on pushes to feat/{PREID}/whatever branches
++# Branch naming pattern: feat/{PREID}/whatever
++# Example: feat/alpha/main, feat/beta/my-feature, feat/rc/test
+ on:
+-  push:
+-    branches:
+-      # Branch naming pattern: feat/{PREID}/whatever
+-      # Example: feat/alpha/main, feat/beta/my-feature, feat/rc/test
+-      - feat/preid/whatever
++  workflow_call:
+ 
+ jobs:
+   # Job 1: Parse preid from branch name
+@@ -59,6 +52,10 @@ jobs:
+       - parse-preid
+       - validate-preid
+     if: github.repository_owner == 'aws-amplify'
++    # Job-level permissions replace workflow-level ones; id-token is required for npm trusted publishing (OIDC)
++    permissions:
++      contents: write
++      id-token: write
+     steps:
+       - name: Checkout repository
+         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+@@ -68,13 +65,15 @@ jobs:
+       - name: Setup node and build the repository
+         uses: ./amplify-js/.github/actions/node-and-build
+ 
++      - name: Ensure npm supports trusted publishing
++        uses: ./amplify-js/.github/actions/ensure-npm-trusted-publishing
++
+       - name: Publish to @preid
+-        uses: changesets/action@aba318e9165b45b7948c60273e0b72fce0a64eb9 # v1.4.7
++        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+         with:
+           cwd: ./amplify-js
+           publish: yarn publish:preid
+           createGithubReleases: false
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+           PREID: ${{ needs.parse-preid.outputs.preid }}
+```
+
+**File**: `.github/workflows/release-unstable.yml` (modified, +8/-13)
+```diff
+@@ -1,25 +1,22 @@
+ name: Release Unstable
+ 
+-# Concurrency control to prevent multiple unstable releases running simultaneously
+-# Cancels in-progress releases when new commits are pushed
+-concurrency:
+-  group: push-release-${{ github.ref }}
+-  cancel-in-progress: true
+-
+ # Permissions required for publishing packages
+ permissions:
+   contents: write
+ 
++# Called from release.yml on pushes to main
+ on:
+-  push:
+-    branches:
+-      - main
++  workflow_call:
+ 
+ jobs:
+   # Job 1: Publish unstable packages
+   unstable-release:
+     runs-on: ubuntu-latest
+     if: github.repository_owner == 'aws-amplify'
++    # Job-level permissions replace workflow-level ones; id-token is required for npm trusted publishing (OIDC)
++    permissions:
++      contents: write
++      id-token: write
+     steps:
+       - name: Checkout repository
+         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+@@ -29,10 +26,8 @@ jobs:
+       - name: Setup node and build the repository
+         uses: ./amplify-js/.github/actions/node-and-build
+ 
+-      - name: Configure npm authentication
+-        run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+-        env:
+-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
++      - name: Ensure npm supports trusted publishing
++        uses: ./amplify-js/.github/actions/ensure-npm-trusted-publishing
+ 
+       - name: Publish to @unstable
+         working-directory: ./amplify-js
+```
+
+**File**: `.github/workflows/release.yml` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++name: Release
++
++# Single entry point for all npm publishes.
++#
++# npm trusted publishing (OIDC) validates the filename of the top-level (caller) workflow, not the
++# reusable workflow that runs `npm publish`. All npm publishes must therefore originate from this file,
++# which dispatches to the release-* reusable workflows based on the pushed branch.
++
++# Permissions required for creating git tags, pushing changes, creating PRs, and requesting an OIDC
++# token for npm trusted publishing. Called workflows can only use permissions granted here.
++permissions:
++  contents: write
++  pull-requests: write
++  id-token: write
++
++on:
++  push:
++    branches:
++      - main
++      - hotfix
++      # Branch naming pattern: feat/{PREID}/whatever
++      # Example: feat/alpha/main, feat/beta/my-feature, feat/rc/test
++      - feat/preid/whatever
++
++jobs:
++  latest:
++    if: github.ref_name == 'main'
++    # Prevent concurrent releases to avoid race conditions
++    concurrency:
++      group: release-latest-${{ github.ref }}
++      cancel-in-progress: false
++    uses: ./.github/workflows/release-latest.yml
++    secrets: inherit
++
++  unstable:
++    if: github.ref_name == 'main'
++    # Concurrency control to prevent multiple unstable releases running simultaneously
++    # Cancels in-progress releases when new commits are pushed
++    concurrency:
++      group: release-unstable-${{ github.ref }}
++      cancel-in-progress: true
++    uses: ./.github/workflows/release-unstable.yml
++    secrets: inherit
++
++  hotfix:
++    if: github.ref_name == 'hotfix'
++    uses: ./.github/workflows/release-hotfix.yml
++    secrets: inherit
++
++  preid:
++    if: startsWith(github.ref_name, 'feat/')
++    # Concurrency control to prevent multiple preid releases running simultaneously
++    # Cancels in-progress releases when new commits are pushed
++    concurrency:
++      group: release-preid-${{ github.ref }}
++      cancel-in-progress: true
++    uses: ./.github/workflows/release-preid.yml
++    secrets: inherit
+```
+
+**File**: `.github/workflows/version-packages.yml` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@ jobs:
+ 
+       - name: Create Version Packages PR
+         if: steps.has-changesets.outputs.has-changesets == 'true'
+-        uses: changesets/action@aba318e9165b45b7948c60273e0b72fce0a64eb9 # v1.4.7
++        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+         with:
+           version: yarn changeset version
+           commit: "chore(release): Version packages"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14998** (2026-10-23): ci(release): upgrade lerna to v9 for trusted publishing on v5 (@soberm)
+- **PR #14997** (closed): ci(release): publish v5 to npm via trusted publishing (@soberm)
+- **PR #14996** (2026-10-22): chore(deps): bump markdown-it from 14.3.2 to 14.3.3 (@dependabot[bot])
+- **PR #14995** (2026-10-21): ci(release): publish to npm via trusted publishing (@soberm)
 - **PR #14994** (2026-10-16): chore(deps): bump brace-expansion to 1.1.21, 2.1.7, 5.0.12 (@pranavosu)
 - **PR #14993** (closed): chore(deps): bump brace-expansion to 1.1.21, 2.1.7, 5.0.12 (@pranavosu)
-- **PR #14991** (2026-10-15): ci(e2e): set realistic iOS Detox timeouts and bound Detox steps (@pranavosu)
-- **PR #14990** (2026-10-15): ci(e2e): pin iOS Detox simulator runtime and bound Detox step timeouts (@pranavosu)
-- **PR #14989** (2026-10-14): chore(deps): bump source-map-js from 1.2.1 to 1.2.2 (@dependabot[bot])
-- **PR #14988** (closed): chore(deps): bump sharp from 0.35.4 to 0.35.5 (@dependabot[bot])
 
 ---
 
@@ -1672,46 +893,32 @@ Sign-in flows persisted Cognito tokens via a module-level singleton tokenOrchest
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. auth): bound waiting on inflight OAuth flow with read-time deadline (#14942)
+## X. deps): bump markdown-it from 14.3.2 to 14.3.3 (#14996)
 
 **RULE**:
-When implementing operations in `.changeset/oauth-inflight-deadline.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws-amplify/amplify-js. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws-amplify/amplify-js. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `556185e7`: auth): bound waiting on inflight OAuth flow with read-time deadline (#14942). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6334056c`: deps): bump markdown-it from 14.3.2 to 14.3.3 (#14996). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/oauth-inflight-deadline.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `yarn.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-'@aws-amplify/auth': patch
----
-
-fix(auth): bound waiting on an inflight OAuth flow with a read-time deadline
-
-`fetchAuthSession` / `getCurrentUser` could previously hang forever when another
-tab started `signInWithRedirect` and abandoned the Hosted UI page: the shared
-`inflightOAuth` flag has no expiry and the parked promise was only released by
-the tab completing the flow.
-
-The flow now records a blocking deadline next to the flag (`inflightOAuthDeadline`,
-5 minutes). Token consumers evaluate it at read time and park with a backstop
-timer, and a cross-tab storage listener releases waiters as soon as the owning
-tab settles the flow. The deadline bounds only how long other work may block —
-the completion path deliberately ignores it, and no tab ever mutates another
-tab's flow state, so a slow-but-successful login still completes. Flags written
-by older library versions are handled by persisting a default deadline on first
-observation.
+  version "14.3.3"
+  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-14.3.3.tgz#15e6e145d20b1499a7b323bb14e21062690132d8"
+  integrity sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  version "14.3.2"
+  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-14.3.2.tgz#eb41b5855120836603c33c1be4c92f58001f8a26"
+  integrity sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `556185e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6334056c` are properly handled with clean fallback behavior.

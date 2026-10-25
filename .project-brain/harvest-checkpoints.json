@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T02:11:22.488Z",
+  "last_updated": "2026-10-25T02:19:01.449Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "846d86183c7a1ab87d146df1c71c723ebaf0fe49eac51dbf89c84632b8cd4c59",
-      "verified_at": "2026-10-24T19:43:48.075Z",
+      "content_hash": "7496aef1456fcdbde5ade24677b40fce4d35ad622ae7498676d9d0793bfa1652",
+      "verified_at": "2026-10-25T02:19:01.448Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T19:43:48.075Z"
+      "last_updated": "2026-10-25T02:19:01.448Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -6501,14 +6501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-amplify-amplify-js",
-      "content_hash": "016f8b446c406943bcededea42577d222e69a558e5c71242b14deb9818071d33",
-      "verified_at": "2026-10-19T00:54:36.889Z",
+      "content_hash": "8f94dd9fe6114803cfc1e9ebfcf940975f01ac6323477be14c558737c6a9e26b",
+      "verified_at": "2026-10-25T02:18:52.279Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:54:36.889Z"
+      "last_updated": "2026-10-25T02:18:52.279Z"
     },
     "go-eagle/eagle": {
       "repository": "go-eagle/eagle",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "77789c8e1fdc9169a9cbba39f97d16b420774bf3f456a8759d57ef4ed2c81665",
-      "verified_at": "2026-10-22T15:46:53.102Z",
+      "content_hash": "a4e10143af5d9295cd759975aa26733d4e625921801961cb318aab474a97bafb",
+      "verified_at": "2026-10-25T02:18:54.372Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:46:53.102Z"
+      "last_updated": "2026-10-25T02:18:54.372Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",
