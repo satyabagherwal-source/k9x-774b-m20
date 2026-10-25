@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T15:16:11.451Z",
-  "total_cycles_completed": 4855,
-  "total_learnings_persisted": 4855,
+  "last_updated": "2026-10-25T15:26:52.769Z",
+  "total_cycles_completed": 4856,
+  "total_learnings_persisted": 4856,
   "total_rules_promoted": 4245,
   "history": [
-    {
-      "timestamp": "2026-10-25T05:06:56.352Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T05:14:46.483Z",
       "repository": "moby/buildkit",
@@ -1403,6 +1396,13 @@
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:26:52.769Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T15:16:11.454Z",
+  "last_updated": "2026-10-25T15:26:52.777Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -725,14 +725,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "5e3ba15f656c4f1701dd1247a203d71a80bfcf90bf1b8911877d5bd9431ddd80",
-      "verified_at": "2026-10-20T20:00:48.055Z",
+      "content_hash": "d0edded8b428627f156a711da1a2f3958082f8341b1859c7c076631cc71a1aeb",
+      "verified_at": "2026-10-25T15:26:52.773Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:00:48.055Z"
+      "last_updated": "2026-10-25T15:26:52.773Z"
     },
     "PSRben/VisionHOPE": {
       "repository": "PSRben/VisionHOPE",

@@ -4878,3 +4878,4 @@
 | `CYCLE-20261025-ZP1I` | `2026-10-25T15:15:56.934Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`0e8b9f1d...`) |
 | `CYCLE-20261025-ZUSM` | `2026-10-25T15:16:04.390Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4364` | Yes (`7313231a...`) |
 | `CYCLE-20261025-008L` | `2026-10-25T15:16:11.445Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4365` | Yes (`5587bdb6...`) |
+| `CYCLE-20261025-DR2X` | `2026-10-25T15:26:52.761Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`d0edded8...`) |

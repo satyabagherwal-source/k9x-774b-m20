@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T15:16:11.413Z",
+  "last_updated": "2026-10-25T15:26:52.708Z",
   "total_verified_learnings": 1087,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26537,7 +26537,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "5e3ba15f656c4f1701dd1247a203d71a80bfcf90bf1b8911877d5bd9431ddd80",
+      "content_hash": "d0edded8b428627f156a711da1a2f3958082f8341b1859c7c076631cc71a1aeb",
       "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -26630,7 +26630,7 @@
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo",
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs"
       ],
-      "verified_at": "2026-10-20T20:00:47.971Z",
+      "verified_at": "2026-10-25T15:26:52.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

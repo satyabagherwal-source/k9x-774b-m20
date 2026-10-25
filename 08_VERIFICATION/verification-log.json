@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-6124",
-    "timestamp": "2026-10-22T18:17:49.276Z",
-    "repository": "higress-group/higress",
-    "learningId": "learn-github-higress-group-higress",
-    "contentHash": "6e30f340a3aeb059e44281a9d1732007940768abc0d047a1395e3ec07e856c9d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-E6FU",
     "timestamp": "2026-10-22T18:24:09.498Z",
     "repository": "sharkdp/fd",
@@ -7492,6 +7477,21 @@
     "contentHash": "5587bdb6ecfa1abab4f8c711e479082a50f790ea60e1ee177a2ae967575b1df8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-DR2X",
+    "timestamp": "2026-10-25T15:26:52.761Z",
+    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "d0edded8b428627f156a711da1a2f3958082f8341b1859c7c076631cc71a1aeb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
