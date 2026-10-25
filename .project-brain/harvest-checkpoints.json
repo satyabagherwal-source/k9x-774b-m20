@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T03:31:57.008Z",
+  "last_updated": "2026-10-25T03:38:40.560Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2946,14 +2946,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlcove-hreflang-checker",
-      "content_hash": "f2dfb31b9b6caed719989d76a59436152cff96ebac0f0fca65b8559fe43bf985",
-      "verified_at": "2026-10-20T11:33:01.379Z",
+      "content_hash": "0dc6ea340024db54c4badaf650a757b26452437772aaa86efee814ce35fc60a1",
+      "verified_at": "2026-10-25T03:38:32.318Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:33:01.379Z"
+      "last_updated": "2026-10-25T03:38:32.318Z"
     },
     "alecxe/scrapy-fake-useragent": {
       "repository": "alecxe/scrapy-fake-useragent",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "6a28ee093c0c16ab93655116d3956ea0a9b7a9f344c4ac0a2ceedb240e8e9508",
-      "verified_at": "2026-10-23T06:17:23.499Z",
+      "content_hash": "0da4858ae7dffb0486b97b7c94e2b599f136fecdd4f8190648087928add4fdef",
+      "verified_at": "2026-10-25T03:38:38.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:17:23.499Z"
+      "last_updated": "2026-10-25T03:38:38.818Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -6096,14 +6096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-fluentui",
-      "content_hash": "71f9ca4f6a8b89bc4f85ca8996a741ddb844590d0ecd9256d6a2892be21688bf",
-      "verified_at": "2026-10-22T17:04:41.196Z",
+      "content_hash": "1a665bd028fdc2c50ff2fbee72184611030f3ad9ced9c7406e530a52eb189e37",
+      "verified_at": "2026-10-25T03:38:28.621Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:04:41.196Z"
+      "last_updated": "2026-10-25T03:38:28.621Z"
     },
     "o2sh/onefetch": {
       "repository": "o2sh/onefetch",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "d1f2fc049415177d8829e96184d098ecd6efd466f753e4d40c8d1cb8e1fb0709",
-      "verified_at": "2026-10-23T05:33:17.384Z",
+      "content_hash": "e014a1031fb833966f990acce1aa907791b9c7c48302852eea8a50b7e778b1b2",
+      "verified_at": "2026-10-25T03:38:35.815Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T05:33:17.384Z"
+      "last_updated": "2026-10-25T03:38:35.815Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "2ef4b81851f693ad14d31f30420866d897ef9dc633ccd97b43d5855cae8ec732",
-      "verified_at": "2026-10-22T16:45:16.672Z",
+      "content_hash": "8282a93062d14a118d8a6930442b216082000b8f28416f87496ba27c6c24dc54",
+      "verified_at": "2026-10-25T03:38:40.559Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:45:16.672Z"
+      "last_updated": "2026-10-25T03:38:40.559Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",

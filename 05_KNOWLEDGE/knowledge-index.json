@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T03:31:56.941Z",
+  "last_updated": "2026-10-25T03:38:40.492Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11541,8 +11541,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "c55c2450",
-      "content_hash": "6a28ee093c0c16ab93655116d3956ea0a9b7a9f344c4ac0a2ceedb240e8e9508",
+      "source_version": "ab599433",
+      "content_hash": "0da4858ae7dffb0486b97b7c94e2b599f136fecdd4f8190648087928add4fdef",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -11615,6 +11615,11 @@
           "number": 3786,
           "title": "transport): add QUIC socket plumbing behind DemuxSocket (#5965)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4018,
+          "title": "build: release 0.2.149 (#5979)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11622,7 +11627,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:17:23.421Z",
+      "verified_at": "2026-10-25T03:38:38.740Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11772,8 +11777,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "7d70e57f",
-      "content_hash": "2ef4b81851f693ad14d31f30420866d897ef9dc633ccd97b43d5855cae8ec732",
+      "source_version": "e4fad3f1",
+      "content_hash": "8282a93062d14a118d8a6930442b216082000b8f28416f87496ba27c6c24dc54",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -11801,6 +11806,11 @@
           "number": 3645,
           "title": "stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (#16078)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4019,
+          "title": "Disable unused Perses datasource plugins (#16082)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11808,7 +11818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:45:16.596Z",
+      "verified_at": "2026-10-25T03:38:40.482Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33651,8 +33661,8 @@
       "slug": "microsoft-fluentui",
       "platform": "github",
       "source_url": "https://github.com/microsoft/fluentui",
-      "source_version": "7e6920d5",
-      "content_hash": "71f9ca4f6a8b89bc4f85ca8996a741ddb844590d0ecd9256d6a2892be21688bf",
+      "source_version": "6d3e9d68",
+      "content_hash": "1a665bd028fdc2c50ff2fbee72184611030f3ad9ced9c7406e530a52eb189e37",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "promoted_rules": [
@@ -33705,6 +33715,11 @@
           "number": 3652,
           "title": "react-compiler-analyzer): analyze TypeScript without lowering (#36969)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4016,
+          "title": "web-components): height for empty vertical divider (#36981)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33712,7 +33727,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:04:41.149Z",
+      "verified_at": "2026-10-25T03:38:28.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49569,13 +49584,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "wcandillon-react-native-skia",
+      "slug": "shopify-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/wcandillon/react-native-skia",
-      "source_version": "5148abb4",
-      "content_hash": "d1f2fc049415177d8829e96184d098ecd6efd466f753e4d40c8d1cb8e1fb0709",
-      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "source_url": "https://github.com/Shopify/react-native-skia",
+      "source_version": "bbd1b685",
+      "content_hash": "e014a1031fb833966f990acce1aa907791b9c7c48302852eea8a50b7e778b1b2",
+      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 2002,
@@ -49601,6 +49616,11 @@
           "number": 3768,
           "title": "Vulkan Extension Mutexing in Shared Device Contexts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4017,
+          "title": "🤖): present Android canvases off the main thread (#4318)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49608,7 +49628,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T05:33:17.306Z",
+      "verified_at": "2026-10-25T03:38:35.736Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61357,7 +61377,7 @@
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
       "source_version": "68a78d31",
-      "content_hash": "f2dfb31b9b6caed719989d76a59436152cff96ebac0f0fca65b8559fe43bf985",
+      "content_hash": "0dc6ea340024db54c4badaf650a757b26452437772aaa86efee814ce35fc60a1",
       "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-hreflang-checker-learnings.md",
       "promoted_rules": [
@@ -61373,7 +61393,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:33:01.312Z",
+      "verified_at": "2026-10-25T03:38:32.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84661,7 +84681,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T11:33:01.312Z"
+      "verified_at": "2026-10-25T03:38:32.239Z"
     },
     "rule-1776": {
       "learning_id": "rule-1776",
@@ -117528,6 +117548,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T03:31:56.929Z"
+    },
+    "rule-4016": {
+      "learning_id": "rule-4016",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4016,
+      "title": "web-components): height for empty vertical divider (#36981)",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "6d3e9d68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:38:28.537Z"
+    },
+    "rule-4017": {
+      "learning_id": "rule-4017",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4017,
+      "title": "🤖): present Android canvases off the main thread (#4318)",
+      "source_url": "https://github.com/Shopify/react-native-skia",
+      "source_version": "bbd1b685",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:38:35.736Z"
+    },
+    "rule-4018": {
+      "learning_id": "rule-4018",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4018,
+      "title": "build: release 0.2.149 (#5979)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "ab599433",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:38:38.740Z"
+    },
+    "rule-4019": {
+      "learning_id": "rule-4019",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4019,
+      "title": "Disable unused Perses datasource plugins (#16082)",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "e4fad3f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:38:40.482Z"
     }
   },
   "aliases": {

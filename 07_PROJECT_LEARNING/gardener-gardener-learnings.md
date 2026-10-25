@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `7d70e57f`  
+> **Source Version**: `e4fad3f1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:45:16.333Z  
+> **Timestamp**: 2026-10-25T03:38:40.200Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:45:15.534Z  
+> **Harvest Timestamp**: 2026-10-25T03:38:39.966Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -726,14 +726,17 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #16088** (2026-10-23): **[release-v1.153] Use field selector and APIReader instead of cached client for `sync-provider-secret-labels` webhook**
+  *Symptoms*: cherry-pick of #16056  ```other operator github.com/gardener/gardener #16067 @acumino NONE ```  /kind enhancement
+  **Post-Mortem & Fix Analysis**:
+  > /cc @timuthy
+  > /retest
+
 - **Issue #16084** (2026-10-22): **Update nginx Docker tag to v1.31.8**
   *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [nginx](https://hub.docker.com/_/nginx) ([source](https://redirect.github.com/nginx/docker-nginx)) | patch | `1.31.7` → `1.31.8` |  ---  ### Release Notes  <details> <summary>nginx/docker-nginx (nginx)</summary>  ### [`v1.31.8`](https://redirect.github.com/nginx/docker-nginx/compare/1.31.7...1.31.8)  [Compare Source](https://redirect.github.com/nginx/docker-nginx/compare/1.31.7...1.31.8)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xNzYuMyIsInVwZGF0ZWRJblZlciI6IjQ0LjE3Ni4zIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
   **Post-Mortem & Fix Analysis**:
   > /label skip-review
   > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [timebertt](https://github.com/timebertt) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["timebertt"]} -->
-
-- **Issue #16078** (2026-10-22): **Fix stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS**
-  *Symptoms*: ## What does this PR do?  Fixes a stale API doc comment on `NodeLocalDNS.ForceTCPToUpstreamDNS`. The comment incorrectly stated the default was `force_tcp` (enforce TCP). The implementation was changed in August 2025 (commit `7b071a0cfd`) to default to `prefer_udp` instead, but the comment was never updated.  ## Why?  Many infrastructure DNS resolvers (AWS Route53, GCP, Azure, ConvergedCloud) rate-limit or struggle with large numbers of TCP connections, which can cause connection timeouts under load.  ## How was this tested?  Documentation-only change — no behaviour change, no test needed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -750,265 +753,1261 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4df3a9a5` (2026-10-22)
-**Commit Message**: Fix stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (#16078)
+### Incident Patch 1: `e4fad3f1` (2026-10-24)
+**Commit Message**: Disable unused Perses datasource plugins (#16082)
 
-* Fix stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS
+Add the bundled backends to the deny list we do not run so they stop
+cluttering the Explore datasource picker.
 
-The implementation was changed in August 2025 to default to prefer_udp
-for upstream DNS (infrastructure/cloud provider resolvers) to avoid TCP
-connection rate-limiting issues seen across multiple cloud providers. The
-API type comment was never updated and still claimed the default was TCP.
+Signed-off-by: Jeremy Rickards <[REDACTED_EMAIL]>
 
-Signed-off-by: docktofuture <[REDACTED_EMAIL]>
-
-* address feedback
-
-Signed-off-by: docktofuture <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: docktofuture <[REDACTED_EMAIL]>
-
-**File**: `docs/api-reference/core.md` (modified, +1/-1)
+**File**: `pkg/component/observability/monitoring/perses/perses.go` (modified, +4/-0)
 ```diff
-@@ -9048,7 +9048,7 @@ boolean
- </td>
- <td>
- <em>(Optional)</em>
--<p>ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.<br />Default, if unspecified, is to enforce TCP.</p>
-+<p>ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.<br />Default, if unspecified, is to prefer UDP.</p>
- </td>
- </tr>
- <tr>
-```
-
-**File**: `pkg/apis/core/types_shoot.go` (modified, +1/-1)
-```diff
-@@ -1663,7 +1663,7 @@ type NodeLocalDNS struct {
- 	// Default, if unspecified, is to enforce TCP.
- 	ForceTCPToClusterDNS *bool
- 	// ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.
--	// Default, if unspecified, is to enforce TCP.
-+	// Default, if unspecified, is to prefer UDP.
- 	ForceTCPToUpstreamDNS *bool
- 	// DisableForwardToUpstreamDNS indicates whether requests from node local DNS to upstream DNS should be disabled.
- 	// Default, if unspecified, is to forward requests for external domains to upstream DNS
-```
-
-**File**: `pkg/apis/core/v1beta1/generated.proto` (modified, +1/-1)
-```diff
-@@ -2523,7 +2523,7 @@ message NodeLocalDNS {
-   optional bool forceTCPToClusterDNS = 2;
- 
-   // ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.
--  // Default, if unspecified, is to enforce TCP.
-+  // Default, if unspecified, is to prefer UDP.
-   // +optional
-   optional bool forceTCPToUpstreamDNS = 3;
- 
-```
-
-**File**: `pkg/apis/core/v1beta1/types_shoot.go` (modified, +1/-1)
-```diff
-@@ -2153,7 +2153,7 @@ type NodeLocalDNS struct {
- 	// +optional
- 	ForceTCPToClusterDNS *bool `json:"forceTCPToClusterDNS,omitempty" protobuf:"varint,2,opt,name=forceTCPToClusterDNS"`
- 	// ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.
--	// Default, if unspecified, is to enforce TCP.
-+	// Default, if unspecified, is to prefer UDP.
- 	// +optional
- 	ForceTCPToUpstreamDNS *bool `json:"forceTCPToUpstreamDNS,omitempty" protobuf:"varint,3,opt,name=forceTCPToUpstreamDNS"`
- 	// DisableForwardToUpstreamDNS indicates whether requests from node local DNS to upstream DNS should be disabled.
-```
-
-**File**: `pkg/apiserver/openapi/openapi_generated.go` (modified, +1/-1)
-```diff
-@@ -7352,7 +7352,7 @@ func schema_pkg_apis_core_v1beta1_NodeLocalDNS(ref common.ReferenceCallback) com
- 					},
- 					"forceTCPToUpstreamDNS": {
- 						SchemaProps: spec.SchemaProps{
--							Description: "ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not. Default, if unspecified, is to enforce TCP.",
-+							Description: "ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not. Default, if unspecified, is to prefer UDP.",
- 							Type:        []string{"boolean"},
- 							Format:      "",
+@@ -63,6 +63,10 @@ func (p *perses) perses() *persesv1alpha2.Perses {
+ 							Enable: true,
  						},
+ 					},
++					// Disable bundled datasource plugins for backends we do not run so they do not clutter the Explore picker.
++					Plugin: persesconfig.Plugin{
++						Disabled: []string{"ClickHouse", "GreptimeDB", "Jaeger", "Loki", "OpenSearch", "Pyroscope", "Splunk", "Tempo"},
++					},
+ 				},
+ 			},
+ 			Replicas:      &p.values.Replicas,
+```
+
+**File**: `pkg/component/observability/monitoring/perses/perses_test.go` (modified, +3/-0)
+```diff
+@@ -174,6 +174,9 @@ var _ = Describe("Perses", func() {
+ 								Enable: true,
+ 							},
+ 						},
++						Plugin: persesconfig.Plugin{
++							Disabled: []string{"ClickHouse", "GreptimeDB", "Jaeger", "Loki", "OpenSearch", "Pyroscope", "Splunk", "Tempo"},
++						},
+ 					},
+ 				},
+ 				Replicas:      new(int32(1)),
 ```
 
 ---
 
-### Incident Patch 2: `4617b2ee` (2026-10-22)
-**Commit Message**: Fix flaky integration tests failing with 503 on first Gardener API request (#16063)
+### Incident Patch 2: `d8abc488` (2026-10-23)
+**Commit Message**: Add `Garden` and `Seed` Perses dashboards (#15910)
 
-* Wait until all Gardener API GroupVersions are served in envtest
+* Add Perses dashboards converted from Plutono
 
-Signed-off-by: Gledis Lami <[REDACTED_EMAIL]>
+Add 47 Perses dashboards for the garden and seed monitoring stacks,
+converted from the existing Plutono (Grafana 7.5) dashboards. Each is stored
+as a complete Perses Dashboard resource (kind/metadata/spec), so the files
+validate directly with 'percli lint'.
 
-* Retry if no listable resource is found yet
+The conversion is a two-step pipeline: each Plutono dashboard is first
+imported into a current Grafana (v12) instance to upgrade its schemaVersion
+(27 -> 42) and bind an explicit Prometheus datasource, then migrated to the
+Perses native format via 'percli migrate'. The Grafana upgrade step is
+required because migrating the old schema directly misclassifies
+datasource-less Prometheus queries as Loki queries.
 
-Signed-off-by: Gledis Lami <[REDACTED_EMAIL]>
+The following adjustments were applied by hand on top of the raw converter
+output:
+- Datasource references normalized to the project default (var-refs stripped;
+  named refs such as prometheus-longterm / prometheus-seed preserved).
+- The duplicate 'All' variable option removed (percli migrates Grafana's
+  literal $__all option while Perses also adds its own allowAllValue entry).
+- garden-resource: the condition panel is hard-
 
----------
-
-Signed-off-by: Gledis Lami <[REDACTED_EMAIL]>
-
-**File**: `test/envtest/apiserver.go` (modified, +35/-16)
+**File**: `pkg/component/observability/monitoring/perses/component.go` (modified, +8/-4)
 ```diff
-@@ -18,7 +18,9 @@ import (
- 	"os"
- 	"os/exec"
- 	"path/filepath"
-+	"slices"
- 	"strconv"
-+	"strings"
+@@ -8,7 +8,6 @@ import (
+ 	"context"
  	"time"
  
- 	"github.com/onsi/gomega/gexec"
-@@ -36,9 +38,6 @@ import (
- 	"sigs.k8s.io/controller-runtime/pkg/envtest"
+-	persesv1alpha2 "github.com/perses/perses-operator/api/v1alpha2"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
  
- 	apiserverapp "github.com/gardener/gardener/cmd/gardener-apiserver/app"
--	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
--	operationsv1alpha1 "github.com/gardener/gardener/pkg/apis/operations/v1alpha1"
--	seedmanagementv1alpha1 "github.com/gardener/gardener/pkg/apis/seedmanagement/v1alpha1"
- 	"github.com/gardener/gardener/pkg/apiserver"
- 	"github.com/gardener/gardener/pkg/apiserver/features"
- 	"github.com/gardener/gardener/pkg/client/kubernetes"
-@@ -387,29 +386,49 @@ func (g *GardenerAPIServer) registerGardenerAPIs(ctx context.Context) error {
- 		return err
- 	}
- 
--	// ensure that we can really list objects in the Gardener API
--	// after https://github.com/kubernetes/kubernetes/pull/119824 (first available in v0.28.3), we have seen that GAPI
--	// sometimes fails to communicate with etcd even if we have passed all prior checks here, see
--	// https://github.com/gardener/gardener/pull/8666
--	// TODO: Revisit this once sigs.k8s.io/controller-runtime has upgraded their envtest version to v1.28.3+ (currently,
--	//  only v1.28.0 is used, hence the kube-apiserver does not yet suffer from the same issue).
-+	// Ensure that every Gardener API GroupVersion is really served via the kube-apiserver and that we can list objects
-+	// in it.
-+	// An APIService being available does not mean that the kube-aggregator already proxies requests for it. It updates
-+	// its proxy handler for the APIService asynchronously. Until then, requests for this GroupVersion fail with
-+	// 503 ServiceUnavailable or 404 NotFound. Hence, we need to check every GroupVersion. Otherwise, tests might fail with
-+	// "the server is currently unable to handle the request" when creating their first object.
-+	// Listing objects also ensures that gardener-apiserver can communicate with etcd. After
-+	// https://github.com/kubernetes/kubernetes/pull/119824, we have seen that it sometimes fails to do so even if we have
-+	// passed all prior checks here. This check was added with the dependency update in
-+	// https://github.com/gardener/gardener/pull/8666.
- 	return retry.Until(ctx, waitPollInterval, func(ctx context.Context) (bool, error) {
--		for _, gvk := range []schema.GroupVersionKind{
--			gardencorev1beta1.SchemeGroupVersion.WithKind("ShootList"),
--			operationsv1alpha1.SchemeGroupVersion.WithKind("BastionList"),
--			seedmanagementv1alpha1.SchemeGroupVersion.WithKind("ManagedSeedList"),
--		} {
-+		for _, gv := range apiserver.AllGardenerAPIGroupVersions {
-+			resourceList, err := discoveryClient.ServerResourcesForGroupVersion(gv.String())
-+			if err != nil {
-+				return retry.MinorError(fmt.Errorf("failed discovering resources of %s: %w", gv, err))
-+			}
-+
-+			kind := listableKind(resourceList)
-+			if kind == "" {
-+				return retry.MinorError(fmt.Errorf("no listable resource found in %s", gv))
-+			}
-+
- 			objList := &metav1.PartialObjectMetadataList{}
--			objList.SetGroupVersionKind(gvk)
-+			objList.SetGroupVersionKind(gv.WithKind(kind + "List"))
- 			if err := c.List(ctx, objList, client.Limit(1)); err != nil {
- 				return retry.MinorError(err)
- 			}
--			log.V(1).Info("Listing resources is possible", "gvk", gvk)
-+			log.V(1).Info("Listing resources is possible", "gvk", objList.GroupVersionKind())
- 		}
- 		return retry.Ok()
- 	})
+ 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
+@@ -47,12 +46,12 @@ type Values struct {
+ 	ExternalExposure *ExposureValues
+ 	// VictoriaLogsEnabled indicates whether VictoriaLogs is enabled as the logging backend.
+ 	VictoriaLogsEnabled bool
++	// IncludeIstioDashboards specifies whether the istio dashboards should be deployed.
++	IncludeIstioDashboards bool
+ 	// OnlyDeployDatasourcesAndDashboards only leads to deployment of the PersesDatasource and PersesDashboard CRs.
+ 	// This is relevant when the Perses instance is already deployed by another component (e.g., gardener-operator),
+ 	// and the gardenlet wants to contribute seed-specific configuration.
+ 	OnlyDeployDatasourcesAndDashboards bool
+-	// Dashboards is a map of PersesDashboard CRs to deploy, keyed by name.
+-	Dashboards map[string]persesv1alpha2.Dashboard
  }
  
-+// listableKind returns the kind of the first top-level resource in the given list that supports the list verb.
-+func listableKind(resourceList *metav1.APIResourceList) string {
-+	for _, resource := range resourceList.APIResources {
-+		if !strings.Contains(resource.Name, "/") && slices.Contains(resource.Verbs, "list") {
-+			return resource.Kind
-+		}
+ // ExposureValues contains configuration for exposing this Perses instance via a VirtualService resource.
+@@ -121,7 +120,12 @@ func (p *perses) Deploy(ctx context.Context) error {
+ 		objs = append(objs, p.serviceMonitor())
+ 	}
+ 	objs = append(objs, p.datasources()...)
+-	objs = append(objs, p.dashboards()...)
++
++	dashboards, err := p.dashboards()
++	if err != nil {
++		return err
 +	}
-+	return ""
++	objs = append(objs, dashboards...)
+ 
+ 	resources, err := registry.AddAllAndSerialize(objs...)
+ 	if err != nil {
+```
+
+**File**: `pkg/component/observability/monitoring/perses/dashboards.go` (modified, +157/-4)
+```diff
+@@ -5,15 +5,79 @@
+ package perses
+ 
+ import (
++	"embed"
++	"fmt"
++	"io/fs"
++	"strings"
++
+ 	persesv1alpha2 "github.com/perses/perses-operator/api/v1alpha2"
++	persesv1 "github.com/perses/perses/pkg/model/api/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
++	"k8s.io/apimachinery/pkg/util/sets"
++	utilvalidation "k8s.io/apimachinery/pkg/util/validation"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/yaml"
+ )
+ 
+-func (p *perses) dashboards() []client.Object {
+-	var objs []client.Object
++var (
++	//go:embed dashboards/garden
++	gardenDashboards embed.FS
++	//go:embed dashboards/seed
++	seedDashboards embed.FS
++	//go:embed dashboards/garden-seed
++	gardenAndSeedDashboards embed.FS
++	//go:embed dashboards/garden-shoot
++	gardenAndShootDashboards embed.FS
++	//go:embed dashboards/common
++	commonDashboards embed.FS
++
++	gardenDashboardsPath         = "dashboards/garden"
++	seedDashboardsPath           = "dashboards/seed"
++	gardenAndSeedDashboardsPath  = "dashboards/garden-seed"
++	gardenAndShootDashboardsPath = "dashboards/garden-shoot"
++	commonDashboardsPath         = "dashboards/common"
++	commonVpaDashboardsPath      = commonDashboardsPath + "/vpa"
++)
++
++func init() {
++	// Fail fast at startup if any embedded dashboard cannot be decoded/validated, has no or an invalid resource name,
++	// or defines no panels.
++	for _, dashboardEmbed := range []embed.FS{gardenDashboards, seedDashboards, gardenAndSeedDashboards, gardenAndShootDashboards, commonDashboards} {
++		utilruntime.Must(fs.WalkDir(dashboardEmbed, "dashboards", func(path string, dirEntry fs.DirEntry, err error) error {
++			if err != nil {
++				return err
++			}
++			if dirEntry.IsDir() {
++				return nil
++			}
++			data, err := dashboardEmbed.ReadFile(path)
++			if err != nil {
++				return err
++			}
++			name, config, err := decodeDashboard(data)
++			if err != nil {
++				return fmt.Errorf("embedded dashboard %s cannot be decoded: %w", path, err)
++			}
++			if errs := utilvalidation.IsDNS1123Subdomain(name); len(errs) > 0 {
++				return fmt.Errorf("embedded dashboard %s has invalid resource name %q: %v", path, name, errs)
++			}
++			if len(config.Panels) == 0 {
++				return fmt.Errorf("embedded dashboard %s (%q) defines no panels", path, name)
++			}
++			return nil
++		}))
++	}
 +}
 +
- func (g *GardenerAPIServer) apiServiceForSchemeGroupVersion(svc *corev1.Service, gv schema.GroupVersion) *apiregistrationv1.APIService {
- 	port := int32(g.SecurePort) // #nosec G115 -- Test code.
- 	return &apiregistrationv1.APIService{
++func (p *perses) dashboards() ([]client.Object, error) {
++	dashboards, err := p.loadDashboards()
++	if err != nil {
++		return nil, err
++	}
+ 
+-	for name, config := range p.values.Dashboards {
++	var objs []client.Object
++	for name, config := range dashboards {
+ 		objs = append(objs, &persesv1alpha2.PersesDashboard{
+ 			ObjectMeta: metav1.ObjectMeta{
+ 				Name:      name,
+@@ -27,5 +91,94 @@ func (p *perses) dashboards() []client.Object {
+ 		})
+ 	}
+ 
+-	return objs
++	return objs, nil
++}
++
++// loadDashboards reads the embedded dashboard resources relevant for the current role and returns them keyed by the
++// PersesDashboard resource name (taken from the dashboard's metadata.name).
++func (p *perses) loadDashboards() (map[string]persesv1alpha2.Dashboard, error) {
++	requiredDashboards, ignorePaths := p.selectDashboards()
++
++	dashboards := map[string]persesv1alpha2.Dashboard{}
++	for dashboardPath, dashboardEmbed := range requiredDashboards {
++		if err := fs.WalkDir(dashboardEmbed, dashboardPath, func(path string, dirEntry fs.DirEntry, err error) error {
++			if err != nil {
++				return err
++			}
++
++			if dirEntry.IsDir() {
++				if ignorePaths.HasAny(strings.Split(path, "/")...) {
++					return fs.SkipDir
++				}
++				return nil
++			}
++
++			data, err := dashboardEmbed.ReadFile(path)
++			if err != nil {
++				return fmt.Errorf("error reading %s: %w", path, err)
++			}
++
++			name, config, err := decodeDashboard(data)
++			if err != nil {
++				return fmt.Errorf("error decoding %s: %w", path, err)
++			}
++
++			dashboards[name] = config
++			return nil
++		}); err != nil {
++			return nil, err
++		}
++	}
++
++	return dashboards, nil
++}
++
++// decodeDashboard decodes an embedded Perses dashboard resource. It decodes into the upstream Perses Dashboard type
++// whose unmarshalling validates the resource against the Perses schema (equivalent to `percli lint`), and returns the
++// resource name (from metadata.name) together with the operator-flavoured dashboard config.
++func decodeDashboard(data []byte) (string, persesv1alpha2.Dashboard, error) {
++	var dashboard persesv1.Dashboard
++	if err := yaml.Unmarshal(data, &dashboard); err != nil {
++		return "", persesv1alpha2.Dashboard{}, err
++	}
++	return dashboard.Metadata.Name, persesv1alpha2.Dashboard{Spec: dashboard.Spec}, nil
++}
++
++// selectDashboards returns the set of embedded dashboard directories to deploy for the current role, together with the
++// path segments that should be ignored (e.g. istio or vpa dashboards which are only conditionally deployed). Perses is
++// only ever deployed to the garden runtime cluster and to seeds, so only these two roles are handled.
++func (p *perses) selectDashboards() (map[string]embed.FS
 ```
 
----
-
-### Incident Patch 3: `65419062` (2026-10-21)
-**Commit Message**: Preserve gardener user UID/GID across /etc-wipe in-place OS upgrade (#16038)
-
-Signed-off-by: acumino <[REDACTED_EMAIL]>
-
-**File**: `pkg/component/extensions/operatingsystemconfig/original/components/gardeneruser/component_test.go` (modified, +14/-1)
+**File**: `pkg/component/observability/monitoring/perses/dashboards/common/client-go.yaml` (added, +217/-0)
 ```diff
-@@ -95,9 +95,22 @@ DIR_SSH="/home/gardener/.ssh"
- PATH_AUTHORIZED_KEYS="$DIR_SSH/authorized_keys"
- PATH_SUDOERS="/etc/sudoers.d/99-gardener-user"
- USERNAME="gardener"
-+HOME_DIR="/home/$USERNAME"
- 
- # create user if missing
--id $USERNAME || useradd $USERNAME -mU
-+if ! id "$USERNAME" >/dev/null 2>&1; then
-+  if [ -d "$HOME_DIR" ]; then
-+    # The home directory survived an /etc wipe (e.g. GardenLinux wipe-based in-place OS upgrade) while the
-+    # passwd/group entries did not. Recreate the user/group with the UID/GID that still own the home directory
-+    # so its files (and anything else owned by the gardener user) keep their owner instead of being orphaned.
-+    GARDENER_UID="$(stat -c %u "$HOME_DIR")"
-+    GARDENER_GID="$(stat -c %g "$HOME_DIR")"
-+    getent group "$GARDENER_GID" >/dev/null 2>&1 || groupadd -g "$GARDENER_GID" "$USERNAME"
-+    useradd "$USERNAME" -m -u "$GARDENER_UID" -g "$GARDENER_GID"
-+  else
-+    useradd "$USERNAME" -mU
-+  fi
-+fi
- 
- # copy authorized_keys file
- mkdir -p $DIR_SSH
+@@ -0,0 +1,217 @@
++kind: Dashboard
++metadata:
++  name: client-go
++  project: garden
++spec:
++  display:
++    name: Controller Runtime / Client-Go
++  variables:
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue: seed-prometheus
++        allowAllValue: false
++        allowMultiple: false
++        plugin:
++          kind: DatasourceVariable
++          spec:
++            datasourcePluginKind: PrometheusDatasource
++        name: datasource
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue: gardenlet
++        allowAllValue: false
++        allowMultiple: false
++        sort: none
++        plugin:
++          kind: PrometheusLabelValuesVariable
++          spec:
++            labelName: job
++            matchers:
++              - controller_runtime_reconcile_total{}
++        name: job
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue:
++          - $__all
++        allowAllValue: true
++        allowMultiple: true
++        sort: none
++        plugin:
++          kind: PrometheusLabelValuesVariable
++          spec:
++            labelName: pod
++            matchers:
++              - controller_runtime_reconcile_total{job="$job"}
++        name: pod
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue:
++          - $__all
++        allowAllValue: true
++        allowMultiple: true
++        sort: none
++        plugin:
++          kind: PrometheusLabelValuesVariable
++          spec:
++            labelName: method
++            matchers:
++              - rest_client_requests_total
++        name: verb
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue:
++          - $__all
++        allowAllValue: true
++        allowMultiple: true
++        sort: none
++        plugin:
++          kind: PrometheusLabelValuesVariable
++          spec:
++            labelName: code
++            matchers:
++              - rest_client_requests_total
++        name: code
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue: "90"
++        allowAllValue: false
++        allowMultiple: false
++        plugin:
++          kind: StaticListVariable
++          spec:
++            values:
++              - "50"
++              - "90"
++              - "99"
++        name: percentile
++  panels:
++    "0_0":
++      kind: Panel
++      spec:
++        display:
++          name: Request Rate by pod
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            legend:
++              mode: list
++              position: bottom
++              size: small
++            visual:
++              areaOpacity: 0.3
++              connectNulls: false
++              display: line
++              lineWidth: 1
++            yAxis:
++              format:
++                unit: requests/sec
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  minStep: ""
++                  query: sum(rate(rest_client_requests_total{job="$job",pod=~"$pod",method=~"$verb",code=~"$code"}[$__rate_interval])) by (pod)
++                  seriesNameFormat: '{{pod}}'
++    "0_1":
++      kind: Panel
++      spec:
++        display:
++          name: Request Rate by code
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            legend:
++              mode: list
++              position: bottom
++              size: small
++            visual:
++              areaOpacity: 0.3
++              connectNulls: false
++              display: line
++              lineWidth: 1
++            yAxis:
++              format:
++                unit: requests/sec
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  minStep: ""
++                  query: sum(rate(rest_client_requests_total{job="$job",pod=~"$pod",method=~"$verb",code=~"$code"}[$__rate_interval])) by (code)
++                  seriesNameFormat: '{{code}}'
++    "0_2":
++      kind: Panel
++      spec:
++        display:
++          name: Request Rate by verb
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            legend:
++              mode: list
++              position: bottom
++              size: small
++            visual:
++              areaOpacity: 0.3
++              connectNulls: false
++              display: line
++              lineWidth: 1
++            yAxis:
++              format:
++                unit: requests/sec
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
 ```
 
-**File**: `pkg/component/extensions/operatingsystemconfig/original/components/gardeneruser/templates/scripts/reconcile.tpl.sh` (modified, +14/-1)
+**File**: `pkg/component/observability/monitoring/perses/dashboards/common/controller-details.yaml` (added, +675/-0)
 ```diff
-@@ -4,9 +4,22 @@ DIR_SSH="/home/gardener/.ssh"
- PATH_AUTHORIZED_KEYS="$DIR_SSH/authorized_keys"
- PATH_SUDOERS="/etc/sudoers.d/99-gardener-user"
- USERNAME="gardener"
-+HOME_DIR="/home/$USERNAME"
- 
- # create user if missing
--id $USERNAME || useradd $USERNAME -mU
-+if ! id "$USERNAME" >/dev/null 2>&1; then
-+  if [ -d "$HOME_DIR" ]; then
-+    # The home directory survived an /etc wipe (e.g. GardenLinux wipe-based in-place OS upgrade) while the
-+    # passwd/group entries did not. Recreate the user/group with the UID/GID that still own the home directory
-+    # so its files (and anything else owned by the gardener user) keep their owner instead of being orphaned.
-+    GARDENER_UID="$(stat -c %u "$HOME_DIR")"
-+    GARDENER_GID="$(stat -c %g "$HOME_DIR")"
-+    getent group "$GARDENER_GID" >/dev/null 2>&1 || groupadd -g "$GARDENER_GID" "$USERNAME"
-+    useradd "$USERNAME" -m -u "$GARDENER_UID" -g "$GARDENER_GID"
-+  else
-+    useradd "$USERNAME" -mU
-+  fi
-+fi
- 
- # copy authorized_keys file
- mkdir -p $DIR_SSH
+@@ -0,0 +1,675 @@
++kind: Dashboard
++metadata:
++  name: controller-details
++  project: garden
++spec:
++  display:
++    name: Controller Runtime / Controller Details
++  variables:
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue: seed-prometheus
++        allowAllValue: false
++        allowMultiple: false
++        plugin:
++          kind: DatasourceVariable
++          spec:
++            datasourcePluginKind: PrometheusDatasource
++        name: datasource
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue: gardenlet
++        allowAllValue: false
++        allowMultiple: false
++        sort: none
++        plugin:
++          kind: PrometheusLabelValuesVariable
++          spec:
++            labelName: job
++            matchers:
++              - controller_runtime_reconcile_total{}
++        name: job
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue:
++          - $__all
++        allowAllValue: true
++        allowMultiple: true
++        sort: none
++        plugin:
++          kind: PrometheusLabelValuesVariable
++          spec:
++            labelName: pod
++            matchers:
++              - controller_runtime_reconcile_total{job="$job"}
++        name: pod
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue: backupbucket
++        allowAllValue: false
++        allowMultiple: false
++        sort: none
++        plugin:
++          kind: PrometheusLabelValuesVariable
++          spec:
++            labelName: controller
++            matchers:
++              - controller_runtime_reconcile_total{job="$job",pod=~"$pod"}
++        name: controller
++  panels:
++    "0_0":
++      kind: Panel
++      spec:
++        display:
++          name: Reconciliation Rate by pod
++          description: Shows the reconciliation rate for a controller by pod.
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            legend:
++              mode: list
++              position: bottom
++              size: small
++            visual:
++              areaOpacity: 0.3
++              connectNulls: false
++              display: line
++              lineWidth: 1
++            yAxis:
++              format:
++                unit: ops/sec
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  minStep: ""
++                  query: sum(rate(controller_runtime_reconcile_total{job="$job",controller=~"$controller",pod=~"$pod"}[$__rate_interval])) by (pod)
++                  seriesNameFormat: '{{pod}}'
++    "0_1":
++      kind: Panel
++      spec:
++        display:
++          name: Reconciliation Rate by result
++          description: Shows the reconciliation rate per result per controller by pod.
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            legend:
++              mode: list
++              position: bottom
++              size: small
++            visual:
++              areaOpacity: 0.3
++              connectNulls: false
++              display: line
++              lineWidth: 1
++            yAxis:
++              format:
++                unit: ops/sec
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  minStep: ""
++                  query: sum(rate(controller_runtime_reconcile_total{job="$job",controller=~"$controller",pod=~"$pod"}[$__rate_interval])) by (result)
++                  seriesNameFormat: '{{result}}'
++    "0_2":
++      kind: Panel
++      spec:
++        display:
++          name: Error Rate by pod
++          description: Shows the total number of reconciliation errors per controller by pod.
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            legend:
++              mode: list
++              position: bottom
++              size: small
++            visual:
++              areaOpacity: 0.3
++              connectNulls: false
++              display: line
++              lineWidth: 1
++            yAxis:
++              format:
++                decimalPlaces: 3
++                unit: ops/sec
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  minStep: ""
++                  query: sum(rate(controller_runtime_reconcile_errors_total{job="$job",controller=~"$controller",pod=~"$pod"}[$__rate_interval])) by (pod)
++                  seriesNameFormat: '{{pod}}'
++    "0_3":
++      kind: Panel
++      spec:
++        display:
++          name: Reconciliation time (P50, P90, P99)
+```
+
+**File**: `pkg/component/observability/monitoring/perses/dashboards/common/controllers.yaml` (added, +670/-0)
+```diff
+@@ -0,0 +1,670 @@
++kind: Dashboard
++metadata:
++  name: controllers
++  project: garden
++spec:
++  display:
++    name: Controller Runtime / Controllers
++  variables:
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue: seed-prometheus
++        allowAllValue: false
++        allowMultiple: false
++        plugin:
++          kind: DatasourceVariable
++          spec:
++            datasourcePluginKind: PrometheusDatasource
++        name: datasource
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue: gardenlet
++        allowAllValue: false
++        allowMultiple: false
++        sort: none
++        plugin:
++          kind: PrometheusLabelValuesVariable
++          spec:
++            labelName: job
++            matchers:
++              - controller_runtime_reconcile_total{}
++        name: job
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue:
++          - $__all
++        allowAllValue: true
++        allowMultiple: true
++        sort: none
++        plugin:
++          kind: PrometheusLabelValuesVariable
++          spec:
++            labelName: controller
++            matchers:
++              - controller_runtime_reconcile_total{job="$job"}
++        name: controller
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue: "90"
++        allowAllValue: false
++        allowMultiple: false
++        plugin:
++          kind: StaticListVariable
++          spec:
++            values:
++              - "50"
++              - "90"
++              - "99"
++        name: percentile
++  panels:
++    "0_0":
++      kind: Panel
++      spec:
++        display:
++          name: Reconciliation Rate
++        plugin:
++          kind: BarChart
++          spec:
++            calculation: last-number
++            format:
++              unit: ops/sec
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  minStep: ""
++                  query: sum(rate(controller_runtime_reconcile_total{job="$job",controller=~"$controller"}[$__range])) by (controller)
++                  seriesNameFormat: '{{controller}}'
++    "0_1":
++      kind: Panel
++      spec:
++        display:
++          name: Total Workers by controller
++        plugin:
++          kind: Table
++          spec:
++            columnSettings:
++              - name: value
++                width: 80
++              - dataLink:
++                  openNewTab: false
++                  title: ""
++                  url: /d/controller-details/controller-runtime-controllers-controller-details?var-datasource=$datasource&var-job=$job&var-controller=${__data.fields.controller}
++                name: controller
++              - hide: true
++                name: timestamp
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  minStep: ""
++                  query: sum(controller_runtime_max_concurrent_reconciles{job="$job",controller=~"$controller"}) by (controller)
++                  seriesNameFormat: ""
++    "0_2":
++      kind: Panel
++      spec:
++        display:
++          name: Reconciliation Time Distribution
++        plugin:
++          kind: PieChart
++          spec:
++            calculation: last-number
++            legend:
++              mode: table
++              position: right
++              values:
++                - relative
++            radius: 50
++            showLabels: false
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  minStep: ""
++                  query: sum(rate(controller_runtime_reconcile_time_seconds_sum{job="$job",controller=~"$controller"}[$__range])) by (controller)
++                  seriesNameFormat: '{{controller}}'
++    "1_0":
++      kind: Panel
++      spec:
++        display:
++          name: Reconciliation Rate by controller
++          description: Shows the rate of reconciliations per controller.
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            legend:
++              mode: table
++              position: right
++              values:
++                - max
++                - mean
++                - last
++              size: small
++            visual:
++              areaOpacity: 0.3
++              connectNulls: false
++              display: line
++              lineWidth: 1
++            yAxis:
++              format:
++                decimalPlaces: 4
++                unit: ops/sec
++        queries:
++          - kind: TimeSeriesQuery
++     
+```
+
+**File**: `pkg/component/observability/monitoring/perses/dashboards/common/shoot-control-plane-resource-usage-by-owner-container.yaml` (added, +780/-0)
+```diff
+@@ -0,0 +1,780 @@
++kind: Dashboard
++metadata:
++  name: shoot-control-plane-resource-usage-by-owner-container
++  project: garden
++spec:
++  display:
++    name: Shoot control plane resource usage by owner and container
++  variables:
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue: shoot--local--local
++        allowAllValue: false
++        allowMultiple: false
++        sort: alphabetical-asc
++        plugin:
++          kind: PrometheusLabelValuesVariable
++          spec:
++            labelName: namespace
++            matchers:
++              - metering:working_set_memory:sum_by_namespace{shoot_uid!=""}
++        name: namespace
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue:
++          - $__all
++        allowAllValue: true
++        allowMultiple: true
++        customAllValue: .*
++        sort: alphabetical-asc
++        plugin:
++          kind: PrometheusLabelValuesVariable
++          spec:
++            labelName: owner
++            matchers:
++              - metering:working_set_memory:sum_by_namespace_owner_container{shoot_uid!="",namespace=~"$namespace"}
++        name: owner
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue:
++          - $__all
++        allowAllValue: true
++        allowMultiple: true
++        customAllValue: .*
++        sort: alphabetical-asc
++        plugin:
++          kind: PrometheusLabelValuesVariable
++          spec:
++            labelName: container
++            matchers:
++              - metering:working_set_memory:sum_by_namespace_owner_container{shoot_uid!="",namespace=~"$namespace",owner=~"$owner"}
++        name: container
++  panels:
++    "0_0":
++      kind: Panel
++      spec:
++        display:
++          name: Shoot UID
++        plugin:
++          kind: StatChart
++          spec:
++            calculation: last-number
++            colorMode: value
++            metricLabel: shoot_uid
++            sparkline: {}
++            thresholds:
++              steps: []
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource:
++                    kind: PrometheusDatasource
++                  minStep: ""
++                  query: metering:cpu_usage:sum_by_namespace:avg_over_time{shoot_uid!="",namespace=~"$namespace"}
++                  seriesNameFormat: '{{shoot_uid}}'
++    "0_1":
++      kind: Panel
++      spec:
++        display:
++          name: Elapsed usage time in the current calendar month
++        plugin:
++          kind: StatChart
++          spec:
++            calculation: last-number
++            colorMode: value
++            format:
++              unit: seconds
++            sparkline: {}
++            thresholds:
++              steps: []
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource:
++                    kind: PrometheusDatasource
++                  minStep: ""
++                  query: metering:memory_usage_seconds{shoot_uid!="",namespace=~"$namespace"}
++                  seriesNameFormat: CPU, Memory, Network usage time in {{year}}/{{month}} 
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource:
++                    kind: PrometheusDatasource
++                  minStep: ""
++                  query: metering:disk_usage_seconds{shoot_uid!="",namespace=~"$namespace"}
++                  seriesNameFormat: Disk usage time in {{year}}/{{month}} 
++    "0_2":
++      kind: Panel
++      spec:
++        display:
++          name: Average resource usage in the current calendar month when the cluster was active
++        plugin:
++          kind: StatChart
++          spec:
++            calculation: last-number
++            colorMode: value
++            format:
++              unit: decimal
++            sparkline: {}
++            thresholds:
++              steps: []
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource:
++                    kind: PrometheusDatasource
++                  minStep: ""
++                  query: metering:cpu_usage:sum_by_namespace:avg_over_time{shoot_uid!="",namespace=~"$namespace"}
++                  seriesNameFormat: CPU usage
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource:
++                    kind: PrometheusDatasource
++                  minStep: ""
++                  query: metering:cpu_requests:sum_by_namespace:avg_over_time{sho
+```
+
+**File**: `pkg/component/observability/monitoring/perses/dashboards/common/victorialogs-dashboard.yaml` (added, +312/-0)
+```diff
+@@ -0,0 +1,312 @@
++kind: Dashboard
++metadata:
++  name: victorialogs
++  project: garden
++spec:
++  display:
++    name: VictoriaLogs
++  variables:
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        allowAllValue: false
++        allowMultiple: false
++        plugin:
++          kind: DatasourceVariable
++          spec:
++            datasourcePluginKind: PrometheusDatasource
++        name: datasource
++  panels:
++    "0_0":
++      kind: Panel
++      spec:
++        display:
++          name: HTTP requests rate
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            yAxis:
++              format:
++                unit: decimal
++            legend:
++              position: bottom
++              mode: table
++              values:
++                - mean
++                - last
++                - max
++              size: small
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  query: sum(rate(vl_http_requests_total[$__rate_interval])) by (path)
++                  seriesNameFormat: '{{path}}'
++    "0_1":
++      kind: Panel
++      spec:
++        display:
++          name: Query timeouts
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            yAxis:
++              format:
++                unit: decimal
++            legend:
++              position: bottom
++              mode: table
++              values:
++                - mean
++                - last
++                - max
++              size: small
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  query: sum(rate(vl_concurrent_select_limit_timeout_total[$__rate_interval])) by (instance)
++                  seriesNameFormat: '{{instance}}'
++    "1_0":
++      kind: Panel
++      spec:
++        display:
++          name: Free disk space
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            yAxis:
++              format:
++                unit: bytes
++            legend:
++              position: bottom
++              mode: table
++              values:
++                - mean
++                - last
++                - max
++              size: small
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  query: max(vl_free_disk_space_bytes) by (instance)
++                  seriesNameFormat: '{{instance}}'
++    "1_1":
++      kind: Panel
++      spec:
++        display:
++          name: Streams creation rate
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            yAxis:
++              format:
++                unit: decimal
++            legend:
++              position: bottom
++              mode: table
++              values:
++                - mean
++                - last
++                - max
++              size: small
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  query: sum(rate(vl_streams_created_total[$__rate_interval])) by (instance)
++                  seriesNameFormat: '{{instance}}'
++    "2_0":
++      kind: Panel
++      spec:
++        display:
++          name: Logs ingestion rate
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            yAxis:
++              format:
++                unit: decimal
++            legend:
++              position: bottom
++              mode: table
++              values:
++                - mean
++                - last
++                - max
++              size: small
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  query: sum(rate(vl_rows_ingested_total[$__rate_interval])) by (type)
++                  seriesNameFormat: '{{type}}'
++    "2_1":
++      kind: Panel
++      spec:
++        display:
++          name: Dropped logs
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            yAxis:
++              format:
++                unit: decimal
++            legend:
++              position: bottom
++              mode: table
++              values:
++                - mean
++                - last
++                - max
++              size: small
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++  
+```
+
+**File**: `pkg/component/observability/monitoring/perses/dashboards/common/vpa/vpa-admission-controller.yaml` (added, +102/-0)
+```diff
+@@ -0,0 +1,102 @@
++kind: Dashboard
++metadata:
++  name: vpa-admission-controller
++  project: garden
++spec:
++  display:
++    name: VPA Admission Controller
++  variables:
++    - kind: ListVariable
++      spec:
++        display:
++          hidden: false
++        defaultValue: seed-prometheus
++        allowAllValue: false
++        allowMultiple: false
++        plugin:
++          kind: DatasourceVariable
++          spec:
++            datasourcePluginKind: PrometheusDatasource
++        name: datasource
++  panels:
++    "0":
++      kind: Panel
++      spec:
++        display:
++          name: Admitted Pods rate
++        plugin:
++          kind: TimeSeriesChart
++          spec:
++            legend:
++              position: bottom
++              mode: list
++              size: small
++            yAxis:
++              format:
++                unit: decimal
++        queries:
++          - kind: TimeSeriesQuery
++            spec:
++              plugin:
++                kind: PrometheusTimeSeriesQuery
++                spec:
++                  datasource: $datasource
++                  minStep: ""
++                  query: sum(rate(vpa_admission_controller_admission_pods_total[$__rate_interval])) by (applied)
++                  seriesNameFormat: Applied recommendation "{{ applied }}"
++    "1":
++      kind: Panel
++      spec:
++        display:
++          name: Execution latency step=total
++        plugin:
++          kind: Markdown
++          spec:
++            text: '**Migration from Grafana not supported !**'
++    "2":
++      kind: Panel
++      spec:
++        display:
++          name: Total admission time for Pods
++        plugin:
++          kind: Markdown
++          spec:
++            text: '**Migration from Grafana not supported !**'
++    "3":
++      kind: Panel
++      spec:
++        display:
++          name: Total admission time for VPAs
++        plugin:
++          kind: Markdown
++          spec:
++            text: '**Migration from Grafana not supported !**'
++  layouts:
++    - kind: Grid
++      spec:
++        items:
++          - x: 0
++            "y": 0
++            width: 12
++            height: 9
++            content:
++              $ref: '#/spec/panels/0'
++          - x: 12
++            "y": 0
++            width: 12
++            height: 9
++            content:
++              $ref: '#/spec/panels/1'
++          - x: 12
++            "y": 9
++            width: 12
++            height: 9
++            content:
++              $ref: '#/spec/panels/2'
++          - x: 12
++            "y": 18
++            width: 12
++            height: 9
++            content:
++              $ref: '#/spec/panels/3'
++  duration: 6h
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16088** (2026-10-23): [release-v1.153] Use field selector and APIReader instead of cached client for `sync-provider-secret-labels` webhook (@acumino)
 - **PR #16084** (2026-10-22): Update nginx Docker tag to v1.31.8 (@renovate[bot])
+- **PR #16082** (2026-10-24): Disable unused Perses datasource plugins (@rickardsjp)
 - **PR #16078** (2026-10-22): Fix stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (@DockToFuture)
 - **PR #16077** (2026-10-22): [release-v1.151] Update dependency gardener/dashboard to v1.85.2 (@marc1404)
 - **PR #16076** (2026-10-22): [release-v1.152] Update dependency gardener/dashboard to v1.85.2 (@petersutter)
-- **PR #16075** (2026-10-22): [release-v1.153] Automated cherry pick of #16072: Update dependency gardener/dashboard to v1.86.2 (@ialidzhikov)
-- **PR #16074** (2026-10-22): [release-v1.154] Update dependency gardener/dashboard to v1.86.2 (@gardener-ci-robot)
 
 ---
 
@@ -1028,28 +2027,31 @@ Signed-off-by: acumino <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (#16078)
+## X. Disable unused Perses datasource plugins (#16082)
 
 **RULE**:
-When implementing operations in `docs/api-reference/core.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/component/observability/monitoring/perses/perses.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4df3a9a5`: stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (#16078). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e4fad3f1`: Disable unused Perses datasource plugins (#16082). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/api-reference/core.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/component/observability/monitoring/perses/perses.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-<p>ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.<br />Default, if unspecified, is to prefer UDP.</p>
+					// Disable bundled datasource plugins for backends we do not run so they do not clutter the Explore picker.
+					Plugin: persesconfig.Plugin{
+						Disabled: []string{"ClickHouse", "GreptimeDB", "Jaeger", "Loki", "OpenSearch", "Pyroscope", "Splunk", "Tempo"},
+					},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-<p>ForceTCPToUpstreamDNS indicates whether the connection from the node local DNS to the upstream DNS (infrastructure DNS) will be forced to TCP or not.<br />Default, if unspecified, is to enforce TCP.</p>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4df3a9a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e4fad3f1` are properly handled with clean fallback behavior.

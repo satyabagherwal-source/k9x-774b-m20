@@ -4633,3 +4633,9 @@
 | `CYCLE-20261025-U3PF` | `2026-10-25T03:31:45.603Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4013` | Yes (`f6041b35...`) |
 | `CYCLE-20261025-U5YQ` | `2026-10-25T03:31:48.530Z` | `DylanVann/react-native-fast-image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4014` | Yes (`dcd0699c...`) |
 | `CYCLE-20261025-UCHR` | `2026-10-25T03:31:56.991Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4015` | Yes (`13e167b5...`) |
+| `CYCLE-20261025-2QNR` | `2026-10-25T03:38:28.599Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3567` | Yes (`3b8521b0...`) |
+| `CYCLE-20261025-2QNT` | `2026-10-25T03:38:28.601Z` | `microsoft/fluentui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4016` | Yes (`1a665bd0...`) |
+| `CYCLE-20261025-2TIM` | `2026-10-25T03:38:32.302Z` | `CrawlCove/hreflang-checker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1775` | Yes (`0dc6ea34...`) |
+| `CYCLE-20261025-2W7S` | `2026-10-25T03:38:35.800Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4017` | Yes (`e014a103...`) |
+| `CYCLE-20261025-2YJ6` | `2026-10-25T03:38:38.802Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4018` | Yes (`0da4858a...`) |
+| `CYCLE-20261025-2ZVK` | `2026-10-25T03:38:40.544Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4019` | Yes (`8282a930...`) |

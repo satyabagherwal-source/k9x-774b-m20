@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source**: github ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
-> **Source Version**: `46c72f21`  
+> **Source Version**: `4cc5c89a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T16:51:34.745Z  
+> **Timestamp**: 2026-10-25T03:38:28.310Z  
 > **Learning ID**: `learn-github-jhspetersson-fselect`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T16:51:34.342Z  
+> **Harvest Timestamp**: 2026-10-25T03:38:27.658Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find files with SQL-like queries
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 4472 stars
+- **Stars / Engagement**: 4474 stars
 
 ---
 
@@ -882,6 +882,58 @@ static DATE_REGEX: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new("^([0-9]{4})(-|:)([0-9]{1,2})(-|:)([0-9]{1,2})(?:[ Tt]([0-9]{1,2})(?::([0-9]{1,2})(?::([0-9]{1,2}))?)?)?$").unwrap()
 });
 
+static EXPLICIT_TIME_REGEX: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?i)\b[0-9]{1,2}\s*[:.]\s*[0-9]{2}\b|\b[0-9]{1,2}\s*[ap]m\b").unwrap()
+});
+
+static TWELVE_OCLOCK_REGEX: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?i)(^|[^0-9:.])12(?::([0-9]{2})(?::([0-9]{2}))?)?\s*([ap])m\b").unwrap()
+});
+
+static TRAILING_TIME_REGEX: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?i)^(.*\S)\s+([0-9]{1,2})(?::([0-9]{2})(?::([0-9]{2}))?)?\s*([ap]m)?$").unwrap()
+});
+
+fn trailing_time(caps: &regex::Captures) -> Option<NaiveTime> {
+    let mut hour: u32 = caps[2].parse().ok()?;
+    if let Some(meridiem) = caps.get(5) {
+        if hour == 0 || hour > 12 {
+            return None;
+        }
+        hour %= 12;
+        if meridiem.as_str().eq_ignore_ascii_case("pm") {
+            hour += 12;
+        }
+    }
+    let minute = caps.get(3).map_or(Some(0), |m| m.as_str().parse().ok())?;
+    let second = caps.get(4).map_or(Some(0), |m| m.as_str().parse().ok())?;
+    NaiveTime::from_hms_opt(hour, minute, second)
+}
+
+fn parse_natural_datetime(s: &str, dialect: Dialect) -> Option<NaiveDateTime> {
+    let now = Local::now();
+    if let Some(caps) = TRAILING_TIME_REGEX.captures(s)
+        && (caps.get(3).is_some() || caps.get(5).is_some())
+    {
+        let time = trailing_time(&caps)?;
+        let date_time = parse_date_string(&caps[1], now, dialect).ok()?;
+        return Some(date_time.date_naive().and_time(time));
+    }
+    parse_date_string(s, now, dialect).ok().map(|date_time| date_time.naive_local())
+}
+
+fn normalize_twelve_oclock(s: &str) -> std::borrow::Cow<'_, str> {
+    TWELVE_OCLOCK_REGEX.replace_all(s, |caps: &regex::Captures| {
+        let before = &caps[1];
+        let hour = if caps[4].eq_ignore_ascii_case("a") { "0" } else { "12" };
+        let minutes = caps.get(2).map_or("00", |m| m.as_str());
+        match caps.get(3) {
+            Some(seconds) => format!("{before}{hour}:{minutes}:{}", seconds.as_str()),
+            None => format!("{before}{hour}:{minutes}"),
+        }
+    })
+}
+
 static US_DATES: Mutex<bool> = Mutex::new(false);
 
 pub fn set_us_dates(us: bool) {
@@ -974,12 +1026,13 @@ pub fn parse_datetime(s: &str) -> Result<(NaiveDateTime, NaiveDateTime), String>
                     true => Dialect::Us,
                     false => Dialect::Uk,
                 };
-                match parse_date_string(s, Local::now(), dialect) {
-                    Ok(date_time) => {
-                        let date_time = date_time.naive_local();
+                let normalized = normalize_twelve_oclock(s);
+                match parse_natural_datetime(&normalized, dialect) {
+                    Some(date_time) => {
                         let finish = if date_time.hour() == 0
                             && date_time.minute() == 0
                             && date_time.second() == 0
+                            && !EXPLICIT_TIME_REGEX.is_match(&normalized)
                         {
                             date_time
                                 .with_hour(23)
@@ -994,7 +1047,7 @@ pub fn parse_datetime(s: &str) -> Result<(NaiveDateTime, NaiveDateTime), String>
 
                         Ok((date_time, finish))
                     }
-                    _ => Err("Error parsing date/time value: ".to_string() + s),
+                    None => Err("Error parsing date/time value: ".to_string() + s),
                 }
             } else {
                 Err("Error parsing date/time value: ".to_string() + s)
@@ -1077,67 +1130,7 @@ mod tests {
     #[test]
     fn test_parse_two_days_ago() {
         let result = parse_datetime("2 days ago 00:00").unwrap();
-        let two_days_ago = Local::now().date_naive() - chrono::Duration::days(2);
-        let start = two_days_ago.and_hms_opt(0, 0, 0).unwrap();
-        let finish = two_days_ago.and_hms_opt(23, 59, 59).unwrap();
-
-        assert_eq!(result.0, start);
-        assert_eq!(result.1, finish);
-    }
-
-    #[test]
-    fn test_parse_two_days_ago_simplified() {
-        let result = parse_datetime("-2").unwrap();
-        let two_days_ago = Local::now().date_naive() - chrono::Duration::days(2);
-        let start = two_days_ago.and_hms_opt(0, 0, 0).unwrap();
-        let finish = two_days_ago.and_hms_opt(23, 59, 59).unwrap();
-
-        assert_eq!(result.0, start);
-        assert_eq!(result.1, finish);
-    }
-
-    #[test]
-    fn test_parse_specific_date() {
-        let result = parse_datetime("2023-12-11").unwrap();
-        let date = NaiveDate::from_ymd_opt(2023, 12, 11).unwrap();
-        let start = date.and_hms_opt(0, 0, 0).unwrap();
-        let finish = date.and_hms_opt(23, 59, 59).unwrap();
-
-        assert_eq!(result.0, start);
-        assert_eq!(result.1, finish);
-    }
-
-    #[test]
-    fn test_parse_specific_datetime() {
-        let result = parse_datetime("2023-12-11 14:30:45").unwrap();
-        let date = NaiveDate::from_ymd_opt(2023, 12, 11).unwrap();
-        let start = date.and_hms_opt(14, 30, 45).unwrap();
-        let finish = start;
-
-        assert_eq!(result.0, start);
-        assert_eq!(result.1, finish);
-    }
-
-    #[test]
-    fn test_invalid_format() {
-        let result = parse_datetime("invalid-date");
-
-        assert!(result.is_err());
-        assert_eq!(result.unwrap_err(), "Error parsing date/time value: invalid-date");
-    }
-
-    #[test]
-    fn test_parse_invalid_calendar_date() {
-        // Genuinely invalid dates must still error after dropping the Local round-trip
-        assert!(parse_datetime("2023-02-30").is_err());
-        assert!(parse_datetime("2023-13-01").is_err());
-        assert!(parse_datetime("2023-04-31").is_err());
-    }
-
-    #[test]
-    fn test_parse_out_of_range_time() {
-        assert!(parse_datetime("2024-01-01 25:00:00").is_err());
-        assert!(parse_datetime("2024-01-01 12:61:00").is_e
+        let two_days_ago = Local::now().date_na
 ```
 
 ### Core Architecture Module: `src/util/dimensions/image.rs`
@@ -1305,12 +1298,14 @@ mod test {
 use std::io;
 
 mod image;
+#[cfg(feature = "mkv")]
 mod mkv;
 mod mp4;
 mod svg;
 
 use self::svg::SvgDimensionsExtractor;
 use image::ImageDimensionsExtractor;
+#[cfg(feature = "mkv")]
 use mkv::MkvDimensionsExtractor;
 use mp4::Mp4DimensionsExtractor;
 use std::path::Path;
@@ -1326,7 +1321,8 @@ pub trait DimensionsExtractor {
     fn try_read_dimensions(&self, path: &Path) -> io::Result<Option<Dimensions>>;
 }
 
-const EXTRACTORS: [&dyn DimensionsExtractor; 4] = [
+const EXTRACTORS: &[&dyn DimensionsExtractor] = &[
+    #[cfg(feature = "mkv")]
     &MkvDimensionsExtractor,
     &Mp4DimensionsExtractor,
     &SvgDimensionsExtractor,
@@ -1443,14 +1439,11 @@ mod test {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #187** (2026-10-24): **Interoperability note: binary typed xattrs and text comparisons**
+  *Symptoms*: Hi,  I maintain MoobFS, an experimental GPL-2.0-only Linux stackable filesystem developed with AI assistance and human review/testing. I used fselect 0.10.3 in a disposable Linux VM to check xattr interoperability.  Our public test record shows that has_xattr(user.moob.kind) finds the expected files, and ordinary user.xdg.tags values remain searchable through the layer. The interesting distinction is our typed encoding: a string value stores a 0x01 type byte before the UTF-8 payload. fselect exposes those bytes, so xattr(user.moob.kind) = 'decision' does not match the stored value with that prefix. I am not reporting this as a fselect bug.  Would a short documentation example about binary/type-prefixed xattrs be useful? I can prepare a small example using an ordinary user.* attribute on a regular Linux filesystem, so reproducing it would not require loading MoobFS. That standalone example has not been run yet; the existing evidence comes from the layer test.  Public observations and limitations: https://github.com/studiomoob/llmoobfs/blob/02381fba3f0a908623cac52180a39f24e02e98a6/docs/history/0140-interoperability-test.md Encoding: https://github.com/studiomoob/llmoobfs/blob/02381fba3f0a908623cac52180a39f24e02e98a6/docs/client-contract.md#4-structured-fields-are-typed-attributes  Thanks, Cláudio 
+
 - **Issue #185** (2026-06-10): **fix mobile input**
   *Symptoms*: 
-
-- **Issue #184** (2026-05-11): **Crash/panic in some queries with time/date**
-  *Symptoms*: Crash when created/modified/accessed mentioned in query  thread 'main' (487628) panicked at /home/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/chrono-0.4.44/src/datetime/mod.rs:1931:38: No such local time stack backtrace:    0:     0x6524d9987d02 - <unknown>    1:     0x6524d96d75ea - <unknown>    2:     0x6524d9987175 - <unknown>    3:     0x6524d9986de8 - <unknown>    4:     0x6524d99afaf8 - <unknown>    5:     0x6524d99afa79 - <unknown>    6:     0x6524d99afa6c - <unknown>    7:     0x6524d96d85bb - <unknown>    8:     0x6524d96d0300 - <unknown>    9:     0x6524d96846f1 - <unknown>   10:     0x6524d97aa0ac - <unknown>   11:     0x6524d97b1d1a - <unknown>   12:     0x6524d97ad3ee - <unknown>   13:     0x6524d97ad034 - <unknown>   14:     0x6524d97a19f1 - <unknown>   15:     0x6524d967ea9d - <unknown>   16:     0x6524d9681ca4 - <unknown>   17:     0x6524d97c0653 - <unknown>   18:     0x6524d96925c6 - <unknown>   19:     0x7721f7c2a1ca - __libc_start_call_main                                at ./csu/../sysdeps/nptl/libc_start_call_main.h:58:16   20:     0x7721f7c2a28b - __libc_start_main_impl                                at ./csu/../csu/libc-start.c:360:3   21:     0x6524d9676565 - <unknown>   22:                0x0 - <unknown> [ble: exit 101]  Shell: bash Distro: Ubuntu 24.04 (Kde Neon) Deb package of fselect
-  **Post-Mortem & Fix Analysis**:
-  > Blank column in binary + Musl version if 'created' column queried
-  > Thank you for the bugreport!   I tried to fix a panic when parsing some invalid datetimes. If you can build from `master`, please check if the fix works for you. Otherwise, it will be available after the next release.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1467,829 +1460,485 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46c72f21` (2026-10-20)
+### Incident Patch 1: `9a867909` (2026-10-22)
 **Commit Message**: fix found regressions
 
-**File**: `src/expr.rs` (modified, +22/-0)
+**File**: `src/function.rs` (modified, +26/-13)
 ```diff
-@@ -1233,6 +1233,28 @@ enum Rendering {
- }
+@@ -1977,12 +1977,12 @@ impl FieldAccumulator {
+                     self.count = 1;
+                     self.sum = v;
+                 } else {
+-                    if v < self.min {
++                    if v < self.min || (v == self.min && self.min_raw.as_deref().is_some_and(|current| value < current)) {
+                         self.min = v;
+                         self.min_raw = Some(value.to_string());
+                         self.min_raw_type = value_type.clone();
+                     }
+-                    if v > self.max {
++                    if v > self.max || (v == self.max && self.max_raw.as_deref().is_some_and(|current| value > current)) {
+                         self.max = v;
+                         self.max_raw = Some(value.to_string());
+                         self.max_raw_type = value_type;
+@@ -3640,6 +3640,20 @@ mod tests {
+         assert_eq!(get_aggregate_value(&Function::Max, &numeric, "val".to_string(), &None), "100");
+     }
  
- impl Expr {
-+    pub fn negated(&self) -> Expr {
-+        let mut result = self.clone();
-+        result.props.clear_file_types();
-+
-+        if let Some(op) = self.op {
-+            result.op = Some(Op::negate(op));
-+            return result;
++    #[test]
++    fn numeric_ties_between_extremes_are_broken_by_text_regardless_of_order() {
++        for order in [["000", "-000", "002"], ["-000", "000", "002"], ["002", "000", "-000"]] {
++            let names = make_accumulator("val", &order);
++            assert_eq!(get_aggregate_value(&Function::Min, &names, "val".to_string(), &None), "-000", "{order:?}");
++            assert_eq!(get_aggregate_value(&Function::Max, &names, "val".to_string(), &None), "002", "{order:?}");
 +        }
-+
-+        if let Some(ref logical_op) = self.logical_op {
-+            result.logical_op = Some(logical_op.negate());
-+            if let Some(left) = &self.left {
-+                result.left = Some(Box::new(left.negated()));
-+            }
-+            if let Some(right) = &self.right {
-+                result.right = Some(Box::new(right.negated()));
-+            }
++        for order in [["2", "2.0", "002"], ["002", "2.0", "2"]] {
++            let twos = make_accumulator("val", &order);
++            assert_eq!(get_aggregate_value(&Function::Min, &twos, "val".to_string(), &None), "002", "{order:?}");
++            assert_eq!(get_aggregate_value(&Function::Max, &twos, "val".to_string(), &None), "2.0", "{order:?}");
 +        }
-+
-+        result
 +    }
 +
-     pub fn cache_key(&self) -> String {
-         let mut key = String::new();
-         self.render(&mut key, Rendering::CacheKey).expect("writing to a String cannot fail");
+     #[test]
+     fn min_and_max_keep_the_spelling_of_numeric_looking_text() {
+         let padded = make_accumulator("val", &["002", "010", "1e3"]);
+@@ -4518,20 +4532,19 @@ mod tests {
+     }
+ 
+     #[test]
+-    fn min_negative_zero_keeps_the_first_spelling() {
+-        let acc = make_accumulator("val", &["-0", "0"]);
+-        let result = get_aggregate_value(&Function::Min, &acc, "val".to_string(), &None);
+-        assert_eq!(result, "-0");
+-        let acc = make_accumulator("val", &["0", "-0"]);
+-        let result = get_aggregate_value(&Function::Min, &acc, "val".to_string(), &None);
+-        assert_eq!(result, "0");
++    fn min_negative_zero_is_the_textually_smaller_spelling() {
++        for order in [["-0", "0"], ["0", "-0"]] {
++            let acc = make_accumulator("val", &order);
++            assert_eq!(get_aggregate_value(&Function::Min, &acc, "val".to_string(), &None), "-0", "{order:?}");
++        }
+     }
+ 
+     #[test]
+-    fn max_negative_zero_keeps_the_first_spelling() {
+-        let acc = make_accumulator("val", &["-0", "0"]);
+-        let result = get_aggregate_value(&Function::Max, &acc, "val".to_string(), &None);
+-        assert_eq!(result, "-0");
++    fn max_negative_zero_is_the_textually_larger_spelling() {
++        for order in [["-0", "0"], ["0", "-0"]] {
++            let acc = make_accumulator("val", &order);
++            assert_eq!(get_aggregate_value(&Function::Max, &acc, "val".to_string(), &None), "0", "{order:?}");
++        }
+     }
+ 
+     #[test]
 ```
 
-**File**: `src/function.rs` (modified, +1/-0)
+**File**: `src/searcher.rs` (modified, +1/-1)
 ```diff
-@@ -1960,6 +1960,7 @@ impl FieldAccumulator {
- pub struct GroupAccumulator {
-     pub total_count: usize,
-     pub fields: HashMap<String, FieldAccumulator>,
-+    pub key_types: Vec<Option<VariantType>>,
-     /// Absolute path and root depth of the first entry that joined the group.
-     /// Only recorded when the query drives an outer FROM-subselect, so each
-     /// group can stand in for one filesystem entry there.
-```
-
-**File**: `src/lexer.rs` (modified, +63/-1)
-```diff
-@@ -71,6 +71,7 @@ struct LexerState {
-     in_value_set: bool,
-     paren_depth: u32,
-     after_as: bool,
-+    after_value_end: bool,
- }
- 
- impl LexerState {
-@@ -87,13 +88,18 @@ impl LexerState {
-             in_value_set: false,
-             paren_depth: 0,
-             after_as: false,
-+            after_value_end: false,
-         }
-     }
- 
-     fn in_fields(&self) -> bool {
-         self.clause == Clause::Fields
-     }
- 
-+    fn in_column_expression(&self) -> bool {
-+        matches!(self.clause, Clause::Fields | Clause::GroupBy)
-+    }
-+
-     fn in_where(&self) -> bool {
-         self.clause == Clause::Where
-     }
-@@ -371,6 +377,13 @@ impl Lexer {
-                 "or" if self.state.in_where() && self.state.is_keyword_position(false) => Some(Lexeme::Or),
-                 "and" if self.state.in_where() && self.state.is_keyword_position(false) => Some(Lexeme::And),
-                 "not" if self.state.in_where() && !self.state.after_operator && !self.state.after_value_start => Some(Lexeme::Not),
-+                "or" if self.state.in_column_expression() && self.state.after_value_end && self.value_follows() => Some(Lexeme::Or),
-+                "and" if self.state.in_column_expression() && self.state.after_value_end && self.value_follows() => Some(Lexeme::And),
-+                "not" if self.state.in_column_expression()
-+                    && !self.state.after_value_end
-+                    && !self.state.after_operator
-+                    && !self.state.after_as
-+                    && self.value_follows() => Some(Lexeme::Not),
-                 "group" if self.state.is_keyword_position(search_root_ctx) && self.next_word_is("by") => {
-                     self.state.clause = Clause::GroupBy;
-                     Some(Lexeme::Group)
-@@ -421,6 +434,11 @@ impl Lexer {
-             let scope = self.current_scope();
-             self.root_aliases.push((alias.to_ascii_lowercase(), scope));
-         }
-+        self.state.after_value_end = match lexeme {
-+            Some(Lexeme::RawString(ref s)) => !s.eq_ignore_ascii_case("as"),
-+            Some(Lexeme::String(_)) | Some(Lexeme::Close) | Some(Lexeme::CurlyClose) => true,
-+            _ => false,
-+        };
-         self.state.after_as = matches!(lexeme, Some(Lexeme::RawString(ref s)) if s.eq_ignore_ascii_case("as"));
-         self.state.possible_search_root = matches!(lexeme, Some(Lexeme::From))
-                 || (matches!(lexeme, Some(Lexeme::Comma)) && self.state.clause == Clause::Roots);
-@@ -472,6 +490,24 @@ impl Lexer {
-         false
-     }
- 
-+    fn value_follows(&self) -> bool {
-+        let mut input_index = self.input_index;
-+        let mut char_index = self.char_index;
-+        while let Some(part) = self.chars.get(input_index) {
-+            if let Some(&c) = part.iter().skip(char_index).find(|c| !c.is_ascii_whitespace()) {
-+                if matches!(c, ',' | ')' | '}') {
-+                    return false;
-+                }
-+                return !["from", "into", "where", "group", "order", "limit", "offset", "having", "as"]
-+                    .iter()
-+                    .any(|keyword| self.next_word_is(keyword));
-+            }
-+            input_index += 1;
-+            char_index = 0;
-+        }
-+        false
-+    }
-+
-     fn is_arithmetic_op_char(&self, c: char) -> bool {
-         match c {
-             '+' | '-' => self.state.in_expression() && !self.state.after_operator,
-@@ -483,7 +519,7 @@ impl Lexer {
-     }
- 
-     fn is_op_char(&self, c: char) -> bool {
--        if !matches!(self.state.clause, Clause::Fields | Clause::Where) {
-+        if !matches!(self.state.clause, Clause::Fields | Clause::Where | Clause::GroupBy) {
-             return false;
-         }
- 
-@@ -2461,6 +2497,32 @@ c"))), "lexemes were {:?}", lexemes);
+@@ -6070,7 +6070,7 @@ mod tests {
+             &tmp,
          );
-     }
- 
-+    #[test]
-+    fn logical_words_in_select_column_list_are_operators_between_values() {
-+        let mut lexer = lexer!("select name, not is_file, is_dir and size > 2, coalesce(is_file or is_dir, 0) from .");
-+
-+        let mut lexemes = vec![];
-+        while let Some(lexeme) = lexer.next_lexeme() {
-+            lexemes.push(lexeme);
-+        }
-+        assert!(lexemes.contains(&Lexeme::Not));
-+        assert!(lexemes.contains(&Lexeme::And));
-+        assert!(lexemes.contains(&Lexeme::Or));
-+    }
-+
-+    #[test]
-+    fn logical_words_without_an_operand_in_select_stay_column_names() {
-+        for query in ["select not from .", "select name, not from .", "select name, and from .", "select name, size or from ."] {
-+            let mut lexer = Lexer::new(vec![query.to_string()]);
-+            while let Some(lexeme) = lexer.next_lexeme() {
-+                assert!(
-+                    !matches!(lexeme, Lexeme::Not | Lexeme::And | Lexeme::Or),
-+                    "{query} produced {lexeme:?}"
-+                );
-+            }
-+        }
-+    }
-+
-     #[test]
-     fn word_operator_in_select_column_list() {
-         let mut lexer = lexer!("select gt from .");
-```
-
-**File**: `src/parser.rs` (modified, +45/-27)
-```diff
-@@ -339,7 +339,7 @@ impl <'a> Parser<'a> {
-                         }
-                     }
-                 }
--                Some(Lexeme::Open) | Some(Lexeme::CurlyOpen) => {
-+                Some(Lexeme::Open) | Some(Lexeme::CurlyOpen) | Some(Lexeme::Not) => {
-                     self.drop_lexeme();
-                     match self.parse_expr() {
-                         Ok(Some(field)) => fields.push(field),
-@@ -785,7 +785,8 @@ impl <'a> Parser<'a> {
-         }
-     }
- 
--    fn fold_by_weight(&self, mut operands: Vec<Expr>, logical_op: LogicalOp) -> Result<Expr, String> {
-+    fn fold_by_weight(&self, operands: Vec<Expr>, logical_op: LogicalOp) -> Result<Expr, String> {
-+        let mut operands: Vec<Expr> = operands.into_iter().map(|operand| self.as_condition(operand)).collect();
-         operands.sort_by_key(|operand| operand.weight);
-         let mut operands = operands.into_iter();
-         let mut result = operands.next().expect("a chain has at least one operand");
-@@ -818,11 +819,18 @@ impl <'a> Parser<'a> {
-         self.negation_depth -= 1;
- 
-         match result {
--            Ok(Some(expr)) => Ok(Some(Self::negate_expr_op(&expr))),
-+            Ok(Some(expr)) => Ok(Some(self.as_condition(expr).negated())),
-             other => other,
-         }
-     }
- 
-+    fn as_condition(&self, expr: Expr) -> Expr {
-+        if self.wraps_bare_booleans() || expr.op.is_some() || expr.logical_op.is_some() {
-+            return expr;
-+        }
-+        Expr::op(expr, Op::Eq, Expr::value(String::from("true")))
-+    }
-+
-     fn parse_comparison(&mut self) -> Result<Option<Expr>, String> {
-         let mut exists_present = false;
- 
-@@ -1594,7 +1602,7 @@ impl <'a> Parser<'a> {
-                                 }
-                             }
-                         }
--                        Some(Lexeme::Open) | Some(Lexeme::CurlyOpen) => {
-+                        Some(Lexeme::Open) | Some(Lexeme::CurlyOpen) | Some(Lexeme::Not) => {
-                             self.drop_lexeme();
-                             match self.parse_expr()? {
-                                 Some(group_field) => group_by_fields.push(group_field),
-@@ -1895,29 +1903,6 @@ impl <'a> Parser<'a> {
-     fn drop_lexeme(&mut self) {
-         self.index -= 1;
-     }
--
--    fn negate_expr_op(expr: &Expr) -> Expr {
--        let mut result = expr.clone();
--        result.props.clear_file_types();
--
--        if let Some(left) = &expr.left {
--            result.left = Some(Box::from(Self::negate_expr_op(left)));
--        }
--
--        if let &Some(op) = &expr.op {
--            result.op = Some(Op::negate(op));
--        }
--
--        if let Some(ref logical_op) = expr.logical_op {
--            result.logical_op = Some(logical_op.negate());
--        }
--
--        if let Some(right) = &expr.right {
--            result.right = Some(Box::from(Self::negate_expr_op(right)));
--        }
--
--        result
--    }
- }
- 
- #[cfg(test)]
-@@ -1939,6 +1924,39 @@ mod tests {
-         p.parse(false).err().unwrap_or_else(|| panic!("{} should not parse", query))
-     }
- 
-+    #[test]
-+    fn bare_booleans_under_not_and_or_inside_arguments_become_conditions() {
-+        let expr = parse_where("select name from /test where coalesce(not is_file, 0) = false");
-+        let negated = expr.left.as_ref().unwrap().left.as_ref().unwrap();
-+        assert_eq!(negated.op, Some(Op::Ne));
-+        assert_eq!(negated.left.as_ref().unwrap().field, Some(Field::IsFile));
-+
-+        let expr = parse_where("select name from /test where coalesce(is_file and size > 2, 0) = true");
-+        let conjunction = expr.left.as_ref().unwrap().left.as_ref().unwrap();
-+        assert_eq!(conjunction.logical_op, Some(LogicalOp::And));
-+        for side in [&conjunction.left, &conjunction.right] {
-+            assert!(side.as_ref().unwrap().op.is_some());
-+        }
-+    }
-+
-+    #[test]
-+    fn select_columns_accept_not_and_or_conditions() {
-+        let query = parse_query("select not is_file, coalesce(not is_file, 0), is_file and size > 2 as big from /test").unwrap();
-+        assert_eq!(query.fields.len(), 3);
-+        assert_eq!(query.fields[0].op, Some(Op::Ne));
-+        assert_eq!(query.fields[0].left.as_ref().unwrap().field, Some(Field::IsFile));
-+        assert_eq!(query.fields[1].left.as_ref().unwrap().op, Some(Op::Ne));
-+        assert_eq!(query.fields[2].logical_op, Some(LogicalOp::And));
-+        assert_eq!(query.fields[2].alias.as_deref(), Some("big"));
-+    }
-+
-+    #[test]
-+    fn not_flips_only_the_outer_comparison_of_a_nested_one() {
-+        let expr = parse_where("select name from /test where not ((size > 2) = false)");
-+        assert_eq!(expr.op, Some(Op::Ne));
-+        assert_eq!(expr.left.as_ref().unwrap().op, Some(Op::Gt));
-+    }
-+
-     #[test]
-     fn operator_less_conditions_are_rejected() {
-         for (query, found) in [
-```
-
-**File**: `src/searcher.rs` (modified, +134/-40)
-```diff
-@@ -159,9 +159,8 @@ pub struct Searcher<'a> {
-     /// with, keyed by the value's text, cached alongside the rows: a row is
-     /// handed back as text, which alone cannot tell the file name "true"
-     /// from the boolean true.
--    subquery_type_cache: HashMap<String, HashMap<String, VariantType>>,
--    last_subquery_types: HashMap<String, VariantType>,
--    first_column_types: HashMap<String, VariantType>,
-+    subquery_type_cache: HashMap<String, Vec<Option<VariantType>>>,
-+    last_subquery_types: Vec<Option<VariantType>>,
-     membership_cache: HashMap<(String, VariantType), Rc<Membership>>,
-     silent_mode: bool,
-     /// Runs a subquery on behalf of an enclosing searcher, whose aliases it
-@@ -328,25 +327,35 @@ impl AggregatePlan {
- }
- 
- enum BufferedRow {
--    Rendered(String),
-+    Rendered(String, Option<VariantType>),
-     Pending(PendingRow),
- }
- 
-+impl BufferedRow {
-+    fn first_type(&self) -> Option<VariantType> {
-+        match self {
-+            BufferedRow::Rendered(_, first_type) => first_type.clone(),
-+            BufferedRow::Pending(pending) => pending.first_type.clone(),
-+        }
-+    }
-+}
-+
- struct PendingRow {
-     path: PathBuf,
-     root_path: PathBuf,
-     file_info: Option<FileInfo>,
-     follow_symlinks: bool,
-     items: Vec<(String, String)>,
-     deferred: Vec<usize>,
-+    first_type: Option<VariantType>,
- }
- 
- impl std::ops::Deref for BufferedRow {
-     type Target = str;
- 
-     fn deref(&self) -> &str {
-         match self {
--            BufferedRow::Rendered(text) => text,
-+            BufferedRow::Rendered(text, _) => text,
-             BufferedRow::Pending(_) => "",
-         }
-     }
-@@ -475,8 +484,7 @@ impl<'a> Searcher<'a> {
-             conforms_map: HashMap::new(),
-             subquery_cache: HashMap::new(),
-             subquery_type_cache: HashMap::new(),
--            last_subquery_types: HashMap::new(),
--            first_column_types: HashMap::new(),
-+            last_subquery_types: Vec::new(),
-             membership_cache: HashMap::new(),
-             silent_mode: false,
-             is_nested: false,
-@@ -922,7 +930,7 @@ impl<'a> Searcher<'a> {
-                     })
-                     .collect();
- 
--                let mut grouped_results: TopN<Criteria<String>, Vec<(String, String)>> =
-+                let mut grouped_results: TopN<Criteria<String>, (Vec<(String, String)>, Option<VariantType>)> =
-                     if self.query.limit > 0 {
-                         TopN::new(self.query.limit.saturating_add(self.query.offset))
-                     } else {
-@@ -934,10 +942,19 @@ impl<'a> Searcher<'a> {
-                 for (group_key, group_acc) in &accumulators {
-                     let mut file_map = HashMap::new();
-                     for (i, k) in group_keys.iter().enumerate() {
--                        file_map.insert(k.clone(), group_key.get(i).cloned().unwrap_or_default());
-+                        let text = group_key.get(i).cloned().unwrap_or_default();
-+                        match group_acc.key_types.get(i).and_then(Option::as_ref) {
-+                            Some(value_type) => {
-+                                self.cached_types.insert(k.clone(), (text.clone(), value_type.clone()));
-+                            }
-+                            None => {
-+                                self.cached_types.remove(k);
-+                            }
-+                        }
-+                        file_map.insert(k.clone(), text);
-                     }
-                     self.reset_alias_failures(&aliases);
--                    self.bind_group_context(&aliases, group_key, &[]);
-+                    self.bind_group_context(&aliases, group_key, &group_acc.key_types, &[]);
-                     if let Some(having_expr) = having_expr {
-                         if having_expr.has_correlated_subquery() {
-                             self.bind_aggregate_aliases(&aliases, group_key, &mut file_map, group_acc, true)?;
-@@ -950,11 +967,12 @@ impl<'a> Searcher<'a> {
-                     }
-                     self.bind_aggregate_aliases(&aliases, group_key, &mut file_map, group_acc, false)?;
-                     let mut items: Vec<(String, String)> = Vec::new();
-+                    let mut first_type = None;
-                     for (index, column_expr) in self.query.fields.iter().enumerate() {
-                         let value = self.get_column_expr_value(
-                             None, &None, Path::new(""), &mut file_map, Some(group_acc), column_expr,
-                         )?;
--                        self.note_first_column_type(index, &value);
-+                        first_type = first_type.or(self.first_column_type(index, &value));
-                         items.push((column_expr.column_name(), value.to_string()));
-                     }
-                     if self.root_depth_column
-@@ -991,13 +1009,13 @@ impl<'a> Searcher<'a> {
-                     }
-                     grouped_results.insert(
-                         Criteria
-```
-
-**File**: `tests/grouping.rs` (modified, +114/-0)
-```diff
-@@ -32,3 +32,117 @@ fn computed_grouping_alias_keeps_its_numeric_type_in_correlated_subqueries() {
-     assert_eq!(grouped.0, Some(0), "{}", grouped.2);
-     assert_eq!(grouped.1, "4\t0\n6\t0\n12\t3\n");
- }
-+
-+#[test]
-+fn grouped_coalesce_alias_keeps_a_string_that_reads_as_boolean() {
-+    let dir = std::env::temp_dir().join("fselect_it_grouping_coalesce_alias_type");
-+    let _ = fs::remove_dir_all(&dir);
-+    fs::create_dir_all(&dir).unwrap();
-+    fs::write(dir.join("true"), "x").unwrap();
-+    fs::write(dir.join("a.txt"), "yy").unwrap();
-+    let root = dir.display();
-+
-+    let arithmetic = fselect(&format!(
-+        "select coalesce(name, is_file) as n, t.n + 0 from {root} as t group by coalesce(name, is_file) order by n"
-+    ));
-+    let having = fselect(&format!(
-+        "select coalesce(name, is_file) as n, count(*) from {root} as t group by coalesce(name, is_file) having t.n + 0 = 0 order by n"
-+    ));
-+    let boolean = fselect(&format!(
-+        "select is_file as f, t.f + 0 from {root} as t group by is_file"
-+    ));
-+    let _ = fs::remove_dir_all(&dir);
-+
-+    assert_eq!(arithmetic.0, Some(0), "{}", arithmetic.2);
-+    assert_eq!(arithmetic.1, "a.txt\t0\ntrue\t0\n");
-+    assert_eq!(having.0, Some(0), "{}", having.2);
-+    assert_eq!(having.1, "a.txt\t1\ntrue\t1\n");
-+    assert_eq!(boolean.0, Some(0), "{}", boolean.2);
-+    assert_eq!(boolean.1, "true\t1\n");
-+}
-+
-+#[test]
-+fn sorted_scalar_subquery_takes_the_type_of_the_row_it_returns() {
-+    let dir = std::env::temp_dir().join("fselect_it_subquery_row_type");
-+    let _ = fs::remove_dir_all(&dir);
-+    for sub in ["strings", "flags", "other"] {
-+        fs::create_dir_all(dir.join(sub)).unwrap();
-+    }
-+    fs::write(dir.join("strings").join("true"), "xx").unwrap();
-+    fs::write(dir.join("flags").join("item.txt"), "xxx").unwrap();
-+    fs::write(dir.join("other").join("o"), "x").unwrap();
-+    let strings = dir.join("strings");
-+    let flags = dir.join("flags");
-+    let other = dir.join("other");
-+    let (strings, flags, other) = (strings.display(), flags.display(), other.display());
-+
-+    let query = |order: &str| {
-+        fselect(&format!(
-+            "select (select coalesce(r.name, is_file) from {strings} as r, {flags} order by size {order}) + 0 from {other}"
-+        ))
-+    };
-+    let boolean_first = query("desc");
-+    let string_first = query("asc");
-+    let _ = fs::remove_dir_all(&dir);
-+
-+    assert_eq!(boolean_first.0, Some(0), "{}", boolean_first.2);
-+    assert_eq!(boolean_first.1, "1\n");
-+    assert_eq!(string_first.0, Some(0), "{}", string_first.2);
-+    assert_eq!(string_first.1, "0\n");
-+}
-+
-+#[test]
-+fn conditions_group_and_filter_in_having() {
-+    let dir = std::env::temp_dir().join("fselect_it_grouping_conditions");
-+    let _ = fs::remove_dir_all(&dir);
-+    fs::create_dir_all(dir.join("sub")).unwrap();
-+    fs::write(dir.join("f1"), "xx").unwrap();
-+    fs::write(dir.join("f2"), "xxx").unwrap();
-+    let root = dir.display();
-+
-+    let negated = fselect(&format!(
-+        "select not is_file as d, count(*) from {root} group by not is_file order by d"
-+    ));
-+    let compared = fselect(&format!(
-+        "select is_file and size > 2 as k, count(*) from {root} group by is_file and size > 2 order by k"
-+    ));
-+    let having = fselect(&format!(
-+        "select size > 2 as big, count(*) from {root} group by size > 2 having size > 2"
-+    ));
-+    let having_not = fselect(&format!(
-+        "select size > 2 as big, count(*) from {root} group by size > 2 having not big"
-+    ));
-+    let _ = fs::remove_dir_all(&dir);
-+
-+    for result in [&negated, &compared, &having, &having_not] {
-+        assert_eq!(result.0, Some(0), "{}", result.2);
-+    }
-+    assert_eq!(negated.1, "false\t2\ntrue\t1\n");
-+    assert_eq!(compared.1, "false\t2\ntrue\t1\n");
-+    assert_eq!(having.1, "true\t1\n");
-+    assert_eq!(having_not.1, "false\t2\n");
-+}
-+
-+#[test]
-+fn unary_minus_turns_a_condition_into_zero_or_minus_one() {
-+    let dir = std::env::temp_dir().join("fselect_it_negated_condition");
-+    let _ = fs::remove_dir_all(&dir);
-+    fs::create_dir_all(&dir).unwrap();
-+    fs::write(dir.join("f1"), "xx").unwrap();
-+    fs::write(dir.join("f2"), "xxx").unwrap();
-+    let root = dir.display();
-+
-+    let column = fselect(&format!("select name, -(size > 2) from {root} order by name"));
-+    let filter = fselect(&format!("select name from {root} where -(size > 2) < 0"));
-+    let having = fselect(&format!(
-+        "select size > 2 as big, count(*) from {root} group by size > 2 having -(size > 2) < 0"
-+    ));
-+    let _ = fs::remove_dir_all(&dir);
-+
-+    for result in [&column, &filter, &having] {
-+        assert_eq!(result.0, Some(0), "{}", result.2);
-+    }
-+    assert_eq!(column.1, "f1\t0\nf2\t-1\n");
-+    assert_eq!(filter.1, "f2\n");
-+    assert_eq!(having.1, "true\t1\n");
-+}
+         let where_size_twice = run_query_against_dir(
+-            "select name from __DIR__ where size > 1 and size * 2 > 5 order by name",
++            "select name from __DIR__ where is_file and size > 1 and size * 2 > 5 order by name",
+             &tmp,
+         );
+         let _ = fs::remove_dir_all(&tmp);
 ```
 
 ---
 
-### Incident Patch 2: `35999f04` (2026-10-20)
+### Incident Patch 2: `0d2483e9` (2026-10-22)
 **Commit Message**: fix found regressions
 
-**File**: `src/parser.rs` (modified, +19/-1)
+**File**: `docs/usage.md` (modified, +7/-1)
 ```diff
-@@ -35,6 +35,7 @@ pub struct Parser<'a> {
-     roots_parsed: bool,
-     where_parsed: bool,
-     in_having: bool,
-+    args_depth: u32,
-     debug: bool,
-     /// Aliases declared on this query's own roots; any other alias in an
-     /// expression refers to an enclosing query's entry.
-@@ -54,6 +55,7 @@ impl <'a> Parser<'a> {
-             roots_parsed: false,
-             where_parsed: false,
-             in_having: false,
-+            args_depth: 0,
-             debug: false,
+@@ -96,7 +96,13 @@ And yes, you should use quotes for glob-patterns or regular expressions in the q
+ on Linux or macOS to prevent parameter expansion from the shell. 
+ If you are on Windows, feel free to omit most of the quotes.
+ 
+-Commas for column separation aren't needed as well. Column aliasing (with or without `as` keyword) is not supported.
++Commas for column separation aren't needed as well. A column can be given an alias with the `as` keyword;
++the alias can then be reused in later columns, in `where`, `group by`, `having` and `order by`:
++
++    fselect "size + 1 as next, next * 2 from /home/user where next > 1000 order by next"
++
++A real field name is never shadowed by an alias, and an unknown name followed by parentheses is
++reported as an unknown function instead of being read as text.
+ 
+ `where` section can contain short syntax conditions for boolean columns (like `is_audio` or `other_write`).
+ 
+```
+
+**File**: `src/parser.rs` (modified, +63/-7)
+```diff
+@@ -42,6 +42,7 @@ pub struct Parser<'a> {
+     /// How many NOTs enclose the condition being parsed.
+     negation_depth: usize,
+     select_aliases: Vec<Expr>,
++    declared_aliases: Vec<Expr>,
+     nested: bool,
+ }
+ 
+@@ -59,6 +60,7 @@ impl <'a> Parser<'a> {
              root_aliases: vec![],
              negation_depth: 0,
-@@ -986,8 +988,10 @@ impl <'a> Parser<'a> {
-         result
+             select_aliases: vec![],
++            declared_aliases: vec![],
+             nested: false,
+         }
+     }
+@@ -294,6 +296,25 @@ impl <'a> Parser<'a> {
+         }
      }
  
-+    /// A bare boolean in WHERE or HAVING is a condition (`where is_file`),
-+    /// but inside a function's argument list or an IN list it is a value.
-     fn wraps_bare_booleans(&self) -> bool {
--        self.roots_parsed && (!self.where_parsed || self.in_having)
-+        self.args_depth == 0 && self.roots_parsed && (!self.where_parsed || self.in_having)
-     }
- 
-     fn ensure_boolean_conditions(mut expr: Expr, clause: &str) -> Result<Expr, String> {
-@@ -1224,6 +1228,13 @@ impl <'a> Parser<'a> {
-     }
- 
-     fn parse_args(&mut self) -> Result<Vec<Expr>, String> {
-+        self.args_depth += 1;
-+        let args = self.parse_args_inner();
-+        self.args_depth -= 1;
-+        args
++    fn push_field(&mut self, fields: &mut Vec<Expr>, field: Expr) {
++        if field.alias.is_some() {
++            self.declared_aliases.push(field.clone());
++        }
++        fields.push(field);
 +    }
 +
-+    fn parse_args_inner(&mut self) -> Result<Vec<Expr>, String> {
-         let mut args = vec![];
- 
-         loop {
-@@ -1389,6 +1400,13 @@ impl <'a> Parser<'a> {
-     }
- 
-     fn parse_function(&mut self, function: Function) -> Result<Expr, String> {
-+        self.args_depth += 1;
-+        let parsed = self.parse_function_inner(function);
-+        self.args_depth -= 1;
-+        parsed
++    fn find_alias(aliases: &[Expr], name: &str) -> Option<Expr> {
++        aliases
++            .iter()
++            .find(|f| f.alias.as_deref().is_some_and(|a| a.eq_ignore_ascii_case(name)))
++            .cloned()
 +    }
 +
-+    fn parse_function_inner(&mut self, function: Function) -> Result<Expr, String> {
-         let mut function_expr = Expr::function(function);
++    fn is_plain_identifier(s: &str) -> bool {
++        s.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
++            && s.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
++    }
++
+     fn parse_fields(&mut self) -> Result<Vec<Expr>, String> {
+         let mut fields = vec![];
  
-         let mut curly_mode = false;
+@@ -334,7 +355,7 @@ impl <'a> Parser<'a> {
+                         }
+ 
+                         match self.parse_expr() {
+-                            Ok(Some(field)) => fields.push(field),
++                            Ok(Some(field)) => self.push_field(&mut fields, field),
+                             Err(e) => return Err(e),
+                             _ => {}
+                         }
+@@ -343,7 +364,7 @@ impl <'a> Parser<'a> {
+                 Some(Lexeme::Open) | Some(Lexeme::CurlyOpen) | Some(Lexeme::Not) => {
+                     self.drop_lexeme();
+                     match self.parse_expr() {
+-                        Ok(Some(field)) => fields.push(field),
++                        Ok(Some(field)) => self.push_field(&mut fields, field),
+                         Err(e) => return Err(e),
+                         _ => {}
+                     }
+@@ -1327,11 +1348,7 @@ impl <'a> Parser<'a> {
+                 Ok(Some(expr))
+             }
+             Some(Lexeme::RawString(ref s)) => {
+-                if let Some(aliased) = self
+-                    .select_aliases
+-                    .iter()
+-                    .find(|f| f.alias.as_deref().is_some_and(|a| a.eq_ignore_ascii_case(s)))
+-                    .cloned()
++                if let Some(aliased) = Self::find_alias(&self.select_aliases, s)
+                     && !self.call_follows()
+                 {
+                     let mut expr = aliased;
+@@ -1350,6 +1367,16 @@ impl <'a> Parser<'a> {
+                     return Ok(Some(expr));
+                 }
+ 
++                if let Some(aliased) = Self::find_alias(&self.declared_aliases, s)
++                    && !self.call_follows()
++                {
++                    let mut expr = aliased;
++                    if minus {
++                        expr.minus = !expr.minus;
++                    }
++                    return Ok(Some(expr));
++                }
++
+                 // Once a function name is recognised, argument errors must
+                 // propagate: silently falling back to the literal "upper"
+                 // would leave the already-consumed lexemes unrewound and
+@@ -1362,6 +1389,10 @@ impl <'a> Parser<'a> {
+                     return Ok(Some(expr));
+                 }
+ 
++                if Self::is_plain_identifier(s) && !s.eq_ignore_ascii_case("not") && self.call_follows() {
++                    return Err(format!("Unknown function: {}", s));
++                }
++
+                 // After a comparison operator the lexer emits a bare "-" as a
+                 // RawString (start of a negative literal), so `size gt -(1+2)`
+                 // arrives here rather than as an arithmetic operator.
+@@ -2686,6 +2717,31 @@ mod tests {
+         assert_eq!(grouped.grouping_fields[1].left.as_ref().unwrap().function, Some(Function::Length), "alias inside arithmetic is the aliased expression");
+     }
+ 
++    #[test]
++    fn declared_select_aliases_resolve_in_later_columns_and_in_where() {
++        let query = parse_query("select size + 1 as nxt, nxt * 2 from /d where nxt = 12").unwrap();
++        let second = &query.fields[1];
++        assert_eq!(second.arithmetic_op, Some(ArithmeticOp::Multiply));
++        assert_eq!(second.left.as_ref().unwrap().left.as_ref().unwrap().field, Some(Field::Size), "nxt is the aliased size + 1");
++        let condition = query.expr.unwrap();
++        assert_eq!(condition.left.as_ref().unwrap().left.as_ref().unwrap().field, Some(Field::Size));
++
++        let shadowed = parse_query("select upper(name) as name, name from /d where name = 'x'").unwrap();
++        assert_eq!(shadowed.fields[1].field, Some(Field::Name), "a real field is never shadowed by an alias");
++        assert_eq!(shadowed.expr.unwrap().left.unwrap().field,
 ```
 
-**File**: `src/searcher.rs` (modified, +128/-5)
+**File**: `src/searcher.rs` (modified, +49/-4)
 ```diff
-@@ -155,6 +155,13 @@ pub struct Searcher<'a> {
-     cached_types: HashMap<String, (String, VariantType)>,
-     conforms_map: HashMap<String, String>,
-     subquery_cache: HashMap<String, Vec<String>>,
-+    /// The type each first-column value of a subquery's rows was produced
-+    /// with, keyed by the value's text, cached alongside the rows: a row is
-+    /// handed back as text, which alone cannot tell the file name "true"
-+    /// from the boolean true.
-+    subquery_type_cache: HashMap<String, HashMap<String, VariantType>>,
-+    last_subquery_types: HashMap<String, VariantType>,
-+    first_column_types: HashMap<String, VariantType>,
-     membership_cache: HashMap<(String, VariantType), Rc<Membership>>,
-     silent_mode: bool,
-     /// Runs a subquery on behalf of an enclosing searcher, whose aliases it
-@@ -467,6 +474,9 @@ impl<'a> Searcher<'a> {
-             cached_types: HashMap::new(),
-             conforms_map: HashMap::new(),
-             subquery_cache: HashMap::new(),
-+            subquery_type_cache: HashMap::new(),
-+            last_subquery_types: HashMap::new(),
-+            first_column_types: HashMap::new(),
-             membership_cache: HashMap::new(),
-             silent_mode: false,
-             is_nested: false,
-@@ -940,10 +950,11 @@ impl<'a> Searcher<'a> {
-                     }
-                     self.bind_aggregate_aliases(&aliases, group_key, &mut file_map, group_acc, false)?;
-                     let mut items: Vec<(String, String)> = Vec::new();
--                    for column_expr in &self.query.fields {
-+                    for (index, column_expr) in self.query.fields.iter().enumerate() {
-                         let value = self.get_column_expr_value(
-                             None, &None, Path::new(""), &mut file_map, Some(group_acc), column_expr,
-                         )?;
-+                        self.note_first_column_type(index, &value);
-                         items.push((column_expr.column_name(), value.to_string()));
-                     }
-                     if self.root_depth_column
-@@ -1388,6 +1399,7 @@ impl<'a> Searcher<'a> {
-         let ok_to_cache = is_subquery_cacheable(&query);
-         if ok_to_cache
-             && let Some(cached) = self.subquery_cache.get(&query_str) {
-+                self.last_subquery_types = self.subquery_type_cache.get(&query_str).cloned().unwrap_or_default();
-                 return Ok(cached.clone());
-             }
- 
-@@ -1460,13 +1472,21 @@ impl<'a> Searcher<'a> {
-             .map(|s| s.strip_suffix(terminator.as_str()).unwrap_or(s).to_string())
-             .collect::<Vec<String>>();
- 
-+        self.last_subquery_types = std::mem::take(&mut sub_searcher.first_column_types);
-         if ok_to_cache {
-+            self.subquery_type_cache.insert(query_str.clone(), self.last_subquery_types.clone());
-             self.subquery_cache.insert(query_str, result_values.clone());
-         }
- 
-         Ok(result_values)
+@@ -2048,6 +2048,45 @@ impl<'a> Searcher<'a> {
+         Ok(if self.null_comparisons.contains(&key) { None } else { Some(holds) })
      }
  
-+    fn note_first_column_type(&mut self, index: usize, value: &Variant) {
-+        if index == 0 && self.is_nested {
-+            self.first_column_types.entry(value.to_string()).or_insert_with(|| value.get_type().clone());
++    fn conforms_caching_leaves(
++        &mut self,
++        entry: &DirEntry,
++        file_info: &Option<FileInfo>,
++        root_path: &Path,
++        file_map: &mut HashMap<String, String>,
++        expr: &Expr,
++    ) -> Result<bool, SearchError> {
++        if let Some(ref logical_op) = expr.logical_op {
++            let left = match expr.left {
++                Some(ref left) => self.conforms_caching_leaves(entry, file_info, root_path, file_map, left)?,
++                None => false,
++            };
++            match (logical_op, left) {
++                (LogicalOp::And, false) => return Ok(false),
++                (LogicalOp::Or, true) => return Ok(true),
++                _ => {}
++            }
++            return match expr.right {
++                Some(ref right) => self.conforms_caching_leaves(entry, file_info, root_path, file_map, right),
++                None => Ok(false),
++            };
 +        }
++        let key = expr.cache_key();
++        let cached = file_map.get(&key).and_then(|cached| match cached.as_str() {
++            "-1" if expr.minus => Some(true),
++            "0" if expr.minus => Some(false),
++            text => str_to_bool(text),
++        });
++        if let Some(holds) = cached {
++            return Ok(holds);
++        }
++        let holds = self.conforms(entry, file_info, root_path, expr)?;
++        let value = apply_minus(expr, Variant::from_bool(holds));
++        self.remember_type(&key, &value);
++        file_map.insert(key, value.to_string());
++        Ok(holds)
 +    }
 +
-     #[cfg(all(windows, feature = "everything"))]
-     fn try_visit_with_everything(&mut self, root_dir: &Path) -> Result<bool, SearchError> {
-         let abs = match canonical_path(&root_dir.to_path_buf()) {
-@@ -2049,7 +2069,13 @@ impl<'a> Searcher<'a> {
-         column: &Expr,
-     ) -> Result<Variant, SearchError> {
-         let value = self.get_column_expr_value(None, &None, Path::new(""), file_map, Some(accumulator), column)?;
--        Ok(typed_variant(column, &value.to_string()))
-+        // An aggregate is formatted as text and needs its type back; any
-+        // other column already carries the type it was produced with.
-+        if column.has_aggregate_function() {
-+            Ok(typed_variant(column, &value.to_string()))
-+        } else {
-+            Ok(value)
-+        }
+     fn grouped_condition_value(&self, file_map: &HashMap<String, String>, condition: &Expr) -> Option<bool> {
+         let key = Self::condition_key(condition);
+         let conditions = || {
+@@ -2516,7 +2555,7 @@ impl<'a> Searcher<'a> {
+         // it evaluates to a boolean, per row or per group.
+         if column_expr.op.is_some() || column_expr.logical_op.is_some() {
+             let holds = match (entry, accumulator) {
+-                (Some(entry), _) => Some(self.conforms(entry, file_info, root_path, column_expr)?),
++                (Some(entry), _) => Some(self.conforms_caching_leaves(entry, file_info, root_path, file_map, column_expr)?),
+                 (None, Some(accumulator)) => Some(self.group_conforms(file_map, accumulator, column_expr)?),
+                 (None, None) => None,
+             };
+@@ -2741,6 +2780,7 @@ impl<'a> Searcher<'a> {
+             .map(|(_, column)| column.get_alias_references_in_subqueries(current_alias, true).is_empty())
+             .collect();
+         let mut bound: Vec<Option<Variant>> = vec![None; required_columns.len()];
++        let mut scratches: Vec<HashMap<String, String>> = vec![HashMap::new(); required_columns.len()];
+         let mut failed: Vec<(usize, SearchError)> = Vec::new();
+         for round in 0..rounds {
+             let mut changed = false;
+@@ -2758,6 +2798,7 @@ impl<'a> Searcher<'a> {
+                     Some(value) => Ok(value),
+                     None => self.get_column_expr_value(Some(entry), file_info, root_path, &mut scratch, None, column),
+                 };
++                scratches[index] = scratch;
+                 let value = match evaluated {
+                     Ok(value) => {
+                         bound[index] = Some(value.clone());
+@@ -2783,7 +2824,7 @@ impl<'a> Searcher<'a> {
+             }
+         }
+         if failed.is_empty() {
+-            self.seed_bound_aliases(current_alias, required_columns, &bound, file_map);
++            self.seed_bound_aliases(current_alias, required_columns, &bound, &scratches, file_map);
+             return Ok(());
+         }
+         for (index, err) in failed {
+@@ -2811,7 +2852,7 @@ impl<'a> Searcher<'a> {
+                 break;
+             }
+         }
+-        self.seed_bound_aliases(current_alias, required_columns, &bound, file_map);
++        self.seed_bound_aliases(current_alias, required_columns, &bound, &scratches, file_map);
+         Ok(())
      }
  
-     fn upsert_alias_value(values: &mut Vec<(String, Variant)>, column: &Expr, value: Variant) {
-@@ -2250,7 +2276,13 @@ impl<'a> Searcher<'a> {
+@@ -2820,9 +2861,10 @@ impl<'a> Searcher<'a> {
+         current_alias: &str,
+         required_columns: &[(String, Expr)],
+         bound: &[Option<Variant>],
++        scratches: &[HashMap<String, String>],
+         file_map: &mut HashMap<String, String>,
+     ) {
+-        for ((name, column), value) in required_columns.iter().zip(bound) {
++        for (((name, column), value), scratch) in required_columns.iter().zip(bound).zip(scratches) {
+             let failed = self
+                 .alias_failures
+                 .borrow()
+@@ -2833,6 +2875,9 @@ impl<'a> Searcher<'a> {
+                 continue;
              }
-             let list = self.get_list_from_subquery(*subquery)?;
-             return match list.first() {
--                Some(result) => Ok(apply_minus(column_expr, typed_variant(column_expr, result))),
-+                Some(result) => {
-+                    let value = match self.last_subquery_types.get(result) {
-+                        Some(value_type) => variant_of_type(column_expr, result, value_type),
-+                        None => typed_variant(column_expr, result),
-+                    };
-+                    Ok(apply_minus(column_expr, value))
+             if let Some(value) = value {
++                for (key, text) in scratch {
++                    file_map.entry(key.clone()).or_insert_with(|| text.clone());
 +                }
-                 None => Ok(Variant::empty(VariantType::String)),
-             };
-         }
-@@ -2282,7 +2314,7 @@ impl<'a> Searcher<'a> {
-                 };
-                 return Ok(result);
-             } else if let Some(val) = file_map.get(&fi
+                 let key = column.cache_key();
+                 self.remember_type(&key, val
+```
+
+**File**: `tests/fatal_errors.rs` (modified, +15/-0)
+```diff
+@@ -275,3 +275,18 @@ fn having_fields_hidden_by_expression_grouping_are_rejected() {
+     assert_eq!(grouped_expression.code, Some(0), "{}", grouped_expression.stderr);
+     assert_eq!(grouped_expression.stdout, "1\t2\n");
+ }
++
++#[test]
++fn an_unknown_function_name_is_rejected_before_the_header() {
++    let dir = make_dir("fselect_it_fatal_unknown_function");
++    let root = dir.display().to_string();
++
++    assert_rejected_without_output(&format!("select reverse('abc') from {root} into json"), "Unknown function: reverse");
++    assert_rejected_without_output(&format!("select name from {root} where lpad(name, 3) = 'x' into html"), "Unknown function: lpad");
++    assert_rejected_without_output(&format!("select name, median(size) from {root} order by name"), "Unknown function: median");
++
++    let still_fine = fselect(&format!("select name from {root} where not (size > 100) and ext in (txt, md) order by name"));
++    let _ = fs::remove_dir_all(&dir);
++    assert_eq!(still_fine.code, Some(0), "{}", still_fine.stderr);
++    assert_eq!(still_fine.stdout, "a.txt\nb.md\n");
++}
+```
+
+**File**: `tests/grouping.rs` (modified, +24/-0)
+```diff
+@@ -502,3 +502,27 @@ fn negated_unknown_keys_keep_their_numeric_type_in_ordering() {
+     assert_eq!(ascending.1, "9\t1\n10\t3\n", "9 before 10 only when the key is numeric");
+     assert_eq!(descending.1, "10\t3\n9\t1\n");
+ }
++
++#[test]
++fn grouping_reuses_compound_alias_values_where_already_evaluated() {
++    let dir = std::env::temp_dir().join("fselect_it_grouping_cached_compound_alias");
++    let _ = fs::remove_dir_all(&dir);
++    fs::create_dir_all(&dir).unwrap();
++    for i in 0..60 {
++        fs::write(dir.join(format!("f{i}.txt")), "x").unwrap();
++    }
++    let root = dir.display();
++
++    let disjunction = fselect(&format!("select random(0, 1) = 1 or size < 0 as flag, count(*) from {root} as t where t.flag = true group by flag"));
++    let conjunction = fselect(&format!("select random(0, 1) = 1 and size >= 0 as flag, count(*) from {root} as t where t.flag = true group by flag"));
++    let nested = fselect(&format!(
++        "select (random(0, 1) = 1 or size < 0) and size >= 0 as flag, count(*) from {root} as t where t.flag = true group by flag"
++    ));
++    let _ = fs::remove_dir_all(&dir);
++
++    for result in [&disjunction, &conjunction, &nested] {
++        assert_eq!(result.0, Some(0), "{}", result.2);
++        assert_eq!(result.1.lines().count(), 1, "rows that passed WHERE must not regroup as false: {}", result.1);
++        assert!(result.1.starts_with("true\t"), "{}", result.1);
++    }
++}
+```
+
+**File**: `tests/queries.rs` (modified, +17/-0)
+```diff
+@@ -393,3 +393,20 @@ fn arithmetic_follows_precedence_and_mixes_with_fields() {
+     assert_eq!(division.stdout, "beta.md\t\n", "the row is still printed with an empty cell");
+     assert!(division.stderr.contains("Division by zero"), "{}", division.stderr);
+ }
++
++#[test]
++fn select_aliases_can_be_reused_in_later_columns_and_in_where() {
++    let dir = query_dir("fselect_it_query_alias_reuse");
++    let root = dir.display();
++
++    let arithmetic = fselect(&format!("select size + 1 as nxt, nxt * 2 from {root} where nxt = 12"));
++    let condition = fselect(&format!("select size > 5 as big, name from {root} where big and is_file order by name"));
++    let function_name = fselect(&format!("select length(name) as len, len - 1 from {root} where name = beta.md"));
++    let chained = fselect(&format!("select size as sz, sz + 1 as nxt, nxt * 2 from {root} where is_file and sz < 2 order by path"));
++    let _ = fs::remove_dir_all(&dir);
++
++    assert_eq!(ok(&arithmetic), "12\t24\n");
++    assert_eq!(ok(&condition), "true\talpha.txt\n");
++    assert_eq!(ok(&function_name), "7\t6\n", "a declared alias wins over a function of the same name");
++    assert_eq!(ok(&chained), "1\t2\t4\n0\t1\t2\n1\t2\t4\n");
++}
 ```
 
 ---
 
-### Incident Patch 3: `4cbc67c2` (2026-10-20)
-**Commit Message**: fix found regressions
+### Incident Patch 3: `4cc5c89a` (2026-10-23)
+**Commit Message**: leave update notifications out of the default build
 
-**File**: `src/parser.rs` (modified, +5/-4)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -121,10 +121,11 @@ impl <'a> Parser<'a> {
-             clause.validate_format_size_modifiers()?;
-         }
+@@ -5,6 +5,7 @@
+ ### Changed
  
--        // A qualifier on the query's only root alias is redundant (`t.size`
--        // is `size`), so it is dropped from cache keys; with several roots
--        // the qualifier tells `t.size` and `u.size` apart and must stay.
--        if self.root_aliases.len() == 1 {
-+        // With a single root a qualifier is redundant (`t.size` is `size`),
-+        // so it is dropped from cache keys; with several roots, named or
-+        // not, `t.size` and `size` cover different entries and the qualifier
-+        // must stay.
-+        if roots.len() == 1 {
-             for clause in fields
-                 .iter_mut()
-                 .chain(expr.iter_mut())
+ - Matroska and WebM metadata is behind the `mkv` build feature, enabled by default.
++- The `update-notifications` build feature is no longer enabled by default.
+ 
+ ## [0.10.4] - 2026-10-23
+ 
 ```
 
-**File**: `src/searcher.rs` (modified, +124/-4)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -149,6 +149,10 @@ pub struct Searcher<'a> {
-     #[cfg(feature = "git")]
-     git_cache: crate::util::git::GitCache,
-     file_map: HashMap<String, String>,
-+    /// The type each cached text was produced with, keyed by cache key and
-+    /// stored with that text: a text alone cannot tell `coalesce(name,
-+    /// is_file)` returning the file name "true" from the boolean true.
-+    cached_types: HashMap<String, (String, VariantType)>,
-     conforms_map: HashMap<String, String>,
-     subquery_cache: HashMap<String, Vec<String>>,
-     membership_cache: HashMap<(String, VariantType), Rc<Membership>>,
-@@ -194,6 +198,24 @@ fn apply_minus(column_expr: &Expr, value: Variant) -> Variant {
-         .unwrap_or(value)
- }
+@@ -13,7 +13,7 @@ license = "MIT OR Apache-2.0"
+ edition = "2024"
  
-+/// Rebuilds a cached text with the type it was produced with.
-+fn variant_of_type(expr: &Expr, text: &str, value_type: &VariantType) -> Variant {
-+    let typed = match value_type {
-+        VariantType::String => Some(Variant::from_string(&text.to_string())),
-+        VariantType::Int | VariantType::Float => text
-+            .parse::<i64>()
-+            .map(Variant::from_int)
-+            .or_else(|_| text.parse::<f64>().map(Variant::from_float))
-+            .ok(),
-+        VariantType::Bool => str_to_bool(text).map(Variant::from_bool),
-+        VariantType::DateTime => parse_datetime(text).ok().map(|(from, to)| Variant::from_datetime_range(from, to)),
-+    };
-+    match typed {
-+        Some(variant) => variant.with_text(text),
-+        None => typed_variant(expr, text),
-+    }
-+}
-+
- /// Re-types a value that was rendered as text. The expression says which
- /// types it can produce, the text says which one it did: `coalesce(is_file,
- /// size)` may be numeric or boolean, and `true` is the boolean.
-@@ -252,7 +274,7 @@ impl Membership {
-             Membership::Floats(list) => list.contains(&field_value.to_float()),
-             Membership::Bools { has_true, has_false } => if field_value.to_bool() { *has_true } else { *has_false },
-             Membership::DateTimes(intervals) => match field_value.to_datetime() {
--                Ok((dt, _)) => intervals.iter().any(|(start, finish)| dt >= *start && dt <= *finish),
-+                Ok((from, to)) => intervals.iter().any(|(start, finish)| from <= *finish && *start <= to),
-                 Err(_) => false,
-             },
-         }
-@@ -442,6 +464,7 @@ impl<'a> Searcher<'a> {
-             #[cfg(feature = "git")]
-             git_cache: crate::util::git::GitCache::new(),
-             file_map: HashMap::new(),
-+            cached_types: HashMap::new(),
-             conforms_map: HashMap::new(),
-             subquery_cache: HashMap::new(),
-             membership_cache: HashMap::new(),
-@@ -2046,6 +2069,13 @@ impl<'a> Searcher<'a> {
-                 entry.insert(alias_name.clone(), value.clone());
-             }
-             for (grouping_expr, text) in self.query.grouping_fields.iter().zip(group_key) {
-+                if grouping_expr
-+                    .root_alias
-+                    .as_deref()
-+                    .is_some_and(|owner| !owner.eq_ignore_ascii_case(alias))
-+                {
-+                    continue;
-+                }
-                 let value = typed_variant(grouping_expr, text);
-                 if let Some(field) = grouping_expr.field
-                     && !grouping_expr.minus
-@@ -2178,6 +2208,7 @@ impl<'a> Searcher<'a> {
-                         return Ok(match ctx.get(&field_key) {
-                             Some(val) => {
-                                 let value = apply_minus(column_expr, val.clone());
-+                                self.cached_types.insert(cache_key.clone(), (value.to_string(), value.get_type().clone()));
-                                 file_map.insert(cache_key, value.to_string());
-                                 value
-                             }
-@@ -2199,7 +2230,10 @@ impl<'a> Searcher<'a> {
-         }
+ [features]
+-default = ["git", "users", "update-notifications", "interactive", "mkv"]
++default = ["git", "users", "interactive", "mkv"]
+ git = ["dep:git2"]
+ update-notifications = ["dep:update-informer"]
+ users = ["dep:uzers"]
+```
+
+**File**: `docs/usage.md` (modified, +4/-3)
+```diff
+@@ -971,8 +971,9 @@ You can also specify a config location with a runtime option, e.g.:
  
-         if let Some(cached) = file_map.get(&cache_key) {
--            let value = typed_variant(column_expr, cached);
-+            let value = match self.cached_types.get(&cache_key) {
-+                Some((text, value_type)) if text == cached => variant_of_type(column_expr, cached, value_type),
-+                _ => typed_variant(column_expr, cached),
-+            };
-             if let Some(entry_key) = context_field {
-                 let mut context = self.record_context.borrow_mut();
-                 let context_key = self.current_alias.clone().unwrap_or_else(|| String::from(""));
-@@ -2225,6 +2259,7 @@ impl<'a> Searcher<'a> {
-             let result =
-                 self.get_function_value(entry, file_info, root_path, file_map, accumulator, column_expr)?;
-             let result = apply_minus(column_expr, result);
-+            self.remember_type(&cache_key, &result);
-             file_map.insert(cache_key, result.to_string());
-             return Ok(result);
-         }
-@@ -2236,6 +2271,7 @@ impl<'a> Searcher<'a> {
-                 // field name it holds the raw value, unde
+ #### Check for updates
+ 
+-**fselect** can be built with `update-notifications` feature, that enables automatic check for updates.
+-This check is disabled by default. To enable it, put
++**fselect** can be built with the `update-notifications` feature (`cargo build --features update-notifications`,
++it is not part of the default build), which enables an automatic check for updates.
++The check is also disabled at run time by default. To enable it, put
+ 
+     check_for_updates = true
+ 
+@@ -1082,7 +1083,7 @@ Some functionality is behind Cargo features so that packagers can leave out depe
+ | `git`                  | on      | `is_git_*` and `git_*` fields via libgit2                     |
+ | `users`                | on      | `user` and `group` names on Unix                              |
+ | `interactive`          | on      | the `-i` REPL                                                 |
+-| `update-notifications` | on      | the check for a newer release                                 |
++| `update-notifications` | off     | the check for a newer release                                 |
+ | `mkv`                  | on      | `width`, `height` and `duration` of Matroska and WebM files   |
+ | `everything`           | off     | the *Everything* index on Windows                             |
+ | `plocate`              | off     | the *plocate* index on Linux                                  |
 ```
 
 #### Recent Merged Pull Requests:
@@ -2321,46 +1970,54 @@ Observed empirical fixes and code patches:
 ## X. found regressions
 
 **RULE**:
-When implementing operations in `src/expr.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/function.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46c72f21`: found regressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9a867909`: found regressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/expr.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/function.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    pub fn negated(&self) -> Expr {
-        let mut result = self.clone();
-        result.props.clear_file_types();
-
-        if let Some(op) = self.op {
-            result.op = Some(Op::negate(op));
-            return result;
+                    if v < self.min || (v == self.min && self.min_raw.as_deref().is_some_and(|current| value < current)) {
+                    if v > self.max || (v == self.max && self.max_raw.as_deref().is_some_and(|current| value > current)) {
+    #[test]
+    fn numeric_ties_between_extremes_are_broken_by_text_regardless_of_order() {
+        for order in [["000", "-000", "002"], ["-000", "000", "002"], ["002", "000", "-000"]] {
+            let names = make_accumulator("val", &order);
+            assert_eq!(get_aggregate_value(&Function::Min, &names, "val".to_string(), &None), "-000", "{order:?}");
+            assert_eq!(get_aggregate_value(&Function::Max, &names, "val".to_string(), &None), "002", "{order:?}");
         }
-
-        if let Some(ref logical_op) = self.logical_op {
-            result.logical_op = Some(logical_op.negate());
-            if let Some(left) = &self.left {
-                result.left = Some(Box::new(left.negated()));
-            }
-            if let Some(right) = &self.right {
-                result.right = Some(Box::new(right.negated()));
-            }
+        for order in [["2", "2.0", "002"], ["002", "2.0", "2"]] {
+            let twos = make_accumulator("val", &order);
+            assert_eq!(get_aggregate_value(&Function::Min, &twos, "val".to_string(), &None), "002", "{order:?}");
+            assert_eq!(get_aggregate_value(&Function::Max, &twos, "val".to_string(), &None), "2.0", "{order:?}");
         }
-
-        result
     }
 
+    fn min_negative_zero_is_the_textually_smaller_spelling() {
+        for order in [["-0", "0"], ["0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                    if v < self.min {
+                    if v > self.max {
+    fn min_negative_zero_keeps_the_first_spelling() {
+        let acc = make_accumulator("val", &["-0", "0"]);
+        let result = get_aggregate_value(&Function::Min, &acc, "val".to_string(), &None);
+        assert_eq!(result, "-0");
+        let acc = make_accumulator("val", &["0", "-0"]);
+        let result = get_aggregate_value(&Function::Min, &acc, "val".to_string(), &None);
+        assert_eq!(result, "0");
+    fn max_negative_zero_keeps_the_first_spelling() {
+        let acc = make_accumulator("val", &["-0", "0"]);
+        let result = get_aggregate_value(&Function::Max, &acc, "val".to_string(), &None);
+        assert_eq!(result, "-0");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46c72f21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9a867909` are properly handled with clean fallback behavior.

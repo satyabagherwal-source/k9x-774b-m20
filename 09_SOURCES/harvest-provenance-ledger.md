@@ -4640,3 +4640,9 @@ Every entry in this ledger must capture:
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `4b2fb2ce` | Multi-dimensional audit evidence | 2026-10-25T03:31:45.607Z |
 | `learn-github-dylanvann-react-native-fast-image` | `https://github.com/DylanVann/react-native-fast-image` | `2042b419` | Multi-dimensional audit evidence | 2026-10-25T03:31:48.533Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `5fb6a1ff` | Multi-dimensional audit evidence | 2026-10-25T03:31:56.994Z |
+| `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `4cc5c89a` | Multi-dimensional audit evidence | 2026-10-25T03:38:28.602Z |
+| `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `6d3e9d68` | Multi-dimensional audit evidence | 2026-10-25T03:38:28.604Z |
+| `learn-github-crawlcove-hreflang-checker` | `https://github.com/CrawlCove/crawlcove-hreflang-checker` | `68a78d31` | Multi-dimensional audit evidence | 2026-10-25T03:38:32.306Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `bbd1b685` | Multi-dimensional audit evidence | 2026-10-25T03:38:35.803Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `ab599433` | Multi-dimensional audit evidence | 2026-10-25T03:38:38.805Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `e4fad3f1` | Multi-dimensional audit evidence | 2026-10-25T03:38:40.547Z |

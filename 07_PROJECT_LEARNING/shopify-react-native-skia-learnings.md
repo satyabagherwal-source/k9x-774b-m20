@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source**: github ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
-> **Source Version**: `f92429aa`  
+> **Source Version**: `bbd1b685`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T14:16:45.105Z  
+> **Timestamp**: 2026-10-25T03:38:35.450Z  
 > **Learning ID**: `learn-github-wcandillon-react-native-skia`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T14:16:44.423Z  
+> **Harvest Timestamp**: 2026-10-25T03:38:34.976Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-performance React Native Graphics using Skia
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8744 stars
+- **Stars / Engagement**: 8750 stars
 
 ---
 
@@ -1161,16 +1161,13 @@ getMatchedAdapter(dawn::native::Instance *instance) {
 
 // Where requestDevice() reports what becomes of the device. A loss after
 // creation (a driver reset, the GPU out of memory, a device-level error)
-// goes to onLost with Dawn's message, on whichever thread Dawn detects it.
-// A creation failure leaves Dawn's message in creationFailure, for the
-// caller of requestDevice(): that callback runs inside CreateDevice, on the
-// calling thread. The listener must outlive the device.
+// goes to onLost with Dawn's reason and message, on whichever thread Dawn
+// detects it: possibly inside a call on the device itself, on the calling
+// thread. A creation failure leaves Dawn's message in creationFailure, for
+// the caller of requestDevice(): that callback runs inside CreateDevice, on
+// the calling thread. The listener must outlive the device.
 struct DeviceLostListener {
-  std::function<void(const std::string &message)> onLost;
-  std::string creationFailure;
-};
-
-// Create a Dawn device from the given adapter with the re
+  std::function<void(wgpu::DeviceLostReason reason, const std::string
 ```
 
 ### Core Architecture Module: `packages/skia/cpp/rnskia/RNSkWorker.h`
@@ -1321,6 +1318,13 @@ public:
     auto console = RNSkLogger::getJavascriptConsole(runtime).asObject(runtime);
     auto warn = console.getPropertyAsFunction(runtime, "warn");
     warn.call(runtime, jsi::String::createFromUtf8(runtime, message));
+  }
+
+  static void errorToJavascriptConsole(jsi::Runtime &runtime,
+                                       const std::string &message) {
+    auto console = RNSkLogger::getJavascriptConsole(runtime).asObject(runtime);
+    auto error = console.getPropertyAsFunction(runtime, "error");
+    error.call(runtime, jsi::String::createFromUtf8(runtime, message));
   }
 
 private:
@@ -1512,321 +1516,1055 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f92429aa` (2026-10-20)
-**Commit Message**: fix(🤖): keep the Dawn device on the emulator when a view snapshot imports an AHardwareBuffer (#4293)
+### Incident Patch 1: `cce3cf0f` (2026-10-23)
+**Commit Message**: fix(🤖): present Android canvases off the main thread (#4318)
 
-Since the example moved to react-native-webgpu 0.17.0 (#4271), every
-main-based PR fails build-test-android: the first surface.screen() of the
-e2e run fails with "GPUDevice::importExternalTexture(): the import failed"
-and every later test fails with "Unsupported data type". Logcat has the
-cause: "React Native Skia lost its GPU device. Reason: Required texture
-memory size (2359296) is larger than the AHardwareBuffer allocation size
-(0)" from Dawn's SharedTextureMemoryVk.cpp.
+* fix(🤖): present a SurfaceView canvas off the main thread
 
-react-native-webgpu 0.15.0 made drawElementImageToTexture import the
-HardwareRenderer's AHardwareBuffer into Dawn on Android 13+ instead of
-reading it back to a software bitmap. The API 35 emulator (gfxstream guest
-driver on a SwiftShader host) reports an allocation size of 0 for that
-buffer, Dawn's size validation rejects the import as an internal error,
-and Dawn turns that into a device loss, so the rest of the run has no GPU.
-Main looked green because the emulator step is skipped on pushes.
+Presenting a frame of a SurfaceView canvas (inserting its recordings,
+the GPU submit, the swapchain present) ran on the main thread, on a
+Choreographer tick: on a Pixel 8 about 4.7 ms per frame at 120 Hz, 370
+to 760 ms/s of the main thread for one animating canvas. Recording
+already runs off the main thread (the render thread pool for <Canvas>,
+the caller's runtime for a Graphite view); presenting was the remaining
+main-thread cost, and it held up everything else the main thread does.
 
-Dawn skips this check on the Samsung, Qualcomm and Huawei drivers that
-misreport the size (ignore_imported_ahardwareb
+A SurfaceView canvas now presents on a present thread shared by every
+such canvas in the process (presents serialize on the GPU context
+anyway), a looper thread with a Choreographer of its own for the vsync,
+where the view's FrameScheduler lives. A TextureView canvas keeps
+presenting on the main thread, behind the draw its window has pending.
+RNSkView takes the thread from the platform view (setPresentThread);
+without one, as on Apple platforms, tasks keep going to the main thread.
 
-**File**: `packages/skia/cpp/rnskia/RNDawnUtils.h` (modified, +30/-2)
+The window surface keeps the main thread (attach, resize, detach) and
+the present thread apart wi
+
+**File**: `apps/docs/docs/canvas/graphite.md` (modified, +1/-1)
 ```diff
-@@ -155,6 +155,20 @@ inline AdapterDescription describeAdapter(const wgpu::Adapter &adapter) {
-   return result;
- }
+@@ -41,7 +41,7 @@ A recording is immutable: you can submit the same one again later without record
  
-+// Dawn's own SwiftShader test (gpu_info::IsGoogleSwiftshader): Google's
-+// vendor ID with SwiftShader's device ID. The Android emulator exposes the
-+// host's SwiftShader through gfxstream, which keeps the IDs and the name, so
-+// either identifies it.
-+inline bool isSwiftShader(const wgpu::Adapter &adapter) {
-+  wgpu::AdapterInfo info;
-+  adapter.GetInfo(&info);
-+  constexpr uint32_t kVendorIDGoogle = 0x1AE0;
-+  constexpr uint32_t kDeviceIDSwiftShader = 0xC0DE;
-+  return (info.vendorID == kVendorIDGoogle &&
-+          info.deviceID == kDeviceIDSwiftShader) ||
-+         toString(info.device).find("SwiftShader") != std::string::npos;
-+}
-+
- // The backend Skia renders with: Metal on Apple, Vulkan on Android.
- #ifdef __APPLE__
- constexpr auto kPlatformBackendType = wgpu::BackendType::Metal;
-@@ -304,9 +318,23 @@ requestDevice(dawn::native::Adapter &nativeAdapter,
-       "disable_robustness",
- #endif
-   };
-+  std::vector<const char *> toggles(std::begin(kToggles), std::end(kToggles));
-+#ifdef __ANDROID__
-+  // Dawn checks an imported AHardwareBuffer's allocation size against the
-+  // VkImage it binds to, and the Android emulator's SwiftShader driver reports
-+  // that size as 0 for every buffer. The first import (react-native-webgpu's
-+  // view snapshots draw into an imported AHardwareBuffer on Android 13+) then
-+  // fails as an internal error, which Dawn turns into a device loss: nothing
-+  // renders for the rest of the process. Dawn itself skips the check on the
-+  // Samsung, Qualcomm and Huawei drivers that misreport the size; do the same
-+  // for SwiftShader. Real devices keep the check.
-+  if (isSwiftShader(adapter)) {
-+    toggles.push_back("ignore_imported_ahardwarebuffer_vulkan_image_size");
-+  }
-+#endif
-   wgpu::DawnTogglesDescriptor togglesDesc;
--  togglesDesc.enabledToggleCount = std::size(kToggles);
--  togglesDesc.enabledToggles = kToggles;
-+  togglesDesc.enabledToggleCount = toggles.size();
-+  togglesDesc.enabledToggles = toggles.data();
- #if defined(TARGET_OS_SIMULATOR) && TARGET_OS_SIMULATOR
-   // The iOS Simulator only advertises MTLFeatureSet_iOS_GPUFamily2, so Dawn
-   // defaults disable_base_instance/disable_base_vertex on and then rejects
-```
-
----
-
-### Incident Patch 2: `64008ac4` (2026-10-20)
-**Commit Message**: fix(🤖): reduce peak compiler memory of the Android build (#4285)
-
-**File**: `packages/skia/android/CMakeLists.txt` (modified, +0/-1)
-```diff
-@@ -63,7 +63,6 @@ add_library(
-         "${PROJECT_SOURCE_DIR}/../cpp/jsi/JSICache.cpp"
-         "${PROJECT_SOURCE_DIR}/../cpp/jsi/JsiPromises.cpp"
-         "${PROJECT_SOURCE_DIR}/../cpp/jsi/Promise.cpp"
--        "${PROJECT_SOURCE_DIR}/../cpp/jsi/ViewProperty.cpp"
- 
-         "${PROJECT_SOURCE_DIR}/../cpp/rnskia/RNSkManager.cpp"
-         "${PROJECT_SOURCE_DIR}/../cpp/rnskia/RNSkGraphiteProducer.cpp"
-```
-
-**File**: `packages/skia/cpp/jsi/ViewProperty.cpp` (removed, +0/-23)
-```diff
-@@ -1,23 +0,0 @@
--// The recorder headers depend on the include order established by
--// JsiSkApi.h, so the probe lives here rather than in ViewProperty.h (which
--// every platform view includes on its own).
--#include "api/JsiSkApi.h"
--
--#include "jsi/ViewProperty.h"
--
--#include "api/JsiSkPicture.h"
--#include "api/recorder/JsiRecorder.h"
--
--namespace RNJsi {
--
--ViewProperty::ViewProperty(jsi::Runtime &runtime, const jsi::Value &value) {
--  if (auto picture =
--          RNSkia::tryGetJsiObject<RNSkia::JsiSkPicture>(runtime, value)) {
--    _value = picture->getObject();
--  } else if (auto recorder =
--                 RNSkia::tryGetJsiObject<RNSkia::JsiRecorder>(runtime, value)) {
--    _value = recorder->getObject();
--  }
--}
--
--} // namespace RNJsi
-```
-
-**File**: `packages/skia/cpp/jsi/ViewProperty.h` (modified, +2/-3)
-```diff
-@@ -26,9 +26,8 @@ class ViewProperty {
-   /**
-    * Probes the JS value for the native objects a view can display (a picture
-    * or a recorder); anything else yields an empty property. Defined in
--   * ViewProperty.cpp: the recorder headers depend on the include order
--   * established by JsiSkApi.h, which this header (included by every platform
--   * view) must not pull in.
-+   * RNSkManager.cpp so that this header (included by every platform view)
-+   * does not pull in the recorder headers.
-    */
-   ViewProperty(jsi::Runtime &runtime, const jsi::Value &value);
- 
-```
-
-**File**: `packages/skia/cpp/rnskia/RNSkManager.cpp` (modified, +21/-0)
-```diff
-@@ -10,7 +10,10 @@
- #include "RNSkJsiViewApi.h"
- #include "RNSkView.h"
- #include "api/JsiSkApi.h"
-+#include "api/JsiSkPicture.h"
-+#include "api/recorder/JsiRecorder.h"
- #include "jsi/BoxedNativeObject.h"
-+#include "jsi/ViewProperty.h"
- 
- namespace RNSkia {
- namespace jsi = facebook::jsi;
-@@ -83,3 +86,21 @@ void RNSkManager::installBindings() {
-   // implementation detail only.
- }
- } // namespace RNSkia
-+
-+namespace RNJsi {
-+
-+// Probing for a recorder needs the complete recorder types. Parsing the
-+// recorder headers costs about 1.5 GB of compiler memory, so the probe lives
-+// in this translation unit, which parses them already. A separate translation
-+// unit would compile in parallel and add to the peak memory of the build.
-+ViewProperty::ViewProperty(jsi::Runtime &runtime, const jsi::Value &value) {
-+  if (auto picture =
-+          RNSkia::tryGetJsiObject<RNSkia::JsiSkPicture>(runtime, value)) {
-+    _value = picture->getObject();
-+  } else if (auto recorder =
-+                 RNSkia::tryGetJsiObject<RNSkia::JsiRecorder>(runtime, value)) {
-+    _value = recorder->getObject();
-+  }
-+}
-+
-+} // namespace RNJsi
-```
-
----
-
-### Incident Patch 3: `9b99a239` (2026-10-19)
-**Commit Message**: fix(🍏): present at the display's full rate on ProMotion devices (#4273)
-
-**File**: `apps/docs/docs/canvas/canvas.md` (modified, +9/-0)
-```diff
-@@ -130,6 +130,15 @@ On the Web, the drawing is recorded into a picture on the JS thread and painted
- 
- If you need to produce the frames yourself, from the thread of your choice, use the [Graphite View](/docs/canvas/graphite).
- 
-+## High refresh rate displays
-+
-+The view presents at the rate of the display it is on, 120 Hz on a ProMotion iPhone or iPad.
-+Reanimated values and worklets run at the display's rate, so a canvas animated with them shows every frame the display can.
-+
-+An app created from an Expo or React Native template before React Native 0.82 may still carry iOS's 60 Hz cap for iPhone: [Reanimated's performance guide](https://docs.swmansion.com/react-native-reanimated/docs/guides/performance/#-enable-120-fps) covers the `Info.plist` opt-in.
-+
-+React Native's `requestAnimationFrame` on the JS thread runs at 60 Hz on iOS, so frames recorded from it, as in a [Graphite View](/docs/canvas/graphite) fed from the JS thread, are presented at that rate.
-+
- ## Android rendering options
- 
- On iOS, the canvas draws into a `CAMetalLayer` and behaves like any other view.
-```
-
-**File**: `apps/docs/docs/canvas/graphite.md` (modified, +2/-1)
-```diff
-@@ -42,7 +42,7 @@ A recording is immutable: you can submit the same one again later without record
  ## Threading model
  
- Recording happens on the thread that calls `beginRecording()`, presenting on the main thread: on the display link (`CADisplayLink` on iOS, the `Choreographer` for an Android `SurfaceView`), or, for an Android `TextureView`, once its window has drawn the previous frame.
--The context can be captured into a worklet, so a frame loop can run on the Reanimated UI runtime without touching the JS thread:
-+The context can be captured into a worklet, so a frame loop can run on the Reanimated UI runtime, at the display's rate, without touching the JS thread:
+-Recording happens on the thread that calls `beginRecording()`, presenting on the main thread: on the display link (`CADisplayLink` on iOS, the `Choreographer` for an Android `SurfaceView`), or, for an Android `TextureView`, once its window has drawn the previous frame.
++Recording happens on the thread that calls `beginRecording()`. Presenting happens on the display link on iOS (`CADisplayLink`, on the main thread), and on a present thread of its own on Android, so that the main thread pays nothing for a frame: on the vsync of that thread's `Choreographer` for a `SurfaceView`, once its window has drawn the previous frame for a `TextureView`.
+ The context can be captured into a worklet, so a frame loop can run on the Reanimated UI runtime, at the display's rate, without touching the JS thread:
  
  ```tsx
- import { useEffect, useRef } from "react";
-@@ -79,6 +79,7 @@ A few rules follow from this model:
- - Recordings are presented in submission order and never dropped. A later frame may sample a texture an earlier frame uploaded, so when the main thread falls behind, the queued frames are replayed in order and only the last one stays visible. This holds for a frame submitted before the native view exists, whether or not you keep the context: the view owns its recording state natively for as long as it is mounted, and `getContext()` hands out a context to it at any time. A recording made for another size than the surface has by the time it is presented (recorded before the view had a surface, or the view was resized since) still shows, at the cost of an extra copy for that frame.
- - The producer clears the canvas. A recording draws on top of what the view shows, which also lets you record only the parts that changed.
- - GPU-backed images (offscreen surface snapshots, native buffers, video frames, [WebGPU textures](/docs/webgpu)) can be drawn from any runtime. Their content is uploaded when they are created, so create them before the frame that uses them.
-+- A loop on the Reanimated UI runtime or on a worklet runtime runs at the display's rate. On iOS, React Native's `requestAnimationFrame` on the JS thread runs at 60 Hz, so a view fed from it presents at that rate (see [High refresh rate displays](/docs/canvas/overview#high-refresh-rate-displays)).
- 
- ## Snapshots
- 
 ```
 
-**File**: `apps/example/ios/Podfile` (modified, +14/-0)
+**File**: `apps/example/src/Tests/Screens/Resize.tsx` (added, +43/-0)
 ```diff
-@@ -42,9 +42,23 @@ raise_pod_deployment_targets = ->(installer) do
-   end
- end
- 
-+# react-native-test-app generates the app's Info.plist from its own template
-+# and takes no extra keys from app.json. Without this one iOS caps every
-+# display link at 60 Hz on iPhone, so a ProMotion iPhone would never show the
-+# canvases above 60 fps (see the docs, "High refresh rate displays").
-+opt_in_promotion = ->(_installer) do
-+  plist_path = "#{ws_dir}/node_modules/.generated/ios/Info.plist"
-+  return unless File.exist?(plist_path)
+@@ -0,0 +1,43 @@
++import React, { useEffect, useState } from "react";
++import { View } from "react-native";
++import { Canvas, Fill, Rect } from "react-native-skia";
 +
-+  info = Xcodeproj::Plist.read_from_path(plist_path)
-+  info['CADisableMinimumFrameDurationOnPhone'] = true
-+  Xcodeproj::Plist.write_to_path(info, plist_path)
-+end
++const SMALL = 60;
++const LARGE = 120;
++const STEP = 6;
 +
- example_post_install = ->(installer) do
-   fix_fmt_consteval.call(installer)
-   raise_pod_deployment_targets.call(installer)
-+  opt_in_promotion.call(installer)
-   installer.pods_project.targets.each do |target|
-     next unless ['react-native-skia', 'react-native-webgpu'].include?(target.name)
- 
++// A canvas that grows (or shrinks) a few points per frame from one size to
++// another once mounted, so that its presents race its resizes, and settles.
++// Red, with a 20 point green square at its origin: a stale frame stretched to
++// the new size would show a larger (or smaller) square, so the square tells
++// that the frame shown was recorded for the size the canvas settled at. Cyan
++// wherever the canvas does not reach.
++const ResizingCanvas = ({ from, to }: { from: number; to: number }) => {
++  const [size, setSize] = useState(from);
++  useEffect(() => {
++    let current = from;
++    let frame = 0;
++    const step = () => {
++      current =
++        from < to ? Math.min(current + STEP, to) : Math.max(current - STEP, to);
++      setSize(current);
++      if (current !== to) {
++        frame = requestAnimationFrame(step);
++      }
++    };
++    frame = requestAnimationFrame(step);
++    return () => cancelAnimationFrame(frame);
++  }, [from, to]);
++  return (
++    <View style={{ width: LARGE, height: LARGE, backgroundColor: "cyan" }}>
++      <Canvas style={{ width: size, height: size }}>
++        <Fill color="red" />
++        <Rect x={0} y={0} width={20} height={20} color="lime" />
++      </Canvas>
++    </View>
++  );
++};
++
++export const ResizeGrow = () => <ResizingCanvas from={SMALL} to={LARGE} />;
++
++export const ResizeShrink = () => <ResizingCanvas from={LARGE} to={SMALL} />;
 ```
 
-**File**: `packages/skia/apple/SkiaView.mm` (modified, +31/-0)
+**File**: `apps/example/src/Tests/Screens/index.ts` (modified, +3/-0)
 ```diff
-@@ -57,6 +57,9 @@ @implementation SkiaView {
-   bool _canPresent;
- #if !TARGET_OS_OSX
-   CADisplayLink *_displayLink;
-+  // Whether the display link asked for the display's full rate yet (see
-+  // requestFullFrameRate).
-+  bool _fullFrameRateRequested;
- #else
-   bool _presentAgainScheduled;
- #endif
-@@ -70,6 +73,8 @@ - (instancetype)initWithFrame:(CGRect)frame {
-     _canPresent = !appIsBackgrounded();
- #if TARGET_OS_OSX
-     _presentAgainScheduled = false;
-+#else
-+    _fullFrameRateRequested = false;
- #endif
-     static const auto defaultProps = std::make_shared<const SkiaViewProps>();
-     _props = defaultProps;
-@@ -208,6 +213,7 @@ - (void)scheduleFrame {
-     [_displayLink addToRunLoop:[NSRunLoop mainRunLoop]
-                        forMode:NSRunLoopCommonModes];
+@@ -3,6 +3,7 @@ import type { FC } from "react";
+ import { GraphiteView, GraphiteViewTransform } from "./GraphiteView";
+ import { IsOnMainThread } from "./IsOnMainThread";
+ import { OnLayout } from "./OnLayout";
++import { ResizeGrow, ResizeShrink } from "./Resize";
+ import { SharedImage } from "./SharedImage";
+ import { SharedValueReads } from "./SharedValueReads";
+ 
+@@ -11,6 +12,8 @@ export const Screens: Record<string, FC> = {
+   GraphiteViewTransform,
+   IsOnMainThread,
+   OnLayout,
++  ResizeGrow,
++  ResizeShrink,
+   SharedImage,
+   SharedValueReads,
+ };
+```
+
+**File**: `packages/skia/android/cpp/jni/JniLoad.cpp` (modified, +8/-0)
+```diff
+@@ -1,6 +1,7 @@
+ #include "JniPlatformContext.h"
+ #include "JniSkiaManager.h"
+ #include "JniSkiaView.h"
++#include <fbjni/NativeRunnable.h>
+ #include <fbjni/fbjni.h>
+ #include <jni.h>
+ 
+@@ -9,5 +10,12 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
+     RNSkia::JniSkiaManager::registerNatives();
+     RNSkia::JniSkiaView::registerNatives();
+     RNSkia::JniPlatformContext::registerNatives();
++    // A view posts to the thread it presents on through a NativeRunnable (see
++    // JniSkiaView), from the render thread pool among others. A thread the
++    // JVM did not create has only the system class loader, which does not
++    // know the app's classes, so the lookup fails there. Making one here,
++    // with the app's loader in use, resolves every class on that path once;
++    // fbjni keeps them.
++    facebook::jni::JNativeRunnable::newObjectCxxArgs([] {});
+   });
+ }
+```
+
+**File**: `packages/skia/android/cpp/jni/include/JniSkiaView.h` (modified, +71/-20)
+```diff
+@@ -1,9 +1,12 @@
+ #pragma once
+ 
++#include <functional>
+ #include <memory>
++#include <utility>
+ 
+ #include <android/native_window.h>
+ #include <android/native_window_jni.h>
++#include <fbjni/NativeRunnable.h>
+ #include <fbjni/fbjni.h>
+ #include <jni.h>
+ 
+@@ -18,7 +21,9 @@ namespace jni = facebook::jni;
+ /**
+  * The JNI side of SkiaView: owns the native view and the window surface it
+  * presents into, and relays the surface callbacks of the backing SurfaceView
+- * or TextureView, whose ANativeWindow it acquires for the surface.
++ * or TextureView, whose ANativeWindow it acquires for the surface. The
++ * surface callbacks come on the main thread; the view presents on the present
++ * thread of the Java side (see SkiaView.runOnPresentThread).
+  */
+ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
+ public:
+@@ -53,27 +58,32 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
+   std::shared_ptr<RNSkManager> getSkiaManager() { return _manager.lock(); }
+ 
+ protected:
++  // Main thread. Attaching the window asks the view for a frame on the
++  // present thread.
+   void surfaceAvailable(jobject surface, int width, int height, bool isSurface,
+                         bool highBitDepth) {
+     attachWindow(surface, width, height, isSurface, highBitDepth);
+-    _view->redraw();
    }
-+  [self requestFullFrameRate];
-   _displayLink.paused = NO;
- #else
-   if (_view != nullptr && _view->presentFrame()) {
-@@ -217,6 +223,31 @@ - (void)scheduleFrame {
+ 
++  // Main thread. The new size is painted on the present thread, which the
++  // surface asks for a frame once it is reconfigured.
+   void surfaceSizeChanged(jobject surface, int width, int height,
+                           bool isSurface, bool highBitDepth) {
+     // Setting width/height to zero is nothing we need to care about when
+     // it comes to invalidating the surface.
+-    if (width != 0 || height != 0) {
+-      if (_surface->isAttached()) {
+-        _surface->resize(width, height);
+-      } else {
+-        attachWindow(surface, width, height, isSurface, highBitDepth);
+-      }
++    if (width == 0 && height == 0) {
++      return;
++    }
++    if (_surface->isAttached()) {
++      _surface->resize(width, height);
++    } else {
++      attachWindow(surface, width, height, isSurface, highBitDepth);
+     }
+-    // Paint the new size right away rather than on the next scheduled redraw.
+-    _view->redraw();
+   }
+ 
++  // Main thread, before the platform destroys the window: waits for the
++  // present in flight, if any, then lets go of the window (see
++  // RNSkWindowSurface::detach).
+   void surfaceDestroyed() { _surface->detach(); }
+ 
+   /**
+@@ -116,9 +126,11 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
+     manager->unregisterSkiaView(_view->getNativeId());
+   }
+ 
+-  // Choreographer tick: presents the queued recordings, returns whether more
+-  // are already waiting.
+-  bool presentFrame() { return _view->presentFrame(); }
++  // The Java view's frame scheduler, on the thread the view presents on:
++  // presents the queued recordings, says whether a frame went to the window
++  // and whether more are waiting (see RNSkView::presentFrame). The Java view
++  // keeps this object alive for the call (see SkiaView.dropInstance).
++  int presentFrame() { return _view->presentFrame(); }
+ 
+ private:
+   friend HybridBase;
+@@ -129,20 +141,56 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
+     auto context = skiaManager->cthis()->getPlatformContext();
+     _surface = std::make_shared<RNSkWindowSurface>();
+     _view = std::make_shared<RNSkView>(context, _surface);
+-    // A submitted recording arms the Java view's frame callback. Weak: the
+-    // Java view owns this object through its hybrid data.
+-    jni::weak_ref<jhybridobject> weakJava = jni::make_weak(jThis);
+-    _view->setFrameScheduler([weakJava]() {
+-      auto javaPart = weakJava.lockLocal();
++    // Tasks for the present thread go through the Java view, which owns the
++    // thread. Weak: the Java view owns this object through its hybrid data;
++    // a task for a view that is gone is dropped. Called from any thread, the
++    // render thread pool's included, hence the thread scope.
++    auto javaView = std::make_shared<JavaView>(jThis);
++    _view->setPresentThread([javaView](std::function<void()> task) {
++      jni::ThreadScope threadScope;
++      auto javaPart = javaView->weak->lockLocal();
++      if (!javaPart) {
++        return;
++      }
++      static const auto method =
++          javaPart->getClass()
++              ->getMethod<void(jni::alias_ref<jni::JRunnable::javaobject>)>(
++                  "runOnPresentThread");
++      method(javaPart, jni::JNativeRunnable::newObjectCxxArgs(std::move(task)));
++    });
++    // A submitted recording arms the Java view's frame callback, on the
++    // present thread (or presents on the spot, for a window resized since
++    // the frame it shows: see FrameScheduler.requestFrame).
++    _view->setFrameScheduler([javaView](bool forResizedWindow) {
++      auto javaPart = javaView->weak->lockLocal();
+       if (!javaPart) {
+         return;
+       }
+       static const auto method =
+-          ja
+```
+
+**File**: `packages/skia/android/src/main/java/com/reactnative/skia/FrameScheduler.java` (modified, +78/-46)
+```diff
+@@ -3,46 +3,77 @@
+ import androidx.annotation.Nullable;
+ 
+ /**
+- * Decides when a SkiaView presents the recordings queued for it: a SurfaceView
+- * on the next vsync, a TextureView behind the draw its window has pending, so
+- * that the window has taken the previous frame by then. Keeps at most one
+- * frame callback and one posted present outstanding. Main thread.
++ * Decides when a SkiaView presents the recordings queued for it. A SurfaceView
++ * presents on the next vsync, when the compositor takes its buffer. A
++ * TextureView shows a frame when its window draws, which takes the latest
++ * frame presented and lets the others go: it presents one frame at a time,
++ * the next once the window drew the previous one (see onFrameConsumed), so
++ * that every draw gets a new frame and no frame is made for nothing; a frame
++ * for a window resized since the one it shows goes on the spot in either case
++ * (see requestFrame). Keeps at most one frame callback outstanding. Lives on
++ * the present thread, whose Choreographer gives the vsync.
+  */
+ final class FrameScheduler {
++    /** Host.presentFrame: a frame went to the window. */
++    static final int PRESENTED = 1;
++    /** Host.presentFrame: recordings are left, more queued or declined (no drawable). */
++    static final int MORE_QUEUED = 2;
++
+     /** What the scheduler asks of the view. */
+     interface Host {
+         /** Calls onFrame() on the next Choreographer frame. */
+         void postFrameCallback();
+ 
+-        /** Calls onPosted() from the main looper, behind any draw the window has pending. */
+-        void postBehindPendingDraw();
+-
+-        /** Presents the queued recordings, returning whether any are left. */
+-        boolean presentFrame();
++        /** Presents the queued recordings: PRESENTED and MORE_QUEUED, as they apply. */
++        int presentFrame();
+     }
+ 
+     private final Host mHost;
+     private boolean mFrameCallbackPosted = false;
+-    private boolean mPresentPosted = false;
++    // TextureView: the window has a frame it has not drawn yet, and a request
++    // arrived while it had.
++    private boolean mFrameInWindow = false;
++    private boolean mRequested = false;
+ 
+     FrameScheduler(Host host) {
+         mHost = host;
+     }
+ 
+     /** A recording was submitted. Without a backing view there is no surface to present on yet. */
+     void requestFrame(@Nullable BackingViewKind kind) {
++        requestFrame(kind, false);
++    }
++
++    /**
++     * A recording was submitted. With forResizedWindow, the window was resized since
++     * the frame it shows was made, so it shows that frame stretched to its size, and
++     * the recording is for its size: it is presented on the spot, ahead of the vsync
++     * or the draw it would otherwise wait for (a TextureView's window takes it in
++     * place of the frame it has not drawn yet), so that a window resized on every
++     * frame is drawn at the right size on every frame.
++     */
++    void requestFrame(@Nullable BackingViewKind kind, boolean forResizedWindow) {
+         if (kind == null) {
+             return;
+         }
+-        // A frame callback still outstanding (a retry, see presentOrRetry) presents
++        if (forResizedWindow) {
++            present(kind);
++            return;
++        }
++        // A frame callback still outstanding (a retry, see present) presents
+         // the new recording along with the leftovers on that vsync.
+         if (mFrameCallbackPosted) {
+             return;
+         }
+-        if (presentsOnVsync(kind)) {
+-            postFrameCallback();
+-        } else {
+-            postBehindPendingDraw();
++        switch (kind) {
++            case SURFACE_VIEW -> postFrameCallback();
++            case TEXTURE_VIEW -> {
++                if (mFrameInWindow) {
++                    mRequested = true;
++                } else {
++                    present(kind);
++                }
++            }
+         }
+     }
+ 
+@@ -52,38 +83,46 @@ void onFrame(@Nullable BackingViewKind kind) {
+         if (kind == null) {
+             return;
+         }
+-        if (presentsOnVsync(kind)) {
+-            presentOrRetry();
+-        } else {
+-            postBehindPendingDraw();
+-        }
++        present(kind);
+     }
+ 
+-    /** The message posted with Host.postBehindPendingDraw(). */
+-    void onPosted() {
+-        mPresentPosted = false;
+-        presentOrRetry();
++    /**
++     * The TextureView drew the frame it was given (or a later one, presented for a
++     * resized window): the recording waiting for that, if any, goes to it now.
++     */
++    void onFrameConsumed(@Nullable BackingViewKind kind) {
++        mFrameInWindow = false;
++        if (kind == null || !mRequested) {
++            return;
++        }
++        present(kind);
+     }
+ 
+-    /** The view left its window, and the host removed both callbacks. */
++    /** The view left its window, or the window lost its surface: the host removed the callbacks. */
+     void cancel() {
+         mFrameCallbackPosted 
+```
+
+**File**: `packages/skia/android/src/main/java/com/reactnative/skia/PresentThread.java` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++package com.reactnative.skia;
++
++import android.os.Handler;
++import android.os.HandlerThread;
++import android.os.Process;
++
++/**
++ * The thread every canvas presents on: one for the process, started on first
++ * use and never stopped. Presenting a frame (replaying its recordings on the
++ * GPU and handing the buffer to the compositor, or to the window for a
++ * TextureView) costs a few milliseconds of CPU on a Vulkan window, which this
++ * thread takes off the main thread; one thread serves every canvas, as
++ * presents serialize on the GPU context anyway. It is a looper thread, so
++ * that each canvas's FrameScheduler runs on it as it would on the main
++ * thread, with the Choreographer of this thread for its vsync (see
++ * SkiaView for how a TextureView's present still waits for its window's
++ * pending draw).
++ */
++final class PresentThread {
++    private static final Object sLock = new Object();
++    private static Handler sHandler;
++
++    private PresentThread() {
++    }
++
++    /** The handler of the thread, started on first use. Any thread. */
++    static Handler handler() {
++        synchronized (sLock) {
++            if (sHandler == null) {
++                // The priority of the UI toolkit's own render thread.
++                HandlerThread thread = new HandlerThread("RNSkia Present",
++                        Process.THREAD_PRIORITY_DISPLAY);
++                thread.start();
++                sHandler = new Handler(thread.getLooper());
++            }
++            return sHandler;
++        }
++    }
++}
+```
+
+**File**: `packages/skia/android/src/main/java/com/reactnative/skia/SkiaTextureView.java` (modified, +1/-0)
+```diff
+@@ -43,5 +43,6 @@ public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture)
+ 
+     @Override
+     public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
++        mApi.onSurfaceTextureUpdated();
+     }
+ }
+\ No newline at end of file
+```
+
+---
+
+### Incident Patch 2: `32089636` (2026-10-21)
+**Commit Message**: fix(🐙): read shared values on the UI thread, not while recording (#4300)
+
+Recording a scene read the current value of every shared-value prop on
+the JS thread to seed the recording. With Reanimated 4, each of those
+reads is a blocking round trip to the UI thread, and reading a picture
+held by a shared value wrapped it for the JS runtime on every commit
+(charged to the garbage collector, freed in bulk). For scenes that
+commit often this was the largest JS-thread cost, and the first frame
+could mix values read at different moments (#4097).
+
+Recording now only registers the conversions. The Reanimated mapper,
+which runs once as it starts, reads every shared value on the UI thread
+at the same moment; the view does not replay a recording before that
+first read (Recorder::isReady) and keeps showing its previous frame
+until then. A recording played on the JS thread (makePicture, offscreen)
+reads the values it still holds itself, and without Reanimated 4 the
+container reads them once through SkiaViewApi.applyUpdates.
+
+Fixes #4243
+
+**File**: `packages/skia/cpp/api/recorder/Convertor.h` (modified, +13/-7)
+```diff
+@@ -17,14 +17,14 @@
+ #include <modules/skparagraph/include/ParagraphStyle.h>
+ 
+ #include "../CustomBlendModes.h"
+-#include "api/JsiSkPoint.h"
+ #include "api/JsiSkFont.h"
+ #include "api/JsiSkImage.h"
+ #include "api/JsiSkImageFilter.h"
+ #include "api/JsiSkMatrix.h"
+ #include "api/JsiSkPaint.h"
+ #include "api/JsiSkParagraph.h"
+ #include "api/JsiSkPicture.h"
++#include "api/JsiSkPoint.h"
+ #include "api/JsiSkRSXform.h"
+ #include "api/JsiSkRuntimeEffect.h"
+ #include "api/JsiSkSVG.h"
+@@ -58,6 +58,13 @@ using ConversionFunction = std::function<PendingWrite(
+  * slot order to JS, and the Reanimated mapper passes the values back in that
+  * order (see Recorder::readUpdates).
+  *
++ * Recording only registers the conversions; no value is read. On the
++ * recording (JS) runtime, reading a Reanimated 4 shared value is a blocking
++ * round trip to the UI thread, and reading a picture held by one wraps it for
++ * this runtime: the values are read where they live, by the mapper (see
++ * Container.native.ts), or once on the JS thread for a recording played
++ * there (Recorder::readSharedValues).
++ *
+  * The shared values themselves, and the Map that finds their slot, are
+  * objects of the recording runtime and are only kept until getSharedValues()
+  * takes them, on the JS thread: the recording lives on in the view, on other
+@@ -87,6 +94,11 @@ class Variables {
+     return count;
+   }
+ 
++  /** The shared value of a slot, or nullptr once they have been let go of. */
++  const jsi::Object *sharedValue(size_t slot) const {
++    return slot < _sharedValues.size() ? &_sharedValues[slot] : nullptr;
++  }
++
+   /** The shared values in slot order; this lets go of them. */
+   jsi::Array takeSharedValues(jsi::Runtime &runtime) {
+     auto array = jsi::Array(runtime, _sharedValues.size());
+@@ -232,9 +244,6 @@ bool convertSelectorProperty(jsi::Runtime &runtime, const jsi::Value &prop,
+   };
+ 
+   variables.add(runtime, sharedValue, conv);
+-  if (auto write = conv(runtime, sharedValue)) {
+-    write();
+-  }
+   return true;
  }
  
- #if !TARGET_OS_OSX
-+// A display link fires at 60 Hz until it asks for more, also while the
-+// display already runs at 120 Hz for another link (Reanimated asks for 120):
-+// a 120 Hz producer would then be presented every other frame. Ask for the
-+// display's full rate once the view knows its screen. On iPhone this needs
-+// CADisableMinimumFrameDurationOnPhone in the app's Info.plist too, else iOS
-+// caps every link at 60 Hz. The link is paused while nothing is queued, so an
-+// idle view does not keep the display at its full rate.
-+- (void)requestFullFrameRate {
-+#if !TARGET_OS_VISION
-+  if (_fullFrameRateRequested) {
-+    return;
+@@ -263,9 +272,6 @@ void convertPropertyImpl(jsi::Runtime &runtime, const jsi::Object &object,
+           };
+     };
+     variables.add(runtime, sharedValue, conv);
+-    if (auto write = conv(runtime, sharedValue)) {
+-      write();
+-    }
+     return;
+   }
+ 
+```
+
+**File**: `packages/skia/cpp/api/recorder/JsiRecorder.h` (modified, +5/-2)
+```diff
+@@ -66,10 +66,13 @@ class JsiRecorder
+ 
+   /**
+    * Plays the recording into a picture, on the calling thread, with the
+-   * values the shared values had when they were recorded.
++   * current values of the shared values it still holds, read here on this
++   * runtime (see Recorder::readSharedValues).
+    */
+   JSI_HOST_FUNCTION(makePicture) {
+-    auto picture = getObject()->makePicture();
++    auto recorder = getObject();
++    recorder->readSharedValues(runtime);
++    auto picture = recorder->makePicture();
+     return makeJsiObject(runtime, std::make_shared<JsiSkPicture>(
+                                       getContext(), std::move(picture)));
+   }
+```
+
+**File**: `packages/skia/cpp/api/recorder/RNRecorder.h` (modified, +66/-14)
+```diff
+@@ -491,6 +491,17 @@ class Recorder {
+     return pictureRecorder.finishRecordingAsPicture();
+   }
+ 
++  /**
++   * Whether the commands hold a value for every shared value they read.
++   * Recording registers the reads without performing them (see Variables):
++   * until the first readUpdates(), the animated properties of a recording
++   * are unset and a replay would draw them wrong. A recording without shared
++   * values is complete as recorded.
++   */
++  bool isReady() const {
++    return variables.empty() || _hasReadValues.load(std::memory_order_acquire);
 +  }
-+  UIScreen *screen = self.window.screen;
-+  if (screen == nil) {
-+    return;
++
+   /**
+    * Reads the current value of each shared value, in slot order (the order
+    * of JsiRecorder.getSharedValues()), on the calling runtime into the
+@@ -499,31 +510,72 @@ class Recorder {
+    * commands first, so the caller never waits for a replay.
+    */
+   void readUpdates(jsi::Runtime &runtime, const jsi::Array &values) {
+-    // The values are read outside the lock: a conversion calls into the
+-    // runtime, and the render thread must not wait on that to replay.
+     std::vector<std::pair<size_t, PendingWrite>> writes;
+     const auto count = std::min(values.size(runtime), variables.size());
+     size_t index = 0;
+     for (size_t slot = 0; slot < count; slot++) {
+       auto sharedValue =
+           values.getValueAtIndex(runtime, slot).asObject(runtime);
+-      for (const auto &conversion : variables.conversions(slot)) {
+-        if (auto write = conversion(runtime, sharedValue)) {
+-          writes.emplace_back(index, std::move(write));
+-        }
+-        index++;
++      index = readSlot(runtime, slot, sharedValue, index, writes);
++    }
++    filePendingWrites(std::move(writes));
 +  }
-+  _fullFrameRateRequested = true;
-+  const float maxFps = (float)screen.maximumFramesPerSecond;
-+  if (maxFps > 60) {
-+    _displayLink.preferredFrameRateRange =
-+        CAFrameRateRangeMake(60, maxFps, maxFps);
++
++  /**
++   * Reads the shared values the recording still holds (getSharedValues() has
++   * not taken them), on the recording runtime. For a recording played on the
++   * JS thread, which no mapper updates: on Reanimated 4, each read is a
++   * blocking round trip to the UI thread, so a view's recording gets its
++   * values from the mapper instead.
++   */
++  void readSharedValues(jsi::Runtime &runtime) {
++    std::vector<std::pair<size_t, PendingWrite>> writes;
++    size_t index = 0;
++    for (size_t slot = 0; slot < variables.size(); slot++) {
++      if (const auto *sharedValue = variables.sharedValue(slot)) {
++        index = readSlot(runtime, slot, *sharedValue, index, writes);
++      } else {
++        index += variables.conversions(slot).size();
+       }
+     }
+-    if (writes.empty()) {
+-      return;
++    filePendingWrites(std::move(writes));
 +  }
-+#endif
++
++private:
++  /**
++   * Reads one shared value through the conversions of its slot, outside the
++   * lock: a conversion calls into the runtime, and the render thread must not
++   * wait on that to replay. `index` is the pending write of the slot's first
++   * conversion; the one past its last is returned.
++   */
++  size_t readSlot(jsi::Runtime &runtime, size_t slot,
++                  const jsi::Object &sharedValue, size_t index,
++                  std::vector<std::pair<size_t, PendingWrite>> &writes) {
++    for (const auto &conversion : variables.conversions(slot)) {
++      if (auto write = conversion(runtime, sharedValue)) {
++        writes.emplace_back(index, std::move(write));
++      }
++      index++;
+     }
+-    std::lock_guard<std::mutex> lock(_pendingMutex);
+-    layoutPendingWritesLocked();
+-    for (auto &[i, write] : writes) {
+-      _pendingWrites[i] = std::move(write);
++    return index;
++  }
++
++  /** Files the writes, taking the lock once, and marks the values as read. */
++  void filePendingWrites(std::vector<std::pair<size_t, PendingWrite>> writes) {
++    if (!writes.empty()) {
++      std::lock_guard<std::mutex> lock(_pendingMutex);
++      layoutPendingWritesLocked();
++      for (auto &[i, write] : writes) {
++        _pendingWrites[i] = std::move(write);
++      }
++      _hasPendingWrites = true;
+     }
+-    _hasPendingWrites = true;
++    _hasReadValues.store(true, std::memory_order_release);
+   }
++
++  // Set once by the first read, on whichever runtime performs it, and checked
++  // by the producer before it replays (another thread), hence atomic.
++  std::atomic<bool> _hasReadValues{false};
+ };
+ 
+ } // namespace RNSkia
+```
+
+**File**: `packages/skia/cpp/rnskia/RNSkGraphiteProducer.cpp` (modified, +22/-7)
+```diff
+@@ -79,7 +79,15 @@ void RNSkGraphiteProducer::replaceContent(std::shared_ptr<Recorder> recorder,
+ 
+ bool RNSkGraphiteProducer::hasContent() {
+   std::lock_guard<std::mutex> lock(_mutex);
+-  return _recorder != nullptr || _picture != nullptr;
++  return hasContentLocked();
 +}
 +
- - (void)onFrame:(CADisplayLink *)link {
-   if (_view == nullptr || !_view->presentFrame()) {
-     link.paused = YES;
++bool RNSkGraphiteProducer::hasContentLocked() const {
++  // A recording whose shared values have not been read yet is not content:
++  // its animated properties are unset, and replaying it would draw them wrong.
++  // The view keeps showing the previous frame until the mapper has read them,
++  // which schedules the frame that draws it (applyUpdates).
++  return (_recorder != nullptr && _recorder->isReady()) || _picture != nullptr;
+ }
+ 
+ bool RNSkGraphiteProducer::applyUpdatesTo(
+@@ -118,7 +126,7 @@ bool RNSkGraphiteProducer::requestFrame() {
+   std::lock_guard<std::mutex> lock(_mutex);
+   _dirty = true;
+   kickLocked();
+-  return _target != nullptr && (_recorder != nullptr || _picture != nullptr);
++  return _target != nullptr && hasContentLocked();
+ }
+ 
+ void RNSkGraphiteProducer::onFramePresented(size_t presented) {
+@@ -133,7 +141,7 @@ void RNSkGraphiteProducer::onFramePresented(size_t presented) {
+ 
+ void RNSkGraphiteProducer::kickLocked() {
+   if (_inFlight || _queued >= kMaxQueued || _target == nullptr ||
+-      (_recorder == nullptr && _picture == nullptr)) {
++      !hasContentLocked()) {
+     return;
+   }
+   _inFlight = true;
+@@ -152,8 +160,13 @@ void RNSkGraphiteProducer::produce() {
+   {
+     std::lock_guard<std::mutex> lock(_mutex);
+     target = _target;
+-    recorder = _recorder;
+-    picture = _picture;
++    // A commit may have replaced the content this job was started for with a
++    // recording that has not read its values yet: nothing to replay until it
++    // has (the read schedules the job), and the content stays dirty below.
++    if (hasContentLocked()) {
++      recorder = _recorder;
++      picture = _picture;
++    }
+     _dirty = false;
+   }
+   std::shared_ptr<RNSkGraphiteRecording> recording;
+@@ -217,8 +230,10 @@ void RNSkGraphiteProducer::renderInto(SkCanvas *canvas, float pixelDensity) {
+   sk_sp<SkPicture> picture;
+   {
+     std::lock_guard<std::mutex> lock(_mutex);
+-    recorder = _recorder;
+-    picture = _picture;
++    if (hasContentLocked()) {
++      recorder = _recorder;
++      picture = _picture;
++    }
+   }
+   drawContent(canvas, recorder.get(), picture, pixelDensity);
+ }
+```
+
+**File**: `packages/skia/cpp/rnskia/RNSkGraphiteProducer.h` (modified, +11/-0)
+```diff
+@@ -30,6 +30,12 @@ class RNSkGraphiteTarget;
+  * target and submits the recording; the main thread presents it on the next
+  * vsync.
+  *
++ * A recording with shared values arrives without their values (recording
++ * reads none, see Variables) and is not replayed before the mapper has read
++ * them once (Recorder::isReady): the view keeps showing its previous frame
++ * until then, one UI frame at most, rather than a frame with unset
++ * properties.
++ *
+  * Pacing: a view has at most one job in flight, and the pool keeps at most one
+  * frame ahead of the display: a job may start while the previous recording is
+  * still waiting for its vsync, so that the replay of one frame overlaps the
+@@ -120,6 +126,11 @@ class RNSkGraphiteProducer
+    */
+   void replaceContent(std::shared_ptr<Recorder> recorder,
+                       sk_sp<SkPicture> picture, bool dirty);
++  /**
++   Whether there is something to replay: a picture, or a recorder that has
++   read its shared values (see Recorder::isReady). Under the lock.
++   */
++  bool hasContentLocked() const;
+   void kickLocked();
+   void produce();
+ 
+```
+
+**File**: `packages/skia/cpp/rnskia/RNSkJsiViewApi.h` (modified, +3/-2)
+```diff
+@@ -230,8 +230,9 @@ class RNSkJsiViewApi : public JsiSkNativeObject<RNSkJsiViewApi> {
+           // destroys it): the recording waits in the registry and is drawn,
+           // with whatever values it holds by then, once a view registers.
+           // Keep it current, under the registry lock so that a registration
+-          // cannot slip in between; the first frame would otherwise show
+-          // the values from recording time until the next change.
++          // cannot slip in between; the recording would otherwise wait,
++          // unready (it reads no value while recording), until the next
++          // change, and the view would show nothing until then.
+           auto it = info->props.find("recorder");
+           if (it != info->props.end() && it->second.isRecorder()) {
+             RNSkGraphiteProducer::applyUpdatesTo(it->second.getRecorder(),
+```
+
+**File**: `packages/skia/src/skia/types/Recorder.ts` (modified, +5/-1)
+```diff
+@@ -92,13 +92,17 @@ export interface BaseRecorder {
+ export interface JsiRecorder extends BaseRecorder {
+   /**
+    * Plays the recording into a picture, on the calling thread, with the
+-   * values the shared values had when they were recorded.
++   * current values of the shared values it still holds, read here. On
++   * Reanimated 4 each read is a blocking round trip to the UI thread: this
++   * is for a recording that no view and no mapper will update.
+    */
+   makePicture(): SkPicture;
+   /**
+    * The shared values the recording reads, in the order
+    * `SkiaViewApi.applyUpdates` expects them. The recording hands them out
+    * once and lets go of them: recording a shared value after this throws.
++   * Nothing has read them: the recording draws its animated properties only
++   * once `SkiaViewApi.applyUpdates` has passed their values back.
+    */
+   getSharedValues(): SharedValue<unknown>[];
+   /**
+```
+
+**File**: `packages/skia/src/sksg/Container.native.ts` (modified, +20/-4)
+```diff
+@@ -64,6 +64,14 @@ const reportUnsupportedReanimated = () => {
+  * collector gets around to a wrapper. A recording without shared values is
+  * turned into a picture by the view.
+  *
++ * Recording reads no shared value: on Reanimated 4, a read on the JS thread
++ * is a blocking round trip to the UI thread, and reading a picture held by a
++ * shared value wraps it for the JS runtime (a wrapper per commit, charged to
++ * the garbage collector). The mapper runs once as it starts and reads every
++ * shared value on the UI thread, at the same moment; the view draws the
++ * recording from that first read on (see RNSkGraphiteProducer) and keeps
++ * showing the previous frame until then.
++ *
+  * Unmounting does not clear the view: the native view can outlive the React
+  * tree (exit animations, screen transitions) and keeps showing its last frame
+  * until it is torn down, which is when the recording is released.
+@@ -107,7 +115,10 @@ class NativeContainer extends Container {
+     try {
+       visit(recorder, this.root);
+       if (this.nativeId === -1) {
+-        // The previous frame stays until the new one is recorded.
++        // No mapper will update the picture: it is played with the current
++        // values of the shared values, which makePicture() reads on this
++        // thread (it needs the recorder to still hold them). The previous
++        // frame stays until the new one is recorded.
+         const picture = recorder.makePicture();
+         this.picture?.dispose();
+         this.picture = picture;
+@@ -132,16 +143,21 @@ class NativeContainer extends Container {
+     // mapper can still fire after the new recording is installed. Tagging the
+     // updates with the recording id lets the view ignore them.
+     const recorderId = recorder.getId();
+-    // The view takes ownership of the recorder and draws the first frame.
++    // The view takes ownership of the recorder and draws it (right away for a
++    // static scene, from the first update on otherwise).
+     SkiaViewApi.setJsiProperty(nativeId, "recorder", recorder);
+     if (sharedValues.length === 0) {
+       return;
+     }
+     if (!HAS_REANIMATED_4) {
+-      // The scene was recorded with the current values of the shared values
+-      // and nothing will update them: createContainer() reported it.
++      // No mapper will read the shared values (createContainer() reported
++      // it): read them once, here, so that the view can draw the scene with
++      // their current values.
++      SkiaViewApi.applyUpdates(nativeId, recorderId, sharedValues);
+       return;
+     }
++    // A mapper runs once when it starts: that run reads every shared value on
++    // the UI thread and draws the first frame of this recording.
+     this.mapperId = Rea.startMapper(() => {
+       "worklet";
+       SkiaViewApi.applyUpdates(nativeId, recorderId, sharedValues);
+```
+
+---
+
+### Incident Patch 3: `d39702cf` (2026-10-21)
+**Commit Message**: fix(🧠): make each recorder the only owner of its image provider (#4277)
+
+* fix(🧠): release each recorder's image provider with its recorder
+
+ImageProvider::Make() returned sk_ref_sp(new ImageProvider): the object
+starts with one reference and sk_ref_sp adds a second, so the provider,
+and the up to 256 images its cache holds, survived the recorder that
+owned it. sk_make_sp adopts the initial reference instead.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(🧠): make each recorder the only owner of its image provider
+
+getRecorder() kept the per-thread image provider in a separate
+thread_local RecorderOptions, so the provider and its cached images
+outlived the recorder. Both recorder paths now build their options in
+one helper, so the recorder holds the only reference.
+
+The upload recorder of MakeTextureImage keeps Skia's default image
+provider: it only uploads and never used the cache.
+
+A host-side C++ test (yarn test-cpp, run in the CI test job) checks that
+ImageProvider::Make() returns a provider with a single reference.
+
+---------
+
+Co-authored-by: Sebastien Hecart <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ci.yml` (modified, +5/-0)
+```diff
+@@ -65,6 +65,11 @@ jobs:
+       - name: Test
+         run: yarn test
+ 
++      # Builds against the headers the Setup step copies, no Skia binaries.
++      - name: Test the C++ helpers
++        working-directory: packages/skia
++        run: yarn test-cpp
++
+   test-web:
+     runs-on: ubuntu-latest
+     steps:
+```
+
+**File**: `packages/skia/cpp-tests/ImageProviderTest.cpp` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++// Host-side check of RNSkia::ImageProvider, built against the Skia headers
++// only (see run.sh). The Skia symbols the header references but this check
++// never reaches are stubbed below.
++
++#include <cstdio>
++#include <cstdlib>
++
++#include "include/private/SkLog.h"
++#include "rnskia/RNImageProvider.h"
++
++void SkLog(SkLogPriority, const char[], ...) {}
++void sk_abort_no_print() { std::abort(); }
++uint32_t SkChecksum::Hash32(const void *, size_t, uint32_t) { return 0; }
++void SkTiledImageUtils::GetImageKeyValues(const SkImage *, uint32_t *) {}
++sk_sp<SkImage> SkImages::TextureFromImage(skgpu::graphite::Recorder *,
++                                          const SkImage *,
++                                          SkImage::RequiredProperties) {
++  return nullptr;
++}
++
++int main() {
++  // The recorder that receives the provider must be its only owner: a
++  // second reference keeps the provider, and the images it caches, alive
++  // after the recorder is gone.
++  auto provider = RNSkia::ImageProvider::Make();
++  if (!provider->unique()) {
++    std::fprintf(stderr, "FAIL: ImageProvider::Make() returns a provider with "
++                         "more than one reference\n");
++    return 1;
++  }
++  std::printf("ImageProviderTest: passed\n");
++  return 0;
++}
+```
+
+**File**: `packages/skia/cpp-tests/run.sh` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++#!/bin/sh
++# Builds and runs the host-side C++ tests against the Skia headers that
++# `yarn copy-skia-headers` puts in cpp/skia (SKIA_INCLUDE overrides it).
++set -e
++cd "$(dirname "$0")/.."
++SKIA_INCLUDE="${SKIA_INCLUDE:-cpp/skia}"
++CXX="${CXX:-clang++}"
++OUT="$(mktemp -d)"
++trap 'rm -rf "$OUT"' EXIT
++for test in cpp-tests/*.cpp; do
++  name="$(basename "$test" .cpp)"
++  "$CXX" -std=c++20 -I "$SKIA_INCLUDE" -I cpp "$test" -o "$OUT/$name"
++  "$OUT/$name"
++done
+```
+
+**File**: `packages/skia/cpp/rnskia/RNDawnContext.h` (modified, +18/-12)
+```diff
+@@ -243,8 +243,13 @@ class DawnContext {
+       return image;
+     }
+     // A recorder of its own: snapping the recorder of this thread would also
+-    // submit what the offscreen surfaces of this thread recorded so far.
+-    static thread_local auto uploadRecorder = makeRecorder();
++    // submit what the offscreen surfaces of this thread recorded so far. It
++    // only uploads, so it keeps Skia's default image provider rather than an
++    // image cache it would never use.
++    static thread_local auto uploadRecorder = [this]() {
++      std::lock_guard<std::mutex> lock(_mutex);
++      return fGraphiteContext->makeRecorder();
++    }();
+     auto *recorder = uploadRecorder.get();
+     auto texture =
+         SkImages::TextureFromImage(recorder, image.get(), {mipmapped});
+@@ -262,9 +267,7 @@ class DawnContext {
+   // calling thread. Creating a recorder is a Context operation, hence the lock.
+   std::unique_ptr<skgpu::graphite::Recorder> makeRecorder() {
+     std::lock_guard<std::mutex> lock(_mutex);
+-    skgpu::graphite::RecorderOptions options;
+-    options.fImageProvider = ImageProvider::Make();
+-    return fGraphiteContext->makeRecorder(options);
++    return makeRecorderWithImageProvider();
+   }
+ 
+   // Replays the recordings, in order, onto the target surface (a deferred
+@@ -486,20 +489,23 @@ class DawnContext {
+   }
+ 
+   skgpu::graphite::Recorder *getRecorder() {
+-    static thread_local skgpu::graphite::RecorderOptions recorderOptions;
+-    if (!recorderOptions.fImageProvider) {
+-      auto imageProvider = ImageProvider::Make();
+-      recorderOptions.fImageProvider = imageProvider;
+-    }
+-    static thread_local auto recorder =
+-        fGraphiteContext->makeRecorder(recorderOptions);
++    static thread_local auto recorder = makeRecorderWithImageProvider();
+     if (!recorder) {
+       throw std::runtime_error("Failed to create graphite context");
+     }
+     return recorder.get();
+   }
+ 
+ private:
++  // A recorder with an image provider of its own. The options go away here,
++  // so the recorder is the provider's only owner: the provider, and the
++  // images it caches, are released with the recorder.
++  std::unique_ptr<skgpu::graphite::Recorder> makeRecorderWithImageProvider() {
++    skgpu::graphite::RecorderOptions options;
++    options.fImageProvider = ImageProvider::Make();
++    return fGraphiteContext->makeRecorder(options);
++  }
++
+   struct Probe {
+     DawnContext *instance = nullptr;
+     GpuInfo info;
+```
+
+**File**: `packages/skia/cpp/rnskia/RNImageProvider.h` (modified, +4/-1)
+```diff
+@@ -21,7 +21,10 @@ class ImageProvider : public skgpu::graphite::ImageProvider {
+   ImageProvider() : fCache(kDefaultNumCachedImages) {}
+   ~ImageProvider() override {}
+ 
+-  static sk_sp<ImageProvider> Make() { return sk_ref_sp(new ImageProvider); }
++  // sk_make_sp adopts the reference `new` starts with. sk_ref_sp(new ...)
++  // would add a second one that nothing releases, so the provider and the
++  // images it caches would outlive their recorder.
++  static sk_sp<ImageProvider> Make() { return sk_make_sp<ImageProvider>(); }
+ 
+   sk_sp<SkImage>
+   findOrCreate(skgpu::graphite::Recorder *recorder, const SkImage *image,
+```
+
+**File**: `packages/skia/package.json` (modified, +1/-0)
+```diff
+@@ -43,6 +43,7 @@
+     "tsc": "tsc --noEmit",
+     "test": "jest",
+     "e2e": "E2E=true yarn test -i e2e",
++    "test-cpp": "sh ./cpp-tests/run.sh",
+     "release": "semantic-release",
+     "build": "bob build && merge-dirs lib/typescript/src lib/commonjs && merge-dirs lib/typescript/src lib/module",
+     "clean-skia": "yarn rimraf ./libs && yarn rimraf ../../externals/skia/out",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4293** (2026-10-20): fix(🤖): keep the Dawn device on the emulator when a view snapshot imports an AHardwareBuffer (@wcandillon)
-- **PR #4287** (2026-10-20): fix(🎨): 2.x: saveLayer's bounds dangled for a plain-object rect, so layers drew empty on devices (backport of #4063) (@cankoe)
-- **PR #4285** (2026-10-20): fix(🤖): reduce peak compiler memory of the Android build (@alanjhughes)
-- **PR #4284** (2026-10-20): fix(🤖): reduce peak compiler memory of the Android build 2.x (@alanjhughes)
-- **PR #4281** (2026-10-20): chore(deps): bump anthropics/claude-code-action from 1.0.249 to 1.0.252 (@dependabot[bot])
-- **PR #4280** (2026-10-20): chore(deps): bump actions/setup-java from 6.0.1 to 6.1.0 (@dependabot[bot])
+- **PR #4327** (2026-10-24): feat(🌠): Remove SkiaPictureView (@wcandillon)
+- **PR #4326** (2026-10-24): chore(🧪): upgrade Playwright to 1.64.1 for Ubuntu 26.04 runners (2.x) (@wcandillon)
+- **PR #4325** (2026-10-24): chore(🧪): upgrade Playwright to 1.64.1 for Ubuntu 26.04 runners (@wcandillon)
+- **PR #4323** (2026-10-24): fix(💄): rename factory methods to remove redundant prefixes (@wcandillon)
+- **PR #4322** (2026-10-24): fix(⚛️): fix handling of native view ids (2.x backport of #4314) (@Jonathansoufer)
+- **PR #4320** (2026-10-22): chore(🧪): add a Canvas Resize example (@wcandillon)
 
 ---
 
@@ -1846,51 +2584,28 @@ misreport the size (ignore_imported_ahardwareb
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🤖): keep the Dawn device on the emulator when a view snapshot imports an AHardw
+## X. 🤖): present Android canvases off the main thread (#4318)
 
 **RULE**:
-When implementing operations in `packages/skia/cpp/rnskia/RNDawnUtils.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/docs/docs/canvas/graphite.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f92429aa`: 🤖): keep the Dawn device on the emulator when a view snapshot imports an AHardwareBuffer (#4293). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cce3cf0f`: 🤖): present Android canvases off the main thread (#4318). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/cpp/rnskia/RNDawnUtils.h`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/docs/canvas/graphite.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// Dawn's own SwiftShader test (gpu_info::IsGoogleSwiftshader): Google's
-// vendor ID with SwiftShader's device ID. The Android emulator exposes the
-// host's SwiftShader through gfxstream, which keeps the IDs and the name, so
-// either identifies it.
-inline bool isSwiftShader(const wgpu::Adapter &adapter) {
-  wgpu::AdapterInfo info;
-  adapter.GetInfo(&info);
-  constexpr uint32_t kVendorIDGoogle = 0x1AE0;
-  constexpr uint32_t kDeviceIDSwiftShader = 0xC0DE;
-  return (info.vendorID == kVendorIDGoogle &&
-          info.deviceID == kDeviceIDSwiftShader) ||
-         toString(info.device).find("SwiftShader") != std::string::npos;
-}
-
-  std::vector<const char *> toggles(std::begin(kToggles), std::end(kToggles));
-#ifdef __ANDROID__
-  // Dawn checks an imported AHardwareBuffer's allocation size against the
-  // VkImage it binds to, and the Android emulator's SwiftShader driver reports
-  // that size as 0 for every buffer. The first import (react-native-webgpu's
-  // view snapshots draw into an imported AHardwareBuffer on Android 13+) then
-  // fails as an internal error, which Dawn turns into a device loss: nothing
-  // renders for the rest of the process. Dawn itself skips the check on the
-
+Recording happens on the thread that calls `beginRecording()`. Presenting happens on the display link on iOS (`CADisplayLink`, on the main thread), and on a present thread of its own on Android, so that the main thread pays nothing for a frame: on the vsync of that thread's `Choreographer` for a `SurfaceView`, once its window has drawn the previous frame for a `TextureView`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  togglesDesc.enabledToggleCount = std::size(kToggles);
-  togglesDesc.enabledToggles = kToggles;
+Recording happens on the thread that calls `beginRecording()`, presenting on the main thread: on the display link (`CADisplayLink` on iOS, the `Choreographer` for an Android `SurfaceView`), or, for an Android `TextureView`, once its window has drawn the previous frame.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f92429aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cce3cf0f` are properly handled with clean fallback behavior.

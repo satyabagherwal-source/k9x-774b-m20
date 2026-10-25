@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `c55c2450`  
+> **Source Version**: `ab599433`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:17:23.149Z  
+> **Timestamp**: 2026-10-25T03:38:38.454Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:17:22.827Z  
+> **Harvest Timestamp**: 2026-10-25T03:38:37.859Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,14 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5965** (2026-10-23): **feat(transport): add QUIC socket plumbing behind DemuxSocket**
-  *Symptoms*: ## Problem  The QUIC endpoint (#5940, step c of the rollout plan) will share the node's UDP socket with the current transport. The demux from #5961 currently counts and drops QUIC-shaped datagrams, and three pieces are missing before a quinn endpoint can sit on it:  - A way to hand QUIC datagrams to quinn without a second reader of the UDP socket. - A non-blocking send, plus egress-cap admission that quinn can poll. quinn's `UdpPoller` and `try_send` need these, and today's `send_to_blocking` thread-sleeps on `WouldBlock`. - A correct health signal. Since #5961 the listener's `RecvErrorTracker` counts only current-transport datagrams as successful reads, so a node receiving mostly QUIC traffic could build an unclassified-error run with nothing resetting it, and the listener exit force-exits the node.  ## Approach  No quinn dependency. Nothing in production turns the QUIC ingress on, so behaviour is unchanged except for the health signal.  - **QUIC ingress on `DemuxSocket`.** An optional bounded queue (1024 datagrams, about 1.5 MiB, registered in `declared_cache_ceiling`) receives QUIC-class datagrams. It is fed with `try_reserve` only, so the listener never waits. A datagram is forwarded only if its source address is in an allow-set. Without that, a quinn endpoint would answer an unknown sender, which tells a prober the port speaks QUIC. Drops are counted by reason in `transport_snapshot`. The listener stays the only reader of the UDP socket. - **Classified receive and health
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/39887511962) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
-  > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/39886258223)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/39886258223)
+- **Issue #5984** (2026-10-25): **feat(telemetry): count connection identity transitions**
+  *Symptoms*: ## Problem  An upcoming change will fix a connection's peer identity when the connection is established, so it cannot change later. Before any behaviour changes, we need field data on how often a connection's identity is set, repeated or changed after establishment today, and on which code path, so the change can be checked against real traffic.  ## Approach  This is telemetry only; behaviour is unchanged. It adds `conn_identity_<label>` period counters to the transport snapshot. Each one is recorded where the decision is made in `p2p_protoc/connection_lifecycle.rs`, never derived from map sizes.  - **Establishment:** `set_dialed` and `set_expected_inbound`. - **ConnectRequest:**   - `set_connect_request`, `same_connect_request` and `changed_connect_request`, plus `connect_request_known_addr`.   - When a request replaces the expected-inbound placeholder, it is counted as `set_from_placeholder_expected`, `set_from_placeholder_other` or `set_from_placeholder_unchecked`. The split depends on whether the request names the key an earlier ConnectPeer named. - **ConnectPeer for an existing connection:**   - `set_connect_peer`, `same_connect_peer` and `changed_connect_peer`.   - `connect_peer_on_placeholder`.   - `changed_ring_promotion`, counted only when the ring actually takes the connection. - **Key map (one helper for every `addr_by_pub_key` insert):**   - `own_key`: this node's own key was recorded.   - `duplicate_key`: the key was already recorded for another open connection t
 
-- **Issue #5964** (2026-10-22): **feat(transport): make total-bandwidth-limit a node-wide egress cap**
-  *Symptoms*: ## Problem  `total-bandwidth-limit` is not a cap on what a node sends: - it only divides a per-connection pacing rate, and `min-bandwidth-per-connection` raises every connection's rate whatever the total, so 50 connections at the 1 MB/s minimum exceed any total below 50 MB/s; - handshakes, ACKs, keepalives, Pongs, short messages and retransmissions are never metered at all.  Decision 3 of the QUIC rollout (#5940) makes this setting a node-wide cap on everything the node sends on its socket. The cap covers both transports, so it lives in the socket wrapper added in #5961.  ## Approach  When `total-bandwidth-limit` is set, `DemuxSocket` owns one `EgressCap` (`transport/egress_cap.rs`) and charges every datagram it sends. `EgressCap` is a token bucket held in one atomic: rate `R` is the total, and burst `B` is the larger of 25 ms at `R` and 4 datagrams. Without the setting, nothing is built and each send costs one `Option` check. Uncapped nodes keep their existing pacing path unchanged.  - **Stream fragments are the only sends that wait.** Admission for each fragment goes cwnd check, then the per-connection bucket, then the node-wide bucket. The two bucket takes happen back to back with no await before the send. If either bucket is short, nothing is kept: the per-connection bytes are given back, and the task sleeps the deficit with random jitter (`deficit × U[1.0, 1.4) + U[0, 2 ms)`, via `GlobalRng`) and starts again from the cwnd check. Nothing is reserved while waiting, so a w
+- **Issue #5979** (2026-10-24): **build: release 0.2.149**
+  *Symptoms*: **Automated release PR**  - freenet: → **0.2.149** - fdev: → **0.3.311**  This PR will auto-merge once GitHub CI passes. Generated by: `.github/workflows/release.yml` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,769 +1759,952 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c55c2450` (2026-10-23)
-**Commit Message**: feat(transport): add QUIC socket plumbing behind DemuxSocket (#5965)
+### Incident Patch 1: `482227ba` (2026-10-24)
+**Commit Message**: build: release 0.2.149 (#5979)
 
-**File**: `.claude/rules/transport.md` (modified, +35/-6)
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -127,8 +127,15 @@ while it waits, and is charged only at its send. Gaps that reach LONG_WAIT
- upstream stream for relayed streams, and the rest): egress_long_waits_<cause>, egress_streams_abandoned_<cause>.
- Each has its own rate-limited WARN with one line per cause seen since the last, each with its count and remedy; the
- per-stream abandonment line is at debug. The
--cap counts UDP payload, not IP/UDP headers. A quinn endpoint will need a poll-based admission (poll_ready
--+ try_admit over try_take's predicate); not built yet.
-+cap counts UDP payload, not IP/UDP headers.
-+EgressCap::poll_admit is the poll form for a sender that is polled (a quinn
-+UdpPoller, #5940): Ready exactly when try_take would succeed at that instant
-+(one shared predicate, `admits`), else Pending with a timer on the cap's
-+TimeSource at the refill time, kept in the caller's AdmissionWaiter. It takes
-+nothing; the sender is charged at its send (Socket::try_send_to charges like
-+send_to). The cap is built on RealTime even in simulation, because the
-+listener and its connections run on RealTime there: a VirtualTime cap would
-+compute deficits on another clock than its waiters sleep and time out on.
- Tests assert on per-cap EgressCap::stats(), never the global counters.
- ```
+@@ -1899,7 +1899,7 @@ dependencies = [
  
-@@ -279,7 +286,9 @@ TTL, and early evictions are counted in `stray_intro_failures_evicted`) and CONN
- joiner dial-queue waits (`dial_queue_wait_<label>`, coarse buckets around the
- 3 s punch window) and inbound datagrams by first byte (`demux_<label>`, one per
- `DemuxClass`: `legacy` passes through, `quic` and `other` are counted and
--dropped; see "Socket Abstraction Rules") and outbound datagrams by how the
-+dropped or, for `quic`, queued for the QUIC ingress; each `quic` one is also
-+counted once by what happened to it, `quic_ingress_<label>`, one per
-+`QuicIngressOutcome`; see "Socket Abstraction Rules") and outbound datagrams by how the
- node-wide egress cap paced them (`egress_<label>`, one per `EgressDecision`,
- plus `egress_bytes`, `egress_bytes_waited`, `egress_wait_us_sum` / `_max`,
- `egress_long_waits_<cause>`, `egress_streams_abandoned_<cause>`, `egress_debt_hwm_bytes`,
-@@ -604,9 +613,29 @@ update this section.
- (the UDP transport's own type bytes) pass through unchanged, a byte with a
- `0xC0` bit set is QUIC-shaped, anything else (including an empty datagram) is
- other. QUIC-shaped and other datagrams are counted (`demux_<label>`) and
--dropped until a QUIC endpoint exists on the same port (#5940). The QUIC rule
--is exact only with QUIC bit greasing (RFC 9287) disabled. Tests that inject a
--hand-written socket straight into the listener bypass the wrapper.
-+dropped. The QUIC rule is exact only with QUIC bit greasing (RFC 9287)
-+disabled. Tests that inject a hand-written socket straight into the listener
-+bypass the wrapper.
-+
-+For a QUIC endpoint on the same port (#5940), `enable_quic_ingress` gives the
-+wrapper a bounded queue (`QUIC_INGRESS_QUEUE_DATAGRAMS`, a declared byte
-+budget `QUIC_INGRESS_QUEUE_BYTES` in `declared_cache_ceiling`) of QUIC-class
-+datagrams with their source. The listener stays the ONLY reader of the UDP
-+socket and fills the queue with `try_reserve`, never a waiting send, so a slow
-+endpoint costs dropped QUIC datagrams and never stalls the listener. Only
-+sources on the allow-set (`allow_quic_source`, normalized addresses) are
-+queued; the rest are dropped, so a prober gets no QUIC reply. Each QUIC-class
-+datagram is counted as `quic_ingress_forwarded`, `_not_allowed`,
-+`_queue_full` or `_no_ingress` (no ingress enabled or its receiver gone;
-+every node today, since only tests enable it).
-+
-+Socket-health signal: the listener reads through `Socket::recv_classified`,
-+which `DemuxSocket` answers with `Datagram` for a legacy datagram and
-+`Diverted` for one it consumed. The listener calls
-+`RecvErrorTracker::on_success` for both, so any datagram the socket delivered
-+resets the unclassified-error run that would end the listener. Do not move the
-+QUIC read onto a second reader of the socket; the ingress queue exists so
-+there is one.
+ [[package]]
+ name = "fdev"
+-version = "0.3.310"
++version = "0.3.311"
+ dependencies = [
+  "anyhow",
+  "axum",
+@@ -2078,7 +2078,7 @@ dependencies = [
  
- The same wrapper charges outbound datagrams to the node-wide egress cap (see
- "Node-wide egress cap" above). A new send site needs nothing to be charged;
+ [[package]]
+ name = "freenet"
+-version = "0.2.148"
++version = "0.2.149"
+ dependencies = [
+  "aes-gcm",
+  "ahash",
 ```
 
-**File**: `crates/core/src/contract/executor.rs` (modified, +9/-0)
+**File**: `apps/freenet-ping/Cargo.lock` (modified, +10/-5)
 ```diff
-@@ -1663,6 +1663,9 @@ pub(crate) fn declared_cache_ceiling_terms(
-     // `declared_caches_plus_hosting_budget_leave_room_for_the_runtime` in
-     // `ring::hosting::cache`) never see.
-     let parked = crate::contract::delegate_park::parked_budget_for(memory_limit);
-+    // The transport's QUIC ingress queue (#5940): one per node, flat, since it
-+    // holds at most a fixed number of datagrams of at most one MTU each.
-+    let quic_ingress = crate::transport::demux::QUIC_INGRESS_QUEUE_BYTES;
+@@ -1715,7 +1715,7 @@ dependencies = [
  
-     vec![
-         // The pool multiplication IS #5268's defect 3.
-@@ -1695,6 +1698,7 @@ pub(crate) fn declared_cache_ceiling_terms(
-         // staleness.
-         ("page_cache_size_for", page_cache),
-         ("parked_budget_for", parked),
-+        ("QUIC_INGRESS_QUEUE_BYTES", quic_ingress),
-     ]
- }
+ [[package]]
+ name = "freenet"
+-version = "0.2.148"
++version = "0.2.149"
+ dependencies = [
+  "aes-gcm",
+  "ahash",
+@@ -1735,6 +1735,7 @@ dependencies = [
+  "clap",
+  "cookie",
+  "ctrlc",
++ "curve25519-dalek 4.1.3",
+  "dashmap",
+  "delegate",
+  "directories",
+@@ -1767,11 +1768,14 @@ dependencies = [
+  "parking_lot",
+  "pav_regression",
+  "pin-project",
++ "quinn",
++ "quinn-proto",
+  "rand 0.10.1",
+  "rand 0.9.3",
+  "rand_core 0.10.1",
+  "redb",
+  "reqwest",
++ "ring",
+  "rpassword",
+  "rustls",
+  "rustls-native-certs",
+@@ -1781,6 +1785,7 @@ dependencies = [
+  "serde_with",
+  "sha2 0.11.0",
+  "socket2",
++ "subtle",
+  "tao",
+  "tar",
+  "tempfile",
+@@ -4438,9 +4443,9 @@ dependencies = [
  
-@@ -2153,6 +2157,7 @@ mod tests {
-             "interest_delta_budget_for",
-             "page_cache_size_for",
-             "parked_budget_for",
-+            "QUIC_INGRESS_QUEUE_BYTES",
-         ] {
-             assert!(
-                 labels.contains(&required),
-@@ -2266,6 +2271,10 @@ mod tests {
-                 "parked_budget_for",
-                 crate::contract::delegate_park::parked_budget_for(ONE_GIB),
-             ),
-+            (
-+                "QUIC_INGRESS_QUEUE_BYTES",
-+                crate::transport::demux::QUIC_INGRESS_QUEUE_BYTES,
-+            ),
-         ] {
-             assert_eq!(
-                 value(&terms, label),
+ [[package]]
+ name = "quinn"
+-version = "0.11.9"
++version = "0.11.12"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b9e20a958963c291dc322d98411f541009df2ced7b5a4f2bd52337638cfccf20"
++checksum = "4051e23e9185c255a7e33ef59cdbca87a22d359052eecd22fc6b901fb37d9d11"
+ dependencies = [
+  "bytes",
+  "cfg_aliases",
+@@ -4458,9 +4463,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "quinn-proto"
+-version = "0.11.16"
++version = "0.11.19"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2f4bfc015262b9df63c8845072ce59068853ff5872180c2ce2f13038b970e560"
++checksum = "0e750cca55fe4f0439a15d0bb529da9651e79993e8e72c61a899a36d462befbe"
+ dependencies = [
+  "bytes",
+  "getrandom 0.4.2",
 ```
 
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +24/-0)
+**File**: `crates/core/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -2882,6 +2882,22 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                 "demux_other".into(),
-                 serde_json::json!(snapshot.demux_other),
+@@ -1,6 +1,6 @@
+ [package]
+ name = "freenet"
+-version = "0.2.148"
++version = "0.2.149"
+ edition = "2024"
+ rust-version = "1.85"
+ publish = true
+```
+
+**File**: `crates/fdev/Cargo.toml` (modified, +4/-4)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "fdev"
+-version = "0.3.310"
++version = "0.3.311"
+ edition = "2024"
+ rust-version = "1.85"
+ publish = true
+@@ -14,12 +14,12 @@ readme = "README.md"
+ # (v0.2.x), so we embed the matching freenet version literally — `v{ version }`
+ # would expand to the fdev crate version and 404. release.yml rewrites the
+ # `vX.Y.Z` segment whenever the freenet version is bumped (issue #3995).
+-pkg-url = "{ repo }/releases/download/v0.2.148/fdev-{ target }.tar.gz"
++pkg-url = "{ repo }/releases/download/v0.2.149/fdev-{ target }.tar.gz"
+ pkg-fmt = "tgz"
+ bin-dir = "fdev"
+ 
+ [package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+-pkg-url = "{ repo }/releases/download/v0.2.148/fdev-{ target }.zip"
++pkg-url = "{ repo }/releases/download/v0.2.149/fdev-{ target }.zip"
+ pkg-fmt = "zip"
+ bin-dir = "fdev.exe"
+ 
+@@ -56,7 +56,7 @@ ed25519-dalek = { version = "2", features = ["rand_core", "serde"] }
+ hex = { workspace = true }
+ 
+ # internal
+-freenet = { path = "../core", version = "0.2.148", features = ["testing"] }
++freenet = { path = "../core", version = "0.2.149", features = ["testing"] }
+ freenet-stdlib = { workspace = true }
+ 
+ [dev-dependencies]
+```
+
+---
+
+### Incident Patch 2: `90561980` (2026-10-24)
+**Commit Message**: fix(transport): complete a hole-punch handshake only on a packet under the attempt's session key (#5977)
+
+**File**: `.claude/rules/transport.md` (modified, +23/-2)
+```diff
+@@ -359,8 +359,10 @@ plus `egress_bytes`, `egress_bytes_waited`, `egress_wait_us_sum` / `_max`,
+ `egress_long_waits_<cause>`, `egress_streams_abandoned_<cause>`,
+ `egress_streams_refused_<cause>`, `egress_debt_hwm_bytes`,
+ `egress_debt_forgiven_bytes`; all zero without
+-`total-bandwidth-limit`) and QUIC upgrade control messages received and
+-ignored (`upgrade_control_received`). Each label set is declared once in a
++`total-bandwidth-limit`), QUIC upgrade control messages received and
++ignored (`upgrade_control_received`) and hole-punch handshake packets dropped,
++one count per packet, because they were not encrypted under the attempt's
++inbound session key (`handshake_unauthenticated_dropped`). Each label set is declared once in a
+ `labelled_counters!` list, so a new variant needs a snapshot field. Hot
+ path writes are single relaxed atomics; `SentPacketTracker` keeps an
+ `rto_expiries` count and a bounded per-stream final-ACK watch, both
+@@ -494,6 +496,25 @@ Handshake send failures (#5871):
+     logs, so the peer is still recorded as outdated.
+   → Never map a send error to `ChannelClosed`.
+ 
++Hole-punch completion (traverse_nat's RemoteInbound arm, the side that
++answered the remote's intro):
++  → Completes only on a packet encrypted under this attempt's inbound
++    session key. The success ack is unchanged here; a follow-up changes it.
++  → Any other packet is dropped and counted once per packet
++    (`handshake_unauthenticated_dropped`). The attempt goes back to
++    receiving without sending, within the current receive window, so
++    dropped packets cause no extra acks and do not delay the paced ones.
++    It stays pending until a packet under the key arrives or the
++    deadline passes.
++  → Every release encrypts the packets that complete this arm under that
++    key, so the check needs no version gate and no wire change. Tests run
++    a peer with the earlier rule (complete on any non-intro packet)
++    through LEGACY_HANDSHAKE_COMPLETION to check interop both ways, and
++    REMOTE_INBOUND_COMPLETIONS records which peer completed in this arm.
++  → Its logs, like every traverse_nat log, carry direction = "outbound"
++    even though this side is answering; the drop log adds
++    arm = "remote_inbound".
++
+ Restart detection (all peers, not just gateways):
+   → If an intro packet arrives on an established connection, attempt
+     asymmetric decryption (rate-limited to 1/sec per IP).
+```
+
+**File**: `crates/core/src/tracing/telemetry.rs` (modified, +17/-0)
+```diff
+@@ -2781,6 +2781,10 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
+                 "upgrade_control_received".into(),
+                 serde_json::json!(snapshot.upgrade_control_received),
              );
 +            m.insert(
-+                "quic_ingress_forwarded".into(),
-+                serde_json::json!(snapshot.quic_ingress_forwarded),
-+            );
-+            m.insert(
-+                "quic_ingress_not_allowed".into(),
-+                serde_json::json!(snapshot.quic_ingress_not_allowed),
-+            );
-+            m.insert(
-+                "quic_ingress_queue_full".into(),
-+                serde_json::json!(snapshot.quic_ingress_queue_full),
-+            );
-+            m.insert(
-+                "quic_ingress_no_ingress".into(),
-+                serde_json::json!(snapshot.quic_ingress_no_ingress),
++                "handshake_unauthenticated_dropped".into(),
++                serde_json::json!(snapshot.handshake_unauthenticated_dropped),
 +            );
              m.insert(
-                 "egress_immediate".into(),
-                 serde_json::json!(snapshot.egress_immediate),
-@@ -6608,6 +6624,10 @@ mod tests {
-             demux_legacy: 19,
-             demux_quic: 20,
-             demux_other: 21,
-+            quic_ingress_forwarded: 46,
-+            quic_ingress_not_allowed: 47,
-+            quic_ingress_queue_full: 48,
-+            quic_ingress_no_ingress: 49,
-             egress_immediate: 22,
-             egress_waited: 23,
-             egress_unpaced: 25,
-@@ -6649,6 +6669,10 @@ mod tests {
-             ("demux_legacy", 19),
-             ("demux_quic", 20),
-             ("demux_other", 21),
-+            ("quic_ingress_forwarded", 46),
-+            ("quic_ingress_not_allowed", 47),
-+            ("quic_ingress_queue_full", 48),
-+            ("quic_ingress_no_ingress", 49),
-             ("egress_immediate", 22),
-             ("egress_waited", 23),
-             ("egress_unpaced", 25),
-```
-
-**File**: `crates/core/src/transport.rs` (modified, +124/-6)
-```diff
-@@ -8,6 +8,7 @@
- 
- use std::sync::Mutex;
- use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
-+use std::task::{Context, Poll};
- use std::{borrow::Cow, io, net::SocketAddr};
- 
- use futures::Future;
-@@ -596,6 +597,60 @@ pub trait Socket: Sized + Send + Sync + 'static {
-         drop(take);
-         self.send_to(buf, target)
-     }
-+
-+    /// Send a datagram without waiting: when the socket cannot take it now,
-+    /// return `WouldBlock` instead of sleeping or awaiting. For a sender that
-+    /// must never block, such as a QUIC endpoint's driver (#5940). Charged
-+    /// like [`Self::send_to`] once sent; a datagram that was not sent is not
-+    /// charged.
-+    ///
-+    /// The default returns `Unsupported`; the UDP sockets, the in-memory
-+    /// sockets and [`DemuxSocket`] implement it.
-+    #[doc(hidden)]
-+    fn try_send_to(&self, _buf: &[u8], _target: SocketAddr) -> io::Result<usize> {
-+        Err(io::Error::from(io::ErrorKind::Unsupported))
-+    }
-+
-+    /// Poll whether the socket can take a send now. `Ready` means a
-+    /// [`Self::try_send_to`] may succeed (it can still return `WouldBlock`);
-+    /// `Pending` arms `cx`'s waker for when the socket becomes writable.
-+    ///
-+    /// The default is always ready, which is right for sockets that never
-+    /// return `WouldBlock`.
-+    #[doc(hidden)]
-+    fn poll_send_ready(&self, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-+        Poll::Ready(Ok(()))
-+    }
-+
-+    /// Read one datagram, saying whether it is for the caller
-+    /// ([`SocketRead::Datagram`]) or was consumed by the socket
-+    /// ([`SocketRead::Diverted`]: [`DemuxSocket`] counted it and dropped it
-+    /// or passed it to its QUIC ingress). The listener reads through this so
-+    /// it sees every datagram the socket received, of any class, for its
-+    /// socket-health signal.
-+    ///
-+    /// Cancellation-safe when [`Self::recv_from`] is: the default is one
-+    /// `recv_from`.
-+    #[doc(hidden)]
-+    fn recv_classified(
-+        &self,
-+        buf: &mut [u8],
-+    ) -> impl Future<Output = io::Result<SocketRead>> + Send {
-+        async move {
-+            let (len, from) = self.recv_from(buf).await?;
-+            Ok(SocketRead::Datagram(len, from))
-+        }
-+    }
-+}
-+
-+/// What one [`Socket::recv_classified`] read produced.
-+#[doc(hidden)]
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub enum SocketRead {
-+    /// A datagram for the caller: its length in the buffer and its source.
-+    Datagram(usize, SocketAddr),
-+    /// The socket received a datagram and consumed it itself.
-+    Diverted,
- }
- 
- /// Normalize an IPv4-mapped IPv6 address (`::ffff:x.x.x.x`) to plain IPv4.
-@@ -751,6 +806,28 @@ impl Socket for UdpSocket {
-         let local_is_ipv6 = self.local_addr().map(|a| a.is_ipv6()).unwrap_or(false);
-         send_to_blocking_mapped(self, buf, target, local_is_ipv6)
-     }
-+
-+    fn try_send_to(&self, buf: &[u8], target: SocketAddr) -> io::Result<usize> {
-+        let local_is_ipv6 = self.local_addr().map(|a| a.is_ipv6()).unwrap_or(false);
-+        try_send_to_mapped(self, buf, target, local_is_ipv6)
-+    }
-+
-+    fn poll_send_ready(&self, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-+        UdpSocket::poll_send_ready(self, cx)
-+    }
-+}
-+
-+/// One non-blocking send, metered like `send_to` when it succeeds. Returns
-+/// `WouldBlock` when the kernel send buffer is full.
-+fn try_send_to_mapped(
-+    sock: &UdpSocket,
-+    buf: &[u8],
-+    target: SocketAddr,
-+    local_is_ipv6: bool,
-+) -> io::Result<usize> {
-+    let sent = sock.try_send_to(buf, map_addr_for_send(local_is_ipv6, target))?;
-+    metrics::TRANSPORT_METRICS.record_packet_sent(target, sent as u64);
-+    Ok(sent)
- }
- 
- /// Blocking send shared by the `Socket` impls.
-@@ -765,16 +842,12 @@ fn send_to_blocking_mapped(
-     target: SocketAddr,
-     local_is_ipv6: bool,
- ) -> io::Result<usize> {
--    let mapped_target = map_addr_for_send(local_is_ipv6, target);
-     let mut backoff_us = 1u64; // Start at 1μs
-     const MAX_BACKOFF_US: u64 = 1000; // Cap at 1ms
- 
-     loop {
--        match sock.try_send_to(buf, mapped_target) {
--            Ok(n) => {
--                metrics::TRANSPORT_METRICS.record_packet_sent(target, n as u64);
--                return Ok(n);
--            }
-+        match try_send_to_mapped(sock, buf, target, local_is_ipv6) {
-+            Ok(n) => return Ok(n),
-             Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
-                 // Kernel buffer full - exponential backoff
-                 std::thread::sleep(std::time::Duration::from_micros(backoff_us));
-@@ -853,6 +926,14 @@ impl Socket for UdpTransportSocket {
-         // Same as the `UdpSocket` impl, minus the per-call getsockname.
-         send_to_blocking_mapped(&self.sock, buf, target, self.is_ipv6)
-     }
-+
-+    fn try_send_to(&self, buf: &[u8], target: SocketAddr) -> io::Result<usize> {
-+        try_send_to_mapped(&self.sock, buf, target, self.is_ipv6)
-+    }
-+
-+    fn poll_send_ready(&self, c
-```
-
-**File**: `crates/core/src/transport/connection_handler.rs` (modified, +63/-4)
-```diff
-@@ -30,7 +30,7 @@ use tracing::{Instrument, span};
- use version_cmp::PROTOC_VERSION;
- 
- use super::{
--    Socket, TransportError, UdpError, UdpErrorKind,
-+    Socket, SocketRead, TransportError, UdpError, UdpErrorKind,
-     congestion_control::{CongestionControl, CongestionControlConfig},
-     crypto::{TransportKeypair, TransportPublicKey},
-     demux::DemuxSocket,
-@@ -229,6 +229,11 @@ async fn bind_udp_listener<S: Socket>(
-     // set (which is when `global_bandwidth` is), so a node without it pays
-     // nothing. The cap uses the same clock kind as the listener built below
-     // (`RealTime`); waiters sleep on their own connection's time source.
-+    // That holds in simulation too: the listener and its connections run on
-+    // `RealTime` there, so a cap on the network's `VirtualTime` would compute
-+    // deficits on one clock for stream senders that sleep and time out on
-+    // another. A sender on `VirtualTime` (the QUIC endpoint, #5940) must use
-+    // the cap only once the cap and its other waiters share that clock.
-     let egress_cap = config.global_bandwidth.as_ref().and_then(|manager| {
-         super::egress_cap::EgressCap::from_total_limit(manager.total_limit(), RealTime::new())
-     });
-@@ -1529,9 +1534,17 @@ impl<S: Socket, T: TimeSource> UdpPacketsListener<S, T> {
-         'outer: loop {
-             // DST: Use deterministic_select! for fair but deterministic branch ordering
-             crate::deterministic_select! {
--                recv_result = self.socket_listener.recv_from(&mut buf) => {
-+                recv_result = self.socket_listener.recv_classified(&mut buf) => {
-                     match recv_result {
--                        Ok((size, remote_addr)) => {
-+                        // The socket received a datagram that is not for this
-+                        // listener (`DemuxSocket` counted it and dropped it or
-+                        // queued it for the QUIC ingress). It is still a
-+                        // successful read, so it is evidence the socket works.
-+                        Ok(SocketRead::Diverted) => {
-+                            recv_errors.on_success();
-+                            continue;
-+                        }
-+                        Ok(SocketRead::Datagram(size, remote_addr)) => {
-                             recv_errors.on_success();
-                             if let Some(time_nanos) = outdated_peer.get(&remote_addr) {
-                                 let now_nanos = self.time_source.now_nanos();
-@@ -6323,6 +6336,16 @@ pub mod mock_transport {
-         bool,
-         OutboundConnectionHandler<ScriptedRecvSocket, VirtualTime>,
-     ) {
-+        run_scripted_listener_on(script, |socket| socket).await
-+    }
-+
-+    /// [`run_scripted_listener`] over the scripted socket as wrapped by
-+    /// `wrap`, e.g. in the `DemuxSocket` the transport binds.
-+    #[cfg(test)]
-+    async fn run_scripted_listener_on<S: Socket>(
-+        script: Vec<RecvStep>,
-+        wrap: impl FnOnce(ScriptedRecvSocket) -> S,
-+    ) -> (bool, OutboundConnectionHandler<S, VirtualTime>) {
-         let time = VirtualTime::new();
-         let progress = Arc::new(ScriptProgress::default());
-         let socket = ScriptedRecvSocket {
-@@ -6333,7 +6356,7 @@ pub mod mock_transport {
-         let addr: SocketAddr = (Ipv4Addr::LOCALHOST, 47_300).into();
-         let (handler, _new_connections) =
-             OutboundConnectionHandler::<_, VirtualTime>::config_listener_with_virtual_time(
--                Arc::new(socket),
-+                Arc::new(wrap(socket)),
-                 TransportKeypair::new(),
-                 false,
-                 addr,
-@@ -6396,6 +6419,42 @@ pub mod mock_transport {
-         );
-     }
- 
-+    /// The socket-health signal counts every datagram the socket delivered,
-+    /// not only those the listener handles: through the `DemuxSocket` the
-+    /// transport binds, a QUIC-class datagram (dropped, since no QUIC
-+    /// ingress is enabled) between two unclassified error runs resets the
-+    /// run as a legacy datagram does. Without the reset the run holds 1000
-+    /// errors over 100 s and the listener exits.
-+    #[tokio::test]
-+    async fn listener_quic_datagram_through_demux_resets_recv_error_run() {
-+        let from: SocketAddr = (Ipv4Addr::LOCALHOST, 47_303).into();
-+        let script = unclassified_errors(700)
-+            .chain([RecvStep::Packet(from, vec![0xC3, 0, 0, 0])])
-+            .chain(unclassified_errors(400))
-+            .collect();
-+        let (survived, _) =
-+            run_scripted_listener_on(script, |socket| DemuxSocket::wrap(socket, None)).await;
-+        assert!(
-+            survived,
-+            "the QUIC-class datagram between the two error runs must reset the run"
-+        );
-+    }
-+
-+    /// Control for the test above: through the same `DemuxSocket`, 1100
-+    /// unclassified errors with no datagram between them still end the
-+    /// listener.
-+    #[tokio::test]
-+    async fn listener_through_demux_exits_on_persi
-```
-
-**File**: `crates/core/src/transport/demux.rs` (modified, +431/-41)
-```diff
-@@ -6,14 +6,27 @@
- //! the fixed bit or the long-header bit set in its first byte. The two sets
- //! of first bytes do not overlap, so the first byte alone says which protocol
- //! a datagram belongs to.
-+//!
-+//! QUIC-class datagrams go to an optional QUIC ingress queue, which a QUIC
-+//! endpoint reads (#5940), and only from source addresses on the ingress
-+//! allow-set. Everything else that is not legacy is counted and dropped.
- 
- use std::io;
- use std::net::SocketAddr;
-+use std::sync::OnceLock;
-+#[cfg(test)]
-+use std::sync::atomic::AtomicU64;
-+use std::sync::atomic::{AtomicU32, Ordering};
-+use std::task::{Context, Poll};
-+
-+use dashmap::DashSet;
-+use tokio::sync::mpsc;
- 
--use super::Socket;
- use super::crypto::{PACKET_TYPE_INTRO, PACKET_TYPE_SYMMETRIC};
- use super::egress_cap::{EgressCap, EgressTake};
--use super::metrics::{DemuxClass, TRANSPORT_METRICS};
-+use super::metrics::{DemuxClass, QuicIngressOutcome, TRANSPORT_METRICS};
-+use super::packet_data::MAX_RECV_PACKET_SIZE;
-+use super::{Socket, SocketRead, normalize_mapped_addr};
- 
- /// Bits of a QUIC packet's first byte of which at least one is always set.
- ///
-@@ -32,6 +45,36 @@ const QUIC_FIRST_BYTE_MASK: u8 = 0xC0;
- /// with a deep inbox.
- const DROPS_BETWEEN_YIELDS: u32 = 64;
- 
-+/// How many datagrams the QUIC ingress queue holds before it drops.
-+pub(crate) const QUIC_INGRESS_QUEUE_DATAGRAMS: usize = 1024;
-+
-+/// The most memory the QUIC ingress queue can hold: every slot holding a
-+/// datagram of the largest size the listener receives (its read buffer is
-+/// `MAX_RECV_PACKET_SIZE`, so no read is longer), plus the slot itself.
-+/// The bound assumes that buffer: a caller reading into a larger one could
-+/// queue longer datagrams. One queue per node, and only while a QUIC ingress
-+/// is enabled. The allow-set is not counted here; its size is up to the
-+/// caller. Declared in `contract::executor::declared_cache_ceiling`, which
-+/// only tests read.
-+#[cfg_attr(not(test), allow(dead_code))]
-+pub(crate) const QUIC_INGRESS_QUEUE_BYTES: usize =
-+    QUIC_INGRESS_QUEUE_DATAGRAMS * (MAX_RECV_PACKET_SIZE + std::mem::size_of::<QuicDatagram>());
-+
-+/// A QUIC-class datagram passed to the QUIC ingress: its bytes and its source
-+/// address (IPv4-mapped IPv6 addresses already normalized to IPv4).
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub(crate) struct QuicDatagram {
-+    pub bytes: Vec<u8>,
-+    pub from: SocketAddr,
-+}
-+
-+/// The QUIC ingress of one [`DemuxSocket`]: the queue's sending half and the
-+/// source addresses allowed to reach it.
-+struct QuicIngress {
-+    queue: mpsc::Sender<QuicDatagram>,
-+    allowed: DashSet<SocketAddr>,
-+}
-+
- /// Classify a datagram by its first byte. An empty datagram is
- /// [`DemuxClass::Other`].
- pub(crate) fn classify(packet: &[u8]) -> DemuxClass {
-@@ -50,9 +93,9 @@ pub(crate) fn classify(packet: &[u8]) -> DemuxClass {
- /// to construct it.
- ///
- /// It exists so a QUIC endpoint can use the same UDP port as the UDP
--/// transport (#5940). Until that endpoint exists, QUIC-shaped datagrams are
--/// dropped here and counted as `demux_quic`; datagrams that are neither are
--/// dropped and counted as `demux_other`. Legacy datagrams are returned
-+/// transport (#5940). QUIC-shaped datagrams are counted as `demux_quic` and
-+/// dropped, or queued for the QUIC ingress when one is enabled (see below);
-+/// datagrams that are neither are dropped and counted as `demux_other`. Legacy datagrams are returned
- /// unchanged, and are counted as `demux_legacy` so the ratio is visible.
- ///
- /// It wraps the socket below the [`Socket`] trait, so every implementation of
-@@ -63,13 +106,43 @@ pub(crate) fn classify(packet: &[u8]) -> DemuxClass {
- /// cap, when `total-bandwidth-limit` is set (see `transport::egress_cap`):
- /// every datagram the transport sends goes through this socket.
- ///
-+/// # QUIC ingress
-+///
-+/// [`Self::enable_quic_ingress`] gives the socket a bounded queue of
-+/// QUIC-class datagrams for a QUIC endpoint. The listener stays the only
-+/// reader of the UDP socket and fills the queue with `try_reserve`, so a slow
-+/// or stopped endpoint costs dropped QUIC datagrams and never stalls the
-+/// listener. A datagram is queued only if its source address is on the
-+/// allow-set ([`Self::allow_quic_source`]); the rest are dropped as before,
-+/// so a prober sending QUIC Initials gets no answer that says the port
-+/// speaks QUIC. Each QUIC-class datagram is counted once by what happened to
-+/// it (`quic_ingress_<label>`, see [`QuicIngressOutcome`]). Without an
-+/// ingress every one is `no_ingress`, which is every node today.
-+///
- /// [`create_connection_handler`]: super::create_connection_handler
- pub struct DemuxSocket<S> {
-     inner: S,
-     egress: Option<EgressCap>,
-+    quic: OnceLock<QuicIngress>,
-+    /// Datagrams consumed here since the last legacy one, for the yield in
-+    /// `recv_classified`. Only the listener reads, so relaxed is enough.
-+    diverted_in_a_row: AtomicU32,
-+    #[cfg(test)]
-+    qui
-```
-
-**File**: `crates/core/src/transport/egress_cap.rs` (modified, +100/-7)
-```diff
-@@ -67,10 +67,13 @@
- //! [`TimeSource`] the cap was built with, with saturating operations.
- 
- use std::fmt;
-+use std::future::Future;
- use std::mem::ManuallyDrop;
-+use std::pin::Pin;
- #[cfg(test)]
- use std::sync::atomic::AtomicU64;
- use std::sync::atomic::{AtomicI64, Ordering};
-+use std::task::{Context, Poll};
- use std::time::Duration;
- 
- use super::Socket;
-@@ -213,6 +216,10 @@ pub struct EgressCap {
-     burst_ns: i64,
-     debt_limit_ns: i64,
-     clock: Box<dyn Fn() -> u64 + Send + Sync>,
-+    /// `TimeSource::sleep_until` of the same time source as `clock`, for
-+    /// [`Self::poll_admit`]'s wakeups.
-+    #[cfg_attr(not(test), allow(dead_code))]
-+    sleep_until: Box<dyn Fn(u64) -> SleepFuture + Send + Sync>,
-     /// Time (ns, on `clock`) at which the bucket level is zero.
-     empty_at_ns: AtomicI64,
-     /// When the long-wait warning was last logged (ns, on `clock`).
-@@ -236,6 +243,34 @@ impl fmt::Debug for EgressCap {
-     }
- }
- 
-+type SleepFuture = Pin<Box<dyn Future<Output = ()> + Send>>;
-+
-+/// The wakeup a sender polling [`EgressCap::poll_admit`] keeps between
-+/// polls: one timer on the cap's time source and the time it fires at.
-+/// Owned by the sender, so the cap holds nothing per waiter.
-+#[derive(Default)]
-+// Used by the QUIC endpoint (#5940); only tests use it until then.
-+#[cfg_attr(not(test), allow(dead_code))]
-+pub(crate) struct AdmissionWaiter {
-+    timer: Option<(u64, SleepFuture)>,
-+}
-+
-+impl AdmissionWaiter {
-+    /// When the armed timer fires (ns on the cap's clock), if one is armed.
-+    #[cfg(test)]
-+    pub(crate) fn wake_at_ns(&self) -> Option<u64> {
-+        self.timer.as_ref().map(|(at, _)| *at)
-+    }
-+}
-+
-+impl fmt::Debug for AdmissionWaiter {
-+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+        f.debug_struct("AdmissionWaiter")
-+            .field("wake_at_ns", &self.timer.as_ref().map(|(at, _)| *at))
-+            .finish()
-+    }
-+}
-+
- /// Bytes a paced sender took from the bucket for a datagram it is about to
- /// send. Pass it to [`Socket::send_to_paced`], which returns what the
- /// datagram did not use; dropping it instead (the send failed or was
-@@ -259,13 +294,16 @@ impl EgressCap {
-         let burst_bytes = burst_bytes.max(MIN_BURST_PACKETS * MAX_PACKET_SIZE as u64);
-         let burst_ns = Self::nanos_for(rate, burst_bytes);
-         let debt_limit_ns = i64::try_from(DEBT_LIMIT.as_nanos()).unwrap_or(i64::MAX);
-+        let sleeper = time_source.clone();
-+        let sleep_until = Box::new(move |deadline_ns| sleeper.sleep_until(deadline_ns));
-         let clock = Box::new(move || time_source.now_nanos());
-         let now = i64::try_from(clock()).unwrap_or(i64::MAX);
-         Self {
-             rate_bytes_per_sec: rate,
-             burst_ns,
-             debt_limit_ns,
-             clock,
-+            sleep_until,
-             empty_at_ns: AtomicI64::new(now.saturating_sub(burst_ns)),
-             last_long_wait_warn_ns: AtomicI64::new(i64::MIN),
-             last_abandon_warn_ns: AtomicI64::new(i64::MIN),
-@@ -325,6 +363,19 @@ impl EgressCap {
-         empty_at.max(now.saturating_sub(self.burst_ns))
-     }
- 
-+    /// The admission predicate shared by [`Self::try_take`] and
-+    /// [`Self::poll_admit`]: a take of `cost` at `now` is admitted when the
-+    /// bucket holds the whole amount. `Ok` is `empty_at_ns` after the take;
-+    /// `Err` is the deficit in nanoseconds at the rate.
-+    fn admits(&self, empty_at: i64, now: i64, cost: i64) -> Result<i64, i64> {
-+        let after = self.refilled(empty_at, now).saturating_add(cost);
-+        if after <= now {
-+            Ok(after)
-+        } else {
-+            Err(after - now)
-+        }
-+    }
-+
-     /// Apply `f(empty_at_ns, now)` atomically. `f` returns the new value, or
-     /// `None` to leave it unchanged. Returns the value before, the value
-     /// after and `now`.
-@@ -392,16 +443,12 @@ impl EgressCap {
-         waited: Duration,
-     ) -> Result<EgressTake<'_>, Duration> {
-         let cost = self.cost_ns(bytes as u64);
--        let (old, _, now) = self.update(|empty_at, now| {
--            let after = self.refilled(empty_at, now).saturating_add(cost);
--            (after <= now).then_some(after)
--        });
-+        let (old, _, now) = self.update(|empty_at, now| self.admits(empty_at, now, cost).ok());
-         // The same predicate on the value the last attempt saw.
--        let after = self.refilled(old, now).saturating_add(cost);
--        if after > now {
-+        if let Err(deficit) = self.admits(old, now, cost) {
-             #[cfg(test)]
-             self.stats.refusals.fetch_add(1, Ordering::Relaxed);
--            return Err(Duration::from_nanos((after - now) as u64));
-+            return Err(Duration::from_nanos(deficit as u64));
+                 "nat_fail_samples".into(),
+                 serde_json::json!(snapshot.nat_fail_samples),
+@@ -6752,4 +6756,17 @@ mod tests {
+             assert_eq!(json[key], reference[key], "serde value for {key}");
          }
-         Ok(EgressTake {
-             cap: self,
-@@ -410,6 +457,52 @@ impl EgressCap {
-         })
      }
- 
-+    /// Poll form of the admission check, for a sender that is polled rather
-+    /// than one that can sleep and retry
++
++    /// The event-log JSON carries the dropped-handshake-packet count.
++    #[test]
++    fn transport_snapshot_json_carries_handshake_unauthenticated_dropped() {
++        let snapshot = crate::transport::metrics::TransportSnapshot {
++            handshake_unauthenticated_dropped: 7,
++            ..Default::default()
++        };
++        let json = event_kind_to_json(&super::super::EventKind::TransportSnapshot(Box::new(
++            snapshot,
++        )));
++        assert_eq!(json["handshake_unauthenticated_dropped"], 7);
++    }
+ }
 ```
 
-**File**: `crates/core/src/transport/egress_cap/tests.rs` (modified, +119/-0)
+**File**: `crates/core/src/transport/connection_handler.rs` (modified, +584/-3)
 ```diff
-@@ -804,3 +804,122 @@ fn a_warn_window_does_not_tear_under_concurrent_adds() {
+@@ -2545,11 +2545,24 @@ impl<S: Socket, T: TimeSource> UdpPacketsListener<S, T> {
+             // NAT traversal: keep sending packets throughout the deadline to maintain NAT bindings.
+             // The acceptor may start hole-punching well before the joiner, so we must keep
+             // sending until the deadline expires, not just until we've sent MAX_ATTEMPTS packets.
++            // End of the current receive window. A pass that may send opens
++            // a new 200 ms window. A pass after a dropped packet
++            // (`resume_receive`) skips the send and waits out what is left
++            // of the window, so dropped packets neither cause extra sends
++            // nor postpone the next paced one.
++            let mut recv_window_end_nanos = 0u64;
++            let mut resume_receive = false;
+             while time_source.now_nanos().saturating_sub(start_time_nanos)
+                 < overall_deadline.as_nanos() as u64
+             {
++                let skip_send = std::mem::take(&mut resume_receive);
++                if !skip_send {
++                    recv_window_end_nanos = time_source
++                        .now_nanos()
++                        .saturating_add(Duration::from_millis(200).as_nanos() as u64);
++                }
+                 // Send a packet if we haven't exceeded the max attempts
+-                if attempts < NAT_TRAVERSAL_MAX_ATTEMPTS {
++                if !skip_send && attempts < NAT_TRAVERSAL_MAX_ATTEMPTS {
+                     match state {
+                         HandshakePhase::StartOutbound => {
+                             tracing::trace!(
+@@ -2605,7 +2618,9 @@ impl<S: Socket, T: TimeSource> UdpPacketsListener<S, T> {
+                 }
+                 let next_inbound_result = crate::deterministic_select! {
+                     result = next_inbound.recv() => Some(result),
+-                    _ = time_source.sleep(Duration::from_millis(200)) => None,
++                    _ = time_source.sleep(Duration::from_nanos(
++                        recv_window_end_nanos.saturating_sub(time_source.now_nanos()),
++                    )) => None,
+                 };
+                 match next_inbound_result {
+                     Some(Some(packet)) => {
+@@ -2895,7 +2910,36 @@ impl<S: Socket, T: TimeSource> UdpPacketsListener<S, T> {
+                                     );
+                                     continue;
+                                 }
+-                                // if is not an intro packet, the connection is successful and we can proceed
++                                // Complete only on a packet encrypted under
++                                // this attempt's inbound session key. The
++                                // success ack sent above is unchanged here; a
++                                // follow-up changes it. Every release encrypts
++                                // the packets that complete this arm under this
++                                // key, so the check needs no version gate.
++                                // Any other packet is dropped and counted (once
++                                // per packet), and the attempt goes back to
++                                // receiving without sending, so the next ack
++                                // keeps its normal pacing.
++                                if !completes_on_any_packet(this_addr)
++                                    && packet.try_decrypt_sym(&inbound_sym_key).is_err()
++                                {
++                                    crate::transport::TRANSPORT_METRICS
++                                        .record_handshake_unauthenticated_dropped(remote_addr);
++                                    // `direction` is "outbound" for every log in
++                                    // traverse_nat, including this arm, where we
++                                    // are answering the remote's intro.
++                                    tracing::debug!(
++                                        peer_addr = %remote_addr,
++                                        direction = "outbound",
++                                        arm = "remote_inbound",
++                                        "Dropped a handshake packet not encrypted under \
++                                         this attempt's inbound key"
++                                    );
++                                    resume_receive = true;
++                                    continue;
++                                }
++                                #[cfg(test)]
++                                record_remote_inbound_completion(this_addr, remote_addr);
+                                 let (inbound_sender, inbound_recv) =
+                                     mpsc::channel(INBOUND_CHANNEL_CAPACITY);
+ 
+@@ -3027,6 +3071,51 @@ impl<S: Socket, T: TimeSource> UdpPacketsListener<S, T> {
      }
-     assert_eq!(total, THREADS * EACH);
  }
+ 
++/// Whether the listener bound at `this_addr` completes a hole-punch
++/// handshake on ANY non-
+```
+
+**File**: `crates/core/src/transport/metrics.rs` (modified, +70/-0)
+```diff
+@@ -388,6 +388,13 @@ pub struct TransportMetrics {
+     /// Never-reset twin of `upgrade_control_received`.
+     cumulative_upgrade_control_received: AtomicU64,
+ 
++    /// Packets that would have completed a hole-punch handshake on the
++    /// side that answered the remote's intro, dropped because they were not
++    /// encrypted under that attempt's inbound session key; one count per
++    /// packet, not per attempt (reset each snapshot). The handshake stays
++    /// pending, so a later packet under that key still completes it.
++    handshake_unauthenticated_dropped: AtomicU64,
 +
-+/// Counts how often it is woken.
-+#[derive(Default)]
-+struct CountingWaker(std::sync::atomic::AtomicUsize);
+     /// Inbound streams refused or evicted this period, by reason (reset each
+     /// snapshot). The never-reset twin is `cumulative_inbound_stream_outcomes`,
+     /// which is what the OTel instrument observes.
+@@ -527,6 +534,10 @@ struct NatDetailCounters {
+     #[cfg(test)]
+     stray_intros_by_remote:
+         parking_lot::Mutex<std::collections::VecDeque<(SocketAddr, StrayIntro)>>,
++    /// Test-only log of the remotes whose handshake packets were dropped for
++    /// not being under the attempt's inbound key (bounded), one per packet.
++    #[cfg(test)]
++    handshake_unauthenticated_by_remote: parking_lot::Mutex<std::collections::VecDeque<SocketAddr>>,
+     /// Test-only log of observed-address reporters (bounded).
+     #[cfg(test)]
+     observed_reporters: parking_lot::Mutex<std::collections::VecDeque<SocketAddr>>,
+@@ -740,6 +751,7 @@ impl TransportMetrics {
+             inbound_queue_drops: AtomicU64::new(0),
+             upgrade_control_received: AtomicU64::new(0),
+             cumulative_upgrade_control_received: AtomicU64::new(0),
++            handshake_unauthenticated_dropped: AtomicU64::new(0),
+             inbound_stream_outcomes: Default::default(),
+             nat_attempts_by_origin: Default::default(),
+             nat_established_by_origin: Default::default(),
+@@ -1042,6 +1054,30 @@ impl TransportMetrics {
+             .fetch_add(1, Ordering::Relaxed);
+     }
+ 
++    /// A packet from `remote` that would have completed a hole-punch
++    /// handshake was dropped because it was not encrypted under the
++    /// attempt's inbound session key (`remote` is never exported).
++    pub(crate) fn record_handshake_unauthenticated_dropped(&self, remote: SocketAddr) {
++        #[cfg(test)]
++        push_test_log(&self.nat_detail.handshake_unauthenticated_by_remote, remote);
++        #[cfg(not(test))]
++        let _ = remote;
++        self.handshake_unauthenticated_dropped
++            .fetch_add(1, Ordering::Relaxed);
++    }
 +
-+impl std::task::Wake for CountingWaker {
-+    fn wake(self: std::sync::Arc<Self>) {
-+        self.0.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
++    /// Test-only: how many handshake packets from `remote` were dropped for
++    /// not being under the attempt's inbound key.
++    #[cfg(test)]
++    pub(crate) fn handshake_unauthenticated_dropped_from(&self, remote: SocketAddr) -> usize {
++        self.nat_detail
++            .handshake_unauthenticated_by_remote
++            .lock()
++            .iter()
++            .filter(|addr| **addr == remote)
++            .count()
++    }
++
+     /// QUIC upgrade control messages received since process start, never
+     /// reset (tests only).
+     #[cfg(test)]
+@@ -1613,6 +1649,7 @@ impl TransportMetrics {
+             inbound_queue_depth_hwm: get32(&self.inbound_queue_depth_hwm),
+             inbound_queue_drops: get64(&self.inbound_queue_drops),
+             upgrade_control_received: get64(&self.upgrade_control_received),
++            handshake_unauthenticated_dropped: get64(&self.handshake_unauthenticated_dropped),
+             nat_fail_samples: if reset {
+                 std::mem::take(&mut *d.samples.lock())
+             } else {
+@@ -2055,6 +2092,9 @@ pub struct TransportSnapshot {
+     pub inbound_queue_drops: u64,
+     /// QUIC upgrade control messages received and ignored (#5940 e1).
+     pub upgrade_control_received: u64,
++    /// Hole-punch handshake packets dropped because they were not
++    /// encrypted under the attempt's inbound session key (per packet).
++    pub handshake_unauthenticated_dropped: u64,
+     /// Per-attempt records of the FIRST 8 failed outbound NAT traversals in
+     /// the period (not a representative sample of a busy period);
+     /// `nat_fail_samples_dropped` counts the rest. Read with the same
+@@ -2196,6 +2236,7 @@ impl TransportSnapshot {
+             inbound_queue_depth_hwm,
+             inbound_queue_drops,
+             upgrade_control_received,
++            handshake_unauthenticated_dropped,
+             nat_fail_samples,
+             nat_fail_samples_dropped,
+             inbound_stream_refused_invalid_length,
+@@ -2276,6 +2317,7 @@ impl TransportSnapshot {
+         self.inbound_queue_depth_hwm = inbound_queue_depth_hwm;
+         self.inbound_queue_drops = inbound_queue_drops;
+         self.upgrade_control_received = upgrade_control_received;
++        self.handshake_unauthenticated_dropped = handshake_unauthenticated_dropped;
+         self.nat_fail_samples = nat_fail_samples;
+         self.nat_fail_samples_dropped = nat_fail_samples_dropped;
+         self.inbound_st
+```
+
+---
+
+### Incident Patch 3: `3e92e7b1` (2026-10-24)
+**Commit Message**: feat(transport): add QUIC stream framing, QuicPath and the inbound stream adapter (unused yet) (#5973)
+
+**File**: `.claude/rules/transport.md` (modified, +111/-0)
+```diff
+@@ -893,6 +893,117 @@ refusal of a wrong server key, a wrong client key, a plain Ed25519 key on
+ either side, and a man in the middle with its own key on either leg.
+ ```
+ 
++#### QUIC framing and path (`quic/framing.rs`, `quic/path.rs`, #5940 step e3)
++
++Dead code until e5: nothing in the node builds a `QuicPath`.
++
++```
++One message per QUIC uni stream: an 18-byte header, then metadata, then
++payload, then the stream's end.
++  version u8 (1) | kind u8 (0 Short, 1 Stream, 2 Control) |
++  stream_id u32 BE | total_len u64 BE (payload) | metadata_len u32 BE
++FrameHeader::decode refuses, never panics: unknown version or kind;
++  total_len 0 or > MAX_STREAM_TOTAL_BYTES (check_declared_stream_length)
++  for Short and Stream; Control 0 or > MAX_CONTROL_BYTES (4 KiB);
++  metadata_len > MAX_METADATA_BYTES (1120, what UDP embeds in fragment
++  #1, the shared embeds_metadata predicate; the sender leaves larger
++  metadata out of the frame, and the caller sends the announcing message
++  separately as a short message, as on UDP; empty metadata arrives as
++  None, deliberately); metadata or a nonzero
++  stream_id on Short or Control; a Stream id that is not caller-named;
++  fewer than 18 bytes. The sender builds headers through the same
++  checks. A new kind or field needs a new version, sent only to a peer
++  that said it reads it.
++Sending (QuicPath::send_short / send_stream / send_stream_chunks /
++  send_control): returns when the peer's QUIC stack acked every byte, or
++  Stopped(code). A message that fits in the flow window can be acked
++  before the receiver reads its header, so a refusal may read as success
++  at the sender, as on UDP, and so may one dropped for a full channel:
++  sent is NOT delivered. send_stream_chunks resets the stream if the
++  source fails or delivers a different length. quinn's 256 uni streams
++  are the back-pressure (open_uni waits; quinn returns credit only after
++  more than 32 streams are freed).
++  Sends have no deadline of their own: open_uni, a flow-blocked write
++  and the final wait for acks can wait as long as the connection lives
++  against a peer that does not cooperate. e5 callers MUST bound every
++  send with a timeout. Dropping a send future resets its stream (Drop on
++  Outgoing; quinn's own drop would FINISH it, which the receiver reads as
++  a stream that ended early). A send dropped while waiting for acks after
++  finish is not reset and may still be delivered: a timeout there means
++  "maybe delivered".
++  Each locally reset stream leaves one Arc<Notify> in quinn's per-
++  connection `stopped` map until the connection closes (quinn 0.11.12:
++  stopped() registers it, and a local reset produces neither the Finished
++  nor the Stopped event that removes it). Bounded by the sends aborted on
++  the connection; e5 must bound that or recycle the connection.
++  Every write, and the wait for a source's next chunk, races the
++  stream's stopped() future and resets on a stop:
++  quinn-proto 0.11.19 does not report STOP_SENDING to a writer blocked on
++  CONNECTION flow control, so without the race a stopped stream keeps the
++  connection's window and blocks every other stream on it. Do not write
++  to a quinn SendStream without that race.
++Receiving: one task per connection reads every stream (FuturesUnordered,
++  no task per stream) and only uses try_send. If that task panics it is
++  counted (receive_task_panicked) and the connection is closed. Short
++  and Control go to bounded channels (full: dropped and counted); Stream
++  goes through the INBOUND ADAPTER (path/inbound.rs).
++Inbound adapter: a Stream's payload goes into an ordinary StreamHandle,
++  re-chunked to the UDP fragment shape (fragment i = bytes
++  [(i-1)F, iF), F = FRAGMENT_PAYLOAD_SIZE), so fork / assemble / pipe /
++  StreamIdentity / registry are unchanged. The handle is announced
++  (InboundStreamArrival, with the metadata) before the payload.
++  → Before allocating: header checks, then the path's
++    InboundStreamBudget check and charge (same cost and limits as UDP).
++    Short messages are charged too (a token rides with the message until
++    its payload is taken). Refusal: STOP_SENDING (stop_code), counted in
++    the shared InboundStreamOutcome counters, path and process-wide.
++  → Completion by BYTES: exactly total_len, then the stream's end. The
++    fragment that completes the buffer is held until the end is seen.
++    Ends early (Truncated), more bytes (Overlong), reset by the sender:
++    the handle is cancelled (consumers get Cancelled) and it is counted.
++  → Charge released only when all state is gone (Weak), as on UDP. The
++    reader's guard owns its only clone, so the charge goes when the
++    reader ends if no consumer holds one; a consumer that drops later is
++    not observed, and the charge goes at the next check() that needs
++    room or when a stream with the same id arrives (release_if_gone
++    before the StreamIdInUse test). An id is held from admission until
++    then, and is free again 
+```
+
+**File**: `crates/core/src/contract/executor.rs` (modified, +12/-0)
+```diff
+@@ -2775,6 +2775,18 @@ mod tests {
+                 "quinn's buffer for ONE pending QUIC connection attempt, inside \
+                  INCOMING_BUFFER_TOTAL_BYTES",
+             ),
++            (
++                "READ_START_BYTES",
++                "initial allocation of ONE QUIC stream read (quic::path::inbound), \
++                 at most the stream's declared length, which is charged to the \
++                 per-connection inbound budget or held to a small per-message \
++                 bound; not a node budget",
++            ),
++            (
++                "MAX_CONTROL_BYTES",
++                "length limit on ONE QUIC path control frame (quic::framing), a \
++                 per-message bound inside a per-connection channel, not a node budget",
++            ),
+             (
+                 "XEDDSA_RANDOM_BYTES",
+                 "the 64 random bytes one QUIC handshake signature draws, on the stack, \
+```
+
+**File**: `crates/core/src/transport/peer_connection.rs` (modified, +4/-3)
+```diff
+@@ -22,9 +22,10 @@ use tokio::sync::mpsc;
+ use tokio::task::JoinHandle;
+ use tracing::{Instrument, span};
+ 
+-mod inbound_budget;
++pub(super) mod inbound_budget;
+ mod inbound_stream;
+ mod outbound_stream;
++pub(super) use outbound_stream::embeds_metadata;
+ pub(crate) mod piped_stream;
+ pub(crate) mod streaming;
+ 
+@@ -714,7 +715,7 @@ struct RefusalLog {
+ /// ([`streaming::max_inbound_stream_age`]). Under the simulation idle-timeout
+ /// accommodation it is at least the (long) simulation idle threshold, for the
+ /// same reason that threshold exists.
+-fn inbound_stream_age_limit(total_bytes: u64) -> Duration {
++pub(super) fn inbound_stream_age_limit(total_bytes: u64) -> Duration {
+     let limit = streaming::max_inbound_stream_age(total_bytes);
+     if crate::config::SimulationIdleTimeout::is_enabled() {
+         limit.max(STREAMING_HANDLE_IDLE_TIMEOUT_SIM)
+@@ -779,7 +780,7 @@ const STREAMING_HANDLE_IDLE_TIMEOUT_SIM: Duration = Duration::from_secs(86_400);
+ /// Returns the active idle threshold for sweeping `streaming_handles` entries,
+ /// switching between the production and simulation values based on the same
+ /// `SimulationIdleTimeout` flag that gates `connection_idle_timeout()`.
+-fn streaming_handle_idle_timeout() -> Duration {
++pub(super) fn streaming_handle_idle_timeout() -> Duration {
+     if crate::config::SimulationIdleTimeout::is_enabled() {
+         STREAMING_HANDLE_IDLE_TIMEOUT_SIM
+     } else {
+```
+
+**File**: `crates/core/src/transport/peer_connection/inbound_budget.rs` (modified, +19/-19)
+```diff
+@@ -37,7 +37,7 @@ use super::streaming_buffer::LockFreeStreamBuffer;
+ /// holds (its progress) and its state: active, then either complete or
+ /// cancelled, whichever is set first (the other then fails).
+ #[derive(Debug, Default)]
+-pub(super) struct LegacyStreamToken {
++pub(in crate::transport) struct LegacyStreamToken {
+     received_bytes: AtomicU64,
+     state: AtomicU8,
+ }
+@@ -47,12 +47,12 @@ const COMPLETE: u8 = 1;
+ const CANCELLED: u8 = 2;
+ 
+ impl LegacyStreamToken {
+-    pub(super) fn new() -> Arc<Self> {
++    pub(in crate::transport) fn new() -> Arc<Self> {
+         Arc::new(Self::default())
+     }
+ 
+     /// Report the stream's received payload bytes.
+-    pub(super) fn report(&self, received: u64) {
++    pub(in crate::transport) fn report(&self, received: u64) {
+         self.received_bytes.store(received, Ordering::Release);
+     }
+ 
+@@ -64,7 +64,7 @@ impl LegacyStreamToken {
+ 
+     /// Record that the stream has every byte, contiguously. Returns false if
+     /// it was cancelled first; it must then not be delivered.
+-    pub(super) fn mark_complete(&self) -> bool {
++    pub(in crate::transport) fn mark_complete(&self) -> bool {
+         self.transition(COMPLETE)
+     }
+ 
+@@ -80,7 +80,7 @@ impl LegacyStreamToken {
+ }
+ 
+ /// What keeps a charged stream's reassembly state alive.
+-pub(super) enum Liveness {
++pub(in crate::transport) enum Liveness {
+     /// An operations stream: alive while any clone of its buffer exists.
+     Buffer(Weak<LockFreeStreamBuffer>),
+     /// A legacy stream: alive while its token is held (see
+@@ -134,7 +134,7 @@ struct Charge {
+ 
+ /// Why a new stream could not be charged.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+-pub(super) enum BudgetRejection {
++pub(in crate::transport) enum BudgetRejection {
+     /// The connection already has the maximum number of charged streams.
+     Streams { open: usize },
+     /// The stream's length does not fit in the connection's byte allowance.
+@@ -152,7 +152,7 @@ pub(super) enum EvictionReason {
+ 
+ /// Memory a stream costs beyond its payload bytes, charged with them.
+ #[derive(Debug, Clone, Copy)]
+-pub(super) struct ChargeOverhead {
++pub(in crate::transport) struct ChargeOverhead {
+     /// Per stream: its buffer or reassembly task, handle, registry and map
+     /// entries, channel, and first slot chunk.
+     pub(super) per_stream: u64,
+@@ -194,7 +194,7 @@ impl ChargeOverhead {
+     /// alone is 2 KiB, a legacy stream's 64-entry channel about 2.5 KiB, plus
+     /// its task, handle and map entries); see [`PER_FRAGMENT_OVERHEAD`] for a
+     /// held fragment.
+-    pub(super) const DEFAULT: Self = Self {
++    pub(in crate::transport) const DEFAULT: Self = Self {
+         per_stream: 8 * 1024,
+         per_fragment: PER_FRAGMENT_OVERHEAD,
+     };
+@@ -209,15 +209,15 @@ impl ChargeOverhead {
+     /// Bytes charged for a stream declaring `declared` payload bytes: the
+     /// payload, the fixed overhead, and the per-fragment overhead for every
+     /// fragment number it may use (one per full fragment, plus one).
+-    pub(super) const fn cost(self, declared: u64) -> u64 {
++    pub(in crate::transport) const fn cost(self, declared: u64) -> u64 {
+         let fragments = declared.div_ceil(super::MAX_DATA_SIZE as u64) + 1;
+         declared
+             .saturating_add(self.per_stream)
+             .saturating_add(fragments.saturating_mul(self.per_fragment))
+     }
+ }
+ 
+-pub(super) struct InboundStreamBudget {
++pub(in crate::transport) struct InboundStreamBudget {
+     streams: HashMap<StreamId, Charge>,
+     charged_bytes: u64,
+     max_streams: usize,
+@@ -226,7 +226,7 @@ pub(super) struct InboundStreamBudget {
+ }
+ 
+ impl InboundStreamBudget {
+-    pub(super) fn new(max_streams: usize, max_bytes: u64) -> Self {
++    pub(in crate::transport) fn new(max_streams: usize, max_bytes: u64) -> Self {
+         Self::with_overhead(max_streams, max_bytes, ChargeOverhead::DEFAULT)
+     }
+ 
+@@ -245,7 +245,7 @@ impl InboundStreamBudget {
+     }
+ 
+     /// Whether `stream_id` holds a charge (live, or evicted but not yet gone).
+-    pub(super) fn contains(&self, stream_id: StreamId) -> bool {
++    pub(in crate::transport) fn contains(&self, stream_id: StreamId) -> bool {
+         self.streams.contains_key(&stream_id)
+     }
+ 
+@@ -261,11 +261,11 @@ impl InboundStreamBudget {
+             })
+     }
+ 
+-    pub(super) fn stream_count(&self) -> usize {
++    pub(in crate::transport) fn stream_count(&self) -> usize {
+         self.streams.len()
+     }
+ 
+-    pub(super) fn charged_bytes(&self) -> u64 {
++    pub(in crate::transport) fn charged_bytes(&self) -> u64 {
+         self.charged_bytes
+     }
+ 
+@@ -286,7 +286,7 @@ impl InboundStreamBudget {
+     /// Whether a new stream declaring `declared` bytes fits this connection's
+     /// limits (with its overhead; see [`ChargeOverhead`]). Releases the
+     /// charges of streams whose state is already gone before refusing.
+-    pub(super) fn check(&mut self, declared: u64) -> Result<(), BudgetRejection> {
++    pub(
+```
+
+**File**: `crates/core/src/transport/peer_connection/outbound_stream.rs` (modified, +10/-1)
+```diff
+@@ -260,6 +260,15 @@ pub(crate) type SerializedStream = Bytes;
+ /// The extra byte vs. the original 40 comes from the Option discriminant of `metadata_bytes`.
+ const MAX_DATA_SIZE: usize = packet_data::MAX_DATA_SIZE - 41;
+ 
++/// Whether `send_stream` embeds metadata of `len` bytes in fragment #1:
++/// fragment #1 must still carry at least one payload byte beside the
++/// metadata's `Option` tag and length prefix. Larger metadata travels only
++/// in the separate short message the caller sends. The QUIC path applies
++/// the same rule to its `Stream` frames.
++pub(in crate::transport) fn embeds_metadata(len: usize) -> bool {
++    1 + 8 + len < MAX_DATA_SIZE
++}
++
+ /// A congestion window as reported in transfer telemetry: `None` when the
+ /// controller has no bounded window. FixedRate outside a loss pause reports
+ /// `usize::MAX / 2`, which used to surface as `u32::MAX` after truncation.
+@@ -386,7 +395,7 @@ pub(super) async fn send_stream<S: super::super::Socket, T: TimeSource>(
+     let total_length_bytes = bytes_to_send;
+     // Fragment #1 must carry at least one payload byte; metadata too large to
+     // leave room for one is not embedded (it is also sent separately).
+-    let metadata = metadata.filter(|meta| 1 + 8 + meta.len() < MAX_DATA_SIZE);
++    let metadata = metadata.filter(|meta| embeds_metadata(meta.len()));
+     // Calculate total_packets accounting for fragment #1's reduced payload when
+     // metadata is embedded. Without this adjustment, the loop terminates too early
+     // and the final bytes of the stream are never sent.
+```
+
+**File**: `crates/core/src/transport/quic.rs` (modified, +2/-0)
+```diff
+@@ -31,7 +31,9 @@
+ 
+ pub(crate) mod cid;
+ pub(crate) mod config;
++pub(crate) mod framing;
+ pub(crate) mod identity;
++pub(crate) mod path;
+ pub(crate) mod runtime;
+ pub(crate) mod socket;
+ 
+```
+
+**File**: `crates/core/src/transport/quic/framing.rs` (added, +485/-0)
+```diff
+@@ -0,0 +1,485 @@
++//! The format of one message on a QUIC unidirectional stream (#5940, step e3).
++//!
++//! Every message a node sends over QUIC gets its own unidirectional stream:
++//! a fixed-size header, then `metadata_len` bytes of metadata, then
++//! `total_len` bytes of payload, then the end of the stream. The header is
++//! [`HEADER_LEN`] bytes, so the receiver reads it with one fixed-size read
++//! and knows everything it must check before it allocates anything:
++//!
++//! ```text
++//! offset  size  field
++//! 0       1     version       HEADER_VERSION (1)
++//! 1       1     kind          0 Short, 1 Stream, 2 Control
++//! 2       4     stream_id     big-endian u32 (Stream only; 0 otherwise)
++//! 6       8     total_len     big-endian u64, payload bytes
++//! 14      4     metadata_len  big-endian u32 (Stream only; 0 otherwise)
++//! ```
++//!
++//! - `Short`: one serialized message of any size the UDP transport carries
++//!   (a short message or an oversized one it would send as a transport
++//!   stream), so `total_len` is bounded by [`check_declared_stream_length`].
++//! - `Stream`: a caller-named stream ([`StreamId::next`]); its payload is fed
++//!   into an ordinary `StreamHandle` by the inbound adapter. The metadata is
++//!   the message that announces the stream (the UDP transport embeds it in
++//!   fragment #1), at most [`MAX_METADATA_BYTES`] (1120, what fits in
++//!   fragment #1 on UDP). The sender leaves out metadata that does not fit,
++//!   as UDP does; the caller sends the announcing message separately as a
++//!   short message as well, as on UDP. Empty metadata is sent as none
++//!   (`metadata_len` 0) and arrives as `None`, deliberately (see
++//!   `path::frame_metadata`).
++//! - `Control`: a QUIC path control frame, at most [`MAX_CONTROL_BYTES`].
++//!
++//! [`FrameHeader::decode`] refuses anything else, and never panics: an
++//! unknown version or kind, a length the receiver would refuse, metadata on
++//! a kind that has none, a nonzero stream id where none is allowed, a stream
++//! id that is not caller-named, and a header cut short. The sender builds
++//! its header through the same checks ([`FrameHeader::stream`] and the
++//! others), so it never sends a header the receiver refuses.
++//!
++//! A new kind or field needs a new header version: a receiver refuses a
++//! version it does not know, so a sender may use one only after the peer
++//! said it understands it.
++
++use super::super::StreamId;
++use super::super::peer_connection::streaming::{
++    StreamLengthRejection, check_declared_stream_length,
++};
++use super::super::peer_connection::streaming_buffer::FRAGMENT_PAYLOAD_SIZE;
++
++/// The header version this node writes and the only one it reads.
++pub(crate) const HEADER_VERSION: u8 = 1;
++
++/// Length of the header in bytes.
++pub(crate) const HEADER_LEN: usize = 18;
++
++/// Most metadata bytes a `Stream` header may declare: 1120, the most the
++/// UDP transport embeds in fragment #1 (`embeds_metadata`: `1 + 8 + len <
++/// FRAGMENT_PAYLOAD_SIZE`). The metadata is the message announcing the
++/// stream (a GET response or PUT header naming the contract, its size and a
++/// few flags). As on UDP, the CALLER also sends that message separately as
++/// a short message, which carries any length; `QuicPath` leaves out of the
++/// `Stream` frame any metadata that does not fit, as `send_stream` does on
++/// UDP. It is read into memory before the payload and is not charged to
++/// the inbound budget, so it is held to one fragment's worth: at most 256
++/// streams x 1120 bytes per connection.
++pub(crate) const MAX_METADATA_BYTES: u32 = (FRAGMENT_PAYLOAD_SIZE - 1 - 8 - 1) as u32;
++
++/// Most payload bytes a `Control` frame may declare. Control frames are a
++/// few bytes (an attempt number); they are not charged to the inbound
++/// budget, so the bound is what limits their memory.
++pub(crate) const MAX_CONTROL_BYTES: u64 = 4 * 1024;
++
++/// What a stream carries.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) enum FrameKind {
++    /// One complete serialized message.
++    Short,
++    /// A caller-named stream with optional metadata.
++    Stream,
++    /// A QUIC path control frame.
++    Control,
++}
++
++impl FrameKind {
++    fn to_byte(self) -> u8 {
++        match self {
++            FrameKind::Short => 0,
++            FrameKind::Stream => 1,
++            FrameKind::Control => 2,
++        }
++    }
++
++    fn from_byte(byte: u8) -> Option<Self> {
++        match byte {
++            0 => Some(FrameKind::Short),
++            1 => Some(FrameKind::Stream),
++            2 => Some(FrameKind::Control),
++            _ => None,
++        }
 +    }
 +}
 +
-+fn counting_waker() -> (std::task::Waker, std::sync::Arc<CountingWaker>) {
-+    let counter = std::sync::Arc::new(CountingWaker::default());
-+    (std::task::Waker::from(counter.clone()), counter)
++/// A validated header. Only [`FrameHeader::decode`] and the constructors
++/// make one, so every header in hand passed the receiver's checks.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) struct FrameHeader {
++    kind: FrameKind,
++    stream_id: StreamId,
++    total_len: u64,
++    metadata_len: u32,
 +}
 +
-+fn woken(counter: &CountingWaker) -> usize {
-+    counter.0.load(std::sync::atomic::Ordering::SeqCst)
-+}
++/// Why a header was refused. Each has 
+```
+
+**File**: `crates/core/src/transport/quic/path.rs` (added, +735/-0)
+```diff
+@@ -0,0 +1,735 @@
++//! A QUIC connection used as a transport path to one peer (#5940, step e3).
++//!
++//! Dead code in this release: nothing in the node builds a [`QuicPath`] yet.
++//! Step e5 moves a peer's traffic onto one once the connection is
++//! established, and keeps the UDP session as the fallback.
++//!
++//! Each message gets its own QUIC unidirectional stream in the format of
++//! [`super::framing`]. quinn allows the peer [`MAX_UNI_STREAMS`] streams at a
++//! time, so a sender with more messages in flight waits in `open_uni` until
++//! the receiver has read one to its end: that limit is the path's
++//! back-pressure.
++//!
++//! Sending: [`QuicPath::send_short`], [`QuicPath::send_stream`] (from bytes),
++//! [`QuicPath::send_stream_chunks`] (from a stream of chunks, such as an
++//! inbound stream being piped onward) and [`QuicPath::send_control`]. Each
++//! returns once the peer's QUIC stack has acknowledged every byte, or with
++//! the code the peer stopped the stream with ([`QuicSendError::Stopped`]).
++//! A stop is seen only if it arrives before every byte is acknowledged: a
++//! message that fits in the flow-control window can be acknowledged before
++//! the receiver reads its header, and its refusal then reads as success at
++//! the sender, as a refused stream does on the UDP transport (refusals do
++//! not change its ACKs). The receiver counts every refusal either way.
++//! The same holds for a message the receiver drops because its channel is
++//! full: it was acknowledged, so the sender sees `Ok`. A successful send
++//! means the bytes reached the peer's QUIC stack, never that the peer
++//! delivered them (e5: sent is not delivered).
++//!
++//! Sends can wait without limit against a peer that does not cooperate:
++//! `open_uni` waits for a stream credit, a write waits for flow-control
++//! credit, and the final wait for acknowledgement has no deadline of its
++//! own (only quinn's connection idle timeout ends it, and keepalives keep a
++//! connection alive). e5 callers MUST bound every send with a timeout.
++//!
++//! Cancel safety: dropping a send future before it returns resets the
++//! stream ([`reset_code::SENDER_ABORTED`]), so the receiver sees
++//! `ResetByPeer` and cancels its handle; it never sees a stream that ends
++//! early as if it were complete or truncated. A dropped short message or
++//! control frame is lost. A send future dropped while it waits for
++//! acknowledgement (after `finish` was issued) is NOT reset: every byte
++//! was already written, so the message may still be delivered. For e5, a
++//! timeout that fires during that wait means "maybe delivered", not
++//! "failed".
++//!
++//! Known quinn cost (quinn 0.11.12): `SendStream::stopped()` registers an
++//! `Arc<Notify>` in the connection's `stopped` map, removed only when quinn
++//! reports the stream Finished or Stopped. A stream this side resets gets
++//! neither event (`reset_acked` emits none), so each locally reset stream
++//! leaves one entry until the connection closes. Every send registers
++//! (its writes race `stopped()`), so the entries are bounded by the sends
++//! aborted on the connection over its lifetime (a source that failed, a
++//! cancelled send, a stop answered with a reset). e5 constraint: a
++//! connection that aborts sends without limit grows without limit, so it
++//! must be recycled or the abort rate bounded. Worth an upstream quinn
++//! issue (not filed).
++//!
++//! Receiving: one task per connection accepts every uni stream and reads all
++//! of them concurrently (no task per stream), parsing the header and then:
++//! - `Short` → [`QuicInbound::shorts`], a bounded channel;
++//! - `Stream` → the inbound adapter ([`inbound`]), which feeds the payload
++//!   into an ordinary [`StreamHandle`] and announces it on
++//!   [`QuicInbound::streams`];
++//! - `Control` → [`QuicInbound::controls`], a bounded channel.
++//!
++//! The task only ever uses `try_send`: a full channel drops the message and
++//! counts it (`QuicInboundOutcome`), it never waits, so a slow consumer
++//! cannot stall the other streams of the connection.
++//!
++//! Not done here, on purpose:
++//! - Dedup. The same message sent twice (once on UDP, once on QUIC after a
++//!   fallback) is delivered twice. e5 dedups short messages with
++//!   `PeerConnection::is_duplicate_dispatch` and streams with
++//!   `completed_inbound_streams`, where both transports meet.
++//! - Exporting the QUIC-specific counters. They are per path
++//!   ([`QuicPath::stats`]); the refusals and evictions the UDP transport also
++//!   has are counted in `TRANSPORT_METRICS` as well, under the same
++//!   `InboundStreamOutcome` labels. Telemetry for the rest is e2/e5.
++//!
++//! [`MAX_UNI_STREAMS`]: super::config::MAX_UNI_STREAMS
++//! [`StreamHandle`]: crate::transport::peer_connection::streaming::StreamHandle
 +
-+/// With the bucket empty, a datagram's admission is `Pending` until the
-+/// rate has made up exactly its deficit: still `Pending` 1 ns before, with
-+/// the waker not yet woken, and `Ready` at the deficit, after the cap's
-+/// timer woke the waker. Polling takes nothing.
-+#[test]
-+fn poll_admit_is_pending_until_the_deficit_and_ready_at_it() {
-+    let (cap, time) = cap_at(RATE);
-+    cap.charge_unpaced(BURST as usize);
-+    assert_eq!(cap.level_bytes(), 0);
-+    // 1 200 bytes at 1 MB/s.
-+    let deficit = Duration::from_micros(1_200);
-+    assert_eq!(cap.try_take(PACKET, Duration::ZERO).unwrap_err(), deficit);
++pub(crate) mod inbound;
 +
-+    let (waker, counter) = counting_waker();
-+    let mut cx = Context::from_waker(&waker);
-+    let mut waiter = AdmissionWaiter::default();
-+    assert!(cap.poll_admit(PACKET, &mut waiter, &mut cx).is_pending());
-+    let start = time.now_nanos();
-+    assert_eq!(waiter.wake_at_ns(), Some(start + deficit.as_nanos() as u64));
++#[cfg(test)]
++mod tests;
 +
-+    time.advance(deficit - Duration::from_nanos(1));
-+    assert_eq!(
-+        woken(&counter),
-+        0,
-+        "the timer must not fire before the deficit"
-+    );
-+    assert!(cap.poll_admit(PACKET, &mut waiter, &mut cx).is_pending());
-+    assert_eq!(
-+        waiter.wake_at_ns(),
-+        Some(start + deficit.as_nanos() as u64),
-+        "a poll that needs the same wakeup keeps the armed timer"
-+    );
-+
-+    time.advance(Duration::from_nanos(1));
-+    assert_eq!(woken(&counter), 1, "the timer fires at the deficit");
-+    assert!(cap.poll_admit(PACKET, &mut waiter, &mut cx).is_ready());
-+    assert_eq!(
-+        waiter.wake_at_ns(),
-+        None,
-+        "a Ready poll leaves no timer armed"
-+    );
-+    assert_eq!(cap.level_bytes(), PACKET as i64, "polling took nothing");
-+    cap.try_take(PACKET, Duration::ZERO)
-+        .expect("try_take agrees with the Ready poll")
-+        .sent(PACKET);
-+}
-+
-+/// `poll_admit` and `try_take` decide alike at the same instant, over random
-+/// sequences of unpaced charges, paced takes, refills and datagram sizes,
-+/// and a `Pending` poll arms its wakeup exactly at `try_take`'s deficit.
-+#[test]
-+fn poll_admit_and_try_take_agree_at_the_same_instant() {
-+    let (waker, _) = counting_waker();
-+    let mut cx = Context::from_waker(&waker);
-+    let (mut admitted, mut refused) = (0u32, 0u32);
-+    for seed in 0..32u64 {
-+        GlobalRng::scoped_seed(seed, || {
-+            let (cap, time) = cap_at(RATE);
-+            for _ in 0..500 {
-+                match GlobalRng::random_range(0..4u32) {
-+                    0 => cap.charge_unpaced(GlobalRng::random_range(1..4 * PACKET)),
-+                    1 => {
-+                        if let Ok(take) = cap.try_take(PACKET, Duration::ZERO) {
-+                            take.sent(GlobalRng::random_range(1..=PACKET));
-+                        }
-+                    }
-+                    _ => {
-+                        time.advance(Duration::from_nanos(GlobalRng::random_range(0..3_000_000)));
-+                    }
-+                }
-+                let bytes = GlobalRng::random_range(1..=2 * PACKET);
-+                let mut waiter = AdmissionWaiter::default();
-+                let polled = cap.poll_admit(bytes, &mut waiter, &mut cx);
-+                let wake_at = waiter.wake_at_ns();
-+                match cap.try_take(bytes, Duration::ZERO) {
-+                    Ok(take) => {
-+                        assert!(polled.is_ready(), "seed {seed}: try_take admitted {bytes}");
-+                        admitted += 1;
-+                        drop(take);
-+                    }
-+                    Err(deficit) => {
-+                        assert!(polled.is_pending(), "seed {seed}: try_take refused {bytes}");
-+                        assert_eq!(
-+                            wake_at,
-+                            Some(time.now_nanos() + deficit.as_nanos() as u64),
-+                            "seed {seed}: the wakeup is at try_take's deficit"
-+                        );
-+                        refused += 1;
-+                    }
-+                }
-+            }
-+        });
-+    }
-+    // Both branches must have been exercised, or the agreement is vacuous.
-+    assert!(
-+        admitted > 1_000 && refused > 1_000,
-+        "admitted {admitted}, refused {refused}"
-+    );
-+}
++use std::future::Future;
++use std::pin::Pin;
++use std::sync::Arc;
++use std::sync::atomic::{AtomicU64, Order
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5965** (2026-10-23): feat(transport): add QUIC socket plumbing behind DemuxSocket (@sanity)
-- **PR #5964** (2026-10-22): feat(transport): make total-bandwidth-limit a node-wide egress cap (@sanity)
-- **PR #5963** (2026-10-22): fix(transport): stop malformed peer packets from panicking the receive path (@sanity)
-- **PR #5962** (2026-10-21): test: give the dial-queue-wait test addresses no other test dials (@sanity)
-- **PR #5961** (2026-10-22): feat(transport): demultiplex inbound packets by first byte (@sanity)
-- **PR #5960** (2026-10-21): fix(test): seed GlobalRng in topology::tests::test_topology (and chi_squared_test) (@sanity)
+- **PR #5984** (2026-10-25): feat(telemetry): count connection identity transitions (@sanity)
+- **PR #5979** (2026-10-24): build: release 0.2.149 (@sanity)
+- **PR #5977** (2026-10-24): fix(transport): complete a hole-punch handshake only on a packet under the attempt's session key (@sanity)
+- **PR #5973** (2026-10-24): feat(transport): add QUIC stream framing, QuicPath and the inbound stream adapter (unused yet) (@sanity)
+- **PR #5972** (2026-10-24): fix(transport): serve a connection's streams in order under the egress cap (@sanity)
+- **PR #5971** (2026-10-24): chore(transport): record that 0.2.149 ships the QUIC upgrade decoder (@sanity)
 
 ---
 
@@ -2544,51 +2724,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): add QUIC socket plumbing behind DemuxSocket (#5965)
+## X. build: release 0.2.149 (#5979)
 
 **RULE**:
-When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c55c2450`: transport): add QUIC socket plumbing behind DemuxSocket (#5965). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `482227ba`: build: release 0.2.149 (#5979). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-cap counts UDP payload, not IP/UDP headers.
-EgressCap::poll_admit is the poll form for a sender that is polled (a quinn
-UdpPoller, #5940): Ready exactly when try_take would succeed at that instant
-(one shared predicate, `admits`), else Pending with a timer on the cap's
-TimeSource at the refill time, kept in the caller's AdmissionWaiter. It takes
-nothing; the sender is charged at its send (Socket::try_send_to charges like
-send_to). The cap is built on RealTime even in simulation, because the
-listener and its connections run on RealTime there: a VirtualTime cap would
-compute deficits on another clock than its waiters sleep and time out on.
-dropped or, for `quic`, queued for the QUIC ingress; each `quic` one is also
-counted once by what happened to it, `quic_ingress_<label>`, one per
-`QuicIngressOutcome`; see "Socket Abstraction Rules") and outbound datagrams by how the
-dropped. The QUIC rule is exact only with QUIC bit greasing (RFC 9287)
-disabled. Tests that inject a hand-written socket straight into the listener
-bypass the wrapper.
-
-For a QUIC endpoint on the same port (#5940), `enable_quic_ingress` gives the
-wrapper a bounded queue (`QUIC_INGRESS_QUEUE_DATAGRAMS`, a declared byte
-
+version = "0.3.311"
+version = "0.2.149"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-cap counts UDP payload, not IP/UDP headers. A quinn endpoint will need a poll-based admission (poll_ready
-+ try_admit over try_take's predicate); not built yet.
-dropped; see "Socket Abstraction Rules") and outbound datagrams by how the
-dropped until a QUIC endpoint exists on the same port (#5940). The QUIC rule
-is exact only with QUIC bit greasing (RFC 9287) disabled. Tests that inject a
-hand-written socket straight into the listener bypass the wrapper.
+version = "0.3.310"
+version = "0.2.148"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c55c2450` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `482227ba` are properly handled with clean fallback behavior.

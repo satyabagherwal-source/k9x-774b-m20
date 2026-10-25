@@ -1875,8 +1875,8 @@
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
     "sourceVersion": "68a78d31",
     "license": "MIT",
-    "contentHash": "f2dfb31b9b6caed719989d76a59436152cff96ebac0f0fca65b8559fe43bf985",
-    "lastHarvestedAt": "2026-10-20T11:33:01.372Z",
+    "contentHash": "0dc6ea340024db54c4badaf650a757b26452437772aaa86efee814ce35fc60a1",
+    "lastHarvestedAt": "2026-10-25T03:38:32.306Z",
     "learningId": "learn-github-crawlcove-hreflang-checker"
   },
   "alecxe-scrapy-fake-useragent": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "c55c2450",
+    "sourceVersion": "ab599433",
     "license": "NOASSERTION",
-    "contentHash": "6a28ee093c0c16ab93655116d3956ea0a9b7a9f344c4ac0a2ceedb240e8e9508",
-    "lastHarvestedAt": "2026-10-23T06:17:23.485Z",
+    "contentHash": "0da4858ae7dffb0486b97b7c94e2b599f136fecdd4f8190648087928add4fdef",
+    "lastHarvestedAt": "2026-10-25T03:38:38.805Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3983,10 +3983,10 @@
     "repository": "microsoft/fluentui",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/fluentui",
-    "sourceVersion": "7e6920d5",
+    "sourceVersion": "6d3e9d68",
     "license": "NOASSERTION",
-    "contentHash": "71f9ca4f6a8b89bc4f85ca8996a741ddb844590d0ecd9256d6a2892be21688bf",
-    "lastHarvestedAt": "2026-10-22T17:04:41.187Z",
+    "contentHash": "1a665bd028fdc2c50ff2fbee72184611030f3ad9ced9c7406e530a52eb189e37",
+    "lastHarvestedAt": "2026-10-25T03:38:28.604Z",
     "learningId": "learn-github-microsoft-fluentui"
   },
   "o2sh-onefetch": {
@@ -4753,10 +4753,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/Shopify/react-native-skia",
-    "sourceVersion": "f92429aa",
+    "sourceVersion": "bbd1b685",
     "license": "MIT",
-    "contentHash": "1c532e695dfff1226863a2949ef79afdb2d26a6c051d0d0dd4df93ff6b407afa",
-    "lastHarvestedAt": "2026-10-20T14:16:45.560Z",
+    "contentHash": "e014a1031fb833966f990acce1aa907791b9c7c48302852eea8a50b7e778b1b2",
+    "lastHarvestedAt": "2026-10-25T03:38:35.803Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "saltstack-salt": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "7d70e57f",
+    "sourceVersion": "e4fad3f1",
     "license": "Apache-2.0",
-    "contentHash": "2ef4b81851f693ad14d31f30420866d897ef9dc633ccd97b43d5855cae8ec732",
-    "lastHarvestedAt": "2026-10-22T16:45:16.660Z",
+    "contentHash": "8282a93062d14a118d8a6930442b216082000b8f28416f87496ba27c6c24dc54",
+    "lastHarvestedAt": "2026-10-25T03:38:40.547Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
