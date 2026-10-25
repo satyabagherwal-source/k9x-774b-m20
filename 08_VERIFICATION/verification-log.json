@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-E6FU",
-    "timestamp": "2026-10-22T18:24:09.498Z",
-    "repository": "sharkdp/fd",
-    "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "cdd5ba1b886baf9fd33ed1f896cc8f523b2ae3840ef64127e72e5e7385ba603c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-E8CS",
-    "timestamp": "2026-10-22T18:24:11.980Z",
-    "repository": "ArchiveBox/ArchiveBox",
-    "learningId": "learn-github-archivebox-archivebox",
-    "contentHash": "4fb5f49350057dfd736c351f85bcdc65d8eb3fc2ef639795911b3ddbae8c7db3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-EBJA",
-    "timestamp": "2026-10-22T18:24:16.102Z",
-    "repository": "fission/fission",
-    "learningId": "learn-github-fission-fission",
-    "contentHash": "3e46e18e338815ab4c2329de4de62072d6ab45b1c998b06d3cdd155da43e1e2c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-EGSU",
-    "timestamp": "2026-10-22T18:24:22.926Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "a44f1dec9bc15706d79560b07c70973addc26b09dab9d161d0a7914e4982f981",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-MFKO",
     "timestamp": "2026-10-22T18:30:34.584Z",
     "repository": "codewhale-hq/Codewhale",
@@ -7500,26 +7440,63 @@
     }
   },
   {
-    "cycleId": "CYCLE-20261025-OEF124",
-    "timestamp": "2026-10-25T15:39:07.790Z",
-    "repository": "local/old-english-font-free",
-    "learningId": "learn-local-old-english-font-free-v3-124",
-    "contentHash": "16836c99fe9a94b21a6403e7577f121bf53f6dd11c54b5a4860a077675bd8278",
-    "status": "PROMOTED_AND_VERIFIED",
-    "promotedRulesCount": 5,
-    "promotedRules": [
-      4366,
-      4367,
-      4368,
-      4369,
-      4370
-    ],
+    "cycleId": "CYCLE-20261025-SEWB",
+    "timestamp": "2026-10-25T15:38:16.811Z",
+    "repository": "meshtastic/Meshtastic-Android",
+    "learningId": "learn-github-meshtastic-meshtastic-android",
+    "contentHash": "609280e6c71fcdd062eb21d2432cf792a4ca42acd6c8cbc27fdf31cd886e5af1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
       "content_hash_verified": true,
-      "index_read_back_verified": true,
-      "retrieval_verified": true
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-SHJC",
+    "timestamp": "2026-10-25T15:38:20.232Z",
+    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+    "contentHash": "5c12e79ea551716fa7d1c479f00a18fbeb2df7dab09a0822c886befddd6134d5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-SJCS",
+    "timestamp": "2026-10-25T15:38:22.588Z",
+    "repository": "neuron-core/neuron-ai",
+    "learningId": "learn-github-neuron-core-neuron-ai",
+    "contentHash": "f46b1bdbfd718a66bb7b93e623fd9e46c743d47d701e41324fafdf5c27fb28eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-YMPL",
+    "timestamp": "2026-10-25T15:43:06.873Z",
+    "repository": "kajisho5/ffmpeg-skill",
+    "learningId": "learn-github-kajisho5-ffmpeg-skill",
+    "contentHash": "973b37627992402e40a401b8dd721fb79618a941f43a029a26df2ee11599e3f2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
     }
   }
 ]

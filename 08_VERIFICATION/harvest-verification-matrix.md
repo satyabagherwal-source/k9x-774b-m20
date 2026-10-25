@@ -4879,3 +4879,7 @@
 | `CYCLE-20261025-ZUSM` | `2026-10-25T15:16:04.390Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4364` | Yes (`7313231a...`) |
 | `CYCLE-20261025-008L` | `2026-10-25T15:16:11.445Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4365` | Yes (`5587bdb6...`) |
 | `CYCLE-20261025-DR2X` | `2026-10-25T15:26:52.761Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`d0edded8...`) |
+| `CYCLE-20261025-SEWB` | `2026-10-25T15:38:16.811Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4366` | Yes (`609280e6...`) |
+| `CYCLE-20261025-SHJC` | `2026-10-25T15:38:20.232Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4367, Rule 4368` | Yes (`5c12e79e...`) |
+| `CYCLE-20261025-SJCS` | `2026-10-25T15:38:22.588Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4369` | Yes (`f46b1bdb...`) |
+| `CYCLE-20261025-YMPL` | `2026-10-25T15:43:06.873Z` | `kajisho5/ffmpeg-skill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4370` | Yes (`973b3762...`) |

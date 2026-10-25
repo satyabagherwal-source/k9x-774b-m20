@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T15:26:52.777Z",
+  "last_updated": "2026-10-25T15:43:06.888Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1880,14 +1880,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "3344ad6e165e769a3f5d880bdbaf6811a3b53fa095fa412b0112f04a15f24052",
-      "verified_at": "2026-10-20T20:07:00.489Z",
+      "content_hash": "5c12e79ea551716fa7d1c479f00a18fbeb2df7dab09a0822c886befddd6134d5",
+      "verified_at": "2026-10-25T15:38:20.242Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:07:00.489Z"
+      "last_updated": "2026-10-25T15:38:20.242Z"
     },
     "ZHangZHengEric/Sage": {
       "repository": "ZHangZHengEric/Sage",
@@ -4791,14 +4791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-neuron-core-neuron-ai",
-      "content_hash": "2a219feacb36386c257b070710ce36b6c871077dcbd2d9d3a3394e79ebcea9cc",
-      "verified_at": "2026-10-20T16:27:57.018Z",
+      "content_hash": "f46b1bdbfd718a66bb7b93e623fd9e46c743d47d701e41324fafdf5c27fb28eb",
+      "verified_at": "2026-10-25T15:38:22.598Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:27:57.018Z"
+      "last_updated": "2026-10-25T15:38:22.598Z"
     },
     "GeekyAnts/NativeBase": {
       "repository": "GeekyAnts/NativeBase",
@@ -11751,14 +11751,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshtastic-meshtastic-android",
-      "content_hash": "015556942819f9f12063d0fbf99d75bd136d550b2f6c060c9774d80f4d97af94",
-      "verified_at": "2026-10-20T22:32:56.160Z",
+      "content_hash": "609280e6c71fcdd062eb21d2432cf792a4ca42acd6c8cbc27fdf31cd886e5af1",
+      "verified_at": "2026-10-25T15:38:16.821Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:32:56.160Z"
+      "last_updated": "2026-10-25T15:38:16.821Z"
     },
     "astral-sh/uv": {
       "repository": "astral-sh/uv",
@@ -16094,6 +16094,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-25T15:15:52.709Z"
+    },
+    "kajisho5/ffmpeg-skill": {
+      "repository": "kajisho5/ffmpeg-skill",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kajisho5-ffmpeg-skill",
+      "content_hash": "973b37627992402e40a401b8dd721fb79618a941f43a029a26df2ee11599e3f2",
+      "verified_at": "2026-10-25T15:43:06.883Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-25T15:43:06.883Z"
     }
   },
   "repos": {

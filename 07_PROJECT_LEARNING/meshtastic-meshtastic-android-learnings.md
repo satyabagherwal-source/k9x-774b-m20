@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md`  
 > **Source**: github ([https://github.com/meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android))  
-> **Source Version**: `2a41b35c`  
+> **Source Version**: `1bedc5de`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:32:55.726Z  
+> **Timestamp**: 2026-10-25T15:38:16.481Z  
 > **Learning ID**: `learn-github-meshtastic-meshtastic-android`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:32:55.720Z  
+> **Harvest Timestamp**: 2026-10-25T15:38:16.207Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Android application for Meshtastic
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1879 stars
+- **Stars / Engagement**: 1884 stars
 
 ---
 
@@ -101,7 +101,7 @@ import android.content.Context
 import android.os.Build
 import androidx.appfunctions.AppFunctionException
 import androidx.appfunctions.AppFunctionManager
-import androidx.appfunctions.metadata.AppFunctionName
+import androidx.appfunctions.AppFunctionName
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -1311,11 +1311,11 @@ class AndroidBluetoothRepository(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7695** (2026-10-20): **[Bug]: Docs sync deletes screenshots that versioned docs still link**
-  *Symptoms*: ### Affected app version  Not applicable. The bug is in `scripts/sync-android-docs.js`, which the meshtastic/meshtastic docs sync runs from the latest release.  ### Affected Android version / phone model / node model / node firmware version  Not applicable: build tooling, no device involved.  ### Steps to reproduce the bug  1. Check out meshtastic/meshtastic `master`. 2. From that checkout, run `node <Meshtastic-Android>/scripts/sync-android-docs.js <Meshtastic-Android> --convert-webp`. 3. Run `pnpm build` in the docs repo.  ### Actual behavior  The script prunes every image in `static/img/android/docs/` that no current page references, including images the frozen Docusaurus snapshots under `versioned_docs/` still link. The docs build then fails on the unresolved images. meshtastic/meshtastic#2728 is failing this way:  ```shell Error: MDX compilation failed for file "versioned_docs/version-2.7/software/android/user/nodes.md" Cause: Markdown image with URL `/img/android/docs/nodes_node_list.webp` in source file "versioned_docs/version-2.7/software/android/user/nodes.md" (128:1) couldn't be resolved to an existing local image file. ```  `settings_password_field.webp` and `firmware_disclaimer.webp` fail the same way, and running the script from `main` also removes `connections_empty_state.webp`, which the 2.7 snapshot links too.  ### Expected behavior  The sync keeps any screenshot that a `versioned_docs/` page still links, so the docs build passes when the app drops a screensho
+- **Issue #7756** (2026-10-24): **[Bug]: Coverage overlay floor ignores the receiver sensitivity, so the outer edge is wrong**
+  *Symptoms*: ### Steps to reproduce the bug  1. Connect to a radio on the LongFast preset and open the Site Planner from the map (the receiver sensitivity is prefilled as -139 dBm). 2. Run an estimate. 3. Optionally, set the receiver sensitivity to -120 dBm and run it again.  ### Actual behavior  The lowest band always starts at -130 dBm, whatever the receiver sensitivity is. With LongFast, everything between -139 and -130 dBm, where a node can still hear the site, is left off the map, so the outer edge of coverage is drawn too small. With a sensitivity of -120 dBm, areas between -130 and -120 dBm are drawn as coverage even though a node there could not hear the site.  ### Expected behavior  The outermost band starts at the receiver sensitivity, as the comment on `toGeoJson` says: the outer edge means "a node here can hear this site at all."  ### Additional information  The style uses fixed `minDbm` / `maxDbm` defaults of -130 / -80 that the form never changes: https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/feature/coverage/src/commonMain/kotlin/org/meshtastic/feature/coverage/SitePlannerEstimate.kt#L87-L92 https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/feature/map/src/commonMain/kotlin/org/meshtastic/feature/map/component/SitePlannerParams.kt#L46-L47  The sensitivity is prefilled from the preset: https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/fea
 
-- **Issue #7488** (2026-09-30): **[Bug]: After pining a channel there is no way of un-pining it**
-  *Symptoms*: ### Contact Details  ronv42@outlook.com  ### Checklist  - [x] I am able to reproduce the bug with the latest version.  - [x] I have updated to the latest *Alpha* firmware, and am able to reproduce the bug. Many issues are fixed quickly in alpha before the general beta release.  - [x] I made sure that there are no existing **OPEN or CLOSED issues** which I could contribute my information to.  - [x] I have taken the time to fill in all the required details. I understand that the bug report will be dismissed otherwise.  - [x] This issue contains only one bug.  - [x] I have read and understood the **Contribution Guidelines**.  - [x] I agree to follow this project's Code of Conduct  - [x] I actually read this list, and should be taken seriously.   ### Affected app version  2.8.2 (29322440)  ### Affected Android version  Android 17  ### Affected phone model  Google Pixel 9 Pro  ### Affected node model  Seed Tracker L1  ### Affected node firmware version  2.7.26  ### Steps to reproduce the bug  1. Goto Conversation screen and the list of channels 2. Highlight a channel and select the "Pin" icon 3. Channel will now show at the top of the list with the Pin icon in the lower right corner 4. No option to un-pin, selecting channel again and selecting the Pin icon doesn't  clear the pin   <img width="567" height="483" alt="Image" src="https://github.com/user-attachments/assets/7d49c12b-78ed-497c-ae05-5bdce01e57c4" />  ### Actual behavior  Pinning works, un-pinning doesn't    ### Expected 
+- **Issue #7755** (2026-10-24): **[Bug]: Coverage estimates don't credit the Mapterhorn terrain they are built from**
+  *Symptoms*: ### Steps to reproduce the bug  1. With hillshade and contours off (or no offline terrain downloaded), open the map. 2. Run a Site Planner coverage estimate and let the overlay load. 3. Look at the map's attribution and the Site Planner form.  ### Actual behavior  The overlay is computed from Mapterhorn terrain (built from CC-BY sources), but nothing on the map or in the form credits it. The Mapterhorn credit only shows while the offline hillshade or contour layer is drawing.  ### Expected behavior  Whenever a coverage overlay is shown, the map credits Mapterhorn the same way it does for hillshade, or the Site Planner form says where the terrain comes from.  ### Additional information  The credit is gated on the offline terrain layers: https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/androidApp/src/google/kotlin/org/meshtastic/app/map/MapView.kt#L1031-L1045 https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/layers/TerrainLayers.kt#L102-L103  The estimate's terrain source: https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/feature/coverage/src/commonMain/kotlin/org/meshtastic/feature/coverage/MapterhornTiles.kt#L70-L71  Suggested fix: add `MapterhornEndpoints.ATTRIBUTION` to the attribution list whenever a coverage layer is visible (Google flavor), set `attributionHtm
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1332,308 +1332,566 @@ class AndroidBluetoothRepository(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2a41b35c` (2026-10-20)
-**Commit Message**: fix(docs): keep screenshots versioned docs still link (#7694)
+### Incident Patch 1: `10297408` (2026-10-22)
+**Commit Message**: chore(deps): update bouncycastle [security] (#7733)
 
-**File**: `scripts/sync-android-docs.js` (modified, +30/-5)
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -17,7 +17,8 @@
- //   static/img/android/docs/*.webp (or .png/.svg if not converting)
- //
- // Only screenshots a synced page actually references are published; any other
--// file already under those two directories is pruned at the end of the run.
-+// file already under those two directories is pruned at the end of the run,
-+// except screenshots a frozen versioned_docs/ snapshot still links.
+@@ -99,7 +99,7 @@ google-services-gradle = "4.5.0"
+ markdown = "0.7.18"
+ markdownRenderer = "0.46.0"
+ okio = "3.18.2"
+-bouncycastle = "1.80"
++bouncycastle = "1.85"
+ uri-kmp = "0.0.21"
+ spotless = "8.10.4"
+ sceneview = "4.62.0"
+```
+
+---
+
+### Incident Patch 2: `bb78b38b` (2026-10-24)
+**Commit Message**: fix(coverage): Site Planner estimate placement, floor, offline terrain, threads and credit (#7758)
+
+Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
+
+**File**: `.skills/compose-ui/strings-index.txt` (modified, +1/-0)
+```diff
+@@ -1914,6 +1914,7 @@ site_planner_section_receiver
+ site_planner_section_simulation
+ site_planner_section_transmitter
+ site_planner_subtitle
++site_planner_terrain_credit
+ site_planner_tx_power_watts
+ site_planner_use_current_location
+ site_planner_use_map_center
+```
+
+**File**: `androidApp/src/fdroid/kotlin/org/meshtastic/app/map/component/SitePlannerSlot.kt` (modified, +11/-1)
+```diff
+@@ -17,16 +17,20 @@
+ package org.meshtastic.app.map.component
  
- "use strict";
+ import androidx.compose.runtime.Composable
++import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.runtime.getValue
++import androidx.compose.runtime.remember
+ import androidx.lifecycle.compose.collectAsStateWithLifecycle
+ import org.koin.compose.viewmodel.koinViewModel
+ import org.maplibre.spatialk.geojson.Position
+ import org.meshtastic.app.map.MapViewModel
++import org.meshtastic.feature.coverage.RegionTerrain
+ import org.meshtastic.feature.coverage.rememberCoverageEstimate
+ import org.meshtastic.feature.map.SharedMapViewModel
+ import org.meshtastic.feature.map.component.SitePlannerHost
+ import org.meshtastic.feature.map.component.toSitePlannerParams
+ import org.meshtastic.feature.map.maplibre.SitePlannerSession
++import org.meshtastic.feature.map.maplibre.terrain.OfflineTerrainRepository
  
-@@ -52,6 +53,9 @@ if (!fs.existsSync(SRC_DOCS_DIR)) {
- // Output directories (relative to CWD, which should be the meshtastic/meshtastic repo)
- const DEST_DOCS_DIR = path.join("docs", "software", "android");
- const DEST_IMAGES_DIR = path.join("static", "img", "android", "docs");
-+// Docusaurus version snapshots. They link the same /img/android/docs/ files as the
-+// current pages, but no sync rewrites them, so their images must outlive the app's.
-+const VERSIONED_DOCS_DIR = "versioned_docs";
+ /**
+  * Runs the Site Planner for the F-Droid map. The estimate becomes a GeoJSON map layer and the map moves to the
+@@ -48,9 +52,15 @@ fun SitePlannerSlot(session: SitePlannerSession) {
+     // A deep link names the node to plan for; a toolbar launch plans for whatever we are connected to.
+     val subject = session.nodeNum?.let { num -> nodes.firstOrNull { it.num == num } } ?: ourNode
  
- // Derive sibling page slugs from the filesystem (no manual sync needed)
- const KNOWN_USER_SLUGS = discoverSlugs(SRC_DOCS_DIR, "user");
-@@ -244,7 +248,8 @@ function collectImageReferences(content, into) {
-     const re = /\/img\/android\/docs\/([^)"'\s>]+)/g;
-     let match;
-     while ((match = re.exec(content)) !== null) {
--        into.add(path.basename(match[1]));
-+        // Drop any ?query or #fragment so the name matches the file on disk.
-+        into.add(path.basename(match[1].split(/[?#]/, 1)[0]));
++    val terrain = OfflineTerrainRepository.default
++    LaunchedEffect(terrain) { terrain.refresh() }
++    val terrainRegion by terrain.region.collectAsStateWithLifecycle()
++    val offlineTerrain =
++        remember(terrainRegion) { listOfNotNull(terrainRegion?.let { RegionTerrain(terrain.tileStore, it.bounds) }) }
++
+     SitePlannerHost(
+         initialParams = subject.toSitePlannerParams(channelSet),
+-        estimate = rememberCoverageEstimate(),
++        estimate = rememberCoverageEstimate(offlineTerrain),
+         onDismiss = session.onDismiss,
+         onImport = { name, geoJson, latitude, longitude ->
+             mapViewModel.addGeoJsonLayer(name, geoJson)
+```
+
+**File**: `androidApp/src/google/kotlin/org/meshtastic/app/map/MapView.kt` (modified, +19/-3)
+```diff
+@@ -193,6 +193,7 @@ import org.meshtastic.core.ui.util.formatAgo
+ import org.meshtastic.core.ui.util.formatPositionTime
+ import org.meshtastic.core.ui.util.rememberLocationPermissionState
+ import org.meshtastic.core.ui.util.showToast
++import org.meshtastic.feature.coverage.RegionTerrain
+ import org.meshtastic.feature.coverage.rememberCoverageEstimate
+ import org.meshtastic.feature.map.BaseMapViewModel.MapFilterState
+ import org.meshtastic.feature.map.MapBounds
+@@ -225,6 +226,7 @@ import org.meshtastic.feature.map.layers.MapLayerItem
+ import org.meshtastic.feature.map.layers.opacityOf
+ import org.meshtastic.feature.map.layers.toPickedMapFile
+ import org.meshtastic.feature.map.mergeStationaryRuns
++import org.meshtastic.feature.map.terrain.GeoBounds
+ import org.meshtastic.feature.map.terrain.MapterhornEndpoints
+ import org.meshtastic.feature.map.tiles.mapAttributionText
+ import org.meshtastic.feature.map.tracerouteNodeSelection
+@@ -1027,12 +1029,14 @@ fun MapView(
+         // alone: an on-disk-only attribution is invisible to anyone who never opens the offline-region manager
+         // sheet, which is exactly the gap this mirrors from the sibling iOS app's own terrain layer. The offline
+         // terrain layer's own credit (Mapterhorn) is folded in the same way, whenever hillshade or contours are
+-        // actually rendering.
++        // actually rendering, or a coverage estimate built from that terrain is shown.
+         val attributionCoveringRegion =
+             cameraPositionState.projection?.visibleRegion?.latLngBounds?.let { mapViewModel.offlineRegionCovering(it) }
+         val offlineRegionActive = offlineOverlayEnabled && attributionCoveringRegion != null
+-        val terrainActive =
++        val terrainDrawn =
+             attributionCoveringRegion?.hasTerrain == true && (terrainHillshadeEnabled || terrainContoursEnabled)
++        val coverageShown = mapLayers.any { it.layerType == LayerType.COVERAGE && it.isVisible }
++        val terrainActive = terrainDrawn || coverageShown
+         val attributionText =
+             remember(currentRasterBasemap, enabledOverlayIds, offlineRegionActive, terrainActive) {
+                 val baseAttribution =
+@@ -1234,9 +1238,21 @@ fun MapView(
+         // Route launches retain the selected node; manual map launches continue following our connected node.
+         val onUseNodeLocation: (() -> Pair<Double, Double>)? =
+             launch.nodeLocation(ourNodeInfo)?.let { location -> { location } }
++        val offlineRegions by mapViewModel.offlineRegions.collectAsStateWithLifecycle()
++        val offlineTerrain =
++            remember(offlineRegions) {
++                offlineRegions
++                    .filter { it.hasTerrain }
++                    .map { region ->
++                        RegionTerrain(
++                            store = mapViewModel.terrainStoreForRegion(region.id),
++                            bounds = GeoBounds(region.southLat, region.westLon, region.northLat, region.eastLon),
++                        )
++                    }
++            }
+         SitePlannerHost(
+             initialParams = launch.initialParams,
+-            estimate = rememberCoverageEstimate(),
++            estimate = rememberCoverageEstimate(offlineTerrain),
+             onDismiss = { sitePlannerLaunch = null },
+             onImport = { name, geoJson, latitude, longitude ->
+                 mapViewModel.addGeoJsonLayer(name, geoJson)
+```
+
+**File**: `core/resources/src/commonMain/composeResources/values/strings.xml` (modified, +1/-0)
+```diff
+@@ -1980,6 +1980,7 @@
+     <string name="site_planner_section_simulation">Simulation Options</string>
+     <string name="site_planner_section_transmitter">Site / Transmitter</string>
+     <string name="site_planner_subtitle">Estimate RF coverage for a transmitter</string>
++    <string name="site_planner_terrain_credit">Terrain data © Mapterhorn</string>
+     <string name="site_planner_tx_power_watts">TX power (W)</string>
+     <string name="site_planner_use_current_location">Use current location</string>
+     <string name="site_planner_use_map_center">Use map center</string>
+```
+
+**File**: `desktopApp/src/main/kotlin/org/meshtastic/desktop/map/DesktopSitePlannerSlot.kt` (modified, +11/-1)
+```diff
+@@ -17,17 +17,21 @@
+ package org.meshtastic.desktop.map
+ 
+ import androidx.compose.runtime.Composable
++import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.runtime.getValue
++import androidx.compose.runtime.remember
+ import androidx.lifecycle.compose.collectAsStateWithLifecycle
+ import org.koin.compose.koinInject
+ import org.koin.compose.viewmodel.koinViewModel
+ import org.maplibre.spatialk.geojson.Position
++import org.meshtastic.feature.coverage.RegionTerrain
+ import org.meshtastic.feature.coverage.rememberCoverageEstimate
+ import org.meshtastic.feature.map.SharedMapViewModel
+ import org.meshtastic.feature.map.component.SitePlannerHost
+ import org.meshtastic.feature.map.component.toSitePlannerParams
+ import org.meshtastic.feature.map.layers.MapLayersManager
+ import org.meshtastic.feature.map.maplibre.SitePlannerSession
++import org.meshtastic.feature.map.maplibre.terrain.OfflineTerrainRepository
+ 
+ /** Runs the Site Planner for the desktop map; the estimate becomes a GeoJSON map layer and the map moves to it. */
+ @Composable
+@@ -42,9 +46,15 @@ fun DesktopSitePlannerSlot(session: SitePlannerSession) {
+     // A deep link names the node to plan for; a toolbar launch plans for whatever we are connected to.
+     val subject = session.nodeNum?.let { num -> nodes.firstOrNull { it.num == num } } ?: ourNode
+ 
++    val terrain = OfflineTerrainRepository.default
++    LaunchedEffect(terrain) { terrain.refresh() }
++    val terrainRegion by terrain.region.collectAsStateWithLifecycle()
++    val offlineTerrain =
++        remember(terrainRegion) { listOfNotNull(terrainRegion?.let { RegionTerrain(terrain.tileStore, it.bounds) }) }
++
+     SitePlannerHost(
+         initialParams = subject.toSitePlannerParams(channelSet),
+-        estimate = rememberCoverageEstimate(),
++        estimate = rememberCoverageEstimate(offlineTerrain),
+         onDismiss = session.onDismiss,
+         onImport = { name, geoJson, latitude, longitude ->
+             layersManager.addGeoJsonLayer(name, geoJson)
+```
+
+**File**: `feature/coverage/build.gradle.kts` (modified, +7/-3)
+```diff
+@@ -34,17 +34,21 @@ kotlin {
+             implementation(libs.kp1812)
+             implementation(libs.kotlinx.coroutines.core)
+             implementation(projects.feature.map)
+-            implementation(projects.feature.mapTerrain)
++            // api: the estimate's public signatures take a TerrainTileStore.
++            api(projects.feature.mapTerrain)
+             implementation(projects.core.common)
+-            implementation(projects.core.di)
+             implementation(libs.okio)
+             implementation(libs.ktor.client.core)
+         }
+ 
+         jvmMain.dependencies { implementation(libs.ktor.client.java) }
+         androidMain.dependencies { implementation(libs.ktor.client.okhttp) }
+ 
+-        commonTest.dependencies { implementation(libs.kotlinx.coroutines.test) }
++        commonTest.dependencies {
++            implementation(libs.kotlinx.coroutines.test)
++            implementation(libs.ktor.client.mock)
++            implementation(libs.okio.fakefilesystem)
++        }
+         jvmTest.dependencies { implementation(libs.kotlinx.coroutines.test) }
      }
  }
- 
-@@ -345,13 +350,29 @@ function collectFiles(dir) {
-     return results;
- }
- 
-+/**
-+ * Collect the screenshot basenames that frozen version snapshots still link.
-+ * Pruning one of these breaks the site build, since Docusaurus fails on a
-+ * Markdown image it cannot resolve.
+```
+
+**File**: `feature/coverage/src/androidMain/kotlin/org/meshtastic/feature/coverage/CoverageCompute.android.kt` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++/*
++ * Copyright (c) 2026 Meshtastic LLC
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 + */
-+function collectVersionedImageReferences() {
-+    const names = new Set();
-+    for (const file of collectFiles(VERSIONED_DOCS_DIR)) {
-+        const ext = path.extname(file).toLowerCase();
-+        if (ext !== ".md" && ext !== ".mdx") continue;
-+        collectImageReferences(fs.readFileSync(path.join(VERSIONED_DOCS_DIR, file), "utf-8"), names);
-+    }
-+    return names;
++package org.meshtastic.feature.coverage
++
++internal actual fun processorCount(): Int = Runtime.getRuntime().availableProcessors()
+```
+
+**File**: `feature/coverage/src/commonMain/kotlin/org/meshtastic/feature/coverage/CoverageCompute.kt` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++/*
++ * Copyright (c) 2026 Meshtastic LLC
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
++ */
++package org.meshtastic.feature.coverage
++
++import kotlinx.coroutines.CoroutineDispatcher
++import kotlinx.coroutines.Dispatchers
++
++/**
++ * Where a coverage estimate's CPU work runs: [Dispatchers.Default] with one worker held back. The mesh service shares
++ * Default, and a sweep queues hundreds of radials, so an unlimited one would leave incoming radio data waiting on it.
++ */
++@Suppress("InjectDispatcher") // the sweep and tile decode are built outside DI
++internal val coverageComputeDispatcher: CoroutineDispatcher by lazy {
++    Dispatchers.Default.limitedParallelism(maxOf(1, processorCount() - 1))
 +}
 +
- /**
-  * Remove destination files this run did not produce, so renamed or deleted
-  * source pages (and the screenshots they referenced) don't linger on the site.
-  * Mirrors the Apple sync's cleanup pass. Scoped to docs pages (.md/.mdx) and
-- * images under the directories this script owns.
-+ * images under the directories this script owns. Images in `keepImageNames`
-+ * survive even when no current page references them.
-  */
--function pruneStale(expectedDocPaths, expectedImageNames) {
-+function pruneStale(expectedDocPaths, expectedImageNames, keepImageNames) {
-     for (const file of collectFiles(DEST_DOCS_DIR)) {
-         const ext = path.extname(file).toLowerCase();
-         if (ext !== ".md" && ext !== ".mdx") continue;
-@@ -368,6 +389,10 @@ function pruneStale(expectedDocPaths, expectedImageNames) {
-         if (!IMAGE_EXTENSIONS.has(path.extname(file).toLowerCase())) continue;
-         if (expectedImageNames.has(path.basename(file))) continue;
-         const target = path.join(DEST_IMAGES_DIR, file);
-+        if (keepImageNames.has(path.basename(file))) {
-+            console.log(`Kept image a versioned snapshot still links: ${target}`);
-+            continue;
-+        }
-         if (DRY_RUN) {
-             console.log(`[dry-run] Would remove stale image: ${target}`);
-         } else {
-@@ -503,7 +528,7 @@ function main() {
-     const expectedImageNames = processImages(referencedImages);
- 
-     // Remove anything left over from a previous sync or the old hand-written docs.
--    pruneStale(expectedDocPaths, expectedImageNames);
-+    pruneStale(expectedDocPaths, expectedImageNames, collectVersionedImageReferences());
- 
-     console.log("\nSync complete.");
++/** CPU cores available to the process; common code has no API for it. */
++internal expect fun processorCount(): Int
+```
+
+---
+
+### Incident Patch 3: `1bedc5de` (2026-10-24)
+**Commit Message**: fix(coverage): Mapterhorn credit on MapLibre and antimeridian regions (#7759)
+
+**File**: `feature/coverage/src/commonMain/kotlin/org/meshtastic/feature/coverage/RegionTerrain.kt` (modified, +9/-2)
+```diff
+@@ -36,5 +36,12 @@ internal fun TileIndex.bounds(): GeoBounds {
+     )
  }
+ 
+-internal fun GeoBounds.intersects(other: GeoBounds): Boolean =
+-    west < other.east && other.west < east && south < other.north && other.south < north
++/** Whether the two overlap. A box whose west is east of its east crosses the antimeridian. */
++internal fun GeoBounds.intersects(other: GeoBounds): Boolean = south < other.north &&
++    other.south < north &&
++    longitudeSpans().any { (w, e) -> other.longitudeSpans().any { (ow, oe) -> w < oe && ow < e } }
++
++private fun GeoBounds.longitudeSpans(): List<Pair<Double, Double>> =
++    if (west <= east) listOf(west to east) else listOf(west to MAX_LONGITUDE, -MAX_LONGITUDE to east)
++
++private const val MAX_LONGITUDE = 180.0
 ```
 
----
-
-### Incident Patch 2: `4b3068fb` (2026-10-19)
-**Commit Message**: build(flatpak): stamp the overlay's Gradle zip from the wrapper (#7681)
-
-**File**: `.github/renovate.json` (modified, +0/-13)
+**File**: `feature/coverage/src/commonTest/kotlin/org/meshtastic/feature/coverage/RegionTerrainTest.kt` (added, +44/-0)
 ```diff
-@@ -145,19 +145,6 @@
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (c) 2026 Meshtastic LLC
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
++ */
++package org.meshtastic.feature.coverage
++
++import org.meshtastic.feature.map.terrain.GeoBounds
++import kotlin.test.Test
++import kotlin.test.assertFalse
++import kotlin.test.assertTrue
++
++class RegionTerrainTest {
++
++    // Fiji, west 177 to east -178: across the antimeridian.
++    private val acrossTheAntimeridian = GeoBounds(south = -19.0, west = 177.0, north = -16.0, east = -178.0)
++
++    @Test
++    fun aWrappedRegionMeetsGroundOnBothSidesOfTheLine() {
++        assertTrue(acrossTheAntimeridian.intersects(GeoBounds(-18.0, 178.0, -17.0, 179.0)))
++        assertTrue(acrossTheAntimeridian.intersects(GeoBounds(-18.0, -179.5, -17.0, -179.0)))
++    }
++
++    @Test
++    fun aWrappedRegionMissesGroundBetweenItsEnds() {
++        assertFalse(acrossTheAntimeridian.intersects(GeoBounds(-18.0, 0.0, -17.0, 1.0)))
++    }
++
++    @Test
++    fun boxesThatOnlyTouchDoNotIntersect() {
++        assertFalse(GeoBounds(0.0, 0.0, 1.0, 1.0).intersects(GeoBounds(0.0, 1.0, 1.0, 2.0)))
++    }
++}
+```
+
+**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/MapLibreMapViewProvider.kt` (modified, +3/-1)
+```diff
+@@ -147,6 +147,7 @@ class MapLibreMapViewProvider(
+         val location = rememberLocationControls()
+         val waypoints = rememberWaypointEditing()
+         val screen = rememberMapScreenState(waypointId = waypointId, sitePlannerNodeNum = sitePlannerNodeNum)
++        val layers = customLayers()
+ 
+         val mapState =
+             rememberMapScreenMapState(
+@@ -155,7 +156,7 @@ class MapLibreMapViewProvider(
+                 screen = screen,
+                 waypoints = waypoints,
+                 location = location,
+-                customLayers = customLayers(),
++                customLayers = layers,
+                 navigateToNodeDetails = navigateToNodeDetails,
+             )
+ 
+@@ -170,6 +171,7 @@ class MapLibreMapViewProvider(
+                 mapState = mapState,
+                 modifier = Modifier.fillMaxSize(),
+                 basemap = basemaps.current,
++                extraCredits = layers.mapNotNull { it.attributionHtml },
+                 onMapLongClick = waypoints.onLongPress,
+                 onMapClick = waypoints.onMapTap,
+             )
+```
+
+**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/MeshMap.kt` (modified, +6/-2)
+```diff
+@@ -73,7 +73,7 @@ import org.meshtastic.feature.map.BaseMapViewModel
+ import org.meshtastic.feature.map.MapNodePolicy
+ import org.meshtastic.feature.map.component.MapEngineUnavailable
+ import org.meshtastic.feature.map.component.MeshMapFitPadding
+-import org.meshtastic.feature.map.maplibre.component.MeshMapOrnaments
++import org.meshtastic.feature.map.maplibre.component.meshMapOrnaments
+ import org.meshtastic.feature.map.maplibre.geojson.ClusterMember
+ import org.meshtastic.feature.map.maplibre.geojson.rememberFeatureSource
+ import org.meshtastic.feature.map.maplibre.layers.CustomLayer
+@@ -222,6 +222,8 @@ fun MeshMap(
+     mapState: MapState,
+     modifier: Modifier = Modifier,
+     basemap: Basemap = Basemaps.default,
++    /** HTML credits for drawn data no style source carries; see [meshMapOrnaments]. */
++    extraCredits: List<String> = emptyList(),
+     /** Called with the pressed position on a long press, which is how a new waypoint gets placed. */
+     onMapLongClick: (Position) -> Unit = {},
+     /** Called with the tapped position. Used to collect the two corners of a waypoint's geofence bounding box. */
+@@ -240,6 +242,8 @@ fun MeshMap(
      }
-   ],
-   "customManagers": [
--    {
--      "customType": "regex",
--      "description": "Mirror gradle-wrapper.properties bumps into the vendored Gradle distribution URL in the verify-flatpak offline manifest (see PRs #6777/#6782, where a wrapper bump without this file broke both build-flatpak arches). Shares depName 'gradle' with the gradle-wrapper manager so both files update in the same Renovate branch/PR. The sha256 line below the URL cannot be auto-updated (the gradle-version datasource has no digest support and the hosted app disallows postUpgradeTasks); the fail-fast guard in verify-flatpak.yml's generate-sources job holds that PR red until the sha256 is copied from distributionSha256Sum.",
--      "managerFilePatterns": [
--        "/^scripts/verify-flatpak/desktop-offline\\.yaml$/"
--      ],
--      "matchStrings": [
--        "services\\.gradle\\.org/distributions/gradle-(?<currentValue>\\d+(?:\\.\\d+)*)-bin\\.zip"
--      ],
--      "depNameTemplate": "gradle",
--      "datasourceTemplate": "gradle-version",
--      "versioningTemplate": "gradle"
--    },
-     {
-       "customType": "regex",
-       "description": "ktlint's version is a bare [versions] entry that only Spotless reads, so the gradle manager cannot tie it to an artifact.",
+ 
+     val zoomRange = basemap.zoomRange()
++    val credits = extraCredits.distinct()
++    val ornaments = remember(credits) { meshMapOrnaments(credits) }
+     MaplibreMap(
+         modifier = modifier,
+         state = mapState,
+@@ -267,7 +271,7 @@ fun MeshMap(
+                 }
+             }
+         },
+-        overlay = { include(MeshMapOrnaments) },
++        overlay = { include(ornaments) },
+     )
+ }
+ 
 ```
 
-**File**: `.github/workflows/verify-flatpak.yml` (modified, +5/-24)
+**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/NodeTrackMap.kt` (modified, +1/-1)
 ```diff
-@@ -8,8 +8,8 @@ on:
-     paths:
-       - 'scripts/verify-flatpak/**'
-       - '.github/workflows/verify-flatpak.yml'
--  # Post-merge only for what the check itself depends on. The offline manifest pins the
--  # Gradle distribution apart from the wrapper, so a wrapper bump is checked on merge.
-+  # Post-merge only for what the check itself depends on. The offline build vendors the
-+  # wrapper's Gradle distribution, so a wrapper bump is checked on merge.
-   push:
-     branches: [ main ]
-     paths:
-@@ -49,28 +49,6 @@ jobs:
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
- 
--      # Renovate mirrors wrapper bumps into the manifest's distribution URL but cannot
--      # rewrite its sha256, so on a wrapper bump this drift is expected: fail here in
--      # seconds instead of ~15 minutes into the build ("Verification of Gradle
--      # distribution failed!", see #6777/#6782).
--      - name: Check vendored Gradle dist matches the wrapper
--        run: |
--          props=gradle/wrapper/gradle-wrapper.properties
--          manifest=scripts/verify-flatpak/desktop-offline.yaml
--          wrapper_dist=$(grep '^distributionUrl=' "$props" | sed 's|.*/||' || true)
--          wrapper_sha=$(grep '^distributionSha256Sum=' "$props" | cut -d= -f2 || true)
--          manifest_dist=$(grep -o 'gradle-[0-9][^/]*\.zip' "$manifest" || true)
--          manifest_sha=$(awk '/url:.*services\.gradle\.org\/distributions\//{getline; sub(/^[[:space:]]*sha256:[[:space:]]*/, ""); print}' "$manifest")
--          if [ -z "$wrapper_dist" ] || [ -z "$wrapper_sha" ]; then
--            echo "::error file=$props::Could not parse distributionUrl/distributionSha256Sum from $props; the guard in verify-flatpak.yml needs updating."
--            exit 1
--          fi
--          if [ "$wrapper_dist" != "$manifest_dist" ] || [ "$wrapper_sha" != "$manifest_sha" ]; then
--            echo "::error file=$manifest::Vendored Gradle dist is out of sync: $manifest pins '$manifest_dist' (sha256 '$manifest_sha') but $props pins '$wrapper_dist' (sha256 '$wrapper_sha'). Update the url and sha256 in $manifest; the correct sha256 is distributionSha256Sum in $props."
--            exit 1
--          fi
--          echo "OK: $manifest vendors $wrapper_dist, matching $props"
--
-       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
-         with:
-           distribution: temurin
-@@ -122,6 +100,9 @@ jobs:
-         run: |
-           cp scripts/verify-flatpak/desktop-offline.yaml \
-             "$RUNNER_TEMP/org.meshtastic.MeshtasticDesktop/org.meshtastic.MeshtasticDesktop.yaml"
-+          python3 scripts/verify-flatpak/bump-flathub-manifest.py --gradle-only \
-+            "$RUNNER_TEMP/org.meshtastic.MeshtasticDesktop/org.meshtastic.MeshtasticDesktop.yaml" \
-+            gradle/wrapper/gradle-wrapper.properties
-           cp flatpak-sources.json \
-             "$RUNNER_TEMP/org.meshtastic.MeshtasticDesktop/flatpak-sources.json"
-           rsync -a --delete \
+@@ -173,7 +173,7 @@ fun MapLibreNodeTrackMap(
+                 ?.let { selected -> positions.firstOrNull { it.time == selected } },
+             displayUnits = displayUnits,
+             // Clear of the wordmark and attribution button along the bottom edge, which every map shows.
+-            // See MeshMapOrnaments.
++            // See meshMapOrnaments.
+             modifier =
+             Modifier.align(Alignment.BottomStart)
+                 .padding(start = CARD_INSET.dp, end = CARD_INSET.dp, bottom = ORNAMENT_CLEARANCE.dp),
 ```
 
-**File**: `scripts/verify-flatpak/README.md` (modified, +3/-1)
+**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/SecondaryMaps.kt` (modified, +1/-1)
 ```diff
-@@ -78,7 +78,9 @@ executing the Gradle build, or run the full script on a Linux host.
- - `verify.sh` — entry point. Idempotent: re-running just re-syncs the overlay and re-runs flatpak-builder.
- - `desktop-offline.yaml` — patched manifest. Kept in sync manually with the upstream packaging;
-   diff against `https://raw.githubusercontent.com/flathub/org.meshtastic.MeshtasticDesktop/master/org.meshtastic.MeshtasticDesktop.yaml`
--  if upstream changes something material.
-+  if upstream changes something material. Its Gradle zip is a placeholder; `verify.sh` and
-+  `verify-flatpak.yml` fill it from `gradle/wrapper/gradle-wrapper.properties`.
- - `bump-flathub-manifest.py` - points the upstream manifest at a release: the source tag and
-   commit, and the Gradle zip the tag's wrapper pins. `promote.yml`'s `update-flathub` job runs it
-   on every production promotion, then commits the release's `flatpak-sources.json` beside it.
-+  `--gradle-only` rewrites just the Gradle zip, for the overlay.
+@@ -449,7 +449,7 @@ internal const val CARD_INSET = 8
+ /**
+  * Height to leave for the map's wordmark and attribution button, which every map shows.
+  *
+- * See [org.meshtastic.feature.map.maplibre.component.MeshMapOrnaments].
++ * See [org.meshtastic.feature.map.maplibre.component.meshMapOrnaments].
+  */
+ internal const val ORNAMENT_CLEARANCE = 40
+ private const val CARD_PADDING = 8
 ```
 
-**File**: `scripts/verify-flatpak/bump-flathub-manifest.py` (modified, +18/-9)
+**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/component/MapOrnaments.kt` (modified, +25/-10)
 ```diff
-@@ -2,9 +2,11 @@
- """Point the Flathub manifest at a release: the source tag and commit, and the Gradle zip.
+@@ -69,8 +69,11 @@ import org.maplibre.compose.overlay.MapOverlay as MaplibreOverlay
+  *
+  * Scale-bar units are left to the library, which picks them by region — the same locale-driven approach the rest of the
+  * app takes through `localeUnitsProvider`.
++ *
++ * [extraCredits] are HTML credits for data no style source carries, such as the terrain under a coverage estimate,
++ * which is drawn from a GeoJSON source that has no attribution field. They join the style's own, deduplicated.
+  */
+-internal val MeshMapOrnaments: MaplibreOverlay = MaplibreOverlay {
++internal fun meshMapOrnaments(extraCredits: List<String>): MaplibreOverlay = MaplibreOverlay {
+     val mapState = checkNotNull(LocalMapState.current)
+     val viewportInsets = LocalViewportInsets.current
  
- Usage: bump-flathub-manifest.py <manifest.yaml> <tag> <commit> <gradle-wrapper.properties>
-+       bump-flathub-manifest.py --gradle-only <manifest.yaml> <gradle-wrapper.properties>
+@@ -89,18 +92,24 @@ internal val MeshMapOrnaments: MaplibreOverlay = MaplibreOverlay {
+             zoom = { mapState.cameraPosition.zoom },
+             modifier = Modifier.align(Alignment.TopStart),
+         )
++        if (extraCredits.isNotEmpty()) {
++            // Ours rather than the library's button, which draws nothing when the style itself credits nobody, as a
++            // custom raster basemap may not.
++            MaplibreLogo(Modifier.align(Alignment.BottomStart))
++            CreditButton(Modifier.align(Alignment.BottomEnd), extraCredits = extraCredits, startExpanded = true)
++        }
+     }
  
- The Gradle distribution URL and sha256 come from the tag's own wrapper properties, since the
--offline build can only run the Gradle version that tag pins. Each field is rewritten in
-+offline build can only run the Gradle version that tag pins. --gradle-only rewrites just the
-+Gradle zip, which is how the verify-flatpak overlay gets the working tree's wrapper. Each field is rewritten in
- place, so comments and layout survive. Any field that does not match exactly once fails the
- run instead of guessing, and the manifest is then bumped by hand.
- """
-@@ -49,22 +51,29 @@ def replace_once(pattern: re.Pattern, value_a: str, value_b: str, text: str, wha
+     // The logo and the attribution button, in the places `MapOverlay.Default` puts them.
+-    include(MaplibreOverlay.AttributionOnly)
++    if (extraCredits.isEmpty()) include(MaplibreOverlay.AttributionOnly)
+ }
  
+ /**
+  * `MapOverlay.Default` with the credit collapsed, for a map too small to host the credit without it overflowing: the
+  * scale bar, the wordmark and the button all stay, and the button is what reveals the text.
+  *
+- * Composed rather than reached for because the library cannot be asked for it — [CollapsedAttributionButton] says why —
+- * and the insets are spelled out because its `DefaultControls` is internal to it.
++ * Composed rather than reached for because the library cannot be asked for it — [CreditButton] says why — and the
++ * insets are spelled out because its `DefaultControls` is internal to it.
+  */
+ internal val CollapsedAttributionOrnaments: MaplibreOverlay = MaplibreOverlay {
+     val mapState = checkNotNull(LocalMapState.current)
+@@ -119,7 +128,7 @@ internal val CollapsedAttributionOrnaments: MaplibreOverlay = MaplibreOverlay {
+             modifier = Modifier.align(Alignment.TopStart),
+         )
+         MaplibreLogo(Modifier.align(Alignment.BottomStart))
+-        CollapsedAttributionButton(Modifier.align(Alignment.BottomEnd))
++        CreditButton(Modifier.align(Alignment.BottomEnd))
+     }
+ }
  
- def main() -> None:
--    if len(sys.argv) != 5:
-+    args = sys.argv[1:]
-+    gradle_only = args[:1] == ["--gradle-only"]
-+    if gradle_only and len(args) == 3:
-+        manifest, wrapper = args[1:]
-+    elif not gradle_only and len(args) == 4:
-+        manifest, tag, commit, wrapper = args
-+        if not re.fullmatch(r"v\d+\.\d+\.\d+", tag):
-+            sys.exit(f"'{tag}' is not a production tag (vX.Y.Z)")
-+        if not re.fullmatch(r"[0-9a-f]{40}", commit):
-+            sys.exit(f"'{commit}' is not a full commit sha")
-+    else:
-         sys.exit(__doc__)
--    manifest, tag, commit, wrapper = sys.argv[1:]
--    if not re.fullmatch(r"v\d+\.\d+\.\d+", tag):
--        sys.exit(f"'{tag}' is not a production tag (vX.Y.Z)")
--    if not re.fullmatch(r"[0-9a-f]{40}", commit):
--        sys.exit(f"'{commit}' is not a full commit sha")
-     url, sha = wrapper_distribution(wrapper)
+@@ -130,22 +139,28 @@ internal val CollapsedAttributionOrnaments: MaplibreOverlay = MaplibreOverlay {
+ private const val CREDIT_WIDTH_FRACTION = 0.55f
  
-     with open(manifest, encoding="utf-8") as f:
-         text = f.read()
--    text = replace_once(GIT_SOURCE, tag, commit, text, "Meshtastic-Android git source (url, tag, commit)")
-+    if not gradle_only:
-+        text = replace_once(GIT_SOURCE, tag, commit, text, "Meshtastic-Android git source (url, tag, commit)")
-     text = replace_once(GRADLE_ZIP, url, sha, text, "Gradle distribution (url, sha256)")
-     with open(manifest, "w", encoding="utf-8") as f:
-         f.write(text)
--    print(f"{manifest}: {tag} at {commit}, {url.rsplit('/', 1)[-1]}")
-+    zip_name = url.rsplit("/", 1)[-1]
-+    print(f"{manifest}: {zip_name}" if gradle_only else f"{manifest}: {tag} at {commit}, {zip_name}")
+ /**
+- * The library's attribution button, starting collapsed.
++ * The library's attribution button, with the expanded state and the credit list held here.
+  *
+  * `ExpandingAttributionButton` holds its own `expanded` flag, initialised to `true` and not settable from outside, so
+  * `collapsedStyle` only styles the branch it is already in and the credit still opens. Holding the flag here is what
+- * makes it start shut; everything else — icon, label, links — still comes from the library.
++ * lets it start shut; everything else — icon, label, links — still comes from the library. It also returns before
++ * drawing anything when the style credits nobody, which would drop [extraCredits] with it.
+  */
+ @Composable
+-private fun CollapsedAttributionButton(modifier: Modifier = Modifier) {
++private fun CreditButton(
++    modifier: Modifier = Modifier,
++    extraCredits: List<String> = emptyList(),
++    startExpanded: Boolean = false,
++) {
+     val mapState = checkNotNull(LocalMapState.current)
+     val mapStyle = mapState.style
+     // Derived, not remembered: a basemap arrives as a style URL, so its sources are still empty on the first
+     // composition and a remembered list would never re-read. As in the library's own button.
+-    val attributions by remember(mapStyle) { derivedStateOf { mapStyle.attributions() } }
++    val attributions by
++        remember(mapStyle, extraCredits) { derivedStateOf { (mapStyle.attributions() + extraCredits).distinct() } }
+     if (attributions.isEmpty()) return
  
+-    var expanded by remember(mapStyle) { mutableStateOf(false) }
++    var expanded by remember(mapStyle) { mutableStateOf(startExpanded) }
  
- if __name__ == "__main__":
+     // As the library's button: a gesture closes the credit, so it does not sit over a short map after a pan. Narrowed
+     // to gestures, or the programmatic moves our own zoom controls make would fold it away mid-animation.
 ```
 
-**File**: `scripts/verify-flatpak/desktop-offline.yaml` (modified, +4/-6)
+**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/component/ZoomControls.kt` (modified, +1/-1)
 ```diff
-@@ -97,12 +97,10 @@ modules:
-       - type: dir
-         path: meshtastic-android
-       - type: file
--        # Must be the EXACT distribution from gradle-wrapper.properties (version AND -bin
--        # flavor); distributionSha256Sum verifies this file. Renovate bumps the version here
--        # alongside wrapper bumps (custom manager in renovate.json) but the sha256 must be
--        # copied from distributionSha256Sum by hand; CI fails fast on any mismatch.
--        url: https://services.gradle.org/distributions/gradle-9.8.2-bin.zip
--        sha256: 21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
-+        # Placeholder: verify.sh and verify-flatpak.yml stamp the url and sha256 from
-+        # gradle-wrapper.properties into their copy (bump-flathub-manifest.py --gradle-only).
-+        url: https://services.gradle.org/distributions/gradle-from-wrapper-bin.zip
-+        sha256: 0000000000000000000000000000000000000000000000000000000000000000
-         dest: "gradle/wrapper"
-         dest-filename: "gradle-bin.zip"
-       - flatpak-sources.json
-```
-
-**File**: `scripts/verify-flatpak/verify.sh` (modified, +3/-0)
-```diff
-@@ -107,6 +107,9 @@ fi
- #   flatpak-sources.json = the artifact we're validating
- step "Wiring overlay manifest + our flatpak-sources.json"
- cp "$OVERLAY" "$WORK/org.meshtastic.MeshtasticDesktop/org.meshtastic.MeshtasticDesktop.yaml"
-+python3 "$REPO_ROOT/scripts/verify-flatpak/bump-flathub-manifest.py" --gradle-only \
-+    "$WORK/org.meshtastic.MeshtasticDesktop/org.meshtastic.MeshtasticDesktop.yaml" \
-+    "$REPO_ROOT/gradle/wrapper/gradle-wrapper.properties"
- cp "$SOURCES_JSON" "$WORK/org.meshtastic.MeshtasticDesktop/flatpak-sources.json"
- 
- if [[ $REBUILD_ONLY -eq 0 ]]; then
-```
-
----
-
-### Incident Patch 3: `bc15de5e` (2026-10-19)
-**Commit Message**: fix(flatpak): vendor the Gradle 9.8.2 sha256 (#7677)
-
-**File**: `scripts/verify-flatpak/desktop-offline.yaml` (modified, +1/-1)
-```diff
-@@ -102,7 +102,7 @@ modules:
-         # alongside wrapper bumps (custom manager in renovate.json) but the sha256 must be
-         # copied from distributionSha256Sum by hand; CI fails fast on any mismatch.
-         url: https://services.gradle.org/distributions/gradle-9.8.2-bin.zip
--        sha256: dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f
-+        sha256: 21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
-         dest: "gradle/wrapper"
-         dest-filename: "gradle-bin.zip"
-       - flatpak-sources.json
+@@ -51,7 +51,7 @@ private const val ZOOM_BOTTOM_INSET = 56
+  * somewhere else.
+  *
+  * Lifted clear of the wordmark and attribution button along the bottom edge, which every map shows. See
+- * [MeshMapOrnaments] for why the main map carries the credit outright and the small maps behind the button.
++ * [meshMapOrnaments] for why the main map carries the credit outright and the small maps behind the button.
+  */
+ @Composable
+ internal fun BoxScope.MapZoom(mapState: MapState, basemap: Basemap) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7696** (2026-10-20): chore(deps): update sceneview to v4.60.0 (@renovate[bot])
-- **PR #7694** (2026-10-20): fix(docs): keep screenshots versioned docs still link (@rcarteraz)
-- **PR #7693** (2026-10-20): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
-- **PR #7692** (2026-10-20): docs: update CHANGELOG.md (@jamesarich)
-- **PR #7691** (2026-10-20): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
-- **PR #7690** (2026-10-20): chore(deps): update org.meshtastic:protobufs to v2.8.1.18-g8d0ed0c-snapshot (@renovate[bot])
+- **PR #7759** (2026-10-24): fix(coverage): Mapterhorn credit on MapLibre and antimeridian regions (@jamesarich)
+- **PR #7758** (2026-10-24): fix(coverage): Site Planner estimate placement, floor, offline terrain, threads and credit (@jamesarich)
+- **PR #7757** (closed): fix: center coverage bands on computed grid samples (@mvanhorn)
+- **PR #7751** (2026-10-24): chore(deps): update org.meshtastic:kp1812 to v0.2.0 (@renovate[bot])
+- **PR #7750** (2026-10-23): chore(claude): route the commit and push hooks through gradle-queue (@jamesarich)
+- **PR #7749** (2026-10-23): fix: surface routing NAKs on remote admin and node requests (@jamesarich)
 
 ---
 
@@ -1653,55 +1911,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs): keep screenshots versioned docs still link (#7694)
+## X. deps): update bouncycastle [security] (#7733)
 
 **RULE**:
-When implementing operations in `scripts/sync-android-docs.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2a41b35c`: docs): keep screenshots versioned docs still link (#7694). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `10297408`: deps): update bouncycastle [security] (#7733). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/sync-android-docs.js`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-// file already under those two directories is pruned at the end of the run,
-// except screenshots a frozen versioned_docs/ snapshot still links.
-// Docusaurus version snapshots. They link the same /img/android/docs/ files as the
-// current pages, but no sync rewrites them, so their images must outlive the app's.
-const VERSIONED_DOCS_DIR = "versioned_docs";
-        // Drop any ?query or #fragment so the name matches the file on disk.
-        into.add(path.basename(match[1].split(/[?#]/, 1)[0]));
-/**
- * Collect the screenshot basenames that frozen version snapshots still link.
- * Pruning one of these breaks the site build, since Docusaurus fails on a
- * Markdown image it cannot resolve.
- */
-function collectVersionedImageReferences() {
-    const names = new Set();
-    for (const file of collectFiles(VERSIONED_DOCS_DIR)) {
-        const ext = path.extname(file).toLowerCase();
-        if (ext !== ".md" && ext !== ".mdx") continue;
-        collectImageReferences(fs.readFileSync(path.join(VERSIONED_DOCS_DIR, file), "utf-8"), names);
-    }
-    return names;
-}
-
- * images under the directories this script owns. Images in `keepImageNames`
- * survive even when no current page references them.
+bouncycastle = "1.85"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// file already under those two directories is pruned at the end of the run.
-        into.add(path.basename(match[1]));
- * images under the directories this script owns.
-function pruneStale(expectedDocPaths, expectedImageNames) {
-    pruneStale(expectedDocPaths, expectedImageNames);
+bouncycastle = "1.80"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a41b35c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `10297408` are properly handled with clean fallback behavior.

@@ -18643,5 +18643,20 @@
     "downloads": 0,
     "qualityScore": 1630,
     "discoveredAt": "2026-10-25T15:13:40.832Z"
+  },
+  {
+    "name": "ffmpeg-skill",
+    "fullName": "kajisho5/ffmpeg-skill",
+    "url": "https://github.com/kajisho5/ffmpeg-skill",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Local video editor for coding agents: 42 FFmpeg tools with a machine-readable contract and an MCP server, for Claude Code, Cursor and Codex. Cut, captions, reframe, loudness, platform exports. No cloud, no API keys.",
+    "stars": 2767,
+    "forks": 206,
+    "openIssues": 3,
+    "language": "Python",
+    "qualityScore": 1701,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-25T15:34:35.842Z"
   }
 ]

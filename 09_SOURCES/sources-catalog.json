@@ -585,8 +585,8 @@
     "sourceUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "sourceVersion": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "license": "Open-Source",
-    "contentHash": "3344ad6e165e769a3f5d880bdbaf6811a3b53fa095fa412b0112f04a15f24052",
-    "lastHarvestedAt": "2026-10-20T20:07:00.480Z",
+    "contentHash": "5c12e79ea551716fa7d1c479f00a18fbeb2df7dab09a0822c886befddd6134d5",
+    "lastHarvestedAt": "2026-10-25T15:38:20.235Z",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2"
   },
   "hf-psrben-visionhope": {
@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "724405c0",
+    "sourceVersion": "14ecdbc0",
     "license": "MIT",
-    "contentHash": "2a219feacb36386c257b070710ce36b6c871077dcbd2d9d3a3394e79ebcea9cc",
-    "lastHarvestedAt": "2026-10-20T16:27:57.012Z",
+    "contentHash": "f46b1bdbfd718a66bb7b93e623fd9e46c743d47d701e41324fafdf5c27fb28eb",
+    "lastHarvestedAt": "2026-10-25T15:38:22.591Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {
@@ -7813,10 +7813,10 @@
     "repository": "meshtastic/Meshtastic-Android",
     "platform": "github",
     "sourceUrl": "https://github.com/meshtastic/Meshtastic-Android",
-    "sourceVersion": "2a41b35c",
+    "sourceVersion": "1bedc5de",
     "license": "GPL-3.0",
-    "contentHash": "015556942819f9f12063d0fbf99d75bd136d550b2f6c060c9774d80f4d97af94",
-    "lastHarvestedAt": "2026-10-20T22:32:56.154Z",
+    "contentHash": "609280e6c71fcdd062eb21d2432cf792a4ca42acd6c8cbc27fdf31cd886e5af1",
+    "lastHarvestedAt": "2026-10-25T15:38:16.814Z",
     "learningId": "learn-github-meshtastic-meshtastic-android"
   },
   "astral-sh-uv": {
@@ -10708,5 +10708,15 @@
     "contentHash": "545e22d7b2b9da911dd8d50d26dcaac22ee4a19b435a4c09cf6a29929c1ebb61",
     "lastHarvestedAt": "2026-10-25T15:15:52.704Z",
     "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b"
+  },
+  "kajisho5-ffmpeg-skill": {
+    "repository": "kajisho5/ffmpeg-skill",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kajisho5/ffmpeg-skill",
+    "sourceVersion": "f2d90ea6",
+    "license": "MIT",
+    "contentHash": "973b37627992402e40a401b8dd721fb79618a941f43a029a26df2ee11599e3f2",
+    "lastHarvestedAt": "2026-10-25T15:43:06.876Z",
+    "learningId": "learn-github-kajisho5-ffmpeg-skill"
   }
 }

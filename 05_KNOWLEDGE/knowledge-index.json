@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T15:26:52.708Z",
-  "total_verified_learnings": 1087,
+  "last_updated": "2026-10-25T15:43:06.826Z",
+  "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -23375,7 +23375,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "source_version": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "3344ad6e165e769a3f5d880bdbaf6811a3b53fa095fa412b0112f04a15f24052",
+      "content_hash": "5c12e79ea551716fa7d1c479f00a18fbeb2df7dab09a0822c886befddd6134d5",
       "dossier_path": "07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md",
       "promoted_rules": [
@@ -23387,6 +23387,16 @@
         {
           "number": 1371,
           "title": "Mutually Exclusive Speculative Decoding Dispatch",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4367,
+          "title": "The Termination Invariant for Generative Agents",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4368,
+          "title": "Quantization-Aware Inference Consistency",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -23404,7 +23414,7 @@
         "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv47ewm0",
         "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv4kon4a"
       ],
-      "verified_at": "2026-10-20T20:07:00.411Z",
+      "verified_at": "2026-10-25T15:38:20.160Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34378,8 +34388,8 @@
       "slug": "meshtastic-meshtastic-android",
       "platform": "github",
       "source_url": "https://github.com/meshtastic/Meshtastic-Android",
-      "source_version": "2a41b35c",
-      "content_hash": "015556942819f9f12063d0fbf99d75bd136d550b2f6c060c9774d80f4d97af94",
+      "source_version": "1bedc5de",
+      "content_hash": "609280e6c71fcdd062eb21d2432cf792a4ca42acd6c8cbc27fdf31cd886e5af1",
       "dossier_path": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "promoted_rules": [
@@ -34392,6 +34402,11 @@
           "number": 3414,
           "title": "docs): keep screenshots versioned docs still link (#7694)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4366,
+          "title": "deps): update bouncycastle [security] (#7733)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34399,7 +34414,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:32:56.077Z",
+      "verified_at": "2026-10-25T15:38:16.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37072,8 +37087,8 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "724405c0",
-      "content_hash": "2a219feacb36386c257b070710ce36b6c871077dcbd2d9d3a3394e79ebcea9cc",
+      "source_version": "14ecdbc0",
+      "content_hash": "f46b1bdbfd718a66bb7b93e623fd9e46c743d47d701e41324fafdf5c27fb28eb",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
@@ -37086,6 +37101,11 @@
           "number": 3266,
           "title": "guzzle stream",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4369,
+          "title": "batch embeddings and sentence splitter",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37093,7 +37113,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:27:56.946Z",
+      "verified_at": "2026-10-25T15:38:22.514Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124407,6 +124427,109 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T15:16:11.406Z"
+    },
+    "rule-4366": {
+      "learning_id": "rule-4366",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4366,
+      "title": "deps): update bouncycastle [security] (#7733)",
+      "source_url": "https://github.com/meshtastic/Meshtastic-Android",
+      "source_version": "1bedc5de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:38:16.741Z"
+    },
+    "rule-4367": {
+      "learning_id": "rule-4367",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4367,
+      "title": "The Termination Invariant for Generative Agents",
+      "source_url": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "source_version": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:38:20.160Z"
+    },
+    "rule-4368": {
+      "learning_id": "rule-4368",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4368,
+      "title": "Quantization-Aware Inference Consistency",
+      "source_url": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "source_version": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:38:20.160Z"
+    },
+    "rule-4369": {
+      "learning_id": "rule-4369",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4369,
+      "title": "batch embeddings and sentence splitter",
+      "source_url": "https://github.com/neuron-core/neuron-ai",
+      "source_version": "14ecdbc0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:38:22.514Z"
+    },
+    "learn-github-kajisho5-ffmpeg-skill": {
+      "learning_id": "learn-github-kajisho5-ffmpeg-skill",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "kajisho5/ffmpeg-skill",
+      "repository": "kajisho5/ffmpeg-skill",
+      "slug": "kajisho5-ffmpeg-skill",
+      "platform": "github",
+      "source_url": "https://github.com/kajisho5/ffmpeg-skill",
+      "source_version": "f2d90ea6",
+      "content_hash": "973b37627992402e40a401b8dd721fb79618a941f43a029a26df2ee11599e3f2",
+      "dossier_path": "07_PROJECT_LEARNING/kajisho5-ffmpeg-skill-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kajisho5-ffmpeg-skill-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4370,
+          "title": "FFmpeg 8.0.1 (Ubuntu 26.04) failures; doctor CVE advisory; deprecate Python 3.9",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-25T15:43:06.816Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4370": {
+      "learning_id": "rule-4370",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4370,
+      "title": "FFmpeg 8.0.1 (Ubuntu 26.04) failures; doctor CVE advisory; deprecate Python 3.9",
+      "source_url": "https://github.com/kajisho5/ffmpeg-skill",
+      "source_version": "f2d90ea6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:43:06.816Z"
     }
   },
   "aliases": {

@@ -4886,3 +4886,7 @@ Every entry in this ledger must capture:
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `ee413f1b` | Multi-dimensional audit evidence | 2026-10-25T15:16:04.392Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `e2dc7bf0` | Multi-dimensional audit evidence | 2026-10-25T15:16:11.448Z |
 | `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-10-25T15:26:52.764Z |
+| `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `1bedc5de` | Multi-dimensional audit evidence | 2026-10-25T15:38:16.814Z |
+| `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-10-25T15:38:20.235Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `14ecdbc0` | Multi-dimensional audit evidence | 2026-10-25T15:38:22.591Z |
+| `learn-github-kajisho5-ffmpeg-skill` | `https://github.com/kajisho5/ffmpeg-skill` | `f2d90ea6` | Multi-dimensional audit evidence | 2026-10-25T15:43:06.876Z |

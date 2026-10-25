@@ -4450,3 +4450,7 @@ https://github.com/Fei2411/DS-Bot
 # --- Automatically Discovered by AI Scout Engine [2026-10-25T15:15:48.756Z] ---
 # [HUGGINGFACE-AI-MODELS] Nanbeige/Nanbeige4.3-33B (1630 score) - Verified Hugging Face Model: Nanbeige/Nanbeige4.3-33B (163 likes, 0 downloads)
 https://huggingface.co/Nanbeige/Nanbeige4.3-33B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-25T15:37:59.914Z] ---
+# [AI-AGENTS] kajisho5/ffmpeg-skill (1701 score) - Local video editor for coding agents: 42 FFmpeg tools with a machine-readable co
+https://github.com/kajisho5/ffmpeg-skill
