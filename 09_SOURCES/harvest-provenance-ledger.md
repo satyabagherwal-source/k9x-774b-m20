@@ -4745,3 +4745,7 @@ Every entry in this ledger must capture:
 | `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `40a91421` | Multi-dimensional audit evidence | 2026-10-25T08:08:11.057Z |
 | `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-25T08:08:18.600Z |
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `c11c2342` | Multi-dimensional audit evidence | 2026-10-25T08:08:40.302Z |
+| `learn-github-herdrdev-herdr` | `https://github.com/herdrdev/herdr` | `5608de06` | Multi-dimensional audit evidence | 2026-10-25T08:23:58.889Z |
+| `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-25T08:24:00.417Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `2f2c4d63` | Multi-dimensional audit evidence | 2026-10-25T08:24:09.845Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `78f1a7a6` | Multi-dimensional audit evidence | 2026-10-25T08:24:37.810Z |

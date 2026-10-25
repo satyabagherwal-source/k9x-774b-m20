@@ -245,8 +245,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
     "sourceVersion": "hf-autotrust-gev-26b-decide-nvfp4",
     "license": "Open-Source",
-    "contentHash": "0be07b513a4e5444aaf4137b47ef495eca0921fbe95e104899f8ec18ec9d7778",
-    "lastHarvestedAt": "2026-10-20T15:23:38.767Z",
+    "contentHash": "ca7af94367ac22e545a6c3c31ce9fdca819bd572eb35e3420b5492c763e6b336",
+    "lastHarvestedAt": "2026-10-25T08:24:00.417Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4"
   },
   "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
@@ -6303,10 +6303,10 @@
     "repository": "open-ani/animeko",
     "platform": "github",
     "sourceUrl": "https://github.com/open-ani/animeko",
-    "sourceVersion": "94e358e6",
+    "sourceVersion": "2f2c4d63",
     "license": "AGPL-3.0",
-    "contentHash": "1ad9298d7933845741295111bba0d43dcbcde73ccdc3083aa42dcc38e03669aa",
-    "lastHarvestedAt": "2026-10-20T17:49:22.240Z",
+    "contentHash": "288b3b5c564a931bd9a0aa205c311bdf2b40188475546aa6eeeac01fb7d1dc81",
+    "lastHarvestedAt": "2026-10-25T08:24:09.845Z",
     "learningId": "learn-github-open-ani-animeko"
   },
   "k3s-io-k3s": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "f0f76776",
+    "sourceVersion": "78f1a7a6",
     "license": "Apache-2.0",
-    "contentHash": "b2cda982a0c1d5514e0ed6adb3a9125329fe7020cbfb7f3a1fb55875e789396f",
-    "lastHarvestedAt": "2026-10-22T19:16:27.905Z",
+    "contentHash": "6697442573ee5b14266e12c155aec0da031cb5f4c06c385cbd1fe0b64d78e85d",
+    "lastHarvestedAt": "2026-10-25T08:24:37.810Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -7883,10 +7883,10 @@
     "repository": "herdrdev/herdr",
     "platform": "github",
     "sourceUrl": "https://github.com/herdrdev/herdr",
-    "sourceVersion": "5bd900d8",
+    "sourceVersion": "5608de06",
     "license": "Apache-2.0",
-    "contentHash": "dde2845ddafcedaa736c55c0ec1cbb196f4e82eab109de19cd052aff4021e595",
-    "lastHarvestedAt": "2026-10-22T17:12:36.707Z",
+    "contentHash": "947cd5877ba76216580aa2b648760e9edb2f5d812acce271dbf737ae2754df52",
+    "lastHarvestedAt": "2026-10-25T08:23:58.889Z",
     "learningId": "learn-github-herdrdev-herdr"
   },
   "darrylmorley-whatcable": {

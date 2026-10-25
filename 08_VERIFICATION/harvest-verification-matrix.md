@@ -4738,3 +4738,7 @@
 | `CYCLE-20261025-PL4E` | `2026-10-25T08:08:11.054Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4171, Rule 4172, Rule 4173` | Yes (`4c4e74da...`) |
 | `CYCLE-20261025-PQXX` | `2026-10-25T08:08:18.597Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4174, Rule 4175` | Yes (`dbced9fe...`) |
 | `CYCLE-20261025-Q7OR` | `2026-10-25T08:08:40.299Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4176, Rule 4177, Rule 4178` | Yes (`bb207bfd...`) |
+| `CYCLE-20261025-9WH2` | `2026-10-25T08:23:58.886Z` | `herdrdev/herdr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4179, Rule 4180, Rule 4181` | Yes (`947cd587...`) |
+| `CYCLE-20261025-9XNH` | `2026-10-25T08:24:00.413Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4182, Rule 4183, Rule 4184` | Yes (`ca7af943...`) |
+| `CYCLE-20261025-A4XE` | `2026-10-25T08:24:09.842Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4185, Rule 4186, Rule 4187` | Yes (`288b3b5c...`) |
+| `CYCLE-20261025-AQI7` | `2026-10-25T08:24:37.807Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4188, Rule 4189, Rule 4190` | Yes (`66974425...`) |

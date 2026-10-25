@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T08:08:40.306Z",
-  "total_cycles_completed": 4715,
-  "total_learnings_persisted": 4715,
-  "total_rules_promoted": 4052,
+  "last_updated": "2026-10-25T08:24:37.815Z",
+  "total_cycles_completed": 4719,
+  "total_learnings_persisted": 4719,
+  "total_rules_promoted": 4064,
   "history": [
-    {
-      "timestamp": "2026-10-23T10:54:28.018Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T11:05:28.226Z",
-      "repository": "adobe/react-spectrum",
-      "learningId": "learn-github-adobe-react-spectrum",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T11:05:30.777Z",
-      "repository": "salvo-rs/salvo",
-      "learningId": "learn-github-salvo-rs-salvo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T11:05:34.287Z",
-      "repository": "callstack/react-native-paper",
-      "learningId": "learn-github-callstack-react-native-paper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T11:11:43.723Z",
       "repository": "assistant-ui/assistant-ui",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-25T08:08:40.306Z",
       "repository": "VectifyAI/PageIndex",
       "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T08:23:58.894Z",
+      "repository": "herdrdev/herdr",
+      "learningId": "learn-github-herdrdev-herdr",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T08:24:00.421Z",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T08:24:09.850Z",
+      "repository": "open-ani/animeko",
+      "learningId": "learn-github-open-ani-animeko",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T08:24:37.815Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T08:08:40.243Z",
+  "last_updated": "2026-10-25T08:24:37.752Z",
   "total_verified_learnings": 1084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14315,8 +14315,8 @@
       "slug": "herdrdev-herdr",
       "platform": "github",
       "source_url": "https://github.com/herdrdev/herdr",
-      "source_version": "5bd900d8",
-      "content_hash": "dde2845ddafcedaa736c55c0ec1cbb196f4e82eab109de19cd052aff4021e595",
+      "source_version": "5608de06",
+      "content_hash": "947cd5877ba76216580aa2b648760e9edb2f5d812acce271dbf737ae2754df52",
       "dossier_path": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "promoted_rules": [
@@ -14329,6 +14329,21 @@
           "number": 3656,
           "title": "prevent windows ssh output from delaying typing (#5463)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4179,
+          "title": "POSIX Asynchronous Signal-Safe Ephemeral Horizon Recording",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4180,
+          "title": "Unix Local Socket Liveness Differentiation: Refusal vs Timeout",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4181,
+          "title": "Agent Integration Multi-Instance Session Isolation via Process Environment Traps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14336,7 +14351,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:12:36.644Z",
+      "verified_at": "2026-10-25T08:23:58.818Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15768,7 +15783,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "0be07b513a4e5444aaf4137b47ef495eca0921fbe95e104899f8ec18ec9d7778",
+      "content_hash": "ca7af94367ac22e545a6c3c31ce9fdca819bd572eb35e3420b5492c763e6b336",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "promoted_rules": [
@@ -15785,6 +15800,21 @@
         {
           "number": 1542,
           "title": "Fused Gate-Up Tensor Scale Alignment for NVFP4",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4182,
+          "title": "Selective Heterogeneous FP4 MoE Quantization Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4183,
+          "title": "Final Logit Softcapping Numerical Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4184,
+          "title": "Dual-Sequence Multi-EOS Token Termination Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -15806,7 +15836,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4"
       ],
-      "verified_at": "2026-10-20T15:23:38.709Z",
+      "verified_at": "2026-10-25T08:24:00.346Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34610,8 +34640,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "f0f76776",
-      "content_hash": "b2cda982a0c1d5514e0ed6adb3a9125329fe7020cbfb7f3a1fb55875e789396f",
+      "source_version": "78f1a7a6",
+      "content_hash": "6697442573ee5b14266e12c155aec0da031cb5f4c06c385cbd1fe0b64d78e85d",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -34639,6 +34669,21 @@
           "number": 3710,
           "title": "bound sync packed index buffers to positioned download tasks (#54358)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4188,
+          "title": "Explicit Column Existence Guarding Across Heterogeneous Arrow Deserialization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4189,
+          "title": "Isolation of Cross-Goroutine Inspection from Mutable Worker Execution",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4190,
+          "title": "Snapshot Re-Verification on Aborted Terminal Dependency States",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34646,7 +34691,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:16:27.844Z",
+      "verified_at": "2026-10-25T08:24:37.740Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37906,8 +37951,8 @@
       "slug": "open-ani-animeko",
       "platform": "github",
       "source_url": "https://github.com/open-ani/animeko",
-      "source_version": "94e358e6",
-      "content_hash": "1ad9298d7933845741295111bba0d43dcbcde73ccdc3083aa42dcc38e03669aa",
+      "source_version": "2f2c4d63",
+      "content_hash": "288b3b5c564a931bd9a0aa205c311bdf2b40188475546aa6eeeac01fb7d1dc81",
       "dossier_path": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "promoted_rules": [
@@ -37920,6 +37965,21 @@
           "number": 3297,
           "title": "selector): 同 host 的绝对 http 链接自动升级为 https (#3633)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4185,
+          "title": "Focus Search Disablement in Adaptive Multi-Pane Scaffolds",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4186,
+          "title": "POSIX Shell Subshell Masking Elimination in Pipeline Exports",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4187,
+          "title": "Delimited Sub-Token Regex Boundary Guarding for Media Metadata",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37927,7 +37987,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:49:22.153Z",
+      "verified_at": "2026-10-25T08:24:09.776Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120741,6 +120801,174 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T08:08:40.231Z"
+    },
+    "rule-4179": {
+      "learning_id": "rule-4179",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4179,
+      "title": "POSIX Asynchronous Signal-Safe Ephemeral Horizon Recording",
+      "source_url": "https://github.com/herdrdev/herdr",
+      "source_version": "5608de06",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:23:58.818Z"
+    },
+    "rule-4180": {
+      "learning_id": "rule-4180",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4180,
+      "title": "Unix Local Socket Liveness Differentiation: Refusal vs Timeout",
+      "source_url": "https://github.com/herdrdev/herdr",
+      "source_version": "5608de06",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:23:58.818Z"
+    },
+    "rule-4181": {
+      "learning_id": "rule-4181",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4181,
+      "title": "Agent Integration Multi-Instance Session Isolation via Process Environment Traps",
+      "source_url": "https://github.com/herdrdev/herdr",
+      "source_version": "5608de06",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:23:58.818Z"
+    },
+    "rule-4182": {
+      "learning_id": "rule-4182",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4182,
+      "title": "Selective Heterogeneous FP4 MoE Quantization Boundary Invariant",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+      "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:24:00.346Z"
+    },
+    "rule-4183": {
+      "learning_id": "rule-4183",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4183,
+      "title": "Final Logit Softcapping Numerical Guard",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+      "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:24:00.346Z"
+    },
+    "rule-4184": {
+      "learning_id": "rule-4184",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4184,
+      "title": "Dual-Sequence Multi-EOS Token Termination Invariant",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+      "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:24:00.346Z"
+    },
+    "rule-4185": {
+      "learning_id": "rule-4185",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4185,
+      "title": "Focus Search Disablement in Adaptive Multi-Pane Scaffolds",
+      "source_url": "https://github.com/open-ani/animeko",
+      "source_version": "2f2c4d63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:24:09.776Z"
+    },
+    "rule-4186": {
+      "learning_id": "rule-4186",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4186,
+      "title": "POSIX Shell Subshell Masking Elimination in Pipeline Exports",
+      "source_url": "https://github.com/open-ani/animeko",
+      "source_version": "2f2c4d63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:24:09.776Z"
+    },
+    "rule-4187": {
+      "learning_id": "rule-4187",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4187,
+      "title": "Delimited Sub-Token Regex Boundary Guarding for Media Metadata",
+      "source_url": "https://github.com/open-ani/animeko",
+      "source_version": "2f2c4d63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:24:09.776Z"
+    },
+    "rule-4188": {
+      "learning_id": "rule-4188",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4188,
+      "title": "Explicit Column Existence Guarding Across Heterogeneous Arrow Deserialization",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "78f1a7a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:24:37.740Z"
+    },
+    "rule-4189": {
+      "learning_id": "rule-4189",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4189,
+      "title": "Isolation of Cross-Goroutine Inspection from Mutable Worker Execution",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "78f1a7a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:24:37.740Z"
+    },
+    "rule-4190": {
+      "learning_id": "rule-4190",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4190,
+      "title": "Snapshot Re-Verification on Aborted Terminal Dependency States",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "78f1a7a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:24:37.740Z"
     }
   },
   "aliases": {

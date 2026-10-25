@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T08:08:40.314Z",
+  "last_updated": "2026-10-25T08:24:37.824Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -260,14 +260,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "0be07b513a4e5444aaf4137b47ef495eca0921fbe95e104899f8ec18ec9d7778",
-      "verified_at": "2026-10-20T15:23:38.775Z",
+      "content_hash": "ca7af94367ac22e545a6c3c31ce9fdca819bd572eb35e3420b5492c763e6b336",
+      "verified_at": "2026-10-25T08:24:00.428Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T15:23:38.775Z"
+      "last_updated": "2026-10-25T08:24:00.428Z"
     },
     "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF": {
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -9576,14 +9576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-ani-animeko",
-      "content_hash": "1ad9298d7933845741295111bba0d43dcbcde73ccdc3083aa42dcc38e03669aa",
-      "verified_at": "2026-10-20T17:49:22.247Z",
+      "content_hash": "288b3b5c564a931bd9a0aa205c311bdf2b40188475546aa6eeeac01fb7d1dc81",
+      "verified_at": "2026-10-25T08:24:09.857Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:49:22.247Z"
+      "last_updated": "2026-10-25T08:24:09.857Z"
     },
     "k3s-io/k3s": {
       "repository": "k3s-io/k3s",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "b2cda982a0c1d5514e0ed6adb3a9125329fe7020cbfb7f3a1fb55875e789396f",
-      "verified_at": "2026-10-22T19:16:27.916Z",
+      "content_hash": "6697442573ee5b14266e12c155aec0da031cb5f4c06c385cbd1fe0b64d78e85d",
+      "verified_at": "2026-10-25T08:24:37.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:16:27.916Z"
+      "last_updated": "2026-10-25T08:24:37.823Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -11856,14 +11856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-herdrdev-herdr",
-      "content_hash": "dde2845ddafcedaa736c55c0ec1cbb196f4e82eab109de19cd052aff4021e595",
-      "verified_at": "2026-10-22T17:12:36.719Z",
+      "content_hash": "947cd5877ba76216580aa2b648760e9edb2f5d812acce271dbf737ae2754df52",
+      "verified_at": "2026-10-25T08:23:58.902Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:12:36.719Z"
+      "last_updated": "2026-10-25T08:23:58.902Z"
     },
     "darrylmorley/whatcable": {
       "repository": "darrylmorley/whatcable",

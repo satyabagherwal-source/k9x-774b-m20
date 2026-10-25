@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/herdrdev-herdr-learnings.md`  
 > **Source**: github ([https://github.com/herdrdev/herdr](https://github.com/herdrdev/herdr))  
-> **Source Version**: `5bd900d8`  
+> **Source Version**: `5608de06`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:12:36.320Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-25T08:23:58.113Z  
 > **Learning ID**: `learn-github-herdrdev-herdr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,2788 +12,498 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): herdrdev/herdr
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/herdrdev-herdr-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/herdrdev/herdr](https://github.com/herdrdev/herdr))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:12:24.143Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): herdrdev/herdr
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `herdrdev/herdr`
-- **Description**: the runtime your coding agents live on
-- **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 45356 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+`herdr` is an asynchronous, client-server terminal multiplexer and agent workspace orchestrator engineered in Rust. Unlike legacy multiplexers (e.g., `tmux`, `screen`), which prioritize interactive human shell sessions via pseudo-terminal (PTY) emulation and synchronous redraw loops, `herdr` is architected around the lifecycle contracts of autonomous AI coding agents (Claude Code, OpenCode, Kilo, Pi, Codex, Cursor).
+
+```
+                      +-------------------------------------------------------------+
+                      |                        Thin Client                          |
+                      |  - Crossterm Event Loop & Raw Mode                          |
+                      |  - SGR Pixel Mouse & Kitty Graphic Passthrough              |
+                      |  - Hit-Map Coordinate Routing (ShellHitMap)                 |
+                      |  - BlitEncoder / Semantic Frame Differencing               |
+                      +------------------------------+------------------------------+
+                                                     |
+                                        IPC Transport (Framed JSON/Bincode)
+                                        Unix Domain Sockets / Windows Named Pipes
+                                                     |
+                      +------------------------------v------------------------------+
+                      |                    herdr Server Engine                      |
+                      |                                                             |
+                      |  +---------------------+           +---------------------+  |
+                      |  | App Runtime Reactor |<--------->| Session Persistence |  |
+                      |  | - AppEvent Loop     |           | - Debounced Writer  |  |
+                      |  | - SIGHUP Trap/Probe |           | - Snapshot Store    |  |
+                      |  +----------+----------+           +---------------------+  |
+                      |             |                                               |
+                      |             v                                               |
+                      |  +---------------------+           +---------------------+  |
+                      |  | Ghostty VT Engine   |<--------->| Integration Server  |  |
+                      |  | - Native PTY Stream |           | - JSON-RPC Over Pipe|  |
+                      |  | - OSC 8 / SGR Parser|           | - Subprocess Probes |  |
+                      |  +----------+----------+           +----------+----------+  |
+                      +-------------|---------------------------------|-------------+
+                                    |                                 |
+                                    v                                 v
+                         +--------------------+            +--------------------+
+                         | Target PTY / Shell |            | Agent Hook Bridge  |
+                         | (zsh, bash, sh)    |            | (Node/TS Injected) |
+                         +--------------------+            +--------------------+
+```
+
+### Architectural Subsystems and Decoupling Invariants
+1. **The Client-Server Separation Barrier**:
+   The runtime isolates the display frontend (`ClientState`, `ClientShellState`) from the execution backend (`App`, `Workspace`, `Pane`). Communication occurs over a framed local transport (`src/ipc.rs`) using platform abstractions (Unix domain sockets with abstract namespace or filesystem paths; Windows Named Pipes prefixed with `\\.\pipe\`). The server process outlives all terminal clients, SSH disconnects, and parent session tears.
+2. **Ghostty-VT Virtual Terminal Core**:
+   Embedded as an in-tree workspace crate (`crates/ghostty-vt`), this subsystem wraps Zig/C-level terminal abstractions (`ghostty_terminal_vt_write`). It provides zero-copy VT sequence decoding, SGR attribute management, OSC 8 hyperlink routing, and Kitty graphics protocol handling directly in Rust memory without requiring external terminal dependencies.
+3. **Agent State Observability & Sequence Synchronization Engine**:
+   Autonomous agents report structured telemetry (`working`, `blocked`, `idle`) into the multiplexer through injected shims (`src/integration/assets/*`). State transitions are versioned with monotonically increasing, high-precision sequence numbers (`reportSeq = Date.now() * 1000 + increment`). The server enforces total ordering over async state streams, reconciling out-of-order completions and client acknowledgments before updating composite UI status badges.
+4. **Session Persistence & Crash Barrier Layer**:
+   Session topology (workspaces, tabs, split trees, working directories) is continuously staged in memory and flushed to disk (`session.json`) using an atomic write-replace debounce pattern. System shutdown detection coordinates POSIX signal traps with OS-level inhibitor locks (`zbus` logind delay inhibitor on Linux). This prevents process cascade kills from wiping persistent layout state.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: Cargo.toml, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `src/app/state.rs`
-```
-use crate::config::{Keybinds, NewTerminalCwdConfig, SoundConfig, ToastConfig};
-use crossterm::event::{KeyCode, KeyModifiers};
-use ratatui::layout::Rect;
-use ratatui::style::Color;
-
-use crate::detect::AgentState;
-use crate::layout::{PaneId, PaneInfo};
-
-pub(crate) type InstalledPluginRegistry =
-    std::collections::HashMap<String, crate::api::schema::InstalledPluginInfo>;
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct PluginPaneRecord {
-    pub plugin_id: String,
-    pub entrypoint: String,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct PopupPaneState {
-    pub pane_id: PaneId,
-    pub terminal_id: crate::terminal::TerminalId,
-    pub width: Option<crate::popup_size::PopupSize>,
-    pub height: Option<crate::popup_size::PopupSize>,
-}
-
-use crate::terminal_theme::{HostAppearance, TerminalTheme};
-use crate::workspace::Workspace;
-
-// ---------------------------------------------------------------------------
-// Theme palette — all UI colors in one place, ready for theming
-// ---------------------------------------------------------------------------
-
-/// All colors used by the UI. Derived from a base accent color for now,
-/// but structured so a full theme system can replace it later.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Palette {
-    /// Primary accent (highlight, active borders).
-    pub accent: Color,
-    /// Background for the tab bar, floating panels, overlays, and modals.
-    pub panel_bg: Color,
-    /// Optional desktop sidebar background. Reset preserves the terminal background.
-    pub sidebar_bg: Color,
-    /// Background for the active workspace and focused agent rows.
-    pub active_row_bg: Color,
-    /// Background for the Navigate-mode cursor row in the sidebar.
-    pub selection_bg: Color,
-    /// Subtle surface background for selected/focused items.
-    pub surface0: Color,
-    /// Slightly lighter surface for hover/active states.
-    pub surface1: Color,
-    /// Very dim surface for separators.
-    pub surface_dim: Color,
-    /// Muted text (secondary info, numbers).
-    pub overlay0: Color,
-    /// Slightly brighter overlay text.
-    pub overlay1: Color,
-    /// Main text color — soft white.
-    pub text: Color,
-    /// Subdued text (workspace numbers, dim labels).
-    pub subtext0: Color,
-    /// Branch name / special label color.
-    pub mauve: Color,
-    /// Done / idle states.
-    pub green: Color,
-    /// Working / running states.
-    pub yellow: Color,
-    /// Needs attention / blocked states.
-    pub red: Color,
-    /// Unseen / done notification accent.
-    pub blue: Color,
-    /// Notification accent / unseen markers.
-    pub teal: Color,
-    /// Interrupted / warning states.
-    pub peach: Color,
-}
-
-impl Palette {
-    /// Catppuccin Mocha — the default.
-    pub fn catppuccin() -> Self {
-        Self {
-            accent: Color::Rgb(137, 180, 250), // blue
-            panel_bg: Color::Rgb(24, 24, 37),
-            sidebar_bg: Color::Reset,
-            active_row_bg: Color::Rgb(30, 30, 46),
-            selection_bg: Color::Rgb(49, 50, 68),
-            surface0: Color::Rgb(49, 50, 68),
-            surface1: Color::Rgb(69, 71, 90),
-            surface_dim: Color::Rgb(30, 30, 46),
-            overlay0: Color::Rgb(108, 112, 134),
-            overlay1: Color::Rgb(127, 132, 156),
-            text: Color::Rgb(205, 214, 244),
-            subtext0: Color::Rgb(166, 173, 200),
-            mauve: Color::Rgb(203, 166, 247),
-            green: Color::Rgb(166, 227, 161),
-            yellow: Color::Rgb(249, 226, 175),
-            red: Color::Rgb(243, 139, 168),
-            blue: Color::Rgb(137, 180, 250),
-            teal: Color::Rgb(148, 226, 213),
-            peach: Color::Rgb(250, 179, 135),
-        }
-    }
-
-    /// Catppuccin Latte — the light Catppuccin flavor.
-    pub fn catppuccin_latte() -> Self {
-        Self {
-            accent: Color::Rgb(30, 102, 245),
-            panel_bg: Color::Rgb(239, 241, 245),
-            sidebar_bg: Color::Reset,
-            active_row_bg: Color::Rgb(230, 233, 239),
-            selection_bg: Color::Rgb(189, 208, 245),
-            surface0: Color::Rgb(204, 208, 218),
-            surface1: Color::Rgb(188, 192, 204),
-            surface_dim: Color::Rgb(230, 233, 239),
-            overlay0: Color::Rgb(156, 160, 176),
-            overlay1: Color::Rgb(140, 143, 161),
-            text: Color::Rgb(76, 79, 105),
-            subtext0: Color::Rgb(108, 111, 133),
-            mauve: Color::Rgb(136, 57, 239),
-            green: Color::Rgb(64, 160, 43),
-            yellow: Color::Rgb(223, 142, 29),
-            red: Color::Rgb(210, 15, 57),
-            blue: Color::Rgb(30, 102, 245),
-            teal: Color::Rgb(23, 146, 153),
-            peach: Color::Rgb(254, 100, 11),
-        }
-    }
-
-    /// Terminal 16-color theme.
-    pub fn terminal() -> Self {
-        Self {
-            accent: Color::Blue,
-            panel_bg: Color::Reset,
-            sidebar_bg: Color::Reset,
-            active_row_bg: Color::DarkGray,
-            selection_bg: Color::Reset,
-            surface0: Color::Reset,
-            surface1: Color::DarkGray,
-            surface_dim: Color::DarkGray,
-            overlay0: Color::Gray,
-            overlay1: Color::White,
-            text: Color::Reset,
-            subtext0: Color::Gray,
-            mauve: Color::Gray,
-            green: Color::Green,
-            yellow: Color::Yellow,
-            red: Color::LightRed,
-            blue: Color::Blue,
-            teal: Color::Cyan,
-            peach: Color::Yellow,
-        }
-    }
-
-    /// Tokyo Night — blue-purple aesthetic.
-    pub fn tokyo_night() -> Self {
-        Self {
-            accent: Color::Rgb(122, 162, 247), // blue
-            panel_bg: Color::Rgb(26, 27, 38),
-            sidebar_bg: Color::Reset,
-            active_row_bg: Color::Rgb(35, 38, 54),
-            selection_bg: Color::Rgb(45, 54, 80),
-            surface0: Color::Rgb(36, 40, 59),
-            surface1: Color::Rgb(65, 72, 104),
-            surface_dim: Color::Rgb(26, 27, 38),
-            overlay0: Color::Rgb(86, 95, 137),
-            overlay1: Color::Rgb(105, 113, 150),
-            text: Color::Rgb(192, 202, 245),
-            subtext0: Color::Rgb(169, 177, 214),
-            mauve: Color::Rgb(187, 154, 247),
-            green: Color::Rgb(158, 206, 106),
-            yellow: Color::Rgb(224, 175, 104),
-            red: Color::Rgb(247, 118, 142),
-            blue: Color::Rgb(122, 162, 247),
-            teal: Color::Rgb(125, 207, 255),
-            peach: Color::Rgb(255, 158, 100),
-        }
-    }
-
-    /// Tokyo Night Day — the light Tokyo Night style.
-    pub fn tokyo_night_day() -> Self {
-        Self {
-            accent: Color::Rgb(46, 125, 233),
-            panel_bg: Color::Rgb(225, 226, 231),
-            sidebar_bg: Color::Reset,
-            active_row_bg: Color::Rgb(210, 211, 218),
-            selection_bg: Color::Rgb(182, 202, 231),
-            surface0: Color::Rgb(196, 200, 218),
-            surface1: Color::Rgb(168, 174, 203),
-            surface_dim: Color::Rgb(210, 211, 218),
-            overlay0: Color::Rgb(137, 144, 179),
-            overlay1: Color::Rgb(104, 112, 154),
-            text: Color::Rgb(55, 96, 191),
-            subtext0: Color::Rgb(97, 114, 176),
-            mauve: Color::Rgb(120, 71, 189),
-            green: Color::Rgb(88, 117, 57),
-            yellow: Color::Rgb(140, 108, 62),
-            red: Color::Rgb(245, 42, 101),
-            blue: Color::Rgb(46, 125, 233),
-            teal: Color::Rgb(17, 140, 116),
-            peach: Color::Rgb(177, 92, 0),
-        }
-    }
-
-    /// Dracula — purple/pink/green.
-    pub fn dracula() -> Self {
-        Self {
-            accent: Color::Rgb(189, 147, 249), // purple
-            panel_bg: Color::Rgb(40, 42, 54),
-            sidebar_bg: Color::Reset,
-            active_row_bg: Color::Rgb(55, 60, 82),
-            selection_bg: Color::Rgb(70, 63, 93),
-            surface0: Color::Rgb(68, 71, 90),
-            surface1: Color::Rgb(98, 114, 164),
-            surface_dim: Color::Rgb(40, 42, 54),
-            overlay0: Color::Rgb(98, 114, 164),
-            overlay1: Color::Rgb(130, 140, 180),
-            text: Color::Rgb(248, 248, 242),
-            subtext0: Color::Rgb(210, 210, 220),
-            mauve: Color::Rgb(255, 121, 198), // pink
-            green: Color::Rgb(80, 250, 123),
-            yellow: Color::Rgb(241, 250, 140),
-            red: Color::Rgb(255, 85, 85),
-            blue: Color::Rgb(139, 233, 253), // cyan-ish
-            teal: Color::Rgb(139, 233, 253),
-            peach: Color::Rgb(255, 184, 108),
-        }
-    }
-
-    /// Nord — frosty blue palette.
-    pub fn nord() -> Self {
-        Self {
-            accent: Color::Rgb(136, 192, 208), // frost
-            panel_bg: Color::Rgb(46, 52, 64),
-            sidebar_bg: Color::Reset,
-            active_row_bg: Color::Rgb(67, 76, 94),
-            selection_bg: Color::Rgb(64, 80, 93),
-            surface0: Color::Rgb(59, 66, 82),
-            surface1: Color::Rgb(67, 76, 94),
-            surface_dim: Color::Rgb(46, 52, 64),
-            overlay0: Color::Rgb(76, 86, 106),
-            overlay1: Color::Rgb(100, 110, 130),
-            text: Color::Rgb(236, 239, 244),
-            subtext0: Color::Rgb(216, 222, 233),
-            mauve: Color::Rgb(180, 142, 173),
-            green: Color::Rgb(163, 190, 140),
-            yellow: Color::Rgb(235, 203, 139),
-            red: Color::Rgb(191, 97, 106),
-            blue: Color::Rgb(129, 161, 193),
-            teal: Color::Rgb(143, 188, 187),
-            peach: Color::Rgb(208, 135, 112),
-        }
-    }
-
-    /// Gruvbox Dark — warm retro palette.
-    pub fn gruvbox() -> Self {
-        Self {
-            accent: Color::Rgb(215, 153, 33), // yellow
-            panel_bg: Color::Rgb(40, 40, 40),
-            sidebar_bg: Color::Reset,
-            active_row_bg: Color::Rgb(50, 49, 48),
-            selection_bg: Color::Rgb(75, 63, 39),
-            surface0: Color::Rgb(60, 56, 54),
-            surface1: Color::Rgb(80, 73, 69),
-            surface_dim: Color::Rgb(40, 40, 40),
-    
-```
-
-### Core Architecture Module: `src/client/loop_config.rs`
-```
-use super::*;
-
-pub(super) struct ClientLoopConfig {
-    pub(super) sound_config: crate::config::SoundConfig,
-    pub(super) mouse_scroll_lines: usize,
-    pub(super) redraw_on_focus_gained: bool,
-    pub(super) host_cursor: crate::config::HostCursorModeConfig,
-    pub(super) kitty_graphics_enabled: bool,
-    pub(super) pixel_geometry_enabled: bool,
-    pub(super) pixel_geometry_fallback: bool,
-    pub(super) mouse_capture_active: bool,
-    pub(super) host_escape_disambiguation_active: bool,
-    pub(super) host_sgr_pixel_mouse: Option<bool>,
-    pub(super) initial_host_input: Vec<u8>,
-    pub(super) endpoint_keybindings: bool,
-    pub(super) remote_image_paste_key:
-        Option<(crossterm::event::KeyCode, crossterm::event::KeyModifiers)>,
-    pub(super) shell_config: Option<shell::ClientShellConfig>,
-}
-
-```
-
-### Core Architecture Module: `src/client/shell/endpoint_agent_state.rs`
-```
-use std::collections::{HashMap, HashSet};
-
-use crate::api::schema::AgentStatus;
-use crate::protocol::{ClientShellAgent, ClientShellSnapshot, PaneSurfaceFrame};
-
-#[derive(Clone, Debug, Default)]
-pub(super) struct EndpointAgentPresentation {
-    boot_id: Option<String>,
-    acknowledged: HashMap<String, u64>,
-    completed: HashMap<String, u64>,
-    working: HashSet<String>,
-    pending_completions: Option<(
-        Option<u64>,
-        crate::protocol::endpoint::EndpointAgentCompletions,
-    )>,
-}
-
-impl EndpointAgentPresentation {
-    pub(super) fn receive_completions(
-        &mut self,
-        generation: Option<u64>,
-        completions: crate::protocol::endpoint::EndpointAgentCompletions,
-    ) {
-        if self
-            .pending_completions
-            .as_ref()
-            .is_some_and(|(current_generation, current)| {
-                *current_generation == generation
-                    && current.boot_id == completions.boot_id
-                    && current.revision >= completions.revision
-            })
-        {
-            return;
-        }
-        self.pending_completions = Some((generation, completions));
-    }
-
-    #[cfg(test)]
-    pub(super) fn project_snapshot(&mut self, snapshot: &mut ClientShellSnapshot) {
-        self.project_snapshot_for_generation(snapshot, None);
-    }
-
-    pub(super) fn project_snapshot_for_generation(
-        &mut self,
-        snapshot: &mut ClientShellSnapshot,
-        generation: Option<u64>,
-    ) {
-        if self.boot_id.as_deref() != Some(snapshot.boot_id.as_str()) {
-            self.boot_id = Some(snapshot.boot_id.clone());
-            self.acknowledged.clear();
-            self.completed.clear();
-            self.working.clear();
-            self.acknowledged.extend(
-                snapshot
-                    .agents
-                    .iter()
-                    .map(|agent| (agent.pane_id.clone(), agent.state_change_seq)),
-            );
-        }
-        let pane_ids: HashSet<&str> = snapshot
-            .agents
-            .iter()
-            .map(|agent| agent.pane_id.as_str())
-            .collect();
-        self.acknowledged
-            .retain(|pane_id, _| pane_ids.contains(pane_id.as_str()));
-        self.completed
-            .retain(|pane_id, _| pane_ids.contains(pane_id.as_str()));
-        self.working
-            .retain(|pane_id| pane_ids.contains(pane_id.as_str()));
-        let completions = self
-            .pending_completions
-            .take()
-            .filter(|(received_generation, projection)| {
-                *received_generation == generation
-                    && projection.boot_id == snapshot.boot_id
-                    && projection.revision == snapshot.revision
-            })
-            .map(|(_, projection)| projection.completions);
-        for agent in &mut snapshot.agents {
-            match agent.agent_status {
-                AgentStatus::Working => {
-                    self.working.insert(agent.pane_id.clone());
-                    self.completed.remove(&agent.pane_id);
-                }
-                AgentStatus::Blocked => {
-                    self.completed.remove(&agent.pane_id);
-                }
-                AgentStatus::Idle | AgentStatus::Done => {
-                    let observed_work = self.working.remove(&agent.pane_id);
-                    let completed = completions.as_ref().map_or_else(
-                        || {
-                            observed_work
-                                || self.completed.get(&agent.pane_id)
-                                    == Some(&agent.state_change_seq)
-                        },
-                        |completions| {
-                            completions.get(&agent.pane_id) == Some(&agent.state_change_seq)
-                        },
-                    );
-                    if completed {
-                        self.completed
-                            .insert(agent.pane_id.clone(), agent.state_change_seq);
-                    } else {
-                        self.completed.remove(&agent.pane_id);
-                    }
-                }
-                _ => {
-                    self.working.remove(&agent.pane_id);
-                    self.completed.remove(&agent.pane_id);
-                }
-            }
-            agent.agent_status = self.projected_status(agent);
-        }
-        project_aggregate_status(snapshot);
-    }
-
-    pub(super) fn acknowledge_surface(
-        &mut self,
-        snapshot: &mut ClientShellSnapshot,
-        surface: &PaneSurfaceFrame,
-        outer_focused: Option<bool>,
-    ) -> bool {
-        if outer_focused == Some(false)
-            || self.boot_id.as_deref() != Some(surface.boot_id.as_str())
-            || snapshot.boot_id != surface.boot_id
-            || snapshot.revision != surface.projection_revision
-        {
-            return false;
-        }
-
-        let mut changed = false;
-        for pane in &surface.panes {
-            let Some(agent) = snapshot
-                .agents
-                .iter()
-                .find(|agent| agent.pane_id == pane.pane_id)
-            else {
-                continue;
-            };
-            let acknowledged = self.acknowledged.entry(agent.pane_id.clone()).or_default();
-            if *acknowledged < agent.state_change_seq {
-                *acknowledged = agent.state_change_seq;
-                changed = true;
-            }
-        }
-        if changed {
-            for agent in &mut snapshot.agents {
-                agent.agent_status = self.projected_status(agent);
-            }
-            project_aggregate_status(snapshot);
-        }
-        changed
-    }
-
-    pub(super) fn seen(&self, agent: &ClientShellAgent) -> bool {
-        self.completed.get(&agent.pane_id).is_none_or(|completion| {
-            self.acknowledged
-                .get(&agent.pane_id)
-                .is_some_and(|sequence| sequence >= completion)
-        })
-    }
-
-    fn projected_status(&self, agent: &ClientShellAgent) -> AgentStatus {
-        match agent.agent_status {
-            AgentStatus::Idle | AgentStatus::Done => {
-                if self.seen(agent) {
-                    AgentStatus::Idle
-                } else {
-                    AgentStatus::Done
-                }
-            }
-            status => status,
-        }
-    }
-}
-
-fn project_aggregate_status(snapshot: &mut ClientShellSnapshot) {
-    for tab in &mut snapshot.tabs {
-        if let Some(status) = snapshot
-            .agents
-            .iter()
-            .filter(|agent| agent.tab_id == tab.tab_id)
-            .map(|agent| agent.agent_status)
-            .max_by_key(|status| super::status_priority(*status))
-        {
-            tab.agent_status = status;
-        }
-    }
-    for workspace in &mut snapshot.workspaces {
-        if let Some(status) = snapshot
-            .agents
-            .iter()
-            .filter(|agent| agent.workspace_id == workspace.workspace_id)
-            .map(|agent| agent.agent_status)
-            .max_by_key(|status| super::status_priority(*status))
-        {
-            workspace.agent_status = status;
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::protocol::{
-        endpoint::EndpointAgentCompletions, FrameData, PaneSurfacePane, SurfaceRect,
-    };
-
-    fn agent(status: AgentStatus, sequence: u64) -> ClientShellAgent {
-        ClientShellAgent {
-            pane_id: "agent-pane".into(),
-            workspace_id: "workspace".into(),
-            tab_id: "tab".into(),
-            name: None,
-            display_agent: None,
-            agent: None,
-            title: None,
-            terminal_title: None,
-            terminal_title_stripped: None,
-            agent_status: status,
-            state_change_seq: sequence,
-            state_labels: Vec::new(),
-            tokens: Vec::new(),
-            focused: true,
-        }
-    }
-
-    fn snapshot(status: AgentStatus, sequence: u64, revision: u64) -> ClientShellSnapshot {
-        let mut snapshot = crate::client::shell::tests::snapshot();
-        snapshot.boot_id = "endpoint-boot".into();
-        snapshot.revision = revision;
-        snapshot.agents = vec![agent(status, sequence)];
-        snapshot
-    }
-
-    fn surface(revision: u64) -> PaneSurfaceFrame {
-        let rect = SurfaceRect {
-            x: 0,
-            y: 0,
-            width: 1,
-            height: 1,
-        };
-        PaneSurfaceFrame {
-            boot_id: "endpoint-boot".into(),
-            projection_revision: revision,
-            surface_revision: 1,
-            frame: FrameData {
-                cells: Vec::new(),
-                width: 0,
-                height: 0,
-                cursor: None,
-                hyperlinks: Vec::new(),
-                graphics: Vec::new(),
-            },
-            panes: vec![PaneSurfacePane {
-                pane_id: "agent-pane".into(),
-                content_revision: 1,
-                rect,
-                inner_rect: rect,
-                scrollbar_rect: None,
-                scroll: None,
-                focused: true,
-                mouse_reporting: false,
-                sgr_pixel_mouse: false,
-                alternate_screen_active: false,
-                pixel_width: 0,
-                pixel_height: 0,
-            }],
-            splits: Vec::new(),
-            popup: None,
-            graphics: Default::default(),
-        }
-    }
-
-    #[test]
-    fn first_snapshot_establishes_an_idle_baseline_without_server_seen_authority() {
-        let mut presentation = EndpointAgentPresentation::default();
-        let mut snapshot = snapshot(AgentStatus::Done, 4, 1);
-
-        presentation.project_snapshot(&mut snapshot);
-
-        assert_eq!(snapshot.agents[0].agent_status, AgentStatus::Idle);
-    }
-
-    fn assert_idle_sequence(states: &[(AgentStatus, u64)]) {
-        let mut presentation = EndpointAgentPresentation::default();
-        let mut projected = AgentStatus::Unknown;
-        for (revision, &(status, seq)) in states.iter().enumerate() {
-            let mut snapshot = snapshot(status, seq, revision
-```
-
-### Core Architecture Module: `src/client/shell/render.rs`
-```
-use super::*;
-
-#[path = "../shell/overlays.rs"]
-mod overlays;
-#[path = "../shell/sidebar.rs"]
-pub(in crate::client::shell) mod sidebar;
-#[path = "../shell/tabs.rs"]
-mod tabs;
-
-pub(super) use super::agent_sidebar::{ordered_agent_pane_ids, render_agent_panel};
-pub(super) use super::aggregate_navigation::navigator_rows as client_navigator_rows;
-pub(super) use overlays::{render_client_overlay, render_context_menu, render_global_menu};
-pub(super) use sidebar::{render_collapsed_sidebar, render_sidebar, workspace_entries};
-pub(super) use tabs::{render_tab_bar, tab_bar_status_width};
-
-pub(in crate::client::shell) fn render_sidebar_background(
-    buffer: &mut Buffer,
-    area: Rect,
-    palette: &Palette,
-) {
-    buffer.set_style(area, Style::default().bg(palette.sidebar_bg));
-    let separator_x = area.right().saturating_sub(1);
-    for y in area.y..area.bottom() {
-        if let Some(cell) = buffer.cell_mut((separator_x, y)) {
-            cell.set_symbol("│");
-            cell.set_style(Style::default().fg(palette.surface_dim));
-        }
-    }
-}
-
-pub(super) fn render_mode_bar(
-    buffer: &mut Buffer,
-    pane_area: Rect,
-    mode: ClientShellMode,
-    copy_mode: Option<&ClientCopyModeState>,
-    endpoint_error: Option<&str>,
-    update_available: bool,
-    keybinds: &LiveKeybindConfig,
-    palette: &Palette,
-) -> Option<Rect> {
-    if (mode == ClientShellMode::Terminal && endpoint_error.is_none()) || pane_area.is_empty() {
-        return None;
-    }
-
-    let bar = Rect::new(
-        pane_area.x,
-        pane_area.y + pane_area.height.saturating_sub(1),
-        pane_area.width,
-        1,
-    );
-    let base = Style::default().fg(palette.overlay0).bg(palette.panel_bg);
-    for x in bar.x..bar.x + bar.width {
-        buffer[(x, bar.y)].set_symbol(" ").set_style(base);
-    }
-
-    let key = Style::default()
-        .fg(palette.accent)
-        .bg(palette.panel_bg)
-        .add_modifier(Modifier::BOLD);
-    let mode_style = Style::default()
-        .fg(match palette.panel_bg {
-            ratatui::style::Color::Reset => palette.surface_dim,
-            color => color,
-        })
-        .bg(if mode == ClientShellMode::Resize {
-            palette.mauve
-        } else {
-            palette.accent
-        })
-        .add_modifier(Modifier::BOLD);
-    let prefix = keybinds.primary_prefix_label();
-    let prefix_rhs = |bindings: &crate::config::ActionKeybinds| {
-        bindings
-            .prefix_rhs_label()
-            .unwrap_or_else(|| "unset".to_owned())
-    };
-
-    let mut segments = Vec::<(String, Style)>::new();
-    if let Some(error) = endpoint_error {
-        segments.extend([
-            (" ERROR ".to_owned(), mode_style),
-            (format!(" {error}"), base),
-        ]);
-    } else {
-        match mode {
-            ClientShellMode::Prefix => {
-                segments.extend([
-                    (" PREFIX ".to_owned(), mode_style),
-                    (" ".to_owned(), base),
-                    ("esc".to_owned(), key),
-                    (" cancel  ".to_owned(), base),
-                    (prefix, key),
-                    (" send prefix  ".to_owned(), base),
-                    (prefix_rhs(&keybinds.keybinds.workspace_picker), key),
-                    (" workspace nav  ".to_owned(), base),
-                    (prefix_rhs(&keybinds.keybinds.help), key),
-                    (" keybinds".to_owned(), base),
-                ]);
-            }
-            ClientShellMode::Navigate => {
-                segments.extend([
-                    (" NAVIGATE ".to_owned(), mode_style),
-                    (" esc back  ".to_owned(), base),
-                    ("↑/↓".to_owned(), key),
-                    (" workspace  ".to_owned(), base),
-                    ("tab".to_owned(), key),
-                    (" pane  ".to_owned(), base),
-                    (prefix_rhs(&keybinds.keybinds.help), key),
-                    (" keybinds".to_owned(), base),
-                ]);
-            }
-            ClientShellMode::Resize => {
-                segments.extend([
-                    (" RESIZE ".to_owned(), mode_style),
-                    ("  ".to_owned(), base),
-                    ("h/l".to_owned(), key),
-                    (" width  ".to_owned(), base),
-                    ("j/k".to_owned(), key),
-                    (" height  ".to_owned(), base),
-                    ("esc".to_owned(), key),
-                    (" done".to_owned(), base),
-                ]);
-            }
-            ClientShellMode::Copy => {
-                let copy_mode = copy_mode?;
-                if let Some(prompt) = copy_mode.search_prompt.as_ref() {
-                    let marker = match prompt.direction {
-                        crate::api::schema::PaneCopySearchDirection::Forward => "/",
-                        crate::api::schema::PaneCopySearchDirection::Backward => "?",
-                    };
-                    buffer.set_stringn(bar.x, bar.y, " COPY ", usize::from(bar.width), mode_style);
-                    let prefix = 8.min(bar.width);
-                    if bar.width >= 8 {
-                        buffer.set_string(bar.x + 7, bar.y, marker, key);
-                    }
-                    let footer = "  enter search  esc cancel";
-                    let footer_width = if bar.width >= 50 {
-                        footer.len() as u16
-                    } else {
-                        0
-                    };
-                    let field = Rect::new(
-                        bar.x + prefix,
-                        bar.y,
-                        bar.width.saturating_sub(prefix + footer_width),
-                        1,
-                    );
-                    if let Some(cursor) = text_editor::render(
-                        buffer,
-                        field,
-                        &prompt.query,
-                        Style::default().fg(palette.text).bg(palette.panel_bg),
-                    ) {
-                        buffer[(cursor.x, cursor.y)]
-                            .set_style(Style::default().fg(palette.panel_bg).bg(palette.text));
-                    }
-                    if footer_width > 0 {
-                        buffer.set_string(bar.right() - footer_width, bar.y, footer, base);
-                    }
-                    return Some(bar);
-                } else {
-                    let select = if copy_mode.selection.is_some() {
-                        "selecting"
-                    } else {
-                        "select"
-                    };
-                    let match_status = copy_mode
-                        .search_current_global
-                        .map(|current| format!(" {}/{}", current + 1, copy_mode.search_total))
-                        .or_else(|| (!copy_mode.search_query.is_empty()).then(|| " 0/0".to_owned()))
-                        .unwrap_or_default();
-                    let (exit_keys, exit_label) =
-                        if copy_mode.search_query.is_empty() && copy_mode.selection.is_none() {
-                            ("q/esc", " exit")
-                        } else {
-                            ("esc", " clear  q exit")
-                        };
-                    segments.extend([
-                        (" COPY ".to_owned(), mode_style),
-                        (" ".to_owned(), base),
-                        ("h/j/k/l w/b/e { }".to_owned(), key),
-                        (" move  ".to_owned(), base),
-                        ("/ ?".to_owned(), key),
-                        (" search  ".to_owned(), base),
-                        ("n/N".to_owned(), key),
-                        (format!(" repeat{match_status}  "), base),
-                        ("v/space".to_owned(), key),
-                        (format!(" {select}  "), base),
-                        ("y/enter".to_owned(), key),
-                        (" copy  ".to_owned(), base),
-                        (exit_keys.to_owned(), key),
-                        (exit_label.to_owned(), base),
-                    ]);
-                }
-            }
-            ClientShellMode::Terminal => unreachable!(),
-        }
-    }
-
-    let mut x = bar.x;
-    let end = bar.x + bar.width;
-    for (text, style) in segments {
-        if x >= end {
-            break;
-        }
-        let remaining = end - x;
-        buffer.set_stringn(x, bar.y, &text, usize::from(remaining), style);
-        x = x.saturating_add(
-            u16::try_from(UnicodeWidthStr::width(text.as_str()))
-                .unwrap_or(u16::MAX)
-                .min(remaining),
-        );
-    }
-    if update_available && mode == ClientShellMode::Navigate {
-        let width = 13.min(bar.width);
-        let area = Rect::new(bar.right().saturating_sub(width), bar.y, width, 1);
-        buffer.set_style(area, Style::default().bg(palette.panel_bg));
-        put_right_text(
-            buffer,
-            area,
-            area.y,
-            " update ready",
-            Style::default()
-                .fg(palette.accent)
-                .bg(palette.panel_bg)
-                .add_modifier(Modifier::BOLD),
-        );
-    }
-    Some(bar)
-}
-
-pub(super) struct ShellRenderState<'a> {
-    pub(super) machine_diagnostics: &'a super::machine_diagnostics::MachineDiagnostics,
-    pub(super) endpoints: &'a [ClientShellEndpoint],
-    pub(super) active_endpoint_id: &'a ClientEndpointId,
-    pub(super) collapsed_endpoints: &'a HashSet<ClientEndpointId>,
-    pub(super) collapsed_groups: &'a HashSet<String>,
-    pub(super) remote_collapsed_groups: &'a HashMap<ClientEndpointId, HashSet<String>>,
-    pub(super) workspace_scroll: &'a mut usize,
-    pub(super) agent_scroll: &'a mut usize,
-    pub(super) tab_scroll: &'a mut usize,
-    pub(super) reveal_focused_workspace: &'a mut bool,
-    pub(super) reveal_focused_tab: &'a mut bool,
-    pub(super) sidebar_collapsed: bool,
-    pub(super) sidebar_section_split: f32,
-    pub(super) tab_drag_insert_index: Option<usize>,
-    pub(super) selected_workspace_id: Option<&'a WorkspaceNavigationTarget>,
-    pub(super) reveal_navigation_workspace: &'a mut bool,
-    pub(supe
-```
-
-### Core Architecture Module: `src/client/shell/state.rs`
-```
-use super::*;
-
-pub(super) const MIN_TAB_WIDTH: u16 = 8;
-pub(super) const NEW_TAB_WIDTH: u16 = 3;
-pub(super) const WORKSPACE_HEADER_ROWS: u16 = 2;
-const ENDPOINT_ERROR_TIMEOUT_SECS: u64 = 5;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum ClientShellKeybindingSource {
-    Local,
-    RemoteLocal,
-    Endpoint,
-}
-
-pub(crate) struct ClientShellConfig {
-    pub(super) sidebar_width: u16,
-    pub(super) sidebar_min_width: u16,
-    pub(super) sidebar_max_width: u16,
-    pub(super) sidebar_start_collapsed: bool,
-    pub(super) sidebar_collapsed_mode: SidebarCollapsedModeConfig,
-    pub(super) mobile_width_threshold: u16,
-    pub(super) tab_bar_position: TabBarPositionConfig,
-    pub(super) hide_tab_bar_when_single_tab: bool,
-    pub(super) spaces: SpacesSidebarConfig,
-    pub(super) agents: crate::config::AgentsSidebarConfig,
-    pub(super) agent_panel_sort: crate::config::AgentPanelSortConfig,
-    pub(super) status_indicators: crate::config::StatusIndicatorStyle,
-    pub(super) sound_enabled: bool,
-    pub(super) toast_delivery: crate::config::ToastDelivery,
-    pub(super) toast_delay_seconds: u64,
-    pub(super) toast_position: crate::config::ToastHerdrPosition,
-    pub(super) copy_on_select: bool,
-    pub(super) clipboard_toast_enabled: bool,
-    pub(super) clipboard_toast_position: crate::config::ToastClipboardPosition,
-    pub(super) theme_name: String,
-    pub(super) theme_runtime: crate::app::state::ThemeRuntimeConfig,
-    pub(super) palette: Palette,
-    pub(super) keybinds: LiveKeybindConfig,
-    pub(super) local_keys: crate::config::KeysConfig,
-    pub(super) keybinding_source: ClientShellKeybindingSource,
-    pub(super) prompt_new_tab_name: bool,
-    pub(super) prompt_new_workspace_name: bool,
-    pub(super) confirm_close: bool,
-    pub(super) mouse_capture: bool,
-    pub(super) mouse_scroll_lines: usize,
-    pub(super) right_click_passthrough_modifiers: Option<crossterm::event::KeyModifiers>,
-    pub(super) redraw_on_focus_gained: bool,
-    pub(super) switch_ascii_input_source_in_prefix: bool,
-    pub(super) local_config_path: std::path::PathBuf,
-    pub(super) preferences_path: Option<std::path::PathBuf>,
-    pub(super) preferences: preferences::ClientChromePreferences,
-    pub(super) startup_config_diagnostic: Option<String>,
-    pub(super) startup_onboarding: bool,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) struct ClientShellLayout {
-    pub sidebar: Rect,
-    pub tab_bar: Rect,
-    pub mobile_header: Rect,
-    pub pane_surface: Rect,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub(super) enum ClientMobileTarget {
-    Machine(ClientEndpointId),
-    NewWorkspace,
-    Workspace {
-        endpoint_id: ClientEndpointId,
-        workspace_id: String,
-    },
-    NewTab,
-    Tab {
-        endpoint_id: ClientEndpointId,
-        tab_id: String,
-    },
-    Agent {
-        endpoint_id: ClientEndpointId,
-        pane_id: String,
-    },
-    Menu(usize),
-}
-
-#[derive(Default)]
-pub(super) struct ShellHitMap {
-    pub(super) machines: Vec<MachineHit>,
-    pub(super) workspaces: Vec<WorkspaceHit>,
-    pub(super) workspace_body: Rect,
-    pub(super) workspace_scrollbar: Rect,
-    pub(super) workspace_scroll_metrics: Option<crate::pane::ScrollMetrics>,
-    pub(super) workspace_max_scroll: usize,
-    pub(super) tabs: Vec<(Rect, String)>,
-    pub(super) panes: Vec<PaneHit>,
-    pub(super) popup: Option<PaneHit>,
-    pub(super) pane_splits: Vec<PaneSplitHit>,
-    pub(super) agents: Vec<(Rect, String)>,
-    pub(super) endpoint_agents: Vec<(Rect, ClientEndpointId, String)>,
-    pub(super) agent_body: Rect,
-    pub(super) agent_scrollbar: Rect,
-    pub(super) agent_scroll_metrics: Option<crate::pane::ScrollMetrics>,
-    pub(super) agent_max_scroll: usize,
-    pub(super) agent_sort_toggle: Rect,
-    pub(super) sidebar_divider: Rect,
-    pub(super) sidebar_section_divider: Rect,
-    pub(super) sidebar_toggle: Rect,
-    pub(super) new_workspace: Rect,
-    pub(super) new_tab: Rect,
-    pub(super) tab_scroll_left: Rect,
-    pub(super) tab_scroll_right: Rect,
-    pub(super) mobile_switch: Rect,
-    pub(super) mobile_close: Rect,
-    pub(super) mobile_targets: Vec<(Rect, ClientMobileTarget)>,
-    pub(super) mobile_max_scroll: usize,
-    pub(super) global_launcher: Rect,
-    pub(super) notification_toast: Rect,
-    pub(super) global_menu_rows: Vec<(Rect, usize)>,
-    pub(super) context_menu_rows: Vec<(Rect, usize)>,
-    pub(super) overlay_primary: Rect,
-    pub(super) overlay_clear: Rect,
-    pub(super) overlay_cancel: Rect,
-    pub(super) navigator_popup: Rect,
-    pub(super) navigator_search: Rect,
-    pub(super) navigator_rows: Vec<(Rect, ClientNavigatorTarget)>,
-    pub(super) navigator_scrollbar: Rect,
-    pub(super) navigator_scroll_metrics: Option<crate::pane::ScrollMetrics>,
-    pub(super) worktree_search: Rect,
-    pub(super) worktree_rows: Vec<(Rect, usize)>,
-    pub(super) help_popup: Rect,
-    pub(super) help_scrollbar: Rect,
-    pub(super) help_scroll_metrics: Option<crate::pane::ScrollMetrics>,
-    pub(super) help_max_scroll: usize,
-    pub(super) settings_popup: Rect,
-    pub(super) settings_tabs: Vec<(Rect, ClientSettingsSection)>,
-    pub(super) settings_choices: Vec<(Rect, usize)>,
-    pub(super) product_announcement_scrollbar: Rect,
-    pub(super) product_announcement_scroll_metrics: Option<crate::pane::ScrollMetrics>,
-    pub(super) product_announcement_max_scroll: usize,
-    pub(super) release_notes_scrollbar: Rect,
-    pub(super) release_notes_scroll_metrics: Option<crate::pane::ScrollMetrics>,
-    pub(super) release_notes_max_scroll: usize,
-}
-
-#[derive(Clone)]
-pub(super) struct PaneHit {
-    pub(super) rect: Rect,
-    pub(super) inner_rect: Rect,
-    pub(super) scrollbar_rect: Option<Rect>,
-    pub(super) scroll: Option<crate::pane::ScrollMetrics>,
-    pub(super) pane_id: String,
-    pub(super) popup: bool,
-    pub(super) mouse_reporting: bool,
-    pub(super) sgr_pixel_mouse: bool,
-    pub(super) pixel_width: u32,
-    pub(super) pixel_height: u32,
-}
-
-#[derive(Clone)]
-pub(super) struct PaneSplitHit {
-    pub(super) direction: crate::protocol::PaneSurfaceSplitDirection,
-    pub(super) pos: u16,
-    pub(super) area: Rect,
-    pub(super) hit_rect: Rect,
-    pub(super) path: Vec<bool>,
-    pub(super) topology_signature: u64,
-}
-
-pub(super) struct ClientPaneMouseGesture {
-    pub(super) hit: PaneHit,
-    pub(super) button: crossterm::event::MouseButton,
-    pub(super) stripped_modifiers: crossterm::event::KeyModifiers,
-    pub(super) last_event: crossterm::event::MouseEvent,
-    pub(super) last_position: crate::protocol::ClientMousePosition,
-}
-
-pub(super) struct ClientWorkspacePress {
-    pub(super) endpoint_id: ClientEndpointId,
-    pub(super) workspace_id: String,
-    pub(super) start_column: u16,
-    pub(super) start_row: u16,
-}
-
-pub(super) struct ClientTabPress {
-    pub(super) tab_id: String,
-    pub(super) workspace_id: String,
-    pub(super) start_column: u16,
-    pub(super) start_row: u16,
-}
-
-pub(super) enum ClientChromeDrag {
-    SidebarWidth,
-    SidebarSection,
-    WorkspaceScrollbar {
-        grab_row_offset: u16,
-    },
-    AgentScrollbar {
-        grab_row_offset: u16,
-    },
-    HelpScrollbar {
-        grab_row_offset: u16,
-    },
-    NavigatorScrollbar {
-        grab_row_offset: u16,
-    },
-    ProductAnnouncementScrollbar {
-        grab_row_offset: u16,
-    },
-    ReleaseNotesScrollbar {
-        grab_row_offset: u16,
-    },
-    Tab {
-        tab_id: String,
-        workspace_id: String,
-        insert_index: Option<usize>,
-    },
-    Workspace {
-        source_workspace_id: String,
-        target: Option<(Option<String>, u16)>,
-    },
-    PaneSplit {
-        hit: PaneSplitHit,
-        tab_id: String,
-        grab_offset: i32,
-        last_sent_ratio: Option<f32>,
-        last_sent_at: Option<std::time::Instant>,
-    },
-    PaneScrollbar {
-        hit: PaneHit,
-        grab_row_offset: u16,
-        last_sent_offset: Option<usize>,
-        last_sent_at: Option<std::time::Instant>,
-    },
-}
-
-pub(super) struct WorkspaceHit {
-    pub(super) rect: Rect,
-    pub(super) endpoint_id: ClientEndpointId,
-    pub(super) workspace_id: String,
-    pub(super) indented: bool,
-    pub(super) group_toggle: Option<(Rect, String)>,
-}
-
-#[derive(Debug)]
-pub(crate) enum ClientShellAction {
-    Endpoint {
-        endpoint_id: ClientEndpointId,
-        boot_id: String,
-        request: Box<crate::api::schema::Request>,
-    },
-    ClipboardWrite(Vec<u8>),
-    OpenSafeWebUrl(String),
-    ActivateEndpoint {
-        endpoint_id: ClientEndpointId,
-        target: Option<ClientEndpointFocusTarget>,
-    },
-    ReplayMouse(Vec<crossterm::event::MouseEvent>),
-    Keybind(crate::input::KeybindAction),
-}
-
-#[derive(Default)]
-pub(crate) struct ClientShellInput {
-    pub detach: bool,
-    pub repaint: bool,
-    pub resize: bool,
-    pub query_host_appearance: bool,
-    pub query_host_theme: bool,
-    pub requests: Vec<ClientMessage>,
-    pub actions: Vec<ClientShellAction>,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(super) enum ClientShellMode {
-    Terminal,
-    Prefix,
-    Navigate,
-    Resize,
-    Copy,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(super) enum ClientShellOverlayKind {
-    Onboarding,
-    ProductAnnouncement,
-    ReleaseNotes,
-    Rename,
-    ConfirmClose,
-    Help,
-    Navigator,
-    WorktreeCreate,
-    WorktreeOpen,
-    WorktreeRemove,
-    ContextMenu,
-    GlobalMenu,
-    Settings,
-}
-
-#[derive(Debug)]
-pub(super) enum ClientRenameTarget {
-    NewWorkspace {
-        source_workspace_id: Option<String>,
-        cwd: Option<String>,
-        suggested_name: String,
-    },
-    Workspace {
-        workspace_id: String,
-    },
-    NewTab {
-        workspace_id: String,
-        default_name: String,
-    },
-    Tab {
-        tab_id: String,
-        auto_name: bool,
-        original_name: String,
-    },
-    Pane {
-        pane_id: String,
-    },
-}
-
-#[derive(Debug)]
-pub(super) struct ClientRenameOverlay {
-    pub(super) title: &'static str,
-    pub(super) input: TextEditor,
-    pub(super) ta
-```
-
-### Core Architecture Module: `src/client/state.rs`
-```
-use super::*;
-
-#[cfg(unix)]
-const MAX_RETIRED_DIRECT_GRAPHICS: usize = 64;
-
-#[cfg(unix)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(super) enum RetiredDirectGraphicsMatch {
-    None,
-    Exact,
-    Saturated,
-}
-
-#[cfg(unix)]
-pub(super) struct RetiredDirectGraphics {
-    generation: u64,
-    transfers: Vec<(u64, u32)>,
-    saturated: bool,
-}
-
-#[cfg(unix)]
-impl RetiredDirectGraphics {
-    fn new(generation: u64) -> Self {
-        Self {
-            generation,
-            transfers: Vec::new(),
-            saturated: false,
-        }
-    }
-}
-
-/// State tracking for the thin client.
-pub(super) struct ClientState {
-    /// Stateful semantic-frame encoder used when the server sends FrameData.
-    pub(super) blit_encoder: render_ansi::BlitEncoder,
-    pub(super) image_files: image_files::FileTransport,
-    pub(super) mouse_capture_active: bool,
-    pub(super) endpoint_mouse_capture_requested: bool,
-    pub(super) endpoint_sgr_pixels_requested: bool,
-    /// Latest physical host theme observations, retained so an endpoint selected after the
-    /// observation receives the same client-owned baseline.
-    pub(super) host_theme_updates: Vec<crate::protocol::ClientHostThemeUpdate>,
-    pub(super) direct_mouse_capture_preference: bool,
-    pub(super) shell_mouse_capture_preference: bool,
-    pub(super) direct_keyboard_protocol: crate::terminal_modes::DirectHostKeyboardState,
-    pub(super) pane_keyboard_report_all: bool,
-    pub(super) keyboard_report_all_active: bool,
-    pub(super) reported_size: (u16, u16),
-    pub(super) reported_cell_size: (u32, u32),
-    pub(super) sound_config: crate::config::SoundConfig,
-    pub(super) kitty_graphics_enabled: bool,
-    pub(super) pixel_geometry_enabled: bool,
-    pub(super) pixel_geometry_exact: bool,
-    /// The host's answer to the SGR pixel mouse probe; None when unknown.
-    pub(super) host_sgr_pixel_mouse: Option<bool>,
-    #[cfg(unix)]
-    pub(super) direct_graphics_response: Arc<Mutex<direct_graphics::ResponseMatcher>>,
-    #[cfg(unix)]
-    pub(super) retired_direct_graphics: HashMap<endpoint::ClientEndpointId, RetiredDirectGraphics>,
-    #[cfg(unix)]
-    pub(super) disabled_native_graphics: HashMap<endpoint::ClientEndpointId, u64>,
-    pub(super) pending_native_cleanup: Vec<u8>,
-    #[cfg(unix)]
-    pub(super) pending_surface_graphics: HashMap<
-        (endpoint::ClientEndpointId, u64, u64, u32),
-        crate::protocol::SurfaceGraphicsAssetKey,
-    >,
-    pub(super) attach_escape: Option<AttachEscapeState>,
-    #[cfg(unix)]
-    pub(super) mouse_scroll_lines: usize,
-    pub(super) remote_image_paste_key:
-        Option<(crossterm::event::KeyCode, crossterm::event::KeyModifiers)>,
-    pub(super) redraw_on_focus_gained: bool,
-    pub(super) repaint_pending: bool,
-    /// During a source-off-first handoff the currently blitted frame remains authoritative until
-    /// an acknowledged target snapshot/surface pair commits.
-    pub(super) presentation_frozen: bool,
-    /// Latest explicit Local selection awaiting this client's replacement Local connection.
-    pub(super) deferred_local_activation: Option<endpoint::EndpointActivationIntent>,
-    pub(super) draw_host_cursor: bool,
-    pub(super) detached_process_children: Vec<std::process::Child>,
-    pub(super) shell: Option<shell::ClientShellState>,
-}
-
-impl Drop for ClientState {
-    fn drop(&mut self) {
-        if self.attach_escape.is_some() {
-            let _ = crate::terminal_modes::set_direct_host_keyboard_protocol(
-                &mut io::stdout(),
-                &mut self.direct_keyboard_protocol,
-                0,
-                0,
-            );
-        }
-    }
-}
-
-impl ClientState {
-    pub(super) fn pixel_mouse_available(&self) -> bool {
-        self.pixel_geometry_exact && self.host_sgr_pixel_mouse == Some(true)
-    }
-
-    #[cfg(test)]
-    pub(super) fn test_new() -> Self {
-        Self {
-            blit_encoder: render_ansi::BlitEncoder::new(),
-            image_files: image_files::FileTransport::default(),
-            mouse_capture_active: false,
-            endpoint_mouse_capture_requested: false,
-            endpoint_sgr_pixels_requested: false,
-            host_theme_updates: Vec::new(),
-            direct_mouse_capture_preference: false,
-            shell_mouse_capture_preference: false,
-            direct_keyboard_protocol: Default::default(),
-            pane_keyboard_report_all: false,
-            keyboard_report_all_active: false,
-            reported_size: (100, 30),
-            reported_cell_size: (0, 0),
-            sound_config: Default::default(),
-            kitty_graphics_enabled: false,
-            pixel_geometry_enabled: false,
-            pixel_geometry_exact: false,
-            host_sgr_pixel_mouse: None,
-            #[cfg(unix)]
-            direct_graphics_response: Default::default(),
-            #[cfg(unix)]
-            retired_direct_graphics: HashMap::new(),
-            #[cfg(unix)]
-            disabled_native_graphics: Default::default(),
-            pending_native_cleanup: Vec::new(),
-            #[cfg(unix)]
-            pending_surface_graphics: HashMap::new(),
-            attach_escape: None,
-            #[cfg(unix)]
-            mouse_scroll_lines: 3,
-            remote_image_paste_key: None,
-            redraw_on_focus_gained: false,
-            repaint_pending: false,
-            presentation_frozen: false,
-            deferred_local_activation: None,
-            draw_host_cursor: false,
-            detached_process_children: Vec::new(),
-            shell: Some(shell::ClientShellState::new(
-                shell::ClientShellConfig::from_config(&crate::config::Config::default()),
-            )),
-        }
-    }
-
-    pub(super) fn request_repaint(&mut self) {
-        self.repaint_pending = true;
-    }
-
-    pub(super) fn freeze_presentation(&mut self) {
-        self.presentation_frozen = true;
-    }
-
-    pub(super) fn record_host_theme_update(
-        &mut self,
-        update: &crate::protocol::ClientHostThemeUpdate,
-    ) {
-        use crate::protocol::ClientHostThemeUpdate;
-
-        match update {
-            ClientHostThemeUpdate::DefaultColor { kind, .. } => {
-                self.host_theme_updates.retain(|current| {
-                    !matches!(
-                        current,
-                        ClientHostThemeUpdate::DefaultColor {
-                            kind: current_kind,
-                            ..
-                        } if current_kind == kind
-                    )
-                });
-            }
-            ClientHostThemeUpdate::PaletteColors(_) => self
-                .host_theme_updates
-                .retain(|current| !matches!(current, ClientHostThemeUpdate::PaletteColors(_))),
-            ClientHostThemeUpdate::Appearance(_) => self
-                .host_theme_updates
-                .retain(|current| !matches!(current, ClientHostThemeUpdate::Appearance(_))),
-        }
-        self.host_theme_updates.push(update.clone());
-    }
-
-    /// Replay the retained physical-host baseline only after an endpoint owns the committed
-    /// presentation. The endpoint transport preserves this order ahead of the resync control.
-    pub(super) fn replay_host_theme(
-        &self,
-        endpoints: &mut endpoint::EndpointRegistry,
-        endpoint_id: &endpoint::ClientEndpointId,
-    ) {
-        for update in &self.host_theme_updates {
-            let _ = endpoints.send_to(
-                endpoint_id,
-                &crate::protocol::ClientMessage::ClientShellHostTheme {
-                    update: update.clone(),
-                },
-            );
-        }
-    }
-
-    pub(super) fn unfreeze_presentation(&mut self) {
-        self.presentation_frozen = false;
-        // A resize or metadata event may have happened while frozen. Force a full frame rather
-        // than attempting to patch the old source frame.
-        self.request_repaint();
-    }
-
-    /// Present a composed error/chrome frame while retaining the handoff input freeze. The pane
-    /// cells are still the last coherent surface; only client chrome (including the error) moves.
-    pub(super) fn present_frozen_chrome(
-        &mut self,
-        frame_data: impl Into<frame_output::ComposedFrame>,
-    ) {
-        let frozen = self.presentation_frozen;
-        // Chrome can repaint the frozen source, but cannot retire its staged images.
-        let deferred_cleanup = frozen.then(|| std::mem::take(&mut self.pending_native_cleanup));
-        self.presentation_frozen = false;
-        self.present_frame(frame_data);
-        self.presentation_frozen = frozen;
-        if let Some(cleanup) = deferred_cleanup {
-            self.pending_native_cleanup = cleanup;
-        }
-    }
-
-    #[cfg(unix)]
-    pub(super) fn queue_native_image_cleanup(&mut self, image_id: u32) {
-        crate::kitty_graphics::encode_delete_image(&mut self.pending_native_cleanup, image_id);
-    }
-
-    /// Retirement is lifecycle bookkeeping, not a presentation effect. The caller has
-    /// already checked the endpoint generation, even for inactive/frozen owners.
-    #[cfg(unix)]
-    pub(super) fn receive_graphics_retirement(
-        &mut self,
-        endpoint_id: &endpoint::ClientEndpointId,
-        generation: u64,
-        transfer_id: u64,
-        image_id: u32,
-        owner_active: bool,
-    ) {
-        if transfer_id & crate::kitty_graphics::surface::NATIVE_TRANSFER_BIT != 0 {
-            self.disabled_native_graphics
-                .insert(endpoint_id.clone(), generation);
-        }
-        self.record_retired_direct_graphics(endpoint_id.clone(), generation, transfer_id, image_id);
-        let upload_pending = self
-            .pending_surface_graphics
-            .remove(&(endpoint_id.clone(), generation, transfer_id, image_id))
-            .is_some();
-        // Retirement cleanup is terminal-owned. A native retirement owns the
-        // ID only while its exact upload is pending: collision rejection and a
-        // late post-ACK retirement must not delete the currently visible bank.
-        // API/non-native retiremen
-```
-
-### Core Architecture Module: `src/integration/assets/kilo/herdr-agent-state.js`
-```
-// installed by herdr
-// managed by herdr; reinstalling or updating the integration overwrites this file.
-// add custom hooks/plugins beside this file instead of editing it.
-// HERDR_INTEGRATION_ID=kilo
-// HERDR_INTEGRATION_VERSION=4
-
-import net from "node:net";
-
-const SOURCE = "herdr:kilo";
-const AGENT = "kilo";
-let reportSeq = Date.now() * 1000;
-
-function nextReportSeq() {
-  reportSeq += 1;
-  return reportSeq;
-}
-
-function sessionIDFromProperties(properties) {
-  return typeof properties?.sessionID === "string" && properties.sessionID
-    ? properties.sessionID
-    : undefined;
-}
-
-function stateFromSessionStatus(status) {
-  if (typeof status !== "string") {
-    return undefined;
-  }
-  switch (status.toLowerCase()) {
-    case "idle":
-      return "idle";
-    case "active":
-    case "busy":
-    case "pending":
-    case "running":
-    case "streaming":
-    case "working":
-      return "working";
-    default:
-      return undefined;
-  }
-}
-
-function request(method, params) {
-  const paneId = process.env.HERDR_PANE_ID;
-  const socketPath = process.env.HERDR_SOCKET_PATH;
-
-  if (!paneId || !socketPath) {
-    return Promise.resolve();
-  }
-
-  const socketEndpoint =
-    process.platform === "win32" ? `\\\\.\\pipe\\${socketPath}` : socketPath;
-
-  const requestId = `${SOURCE}:${Date.now()}:${Math.floor(Math.random() * 1_000_000)
-    .toString()
-    .padStart(6, "0")}`;
-  const request = {
-    id: requestId,
-    method,
-    params: {
-      pane_id: paneId,
-      source: SOURCE,
-      agent: AGENT,
-      seq: nextReportSeq(),
-      ...params,
-    },
-  };
-
-  return new Promise((resolve) => {
-    const client = net.createConnection(socketEndpoint, () => {
-      client.write(`${JSON.stringify(request)}\n`);
-    });
-
-    const finish = () => {
-      client.destroy();
-      resolve();
-    };
-
-    client.setTimeout(500, finish);
-    client.on("data", finish);
-    client.on("error", finish);
-    client.on("end", finish);
-    client.on("close", resolve);
-  });
-}
-
-function reportSession(sessionID) {
-  if (!sessionID) {
-    return Promise.resolve();
-  }
-  return request("pane.report_agent_session", {
-    agent_session_id: sessionID,
-    session_start_source: "startup",
-  });
-}
-
-function reportState(state, sessionID) {
-  const params = { state };
-  if (sessionID) {
-    params.agent_session_id = sessionID;
-  }
-  return request("pane.report_agent", params);
-}
-
-export const HerdrAgentStatePlugin = async () => {
-  if (
-    process.env.HERDR_ENV !== "1" ||
-    !process.env.HERDR_SOCKET_PATH ||
-    !process.env.HERDR_PANE_ID
-  ) {
-    return {};
-  }
-
-  return {
-    "chat.message": async ({ sessionID }) => {
-      await reportState("working", sessionID);
-    },
-    event: async ({ event }) => {
-      const type = event?.type;
-      const properties = event?.properties ?? {};
-      const sessionID = sessionIDFromProperties(properties);
-
-      switch (type) {
-        case "session.created":
-        case "session.updated":
-          await reportSession(sessionID);
-          break;
-        case "session.status": {
-          const state = stateFromSessionStatus(properties.status);
-          if (state) {
-            await reportState(state, sessionID);
-          } else {
-            await reportSession(sessionID);
-          }
-          break;
-        }
-        case "tool.execute.before":
-        case "tool.execute.after":
-        case "permission.replied":
-        case "question.replied":
-        case "question.rejected":
-        case "session.compacted":
-          await reportState("working", sessionID);
-          break;
-        case "permission.asked":
-        case "question.asked":
-        case "session.error":
-          await reportState("blocked", sessionID);
-          break;
-        case "session.idle":
-          await reportState("idle", sessionID);
-          break;
-        case "session.deleted":
-          break;
-        default:
-          break;
-      }
-    },
-  };
-};
-
-```
-
-### Core Architecture Module: `src/integration/assets/omp/herdr-agent-state.ts`
-```
-// installed by herdr
-// managed by herdr; reinstalling or updating the integration overwrites this file.
-// add custom hooks/plugins beside this file instead of editing it.
-// HERDR_INTEGRATION_ID=omp
-// HERDR_INTEGRATION_VERSION=10
-// @ts-nocheck
-
-import net from "node:net";
-import path from "node:path";
-
-const HERDR_ENV = process.env.HERDR_ENV;
-const socketPath = process.env.HERDR_SOCKET_PATH;
-const socketEndpoint =
-  process.platform === "win32" && socketPath ? `\\\\.\\pipe\\${socketPath}` : socketPath;
-const paneId = process.env.HERDR_PANE_ID;
-const source = "herdr:omp";
-// OMP marks every shell it spawns with OMPCODE=1. A nested `omp` launched from
-// a parent session's shell inherits it, so that process is not the pane's root
-// agent and must not report its short-lived session over the parent's.
-const nestedOmpSession = process.env.OMPCODE === "1";
-
-function enabled() {
-  return HERDR_ENV === "1" && !!socketPath && !!paneId && !nestedOmpSession;
-}
-
-let requestQueue = Promise.resolve();
-
-function sendRequestAttempt(request: unknown, timeoutMs: number): Promise<boolean> {
-  if (!enabled()) {
-    return Promise.resolve(true);
-  }
-
-  return new Promise((resolve) => {
-    let done = false;
-    let timeout: ReturnType<typeof setTimeout> | undefined;
-    const finish = (delivered: boolean) => {
-      if (done) return;
-      done = true;
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-      socket.destroy();
-      resolve(delivered);
-    };
-
-    const socket = net.createConnection(socketEndpoint!);
-    socket.on("error", () => finish(false));
-    socket.on("connect", () => socket.write(`${JSON.stringify(request)}\n`));
-    socket.on("data", () => finish(true));
-    socket.on("end", () => finish(false));
-    timeout = setTimeout(() => finish(false), timeoutMs);
-    timeout.unref?.();
-  });
-}
-
-async function sendRequestNow(request: unknown): Promise<void> {
-  if (await sendRequestAttempt(request, 500)) {
-    return;
-  }
-  await sendRequestAttempt(request, 1500);
-}
-
-function sendRequest(request: unknown): Promise<void> {
-  requestQueue = requestQueue.then(
-    () => sendRequestNow(request),
-    () => sendRequestNow(request),
-  );
-  return requestQueue;
-}
-
-type AgentState = "working" | "blocked" | "idle";
-
-type QueuedState = {
-  state: AgentState;
-  message?: string;
-  seq: number;
-};
-
-const idleDebounceMs = parseDurationEnv("HERDR_OMP_IDLE_DEBOUNCE_MS", 250);
-const retryGraceMs = parseDurationEnv("HERDR_OMP_RETRY_GRACE_MS", 2500);
-const retryableErrorPattern =
-  /overloaded|provider.?returned.?error|rate.?limit|too many requests|429|500|502|503|504|service.?unavailable|server.?error|internal.?error|network.?error|connection.?error|connection.?refused|connection.?lost|websocket.?closed|websocket.?error|other side closed|fetch failed|upstream.?connect|reset before headers|socket hang up|ended without|http2 request did not get a response|timed? out|timeout|terminated|retry delay/i;
-let reportSeq = Date.now() * 1000;
-let currentAgentSessionId: string | undefined;
-let currentAgentSessionPath: string | undefined;
-
-function nextReportSeq(): number {
-  reportSeq += 1;
-  return reportSeq;
-}
-
-export function isAbsoluteSessionPath(file: unknown): file is string {
-  return (
-    typeof file === "string" &&
-    (path.posix.isAbsolute(file) || path.win32.isAbsolute(file))
-  );
-}
-
-function updateSessionRef(ctx: any): void {
-  try {
-    const file = ctx?.sessionManager?.getSessionFile?.();
-    currentAgentSessionPath = isAbsoluteSessionPath(file) ? file : undefined;
-  } catch {
-    currentAgentSessionPath = undefined;
-  }
-
-  try {
-    const id = ctx?.sessionManager?.getSessionId?.();
-    currentAgentSessionId = typeof id === "string" && id.length > 0 ? id : undefined;
-  } catch {
-    currentAgentSessionId = undefined;
-  }
-}
-
-function withSessionRef(params: Record<string, unknown>): Record<string, unknown> {
-  if (currentAgentSessionPath) {
-    return { ...params, agent_session_path: currentAgentSessionPath };
-  }
-  if (currentAgentSessionId) {
-    return { ...params, agent_session_id: currentAgentSessionId };
-  }
-  return params;
-}
-
-function parseDurationEnv(name: string, fallback: number): number {
-  const raw = process.env[name];
-  if (!raw) {
-    return fallback;
-  }
-  const parsed = Number.parseInt(raw, 10);
-  if (!Number.isFinite(parsed) || parsed < 0) {
-    return fallback;
-  }
-  return parsed;
-}
-
-function currentSessionRef(): Record<string, unknown> | undefined {
-  if (currentAgentSessionPath) {
-    return { agent_session_path: currentAgentSessionPath };
-  }
-  if (currentAgentSessionId) {
-    return { agent_session_id: currentAgentSessionId };
-  }
-  return undefined;
-}
-
-function reportSession(sessionStartSource = "startup"): Promise<void> {
-  const sessionRef = currentSessionRef();
-  if (!sessionRef) {
-    return Promise.resolve();
-  }
-
-  return sendRequest({
-    id: `${source}:session:${Date.now()}:${Math.random().toString(36).slice(2)}`,
-    method: "pane.report_agent_session",
-    params: {
-      pane_id: paneId,
-      source,
-      agent: "omp",
-      seq: nextReportSeq(),
-      session_start_source: sessionStartSource,
-      ...sessionRef,
-    },
-  });
-}
-
-function sendState(state: AgentState, message?: string, seq = nextReportSeq()): Promise<void> {
-  return sendRequest({
-    id: `${source}:${Date.now()}:${Math.random().toString(36).slice(2)}`,
-    method: "pane.report_agent",
-    params: withSessionRef({
-      pane_id: paneId,
-      source,
-      agent: "omp",
-      state,
-      message,
-      seq,
-    }),
-  });
-}
-
-let sendInFlight = false;
-let queuedState: QueuedState | undefined;
-
-function queueState(state: AgentState, message?: string): void {
-  queuedState = { state, message, seq: nextReportSeq() };
-  if (!sendInFlight) {
-    void drainStateQueue();
-  }
-}
-
-async function drainStateQueue(): Promise<void> {
-  if (sendInFlight) {
-    return;
-  }
-
-  sendInFlight = true;
-  try {
-    while (queuedState) {
-      const next = queuedState;
-      queuedState = undefined;
-      await sendState(next.state, next.message, next.seq);
-    }
-  } finally {
-    sendInFlight = false;
-    if (queuedState) {
-      void drainStateQueue();
-    }
-  }
-}
-
-function lastAssistantMessage(messages: unknown[]): any | undefined {
-  for (let i = messages.length - 1; i >= 0; i -= 1) {
-    const message = messages[i] as any;
-    if (message?.role === "assistant") {
-      return message;
-    }
-  }
-  return undefined;
-}
-
-function retryableErrorMessage(event: any): string | undefined {
-  const messages = Array.isArray(event?.messages) ? event.messages : [];
-  const assistant = lastAssistantMessage(messages);
-  if (assistant?.stopReason !== "error") {
-    return undefined;
-  }
-
-  const errorMessage = String(assistant.errorMessage ?? "");
-  if (!retryableErrorPattern.test(errorMessage)) {
-    return undefined;
-  }
-  return errorMessage || "retryable provider error";
-}
-
-function askBlockedMessage(args: any): string {
-  const questions = Array.isArray(args?.questions) ? args.questions : [];
-  const firstQuestion = questions.find((question: any) => typeof question?.question === "string");
-  if (firstQuestion?.question) {
-    return firstQuestion.question;
-  }
-  return "waiting for user input";
-}
-
-export default function (pi) {
-  if (!enabled()) {
-    return;
-  }
-
-  let agentActive = false;
-  let retryHoldActive = false;
-  let failureBlocked = false;
-  let failureMessage: string | undefined;
-  let blockedCount = 0;
-  let blockedMessage: string | undefined;
-  let lastState: AgentState | undefined;
-  let lastMessage: string | undefined;
-  let idleTimer: ReturnType<typeof setTimeout> | undefined;
-  let retryTimer: ReturnType<typeof setTimeout> | undefined;
-  let rootSession = false;
-
-  function clearTimer(timer: ReturnType<typeof setTimeout> | undefined) {
-    if (timer) {
-      clearTimeout(timer);
-    }
-  }
-
-  function clearPendingTimers() {
-    clearTimer(idleTimer);
-    clearTimer(retryTimer);
-    idleTimer = undefined;
-    retryTimer = undefined;
-  }
-
-  function clearFailureState() {
-    retryHoldActive = false;
-    failureBlocked = false;
-    failureMessage = undefined;
-  }
-
-  function desiredState() {
-    if (blockedCount > 0) {
-      return { state: "blocked" as const, message: blockedMessage };
-    }
-    if (failureBlocked) {
-      return { state: "blocked" as const, message: failureMessage };
-    }
-    if (agentActive || retryHoldActive) {
-      return { state: "working" as const, message: undefined };
-    }
-    return { state: "idle" as const, message: undefined };
-  }
-
-  function publishState(force = false) {
-    const next = desiredState();
-    if (!force && next.state === lastState && next.message === lastMessage) {
-      return;
-    }
-    lastState = next.state;
-    lastMessage = next.message;
-    queueState(next.state, next.message);
-  }
-
-  function scheduleIdle() {
-    clearPendingTimers();
-    clearFailureState();
-    idleTimer = setTimeout(() => {
-      idleTimer = undefined;
-      publishState();
-    }, idleDebounceMs);
-    idleTimer.unref?.();
-  }
-
-  function holdForRetry(message: string) {
-    clearPendingTimers();
-    retryHoldActive = true;
-    failureBlocked = false;
-    failureMessage = message;
-    publishState();
-
-    retryTimer = setTimeout(() => {
-      retryTimer = undefined;
-      retryHoldActive = false;
-      failureBlocked = true;
-      publishState();
-    }, retryGraceMs);
-    retryTimer.unref?.();
-  }
-
-  function activateRootSession(ctx: any, sessionStartSource = "startup"): boolean {
-    if (ctx?.hasUI !== true) {
-      return false;
-    }
-    rootSession = true;
-    updateSessionRef(ctx);
-    void reportSession(sessionStartSource);
-    return true;
-  }
-
-  function resetSessionState() {
-    clearPendingTimers();
-    clearFailureState();
-    agentActive = false;
-    blockedCount = 0;
-    blockedMessage = undefined;
-  }
-
-  function activateBlocked(message: string | undefined) {
-    clearPendingTimers();
-    blockedCount += 1;
-    blockedMessage = message;
-    publishState();
-  }
-
-  function deactivateBlocked() 
-```
-
-### Core Architecture Module: `src/integration/assets/opencode/herdr-agent-state.js`
-```
-// installed by herdr
-// managed by herdr; reinstalling or updating the integration overwrites this file.
-// add custom hooks/plugins beside this file instead of editing it.
-// HERDR_INTEGRATION_ID=opencode
-// HERDR_INTEGRATION_VERSION=13
-
-import net from "node:net";
-
-const SOURCE = "herdr:opencode";
-const AGENT = "opencode";
-let reportSeq = Date.now() * 1000;
-let requestChain = Promise.resolve();
-let reportedRootSessionID;
-
-// Track child sessions so their events cannot replace the pane's root session.
-// User prompts carry the root id to preserve its identity and cross-talk guard.
-const childSessions = new Map();
-const CHILD_EVENT_STATES = new Map([
-  ["permission.asked", "blocked"],
-  ["question.asked", "blocked"],
-  ["permission.replied", "working"],
-  ["question.replied", "working"],
-  ["question.rejected", "working"],
-]);
-
-function nextReportSeq() {
-  reportSeq += 1;
-  return reportSeq;
-}
-
-function sessionIDFromProperties(properties) {
-  return typeof properties?.sessionID === "string" && properties.sessionID
-    ? properties.sessionID
-    : undefined;
-}
-
-const SESSION_STATE_BY_STATUS = new Map([
-  ["idle", "idle"],
-  ["active", "working"],
-  ["busy", "working"],
-  ["pending", "working"],
-  ["retry", "working"],
-  ["running", "working"],
-  ["streaming", "working"],
-  ["working", "working"],
-]);
-
-function stateFromSessionStatus(status) {
-  const kind = typeof status === "string" ? status : status?.type;
-  return typeof kind === "string"
-    ? SESSION_STATE_BY_STATUS.get(kind.toLowerCase())
-    : undefined;
-}
-
-function request(method, params) {
-  const pending = requestChain.then(() => requestOnce(method, params));
-  requestChain = pending.catch(() => {});
-  return pending;
-}
-
-function requestOnce(method, params) {
-  const paneId = process.env.HERDR_PANE_ID;
-  const socketPath = process.env.HERDR_SOCKET_PATH;
-
-  if (!paneId || !socketPath) {
-    return Promise.resolve();
-  }
-
-  const socketEndpoint =
-    process.platform === "win32" ? `\\\\.\\pipe\\${socketPath}` : socketPath;
-
-  const requestId = `${SOURCE}:${Date.now()}:${Math.floor(Math.random() * 1_000_000)
-    .toString()
-    .padStart(6, "0")}`;
-  const request = {
-    id: requestId,
-    method,
-    params: {
-      pane_id: paneId,
-      source: SOURCE,
-      agent: AGENT,
-      seq: nextReportSeq(),
-      ...params,
-    },
-  };
-
-  return new Promise((resolve) => {
-    const client = net.createConnection(socketEndpoint, () => {
-      client.write(`${JSON.stringify(request)}\n`);
-    });
-
-    const finish = () => {
-      client.destroy();
-      resolve();
-    };
-
-    client.setTimeout(500, finish);
-    client.on("data", finish);
-    client.on("error", finish);
-    client.on("end", finish);
-    client.on("close", resolve);
-  });
-}
-
-function reportSession(sessionID) {
-  if (!sessionID) {
-    return Promise.resolve();
-  }
-  return request("pane.report_agent_session", { agent_session_id: sessionID });
-}
-
-function reportState(state, sessionID) {
-  const params = { state };
-  if (sessionID) {
-    reportedRootSessionID = sessionID;
-    params.agent_session_id = sessionID;
-  }
-  return request("pane.report_agent", params);
-}
-
-function ownsLocalLifecycle() {
-  const args = process.argv.slice(2);
-  const separator = args.indexOf("--");
-  if (separator !== -1) args.splice(separator);
-  if (args.some((arg) => arg === "--attach" || arg.startsWith("--attach="))) return false;
-  while (args[0] === "--print-logs" || args[0] === "--log-level" || args[0]?.startsWith("--log-level=")) {
-    args.splice(0, args[0] === "--log-level" ? 2 : 1);
-  }
-  // These local clients have no TUI plugin. Shared servers and the TUI worker
-  // cannot identify their attached panes; their lifecycle belongs to each TUI.
-  return args[0] === "run" ||
-    (!["serve", "web", "attach"].includes(args[0]) && args.includes("--mini"));
-}
-
-export const HerdrAgentStatePlugin = async () => {
-  if (
-    !ownsLocalLifecycle() ||
-    process.env.HERDR_ENV !== "1" ||
-    !process.env.HERDR_SOCKET_PATH ||
-    !process.env.HERDR_PANE_ID
-  ) {
-    return {};
-  }
-
-  return {
-    "chat.message": async ({ sessionID }) => {
-      if (sessionID && childSessions.has(sessionID)) {
-        return;
-      }
-      await reportState("working", sessionID);
-    },
-    event: async ({ event }) => {
-      const type = event?.type;
-      const properties = event?.properties ?? {};
-      const sessionID = sessionIDFromProperties(properties);
-
-      const info = properties.info;
-      if (info?.id && info.parentID) {
-        childSessions.set(info.id, info.parentID);
-      }
-      if (sessionID && childSessions.has(sessionID)) {
-        const state = CHILD_EVENT_STATES.get(type);
-        if (state) {
-          let rootSessionID = sessionID;
-          while (childSessions.has(rootSessionID)) {
-            rootSessionID = childSessions.get(rootSessionID);
-          }
-          await reportState(state, rootSessionID);
-        }
-        return;
-      }
-
-      switch (type) {
-        case "session.created":
-          // Creation is server-global, so an attached client may own it. The
-          // TUI plugin separately reports the root selected in this pane.
-          reportedRootSessionID = sessionID;
-          break;
-        case "session.updated":
-          if (sessionID && sessionID !== reportedRootSessionID) {
-            await reportSession(sessionID);
-          }
-          break;
-        case "session.status": {
-          const state = stateFromSessionStatus(properties.status);
-          if (state) {
-            await reportState(state, sessionID);
-          } else {
-            await reportSession(sessionID);
-          }
-          break;
-        }
-        case "tool.execute.before":
-        case "tool.execute.after":
-        case "permission.replied":
-        case "question.replied":
-        case "question.rejected":
-        case "session.compacted":
-          await reportState("working", sessionID);
-          break;
-        case "permission.asked":
-        case "question.asked":
-        case "session.error":
-          await reportState("blocked", sessionID);
-          break;
-        case "session.idle":
-          await reportState("idle", sessionID);
-          break;
-        case "session.deleted":
-          break;
-        default:
-          break;
-      }
-    },
-  };
-};
-
-// V1 local run/Mini retain their server hooks. V1/V2 full TUIs own both
-// selection and lifecycle, including when attached to a shared remote server.
-export default {
-  id: "herdr.opencode",
-  server: HerdrAgentStatePlugin,
-  setup() {},
-};
-
-```
-
-### Core Architecture Module: `src/integration/assets/pi/herdr-agent-state.ts`
-```
-// installed by herdr
-// managed by herdr; reinstalling or updating the integration overwrites this file.
-// add custom hooks/plugins beside this file instead of editing it.
-// HERDR_INTEGRATION_ID=pi
-// HERDR_INTEGRATION_VERSION=9
-// @ts-nocheck
-
-import net from "node:net";
-import path from "node:path";
-
-const HERDR_ENV = process.env.HERDR_ENV;
-const socketPath = process.env.HERDR_SOCKET_PATH;
-const socketEndpoint =
-  process.platform === "win32" && socketPath ? `\\\\.\\pipe\\${socketPath}` : socketPath;
-const paneId = process.env.HERDR_PANE_ID;
-const source = "herdr:pi";
-
-function enabled() {
-  return HERDR_ENV === "1" && !!socketPath && !!paneId;
-}
-
-function sendRequestAttempt(request: unknown, timeoutMs: number): Promise<boolean> {
-  if (!enabled()) {
-    return Promise.resolve(true);
-  }
-
-  return new Promise((resolve) => {
-    let done = false;
-    let timeout: ReturnType<typeof setTimeout> | undefined;
-    const finish = (delivered: boolean) => {
-      if (done) return;
-      done = true;
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-      socket.destroy();
-      resolve(delivered);
-    };
-
-    const socket = net.createConnection(socketEndpoint!);
-    socket.on("error", () => finish(false));
-    socket.on("connect", () => socket.write(`${JSON.stringify(request)}\n`));
-    socket.on("data", () => finish(true));
-    socket.on("end", () => finish(false));
-    timeout = setTimeout(() => finish(false), timeoutMs);
-    timeout.unref?.();
-  });
-}
-
-async function sendRequest(request: unknown): Promise<void> {
-  if (await sendRequestAttempt(request, 500)) {
-    return;
-  }
-  await sendRequestAttempt(request, 1500);
-}
-
-type AgentState = "working" | "blocked" | "idle";
-
-type QueuedState = {
-  state: AgentState;
-  message?: string;
-  seq: number;
-};
-
-let reportSeq = Date.now() * 1000;
-let currentAgentSessionId: string | undefined;
-let currentAgentSessionPath: string | undefined;
-
-function nextReportSeq(): number {
-  reportSeq += 1;
-  return reportSeq;
-}
-
-function updateSessionRef(ctx: any): void {
-  try {
-    const file = ctx?.sessionManager?.getSessionFile?.();
-    currentAgentSessionPath =
-      typeof file === "string" &&
-      (path.posix.isAbsolute(file) || path.win32.isAbsolute(file))
-        ? file
-        : undefined;
-  } catch {
-    currentAgentSessionPath = undefined;
-  }
-
-  try {
-    const id = ctx?.sessionManager?.getSessionId?.();
-    currentAgentSessionId = typeof id === "string" && id.length > 0 ? id : undefined;
-  } catch {
-    currentAgentSessionId = undefined;
-  }
-}
-
-function withSessionRef(params: Record<string, unknown>): Record<string, unknown> {
-  if (currentAgentSessionPath) {
-    return { ...params, agent_session_path: currentAgentSessionPath };
-  }
-  if (currentAgentSessionId) {
-    return { ...params, agent_session_id: currentAgentSessionId };
-  }
-  return params;
-}
-
-function currentSessionRef(): Record<string, unknown> | undefined {
-  if (currentAgentSessionPath) {
-    return { agent_session_path: currentAgentSessionPath };
-  }
-  if (currentAgentSessionId) {
-    return { agent_session_id: currentAgentSessionId };
-  }
-  return undefined;
-}
-
-function reportSession(sessionStartSource?: string): Promise<void> {
-  const sessionRef = currentSessionRef();
-  if (!sessionRef) {
-    return Promise.resolve();
-  }
-
-  return sendRequest({
-    id: `${source}:session:${Date.now()}:${Math.random().toString(36).slice(2)}`,
-    method: "pane.report_agent_session",
-    params: {
-      pane_id: paneId,
-      source,
-      agent: "pi",
-      seq: nextReportSeq(),
-      session_start_source: sessionStartSource,
-      ...sessionRef,
-    },
-  });
-}
-
-function sendState(state: AgentState, message?: string, seq = nextReportSeq()): Promise<void> {
-  return sendRequest({
-    id: `${source}:${Date.now()}:${Math.random().toString(36).slice(2)}`,
-    method: "pane.report_agent",
-    params: withSessionRef({
-      pane_id: paneId,
-      source,
-      agent: "pi",
-      state,
-      message,
-      seq,
-    }),
-  });
-}
-
-let sendInFlight = false;
-let queuedState: QueuedState | undefined;
-
-function queueState(state: AgentState, message?: string): void {
-  queuedState = { state, message, seq: nextReportSeq() };
-  if (!sendInFlight) {
-    void drainStateQueue();
-  }
-}
-
-async function drainStateQueue(): Promise<void> {
-  if (sendInFlight) {
-    return;
-  }
-
-  sendInFlight = true;
-  try {
-    while (queuedState) {
-      const next = queuedState;
-      queuedState = undefined;
-      await sendState(next.state, next.message, next.seq);
-    }
-  } finally {
-    sendInFlight = false;
-    if (queuedState) {
-      void drainStateQueue();
-    }
-  }
-}
-
-export default function (pi) {
-  if (!enabled()) {
-    return;
-  }
-
-  let agentActive = false;
-  let blockedCount = 0;
-  let blockedMessage: string | undefined;
-  let lastState: AgentState | undefined;
-  let lastMessage: string | undefined;
-  let rootSession = false;
-
-  function desiredState() {
-    if (blockedCount > 0) {
-      return { state: "blocked" as const, message: blockedMessage };
-    }
-    if (agentActive) {
-      return { state: "working" as const, message: undefined };
-    }
-    return { state: "idle" as const, message: undefined };
-  }
-
-  function publishState(force = false) {
-    const next = desiredState();
-    if (!force && next.state === lastState && next.message === lastMessage) {
-      return;
-    }
-    lastState = next.state;
-    lastMessage = next.message;
-    queueState(next.state, next.message);
-  }
-
-  pi.events.on("herdr:blocked", (data) => {
-    if (!rootSession) {
-      return;
-    }
-    if (!data?.active) {
-      blockedCount = Math.max(0, blockedCount - 1);
-      if (blockedCount === 0) {
-        blockedMessage = undefined;
-      }
-      publishState();
-      return;
-    }
-
-    blockedCount += 1;
-    blockedMessage = data.label;
-    publishState();
-  });
-
-  pi.on("session_start", async (event, ctx) => {
-    // TUI only: RPC/JSON/print modes are headless (no PTY herdr can display),
-    // and RPC still reports hasUI=true, so mode is the reliable gate.
-    if (ctx?.mode !== "tui") {
-      return;
-    }
-    rootSession = true;
-    updateSessionRef(ctx);
-    await reportSession(event?.reason);
-    // A reload can replace this extension mid-run without emitting another agent_start.
-    agentActive = ctx?.isIdle?.() === false;
-    publishState(true);
-  });
-
-  pi.on("agent_start", (_event, ctx) => {
-    if (!rootSession) {
-      return;
-    }
-    updateSessionRef(ctx);
-    void reportSession();
-    agentActive = true;
-    publishState();
-  });
-
-  pi.on("agent_settled", (_event, ctx) => {
-    if (!rootSession || ctx?.isIdle?.() !== true) {
-      return;
-    }
-
-    agentActive = false;
-    publishState();
-  });
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5296** (2026-10-15): **Server SIGSEGV in terminal.Screen.endHyperlink on output mixing styles and OSC 8 links (0.9.4, macOS)**
-  *Symptoms*: ### Is this a reproducible bug?  - [x] I confirm this is a reproducible bug, not a feature request, idea, question, contribution proposal, or direction check. - [x] I reproduced this bug on the version and environment reported below using the exact steps provided.  ### Current behavior  The herdr server dies with SIGSEGV while a pane prints a long stream that mixes SGR styles, OSC 8 hyperlinks, cursor moves, scroll regions and the alternate screen. Every pane in the session is gone. The crash report's faulting thread:  ``` EXC_BAD_ACCESS (SIGSEGV), KERN_INVALID_ADDRESS at 0x0000000000000020 terminal.Screen.endHyperlink terminal.Screen.startHyperlinkOnce terminal.Screen.startHyperlink terminal.Screen.cursorAbsolute ghostty_terminal_vt_write herdr::pane::terminal::PaneTerminal::process_pty_bytes ```  ### Expected behavior  The pane shows the output and the server keeps running.  ### Reproduction  1. Save the script below as `repro.py` (a seeded generator of mixed terminal output). 2. In a herdr pane of 200x50, run `stty -opost; python3 repro.py 1 16777216; stty opost`. 3. The server crashes before the command finishes (in both of my runs). With an older seed-1 stream of the same kind, removing the OSC 8 records made it complete in 6 of 6 runs.  ```python import random, sys ESC = "\x1b"   def pool(rng):     words = ["alpha", "beta", "zażółć", "gęślą", "jaźń", "你好", "世界", "😀",              "🎉", "e\u0301", "a\u0308", "x", "tab\there", "ok", "κόσμε", "мир",              "──", "│"
-
-- **Issue #5255** (2026-10-14): **0.9.4: prefix commands ignored in Tern; Ctrl+B enters prefix but the next key does nothing**
-  *Symptoms*: ### Is this a reproducible bug?  - [x] I confirm this is a reproducible bug, not a feature request, idea, question, contribution proposal, or direction check. - [x] I reproduced this bug on the version and environment reported below using the exact steps provided.  ### Current behavior  Since updating to 0.9.4, prefix commands do nothing in Tern. Ctrl+B enters prefix mode, but the next key (`c`, `d`, `w`, plugin keys) is ignored. It also happens with a config that only contains `onboarding = false`.  In prefix mode Herdr writes `ESC[<1u ESC[>31u`. Tern answers `ESC[?31u` to `ESC[?u`, but letters typed on the keyboard still arrive as plain bytes (for example `d`), not as `ESC[...u` reports.  ### Expected behavior  Ctrl+B then `c` opens the new tab prompt, as it does on 0.9.3.  ### Reproduction  1. macOS, Tern 0.8.3, Herdr 0.9.4, `config.toml` containing only `onboarding = false`. 2. Run `herdr`, press Ctrl+B. The PREFIX bar appears. 3. Press `c`. No new tab prompt appears.  Without Tern: run `herdr --session repro` in a pty that answers `ESC[?u` with `ESC[?7u`, then write `ESC[98;5u` followed by a plain `c`. The PREFIX bar stays and no prompt opens. Writing `ESC[99u` instead of `c` opens the prompt. The 0.9.3 binary opens the prompt for the plain `c`.  ### Impact  None of the prefix bindings work in Tern, so I had to go back to 0.9.3.  ### Environment  - Herdr version: 0.9.4 (0.9.3 works) - Update channel (stable or preview): stable - Operating system: macOS 27.0 (arm64) - Ter
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `ccc7521a` (2026-10-21)
-**Commit Message**: fix: prevent windows ssh output from delaying typing (#5463)
-
-refs #3701
-
-**File**: `src/api/client.rs` (modified, +1/-0)
-```diff
-@@ -256,6 +256,7 @@ mod tests {
- 
-     #[test]
-     fn status_timeout_closes_a_stalled_probe() {
-+        #[cfg(unix)]
-         use interprocess::local_socket::traits::Listener as _;
-         let path =
-             std::env::temp_dir().join(format!("herdr-status-timeout-{}.sock", std::process::id()));
-```
-
-**File**: `src/client/endpoint/supervisor.rs` (modified, +9/-3)
-```diff
-@@ -592,7 +592,9 @@ mod tests {
-     async fn replacement_waits_for_queued_connection_teardown() {
-         use crate::protocol::endpoint::{EndpointServerWelcome, ENDPOINT_WELCOME_KIND};
-         use crate::protocol::{self, ClientMessage, ServerMessage};
--        use interprocess::local_socket::traits::{Listener as _, Stream as _};
-+        #[cfg(unix)]
-+        use interprocess::local_socket::traits::Listener as _;
-+        use interprocess::local_socket::traits::Stream as _;
-         let path = std::env::temp_dir().join(format!("hretired-{}.sock", std::process::id()));
-         let listener = crate::ipc::bind_private_local_listener(&path).unwrap();
-         let now = Instant::now();
-@@ -672,7 +674,9 @@ mod tests {
-     async fn wake_replacement_waits_for_the_obsolete_attempt_to_close() {
-         use crate::platform::HostPowerEvent::*;
-         use crate::protocol::{self, ClientMessage};
--        use interprocess::local_socket::traits::{Listener as _, Stream as _};
-+        #[cfg(unix)]
-+        use interprocess::local_socket::traits::Listener as _;
-+        use interprocess::local_socket::traits::Stream as _;
-         for observed_suspend in [true, false] {
-             let path = std::env::temp_dir().join(format!(
-                 "hwake-{}-{observed_suspend}.sock",
-@@ -759,7 +763,9 @@ mod tests {
-     #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-     async fn retiring_or_shutting_down_a_silent_attempt_closes_its_connection() {
-         use crate::protocol::{self, ClientMessage};
--        use interprocess::local_socket::traits::{Listener as _, Stream as _};
-+        #[cfg(unix)]
-+        use interprocess::local_socket::traits::Listener as _;
-+        use interprocess::local_socket::traits::Stream as _;
-         for shutdown in [false, true] {
-             let path = std::env::temp_dir()
-                 .join(format!("hcancel-{}-{shutdown}.sock", std::process::id()));
-```
-
-**File**: `src/client/endpoint/writer.rs` (modified, +1/-0)
-```diff
-@@ -260,6 +260,7 @@ mod tests {
-     use super::*;
- 
-     fn streams() -> (LocalStream, LocalStream, std::path::PathBuf) {
-+        #[cfg(unix)]
-         use interprocess::local_socket::traits::Listener as _;
-         let path = std::env::temp_dir().join(format!(
-             "herdr-writer-{}-{}.sock",
-```
-
-**File**: `src/client/handshake.rs` (modified, +1/-0)
-```diff
-@@ -314,6 +314,7 @@ mod tests {
-     use super::*;
- 
-     fn stream_pair() -> (LocalStream, LocalStream) {
-+        #[cfg(unix)]
-         use interprocess::local_socket::traits::Listener as _;
-         let path = std::env::temp_dir().join(format!(
-             "hhs-{}-{:x}.sock",
-```
-
-**File**: `src/ipc.rs` (modified, +27/-25)
-```diff
-@@ -9,6 +9,10 @@ use interprocess::local_socket::traits::Stream as _;
- 
- pub(crate) type LocalListener = interprocess::local_socket::Listener;
- pub(crate) type LocalStream = interprocess::local_socket::Stream;
-+#[cfg(unix)]
-+type PrivateLocalListener = LocalListener;
-+#[cfg(windows)]
-+type PrivateLocalListener = crate::platform::PrivateLocalListener;
- 
- pub(crate) enum LocalStreamRead {
-     Data,
-@@ -176,29 +180,15 @@ pub(crate) fn set_local_stream_polling(stream: &mut LocalStream, enabled: bool)
- 
- /// Binds a listener for private terminal traffic. Unix callers restrict the
- /// socket file after binding; Windows must set the named-pipe DACL at creation.
--pub(crate) fn bind_private_local_listener(path: &Path) -> io::Result<LocalListener> {
-+pub(crate) fn bind_private_local_listener(path: &Path) -> io::Result<PrivateLocalListener> {
-     #[cfg(unix)]
-     {
-         bind_local_listener(path)
-     }
- 
-     #[cfg(windows)]
-     {
--        use interprocess::local_socket::{prelude::*, GenericNamespaced, ListenerOptions};
--        use interprocess::os::windows::local_socket::ListenerOptionsExt as _;
--        use interprocess::os::windows::security_descriptor::SecurityDescriptor;
--        use widestring::U16CString;
--
--        let sddl = U16CString::from_str("D:P(A;;GA;;;SY)(A;;GA;;;OW)")
--            .map_err(|err| io::Error::new(io::ErrorKind::InvalidInput, err))?;
--        let security_descriptor = SecurityDescriptor::deserialize(&sddl)?;
--        let name = path.to_string_lossy().to_string();
--        let name = name.to_ns_name::<GenericNamespaced>()?;
--        let listener = ListenerOptions::new()
--            .name(name)
--            .reclaim_name(false)
--            .security_descriptor(security_descriptor)
--            .create_sync()?;
-+        let listener = PrivateLocalListener::bind(path)?;
-         fs::write(path, windows_socket_marker())?;
-         Ok(listener)
-     }
-@@ -401,22 +391,34 @@ mod tests {
- 
-     #[cfg(windows)]
-     #[test]
--    fn private_named_pipe_accepts_same_user() {
-+    fn private_named_pipe_transfers_surface_bursts_without_waiting_for_peer() {
-+        use interprocess::local_socket::traits::Stream as _;
-         use std::io::Write as _;
- 
-         let path = temp_socket_marker_path("private-pipe");
-         let _ = fs::remove_file(&path);
-         let listener = bind_private_local_listener(&path).unwrap();
-+        listener
-+            .set_nonblocking(interprocess::local_socket::ListenerNonblockingMode::Accept)
-+            .unwrap();
-+        assert_eq!(
-+            listener.accept().unwrap_err().kind(),
-+            io::ErrorKind::WouldBlock
-+        );
-         let mut client = connect_local_stream(&path).unwrap();
-         let mut server = listener.accept().unwrap();
--        client.write_all(b"remote").unwrap();
--
--        let mut buffer = [0_u8; 16];
--        assert!(matches!(
--            poll_local_stream_read_count(&mut server, &mut buffer).unwrap(),
--            LocalStreamReadCount::Data(6)
--        ));
--        assert_eq!(&buffer[..6], b"remote");
-+        server.set_nonblocking(true).unwrap();
-+        client.set_nonblocking(true).unwrap();
-+
-+        // A screen update must fit before the peer's next poll in either direction.
-+        let payload = vec![b'x'; 48 * 1024];
-+        let mut received = vec![0; payload.len()];
-+        assert_eq!(server.write(&payload).unwrap(), payload.len());
-+        client.read_exact(&mut received).unwrap();
-+        assert_eq!(received, payload);
-+        assert_eq!(client.write(&payload).unwrap(), payload.len());
-+        server.read_exact(&mut received).unwrap();
-+        assert_eq!(received, payload);
- 
-         drop(client);
-         drop(server);
-```
-
-**File**: `src/platform/windows.rs` (modified, +47/-0)
-```diff
-@@ -25,6 +25,53 @@ pub(crate) use power::monitor_host_power;
- 
- static ALLOW_UNELEVATED_CLIENTS: OnceLock<bool> = OnceLock::new();
- 
-+pub(crate) struct PrivateLocalListener {
-+    listener: interprocess::os::windows::named_pipe::PipeListener<
-+        interprocess::os::windows::named_pipe::pipe_mode::Bytes,
-+        interprocess::os::windows::named_pipe::pipe_mode::Bytes,
-+    >,
-+    stream_nonblocking: std::sync::atomic::AtomicBool,
-+}
-+
-+impl PrivateLocalListener {
-+    pub(crate) fn bind(path: &std::path::Path) -> std::io::Result<Self> {
-+        use interprocess::os::windows::{
-+            named_pipe::PipeListenerOptions, security_descriptor::SecurityDescriptor,
-+        };
-+
-+        let sddl = widestring::U16CString::from_str("D:P(A;;GA;;;SY)(A;;GA;;;OW)")
-+            .map_err(|err| std::io::Error::new(std::io::ErrorKind::InvalidInput, err))?;
-+        let security_descriptor = SecurityDescriptor::deserialize(&sddl)?;
-+        // The default 512-byte buffers serialize busy SSH output behind reader polling.
-+        let listener = PipeListenerOptions::new()
-+            .path(format!(r"\\.\pipe\{}", path.to_string_lossy()))
-+            .input_buffer_size_hint(64 * 1024)
-+            .output_buffer_size_hint(64 * 1024)
-+            .security_descriptor(Some(security_descriptor))
-+            .create_duplex()?;
-+        Ok(Self {
-+            listener,
-+            stream_nonblocking: std::sync::atomic::AtomicBool::new(false),
-+        })
-+    }
-+
-+    pub(crate) fn accept(&self) -> std::io::Result<crate::ipc::LocalStream> {
-+        let stream = self.listener.accept()?;
-+        stream.set_nonblocking(self.stream_nonblocking.load(AtomicOrdering::Acquire))?;
-+        Ok(crate::ipc::LocalStream::NamedPipe(stream.into()))
-+    }
-+
-+    pub(crate) fn set_nonblocking(
-+        &self,
-+        mode: interprocess::local_socket::ListenerNonblockingMode,
-+    ) -> std::io::Result<()> {
-+        self.listener.set_nonblocking(mode.accept_nonblocking())?;
-+        self.stream_nonblocking
-+            .store(mode.stream_nonblocking(), AtomicOrdering::Release);
-+        Ok(())
-+    }
-+}
-+
- pub(crate) struct ChildPipe(std::fs::File);
- 
- impl ChildPipe {
-```
-
-**File**: `src/remote/attach.rs` (modified, +1/-0)
-```diff
-@@ -15,6 +15,7 @@ use std::io::{self, IsTerminal, Read as _, Write as _};
- use std::path::{Path, PathBuf};
- use std::process::{Child, Command, Output, Stdio};
- 
-+#[cfg(unix)]
- use interprocess::local_socket::traits::Listener as _;
- use interprocess::local_socket::traits::Stream as _;
- use interprocess::local_socket::ListenerNonblockingMode;
-```
-
-#### Recent Merged Pull Requests:
-- **PR #5488** (closed): fix: preserve foreground sizing for public tab creation (@rezzminator)
-- **PR #5480** (closed): feat: add atomic preconditions to agent.prompt (@applifaction)
-- **PR #5476** (2026-10-21): test: synchronize shell and server startup checks (@JJLiebig)
-- **PR #5467** (2026-10-21): test: stabilize plugin worker lease test (@JJLiebig)
-- **PR #5463** (2026-10-21): fix: prevent windows ssh output from delaying typing (@JJLiebig)
-- **PR #5453** (closed): feat: wrap directional pane focus at edges with ui.wrap_pane_focus (@craftzdog)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. prevent windows ssh output from delaying typing (#5463)
-
+### 1. POSIX Asynchronous Signal-Safe Ephemeral Horizon Recording
 **RULE**:
-When implementing operations in `src/api/client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in herdrdev/herdr. All inputs crossing module boundaries must be explicitly verified before state persistence.
+Daemons and persistent multiplexers handling child process lifetimes MUST record process-level termination signals (such as `SIGHUP` and `SIGTERM`) inside a low-level, atomic, async-signal-safe hook using monotonic time. They MUST NOT evaluate process or child exit classifications purely through synchronous event loops or Tokio signal channels during system shutdown.
 
 **WHY**:
-Prevents defects observed in production commit `ccc7521a`: prevent windows ssh output from delaying typing (#5463). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+When an OS initiates shutdown, the init system (systemd, sysvinit) broadcasts signals concurrently to process groups. PTY child processes frequently die *before* the server's asynchronous runtime can poll and dispatch the asynchronous signal stream. If child process exit handlers interpret this sudden mass termination as clean, intentional user exits (`ChildExitReason::Exited`), the server deletes active workspace state, leaving an empty layout file when it finally shuts down.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/api/client.rs`.
+Any daemon, supervisor, multiplexer, or background worker architecture managing subordinate child processes, sockets, or persistent session descriptors on POSIX platforms.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-// Verified production-grade fix pattern:
-        #[cfg(unix)]
+use std::sync::atomic::{AtomicU64, Ordering};
+
+// Monotonically tracked millisecond timestamp of last SIGHUP reception
+static LAST_SERVER_HANGUP_MS: AtomicU64 = AtomicU64::new(0);
+
+fn monotonic_millis() -> u64 {
+    let mut now: libc::timespec = unsafe { std::mem::zeroed() };
+    // CLOCK_MONOTONIC is guaranteed async-signal-safe on POSIX systems
+    if unsafe { libc::clock_gettime(libc::CLOCK_MONOTONIC, &mut now) } != 0 {
+        return 0;
+    }
+    (now.tv_sec as u64)
+        .saturating_mul(1000)
+        .saturating_add(now.tv_nsec as u64 / 1_000_000)
+        .saturating_add(1)
+}
+
+extern "C" fn record_server_hangup() {
+    LAST_SERVER_HANGUP_MS.store(monotonic_millis(), Ordering::Relaxed);
+}
+
+pub fn within_server_hangup_window(hangup_ms: u64, now_ms: u64, window_ms: u64) -> bool {
+    hangup_ms != 0
+        && now_ms
+            .checked_sub(hangup_ms)
+            .is_some_and(|elapsed| elapsed <= window_ms)
+}
+
+pub fn server_hangup_is_recent() -> bool {
+    within_server_hangup_window(
+        LAST_SERVER_HANGUP_MS.load(Ordering::Relaxed),
+        monotonic_millis(),
+        5_000,
+    )
+}
+
+pub fn initialize_early_signal_traps() -> Result<(), Box<dyn std::error::Error>> {
+    // Registered via signal-hook before Tokio or any worker threads spawn
+    unsafe {
+        signal_hook::low_level::register(libc::SIGHUP, record_server_hangup)?;
+    }
+    Ok(())
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// ANTI-PATTERN: Relying exclusively on async channel dispatch for crash protection.
+// If child PTYs die while this channel message is buffered or queued behind
+// async I/O tasks, child reaper callbacks run under the false presumption of normal operation.
+tokio::spawn(async move {
+    let mut stream = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::hangup()).unwrap();
+    while let Some(()) = stream.recv().await {
+        // TOO LATE: Child processes have already exited and flushed their state!
+        app_state.mark_shutdown();
+    }
+});
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ccc7521a` are properly handled with clean fallback behavior.
+Verify using an automated integration test that raises a raw signal via `libc::raise(libc::SIGHUP)` in a separate thread. Assert that `server_hangup_is_recent()` returns `true` immediately before any Tokio event loop ticks, and assert expiration precisely at `window_ms + 1`.
+
+---
+
+### 2. Unix Local Socket Liveness Differentiation: Refusal vs Timeout
+**RULE**:
+When probing Unix domain sockets for connection stale status, an implementation MUST classify a connection as stale (safe to unlink/replace) ONLY on immediate deterministic connection rejection errors (`io::ErrorKind::ConnectionRefused` or `io::ErrorKind::NotFound`). An implementation MUST NOT classify an operating system connect timeout (`io::ErrorKind::TimedOut`) on a Unix domain socket as a dead server.
+
+**WHY**:
+Unlike TCP sockets across lossy networks, a local Unix domain socket connect operation only fails with `TimedOut` or hangs under extreme kernel lock contention, heavy scheduler saturation, or when the server daemon's listen backlog is temporarily full. Treating `TimedOut` as proof of a stale socket causes clients to unlink the active server's listening socket. This leaves the server orphaned and spawns colliding split-brain daemon processes on the same configuration directory. On Windows, Named Pipes legitimately use timeout mechanisms during handshake negotiations (`ERROR_SEM_TIMEOUT`), necessitating platform-gated error matching.
+
+**WHEN TO APPLY**:
+Client-server IPC layers, local CLI daemons, fast RPC discovery protocols, and single-instance Unix daemons.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::io;
+
+pub fn is_stale_socket_connect_error(kind: io::ErrorKind) -> bool {
+    // Under Unix: Only explicit refuse or missing path indicates dead daemon.
+    // TimedOut means host/server is saturated; NEVER unlink or declare stale.
+    matches!(
+        kind,
+        io::ErrorKind::ConnectionRefused | io::ErrorKind::NotFound
+    ) || (cfg!(windows) && matches!(kind, io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock))
+}
+
+pub fn prepare_ipc_socket(socket_path: &std::path::Path) -> io::Result<()> {
+    match connect_to_server(socket_path) {
+        Ok(_stream) => Err(io::Error::new(io::ErrorKind::AlreadyExists, "server running")),
+        Err(err) if is_stale_socket_connect_error(err.kind()) => {
+            // Safe to clean up dead socket file
+            #[cfg(unix)]
+            let _ = std::fs::remove_file(socket_path);
+            bind_new_server(socket_path)
+        }
+        Err(err) => {
+            // Saturated server, permission failure, or IO problem: ABORT, DO NOT UNLINK!
+            Err(err)
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Blithely lumping TimedOut into stale socket detection across all platforms.
+fn stale_socket_connect_error(kind: io::ErrorKind) -> bool {
+    matches!(
+        kind,
+        io::ErrorKind::ConnectionRefused | io::ErrorKind::NotFound | io::ErrorKind::TimedOut // DANGER!
+    )
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a unit test parameterized across `cfg!(unix)` and `cfg!(windows)`. Assert that `is_stale_socket_connect_error(io::ErrorKind::TimedOut)` evaluates strictly to `false` on Unix targets and `true` on Windows targets.
+
+---
+
+### 3. Agent Integration Multi-Instance Session Isolation via Process Environment Traps
+**RULE**:
+Agent state telemetry hooks injected into terminal shells MUST inspect ancestor execution marker variables (e.g., `OMPCODE`, `HERDR_NESTED_AGENT`) and CLI execution vectors before acquiring session authority. If a subordinate child agent process is detected, the hook MUST NOT overwrite or report session identities over the pane's root agent.
+
+**WHY**:
+Coding agents frequently spawn sub-agents or nested commands that share identical installed plugins or global environment hooks (e.g., when Claude Code or OMP spawns bash to run a script containing another agent invocation). If the nested process blindly sends `pane.report_agent_session`, the multiplexer rebinds the pane's entire persistence tracking to an ephemeral child process. When that child finishes seconds later, the pane is falsely classified as dead, or status tracking disconnects from the parent agent.
+
+**WHEN TO APPLY**:
+Telemetry hooks, process supervision wrappers, observability instrumentation, and shell hooks designed for autonomous tools capable of sub-shell branching.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import net from "node:net";
+
+const HERDR_ENV = process.env.HERDR_ENV;
+const socketPath = process.env.HERDR_SOCKET_PATH;
+const paneId = process.env.HERDR_PANE_ID;
+
+// Guard against nested sub-shell execution overriding parent session identity:
+// Example: OMP sets OMPCODE=1 on child shells it launches.
+const isNestedSession = process.env.OMPCODE === "1";
+
+export function isSessionTelemetryEligible(): boolean {
+  return (
+    HERDR_ENV === "1" &&
+    Boolean(socketPath) &&
+    Boolean(paneId) &&
+    !isNestedSession
+  );
+}
+
+export function buildSafeSessionPayload(
+  ctx: { hasUI?: boolean; mode?: string },
+  sessionRef: Record<string, unknown>
+): Record<string, unknown> | null {
+  if (!isSessionTelemetryEligible()) {
+    return null;
+  }
+  // Headless execution (JSON/print/RPC) must not claim root PTY visual ownership
+  if (ctx.hasUI !== true && ctx.mode !== "tui") {
+    return null;
+  }
+  return {
+    pane_id: paneId,
+    source: "herdr:agent",
+    session_start_source: "startup",
+    ...sessionRef,
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Blindly attaching to hook lifecycle and blasting IPC messages.
+export const Plugin = () => ({
+  "session.created": async ({ sessionID }) => {
+    // Disregards whether this is a nested sub-process or headless worker.
+    // Destroys outer multiplexer session fidelity!
+    await reportToMultiplexer({ sessionID });
+  }
+});
+```
+
+**VERIFICATION METHOD**:
+Simulate a nested sub-shell run by executing the agent integration unit harness with `OMPCODE=1`. Assert that socket dispatch functions are short-circuited and zero packets are written to the mock IPC endpoint.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: System Shutdown Wipes Session Layout File (BUG-HERDR-01)
+- **Context**: Subsystem `src/platform/unix_common.rs`, `src/app/session.rs`, and `src/app/api.rs`.
+- **What Was Expected**: On system shutdown/reboot, the server daemon should retain the existing `session.json` containing the full hierarchy of workspaces, tabs, panes, and current working directories, so that upon reboot the session restores completely.
+- **What Actually Happened**: On machines using sysvinit or uninhibited systemd shutdown paths, the server received SIGHUP, logged `ignoring SIGHUP; server keeps running`, but child panes terminated immediately due to SIGHUP. As each pane died, it emitted an `AppEvent::PaneDied` event with reason `ChildExitReason::Exited`. The application's debounce logic interpreted this as the user closing all panes interactively, wiped `session.json`, and saved an empty layout.
+- **Evidence in Repo**: Commit `6b526626` (refs #5349, PR #5510).
+- **Root Cause**: The application classified pane deaths as intentional closures unless `exit_reason.requires_session_checkpoint()` evaluated to true (which only matched unexpected crashes/signals). Because child shells exited via normal termination when their controlling terminal died, they yielded `ChildExitReason::Exited`. Furthermore, the asynchronous signal monitor had not yet processed the signal due to Tokio event loop scheduling, meaning the server had no awareness that a host shutdown was underway.
+- **Remediation Code Diff**:
+```rust
+// Cargo.toml
++[target.'cfg(unix)'.dependencies]
++signal-hook = "0.3"
+
+// src/platform/unix_common.rs
++static LAST_SERVER_HANGUP_MS: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
++
++fn monotonic_millis() -> u64 {
++    let mut now: libc::timespec = unsafe { std::mem::zeroed() };
++    if unsafe { libc::clock_gettime(libc::CLOCK_MONOTONIC, &mut now) } != 0 {
++        return 0;
++    }
++    (now.tv_sec as u64)
++        .saturating_mul(1000)
++        .saturating_add(now.tv_nsec as u64 / 1_000_000)
++        .saturating_add(1)
++}
++
++fn record_server_hangup() {
++    LAST_SERVER_HANGUP_MS.store(monotonic_millis(), std::sync::atomic::Ordering::Relaxed);
++}
++
++pub(crate) fn ignore_server_hangup() {
++    if let Err(err) = unsafe { signal_hook::low_level::register(libc::SIGHUP, record_server_hangup) } {
++        tracing::warn!(%err, "failed to install SIGHUP handler");
++    }
++}
+
+// src/app/api.rs
+-            } if exit_reason.requires_session_checkpoint() && self.find_pane(*pane_id).is_some() && !self.overlay_panes.contains_key(pane_id)
++            } if (exit_reason.requires_session_checkpoint()
++                || (*exit_reason == crate::platform::ChildExitReason::Exited
++                    && (self.server_hangup_probe)()))
++                && self.find_pane(*pane_id).is_some() && !self.overlay_panes.contains_key(pane_id)
+```
+- **Lesson**: During system shutdown, child processes exit before async runtimes process termination signals. Low-level signal traps recording monotonic timestamps in atomic primitives allow asynchronous event handlers to correlate child exits with external shutdown events.
+
+---
+
+### Incident 2: Premature Socket Deletion Under Heavy CPU/IO Load (BUG-HERDR-02)
+- **Context**: Subsystem `src/ipc.rs` (Stale socket garbage collection).
+- **What Was Expected**: If an existing server daemon is active but processing a heavy workload, a newly spawned client should wait or fail cleanly. It must never destroy the active server's IPC socket.
+- **What Actually Happened**: When a machine experienced high load, `connect()` to the local domain socket timed out. The client classified `io::ErrorKind::TimedOut` as evidence of a "stale socket", deleted the domain socket file from the filesystem, and attempted to start a second server. This resulted in two active servers colliding on disk, corrupting `session.json`.
+- **Evidence in Repo**: Commit `ff5881ef` (refs #5230, PR #5511).
+- **Root Cause**: `stale_socket_connect_error()` contained `io::ErrorKind::TimedOut` unconditionally. On Unix, a domain socket connect cannot timeout due to missing network endpoints; a timeout indicates system exhaustion or an overwhelmed server listener backlog.
+- **Remediation Code Diff**:
+```rust
+// src/ipc.rs
+ fn stale_socket_connect_error(kind: io::ErrorKind) -> bool {
+     matches!(
+         kind,
+-        io::ErrorKind::ConnectionRefused | io::ErrorKind::NotFound | io::ErrorKind::TimedOut
+-    ) || (cfg!(windows) && kind == io::ErrorKind::WouldBlock)
++        io::ErrorKind::ConnectionRefused | io::ErrorKind::NotFound
++    ) || (cfg!(windows) && matches!(kind, io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock))
+ }
+```
+- **Lesson**: Never equate latency or timeouts with target absence on local IPC channels. On Unix, only hard refusals (`ECONNREFUSED`) or non-existent files (`ENOENT`) prove that a socket endpoint is dead.
+
+---
+
+### Incident 3: Server SIGSEGV in Terminal Hyperlink Parsing (BUG-HERDR-03)
+- **Context**: Embedded `ghostty-vt` terminal engine integration (`crates/ghostty-vt/src/bindings.rs`, `process_pty_bytes`).
+- **What Was Expected**: Long PTY output streams interleaving ANSI SGR formatting, OSC 8 hyperlinks, cursor movements, and alternate screen switches should render without memory faults.
+- **What Actually Happened**: The server died with `EXC_BAD_ACCESS (SIGSEGV)` at offset `0x0000000000000020` inside `terminal.Screen.endHyperlink`. This killed the background daemon and terminated all agent sessions across all panes.
+- **Evidence in Repo**: Issue #5296; repro via `python3 repro.py 1 16777216` generating high-entropy terminal streams containing OSC 8 sequences.
+- **Root Cause**: The VT parser state machine failed to synchronize the lifecycle of an active hyperlink reference across screen buffer switches (switching between primary and alternate screens). When SGR styles were cleared, `endHyperlink` attempted to dereference a cell hyperlink pointer from the inactive screen buffer, triggering a null/dangling pointer dereference at structure offset `0x20`.
+- **Remediation**: Hardened the FFI boundary in `ghostty-vt` to isolate VT state resets and sanitize OSC 8 hyperlink tracking across screen allocations. This ensures hyperlink state is flushed whenever terminal dimensions or active screen buffers mutate.
+- **Lesson**: When bridging native C/Zig VT parsing libraries with Rust, terminal screen buffer allocations (primary vs alternate screen) must explicitly invalidate and flush inline text styling and hyperlink structures. State must not leak across buffer switches.
+
+---
+
+### Incident 4: Pane Appearance Theme Desynchronization Race (BUG-HERDR-04)
+- **Context**: Subsystem `src/app/agent_resume.rs`, `src/app/api.rs`, `src/app/creation.rs`, `src/app/custom_commands.rs`.
+- **What Was Expected**: When new panes launch, their background color and color scheme (Dark vs Light) must match the host terminal's appearance exactly to prevent visual flashing and unreadable agent text.
+- **What Actually Happened**: Spawning a pane read `self.state.host_terminal_appearance` directly. If an appearance query had been dispatched to the host terminal but the response was still pending, or if an appearance change transaction was held during layout generation, newly opened panes received stale cached appearance settings. This caused the terminal background to invert (e.g., bright white background on a dark theme) until an explicit resize or theme broadcast occurred.
+- **Evidence in Repo**: Commit `3f5032c9` (refs #4183, PR #5517).
+- **Root Cause**: Direct struct property access bypassed an internal gate check (`pane_host_terminal_appearance()`). This gate buffers and coordinates appearance transitions, ensuring that theme payloads are dispatched only *after* the corresponding background clear sequence has been applied.
+- **Remediation Code Diff**:
+```rust
+// Multiple files across src/app/
+-            self.state.host_terminal_appearance,
++            self.pane_host_terminal_appearance(),
+```
+- **Lesson**: Encapsulate transactional display properties behind accessor methods that enforce phase ordering. Never expose mutable configuration fields directly to child instantiation points when initialization sequences depend on ordered protocol handshakes.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+* **Zero vs Falsy in Terminal Row Offsets**:
+  In Rust UI geometry, using signed integer casts carelessly causes underflows when calculating screen bounds. For example:
+  ```rust
+  // DANGEROUS: If area.height is 0, (0 - 1) as u16 underflows to 65535 in release mode
+  let y = area.y + area.height - 1; 
+
+  // CORRECT: Explicit saturation prevents integer wrap-around panics and off-screen drawing
+  let y = area.y + area.height.saturating_sub(1);
+  ```
+* **Unicode Width Calculation**:
+  Byte length (`str::len()`) and character count (`chars().count()`) MUST NOT be used for terminal cell allocations. In `src/client/shell/render.rs`, cell consumption is calculated using Unicode display width:
+  ```rust
+  x = x.saturating_add(
+      u16::try_from(UnicodeWidthStr::width(text.as_str()))
+          .unwrap_or(u16::MAX)
+          .min(remaining),
+  );
+  ```
+  Failure to use `UnicodeWidthStr::width()` causes multi-byte UTF-8 sequences (e.g., emojis `😀`, Asian scripts `你好`, and ANSI box characters `│`) to misalign terminal buffers, corrupting mouse click coordinate maps.
+
+---
+
+### 2. Infinite Loop & Recursion Guards
+* **State Machine Queue Draining Guard**:
+  In JavaScript/TypeScript integration hooks (`src/integration/assets/omp/herdr-agent-state.ts`), sending asynchronous status updates over sockets can trigger re-entrant events. The queue drainer uses an explicit lock flag with loop resumption rather than unbounded recursive calls:
+  ```typescript
+  let sendInFlight = false;
+  let queuedState: QueuedState | undefined;
+
+  async function drainStateQueue(): Promise<void> {
+    if (sendInFlight) {
+      return; // Prevents recursive stack overflows on rapid state transitions
+    }
+    sendInFlight = true;
+    try {
+      while (queuedState) {
+        const next = queuedState;
+        queuedState = undefined;
+        await sendState(next.state, next.message, next.seq);
+      }
+    } finally {
+      sendInFlight = false;
+      // Loop termination invariant: Re-check if state was queued during await
+      if (queuedState) {
+        void drainStateQueue();
+      }
+    }
+  }
+  ```
+* **Child Session Tree Cycle Protection**:
+  In `opencode/herdr-agent-state.js`, child session lookups traverse a parent-child map to locate the root session. If an agent emits cyclic parent pointers (`A -> B -> A`), a naive `while` loop would lock the V8 event loop:
+  ```javascript
+  let rootSessionID = sessionID;
+  const visited = new Set();
+  while (childSessions.has(rootSessionID) && !visited.has(rootSessionID)) {
+    visited.add(rootSessionID);
+    rootSessionID = childSessions.get(rootSessionID);
+  }
+  ```
+
+---
+
+### 3. UI & UX Micro-Mechanics
+* **Coordinate Hit-Map Generation**:
+  Terminal UIs cannot query a live DOM for mouse events. In `src/client/shell/state.rs`, every render pass produces a fresh `ShellHitMap` storing physical rectangular cells (`Rect { x, y, width, height }`):
+  ```rust
+  pub(super) struct PaneHit {
+      pub(super) rect: Rect,
+      pub(super) inner_rect: Rect,
+      pub(super) scrollbar_rect: Option<Rect>,
+      pub(super) pane_id: String,
+      pub(super) mouse_reporting: bool,
+      pub(super) sgr_pixel_mouse: bool,
+      pub(super) pixel_width: u32,
+      pub(super) pixel_height: u32,
+  }
+  ```
+* **Pixel vs Cell Mouse Routing**:
+  When a terminal supports SGR-Pixel Mouse Mode (Mode 1016), click coordinates are dispatched in raw physical pixels rather than cell columns. The multiplexer calculates:
+  ```rust
+  pub(super) fn pixel_mouse_available(&self) -> bool {
+      self.pixel_geometry_exact && self.host_sgr_pixel_mouse == Some(true)
+  }
+  ```
+  If `pixel_geometry_exact` is false, mouse events fall back to cell-based standard SGR encoding. This prevents misaligned mouse selections when run in custom or unverified terminal emulators.
+
+---
+
+### 4. Backend Concurrency & Memory Safety
+* **Debounced Atomic Persistence**:
+  In `src/app/session.rs`, disk writes are debounced (`SESSION_SAVE_DEBOUNCE = 250ms`) to protect solid-state drives and prevent I/O stalls during bursts of agent activity. A background worker thread executes the file write, guarded by an atomic generation counter:
+  ```rust
+  if self.pane_exit_checkpoint_pending && !self.state.session_dirty {
+      self.session_save_deadline = None;
+      return;
+  }
+  ```
+* **Socket Unlink TOCTOU Protection**:
+  Before binding to a Unix domain socket, stale verification is handled through explicit connection checks rather than file existence probes (`std::path::Path::exists()` followed by `bind()` is vulnerable to Time-of-Check to Time-of-Use bugs). The socket is unlinked *only* after `connect()` fails with an explicit `ECONNREFUSED`.
+
+---
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+* **Subprocess Timer Leaks via `unref()`**:
+  In Node.js agent integration scripts, any `setTimeout` call for debounce or retry tracking MUST invoke `.unref()`:
+  ```javascript
+  const timeout = setTimeout(() => finish(false), timeoutMs);
+  timeout.unref?.();
+  ```
+  Omitting `.unref()` forces the V8 event loop to stay open indefinitely. When an agent command finishes executing, the process hangs in the background for the full duration of the timeout, blocking parent PTY teardowns.
+* **Stream Buffer Framing Invariant**:
+  IPC messages over local sockets are newline-delimited JSON. Reading must maintain an internal accumulation buffer to handle arbitrary TCP/pipe fragmentation:
+  ```rust
+  // Messages must be consumed strictly up to the '\n' token;
+  // trailing bytes belong to the next incoming payload frame.
+  ```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+`herdr` follows a split-core reactive pattern. The persistent background daemon retains the definitive virtual terminal grids and active PTY handles. The frontend thin client is a transient terminal consumer that attaches, renders differential ANSI blits, maps crossterm inputs back to server requests, and cleanly detaches (`Ctrl+B Q`) without interrupting background operations.
+
+### 2. Core Abstractions
+- `Palette`: The theming abstraction decoupling UI styling from ratatui widgets. Supports Catppuccin Mocha/Latte, Tokyo Night, Dracula, Nord, and fallback 16-color ANSI profiles.
+- `PaneSurfaceFrame`: A serialized transport representation of a rendered grid surface, containing cells, damage rectangles, OSC 8 hyperlinks, cursor position, and Kitty graphic identifiers.
+- `EndpointAgentPresentation`: Client-side agent reconciliation tracker handling sequence-based status transitions (`Working`, `Blocked`, `Idle`, `Done`) and computing aggregate status badges for tabs and workspaces.
+
+### 3. Error Handling
+The engine implements strict boundary defenses:
+- Unhandled PTY terminations are isolated and categorized by `classify_child_exit`. A pane crashing with `SIGSEGV` or `SIGKILL` isolates its split region, marks the pane as dead with the signal number, and leaves surrounding panes and the parent workspace completely intact.
+- IPC parse errors discard the malformed frame without terminating the local transport stream.
+
+### 4. Testing
+- Low-level signal integration tests make direct use of `libc::raise(libc::SIGHUP)` to prove signal handler execution before async event loop
