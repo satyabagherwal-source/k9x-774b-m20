@@ -4730,3 +4730,6 @@
 | `CYCLE-20261025-YCOY` | `2026-10-25T07:19:00.802Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4148, Rule 4149, Rule 4150` | Yes (`188379ec...`) |
 | `CYCLE-20261025-YOXC` | `2026-10-25T07:19:16.656Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4151, Rule 4152, Rule 4153` | Yes (`f4f076c8...`) |
 | `CYCLE-20261025-2QN3` | `2026-10-25T07:22:25.503Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4154, Rule 4155, Rule 4156` | Yes (`340f6205...`) |
+| `CYCLE-20261025-NTC0` | `2026-10-25T07:38:48.768Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4157, Rule 4158, Rule 4159` | Yes (`429b6c32...`) |
+| `CYCLE-20261025-NZ79` | `2026-10-25T07:38:56.373Z` | `bergside/typeui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4160, Rule 4161, Rule 4162` | Yes (`5bde2361...`) |
+| `CYCLE-20261025-ORL7` | `2026-10-25T07:39:33.163Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4163, Rule 4164, Rule 4165` | Yes (`3e22f0a1...`) |

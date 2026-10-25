@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T07:22:25.447Z",
+  "last_updated": "2026-10-25T07:39:33.106Z",
   "total_verified_learnings": 1084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3282,8 +3282,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "55bd0f76",
-      "content_hash": "cf39d8596b28d0f5c4e09cb7ac2de79544fec7f0468c4ec10906120d9629e283",
+      "source_version": "6fe4f0f5",
+      "content_hash": "429b6c325f69e9d0acd61f6d9e192994f51328d3ee38f8a3782cd91320a593aa",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -3316,6 +3316,21 @@
           "number": 3646,
           "title": "Compact lockfile requirement sets (#22834)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4157,
+          "title": "Invariant Key Tuple Completeness Across Domain Projections",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4158,
+          "title": "Zero-Copy Self-Contained Archived Buffers via RAII Alignment Wrappers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4159,
+          "title": "Filter-Before-Allocate Lookahead Pruning with Cow Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3323,7 +3338,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:51:42.219Z",
+      "verified_at": "2026-10-25T07:38:48.699Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4002,14 +4017,29 @@
       "slug": "bergside-typeui",
       "platform": "github",
       "source_url": "https://github.com/bergside/typeui",
-      "source_version": "2a977f1f",
-      "content_hash": "3f474cc8771913b4f7e37a823018cae78576b419cb15dfc3fb3a883da85705dd",
+      "source_version": "efc5f21d",
+      "content_hash": "5bde2361628c34c11bb2d48079fa877bb246258a226ef8ba582f3257bf1f87c4",
       "dossier_path": "07_PROJECT_LEARNING/bergside-typeui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bergside-typeui-learnings.md",
       "promoted_rules": [
         {
           "number": 2072,
           "title": "add: eve guide",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4160,
+          "title": "Invariant Boundary Wrapping for Automated File Synthesis",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4161,
+          "title": "Idempotent Config Mutation with Mandatory Backup and State Fingerprinting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4162,
+          "title": "Client-Side Decoupling of Remote Tool Preconditions",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -4018,7 +4048,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:26:40.603Z",
+      "verified_at": "2026-10-25T07:38:56.304Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16936,7 +16966,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "29a69396dbf3441a549561dce0547fb2c693225194844e97a9a0190b4a868912",
+      "content_hash": "3e22f0a103d7116afa3caa10d2a00c9738e0ffa7fc3c9026556472804bbc278d",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [
@@ -17045,6 +17075,21 @@
           "number": 3238,
           "title": "Attention Mechanism Memory Efficiency in High-Resolution DiTs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4163,
+          "title": "Multidimensional Rotary Embedding Decomposition (RoPE-ND)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4164,
+          "title": "Dual-Scale Numerical Modulation Invariant (AdaLN-Zero Scaling)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4165,
+          "title": "Latent Patchification Tensor Boundary Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17065,7 +17110,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv43g3lp",
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m"
       ],
-      "verified_at": "2026-10-20T15:04:00.919Z",
+      "verified_at": "2026-10-25T07:39:33.095Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120323,6 +120368,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T07:22:25.435Z"
+    },
+    "rule-4157": {
+      "learning_id": "rule-4157",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4157,
+      "title": "Invariant Key Tuple Completeness Across Domain Projections",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "6fe4f0f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:38:48.699Z"
+    },
+    "rule-4158": {
+      "learning_id": "rule-4158",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4158,
+      "title": "Zero-Copy Self-Contained Archived Buffers via RAII Alignment Wrappers",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "6fe4f0f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:38:48.699Z"
+    },
+    "rule-4159": {
+      "learning_id": "rule-4159",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4159,
+      "title": "Filter-Before-Allocate Lookahead Pruning with Cow Invariance",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "6fe4f0f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:38:48.699Z"
+    },
+    "rule-4160": {
+      "learning_id": "rule-4160",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4160,
+      "title": "Invariant Boundary Wrapping for Automated File Synthesis",
+      "source_url": "https://github.com/bergside/typeui",
+      "source_version": "efc5f21d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:38:56.304Z"
+    },
+    "rule-4161": {
+      "learning_id": "rule-4161",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4161,
+      "title": "Idempotent Config Mutation with Mandatory Backup and State Fingerprinting",
+      "source_url": "https://github.com/bergside/typeui",
+      "source_version": "efc5f21d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:38:56.304Z"
+    },
+    "rule-4162": {
+      "learning_id": "rule-4162",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4162,
+      "title": "Client-Side Decoupling of Remote Tool Preconditions",
+      "source_url": "https://github.com/bergside/typeui",
+      "source_version": "efc5f21d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:38:56.304Z"
+    },
+    "rule-4163": {
+      "learning_id": "rule-4163",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4163,
+      "title": "Multidimensional Rotary Embedding Decomposition (RoPE-ND)",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:39:33.095Z"
+    },
+    "rule-4164": {
+      "learning_id": "rule-4164",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4164,
+      "title": "Dual-Scale Numerical Modulation Invariant (AdaLN-Zero Scaling)",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:39:33.095Z"
+    },
+    "rule-4165": {
+      "learning_id": "rule-4165",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4165,
+      "title": "Latent Patchification Tensor Boundary Alignment",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:39:33.095Z"
     }
   },
   "aliases": {

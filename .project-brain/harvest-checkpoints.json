@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T07:22:25.520Z",
+  "last_updated": "2026-10-25T07:39:33.180Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -230,14 +230,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "content_hash": "29a69396dbf3441a549561dce0547fb2c693225194844e97a9a0190b4a868912",
-      "verified_at": "2026-10-20T15:04:00.970Z",
+      "content_hash": "3e22f0a103d7116afa3caa10d2a00c9738e0ffa7fc3c9026556472804bbc278d",
+      "verified_at": "2026-10-25T07:39:33.179Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T15:04:00.970Z"
+      "last_updated": "2026-10-25T07:39:33.180Z"
     },
     "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -8061,14 +8061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bergside-typeui",
-      "content_hash": "3f474cc8771913b4f7e37a823018cae78576b419cb15dfc3fb3a883da85705dd",
-      "verified_at": "2026-10-19T03:26:40.675Z",
+      "content_hash": "5bde2361628c34c11bb2d48079fa877bb246258a226ef8ba582f3257bf1f87c4",
+      "verified_at": "2026-10-25T07:38:56.389Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:26:40.675Z"
+      "last_updated": "2026-10-25T07:38:56.389Z"
     },
     "czy0729/Bangumi": {
       "repository": "czy0729/Bangumi",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "cf39d8596b28d0f5c4e09cb7ac2de79544fec7f0468c4ec10906120d9629e283",
-      "verified_at": "2026-10-22T16:51:42.331Z",
+      "content_hash": "429b6c325f69e9d0acd61f6d9e192994f51328d3ee38f8a3782cd91320a593aa",
+      "verified_at": "2026-10-25T07:38:48.784Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:51:42.331Z"
+      "last_updated": "2026-10-25T07:38:48.784Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",

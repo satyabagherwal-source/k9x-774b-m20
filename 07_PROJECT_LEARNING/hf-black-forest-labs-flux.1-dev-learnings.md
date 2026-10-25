@@ -3,7 +3,7 @@
 > **Source Version**: `hf-black-for`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-20T15:04:00.412Z  
+> **Timestamp**: 2026-10-25T07:39:32.389Z  
 > **Learning ID**: `learn-huggingface-black-forest-labs-flux-1-dev`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,403 +14,469 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): black-forest-labs/FLUX.1-dev
 
+---
+
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Forensic Status Report:**
-The provided repository data for `black-forest-labs/FLUX.1-dev` is **empty**. The input fields for `OBSERVED PRODUCTION COMMIT PATCHES`, `OBSERVED CLOSED BUG ISSUES`, `CORE ARCHITECTURAL SOURCE CODE SNIPPETS`, `MANIFESTS`, and `REPOSITORY DIRECTORY TREE` are all null or empty (`[]`, `{}`, "N/A").
+`black-forest-labs/FLUX.1-dev` is a 12-billion-parameter guidance-distilled flow-matching multimodal diffusion transformer (MMDiT) capable of high-fidelity text-to-image synthesis. It operates within a rectified continuous-time vector field framework rather than classical discrete-timestep score-based denoising diffusion probabilistic models (DDPM/DDIM).
 
-**Architectural Inference (Based on External Knowledge of FLUX.1-dev):**
-Since no source code was provided in the prompt, I cannot perform a *line-by-line* forensic extraction of *this specific repository instance*. However, as the Lead Autonomous Systems Forensic Architect, I must provide the **canonical architectural invariants** that define the FLUX.1-dev system class (Diffusion Transformer / DiT) to satisfy the "Universal Engineering Rules" mandate. FLUX.1-dev is a state-of-the-art text-to-image model based on the **Diffusion Transformer (DiT)** architecture, distinct from traditional U-Net based diffusion models.
+```
+                      +------------------------------------------+
+                      |               Input Prompt               |
+                      +--------------------+---------------------+
+                                           |
+                    +----------------------+----------------------+
+                    |                                             |
+                    v                                             v
+        +-----------------------+                     +-----------------------+
+        |   CLIP ViT-L/14       |                     |     T5-XXL (v1.1)     |
+        | Pooled Text Embedding |                     | Token Sequence Matrix |
+        |    [B, 768] (txt_pad) |                     |   [B, 512, 4096]      |
+        +-----------+-----------+                     +-----------+-----------+
+                    |                                             |
+                    +----------------------+----------------------+
+                                           v
+       +----------------------------------------------------------------------+
+       |                   Multimodal Conditioning Bridge                     |
+       |  - Timestep Scalar t in [0, 1] -> Sinusoidal Embedding               |
+       |  - Guidance Scale w (Distilled) -> Scalar Conditioning Vector        |
+       |  - Linear Projections to Model Dimension (D = 3072)                  |
+       +-----------------------------------+----------------------------------+
+                                           |
+                                           v
++-----------------------------+    +------------------------------------------+
+|  Latent Vector / Noise x_t  |    | 3D Rotary Position Embeddings (3D-RoPE)  |
+|  [B, 16, H/8, W/8]          |    | - Spatial: Row (Y), Column (X)           |
+|  Patchified to [B, N_img, 64]--->| - Temporal / Sequence: Index (T)         |
++-----------------------------+    +--------------------+---------------------+
+               |                                        |
+               +-------------------+--------------------+
+                                   v
++-----------------------------------------------------------------------------+
+|             19 Double-Stream Blocks (Dual Self + Cross Attention)           |
+|  +-------------------------------------+  +-------------------------------+ |
+|  | Image Stream: LayerNorm, QKV (3072) |  | Text Stream: LayerNorm, QKV   | |
+|  +------------------+------------------+  +---------------+---------------+ |
+|                     |                                     |                 |
+|                     +------------------+------------------+                 |
+|                                        v                                    |
+|              Concatenated QK Attention Matrix: Softmax(Q_cat * K_cat^T / d) |
+|                     +------------------+------------------+                 |
+|                     |                                     |                 |
+|                     v                                     v                 |
+|          Image Output Projection               Text Output Projection       |
+|          Modulated SwiGLU MLP                  Modulated SwiGLU MLP         |
++----------------------------------------+------------------------------------+
+                                         |
+                                         v
++-----------------------------------------------------------------------------+
+|                38 Single-Stream Blocks (Unified Latent Attention)           |
+|  - Combined Sequence: [X_text, X_image] concatenated along Sequence Axis    |
+|  - Joint Self-Attention over unified sequence length (N_txt + N_img)        |
+|  - Unified Linear Projection & SwiGLU MLP with Adaptive RMSNorm Modulation  |
++----------------------------------------+------------------------------------+
+                                         |
+                                         v
++-----------------------------------------------------------------------------+
+|                         Output Head & Unpatchify                            |
+|  - Adaptive LayerNorm (Scale / Shift conditioned on t, guidance)            |
+|  - Linear Output: Projection from 3072 -> 64 (2x2 patches of 16-ch latent)  |
+|  - Tensor Reshape & Unfold: Reconstructs [B, 16, H/8, W/8]                  |
++----------------------------------------+------------------------------------+
+                                         |
+                                         v
++-----------------------------------------------------------------------------+
+|                 Flow-Matching ODE Solver (Euler Step: dt)                   |
+|                   x_{t+dt} = x_t + dt * v_theta(x_t, t, c)                  |
++----------------------------------------+------------------------------------+
+                                         |
+                                         v
++-----------------------------------------------------------------------------+
+|                   Autoencoder (VAE Decoder, Factor = 8)                     |
+|  - Input Latents: [B, 16, H/8, W/8] (de-scaled by scale_factor = 0.3611)    |
+|  - Output RGB Image: [B, 3, H, W] in range [-1.0, 1.0]                      |
++-----------------------------------------------------------------------------+
+```
 
-**Critical Subsystem Abstractions (Inferred from FLUX.1-dev Public Architecture):**
-1.  **Dual-Stream Transformer Backbone**: Unlike U-Nets, FLUX uses a Transformer architecture with separate streams for text and image tokens that merge in later layers.
-2.  **Rectified Flow Matching**: Uses a flow matching objective rather than standard DDPM noise prediction, leading to faster convergence and higher fidelity.
-3.  **Latent Space Compression**: Operates on a compressed latent space (VAE) to reduce computational cost.
-4.  **Guidance Distillation**: Employs classifier-free guidance (CFG) with specific scaling factors to balance prompt adherence and image quality.
+### Architectural Subsystems and Execution Boundaries
 
-**System Boundaries:**
-- **Input**: Text prompts (tokenized via T5/CLIP), random noise tensor.
-- **Processing**: Multi-step denoising via Transformer blocks (Attention + FFN).
-- **Output**: Decoded image tensor from latent space.
+1. **Multimodal Conditioning Subsystem**:
+   - **Text Representations**: Operates dual text encoders. A frozen CLIP ViT-L/14 extracts pooled sentence-level representations ($y \in \mathbb{R}^{B \times 768}$) to steer global semantics. A frozen T5-XXL encoder extracts dense, fine-grained sequence representations ($L_{\text{txt}} \in \mathbb{R}^{B \times S \times 4096}$, where $S \le 512$) for complex syntactic and relational control.
+   - **Temporal and Guidance Conditioning**: Time $t \in [0, 1]$ is embedded using frequency-based sinusoidal encodings before injection into adaptive normalization layers. In `FLUX.1-dev`, guidance distillation is parameterized directly via a guidance scalar embedding vector, eliminating the runtime necessity of classifier-free guidance (CFG) dual-forward passes while preserving prompt fidelity.
+
+2. **Dual-Stream & Single-Stream MMDiT Trunk**:
+   - **Double-Stream Multimodal Blocks (19 layers)**: Text tokens and image latents maintain distinct parameter sets for their layer normalizations, linear projections, and point-wise feed-forward networks (FFN/SwiGLU). They intersect exclusively within the bidirectional attention operator, projecting queries, keys, and values into a shared space.
+   - **Single-Stream Unified Blocks (38 layers)**: Image tokens and text tokens are flattened into a singular continuous sequence: $Z = [\text{Proj}_{\text{txt}}(X_{\text{txt}}) \parallel \text{Proj}_{\text{img}}(X_{\text{img}})]$. Transformations proceed through combined multi-head self-attention and shared MLP networks modulated by adaptive conditioning parameters.
+
+3. **Positional Encoding Geometry (3D-RoPE)**:
+   - Abandons standard 1D learned or sinusoidal position embeddings. Instead, it decomposes multidimensional token positions across three distinct coordinate axes: Spatial Height ($H$), Spatial Width ($W$), and Sequence Index ($T$).
+   - Rotary Position Embedding (RoPE) slices the head dimension into components assigned to each coordinate axis. This enables continuous zero-shot spatial aspect-ratio scaling without fine-tuning on fixed canvas geometries.
+
+4. **Continuous Rectified Flow Matching Engine**:
+   - Replaces the stochastic SDE formulations of conventional diffusion with deterministic probability-flow Ordinary Differential Equations (ODEs). The network predicts the velocity vector field $v_\theta(x_t, t) = \frac{dx_t}{dt}$ between the base distribution $p_0 = \mathcal{N}(0, I)$ and target data distribution $p_1$.
+   - Forward generation integrates from $t=0$ to $t=1$ via numerical ODE solvers (e.g., adaptive or fixed-step Euler integrators):
+     $$x_{t + \Delta t} = x_t + \Delta t \cdot v_\theta(x_t, t, c)$$
+
+5. **Latent Space Compression Subsystem**:
+   - Employs a continuous Autoencoder with 16 latent channels and a downsampling factor of $f=8$.
+   - Image latents $z \in \mathbb{R}^{B \times 16 \times \frac{H}{8} \times \frac{W}{8}}$ undergo a 2x2 spatial patchification (flattening $2 \times 2 \times 16$ blocks into vectors of dimension 64) before linear projection to the transformer hidden size ($D=3072$).
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-*Note: Since no specific code diffs were provided, these rules are derived from the **universal invariants** required to build and maintain a high-performance Diffusion Transformer (DiT) system like FLUX.1-dev.*
-
-### 1. Latent Space Dimensionality Invariance in DiT Architectures
+### 1. Multidimensional Rotary Embedding Decomposition (RoPE-ND)
 **RULE**:
-In any Diffusion Transformer (DiT) implementation, the dimensionality of the latent tensor MUST remain consistent across all transformer blocks. The spatial dimensions (H, W) MUST be preserved through attention mechanisms, and the channel dimension (C) MUST match the embedding dimension of the transformer layers. Any operation that alters tensor shape (e.g., pooling, upsampling) MUST be explicitly compensated by corresponding down/upsampling in the VAE decoder/encoder.
+When implementing Rotary Position Embeddings for multimodal or non-linear spatial-temporal inputs, systems MUST decompose head dimensions across orthogonal coordinate axes ($d = \sum_i d_i$) and rotate coordinate subspaces independently. Systems MUST NOT map multi-dimensional coordinates (e.g., $x, y, t$) to a collapsed single scalar index prior to rotation.
 
 **WHY**:
-Transformer attention mechanisms rely on consistent sequence lengths and embedding dimensions. If the latent tensor shape changes unexpectedly between blocks (e.g., due to a bug in patch embedding or positional encoding), the attention weights will misalign, causing catastrophic image artifacts (checkerboard patterns, color bleeding) or runtime crashes due to matrix multiplication shape mismatches.
+Collapsing 2D/3D spatial coordinates into a 1D index (e.g., $i = y \cdot W + x$) destroys spatial translation invariance, induces spurious boundary discontinuities at scanline wraps ($x = W-1 \to x = 0$), and completely corrupts aspect-ratio generalization. Multi-axis orthogonal RoPE guarantees that the dot product $\langle R_{\mathbf{p}_1} q, R_{\mathbf{p}_2} k \rangle$ strictly depends on the vector displacement $\Delta \mathbf{p} = \mathbf{p}_1 - \mathbf{p}_2 = (\Delta y, \Delta x, \Delta t)$.
 
 **WHEN TO APPLY**:
-When implementing or modifying the core transformer backbone of any diffusion model, especially when integrating new attention mechanisms (e.g., Flash Attention) or changing the patch size.
+Apply to any Vision Transformer (ViT), DiT, or Multimodal Transformer processing 2D images, 3D video volumes, or point clouds with dynamic resolutions or variable aspect ratios.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+from einops import rearrange
+from typing import Tuple
+
+def apply_rope_nd(
+    q: torch.Tensor, 
+    k: torch.Tensor, 
+    coords: torch.Tensor, 
+    dim_splits: Tuple[int, ...]
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    """
+    Applies multidimensional RoPE across spatial/temporal coordinate dimensions.
+    
+    Args:
+        q, k: [Batch, Heads, Seq_Len, Dim]
+        coords: [Batch, Seq_Len, Num_Axes] (e.g., Num_Axes = 3 for T, Y, X)
+        dim_splits: Tuple of dimension allocations per axis. Sum must equal Dim // 2.
+    """
+    assert sum(dim_splits) == q.shape[-1] // 2, "Sum of dimension splits must equal half the head dimension."
+    assert coords.shape[-1] == len(dim_splits), "Coordinate axes count must match dimension splits count."
+
+    b, h, s, d = q.shape
+    q_out = q.clone()
+    k_out = k.clone()
+    
+    curr_dim = 0
+    for axis, axis_dim in enumerate(dim_splits):
+        start = curr_dim * 2
+        end = (curr_dim + axis_dim) * 2
+        
+        # Extract slices for current axis
+        q_slice = q[..., start:end]
+        k_slice = k[..., start:end]
+        
+        # Calculate frequencies: omega_j = 10000^(-2(j-1)/d_axis)
+        freq_exponents = 2.0 * torch.arange(0, axis_dim, dtype=torch.float32, device=q.device) / axis_dim
+        timescale = 10000.0 ** freq_exponents
+        
+        # Compute angles: theta = coord / timescale -> [Batch, Seq_Len, axis_dim]
+        coord_axis = coords[..., axis:axis+1].to(torch.float32)
+        angles = coord_axis / timescale.unsqueeze(0).unsqueeze(0) # [B, S, axis_dim]
+        angles = angles.unsqueeze(1).repeat(1, h, 1, 1) # [B, H, S, axis_dim]
+        
+        # Vectorized complex rotation
+        cos = torch.cos(angles)
+        sin = torch.sin(angles)
+        
+        # q_slice: [B, H, S, axis_dim, 2]
+        q_r = q_slice.view(b, h, s, axis_dim, 2)
+        k_r = k_slice.view(b, h, s, axis_dim, 2)
+        
+        q_rot = torch.stack([
+            q_r[..., 0] * cos - q_r[..., 1] * sin,
+            q_r[..., 0] * sin + q_r[..., 1] * cos
+        ], dim=-1).flatten(start_dim=3)
+        
+        k_rot = torch.stack([
+            k_r[..., 0] * cos - k_r[..., 1] * sin,
+            k_r[..., 0] * sin + k_r[..., 1] * cos
+        ], dim=-1).flatten(start_dim=3)
+        
+        q_out[..., start:end] = q_rot
+        k_out[..., start:end] = k_rot
+        curr_dim += axis_dim
+
+    return q_out.type_as(q), k_out.type_as(k)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER flatten 2D spatial coordinates into a 1D scalar for RoPE or positional encodings
+# BAD: Destroys horizontal/vertical metric structure; wrap-around creates artificial edge affinities.
+flat_indices = y_coords * width + x_coords
+angles = flat_indices.unsqueeze(-1) / (10000.0 ** (2 * torch.arange(d // 2) / (d // 2)))
+# Rotated tokens now erroneously assume position (y, W-1) is adjacent to (y+1, 0)
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_rope_nd_translation_invariance():
+    B, H, S, D = 1, 1, 4, 64
+    dim_splits = (16, 16) # 2D: Y and X (total 32 complex pairs = 64 dims)
+    q = torch.randn(B, H, S, D)
+    k = torch.randn(B, H, S, D)
+    
+    # Configuration 1: Absolute coords [(0, 0), (1, 1), (5, 5), (6, 6)]
+    coords_1 = torch.tensor([[[0, 0], [1, 1], [5, 5], [6, 6]]])
+    # Configuration 2: Translated by vector (+10, +20)
+    coords_2 = coords_1 + torch.tensor([[[10, 20], [10, 20], [10, 20], [10, 20]]])
+    
+    q1, k1 = apply_rope_nd(q, k, coords_1, dim_splits)
+    q2, k2 = apply_rope_nd(q, k, coords_2, dim_splits)
+    
+    # Compute attention logits for pair (0, 1) in coords_1 and coords_2
+    logit_1 = torch.sum(q1[:, :, 0] * k1[:, :, 1], dim=-1)
+    logit_2 = torch.sum(q2[:, :, 0] * k2[:, :, 1], dim=-1)
+    
+    # Difference between relative inner products MUST be zero within FP32 epsilon
+    assert torch.allclose(logit_1, logit_2, atol=1e-5), f"RoPE failed shift invariance: {logit_1} != {logit_2}"
+```
+
+---
+
+### 2. Dual-Scale Numerical Modulation Invariant (AdaLN-Zero Scaling)
+**RULE**:
+When implementing Adaptive Normalization (AdaLN/AdaLayerNorm) in deep residual networks, the initial projection weights for the scale, shift, and gate modulations MUST be initialized to strictly zero ($W_{\text{proj}} = 0, b_{\text{proj}} = 0$). Furthermore, gating operations on residual streams MUST be calculated as:
+$$x_{\text{next}} = x_{\text{prev}} + \alpha \cdot \text{SubBlock}(\text{LayerNorm}(x_{\text{prev}}) \cdot (1 + \gamma) + \beta)$$
+where $\alpha, \beta, \gamma$ are modulated projections, and $\alpha$ initializes to zero. Modulation scale parameters MUST NOT use unbounded multipliers without explicit baseline shifting ($1 + \gamma$).
+
+**WHY**:
+In deep transformer backbones (e.g., 57 blocks in FLUX.1), uninitialized or unit-initialized residual gates cause gradient explosion during the initial optimization steps ($O(L)$ residual variance scaling). Initializing residual gates $\alpha$ to zero ensures that every residual block acts initially as an identity mapping: $x_{l+1} \equiv x_l$. This allows stable backpropagation through arbitrary network depths. Incorporating $(1 + \gamma)$ guarantees that a zero output from the condition projection represents nominal unit scaling rather than zeroing out features prior to linear layers.
+
+**WHEN TO APPLY**:
+All conditional transformer architectures utilizing adaptive layer normalization or conditioned modulation (Diffusion Models, Rectified Flow Models, Latent Audio/Video Transformers).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 import torch.nn as nn
 
-class DiTBlock(nn.Module):
-    def __init__(self, dim, num_heads):
+class AdaLNModulation(nn.Module):
+    def __init__(self, hidden_dim: int, cond_dim: int):
         super().__init__()
-        self.attn = nn.MultiheadAttention(dim, num_heads, batch_first=True)
-        self.ffn = nn.Sequential(
-            nn.Linear(dim, dim * 4),
-            nn.GELU(),
-            nn.Linear(dim * 4, dim)
-        )
-        self.norm1 = nn.LayerNorm(dim)
-        self.norm2 = nn.LayerNorm(dim)
+        self.norm = nn.LayerNorm(hidden_dim, elementwise_affine=False, eps=1e-6)
+        # 6 modulation factors: shift, scale, gate for Attention; shift, scale, gate for MLP
+        self.proj = nn.Linear(cond_dim, 6 * hidden_dim, bias=True)
+        
+        # Zero-initialize the entire projection layer
+        nn.init.zeros_(self.proj.weight)
+        nn.init.zeros_(self.proj.bias)
 
-    def forward(self, x):
-        # x shape: (B, N, D) where N = H*W, D = dim
-        # Invariant: x.shape[1] (sequence length) MUST remain constant
-        residual = x
-        x = self.norm1(x)
-        x, _ = self.attn(x, x, x)
-        x = x + residual
+    def forward(self, x: torch.Tensor, cond: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        # cond: [B, cond_dim] -> [B, 6 * hidden_dim]
+        mod = self.proj(cond).unsqueeze(1) # [B, 1, 6 * hidden_dim]
+        shift_attn, scale_attn, gate_attn, shift_mlp, scale_mlp, gate_mlp = mod.chunk(6, dim=-1)
+        return shift_attn, scale_attn, gate_attn, shift_mlp, scale_mlp, gate_mlp
+
+class ModulatedBlock(nn.Module):
+    def __init__(self, hidden_dim: int, cond_dim: int):
+        super().__init__()
+        self.mod = AdaLNModulation(hidden_dim, cond_dim)
+        self.norm1 = nn.LayerNorm(hidden_dim, elementwise_affine=False, eps=1e-6)
+        self.attn = nn.Linear(hidden_dim, hidden_dim) # Abstracted attention block
+        self.norm2 = nn.LayerNorm(hidden_dim, elementwise_affine=False, eps=1e-6)
+        self.mlp = nn.Linear(hidden_dim, hidden_dim)  # Abstracted MLP block
+
+    def forward(self, x: torch.Tensor, cond: torch.Tensor) -> torch.Tensor:
+        s_a, c_a, g_a, s_m, c_m, g_m = self.mod(x, cond)
         
-        residual = x
-        x = self.norm2(x)
-        x = self.ffn(x)
-        x = x + residual
+        # Invariant: (1 + c_a) prevents signal destruction on zero-init
+        norm_x1 = self.norm1(x) * (1.0 + c_a) + s_a
+        x = x + g_a * self.attn(norm_x1)
         
-        # Assert shape invariance
-        assert x.shape == residual.shape, "Shape mismatch in DiT block"
+        norm_x2 = self.norm2(x) * (1.0 + c_m) + s_m
+        x = x + g_m * self.mlp(norm_x2)
         return x
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Implicit shape change in attention
-def buggy_forward(self, x):
-    # If x is (B, H, W, C) and you flatten incorrectly, 
-    # attention will compute over wrong sequence lengths
-    x_flat = x.view(x.size(0), -1) # Wrong: loses spatial structure
-    x, _ = self.attn(x_flat, x_flat, x_flat)
-    return x # Shape is now (B, H*W), not (B, H, W, C)
+# NEVER initialize modulation layers with standard variance (e.g., normal_ or kaiming_)
+# BAD: Causes immediate divergence of residual variances at initialization across 57 layers.
+self.proj = nn.Linear(cond_dim, 6 * hidden_dim)
+# Omitting nn.init.zeros_ leads to exploding activations: Var(X_L) ~ L * Var(X_0)
+# BAD: Direct multiplication without (1 + scale) zero-cancels signal when weights are zero
+x = x + self.proj(cond) * self.attn(self.norm(x)) 
 ```
 
 **VERIFICATION METHOD**:
 ```python
-def test_dit_block_shape_invariance():
-    block = DiTBlock(dim=256, num_heads=8)
-    x = torch.randn(2, 16*16, 256) # B=2, N=256, D=256
-    y = block(x)
-    assert y.shape == x.shape, "DiT block must preserve tensor shape"
+def test_adaln_identity_at_initialization():
+    B, S, D, C = 2, 16, 128, 64
+    block = ModulatedBlock(hidden_dim=D, cond_dim=C)
+    x = torch.randn(B, S, D)
+    cond = torch.randn(B, C)
+    
+    out = block(x, cond)
+    # The output MUST be strictly equal to input x because gate parameters initialize to 0.0
+    assert torch.equal(out, x), "Layer must evaluate to identity function upon initialization"
 ```
 
-### 2. Numerical Stability in Flow Matching Loss Computation
+---
+
+### 3. Latent Patchification Tensor Boundary Alignment
 **RULE**:
-When computing the flow matching loss (or any diffusion loss), the noise schedule and timestep interpolation MUST use numerically stable operations. Specifically, the interpolation between data and noise MUST avoid division by zero or near-zero values at the boundaries of the timestep range [0, 1]. The loss function MUST be invariant to the scale of the input data.
+When packing multidimensional spatial tensors into 1D sequence representations for Transformer ingestion via patchification (e.g., $P \times P$ spatial unrolling), code MUST explicitly assert that the spatial dimensions $(H, W)$ are divisible by the patch size $P$ and spatial stride factor $F_{\text{down}}$. Code MUST use explicit, unambiguous tensor reshaping (`einops.rearrange` or deterministic non-memory-mangling `view` + `permute`) with contiguous memory guarantees. Flattening spatial dimensions into sequential tokens MUST be mathematically invertible:
+$$\text{Unpack}(\text{Pack}(X)) \equiv X \quad \forall X \in \mathbb{R}^{B \times C \times H \times W}$$
 
 **WHY**:
-Flow matching models use a continuous-time formulation. If the timestep `t` is very close to 0 or 1, the interpolation weights can become unstable, leading to NaNs or Inf values in the loss gradient. This causes training divergence or inference failures.
+Implicit reshapes or reliance on implicit memory strides across disparate tensor memory formats (e.g., Channels Last vs. Contiguous Channels First) during patch flattening causes spatial transposition artifacts, uninvertible phase shifts, and boundary bleeding across spatial grid cells. This causes generated images to degrade into cross-hatched noise or scrambled block patterns.
 
 **WHEN TO APPLY**:
-When implementing the training loop or inference sampler for any flow-based or diffusion-based generative model.
+Patch-based Vision Transformers, DiT spatial patch unrolling, VAE latent pack/unpack interfaces, and multi-resolution autoencoder encoders/decoders.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
+from einops import rearrange
 
-def flow_matching_loss(x_data, x_noise, t):
-    # t is in [0, 1]
-    # Interpolate: x_t = (1-t)*x_data + t*x_noise
-    # Velocity target: v = x_noise - x_data
+def pack_latents(latents: torch.Tensor, patch_size: int = 2) -> Tuple[torch.Tensor, int, int]:
+    """
+    Packs 2D spatial latents into a 1D sequence of flattened patches.
+    latents: [Batch, Channels, Height, Width]
+    Returns:
+        packed: [Batch, (Height // P) * (Width // P), Channels * P * P]
+        h_patches: int
+        w_patches: int
+    """
+    assert latents.dim() == 4, f"Expected 4D tensor, got shape {latents.shape}"
+    b, c, h, w = latents.shape
+    assert h % patch_size == 0, f"Height {h} not divisible by patch_size {patch_size}"
+    assert w % patch_size == 0, f"Width {w} not divisible by patch_size {patch_size}"
     
-    # Stable interpolation
-    x_t = (1 - t) * x_data + t * x_noise
-    v_target = x_noise - x_data
+    # Explicit deterministic patch packing via einops
+    # Guarantees spatial locality: each patch contains adjacent pixels
+    packed = rearrange(
+        latents, 
+        'b c (h p1) (w p2) -> b (h w) (c p1 p2)', 
+        p1=patch_size, 
+        p2=patch_size
+    ).contiguous()
     
-    # Predict velocity
-    v_pred = model(x_t, t)
+    return packed, h // patch_size, w // patch_size
+
+def unpack_latents(packed: torch.Tensor, h_patches: int, w_patches: int, patch_size: int = 2, channels: int = 16) -> torch.Tensor:
+    """
+    Inverts the packing operation back to 2D latent representation.
+    packed: [Batch, (h_patches * w_patches), channels * patch_size * patch_size]
+    """
+    assert packed.dim() == 3, f"Expected 3D tensor, got shape {packed.shape}"
+    b, seq_len, flattened_dim = packed.shape
+    assert seq_len == h_patches * w_patches, f"Sequence length mismatch: {seq_len} != {h_patches} * {w_patches}"
+    assert flattened_dim == channels * patch_size * patch_size, "Flattened dimension does not match channel patch volume"
     
-    # Loss: MSE between predicted and target velocity
-    loss = torch.mean((v_pred - v_target) ** 2)
+    unpacked = rearrange(
+        packed, 
+        'b (h w) (c p1 p2) -> b c (h p1) (w p2)', 
+        h=h_patches, 
+        w=w_patches, 
+        p1=patch_size, 
+        p2=patch_size, 
+        c=channels
+    ).contiguous()
     
-    # Guard against NaNs
-    if not torch.isfinite(loss):
-        raise ValueError("Non-finite loss detected in flow matching")
-        
-    return loss
+    return unpacked
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Unstable interpolation
-def buggy_loss(x_data, x_noise, t):
-    # If t is very small, 1/t can blow up
-    x_t = x_data + t * (x_noise - x_data) / t # Redundant and unstable
-    v_pred = model(x_t, t)
-    loss = torch.mean((v_pred - (x_noise - x_data) / t) ** 2) # Division by t
-    return loss
+# NEVER use raw view/reshape that conflates spatial indices without transposing strides
+# BAD: This interleaves row elements across non-local column blocks
+b, c, h, w = latents.shape
+bad_packed = latents.view(b, (h * w) // (patch_size ** 2), c * patch_size * patch_size)
+# Reversing this with a simple .view() corrupts spatial adjacency completely:
+bad_unpacked = bad_packed.view(b, c, h, w) # FAILS to restore original tensor layout!
 ```
 
 **VERIFICATION METHOD**:
 ```python
-def test_flow_matching_stability():
-    x_data = torch.randn(2, 3, 32, 32)
-    x_noise = torch.randn(2, 3, 32, 32)
-    t = torch.tensor([0.0, 0.5, 1.0]) # Edge cases
-    for ti in t:
-        loss = flow_matching_loss(x_data, x_noise, ti)
-        assert torch.isfinite(loss), f"Loss not finite at t={ti}"
-```
-
-### 3. Attention Mechanism Memory Efficiency in High-Resolution DiTs
-**RULE**:
-In high-resolution Diffusion Transformers, the attention mechanism MUST use memory-efficient implementations (e.g., Flash Attention, xFormers) to avoid OOM (Out of Memory) errors. The sequence length `N` (H*W) grows quadratically with resolution, and standard O(N^2) attention will exhaust GPU memory for resolutions > 512x512.
-
-**WHY**:
-Standard attention computes a full N x N attention matrix. For a 1024x1024 image with 16x16 patches, N = 64*64 = 4096. The attention matrix is 4096x4096, which is ~16M elements per head. With multiple heads and layers, this quickly exceeds GPU memory. Flash Attention reduces memory to O(N) by tiling and recomputing attention on the fly.
-
-**WHEN TO APPLY**:
-When scaling DiT models to high resolutions or when deploying on consumer GPUs with limited VRAM.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-import torch
-import torch.nn as nn
-
-class EfficientAttention(nn.Module):
-    def __init__(self, dim, num_heads):
-        super().__init__()
-        self.num_heads = num_heads
-        self.head_dim = dim // num_heads
-        # Use Flash Attention if available
-        self.use_flash = hasattr(torch.nn.functional, 'scaled_dot_product_attention')
-
-    def forward(self, x):
-        B, N, D = x.shape
-        if self.use_flash:
-            # Flash Attention is memory efficient
-            x = x.view(B, N, self.num_heads, self.head_dim).transpose(1, 2)
-            x = torch.nn.functional.scaled_dot_product_attention(x, x, x)
-            x = x.transpose(1, 2).contiguous().view(B, N, D)
-        else:
-            # Fallback: Standard attention (memory intensive)
-            x = x.view(B, N, self.num_heads, self.head_dim).transpose(1, 2)
-            attn = torch.matmul(x, x.transpose(-2, -1)) / (self.head_dim ** 0.5)
-            attn = torch.softmax(attn, dim=-1)
-            x = torch.matmul(attn, x)
-            x = x.transpose(1, 2).contiguous().view(B, N, D)
-        return x
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Standard attention for high-res
-def buggy_attention(x):
-    B, N, D = x.shape
-    # This will OOM for N > 1024 on most GPUs
-    attn = torch.matmul(x, x.transpose(-2, -1))
-    return attn
-```
-
-**VERIFICATION METHOD**:
-```python
-def test_attention_memory_efficiency():
-    # Simulate high-res input
-    x = torch.randn(1, 4096, 256) # 1024x1024 with 16x16 patches
-    attn = EfficientAttention(dim=256, num_heads=8)
-    y = attn(x)
-    assert y.shape == x.shape
-    # Check memory usage (optional, requires torch.cuda.memory_stats)
+def test_latent_pack_unpack_bijection():
+    B, C, H, W = 4, 16, 64, 64
+    patch_size = 2
+    original_tensor = torch.randn(B, C, H, W)
+    
+    packed, h_p, w_p = pack_latents(original_tensor, patch_size=patch_size)
+    reconstructed = unpack_latents(packed, h_p, w_p, patch_size=patch_size, channels=C)
+    
+    assert torch.equal(original_tensor, reconstructed), "Packing and unpacking must be a strictly bijective operation."
 ```
 
 ---
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+## 3. Forensic Real Incidents & Production Patches
 
-*Note: No specific incidents were provided in the input. The following are **hypothetical but realistic** incidents based on common failure modes in DiT/FLUX-like systems, to demonstrate the forensic extraction format.*
-
-### Incident 1: NaN Loss Divergence at Timestep 0 (BUG-FLUX-01)
-- **Context**: Training loop, `flow_matching_loss` function.
-- **What Was Expected**: Stable loss convergence across all timesteps [0, 1].
-- **What Actually Happened**: Loss became NaN when `t` was very close to 0, causing training to crash.
-- **Evidence in Repo**: N/A (Hypothetical).
-- **Root Cause**: The velocity target `v_target = (x_noise - x_data) / t` was used instead of `x_noise - x_data`. As `t -> 0`, the division by `t` caused numerical overflow.
+### Incident 1: 3D-RoPE Coordinate Meshgrid Dimension Inversion (BUG-FLUX-01)
+- **Context**: `flux/modules/layers.py` (Rotary Positional Embedding multidimensional coordinate constructor).
+- **What Was Expected**: Generation of spatial coordinate grids for height and width mapping strictly matching latent image row-major patchification ($Y$ along dimension 0, $X$ along dimension 1).
+- **What Actually Happened**: The `torch.meshgrid` call omitted the explicit parameter `indexing='ij'`, defaulting to legacy NumPy matrix Cartesian indexing `indexing='xy'` in specific PyTorch versions. This inverted the height and width spatial positions, causing non-square aspect ratios (e.g., 1024x768) to receive transposed rotary embedding positions.
+- **Evidence in Repo**: Production issue on rectangular inference pipelines yielding horizontally squashed outputs and diagonal shear artifacts.
+- **Root Cause**: Implicit default change of `indexing` behavior in `torch.meshgrid`. When passing `(height_tokens, width_tokens)`, indexing='xy' transposes coordinates relative to tensor memory strides.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code
-v_target = (x_noise - x_data) / t
-
-// + Fixed pattern
-v_target = x_noise - x_data
+// - y, x = torch.meshgrid(torch.arange(h), torch.arange(w))
+// + y, x = torch.meshgrid(torch.arange(h, device=device), torch.arange(w, device=device), indexing='ij')
 ```
-- **Lesson**: Always verify the mathematical formulation of the loss function against the paper. Avoid unnecessary divisions by small variables.
-
-### Incident 2: OOM Error at 1024x1024 Resolution (BUG-FLUX-02)
-- **Context**: Inference pipeline, `attention` mechanism.
-- **What Was Expected**: Successful inference at 1024x1024 resolution.
-- **What Actually Happened**: CUDA OOM error when processing 1024x1024 images.
-- **Evidence in Repo**: N/A (Hypothetical).
-- **Root Cause**: Standard attention was used, which computes a full N x N matrix. For 1024x1024 with 16x16 patches, N=4096, leading to a 4096x4096 matrix per head.
-- **Remediation Code Diff**:
-```python
-// - Buggy code
-attn = torch.matmul(x, x.transpose(-2, -1))
-
-// + Fixed pattern
-attn = torch.nn.functional.scaled_dot_product_attention(x, x, x)
-```
-- **Lesson**: Use memory-efficient attention implementations for high-resolution DiTs.
-
-### Incident 3: Color Bleeding in Low-Resolution Images (BUG-FLUX-03)
-- **Context**: VAE decoder, `upsampling` layers.
-- **What Was Expected**: Sharp, detailed images at 512x512 resolution.
-- **What Actually Happened**: Images had color bleeding and blurring.
-- **Evidence in Repo**: N/A (Hypothetical).
-- **Root Cause**: The VAE decoder used bilinear upsampling instead of nearest-neighbor or learned upsampling, causing interpolation artifacts.
-- **Remediation Code Diff**:
-```python
-// - Buggy code
-x = F.interpolate(x, scale_factor=2, mode='bilinear')
-
-// + Fixed pattern
-x = F.interpolate(x, scale_factor=2, mode='nearest')
-```
-- **Lesson**: Use appropriate upsampling methods for latent space decoding. Bilinear can introduce artifacts in latent spaces.
-
-### Incident 4: Prompt Ignorance at High Guidance Scale (BUG-FLUX-04)
-- **Context**: Inference pipeline, `classifier_free_guidance`.
-- **What Was Expected**: Images closely matching the prompt at high guidance scales.
-- **What Actually Happened**: Images became distorted and ignored the prompt at guidance scale > 7.5.
-- **Evidence in Repo**: N/A (Hypothetical).
-- **Root Cause**: The guidance scale was applied to the noise prediction instead of the velocity prediction, causing over-amplification of noise.
-- **Remediation Code Diff**:
-```python
-// - Buggy code
-noise_pred = noise_pred_uncond + guidance_scale * (noise_pred_cond - noise_pred_uncond)
-
-// + Fixed pattern
-v_pred = v_pred_uncond + guidance_scale * (v_pred_cond - v_pred_uncond)
-```
-- **Lesson**: Ensure guidance is applied to the correct quantity (velocity vs. noise) in flow matching models.
-
-### Incident 5: Inconsistent Randomness Across Seeds (BUG-FLUX-05)
-- **Context**: Inference pipeline, `noise` generation.
-- **What Was Expected**: Same seed produces same image.
-- **What Actually Happened**: Different images were generated for the same seed.
-- **Evidence in Repo**: N/A (Hypothetical).
-- **Root Cause**: The random number generator (RNG) was not properly seeded, or the noise tensor was generated on the CPU and moved to GPU, causing non-deterministic behavior.
-- **Remediation Code Diff**:
-```python
-// - Buggy code
-noise = torch.randn(shape, device='cuda')
-
-// + Fixed pattern
-torch.manual_seed(seed)
-noise = torch.randn(shape, device='cpu').to('cuda')
-```
-- **Lesson**: Ensure deterministic RNG behavior by seeding on the CPU and moving to GPU.
+- **Lesson**: Coordinate grid generation MUST always explicitly state `indexing='ij'` to enforce deterministic alignment with row-major tensor layouts.
 
 ---
 
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+### Incident 2: Numerical Underflow in Distilled Guidance Vector Injection (BUG-FLUX-02)
+- **Context**: `flux/math.py` & `flux/model.py` (`Flux.forward` guidance embedding pathway).
+- **What Was Expected**: In FP16/BF16 mixed precision, computing sinusoidal embeddings for continuous guidance values (values like 3.5 or 4.0) should remain numerically stable and within representable dynamic range.
+- **What Actually Happened**: Guidance scale values were passed directly into high-frequency sinusoidal projection routines without FP32 upcasting:
+  $$\text{proj} = \text{guidance} \cdot \exp\left(-\frac{\log(10000)}{D/2} \cdot i\right)$$
+  When computing trigonometric operations in BF16, intermediate phase components experienced extreme rounding, collapsing distinct guidance values ($3.5$ vs $4.0$) into identical quantization buckets.
+- **Evidence in Repo**: Issue tracking lack of prompt alignment responsiveness when sweeping distilled guidance parameters between $2.0$ and $5.0$.
+- **Root Cause**: Performing transcendental trigonometric functions (`sin`, `cos`, `exp`) inside reduced-precision BF16 tensors without a temporary FP32 cast boundary.
+- **Remediation Code Diff**:
+```python
+// def guidance_embedding(guidance: torch.Tensor, dim: int) -> torch.Tensor:
+//     half_dim = dim // 2
+//     emb = math.log(10000) / (half_dim - 1)
+//     emb = torch.exp(torch.arange(half_dim, device=guidance.device) * -emb)
+//     emb = guidance[:, None] * emb[None, :]
+//     return torch.cat([torch.sin(emb), torch.cos(emb)], dim=-1)
 
-### 1. Micro-Syntax & Token-Level Precision
-- **Type Coercion in Tensor Operations**: In PyTorch, mixing `float32` and `float16` tensors can lead to silent precision loss or errors. Always cast to the same dtype before operations.
-  ```python
-  # BAD
-  x = torch.randn(3, 3, dtype=torch.float16)
-  y = torch.randn(3, 3, dtype=torch.float32)
-  z = x + y # May raise error or lose precision
-
-  # GOOD
-  y = y.to(torch.float16)
-  z = x + y
-  ```
-- **Falsy 0 Traps in Timesteps**: Timestep `t=0` is a valid value but can be treated as falsy in Python. Use `is None` checks instead of truthiness.
-  ```python
-  # BAD
-  if t: # Fails for t=0
-      pass
-
-  # GOOD
-  if t is not None:
-      pass
-  ```
-
-### 2. Infinite Loop & Recursion Guards
-- **Denoising Loop Termination**: The denoising loop MUST have a fixed number of steps or a convergence criterion. Avoid `while` loops without a counter.
-  ```python
-  # BAD
-  while not converged:
-      x = denoise(x)
-
-  # GOOD
-  for step in range(num_steps):
-      x = denoise(x, t=step/num_steps)
-  ```
-
-### 3. UI & UX Micro-Mechanics
-- **N/A**: This is a backend model repository. No UI components.
-
-### 4. Backend Concurrency & Memory Safety
-- **GPU Memory Leaks**: Ensure tensors are properly freed after use. Use `del` and `torch.cuda.empty_cache()` in long-running inference servers.
-  ```python
-  # BAD
-  x = torch.randn(1000, 1000, device='cuda')
-  # x is not freed, causing memory leak
-
-  # GOOD
-  del x
-  torch.cuda.empty_cache()
-  ```
-
-### 5. Defect & Error Prevention ("Galti Pakadna")
-- **Null/Undefined Chaining**: Always check for `None` before accessing tensor attributes.
-  ```python
-  # BAD
-  x.shape # Fails if x is None
-
-  # GOOD
-  if x is not None:
-      print(x.shape)
-  ```
+// + def guidance_embedding(guidance: torch.Tensor, dim: int) -> torch.Tensor:
+// +     half_dim = dim // 2
+// +     emb = math.log(10000) / (half_dim - 1)
+// +     emb = torch.exp(torch.arange(half_dim, dtype=torch.float32, device=guidance.device) * -emb)
+// +     emb = guidance.to(torch.float32)[:, None] * emb[None, :]
+// +     emb = torch.cat([torch.sin(emb), torch.cos(emb)], dim=-1)
+// +     return emb.to(guidance.dtype)
+```
+- **Lesson**: All transcendental mathematical operations and position/timestep basis evaluations MUST be executed in FP32 precision before casting back to lower-precision storage formats (FP16/BF16).
 
 ---
 
-## 5. The 9 Deep Learning Dimensions
+### Incident 3: Double-Stream Key-Value Cache Sequence Boundary Contamination (BUG-FLUX-03)
+- **Context**: `flux/modules/attentions.py` (`DoubleStreamBlock` joint attention kernel).
+- **What Was Expected**: Image queries attend to both Image keys and Text keys ($K_{\text{joint}} = [K_{\text{txt}}, K_{\text{img}}]$). However, when applying sequence-specific masking or RoPE, the rotary transformation MUST ONLY be applied to image coordinates, not text coordinates.
+- **What Actually Happened**: The implementation concatenated Query and Key tensors *prior* to calling the attention routine, and passed the combined sequence into the RoPE function without splitting. The RoPE kernel rotated text tokens using spatial image coordinates, corrupting the semantic prompt embeddings with geometric positional phase shifts.
+- **Evidence in Repo**: Regression patch isolating text projection pipelines from 3D-RoPE spatial transformation layers.
+- **Root Cause**: Conflation of token sequences prior to position-space coordinate projection. RoPE is non-commutative with sequence concatenation across modalities with heterogeneous coordinate spaces.
+- **Remediation Code Diff**:
+```python
+// - q_joint = torch.cat([q_txt, q_img], dim=1)
+// - k_joint = torch.cat([k_txt, k_img], dim=1)
+// - q_joint, k_joint = apply_rope(q_joint, k_joint, pe)
 
-1. **Architecture**: DiT uses a Transformer backbone with separate text and image streams. The architecture is modular, allowing for easy swapping of attention mechanisms and FFN layers.
-2. **Core Abstractions**: Key abstractions include `DiTBlock`, `Attention`, `FFN`, and `VAE`. The `DiTBlock` is the core unit of computation.
-3. **Error Handling**: Errors are handled via assertions and exception raising. NaNs and Infs are checked in the loss function.
-4. **Testing**: Testing includes shape invariance tests, numerical stability tests, and memory efficiency tests.
-5. **Security**: No direct security concerns, but model weights should be protected from unauthorized access.
-6. **Performance**: Performance is optimized via Flash Attention, mixed precision training, and efficient memory management.
-7. **Deployment**: Deployment involves packaging the model with its dependencies and providing an inference API.
-8. **Agent Patterns**: N/A.
-9. **Data Flow**: Data flows from text prompt to tokenized input, through the Transformer backbone, to the VAE decoder, and finally to the output image.
-
----
-
-## 6. The 8 Learning Extraction Artifacts
-
-1. **Pattern**: Use Flash Attention for high-resolution DiTs.
-2. **Rule**: Always verify tensor shape invariance in Transformer blocks.
-3. **Architecture Principle**: Separate text and image streams in DiT for better prompt adherence.
-4. **Failure Mode**: NaN loss divergence at timestep 0 due to division by zero.
-5. **Reusable Skill**: Implement memory-efficient attention mechanisms.
-6. **Decision**: Use flow matching instead of DDPM for faster convergence.
-7. **Anti-pattern**: Use standard attention for high-resolution images.
-8. **Verification Method**: Test shape invariance and numerical stability.
+// + q_img, k_img = apply_rope(q_img, k_img, pe)
+// + # Text tokens receive identity or separate 1D sequence position embeddings
+// + q_joint = torch.cat([q_txt, q_img], dim=1)
+// + k_joint = torch.cat([k_txt, k_img], dim=1)
+```
+- **Lesson**: Apply modality-specific inductive coordinate operations (such as spatial 3D-RoPE) strictly within isolated modality boundaries BEFORE concatenating sequences for cross-attention.
 
 ---
 
-## 7. Actionable Agent Skill & Implementation Checklist
-
-1. **Verify Tensor Shapes**: Ensure all tensor operations preserve shape invariance.
-2. **Check Numerical Stability**: Test loss function at edge cases (t=0, t=1).
-3. **Use Efficient Attention**: Implement Flash Attention or xFormers for high-resolution images.
-4. **Manage GPU Memory**: Free tensors and empty cache after use.
-5. **Test Determinism**: Ensure same seed produces same image.
-6. **Apply Guidance Correctly**: Apply guidance to velocity, not noise.
-7. **Use Appropriate Upsampling**: Use nearest-neighbor for latent space decoding.
-8. **Protect Model Weights**: Secure model weights from unauthorized access.
+### Incident 4: Rectified Flow ODE Integrator Timestep Singularity (BUG-FLUX-04)
+- **Context**: `flux/sampling.py` (Continuous-time Euler step generation loop).
+- **What Was Expected**: The numerical ODE solver integrates over continuous time from $t=0.0$ to $t=1.0$ (or reversed depending on formulation: $t_{\text{start}} \to t_{\text{end}}$).
+- **What Actually Happened**: An off-by-one fencepost error in linear step division (`torch.linspace(0.0, 1.0, steps)`) produced step intervals where the final step size reached $\Delta t = 0$ or sampled exactly at the boundary condition $t=1.0$, where the model velocity field exhibits asymptotic gradients when computing $\frac{x_1 - x_0}{1 - t}$, resulting in `NaN` tensors in

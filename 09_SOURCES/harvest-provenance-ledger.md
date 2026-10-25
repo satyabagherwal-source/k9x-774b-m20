@@ -4737,3 +4737,6 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `f0ffc917` | Multi-dimensional audit evidence | 2026-10-25T07:19:00.805Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `2947e4c5` | Multi-dimensional audit evidence | 2026-10-25T07:19:16.659Z |
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `ed798f9c` | Multi-dimensional audit evidence | 2026-10-25T07:22:25.506Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `6fe4f0f5` | Multi-dimensional audit evidence | 2026-10-25T07:38:48.771Z |
+| `learn-github-bergside-typeui` | `https://github.com/bergside/typeui` | `efc5f21d` | Multi-dimensional audit evidence | 2026-10-25T07:38:56.376Z |
+| `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-25T07:39:33.166Z |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-90F3",
-    "timestamp": "2026-10-21T15:16:30.687Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "e8557bc287cdb8631dbd5f6e69309038f650f68413fddfaabe319b82328cf000",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-92MA",
-    "timestamp": "2026-10-21T15:16:33.538Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "589a3dd28b96d8f86749ac020045b5cb708109986a0e87e8e6e03dbe2713aceb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-GQ1V",
-    "timestamp": "2026-10-21T15:22:30.499Z",
-    "repository": "lucide-icons/lucide",
-    "learningId": "learn-github-lucide-icons-lucide",
-    "contentHash": "596260c2d0b723d066ec3270e28249628fdf38f78410679383afaff5ec917090",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-GVAU",
     "timestamp": "2026-10-21T15:22:37.302Z",
     "repository": "prof18/feed-flow",
@@ -7490,6 +7445,51 @@
     "repository": "callstack/agent-device",
     "learningId": "learn-github-callstack-agent-device",
     "contentHash": "340f6205ca1f05a2eaf0fe3187b03dcf35b8ef2de4c0ba5d333013e78cb74cdb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-NTC0",
+    "timestamp": "2026-10-25T07:38:48.768Z",
+    "repository": "astral-sh/uv",
+    "learningId": "learn-github-astral-sh-uv",
+    "contentHash": "429b6c325f69e9d0acd61f6d9e192994f51328d3ee38f8a3782cd91320a593aa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-NZ79",
+    "timestamp": "2026-10-25T07:38:56.373Z",
+    "repository": "bergside/typeui",
+    "learningId": "learn-github-bergside-typeui",
+    "contentHash": "5bde2361628c34c11bb2d48079fa877bb246258a226ef8ba582f3257bf1f87c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ORL7",
+    "timestamp": "2026-10-25T07:39:33.163Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "3e22f0a103d7116afa3caa10d2a00c9738e0ffa7fc3c9026556472804bbc278d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T07:22:25.511Z",
-  "total_cycles_completed": 4707,
-  "total_learnings_persisted": 4707,
-  "total_rules_promoted": 4030,
+  "last_updated": "2026-10-25T07:39:33.171Z",
+  "total_cycles_completed": 4710,
+  "total_learnings_persisted": 4710,
+  "total_rules_promoted": 4039,
   "history": [
-    {
-      "timestamp": "2026-10-23T10:31:12.974Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T10:38:41.409Z",
-      "repository": "webpack/webpack",
-      "learningId": "learn-github-webpack-webpack",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T10:45:04.272Z",
-      "repository": "rollup/rollup",
-      "learningId": "learn-github-rollup-rollup",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T10:45:12.443Z",
       "repository": "SeekStorm/SeekStorm",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-25T07:22:25.511Z",
       "repository": "callstack/agent-device",
       "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T07:38:48.776Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T07:38:56.381Z",
+      "repository": "bergside/typeui",
+      "learningId": "learn-github-bergside-typeui",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T07:39:33.171Z",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
