@@ -5044,3 +5044,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-10-25T23:17:15.702Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e6dbc624` | Multi-dimensional audit evidence | 2026-10-25T23:17:30.546Z |
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-25T23:32:54.930Z |
+| `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-25T23:39:17.217Z |
+| `learn-github-dockview-dockview` | `https://github.com/dockview/dockview` | `c26490bf` | Multi-dimensional audit evidence | 2026-10-25T23:39:17.362Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `a927b3d6` | Multi-dimensional audit evidence | 2026-10-25T23:39:19.633Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `b80c75cb` | Multi-dimensional audit evidence | 2026-10-25T23:39:26.435Z |

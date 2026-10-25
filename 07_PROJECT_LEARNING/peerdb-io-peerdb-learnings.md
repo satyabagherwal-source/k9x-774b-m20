@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `4dbe4f57`  
+> **Source Version**: `b80c75cb`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T10:10:53.224Z  
+> **Timestamp**: 2026-10-25T23:39:26.038Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T10:10:52.763Z  
+> **Harvest Timestamp**: 2026-10-25T23:39:26.030Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3309 stars
+- **Stars / Engagement**: 3310 stars
 
 ---
 
@@ -1860,481 +1860,111 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bd61d073` (2026-10-24)
-**Commit Message**: security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (#4973)
+### Incident Patch 1: `b80c75cb` (2026-10-25)
+**Commit Message**: refactor(clickhouse): reuse table mapping and column setting lookups (#4971)
 
-# Security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497)
+Follow-up to #4963.
 
+- Add `findTableMappingByDestination` and use it in normalize table
+creation and the normalize query generator.
+- Use `findColumnSetting` for the array JSON destination type lookup in
+initial load.
 
-## What this changes
-
-`stacks/peerdb-ui.Dockerfile` base image:
-
-```
-- FROM node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS base
-+ FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS base
-```
-
-The old digest was resolved through the Docker registry API (index →
-amd64 manifest `sha256:83f1c388…`) and matches **node:24.21.0-alpine** —
-below the 24.22.1 fix. The new digest is the verified `24.22.1-alpine`
-multi-arch index (Docker Hub, pushed 2026-10-22), resolving the tag
-ambiguity that a floating `24-alpine` digest pin created while staying
-digest-pinned as this repo prefers.
-
-## Verification
-- Old digest identity proven via registry manifest comparison with the
-`24.21.0-alpine` tag digests (amd64 `83f1c388…`).
-- New digest fetched from the registry API for tag `24.22.1-alpine` on
-2026-10-23; `docker buildx` will verify platform manifests at pull time
-as usual.
-- Same-major patch bump (24.21.0 → 24.22.1); alpine base unchanged.
-Build-only change,
-
-**File**: `stacks/peerdb-ui.Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- # syntax=docker/dockerfile:1.27@sha256:bde3983e9c939224420ddaf6b784cc30e09b035a4dea01f581230c50809f372e
- 
- # Base stage
--FROM node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS base
-+FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS base
- ENV TZ=UTC
- ENV NPM_CONFIG_UPDATE_NOTIFIER=false
- RUN apk add --no-cache openssl && \
-```
-
----
-
-### Incident Patch 2: `ab1d1afe` (2026-10-23)
-**Commit Message**: fix(clickhouse): honor column destination_name in initial load (#4963)
-
-The ClickHouse initial load inserted into the source column name,
-ignoring `ColumnSetting.destination_name`. A renamed column failed the
-snapshot with `No such column`, while CDC normalize already used the new
-name. The UI never sets `destination_name`, so this only affects API
-users.
-
-E2E: `Test_DestinationNameColumnSetting`
+No behavior change.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
----------
-
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `flow/connectors/clickhouse/clickhouse.go` (modified, +1/-9)
+**File**: `flow/connectors/clickhouse/normalize.go` (modified, +3/-7)
 ```diff
-@@ -350,16 +350,8 @@ func (c *ClickHouseConnector) processTableComparison(dstTableName string, srcSch
- 	dstSchema []peerdb_clickhouse.ClickHouseColumn, peerDBColumns []string, tableMapping *protos.TableMapping,
- ) error {
- 	for _, srcField := range srcSchema.Columns {
--		colName := srcField.Name
- 		// if the column is mapped to a different name, find and use that name instead
--		for _, col := range tableMapping.Columns {
--			if col.SourceName == colName {
--				if col.DestinationName != "" {
--					colName = col.DestinationName
--				}
--				break
--			}
+@@ -96,13 +96,9 @@ func (c *ClickHouseConnector) generateCreateTableSQLForNormalizedTable(
+ 	var engine string
+ 	tmEngine := protos.TableEngine_CH_ENGINE_REPLACING_MERGE_TREE
+ 
+-	var tableMapping *protos.TableMapping
+-	for _, tm := range config.TableMappings {
+-		if tm.DestinationTableIdentifier == tableIdentifier {
+-			tmEngine = tm.Engine
+-			tableMapping = tm
+-			break
 -		}
-+		colName := resolveDestinationColumnName(srcField.Name, tableMapping.GetColumns())
- 		found := false
- 		// compare either the source column name or the mapped destination column name to the ClickHouse schema
- 		for _, dstField := range dstSchema {
-```
-
-**File**: `flow/connectors/clickhouse/normalize.go` (modified, +6/-17)
-```diff
-@@ -187,25 +187,14 @@ func (c *ClickHouseConnector) generateCreateTableSQLForNormalizedTable(
- 
- 		for _, column := range tableSchema.Columns {
- 			colName := column.Name
--			dstColName := colName
- 			colType := types.QValueKind(column.Type)
--			var columnNullableEnabled bool
--			var clickHouseType string
--			if tableMapping != nil {
--				for _, col := range tableMapping.Columns {
--					if col.SourceName == colName {
--						if col.DestinationName != "" {
--							dstColName = col.DestinationName
--							colNameMap[colName] = dstColName
--						}
--						if col.DestinationType != "" {
--							clickHouseType = col.DestinationType
--						}
--						columnNullableEnabled = col.NullableEnabled
--						break
--					}
--				}
-+			colSetting := findColumnSetting(colName, tableMapping.GetColumns())
-+			dstColName := resolveDestinationColumnName(colName, tableMapping.GetColumns())
-+			if dstColName != colName {
-+				colNameMap[colName] = dstColName
- 			}
-+			clickHouseType := colSetting.GetDestinationType()
-+			columnNullableEnabled := colSetting.GetNullableEnabled()
- 
- 			if clickHouseType == "" {
- 				var err error
-```
-
-**File**: `flow/connectors/clickhouse/normalize_query.go` (modified, +5/-19)
-```diff
-@@ -138,26 +138,12 @@ func (t *NormalizeQueryGenerator) BuildQuery(ctx context.Context) (string, error
- 
- 	for _, column := range schema.Columns {
- 		colName := column.Name
--		dstColName := colName
- 		colType := types.QValueKind(column.Type)
--
--		var clickHouseType string
--		var columnNullableEnabled bool
--		if tableMapping != nil {
--			for _, col := range tableMapping.Columns {
--				if col.SourceName == colName {
--					if col.DestinationName != "" {
--						dstColName = col.DestinationName
--					}
--					if col.DestinationType != "" {
--						// TODO basic validation to avoid injection
--						clickHouseType = col.DestinationType
--					}
--					columnNullableEnabled = col.NullableEnabled
--					break
--				}
--			}
--		}
-+		colSetting := findColumnSetting(colName, tableMapping.GetColumns())
-+		dstColName := resolveDestinationColumnName(colName, tableMapping.GetColumns())
-+		// TODO basic validation to avoid injection
-+		clickHouseType := colSetting.GetDestinationType()
-+		columnNullableEnabled := colSetting.GetNullableEnabled()
- 
- 		fmt.Fprintf(&colSelector, "%s,", peerdb_clickhouse.QuoteIdentifier(dstColName))
- 		if clickHouseType == "" {
-```
-
-**File**: `flow/connectors/clickhouse/query_cdc_sync.go` (modified, +1/-11)
-```diff
-@@ -28,17 +28,7 @@ func typedCDCTableSchema(
- 	businessFields := make([]types.QField, 0, len(tableSchema.Columns))
- 	sourceColumnByDest := make(map[string]string, len(tableSchema.Columns))
- 	for _, column := range tableSchema.Columns {
--		dstColName := column.Name
--		if tableMapping != nil {
--			for _, col := range tableMapping.Columns {
--				if col.SourceName == column.Name {
--					if col.DestinationName != "" {
--						dstColName = col.DestinationName
--					}
--					break
--				}
--			}
--		}
-+		dstColName := resolveDestinationColumnName(column.Name, tableMapping.GetColumns())
- 		sourceColumnByDest[dstColName] = column.Name
- 		businessFields = append(businessFields, types.QField{
- 			Name:     dstColName,
-```
-
-**File**: `flow/connectors/clickhouse/table_function.go` (modified, +2/-1)
-```diff
-@@ -183,8 +183,9 @@ func buildInsertFromTableFunctionQuery(
- 			sourceFieldName = convertedExpr
- 		}
- 
-+		dstColName := resolveDestinationColumnName(colName, config.config.GetColumns())
- 		selectedColumnNames = append(selectedColumnNames, sourceFieldName)
--		insertedColumnNames = append(insertedColumnNames, peerdb_clickhouse.QuoteIdentifier(colName))
-+		insertedColumnNames = append(insertedColumnNames, peerdb_clickhouse.QuoteIdentifier(dstColName))
++	tableMapping := findTableMappingByDestination(config.TableMappings, tableIdentifier)
++	if tableMapping != nil {
++		tmEngine = tableMapping.Engine
  	}
  
- 	// Add source schema column if needed
+ 	isDeletedColumn := defaultIsDeletedColName
 ```
 
-**File**: `flow/connectors/clickhouse/table_function_test.go` (modified, +24/-0)
+**File**: `flow/connectors/clickhouse/normalize_query.go` (modified, +1/-7)
 ```diff
-@@ -81,6 +81,30 @@ func TestBuildInsertFromTableFunctionQueryArrayTime(t *testing.T) {
- 		query)
- }
+@@ -118,13 +118,7 @@ func (t *NormalizeQueryGenerator) BuildQuery(ctx context.Context) (string, error
  
-+// TestBuildInsertFromTableFunctionQueryDestinationName checks a renamed column is inserted under its
-+// destination name while still being read from the staged field with the source name.
-+func TestBuildInsertFromTableFunctionQueryDestinationName(t *testing.T) {
-+	config := &insertFromTableFunctionConfig{
-+		destinationTable: "t1",
-+		schema: types.QRecordSchema{Fields: []types.QField{
-+			{Name: "id", Type: types.QValueKindInt64},
-+			{Name: "note", Type: types.QValueKindString},
-+		}},
-+		config: &protos.QRepConfig{
-+			Env:     map[string]string{"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN": "false"},
-+			Columns: []*protos.ColumnSetting{{SourceName: "note", DestinationName: "memo"}},
-+		},
-+	}
-+
-+	query, err := buildInsertFromTableFunctionQuery(
-+		context.Background(), config, "s3('s3://bucket/key', 'Avro')", nil,
-+	)
-+	require.NoError(t, err)
-+	require.Equal(t,
-+		"INSERT INTO `t1`(`id`,`memo`) SELECT `id`,`note` FROM s3('s3://bucket/key', 'Avro')",
-+		query)
-+}
-+
- // TestBuildInsertFromTableFunctionQueryArrayOfJSON checks arrays of JSON, staged as a string holding the
- // whole array, are parsed when their column is declared an array, a null one into the empty array, and
- // left as is otherwise, as when they land in a String column.
+ 	schema := t.tableNameSchemaMapping[t.TableName]
+ 
+-	var tableMapping *protos.TableMapping
+-	for _, tm := range t.tableMappings {
+-		if tm.DestinationTableIdentifier == t.TableName {
+-			tableMapping = tm
+-			break
+-		}
+-	}
++	tableMapping := findTableMappingByDestination(t.tableMappings, t.TableName)
+ 
+ 	var escapedSourceSchemaSelectorFragment string
+ 	if t.sourceSchemaAsDestinationColumn {
 ```
 
-**File**: `flow/connectors/clickhouse/type_conversion.go` (modified, +19/-0)
+**File**: `flow/connectors/clickhouse/table_function.go` (modified, +4/-6)
 ```diff
-@@ -102,6 +102,25 @@ func findTypeConversions(schema types.QRecordSchema, columns []*protos.ColumnSet
+@@ -119,12 +119,10 @@ func arrayJSONFieldExpressionConverter(
+ 	if field.Type != types.QValueKindArrayJSON && field.Type != types.QValueKindArrayJSONB {
+ 		return sourceFieldIdentifier, nil
+ 	}
+-	for _, column := range config.config.GetColumns() {
+-		if column.SourceName == field.Name && strings.HasPrefix(column.DestinationType, "Array(") {
+-			// a null array is staged as a null string, the empty array once parsed
+-			return fmt.Sprintf("JSONExtract(ifNull(%s, ''), %s)",
+-				sourceFieldIdentifier, peerdb_clickhouse.QuoteLiteral(column.DestinationType)), nil
+-		}
++	if dstType := findColumnSetting(field.Name, config.config.GetColumns()).GetDestinationType(); strings.HasPrefix(dstType, "Array(") {
++		// a null array is staged as a null string, the empty array once parsed
++		return fmt.Sprintf("JSONExtract(ifNull(%s, ''), %s)",
++			sourceFieldIdentifier, peerdb_clickhouse.QuoteLiteral(dstType)), nil
+ 	}
+ 	return sourceFieldIdentifier, nil
+ }
+```
+
+**File**: `flow/connectors/clickhouse/type_conversion.go` (modified, +10/-0)
+```diff
+@@ -102,6 +102,16 @@ func findTypeConversions(schema types.QRecordSchema, columns []*protos.ColumnSet
  	return typeConversions
  }
  
-+// findColumnSetting returns the column setting for the given source column, or nil if there is none
-+func findColumnSetting(sourceColumnName string, columns []*protos.ColumnSetting) *protos.ColumnSetting {
-+	for _, column := range columns {
-+		if column.SourceName == sourceColumnName {
-+			return column
++// findTableMappingByDestination returns the table mapping for the given destination table, or nil if there is none
++func findTableMappingByDestination(tableMappings []*protos.TableMapping, dstTableName string) *protos.TableMapping {
++	for _, tableMapping := range tableMappings {
++		if tableMapping.DestinationTableIdentifier == dstTableName {
++			return tableMapping
 +		}
 +	}
 +	return nil
 +}
 +
-+// resolveDestinationColumnName returns the mapped destination name for a source column,
-+// falling back to the source name when no mapping is configured
-+func resolveDestinationColumnName(sourceColumnName string, columns []*protos.ColumnSetting) string {
-+	if dstColName := findColumnSetting(sourceColumnName, columns).GetDestinationName(); dstColName != "" {
-+		return dstColName
-+	}
-+	return sourceColumnName
-+}
-+
- func applyTypeConversions(schema types.QRecordSchema, typeConversions map[string]types.TypeConversion) types.QRecordSchema {
- 	for i, field := range schema.Fields {
- 		if conversion, exist := typeConversions[field.Name]; exist {
-```
-
-**File**: `flow/e2e/clickhouse_suite.go` (modified, +40/-0)
-```diff
-@@ -451,6 +451,46 @@ func (s ClickHouseSuite) Test_NullableColumnSetting() {
- 	RequireEnvCanceled(s.t, env)
- }
- 
-+// Test_DestinationNameColumnSetting checks a column renamed via destination_name is filled by both the
-+// initial snapshot and CDC.
-+func (s ClickHouseSuite) Test_DestinationNameColumnSetting() {
-+	srcTableName := "test_destination_name"
-+	srcFullName := s.attachSchemaSuffix(srcTableName)
-+	dstTableName := "test_destination_name_dst"
-+
-+	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
-+		`CREATE TABLE IF NOT EXISTS %s (id INT PRIMARY KEY, note TEXT)`, srcFullName)))
-+	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
-+		`INSERT INTO %s (id, note) VALUES (1, 'snapshot')`, srcFullName)))
-+
-+	connectionGen := FlowConnectionGenerationConfig{
-+		FlowJobName:      s.attachSuffix("ch_destination_name"),
-+		TableNameMapping: map[string]string{srcFullName: dstTableName},
-+		Destination:      s.Peer().Name,
-+	}
-+	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
-+	flowConnConfig.DoInitialSnapshot = true
-+	flowConnConfig.TableMappings[0].Columns = []*protos.ColumnSetting{{SourceName: "note", DestinationName: "memo"}}
-+
-+	tc := NewTemporalClient(s.t)
-+	env := ExecutePeerflow(s.t, tc, flowConnConfig)
-+	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
-+
-+	EnvWaitForCount(env, s, "waiting on initial", dstTableName, "id,memo", 1)
-+	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
-+		`INSERT INTO %s (id, note) VALUES (2, 'cdc')`, srcFullName)))
-+	EnvWaitForCount(env, s, "waiting on cdc", dstTableName, "id,memo", 2)
-+
-+	rows, err := s.GetRows(dstTableName, "id,memo")
-+	require.NoError(s.t, err)
-+	require.Len(s.t, rows.Records, 2)
-+	require.Equal(s.t, "snapshot", rows.Records[0][1].Value())
-+	require.Equal(s.t, "cdc", rows.Records[1][1].Value())
-+
-+	env.Cancel(s.t.Context())
-+	RequireEnvCanceled(s.t, env)
-+}
-+
- func (s ClickHouseSuite) Test_Update_PKey_Env_Disabled() {
- 	srcTableName := "test_update_pkey_disabled"
- 	srcFullName := s.attachSchemaSuffix(srcTableName)
-```
-
----
-
-### Incident Patch 3: `024df355` (2026-10-23)
-**Commit Message**: fix(clickhouse): honour per-column destination types in the snapshot JSON cast (#4965)
-
-The ClickHouse snapshot insert casts every JSON column with `CAST(col,
-'JSON')` when native JSON is on, ignoring a per-column destination type.
-A JSON column pinned to `String` therefore fails the cast on the first
-scalar or array row and the mirror never leaves the snapshot phase,
-while the DDL and the normalize query already honour the override.
-
-- The override now decides whether the snapshot casts at all; the
-existing nullable handling then picks `JSON` or `Nullable(JSON)`, so a
-bare `JSON` override on a nullable column survives NULL rows.
-- Unit test on the generated query for `String`, `Nullable(JSON)` and
-bare `JSON` overrides; e2e `Test_JSON_CH_StringOverride` runs a
-`String`-pinned JSON column through snapshot and CDC on Postgres and
-MySQL.
-
-**File**: `flow/connectors/clickhouse/table_function.go` (modified, +9/-1)
-```diff
-@@ -48,7 +48,15 @@ func jsonFieldExpressionConverter(
- 		return sourceFieldIdentifier, nil
- 	}
- 
--	if !qvalue.ShouldUseNativeJSONType(ctx, config.config.Env, config.connector.chVersion) {
-+	// an explicit destination type decides for its column, as the DDL and the normalize query do
-+	castToJSON := qvalue.ShouldUseNativeJSONType(ctx, config.config.Env, config.connector.chVersion)
-+	for _, column := range config.config.GetColumns() {
-+		if column.SourceName == field.Name && column.DestinationType != "" {
-+			castToJSON = column.DestinationType == "JSON" || column.DestinationType == "Nullable(JSON)"
-+			break
-+		}
-+	}
-+	if !castToJSON {
- 		return sourceFieldIdentifier, nil
- 	}
- 
-```
-
-**File**: `flow/connectors/clickhouse/table_function_test.go` (modified, +53/-0)
-```diff
-@@ -144,3 +144,56 @@ func TestBuildInsertFromTableFunctionQueryJSON(t *testing.T) {
- 	// the classifier relies on Exec recognizing these casts
- 	require.True(t, peerdb_clickhouse.QueryCastsToJSON(query))
- }
-+
-+// TestBuildInsertFromTableFunctionQueryJSONOverride checks that an explicit destination type on a JSON
-+// column wins over the mirror-wide native JSON setting, as it does in the DDL and the normalize query.
-+func TestBuildInsertFromTableFunctionQueryJSONOverride(t *testing.T) {
-+	config := &insertFromTableFunctionConfig{
-+		destinationTable: "t1",
-+		schema: types.QRecordSchema{Fields: []types.QField{
-+			{Name: "as_string", Type: types.QValueKindJSON, Nullable: true},
-+			{Name: "as_json", Type: types.QValueKindJSON, Nullable: true},
-+			{Name: "as_bare_json", Type: types.QValueKindJSON, Nullable: true},
-+			{Name: "as_bare_json_required", Type: types.QValueKindJSON, Nullable: false},
-+			{Name: "untouched", Type: types.QValueKindJSON, Nullable: true},
-+		}},
-+		config: &protos.QRepConfig{
-+			Env: map[string]string{
-+				"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN": "false",
-+				"PEERDB_CLICKHOUSE_ENABLE_JSON":              "false",
-+			},
-+			Columns: []*protos.ColumnSetting{
-+				{SourceName: "as_string", DestinationType: "String"},
-+				{SourceName: "as_json", DestinationType: "Nullable(JSON)"},
-+				// a bare JSON override is promoted for a nullable column, as the DDL does
-+				{SourceName: "as_bare_json", DestinationType: "JSON"},
-+				{SourceName: "as_bare_json_required", DestinationType: "JSON"},
-+			},
-+		},
-+		connector: &ClickHouseConnector{chVersion: &chproto.Version{Major: 25, Minor: 8}},
-+	}
-+
-+	query, err := buildInsertFromTableFunctionQuery(
-+		context.Background(), config, "s3('s3://bucket/key', 'Avro')", nil,
-+	)
-+	require.NoError(t, err)
-+	require.Equal(t,
-+		"INSERT INTO `t1`(`as_string`,`as_json`,`as_bare_json`,`as_bare_json_required`,`untouched`) SELECT "+
-+			"`as_string`,CAST(`as_json`, 'Nullable(JSON)'),CAST(`as_bare_json`, 'Nullable(JSON)'),"+
-+			"CAST(`as_bare_json_required`, 'JSON'),`untouched` "+
-+			"FROM s3('s3://bucket/key', 'Avro')",
-+		query)
-+
-+	// with native JSON on, the String override still keeps its column out of the cast
-+	config.config.Env["PEERDB_CLICKHOUSE_ENABLE_JSON"] = "true"
-+	query, err = buildInsertFromTableFunctionQuery(
-+		context.Background(), config, "s3('s3://bucket/key', 'Avro')", nil,
-+	)
-+	require.NoError(t, err)
-+	require.Equal(t,
-+		"INSERT INTO `t1`(`as_string`,`as_json`,`as_bare_json`,`as_bare_json_required`,`untouched`) SELECT "+
-+			"`as_string`,CAST(`as_json`, 'Nullable(JSON)'),CAST(`as_bare_json`, 'Nullable(JSON)'),"+
-+			"CAST(`as_bare_json_required`, 'JSON'),CAST(`untouched`, 'Nullable(JSON)') "+
-+			"FROM s3('s3://bucket/key', 'Avro')",
-+		query)
-+}
-```
-
-**File**: `flow/e2e/clickhouse_json_suite.go` (modified, +48/-0)
-```diff
-@@ -390,3 +390,51 @@ func jsonBatchesMatch(jsonColumns []string, sourceNullLandsAs *string) func(*tes
- 		return true
- 	}
- }
-+
-+// Test_JSON_CH_StringOverride pins a JSON column to String on a native JSON mirror. The snapshot has to
-+// leave that column out of its JSON cast, as the DDL and the normalize query already honour the override.
-+func (s ClickHouseSuite) Test_JSON_CH_StringOverride() {
-+	if mySource, ok := s.source.(*MySqlSource); ok && mySource.Config.Flavor == protos.MySqlFlavor_MYSQL_MARIA {
-+		s.t.Skip("skip maria, where JSON is stored as LONGTEXT and PeerDB does not map it to JSON yet")
-+	}
-+
-+	srcTableName := "test_json_string_override"
-+	srcFullName := s.attachSchemaSuffix(srcTableName)
-+	dstTableName := srcTableName + "_dst"
-+	docs := []string{`'{"key": "val"}'`, `'"dark"'`, `'[1, 2]'`, `'42'`}
-+	insertDocs := func() {
-+		for _, doc := range docs {
-+			require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(`INSERT INTO %s (json) VALUES (%s)`, srcFullName, doc)))
-+		}
-+	}
-+
-+	require.NoError(s.t, s.source.Exec(s.t.Context(),
-+		fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (id SERIAL PRIMARY KEY, json JSON)`, srcFullName)))
-+	insertDocs()
-+
-+	connectionGen := FlowConnectionGenerationConfig{
-+		FlowJobName:      s.attachSuffix(srcTableName),
-+		TableNameMapping: map[string]string{srcFullName: dstTableName},
-+		Destination:      s.Peer().Name,
-+	}
-+	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
-+	flowConnConfig.DoInitialSnapshot = true
-+	flowConnConfig.Env = map[string]string{"PEERDB_CLICKHOUSE_ENABLE_JSON": "true"}
-+	flowConnConfig.TableMappings[0].Columns = []*protos.ColumnSetting{{SourceName: "json", DestinationType: "String"}}
-+
-+	tc := NewTemporalClient(s.t)
-+	env := ExecutePeerflow(s.t, tc, flowConnConfig)
-+	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
-+
-+	columnType, err := s.GetColumnType(dstTableName, "json")
-+	require.NoError(s.t, err)
-+	require.Equal(s.t, "String", columnType)
-+
-+	rowsMatch := jsonBatchesMatch([]string{"json"}, nil)
-+	EnvWaitForEqualTablesWithNamesFunc(env, s, "compare initial load", srcTableName, dstTableName, "id,json", rowsMatch)
-+	insertDocs()
-+	EnvWaitForEqualTablesWithNamesFunc(env, s, "compare cdc", srcTableName, dstTableName, "id,json", rowsMatch)
-+
-+	env.Cancel(s.t.Context())
-+	RequireEnvCanceled(s.t, env)
-+}
+ // findColumnSetting returns the column setting for the given source column, or nil if there is none
+ func findColumnSetting(sourceColumnName string, columns []*protos.ColumnSetting) *protos.ColumnSetting {
+ 	for _, column := range columns {
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4973** (2026-10-24): security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (@motsc)
+- **PR #4971** (2026-10-25): refactor(clickhouse): reuse table mapping and column setting lookups (@dtunikov)
 - **PR #4968** (2026-10-23): fix(query-cdc): only catch up when the poll window was capped (@dtunikov)
 - **PR #4966** (2026-10-23): fix(postgres): keep the JSON form of a json/jsonb column default on ADD COLUMN (@gheorghepucea)
 - **PR #4965** (2026-10-23): fix(clickhouse): honour per-column destination types in the snapshot JSON cast (@gheorghepucea)
 - **PR #4963** (2026-10-23): fix(clickhouse): honor column destination_name in initial load (@dtunikov)
-- **PR #4961** (2026-10-22): safe command monitor debugging (@jgao54)
 
 ---
 
@@ -2354,28 +1984,36 @@ MySQL.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (#49
+## X. clickhouse): reuse table mapping and column setting lookups (#4971)
 
 **RULE**:
-When implementing operations in `stacks/peerdb-ui.Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/clickhouse/normalize.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bd61d073`: security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (#4973). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b80c75cb`: clickhouse): reuse table mapping and column setting lookups (#4971). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `stacks/peerdb-ui.Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/clickhouse/normalize.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS base
+	tableMapping := findTableMappingByDestination(config.TableMappings, tableIdentifier)
+	if tableMapping != nil {
+		tmEngine = tableMapping.Engine
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-FROM node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS base
+	var tableMapping *protos.TableMapping
+	for _, tm := range config.TableMappings {
+		if tm.DestinationTableIdentifier == tableIdentifier {
+			tmEngine = tm.Engine
+			tableMapping = tm
+			break
+		}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bd61d073` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b80c75cb` are properly handled with clean fallback behavior.

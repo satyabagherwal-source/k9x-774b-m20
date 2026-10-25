@@ -1135,8 +1135,8 @@
     "sourceUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
     "sourceVersion": "hf-facebookai-xlm-roberta-base",
     "license": "Open-Source",
-    "contentHash": "66c6bb3e2421961c03d9fc9bc267a8e29b6d50f4d6a811d52c7ae1635f6a5a0e",
-    "lastHarvestedAt": "2026-10-21T03:30:30.063Z",
+    "contentHash": "b87b48d3d1718c46f59aaadf2e09a653eec7bfcd82cb11de257172adf9ddc1b8",
+    "lastHarvestedAt": "2026-10-25T23:39:17.217Z",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base"
   },
   "hf-openai-community-gpt2": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "4dbe4f57",
+    "sourceVersion": "b80c75cb",
     "license": "AGPL-3.0",
-    "contentHash": "7cdbf1f45d26f9d23f1525c680b73738dd130e5b2395cfc0d0ff2bc769deb208",
-    "lastHarvestedAt": "2026-10-25T10:10:53.541Z",
+    "contentHash": "33d9989c180e7a1e82630d10e43b84a865b0f02580560122ec837ba31ed8fa2c",
+    "lastHarvestedAt": "2026-10-25T23:39:26.435Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -6083,10 +6083,10 @@
     "repository": "dockview/dockview",
     "platform": "github",
     "sourceUrl": "https://github.com/dockview/dockview",
-    "sourceVersion": "173734ec",
+    "sourceVersion": "c26490bf",
     "license": "NOASSERTION",
-    "contentHash": "ad5cd8e75e50262397979627c9498b6c6b300d6ec4f5a694e90b7e8ecd43d6ef",
-    "lastHarvestedAt": "2026-10-21T04:21:58.000Z",
+    "contentHash": "975940c065a907f433b21e526a594e95d29ed43db59ecf6e7ed948ee9dcfaefd",
+    "lastHarvestedAt": "2026-10-25T23:39:17.362Z",
     "learningId": "learn-github-dockview-dockview"
   },
   "kubearmor-kubearmor": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "3bf26499",
+    "sourceVersion": "a927b3d6",
     "license": "MIT",
-    "contentHash": "e8c977e299d8932cab2eb56e77b3b0cf588fa1c2e99ba111630ceb4ed6d6db91",
-    "lastHarvestedAt": "2026-10-25T04:58:31.428Z",
+    "contentHash": "f5c52edb5942deb0b331b20917bbddd088d21d2d8a02bf11cdc569abe930a0f0",
+    "lastHarvestedAt": "2026-10-25T23:39:19.633Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {

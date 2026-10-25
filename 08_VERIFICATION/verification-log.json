@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-RO2W",
-    "timestamp": "2026-10-23T10:54:25.448Z",
-    "repository": "diggerhq/digger",
-    "learningId": "learn-github-diggerhq-digger",
-    "contentHash": "c63310c6529b4260043644c47e791192903f4b82c575a0af4cca1f4910efe1b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-RQ1Y",
-    "timestamp": "2026-10-23T10:54:28.006Z",
-    "repository": "DefGuard/defguard",
-    "learningId": "learn-github-defguard-defguard",
-    "contentHash": "91bcaf14c6758ad8c447d82831011a64aeef72ab118ee8033d9ab2bd6c48f643",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-5VH2",
-    "timestamp": "2026-10-23T11:05:28.214Z",
-    "repository": "adobe/react-spectrum",
-    "learningId": "learn-github-adobe-react-spectrum",
-    "contentHash": "1c545c8b828c65b430113e9a3f924e5421cc921c5d073e251dd54cda1f051ea3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-5XFV",
-    "timestamp": "2026-10-23T11:05:30.763Z",
-    "repository": "salvo-rs/salvo",
-    "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "e856536161be648df257a21d8f06bb1e059f99edf5df12cfa1730489f03f214f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-605E",
     "timestamp": "2026-10-23T11:05:34.274Z",
     "repository": "callstack/react-native-paper",
@@ -7492,6 +7432,66 @@
     "contentHash": "23f8156f03c3b909af8e214a147a3a48c7d4e5350fa1fa30481a31e136aadd43",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-YZQ6",
+    "timestamp": "2026-10-25T23:39:17.214Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "b87b48d3d1718c46f59aaadf2e09a653eec7bfcd82cb11de257172adf9ddc1b8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-YZU5",
+    "timestamp": "2026-10-25T23:39:17.357Z",
+    "repository": "dockview/dockview",
+    "learningId": "learn-github-dockview-dockview",
+    "contentHash": "975940c065a907f433b21e526a594e95d29ed43db59ecf6e7ed948ee9dcfaefd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-Z1L8",
+    "timestamp": "2026-10-25T23:39:19.628Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "f5c52edb5942deb0b331b20917bbddd088d21d2d8a02bf11cdc569abe930a0f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-Z6U8",
+    "timestamp": "2026-10-25T23:39:26.432Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "33d9989c180e7a1e82630d10e43b84a865b0f02580560122ec837ba31ed8fa2c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

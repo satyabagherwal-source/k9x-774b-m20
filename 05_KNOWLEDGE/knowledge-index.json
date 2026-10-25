@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T23:32:54.868Z",
+  "last_updated": "2026-10-25T23:39:26.373Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -739,8 +739,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "3bf26499",
-      "content_hash": "e8c977e299d8932cab2eb56e77b3b0cf588fa1c2e99ba111630ceb4ed6d6db91",
+      "source_version": "a927b3d6",
+      "content_hash": "f5c52edb5942deb0b331b20917bbddd088d21d2d8a02bf11cdc569abe930a0f0",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -778,6 +778,11 @@
           "number": 4063,
           "title": "POSIX File Lock Sanitization with Inode/Device Verification and O_NOFOLLOW",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4491,
+          "title": "daemon): stop trusting group-writable ancestors of the socket dir (#4929)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -785,7 +790,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:58:31.361Z",
+      "verified_at": "2026-10-25T23:39:19.544Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8800,8 +8805,8 @@
       "slug": "dockview-dockview",
       "platform": "github",
       "source_url": "https://github.com/dockview/dockview",
-      "source_version": "173734ec",
-      "content_hash": "ad5cd8e75e50262397979627c9498b6c6b300d6ec4f5a694e90b7e8ecd43d6ef",
+      "source_version": "c26490bf",
+      "content_hash": "975940c065a907f433b21e526a594e95d29ed43db59ecf6e7ed948ee9dcfaefd",
       "dossier_path": "07_PROJECT_LEARNING/dockview-dockview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dockview-dockview-learnings.md",
       "promoted_rules": [
@@ -8819,6 +8824,11 @@
           "number": 3518,
           "title": "Merge pull request #1703 from dockview/feat/group-envelope-ergonomics",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4490,
+          "title": "Merge pull request #1709 from mayuriphad/fix/popout-resize-end-timeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8826,7 +8836,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T04:21:57.959Z",
+      "verified_at": "2026-10-25T23:39:17.286Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20527,7 +20537,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
       "source_version": "hf-facebookai-xlm-roberta-base",
-      "content_hash": "66c6bb3e2421961c03d9fc9bc267a8e29b6d50f4d6a811d52c7ae1635f6a5a0e",
+      "content_hash": "b87b48d3d1718c46f59aaadf2e09a653eec7bfcd82cb11de257172adf9ddc1b8",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "promoted_rules": [
@@ -20588,7 +20598,7 @@
         "learn-huggingface-hf-facebookai-xlm-roberta-base-mv3ypies",
         "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d"
       ],
-      "verified_at": "2026-10-21T03:30:30.000Z",
+      "verified_at": "2026-10-25T23:39:17.142Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40501,8 +40511,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "4dbe4f57",
-      "content_hash": "7cdbf1f45d26f9d23f1525c680b73738dd130e5b2395cfc0d0ff2bc769deb208",
+      "source_version": "b80c75cb",
+      "content_hash": "33d9989c180e7a1e82630d10e43b84a865b0f02580560122ec837ba31ed8fa2c",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -40535,6 +40545,11 @@
           "number": 4232,
           "title": "security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (#49",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4492,
+          "title": "clickhouse): reuse table mapping and column setting lookups (#4971)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40542,7 +40557,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:10:53.484Z",
+      "verified_at": "2026-10-25T23:39:26.361Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126840,6 +126855,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T23:32:54.860Z"
+    },
+    "rule-4490": {
+      "learning_id": "rule-4490",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4490,
+      "title": "Merge pull request #1709 from mayuriphad/fix/popout-resize-end-timeout",
+      "source_url": "https://github.com/dockview/dockview",
+      "source_version": "c26490bf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T23:39:17.286Z"
+    },
+    "rule-4491": {
+      "learning_id": "rule-4491",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4491,
+      "title": "daemon): stop trusting group-writable ancestors of the socket dir (#4929)",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "a927b3d6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T23:39:19.544Z"
+    },
+    "rule-4492": {
+      "learning_id": "rule-4492",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4492,
+      "title": "clickhouse): reuse table mapping and column setting lookups (#4971)",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "b80c75cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T23:39:26.361Z"
     }
   },
   "aliases": {
