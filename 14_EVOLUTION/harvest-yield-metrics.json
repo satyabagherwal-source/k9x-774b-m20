@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T23:10:57.455Z",
-  "total_cycles_completed": 5011,
-  "total_learnings_persisted": 5011,
-  "total_rules_promoted": 4374,
+  "last_updated": "2026-10-25T23:17:30.551Z",
+  "total_cycles_completed": 5013,
+  "total_learnings_persisted": 5013,
+  "total_rules_promoted": 4375,
   "history": [
-    {
-      "timestamp": "2026-10-25T13:42:26.288Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T13:46:00.173Z",
-      "repository": "Fei2411/DS-Bot",
-      "learningId": "learn-github-fei2411-ds-bot",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T13:57:06.835Z",
       "repository": "vuetifyjs/vuetify",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T23:10:57.455Z",
       "repository": "Mintplex-Labs/anything-llm",
       "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T23:17:15.708Z",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T23:17:30.551Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

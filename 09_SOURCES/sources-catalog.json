@@ -1125,8 +1125,8 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "3c4a0b137d2a85f928d498609ba5634e4e237f8622059ef0f06b5470f34b9039",
-    "lastHarvestedAt": "2026-10-21T03:18:02.576Z",
+    "contentHash": "bd4696f0e0950b9e907295bf941b131c283c6cd78ce5e3045788bc02b140d2b7",
+    "lastHarvestedAt": "2026-10-25T23:17:15.702Z",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese"
   },
   "hf-facebookai-xlm-roberta-base": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "796c21ca",
+    "sourceVersion": "e6dbc624",
     "license": "NOASSERTION",
-    "contentHash": "a9c31fb766979a1edd943c64082118aeb6a53fecc1877931f4780f5a1176b618",
-    "lastHarvestedAt": "2026-10-25T18:15:34.599Z",
+    "contentHash": "16d526a0d6f9025582f1db4182c29a9341c016c256cc0e16594fbd5b78cda78f",
+    "lastHarvestedAt": "2026-10-25T23:17:30.546Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {

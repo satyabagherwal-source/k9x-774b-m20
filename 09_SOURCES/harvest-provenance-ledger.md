@@ -5041,3 +5041,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-25T23:10:53.428Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `51b8067b` | Multi-dimensional audit evidence | 2026-10-25T23:10:53.557Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `9b1fcab1` | Multi-dimensional audit evidence | 2026-10-25T23:10:57.451Z |
+| `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-10-25T23:17:15.702Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e6dbc624` | Multi-dimensional audit evidence | 2026-10-25T23:17:30.546Z |

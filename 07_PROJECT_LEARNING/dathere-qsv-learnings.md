@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `796c21ca`  
+> **Source Version**: `e6dbc624`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T18:15:34.218Z  
+> **Timestamp**: 2026-10-25T23:17:30.162Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T18:15:34.209Z  
+> **Harvest Timestamp**: 2026-10-25T23:17:30.153Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,26 +2203,20 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `796c21ca` (2026-10-25)
-**Commit Message**: deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (#4917)
+### Incident Patch 1: `e6dbc624` (2026-10-25)
+**Commit Message**: deps: pin Polars to the published py-2.1.0 tag (#4918)
 
-* deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd
+* deps: pin Polars to the published py-2.1.0 tag
 
-Moves the polars, polars-core and polars-arrow pins from d02c621 to
-7f902bd ("Python Polars 2.1.0", pola-rs/polars#30124), 14 commits ahead.
-Crate version (0.55.1), rust-toolchain (nightly-2026-09-01), the workspace
-[patch] and the crates/polars feature list are unchanged, so no other
-manifest edits are needed. Cargo.lock has a single polars tree and no
-unused patches.
-
-The upstream commits are mostly out-of-core/streaming memory work, plus
-COUNT(DISTINCT) in the streaming group-by (#30281) and boolean-expression
-simplification (#30293). Probed 14 NULL-heavy boolean and COUNT(DISTINCT)
-queries, plain and --streaming, on both pins: identical output.
+py-2.1.0 points at 7f902bd, the commit #4917 pinned, so the code is
+unchanged. Switch all three pins (polars, polars-core, polars-arrow) from
+rev = to tag = together, so they keep one Cargo source, set
+QSV_POLARS_REV=py-2.1.0 per the release-tag convention, and point the
+README badge and CHANGELOG entry at the release.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs: cite #4917 in the Polars CHANGELOG entry
+* docs: cite #4918 in the Polars CHANGELOG entry
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -2230,13 +2224,14 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -54,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    - **New: `CREATE [OR REPLACE] TEMP TABLE`** in `.sql` scripts ([#30256](https://github.com/pola-rs/polars/pull/30256)). It works like `CREATE TABLE`.
    - Unchanged on both revs: `REGEXP_REPLACE`, `REAL`/`DECIMAL` division and `CORR`/`COVAR` results.
    - Also lower memory for CSV scans of wide rows ([#30165](https://github.com/pola-rs/polars/pull/30165)), out-of-core streaming windows and sorts, and smaller SQL code size.
-+- **deps: Polars bumped to the Python Polars 2.1.0 release commit [`7f902bd`](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
+-- **deps: Polars bumped to the Python Polars 2.1.0 release commit [`7f902bd`](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
++- **deps: Polars bumped to [Python Polars 2.1.0](https://github.com/pola-rs/polars/releases/tag/py-2.1.0)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917), [#4918](https://github.com/dathere/qsv/pull/4918)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
  - **deps: Polars bumped to upstream rev [`34cc518`](https://github.com/pola-rs/polars/commit/34cc5185a9d7c83e9e3b6b63022fe596c6aebb53)** (from `c7da28c`, [#4875](https://github.com/dathere/qsv/pull/4875)). No `sqlp` result that already worked changes; every difference is a query that used to fail.
    - **Fixed: `COUNT(*)` over a `UNION ALL ... LIMIT n`** panicked ([#30150](https://github.com/pola-rs/polars/pull/30150)).
    - **Fixed: a correlated subquery whose table has a column named like the outer table** (`WHERE w.g = t.g` where `w` has a column `t`) failed with `StructFieldNotFound` ([#30149](https://github.com/pola-rs/polars/pull/30149)). This regressed in the `c7da28c` bump.
@@ -2248,8 +2243,8 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [[package]]
  name = "polars"
  version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
-+source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
  dependencies = [
   "getrandom 0.2.17",
   "getrandom 0.4.3",
@@ -2257,8 +2252,8 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [[package]]
  name = "polars-arrow"
  version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
-+source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
  dependencies = [
   "atoi_simd",
   "avro-schema",
@@ -2266,8 +2261,8 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [[package]]
  name = "polars-async"
  version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
-+source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
  dependencies = [
   "atomic-waker",
   "crossbeam-channel",
@@ -2275,8 +2270,8 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [[package]]
  name = "polars-buffer"
  version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
-+source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
  dependencies = [
   "bytemuck",
   "either",
@@ -2284,8 +2279,8 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [[package]]
  name = "polars-compute"
  version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
-+source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
  dependencies = [
   "atoi_simd",
   "bytemuck",
@@ -2293,8 +2288,8 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [[package]]
  name = "polars-config"
  version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
-+source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
  dependencies = [
   "polars-error",
   "serde",
@@ -2302,8 +2297,8 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [[package]]
  name = "polars-core"
  version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
-+source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
  dependencies = [
   "atoi_simd",
   "bitflags 2.13.2",
@@ -2311,8 +2306,8 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [[package]]
  name = "polars-defs"
  version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
-+source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
  dependencies = [
   "chrono",
   "chrono-tz",
@@ -2320,8 +2315,8 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [[package]]
  name = "polars-descriptions"
  version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
-+source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
  dependencies = [
   "serde",
   "strum_macros 0.28.0",
@@ -2329,8 +2324,8 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [[package]]
  name = "polars-dtype"
  version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
-+source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
  dependencies = [
   "boxcar",
   "hashbrown 0.17.1",
@@ -2338,8 +2333,8 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [[package]]
  name = "polars-error"
  version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
-+source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
  dependencies = [
   "avro-schema",
   "object_store",
@@ -2347,10 +2342,19 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [[package]]
  name = "polars-expr"
  version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
-+source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
  dependencies = [
-  "bitflag
+  "bitflags 2.13.2",
+  "hashbrown 0.17.1",
+@@ -6295,7 +6295,7 @@ dependencies = [
+ [[package]]
+ name = "polars-io"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
++source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+ 
 ```
 
 **File**: `Cargo.toml` (modified, +5/-5)
@@ -2359,10 +2363,10 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  [patch.crates-io]
  # polars-readstat-rs depends on these directly; redirect them onto the same git polars
  # revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io.
--polars-core  = { git = "https://github.com/pola-rs/polars", rev = "d02c62175ad906f3c54cda7a0d917e6a72f73865" }
--polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "d02c62175ad906f3c54cda7a0d917e6a72f73865" }
-+polars-core  = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92" }
-+polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92" }
+-polars-core  = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92" }
+-polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92" }
++polars-core  = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0" }
++polars-arrow = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0" }
  # Polars (since py-2.0.0) calls HashTable::prefetch_{get,insert}, which exist only in its
  # hashbrown fork (https://github.com/rust-lang/hashbrown/pull/727). Polars' own workspace
  # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
@@ -2370,12 +2374,12 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  #     (e.g. py-1.19.0:52ea381 to indicate that we are Python Polars 1.19.0,
  #      and the commit hash 52ea381)
  # ================================
--# QSV_POLARS_REV=py-2.0.0:d02c621
--# polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.0.0", optional = true }
--polars = { git = "https://github.com/pola-rs/polars", rev = "d02c62175ad906f3c54cda7a0d917e6a72f73865", optional = true }
-+# QSV_POLARS_REV=py-2.1.0:7f902bd
-+# polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
-+polars = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92", optional = true }
+-# QSV_POLARS_REV=py-2.1.0:7f902bd
+-# polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
+-polars = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92", optional = true }
++# QSV_POLARS_REV=py-2.1.0
++# polars = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92", optional = true }
++polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
  
  # Apache DataSketches (t-digest, HLL, Frequent Items) — upstream C++ does not
  # support big-endian targets, so we exclude the crate on big-endian builds.
@@ -2387,8 +2391,8 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
  🗄️: [Extended input support](#extended-input-support).  
  🗃️: [Limited Extended input support](#limited-extended-input-support).  
--🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.0.0:d02c621](https://img.shields.io/badge/polars-0.55.1:py--2.0.0:d02c621-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.0.0) vectorized query engine.  
-+🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:7f902bd](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:7f902bd-blue?logo=polars)](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92) vectorized query engine.  
+-🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:7f902bd](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:7f902bd-blue?logo=polars)](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92) vectorized query engine.  
++🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0](https://img.shields.io/badge/polars-0.55.1:py--2.1.0-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
  🤖: command uses Natural Language Processing or Generative AI.  
  🏎️: multithreaded and/or faster when an index (📇) is available.  
  🚀: multithreaded even without an index.  
@@ -2400,20 +2404,20 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
  🗄️: [Extended input support](../../README.md#extended-input-support).  
  🗃️: [Limited Extended input support](../../README.md#limited-extended-input-support).  
--🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.0.0:d02c621](https://img.shields.io/badge/polars-0.55.1:py--2.0.0:d02c621-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.0.0) vectorized query engine.  
-+🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:7f902bd](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:7f902bd-blue?logo=polars)](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92) vectorized query engine.  
+-🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:7f902bd](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:7f902bd-blue?logo=polars)](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92) vectorized query engine.  
++🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0](https://img.shields.io/badge/polars-0.55.1:py--2.1.0-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
  🤖: command uses Natural Language Processing or Generative AI.  
  🏎️: multithreaded and/or faster when an index (📇) is available.  
  🚀: multithreaded even without an index.  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4918** (2026-10-25): deps: pin Polars to the published py-2.1.0 tag (@jqnatividad)
 - **PR #4917** (2026-10-25): deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (@jqnatividad)
 - **PR #4916** (2026-10-25): fix: QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs review (@jqnatividad)
 - **PR #4915** (2026-10-25): fix(index): compare index staleness at full mtime precision (@jqnatividad)
 - **PR #4914** (2026-10-25): fix: describegpt subprocesses and `to parquet` read piped stdin / .tsv with the right delimiter (@jqnatividad)
 - **PR #4913** (2026-10-25): fix(validate): uniqueCombinedWith column checks, duplicate-header indices, dynamicEnum index, schema URLs (@jqnatividad)
-- **PR #4912** (2026-10-24): fix(validate): #4911 follow-ups (boolean dynamicEnum, $id-scoped $refs, test helper) (@jqnatividad)
 
 ---
 
@@ -2433,13 +2437,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (#4917)
+## X. deps: pin Polars to the published py-2.1.0 tag (#4918)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `796c21ca`: deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (#4917). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e6dbc624`: deps: pin Polars to the published py-2.1.0 tag (#4918). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2447,14 +2451,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **deps: Polars bumped to the Python Polars 2.1.0 release commit [`7f902bd`](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
+- **deps: Polars bumped to [Python Polars 2.1.0](https://github.com/pola-rs/polars/releases/tag/py-2.1.0)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917), [#4918](https://github.com/dathere/qsv/pull/4918)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- **deps: Polars bumped to the Python Polars 2.1.0 release commit [`7f902bd`](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `796c21ca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e6dbc624` are properly handled with clean fallback behavior.

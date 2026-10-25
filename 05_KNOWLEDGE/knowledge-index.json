@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T23:10:57.396Z",
+  "last_updated": "2026-10-25T23:17:30.488Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7846,8 +7846,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "796c21ca",
-      "content_hash": "a9c31fb766979a1edd943c64082118aeb6a53fecc1877931f4780f5a1176b618",
+      "source_version": "e6dbc624",
+      "content_hash": "16d526a0d6f9025582f1db4182c29a9341c016c256cc0e16594fbd5b78cda78f",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8045,6 +8045,11 @@
           "number": 4410,
           "title": "deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (#4917)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4487,
+          "title": "deps: pin Polars to the published py-2.1.0 tag (#4918)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8052,7 +8057,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T18:15:34.530Z",
+      "verified_at": "2026-10-25T23:17:30.477Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21918,7 +21923,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "3c4a0b137d2a85f928d498609ba5634e4e237f8622059ef0f06b5470f34b9039",
+      "content_hash": "bd4696f0e0950b9e907295bf941b131c283c6cd78ce5e3045788bc02b140d2b7",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "promoted_rules": [
@@ -21965,7 +21970,7 @@
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko",
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje"
       ],
-      "verified_at": "2026-10-21T03:18:02.492Z",
+      "verified_at": "2026-10-25T23:17:15.631Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126783,6 +126788,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T23:10:57.388Z"
+    },
+    "rule-4487": {
+      "learning_id": "rule-4487",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4487,
+      "title": "deps: pin Polars to the published py-2.1.0 tag (#4918)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "e6dbc624",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T23:17:30.477Z"
     }
   },
   "aliases": {

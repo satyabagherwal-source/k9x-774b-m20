@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-FUU4",
-    "timestamp": "2026-10-23T10:45:14.332Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "1086d06d80778acf22da41428d32a8e7cb353ba24ef2235759acee3774652cbb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-JOSC",
-    "timestamp": "2026-10-23T10:48:13.116Z",
-    "repository": "grpc/grpc-rust",
-    "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "abee897c1c8dd0ef0c5a533ee731407706627c412f3c83fbe9c8bcc25cce8df9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-RLKE",
     "timestamp": "2026-10-23T10:54:22.190Z",
     "repository": "cypress-io/cypress",
@@ -7490,6 +7460,36 @@
     "repository": "Mintplex-Labs/anything-llm",
     "learningId": "learn-github-mintplex-labs-anything-llm",
     "contentHash": "2e3761b103ec6f360d7917f636377e223217a30ad777c261e5a86f8f9b517ae6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-6O1F",
+    "timestamp": "2026-10-25T23:17:15.699Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "contentHash": "bd4696f0e0950b9e907295bf941b131c283c6cd78ce5e3045788bc02b140d2b7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-6ZHR",
+    "timestamp": "2026-10-25T23:17:30.543Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "16d526a0d6f9025582f1db4182c29a9341c016c256cc0e16594fbd5b78cda78f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
