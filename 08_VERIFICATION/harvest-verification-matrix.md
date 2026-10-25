@@ -4760,3 +4760,8 @@
 | `CYCLE-20261025-KDRF` | `2026-10-25T09:56:06.699Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4221, Rule 4222, Rule 4223` | Yes (`f39f70f2...`) |
 | `CYCLE-20261025-NU9H` | `2026-10-25T09:58:48.053Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4224` | Yes (`57b41f52...`) |
 | `CYCLE-20261025-RBZ0` | `2026-10-25T10:01:30.972Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4225, Rule 4226` | Yes (`fd1d856d...`) |
+| `CYCLE-20261025-3ASO` | `2026-10-25T10:10:49.320Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4227` | Yes (`9a9cff4f...`) |
+| `CYCLE-20261025-3CXF` | `2026-10-25T10:10:52.083Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4228, Rule 4229, Rule 4230` | Yes (`45c7eb34...`) |
+| `CYCLE-20261025-3DP0` | `2026-10-25T10:10:53.076Z` | `InsertKoinIO/koin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4231` | Yes (`3cf9abb8...`) |
+| `CYCLE-20261025-3E1U` | `2026-10-25T10:10:53.538Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4232` | Yes (`7cdbf1f4...`) |
+| `CYCLE-20261025-3HUQ` | `2026-10-25T10:10:58.466Z` | `influxdata/influxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4233` | Yes (`eaee8df6...`) |

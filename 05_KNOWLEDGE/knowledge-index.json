@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T10:01:30.886Z",
+  "last_updated": "2026-10-25T10:10:58.421Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3547,8 +3547,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "760378b7",
-      "content_hash": "385792884a7295d370d455105f3159ed3e25fbb66ade93f6a473f03a99b38f81",
+      "source_version": "566bc371",
+      "content_hash": "9a9cff4f5bd5866b07998c8a1c9385df0ba614d0f3faef44f2df7ad8dd485ae2",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -3576,6 +3576,11 @@
           "number": 3675,
           "title": "lint-framework): position highlights correctly under zoomed or scaled ancestors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4227,
+          "title": "popup): refine UI layout, animated controls, and form ergonomics (#4541)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3583,7 +3588,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:51:42.159Z",
+      "verified_at": "2026-10-25T10:10:49.261Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28224,8 +28229,8 @@
       "slug": "influxdata-influxdb",
       "platform": "github",
       "source_url": "https://github.com/influxdata/influxdb",
-      "source_version": "06200ef9",
-      "content_hash": "ee7eb3684b9dd2b68f271fba11e59728a0d9634d89a9c96c6522ee0afd371954",
+      "source_version": "185688a5",
+      "content_hash": "eaee8df6720047da83f998a1c93ab42f5936d441fe5f166145b78bc18bb9933d",
       "dossier_path": "07_PROJECT_LEARNING/influxdata-influxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/influxdata-influxdb-learnings.md",
       "promoted_rules": [
@@ -28243,6 +28248,11 @@
           "number": 2279,
           "title": "Dynamic SELinux Socket Mount-Mask Isolation via Systemd Generators",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4233,
+          "title": "py_api): bind WAL RecordBatch columns by name for PE plugins (#27714)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28250,7 +28260,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:10:13.792Z",
+      "verified_at": "2026-10-25T10:10:58.411Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28305,14 +28315,19 @@
       "slug": "insertkoinio-koin",
       "platform": "github",
       "source_url": "https://github.com/InsertKoinIO/koin",
-      "source_version": "dc86ef8d",
-      "content_hash": "e53723dfa4b9f9c8380e38e9b0dac6909b67815993fba37ae1ddc390c5926ab5",
+      "source_version": "d39a4f8e",
+      "content_hash": "3cf9abb83506d3e91080d8263cb9002296e6f51c5658021d22a29e45613a84bd",
       "dossier_path": "07_PROJECT_LEARNING/insertkoinio-koin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/insertkoinio-koin-learnings.md",
       "promoted_rules": [
         {
           "number": 2232,
           "title": "#2379 - CoreResolverV2 resolved root factory's scoped deps from _root_",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4231,
+          "title": "Merge pull request #2481 from InsertKoinIO/arnaud/ktz-4991-skills-repo-link",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -28321,7 +28336,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:19:03.068Z",
+      "verified_at": "2026-10-25T10:10:53.021Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39522,8 +39537,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "dec84ad2",
-      "content_hash": "4726ed226b5125ae462b4ebe9862ee76b43fb3ed6f7356b54492a84eb10ad3fc",
+      "source_version": "4dbe4f57",
+      "content_hash": "7cdbf1f45d26f9d23f1525c680b73738dd130e5b2395cfc0d0ff2bc769deb208",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -39551,6 +39566,11 @@
           "number": 3748,
           "title": "postgres): keep unchanged toast columns on delete rows (#4951)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4232,
+          "title": "security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (#49",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39558,7 +39578,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:22:21.382Z",
+      "verified_at": "2026-10-25T10:10:53.484Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60977,7 +60997,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
       "source_version": "hf-openmoss-team-moss-image-sft",
-      "content_hash": "c6c639bbf463088642e32c31976390c10b99c803a112ffa7aea85c393d4866bb",
+      "content_hash": "45c7eb344ff66e9bcc49f3a2a7f965896fc3f8245f24b452be4600551121941c",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "promoted_rules": [
@@ -61010,6 +61030,21 @@
           "number": 2020,
           "title": "Overlap-Blended Latent Spatial Tiling for Generative Decoders",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4228,
+          "title": "Model Artifact Provenance & Configuration Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4229,
+          "title": "Inference-Only Artifact Security Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4230,
+          "title": "License & Provenance Chain Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61017,7 +61052,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T15:56:25.614Z",
+      "verified_at": "2026-10-25T10:10:52.030Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -121682,6 +121717,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T10:01:30.868Z"
+    },
+    "rule-4227": {
+      "learning_id": "rule-4227",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4227,
+      "title": "popup): refine UI layout, animated controls, and form ergonomics (#4541)",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "566bc371",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:10:49.261Z"
+    },
+    "rule-4228": {
+      "learning_id": "rule-4228",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4228,
+      "title": "Model Artifact Provenance & Configuration Integrity",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
+      "source_version": "hf-openmoss-team-moss-image-sft",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:10:52.030Z"
+    },
+    "rule-4229": {
+      "learning_id": "rule-4229",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4229,
+      "title": "Inference-Only Artifact Security Boundary",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
+      "source_version": "hf-openmoss-team-moss-image-sft",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:10:52.030Z"
+    },
+    "rule-4230": {
+      "learning_id": "rule-4230",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4230,
+      "title": "License & Provenance Chain Enforcement",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
+      "source_version": "hf-openmoss-team-moss-image-sft",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:10:52.030Z"
+    },
+    "rule-4231": {
+      "learning_id": "rule-4231",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4231,
+      "title": "Merge pull request #2481 from InsertKoinIO/arnaud/ktz-4991-skills-repo-link",
+      "source_url": "https://github.com/InsertKoinIO/koin",
+      "source_version": "d39a4f8e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:10:53.021Z"
+    },
+    "rule-4232": {
+      "learning_id": "rule-4232",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4232,
+      "title": "security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (#49",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "4dbe4f57",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:10:53.484Z"
+    },
+    "rule-4233": {
+      "learning_id": "rule-4233",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4233,
+      "title": "py_api): bind WAL RecordBatch columns by name for PE plugins (#27714)",
+      "source_url": "https://github.com/influxdata/influxdb",
+      "source_version": "185688a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:10:58.411Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `dec84ad2`  
+> **Source Version**: `4dbe4f57`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:22:21.022Z  
+> **Timestamp**: 2026-10-25T10:10:53.224Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:22:20.723Z  
+> **Harvest Timestamp**: 2026-10-25T10:10:52.763Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1860,270 +1860,62 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dec84ad2` (2026-10-22)
-**Commit Message**: fix(postgres): keep unchanged toast columns on delete rows (#4951)
+### Incident Patch 1: `bd61d073` (2026-10-24)
+**Commit Message**: security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (#4973)
 
-Fixes #4917
+# Security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497)
 
-The Postgres destination wrote `""` as `_peerdb_unchanged_toast_columns`
-for delete rows, which
-dropped the `_peerdb_not_backfilled_delete` marker from `cdc.go`. If the
-batch also held an insert or
-update for the table, the key-only delete matched the all-columns delete
-arm in the normalize MERGE
-and wrote NULLs into the soft-deleted row, or failed with 23502 on a NOT
-NULL column.
-`utils/stream.go` already writes the record's unchanged toast columns
-for the other destinations,
-and this change does the same.
 
-`Test_Soft_Delete_Key_Only_Delete_With_Insert` in
-`e2e/postgres_postgres` commits an insert and a
-key-only delete in one transaction, then checks that the soft-deleted
-row keeps its values.
-`Test_Soft_Delete_Basic` never caught this because its delete batch has
-no other record.
+## What this changes
 
-I could not run the e2e suite locally, since it needs the Tilt stack.
-gofmt is clean on both files.
-`go vet` did not run either, because the protos are not generated in my
-checkout. CI is the first
-real run of the test.
+`stacks/peerdb-ui.Dockerfile` base image:
 
-**File**: `flow/connectors/postgres/postgres_destination.go` (modified, +1/-1)
-```diff
-@@ -162,7 +162,7 @@ func syncRecordsCore[Items model.Items](
- 					2,
- 					itemsJSON,
- 					req.SyncBatchID,
--					"",
-+					utils.KeysToString(typedRecord.UnchangedToastColumns),
- 				}
- 
- 			case *model.MessageRecord[Items]:
+```
+- FROM node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS base
++ FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS base
 ```
 
-**File**: `flow/e2e/postgres_postgres/postgres_test.go` (modified, +66/-0)
+The old digest was resolved through the Docker registry API (index →
+amd64 manifest `sha256:83f1c388…`) and matches **node:24.21.0-alpine** —
+below the 24.22.1 fix. The new digest is the verified `24.22.1-alpine`
+multi-arch index (Docker Hub, pushed 2026-10-22), resolving the tag
+ambiguity that a floating `24-alpine` digest pin created while staying
+digest-pinned as this repo prefers.
+
+## Verification
+- Old digest identity proven via registry manifest comparison with the
+`24.21.0-alpine` tag digests (amd64 `83f1c388…`).
+- New digest fetched from the registry API for tag `24.22.1-alpine` on
+2026-10-23; `docker buildx` will verify platform manifests at pull time
+as usual.
+- Same-major patch bump (24.21.0 → 24.22.1); alpine base unchanged.
+Build-only change,
+
+**File**: `stacks/peerdb-ui.Dockerfile` (modified, +1/-1)
 ```diff
-@@ -965,6 +965,72 @@ func (s PeerFlowE2ETestSuitePG) Test_Soft_Delete_Insert_After_Delete() {
- 	require.Equal(s.t, int64(0), numRows)
- }
+@@ -1,7 +1,7 @@
+ # syntax=docker/dockerfile:1.27@sha256:bde3983e9c939224420ddaf6b784cc30e09b035a4dea01f581230c50809f372e
  
-+func (s PeerFlowE2ETestSuitePG) Test_Soft_Delete_Key_Only_Delete_With_Insert() {
-+	tc := e2e.NewTemporalClient(s.t)
-+
-+	cmpTableName := s.attachSchemaSuffix("test_softdel_kod")
-+	srcTableName := cmpTableName + "_src"
-+	dstTableName := s.attachSchemaSuffix("test_softdel_kod_dst")
-+
-+	_, err := s.Conn().Exec(s.t.Context(), fmt.Sprintf(`
-+		CREATE TABLE IF NOT EXISTS %s (
-+			id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-+			c1 INT,
-+			c2 INT
-+		);
-+	`, srcTableName))
-+	require.NoError(s.t, err)
-+
-+	config := &protos.FlowConnectionConfigs{
-+		FlowJobName:     s.attachSuffix("test_softdel_kod"),
-+		DestinationName: s.Peer().Name,
-+		TableMappings: []*protos.TableMapping{
-+			{
-+				SourceTableIdentifier:      srcTableName,
-+				DestinationTableIdentifier: dstTableName,
-+			},
-+		},
-+		SourceName:        e2e.GeneratePostgresPeer(s.t).Name,
-+		SoftDeleteColName: "_PEERDB_IS_DELETED",
-+		SyncedAtColName:   "_PEERDB_SYNCED_AT",
-+		MaxBatchSize:      100,
-+	}
-+
-+	env := e2e.ExecutePeerflow(s.t, tc, config)
-+	e2e.SetupCDCFlowStatusQuery(s.t, env, config)
-+
-+	_, err = s.Conn().Exec(s.t.Context(), fmt.Sprintf(`
-+			INSERT INTO %s(c1,c2) VALUES (1,2)`, srcTableName))
-+	e2e.EnvNoError(s.t, env, err)
-+	e2e.EnvWaitFor(s.t, env, 3*time.Minute, "normalize row", func() bool {
-+		return s.comparePGTables(srcTableName, dstTableName, "id,c1,c2") == nil
-+	})
-+	_, err = s.Conn().Exec(s.t.Context(), fmt.Sprintf(`
-+			CREATE TABLE %s AS SELECT * FROM %s`, cmpTableName, srcTableName))
-+	e2e.EnvNoError(s.t, env, err)
-+
-+	// The insert gives the batch an update arm for empty unchanged toast columns,
-+	// which the key-only delete of id=1 must not take.
-+	tx, err := s.Conn().Begin(s.t.Context())
-+	e2e.EnvNoError(s.t, env, err)
-+	_, err = tx.Exec(s.t.Context(), fmt.Sprintf(`
-+			INSERT INTO %s(c1,c2) VALUES (3,4)`, srcTableName))
-+	e2e.EnvNoError(s.t, env, err)
-+	_, err = tx.Exec(s.t.Context(), fmt.Sprintf(`
-+			DELETE FROM %s WHERE id=1`, srcTableName))
-+	e2e.EnvNoError(s.t, env, err)
-+	e2e.EnvNoError(s.t, env, tx.Commit(s.t.Context()))
-+
-+	e2e.EnvWaitFor(s.t, env, 3*time.Minute, "normalize transaction", func() bool {
-+		return s.comparePGTables(srcTableName, dstTableName+` WHERE NOT "_PEERDB_IS_DELETED"`, "id,c1,c2") == nil
-+	})
-+
-+	env.Cancel(s.t.Context())
-+	e2e.RequireEnvCanceled(s.t, env)
-+
-+	require.NoError(s.t, s.comparePGTables(cmpTableName, dstTableName+` WHERE "_PEERDB_IS_DELETED"`, "id,c1,c2"))
-+}
-+
- func (s PeerFlowE2ETestSuitePG) Test_Supported_Mixed_Case_Table() {
- 	tc := e2e.NewTemporalClient(s.t)
- 
+ # Base stage
+-FROM node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS base
++FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS base
+ ENV TZ=UTC
+ ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+ RUN apk add --no-cache openssl && \
 ```
 
 ---
 
-### Incident Patch 2: `26ab341e` (2026-10-22)
-**Commit Message**: fix(clickhouse): write {} for SQL NULL into plain JSON column on CDC (#4955)
+### Incident Patch 2: `ab1d1afe` (2026-10-23)
+**Commit Message**: fix(clickhouse): honor column destination_name in initial load (#4963)
 
-- With `PEERDB_CLICKHOUSE_ENABLE_JSON` on and `PEERDB_NULLABLE` off, a
-SQL NULL in a Postgres/MySQL JSON column failed the CDC normalize query
-on `''::JSON` and stalled the mirror.
-- The `JSON` projection now routes the empty string to `{}`, the same
-guard `Nullable(JSON)` already has for NULL. Non-empty values are cast
-exactly as before.
-- No version gate: it turns a failing batch into a value.
+The ClickHouse initial load inserted into the source column name,
+ignoring `ColumnSetting.destination_name`. A renamed column failed the
+snapshot with `No such column`, while CDC normalize already used the new
+name. The UI never sets `destination_name`, so this only affects API
+users.
 
-Tests:
-- `TestBuildQueryNullableJSON` asserts the generated projection text for
-the plain `JSON` column.
-- `Test_JSON_CH` (Postgres and MySQL to ClickHouse, native JSON on,
-nullable off) covers it end to end: the SQL NULL row is now inserted
-during the CDC phase too and is asserted to land as `{}`. Before this
-change that row stalled the mirror, which is why the test had a
-`skipNullDuringCDC` escape hatch; that is removed.
-
-Closes
-[DBI-1248](https://linear.app/clickhouse/issue/DBI-1248/peerdb-clickhouse-cdc-plain-json-column-writes-on-sql-null-from).
-
-**File**: `flow/connectors/clickhouse/normalize_query.go` (modified, +4/-2)
-```diff
-@@ -273,14 +273,16 @@ func (t *NormalizeQueryGenerator) BuildQuery(ctx context.Context) (string, error
- 				}
- 			}
- 		case "JSON":
-+			// JSONExtractString yields '' both for a SQL NULL and for a missing field, and casting '' with
-+			// ::JSON raises; every other type lands as its zero value on NULL, so write {} instead.
- 			fmt.Fprintf(&projection,
--				"JSONExtractString(_peerdb_data, %s)::JSON AS %s,",
-+				"CAST(ifNull(nullIf(JSONExtractString(_peerdb_data, %s), ''), '{}'), 'JSON') AS %s,",
- 				peerdb_clickhouse.QuoteLiteral(colName),
- 				peerdb_clickhouse.QuoteIdentifier(dstColName),
- 			)
- 			if t.enablePrimaryUpdate {
- 				fmt.Fprintf(&projectionUpdate,
--					"JSONExtractString(_peerdb_match_data, %s)::JSON AS %s,",
-+					"CAST(ifNull(nullIf(JSONExtractString(_peerdb_match_data, %s), ''), '{}'), 'JSON') AS %s,",
- 					peerdb_clickhouse.QuoteLiteral(colName),
- 					peerdb_clickhouse.QuoteIdentifier(dstColName),
- 				)
-```
-
-**File**: `flow/connectors/clickhouse/normalize_query_test.go` (modified, +5/-5)
-```diff
-@@ -131,15 +131,15 @@ func TestBuildQueryArrayOfJSON(t *testing.T) {
- }
- 
- // TestBuildQueryNullableJSON checks the projection for native JSON columns.
--// JSONExtractString yields `""` both for a JSON null and for a missing field so `"" ::JSON` errors.
-+// JSONExtractString yields `""` both for a SQL NULL and for a missing field, and casting `""` to JSON errors.
- // Nullable(JSON) column has to route `""` to NULL.
--// A non-nullable JSON column keeps the plain ::JSON cast.
-+// A non-nullable JSON column writes {} for it instead.
- func TestBuildQueryNullableJSON(t *testing.T) {
- 	const (
- 		nullableProjection = `CAST(nullIf(JSONExtractString(_peerdb_data, 'payload'), ''), 'Nullable(JSON)') AS ` + "`payload`"
- 		nullableUpdate     = `CAST(nullIf(JSONExtractString(_peerdb_match_data, 'payload'), ''), 'Nullable(JSON)') AS ` + "`payload`"
--		plainProjection    = `JSONExtractString(_peerdb_data, 'payload')::JSON AS ` + "`payload`"
--		plainUpdate        = `JSONExtractString(_peerdb_match_data, 'payload')::JSON AS ` + "`payload`"
-+		plainProjection    = `CAST(ifNull(nullIf(JSONExtractString(_peerdb_data, 'payload'), ''), '{}'), 'JSON') AS ` + "`payload`"
-+		plainUpdate        = `CAST(ifNull(nullIf(JSONExtractString(_peerdb_match_data, 'payload'), ''), '{}'), 'JSON') AS ` + "`payload`"
- 	)
- 	// ClickHouse 25.8 supports the native JSON type
- 	chVersion := &chproto.Version{Major: 25, Minor: 8}
-@@ -210,7 +210,7 @@ func TestBuildQueryNullableJSON(t *testing.T) {
- 		require.NotContains(t, query, "Nullable(Nullable(")
- 	})
- 
--	t.Run("non-nullable JSON column keeps plain cast", func(t *testing.T) {
-+	t.Run("non-nullable JSON column writes {} on empty", func(t *testing.T) {
- 		query := build(t, newSchema(false), newMapping(""), true, jsonEnabled)
- 		require.Contains(t, query, plainProjection)
- 		require.Contains(t, query, plainUpdate)
-```
-
-**File**: `flow/e2e/clickhouse_json_suite.go` (modified, +0/-9)
-```diff
-@@ -26,7 +26,6 @@ func (s ClickHouseSuite) Test_JSON_CH() {
- 		nativeJSON:         true,
- 		expectedColumnType: "JSON",
- 		sourceNullLandsAs:  &emptyObject,
--		skipNullDuringCDC:  true,
- 	})
- }
- 
-@@ -273,12 +272,6 @@ func (s ClickHouseSuite) testJSONColumns(cfg jsonColumnMirrorConfig) {
- 		if testCase.skip {
- 			continue
- 		}
--		// a SQL NULL into a plain JSON column fails on the CDC path: the normalize query extracts it as an
--		// empty string and casts that with ::JSON, which ClickHouse rejects, so the batch errors and the
--		// mirror stalls
--		if testCase.isNull && cfg.skipNullDuringCDC {
--			continue
--		}
- 		require.NoError(s.t, s.source.Exec(s.t.Context(), insertStmt(testCase.value)))
- 	}
- 	EnvWaitForEqualTablesWithNamesFunc(env, s, "compare cdc", srcTableName, dstTableName, cols, rowsMatch)
-@@ -298,8 +291,6 @@ type jsonColumnMirrorConfig struct {
- 	nativeJSON bool
- 	// nullableDestinationColumns sets PEERDB_NULLABLE, so nullable source columns get Nullable(...) on the destination
- 	nullableDestinationColumns bool
--	// skipNullDuringCDC keeps the SQL NULL case out of the CDC phase
--	skipNullDuringCDC bool
- }
- 
- // jsonColumnTestCase is one source value for the JSON column tests. value is the SQL literal to insert.
-```
-
----
-
-### Incident Patch 3: `33089ab1` (2026-10-21)
-**Commit Message**: fix(bigquery): consistent schema-ordered STRUCT JSON across snapshot and CDC (#4937)
-
-Fixes DBI-1069.
-
-STRUCT columns from BigQuery landed differently depending on which path
-replicated the row:
-- **CDC** used `map[string]any` + `json.Marshal`, which sorted keys
-alphabetically and collapsed unnamed fields into one `""` key.
-- **Snapshot** exported RECORD to Parquet with no cast. ClickHouse read
-it as a Tuple and inserted unnamed tuple text like `('nested',7)` into
-the `String` column.
-
-Changes:
-- CDC: `bigQueryRecordJSONString` writes the object in schema order.
-Unnamed fields get `_field_N`, the names BigQuery's `TO_JSON_STRING`
-uses.
-- Snapshot: `buildBigQueryExportSQL` encodes RECORD with
-`TO_JSON_STRING` (NULL stays NULL), and repeated RECORD as an array of
-JSON strings.
-
-E2E:
-- New `Test_BigQuery_CDC_Snapshot_And_CDC_Struct_JSON_Match` checks that
-a snapshot row and a CDC row with the same nested STRUCT values land
-identically, in schema order.
-- `Test_BigQuery_CDC_All_Types` now compares STRUCT output as exact
-strings instead of with `JSONEq`.
+E2E: `Test_DestinationNameColumnSetting`
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -2131,271 +1923,418 @@ strings instead of with `JSONEq`.
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `flow/connectors/bigquery/qrep_object_pull.go` (modified, +11/-0)
+**File**: `flow/connectors/clickhouse/clickhouse.go` (modified, +1/-9)
 ```diff
-@@ -520,6 +520,17 @@ func buildBigQueryExportSQL(
- 			// is timezone-unaware and its Parquet representation may not be compatible
- 			// with ClickHouse. Casting to TIMESTAMP (UTC) preserves the value.
- 			columnSelect = fmt.Sprintf("CAST(%s AS TIMESTAMP) AS %s", quotedName, quotedName)
-+		case bigquery.RecordFieldType:
-+			// Encode STRUCT as JSON here, matching CDC; otherwise ClickHouse reads the
-+			// Parquet group as a Tuple and casts it to unnamed tuple text like ('a',1).
-+			// TO_JSON_STRING keeps schema field order but returns 'null' for NULL, hence the IF.
-+			if field.Repeated {
-+				columnSelect = fmt.Sprintf(
-+					"ARRAY(SELECT TO_JSON_STRING(e) FROM UNNEST(%s) AS e WITH OFFSET AS o ORDER BY o) AS %s",
-+					quotedName, quotedName)
-+			} else {
-+				columnSelect = fmt.Sprintf("IF(%s IS NULL, NULL, TO_JSON_STRING(%s)) AS %s", quotedName, quotedName, quotedName)
-+			}
- 		}
- 		columnSelects = append(columnSelects, columnSelect)
- 	}
+@@ -350,16 +350,8 @@ func (c *ClickHouseConnector) processTableComparison(dstTableName string, srcSch
+ 	dstSchema []peerdb_clickhouse.ClickHouseColumn, peerDBColumns []string, tableMapping *protos.TableMapping,
+ ) error {
+ 	for _, srcField := range srcSchema.Columns {
+-		colName := srcField.Name
+ 		// if the column is mapped to a different name, find and use that name instead
+-		for _, col := range tableMapping.Columns {
+-			if col.SourceName == colName {
+-				if col.DestinationName != "" {
+-					colName = col.DestinationName
+-				}
+-				break
+-			}
+-		}
++		colName := resolveDestinationColumnName(srcField.Name, tableMapping.GetColumns())
+ 		found := false
+ 		// compare either the source column name or the mapped destination column name to the ClickHouse schema
+ 		for _, dstField := range dstSchema {
 ```
 
-**File**: `flow/connectors/bigquery/qrep_object_pull_test.go` (modified, +20/-0)
+**File**: `flow/connectors/clickhouse/normalize.go` (modified, +6/-17)
 ```diff
-@@ -75,6 +75,26 @@ func TestBuildBigQueryExportSQL(t *testing.T) {
- 				"SELECT `plain`, TO_JSON_STRING(`payload`) AS `payload`, ST_AsText(`geo`) AS `geo`, " +
- 				"CAST(`ts` AS TIMESTAMP) AS `ts` FROM `ds`.`tbl` FOR SYSTEM_TIME AS OF TIMESTAMP('2026-08-14 12:00:00 UTC')",
- 		},
-+		{
-+			name:    "RECORD columns are encoded as JSON strings",
-+			dsTable: datasetTable{dataset: "ds", table: "tbl"},
-+			schema: bigquery.Schema{
-+				{Name: "rec", Type: bigquery.RecordFieldType, Schema: bigquery.Schema{
-+					{Name: "b", Type: bigquery.StringFieldType},
-+				}},
-+				{Name: "recs", Type: bigquery.RecordFieldType, Repeated: true, Schema: bigquery.Schema{
-+					{Name: "b", Type: bigquery.StringFieldType},
-+				}},
-+			},
-+			snapshotStagingPath:   "gs://bucket",
-+			sourceTableIdentifier: "tbl",
-+			snapshotTime:          time.Date(2026, 8, 14, 12, 0, 0, 0, time.UTC),
-+			expected: "EXPORT DATA OPTIONS(uri='gs://bucket/tbl/*.parquet', format='PARQUET', " +
-+				"compression='GZIP', overwrite=true) AS " +
-+				"SELECT IF(`rec` IS NULL, NULL, TO_JSON_STRING(`rec`)) AS `rec`, " +
-+				"ARRAY(SELECT TO_JSON_STRING(e) FROM UNNEST(`recs`) AS e WITH OFFSET AS o ORDER BY o) AS `recs` " +
-+				"FROM `ds`.`tbl` FOR SYSTEM_TIME AS OF TIMESTAMP('2026-08-14 12:00:00 UTC')",
-+		},
- 		{
- 			name:    "watermark column filters instead of FOR SYSTEM_TIME AS OF",
- 			dsTable: datasetTable{dataset: "ds", table: "tbl"},
-```
-
-**File**: `flow/connectors/bigquery/qvalue_convert.go` (modified, +27/-8)
-```diff
-@@ -5,6 +5,7 @@ import (
- 	"encoding/json"
- 	"fmt"
- 	"math/big"
-+	"strings"
- 	"time"
+@@ -187,25 +187,14 @@ func (c *ClickHouseConnector) generateCreateTableSQLForNormalizedTable(
  
- 	"cloud.google.com/go/bigquery"
-@@ -500,19 +501,37 @@ func bigQueryRecordJSONString(schema bigquery.Schema, values []bigquery.Value) (
- 	if len(schema) != len(values) {
- 		return "", fmt.Errorf("record schema has %d fields but value has %d elements", len(schema), len(values))
- 	}
--	record := make(map[string]any, len(schema))
-+	// Build the object by hand: a map would sort keys alphabetically and
-+	// collapse unnamed fields into a single "" key.
-+	var buf strings.Builder
-+	buf.WriteByte('{')
- 	for i, field := range schema {
-+		name := field.Name
-+		if name == "" {
-+			// Same naming BigQuery uses for anonymous fields in TO_JSON_STRING.
-+			name = fmt.Sprintf("_field_%d", i+1)
-+		}
- 		value, err := bigQueryValueForJSON(field, values[i])
- 		if err != nil {
--			return "", fmt.Errorf("field %s: %w", field.Name, err)
-+			return "", fmt.Errorf("field %s: %w", name, err)
+ 		for _, column := range tableSchema.Columns {
+ 			colName := column.Name
+-			dstColName := colName
+ 			colType := types.QValueKind(column.Type)
+-			var columnNullableEnabled bool
+-			var clickHouseType string
+-			if tableMapping != nil {
+-				for _, col := range tableMapping.Columns {
+-					if col.SourceName == colName {
+-						if col.DestinationName != "" {
+-							dstColName = col.DestinationName
+-							colNameMap[colName] = dstColName
+-						}
+-						if col.DestinationType != "" {
+-							clickHouseType = col.DestinationType
+-						}
+-						columnNullableEnabled = col.NullableEnabled
+-						break
+-					}
+-				}
++			colSetting := findColumnSetting(colName, tableMapping.GetColumns())
++			dstColName := resolveDestinationColumnName(colName, tableMapping.GetColumns())
++			if dstColName != colName {
++				colNameMap[colName] = dstColName
+ 			}
++			clickHouseType := colSetting.GetDestinationType()
++			columnNullableEnabled := colSetting.GetNullableEnabled()
+ 
+ 			if clickHouseType == "" {
+ 				var err error
+```
+
+**File**: `flow/connectors/clickhouse/normalize_query.go` (modified, +5/-19)
+```diff
+@@ -138,26 +138,12 @@ func (t *NormalizeQueryGenerator) BuildQuery(ctx context.Context) (string, error
+ 
+ 	for _, column := range schema.Columns {
+ 		colName := column.Name
+-		dstColName := colName
+ 		colType := types.QValueKind(column.Type)
+-
+-		var clickHouseType string
+-		var columnNullableEnabled bool
+-		if tableMapping != nil {
+-			for _, col := range tableMapping.Columns {
+-				if col.SourceName == colName {
+-					if col.DestinationName != "" {
+-						dstColName = col.DestinationName
+-					}
+-					if col.DestinationType != "" {
+-						// TODO basic validation to avoid injection
+-						clickHouseType = col.DestinationType
+-					}
+-					columnNullableEnabled = col.NullableEnabled
+-					break
+-				}
+-			}
+-		}
++		colSetting := findColumnSetting(colName, tableMapping.GetColumns())
++		dstColName := resolveDestinationColumnName(colName, tableMapping.GetColumns())
++		// TODO basic validation to avoid injection
++		clickHouseType := colSetting.GetDestinationType()
++		columnNullableEnabled := colSetting.GetNullableEnabled()
+ 
+ 		fmt.Fprintf(&colSelector, "%s,", peerdb_clickhouse.QuoteIdentifier(dstColName))
+ 		if clickHouseType == "" {
+```
+
+**File**: `flow/connectors/clickhouse/query_cdc_sync.go` (modified, +1/-11)
+```diff
+@@ -28,17 +28,7 @@ func typedCDCTableSchema(
+ 	businessFields := make([]types.QField, 0, len(tableSchema.Columns))
+ 	sourceColumnByDest := make(map[string]string, len(tableSchema.Columns))
+ 	for _, column := range tableSchema.Columns {
+-		dstColName := column.Name
+-		if tableMapping != nil {
+-			for _, col := range tableMapping.Columns {
+-				if col.SourceName == column.Name {
+-					if col.DestinationName != "" {
+-						dstColName = col.DestinationName
+-					}
+-					break
+-				}
+-			}
+-		}
++		dstColName := resolveDestinationColumnName(column.Name, tableMapping.GetColumns())
+ 		sourceColumnByDest[dstColName] = column.Name
+ 		businessFields = append(businessFields, types.QField{
+ 			Name:     dstColName,
+```
+
+**File**: `flow/connectors/clickhouse/table_function.go` (modified, +2/-1)
+```diff
+@@ -183,8 +183,9 @@ func buildInsertFromTableFunctionQuery(
+ 			sourceFieldName = convertedExpr
  		}
--		record[field.Name] = value
--	}
--	encoded, err := json.Marshal(record)
--	if err != nil {
--		return "", err
-+		encodedName, err := json.Marshal(name)
-+		if err != nil {
-+			return "", err
-+		}
-+		encodedValue, err := json.Marshal(value)
-+		if err != nil {
-+			return "", fmt.Errorf("field %s: %w", name, err)
-+		}
-+		if i > 0 {
-+			buf.WriteByte(',')
-+		}
-+		buf.Write(encodedName)
-+		buf.WriteByte(':')
-+		buf.Write(encodedValue)
+ 
++		dstColName := resolveDestinationColumnName(colName, config.config.GetColumns())
+ 		selectedColumnNames = append(selectedColumnNames, sourceFieldName)
+-		insertedColumnNames = append(insertedColumnNames, peerdb_clickhouse.QuoteIdentifier(colName))
++		insertedColumnNames = append(insertedColumnNames, peerdb_clickhouse.QuoteIdentifier(dstColName))
  	}
--	return string(encoded), nil
-+	buf.WriteByte('}')
-+	return buf.String(), nil
+ 
+ 	// Add source schema column if needed
+```
+
+**File**: `flow/connectors/clickhouse/table_function_test.go` (modified, +24/-0)
+```diff
+@@ -81,6 +81,30 @@ func TestBuildInsertFromTableFunctionQueryArrayTime(t *testing.T) {
+ 		query)
  }
  
- func bigQueryValueForJSON(field *bigquery.FieldSchema, value bigquery.Value) (any, error) {
-```
-
-**File**: `flow/connectors/bigquery/qvalue_convert_test.go` (modified, +33/-0)
-```diff
-@@ -489,6 +489,39 @@ func TestQValueFromBigQueryValue(t *testing.T) {
- 		assert.JSONEq(t, `{"name":"alice","created":"2024-01-02","metadata":{"active":true}}`, v.Value().(string))
- 	})
- 
-+	t.Run("record JSON keeps schema field order", func(t *testing.T) {
-+		field := &bigquery.FieldSchema{
-+			Name: "record_col", Type: bigquery.RecordFieldType,
-+			Schema: bigquery.Schema{
-+				{Name: "b", Type: bigquery.IntegerFieldType},
-+				{Name: "a", Type: bigquery.RecordFieldType, Schema: bigquery.Schema{
-+					{Name: "z", Type: bigquery.StringFieldType},
-+					{Name: "y", Type: bigquery.StringFieldType},
-+				}},
-+			},
-+		}
-+		f := BigQueryFieldToQField(field)
-+		v, err := qvalueFromBigQueryValue(f, []bigquery.Value{
-+			int64(1), []bigquery.Value{"z", "y"},
-+		}, field)
-+		require.NoError(t, err)
-+		assert.Equal(t, `{"b":1,"a":{"z":"z","y":"y"}}`, v.Value().(string)) //nolint:testifylint // exact match: JSONEq ignores key order
-+	})
++// TestBuildInsertFromTableFunctionQueryDestinationName checks a renamed column is inserted under its
++// destination name while still being read from the staged field with the source name.
++func TestBuildInsertFromTableFunctionQueryDestinationName(t *testing.T) {
++	config := &insertFromTableFunctionConfig{
++		destinationTable: "t1",
++		schema: types.QRecordSchema{Fields: []types.QField{
++			{Name: "id", Type: types.QValueKindInt64},
++			{Name: "note", Type: types.QValueKindString},
++		}},
++		config: &protos.QRepConfig{
++			Env:     map[string]string{"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN": "false"},
++			Columns: []*protos.ColumnSetting{{SourceName: "note", DestinationName: "memo"}},
++		},
++	}
 +
-+	t.Run("record JSON names unnamed fields instead of dropping them", func(t *testing.T) {
-+		field := &bigquery.FieldSchema{
-+			Name: "record_col", Type: bigquery.RecordFieldType,
-+			Schema: bigquery.Schema{
-+				{Type: bigquery.IntegerFieldType},
-+				{Type: bigquery.StringFieldType},
-+			},
-+		}
-+		f := BigQueryFieldToQField(field)
-+		v, err := qvalueFromBigQueryValue(f, []bigquery.Value{int64(1), "a"}, field)
-+		require.NoError(t, err)
-+		assert.Equal(t, `{"_field_1":1,"_field_2":"a"}`, v.Value().(string)) //nolint:testifylint // exact match: JSONEq ignores key order
-+	})
-+
- 	t.Run("record JSON recursively preserves BigQuery logical types", func(t *testing.T) {
- 		field := &bigquery.FieldSchema{
- 			Name: "record_col", Type: bigquery.RecordFieldType,
-```
-
-**File**: `flow/e2e/bigquery_clickhouse/bigquery_cdc_test.go` (modified, +83/-2)
-```diff
-@@ -1065,7 +1065,7 @@ func (s BigQueryClickhouseSuite) Test_BigQuery_CDC_All_Types() {
- 	require.Equal(t, "0.12345678901234567890123456789012345678", bigNumeric.String())
- 	require.Equal(t, "1-2 3 4:5:6", row[1].Value())
- 	require.Equal(t, "[2024-01-01, 2024-02-01)", row[2].Value())
--	require.JSONEq(t, `{"nested_str":"nested","nested_int":7}`, row[3].Value().(string))
-+	require.Equal(t, `{"nested_str":"nested","nested_int":7}`, row[3].Value()) //nolint:testifylint // exact match: JSONEq ignores key order
- 	require.Equal(t, []string{"aGk=", "Ynll"}, row[4].Value())
- 	arrayTime, ok := row[5].Value().([]time.Time)
- 	require.True(t, ok, "array_time should land as an array of time-of-day values, got %T", row[5].Value())
-@@ -1075,7 +1075,88 @@ func (s BigQueryClickhouseSuite) Test_BigQuery_CDC_All_Types() {
- 	arrayRecord, ok := row[7].Value().([]string)
- 	require.True(t, ok)
- 	require.Len(t, arrayRecord, 1)
--	require.JSONEq(t, `{"item_count":9,"item_name":"item"}`, arrayRecord[0])
-+	require.Equal(t, `{"item_name":"item","item_count":9}`, arrayRecord[0]) //nolint:testifylint // exact match: JSONEq ignores key order
-+
-+	env.Cancel(ctx)
-+	e2e.RequireEnvCanceled(t, env)
++	query, err := buildInsertFromTableFunctionQuery(
++		context.Background(), config, "s3('s3://bucket/key', 'Avro')", nil,
++	)
++	require.NoError(t, err)
++	require.Equal(t,
++		"INSERT INTO `t1`(`id`,`memo`) SELECT `id`,`note` FROM s3('s3://bucket/key', 'Avro')",
++		query)
 +}
 +
-+// Test_BigQuery_CDC_Snapshot_And_CDC_Struct_JSON_Match checks that STRUCT columns
-+// land identically whether a row arrives via the initial snapshot (Parquet export)
-+// or via CDC (Go JSON encoding), with keys in schema order.
-+func (s BigQueryClickhouseSuite) Test_BigQuery_CDC_Snapshot_And_CDC_Struct_JSON_Match() {
-+	t := s.T()
-+	ctx := t.Context()
-+
-+	source := s.Source().(*bigQuerySource)
-+	srcTable := e2e.AddSuffix(s, "cdc_struct_match")
-+	dstTable := srcTable + "_dst"
-+	tableFQN := fmt.Sprintf("%s.%s.%s", source.config.ProjectId, source.config.DatasetId, srcTable)
-+	// Field names are deliberately not in alphabetical order.
-+	require.NoError(t, source.Exec(ctx, fmt.Sprintf(`CREATE TABLE %s (
-+		id INT64 NOT NULL,
-+		record_col STRUCT<nested_str STRING, nested_int INT64, sub STRUCT<z STRING, y INT64>>,
-+		array_record ARRAY<STRUCT<item_name STRING, item_count INT64>>,
-+		PRIMARY KEY(id) NOT ENFORCED
-+	)`, quoteBigQueryTableFQN(tableFQN))), "should create struct BigQuery CDC source table %s", srcTable)
-+	t.Cleanup(func() {
-+		table := source.client.DatasetInProject(source.config.ProjectId, source.config.DatasetId).Table(srcTable)
-+		if err := table.Delete(context.Background()); err != nil {
-+			t.Logf("Warning: failed to delete test table %s: %v", srcTable, err)
-+		}
-+	})
-+
-+	insertRow := func(id int64) {
-+		t.Helper()
-+		require.NoError(t, source.Exec(ctx, fmt.Sprintf(`INSERT INTO %s VALUES (
-+			%d,
-+			STRUCT('nested', 7, STRUCT('zz', 1)),
-+			[STRUCT('item', 9), STRUCT('other', 3)]
-+		)`, quoteBigQueryTableFQN(tableFQN), id)), "should insert struct row %d", id)
-+	}
-+
-+	// present before the mirror exists - lands via the initial snapshot.
-+	insertRow(1)
-+
-+	flowConnConfig := bqCdcFlowConnectionConfig(s, srcTable, dstTable, bqCdcFlowParams{
-+		eventsFunction:    protos.BigqueryCdcEventsFunction_BIGQUERY_CDC_EVENTS_FUNCTION_APPENDS,
-+		replicationMethod: protos.BigQueryReplicationMethod_BIGQUERY_REPLICATION_METHOD_EVENTS,
-+	})
-+
-+	tc := e2e.NewTemporalClient(t)
-+	env := e2e.ExecutePeerflow(t, tc, flowConnConfig)
-+	e2e.SetupCDCFlowStatusQuery(t, env, flowConnConfig)
-+
-+	waitForRows := func(reason string, n int) {
-+		t.Helper()
-+		e2e.EnvWaitFor(t, env, 4*time.Minute, reason, func() bool {
-+			rows, err := s.GetRows(dstTable, "id")
-+			if err != nil {
-+				t.Log(err)
-+				return false
-+			}
-+			return len(rows.Records) == n
-+		})
-+	}
-+	waitForRows("snapshot row landed", 1)
-+
-+	// inserted after the snapshot - lands via CDC.
-+	insertRow(2)
-+	waitForRows("CDC row landed", 2)
-+
-+	rows, err := s.GetRows(dstTable, "id,record_col,array_record")
-+	require.NoError(t, err)
-+	require.Len(t, rows.Records, 2)
-+	snapshotRow, cdcRow := rows.Records[0], rows.Records[1]
-+	require.Equal(t, int64(1), snapshotRow[0].Value())
-+	require.Equal(t, int64(2), cdcRow[0].Value())
-+
-+	expectedRecord := `{"nested_str":"nested","nested_int":7,"sub":{"z":"zz","y":1}}`
-+	expectedArray := []string{`{"item_name":"item","item_count":9}`, `{"item_name":"other","item_count":3}`}
-+	require.Equal(t, expectedRecord, cdcRow[1].Value(), "CDC record_col")
-+	require.Equal(t, expectedArray, cdcRow[2].Value(), "CDC array_record")
-+	require.Equal(t, cdcRow[1].Value(), snapshotRow[1].Value(), "snapshot and CDC record_col should match")
-+	require.Equal(t, cdcRow[2].Value(), snapshotRow[2].Value(), "snapshot and CDC array_record should match")
+ // TestBuildInsertFromTableFunctionQueryArrayOfJSON checks arrays of JSON, staged as a string holding the
+ // whole array, are parsed when their column is declared an array, a null one into the empty array, and
+ // left as is otherwise, as when they land in a String column.
+```
+
+**File**: `flow/connectors/clickhouse/type_conversion.go` (modified, +19/-0)
+```diff
+@@ -102,6 +102,25 @@ func findTypeConversions(schema types.QRecordSchema, columns []*protos.ColumnSet
+ 	return typeConversions
+ }
  
- 	env.Cancel(ctx)
- 	e2e.RequireEnvCanceled(t, env)
++// findColumnSetting returns the column setting for the given source column, or nil if there is none
++func findColumnSetting(sourceColumnName string, columns []*protos.ColumnSetting) *protos.ColumnSetting {
++	for _, column := range columns {
++		if column.SourceName == sourceColumnName {
++			return column
++		}
++	}
++	return nil
++}
++
++// resolveDestinationColumnName returns the mapped destination name for a source column,
++// falling back to the source name when no mapping is configured
++func resolveDestinationColumnName(sourceColumnName string, columns []*protos.ColumnSetting) string {
++	if dstColName := findColumnSetting(sourceColumnName, columns).GetDestinationName(); dstColName != "" {
++		return dstColName
++	}
++	return sourceColumnName
++}
++
+ func applyTypeConversions(schema types.QRecordSchema, typeConversions map[string]types.TypeConversion) types.QRecordSchema {
+ 	for i, field := range schema.Fields {
+ 		if conversion, exist := typeConversions[field.Name]; exist {
+```
+
+**File**: `flow/e2e/clickhouse_suite.go` (modified, +40/-0)
+```diff
+@@ -451,6 +451,46 @@ func (s ClickHouseSuite) Test_NullableColumnSetting() {
+ 	RequireEnvCanceled(s.t, env)
+ }
+ 
++// Test_DestinationNameColumnSetting checks a column renamed via destination_name is filled by both the
++// initial snapshot and CDC.
++func (s ClickHouseSuite) Test_DestinationNameColumnSetting() {
++	srcTableName := "test_destination_name"
++	srcFullName := s.attachSchemaSuffix(srcTableName)
++	dstTableName := "test_destination_name_dst"
++
++	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
++		`CREATE TABLE IF NOT EXISTS %s (id INT PRIMARY KEY, note TEXT)`, srcFullName)))
++	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
++		`INSERT INTO %s (id, note) VALUES (1, 'snapshot')`, srcFullName)))
++
++	connectionGen := FlowConnectionGenerationConfig{
++		FlowJobName:      s.attachSuffix("ch_destination_name"),
++		TableNameMapping: map[string]string{srcFullName: dstTableName},
++		Destination:      s.Peer().Name,
++	}
++	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
++	flowConnConfig.DoInitialSnapshot = true
++	flowConnConfig.TableMappings[0].Columns = []*protos.ColumnSetting{{SourceName: "note", DestinationName: "memo"}}
++
++	tc := NewTemporalClient(s.t)
++	env := ExecutePeerflow(s.t, tc, flowConnConfig)
++	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
++
++	EnvWaitForCount(env, s, "waiting on initial", dstTableName, "id,memo", 1)
++	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(
++		`INSERT INTO %s (id, note) VALUES (2, 'cdc')`, srcFullName)))
++	EnvWaitForCount(env, s, "waiting on cdc", dstTableName, "id,memo", 2)
++
++	rows, err := s.GetRows(dstTableName, "id,memo")
++	require.NoError(s.t, err)
++	require.Len(s.t, rows.Records, 2)
++	require.Equal(s.t, "snapshot", rows.Records[0][1].Value())
++	require.Equal(s.t, "cdc", rows.Records[1][1].Value())
++
++	env.Cancel(s.t.Context())
++	RequireEnvCanceled(s.t, env)
++}
++
+ func (s ClickHouseSuite) Test_Update_PKey_Env_Disabled() {
+ 	srcTableName := "test_update_pkey_disabled"
+ 	srcFullName := s.attachSchemaSuffix(srcTableName)
+```
+
+---
+
+### Incident Patch 3: `024df355` (2026-10-23)
+**Commit Message**: fix(clickhouse): honour per-column destination types in the snapshot JSON cast (#4965)
+
+The ClickHouse snapshot insert casts every JSON column with `CAST(col,
+'JSON')` when native JSON is on, ignoring a per-column destination type.
+A JSON column pinned to `String` therefore fails the cast on the first
+scalar or array row and the mirror never leaves the snapshot phase,
+while the DDL and the normalize query already honour the override.
+
+- The override now decides whether the snapshot casts at all; the
+existing nullable handling then picks `JSON` or `Nullable(JSON)`, so a
+bare `JSON` override on a nullable column survives NULL rows.
+- Unit test on the generated query for `String`, `Nullable(JSON)` and
+bare `JSON` overrides; e2e `Test_JSON_CH_StringOverride` runs a
+`String`-pinned JSON column through snapshot and CDC on Postgres and
+MySQL.
+
+**File**: `flow/connectors/clickhouse/table_function.go` (modified, +9/-1)
+```diff
+@@ -48,7 +48,15 @@ func jsonFieldExpressionConverter(
+ 		return sourceFieldIdentifier, nil
+ 	}
+ 
+-	if !qvalue.ShouldUseNativeJSONType(ctx, config.config.Env, config.connector.chVersion) {
++	// an explicit destination type decides for its column, as the DDL and the normalize query do
++	castToJSON := qvalue.ShouldUseNativeJSONType(ctx, config.config.Env, config.connector.chVersion)
++	for _, column := range config.config.GetColumns() {
++		if column.SourceName == field.Name && column.DestinationType != "" {
++			castToJSON = column.DestinationType == "JSON" || column.DestinationType == "Nullable(JSON)"
++			break
++		}
++	}
++	if !castToJSON {
+ 		return sourceFieldIdentifier, nil
+ 	}
+ 
+```
+
+**File**: `flow/connectors/clickhouse/table_function_test.go` (modified, +53/-0)
+```diff
+@@ -144,3 +144,56 @@ func TestBuildInsertFromTableFunctionQueryJSON(t *testing.T) {
+ 	// the classifier relies on Exec recognizing these casts
+ 	require.True(t, peerdb_clickhouse.QueryCastsToJSON(query))
+ }
++
++// TestBuildInsertFromTableFunctionQueryJSONOverride checks that an explicit destination type on a JSON
++// column wins over the mirror-wide native JSON setting, as it does in the DDL and the normalize query.
++func TestBuildInsertFromTableFunctionQueryJSONOverride(t *testing.T) {
++	config := &insertFromTableFunctionConfig{
++		destinationTable: "t1",
++		schema: types.QRecordSchema{Fields: []types.QField{
++			{Name: "as_string", Type: types.QValueKindJSON, Nullable: true},
++			{Name: "as_json", Type: types.QValueKindJSON, Nullable: true},
++			{Name: "as_bare_json", Type: types.QValueKindJSON, Nullable: true},
++			{Name: "as_bare_json_required", Type: types.QValueKindJSON, Nullable: false},
++			{Name: "untouched", Type: types.QValueKindJSON, Nullable: true},
++		}},
++		config: &protos.QRepConfig{
++			Env: map[string]string{
++				"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN": "false",
++				"PEERDB_CLICKHOUSE_ENABLE_JSON":              "false",
++			},
++			Columns: []*protos.ColumnSetting{
++				{SourceName: "as_string", DestinationType: "String"},
++				{SourceName: "as_json", DestinationType: "Nullable(JSON)"},
++				// a bare JSON override is promoted for a nullable column, as the DDL does
++				{SourceName: "as_bare_json", DestinationType: "JSON"},
++				{SourceName: "as_bare_json_required", DestinationType: "JSON"},
++			},
++		},
++		connector: &ClickHouseConnector{chVersion: &chproto.Version{Major: 25, Minor: 8}},
++	}
++
++	query, err := buildInsertFromTableFunctionQuery(
++		context.Background(), config, "s3('s3://bucket/key', 'Avro')", nil,
++	)
++	require.NoError(t, err)
++	require.Equal(t,
++		"INSERT INTO `t1`(`as_string`,`as_json`,`as_bare_json`,`as_bare_json_required`,`untouched`) SELECT "+
++			"`as_string`,CAST(`as_json`, 'Nullable(JSON)'),CAST(`as_bare_json`, 'Nullable(JSON)'),"+
++			"CAST(`as_bare_json_required`, 'JSON'),`untouched` "+
++			"FROM s3('s3://bucket/key', 'Avro')",
++		query)
++
++	// with native JSON on, the String override still keeps its column out of the cast
++	config.config.Env["PEERDB_CLICKHOUSE_ENABLE_JSON"] = "true"
++	query, err = buildInsertFromTableFunctionQuery(
++		context.Background(), config, "s3('s3://bucket/key', 'Avro')", nil,
++	)
++	require.NoError(t, err)
++	require.Equal(t,
++		"INSERT INTO `t1`(`as_string`,`as_json`,`as_bare_json`,`as_bare_json_required`,`untouched`) SELECT "+
++			"`as_string`,CAST(`as_json`, 'Nullable(JSON)'),CAST(`as_bare_json`, 'Nullable(JSON)'),"+
++			"CAST(`as_bare_json_required`, 'JSON'),CAST(`untouched`, 'Nullable(JSON)') "+
++			"FROM s3('s3://bucket/key', 'Avro')",
++		query)
++}
+```
+
+**File**: `flow/e2e/clickhouse_json_suite.go` (modified, +48/-0)
+```diff
+@@ -390,3 +390,51 @@ func jsonBatchesMatch(jsonColumns []string, sourceNullLandsAs *string) func(*tes
+ 		return true
+ 	}
+ }
++
++// Test_JSON_CH_StringOverride pins a JSON column to String on a native JSON mirror. The snapshot has to
++// leave that column out of its JSON cast, as the DDL and the normalize query already honour the override.
++func (s ClickHouseSuite) Test_JSON_CH_StringOverride() {
++	if mySource, ok := s.source.(*MySqlSource); ok && mySource.Config.Flavor == protos.MySqlFlavor_MYSQL_MARIA {
++		s.t.Skip("skip maria, where JSON is stored as LONGTEXT and PeerDB does not map it to JSON yet")
++	}
++
++	srcTableName := "test_json_string_override"
++	srcFullName := s.attachSchemaSuffix(srcTableName)
++	dstTableName := srcTableName + "_dst"
++	docs := []string{`'{"key": "val"}'`, `'"dark"'`, `'[1, 2]'`, `'42'`}
++	insertDocs := func() {
++		for _, doc := range docs {
++			require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(`INSERT INTO %s (json) VALUES (%s)`, srcFullName, doc)))
++		}
++	}
++
++	require.NoError(s.t, s.source.Exec(s.t.Context(),
++		fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (id SERIAL PRIMARY KEY, json JSON)`, srcFullName)))
++	insertDocs()
++
++	connectionGen := FlowConnectionGenerationConfig{
++		FlowJobName:      s.attachSuffix(srcTableName),
++		TableNameMapping: map[string]string{srcFullName: dstTableName},
++		Destination:      s.Peer().Name,
++	}
++	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
++	flowConnConfig.DoInitialSnapshot = true
++	flowConnConfig.Env = map[string]string{"PEERDB_CLICKHOUSE_ENABLE_JSON": "true"}
++	flowConnConfig.TableMappings[0].Columns = []*protos.ColumnSetting{{SourceName: "json", DestinationType: "String"}}
++
++	tc := NewTemporalClient(s.t)
++	env := ExecutePeerflow(s.t, tc, flowConnConfig)
++	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
++
++	columnType, err := s.GetColumnType(dstTableName, "json")
++	require.NoError(s.t, err)
++	require.Equal(s.t, "String", columnType)
++
++	rowsMatch := jsonBatchesMatch([]string{"json"}, nil)
++	EnvWaitForEqualTablesWithNamesFunc(env, s, "compare initial load", srcTableName, dstTableName, "id,json", rowsMatch)
++	insertDocs()
++	EnvWaitForEqualTablesWithNamesFunc(env, s, "compare cdc", srcTableName, dstTableName, "id,json", rowsMatch)
++
++	env.Cancel(s.t.Context())
++	RequireEnvCanceled(s.t, env)
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4973** (2026-10-24): security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (@motsc)
+- **PR #4968** (2026-10-23): fix(query-cdc): only catch up when the poll window was capped (@dtunikov)
+- **PR #4966** (2026-10-23): fix(postgres): keep the JSON form of a json/jsonb column default on ADD COLUMN (@gheorghepucea)
+- **PR #4965** (2026-10-23): fix(clickhouse): honour per-column destination types in the snapshot JSON cast (@gheorghepucea)
+- **PR #4963** (2026-10-23): fix(clickhouse): honor column destination_name in initial load (@dtunikov)
 - **PR #4961** (2026-10-22): safe command monitor debugging (@jgao54)
-- **PR #4959** (2026-10-21): CI: wait for (Tiltfile) resource before tilt wait (@ilidemi)
-- **PR #4957** (2026-10-21): Log failover slots setting and missing source configs in hourly config log (@ilidemi)
-- **PR #4956** (2026-10-22): CI versions table: Bump MongoDB 8.X version from 8.0 to 8.2 (@pfcoperez)
-- **PR #4955** (2026-10-22): fix(clickhouse): write {} for SQL NULL into plain JSON column on CDC (@gheorghepucea)
-- **PR #4951** (2026-10-22): fix(postgres): keep unchanged toast columns on delete rows (@ReguiguiMohamed)
 
 ---
 
@@ -2415,28 +2354,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres): keep unchanged toast columns on delete rows (#4951)
+## X. security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (#49
 
 **RULE**:
-When implementing operations in `flow/connectors/postgres/postgres_destination.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `stacks/peerdb-ui.Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dec84ad2`: postgres): keep unchanged toast columns on delete rows (#4951). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bd61d073`: security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (#4973). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/postgres/postgres_destination.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `stacks/peerdb-ui.Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-					utils.KeysToString(typedRecord.UnchangedToastColumns),
+FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS base
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-					"",
+FROM node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 AS base
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dec84ad2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bd61d073` are properly handled with clean fallback behavior.

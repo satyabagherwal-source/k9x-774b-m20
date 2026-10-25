@@ -1685,8 +1685,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
     "sourceVersion": "hf-openmoss-team-moss-image-sft",
     "license": "Open-Source",
-    "contentHash": "c6c639bbf463088642e32c31976390c10b99c803a112ffa7aea85c393d4866bb",
-    "lastHarvestedAt": "2026-10-20T15:56:25.685Z",
+    "contentHash": "45c7eb344ff66e9bcc49f3a2a7f965896fc3f8245f24b452be4600551121941c",
+    "lastHarvestedAt": "2026-10-25T10:10:52.085Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-sft"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "760378b7",
+    "sourceVersion": "566bc371",
     "license": "Apache-2.0",
-    "contentHash": "385792884a7295d370d455105f3159ed3e25fbb66ade93f6a473f03a99b38f81",
-    "lastHarvestedAt": "2026-10-22T17:51:42.221Z",
+    "contentHash": "9a9cff4f5bd5866b07998c8a1c9385df0ba614d0f3faef44f2df7ad8dd485ae2",
+    "lastHarvestedAt": "2026-10-25T10:10:49.323Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "dec84ad2",
+    "sourceVersion": "4dbe4f57",
     "license": "AGPL-3.0",
-    "contentHash": "4726ed226b5125ae462b4ebe9862ee76b43fb3ed6f7356b54492a84eb10ad3fc",
-    "lastHarvestedAt": "2026-10-22T21:22:21.459Z",
+    "contentHash": "7cdbf1f45d26f9d23f1525c680b73738dd130e5b2395cfc0d0ff2bc769deb208",
+    "lastHarvestedAt": "2026-10-25T10:10:53.541Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -6593,10 +6593,10 @@
     "repository": "InsertKoinIO/koin",
     "platform": "github",
     "sourceUrl": "https://github.com/InsertKoinIO/koin",
-    "sourceVersion": "dc86ef8d",
+    "sourceVersion": "d39a4f8e",
     "license": "Apache-2.0",
-    "contentHash": "e53723dfa4b9f9c8380e38e9b0dac6909b67815993fba37ae1ddc390c5926ab5",
-    "lastHarvestedAt": "2026-10-19T06:19:03.125Z",
+    "contentHash": "3cf9abb83506d3e91080d8263cb9002296e6f51c5658021d22a29e45613a84bd",
+    "lastHarvestedAt": "2026-10-25T10:10:53.079Z",
     "learningId": "learn-github-insertkoinio-koin"
   },
   "actions-actions-runner-controller": {
@@ -6933,10 +6933,10 @@
     "repository": "influxdata/influxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/influxdata/influxdb",
-    "sourceVersion": "06200ef9",
+    "sourceVersion": "185688a5",
     "license": "Apache-2.0",
-    "contentHash": "ee7eb3684b9dd2b68f271fba11e59728a0d9634d89a9c96c6522ee0afd371954",
-    "lastHarvestedAt": "2026-10-19T07:10:13.828Z",
+    "contentHash": "eaee8df6720047da83f998a1c93ab42f5936d441fe5f166145b78bc18bb9933d",
+    "lastHarvestedAt": "2026-10-25T10:10:58.469Z",
     "learningId": "learn-github-influxdata-influxdb"
   },
   "angular-angular": {

@@ -4767,3 +4767,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-25T09:56:06.702Z |
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `e1f3ae29` | Multi-dimensional audit evidence | 2026-10-25T09:58:48.056Z |
 | `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-25T10:01:30.975Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `566bc371` | Multi-dimensional audit evidence | 2026-10-25T10:10:49.323Z |
+| `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-25T10:10:52.085Z |
+| `learn-github-insertkoinio-koin` | `https://github.com/InsertKoinIO/koin` | `d39a4f8e` | Multi-dimensional audit evidence | 2026-10-25T10:10:53.079Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `4dbe4f57` | Multi-dimensional audit evidence | 2026-10-25T10:10:53.541Z |
+| `learn-github-influxdata-influxdb` | `https://github.com/influxdata/influxdb` | `185688a5` | Multi-dimensional audit evidence | 2026-10-25T10:10:58.469Z |

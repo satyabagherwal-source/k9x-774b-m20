@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T10:01:30.982Z",
+  "last_updated": "2026-10-25T10:10:58.481Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2661,14 +2661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-sft",
-      "content_hash": "c6c639bbf463088642e32c31976390c10b99c803a112ffa7aea85c393d4866bb",
-      "verified_at": "2026-10-20T15:56:25.693Z",
+      "content_hash": "45c7eb344ff66e9bcc49f3a2a7f965896fc3f8245f24b452be4600551121941c",
+      "verified_at": "2026-10-25T10:10:52.092Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T15:56:25.693Z"
+      "last_updated": "2026-10-25T10:10:52.092Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash-1017": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "385792884a7295d370d455105f3159ed3e25fbb66ade93f6a473f03a99b38f81",
-      "verified_at": "2026-10-22T17:51:42.228Z",
+      "content_hash": "9a9cff4f5bd5866b07998c8a1c9385df0ba614d0f3faef44f2df7ad8dd485ae2",
+      "verified_at": "2026-10-25T10:10:49.330Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:51:42.228Z"
+      "last_updated": "2026-10-25T10:10:49.330Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "4726ed226b5125ae462b4ebe9862ee76b43fb3ed6f7356b54492a84eb10ad3fc",
-      "verified_at": "2026-10-22T21:22:21.474Z",
+      "content_hash": "7cdbf1f45d26f9d23f1525c680b73738dd130e5b2395cfc0d0ff2bc769deb208",
+      "verified_at": "2026-10-25T10:10:53.548Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:22:21.474Z"
+      "last_updated": "2026-10-25T10:10:53.548Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -9966,14 +9966,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-insertkoinio-koin",
-      "content_hash": "e53723dfa4b9f9c8380e38e9b0dac6909b67815993fba37ae1ddc390c5926ab5",
-      "verified_at": "2026-10-19T06:19:03.132Z",
+      "content_hash": "3cf9abb83506d3e91080d8263cb9002296e6f51c5658021d22a29e45613a84bd",
+      "verified_at": "2026-10-25T10:10:53.086Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:19:03.132Z"
+      "last_updated": "2026-10-25T10:10:53.086Z"
     },
     "actions/actions-runner-controller": {
       "repository": "actions/actions-runner-controller",
@@ -10461,14 +10461,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-influxdata-influxdb",
-      "content_hash": "ee7eb3684b9dd2b68f271fba11e59728a0d9634d89a9c96c6522ee0afd371954",
-      "verified_at": "2026-10-19T07:10:13.833Z",
+      "content_hash": "eaee8df6720047da83f998a1c93ab42f5936d441fe5f166145b78bc18bb9933d",
+      "verified_at": "2026-10-25T10:10:58.476Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:10:13.833Z"
+      "last_updated": "2026-10-25T10:10:58.476Z"
     },
     "angular/angular": {
       "repository": "angular/angular",

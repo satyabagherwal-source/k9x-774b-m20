@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T10:01:30.979Z",
-  "total_cycles_completed": 4737,
-  "total_learnings_persisted": 4737,
-  "total_rules_promoted": 4100,
+  "last_updated": "2026-10-25T10:10:58.473Z",
+  "total_cycles_completed": 4742,
+  "total_learnings_persisted": 4742,
+  "total_rules_promoted": 4107,
   "history": [
-    {
-      "timestamp": "2026-10-24T19:28:40.766Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:34:51.734Z",
-      "repository": "KRAFTON/Raon-1-mini-preview",
-      "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:34:54.444Z",
-      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:34:59.930Z",
-      "repository": "invertase/react-native-firebase",
-      "learningId": "learn-github-invertase-react-native-firebase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:35:00.404Z",
-      "repository": "Comfy-Org/Fibo-2.0",
-      "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-24T19:35:06.270Z",
       "repository": "HelixDB/helix-db",
@@ -1403,6 +1368,41 @@
       "repository": "franken-ui/ui",
       "learningId": "learn-github-franken-ui-ui",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:10:49.327Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:10:52.089Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:10:53.083Z",
+      "repository": "InsertKoinIO/koin",
+      "learningId": "learn-github-insertkoinio-koin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:10:53.545Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:10:58.473Z",
+      "repository": "influxdata/influxdb",
+      "learningId": "learn-github-influxdata-influxdb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

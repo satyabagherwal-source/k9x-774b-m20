@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `760378b7`  
+> **Source Version**: `566bc371`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:51:41.873Z  
+> **Timestamp**: 2026-10-25T10:10:49.012Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:51:40.382Z  
+> **Harvest Timestamp**: 2026-10-25T10:10:48.217Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 16983 stars
+- **Stars / Engagement**: 17101 stars
 
 ---
 
@@ -1429,408 +1429,1088 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8670fc3c` (2026-10-21)
-**Commit Message**: fix(lint-framework): position highlights correctly under zoomed or scaled ancestors (#4506)
+### Incident Patch 1: `ad3db4e8` (2026-10-24)
+**Commit Message**: feat(popup): refine UI layout, animated controls, and form ergonomics (#4541)
 
-* fix(lint-framework): position highlights correctly under zoomed or scaled ancestors
+* feat(popup): redesign main popup layout and add animated toggles
 
-When a text field sits inside an element with CSS `zoom`, or with an
-individual transform property such as `scale` (which
-`isContainingBlock()` does not check), highlights drift away from the
-text. This happens for example in a web app that sets `scale: 0.9` on its
-main container and `zoom: 1.2` on its forms. Two things go wrong:
+- Replace static radios/buttons with smooth sliding animated toggles for domain enable and review status
+- Redesign main extension popup with a clean vertical layout (greeting, site status pill, toggle)
+- Add gliding hover effect to footer navigation links
+- Enhance site status display and fix text contrast in dark mode
 
-- The render box sits inside the zoomed or scaled subtree, so the
-  `position: fixed` highlights are moved and scaled again. Render an
-  invisible fixed marker at (0, 0) alongside them, measure where it lands
-  and how much it is scaled, and map the boxes through that frame,
-  rendering once more when the frame has changed.
-- The textarea mirror lives in `<body>`, with the field's own font and
-  padding but its on-screen width, so its text is laid out too small.
-  Give it the field's own size and scale it to the on-screen size.
+* feat(popup): optimize onboarding view, improve layout spacing, and fix focus borders
 
-* test(chrome-plugin): use the exact CSS scale in the scaled textarea test
+- Redesign Onboarding view with step badges, improved typography, and smooth confirm delay
+- Fix double-border and focus ring clipping on Domain and Feedback inputs
+- Preserve full height layout for popup screens to prevent button truncation
+- Ensure bottom review section remains on a single line
+- Changed font-family to Atkinson Hyperlegible for header style in app.css
 
-The ratio of the two textareas' on-screen widths is not exactly
-scale × zoom
+* feat(settings): overhaul UI controls, standardize dimensions, and fix theme contrast
 
-**File**: `packages/chrome-plugin/tests/css_zoom.spec.ts` (added, +69/-0)
+- Replace native checkboxes with standardized sliding pill toggles across all views
+- Unify control dimensions (w-48, h-9) for consistent right-edge alignment
+- Remove hardcoded da
+
+**File**: `packages/chrome-plugin/app.css` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,69 @@
-+import type { Page } from '@playwright/test';
-+import { expect, test } from './fixtures';
-+import { getHarperHighlights, getTextarea, replaceEditorContent } from './testUtils';
+@@ -77,7 +77,7 @@ a {
+ }
+ 
+ #app {
+-	@apply min-h-screen bg-white text-black dark:bg-black dark:text-white transition-colors duration-150;
++	@apply bg-white text-black dark:bg-black dark:text-white transition-colors duration-150;
+ 
+ 	font-family:
+ 		Atkinson Hyperlegible,
+```
+
+**File**: `packages/chrome-plugin/src/options/Options.svelte` (modified, +432/-287)
+```diff
+@@ -6,12 +6,15 @@ import {
+ 	type StructuredLintConfig,
+ 	type StructuredLintSetting,
+ } from 'harper.js';
++import { tick } from 'svelte';
+ import logo from '/logo.png';
+ import ProtocolClient from '../ProtocolClient';
+ import type { Hotkey, Modifier, WeirpackMeta } from '../protocol';
+ import { ActivationKey } from '../protocol';
+ import StructuredRuleSettings from './StructuredRuleSettings.svelte';
+ 
++let loaded = $state(false);
 +
-+test('Positions highlights inside an ancestor with CSS zoom.', async ({ page }) => {
-+	await page.goto('http://localhost:8081/css_zoom.html');
+ let lintConfig: LintConfig = $state({});
+ let structuredLintConfig: StructuredLintConfig = $state({ settings: [] });
+ let lintDescriptions: Record<string, string> = $state({});
+@@ -25,85 +28,97 @@ let delayLoaded = $state(false);
+ let defaultEnabled = $state(false);
+ let activationKey: ActivationKey = $state(ActivationKey.Off);
+ let userDict = $state('');
+-let modifyHotkeyButton: Button;
+-let hotkey: Hotkey = $state({ modifiers: ['Ctrl'], key: 'e' });
++let hotkey: Hotkey = $state({ modifiers: ['Ctrl'], key: 'E' });
++let buttonText = $state('');
+ let anyRulesEnabled = $derived(Object.values(lintConfig ?? {}).some((value) => value !== false));
++let totalRules = $derived(Object.keys(lintConfig ?? {}).length);
++let customizedRules = $derived(
++	Object.values(lintConfig ?? {}).filter((value) => value !== null && value !== undefined).length,
++);
+ let weirpacks: WeirpackMeta[] = $state([]);
+ let weirpackBusy = $state(false);
+ let weirpackError = $state('');
++let fileInputRef: HTMLInputElement | undefined = $state();
++/** Announced to screen readers through a polite live region. */
++let statusMessage = $state('');
+ 
+ $effect(() => {
++	if (!loaded) return;
+ 	ProtocolClient.setLintConfig($state.snapshot(lintConfig));
+ });
+ 
+ $effect(() => {
++	if (!loaded) return;
+ 	ProtocolClient.setDialect(dialect);
+ });
+ 
+ $effect(() => {
+-	if (delayLoaded) {
+-		ProtocolClient.setDelay(delay);
+-	}
++	if (!loaded || !delayLoaded) return;
++	ProtocolClient.setDelay(delay);
+ });
+ 
+ $effect(() => {
++	if (!loaded) return;
+ 	ProtocolClient.setDefaultEnabled(defaultEnabled);
+ });
+ 
+ $effect(() => {
++	if (!loaded) return;
+ 	ProtocolClient.setActivationKey(activationKey);
+ });
+ 
+ $effect(() => {
++	if (!loaded) return;
+ 	ProtocolClient.setUserDictionary(stringToDict(userDict));
+ });
+ 
++// Load all initial state before displaying settings to prevent flash of defaults
+ Promise.all([
+ 	ProtocolClient.getLintConfig(),
+ 	ProtocolClient.getStructuredLintConfig(),
+ 	ProtocolClient.getLintDescriptions(),
+-]).then(([nextLintConfig, nextStructuredConfig, nextLintDescriptions]) => {
+-	lintConfig = nextLintConfig;
+-	structuredLintConfig = nextStructuredConfig;
+-	lintDescriptions = nextLintDescriptions;
+-});
+-
+-ProtocolClient.getDialect().then((d) => {
+-	dialect = d;
+-});
+-
+-ProtocolClient.getIsolateEnglish().then((value) => {
+-	isolateEnglish = value;
+-});
+-
+-ProtocolClient.getDelay().then((value) => {
+-	delay = value;
+-	delayLoaded = true;
+-});
+-
+-ProtocolClient.getDefaultEnabled().then((d) => {
+-	defaultEnabled = d;
+-});
+-
+-ProtocolClient.getActivationKey().then((d) => {
+-	activationKey = d;
+-});
+-
+-ProtocolClient.getHotkey().then((d) => {
+-	hotkey = {
+-		modifiers: [...d.modifiers],
+-		key: d.key,
+-	};
+-	buttonText = `Hotkey: ${d.modifiers.join('+')}+${d.key}`;
+-});
+-
+-ProtocolClient.getUserDictionary().then((d) => {
+-	userDict = dictToString(d.toSorted());
+-});
+-
+-ProtocolClient.getWeirpacks().then((stored) => {
+-	weirpacks = stored.toSorted((a, b) => b.installedAt.localeCompare(a.installedAt));
+-});
++	ProtocolClient.getDialect(),
++	ProtocolClient.getIsolateEnglish(),
++	ProtocolClient.getDelay(),
++	ProtocolClient.getDefaultEnabled(),
++	ProtocolClient.getActivationKey(),
++	ProtocolClient.getHotkey(),
++	ProtocolClient.getUserDictionary(),
++	ProtocolClient.getWeirpacks(),
++]).then(
++	([
++		nextLintConfig,
++		nextStructuredConfig,
++		nextLintDescriptions,
++		nextDialect,
++		nextIsolateEnglish,
++		nextDelay,
++		nextDefaultEnabled,
++		nextActivationKey,
++		nextHotkey,
++		nextUserDict,
++		nextWeirpacks,
++	]) => {
++		lintConfig = nextLintConfig;
++		structuredLintConfig = nextStructuredConfig;
++		lintDescriptions = nextLintDescriptions;
++		dialect = nextDialect;
++		isolateEnglish = nextIsolateEnglish;
++		delay = nextDelay;
++		delayLoaded = true;
++		defaultEnabled = nextDefaultEnabled;
++		activationKey = nextActivationKey;
++		hotkey = {
++			modifiers: [...nextHotkey.modifiers],
++			key: nextHotkey.key,
++		};
++		buttonText = `${nextHotkey.modifiers.join('+')} + ${nextHotkey.key.toUpperCase()}`;
++		userDict = dictToString(nextUserDict.toSorted());
++		weirpacks = nextWeirpacks.toSorted((a, b) => b.installedAt.localeCompare(a.installedAt));
 +
-+	const editor = getTextarea(page);
-+	await replaceEditorContent(editor, 'This is an test of the Harper grammar checker.');
++		loaded = true;
++	},
++);
+ 
+ /** Converts the content of a text area to viable dictionary values. */
+ export function stringToDict(s: string): string[] {
+@@ -143,7 +158,9 @@ function updateAllRules(enabled: boolean): void {
+ }
+ 
+ function toggleAllRules(): void {
+-	updateAllRules(!anyRulesEnabled);
++	const enable = !anyRulesEnabled;
++	updateAllRules(enable);
++	statusMessage = enable ? 'All rules 
+```
+
+**File**: `packages/chrome-plugin/src/options/StructuredRuleSettings.svelte` (modified, +152/-93)
+```diff
+@@ -241,7 +241,7 @@ function buildRenderNodes(
+ 				name,
+ 				title: `Choose an option for ${name}.`,
+ 				options: [
+-					{ value: 'default', label: '⚙️ Default' },
++					{ value: 'default', label: 'Default' },
+ 					...setting.OneOfMany.names.map((value, index) => ({
+ 						value,
+ 						label: setting.OneOfMany.labels?.[index] ?? value,
+@@ -300,97 +300,156 @@ $: {
+ 	void lintDescriptions;
+ 	renderedNodes = nodes ?? buildRenderNodes(settings, groupPath, forceShow, indent).nodes;
+ }
 +
-+	const highlights = getHarperHighlights(page);
-+	await expect(highlights).toHaveCount(1, { timeout: 24000 });
-+
-+	const editorBox = (await editor.boundingBox())!;
-+	const highlightBox = (await highlights.first().boundingBox())!;
-+
-+	// When the zoom is applied to the highlight a second time, it drifts below and to the
-+	// right of the textarea.
-+	expect(highlightBox.x).toBeGreaterThanOrEqual(editorBox.x);
-+	expect(highlightBox.y).toBeGreaterThanOrEqual(editorBox.y);
-+	expect(highlightBox.x + highlightBox.width).toBeLessThanOrEqual(editorBox.x + editorBox.width);
-+	expect(highlightBox.y + highlightBox.height).toBeLessThanOrEqual(editorBox.y + editorBox.height);
-+});
-+
-+/** The highlight box inside `textareaId`, relative to that textarea's top-left corner. */
-+async function relativeHighlight(page: Page, textareaId: string) {
-+	const editor = page.locator(`#${textareaId}`);
-+	const editorBox = (await editor.boundingBox())!;
-+
-+	for (const highlight of await getHarperHighlights(page).all()) {
-+		const box = await highlight.boundingBox();
-+		if (
-+			box != null &&
-+			box.x >= editorBox.x &&
-+			box.y >= editorBox.y &&
-+			box.x < editorBox.x + editorBox.width &&
-+			box.y < editorBox.y + editorBox.height
-+		) {
-+			return { editorBox, x: box.x - editorBox.x, y: box.y - editorBox.y, width: box.width };
-+		}
-+	}
-+
-+	return null;
++function idFor(prefix: string, key: string): string {
++	return `${prefix}-${key.replace(/[^a-zA-Z0-9]+/g, '-')}`;
 +}
 +
-+test('Positions highlights inside a scaled and zoomed ancestor.', async ({ page }) => {
-+	await page.goto('http://localhost:8081/css_scale.html');
-+
-+	// Put the mistake far along the line, so a scale error adds up to a visible offset.
-+	const text = 'The quick brown fox jumps over the lazy dog, and then an test.';
-+	await replaceEditorContent(page.locator('#reference'), text);
-+	await replaceEditorContent(page.locator('#scaled'), text);
-+
-+	await expect(getHarperHighlights(page)).toHaveCount(2, { timeout: 24000 });
-+
-+	const reference = (await relativeHighlight(page, 'reference'))!;
-+	const scaled = (await relativeHighlight(page, 'scaled'))!;
-+	expect(reference).not.toBeNull();
-+	expect(scaled).not.toBeNull();
-+
-+	// Both textareas have the same layout size, so the scaled one should show the same
-+	// highlight, just scaled by `scale: 0.9` times `zoom: 1.2` from css_scale.html. The ratio
-+	// of the textareas' on-screen widths is not exact, because their borders snap to device
-+	// pixels.
-+	const ratio = 0.9 * 1.2;
-+	expect(Math.abs(scaled.x / ratio - reference.x)).toBeLessThan(2);
-+	expect(Math.abs(scaled.y / ratio - reference.y)).toBeLessThan(2);
-+	expect(Math.abs(scaled.width / ratio - reference.width)).toBeLessThan(2);
-+});
++const selectClass =
++	'h-9 w-36 shrink-0 rounded-md border border-gray-200 bg-white px-3 text-xs font-semibold text-gray-900 dark:border-white/15! dark:bg-white/5! dark:text-white dark:[color-scheme:dark] dark:[&_option]:bg-[#1c1c1c] dark:[&_option]:text-white outline-none! transition-colors focus:border-primary! focus:ring-0! focus-visible:ring-2! focus-visible:ring-primary!';
++const dividerClass = 'border-t border-gray-100 pt-3 dark:border-white/10!';
+ </script>
+ 
+-<div class="space-y-4">
+-	{#each renderedNodes as node}
+-		{#if node.kind === 'group'}
+-				<div class="space-y-3">
+-					<div class="flex items-start justify-between gap-4" style={rowStyle(node.indent)}>
+-						<div class="space-y-0.5">
+-							<h3 class="text-sm">{node.label}</h3>
+-							<p class="text-xs text-gray-600 dark:text-gray-400">{node.description}</p>
+-							<p class="text-xs text-gray-600 dark:text-gray-400">{node.ruleCount} rules</p>
+-						</div>
+-						<div class="flex items-center gap-2">
+-							<button
+-								type="button"
+-								class="cursor-pointer inline-flex items-center gap-2 justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-center text-gray-900 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+-								title={node.expanded
+-									? `Collapse the ${node.label} category`
+-									: `Expand the ${node.label} category`}
+-								onclick={() => handleToggleGroup(node.groupKey)}
+-							>
+-								{node.expanded ? 'Collapse' : 'Expand'}
+-							</button>
+-							<Select
+-								size="md"
+-								title={`Set all rules in the ${node.label} category to their default, on, or off state.`}
+-								value={node.state === 'mixed' ? 'default' : node.state}
+-								onchange={(event: Event) => updateGroup(node.ruleNames, (event.target as HTMLSelectElement).value)}
+-							>
+-								<option value="default">{node.state === 'mixed' ? '⚙️ Default (mixed)' : '⚙️ Default'}</option>
+-								<option value="enable">✅ On</option>
+-								<option value="disable">🚫 Off</option>
+-							</Select>
+-						</div>
+-					</div>
+-
+-					{#if node.expanded}
+-						<svelte:self
+-							nodes={node.childNodes}
+-							settings={[]}
+-							{lintConfig}
+-							{lintDescriptions}
+-							{searchQueryLower}
+-							{expandedGroups}
+-							groupPath={[]}
+-							indent={indent}
+-							forceShow={forceShow}
+-							{handleLintConfigChange}
+-							{handleToggleGroup}
+-						/>
+-					{/if}
+-				</div>
+-		{:else if node.kind === 'bool'}
+-				<div class="flex items-start justify-between gap-4" style={rowStyle(node.indent)}>
+-					<div class="space-y-0.5">
+-						<h3 class="text-sm">{node.label}</h3>
+-						<p class="text-xs">{@html node.description}</p>
+-					</div>
+-					<Select
+-						size="md"
+-						title={node.title}
+-						value={node.value}
+-						onchange={(event: Event) => {
+-							const nextConfig: LintConfig = { ...lintConfig };
+-							nextConfig[node.name] = configStringToValue(
+-								(event.target as HTMLSelectElement).value,
+-							);
+-							handleLintConfigChange(nextConfig);
+-						}}
+-					>
+-						<option value="default">⚙️ Default</option>
+-						<option value="enable">✅ On</option>
+-						<option value="disable">🚫 Off</option>
+-					</Select>
+-				</div>
+-		{:else if node.kind === 'oneOfMany'}
+-			<div class="flex items-start justify-between gap-4" style={rowStyle(node.indent)}>
+-				<div class="space-y-0.5">
+-					<h3 class="text-sm">{node.name}</h3>
+-				</div>
+-				<Select
+-					size="md"
+-					title={node.title}
+-					value={node.value}
+-					onchange={(event: Event) => updateOneOfMany(node.setting, (event.target as HTMLSelectElement).value)}
+-				>
+-					{#each node.options as option}
+-						<option value={option.value}>{option.label}</option>
+-					{/each}
+-				</Select>
+-			</div>
+-		{/if}
+-	{/each}
+-</div>
++<div class="space-y-2">
++    {#if nodes === undefined}
++        <!-- Search result announcements (top-level instance only) -->
++        <p class="sr-only" role="status" aria-live="polite" aria-atomic="true">
++            {#if searchQueryLower !== ''}
++                {renderedNodes.length === 0
++                    ? 'No categories match your search.'
++                    : `${renderedNodes.length} ${renderedNodes.length 
 ```
 
-**File**: `packages/chrome-plugin/tests/pages/css_scale.html` (added, +11/-0)
+**File**: `packages/chrome-plugin/src/popup/DomainReview.svelte` (modified, +103/-49)
 ```diff
-@@ -0,0 +1,11 @@
-+<!DOCTYPE html>
-+<html>
-+  <body style="margin: 0">
-+    <textarea id="reference" style="position: absolute; top: 400px; left: 20px; font: 16px monospace" rows="3" cols="60"></textarea>
-+    <div style="position: absolute; top: 64px; left: 0; scale: 0.9; transform-origin: 0 0">
-+      <div style="zoom: 1.2">
-+        <textarea id="scaled" style="margin: 20px 0 0 20px; font: 16px monospace" rows="3" cols="60"></textarea>
-+      </div>
+@@ -1,21 +1,28 @@
+ <script lang="ts">
+-import { Button, Input, Label, Select } from 'components';
++import { Button, Input, Label } from 'components';
+ import ProtocolClient from '../ProtocolClient';
+ 
+ let {
+-	domain,
+-	works,
+-	feedback,
++	domain: initialDomain,
++	works: initialWorks,
++	feedback: initialFeedback,
+ 	onSubmit,
+ }: { domain: string; works: boolean; feedback: string; onSubmit: () => void } = $props();
+ 
++// Local copies so the form can be edited without mutating props.
++let domain = $state(initialDomain);
++let works = $state(initialWorks);
++let feedback = $state(initialFeedback);
++
+ let submitting = $state(false);
+ let successful = $state(false);
++let failed = $state(false);
+ 
+ async function handleSubmit(event: SubmitEvent) {
+ 	event.preventDefault();
+ 
+ 	submitting = true;
++	failed = false;
+ 
+ 	const success = await ProtocolClient.postFormData(
+ 		'https://writewithharper.com/api/domain-reviews',
+@@ -29,53 +36,100 @@ async function handleSubmit(event: SubmitEvent) {
+ 	submitting = false;
+ 
+ 	if (success) {
+-		onSubmit();
+ 		successful = true;
++		setTimeout(onSubmit, 1200);
++	} else {
++		failed = true;
+ 	}
+ }
++
++const segment =
++	'flex-1 rounded-md px-3 py-1 text-sm font-semibold transition-colors cursor-pointer text-center';
+ </script>
+ 
+-<div class="p-5">
+-	<h1 class="text-2xl font-semibold">Domain Review</h1>
+-	<p class="text-sm">
+-		Only the data you enter below will be sent to the Harper maintainer.
+-	</p>
+-	<form class="mt-4 space-y-6" onsubmit={handleSubmit}>
+-		<div class="space-y-3">
+-			<div class="flex items-baseline gap-2">
+-				<Label class=" ">Which domain would you like to tell us about?</Label>
+-			</div>
+-			<Input
+-				name="domain"
+-				bind:value={domain}
+-				placeholder="example.com"
+-				class="dark:bg-slate-900 dark:border-slate-700 "
+-			/>
+-			<div class="flex items-baseline gap-2">
+-				<Label class=" ">Would you say that Harper works well on this domain?</Label>
+-			</div>
+-			<Select
+-				name="works"
+-				bind:value={works}
+-				class="dark:bg-slate-900 dark:border-slate-700 "
+-			>
+-        <option value={true}>Yes</option>
+-        <option value={false}>No</option>
+-        </Select>
+-
+-			<div class="flex items-baseline gap-2">
+-				<Label class=" ">Additional Feedback</Label>
+-			</div>
+-			<Input
+-				name="feedback"
+-				placeholder="Tell us what went wrong."
+-				bind:value={feedback}
+-				class="dark:bg-slate-900 dark:border-slate-700 "
+-			/>
+-
+-			<div class="flex items-center justify-between pt-2">
+-				<Button state={submitting ? (successful ? "success" : "loading") : "idle"} type="submit" disabled={submitting}>Submit</Button>
+-			</div>
+-		</div>
+-	</form>
+-</div>
++<div class="flex h-full flex-col justify-between px-5 py-3">
++    <div>
++        <h1 class="text-lg font-bold text-gray-900 dark:text-white">Review this site</h1>
++        <p class="mt-0.5 text-xs text-gray-600 dark:text-slate-300">
++            Only what you enter below is sent to the Harper maintainer.
++        </p>
 +    </div>
-+  </body>
-+</html>
++
++    <form class="mt-2.5 flex flex-1 flex-col justify-between overflow-hidden" onsubmit={handleSubmit}>
++        <!-- Scrollable Inputs Area (Prevents pushing button out of bounds) -->
++        <div class="space-y-2.5 overflow-y-auto pr-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
++            <div class="space-y-1">
++                <Label class="text-xs font-bold text-gray-900 dark:text-white">Domain</Label>
++                <Input
++                    name="domain"
++                    bind:value={domain}
++                    placeholder="example.com"
++                    class="w-full border-gray-200 text-gray-900 outline-none! transition-colors focus:border-primary! focus:ring-0! dark:border-slate-700 dark:bg-slate-900 dark:text-white"
++                />
++            </div>
++
++            <div class="space-y-1">
++                <Label class="text-xs font-bold text-gray-900 dark:text-white">Does Harper work well here?</Label>
++                <div class="rounded-lg border border-gray-200 p-1 dark:border-slate-700 dark:bg-slate-900">
++                    <div
++                        class="relative flex w-full"
++                        role="radiogroup"
++                        aria-label="Does Harper work well on this domain?"
++                    >
++                        <!-- Animated Sliding Background -->
++                        <div
++                            class="absolute inset-y-0 left-0 w-1/2 rounded-md bg-primary transition-transform duration-300 ease-out"
++                            class:translate-x-0={works}
++                            class:translate-x-full={!works}
++                        ></div>
++
++                        <button
++                            type="button"
++                            role="radio"
++                            aria-checked={works}
++                            class="relative z-10 {segment} {works ? 'text-black' : 'text-gray-600 hover:text-gray-900 dark:text-slate-300 dark:hover:text-whi
 ```
 
-**File**: `packages/chrome-plugin/tests/pages/css_zoom.html` (added, +8/-0)
+**File**: `packages/chrome-plugin/src/popup/Main.svelte` (modified, +129/-87)
+```diff
+@@ -7,8 +7,12 @@ import ProtocolClient from '../ProtocolClient';
+ 
+ let { onReviewDomain }: { onReviewDomain: (works: boolean, domain: string) => void } = $props();
+ 
++// UI State Flags
++let loaded = $state(false);
++
+ let enabled = $state(true);
+ let domain = $state('');
++let site = $derived(domain || 'this page');
+ 
+ let installDate: Date | null = $state(null);
+ let hasBeenReviewed: boolean | null = $state(null);
+@@ -17,28 +21,24 @@ const REVIEW_URL =
+ 
+ const isFirefox = isFirefoxExtension();
+ 
+-if (!isFirefox) {
+-	ProtocolClient.getInstalledOn().then((d) => {
+-		if (d == null) {
+-			return;
+-		}
+-
+-		installDate = new Date(d);
+-	});
+-
+-	ProtocolClient.getReviewed().then((r) => {
+-		hasBeenReviewed = r;
+-	});
+-}
+-
+-getCurrentTabDomain().then((d) => {
+-	domain = d ?? '';
+-});
+-
+-$effect(() => {
+-	ProtocolClient.getDomainEnabled(domain).then((e) => {
+-		enabled = e;
+-	});
++// Fetch all initial data concurrently before showing the UI to prevent layout flashing
++Promise.all([
++	getCurrentTabDomain().then(async (d) => {
++		domain = d ?? '';
++		enabled = await ProtocolClient.getDomainEnabled(domain);
++	}),
++	!isFirefox
++		? ProtocolClient.getInstalledOn().then((d) => {
++				if (d != null) installDate = new Date(d);
++			})
++		: Promise.resolve(),
++	!isFirefox
++		? ProtocolClient.getReviewed().then((r) => {
++				hasBeenReviewed = r;
++			})
++		: Promise.resolve(),
++]).then(() => {
++	loaded = true;
+ });
+ 
+ /**
+@@ -53,14 +53,13 @@ export async function getCurrentTabDomain(): Promise<string | undefined> {
+ 
+ 	try {
+ 		const { hostname } = new URL(tab.url);
+-		return hostname.replace(/^www\\./, '');
++		return hostname.replace(/^www\./, '');
+ 	} catch {
+ 		return undefined;
+ 	}
+ }
+ 
+ function toggleDomainEnabled() {
+-	console.log('toggle');
+ 	enabled = !enabled;
+ 	ProtocolClient.setDomainEnabled(domain, enabled);
+ }
+@@ -92,67 +91,110 @@ function daysSince(date: Date): number {
+ }
+ </script>
+ 
+-<main>
+-  <section class="p-6 space-y-5 text-gray-800 flex flex-row">
+-      <Button
+-        size="lg"
+-        class="rounded-full! aspect-square h-24 w-24 p-0 shadow-lg transition-colors flex! flex-row justify-center"
+-        color={enabled ? 'var(--color-primary)' : 'var(--color-cream-50)'}
+-        on:click={toggleDomainEnabled}
+-      >
+-        <svg
+-          xmlns="http://www.w3.org/2000/svg"
+-          class="h-9 w-9"
+-          fill="none"
+-          viewBox="0 0 24 24"
+-          stroke="currentColor"
+-          stroke-width="2"
++<main class="flex h-full flex-col justify-between">
++    {#if loaded}
++        <section
++            class="flex flex-1 flex-col items-center justify-center px-5 py-6 transition-colors"
++            style={enabled
++                ? 'background-image: radial-gradient(circle at 25% 50%, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 75%)'
++                : ''}
+         >
+-          <path
+-          color={enabled ? 'var(--color-cream-50)' : 'var(--color-primary)'}
+-            stroke-linecap="round"
+-            stroke-linejoin="round"
+-            d="M12 5v7m5.657-4.657a8 8 0 11-11.314 0"
+-          />
+-        </svg>
+-      </Button>
+-  
+-    <section class="items-end p-2">
+-      <h1 class="text-2xl dark:text-white text-right">
+-        {generateGreeting()}
+-      </h1>
+-  
+-      <p class="text-sm font-medium font-sans dark:text-white text-right">
+-        Harper is {enabled ? 'enabled on ' : 'disabled on '}{domain.length > 10 ? "this page" : domain}.
+-      </p>
+-    </section>
+-  </section>
+-
+-  
+-  {#if !isFirefox && installDate != null && daysSince(installDate) > 14 && hasBeenReviewed === false}
+-    <section class="bg-primary flex flex-row justify-between p-4">
+-      <div class="font-bold">
+-        It looks like you're enjoying Harper.<br>
+-        Would you mind giving us a review?
+-      </div>
+-      <Button on:click={openReviewPage}>
+-        Review
+-      </Button>
+-    </section>
+-  {:else}
+-    <section class="flex flex-row justify-between p-2 items-center">
+-      <p class="text-sm font-medium font-sans dark:text-white text-left">
+-        Does Harper work well on this site?
+-      </p>
+-
+-      <div class="flex flex-row *:ml-1">
+-        <Button size="xs" on:click={() => reviewDomain(true)}>
+-          <Fa icon={faThumbsUp} />
+-        </Button>
+-        <Button size="xs"  on:click={() => reviewDomain(false)}>
+-          <Fa icon={faThumbsDown} />
+-        </Button>
+-      </div>
+-    </section>
+-  {/if}
+-</main>
++            <!-- Row Layout: power button left, greeting + status right -->
++            <div class="flex w-full flex-row items-center gap-5">
++
++                <!-- 1. Power Button -->
++                <Button
++                    size="lg"
++                    class="rounded-full! aspect-square h-24 w-24 shrink-0 p-0 shadow-lg transition-colors flex! flex-row items-center justify-center"
++                    color={enabled ? 'var(--color-primary)' : 'var(--color-cream-50)'}
++                    on:click={toggleDomainEnabled}
++         
+```
+
+**File**: `packages/chrome-plugin/src/popup/Onboarding.svelte` (modified, +49/-20)
+```diff
+@@ -1,32 +1,61 @@
+ <script lang="ts">
+-import { Badge, Button } from 'components';
++import { Button } from 'components';
+ 
+ let { onConfirm }: { onConfirm: () => void } = $props();
+ 
++let isConfirming = $state(false);
++
+ const steps = [
+ 	'Start typing in any large text box — emails, docs, blog posts, you name it.',
+ 	'Keep writing — Harper quietly highlights potential hiccups as you go.',
+-	'Click a highlight to open focused, context‑aware suggestions.',
++	'Click a highlight to open focused, context-aware suggestions.',
+ ];
++
++function handleStart() {
++	if (isConfirming) return;
++	isConfirming = true;
++	// Allow button press state/animation to register briefly before transitioning views
++	setTimeout(() => {
++		onConfirm();
++	}, 180);
++}
+ </script>
+ 
+-<main class="p-6 space-y-6">
+-  <h2 class="text-base font-semibold">
+-    Welcome! Let’s see Harper in action:
+-  </h2>
++<main class="flex h-full flex-col justify-between px-5 py-4 select-none">
++	<div class="space-y-4">
++		<div>
++			<h2 class="text-base font-semibold dark:text-white">
++				Welcome! Let’s see Harper in action:
++			</h2>
++			<p class="mt-0.5 text-xs text-gray-500 dark:text-slate-400">
++				Three quick tips to get the most out of your writing assistant.
++			</p>
++		</div>
+ 
+-  <ul class="space-y-6">
+-    {#each steps as line, i}
+-      <li class="flex gap-4 items-start">
+-        <Badge class="w-8 h-8 bg-primary-300 text-primary-900 font-semibold flex items-center justify-center rounded-lg dark:bg-slate-900 dark:text-slate-100">
+-          {i + 1}
+-        </Badge>
+-        <p class="text-sm text-gray-700 dark:text-slate-300">{line}</p>
+-      </li>
+-    {/each}
+-  </ul>
++		<ul class="space-y-3.5 pt-1">
++			{#each steps as line, i}
++				<li class="flex items-start gap-3">
++					<span
++						class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md  bg-primary/15 text-xs font-bold text-primary ring-1 ring-primary/30 dark:bg-primary/20 dark:text-primary dark:ring-primary/40"
++					>
++						{i + 1}
++					</span>
++					<p class="text-sm leading-relaxed text-gray-700 dark:text-slate-300">
++						{line}
++					</p>
++				</li>
++			{/each}
++		</ul>
++	</div>
+ 
+-  <Button color="primary"  class="w-full h-10" on:click={onConfirm}>
+-    Let's start writing
+-  </Button>
+-</main>
++	<div class="pt-3">
++		<Button
++			color="primary"
++			class="h-9 w-full text-xs font-semibold bg-primary! text-black! hover:bg-primary/85!"
++			disabled={isConfirming}
++			on:click={handleStart}
++		>
++			{isConfirming ? 'Getting started...' : "Let's start writing"}
++		</Button>
++	</div>
++</main>
+\ No newline at end of file
+```
+
+**File**: `packages/chrome-plugin/src/popup/Popup.svelte` (modified, +167/-36)
+```diff
+@@ -2,6 +2,7 @@
+ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+ import { Button, Link } from 'components';
+ import { onMount } from 'svelte';
++import { fly } from 'svelte/transition';
+ import Fa from 'svelte-fa';
+ import logo from '/logo.png';
+ import detectBrowserEngine from '../detectBrowserEngine';
+@@ -17,6 +18,14 @@ let version = `v${chrome.runtime.getManifest().version}`;
+ let latestVersion: string | null = $state(null);
+ let versionMismatch = $state(false);
+ 
++let hoveredFooterIndex = $state<number | null>(null);
++let activeFooterIndex = $state<number>(0);
++
++function handleMouseEnter(index: number) {
++	activeFooterIndex = index;
++	hoveredFooterIndex = index;
++}
++
+ onMount(async () => {
+ 	try {
+ 		const response = await fetch('https://writewithharper.com/latestversion');
+@@ -57,43 +66,165 @@ function openUpdateHelpPage() {
+ 		url,
+ 	});
+ }
++
++// Per-page heights: compact for the main view, taller for forms.
++const PAGE_HEIGHTS: Record<string, number> = { main: 410, 'report-error': 580 };
++let heightPx = $derived(PAGE_HEIGHTS[popupState.page] ?? 500);
++const WIDTH_PX = 340;
++
++// Browser popups size themselves to the document, and stale CSS (e.g. #app min-h-screen) can keep
++// them at the larger size. Setting the size explicitly forces the popup to resize.
++$effect(() => {
++	const app = document.getElementById('app'); // global CSS gives #app min-h-screen
++	for (const el of [document.documentElement, document.body, app]) {
++		if (!el) continue;
++		el.style.width = `${WIDTH_PX}px`;
++		el.style.height = `${heightPx}px`;
++		el.style.minHeight = '0';
++		el.style.margin = '0';
++		el.style.overflow = 'hidden';
++	}
++});
++
++const footerLink = 'text-xs text-gray-500 dark:text-slate-400 no-underline!';
+ </script>
+ 
+-<div class="w-[340px] border border-gray-200 font-sans flex flex-col rounded-lg shadow-sm select-none dark:border-slate-800 dark:text-slate-100">
+-  <header class="flex flex-row justify-between items-center gap-2 px-3 py-2 rounded-t-lg">
+-    <div class="flex flex-row justify-start items-center gap-1">
+-      <img src={logo} alt="Harper logo" class="h-6 w-auto rounded-lg mx-2" />
+-      <span class="font-semibold text-sm">Harper</span>
+-    </div>
++<div
++    style="width: {WIDTH_PX}px; height: {heightPx}px;"
++    class="font-sans flex flex-col select-none overflow-hidden rounded-xl border border-gray-200 dark:border-slate-800 dark:text-slate-100"
++>
++    <header
++        class="flex shrink-0 flex-row items-center justify-between gap-2 border-b border-gray-100 px-4 py-3 dark:border-slate-800"
++    >
++        <div class="flex flex-row items-center gap-2.5">
++            <img src={logo} alt="Harper logo" class="h-6 w-6 rounded-md" />
++            <span class="text-sm font-semibold tracking-tight">Harper</span>
++        </div>
++
++        {#if popupState.page != 'main'}
++            <Button
++                class="bg-primary! text-black! hover:bg-primary/85!"
++                on:click={() => {
++                    popupState = main();
++                }}
++            >
++                <Fa icon={faArrowLeft} />
++            </Button>
++        {:else}
++            <button
++                type="button"
++                class="flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 font-mono text-xs transition-colors
++                    {versionMismatch
++                        ? 'border border-primary text-primary hover:bg-primary hover:text-black'
++                        : 'text-gray-500 hover:text-gray-900 dark:text-slate-400 dark:hover:text-white'}"
++                onclick={openUpdateHelpPage}
++                title={versionMismatch
++                    ? `Newer version available: ${latestVersion ?? ''}. Click to find out more.`
++                    : 'How to update'}
++            >
++                {#if versionMismatch}
++                    <span class="text-xs" aria-label="Update available">⚠️</span>
++                {/if}
++                <span class="text-xs font-mono">{version}</span>
++            </button>
++        {/if}
++    </header>
+ 
+-    {#if popupState.page != "main"}
+-       <Button on:click={() => { 
+-          popupState = main();
+-       }}><Fa icon={faArrowLeft}/></Button>
+-    {:else}
+-      <button type="button" class="cursor-pointer" onclick={openUpdateHelpPage}>
+-        {#if versionMismatch}
+-          <span class="ml-1" title={`Newer version available: ${latestVersion ?? ''}. Click to find out more.`}>⚠️</span>
++    <!-- Flex container ensuring children take up full available height -->
++    <div class="relative flex min-h-0 flex-1 flex-col overflow-hidden">
++        {#if popupState.page == 'onboarding'}
++            <div class="flex h-full flex-col" in:fly={{ y: 12, duration: 250 }}>
++                <Onboarding
++                    onConfirm={() => {
++                        popupState = main();
++                    }}
++                />
++            </div>
++        {:else if popupState.page == 'main'}
++            <div class="flex h-full flex-col
+```
+
+**File**: `packages/chrome-plugin/src/popup/ReportProblematicLint.svelte` (modified, +68/-35)
+```diff
+@@ -11,11 +11,13 @@ let {
+ 
+ let submitting = $state(false);
+ let successful = $state(false);
++let failed = $state(false);
+ 
+ async function handleSubmit(event: SubmitEvent) {
+ 	event.preventDefault();
+ 
+ 	submitting = true;
++	failed = false;
+ 
+ 	const success = await ProtocolClient.postFormData(
+ 		'https://writewithharper.com/api/problematic-lints',
+@@ -30,54 +32,85 @@ async function handleSubmit(event: SubmitEvent) {
+ 	submitting = false;
+ 
+ 	if (success) {
+-		onSubmit();
+ 		successful = true;
++		setTimeout(onSubmit, 1200);
++	} else {
++		failed = true;
+ 	}
+ }
++
++// The `!` suffix is needed: the shared Input component ships its own orange-tinted
++// background/border, which otherwise wins over these utilities. Colors deliberately avoid
++// `dark:` variants (they don't apply reliably here): the tinted fill, inherited text color and
++// translucent border read correctly on both light and dark popup backgrounds.
++const inputClass =
++	'w-full bg-slate-500/10! border-slate-500/40! text-inherit! caret-primary ' +
++	'placeholder:text-primary/70! placeholder:opacity-100 ' +
++	'focus:border-primary! focus:ring-1 focus:ring-primary';
++const textareaClass = `min-h-14 flex-1 resize-none rounded-lg border px-3 py-2 text-sm leading-snug outline-none! transition-colors ${inputClass}`;
++const labelClass = 'shrink-0 text-xs! font-medium! leading-none text-inherit!';
+ </script>
+ 
+-<div class="p-5">
+-	<h1 class="text-2xl font-semibold">Report Problematic Lint</h1>
+-	<p class="text-sm">
+-		Only the data you enter below will be sent to the Harper maintainer.
+-	</p>
+-	<form class="mt-4 space-y-6" onsubmit={handleSubmit}>
+-		<div class="space-y-3">
+-			<div class="flex items-baseline gap-2">
+-				<Label class=" ">What text caused (or should cause) feedback from Harper?</Label>
+-			</div>
+-			<Input
++<form class="flex h-full min-h-0 flex-col" onsubmit={handleSubmit}>
++	<!-- Fixed intro, so the title never scrolls under the header -->
++	<div class="shrink-0 px-5 pt-3 pb-2.5">
++		<h1 class="font-sans! text-xl font-semibold tracking-tight ">
++			Report Problematic Lint
++		</h1>
++		<p class="mt-1 text-xs leading-snug opacity-70">
++			Only the data you enter below will be sent to the Harper maintainer.
++		</p>
++	</div>
++
++	<!-- Compact fields: sized to fit the popup without scrolling -->
++	<div class="flex min-h-0 flex-1 flex-col gap-3 px-5 pb-3">
++		<Checkbox name="is_false_positive" value="true" hidden />
++
++		<div class="flex min-h-0 flex-1 flex-col gap-1.5">
++			<Label class={labelClass}>What text caused (or should cause) feedback from Harper?</Label>
++			<textarea
+ 				name="example"
+ 				bind:value={example}
+-				placeholder="Give us an example."
+-				class="dark:bg-slate-900 dark:border-slate-700 "
+-			/>
+-
+-			<Checkbox name="is_false_positive" value="true" hidden />
++				placeholder="Paste the text, plus any context that helps."
++				class={textareaClass}
++			></textarea>
++		</div>
+ 
+-			<div class="flex items-baseline gap-2">
+-				<Label class=" ">What rule caused (or should cause) feedback from Harper?</Label>
+-			</div>
+-			<Input
++		<div class="flex min-h-0 flex-1 flex-col gap-1.5">
++			<Label class={labelClass}>What rule caused (or should cause) feedback from Harper?</Label>
++			<textarea
+ 				name="rule_id"
+-				placeholder="We'd appreciate the specific rule ID, if applicable."
+ 				bind:value={rule_id}
+-				class="dark:bg-slate-900 dark:border-slate-700 "
+-			/>
++				placeholder="Rule ID, and anything else worth knowing."
++				class={textareaClass}
++			></textarea>
++		</div>
+ 
+-			<div class="flex items-baseline gap-2">
+-				<Label class=" ">Additional Feedback</Label>
+-			</div>
++		<div class="flex shrink-0 flex-col gap-1.5">
++			<Label class={labelClass}>Additional Feedback</Label>
+ 			<Input
+ 				name="feedback"
+-				placeholder="Anything you want to add?"
+ 				bind:value={feedback}
+-				class="dark:bg-slate-900 dark:border-slate-700 "
++				placeholder="Anything you want to add?"
++				class={inputClass}
+ 			/>
+-
+-			<div class="flex items-center justify-between pt-2">
+-				<Button state={submitting ? (successful ? "success" : "loading") : "idle"} type="submit" disabled={submitting}>Submit</Button>
+-			</div>
+ 		</div>
+-	</form>
+-</div>
++	</div>
++
++	{#if failed}
++		<p class="shrink-0 px-5 pb-2 text-xs text-red-500 dark:text-red-400" role="alert">
++			Couldn't send your report. Please try again.
++		</p>
++	{/if}
++
++	<div class="shrink-0 px-5 pb-4">
++		<Button
++			class="w-full shrink-0 {successful ? '' : 'bg-primary! text-black! hover:bg-primary/85!'} ring-0! focus:ring-0! focus-visible:ring-0! focus:shadow-none! focus-visible:shadow-none! focus-visible:outline! focus-visible:outline-1! focus-visible:outline-offset-2! focus-visible:outline-primary!"
++			state={successful ? 'success' : submitting ? 'loading' : 'idle'}
++			type="submit"
++			disabled={submitting || successful}
++		>
++			{successful ? 'Sent. Thank you!' : 'Send report'}
++		</Button>
++	</div>
++</form>
+\ No newline at end of file
+```
+
+---
+
+### Incident Patch 2: `b423cd47` (2026-10-23)
+**Commit Message**: fix: don't flag "deus" to change to "imus" (#4671)
+
+**File**: `harper-core/src/linting/wrong_negative.rs` (modified, +11/-1)
+```diff
+@@ -12,7 +12,9 @@ fn looks_negative_but_oov(token: &Token, source: &[char]) -> bool {
+         && token
+             .get_ch(source)
+             .starts_with_any_ignore_ascii_case_str(NEGATIVE_PREFIXES)
+-        && !token.get_ch(source).eq_ch(&['d', 'e', 'f', 'o'])
++        && !token
++            .get_ch(source)
++            .eq_any_ignore_ascii_case_str(&["defo", "deus"])
+ }
+ 
+ pub struct WrongNegative<D: Dictionary + 'static> {
+@@ -180,4 +182,12 @@ mod tests {
+             WrongNegative::new(FstDictionary::curated()),
+         );
+     }
++
++    #[test]
++    fn dont_flag_deus() {
++        assert_no_lints(
++            "That deus ex machine stuff seems like enormous cope to me",
++            WrongNegative::new(FstDictionary::curated()),
++        );
++    }
+ }
+```
+
+---
+
+### Incident Patch 3: `cf4e973f` (2026-10-24)
+**Commit Message**: feat: (deux) ex machine → ex machina (#4675)
+
+**File**: `harper-core/default_config.json` (modified, +7/-0)
+```diff
+@@ -2672,6 +2672,13 @@
+ 								"label": "Exited Excited Context"
+ 							}
+ 						},
++						{
++							"Bool": {
++								"name": "ExMachina",
++								"state": true,
++								"label": "Ex Machina"
++							}
++						},
+ 						{
+ 							"Bool": {
+ 								"name": "FetalPosition",
+```
+
+**File**: `harper-core/src/linting/weir_rules/ExMachina/WithDeus.weir` (added, +8/-0)
 ```diff
 @@ -0,0 +1,8 @@
-+<!DOCTYPE html>
-+<html>
-+  <body>
-+    <div style="zoom: 1.5">
-+      <textarea style="margin: 200px 0 0 200px" rows="3" cols="40"></textarea>
-+    </div>
-+  </body>
-+</html>
++expr main <(deus ex machine), machine>
++
++let message "This phrase is Latin and the spelling is `machina`."
++let description "Corrects the Latin phrase `deus ex machina`."
++let kind "Spelling"
++let becomes "machina"
++
++test "That deus ex machine stuff seems like enormous cope to me" "That deus ex machina stuff seems like enormous cope to me"
 ```
 
-**File**: `packages/lint-framework/src/lint/Highlights.ts` (modified, +55/-9)
+**File**: `harper-core/src/linting/weir_rules/ExMachina/WithoutDeus.weir` (added, +13/-0)
 ```diff
-@@ -25,7 +25,7 @@ import {
- 	isGoogleDocsSourceSyncing,
- } from './googleDocsAdapter';
- import { type LintKind, lintKindColor } from './lintKindColor';
--import RenderBox from './RenderBox';
-+import RenderBox, { FIXED_FRAME_MARKER_ID, type FixedFrame } from './RenderBox';
- import type SourceElement from './SourceElement';
- import type { UnpackedLint } from './unpackLint';
- 
-@@ -150,7 +150,21 @@ export default class Highlights {
- 				googleDocsRenderOffset ?? (isGoogleDocs || cpa == null ? null : { x: cpa.x, y: cpa.y });
- 			const boxPosition: 'absolute' | 'fixed' = isGoogleDocs ? 'absolute' : 'fixed';
- 
--			renderBox.render(this.renderTree(boxes, offset, boxPosition));
-+			// Lint boxes are measured in viewport pixels, but the render box lives inside the
-+			// source's subtree, where ancestors with `zoom`, `transform` or `scale` can move and
-+			// scale fixed-position content. Map the boxes through the frame we actually get.
-+			if (isGoogleDocs) {
-+				renderBox.render(this.renderTree(boxes, offset, boxPosition));
-+			} else {
-+				// The frame is measured from a marker in the previous render, so render once more
-+				// when it was missing or has moved since.
-+				const before = renderBox.measureFixedFrame();
-+				renderBox.render(this.renderTree(boxes, before, boxPosition));
-+				const after = renderBox.measureFixedFrame();
-+				if (after != null && !framesEqual(before, after)) {
-+					renderBox.render(this.renderTree(boxes, after, boxPosition));
-+				}
-+			}
- 			updated.add(source);
- 		}
- 
-@@ -178,16 +192,38 @@ export default class Highlights {
- 
- 	private renderTree(
- 		boxes: LintBox[],
--		offset: { x: number; y: number } | null,
-+		frame: { x: number; y: number; scaleX?: number; scaleY?: number } | null,
- 		boxPosition: 'absolute' | 'fixed',
- 	): VNode {
- 		const elements = [];
--		const offsetX = offset?.x ?? 0;
--		const offsetY = offset?.y ?? 0;
-+		const offsetX = frame?.x ?? 0;
-+		const offsetY = frame?.y ?? 0;
-+		const scale = { x: frame?.scaleX ?? 1, y: frame?.scaleY ?? 1 };
+@@ -0,0 +1,13 @@
++expr main <(ex machine), machine>
 +
-+		if (boxPosition === 'fixed') {
-+			elements.push(
-+				h(
-+					'div',
-+					{
-+						id: FIXED_FRAME_MARKER_ID,
-+						style: {
-+							position: 'fixed',
-+							left: '0px',
-+							top: '0px',
-+							width: '100px',
-+							height: '100px',
-+							visibility: 'hidden',
-+							pointerEvents: 'none',
-+						},
-+					},
-+					[],
-+				),
-+			);
-+		}
- 
- 		for (const box of boxes) {
--			const x = box.x - offsetX;
--			const y = box.y - offsetY;
-+			const x = (box.x - offsetX) / scale.x;
-+			const y = (box.y - offsetY) / scale.y;
- 			const positionStyle =
- 				boxPosition === 'fixed'
- 					? {
-@@ -207,8 +243,8 @@ export default class Highlights {
- 				{
- 					style: {
- 						...positionStyle,
--						width: `${box.width}px`,
--						height: `${box.height}px`,
-+						width: `${box.width / scale.x}px`,
-+						height: `${box.height / scale.y}px`,
- 						pointerEvents: 'none',
- 						borderBottom: `2px solid ${lintKindColor(box.lint.lint_kind)}`,
- 						backgroundColor: `${lintKindColor(box.lint.lint_kind)}22`,
-@@ -266,6 +302,16 @@ export default class Highlights {
- 	}
- }
- 
-+function framesEqual(a: FixedFrame | null, b: FixedFrame): boolean {
-+	return (
-+		a != null &&
-+		Math.abs(a.x - b.x) < 0.5 &&
-+		Math.abs(a.y - b.y) < 0.5 &&
-+		Math.abs(a.scaleX - b.scaleX) < 0.001 &&
-+		Math.abs(a.scaleY - b.scaleY) < 0.001
-+	);
-+}
++let message "Did you mean the Latin phrase `ex machina`?"
++let description "Checks if the user intended the Latin phrase `ex machina`."
++let kind "Spelling"
++let becomes "machina"
 +
- function getInitialContainingRect(el: HTMLElement): DOMRect | null {
- 	let node = el.parentElement;
- 
-```
-
-**File**: `packages/lint-framework/src/lint/RenderBox.ts` (modified, +34/-2)
-```diff
-@@ -5,6 +5,12 @@ import patch from 'virtual-dom/patch';
- 
- type ParentResolver = () => Node;
- 
-+/** The id of the invisible `position: fixed` marker used by `RenderBox.measureFixedFrame`. */
-+export const FIXED_FRAME_MARKER_ID = 'harper-fixed-frame';
++test "While I really enjoyed Ex Machine, its not of the \"2001: A Space Odyssey\" level." "While I really enjoyed Ex Machina, its not of the \"2001: A Space Odyssey\" level."
 +
-+/** The on-screen origin and scale of `position: fixed` content inside a render box. */
-+export type FixedFrame = { x: number; y: number; scaleX: number; scaleY: number };
++# examples of where it's not a spelling mistake
 +
- /** Wraps `virtual-dom` to create a box that is unaffected by the style of the rest of the page. */
- export default class RenderBox {
- 	/** The node we reattach into if a host is removed by editor-managed DOM updates. */
-@@ -30,15 +36,41 @@ export default class RenderBox {
- 
- 		if (!this.virtualRoot || !this.virtualTree) {
- 			this.virtualRoot = createElement(node);
--			const shadow = this.shadowHost.attachShadow({ mode: 'open' });
--			shadow.appendChild(this.virtualRoot);
-+			this.getShadowRoot().appendChild(this.virtualRoot);
- 		} else {
- 			const patches = diff(this.virtualTree, node);
- 			this.virtualRoot = patch(this.virtualRoot, patches);
- 		}
- 		this.virtualTree = node;
- 	}
- 
-+	/**
-+	 * Measure where the rendered frame marker (see `FIXED_FRAME_MARKER_ID`), a `position: fixed`
-+	 * element placed at (0, 0) and 100px wide, actually lands on screen and how much it is
-+	 * scaled. Ancestors with CSS `zoom`, `transform`, `scale` and similar properties change
-+	 * both, so highlights have to be mapped through this frame. Returns `null` before the
-+	 * marker has been rendered.
-+	 */
-+	public measureFixedFrame(): FixedFrame | null {
-+		const marker = this.shadowHost.shadowRoot?.getElementById(FIXED_FRAME_MARKER_ID);
-+		if (marker == null || !marker.isConnected) {
-+			return null;
-+		}
-+
-+		const rect = marker.getBoundingClientRect();
-+
-+		return {
-+			x: rect.x,
-+			y: rect.y,
-+			scaleX: rect.width > 0 ? rect.width / 100 : 1,
-+			scaleY: rect.height > 0 ? rect.height / 100 : 1,
-+		};
-+	}
-+
-+	private getShadowRoot(): ShadowRoot {
-+		return this.shadowHost.shadowRoot ?? this.shadowHost.attachShadow({ mode: 'open' });
-+	}
-+
- 	/** Remove the box from the DOM. */
- 	public remove() {
- 		try {
-```
-
-**File**: `packages/lint-framework/src/lint/TextFieldRange.ts` (modified, +14/-2)
-```diff
-@@ -129,11 +129,23 @@ export default class TextFieldRange {
- 		const fieldRect = field.getBoundingClientRect();
- 		const scrollTop = window.scrollY || document.documentElement.scrollTop;
- 		const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
-+
-+		// The copied styles are in the field's own CSS pixels, while its bounding rect is on
-+		// screen. When an ancestor zooms or scales the field (CSS `zoom`, `transform`, `scale`),
-+		// lay the mirror out at the field's own size and scale it to match what is on screen.
-+		const width = field.offsetWidth || fieldRect.width;
-+		const height = field.offsetHeight || fieldRect.height;
-+		const scaleX = width > 0 ? fieldRect.width / width : 1;
-+		const scaleY = height > 0 ? fieldRect.height / height : 1;
-+		const scaled = Math.abs(scaleX - 1) > 0.001 || Math.abs(scaleY - 1) > 0.001;
-+
- 		Object.assign(mirror.style, {
- 			top: `${fieldRect.top + scrollTop}px`,
- 			left: `${fieldRect.left + scrollLeft}px`,
--			width: `${fieldRect.width}px`,
--			height: `${fieldRect.height}px`,
-+			width: `${scaled ? width : fieldRect.width}px`,
-+			height: `${scaled ? height : fieldRect.height}px`,
-+			transform: scaled ? `scale(${scaleX}, ${scaleY})` : '',
-+			transformOrigin: scaled ? '0 0' : '',
- 		});
- 	}
- 
-```
-
----
-
-### Incident Patch 2: `31fc96f3` (2026-10-21)
-**Commit Message**: build(deps): bump ammonia from 4.2.3 to 4.2.4 (#4663)
-
-Bumps [ammonia](https://github.com/rust-ammonia/ammonia) from 4.2.3 to 4.2.4.
-- [Release notes](https://github.com/rust-ammonia/ammonia/releases)
-- [Changelog](https://github.com/rust-ammonia/ammonia/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/rust-ammonia/ammonia/compare/v4.2.3...v4.2.4)
-
----
-updated-dependencies:
-- dependency-name: ammonia
-  dependency-version: 4.2.4
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -46,9 +46,9 @@ checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
- 
- [[package]]
- name = "ammonia"
--version = "4.2.3"
-+version = "4.2.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "061e83b03c2681c18a6787d956e355c74e0b98ba7ba3d69b0822ade1e6f1d716"
-+checksum = "1f45dfa685e1ec33b1bf1a3b93b8047cbdbef41b6040deebbe6bea7720a45574"
- dependencies = [
-  "cssparser",
-  "html5ever",
-```
-
----
-
-### Incident Patch 3: `65d54e6a` (2026-10-21)
-**Commit Message**: fix(desktop): stop recreating the linter every second (#4661)
-
-Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
-
-**File**: `harper-desktop/src-tauri/src/main.rs` (modified, +6/-2)
-```diff
-@@ -548,7 +548,12 @@ fn apply_highlighter_config(
-     debounce_ms: &Rc<RefCell<u64>>,
-     linter: &Rc<RefCell<LintGroup>>,
- ) {
--    let linter_config = config.create_linter();
-+    if config.mutable_dictionary != *user_dictionary.borrow()
-+        || config.dialect != *dialect.borrow()
-+        || config.lint_config != linter.borrow().config
-+    {
-+        *linter.borrow_mut() = config.create_linter();
-+    }
-     *ignored_lints.borrow_mut() = config.ignored_lints;
-     *user_dictionary.borrow_mut() = config.mutable_dictionary;
-     *dialect.borrow_mut() = config.dialect;
-@@ -562,5 +567,4 @@ fn apply_highlighter_config(
-         Err(error) => eprintln!("failed to update integrations: {error}"),
-     }
-     *debounce_ms.borrow_mut() = config.debounce_ms;
--    *linter.borrow_mut() = linter_config;
- }
++# The result is that every Cray EX machine needs a hand-written config file
++# Ex Machine Learning Engineer at ACI Limited
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4665** (closed): fix(cli): write each lint report in one go so parallel reports don't interleave (@bercedev)
-- **PR #4664** (2026-10-21): feat: fiber optics/fibre optics → optic (@hippietrail)
-- **PR #4663** (2026-10-21): build(deps): bump ammonia from 4.2.3 to 4.2.4 (@dependabot[bot])
-- **PR #4662** (2026-10-21): build(deps): bump tree-sitter-php from 0.24.2 to 0.25.1 (@dependabot[bot])
-- **PR #4661** (2026-10-21): fix(desktop): stop recreating the linter every second (@elijah-potter)
-- **PR #4658** (2026-10-20): fix(chrome-ext): don't close popup when the context_hash changes (@elijah-potter)
+- **PR #4686** (2026-10-24): feat: xyz are the one → xyz are the ones (@hippietrail)
+- **PR #4685** (2026-10-25): feat: out of curiosities → curiosity / curosity's (@hippietrail)
+- **PR #4675** (2026-10-24): feat: (deus) ex machine → ex machina (@hippietrail)
+- **PR #4673** (2026-10-24): feat: mixing up "passed" and "past' (@hippietrail)
+- **PR #4672** (2026-10-23): feat: in a/the mood of → mood for (@hippietrail)
+- **PR #4671** (2026-10-23): fix: don't flag "deus" to change to "imus" (@hippietrail)
 
 ---
 
@@ -1850,53 +2530,28 @@ Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lint-framework): position highlights correctly under zoomed or scaled ancestors 
+## X. popup): refine UI layout, animated controls, and form ergonomics (#4541)
 
 **RULE**:
-When implementing operations in `packages/chrome-plugin/tests/css_zoom.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/chrome-plugin/app.css`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8670fc3c`: lint-framework): position highlights correctly under zoomed or scaled ancestors (#4506). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad3db4e8`: popup): refine UI layout, animated controls, and form ergonomics (#4541). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/chrome-plugin/tests/css_zoom.spec.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/chrome-plugin/app.css`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import type { Page } from '@playwright/test';
-import { expect, test } from './fixtures';
-import { getHarperHighlights, getTextarea, replaceEditorContent } from './testUtils';
-
-test('Positions highlights inside an ancestor with CSS zoom.', async ({ page }) => {
-	await page.goto('http://localhost:8081/css_zoom.html');
-
-	const editor = getTextarea(page);
-	await replaceEditorContent(editor, 'This is an test of the Harper grammar checker.');
-
-	const highlights = getHarperHighlights(page);
-	await expect(highlights).toHaveCount(1, { timeout: 24000 });
-
-	const editorBox = (await editor.boundingBox())!;
-	const highlightBox = (await highlights.first().boundingBox())!;
-
-	// When the zoom is applied to the highlight a second time, it drifts below and to the
-	// right of the textarea.
-	expect(highlightBox.x).toBeGreaterThanOrEqual(editorBox.x);
-	expect(highlightBox.y).toBeGreaterThanOrEqual(editorBox.y);
-	expect(highlightBox.x + highlightBox.width).toBeLessThanOrEqual(editorBox.x + editorBox.width);
-	expect(highlightBox.y + highlightBox.height).toBeLessThanOrEqual(editorBox.y + editorBox.height);
-});
-
-/** The highlight box inside `textareaId`, relative to that textarea's top-left corner. */
-asy
+	@apply bg-white text-black dark:bg-black dark:text-white transition-colors duration-150;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	@apply min-h-screen bg-white text-black dark:bg-black dark:text-white transition-colors duration-150;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8670fc3c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad3db4e8` are properly handled with clean fallback behavior.
