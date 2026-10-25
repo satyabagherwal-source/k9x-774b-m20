@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T20:17:44.897Z",
-  "total_cycles_completed": 4957,
-  "total_learnings_persisted": 4957,
-  "total_rules_promoted": 4325,
+  "last_updated": "2026-10-25T20:23:52.609Z",
+  "total_cycles_completed": 4959,
+  "total_learnings_persisted": 4959,
+  "total_rules_promoted": 4326,
   "history": [
-    {
-      "timestamp": "2026-10-25T11:12:02.940Z",
-      "repository": "XingChen-AGI/TeleOCR",
-      "learningId": "learn-huggingface-xingchen-agi-teleocr",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T11:14:37.956Z",
-      "repository": "sharkdp/fd",
-      "learningId": "learn-github-sharkdp-fd",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T11:20:46.715Z",
       "repository": "guokaigdg/animal-island-ui",
@@ -1403,6 +1389,20 @@
       "repository": "stabilityai/stable-diffusion-3-medium",
       "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T20:23:37.581Z",
+      "repository": "bigscience/bloom",
+      "learningId": "learn-huggingface-bigscience-bloom",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T20:23:52.609Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

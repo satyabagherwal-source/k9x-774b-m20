@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T20:17:44.904Z",
+  "last_updated": "2026-10-25T20:23:52.616Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1235,14 +1235,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-bigscience-bloom",
-      "content_hash": "ffa3abac8fe18fad2f5885117b3f2ccdbb765b78ca64373963585ea57591accf",
-      "verified_at": "2026-10-21T00:42:32.708Z",
+      "content_hash": "98dbfab91ea5ec27c1f6195908c7a0f8c234970bb68e24d8a83d9c602633f63b",
+      "verified_at": "2026-10-25T20:23:37.583Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:42:32.708Z"
+      "last_updated": "2026-10-25T20:23:37.583Z"
     },
     "openai/gpt-oss-20b": {
       "repository": "openai/gpt-oss-20b",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "43b9863746dd409476dcc82c601425dbe7acb16cd1a83a1315f37bc1c55336ca",
-      "verified_at": "2026-10-25T04:06:07.082Z",
+      "content_hash": "c693eee1ee3afac7d13df97f92c96218c326ae1c24b7ff4e8928289526f130a4",
+      "verified_at": "2026-10-25T20:23:52.612Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:06:07.082Z"
+      "last_updated": "2026-10-25T20:23:52.612Z"
     },
     "React95/React95": {
       "repository": "React95/React95",

@@ -4980,3 +4980,5 @@
 | `CYCLE-20261025-B5JE` | `2026-10-25T20:04:47.690Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4438` | Yes (`87048aa7...`) |
 | `CYCLE-20261025-JNPO` | `2026-10-25T20:11:24.492Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`5d96b458...`) |
 | `CYCLE-20261025-RT8C` | `2026-10-25T20:17:44.892Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4439, Rule 4440, Rule 4441` | Yes (`14608bba...`) |
+| `CYCLE-20261025-ZDD4` | `2026-10-25T20:23:37.576Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`98dbfab9...`) |
+| `CYCLE-20261025-ZOYK` | `2026-10-25T20:23:52.604Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4442` | Yes (`c693eee1...`) |

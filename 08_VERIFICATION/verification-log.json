@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-RS5A",
-    "timestamp": "2026-10-23T06:42:34.174Z",
-    "repository": "expo/expo",
-    "learningId": "learn-github-expo-expo",
-    "contentHash": "76a90574f9442365d9ff70debc0d11c6cee02bf4d8572491a9374eba57f37f64",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-0ZHK",
-    "timestamp": "2026-10-23T06:49:43.592Z",
-    "repository": "fastapi/fastapi",
-    "learningId": "learn-github-fastapi-fastapi",
-    "contentHash": "98601ea6e30448df9e2cd3de08e2de09e9ffb431505e507f34d09e9fa3d34953",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-12N3",
     "timestamp": "2026-10-23T06:49:47.679Z",
     "repository": "TanStack/query",
@@ -7492,6 +7462,36 @@
     "contentHash": "14608bbae8242e4cc5248118194077ac9fe40cfdc98ff83114e8cdf753a09d51",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ZDD4",
+    "timestamp": "2026-10-25T20:23:37.576Z",
+    "repository": "bigscience/bloom",
+    "learningId": "learn-huggingface-bigscience-bloom",
+    "contentHash": "98dbfab91ea5ec27c1f6195908c7a0f8c234970bb68e24d8a83d9c602633f63b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ZOYK",
+    "timestamp": "2026-10-25T20:23:52.604Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "c693eee1ee3afac7d13df97f92c96218c326ae1c24b7ff4e8928289526f130a4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

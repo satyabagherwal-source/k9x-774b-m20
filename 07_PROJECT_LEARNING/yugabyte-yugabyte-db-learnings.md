@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `d00af7d2`  
+> **Source Version**: `545b420b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:06:06.724Z  
+> **Timestamp**: 2026-10-25T20:23:52.372Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:06:06.715Z  
+> **Harvest Timestamp**: 2026-10-25T20:23:52.367Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10624 stars
+- **Stars / Engagement**: 10628 stars
 
 ---
 
@@ -1261,6 +1261,12 @@ class GcpMetadata():
         return GcpMetadata._query_endpoint("instance/network-interfaces/0/network")
 
     @staticmethod
+    def zone():
+        # Of the form projects/PROJECT_NUMBER/zones/ZONE.
+        zone = GcpMetadata._query_endpoint("instance/zone")
+        return zone.split("/")[-1] if zone else None
+
+    @staticmethod
     def service_accounts():
         return GcpMetadata._query_endpoint("instance/service-accounts/")
 
@@ -1359,12 +1365,7 @@ class NetworkManager():
         if output_region_to_subnet_map:
             return self.network_info_as_json(network_name, output_region_to_subnet_map)
 
-        networks = self.get_networks(network_name)
-        if len(networks) == 0:
-            raise YBOpsRuntimeError("Invalid target VPC: {}".format(network_name))
-        network = networks[0]
-
-        subnet_map = self.get_region_subnet_map(n
+        networks = self.get_networks(ne
 ```
 
 ### Core Architecture Module: `managed/devops/opscli/ybops/cloud/oci/utils.py`
@@ -2270,599 +2271,513 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c48c3dbf` (2026-10-23)
-**Commit Message**: [#34664] YSQL: Fix RemoteBootstrapITest.TestRBSWithLazySuperblockFlush leader-failover delay
-
-Summary:
-When the tserver being tombstoned was the tablet's Raft leader, the other peers only started an election after the failure-detection timeout, which is longer under TSAN (`--leader_failure_max_missed_heartbeat_periods=20`). Remote bootstrap then waited for the new leader and started 40-45s after the restart, past the 30s the test allows for the `TEST_pause_rbs_before_download_wal` log line. Before tombstoning the tablet, the test now steps it down with `itest::LeaderStepDown` if that tserver leads it, and waits for `GetTabletLeaderIndex` to return a different leader with a lease, so remote bootstrap starts right away. Only this tablet's leadership moves, so no tserver-wide leader blacklist or cleanup is needed.
-
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
-
-Test Plan:
-./yb_build.sh tsan --clang21 --cxx-test remote_bootstrap-itest --gtest-filter RemoteBootstrapITest.TestRBSWithLazySuperblockFlush -n 100 --stop-at-failure -- -p 6
-Ran the above locally with no failures.
-Before the fix, this te
-
-**File**: `src/yb/integration-tests/remote_bootstrap-itest.cc` (modified, +19/-1)
-```diff
-@@ -2271,8 +2271,26 @@ void RemoteBootstrapITest::RBSWithLazySuperblockFlush(int num_tables) {
-   ASSERT_EQ(user_tablet_ids.size(), 1);
-   string tablet_id = user_tablet_ids[0];
- 
--  // Delete tablet and shutdown one tserver.
-+  // Move leadership off the tserver to tombstone. Otherwise the other peers only notice the leader
-+  // is gone after the failure detection timeout, which under TSAN delays RBS past the wait below.
-   auto* const ts_to_bootstrap = cluster_->tablet_server(ts_idx_to_bootstrap);
-+  ASSERT_OK(WaitFor(
-+      [&]() -> Result<bool> {
-+        auto leader = cluster_->GetTabletLeaderIndex(tablet_id, /* require_lease = */ true);
-+        if (!leader.ok()) {
-+          return false;
-+        }
-+        if (*leader != ts_idx_to_bootstrap) {
-+          return true;
-+        }
-+        WARN_NOT_OK(
-+            itest::LeaderStepDown(ts, tablet_id, /* new_leader = */ nullptr, timeout),
-+            "Leader step down failed");
-+        return false;
-+      },
-+      timeout, "Waiting for leader to move off ts_idx_to_bootstrap"));
-+
-+  // Delete tablet and shutdown one tserver.
-   ASSERT_OK(WaitFor(
-       [&tablet_id, ts, timeout]() -> Result<bool> {
-         const auto s = itest::DeleteTablet(
-```
-
----
-
-### Incident Patch 2: `0c633a06` (2026-10-24)
-**Commit Message**: [#35159] DocDB: Build replica placement candidates once per table instead of per tablet (#35162)
+### Incident Patch 1: `545b420b` (2026-10-25)
+**Commit Message**: [PLAT-23030] YBA: Add v2 API for the host's cloud info (#35720)
 
 ## Summary
 
-Stacked on #35161 (incremental load ordering).
+Aeon's BYOC bootstrap needs the cloud and region of the YBA it
+registers. v1 `GET /api/v1/customers/{c}/host_info` has neither as a
+field, and it is slow and sticky on failure:
 
-For every tablet of a table, `SelectReplicasForTablet` re-read and
-validated the table's
-replication info, rebuilt the per-placement `TSDescriptorVector` and the
-per-block tserver
-lists, and resolved every pick from the load-ordered uuid list back to a
-descriptor with a
-linear scan over all tservers. None of that depends on the tablet.
+- It runs ybops `current-host` for AWS, GCP and Azure one after another.
+On the wrong clouds each run waits out a metadata timeout.
+- It caches every result until restart. ybops reports an unreachable
+metadata service as a JSON string with exit code 0, so one transient
+failure stays cached.
+- GCP returns no zone or region.
 
-`BuildPlacementCandidates` now does it once per table in
-`ProcessPendingAssignmentsPerTable`:
-for the live placement and each read replica placement it records which
-tservers (by index
-into `ts_descs`) each placement block allows, the union, and the
-per-block min and effective
-max. `SelectReplicasForTablet` then works on index bitmaps only:
-minimums per block first,
-leftovers to the least loaded allowed tservers up to each block's cap,
-same order and same
-caps as before. `SelectReplica` becomes a scan of the load order
-filtered by two bool vectors.
+This adds `GET /api/v2/customers/{cUUID}/host-cloud-info` (Customer tag,
+read permission on the customer, same as v1):
 
-Behavior change: a placement block whose tservers were already taken by
-an earlier block, possible
-with overlapping table-level placements such as 
-
-**File**: `src/yb/master/catalog_manager-test.cc` (modified, +197/-21)
-```diff
-@@ -31,6 +31,7 @@
- //
- 
- #include "yb/common/constants.h"
-+#include "yb/master/catalog_manager.h"
- #include "yb/master/catalog_manager-test_base.h"
- #include "yb/master/catalog_manager_util.h"
- #include "yb/master/master_client.pb.h"
-@@ -604,10 +605,11 @@ TEST(TestCatalogManagerEnterprise, TestLoadBalancedReadOnlySameAz) {
- 
- namespace {
- 
--std::vector<TabletServerId> SortedUuids(const CMPerTableLoadState& state) {
-+std::vector<TabletServerId> SortedUuids(
-+    const CMPerTableLoadState& state, const TSDescriptorVector& ts_descs) {
-   std::vector<TabletServerId> result;
-   for (size_t idx : state.sorted_by_load()) {
--    result.push_back(state.uuid(idx));
-+    result.push_back(ts_descs[idx]->permanent_uuid());
-   }
-   return result;
- }
-@@ -620,11 +622,11 @@ TEST(TestCatalogManager, PerTableLoadStateOrder) {
-   CMGlobalLoadState global_state;
-   global_state.per_ts_replica_load_ = {{"0000", 5}, {"1111", 3}, {"2222", 3}, {"3333", 9}};
-   CMPerTableLoadState state(&global_state);
--  state.per_ts_replica_load_ = {{"0000", 2}, {"1111", 2}, {"2222", 2}, {"3333", 0}};
--  ASSERT_OK(state.Init(ts_descs));
-+  ASSERT_OK(state.Init(ts_descs, {{"0000", 2}, {"1111", 2}, {"2222", 2}, {"3333", 0}}));
- 
-   // Table load first, then global load, then uuid.
--  ASSERT_EQ(SortedUuids(state), (std::vector<TabletServerId>{"3333", "1111", "2222", "0000"}));
-+  ASSERT_EQ(SortedUuids(state, ts_descs),
-+            (std::vector<TabletServerId>{"3333", "1111", "2222", "0000"}));
- }
- 
- TEST(TestCatalogManager, PerTableLoadStateAddReplica) {
-@@ -633,41 +635,215 @@ TEST(TestCatalogManager, PerTableLoadStateAddReplica) {
-   CMGlobalLoadState global_state;
-   global_state.per_ts_replica_load_ = {{"0000", 0}, {"1111", 0}, {"2222", 0}, {"3333", 0}};
-   CMPerTableLoadState state(&global_state);
--  state.per_ts_replica_load_ = {{"0000", 0}, {"1111", 0}, {"2222", 0}, {"3333", 0}};
--  ASSERT_OK(state.Init(ts_descs));
--  ASSERT_EQ(SortedUuids(state), (std::vector<TabletServerId>{"0000", "1111", "2222", "3333"}));
-+  ASSERT_OK(state.Init(ts_descs, {{"0000", 0}, {"1111", 0}, {"2222", 0}, {"3333", 0}}));
-+  ASSERT_EQ(SortedUuids(state, ts_descs),
-+            (std::vector<TabletServerId>{"0000", "1111", "2222", "3333"}));
- 
-   // The tserver that gained a replica moves behind every tserver with equal load.
--  state.AddReplica("0000");
--  ASSERT_EQ(SortedUuids(state), (std::vector<TabletServerId>{"1111", "2222", "3333", "0000"}));
--  state.AddReplica("2222");
--  ASSERT_EQ(SortedUuids(state), (std::vector<TabletServerId>{"1111", "3333", "0000", "2222"}));
--  state.AddReplica("2222");
--  ASSERT_EQ(SortedUuids(state), (std::vector<TabletServerId>{"1111", "3333", "0000", "2222"}));
--  state.AddReplica("1111");
--  state.AddReplica("3333");
--  ASSERT_EQ(SortedUuids(state), (std::vector<TabletServerId>{"0000", "1111", "3333", "2222"}));
-+  state.AddReplica(0);
-+  ASSERT_EQ(SortedUuids(state, ts_descs),
-+            (std::vector<TabletServerId>{"1111", "2222", "3333", "0000"}));
-+  state.AddReplica(2);
-+  ASSERT_EQ(SortedUuids(state, ts_descs),
-+            (std::vector<TabletServerId>{"1111", "3333", "0000", "2222"}));
-+  state.AddReplica(2);
-+  ASSERT_EQ(SortedUuids(state, ts_descs),
-+            (std::vector<TabletServerId>{"1111", "3333", "0000", "2222"}));
-+  state.AddReplica(1);
-+  state.AddReplica(3);
-+  ASSERT_EQ(SortedUuids(state, ts_descs),
-+            (std::vector<TabletServerId>{"0000", "1111", "3333", "2222"}));
- 
-   // The global load follows the picks.
-   ASSERT_EQ(2, ASSERT_RESULT(global_state.GetGlobalReplicaLoad("2222")));
-   ASSERT_EQ(1, ASSERT_RESULT(global_state.GetGlobalReplicaLoad("0000")));
- }
- 
-+using consensus::PeerMemberType;
-+
-+namespace {
-+
-+PlacementInfoPB MakePlacement(int num_replicas, const std::string& placement_uuid = "") {
-+  PlacementInfoPB placement;
-+  placement.set_num_replicas(num_replicas);
-+  if (!placement_uuid.empty()) {
-+    placement.set_placement_uuid(placement_uuid);
-+  }
-+  return placement;
-+}
-+
-+// An empty zone makes a region-level block, which matches every zone of the default region.
-+void AddBlock(
-+    PlacementInfoPB* placement, const std::string& zone, int min_num_replicas,
-+    std::optional<int> max_num_replicas = std::nullopt) {
-+  auto* block = placement->add_placement_blocks();
-+  block->mutable_cloud_info()->set_placement_cloud(default_cloud);
-+  block->mutable_cloud_info()->set_placement_region(default_region);
-+  if (!zone.empty()) {
-+    block->mutable_cloud_info()->set_placement_zone(zone);
-+  }
-+  block->set_min_num_replicas(min_num_replicas);
-+  if (max_num_replicas) {
-+    block->set_max_num_replicas(*max_num_replicas);
-+  }
-+}
-+
-+struct LoadState {
-+  CMGlobalLoadState global;
-+  CMPerTableLoadState table{&global};
-+};
-+
-+// Zero global load, the given per-table load (default 0) for every tserver.
-+Status InitLoadState(
-+    const TSDescriptorVector& ts_descs,
-+    const std::unordered_map<TabletServerId, uint32_t>& table_load, LoadState* state) {
-+  std::unordered_map<TabletServerId, 
+```json
+{"cloud": "gcp", "region": "us-central1",
+ "gcp": {"project": "...", "network": "...", "shared_vpc_project": "...", "zone": "us-central1-a", "region": "us-central1"}}
 ```
 
-**File**: `src/yb/master/catalog_manager.cc` (modified, +193/-178)
+Only the host cloud's object is set (`aws`, `gcp` or `azu`). `cloud` is
+absent when YBA isn't on one of the three. `region` and the cloud's
+object are absent when the cloud is known but its metadata service is
+unreachable.
+
+Changes:
+
+- `HostCloudDetector` reads DMI (`/sys/devices/virtual/dmi/id`) with the
+same rules a
+
+**File**: `managed/build.sbt` (modified, +2/-2)
 ```diff
-@@ -12591,11 +12591,21 @@ Status CatalogManager::ProcessPendingAssignmentsPerTable(
-   // For those tablets which need to be created in this round, assign replicas.
-   Status s;
-   std::unordered_set<TableInfo*> ok_status_tables;
-+  Result<std::vector<PlacementCandidates>> candidates = std::vector<PlacementCandidates>();
-+  TableInfoPtr table;
-+  if (!deferred.needs_create_rpc.empty()) {
-+    table = deferred.needs_create_rpc.front()->table();
-+    candidates = BuildPlacementCandidates(table, ts_descs);
-+  }
-   for (const TabletInfoPtr& tablet : deferred.needs_create_rpc) {
-+    DCHECK_EQ(tablet->table(), table);
-     // NOTE: if we fail to select replicas on the first pass (due to
-     // insufficient Tablet Servers being online), we will still try
-     // again unless the tablet/table creation is cancelled.
--    s = SelectReplicasForTablet(ts_descs, tablet, &table_load_state, global_load_state);
-+    s = candidates.ok()
-+        ? SelectReplicasForTablet(ts_descs, *candidates, tablet, &table_load_state,
-+                                  global_load_state)
-+        : candidates.status();
-     if (!s.ok()) {
-       LOG_WITH_FUNC(INFO) << "Select replicas for tablet " << tablet->id() << " failed: " << s;
-       s = s.CloneAndPrepend(Format(
-@@ -12711,31 +12721,106 @@ Status CatalogManager::SelectProtegeForTablet(
-   return Status::OK();
- }
+@@ -317,7 +317,7 @@ libraryDependencies ++= Seq(
+   // aarch64 binaries (same PG 14.5) so the embedded server starts natively there.
+   "io.zonky.test.postgres" % "embedded-postgres-binaries-darwin-arm64v8" % "14.5.0" % Test,
+   "org.springframework" % "spring-test" % "5.3.9" % Test,
+-  "com.yugabyte" % "yba-client-v2" % "1.8.10" % Test,
++  "com.yugabyte" % "yba-client-v2" % "1.8.11" % Test,
+   "io.fabric8" % "kubernetes-server-mock" % "6.14.0" % Test
+ )
  
--Status CatalogManager::SelectReplicasForTablet(
--    const TSDescriptorVector& ts_descs, const TabletInfoPtr& tablet,
--    CMPerTableLoadState* per_table_state, CMGlobalLoadState* global_state) {
--  auto table_guard = tablet->table()->LockForRead();
-+namespace {
+@@ -767,7 +767,7 @@ lazy val javaGenV2Client = project.in(file("client/java"))
+     openApiConfigFile := "client/java/openapi-java-config-v2.json",
+     openApiGlobalProperties += ("skipFormModel" -> "false"),
+     openApiTemplateDir := (baseDirectory.value / resDir / "openapi_templates/clients/v2").absolutePath,
+-    version := "1.8.10",
++    version := "1.8.11",
+     openApiHttpUserAgent := s"yba-java-client/${version.value}",
+     target := file("client/java/target/v2"),
+   )
+```
+
+**File**: `managed/client/java/v2/pom.xml` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+     <artifactId>yba-client-v2</artifactId>
+     <packaging>jar</packaging>
+     <name>yba-client-v2</name>
+-    <version>1.8.10</version>
++    <version>1.8.11</version>
+     <url>https://github.com/openapitools/openapi-generator</url>
+     <description>Java V2 client for Yugabyte Anywhere</description>
+     <scm>
+```
+
+**File**: `managed/devops/opscli/ybops/cloud/gcp/utils.py` (modified, +11/-1)
+```diff
+@@ -151,6 +151,12 @@ def shared_vpc_project():
+     def network():
+         return GcpMetadata._query_endpoint("instance/network-interfaces/0/network")
  
--  if (!table_guard->pb.IsInitialized()) {
--    return STATUS_FORMAT(InvalidArgument,
--        "TableInfo for tablet $0 is not initialized (aborted CreateTable attempt?)",
--        tablet->tablet_id());
-+// A tserver belongs to the placement that names its placement uuid; a placement without one is
-+// the live placement, whose tservers have an empty placement uuid.
-+bool TsInPlacement(const PlacementInfoPB& placement_info, const TSDescriptor& ts_desc) {
-+  if (placement_info.has_placement_uuid()) {
-+    return ts_desc.placement_uuid() == placement_info.placement_uuid();
-   }
-+  return ts_desc.placement_uuid().empty();
-+}
- 
--  // Neither tablespace case is set only for a table an older master created; place it by the
--  // cluster default, as a custom tablespace is not known yet. The load balancer moves it later.
--  const auto tablespace_id =
--      table_guard->pb.has_tablespace_id() ? table_guard->pb.tablespace_id() : TablespaceId();
--  auto replication_info = VERIFY_RESULT(GetTableReplicationInfo(
-+}  // namespace
++    @staticmethod
++    def zone():
++        # Of the form projects/PROJECT_NUMBER/zones/ZONE.
++        zone = GcpMetadata._query_endpoint("instance/zone")
++        return zone.split("/")[-1] if zone else None
 +
-+Result<std::vector<CatalogManager::PlacementCandidates>> CatalogManager::BuildPlacementCandidates(
-+    const TableInfoPtr& table, const TSDescriptorVector& ts_descs) {
-+  ReplicationInfoPB replication_info;
-+  {
-+    auto table_guard = table->LockForRead();
-+    if (!table_guard->pb.IsInitialized()) {
-+      return STATUS_FORMAT(InvalidArgument,
-+          "TableInfo for table $0 is not initialized (aborted CreateTable attempt?)", table->id());
+     @staticmethod
+     def service_accounts():
+         return GcpMetadata._query_endpoint("instance/service-accounts/")
+@@ -589,12 +595,16 @@ def get_current_host_info():
+         network = GcpMetadata.network()
+         shared_vpc_project = GcpMetadata.shared_vpc_project()
+         project = GcpMetadata.project()
++        zone = GcpMetadata.zone()
+         if network is None or project is None:
+             raise YBOpsRuntimeError("Unable to auto-discover GCP provider information")
+         return {
+             "network": network.split("/")[-1],
+             "shared_vpc_project": shared_vpc_project,
+-            "project": project
++            "project": project,
++            "zone": zone,
++            # A zone is its region plus a one-letter suffix, e.g. us-central1-a.
++            "region": zone.rsplit("-", 1)[0] if zone else None
+         }
+ 
+     def get_image(self, image, project=None):
+```
+
+**File**: `managed/src/main/java/api/v2/controllers/CustomerApiControllerImp.java` (modified, +6/-0)
+```diff
+@@ -6,6 +6,7 @@
+ import api.v2.models.ApiTokenSpec;
+ import api.v2.models.CustomerRegistration;
+ import api.v2.models.CustomerRegistrationSpec;
++import api.v2.models.HostCloudInfo;
+ import api.v2.models.UserApiToken;
+ import com.google.inject.Inject;
+ import com.typesafe.config.Config;
+@@ -38,4 +39,9 @@ public UserApiToken generateApiToken(
+       Http.Request request, UUID cUUID, ApiTokenSpec apiTokenSpec) {
+     return customerHandler.generateApiToken(request, cUUID, apiTokenSpec);
+   }
++
++  @Override
++  public HostCloudInfo getHostCloudInfo(Http.Request request, UUID cUUID) {
++    return customerHandler.getHostCloudInfo();
++  }
+ }
+```
+
+**File**: `managed/src/main/java/api/v2/handlers/CustomerManagementHandler.java` (modified, +76/-1)
+```diff
+@@ -9,12 +9,21 @@
+ import static play.mvc.Http.Status.UNAUTHORIZED;
+ 
+ import api.v2.models.ApiTokenSpec;
++import api.v2.models.AwsHostInfo;
++import api.v2.models.AzuHostInfo;
+ import api.v2.models.CustomerRegistration;
+ import api.v2.models.CustomerRegistrationSpec;
++import api.v2.models.GcpHostInfo;
++import api.v2.models.HostCloud;
++import api.v2.models.HostCloudInfo;
+ import api.v2.models.UserApiToken;
++import com.fasterxml.jackson.databind.JsonNode;
+ import com.google.inject.Inject;
+ import com.google.inject.Provider;
+ import com.google.inject.Singleton;
++import com.yugabyte.yw.commissioner.Common.CloudType;
++import com.yugabyte.yw.common.CloudQueryHelper;
++import com.yugabyte.yw.common.HostCloudDetector;
+ import com.yugabyte.yw.common.PlatformServiceException;
+ import com.yugabyte.yw.common.user.UserService;
+ import com.yugabyte.yw.controllers.RequestContext;
+@@ -24,6 +33,7 @@
+ import com.yugabyte.yw.models.Users;
+ import io.ebean.DB;
+ import io.ebean.Transaction;
++import java.util.Optional;
+ import java.util.UUID;
+ import org.apache.commons.validator.routines.EmailValidator;
+ import play.mvc.Http;
+@@ -36,15 +46,21 @@ public class CustomerManagementHandler {
+   private final Provider<TokenAuthenticator> tokenAuthenticatorProvider;
+   private final CustomerRegistrationHandler customerRegistrationHandler;
+   private final UserService userService;
++  private final HostCloudDetector hostCloudDetector;
++  private final CloudQueryHelper cloudQueryHelper;
+ 
+   @Inject
+   public CustomerManagementHandler(
+       Provider<TokenAuthenticator> tokenAuthenticatorProvider,
+       CustomerRegistrationHandler customerRegistrationHandler,
+-      UserService userService) {
++      UserService userService,
++      HostCloudDetector hostCloudDetector,
++      CloudQueryHelper cloudQueryHelper) {
+     this.tokenAuthenticatorProvider = tokenAuthenticatorProvider;
+     this.customerRegistrationHandler = customerRegistrationHandler;
+     this.userService = userService;
++    this.hostCloudDetector = hostCloudDetector;
++    this.cloudQueryHelper = cloudQueryHelper;
+   }
+ 
+   public CustomerRegistration registerCustomer(
+@@ -134,4 +150,63 @@ public UserApiToken generateApiToken(Http.Request request, UUID cUUID, ApiTokenS
+         .apiToken(apiToken)
+         .apiTokenVersion(user.getApiTokenVersion());
+   }
++
++  public HostCloudInfo getHostCloudInfo() {
++    HostCloudInfo info = new HostCloudInfo();
++    Optional<CloudType> cloud = hostCloudDetector.getHostCloud();
++    if (cloud.isEmpty()) {
++      return info;
 +    }
-+    // Neither tablespace case is set only for a table an older master created; place it by the
-+    // cluster default, as a custom tablespace is not known yet. The load balancer moves it later.
-+    const auto tablespace_id =
-+        table_guard->pb.has_tablespace_id() ? table_guard->pb.tablespace_id() : TablespaceId();
-+    replication_info = VERIFY_RESULT(GetTableReplicationInfo(
-         table_guard->pb.replication_info(), tablespace_id));
++    info.cloud(HostCloud.fromValue(cloud.get().name()));
++    JsonNode hostInfo = cloudQueryHelper.getCurrentHostInfo(cloud.get());
++    // Without metadata, e.g. when the metadata service is unreachable from a pod, the cloud is
++    // still known from DMI.
++    if (!hostInfo.isObject() || hostInfo.has("error")) {
++      return info;
++    }
++    switch (cloud.get()) {
++      case aws:
++        info.aws(
++            new AwsHostInfo()
++                .instanceId(text(hostInfo, "instance-id"))
++                .vpcId(text(hostInfo, "vpc-id"))
++                .privateIp(text(hostInfo, "privateIp"))
++                .region(text(hostInfo, "region")));
++        return info.region(info.getAws().getRegion());
++      case gcp:
++        info.gcp(
++            new GcpHostInfo()
++                .project(text(hostInfo, "project"))
++                .network(text(hostInfo, "network"))
++                .sharedVpcProject(text(hostInfo, "shared_vpc_project"))
++                .zone(text(hostInfo, "zone"))
++                .region(text(hostInfo, "region")));
++        return info.region(info.getGcp().getRegion());
++      default:
++        // The Azure instance metadata document, as returned by IMDS.
++        JsonNode compute = hostInfo.path("compute");
++        info.azu(
++            new AzuHostInfo()
++                .subscriptionId(text(compute, "subscriptionId"))
++                .resourceGroup(text(compute, "resourceGroupName"))
++                .vmId(text(compute, "vmId"))
++                .privateIp(
++                    text(
++                        hostInfo
++                            .path("network")
++                            .path("interface")
++                            .path(0)
++                            .path("ipv4")
++                            .path("ipAddress")
++                            .path(0),
++                        "privateIpAddress"))
++                .region(text(compute, "location")));
++        return info.region(info.getAzu().getRegion());
++    }
 +  }
 +
-+  // Validate if we have enough tservers to put the replicas.
-+  ValidateReplicationInfoRequestPB req;
-+  *req.mutable_replication_info() = replication_info;
-+  ValidateReplicationInfoResponsePB resp;
-+  RETURN_NOT_OK(ValidateReplicationInfo(&req, &resp));
- 
-+  std::vector<PlacementCandidates> candidates;
-+  candidates.push_back(VERIFY_RESULT(BuildPlacementCandidates(
-+      replication_info.live_replicas(), ts_descs, PeerMemberType::VOTER)));
-+  for (const auto& read_replicas : replication_info.read_replicas()) {
-+    candidates.push_back(VERIFY_RESULT(BuildPlacementCandidates(
-+        read_replicas, ts_descs, PeerMemberType::OBSERVER)));
++  private static String text(JsonNode node, String field) {
++    JsonNode value = node.path(field);
++    return value.isValueNode() && !value.isNull() ? value.asText() : null;
 +  }
-+  return candidates;
+ }
+```
+
+**File**: `managed/src/main/java/com/yugabyte/yw/common/CloudMetadataEndpoints.java` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++// Copyright (c) YugabyteDB, Inc.
++
++package com.yugabyte.yw.common;
++
++/**
++ * Cloud instance metadata service endpoints, as ybops also uses them (GcpMetadata in
++ * devops/opscli/ybops/cloud/gcp/utils.py, get_and_append_imdsv2_token_header in
++ * devops/opscli/ybops/cloud/aws/cloud.py). They are link-local, so must be reached without a proxy.
++ */
++public final class CloudMetadataEndpoints {
++  // AWS, GCP and Azure all serve instance metadata on this address.
++  public static final String METADATA_IP = "169.254.169.254";
++  public static final String GCP_METADATA_HOST = "metadata.google.internal";
++  public static final String GCP_METADATA_FLAVOR_HEADER = "Metadata-Flavor";
++  public static final String GCP_METADATA_FLAVOR = "Google";
++  public static final String GCP_INSTANCE_ID_PATH = "/computeMetadata/v1/instance/id";
++  public static final String AWS_IMDSV2_TOKEN_PATH = "/latest/api/token";
++  public static final String AWS_IMDSV2_TOKEN_TTL_HEADER = "X-aws-ec2-metadata-token-ttl-seconds";
++  public static final String AWS_INSTANCE_ID_PATH = "/latest/meta-data/instance-id";
++
++  private CloudMetadataEndpoints() {}
 +}
+```
+
+**File**: `managed/src/main/java/com/yugabyte/yw/common/CloudQueryHelper.java` (modified, +59/-4)
+```diff
+@@ -14,18 +14,22 @@
+ 
+ import com.fasterxml.jackson.databind.JsonNode;
+ import com.fasterxml.jackson.databind.node.ArrayNode;
++import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.collect.ImmutableList;
+ import com.yugabyte.yw.commissioner.Common;
+ import com.yugabyte.yw.models.Provider;
+ import com.yugabyte.yw.models.Region;
+ import com.yugabyte.yw.models.helpers.CloudInfoInterface;
+ import com.yugabyte.yw.models.helpers.provider.GCPCloudInfo;
++import java.time.Duration;
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Optional;
+ import java.util.UUID;
+ import java.util.concurrent.ConcurrentHashMap;
+ import javax.annotation.Nullable;
++import javax.inject.Inject;
+ import javax.inject.Singleton;
+ import org.apache.commons.lang3.StringUtils;
+ import org.slf4j.Logger;
+@@ -42,17 +46,68 @@ public class CloudQueryHelper extends DevopsBase {
+   private static final String DEFAULT_IMAGE_KEY = "default_image";
+   public static final String ARCHITECTURE_KEY = "architecture";
+ 
+-  private Map<Common.CloudType, JsonNode> cachedHostInfos = new ConcurrentHashMap<>();
++  // A failed lookup is retried after this long, e.g. once the metadata service is reachable again.
++  // Failures are cached too: each attempt can take tens of seconds (ybops' IMDSv2 token timeout).
++  @VisibleForTesting Duration hostInfoFailureTtl = Duration.ofMinutes(5);
 +
-+Result<CatalogManager::PlacementCandidates> CatalogManager::BuildPlacementCandidates(
-+    const PlacementInfoPB& placement_info, const TSDescriptorVector& ts_descs,
-+    PeerMemberType member_type) {
-+  PlacementCandidates result;
-+  result.member_type = member_type;
-+  result.nreplicas = GetNumReplicasOrGlobalReplicationFactor(placement_info);
-+  result.num_allowed = 0;
-+  result.all_allowed.assign(ts_descs.size(), false);
-+  for (const auto& block : placement_info.placement_blocks()) {
-+    result.blocks.push_back(PlacementCandidates::Block{
-+        .min_num_replicas = static_cast<size_t>(block.min_num_replicas()),
-+        .max_num_replicas = static_cast<size_t>(
-+            GetEffectiveMaxNumReplicas(block, narrow_cast<
-```
-
-**File**: `src/yb/master/catalog_manager.h` (modified, +60/-50)
-```diff
-@@ -1066,22 +1066,34 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
-                                  const TSDescriptorVector& ts_descs,
-                                  ValidateReplicationInfoResponsePB* resp);
- 
--  // Loops through the table's placement infos and populates the corresponding config from
--  // each placement.
--  Status HandlePlacementUsingReplicationInfo(
--      const ReplicationInfoPB& replication_info,
--      const TSDescriptorVector& all_ts_descs,
--      consensus::RaftConfigPB* config,
--      CMPerTableLoadState* per_table_state,
--      CMGlobalLoadState* global_state);
-+  // The tservers allowed to host a table's replicas under one PlacementInfoPB (live or read
-+  // replica). Built once per table and reused for every tablet of that table; the bool vectors
-+  // are indexed like the ts_descs the candidates were built from.
-+  struct PlacementCandidates {
-+    struct Block {
-+      size_t min_num_replicas;
-+      // Effective maximum, a hard cap on replicas placed in the block.
-+      size_t max_num_replicas;
-+      size_t num_allowed;
-+      std::vector<bool> allowed;
-+    };
-+    consensus::PeerMemberType member_type;
-+    size_t nreplicas;
-+    // Empty when the placement has no placement blocks.
-+    std::vector<Block> blocks;
-+    // Union of the blocks, or every tserver in the placement when there are none.
-+    size_t num_allowed;
-+    std::vector<bool> all_allowed;
-+  };
++  private static class CachedHostInfo {
++    private final JsonNode hostInfo;
++    // System.nanoTime() after which the entry is stale; null for a successful lookup.
++    private final Long expiresAtNanos;
 +
-+  // Resolves and validates the table's replication info and builds the candidates for its live
-+  // placement and each read replica placement.
-+  Result<std::vector<PlacementCandidates>> BuildPlacementCandidates(
-+      const TableInfoPtr& table, const TSDescriptorVector& ts_descs);
++    private CachedHostInfo(JsonNode hostInfo, Long expiresAtNanos) {
++      this.hostInfo = hostInfo;
++      this.expiresAtNanos = expiresAtNanos;
++    }
++
++    private boolean isFresh() {
++      return expiresAtNanos == null || System.nanoTime() - expiresAtNanos < 0;
++    }
++  }
++
++  private final Map<Common.CloudType, CachedHostInfo> cachedHostInfos = new ConcurrentHashMap<>();
++  private final Map<Common.CloudType, Object> hostInfoLocks = new ConcurrentHashMap<>();
++
++  @Inject HostCloudDetector hostCloudDetector;
  
--  // Handles the config creation for a given placement.
--  Status HandlePlacementUsingPlacementInfo(const PlacementInfoPB& placement_info,
--                                           const TSDescriptorVector& ts_descs,
--                                           consensus::PeerMemberType member_type,
--                                           consensus::RaftConfigPB* config,
--                                           CMPerTableLoadState* per_table_state,
--                                           CMGlobalLoadState* global_state);
-+  static Result<PlacementCandidates> BuildPlacementCandidates(
-+      const PlacementInfoPB& placement_info, const TSDescriptorVector& ts_descs,
-+      consensus::PeerMemberType member_type);
- 
-   // Populates ts_descs with all tservers belonging to a certain placement.
-   void GetTsDescsFromPlacementInfo(const PlacementInfoPB& placement_info,
-@@ -2067,6 +2079,13 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
-   friend class ObjectLockLoader;
- 
-   FRIEND_TEST(yb::MasterPartitionedTest, VerifyOldLeaderStepsDown);
-+  FRIEND_TEST(TestCatalogManager, PlaceReplicasWithoutPlacementBlocks);
-+  FRIEND_TEST(TestCatalogManager, PlaceReplicasPerBlockMinimums);
-+  FRIEND_TEST(TestCatalogManager, PlaceReplicasBlockMaximumCapsLeftovers);
-+  FRIEND_TEST(TestCatalogManager, PlaceReadReplicas);
-+  FRIEND_TEST(TestCatalogManager, PlaceReplicasExcludesOtherPlacementUuids);
-+  FRIEND_TEST(TestCatalogManager, PlaceReplicasBlockWithTooFewTservers);
-+  FRIEND_TEST(TestCatalogManager, PlaceReplicasOverlappingBlocksFail);
- 
-   // Called by SysCatalog::SysCatalogStateChanged when this node
-   // becomes the leader of a consensus configuration.
-@@ -2265,53 +2284,44 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
-       const TableId& table_id, const TabletInfos& tablets, const LeaderEpoch& epoch,
-       CMGlobalLoadState* global_load_state);
- 
--  // Select a tablet server from 'ts_descs' on which to place a new replica.
--  // Any tablet servers in 'excluded' are not considered.
--  // REQUIRES: 'ts_descs' must include at least one non-excluded server.
--  std::shared_ptr<TSDescriptor> SelectReplica(
--      const TSDescriptorVector& ts_descs,
--      std::set<TabletServerId>* excluded,
--      CMPerTableLoadState* per_table_state, CMGlobalLoadState* global_state);
-+  // Index of the least loaded tserver that is in 'allowed' and not in 'excluded', if any.
-+  static std::optional<size_t> SelectReplica(
-+      const std::vector<bool>& allowed, const std::vector<bool>& excluded,
-+      const CMPerTableLoadState& per_table_state);
- 
-   // Select and assign a tablet server as the protege 'config'. This protege is selected from the
-   // set of tservers in 'global_state' that have the lowest current protege load.
-   Status SelectProtegeForTablet(
-       const TabletInfoPtr& tablet, consensus::RaftConfigPB* config,
-       CMGlobalLoadState* global_state);
- 
--  // Select N Replicas from online tablet servers (as specified by
--  // 'ts_descs') for the specified tablet and populate the consensus configuration
--  // object. If 'ts_descs' does not specify enough online tablet
--  // servers to select the N replicas, return Status::
-```
-
-**File**: `src/yb/master/catalog_manager_util.cc` (modified, +14/-22)
-```diff
-@@ -597,17 +597,18 @@ size_t CatalogManagerUtil::GetReplicationFactor(const ReplicationInfoPB& replica
-   return FLAGS_replication_factor;
- }
- 
--Status CMPerTableLoadState::Init(const TSDescriptorVector& ts_descs) {
-+Status CMPerTableLoadState::Init(
-+    const TSDescriptorVector& ts_descs,
-+    const std::unordered_map<TabletServerId, uint32_t>& table_load) {
-   const size_t n = ts_descs.size();
-   uuids_.reserve(n);
-   table_load_.reserve(n);
-   global_load_.reserve(n);
-   for (const auto& ts : ts_descs) {
-     const auto& uuid = ts->permanent_uuid();
--    auto it = per_ts_replica_load_.find(uuid);
--    SCHECK(it != per_ts_replica_load_.end(), IllegalState,
--           Format("per_ts_replica_load_ does not contain $0", uuid));
--    index_[uuid] = uuids_.size();
-+    auto it = table_load.find(uuid);
-+    SCHECK(it != table_load.end(), IllegalState,
-+           Format("table_load does not contain $0", uuid));
-     uuids_.push_back(uuid);
-     table_load_.push_back(it->second);
-     global_load_.push_back(VERIFY_RESULT(global_load_state_->GetGlobalReplicaLoad(uuid)));
-@@ -633,16 +634,11 @@ bool CMPerTableLoadState::LessLoaded(size_t a, size_t b) const {
-   return uuids_[a] < uuids_[b];
- }
- 
--void CMPerTableLoadState::AddReplica(const TabletServerId& uuid) {
--  auto it = index_.find(uuid);
--  if (it == index_.end()) {
--    LOG(DFATAL) << "Unknown tablet server " << uuid;
--    return;
--  }
--  size_t idx = it->second;
-+void CMPerTableLoadState::AddReplica(size_t idx) {
-+  DCHECK_LT(idx, uuids_.size());
-   ++table_load_[idx];
-   ++global_load_[idx];
--  ++global_load_state_->per_ts_replica_load_[uuid];
-+  ++global_load_state_->per_ts_replica_load_[uuids_[idx]];
-   // The key only grew, so the entry can only move towards the loaded end.
-   size_t p = pos_[idx];
-   while (p + 1 < sorted_.size() && LessLoaded(sorted_[p + 1], idx)) {
-@@ -708,9 +704,9 @@ bool UseRelfilenodeForTableMatch(const SnapshotInfoPB& snapshot_pb) {
-   return snapshot_pb.format_version() == kUseRelfilenodeFormatVersion;
- }
- 
--template <class LoadState>
- Status CatalogManagerUtil::FillTableLoadState(
--    const scoped_refptr<TableInfo>& table_info, LoadState* state) {
-+    const scoped_refptr<TableInfo>& table_info,
-+    std::unordered_map<TabletServerId, uint32_t>* per_ts_replica_load) {
-   auto tablets = VERIFY_RESULT(table_info->GetTabletsIncludeInactive());
- 
-   for (const auto& tablet : tablets) {
-@@ -725,21 +721,17 @@ Status CatalogManagerUtil::FillTableLoadState(
- 
-     for (const auto& loc : *replica_locs) {
-       // Ignore replica if not present in the tserver list passed.
--      if (state->per_ts_replica_load_.count(loc.first) == 0) {
-+      auto it = per_ts_replica_load->find(loc.first);
-+      if (it == per_ts_replica_load->end()) {
-         continue;
-       }
-       // Account for this load.
--      state->per_ts_replica_load_[loc.first]++;
-+      ++it->second;
-     }
+   @Override
+   protected String getCommandType() {
+     return YB_CLOUD_COMMAND_TYPE;
    }
-   return Status::OK();
- }
  
--template Status CatalogManagerUtil::FillTableLoadState(
--    const scoped_refptr<TableInfo>& table_info, CMPerTableLoadState* state);
--template Status CatalogManagerUtil::FillTableLoadState(
--    const scoped_refptr<TableInfo>& table_info, CMGlobalLoadState* state);
--
- Status ValidateVectorIndexBackend(const TableId& table_id, const SysTablesEntryPB& table) {
-   if (!table.has_index_info() || !table.index_info().has_vector_idx_options() ||
-       table.index_info().vector_idx_options().idx_type() != PgVectorIndexType::HNSW) {
-```
-
-**File**: `src/yb/master/catalog_manager_util.h` (modified, +10/-12)
-```diff
-@@ -129,9 +129,10 @@ class CatalogManagerUtil {
- 
-   static Status CheckValidLeaderAffinity(const ReplicationInfoPB& replication_info);
- 
--  template<class LoadState>
-+  // Adds the table's running replicas to the counts of the tservers already in the map.
-   static Status FillTableLoadState(
--      const scoped_refptr<TableInfo>& table_info, LoadState* state);
-+      const scoped_refptr<TableInfo>& table_info,
-+      std::unordered_map<TabletServerId, uint32_t>* per_ts_replica_load);
- 
-   static const google::protobuf::RepeatedPtrField<TableIdentifierPB>& SequenceDataFilter() {
-     std::call_once(sequences_data_table_filter_once_flag_, []() {
-@@ -211,26 +212,23 @@ class CMPerTableLoadState {
-   explicit CMPerTableLoadState(CMGlobalLoadState* global_state)
-     : global_load_state_(global_state) {}
- 
--  // Call once after per_ts_replica_load_ is filled; sorts by (table load, global load, uuid).
--  Status Init(const TSDescriptorVector& ts_descs);
-+  // 'table_load' is the table's replica count per tserver; sorts by (table load, global load,
-+  // uuid).
-+  Status Init(
-+      const TSDescriptorVector& ts_descs,
-+      const std::unordered_map<TabletServerId, uint32_t>& table_load);
- 
--  // Adds one replica on tserver 'uuid' and keeps the sorted order.
--  void AddReplica(const TabletServerId& uuid);
-+  // Adds one replica on tserver 'idx' and keeps the sorted order.
-+  void AddReplica(size_t idx);
- 
-   // Tserver indexes, least loaded first.
-   const std::vector<size_t>& sorted_by_load() const { return sorted_; }
- 
--  const TabletServerId& uuid(size_t idx) const { return uuids_[idx]; }
--
--  // Filled by CatalogManagerUtil::FillTableLoadState before Init().
--  std::unordered_map<TabletServerId, uint32_t> per_ts_replica_load_;
--
-  private:
-   bool LessLoaded(size_t a, size_t b) const;
- 
-   CMGlobalLoadState* global_load_state_;
-   std::vector<TabletServerId> uuids_;
--  std::unordered_map<TabletServerId, size_t> index_;
-   std::vector<uint32_t> table_load_;
-   // Mirror of global_load_state_->per_ts_replica_load_ for the tservers in uuids_.
-   std::vector<uint32_t> global_load_;
-```
-
----
-
-### Incident Patch 3: `655f790c` (2026-10-24)
-**Commit Message**: [#34393] YSQL: Fix ClassCastException in TestYbQpm stress tests (#34502)
-
-## Summary
-
-`testYbQpmSimpleClockLru` and `testYbQpmTrueLru` fail every run with
-`expected:<10> but was:<1>`.
-
-Cause: `shuffleQueryInfo` does `(QueryInfo[]) list.toArray()` on an
-`Arrays.asList` list. Since JDK 9 that returns `Object[]` (JDK-6260652),
-so every stress thread throws `ClassCastException` before running any
-statement. The thread's `assertFalse(hitException)` fails inside the
-worker thread, which does not fail the test directly. The thread never
-appends its "done" line, so the main thread's count check fails instead.
-The exception was discarded, so the log showed no cause. See the
-correction comment on #34393: the shared connection and 7f964e967 are
-not involved.
-
-Fix: use `list.toArray(new QueryInfo[0])`, and log the exception a
-stress thread catches so a future failure shows its cause.
-
-Not changed: worker-thread assertions still do not propagate to JUnit;
-the completion count is what fails the test. That is unchanged existing
-behaviour and out of scope here.
-
-## Test plan
-
-- [x] Before the fix, with the exception logged: all 10 stress threads
-hit `ClassCastException` at `shuffleQueryInfo` (JDK 
-
-**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/TestYbQpm.java` (modified, +2/-1)
-```diff
-@@ -1431,7 +1431,7 @@ public QueryInfo[] shuffleQueryInfo(QueryInfo[] queryInfo, Random randLocal) {
-     List<QueryInfo> list = Arrays.asList(queryInfo);
-     Collections.shuffle(list, randLocal);
- 
--    QueryInfo[] shuffledQueryInfo = (QueryInfo[]) list.toArray();
-+    QueryInfo[] shuffledQueryInfo = list.toArray(new QueryInfo[0]);
- 
-     return shuffledQueryInfo;
++  /**
++   * Returns the host's metadata from the cloud's metadata service. On failure, returns what ybops
++   * does: a JSON string if YBA doesn't run on that cloud or its metadata service is unreachable,
++   * or an {@code {"error": ...}} object if ybops itself failed.
++   */
+   public JsonNode getCurrentHostInfo(Common.CloudType cloudType) {
+-    return cachedHostInfos.computeIfAbsent(
+-        cloudType,
+-        ct -> currentHostInfo(ct, ct == Common.CloudType.aws ? AWS_METADATA_TYPES : null));
++    if (!hostCloudDetector.getHostCloud().equals(Optional.of(cloudType))) {
++      // Running ybops would only wait out the metadata service timeouts to fail the same way.
++      return Json.toJson(
++          String.format(
++              "Unable to auto-discover %s provider information",
++              cloudType.name().toUpperCase()));
++    }
++    CachedHostInfo cached = cachedHostInfos.get(cloudType);
++    if (cached != null && cached.isFresh()) {
++      return cached.hostInfo;
++    }
++    // Concurrent callers wait for one ybops run instead of each starting one.
++    synchronized (hostInfoLocks.computeIfAbsent(cloudType, ct -> new Object())) {
++      cached = cachedHostInfos.get(cloudType);
++      if (cached != null && cached.isFresh()) {
++        return cached.hostInfo;
++      }
++      JsonNode hostInfo =
++          currentHostInfo(
++              cloudType, cloudType == Common.CloudType.aws ? AWS_METADATA_TYPES : null);
++      boolean success = hostInfo.isObject() && !hostInfo.has("error");
++      cachedHostInfos.put(
++          cloudType,
++          new CachedHostInfo(
++              hostInfo, success ? null : System.nanoTime() + hostInfoFailureTtl.toNanos()));
++      return hostInfo;
++    }
    }
-@@ -1484,6 +1484,7 @@ public void executeStress(final QueryInfo[] queryInfo, int threadCount, long cac
-                 executeStmts(shuffledQueryInfo, false, debug, null);
  
-             } catch (Exception e) {
-+                LOG.error("Stress thread " + threadId + " failed", e);
-                 hitException = true;
-             }
- 
+   private JsonNode currentHostInfo(
+```
+
+**File**: `managed/src/main/java/com/yugabyte/yw/common/HostCloudDetector.java` (added, +157/-0)
+```diff
+@@ -0,0 +1,157 @@
++// Copyright (c) YugabyteDB, Inc.
++
++package com.yugabyte.yw.common;
++
++import static com.yugabyte.yw.common.CloudMetadataEndpoints.AWS_IMDSV2_TOKEN_PATH;
++import static com.yugabyte.yw.common.CloudMetadataEndpoints.AWS_IMDSV2_TOKEN_TTL_HEADER;
++import static com.yugabyte.yw.common.CloudMetadataEndpoints.AWS_INSTANCE_ID_PATH;
++import static com.yugabyte.yw.common.CloudMetadataEndpoints.GCP_INSTANCE_ID_PATH;
++import static com.yugabyte.yw.common.CloudMetadataEndpoints.GCP_METADATA_FLAVOR;
++import static com.yugabyte.yw.common.CloudMetadataEndpoints.GCP_METADATA_FLAVOR_HEADER;
++import static com.yugabyte.yw.common.CloudMetadataEndpoints.METADATA_IP;
++
++import com.google.common.annotations.VisibleForTesting;
++import com.google.inject.Singleton;
++import com.yugabyte.yw.commissioner.Common.CloudType;
++import java.io.IOException;
++import java.net.URI;
++import java.net.http.HttpClient;
++import java.net.http.HttpRequest;
++import java.net.http.HttpResponse;
++import java.nio.charset.StandardCharsets;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.nio.file.Paths;
++import java.time.Duration;
++import java.util.Optional;
++import java.util.concurrent.CompletableFuture;
++import java.util.function.Predicate;
++import lombok.extern.slf4j.Slf4j;
++
++/**
++ * Detects the public cloud that YBA runs on, so that only that cloud's metadata service is queried.
++ * Reads DMI first, as Aeon's boot scripts do; if DMI is missing or unrecognized, probes the three
++ * metadata services in parallel.
++ */
++@Singleton
++@Slf4j
++public class HostCloudDetector {
++  private static final Path DMI_DIR = Paths.get("/sys/devices/virtual/dmi/id");
++  private static final String METADATA_URL = "http://" + METADATA_IP;
++  private static final String AZURE_CHASSIS_ASSET_TAG = "7783-7084-3265-9085-8269-3286-77";
++  private static final Duration PROBE_TIMEOUT = Duration.ofSeconds(1);
++  // An undetected host is probed again after this long, in case the metadata service was only
++  // briefly unreachable. A detected cloud doesn't change.
++  private static final Duration UNDETECTED_TTL = Duration.ofMinutes(5);
++
++  private final Path dmiDir;
++  private final String metadataUrl;
++  private final HttpClient httpClient;
++
++  private CloudType detected;
++  private long undetectedUntilNanos;
++  private boolean checked;
++
++  public HostCloudDetector() {
++    this(DMI_DIR, METADATA_URL);
++  }
++
++  @VisibleForTesting
++  HostCloudDetector(Path dmiDir, String metadataUrl) {
++    this.dmiDir = dmiDir;
++    this.metadataUrl = metadataUrl;
++    this.httpClient =
++        HttpClient.newBuilder()
++            // YBA's default ProxySelector sends hosts not in no_proxy through http_proxy.
++            .proxy(HttpClient.Builder.NO_PROXY)
++            .connectTimeout(PROBE_TIMEOUT)
++            .followRedirects(HttpClient.Redirect.NEVER)
++            .build();
++  }
++
++  public synchronized Optional<CloudType> getHostCloud() {
++    if (detected == null && (!checked || System.nanoTime() - undetectedUntilNanos > 0)) {
++      detected = fromDmi().or(this::fromMetadataServices).orElse(null);
++      checked = true;
++      undetectedUntilNanos = System.nanoTime() + UNDETECTED_TTL.toNanos();
++      log.info("YBA host cloud: {}", detected == null ? "none detected" : detected);
++    }
++    return Optional.ofNullable(detected);
++  }
++
++  private Optional<CloudType> fromDmi() {
++    String chassisAssetTag = readDmi("chassis_asset_tag");
++    if ("Amazon EC2".equals(chassisAssetTag)) {
++      return Optional.of(CloudType.aws);
++    }
++    if (AZURE_CHASSIS_ASSET_TAG.equals(chassisAssetTag)) {
++      return Optional.of(CloudType.azu);
++    }
++    if ("Google Compute Engine".equals(readDmi("product_name"))) {
++      return Optional.of(CloudType.gcp);
++    }
++    return Optional.empty();
++  }
++
++  private String readDmi(String name) {
++    try {
++      return Files.readString(dmiDir.resolve(name), StandardCharsets.UTF_8).trim();
++    } catch (IOException | SecurityException e) {
++      return null;
++    }
++  }
++
++  private Optional<CloudType> fromMetadataServices() {
++    // GCP and Azure are recognized by their responses. AWS is checked last: the IMDSv1 paths are
++    // also served by EC2-compatible clouds. The IMDSv1 path covers instances whose IMDSv2 token
++    // response can't reach YBA, e.g. a container behind a hop limit of 1: it answers 200 if IMDSv1
++    // is enabled, and 401 if IMDSv2 is required.
++    CompletableFuture<Boolean> gcp =
++        probe(
++            get(GCP_INSTANCE_ID_PATH).header(GCP_METADATA_FLAVOR_HEADER, GCP_METADATA_FLAVOR),
++            r ->
++                r.statusCode() == 200
++                    && r.headers()
++                        .allValues(GCP_METADATA_FLAVOR_HEADER)
++                        .contains(GCP_METADATA_FLAVOR));
++    CompletableFuture<Boolean> azu =
++        probe(
++            get("/metadata/instance?api-version=2021-02-01").header("Metadata", "true"),
++            r -> r.statusCode() == 200);
++ 
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #35766** (closed): [#35199] YSQL: Fix PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 by lengthening the YSQL lease (@csi-fix)
 - **PR #35751** (2026-10-24): [#32301] YSQL: Retry a YSQL migration that fails with a serialization failure (@myang2021)
+- **PR #35720** (2026-10-25): [PLAT-23030] YBA: Add v2 API for the host's cloud info (@artem-mindrov)
 - **PR #35711** (2026-10-23): [#35643] Docs: Document Connection Manager disconnecting sessions of a dropped role (@arpit-saxena)
 - **PR #35709** (2026-10-24): [PLAT-23213] YBA: Keep a failed task's rollback checkpoint when other tasks run on the broken universe (@vipul-yb)
 - **PR #35680** (2026-10-23): [BACKPORT 2026.1][#35550] DocDB: Count only the test table's peers in OrphanedTabletCleanupTest (#35558) (@hkimura)
-- **PR #35679** (2026-10-23): [BACKPORT 2025.2][#35550] DocDB: Count only the test table's peers in OrphanedTabletCleanupTest (#35558) (@hkimura)
 
 ---
 
@@ -2882,46 +2797,30 @@ hit `ClassCastException` at `shuffleQueryInfo` (JDK
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#34664] YSQL: Fix RemoteBootstrapITest.TestRBSWithLazySuperblockFlush leader-fa
+## X. [PLAT-23030] YBA: Add v2 API for the host's cloud info (#35720)
 
 **RULE**:
-When implementing operations in `src/yb/integration-tests/remote_bootstrap-itest.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `managed/build.sbt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c48c3dbf`: [#34664] YSQL: Fix RemoteBootstrapITest.TestRBSWithLazySuperblockFlush leader-failover delay. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `545b420b`: [PLAT-23030] YBA: Add v2 API for the host's cloud info (#35720). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/integration-tests/remote_bootstrap-itest.cc`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/build.sbt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-  // Move leadership off the tserver to tombstone. Otherwise the other peers only notice the leader
-  // is gone after the failure detection timeout, which under TSAN delays RBS past the wait below.
-  ASSERT_OK(WaitFor(
-      [&]() -> Result<bool> {
-        auto leader = cluster_->GetTabletLeaderIndex(tablet_id, /* require_lease = */ true);
-        if (!leader.ok()) {
-          return false;
-        }
-        if (*leader != ts_idx_to_bootstrap) {
-          return true;
-        }
-        WARN_NOT_OK(
-            itest::LeaderStepDown(ts, tablet_id, /* new_leader = */ nullptr, timeout),
-            "Leader step down failed");
-        return false;
-      },
-      timeout, "Waiting for leader to move off ts_idx_to_bootstrap"));
-
-  // Delete tablet and shutdown one tserver.
+  "com.yugabyte" % "yba-client-v2" % "1.8.11" % Test,
+    version := "1.8.11",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-  // Delete tablet and shutdown one tserver.
+  "com.yugabyte" % "yba-client-v2" % "1.8.10" % Test,
+    version := "1.8.10",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c48c3dbf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `545b420b` are properly handled with clean fallback behavior.

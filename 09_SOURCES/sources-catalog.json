@@ -945,8 +945,8 @@
     "sourceUrl": "https://huggingface.co/bigscience/bloom",
     "sourceVersion": "hf-bigscience-bloom",
     "license": "Open-Source",
-    "contentHash": "ffa3abac8fe18fad2f5885117b3f2ccdbb765b78ca64373963585ea57591accf",
-    "lastHarvestedAt": "2026-10-21T00:42:32.703Z",
+    "contentHash": "98dbfab91ea5ec27c1f6195908c7a0f8c234970bb68e24d8a83d9c602633f63b",
+    "lastHarvestedAt": "2026-10-25T20:23:37.578Z",
     "learningId": "learn-huggingface-bigscience-bloom"
   },
   "hf-openai-gpt-oss-20b": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "d00af7d2",
+    "sourceVersion": "545b420b",
     "license": "NOASSERTION",
-    "contentHash": "43b9863746dd409476dcc82c601425dbe7acb16cd1a83a1315f37bc1c55336ca",
-    "lastHarvestedAt": "2026-10-25T04:06:07.069Z",
+    "contentHash": "c693eee1ee3afac7d13df97f92c96218c326ae1c24b7ff4e8928289526f130a4",
+    "lastHarvestedAt": "2026-10-25T20:23:52.606Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {

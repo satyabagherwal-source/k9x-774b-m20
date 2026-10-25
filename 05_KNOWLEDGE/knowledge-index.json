@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T20:17:44.840Z",
+  "last_updated": "2026-10-25T20:23:52.572Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17102,7 +17102,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "ffa3abac8fe18fad2f5885117b3f2ccdbb765b78ca64373963585ea57591accf",
+      "content_hash": "98dbfab91ea5ec27c1f6195908c7a0f8c234970bb68e24d8a83d9c602633f63b",
       "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "promoted_rules": [
@@ -17154,7 +17154,7 @@
         "learn-huggingface-hf-bigscience-bloom-mv3wl1kr",
         "learn-huggingface-hf-bigscience-bloom-mv4ba34m"
       ],
-      "verified_at": "2026-10-21T00:42:32.660Z",
+      "verified_at": "2026-10-25T20:23:37.539Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52628,8 +52628,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "d00af7d2",
-      "content_hash": "43b9863746dd409476dcc82c601425dbe7acb16cd1a83a1315f37bc1c55336ca",
+      "source_version": "545b420b",
+      "content_hash": "c693eee1ee3afac7d13df97f92c96218c326ae1c24b7ff4e8928289526f130a4",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -52662,6 +52662,11 @@
           "number": 4034,
           "title": "[#34664] YSQL: Fix RemoteBootstrapITest.TestRBSWithLazySuperblockFlush leader-fa",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4442,
+          "title": "[PLAT-23030] YBA: Add v2 API for the host's cloud info (#35720)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52669,7 +52674,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:06:07.001Z",
+      "verified_at": "2026-10-25T20:23:52.565Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125917,6 +125922,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T20:17:44.833Z"
+    },
+    "rule-4442": {
+      "learning_id": "rule-4442",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4442,
+      "title": "[PLAT-23030] YBA: Add v2 API for the host's cloud info (#35720)",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "545b420b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T20:23:52.565Z"
     }
   },
   "aliases": {
