@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T16:31:37.287Z",
-  "total_cycles_completed": 4874,
-  "total_learnings_persisted": 4876,
-  "total_rules_promoted": 4260,
+  "last_updated": "2026-10-25T16:34:47.046Z",
+  "total_cycles_completed": 4878,
+  "total_learnings_persisted": 4878,
+  "total_rules_promoted": 4261,
   "history": [
-    {
-      "timestamp": "2026-10-25T05:58:42.275Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T05:58:44.766Z",
-      "repository": "HuggingFaceBio/Carbon-X",
-      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T05:58:57.855Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T05:58:58.291Z",
-      "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
-      "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T06:06:13.323Z",
       "repository": "facebook/folly",
@@ -1406,22 +1378,32 @@
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-25T16:29:23.985Z",
-      "event": "RULE_PROMOTION_COMPLETE",
-      "source": "old-english-font-free",
-      "promotedRules": [
-        4379
-      ],
-      "dossier": "07_PROJECT_LEARNING/old-english-font-learnings.md"
+      "timestamp": "2026-10-25T16:28:20.866Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-25T16:31:37.287Z",
-      "event": "RULE_PROMOTION_COMPLETE",
-      "source": "old-english-font-free",
-      "promotedRules": [
-        4379
-      ],
-      "dossier": "07_PROJECT_LEARNING/old-english-font-learnings.md"
+      "timestamp": "2026-10-25T16:28:34.514Z",
+      "repository": "LLPhant/LLPhant",
+      "learningId": "learn-github-llphant-llphant",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T16:34:36.835Z",
+      "repository": "Megabit/Blazorise",
+      "learningId": "learn-github-megabit-blazorise",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T16:34:47.046Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z_image_turbo",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
     }
   ]
 }

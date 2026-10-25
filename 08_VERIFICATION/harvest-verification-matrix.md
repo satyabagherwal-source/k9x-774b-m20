@@ -4899,3 +4899,5 @@
 | `CYCLE-20261025-CF5V` | `2026-10-25T16:21:49.891Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`b5e065a6...`) |
 | `CYCLE-20261025-KSU2` | `2026-10-25T16:28:20.858Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`200645d6...`) |
 | `CYCLE-20261025-L3D4` | `2026-10-25T16:28:34.504Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/llphant-llphant-learnings.md` | Yes (`b353f057...`) |
+| `CYCLE-20261025-SUXP` | `2026-10-25T16:34:36.829Z` | `Megabit/Blazorise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4379` | Yes (`b38b096c...`) |
+| `CYCLE-20261025-T2TC` | `2026-10-25T16:34:47.040Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4380, Rule 4381` | Yes (`6cfd82cf...`) |

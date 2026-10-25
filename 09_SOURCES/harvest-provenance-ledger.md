@@ -4906,3 +4906,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-10-25T16:21:49.894Z |
 | `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-10-25T16:28:20.862Z |
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `b9e6030a` | Multi-dimensional audit evidence | 2026-10-25T16:28:34.507Z |
+| `learn-github-megabit-blazorise` | `https://github.com/Megabit/Blazorise` | `a9c6c06b` | Multi-dimensional audit evidence | 2026-10-25T16:34:36.832Z |
+| `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-25T16:34:47.043Z |

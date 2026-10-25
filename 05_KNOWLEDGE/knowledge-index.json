@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T16:28:34.444Z",
+  "last_updated": "2026-10-25T16:34:46.993Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34060,8 +34060,8 @@
       "slug": "megabit-blazorise",
       "platform": "github",
       "source_url": "https://github.com/Megabit/Blazorise",
-      "source_version": "7ecbdcac",
-      "content_hash": "31577a2b947ece074c05c4d1cb94f3cd6dd52f040706f0c5b673b302bbae50eb",
+      "source_version": "a9c6c06b",
+      "content_hash": "b38b096cbc6d6cb1e2f6fae6f28cc01a97474dce89408adfcdcdfe882d132488",
       "dossier_path": "07_PROJECT_LEARNING/megabit-blazorise-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/megabit-blazorise-learnings.md",
       "promoted_rules": [
@@ -34079,6 +34079,11 @@
           "number": 3941,
           "title": "Demo: add invoice builder mini app",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4379,
+          "title": "Tests: fix merge conflict errors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34086,7 +34091,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:11:11.032Z",
+      "verified_at": "2026-10-25T16:34:36.791Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -93831,13 +93836,13 @@
     "learn-huggingface-comfy-org-z_image_turbo": {
       "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "source": "Comfy-Org/z_image_turbo",
-      "repository": "Comfy-Org/z_image_turbo",
+      "source": "Comfy-Org/Z-Image-Turbo",
+      "repository": "Comfy-Org/Z-Image-Turbo",
       "slug": "hf-comfy-org-z_image_turbo",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
       "source_version": "hf-comfy-org-z_image_turbo",
-      "content_hash": "644d4d9161213d55023bb82df3c8b76e5208e084757228cb0cf3f7a8164206db",
+      "content_hash": "6cfd82cf4627c83e8b7300f361a83043a4732c397d604ce10e3f7a935647f633",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "promoted_rules": [
@@ -93850,6 +93855,16 @@
           "number": 2301,
           "title": "LoRA Distillation Residual Patch Scaling Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4380,
+          "title": "Modular Precision Decoupling for Heterogeneous Hardware",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4381,
+          "title": "Distillation Patch Isolation via LoRA",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -93857,7 +93872,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:01:25.271Z",
+      "verified_at": "2026-10-25T16:34:46.985Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124682,6 +124697,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T16:15:24.360Z"
+    },
+    "rule-4379": {
+      "learning_id": "rule-4379",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4379,
+      "title": "Tests: fix merge conflict errors",
+      "source_url": "https://github.com/Megabit/Blazorise",
+      "source_version": "a9c6c06b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T16:34:36.791Z"
+    },
+    "rule-4380": {
+      "learning_id": "rule-4380",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4380,
+      "title": "Modular Precision Decoupling for Heterogeneous Hardware",
+      "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T16:34:46.986Z"
+    },
+    "rule-4381": {
+      "learning_id": "rule-4381",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4381,
+      "title": "Distillation Patch Isolation via LoRA",
+      "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T16:34:46.986Z"
     }
   },
   "aliases": {

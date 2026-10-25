@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T16:28:34.522Z",
+  "last_updated": "2026-10-25T16:34:47.048Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4626,14 +4626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-megabit-blazorise",
-      "content_hash": "31577a2b947ece074c05c4d1cb94f3cd6dd52f040706f0c5b673b302bbae50eb",
-      "verified_at": "2026-10-24T20:11:11.089Z",
+      "content_hash": "b38b096cbc6d6cb1e2f6fae6f28cc01a97474dce89408adfcdcdfe882d132488",
+      "verified_at": "2026-10-25T16:34:36.837Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T20:11:11.089Z"
+      "last_updated": "2026-10-25T16:34:36.837Z"
     },
     "metalbear-co/mirrord": {
       "repository": "metalbear-co/mirrord",
@@ -15845,15 +15845,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-comfy-org-z-image-turbo",
-      "content_hash": "f6d9511e888b789348c4b6a1014711b6622bdcb0901e26f201be1b275c05910a",
-      "verified_at": "2026-10-22T21:35:20.223Z",
+      "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
+      "content_hash": "6cfd82cf4627c83e8b7300f361a83043a4732c397d604ce10e3f7a935647f633",
+      "verified_at": "2026-10-25T16:34:47.047Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:35:20.223Z"
+      "last_updated": "2026-10-25T16:34:47.047Z"
     },
     "unsloth/flint-GGUF": {
       "repository": "unsloth/flint-GGUF",
