@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-6NLZ",
-    "timestamp": "2026-10-22T19:42:17.351Z",
-    "repository": "flox/flox",
-    "learningId": "learn-github-flox-flox",
-    "contentHash": "7b0e8d3d422f4ec8e8f97c76a36bfe8a882b30233d359a0802596c6635f6c89a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-6UPH",
     "timestamp": "2026-10-22T19:42:26.549Z",
     "repository": "beclab/Olares",
@@ -7492,6 +7477,21 @@
     "contentHash": "21a54f8f47eacca77d9c324faad7aa4c756552ca8d8d22689445af5506efedbf",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ZWGY",
+    "timestamp": "2026-10-25T17:08:05.026Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+    "contentHash": "8da24840749ed2130fe0413f87a199d532ab2e8b9440866c11458fa5c99416a6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

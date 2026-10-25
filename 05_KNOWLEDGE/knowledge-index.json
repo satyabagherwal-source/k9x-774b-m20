@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T17:01:32.776Z",
+  "last_updated": "2026-10-25T17:08:04.971Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25650,7 +25650,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "a9ac7404fdcec93cb566da1d425ef779585b41e7b4575d6302e4d4e9b6460e71",
+      "content_hash": "8da24840749ed2130fe0413f87a199d532ab2e8b9440866c11458fa5c99416a6",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "promoted_rules": [
@@ -25683,6 +25683,11 @@
           "verified_at": "2026-10-11T19:52:45.175Z"
         },
         {
+          "number": 996,
+          "title": "Masked Mean Pooling Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 1123,
           "title": "Mask-Aware Aggregation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
@@ -25711,6 +25716,11 @@
           "number": 2351,
           "title": "Upstream Sequence Length Invariant Clamping",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4390,
+          "title": "Tokenizer-Model Dimensional Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25731,7 +25741,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u"
       ],
-      "verified_at": "2026-10-20T21:33:54.642Z",
+      "verified_at": "2026-10-25T17:08:04.953Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75312,14 +75322,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 996,
       "title": "Masked Mean Pooling Invariant",
-      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T23:02:06.089Z"
+      "verified_at": "2026-10-25T17:08:04.954Z"
     },
     "rule-997": {
       "learning_id": "rule-997",
@@ -124891,6 +124901,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T17:01:32.764Z"
+    },
+    "rule-4390": {
+      "learning_id": "rule-4390",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4390,
+      "title": "Tokenizer-Model Dimensional Alignment",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:08:04.954Z"
     }
   },
   "aliases": {

@@ -4910,3 +4910,4 @@
 | `CYCLE-20261025-IMZY` | `2026-10-25T16:54:39.598Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4383, Rule 4384, Rule 4385` | Yes (`98d852e4...`) |
 | `CYCLE-20261025-IU1G` | `2026-10-25T16:54:48.724Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4386` | Yes (`b08de740...`) |
 | `CYCLE-20261025-RHUN` | `2026-10-25T17:01:32.831Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4387, Rule 4388, Rule 4389` | Yes (`21a54f8f...`) |
+| `CYCLE-20261025-ZWGY` | `2026-10-25T17:08:05.026Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule 4390` | Yes (`8da24840...`) |
