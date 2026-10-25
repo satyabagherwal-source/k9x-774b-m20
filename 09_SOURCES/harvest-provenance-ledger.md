@@ -4752,3 +4752,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-25T08:39:34.168Z |
 | `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `65288cb1` | Multi-dimensional audit evidence | 2026-10-25T08:44:00.577Z |
 | `learn-github-komi-store-komi-store` | `https://github.com/komi-store/komi-store` | `fc65863b` | Multi-dimensional audit evidence | 2026-10-25T08:44:18.827Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `c0ee7238` | Multi-dimensional audit evidence | 2026-10-25T08:56:55.759Z |
+| `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `4de2f318` | Multi-dimensional audit evidence | 2026-10-25T08:57:49.144Z |
+| `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-25T08:57:57.163Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `210cdb00` | Multi-dimensional audit evidence | 2026-10-25T08:58:12.469Z |

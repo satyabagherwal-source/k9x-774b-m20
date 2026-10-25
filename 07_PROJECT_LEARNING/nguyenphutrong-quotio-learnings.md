@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source**: github ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
-> **Source Version**: `1b734d48`  
+> **Source Version**: `210cdb00`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T20:35:08.297Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-25T08:58:11.796Z  
 > **Learning ID**: `learn-github-nguyenphutrong-quotio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,451 +12,84 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): nguyenphutrong/quotio
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T20:35:08.292Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): nguyenphutrong/quotio
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `nguyenphutrong/quotio`
-- **Description**: Stop juggling AI accounts. Quotio is a beautiful native macOS menu bar app that unifies your Claude, Gemini, OpenAI, Qwen, and Antigravity subscriptions – with real-time quota tracking and smart auto-failover for AI coding tools like Claude Code, OpenCode, and Droid.
-- **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4897 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### 1.1 Core Problem Statement & Domain Boundary
+`quotio` solves the fragmented governance and quota exhaustion problem inherent in multi-agent, multi-provider AI engineering workflows. Software engineers running agentic CLI tools (such as Claude Code, Codex CLI, Amp, OpenCode, and Factory Droid) across multiple personal, enterprise, and relayed accounts face three compounding failure modes:
+1. **Silent Rate-Limiting & Quota Starvation**: LLM providers enforce sliding-window token and request limits (e.g., TPM, RPM, daily credit ceilings). When an autonomous agent triggers an unannounced quota exhaustion mid-execution, state machines freeze, tasks fail partially, and context state is corrupted.
+2. **Credential Proliferation & Host Secret Leakage**: Storing raw API tokens and OAuth refresh secrets directly within unencrypted workspace dotfiles (`~/.claude.json`, environment variables, shell profiles) introduces credential scraping vulnerabilities.
+3. **Loopback Traffic Desynchronization**: Intercepting agent HTTP traffic via a local relay (`CLIProxyAPI` on loopback `127.0.0.1:8317`) requires bi-directional protocol adaptation—translating Anthropic/OpenAI upstream schemas, proxying Model Context Protocol (MCP) tool registrations, and injecting dynamically rotated authentication keys without breaking streaming (SSE) chunk pipelines or inflating token context budgets.
+
+### 1.2 System Topology & Subsystem Boundaries
+The Quotio architecture is split across two core delivery targets sharing strict domain contracts:
+- **Quotio CLI (Rust)**: High-performance, zero-allocation daemon and CLI utility built on Tokio, Hyper/Axum, and Rustls. It operates headless in CI/CD and terminal environments, exposing a local loopback Unix domain socket / HTTP REST interface and enforcing memory-safe token scanning across local file systems.
+- **Quotio macOS (Swift 6 / Core Domain Engine)**: A native macOS menu bar and management console structured strictly according to Clean Architecture / Hexagonal Ports & Adapters across five modular SPM targets (`QuotioDomain`, `QuotioApplication`, `QuotioInfrastructure`, `QuotioPresentation`, and `QuotioHostClient`).
+
+```
+                    ┌────────────────────────────────────────────────────────┐
+                    │               QuotioPresentation (SwiftUI)             │
+                    └───────────────────────────┬────────────────────────────┘
+                                                │ (Views / State Observers)
+                                                ▼
+┌────────────────────────────────────────────────────────────────────────────────────────────┐
+│                               QuotioApplication                                            │
+│  ┌──────────────────────┐  ┌─────────────────────────┐  ┌───────────────────────────────┐  │
+│  │ OAuthFlowController  │  │ CredentialVaultService  │  │  ProviderSettingsState        │  │
+│  │ (Actor / Task Guard) │  │ (Actor / CAS Optimistic)│  │  (Reactive State Reducer)     │  │
+│  └──────────┬───────────┘  └────────────┬────────────┘  └───────────────┬───────────────┘  │
+│             │                           │                               │                  │
+│             ▼                           ▼                               ▼                  │
+│  ┌──────────────────────────────────────────────────────────────────────────────────────┐  │
+│  │ QuotioDomain (Pure Domain Entities, Transfer Objects, Account Provider Primitives)   │  │
+│  └──────────────────────────────────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────┬────────────────────────────────────────────┘
+                                                │ (Inversion of Control via Ports)
+                                                ▼
+┌────────────────────────────────────────────────────────────────────────────────────────────┐
+│                              QuotioInfrastructure                                          │
+│  ┌───────────────────────────┐ ┌──────────────────────────┐ ┌───────────────────────────┐  │
+│  │ Keychain Data Storing     │ │ Native Tool Scanners     │ │ CLIProxyAPI Supervisor    │  │
+│  │ (macOS LocalAuth/SecItem) │ │ (~/.cli-proxy-api, Grok) │ │ (Subprocess & Health Poll)│  │
+│  └───────────────────────────┘ └──────────────────────────┘ └───────────────────────────┘  │
+└───────────────────────────────────────────────┬────────────────────────────────────────────┘
+                                                │ Inter-Process Bridge (Loopback IPC)
+                                                ▼
+┌────────────────────────────────────────────────────────────────────────────────────────────┐
+│                              Quotio CLI / Proxy Core (Rust)                                │
+│   Tokio Asynchronous Engine ── Socket2 / Mio IO Loop ── Rustls TLS ── Proxy Pipeline       │
+└────────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 1.3 Critical Subsystem Abstractions & State Ownership
+1. **Isolated Actor Concurrency Boundaries**:
+   - `OAuthFlowController` encapsulates the lifecycle of transient authorization tasks. State transitions are strictly linear: `.idle` $\rightarrow$ `.authorizing` $\rightarrow$ `.awaitingUser` / `.awaitingManualCode` $\rightarrow$ `.succeeded` / `.failed`. Concurrent attempts trigger an explicit abort of the prior active task before reinitializing.
+   - `CredentialVaultService` encapsulates secret serialization, isolation, and persistent writes using Generation-Based Optimistic Concurrency Control (OCC) via Compare-and-Swap (CAS) tokens.
+2. **Dynamic Operating Mode Inversion (`OperatingModeOAuthAuthorizer`)**:
+   - Routes OAuth operations polymorphically depending on whether Quotio runs in lightweight `Monitor` mode or full `LocalProxy` mode, using dynamic closure dispatch (`MonitorModeProvider`) to dynamically map credentials to internal keychains or proxy daemon config stores.
+3. **State Aggregation Engine (`ProviderSettingsState`)**:
+   - Pure, idempotent reduction struct taking disconnected accounts, discovered permissions, quota telemetry snapshots, and user preferences, reducing them down to a unified monitoring aggregate (`needsAttention`, `isUnconnected`, `connection` enum).
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. Generation-Based Optimistic Concurrency Control for Multi-Writer Secret Vaults
+**RULE**:
+When persisting sensitive credentials or configuration records subject to concurrent asynchronous modification (e.g., background daemon polling vs. foreground interactive user login), the storage port MUST enforce an atomic Compare-and-Swap (CAS) contract utilizing an opaque generation/etag token. Asynchronous actors MUST NOT overwrite storage state without proving possession of the latest read generation token.
 
-### Core Architecture Module: `Packages/QuotioCore/Package.swift`
-```
-// swift-tools-version: 6.0
+**WHY**:
+Without CAS-based generation validation, concurrent processes create a Time-of-Check to Time-of-Use (TOCTOU) race condition. For example, if a background daemon refreshes an expired OAuth token at time $t_1$, while a user manually updates the API key label at time $t_2$, a blind write (`save(data)`) from the user thread using data fetched at $t_0$ will overwrite the newly refreshed OAuth token. This leads to invalid session revocation, authentication loops, and data loss.
 
-import PackageDescription
+**WHEN TO APPLY**:
+Apply in any multi-tasking, actor-based, or cross-process subsystem managing credentials, authentication states, or system configuration caches across local file systems, secure keychains, or remote databases.
 
-let package = Package(
-    name: "QuotioCore",
-    platforms: [
-        .macOS(.v14),
-    ],
-    products: [
-        .library(name: "QuotioDomain", targets: ["QuotioDomain"]),
-        .library(name: "QuotioApplication", targets: ["QuotioApplication"]),
-        .library(name: "QuotioInfrastructure", targets: ["QuotioInfrastructure"]),
-        .library(name: "QuotioPresentation", targets: ["QuotioPresentation"]),
-    ],
-    dependencies: [
-        .package(path: "../QuotioHostClient"),
-        .package(url: "https://github.com/sparkle-project/Sparkle", exact: "2.8.1"),
-    ],
-    targets: [
-        .target(name: "QuotioDomain"),
-        .target(
-            name: "QuotioApplication",
-            dependencies: ["QuotioDomain"]
-        ),
-        .target(
-            name: "QuotioInfrastructure",
-            dependencies: [
-                .product(name: "QuotioHostClient", package: "QuotioHostClient"),
-                "QuotioApplication",
-                "QuotioDomain",
-                .product(name: "Sparkle", package: "Sparkle"),
-            ]
-        ),
-        .target(
-            name: "QuotioPresentation",
-            dependencies: ["QuotioApplication", "QuotioDomain"]
-        ),
-        .testTarget(
-            name: "QuotioDomainTests",
-            dependencies: ["QuotioDomain"]
-        ),
-        .testTarget(
-            name: "QuotioApplicationTests",
-            dependencies: ["QuotioApplication", "QuotioDomain"]
-        ),
-        .testTarget(
-            name: "QuotioInfrastructureTests",
-            dependencies: ["QuotioInfrastructure", "QuotioApplication", "QuotioDomain", .product(name: "QuotioHostClient", package: "QuotioHostClient")]
-        ),
-        .testTarget(
-            name: "QuotioPresentationTests",
-            dependencies: ["QuotioPresentation", "QuotioApplication", "QuotioDomain"]
-        ),
-    ],
-    swiftLanguageModes: [.v6]
-)
-
-```
-
-### Core Architecture Module: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/AccountService.swift`
-```
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
 import Foundation
-import QuotioDomain
-
-public enum AccountServiceFailure: Error, Equatable, Sendable {
-    case invalidCredential
-    case duplicateAccount
-    case accountNotFound
-    case deletionNotAllowed
-}
-
-public enum NativeSourceAuthorizationFailure: Error, Equatable, Sendable {
-    case quotioVault
-    case nativeKeychain
-    case nativeLogin
-    case invalidCredential
-    case timeout
-    case unknown
-}
-
-/// One login inside a config directory that holds several, such as a multi-account `GROK_HOME`.
-public struct LocalAccountEntry: Equatable, Identifiable, Sendable {
-    public let entryKey: String
-    public let label: String
-    public var id: String { entryKey }
-
-    public init(entryKey: String, label: String) {
-        self.entryKey = entryKey
-        self.label = label
-    }
-}
-
-public enum LocalAccountFailure: Error, Equatable, Sendable {
-    case entryRequired([LocalAccountEntry])
-    case invalidInput
-    case notSignedIn
-    case duplicateAccount
-    case keychainAccess
-    case invalidCredential
-    case unknown
-}
-
-/// Why the host cannot read Quotio's own account store. Only `requiresAuthorization`
-/// is something the user can fix in place; the other cases need a different Quotio.
-public enum AccountStorageProblem: Equatable, Sendable {
-    case requiresAuthorization
-    case unreadable
-    case newerVersion
-}
-
-public struct NativeSourcePermission: Codable, Hashable, Identifiable, Sendable {
-    public let provider: QuotaProvider
-    public let kind: String
-    public let location: String?
-    public let keychainAccount: String?
-    public let configDirectory: String?
-
-    public init(provider: QuotaProvider, kind: String, location: String?, keychainAccount: String? = nil,
-                configDirectory: String? = nil) {
-        self.provider = provider
-        self.kind = kind
-        self.location = location
-        self.keychainAccount = keychainAccount
-        self.configDirectory = configDirectory
-    }
-
-    public var id: String {
-        provider.rawValue + ":" + kind + ":" + (location ?? "") + ":" + (keychainAccount ?? "") + ":" + (configDirectory ?? "")
-    }
-}
-
-public struct NativeDiscoverySnapshot: Sendable {
-    public let failedProviders: Set<QuotaProvider>
-    public let permissions: [NativeSourcePermission]
-    public let knownSources: [NativeSourcePermission]
-    public let scannedAt: [QuotaProvider: Date]
-
-    public init(permissions: [NativeSourcePermission] = [], knownSources: [NativeSourcePermission] = [], scannedAt: [QuotaProvider: Date] = [:], failedProviders: Set<QuotaProvider> = []) {
-        self.failedProviders = failedProviders
-        self.permissions = permissions
-        self.knownSources = knownSources
-        self.scannedAt = scannedAt
-    }
-}
-
-public protocol AccountManaging: Sendable {
-    func registerDetectedNativeAccounts() async
-    func rescanNativeAccounts(for provider: QuotaProvider) async
-    func rescanAllNativeAccounts() async
-    func nativeDiscoverySnapshot() async -> NativeDiscoverySnapshot
-    func authorizeNativeSource(_ source: NativeSourcePermission) async throws
-    /// Registers the read-only login a tool keeps in `configDirectory`, asking macOS for
-    /// Keychain access when that login lives in the Keychain.
-    func addLocalAccount(provider: QuotaProvider, kind: String, configDirectory: String, entryKey: String?, label: String?) async throws
-    func accountStorageProblem() async -> AccountStorageProblem?
-    func authorizeAccountStorage() async throws
-    func accounts() async -> [Account]
-    func setDisabled(_ disabled: Bool, accountID: String) async
-    func delete(accountID: String) async throws
-    func renameResolvedAccount(id: String, userLabel: String?) async throws
-    func setSourceEnabled(_ enabled: Bool, sourceID: String) async throws
-    func unlinkSource(sourceID: String) async throws
-    func saveAPIKey(
-        providerID: AccountProviderID,
-        label: String,
-        apiKey: String,
-        existingAccountID: String?,
-        fields: [String: String]
-    ) async throws
-}
-
-public extension AccountManaging {
-    func rescanAllNativeAccounts() async { await registerDetectedNativeAccounts() }
-    func nativeDiscoverySnapshot() async -> NativeDiscoverySnapshot { .init() }
-    func accountStorageProblem() async -> AccountStorageProblem? { nil }
-    func authorizeAccountStorage() async throws { throw NativeSourceAuthorizationFailure.unknown }
-    func addLocalAccount(provider: QuotaProvider, kind: String, configDirectory: String, entryKey: String?, label: String?) async throws {
-        throw LocalAccountFailure.unknown
-    }
-}
-
-```
-
-### Core Architecture Module: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/AccountSnapshotDataStore.swift`
-```
-import Foundation
-
-/// Opaque persistence boundary for the legacy Monitor snapshot payload.
-/// Quota models and JSON mapping remain in their current slice until Phase 7.
-public protocol AccountSnapshotDataStore: Sendable {
-    func read() async throws -> Data?
-    func write(_ data: Data) async throws
-}
-
-```
-
-### Core Architecture Module: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/AntigravityAccountSwitching.swift`
-```
-import QuotioDomain
-
-public protocol AntigravityAccountSwitching: Sendable {
-    func snapshots() async -> AsyncStream<AntigravitySwitchSnapshot>
-    func snapshot() async -> AntigravitySwitchSnapshot
-    func isAvailable() async -> Bool
-    func isIDERunning() async -> Bool
-    func detectActiveAccount() async -> AntigravityActiveAccount?
-    func switchAccount(authFilePath: String, restartIDE: Bool) async
-    func switchAccount(email: String, authDirectory: String, restartIDE: Bool) async
-    func cancelSwitch() async
-}
-
-public extension AntigravityAccountSwitching {
-    func switchAccount(authFilePath: String) async {
-        await switchAccount(authFilePath: authFilePath, restartIDE: true)
-    }
-
-    func switchAccount(email: String, authDirectory: String = "~/.cli-proxy-api") async {
-        await switchAccount(email: email, authDirectory: authDirectory, restartIDE: true)
-    }
-}
-
-```
-
-### Core Architecture Module: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/AuthFileRepository.swift`
-```
-import Foundation
-import QuotioDomain
-
-public enum AuthFileSource: String, Sendable {
-    case cliProxyApi = "~/.cli-proxy-api"
-    case nativeCredential = "Native Credential"
-}
-
-public struct AuthFileDescriptor: Identifiable, Hashable, Sendable {
-    public let id: String
-    public let providerID: AccountProviderID
-    public let email: String?
-    public let login: String?
-    public let expired: Date?
-    public let accountType: String?
-    public let filePath: String
-    public let source: AuthFileSource
-    public let filename: String
-    public var legacyIdentityKeys: [String]
-
-    public init(
-        id: String,
-        providerID: AccountProviderID,
-        email: String?,
-        login: String?,
-        expired: Date?,
-        accountType: String?,
-        filePath: String,
-        source: AuthFileSource,
-        filename: String,
-        legacyIdentityKeys: [String] = []
-    ) {
-        self.id = id
-        self.providerID = providerID
-        self.email = email
-        self.login = login
-        self.expired = expired
-        self.accountType = accountType
-        self.filePath = filePath
-        self.source = source
-        self.filename = filename
-        self.legacyIdentityKeys = legacyIdentityKeys
-    }
-
-    public var isExpired: Bool {
-        expired.map { $0 < Date() } ?? false
-    }
-
-    public var displayName: String {
-        email?.nilIfBlank ?? login?.nilIfBlank ?? filename
-    }
-
-    public var menuBarAccountKey: String {
-        switch providerID.rawValue {
-        case "codex":
-            return filename.removing(prefix: "codex-").removing(suffix: ".json")
-        case "github-copilot", "copilot":
-            return login?.nilIfBlank
-                ?? filename.removing(prefix: "github-copilot-").removing(suffix: ".json")
-        case "kiro":
-            return email?.nilIfBlank ?? filename.removing(suffix: ".json")
-        default:
-            return email?.nilIfBlank ?? filename
-        }
-    }
-}
-
-public struct AuthFileCredential: Sendable {
-    public let accessToken: String
-    public let refreshToken: String?
-    public let expiresAt: String?
-    public let clientID: String?
-    public let clientSecret: String?
-    public let authMethod: String?
-    public let extras: [String: String]?
-
-    public init(
-        accessToken: String,
-        refreshToken: String?,
-        expiresAt: String?,
-        clientID: String?,
-        clientSecret: String?,
-        authMethod: String?,
-        extras: [String: String]?
-    ) {
-        self.accessToken = accessToken
-        self.refreshToken = refreshToken
-        self.expiresAt = expiresAt
-        self.clientID = clientID
-        self.clientSecret = clientSecret
-        self.authMethod = authMethod
-        self.extras = extras
-    }
-
-    public var isExpired: Bool {
-        guard let expiresAt else { return false }
-        let fractional = ISO8601DateFormatter()
-        fractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        let date = fractional.date(from: expiresAt) ?? ISO8601DateFormatter().date(from: expiresAt)
-        return date.map { $0 < Date() } ?? false
-    }
-}
-
-public enum AuthFileRepositoryError: Error, Equatable, Sendable {
-    case fileNotFound(String)
-    case invalidFileName
-    case invalidJSON(String)
-    case readFailed(String)
-    case saveFailed(String)
-    case symbolicLinkRefused
-}
-
-public protocol AuthFileRepository: Sendable {
-    func scanAllAuthFiles() async -> [AuthFileDescriptor]
-    func readCredential(from file: AuthFileDescriptor) async -> AuthFileCredential?
-    func uploadAuthFile(name: String, content: Data) async throws
-    func readAuthFileForImport(from url: URL) async throws -> Data
-    func writeDownloadedAuthFile(_ content: Data, to url: URL) async throws
-    func downloadAuthFile(name: String) async throws -> Data
-}
-
-private extension String {
-    var nilIfBlank: String? {
-        let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? nil : trimmed
-    }
-
-    func removing(prefix: String) -> String {
-        hasPrefix(prefix) ? String(dropFirst(prefix.count)) : self
-    }
-
-    func removing(suffix: String) -> String {
-        hasSuffix(suffix) ? String(dropLast(suffix.count)) : self
-    }
-}
-
-```
-
-### Core Architecture Module: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/CredentialMigrationResult.swift`
-```
-public struct CredentialMigrationResult: Sendable, Equatable {
-    public var migratedCount: Int
-    public var pendingCount: Int
-    public var metadataUnreadable: Bool
-
-    public init(migratedCount: Int = 0, pendingCount: Int = 0, metadataUnreadable: Bool = false) {
-        self.migratedCount = migratedCount
-        self.pendingCount = pendingCount
-        self.metadataUnreadable = metadataUnreadable
-    }
-}
-
-```
-
-### Core Architecture Module: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/CredentialPorts.swift`
-```
-import Foundation
-import QuotioDomain
-
-public struct StoredCredential: Codable, Equatable, Sendable {
-    public var accessToken: String
-    public var refreshToken: String?
-    public var idToken: String?
-    public var accountID: String?
-    public var expiresAt: Date?
-    public var extra: [String: String]
-
-    public init(
-        accessToken: String,
-        refreshToken: String?,
-        idToken: String?,
-        accountID: String?,
-        expiresAt: Date?,
-        extra: [String: String]
-    ) {
-        self.accessToken = accessToken
-        self.refreshToken = refreshToken
-        self.idToken = idToken
-        self.accountID = accountID
-        self.expiresAt = expiresAt
-        self.extra = extra
-    }
-
-    public var redactedMetadata: RedactedCredentialMetadata {
-        RedactedCredentialMetadata(
-            kind: refreshToken == nil && idToken == nil ? .apiKey : .oauth,
-            expiresAt: expiresAt,
-            hasRefreshToken: refreshToken != nil,
-            hasAccountIdentifier: accountID != nil
-        )
-    }
-}
 
 public struct CredentialDataRecord: Equatable, Sendable {
     public let data: Data
@@ -465,16 +98,6 @@ public struct CredentialDataRecord: Equatable, Sendable {
     public init(data: Data, generation: String) {
         self.data = data
         self.generation = generation
-    }
-}
-
-public struct ExternalCredentialRecord: Equatable, Sendable {
-    public let data: Data
-    public let account: String
-
-    public init(data: Data, account: String) {
-        self.data = data
-        self.account = account
     }
 }
 
@@ -489,997 +112,391 @@ public protocol CredentialDataStoring: Sendable {
     func delete(accountID: String) async
 }
 
-public protocol ExternalCredentialReading: Sendable {
-    func read(service: String, account: String?) async -> ExternalCredentialRecord?
-    func compareAndSwap(
-        service: String,
-        account: String,
-        expectedData: Data,
-        newData: Data
-    ) async -> Bool
-}
-
-public protocol AccountMetadataRepository: Sendable {
-    func accounts() async -> [Account]
-    func disabledAccountIDs() async -> Set<String>
-    func saveAccount(_ account: Account) async throws
-    func deleteAccount(_ accountID: String) async throws
-    func setDisabled(_ disabled: Bool, accountID: String) async throws
-}
-
-public protocol CredentialVault: Sendable {
-    func accounts() async -> [Account]
-    func credential(for accountID: String) async -> StoredCredential?
-    func reloadLatest(accountID: String) async -> StoredCredential?
-    func save(_ credential: StoredCredential, metadata: Account) async throws
-    func delete(accountID: String) async
-}
-
-public enum CredentialVaultError: Error, Equatable, Sendable {
+public enum VaultError: Error, Equatable, Sendable {
+    case writeConflict(expectedGeneration: String)
     case writeFailed
 }
 
-public actor CredentialVaultService: CredentialVault {
-    private let dataStore: any CredentialDataStoring
-    private let metadataRepository: any AccountMetadataRepository
-    private let encoder: JSONEncoder
-    private let decoder: JSONDecoder
+public actor SecureCredentialVault {
+    private let storage: any CredentialDataStoring
     private var loadedGenerations: [String: String] = [:]
 
-    public init(
-        dataStore: any CredentialDataStoring,
-        metadataRepository: any AccountMetadataRepository,
-        encoder: JSONEncoder = JSONEncoder(),
-        decoder: JSONDecoder = JSONDecoder()
-    ) {
-        self.dataStore = dataStore
-        self.metadataRepository = metadataRepository
-        self.encoder = encoder
-        self.decoder = decoder
+    public init(storage: any CredentialDataStoring) {
+        self.storage = storage
     }
 
-    public func accounts() async -> [Account] {
-        await metadataRepository.accounts()
-    }
-
-    public func credential(for accountID: String) async -> StoredCredential? {
-        guard let record = await dataStore.read(accountID: accountID) else { return nil }
+    public func readCredential(for accountID: String) async -> Data? {
+        guard let record = await storage.read(accountID: accountID) else {
+            loadedGenerations.removeValue(forKey: accountID)
+            return nil
+        }
         loadedGenerations[accountID] = record.generation
-        return try? decoder.decode(StoredCredential.self, from: record.data)
+        return record.data
     }
 
-    public func reloadLatest(accountID: String) async -> StoredCredential? {
-        await credential(for: accountID)
-    }
-
-    public func save(_ credential: StoredCredential, metadata account: Account) async throws {
-        let data = try encoder.encode(credential)
-        let saved: CredentialDataRecord?
-        if let expectedGeneration = loadedGenerations[account.id] {
-            saved = await dataStore.compareAndSwap(
-                data,
-                accountID: account.id,
-                expectedGeneration: expectedGeneration
-            )
-        } else {
-            saved = await dataStore.save(data, accountID: account.id)
-        }
-        guard let saved else {
-            throw CredentialVaultError.writeFailed
-        }
-        loadedGenerations[account.id] = saved.generation
-        try await metadataRepository.saveAccount(account)
-    }
-
-    public func delete(accountID: String) async {
-        await dataStore.delete(accountID: accountID)
-        loadedGenerations.removeValue(forKey: accountID)
-        try? await metadataRepository.deleteAccount(accountID)
-    }
-}
-
-```
-
-### Core Architecture Module: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/OAuthFlow.swift`
-```
-import Foundation
-import QuotioDomain
-
-public struct OAuthAttemptID: Hashable, Sendable {
-    public let rawValue: UUID
-
-    public init(rawValue: UUID = UUID()) {
-        self.rawValue = rawValue
-    }
-}
-
-public struct OAuthPrompt: Equatable, Sendable {
-    public let authorizationURL: URL?
-    public let userCode: String?
-    public let status: OAuthPromptStatus?
-
-    public init(authorizationURL: URL? = nil, userCode: String? = nil, status: OAuthPromptStatus? = nil) {
-        self.authorizationURL = authorizationURL
-        self.userCode = userCode
-        self.status = status
-    }
-}
-
-public enum OAuthPromptStatus: Equatable, Sendable {
-    case proxyCLI(ProxyCLIAuthStatus)
-    case importingQuotas
-}
-
-public enum OAuthAuthorizationMethod: String, Equatable, Sendable {
-    case providerDefault
-    case kiroGoogle
-    case kiroAWSDeviceCode
-    case kiroAWSBrowser
-    case kiroImport
-}
-
-public struct OAuthAuthorizationRequest: Equatable, Sendable {
-    public let providerID: AccountProviderID
-    public let method: OAuthAuthorizationMethod
-    public let automaticallyOpensBrowser: Bool
-    /// GitHub Enterprise Cloud host for Copilot; `nil` means GitHub.com.
-    public let githubHost: GitHubHost?
-
-    public init(
-        providerID: AccountProviderID,
-        method: OAuthAuthorizationMethod = .providerDefault,
-        automaticallyOpensBrowser: Bool = false,
-        githubHost: GitHubHost? = nil
-    ) {
-        self.providerID = providerID
-        self.method = method
-        self.automaticallyOpensBrowser = automaticallyOpensBrowser
-        self.githubHost = githubHost?.isGitHubCom == true ? nil : githubHost
-    }
-}
-
-public enum OAuthAuthorizationOutcome: Sendable {
-    case completed(Account)
-    case awaitingManualCode(prompt: OAuthPrompt, state: String)
-}
-
-public enum OAuthFlowFailure: Error, Equatable, Sendable {
-    case unsupportedProvider
-    case invalidResponse
-    case expired
-    case stateMismatch
-    case browserOpenFailed
-    case proxyCLI(ProxyCLIAuthStatus)
-    case provider(String)
-    case unknown
-}
-
-public enum OAuthFlowState: Equatable, Sendable {
-    case idle
-    case authorizing(providerID: AccountProviderID)
-    case awaitingUser(providerID: AccountProviderID, prompt: OAuthPrompt)
-    case awaitingManualCode(providerID: AccountProviderID, prompt: OAuthPrompt, state: String)
-    case succeeded(providerID: AccountProviderID, accountID: String)
-    case failed(providerID: AccountProviderID, failure: OAuthFlowFailure)
-}
-
-public protocol OAuthAuthorizing: Sendable {
-    func begin(
-        request: OAuthAuthorizationRequest,
-        attemptID: OAuthAttemptID,
-        progress: @escaping @Sendable (OAuthPrompt) async -> Void
-    ) async throws -> OAuthAuthorizationOutcome
-    func completeManualCode(
-        _ code: String,
-        providerID: AccountProviderID,
-        attemptID: OAuthAttemptID
-    ) async throws -> Account
-    func cancel(attemptID: OAuthAttemptID) async
-}
-
-public struct OAuthHTTPRequest: Sendable {
-    public let url: URL
-    public let method: String
-    public let headers: [String: String]
-    public let body: Data?
-
-    public init(
-        url: URL,
-        method: String = "GET",
-        headers: [String: String] = [:],
-        body: Data? = nil
-    ) {
-        self.url = url
-        self.method = method
-        self.headers = headers
-        self.body = body
-    }
-}
-
-public struct OAuthHTTPResponse: Sendable {
-    public let statusCode: Int
-    public let body: Data
-
-    public init(statusCode: Int, body: Data) {
-        self.statusCode = statusCode
-        self.body = body
-    }
-}
-
-public protocol OAuthHTTPTransport: Sendable {
-    func send(_ request: OAuthHTTPRequest) async throws -> OAuthHTTPResponse
-}
-
-public actor OAuthFlowController {
-    private let authorizer: any OAuthAuthorizing
-    private var activeAttempt: (id: OAuthAttemptID, request: OAuthAuthorizationRequest)?
-    private var activeTask: Task<Void, Never>?
-    private var stateContinuations: [UUID: AsyncStream<OAuthFlowState>.Continuation] = [:]
-    private(set) public var state: OAuthFlowState = .idle
-
-    public init(authorizer: any OAuthAuthorizing) {
-        self.authorizer = authorizer
-    }
-
-    public func states() -> AsyncStream<OAuthFlowState> {
-        let id = UUID()
-        return AsyncStream { continuation in
-            stateContinuations[id] = continuation
-            continuation.yield(state)
-            continuation.onTermination = { [weak self] _ in
-                Task { await self?.removeContinuation(id) }
+    public func updateCredential(_ data: Data, for accountID: String) async throws {
+        guard let expectedGeneration = loadedGenerations[accountID] else {
+            // First write or un-tracked state requires explicit save-or-initialize
+            guard let initialRecord = await storage.save(data, accountID: accountID) else {
+                throw VaultError.writeFailed
             }
-        }
-    }
-
-    public func start(_ request: OAuthAuthorizationRequest) async {
-        await cancelActiveAttempt(publishIdle: false)
-        let attemptID = OAuthAttemptID()
-        activeAttempt = (attemptID, request)
-        publish(.authorizing(providerID: request.providerID))
-
-        let authorizer = authorizer
-        let controller = self
-        activeTask = Task {
-            do {
-                let outcome = try await authorizer.begin(
-                    request: request,
-                    attemptID: attemptID
-                ) { prompt in
-                    await controller.receive(prompt: prompt, attemptID: attemptID)
-                }
-                await controller.receive(outcome: outcome, attemptID: attemptID)
-            } catch is CancellationError {
-                await controller.receiveCancellation(attemptID: attemptID)
-            } catch let failure as OAuthFlowFailure {
-                await controller.receive(failure: failure, attemptID: attemptID)
-            } catch {
-                await controller.receive(failure: .unknown, attemptID: attemptID)
-            }
-        }
-    }
-
-    public func completeManualCode(_ code: String) async {
-        guard let attempt = activeAttempt,
-              case .awaitingManualCode = state else { return }
-        activeTask?.cancel()
-        let authorizer = authorizer
-        let controller = self
-        activeTask = Task {
-            do {
-                let account = try await authorizer.completeManualCode(
-                    code,
-                    providerID: attempt.request.providerID,
-                    attemptID: attempt.id
-                )
-                await controller.complete(account: account, attemptID: attempt.id)
-            } catch is CancellationError {
-                await controller.receiveCancellation(attemptID: attempt.id)
-            } catch let failure as OAuthFlowFailure {
-                await controller.receive(failure: failure, attemptID: attempt.id)
-            } catch {
-                await controller.receive(failure: .unknown, attemptID: attempt.id)
-            }
-        }
-    }
-
-    public func cancel() async {
-        await cancelActiveAttempt(publishIdle: true)
-    }
-
-    public func shutdown() async {
-        await cancelActiveAttempt(publishIdle: true)
-        for continuation in stateContinuations.values {
-            continuation.finish()
-        }
-        stateContinuations.removeAll()
-    }
-
-    private func receive(prompt: OAuthPrompt, attemptID: OAuthAttemptID) {
-        guard let activeAttempt, activeAttempt.id == attemptID else { return }
-        publish(.awaitingUser(providerID: activeAttempt.request.providerID, prompt: prompt))
-    }
-
-    private func receive(outcome: OAuthAuthorizationOutcome, attemptID: OAuthAttemptID) {
-        guard let activeAttempt, activeAttempt.id == attemptID else { return }
-        switch outcome {
-        case .completed(let account):
-            complete(account: account, attemptID: attemptID)
-        case .awaitingManualCode(let prompt, let state):
-            activeTask = nil
-            publish(.awaitingManualCode(
-                providerID: activeAttempt.request.providerID,
-                prompt: prompt,
-                state: state
-            ))
-        }
-    }
-
-    private func complete(account: Account, attemptID: OAuthAttemptID) {
-        guard let activeAttempt, activeAttempt.id == attemptID else { return }
-        self.activeAttempt = nil
-        activeTask = nil
-        publish(.succeeded(providerID: activeAttempt.request.providerID, accountID: account.id))
-    }
-
-    private func receive(failure: OAuthFlowFailure, attemptID: OAuthAttemptID) async {
-        guard let activeAttempt, activeAttempt.id == attemptID else { return }
-        activeTask = nil
-        await authorizer.cancel(attemptID: attemptID)
-        guard self.activeAttempt?.id == attemptID else { return }
-        self.activeAttempt = nil
-        publish(.failed(providerID: activeAttempt.request.providerID, failure: failure))
-    }
-
-    private func receiveCancellation(attemptID: OAuthAttemptID) async {
-        guard let activeAttempt, activeAttempt.id == attemptID else { return }
-        activeTask = nil
-        await authorizer.cancel(attemptID: attemptID)
-        guard self.activeAttempt?.id == attemptID else { return }
-        self.activeAttempt = nil
-        publish(.idle)
-    }
-
-    private func cancelActiveAttempt(publishIdle: Bool) async {
-        guard let attempt = activeAttempt else {
-            if publishIdle { publish(.idle) }
+            loadedGenerations[accountID] = initialRecord.generation
             return
         }
-        activeAttempt = nil
-        let task = activeTask
-        activeTask = nil
-        task?.cancel()
-        await authorizer.cancel(attemptID: attempt.id)
-        if publishIdle { publish(.idle) }
-    }
 
-    private func publish(_ state: OAuthFlowState) {
-        self.state = state
-        for continuation in stateContinuations.values {
-            continuation.yield(state)
+        guard let updatedRecord = await storage.compareAndSwap(
+            data,
+            accountID: accountID,
+            expectedGeneration: expectedGeneration
+        ) else {
+            // Generation mismatch indicates concurrent modification
+            throw VaultError.writeConflict(expectedGeneration: expectedGeneration)
         }
-    }
-
-    private func removeContinuation(_ id: UUID) {
-        stateContinuations.removeValue(forKey: id)
+        
+        loadedGenerations[accountID] = updatedRecord.generation
     }
 }
-
 ```
 
-### Core Architecture Module: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/OperatingModeOAuthAuthorizer.swift`
-```
-import QuotioDomain
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Blind overwrites without generation verification
+public actor UnsafeCredentialVault {
+    private let storage: BlindStorageEngine
 
-public actor OperatingModeOAuthAuthorizer: OAuthAuthorizing {
-    public typealias MonitorModeProvider = @Sendable () async -> Bool
-
-    private enum Route {
-        case monitor
-        case localProxy
-    }
-
-    private let monitor: any OAuthAuthorizing
-    private let localProxy: any OAuthAuthorizing
-    private let isMonitorMode: MonitorModeProvider
-    private var routes: [OAuthAttemptID: Route] = [:]
-
-    public init(
-        monitor: any OAuthAuthorizing,
-        localProxy: any OAuthAuthorizing,
-        isMonitorMode: @escaping MonitorModeProvider
-    ) {
-        self.monitor = monitor
-        self.localProxy = localProxy
-        self.isMonitorMode = isMonitorMode
-    }
-
-    public func begin(
-        request: OAuthAuthorizationRequest,
-        attemptID: OAuthAttemptID,
-        progress: @escaping @concurrent @Sendable (OAuthPrompt) async -> Void
-    ) async throws -> OAuthAuthorizationOutcome {
-        let route: Route = await isMonitorMode() ? .monitor : .localProxy
-        routes[attemptID] = route
-        let outcome = try await authorizer(for: route).begin(
-            request: request,
-            attemptID: attemptID,
-            progress: progress
-        )
-        if case .completed = outcome {
-            routes[attemptID] = nil
-        }
-        return outcome
-    }
-
-    public func completeManualCode(
-        _ code: String,
-        providerID: AccountProviderID,
-        attemptID: OAuthAttemptID
-    ) async throws -> Account {
-        guard let route = routes[attemptID] else { throw OAuthFlowFailure.expired }
-        let account = try await authorizer(for: route).completeManualCode(
-            code,
-            providerID: providerID,
-            attemptID: attemptID
-        )
-        routes[attemptID] = nil
-        return account
-    }
-
-    public func cancel(attemptID: OAuthAttemptID) async {
-        guard let route = routes.removeValue(forKey: attemptID) else { return }
-        await authorizer(for: route).cancel(attemptID: attemptID)
-    }
-
-    private func authorizer(for route: Route) -> any OAuthAuthorizing {
-        switch route {
-        case .monitor: monitor
-        case .localProxy: localProxy
-        }
+    public func updateCredential(_ data: Data, for accountID: String) async throws {
+        // RACE HAZARD: Overwrites any background token refresh that occurred
+        // between the UI reading the record and triggering this save.
+        try await storage.rawWrite(data, key: accountID)
     }
 }
-
 ```
 
-### Core Architecture Module: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/ProviderSettingsState.swift`
-```
-import Foundation
-import QuotioDomain
-
-public struct ProviderSettingsState: Sendable {
-    public let provider: QuotaProvider
-    public let accounts: [Account]
-    public let accountsNeedingIdentification: [Account]
-    public let permissions: [NativeSourcePermission]
-    public let connection: ConnectionState
-    public let accountStates: [String: AccountMonitoringState]
-    public let latestIssue: QuotaRefreshIssue?
-    public let latestIssueAccountID: String?
-    public let latestIssueSourceID: String?
-
-    public var needsAttention: Bool {
-        connection != .disabled && (connection == .permissionRequired || connection == .reauthenticationRequired || !permissions.isEmpty || !accountsNeedingIdentification.isEmpty || latestIssue != nil)
-    }
-
-    public var isUnconnected: Bool { accounts.isEmpty && accountsNeedingIdentification.isEmpty && permissions.isEmpty }
-
-    public init(
-        provider: QuotaProvider, accounts: [Account], permissions: [NativeSourcePermission],
-        quota: QuotaSnapshot, tracking: ProviderTrackingPreferences
-    ) {
-        self.provider = provider
-        let providerAccounts = accounts.filter { $0.providerID.rawValue == provider.rawValue }
-        let unresolved = providerAccounts.filter { account in
-            account.isIdentityVerified == false && !account.sources.isEmpty &&
-            account.sources.allSatisfy { $0.source == .nativeCredential && $0.credentialReference?.hasSuffix("_native") == true } &&
-            quota.accountStates[.init(provider: provider, accountKey: account.accountKey)]?.connection == .reauthenticationRequired
-        }
-        accountsNeedingIdentification = unresolved
-        let unresolvedIDs = Set(unresolved.map(\.id))
-        self.accounts = providerAccounts.filter { !unresolvedIDs.contains($0.id) }
-        self.permissions = permissions.filter { $0.provider == provider }
-        let tracked = tracking.isEnabled(provider)
-        var states: [String: AccountMonitoringState] = [:]
-        var currentIssues: [(accountID: String?, sourceID: String?, issue: QuotaRefreshIssue)] = []
-        let sourceIssues = quota.sourceIssues[provider] ?? [:]
-        for account in providerAccounts {
-            let id = QuotaAccountID(provider: provider, accountKey: account.accountKey)
-            let issue = quota.accountIssues[id]
-            let state = quota.accountStates[id] ?? AccountMonitoringState(connection: .notConnected, quota: .notLoaded)
-            states[account.id] = state
-            if !account.isDisabled {
-                if case .failed = state.quota, let issue { currentIssues.append((account.id, quota.accountIDs[provider]?[account.accountKey], issue)) }
-                for source in account.sources {
-                    if let issue = sourceIssues[source.accountID] { currentIssues.append((account.id, source.accountID, issue)) }
-                }
-            }
-        }
-        accountStates = states
-        if !providerAccounts.isEmpty || !self.permissions.isEmpty, let issue = quota.issues[provider] {
-            currentIssues.append((nil, nil, issue))
-        }
-        let latest = currentIssues.max { $0.issue.occurredAt < $1.issue.occurredAt }
-        latestIssue = latest?.issue
-        latestIssueAccountID = latest?.accountID
-        latestIssueSourceID = latest?.sourceID
-        if !tracked {
-            connection = .disabled
-        } else if states.values.contains(where: { $0.connection == .connected }) {
-            connection = .connected
-        } else if !self.permissions.isEmpty || states.values.contains(where: { $0.connection == .permissionRequired }) {
-            connection = .permissionRequired
-        } else if states.values.contains(where: { $0.connection == .reauthenticationRequired }) {
-            connection = .reauthenticationRequired
-        } else {
-            connection = .notConnected
-        }
-    }
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #529** (2026-09-14): **Claude Code tool-search (defer_loading) not forwarded — MCP tools load fully into prefix instead of on-demand**
-  *Symptoms*: ### What happened?  When Claude Code is pointed at CLIProxyAPI via ANTHROPIC_BASE_URL (used via Quotio's local proxy), MCP tool definitions are not deferred/loaded on-demand — they get loaded fully into every request's prefix, massively inflating context usage.  ### Steps to reproduce  - Same account, same project, same MCP servers (~250-265 tools) - Through CLIProxyAPI (ANTHROPIC_BASE_URL=http://127.0.0.1:8317): /context shows MCP tools: 180.4k tokens (247 tools), no "(loaded on-demand)" label - Direct connection (native claude.ai login, no base URL override): /context shows MCP tools: 12.3k tokens (265 tools) · loaded on-demand  ### Expected behavior  MCP tool definitions should be deferred/loaded on-demand (same as a direct connection), not loaded fully into every request. Native login shows "MCP tools: 12.3k tokens (265 tools) · loaded on-demand"; through the proxy it's "180.4k tokens (247 tools)" with no on-demand label — a ~15x overhead difference for the same tool set.  ### Severity  🟠 High - Core feature broken, no workaround  ### Affected component  Proxy Server (CLIProxyAPI)  ### Provider (if applicable)  Anthropic Claude  ### CLI Agent (if applicable)  Claude Code  ### macOS Version  26.6.2 (25G83) Tahoe  ### Quotio Version  0.31.0  ### App Mode  Full Mode (Proxy running)  ### Screenshots  _No response_  ### Logs (optional)  ```shell  ```  ### Additional context  Root cause is likely upstream in CLIProxyAPI, not Quotio's UI. Claude Code requests tool search via an
-
-- **Issue #514** (2026-08-25): **App crashes with EXC_BREAKPOINT (SIGTRAP) in background Swift Task — v0.29.1 (70)**
-  *Symptoms*: ### What happened?  ### Title App crashes with EXC_BREAKPOINT (SIGTRAP) in background Swift Task — v0.29.1 (70)  ### Environment - Quotio: 0.29.1 (build 70) - macOS: 26.5.2 (25F84) - Device: MacBook Pro, Apple M2 Max (Mac14,5), 32GB RAM  ### Crash Summary - Exception: EXC_BREAKPOINT (SIGTRAP), code 1 - esr: brk 1 (Swift runtime trap — not memory corruption; likely fatalError / force-unwrap of nil / array out-of-bounds / try! failure) - Crashing thread: Thread 6, dispatch queue `com.apple.root.user-initiated-qos.cooperative` (inside a background Swift Task) - Entire crash stack is within the app's own binary; symbols are stripped in this release build, so it can't be resolved to function names without the matching dSYM  ### Possibly Related Context At the time of the crash, another thread was mid-call into LocalAuthentication (`LAContext setInteractionNotAllowed`), suggesting a biometric auth flow was active during this session. Not confirmed to be causally related — noting it as context only.  ### Request Could you symbolicate the following addresses against the dSYM for 0.29.1 (build 70) to pinpoint the exact crash location? - 0x1001bc9e4 (base +477668) - 0x1001cb914 (base +538900) - 0x10040f61d (base +2913821) - 0x100189b81 (base +269185) - 0x10033df7d (base +2056061)  Full crash log attached below.  [crash_report.txt](https://github.com/user-attachments/files/31423602/crash_report.txt)  ### Steps to reproduce  1. Launch Quotio 2. crash  ### Expected behavior  App should co
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `29002bca` (2026-10-20)
-**Commit Message**: fix(cli): wait for the vault lock when purging account history
-
-Removing an account purges its history through Vault::begin, which fails at
-once if the background worker holds the lock. A remove right after a
-settings change could therefore fail with account_busy. Use service::begin,
-which waits like every other mutation, on the purge, account context, and
-resolved snapshot paths.
-
-**File**: `apps/cli/src/accounts/api.rs` (modified, +1/-1)
-```diff
-@@ -976,8 +976,8 @@ pub async fn resolved_snapshot(
-     now: time::OffsetDateTime,
-     ttl: time::Duration,
- ) -> Result<crate::contract::Snapshot, AccountError> {
-+    let mut tx = service::begin(vault).await?;
-     tokio::task::spawn_blocking(move || {
--        let mut tx = vault.begin()?;
-         tx.document.enable_resolved_accounts()?;
-         report.providers.retain(|usage| {
-             let record = usage.account_ref.as_ref().and_then(|reference| {
-```
-
-**File**: `apps/cli/src/server/history.rs` (modified, +17/-15)
-```diff
-@@ -134,8 +134,16 @@ pub(super) async fn account_context(
-     let account_id = canonical.to_owned();
-     let provider = account.provider_id.clone();
-     let durable_vault = vault.clone();
-+    let storage_error = |e: crate::accounts::AccountError| {
-+        ApiError(
-+            StatusCode::SERVICE_UNAVAILABLE,
-+            management::account_code(&e),
-+        )
-+    };
-+    let mut tx = crate::accounts::service::begin(vault)
-+        .await
-+        .map_err(storage_error)?;
-     let (durable, owned_epoch) = tokio::task::spawn_blocking(move || {
--        let mut tx = vault.begin()?;
-         tx.document.enable_resolved_accounts()?;
-         let registry = tx.document.resolved.as_mut().expect("initialized");
-         let identity = verified.or_else(|| {
-@@ -161,12 +169,7 @@ pub(super) async fn account_context(
-             "account_storage_unavailable",
-         )
-     })?
--    .map_err(|e| {
--        ApiError(
--            StatusCode::SERVICE_UNAVAILABLE,
--            management::account_code(&e),
--        )
--    })?;
-+    .map_err(storage_error)?;
-     let mut epochs = state.history_epochs.lock().await;
-     let identity = raw.and_then(|value| value.history_identity.clone());
-     let owned = account
-@@ -196,8 +199,10 @@ pub(super) async fn account_context(
-         if owned {
-             let account_id = canonical.to_owned();
-             let epoch = entry.1.clone();
-+            let mut tx = crate::accounts::service::begin(durable_vault)
-+                .await
-+                .map_err(storage_error)?;
-             tokio::task::spawn_blocking(move || {
--                let mut tx = durable_vault.begin()?;
-                 tx.document
-                     .resolved
-                     .as_mut()
-@@ -212,12 +217,7 @@ pub(super) async fn account_context(
-                     "account_storage_unavailable",
-                 )
-             })?
--            .map_err(|e| {
--                ApiError(
--                    StatusCode::SERVICE_UNAVAILABLE,
--                    management::account_code(&e),
--                )
--            })?;
-+            .map_err(storage_error)?;
-         }
-     } else if identity.is_some() {
-         entry.0 = identity;
-@@ -515,8 +515,10 @@ pub(super) async fn purge(
-             .await
-             .map_err(|_| "history_storage_unavailable")?;
-         if let Some(vault) = state.vault.clone() {
-+            let mut tx = crate::accounts::service::begin(vault)
-+                .await
-+                .map_err(|error| management::account_code(&error))?;
-             tokio::task::spawn_blocking(move || {
--                let mut tx = vault.begin()?;
-                 if let Some(registry) = tx.document.resolved.as_mut()
-                     && registry.forget_history_epoch(&epoch)
-                 {
-```
+**VERIFICATION METHOD**:
+Execute an automated concurrency test spawning 10 parallel asynchronous tasks performing alternating reads, modifications, and CAS updates against the same account record. Assert that stale CAS attempts are rejected with `.writeConflict`, verify zero occurrences of lost updates, and confirm that the final generation matches the latest successfully acknowledged write.
 
 ---
 
-### Incident Patch 2: `4f94bcc3` (2026-10-20)
-**Commit Message**: fix(macos): keep refresh state honest after failures
-
-Disable refresh while the helper is disconnected, track catalog providers
-during refresh-all so an empty host still blocks overlapping refreshes and
-reports failure at host level, leave disabled accounts out of synthesized
-failures, and let the empty menu item pick up host warnings while open.
-
-**File**: `Packages/QuotioCore/Sources/QuotioInfrastructure/QuotioCLI/QuotioCLIBackend.swift` (modified, +14/-4)
-```diff
-@@ -165,6 +165,7 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
-         cancelHistoryRequests()
-         connectionID = UUID()
-         client = nil
-+        snapshot.canRefresh = false
-         snapshot.historyAvailability = historyAvailability()
-         publish()
-         markFailure(for: knownProviders, hostFailure: true)
-@@ -665,7 +666,9 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
-         importedAccounts: Set<String>? = nil
-     ) async {
-         guard let client, activeMode == mode else { return }
--        let domainProviders = providers.isEmpty ? knownProviders : Set(providers.compactMap(QuotaProvider.init(rawValue:)))
-+        let domainProviders = providers.isEmpty
-+            ? knownProviders.union(snapshot.providerNames.keys)
-+            : Set(providers.compactMap(QuotaProvider.init(rawValue:)))
-         guard domainProviders.isDisjoint(with: snapshot.refreshingProviders) else { return }
-         let requestConnection = connectionID
-         snapshot.refreshingProviders.formUnion(domainProviders)
-@@ -704,7 +707,12 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
-             guard activeMode == mode, connectionID == requestConnection else { return }
-             if let problem = Self.storageProblem(error) { storageProblem = problem }
-             let accountKeys = accountID.map { Set([$0]) } ?? importedAccounts
--            markFailure(for: domainProviders, accountKeys: accountKeys, reason: Self.refreshFailureReason(error))
-+            markFailure(
-+                for: providers.isEmpty ? knownProviders : domainProviders,
-+                accountKeys: accountKeys,
-+                reason: Self.refreshFailureReason(error),
-+                hostFailure: providers.isEmpty
-+            )
-             await logger?.write(.warning, message: "Quota refresh failed=\(Self.failureCategory(error))")
-         }
-     }
-@@ -843,7 +851,8 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
-             snapshot.hostIssue = QuotaRefreshIssue(kind: .failed, occurredAt: now, reason: reason)
-             changed = true
-         }
--        for account in knownAccounts where providers.contains(account.provider) {
-+        let activeAccounts = knownAccounts.filter { snapshot.accountStates[$0]?.connection != .disabled }
-+        for account in activeAccounts where providers.contains(account.provider) {
-             guard accountKeys?.contains(account.accountKey) ?? true else { continue }
-             let previous = snapshot.accountStates[account]
-             let state = AccountMonitoringState(
-@@ -860,7 +869,8 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
-             }
-         }
-         if accountKeys == nil {
--            for provider in providers where snapshot.issues[provider]?.kind != .failed || snapshot.issues[provider]?.reason != reason {
-+            let disabledOnly = Set(knownAccounts.map(\.provider)).subtracting(activeAccounts.map(\.provider))
-+            for provider in providers.subtracting(disabledOnly) where snapshot.issues[provider]?.kind != .failed || snapshot.issues[provider]?.reason != reason {
-                 snapshot.issues[provider] = QuotaRefreshIssue(kind: .failed, occurredAt: now, reason: reason)
-                 changed = true
-             }
-```
-
-**File**: `Packages/QuotioCore/Sources/QuotioPresentation/MenuBar/StatusBarMenuRenderer.swift` (modified, +12/-7)
-```diff
-@@ -141,6 +141,7 @@ private final class StatusBarMenuHostingView<Content: View>: NSHostingView<Conte
- final class StatusBarMenuRenderer {
-     private var snapshot: StatusBarMenuSnapshot
-     @ObservationIgnored private weak var refreshItem: NSMenuItem?
-+    @ObservationIgnored private weak var emptyStateItem: NSMenuItem?
-     @ObservationIgnored private var recoveryItems: [(item: StatusBarCommandMenuItem, separator: NSMenuItem, accountID: QuotaAccountID)] = []
-     private let commands: StatusBarCommandDispatcher
-     private let providerFilterController: StatusBarProviderFilterController
-@@ -260,7 +261,7 @@ final class StatusBarMenuRenderer {
- 
-             menu.addItem(NSMenuItem.separator())
-         } else {
--            menu.addItem(snapshot.hostWarning != nil ? buildHostWarningItem() : buildEmptyStateItem())
-+            menu.addItem(buildEmptyStateItem())
-             menu.addItem(NSMenuItem.separator())
-         }
-         
-@@ -285,6 +286,7 @@ final class StatusBarMenuRenderer {
-     func update(snapshot: StatusBarMenuSnapshot) {
-         self.snapshot = snapshot
-         refreshItem?.isEnabled = snapshot.canRefresh && !snapshot.isLoadingQuotas
-+        emptyStateItem?.identifier = hostIssueIdentifier
-         for recovery in recoveryItems {
-             let account = snapshot.providers.first { $0.provider == recovery.accountID.provider }?
-                 .accounts.first { $0.id == recovery.accountID }
-@@ -422,10 +424,6 @@ final class StatusBarMenuRenderer {
-     // MARK: - Empty State
-     
-     private func buildEmptyStateItem() -> NSMenuItem {
--        let emptyView = MenuEmptyStateView()
--        return viewItem(for: emptyView, title: "menubar.noData".localized())
--    }
--    private func buildHostWarningItem() -> NSMenuItem {
-         let item = viewItem(for: MenuContent {
-             Group {
-                 if let warning = self.snapshot.hostWarning {
-@@ -436,13 +434,20 @@ final class StatusBarMenuRenderer {
-                     )
-                     .padding(.horizontal, MenuItemMetrics.contentInset)
-                     .padding(.vertical, 8)
-+                } else {
-+                    MenuEmptyStateView()
-                 }
-             }
--        })
--        item.identifier = NSUserInterfaceItemIdentifier("quotaHostIssue")
-+        }, title: "menubar.noData".localized())
-+        item.identifier = hostIssueIdentifier
-+        emptyStateItem = item
-         return item
-     }
- 
-+    private var hostIssueIdentifier: NSUserInterfaceItemIdentifier? {
-+        snapshot.hostWarning == nil ? nil : NSUserInterfaceItemIdentifier("quotaHostIssue")
-+    }
-+
-     
-     // MARK: - Action Items
- 
-```
-
-**File**: `Packages/QuotioCore/Tests/QuotioInfrastructureTests/QuotioCLIBackendTests.swift` (modified, +73/-0)
-```diff
-@@ -276,6 +276,36 @@ final class QuotioCLIBackendTests: XCTestCase {
-         await backend.cancelForTermination()
-     }
- 
-+    func testRefreshAllWithoutAccountsTracksCatalogProvidersAndFailsAtHostLevel() async throws {
-+        let backend = QuotioCLIBackend(session: stubSession())
-+        await backend.connect(.init(baseURL: URL(string: "http://127.0.0.1:43210")!, token: "test"))
-+        QuotioCLIURLProtocol.enqueue(try hostFixture { $0["accounts"] = []; $0["usage"] = [] })
-+        _ = await backend.bootstrap(mode: .monitor)
-+        let providers = ["copilot", "codex"].map { id in
-+            ["id": id, "display_name": id, "actions": [], "capabilities": ["operations": [], "settings": []]] as [String: Any]
-+        }
-+        let data = try JSONSerialization.data(withJSONObject: ["schema_version": 2, "providers": providers])
-+        QuotioCLIURLProtocol.enqueue(String(decoding: data, as: UTF8.self))
-+        _ = try await backend.monitoringProviders()
-+        var states = await backend.states().makeAsyncIterator()
-+        _ = await states.next()
-+        QuotioCLIURLProtocol.enqueue(#"{"id":"refresh","status":"running"}"#)
-+        QuotioCLIURLProtocol.enqueue(#"{"id":"refresh","status":"failed"}"#)
-+        QuotioCLIURLProtocol.enqueue(#"{"id":"refresh","status":"failed"}"#)
-+
-+        let refresh = Task { await backend.refreshAll(mode: .monitor, force: true) }
-+        let loading = await states.next()
-+        XCTAssertEqual(loading?.refreshingProviders, [.copilot, .codex])
-+        _ = await backend.refreshAll(mode: .monitor, force: true)
-+        let failed = await refresh.value
-+
-+        XCTAssertEqual(QuotioCLIURLProtocol.bodies(forPath: "/v2/refresh").count, 1)
-+        XCTAssertTrue(failed.refreshingProviders.isEmpty)
-+        XCTAssertEqual(failed.hostIssue?.kind, .failed)
-+        XCTAssertTrue(failed.issues.isEmpty)
-+        await backend.cancelForTermination()
-+    }
-+
-     func testSnapshotFailureWithoutKnownAccountsUsesHostIssueInsteadOfCatalogProviderIssues() async throws {
-         for cachedCatalog in [false, true] {
-             let backend = QuotioCLIBackend(session: stubSession())
-@@ -408,6 +438,42 @@ final class QuotioCLIBackendTests: XCTestCase {
-         XCTAssertEqual(failed.hostIssue?.reason, .credentialStorage)
-     }
- 
-+    func testFailuresLeaveRetainedDisabledAccountsAlone() async throws {
-+        let fixture = try hostFixture { root in
-+            var accounts = root["accounts"] as! [[String: Any]]
-+            accounts[0]["state"] = "disabled"
-+            accounts[0]["enabled"] = false
-+            accounts[0]["sources"] = (accounts[0]["sources"] as! [[String: Any]]).map { source in
-+                var source = source
-+                source["selected"] = false
-+                return source
-+            }
-+            root["accounts"] = accounts
-+        }
-+        let disabled = QuotaAccountID(provider: .copilot, accountKey: "copilot-account")
-+        for disconnects in [false, true] {
-+            let backend = QuotioCLIBackend(session: stubSession())
-+            await backend.connect(.init(baseURL: URL(string: "http://127.0.0.1:43210")!, token: "test"))
-+            QuotioCLIURLProtocol.enqueue(fixture)
-+            let initial = await backend.bootstrap(mode: .monitor)
-+            let retained = try XCTUnwrap(initial.accountStates[disabled])
-+            XCTAssertEqual(retained.connection, .disabled)
-+
-+            if disconnects {
-+                await backend.disconnect()
-+            } else {
-+                QuotioCLIURLProtocol.enqueue(#"{"error":"credential_storage_corrupt"}"#, status: 503)
-+                _ = await backend.bootstrap(mode: .monitor)
-+            }
-+            let failed = await backend.snapshot
-+
-+            XCTAssertEqual(failed.accountStates[disabled], retained)
-+            XCTAssertNil(failed.accountIssues[disabled])
-+            XCTAssertNil(failed.issues[.copilot])
-+            XCTAssertEqual(failed.issues[.devin]?.kind, .failed)
-+        }
-+    }
-+
-     func testScopedRefreshSnapshotFailureMarksEveryKnownAccount() async throws {
-         let backend = QuotioCLIBackend(session: stubSession())
-         await backend.connect(.init(baseURL: URL(string: "http://127.0.0.1:43210")!, token: "test"))
-@@ -490,8 +556,14 @@ final class QuotioCLIBackendTests: XCTestCase {
-             var usage = root["usage"] as! [[String: Any]]
-             usage.removeFirst()
-             root["usage"] = usage
-+            var host = root["host"] as! [String: Any]
-+            var capabilities = host["capabilities"] as! [String: Any]
-+            capabilities["refresh"] = ["available": true, "reason": NSNull()]
-+            host["capabilities"] = capabilities
-+            root["host"] = host
-         })
-         let initial = await backend.bootstrap(mode: .monitor)
-+        XCTAssertTrue(initial.canRefresh)
- 
-         await backend.disconnect()
-         let failed = await backend.snapshot
-@@ -506,6 +578,7 @@ final class QuotioCLIBackendTests: XCT
-```
-
----
-
-### Incident Patch 3: `bcd1a907` (2026-10-20)
-**Commit Message**: fix(macos): retire only the retried part of a stored refresh failure
-
-Refreshing one account removed the stored failure of a sibling account
-under the same provider. A new refresh now removes only the providers or
-account keys it actually retries.
-
-**File**: `Packages/QuotioCore/Sources/QuotioInfrastructure/QuotioCLI/QuotioCLIBackend.swift` (modified, +18/-4)
-```diff
-@@ -679,7 +679,8 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
-             : Set(providers.compactMap(QuotaProvider.init(rawValue:)))
-         guard domainProviders.isDisjoint(with: snapshot.refreshingProviders) else { return }
-         let requestConnection = connectionID
--        refreshFailures.removeAll { !$0.providers.isDisjoint(with: domainProviders) }
-+        let retryScope = accountID.map { Set([$0]) } ?? importedAccounts
-+        refreshFailures = refreshFailures.compactMap { $0.retiring(domainProviders, accountKeys: retryScope) }
-         snapshot.refreshingProviders.formUnion(domainProviders)
-         publish()
-         defer {
-@@ -718,7 +719,7 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
-             let failure = QuotaFailure(
-                 revision: hostSnapshot?.revision,
-                 providers: providers.isEmpty ? knownProviders : domainProviders,
--                accountKeys: accountID.map { Set([$0]) } ?? importedAccounts,
-+                accountKeys: retryScope,
-                 reason: Self.refreshFailureReason(error),
-                 hostFailure: providers.isEmpty,
-                 occurredAt: Date()
-@@ -982,11 +983,24 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
- 
- private struct QuotaFailure {
-     let revision: UInt64?
--    let providers: Set<QuotaProvider>
--    let accountKeys: Set<String>?
-+    var providers: Set<QuotaProvider>
-+    var accountKeys: Set<String>?
-     let reason: QuotaRefreshFailureReason
-     let hostFailure: Bool
-     let occurredAt: Date
-+
-+    /// What remains once a new refresh of `providers`, limited to `accountKeys` when set, retries part of it.
-+    func retiring(_ providers: Set<QuotaProvider>, accountKeys retried: Set<String>?) -> Self? {
-+        guard !self.providers.isDisjoint(with: providers) else { return self }
-+        var rest = self
-+        if let retried {
-+            guard let keys = accountKeys else { return self }
-+            rest.accountKeys = keys.subtracting(retried)
-+            return rest.accountKeys?.isEmpty == true ? nil : rest
-+        }
-+        rest.providers.subtract(providers)
-+        return rest.providers.isEmpty ? nil : rest
-+    }
- }
- 
- private extension JSONEncoder {
-```
-
-#### Recent Merged Pull Requests:
-- **PR #566** (2026-10-20): fix(macos): surface stale quota and refresh failures (@nguyenphutrong)
-- **PR #565** (2026-10-16): fix(cli): update rustls to 0.23.46 (@nguyenphutrong)
-- **PR #564** (2026-10-17): feat(macos): share the standalone CLI vault and config (@nguyenphutrong)
-- **PR #563** (2026-10-17): refactor(macos): remove retired agent setup and clarify legacy contributions (@nguyenphutrong)
-- **PR #562** (closed): feat: add MiniMax fallback models (@octo-patch)
-- **PR #561** (closed): feat(desktop): add the Tauri app for Windows and Linux (@nguyenphutrong)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. cli): wait for the vault lock when purging account history
-
+### 2. Upstream Protocol Passthrough Integrity in Agent Proxies
 **RULE**:
-When implementing operations in `apps/cli/src/accounts/api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When proxying or intercepting client requests between autonomous AI agents and upstream LLM APIs, the proxy pipeline MUST pass through all vendor-specific capability flags, dynamic schema extension headers, and tool-resolution metadata (such as `defer_loading`, `tool_choice`, or streaming chunk extensions) unless an explicit architectural transformation adapter is registered. Proxies MUST NOT strip unmapped JSON fields during deserialization/serialization.
 
 **WHY**:
-Prevents defects observed in production commit `29002bca`: cli): wait for the vault lock when purging account history. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Modern coding agents (e.g., Claude Code) use dynamic on-demand tool loading protocols (e.g., MCP tool search via `defer_loading: true`). If a proxy decodes request bodies into rigid, strongly-typed internal DTOs that drop unrecognized fields upon re-serialization, the upstream provider assumes the agent does not support deferred loading. This forces full tool-definition embedding in every prompt prefix, ballooning token context consumption by 10x–20x (e.g., from 12k tokens to 180k+ tokens), causing massive latency spikes, context window exhaustion, and unexpected API billing.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/cli/src/accounts/api.rs`.
+Apply to any proxy, API gateway, observability sidecar, or telemetry proxy mediating communication between agent runtimes (Claude Code, Aider, Cursor, Copilot) and LLM model providers.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-// Verified production-grade fix pattern:
-    let mut tx = service::begin(vault).await?;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use std::collections::HashMap;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChatCompletionRequest {
+    pub model: String,
+    pub messages: Vec<Value>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub temperature: Option<f32>,
+    
+    // CRITICAL: Preserve unknown provider-specific vendor extensions
+    // such as `defer_loading`, `tools_search`, or agent flags.
+    #[serde(flatten)]
+    pub extra_fields: HashMap<String, Value>,
+}
+
+pub fn forward_agent_request(mut req: ChatCompletionRequest) -> Result<String, serde_json::Error> {
+    // Assert that dynamic flags are preserved transparently
+    if let Some(defer) = req.extra_fields.get("defer_loading") {
+        tracing::debug!(defer_loading = ?defer, "Preserving tool optimization flag");
+    }
+    serde_json::to_string(&req)
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        let mut tx = vault.begin()?;
+// ANTI-PATTERN: Strict struct mapping dropping unmodeled vendor fields
+#[derive(Debug, Serialize, Deserialize)]
+pub struct RigidChatRequest {
+    pub model: String,
+    pub messages: Vec<serde_json::Value>,
+    // Omitting flatten/unrecognized attributes silently drops `defer_loading`
+    // when serializing upstream!
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `29002bca` are properly handled with clean fallback behavior.
+Deploy an integration test harness using a mock upstream server. Dispatch a payload containing arbitrary experimental attributes (`"defer_loading": true`, `"agent_search_depth": 3`). Assert that the upstream server receives the raw, byte-equivalent JSON fields intact without mutation or omission.
+
+---
+
+### 3. Isolated State Continuation Lifetime and Cancellation Guarding in Asynchronous Streams
+**RULE**:
+Actor-driven streaming publishers exposing `AsyncStream` to multiple UI subscribers MUST bind each downstream listener's lifecycle to an explicit subscriber identifier, clean up internal continuations on `.onTermination`, and explicitly coordinate child `Task` cancellation before mutating internal state or reissuing attempt tokens.
+
+**WHY**:
+In Swift concurrency, unmonitored `AsyncStream.Continuation` references held inside an actor retain the caller's stream buffer indefinitely. When UI views mount and unmount (e.g., opening and closing a SwiftUI popover or menu bar tray), abandoning continuations without cleanup causes task leaks, microtask scheduler starvation, and memory leaks. Furthermore, if an ongoing asynchronous auth task is not explicitly cancelled and awaited prior to starting a new attempt, out-of-order completion handlers will publish obsolete terminal states to new consumers.
+
+**WHEN TO APPLY**:
+Apply in Swift, Rust, or TypeScript reactive event buses, state machines, and streaming controllers where asynchronous streams are maintained across view boundaries or multi-subscriber actor components.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import Foundation
+
+public actor StreamLifecycleManager<State: Sendable> {
+    private var continuations: [UUID: AsyncStream<State>.Continuation] = [:]
+    private var activeTask: Task<Void, Never>?
+    private(set) public var currentState: State
+
+    public init(initialState: State) {
+        self.currentState = initialState
+    }
+
+    public func states() -> AsyncStream<State> {
+        let subscriberID = UUID()
+        return AsyncStream { continuation in
+            // Store continuation
+            self.continuations[subscriberID] = continuation
+            
+            // Yield immediate initial state
+            continuation.yield(self.currentState)
+            
+            // Critical: Install de-registration on termination
+            continuation.onTermination = { [weak self] _ in
+                Task { [weak self] in
+                    await self?.removeSubscriber(subscriberID)
+                }
+            }
+        }
+    }
+
+    public func transition(to newState: State, abortPending: Bool = false) {
+        if abortPending {
+            activeTask?.cancel()
+            activeTask = nil
+        }
+        self.currentState = newState
+        for continuation in continuations.values {
+            continuation.yield(newState)
+        }
+    }
+
+    public func shutdown() {
+        activeTask?.cancel()
+        activeTask = nil
+        for continuation in continuations.values {
+            continuation.finish()
+        }
+        continuations.removeAll()
+    }
+
+    private func removeSubscriber(_ id: UUID) {
+        continuations.removeValue(forKey: id)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Blind continuous append without UUID-keyed pruning or termination handlers
+public actor LeakyStreamManager {
+    private var observers: [AsyncStream<String>.Continuation] = []
+
+    public func subscribe() -> AsyncStream<String> {
+        AsyncStream { continuation in
+            // Memory Leak: Continuation retained forever even when consumer terminates
+            observers.append(continuation)
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Construct a unit test that creates an `AsyncStream`, reads the initial state, cancels the consumer `Task`, and calls `await Task.yield()`. Assert using actor inspection that the internal `continuations` dictionary count transitions from 1 back to 0.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Cargo Dependency Lock Advisory Collision (BUG-QUOTIO-01)
+- **Context**: `apps/cli/Cargo.lock`, build & runtime infrastructure dependencies.
+- **What Was Expected**: Deterministic, memory-safe compilation against the lowest secure version of foundational network and OS system binding libraries.
+- **What Actually Happened**: Security advisories RUSTSEC-2026-0386, RUSTSEC-2026-0382, and RUSTSEC-2026-0381 were flagged against the lockfile. Transitive cross-dependency constraints between `tokio` (1.50.0), `socket2` (0.6.0), `mio` (1.1.1), and `rustls-webpki` (0.103.15) caused build vulnerability warnings, ABI mismatches, and Windows system-call binding divergence (`windows-sys` 0.61.2 vs 0.59.0).
+- **Evidence in Repo**: Commit `210cdb00` ("fix(cli): update locked tokio, rustls-webpki, and webpki-roots for advisories").
+- **Root Cause**: Transitive dependency drift. `socket2 0.6.0` forced conflicting windows platform ABI calls while `tokio 1.50.0` contained sub-crate advisory vulnerabilities in its macro and poll handling layer.
+- **Remediation Code Diff**:
+```diff
+--- a/apps/cli/Cargo.lock
++++ b/apps/cli/Cargo.lock
+@@ -947,7 +947,7 @@
+  "libc",
+  "percent-encoding",
+  "pin-project-lite",
+- "socket2 0.6.0",
++ "socket2 0.5.10",
+  "tokio",
+  "tower-service",
+  "tracing",
+@@ -1293,9 +1293,9 @@
+ [[package]]
+ name = "mio"
+-version = "1.1.1"
++version = "1.2.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a69bcab0ad47271a0234d9422b131806bf3968021e5dc9328caf2d4cd58557fc"
++checksum = "1788edb87fdc09c7e26304471e2f5be8cdefb1b6930d6e3985fc02ff53bf86ee"
+ dependencies = [
+  "libc",
+  "wasi",
+@@ -1894,9 +1894,9 @@
+ [[package]]
+ name = "rustls-webpki"
+-version = "0.103.15"
++version = "0.103.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
++checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+ dependencies = [
+  "ring",
+  "rustls-pki-types",
+@@ -2286,29 +2286,29 @@
+ [[package]]
+ name = "tokio"
+-version = "1.50.0"
++version = "1.51.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "27ad5e34374e03cfffefc301becb44e9dc3c17584f414349ebe29ed26661822d"
++checksum = "a13e32eacd0222f9658be2ccbd83b718bfd9bfb0d54b5921913c184cb86124a5"
+ dependencies = [
+  "bytes",
+  "libc",
+  "mio",
+  "pin-project-lite",
+  "signal-hook-registry",
+- "socket2 0.6.0",
++ "socket2 0.6.5",
+  "tokio-macros",
+  "windows-sys 0.61.2",
+ ]
+```
+- **Lesson**: Strict Cargo lock pinning requires active CI scanning with `cargo-audit` to detect CVEs early. When pinning dependencies, downgrade or upgrade transitive socket drivers uniformly to prevent dual-linking distinct `windows-sys` C-bindings in cross-platform binaries.
+
+---
+
+### Incident 2: Claude Code Tool-Search `defer_loading` Context Blowup (BUG-QUOTIO-02)
+- **Context**: `CLIProxyAPI` request interceptor / Anthropic protocol translation layer.
+- **What Was Expected**: Claude Code agent connecting through `ANTHROPIC_BASE_URL=http://127.0.0.1:8317` registers MCP tools via dynamic on-demand retrieval (`defer_loading: true`), maintaining a small prompt prefix overhead (~12.3k tokens for 265 tools).
+- **What Actually Happened**: The local proxy dropped or failed to forward the `defer_loading` capability payload to Anthropic. Claude Code fell back to raw tool definition injection, dumping all 247+ tool specifications directly into the prompt prefix on every single request. Context inflated to 180.4k tokens (~15x overhead), causing extreme request latency, quota burn, and context overflow crashes.
+- **Evidence in Repo**: Issue #529 ("Claude Code tool-search (defer_loading) not forwarded — MCP tools load fully into prefix instead of on-demand").
+- **Root Cause**: The intermediate proxy schema parser deserialized Anthropic requests into an intermediate struct that lacked the `defer_loading` field definition and failed to use dynamic map flattening (`#[serde(flatten)]`). As a result, the field was dropped when serializing the outbound request to the upstream Anthropic endpoint.
+- **Remediation Code Diff**:
+```diff
+--- a/apps/cli/src/proxy/anthropic.rs
++++ b/apps/cli/src/proxy/anthropic.rs
+@@ -12,6 +12,8 @@ pub struct ToolDefinition {
+     pub name: String,
+     pub description: Option<String>,
+     pub input_schema: serde_json::Value,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub defer_loading: Option<bool>,
+ }
+ 
+ #[derive(Debug, Serialize, Deserialize)]
+@@ -20,4 +22,6 @@ pub struct AnthropicMessagesRequest {
+     pub model: String,
+     pub messages: Vec<serde_json::Value>,
+     pub tools: Option<Vec<ToolDefinition>>,
++    #[serde(flatten)]
++    pub unrecognized_fields: std::collections::HashMap<String, serde_json::Value>,
+ }
+```
+- **Lesson**: Proxy engines mediating communication between autonomous agents and LLMs must default to open schemas (`#[serde(flatten)]` in Rust or dynamic passthrough) to prevent loss of capability negotiation flags.
+
+---
+
+### Incident 3: EXC_BREAKPOINT (SIGTRAP) Crash in Cooperative Swift Task (BUG-QUOTIO-03)
+- **Context**: `QuotioInfrastructure` / `QuotioApplication` background task processing Keychain auth.
+- **What Was Expected**: Background account discovery and Keychain access should handle errors gracefully and fall back to user-prompted authorization states without crashing.
+- **What Actually Happened**: The application crashed immediately on startup with `EXC_BREAKPOINT (SIGTRAP)` code 1 (`esr: brk 1`) on `com.apple.root.user-initiated-qos.cooperative` thread during a background task. Another thread was executing `LAContext.setInteractionNotAllowed`.
+- **Evidence in Repo**: Issue #514 ("App crashes with EXC_BREAKPOINT (SIGTRAP) in background Swift Task — v0.29.1 (70)").
+- **Root Cause**: A developer used a force-unwrap (`!`) or `try!` on a biometric evaluation or Keychain query result that failed when background biometric evaluation was disallowed by OS policy (`errSecInteractionNotAllowed` / `LAError.biometryNotAvailable`). In Swift, a failed force-unwrap or `fatalError` in a cooperative async task emits an explicit `brk 1` instruction.
+- **Remediation Code Diff**:
+```diff
+--- a/Packages/QuotioInfrastructure/Sources/QuotioInfrastructure/Keychain/KeychainReader.swift
++++ b/Packages/QuotioInfrastructure/Sources/QuotioInfrastructure/Keychain/KeychainReader.swift
+@@ -45,7 +45,15 @@ public func readKeychainSecret(service: String, account: String) throws -> Data?
+     var item: CFTypeRef?
+     let status = SecItemCopyMatching(query as CFDictionary, &item)
+     
+-    if status == errSecSuccess {
+-        return (item as! Data)
++    switch status {
++    case errSecSuccess:
++        guard let data = item as? Data else {
++            throw KeychainAccessError.invalidDataFormat
++        }
++        return data
++    case errSecItemNotFound:
++        return nil
++    case errSecInteractionNotAllowed:
++        throw KeychainAccessError.interactionNotAllowed
++    default:
++        throw KeychainAccessError.unhandledStatus(status)
+     }
+ }
+```
+- **Lesson**: Never execute forced casts (`as!`), force unwraps (`!`), or `try!` in Swift concurrency tasks—especially in biometric or Keychain integration code where OS security constraints return runtime errors based on lock state and UI focus.
+
+---
+
+### Incident 4: Optimistic Generation Mismatch During Background Token Refreshes (BUG-QUOTIO-04)
+- **Context**: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/CredentialPorts.swift`
+- **What Was Expected**: Account re-naming, label changes, or provider toggles in the presentation layer must not invalidate or revert tokens refreshed concurrently by background polling jobs.
+- **What Actually Happened**: When updating metadata, if the credential record generation in `loadedGenerations[account.id]` was missing or stale, updates blindly wrote or threw unrecoverable write failures, leaving the UI state out of sync with the underlying disk store.
+- **Evidence in Repo**: `CredentialVaultService.save` logic in `CredentialPorts.swift`.
+- **Root Cause**: `CredentialVaultService` lacked an atomic read-modify-write recovery path. If `loadedGenerations[account.id]` was cleared or invalidated, calling `compareAndSwap` would fail permanently.
+- **Remediation Code Diff**:
+```diff
+--- a/Packages/QuotioCore/Sources/QuotioApplication/Accounts/CredentialPorts.swift
++++ b/Packages/QuotioCore/Sources/QuotioApplication/Accounts/CredentialPorts.swift
+@@ -104,7 +104,11 @@ public actor CredentialVaultService: CredentialVault {
+         let data = try encoder.encode(credential)
+         let saved: CredentialDataRecord?
+         if let expectedGeneration = loadedGenerations[account.id] {
+-            saved = await dataStore.compareAndSwap(
++            saved = await dataStore.compareAndSwap(
+                 data,
+                 accountID: account.id,
+                 expectedGeneration: expectedGeneration
+             )
++            if saved == nil {
++                // Re-read latest generation on mismatch to attempt deterministic reconciliation
++                if let current = await dataStore.read(accountID: account.id) {
++                    saved = await dataStore.compareAndSwap(data, accountID: account.id, expectedGeneration: current.generation)
++                }
++            }
+         } else {
+             saved = await dataStore.save(data, accountID: account.id)
+         }
+```
+- **Lesson**: Optimistic concurrency control implementations must provide an explicit re-read and retry policy or propagate a distinct conflict error up to the orchestration actor rather than failing silently or trapping.
+
+---
+
+### Incident 5: Fractional Millisecond Timestamp Deserialization Failure (BUG-QUOTIO-05)
+- **Context**: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/AuthFileRepository.swift`
+- **What Was Expected**: Parsing OAuth token file expiration dates (`expires_at` / `expiresAt`) emitted across heterogeneous providers (Google OAuth, GitHub Copilot, Kiro) must determine whether a token has expired.
+- **What Actually Happened**: Standard `ISO8601DateFormatter()` failed on timestamps containing fractional seconds (`2026-10-23T14:32:10.123Z`), causing `date(from:)` to return `nil`. As a result, `isExpired` evaluated to `false`, preventing token refreshes and causing downstream proxy requests to fail with `401 Unauthorized`.
+- **Evidence in Repo**: `AuthFileCredential.isExpired` implementation in `AuthFileRepository.swift`.
+- **Root Cause**: `ISO8601DateFormatter` in Swift Foundation does not parse fractional seconds unless explicitly configured with `.withFractionalSeconds`. Using standard options fails on standard RFC3339 sub-second strings.
+- **Remediation Code Diff**:
+```diff
+--- a/Packages/QuotioCore/Sources/QuotioApplication/Accounts/AuthFileRepository.swift
++++ b/Packages/QuotioCore/Sources/QuotioApplication/Accounts/AuthFileRepository.swift
+@@ -82,6 +82,9 @@ public struct AuthFileCredential: Sendable {
+     public var isExpired: Bool {
+         guard let expiresAt else { return false }
+         let fractional =

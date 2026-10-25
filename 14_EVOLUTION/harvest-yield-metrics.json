@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T08:44:18.832Z",
-  "total_cycles_completed": 4722,
-  "total_learnings_persisted": 4722,
-  "total_rules_promoted": 4071,
+  "last_updated": "2026-10-25T08:58:12.473Z",
+  "total_cycles_completed": 4726,
+  "total_learnings_persisted": 4726,
+  "total_rules_promoted": 4082,
   "history": [
-    {
-      "timestamp": "2026-10-23T11:17:53.276Z",
-      "repository": "tamagui/tamagui",
-      "learningId": "learn-github-tamagui-tamagui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T11:18:09.675Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T11:24:38.259Z",
-      "repository": "cosscom/coss",
-      "learningId": "learn-github-cosscom-coss",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T11:30:49.375Z",
-      "repository": "wix/react-native-navigation",
-      "learningId": "learn-github-wix-react-native-navigation",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T11:30:55.188Z",
       "repository": "pixeltable/pixeltable",
@@ -1403,6 +1375,34 @@
       "repository": "komi-store/komi-store",
       "learningId": "learn-github-komi-store-komi-store",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T08:56:55.764Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T08:57:49.148Z",
+      "repository": "carbon-design-system/carbon-components-svelte",
+      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T08:57:57.167Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T08:58:12.473Z",
+      "repository": "nguyenphutrong/quotio",
+      "learningId": "learn-github-nguyenphutrong-quotio",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

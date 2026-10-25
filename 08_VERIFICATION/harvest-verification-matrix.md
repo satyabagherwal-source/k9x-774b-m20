@@ -4745,3 +4745,7 @@
 | `CYCLE-20261025-TY51` | `2026-10-25T08:39:34.165Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4191, Rule 4192` | Yes (`f07af78d...`) |
 | `CYCLE-20261025-ZNPA` | `2026-10-25T08:44:00.574Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4193, Rule 4194, Rule 4195` | Yes (`c3ec7797...`) |
 | `CYCLE-20261025-01S8` | `2026-10-25T08:44:18.825Z` | `komi-store/komi-store` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4196, Rule 4197` | Yes (`e00d3972...`) |
+| `CYCLE-20261025-G9U5` | `2026-10-25T08:56:55.757Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4198, Rule 4199` | Yes (`163ce803...`) |
+| `CYCLE-20261025-HF11` | `2026-10-25T08:57:49.141Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4200, Rule 4201, Rule 4202` | Yes (`5df24ddc...`) |
+| `CYCLE-20261025-HL7S` | `2026-10-25T08:57:57.160Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4203, Rule 4204, Rule 4205` | Yes (`b2457edf...`) |
+| `CYCLE-20261025-HX0Y` | `2026-10-25T08:58:12.466Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4206, Rule 4207, Rule 4208` | Yes (`871525d8...`) |

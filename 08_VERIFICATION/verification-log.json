@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-YF56",
-    "timestamp": "2026-10-21T16:32:15.402Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "22bde341112729ccd7f4bd83f776ef11b5ce3681e4da8dfa4138d4cca22f0ebb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-6PZM",
-    "timestamp": "2026-10-21T16:38:42.706Z",
-    "repository": "DNSControl/dnscontrol",
-    "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "b8764a4dde5fc44514971efa781d4e090f20991ee830e6567198aea90da4d1f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-6RRM",
-    "timestamp": "2026-10-21T16:38:45.010Z",
-    "repository": "trailbaseio/trailbase",
-    "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "6b6e93d98496ecdb63b67cca1641eaffbec44d92442eee5c75a6f4dcd2018f87",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-ESQG",
-    "timestamp": "2026-10-21T16:44:59.512Z",
-    "repository": "adobe/react-spectrum",
-    "learningId": "learn-github-adobe-react-spectrum",
-    "contentHash": "177e45d7f929bd156a23c7d0aad339cbb235a90b4088b2fabbe12b1b9c723a4f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-EU4A",
     "timestamp": "2026-10-21T16:45:01.306Z",
     "repository": "restatedev/restate",
@@ -7492,6 +7432,66 @@
     "contentHash": "e00d3972e26a1d9416b723b69c0eeef59b8d3772e903ca19541693175d3e7afb",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-G9U5",
+    "timestamp": "2026-10-25T08:56:55.757Z",
+    "repository": "kumahq/kuma",
+    "learningId": "learn-github-kumahq-kuma",
+    "contentHash": "163ce8038da220358666e8d7d3385416644c8ae649540d57674e38f84daee60c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-HF11",
+    "timestamp": "2026-10-25T08:57:49.141Z",
+    "repository": "carbon-design-system/carbon-components-svelte",
+    "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
+    "contentHash": "5df24ddc2152e418339cd60e6dc76b25655855be52adf69119e20a32fa320fe4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-HL7S",
+    "timestamp": "2026-10-25T08:57:57.160Z",
+    "repository": "deepseek-ai/DeepSeek-R1",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+    "contentHash": "b2457edfc7be59abbfe404af160bd87c4a4d2ec380164815733cfb42e1299a2d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-HX0Y",
+    "timestamp": "2026-10-25T08:58:12.466Z",
+    "repository": "nguyenphutrong/quotio",
+    "learningId": "learn-github-nguyenphutrong-quotio",
+    "contentHash": "871525d88a20911bb5d57cb15c3bbdeb735ac995ed34940af0fc827e8ea846a4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

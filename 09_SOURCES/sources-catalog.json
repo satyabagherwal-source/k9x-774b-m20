@@ -265,8 +265,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
     "sourceVersion": "hf-deepseek-ai-deepseek-r1",
     "license": "Open-Source",
-    "contentHash": "3a1086e516d4dc3f9dbe05c056519810d6675fca3907a7a9561177e69c6df20a",
-    "lastHarvestedAt": "2026-10-20T15:37:06.262Z",
+    "contentHash": "b2457edfc7be59abbfe404af160bd87c4a4d2ec380164815733cfb42e1299a2d",
+    "lastHarvestedAt": "2026-10-25T08:57:57.163Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-r1"
   },
   "hf-moonshotai-kimi-k3": {
@@ -1493,10 +1493,10 @@
     "repository": "nguyenphutrong/quotio",
     "platform": "github",
     "sourceUrl": "https://github.com/nguyenphutrong/quotio",
-    "sourceVersion": "1b734d48",
+    "sourceVersion": "210cdb00",
     "license": "MIT",
-    "contentHash": "cd93f034601aba1d976ccf850dc7c6bd18d4077c79680e5fe77582dce835fd79",
-    "lastHarvestedAt": "2026-10-20T20:35:08.496Z",
+    "contentHash": "871525d88a20911bb5d57cb15c3bbdeb735ac995ed34940af0fc827e8ea846a4",
+    "lastHarvestedAt": "2026-10-25T08:58:12.469Z",
     "learningId": "learn-github-nguyenphutrong-quotio"
   },
   "pathwaycom-serviette": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "cfab75ea",
+    "sourceVersion": "c0ee7238",
     "license": "Apache-2.0",
-    "contentHash": "b27b8563fb916cfef636c413407974f9ada2832d8606c9e02c53f710b7ee8405",
-    "lastHarvestedAt": "2026-10-22T20:52:00.156Z",
+    "contentHash": "163ce8038da220358666e8d7d3385416644c8ae649540d57674e38f84daee60c",
+    "lastHarvestedAt": "2026-10-25T08:56:55.759Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -5523,10 +5523,10 @@
     "repository": "carbon-design-system/carbon-components-svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon-components-svelte",
-    "sourceVersion": "df356cd2",
+    "sourceVersion": "4de2f318",
     "license": "Apache-2.0",
-    "contentHash": "8664c0cd63ac5d0357d462e71a7be4dbc66c042ec9647f04a07cde708be4f421",
-    "lastHarvestedAt": "2026-10-22T21:01:26.044Z",
+    "contentHash": "5df24ddc2152e418339cd60e6dc76b25655855be52adf69119e20a32fa320fe4",
+    "lastHarvestedAt": "2026-10-25T08:57:49.144Z",
     "learningId": "learn-github-carbon-design-system-carbon-components-svelte"
   },
   "shadcn-ui-lint": {

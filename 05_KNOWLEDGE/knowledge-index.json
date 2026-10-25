@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T08:44:18.754Z",
+  "last_updated": "2026-10-25T08:58:12.410Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5155,8 +5155,8 @@
       "slug": "carbon-design-system-carbon-components-svelte",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
-      "source_version": "df356cd2",
-      "content_hash": "8664c0cd63ac5d0357d462e71a7be4dbc66c042ec9647f04a07cde708be4f421",
+      "source_version": "4de2f318",
+      "content_hash": "5df24ddc2152e418339cd60e6dc76b25655855be52adf69119e20a32fa320fe4",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "promoted_rules": [
@@ -5209,6 +5209,21 @@
           "number": 3739,
           "title": "syntax): color comments in JSON and use the JSON lexer for jsonc",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4200,
+          "title": "Zero-Allocation Collator and Strict Numeric Zero Sort Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4201,
+          "title": "Bidirectional Inline-Axis Geometry Resolution Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4202,
+          "title": "Native Constraint Validation Bubble Suppression with User-Intent Gating",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5216,7 +5231,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:01:25.980Z",
+      "verified_at": "2026-10-25T08:57:49.079Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19353,7 +19368,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
       "source_version": "hf-deepseek-ai-deepseek-r1",
-      "content_hash": "3a1086e516d4dc3f9dbe05c056519810d6675fca3907a7a9561177e69c6df20a",
+      "content_hash": "b2457edfc7be59abbfe404af160bd87c4a4d2ec380164815733cfb42e1299a2d",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "promoted_rules": [
@@ -19378,6 +19393,21 @@
           "number": 1997,
           "title": "YaRN Positional Encoding Scaling Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4203,
+          "title": "High-Rank MoE Grouped Gating with Non-Auxiliary Loss Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4204,
+          "title": "Multi-Head Latent Attention (MLA) Decoupled Rotary Compression Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4205,
+          "title": "Tiled Block FP8 Dynamic Dequantization Scale Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19398,7 +19428,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv43zicx",
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv4h8dyv"
       ],
-      "verified_at": "2026-10-20T15:37:06.203Z",
+      "verified_at": "2026-10-25T08:57:57.087Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31152,8 +31182,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "cfab75ea",
-      "content_hash": "b27b8563fb916cfef636c413407974f9ada2832d8606c9e02c53f710b7ee8405",
+      "source_version": "c0ee7238",
+      "content_hash": "163ce8038da220358666e8d7d3385416644c8ae649540d57674e38f84daee60c",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -31171,6 +31201,16 @@
           "number": 3736,
           "title": "lint): fix golangci-lint 2.15.0 findings (#19227)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4198,
+          "title": "Invariant Evaluation Preservation in Shadowed Policy Compilers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4199,
+          "title": "Environment-Aware Upstream Resolution Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31178,7 +31218,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:52:00.091Z",
+      "verified_at": "2026-10-25T08:56:55.667Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59063,8 +59103,8 @@
       "slug": "nguyenphutrong-quotio",
       "platform": "github",
       "source_url": "https://github.com/nguyenphutrong/quotio",
-      "source_version": "1b734d48",
-      "content_hash": "cd93f034601aba1d976ccf850dc7c6bd18d4077c79680e5fe77582dce835fd79",
+      "source_version": "210cdb00",
+      "content_hash": "871525d88a20911bb5d57cb15c3bbdeb735ac995ed34940af0fc827e8ea846a4",
       "dossier_path": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "promoted_rules": [
@@ -59097,6 +59137,21 @@
           "number": 3368,
           "title": "cli): wait for the vault lock when purging account history",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4206,
+          "title": "Generation-Based Optimistic Concurrency Control for Multi-Writer Secret Vaults",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4207,
+          "title": "Upstream Protocol Passthrough Integrity in Agent Proxies",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4208,
+          "title": "Isolated State Continuation Lifetime and Cancellation Guarding in Asynchronous Streams",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59104,7 +59159,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:35:08.458Z",
+      "verified_at": "2026-10-25T08:58:12.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -121130,6 +121185,160 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T08:44:18.743Z"
+    },
+    "rule-4198": {
+      "learning_id": "rule-4198",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4198,
+      "title": "Invariant Evaluation Preservation in Shadowed Policy Compilers",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "c0ee7238",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:56:55.667Z"
+    },
+    "rule-4199": {
+      "learning_id": "rule-4199",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4199,
+      "title": "Environment-Aware Upstream Resolution Decoupling",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "c0ee7238",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:56:55.667Z"
+    },
+    "rule-4200": {
+      "learning_id": "rule-4200",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4200,
+      "title": "Zero-Allocation Collator and Strict Numeric Zero Sort Invariant",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "4de2f318",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:57:49.079Z"
+    },
+    "rule-4201": {
+      "learning_id": "rule-4201",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4201,
+      "title": "Bidirectional Inline-Axis Geometry Resolution Invariant",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "4de2f318",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:57:49.079Z"
+    },
+    "rule-4202": {
+      "learning_id": "rule-4202",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4202,
+      "title": "Native Constraint Validation Bubble Suppression with User-Intent Gating",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "4de2f318",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:57:49.079Z"
+    },
+    "rule-4203": {
+      "learning_id": "rule-4203",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4203,
+      "title": "High-Rank MoE Grouped Gating with Non-Auxiliary Loss Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:57:57.087Z"
+    },
+    "rule-4204": {
+      "learning_id": "rule-4204",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4204,
+      "title": "Multi-Head Latent Attention (MLA) Decoupled Rotary Compression Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:57:57.087Z"
+    },
+    "rule-4205": {
+      "learning_id": "rule-4205",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4205,
+      "title": "Tiled Block FP8 Dynamic Dequantization Scale Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:57:57.087Z"
+    },
+    "rule-4206": {
+      "learning_id": "rule-4206",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4206,
+      "title": "Generation-Based Optimistic Concurrency Control for Multi-Writer Secret Vaults",
+      "source_url": "https://github.com/nguyenphutrong/quotio",
+      "source_version": "210cdb00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:58:12.400Z"
+    },
+    "rule-4207": {
+      "learning_id": "rule-4207",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4207,
+      "title": "Upstream Protocol Passthrough Integrity in Agent Proxies",
+      "source_url": "https://github.com/nguyenphutrong/quotio",
+      "source_version": "210cdb00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:58:12.400Z"
+    },
+    "rule-4208": {
+      "learning_id": "rule-4208",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4208,
+      "title": "Isolated State Continuation Lifetime and Cancellation Guarding in Asynchronous Streams",
+      "source_url": "https://github.com/nguyenphutrong/quotio",
+      "source_version": "210cdb00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:58:12.400Z"
     }
   },
   "aliases": {

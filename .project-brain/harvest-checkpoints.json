@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T08:44:18.836Z",
+  "last_updated": "2026-10-25T08:58:12.480Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -290,14 +290,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "content_hash": "3a1086e516d4dc3f9dbe05c056519810d6675fca3907a7a9561177e69c6df20a",
-      "verified_at": "2026-10-20T15:37:06.271Z",
+      "content_hash": "b2457edfc7be59abbfe404af160bd87c4a4d2ec380164815733cfb42e1299a2d",
+      "verified_at": "2026-10-25T08:57:57.174Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T15:37:06.271Z"
+      "last_updated": "2026-10-25T08:57:57.174Z"
     },
     "moonshotai/Kimi-K3": {
       "repository": "moonshotai/Kimi-K3",
@@ -2316,14 +2316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nguyenphutrong-quotio",
-      "content_hash": "cd93f034601aba1d976ccf850dc7c6bd18d4077c79680e5fe77582dce835fd79",
-      "verified_at": "2026-10-20T20:35:08.501Z",
+      "content_hash": "871525d88a20911bb5d57cb15c3bbdeb735ac995ed34940af0fc827e8ea846a4",
+      "verified_at": "2026-10-25T08:58:12.480Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:35:08.501Z"
+      "last_updated": "2026-10-25T08:58:12.480Z"
     },
     "pathwaycom/serviette": {
       "repository": "pathwaycom/serviette",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "b27b8563fb916cfef636c413407974f9ada2832d8606c9e02c53f710b7ee8405",
-      "verified_at": "2026-10-22T20:52:00.169Z",
+      "content_hash": "163ce8038da220358666e8d7d3385416644c8ae649540d57674e38f84daee60c",
+      "verified_at": "2026-10-25T08:56:55.766Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:52:00.169Z"
+      "last_updated": "2026-10-25T08:56:55.766Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -8406,14 +8406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon-components-svelte",
-      "content_hash": "8664c0cd63ac5d0357d462e71a7be4dbc66c042ec9647f04a07cde708be4f421",
-      "verified_at": "2026-10-22T21:01:26.055Z",
+      "content_hash": "5df24ddc2152e418339cd60e6dc76b25655855be52adf69119e20a32fa320fe4",
+      "verified_at": "2026-10-25T08:57:49.155Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:01:26.055Z"
+      "last_updated": "2026-10-25T08:57:49.155Z"
     },
     "shadcn-ui/lint": {
       "repository": "shadcn-ui/lint",
