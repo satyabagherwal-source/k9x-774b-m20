@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source**: github ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
-> **Source Version**: `e07e0c56`  
+> **Source Version**: `00e9efd7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T02:33:46.885Z  
+> **Timestamp**: 2026-10-25T19:51:41.455Z  
 > **Learning ID**: `learn-github-maziyarpanahi-openmed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T02:33:46.880Z  
+> **Harvest Timestamp**: 2026-10-25T19:51:41.250Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first healthcare AI: clinical NER and HIPAA PII de-identification on hardware you control. 2,200+ medical models, 35 model-backed PII languages, and Python, MLX, Android and browser runtimes. Apache-2.0 SDK.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5700 stars
+- **Stars / Engagement**: 5711 stars
 
 ---
 
@@ -2325,393 +2325,515 @@ def _check_element(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c47deb59` (2026-10-20)
-**Commit Message**: fix: renew reviewed optional NLTK exception for v3.1
+### Incident Patch 1: `00e9efd7` (2026-10-23)
+**Commit Message**: fix: require patched GitPython for the docs profile
 
-**File**: `CHANGELOG.md` (modified, +5/-0)
+The vulnerability scan now blocks GitPython 3.1.62 for the HIGH
+CVE-2026-114145, fixed in 3.2.1. Raise the docs extra floor and the
+lock constraint, and cover it in the published-floor regression table.
+The strict Pages build passes with GitPython 3.2.1.
+
+**File**: `CHANGELOG.md` (modified, +3/-2)
 ```diff
-@@ -380,6 +380,11 @@ clinical efficacy. Package publication remains a separate release action.
- 
+@@ -381,8 +381,9 @@ clinical efficacy. Package publication remains a separate release action.
  ### Security
  
-+- Renew the maintainer-reviewed exception for unpatched NLTK
-+  `CVE-2026-81726` in the universal lockfile through 2026-11-03. NLTK remains
-+  optional and absent from the core closure and service image. The exception
-+  rejects other packages or targets, any reported fix, and expiry; this is
-+  temporary risk acceptance, not remediation.
- - Raise optional dependency floors to patched aiohttp 3.14.4, banks 2.5.1,
-   Mako 1.4.2, multidict 6.9.1 and tinytag 2.3.0. Apply the same floors to
-   published extras and the frozen lockfile, preserving AWQ's Linux-only
+ - Require patched OpenTelemetry API 1.45.1 in the optional `dev`, `otel` and
+-  `service` profiles, and lock patched virtualenv 21.14.13, Brotli 1.2.1 and
+-  graphql-core 3.2.12. A lock-only packaging override lifts Prefect 3.7's
++  `service` profiles and GitPython 3.2.1 in the `docs` profile, and lock
++  patched virtualenv 21.14.13, Brotli 1.2.1 and graphql-core 3.2.12. A
++  lock-only packaging override lifts Prefect 3.7's
+   `packaging<26.3` cap so the lock keeps Airflow on patched 3.3.2; the base
+   SDK's dependency set is unchanged.
+ - Refresh the service image's exact Debian forky pins for ca-certificates,
 ```
 
-**File**: `deploy/security/cve-allowlist.yaml` (modified, +5/-4)
+**File**: `pyproject.toml` (modified, +2/-1)
 ```diff
-@@ -8,13 +8,14 @@ allowlist:
-   - id: CVE-2026-81726
-     package: nltk
-     target: uv.lock
--    expires: 2026-10-17
-+    expires: 2026-11-03
-     reason: >-
--      Owner-authorized review 2026-10-03: upstream GHSA-8mgp-746c-j5xp still
--      lists no patched release and PyPI latest is 3.10.3. NLTK is reachable
-+      Maintainer-approved renewal reviewed 2026-10-20: upstream
-+      GHSA-8mgp-746c-j5xp still lists no patched release and PyPI latest is
-+      3.10.3. NLTK is reachable
-       only through agents, llamaindex, medspacy, quickumls and scrubadub extras;
-       it is absent from the core closure and service image. OpenMed does not
-       call the affected model-artifact APIs. This temporary acceptance is not
-       remediation: do not pass untrusted model paths to those optional
-       integrations. The gate rejects this waiver when a fixed version is
--      reported, for any other package or target, or after 2026-10-17.
-+      reported, for any other package or target, or after 2026-11-03.
+@@ -501,7 +501,7 @@ docs = [
+   "mkdocs-minify-plugin>=0.8.0",
+   "mkdocs-static-i18n>=1.3,<2",
+   "pymdown-extensions>=11.0.1,<12",
+-  "gitpython>=3.1.60,<4",
++  "gitpython>=3.2.1,<4",
+   "mkdocstrings[python]",
+   "griffe",
+ ]
+@@ -542,6 +542,7 @@ constraint-dependencies = [
+   "brotli>=1.2.1",
+   "graphql-core>=3.2.12",
+   "opentelemetry-api>=1.45.1",
++  "gitpython>=3.2.1",
+   "betterproto==2.0.0b6; python_version >= '3.11'",
+   "pyjwt>=2.14.0",
+ ]
 ```
 
-**File**: `docs/security/dependency-risk.md` (modified, +2/-2)
+**File**: `tests/unit/security/test_pip_audit_gate.py` (modified, +1/-0)
 ```diff
-@@ -180,9 +180,9 @@ change makes none of those changes.
- 
- ## Temporary NLTK exception for the universal lockfile
- 
--On 2026-10-03, the maintainer approved a time-limited exception for
-+On 2026-10-20, the maintainer reviewed and renewed the existing exception for
- `CVE-2026-81726` / [GHSA-8mgp-746c-j5xp](https://github.com/nltk/nltk/security/advisories/GHSA-8mgp-746c-j5xp),
--scoped to the `nltk` package in `uv.lock` through **2026-10-17**. At review,
-+scoped to the `nltk` package in `uv.lock` through **2026-11-03**. At review,
- upstream listed no patched release and the latest published NLTK was 3.10.3.
- The finding remains present in scanner evidence; it is not considered fixed.
- 
+@@ -407,6 +407,7 @@ def test_awq_torch_floor_keeps_the_existing_linux_only_boundary() -> None:
+         ("banks", "2.5.0", "2.5.1", ("agents", "llamaindex")),
+         ("datasets", "5.0.0", "5.0.1", ("awq", "gptq")),
+         ("fsspec", "2026.4.0", "2026.6.0", ("dev", "cloud", "journey")),
++        ("gitpython", "3.1.62", "3.2.1", ("docs",)),
+         ("h2", "4.3.0", "4.4.1", ("beam", "prefect")),
+         ("langgraph-sdk", "0.4.3", "0.4.4", ("agents", "langgraph")),
+         ("mcp", "1.29.1", "1.30.0", ("dev", "mcp")),
 ```
 
-**File**: `tests/browser/brand/budgets.json` (modified, +5/-5)
+**File**: `uv.lock` (modified, +5/-4)
 ```diff
-@@ -12,26 +12,26 @@
-     "html": 2359296,
-     "image": 262144,
-     "javascript": 716800,
--    "json": 5056239
-+    "json": 5056249
-   },
-   "governed_payload_bytes": {
-     "docs/assets/javascripts/lunr/wordcut.js": 716800,
-     "docs/model-tokenizer-script-coverage/index.html": 2359296,
-     "docs/model-tokenizer-script-coverage.json": 1572864,
--    "docs/search/search_index.json": 5056239
-+    "docs/search/search_index.json": 5056249
-   },
-   "route_transfer_bytes": {
-     "/": 3145728,
--    "/docs/": 6531623,
--    "/docs/model-tokenizer-script-coverage/": 8628275
-+    "/docs/": 6531633,
-+    "/docs/model-tokenizer-script-coverage/": 8628285
-   },
-   "page_metrics": {
-     "cumulative_layout_shift": 0.1,
-     "largest_contentful_paint_ms": 2500,
-     "representative_interaction_latency_ms": 200
-   },
-   "notes": [
--    "The v3.1 release, privacy migration and dependency-security documentation measures 5054553 search-index bytes. The search and JSON ceilings retain the established 1686-byte allowance; docs route totals retain their fixed-asset ceilings. Other artifact, image, runtime and page-metric limits are unchanged.",
-+    "The v3.1 release, privacy migration and dependency-security documentation measures 5054563 search-index bytes. The search and JSON ceilings retain the established 1686-byte allowance; docs route totals retain their fixed-asset ceilings. Other artifact, image, runtime and page-metric limits are unchanged.",
-     "The reviewed governance API deprecation policy and major privacy-boundary announcement measure 5046074 search-index bytes. The search and JSON ceilings retain the established 1686-byte allowance. Docs route totals add only this governed search ceiling to unchanged fixed-asset ceilings; aggregate, non-JSON, duplicate, source-map and page-metric limits remain unchanged.",
-     "The tokenizer docs route applies the same component checks: its fixed-asset ceiling is 3572036 bytes, retaining the prior 7992837-byte route ceiling minus the 4420801-byte search ceiling at revision 429403b7f687fa6c94f3446917be050069afeef5. The current total adds only the independently reviewed search ceiling; fixed assets receive no extra allowance.",
-     "The docs route now budgets fixed assets separately from its independently reviewed search index. The fixed-asset ceiling remains 1475384 bytes: the prior 5817753-byte route ceiling minus its recorded 4342369-byte index. The total is the same fixed ceiling plus the current governed search ceiling. Browser checks enforce both components, so index growth cannot grant extra room to other assets. No other route or artifact limits change.",
+@@ -680,6 +680,7 @@ constraints = [
+     { name = "certifi", specifier = ">=2026.10.19" },
+     { name = "datasets", specifier = ">=5.0.1" },
+     { name = "fsspec", specifier = ">=2026.6.0" },
++    { name = "gitpython", specifier = ">=3.2.1" },
+     { name = "graphql-core", specifier = ">=3.2.12" },
+     { name = "h2", specifier = ">=4.4.1" },
+     { name = "jinja2", specifier = ">=3.1.6" },
+@@ -5895,14 +5896,14 @@ wheels = [
+ 
+ [[package]]
+ name = "gitpython"
+-version = "3.1.62"
++version = "3.2.1"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "gitdb" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/e0/db/3ca813cbacb23ab6fe46ff38a9b5ef8e73e970c8051f2ce903aacafe0446/gitpython-3.1.62.tar.gz", hash = "sha256:1791de66309bc0c7cfca40bf8d2e3de7ca091cbf94e6051be1ad0722c61062af", size = 231728, upload-time = "2026-09-07T02:57:21.155Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/c0/ff/fee293f1ec3e1b64db6eb270e00964f29c086d769201474cedb8d1608930/gitpython-3.2.1.tar.gz", hash = "sha256:0f1229ec5c057bdabdeeda8bda4f17bda679ab33dbccc00f24e6a480553c8613", size = 241688, upload-time = "2026-10-14T12:20:20.589Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/d6/0b/29d7965215f8ef830a7ca1f42997fe13e5693d85e9edb18f938d063ef5f2/gitpython-3.1.62-py3-none-any.whl", hash = "sha256:7002251225e10e29d2e1f49e6532613fe5d5d9f0b6f1f02997a52b38fe56899e", size = 222753, upload-time = "2026-09-07T02:57:19.762Z" },
++    { url = "https://files.pythonhosted.org/packages/6b/50/2a923c4dc02522ff9567f07c67ed1deca6d5fa9474f4708168b8088dfa37/gitpython-3.2.1-py3-none-any.whl", hash = "sha256:d66b0832aa8755c1a84892937282df0befb16c97e5a64aeebd68be9c5e323f53", size = 231548, upload-time = "2026-10-14T12:20:18.844Z" },
+ ]
+ 
+ [[package]]
+@@ -12172,7 +12173,7 @@ requires-dist = [
+     { name = "fsspec", marker = "extra == 'triton'", specifier = ">=2026.6.0" },
+     { name = "fsspec", marker = "extra == 'zh-hanlp'", specifier = ">=2026.6.0" },
+     { name = "gcsfs", marker = "extra == 'cloud'", specifier = ">=2025.9.0" },
+-    { name = "gitpython", marker = "extra == 'docs'", specifier = ">=3.1.60,<4" },
++    { name = "gitpython", marker = "extra == 'docs'", specifier = ">=3.2.1,<4" },
+     { name = "gliner", extras = ["tokenizers"], marker = "extra == 'gliner'", specifier = ">=0.2.0" },
+     { name = "griffe", marker = "extra == 'docs'" },
+     { name = "grpcio", marker = "extra == 'dev'", specifier = ">=1.64" },
 ```
 
 ---
 
-### Incident Patch 2: `e5fb122a` (2026-10-20)
-**Commit Message**: fix: patch optional dependencies for v3.1
+### Incident Patch 2: `09596618` (2026-10-23)
+**Commit Message**: fix: patch audited dependencies and container pins for v3.1
 
-**File**: `CHANGELOG.md` (modified, +5/-0)
+The CI security gate failed on fixable virtualenv advisories, and newer
+advisories now cover Brotli, graphql-core and the OpenTelemetry API.
+Raise the lock constraints to the patched releases and raise the
+OpenTelemetry API floor in the dev, otel and service extras.
+
+Patched virtualenv needs packaging 26.3, which Prefect 3.7 excludes.
+Newer Prefect needs FastAPI releases that Airflow 3.3 excludes, so the
+resolver would otherwise drop Airflow to an advisory-laden 3.2.2. A
+lock-only packaging override keeps Airflow on patched 3.3.2.
+
+Debian forky retired the pinned ca-certificates, liblzma5 and tzdata
+versions, which broke the service image build used by Image SBOM and
+the load-test SLO job.
+
+**File**: `CHANGELOG.md` (modified, +7/-0)
 ```diff
-@@ -380,6 +380,11 @@ clinical efficacy. Package publication remains a separate release action.
+@@ -380,6 +380,13 @@ clinical efficacy. Package publication remains a separate release action.
  
  ### Security
  
-+- Raise optional dependency floors to patched aiohttp 3.14.4, banks 2.5.1,
-+  Mako 1.4.2, multidict 6.9.1 and tinytag 2.3.0. Apply the same floors to
-+  published extras and the frozen lockfile, preserving AWQ's Linux-only
-+  boundary and the base SDK's dependency set.
-+
- - Require MCP 1.30 or newer for patched session handling in the optional
-   MCP and development dependency profiles (#4221).
++- Require patched OpenTelemetry API 1.45.1 in the optional `dev`, `otel` and
++  `service` profiles, and lock patched virtualenv 21.14.13, Brotli 1.2.1 and
++  graphql-core 3.2.12. A lock-only packaging override lifts Prefect 3.7's
++  `packaging<26.3` cap so the lock keeps Airflow on patched 3.3.2; the base
++  SDK's dependency set is unchanged.
++- Refresh the service image's exact Debian forky pins for ca-certificates,
++  liblzma5 and tzdata after the archive retired the previous versions.
+ - Renew the maintainer-reviewed exception for unpatched NLTK
+   `CVE-2026-81726` in the universal lockfile through 2026-11-03. NLTK remains
+   optional and absent from the core closure and service image. The exception
+```
+
+**File**: `Dockerfile` (modified, +3/-3)
+```diff
+@@ -13,11 +13,11 @@ WORKDIR /app
+ # release. Runtime libraries stay exact and come from one Debian suite.
+ RUN apt-get update \
+     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+-        "ca-certificates=20260816" \
++        "ca-certificates=20260816+nmu1" \
+         "libbz2-1.0=1.0.8-6+b2" \
+         "libffi8=3.8.0-2" \
+         "libgdbm6t64=1.26-1+b2" \
+-        "liblzma5=5.8.3-1" \
++        "liblzma5=5.8.4-1" \
+         "libncursesw6=6.6+20260608-2" \
+         "libreadline8t64=8.3-4" \
+         "libsqlite3-0=3.53.4-2" \
+@@ -27,7 +27,7 @@ RUN apt-get update \
+         "openssl=3.6.5-1" \
+         "openssl-provider-legacy=3.6.5-1" \
+         "readline-common=8.3-4" \
+-        "tzdata=2026c-1" \
++        "tzdata=2026e-1" \
+         "zlib1g=1:1.3.dfsg+really1.3.2-3" \
+     && rm -rf /var/lib/apt/lists/*
  
 ```
 
-**File**: `docs/security/dependency-policy.md` (modified, +8/-0)
+**File**: `deploy/docker/Dockerfile` (modified, +3/-3)
 ```diff
-@@ -23,6 +23,14 @@ upgraded.
+@@ -19,11 +19,11 @@ WORKDIR /app
+ # release. Runtime libraries stay exact and come from one Debian suite.
+ RUN apt-get update \
+     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+-        "ca-certificates=20260816" \
++        "ca-certificates=20260816+nmu1" \
+         "libbz2-1.0=1.0.8-6+b2" \
+         "libffi8=3.8.0-2" \
+         "libgdbm6t64=1.26-1+b2" \
+-        "liblzma5=5.8.3-1" \
++        "liblzma5=5.8.4-1" \
+         "libncursesw6=6.6+20260608-2" \
+         "libreadline8t64=8.3-4" \
+         "libsqlite3-0=3.53.4-2" \
+@@ -33,7 +33,7 @@ RUN apt-get update \
+         "openssl=3.6.5-1" \
+         "openssl-provider-legacy=3.6.5-1" \
+         "readline-common=8.3-4" \
+-        "tzdata=2026c-1" \
++        "tzdata=2026e-1" \
+         "zlib1g=1:1.3.dfsg+really1.3.2-3" \
+     && rm -rf /var/lib/apt/lists/*
  
- ## Optional storage dependencies
- 
-+The v3.1 release review raises the existing optional dependency closures to
-+`aiohttp>=3.14.4`, `banks>=2.5.1`, `mako>=1.4.2`, `multidict>=6.9.1` and
-+`tinytag>=2.3.0` for the fixes reported by the October 20 lockfile scan.
-+Each affected extra publishes its minimum version, and the universal lock
-+uses the same floors. No package is added to the core install; AWQ retains
-+its Linux-only markers. The unpatched NLTK finding is evaluated separately
-+under the [time-limited dependency review](dependency-risk.md).
-+
- Every optional profile that resolves `fsspec` requires `fsspec>=2026.6.0` in
- published package metadata as well as the frozen dependency graph. The same
- profiles require `jinja2>=3.1.6`, since an older sandbox can still admit
 ```
 
-**File**: `docs/security/license-inventory.md` (modified, +4/-0)
+**File**: `pyproject.toml` (modified, +10/-4)
 ```diff
-@@ -33,6 +33,10 @@ a dependency also declared in another extra.
- | `apache-beam` | `beam` | `Apache-2.0` |
- | `auto-gptq` | `gptq` | `MIT` |
- | `autoawq` | `awq` | `MIT` |
-+| `aiohttp` | `agents, awq, cloud, gptq, llamaindex, operator` | `Apache-2.0 AND MIT` |
-+| `multidict` | `agents, awq, beam, cloud, gptq, llamaindex, operator` | `Apache-2.0` |
-+| `mako` | `airflow, dagster, prefect` | `MIT` |
-+| `tinytag` | `agents, llamaindex` | `MIT` |
- | `banks` | `agents, llamaindex` | `MIT` |
- | `click` | `spacy` | `BSD-3-Clause` |
- | `confluent-kafka` | `kafka` | `Apache-2.0` |
+@@ -70,7 +70,7 @@ dev = [
+   "fastapi>=0.110",
+   "httpx>=0.27",
+   "dask[dataframe]>=2024.8",
+-  "opentelemetry-api>=1.26,<2",
++  "opentelemetry-api>=1.45.1,<2",
+   "opentelemetry-exporter-otlp-proto-http>=1.26,<2",
+   "opentelemetry-sdk>=1.26,<2",
+   "pandas>=2.0",
+@@ -391,7 +391,7 @@ hf = [
+ # Core pipeline observability. The SDK enables caller-owned in-process
+ # providers and test exporters; no network exporter is included or configured.
+ otel = [
+-  "opentelemetry-api>=1.26,<2",
++  "opentelemetry-api>=1.45.1,<2",
+   "opentelemetry-sdk>=1.26,<2",
+ ]
+ 
+@@ -400,7 +400,7 @@ service = [
+   "fastapi>=0.110",
+   "grpcio>=1.64",
+   "httpx>=0.27",
+-  "opentelemetry-api>=1.26,<2",
++  "opentelemetry-api>=1.45.1,<2",
+   "opentelemetry-exporter-otlp-proto-http>=1.26,<2",
+   "opentelemetry-sdk>=1.26,<2",
+   "protobuf>=5.26,<7",
+@@ -538,7 +538,10 @@ constraint-dependencies = [
+   "torch>=2.13.0",
+   "tornado>=6.5.9",
+   "urllib3>=2.8.0",
+-  "virtualenv>=21.7.13",
++  "virtualenv>=21.14.9",
++  "brotli>=1.2.1",
++  "graphql-core>=3.2.12",
++  "opentelemetry-api>=1.45.1",
+   "betterproto==2.0.0b6; python_version >= '3.11'",
+   "pyjwt>=2.14.0",
+ ]
+@@ -549,6 +552,9 @@ override-dependencies = [
+   "httplib2>=0.32",
+   # Beam also caps Pillow below the patched release on Python 3.11+.
+   "Pillow>=13.0.0; python_version >= '3.11'",
++  # Prefect 3.7 caps packaging below the release patched virtualenv needs, and
++  # newer Prefect requires FastAPI releases that Airflow 3.3 excludes.
++  "packaging>=26.3,<27",
+ ]
+ conflicts = [
+   [
 ```
 
-**File**: `pyproject.toml` (modified, +25/-3)
+**File**: `tests/unit/core/test_pipeline_telemetry.py` (modified, +1/-1)
 ```diff
-@@ -155,6 +155,7 @@ dask = [
- ]
+@@ -297,7 +297,7 @@ def test_otel_extra_contains_no_network_exporter() -> None:
+         dependencies = tomllib.load(handle)["project"]["optional-dependencies"]
  
- dagster = [
-+  "mako>=1.4.2",
-   "fsspec>=2026.6.0",
-   "jinja2>=3.1.6",
-   "dagster>=1.8,<2",
-@@ -245,6 +246,8 @@ zh-hanlp = [
- ]
- 
- awq = [
-+  "multidict>=6.9.1; sys_platform == 'linux'",
-+  "aiohttp>=3.14.4; sys_platform == 'linux'",
-   "fsspec>=2026.6.0; sys_platform == 'linux'",
-   "jinja2>=3.1.6; sys_platform == 'linux'",
-   "autoawq==0.2.9; sys_platform == 'linux'",
-@@ -254,6 +257,8 @@ awq = [
- ]
- 
- gptq = [
-+  "multidict>=6.9.1",
-+  "aiohttp>=3.14.4",
-   "fsspec>=2026.6.0",
-   "jinja2>=3.1.6",
-   "auto-gptq>=0.7.1",
-@@ -281,29 +286,37 @@ haystack = [
- ]
- 
- llamaindex = [
-+  "tinytag>=2.3.0",
-+  "multidict>=6.9.1",
-+  "aiohttp>=3.14.4",
-   "fsspec>=2026.6.0",
-   "jinja2>=3.1.6",
-   "llama-index-core>=0.10,<1",
--  "banks>=2.4.5",
-+  "banks>=2.5.1",
- ]
- 
- agents = [
-+  "tinytag>=2.3.0",
-+  "multidict>=6.9.1",
-+  "aiohttp>=3.14.4",
-   "fsspec>=2026.6.0",
-   "jinja2>=3.1.6",
-   "langchain-core>=0.2,<2",
-   "langgraph>=0.2,<2",
-   "langgraph-sdk>=0.4.4",
-   "llama-index-core>=0.10,<1",
--  "banks>=2.4.5",
-+  "banks>=2.5.1",
- ]
- 
- beam = [
-+  "multidict>=6.9.1",
-   "apache-beam>=2.73,<3",
-   "pymongo>=4.18.2",
-   "h2>=4.4.1",
- ]
- 
- airflow = [
-+  "mako>=1.4.2",
-   "fsspec>=2026.6.0",
-   "jinja2>=3.1.6",
-   "apache-airflow>=3.2.2,<4",
-@@ -319,6 +332,7 @@ kafka = [
- ]
- 
- prefect = [
-+  "mako>=1.4.2",
-   "fsspec>=2026.6.0",
-   "jinja2>=3.1.6",
-   "prefect>=3.7,<4",
-@@ -327,6 +341,8 @@ prefect = [
- ]
- 
- cloud = [
-+  "multidict>=6.9.1",
-+  "aiohttp>=3.14.4",
-   "fsspec>=2026.6.0",
-   "jinja2>=3.1.6",
-   "s3fs>=2025.9.0",
-@@ -399,6 +415,8 @@ triton = [
- ]
- 
- operator = [
-+  "multidict>=6.9.1",
-+  "aiohttp>=3.14.4",
-   "kopf>=1.44.6,<2",
- ]
- 
-@@ -496,10 +514,14 @@ openmed-journey = "openmed.deploy.journey:main"
- 
- [tool.uv]
- constraint-dependencies = [
-+  "tinytag>=2.3.0",
-+  "mako>=1.4.2",
-+  "multidict>=6.9.1",
-+  "aiohttp>=3.14.4",
-   "mcp>=1.30,<2",
-   "fsspec>=2026.6.0",
-   "jinja2>=3.1.6",
--  "banks>=2.4.5",
-+  "banks>=2.5.1",
-   "langgraph-sdk>=0.4.4",
-   "pymongo>=4.18.2",
-   "datasets>=5.0.1",
+     assert dependencies["otel"] == [
+-        "opentelemetry-api>=1.26,<2",
++        "opentelemetry-api>=1.45.1,<2",
+         "opentelemetry-sdk>=1.26,<2",
+     ]
+     assert all("exporter" not in dependency for dependency in dependencies["otel"])
 ```
 
-**File**: `scripts/release/check_license_policy.py` (modified, +4/-0)
+**File**: `tests/unit/security/test_pip_audit_gate.py` (modified, +26/-0)
 ```diff
-@@ -75,6 +75,7 @@
- REVIEWED_LICENSES = {
-     "accelerate": "Apache-2.0",
-     "adlfs": "BSD-3-Clause",
-+    "aiohttp": "Apache-2.0 AND MIT",
-     "apache-airflow": "Apache-2.0",
-     "apache-beam": "Apache-2.0",
-     "auto-gptq": "MIT",
-@@ -114,6 +115,7 @@
-     "langgraph-sdk": "MIT",
-     "llama-index-core": "MIT",
-     "markdown-it-py": "MIT",
-+    "mako": "MIT",
-     "mcp": "MIT",
-     "medspacy": "MIT",
-     "mkdocs": "BSD-2-Clause",
-@@ -127,6 +129,7 @@
-     "mlx-lm": "MIT",
-     "nbformat": "BSD-3-Clause",
-     "nncf": "Apache-2.0",
-+    "multidict": "Apache-2.0",
-     "numpy": "BSD-3-Clause",
-     "oauthlib": "BSD-3-Clause",
-     "onnx": "Apache-2.0",
-@@ -179,6 +182,7 @@
-     "sqlalchemy": "MIT",
-     "strawberry-graphql": "MIT",
-     "tiktoken": "MIT",
-+    "tinytag": "MIT",
-     "tokenizers": "Apache-2.0",
-     "torch": "BSD-3-Clause",
-     "transformers": "Apache-2.0",
-```
-
-**File**: `tests/browser/brand/budgets.json` (modified, +5/-5)
-```diff
-@@ -12,26 +12,26 @@
-     "html": 2359296,
-     "image": 262144,
-     "javascript": 716800,
--    "json": 5055146
-+    "json": 5056239
-   },
-   "governed_payload_bytes": {
-     "docs/assets/javascripts/lunr/wordcut.js": 716800,
-     "docs/model-tokenizer-script-coverage/index.html": 2359296,
-     "docs/model-tokenizer-script-coverage.json": 1572864,
--    "docs/search/search_index.json": 5055146
-+    "docs/search/search_index.json": 5056239
-   },
-   "route_transfer_bytes": {
-     "/": 3145728,
--    "/docs/": 6530530,
--    "/docs/model-tokenizer-script-coverage/": 8627182
-+    "/docs/": 6531623,
-+    "/docs/model-tokenizer-script-coverage/": 8628275
-   },
-   "page_metrics": {
-     "cumulative_layout_shift": 0.1,
-     "largest_contentful_paint_ms": 2500,
-     "representative_interaction_latency_ms": 200
-   },
-   "notes": [
--    "The v3.1 release and privacy migration documentation measures 5053460 search-index bytes. The search and JSON ceilings retain the established 1686-byte allowance; docs route totals retain their fixed-asset ceilings. Other artifact, image, runtime and page-metric limits are unchanged.",
-+    "The v3.1 release, privacy migration and dependency-security documentation measures 5054553 search-index bytes. The search and JSON ceilings retain the established 1686-byte allowance; docs route totals retain their fixed-asset ceilings. Other artifact, image, runtime and page-metric limits are unchanged.",
-     "The reviewed governance API deprecation policy and major privacy-boundary announcement measure 5046074 search-index bytes. The search and JSON ceilings retain the established 1686-byte allowance. Docs route totals add only this governed search ceiling to unchanged fixed-asset ceilings; aggregate, non-JSON, duplicate, source-map and page-metric limits remain unchanged.",
-     "The tokenizer docs route applies the same component checks: its fixed-asset ceiling is 3572036 bytes, retaining the prior 7992837-byte route ceiling minus the 4420801-byte search ceiling at revision 429403b7f687fa6c94f3446917be050069afeef5. The current total adds only the independently reviewed search ceiling; fixed assets receive no extra allowance.",
-     "The docs route now budgets fixed assets separately from its independently reviewed search index. The fixed-asset ceiling remains 1475384 bytes: the prior 5817753-byte route ceiling minus its recorded 4342369-byte index. The total is the same fixed ceiling plus the current governed search ceiling. Browser checks enforce both components, so index growth cannot grant extra room to other assets. No other route or artifact limits change.",
-```
-
-**File**: `tests/unit/licenses/test_inventory.py` (modified, +1/-1)
-```diff
-@@ -48,7 +48,7 @@ def test_checked_in_inventory_covers_non_dev_project_dependencies() -> None:
-     entries = inventory.parse_inventory(inventory.DEFAULT_INVENTORY)
-     records = inventory.audit_project()
- 
--    assert len(entries) == 112
-+    assert len(entries) == 116
-     assert len(records) == len(entries)
-     assert {
-         record.name
-```
-
-**File**: `tests/unit/security/test_pip_audit_gate.py` (modified, +15/-1)
-```diff
-@@ -398,14 +398,28 @@ def test_awq_torch_floor_keeps_the_existing_linux_only_boundary() -> None:
- @pytest.mark.parametrize(
-     ("package", "unsafe", "fixed", "extras"),
-     [
--        ("banks", "2.4.4", "2.4.5", ("agents", "llamaindex")),
-+        (
-+            "aiohttp",
-+            "3.14.3",
-+            "3.14.4",
-+            ("agents", "awq", "cloud", "gptq", "llamaindex", "operator"),
-+        ),
-+        ("banks", "2.5.0", "2.5.1", ("agents", "llamaindex")),
-         ("datasets", "5.0.0", "5.0.1", ("awq", "gptq")),
-         ("fsspec", "2026.4.0", "2026.6.0", ("dev", "cloud", "journey")),
-         ("h2", "4.3.0", "4.4.1", ("beam", "prefect")),
-         ("langgraph-sdk", "0.4.3", "0.4.4", ("agents", "langgraph")),
-         ("mcp", "1.29.1", "1.30.0", ("dev", "mcp")),
-+        ("mako", "1.4.1", "1.4.2", ("airflow", "dagster", "prefect")),
-+        (
-+            "multidict",
-+            "6.9.0",
-+            "6.9.1",
-+            ("agents", "awq", "beam", "cloud", "gptq", "llamaindex", "operator"),
-+        ),
+@@ -418,6 +418,7 @@ def test_awq_torch_floor_keeps_the_existing_linux_only_boundary() -> None:
+             ("agents", "awq", "beam", "cloud", "gptq", "llamaindex", "operator"),
+         ),
          ("oauthlib", "3.3.1", "4.0.0", ("cloud", "prefect")),
++        ("opentelemetry-api", "1.43.0", "1.45.1", ("dev", "otel", "service")),
          ("pymongo", "4.18.1", "4.18.2", ("beam",)),
-+        ("tinytag", "2.2.1", "2.3.0", ("agents", "llamaindex")),
+         ("tinytag", "2.2.1", "2.3.0", ("agents", "llamaindex")),
      ],
- )
- def test_fixable_optional_dependency_floors_are_published_and_locked(
+@@ -512,6 +513,31 @@ def test_certificate_bundle_lock_uses_patched_release() -> None:
+     assert "2026.10.19" in floor.specifier
+ 
+ 
++@pytest.mark.parametrize(
++    ("package", "unsafe", "fixed"),
++    [
++        ("brotli", "1.2.0", "1.2.1"),
++        ("graphql-core", "3.2.11", "3.2.12"),
++        ("virtualenv", "21.14.5", "21.14.9"),
++    ],
++)
++def test_transitive_dependency_lock_uses_patched_release(
++    package: str, unsafe: str, fixed: str
++) -> None:
++    project, lock = _model_dependency_metadata()
++    resolved = [item for item in lock["package"] if item["name"] == package]
++    assert resolved
++    assert all(Version(item["version"]) >= Version(fixed) for item in resolved)
++    floor = next(
++        requirement
++        for value in project["tool"]["uv"]["constraint-dependencies"]
++        for requirement in [Requirement(value)]
++        if requirement.name == package
++    )
++    assert unsafe not in floor.specifier
++    assert fixed in floor.specifier
++
++
+ def test_awq_dataset_floor_retains_linux_only_installation() -> None:
+     project, _ = _model_dependency_metadata()
+     floor = next(
+```
+
+**File**: `uv.lock` (modified, +176/-102)
+```diff
+@@ -676,28 +676,32 @@ constraints = [
+     { name = "aiohttp", specifier = ">=3.14.4" },
+     { name = "banks", specifier = ">=2.5.1" },
+     { name = "betterproto", marker = "python_full_version >= '3.11'", specifier = "==2.0.0b6" },
++    { name = "brotli", specifier = ">=1.2.1" },
+     { name = "certifi", specifier = ">=2026.10.19" },
+     { name = "datasets", specifier = ">=5.0.1" },
+     { name = "fsspec", specifier = ">=2026.6.0" },
++    { name = "graphql-core", specifier = ">=3.2.12" },
+     { name = "h2", specifier = ">=4.4.1" },
+     { name = "jinja2", specifier = ">=3.1.6" },
+     { name = "langgraph-sdk", specifier = ">=0.4.4" },
+     { name = "mako", specifier = ">=1.4.2" },
+     { name = "mcp", specifier = ">=1.30,<2" },
+     { name = "multidict", specifier = ">=6.9.1" },
+     { name = "oauthlib", specifier = ">=4.0.0" },
++    { name = "opentelemetry-api", specifier = ">=1.45.1" },
+     { name = "pillow", marker = "python_full_version >= '3.11'", specifier = ">=13.0.0" },
+     { name = "pyjwt", specifier = ">=2.14.0" },
+     { name = "pymongo", specifier = ">=4.18.2" },
+     { name = "tinytag", specifier = ">=2.3.0" },
+     { name = "torch", specifier = ">=2.13.0" },
+     { name = "tornado", specifier = ">=6.5.9" },
+     { name = "urllib3", specifier = ">=2.8.0" },
+-    { name = "virtualenv", specifier = ">=21.7.13" },
++    { name = "virtualenv", specifier = ">=21.14.9" },
+ ]
+ overrides = [
+     { name = "cryptography", specifier = ">=50,<51" },
+     { name = "httplib2", specifier = ">=0.32" },
++    { name = "packaging", specifier = ">=26.3,<27" },
+     { name = "pillow", marker = "python_full_version >= '3.11'", specifier = ">=13.0.0" },
+ ]
+ 
+@@ -1113,20 +1117,20 @@ wheels = [
+ 
+ [[package]]
+ name = "apache-airflow"
+-version = "3.3.1"
++version = "3.3.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "apache-airflow-core" },
+     { name = "apache-airflow-task-sdk" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/05/f4/025fc6e41878ae075bfd50136542071abaac5ead6a967b53a878b4efbca8/apache_airflow-3.3.1.tar.gz", hash = "sha256:a62ee9c46b7b8c919a46a88ee9346e0b36bc4ff10d6f9ac7cde5a6165da52164", size = 31054, upload-time = "2026-08-12T08:10:24.808Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/e9/9e/148e8d9211c57689af9a8aafa228ff4d9b23bf23c203e973cd2fed9f1353/apache_airflow-3.3.2.tar.gz", hash = "sha256:cdbe0dcd47ff2e9ab267fcc050bc6e4fa6e40fb86bf3671e05d9672206da59bb", size = 31774, upload-time = "2026-09-17T08:39:00.645Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/46/a5/018810c3fe96f9d57377a7d5ca303c51231fe367bf16c34402fb1eb91e55/apache_airflow-3.3.1-py3-none-any.whl", hash = "sha256:0c047c0a0415b100d2966b35d0f0c191013dc996e7645023178c770296ce8602", size = 13048, upload-time = "2026-08-12T08:10:18.204Z" },
++    { url = "https://files.pythonhosted.org/packages/72/0f/835c3e3d7a09ce377a1ebc475718f404a2f6c976cb2662f84c6fcb7aaa96/apache_airflow-3.3.2-py3-none-any.whl", hash = "sha256:c1fd40a00cfc50e7ef8d0aa07a1418b059f22db03ad25c2793bb030b176dc085", size = 13331, upload-time = "2026-09-17T08:38:26.148Z" },
+ ]
+ 
+ [[package]]
+ name = "apache-airflow-core"
+-version = "3.3.1"
++version = "3.3.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "a2wsgi" },
+@@ -1195,9 +1199,9 @@ dependencies = [
+     { name = "uuid6" },
+     { name = "uvicorn" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/37/42/d1d5f2e6172398ed4b5864a3f262eddd89008f8445678934c94eabdcee9d/apache_airflow_core-3.3.1.tar.gz", hash = "sha256:0c4ae4f3aea72dc2087b615305ea97ff0247b266bf6fa6661877ce1e1d9a951b", size = 7373613, upload-time = "2026-08-12T08:10:26.454Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/45/47/bcf1e5ebc134c6a39f06fe00534a8981ea195e7191ea2d60dabb7af0428e/apache_airflow_core-3.3.2.tar.gz", hash = "sha256:53f38e7749a2689a1d67c6e661284ecddaa687c1f7f3cae2d76b2eca7758210f", size = 7442317, upload-time = "2026-09-17T08:39:34.987Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/2f/e4/910a68502da13948877c91d6b605ea5f0988962792b0b3191025eb8d4423/apache_airflow_core-3.3.1-py3-none-any.whl", hash = "sha256:28c6aa88bdd47a4401436f1bfefbc979236de16fa4962d408218c67b8f9a00b8", size = 6875541, upload-time = "2026-08-12T08:10:22.343Z" },
++    { url = "https://files.pythonhosted.org/packages/54/b9/1ee2db2eeda6411ce2611e7ce800f57a4b9d22920f5c4ccaed908f7664a1/apache_airflow_core-3.3.2-py3-none-any.whl", hash = "sha256:99258922bccec15be4700ff89f3c942b8acd93407e263c287ce863e671bb3c50", size = 6921273, upload-time = "2026-09-17T08:38:58.61Z" },
+ ]
+ 
+ [[package]]
+@@ -1271,7 +1275,7 @@ wheels = [
+ 
+ [[package]]
+ name = "apache-airflow-task-sdk"
+-version = "1.3.1"
++version = "1.3.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "apache-airflow-core" },
+@@ -1301,9 +1305,9 @@ dependencies = [
+     { name = "tenacity" },
+     { name = "typing-extensio
+```
+
+---
+
+### Incident Patch 3: `387640bf` (2026-10-23)
+**Commit Message**: fix: fail closed on unserializable redacted email headers
+
+Format-parser fuzzing found that a header containing a vertical tab
+parses, but newer CPython patch releases refuse to serialize it with
+HeaderWriteError. That escaped redact_email as an unhandled error.
+
+Wrap MIME serialization so it raises UnsupportedDocumentError, as other
+unsupported inputs do. The stdlib error embeds raw header bytes, so it
+is not chained onto the rejection.
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
+```diff
+@@ -431,6 +431,9 @@ clinical efficacy. Package publication remains a separate release action.
+ 
+ ### Fixed
+ 
++- Reject emails whose redacted headers cannot be serialized as clean MIME
++  with `UnsupportedDocumentError` instead of an unhandled stdlib error. The
++  rejection omits the stdlib error, which embeds raw header bytes.
+ - Handle decoding failures through both batch readers' per-file error paths,
+   continue later files in permissive mode, and retain strict propagation
+   without including decoder details in error reports (#4201).
+```
+
+**File**: `openmed/multimodal/email.py` (modified, +13/-3)
+```diff
+@@ -21,7 +21,7 @@
+ from difflib import SequenceMatcher
+ from email import encoders
+ from email import policy as email_policy
+-from email.errors import HeaderParseError
++from email.errors import HeaderParseError, MessageError
+ from email.header import decode_header
+ from email.message import Message
+ from email.parser import BytesParser
+@@ -441,7 +441,7 @@ def redact_email(
+     body_redactions = _redact_body_parts(message, processor, cid_map=cid_map)
+     _sanitize_mime_metadata(message)
+ 
+-    email_bytes = message.as_bytes(policy=email_policy.SMTP)
++    email_bytes = _serialize_message(message)
+     resolved_output = _write_email_output(output_path, email_bytes)
+     redacted_message = _parse_eml(email_bytes)
+     document = _document_from_message(
+@@ -501,6 +501,16 @@ def _parse_eml(payload: bytes) -> Message:
+     return BytesParser(policy=email_policy.default).parsebytes(payload)
+ 
+ 
++def _serialize_message(message: Message) -> bytes:
++    try:
++        return message.as_bytes(policy=email_policy.SMTP)
++    except MessageError:
++        # The stdlib error embeds raw header bytes, so do not chain it.
++        raise UnsupportedDocumentError(
++            "This email has headers that cannot be serialized as clean MIME."
++        ) from None
++
++
+ def _raw_header_values(message: Message, header_name: str) -> tuple[Any, ...]:
+     """Return header values without invoking strict structured-header parsing."""
+ 
+@@ -930,7 +940,7 @@ def _attachment_payload(part: Message) -> bytes | None:
+     if part.get_content_type().lower() == "message/rfc822":
+         nested = part.get_payload()
+         if isinstance(nested, list) and nested and isinstance(nested[0], Message):
+-            return nested[0].as_bytes(policy=email_policy.SMTP)
++            return _serialize_message(nested[0])
+     return None
+ 
+ 
+```
+
+**File**: `tests/unit/multimodal/test_email.py` (modified, +25/-0)
+```diff
+@@ -7,6 +7,7 @@
+ import sys
+ import zipfile
+ from email import policy as email_policy
++from email.errors import MessageError
+ from email.message import EmailMessage
+ from email.parser import BytesParser
+ from io import BytesIO
+@@ -467,6 +468,30 @@ def test_unsupported_attachment_fails_closed_without_echoing_filename():
+     assert "Alice Patient" not in str(excinfo.value)
+ 
+ 
++def test_unserializable_redacted_headers_fail_closed_without_header_text(
++    monkeypatch,
++):
++    payload = (
++        b"From: Synthetic Clinic <clinic@example.test>\n"
++        b"MIME-Version: 1.0\x0bContent-Type: text/plain\n"
++        b"\n"
++        b"Synthetic body PATIENT-001.\n"
++    )
++
++    def reject_headers(_message, *args, **kwargs):
++        raise MessageError(f"folded header contains newline: {payload!r}")
++
++    monkeypatch.setattr(EmailMessage, "as_bytes", reject_headers)
++
++    with pytest.raises(UnsupportedDocumentError) as excinfo:
++        redact_email(payload, models=lambda text, **_: text)
++
++    assert "cannot be serialized" in str(excinfo.value)
++    assert "PATIENT-001" not in str(excinfo.value)
++    assert excinfo.value.__cause__ is None
++    assert excinfo.value.__suppress_context__ is True
++
++
+ def test_named_memory_stream_dispatches_eml_without_multimodal_extra(monkeypatch):
+     monkeypatch.setattr(
+         base,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4284** (closed): feat: bridge text decision requests to a loopback System One server (#4257) (@maziyarpanahi)
+- **PR #4275** (closed): feat: export privacy-safe native reviewer packets (#2864) (@maziyarpanahi)
+- **PR #4251** (closed): Add a local MedDecider NLI runtime (@AleksanderObuchowski)
+- **PR #4237** (2026-10-21): fix: stabilize Windows release checks and update vulnerable dependencies (@maziyarpanahi)
 - **PR #4236** (2026-10-20): release: prepare OpenMed v3.1.0 (@maziyarpanahi)
 - **PR #4223** (2026-10-17): fix: read JSONL records without splitting Unicode inside strings (#4205) (@Bembaby)
-- **PR #4221** (2026-10-16): fix: require patched MCP session handling (@maziyarpanahi)
-- **PR #4218** (2026-10-17): fix: honor continue_on_error for file decoding failures (#4201) (@Bembaby)
-- **PR #4154** (2026-10-13): fix: restore website analytics beacon (@maziyarpanahi)
-- **PR #4153** (2026-10-13): fix: restore master CI across platforms (@maziyarpanahi)
 
 ---
 
@@ -2731,13 +2853,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. renew reviewed optional NLTK exception for v3.1
+## X. require patched GitPython for the docs profile
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in maziyarpanahi/openmed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c47deb59`: renew reviewed optional NLTK exception for v3.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `00e9efd7`: require patched GitPython for the docs profile. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2745,18 +2867,17 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Renew the maintainer-reviewed exception for unpatched NLTK
-  `CVE-2026-81726` in the universal lockfile through 2026-11-03. NLTK remains
-  optional and absent from the core closure and service image. The exception
-  rejects other packages or targets, any reported fix, and expiry; this is
-  temporary risk acceptance, not remediation.
+  `service` profiles and GitPython 3.2.1 in the `docs` profile, and lock
+  patched virtualenv 21.14.13, Brotli 1.2.1 and graphql-core 3.2.12. A
+  lock-only packaging override lifts Prefect 3.7's
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  `service` profiles, and lock patched virtualenv 21.14.13, Brotli 1.2.1 and
+  graphql-core 3.2.12. A lock-only packaging override lifts Prefect 3.7's
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c47deb59` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `00e9efd7` are properly handled with clean fallback behavior.

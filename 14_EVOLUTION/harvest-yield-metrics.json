@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T19:45:16.762Z",
-  "total_cycles_completed": 4945,
-  "total_learnings_persisted": 4945,
-  "total_rules_promoted": 4313,
+  "last_updated": "2026-10-25T19:51:50.011Z",
+  "total_cycles_completed": 4949,
+  "total_learnings_persisted": 4949,
+  "total_rules_promoted": 4318,
   "history": [
-    {
-      "timestamp": "2026-10-25T10:17:01.849Z",
-      "repository": "autotrust/JEV-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T10:17:02.315Z",
-      "repository": "koderover/zadig",
-      "learningId": "learn-github-koderover-zadig",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T10:36:17.637Z",
-      "repository": "sqldelight/sqldelight",
-      "learningId": "learn-github-sqldelight-sqldelight",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T10:36:19.997Z",
-      "repository": "ducaale/xh",
-      "learningId": "learn-github-ducaale-xh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T10:36:25.281Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-25T19:45:16.762Z",
       "repository": "arangodb/arangodb",
       "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:51:41.836Z",
+      "repository": "maziyarpanahi/openmed",
+      "learningId": "learn-github-maziyarpanahi-openmed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:51:44.647Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:51:48.815Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:51:50.011Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

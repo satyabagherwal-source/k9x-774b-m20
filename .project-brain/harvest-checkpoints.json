@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T19:45:16.770Z",
+  "last_updated": "2026-10-25T19:51:50.019Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1160,14 +1160,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "content_hash": "1a20e6d5bb01a67f877865a1e3d443400205490fe7326efcb92f2b885518f720",
-      "verified_at": "2026-10-21T00:08:44.535Z",
+      "content_hash": "fdedf69475127885e1267152f5daed2fff736d899f0a1f2db2fc1dfb12fca68d",
+      "verified_at": "2026-10-25T19:51:48.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:08:44.535Z"
+      "last_updated": "2026-10-25T19:51:48.818Z"
     },
     "meta-llama/Meta-Llama-3-8B-Instruct": {
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "13e167b5951c090d34535d5a9b4331b1f318c18e51d470f44376ddf605fd2a0a",
-      "verified_at": "2026-10-25T03:31:57.007Z",
+      "content_hash": "4527f5955bf7d300fb6a72c2cc5b41e4aab95536994b9274ad8f2d0e122ec550",
+      "verified_at": "2026-10-25T19:51:50.014Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:31:57.007Z"
+      "last_updated": "2026-10-25T19:51:50.014Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -10776,14 +10776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeromicro-go-zero",
-      "content_hash": "05f703e70c2f76303c953f8674c150093d14b93d07ee086ed75e447c8d847fbb",
-      "verified_at": "2026-10-25T04:18:54.245Z",
+      "content_hash": "5cfd378456458d57b39d94cfcf69b61aaab8bd2462bfbe7397a9e4d6fe5d8ba5",
+      "verified_at": "2026-10-25T19:51:44.651Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:18:54.245Z"
+      "last_updated": "2026-10-25T19:51:44.651Z"
     },
     "t8y2/dbx": {
       "repository": "t8y2/dbx",
@@ -12381,14 +12381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-maziyarpanahi-openmed",
-      "content_hash": "a2e46fe020e03ad2820e8327f708850ce1d4aae80b12f0bf0655638fb93ca25a",
-      "verified_at": "2026-10-21T02:33:47.172Z",
+      "content_hash": "bfdba2040e2143715974e4f23339333f9a6a03ecda05582be44526b1709e84c6",
+      "verified_at": "2026-10-25T19:51:41.840Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:33:47.172Z"
+      "last_updated": "2026-10-25T19:51:41.840Z"
     },
     "bernaferrari/FigmaToCode": {
       "repository": "bernaferrari/FigmaToCode",

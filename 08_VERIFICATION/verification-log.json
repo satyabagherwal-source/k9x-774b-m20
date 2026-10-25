@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-L4KR",
-    "timestamp": "2026-10-23T06:09:24.075Z",
-    "repository": "iliyami/MacSai",
-    "learningId": "learn-github-iliyami-macsai",
-    "contentHash": "fdc8bbe824435691ad48c51cf83c479717b8c94d4c5baa04fd906ca75e4cddf7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-L4MJ",
-    "timestamp": "2026-10-23T06:09:24.139Z",
-    "repository": "google/closure-compiler",
-    "learningId": "learn-github-google-closure-compiler",
-    "contentHash": "93023a13b050f8cbca566742f88d838349afa1c57030ab92af96075b14cf1c32",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-MIOP",
-    "timestamp": "2026-10-23T06:10:29.017Z",
-    "repository": "taiga-family/taiga-ui",
-    "learningId": "learn-github-taiga-family-taiga-ui",
-    "contentHash": "a4f7e21a6de5e1dae723820df546048703bfec9376b07e470ba18e76079ac044",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-V9K1",
-    "timestamp": "2026-10-23T06:17:17.089Z",
-    "repository": "sveltejs/svelte",
-    "learningId": "learn-github-sveltejs-svelte",
-    "contentHash": "11acc216e0affde97dc30f9265515404a712b463f64c936cfaa5c8c249235e85",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-VAXS",
     "timestamp": "2026-10-23T06:17:18.880Z",
     "repository": "storybookjs/storybook",
@@ -7490,6 +7430,66 @@
     "repository": "arangodb/arangodb",
     "learningId": "learn-github-arangodb-arangodb",
     "contentHash": "c1a0481705b49a1084a905e222422500043f781fcb2ea247da37f726df089fca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-UB5W",
+    "timestamp": "2026-10-25T19:51:41.828Z",
+    "repository": "maziyarpanahi/openmed",
+    "learningId": "learn-github-maziyarpanahi-openmed",
+    "contentHash": "bfdba2040e2143715974e4f23339333f9a6a03ecda05582be44526b1709e84c6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-UDBZ",
+    "timestamp": "2026-10-25T19:51:44.639Z",
+    "repository": "zeromicro/go-zero",
+    "learningId": "learn-github-zeromicro-go-zero",
+    "contentHash": "5cfd378456458d57b39d94cfcf69b61aaab8bd2462bfbe7397a9e4d6fe5d8ba5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-UGJR",
+    "timestamp": "2026-10-25T19:51:48.807Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+    "contentHash": "fdedf69475127885e1267152f5daed2fff736d899f0a1f2db2fc1dfb12fca68d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-UHGY",
+    "timestamp": "2026-10-25T19:51:50.002Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "4527f5955bf7d300fb6a72c2cc5b41e4aab95536994b9274ad8f2d0e122ec550",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T19:45:16.700Z",
+  "last_updated": "2026-10-25T19:51:49.949Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26616,7 +26616,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "1a20e6d5bb01a67f877865a1e3d443400205490fe7326efcb92f2b885518f720",
+      "content_hash": "fdedf69475127885e1267152f5daed2fff736d899f0a1f2db2fc1dfb12fca68d",
       "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "promoted_rules": [
@@ -26669,6 +26669,16 @@
           "number": 3450,
           "title": "Single-Stream Attention Context Budgeting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4432,
+          "title": "Distillation-First Latency Optimization for Generative Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4433,
+          "title": "VRAM-Bounded Deployment Invariant for Consumer Hardware",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26689,7 +26699,7 @@
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4ar4th",
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p"
       ],
-      "verified_at": "2026-10-21T00:08:44.448Z",
+      "verified_at": "2026-10-25T19:51:48.726Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34076,8 +34086,8 @@
       "slug": "maziyarpanahi-openmed",
       "platform": "github",
       "source_url": "https://github.com/maziyarpanahi/openmed",
-      "source_version": "e07e0c56",
-      "content_hash": "a2e46fe020e03ad2820e8327f708850ce1d4aae80b12f0bf0655638fb93ca25a",
+      "source_version": "00e9efd7",
+      "content_hash": "bfdba2040e2143715974e4f23339333f9a6a03ecda05582be44526b1709e84c6",
       "dossier_path": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "promoted_rules": [
@@ -34090,6 +34100,11 @@
           "number": 3489,
           "title": "renew reviewed optional NLTK exception for v3.1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4430,
+          "title": "require patched GitPython for the docs profile",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34097,7 +34112,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:33:47.120Z",
+      "verified_at": "2026-10-25T19:51:41.761Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49507,8 +49522,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "5fb6a1ff",
-      "content_hash": "13e167b5951c090d34535d5a9b4331b1f318c18e51d470f44376ddf605fd2a0a",
+      "source_version": "67e7cf4c",
+      "content_hash": "4527f5955bf7d300fb6a72c2cc5b41e4aab95536994b9274ad8f2d0e122ec550",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -49536,6 +49551,11 @@
           "number": 4015,
           "title": "ineffective Trino coordinator startup timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4434,
+          "title": "test code flagged by error-prone 2.51.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49543,7 +49563,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:31:56.929Z",
+      "verified_at": "2026-10-25T19:51:49.938Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52986,8 +53006,8 @@
       "slug": "zeromicro-go-zero",
       "platform": "github",
       "source_url": "https://github.com/zeromicro/go-zero",
-      "source_version": "2b5efac9",
-      "content_hash": "05f703e70c2f76303c953f8674c150093d14b93d07ee086ed75e447c8d847fbb",
+      "source_version": "fd59ce39",
+      "content_hash": "5cfd378456458d57b39d94cfcf69b61aaab8bd2462bfbe7397a9e4d6fe5d8ba5",
       "dossier_path": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "promoted_rules": [
@@ -53010,6 +53030,11 @@
           "number": 4040,
           "title": "filex): only trim trailing newline on tail block in LastLine (#5790)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4431,
+          "title": "filex): return EOF at range end (#5805)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53017,7 +53042,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:18:54.178Z",
+      "verified_at": "2026-10-25T19:51:44.572Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125661,6 +125686,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T19:45:16.689Z"
+    },
+    "rule-4430": {
+      "learning_id": "rule-4430",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4430,
+      "title": "require patched GitPython for the docs profile",
+      "source_url": "https://github.com/maziyarpanahi/openmed",
+      "source_version": "00e9efd7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:51:41.761Z"
+    },
+    "rule-4431": {
+      "learning_id": "rule-4431",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4431,
+      "title": "filex): return EOF at range end (#5805)",
+      "source_url": "https://github.com/zeromicro/go-zero",
+      "source_version": "fd59ce39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:51:44.572Z"
+    },
+    "rule-4432": {
+      "learning_id": "rule-4432",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4432,
+      "title": "Distillation-First Latency Optimization for Generative Models",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:51:48.726Z"
+    },
+    "rule-4433": {
+      "learning_id": "rule-4433",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4433,
+      "title": "VRAM-Bounded Deployment Invariant for Consumer Hardware",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:51:48.726Z"
+    },
+    "rule-4434": {
+      "learning_id": "rule-4434",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4434,
+      "title": "test code flagged by error-prone 2.51.0",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "67e7cf4c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:51:49.938Z"
     }
   },
   "aliases": {

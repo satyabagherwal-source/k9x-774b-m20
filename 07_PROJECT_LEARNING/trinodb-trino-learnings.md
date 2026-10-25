@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `5fb6a1ff`  
+> **Source Version**: `67e7cf4c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:31:56.645Z  
+> **Timestamp**: 2026-10-25T19:51:49.628Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:31:56.638Z  
+> **Harvest Timestamp**: 2026-10-25T19:51:49.416Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1862,123 +1862,184 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1bff39a8` (2026-10-23)
-**Commit Message**: Fix ineffective Trino coordinator startup timeout
+### Incident Patch 1: `5d51219a` (2026-10-25)
+**Commit Message**: Fix test code flagged by error-prone 2.51.0
 
-TrinoContainer extends JdbcDatabaseContainer, which waits for startup
-by running a test query for up to startupTimeoutSeconds (120s by
-default) and never consults the strategy set with waitingFor(). The
-90s HTTP wait strategy configured on product test coordinators was
-therefore ignored, and a slow coordinator start on a loaded CI runner
-failed the environment after 120s.
-
-Set the startup timeout that is actually used, and drop the unused
-wait strategy.
-
-**File**: `testing/trino-testing-containers/pom.xml` (modified, +5/-0)
+**File**: `core/trino-main/src/test/java/io/trino/operator/aggregation/minmaxn/TestDoubleMinNAggregation.java` (modified, +1/-1)
 ```diff
-@@ -94,6 +94,11 @@
-             <artifactId>testcontainers</artifactId>
-         </dependency>
+@@ -79,7 +79,7 @@ private void testInvalidAggregation(Double[] x, int n)
  
-+        <dependency>
-+            <groupId>org.testcontainers</groupId>
-+            <artifactId>testcontainers-jdbc</artifactId>
-+        </dependency>
-+
-         <dependency>
-             <groupId>org.testcontainers</groupId>
-             <artifactId>testcontainers-trino</artifactId>
+     private void testCustomAggregation(Double[] values, int n)
+     {
+-        PriorityQueue<Double> heap = new PriorityQueue<>(n, (x, y) -> -Double.compare(x, y));
++        PriorityQueue<Double> heap = new PriorityQueue<>(n, (x, y) -> Double.compare(y, x));
+         Arrays.stream(values).filter(Objects::nonNull).forEach(heap::add);
+         Double[] expected = new Double[heap.size()];
+         for (int i = heap.size() - 1; i >= 0; i--) {
 ```
 
-**File**: `testing/trino-testing-containers/src/main/java/io/trino/testing/containers/MultiNodeTrinoCluster.java` (modified, +3/-7)
-```diff
-@@ -14,7 +14,6 @@
- package io.trino.testing.containers;
- 
- import org.testcontainers.containers.Network;
--import org.testcontainers.containers.wait.strategy.Wait;
- import org.testcontainers.images.builder.Transferable;
- import org.testcontainers.lifecycle.Startables;
- import org.testcontainers.trino.TrinoContainer;
-@@ -34,6 +33,7 @@
- import java.util.function.Consumer;
- import java.util.stream.Stream;
- 
-+import static io.trino.testing.containers.TrinoProductTestContainer.STARTUP_TIMEOUT_SECONDS;
- import static io.trino.testing.containers.TrinoProductTestContainer.configureTrinoContainer;
- import static java.util.Objects.requireNonNull;
- 
-@@ -432,12 +432,8 @@ public MultiNodeTrinoCluster build()
-                 coordinatorCustomizer.accept(coordinator);
-             }
- 
--            // Add a robust wait strategy
--            coordinator.waitingFor(
--                    Wait.forHttp("/v1/info")
--                            .forPort(8080)
--                            .forStatusCode(200)
--                            .withStartupTimeout(Duration.ofSeconds(90)));
-+            // TrinoContainer waits by running a test query, ignoring waitingFor()
-+            coordinator.withStartupTimeoutSeconds(STARTUP_TIMEOUT_SECONDS);
- 
-             // Build workers
-             List<TrinoWorkerContainer> workers = new ArrayList<>();
-```
-
-**File**: `testing/trino-testing-containers/src/main/java/io/trino/testing/containers/TrinoProductTestContainer.java` (modified, +3/-7)
+**File**: `core/trino-main/src/test/java/io/trino/server/ui/TestMultipartUiCookie.java` (modified, +1/-2)
 ```diff
 @@ -19,7 +19,6 @@
- import org.testcontainers.DockerClientFactory;
- import org.testcontainers.containers.GenericContainer;
- import org.testcontainers.containers.Network;
--import org.testcontainers.containers.wait.strategy.Wait;
- import org.testcontainers.images.builder.Transferable;
- import org.testcontainers.trino.TrinoContainer;
- import org.testcontainers.utility.DockerImageName;
-@@ -76,6 +75,7 @@ public final class TrinoProductTestContainer
-     private static final String DEFAULT_IMAGE = "trinodb/trino";
-     private static final DataSize MEMORY_LIMIT = DataSize.of(6, GIGABYTE);
-     private static final long CPU_LIMIT = 4;
-+    static final int STARTUP_TIMEOUT_SECONDS = 300;
+ import org.junit.jupiter.api.Test;
  
-     private TrinoProductTestContainer() {}
+ import java.time.Instant;
+-import java.util.Date;
+ import java.util.List;
+ import java.util.Map;
  
-@@ -364,12 +364,8 @@ public TrinoContainer build()
-                 }
+@@ -65,7 +64,7 @@ public void testLongValueRoundTrip()
+                 .allMatch(NewCookie::isSecure)
+                 .allMatch(NewCookie::isHttpOnly)
+                 .allMatch(cookie -> cookie.getMaxAge() == DEFAULT_MAX_AGE)
+-                .allMatch(cookie -> cookie.getExpiry().equals(Date.from(Instant.EPOCH)))
++                .allMatch(cookie -> cookie.getExpiry().toInstant().equals(Instant.EPOCH))
+                 .allMatch(cookie -> (cookie.getName().length() + cookie.getValue().length()) <= MAXIMUM_COOKIE_SIZE);
+ 
+         assertThat(newCookies)
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/util/DynamicFiltersTestUtil.java` (modified, +1/-1)
+```diff
+@@ -176,7 +176,7 @@ public boolean equals(Object o)
              }
- 
--            // Add a more robust wait strategy that ensures nodes are available
--            container.waitingFor(
--                    Wait.forHttp("/v1/info")
--                            .forPort(8080)
--                            .forStatusCode(200)
--                            .withStartupTimeout(Duration.ofSeconds(90)));
-+            // TrinoContainer waits by running a test query, ignoring waitingFor()
-+            container.withStartupTimeoutSeconds(STARTUP_TIMEOUT_SECONDS);
- 
-             return container;
+             TestingDynamicFilter that = (TestingDynamicFilter) o;
+             return futuresLeft == that.futuresLeft
+-                    && Objects.equals(isBlocked, that.isBlocked)
++                    && isBlocked == that.isBlocked
+                     && Objects.equals(currentPredicate, that.currentPredicate);
          }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `02e2cdf8` (2026-10-13)
-**Commit Message**: Fix JDBC driver resolution for DB resource groups
+### Incident Patch 2: `4b915171` (2026-10-25)
+**Commit Message**: Remove impossible null check in ProtobufValueProvider
 
-DriverManager cannot see JDBC drivers loaded by a plugin's own
-classloader, so DB resource-group configuration failed to find a
-registered driver at runtime. Add ClassLoaderAwareConnectionFactory,
-which resolves the Driver via ServiceLoader against its own
-classloader and opens connections directly instead of relying on
-DriverManager's static registry.
+DynamicMessage.getField never returns null, so the check is always true.
 
-DbResourceGroupsModule uses it for the Jdbi instance, and
-FlywayDatabaseMigrator takes the URL and credentials directly.
-
-**File**: `plugin/trino-resource-group-managers/src/main/java/io/trino/plugin/resourcegroups/db/ClassLoaderAwareConnectionFactory.java` (added, +70/-0)
+**File**: `lib/trino-record-decoder/src/main/java/io/trino/decoder/protobuf/ProtobufValueProvider.java` (modified, +2/-4)
 ```diff
-@@ -0,0 +1,70 @@
+@@ -273,10 +273,8 @@ private SqlMap serializeMap(BlockBuilder parentBlockBuilder, @Nullable Object va
+     private void buildMap(String columnName, Collection<DynamicMessage> dynamicMessages, Type keyType, Type valueType, BlockBuilder keyBuilder, BlockBuilder valueBuilder)
+     {
+         for (DynamicMessage dynamicMessage : dynamicMessages) {
+-            if (dynamicMessage.getField(dynamicMessage.getDescriptorForType().findFieldByNumber(1)) != null) {
+-                serializeObject(keyBuilder, dynamicMessage.getField(getFieldDescriptor(dynamicMessage, 1)), keyType, columnName);
+-                serializeObject(valueBuilder, dynamicMessage.getField(getFieldDescriptor(dynamicMessage, 2)), valueType, columnName);
+-            }
++            serializeObject(keyBuilder, dynamicMessage.getField(getFieldDescriptor(dynamicMessage, 1)), keyType, columnName);
++            serializeObject(valueBuilder, dynamicMessage.getField(getFieldDescriptor(dynamicMessage, 2)), valueType, columnName);
+         }
+     }
+ 
+```
+
+---
+
+### Incident Patch 3: `aab079cf` (2026-10-23)
+**Commit Message**: Migrate RecordPageSource to MemoryContext
+
+Report cursor and page builder memory through a required MemoryContext
+and update callers to pass it.
+
+**File**: `core/trino-main/src/main/java/io/trino/connector/system/SystemPageSourceProvider.java` (modified, +12/-10)
+```diff
+@@ -160,16 +160,18 @@ public ConnectorPageSource createPageSource(
+                     userToSystemFieldIndex.build());
+         }
+         catch (UnsupportedOperationException e) {
+-            return new RecordPageSource(new MappedRecordSet(
+-                    toRecordSet(
+-                            systemTransaction.getConnectorTransactionHandle(),
+-                            systemTable,
+-                            session,
+-                            newConstraint,
+-                            requiredColumns.build(),
+-                            systemSplit,
+-                            accessControl),
+-                    userToSystemFieldIndex.build()));
++            return new RecordPageSource(
++                    new MappedRecordSet(
++                            toRecordSet(
++                                    systemTransaction.getConnectorTransactionHandle(),
++                                    systemTable,
++                                    session,
++                                    newConstraint,
++                                    requiredColumns.build(),
++                                    systemSplit,
++                                    accessControl),
++                            userToSystemFieldIndex.build()),
++                    memoryContext);
+         }
+     }
+ 
+```
+
+**File**: `core/trino-main/src/main/java/io/trino/split/RecordPageSourceProvider.java` (modified, +4/-2)
+```diff
+@@ -23,6 +23,7 @@
+ import io.trino.spi.connector.ConnectorTableHandle;
+ import io.trino.spi.connector.ConnectorTransactionHandle;
+ import io.trino.spi.connector.DynamicFilter;
++import io.trino.spi.connector.MemoryContext;
+ import io.trino.spi.connector.RecordPageSource;
+ 
+ import java.util.List;
+@@ -48,8 +49,9 @@ public ConnectorPageSource createPageSource(
+             ConnectorTableHandle table,
+             Optional<ConnectorTableCredentials> tableCredentials,
+             List<ColumnHandle> columns,
+-            DynamicFilter dynamicFilter)
++            DynamicFilter dynamicFilter,
++            MemoryContext memoryContext)
+     {
+-        return new RecordPageSource(recordSetProvider.getRecordSet(transaction, session, split, table, columns));
++        return new RecordPageSource(recordSetProvider.getRecordSet(transaction, session, split, table, columns), memoryContext);
+     }
+ }
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/connector/MockConnector.java` (modified, +3/-2)
+```diff
+@@ -1127,7 +1127,8 @@ public ConnectorPageSource createPageSource(
+                 ConnectorTableHandle table,
+                 Optional<ConnectorTableCredentials> tableCredentials,
+                 List<ColumnHandle> columns,
+-                DynamicFilter dynamicFilter)
++                DynamicFilter dynamicFilter,
++                MemoryContext memoryContext)
+         {
+             MockConnectorTableHandle handle = (MockConnectorTableHandle) table;
+             SchemaTableName tableName = handle.getTableName();
+@@ -1155,7 +1156,7 @@ public ConnectorPageSource createPageSource(
+                         return projectedRow.build();
+                     })
+                     .collect(toImmutableList());
+-            return new MockConnectorPageSource(new RecordPageSource(new InMemoryRecordSet(types, records)), metrics.apply(tableName));
++            return new MockConnectorPageSource(new RecordPageSource(new InMemoryRecordSet(types, records), memoryContext), metrics.apply(tableName));
+         }
+ 
+         private Map<String, Integer> getColumnIndexes(SchemaTableName tableName)
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/operator/TestScanFilterAndProjectOperator.java` (modified, +1/-1)
+```diff
+@@ -313,7 +313,7 @@ public void testRecordCursorSource()
+                 0,
+                 new PlanNodeId("test"),
+                 new PlanNodeId("0"),
+-                (_, _) -> (_, _, _, _, _, _, _) -> new RecordPageSource(new PageRecordSet(ImmutableList.of(VARCHAR), input)),
++                (_, _) -> (_, _, _, _, _, _, memoryContext) -> new RecordPageSource(new PageRecordSet(ImmutableList.of(VARCHAR), input), memoryContext),
+                 _ -> pageProcessor.get(),
+                 TEST_TABLE_HANDLE,
+                 Optional.empty(),
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/split/TestRecordPageSourceProvider.java` (added, +79/-0)
+```diff
+@@ -0,0 +1,79 @@
 +/*
 + * Licensed under the Apache License, Version 2.0 (the "License");
 + * you may not use this file except in compliance with the License.
@@ -1992,209 +2053,291 @@ FlywayDatabaseMigrator takes the URL and credentials directly.
 + * See the License for the specific language governing permissions and
 + * limitations under the License.
 + */
-+package io.trino.plugin.resourcegroups.db;
++package io.trino.split;
 +
-+import org.jdbi.v3.core.ConnectionFactory;
++import io.trino.memory.context.AggregatedMemoryContext;
++import io.trino.memory.context.LocalMemoryContext;
++import io.trino.spi.connector.ColumnHandle;
++import io.trino.spi.connector.ConnectorPageSource;
++import io.trino.spi.connector.ConnectorRecordSetProvider;
++import io.trino.spi.connector.ConnectorSession;
++import io.trino.spi.connector.ConnectorSplit;
++import io.trino.spi.connector.ConnectorTableHandle;
++import io.trino.spi.connector.ConnectorTransactionHandle;
++import io.trino.spi.connector.DynamicFilter;
++import io.trino.spi.connector.InMemoryRecordSet;
++import io.trino.spi.connector.RecordPageSource;
++import io.trino.spi.connector.RecordSet;
++import org.junit.jupiter.api.Test;
 +
-+import java.sql.Connection;
-+import java.sql.Driver;
-+import java.sql.SQLException;
-+import java.util.Properties;
-+import java.util.ServiceLoader;
++import java.io.IOException;
++import java.util.List;
++import java.util.Optional;
 +
-+import static java.lang.String.format;
-+import static java.util.Objects.requireNonNull;
++import static io.trino.memory.context.AggregatedMemoryContext.newSimpleAggregatedMemoryContext;
++import static io.trino.spi.type.BigintType.BIGINT;
++import static io.trino.testing.TestingConnectorSession.SESSION;
++import static io.trino.testing.TestingHandles.TEST_TABLE_HANDLE;
++import static org.assertj.core.api.Assertions.assertThat;
 +
-+final class ClassLoaderAwareConnectionFactory
-+        implements ConnectionFactory
++class TestRecordPageSourceProvider
 +{
-+    static ConnectionFactory create(String url, String user, String password)
++    @Test
++    public void testMemoryContextLifecycle()
++            throws IOException
 +    {
-+        Driver driver = ServiceLoader.load(Driver.class, ClassLoaderAwareConnectionFactory.class.getClassLoader())
-+                .stream()
-+                .map(ServiceLoader.Provider::get)
-+                .filter(d -> {
-+                    try {
-+                        return d.acceptsURL(url);
-+                    }
-+                    catch (SQLException e) {
-+                        return false;
-+                    }
-+                })
-+                .findFirst()
-+                .orElseThrow(() -> new IllegalStateException(format("No JDBC driver found for URL: %s", url)));
-+        return new ClassLoaderAwareConnectionFactory(driver, url, user, password);
-+    }
++        InMemoryRecordSet recordSet = new InMemoryRecordSet(List.of(BIGINT), List.of(List.of(42L)));
++        RecordPageSourceProvider provider = new RecordPageSourceProvider(new ConnectorRecordSetProvider()
++        {
++            @Override
++            public RecordSet getRecordSet(ConnectorTransactionHandle transaction, ConnectorSession session, ConnectorSplit split, ConnectorTableHandle table, List<? extends ColumnHandle> columns)
++            {
++                return recordSet;
++            }
++        });
 +
-+    private final Driver driver;
-+    private final String url;
-+    private final Properties properties = new Properties();
-+
-+    private ClassLoaderAwareConnectionFactory(Driver driver, String url, String user, String password)
-+    {
-+        this.driver = requireNonNull(driver, "driver is null");
-+        this.url = requireNonNull(url, "url is null");
-+        if (user != null) {
-+            properties.setProperty("user", user);
++        AggregatedMemoryContext memoryContext = newSimpleAggregatedMemoryContext();
++        LocalMemoryContext sourceMemoryContext = memoryContext.newLocalMemoryContext("test");
++        try (ConnectorPageSource source = provider.createPageSource(
++                TEST_TABLE_HANDLE.transaction(),
++                SESSION,
++                new ConnectorSplit() {},
++                TEST_TABLE_HANDLE.connectorHandle(),
++                Optional.empty(),
++                List.of(),
++                DynamicFilter.EMPTY,
++                sourceMemoryContext::setBytes)) {
++            assertThat(source).isInstanceOf(RecordPageSource.class);
++            assertThat(source.getMemoryUsage()).isZero();
++            assertThat(memoryContext.getBytes()).isPositive();
++            assertThat(source.getNextSourcePage().getPositionCount()).isEqualTo(1);
++            assertThat(source.isFinished()).isTrue();
 +        }
-+        if (password != null) {
-+            properties.setProperty("password", password);
-+        }
-+    }
-+
-+    @Override
-+    public Connection openConnection()
-+            throws SQLException
-+    {
-+        return driver.connect(url, properties);
++        // Closing the source preserves accounting for the retained builder buffers.
++        assertThat(memoryContext.getBytes()).isPositive();
++        sourceMemoryContext.close();
++        assertThat(memoryContext.getBytes()).isZero();
 +    }
 +}
 ```
 
-**File**: `plugin/trino-resource-group-managers/src/main/java/io/trino/plugin/resourcegroups/db/DbResourceGroupsModule.java` (modified, +1/-1)
+**File**: `core/trino-spi/pom.xml` (modified, +12/-0)
 ```diff
-@@ -52,6 +52,6 @@ public static DatabaseMigrator createMigrator(DbResourceGroupConfig config)
-     @Singleton
-     public static Jdbi createJdbi(DbResourceGroupConfig config)
+@@ -240,6 +240,18 @@
+                                     </old>
+                                 </item>
+                                 <!-- Backwards incompatible changes since the previous release -->
++                                <item>
++                                    <code>java.method.numberOfParametersChanged</code>
++                                    <old>method void io.trino.spi.connector.RecordPageSource::&lt;init&gt;(io.trino.spi.connector.RecordSet)</old>
++                                    <new>method void io.trino.spi.connector.RecordPageSource::&lt;init&gt;(io.trino.spi.connector.RecordSet, io.trino.spi.connector.MemoryContext)</new>
++                                    <justification>Require a MemoryContext to replace polling through ConnectorPageSource.getMemoryUsage</justification>
++                                </item>
++                                <item>
++                                    <code>java.method.numberOfParametersChanged</code>
++                                    <old>method void io.trino.spi.connector.RecordPageSource::&lt;init&gt;(java.util.List&lt;io.trino.spi.type.Type&gt;, io.trino.spi.connector.RecordCursor)</old>
++                                    <new>method void io.trino.spi.connector.RecordPageSource::&lt;init&gt;(java.util.List&lt;io.trino.spi.type.Type&gt;, io.trino.spi.connector.RecordCursor, io.trino.spi.connector.MemoryContext)</new>
++                                    <justification>Require a MemoryContext to replace polling through ConnectorPageSource.getMemoryUsage</justification>
++                                </item>
+                                 <item>
+                                     <ignore>true</ignore>
+                                     <code>java.method.removed</code>
+```
+
+**File**: `core/trino-spi/src/main/java/io/trino/spi/connector/RecordPageSource.java` (modified, +22/-9)
+```diff
+@@ -30,18 +30,28 @@ public class RecordPageSource
+     private final RecordCursor cursor;
+     private final List<Type> types;
+     private final PageBuilder pageBuilder;
++    private final MemoryContext memoryContext;
+     private boolean closed;
+ 
+-    public RecordPageSource(RecordSet recordSet)
++    public RecordPageSource(RecordSet recordSet, MemoryContext memoryContext)
      {
--        return Jdbi.create(config.getConfigDbUrl(), config.getConfigDbUser(), config.getConfigDbPassword());
-+        return Jdbi.create(ClassLoaderAwareConnectionFactory.create(config.getConfigDbUrl(), config.getConfigDbUser(), config.getConfigDbPassword()));
+-        this(recordSet.getColumnTypes(), recordSet.cursor());
++        this(recordSet.getColumnTypes(), recordSet.cursor(), memoryContext);
      }
- }
-```
-
-**File**: `plugin/trino-resource-group-managers/src/test/java/io/trino/plugin/resourcegroups/db/BaseTestDbResourceGroupsFlywayMigration.java` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@
- public abstract class BaseTestDbResourceGroupsFlywayMigration
- {
-     protected final JdbcDatabaseContainer<?> container = startContainer();
--    protected final Jdbi jdbi = Jdbi.create(container.getJdbcUrl(), container.getUsername(), container.getPassword());
-+    protected final Jdbi jdbi = Jdbi.create(ClassLoaderAwareConnectionFactory.create(container.getJdbcUrl(), container.getUsername(), container.getPassword()));
  
-     protected abstract JdbcDatabaseContainer<?> startContainer();
+-    public RecordPageSource(List<Type> types, RecordCursor cursor)
++    public RecordPageSource(List<Type> types, RecordCursor cursor, MemoryContext memoryContext)
+     {
+         this.cursor = requireNonNull(cursor, "cursor is null");
+         this.types = List.copyOf(requireNonNull(types, "types is null"));
+         this.pageBuilder = new PageBuilder(this.types);
++        this.memoryContext = requireNonNull(memoryContext, "memoryContext is null");
++        try {
++            updateMemoryUsage();
++        }
++        catch (Throwable throwable) {
++            try (cursor) {
++                throw throwable;
++            }
++        }
+     }
  
-```
-
-**File**: `testing/trino-tests/pom.xml` (modified, +6/-0)
-```diff
-@@ -38,6 +38,12 @@
-             <scope>test</scope>
-         </dependency>
+     public RecordCursor getCursor()
+@@ -61,17 +71,13 @@ public long getReadTimeNanos()
+         return cursor.getReadTimeNanos();
+     }
  
-+        <dependency>
-+            <groupId>com.h2database</groupId>
-+            <artifactId>h2</artifactId>
-+            <scope>test</scope>
-+        </dependency>
-+
-         <dependency>
-             <groupId>com.squareup.okhttp3</groupId>
-             <artifactId>okhttp-jvm</artifactId>
-```
-
-**File**: `testing/trino-tests/src/test/java/io/trino/execution/resourcegroups/db/H2ResourceGroupsModule.java` (modified, +12/-0)
-```diff
-@@ -23,6 +23,9 @@
- import io.trino.plugin.resourcegroups.db.DbResourceGroupConfigurationManager;
- import io.trino.plugin.resourcegroups.db.H2DaoProvider;
- import io.trino.plugin.resourcegroups.db.ResourceGroupsDao;
-+import org.h2.jdbcx.JdbcDataSource;
-+
-+import javax.sql.DataSource;
+-    @Override
+-    public long getMemoryUsage()
+-    {
+-        return cursor.getMemoryUsage() + pageBuilder.getRetainedSizeInBytes();
+-    }
+-
+     @Override
+     public void close()
+     {
+         closed = true;
+         cursor.close();
++        // The builder remains retained; its reservation is released by the context's owner.
++        updateMemoryUsage();
+     }
  
- import static io.airlift.configuration.ConfigBinder.configBinder;
+     @Override
+@@ -124,9 +130,16 @@ else if (javaType == Slice.class) {
+         if ((closed && !pageBuilder.isEmpty()) || pageBuilder.isFull()) {
+             Page page = pageBuilder.build();
+             pageBuilder.reset();
++            updateMemoryUsage();
+             return SourcePage.create(page);
+         }
  
-@@ -44,4 +47,13 @@ public static DatabaseMigrator createMigrator()
-         // H2 tests set up schema manually; skip Flyway migrations for this non-production database.
-         return () -> {};
++        updateMemoryUsage();
+         return null;
      }
 +
-+    @Provides
-+    @Singleton
-+    public static DataSource createDataSource(DbResourceGroupConfig config)
++    private void updateMemoryUsage()
 +    {
-+        JdbcDataSource ds = new JdbcDataSource();
-+        ds.setURL(config.getConfigDbUrl());
-+        return ds;
++        memoryContext.setBytes(cursor.getMemoryUsage() + pageBuilder.getRetainedSizeInBytes());
 +    }
  }
 ```
 
----
-
-### Incident Patch 3: `54bde53e` (2026-09-15)
-**Commit Message**: Require config-db-url and document it
-
-Add @NotNull validation and a @ConfigDescription so a missing
-resource-groups.config-db-url fails fast with a clear message
-instead of surfacing as a downstream NPE.
-
-**File**: `plugin/trino-resource-group-managers/src/main/java/io/trino/plugin/resourcegroups/db/DbResourceGroupConfig.java` (modified, +3/-0)
+**File**: `core/trino-spi/src/test/java/io/trino/spi/connector/TestRecordPageSource.java` (added, +158/-0)
 ```diff
-@@ -19,6 +19,7 @@
- import io.airlift.units.Duration;
- import io.airlift.units.MinDuration;
- import jakarta.validation.constraints.AssertTrue;
-+import jakarta.validation.constraints.NotNull;
- 
- import static java.util.concurrent.TimeUnit.HOURS;
- import static java.util.concurrent.TimeUnit.SECONDS;
-@@ -33,12 +34,14 @@ public class DbResourceGroupConfig
-     private Duration refreshInterval = new Duration(1, SECONDS);
-     private boolean runMigrationsEnabled = true;
- 
-+    @NotNull
-     public String getConfigDbUrl()
-     {
-         return configUrl;
-     }
- 
-     @Config("resource-groups.config-db-url")
-+    @ConfigDescription("JDBC URL of the resource-groups configuration database")
-     public DbResourceGroupConfig setConfigDbUrl(String configUrl)
-     {
-         this.configUrl = configUrl;
-```
-
-**File**: `plugin/trino-resource-group-managers/src/test/java/io/trino/plugin/resourcegroups/db/TestDbResourceGroupConfig.java` (modified, +12/-1)
-```diff
-@@ -16,6 +16,7 @@
- import com.google.common.collect.ImmutableMap;
- import io.airlift.units.Duration;
- import jakarta.validation.constraints.AssertTrue;
-+import jakarta.validation.constraints.NotNull;
- import org.junit.jupiter.api.Test;
- 
- import java.util.Map;
-@@ -70,7 +71,17 @@ public void testExplicitPropertyMappings()
-     }
- 
-     @Test
--    public void testValidation()
-+    public void testConfigDbUrlRequired()
+@@ -0,0 +1,158 @@
++/*
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package io.trino.spi.connector;
++
++import io.trino.spi.PageBuilder;
++import io.trino.spi.connector.InMemoryRecordSet.InMemoryRecordCursor;
++import io.trino.spi.type.Type;
++import org.junit.jupiter.api.Test;
++
++import java.util.List;
++import java.util.concurrent.atomic.AtomicLong;
++import java.util.stream.LongStream;
++
++import static io.trino.spi.type.BigintType.BIGINT;
++import static io.trino.spi.type.VarcharType.VARCHAR;
++import static java.util.Collections.nCopies;
++import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
++
++class TestRecordPageSource
++{
++    @Test
++    public void testCloseOnInitialMemoryReservationFailure()
 +    {
-+        assertFailsValidation(
-+                new DbResourceGroupConfig(),
-+                "configDbUrl",
-+                "must not be null",
-+                NotNull.class);
++        RuntimeException reservationFailure = new RuntimeException("reservation failed");
++        RuntimeException closeFailure = new RuntimeException("close failed");
++        MemoryTrackingRecordCursor cursor = new MemoryTrackingRecordCursor(List.of(BIGINT), List.of())
++        {
++            @Override
++            public void close()
++            {
++                super.close();
++                throw closeFailure;
++            }
++        };
++
++        assertThatThrownBy(() -> new RecordPageSource(List.of(BIGINT), cursor, _ -> {
++            throw reservationFailure;
++        })).isSameAs(reservationFailure);
++        assertThat(cursor.closed).isTrue();
++        assertThat(reservationFailure).hasSuppressedException(closeFailure);
 +    }
 +
 +    @Test
-+    public void testRefreshIntervalMustNotExceedMaxRefreshInterval()
-     {
-         assertFailsValidation(
-                 new DbResourceGroupConfig().setRefreshInterval(new Duration(2, HOURS)),
++    public void testMemoryUsageUpdates()
++    {
++        List<List<Object>> records = LongStream.range(0, 5000)
++                .mapToObj(value -> List.<Object>of(value))
++                .toList();
++        MemoryTrackingRecordCursor cursor = new MemoryTrackingRecordCursor(List.of(BIGINT), records);
++        AtomicLong reportedBytes = new AtomicLong(-1);
++        long emptyBuilderBytes = new PageBuilder(List.of(BIGINT)).getRetainedSizeInBytes();
++        try (RecordPageSource source = new RecordPageSource(List.of(BIGINT), cursor, reportedBytes::set)) {
++            assertThat(reportedBytes).hasValue(cursor.getMemoryUsage() + emptyBuilderBytes);
++            assertThat(source.getMemoryUsage()).isZero();
++
++            // A request can grow both the cursor and the builder without returning a page.
++            assertThat(source.getNextSourcePage()).isNull();
++            assertThat(reportedBytes.get()).isGreaterThan(cursor.getMemoryUsage() + 4096L * Long.BYTES);
++            assertThat(source.isFinished()).isFalse();
++
++            SourcePage page = source.getNextSourcePage();
++            assertThat(page.getPositionCount()).isEqualTo(5000);
++            assertThat(BIGINT.getLong(page.getBlock(0), 0)).isZero();
++            assertThat(BIGINT.getLong(page.getBlock(0), 4999)).isEqualTo(4999);
++            assertThat(source.isFinished()).isTrue();
++            assertThat(reportedBytes).hasValue(cursor.getMemoryUsage() + emptyBuilderBytes);
++            assertThat(source.getMemoryUsage()).isZero();
++            long beforeClose = reportedBytes.get();
++            long cursorBytes = cursor.getMemoryUsage();
++
++            source.close();
++            assertThat(reportedBytes).hasValue(beforeClose - cursorBytes);
++        }
++        // The builder is still retained. Its reservation is released by the context's owner.
++        assertThat(reportedBytes).hasValue(emptyBuilderBytes);
++        assertThat(reportedBytes.get()).isPositive();
++    }
++
++    @Test
++    public void testFullPages()
++    {
++        InMemoryRecordSet recordSet = new InMemoryRecordSet(List.of(VARCHAR), nCopies(3000, List.of("x".repeat(1024))));
++        AtomicLong reportedBytes = new AtomicLong(-1);
++        long emptyBuilderBytes = new PageBuilder(List.of(VARCHAR)).getRetainedSizeInBytes();
++        try (RecordPageSource source = new RecordPageSource(recordSet, reportedBytes::set)) {
++            assertThat(reportedBytes).hasValue(emptyBuilderBytes);
++            int positions = 0;
++            int pages = 0;
++            while (!source.isFinished()) {
++                SourcePage page = source.getNextSourcePage();
++                assertThat(page).isNotNull();
++                assertThat(reportedBytes).hasValue(emptyBuilderBytes);
++                assertThat(source.getMemoryUsage()).isZero();
++                positions += page.getPositionCount();
++                pages++;
++            }
++            assertThat(po
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #31778** (2026-10-24): Remove duplicated words in messages (@chenjian2664)
+- **PR #31767** (2026-10-25): Bump dep.airlift.version from 453 to 454 (@dependabot[bot])
 - **PR #31764** (2026-10-24): Update Hadoop to 3.3.5-4 (@electrum)
 - **PR #31763** (2026-10-23): Remove Hadoop dependency from trino-tests (@electrum)
 - **PR #31761** (2026-10-23): Support query parameters in MV properties (@findepi)
 - **PR #31760** (2026-10-23): Disable NameNode load check in HDFS test container (@findepi)
-- **PR #31759** (2026-10-23): Fix ineffective Trino coordinator startup timeout (@findepi)
 
 ---
 
@@ -2214,32 +2357,28 @@ instead of surfacing as a downstream NPE.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ineffective Trino coordinator startup timeout
+## X. test code flagged by error-prone 2.51.0
 
 **RULE**:
-When implementing operations in `testing/trino-testing-containers/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-main/src/test/java/io/trino/operator/aggregation/minmaxn/TestDoubleMinNAggregation.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1bff39a8`: ineffective Trino coordinator startup timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d51219a`: test code flagged by error-prone 2.51.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `testing/trino-testing-containers/pom.xml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/test/java/io/trino/operator/aggregation/minmaxn/TestDoubleMinNAggregation.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers-jdbc</artifactId>
-        </dependency>
-
+        PriorityQueue<Double> heap = new PriorityQueue<>(n, (x, y) -> Double.compare(y, x));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        PriorityQueue<Double> heap = new PriorityQueue<>(n, (x, y) -> -Double.compare(x, y));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bff39a8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d51219a` are properly handled with clean fallback behavior.

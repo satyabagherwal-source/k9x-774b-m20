@@ -4968,3 +4968,7 @@
 | `CYCLE-20261025-LQIX` | `2026-10-25T19:45:01.833Z` | `nezhahq/nezha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4427` | Yes (`bde7a8dd...`) |
 | `CYCLE-20261025-LXXH` | `2026-10-25T19:45:11.429Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4428` | Yes (`678f3344...`) |
 | `CYCLE-20261025-M21E` | `2026-10-25T19:45:16.754Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4429` | Yes (`c1a04817...`) |
+| `CYCLE-20261025-UB5W` | `2026-10-25T19:51:41.828Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4430` | Yes (`bfdba204...`) |
+| `CYCLE-20261025-UDBZ` | `2026-10-25T19:51:44.639Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4431` | Yes (`5cfd3784...`) |
+| `CYCLE-20261025-UGJR` | `2026-10-25T19:51:48.807Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4432, Rule 4433` | Yes (`fdedf694...`) |
+| `CYCLE-20261025-UHGY` | `2026-10-25T19:51:50.002Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4434` | Yes (`4527f595...`) |

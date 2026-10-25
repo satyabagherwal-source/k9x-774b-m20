@@ -895,8 +895,8 @@
     "sourceUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
     "sourceVersion": "hf-tongyi-mai-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "1a20e6d5bb01a67f877865a1e3d443400205490fe7326efcb92f2b885518f720",
-    "lastHarvestedAt": "2026-10-21T00:08:44.528Z",
+    "contentHash": "fdedf69475127885e1267152f5daed2fff736d899f0a1f2db2fc1dfb12fca68d",
+    "lastHarvestedAt": "2026-10-25T19:51:48.810Z",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo"
   },
   "hf-meta-llama-meta-llama-3-8b-instruct": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "5fb6a1ff",
+    "sourceVersion": "67e7cf4c",
     "license": "Apache-2.0",
-    "contentHash": "13e167b5951c090d34535d5a9b4331b1f318c18e51d470f44376ddf605fd2a0a",
-    "lastHarvestedAt": "2026-10-25T03:31:56.994Z",
+    "contentHash": "4527f5955bf7d300fb6a72c2cc5b41e4aab95536994b9274ad8f2d0e122ec550",
+    "lastHarvestedAt": "2026-10-25T19:51:50.006Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -7153,10 +7153,10 @@
     "repository": "zeromicro/go-zero",
     "platform": "github",
     "sourceUrl": "https://github.com/zeromicro/go-zero",
-    "sourceVersion": "2b5efac9",
+    "sourceVersion": "fd59ce39",
     "license": "MIT",
-    "contentHash": "05f703e70c2f76303c953f8674c150093d14b93d07ee086ed75e447c8d847fbb",
-    "lastHarvestedAt": "2026-10-25T04:18:54.234Z",
+    "contentHash": "5cfd378456458d57b39d94cfcf69b61aaab8bd2462bfbe7397a9e4d6fe5d8ba5",
+    "lastHarvestedAt": "2026-10-25T19:51:44.642Z",
     "learningId": "learn-github-zeromicro-go-zero"
   },
   "t8y2-dbx": {
@@ -8233,10 +8233,10 @@
     "repository": "maziyarpanahi/openmed",
     "platform": "github",
     "sourceUrl": "https://github.com/maziyarpanahi/openmed",
-    "sourceVersion": "e07e0c56",
+    "sourceVersion": "00e9efd7",
     "license": "Apache-2.0",
-    "contentHash": "a2e46fe020e03ad2820e8327f708850ce1d4aae80b12f0bf0655638fb93ca25a",
-    "lastHarvestedAt": "2026-10-21T02:33:47.166Z",
+    "contentHash": "bfdba2040e2143715974e4f23339333f9a6a03ecda05582be44526b1709e84c6",
+    "lastHarvestedAt": "2026-10-25T19:51:41.832Z",
     "learningId": "learn-github-maziyarpanahi-openmed"
   },
   "bernaferrari-figmatocode": {

@@ -4975,3 +4975,7 @@ Every entry in this ledger must capture:
 | `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `15fa673c` | Multi-dimensional audit evidence | 2026-10-25T19:45:01.837Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `e72789f4` | Multi-dimensional audit evidence | 2026-10-25T19:45:11.432Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `f2f80ab7` | Multi-dimensional audit evidence | 2026-10-25T19:45:16.757Z |
+| `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `00e9efd7` | Multi-dimensional audit evidence | 2026-10-25T19:51:41.832Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `fd59ce39` | Multi-dimensional audit evidence | 2026-10-25T19:51:44.642Z |
+| `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-10-25T19:51:48.810Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `67e7cf4c` | Multi-dimensional audit evidence | 2026-10-25T19:51:50.006Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source**: github ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
-> **Source Version**: `2b5efac9`  
+> **Source Version**: `fd59ce39`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:18:53.920Z  
+> **Timestamp**: 2026-10-25T19:51:44.261Z  
 > **Learning ID**: `learn-github-zeromicro-go-zero`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:18:53.914Z  
+> **Harvest Timestamp**: 2026-10-25T19:51:44.253Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud-native Go microservices framework with cli tool for productivity.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 33400 stars
+- **Stars / Engagement**: 33403 stars
 
 ---
 
@@ -1305,79 +1305,97 @@ func Gunzip(bs []byte) ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b5efac9` (2026-10-24)
-**Commit Message**: fix(filex): only trim trailing newline on tail block in LastLine (#5790)
+### Incident Patch 1: `fd59ce39` (2026-10-25)
+**Commit Message**: fix(filex): return EOF at range end (#5805)
 
-**File**: `core/filex/file.go` (modified, +1/-1)
-```diff
-@@ -83,7 +83,7 @@ func lastLine(filename string, file *os.File) (string, error) {
- 			break
- 		}
- 
--		if buf[n-1] == '\n' {
-+		if offset+int64(n) == info.Size() && buf[n-1] == '\n' {
- 			buf = buf[:n-1]
- 			n--
- 		} else {
-```
+Co-authored-by: kevin <[REDACTED_EMAIL]>
 
-**File**: `core/filex/file_test.go` (modified, +47/-0)
+**File**: `core/filex/rangereader.go` (modified, +8/-1)
 ```diff
 @@ -2,6 +2,7 @@ package filex
  
  import (
+ 	"errors"
++	"io"
  	"os"
-+	"strings"
+ )
+ 
+@@ -31,7 +32,13 @@ func (rr *RangeReader) Read(p []byte) (n int, err error) {
+ 		return 0, err
+ 	}
+ 
+-	if rr.stop < rr.start || rr.start >= stat.Size() {
++	if rr.stop < rr.start || rr.start > stat.Size() {
++		return 0, errExceedFileSize
++	}
++	if rr.start == rr.stop {
++		return 0, io.EOF
++	}
++	if rr.start == stat.Size() {
+ 		return 0, errExceedFileSize
+ 	}
+ 
+```
+
+**File**: `core/filex/rangereader_test.go` (modified, +42/-0)
+```diff
+@@ -1,6 +1,7 @@
+ package filex
+ 
+ import (
++	"io"
+ 	"os"
  	"testing"
  
- 	"github.com/stretchr/testify/assert"
-@@ -218,3 +219,49 @@ func TestLastLineLargeFile(t *testing.T) {
- 	assert.Nil(t, err)
- 	assert.Equal(t, "extra", val)
+@@ -25,6 +26,10 @@ world`
+ 	assert.Equal(t, 3, n)
+ 	assert.Equal(t, `
+ wo`, string(buf[:n]))
++
++	n, err = reader.Read(buf)
++	assert.Zero(t, n)
++	assert.ErrorIs(t, err, io.EOF)
+ }
+ 
+ func TestRangeReader_OutOfRange(t *testing.T) {
+@@ -42,3 +47,40 @@ world`
+ 	_, err = reader.Read(buf)
+ 	assert.NotNil(t, err)
  }
 +
-+func TestLastLineMultipleOfBufSizeAfterSeparator(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		content  string
-+		expected string
-+	}{
-+		{
-+			name:     "single block multiple without trailing newline",
-+			content:  "previous line\n" + strings.Repeat("C", bufSize),
-+			expected: strings.Repeat("C", bufSize),
-+		},
-+		{
-+			name:     "single block multiple with trailing newline",
-+			content:  "previous line\n" + strings.Repeat("C", bufSize) + "\n",
-+			expected: strings.Repeat("C", bufSize),
-+		},
-+		{
-+			name:     "multi-block multiple without trailing newline",
-+			content:  "line 1\nline 2\n" + strings.Repeat("D", 2*bufSize),
-+			expected: strings.Repeat("D", 2*bufSize),
-+		},
-+		{
-+			name:     "multi-block multiple with trailing newline",
-+			content:  "line 1\nline 2\n" + strings.Repeat("D", 2*bufSize) + "\n",
-+			expected: strings.Repeat("D", 2*bufSize),
-+		},
-+		{
-+			name:     "empty line after multiple of bufSize",
-+			content:  "previous line\n" + strings.Repeat("E", bufSize) + "\n\n",
-+			expected: "",
-+		},
++func TestRangeReader_AtFileEOF(t *testing.T) {
++	const text = "hello\nworld"
++	file, err := fs.TempFileWithText(text)
++	if !assert.NoError(t, err) {
++		return
 +	}
++	t.Cleanup(func() {
++		file.Close()
++		os.Remove(file.Name())
++	})
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			filename, err := fs.TempFilenameWithText(tt.content)
-+			assert.Nil(t, err)
-+			defer os.Remove(filename)
++	for _, test := range []struct {
++		name  string
++		start int64
++		want  string
++		err   error
++	}{
++		{name: "range ending at file EOF", start: 5, want: "\nworld"},
++		{name: "empty range at file EOF", start: int64(len(text)), err: io.EOF},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			reader := NewRangeReader(file, test.start, int64(len(text)))
++			buf := make([]byte, len(text)+1)
++			n, err := reader.Read(buf)
++			assert.Equal(t, len(test.want), n)
++			assert.Equal(t, test.want, string(buf[:n]))
++			assert.ErrorIs(t, err, test.err)
 +
-+			val, err := LastLine(filename)
-+			assert.Nil(t, err)
-+			assert.Equal(t, tt.expected, val)
++			for i := 0; i < 2; i++ {
++				n, err = reader.Read(buf)
++				assert.Zero(t, n)
++				assert.ErrorIs(t, err, io.EOF)
++			}
 +		})
 +	}
 +}
@@ -1385,107 +1403,54 @@ Observed empirical fixes and code patches:
 
 ---
 
-### Incident Patch 2: `db0138b4` (2026-10-24)
-**Commit Message**: fix: guard errorWindow count access in String (#5775)
+### Incident Patch 2: `98fe33f5` (2026-10-25)
+**Commit Message**: fix: stop text line scanner at empty EOF (#5798)
 
-Co-authored-by: kevin <[REDACTED_EMAIL]>
-
-**File**: `core/breaker/breaker.go` (modified, +1/-2)
+**File**: `core/iox/textlinescanner.go` (modified, +1/-1)
 ```diff
-@@ -265,9 +265,8 @@ func (ew *errorWindow) add(reason string) {
- }
- 
- func (ew *errorWindow) String() string {
--	reasons := make([]string, 0, ew.count)
--
- 	ew.lock.Lock()
-+	reasons := make([]string, 0, ew.count)
- 	// reverse order
- 	for i := ew.index - 1; i >= ew.index-ew.count; i-- {
- 		reasons = append(reasons, ew.reasons[(i+numHistoryReasons)%numHistoryReasons])
+@@ -33,7 +33,7 @@ func (scanner *TextLineScanner) Scan() bool {
+ 	scanner.line = strings.TrimRight(line, "\n")
+ 	if errors.Is(err, io.EOF) {
+ 		scanner.hasNext = false
+-		return true
++		return len(line) > 0
+ 	} else if err != nil {
+ 		scanner.err = err
+ 		return false
 ```
 
-**File**: `core/breaker/breaker_test.go` (modified, +34/-0)
+**File**: `core/iox/textlinescanner_test.go` (modified, +23/-0)
 ```diff
-@@ -6,6 +6,7 @@ import (
- 	"fmt"
- 	"strconv"
- 	"strings"
-+	"sync"
- 	"testing"
- 	"time"
- 
-@@ -346,6 +347,39 @@ func TestErrorWindow(t *testing.T) {
- 	}
+@@ -24,6 +24,29 @@ func TestScanner(t *testing.T) {
+ 	assert.EqualValues(t, []string{"1", "2", "3", "4"}, lines)
  }
  
-+// Run with -race to detect unsynchronized access between add and String.
-+func TestErrorWindowConcurrentAddAndString(t *testing.T) {
-+	const iterations = 1000
-+	var ew errorWindow
-+	var wg sync.WaitGroup
-+	start := make(chan struct{})
-+	wg.Add(2)
-+	go func() {
-+		defer wg.Done()
-+		<-start
-+		for i := 0; i < iterations; i++ {
-+			ew.add(strconv.Itoa(i))
-+		}
-+	}()
-+	go func() {
-+		defer wg.Done()
-+		<-start
-+		for i := 0; i < iterations; i++ {
-+			_ = ew.String()
-+		}
-+	}()
-+	close(start)
-+	wg.Wait()
++func TestScannerDoesNotReturnEmptyEOF(t *testing.T) {
++	tests := []struct {
++		input string
++		want  []string
++	}{
++		{input: ""},
++		{input: "one\n", want: []string{"one"}},
++		{input: "\n", want: []string{""}},
++		{input: "one\n\n", want: []string{"one", ""}},
++	}
 +
-+	reasons := strings.Split(ew.String(), "\n")
-+	if assert.Len(t, reasons, numHistoryReasons) {
-+		for i, reason := range reasons {
-+			assert.True(t, strings.HasSuffix(reason, " "+strconv.Itoa(iterations-1-i)),
-+				"unexpected reason at index %d: %q", i, reason)
++	for _, test := range tests {
++		scanner := NewTextLineScanner(strings.NewReader(test.input))
++		var lines []string
++		for scanner.Scan() {
++			line, err := scanner.Line()
++			assert.NoError(t, err)
++			lines = append(lines, line)
 +		}
++		assert.Equal(t, test.want, lines)
 +	}
 +}
 +
- func TestPromiseWithReason(t *testing.T) {
- 	tests := []struct {
- 		name   string
-```
-
----
-
-### Incident Patch 3: `8c6f70fb` (2026-10-24)
-**Commit Message**: fix(ci): run required workflows for merge queue (#5845)
-
-**File**: `.github/workflows/codeql-analysis.yml` (modified, +2/-0)
-```diff
-@@ -12,6 +12,8 @@
- name: "CodeQL"
- 
- on:
-+  merge_group:
-+    types: [checks_requested]
-   push:
-     branches: [ master ]
-   pull_request:
-```
-
-**File**: `.github/workflows/go.yml` (modified, +2/-0)
-```diff
-@@ -1,6 +1,8 @@
- name: Go
- 
- on:
-+  merge_group:
-+    types: [checks_requested]
-   push:
-     branches: [ master ]
-   pull_request:
+ func TestBadScanner(t *testing.T) {
+ 	scanner := NewTextLineScanner(iotest.ErrReader(iotest.ErrTimeout))
+ 	assert.False(t, scanner.Scan())
 ```
 
 #### Recent Merged Pull Requests:
@@ -1514,28 +1479,35 @@ Co-authored-by: kevin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. filex): only trim trailing newline on tail block in LastLine (#5790)
+## X. filex): return EOF at range end (#5805)
 
 **RULE**:
-When implementing operations in `core/filex/file.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/filex/rangereader.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b5efac9`: filex): only trim trailing newline on tail block in LastLine (#5790). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd59ce39`: filex): return EOF at range end (#5805). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/filex/file.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/filex/rangereader.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if offset+int64(n) == info.Size() && buf[n-1] == '\n' {
+	"io"
+	if rr.stop < rr.start || rr.start > stat.Size() {
+		return 0, errExceedFileSize
+	}
+	if rr.start == rr.stop {
+		return 0, io.EOF
+	}
+	if rr.start == stat.Size() {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		if buf[n-1] == '\n' {
+	if rr.stop < rr.start || rr.start >= stat.Size() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b5efac9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd59ce39` are properly handled with clean fallback behavior.
