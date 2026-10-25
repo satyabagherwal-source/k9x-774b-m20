@@ -4442,3 +4442,7 @@ https://huggingface.co/HuggingFaceBio/Carbon-X
 # --- Automatically Discovered by AI Scout Engine [2026-10-25T08:35:48.379Z] ---
 # [MOBILE-CROSS-PLATFORM] makecindy/cindy (2796 score) - Consider it done. The open-source AI agent that works out of the box · 想到，就能做到。开
 https://github.com/makecindy/cindy
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-25T13:42:02.035Z] ---
+# [AI-AGENTS] Fei2411/DS-Bot (2471 score) - A team of long-lived bots for DeepSeek Harness, with main bots, bot-to-bot messa
+https://github.com/Fei2411/DS-Bot

@@ -4839,3 +4839,7 @@ Every entry in this ledger must capture:
 | `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `6bb01eab` | Multi-dimensional audit evidence | 2026-10-25T13:30:54.175Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `55988303` | Multi-dimensional audit evidence | 2026-10-25T13:30:56.416Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `4b5d3bc9` | Multi-dimensional audit evidence | 2026-10-25T13:30:59.844Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `3a0164d6` | Multi-dimensional audit evidence | 2026-10-25T13:42:19.162Z |
+| `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-25T13:42:22.685Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `6bc056af` | Multi-dimensional audit evidence | 2026-10-25T13:42:26.283Z |
+| `learn-github-fei2411-ds-bot` | `https://github.com/Fei2411/DS-Bot` | `53518443` | Multi-dimensional audit evidence | 2026-10-25T13:46:00.168Z |

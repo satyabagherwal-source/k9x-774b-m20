@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `9376c568`  
+> **Source Version**: `6bc056af`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:30:19.131Z  
+> **Timestamp**: 2026-10-25T13:42:25.926Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:30:19.125Z  
+> **Harvest Timestamp**: 2026-10-25T13:42:24.110Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3743 stars
+- **Stars / Engagement**: 3773 stars
 
 ---
 
@@ -1009,455 +1009,675 @@ class ResponseCode(Enum):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0f1a287f` (2026-10-22)
-**Commit Message**: Merge pull request #466 from Ontos-AI/fix/wangbinqi/page-memory-root-prefix
+### Incident Patch 1: `7e303128` (2026-10-23)
+**Commit Message**: Merge pull request #468 from Ontos-AI/fix/wangbinqi/page-body-text-preview
 
-Preserve opening pages at the document root
+fix: publish body-only previews for page chunks
 
-**File**: `CONTEXT.md` (modified, +12/-0)
+**File**: `apps/api/tests/contract/test_canonical_demo_bundle_contract.py` (modified, +32/-0)
 ```diff
-@@ -59,6 +59,18 @@ The hierarchical navigation node derived from parsed headings and section paths.
+@@ -7,6 +7,9 @@
+ from contextlib import AbstractAsyncContextManager
+ from pathlib import Path
+ from threading import Event
++import json
++from io import BytesIO
++from zipfile import ZipFile
+ from typing import Literal
  
- The retrieval-visible text, image, or table row attached to a Document Section.
+ import pytest
+@@ -20,6 +23,35 @@ def _write_source(directory: Path, content: str) -> None:
+     (directory / "source.md").write_text(content, encoding="utf-8")
  
-+### Document Root
+ 
++@pytest.mark.asyncio
++async def test_canonical_bundle_keeps_page_body_preview_metadata(
++    api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++    tmp_path: Path,
++) -> None:
++    async with api_client_factory():
++        from app.services.demo.canonical_bundle import CanonicalDemoBundleStore
++        from shared.services.redis import RedisServiceFactory
++        from shared.services.storage.job_file_storage import JobFileStorage
++        from shared.services.storage.zip_chunk_schema import ZipChunkSchemaBuilder
 +
-+The existing document-level container above its chapters. It can own opening
-+content without introducing another chapter.
-+
-+### Document Prefix
-+
-+All physical pages before the first recognized chapter, including covers,
-+opening text, and printed table-of-contents pages. These pages belong directly
-+to the existing document Root; they are not a separate chapter or part of the
-+first chapter.
-+
- ### Document Ingestion
- 
- The workflow that creates a Job, accepts a file or URL source, confirms upload
-```
-
-**File**: `apps/worker/app/services/page_memory/_serialization.py` (modified, +7/-5)
-```diff
-@@ -8,6 +8,8 @@
- 
- from app.services.page_memory._utils import (
-     collapse_page_ranges,
-+    is_document_prefix,
-+    is_fallback_root,
-     page_scope_info,
- )
- from shared.services.chunks.path_segments import split_escaped_document_path
-@@ -39,11 +41,7 @@ def derive_hierarchy_page_scope(
-     if not skeletons:
-         return list(range(1, page_count + 1))
- 
--    has_only_root_fallback = all(
--        getattr(item, "title", "") == "Root"
--        or (getattr(item, "evidence", {}) or {}).get("source") == "fallback_root"
--        for item in skeletons
--    )
-+    has_only_root_fallback = all(is_fallback_root(item) for item in skeletons)
-     if has_only_root_fallback:
-         return list(range(1, page_count + 1))
- 
-@@ -86,6 +84,7 @@ def serialize_skeletons(skeletons: list[Any]) -> list[dict[str, Any]]:
-             "start_page": item.start_page,
-             "end_page": item.end_page,
-             "parent_path": item.parent_path,
-+            "evidence": dict(item.evidence),
-         }
-         for item in skeletons
-     ]
-@@ -100,6 +99,9 @@ def build_hierarchy_tree(skeletons: list[Any]) -> dict[str, Any]:
-     """
-     hierarchy: dict[str, Any] = {}
-     for skel in skeletons:
-+        # Root-owned body is not a chapter nested beneath its own filename.
-+        if is_document_prefix(skel):
-+            continue
-         parts = split_escaped_document_path(
-             getattr(skel, "section_path", "") or ""
-         )
-```
-
-**File**: `apps/worker/app/services/page_memory/_utils.py` (modified, +35/-8)
-```diff
-@@ -6,6 +6,36 @@
- from typing import Any
- 
- 
-+def is_document_prefix(skeleton: Any) -> bool:
-+    """Identify body owned by the existing document root before its chapters."""
-+    return (getattr(skeleton, "evidence", {}) or {}).get("source") == "document_prefix"
-+
-+
-+def is_fallback_root(skeleton: Any) -> bool:
-+    """Keep prefix ownership separate from the full-document Root fallback."""
-+    if is_document_prefix(skeleton):
-+        return False
-+    return (
-+        getattr(skeleton, "title", "") == "Root"
-+        or (getattr(skeleton, "evidence", {}) or {}).get("source") == "fallback_root"
-+    )
-+
-+
-+def derive_excluded_toc_pages(
-+    *,
-+    skeletons: list[Any],
-+    toc_pages: list[int] | None,
-+) -> list[int]:
-+    """Exclude chapter TOCs while retaining every physical prefix page."""
-+    prefix_pages: set[int] = {
-+        page
-+        for skeleton in skeletons
-+        if is_document_prefix(skeleton)
-+        for page in range(skeleton.start_page, skeleton.end_page + 1)
-+    }
-+    return sorted({int(page) for page in (toc_pages or [])} - prefix_pages)
-+
-+
- def sort_skeletons(skeletons: list[Any]) -> list[Any]:
-     """Order skeletons by start page only.
- 
-@@ -73,20 +103,17 @@ def build_hierarchy_scopes(
- ) -> list[CoarseScope]:
-     """Split skeleton list into per-leaf scopes for independent processing.
- 
--    Each TOC leaf skeleton becomes its own scope. ``skeletons`` is leaf-level
--    (produced by ``extract_section_skeletons`` → ``resolve_hierarchy_page_ranges``,
--    which only emits leaf nodes). When multiple leaves share the same page range
-+    Each TOC leaf skeleton and any document-root prefix owner gets its own
-+    scope. Chapter ranges come from ``resolve_hierarchy_page_ranges``; the
-+    root owner preserves physical pages before those chapters without adding
-+    a section. When multiple leaves share the same page range
-     (e.g. unlocated leaves that fell back to the same parent scope), they are
-     merged into a single scope to keep ``scope_id`` unique.
-     """
-     if not skeletons:
-         return []
- 
--    root_fallback = all(
--        getattr(item, "title", "") == "Root"
--        or (getattr(item, "evidence", {}) or {}).get("source") == "fallback_root"
--        for item in skeletons
--    )
-+    root_fallback = all(is_fallback_root(item) for item in skeletons)
-     if root_fallback:
-         ordered = sort_skeletons(skeletons)
-         return [
-```
-
-**File**: `apps/worker/app/services/page_memory/fine_hierarchy.py` (modified, +10/-1)
-```diff
-@@ -24,7 +24,11 @@
- from app.services.page_memory.page_tagger import PageTagResult
- from app.services.page_memory.hierarchy_level_resolver import PageHierarchyLevelResolver
- from app.services.page_memory.skeleton_extractor import SectionSkeleton
--from app.services.page_memory._utils import page_scope_info, sort_skeletons
-+from app.services.page_memory._utils import (
-+    is_document_prefix,
-+    page_scope_info,
-+    sort_skeletons,
-+)
- from shared.services.ai.llm_overrides import get_text_client
- from shared.services.chunks.path_segments import append_document_path
- 
-@@ -57,6 +61,9 @@ def refine_fat_leaf_skeletons(
-     refined: list[SectionSkeleton] = []
- 
-     for index, skeleton in enumerate(coarse_skeletons):
-+        if is_document_prefix(skeleton):
-+            refined.append(skeleton)
-+            continue
-         exclusive_end = _exclusive_end(coarse_skeletons, index)
-         skel_pages = set(range(skeleton.start_page, exclusive_end + 1))
-         overlap = skel_pages & fat_leaf_pages
-@@ -126,6 +133,8 @@ def compute_fat_leaf_pages(
-     excluded = {int(page) for page in (toc_pages or [])}
-     fat_pages: set[int] = set()
-     for idx, skel in enumerate(skeletons):
-+        if is_document_prefix(skel):
-+            continue
-         exclusive_end = _exclusive_end(skeletons, idx)
-         body_pages = [
-             page
-```
-
-**File**: `apps/worker/app/services/page_memory/memory_service.py` (modified, +8/-1)
-```diff
-@@ -22,6 +22,7 @@
-     CoarseScope,
-     build_hierarchy_scopes,
-     collapse_page_ranges,
-+    derive_excluded_toc_pages,
-     page_scope_info,
-     sort_skeletons,
- )
-@@ -274,7 +275,10 @@ def _build_page_dataframe(
-         page_count=page_count,
-     )
-     toc_result = getattr(anatomy, "toc_result", None) if anatomy is not None else None
--    toc_pages = list(getattr(toc_result, "toc_pages", None) or [])
-+    toc_pages = derive_excluded_toc_pages(
-+        skeletons=skeletons,
-+        toc_pages=list(getattr(toc_result, "toc_pages", None) or []),
-+    )
-     coarse_pages_scope = pages_excluding_toc(
-         _derive_hierarchy_page_scope(
-             skeletons=skeletons,
-@@ -571,6 +575,9 @@ def _run_hierarchy_scope(
-     )
- 
-     scope_skeletons = sort_skeletons(scope.skeletons)
-+    toc_pages = derive_excluded_toc_pages(
-+        skeletons=scope_skeletons, toc_pages=toc_pages,
-+    )
-     scope_manifest = _scope_manifest(
-         scope_id=scope.scope_id,
-         skeletons=scope_skeletons,
-```
-
-**File**: `apps/worker/app/services/page_memory/skeleton_extractor.py` (modified, +17/-1)
-```diff
-@@ -28,6 +28,7 @@
-     select_global_toc_hierarchies,
- )
- from loguru import logger
-+from app.services.page_memory._utils import is_document_prefix
- from shared.services.chunks.path_segments import (
-     append_document_path,
-     join_document_path,
-@@ -205,6 +206,21 @@ def extract_section_skeletons(
-         )
-         skeletons.extend(secondary_skeletons)
- 
-+    first_chapter_page: int = min(skeleton.start_page for skeleton in skeletons)
-+    if first_chapter_page > 1:
-+        skeletons.insert(
-+            0,
-+            SectionSkeleton(
-+                section_path=join_document_path([filename]),
-+                level=0,
-+                start_page=1,
-+                end_page=first_chapter_page - 1,
-+                title="Root",
-+                parent_path=None,
-+                evidence={"source": "document_prefix"},
-+            ),
++        directory = tmp_path / "preview-source"
++        _write_source(directory, "original content")
++        chunks = ZipChunkSchemaBuilder().format_chunks([
++            {"chunk_id": f"page-{index}", "type": "page", "path": f"doc.pdf/Section {index}", "content": "header\nbody\nfooter", "metadata": {"body_text_preview": preview}}
++            for index, preview in enumerate(["body", ""])
++        ], {}, {})
++        (directory / "chunks.json").write_text(json.dumps({"chunks": chunks}))
++        bundle = await CanonicalDemoBundleStore(redis_service=RedisServiceFactory.get_service()).ensure_bundle(
++            source_id="contract-body-preview", source_directory=directory,
 +        )
++        storage = JobFileStorage()
++        payload = storage.storage_adapter.download_fileobj(bundle.zip_key, storage.results_bucket)
++        with ZipFile(BytesIO(payload)) as archive:
++            archived = json.loads(archive.read("chunks.json"))["chunks"]
++        assert [chunk["metadata"]["body_text_preview"] for chunk in archived] == ["body", ""]
++        assert all(chunk["content"] == "header\nbody\nfooter" for chunk in archived)
 +
-     _log_unlocated_title_warnings(filename=filename, skeletons=skeletons)
-     return skeletons
- 
-@@ -452,7 +468,7 @@ def _collapse_node(path: str) -> None:
-         # Re-read children after recursive collapse may have mutated by_path
-         child_paths = children_of.get(path, [])
- 
--        if len(child_paths) == 1:
-+        if len(child_paths) == 1 and not is_document_prefix(node):
-             only_child_path = child_paths[0]
-             only_child = by_path[only_child_path]
-             grandchild_paths = children_of.get(only_child_path, [])
++
+ @pytest.mark.asyncio
+ @pytest.mark.parametrize("stage", ("upload", "marker"))
+ async def test_cancellation_retains_lease_until_storage_work_finishes(
 ```
 
-**File**: `apps/worker/scripts/page_memory/_debug_pm_shared.py` (modified, +6/-2)
+**File**: `apps/api/tests/contract/test_shared_demo_corpus_contract.py` (modified, +51/-0)
+```diff
+@@ -211,6 +211,57 @@ def reject_artifact_reads(*args: Any, **kwargs: Any) -> None:
+         assert invalid_revision.status_code == 404
+ 
+ 
++@pytest.mark.asyncio
++@pytest.mark.parametrize("is_demo", [False, True])
++async def test_page_body_preview_survives_private_and_demo_publication(
++    developer_api_client_factory: ClientFactory, is_demo: bool,
++) -> None:
++    async with developer_api_client_factory() as client:
++        from shared.core.database import get_db_context
++        from shared.models.database.job import Job
++        from shared.models.database.job_result import JobResult
++        from shared.services.retrieval.publication_service import RetrievalPublicationService
++
++        if is_demo:
++            job = await create_demo(client, file_name="preview.pdf")
++        else:
++            response = await client.post("/api/v2/jobs", json={
++                "namespace": "preview-contract", "source_type": "file", "file_name": "preview.pdf",
++            })
++            assert response.status_code == 200, response.text
++            job = response.json()
++        revision = str(uuid4())
++        raw_content = "iv\nTable of Contents\nBody text\nfooter"
++
++        def publish(db: Session) -> None:
++            record = db.execute(select(Job).where(Job.job_id == job["job_id"])).scalar_one()
++            db.add(JobResult(id=revision, job_id=record.job_id, delivery_mode="url", document_metadata={"parse_track": "page_memory"}))
++            db.flush()
++            chunks = [{
++                "chunk_id": f"body-preview-{index}", "type": "page", "content": raw_content,
++                "path": f"preview.pdf/Section {index}",
++                "metadata": {"page_nums": [index + 1], "body_text_preview": preview},
++            } for index, preview in enumerate(["Body text", ""])]
++            service = RetrievalPublicationService()
++            service.publish_document_state(db, job_id=record.job_id, job_result_id=revision, chunks=chunks)
++            service.publish_document_graph(db, job_id=record.job_id, job_result_id=revision)
++            record.status = "done"
++
++        async with get_db_context() as db:
++            await db.run_sync(publish)
++            await db.commit()
++        response = await client.get(
++            f"/api/v1/documents/{job['document_id']}/chunks",
++            params={"job_result_id": revision, "page_size": 200},
++        )
++        assert response.status_code == 200, response.text
++        assert response.json()["job_result_id"] == revision
++        chunks = {chunk["chunk_id"]: chunk for chunk in response.json()["chunks"]}
++        assert chunks["body-preview-0"]["metadata"]["body_text_preview"] == "Body text"
++        assert chunks["body-preview-1"]["metadata"]["body_text_preview"] == ""
++        assert all(chunk["content"] == raw_content for chunk in chunks.values())
++
++
+ @pytest.mark.asyncio
+ async def test_preparing_readiness_and_removed_materialization(
+     developer_api_client_factory: ClientFactory,
+```
+
+**File**: `apps/worker/app/services/document_agent/pdf_text.py` (modified, +16/-0)
+```diff
+@@ -173,6 +173,22 @@ def page_bands_map(raw: Any) -> dict[int, PageTextBands]:
+     return {int(page): PageTextBands.from_any(value) for page, value in raw.items()}
+ 
+ 
++def page_body_content_map(raw: Any) -> dict[int, str]:
++    """Keep only explicitly classified body lines; plain legacy text is unknown."""
++    if not isinstance(raw, dict):
++        return {}
++    result: dict[int, str] = {}
++    for page, value in raw.items():
++        has_regions = isinstance(value, PageTextBands) or (
++            isinstance(value, dict) and isinstance(value.get("lines"), list)
++        )
++        result[int(page)] = (
++            "\n".join(line.text for line in PageTextBands.from_any(value).lines if line.region == "body")
++            if has_regions else ""
++        )
++    return result
++
++
+ def strip_margin_text(
+     content: str,
+     margin: str,
+```
+
+**File**: `apps/worker/app/services/document_parser/profiling/doc_profiler.py` (modified, +4/-1)
+```diff
+@@ -8,7 +8,7 @@
+ 
+ from loguru import logger
+ from app.services.document_agent.coordinator import ProfileCoordinator
+-from app.services.document_agent.pdf_text import page_content_map
++from app.services.document_agent.pdf_text import page_body_content_map, page_content_map
+ from app.services.document_agent.visual import purge_debug_visual_dirs, visual_debug_enabled
+ from app.services.document_parser.orchestration.oversized_pdf_policy import (
+     build_oversized_pdf_profile_failed_exception,
+@@ -164,6 +164,9 @@ def _profile_pdf_with_db(
+         page_full_text_cache=page_content_map(
+             coordinator.blackboard.page_full_text_cache
+         ),
++        page_body_text_cache=page_body_content_map(
++            coordinator.blackboard.page_full_text_cache
++        ),
+     )
+     if profile.page_count > settings.MAX_PDF_PAGE_LIMIT:
+         if oversized_policy != "page_memory":
+```
+
+**File**: `apps/worker/app/services/document_parser/profiling/profile_model.py` (modified, +2/-0)
+```diff
+@@ -44,6 +44,7 @@ class ParserDocumentProfile:
+     anatomy: Any | None = None
+     metrics: dict[str, Any] = field(default_factory=dict)
+     page_full_text_cache: dict[int, str] = field(default_factory=dict)
++    page_body_text_cache: dict[int, str] = field(default_factory=dict)
+ 
+     @property
+     def is_pdf(self) -> bool:
+@@ -60,6 +61,7 @@ def has_structural_anatomy(self) -> bool:
+     def to_dict(self) -> dict[str, Any]:
+         data = asdict(self)
+         data.pop("page_full_text_cache", None)
++        data.pop("page_body_text_cache", None)
+         data["routing_category"] = self.routing_category.value
+         if self.anatomy is not None and hasattr(self.anatomy, "to_dict"):
+             data["anatomy"] = self.anatomy.to_dict()
+```
+
+**File**: `apps/worker/app/services/page_memory/body_text_preview.py` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++"""Bound the display preview without changing stored PAGE content."""
++
++from collections.abc import Iterable
++
++
++def build_body_text_preview(texts: Iterable[str]) -> str:
++    return " ".join(" ".join(texts).split())[:180]
+```
+
+**File**: `apps/worker/app/services/page_memory/memory_service.py` (modified, +9/-1)
 ```diff
 @@ -37,6 +37,7 @@
+ 
+ from shared.core.exceptions.domain_exceptions import ValidationException
+ from shared.models.schemas.page_memory_config import PageMemoryConfig, resolve_asset_model
++from app.services.page_memory.body_text_preview import build_body_text_preview
+ 
+ 
+ @dataclass(frozen=True)
+@@ -122,6 +123,7 @@ def run(request: PageMemoryInput) -> tuple[str, pd.DataFrame]:
+                 page_texts=coerce_page_text_cache(
+                     getattr(profile, "page_full_text_cache", None)
+                 ),
++                body_text_by_page=getattr(profile, "page_body_text_cache", None),
+             )
+         else:
+             parsed_df = _build_page_dataframe(
+@@ -454,6 +456,7 @@ def _build_page_dataframe(
+             page_assets_by_page=page_assets_by_page,
+             node_summary_max_pages=page_memory_config.node_summary_max_pages,
+             node_assembly_concurrency=page_memory_config.node_assembly_concurrency,
++            body_text_by_page=getattr(profile, "page_body_text_cache", None),
+         )
+     logger.info(
+         "[page_memory] C7 assembled {} node rows (verdict={})",
+@@ -834,6 +837,7 @@ def _build_whole_doc_dataframe(
+     verdict: str,
+     trace_recorder: Any | None = None,
+     page_texts: dict[int, str] | None = None,
++    body_text_by_page: dict[int, str] | None = None,
+ ) -> pd.DataFrame:
+     pages = list(range(1, page_count + 1)) if page_count > 0 else [1]
+     texts = coerce_page_text_cache(page_texts)
+@@ -853,7 +857,11 @@ def _build_whole_doc_dataframe(
+         "connectto": "",
+         "addtime": get_str_time(),
+         "page_nums": ",".join(str(page) for page in pages),
+-        "extra_metadata": {},
++        "extra_metadata": {
++            "body_text_preview": build_body_text_preview(
++                (body_text_by_page or {}).get(page, "") for page in pages
++            ),
++        },
+     }
+     _record_trace_stage(
+         trace_recorder,
+```
+
+**File**: `apps/worker/app/services/page_memory/node_assembler.py` (modified, +51/-0)
+```diff
+@@ -37,6 +37,8 @@
+     build_asset_rows,
+ )
+ from app.services.page_memory.page_tagger import PageTagResult
++from app.services.page_memory.body_text_preview import build_body_text_preview
++from app.services.document_parser.structure.body_boundary import normalize_match_text
+ from app.services.page_memory.skeleton_extractor import SectionSkeleton
+ from shared.services.ai.summary.engine import summarize
+ 
+@@ -211,6 +213,50 @@ def build_node_content(
+     return "\n\n".join(segment for segment in segments if segment).strip()
+ 
+ 
++def _find_body_heading(lines: list[str], title: str) -> int | None:
++    target = normalize_match_text(title)
++    if not target:
++        return None
++    for start in range(len(lines)):
++        for end in range(start + 1, min(start + 3, len(lines)) + 1):
++            if normalize_match_text(" ".join(lines[start:end])) == target:
++                return start
++    return None
++
++
++def _preview_owned_body(
++    *,
++    view: NodePageView,
++    page_to_leaves: dict[int, list[LeafNode]],
++    body_text_by_page: dict[int, str],
++) -> str:
++    """Respect physical ownership and conservative same-page title boundaries."""
++    texts: list[str] = []
++    for page in view.owned_pages:
++        lines = body_text_by_page.get(page, "").splitlines()
++        leaves = page_to_leaves.get(page, [])
++        current_index = next(index for index, leaf in enumerate(leaves) if leaf.section_path == view.leaf.section_path)
++        following = next((leaf for leaf in leaves[current_index + 1:] if leaf.start_page == page), None)
++        start = 0
++        if page == view.leaf.start_page and view.leaf.title != "Root":
++            located = _find_body_heading(lines, view.leaf.title)
++            if located is None:
++                if following is not None:
++                    break
++                continue
++            start = located
++        end = len(lines)
++        if following is not None:
++            located = _find_body_heading(lines[start:], following.title)
++            if located is None:
++                break
++            end = start + located
++        texts.append("\n".join(lines[start:end]))
++        if following is not None:
++            break
++    return build_body_text_preview(texts)
++
++
+ def next_title_on_page(
+     leaf: LeafNode,
+     *,
+@@ -391,6 +437,7 @@ def build_node_rows(
+     page_assets_by_page: dict[int, list[PageAsset]] | None = None,
+     node_summary_max_pages: int = _NODE_SUMMARY_MAX_PAGES_DEFAULT,
+     node_assembly_concurrency: int = 3,
++    body_text_by_page: dict[int, str] | None = None,
+ ) -> list[dict[str, Any]]:
+     """Assemble one row per leaf section node (node-granularity chunks)."""
+     available_pages = set(raw_text_by_page.keys())
+@@ -473,6 +520,10 @@ def _summarize_one(
+                     output_dir=output_dir,
+                 ),
+             }
++            row["extra_metadata"]["body_text_preview"] = _preview_owned_body(
++                view=view, page_to_leaves=page_to_leaves,
++                body_text_by_page=body_text_by_page or {},
++            )
+             rows.append(row)
+             rows_by_path[leaf.section_path] = row
+ 
+```
+
+---
+
+### Incident Patch 2: `f36a4445` (2026-10-23)
+**Commit Message**: fix: publish body-only previews for page chunks
+
+**File**: `apps/api/tests/contract/test_canonical_demo_bundle_contract.py` (modified, +32/-0)
+```diff
+@@ -7,6 +7,9 @@
+ from contextlib import AbstractAsyncContextManager
+ from pathlib import Path
+ from threading import Event
++import json
++from io import BytesIO
++from zipfile import ZipFile
+ from typing import Literal
+ 
+ import pytest
+@@ -20,6 +23,35 @@ def _write_source(directory: Path, content: str) -> None:
+     (directory / "source.md").write_text(content, encoding="utf-8")
+ 
+ 
++@pytest.mark.asyncio
++async def test_canonical_bundle_keeps_page_body_preview_metadata(
++    api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++    tmp_path: Path,
++) -> None:
++    async with api_client_factory():
++        from app.services.demo.canonical_bundle import CanonicalDemoBundleStore
++        from shared.services.redis import RedisServiceFactory
++        from shared.services.storage.job_file_storage import JobFileStorage
++        from shared.services.storage.zip_chunk_schema import ZipChunkSchemaBuilder
++
++        directory = tmp_path / "preview-source"
++        _write_source(directory, "original content")
++        chunks = ZipChunkSchemaBuilder().format_chunks([
++            {"chunk_id": f"page-{index}", "type": "page", "path": f"doc.pdf/Section {index}", "content": "header\nbody\nfooter", "metadata": {"body_text_preview": preview}}
++            for index, preview in enumerate(["body", ""])
++        ], {}, {})
++        (directory / "chunks.json").write_text(json.dumps({"chunks": chunks}))
++        bundle = await CanonicalDemoBundleStore(redis_service=RedisServiceFactory.get_service()).ensure_bundle(
++            source_id="contract-body-preview", source_directory=directory,
++        )
++        storage = JobFileStorage()
++        payload = storage.storage_adapter.download_fileobj(bundle.zip_key, storage.results_bucket)
++        with ZipFile(BytesIO(payload)) as archive:
++            archived = json.loads(archive.read("chunks.json"))["chunks"]
++        assert [chunk["metadata"]["body_text_preview"] for chunk in archived] == ["body", ""]
++        assert all(chunk["content"] == "header\nbody\nfooter" for chunk in archived)
++
++
+ @pytest.mark.asyncio
+ @pytest.mark.parametrize("stage", ("upload", "marker"))
+ async def test_cancellation_retains_lease_until_storage_work_finishes(
+```
+
+**File**: `apps/api/tests/contract/test_shared_demo_corpus_contract.py` (modified, +51/-0)
+```diff
+@@ -211,6 +211,57 @@ def reject_artifact_reads(*args: Any, **kwargs: Any) -> None:
+         assert invalid_revision.status_code == 404
+ 
+ 
++@pytest.mark.asyncio
++@pytest.mark.parametrize("is_demo", [False, True])
++async def test_page_body_preview_survives_private_and_demo_publication(
++    developer_api_client_factory: ClientFactory, is_demo: bool,
++) -> None:
++    async with developer_api_client_factory() as client:
++        from shared.core.database import get_db_context
++        from shared.models.database.job import Job
++        from shared.models.database.job_result import JobResult
++        from shared.services.retrieval.publication_service import RetrievalPublicationService
++
++        if is_demo:
++            job = await create_demo(client, file_name="preview.pdf")
++        else:
++            response = await client.post("/api/v2/jobs", json={
++                "namespace": "preview-contract", "source_type": "file", "file_name": "preview.pdf",
++            })
++            assert response.status_code == 200, response.text
++            job = response.json()
++        revision = str(uuid4())
++        raw_content = "iv\nTable of Contents\nBody text\nfooter"
++
++        def publish(db: Session) -> None:
++            record = db.execute(select(Job).where(Job.job_id == job["job_id"])).scalar_one()
++            db.add(JobResult(id=revision, job_id=record.job_id, delivery_mode="url", document_metadata={"parse_track": "page_memory"}))
++            db.flush()
++            chunks = [{
++                "chunk_id": f"body-preview-{index}", "type": "page", "content": raw_content,
++                "path": f"preview.pdf/Section {index}",
++                "metadata": {"page_nums": [index + 1], "body_text_preview": preview},
++            } for index, preview in enumerate(["Body text", ""])]
++            service = RetrievalPublicationService()
++            service.publish_document_state(db, job_id=record.job_id, job_result_id=revision, chunks=chunks)
++            service.publish_document_graph(db, job_id=record.job_id, job_result_id=revision)
++            record.status = "done"
++
++        async with get_db_context() as db:
++            await db.run_sync(publish)
++            await db.commit()
++        response = await client.get(
++            f"/api/v1/documents/{job['document_id']}/chunks",
++            params={"job_result_id": revision, "page_size": 200},
++        )
++        assert response.status_code == 200, response.text
++        assert response.json()["job_result_id"] == revision
++        chunks = {chunk["chunk_id"]: chunk for chunk in response.json()["chunks"]}
++        assert chunks["body-preview-0"]["metadata"]["body_text_preview"] == "Body text"
++        assert chunks["body-preview-1"]["metadata"]["body_text_preview"] == ""
++        assert all(chunk["content"] == raw_content for chunk in chunks.values())
++
++
+ @pytest.mark.asyncio
+ async def test_preparing_readiness_and_removed_materialization(
+     developer_api_client_factory: ClientFactory,
+```
+
+**File**: `apps/worker/app/services/document_agent/pdf_text.py` (modified, +16/-0)
+```diff
+@@ -173,6 +173,22 @@ def page_bands_map(raw: Any) -> dict[int, PageTextBands]:
+     return {int(page): PageTextBands.from_any(value) for page, value in raw.items()}
+ 
+ 
++def page_body_content_map(raw: Any) -> dict[int, str]:
++    """Keep only explicitly classified body lines; plain legacy text is unknown."""
++    if not isinstance(raw, dict):
++        return {}
++    result: dict[int, str] = {}
++    for page, value in raw.items():
++        has_regions = isinstance(value, PageTextBands) or (
++            isinstance(value, dict) and isinstance(value.get("lines"), list)
++        )
++        result[int(page)] = (
++            "\n".join(line.text for line in PageTextBands.from_any(value).lines if line.region == "body")
++            if has_regions else ""
++        )
++    return result
++
++
+ def strip_margin_text(
+     content: str,
+     margin: str,
+```
+
+**File**: `apps/worker/app/services/document_parser/profiling/doc_profiler.py` (modified, +4/-1)
+```diff
+@@ -8,7 +8,7 @@
+ 
  from loguru import logger
- 
- from app.services.page_memory._utils import (
-+    derive_excluded_toc_pages,
-     page_scope_info,
-     scope_id_for_pages,
-     sort_skeletons,
-@@ -1342,7 +1343,7 @@ def load_hierarchy_artifact(path: Path) -> tuple[dict[str, Any], list[Any]]:
-             SectionSkeleton(
-                 section_path=section_path,
-                 title=title,
--                level=int(node.get("level") or 1),
-+                level=int(node.get("level", 1)),
-                 start_page=int(node.get("start_page") or 1),
-                 end_page=int(node.get("end_page") or node.get("start_page") or 1),
-                 parent_path=node.get("parent_path"),
-@@ -1531,7 +1532,10 @@ def build_debug_coarse_scopes(
-     from app.services.page_memory._utils import build_hierarchy_scopes
- 
-     toc_result = getattr(anatomy, "toc_result", None) if anatomy is not None else None
--    toc_pages = list(getattr(toc_result, "toc_pages", None) or [])
-+    toc_pages = derive_excluded_toc_pages(
-+        skeletons=skeletons,
-+        toc_pages=list(getattr(toc_result, "toc_pages", None) or []),
-+    )
-     toc_page_set = set()
-     for raw in toc_pages:
-         try:
+ from app.services.document_agent.coordinator import ProfileCoordinator
+-from app.services.document_agent.pdf_text import page_content_map
++from app.services.document_agent.pdf_text import page_body_content_map, page_content_map
+ from app.services.document_agent.visual import purge_debug_visual_dirs, visual_debug_enabled
+ from app.services.document_parser.orchestration.oversized_pdf_policy import (
+     build_oversized_pdf_profile_failed_exception,
+@@ -164,6 +164,9 @@ def _profile_pdf_with_db(
+         page_full_text_cache=page_content_map(
+             coordinator.blackboard.page_full_text_cache
+         ),
++        page_body_text_cache=page_body_content_map(
++            coordinator.blackboard.page_full_text_cache
++        ),
+     )
+     if profile.page_count > settings.MAX_PDF_PAGE_LIMIT:
+         if oversized_policy != "page_memory":
 ```
 
-**File**: `apps/worker/scripts/page_memory/debug_pm_stage3_scope_fine_hierarchy.py` (modified, +6/-0)
+**File**: `apps/worker/app/services/document_parser/profiling/profile_model.py` (modified, +2/-0)
 ```diff
-@@ -67,7 +67,9 @@ def _resolve_scope_processing_pages(
-     toc_pages: list[int],
- ) -> tuple[list[int], list[int]]:
-     from app.services.document_agent.structure.toc_anchoring import pages_excluding_toc
-+    from app.services.page_memory._utils import derive_excluded_toc_pages
+@@ -44,6 +44,7 @@ class ParserDocumentProfile:
+     anatomy: Any | None = None
+     metrics: dict[str, Any] = field(default_factory=dict)
+     page_full_text_cache: dict[int, str] = field(default_factory=dict)
++    page_body_text_cache: dict[int, str] = field(default_factory=dict)
  
-+    toc_pages = derive_excluded_toc_pages(skeletons=skeletons, toc_pages=toc_pages)
-     processing_pages = [
-         int(page) for page in (scope_meta.get("processing_pages") or [])
-     ]
-@@ -132,6 +134,8 @@ def _run_fine_hierarchy_for_scope(
-     require_file(skel_path, hint=f"Stage 3 should have created {skel_path}")
-     scope_meta, active_skeletons = load_scope_skeletons_artifact(skel_path)
-     active_skeletons = sort_skeletons(active_skeletons)
-+    from app.services.page_memory._utils import derive_excluded_toc_pages
-+    toc_pages = derive_excluded_toc_pages(skeletons=active_skeletons, toc_pages=toc_pages)
-     strategy = str(scope_meta.get("strategy") or "coarse_scope")
-     processing_pages, excluded_toc_pages = _resolve_scope_processing_pages(
-         scope_meta=scope_meta,
-@@ -358,6 +362,8 @@ def main() -> int:
-     toc_pages = list(getattr(toc_result, "toc_pages", None) or [])
-     page_memory_config = PageMemoryConfig.default()
-     skeletons = load_pipeline_skeletons(state_path)
-+    from app.services.page_memory._utils import derive_excluded_toc_pages
-+    toc_pages = derive_excluded_toc_pages(skeletons=skeletons, toc_pages=toc_pages)
- 
-     logger.info("█" * 70)
-     logger.info(f"  STAGE 3: SCOPE + FINE HIERARCHY — {filename}")
+     @property
+     def is_pdf(self) -> bool:
+@@ -60,6 +61,7 @@ def has_structural_anatomy(self) -> bool:
+     def to_dict(self) -> dict[str, Any]:
+         data = asdict(self)
+         data.pop("page_full_text_cache", None)
++        data.pop("page_body_text_cache", None)
+         data["routing_category"] = self.routing_category.value
+         if self.anatomy is not None and hasattr(self.anatomy, "to_dict"):
+             data["anatomy"] = self.anatomy.to_dict()
 ```
 
----
-
-### Incident Patch 2: `573ada84` (2026-10-22)
-**Commit Message**: test: resolve live page-memory modules after contract reload
-
-**File**: `apps/worker/tests/contract/test_page_memory_root_prefix_contract.py` (modified, +19/-17)
+**File**: `apps/worker/app/services/page_memory/body_text_preview.py` (added, +7/-0)
 ```diff
-@@ -19,23 +19,6 @@
- os.environ.setdefault("S3_SECRET_ACCESS_KEY", "test")
- os.environ.setdefault("S3_TEMP_PATH", "/tmp")
- 
--from app.services.document_agent.structure.anchoring_primitives import (
--    SkeletonAnchor,
--    serialize_skeleton_anchor,
--    serialize_title_node,
--)
--from app.services.document_agent.structure.hierarchy_locator import (
--    TitleMatch,
--    TitleNode,
--)
--from app.services.page_memory import memory_service, page_renderer, page_tagger
--from app.services.page_memory.page_tagger import PageTagResult
--from shared.models.schemas.page_memory_config import PageMemoryConfig
--from shared.services.chunks.dataframe_chunk_converter import dataframe_to_chunks
--from shared.services.retrieval.search.lexical_text import section_path_from_chunk_path
--from shared.services.storage.zip_chunk_schema import ZipChunkSchemaBuilder
--from shared.services.storage.zip_doc_navigation import ZipDocNavigationBuilder
--
- 
- @pytest.mark.parametrize(
-     ("page_count", "chapter_pages", "toc_pages"),
-@@ -61,6 +44,25 @@ def test_opening_pages_keep_root_ownership_and_page_citation_assets(
-     chapter_pages: list[int],
-     toc_pages: list[int],
- ) -> None:
-+    # Database contracts evict application modules after collection. Resolve
-+    # live modules so provider patches reach the same renderer as the use case.
-+    from app.services.document_agent.structure.anchoring_primitives import (
-+        SkeletonAnchor,
-+        serialize_skeleton_anchor,
-+        serialize_title_node,
-+    )
-+    from app.services.document_agent.structure.hierarchy_locator import (
-+        TitleMatch,
-+        TitleNode,
-+    )
-+    from app.services.page_memory import memory_service, page_renderer, page_tagger
-+    from app.services.page_memory.page_tagger import PageTagResult
-+    from shared.models.schemas.page_memory_config import PageMemoryConfig
-+    from shared.services.chunks.dataframe_chunk_converter import dataframe_to_chunks
-+    from shared.services.retrieval.search.lexical_text import section_path_from_chunk_path
-+    from shared.services.storage.zip_chunk_schema import ZipChunkSchemaBuilder
-+    from shared.services.storage.zip_doc_navigation import ZipDocNavigationBuilder
+@@ -0,0 +1,7 @@
++"""Bound the display preview without changing stored PAGE content."""
 +
-     filename: str = "document.pdf"
-     titles: list[str] = [f"Chapter {page}" for page in chapter_pages]
-     anatomy: SimpleNamespace = SimpleNamespace(
++from collections.abc import Iterable
++
++
++def build_body_text_preview(texts: Iterable[str]) -> str:
++    return " ".join(" ".join(texts).split())[:180]
 ```
 
-**File**: `docs/spacex-hierarchy-fix.md` (modified, +7/-0)
+**File**: `apps/worker/app/services/page_memory/memory_service.py` (modified, +9/-1)
 ```diff
-@@ -93,6 +93,13 @@ reload before its repair. The final focused run passed **102 contracts**:
-   apps/worker/tests/contract/test_profile_skeleton_anchor_wiring_contract.py -q
- ```
+@@ -37,6 +37,7 @@
  
-+The full Worker contract suite also passed **405 contracts**, including the
-+database contracts that reload application modules between environments:
-+
-+```sh
-+.venv/bin/pytest apps/worker/tests/contract -q
-+```
-+
- This includes direct-root text and full-page citation assets, TOC retention in
- the prefix, unchanged chapter TOC policy, first-page chapters, no-TOC fallback,
- filename-only publication/navigation projection, and staged artifact reload.
+ from shared.core.exceptions.domain_exceptions import ValidationException
+ from shared.models.schemas.page_memory_config import PageMemoryConfig, resolve_asset_model
++from app.services.page_memory.body_text_preview import build_body_text_preview
+ 
+ 
+ @dataclass(frozen=True)
+@@ -122,6 +123,7 @@ def run(request: PageMemoryInput) -> tuple[str, pd.DataFrame]:
+                 page_texts=coerce_page_text_cache(
+                     getattr(profile, "page_full_text_cache", None)
+                 ),
++                body_text_by_page=getattr(profile, "page_body_text_cache", None),
+             )
+         else:
+             parsed_df = _build_page_dataframe(
+@@ -454,6 +456,7 @@ def _build_page_dataframe(
+             page_assets_by_page=page_assets_by_page,
+             node_summary_max_pages=page_memory_config.node_summary_max_pages,
+             node_assembly_concurrency=page_memory_config.node_assembly_concurrency,
++            body_text_by_page=getattr(profile, "page_body_text_cache", None),
+         )
+     logger.info(
+         "[page_memory] C7 assembled {} node rows (verdict={})",
+@@ -834,6 +837,7 @@ def _build_whole_doc_dataframe(
+     verdict: str,
+     trace_recorder: Any | None = None,
+     page_texts: dict[int, str] | None = None,
++    body_text_by_page: dict[int, str] | None = None,
+ ) -> pd.DataFrame:
+     pages = list(range(1, page_count + 1)) if page_count > 0 else [1]
+     texts = coerce_page_text_cache(page_texts)
+@@ -853,7 +857,11 @@ def _build_whole_doc_dataframe(
+         "connectto": "",
+         "addtime": get_str_time(),
+         "page_nums": ",".join(str(page) for page in pages),
+-        "extra_metadata": {},
++        "extra_metadata": {
++            "body_text_preview": build_body_text_preview(
++                (body_text_by_page or {}).get(page, "") for page in pages
++            ),
++        },
+     }
+     _record_trace_stage(
+         trace_recorder,
 ```
 
----
-
-### Incident Patch 3: `ecb737f6` (2026-10-22)
-**Commit Message**: docs: document demo reprocessing after prefix repair
-
-**File**: `docs/spacex-hierarchy-fix.md` (modified, +11/-15)
+**File**: `apps/worker/app/services/page_memory/node_assembler.py` (modified, +51/-0)
 ```diff
-@@ -80,8 +80,7 @@ is separate from the prefix-repair validation.
+@@ -37,6 +37,8 @@
+     build_asset_rows,
+ )
+ from app.services.page_memory.page_tagger import PageTagResult
++from app.services.page_memory.body_text_preview import build_body_text_preview
++from app.services.document_parser.structure.body_boundary import normalize_match_text
+ from app.services.page_memory.skeleton_extractor import SectionSkeleton
+ from shared.services.ai.summary.engine import summarize
  
- ### Prefix-repair verification on 2026-10-22
+@@ -211,6 +213,50 @@ def build_node_content(
+     return "\n\n".join(segment for segment in segments if segment).strip()
  
--Validation ran on `oracle.ylioo.com` in the isolated workspace
--`/tmp/knowhere-root-prefix-20261022`, based on `main` commit
-+Validation ran in an isolated Linux ARM64 environment, based on `main` commit
- `2ed1889626f63240bd0894ec0c24b7a7c5217dfb`.
  
- The new output contract failed for both missing-prefix examples before the
-@@ -115,18 +114,15 @@ SpaceX rendered only the missing prefix and reused the original body results,
- rather than rerunning all 407 pages. Thus this is captured-profile seam
- verification, not a fresh full-provider parse or production deployment.
++def _find_body_heading(lines: list[str], title: str) -> int | None:
++    target = normalize_match_text(title)
++    if not target:
++        return None
++    for start in range(len(lines)):
++        for end in range(start + 1, min(start + 3, len(lines)) + 1):
++            if normalize_match_text(" ".join(lines[start:end])) == target:
++                return start
++    return None
++
++
++def _preview_owned_body(
++    *,
++    view: NodePageView,
++    page_to_leaves: dict[int, list[LeafNode]],
++    body_text_by_page: dict[int, str],
++) -> str:
++    """Respect physical ownership and conservative same-page title boundaries."""
++    texts: list[str] = []
++    for page in view.owned_pages:
++        lines = body_text_by_page.get(page, "").splitlines()
++        leaves = page_to_leaves.get(page, [])
++        current_index = next(index for index, leaf in enumerate(leaves) if leaf.section_path == view.leaf.section_path)
++        following = next((leaf for leaf in leaves[current_index + 1:] if leaf.start_page == page), None)
++        start = 0
++        if page == view.leaf.start_page and view.leaf.title != "Root":
++            located = _find_body_heading(lines, view.leaf.title)
++            if located is None:
++                if following is not None:
++                    break
++                continue
++            start = located
++        end = len(lines)
++        if following is not None:
++            located = _find_body_heading(lines[start:], following.title)
++            if located is None:
++                break
++            end = start + located
++        texts.append("\n".join(lines[start:end]))
++        if following is not None:
++            break
++    return build_body_text_preview(texts)
++
++
+ def next_title_on_page(
+     leaf: LeafNode,
+     *,
+@@ -391,6 +437,7 @@ def build_node_rows(
+     page_assets_by_page: dict[int, list[PageAsset]] | None = None,
+     node_summary_max_pages: int = _NODE_SUMMARY_MAX_PAGES_DEFAULT,
+     node_assembly_concurrency: int = 3,
++    body_text_by_page: dict[int, str] | None = None,
+ ) -> list[dict[str, Any]]:
+     """Assemble one row per leaf section node (node-granularity chunks)."""
+     available_pages = set(raw_text_by_page.keys())
+@@ -473,6 +520,10 @@ def _summarize_one(
+                     output_dir=output_dir,
+                 ),
+             }
++            row["extra_metadata"]["body_text_preview"] = _preview_owned_body(
++                view=view, page_to_leaves=page_to_leaves,
++                body_text_by_page=body_text_by_page or {},
++            )
+             rows.append(row)
+             rows_by_path[leaf.section_path] = row
  
--The one-off replay command was:
-+### Existing demo revisions after deployment
- 
--```sh
--PYTHONPATH=apps/worker:packages/shared-python \
--  .venv/bin/python /tmp/knowhere-root-prefix-replay.py
--```
-+Deploying the Worker repair does not regenerate existing parsed revisions.
-+After confirming the deployed Worker includes this change, reparse the known
-+affected Meta release and SpaceX filing through the maintainer demo ingestion
-+flow. Audit the remaining READY demos for missing opening pages before
-+selecting additional sources. The restoration helper supports source selection
-+and `--reparse-ready`; keep the previous revision available while an update runs.
- 
--Remote evidence is retained in `/tmp/knowhere-root-prefix-red.log`,
--`/tmp/knowhere-root-prefix-staged-red.log`,
--`/tmp/knowhere-root-prefix-focused.log`,
--`/tmp/knowhere-root-prefix-real-replay.log`, and
--`/tmp/knowhere-root-prefix-replay-summary.json`. The replay script SHA-256 is
--`906e0a6458e3327799d2ae07921ef3cfe4e60d8868a3e1853889016ac6696c6e`.
--Rendered assets and per-document reports remain under
--`/tmp/knowhere-root-prefix-replay/`.
-+Validate physical-page coverage, prefix TOC retention, filename-only root-body
-+paths, and page-citation assets on each new revision. Confirm that downstream
-+readers consume the new revision after publication.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #470** (2026-10-24): chore: promote main to staging (query-mode-router + pending) (@EricNGOntos)
+- **PR #469** (2026-10-24): feat: add retrieval query mode router (agent vs classic) (@EricNGOntos)
+- **PR #468** (2026-10-23): fix: publish body-only previews for page chunks (@suguanYang)
 - **PR #467** (2026-10-22): feat: expose revision-pinned demo document structure (@suguanYang)
 - **PR #466** (2026-10-22): Preserve opening pages at the document root (@suguanYang)
 - **PR #464** (2026-10-16): feat: IPTC domain taxonomy, TOC keywords, and image region metadata (@EricNGOntos)
-- **PR #463** (2026-10-16): fix: return 400 for invalid webhook configuration (@suguanYang)
-- **PR #462** (2026-10-16): feat: unified chunk relations, importance, and entities-first metadata (@EricNGOntos)
-- **PR #461** (2026-10-13): fix: retain the production QStash token region (@suguanYang)
 
 ---
 
@@ -1477,32 +1697,43 @@ Preserve opening pages at the document root
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #466 from Ontos-AI/fix/wangbinqi/page-memory-root-prefix
+## X. Merge pull request #468 from Ontos-AI/fix/wangbinqi/page-body-text-preview
 
 **RULE**:
-When implementing operations in `CONTEXT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/api/tests/contract/test_canonical_demo_bundle_contract.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0f1a287f`: Merge pull request #466 from Ontos-AI/fix/wangbinqi/page-memory-root-prefix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7e303128`: Merge pull request #468 from Ontos-AI/fix/wangbinqi/page-body-text-preview. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTEXT.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/api/tests/contract/test_canonical_demo_bundle_contract.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-### Document Root
+import json
+from io import BytesIO
+from zipfile import ZipFile
+@pytest.mark.asyncio
+async def test_canonical_bundle_keeps_page_body_preview_metadata(
+    api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
+    tmp_path: Path,
+) -> None:
+    async with api_client_factory():
+        from app.services.demo.canonical_bundle import CanonicalDemoBundleStore
+        from shared.services.redis import RedisServiceFactory
+        from shared.services.storage.job_file_storage import JobFileStorage
+        from shared.services.storage.zip_chunk_schema import ZipChunkSchemaBuilder
 
-The existing document-level container above its chapters. It can own opening
-content without introducing another chapter.
-
-### Document Prefix
-
-All physical pages before the first recognized chapter, including covers,
-opening text, and printed table-of-contents pages. These pages belong directly
-to the existing document Root; they are not a separate chapter or part of the
-first chapter.
-
+        directory = tmp_path / "preview-source"
+        _write_source(directory, "original content")
+        chunks = ZipChunkSchemaBuilder().format_chunks([
+            {"chunk_id": f"page-{index}", "type": "page", "path": f"doc.pdf/Section {index}", "content": "header\nbody\nfooter", "metadata": {"body_text_preview": preview}}
+            for index, preview in enumerate(["body", ""])
+        ], {}, {})
+        (directory / "chunks.json").write_text(json.dumps({"chunks": chunks}))
+        bundle = await CanonicalDemoBundleStore(redis_service=RedisServiceFactory.get_service()).ensure_bundle(
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1512,4 +1743,4 @@ first chapter.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0f1a287f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7e303128` are properly handled with clean fallback behavior.

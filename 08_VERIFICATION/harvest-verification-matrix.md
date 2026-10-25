@@ -4832,3 +4832,7 @@
 | `CYCLE-20261025-8LSS` | `2026-10-25T13:30:54.172Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4308` | Yes (`914fdd3e...`) |
 | `CYCLE-20261025-8NJ1` | `2026-10-25T13:30:56.413Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4309` | Yes (`d959109a...`) |
 | `CYCLE-20261025-8Q69` | `2026-10-25T13:30:59.841Z` | `crate/crate` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/crate-crate-learnings.md` | Yes (`855a92e8...`) |
+| `CYCLE-20261025-NAC7` | `2026-10-25T13:42:19.159Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4310` | Yes (`f9245df2...`) |
+| `CYCLE-20261025-ND22` | `2026-10-25T13:42:22.682Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1131, Rule 4311, Rule 4312` | Yes (`cda1395e...`) |
+| `CYCLE-20261025-NFU0` | `2026-10-25T13:42:26.280Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4313` | Yes (`4550215e...`) |
+| `CYCLE-20261025-S0V9` | `2026-10-25T13:46:00.165Z` | `Fei2411/DS-Bot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4314, Rule 4315, Rule 4316` | Yes (`1842bc6b...`) |

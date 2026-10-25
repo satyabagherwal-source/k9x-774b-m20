@@ -18616,5 +18616,20 @@
     "qualityScore": 2796,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-25T08:33:52.879Z"
+  },
+  {
+    "name": "DS-Bot",
+    "fullName": "Fei2411/DS-Bot",
+    "url": "https://github.com/Fei2411/DS-Bot",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A team of long-lived bots for DeepSeek Harness, with main bots, bot-to-bot messages and group chats.",
+    "stars": 3828,
+    "forks": 357,
+    "openIssues": 104,
+    "language": "JavaScript",
+    "qualityScore": 2471,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-25T13:38:16.002Z"
   }
 ]

@@ -445,8 +445,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceVersion": "hf-orcarouter-orcasaq-2-27b",
     "license": "Open-Source",
-    "contentHash": "31840917bd1619ff4fe0c85b586721e1eb815b7b3122ffe8b4726691a36bb713",
-    "lastHarvestedAt": "2026-10-20T18:27:21.629Z",
+    "contentHash": "cda1395ede787b8f5211120c592fa746b2871c969ff5d844ee52f8a456f119f7",
+    "lastHarvestedAt": "2026-10-25T13:42:22.685Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "9376c568",
+    "sourceVersion": "6bc056af",
     "license": "Apache-2.0",
-    "contentHash": "33b4a2ba4b0c58bbcc5e2ddb133db2291f22854634af8bc70aed77cfdebfcc71",
-    "lastHarvestedAt": "2026-10-23T06:30:19.409Z",
+    "contentHash": "4550215e6504560aae5ef3542e15faf4b83309c888d087e4c89647a2e646db48",
+    "lastHarvestedAt": "2026-10-25T13:42:26.283Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "0231990f",
+    "sourceVersion": "3a0164d6",
     "license": "Apache-2.0",
-    "contentHash": "cebb8d3026f019e47acc16f01c70140af87e227ccdcf8f845a664db10dcf1271",
-    "lastHarvestedAt": "2026-10-23T08:10:06.939Z",
+    "contentHash": "f9245df20c7c4facad4c86fab142c9899a938c1b5d553c4da057797d32ec6d15",
+    "lastHarvestedAt": "2026-10-25T13:42:19.162Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -10688,5 +10688,15 @@
     "contentHash": "c3ec7797c0670ea6d6e960e981b450d7bd5840fc05014713426e8007af6d1216",
     "lastHarvestedAt": "2026-10-25T08:44:00.577Z",
     "learningId": "learn-github-makecindy-cindy"
+  },
+  "fei2411-ds-bot": {
+    "repository": "Fei2411/DS-Bot",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Fei2411/DS-Bot",
+    "sourceVersion": "53518443",
+    "license": "Apache-2.0",
+    "contentHash": "1842bc6bc574de91d5fed07b0275760d813d8dcdfd4d432581df941d28e28b36",
+    "lastHarvestedAt": "2026-10-25T13:46:00.168Z",
+    "learningId": "learn-github-fei2411-ds-bot"
   }
 }
