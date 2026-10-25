@@ -4916,3 +4916,4 @@ Every entry in this ledger must capture:
 | `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `2fc9d066` | Multi-dimensional audit evidence | 2026-10-25T16:54:35.554Z |
 | `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-25T16:54:39.601Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `204e2636` | Multi-dimensional audit evidence | 2026-10-25T16:54:48.728Z |
+| `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-25T17:01:32.834Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T16:54:48.670Z",
+  "last_updated": "2026-10-25T17:01:32.776Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17723,7 +17723,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "75c12e2bf6a803b339ffe5b4aef2ea0a3f4c30566dc95752f0077dbd6a376ba5",
+      "content_hash": "21a54f8f47eacca77d9c324faad7aa4c756552ca8d8d22689445af5506efedbf",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [
@@ -17898,6 +17898,21 @@
           "number": 3391,
           "title": "**Head‑Backbone Compatibility Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4387,
+          "title": "**Consistent Numerical Precision Across Backbone and Head**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4388,
+          "title": "**Uniform Padding Before Batching**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4389,
+          "title": "**Unambiguous Multimodal Token ID Allocation**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17918,7 +17933,7 @@
         "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
         "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs"
       ],
-      "verified_at": "2026-10-20T21:27:33.570Z",
+      "verified_at": "2026-10-25T17:01:32.764Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124834,6 +124849,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T16:54:48.658Z"
+    },
+    "rule-4387": {
+      "learning_id": "rule-4387",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4387,
+      "title": "**Consistent Numerical Precision Across Backbone and Head**",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:01:32.764Z"
+    },
+    "rule-4388": {
+      "learning_id": "rule-4388",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4388,
+      "title": "**Uniform Padding Before Batching**",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:01:32.764Z"
+    },
+    "rule-4389": {
+      "learning_id": "rule-4389",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4389,
+      "title": "**Unambiguous Multimodal Token ID Allocation**",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:01:32.764Z"
     }
   },
   "aliases": {

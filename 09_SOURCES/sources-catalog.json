@@ -695,8 +695,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef-flash",
     "sourceVersion": "hf-cloudflare-clef-flash",
     "license": "Open-Source",
-    "contentHash": "75c12e2bf6a803b339ffe5b4aef2ea0a3f4c30566dc95752f0077dbd6a376ba5",
-    "lastHarvestedAt": "2026-10-20T21:27:33.635Z",
+    "contentHash": "21a54f8f47eacca77d9c324faad7aa4c756552ca8d8d22689445af5506efedbf",
+    "lastHarvestedAt": "2026-10-25T17:01:32.834Z",
     "learningId": "learn-huggingface-cloudflare-clef-flash"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
