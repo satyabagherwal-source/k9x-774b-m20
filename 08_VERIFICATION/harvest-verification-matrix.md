@@ -5041,3 +5041,5 @@
 | `CYCLE-20261025-YZU5` | `2026-10-25T23:39:17.357Z` | `dockview/dockview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4490` | Yes (`975940c0...`) |
 | `CYCLE-20261025-Z1L8` | `2026-10-25T23:39:19.628Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4491` | Yes (`f5c52edb...`) |
 | `CYCLE-20261025-Z6U8` | `2026-10-25T23:39:26.432Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4492` | Yes (`33d9989c...`) |
+| `CYCLE-20261025-7GOA` | `2026-10-25T23:45:52.426Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`a6d17f1f...`) |
+| `CYCLE-20261025-7L3H` | `2026-10-25T23:45:58.157Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule 1135, Rule 4493` | Yes (`c463c737...`) |

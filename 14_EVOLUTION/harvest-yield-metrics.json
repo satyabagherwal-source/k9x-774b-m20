@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T23:39:26.440Z",
-  "total_cycles_completed": 5018,
-  "total_learnings_persisted": 5018,
-  "total_rules_promoted": 4380,
+  "last_updated": "2026-10-25T23:45:58.165Z",
+  "total_cycles_completed": 5020,
+  "total_learnings_persisted": 5020,
+  "total_rules_promoted": 4384,
   "history": [
-    {
-      "timestamp": "2026-10-25T14:03:16.711Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T14:03:22.124Z",
-      "repository": "microsoft/react-native-windows",
-      "learningId": "learn-github-microsoft-react-native-windows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T14:03:25.766Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -1403,6 +1389,20 @@
       "repository": "PeerDB-io/peerdb",
       "learningId": "learn-github-peerdb-io-peerdb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T23:45:52.434Z",
+      "repository": "SimonSchubert/Kai",
+      "learningId": "learn-github-simonschubert-kai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T23:45:58.165Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-openai-community-gpt2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

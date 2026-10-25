@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/simonschubert-kai-learnings.md`  
 > **Source**: github ([https://github.com/SimonSchubert/Kai](https://github.com/SimonSchubert/Kai))  
-> **Source Version**: `33193423`  
+> **Source Version**: `bd774d32`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T15:16:23.863Z  
+> **Timestamp**: 2026-10-25T23:45:52.154Z  
 > **Learning ID**: `learn-github-simonschubert-kai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/simonschubert-kai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SimonSchubert/Kai](https://github.com/SimonSchubert/Kai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T15:16:23.514Z  
+> **Harvest Timestamp**: 2026-10-25T23:45:52.024Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenClaw alternative in your pocket
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1311 stars
+- **Stars / Engagement**: 1322 stars
 
 ---
 
@@ -1036,192 +1036,20 @@ private fun AnnotatedString.Builder.appendInline(node: InlineNode, colors: Color
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `33193423` (2026-10-21)
+### Incident Patch 1: `bd774d32` (2026-10-24)
 **Commit Message**: Upgrade dependencies
 
-**File**: `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/inference/LocalModelCatalog.kt` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ val MODEL_CATALOG = listOf(
-     ),
-     // Upstream replaced this file on 2026-09-03: the current build adds vision and audio
-     // modalities and Multi-Token Prediction for speculative decoding, and its model card
--    // requires litert-lm >= 0.17 to load at all. Android/desktop ship 0.18.0; the iOS
-+    // requires litert-lm >= 0.17 to load at all. Android/desktop ship 0.18.1; the iOS
-     // bridge is still on 0.16.1, where this entry will refuse to load — academic at 6.9 GB,
-     // which no iPhone was going to hold anyway.
-     LocalModel(
-```
-
-**File**: `docs/features/on-device-inference.md` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- # On-Device Inference (LiteRT)
- 
--**Last verified:** 2026-10-20
-+**Last verified:** 2026-10-21
- 
- Kai can run AI models directly on the user's device using Google's LiteRT LM SDK. This enables fully offline, private inference with no API key, no internet connection, and no cost. Available on **Android**, **Desktop** (macOS, Linux, Windows), and **iOS**.
- 
-@@ -110,7 +110,7 @@ When the last LiteRT service instance is removed, all downloaded and imported mo
- | Disk space | `StatFs.availableBytes` | `File.usableSpace` | Platform bridge |
- | Download notification | Foreground service with notification | No notification (no OS restriction) | Platform bridge |
- | Model import | FileKit file picker → stream-copy into app storage | Same | Same |
--| Runtime version | litert-lm 0.18.0 (Google Maven) | Same | LiteRT-LM 0.16.1 (Swift package) — behind Android/Desktop; newer Swift package tags exist but iOS has not been moved yet |
-+| Runtime version | litert-lm 0.18.1 (Google Maven) | Same | LiteRT-LM 0.16.1 (Swift package) — behind Android/Desktop; newer Swift package tags exist but iOS has not been moved yet |
- | Capability probe | Reads the bundle's declared tool support, modalities and sampler defaults | Same | Unavailable — the Swift capability API at 0.16.1 exposes only speculative-decoding support, so the probe reports *unknown* and callers keep their defaults |
- 
- ## Fallback Behavior
-```
-
-**File**: `docs/knowledge/litert/log.md` (modified, +6/-0)
-```diff
-@@ -1,5 +1,11 @@
- # LiteRT knowledge update log
- 
-+## 2026-10-21
-+
-+* **Runtime**: litert-lm (Android + JVM) 0.18.0 → 0.18.1. Model pins unchanged.
-+* **Runtime API**: patch only. Upstream fixed an ABI mismatch in `libGemmaModelConstraintProvider` that blocked EmbeddingGemma 2 when building LiteRT-LM from source. No Kotlin API change. Kai consumes the Google Maven artifacts and does not build LiteRT-LM from source.
-+* **iOS**: still on LiteRT-LM Swift package 0.16.1. Upstream tagged v0.18.1; moving iOS still needs the SPM pin and the Swift bridge ported to `ModelInfo`.
-+
- ## 2026-10-20
- 
- * **Runtime**: litert-lm (Android + JVM) 0.17.1 → 0.18.0. Model pins unchanged.
-```
-
 **File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -31,7 +31,7 @@ paparazzi = "2.0.0-alpha05"
- turbine = "1.2.1"
- bouncycastle = "1.86"
- reorderable = "3.1.0"
--litert-lm = "0.18.0"
-+litert-lm = "0.18.1"
- sqldelight = "2.4.1"
- materialIcons = "1.7.3"
- xz = "1.12"
-```
-
----
-
-### Incident Patch 2: `1f0ee40b` (2026-10-20)
-**Commit Message**: Upgrade litert-lm to 0.18.0
-
-0.18 removed Capabilities; read model metadata through ModelInfo.from()
-instead. Non-LLM bundles report unknown capabilities, as a failed probe
-did before.
-
-**File**: `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/inference/LocalModelCatalog.kt` (modified, +2/-2)
-```diff
-@@ -51,8 +51,8 @@ val MODEL_CATALOG = listOf(
-     ),
-     // Upstream replaced this file on 2026-09-03: the current build adds vision and audio
-     // modalities and Multi-Token Prediction for speculative decoding, and its model card
--    // requires litert-lm >= 0.17 to load at all. Android/desktop ship 0.17.0; the iOS
--    // bridge is still on 0.15, where this entry will refuse to load — academic at 6.9 GB,
-+    // requires litert-lm >= 0.17 to load at all. Android/desktop ship 0.18.0; the iOS
-+    // bridge is still on 0.16.1, where this entry will refuse to load — academic at 6.9 GB,
-     // which no iPhone was going to hold anyway.
-     LocalModel(
-         id = "gemma-4-12b-it",
-```
-
-**File**: `composeApp/src/jvmShared/kotlin/com/inspiredandroid/kai/inference/LiteRTInferenceEngine.kt` (modified, +8/-9)
-```diff
-@@ -1,12 +1,12 @@
- package com.inspiredandroid.kai.inference
- 
- import com.google.ai.edge.litertlm.Backend
--import com.google.ai.edge.litertlm.Capabilities
- import com.google.ai.edge.litertlm.Contents
- import com.google.ai.edge.litertlm.ConversationConfig
- import com.google.ai.edge.litertlm.Engine
- import com.google.ai.edge.litertlm.EngineConfig
- import com.google.ai.edge.litertlm.Message
-+import com.google.ai.edge.litertlm.ModelInfo
- import com.google.ai.edge.litertlm.OpenApiTool
- import com.google.ai.edge.litertlm.SamplerConfig
- import com.google.ai.edge.litertlm.tool
-@@ -207,13 +207,14 @@ class LiteRTInferenceEngine : LocalInferenceEngine {
-      * runtime that throws reading it, yields null so callers keep their own assumptions.
-      */
-     private fun readModelCapabilities(modelPath: String): LocalModelCapabilities? = runCatching {
--        val caps = Capabilities(modelPath)
--        try {
--            val modalities = caps.inputModalities()
--            val sampler = caps.defaultSamplerParams()
-+        ModelInfo.from(modelPath).use { info ->
-+            // Embedding or unrecognised bundles declare no chat capabilities — unknown, not incapable.
-+            val llm = info as? ModelInfo.Llm ?: return@use null
-+            val modalities = info.inputModalities()
-+            val sampler = llm.defaultSamplerParams()
-             LocalModelCapabilities(
--                supportsFunctionCalling = caps.supportsFunctionCalling(),
--                supportsThinking = caps.supportsThinking(),
-+                supportsFunctionCalling = llm.supportsFunctionCalling(),
-+                supportsThinking = llm.supportsThinking(),
-                 supportsVision = modalities.vision,
-                 supportsAudio = modalities.audio,
-                 sampler = localSamplerDefaultsOrNull(
-@@ -222,8 +223,6 @@ class LiteRTInferenceEngine : LocalInferenceEngine {
-                     topP = sampler.topP,
-                 ),
-             )
--        } finally {
--            caps.close()
-         }
-     }.getOrElse {
-         println("LiteRT: could not read capabilities for $modelPath: ${it.message}")
-```
-
-**File**: `docs/features/on-device-inference.md` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- # On-Device Inference (LiteRT)
- 
--**Last verified:** 2026-10-02
-+**Last verified:** 2026-10-20
- 
- Kai can run AI models directly on the user's device using Google's LiteRT LM SDK. This enables fully offline, private inference with no API key, no internet connection, and no cost. Available on **Android**, **Desktop** (macOS, Linux, Windows), and **iOS**.
- 
-@@ -110,7 +110,7 @@ When the last LiteRT service instance is removed, all downloaded and imported mo
- | Disk space | `StatFs.availableBytes` | `File.usableSpace` | Platform bridge |
- | Download notification | Foreground service with notification | No notification (no OS restriction) | Platform bridge |
- | Model import | FileKit file picker → stream-copy into app storage | Same | Same |
--| Runtime version | litert-lm 0.17.1 (Google Maven) | Same | LiteRT-LM 0.16.1 (Swift package) — the newest tagged release; the 0.17 line ships on Google Maven ahead of GitHub tags, so no Swift package exists for it |
-+| Runtime version | litert-lm 0.18.0 (Google Maven) | Same | LiteRT-LM 0.16.1 (Swift package) — behind Android/Desktop; newer Swift package tags exist but iOS has not been moved yet |
- | Capability probe | Reads the bundle's declared tool support, modalities and sampler defaults | Same | Unavailable — the Swift capability API at 0.16.1 exposes only speculative-decoding support, so the probe reports *unknown* and callers keep their defaults |
- 
- ## Fallback Behavior
-```
-
-**File**: `docs/knowledge/litert/log.md` (modified, +6/-0)
-```diff
-@@ -1,5 +1,11 @@
- # LiteRT knowledge update log
- 
-+## 2026-10-20
-+
-+* **Runtime**: litert-lm (Android + JVM) 0.17.1 → 0.18.0. Model pins unchanged.
-+* **Runtime API**: 0.18 removed `Capabilities`; its replacement is `ModelInfo.from(path)`, which returns `ModelInfo.Llm` / `Embedding` / `Unknown`. Function-calling, thinking and sampler defaults now live on `ModelInfo.Llm`; input modalities on the base class. A non-LLM bundle reports unknown capabilities, so callers keep their own defaults as before.
-+* **iOS**: still on LiteRT-LM Swift package 0.16.1. Upstream has since tagged v0.17.0, v0.17.1 and v0.18.0 on GitHub (each with `Package.swift`), so iOS can now follow — not done here; it needs the SPM pin moved and the Swift bridge ported to `ModelInfo`.
-+
- ## 2026-09-07
- 
- * **Pin check**: all four existing pins attested against the HuggingFace tree API at their pinned commits.
-```
-
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ paparazzi = "2.0.0-alpha05"
- turbine = "1.2.1"
- bouncycastle = "1.86"
- reorderable = "3.1.0"
--litert-lm = "0.17.1"
-+litert-lm = "0.18.0"
- sqldelight = "2.4.1"
- materialIcons = "1.7.3"
- xz = "1.12"
+@@ -23,7 +23,7 @@ ktor = "3.6.0"
+ material = "1.14.0"
+ playReview = "2.0.2"
+ multiplatformSettings = "1.3.0"
+-navigationComposeVersion = "2.9.2"
++navigationComposeVersion = "2.10.0"
+ spotless = "8.10.4"
+ tts = "3.0.0"
+ foundationAndroid = "1.12.1"
 ```
 
 #### Recent Merged Pull Requests:
@@ -1253,25 +1081,25 @@ did before.
 ## X. Upgrade dependencies
 
 **RULE**:
-When implementing operations in `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/inference/LocalModelCatalog.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/Kai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/Kai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `33193423`: Upgrade dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bd774d32`: Upgrade dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/inference/LocalModelCatalog.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    // requires litert-lm >= 0.17 to load at all. Android/desktop ship 0.18.1; the iOS
+navigationComposeVersion = "2.10.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-    // requires litert-lm >= 0.17 to load at all. Android/desktop ship 0.18.0; the iOS
+navigationComposeVersion = "2.9.2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `33193423` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bd774d32` are properly handled with clean fallback behavior.

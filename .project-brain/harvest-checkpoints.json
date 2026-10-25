@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T23:39:26.444Z",
+  "last_updated": "2026-10-25T23:45:58.169Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1520,14 +1520,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-community-gpt2",
-      "content_hash": "7153ec57d1ee1e838177f655c8d0836bb64bfa9ff3b0b33a80665ee3396ca6c1",
-      "verified_at": "2026-10-21T03:36:58.311Z",
+      "content_hash": "c463c737dbf59fb4ce862e436a2f8e989f273123d08ca0003ab138132e093613",
+      "verified_at": "2026-10-25T23:45:58.168Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T03:36:58.311Z"
+      "last_updated": "2026-10-25T23:45:58.168Z"
     },
     "Qwen/Qwen3-VL-8B-Instruct": {
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -13011,14 +13011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-kai",
-      "content_hash": "b0f32b2d8493d68a006cbf310d023df075426a940a8a545f4d77f55ebc507788",
-      "verified_at": "2026-10-21T15:16:24.351Z",
+      "content_hash": "a6d17f1f99036502cabdcbfa78830a67ccd25a6005c276dc8bcc95e988ffc5bf",
+      "verified_at": "2026-10-25T23:45:52.437Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T15:16:24.351Z"
+      "last_updated": "2026-10-25T23:45:52.437Z"
     },
     "a4csi/schema-org-validate": {
       "repository": "a4csi/schema-org-validate",

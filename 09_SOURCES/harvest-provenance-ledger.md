@@ -5048,3 +5048,5 @@ Every entry in this ledger must capture:
 | `learn-github-dockview-dockview` | `https://github.com/dockview/dockview` | `c26490bf` | Multi-dimensional audit evidence | 2026-10-25T23:39:17.362Z |
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `a927b3d6` | Multi-dimensional audit evidence | 2026-10-25T23:39:19.633Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `b80c75cb` | Multi-dimensional audit evidence | 2026-10-25T23:39:26.435Z |
+| `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `bd774d32` | Multi-dimensional audit evidence | 2026-10-25T23:45:52.429Z |
+| `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-25T23:45:58.160Z |

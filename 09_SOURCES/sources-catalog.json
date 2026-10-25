@@ -1145,8 +1145,8 @@
     "sourceUrl": "https://huggingface.co/openai-community/gpt2",
     "sourceVersion": "hf-openai-community-gpt2",
     "license": "Open-Source",
-    "contentHash": "7153ec57d1ee1e838177f655c8d0836bb64bfa9ff3b0b33a80665ee3396ca6c1",
-    "lastHarvestedAt": "2026-10-21T03:36:58.303Z",
+    "contentHash": "c463c737dbf59fb4ce862e436a2f8e989f273123d08ca0003ab138132e093613",
+    "lastHarvestedAt": "2026-10-25T23:45:58.160Z",
     "learningId": "learn-huggingface-openai-community-gpt2"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
@@ -8643,10 +8643,10 @@
     "repository": "SimonSchubert/Kai",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/Kai",
-    "sourceVersion": "33193423",
+    "sourceVersion": "bd774d32",
     "license": "Apache-2.0",
-    "contentHash": "b0f32b2d8493d68a006cbf310d023df075426a940a8a545f4d77f55ebc507788",
-    "lastHarvestedAt": "2026-10-21T15:16:24.342Z",
+    "contentHash": "a6d17f1f99036502cabdcbfa78830a67ccd25a6005c276dc8bcc95e988ffc5bf",
+    "lastHarvestedAt": "2026-10-25T23:45:52.429Z",
     "learningId": "learn-github-simonschubert-kai"
   },
   "a4csi-schema-org-validate": {

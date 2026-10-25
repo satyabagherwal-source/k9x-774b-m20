@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T23:39:26.373Z",
+  "last_updated": "2026-10-25T23:45:58.102Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23834,7 +23834,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai-community/gpt2",
       "source_version": "hf-openai-community-gpt2",
-      "content_hash": "7153ec57d1ee1e838177f655c8d0836bb64bfa9ff3b0b33a80665ee3396ca6c1",
+      "content_hash": "c463c737dbf59fb4ce862e436a2f8e989f273123d08ca0003ab138132e093613",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "promoted_rules": [
@@ -23866,6 +23866,21 @@
           "number": 1228,
           "title": "Absolute Context Boundary Enforcement in Learned Positional Embeddings",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Configuration-Weight Consistency Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 1135,
+          "title": "Tokenizer Determinism & Boundary Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4493,
+          "title": "Causal Attention Mask Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23885,7 +23900,7 @@
         "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq",
         "learn-huggingface-hf-openai-community-gpt2-mv4dfghb"
       ],
-      "verified_at": "2026-10-21T03:36:58.228Z",
+      "verified_at": "2026-10-25T23:45:58.090Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45530,8 +45545,8 @@
       "slug": "simonschubert-kai",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "33193423",
-      "content_hash": "b0f32b2d8493d68a006cbf310d023df075426a940a8a545f4d77f55ebc507788",
+      "source_version": "bd774d32",
+      "content_hash": "a6d17f1f99036502cabdcbfa78830a67ccd25a6005c276dc8bcc95e988ffc5bf",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "promoted_rules": [
@@ -45543,7 +45558,7 @@
         {
           "number": 3545,
           "title": "Upgrade dependencies",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45551,7 +45566,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:16:24.264Z",
+      "verified_at": "2026-10-25T23:45:52.357Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77788,15 +77803,15 @@
       "learning_id": "rule-1135",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1135,
-      "title": "Tokenizer Determinism & Boundary Invariant (Harvested from meta-llama/Meta-Llama-3-8B-Instruct)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Tokenizer Determinism & Boundary Invariant",
+      "source_url": "https://huggingface.co/openai-community/gpt2",
+      "source_version": "hf-openai-community-gpt2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.817Z"
+      "verified_at": "2026-10-25T23:45:58.090Z"
     },
     "rule-1136": {
       "learning_id": "rule-1136",
@@ -112653,13 +112668,13 @@
       "rule_number": 3545,
       "title": "Upgrade dependencies",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "33193423",
+      "source_version": "bd774d32",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-21T15:16:24.264Z"
+      "verified_at": "2026-10-25T23:45:52.357Z"
     },
     "rule-3546": {
       "learning_id": "rule-3546",
@@ -126897,6 +126912,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T23:39:26.361Z"
+    },
+    "rule-4493": {
+      "learning_id": "rule-4493",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4493,
+      "title": "Causal Attention Mask Integrity",
+      "source_url": "https://huggingface.co/openai-community/gpt2",
+      "source_version": "hf-openai-community-gpt2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T23:45:58.090Z"
     }
   },
   "aliases": {
