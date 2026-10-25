@@ -4952,3 +4952,5 @@ Every entry in this ledger must capture:
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `0ecf9253` | Multi-dimensional audit evidence | 2026-10-25T18:28:20.540Z |
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-25T18:34:44.399Z |
 | `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `6d3e9d68` | Multi-dimensional audit evidence | 2026-10-25T18:34:44.594Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `07f55f73` | Multi-dimensional audit evidence | 2026-10-25T18:40:47.148Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-25T18:41:00.219Z |

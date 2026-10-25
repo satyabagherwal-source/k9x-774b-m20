@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T18:34:44.599Z",
-  "total_cycles_completed": 4922,
-  "total_learnings_persisted": 4922,
-  "total_rules_promoted": 4296,
+  "last_updated": "2026-10-25T18:41:00.222Z",
+  "total_cycles_completed": 4924,
+  "total_learnings_persisted": 4924,
+  "total_rules_promoted": 4300,
   "history": [
-    {
-      "timestamp": "2026-10-25T08:56:55.764Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T08:57:49.148Z",
-      "repository": "carbon-design-system/carbon-components-svelte",
-      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T08:57:57.167Z",
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -1403,6 +1389,20 @@
       "repository": "microsoft/fluentui",
       "learningId": "learn-github-microsoft-fluentui",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:40:47.152Z",
+      "repository": "salvo-rs/salvo",
+      "learningId": "learn-github-salvo-rs-salvo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:41:00.222Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

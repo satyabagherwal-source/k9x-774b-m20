@@ -815,8 +815,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "d0788052b367b6785d02977553b30aed3206982d21a4f93f6e27345da09dc2a2",
-    "lastHarvestedAt": "2026-10-20T22:57:59.865Z",
+    "contentHash": "98acc68f055bfe4fa5f9113f9c10f59038fc3f666df20b58089f81611ded0ce0",
+    "lastHarvestedAt": "2026-10-25T18:41:00.219Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b"
   },
   "hf-microsoft-frognano-4b-2609": {
@@ -5483,10 +5483,10 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "62a4f53b",
+    "sourceVersion": "07f55f73",
     "license": "Apache-2.0",
-    "contentHash": "e856536161be648df257a21d8f06bb1e059f99edf5df12cfa1730489f03f214f",
-    "lastHarvestedAt": "2026-10-23T11:05:30.767Z",
+    "contentHash": "b4ec955abd099a1daf7a95d7849302b55332daff5834cb57d4f53d3e28c6c3d6",
+    "lastHarvestedAt": "2026-10-25T18:40:47.148Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {

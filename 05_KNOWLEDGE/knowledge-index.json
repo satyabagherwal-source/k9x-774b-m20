@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T18:34:44.536Z",
+  "last_updated": "2026-10-25T18:41:00.184Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23035,7 +23035,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
       "source_version": "hf-meta-llama-meta-llama-3-8b",
-      "content_hash": "d0788052b367b6785d02977553b30aed3206982d21a4f93f6e27345da09dc2a2",
+      "content_hash": "98acc68f055bfe4fa5f9113f9c10f59038fc3f666df20b58089f81611ded0ce0",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
       "promoted_rules": [
@@ -23089,6 +23089,21 @@
           "number": 1505,
           "title": "Weight Precision & Memory Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4414,
+          "title": "KV Cache Memory Contiguity & Pre-allocation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4415,
+          "title": "RoPE (Rotary Positional Embedding) Precision & Indexing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4416,
+          "title": "Grouped Query Attention (GQA) Head Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23109,7 +23124,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv49vwk3",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv4n9ejx"
       ],
-      "verified_at": "2026-10-20T22:57:59.815Z",
+      "verified_at": "2026-10-25T18:41:00.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43768,8 +43783,8 @@
       "slug": "salvo-rs-salvo",
       "platform": "github",
       "source_url": "https://github.com/salvo-rs/salvo",
-      "source_version": "62a4f53b",
-      "content_hash": "e856536161be648df257a21d8f06bb1e059f99edf5df12cfa1730489f03f214f",
+      "source_version": "07f55f73",
+      "content_hash": "b4ec955abd099a1daf7a95d7849302b55332daff5834cb57d4f53d3e28c6c3d6",
       "dossier_path": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "promoted_rules": [
@@ -43782,6 +43797,11 @@
           "number": 3894,
           "title": "middleware boundaries and multipart upload handling (#1722)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4413,
+          "title": "Preserve Salvo context across Tower short circuits and cancellation (#1754)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43789,7 +43809,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:05:30.693Z",
+      "verified_at": "2026-10-25T18:40:47.110Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125338,6 +125358,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T18:28:20.458Z"
+    },
+    "rule-4413": {
+      "learning_id": "rule-4413",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4413,
+      "title": "Preserve Salvo context across Tower short circuits and cancellation (#1754)",
+      "source_url": "https://github.com/salvo-rs/salvo",
+      "source_version": "07f55f73",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T18:40:47.110Z"
+    },
+    "rule-4414": {
+      "learning_id": "rule-4414",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4414,
+      "title": "KV Cache Memory Contiguity & Pre-allocation Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+      "source_version": "hf-meta-llama-meta-llama-3-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T18:41:00.178Z"
+    },
+    "rule-4415": {
+      "learning_id": "rule-4415",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4415,
+      "title": "RoPE (Rotary Positional Embedding) Precision & Indexing Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+      "source_version": "hf-meta-llama-meta-llama-3-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T18:41:00.178Z"
+    },
+    "rule-4416": {
+      "learning_id": "rule-4416",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4416,
+      "title": "Grouped Query Attention (GQA) Head Alignment Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+      "source_version": "hf-meta-llama-meta-llama-3-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T18:41:00.178Z"
     }
   },
   "aliases": {

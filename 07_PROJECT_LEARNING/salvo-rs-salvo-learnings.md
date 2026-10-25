@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md`  
 > **Source**: github ([https://github.com/salvo-rs/salvo](https://github.com/salvo-rs/salvo))  
-> **Source Version**: `62a4f53b`  
+> **Source Version**: `07f55f73`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T11:05:30.386Z  
+> **Timestamp**: 2026-10-25T18:40:46.915Z  
 > **Learning ID**: `learn-github-salvo-rs-salvo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/salvo-rs/salvo](https://github.com/salvo-rs/salvo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T11:05:28.675Z  
+> **Harvest Timestamp**: 2026-10-25T18:40:46.491Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A powerful web framework built with a simplified design.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4452 stars
+- **Stars / Engagement**: 4454 stars
 
 ---
 
@@ -1888,1711 +1888,419 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `82278068` (2026-10-23)
-**Commit Message**: Fix middleware boundaries and multipart upload handling (#1722)
+### Incident Patch 1: `07f55f73` (2026-10-23)
+**Commit Message**: Preserve Salvo context across Tower short circuits and cancellation (#1754)
 
-* Respect cookie changes and partial responses in shared caches
+* Recover Salvo context when Tower layers finish or cancel
 
-* Preserve named optional extraction and reject missing required values
+* Place changelog entry beside related fixes
 
-* Honor conditional response precedence and method semantics
-
-* Preserve compression trailers and offload flushing
-
-* Clean up rejected tus creations and report final storage metadata
-
-* Merge multipart file and form schemas
-
-* Document middleware and upload boundary fixes
-
-**File**: `CHANGELOG.md` (modified, +12/-0)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
- 
- ### Fixed
- 
-+- Exclude pending cookie jar changes and partial responses from response caching,
-+  and bypass cached representations for range requests.
-+- Forward parameter names through optional extractors and reject missing required
-+  header, query and cookie values before constructing their wrappers.
-+- Honor ETag precedence, lists and wildcards in conditional responses, while
-+  preserving write responses and non-200 statuses.
-+- Preserve response trailers during compression and offload compression flushing
-+  and finalization together with expensive writes.
-+- Validate tus creation requests before allocating storage, remove uploads after
-+  creation-time stream failures, and pass final storage metadata to completion hooks.
-+- Merge multipart form and file schemas instead of overwriting earlier endpoint
-+  parameters, preserving required fields and form constraints.
- - Generate `Allow` for automatic 405 responses from complete built-in route matches,
-   without replaying custom callbacks or overriding middleware response policies.
-   When opaque filters prevent safely inferring any supported method, routing defaults
-```
-
-**File**: `crates/cache/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ tokio = { workspace = true, features = ["sync"] }
- tracing = { workspace = true }
- 
- [dev-dependencies]
--salvo_core = { workspace = true, features = ["test"] }
-+salvo_core = { workspace = true, features = ["test", "cookie"] }
- tokio = { workspace = true, features = ["macros", "rt-multi-thread", "time"] }
- time = { workspace = true }
- 
-```
-
-**File**: `crates/cache/src/lib.rs` (modified, +126/-7)
-```diff
-@@ -97,7 +97,9 @@ use std::sync::{Arc, Mutex, MutexGuard};
- 
- use bytes::Bytes;
- use salvo_core::handler::Skipper;
--use salvo_core::http::header::{AUTHORIZATION, CACHE_CONTROL, COOKIE, SET_COOKIE, VARY};
-+use salvo_core::http::header::{
-+    AUTHORIZATION, CACHE_CONTROL, CONTENT_RANGE, COOKIE, RANGE, SET_COOKIE, VARY,
-+};
- use salvo_core::http::{HeaderMap, ResBody, StatusCode};
- use salvo_core::{Depot, Error, FlowCtrl, Handler, Request, Response, async_trait, cfg_feature};
- use tokio::sync::Notify;
-@@ -557,10 +559,11 @@ where
- 
-     /// Allow caching requests or responses that contain private-user cache signals.
-     ///
--    /// By default, requests with `Authorization` or `Cookie`, and responses with `Set-Cookie`,
--    /// `Vary`, or `Cache-Control: private`, are not cached. Enabling this lifts those
--    /// privacy restrictions. `Cache-Control: no-store`/`no-cache` responses are never
--    /// cached regardless of this setting.
-+    /// By default, requests with `Authorization` or `Cookie`, and responses with a
-+    /// `Set-Cookie` header or `Cache-Control: private`, are not cached. Enabling this
-+    /// lifts those privacy restrictions. Responses with pending cookie jar changes,
-+    /// `Vary`, or `Cache-Control: no-store`/`no-cache` are never cached. Range requests
-+    /// and partial responses are also excluded regardless of this setting.
-     #[inline]
-     #[must_use]
-     pub fn cache_private(mut self, cache_private: bool) -> Self {
-@@ -611,7 +614,9 @@ fn cached_response(
-     headers_before: &HeaderMap,
-     cache_private: bool,
- ) -> Option<CachedEntry> {
--    if res.body.is_stream() || res.body.is_error() {
-+    // Cookie jar changes are serialized into headers only after middleware returns.
-+    // Entries cannot replay the jar, so skip these responses even in private mode.
-+    if res.body.is_stream() || res.body.is_error() || res.has_cookie_changes() {
-         return None;
-     }
-     // Only cache successful responses. Use the *effective* status: a missing
-@@ -625,7 +630,8 @@ fn cached_response(
-     } else {
-         StatusCode::OK
-     });
--    if !effective_status.is_success() {
-+    // The cache stores complete representations and does not assemble byte ranges.
-+    if !effective_status.is_success() || effective_status == StatusCode::PARTIAL_CONTENT {
-         return None;
-     }
-     // `no-store`/`no-cache` forbid storing or reusing without revalidation in
-@@ -698,6 +704,7 @@ fn response_disallows_caching(headers: &HeaderMap) -> bool {
-     cache_control_contains(headers, "no-store")
-         || cache_control_contains(headers, "no-cache")
-         || headers.contains_key(VARY)
-+        || headers.contains_key(CONTENT_RANGE)
- }
- 
- fn cache_control_contains(headers: &HeaderMap, directive: &str) -> bool {
-@@ -729,6 +736,8 @@ where
-         ctrl: &mut FlowCtrl,
-     ) {
-         if self.skipper.skipped(req, depot)
-+            // Range is not part of the default key, and hits do not apply ranges.
-+            || req.headers().contains_key(RANGE)
-             || (!self.cache_private && request_has_private_cache_headers(req))
-         {
-             ctrl.call_next(req, depot, res).await;
-@@ -1362,6 +1371,116 @@ mod tests {
-         }
-     }
- 
-+    #[tokio::test]
-+    async fn cookie_jar_changes_are_not_cached() {
-+        #[derive(Debug)]
-+        struct CookiePage {
-+            calls: Arc<AtomicUsize>,
-+            remove: bool,
-+        }
-+        #[async_trait]
-+        impl Handler for CookiePage {
-+            async fn handle(
-+                &self,
-+                _req: &mut Request,
-+                _depot: &mut Depot,
-+                res: &mut Response,
-+                _ctrl: &mut FlowCtrl,
-+            ) {
-+                let call = self.calls.fetch_add(1, Ordering::SeqCst) + 1;
-+                if self.remove {
-+                    res.remove_cookie("session");
-+                } else {
-+                    res.add_cookie(salvo_core::http::cookie::Cookie::new(
-+                        "session",
-+                        format!("session-{call}"),
-+                    ));
-+                }
-+                res.render(format!("session-specific body {call}"));
-+            }
-+        }
-+
-+        for cache_private in [false, true] {
-+            for remove in [false, true] {
-+                let calls = Arc::new(AtomicUsize::new(0));
-+                let cache = Cache::new(MokaStore::new(100), RequestIssuer::default())
-+                    .cache_private(cache_private);
-+                let service = Service::new(Router::new().hoop(cache).goal(CookiePage {
-+                    calls: calls.clone(),
-+                    remove,
-+                }));
-+                for call in 1..=2 {
-+                    let mut res = TestClient::get("http://example.test/").send(&service).await;
-+                    assert!(res.headers().contains_key(SET_COOKIE));
-+                    assert_eq!(
-+                        res.take_string().await.unwrap(),
-+                        format!(
-```
-
-**File**: `crates/compression/src/lib.rs` (modified, +51/-0)
-```diff
-@@ -570,6 +570,57 @@ mod tests {
- 
-     use super::*;
- 
-+    #[cfg(feature = "gzip")]
-+    #[tokio::test]
-+    async fn compression_preserves_trailers_after_final_data() {
-+        use std::io::Read;
-+        use std::pin::Pin;
-+
-+        use salvo_core::http::HeaderMap;
-+        use salvo_core::http::body::{Body, BytesFrame, Frame};
-+
-+        #[handler]
-+        async fn with_trailers(res: &mut Response) {
-+            res.add_header("content-type", "text/plain", true).unwrap();
-+            res.add_header("trailer", "x-checksum", true).unwrap();
-+            let mut trailers = HeaderMap::new();
-+            trailers.insert("x-checksum", "complete".parse().unwrap());
-+            let frames = vec![
-+                Ok::<_, std::io::Error>(BytesFrame::data(vec![b'a'; 32 * 1024])),
-+                Ok(BytesFrame(Frame::trailers(trailers))),
-+            ];
-+            res.stream(futures_util::stream::iter(frames));
-+        }
-+
-+        let router = Router::with_hoop(super::Compression::new().min_length(1)).get(with_trailers);
-+        let mut response = TestClient::get("http://localhost/")
-+            .add_header("accept-encoding", "gzip", true)
-+            .send(router)
-+            .await;
-+        assert_eq!(response.headers()["content-encoding"], "gzip");
-+        assert_eq!(response.headers()["trailer"], "x-checksum");
-+        let mut body = response.take_body();
-+        let mut compressed = Vec::new();
-+        let mut trailers = None;
-+        while let Some(frame) =
-+            futures_util::future::poll_fn(|cx| Pin::new(&mut body).poll_frame(cx)).await
-+        {
-+            match frame.unwrap().into_data() {
-+                Ok(data) => {
-+                    assert!(trailers.is_none());
-+                    compressed.extend_from_slice(&data);
-+                }
-+                Err(frame) => trailers = Some(frame.into_trailers().unwrap()),
-+            }
-+        }
-+        assert_eq!(trailers.unwrap()["x-checksum"], "complete");
-+        let mut decoded = Vec::new();
-+        flate2::read::GzDecoder::new(&compressed[..])
-+            .read_to_end(&mut decoded)
-+            .unwrap();
-+        assert_eq!(decoded, vec![b'a'; 32 * 1024]);
-+    }
-+
-     #[handler]
-     async fn hello() -> &'static str {
-         "hello"
-```
-
-**File**: `crates/compression/src/stream.rs` (modified, +268/-74)
-```diff
-@@ -12,15 +12,19 @@ use tokio::task::{JoinHandle, spawn_blocking};
- 
- use super::{CompressionAlgo, CompressionLevel, Encoder};
- 
--// Keep 8 KiB JSON chunks and similarly sized buffered chunks on the async task
--// when compression is enabled.
-+// Keep small chunks at the default/fastest level on the async task. Explicit
-+// compression levels can be expensive even for small inputs.
- const MAX_CHUNK_SIZE_ENCODE_IN_PLACE: usize = 16 * 1024;
- 
-+type Encoded = (Option<Encoder>, Bytes);
-+
- pub(super) struct EncodeStream<B> {
-     encoder: Option<Encoder>,
-     body: B,
-     eof: bool,
--    encoding: Option<JoinHandle<IoResult<Encoder>>>,
-+    offload: bool,
-+    trailers: Option<BytesFrame>,
-+    encoding: Option<JoinHandle<IoResult<Encoded>>>,
- }
- 
- impl<B> EncodeStream<B> {
-@@ -29,110 +33,140 @@ impl<B> EncodeStream<B> {
-         Self {
-             body,
-             eof: false,
-+            offload: matches!(
-+                level,
-+                CompressionLevel::Minsize | CompressionLevel::Precise(_)
-+            ),
-+            trailers: None,
-             encoding: None,
-             encoder: Some(Encoder::new(algo, level)),
-         }
-     }
-+
-+    fn write_chunk(&mut self, chunk: Bytes) -> IoResult<Option<Bytes>> {
-+        let Some(mut encoder) = self.encoder.take() else {
-+            return Err(IoError::other("compression encoder is unavailable"));
-+        };
-+        self.offload |= chunk.len() >= MAX_CHUNK_SIZE_ENCODE_IN_PLACE;
-+        if self.offload {
-+            self.encoding = Some(spawn_blocking(move || {
-+                encoder.write(&chunk)?;
-+                // Flushing may perform most of the compression work (especially
-+                // for Brotli), so keep it in the blocking task with write().
-+                let chunk = encoder.take()?;
-+                Ok((Some(encoder), chunk))
-+            }));
-+            Ok(None)
-+        } else {
-+            encoder.write(&chunk)?;
-+            let chunk = encoder.take()?;
-+            self.encoder = Some(encoder);
-+            Ok(Some(chunk))
-+        }
-+    }
-+
-+    fn finish_encoding(&mut self) -> IoResult<Option<Bytes>> {
-+        let Some(encoder) = self.encoder.take() else {
-+            return Err(IoError::other("compression encoder is unavailable"));
-+        };
-+        if self.offload {
-+            self.encoding = Some(spawn_blocking(move || Ok((None, encoder.finish()?))));
-+            Ok(None)
-+        } else {
-+            self.eof = true;
-+            encoder.finish().map(Some)
-+        }
-+    }
-+
-+    fn fail(&mut self, error: IoError) -> Poll<Option<IoResult<BytesFrame>>> {
-+        self.eof = true;
-+        self.encoder = None;
-+        self.encoding = None;
-+        self.trailers = None;
-+        Poll::Ready(Some(Err(error)))
-+    }
- }
- impl EncodeStream<BoxStream<'static, Result<Bytes, BoxedError>>> {
-     #[inline]
--    fn poll_chunk(&mut self, cx: &mut Context<'_>) -> Poll<Option<IoResult<Bytes>>> {
--        Stream::poll_next(Pin::new(&mut self.body), cx).map_err(IoError::other)
-+    fn poll_chunk(&mut self, cx: &mut Context<'_>) -> Poll<Option<IoResult<BytesFrame>>> {
-+        Stream::poll_next(Pin::new(&mut self.body), cx)
-+            .map_ok(BytesFrame::data)
-+            .map_err(IoError::other)
-     }
- }
- impl EncodeStream<BoxStream<'static, Result<BytesFrame, BoxedError>>> {
--    fn poll_chunk(&mut self, cx: &mut Context<'_>) -> Poll<Option<IoResult<Bytes>>> {
--        Stream::poll_next(Pin::new(&mut self.body), cx)
--            .map_ok(|f| f.into_data().unwrap_or_default())
--            .map_err(IoError::other)
-+    fn poll_chunk(&mut self, cx: &mut Context<'_>) -> Poll<Option<IoResult<BytesFrame>>> {
-+        Stream::poll_next(Pin::new(&mut self.body), cx).map_err(IoError::other)
-     }
- }
- impl EncodeStream<HyperBody> {
--    fn poll_chunk(&mut self, cx: &mut Context<'_>) -> Poll<Option<IoResult<Bytes>>> {
--        match ready!(Body::poll_frame(Pin::new(&mut self.body), cx)) {
--            Some(Ok(frame)) => Poll::Ready(frame.into_data().map(Ok).ok()),
--            Some(Err(e)) => Poll::Ready(Some(Err(IoError::other(e)))),
--            None => Poll::Ready(None),
--        }
-+    fn poll_chunk(&mut self, cx: &mut Context<'_>) -> Poll<Option<IoResult<BytesFrame>>> {
-+        Body::poll_frame(Pin::new(&mut self.body), cx)
-+            .map_ok(BytesFrame)
-+            .map_err(IoError::other)
-     }
- }
- impl EncodeStream<Option<Bytes>> {
--    fn poll_chunk(&mut self, _cx: &mut Context<'_>) -> Poll<Option<IoResult<Bytes>>> {
--        if let Some(body) = Pin::new(&mut self.body).take() {
--            Poll::Ready(Some(Ok(body)))
--        } else {
--            Poll::Ready(None)
--        }
-+    fn poll_chunk(&mut self, _cx: &mut Context<'_>) -> Poll<Option<IoResult<BytesFrame>>> {
-+        Poll::Ready(self.body.take().map(|chunk| Ok(BytesFrame::data(chunk))))
-     }
- }
- impl EncodeStream<VecDeque<Bytes>> {
--    fn poll_chunk(&mut self, _cx: &mut Context<'_>) -> Poll<Option<IoResult<Bytes>>> {
--        if let Some
-```
-
-**File**: `crates/core/src/extract.rs` (modified, +78/-1)
-```diff
-@@ -130,14 +130,91 @@ where
-     async fn extract(req: &'ex mut Request, depot: &'ex mut Depot) -> Result<Self, ParseError> {
-         Ok(T::extract(req, depot).await.ok())
-     }
-+    #[allow(refining_impl_trait)]
-+    fn extract_with_arg(
-+        req: &'ex mut Request,
-+        depot: &'ex mut Depot,
-+        arg: &str,
-+    ) -> impl Future<Output = Result<Self, ParseError>> + Send {
-+        futures_util::FutureExt::map(T::extract_with_arg(req, depot, arg), |result| {
-+            Ok(result.ok())
-+        })
-+    }
- }
- 
- #[cfg(test)]
- mod tests {
-     use serde::Deserialize;
- 
-+    use crate::extract::{HeaderParam, PathParam, QueryParam};
-     use crate::prelude::*;
--    use crate::test::TestClient;
-+    use crate::test::{ResponseExt, TestClient};
-+
-+    #[handler]
-+    async fn optional_parameters(
-+        id: Option<PathParam<u32>>,
-+        page: Option<QueryParam<u32>>,
-+        limit: Option<HeaderParam<u32>>,
-+    ) -> String {
-+        format!(
-+            "{:?}/{:?}/{:?}",
-+            id.map(PathParam::into_inner),
-+            page.map(QueryParam::<u32>::into_inner),
-+            limit.map(HeaderParam::<u32>::into_inner),
-+        )
-+    }
-+
-+    #[tokio::test]
-+    async fn optional_named_parameters_preserve_argument_names() {
-+        let service = Service::new(Router::with_path("{id}").get(optional_parameters));
-+        let mut response = TestClient::get("http://localhost/7?page=2")
-+            .add_header("limit", "5", true)
-+            .send(&service)
-+            .await;
-+        assert_eq!(response.status_code, Some(StatusCode::OK));
-+        assert_eq!(
-+            response.take_string().await.unwrap(),
-+            "Some(7)/Some(2)/Some(5)"
-+        );
-+
-+        let mut response = TestClient::get("http://localhost/7").send(&service).await;
-+        assert_eq!(response.take_string().await.unwrap(), "Some(7)/None/None");
-+
-+        let mut response = TestClient::get("http://localhost/invalid?page=invalid")
-+            .add_header("limit", "invalid", true)
-+            .send(&service)
-+            .await;
-+        assert_eq!(response.take_string().await.unwrap(), "None/None/None");
-+
-+        let mut response = TestClient::get("http://localhost/")
-+            .send(Router::new().get(optional_parameters))
-+            .await;
-+        assert_eq!(response.take_string().await.unwrap(), "None/None/None");
-+    }
-+
-+    #[cfg(feature = "cookie")]
-+    #[tokio::test]
-+    async fn optional_cookie_parameter_preserves_argument_name() {
-+        use crate::extract::CookieParam;
-+
-+        #[handler]
-+        async fn optional_cookie(count: Option<CookieParam<u32>>) -> String {
-+            format!("{:?}", count.map(CookieParam::<u32>::into_inner))
-+        }
-+
-+        let service = Service::new(Router::new().get(optional_cookie));
-+        for (cookie, expected) in [
-+            ("count=3", "Some(3)"),
-+            ("count=invalid", "None"),
-+            ("other=3", "None"),
-+        ] {
-+            let mut response = TestClient::get("http://localhost/")
-+                .add_header("cookie", cookie, true)
-+                .send(&service)
-+                .await;
-+            assert_eq!(response.take_string().await.unwrap(), expected);
-+        }
-+    }
- 
-     #[tokio::test]
-     async fn test_generic_struct() {
-```
-
-**File**: `crates/core/src/extract/parameter/cookie.rs` (modified, +4/-5)
-```diff
-@@ -133,13 +133,13 @@ where
-         let value = req
-             .cookies()
-             .get(arg)
--            .and_then(|v| parse_cookie_value(v.value()))
-+            .and_then(|v| parse_cookie_value::<T>(v.value()))
-             .ok_or_else(|| {
-                 ParseError::other(format!(
-                     "cookie parameter {arg} not found or convert to type failed"
-                 ))
-             })?;
--        Ok(Self(value))
-+        Ok(Self(Some(value)))
-     }
- }
- 
-@@ -325,15 +325,14 @@ mod tests {
-     }
- 
-     #[tokio::test]
--    #[should_panic]
--    async fn test_required_cookie_param_extract_with_value_panic() {
-+    async fn test_required_cookie_param_extract_missing_value_returns_error() {
-         let req = TestClient::get("http://127.0.0.1:5801").build_hyper();
-         let schema = req.uri().scheme().cloned().unwrap();
-         let mut req = Request::from_hyper(req, schema);
-         let mut depot = Depot::new();
-         let result =
-             CookieParam::<String, true>::extract_with_arg(&mut req, &mut depot, "param").await;
--        assert_eq!(result.unwrap().0.unwrap(), "param");
-+        assert!(result.is_err());
-     }
- 
-     #[test]
-```
-
-**File**: `crates/core/src/extract/parameter/header.rs` (modified, +4/-5)
-```diff
-@@ -111,12 +111,12 @@ where
-         _depot: &'ex mut Depot,
-         arg: &str,
-     ) -> Result<Self, ParseError> {
--        let value = req.header(arg).ok_or_else(|| {
-+        let value = req.header::<T>(arg).ok_or_else(|| {
-             ParseError::other(format!(
-                 "header parameter {arg} not found or convert to type failed"
-             ))
-         })?;
--        Ok(Self(value))
-+        Ok(Self(Some(value)))
-     }
- }
- 
-@@ -231,15 +231,14 @@ mod tests {
-     }
- 
-     #[tokio::test]
--    #[should_panic]
--    async fn test_required_header_param_extract_with_value_panic() {
-+    async fn test_required_header_param_extract_missing_value_returns_error() {
-         let req = TestClient::get("http://127.0.0.1:5801").build_hyper();
-         let schema = req.uri().scheme().cloned().unwrap();
-         let mut req = Request::from_hyper(req, schema);
-         let mut depot = Depot::new();
-         let result =
-             HeaderParam::<String, true>::extract_with_arg(&mut req, &mut depot, "param").await;
--        assert_eq!(result.unwrap().0.unwrap(), "param");
-+        assert!(result.is_err());
-     }
- 
-     #[test]
-```
-
----
-
-### Incident Patch 2: `fa8321a2` (2026-10-23)
-**Commit Message**: Fix upload file lifetimes, range compression and OpenAPI inheritance (#1723)
-
-* Share multipart file ownership and clean up interrupted writes
-
-* Roll back failed tus writes and trim stale retry data
-
-* Preserve partial response bytes during compression
-
-* Inherit and intersect OpenAPI route method constraints
-
-* Document upload lifecycle and response boundary fixes
-
-**File**: `CHANGELOG.md` (modified, +6/-0)
-```diff
-@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
- 
- ### Fixed
- 
-+- Clean up interrupted multipart uploads and keep temporary files alive until
-+  the last `FilePart` clone is released.
-+- Roll back failed tus writes and discard uncommitted file tails before retrying.
-+- Preserve byte ranges by skipping dynamic compression for partial responses.
-+- Inherit ancestor HTTP method constraints when generating OpenAPI operations,
-+  excluding routes whose method constraints conflict.
- - Exclude pending cookie jar changes and partial responses from response caching,
-   and bypass cached representations for range requests.
- - Forward parameter names through optional extractors and reject missing required
-```
-
-**File**: `crates/compression/src/lib.rs` (modified, +160/-2)
-```diff
-@@ -5,6 +5,8 @@
- //!
- //! This middleware automatically compresses HTTP responses using various algorithms,
- //! reducing bandwidth usage and improving load times for clients.
-+//! Responses with status `206 Partial Content` or a `Content-Range` header are
-+//! preserved because their byte offsets refer to the original representation.
- //!
- //! # Supported Algorithms
- //!
-@@ -72,7 +74,7 @@ use std::sync::LazyLock;
- use indexmap::IndexMap;
- use salvo_core::http::body::ResBody;
- use salvo_core::http::header::{
--    ACCEPT_ENCODING, CONTENT_ENCODING, CONTENT_LENGTH, CONTENT_TYPE, HeaderValue,
-+    ACCEPT_ENCODING, CONTENT_ENCODING, CONTENT_LENGTH, CONTENT_RANGE, CONTENT_TYPE, HeaderValue,
- };
- use salvo_core::http::headers::{ContentLength, HeaderMapExt};
- use salvo_core::http::{self, Method, Mime, StatusCode, append_vary_header, mime};
-@@ -468,7 +470,14 @@ impl Handler for Compression {
-         ctrl: &mut FlowCtrl,
-     ) {
-         ctrl.call_next(req, depot, res).await;
--        if ctrl.is_ceased() || res.headers().contains_key(CONTENT_ENCODING) {
-+        // A range describes bytes of the selected representation. Re-encoding its
-+        // body would invalidate those offsets, including representation headers
-+        // synthesized for HEAD. Leave the body and headers together untouched.
-+        if ctrl.is_ceased()
-+            || res.headers().contains_key(CONTENT_ENCODING)
-+            || res.headers().contains_key(CONTENT_RANGE)
-+            || res.status_code == Some(StatusCode::PARTIAL_CONTENT)
-+        {
-             return;
-         }
- 
-@@ -570,6 +579,155 @@ mod tests {
- 
-     use super::*;
- 
-+    #[cfg(feature = "gzip")]
-+    #[tokio::test]
-+    async fn named_file_ranges_preserve_representation_bytes() {
-+        use salvo_core::fs::NamedFile;
-+
-+        #[handler]
-+        async fn serve_file(req: &mut Request, res: &mut Response) {
-+            let file = NamedFile::builder(concat!(env!("CARGO_MANIFEST_DIR"), "/Cargo.toml"))
-+                .content_type(mime::TEXT_PLAIN)
-+                .preload_threshold(req.query::<u64>("preload").unwrap())
-+                .build()
-+                .await
-+                .unwrap();
-+            if req.method() == Method::HEAD {
-+                file.send_head(req.headers(), res).await;
-+            } else {
-+                file.send(req.headers(), res).await;
-+            }
-+        }
-+
-+        let service =
-+            Service::new(Router::with_hoop(Compression::new().min_length(1)).goal(serve_file));
-+        let original = include_bytes!("../Cargo.toml");
-+        // Cover the preloaded and streaming NamedFile paths.
-+        for preload in [0, u64::MAX] {
-+            let url = format!("http://localhost/?preload={preload}");
-+            for head in [false, true] {
-+                let request = if head {
-+                    TestClient::head(&url)
-+                } else {
-+                    TestClient::get(&url)
-+                };
-+                let mut response = request
-+                    .add_header(ACCEPT_ENCODING, "gzip", true)
-+                    .add_header("range", "bytes=16-79", true)
-+                    .send(&service)
-+                    .await;
-+                assert_eq!(response.status_code, Some(StatusCode::PARTIAL_CONTENT));
-+                assert_eq!(
-+                    response.headers()[CONTENT_RANGE],
-+                    format!("bytes 16-79/{}", original.len())
-+                );
-+                assert_eq!(response.headers()[CONTENT_LENGTH], "64");
-+                assert!(!response.headers().contains_key(CONTENT_ENCODING));
-+                let bytes = response.take_bytes(None).await.unwrap();
-+                assert_eq!(&bytes[..], if head { &[][..] } else { &original[16..80] });
-+            }
-+
-+            let mut full = TestClient::get(&url)
-+                .add_header(ACCEPT_ENCODING, "gzip", true)
-+                .send(&service)
-+                .await;
-+            assert_eq!(full.status_code, Some(StatusCode::OK));
-+            assert_eq!(full.headers()[CONTENT_ENCODING], "gzip");
-+            assert_eq!(full.take_string().await.unwrap().as_bytes(), original);
-+        }
-+    }
-+
-+    #[cfg(feature = "gzip")]
-+    #[tokio::test]
-+    async fn partial_status_or_content_range_prevents_compression() {
-+        #[handler]
-+        async fn partial_response(req: &mut Request, res: &mut Response) {
-+            res.status_code(if req.query::<bool>("partial").unwrap() {
-+                StatusCode::PARTIAL_CONTENT
-+            } else {
-+                StatusCode::OK
-+            });
-+            if req.query::<bool>("range").unwrap() {
-+                res.add_header("content-range", "bytes 0-4/10", true)
-+                    .unwrap();
-+            }
-+            res.add_header(CONTENT_TYPE, "text/plain", true).unwrap();
-+            res.add_header(CONTENT_LENGTH, "5", true).unwrap();
-+            res.add_header(VARY, "origin", true).unwrap();
-+            if req.method() != Method::HEAD {
-+           
-```
-
-**File**: `crates/core/src/http/form.rs` (modified, +223/-45)
-```diff
-@@ -1,6 +1,9 @@
- //! Form parse module.
- use std::ffi::OsStr;
-+use std::io::Write;
- use std::path::{Path, PathBuf};
-+use std::sync::Arc;
-+use std::sync::atomic::{AtomicBool, Ordering};
- 
- use base64::engine::Engine;
- use base64::engine::general_purpose::URL_SAFE_NO_PAD;
-@@ -12,8 +15,6 @@ use multra::{Field, Multipart};
- use rand::TryRng;
- use rand::rngs::SysRng;
- use tempfile::Builder;
--use tokio::fs::File;
--use tokio::io::AsyncWriteExt;
- 
- use crate::http::ParseError;
- use crate::http::header::{CONTENT_TYPE, HeaderMap};
-@@ -125,8 +126,22 @@ pub struct FilePart {
-     /// Optionally, the size of the file.  This is filled when multiparts are parsed, but is
-     /// not necessary when they are generated.
-     size: u64,
--    // The temporary directory the upload was put into, saved for the Drop trait
--    temp_dir: Option<PathBuf>,
-+    // Cleanup belongs to the upload, rather than any particular FilePart clone.
-+    storage: Arc<TemporaryUpload>,
-+}
-+
-+#[derive(Debug)]
-+struct TemporaryUpload {
-+    path: PathBuf,
-+    temp_dir: PathBuf,
-+    delete_on_drop: AtomicBool,
-+}
-+
-+// Field order closes the file before releasing the cleanup guard. Keeping both
-+// in the blocking task also covers cancellation while a disk operation runs.
-+struct UploadWriter {
-+    file: std::fs::File,
-+    storage: Arc<TemporaryUpload>,
- }
- impl FilePart {
-     /// Get file name.
-@@ -172,9 +187,12 @@ impl FilePart {
-     }
-     /// If you do not want the file on disk to be deleted when Self drops, call this
-     /// function.  It will become your responsibility to clean up.
-+    ///
-+    /// This applies to all clones of this file part. Otherwise the file is removed
-+    /// after the last clone is dropped.
-     #[inline]
-     pub fn do_not_delete_on_drop(&mut self) {
--        self.temp_dir = None;
-+        self.storage.delete_on_drop.store(false, Ordering::Relaxed);
-     }
- 
-     /// Create a new temporary FilePart (when created this way, the file will be
-@@ -199,15 +217,16 @@ impl FilePart {
-     /// fill the temporary directory's disk (denial of service), so make sure the
-     /// request body is bounded before the first read.
-     pub async fn create(field: &mut Field<'_>) -> Result<Self, ParseError> {
--        // Setup a file to capture the contents.
--        // Map the `JoinError` to a `ParseError` instead of panicking, so a
--        // runtime issue (e.g. shutdown) on this request path doesn't abort.
--        let mut path =
--            tokio::task::spawn_blocking(|| Builder::new().prefix("salvo_http_multipart").tempdir())
--                .await
--                .map_err(ParseError::other)??
--                .keep();
--        let temp_dir = Some(path.clone());
-+        Self::create_with_directory(field, || {
-+            Builder::new().prefix("salvo_http_multipart").tempdir()
-+        })
-+        .await
-+    }
-+
-+    async fn create_with_directory(
-+        field: &mut Field<'_>,
-+        create_directory: impl FnOnce() -> std::io::Result<tempfile::TempDir> + Send + 'static,
-+    ) -> Result<Self, ParseError> {
-         let name = field.file_name().map(|s| {
-             // Sanitize filename by removing invalid characters
-             s.chars()
-@@ -219,26 +238,51 @@ impl FilePart {
-                 })
-                 .collect::<String>()
-         });
--        path.push(format!(
--            "{}.{}",
--            text_nonce(),
--            name.as_deref()
--                .and_then(|name| { Path::new(name).extension().and_then(OsStr::to_str) })
--                .unwrap_or("unknown")
--        ));
--        let mut file = File::create(&path).await?;
-+        let extension = name
-+            .as_deref()
-+            .and_then(|name| Path::new(name).extension().and_then(OsStr::to_str))
-+            .unwrap_or("unknown")
-+            .to_owned();
-+        let mut writer = tokio::task::spawn_blocking(move || -> std::io::Result<UploadWriter> {
-+            let directory = create_directory()?;
-+            let path = directory
-+                .path()
-+                .join(format!("{}.{}", text_nonce(), extension));
-+            let storage = Arc::new(TemporaryUpload {
-+                path: path.clone(),
-+                temp_dir: directory.keep(),
-+                delete_on_drop: AtomicBool::new(true),
-+            });
-+            let file = std::fs::File::create(path)?;
-+            Ok(UploadWriter { file, storage })
-+        })
-+        .await
-+        .map_err(ParseError::other)??;
-         let mut size = 0;
-         while let Some(chunk) = field.chunk().await? {
-             size += chunk.len() as u64;
--            file.write_all(&chunk).await?;
-+            writer = tokio::task::spawn_blocking(move || -> std::io::Result<UploadWriter> {
-+                writer.file.write_all(&chunk)?;
-+                Ok(writer)
-+            })
-+            .await
-+            .map_err(ParseError::other)??;
-         }
--        file.sync_all().await?;
-+        let storage =
-+            tokio::task::spawn_blocking(move || -> std::io::Resul
-```
-
-**File**: `crates/oapi/src/openapi.rs` (modified, +105/-0)
-```diff
-@@ -1598,6 +1598,111 @@ mod tests {
-         );
-     }
- 
-+    #[tokio::test]
-+    async fn merge_router_inherits_ancestor_method_through_path_nodes() {
-+        use salvo_core::routing::filters;
-+        use salvo_core::test::TestClient;
-+
-+        #[salvo_oapi::endpoint]
-+        async fn inherited() -> &'static str {
-+            "ok"
-+        }
-+
-+        let router = Router::with_path("/api")
-+            .filter(filters::get())
-+            .push(Router::with_path("v1").push(Router::with_path("items").goal(inherited)));
-+        let doc = OpenApi::new("test api", "0.0.1").merge_router(&router);
-+        let item = &doc.paths["/api/v1/items"];
-+        assert_eq!(item.operations.len(), 1);
-+        assert!(item.operations.contains_key(&PathItemType::Get));
-+        assert!(item.additional_operations.is_empty());
-+        let response = TestClient::get("http://localhost/api/v1/items")
-+            .send(router)
-+            .await;
-+        assert_eq!(response.status_code, Some(StatusCode::OK));
-+    }
-+
-+    #[test]
-+    fn merge_router_intersects_method_constraints_instead_of_overriding_them() {
-+        use salvo_core::http::Method;
-+        use salvo_core::routing::filters::MethodFilter;
-+
-+        #[salvo_oapi::endpoint]
-+        async fn endpoint() -> &'static str {
-+            "ok"
-+        }
-+
-+        let purge = Method::from_bytes(b"PURGE").unwrap();
-+        for (first, second) in [
-+            (Method::GET, Method::POST),
-+            (Method::POST, Method::GET),
-+            (Method::GET, purge.clone()),
-+            (purge.clone(), Method::GET),
-+        ] {
-+            let same_node = Router::with_path("/conflict")
-+                .filter(MethodFilter(first.clone()))
-+                .filter(MethodFilter(second.clone()))
-+                .goal(endpoint)
-+                .push(Router::with_path("child").get(endpoint));
-+            let parent_and_child = Router::with_path("/conflict")
-+                .filter(MethodFilter(first))
-+                .push(
-+                    Router::new()
-+                        .filter(MethodFilter(second))
-+                        .goal(endpoint)
-+                        .push(Router::with_path("child").get(endpoint)),
-+                );
-+            for conflict in [same_node, parent_and_child] {
-+                let router = Router::new()
-+                    .push(conflict)
-+                    .push(Router::with_path("/valid").get(endpoint));
-+                let doc = OpenApi::new("test api", "0.0.1")
-+                    .openapi_version(OpenApiVersion::Version3_2)
-+                    .merge_router(&router);
-+                assert_eq!(doc.paths.len(), 1);
-+                assert!(doc.paths.contains_key("/valid"));
-+            }
-+        }
-+
-+        let repeated = Router::with_path("/repeated")
-+            .filter(MethodFilter(Method::GET))
-+            .filter(MethodFilter(Method::GET))
-+            .push(Router::new().get(endpoint));
-+        let doc = OpenApi::new("test api", "0.0.1").merge_router(&repeated);
-+        assert!(
-+            doc.paths["/repeated"]
-+                .operations
-+                .contains_key(&PathItemType::Get)
-+        );
-+    }
-+
-+    #[test]
-+    fn merge_router_inherited_extension_methods_keep_version_gating() {
-+        use salvo_core::http::Method;
-+        use salvo_core::routing::filters::MethodFilter;
-+
-+        #[salvo_oapi::endpoint]
-+        async fn endpoint() -> &'static str {
-+            "ok"
-+        }
-+
-+        for method in [Method::QUERY, Method::from_bytes(b"PURGE").unwrap()] {
-+            let router = Router::with_filter(MethodFilter(method.clone()))
-+                .push(Router::with_path("/resource").goal(endpoint));
-+            let doc = OpenApi::new("test api", "0.0.1").merge_router(&router);
-+            assert!(doc.paths.is_empty());
-+            let doc = OpenApi::new("test api", "0.0.1")
-+                .openapi_version(OpenApiVersion::Version3_2)
-+                .merge_router(&router);
-+            let item = &doc.paths["/resource"];
-+            if method == Method::QUERY {
-+                assert!(item.operations.contains_key(&PathItemType::Query));
-+            } else {
-+                assert!(item.additional_operations.contains_key("PURGE"));
-+            }
-+        }
-+    }
-+
-     #[test]
-     fn merge_router_emits_query_operation_only_for_3_2() {
-         #[salvo_oapi::endpoint]
-```
-
-**File**: `crates/oapi/src/routing.rs` (modified, +34/-27)
-```diff
-@@ -99,6 +99,14 @@ pub(crate) struct NormNode {
- 
- impl NormNode {
-     pub(crate) fn new(router: &Router, inherited_metadata: Metadata) -> Self {
-+        Self::with_method(router, inherited_metadata, None)
-+    }
-+
-+    fn with_method(
-+        router: &Router,
-+        inherited_metadata: Metadata,
-+        mut method: Option<Method>,
-+    ) -> Self {
-         let mut node = Self {
-             // router_id: router.id,
-             metadata: inherited_metadata,
-@@ -134,45 +142,44 @@ impl NormNode {
-                         node.path = Some(path);
-                     }
-                 }
--                FilterInfo::Method(method) => {
--                    // Methods with a dedicated Path Item field map to `PathItemType`;
--                    // everything else (CONNECT and custom/extension methods) goes to
--                    // `additionalOperations`, which requires OpenAPI 3.2. Whether such a
--                    // slot is actually emitted is decided later, when the document version
--                    // is known.
--                    let item = match method {
--                        Method::GET => OperationSlot::Standard(PathItemType::Get),
--                        Method::POST => OperationSlot::Standard(PathItemType::Post),
--                        Method::PUT => OperationSlot::Standard(PathItemType::Put),
--                        Method::DELETE => OperationSlot::Standard(PathItemType::Delete),
--                        Method::HEAD => OperationSlot::Standard(PathItemType::Head),
--                        Method::OPTIONS => OperationSlot::Standard(PathItemType::Options),
--                        Method::TRACE => OperationSlot::Standard(PathItemType::Trace),
--                        Method::PATCH => OperationSlot::Standard(PathItemType::Patch),
--                        Method::QUERY => OperationSlot::Standard(PathItemType::Query),
--                        other => OperationSlot::Additional(other.as_str().to_owned()),
--                    };
--                    // A standard method never loses to a custom one, so combining a
--                    // standard method filter with a custom one does not erase the standard
--                    // mapping (the previous string-parsing path had the same behavior via
--                    // its `_ => {}` arm).
--                    if matches!(item, OperationSlot::Standard(_))
--                        || !matches!(node.method, Some(OperationSlot::Standard(_)))
--                    {
--                        node.method = Some(item);
-+                FilterInfo::Method(current) => {
-+                    // Router filters and all ancestor filters are conjunctive. A
-+                    // different method cannot override an earlier constraint: no
-+                    // request can reach this node or any of its descendants.
-+                    if method.as_ref().is_some_and(|method| method != &current) {
-+                        return node;
-                     }
-+                    method = Some(current);
-                 }
-                 // Other filter kinds (Scheme/Host/Port/Other) do not carry
-                 // information that maps to OpenAPI path items.
-                 _ => {}
-             }
-         }
-+        // Preserve extension method spelling; version compatibility is checked
-+        // when the operation is inserted into the OpenAPI document.
-+        node.method = method.as_ref().map(|method| match *method {
-+            Method::GET => OperationSlot::Standard(PathItemType::Get),
-+            Method::POST => OperationSlot::Standard(PathItemType::Post),
-+            Method::PUT => OperationSlot::Standard(PathItemType::Put),
-+            Method::DELETE => OperationSlot::Standard(PathItemType::Delete),
-+            Method::HEAD => OperationSlot::Standard(PathItemType::Head),
-+            Method::OPTIONS => OperationSlot::Standard(PathItemType::Options),
-+            Method::TRACE => OperationSlot::Standard(PathItemType::Trace),
-+            Method::PATCH => OperationSlot::Standard(PathItemType::Patch),
-+            Method::QUERY => OperationSlot::Standard(PathItemType::Query),
-+            _ => OperationSlot::Additional(method.as_str().to_owned()),
-+        });
-         node.handler_type_id = router.goal.as_ref().map(|h| h.type_id());
-         node.handler_type_name = router.goal.as_ref().map(|h| h.type_name());
-         let routers = router.routers();
-         if !routers.is_empty() {
-             for router in routers {
--                node.children.push(Self::new(router, node.metadata.clone()));
-+                node.children.push(Self::with_method(
-+                    router,
-+                    node.metadata.clone(),
-+                    method.clone(),
-+                ));
-             }
-         }
-         node
-```
-
-**File**: `crates/tus/src/stores/disk.rs` (modified, +120/-29)
-```diff
-@@ -520,47 +520,58 @@ impl DataStore for DiskStore {
-                 _ => TusError::Internal(e.to_string()),
-             })?;
- 
-+        // Metadata is the committed boundary. A cancelled write (or an older
-+        // failed write) may have left an uncommitted tail on disk. Remove it
-+        // before retrying, including retries with an empty body.
-+        file.set_len(offset)
-+            .await
-+            .map_err(|e| TusError::Internal(e.to_string()))?;
-         file.seek(SeekFrom::Start(offset))
-             .await
-             .map_err(|e| TusError::Internal(e.to_string()))?;
- 
-         let original_offset = offset;
--        let mut written: u64 = 0;
-         let mut stream = stream;
--        while let Some(item) = stream.next().await {
--            let chunk = match item {
--                Ok(chunk) => chunk,
--                Err(e) if is_upload_size_limit_error(&e) => {
--                    let _ = file.set_len(original_offset).await;
-+        let result = async {
-+            let mut written: u64 = 0;
-+            while let Some(item) = stream.next().await {
-+                let chunk = item.map_err(|e| {
-+                    if is_upload_size_limit_error(&e) {
-+                        TusError::PayloadTooLarge
-+                    } else {
-+                        TusError::Internal(e.to_string())
-+                    }
-+                })?;
-+                let new_offset = written
-+                    .checked_add(chunk.len() as u64)
-+                    .and_then(|w| original_offset.checked_add(w))
-+                    .ok_or(TusError::PayloadTooLarge)?;
-+                if meta.size.is_some_and(|size| new_offset > size) {
-                     return Err(TusError::PayloadTooLarge);
-                 }
--                Err(e) => return Err(TusError::Internal(e.to_string())),
--            };
--            // Accumulate with overflow checks: `write` is a public `DataStore`
--            // API and, on the deferred-size path (`meta.size == None`), there is
--            // no upper bound, so an extreme starting offset could otherwise wrap.
--            let new_offset = written
--                .checked_add(chunk.len() as u64)
--                .and_then(|w| original_offset.checked_add(w));
--            let Some(new_offset) = new_offset else {
--                let _ = file.set_len(original_offset).await;
--                return Err(TusError::PayloadTooLarge);
--            };
--            if let Some(size) = meta.size
--                && new_offset > size
--            {
--                let _ = file.set_len(original_offset).await;
--                return Err(TusError::PayloadTooLarge);
-+                file.write_all(&chunk)
-+                    .await
-+                    .map_err(|e| TusError::Internal(e.to_string()))?;
-+                written += chunk.len() as u64;
-             }
--            file.write_all(&chunk)
-+
-+            file.flush()
-                 .await
-                 .map_err(|e| TusError::Internal(e.to_string()))?;
--            written += chunk.len() as u64;
-+            Ok(written)
-         }
--
--        file.flush()
--            .await
--            .map_err(|e| TusError::Internal(e.to_string()))?;
-+        .await;
-+        let written = match result {
-+            Ok(written) => written,
-+            Err(error) => {
-+                // Roll back stream and I/O failures as well as size violations.
-+                // set_len waits for pending Tokio file writes before truncating.
-+                if let Err(rollback_error) = file.set_len(original_offset).await {
-+                    warn!(id, error = %rollback_error, "failed to roll back tus upload data");
-+                }
-+                return Err(error);
-+            }
-+        };
- 
-         // `original_offset + written` was validated each iteration above, so this
-         // cannot overflow; `saturating_add` is a belt-and-braces guard.
-@@ -1309,6 +1320,86 @@ mod tests {
-         assert_eq!(info.offset, Some(13));
-     }
- 
-+    #[tokio::test]
-+    async fn interrupted_write_preserves_committed_prefix() {
-+        use bytes::Bytes;
-+        use futures_util::stream;
-+
-+        let (store, _directory) = create_test_store();
-+        let id = "interrupted-write";
-+        let mut upload = create_test_upload_info(id);
-+        upload.size = None;
-+        store.create(upload).await.unwrap();
-+        store
-+            .write(
-+                id,
-+                0,
-+                Box::pin(stream::iter([Ok(Bytes::from_static(b"prefix"))])),
-+            )
-+            .await
-+            .unwrap();
-+        let result = store
-+            .write(
-+                id,
-+                6,
-+                Box::pin(stream::iter([
-+                    Ok(Bytes::from_static(b"old tail")),
-+                    Err(io::Error::new(io::ErrorKind::UnexpectedEof, "interrupted")),
-+                ])),
-+            )
-+            .await;
-+        assert!(matches!(result, Err(TusError::Internal(_))));
-+        assert_eq!(store.read_meta
-```
-
-**File**: `crates/tus/tests/upload_finish.rs` (modified, +66/-0)
-```diff
-@@ -38,6 +38,72 @@ fn streamed_body(
-     }
- }
- 
-+#[tokio::test]
-+async fn interrupted_patch_can_complete_with_a_shorter_retry() {
-+    use bytes::Bytes;
-+    use salvo_core::hyper::body::Frame;
-+
-+    let directory = tempfile::tempdir().unwrap();
-+    let completed = Arc::new(Mutex::new(Vec::new()));
-+    let observed = completed.clone();
-+    let service = Service::new(
-+        Tus::new()
-+            .path("/uploads")
-+            .storage_root(directory.path())
-+            .on_upload_finish(move |_req, upload| {
-+                observed.lock().unwrap().push(upload);
-+                async { Ok(UploadFinishPatch::default()) }
-+            })
-+            .into_router(),
-+    );
-+    let created = TestClient::post("http://localhost/uploads")
-+        .add_header("tus-resumable", "1.0.0", true)
-+        .add_header("upload-defer-length", "1", true)
-+        .send(&service)
-+        .await;
-+    assert_eq!(created.status_code, Some(StatusCode::CREATED));
-+    let url = format!(
-+        "http://localhost{}",
-+        created.headers()["location"].to_str().unwrap()
-+    );
-+    let failed = TestClient::patch(&url)
-+        .add_header("tus-resumable", "1.0.0", true)
-+        .add_header("content-type", "application/offset+octet-stream", true)
-+        .add_header("upload-offset", "0", true)
-+        .body(streamed_body(vec![
-+            Ok(Frame::data(Bytes::from_static(b"old-data"))),
-+            Err(std::io::Error::new(std::io::ErrorKind::UnexpectedEof, "interrupted").into()),
-+        ]))
-+        .send(&service)
-+        .await;
-+    assert_eq!(failed.status_code, Some(StatusCode::INTERNAL_SERVER_ERROR));
-+    assert!(completed.lock().unwrap().is_empty());
-+    let head = TestClient::head(&url)
-+        .add_header("tus-resumable", "1.0.0", true)
-+        .send(&service)
-+        .await;
-+    assert_eq!(head.headers()["upload-offset"], "0");
-+    let retry = TestClient::patch(&url)
-+        .add_header("tus-resumable", "1.0.0", true)
-+        .add_header("content-type", "application/offset+octet-stream", true)
-+        .add_header("upload-offset", "0", true)
-+        .add_header("upload-length", "3", true)
-+        .body("abc")
-+        .send(&service)
-+        .await;
-+    assert_eq!(retry.status_code, Some(StatusCode::NO_CONTENT));
-+    assert_eq!(retry.headers()["upload-offset"], "3");
-+    let mut downloaded = TestClient::get(&url)
-+        .add_header("tus-resumable", "1.0.0", true)
-+        .send(&service)
-+        .await;
-+    assert_eq!(downloaded.take_bytes(None).await.unwrap(), "abc");
-+    let uploads = completed.lock().unwrap();
-+    assert_eq!(uploads.len(), 1);
-+    assert_eq!(uploads[0].size, Some(3));
-+    assert_eq!(uploads[0].offset, Some(3));
-+}
-+
- #[tokio::test]
- async fn deferred_completion_waits_for_a_valid_request_stream() {
-     use bytes::Bytes;
-```
-
----
-
-### Incident Patch 3: `4fb27aa9` (2026-10-23)
-**Commit Message**: Fix route rollback, conditional file ranges and OpenAPI paths (#1718)
-
-* Restore path state after failed filter branches
-
-* Honor If-Range validators in file responses
-
-* Preserve consecutive path filters in OpenAPI routes
-
-* Exercise core tests with matched path enabled and disabled
-
-**File**: `.github/workflows/linux.yml` (modified, +6/-0)
-```diff
-@@ -161,6 +161,12 @@ jobs:
-       - uses: dtolnay/rust-toolchain@stable
-       - name: Check selected protocols
-         run: cargo check -p salvo --no-default-features --features '${{ matrix.features }}'
-+      - name: Test core without matched-path
-+        if: ${{ matrix.features == 'server,http1' }}
-+        run: cargo test -p salvo_core --lib --no-default-features --features server,http1,test,cookie
-+      - name: Test core with matched-path
-+        if: ${{ matrix.features == 'server,http1' }}
-+        run: cargo test -p salvo_core --lib --no-default-features --features server,http1,test,cookie,matched-path
-       - name: Verify HTTP/2 is excluded when disabled
-         if: ${{ !contains(matrix.features, 'http2') }}
-         shell: bash
-```
-
-**File**: `CHANGELOG.md` (modified, +6/-0)
-```diff
-@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
- 
- ### Fixed
- 
-+- Preserve consecutive path filters on the same router when generating OpenAPI paths.
-+- Honor `If-Range` validators in file responses, returning the full representation
-+  when a resumable download refers to a different version.
-+- Restore path cursors, captured parameters and matched path templates after failed
-+  composite filters, so alternative routes start from the original matching state.
-+  Routing tests also compile when `matched-path` is disabled.
+@@ -53,6 +53,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
  - Enable only the requested `salvo_extra` middleware features through `salvo`,
    avoiding unrelated WebSocket, Tower and request-ID dependencies for logging-only builds.
  - Declare the Hyper dependency directly for standalone `tower-compat` builds.
++- Recover request, depot and flow state when Tower layers short-circuit, fail or
++  cancel their inner future, preserving HEAD handling and prepared response policy headers.
+ - Invoke tus upload completion hooks when PATCH finishes an upload, sharing
+   response customization and error handling with creation-time completion.
+ - Preserve existing tus metadata if replacing its temporary file fails on Windows.
 ```
 
-**File**: `crates/core/src/fs/named_file.rs` (modified, +104/-2)
+**File**: `crates/extra/Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -21,7 +21,7 @@ use tokio::io::{AsyncReadExt, AsyncSeekExt};
- use super::{ChunkedFile, ChunkedState};
- use crate::http::body::ResBody;
- use crate::http::header::{
--    CONTENT_DISPOSITION, CONTENT_ENCODING, CONTENT_TYPE, IF_NONE_MATCH, RANGE,
-+    CONTENT_DISPOSITION, CONTENT_ENCODING, CONTENT_TYPE, IF_NONE_MATCH, IF_RANGE, RANGE,
-     X_CONTENT_TYPE_OPTIONS,
- };
- use crate::http::mime::{detect_text_mime, fill_mime_charset_if_need, is_charset_required_mime};
-@@ -847,6 +847,18 @@ impl NamedFile {
-             false
+@@ -66,6 +66,8 @@ tower-compat = [
+     "dep:http-body-util",
+     "dep:tower",
+     "dep:tracing",
++    "tokio/macros",
++    "tokio/sync",
+ ]
+ 
+ [dependencies]
+```
+
+**File**: `crates/extra/src/tower_compat.rs` (modified, +696/-88)
+```diff
+@@ -26,17 +26,17 @@ use std::error::Error as StdError;
+ use std::fmt::{self, Debug, Formatter};
+ use std::io::Error as IoError;
+ use std::marker::PhantomData;
+-use std::sync::Arc;
++use std::sync::{Arc, Mutex};
+ use std::task::{Context, Poll};
+ 
+ use futures_util::future::{BoxFuture, FutureExt, ready};
+ use http_body_util::BodyExt;
+ use hyper::body::{Body, Bytes};
+-use tower::buffer::Buffer;
+-use tower::{Layer, Service, ServiceExt};
+-
+ use salvo_core::http::{ReqBody, ResBody, StatusError};
+ use salvo_core::{Depot, FlowCtrl, Handler, Request, Response, async_trait, hyper};
++use tokio::sync::oneshot;
++use tower::buffer::Buffer;
++use tower::{Layer, Service, ServiceExt};
+ 
+ /// Trait for tower service compat.
+ pub trait TowerServiceCompat<QB, SB, E, Fut> {
+@@ -105,9 +105,7 @@ where
+         }
+         let Ok(hyper_req) = req.strip_to_hyper::<QB>() else {
+             tracing::error!("strip request to hyper failed");
+-            res.render(
+-                StatusError::internal_server_error().cause("strip request to hyper failed"),
+-            );
++            res.render(StatusError::internal_server_error().cause("strip request to hyper failed"));
+             return;
          };
  
-+        // If-Range uses strong entity-tag comparison or an exact HTTP-date
-+        // match. A failed (or invalid) validator ignores Range, even when the
-+        // requested range would otherwise be unsatisfiable.
-+        let range_allowed = !req_headers.contains_key(IF_RANGE)
-+            || req_headers.typed_get::<IfRange>().is_some_and(|if_range| {
-+                etag.as_ref()
-+                    .is_some_and(|etag| if_range == IfRange::etag(etag.clone()))
-+                    || last_modified
-+                        .and_then(|mtime| self.encodable_last_modified(mtime))
-+                        .is_some_and(|mtime| if_range == IfRange::date(mtime))
-+            });
-+
-         // A caller may have already chosen the response's Content-Type. Default
-         // the disposition from the type the client will actually receive, not
-         // necessarily the type detected for the file on disk. Treat an invalid
-@@ -918,7 +930,7 @@ impl NamedFile {
-         let mut is_partial = false;
+@@ -133,35 +131,80 @@ where
+     }
+ }
  
-         // check for range header
--        if let Some(range) = req_headers.get(RANGE) {
-+        if let Some(range) = req_headers.get(RANGE).filter(|_| range_allowed) {
-             let Ok(range) = range.to_str() else {
-                 res.status_code(StatusCode::BAD_REQUEST);
-                 return;
-@@ -1075,6 +1087,96 @@ fn none_match(etag: Option<&ETag>, req_headers: &HeaderMap) -> bool {
- mod tests {
-     use super::*;
- 
-+    #[tokio::test]
-+    async fn if_range_requires_a_matching_validator() {
-+        use crate::test::ResponseExt;
+-struct FlowCtrlInContext {
+-    ctrl: FlowCtrl,
+-    request: Request,
+-    depot: Depot,
+-    response: Response,
++struct FlowCall {
++    request: hyper::Request<ReqBody>,
++    response: oneshot::Sender<hyper::Response<ResBody>>,
++    span: tracing::Span,
+ }
+-impl FlowCtrlInContext {
+-    fn new(ctrl: FlowCtrl, request: Request, depot: Depot, response: Response) -> Self {
+-        Self {
+-            ctrl,
+-            request,
+-            depot,
+-            response,
+-        }
 +
-+        let temp_dir = tempfile::tempdir().unwrap();
-+        let path = temp_dir.path().join("range.txt");
-+        std::fs::write(&path, b"new-content").unwrap();
-+        let file = NamedFile::open(&path).await.unwrap();
-+        let etag = file.etag().unwrap();
-+        let mut etag_headers = HeaderMap::new();
-+        etag_headers.typed_insert(etag.clone());
-+        let weak_etag = format!("W/{}", etag_headers["etag"].to_str().unwrap())
-+            .parse()
-+            .unwrap();
-+        let modified = file.last_modified().unwrap();
-+        let valid_date = IfRange::date(modified);
-+        for (validator, expected_status, expected_body) in [
-+            (
-+                IfRange::etag("\"old-etag\"".parse().unwrap()),
-+                StatusCode::OK,
-+                "new-content",
-+            ),
-+            (
-+                IfRange::etag(etag.clone()),
-+                StatusCode::PARTIAL_CONTENT,
-+                "content",
-+            ),
-+            (IfRange::etag(weak_etag), StatusCode::OK, "new-content"),
-+            (
-+                IfRange::date(modified - Duration::from_secs(60)),
-+                StatusCode::OK,
-+                "new-content",
-+            ),
-+            (
-+                IfRange::date(modified + Duration::from_secs(60)),
-+                StatusCode::OK,
-+                "new-content",
-+            ),
-+            (valid_date, StatusCode::PARTIAL_CONTENT, "content"),
-+        ] {
-+            let mut headers = HeaderMap::new();
-+            headers.insert(RANGE, HeaderValue::from_static("bytes=4-"));
-+            headers.typed_insert(validator);
-+            let mut response = Response::new();
-+            NamedFile::open(&path)
-+                .await
-+                .unwrap()
-+                .send(&headers, &mut response)
-+                .await;
-+            assert_eq!(response.status_code, Some(expected_status));
-+            assert_eq!(response.take_string().await.unwrap(), expected_body);
++type FlowCallSender = Arc<Mutex<Option<oneshot::Sender<FlowCall>>>>;
++
++const REPRESENTATION_HEADERS: &[&str] = &[
++    "content-type",
++    "content-length",
++    "content-encoding",
++    "content-range",
++    "content-disposition",
++    "etag",
++    "last-modified",
++    "digest",
++    "content-digest",
++    "repr-digest",
++    "transfer-encoding",
++    "trailer",
++];
++
++// Request extensions may be cloned or retained by Tower. The sender is a
++// single-use capability, and closing it also invalidates those retained copies.
++struct CloseFlowCall(FlowCallSender);
++
++impl Drop for CloseFlowCall {
++    fn drop(&mut self) {
++        self.0.lock().unwrap_or_else(|e| e.into_inner()).take();
+     }
+ }
+-struct FlowCtrlOutContext {
+-    ctrl: FlowCtrl,
+-    request: Request,
+-    depot: Depot,
+-}
+-impl FlowCtrlOutContext {
+-    fn new(ctrl: FlowCtrl, request: Request, depot: Depot) -> Self {
+-        Self {
+-            ctrl,
+-            request,
+-            depot,
++
++async fn drive_inner_call(
++    call: oneshot::Receiver<FlowCall>,
++    req: &mut Request,
++    depot: &mut Depot,
++    res: &mut Response,
++    ctrl: &mut FlowCtrl,
++    response_sent: &mut bool,
++) {
++    if let Ok(FlowCall {
++        request,
++        mut response,
++        span,
++    }) = call.await
++    {
++        // A layer may poll its inner future once and then abandon it while
++        // preparing a fallback. Do not run an abandoned downstream flow.
++        if response.is_closed() {
++            std::future::pending::<()>().await;
 +        }
-+
-+        // A failed validator must bypass even an unsatisfiable Range.
-+        let mut headers = HeaderMap::new();
-+        headers.insert(RANGE, HeaderValue::from_static("bytes=100-"));
-+        headers.typed_insert(IfRange::etag("\"old-etag\"".parse().unwrap()));
-+        let mut response = Response::new();
-+        NamedFile::open(&path)
-+            .await
-+            .unwrap()
-+            .send_head(&headers, &mut response)
-+            .await;
-+        assert_eq!(response.status_code, Some(StatusCode::OK));
-+        assert!(response.body.is_none());
-+
-+        headers.insert(RANGE, HeaderValue::from_static("bytes=4-"));
-+        headers.insert(IF_RANGE, HeaderValue::from_static("invalid-validator"));
-+        let mut response = Response::new();
-+        NamedFile::open(&path)
-+            .await
-+            .unwrap()
-+            .send(&headers, &mut response)
-+            .await;
-+    
-```
-
-**File**: `crates/core/src/routing.rs` (modified, +1/-0)
-```diff
-@@ -594,6 +594,7 @@ mod tests {
-         assert_eq!(access(&service, "localhost").await, "Hello World");
-     }
- 
-+    #[cfg(feature = "matched-path")]
-     #[tokio::test]
-     async fn test_matched_path() {
-         #[handler]
-```
-
-**File**: `crates/core/src/routing/filters.rs` (modified, +11/-0)
-```diff
-@@ -69,6 +69,9 @@ pub trait Filter: Debug + Send + Sync + 'static {
-         FilterInfo::Other(self.type_name())
-     }
-     /// Create a new filter use `And` filter.
-+    ///
-+    /// Restores path matching state if either filter fails. Mutations to the
-+    /// request itself are not rolled back.
-     #[inline]
-     fn and<F>(self, other: F) -> And<Self, F>
-     where
-@@ -82,6 +85,9 @@ pub trait Filter: Debug + Send + Sync + 'static {
-     }
- 
-     /// Create a new filter use `Or` filter.
-+    ///
-+    /// Restores path matching state before trying the second alternative and
-+    /// when neither alternative matches. Request mutations are not rolled back.
-     #[inline]
-     fn or<F>(self, other: F) -> Or<Self, F>
-     where
-@@ -95,6 +101,8 @@ pub trait Filter: Debug + Send + Sync + 'static {
-     }
- 
-     /// Create a new filter use `AndThen` filter.
-+    ///
-+    /// Restores path matching state if the filter or callback fails.
-     #[inline]
-     fn and_then<F>(self, fun: F) -> AndThen<Self, F>
-     where
-@@ -108,6 +116,9 @@ pub trait Filter: Debug + Send + Sync + 'static {
-     }
- 
-     /// Create a new filter use `OrElse` filter.
-+    ///
-+    /// The callback starts with the original path matching state after a failed
-+    /// filter. A failed callback also restores that state.
-     #[inline]
-     fn or_else<F>(self, fun: F) -> OrElse<Self, F>
-     where
-```
-
-**File**: `crates/core/src/routing/filters/opts.rs` (modified, +110/-8)
-```diff
-@@ -18,10 +18,17 @@ where
- {
-     #[inline]
-     async fn filter(&self, req: &mut Request, state: &mut PathState<'_>) -> bool {
-+        let checkpoint = state.checkpoint();
-         if self.first.filter(req, state).await {
-             true
-         } else {
--            self.second.filter(req, state).await
-+            state.rollback(checkpoint);
-+            if self.second.filter(req, state).await {
-+                true
-+            } else {
-+                state.rollback(checkpoint);
-+                false
-+            }
-         }
-     }
- }
-@@ -39,10 +46,17 @@ where
- {
-     #[inline]
-     async fn filter(&self, req: &mut Request, state: &mut PathState<'_>) -> bool {
-+        let checkpoint = state.checkpoint();
-         if self.filter.filter(req, state).await {
-             true
-         } else {
--            (self.callback)(req, state)
-+            state.rollback(checkpoint);
-+            if (self.callback)(req, state) {
-+                true
-+            } else {
-+                state.rollback(checkpoint);
-+                false
-+            }
-         }
-     }
- }
-@@ -67,10 +81,12 @@ where
- {
-     #[inline]
-     async fn filter(&self, req: &mut Request, state: &mut PathState<'_>) -> bool {
--        if !self.first.filter(req, state).await {
--            false
-+        let checkpoint = state.checkpoint();
-+        if self.first.filter(req, state).await && self.second.filter(req, state).await {
-+            true
-         } else {
--            self.second.filter(req, state).await
-+            state.rollback(checkpoint);
-+            false
-         }
-     }
- }
-@@ -89,10 +105,12 @@ where
- {
-     #[inline]
-     async fn filter(&self, req: &mut Request, state: &mut PathState<'_>) -> bool {
--        if !self.filter.filter(req, state).await {
--            false
-+        let checkpoint = state.checkpoint();
-+        if self.filter.filter(req, state).await && (self.callback)(req, state) {
-+            true
-         } else {
--            (self.callback)(req, state)
-+            state.rollback(checkpoint);
-+            false
-         }
-     }
- }
-@@ -103,3 +121,87 @@ impl<T, F> fmt::Debug for AndThen<T, F> {
-         write!(f, "opt:and_then")
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use crate::routing::{Filter, PathState, filters};
-+    use crate::test::TestClient;
-+
-+    #[tokio::test]
-+    async fn or_retries_from_the_original_path() {
-+        let filter = filters::path("a")
-+            .and(filters::get())
-+            .or(filters::path("a").and(filters::post()));
-+        let mut req = TestClient::post("http://localhost/a").build();
-+        let mut state = PathState::from_borrowed_path("/a");
-+        assert!(filter.filter(&mut req, &mut state).await);
-+        assert!(state.is_ended());
-+    }
-+
-+    #[tokio::test]
-+    async fn or_discards_failed_captures() {
-+        let filter = filters::path("{leaked}/wrong").or(filters::path("{actual}/right"));
-+        let mut req = TestClient::get("http://localhost/alice/right").build();
-+        let mut state = PathState::from_borrowed_path("/alice/right");
-+        assert!(filter.filter(&mut req, &mut state).await);
-+        assert!(!state.params.contains_key("leaked"));
-+        assert_eq!(state.params["actual"], "alice");
-+        #[cfg(feature = "matched-path")]
-+        assert_eq!(state.matched_parts, ["{actual}", "right"]);
-+    }
-+
-+    #[tokio::test]
-+    async fn or_rolls_back_failed_wildcard_captures() {
-+        let filter = filters::path("{**ignored}")
-+            .and(filters::post())
-+            .or(filters::path("{**actual}").and(filters::get()));
-+        let mut req = TestClient::get("http://localhost/some/path").build();
-+        let mut state = PathState::from_borrowed_path("/some/path");
-+        assert!(filter.filter(&mut req, &mut state).await);
-+        assert!(!state.params.contains_key("ignored"));
-+        assert_eq!(state.params.tail(), Some("some/path"));
-+        assert_eq!(state.params["actual"], "some/path");
-+    }
-+
-+    #[tokio::test]
-+    async fn failed_composites_restore_ancestor_captures() {
-+        let mut req = TestClient::get("http://localhost/alice/edit").build();
-+        let mut state = PathState::from_borrowed_path("/alice/edit");
-+        assert!(filters::path("{id}").filter(&mut req, &mut state).await);
-+        let before = state.clone();
-+        let filter = filters::path("{id}").and(filters::post());
-+        assert!(!filter.filter(&mut req, &mut state).await);
-+        assert_eq!(state, before);
-+
-+        let filter = filters::path("{id}").and_then(|_, _| false);
-+        assert!(!filter.filter(&mut req, &mut state).await);
-+        assert_eq!(state, before);
-+
-+        let filter = filters::path("{id}/missing")
-+            .or_else(|_, state| state.pick() == Some("edit") && state.params["id"] == "alice");
-+        assert!(filter.filter(&mut req, &mut state).await);
-+        assert_eq!(state, before);
-+    }
-+
-+    #[tokio::test]
-+    async fn failed_alternatives_restore_the_input_state() {
-+        let 
-```
-
-**File**: `crates/core/src/routing/filters/path.rs` (modified, +7/-3)
-```diff
-@@ -1129,16 +1129,16 @@ impl PathFilter {
-     }
-     /// Detect is that path is match.
-     pub fn detect(&self, state: &mut PathState<'_>) -> bool {
--        let original_cursor = state.cursor;
-+        let checkpoint = state.checkpoint();
-         for ps in &self.path_wisps {
-             let row = state.cursor.0;
-             if ps.detect(state) {
-                 if row == state.cursor.0 && row != state.parts_len() {
--                    state.cursor = original_cursor;
-+                    state.rollback(checkpoint);
-                     return false;
-                 }
-             } else {
--                state.cursor = original_cursor;
-+                state.rollback(checkpoint);
-                 return false;
-             }
-         }
-@@ -1472,6 +1472,7 @@ mod tests {
-         let mut state =
-             PathState::from_borrowed_path("/users/123e4567-e89b-12d3-a456-9AC7CBDCEE52");
-         assert!(filter.detect(&mut state));
-+        #[cfg(feature = "matched-path")]
-         assert_eq!(
-             state.matched_parts,
-             vec!["users".to_owned(), "{id}".to_owned()]
-@@ -1482,6 +1483,7 @@ mod tests {
-         let filter = PathFilter::new("/users/{id}/{**rest}");
-         let mut state = PathState::from_borrowed_path("/users/12/facebook/insights/23");
-         assert!(filter.detect(&mut state));
-+        #[cfg(feature = "matched-path")]
-         assert_eq!(
-             state.matched_parts,
-             vec!["users".to_owned(), "{id}".to_owned(), "{**rest}".to_owned()]
-@@ -1490,6 +1492,7 @@ mod tests {
-         assert!(filter.detect(&mut state));
-         let mut state = PathState::from_borrowed_path("/users/12");
-         assert!(filter.detect(&mut state));
-+        #[cfg(feature = "matched-path")]
-         assert_eq!(
-             state.matched_parts,
-             vec!["users".to_owned(), "{id}".to_owned(), "{**rest}".to_owned()]
-@@ -1512,6 +1515,7 @@ mod tests {
-         assert!(filter.detect(&mut state));
-         let mut state = PathState::from_borrowed_path("/users/12/abc");
-         assert!(filter.detect(&mut state));
-+        #[cfg(feature = "matched-path")]
-         assert_eq!(
-             state.matched_parts,
-             vec!["users".to_owned(), "{id}".to_owned(), "{*?rest}".to_owned()]
-```
-
-**File**: `crates/core/src/routing/path_state.rs` (modified, +30/-0)
-```diff
-@@ -38,6 +38,16 @@ pub struct PathState<'a> {
-     pub(crate) once_ended: bool, /* Once it has ended, used to determine whether the error code
-                                  * returned is 404 or 405. */
- }
-+
-+/// A lightweight transaction boundary for path matching.
-+#[derive(Clone, Copy)]
-+pub(crate) struct PathCheckpoint {
-+    cursor: (usize, usize),
-+    params: (usize, bool, usize),
-+    end_slash: bool,
-+    #[cfg(feature = "matched-path")]
-+    matched_parts_len: usize,
-+}
- impl<'a> Debug for PathState<'a> {
-     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-         let parts = self.parts_iter().collect::<Vec<_>>();
-@@ -75,6 +85,26 @@ impl<'a, 'b> PartialEq<PathState<'b>> for PathState<'a> {
- }
- impl<'a> Eq for PathState<'a> {}
- impl<'a> PathState<'a> {
-+    pub(crate) fn checkpoint(&self) -> PathCheckpoint {
-+        PathCheckpoint {
-+            cursor: self.cursor,
-+            params: self.params.snapshot(),
-+            end_slash: self.end_slash,
-+            #[cfg(feature = "matched-path")]
-+            matched_parts_len: self.matched_parts.len(),
++        req.merge_hyper(request);
++        let completed = tokio::select! {
++            _ = tracing::Instrument::instrument(ctrl.call_next(req, depot, res), span) => true,
++            _ = response.closed() => false,
++        };
++        if !completed {
++            std::future::pending::<()>().await;
 +        }
-+    }
++        let hyper_response = res.strip_to_hyper();
++        // Keep the serialized policy/cookie headers for an error returned by
++        // Tower after it consumes the response. Successful Tower responses are
++        // authoritative, including any headers the layer deliberately removes.
++        *res.headers_mut() = hyper_response.headers().clone();
++        for name in REPRESENTATION_HEADERS {
++            res.headers_mut().remove(*name);
+         }
++        *response_sent = true;
++        let _ = response.send(hyper_response);
+     }
++    // Only the Tower response completes the adapter. In particular, sending
++    // the inner response must not cancel Tower before it can process it.
++    std::future::pending::<()>().await;
+ }
+ 
+ #[doc(hidden)]
+@@ -177,37 +220,45 @@ impl Service<hyper::Request<ReqBody>> for FlowCtrlService {
+     }
+ 
+     fn call(&mut self, mut hyper_req: hyper::Request<ReqBody>) -> Self::Future {
+-        let ctx = hyper_req
+-            .extensions_mut()
+-            .remove::<Arc<FlowCtrlInContext>>()
+-            .and_then(Arc::into_inner);
+-        let Some(FlowCtrlInContext {
+-            mut ctrl,
+-            mut request,
+-            mut depot,
+-            mut response,
+-        }) = ctx
+-        else {
++        let sender = hyper_req.extensions_mut().remove::<FlowCallSender>();
++        let Some(sender) = sender else {
++            return ready(Err(IoError::othe
+```
+
+---
+
+### Incident Patch 2: `2b564125` (2026-10-23)
+**Commit Message**: Audit current dependency resolutions and require patched TLS releases (#1740)
+
+* Audit current dependency resolutions and require patched TLS releases
+
+* Enforce the patched rustls minimum for downstream TLS servers
+
+**File**: `.cargo/audit.toml` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++[advisories]
++# certon 0.3 uses rsa for key generation and DER conversion, not private-key
++# decryption. TLS operations use rustls' ring/aws-lc backend. No fixed rsa release
++# exists for this advisory. See .github/DEPENDENCY_SECURITY.md; review by 2027-01-23.
++ignore = ["RUSTSEC-2023-0071"]
+```
+
+**File**: `.github/DEPENDENCY_SECURITY.md` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++# Dependency security checks
 +
-+    pub(crate) fn rollback(&mut self, checkpoint: PathCheckpoint) {
-+        self.cursor = checkpoint.cursor;
-+        self.params.rollback(checkpoint.params);
-+        self.end_slash = checkpoint.end_slash;
-+        #[cfg(feature = "matched-path")]
-+        self.matched_parts.truncate(checkpoint.matched_parts_len);
-+        // `once_ended` accumulates path matches across failed router branches
-+        // to distinguish 405 from 404, so it is intentionally not rolled back.
-+    }
++The root, examples, and fuzz workspaces intentionally ignore Cargo.lock. Security
++CI generates each lockfile before auditing it, and runs weekly as well as on
++dependency changes. Existing local lockfiles should be refreshed with
++`cargo update` before interpreting findings as the current dependency resolution.
 +
-     /// Creates a new owned `PathState` from a borrowed path.
-     #[inline]
-     #[must_use]
++The direct rustls and quinn minimums exclude known vulnerable releases of those
++packages. The core TLS feature activates rustls as a normal optional dependency,
++so its minimum also applies to downstream server builds without workspace dev
++dependencies. CI checks that an isolated downstream TLS application cannot resolve
++rustls 0.23.40. Transitive dependency findings remain covered by the audit job; raising
++a direct dependency minimum does not guarantee every transitive version is safe.
++
++## RUSTSEC-2023-0071: rsa timing side channel
++
++- Owner: Salvo maintainers. Review by **2027-01-23**, and whenever certon or its
++  cryptographic call sites change.
++- Applies to the rsa 0.9 dependency of certon 0.3, used by salvo-acme. There is no
++  patched rsa version listed in the advisory at the time of this review.
++- certon's crypto module uses rsa for RSA key generation, PKCS#1/PKCS#8 parsing,
++  and DER encoding. It does not use rsa private-key decryption. TLS signing and
++  handshakes use rustls with ring/aws-lc instead. Salvo defaults new ACME keys to
++  ECDSA P-256; applications may explicitly select RSA keys.
++- This is an audit exception for these reviewed call paths, not a claim that rsa
++  is fixed or suitable for private-key decryption. Remove the exception when a
++  fixed version or replacement is available. Reassess it before adding any new
++  use of rsa, including through other dependencies.
++
++All other advisories fail the audit. The workflow checks the exception review
++date so that it cannot remain unreviewed indefinitely.
+```
+
+**File**: `.github/workflows/security.yml` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++name: Dependency security
++
++permissions:
++  contents: read
++
++on:
++  workflow_dispatch:
++  schedule:
++    - cron: '0 4 * * 1'
++  pull_request:
++    paths:
++      - '**/Cargo.toml'
++      - '**/Cargo.lock'
++      - '.cargo/audit.toml'
++      - '.github/DEPENDENCY_SECURITY.md'
++      - '.github/workflows/security.yml'
++  push:
++    branches: [main]
++    paths:
++      - '**/Cargo.toml'
++      - '**/Cargo.lock'
++      - '.cargo/audit.toml'
++      - '.github/DEPENDENCY_SECURITY.md'
++      - '.github/workflows/security.yml'
++
++jobs:
++  downstream-tls:
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v6
++      - uses: dtolnay/rust-toolchain@stable
++      - name: Verify the rustls minimum without workspace dev dependencies
++        shell: bash
++        run: |
++          set -euo pipefail
++          fixture=$(mktemp -d)
++          mkdir "$fixture/src"
++          printf 'fn main() {}\n' > "$fixture/src/main.rs"
++          printf '[package]\nname = "downstream-tls"\nversion = "0.0.0"\nedition = "2024"\n[workspace]\n[dependencies]\nsalvo_core = { path = "%s/crates/core", default-features = false, features = ["rustls", "ring"] }\n' "$GITHUB_WORKSPACE" > "$fixture/Cargo.toml"
++          cargo generate-lockfile --manifest-path "$fixture/Cargo.toml"
++          if cargo update --manifest-path "$fixture/Cargo.toml" -p rustls --precise 0.23.40 > "$fixture/downgrade.log" 2>&1; then
++            echo 'A downstream TLS application unexpectedly accepted vulnerable rustls'
++            exit 1
++          fi
++          cat "$fixture/downgrade.log"
++          grep -F 'rustls = "^0.23.46"' "$fixture/downgrade.log"
++          cargo check --manifest-path "$fixture/Cargo.toml" --locked
++
++  audit:
++    runs-on: ubuntu-latest
++    strategy:
++      fail-fast: false
++      matrix:
++        workspace: ['.', 'examples', 'fuzz']
++    steps:
++      - uses: actions/checkout@v6
++      - uses: dtolnay/rust-toolchain@stable
++      - uses: taiki-e/install-action@cargo-audit
++      - name: Require review of the rsa advisory exception
++        run: |
++          python3 - <<'PY'
++          import datetime
++          if datetime.datetime.now(datetime.timezone.utc).date() > datetime.date(2027, 1, 23):
++              raise SystemExit('Review the rsa advisory exception in .cargo/audit.toml')
++          PY
++      - name: Resolve dependencies and audit
++        run: |
++          cargo generate-lockfile --manifest-path '${{ matrix.workspace }}/Cargo.toml'
++          cargo audit --file '${{ matrix.workspace }}/Cargo.lock'
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -106,7 +106,7 @@ percent-encoding = "2"
+ pin-project = "1"
+ proc-macro-crate = { version = ">= 2, <= 4" }
+ proc-macro2 = "1"
+-quinn = { version = "0.11", default-features = false }
++quinn = { version = "0.11.12", default-features = false }
+ quote = "1"
+ rand = "0.10"
+ rcgen = "0.14"
+@@ -115,7 +115,7 @@ reqwest = { version = "0.13", default-features = false }
+ aws-lc-rs = { version = "1", default-features = true }
+ ring = "0.17"
+ rust_decimal = "1"
+-rustls = { version = "0.23", default-features = false }
++rustls = { version = "0.23.46", default-features = false }
+ rust-embed = { version = ">= 6, <= 9" }
+ saysion = "0.2"
+ serde = "1"
+```
+
+**File**: `crates/core/Cargo.toml` (modified, +4/-3)
+```diff
+@@ -50,15 +50,15 @@ full = [
+ ]
+ cookie = ["dep:cookie"]
+ fix-http1-request-uri = ["http1"]
+-aws-lc-rs = ["tokio-rustls?/aws-lc-rs", "quinn?/rustls-aws-lc-rs"]
+-ring = ["tokio-rustls?/ring", "quinn?/rustls-ring"]
++aws-lc-rs = ["rustls?/aws_lc_rs", "tokio-rustls?/aws-lc-rs", "quinn?/rustls-aws-lc-rs"]
++ring = ["rustls?/ring", "tokio-rustls?/ring", "quinn?/rustls-ring"]
+ server = []
+ server-handle = []
+ http1 = ["hyper/http1"]
+ http2 = ["hyper/http2"]
+ http2-cleartext = ["http2"]
+ quinn = ["dep:salvo-http3", "dep:quinn", "dep:h3-datagram", "rustls"]
+-rustls = ["dep:tokio-rustls", "dep:arc-swap"]
++rustls = ["dep:rustls", "dep:tokio-rustls", "dep:arc-swap"]
+ native-tls = ["dep:tokio-native-tls", "dep:native-tls", "dep:arc-swap"]
+ openssl = ["dep:openssl", "dep:tokio-openssl", "dep:arc-swap"]
+ unix = ["http1", "dep:nix"]
+@@ -115,6 +115,7 @@ quinn = { workspace = true, optional = true, default-features = false, features
+ ] }
+ rand = { workspace = true }
+ regex = { workspace = true }
++rustls = { workspace = true, optional = true }
+ salvo-http3 = { workspace = true, optional = true, features = ["quinn"] }
+ salvo_macros = { workspace = true }
+ hyper-util = { workspace = true, features = ["tokio"] }
+```
+
+**File**: `crates/core/src/conn/rustls.rs` (modified, +5/-5)
+```diff
+@@ -2,9 +2,9 @@
+ use std::io::{Error as IoError, Result as IoResult};
+ use std::sync::Arc;
+ 
+-use tokio_rustls::rustls::RootCertStore;
+-use tokio_rustls::rustls::crypto::CryptoProvider;
+-use tokio_rustls::rustls::pki_types::{CertificateDer, pem::PemObject};
++use rustls::RootCertStore;
++use rustls::crypto::CryptoProvider;
++use rustls::pki_types::{CertificateDer, pem::PemObject};
+ 
+ pub(crate) mod config;
+ pub use config::{Keycert, RustlsConfig, ServerConfig};
+@@ -42,11 +42,11 @@ pub fn default_crypto_provider() -> Arc<CryptoProvider> {
+ 
+     #[cfg(any(feature = "aws-lc-rs", not(feature = "ring")))]
+     {
+-        Arc::new(tokio_rustls::rustls::crypto::aws_lc_rs::default_provider())
++        Arc::new(rustls::crypto::aws_lc_rs::default_provider())
+     }
+     #[cfg(all(not(feature = "aws-lc-rs"), feature = "ring"))]
+     {
+-        Arc::new(tokio_rustls::rustls::crypto::ring::default_provider())
++        Arc::new(rustls::crypto::ring::default_provider())
+     }
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1739** (2026-10-23): Avoid quadratic cleanup when growing the TUS lock map (@chrislearn)
-- **PR #1738** (2026-10-23): Discover allowed methods in one traversal for independent route filters (@chrislearn)
-- **PR #1737** (2026-10-23): Select a TLS provider for standalone extra middleware tests (@chrislearn)
-- **PR #1736** (2026-10-23): Surface session backend failures with configurable policy (@chrislearn)
-- **PR #1734** (2026-10-23): Normalize multipart size limit failures to HTTP 413 (@chrislearn)
-- **PR #1733** (2026-10-23): Clear stale representation headers when rendering status errors (@chrislearn)
+- **PR #1754** (2026-10-23): Preserve Salvo context across Tower short circuits and cancellation (@chrislearn)
+- **PR #1753** (2026-10-23): Bound multipart part and file counts (@chrislearn)
+- **PR #1752** (2026-10-23): Refresh parsed request caches after Tower rewrites (@chrislearn)
+- **PR #1751** (2026-10-23): Log response status after Service finalization (@chrislearn)
+- **PR #1750** (2026-10-23): Omit query strings from empty-response warnings (@chrislearn)
+- **PR #1749** (2026-10-23): Enforce If-Match preconditions for embedded assets (@chrislearn)
 
 ---
 
@@ -3612,13 +2320,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. middleware boundaries and multipart upload handling (#1722)
+## X. Preserve Salvo context across Tower short circuits and cancellation (#1754)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in salvo-rs/salvo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `82278068`: middleware boundaries and multipart upload handling (#1722). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `07f55f73`: Preserve Salvo context across Tower short circuits and cancellation (#1754). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -3626,18 +2334,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Exclude pending cookie jar changes and partial responses from response caching,
-  and bypass cached representations for range requests.
-- Forward parameter names through optional extractors and reject missing required
-  header, query and cookie values before constructing their wrappers.
-- Honor ETag precedence, lists and wildcards in conditional responses, while
-  preserving write responses and non-200 statuses.
-- Preserve response trailers during compression and offload compression flushing
-  and finalization together with expensive writes.
-- Validate tus creation requests before allocating storage, remove uploads after
-  creation-time stream failures, and pass final storage metadata to completion hooks.
-- Merge multipart form and file schemas instead of overwriting earlier endpoint
-  parameters, preserving required fields and form constraints.
+- Recover request, depot and flow state when Tower layers short-circuit, fail or
+  cancel their inner future, preserving HEAD handling and prepared response policy headers.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3647,4 +2345,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `82278068` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `07f55f73` are properly handled with clean fallback behavior.
