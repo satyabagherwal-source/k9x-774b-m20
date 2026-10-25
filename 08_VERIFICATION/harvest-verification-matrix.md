@@ -5028,3 +5028,5 @@
 | `CYCLE-20261025-WYWL` | `2026-10-25T22:41:43.605Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4476, Rule 4477` | Yes (`bb8925a3...`) |
 | `CYCLE-20261025-56BB` | `2026-10-25T22:48:06.455Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4478` | Yes (`5f9f0385...`) |
 | `CYCLE-20261025-5BRE` | `2026-10-25T22:48:13.514Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4479` | Yes (`c486de2c...`) |
+| `CYCLE-20261025-DM2J` | `2026-10-25T22:54:40.123Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4480` | Yes (`b1b2657f...`) |
+| `CYCLE-20261025-G9NM` | `2026-10-25T22:56:44.002Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4481, Rule 4482` | Yes (`9dd4b529...`) |

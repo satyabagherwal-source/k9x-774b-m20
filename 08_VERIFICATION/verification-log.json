@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-XNWE",
-    "timestamp": "2026-10-23T10:31:05.534Z",
-    "repository": "streetwriters/notesnook",
-    "learningId": "learn-github-streetwriters-notesnook",
-    "contentHash": "90e4bf2cc9b8114ca45c9c9a3dffa0ef80022c2aaba45fa2f6bdcce8566672c4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-XOJO",
-    "timestamp": "2026-10-23T10:31:06.372Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "96b3002ffd02d76a5e17aaadf440781d59030d140db031dde9af8087d2a6575b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-XTMP",
     "timestamp": "2026-10-23T10:31:12.961Z",
     "repository": "doobidoo/mcp-memory-service",
@@ -7492,6 +7462,36 @@
     "contentHash": "c486de2c441f5f5f8e08b2cd87c25ba13d1bf82b30dd59b409f78c1f1e3da700",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-DM2J",
+    "timestamp": "2026-10-25T22:54:40.123Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "b1b2657f26f4cb6a41bf626ece934b7204ad5a31746b266a029971b17b4853b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-G9NM",
+    "timestamp": "2026-10-25T22:56:44.002Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "9dd4b5295ae2a22f3901fbd519b68943bce8ef30e912afd437983732fb60f642",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

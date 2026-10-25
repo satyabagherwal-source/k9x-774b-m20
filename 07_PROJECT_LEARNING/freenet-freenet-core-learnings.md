@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `e72789f4`  
+> **Source Version**: `ba036280`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:45:11.032Z  
+> **Timestamp**: 2026-10-25T22:54:39.742Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:45:11.022Z  
+> **Harvest Timestamp**: 2026-10-25T22:54:38.708Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,11 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5989** (2026-10-25): **fix(ring): an expected inbound connection starts without a peer identity**
-  *Symptoms*: ## Problem  When a connect op expected an inbound connection from a peer (both the acceptor and the joiner do this before dialling each other), the event loop registered the expectation under this node's own public key, as a stand-in for the peer's. A matching inbound connection was then recorded under our own key: in the connection entry, in the key-to-address map and, because the registration was not transient, as a ring connection. The ConnectPeer that followed did not replace it, so a hole-punched connection accepted inbound stayed in the ring under our key, and teardown of a keyless connection ran per-peer cleanup under our key as well.  ## Approach  The expectation now carries the key the connect op is dialling, which both producers already have (the acceptor's joiner and the joiner's acceptor, the same key the ConnectPeer carries). A matched inbound connection is handled as a successful dial to that key: recorded under it, promoted into the ring subject to the connection cap and the existing transient rules, and its failed-dial record cleared. A pending ConnectPeer is answered when the connection comes up, as for a dial, and a ConnectPeer handled afterwards reuses the connection without adding it to the ring again. Any other inbound connection starts without an identity until a ConnectRequest or ConnectPeer names the peer.  The key is honoured only for `EXPECTED_INBOUND_WINDOW` (100 s) after registration, which covers the joiner's acceptor collection (`OPERATION_TTL`),
+- **Issue #5992** (2026-10-25): **fix(executor): decide the sampled re-apply probe with the verifier's heal step**
+  *Symptoms*: ## Problem  The sampled re-apply probe (`Executor::maybe_probe_idempotency`) treated any content change on re-applying the same incoming full state as a broken contract. A content change there is a strict associativity failure on the triple (S, X, X), but the conformance verifier reports such a failure only when the two groupings do not heal (#5915). The probe and the verifier disagreed, and the probe's flag suppresses the contract's propagation from that node.  ## Approach  - `contract/executor/runtime/reapply_probe.rs`: `reapply_verdict`, generic over `ConformanceOracle`, decides the question with the verifier's own `associativity_heals`. It flags only when the groupings do not converge, a re-delivered input keeps moving the state, or reconciliation revisits a state. Unchanged, reordered (#4295) and healing re-applies end the probe; a heal-step refusal, running out of heal passes and runtime errors are inconclusive and never flag. - The right grouping is `merge(S, X)`, because the merge path answers a merge of a state into an identical copy without calling the contract (the byte-identical fast path). The probe answers those merges the same way, so every merge it asks for is one the node would make. The module doc lists every place the rule differs from `verify_case(StateAssociativity, [S, X, X])`, and the known residuals. - Bounded work: at most `REAPPLY_PROBE_MAX_CALLS` contract calls (`1 + 2 + 9 * MAX_HEAL_PASSES`) and `REAPPLY_PROBE_TIME_BUDGET` (250 ms on the node clock
 
-- **Issue #5986** (2026-10-25): **fix(test): give each test process its own temp root for node data dirs**
-  *Symptoms*: ## Problem  Unit tests that build node configs put each node's data in `$TMPDIR/freenet-{id}`, where `id` is a fixed string written into the test, and delete that directory if it already exists (`ConfigPathsArgs::default_dirs` in `crates/core/src/config.rs`).  Two `cargo test` processes sharing `/tmp` therefore delete each other's live data directories mid-test. This happens with separate worktrees or several agents on one machine. The tests then fail with `build Config: No such file or directory (os error 2)`, and later tests fail with `TEST_GLOBAL_STATE_LOCK poisoned`. Running the `ring` lib filter showed this as 1 failure in about 70 runs.  ## Approach  Unit-test builds (`cfg(test)`) now put node data directories under a root owned by the process: `$TMPDIR/freenet-test-<pid>/freenet-{id}`. Release and other non-test builds are unchanged; there the root is still `std::env::temp_dir()`, which the auto-update canary relies on.  - **Ownership:** each root holds an exclusive `flock` on `<root>/.owner.lock` for the life of the process. - **Sweep:** old roots are swept on first use. A root is removed only if all of these hold:   - it is a real directory, not a symlink;   - the current user owns it;   - it has a lock file;   - its lock can be taken;   - the locked file is still the one at that path.    So a live root, another user's root, a symlink, or a root still being created is never removed. Process ids are not used to decide liveness, because they do not work across pid name
+- **Issue #5991** (2026-10-25): **fix(delegates): scope delegate unregistration, context and hosted runs to their user**
+  *Symptoms*: ## Problem  A node already separates local clients from network clients. A hosted node goes further and separates its users by user token, giving each user their own secrets. This PR applies the same boundaries to delegate unregistration, delegate context, delegate runs and permission prompts. Each of these runs for, and affects, only the client and user it belongs to.  ## Approach  **Unregistering a delegate** - Only a local client may unregister a delegate. Other connections get `DelegateError::ExecutionError("only a local client may unregister a delegate")`. The check runs before anything is removed. - The push registry is cleared only after the executor accepts the unregistration. A created-delegate slot is released only for a key that was counted. - The store removes only a key it has indexed. Once the index entry is gone, a failure to delete the code file is logged and does not leave a half-removed delegate. - On a hosted node, a client's unregistration removes only that user's push registrations. It never removes the delegate or any secrets.  **Delegate context** - A delegate's context is kept per (delegate, user). - The context cache is bounded by bytes (RAM-derived, 1.25 to 32 MiB) and is counted in the declared cache ceiling. - A run parked on a user prompt holds its context in the park entry, charged to the park byte budget, and gets it back when it resumes.  **Hosted nodes** - The client API requires a user token. A connection without one gets 403 before the upgra
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,1045 +1759,1105 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e72789f4` (2026-10-25)
-**Commit Message**: fix(ring): an expected inbound connection starts without a peer identity (#5989)
+### Incident Patch 1: `ba036280` (2026-10-25)
+**Commit Message**: fix(delegates): scope delegate unregistration, context and hosted runs to their user (#5991)
 
-**File**: `crates/core/src/message.rs` (modified, +4/-2)
+**File**: `.claude/rules/contracts.md` (modified, +29/-2)
 ```diff
-@@ -923,9 +923,11 @@ pub(crate) enum NodeEvent {
-         /// Whether this was a node-internal subscription renewal (no client waiting).
-         is_renewal: bool,
-     },
--    /// Register expectation for an inbound connection from the given peer.
-+    /// Register expectation for an inbound connection from the peer at
-+    /// `addr`, which the connect op is dialling under `peer_key`.
-     ExpectPeerConnection {
-         addr: SocketAddr,
-+        peer_key: crate::transport::TransportPublicKey,
-     },
-     /// Broadcast a proximity cache message to all connected peers.
-     BroadcastHostingUpdate {
-@@ -1084,7 +1086,7 @@ impl Display for NodeEvent {
-                     "Local subscribe complete (tx: {tx}, key: {key}, subscribed: {subscribed})"
-                 )
-             }
--            NodeEvent::ExpectPeerConnection { addr } => {
-+            NodeEvent::ExpectPeerConnection { addr, .. } => {
-                 write!(f, "ExpectPeerConnection (from {addr})")
-             }
-             NodeEvent::BroadcastHostingUpdate { message } => {
+@@ -97,11 +97,38 @@ brief: "gate on the #5730 Background grant"); an app granted under the older
+ card text gets periodic runs without a new prompt. Revoking stops them at the
+ next fire.
+ 
++Hosted nodes: every delegate run belongs to a user, and the node runs no
++delegate on its own. A client request runs under its connection's user; an
++inter-delegate hop runs its target under the originating user (secrets and
++context, via execute_delegate_hop's user_context), so a delegate that calls
++another makes the target run as the same user, as on a normal node. The node
++runs no contract notification and no lifecycle or wake-up run (no
++capabilities). A delegate's SubscribeContractRequest still succeeds: the
++subscription keeps the contract current on the node for the user's reads, but
++the delegate is not run for its changes. Two guards: the executor builds and
++sends no DelegateNotification on a hosted node
++(send_delegate_contract_notifications), and handle_delegate_notification
++returns after the registry sweep if one arrives. Routing a run's output to
++its own user (route_to_apps_for + Recipients::User, nobody when it has no
++user) is a backstop on a hosted node, not a live path: no hosted run delivers
++to apps today. The executor refuses an ApplicationMessages run
++with no user on a hosted node (is_hosted_run_without_user, logged at warn
++once per process, then debug: no client can send one, so it means a node path
++forgot the user). NEVER give
++a run on a hosted node the node-local secrets, and NEVER start a node-owned
++delegate run there; on a node that is not hosted nothing changes. The push
++registry stores a user's id, never the user's secret.
++
+ Old delegate versions: a re-keyed delegate's OLD key keeps its record, and so
+ its wake-ups, while any app stays bound to it. Only an unregister by a bound
+ app from a local connection removes a binding (the record goes with the last
+-one); a CLI or remote unregister does not. An app that re-keys should
+-unregister the old key from its own tab once its migration is done.
++one); a CLI unregister does not. Only a local client may unregister a
++delegate at all. On a hosted node a user's unregister removes only that
++user's push registrations, a client without a user token is refused, and no
++client can remove the delegate itself: an operator does that by running the
++node without hosted mode. Secrets are never removed by an unregister. An app
++that re-keys should unregister the old key from its own tab once its
++migration is done.
+ ```
+ 
+ ### WASM Call Modes
 ```
 
-**File**: `crates/core/src/node/network_bridge/handshake.rs` (modified, +291/-71)
+**File**: `crates/core/src/client_events.rs` (modified, +77/-15)
 ```diff
-@@ -22,18 +22,21 @@ use crate::ring::{ConnectionManager, PeerKeyLocation};
- use crate::router::Router;
- use std::collections::HashMap;
+@@ -12,6 +12,8 @@ pub(crate) mod test;
+ #[cfg(test)]
+ mod test_correlation;
+ pub(crate) mod types;
++#[cfg(test)]
++mod unregister_dispatch_tests;
  
--use crate::transport::{InboundAcceptor, OutboundConnector, PeerConnectionApi};
-+use crate::transport::{InboundAcceptor, OutboundConnector, PeerConnectionApi, TransportPublicKey};
-+use crate::util::time_source::{DynTimeSource, TimeSource};
- 
- /// Events emitted by the handshake driver.
- ///
- /// The connection field uses `Box<dyn PeerConnectionApi>` to type-erase the socket type,
- /// allowing the same event loop code to work with both production (UdpTransportSocket) and
- /// testing (InMemorySocket) transports.
- pub(crate) enum Event {
--    /// A remote peer initiated or completed a connection to us.
-+    /// A remote peer initiated or completed a connection to us. `matched`
-+    /// says whether it matched an expected-inbound registration and, if so,
-+    /// the key the connect op dialled.
-     InboundConnection {
-         transaction: Option<Transaction>,
--        peer: Option<PeerKeyLocation>,
-+        matched: InboundMatch,
-         connection: Box<dyn PeerConnectionApi>,
-         transient: bool,
-     },
-@@ -58,13 +61,13 @@ impl std::fmt::Debug for Event {
-         match self {
-             Event::InboundConnection {
-                 transaction,
--                peer,
-+                matched,
-                 connection,
-                 transient,
-             } => f
-                 .debug_struct("InboundConnection")
-                 .field("transaction", transaction)
--                .field("peer", peer)
-+                .field("matched", matched)
-                 .field("remote_addr", &connection.remote_addr())
-                 .field("transient", transient)
-                 .finish(),
-@@ -96,6 +99,16 @@ impl std::fmt::Debug for Event {
-     }
+ /// Largest client WebSocket message, and frame, the node accepts (see
+ /// `websocket::configure_upgrade`).
+@@ -549,6 +551,38 @@ fn delegate_request_outcome(
+             );
+             Err(Error::Executor(exec_err))
+         }
++        // Refused: an UnregisterDelegate from a connection that is not local,
++        // or from a hosted node's client without a user token. Caused by the
++        // request, and already logged once at debug by the executor.
++        Ok(ContractHandlerEvent::DelegateResponse(Err(exec_err)))
++            if exec_err.is_unregister_not_local() || exec_err.is_unregister_hosted() =>
++        {
++            tracing::debug!(
++                client_id = %client_id,
++                request_id = %request_id,
++                delegate = %delegate_key,
++                outcome = "unregister_refused",
++                error = %exec_err,
++                "DelegateRequest refused: UnregisterDelegate not allowed for this client"
++            );
++            Err(Error::Executor(exec_err))
++        }
++        // Refused: a delegate run with no user on a hosted node. No client can
++        // send one (a hosted node refuses a connection with no user token), so
++        // this means a node path did not supply the run's user; the executor
++        // already logged it (at warn the first time, then at debug).
++        Ok(ContractHandlerEvent::DelegateResponse(Err(exec_err)))
++            if exec_err.is_hosted_run_without_user() =>
++        {
++            tracing::debug!(
++                client_id = %client_id,
++                request_id = %request_id,
++                delegate = %delegate_key,
++                outcome = "hosted_run_without_user",
++                "DelegateRequest refused: a hosted node runs a delegate only on behalf of a user"
++            );
++            Err(Error::Executor(exec_err))
++        }
+         // Genuine delegate execution failure (#5263). Previously this arm
+         // didn't exist: a failure was indistinguishable from
+         // `Ok(ContractHandlerEvent::DelegateResponse(Ok(vec![])))`, so the
+@@ -590,15 +624,15 @@ fn delegate_request_outcome(
  }
  
-+/// Whether an inbound connection matched an expected-inbound registration.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub(crate) enum InboundMatch {
-+    /// No registration for its address.
-+    Unexpected,
-+    /// A registration for its address, with the key the connect op is
-+    /// dialling at that address, when the registration carried one.
-+    Expected(Option<TransportPublicKey>),
+ /// Keeps a missing-delegate failure (#5727), and the refusal of a request
+-/// whose params do not derive the delegate key, TYPED on their way to the
+-/// client.
++/// whose params do not derive the delegate key or of a non-local
++/// `UnregisterDelegate`, TYPED on their way to the client.
+ ///
+ /// Returns the client error `freenet local` sends for the same request —
+ /// `RequestError::DelegateError(DelegateError::Missing(key))`, or
+-/// `RequestError::DelegateError(DelegateError::ExecutionError(..))` for the
++/// `RequestError::DelegateError(DelegateError::ExecutionError(..))` for a
+ /// refusal — when `err` is one of those failures, and hands every other error
+-/// back unchanged for the generic `OperationError { cause }` flattening. The
+-/// refusal is identified by `ExecutorError::is_params_mismatch`, a typed flag,
++/// back unchanged for the generic `OperationError { cause }` flattening. A
++/// refusal is identified by `ExecutorError::is_delegate_refusal`, a typed flag,
+ /// never by its text.
+ ///
+ /// Without this the missing-delegate answer would reach a network-mode client
+@@ -611,7 +645,7 @@ fn typed_delegate_client_error(err: Error) -> Result<ClientError, Error> {
+     match err {
+         Error::Executor(exec_err)
+             if exec_err.is_missing_delegate()
+-                || (exec_err.is_request() && exec_err.is_params_mismatch()) =>
++                || (exec_err.is_request() && exec_err.is_delegate_refusal()) =>
+         {
+             Ok(ErrorKind::RequestError(exec_err.unwrap_request()).into())
+         }
+@@ -624,7 +658,7 @@ fn typed_delegate_client_error(err: Error) -> Result<ClientError, Error> {
+ }
+ 
+ /// True for the typed client errors `typed_delegate_client_error` produces —
+-/// a missing delegate (#5727) or a params-mismatch refusal — so the send path
++/// a missing delegate (#5727) or a refusal — so the send path
+ /// keeps them out of the error log; both were already logged once upstream.
+ ///
+ /// The refusal is matched by variant AND message here because the flag that
+@@ -639,7 +673,12 @@ fn is_routine_delegate_client_error(err: &ClientError) -> bool {
+         ErrorKind::RequestError(RequestError::DelegateError(DelegateError::Missing(_))) => true,
+         ErrorKind::RequestError(RequestError::DelegateError(DelegateError::ExecutionError(
+             msg,
+-        ))) => msg.starts_with(crate::wasm_runtime::DELEGATE_PARAMS_MISMATCH),
++        ))) => {
++            msg.starts_with(crate::wasm_runtime::DELEGATE_PARAMS_MISMATCH)
++                || msg.starts_with(crate::wasm_runtime::DELEGATE_UNREGISTER_NOT_LOCAL)
++                || msg.starts_with(crate::wasm_runtime::DELEGATE_UNREGISTER_HOSTED)
++                || msg.starts_with(crate
+```
+
+**File**: `crates/core/src/client_events/unregister_dispatch_tests.rs` (added, +558/-0)
+```diff
+@@ -0,0 +1,558 @@
++//! `UnregisterDelegate` through the real client dispatch: `process_open_request`
++//! into the PRODUCTION contract handler (`NetworkContractHandler` over a real
++//! `RuntimePool`) running a real WASM delegate.
++//!
++//! The executor's own refusal is pinned in
++//! `contract::executor::runtime::unregister_tests`. These tests drive the layer
++//! above it, which clears a delegate's push registrations: a guard in the
++//! executor says nothing about what this layer did before reaching it.
++
++use std::sync::Arc;
++use std::time::Duration;
++
++use freenet_stdlib::client_api::{
++    ClientRequest, DelegateError, DelegateRequest, ErrorKind, HostResponse, RequestError,
++};
++use freenet_stdlib::prelude::*;
++use tokio::sync::mpsc;
++
++use super::{ClientId, ConnectionScope, Error, HostResult, OpenRequest, process_open_request};
++use crate::config::{ConfigArgs, GlobalExecutor};
++use crate::contract::OperationMode;
++use crate::contract::delegate_app_registry;
++use crate::contract::{ContractHandler, NetworkContractHandler, contract_handling};
++use crate::node::OpManager;
++use crate::wasm_runtime::UserSecretContext;
++
++/// A node whose `OpManager` feeds the production contract handler loop, so a
++/// request sent through `process_open_request` is executed for real.
++struct Node {
++    op_manager: Arc<OpManager>,
++    delegates_dir: std::path::PathBuf,
++    handle: tokio::task::JoinHandle<Result<(), crate::contract::ContractError>>,
++    _guards: Box<dyn std::any::Any>,
 +}
 +
- /// Commands delivered from the event loop into the handshake driver.
- #[derive(Debug)]
- pub(crate) enum Command {
-@@ -107,14 +120,20 @@ pub(crate) enum Command {
-         /// Why this dial is made (telemetry only).
-         origin: crate::transport::NatAttemptOrigin,
-     },
--    /// Register expectation for an inbound connection from `peer`.
-+    /// Register expectation for an inbound connection from `addr`, which the
-+    /// connect op is dialling under `peer_key`. A matched connection is
-+    /// recorded under that key, as a successful dial to it would be.
-     ExpectInbound {
--        peer: PeerKeyLocation,
-+        addr: SocketAddr,
-+        peer_key: Option<TransportPublicKey>,
-         transaction: Option<Transaction>,
-         transient: bool,
-     },
--    /// Remove state associated with `peer`.
--    DropConnection { peer: PeerKeyLocation },
-+    /// Remove state associated with the connection at `addr`.
-+    DropConnection { addr: SocketAddr },
-+    /// Test only: answered once every command sent before it is processed.
-+    #[cfg(test)]
-+    Barrier(tokio::sync::oneshot::Sender<()>),
- }
- 
- #[derive(Clone)]
-@@ -162,12 +181,13 @@ impl HandshakeHandler {
-         _this_location: Option<Location>,
-         _is_gateway: bool,
-         peer_ready: Option<Arc<std::sync::atomic::AtomicBool>>,
-+        clock: DynTimeSource,
-     ) -> (Self, CommandSender) {
-         let (cmd_tx, cmd_rx) = mpsc::channel(128);
-         let (event_tx, event_rx) = mpsc::channel(128);
- 
-         GlobalExecutor::spawn(async move {
--            run_driver(inbound, outbound, cmd_rx, event_tx, peer_ready).await;
-+            run_driver(inbound, outbound, cmd_rx, event_tx, peer_ready, clock).await;
-         });
- 
-         (
-@@ -187,31 +207,93 @@ impl Stream for HandshakeHandler {
-     }
- }
- 
-+/// How long after its registration an expected-inbound registration's key
-+/// is honoured. An acceptor registers when it accepts a joiner; the joiner
-+/// may still be collecting acceptors for up to `OPERATION_TTL` before it
-+/// dials them, keeps finishing those dials for up to `DIAL_DRAIN_LIMIT` after
-+/// it stops collecting, and each dial's handshake may take up to
-+/// `OUTBOUND_CONNECT_TIMEOUT`. A connection from that address after this
-+/// window is not bound to the registration's key (the address may since
-+/// belong to someone else).
-+///
-+/// No fixed window covers every honest case: the first stage of a dial
-+/// (handing it to the transport) is not bounded (#5947). An inbound
-+/// connection that arrives after the window starts without a key, as one
-+/// did before matched connections were bound: a later ConnectRequest or
-+/// ConnectPeer names it, or the unpromoted-connection sweep removes it.
-+pub(crate) const EXPECTED_INBOUND_WINDOW: Dura
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +22/-85)
-```diff
-@@ -22,7 +22,7 @@ use crate::contract::{ContractHandlerEvent, WaitingTransaction};
- use crate::message::{NetMessageV1, QueryResult};
- use crate::node::network_bridge::handshake::{
-     Command as HandshakeCommand, CommandSender as HandshakeCommandSender, Event as HandshakeEvent,
--    HandshakeHandler,
-+    HandshakeHandler, InboundMatch as HandshakeInboundMatch,
- };
- use crate::node::network_bridge::priority_select;
- use crate::operations::connect::ConnectMsg;
-@@ -526,29 +526,16 @@ impl NetworkBridge for P2pBridge {
- type PeerConnChannelSender = Sender<Either<NetMessage, ConnEvent>>;
- type PeerConnChannelRecv = Receiver<Either<NetMessage, ConnEvent>>;
- 
--/// Telemetry state of a connection that holds the expected-inbound
--/// placeholder (see `ConnectionEntry::placeholder`).
--#[derive(Debug, Default)]
--struct IdentityPlaceholder {
--    /// The key the latest ConnectPeer named for the connection, compared
--    /// with the key the ConnectRequest that replaces the placeholder gives
--    /// (`conn_identity_set_from_placeholder_*`).
--    connect_peer_key: Option<TransportPublicKey>,
--}
--
- /// Entry in the connections HashMap, keyed by SocketAddr.
- /// The pub_key is learned from the first message received on this connection.
- #[derive(Debug)]
- struct ConnectionEntry {
-     sender: PeerConnChannelSender,
--    /// The peer's public key, learned from the first message.
--    /// None for transient connections before identity is established.
-+    /// The peer's public key: the key dialled for an outbound connection, or
-+    /// for an inbound one matched to an expected-inbound registration.
-+    /// `None` for any other inbound connection until a ConnectPeer or the
-+    /// peer's ConnectRequest names the peer.
-     pub_key: Option<TransportPublicKey>,
--    /// Telemetry only, never read for any decision: `Some` while `pub_key`
--    /// is the expected-inbound placeholder (this node's own key, set by the
--    /// registration), `None` on every other connection and once a
--    /// ConnectRequest replaces the placeholder.
--    placeholder: Option<IdentityPlaceholder>,
-     /// Unique ID for this connection entry. Used to distinguish stale
-     /// TransportClosed events from replaced connections (e.g., after identity change).
-     connection_id: u64,
-@@ -1485,6 +1472,7 @@ impl P2pConnManager {
-             this_location,
-             is_gateway,
-             peer_ready,
-+            Arc::new(InstantTimeSrc::new()),
-         );
- 
-         let select_stream = priority_select::ProductionPrioritySelectStream::new(
-@@ -2291,28 +2279,16 @@ impl P2pConnManager {
-                                             "Cleaning up connection due to channel closure"
-                                         );
- 
--                                        // Clean up ring state - construct PeerKeyLocation with pub_key if available
--                                        let peer = if let Some(pub_key) = pub_key_opt.clone() {
--                                            PeerKeyLocation::new(pub_key, peer_addr)
--                                        } else {
--                                            // Use our own pub_key as placeholder if we don't know the peer's
--                                            PeerKeyLocation::new(
--                                                (*ctx
--                                                    .bridge
--                                                    .op_manager
--                                                    .ring
--                                                    .connection_manager
--                                                    .pub_key)
--                                                    .clone(),
--                                                peer_addr,
--                                            )
--                                        };
-+                                        // Clean up ring state
-                                         let prune_result = ctx
-                                             .bridge
-                                             .op_manager
-                                             .ring
-                                             .prune_connection(
--                                                PeerId::new(peer.pub_key().clone(), peer_addr),
-+                                                ctx.teardown_peer_id(
-+                                                    peer_addr,
-+                                                    pub_key_opt.as_ref(),
-+                                                ),
-                                                 crate::tracing::DisconnectReason::Explicit(
-                                                     "shutdown".into(),
-                                                 ),
-@@ -2358,18 +2334,15 @@ impl P2pConnManager {
-                                         // cleanup: the connection has already been removed from
-                                         // ctx.connections / addr_by_pub_key
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs` (modified, +176/-142)
-```diff
-@@ -18,43 +18,30 @@ fn insert_addr_by_pub_key(
-     if key == *own_key {
-         TRANSPORT_METRICS.record_conn_identity(addr, ConnIdentity::OwnKey);
-     }
--    // An expected inbound connection holds the placeholder (this node's own
--    // key) until the connect op names the peer, so several can hold it at
--    // once in ordinary operation; recording it is not counted as
--    // `duplicate_key`. Any other connection recorded under this node's key
--    // is counted normally.
--    let is_placeholder = connections
--        .get(&addr)
--        .is_some_and(|entry| entry.placeholder.is_some());
-     let duplicate = |previous: SocketAddr, key: &TransportPublicKey| {
-         previous != addr
-             && connections
-                 .get(&previous)
-                 .is_some_and(|entry| entry.pub_key.as_ref() == Some(key))
-     };
-     let previous = addr_by_pub_key.get(&key).copied();
--    if !is_placeholder && previous.is_some_and(|previous| duplicate(previous, &key)) {
-+    if previous.is_some_and(|previous| duplicate(previous, &key)) {
-         TRANSPORT_METRICS.record_conn_identity(addr, ConnIdentity::DuplicateKey);
-     }
-     addr_by_pub_key.insert(key, addr);
- }
- 
- /// The identity kind for a connection whose recorded key is `recorded`
- /// when a ConnectRequest or ConnectPeer names `claimed`: one of the path's
--/// `set`, `same` or `changed` kinds, or `on_placeholder()` when the
--/// connection holds the expected-inbound placeholder and the claim names
--/// another key.
-+/// `set`, `same` or `changed` kinds.
- fn classify_identity_claim(
-     recorded: Option<&TransportPublicKey>,
-     claimed: &TransportPublicKey,
--    is_placeholder: bool,
-     [set, same, changed]: [ConnIdentity; 3],
--    on_placeholder: impl FnOnce() -> ConnIdentity,
- ) -> ConnIdentity {
-     match recorded {
-         None => set,
-         Some(recorded) if recorded == claimed => same,
--        Some(_) if is_placeholder => on_placeholder(),
-         Some(_) => changed,
-     }
- }
-@@ -80,16 +67,13 @@ impl P2pConnManager {
-     /// cleanup is not keyed by a key recorded for
-     /// this connection: either it has none (`teardown_unidentified`) or
-     /// `addr_by_pub_key` maps its key to another connection
--    /// (`teardown_key_elsewhere`) or to none (`teardown_key_unmapped`). A
--    /// connection still holding the expected-inbound placeholder is not
--    /// counted: several can hold it at once in ordinary operation. Call
-+    /// (`teardown_key_elsewhere`) or to none (`teardown_key_unmapped`). Call
-     /// before `addr_by_pub_key` is changed.
-     fn record_identity_teardown(&self, addr: SocketAddr, entry: &ConnectionEntry) {
-         match &entry.pub_key {
-             None => {
-                 TRANSPORT_METRICS.record_conn_identity(addr, ConnIdentity::TeardownUnidentified)
-             }
--            Some(_) if entry.placeholder.is_some() => {}
-             Some(key) => {
-                 match self.addr_by_pub_key.get(key) {
-                     Some(mapped) if *mapped == addr => {}
-@@ -102,6 +86,69 @@ impl P2pConnManager {
-         }
-     }
- 
-+    /// The peer that disconnect cleanup of the connection at `addr` passes to
-+    /// `Ring::prune_connection`: the key recorded for the connection, or,
-+    /// for a connection that never named one, this node's own key. That
-+    /// fallback reaches nothing keyed by peer: `prune_connection` prunes by
-+    /// address and uses the key only in its log line and in the disconnect
-+    /// event it emits for a ring connection, and every ring connection has a
-+    /// recorded key. Callers must not pass the fallback key to anything else
-+    /// (`on_ring_connection_lost` runs only for a recorded key).
-+    pub(super) fn teardown_peer_id(
-+        &self,
-+        addr: SocketAddr,
-+        recorded: Option<&TransportPublicKey>,
-+    ) -> PeerId {
-+        let key = recorded
-+            .cloned()
-+            .unwrap_or_else(|| (*self.bridge.op_manager.ring.connection_manager.pub_key).clone());
-+        PeerId::new(key, addr)
++impl Drop for Node {
++    fn drop(&mut self) {
++        self.handle.abort();
++    }
++}
++
++impl Node {
++    async fn start(id: &str) -> Self {
++        Self::start_with(id, false).await
 +    }
 +
-+    /// `NodeEvent::ExpectPeerConnection`: a connect op expects a connection
-+    /// from `addr` and is dialling it under `peer_key`. Registers the address
-+    /// with the transport and, with the key, with the handshake driver, so a
-+    /// matched inbound connection is recorded and promoted under the key the
-+    /// connect op dialled, as the dial itself would be if it succeeded.
-+    pub(super) fn handle_expect_peer_connection(
-+        addr: SocketAddr,
-+        peer_key: TransportPublicKey,
-+        state: &EventListenerState,
-+        handshake_cmd_sender: &HandshakeCommandSender,
-+    ) {
-+        tracing::debug!(
-+            peer_addr = %addr,
-+            direction = "inbound",
-+            phase = "connect",
-+            "Expecting peer connection - registering with handshake handler"
++    async fn start_with(id: &str, hosted_mode: bool) -> Self {
++        let config_args = ConfigArgs {
++            id: Some(id.to_string()),
++            mode: Some(OperationMode::Local),
++            ws_api: crate::config::WebsocketApiArgs {
++                hosted_mode: Some(hosted_mode),
++                ..Default::default()
++            },
++            ..Default::default()
++        };
++        let node_config =
++            crate::node::NodeConfig::new(config_args.build().await.expect("build Config"))
++                .await
++                .expect("build NodeConfig");
++        let config = node_config.config.clone();
++        let delegates_dir = config.delegates_dir();
++
++        let (notification_rx, notification_tx) = crate::node::event_loop_notification_channel();
++        let (ops_ch_channel, handler_half, wait_for_event) =
++            crate::contract::contract_handler_channel();
++        let connection_manager = crate::ring::ConnectionManager::new(&node_config);
++        let (result_router_tx, result_router_rx) = mpsc::channel(100);
++        let task_monitor = crate::node::background_task_monitor::BackgroundTaskMonitor::new();
++        let op_manager = Arc::new(
++            OpManager::new(
++                notification_tx,
++                ops_ch_channel,
++                &node_config,
++                crate::tracing::DynamicRegister::new(vec![]),
++                connection_manager,
++                result_router_tx,
++                &task_monitor,
++            )
++            .expect("build OpManager"),
 +        );
-+        state.expected_inbound.expect_incoming(addr);
-+        // Non-blocking (#4145): this runs on the event-loop task, so a
-+        //
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle/tests.rs` (modified, +850/-120)
-```diff
-@@ -1,6 +1,7 @@
--//! Connection identity telemetry, driven through the real
--//! `P2pConnManager` handlers: `handle_successful_connection`,
--//! `handle_transport_event` and `handle_connect_peer`.
-+//! Connection identity telemetry and bookkeeping, driven through the real
-+//! `P2pConnManager` handlers: `handle_handshake_action`,
-+//! `handle_successful_connection`, `handle_transport_event` and
-+//! `handle_connect_peer`.
- //!
- //! Each test watches its own remote addresses on the process-global
- //! `TRANSPORT_METRICS` (see `watch_conn_identity`), so tests running in
-@@ -12,6 +13,7 @@ use crate::message::Transaction;
- use crate::operations::VisitedPeers;
- use crate::operations::connect::ConnectRequest;
- use crate::transport::{ExpectedInboundTracker, StreamId, TransportKeypair};
-+use freenet_stdlib::prelude::ContractInstanceId;
- 
- /// A connection that never delivers anything and accepts every send.
- struct IdleConnection {
-@@ -74,12 +76,17 @@ struct Harness {
-     mgr: P2pConnManager,
-     state: EventListenerState,
-     handshake: HandshakeCommandSender,
--    _handshake_rx: mpsc::Receiver<HandshakeCommand>,
-+    handshake_rx: mpsc::Receiver<HandshakeCommand>,
-     _conn_events_rx: mpsc::Receiver<ConnEvent>,
- }
- 
- impl Harness {
-     async fn new(id: &str) -> Self {
-+        Self::with_config(id, |_| {}).await
++        op_manager.ring.attach_op_manager(&op_manager);
++
++        // The loop reads the half the OpManager sends to, so this is the path
++        // a client request takes in a running node.
++        let handler = NetworkContractHandler::build(handler_half, op_manager.clone(), config)
++            .await
++            .expect("build the production contract handler");
++        let handle = GlobalExecutor::spawn(contract_handling(
++            handler,
++            crate::contract::user_input::AutoApprovePrompter,
++        ));
++        Node {
++            op_manager,
++            delegates_dir,
++            handle,
++            _guards: Box::new((
++                notification_rx,
++                wait_for_event,
++                result_router_rx,
++                task_monitor,
++            )),
++        }
 +    }
 +
-+    /// As [`Self::new`], with `adjust` applied to the node config first.
-+    async fn with_config(id: &str, adjust: impl FnOnce(&mut crate::node::NodeConfig)) -> Self {
-         let config_args = crate::config::ConfigArgs {
-             id: Some(id.to_string()),
-             mode: Some(crate::contract::OperationMode::Local),
-@@ -92,6 +99,7 @@ impl Harness {
-         // A gateway needs no configured remote gateway to build, and accepts
-         // unidentified inbound connections, which is the path under test.
-         node_config.is_gateway = true;
-+        adjust(&mut node_config);
-         let (_notification_rx, notification_tx) = crate::node::event_loop_notification_channel();
-         let (ops_ch_channel, _ch_channel, _wait_for_event) =
-             crate::contract::contract_handler_channel();
-@@ -125,7 +133,7 @@ impl Harness {
-             mgr,
-             state: EventListenerState::new(Arc::new(ExpectedInboundTracker::empty_for_test())),
-             handshake: HandshakeCommandSender::for_test(handshake_tx),
--            _handshake_rx: handshake_rx,
-+            handshake_rx,
-             _conn_events_rx: conn_events_rx,
-         }
-     }
-@@ -134,14 +142,13 @@ impl Harness {
-         (*self.mgr.bridge.op_manager.ring.connection_manager.pub_key).clone()
-     }
- 
--    /// A connection established by the transport, as a handshake event
--    /// delivers it. `peer` is `Some` for a dial or a matched expectation.
-+    /// A connection established by the transport. `peer` is `Some` for a
-+    /// dial, `None` for an inbound connection.
-     async fn establish(
-         &mut self,
-         addr: SocketAddr,
-         peer: Option<PeerKeyLocation>,
-         transient: bool,
--        source: ConnIdentity,
-     ) {
-         self.mgr
-             .handle_successful_connection(
-@@ -151,7 +158,7 @@ impl Harness {
-                 None,
-                 transient,
-                 &self.handshake,
--                source,
-+                ConnIdentity::SetDialed,
-             )
-             .await
-             .expect("handle_successful_connection");
-@@ -160,19 +167,13 @@ impl Harness {
- 
-     /// The outbound dial path: `HandshakeEvent::OutboundEstablished`.
-     async fn dial(&mut self, addr: SocketAddr, key: &TransportPublicKey) {
--        self.establish(
--            addr,
--            Some(PeerKeyLocation::new(key.clone(), addr)),
--            false,
--            ConnIdentity::SetDialed,
--        )
--        .await;
-+        self.establish(addr, Some(PeerKeyLocation::new(key.clone(), addr)), false)
-+            .await;
-     }
- 
-     /// The gateway inbound path: an inbound connection with no expectation.
-     async fn accept(&mut self, addr: SocketAddr) {
--        self.establish(addr, None, true, ConnIdentity::SetExpectedInbound)
--            .await;
-+        self.establish(addr, None, true).await;
-     }
- 
-     /// A ConnectRequest from the connection at `remote` naming `joiner`.
-@@ -231,18 +232,74 @@ impl Harness {
-         matches!(result_rx.try_recv(), Ok(Ok(_)))
-     }
- 
--    /// An inbound connection matched to an expected-inbound registration,
--    /// which the event loop makes under this node's own key
--    /// (`NodeEvent::ExpectPeerConnection`).
--    async fn accept_expected(&mut self, addr: SocketAddr) {
--        let registration = PeerKeyLocation::new(self.own_key(), addr);
--        self.establish(
--            addr,
--            Some(registration),
--            false,
--            ConnIdentity::SetExpectedInbound,
--        )
-+    /// An inbound connection matched to an expected-inbound registration
-+    /// (`NodeEvent::ExpectPeerConnection`) for the peer the connect op dialled
++    /// Send one delegate request the way a client connection does.
++    async fn send(
++        &self,
++        client_id: ClientId,
++        req: DelegateRequest<'static>,
++        scope: ConnectionScope,
++        notification: Option<mpsc::Sender<HostResult>>,
++    ) -> Result<(), Error> {
++        self.send_as(client_id, req, scope, notification, None)
++            .await
++    }
 +
++    /// [`Self::send`] from a hosted user's connection.
++    async fn send_as(
++        &self,
++        client_id: ClientId,
++        req: DelegateRequest<'static>,
++        scope: ConnectionScope,
++        notification: Option<mpsc::Sender<HostResult>>,
++        user: Option<UserSecretContext>,
++    ) -> Result<(), Error> {
++        let mut open = OpenRequest::new(client_id, Box::new(ClientRequest::DelegateOp(req)))
++            .with_connection_scope(scope)
++            .with_user_context(user);
++        if let Some(tx) = n
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/zombie_sweep.rs` (modified, +0/-3)
+**File**: `crates/core/src/client_events/user_op_rate_limit.rs` (modified, +5/-4)
 ```diff
-@@ -1636,7 +1636,6 @@ mod tests {
-                 ConnectionEntry {
-                     sender,
-                     pub_key: None,
--                    placeholder: None,
-                     connection_id: 1,
-                     created_at: created,
-                     link_use: LinkUseStamp::new(created),
-@@ -1704,7 +1703,6 @@ mod tests {
-         ConnectionEntry {
-             sender,
-             pub_key: None,
--            placeholder: None,
-             connection_id: 1,
-             created_at,
-             link_use,
-@@ -2494,7 +2492,6 @@ mod tests {
-             ConnectionEntry {
-                 sender,
-                 pub_key: None,
--                placeholder: None,
-                 connection_id: 7,
-                 created_at: created,
-                 link_use: link_use.clone(),
+@@ -11,10 +11,11 @@
+ //!
+ //! The limiter is consulted ONLY when a connection carries a
+ //! [`UserSecretContext`](crate::wasm_runtime::UserSecretContext) — i.e. hosted
+-//! mode is on AND the connection presented a user token. Local / non-hosted /
+-//! tokenless connections derive no context, so they are NEVER rate-limited:
+-//! the single-user node behaves byte-for-byte as before (#4381's "never break
+-//! single-user default" invariant).
++//! mode is on AND the connection presented a user token. Non-hosted
++//! connections derive no context, so they are NEVER rate-limited: the
++//! single-user node behaves byte-for-byte as before (#4381's "never break
++//! single-user default" invariant). A hosted node serves its client API only
++//! to connections that present a token, so every such connection is limited.
+ //!
+ //! # Server-level shared state, not a process global
+ //!
 ```
 
-**File**: `crates/core/src/node/network_bridge/priority_select/tests.rs` (modified, +1/-1)
+**File**: `crates/core/src/client_events/websocket.rs` (modified, +186/-37)
 ```diff
-@@ -2883,7 +2883,7 @@ impl Stream for MockHandshakeReceiverStream {
- fn dummy_handshake_event() -> crate::node::network_bridge::handshake::Event {
-     crate::node::network_bridge::handshake::Event::InboundConnection {
-         transaction: None,
--        peer: None,
-+        matched: crate::node::network_bridge::handshake::InboundMatch::Unexpected,
-         connection: Box::new(MockPeerConnection {
-             addr: "127.0.0.1:9999".parse().unwrap(),
-         }),
-```
-
-**File**: `crates/core/src/operations/connect.rs` (modified, +4/-1)
-```diff
-@@ -1449,7 +1449,10 @@ pub(super) async fn dispatch_expect_connection_from(
-     );
+@@ -819,12 +819,14 @@ struct ConnectionInfo {
+ /// - hosted mode OFF => always `None` (token ignored entirely; single-user).
+ /// - hosted mode ON, non-empty token => `Some` context derived solely from the
+ ///   token bytes.
+-/// - hosted mode ON, no token or empty token => `None` (this connection is
+-///   single-user, just like a non-hosted node).
++/// - hosted mode ON, no token or empty token => `None`. This helper also serves
++///   routes that need no token (the shell and other HTTP routes); the client
++///   API refuses such a connection on a hosted node before the upgrade (see
++///   `websocket_commands`).
+ ///
+-/// `None` everywhere means [`crate::wasm_runtime::SecretScope::Local`]
+-/// downstream — byte-for-byte the pre-#4381 behavior — so the flag-off path is
+-/// provably inert.
++/// `None` means [`crate::wasm_runtime::SecretScope::Local`] downstream. On a
++/// hosted node no client-API connection reaches that scope, and with hosted
++/// mode off the path is byte-for-byte the pre-#4381 behavior.
+ pub(crate) fn derive_user_context(
+     hosted_mode: bool,
+     user_token: Option<&str>,
+@@ -833,7 +835,8 @@ pub(crate) fn derive_user_context(
+         (true, Some(token)) if !token.is_empty() => {
+             Some(UserSecretContext::from_token(token.as_bytes()))
+         }
+-        // hosted on but no/empty token, or hosted off (token ignored): Local.
++        // hosted on but no/empty token (the client API refuses such a
++        // connection before this matters), or hosted off (token ignored).
+         (true, _) | (false, _) => None,
+     }
+ }
+@@ -851,18 +854,21 @@ pub(crate) enum UserTokenDecision {
+     /// demonstrably secure (not a loopback source carrying
+     /// `X-Forwarded-Proto: https`). Reject the upgrade rather than silently
+     /// dropping the token — silently falling back to `Local` would put the user
+-    /// on the WRONG (shared) namespace under a public plaintext deployment.
++    /// on the WRONG namespace under a public plaintext deployment.
+     RejectInsecure,
+-    /// No per-user scoping: treat as single-user (`SecretScope::Local`). Reached
+-    /// for the flag-off path and the no-token path (`has_token == false`) — both
+-    /// byte-for-byte the pre-#4381 behavior, so no rejection fires.
++    /// No per-user scoping (`SecretScope::Local`). Reached for the flag-off
++    /// path and for `has_token == false`. On a node that is not hosted this is
++    /// the normal single-user path. On a hosted node the client API refuses a
++    /// connection with no token before the upgrade (`websocket_commands`), so
++    /// only routes that need no token (the shell, other HTTP routes) see this
++    /// outcome there.
+     ///
+-    /// NOTE: an EMPTY token (`?userToken=` with no value) is mapped to `Local`
+-    /// too, but that happens at the CALL SITE, which passes `has_token = false`
+-    /// for an empty token (matching `derive_user_context`'s empty-is-absent
+-    /// rule). This pure fn keys only on the `has_token` bool and never inspects
+-    /// token contents — so an empty token must NOT reach here as `has_token ==
+-    /// true`, or it would be wrongly rejected as insecure.
++    /// NOTE: an EMPTY token (`?userToken=` with no value) counts as no token.
++    /// The CALL SITE passes `has_token = false` for it (matching
++    /// `derive_user_context`'s empty-is-absent rule). This pure fn keys only on
++    /// the `has_token` bool and never inspects token contents, so an empty
++    /// token must NOT reach here as `has_token == true`, or it would be wrongly
++    /// rejected as insecure.
+     Local,
+ }
  
-     op_manager
--        .notify_node_event(NodeEvent::ExpectPeerConnection { addr })
-+        .notify_node_event(NodeEvent::ExpectPeerConnection {
-+            addr,
-+            peer_key: peer.pub_key().clone(),
-+        })
-         .await?;
+@@ -922,9 +928,10 @@ pub(crate) fn decide_user_token(
+     source_ip: Option<std::net::IpAddr>,
+     xfp_https: bool,
+ ) -> UserTokenDecision {
+-    // Flag off, or no token presented: single-user, no rejection. This is the
+-    // ONLY path when hosted mode is off, so the whole invariant is hosted-gated
+-    // and the flag-off behavior is byte-for-byte unchanged.
++    // Flag off, or no token presented: no rejection here. This is the ONLY
++    // path when hosted mode is off, so the whole invariant is hosted-gated and
++    // the flag-off behavior is byte-for-byte unchanged. A hosted node's client
++    // API refuses a tokenless connection separately (`websocket_commands`).
+     if !hosted_mode || !has_token {
+         return UserTokenDecision::Local;
+     }
+@@ -1131,11 +1138,11 @@ async fn connection_info(
+     let token_str: Option<&str> = user_token.as_deref().map(String::as_str);
  
-     let (callback, mut rx) = mpsc::channel(1);
+     // `has_token` is a NON-EMPTY check, matching `derive_user_context`'s
+-    // empty-is-absent semantics. The browser shell sends `?userToken=` (empty)
+-    // for a brand-new user who has no token yet; that connection must fall
+-    // through to Local (single-user) so the client can connect and GET a token,
+-    // NOT be locked out with a 403. Both helpers must agree on "empty": an empty
+-    // token is treated as no token, so it is never gated.
++    // empty-is-absent semantics: an empty 
+```
+
+**File**: `crates/core/src/config.rs` (modified, +36/-40)
+```diff
+@@ -2257,9 +2257,9 @@ impl Config {
+                 %address,
+                 allowed_hosts = ?self.ws_api.allowed_hosts,
+                 hosted_mode = self.ws_api.hosted_mode,
+-                "Client API exposure: {reason}. A connection that presents no per-user \
+-                 token drives this node's SHARED namespace and can read and modify its \
+-                 contract state, identities and keys. Bind loopback \
++                "Client API exposure: {reason}. On a node that is not in hosted mode, a \
++                 connection drives this node's SHARED namespace and can read and modify \
++                 its contract state, identities and keys. Bind loopback \
+                  (--ws-api-address ::1) unless you intend this."
+             );
+         }
+@@ -3361,10 +3361,18 @@ pub struct WebsocketApiConfig {
+     /// gets a per-user delegate-secret namespace derived from that token; when
+     /// `false` (the default), the `userToken` parameter is ignored entirely and
+     /// every connection is single-user — byte-for-byte the pre-#4381 behavior.
+-    ///
+-    /// This flag ONLY governs whether the WS boundary derives a per-user
+-    /// context; everything downstream is driven by whether a context was
+-    /// derived, so with the flag off the entire feature is inert.
++    /// A hosted node serves its client API only to a connection that presents a
++    /// user token.
++    ///
++    /// The flag also governs the rest of hosted mode:
++    /// - the permission routes require a user token, show each user only their
++    ///   own prompts, and the permission routes a hosted node does not serve
++    ///   are refused;
++    /// - imports into the node-local secret scope are refused;
++    /// - the node sends no contract notifications to delegates;
++    /// - the executor refuses a delegate run that has no user.
++    ///
++    /// With the flag off none of these apply.
+     #[serde(default, rename = "hosted-mode")]
+     pub hosted_mode: bool,
+ 
+@@ -3796,33 +3804,24 @@ fn resolve_ws_api_address(
+ /// machine while connections can land in ONE shared secret namespace, and if
+ /// so, why. `None` means stay quiet.
+ ///
+-/// The shared namespace is the danger. `decide_user_token` hands a connection
+-/// the node's single-user context whenever hosted mode is off **or the
+-/// connection simply omits `userToken`** — so hosted mode ADDS a per-user
+-/// namespace for well-behaved clients, it does not remove the shared one.
++/// The shared namespace is the danger. A node that is not in hosted mode hands
++/// every connection its single-user context. A hosted node serves its client
++/// API only to a connection that presents a user token, so it hands none of
++/// them that context.
+ ///
+ /// Two triggers:
+-/// - a **non-loopback bind** warns regardless of hosted mode, because any host
+-///   that can route to the address can omit a token and land in the shared
+-///   namespace;
++/// - a **non-loopback bind** warns regardless of hosted mode: without hosted
++///   mode any host that can route to the address lands in the shared
++///   namespace, and with it a user token is honoured only from a loopback
++///   source, so a wide bind is not the deployment hosted mode expects;
+ /// - **`--allowed-host` on a loopback bind with hosted mode OFF** warns. That
+ ///   flag names a reverse proxy, and a proxy terminates the connection itself,
+ ///   so every visitor arrives wearing the proxy's source address and the node's
+ ///   own source-IP filters cannot tell them apart.
+ ///
+-/// **Loopback + hosted mode stays quiet, and that is a known gap, not an
+-/// assertion of safety.** A connection that omits `userToken` reads the shared
+-/// namespace there too, and behind a public proxy that is any visitor;
+-/// containment on the flagship deployment today is that the shared namespace is
+-/// empty (measured: zero files outside `*/users/*`), which is a fact about
+-/// current state rather than a structural guarantee. Making this branch fire
+-/// only when the shared namespace actually holds something needs a probe of the
+-/// secrets tree, which is a separate change with its own failure modes — it is
+-/// tracked in advisory GHSA-824h-7x5x-wfmf §8, with the measured tree shape and
+-/// the requirements, rather than bolted onto a default-hardening PR, because a
+-/// probe that is wrong in either direction is worse than no warning: too eager
+-/// and it fires on every boot of the flagship and trains operators to ignore the
+-/// one signal there is.
++/// **Loopback + hosted mode stays quiet.** A hosted node serves its client API
++/// only to a connection that presents a user token, and each token has its own
++/// namespace, including behind a public proxy.
+ fn ws_api_shares_one_namespace_with_remote_clients(
+     hosted_mode: bool,
+     address: IpAddr,
+@@ -3831,8 +3830,9 @@ fn ws_api_shares_one_namespace_with_remote_clients(
+     if !address.is_loopback() {
+         return Some(if hosted_mode {
+             "the client API is
+```
+
+**File**: `crates/core/src/conformance/runtime_oracle.rs` (modified, +3/-0)
+```diff
+@@ -293,6 +293,9 @@ fn classify(err: RuntimeContractError) -> OracleError {
+         | RuntimeInnerError::Serialization(_)
+         | RuntimeInnerError::DelegateNotFound(_)
+         | RuntimeInnerError::DelegateParamsMismatch(_)
++        | RuntimeInnerError::DelegateUnregisterNotLocal(_)
++        | RuntimeInnerError::DelegateUnregisterHosted(_)
++        | RuntimeInnerError::DelegateHostedRunWithoutUser(_)
+         | RuntimeInnerError::DelegateIdentityMismatch { .. }
+         | RuntimeInnerError::DelegateExecError(_)
+         | RuntimeInnerError::ContractNotFound(_)
+```
+
+**File**: `crates/core/src/contract.rs` (modified, +1282/-77)
+```diff
+@@ -1321,6 +1321,9 @@ async fn run_user_input_prompts<P>(
+     delegate_key: &DelegateKey,
+     delegate_key_str: &str,
+     caller: CallerIdentity,
++    // The hosted user the prompts belong to: the run's own user. A hosted
++    // node shows each prompt only to its owner (`user_input::UserInputPrompter`).
++    owner: Option<crate::wasm_runtime::UserId>,
+     // Answers are appended AS THEY ARRIVE rather than returned at the end, so a
+     // caller whose overall budget expires mid-sequence still keeps the ones a
+     // human already answered (#5544 S6).
+@@ -1331,7 +1334,7 @@ async fn run_user_input_prompts<P>(
+     for req in requests {
+         let request_id = req.request_id;
+         let response = match prompter
+-            .prompt(&req, delegate_key_str, caller.clone())
++            .prompt(&req, delegate_key_str, caller.clone(), owner)
+             .await
+         {
+             Some((_, response)) => response,
+@@ -1627,6 +1630,24 @@ where
+                     );
+                     return DelegateRunOutcome::Failed(err);
+                 }
++                if err.is_unregister_not_local() || err.is_unregister_hosted() {
++                    tracing::debug!(
++                        delegate_key = %delegate_key,
++                        error = %err,
++                        "Delegate request refused: UnregisterDelegate not allowed for this client"
++                    );
++                    return DelegateRunOutcome::Failed(err);
++                }
++                // A node path that did not supply the run's user; the executor
++                // already logged it with the key (at warn the first time).
++                if err.is_hosted_run_without_user() {
++                    tracing::debug!(
++                        delegate_key = %delegate_key,
++                        "Delegate run refused: a hosted node runs a delegate only on \
++                         behalf of a user"
++                    );
++                    return DelegateRunOutcome::Failed(err);
++                }
+                 tracing::error!(
+                     delegate_key = %delegate_key,
+                     error = %err,
+@@ -2517,7 +2538,7 @@ where
+         // Design notes:
+         // - Delivery is intentionally single-hop: if target delegate B emits its own
+         //   SendDelegateMessage in response, it is filtered out (not delivered). This
+-        //   prevents infinite recursion between delegates. We use execute_delegate_request
++        //   prevents infinite recursion between delegates. We use execute_delegate_hop
+         //   (not the full delivery loop) for the same reason.
+         // - Target delegate runs with the params IT was registered with on this node
+         //   (`registered_delegate_params`, #5616), never the caller's and never empty
+@@ -2547,7 +2568,7 @@ where
+                 let target_key = msg.target.clone();
+                 // PER-DELEGATE EXCLUSION, second door (#5544 B2).
+                 //
+-                // This is the SECOND call site of `execute_delegate_request`,
++                // This is the second executor call (`execute_delegate_hop`),
+                 // and it invokes the TARGET delegate, not the calling one — so
+                 // `dispatch_delegate_request`'s check upstream says nothing
+                 // about it. Delivering here while the target is parked would
+@@ -2612,14 +2633,18 @@ where
+ 
+                 match contract_handler
+                     .executor()
+-                    // Inter-delegate hop: `user_context = None`. A
+-                    // delegate-to-delegate message does NOT carry the
+-                    // originating connection's per-user secret namespace — the
+-                    // target delegate's secrets are its own, scoped to whatever
+-                    // (if any) user context its own connections present. This
+-                    // keeps the per-user namespace bound to the connection
+-                    // boundary, not propagated transitively through delegate
+-                    // messages (part of the #4381 unforgeability invariant).
++                    // Inter-delegate hop: the target runs under the ORIGINATING
++                    // user, the one whose request led to the hop. On a hosted
++                    // node every delegate run belongs to a user, so the hop
++                    // gets that user's secrets and that user's delegate
++                    // context, and nothing else. The user comes from the
++                    // connection boundary through `user_context`, never from
++                    // the message. So a delegate that calls another delegate
++                    // makes that target run as the same user, as on a node that
++                    // is not hosted, where `user_context` is `None` and both
++                    // run under the node-local secrets. The target sees the
++                    // caller as the attested origin and decides what to allow.
++                    //
+                    
 ```
 
 ---
 
-### Incident Patch 2: `138c909a` (2026-10-25)
-**Commit Message**: feat(transport): add QUIC error kinds, close codes and the endpoint-death circuit (#5985)
+### Incident Patch 2: `ee32942c` (2026-10-25)
+**Commit Message**: fix(executor): decide the sampled re-apply probe with the verifier's heal step (#5992)
 
-**File**: `.claude/rules/transport.md` (modified, +150/-2)
+**File**: `.claude/rules/contracts.md` (modified, +21/-7)
 ```diff
-@@ -362,7 +362,9 @@ plus `egress_bytes`, `egress_bytes_waited`, `egress_wait_us_sum` / `_max`,
- `total-bandwidth-limit`), QUIC upgrade control messages received and
- ignored (`upgrade_control_received`) and hole-punch handshake packets dropped,
- one count per packet, because they were not encrypted under the attempt's
--inbound session key (`handshake_unauthenticated_dropped`). Each label set is declared once in a
-+inbound session key (`handshake_unauthenticated_dropped`), QUIC endpoint deaths
-+(`quic_endpoint_down`) and QUIC connections this node closed, by close code
-+(`quic_close_sent_<label>`, one per `QuicCloseCode`). Each label set is declared once in a
- `labelled_counters!` list, so a new variant needs a snapshot field. Hot
- path writes are single relaxed atomics; `SentPacketTracker` keeps an
- `rto_expiries` count and a bounded per-stream final-ACK watch, both
-@@ -965,7 +967,8 @@ Sending (QuicPath::send_short / send_stream / send_stream_chunks /
-   to a quinn SendStream without that race.
- Receiving: one task per connection reads every stream (FuturesUnordered,
-   no task per stream) and only uses try_send. If that task panics it is
--  counted (receive_task_panicked) and the connection is closed. Short
-+  counted (receive_task_panicked) and the connection is closed with
-+  close code DOWNGRADE (the peer falls back to UDP). Short
-   and Control go to bounded channels (full: dropped and counted); Stream
-   goes through the INBOUND ADAPTER (path/inbound.rs).
- Inbound adapter: a Stream's payload goes into an ordinary StreamHandle,
-@@ -1025,6 +1028,151 @@ Not here: dedup (e5: is_duplicate_dispatch, completed_inbound_streams),
-   budget without separating the keys.
- ```
- 
-+#### QUIC errors, close codes and liveness (`quic/error.rs`, `quic/liveness.rs`, #5940 step e4)
-+
-+Dead code in production while QUIC carries no traffic: with `transport-quic`
-+off no endpoint is built and the transport reports `Disabled`.
-+
-+```
-+Errors: TransportError::Quic(QuicError), beside TransportError::Udp and
-+  opaque like it (classify with scope()). quic/error.rs maps every quinn
-+  ConnectionError / ConnectError / WriteError / ReadError and the e3
-+  QuicSendError / HeaderError / QuicConnectError / QuicAllowError to one
-+  QuicErrorKind, with exhaustive matches (a new quinn variant does not
-+  compile until it has a kind); path/inbound.rs reads through the same
-+  mapping. Do not match quinn errors elsewhere to decide what to do;
-+  convert and match the kind.
-+  → Reset{code} (the peer reset a stream we read, or we reset our own
-+    send: SENDER_ABORTED when its source failed, LENGTH_MISMATCH when it
-+    delivered the wrong length) and Stopped{code} (the peer sent
-+    STOP_SENDING) are TRANSIENT, like UDP's OutboundStreamFailed, except
-+    the codes that refuse the message itself: HEADER_REFUSED, OVERLONG,
-+    FRAGMENT_REFUSED (the receiver's buffer refused a fragment; distinct
-+    from CANCELLED, which means the consumer is gone) and LENGTH_MISMATCH
-+    (stop_is_retryable, reset_is_retryable: classified per namespace, so
-+    a reset carrying a deterministic stop value, or a stop carrying
-+    LENGTH_MISMATCH's value, is retryable).
-+  → Stream scope (fails the same way again): those codes, InvalidFrame,
-+    StreamClosed (a local misuse of quinn's stream API).
-+  → Connection scope: ConnectionLost (peer closed with NODE_DROPPED_PEER
-+    or an unknown code, closed here, NO_ERROR, stateless reset),
-+    TimedOut, EndpointDown, Protocol{code} (any other transport error,
-+    including a LOCAL INTERNAL_ERROR: quinn raises it for a dropped
-+    endpoint driver, but quinn-proto 0.11.19 also raises it on a healthy
-+    endpoint for a peer leaving too many gaps in a stream or crypto
-+    buffer, so the code alone does not blame the endpoint),
-+    Refused{reason}:
-+    Handshake (a TLS alert, codes 0x100 to 0x1ff), Version,
-+    ConnectionRefused (CONNECTION_REFUSED), Downgrade and
-+    IdentityMismatch (the peer's close codes), AllowSetFull, KeyConflict,
-+    UnusableKey, Local.
-+  → Attribution: error::attribute(availability, kind) turns every
-+    connection-scope kind into EndpointDown while the endpoint is Down,
-+    whichever error it came from (a connection error, a read or write or
-+    path send that lost its connection, a connect), except
-+    Refused{IdentityMismatch}, a security signal kept visible;
-+    stream-scope kinds are unchanged. QuicEndpoint::error_kind applies it
-+    with the endpoint's availability: use it, not the bare mapping, to
-+    decide what to do (after endpoint death quinn reports an
-+    INTERNAL_ERROR or, once its implicit close ran, LocallyClosed).
-+    Window: quinn's EndpointDriver::drop ends the connections before the
-+    watcher records Down, so on a multi-thread runtime a connection can
-+    end as Protocol{0x1} while the availability still reads Up. e5 must
-+    not take an irreversible per-peer action on Protocol{0x1} without
-+    re-checking after a short timeout on availability(
+@@ -242,10 +242,19 @@ State merging rules:
+   - Contract defines merge semantics
+   - Merge MUST be commutative: merge(a, b) == merge(b, a)
+   - Merge MUST be associative: merge(merge(a, b), c) == merge(a, merge(b, c))
+-  - For `UpdateData::State` inputs, merge MUST be idempotent:
+-      update_state(update_state(S, State(X)), State(X)) == update_state(S, State(X))
++  - For `UpdateData::State` inputs, re-applying the same incoming state MUST
++    settle: update_state(update_state(S, State(X)), State(X)) should equal
++    update_state(S, State(X)), and where it does not (a contract with bounded
++    retention can change once), the results must reconcile to a fixpoint.
+     Enforced at runtime via TWO in-peer detectors: the sampled re-apply probe
+-    (`Executor::maybe_probe_idempotency`, 1/32 of pure-State merges) and the
++    (`Executor::maybe_probe_idempotency`, 1/32 of merges whose batch is a
++    single full `State`; rule in `contract::executor::runtime::reapply_probe`:
++    a content change on re-apply is a strict associativity failure on
++    (S, X, X), so it flags only when the conformance verifier's heal step
++    (`conformance::verifier::associativity_heals`) shows the groupings do not
++    converge, a re-delivered input keeps moving the state, or reconciliation
++    revisits a state; bounded to `REAPPLY_PROBE_MAX_CALLS` contract calls and
++    `REAPPLY_PROBE_TIME_BUDGET`, and inconclusive past either) and the
+     deterministic identical-input probe
+     (`Executor::probe_identical_input_idempotency`): when an incoming
+     full-State payload is byte-identical to the stored state,
+@@ -258,10 +267,15 @@ State merging rules:
+     Both detectors flag a violation only when the CONTENT changed (a
+     counter/timestamp/signature churned, an entry was added/removed),
+     including the fixed-size byte-churn shape of the #4251 incident.
+-    Neither flags a mere REORDERING of the same bytes, because a correct
+-    contract with non-canonical serialization (HashMap/HashSet iteration
+-    order) re-serializes the same logical state in a different byte order
+-    (the #4295 false-positive case). Violators get flagged in
++    A re-apply that only REORDERS the same bytes ends either probe without a
++    flag, because a correct contract with non-canonical serialization
++    (HashMap/HashSet iteration order) re-serializes the same logical state in
++    a different byte order (the #4295 false-positive case). Caveat for the
++    sampled probe: only its first re-apply comparison tolerates reordering.
++    Once the content has changed, the heal step compares states in exact
++    bytes, as the verifier does, so a contract whose encoding depends on
++    argument order and that also fails strict associativity can be flagged
++    for byte order alone. Violators get flagged in
+     `Ring::broken_invariants`; while flagged, this node suppresses commit,
+     outbound `BroadcastStateChange` (including the retry/stash/flush
+     re-emissions through `handle_broadcast_state_change`), AND full-state
 ```
 
-**File**: `crates/core/src/node/background_task_monitor.rs` (modified, +55/-1)
+**File**: `crates/core/src/conformance.rs` (modified, +7/-4)
 ```diff
-@@ -13,6 +13,7 @@
- //! See issue #3121 and the incident described in #3120 for motivation.
- 
- use std::sync::Arc;
-+use std::sync::atomic::{AtomicBool, Ordering};
- 
- use parking_lot::Mutex;
- use tokio::task::JoinHandle;
-@@ -36,12 +37,16 @@ struct TrackedTask {
- #[derive(Clone)]
- pub(crate) struct BackgroundTaskMonitor {
-     inner: Arc<Mutex<Vec<TrackedTask>>>,
-+    /// Set by `wait_for_any_exit`, after which a registration is not
-+    /// monitored.
-+    drained: Arc<AtomicBool>,
- }
- 
- impl BackgroundTaskMonitor {
-     pub fn new() -> Self {
-         Self {
-             inner: Arc::new(Mutex::new(Vec::new())),
-+            drained: Arc::new(AtomicBool::new(false)),
-         }
-     }
- 
-@@ -50,8 +55,29 @@ impl BackgroundTaskMonitor {
-     /// The `name` is used in error messages when the task exits. It should be
-     /// a short, human-readable identifier (e.g. "connection_maintenance",
-     /// "garbage_cleanup").
-+    ///
-+    /// Only before [`Self::wait_for_any_exit`]: a task registered after it
-+    /// is not watched by anything, so it is logged at ERROR (the task keeps
-+    /// running, unmonitored) instead of failing silently.
-     pub fn register(&self, name: &'static str, handle: JoinHandle<()>) {
--        self.inner.lock().push(TrackedTask { name, handle });
-+        let mut inner = self.inner.lock();
-+        // Read under the lock `wait_for_any_exit` drains under, so a
-+        // registration is either drained or reported, never lost unseen.
-+        if self.drained.load(Ordering::Acquire) {
-+            tracing::error!(
-+                task = name,
-+                "Background task registered after the monitor started waiting; it is NOT monitored"
-+            );
-+            return;
-+        }
-+        inner.push(TrackedTask { name, handle });
-+    }
-+
-+    /// Whether `wait_for_any_exit` has drained this monitor, so a new
-+    /// registration would not be monitored.
-+    #[cfg_attr(not(test), allow(dead_code))]
-+    pub fn is_drained(&self) -> bool {
-+        self.drained.load(Ordering::Acquire)
-     }
- 
-     /// Consume the monitor and return a future that resolves with an error
-@@ -62,6 +88,7 @@ impl BackgroundTaskMonitor {
-     pub fn wait_for_any_exit(self) -> impl std::future::Future<Output = anyhow::Error> + Send {
-         let tasks: Vec<TrackedTask> = {
-             let mut inner = self.inner.lock();
-+            self.drained.store(true, Ordering::Release);
-             std::mem::take(&mut *inner)
-         };
- 
-@@ -210,4 +237,31 @@ mod tests {
-             "Expected 'fast_exit' to be detected first, got: {msg}"
-         );
-     }
-+
-+    /// A task registered after `wait_for_any_exit` drained the monitor is
-+    /// not monitored, and the monitor says so: its exit does not resolve
-+    /// the wait (nothing could), and `is_drained` reports the state a
-+    /// late caller must check.
-+    #[tokio::test]
-+    async fn registration_after_wait_is_not_monitored() {
-+        let monitor = BackgroundTaskMonitor::new();
-+        let sleeper = tokio::spawn(async {
-+            tokio::time::sleep(Duration::from_secs(60)).await;
-+        });
-+        monitor.register("sleeper", sleeper);
-+        assert!(!monitor.is_drained());
-+        let wait = monitor.clone().wait_for_any_exit();
-+        assert!(monitor.is_drained());
-+        let (logs, guard) = crate::util::test_log_capture::install();
-+        monitor.register("late_exit", tokio::spawn(async {}));
-+        drop(guard);
-+        let logs = logs.lock().unwrap().clone();
-+        assert!(
-+            logs.iter()
-+                .any(|line| line.starts_with("ERROR") && line.contains("late_exit")),
-+            "the late registration is logged at ERROR: {logs:?}"
-+        );
-+        let fired = tokio::time::timeout(Duration::from_millis(100), wait).await;
-+        assert!(fired.is_err(), "a late registration is not watched");
-+    }
- }
+@@ -53,17 +53,20 @@
+ //! # Relationship to the existing probe
+ //!
+ //! `contract::executor::runtime::executor_impl::maybe_probe_idempotency` already
+-//! samples one merge in 32 and checks re-apply idempotence. Two differences matter.
++//! samples one merge in 32 and checks that re-applying the incoming state settles,
++//! deciding a content change with this module's own [`verifier`] heal step (see
++//! `contract::executor::runtime::reapply_probe`). Two differences matter.
+ //!
+ //! It compares with `byte_multiset_eq` rather than byte equality, because states
+ //! were not guaranteed to have a canonical encoding, so a strict comparison would
+ //! have flagged contracts that merely reordered their own output. The RFC makes
+ //! canonical serialization an explicit platform requirement, which is what lets this
+ //! module compare exact bytes and therefore say something much stronger.
+ //!
+-//! It also checks exactly one law. Commutativity, associativity and reconciliation
+-//! are where the measured production damage actually came from (#5153), and a
+-//! re-apply probe cannot see any of them.
++//! It also checks one input shape, the triple `(S, X, X)`. Commutativity,
++//! associativity over distinct inputs and reconciliation are where the measured
++//! production damage actually came from (#5153), and a re-apply probe cannot see
++//! them.
+ //!
+ //! This module does not replace or disable that probe. The node can run this verifier
+ //! in an opt-in shadow mode: set `FREENET_CONFORMANCE_CAPTURE_DIR` (see [`capture`] and
 ```
 
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +42/-0)
+**File**: `crates/core/src/conformance/runtime_oracle.rs` (modified, +67/-0)
 ```diff
-@@ -2785,6 +2785,22 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                 "handshake_unauthenticated_dropped".into(),
-                 serde_json::json!(snapshot.handshake_unauthenticated_dropped),
-             );
-+            m.insert(
-+                "quic_endpoint_down".into(),
-+                serde_json::json!(snapshot.quic_endpoint_down),
-+            );
-+            m.insert(
-+                "quic_close_sent_node_dropped_peer".into(),
-+                serde_json::json!(snapshot.quic_close_sent_node_dropped_peer),
-+            );
-+            m.insert(
-+                "quic_close_sent_downgrade".into(),
-+                serde_json::json!(snapshot.quic_close_sent_downgrade),
-+            );
-+            m.insert(
-+                "quic_close_sent_identity_mismatch".into(),
-+                serde_json::json!(snapshot.quic_close_sent_identity_mismatch),
-+            );
-             m.insert(
-                 "nat_fail_samples".into(),
-                 serde_json::json!(snapshot.nat_fail_samples),
-@@ -6856,6 +6872,32 @@ mod tests {
-         }
+@@ -199,6 +199,73 @@ impl ConformanceOracle for RuntimeOracle {
      }
- 
-+    /// The event-log JSON carries the QUIC endpoint-down and close-code
-+    /// counts, with the same values serde gives.
-+    #[test]
-+    fn transport_snapshot_json_carries_quic_endpoint_and_close_counts() {
-+        let snapshot = crate::transport::metrics::TransportSnapshot {
-+            quic_endpoint_down: 1,
-+            quic_close_sent_node_dropped_peer: 2,
-+            quic_close_sent_downgrade: 3,
-+            quic_close_sent_identity_mismatch: 4,
-+            ..Default::default()
-+        };
-+        let reference = serde_json::to_value(&snapshot).unwrap();
-+        let json = event_kind_to_json(&super::super::EventKind::TransportSnapshot(Box::new(
-+            snapshot,
-+        )));
-+        for (key, expected) in [
-+            ("quic_endpoint_down", 1),
-+            ("quic_close_sent_node_dropped_peer", 2),
-+            ("quic_close_sent_downgrade", 3),
-+            ("quic_close_sent_identity_mismatch", 4),
-+        ] {
-+            assert_eq!(json[key], expected, "event-log value for {key}");
-+            assert_eq!(json[key], reference[key], "serde value for {key}");
-+        }
-+    }
-+
-     /// Each connection identity key is in the event-log JSON exactly when its
-     /// count is non-zero, and every serde `conn_identity_*` field is covered.
-     #[test]
-```
-
-**File**: `crates/core/src/transport.rs` (modified, +194/-1)
-```diff
-@@ -401,6 +401,13 @@ pub enum TransportError {
-     /// Opaque above the transport: classify it with [`Self::scope`].
-     #[error(transparent)]
-     Udp(UdpError),
-+    /// An error only the QUIC path produces (#5940): a quinn connection,
-+    /// stream or endpoint error, or a framing error, mapped to a stable
-+    /// kind. Opaque above the transport like [`Self::Udp`]: classify it with
-+    /// [`Self::scope`]. Nothing produces one while `transport-quic` carries
-+    /// no traffic.
-+    #[error(transparent)]
-+    Quic(QuicError),
  }
  
- /// An error only the UDP transport produces, inside [`TransportError::Udp`].
-@@ -434,6 +441,122 @@ pub(in crate::transport) enum UdpErrorKind {
-     Serialization(bincode::Error),
- }
- 
-+/// An error only the QUIC path produces, inside [`TransportError::Quic`].
-+/// Its kind is private to the transport; `quic::error` maps quinn's and the
-+/// framing's errors to it.
-+#[derive(Clone, Copy, PartialEq, Eq, thiserror::Error)]
-+#[error(transparent)]
-+pub struct QuicError(pub(in crate::transport) QuicErrorKind);
-+
-+impl std::fmt::Debug for QuicError {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        std::fmt::Debug::fmt(&self.0, f)
-+    }
-+}
-+
-+/// What went wrong in a [`QuicError`]. A small, stable set: quinn has many
-+/// more error variants, and `quic::error` decides which kind each is.
++/// An oracle over a runtime someone else owns, for one contract.
 +///
-+/// Scope (see [`TransportError::scope`]): `Reset` and `Stopped` are
-+/// transient (a retry may succeed) unless their code refuses the message
-+/// itself, then stream scope like `InvalidFrame` and `StreamClosed`; the
-+/// rest end the QUIC connection (or the attempt to make one). A connection-scope kind ends
-+/// the QUIC path only: the peer's UDP session stays up, and e5 falls back
-+/// to it inside the transport, so a connection-scope QUIC error is never
-+/// surfaced to the operations above it.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
-+pub(in crate::transport) enum QuicErrorKind {
-+    /// The connection ended: the peer closed it with
-+    /// `close_code::NODE_DROPPED_PEER` or a code this node does not know,
-+    /// this node closed it, the peer's QUIC stack closed it without an
-+    /// error, or the peer answered with a stateless reset (it lost the
-+    /// connection, usually by restarting). Connection scope; handled inside
-+    /// the transport (fallback to UDP), never surfaced to operations.
-+    #[error("QUIC connection lost")]
-+    ConnectionLost,
-+    /// The stream was reset with this code: by the peer while this node was
-+    /// reading it, or by this node, which abandoned a send whose source
-+    /// failed (`reset_code::SENDER_ABORTED`). Transient or stream scope by
-+    /// code (`quic::error::reset_is_retryable`).
-+    #[error("QUIC stream reset with code {code}")]
-+    Reset { code: u64 },
-+    /// The peer stopped the stream (STOP_SENDING) with this code
-+    /// (`stop_code`). Transient or stream scope by code
-+    /// (`quic::error::stop_is_retryable`).
-+    #[error("QUIC stream stopped by the peer with code {code}")]
-+    Stopped { code: u64 },
-+    /// The connection was refused, or ended by a refusal. Connection scope.
-+    #[error("QUIC connection refused: {reason}")]
-+    Refused { reason: QuicRefusal },
-+    /// Nothing was heard from the peer for the idle timeout. Connection
-+    /// scope.
-+    #[error("QUIC connection timed out")]
-+    TimedOut,
-+    /// The node's QUIC endpoint is gone: its driver ended, or it was
-+    /// closed. Connection scope, for every connection of that endpoint
-+    /// (one per node), whose `QuicAvailability` reports it.
-+    #[error("the QUIC endpoint is down")]
-+    EndpointDown,
-+    /// The peer broke the QUIC protocol (a QUIC transport error code other
-+    /// than a TLS alert, sent by the peer or detected here). Connection
-+    /// scope.
-+    #[error("QUIC protocol error {code:#x}")]
-+    Protocol { code: u64 },
-+    /// A message could not be framed: its header would be refused
-+    /// (`framing::HeaderError`). Stream scope, and the same message fails
-+    /// the same way on every attempt.
-+    #[error("QUIC frame refused before sending")]
-+    InvalidFrame,
-+    /// The stream was already closed on this side (a misuse of quinn's
-+    /// stream API; not expected). Stream scope.
-+    #[error("QUIC stream already closed")]
-+    StreamClosed,
++/// The executor's sampled re-apply probe uses this to run the verifier's heal step
++/// ([`super::verifier::associativity_heals`]) on the runtime that just performed the
++/// merge, so the probe's verdict comes from the same law the verifier checks rather
++/// than from a second copy of it.
++pub(crate) struct BorrowedRuntimeOracle<'a, 'p, R: ?Sized> {
++    runtime: &'a mut R,
++    key: &'a ContractKey,
++    parameters: &'a Parameters<'p>,
 +}
 +
-+/// Why a QUIC connection was refused ([`QuicErrorKind::Refused`]).
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
-+pub(in crate::transport) enum QuicRefusal {
-+    /// The TLS handshake failed (a TLS alert, QUIC crypto error 0x100 to
-+    /// 0x1ff, either side): a key other than the expected one, a foreign
-+    /// key type, another ALPN.
-+    #[error("the TLS handshake failed")]
-+    Handshake,
-+    /// The peer does not speak QUIC version 1.
-+    #[error("no common QUIC version")]
-+    Version,
-+    /// The peer's QUIC stack refused the connection (transport error
-+    /// CONNECTION_REFUSED), 
++impl<'a, 'p, R: ContractRuntimeInterface + ?Sized> BorrowedRuntimeOracle<'a, 'p, R> {
++    pub(crate) fn new(
++        runtime: &'a mut R,
++        key: &'a ContractKey,
++        parameters: &'a Parameters<'p>,
++    ) -> Self {
++        Self {
++            runtime,
++            key,
++            parameters,
++        }
++    }
++}
++
++impl<R: ContractRuntimeInterface + ?Sized> ConformanceOracle for BorrowedRuntimeOracle<'_, '_, R> {
++    fn validate_state(
++        &mut self,
++        state: &[u8],
++        related: &RelatedContracts<'_>,
++    ) -> Result<ValidateResult, OracleError> {
++        let state = WrappedState::new(state.to_vec());
++        self.runtime
++            .validate_state(self.key, self.parameters, &state, related)
++            .map_err(classify)
++    }
++
++    fn update_state(
++        &mut self,
++        state: &[u8],
++        updates: &[UpdateData<'_>],
++    ) -> Result<UpdateModification<'static>, OracleError> {
++        let state = WrappedState::new(state.to_vec());
++        self.runtime
++            .update_state(self.key, self.parameters, &state, updates)
++            .map_err(classify)
++    }
++
++    fn summarize_state(&mut self, state: &[u8]) -> Result<Vec<u8>, OracleError> {
++        let state = WrappedState::new(state.to_vec());
++        self.runtime
++            .summarize_state(self.key, self.parameters, &state)
++            .map(StateSummary::into_bytes)
++            .map_err(classify)
++    }
++
++    fn get_state_delta(&mut self, state: &[u8], summary: &[u8]) -> Result<Vec<u8>, OracleError> {
++        let state = WrappedState::new(state.to_vec());
++        let summary = StateSummary::from(summary.to_vec());
++        self.runtime
++            .get_state_delta(self.key, self.parameters, &state, &summary)
++            .map(|delta| delta.into_bytes())
++            .map_err(classify)
++    }
++}
++
+ /// Classify a runtime failure by its *typed* provenance.
+ ///
+ /// Not by message text. A contract can return a rejection whose text mentions gas or
 ```
 
-**File**: `crates/core/src/transport/connection_handler.rs` (modified, +47/-6)
+**File**: `crates/core/src/conformance/verifier.rs` (modified, +15/-3)
 ```diff
-@@ -203,7 +203,7 @@ pub(crate) struct UdpTransportConfig {
-     pub(crate) quic: Option<super::quic::QuicSettings>,
+@@ -54,6 +54,13 @@ pub const MAX_CANONICALIZATION_APPLIES: usize = 3;
+ /// cost coverage, never accuse anyone, because running out is inconclusive; too
+ /// large a bound costs work, and only on a triple that has already failed the
+ /// strict check: at most `2 + 10 * MAX_HEAL_PASSES` extra merges.
++///
++/// NODE BEHAVIOUR DEPENDS ON THIS. The executor's sampled re-apply probe
++/// (`contract::executor::runtime::reapply_probe`) runs [`associativity_heals`] on
++/// the merge path and flags contracts on its verdict, so changing this bound,
++/// [`associativity_heals`] or [`Heal`] changes what a node suppresses and what a
++/// sampled merge costs. Review such a change as a node change, and keep
++/// `reapply_verdict_matches_verifier_on_s_x_x` passing.
+ pub const MAX_HEAL_PASSES: usize = 4;
+ 
+ /// One property plus the exact inputs to check it with.
+@@ -822,7 +829,10 @@ fn run<O: ConformanceOracle + ?Sized>(
  }
  
--type UdpListenerParts<S> = (
-+pub(super) type UdpListenerParts<S> = (
-     OutboundConnectionHandler<S>,
-     InboundConnectionHandler<S>,
-     tokio::task::JoinHandle<TransportError>,
-@@ -215,7 +215,7 @@ type UdpListenerParts<S> = (
- /// sockets and `SimulationSocket` alike, so it is where the socket is wrapped
- /// in [`DemuxSocket`]: everything the listener receives has passed through the
- /// first-byte split.
--async fn bind_udp_listener<S: Socket>(
-+pub(super) async fn bind_udp_listener<S: Socket>(
-     keypair: TransportKeypair,
-     listen_host: IpAddr,
-     listen_port: u16,
-@@ -379,17 +379,42 @@ impl<S: Socket> super::InboundAcceptor for InboundConnectionHandler<S> {
- pub struct OutboundConnectionHandler<S = UdpSocket, TS: TimeSource = RealTime> {
-     send_queue: mpsc::Sender<(SocketAddr, ConnectionEvent<S, TS>)>,
-     expected_non_gateway: Arc<DashSet<IpAddr>>,
-+    /// Whether this transport's QUIC endpoint is alive; `Disabled` when it
-+    /// has none (`transport-quic` off).
-+    quic_availability: super::quic::QuicAvailabilityWatch,
-+    /// The listener's QUIC endpoint, so tests can fail its driver.
-+    #[cfg(test)]
-+    quic_endpoint: Option<super::quic::QuicEndpoint>,
+ /// How the heal step for [`ConformanceProperty::StateAssociativity`] ended.
+-enum Heal {
++///
++/// Also read by the executor's sampled re-apply probe; see [`MAX_HEAL_PASSES`].
++#[derive(Debug, PartialEq, Eq)]
++pub(crate) enum Heal {
+     /// The groupings converge and the state they converge to is a fixpoint.
+     Healed,
+     /// `merge(L, R) != merge(R, L)`: one exchange does not even agree.
+@@ -887,7 +897,9 @@ enum Heal {
+ /// Each moving step costs two merges, so the heal step is at most
+ /// `2 + 10 * MAX_HEAL_PASSES` merges, spent only on a triple that already failed the
+ /// strict check.
+-fn associativity_heals<O: ConformanceOracle + ?Sized>(
++///
++/// Also called by the executor's sampled re-apply probe; see [`MAX_HEAL_PASSES`].
++pub(crate) fn associativity_heals<O: ConformanceOracle + ?Sized>(
+     oracle: &mut O,
+     left: &[u8],
+     right: &[u8],
+@@ -1212,7 +1224,7 @@ fn require_valid<O: ConformanceOracle + ?Sized>(
+ /// There is no separate `merge` entry point in the contract interface; a full-state
+ /// update *is* the merge, which is why a contract that "rejects" an incoming state by
+ /// returning its own state unchanged shows up as an ordinary commutativity failure.
+-fn merge<O: ConformanceOracle + ?Sized>(
++pub(crate) fn merge<O: ConformanceOracle + ?Sized>(
+     oracle: &mut O,
+     base: &[u8],
+     other: &[u8],
+```
+
+**File**: `crates/core/src/contract/executor/mock_wasm_runtime.rs` (modified, +76/-0)
+```diff
+@@ -19,6 +19,8 @@ pub(crate) enum ValidateOverride {
+     Invalid,
+     /// Return `RequestRelated` with an empty vec (malformed request).
+     EmptyRequestRelated,
++    /// `Valid` exactly when the predicate holds for the state bytes.
++    ValidWhen(fn(&[u8]) -> bool),
  }
  
- impl<S, TS: TimeSource> Clone for OutboundConnectionHandler<S, TS> {
-     fn clone(&self) -> Self {
-         Self {
-             send_queue: self.send_queue.clone(),
-             expected_non_gateway: self.expected_non_gateway.clone(),
-+            quic_availability: self.quic_availability.clone(),
-+            #[cfg(test)]
-+            quic_endpoint: self.quic_endpoint.clone(),
+ /// Configurable `update_state` behavior for testing related contract flows.
+@@ -68,6 +70,22 @@ pub(crate) enum UpdateOverride {
+     /// merge canonicalizes, every later one is a fixpoint. The
+     /// identical-input probe must NOT flag this shape.
+     CanonicalizeOnce,
++    /// A full-state merge given as a pure function `merge(current, incoming)`,
++    /// folded over every `State` entry in the batch. Lets a test run the
++    /// executor's probes against a merge with known algebraic properties.
++    MergeWith(fn(&[u8], &[u8]) -> Vec<u8>),
++    /// [`Self::MergeWith`] for a merge that can refuse: `None` is returned as a
++    /// contract error (`InvalidUpdateWithInfo`).
++    TryMergeWith(fn(&[u8], &[u8]) -> Option<Vec<u8>>),
++    /// [`Self::MergeWith`], except that when the batch carries no
++    /// `RelatedState` entry and `needs(current)` holds, it returns
++    /// `requires(related)`. Models a contract that needs related state only
++    /// for some stored states.
++    RequiresRelatedWhen {
++        related: ContractInstanceId,
++        needs: fn(&[u8]) -> bool,
++        merge: fn(&[u8], &[u8]) -> Vec<u8>,
++    },
+ }
+ 
+ /// A lightweight mock runtime at the `ContractRuntimeInterface` level that lets
+@@ -249,6 +267,13 @@ impl ContractRuntimeInterface for MockWasmRuntime {
+                 ValidateOverride::AlwaysRequestRelated(ids) => ValidateResult::RequestRelated(ids),
+                 ValidateOverride::Invalid => ValidateResult::Invalid,
+                 ValidateOverride::EmptyRequestRelated => ValidateResult::RequestRelated(vec![]),
++                ValidateOverride::ValidWhen(valid) => {
++                    if valid(_state.as_ref()) {
++                        ValidateResult::Valid
++                    } else {
++                        ValidateResult::Invalid
++                    }
++                }
+             });
          }
-     }
+         Ok(ValidateResult::Valid)
+@@ -392,6 +417,57 @@ impl ContractRuntimeInterface for MockWasmRuntime {
+                     let out = logical[canonical_start..].to_vec();
+                     return Ok(UpdateModification::valid(out.into()));
+                 }
++                UpdateOverride::TryMergeWith(merge) => {
++                    let mut out = _state.as_ref().to_vec();
++                    for update in update_data {
++                        if let UpdateData::State(incoming) = update {
++                            let Some(next) = merge(&out, incoming.as_ref()) else {
++                                use crate::wasm_runtime::ContractExecError;
++                                use freenet_stdlib::prelude::ContractError as StdlibContractError;
++                                let inner_err = StdlibContractError::InvalidUpdateWithInfo {
++                                    reason: "merge refused".into(),
++                                };
++                                return Err(crate::wasm_runtime::ContractError::from(
++                                    ContractExecError::ContractError(inner_err),
++                                ));
++                            };
++                            out = next;
++                        }
++                    }
++                    return Ok(UpdateModification::valid(out.into()));
++                }
++                UpdateOverride::RequiresRelatedWhen {
++                    related,
++                    needs,
++                    merge,
++                } => {
++                    let has_related = update_data
++                        .iter()
++                        .any(|u| matches!(u, UpdateData::RelatedState { .. }));
++                    if !has_related && needs(_state.as_ref()) {
++                        return Ok(UpdateModification::requires(vec![RelatedContract {
++                            contract_instance_id: related,
++                            mode: RelatedMode::StateOnce,
++                        }])
++                        .map_err(|e| anyhow::anyhow!("{e}"))?);
++                    }
++                    let mut out = _state.as_ref().to_vec();
++                    for update in update_data {
++                        if let UpdateData::State(incoming) = update {
++                            out = merge(&out, incoming.as_ref());
++                        }
++                    }
++                    return Ok(UpdateModification::valid(out.into()));
++                }
++                UpdateOverride::MergeWith(merge) => {
++                    let mut out = _state.as_ref().to_vec();
++                    for update in update_data {
++                        if let UpdateData::State(incoming) = update {
++                            out = merge(&out, incoming.as_ref());
++                        }
++                    }
++       
+```
+
+**File**: `crates/core/src/contract/executor/pool_tests.rs` (modified, +1/-0)
+```diff
+@@ -12,6 +12,7 @@ mod non_idempotent_detector_tests;
+ mod params_integrity_wasm_tests;
+ mod related_contract_tests;
+ mod runtime_pool_tests;
++mod sampled_probe_tests;
+ mod subscriber_limit_tests;
+ mod subscriber_stress_tests;
+ mod summarize_delta_cache_tests;
+```
+
+**File**: `crates/core/src/contract/executor/pool_tests/identical_input_probe_tests.rs` (modified, +7/-2)
+```diff
+@@ -44,7 +44,7 @@ use super::super::mock_runtime::test::create_test_contract as test_contract;
+ 
+ /// Build a real `OpManager` backed by a temp-dir `Config`, mirroring the
+ /// wiring in `disk_budget_gate_tests.rs::build_op_manager`.
+-async fn build_op_manager(id: &str) -> (Arc<OpManager>, Box<dyn std::any::Any>) {
++pub(super) async fn build_op_manager(id: &str) -> (Arc<OpManager>, Box<dyn std::any::Any>) {
+     let config_args = ConfigArgs {
+         id: Some(id.to_string()),
+         mode: Some(OperationMode::Local),
+@@ -92,7 +92,7 @@ fn distinct_bytes_state() -> WrappedState {
+     WrappedState::new((1u8..=32).collect::<Vec<u8>>())
  }
  
-+impl<S, TS: TimeSource> OutboundConnectionHandler<S, TS> {
-+    /// Whether this transport can use QUIC: `Disabled` with
-+    /// `transport-quic` off (no endpoint is built), else whether its
-+    /// endpoint is alive. e5 reads it before upgrading a connection.
-+    #[cfg_attr(not(test), allow(dead_code))]
-+    pub(crate) fn quic_availability(&self) -> super::quic::QuicAvailabilityWatch {
-+        self.quic_availability.clone()
-+    }
+-async fn build_executor(
++pub(super) async fn build_executor(
+     op_manager: &Arc<OpManager>,
+ ) -> Executor<crate::contract::executor::mock_wasm_runtime::MockWasmRuntime, MockStateStorage> {
+     Executor::new_mock_wasm("t", MockStateStorage::new(), None, Some(op_manager.clone()))
+@@ -133,6 +133,8 @@ async fn identical_input_reapply_flags_non_idempotent_contract_on_first_apply()
+         "no flag before any identical re-apply — the install path proves nothing"
+     );
+ 
++    crate::ring::EMITTED_FLAG_EVENTS.with(|events| events.borrow_mut().clear());
 +
-+    /// The listener's QUIC endpoint, if it has one (tests).
-+    #[cfg(test)]
-+    pub(crate) fn quic_endpoint(&self) -> Option<&super::quic::QuicEndpoint> {
-+        self.quic_endpoint.as_ref()
+     // FIRST identical re-apply: the probe re-merges S into itself, the
+     // fixture mutates (different byte multiset) → flagged. Deterministic:
+     // this assertion would only pass ~1/32 of runs under the sampled probe.
+@@ -154,6 +156,9 @@ async fn identical_input_reapply_flags_non_idempotent_contract_on_first_apply()
+         "identity probe must flag the non-idempotent contract on the FIRST \
+          identical apply (no 1/32 sampling)"
+     );
++    let events = crate::ring::EMITTED_FLAG_EVENTS.with(|events| events.borrow().clone());
++    assert_eq!(events.len(), 1, "the flag must reach telemetry: {events:?}");
++    assert_eq!(events[0]["detector"], "identical_input");
+ }
+ 
+ /// Healthy baseline: a correctly-idempotent contract (default mock merge)
+```
+
+**File**: `crates/core/src/contract/executor/pool_tests/sampled_probe_tests.rs` (added, +719/-0)
+```diff
+@@ -0,0 +1,719 @@
++//! Tests for the SAMPLED re-apply probe (`Executor::maybe_probe_idempotency`)
++//! through the executor's merge path. The decision rule itself
++//! (`runtime::reapply_probe::reapply_verdict`) has its own unit tests.
++//!
++//! The probe re-applies the incoming state `X` to the merge result
++//! `merge(S, X)`. A difference there is a strict associativity failure on the
++//! triple `(S, X, X)`, which the conformance verifier reports only when the two
++//! groupings fail to heal (#5915). These tests pin that a merge that changes once
++//! on re-apply and then settles is not flagged, that a merge that keeps moving
++//! is, and that the probe's verdict agrees with
++//! `verify_case(StateAssociativity, [S, X, X])` on every pair of four small
++//! merges.
++//!
++//! Sampling is forced with `IDEMPOTENCY_PROBE_ALWAYS`, which is thread-local, so
++//! every test that drives the merge path runs on a `current_thread` runtime.
++
++use either::Either;
++use freenet_stdlib::prelude::*;
++use std::sync::Arc;
++use std::sync::atomic::AtomicU64;
++use std::time::Duration;
++
++use super::identical_input_probe_tests::{build_executor, build_op_manager};
++use crate::conformance::runtime_oracle::BorrowedRuntimeOracle;
++use crate::conformance::{ConformanceCase, ConformanceProperty, PropertyOutcome, verify_case};
++use crate::contract::UpsertResult;
++use crate::contract::executor::mock_wasm_runtime::UpdateOverride;
++use crate::contract::executor::runtime::{
++    IDEMPOTENCY_PROBE_ALWAYS, IdenticalIsNoOp, REAPPLY_PROBE_TIME_BUDGET,
++};
++use crate::contract::executor::{ContractExecutor, Executor};
++use crate::ring::{BROKEN_INVARIANT_TTL, EMITTED_FLAG_EVENTS};
++use crate::wasm_runtime::MockStateStorage;
++
++use super::super::mock_runtime::test::create_test_contract as test_contract;
++
++/// A symmetric, idempotent merge over the one-byte states `0..=3`:
++///
++/// | merge | 0 | 1 | 2 | 3 |
++/// |---|---|---|---|---|
++/// | 0 | 0 | 0 | 0 | 0 |
++/// | 1 | 0 | 1 | 0 | 0 |
++/// | 2 | 0 | 0 | 2 | 1 |
++/// | 3 | 0 | 0 | 1 | 3 |
++///
++/// It is commutative and idempotent, and its eight strictly non-associative
++/// triples all heal, so the verifier accepts it. `merge(2, 3) = 1` but
++/// `merge(1, 3) = 0`: re-applying `X = 3` changes the result once, and
++/// `merge(0, 3) = 0` is then a fixpoint.
++fn settles_after_one_reapply(a: &[u8], b: &[u8]) -> Vec<u8> {
++    const TABLE: [[u8; 4]; 4] = [[0, 0, 0, 0], [0, 1, 0, 0], [0, 0, 2, 1], [0, 0, 1, 3]];
++    vec![TABLE[a[0] as usize % 4][b[0] as usize % 4]]
++}
++
++/// A merge that never settles: merging any different state advances the current
++/// one around `0 -> 1 -> 2 -> 0`, so re-applying the same incoming state cycles.
++fn cycles_on_reapply(a: &[u8], b: &[u8]) -> Vec<u8> {
++    if a == b {
++        a.to_vec()
++    } else {
++        vec![(a[0] + 1) % 3]
 +    }
 +}
 +
- /// Return type for `config_listener`: the outbound handler, inbound connection receiver,
- /// and the JoinHandle for the UDP listen task (must be monitored for unexpected exits).
- type ListenerSetup<S> = (
-@@ -458,6 +483,12 @@ impl<S: Socket> OutboundConnectionHandler<S> {
-         let (conn_handler_sender, conn_handler_receiver) = mpsc::channel(100);
-         let (new_connection_sender, new_connection_notifier) = mpsc::channel(10);
-         let expected_non_gateway = Arc::new(DashSet::new());
-+        let quic_availability = quic_endpoint.as_ref().map_or_else(
-+            super::quic::QuicAvailabilityWatch::disabled,
-+            super::quic::QuicEndpoint::availability,
-+        );
-+        #[cfg(test)]
-+        let test_quic_endpoint = quic_endpoint.clone();
- 
-         let time_source = RealTime::new();
-         let transport = UdpPacketsListener {
-@@ -493,6 +524,9 @@ impl<S: Socket> OutboundConnectionHandler<S> {
-         let connection_handler = OutboundConnectionHandler {
-             send_queue: conn_handler_sender,
-             expected_non_gateway,
-+            quic_availability,
-+            #[cfg(test)]
-+            quic_endpoint: test_quic_endpoint,
-         };
-         (transport, connection_handler, new_connection_notifier)
-     }
-@@ -744,6 +778,9 @@ impl<S: Socket> OutboundConnectionHandler<S, crate::simulation::VirtualTime> {
-         let connection_handler = OutboundConnectionHandler {
-             send_queue: conn_handler_sender,
-             expected_non_gateway,
-+            quic_availability: super::quic::QuicAvailabilityWatch::disabled(),
-+            #[cfg(test)]
-+            quic_endpoint: None,
-         };
- 
-         // Packets are now sent directly to socket from each connection,
-@@ -2042,7 +2079,7 @@ impl<S: Socket, T: TimeSource> UdpPacketsListener<S, T> {
-                                     crate::transport::TRANSPORT_METRICS
-                                         .record_nat_traversal_failed_version();
-                                 }
--                                TransportError::ChannelClosed | TransportError::ConnectionClosed(_) | TransportError::ConnectionEstablishmentFailure { .. } | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..))) | TransportError::OutboundStreamFailed(_) | TransportError::OutboundStreamInvalidLength(..) | TransportError::Udp(UdpError(UdpErrorKind::IO(_))) | TransportError::Other(_) | TransportError::Udp(UdpError(UdpErrorKind::PubKeyDecryptionError(_))) | TransportError::Udp(UdpError(UdpErrorKind::Serialization(_))) => {
-+                                TransportError::ChannelClosed | Transp
-```
-
-**File**: `crates/core/src/transport/connection_handler/tests/outbound_connector.rs` (modified, +2/-0)
-```diff
-@@ -9,6 +9,8 @@ fn handler() -> (OutboundConnectionHandler<MockSocket>, Queue) {
-     let handler = OutboundConnectionHandler {
-         send_queue,
-         expected_non_gateway: Arc::new(DashSet::new()),
-+        quic_availability: crate::transport::quic::QuicAvailabilityWatch::disabled(),
-+        quic_endpoint: None,
-     };
-     (handler, queue)
- }
-```
-
-**File**: `crates/core/src/transport/connection_handler/tests/transport_handle.rs` (modified, +2/-0)
-```diff
-@@ -46,6 +46,8 @@ async fn udp_handle_shares_one_expected_ip_set_and_reports_the_listener() {
-     let outbound = OutboundConnectionHandler::<MockSocket> {
-         send_queue,
-         expected_non_gateway: expected.clone(),
-+        quic_availability: crate::transport::quic::QuicAvailabilityWatch::disabled(),
-+        quic_endpoint: None,
-     };
-     let (inbound_tx, inbound_rx) = mpsc::channel(1);
-     let inbound = InboundConnectionHandler {
-```
-
-**File**: `crates/core/src/transport/in_memory_socket.rs` (modified, +1/-1)
-```diff
-@@ -71,7 +71,7 @@ pub fn register_address_network(addr: SocketAddr, network_name: &str) {
- }
- 
- /// Unregisters a socket address from the network mapping.
--fn unregister_address_network(addr: &SocketAddr) {
-+pub(crate) fn unregister_address_network(addr: &SocketAddr) {
-     ADDRESS_NETWORKS.remove(addr);
- }
- 
++fn force_sampling() -> impl Drop {
++    struct Reset;
++    impl Drop for Reset {
++        fn drop(&mut self) {
++            IDEMPOTENCY_PROBE_ALWAYS.with(|always| always.set(false));
++        }
++    }
++    IDEMPOTENCY_PROBE_ALWAYS.with(|always| always.set(true));
++    EMITTED_FLAG_EVENTS.with(|events| events.borrow_mut().clear());
++    Reset
++}
++
++fn emitted_flag_events() -> Vec<serde_json::Value> {
++    EMITTED_FLAG_EVENTS.with(|events| events.borrow().clone())
++}
++
++/// Install `stored` with a PUT, then deliver `incoming` as a full state through
++/// the production merge path with the probe sampling every merge.
++async fn deliver(
++    id: &str,
++    merge: UpdateOverride,
++    stored: &[u8],
++    incoming: &[u8],
++) -> (UpsertResult, bool, Vec<serde_json::Value>, Option<Vec<u8>>) {
++    let (op_manager, _guards) = build_op_manager(id).await;
++    let contract = test_contract(id.as_bytes());
++    let key = contract.key();
++    let mut executor = build_executor(&op_manager).await;
++    executor
++        .mock_runtime_mut()
++        .update_overrides
++        .insert(*key.id(), merge);
++
++    executor
++        .upsert_contract_state(
++            key,
++            Either::Left(WrappedState::new(stored.to_vec())),
++            RelatedContracts::default(),
++            Some(contract.clone()),
++        )
++        .await
++        .expect("initial PUT");
++
++    let _sampling = force_sampling();
++    let result = executor
++        .upsert_contract_state(
++            key,
++            Either::Left(WrappedState::new(incoming.to_vec())),
++            RelatedContracts::default(),
++            None,
++        )
++        .await
++        .expect("full-state delivery");
++    let events = emitted_flag_events();
++    let (stored_after, _) = executor
++        .fetch_contract(key, false)
++        .await
++        .expect("fetch after delivery");
++    (
++        result,
++        op_manager.ring.is_contract_broken(&key),
++        events,
++        stored_after.map(|s| s.as_ref().to_vec()),
++    )
++}
++
++/// A merge the verifier accepts, whose re-apply changes the state once and then
++/// settles, is not flagged and commits.
++#[tokio::test(flavor = 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5992** (2026-10-25): fix(executor): decide the sampled re-apply probe with the verifier's heal step (@sanity)
+- **PR #5991** (2026-10-25): fix(delegates): scope delegate unregistration, context and hosted runs to their user (@sanity)
 - **PR #5989** (2026-10-25): fix(ring): an expected inbound connection starts without a peer identity (@sanity)
 - **PR #5986** (2026-10-25): fix(test): give each test process its own temp root for node data dirs (@sanity)
 - **PR #5985** (2026-10-25): feat(transport): add QUIC error kinds, close codes and the endpoint-death circuit (@sanity)
 - **PR #5984** (2026-10-25): feat(telemetry): count connection identity transitions (@sanity)
-- **PR #5979** (2026-10-24): build: release 0.2.149 (@sanity)
-- **PR #5977** (2026-10-24): fix(transport): complete a hole-punch handshake only on a packet under the attempt's session key (@sanity)
 
 ---
 
@@ -2817,32 +2877,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ring): an expected inbound connection starts without a peer identity (#5989)
+## X. delegates): scope delegate unregistration, context and hosted runs to their user
 
 **RULE**:
-When implementing operations in `crates/core/src/message.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/contracts.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e72789f4`: ring): an expected inbound connection starts without a peer identity (#5989). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba036280`: delegates): scope delegate unregistration, context and hosted runs to their user (#5991). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/message.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/contracts.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Register expectation for an inbound connection from the peer at
-    /// `addr`, which the connect op is dialling under `peer_key`.
-        peer_key: crate::transport::TransportPublicKey,
-            NodeEvent::ExpectPeerConnection { addr, .. } => {
+Hosted nodes: every delegate run belongs to a user, and the node runs no
+delegate on its own. A client request runs under its connection's user; an
+inter-delegate hop runs its target under the originating user (secrets and
+context, via execute_delegate_hop's user_context), so a delegate that calls
+another makes the target run as the same user, as on a normal node. The node
+runs no contract notification and no lifecycle or wake-up run (no
+capabilities). A delegate's SubscribeContractRequest still succeeds: the
+subscription keeps the contract current on the node for the user's reads, but
+the delegate is not run for its changes. Two guards: the executor builds and
+sends no DelegateNotification on a hosted node
+(send_delegate_contract_notifications), and handle_delegate_notification
+returns after the registry sweep if one arrives. Routing a run's output to
+its own user (route_to_apps_for + Recipients::User, nobody when it has no
+user) is a backstop on a hosted node, not a live path: no hosted run delivers
+to apps today. The executor refuses an ApplicationMessages run
+with no user on a hosted node (is_hosted_run_without_user, logged at warn
+once per process, then debug: no client can se
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    /// Register expectation for an inbound connection from the given peer.
-            NodeEvent::ExpectPeerConnection { addr } => {
+one); a CLI or remote unregister does not. An app that re-keys should
+unregister the old key from its own tab once its migration is done.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e72789f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba036280` are properly handled with clean fallback behavior.

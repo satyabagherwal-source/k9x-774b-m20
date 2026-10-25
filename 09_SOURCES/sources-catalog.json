@@ -1555,8 +1555,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-community-1",
     "sourceVersion": "hf-pyannote-speaker-diarization-community-1",
     "license": "Open-Source",
-    "contentHash": "5d51bff69c83dbb5971d6da9aac72c33eab9ee24050476573c9ed54940a04f14",
-    "lastHarvestedAt": "2026-10-21T02:56:06.775Z",
+    "contentHash": "9dd4b5295ae2a22f3901fbd519b68943bce8ef30e912afd437983732fb60f642",
+    "lastHarvestedAt": "2026-10-25T22:56:44.005Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1"
   },
   "hf-meta-models-muse-spark-open-816b-a42b": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "e72789f4",
+    "sourceVersion": "ba036280",
     "license": "NOASSERTION",
-    "contentHash": "678f33447e0bf245f5461a1c1782ab9b8a3ed409fac0df0efb7d12321d7edb9c",
-    "lastHarvestedAt": "2026-10-25T19:45:11.432Z",
+    "contentHash": "b1b2657f26f4cb6a41bf626ece934b7204ad5a31746b266a029971b17b4853b9",
+    "lastHarvestedAt": "2026-10-25T22:54:40.127Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {

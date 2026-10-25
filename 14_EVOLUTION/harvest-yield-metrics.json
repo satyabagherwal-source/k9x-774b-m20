@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T22:48:13.522Z",
-  "total_cycles_completed": 5005,
-  "total_learnings_persisted": 5005,
-  "total_rules_promoted": 4366,
+  "last_updated": "2026-10-25T22:56:44.009Z",
+  "total_cycles_completed": 5007,
+  "total_learnings_persisted": 5007,
+  "total_rules_promoted": 4369,
   "history": [
-    {
-      "timestamp": "2026-10-25T13:30:53.732Z",
-      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T13:30:54.180Z",
-      "repository": "NativeScript/NativeScript",
-      "learningId": "learn-github-nativescript-nativescript",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T13:30:56.420Z",
       "repository": "hashicorp/terraform",
@@ -1403,6 +1389,20 @@
       "repository": "Open-Source-Legal/OpenContracts",
       "learningId": "learn-github-open-source-legal-opencontracts",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T22:54:40.133Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T22:56:44.009Z",
+      "repository": "pyannote/speaker-diarization-community-1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

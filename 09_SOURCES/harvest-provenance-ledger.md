@@ -5035,3 +5035,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-25T22:41:43.608Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-25T22:48:06.458Z |
 | `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `dd471b03` | Multi-dimensional audit evidence | 2026-10-25T22:48:13.517Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `ba036280` | Multi-dimensional audit evidence | 2026-10-25T22:54:40.127Z |
+| `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-10-25T22:56:44.005Z |
