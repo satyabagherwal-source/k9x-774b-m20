@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T18:54:05.185Z",
-  "total_cycles_completed": 4926,
-  "total_learnings_persisted": 4926,
+  "last_updated": "2026-10-25T19:00:00.284Z",
+  "total_cycles_completed": 4927,
+  "total_learnings_persisted": 4927,
   "total_rules_promoted": 4300,
   "history": [
-    {
-      "timestamp": "2026-10-25T09:13:18.558Z",
-      "repository": "moonshotai/Kimi-K3",
-      "learningId": "learn-huggingface-moonshotai-kimi-k3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T09:14:37.321Z",
       "repository": "skyhook-io/radar",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-25T18:54:05.185Z",
       "repository": "microsoft/FrogNano-4B-2609",
       "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:00:00.284Z",
+      "repository": "hexgrad/Kokoro-82M",
+      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

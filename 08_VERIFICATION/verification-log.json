@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-GB46",
-    "timestamp": "2026-10-22T21:41:46.182Z",
-    "repository": "vikejs/vike",
-    "learningId": "learn-github-vikejs-vike",
-    "contentHash": "55c4ed2f93e8bd3a6a867658eabe161e7852752594252a053e7e90d58a256550",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-OBH7",
     "timestamp": "2026-10-22T21:47:59.899Z",
     "repository": "unsloth/flint-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "microsoft/FrogNano-4B-2609",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
     "contentHash": "bde2cb99fa85398f19eb8d7f5266a0dab55f87652d577c8ef61e33310c177b55",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ZTZQ",
+    "timestamp": "2026-10-25T19:00:00.278Z",
+    "repository": "hexgrad/Kokoro-82M",
+    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+    "contentHash": "5293fa399a393463db8837c4a3675136a496cd49a8f9a34875c65add4c442671",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

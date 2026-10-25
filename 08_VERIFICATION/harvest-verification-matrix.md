@@ -4949,3 +4949,4 @@
 | `CYCLE-20261025-BEBD` | `2026-10-25T18:41:00.217Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4414, Rule 4415, Rule 4416` | Yes (`98acc68f...`) |
 | `CYCLE-20261025-JHGL` | `2026-10-25T18:47:17.541Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`a170f5aa...`) |
 | `CYCLE-20261025-S7ZT` | `2026-10-25T18:54:05.177Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`bde2cb99...`) |
+| `CYCLE-20261025-ZTZQ` | `2026-10-25T19:00:00.278Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`5293fa39...`) |
