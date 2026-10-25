@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T18:47:17.548Z",
-  "total_cycles_completed": 4925,
-  "total_learnings_persisted": 4925,
+  "last_updated": "2026-10-25T18:54:05.185Z",
+  "total_cycles_completed": 4926,
+  "total_learnings_persisted": 4926,
   "total_rules_promoted": 4300,
   "history": [
-    {
-      "timestamp": "2026-10-25T08:58:12.473Z",
-      "repository": "nguyenphutrong/quotio",
-      "learningId": "learn-github-nguyenphutrong-quotio",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T09:13:18.558Z",
       "repository": "moonshotai/Kimi-K3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-25T18:47:17.548Z",
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:54:05.185Z",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

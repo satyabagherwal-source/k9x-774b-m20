@@ -4955,3 +4955,4 @@ Every entry in this ledger must capture:
 | `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `07f55f73` | Multi-dimensional audit evidence | 2026-10-25T18:40:47.148Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-25T18:41:00.219Z |
 | `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-25T18:47:17.544Z |
+| `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-25T18:54:05.180Z |
