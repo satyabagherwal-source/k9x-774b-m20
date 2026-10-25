@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T17:42:51.613Z",
+  "last_updated": "2026-10-25T17:49:18.675Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -965,14 +965,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-t5-t5-small",
-      "content_hash": "23fcef2251c7f9384ee29737cb75df111c552ce52280004ecbe0ec4737db9d85",
-      "verified_at": "2026-10-20T22:13:58.065Z",
+      "content_hash": "f4d1a0fc533dc55dd0c71b28c3e42014f40039a4d4040fe1b13e4f90cd967e1e",
+      "verified_at": "2026-10-25T17:49:07.836Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:13:58.065Z"
+      "last_updated": "2026-10-25T17:49:07.836Z"
     },
     "maxrave-dev/kotlin-footguns": {
       "repository": "maxrave-dev/kotlin-footguns",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "6ec740fb37bdd2b1069a35fc2d5c333c7cc43b504df8abd901350ffba87fe51c",
-      "verified_at": "2026-10-25T14:38:09.382Z",
+      "content_hash": "6ca361f2806f20d8e0e92c2b845bf7cf879a3aba9a52902be41dfd3b0feb1c96",
+      "verified_at": "2026-10-25T17:49:18.670Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:38:09.382Z"
+      "last_updated": "2026-10-25T17:49:18.670Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "8a64c3c3cc2bc471fba3b8c06801d0bcdeae248e659c8b41d5e84a8adc71e28e",
-      "verified_at": "2026-10-19T18:10:15.433Z",
+      "content_hash": "fc44c6ff299c56894b194e4ce1ad7296f9e237de2a5a63399948649d59cc6964",
+      "verified_at": "2026-10-25T17:49:09.064Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:10:15.433Z"
+      "last_updated": "2026-10-25T17:49:09.064Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",

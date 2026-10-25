@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T17:42:51.607Z",
-  "total_cycles_completed": 4901,
-  "total_learnings_persisted": 4901,
-  "total_rules_promoted": 4281,
+  "last_updated": "2026-10-25T17:49:18.667Z",
+  "total_cycles_completed": 4904,
+  "total_learnings_persisted": 4904,
+  "total_rules_promoted": 4283,
   "history": [
-    {
-      "timestamp": "2026-10-25T07:18:16.476Z",
-      "repository": "Qwen/Qwen3.8-27B",
-      "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T07:18:49.172Z",
-      "repository": "lobehub/lobe-ui",
-      "learningId": "learn-github-lobehub-lobe-ui",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T07:19:00.088Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T07:19:00.810Z",
       "repository": "beclab/Olares",
@@ -1403,6 +1382,27 @@
       "repository": "Qwen/Qwen3-0.6B",
       "learningId": "learn-huggingface-qwen-qwen3-0-6b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T17:49:07.833Z",
+      "repository": "google-t5/t5-small",
+      "learningId": "learn-huggingface-google-t5-t5-small",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T17:49:09.061Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T17:49:18.667Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

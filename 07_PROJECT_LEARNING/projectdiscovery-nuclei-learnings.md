@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `f46ee551`  
+> **Source Version**: `445e6ab9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T14:38:09.191Z  
+> **Timestamp**: 2026-10-25T17:49:18.281Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T14:38:08.920Z  
+> **Harvest Timestamp**: 2026-10-25T17:49:18.273Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -500,20 +500,6 @@ func (e *Engine) ExecuteScanWithOpts(ctx context.Context, templatesList []*templ
 		return &atomic.Bool{}
 	}
 
-	if e.executerOpts.Progress != nil {
-		// Notes:
-		// workflow requests are not counted as they can be conditional
-		// templateList count is user requested templates count (before clustering)
-		// totalReqAfterClustering is total requests count after clustering
-		e.executerOpts.Progress.Init(target.Count(), len(templatesList), e.expectedRequests(finalTemplates, target, totalReqAfterClustering))
-	}
-
-	if stringsutil.EqualFoldAny(e.options.ScanStrategy, scanstrategy.Auto.String(), "") {
-		// TODO: this is only a placeholder, auto scan strategy should choose scan strategy
-		// based on no of hosts , templates , stream and other optimization parameters
-		e.options.ScanStrategy = scanstrategy.TemplateSpray.String()
-	}
-
 	filtered := []*templates.Template{}
 	selfContained := []*templates.Template{}
 	// Filter Self Contained templates since they are not bound to target
@@ -523,6 +509,23 @@ func (e *Engine) ExecuteScanWithOpts(ctx context.Context, templatesList []*templ
 		} else {
 			filtered = append(filtered, v)
 		}
+	}
+
+	if e.executerOpts.Progress != nil {
+		// Notes:
+		// workflow requests are not counted as they can be conditional
+		// templateList count is user requested templates count (before clustering)
+		// totalReqAfterClustering is total requests count after clustering
+		requests, tasks := e.expectedWork(finalTemplates, filtered, target, totalReqAfterClustering)
+		e.executerOpts.Progress.Init(target.Count(), len(templatesList), requests)
+		// a self-contained template runs once
+		e.addTaskTotal(tasks + int64(len(selfContained)))
+	}
+
+	if stringsutil.EqualFoldAny(e.options.ScanStrategy, scanstrategy.Auto.String(), "") {
+		// TODO: this is only a placeholder, auto scan strategy should choose scan strategy
+		// based on no of hosts , templates , stream and other optimization parameters
+		e.options.ScanStrategy = scanstrategy.TemplateSpray.String()
 	}
 
 	// Execute All SelfContained in parallel
@@ -560,7 +563,7 @@ func (e *Engine) executeTemplateSpray(ctx context.Context, templatesList []*temp
 		}
 
 		// resize check point - nop if there are no changes
-		wp.RefreshWithConfig(e.GetWorkPoolConfig())
+		wp.RefreshWithConfigContext(ctx, e.GetWorkPoolConfig())
 
 		templateType := template.Type()
 		var wg *syncutil.AdaptiveWaitGroup
@@ -607,7 +610,10 @@ func (e *Engine) executeHostSpray(ctx context.Context, templatesList []*template
 		default:
 		}
 
-		wp.Add()
+		if err := wp.AddWithContext(ctx); err != nil {
+			return false
+		}
+
 		go func(targetval *contextargs.MetaInput) {
 			defer wp.Done()
 			e.executeTemplatesOnTarget(ctx, templatesList, targetval, results)
@@ -617,23 +623,40 @@ func (e *Engine) executeHostSpray(ctx context.Context, templatesList []*template
 	return results
 }
 
-// expectedRequests counts only the template and target pairs that per-target
-// profiles select, so progress reflects the requests that will be sent.
-func (e *Engine) expectedRequests(templatesList []*templates.Template, target provider.InputProvider, unscoped int) int64 {
+// expectedWork returns the requests and the tasks the target-bound templates
+// will run. It counts only the template and target pairs that per-target
+// profiles select, so progress reflects the work that will be done. A task is
+// one template, cluster or workflow run on one target.
+func (e *Engine) expectedWork(templatesList, targetBound []*templates.Template, target provider.InputProvider, unscopedRequests int) (requests, tasks int64) {
 	scope := e.executerOpts.TargetScope
 	if scope == nil {
-		return int64(unscoped)
+		return int64(unscopedRequests), target.Count() * int64(len(targetBound))
 	}
 	targets := make(map[protocols.TemplateSelection]int64)
 	target.Iterate(func(value *contextargs.MetaInput) bool {
 		targets[scope.For(value)]++
 		return true
 	})
-	var total int64
 	for selection, count := range targets {
-		total += count * int64(getSelectedRequestCount(templatesList, selection))
+		requests += count * int64(getSelectedRequestCount(templatesList, selection))
+		tasks += count * int64(getSelectedCount(targetBound, selection))
 	}
-	return total
+	return requests, tasks
+}
+
+// getSelectedCount returns the number of templates selection selects; a nil
+// selection selects every template.
+func getSelectedCount(templates []*templates.Template, selection protocols.TemplateSelection) int {
+	if selection == nil {
+		return len(templates)
+	}
+	count := 0
+	for _, template := range templates {
+		if template.SelectedBy(selection) {
+			count++
+		}
+	}
+	return count
 }
 
 // returns total requests count
@@ -674,6 +697,8 @@ import (
 	"github.com/projectdiscovery/nuclei/v3/pkg/input/normalize"
 	"github.com/projectdiscovery/nuclei/v3/pkg/input/provider"
 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
+	"github.com/projectdiscovery/nuclei/v3/pkg/progress"
+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
 	"github.com/projectdiscovery/nuclei/v3/pkg/scan"
 	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
@@ -701,6 +726,7 @@ func (e *Engine) executeAllSelfContained(ctx context.Context, alltemplates []*te
 			}
 			finished := e.templateExecutionStarted(template, "")
 			defer func() { finished(ctx.Err()) }()
+			defer e.tasksDone(1)
 			var err error
 			var match bool
 			ctx := scan.NewScanContext(ctx, contextargs.New(ctx))
@@ -831,7 +857,13 @@ func (e *Engine) executeTemplateWithTargets(ctx context.Context, template *templ
 		currentInfo.Unlock()
 
 		// Skip if the host has had errors
-		if inScope && e.executerOpts.HostErrorsCache != nil && e.executerOpts.HostErrorsCache.Check(template.Type().String(), contextargs.NewWithMetaInput(ctx, scannedValue)) {
+		hostDown := inScope && e.executerOpts.HostErrorsCache != nil && e.executerOpts.HostErrorsCache.Check(template.Type().String(), contextargs.NewWithMetaInput(ctx, scannedValue))
+		// in-scope pairs that never reach executeTemplateOnInput are done here:
+		// those done by the resumed scan and those of an unresponsive host
+		if inScope && (skip || hostDown) {
+			e.tasksDone(1)
+		}
+		if hostDown {
 			skipEvent := &output.ResultEvent{
 				TemplateID:    template.ID,
 				TemplatePath:  template.Path,
@@ -875,7 +907,7 @@ func (e *Engine) executeTemplatesOnTarget(ctx context.Context, alltemplates []*t
 	wp := e.GetWorkPool()
 	defer wp.Wait()
 
-	for _, tpl := range alltemplates {
+	for i, tpl := range alltemplates {
 		select {
 		case <-ctx.Done():
 			return
@@ -905,11 +937,13 @@ func (e *Engine) executeTemplatesOnTarget(ctx context.Context, alltemplates []*t
 			} else if e.executerOpts.Output != nil {
 				_ = e.executerOpts.Output.Write(skipEvent)
 			}
+			// the remaining templates are skipped for this target as well
+			e.tasksDone(int64(getSelectedCount(alltemplates[i:], e.selectionFor(target))))
 			break
 		}
 
 		// resize check point - nop if there are no changes
-		wp.RefreshWithConfig(e.GetWorkPoolConfig())
+		wp.RefreshWithConfigContext(ctx, e.GetWorkPoolConfig())
 
 		var sg *syncutil.AdaptiveWaitGroup
 		if tpl.Type() == types.HeadlessProtocol {
@@ -944,32 +978,25 @@ func (e *Engine) executeTemplatesOnTarget(ctx context.Context, alltemplates []*t
 
 // inScope reports whether per-target profiles select template for input.
 func (e *Engine) inScope(template *templates.Template, input *contextargs.MetaInput) bool {
-	if e.executerOpts.TargetScope == nil {
-		return true
-	}
-	selection := e.executerOpts.TargetScope.For(input)
+	selection := e.selectionFor(input)
 	return selection == nil || template.SelectedBy(selection)
 }
 
-// executeTemplateOnInput performs template execution for a single input and returns match status and error
-func (e *Engine) executeTemplateOnInput(ctx context.Context, template *templates.Template, value *contextargs.MetaInput) (matched bool, err error) {
-	// A template fixed to the target's origin makes the same requests for every
-	// target that shares one, which a crawled list produces by the hundred.
-	// Running it once per origin sends exactly the same traffic, minus the
-	// repeats. The reservation is kept only when execution succeeds, so a
-	// failed attempt leaves the origin free for a later target.
-	finish, run := e.claimOriginScoped(template, value)
-	if !run {
-		return false, nil
+// selectionFor returns the templates per-target profiles select for input; nil
+// selects every template.
+func (e *Engine) selectionFor(input *contextargs.MetaInput) protocols.TemplateSelection {
+	if e.executerOpts.TargetScope == nil {
+		return nil
 	}
-	defer func() { finish(err == nil) }()
-	finished := e.templateExecutionStarted(template, value.Input)
-	defer func() { finished(ctx.Err()) }()
-	ctxArgs := contextargs.New(ctx)
-	ctxArgs.MetaInput = value
-	scanCtx := scan.NewScanContext(ctx, ctxArgs)
+	return e.executerOpts.TargetScope.For(input)
+}
 
-	switc
+// taskTracker returns the progress when it counts tasks, nil otherwise.
+func (e *Engine) taskTracker() progress.TaskTracker {
+	if e.executerOpts == nil {
+		return nil
+	}
+	tracker, _ := e.executerOpts.Progress
 ```
 
 ### Core Architecture Module: `pkg/core/workflow_execute.go`
@@ -1108,7 +1135,9 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 					}
 
 					for _, subtemplate := range matcher.Subtemplates {
-						swg.Add()
+						if err := swg.AddWithContext(ctx.Context()); err != nil {
+							return
+						}
 
 						go func(subtemplate *workflows.WorkflowTemplate) {
 							defer swg.Done()
@@ -1137,7 +1166,9 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 	}
 	if len(template.Subtemplates) > 0 && firstMatched {
 		for _, subtemplate := range template.Subtemplates {
-			swg.Add()
+			if err := swg.AddWithContext(ctx.Context()); err != nil {
+				return err
+			}
 
 			go func(template *workflows.WorkflowTemplate) {
 				// create a new context with the same input but with unset callbacks
@@ -1233,6 +1264,10 @@ func (w *WorkPool) InputPool(templateType types.ProtocolType) *syncutil.Adaptive
 }
 
 func (w *WorkPool) RefreshWithConfig(config WorkPoolConfig) {
+	w.RefreshWithConfigContext(context.Background(), config)
+}
+
+func (w *WorkPool) RefreshWithConfigContext(ctx context.Context, config WorkPoolConfig) {
 	if w.config.TypeConcurrency != config.TypeConcurrency {
 		w.config.TypeConcurrency = config.TypeConcurrency
 	}
@@ -1245,7 +1280,7 @@ func (w *WorkPool) RefreshWithConfig(config WorkPoolConfig) {
 	if w.config.HeadlessInputConcurrency != config.HeadlessInputConcurrency {
 		w.config.HeadlessInputConcurrency = config.HeadlessInputConcurrency
 	}
-	w.Refresh(context.Background())
+	w.Refresh(ctx)
 }
 
 func (w *WorkPool) Refresh(ctx context.Context) {
@@ -1410,378 +1445,807 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `48e04c73` (2026-10-25)
-**Commit Message**: fix ignore
+### Incident Patch 1: `7f8abe2c` (2026-10-25)
+**Commit Message**: Merge pull request #7678 from gnuletik/fix/cancellable-template-and-js-waits
 
-**File**: `internal/runner/lazy.go` (modified, +24/-19)
+fix(core): honour the scan context when acquiring worker slots and JS runtimes
+
+**File**: `internal/runner/runner.go` (modified, +1/-1)
 ```diff
-@@ -39,25 +39,30 @@ func GetAuthTmplStore(opts *types.Options, catalog catalog.Catalog, execOpts *pr
- 		}
- 		tmpls = append(tmpls, data...)
- 	}
--	opts.Templates = tmpls
--	opts.Workflows = nil
--	opts.RemoteTemplateDomainList = nil
--	opts.TemplateURLs = nil
--	opts.WorkflowURLs = nil
--	opts.ExcludedTemplates = nil
--	opts.Tags = nil
--	opts.ExcludeTags = nil
--	opts.IncludeTemplates = nil
--	opts.Authors = nil
--	opts.Severities = nil
--	opts.ExcludeSeverities = nil
--	opts.IncludeTags = nil
--	opts.IncludeIds = nil
--	opts.ExcludeIds = nil
--	opts.Protocols = nil
--	opts.ExcludeProtocols = nil
--	opts.IncludeConditions = nil
--	cfg := loader.NewConfig(opts, catalog, execOpts)
-+	// The auth store only wants the secret-file templates. Copy first so
-+	// this scoping cannot clear Templates, ExcludeTags, or the other filters
-+	// on the caller's options. The CLI already copies; the SDK passes the
-+	// engine options directly.
-+	scoped := opts.Copy()
-+	scoped.Templates = tmpls
-+	scoped.Workflows = nil
-+	scoped.RemoteTemplateDomainList = nil
-+	scoped.TemplateURLs = nil
-+	scoped.WorkflowURLs = nil
-+	scoped.ExcludedTemplates = nil
-+	scoped.Tags = nil
-+	scoped.ExcludeTags = nil
-+	scoped.IncludeTemplates = nil
-+	scoped.Authors = nil
-+	scoped.Severities = nil
-+	scoped.ExcludeSeverities = nil
-+	scoped.IncludeTags = nil
-+	scoped.IncludeIds = nil
-+	scoped.ExcludeIds = nil
-+	scoped.Protocols = nil
-+	scoped.ExcludeProtocols = nil
-+	scoped.IncludeConditions = nil
-+	cfg := loader.NewConfig(scoped, catalog, execOpts)
- 	cfg.StoreId = loader.AuthStoreId
- 	store, err := loader.New(cfg)
+@@ -995,7 +995,7 @@ func (r *Runner) executeSmartWorkflowInput(executorOpts *protocols.ExecutorOptio
  	if err != nil {
+ 		return nil, errors.Wrap(err, "could not create automatic scan service")
+ 	}
+-	if err := service.Execute(); err != nil {
++	if err := service.Execute(context.Background()); err != nil {
+ 		return nil, errors.Wrap(err, "could not execute automatic scan")
+ 	}
+ 	result := &atomic.Bool{}
 ```
 
-**File**: `lib/ignorefile_test.go` (modified, +61/-1)
+**File**: `pkg/core/execute_options.go` (modified, +5/-2)
 ```diff
-@@ -8,9 +8,15 @@ import (
+@@ -126,7 +126,7 @@ func (e *Engine) executeTemplateSpray(ctx context.Context, templatesList []*temp
+ 		}
+ 
+ 		// resize check point - nop if there are no changes
+-		wp.RefreshWithConfig(e.GetWorkPoolConfig())
++		wp.RefreshWithConfigContext(ctx, e.GetWorkPoolConfig())
+ 
+ 		templateType := template.Type()
+ 		var wg *syncutil.AdaptiveWaitGroup
+@@ -173,7 +173,10 @@ func (e *Engine) executeHostSpray(ctx context.Context, templatesList []*template
+ 		default:
+ 		}
+ 
+-		wp.Add()
++		if err := wp.AddWithContext(ctx); err != nil {
++			return false
++		}
++
+ 		go func(targetval *contextargs.MetaInput) {
+ 			defer wp.Done()
+ 			e.executeTemplatesOnTarget(ctx, templatesList, targetval, results)
+```
+
+**File**: `pkg/core/executors.go` (modified, +1/-1)
+```diff
+@@ -255,7 +255,7 @@ func (e *Engine) executeTemplatesOnTarget(ctx context.Context, alltemplates []*t
+ 		}
+ 
+ 		// resize check point - nop if there are no changes
+-		wp.RefreshWithConfig(e.GetWorkPoolConfig())
++		wp.RefreshWithConfigContext(ctx, e.GetWorkPoolConfig())
+ 
+ 		var sg *syncutil.AdaptiveWaitGroup
+ 		if tpl.Type() == types.HeadlessProtocol {
+```
+
+**File**: `pkg/core/executors_test.go` (modified, +111/-0)
+```diff
+@@ -10,6 +10,7 @@ import (
  	"testing"
+ 	"time"
  
- 	"github.com/projectdiscovery/nuclei/v3/pkg/catalog/config"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
- 	"github.com/stretchr/testify/require"
- )
- 
-+// Update checks are disabled explicitly so this pins corrupt-file rejection on
-+// its own. The ignore file is read after init's update block, which may replace
-+// a corrupt file via UpdateIgnoreFile — with update checks left on, this test
-+// would assert rejection or repair depending on whether the process could reach
-+// the network.
- func TestNewNucleiEngineRejectsCorruptActiveIgnoreFile(t *testing.T) {
- 	root := t.TempDir()
- 	path := filepath.Join(root, config.NucleiIgnoreFileName)
-@@ -21,8 +27,62 @@ func TestNewNucleiEngineRejectsCorruptActiveIgnoreFile(t *testing.T) {
- 	t.Cleanup(func() { cfg.SetTemplatesDir(oldRoot) })
- 	cfg.SetTemplatesDir(root)
- 
--	engine, err := NewNucleiEngineCtx(context.Background())
-+	engine, err := NewNucleiEngineCtx(context.Background(), DisableUpdateCheck())
- 	require.Nil(t, engine)
- 	require.ErrorContains(t, err, "error parsing")
- 	require.ErrorContains(t, err, strconv.Quote(path))
++	"github.com/projectdiscovery/gologger"
+ 	inputtypes "github.com/projectdiscovery/nuclei/v3/pkg/input/types"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
+@@ -655,3 +656,113 @@ func Test_executeTemplateWithTargets_RespectsCancellation(t *testing.T) {
+ 	var matched atomic.Bool
+ 	e.executeTemplateWithTargets(ctx, tpl, targets, &matched)
  }
 +
-+// TestIgnoreFileSurvivesAuthTemplateStore pins two init orderings.
-+//
-+// The ignore file is read after the update block, so a file this same call
-+// creates is the one that becomes the deny-list. GetAuthTmplStore also runs
-+// during init whenever SecretsFile is set. It must scope a copy of the
-+// options: the caller's Templates and ExcludeTags stay put, and the ignore
-+// file is still applied on top.
-+//
-+// A static-only secrets file is enough to build that store.
-+func TestIgnoreFileSurvivesAuthTemplateStore(t *testing.T) {
-+	root := t.TempDir()
-+	require.NoError(t, os.WriteFile(
-+		filepath.Join(root, config.NucleiIgnoreFileName),
-+		[]byte("tags:\n  - dos\nfiles:\n  - dns/soa-detect.yaml\n"),
-+		0o600,
-+	))
++func newCancelTestEngine() *Engine {
++	opts := &types.Options{
++		TemplateThreads:         1,
++		HeadlessTemplateThreads: 1,
++		BulkSize:                1,
++		HeadlessBulkSize:        1,
++		Logger:                  gologger.DefaultLogger,
++	}
++	e := New(opts)
++	e.SetExecuterOptions(&protocols.ExecutorOptions{Logger: e.Logger, ResumeCfg: types.NewResumeCfg(), ProtocolType: tmpltypes.HTTPProtocol})
++	return e
++}
 +
-+	cfg := config.DefaultConfig
-+	oldRoot := cfg.TemplatesDirectory
-+	t.Cleanup(func() { cfg.SetTemplatesDir(oldRoot) })
-+	cfg.SetTemplatesDir(root)
++type gateExecuter struct {
++	started chan struct{}
++	once    sync.Once
++}
 +
-+	secrets := filepath.Join(root, "secrets.yaml")
-+	require.NoError(t, os.WriteFile(secrets, []byte(`static:
-+  - type: header
-+    domains:
-+      - example.com
-+    headers:
-+      - key: x-api-key
-+        value: not-a-real-secret
-+`), 0o600))
++func (g *gateExecuter) Compile() error { return nil }
++func (g *gateExecuter) Requests() int  { return 1 }
++func (g *gateExecuter) Execute(ctx *scan.ScanContext) (bool, error) {
++	g.once.Do(func() { close(g.started) })
++	<-ctx.Context().Done()
++	return false, ctx.Context().Err()
++}
++func (g *gateExecuter) ExecuteWithResults(ctx *scan.ScanContext) ([]*output.ResultEvent, error) {
++	_, err := g.Execute(ctx)
++	return nil, err
++}
 +
-+	opts := types.DefaultOptions()
-+	opts.SecretsFile = []string{secrets}
-+	opts.Templates = []string{"http/kept.yaml"}
-+	opts.ExcludeTags = []string{"custom"}
++func TestExecuteTemplateSprayUnblocksCancelledAcquire(t *testing.T) {
++	e := newCancelTestEngine()
++	gate := &gateExecuter{started: make(chan struct{})}
++	templatesList := []*templates.Template{{Executer: gate}, {Executer: &gateExecuter{started: make(chan struct{})}}}
++	targets := &fakeTargetProvider{values: []*contextargs.MetaInput{{Input: "a"}}}
 +
-+	engine, err := NewNucleiEngineCtx(context.Background(),
-+		WithOptions(opts),
-+		DisableUpdateCheck(),
-+	)
-+	require.NoError(t, err)
-+	t.Cleanup(engine.Close)
++	ctx, cancel := context.WithCancel(context.Background())
++	done := make(chan struct{})
++	go func() {
++		defer close(done)
++		e.executeTemplateSpray(ctx, templatesList, targets)
++	}()
 +
-+	require.Equal(t, []string{"http/kept.yaml"}, []string(engine.Options().Templates),
-+		"the auth store must not replace the caller's template list")
-+	require.Contains(t, []string(engine.Options().ExcludeTags), "custom",
-+		"the caller's own excluded tags must survive auth-store setup")
-+	require.Contains(t, []string(engine.Options().ExcludeTags), "dos",
-+		"the .nuclei-ignore deny-list must be applied after auth-store setup")
-+	require.Contains(t, []string(engine.Options().ExcludedTemplates), "dns/soa-detect.yaml",
-+		"the files section must be applied too")
++	select {
++	case <-gate.started:
++	case <-time.After(2 * time.Second):
++		t.Fatal("first template did not start")
++	}
++	cancel()
++
++	select {
++	case <-done:
++	case <-time.After(2 * time.Second):
++		t.Fatal("executeTemplateSpray stayed blocked after cancel")
++	}
++}
++
++func TestExecuteHostSprayUnblocksCancelledAcquire(t *testing.T) {
++	e := newCancelTestEngine()
++	gate := &gateExecuter{started: make(chan struct{})}
++	templatesList := []*templates.Template{{Executer: gate}}
++	targets := &fakeTargetProvider{values: []*contextargs.MetaInput{{Input: "a"}, {Input: "b"}}}
++
++	ctx, cancel := context.WithCancel(context.Background())
++	done := make(chan struct{})
++	go func() {
++		defer close(done)
++		e.executeHostSpray(ctx, templatesList, targets)
++	}()
++
++	select {
++	case <-gate.started:
++	case <-time.After(2 * time.Second):
++		t.Fatal("first host did not start")
++	}
++	cancel()
++
++	select {
++	case <-done:
++	case <-time.After(2 * time.Second):
++		t.Fatal("executeHostSpray stayed blocked after cancel")
++	}
++}
++
++func TestExecuteTemplatesOnTargetUnblocksCancelledAcquire(t *testing.T) {
++	e := newCancelTestEngine()
++	gate := &gateExecuter{started: make(chan struct{})}
++	var matched atomic.Bool
++
++	ctx, cancel := context.WithCancel(context.Background())
++	done := make(chan struct{})
++	go func() {
++		defer close(done)
++		e.executeTemplatesOnTarget(ctx, []*templates.Template{{Executer: gate}, {Executer: &gateExecuter{started: make(chan struct{})}}}, &contextargs.MetaInput{Input: "a"}, &matched)
++	}()
++
++	select {
++	case <-gate.started:
++	case <-time.After(2 * time.Second):
++		t.Fatal("first template did not start")
++	}
++	cancel()
++
++	select {
++	case <-done:
++	case <-time.After(2 * time.Second):
++		t.Fatal("executeTemplatesOnTarget stayed blocked after cancel")
++	}
 +}
 ```
 
-**File**: `lib/sdk.go` (modified, +5/-1)
+**File**: `pkg/core/workflow_execute.go` (modified, +6/-2)
 ```diff
-@@ -257,7 +257,7 @@ func (e *NucleiEngine) closeInternal() {
- 	if e.hostErrCache != nil {
- 		e.hostErrCache.Close()
+@@ -132,7 +132,9 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
+ 					}
+ 
+ 					for _, subtemplate := range matcher.Subtemplates {
+-						swg.Add()
++						if err := swg.AddWithContext(ctx.Context()); err != nil {
++							return
++						}
+ 
+ 						go func(subtemplate *workflows.WorkflowTemplate) {
+ 							defer swg.Done()
+@@ -161,7 +163,9 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
  	}
--	if e.executerOpts.RateLimiter != nil {
-+	if e.executerOpts != nil && e.executerOpts.RateLimiter != nil {
- 		e.executerOpts.RateLimiter.Stop()
- 	}
- 	if e.rateLimiter != nil {
-@@ -386,6 +386,10 @@ func NewNucleiEngineCtx(ctx context.Context, options ...NucleiSDKOptions) (*Nucl
- 		}
- 	}
- 	if err := e.init(ctx); err != nil {
-+		// init may already own interactsh, a browser, a temp dir, and
-+		// reporting. Close is safe on a partial engine: executerOpts is
-+		// checked, and protocolinit.Close is a no-op before Init.
-+		e.Close()
- 		return nil, err
- 	}
- 	return e, nil
+ 	if len(template.Subtemplates) > 0 && firstMatched {
+ 		for _, subtemplate := range template.Subtemplates {
+-			swg.Add()
++			if err := swg.AddWithContext(ctx.Context()); err != nil {
++				return err
++			}
+ 
+ 			go func(template *workflows.WorkflowTemplate) {
+ 				// create a new context with the same input but with unset callbacks
 ```
 
-**File**: `lib/sdk_private.go` (modified, +20/-4)
+**File**: `pkg/core/workflow_execute_test.go` (modified, +57/-0)
 ```diff
-@@ -187,10 +187,6 @@ func (e *NucleiEngine) init(ctx context.Context) error {
- 		return err
- 	}
+@@ -2,7 +2,9 @@ package core
  
--	if err := e.loadIgnoreFile(); err != nil {
--		return err
--	}
--
- 	if e.opts.Parser != nil {
- 		if op, ok := e.opts.Parser.(*templates.Parser); ok {
- 			e.parser = op
-@@ -385,6 +381,26 @@ func (e *NucleiEngine) init(ctx context.Context) error {
- 		}
- 	}
+ import (
+ 	"context"
++	"sync/atomic"
+ 	"testing"
++	"time"
  
-+	// Read .nuclei-ignore LAST, once init has finished managing that file and
-+	// the options it writes into.
-+	//
-+	// It must come after the update block above: init creates or replaces the
-+	// ignore file there (UpdateIgnoreFile), so reading earlier reads a file this
-+	// same call is about to write. On a host without a pre-existing ignore file
-+	// — a fresh install, or any container whose filesystem was reset — the read
-+	// found nothing, warned, and left the engine with an empty deny-list for its
-+	// whole lifetime, because ExcludeTags is never re-read after init. Reading
-+	// afterwards also makes the corrupt-file check recoverable rather than fatal:
-+	// a malformed local file that IgnoreFileNeedsUpdate replaces no longer fails
-+	// the scan.
-+	//
-+	// GetAuthTmplStore scopes a copy of the options, so it no longer clears
-+	// the engine filters. This read is still what installs the deny-list, and
-+	// it has to follow the update block above.
-+	if err := e.loadIgnoreFile(); err != nil {
-+		return err
-+	}
-+
- 	return nil
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/stringslice"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
+@@ -301,6 +303,61 @@ func TestWorkflowsSameStepExecutersRefreshTemplateContext(t *testing.T) {
+ 	require.Equal(t, "foo", secondWhoami, "could not refresh workflow context into later executers in the same step")
  }
+ 
++func TestWorkflowSubtemplatesUnblockCancelledAcquire(t *testing.T) {
++	progressBar, _ := progress.NewStatsTicker(0, false, false, false, 0)
++	var started atomic.Int32
++	block := &mockExecuter{result: true, executeScanHook: func(ctx *scan.ScanContext) {
++		started.Add(1)
++		<-ctx.Context().Done()
++	}}
++	var waitingStarted atomic.Bool
++	waiting := &mockExecuter{result: true, executeScanHook: func(ctx *scan.ScanContext) {
++		waitingStarted.Store(true)
++		<-ctx.Context().Done()
++	}}
++
++	// Two slots: the two blockers occupy them so the third AddWithContext waits.
++	workflow := &workflows.Workflow{Options: &protocols.ExecutorOptions{Options: &types.Options{TemplateThreads: 2}}, Workflows: []*workflows.WorkflowTemplate{
++		{Executers: []*workflows.ProtocolExecuterPair{{
++			Executer: &mockExecuter{result: true, outputs: []*output.InternalWrappedEvent{
++				{OperatorsResult: &operators.Result{}, Results: []*output.ResultEvent{{}}},
++			}}, Options: &protocols.ExecutorOptions{Progress: progressBar}},
++		}, Subtemplates: []*workflows.WorkflowTemplate{
++			{Executers: []*workflows.ProtocolExecuterPair{{Executer: block, Options: &protocols.ExecutorOptions{Progress: progressBar}}}},
++			{Executers: []*workflows.ProtocolExecuterPair{{Executer: block, Options: &protocols.ExecutorOptions{Progress: progressBar}}}},
++			{Executers: []*workflows.ProtocolExecuterPair{{Executer: waiting, Options: &protocols.ExecutorOptions{Progress: progressBar}}}},
++		}},
++	}}
++
++	engine := &Engine{}
++	parent, cancel := context.WithCancel(context.Background())
++	input := contextargs.NewWithInput(parent, "https://test.com")
++	ctx := scan.NewScanContext(parent, input)
++
++	done := make(chan struct{})
++	go func() {
++		defer close(done)
++		engine.executeWorkflow(ctx, workflow)
++	}()
++
++	deadline := time.After(2 * time.Second)
++	for started.Load() < 2 {
++		select {
++		case <-deadline:
++			t.Fatal("blocking subtemplates did not occupy both slots")
++		case <-time.After(10 * time.Millisecond):
++		}
++	}
++	cancel()
++
++	select {
++	case <-done:
++	case <-time.After(2 * time.Second):
++		t.Fatal("workflow stayed blocked after cancel")
++	}
++	require.False(t, waitingStarted.Load(), "third subtemplate must not start while slots are held")
++}
++
+ type mockExecuter struct {
+ 	result          bool
+ 	executeHook     func(input *contextargs.MetaInput)
+```
+
+**File**: `pkg/core/workpool.go` (modified, +5/-1)
+```diff
+@@ -62,6 +62,10 @@ func (w *WorkPool) InputPool(templateType types.ProtocolType) *syncutil.Adaptive
+ }
+ 
+ func (w *WorkPool) RefreshWithConfig(config WorkPoolConfig) {
++	w.RefreshWithConfigContext(context.Background(), config)
++}
++
++func (w *WorkPool) RefreshWithConfigContext(ctx context.Context, config WorkPoolConfig) {
+ 	if w.config.TypeConcurrency != config.TypeConcurrency {
+ 		w.config.TypeConcurrency = config.TypeConcurrency
+ 	}
+@@ -74,7 +78,7 @@ func (w *WorkPool) RefreshWithConfig(config WorkPoolConfig) {
+ 	if w.config.HeadlessInputConcurrency != config.HeadlessInputConcurrency {
+ 		w.config.HeadlessInputConcurrency = config.HeadlessInputConcurrency
+ 	}
+-	w.Refresh(context.Background())
++	w.Refresh(ctx)
+ }
+ 
+ func (w *WorkPool) Refresh(ctx context.Context) {
+```
+
+**File**: `pkg/js/libs/smb/smb_share.go` (modified, +2/-2)
+```diff
+@@ -29,7 +29,7 @@ func listDir(ctx context.Context, executionId string, host string, port int, use
+ 		return nil, err
+ 	}
+ 	defer sess.Close()
+-	return sess.ListDir(share, dir)
++	return sess.ListDirContext(ctx, share, dir)
+ }
+ 
+ // @memo
+@@ -55,5 +55,5 @@ func listTree(ctx context.Context, executionId string, host string, port int, us
+ 		return nil, err
+ 	}
+ 	defer sess.Close()
+-	return sess.ListTree(share, dir, smbsession.DefaultMaxTreeDepth, smbsession.DefaultMaxTreeEntries)
++	return sess.ListTreeContext(ctx, share, dir, smbsession.DefaultMaxTreeDepth, smbsession.DefaultMaxTreeEntries)
+ }
+```
+
+---
+
+### Incident Patch 2: `5a339a8d` (2026-10-25)
+**Commit Message**: fix lint
+
+**File**: `pkg/protocols/http/httputils/spm_test.go` (modified, +2/-2)
+```diff
+@@ -21,8 +21,8 @@ func TestAcquireHonoursCancelledContextWhenPoolIsFull(t *testing.T) {
+ 	}()
+ 
+ 	select {
+-	case <-done:
+-		t.Fatal("Acquire returned while the pool is full")
++	case err := <-done:
++		t.Fatal("Acquire returned while the pool is full", err)
+ 	case <-time.After(50 * time.Millisecond):
+ 	}
  
 ```
 
 ---
 
-### Incident Patch 2: `e1f65603` (2026-10-25)
-**Commit Message**: fix idle
+### Incident Patch 3: `71805f50` (2026-10-25)
+**Commit Message**: Merge pull request #7857 from AdamMagued/fix-issue-7829
 
-**File**: `pkg/protocols/http/httpclientpool/clientpool.go` (modified, +3/-2)
-```diff
-@@ -127,6 +127,7 @@ func (t *connTrackingTransport) RoundTrip(req *http.Request) (*http.Response, er
- 	// update both the global counters and the per-host bucket from one trace.
- 	host := normalizeHost(req.URL)
- 	var used atomic.Pointer[desyncConn]
-+	var generation atomic.Uint64
- 	trace := &httptrace.ClientTrace{
- 		GotConn: func(info httptrace.GotConnInfo) {
- 			if info.Reused {
-@@ -136,7 +137,7 @@ func (t *connTrackingTransport) RoundTrip(req *http.Request) (*http.Response, er
- 			}
- 			recordHostConn(host, info.Reused)
- 			if tracked, ok := info.Conn.(*desyncConn); ok {
--				tracked.markBusy()
-+				generation.Store(tracked.markBusy())
- 				used.Store(tracked)
- 			}
- 		},
-@@ -145,7 +146,7 @@ func (t *connTrackingTransport) RoundTrip(req *http.Request) (*http.Response, er
- 				return
- 			}
- 			if tracked := used.Load(); tracked != nil {
--				tracked.markIdle()
-+				tracked.markIdle(generation.Load())
- 			}
- 		},
- 	}
-```
+perf(protocols/http): defer building FullResponseString when unused by operators
 
-**File**: `pkg/protocols/http/httpclientpool/desync_conn.go` (modified, +31/-10)
+**File**: `pkg/operators/extractors/extractors.go` (modified, +24/-0)
 ```diff
-@@ -26,9 +26,13 @@ import (
- // Closing and quarantining only stops the host from doing it again.
- type desyncConn struct {
- 	net.Conn
--	host      string
--	onPoison  func(host string)
--	idle      atomic.Bool
-+	host     string
-+	onPoison func(host string)
-+	// state packs the request generation in the high bits and the idle bit in
-+	// the low bit. markIdle only sets that bit for the generation it was given,
-+	// so a PutIdleConn that lands after the next request has taken the
-+	// connection cannot mark the live exchange idle.
-+	state     atomic.Uint64
- 	poisoned  atomic.Bool
- 	closeOnce sync.Once
- }
-@@ -46,22 +50,39 @@ func newDesyncConn(conn net.Conn, addr string, onPoison func(host string)) net.C
+@@ -5,6 +5,7 @@ import (
  
- func (c *desyncConn) Read(b []byte) (int, error) {
- 	n, err := c.Conn.Read(b)
--	if n > 0 && c.idle.Load() {
-+	if n > 0 && c.state.Load()&1 == 1 {
- 		c.poison()
- 	}
- 	return n, err
- }
+ 	"github.com/itchyny/gojq"
+ 	"github.com/projectdiscovery/govaluate"
++	"github.com/projectdiscovery/nuclei/v3/pkg/operators/matchers"
+ )
  
--func (c *desyncConn) markBusy() {
--	c.idle.Store(false)
-+// markBusy records that a request now owns the connection and returns that
-+// generation. The matching markIdle is the only one allowed to mark it idle.
-+func (c *desyncConn) markBusy() uint64 {
-+	for {
-+		old := c.state.Load()
-+		gen := (old >> 1) + 1
-+		if c.state.CompareAndSwap(old, gen<<1) {
-+			return gen
+ // Extractor is used to extract part of response using a regex.
+@@ -134,3 +135,26 @@ type Extractor struct {
+ 
+ 	llmClient LLMClient
+ }
++
++// NeedsResponse returns true if the extractor reads the full response.
++func (extractor *Extractor) NeedsResponse() bool {
++	if extractor == nil {
++		return false
++	}
++	if matchers.IsResponseVar(extractor.Part) {
++		return true
++	}
++	for _, k := range extractor.KVal {
++		if matchers.IsResponseVar(k) {
++			return true
 +		}
 +	}
- }
- 
--func (c *desyncConn) markIdle() {
--	c.idle.Store(true)
-+func (c *desyncConn) markIdle(gen uint64) {
-+	idle := (gen << 1) | 1
-+	for {
-+		old := c.state.Load()
-+		if old>>1 != gen {
-+			return
-+		}
-+		if c.state.CompareAndSwap(old, idle) {
-+			return
++	for _, expr := range extractor.dslCompiled {
++		for _, v := range expr.Vars() {
++			if matchers.IsResponseVar(v) {
++				return true
++			}
 +		}
 +	}
- }
- 
- func (c *desyncConn) Close() error {
--	c.idle.Store(false)
-+	c.state.Store(0)
- 	return c.Conn.Close()
- }
- 
-@@ -85,7 +106,7 @@ func (c *desyncConn) poison() {
- 	if !c.poisoned.CompareAndSwap(false, true) {
- 		return
- 	}
--	c.idle.Store(false)
-+	c.state.Store(0)
- 	if c.onPoison != nil {
- 		c.onPoison(c.host)
- 	}
++	return matchers.MentionsResponse(extractor.DSL, extractor.Regex)
++}
 ```
 
-**File**: `pkg/protocols/http/httpclientpool/desync_conn_test.go` (modified, +28/-2)
+**File**: `pkg/operators/matchers/matchers.go` (modified, +38/-0)
 ```diff
-@@ -304,14 +304,40 @@ func TestDesyncConnStartsBusy(t *testing.T) {
- 	recorder.requireQuiet(t)
- }
+@@ -2,6 +2,7 @@ package matchers
  
-+func TestDesyncConnIgnoresStaleIdleAfterReuse(t *testing.T) {
-+	client, server := net.Pipe()
-+	t.Cleanup(func() { _ = server.Close() })
+ import (
+ 	"regexp"
++	"strings"
+ 
+ 	"github.com/projectdiscovery/govaluate"
+ )
+@@ -213,3 +214,40 @@ func (matcher *Matcher) ResultWithMatchedSnippet(data bool, matchedSnippet []str
+ 	}
+ 	return data, matchedSnippet
+ }
 +
-+	recorder := newQuarantineRecorder()
-+	tracked := newDesyncConn(client, "stale.test:80", recorder.record).(*desyncConn)
-+	t.Cleanup(func() { _ = tracked.Close() })
-+
-+	first := tracked.markBusy()
-+	second := tracked.markBusy()
-+	tracked.markIdle(first)
-+
-+	go func() { _, _ = io.WriteString(server, "HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nok") }()
-+
-+	buffer := make([]byte, 128)
-+	_, err := tracked.Read(buffer)
-+	require.NoError(t, err)
-+	require.False(t, tracked.poisoned.Load(), "a late idle mark must not poison the request that already took the connection")
-+	recorder.requireQuiet(t)
-+
-+	tracked.markIdle(second)
-+	go func() { _, _ = io.WriteString(server, "left") }()
-+	_, err = tracked.Read(buffer)
-+	require.NoError(t, err)
-+	require.Equal(t, "stale.test", recorder.await(t))
++// NeedsResponse returns true if the matcher reads the full response.
++func (matcher *Matcher) NeedsResponse() bool {
++	if matcher == nil {
++		return false
++	}
++	if IsResponseVar(matcher.Part) {
++		return true
++	}
++	for _, expr := range matcher.dslCompiled {
++		for _, v := range expr.Vars() {
++			if IsResponseVar(v) {
++				return true
++			}
++		}
++	}
++	return MentionsResponse(matcher.DSL, matcher.Words, matcher.Regex)
 +}
 +
- func TestDesyncConnPoisonsOnBytesWhileIdleAndClosesConnection(t *testing.T) {
- 	client, server := net.Pipe()
- 	t.Cleanup(func() { _ = server.Close() })
++// IsResponseVar reports whether name is the full response or a numbered copy of it.
++func IsResponseVar(name string) bool {
++	name = strings.ToLower(name)
++	return name == "response" || strings.HasPrefix(name, "response_")
++}
++
++// MentionsResponse reports whether any value refers to the response by name,
++// either as a DSL variable or as a {{response}} placeholder.
++func MentionsResponse(values ...[]string) bool {
++	for _, list := range values {
++		for _, value := range list {
++			if strings.Contains(strings.ToLower(value), "response") {
++				return true
++			}
++		}
++	}
++	return false
++}
+```
+
+**File**: `pkg/operators/operators.go` (modified, +18/-0)
+```diff
+@@ -86,6 +86,24 @@ func (operators *Operators) GetMatchersCondition() matchers.ConditionType {
+ 	return operators.matchersCondition
+ }
  
- 	recorder := newQuarantineRecorder()
- 	tracked := newDesyncConn(client, "idle.test:80", recorder.record).(*desyncConn)
--	tracked.markBusy()
--	tracked.markIdle()
-+	tracked.markIdle(tracked.markBusy())
++// NeedsResponse returns true if any matcher or extractor requires the full response.
++func (operators *Operators) NeedsResponse() bool {
++	if operators == nil {
++		return false
++	}
++	for _, matcher := range operators.Matchers {
++		if matcher.NeedsResponse() {
++			return true
++		}
++	}
++	for _, extractor := range operators.Extractors {
++		if extractor.NeedsResponse() {
++			return true
++		}
++	}
++	return false
++}
++
+ // Result is a result structure created from operators running on data.
+ type Result struct {
+ 	// Matched is true if any matchers matched
+```
+
+**File**: `pkg/protocols/common/globalmatchers/globalmatchers.go` (modified, +15/-0)
+```diff
+@@ -54,6 +54,21 @@ func (s *Storage) HasMatchers() bool {
+ 	return len(s.requests) > 0
+ }
  
- 	go func() { _, _ = io.WriteString(server, "HTTP/1.1 200 OK\r\nContent-Length: 5\r\n\r\nstale") }()
++// NeedsResponse returns true if any global matcher operator requires the full response.
++func (s *Storage) NeedsResponse() bool {
++	if !s.hasStorage() {
++		return false
++	}
++	for _, item := range s.requests {
++		for _, operator := range item.Operators {
++			if operator.NeedsResponse() {
++				return true
++			}
++		}
++	}
++	return false
++}
++
+ // Match matches the global matchers against the response
+ func (s *Storage) Match(
+ 	event output.InternalEvent,
+```
+
+**File**: `pkg/protocols/http/operators.go` (modified, +16/-2)
+```diff
+@@ -32,7 +32,11 @@ func (request *Request) Match(data map[string]interface{}, matcher *matchers.Mat
+ 		if !ok {
+ 			return false, []string{}
+ 		}
+-		return matcher.Result(matcher.MatchStatusCode(statusCode)), []string{responsehighlighter.CreateStatusCodeSnippet(data["response"].(string), statusCode)}
++		respSnippet := types.ToString(data["response"])
++		if respSnippet == "" {
++			respSnippet = types.ToString(data["header"])
++		}
++		return matcher.Result(matcher.MatchStatusCode(statusCode)), []string{responsehighlighter.CreateStatusCodeSnippet(respSnippet, statusCode)}
+ 	case matchers.SizeMatcher:
+ 		return matcher.Result(matcher.MatchSize(len(item))), []string{}
+ 	case matchers.WordsMatcher:
+@@ -205,7 +209,7 @@ func (request *Request) MakeResultEventItem(wrapped *output.InternalWrappedEvent
+ 		IP:               fields.Ip,
+ 		GlobalMatchers:   isGlobalMatchers,
+ 		Request:          types.ToString(wrapped.InternalEvent["request"]),
+-		Response:         request.truncateResponse(wrapped.InternalEvent["response"]),
++		Response:         request.truncateResponse(eventResponse(wrapped.InternalEvent)),
+ 		CURLCommand:      types.ToString(wrapped.InternalEvent["curl-command"]),
+ 		TemplateEncoded:  request.options.EncodeTemplate(),
+ 		Error:            types.ToString(wrapped.InternalEvent["error"]),
+@@ -215,6 +219,16 @@ func (request *Request) MakeResultEventItem(wrapped *output.InternalWrappedEvent
+ 	return data
+ }
  
++// eventResponse returns the full response of event. Events matched after the
++// response chain is released, such as interactsh matches, may not carry it, so
++// it is rebuilt from the headers and body they keep.
++func eventResponse(event output.InternalEvent) string {
++	if response := types.ToString(event["response"]); response != "" {
++		return response
++	}
++	return types.ToString(event["all_headers"]) + types.ToString(event["body"])
++}
++
+ func (request *Request) truncateResponse(response interface{}) string {
+ 	responseString := types.ToString(response)
+ 	if len(responseString) > request.options.Options.ResponseSaveSize {
+```
+
+**File**: `pkg/protocols/http/request.go` (modified, +59/-2)
+```diff
+@@ -40,6 +40,7 @@ import (
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/marker"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/utils/vardump"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httpclientpool"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httputils"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/signer"
+@@ -1458,12 +1459,24 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
+ 		// Cache response strings once per Fill() to avoid repeated allocs.
+ 		// NOTE(dwisiswant0): These are valid until Previous() (which reloads
+ 		// the buffer).
+-		fullResponseStr := respChain.FullResponseString()
+ 		bodyStr := respChain.BodyString()
+ 		headersStr := respChain.HeadersString()
+ 
+ 		statusCode := respChain.Response().StatusCode
+ 
++		needsFullResponse := request.needsFullResponse(generatedRequest)
++		var fullResponseStr string
++		var fullResponseOnce sync.Once
++		getFullResponse := func() string {
++			fullResponseOnce.Do(func() {
++				fullResponseStr = respChain.FullResponseString()
++			})
++			return fullResponseStr
++		}
++		if needsFullResponse {
++			fullResponseStr = getFullResponse()
++		}
++
+ 		// Detect HTTP-to-HTTPS port mismatch (400 error with specific message) so
+ 		// later requests to the same host:port are auto-upgraded to https. For the
+ 		// standard net/http path this is normally already handled by the
+@@ -1580,6 +1593,9 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
+ 		isDebug := request.options.Options.Debug || request.options.Options.DebugResponse
+ 		event := eventcreator.CreateEventWithAdditionalOptions(request, interimEvent, isDebug, func(internalWrappedEvent *output.InternalWrappedEvent) {
+ 			internalWrappedEvent.OperatorsResult.PayloadValues = generatedRequest.meta
++			if internalWrappedEvent.InternalEvent["response"] == "" || internalWrappedEvent.InternalEvent["response"] == nil {
++				internalWrappedEvent.InternalEvent["response"] = getFullResponse()
++			}
+ 		})
+ 
+ 		if hasInteractMatchers {
+@@ -1590,6 +1606,9 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
+ 		if request.options.GlobalMatchers.HasMatchers() {
+ 			request.options.GlobalMatchers.Match(interimEvent, request.Match, request.Extract, isDebug, func(event output.InternalEvent, result *operators.Result) {
+ 				globalMatched = true
++				if event["response"] == "" || event["response"] == nil {
++					event["response"] = getFullResponse()
++				}
+ 				callback(eventcreator.CreateEventWithOperatorResults(request, event, result))
+ 			})
+ 		}
+@@ -1617,7 +1636,7 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
+ 				StatusCode:    respChain.Response().StatusCode,
+ 				Matched:       event.HasResults(),
+ 				RawRequest:    string(dumpedRequest),
+-				RawResponse:   fullResponseStr,
++				RawResponse:   getFullResponse(),
+ 				Severity:      request.options.TemplateInfo.SeverityHolder.Severity.String(),
+ 			})
+ 		}
+@@ -1890,6 +1909,44 @@ func (request *Request) isUnresponsiveAddress(input *contextargs.Context) bool {
+ 	return false
+ }
+ 
++// needsFullResponse returns true if operators, debug flags, or stats require the full HTTP response.
++func (request *Request) needsFullResponse(generatedRequest *generatedRequest) bool {
++	if request.options != nil && request.options.Options != nil {
++		cliOptions := request.options.Options
++		if cliOptions.Debug || cliOptions.DebugResponse || cliOptions.StoreResponse || cliOptions.HTTPStats {
++			return true
++		}
++	}
++	if vardump.EnableVarDump {
++		return true
++	}
++	if request.options != nil && request.options.FuzzStatsDB != nil && generatedRequest != nil && generatedRequest.fuzzGeneratedRequest.Request != nil {
++		return true
++	}
++	if request.options != nil && (request.options.IsMultiProtocol || request.options.Flow != "") {
++		return true
++	}
++	// request-condition history copies the event, so later requests can read response_N
++	if request.NeedsRequestCondition() {
++		return true
++	}
++	if request.CompiledOperators != nil && request.CompiledOperators.NeedsResponse() {
++		return true
++	}
++	if request.NeedsResponse() {
++		return true
++	}
++	for _, filter := range request.FuzzPreCondition {
++		if filter.NeedsResponse() {
++			return true
++		}
++	}
++	if request.options != nil && request.options.GlobalMatchers != nil && request.options.GlobalMatchers.NeedsResponse() {
++		return true
++	}
++	return false
++}
++
+ // getEffectiveReadLimit returns the effective body read limit for this request.
+ func (request *Request) getEffectiveReadLimit() int {
+ 	maxBodylimit := MaxBodyRead // 10MB
+```
+
+**File**: `pkg/protocols/http/response_defer_test.go` (added, +426/-0)
+```diff
+@@ -0,0 +1,426 @@
++package http
++
++import (
++	"context"
++	"fmt"
++	"net/http"
++	"net/http/httptest"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
++	"github.com/projectdiscovery/nuclei/v3/pkg/model"
++	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
++	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
++	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
++	"github.com/projectdiscovery/nuclei/v3/pkg/operators/matchers"
++	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++)
++
++func TestNeedsFullResponse(t *testing.T) {
++	options := testutils.DefaultOptions
++	testutils.Init(options)
++
++	t.Run("body matcher does not need full response", func(t *testing.T) {
++		req := &Request{
++			ID:     "body-only",
++			Method: HTTPMethodTypeHolder{MethodType: HTTPGet},
++			Operators: operators.Operators{
++				Matchers: []*matchers.Matcher{{
++					Part:  "body",
++					Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
++					Words: []string{"test"},
++				}},
++			},
++		}
++		execOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "body-only"})
++		require.NoError(t, req.Compile(execOpts))
++		require.False(t, req.needsFullResponse(nil))
++	})
++
++	t.Run("header matcher does not need full response", func(t *testing.T) {
++		req := &Request{
++			ID:     "header-only",
++			Method: HTTPMethodTypeHolder{MethodType: HTTPGet},
++			Operators: operators.Operators{
++				Matchers: []*matchers.Matcher{{
++					Part:  "header",
++					Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
++					Words: []string{"Content-Type"},
++				}},
++			},
++		}
++		execOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "header-only"})
++		require.NoError(t, req.Compile(execOpts))
++		require.False(t, req.needsFullResponse(nil))
++	})
++
++	t.Run("status matcher does not need full response", func(t *testing.T) {
++		req := &Request{
++			ID:     "status-only",
++			Method: HTTPMethodTypeHolder{MethodType: HTTPGet},
++			Operators: operators.Operators{
++				Matchers: []*matchers.Matcher{{
++					Type:   matchers.MatcherTypeHolder{MatcherType: matchers.StatusMatcher},
++					Status: []int{200},
++				}},
++			},
++		}
++		execOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "status-only"})
++		require.NoError(t, req.Compile(execOpts))
++		require.False(t, req.needsFullResponse(nil))
++	})
++
++	t.Run("matcher with part response needs full response", func(t *testing.T) {
++		req := &Request{
++			ID:     "part-response",
++			Method: HTTPMethodTypeHolder{MethodType: HTTPGet},
++			Operators: operators.Operators{
++				Matchers: []*matchers.Matcher{{
++					Part:  "response",
++					Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
++					Words: []string{"test"},
++				}},
++			},
++		}
++		execOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "part-response"})
++		require.NoError(t, req.Compile(execOpts))
++		require.True(t, req.needsFullResponse(nil))
++	})
++
++	t.Run("matcher with part all reads body and headers only", func(t *testing.T) {
++		req := &Request{
++			ID:     "part-all",
++			Method: HTTPMethodTypeHolder{MethodType: HTTPGet},
++			Operators: operators.Operators{
++				Matchers: []*matchers.Matcher{{
++					Part:  "all",
++					Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
++					Words: []string{"test"},
++				}},
++			},
++		}
++		execOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "part-all"})
++		require.NoError(t, req.Compile(execOpts))
++		require.False(t, req.needsFullResponse(nil))
++	})
++
++	for _, tc := range []struct {
++		name    string
++		matcher *matchers.Matcher
++	}{
++		{"numbered response part", &matchers.Matcher{Part: "response_1", Type: matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher}, Words: []string{"test"}}},
++		{"response placeholder in words", &matchers.Matcher{Part: "body", Type: matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher}, Words: []string{"{{response}}"}}},
++		{"request condition", &matchers.Matcher{Type: matchers.MatcherTypeHolder{MatcherType: matchers.DSLMatcher}, DSL: []string{"status_code_1 == 200 && status_code_2 == 200"}}},
++	} {
++		t.Run(tc.name+" needs full response", func(t *testing.T) {
++			req := &Request{
++				ID:        "response-ref",
++				Method:    HTTPMethodTypeHolder{MethodType: HTTPGet},
++				Operators: operators.Operators{Matchers: []*matchers.Matcher{tc.matcher}},
++			}
++			execOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "response-ref"})
++			require.NoError(t, req.Compile(execOpts))
++			require.True(t, req.needsFullResponse(nil))
++		})
++	}
++
++	t.Run("dsl matcher without response does not need full response", func(t *testing.T) {
++		req := &Reques
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #7930** (2026-10-25): Keep template options on compiled-cache hits (@Mzack9999)
 - **PR #7929** (2026-10-25): Read the nuclei ignore file after init updates it (@Mzack9999)
+- **PR #7926** (2026-10-25): apply host backoff to javascript template dials (@dogancanbakir)
+- **PR #7923** (closed): fix(http): bound memory for large Flow request bodies (@knakul853)
 - **PR #7922** (2026-10-24): fix(offlinehttp): preserve response content during HTTP version normalization (@MasterchiefGalaxy)
-- **PR #7910** (2026-10-23): fix(js): cap what an smtp connection may read (@gnuletik)
-- **PR #7908** (2026-10-24): fix(js): cap what a redis connection may read (@gnuletik)
-- **PR #7906** (2026-10-23): fix(js): close ldap and smtp connections when the template ends (@gnuletik)
+- **PR #7914** (2026-10-25): feat(payloads): iterate payload combinations in a random order (@mazzz3r)
 
 ---
 
@@ -1801,69 +2265,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in lazy.go
+## X. Merge pull request #7678 from gnuletik/fix/cancellable-template-and-js-waits
 
 **RULE**:
-When implementing operations in `internal/runner/lazy.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/runner/runner.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `48e04c73`: ignore. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7f8abe2c`: Merge pull request #7678 from gnuletik/fix/cancellable-template-and-js-waits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/runner/lazy.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/runner/runner.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The auth store only wants the secret-file templates. Copy first so
-	// this scoping cannot clear Templates, ExcludeTags, or the other filters
-	// on the caller's options. The CLI already copies; the SDK passes the
-	// engine options directly.
-	scoped := opts.Copy()
-	scoped.Templates = tmpls
-	scoped.Workflows = nil
-	scoped.RemoteTemplateDomainList = nil
-	scoped.TemplateURLs = nil
-	scoped.WorkflowURLs = nil
-	scoped.ExcludedTemplates = nil
-	scoped.Tags = nil
-	scoped.ExcludeTags = nil
-	scoped.IncludeTemplates = nil
-	scoped.Authors = nil
-	scoped.Severities = nil
-	scoped.ExcludeSeverities = nil
-	scoped.IncludeTags = nil
-	scoped.IncludeIds = nil
-	scoped.ExcludeIds = nil
-	scoped.Protocols = nil
-	scoped.ExcludeProtocols = nil
-	scoped.IncludeConditions = nil
-	cfg := loader.NewConfig(scoped, catalog, execOpts)
+	if err := service.Execute(context.Background()); err != nil {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	opts.Templates = tmpls
-	opts.Workflows = nil
-	opts.RemoteTemplateDomainList = nil
-	opts.TemplateURLs = nil
-	opts.WorkflowURLs = nil
-	opts.ExcludedTemplates = nil
-	opts.Tags = nil
-	opts.ExcludeTags = nil
-	opts.IncludeTemplates = nil
-	opts.Authors = nil
-	opts.Severities = nil
-	opts.ExcludeSeverities = nil
-	opts.IncludeTags = nil
-	opts.IncludeIds = nil
-	opts.ExcludeIds = nil
-	opts.Protocols = nil
-	opts.ExcludeProtocols = nil
-	opts.IncludeConditions = nil
-	cfg := loader.NewConfig(opts, catalog, execOpts)
+	if err := service.Execute(); err != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `48e04c73` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7f8abe2c` are properly handled with clean fallback behavior.

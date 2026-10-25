@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T17:42:51.567Z",
+  "last_updated": "2026-10-25T17:49:18.603Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -422,8 +422,8 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "2db7119a",
-      "content_hash": "8a64c3c3cc2bc471fba3b8c06801d0bcdeae248e659c8b41d5e84a8adc71e28e",
+      "source_version": "7b23d81b",
+      "content_hash": "fc44c6ff299c56894b194e4ce1ad7296f9e237de2a5a63399948649d59cc6964",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
@@ -436,6 +436,11 @@
           "number": 2728,
           "title": "files): evaluate preconditions before range requests (#4336)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4400,
+          "title": "deny vulnerable TLS dependency versions (#4353)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -443,7 +448,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:10:15.363Z",
+      "verified_at": "2026-10-25T17:49:08.986Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21040,7 +21045,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "23fcef2251c7f9384ee29737cb75df111c552ce52280004ecbe0ec4737db9d85",
+      "content_hash": "f4d1a0fc533dc55dd0c71b28c3e42014f40039a4d4040fe1b13e4f90cd967e1e",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "promoted_rules": [
@@ -21093,7 +21098,7 @@
         "learn-huggingface-hf-google-t5-t5-small-mv498vvv",
         "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm"
       ],
-      "verified_at": "2026-10-20T22:13:57.992Z",
+      "verified_at": "2026-10-25T17:49:07.762Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41144,8 +41149,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "f46ee551",
-      "content_hash": "6ec740fb37bdd2b1069a35fc2d5c333c7cc43b504df8abd901350ffba87fe51c",
+      "source_version": "445e6ab9",
+      "content_hash": "6ca361f2806f20d8e0e92c2b845bf7cf879a3aba9a52902be41dfd3b0feb1c96",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -41178,6 +41183,11 @@
           "number": 4052,
           "title": "Merge pull request #7922 from MasterchiefGalaxy/fix/offline-http-preserve-respon",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4401,
+          "title": "Merge pull request #7678 from gnuletik/fix/cancellable-template-and-js-waits",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41185,7 +41195,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:38:09.287Z",
+      "verified_at": "2026-10-25T17:49:18.592Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125091,6 +125101,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T17:42:51.560Z"
+    },
+    "rule-4400": {
+      "learning_id": "rule-4400",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4400,
+      "title": "deny vulnerable TLS dependency versions (#4353)",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "7b23d81b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:49:08.986Z"
+    },
+    "rule-4401": {
+      "learning_id": "rule-4401",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4401,
+      "title": "Merge pull request #7678 from gnuletik/fix/cancellable-template-and-js-waits",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "445e6ab9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:49:18.592Z"
     }
   },
   "aliases": {

@@ -4931,3 +4931,6 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `66e8caf4` | Multi-dimensional audit evidence | 2026-10-25T17:42:45.042Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `9125647f` | Multi-dimensional audit evidence | 2026-10-25T17:42:47.047Z |
 | `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-25T17:42:51.604Z |
+| `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-25T17:49:07.828Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `7b23d81b` | Multi-dimensional audit evidence | 2026-10-25T17:49:09.056Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `445e6ab9` | Multi-dimensional audit evidence | 2026-10-25T17:49:18.662Z |

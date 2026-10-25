@@ -755,8 +755,8 @@
     "sourceUrl": "https://huggingface.co/google-t5/t5-small",
     "sourceVersion": "hf-google-t5-t5-small",
     "license": "Open-Source",
-    "contentHash": "23fcef2251c7f9384ee29737cb75df111c552ce52280004ecbe0ec4737db9d85",
-    "lastHarvestedAt": "2026-10-20T22:13:58.057Z",
+    "contentHash": "f4d1a0fc533dc55dd0c71b28c3e42014f40039a4d4040fe1b13e4f90cd967e1e",
+    "lastHarvestedAt": "2026-10-25T17:49:07.828Z",
     "learningId": "learn-huggingface-google-t5-t5-small"
   },
   "hf-comfy-org-minimax-h3": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "f46ee551",
+    "sourceVersion": "445e6ab9",
     "license": "MIT",
-    "contentHash": "6ec740fb37bdd2b1069a35fc2d5c333c7cc43b504df8abd901350ffba87fe51c",
-    "lastHarvestedAt": "2026-10-25T14:38:09.372Z",
+    "contentHash": "6ca361f2806f20d8e0e92c2b845bf7cf879a3aba9a52902be41dfd3b0feb1c96",
+    "lastHarvestedAt": "2026-10-25T17:49:18.662Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "2db7119a",
+    "sourceVersion": "7b23d81b",
     "license": "Apache-2.0",
-    "contentHash": "8a64c3c3cc2bc471fba3b8c06801d0bcdeae248e659c8b41d5e84a8adc71e28e",
-    "lastHarvestedAt": "2026-10-19T18:10:15.426Z",
+    "contentHash": "fc44c6ff299c56894b194e4ce1ad7296f9e237de2a5a63399948649d59cc6964",
+    "lastHarvestedAt": "2026-10-25T17:49:09.056Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {

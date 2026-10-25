@@ -4924,3 +4924,6 @@
 | `CYCLE-20261025-8HF4` | `2026-10-25T17:42:45.040Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md` | Yes (`760d8fd1...`) |
 | `CYCLE-20261025-8IYT` | `2026-10-25T17:42:47.045Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4397` | Yes (`51a007fe...`) |
 | `CYCLE-20261025-8MHA` | `2026-10-25T17:42:51.598Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1518, Rule 4398, Rule 4399` | Yes (`e30ad12c...`) |
+| `CYCLE-20261025-GOS1` | `2026-10-25T17:49:07.825Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`f4d1a0fc...`) |
+| `CYCLE-20261025-GPQ3` | `2026-10-25T17:49:09.051Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4400` | Yes (`fc44c6ff...`) |
+| `CYCLE-20261025-GX4Z` | `2026-10-25T17:49:18.659Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4401` | Yes (`6ca361f2...`) |
