@@ -725,8 +725,8 @@
     "sourceUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceVersion": "hf-google-electra-base-discriminator",
     "license": "Open-Source",
-    "contentHash": "424fb282f4a615ea56e349dbb061cd66f6ebd0d98d6a12f93fb97fbc78e8e048",
-    "lastHarvestedAt": "2026-10-20T21:47:04.919Z",
+    "contentHash": "8361e1a126976942919f65f11d758cb67b221ba851a340add62bdf5abe872cc4",
+    "lastHarvestedAt": "2026-10-25T17:20:53.497Z",
     "learningId": "learn-huggingface-google-electra-base-discriminator"
   },
   "hf-baai-bge-m3": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "39a0a4b5",
+    "sourceVersion": "af7e5c5d",
     "license": "Apache-2.0",
-    "contentHash": "ee48504ba0858da7a602982b7614538e74466ae477f204bc1cdc9f0af259e248",
-    "lastHarvestedAt": "2026-10-24T19:35:06.263Z",
+    "contentHash": "9ec56012c141c6ca9329ffac57eae5080f23ba77bac097dbfd95590663ad1c10",
+    "lastHarvestedAt": "2026-10-25T17:21:09.069Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "ff25faef",
+    "sourceVersion": "ea89cc4d",
     "license": "MIT",
-    "contentHash": "68f70f58e708e18ca660c1e3d06081416020abfb0ef25d453702458e6ca221f9",
-    "lastHarvestedAt": "2026-10-23T08:44:38.303Z",
+    "contentHash": "fcd3e1a07f836fe08c5e78cbe1114b5953982c639a34b720757bddfd6aee6c4c",
+    "lastHarvestedAt": "2026-10-25T17:20:54.511Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {

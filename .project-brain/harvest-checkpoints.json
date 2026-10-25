@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T17:14:42.466Z",
+  "last_updated": "2026-10-25T17:21:09.081Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -920,14 +920,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
-      "content_hash": "424fb282f4a615ea56e349dbb061cd66f6ebd0d98d6a12f93fb97fbc78e8e048",
-      "verified_at": "2026-10-20T21:47:04.925Z",
+      "content_hash": "8361e1a126976942919f65f11d758cb67b221ba851a340add62bdf5abe872cc4",
+      "verified_at": "2026-10-25T17:20:53.503Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:47:04.925Z"
+      "last_updated": "2026-10-25T17:20:53.503Z"
     },
     "BAAI/bge-m3": {
       "repository": "BAAI/bge-m3",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "ee48504ba0858da7a602982b7614538e74466ae477f204bc1cdc9f0af259e248",
-      "verified_at": "2026-10-24T19:35:06.273Z",
+      "content_hash": "9ec56012c141c6ca9329ffac57eae5080f23ba77bac097dbfd95590663ad1c10",
+      "verified_at": "2026-10-25T17:21:09.076Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T19:35:06.273Z"
+      "last_updated": "2026-10-25T17:21:09.076Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "68f70f58e708e18ca660c1e3d06081416020abfb0ef25d453702458e6ca221f9",
-      "verified_at": "2026-10-23T08:44:38.312Z",
+      "content_hash": "fcd3e1a07f836fe08c5e78cbe1114b5953982c639a34b720757bddfd6aee6c4c",
+      "verified_at": "2026-10-25T17:20:54.518Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T08:44:38.312Z"
+      "last_updated": "2026-10-25T17:20:54.518Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",

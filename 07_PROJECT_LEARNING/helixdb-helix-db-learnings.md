@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `39a0a4b5`  
+> **Source Version**: `af7e5c5d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T19:35:06.095Z  
+> **Timestamp**: 2026-10-25T17:21:08.662Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T19:35:05.573Z  
+> **Harvest Timestamp**: 2026-10-25T17:21:08.657Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6236 stars
+- **Stars / Engagement**: 6239 stars
 
 ---
 
@@ -2047,168 +2047,90 @@ impl QueuedTextReplacement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39a0a4b5` (2026-10-23)
-**Commit Message**: docs: explain storage-level tenant database isolation (#1225)
+### Incident Patch 1: `091da0c3` (2026-10-25)
+**Commit Message**: fix: reject inner types in Go SDK ParamObject (#1224)
 
-**File**: `docs/database/helix-cloud/operate/multi-tenancy.mdx` (modified, +35/-8)
+ParamObject accepts a variadic element type, but object parameters have no
+inner type in the query AST, so the argument was silently dropped and the
+serialized request stayed identical. Record ErrObjectParameterInnerType so
+callers see the misuse during Validate/Marshal instead of at the server.
+
+**File**: `sdks/go/dsl.go` (modified, +8/-0)
 ```diff
-@@ -1,12 +1,14 @@
- ---
- title: 'Multi-tenancy'
--description: "Isolate application tenants with row-level scoping and tenant-partitioned search indexes"
-+description: "Isolate tenants with storage-level tenant databases, row-level scoping, and tenant-partitioned search indexes"
- pageType: "Guide"
- ---
- 
- <div className="flex flex-wrap gap-2"><Badge color="blue" size="sm">Guide</Badge></div>
- 
--Multi-tenant architectures generally fall into one of three isolation levels.
-+Multi-tenant architectures generally fall into one of three isolation levels. Helix Cloud
-+isolates each database at the storage level, and lets you add row-level isolation for application
-+tenants inside a database.
- 
- ## Isolation levels
- 
-@@ -16,11 +18,34 @@ Multi-tenant architectures generally fall into one of three isolation levels.
- | **Namespace-level**      | Shared infrastructure, separate logical partitions (databases, schemas, or namespaces) per tenant.                          | Strong. Logical separation with shared compute.                  | Moderate. Shared compute, but metadata and indexes scale per tenant. |
- | **Row-level**            | Shared infrastructure, shared data structures. Tenants distinguished by a property on every record, enforced at query time. | Application-enforced. Relies on consistent query-time filtering. | Highest. All tenants share indexes, caches, and storage.             |
- 
-+## Storage-level isolation: tenant databases
+@@ -21,6 +21,7 @@ var (
+ 	ErrEmptyParameterName        = errors.New("helix: parameter name must not be empty")
+ 	ErrMixedParameterModes       = errors.New("helix: typed and untyped parameters cannot be mixed")
+ 	ErrInvalidParameterType      = errors.New("helix: invalid parameter type")
++	ErrObjectParameterInnerType  = errors.New("helix: object parameter type cannot have an inner type")
+ 	ErrInvalidDateTimeParameter  = errors.New("helix: invalid datetime parameter")
+ 	// ErrEventualWriteSearchConsistency rejects eventual search on write
+ 	// requests; write batches always search strongly.
+@@ -2790,7 +2791,14 @@ func (q *QueryRequest) ParamValue(name string, value any) ParamRef {
+ 	v, err := queryValueFromValue(value, name)
+ 	return q.addParam(name, ParamTypeValue(), v, err)
+ }
 +
-+Every tenant database, whether on a GA shared plan or created inside a dedicated enterprise
-+cluster, has its own database ID. Helix uses that ID as a storage tenant ID to give the database
-+a namespace-level partition of the cluster's storage:
-+
-+- **Tenant-prefixed keys.** Every stored key (nodes, edges, properties, and index entries) is
-+  prefixed with the tenant ID. Reads only scan their own prefix, so one database can never observe
-+  another database's records.
-+- **Per-database index catalogs.** Equality, range, vector, and text indexes are defined and built
-+  per database. Index definitions and builds in one database do not affect another.
-+- **Selected by the request, not the query.** The gateway reads the database from the
-+  `X-Helix-Database-Id` header and rejects API keys scoped to a different database. Query bodies
-+  cannot name or change it, so no query predicate is needed for this isolation. See
-+  [HTTP API authentication](/database/helix-db/query-guides/http-api#authentication).
-+
-+Databases that share a cluster still share its compute, caches, and object storage. A
-+database-specific cluster-mode endpoint serves the cluster's own unscoped database and rejects
-+the database header.
-+
-+Create a tenant database with [`helix database create`](/cli/command-reference/database), using
-+`--plan` for a shared plan or `--cluster` for a dedicated cluster.
-+
- ## Row-level isolation in Helix Cloud
- 
--Helix Cloud focuses on row-level isolation, which lets you implement any tenancy model at the
--application layer without structural constraints on the database. Adding a tenant is a write, not a
--provisioning event.
-+Within a single database, use row-level isolation for your own application tenants. It lets you
-+implement any tenancy model at the application layer without structural constraints on the
-+database. Adding a tenant is a write, not a provisioning event.
- 
- Assign a tenant identifier as a property on every node and edge, index it with an equality index,
- and filter every query on it so each request only sees its own tenant's data. This is the same
-@@ -209,6 +234,8 @@ the request's tenant value to the text-search builder. See
- 
- ## Stricter isolation requirements
- 
--For workloads that require namespace-level or infrastructure-level tenant isolation (regulatory
--compliance, data residency, or dedicated-resource SLAs), contact us at
--[founders@helix-db.com](mailto:founders@helix-db.com) to discuss options.
-+When application tenants need storage-level isolation, give each one its own
-+[tenant database](#storage-level-isolation-tenant-databases) instead of a `tenant_id` property.
-+For workloads that require infrastructure-level isolation (regulatory compliance, data residency,
-+or dedicated-resource SLAs), contact us at [founders@helix-db.com](mailto:founders@helix-db.com)
-+about dedicated clusters.
++// ParamObject declares a typed object parameter. Object parameters have no
++// element type in the query AST, so passing an inner type is rejected instead
++// of being silently ignored.
+ func (q *QueryRequest) ParamObject(name string, value any, inner ...QueryParamType) ParamRef {
++	if len(inner) > 0 {
++		return q.addParam(name, ParamTypeObject(), nil, ErrObjectParameterInnerType)
++	}
+ 	v, err := queryValueFromValue(value, name)
+ 	return q.addParam(name, ParamTypeObject(), v, err)
+ }
 ```
 
-**File**: `docs/llms-full.txt` (modified, +34/-7)
+**File**: `sdks/go/dsl_test.go` (modified, +31/-0)
 ```diff
-@@ -7006,7 +7006,9 @@ if your deployment depends on one of them.
+@@ -586,6 +586,37 @@ func TestFloatParametersAcceptEveryIntegerWidth(t *testing.T) {
+ 	}
+ }
  
- Page type: Guide
- 
--Multi-tenant architectures generally fall into one of three isolation levels.
-+Multi-tenant architectures generally fall into one of three isolation levels. Helix Cloud
-+isolates each database at the storage level, and lets you add row-level isolation for application
-+tenants inside a database.
- 
- ## Isolation levels
- 
-@@ -7016,11 +7018,34 @@ Multi-tenant architectures generally fall into one of three isolation levels.
- | **Namespace-level**      | Shared infrastructure, separate logical partitions (databases, schemas, or namespaces) per tenant.                          | Strong. Logical separation with shared compute.                  | Moderate. Shared compute, but metadata and indexes scale per tenant. |
- | **Row-level**            | Shared infrastructure, shared data structures. Tenants distinguished by a property on every record, enforced at query time. | Application-enforced. Relies on consistent query-time filtering. | Highest. All tenants share indexes, caches, and storage.             |
- 
-+## Storage-level isolation: tenant databases
++func TestParamObjectRejectsInnerType(t *testing.T) {
++	// Object parameters have no element type in the query AST, so an inner
++	// type passed to ParamObject can never be serialized. It must be rejected
++	// instead of being silently dropped from the request.
++	request := NewReadQueryRequest(Read())
++	request.ParamObject("metadata", map[string]any{"nested": true}, ParamTypeString())
++	if err := request.Validate(); !errors.Is(err, ErrObjectParameterInnerType) {
++		t.Fatalf("object parameter with inner type should be rejected, got %v", err)
++	}
++	if _, err := json.Marshal(request); !errors.Is(err, ErrObjectParameterInnerType) {
++		t.Fatalf("marshaling object parameter with inner type should fail, got %v", err)
++	}
 +
-+Every tenant database, whether on a GA shared plan or created inside a dedicated enterprise
-+cluster, has its own database ID. Helix uses that ID as a storage tenant ID to give the database
-+a namespace-level partition of the cluster's storage:
++	// The same value without an inner type stays valid and serializes as an
++	// object parameter.
++	valid := NewReadQueryRequest(Read())
++	valid.ParamObject("metadata", map[string]any{"nested": true})
++	if err := valid.Validate(); err != nil {
++		t.Fatalf("object parameter without inner type failed: %v", err)
++	}
++	body, err := json.Marshal(valid)
++	if err != nil {
++		t.Fatal(err)
++	}
++	for _, expected := range []string{`"metadata":"object"`, `"metadata":{"nested":true}`} {
++		if !strings.Contains(string(body), expected) {
++			t.Fatalf("object parameter missing %s: %s", expected, body)
++		}
++	}
++}
 +
-+- **Tenant-prefixed keys.** Every stored key (nodes, edges, properties, and index entries) is
-+  prefixed with the tenant ID. Reads only scan their own prefix, so one database can never observe
-+  another database's records.
-+- **Per-database index catalogs.** Equality, range, vector, and text indexes are defined and built
-+  per database. Index definitions and builds in one database do not affect another.
-+- **Selected by the request, not the query.** The gateway reads the database from the
-+  `X-Helix-Database-Id` header and rejects API keys scoped to a different database. Query bodies
-+  cannot name or change it, so no query predicate is needed for this isolation. See
-+  [HTTP API authentication](/database/helix-db/query-guides/http-api#authentication).
-+
-+Databases that share a cluster still share its compute, caches, and object storage. A
-+database-specific cluster-mode endpoint serves the cluster's own unscoped database and rejects
-+the database header.
-+
-+Create a tenant database with [`helix database create`](/cli/command-reference/database), using
-+`--plan` for a shared plan or `--cluster` for a dedicated cluster.
-+
- ## Row-level isolation in Helix Cloud
- 
--Helix Cloud focuses on row-level isolation, which lets you implement any tenancy model at the
--application layer without structural constraints on the database. Adding a tenant is a write, not a
--provisioning event.
-+Within a single database, use row-level isolation for your own application tenants. It lets you
-+implement any tenancy model at the application layer without structural constraints on the
-+database. Adding a tenant is a write, not a provisioning event.
- 
- Assign a tenant identifier as a property on every node and edge, index it with an equality index,
- and filter every query on it so each request only sees its own tenant's data. This is the same
-@@ -7205,9 +7230,11 @@ the request's tenant value to the text-search builder. See
- 
- ## Stricter isolation requirements
- 
--For workloads that require namespace-level or infrastructure-level tenant isolation (regulatory
--compliance, data residency, or dedicated-resource SLAs), contact us at
--[founders@helix-db.com](mailto:founders@helix-db.com) to discuss options.
-+When application tenants need storage-level isolation, give each one its own
-+[tenant database](#storage-level-isolation-tenant-databases) instead of a `tenant_id` property.
-+For workloads that require infrastructure-level isolation (regulatory compliance, data residency,
-+or dedicated-resource SLAs), contact us at [founders@helix-db.com](mailto:founders@helix-db.com)
-+about dedicated clusters.
- 
- # Guarantees
- 
-```
-
-**File**: `docs/llms.txt` (modified, +1/-1)
-```diff
-@@ -77,7 +77,7 @@ Full walkthrough: https://docs.helix-db.com/database/helix-db/start-here/quickst
- 
- ## Operate
- - [Security](https://docs.helix-db.com/database/helix-cloud/operate/security): Authenticate requests, handle API keys, and review encryption and enterprise security features — Page type: Reference
--- [Multi-tenancy](https://docs.helix-db.com/database/helix-cloud/operate/multi-tenancy): Isolate application tenants with row-level scoping and tenant-partitioned search indexes — Page type: Guide
-+- [Multi-tenancy](https://docs.helix-db.com/database/helix-cloud/operate/multi-tenancy): Isolate tenants with storage-level tenant databases, row-level scoping, and tenant-partitioned search indexes — Page type: Guide
- - [Guarantees](https://docs.helix-db.com/database/helix-cloud/operate/guarantees): Atomicity, isolation, durability, index activation, and read-after-write behavior — Page type: Reference
- - [Limits](https://docs.helix-db.com/database/helix-cloud/operate/limits): Understand Helix Cloud request rate limits and database constraints — Page type: Reference
- - [Tradeoffs](https://docs.helix-db.com/database/helix-cloud/operate/tradeoffs): What the Helix Cloud architecture is optimized for, and where another system may fit better — Page type: Concept
+ func TestTypedDateTimeParameterAcceptsSameValuesAsConvenienceHelper(t *testing.T) {
+ 	// The convenience helper ParamDateTime accepts DateTime, time.Time, RFC3339
+ 	// strings and epoch-millis ints. The low-level typed insertion path
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1226** (2026-10-25): chore(deps): bump the npm_and_yarn group across 1 directory with 3 updates (@dependabot[bot])
 - **PR #1225** (2026-10-23): docs: explain storage-level tenant database isolation (@xav-db)
+- **PR #1224** (2026-10-25): fix: reject inner types in Go SDK ParamObject (@Tyagiquamar)
+- **PR #1221** (2026-10-25): chore(deps): bump follow-redirects from 1.16.0 to 1.16.1 in /docs in the npm_and_yarn group across 1 directory (@dependabot[bot])
 - **PR #1219** (2026-10-20): docs: add the Helix Foundry tab (@xav-db)
 - **PR #1218** (2026-10-20): Start unselective typed Cypher patterns from edge-label bitmaps (@xav-db)
-- **PR #1211** (2026-10-17): Skip the deferred-index flush before counts of held rows (@xav-db)
-- **PR #1210** (2026-10-14): Format the TypeScript client's embedded error test with Prettier (@xav-db)
-- **PR #1209** (2026-10-14): test(db): follow up #1200, #1203 and #1204 and refresh DB coverage (@xav-db)
 
 ---
 
@@ -2228,51 +2150,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: explain storage-level tenant database isolation (#1225)
+## X. reject inner types in Go SDK ParamObject (#1224)
 
 **RULE**:
-When implementing operations in `docs/database/helix-cloud/operate/multi-tenancy.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdks/go/dsl.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39a0a4b5`: docs: explain storage-level tenant database isolation (#1225). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `091da0c3`: reject inner types in Go SDK ParamObject (#1224). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/database/helix-cloud/operate/multi-tenancy.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdks/go/dsl.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-description: "Isolate tenants with storage-level tenant databases, row-level scoping, and tenant-partitioned search indexes"
-Multi-tenant architectures generally fall into one of three isolation levels. Helix Cloud
-isolates each database at the storage level, and lets you add row-level isolation for application
-tenants inside a database.
-## Storage-level isolation: tenant databases
+	ErrObjectParameterInnerType  = errors.New("helix: object parameter type cannot have an inner type")
 
-Every tenant database, whether on a GA shared plan or created inside a dedicated enterprise
-cluster, has its own database ID. Helix uses that ID as a storage tenant ID to give the database
-a namespace-level partition of the cluster's storage:
-
-- **Tenant-prefixed keys.** Every stored key (nodes, edges, properties, and index entries) is
-  prefixed with the tenant ID. Reads only scan their own prefix, so one database can never observe
-  another database's records.
-- **Per-database index catalogs.** Equality, range, vector, and text indexes are defined and built
-  per database. Index definitions and builds in one database do not affect another.
-- **Selected by the request, not the query.** The gateway reads the database from the
-  `X-Helix-Database-Id` header and rejects API keys scoped to a different data
+// ParamObject declares a typed object parameter. Object parameters have no
+// element type in the query AST, so passing an inner type is rejected instead
+// of being silently ignored.
+	if len(inner) > 0 {
+		return q.addParam(name, ParamTypeObject(), nil, ErrObjectParameterInnerType)
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-description: "Isolate application tenants with row-level scoping and tenant-partitioned search indexes"
-Multi-tenant architectures generally fall into one of three isolation levels.
-Helix Cloud focuses on row-level isolation, which lets you implement any tenancy model at the
-application layer without structural constraints on the database. Adding a tenant is a write, not a
-provisioning event.
-For workloads that require namespace-level or infrastructure-level tenant isolation (regulatory
-compliance, data residency, or dedicated-resource SLAs), contact us at
-[founders@helix-db.com](mailto:founders@helix-db.com) to discuss options.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39a0a4b5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `091da0c3` are properly handled with clean fallback behavior.

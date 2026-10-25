@@ -4921,3 +4921,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-25T17:14:27.597Z |
 | `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `317f1bb1` | Multi-dimensional audit evidence | 2026-10-25T17:14:33.127Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `cc54f798` | Multi-dimensional audit evidence | 2026-10-25T17:14:42.451Z |
+| `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-25T17:20:53.497Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `ea89cc4d` | Multi-dimensional audit evidence | 2026-10-25T17:20:54.511Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `af7e5c5d` | Multi-dimensional audit evidence | 2026-10-25T17:21:09.069Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T17:14:42.391Z",
+  "last_updated": "2026-10-25T17:21:09.013Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14452,8 +14452,8 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "39a0a4b5",
-      "content_hash": "ee48504ba0858da7a602982b7614538e74466ae477f204bc1cdc9f0af259e248",
+      "source_version": "af7e5c5d",
+      "content_hash": "9ec56012c141c6ca9329ffac57eae5080f23ba77bac097dbfd95590663ad1c10",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
@@ -14466,6 +14466,11 @@
           "number": 3317,
           "title": "Share one hybrid cache per disk root so reopened readers stop leaking descriptor",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4394,
+          "title": "reject inner types in Go SDK ParamObject (#1224)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14473,7 +14478,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:35:06.182Z",
+      "verified_at": "2026-10-25T17:21:08.996Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20769,7 +20774,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "424fb282f4a615ea56e349dbb061cd66f6ebd0d98d6a12f93fb97fbc78e8e048",
+      "content_hash": "8361e1a126976942919f65f11d758cb67b221ba851a340add62bdf5abe872cc4",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "promoted_rules": [
@@ -20816,7 +20821,7 @@
         "learn-huggingface-hf-google-electra-base-discriminator-mv48xaja",
         "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt"
       ],
-      "verified_at": "2026-10-20T21:47:04.855Z",
+      "verified_at": "2026-10-25T17:20:53.432Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31630,8 +31635,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "ff25faef",
-      "content_hash": "68f70f58e708e18ca660c1e3d06081416020abfb0ef25d453702458e6ca221f9",
+      "source_version": "ea89cc4d",
+      "content_hash": "fcd3e1a07f836fe08c5e78cbe1114b5953982c639a34b720757bddfd6aee6c4c",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -31674,6 +31679,11 @@
           "number": 3844,
           "title": "Canonical Line-Ending Agnostic Content Fingerprinting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4393,
+          "title": "dead-code): a constructor no longer keeps an unused class alive",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31681,7 +31691,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T08:44:38.242Z",
+      "verified_at": "2026-10-25T17:20:54.433Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124953,6 +124963,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T17:14:42.377Z"
+    },
+    "rule-4393": {
+      "learning_id": "rule-4393",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4393,
+      "title": "dead-code): a constructor no longer keeps an unused class alive",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "ea89cc4d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:20:54.433Z"
+    },
+    "rule-4394": {
+      "learning_id": "rule-4394",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4394,
+      "title": "reject inner types in Go SDK ParamObject (#1224)",
+      "source_url": "https://github.com/HelixDB/helix-db",
+      "source_version": "af7e5c5d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:21:08.996Z"
     }
   },
   "aliases": {

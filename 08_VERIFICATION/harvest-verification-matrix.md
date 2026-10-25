@@ -4914,3 +4914,6 @@
 | `CYCLE-20261025-83NT` | `2026-10-25T17:14:27.593Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`27914035...`) |
 | `CYCLE-20261025-87XF` | `2026-10-25T17:14:33.123Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4391` | Yes (`13ee0bba...`) |
 | `CYCLE-20261025-8F4G` | `2026-10-25T17:14:42.448Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4392` | Yes (`ecbd96ce...`) |
+| `CYCLE-20261025-GDFA` | `2026-10-25T17:20:53.494Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`8361e1a1...`) |
+| `CYCLE-20261025-GE7H` | `2026-10-25T17:20:54.509Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4393` | Yes (`fcd3e1a0...`) |
+| `CYCLE-20261025-GPFU` | `2026-10-25T17:21:09.066Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4394` | Yes (`9ec56012...`) |
