@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-0DQL",
-    "timestamp": "2026-10-22T15:53:27.693Z",
-    "repository": "duongductrong/Snapzy",
-    "learningId": "learn-github-duongductrong-snapzy",
-    "contentHash": "f59f194eaa7e72c4084bfd67d8e15406130dddc83cc7864f824ebec53167b633",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-0FDP",
-    "timestamp": "2026-10-22T15:53:29.821Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "d8b9d93c92ab290105439a0df084de08e2a45b76c057d45405dbdd1e00f48b7f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-0JAT",
     "timestamp": "2026-10-22T15:53:34.901Z",
     "repository": "trinodb/trino",
@@ -7490,6 +7460,36 @@
     "repository": "carbon-design-system/carbon",
     "learningId": "learn-github-carbon-design-system-carbon",
     "contentHash": "99eb769a293832d0728098c240eee2beec14ee737bce944ffceb06233e2da78e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-LL03",
+    "timestamp": "2026-10-25T12:17:00.819Z",
+    "repository": "Qwen/Qwen-Image-2.1-Turbo",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+    "contentHash": "fcde7db5d868d2fc77a045db93857a2bf17bfe6401193cced78757c7bc917662",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-LO1E",
+    "timestamp": "2026-10-25T12:17:04.754Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "17690d987778ac08711c9f138108b30e3858ec84582198a8d93977d2e2730ad8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T12:10:54.345Z",
+  "last_updated": "2026-10-25T12:17:04.721Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24378,7 +24378,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
       "source_version": "hf-qwen-qwen-image-2.1-turbo",
-      "content_hash": "414003adae2d1df770e9c1e3c8d3bca08b1428dbd57372d58ef7b7c3714c963f",
+      "content_hash": "fcde7db5d868d2fc77a045db93857a2bf17bfe6401193cced78757c7bc917662",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "promoted_rules": [
@@ -24446,6 +24446,21 @@
           "number": 3288,
           "title": "Prefix KV Caching Invariant for Multi-Step Diffusion with Static Context",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4281,
+          "title": "Distilled Model Scheduler Decoupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4282,
+          "title": "BF16 Precision Mandate for Distilled Vision Transformers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4283,
+          "title": "KV Cache Reuse for Static Context in Iterative Denoising",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24464,7 +24479,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv455o5m",
         "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv4if4tl"
       ],
-      "verified_at": "2026-10-20T17:16:56.055Z",
+      "verified_at": "2026-10-25T12:17:00.779Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31471,8 +31486,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "88203d25",
-      "content_hash": "d87a5a0f1d8d5d54dbd1f84654fc6be41528ae925976470b4de37d39ef465512",
+      "source_version": "de0c5edc",
+      "content_hash": "17690d987778ac08711c9f138108b30e3858ec84582198a8d93977d2e2730ad8",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -31500,6 +31515,11 @@
           "number": 3762,
           "title": "python): stop retrying permanent embedding errors and cap the backoff delay (#45",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4284,
+          "title": "rust): accept usize::MAX as a local query limit (#4567)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31507,7 +31527,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:48:10.884Z",
+      "verified_at": "2026-10-25T12:17:04.715Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122716,6 +122736,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T12:10:54.338Z"
+    },
+    "rule-4281": {
+      "learning_id": "rule-4281",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4281,
+      "title": "Distilled Model Scheduler Decoupling Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:17:00.779Z"
+    },
+    "rule-4282": {
+      "learning_id": "rule-4282",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4282,
+      "title": "BF16 Precision Mandate for Distilled Vision Transformers",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:17:00.779Z"
+    },
+    "rule-4283": {
+      "learning_id": "rule-4283",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4283,
+      "title": "KV Cache Reuse for Static Context in Iterative Denoising",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:17:00.779Z"
+    },
+    "rule-4284": {
+      "learning_id": "rule-4284",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4284,
+      "title": "rust): accept usize::MAX as a local query limit (#4567)",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "de0c5edc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:17:04.715Z"
     }
   },
   "aliases": {

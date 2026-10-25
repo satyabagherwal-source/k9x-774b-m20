@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T12:10:54.403Z",
+  "last_updated": "2026-10-25T12:17:04.766Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1820,14 +1820,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "content_hash": "414003adae2d1df770e9c1e3c8d3bca08b1428dbd57372d58ef7b7c3714c963f",
-      "verified_at": "2026-10-20T17:16:56.130Z",
+      "content_hash": "fcde7db5d868d2fc77a045db93857a2bf17bfe6401193cced78757c7bc917662",
+      "verified_at": "2026-10-25T12:17:00.827Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:16:56.130Z"
+      "last_updated": "2026-10-25T12:17:00.827Z"
     },
     "Phocinae/Phocinae-Largha-150M-v1": {
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "d87a5a0f1d8d5d54dbd1f84654fc6be41528ae925976470b4de37d39ef465512",
-      "verified_at": "2026-10-22T21:48:10.931Z",
+      "content_hash": "17690d987778ac08711c9f138108b30e3858ec84582198a8d93977d2e2730ad8",
+      "verified_at": "2026-10-25T12:17:04.762Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:48:10.931Z"
+      "last_updated": "2026-10-25T12:17:04.762Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",

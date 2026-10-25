@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T12:10:54.397Z",
-  "total_cycles_completed": 4779,
-  "total_learnings_persisted": 4779,
-  "total_rules_promoted": 4156,
+  "last_updated": "2026-10-25T12:17:04.759Z",
+  "total_cycles_completed": 4781,
+  "total_learnings_persisted": 4781,
+  "total_rules_promoted": 4160,
   "history": [
-    {
-      "timestamp": "2026-10-25T02:11:22.485Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T02:18:52.276Z",
-      "repository": "aws-amplify/amplify-js",
-      "learningId": "learn-github-aws-amplify-amplify-js",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T02:18:54.369Z",
       "repository": "prometheus/prometheus",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T12:10:54.397Z",
       "repository": "carbon-design-system/carbon",
       "learningId": "learn-github-carbon-design-system-carbon",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T12:17:00.824Z",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T12:17:04.759Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

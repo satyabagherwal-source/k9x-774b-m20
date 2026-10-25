@@ -375,8 +375,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "414003adae2d1df770e9c1e3c8d3bca08b1428dbd57372d58ef7b7c3714c963f",
-    "lastHarvestedAt": "2026-10-20T17:16:56.122Z",
+    "contentHash": "fcde7db5d868d2fc77a045db93857a2bf17bfe6401193cced78757c7bc917662",
+    "lastHarvestedAt": "2026-10-25T12:17:00.821Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "88203d25",
+    "sourceVersion": "de0c5edc",
     "license": "Apache-2.0",
-    "contentHash": "d87a5a0f1d8d5d54dbd1f84654fc6be41528ae925976470b4de37d39ef465512",
-    "lastHarvestedAt": "2026-10-22T21:48:10.922Z",
+    "contentHash": "17690d987778ac08711c9f138108b30e3858ec84582198a8d93977d2e2730ad8",
+    "lastHarvestedAt": "2026-10-25T12:17:04.756Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {

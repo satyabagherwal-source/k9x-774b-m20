@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `88203d25`  
+> **Source Version**: `de0c5edc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:48:10.715Z  
+> **Timestamp**: 2026-10-25T12:17:04.523Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:48:10.710Z  
+> **Harvest Timestamp**: 2026-10-25T12:17:04.292Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11743 stars
+- **Stars / Engagement**: 11765 stars
 
 ---
 
@@ -1209,11 +1209,14 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4632** (2026-10-22): **fix(python): expect oidc credential-type header on refreshed tokens**
-  *Symptoms*: ## Summary  #3971 added `test_zero_lifetime_token_is_refreshed`, but its expected headers omit `x-lancedb-credential-type: oidc`, which `OAuthProvider.get_headers()` has emitted since #2631/#4070. The test fails against current main and breaks the PR CI matrix for every open PR.  ## Changes  - Align the two zap assertions in `test_zero_lifetime_token_is_refreshed` with the provider contract (see `test_token_refresh` and `test_sync_method`).  ## Tests  - `pytest python/tests/test_header_provider.py -q`
+- **Issue #4665** (2026-10-25): **fix: execute remote materialized view creation through SQL**
+  *Symptoms*: Remote materialized-view creation currently expects a REST response containing a registry job ID, while refresh already submits SQL. Route both through the SQL query backend and preserve Python's synchronous and asynchronous return types.  ### Query to Job mapping  `SqlClient::submit_as_job()` submits an `ExecuteQueryRequest` through the same backend as `execute_query_async()`. Once submission succeeds, it retains the returned `Query` and starts one client-side task that consumes its result reader to completion. `Job::from_query_task()` wraps that task, its cached outcome, a single ID and a cancellation callback. Python exposes this as `Job[T]` or `AsyncJob[T]`.  The existing `job_type` property maps SQL-backed handles to the new `"query"` kind. The shared `id` contains that query's UUID string, so Python callers can inspect it with `db.describe_query(job.id)` on the submitting connection. No separate `query_id`, backend enum or `type()` API is added.  | Handle | `job_type` | `id` | Available lookup | | --- | --- | --- | --- | | SQL-backed | `"query"`, known at submission | Connection-scoped query UUID string | `describe_query(job.id)` | | Registry-backed | Existing server-reported kind, after `status()` or `refresh()` | Registry job ID string | Registry job APIs, descriptions and events | | Local | `None` | `None` | The current in-process handle |  | Job concept | SQL-backed behavior | | --- | --- | | Submission | Await initial SQL submission before returning the handle. Sub
+  **Post-Mortem & Fix Analysis**:
+  > @lancedb-gatekeeper The latest revision uses the existing job-type property for the new `"query"` kind. SQL-backed handles expose `job_type == "query"` immediately and put the query UUID string in the shared `id`; Python accepts that ID directly in `describe_query()` on the submitting connection. The separate `query_id`, backend enum and `type()` API have all been removed. Registry handles retain their server-reported job types and registry IDs; local handles have neither.  Rust, Python and TypeScript accessors, typed-result mapping, docs and regression coverage now follow that contract. Status/wait/cancellation behavior and the single-reader cached outcome are unchanged. This also removes the enum import and binding-generator errors reported by CI on the superseded revision. The job guide and PR description document the mapping and the requirement for compatible SQL server support. Please review the updated revision.
+  > @lancedb-gatekeeper Please review current head `b84392210`. The final API uses the existing `job_type` property: query-backed handles report `"query"` immediately, and `id` contains the connection-scoped query UUID string accepted by Python `describe_query()`. There is no separate query-ID accessor, backend enum or `type()` method. Registry job types and IDs retain their current behavior.  All current Rust/Python/Node lint checks, Python type checking and doctests, and the Node 22/24/26 plus Arrow compatibility suites have passed. The checked-in API reference matches CI generation. The PR description and job guide explain submission, one-reader cached completion, typed waits, cancellation and the SQL-server compatibility requirement. No local builds or tests were run. 
 
-- **Issue #4627** (2026-10-22): **fix(index): preserve registered scalar plugin type names**
-  *Symptoms*: Native `list_indices()` drops registered scalar plugin types absent from LanceDB's fixed enum, and `index_stats()` reports them as `Unknown`. Preserve their registered display names through `IndexType::Custom(String)`.  Resolve these names through Lance's shared `IndexDetails` registry entry point. Registered types such as MinHashLSH become visible; system and unregistered types remain excluded. Existing builtin aliases retain their canonical names. Rust consumers with exhaustive `IndexType` matches need to handle the added variant.  Manual validation with [Lance #10224](https://github.com/lance-format/lance/pull/10224) at `fcc070f88a`: a downstream statistics-only plugin appears as `Custom("Sketch")` in native listing and statistics. Its `load_index` deliberately returns an error, and repeated calls do not construct additional plugin instances, verifying metadata-only lookup through the shared registry. 
+- **Issue #4642** (2026-10-23): **fix: bump tokio to address RUSTSEC-2026-0386**
+  *Symptoms*: Upgrade the locked Tokio version from 1.53.1 to 1.53.3 to fix [RUSTSEC-2026-0386](https://rustsec.org/advisories/RUSTSEC-2026-0386) and restore the Rust workflow's `deny` job. The diff changes only Tokio's version and checksum.  Validation: - `cargo deny check advisories` — passed. - `cargo deny check advisories bans licenses sources` — passed with the repository's `deny.toml`. - `cargo check --quiet -p lancedb` — passed (dead-code warnings). - PR `deny` job — [passed](https://github.com/lancedb/lancedb/actions/runs/40000920646/job/120576455117). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1230,629 +1233,1126 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2d54630a` (2026-10-22)
-**Commit Message**: fix(python): stop retrying permanent embedding errors and cap the backoff delay (#4542)
+### Incident Patch 1: `a8305e07` (2026-10-24)
+**Commit Message**: fix(rust): accept usize::MAX as a local query limit (#4567)
 
-Permanent embedding errors (HTTP 400/404/422 and other 4xx) were retried
-the full `max_retries` times with an
-uncapped, multiplicatively jittered backoff, so a typo'd model name
-looked like a hang of about an hour
-(median 50 min of sleeping with a 404; see the issue for the repro and
-numbers).
+Fixes #2211.
 
-Changes (`python/python/lancedb/embeddings/utils.py`,
-`embeddings/base.py`):
-- An HTTP status in 4xx other than 408/409/429 is raised immediately.
-The status is read from `status_code`,
-`http_status`, `response.status_code`, an integer `code`
-(google-api-core, urllib) or a botocore
-`response["ResponseMetadata"]["HTTPStatusCode"]`. AWS throttling
-reported as 400 stays retryable (matched by
-  error code). `AuthenticationError` by name is unchanged.
-- Still retried: 408, 409, 429, >=500, and anything without a
-recognisable status (connection errors, timeouts,
-custom exceptions), so existing custom embedding functions behave as
-before.
-- New keyword `max_delay=60` (last in the signature, default keeps call
-sites working). `delay = min(delay * base,
-max_delay)` with equal jitter `delay/2 + random() * delay/2`
+Local queries converted `limit`/`offset` with `as i64`, so
+`limit(usize::MAX)` wrapped to `-1` and Lance failed with `Limit must be
+non-negative`. The remote client already worked around this (#2354);
+this fixes the local path.
 
-**File**: `python/python/lancedb/embeddings/base.py` (modified, +5/-3)
+- Saturate scanner offsets to `i64::MAX` and cap limits at `i64::MAX -
+offset`, keeping both conversion and full-text pagination addition safe.
+- Use `saturating_add` for vector `top_k = limit + offset`, then cap
+candidates at the dataset row count to avoid indexed-search capacity and
+refinement overflows. Keep a positive candidate bound for empty tables
+because Lance rejects `k = 0`.
+- Leave public APIs and remote query handling unchanged.
+
+### Testing
+- Regression coverage includes plain scans, indexed IVF search,
+refinement, index bypass, empty vector tables, and indexed full-text
+pagination with finite and extreme limits/offsets.
+- Reproduced the indexed-search and FTS overflows before applying the
+follow-up fix.
+- `cargo test --quiet --features remote -p lancedb --lib query::` — 81
+passed.
+- `cargo clippy --quiet --features remote -p lancedb --tests --examples`
+— clean.
+- `cargo
+
+**File**: `python/python/lancedb/query.py` (modified, +17/-12)
 ```diff
-@@ -38,9 +38,11 @@ class EmbeddingFunction(BaseModel, ABC):
-     3. ndims() which returns the number of dimensions of the vector column
-     """
+@@ -1561,9 +1561,10 @@ def explain_plan(self, verbose: Optional[bool] = False) -> str:
+         ProjectionExec: expr=[vector@0 as vector, _distance@2 as _distance]
+           GlobalLimitExec: skip=0, fetch=10
+             FilterExec: _distance@2 IS NOT NULL
+-              SortExec: TopK(fetch=10), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
++              SortExec: TopK(fetch=1), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                 KNNVectorDistance: metric=l2
+-                  LanceRead: uri=..., projection=[vector], ...
++                  LanceRead: uri=..., projection=[vector], num_fragments=..., ...
++        <BLANKLINE>
  
--    max_retries: int = (
--        7  # Setting 0 disables retires. Maybe this should not be enabled by default,
--    )
-+    # Maximum number of retries for transient errors (rate limits, 5xx responses,
-+    # connection errors, ...), with exponential backoff capped at 60 seconds between
-+    # attempts. Permanent errors (HTTP 4xx other than 408/409/429) are never retried.
-+    # Setting 0 disables retries.
-+    max_retries: int = 7
-     _ndims: int = PrivateAttr()
-     _original_args: dict = PrivateAttr()
+         Parameters
+         ----------
+@@ -1619,8 +1620,8 @@ def analyze_plan(
+               GlobalLimitExec: elapsed=..., skip=0, fetch=10,
+               metrics=[output_rows=..., elapsed_compute=..., output_bytes=...]
+                 FilterExec: elapsed=..., _distance@2 IS NOT NULL, metrics=[...]
+-                  SortExec: elapsed=..., TopK(fetch=10), expr=[...],
+-                  preserve_partitioning=[...],
++                  SortExec: elapsed=..., TopK(fetch=1), expr=[...],
++                  preserve_partitioning=[...], filter=[...],
+                   metrics=[output_rows=..., elapsed_compute=...,
+                   output_bytes=..., row_replacements=...]
+                     KNNVectorDistance: elapsed=..., metric=l2,
+@@ -1633,6 +1634,7 @@ def analyze_plan(
+                       metrics=[output_rows=..., elapsed_compute=..., output_bytes=...,
+                       fragments_scanned=..., ranges_scanned=1, rows_scanned=1,
+                       bytes_read=..., iops=..., requests=..., task_wait_time=...]
++        <BLANKLINE>
  
+         Parameters
+         ----------
+@@ -2959,9 +2961,10 @@ def explain_plan(self, verbose: Optional[bool] = False) -> str:
+         ProjectionExec: expr=[vector@0 as vector, _distance@2 as _distance]
+           GlobalLimitExec: skip=0, fetch=10
+             FilterExec: _distance@2 IS NOT NULL
+-              SortExec: TopK(fetch=10), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
++              SortExec: TopK(fetch=1), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                 KNNVectorDistance: metric=l2
+-                  LanceRead: uri=..., projection=[vector], ...
++                  LanceRead: uri=..., projection=[vector], num_fragments=..., ...
++        <BLANKLINE>
+ 
+         Parameters
+         ----------
+@@ -3601,9 +3604,10 @@ async def explain_plan(self, verbose: Optional[bool] = False):
+         ProjectionExec: expr=[vector@0 as vector, _distance@2 as _distance]
+           GlobalLimitExec: skip=0, fetch=10
+             FilterExec: _distance@2 IS NOT NULL
+-              SortExec: TopK(fetch=10), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
++              SortExec: TopK(fetch=1), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                 KNNVectorDistance: metric=l2
+-                  LanceRead: uri=..., projection=[vector], ...
++                  LanceRead: uri=..., projection=[vector], num_fragments=..., ...
++        <BLANKLINE>
+         <BLANKLINE>
+ 
+         Parameters
+@@ -4521,9 +4525,9 @@ async def explain_plan(self, verbose: Optional[bool] = False):
+               LanceRead: uri=..., projection=[text], source=stream(_rowid)
+                 GlobalLimitExec: skip=0, fetch=10
+                   FilterExec: _distance@2 IS NOT NULL
+-                    SortExec: TopK(fetch=10), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
++                    SortExec: TopK(fetch=1), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                       KNNVectorDistance: metric=l2
+-                        LanceRead: uri=..., projection=[vector], ...
++                        LanceRead: uri=..., projection=[vector], num_fragments=..., ...
+             ProjectionExec: expr=[vector@2 as vector, text@3 as text, _score@1 as _score, _rowid@0 as _rowid]
+               LanceRead: uri=..., projection=[vector, text], source=stream(_rowid)
+                 GlobalLimitExec: skip=0, fetch=10
+@@ -4877,9 +4881,10 @@ def explain_plan(self, verbose: Optional[bool] = False):
+         ProjectionExec: expr=[vector@0 as vector, _distance@2 as _distance]
+           GlobalLimitExec: skip=0, fetch=10
+             FilterExec: _distance@2 IS NOT NULL
+-              SortExec: TopK(fetch=10), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
++              SortExec: TopK(fetch=1), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                 KNNVectorDistance: metric=l2
+-                  LanceRead: uri=..., projection=[vector], ...
+
 ```
 
-**File**: `python/python/lancedb/embeddings/utils.py` (modified, +86/-17)
+**File**: `rust/lancedb/src/query.rs` (modified, +153/-0)
 ```diff
-@@ -241,15 +241,30 @@ def retry_with_exponential_backoff(
-     exponential_base: float = 2,
-     jitter: bool = True,
-     max_retries: int = 7,
-+    max_delay: float = 60,
- ):
-     """Retry a function with exponential backoff.
- 
-+    Only errors that may succeed when repeated are retried. Errors that carry an
-+    HTTP status code are retried when the status is 408, 409, 429 or >= 500; any
-+    other 4xx status (for example 400, 401, 403, 404 or 422) is a permanent failure
-+    that is raised immediately. Errors without a recognisable status code (for
-+    example connection errors, timeouts, or exceptions raised by a custom embedding
-+    function) are retried.
-+
-+    The delay before the n-th retry is ``initial_delay * exponential_base ** n``,
-+    never more than ``max_delay``. With ``jitter`` enabled, a random amount of up to
-+    half of that delay is removed ("equal jitter"), so the actual wait is always in
-+    the range ``[delay / 2, delay]``.
-+
-     Args:
-         func (function): The function to be retried.
-         initial_delay (float): Initial delay in seconds (default is 1).
-         exponential_base (float): The base for exponential backoff (default is 2).
-         jitter (bool): Whether to add jitter to the delay (default is True).
-         max_retries (int): Maximum number of retries (default is 7).
-+        max_delay (float): Maximum delay between two attempts, in seconds
-+            (default is 60).
- 
-     Returns:
-         function: The decorated function.
-@@ -265,13 +280,12 @@ def wrapper(*args, **kwargs):
-             try:
-                 return func(*args, **kwargs)
- 
--            # Currently retrying on all exceptions as there is no way to know the
--            # format of the error msgs used by different APIs. We'll log the error
--            # and say that it is assumed that if this portion errors out, it's due
--            # to rate limit but the user should check the error message to be sure.
-+            # Errors are retried unless they are known to be permanent (see
-+            # `_is_non_retryable_error`). Custom embedding functions can raise
-+            # arbitrary exceptions, so unknown errors are assumed to be transient.
-             except Exception as e:  # noqa: PERF203
--                # Don't retry on authentication errors (e.g., OpenAI 401)
--                # These are permanent failures that won't be fixed by retrying
-+                # Don't retry permanent failures (e.g., OpenAI 401 or 404). They
-+                # won't be fixed by retrying and would only delay the real error.
-                 if _is_non_retryable_error(e):
-                     raise
- 
-@@ -280,24 +294,72 @@ def wrapper(*args, **kwargs):
-                 if num_retries > max_retries:
-                     raise Exception(
-                         f"Maximum number of retries ({max_retries}) exceeded.", e
--                    )
-+                    ) from e
- 
--                delay *= exponential_base * (1 + jitter * random.random())
-+                delay = min(delay * exponential_base, max_delay)
-+                sleep_for = delay
-+                if jitter:
-+                    sleep_for = delay / 2 + random.random() * delay / 2
-                 logging.warning(
-                     "Error occurred: %s \n Retrying in %s seconds (retry %s of %s) \n",
-                     e,
--                    delay,
-+                    sleep_for,
-                     num_retries,
-                     max_retries,
-                 )
--                time.sleep(delay)
-+                time.sleep(sleep_for)
- 
-     return wrapper
- 
- 
-+# HTTP statuses in the 4xx range that are worth retrying: request timeout,
-+# conflict (the OpenAI SDK treats it as transient) and rate limiting.
-+_RETRYABLE_CLIENT_STATUSES = (408, 409, 429)
-+
-+# AWS error codes that are reported with a 4xx status but are transient.
-+_RETRYABLE_AWS_ERROR_CODES = (
-+    "Throttl",
-+    "TooManyRequests",
-+    "RequestLimitExceeded",
-+    "ProvisionedThroughputExceeded",
-+    "ModelNotReady",
-+    "ModelTimeout",
-+)
-+
-+
-+def _get_http_status(error: Exception):
-+    """Best-effort extraction of an HTTP status code from an exception.
-+
-+    Provider SDKs expose it in different ways: ``status_code`` (openai, cohere),
-+    ``http_status`` (voyageai), ``response.status_code`` (requests, httpx),
-+    ``code`` (google-api-core, urllib) or ``response["ResponseMetadata"]``
-+    (botocore). Returns None if no status can be found.
-+    """
-+    candidates = [
-+        getattr(error, "status_code", None),
-+        getattr(error, "http_status", None),
-+    ]
-+    response = getattr(error, "response", None)
-+    if isinstance(response, dict):
-+        candidates.append(response.get("ResponseMetadata", {}).get("HTTPStatusCode"))
-+    else:
-+        candidates.append(getattr(response, "status_code", None))
-+    candidates.append(getattr(error, "code", None))
-+
-+    for status in candidates:
-+        if isinstance(status, int) and not isinstance(status, bool):
-+    
-```
-
-**File**: `python/python/tests/test_embeddings.py` (modified, +263/-0)
-```diff
-@@ -633,6 +633,269 @@ class MockAuthenticationError(Exception):
-     assert mock_sleep.call_count == 0
- 
- 
-+class _HttpStatusError(Exception):
-+    """Stand-in for provider SDK errors (openai, cohere, ...) with a status code."""
-+
-+    def __init__(self, status_code, message="error"):
-+        super().__init__(message)
-+        self.status_code = status_code
-+
-+
-+class _ResponseStatusError(Exception):
-+    """Stand-in for requests/httpx errors, which expose `response.status_code`."""
-+
-+    def __init__(self, status_code):
-+        super().__init__(f"HTTP {status_code}")
-+        self.response = MagicMock(status_code=status_code)
-+
-+
-+def _run_with_retry(side_effect, **kwargs):
-+    """Run a function through the retry helper with a mocked `time.sleep`.
-+
-+    Returns (mock_func, sleeps, error).
-+    """
-+    from lancedb.embeddings.utils import retry_with_exponential_backoff
-+
-+    mock_func = MagicMock(side_effect=side_effect)
-+    sleeps = []
-+    error = None
-+    with patch("time.sleep", side_effect=sleeps.append):
-+        try:
-+            retry_with_exponential_backoff(mock_func, **kwargs)()
-+        except Exception as e:
-+            error = e
-+    return mock_func, sleeps, error
-+
-+
-+@pytest.mark.parametrize("status", [400, 401, 403, 404, 405, 410, 413, 422])
-+@pytest.mark.parametrize("make_error", [_HttpStatusError, _ResponseStatusError])
-+def test_retry_does_not_retry_permanent_http_errors(status, make_error):
-+    err = make_error(status)
-+    mock_func, sleeps, error = _run_with_retry(err, max_retries=7)
-+
-+    assert error is err
-+    assert mock_func.call_count == 1
-+    assert sleeps == []
-+
-+
-+@pytest.mark.parametrize("status", [408, 409, 429, 500, 502, 503, 504])
-+@pytest.mark.parametrize("make_error", [_HttpStatusError, _ResponseStatusError])
-+def test_retry_retries_transient_http_errors(status, make_error):
-+    mock_func, sleeps, error = _run_with_retry(
-+        [make_error(status), make_error(status), "result"], max_retries=7
-+    )
-+
-+    assert error is None
-+    assert mock_func.call_count == 3
-+    assert len(sleeps) == 2
-+
-+
-+@pytest.mark.parametrize(
-+    "exc",
-+    [
-+        ConnectionError("connection reset"),
-+        TimeoutError("timed out"),
-+        OSError("network is unreachable"),
-+        ValueError("custom embedding function failure"),
-+        RuntimeError("boom"),
-+        Exception("plain exception"),
-+    ],
-+)
-+def test_retry_retries_errors_without_http_status(exc):
-+    mock_func, sleeps, error = _run_with_retry([exc, exc, "result"], max_retries=7)
-+
-+    assert error is None
-+    assert mock_func.call_count == 3
-+    assert len(sleeps) == 2
-+
-+
-+def test_retry_error_status_attributes_of_other_types_are_ignored():
-+    # `code` is a string for openai errors ("model_not_found"), and arbitrary
-+    # exceptions may carry unrelated numeric attributes. Neither is an HTTP status.
-+    class WeirdError(Exception):
-+        code = "model_not_found"
-+        status_code = None
-+
-+    class ExitCodeError(Exception):
-+        code = 2
-+
-+    for exc in (WeirdError("a"), ExitCodeError("b")):
-+        mock_func, sleeps, error = _run_with_retry(exc, max_retries=2)
-+        assert mock_func.call_count == 3
-+        assert len(sleeps) == 2
-+
-+
-+def test_retry_botocore_style_errors():
-+    # botocore ClientError exposes `response["ResponseMetadata"]["HTTPStatusCode"]`.
-+    # Bedrock reports throttling with a 400, which must stay retryable.
-+    class ClientError(Exception):
-+        def __init__(self, status, code):
-+            super().__init__(code)
-+            self.response = {
-+                "ResponseMetadata": {"HTTPStatusCode": status},
-+                "Error": {"Code": code},
-+            }
-+
-+    throttled = ClientError(400, "ThrottlingException")
-+    mock_func, sleeps, error = _run_with_retry([throttled, "result"], max_retries=3)
-+    assert error is None
-+    assert mock_func.call_count == 2
-+
-+    invalid = ClientError(400, "ValidationException")
-+    mock_func, sleeps, error = _run_with_retry(invalid, max_retries=3)
-+    assert error is invalid
-+    assert mock_func.call_count == 1
-+    assert sleeps == []
-+
-+
-+def test_retry_authentication_error_by_name_not_retried():
-+    class AuthenticationError(Exception):
-+        pass
-+
-+    mock_func, sleeps, error = _run_with_retry(AuthenticationError("bad key"))
-+    assert isinstance(error, AuthenticationError)
-+    assert mock_func.call_count == 1
-+    assert sleeps == []
-+
-+
-+def test_retry_gives_up_after_max_retries_with_original_error_attached():
-+    original = _HttpStatusError(503, "overloaded")
-+    mock_func, sleeps, error = _run_with_retry(original, max_retries=3)
-+
-+    assert mock_func.call_count == 4
-+    assert len(sleeps) == 3
-+    assert "Maximum number of retries (3) exceeded" in str(error)
-+    assert error.args[1] is original
-+    assert error.__cause__ is original
-+
-+
-+def test_retry_delay_is_capped_by_max_delay():
-+    # Default settings (7 retries, 60s cap): the old implementation could slee
-```
-
----
-
-### Incident Patch 2: `bc4c32b7` (2026-10-22)
-**Commit Message**: fix: keep tagged versions when pruning in optimize (#4544)
-
-`optimize()` fails once a tagged version is older than the cleanup
-cutoff, although the docs say tagged versions
-are exempt from cleanup, and the failed prune also skips the
-index-optimize step (repro and numbers in the issue).
-
-Change: `OptimizeAction::Prune` already exposes
-`error_if_tagged_old_versions: Option<bool>`, so no new API.
-`cleanup_old_versions` and `cleanup_old_versions_before` in
-`rust/lancedb/src/table/optimize.rs` now use
-`unwrap_or(false)`, which covers `OptimizeAction::Prune`,
-`OptimizeAction::All` and `optimize_prune_before`. The
-Python and Node bindings pass `None`, which now means "retain tagged
-versions"; I left `python/src/table.rs` and
-`nodejs/src/table.rs` untouched (this also avoids a conflict with #3870,
-which edits that region). `Some(true)`
-still opts in to the error. Doc comments updated; the sentence in
-`docs/web/management/table.mdx` is accurate once
-this lands.
-
-Tests: Rust `test_optimize_prune_retains_tagged_versions` (`Some(true)`
-still errors; the default retains the tag;
-`optimize_prune_before`; `checkout_tag` plus a data read), a Python sync
-test with a scalar index (index step runs,
-
-
-**File**: `nodejs/__test__/table.test.ts` (modified, +15/-0)
-```diff
-@@ -3742,6 +3742,21 @@ describe("when optimizing a dataset", () => {
-     expect(stats.prune.oldVersionsRemoved).toBe(2);
-   });
- 
-+  it("retains tagged versions older than the cleanup cutoff", async () => {
-+    await (await table.tags()).create("keep", 1);
-+    await table.add([{ id: 3 }]);
-+
-+    const cutoff = await nextMillisecond();
-+    const stats = await table.optimize({ cleanupOlderThan: cutoff });
-+    // Versions 2 and 3 are pruned, tagged version 1 is retained
-+    expect(stats.prune.oldVersionsRemoved).toBe(2);
-+
-+    await table.checkout("keep");
-+    expect(await table.countRows()).toBe(1);
-+    await table.checkoutLatest();
-+    expect(await table.countRows()).toBe(3);
-+  });
-+
-   it("delete unverified", async () => {
-     const version = await table.version();
-     const versionFile = `${tmpDir.name}/${table.name}.lance/_versions/${String(
-```
-
-**File**: `python/python/tests/test_table.py` (modified, +51/-0)
-```diff
-@@ -4792,6 +4792,57 @@ def test_optimize_warns_on_zero_cleanup_sync(mem_db: DBConnection):
-     assert all("concurrent" in str(w.message) for w in seen)
- 
- 
-+def test_optimize_retains_tagged_versions(tmp_db: DBConnection):
-+    # A tagged version older than the cleanup cutoff must be retained, not make
-+    # optimize() fail part-way (after compaction, before the index step).
-+    table = tmp_db.create_table(
-+        "test", data=pa.table({"id": list(range(100)), "text": ["a"] * 100})
-+    )
-+    table.create_index("id", config=BTree())
-+    table.tags.create("release-1", table.version)
-+    tagged_version = table.version
-+    for i in range(3):
-+        table.add(pa.table({"id": [1000 + i], "text": ["new"]}))
-+    assert table.stats()["fragment_stats"]["num_fragments"] == 4
-+    assert table.index_stats("id_idx").num_unindexed_rows == 3
-+    sleep(1.1)
-+
-+    table.optimize(cleanup_older_than=timedelta(seconds=1))
-+
-+    # The index step ran after the prune step
-+    assert table.index_stats("id_idx").num_unindexed_rows == 0
-+    # It stays optimizable
-+    table.optimize(cleanup_older_than=timedelta(seconds=1))
-+    assert table.stats()["fragment_stats"]["num_fragments"] == 1
-+
-+    # Untagged old versions were pruned, the tagged one was retained
-+    versions = [v["version"] for v in table.list_versions()]
-+    assert tagged_version in versions
-+    for added in range(tagged_version + 1, tagged_version + 4):
-+        assert added not in versions
-+    assert len(table) == 103
-+
-+    table.checkout("release-1")
-+    assert len(table) == 100
-+    assert table.to_arrow().num_rows == 100
-+
-+
-+@pytest.mark.asyncio
-+async def test_optimize_retains_tagged_versions_async(tmp_db_async: AsyncConnection):
-+    table = await tmp_db_async.create_table("test", data=[{"x": [1]}])
-+    await table.tags.create("keep", await table.version())
-+    await table.add(data=[{"x": [2]}])
-+    await table.add(data=[{"x": [3]}])
-+    sleep(1.1)
-+
-+    stats = await table.optimize(cleanup_older_than=timedelta(seconds=1))
-+    assert stats.prune.old_versions_removed >= 1
-+
-+    await table.checkout("keep")
-+    assert await table.count_rows() == 1
-+    assert await table.query().to_arrow() == pa.table({"x": [[1]]})
-+
-+
- def test_replace_field_metadata(tmp_path):
-     db = lancedb.connect(tmp_path)
-     table = db.create_table("my_table", data=[{"x": 0}])
-```
-
-**File**: `rust/lancedb/src/table/optimize.rs` (modified, +101/-4)
-```diff
-@@ -69,7 +69,11 @@ pub enum OptimizeAction {
-         /// **WARNING**: This should only be set to true if you can guarantee that no other process is
-         /// currently working on this dataset.  Otherwise the dataset could be put into a corrupted state.
-         delete_unverified: Option<bool>,
-+        /// Tagged versions are never removed, regardless of their age.
-+        ///
-         /// If true, an error will be returned if there are any old versions that are still tagged.
-+        /// If false or `None` (the default), tagged versions are silently retained and all other
-+        /// old versions are removed.
-         error_if_tagged_old_versions: Option<bool>,
-     },
-     /// Optimize the indices
-@@ -125,6 +129,12 @@ pub(crate) async fn optimize_indices(table: &NativeTable, options: &OptimizeOpti
- ///   no other process is currently working on this dataset.  Otherwise the
- ///   dataset could be put into a corrupted state.
- ///
-+/// * `error_if_tagged_old_versions` - Tagged versions are always retained.  If
-+///   this is true, an error is returned when a tagged version is older than the
-+///   cutoff.  Defaults to false (the tagged versions are retained silently),
-+///   unlike Lance's own default, so that `optimize` does not fail (and skip the
-+///   steps after pruning) once a tagged version ages past the cutoff.
-+///
- /// This calls into [lance::dataset::Dataset::cleanup_old_versions] and
- /// returns the result.
- pub(crate) async fn cleanup_old_versions(
-@@ -136,7 +146,11 @@ pub(crate) async fn cleanup_old_versions(
-     table.dataset.ensure_mutable()?;
-     let dataset = table.dataset.get().await?;
-     let stats = dataset
--        .cleanup_old_versions(older_than, delete_unverified, error_if_tagged_old_versions)
-+        .cleanup_old_versions(
-+            older_than,
-+            delete_unverified,
-+            Some(error_if_tagged_old_versions.unwrap_or(false)),
-+        )
-         .await?;
-     // Computed-column signature sidecars live outside lance's directories;
-     // drop the ones the surviving versions no longer reference.
-@@ -161,9 +175,8 @@ pub(crate) async fn cleanup_old_versions_before(
-     if let Some(delete_unverified) = delete_unverified {
-         policy = policy.delete_unverified(delete_unverified);
-     }
--    if let Some(error_if_tagged_old_versions) = error_if_tagged_old_versions {
--        policy = policy.error_if_tagged_old_versions(error_if_tagged_old_versions);
--    }
-+    // Tagged versions are retained rather than raising an error unless asked.
-+    policy = policy.error_if_tagged_old_versions(error_if_tagged_old_versions.unwrap_or(false));
-     let stats = dataset.cleanup_with_policy(policy.build()).await?;
-     // Computed-column signature sidecars live outside lance's directories;
-     // drop the ones the surviving versions no longer reference.
-@@ -511,6 +524,90 @@ mod tests {
-         assert_eq!(all_values, expected);
+@@ -2714,6 +2714,159 @@ mod tests {
+         }
      }
  
 +    #[tokio::test]
-+    async fn test_optimize_prune_retains_tagged_versions() {
-+        let tmpdir = tempfile::tempdir().unwrap();
-+        let conn = connect(tmpdir.path().to_str().unwrap())
-+            .execute()
-+            .await
-+            .unwrap();
-+
-+        let schema = Arc::new(Schema::new(vec![Field::new("i", DataType::Int32, false)]));
-+        let make_batch = |start: i32| {
-+            RecordBatch::try_new(
-+                schema.clone(),
-+                vec![Arc::new(Int32Array::from_iter_values(start..start + 10))],
-+            )
-+            .unwrap()
-+        };
-+
++    async fn test_limit_usize_max() {
++        let conn = connect("memory://foo").execute().await.unwrap();
 +        let table = conn
-+            .create_table("test_prune_tagged", make_batch(0))
++            .create_table("my_table", make_non_empty_batches())
 +            .execute()
 +            .await
 +            .unwrap();
-+        // Tag the first version, then create more versions after it.
-+        table.tags().await.unwrap().create("keep", 1).await.unwrap();
-+        for i in 1..4 {
-+            table.add(make_batch(i * 10)).execute().await.unwrap();
-+        }
-+        assert_eq!(table.list_versions().await.unwrap().len(), 4);
++        let expected = table.count_rows(None).await.unwrap();
 +
-+        // Explicitly asking for an error still errors, and leaves everything in place.
-+        let err = table
-+            .optimize(OptimizeAction::Prune {
-+                older_than: Some(chrono::Duration::try_days(0).unwrap()),
-+                delete_unverified: Some(true),
-+                error_if_tagged_old_versions: Some(true),
-+            })
++        let batches: Vec<RecordBatch> = table
++            .query()
++            .limit(usize::MAX)
++            .execute()
 +            .await
-+            .unwrap_err();
-+        assert!(err.to_string().contains("tagged version"), "{err}");
-+        assert_eq!(table.list_versions().await.unwrap().len(), 4);
-+
-+        // By default, tagged versions are retained and the other old versions are removed.
-+        let stats = table
-+            .optimize(OptimizeAction::Prune {
-+                older_than: Some(chrono::Duration::try_days(0).unwrap()),
-+                delete_unverified: Some(true),
-+                error_if_tagged_old_versions: None,
-+            })
++            .unwrap()
++            .try_collect()
 +            .await
 +            .unwrap();
-+        assert_eq!(stats.prune.unwrap().old_v
++        let num_rows: usize = batches.iter().map(|b| b.num_rows()).sum();
++        assert_eq!(num_rows, expected);
++
++        let batches: Vec<RecordBatch> = table
++            .query()
++            .limit(usize::MAX)
++            .offset(1)
++            .nearest_to(&[0.1; 4])
++            .unwrap()
++            .execute()
++            .await
++            .unwrap()
++            .try_collect()
++            .await
++            .unwrap();
++        let num_rows: usize = batches.iter().map(|b| b.num_rows()).sum();
++        assert_eq!(num_rows, expected - 1);
++    }
++
++    #[tokio::test]
++    async fn test_indexed_vector_limit_usize_max() {
++        use crate::index::vector::IvfFlatIndexBuilder;
++
++        let conn = connect("memory://indexed_limit").execute().await.unwrap();
++        let table = conn
++            .create_table("vectors", make_non_empty_batches())
++            .execute()
++            .await
++            .unwrap();
++        table
++            .create_index(
++                &["vector"],
++                Index::IvfFlat(IvfFlatIndexBuilder::default().num_partitions(1)),
++            )
++            .execute()
++            .await
++            .unwrap();
++        let expected = table.count_rows(None).await.unwrap();
++
++        for limit in [expected, i64::MAX as usize, usize::MAX] {
++            for offset in [0, 1, usize::MAX] {
++                for (bypass, refine_factor) in [(false, None), (false, Some(2)), (true, None)] {
++                    let query = table
++                        .query()
++                        .limit(limit)
++                        .offset(offset)
++                        .nearest_to(&[0.1; 4])
++                        .unwrap();
++                    let query = if bypass {
++                        query.bypass_vector_index()
++                    } else {
++                        query
++                    };
++                    let query = if let Some(factor) = refine_factor {
++                        query.refine_factor(factor)
++                    } else {
++                        query
++                    };
++                    let batches: Vec<RecordBatch> =
++                        query.execute().await.unwrap().try_collect().await.unwrap();
++                    assert_eq!(
++                        batches.iter().map(RecordBatch::num_rows).sum::<usize>(),
++                        expected.saturating_sub(offset),
++                        "limit={limit}, offset={offset}, bypass={bypass}, refine={refine_factor:?}"
++                    );
++                }
++            }
++        }
++    }
++
++    #[tokio::test]
++    async fn test_empty_vector_limit_usize_max() {
++        let conn = connect("memory://empty_limit").execute().await.unwrap();
++        let table = conn
++            .create_table("vectors", make_test_batches())
++            .execute()
++            .await
++            .unwrap();
++        let batches: Vec<RecordBatch> = table
++            .query()
++            .limit(usize::MAX)
++            .nearest_to(&[0.1; 128])
++            .unwrap()
++            .execute()
++            .await
++            .unwrap()
++            .try_collect()
++            .await
++            .unwrap();
++        assert_eq!(batches.iter().map(RecordBatch::num_rows).sum::<usize>(), 0);
++    }
++
++    #[tokio::test]
++    async fn test_fts_limit_usize_max_with_offset() {
++        let conn = connect("memory://fts_limit").execute().await.unwrap();
++        let data = RecordBatch::try_from_iter([(
++            "text",
++            Arc::new(StringArray::from_iter_values((0..32).map(|_| "hello")))
++                as arrow_array::ArrayRef,
++        )])
++        .unwrap();
++        let table = conn
++            .create_table("documents", data)
++            .execute()
++            .await
++            .unwrap();
++        table
++            .create_index(&["text"], Index::FTS(Default::default()))
++            .execute()
++            .await
++            .unwrap();
++
++        for limit in [32, i64::MAX as usize, usize::MAX] {
++            for offset in [0, 1, i64::MAX as usize, usize::MAX] {
++                let batches: Vec<RecordBatch> = table
++                    .query()
++                    .full_text_search(FullTextSearchQuery::new("hello".into()))
++                    .limit(limit)
++                    .offset(offset)
++                    .execute()
++         
+```
+
+**File**: `rust/lancedb/src/table/query.rs` (modified, +18/-3)
+```diff
+@@ -280,7 +280,13 @@ pub async fn create_plan(
+ 
+         let (_, element_type) = lance::index::vector::utils::get_vector_type(schema, &column)?;
+         let is_binary = matches!(element_type, DataType::UInt8);
+-        let top_k = query.base.limit.unwrap_or(DEFAULT_TOP_K) + query.base.offset.unwrap_or(0);
++        let top_k = query
++            .base
++            .limit
++            .unwrap_or(DEFAULT_TOP_K)
++            .saturating_add(query.base.offset.unwrap_or(0))
++            // Lance allocates candidates from k; no search can return more rows than the table.
++            .min(ds_ref.count_rows(None).await?.max(1));
+ 
+         if is_binary {
+             let query_vector = arrow::compute::cast(&query_vector, &DataType::UInt8)?;
+@@ -317,9 +323,18 @@ pub async fn create_plan(
+     // For a batch query, `nearest` already applies k to each query vector.
+     // Adding Scanner's global limit would truncate the combined result to k rows.
+     if !is_batch_query {
++        let offset = query
++            .base
++            .offset
++            .map(|offset| i64::try_from(offset).unwrap_or(i64::MAX));
+         scanner.limit(
+-            query.base.limit.map(|limit| limit as i64),
+-            query.base.offset.map(|offset| offset as i64),
++            // Lance's FTS planner adds limit + offset as i64.
++            query.base.limit.map(|limit| {
++                i64::try_from(limit)
++                    .unwrap_or(i64::MAX)
++                    .min(i64::MAX - offset.unwrap_or(0))
++            }),
++            offset,
+         )?;
+     }
+ 
 ```
 
 ---
 
-### Incident Patch 3: `118e606e` (2026-10-22)
-**Commit Message**: fix(python): align vector parent indices after flattening null lists (#4572)
+### Incident Patch 2: `dd479502` (2026-10-24)
+**Commit Message**: fix(python): align sync remote methods with async behavior (#4411)
 
-Arrow's `flatten()` skips child values hidden under null list parents,
-but `list_parent_indices()` can retain their indices. This makes
-`has_nan_values()` raise `ArrowInvalid` because the parent indices and
-NaN mask have different lengths.
+Sync remote table and connection methods inherited bare base-class
+stubs, so unsupported conversion and bulk-drop operations raised
+`NotImplementedError` with an empty message and differed from the async
+API.
 
-Filter out indices belonging to null parents before applying the mask.
-The regression test covers `ListArray` and `LargeListArray`,
-float16/32/64, and chunked inputs: 12 cases. NaN and null-component
-policies stay the same.
+Delegate `to_lance()`, `drop_all_tables()`, and `drop_database()` to the
+async implementation. Sync and async remote Lance conversion share
+#4306's native-table guard and reject before requesting a URI or opening
+client storage. Conversion documentation directs remote reads through
+server queries.
 
-The crash also affects #4503. This patch fixes it separately from that
-PR's changes to bad-vector policies.
+Add an explicit Polars error, suggest query conversions in
+Arrow/Pandas/Polars errors, and give the remaining base-class errors an
+operation name. Preserve upstream `blob_mode` validation for remote
+Arrow and Pandas conversion. The shared remote bulk-drop error suggests
+dropping tables individually.
 
-Validation:
+Regression tests cover sync/async rejection parity, accessible and
+missing advertised locations, pinned versions, and bulk-drop rejection
+without requests. Sync blob query tests verify that descriptions come
+from the server and unsupported modes cannot open client storage. Keep
+the remote closed-blob-handle assertion c
 
-- All 12 regression cases failed before the fix. The utility suite now
-passes with 87 passed and 1 skipped.
-- Ruff lint and formatting pass for both changed files, as does `git
-diff --check`.
-- The patch applies cleanly to main at `ca275b6d`. The patched helper
-from that revision also passes all 12 cases.
-- A separate AI reviewer checked commit `343082a6` and found no blocking
-issues. They reran the utility suite and compared 4,059 generated cases
-plus 12 explicit null-parent cases with a row-by-row reference
-implementation. Tho
-
-**File**: `python/python/lancedb/table.py` (modified, +5/-0)
+**File**: `python/python/lancedb/db.py` (modified, +24/-7)
 ```diff
-@@ -5333,6 +5333,11 @@ def has_nan_values(arr: Union[pa.ListArray, pa.ChunkedArray]) -> pa.BooleanArray
-     else:
-         values_has_nan = pc.is_nan(values)
-     values_indices = pc.list_parent_indices(arr)
-+    if arr.null_count:
-+        # Match flatten(), which excludes child spans under null parent lists.
-+        values_indices = pc.filter(
-+            values_indices, pc.take(pc.is_valid(arr), values_indices)
+@@ -548,7 +548,9 @@ def create_table(
+         LanceTable(name='table4', ...)
+ 
+         """
+-        raise NotImplementedError
++        raise NotImplementedError(
++            "create_table is not supported for this connection type"
 +        )
-     has_nan_indices = pc.unique(pc.filter(values_indices, values_has_nan))
-     indices = pa.array(range(len(arr)), type=pa.uint32())
-     return pc.is_in(indices, has_nan_indices)
+ 
+     def __getitem__(self, name: str) -> LanceTable:
+         return self.open_table(name)
+@@ -603,7 +605,9 @@ def open_table(
+         -------
+         A LanceTable object representing the table.
+         """
+-        raise NotImplementedError
++        raise NotImplementedError(
++            "open_table is not supported for this connection type"
++        )
+ 
+     def create_materialized_view(
+         self,
+@@ -743,13 +747,17 @@ def drop_table(self, name: str, namespace_path: Optional[List[str]] = None):
+         """
+         if namespace_path is None:
+             namespace_path = []
+-        raise NotImplementedError
++        raise NotImplementedError(
++            "drop_table is not supported for this connection type"
++        )
+ 
+     def drop_table_async(
+         self, name: str, namespace_path: Optional[List[str]] = None
+     ) -> Job:
+         """Start dropping a table and return its cleanup job."""
+-        raise NotImplementedError
++        raise NotImplementedError(
++            "drop_table_async is not supported for this connection type"
++        )
+ 
+     def rename_table(
+         self,
+@@ -777,19 +785,26 @@ def rename_table(
+             cur_namespace_path = []
+         if new_namespace_path is None:
+             new_namespace_path = []
+-        raise NotImplementedError
++        raise NotImplementedError(
++            "rename_table is not supported for this connection type"
++        )
+ 
+     def drop_database(self):
+         """
+         Drop database
+         This is the same thing as dropping all the tables
+         """
+-        raise NotImplementedError
++        raise NotImplementedError(
++            "drop_database is not supported for this connection type"
++        )
+ 
+     def drop_all_tables(self, namespace_path: Optional[List[str]] = None):
+         """
+         Drop all tables from the database
+ 
++        Remote connections do not currently support this operation. Use
++        ``list_tables()`` and ``drop_table()`` to drop tables individually.
++
+         Parameters
+         ----------
+         namespace_path: List[str], optional
+@@ -798,7 +813,9 @@ def drop_all_tables(self, namespace_path: Optional[List[str]] = None):
+         """
+         if namespace_path is None:
+             namespace_path = []
+-        raise NotImplementedError
++        raise NotImplementedError(
++            "drop_all_tables is not supported for this connection type"
++        )
+ 
+     @property
+     def uri(self) -> str:
 ```
 
-**File**: `python/python/tests/test_util.py` (modified, +15/-0)
+**File**: `python/python/lancedb/remote/db.py` (modified, +14/-0)
 ```diff
-@@ -21,6 +21,7 @@
-     _infer_target_schema,
-     _merge_metadata,
-     _sanitize_data,
-+    has_nan_values,
-     sanitize_create_table,
- )
- import pyarrow as pa
-@@ -489,6 +490,20 @@ def test_handle_bad_vectors_nan(on_bad_vectors):
-     assert output["vector"].combine_chunks() == expected
+@@ -841,6 +841,20 @@ def drop_table_async(
+         job = LOOP.run(self._conn.drop_table_async(name, namespace_path=namespace_path))
+         return Job(job if isinstance(job, AsyncJob) else AsyncJob(job))
+ 
++    @override
++    def drop_all_tables(self, namespace_path: Optional[List[str]] = None):
++        """Drop all tables from the database.
++
++        The remote API does not currently support this operation. Use
++        ``list_tables()`` and ``drop_table()`` to drop tables individually.
++        """
++        LOOP.run(self._conn.drop_all_tables(namespace_path=namespace_path))
++
++    @override
++    def drop_database(self):
++        """Deprecated alias for ``drop_all_tables()``."""
++        LOOP.run(self._conn.drop_database())
++
+     @override
+     def rename_table(
+         self,
+```
+
+**File**: `python/python/lancedb/remote/table.py` (modified, +27/-2)
+```diff
+@@ -7,6 +7,7 @@
+ from functools import cached_property
+ import os
+ from typing import (
++    TYPE_CHECKING,
+     Any,
+     Callable,
+     Dict,
+@@ -82,6 +83,10 @@
+ from ..types import BaseTokenizerType
+ from ..util import infer_vector_column_name
+ 
++if TYPE_CHECKING:
++    import lance
++    import polars as pl
++
+ 
+ class RemoteTable(Table):
+     def __init__(
+@@ -243,12 +248,32 @@ def list_versions(self):
+     def to_arrow(self, *, blob_mode: BlobMode = "lazy") -> pa.Table:
+         """to_arrow() is not supported for remote tables."""
+         validate_blob_mode(blob_mode)
+-        raise NotImplementedError("to_arrow() is not supported for remote tables.")
++        raise NotImplementedError(
++            "to_arrow() is not supported for remote tables. "
++            "Use table.search().to_arrow() instead."
++        )
+ 
+     def to_pandas(self, blob_mode: BlobMode = "lazy", **kwargs):
+         """to_pandas() is not supported for remote tables."""
+         validate_blob_mode(blob_mode)
+-        raise NotImplementedError("to_pandas() is not supported for remote tables.")
++        raise NotImplementedError(
++            "to_pandas() is not supported for remote tables. "
++            "Use table.search().to_pandas() instead."
++        )
++
++    def to_lance(self, **kwargs) -> "lance.LanceDataset":
++        """Direct Lance dataset access is not supported for remote tables.
++
++        Use ``table.search().to_arrow()`` to read query results through the server.
++        """
++        return LOOP.run(self._table.to_lance(**kwargs))
++
++    def to_polars(self, **kwargs) -> "pl.LazyFrame":
++        """Use ``table.search().to_polars()`` to read remote query results."""
++        raise NotImplementedError(
++            "to_polars() is not supported for remote tables. "
++            "Use table.search().to_polars() instead."
++        )
+ 
+     def checkout(self, version: Union[int, str]):
+         result = LOOP.run(self._table.checkout(version))
+```
+
+**File**: `python/python/lancedb/table.py` (modified, +34/-22)
+```diff
+@@ -1356,13 +1356,13 @@ class Table(ABC):
+     @abstractmethod
+     def name(self) -> str:
+         """The name of this Table"""
+-        raise NotImplementedError
++        raise NotImplementedError("name is not supported for this table type")
+ 
+     @property
+     @abstractmethod
+     def version(self) -> int:
+         """The version of this Table"""
+-        raise NotImplementedError
++        raise NotImplementedError("version is not supported for this table type")
+ 
+     @property
+     @abstractmethod
+@@ -1371,7 +1371,7 @@ def schema(self) -> pa.Schema:
+         of this Table
+ 
+         """
+-        raise NotImplementedError
++        raise NotImplementedError("schema is not supported for this table type")
+ 
+     @property
+     @abstractmethod
+@@ -1400,7 +1400,7 @@ def tags(self) -> Tags:
+             tags = table.tags.list()
+ 
+         """
+-        raise NotImplementedError
++        raise NotImplementedError("tags is not supported for this table type")
+ 
+     @property
+     def branches(self) -> "Branches":
+@@ -1409,11 +1409,11 @@ def branches(self) -> "Branches":
+         Branches are isolated, writable lines of history forked from another
+         branch (or version). Writes on a branch do not affect ``main``.
+         """
+-        raise NotImplementedError
++        raise NotImplementedError("branches is not supported for this table type")
+ 
+     def current_branch(self) -> Optional[str]:
+         """The branch this table handle is scoped to, or ``None`` for ``main``."""
+-        raise NotImplementedError
++        raise NotImplementedError("current_branch is not supported for this table type")
+ 
+     def __len__(self) -> int:
+         """The number of rows in this Table"""
+@@ -1436,7 +1436,7 @@ def count_rows(self, filter: Optional[str] = None) -> int:
+         filter: str, optional
+             A SQL where clause to filter the rows to count.
+         """
+-        raise NotImplementedError
++        raise NotImplementedError("count_rows is not supported for this table type")
+ 
+     def to_pandas(self, blob_mode: BlobMode = "lazy", **kwargs) -> "pandas.DataFrame":
+         """Return the table as a pandas DataFrame.
+@@ -1471,20 +1471,26 @@ def to_arrow(self, *, blob_mode: BlobMode = "lazy") -> pa.Table:
+         -------
+         pa.Table
+         """
+-        raise NotImplementedError
++        raise NotImplementedError("to_arrow is not supported for this table type")
+ 
+     def to_lance(self, **kwargs) -> lance.LanceDataset:
+-        """Return the table as a lance.LanceDataset.
++        """Return a local table as a lance.LanceDataset.
++
++        Remote tables cannot be opened as Lance datasets by the client. Use
++        ``table.search().to_arrow()`` to read them through the server.
+ 
+         Returns
+         -------
+         lance.LanceDataset
+         """
+-        raise NotImplementedError
++        raise NotImplementedError("to_lance is not supported for this table type")
+ 
+     def to_polars(self, **kwargs) -> "pl.LazyFrame":
+         """Return the table as a Polars LazyFrame.
+ 
++        For remote tables, use ``table.search().to_polars()`` to convert query
++        results to a Polars DataFrame.
++
+         Note
+         ----
+         The Polars streaming engine is not supported because it does not currently
+@@ -1495,7 +1501,7 @@ def to_polars(self, **kwargs) -> "pl.LazyFrame":
+         -------
+         polars.LazyFrame
+         """
+-        raise NotImplementedError
++        raise NotImplementedError("to_polars is not supported for this table type")
+ 
+     # New unified API overload
+     @overload
+@@ -1600,7 +1606,7 @@ def create_index(
+         ...     "l2", vector_column_name="vector"
+         ... )
+         """
+-        raise NotImplementedError
++        raise NotImplementedError("create_index is not supported for this table type")
+ 
+     def create_index_async(
+         self,
+@@ -1618,7 +1624,9 @@ def create_index_async(
+         be complete when returned; callers must not assume the index exists
+         until :meth:`Job.wait` returns.
+         """
+-        raise NotImplementedError
++        raise NotImplementedError(
++            "create_index_async is not supported for this table type"
++        )
+ 
+     def drop_index(self, name: str) -> None:
+         """
+@@ -1638,7 +1646,7 @@ def drop_index(self, name: str) -> None:
+         Use [list_indices][lancedb.table.Table.list_indices] to find the names of
+         the indices.
+         """
+-        raise NotImplementedError
++        raise NotImplementedError("drop_index is not supported for this table type")
+ 
+     def wait_for_index(
+         self, index_names: Iterable[str], timeout: timedelta = timedelta(seconds=300)
+@@ -1655,14 +1663,14 @@ def wait_for_index(
+         timeout: timedelta
+             Timeout to wait for asynchronous indexing. The default is 5 minutes.
+         """
+-        raise NotImplementedError
++        raise NotImplementedError("wait_for_index is not supported for this table type")
+ 
+     @abstractmethod
+     def stats(self)
+```
+
+**File**: `python/python/tests/test_errors.py` (modified, +21/-0)
+```diff
+@@ -3,7 +3,28 @@
+ 
+ import pickle
+ 
++import pytest
++
++from lancedb.db import DBConnection
+ from lancedb.remote.errors import HttpError, LanceDBClientError, RetryError
++from lancedb.table import Table
++
++
++@pytest.mark.parametrize(
++    "base, method",
++    [
++        (Table, "to_lance"),
++        (Table, "to_polars"),
++        (DBConnection, "drop_all_tables"),
++        (DBConnection, "drop_database"),
++    ],
++)
++def test_base_unsupported_methods_have_messages(base, method):
++    with pytest.raises(NotImplementedError) as exc_info:
++        getattr(base, method)(None)
++    message = str(exc_info.value)
++    assert method in message
++    assert "not supported" in message
  
  
-+@pytest.mark.parametrize("dtype", [pa.float16(), pa.float32(), pa.float64()])
-+@pytest.mark.parametrize("large", [False, True])
-+@pytest.mark.parametrize("chunked", [False, True])
-+def test_has_nan_values_skips_hidden_children_of_null_lists(dtype, large, chunked):
-+    array_type = pa.LargeListArray if large else pa.ListArray
-+    values = pa.array([float("nan"), None, float("nan"), 3.0, 4.0, 5.0], type=dtype)
-+    arr = array_type.from_arrays(
-+        [0, 2, 4, 6], values, mask=pa.array([True, False, False])
+ def test_pickle_lancedb_client_error():
+```
+
+**File**: `python/python/tests/test_remote_db.py` (modified, +148/-9)
+```diff
+@@ -857,10 +857,116 @@ def handler(request):
+ 
+     with mock_lancedb_connection(handler) as db:
+         table = db.create_table("test", [{"id": 1}])
+-        with pytest.raises(NotImplementedError):
+-            table.to_arrow()
+-        with pytest.raises(NotImplementedError):
+-            table.to_pandas()
++        for method in ["to_arrow", "to_pandas", "to_polars"]:
++            with pytest.raises(NotImplementedError) as exc_info:
++                getattr(table, method)()
++            message = str(exc_info.value)
++            assert method in message
++            assert "not" in message and "supported" in message
++            assert "remote tables" in message
++            assert "cloud" not in message.lower()
++            assert f"search().{method}()" in message
++
++
++@pytest.mark.parametrize("method", ["to_arrow", "to_pandas"])
++@pytest.mark.parametrize("blob_mode", ["lazy", "descriptions", "bytes", "invalid"])
++def test_remote_conversion_blob_mode_errors(method, blob_mode):
++    with blob_remote_table() as table:
++        if blob_mode == "invalid":
++            with pytest.raises(ValueError, match="blob_mode must be one of"):
++                getattr(table, method)(blob_mode=blob_mode)
++        else:
++            with pytest.raises(NotImplementedError) as error:
++                getattr(table, method)(blob_mode=blob_mode)
++            assert f"search().{method}()" in str(error.value)
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("version", [None, 1])
++@pytest.mark.parametrize("expose_location", [False, True])
++async def test_remote_to_lance_rejection(
++    tmp_path, version, expose_location, monkeypatch
++):
++    import lance
++
++    location = tmp_path / "test.lance"
++    lance.write_dataset(pa.table({"id": [1]}), location)
++    lance.write_dataset(pa.table({"id": [2]}), location, mode="append")
++    requests = []
++
++    def fail_dataset(*args, **kwargs):
++        raise AssertionError("remote storage must not be opened")
++
++    monkeypatch.setattr(lance, "dataset", fail_dataset)
++
++    def handler(request):
++        requests.append(request.path)
++        assert request.path == "/v1/table/test/describe/"
++        content_len = int(request.headers.get("Content-Length", 0))
++        body = json.loads(request.rfile.read(content_len)) if content_len else {}
++        request.send_response(200)
++        request.send_header("Content-Type", "application/json")
++        request.end_headers()
++        response = {
++            "version": body.get("version") or 2,
++            "schema": {"fields": []},
++        }
++        if expose_location:
++            response["location"] = str(location)
++        request.wfile.write(json.dumps(response).encode())
++
++    options = {"default_scan_options": {"with_row_id": True}}
++    with mock_lancedb_connection(handler) as db:
++        table = db.open_table("test", version=version)
++        opened_requests = list(requests)
++        with pytest.raises(NotImplementedError) as sync_error:
++            table.to_lance(**options)
++        assert requests == opened_requests
++
++    async with mock_lancedb_connection_async(handler) as db:
++        table = await db.open_table("test", version=version)
++        opened_requests = list(requests)
++        with pytest.raises(NotImplementedError) as async_error:
++            await table.to_lance(**options)
++        assert requests == opened_requests
++
++    assert "to_lance() is not supported for remote tables" in str(sync_error.value)
++    assert "query the server" in str(sync_error.value)
++    assert str(sync_error.value) == str(async_error.value)
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize(
++    "method, kwargs",
++    [
++        ("drop_all_tables", {}),
++        ("drop_all_tables", {"namespace_path": []}),
++        ("drop_all_tables", {"namespace_path": ["team"]}),
++        ("drop_database", {}),
++    ],
++)
++async def test_remote_drop_all_tables_not_supported(method, kwargs):
++    requests = []
++
++    def handler(request):
++        requests.append(request.path)
++        request.send_response(500)
++        request.end_headers()
++
++    with mock_lancedb_connection(handler) as db:
++        with pytest.raises(NotImplementedError) as sync_error:
++            getattr(db, method)(**kwargs)
++
++    async with mock_lancedb_connection_async(handler) as db:
++        with pytest.raises(NotImplementedError) as async_error:
++            await getattr(db, method)(**kwargs)
++
++    assert "Dropping all tables is not currently supported in the remote API" in str(
++        sync_error.value
 +    )
-+    if chunked:
-+        arr = pa.chunked_array([arr.slice(0, 2), arr.slice(2, 1)])
-+    assert has_nan_values(arr).to_pylist() == [False, True, False]
++    assert "drop_table" in str(sync_error.value)
++    assert str(sync_error.value) == str(async_error.value)
++    assert requests == []
+ 
+ 
+ def test_table_to_pandas_not_supported():
+@@ -1681,10 +1787,13 @@ def test_remote_python_only_messages(caplog):
+             table = db.open_table("test", storage_options={}, index_cache_size=1)
+         assert "storage_options is ignored for remote tables" in caplog.text
+         assert "index_cache_size is ignored
+```
+
+**File**: `rust/lancedb/src/remote/db.rs` (modified, +3/-1)
+```diff
+@@ -1707,7 +1707,9 @@ impl<S: HttpSend> Database for RemoteDatabase<S> {
+         // TODO: Implement namespace-aware drop_all_tables
+         let _namespace_path = namespace_path; // Suppress unused warning for now
+         Err(crate::Error::NotSupported {
+-            message: "Dropping all tables is not currently supported in the remote API".to_string(),
++            message: "Dropping all tables is not currently supported in the remote API. \
++                      List tables and call drop_table for each table instead."
++                .to_string(),
+         })
+     }
+ 
+```
+
+---
+
+### Incident Patch 3: `70238965` (2026-10-23)
+**Commit Message**: fix(python): align pylance extra and preview install indexes (#4556)
+
+Fixes #4248.
+
+The preview index still contains pylance 1.0.0b6. uv's default
+first-index resolution can select it, or backtrack to an old LanceDB
+release when installing the extra. Meanwhile, the extra still permits
+pylance 5 even though current main bundles Lance 14.
+
+Raise the optional dependency to `pylance>=14.0.0b12`, the version
+already pinned in the test extra, and keep the lockfile metadata
+consistent. Document both Fury indexes and uv's `unsafe-best-match`
+strategy in the Python README and the source-owned quickstart
+(`docs/web/quickstart.mdx`). Explain the index trust requirement and
+recommend installing the extra to enforce the version floor.
+
+Add CI checks that reject older Lance majors and ensure the pylance and
+tests extras remain compatible. Run these checks when either dependency
+manifest changes, so a future Lance major bump cannot silently leave the
+Python minimum behind.
+
+### Validation
+
+- Recreated the reported install on Ubuntu 26.04 / CPython 3.12.15 with
+uv 0.12.23: `lancedb==0.40.0b5` plus the old index selects
+`pylance==1.0.0b6`. Reproduced both the missing `blob_array` import and
+the une
+
+**File**: `.agents/skills/lancedb-update-lance-dependency/SKILL.md` (modified, +27/-0)
+```diff
+@@ -48,6 +48,23 @@ Inputs can be a version (`7.2.0-beta.1`), a tag (`v7.2.0-beta.1`), a tag ref (`r
+ 
+    This updates the Rust workspace Lance dependencies through `ci/set_lance_version.py`, updates `java/pom.xml`, refreshes Cargo metadata, and prints JSON metadata containing `branch_name`, `commit_message`, and `pr_title`.
+ 
++   Also synchronize the Python requirements in `python/pyproject.toml`: set the
++   `tests` extra's exact `pylance` pin to the matching published Python release,
++   and update the `pylance` extra's minimum when needed to exclude older bundled
++   Lance majors. The minimum must still accept the test pin. Python prerelease
++   spelling differs from Rust (for example, `15.0.0-beta.1` becomes `15.0.0b1`).
++   Confirm the matching Python release is published before changing the pin.
++
++   Refresh and check `python/uv.lock` from the repository root:
++
++   ```bash
++   uv lock --project python --index https://pypi.fury.io/lancedb/ --index https://pypi.fury.io/lance-format/ --index-strategy unsafe-best-match
++   uv lock --project python --check --index https://pypi.fury.io/lancedb/ --index https://pypi.fury.io/lance-format/ --index-strategy unsafe-best-match
++   ```
++
++   This strategy considers versions across indexes; use it only with trusted
++   indexes. Commit the Python requirements and lockfile together with the bump.
++
+ 5. Run validation:
+ 
+    ```bash
+@@ -57,6 +74,16 @@ Inputs can be a version (`7.2.0-beta.1`), a tag (`v7.2.0-beta.1`), a tag ref (`r
+ 
+    Fix real diagnostics and rerun clippy until it succeeds. Do not skip warnings.
+ 
++   Run the Python dependency guards with Python 3.11+ and `packaging` installed:
++
++   ```bash
++   python3 -m unittest discover -s ci/tests -p test_python_dependencies.py -v
++   ```
++
++   These checks reject older Lance majors and ensure the `pylance` and `tests`
++   extras remain compatible. The full CI-script suite uses
++   `python3 -m unittest discover -s ci/tests -v`.
++
+ 6. Inspect `git status --short` and `git diff` to ensure only the Lance dependency update and required compatibility fixes are present.
+ 
+ 7. If the task only asks to prepare local changes, stop here and report the changed files and validation result.
+```
+
+**File**: `.github/workflows/ci-scripts.yml` (modified, +6/-0)
+```diff
+@@ -5,13 +5,17 @@ on:
+     branches:
+       - main
+     paths:
++      - Cargo.toml
++      - python/pyproject.toml
+       - ci/check_cargo_lock.py
+       - ci/check_sdist.py
+       - ci/set_lance_version.py
+       - ci/tests/**
+       - .github/workflows/ci-scripts.yml
+   pull_request:
+     paths:
++      - Cargo.toml
++      - python/pyproject.toml
+       - ci/check_cargo_lock.py
+       - ci/check_sdist.py
+       - ci/set_lance_version.py
+@@ -30,5 +34,7 @@ jobs:
+       - uses: actions/setup-python@v6
+         with:
+           python-version: "3.13"
++      - name: Install test dependencies
++        run: python -m pip install packaging
+       - name: Run tests
+         run: python -m unittest discover -s ci/tests -v
+```
+
+**File**: `ci/tests/test_python_dependencies.py` (added, +47/-0)
+```diff
+@@ -0,0 +1,47 @@
++import tomllib
++import unittest
++from pathlib import Path
++
++from packaging.requirements import Requirement
++from packaging.version import Version
 +
 +
- def test_handle_bad_vectors_noop():
-     # ChunkedArray should be preserved as-is
-     vector = pa.chunked_array(
++REPO_ROOT = Path(__file__).resolve().parents[2]
++
++
++class PythonDependenciesTest(unittest.TestCase):
++    def setUp(self):
++        with (REPO_ROOT / "python/pyproject.toml").open("rb") as f:
++            self.project = tomllib.load(f)["project"]
++        self.pylance = Requirement(self.project["optional-dependencies"]["pylance"][0])
++
++    def test_pylance_extra_excludes_older_lance_majors(self):
++        with (REPO_ROOT / "Cargo.toml").open("rb") as f:
++            lance = tomllib.load(f)["workspace"]["dependencies"]["lance"]
++        if "version" not in lance:
++            self.skipTest("Local Lance checkout has no version requirement")
++        major = Version(lance["version"].lstrip("=")).major
++        for older_major in range(major):
++            for suffix in (".0.0", ".0.0b6", ".999.999"):
++                version = f"{older_major}{suffix}"
++                with self.subTest(version=version):
++                    self.assertFalse(
++                        self.pylance.specifier.contains(version, prereleases=True),
++                        f"The pylance extra must exclude Lance {version}; "
++                        f"the bundled Lance is major {major}",
++                    )
++
++    def test_pylance_extra_accepts_tested_version(self):
++        requirements = [
++            Requirement(dep) for dep in self.project["optional-dependencies"]["tests"]
++        ]
++        tested = next(dep for dep in requirements if dep.name == "pylance")
++        pin = next(spec for spec in tested.specifier if spec.operator == "==")
++        self.assertTrue(
++            self.pylance.specifier.contains(pin.version, prereleases=True),
++            f"The tests and pylance extras must be installable together: {tested}",
++        )
++
++
++if __name__ == "__main__":
++    unittest.main()
+```
+
+**File**: `docs/web/quickstart.mdx` (modified, +27/-0)
+```diff
+@@ -58,6 +58,33 @@ uv add --prerelease allow --index https://pypi.fury.io/lancedb/ lancedb
+ ```
+ </CodeGroup>
+ 
++If you also need the optional `lance` Python API, install the `pylance` extra and
++include the Lance preview index:
++
++<CodeGroup>
++```bash Python (pip) icon="terminal"
++pip install --pre \
++  --extra-index-url https://pypi.fury.io/lancedb/ \
++  --extra-index-url https://pypi.fury.io/lance-format/ \
++  "lancedb[pylance]"
++```
++
++```bash Python (uv) icon="terminal"
++uv pip install --prerelease allow \
++  --index https://pypi.fury.io/lancedb/ \
++  --index https://pypi.fury.io/lance-format/ \
++  --index-strategy unsafe-best-match \
++  "lancedb[pylance]"
++```
++</CodeGroup>
++
++The LanceDB preview index contains old `pylance` releases; current Lance previews
++are published to the `lance-format` index. By default, uv only considers versions
++from the first index containing a package, which can select an old `pylance` or
++backtrack to an older LanceDB release. `unsafe-best-match` searches all configured
++indexes, like pip; use it only with indexes you trust. Install the extra rather
++than an unconstrained `pylance` so LanceDB's minimum supported version is enforced.
++
+ <Note>
+ Pre-release builds receive the same level of testing as stable releases, but their availability is not guaranteed
+ for more than 6 months after release. For real-world workloads, we recommend you use the latest stable release
+```
+
+**File**: `python/README.md` (modified, +27/-0)
+```diff
+@@ -40,6 +40,33 @@ Stable releases are created about every 2 weeks. For the latest features and bug
+ pip install --pre --extra-index-url https://pypi.fury.io/lancedb/ lancedb
+ ```
+ 
++If you also need the optional `lance` Python API, install the `pylance` extra
++and include the Lance preview index:
++
++```bash
++pip install --pre \
++  --extra-index-url https://pypi.fury.io/lancedb/ \
++  --extra-index-url https://pypi.fury.io/lance-format/ \
++  "lancedb[pylance]"
++```
++
++With uv, also select the best matching version across the indexes:
++
++```bash
++uv pip install --prerelease allow \
++  --index https://pypi.fury.io/lancedb/ \
++  --index https://pypi.fury.io/lance-format/ \
++  --index-strategy unsafe-best-match \
++  "lancedb[pylance]"
++```
++
++The LanceDB preview index contains old `pylance` releases; current Lance previews
++are published to the `lance-format` index. By default, uv only considers versions
++from the first index containing a package, which can select an old `pylance` or
++backtrack to an older LanceDB release. `unsafe-best-match` searches all configured
++indexes, like pip; use it only with indexes you trust. Install the extra rather
++than an unconstrained `pylance` so LanceDB's minimum supported version is enforced.
++
+ ### Threading in CPU-limited containers
+ 
+ LanceDB uses separate pools for compute work and storage I/O. On a container with
+```
+
+**File**: `python/pyproject.toml` (modified, +3/-2)
+```diff
+@@ -45,7 +45,8 @@ repository = "https://github.com/lancedb/lancedb"
+ 
+ [project.optional-dependencies]
+ pylance = [
+-    "pylance>=5.0.0b5",
++    # Keep the minimum in the bundled Lance major and compatible with tests below.
++    "pylance>=15.0.0b1",
+ ]
+ # A library only needs the OpenTelemetry API; the application supplies and
+ # configures the SDK (the actual exporter/reader). See
+@@ -63,7 +64,7 @@ tests = [
+     "polars>=0.19, <=1.32.3",
+     "pyarrow<25",
+     "pyarrow-stubs>=16.0",
+-    "pylance==14.0.0b12",
++    "pylance==15.0.0b1",
+     "requests>=2.31.0",
+     "datafusion>=54,<55",
+     "opentelemetry-sdk>=1.30.0",
+```
+
+**File**: `python/uv.lock` (modified, +9/-9)
+```diff
+@@ -2006,8 +2006,8 @@ requires-dist = [
+     { name = "pyarrow", marker = "extra == 'tests'", specifier = "<25" },
+     { name = "pyarrow-stubs", marker = "extra == 'tests'", specifier = ">=16.0" },
+     { name = "pydantic", specifier = ">=2.7.4,<3" },
+-    { name = "pylance", marker = "extra == 'pylance'", specifier = ">=5.0.0b5" },
+-    { name = "pylance", marker = "extra == 'tests'", specifier = "==14.0.0b12" },
++    { name = "pylance", marker = "extra == 'pylance'", specifier = ">=15.0.0b1" },
++    { name = "pylance", marker = "extra == 'tests'", specifier = "==15.0.0b1" },
+     { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1.350" },
+     { name = "pytest", marker = "extra == 'tests'", specifier = ">=7.0" },
+     { name = "pytest-asyncio", marker = "extra == 'tests'", specifier = ">=0.21" },
+@@ -3938,7 +3938,7 @@ crypto = [
+ 
+ [[package]]
+ name = "pylance"
+-version = "14.0.0b12"
++version = "15.0.0b1"
+ source = { registry = "https://pypi.fury.io/lance-format/" }
+ dependencies = [
+     { name = "lance-namespace" },
+@@ -3948,12 +3948,12 @@ dependencies = [
+     { name = "pyarrow" },
+ ]
+ wheels = [
+-    { url = "https://pypi.fury.io/lance-format/-/ver_1Ixasc/pylance-14.0.0b12-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:84350a3c5c1eea3398f4c4fad7cfe85b831d831a5e43b5ca2a783dbdb0e11969" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_sCEkG/pylance-14.0.0b12-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:76b386c182a6a8e7b86fbef28f84d1dd39e4626ac8681a0cf36f40a45dd7cb87" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_1vdT1C/pylance-14.0.0b12-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6aa548c7937fcdfa8f1943a2d59041a42f8b500199880dbb509c7195fa253381" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_2fXu1V/pylance-14.0.0b12-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:79f82d6a6c50f37aab338470e3733436e6a27fbb5972d29fcf453ece56d3b3c6" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_24UavN/pylance-14.0.0b12-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:de0305999257002785f60169e6926896584d66f1da050bb5afd1d48c6e3d9bb9" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_XNynX/pylance-14.0.0b12-cp310-abi3-win_amd64.whl", hash = "sha256:4d0cdb689e898ce71e8e434d00a3b97639cea8fb97da21f1c921543be363268f" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_23L1Nd/pylance-15.0.0b1-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:19605d3daca1224cc0db079054be5d4eec403dcf286bf4617430bfc259ab0a52" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_1Ho3RK/pylance-15.0.0b1-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:be22b0b6f1e1d250ffaa82b449e982c817db33103c483d1005020285310623cf" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_1QmyF0/pylance-15.0.0b1-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a5b2761d60b1b9db112058213f1f7b2de82b08cbe65888fab08b0a56e702482e" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_1in2Ph/pylance-15.0.0b1-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:294a0fedae312ed32d1b66cddbf7e69770ec9b4c82a873af60c619ed88450718" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_21xpLH/pylance-15.0.0b1-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:ff20a16703d4d3f3bc675b25ce1871ba1d54137929dc46305bffdd07f7b35a6b" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_AAGzF/pylance-15.0.0b1-cp310-abi3-win_amd64.whl", hash = "sha256:3b134e24a5becfc940ca134cf78aa3bae8b80ec40f8927a1b856273ab76213f2" },
+ ]
+ 
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4632** (2026-10-22): fix(python): expect oidc credential-type header on refreshed tokens (@Xuanwo)
-- **PR #4628** (2026-10-22): chore: update lance dependency to v15.0.0-beta.1 (@Xuanwo)
-- **PR #4627** (2026-10-22): fix(index): preserve registered scalar plugin type names (@Xuanwo)
-- **PR #4626** (2026-10-22): fix(python): keep a renamed Permutation column in its position (@chrikrah)
-- **PR #4624** (2026-10-21): fix: update trust-store pins for the eMudhra CA compromise (@esteban)
-- **PR #4621** (2026-10-22): feat(python): expose materialized view auto-refresh creation options (@jackye1995)
+- **PR #4668** (2026-10-25): feat(python): open lazy blob files from SQL descriptors (@jackye1995)
+- **PR #4665** (2026-10-25): fix: execute remote materialized view creation through SQL (@jackye1995)
+- **PR #4664** (2026-10-25): feat(sql): follow adaptive streaming and polling responses (@jackye1995)
+- **PR #4663** (2026-10-25): feat: infer lazy blob reader Function inputs (@jackye1995)
+- **PR #4657** (closed): feat(sql): execute similarity search in source and target blocks (@jackye1995)
+- **PR #4656** (closed): feat(sql): add similarity search pair discovery (@jackye1995)
 
 ---
 
@@ -1872,34 +2372,53 @@ implementation. Tho
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. python): stop retrying permanent embedding errors and cap the backoff delay (#45
+## X. rust): accept usize::MAX as a local query limit (#4567)
 
 **RULE**:
-When implementing operations in `python/python/lancedb/embeddings/base.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/python/lancedb/query.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2d54630a`: python): stop retrying permanent embedding errors and cap the backoff delay (#4542). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a8305e07`: rust): accept usize::MAX as a local query limit (#4567). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/python/lancedb/embeddings/base.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/python/lancedb/query.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    # Maximum number of retries for transient errors (rate limits, 5xx responses,
-    # connection errors, ...), with exponential backoff capped at 60 seconds between
-    # attempts. Permanent errors (HTTP 4xx other than 408/409/429) are never retried.
-    # Setting 0 disables retries.
-    max_retries: int = 7
+              SortExec: TopK(fetch=1), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                  LanceRead: uri=..., projection=[vector], num_fragments=..., ...
+        <BLANKLINE>
+                  SortExec: elapsed=..., TopK(fetch=1), expr=[...],
+                  preserve_partitioning=[...], filter=[...],
+        <BLANKLINE>
+              SortExec: TopK(fetch=1), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                  LanceRead: uri=..., projection=[vector], num_fragments=..., ...
+        <BLANKLINE>
+              SortExec: TopK(fetch=1), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                  LanceRead: uri=..., projection=[vector], num_fragments=..., ...
+        <BLANKLINE>
+                    SortExec: TopK(fetch=1), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                        LanceRead: uri=..., projection=[vector], num_fragments=..., ...
+              SortExec: TopK(fetch=1), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    max_retries: int = (
-        7  # Setting 0 disables retires. Maybe this should not be enabled by default,
-    )
+              SortExec: TopK(fetch=10), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                  LanceRead: uri=..., projection=[vector], ...
+                  SortExec: elapsed=..., TopK(fetch=10), expr=[...],
+                  preserve_partitioning=[...],
+              SortExec: TopK(fetch=10), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                  LanceRead: uri=..., projection=[vector], ...
+              SortExec: TopK(fetch=10), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                  LanceRead: uri=..., projection=[vector], ...
+                    SortExec: TopK(fetch=10), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                        LanceRead: uri=..., projection=[vector], ...
+              SortExec: TopK(fetch=10), expr=[_distance@2 ASC NULLS LAST, _rowid@1 ASC NULLS LAST], preserve_partitioning=[false]
+                  LanceRead: uri=..., projection=[vector], ...
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2d54630a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a8305e07` are properly handled with clean fallback behavior.

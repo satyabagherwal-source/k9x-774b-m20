@@ -4809,3 +4809,5 @@ Every entry in this ledger must capture:
 | `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `2b1ee50a` | Multi-dimensional audit evidence | 2026-10-25T12:05:59.395Z |
 | `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-10-25T12:06:04.371Z |
 | `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `dc9a20d0` | Multi-dimensional audit evidence | 2026-10-25T12:10:54.394Z |
+| `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-25T12:17:00.821Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `de0c5edc` | Multi-dimensional audit evidence | 2026-10-25T12:17:04.756Z |
