@@ -665,8 +665,8 @@
     "sourceUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceVersion": "hf-google-embeddinggemma-2",
     "license": "Open-Source",
-    "contentHash": "6d466de483b0bcd9329721d68f6acf00ac705a0a4c3ed4381794591e4d1f523a",
-    "lastHarvestedAt": "2026-10-20T21:07:57.050Z",
+    "contentHash": "bdf99c8b950059bf820285aedb96a0f57757e03c163e45baa1178552e5b687e8",
+    "lastHarvestedAt": "2026-10-25T16:41:15.727Z",
     "learningId": "learn-huggingface-google-embeddinggemma-2"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "ab599433",
+    "sourceVersion": "883413ab",
     "license": "NOASSERTION",
-    "contentHash": "0da4858ae7dffb0486b97b7c94e2b599f136fecdd4f8190648087928add4fdef",
-    "lastHarvestedAt": "2026-10-25T03:38:38.805Z",
+    "contentHash": "3b7dbbbc83389e02441406dbc9473eebfdcc13c676b51f6a5abb93285c09256f",
+    "lastHarvestedAt": "2026-10-25T16:41:25.974Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {

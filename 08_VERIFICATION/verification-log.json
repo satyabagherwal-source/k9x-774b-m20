@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-95H1",
-    "timestamp": "2026-10-22T19:16:14.197Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "9b742df0e2793c4aac960c4e9edfaa79e15350888cf89c96fe44b24c0655b458",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-9G1Q",
-    "timestamp": "2026-10-22T19:16:27.902Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "b2cda982a0c1d5514e0ed6adb3a9125329fe7020cbfb7f3a1fb55875e789396f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-HDB7",
     "timestamp": "2026-10-22T19:22:37.603Z",
     "repository": "unhappychoice/gitlogue",
@@ -7492,6 +7462,36 @@
     "contentHash": "6cfd82cf4627c83e8b7300f361a83043a4732c397d604ce10e3f7a935647f633",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-1EQ3",
+    "timestamp": "2026-10-25T16:41:15.723Z",
+    "repository": "google/embeddinggemma-2",
+    "learningId": "learn-huggingface-google-embeddinggemma-2",
+    "contentHash": "bdf99c8b950059bf820285aedb96a0f57757e03c163e45baa1178552e5b687e8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-1MMR",
+    "timestamp": "2026-10-25T16:41:25.971Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "3b7dbbbc83389e02441406dbc9473eebfdcc13c676b51f6a5abb93285c09256f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

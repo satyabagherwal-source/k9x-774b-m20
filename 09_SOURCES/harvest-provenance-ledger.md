@@ -4908,3 +4908,5 @@ Every entry in this ledger must capture:
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `b9e6030a` | Multi-dimensional audit evidence | 2026-10-25T16:28:34.507Z |
 | `learn-github-megabit-blazorise` | `https://github.com/Megabit/Blazorise` | `a9c6c06b` | Multi-dimensional audit evidence | 2026-10-25T16:34:36.832Z |
 | `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-25T16:34:47.043Z |
+| `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-25T16:41:15.727Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `883413ab` | Multi-dimensional audit evidence | 2026-10-25T16:41:25.974Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T16:34:46.993Z",
+  "last_updated": "2026-10-25T16:41:25.915Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11862,8 +11862,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "ab599433",
-      "content_hash": "0da4858ae7dffb0486b97b7c94e2b599f136fecdd4f8190648087928add4fdef",
+      "source_version": "883413ab",
+      "content_hash": "3b7dbbbc83389e02441406dbc9473eebfdcc13c676b51f6a5abb93285c09256f",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -11941,6 +11941,11 @@
           "number": 4018,
           "title": "build: release 0.2.149 (#5979)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4382,
+          "title": "test): give each test process its own temp root for node data dirs (#5986)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11948,7 +11953,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:38:38.740Z",
+      "verified_at": "2026-10-25T16:41:25.903Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20799,7 +20804,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/embeddinggemma-2",
       "source_version": "hf-google-embeddinggemma-2",
-      "content_hash": "6d466de483b0bcd9329721d68f6acf00ac705a0a4c3ed4381794591e4d1f523a",
+      "content_hash": "bdf99c8b950059bf820285aedb96a0f57757e03c163e45baa1178552e5b687e8",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
       "promoted_rules": [
@@ -20852,7 +20857,7 @@
         "learn-huggingface-hf-google-embeddinggemma-2-mv489kut",
         "learn-huggingface-hf-google-embeddinggemma-2-mv4ljeb8"
       ],
-      "verified_at": "2026-10-20T21:07:56.976Z",
+      "verified_at": "2026-10-25T16:41:15.658Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124739,6 +124744,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T16:34:46.986Z"
+    },
+    "rule-4382": {
+      "learning_id": "rule-4382",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4382,
+      "title": "test): give each test process its own temp root for node data dirs (#5986)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "883413ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T16:41:25.903Z"
     }
   },
   "aliases": {

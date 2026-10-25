@@ -4901,3 +4901,5 @@
 | `CYCLE-20261025-L3D4` | `2026-10-25T16:28:34.504Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/llphant-llphant-learnings.md` | Yes (`b353f057...`) |
 | `CYCLE-20261025-SUXP` | `2026-10-25T16:34:36.829Z` | `Megabit/Blazorise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4379` | Yes (`b38b096c...`) |
 | `CYCLE-20261025-T2TC` | `2026-10-25T16:34:47.040Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4380, Rule 4381` | Yes (`6cfd82cf...`) |
+| `CYCLE-20261025-1EQ3` | `2026-10-25T16:41:15.723Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`bdf99c8b...`) |
+| `CYCLE-20261025-1MMR` | `2026-10-25T16:41:25.971Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4382` | Yes (`3b7dbbbc...`) |

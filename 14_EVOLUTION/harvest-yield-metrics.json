@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T16:34:47.046Z",
-  "total_cycles_completed": 4878,
-  "total_learnings_persisted": 4878,
-  "total_rules_promoted": 4261,
+  "last_updated": "2026-10-25T16:41:25.979Z",
+  "total_cycles_completed": 4880,
+  "total_learnings_persisted": 4880,
+  "total_rules_promoted": 4262,
   "history": [
-    {
-      "timestamp": "2026-10-25T06:06:13.323Z",
-      "repository": "facebook/folly",
-      "learningId": "learn-github-facebook-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T06:06:20.274Z",
-      "repository": "nats-io/nats.go",
-      "learningId": "learn-github-nats-io-nats-go",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T06:06:25.529Z",
       "repository": "dragonflydb/dragonfly",
@@ -1403,6 +1389,20 @@
       "repository": "Comfy-Org/Z-Image-Turbo",
       "learningId": "learn-huggingface-comfy-org-z_image_turbo",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T16:41:15.732Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-google-embeddinggemma-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T16:41:25.979Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
