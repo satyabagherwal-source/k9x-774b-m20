@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T03:22:13.829Z",
+  "last_updated": "2026-10-25T03:31:56.941Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9072,8 +9072,8 @@
       "slug": "dylanvann-react-native-fast-image",
       "platform": "github",
       "source_url": "https://github.com/DylanVann/react-native-fast-image",
-      "source_version": "d03026c0",
-      "content_hash": "13612cf8183e95d9d1defda5b8746c286da8caf3ae46abffe466ce47dfde7d9e",
+      "source_version": "2042b419",
+      "content_hash": "dcd0699c78d6415735ae4b2756d2edbb86a3adeea2fa946a4d308eda156886f6",
       "dossier_path": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "promoted_rules": [
@@ -9086,6 +9086,11 @@
           "number": 3210,
           "title": "require()d images among several sizes, and defaultSource only without a placehol",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4014,
+          "title": "ios): require SDWebImage 5.21.5 or later (#1355)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9093,7 +9098,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:07:25.148Z",
+      "verified_at": "2026-10-25T03:31:48.468Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41217,8 +41222,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "edd5d318",
-      "content_hash": "880dce7bc51e3b54d3d0085bccbc87af2578cc0405c4cd0584ea0f2673701331",
+      "source_version": "4b2fb2ce",
+      "content_hash": "f6041b35a9eeaae02deab226d907ae324e3bd4ce4d22a65fb4585294b9bb2112",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -41251,6 +41256,11 @@
           "number": 3565,
           "title": "Bump version to 1.8.2-dev",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4013,
+          "title": "[UI] Updating Restate UI to v1.1.3 published at https://github.com/restatedev/re",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41258,7 +41268,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T16:45:01.243Z",
+      "verified_at": "2026-10-25T03:31:45.539Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47717,8 +47727,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "1790bac5",
-      "content_hash": "88d18677fa1acad56039dfb749be4e79f4256259402410fee06915b23fe0ad93",
+      "source_version": "5fb6a1ff",
+      "content_hash": "13e167b5951c090d34535d5a9b4331b1f318c18e51d470f44376ddf605fd2a0a",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -47741,6 +47751,11 @@
           "number": 3377,
           "title": "Markdown table escaping in CLI column headers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4015,
+          "title": "ineffective Trino coordinator startup timeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47748,7 +47763,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:53:34.832Z",
+      "verified_at": "2026-10-25T03:31:56.929Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117471,6 +117486,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T03:22:13.817Z"
+    },
+    "rule-4013": {
+      "learning_id": "rule-4013",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4013,
+      "title": "[UI] Updating Restate UI to v1.1.3 published at https://github.com/restatedev/re",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "4b2fb2ce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:31:45.539Z"
+    },
+    "rule-4014": {
+      "learning_id": "rule-4014",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4014,
+      "title": "ios): require SDWebImage 5.21.5 or later (#1355)",
+      "source_url": "https://github.com/DylanVann/react-native-fast-image",
+      "source_version": "2042b419",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:31:48.468Z"
+    },
+    "rule-4015": {
+      "learning_id": "rule-4015",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4015,
+      "title": "ineffective Trino coordinator startup timeout",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "5fb6a1ff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:31:56.929Z"
     }
   },
   "aliases": {

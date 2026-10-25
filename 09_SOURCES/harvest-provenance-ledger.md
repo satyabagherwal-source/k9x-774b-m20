@@ -4637,3 +4637,6 @@ Every entry in this ledger must capture:
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `3ac379ef` | Multi-dimensional audit evidence | 2026-10-25T03:15:32.829Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `28ee6c68` | Multi-dimensional audit evidence | 2026-10-25T03:22:07.163Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `91ffbe06` | Multi-dimensional audit evidence | 2026-10-25T03:22:13.883Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `4b2fb2ce` | Multi-dimensional audit evidence | 2026-10-25T03:31:45.607Z |
+| `learn-github-dylanvann-react-native-fast-image` | `https://github.com/DylanVann/react-native-fast-image` | `2042b419` | Multi-dimensional audit evidence | 2026-10-25T03:31:48.533Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `5fb6a1ff` | Multi-dimensional audit evidence | 2026-10-25T03:31:56.994Z |

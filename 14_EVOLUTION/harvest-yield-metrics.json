@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T03:22:13.892Z",
-  "total_cycles_completed": 4607,
-  "total_learnings_persisted": 4607,
-  "total_rules_promoted": 3870,
+  "last_updated": "2026-10-25T03:31:57.004Z",
+  "total_cycles_completed": 4610,
+  "total_learnings_persisted": 4610,
+  "total_rules_promoted": 3873,
   "history": [
-    {
-      "timestamp": "2026-10-22T20:52:07.474Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T21:01:26.052Z",
-      "repository": "carbon-design-system/carbon-components-svelte",
-      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T21:01:34.657Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T21:01:39.803Z",
       "repository": "t8y2/dbx",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-25T03:22:13.892Z",
       "repository": "arangodb/arangodb",
       "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:31:45.616Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:31:48.538Z",
+      "repository": "DylanVann/react-native-fast-image",
+      "learningId": "learn-github-dylanvann-react-native-fast-image",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:31:57.004Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

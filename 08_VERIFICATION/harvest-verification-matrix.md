@@ -4630,3 +4630,6 @@
 | `CYCLE-20261025-993U` | `2026-10-25T03:15:32.826Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4008, Rule 4009, Rule 4010` | Yes (`9602a20d...`) |
 | `CYCLE-20261025-HPDK` | `2026-10-25T03:22:07.160Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4011` | Yes (`eccfab8c...`) |
 | `CYCLE-20261025-HUK8` | `2026-10-25T03:22:13.880Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4012` | Yes (`9232c672...`) |
+| `CYCLE-20261025-U3PF` | `2026-10-25T03:31:45.603Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4013` | Yes (`f6041b35...`) |
+| `CYCLE-20261025-U5YQ` | `2026-10-25T03:31:48.530Z` | `DylanVann/react-native-fast-image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4014` | Yes (`dcd0699c...`) |
+| `CYCLE-20261025-UCHR` | `2026-10-25T03:31:56.991Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4015` | Yes (`13e167b5...`) |

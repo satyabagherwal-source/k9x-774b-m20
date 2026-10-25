@@ -4703,10 +4703,10 @@
     "repository": "DylanVann/react-native-fast-image",
     "platform": "github",
     "sourceUrl": "https://github.com/DylanVann/react-native-fast-image",
-    "sourceVersion": "d03026c0",
+    "sourceVersion": "2042b419",
     "license": "MIT",
-    "contentHash": "13612cf8183e95d9d1defda5b8746c286da8caf3ae46abffe466ce47dfde7d9e",
-    "lastHarvestedAt": "2026-10-20T14:07:25.223Z",
+    "contentHash": "dcd0699c78d6415735ae4b2756d2edbb86a3adeea2fa946a4d308eda156886f6",
+    "lastHarvestedAt": "2026-10-25T03:31:48.533Z",
     "learningId": "learn-github-dylanvann-react-native-fast-image"
   },
   "pulumi-pulumi": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "1790bac5",
+    "sourceVersion": "5fb6a1ff",
     "license": "Apache-2.0",
-    "contentHash": "88d18677fa1acad56039dfb749be4e79f4256259402410fee06915b23fe0ad93",
-    "lastHarvestedAt": "2026-10-22T15:53:34.904Z",
+    "contentHash": "13e167b5951c090d34535d5a9b4331b1f318c18e51d470f44376ddf605fd2a0a",
+    "lastHarvestedAt": "2026-10-25T03:31:56.994Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "edd5d318",
+    "sourceVersion": "4b2fb2ce",
     "license": "NOASSERTION",
-    "contentHash": "880dce7bc51e3b54d3d0085bccbc87af2578cc0405c4cd0584ea0f2673701331",
-    "lastHarvestedAt": "2026-10-21T16:45:01.309Z",
+    "contentHash": "f6041b35a9eeaae02deab226d907ae324e3bd4ce4d22a65fb4585294b9bb2112",
+    "lastHarvestedAt": "2026-10-25T03:31:45.607Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {

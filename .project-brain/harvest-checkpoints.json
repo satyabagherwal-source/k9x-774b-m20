@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T03:22:13.896Z",
+  "last_updated": "2026-10-25T03:31:57.008Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7176,14 +7176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dylanvann-react-native-fast-image",
-      "content_hash": "13612cf8183e95d9d1defda5b8746c286da8caf3ae46abffe466ce47dfde7d9e",
-      "verified_at": "2026-10-20T14:07:25.231Z",
+      "content_hash": "dcd0699c78d6415735ae4b2756d2edbb86a3adeea2fa946a4d308eda156886f6",
+      "verified_at": "2026-10-25T03:31:48.541Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:07:25.231Z"
+      "last_updated": "2026-10-25T03:31:48.541Z"
     },
     "pulumi/pulumi": {
       "repository": "pulumi/pulumi",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "88d18677fa1acad56039dfb749be4e79f4256259402410fee06915b23fe0ad93",
-      "verified_at": "2026-10-22T15:53:34.912Z",
+      "content_hash": "13e167b5951c090d34535d5a9b4331b1f318c18e51d470f44376ddf605fd2a0a",
+      "verified_at": "2026-10-25T03:31:57.007Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:53:34.912Z"
+      "last_updated": "2026-10-25T03:31:57.007Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "880dce7bc51e3b54d3d0085bccbc87af2578cc0405c4cd0584ea0f2673701331",
-      "verified_at": "2026-10-21T16:45:01.320Z",
+      "content_hash": "f6041b35a9eeaae02deab226d907ae324e3bd4ce4d22a65fb4585294b9bb2112",
+      "verified_at": "2026-10-25T03:31:45.619Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T16:45:01.320Z"
+      "last_updated": "2026-10-25T03:31:45.619Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",

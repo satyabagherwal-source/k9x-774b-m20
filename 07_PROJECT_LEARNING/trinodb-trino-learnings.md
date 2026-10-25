@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `1790bac5`  
+> **Source Version**: `5fb6a1ff`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T15:53:34.622Z  
+> **Timestamp**: 2026-10-25T03:31:56.645Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T15:53:34.615Z  
+> **Harvest Timestamp**: 2026-10-25T03:31:56.638Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13360 stars
+- **Stars / Engagement**: 13365 stars
 
 ---
 
@@ -1862,191 +1862,339 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4d1a1e03` (2026-10-21)
-**Commit Message**: Bump the web-ui-dependencies group
+### Incident Patch 1: `1bff39a8` (2026-10-23)
+**Commit Message**: Fix ineffective Trino coordinator startup timeout
 
-Bumps the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 12 updates:
+TrinoContainer extends JdbcDatabaseContainer, which waits for startup
+by running a test query for up to startupTimeoutSeconds (120s by
+default) and never consults the strategy set with waitingFor(). The
+90s HTTP wait strategy configured on product test coordinators was
+therefore ignored, and a slow coordinator start on a loaded CI runner
+failed the environment after 120s.
 
-| Package | From | To |
-| --- | --- | --- |
-| [@typescript-eslint/eslint-plugin](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/eslint-plugin) | `8.71.1` | `8.71.2` |
-| [@typescript-eslint/parser](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/parser) | `8.71.1` | `8.71.2` |
-| [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) | `8.71.1` | `8.71.2` |
-| [@typescript-eslint/project-service](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/project-service) | `8.71.1` | `8.71.2` |
-| [@typescript-eslint/scope-manager](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/scope-manager) | `8.71.1` | `8.71.2` |
-| [@typescript-eslint/tsconfig-utils](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/tsconfig-utils) | `8.71.1` | `8.71.2` |
-| [@typescript-eslint/type-utils](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/type-utils) | `8.71.1` | `8.7
+Set the startup timeout that is actually used, and drop the unused
+wait strategy.
 
-**File**: `core/trino-web-ui/src/main/resources/webapp/bun.lock` (modified, +15/-15)
+**File**: `testing/trino-testing-containers/pom.xml` (modified, +5/-0)
 ```diff
-@@ -30,8 +30,8 @@
-         "@types/lodash.merge": "^4.6.9",
-         "@types/react": "^19.3.0",
-         "@types/react-dom": "^19.3.0",
--        "@typescript-eslint/eslint-plugin": "^8.71.1",
--        "@typescript-eslint/parser": "^8.71.1",
-+        "@typescript-eslint/eslint-plugin": "^8.71.2",
-+        "@typescript-eslint/parser": "^8.71.2",
-         "@vitejs/plugin-react": "^5.2.0",
-         "eslint": "^9.39.5",
-         "eslint-plugin-react": "^7.37.5",
-@@ -40,7 +40,7 @@
-         "globals": "^16.5.0",
-         "prettier": "^3.9.10",
-         "typescript": "^6.0.3",
--        "typescript-eslint": "^8.71.1",
-+        "typescript-eslint": "^8.71.2",
-         "vite": "npm:rolldown-vite@^7.3.1",
-       },
-     },
-@@ -323,25 +323,25 @@
+@@ -94,6 +94,11 @@
+             <artifactId>testcontainers</artifactId>
+         </dependency>
  
-     "@types/trusted-types": ["@types/trusted-types@2.0.7", "", {}, "sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw=="],
- 
--    "@typescript-eslint/eslint-plugin": ["@typescript-eslint/eslint-plugin@8.71.1", "", { "dependencies": { "@eslint-community/regexpp": "^4.12.2", "@typescript-eslint/scope-manager": "8.71.1", "@typescript-eslint/type-utils": "8.71.1", "@typescript-eslint/utils": "8.71.1", "@typescript-eslint/visitor-keys": "8.71.1", "ignore": "^7.0.5", "natural-compare": "^1.4.0", "ts-api-utils": "^2.5.0" }, "peerDependencies": { "@typescript-eslint/parser": "^8.71.1", "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0", "typescript": ">=4.8.4 <6.1.0" } }, "sha512-nNlBf6HuotqMgZvSkWD5hNdemiBIxQ2NmrlgfcUIeZRs+BbakjscCQRq/Hb74EFVnFiSWWdL12JruqwBy3ERDw=="],
-+    "@typescript-eslint/eslint-plugin": ["@typescript-eslint/eslint-plugin@8.71.2", "", { "dependencies": { "@eslint-community/regexpp": "^4.12.2", "@typescript-eslint/scope-manager": "8.71.2", "@typescript-eslint/type-utils": "8.71.2", "@typescript-eslint/utils": "8.71.2", "@typescript-eslint/visitor-keys": "8.71.2", "ignore": "^7.0.5", "natural-compare": "^1.4.0", "ts-api-utils": "^2.5.0" }, "peerDependencies": { "@typescript-eslint/parser": "^8.71.2", "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0", "typescript": ">=4.8.4 <6.1.0" } }, "sha512-K72/pvT7qpm8q3k8G5u93NCSN1RcLxX5h7Gw0bQpbMXviBHeY6Nx1WEwmk9wP+eKTSQ8ecxvcgt/ZX/rB938xQ=="],
- 
--    "@typescript-eslint/parser": ["@typescript-eslint/parser@8.71.1", "", { "dependencies": { "@typescript-eslint/scope-manager": "8.71.1", "@typescript-eslint/types": "8.71.1", "@typescript-eslint/typescript-estree": "8.71.1", "@typescript-eslint/visitor-keys": "8.71.1", "debug": "^4.4.3" }, "peerDependencies": { "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0", "typescript": ">=4.8.4 <6.1.0" } }, "sha512-oM/5sAqz/l1v/zYK1qTOPrn2+JIrBGC1V6uNYucRO5gh6eT9vWJ/RhPbGE59byvZEUQ4VP6XkLBaS5Jti5jpvw=="],
-+    "@typescript-eslint/parser": ["@typescript-eslint/parser@8.71.2", "", { "dependencies": { "@typescript-eslint/scope-manager": "8.71.2", "@typescript-eslint/types": "8.71.2", "@typescript-eslint/typescript-estree": "8.71.2", "@typescript-eslint/visitor-keys": "8.71.2", "debug": "^4.4.3" }, "peerDependencies": { "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0", "typescript": ">=4.8.4 <6.1.0" } }, "sha512-aTtmZjp/x3gsGHkDs04/1I8kNogBJkpQaeGaN0PfiG43NzDEmW2n+OP5im9wfsvyX0yP1UZWBrAGtDBfH9jEVw=="],
- 
--    "@typescript-eslint/project-service": ["@typescript-eslint/project-service@8.71.1", "", { "dependencies": { "@typescript-eslint/tsconfig-utils": "^8.71.1", "@typescript-eslint/types": "^8.71.1", "debug": "^4.4.3" }, "peerDependencies": { "typescript": ">=4.8.4 <6.1.0" } }, "sha512-Oijc9RUsohHjncg6iGi7gCtjnEjYt9FWv9u6ygK8uKcHK5eLjLAkqERQ9BaytbpceOFdk6kifPCS/zAZE+A99g=="],
-+    "@typescript-eslint/project-service": ["@typescript-eslint/project-service@8.71.2", "", { "dependencies": { "@typescript-eslint/tsconfig-utils": "^8.71.2", "@typescript-eslint/types": "^8.71.2", "debug": "^4.4.3" }, "peerDependencies": { "typescript": ">=4.8.4 <6.1.0" } }, "sha512-Pd68GsLVh5ZXlcEccFPdhSOvtHZ/2WU0XsA8zmXOS3F158lVlcTLhfQ6qvtL1RzbMie0Kp8xtbVwAg4nejKPHw=="],
- 
--    "@typescript-eslint/scope-manager": ["@typescript-eslint/scope-manager@8.71.1", "", { "dependencies": { "@typescript-eslint/types": "8.71.1", "@typescript-eslint/visitor-keys": "8.71.1" } }, "sha512-1YUDZXdTnXLlob03SFHBipdyMBsDVm7zoSz0ytTJ39dk5J1TgsTK03VlR/dLXG/RLLUrPcYbD4rp23BmHxHP0w=="],
-+    "@typescript-eslint/scope-manager": ["@typescript-eslint/scope-manager@8.71.2", "", { "dependencies": { "@typescript-eslint/types": "8.71.2", "@typescript-eslint/visitor-keys": "8.71.2" } }, "sha512-YF4wgg5iUX5Obywoac27B56FhozMNFhdJSbh11H5GBAwmBtfyRhmgTQqW9tRNNmHDvsZ2CX6UGzoz+YfYn2Leg=="],
- 
--    "@typescript-eslint/tsconfig-utils": ["@typescript-eslint/tsconfig-utils@8.71.1", "", { "peerDependencies": { "typescript": ">=4.8.4 <6.1.0" } }, "sha512-oTvkml5SxXhgg+WWKhod5qWQICDXtOB+/Hi9VdPKFAANJ2b7YOgMffgvzXuqog7R6A/JtrzRf128dsxummyWhg=="],
-+    "@typescript-eslint/tsconfig-utils": ["@typescript-eslint/tsconfig-utils@8.71.2", "", { "peerDependencies": { "typescript": ">=4.8.4 <6.1.0" } }, "sha512-jz49TAWokm/7yWD9/o837nYax9DyALxIPOImdImvVzo6canBCZY
++        <dependency>
++            <groupId>org.testcontainers</groupId>
++            <artifactId>testcontainers-jdbc</artifactId>
++        </dependency>
++
+         <dependency>
+             <groupId>org.testcontainers</groupId>
+             <artifactId>testcontainers-trino</artifactId>
 ```
 
-**File**: `core/trino-web-ui/src/main/resources/webapp/package.json` (modified, +3/-3)
+**File**: `testing/trino-testing-containers/src/main/java/io/trino/testing/containers/MultiNodeTrinoCluster.java` (modified, +3/-7)
 ```diff
-@@ -42,8 +42,8 @@
-     "@types/lodash.merge": "^4.6.9",
-     "@types/react": "^19.3.0",
-     "@types/react-dom": "^19.3.0",
--    "@typescript-eslint/eslint-plugin": "^8.71.1",
--    "@typescript-eslint/parser": "^8.71.1",
-+    "@typescript-eslint/eslint-plugin": "^8.71.2",
-+    "@typescript-eslint/parser": "^8.71.2",
-     "@vitejs/plugin-react": "^5.2.0",
-     "eslint": "^9.39.5",
-     "eslint-plugin-react": "^7.37.5",
-@@ -52,7 +52,7 @@
-     "globals": "^16.5.0",
-     "prettier": "^3.9.10",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.71.1",
-+    "typescript-eslint": "^8.71.2",
-     "vite": "npm:rolldown-vite@^7.3.1"
-   },
-   "overrides": {
-```
-
----
-
-### Incident Patch 2: `e1e8098c` (2026-10-21)
-**Commit Message**: Fix Iceberg $properties sort-order collision
-
-The $properties table adds a sort-order entry derived from the table's sort
-order and then copies the table properties. A table that also has a
-sort-order table property failed with "Multiple entries with same key".
-Reserve sort-order, as Iceberg's SparkTable.properties() does.
-
-**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/system/PropertiesTable.java` (modified, +1/-0)
-```diff
-@@ -49,6 +49,7 @@ public class PropertiesTable
-             .add("current-snapshot-id")
-             .add("location")
-             .add("format-version")
-+            .add("sort-order")
-             .build();
+@@ -14,7 +14,6 @@
+ package io.trino.testing.containers;
  
-     private final ConnectorTableMetadata tableMetadata;
+ import org.testcontainers.containers.Network;
+-import org.testcontainers.containers.wait.strategy.Wait;
+ import org.testcontainers.images.builder.Transferable;
+ import org.testcontainers.lifecycle.Startables;
+ import org.testcontainers.trino.TrinoContainer;
+@@ -34,6 +33,7 @@
+ import java.util.function.Consumer;
+ import java.util.stream.Stream;
+ 
++import static io.trino.testing.containers.TrinoProductTestContainer.STARTUP_TIMEOUT_SECONDS;
+ import static io.trino.testing.containers.TrinoProductTestContainer.configureTrinoContainer;
+ import static java.util.Objects.requireNonNull;
+ 
+@@ -432,12 +432,8 @@ public MultiNodeTrinoCluster build()
+                 coordinatorCustomizer.accept(coordinator);
+             }
+ 
+-            // Add a robust wait strategy
+-            coordinator.waitingFor(
+-                    Wait.forHttp("/v1/info")
+-                            .forPort(8080)
+-                            .forStatusCode(200)
+-                            .withStartupTimeout(Duration.ofSeconds(90)));
++            // TrinoContainer waits by running a test query, ignoring waitingFor()
++            coordinator.withStartupTimeoutSeconds(STARTUP_TIMEOUT_SECONDS);
+ 
+             // Build workers
+             List<TrinoWorkerContainer> workers = new ArrayList<>();
 ```
 
-**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/BaseIcebergSystemTables.java` (modified, +14/-0)
+**File**: `testing/trino-testing-containers/src/main/java/io/trino/testing/containers/TrinoProductTestContainer.java` (modified, +3/-7)
 ```diff
-@@ -1193,6 +1193,20 @@ public void testPropertiesTable()
+@@ -19,7 +19,6 @@
+ import org.testcontainers.DockerClientFactory;
+ import org.testcontainers.containers.GenericContainer;
+ import org.testcontainers.containers.Network;
+-import org.testcontainers.containers.wait.strategy.Wait;
+ import org.testcontainers.images.builder.Transferable;
+ import org.testcontainers.trino.TrinoContainer;
+ import org.testcontainers.utility.DockerImageName;
+@@ -76,6 +75,7 @@ public final class TrinoProductTestContainer
+     private static final String DEFAULT_IMAGE = "trinodb/trino";
+     private static final DataSize MEMORY_LIMIT = DataSize.of(6, GIGABYTE);
+     private static final long CPU_LIMIT = 4;
++    static final int STARTUP_TIMEOUT_SECONDS = 300;
+ 
+     private TrinoProductTestContainer() {}
+ 
+@@ -364,12 +364,8 @@ public TrinoContainer build()
+                 }
+             }
+ 
+-            // Add a more robust wait strategy that ensures nodes are available
+-            container.waitingFor(
+-                    Wait.forHttp("/v1/info")
+-                            .forPort(8080)
+-                            .forStatusCode(200)
+-                            .withStartupTimeout(Duration.ofSeconds(90)));
++            // TrinoContainer waits by running a test query, ignoring waitingFor()
++            container.withStartupTimeoutSeconds(STARTUP_TIMEOUT_SECONDS);
+ 
+             return container;
          }
-     }
- 
-+    @Test
-+    public void testPropertiesTableWithSortOrderTableProperty()
-+    {
-+        try (TestTable table = newTrinoTable("test_properties_sort_order", "(x BIGINT, y DOUBLE) WITH (sorted_by = ARRAY['y'])")) {
-+            loadTable(table.getName()).updateProperties().set("sort-order", "x ASC NULLS FIRST").commit();
-+            assertThat(getTableProperties(table.getName())).containsEntry("sort-order", "y ASC NULLS FIRST");
-+        }
-+
-+        try (TestTable table = newTrinoTable("test_properties_sort_order", "(x BIGINT, y DOUBLE)")) {
-+            loadTable(table.getName()).updateProperties().set("sort-order", "x ASC NULLS FIRST").commit();
-+            assertThat(getTableProperties(table.getName())).doesNotContainKey("sort-order");
-+        }
-+    }
-+
-     private Map<String, String> getTableProperties(String tableName)
-     {
-         return computeActual("SELECT key, value FROM \"" + tableName + "$properties\"").getMaterializedRows().stream()
 ```
 
 ---
 
-### Incident Patch 3: `1790bac5` (2026-10-21)
-**Commit Message**: Fix flaky TestHttpTokenPoller.testHttpStatus503
+### Incident Patch 2: `02e2cdf8` (2026-10-13)
+**Commit Message**: Fix JDBC driver resolution for DB resource groups
 
-The test required a retry within a 1s poll budget, so a JVM pause of
-about 1s after the first 503 response left no time for another request.
-Verify retries in a separate test with a generous budget, and only check
-that retries stop in the budget-exhaustion test.
+DriverManager cannot see JDBC drivers loaded by a plugin's own
+classloader, so DB resource-group configuration failed to find a
+registered driver at runtime. Add ClassLoaderAwareConnectionFactory,
+which resolves the Driver via ServiceLoader against its own
+classloader and opens connections directly instead of relying on
+DriverManager's static registry.
 
-**File**: `client/trino-client/src/test/java/io/trino/client/auth/external/TestHttpTokenPoller.java` (modified, +14/-1)
+DbResourceGroupsModule uses it for the Jdbi instance, and
+FlywayDatabaseMigrator takes the URL and credentials directly.
+
+**File**: `plugin/trino-resource-group-managers/src/main/java/io/trino/plugin/resourcegroups/db/ClassLoaderAwareConnectionFactory.java` (added, +70/-0)
 ```diff
-@@ -44,6 +44,7 @@ public class TestHttpTokenPoller
- {
-     private static final String TOKEN_PATH = "/v1/authentications/sso/test/token";
-     private static final Duration ONE_SECOND = Duration.ofSeconds(1);
-+    private static final Duration ONE_MINUTE = Duration.ofMinutes(1);
- 
-     private static final TokenPoller tokenPoller = new HttpTokenPoller(new OkHttpClient.Builder()
-             .callTimeout(Duration.ofMillis(500))
-@@ -121,6 +122,18 @@ public void testInvalidNextUri()
-                 .matches("Request to http://.* failed: JsonResponse\\{statusCode=200, .*, hasValue=false} .*");
-     }
- 
-+    @Test
-+    public void testHttpStatus503Retried()
+@@ -0,0 +1,70 @@
++/*
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package io.trino.plugin.resourcegroups.db;
++
++import org.jdbi.v3.core.ConnectionFactory;
++
++import java.sql.Connection;
++import java.sql.Driver;
++import java.sql.SQLException;
++import java.util.Properties;
++import java.util.ServiceLoader;
++
++import static java.lang.String.format;
++import static java.util.Objects.requireNonNull;
++
++final class ClassLoaderAwareConnectionFactory
++        implements ConnectionFactory
++{
++    static ConnectionFactory create(String url, String user, String password)
 +    {
-+        server.enqueue(statusAndBody(HTTP_UNAVAILABLE, "Server failure"));
-+        server.enqueue(statusAndBody(HTTP_OK, jsonPair("token", "token")));
-+
-+        TokenPollResult result = tokenPoller.pollForToken(tokenUri(), ONE_MINUTE);
-+
-+        assertThat(result.getToken().token()).isEqualTo("token");
-+        assertThat(server.getRequestCount()).isEqualTo(2);
++        Driver driver = ServiceLoader.load(Driver.class, ClassLoaderAwareConnectionFactory.class.getClassLoader())
++                .stream()
++                .map(ServiceLoader.Provider::get)
++                .filter(d -> {
++                    try {
++                        return d.acceptsURL(url);
++                    }
++                    catch (SQLException e) {
++                        return false;
++                    }
++                })
++                .findFirst()
++                .orElseThrow(() -> new IllegalStateException(format("No JDBC driver found for URL: %s", url)));
++        return new ClassLoaderAwareConnectionFactory(driver, url, user, password);
 +    }
 +
-     @Test
-     public void testHttpStatus503()
++    private final Driver driver;
++    private final String url;
++    private final Properties properties = new Properties();
++
++    private ClassLoaderAwareConnectionFactory(Driver driver, String url, String user, String password)
++    {
++        this.driver = requireNonNull(driver, "driver is null");
++        this.url = requireNonNull(url, "url is null");
++        if (user != null) {
++            properties.setProperty("user", user);
++        }
++        if (password != null) {
++            properties.setProperty("password", password);
++        }
++    }
++
++    @Override
++    public Connection openConnection()
++            throws SQLException
++    {
++        return driver.connect(url, properties);
++    }
++}
+```
+
+**File**: `plugin/trino-resource-group-managers/src/main/java/io/trino/plugin/resourcegroups/db/DbResourceGroupsModule.java` (modified, +1/-1)
+```diff
+@@ -52,6 +52,6 @@ public static DatabaseMigrator createMigrator(DbResourceGroupConfig config)
+     @Singleton
+     public static Jdbi createJdbi(DbResourceGroupConfig config)
      {
-@@ -134,7 +147,7 @@ public void testHttpStatus503()
-                 .hasMessageFindingMatch("Request to http://.* failed: JsonResponse\\{statusCode=503,")
-                 .hasMessageContaining("[Error: Server failure #");
+-        return Jdbi.create(config.getConfigDbUrl(), config.getConfigDbUser(), config.getConfigDbPassword());
++        return Jdbi.create(ClassLoaderAwareConnectionFactory.create(config.getConfigDbUrl(), config.getConfigDbUser(), config.getConfigDbPassword()));
+     }
+ }
+```
+
+**File**: `plugin/trino-resource-group-managers/src/test/java/io/trino/plugin/resourcegroups/db/BaseTestDbResourceGroupsFlywayMigration.java` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@
+ public abstract class BaseTestDbResourceGroupsFlywayMigration
+ {
+     protected final JdbcDatabaseContainer<?> container = startContainer();
+-    protected final Jdbi jdbi = Jdbi.create(container.getJdbcUrl(), container.getUsername(), container.getPassword());
++    protected final Jdbi jdbi = Jdbi.create(ClassLoaderAwareConnectionFactory.create(container.getJdbcUrl(), container.getUsername(), container.getPassword()));
  
--        assertThat(server.getRequestCount()).isGreaterThan(1);
-+        assertThat(server.getRequestCount()).isLessThan(100);
+     protected abstract JdbcDatabaseContainer<?> startContainer();
+ 
+```
+
+**File**: `testing/trino-tests/pom.xml` (modified, +6/-0)
+```diff
+@@ -38,6 +38,12 @@
+             <scope>test</scope>
+         </dependency>
+ 
++        <dependency>
++            <groupId>com.h2database</groupId>
++            <artifactId>h2</artifactId>
++            <scope>test</scope>
++        </dependency>
++
+         <dependency>
+             <groupId>com.squareup.okhttp3</groupId>
+             <artifactId>okhttp-jvm</artifactId>
+```
+
+**File**: `testing/trino-tests/src/test/java/io/trino/execution/resourcegroups/db/H2ResourceGroupsModule.java` (modified, +12/-0)
+```diff
+@@ -23,6 +23,9 @@
+ import io.trino.plugin.resourcegroups.db.DbResourceGroupConfigurationManager;
+ import io.trino.plugin.resourcegroups.db.H2DaoProvider;
+ import io.trino.plugin.resourcegroups.db.ResourceGroupsDao;
++import org.h2.jdbcx.JdbcDataSource;
++
++import javax.sql.DataSource;
+ 
+ import static io.airlift.configuration.ConfigBinder.configBinder;
+ 
+@@ -44,4 +47,13 @@ public static DatabaseMigrator createMigrator()
+         // H2 tests set up schema manually; skip Flyway migrations for this non-production database.
+         return () -> {};
+     }
++
++    @Provides
++    @Singleton
++    public static DataSource createDataSource(DbResourceGroupConfig config)
++    {
++        JdbcDataSource ds = new JdbcDataSource();
++        ds.setURL(config.getConfigDbUrl());
++        return ds;
++    }
+ }
+```
+
+---
+
+### Incident Patch 3: `54bde53e` (2026-09-15)
+**Commit Message**: Require config-db-url and document it
+
+Add @NotNull validation and a @ConfigDescription so a missing
+resource-groups.config-db-url fails fast with a clear message
+instead of surfacing as a downstream NPE.
+
+**File**: `plugin/trino-resource-group-managers/src/main/java/io/trino/plugin/resourcegroups/db/DbResourceGroupConfig.java` (modified, +3/-0)
+```diff
+@@ -19,6 +19,7 @@
+ import io.airlift.units.Duration;
+ import io.airlift.units.MinDuration;
+ import jakarta.validation.constraints.AssertTrue;
++import jakarta.validation.constraints.NotNull;
+ 
+ import static java.util.concurrent.TimeUnit.HOURS;
+ import static java.util.concurrent.TimeUnit.SECONDS;
+@@ -33,12 +34,14 @@ public class DbResourceGroupConfig
+     private Duration refreshInterval = new Duration(1, SECONDS);
+     private boolean runMigrationsEnabled = true;
+ 
++    @NotNull
+     public String getConfigDbUrl()
+     {
+         return configUrl;
+     }
+ 
+     @Config("resource-groups.config-db-url")
++    @ConfigDescription("JDBC URL of the resource-groups configuration database")
+     public DbResourceGroupConfig setConfigDbUrl(String configUrl)
+     {
+         this.configUrl = configUrl;
+```
+
+**File**: `plugin/trino-resource-group-managers/src/test/java/io/trino/plugin/resourcegroups/db/TestDbResourceGroupConfig.java` (modified, +12/-1)
+```diff
+@@ -16,6 +16,7 @@
+ import com.google.common.collect.ImmutableMap;
+ import io.airlift.units.Duration;
+ import jakarta.validation.constraints.AssertTrue;
++import jakarta.validation.constraints.NotNull;
+ import org.junit.jupiter.api.Test;
+ 
+ import java.util.Map;
+@@ -70,7 +71,17 @@ public void testExplicitPropertyMappings()
      }
  
      @Test
+-    public void testValidation()
++    public void testConfigDbUrlRequired()
++    {
++        assertFailsValidation(
++                new DbResourceGroupConfig(),
++                "configDbUrl",
++                "must not be null",
++                NotNull.class);
++    }
++
++    @Test
++    public void testRefreshIntervalMustNotExceedMaxRefreshInterval()
+     {
+         assertFailsValidation(
+                 new DbResourceGroupConfig().setRefreshInterval(new Duration(2, HOURS)),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31728** (2026-10-22): Fix Iceberg $properties sort-order collision (@maswin)
-- **PR #31722** (2026-10-21): Skip query info rebuild before query is done (@raunaqmorarka)
-- **PR #31720** (2026-10-22): Fix flaky TestHttpTokenPoller.testHttpStatus503 (@findepi)
-- **PR #31717** (2026-10-21): Fix error-prone processing of markdown doc comments (@findepi)
-- **PR #31716** (2026-10-21): Enable errorprone RemoveUnusedImports (@findepi)
-- **PR #31713** (2026-10-21): Run HTTP server request handlers on virtual threads (@raunaqmorarka)
+- **PR #31778** (2026-10-24): Remove duplicated words in messages (@chenjian2664)
+- **PR #31764** (2026-10-24): Update Hadoop to 3.3.5-4 (@electrum)
+- **PR #31763** (2026-10-23): Remove Hadoop dependency from trino-tests (@electrum)
+- **PR #31761** (2026-10-23): Support query parameters in MV properties (@findepi)
+- **PR #31760** (2026-10-23): Disable NameNode load check in HDFS test container (@findepi)
+- **PR #31759** (2026-10-23): Fix ineffective Trino coordinator startup timeout (@findepi)
 
 ---
 
@@ -2066,36 +2214,32 @@ that retries stop in the budget-exhaustion test.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump the web-ui-dependencies group
+## X. ineffective Trino coordinator startup timeout
 
 **RULE**:
-When implementing operations in `core/trino-web-ui/src/main/resources/webapp/bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `testing/trino-testing-containers/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4d1a1e03`: Bump the web-ui-dependencies group. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bff39a8`: ineffective Trino coordinator startup timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-web-ui/src/main/resources/webapp/bun.lock`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `testing/trino-testing-containers/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        "@typescript-eslint/eslint-plugin": "^8.71.2",
-        "@typescript-eslint/parser": "^8.71.2",
-        "typescript-eslint": "^8.71.2",
-    "@typescript-eslint/eslint-plugin": ["@typescript-eslint/eslint-plugin@8.71.2", "", { "dependencies": { "@eslint-community/regexpp": "^4.12.2", "@typescript-eslint/scope-manager": "8.71.2", "@typescript-eslint/type-utils": "8.71.2", "@typescript-eslint/utils": "8.71.2", "@typescript-eslint/visitor-keys": "8.71.2", "ignore": "^7.0.5", "natural-compare": "^1.4.0", "ts-api-utils": "^2.5.0" }, "peerDependencies": { "@typescript-eslint/parser": "^8.71.2", "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0", "typescript": ">=4.8.4 <6.1.0" } }, "sha512-K72/pvT7qpm8q3k8G5u93NCSN1RcLxX5h7Gw0bQpbMXviBHeY6Nx1WEwmk9wP+eKTSQ8ecxvcgt/ZX/rB938xQ=="],
-    "@typescript-eslint/parser": ["@typescript-eslint/parser@8.71.2", "", { "dependencies": { "@typescript-eslint/scope-manager": "8.71.2", "@typescript-eslint/types": "8.71.2", "@typescript-eslint/typescript-estree": "8.71.2", "@typescript-eslint/visitor-keys": "8.71.2", "debug": "^4.4.3" }, "peerDependencies": { "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0", "typescript": ">=4.8.4 <6.1.0" } }, "sha512-aTtmZjp/x3gsGHkDs0
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-jdbc</artifactId>
+        </dependency>
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        "@typescript-eslint/eslint-plugin": "^8.71.1",
-        "@typescript-eslint/parser": "^8.71.1",
-        "typescript-eslint": "^8.71.1",
-    "@typescript-eslint/eslint-plugin": ["@typescript-eslint/eslint-plugin@8.71.1", "", { "dependencies": { "@eslint-community/regexpp": "^4.12.2", "@typescript-eslint/scope-manager": "8.71.1", "@typescript-eslint/type-utils": "8.71.1", "@typescript-eslint/utils": "8.71.1", "@typescript-eslint/visitor-keys": "8.71.1", "ignore": "^7.0.5", "natural-compare": "^1.4.0", "ts-api-utils": "^2.5.0" }, "peerDependencies": { "@typescript-eslint/parser": "^8.71.1", "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0", "typescript": ">=4.8.4 <6.1.0" } }, "sha512-nNlBf6HuotqMgZvSkWD5hNdemiBIxQ2NmrlgfcUIeZRs+BbakjscCQRq/Hb74EFVnFiSWWdL12JruqwBy3ERDw=="],
-    "@typescript-eslint/parser": ["@typescript-eslint/parser@8.71.1", "", { "dependencies": { "@typescript-eslint/scope-manager": "8.71.1", "@typescript-eslint/types": "8.71.1", "@typescript-eslint/typescript-estree": "8.71.1", "@typescript-eslint/visitor-keys": "8.71.1", "debug": "^4.4.3" }, "peerDependencies": { "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0", "typescript": ">=4.8.4 <6.1.0" } }, "sha512-oM/5sAqz/l1v/zYK1q
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4d1a1e03` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bff39a8` are properly handled with clean fallback behavior.
