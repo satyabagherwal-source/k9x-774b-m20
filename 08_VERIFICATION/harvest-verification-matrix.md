@@ -4814,3 +4814,6 @@
 | `CYCLE-20261025-50C0` | `2026-10-25T12:32:07.152Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4293` | Yes (`ddd10d71...`) |
 | `CYCLE-20261025-DTCE` | `2026-10-25T12:38:57.998Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`aa7294ee...`) |
 | `CYCLE-20261025-DVC5` | `2026-10-25T12:39:00.581Z` | `sayanarijit/xplr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4294` | Yes (`8cb44782...`) |
+| `CYCLE-20261025-M819` | `2026-10-25T12:45:30.285Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | Yes (`8d95ae1f...`) |
+| `CYCLE-20261025-MFXH` | `2026-10-25T12:45:40.517Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4295` | Yes (`a3ae5b9d...`) |
+| `CYCLE-20261025-SKG5` | `2026-10-25T12:50:26.309Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`6171825c...`) |

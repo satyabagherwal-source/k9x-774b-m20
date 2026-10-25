@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `c9d7861d`  
+> **Source Version**: `9c6fc8a2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T19:35:36.973Z  
+> **Timestamp**: 2026-10-25T12:45:30.078Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T19:35:35.728Z  
+> **Harvest Timestamp**: 2026-10-25T12:45:29.288Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5215 stars
+- **Stars / Engagement**: 5241 stars
 
 ---
 
@@ -1263,11 +1263,15 @@ pub fn run_setup_hooks_with_label(opts: &SetupHooksOptions<'_>, command_label: &
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3696** (2026-10-20): **setup-hooks gate skips the audit when git options contain quoted values with spaces**
-  *Symptoms*: ### What happened?  The fallow-gate.sh script that fallow setup-hooks generates (installer 3.33.1) splits the command on spaces without respecting quotes (set -- $segment). If a git-level option has a quoted value that contains a space, the leftover words are read as the subcommand. The command is then classified as "not a commit/push", and the audit is silently skipped.  Repro (calling is_git_write_command directly):  ``` git commit -m x                               → audited git -c "user.name=Jane Doe" commit -m update  → skipped git -C "/tmp/my project" push                 → skipped ```  Impact: any commit or push with a quoted `-c/-C/--git-dir` value containing a space gets past the gate. This is a regression gap in the [#2106](https://github.com/fallow-rs/fallow/issues/2106) tokenizer change.  Suggested fix: split the command in a quote-aware way that never evaluates it, for example a small parser, or `jq/xargs -n1`-style splitting. Alternatively, when splitting is ambiguous (quotes appear before the subcommand), treat the command as a commit/push and audit or block it instead of skipping it, matching the gate's intent.  ### Reproduction  1. Create a bad change 2. commit with extra options and spaces: `git -c "user.name=Jane Doe" commit -m update` 3. the audit won't be called  ### Expected behavior  1. Create a bad change 2. commit with extra options and spaces: `git -c "user.name=Jane Doe" commit -m update` 3. the audit **will** be run and the commit blocked  ### Fall
+- **Issue #3840** (2026-10-23): **Class inside ::view-transition-*(...) reported as unused export in SCSS Modules**
+  *Symptoms*: ### What happened?  fallow reports classes used in view transitions as unused in SCSS modules.  ### Reproduction  1. Create an SCSS modules file with a view transition class 2. Import the SCSS modules file in a JS file and use it  ```scss //app.module.scss .foo {   view-transition-name: demo; }  ::view-transition-new(.demo) {   animation-duration: 200ms; } ```  ```js // app.js import css from './app.module.scss'  console.log(css.foo); ```  fallow reports `.demo` as unused but it's actually used.  ``` ● Unused exports (1)   app.module.scss     :5 demo ```  ### Expected behavior  fallow should not report it as unused export  ### Fallow version  3.35.0  ### Operating system  Windows  ### Configuration  ```toml  ```
+  **Post-Mortem & Fix Analysis**:
+  > Fixed in v3.36.0 (`npm install fallow@3.36.0`). The class scan now skips the argument of `::view-transition-new(.demo)` and the other `::view-transition-*()` pseudo-elements, so `demo` is no longer reported as an unused export.  Thanks for reporting this together with #3839. 
 
-- **Issue #3532** (2026-10-16): **Performance regression in 3.33.1: plugin detection scans node_modules in pnpm workspaces**
-  *Symptoms*: ### What happened?   After upgrading from 3.33.0 to 3.33.1, `fallow audit` in a pnpm monorepo went from ~34 s to   ~170 s. Bisected by release; 3.33.0 and earlier are fine:    | version | total | system time | user time |   |---|---|---|---|   | 3.31.0 | 32 s | 4.3 s | 2.1 s |   | 3.32.0 | 34 s | 4.4 s | 2.5 s |   | 3.33.0 | 34 s | 4.6 s | 2.6 s |   | 3.33.1 | 169 s | 96.7 s | 9.0 s |    (The fast runs include a one-time cache rebuild after switching versions. Same machine, repo,   config and command for all four.)    `--performance` on 3.33.1 puts almost all of it in plugin detection:        discover files:       47.2ms  (2199 files)       workspaces:           13.1ms  (46 workspaces)       plugin detection: 164653.5ms  (+45.7ms plugin globs under entry points)       parse/extract:     14855.0ms  (2199 modules, 2199 cached, 0 parsed)       build graph:          11.9ms       analyze:              39.8ms       TOTAL:            164805.6ms      TOTAL:            164805.6ms  The time is kernel time. `fs_usage -w -f filesys fallow` during plugin detection shows a recursive directory walk (open → fstatfs64 → getdirentries64 → close per directory) through dependency internals under `node_modules/.pnpm`, reached through the `node_modules` symlinks of the workspace packages, for example:      open  …/.pnpm/@voidzero-dev+vite-plus-core@1.1.0_…/node_modules/@voidzero-dev/vite-plus-core/dist/vite/node/chunks     open  …/.pnpm/eslint@10.12.0_…/node_modules/eslint/lib/rules/utils/unicode 
+- **Issue #3839** (2026-10-23): **Function/mixin call reported as unused export in SCSS Modules**
+  *Symptoms*: ### What happened?  fallow reports namespaced function calls like `math.div()` / `utils.bar()` and mixin calls like `@include utils.baz()` as unused exports in `*.module.scss` files.  ### Reproduction  1. Create an SCSS file with a function / mixin 2. Create an SCSS module file that imports and uses them 3. import the SCSS module file and use it in your app   ```scss // utils.scss @function bar() {   @return red; }  @mixin baz {   border: 1px solid red; } ```  ```scss // app.module.scsss @use './utils'; @use 'sass:math';  .foo {   height: math.div(100px, 10);   background: utils.bar();    @include utils.baz(); } ```  ```js // app.js import css from './app.module.scss'  console.log(css.foo); ```  fallow reports the function / mixin calls as unused:  ``` ● Unused exports (3)   app.module.scss (3)     :6 div     :7 bar     :9 baz ```  ### Expected behavior  fallow shouldn't recognize them as CSS classes and not report them as unused.  ### Fallow version  3.35.0  ### Operating system  Windows  ### Configuration  ```toml  ```
+  **Post-Mortem & Fix Analysis**:
+  > Released in v3.36.0 (`npm install fallow@3.36.0`).  In SCSS Modules, a namespaced call such as `math.div(100px, 10)` or `utils.bar()`, and a namespaced mixin such as `@include utils.baz`, no longer give a false `unused-export`. In `.module.sass` files the `+utils.baz` shorthand is skipped too. A compound selector such as `button.primary` still exports `primary`.  Thanks for the report. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1284,1046 +1288,826 @@ pub fn run_setup_hooks_with_label(opts: &SetupHooksOptions<'_>, command_label: &
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c642c586` (2026-10-22)
-**Commit Message**: fix(extract): stop deeply nested brackets from aborting the run (#3790)
+### Incident Patch 1: `38469b53` (2026-10-23)
+**Commit Message**: chore(security): drop the stale GHSA-vfj7-8cjw-p6xm osv-scanner ignore (#3845)
 
-The Oxc parser recurses once per nesting level and has no depth limit. A
-file with a few thousand nested brackets overflowed the stack, and the
-stack overflow aborted the whole process. OSS-Fuzz found this in the
-fuzz_extract and fuzz_extract_cache targets. `fallow dupes` and
-`fallow health` aborted on the same files.
+The advisory no longer matches a package in editors/vscode/pnpm-lock.yaml, so the osv-scanner ignores check failed on main. Remove the entry and regenerate the VEX document.
 
-`fallow_extract::exceeds_nesting_limit` scans the bracket depth before a
-parse. Past 1024 levels, extraction returns a failed parse with no facts,
-so the run continues and the parse warning names the file. The
-duplication tokenizer, similar-code extraction, inventory and search
-visibility skip the file.
-
-The scan ignores brackets in strings, comments and template text. A
-string or regex literal that does not end on its line is scanned again
-as code, and a regex body raises only the peak depth, so a misread
-literal cannot hide real nesting. The deepest file in a scan of 134k
-real package files nests 87 levels.
-
-CACHE_VERSION and DUPES_CACHE_VERSION change: a file between the cap and
-the old overflow depth parsed before and is now a failed parse, so a
-warm cache must not serve its old facts or tok
-
-**File**: `changelog.d/fix-deep-nesting-stack-overflow.md` (added, +3/-0)
+**File**: `.vex/openvex.json` (modified, +0/-13)
 ```diff
-@@ -0,0 +1,3 @@
-+### Fixed
-+
-+- **A file with deeply nested brackets no longer aborts the run.** A source with thousands of nested `(`, `[`, `{` or template substitutions overflowed the parser stack, and the stack overflow killed the whole `fallow` process. Fallow now measures the nesting before it parses a file. A file past the limit shows as a file that failed to parse, `fallow dupes` finds no clones in it, and the analysis of the other files continues. Brackets inside strings, comments and template text do not count. The extraction and duplication cache versions change, so the first run after the upgrade parses every file again. OSS-Fuzz found this.
-```
-
-**File**: `crates/engine/src/duplication_detector/tokenize/mod.rs` (modified, +10/-0)
-```diff
-@@ -67,6 +67,16 @@ fn tokenize_file_inner(
- 
-     let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
- 
-+    if fallow_extract::exceeds_nesting_limit(source) {
-+        return FileTokens {
-+            tokens: Vec::new(),
-+            function_spans: Vec::new(),
-+            atomic_invocation_spans: Vec::new(),
-+            literal_argument_spans: Vec::new(),
-+            source: source.to_string(),
-+            line_count: source.lines().count().max(1),
-+        };
-+    }
-     if is_sfc_file(path) {
-         return tokenize_sfc(source, strip_types, skip_imports);
-     }
-```
-
-**File**: `crates/engine/src/duplication_detector/tokenize/tests/edge_cases.rs` (modified, +7/-0)
-```diff
-@@ -511,3 +511,10 @@ export async function fetchAndProcess(url, options = {}) {
-     assert!(has_spread, "Should have spread operator");
-     assert!(has_nullish, "Should have nullish coalescing operator");
- }
-+
-+#[test]
-+fn deeply_nested_source_yields_no_tokens_instead_of_overflowing() {
-+    let depth = 20_000;
-+    let code = format!("const x = {}1{};", "(".repeat(depth), ")".repeat(depth));
-+    assert!(tokenize(&code).is_empty());
-+}
-```
-
-**File**: `crates/engine/src/search_visibility.rs` (modified, +6/-0)
-```diff
-@@ -437,6 +437,9 @@ fn forwarded_import_bindings(path: &Path, source: &str) -> FxHashSet<String> {
-     let Ok(source_type) = oxc_span::SourceType::from_path(path) else {
-         return FxHashSet::default();
-     };
-+    if fallow_extract::exceeds_nesting_limit(source) {
-+        return FxHashSet::default();
-+    }
-     let allocator = oxc_allocator::Allocator::default();
-     let parsed = oxc_parser::Parser::new(&allocator, source, source_type).parse();
-     if parsed.fatal_error {
-@@ -764,6 +767,9 @@ impl TopLevelStatement {
- /// The top-level statements of a script. A script that does not parse has
- /// none.
- fn top_level_statements(source: &str, source_type: oxc_span::SourceType) -> Vec<TopLevelStatement> {
-+    if fallow_extract::exceeds_nesting_limit(source) {
-+        return Vec::new();
-+    }
-     let allocator = oxc_allocator::Allocator::default();
-     let parsed = oxc_parser::Parser::new(&allocator, source, source_type).parse();
-     if parsed.fatal_error {
-```
-
-**File**: `crates/extract/src/cache/types.rs` (modified, +2/-2)
-```diff
-@@ -10,12 +10,12 @@ use crate::MemberKind;
- /// extraction semantics change, and give the reason in the commit message and
- /// the CHANGELOG. A stale version serves old extraction results from a warm
- /// cache. The `assert_cached_type_size!` guards below catch shape changes.
--pub(super) const CACHE_VERSION: u32 = 371;
-+pub(super) const CACHE_VERSION: u32 = 372;
- 
- /// Duplication token cache version. Bump it when duplicate tokenization,
- /// normalization, or the on-disk token cache schema changes, and give the
- /// reason in the commit message and the CHANGELOG.
--pub const DUPES_CACHE_VERSION: u32 = 16;
-+pub const DUPES_CACHE_VERSION: u32 = 17;
- 
- /// Default maximum cache size (256 MB). Overridable per-project via
- /// `cache.maxSizeMb` in the config file or `FALLOW_CACHE_MAX_SIZE` env var.
-```
-
-**File**: `crates/extract/src/inventory.rs` (modified, +3/-0)
-```diff
-@@ -506,6 +506,9 @@ fn walk_one_parse(
-     source_type: SourceType,
-     line_offsets: &[u32],
- ) -> (Vec<InventoryEntry>, FxHashMap<String, InventoryComplexity>) {
-+    if crate::exceeds_nesting_limit(source) {
-+        return (Vec::new(), FxHashMap::default());
-+    }
-     let allocator = Allocator::default();
-     let parser_return = Parser::new(&allocator, source, source_type).parse();
- 
-```
-
-**File**: `crates/extract/src/lib.rs` (modified, +3/-0)
-```diff
-@@ -40,8 +40,10 @@ mod jsdoc_attach;
- mod jsdoc_deprecated;
- pub mod mdx;
- mod module_info;
-+mod nesting;
- pub mod og_image;
- mod parse;
-+mod parse_degradation;
- pub mod sfc;
- pub mod sfc_css;
- mod sfc_props;
-@@ -104,6 +106,7 @@ pub use css_in_js::{
- pub use css_metrics::{compute_css_analytics, parse_css_color_rgb};
- pub use glimmer::{is_glimmer_file, strip_glimmer_templates};
- pub use mdx::{extract_mdx_statements, extract_mdx_statements_mapped};
-+pub use nesting::{MAX_NESTING_DEPTH, exceeds_nesting_limit};
- pub use sfc::{
-     SourceRegion, extract_sfc_scripts, extract_sfc_styles, extract_sfc_template_regions,
-     is_sfc_file, sfc_merged_script_source,
-```
-
-**File**: `crates/extract/src/nesting.rs` (added, +360/-0)
-```diff
-@@ -0,0 +1,360 @@
-+//! Nesting-depth guard that runs before the Oxc parser sees a source.
-+//!
-+//! The Oxc parser and the AST visitors recurse once per nesting level and
-+//! have no depth limit (oxc-project/oxc#21953, oxc-project/oxc#24375). A
-+//! file with a few thousand nested brackets overflows the stack, and because
-+//! a stack overflow aborts the process, one such file kills the whole run.
-+//! Extraction therefore measures the bracket nesting first and does not parse
-+//! a file past [`MAX_NESTING_DEPTH`].
-+//!
-+//! The scan is a lexer approximation. Brackets in strings, comments and
-+//! template text do not count. A string or regex literal that does not end on
-+//! its line is not a literal, so the scan reads it again as code: a stray
-+//! quote in JSX text or a division read as a regex cannot hide brackets. A
-+//! regex body keeps its unclosed openers open, so a division that looks like
-+//! a regex cannot hide brackets either. It does not need to be
-+//! exact, because real code stays far below the cap. Nesting without brackets
-+//! (TypeScript generics, JSX elements, long member or call chains) is not
-+//! bounded here.
-+
-+use fallow_types::discover::FileId;
-+use fallow_types::extract::ModuleInfo;
-+
-+use crate::visitor::ModuleInfoExtractor;
-+
-+/// Bracket nesting depth past which a file is not parsed.
-+///
-+/// A release build on a 16 MiB worker stack overflows at about 6000 levels for
-+/// the most expensive shape (nested object literals), and at about half that
-+/// on the 8 MiB main thread that parses small projects. Real code stays far
-+/// below this cap.
-+pub const MAX_NESTING_DEPTH: u32 = 1024;
-+
-+/// The module of a file whose nesting would overflow the parser stack, or
-+/// `None` when the file is safe to parse. The module is a failed parse with no
-+/// facts, so the file shows up as degraded instead of aborting the run.
-+pub fn too_deep_module(file_id: FileId, source: &str, content_hash: u64) -> Option<ModuleInfo> {
-+    let source = crate::strip_bom(source);
-+    if !exceeds_nesting_limit(source) {
-+        return None;
-+    }
-+    let mut info = ModuleInfoExtractor::new().into_module_info(
-+        file_id,
-+        content_hash,
-+        crate::suppress::ParsedSuppressions::default(),
-+    );
-+    info.parse_error_count = 1;
-+    info.parse_panicked = true;
-+    info.line_offsets = fallow_types::extract::compute_line_offsets(source);
-+    Some(info)
-+}
-+
-+/// Returns `true` when the bracket nesting of `source` exceeds
-+/// [`MAX_NESTING_DEPTH`]. Every caller that hands user source to the Oxc
-+/// parser checks this first.
-+#[must_use]
-+pub fn exceeds_nesting_limit(source: &str) -> bool {
-+    max_depth(source, MAX_NESTING_DEPTH) > MAX_NESTING_DEPTH
-+}
-+
-+/// Maximum bracket nesting depth of `source`. The scan stops as soon as the
-+/// depth passes `limit`, so the result is at most `limit + 1`.
-+fn max_depth(source: &str, limit: u32) -> u32 {
-+    let mut scanner = Scanner {
-+        bytes: source.as_bytes(),
-+        pos: 0,
-+        depth: 0,
-+        max_depth: 0,
-+        limit,
-+        templates: Vec::new(),
-+        regex_allowed: true,
-+    };
-+    scanner.scan();
-+    scanner.max_depth
-+}
-+
-+struct Scanner<'a> {
-+    bytes: &'a [u8],
-+    pos: usize,
-+    depth: u32,
-+    max_depth: u32,
-+    limit: u32,
-+    /// Depth of each open `${` substitution, innermost last. The `}` that
-+    /// brings the depth back to this value resumes the template text.
-+    templates: Vec<u32>,
-+    /// Whether a `/` at this point starts a regex literal instead of a
-+    /// division, judged from the previous significant byte.
-+    regex_allowed: bool,
-+}
-+
-+impl Scanner<'_> {
-+    fn scan(&mut self) {
-+        while let Some(&byte) = self.bytes.get(self.pos) {
-+            if self.max_depth > self.limit {
-+                return;
-+            }
-+            self.pos += 1;
-+            match byte {
-+                b'(' | b'[' | b'{' => {
-+                    self.open();
-+                    self.regex_allowed = true;
-+                }
-+                b'}' if self.templates.last() == Some(&self.depth) => {
-+                    self.templates.pop();
-+                    self.depth -= 1;
-+                    self.skip_template_text();
-+                }
-+                b')' | b']' | b'}' => {
-+                    self.depth = self.depth.saturating_sub(1);
-+                    self.regex_allowed = byte == b'}';
-+                }
-+                b'\'' | b'"' => {
-+                    self.skip_string(byte);
-+                    self.regex_allowed = false;
-+                }
-+                b'`' => self.skip_template_text(),
-+                b'/' => self.skip_slash(),
-+                b' ' | b'\t' | b'\n' | b'\r' => {}
-+                _ => self.regex_allowed = starts_expression(byte),
-+            }
-+        }
-+    }
-+
-+    fn open(&mut self) {
-+        self.depth += 1;
-+        self.max_depth = self.max_depth.max(self.depth);
-+    }
-+
-+    /// Skips a comment, a regex literal, or a divis
-```
-
----
-
-### Incident Patch 2: `606d18d6` (2026-10-22)
-**Commit Message**: fix(lsp,mcp): run analysis on threads with the worker stack (#3806)
-
-The language server ran analysis on 2 MiB Tokio blocking threads and the default Rayon pool, and run_decision_surface did not call install. A deeply nested file overflowed those stacks and aborted the process. The language server now builds the global Rayon pool and its Tokio threads with the 16 MiB analysis worker stack, run_decision_surface runs both analysis passes inside install, and the MCP Tokio threads get the same stack size. fallow_api exports WORKER_STACK_SIZE and configure_global_analysis_pool(threads), which the CLI also uses.
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -1423,6 +1423,7 @@ dependencies = [
-  "ls-types",
-  "mimalloc",
-  "proptest",
-+ "rayon",
-  "rustc-hash",
-  "serde",
-  "serde_json",
-```
-
-**File**: `changelog.d/fix-analysis-thread-stack.md` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+### Fixed
-+
-+- **The language server and the MCP `decision_surface` tool no longer abort on nesting that the CLI survives.** Both ran analysis on threads with a 2 MiB stack, so a deeply nested file overflowed that stack and stopped the process. The language server now gives its analysis threads the 16 MiB stack of the CLI workers. Its Tokio runtime uses two worker threads, because analysis runs on the blocking threads and the Rayon pool. `decision_surface` and `run_decision_surface` now parse on the analysis worker pool, as the other tools do. Their thread count now follows the `threads` option.
-```
-
-**File**: `crates/api/src/lib.rs` (modified, +20/-0)
-```diff
-@@ -126,6 +126,12 @@ pub use fallow_engine::change_scope::{
- };
- /// Engine-owned per-workspace Git baseline state used by analysis surfaces.
- pub use fallow_engine::package_baselines::{PackageBaselineError, PackageChangeScope};
-+/// Stack size for threads that run analysis.
-+///
-+/// A process that runs analysis outside
-+/// [`ProgrammaticAnalysisContext::install`], such as the LSP server, gives its
-+/// own threads this stack size.
-+pub use fallow_engine::thread_pool::WORKER_STACK_SIZE;
- /// Parsed modules that a long-lived process keeps across analysis calls.
- ///
- /// A process that runs many calls on the same project, such as the MCP
-@@ -1237,6 +1243,20 @@ pub struct ComplexityRunOptions<'a> {
-     pub coverage_inputs: ComplexityCoverageInputs<'a>,
- }
- 
-+/// Build the process-global Rayon pool with the [`WORKER_STACK_SIZE`] stack
-+/// and `threads` workers. Zero threads selects the Rayon default count, which
-+/// honors `RAYON_NUM_THREADS`.
-+///
-+/// A process that runs analysis outside
-+/// [`ProgrammaticAnalysisContext::install`] calls this once at startup, before
-+/// any parallel work. Returns `false` when the global pool already exists or
-+/// when a worker thread cannot start. Rayon then keeps its default pool.
-+pub fn configure_global_analysis_pool(threads: usize) -> bool {
-+    fallow_engine::thread_pool::worker_pool_builder(threads)
-+        .build_global()
-+        .is_ok()
-+}
-+
- /// Derive effective health section flags for API consumers.
- #[must_use]
- pub fn derive_health_sections(options: &HealthSectionOptions) -> DerivedHealthSections {
-```
-
-**File**: `crates/api/src/runtime/decision_surface.rs` (modified, +105/-2)
-```diff
-@@ -46,7 +46,9 @@ pub fn run_decision_surface(
-         });
-     }
- 
--    let head = run_decision_analysis(&resolved, Some(&changed_files), None)?;
-+    // The caller can be a 2 MiB Tokio blocking thread. Parse on the worker
-+    // stack of the analysis pool instead.
-+    let head = resolved.install(|| run_decision_analysis(&resolved, Some(&changed_files), None))?;
-     let manifests = changed_manifests(&resolved.root, &changed_files);
-     let base = compute_base_decision_snapshot(
-         options,
-@@ -290,7 +292,7 @@ fn compute_base_decision_snapshot(
-         ..options.analysis.clone()
-     };
-     let resolved = resolve_programmatic_analysis_context(&base_analysis)?;
--    let base = run_decision_analysis(&resolved, None, Some(head_config))?;
-+    let base = resolved.install(|| run_decision_analysis(&resolved, None, Some(head_config)))?;
-     let mut snapshot = snapshot_from_decision_analysis(&base);
-     snapshot.manifests = base_manifests;
-     Ok(snapshot)
-@@ -461,3 +463,104 @@ fn export_line_resolver(
-             .map_or(0, |(_, line)| *line)
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use std::path::Path;
-+    use std::process::Command;
-+
-+    use crate::{AnalysisOptions, DecisionSurfaceOptions};
-+
-+    const STACK_PROBE_ENV: &str = "FALLOW_DECISION_SURFACE_STACK_PROBE_CHILD";
-+    const STACK_PROBE_TEST: &str =
-+        "runtime::decision_surface::tests::decision_surface_parses_on_the_worker_stack";
-+    /// Deep enough to overflow a 2 MiB thread in a release build and to fit
-+    /// the 16 MiB worker stack in a debug build. An assignment chain has no
-+    /// brackets, so the pre-parse bracket guard does not stop it.
-+    const ASSIGNMENT_CHAIN_DEPTH: usize = 4_000;
-+
-+    // A stack overflow aborts the process, so the probe re-runs this test
-+    // binary as a child without RUST_MIN_STACK (pinned to 16 MiB in
-+    // .cargo/config.toml). The child test thread then has the 2 MiB default
-+    // stack of an MCP blocking thread.
-+    #[test]
-+    fn decision_surface_parses_on_the_worker_stack() {
-+        if std::env::var_os(STACK_PROBE_ENV).is_some() {
-+            run_stack_probe_child();
-+            return;
-+        }
-+
-+        let current_exe = std::env::current_exe().expect("current test binary should be known");
-+        let output = Command::new(current_exe)
-+            .arg("--exact")
-+            .arg(STACK_PROBE_TEST)
-+            .arg("--nocapture")
-+            .env(STACK_PROBE_ENV, "1")
-+            .env_remove("RUST_MIN_STACK")
-+            .output()
-+            .expect("stack probe child should start");
-+
-+        assert!(
-+            output.status.success(),
-+            "stack probe child failed with status {:?}\nstdout:\n{}\nstderr:\n{}",
-+            output.status.code(),
-+            String::from_utf8_lossy(&output.stdout),
-+            String::from_utf8_lossy(&output.stderr)
-+        );
-+    }
-+
-+    fn run_stack_probe_child() {
-+        let project = tempfile::tempdir().expect("temp dir");
-+        let root = project.path();
-+        std::fs::write(root.join("index.ts"), "export const used = 1;\n").expect("write entry");
-+        git(root, &["init", "-b", "main"]);
-+        git(root, &["add", "."]);
-+        commit(root, "initial");
-+        git(root, &["checkout", "-b", "feature"]);
-+        let deep = format!(
-+            "export let a = 0;\n{}1;\n",
-+            "a=".repeat(ASSIGNMENT_CHAIN_DEPTH)
-+        );
-+        std::fs::write(root.join("deep.ts"), deep).expect("write deep file");
-+        git(root, &["add", "."]);
-+        commit(root, "deep");
-+
-+        let options = DecisionSurfaceOptions {
-+            analysis: AnalysisOptions {
-+                root: Some(root.to_path_buf()),
-+                threads: Some(1),
-+                no_cache: true,
-+                ..AnalysisOptions::default()
-+            },
-+            base: Some("main".to_owned()),
-+            max_decisions: None,
-+        };
-+        super::super::run_decision_surface(&options).expect("decision surface should run");
-+    }
-+
-+    fn commit(root: &Path, message: &str) {
-+        git(
-+            root,
-+            &[
-+                "-c",
-+                "user.email=test@example.com",
-+                "-c",
-+                "user.name=Test",
-+                "-c",
-+                "commit.gpgsign=false",
-+                "commit",
-+                "-m",
-+                message,
-+            ],
-+        );
-+    }
-+
-+    fn git(root: &Path, args: &[&str]) {
-+        let status = fallow_engine::changed_files::clear_ambient_git_env(&mut Command::new("git"))
-+            .args(args)
-+            .current_dir(root)
-+            .status()
-+            .expect("git command");
-+        assert!(status.success(), "git {args:?} failed");
-+    }
-+}
-```
-
-**File**: `crates/cli/src/rayon_pool.rs` (modified, +1/-3)
-```diff
-@@ -1,11 +1,9 @@
--use fallow_engine::thread_pool::worker_pool_builder;
--
- #[allow(
-     dead_code,
-     reason = "used by the CLI binary; the library build uses per-call pools"
- )]
- pub fn configure_global_pool(threads: usize) {
--    let _ = worker_pool_builder(threads).build_global();
-+    let _ = fallow_api::configure_global_analysis_pool(threads);
- }
- 
- #[cfg(test)]
-```
-
-**File**: `crates/engine/src/thread_pool.rs` (modified, +4/-2)
-```diff
-@@ -4,8 +4,10 @@
- ///
- /// Recursive AST extraction and analysis overflow the default Rayon worker
- /// stack on deeply nested sources, so every pool that runs analysis work must
--/// be built with this size. The CLI global pool and the programmatic per-call
--/// pools share this builder so embedders cannot drift.
-+/// be built with this size. The CLI and LSP global pools and the programmatic
-+/// per-call pools share this builder so embedders cannot drift. A thread that
-+/// runs analysis outside these pools, such as a Tokio blocking thread in a
-+/// server, needs this size too.
- pub const WORKER_STACK_SIZE: usize = 16 * 1024 * 1024;
- 
- /// Rayon pool builder preconfigured with the analysis worker stack size.
-```
-
-**File**: `crates/lsp/Cargo.toml` (modified, +2/-0)
-```diff
-@@ -33,6 +33,8 @@ mimalloc = { workspace = true }
- 
- [dev-dependencies]
- proptest = { workspace = true }
-+# The runtime stack probe drives the global Rayon pool that analysis uses.
-+rayon = { workspace = true }
- tempfile = { workspace = true }
- # `io-util` (duplex pipes, BufReader, AsyncRead/WriteExt) is test-only: the
- # `Server::serve` integration test drives the LSP over framed duplex streams.
-```
-
-**File**: `crates/lsp/src/lib.rs` (modified, +2/-4)
-```diff
-@@ -23,6 +23,7 @@ mod path_utils;
- mod position;
- mod protocol;
- mod publish;
-+mod runtime;
- mod schedule;
- mod server_capabilities;
- mod session_store;
-@@ -1476,10 +1477,7 @@ pub fn run_stdio_server() -> std::process::ExitCode {
-         return std::process::ExitCode::SUCCESS;
-     }
- 
--    let runtime = match tokio::runtime::Builder::new_multi_thread()
--        .enable_all()
--        .build()
+@@ -18,19 +18,6 @@
+       "justification": "vulnerable_code_not_in_execute_path",
+       "impact_statement": "Development dependency, not in the bundled extension; the parent package range blocks the patched version. Source: editors/vscode/osv-scanner.toml"
+     },
 -    {
-+    let runtime = match runtime::build_server_runtime() {
-         Ok(runtime) => runtime,
-         Err(error) => {
-             #[expect(
+-      "vulnerability": {
+-        "name": "GHSA-vfj7-8cjw-p6xm"
+-      },
+-      "products": [
+-        {
+-          "@id": "pkg:github/fallow-rs/fallow"
+-        }
+-      ],
+-      "status": "not_affected",
+-      "justification": "vulnerable_code_not_in_execute_path",
+-      "impact_statement": "Development dependency, not in the bundled extension; the parent package range blocks the patched version. Source: editors/vscode/osv-scanner.toml"
+-    },
+     {
+       "vulnerability": {
+         "name": "RUSTSEC-2024-0436"
+```
+
+**File**: `editors/vscode/osv-scanner.toml` (modified, +0/-5)
+```diff
+@@ -1,11 +1,6 @@
+ # These packages are development and build tools. The bundled extension
+ # ships only vscode-languageclient and vscode-languageserver-protocol.
+ 
+-[[IgnoredVulns]]
+-id = "GHSA-vfj7-8cjw-p6xm"
+-ignoreUntil = 2027-01-15T00:00:00Z
+-reason = "Development dependency, not in the bundled extension; the parent package range blocks the patched version."
+-
+ [[IgnoredVulns]]
+ id = "GHSA-73rr-hh4g-fpgx"
+ ignoreUntil = 2027-01-15T00:00:00Z
 ```
 
 ---
 
-### Incident Patch 3: `b694b00e` (2026-10-22)
-**Commit Message**: fix(extract): stop class credit through a nested non-instance shadow (#3800)
+### Incident Patch 2: `abb52e1f` (2026-10-23)
+**Commit Message**: fix(scripts): credit the npm alias that installs a script binary (#3846)
 
-* fix(extract): stop class credit through a nested non-instance shadow
+* fix(scripts): credit the npm alias that installs a script binary
 
-`binding_target_names` is module-flat. A module instance
-`const service = new Service()` gave credit to `Service.m` for
-`service.m`, `service['m']` and `const { m } = service` inside a
-function that declares its own `service`. Fallow then missed an unused
-member.
+A dependency such as @typescript/native: npm:typescript@~7.0.2 provides
+the binaries of typescript. A tsc script resolved to typescript only, so
+the alias was reported as unused.
 
-Each nested scope now records the names it declares that provably hold
-no class instance: an object literal of functions and primitives, a
-primitive or function value, or a parameter typed by a primitive,
-function or type literal type. A read through such a root keeps its raw
-access but does not resolve through the flat class bindings. A class
-binding under the same root clears the record, so a class instance that
-the nested scope declares keeps its credit.
+After script analysis, credit each npm alias whose aliased package a
+script uses. A plain declaration of the aliased package keeps priority,
+so a side-by-side alias such as typescript-5: npm:typescript@5 stays
+reportable.
 
-Loop variables, catch parameters, untyped parameters and named type
-annotations give no proof and keep the old credit.
-
-CACHE_VERSION goes to 372 because the extraction output changes.
-
-Fixes #3798
+Fixes #3844
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-* chore: bump cache versions above the base branch
+* fix(scripts): check the plain declaration per manifest for npm alias credit
 
-Signed-off-by: Bart
+The check that blocks credit for an npm alias used the dependency names of all manifests. A plain typescript in one workspace therefore blocked the credit for an alias of typescript in another workspace, and that alias stayed reported as unused.
 
-**File**: `changelog.d/fix-shadowed-class-binding-credit.md` (added, +3/-0)
+Compare the alias target with the dependency names of the manifest that declares the alias. Add a workspace fixture with a plain typescript in one workspace and an alias in another.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* docs(changelog): move the n
+
+**File**: `changelog.d/fix-npm-alias-dependency-binaries.md` (added, +10/-0)
 ```diff
-@@ -0,0 +1,3 @@
+@@ -0,0 +1,10 @@
 +### Fixed
 +
-+- **`unused-class-members` no longer credits a class through a local shadow.** Without `--type-aware`, a module instance `const service = new Service()` gave credit to `Service.m` for `service.m`, `service['m']`, `const { m } = service` and `({ m }: typeof service)` inside a function that declares its own `service`. Fallow then missed an unused member. Fallow now ignores this credit when the nested `service` provably holds no class instance: an object literal of functions and primitives, a primitive or function value, or a parameter whose type annotation is a primitive, literal or function type. A type literal or a named type gives no proof, because a class instance can satisfy it. A class instance that the nested scope declares keeps its credit.
++- **A script binary now credits the npm alias that installs it.** A
++  dependency such as `"@typescript/native": "npm:typescript@~7.0.2"` provides
++  the binaries of `typescript`, so a `tsc` script no longer reports the alias
++  as unused. When the same manifest also declares the aliased package under
++  its own name, that declaration provides the binary, and an alias that
++  nothing else uses is still reported. A plain declaration in another
++  workspace does not change the result. Thanks @waldoluisribeiro for the
++  report. (Closes [#3844](https://github.com/fallow-rs/fallow/issues/3844))
 ```
 
-**File**: `crates/core/tests/integration_test/member_detection.rs` (modified, +37/-0)
+**File**: `crates/config/src/workspace/package_json.rs` (modified, +73/-1)
 ```diff
-@@ -74,6 +74,43 @@ fn parameter_and_assignment_destructures_credit_class_members() {
-     );
- }
- 
-+/// A nested binding that provably holds no class instance shadows the module
-+/// instance of the same name. A read through the shadow gives no credit to the
-+/// class. A class instance that is declared in the nested scope keeps its
-+/// credit, and so does a parameter typed by a type literal, because a class
-+/// instance satisfies that type.
-+#[test]
-+fn nested_non_instance_shadow_gives_no_class_member_credit() {
-+    let config = create_config(fixture_path("shadowed-class-binding-members"));
-+    let results = fallow_core::analyze(&config).expect("analysis should succeed");
-+    let mut unused: Vec<(&str, &str)> = results
-+        .unused_class_members
-+        .iter()
-+        .map(|item| {
-+            (
-+                item.member.parent_name.as_str(),
-+                item.member.member_name.as_str(),
-+            )
+@@ -414,6 +414,33 @@ impl PackageJson {
+         .find_map(|deps| deps.get(name))
+         .and_then(|spec| workspace_alias_name(spec))
+     }
++
++    /// Every dependency that the manifest installs under an npm alias, as
++    /// `(alias, aliased package)` pairs.
++    ///
++    /// `"@typescript/native": "npm:typescript@~7.0.2"` installs the package
++    /// `typescript` in `node_modules/@typescript/native`, so the alias
++    /// provides the binaries of `typescript`.
++    #[must_use]
++    pub fn npm_aliases(&self) -> Vec<(String, String)> {
++        let mut aliases: Vec<(String, String)> = [
++            &self.dependencies,
++            &self.dev_dependencies,
++            &self.optional_dependencies,
++            &self.peer_dependencies,
++        ]
++        .into_iter()
++        .flatten()
++        .flat_map(|deps| deps.iter())
++        .filter_map(|(name, spec)| {
++            let target = npm_alias_name(spec)?;
++            (target != name).then(|| (name.clone(), target.to_string()))
 +        })
 +        .collect();
-+    unused.sort_unstable();
++        aliases.sort_unstable();
++        aliases.dedup();
++        aliases
++    }
+ }
+ 
+ /// The package name in a `workspace:<name>@<range>` dependency spec.
+@@ -424,7 +451,23 @@ fn workspace_alias_name(spec: &str) -> Option<&str> {
+     } else {
+         rest.find('@')?
+     };
+-    let name = &rest[..separator];
++    valid_package_name(&rest[..separator])
++}
++
++/// The package name in an `npm:<name>@<range>` or `npm:<name>` dependency
++/// spec.
++fn npm_alias_name(spec: &str) -> Option<&str> {
++    let rest = spec.trim().strip_prefix("npm:")?;
++    let separator = if let Some(scoped) = rest.strip_prefix('@') {
++        scoped.find('@').map_or(rest.len(), |at| at + 1)
++    } else {
++        rest.find('@').unwrap_or(rest.len())
++    };
++    valid_package_name(&rest[..separator])
++}
++
++/// `name` when it has the shape of a package name: `name` or `@scope/name`.
++fn valid_package_name(name: &str) -> Option<&str> {
+     let is_package_name = !name.is_empty()
+         && !name.starts_with('.')
+         && match name.strip_prefix('@') {
+@@ -1037,6 +1080,35 @@ mod tests {
+         assert!(pkg.exports_subdirectories().is_empty());
+     }
+ 
++    #[test]
++    fn npm_aliases_read_the_aliased_package_name() {
++        let pkg: PackageJson = serde_json::from_str(
++            r#"{
++                "dependencies": {"plain": "npm:left-pad@^1.3.0", "range": "^1.0.0"},
++                "devDependencies": {
++                    "@typescript/native": "npm:typescript@~7.0.2",
++                    "typescript": "npm:@typescript/typescript6@^6.0.2",
++                    "bare": "npm:eslint",
++                    "same": "npm:same@1.0.0",
++                    "path": "npm:./local",
++                    "bad-scope": "npm:@scope@1.0.0",
++                    "workspace": "workspace:@scope/core@*"
++                }
++            }"#,
++        )
++        .unwrap();
++        assert_eq!(
++            pkg.npm_aliases(),
++            [
++                ("@typescript/native", "typescript"),
++                ("bare", "eslint"),
++                ("plain", "left-pad"),
++                ("typescript", "@typescript/typescript6"),
++            ]
++            .map(|(alias, target)| (alias.to_string(), target.to_string()))
++        );
++    }
++
+     #[test]
+     fn workspace_alias_target_reads_the_aliased_package_name() {
+         let pkg: PackageJson = serde_json::from_str(
+```
+
+**File**: `crates/core/src/lib.rs` (modified, +9/-22)
+```diff
+@@ -2261,7 +2261,11 @@ fn analyze_all_scripts(
+     workspace_pkgs: &[LoadedWorkspacePackage],
+     plugin_result: &mut plugins::AggregatedPluginResult,
+ ) {
+-    let all_dep_names = collect_all_dependency_names(root_pkg, workspace_pkgs);
++    let manifests: Vec<&PackageJson> = root_pkg
++        .into_iter()
++        .chain(workspace_pkgs.iter().map(|(_, ws_pkg)| ws_pkg))
++        .collect();
++    let all_dep_names = scripts::all_dependency_names(&manifests);
+     let all_dep_set: FxHashSet<String> = all_dep_names.iter().cloned().collect();
+     let workspace_packages =
+         discover::collect_workspace_packages(&config.root, root_pkg, workspace_pkgs);
+@@ -2291,12 +2295,12 @@ fn analyze_all_scripts(
+         },
+         plugin_result,
+     );
++    scripts::credit_npm_aliases(&mut plugin_result.script_used_packages, &manifests);
+     plugin_result.dependency_binaries =
+         scripts::DependencyBinaries::new(config.root.clone(), bin_map, all_dep_set);
+-    plugin_result.dev_dependency_names = root_pkg
+-        .into_iter()
+-        .chain(workspace_pkgs.iter().map(|(_, ws_pkg)| ws_pkg))
+-        .flat_map(PackageJson::dev_dependency_names)
++    plugin_result.dev_dependency_names = manifests
++        .iter()
++        .flat_map(|pkg| pkg.dev_dependency_names())
+         .collect();
+ 
+     plugin_result
+@@ -2309,23 +2313,6 @@ fn analyze_all_scripts(
+         .or_insert(EntryPointRole::Test);
+ }
+ 
+-/// Gather sorted, deduped dependency names across the root and workspace packages.
+-fn collect_all_dependency_names(
+-    root_pkg: Option<&PackageJson>,
+-    workspace_pkgs: &[LoadedWorkspacePackage],
+-) -> Vec<String> {
+-    let mut all_dep_names: Vec<String> = Vec::new();
+-    if let Some(pkg) = root_pkg {
+-        all_dep_names.extend(pkg.all_dependency_names());
+-    }
+-    for (_, ws_pkg) in workspace_pkgs {
+-        all_dep_names.extend(ws_pkg.all_dependency_names());
+-    }
+-    all_dep_names.sort_unstable();
+-    all_dep_names.dedup();
+-    all_dep_names
+-}
+-
+ /// The binaries, dependencies, and workspace packages that script analysis
+ /// resolves commands against.
+ struct ScriptDependencyContext<'a> {
+```
+
+**File**: `crates/core/src/scripts/mod.rs` (modified, +2/-2)
+```diff
+@@ -39,8 +39,8 @@ use command_wrappers::{command_wrapper_child_index, skip_command_wrappers};
+ pub use config_tasks::config_task_scripts;
+ use file_target_tools::file_target_tool;
+ pub use resolve::{
+-    DependencyBinaries, build_bin_to_package_map, project_bin_map, resolve_binary_to_packages,
+-    resolve_known_dependency_binary,
++    DependencyBinaries, all_dependency_names, build_bin_to_package_map, credit_npm_aliases,
++    project_bin_map, resolve_binary_to_packages, resolve_known_dependency_binary,
+ };
+ pub use shell::command_substitutions;
+ pub use workspace_selection::WorkspacePackages;
+```
+
+**File**: `crates/core/src/scripts/resolve.rs` (modified, +91/-0)
+```diff
+@@ -186,6 +186,52 @@ pub fn resolve_binary_to_packages(
+     candidates.iter().map(|pkg| (*pkg).to_string()).collect()
+ }
+ 
++/// Gather sorted, deduped dependency names across the root and workspace
++/// manifests.
++#[must_use]
++pub fn all_dependency_names(manifests: &[&fallow_config::PackageJson]) -> Vec<String> {
++    let mut names: Vec<String> = manifests
++        .iter()
++        .flat_map(|pkg| pkg.all_dependency_names())
++        .collect();
++    names.sort_unstable();
++    names.dedup();
++    names
++}
++
++/// Credit each npm alias whose aliased package `used` already holds.
++///
++/// A script binary resolves to the package that ships it, for example `tsc`
++/// to `typescript`. A project that installs that package as
++/// `"@typescript/native": "npm:typescript@7"` declares only the alias, so the
++/// alias is the dependency in use.
++///
++/// When the manifest that declares the alias also declares the aliased
++/// package under its own name, and that name is not itself an alias, the
++/// plain declaration provides the binary and the alias gets no credit. This
++/// keeps a side-by-side alias such as `"typescript-5": "npm:typescript@5"`
++/// reportable. A plain declaration in another workspace does not block the
++/// credit, because that workspace does not install the binary for the alias.
++pub fn credit_npm_aliases(used: &mut FxHashSet<String>, manifests: &[&fallow_config::PackageJson]) {
++    let mut credited: Vec<String> = Vec::new();
++    for pkg in manifests {
++        let aliases = pkg.npm_aliases();
++        if aliases.is_empty() {
++            continue;
++        }
++        let declared: FxHashSet<String> = pkg.all_dependency_names().into_iter().collect();
++        let is_alias = |name: &str| aliases.iter().any(|(alias, _)| alias == name);
++        credited.extend(
++            aliases
++                .iter()
++                .filter(|(_, target)| used.contains(target))
++                .filter(|(_, target)| !declared.contains(target) || is_alias(target))
++                .map(|(alias, _)| alias.clone()),
++        );
++    }
++    used.extend(credited);
++}
++
+ /// Resolve a binary only when it is known to belong to a declared dependency.
+ #[must_use]
+ pub fn resolve_known_dependency_binary(
+@@ -485,6 +531,51 @@ mod tests {
+         assert_eq!(pkg, None);
+     }
+ 
++    fn credit(used: &[&str], dev_dependencies: &str) -> FxHashSet<String> {
++        let pkg = workspace_package(&format!(r#"{{"devDependencies": {dev_dependencies}}}"#));
++        let mut used = declared(used);
++        credit_npm_aliases(&mut used, &[&pkg]);
++        used
++    }
++
++    #[test]
++    fn npm_alias_is_credited_when_another_manifest_declares_the_target_plainly() {
++        let root = workspace_package(r#"{"devDependencies": {"typescript": "^5.0.0"}}"#);
++        let ws = workspace_package(
++            r#"{"devDependencies": {"@typescript/native": "npm:typescript@~7.0.2"}}"#,
++        );
++        let mut used = declared(&["typescript"]);
++        credit_npm_aliases(&mut used, &[&root, &ws]);
++        assert_eq!(used, declared(&["typescript", "@typescript/native"]));
++    }
++
++    #[test]
++    fn npm_alias_of_a_used_package_is_credited() {
++        let used = credit(
++            &["typescript"],
++            r#"{"@typescript/native": "npm:typescript@~7.0.2", "idle": "npm:left-pad@1"}"#,
++        );
++        assert_eq!(used, declared(&["typescript", "@typescript/native"]));
++    }
++
++    #[test]
++    fn npm_alias_is_credited_when_the_target_name_is_another_alias() {
++        let used = credit(
++            &["typescript"],
++            r#"{"@typescript/native": "npm:typescript@7", "typescript": "npm:@typescript/typescript6@6"}"#,
++        );
++        assert!(used.contains("@typescript/native"));
++    }
++
++    #[test]
++    fn npm_alias_is_not_credited_when_the_target_is_declared_plainly() {
++        let used = credit(
++            &["typescript"],
++            r#"{"typescript": "^7.0.2", "typescript-5": "npm:typescript@5"}"#,
++        );
++        assert_eq!(used, declared(&["typescript"]));
++    }
++
+     #[test]
+     fn jest_identity_without_symlink() {
+         let pkg = resolve_binary_to_packages("jest", Path::new("/nonexistent"), &empty_map());
+```
+
+**File**: `crates/core/tests/integration_test.rs` (modified, +2/-0)
+```diff
+@@ -676,6 +676,8 @@ mod namespace_class_static_member;
+ mod namespace_spy_call_member;
+ #[path = "integration_test/node_modules_bin_path.rs"]
+ mod node_modules_bin_path;
++#[path = "integration_test/npm_alias_dependency_binaries.rs"]
++mod npm_alias_dependency_binaries;
+ #[path = "integration_test/osls_plugin.rs"]
+ mod osls_plugin;
+ #[path = "integration_test/pkg_utils_plugin.rs"]
+```
+
+**File**: `crates/core/tests/integration_test/npm_alias_dependency_binaries.rs` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++//! A dependency installed under an npm alias, such as
++//! `"@typescript/native": "npm:typescript@~7.0.2"`, provides the binaries of
++//! the aliased package. A script that runs such a binary credits the alias.
++//! An alias that no script or import uses is still reported, and so is an
++//! alias next to a plain declaration of the same package, because the plain
++//! declaration provides the binary.
++
++use super::common::{create_config, fixture_path};
++
++#[cfg_attr(miri, ignore)]
++#[test]
++fn script_binary_credits_the_npm_alias_that_installs_it() {
++    let root = fixture_path("npm-alias-dependency-binaries");
++    let config = create_config(root);
++    let results = fallow_core::analyze(&config).expect("analysis should succeed");
++
++    let unused: Vec<&str> = results
++        .unused_dev_dependencies
++        .iter()
++        .map(|finding| finding.dep.package_name.as_str())
++        .collect();
 +    assert_eq!(
 +        unused,
-+        [
-+            ("Service", "shadowBeforeVar"),
-+            ("Service", "shadowBlock"),
-+            ("Service", "shadowComputed"),
-+            ("Service", "shadowDestructure"),
-+            ("Service", "shadowInner"),
-+            ("Service", "shadowLocal"),
-+            ("Service", "shadowTypeof"),
-+            ("Service", "toFixed"),
-+            ("Service", "toLowerCase"),
-+            ("Service", "toUpperCase")
-+        ]
++        ["vite-6", "idle-alias"],
++        "a script binary credits the npm alias of the package that provides it"
 +    );
 +}
 +
- #[test]
- fn type_guard_subject_member_access_credits_only_its_predicate_class() {
-     let project = tempfile::tempdir().expect("create project");
++#[cfg_attr(miri, ignore)]
++#[test]
++fn plain_declaration_in_another_workspace_keeps_the_alias_credit() {
++    let root = fixture_path("npm-alias-workspace-binaries");
++    let config = create_config(root);
++    let results = fallow_core::analyze(&config).expect("analysis should succeed");
++
++    let unused: Vec<&str> = results
++        .unused_dev_dependencies
++        .iter()
++        .map(|finding| finding.dep.package_name.as_str())
++        .collect();
++    assert!(
++        !unused.contains(&"@typescript/native"),
++        "a plain declaration in another workspace must not block the alias credit, got {unused:?}"
++    );
++}
 ```
 
-**File**: `crates/extract/src/cache/types.rs` (modified, +1/-1)
+**File**: `tests/fixtures/npm-alias-dependency-binaries/package.json` (added, +18/-0)
 ```diff
-@@ -10,7 +10,7 @@ use crate::MemberKind;
- /// extraction semantics change, and give the reason in the commit message and
- /// the CHANGELOG. A stale version serves old extraction results from a warm
- /// cache. The `assert_cached_type_size!` guards below catch shape changes.
--pub(super) const CACHE_VERSION: u32 = 373;
-+pub(super) const CACHE_VERSION: u32 = 374;
+@@ -0,0 +1,18 @@
++{
++  "name": "npm-alias-dependency-binaries",
++  "private": true,
++  "type": "module",
++  "main": "src/index.ts",
++  "scripts": {
++    "types": "tsc --noEmit",
++    "lint": "eslint .",
++    "build": "vite build"
++  },
++  "devDependencies": {
++    "@typescript/native": "npm:typescript@~7.0.2",
++    "linter": "npm:eslint@^9.0.0",
++    "vite": "^7.0.0",
++    "vite-6": "npm:vite@^6.0.0",
++    "idle-alias": "npm:left-pad@^1.3.0"
++  }
++}
+```
+
+---
+
+### Incident Patch 3: `c030eb19` (2026-10-24)
+**Commit Message**: fix(hooks): audit only the pushed worktree when a push cannot send the session branch (#3857)
+
+A strict push from a linked worktree of the session repository also
+audited the session tree, because linked worktrees share refs. Untracked
+build output in the session thus blocked every push from a clean
+worktree.
+
+The gate now audits only the worktree when git shows that the push cannot
+send the session branch. gate_push_spares_session accepts the push only
+when all of these hold:
+
+- The options are only -u, -q, --set-upstream, --force-with-lease and
+  --force-if-includes.
+- Each refspec source has a name, and git rev-parse --symbolic-full-name
+  in the worktree gives the ref of the worktree HEAD for it. That ref is
+  not the session branch. A commit name gives no ref, so it fails.
+- A push without a refspec needs push.default unset or simple, current,
+  upstream or nothing, and no remote push or mirror setting.
+
+Any other result and any git error keep the session audit. The function
+runs in a subshell, so an error under set -u also keeps it. The strict
+push form also accepts --force-if-includes.
+
+The differential test skips a reviewed list of narrowed commands, and a
+separate test che
+
+**File**: `.agents/skills/fallow/references/patterns.md` (modified, +1/-1)
+```diff
+@@ -784,7 +784,7 @@ Prefer `fallow hooks install --target agent` to install this file. The script is
+ Behavior you can rely on:
+ - The handler walks up from the session directory to the nearest directory that holds `.claude/hooks/fallow-gate.sh` and runs the audit there, so a session in a package directory audits the install root. The walk stops at the first `.git` entry. When it finds no script, the handler runs the script under `$CLAUDE_PROJECT_DIR` from the session directory.
+ - The hook process can start in a directory that is not the session directory, for example in the main checkout when the session works in a nested git worktree. The script reads the session directory from the `cwd` field of the hook input and finds the audit root from it with the same walk. When the walk finds no script, for example with the user-scope script in `$HOME`, the audit root is the directory of the hook process when it is in the git work tree of the session. Else it is the git top level of the session directory, or the session directory outside a git repository. The audit root is never `$HOME`. The script compares physical paths, so a symlink does not change the walk. When the hook input has no usable `cwd`, the audit runs in the directory of the hook process.
+-- A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
++- A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. The one exception is a push that cannot send the session branch: the options are only `-u`, `-q`, `--set-upstream`, `--force-with-lease` and `--force-if-includes`, `git rev-parse --symbolic-full-name` gives the checked-out branch of the target for each refspec source, that branch is not the session branch, and a push without a refspec has `push.default` unset or `simple`, `current`, `upstream` or `nothing` and no remote `push` or `mirror` setting. That push audits only the target. A git error during this check keeps the session audit. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
+ - Runs only when the intercepted command is a `git commit` or `git push`, including invocations that pass git-level options before the subcommand (`git -c user.name=x commit`, `git --no-pager commit`, `git -C dir push`, `git --git-dir=/x push`); anything else exits 0. Set `FALLOW_GATE_DEBUG=1` to log skipped commands to stderr.
+ - Resolves `fallow` from PATH first, then `npx --no-install fallow` as a fallback. Skips with a stderr notice if neither is available or if `jq` is missing.
+ - Enforces a version floor via `FALLOW_GATE_MIN_VERSION`. The installed gate script holds the default floor (currently `2.85.0`). Fallow maintainers raise that default by hand; `fallow hooks install` does not set it to the installed version. Binaries below the floor are blocked with an upgrade hint. Set the env var to the empty string to disable the check.
+```
+
+**File**: `.claude/skills/fallow/references/patterns.md` (modified, +1/-1)
+```diff
+@@ -784,7 +784,7 @@ Prefer `fallow hooks install --target agent` to install this file. The script is
+ Behavior you can rely on:
+ - The handler walks up from the session directory to the nearest directory that holds `.claude/hooks/fallow-gate.sh` and runs the audit there, so a session in a package directory audits the install root. The walk stops at the first `.git` entry. When it finds no script, the handler runs the script under `$CLAUDE_PROJECT_DIR` from the session directory.
+ - The hook process can start in a directory that is not the session directory, for example in the main checkout when the session works in a nested git worktree. The script reads the session directory from the `cwd` field of the hook input and finds the audit root from it with the same walk. When the walk finds no script, for example with the user-scope script in `$HOME`, the audit root is the directory of the hook process when it is in the git work tree of the session. Else it is the git top level of the session directory, or the session directory outside a git repository. The audit root is never `$HOME`. The script compares physical paths, so a symlink does not change the walk. When the hook input has no usable `cwd`, the audit runs in the directory of the hook process.
+-- A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
++- A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. The one exception is a push that cannot send the session branch: the options are only `-u`, `-q`, `--set-upstream`, `--force-with-lease` and `--force-if-includes`, `git rev-parse --symbolic-full-name` gives the checked-out branch of the target for each refspec source, that branch is not the session branch, and a push without a refspec has `push.default` unset or `simple`, `current`, `upstream` or `nothing` and no remote `push` or `mirror` setting. That push audits only the target. A git error during this check keeps the session audit. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
+ - Runs only when the intercepted command is a `git commit` or `git push`, including invocations that pass git-level options before the subcommand (`git -c user.name=x commit`, `git --no-pager commit`, `git -C dir push`, `git --git-dir=/x push`); anything else exits 0. Set `FALLOW_GATE_DEBUG=1` to log skipped commands to stderr.
+ - Resolves `fallow` from PATH first, then `npx --no-install fallow` as a fallback. Skips with a stderr notice if neither is available or if `jq` is missing.
+ - Enforces a version floor via `FALLOW_GATE_MIN_VERSION`. The installed gate script holds the default floor (currently `2.85.0`). Fallow maintainers raise that default by hand; `fallow hooks install` does not set it to the installed version. Binaries below the floor are blocked with an upgrade hint. Set the env var to the empty string to disable the check.
+```
+
+**File**: `changelog.d/fix-gate-worktree-push.md` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++### Fixed
++
++- **The agent gate audits only the worktree for a push that cannot send the
++  session branch.** A strict `git push` from a linked worktree of the session
++  repository also audited the session tree, because linked worktrees share
++  refs. Untracked build output in the session thus blocked every push from a
++  clean worktree. The gate now audits only the worktree when git shows that
++  the push cannot send the session branch: the options are only `-u`, `-q`,
++  `--set-upstream`, `--force-with-lease` and `--force-if-includes`, each
++  refspec source is the checked-out branch of the worktree and not the
++  session branch, and a push without a refspec has `push.default` unset or
++  `simple`, `current`, `upstream` or `nothing` and no remote `push` or
++  `mirror` setting. Any other push from a linked worktree, and any git error
++  during the check, keeps the session audit. The strict push form now also
++  accepts `--force-if-includes`. Run `fallow agent install` again to update an
++  installed gate.
+```
+
+**File**: `crates/cli/src/setup_hooks/fallow-gate.sh` (modified, +101/-8)
+```diff
+@@ -316,12 +316,87 @@ gate_git_identity() {
+ }
+ SESSION_IDENTITY="$(gate_git_identity "$BASE_DIR" || true)"
  
- /// Duplication token cache version. Bump it when duplicate tokenization,
- /// normalization, or the on-disk token cache schema changes, and give the
++# Returns 0 only when the strict push in STRICT_ARGS, run in the linked
++# worktree $1, cannot send the branch of the session. All of these must hold:
++# - The options are only -u, -q, --set-upstream, --force-with-lease and
++#   --force-if-includes.
++# - The words after the options are [<repository>] [<refspec>...]. The source
++#   of each refspec (without a leading + and before the first :) is not empty.
++#   For each source, git rev-parse --symbolic-full-name in $1 gives the same
++#   ref as for HEAD in $1, and that ref is not the session branch. A commit
++#   name, `feat~0` or `@{-1}` gives no ref, so it fails.
++# - A push without a refspec needs push.default (read in $1) unset or one of
++#   simple, current, upstream and nothing, and no remote with a push or mirror
++#   setting.
++# Every other result and every git error return 1. The function runs in a
++# subshell, so an error under set -u also returns 1 and the session is
++# audited.
++gate_push_spares_session() (
++  local target="$1" word src ref head session_ref push_default rc
++  local positionals=0 refspecs=0
++  if ! head="$(git -C "$target" rev-parse --symbolic-full-name HEAD 2>/dev/null)"; then
++    return 1
++  fi
++  [ -n "$head" ] || return 1
++  # Exit 1 means a detached HEAD: no session branch, so no ref can match it.
++  if session_ref="$(git -C "$BASE_DIR" symbolic-ref -q HEAD 2>/dev/null)"; then
++    :
++  else
++    rc=$?
++    [ "$rc" -eq 1 ] || return 1
++    session_ref=""
++  fi
++  [ "$head" != "$session_ref" ] || return 1
++  for word in ${STRICT_ARGS[@]+"${STRICT_ARGS[@]}"}; do
++    case "$word" in
++      -u | -q | --set-upstream | --force-with-lease | --force-if-includes) continue ;;
++      -*) return 1 ;;
++    esac
++    positionals=$((positionals + 1))
++    # The first word is the repository.
++    [ "$positionals" -gt 1 ] || continue
++    refspecs=$((refspecs + 1))
++    src="${word#+}"
++    src="${src%%:*}"
++    case "$src" in
++      '' | -*) return 1 ;;
++    esac
++    if ! ref="$(git -C "$target" rev-parse --symbolic-full-name "$src" 2>/dev/null)"; then
++      return 1
++    fi
++    [ -n "$ref" ] && [ "$ref" = "$head" ] && [ "$ref" != "$session_ref" ] || return 1
++  done
++  if [ "$refspecs" -eq 0 ]; then
++    # Exit 1 means that push.default is not set.
++    if push_default="$(git -C "$target" config --get push.default 2>/dev/null)"; then
++      :
++    else
++      rc=$?
++      [ "$rc" -eq 1 ] || return 1
++      push_default=""
++    fi
++    case "$push_default" in
++      '' | simple | current | upstream | nothing) ;;
++      *) return 1 ;;
++    esac
++    # Exit 1 means that no remote has a push or mirror setting.
++    if git -C "$target" config --get-regexp '^remote\..*\.(push|mirror)$' >/dev/null 2>&1; then
++      return 1
++    else
++      rc=$?
++      [ "$rc" -eq 1 ] || return 1
++    fi
++  fi
++  return 0
++)
++
+ # Returns 0 when git reports another work tree for a directory than for the
+ # session directory: both the top level and the git directory differ. With
+ # `push` as the second argument, the common git directory must differ too,
+ # because linked worktrees share refs: a push from one of them can send the
+-# branch or tags of the session. A directory in the same work tree, or a git
+-# error, returns 1.
++# branch or tags of the session. The one exception is a push that
++# gate_push_spares_session accepts. A directory in the same work tree, or a
++# git error, returns 1.
+ gate_other_work_tree() {
+   local identity top git_dir common session_top session_git_dir session_common rest
+   [ -n "$SESSION_IDENTITY" ] || return 1
+@@ -336,7 +411,7 @@ gate_other_work_tree() {
+   session_common="${rest#*"$GATE_NL"}"
+   [ "$top" != "$session_top" ] && [ "$git_dir" != "$session_git_dir" ] || return 1
+   if [ "${2:-}" = push ] && [ "$common" = "$session_common" ]; then
+-    return 1
++    gate_push_spares_session "$1" || return 1
+   fi
+   return 0
+ }
+@@ -354,7 +429,8 @@ gate_other_work_tree() {
+ # gate_inert_option are allowed; a quoted word is allowed only as the value of
+ # `-m` or `--message`. Nothing else is allowed: no other operator, expansion,
+ # redirection, environment prefix or git option such as `-c`. Each directory
+-# must exist. Returns 1 for any other command.
++# must exist. For a push, the words after the subcommand follow, one on each
++# line. Returns 1 for any other command.
+ gate_allowlisted_target() {
+   local cmd="$1" rest dir="$BASE_DIR" subcommand word
+   # The letters are listed, not given as a range, so that no locale can make
+@@ -363,7 +439,7 @@ gate_allowlisted_target() {
+   local sq_dir=$'\'[^\'\n]*\'' dq_dir=$'"[^"$`\\\\\n]*"'
+   local sq_arg="'[^']*'" dq_arg='"[^"$`\\]*"'
+   local blank=$'[ \t]' sp re word_re dir_re arg_re
+-  local -a words=()
++  local -a words=() args=()
+   sp="$blank+"
+   dir_re="($plain|$sq_dir|$dq_dir)"
+   arg_re="($plain|$sq_arg|$dq_arg)"
+@@ -401,8 +477,12 @@ gate_allowlisted_target() {
+         
 ```
 
-**File**: `crates/extract/src/visitor/mod.rs` (modified, +19/-30)
+**File**: `crates/cli/src/setup_hooks_gate_tests.rs` (modified, +351/-2)
 ```diff
-@@ -989,6 +989,14 @@ pub(crate) struct ModuleInfoExtractor {
-     loop_object_property_values: Vec<FxHashMap<String, FxHashMap<String, Vec<String>>>>,
-     package_resolution_function_args: FxHashMap<String, usize>,
-     nested_declaration_stack: Vec<FxHashSet<String>>,
-+    /// Per `nested_declaration_stack` frame: the names declared there that
-+    /// provably hold no class instance, such as `const service = { m() {} }` or
-+    /// a parameter `service: number`.
-+    scoped_non_instance_bindings: Vec<FxHashSet<String>>,
-+    /// Indices into `member_accesses` whose receiver root is one of those
-+    /// shadows. `resolve_bound_member_accesses` does not resolve them through
-+    /// the module-flat class bindings.
-+    shadowed_member_access_indices: FxHashSet<usize>,
-     class_type_param_constraints: Vec<FxHashMap<String, Option<TypePropertyTarget>>>,
-     pending_playwright_factory_calls: Vec<PendingPlaywrightFactory>,
-     pending_playwright_factory_aliases: Vec<(String, String)>,
-@@ -1762,30 +1770,6 @@ impl ModuleInfoExtractor {
-         self.semantic_facts.extend(whole_object_facts);
-     }
- 
--    fn insert_class_binding_target(&mut self, binding: String, target: String) {
--        self.walk_order_class_bindings
--            .insert(binding.clone(), target.clone());
--        let target = BindingTarget::Class(target);
--        self.binding_target_names
--            .entry(binding)
--            .and_modify(|existing| {
--                if *existing != target {
--                    *existing = BindingTarget::Ambiguous;
--                }
--            })
--            .or_insert(target);
--    }
--
--    fn insert_class_binding_target_if_absent(&mut self, binding: String, target: String) {
--        if !self.binding_target_names.contains_key(&binding) {
--            self.walk_order_class_bindings
--                .insert(binding.clone(), target.clone());
--        }
--        self.binding_target_names
--            .entry(binding)
--            .or_insert(BindingTarget::Class(target));
--    }
--
-     fn direct_object_binding_targets(&self, object: &str) -> Option<(&FxHashSet<String>, u64)> {
-         let root = object.split_once('.').map_or(object, |(root, _)| root);
-         for index in (0..self.scoped_direct_object_binding_targets.len()).rev() {
-@@ -1894,7 +1878,9 @@ impl ModuleInfoExtractor {
-             };
-             prefix = parent;
-         }
--        if let Some(class) = self.walk_order_class_bindings.get(object) {
-+        if let Some(class) = self.walk_order_class_bindings.get(object)
-+            && !self.class_binding_root_is_shadowed(object)
-+        {
-             self.walk_order_member_accesses.push((
-                 Some(object.to_string()),
-                 class.clone(),
-@@ -2013,10 +1999,7 @@ impl ModuleInfoExtractor {
-             {
-                 let object = self.qualify_this_scope(&object_name);
-                 if !self.record_walk_order_member_access(&object, current.property.name.as_str()) {
--                    self.member_accesses.push(MemberAccess {
--                        object,
--                        member: current.property.name.to_string(),
--                    });
-+                    self.push_receiver_member_access(object, current.property.name.to_string());
-                 }
-             }
-             match &current.object {
-@@ -3254,6 +3237,9 @@ impl ModuleInfoExtractor {
-     }
- 
-     fn resolve_bound_object_name(&self, object: &str) -> Option<BindingTarget> {
-+        if self.class_binding_root_is_shadowed(object) {
-+            return None;
-+        }
-         if let Some(target_name) = self.binding_target_names.get(object) {
-             return Some(target_name.clone());
-         }
-@@ -3384,7 +3370,10 @@ impl ModuleInfoExtractor {
-         let mut additional_accesses = Vec::new();
-         let mut additional_facts = Vec::new();
-         let mut additional_typed_property_facts = Vec::new();
--        for access in &self.member_accesses {
-+        for (index, access) in self.member_accesses.iter().enumerate() {
-+            if self.shadowed_member_access_indices.contains(&index) {
-+                continue;
-+            }
-             let Some(target) = self.resolve_bound_object_name(&access.object) else {
-                 continue;
-             };
-```
-
-**File**: `crates/extract/src/visitor/visit_impl.rs` (modified, +5/-8)
-```diff
-@@ -1790,6 +1790,7 @@ impl ModuleInfoExtractor {
-                 for declarator in nested_scope_declarators(var) {
-                     self.record_nested_declaration_names(declarator.id.get_binding_identifiers());
-                 }
-+                self.record_non_instance_declarators(var);
-             }
-             Declaration::ClassDeclaration(class) => {
-                 if let Some(id) = class.id.as_ref() {
-@@ -2503,10 +2504,7 @@ impl<'a> ModuleInfoExtractor {
-         {
-             let object = self.qualify_this_scope(object_name);
-             if !self.record_walk_order_member_access(&object, member) {
--                self.member_accesses.push(MemberAccess {
--                    object,
--                    member: member.to_string(),
--                });
-+                self.push_receiver_member_access(object, member.to_string());
-             }
-         }
-     }
-@@ -3886,6 +3884,7 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
-         self.preseed_direct_object_binding_scope_roots(&stmt.body);
-         if self.namespace_depth == 0 {
-             self.nested_declaration_stack.push(FxHashSet::default());
-+            self.scoped_non_instance_bindings.push(FxHashSet::default());
-             self.scoped_namespace_binding_names
-                 .push(FxHashSet::default());
-             self.scoped_array_binding_element_types
-@@ -3910,6 +3909,7 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
-         }
-         if self.namespace_depth == 0 {
-             self.nested_declaration_stack.pop();
-+            self.scoped_non_instance_bindings.pop();
-             self.scoped_namespace_binding_names.pop();
-             self.scoped_array_binding_element_types.pop();
-             self.sanitizer_binding_stack.pop();
-@@ -5198,10 +5198,7 @@ impl<'a> Visit<'a> for ModuleInfoExtractor {
-             if let Expression::StringLiteral(lit) = &expr.expression
-                 && !shadowed
-             {
--                self.member_accesses.push(MemberAccess {
--                    object: obj.name.to_string(),
--                    member: lit.value.to_string(),
--                });
-+                self.push_receiver_member_access(obj.name.to_string(), lit.value.to_string());
-                 self.mark_structured_namespace_reference(obj);
-             } else if !shadowed {
-                 self.record_whole_object_identifier_use(obj.name.as_str());
-```
-
-**File**: `crates/extract/src/visitor/visit_impl_scope_bindings.rs` (modified, +177/-0)
-```diff
-@@ -47,6 +47,79 @@ impl<'a> Visit<'a> for FunctionVarRootCollector {
-     fn visit_ts_global_declaration(&mut self, _declaration: &TSGlobalDeclaration<'a>) {}
+@@ -1450,7 +1450,7 @@ fn gate_resolves_the_strict_target_physically() {
+         ),
+         (
+             "push with names",
+-            "git -C ../../wt-c push -u --force-with-lease origin HEAD:main".to_owned(),
++            "git -C ../../wt-c push -u --force origin HEAD:main".to_owned(),
+             vec![a, c],
+         ),
+         (
+@@ -1559,6 +1559,306 @@ fn gate_resolves_git_c_physically_through_a_symlink() {
+     assert_cases(&trees, &cases);
  }
  
-+/// Whether a nested binding initialized with `expr` provably holds no class
-+/// instance: a primitive, a function, or an array or object literal built
-+/// only from such values. A type assertion can name a class, so it gives no
-+/// proof.
-+fn expression_holds_no_instance(expr: &Expression<'_>) -> bool {
-+    match expr {
-+        Expression::ParenthesizedExpression(paren) => {
-+            expression_holds_no_instance(&paren.expression)
-+        }
-+        Expression::StringLiteral(_)
-+        | Expression::NumericLiteral(_)
-+        | Expression::BooleanLiteral(_)
-+        | Expression::NullLiteral(_)
-+        | Expression::BigIntLiteral(_)
-+        | Expression::RegExpLiteral(_)
-+        | Expression::TemplateLiteral(_)
-+        | Expression::FunctionExpression(_)
-+        | Expression::ArrowFunctionExpression(_)
-+        | Expression::ClassExpression(_) => true,
-+        Expression::ArrayExpression(array) => array.elements.iter().all(|element| {
-+            element
-+                .as_expression()
-+                .is_some_and(expression_holds_no_instance)
-+        }),
-+        Expression::ObjectExpression(object) => {
-+            object.properties.iter().all(|property| match property {
-+                ObjectPropertyKind::ObjectProperty(property) => {
-+                    expression_holds_no_instance(&property.value)
-+                }
-+                ObjectPropertyKind::SpreadProperty(_) => false,
-+            })
-+        }
-+        _ => false,
-+    }
++/// Two linked worktrees on their own branches: the session works in `a` on
++/// `feat-a` with untracked build output, and `b` holds `feat-b`.
++fn branch_worktrees() -> TwoWorktrees {
++    let trees = two_worktrees();
++    git(&trees.a, &["switch", "-q", "-c", "feat-a"]);
++    git(&trees.b, &["switch", "-q", "-c", "feat-b"]);
++    std::fs::write(trees.a.join("build-output.js"), "export const x = 1;\n").unwrap();
++    trees
 +}
 +
-+/// Whether a binding annotated with `ty` provably holds no class instance: a
-+/// primitive, a literal or function type, or an array or union built only from
-+/// such types. TypeScript types are structural, so a class instance satisfies
-+/// a named type or a type literal with matching members. Neither gives proof.
-+fn type_holds_no_instance(ty: &TSType<'_>) -> bool {
-+    match ty {
-+        TSType::TSStringKeyword(_)
-+        | TSType::TSNumberKeyword(_)
-+        | TSType::TSBooleanKeyword(_)
-+        | TSType::TSBigIntKeyword(_)
-+        | TSType::TSSymbolKeyword(_)
-+        | TSType::TSNullKeyword(_)
-+        | TSType::TSUndefinedKeyword(_)
-+        | TSType::TSVoidKeyword(_)
-+        | TSType::TSNeverKeyword(_)
-+        | TSType::TSLiteralType(_)
-+        | TSType::TSTemplateLiteralType(_)
-+        | TSType::TSFunctionType(_) => true,
-+        TSType::TSParenthesizedType(paren) => type_holds_no_instance(&paren.type_annotation),
-+        TSType::TSArrayType(array) => type_holds_no_instance(&array.element_type),
-+        TSType::TSUnionType(union) => union.types.iter().all(type_holds_no_instance),
-+        _ => false,
-+    }
++/// The full path of the host git.
++fn host_git() -> PathBuf {
++    std::env::split_paths(&std::env::var_os("PATH").unwrap_or_default())
++        .map(|dir| dir.join("git"))
++        .find(|path| path.is_file())
++        .expect("git on PATH")
 +}
 +
-+/// Whether a nested declarator binds a value that provably holds no class
-+/// instance, through its type annotation or its initializer.
-+fn declarator_holds_no_instance(declarator: &VariableDeclarator<'_>) -> bool {
-+    if let Some(annotation) = declarator.type_annotation.as_deref() {
-+        return type_holds_no_instance(&annotation.type_annotation);
++/// Runs a strict push from worktree `b` with a session in `a/src`.
++/// `fail` names a word: each git call with that word fails with exit 128.
++fn run_linked_push(trees: &TwoWorktrees, command: &str, fail: &str) -> GateRun {
++    use std::os::unix::fs::PermissionsExt;
++
++    let session = trees.a.join("src");
++    std::fs::create_dir_all(&session).unwrap();
++    let wrapper_dir = trees.root.join("git-wrapper");
++    std::fs::create_dir_all(&wrapper_dir).unwrap();
++    for (name, body) in [
++        (
++            "git",
++            format!(
++                "#!/bin/sh\ncase \" $* \" in *\"$GIT_STUB_FAIL\"*) exit 128 ;; esac\nexec '{}' \"$@\"\n",
++                host_git().display()
++            ),
++        ),
++        ("fallow", STUB_FALLOW.to_owned()),
++    ] {
++        let path = wrapper_dir.join(name);
++        std::fs::write(&path, body).unwrap();
++        std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755)).unwrap();
 +    }
-+    declarator
-+        .init
-+        .as_ref()
-+        .is_some_and(expression_holds_no_instance)
++    let path = format!(
++        "{}:{}",
++        wrapper_dir.display(),
++        std::env::var("PATH").unwrap_or_default()
++    );
++    run_gate_with_env(
++        &trees.gate,
++        &trees.main,
++        &trees.root.join("home"),
++        &command_payload(&session, command),
++        &[("PATH", path.as_str()), ("GIT_STUB_FAIL", fail)],
++    )
 +}
 +
- impl ModuleInfoExtractor {
-     pub(super) fn is_module_scope(&self) -> bool {
-         self.block_depth == 0 && self.function_depth == 0 && self.namespace_depth == 0
-@@ -56,6 +129,101 @@ impl ModuleInfoExtractor {
-         self.namespace_depth == 0
-     }
- 
-+    /// Whether the root of `object` names a nested binding that provably holds
-+    /// no class instance. `binding_target_names` is module-flat, so a read of
-+    /// such a shadow must not resolve through the class binding of the same
-+    /// name in an outer or sibling scope.
-+    pub(in crate::visitor) fn class_binding_root_is_shadowed(&self, object: &str) -> bool {
-+        let root = object.split_once('.').map_or(object, |(root, _)| root);
-+        self.nested_declaration_stack
-+            .iter()
-+            .rposition(|scope| scope.contains(root))
-+            .and_then(|index| self.scoped_non_instance_bindings.get(index))
-+            .is_some_and(|scope| scope.contains(root))
-+    }
++/// A config key and value to set before a case runs.
++type ConfigSetting<'a> = Option<(&'a str, &'a str)>;
 +
-+    /// Record the nested declarators of `var` that provably hold no class
-+    /// instance. Call it together with `record_nested_declaration_names`.
-+    pub(super) fn record_non_instance_declarators(&mut self, var: &VariableDeclaration<'_>) {
-+        if self.namespace_depth > 0 {
-+            return;
-+        }
-+        let Some(scope) = self.scoped_non_instance_bindings.last_mut() else {
-+            return;
-+        };
-+        for declarator in &var.declarations {
-+            if let BindingPattern::BindingIdentifier(id) = &declarator.id
-+                && declarator_holds_no_instance(declarator)
-+            {
-+                scope.insert(id.name.to_string());
-+            }
-+        }
-+    }
++/// A word that no git call of the gate holds.
++const NO_FAILURE: &str = " no-such-word ";
 +
-+    /// A class binding under
++/// Sets a value in the shared config of the repository of `trees`.
++fn set_config(trees: &TwoWorktrees, key: &str, value: &str) {
++    git(&trees.main, &["config", key, value]);
++}
++
++/// A strict push from a linked worktree that cannot send the session branch
++/// audits only that worktree, also with untracked build output in the
++/// session tree.
++#[test]
++fn gate_audits_only_the_worktree_for_a_push_of_its_own_branch() {
++    if skip_without_tools() {
++        return;
++    }
++    let cases: &[(&str, &str, ConfigSetting)] = &[
++        ("branch", "git -C '../../wt b' push origin feat-b", None),
++        ("-u", "git -C '../../wt b' push -u origin feat-b", None),
++        (
++            "--set-upstream -q",
++            "git -C '../../wt b' push --set-upstream -q origin feat-b",
++            None,
++        ),
++        ("HEAD", "git -C '../../wt b' push origin HEAD", None),
++        (
++            "HEAD to the branch",
++            "git -C '../../wt b' push origin HEAD:refs/heads/feat-b",
++            None,
++        ),
++        (
++            "--force-with-lease",
++            "git -C '../../wt b' push --force-with-lease origin feat-b",
++            None,
++        ),
++        (
++            "--force-with-lease --force-if-includes",
++            "git -C '../../wt b' push --force-with-lease --force-if-includes origin +feat-b",
++            None,
++        ),
++        (
++            "no refspec, push.default simple",
++            "git -C '../../wt b' push",
++            Some(("push.default", "simple")),
++        ),
++        (
++            "no refspec, push.default unset",
++            "git -C '../../wt b' push origin",
++            None,
++        ),
++        ("cd", "cd '../../wt b' && git push origin feat-b", None),
++    ];
++    for (case, command, config) in cases {
++        let trees = branch_worktrees();
++        if let Some((key, value)) = config {
++            set_config(&trees, key, value);
++        }
++        let run = run_linked_push(&trees, command, NO_FAILURE);
++        assert_eq!(
++            run.output.status.code(),
++            Some(0),
++            "{case}: stderr={}",
++            String::from_utf8_lossy(&run.output.stderr)
++        );
++        assert_eq!(
++            run.audit_dirs,
++            [trees.b.as_path()],
++            "{case}: {command:?} must audit only the w
 ```
 
-**File**: `tests/fixtures/shadowed-class-binding-members/package.json` (added, +4/-0)
+**File**: `npm/fallow/skills/fallow/references/patterns.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,4 @@
-+{
-+  "name": "shadowed-class-binding-members",
-+  "main": "src/index.ts"
-+}
-```
-
-**File**: `tests/fixtures/shadowed-class-binding-members/src/index.ts` (added, +102/-0)
-```diff
-@@ -0,0 +1,102 @@
-+import { Service } from './service';
-+
-+const service = new Service();
-+service.keptModule();
-+
-+export function unshadowed(): void {
-+  service.keptUnshadowed();
-+}
-+
-+export function localShadow(): void {
-+  const service = { shadowLocal(): void {} };
-+  service.shadowLocal();
-+}
-+
-+export function computedShadow(): void {
-+  const service = { shadowComputed(): void {} };
-+  service['shadowComputed']();
-+}
-+
-+export function typeofShadow(): void {
-+  const service = { shadowTypeof(): void {} };
-+  const read = ({ shadowTypeof }: typeof service): void => shadowTypeof();
-+  read(service);
-+}
-+
-+export function sibling(): void {
-+  service.keptSibling();
-+}
-+
-+export function paramShadow(service: string): string {
-+  return service.toUpperCase();
-+}
-+
-+export const arrowParamShadow = (service: number): string => service.toFixed();
-+
-+export function destructureShadow(): void {
-+  const service = { shadowDestructure(): void {} };
-+  const { shadowDestructure } = service;
-+  shadowDestructure();
-+}
-+
-+export function paramDestructureShadow(service: string): string {
-+  const { toLowerCase } = service;
-+  return toLowerCase.call(service);
-+}
-+
-+// A type literal gives no proof: a `Service` instance satisfies it.
-+export function structuralParam(service: { keptStructural(): void }): void {
-+  service.keptStructural();
-+}
-+structuralParam(new Service());
-+
-+export function structuralParamDestructure(service: { keptStructuralDestructure(): void }): void {
-+  const { keptStructuralDestructure } = service;
-+  keptStructuralDestructure();
-+}
-+structuralParamDestructure(new Service());
-+
-+// `var` hoists, so the read before the declaration uses the local binding.
-+export function readBeforeVar(): void {
-+  service.shadowBeforeVar();
-+  var service = { other: 1 };
-+  void service;
-+}
-+
-+export function closureThenSiblingShadow(): () => void {
-+  const read = (): void => service.keptClosure();
-+  {
-+    const service = { other: 1 };
-+    void service;
-+  }
-+  return read;
-+}
-+
-+export function annotatedInstance(): void {
-+  const service: Service = new Service();
-+  service.keptAnnotated();
-+}
-+
-+export function blockShadow(flag: boolean): void {
-+  if (flag) {
-+    const service = { shadowBlock(): void {} };
-+    service.shadowBlock();
-+  }
-+}
-+
-+export function nestedClassBinding(): void {
-+  const service = new Service();
-+  service.keptNested();
-+  const { keptNestedDestructure } = service;
-+  keptNestedDestructure();
-+}
-+
-+export function outer(): void {
-+  const service = new Service();
-+  function inner(): void {
-+    const service = { shadowInner(): void {} };
-+    service.shadowInner();
-+  }
-+  inner();
-+  service.keptOuter();
-+}
+@@ -784,7 +784,7 @@ Prefer `fallow hooks install --target agent` to install this file. The script is
+ Behavior you can rely on:
+ - The handler walks up from the session directory to the nearest directory that holds `.claude/hooks/fallow-gate.sh` and runs the audit there, so a session in a package directory audits the install root. The walk stops at the first `.git` entry. When it finds no script, the handler runs the script under `$CLAUDE_PROJECT_DIR` from the session directory.
+ - The hook process can start in a directory that is not the session directory, for example in the main checkout when the session works in a nested git worktree. The script reads the session directory from the `cwd` field of the hook input and finds the audit root from it with the same walk. When the walk finds no script, for example with the user-scope script in `$HOME`, the audit root is the directory of the hook process when it is in the git work tree of the session. Else it is the git top level of the session directory, or the session directory outside a git repository. The audit root is never `$HOME`. The script compares physical paths, so a symlink does not change the walk. When the hook input has no usable `cwd`, the audit runs in the directory of the hook process.
+-- A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
++- A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. The one exception is a push that cannot send the session branch: the options are only `-u`, `-q`, `--set-upstream`, `--force-with-lease` and `--force-if-includes`, `git rev-parse --symbolic-full-name` gives the checked-out branch of the target for each refspec source, that branch is not the session branch, and a push without a refspec has `push.default` unset or `simple`, `current`, `upstream` or `nothing` and no remote `push` or `mirror` setting. That push audits only the target. A git error during this check keeps the session audit. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
+ - Runs only when the intercepted command is a `git commit` or `git push`, including invocations that pass git-level options before the subcommand (`git -c user.name=x commit`, `git --no-pager commit`, `git -C dir push`, `git --git-dir=/x push`); anything else exits 0. Set `FALLOW_GATE_DEBUG=1` to log skipped commands to stderr.
+ - Resolves `fallow` from PATH first, then `npx --no-install fallow` as a fallback. Skips with a stderr notice if neither is available or if `jq` is missing.
+ - Enforces a version floor via `FALLOW_GATE_MIN_VERSION`. The installed gate script holds the default floor (currently `2.85.0`). Fallow maintainers raise that default by hand; `fallow hooks install` does not set it to the installed version. Binaries below the floor are blocked with an upgrade hint. Set the env var to the empty string to disable the check.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3810** (2026-10-22): test(graph): require the package entry resolver to keep its canonical index (@BartWaardenburg)
-- **PR #3808** (2026-10-22): perf(extract): cap recorded member chain names at 64 links (@BartWaardenburg)
-- **PR #3806** (2026-10-22): fix(lsp,mcp): run analysis on threads with the worker stack (@BartWaardenburg)
-- **PR #3805** (2026-10-22): chore(release): ship LICENSE and a full README in every platform npm package (@BartWaardenburg)
-- **PR #3804** (2026-10-22): perf(graph): build the canonical package entry index one time per package (@BartWaardenburg)
-- **PR #3803** (2026-10-22): fix(extract): credit class members read by destructures of imported instances and class fields (@BartWaardenburg)
+- **PR #3866** (2026-10-25): chore: sync napi, Docker pins and the schema baseline to v3.36.0 (@BartWaardenburg)
+- **PR #3864** (2026-10-25): chore(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 in the npm_and_yarn group across 1 directory (@dependabot[bot])
+- **PR #3863** (2026-10-25): chore(deps): bump the npm_and_yarn group across 1 directory with 2 updates (@dependabot[bot])
+- **PR #3862** (2026-10-24): fix(release): read platform package names from workspace paths (@BartWaardenburg)
+- **PR #3861** (2026-10-24): chore: release v3.36.0 (@BartWaardenburg)
+- **PR #3860** (2026-10-24): fix(codeowners): keep an escaped space in a CODEOWNERS pattern (@BartWaardenburg)
 
 ---
 
@@ -2337,36 +2121,3 @@ Signed-off-by: Bart
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. extract): stop deeply nested brackets from aborting the run (#3790)
-
-**RULE**:
-When implementing operations in `changelog.d/fix-deep-nesting-stack-overflow.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `c642c586`: extract): stop deeply nested brackets from aborting the run (#3790). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-deep-nesting-stack-overflow.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-### Fixed
-
-- **A file with deeply nested brackets no longer aborts the run.** A source with thousands of nested `(`, `[`, `{` or template substitutions overflowed the parser stack, and the stack overflow killed the whole `fallow` process. Fallow now measures the nesting before it parses a file. A file past the limit shows as a file that failed to parse, `fallow dupes` finds no clones in it, and the analysis of the other files continues. Brackets inside strings, comments and template text do not count. The extraction and duplication cache versions change, so the first run after the upgrade parses every file again. OSS-Fuzz found this.
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c642c586` are properly handled with clean fallback behavior.

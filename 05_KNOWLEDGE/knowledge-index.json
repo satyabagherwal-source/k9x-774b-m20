@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T12:39:00.514Z",
+  "last_updated": "2026-10-25T12:50:26.252Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10947,8 +10947,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "c9d7861d",
-      "content_hash": "95b26ae9476cb16fc776567fbd4ba8d7ca11511d2c8ee6245a68c23a2365f855",
+      "source_version": "9c6fc8a2",
+      "content_hash": "8d95ae1fe2718ba7d7d43f8c200a18a919f737c69f0981e82dcca68ed406701d",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -10993,7 +10993,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:35:37.264Z",
+      "verified_at": "2026-10-25T12:45:30.188Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39545,8 +39545,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "c3e82fe4",
-      "content_hash": "215d6a25e4a7a164f34bc9e0e865982c0f6a093737986cc49a7f8c2f85373618",
+      "source_version": "1b30ad1b",
+      "content_hash": "a3ae5b9dad346cf8764d3b9c9c1bdb99bf1bf09b619a3ba62f7389c7d6c3233d",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -39574,6 +39574,11 @@
           "number": 3775,
           "title": "Normal scan panics with min > max when pushed-down LIMIT exceeds 8192 (#6959)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4295,
+          "title": "make merges and VACUUM's merger wait interruptible (#6740)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39581,7 +39586,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T05:50:33.741Z",
+      "verified_at": "2026-10-25T12:45:40.421Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60545,7 +60550,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
-      "content_hash": "2ac4056aa3026f38d8111ffa73dbcc78f44d9ce897dfe158816bf2e193f0c851",
+      "content_hash": "6171825c3eb738169c3550ce61972a2507f98ef15aab57e9da9e247b9d1e10ea",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "promoted_rules": [
@@ -60570,7 +60575,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:49:23.285Z",
+      "verified_at": "2026-10-25T12:50:26.229Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122982,6 +122987,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T12:39:00.495Z"
+    },
+    "rule-4295": {
+      "learning_id": "rule-4295",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4295,
+      "title": "make merges and VACUUM's merger wait interruptible (#6740)",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "1b30ad1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:45:40.422Z"
     }
   },
   "aliases": {

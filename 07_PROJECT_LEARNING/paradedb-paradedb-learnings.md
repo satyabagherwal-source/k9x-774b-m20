@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `c3e82fe4`  
+> **Source Version**: `1b30ad1b`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T05:50:33.477Z  
+> **Timestamp**: 2026-10-25T12:45:40.059Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T05:50:33.468Z  
+> **Harvest Timestamp**: 2026-10-25T12:45:40.051Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9434 stars
+- **Stars / Engagement**: 9445 stars
 
 ---
 
@@ -2322,816 +2322,1594 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bdae88a1` (2026-10-21)
-**Commit Message**: fix: Normal scan panics with min > max when pushed-down LIMIT exceeds 8192 (#6959)
+### Incident Patch 1: `185c6094` (2026-10-24)
+**Commit Message**: fix: make merges and VACUUM's merger wait interruptible (#6740)
 
-# Ticket(s) Closed
+## Summary
 
-- No ticket, fixes a customer-reported issue in slack.
+Make segment merges and VACUUM's wait for mergers interruptible. No
+on-disk format or merge-policy change.
 
-## What
+Stacked: reclaiming the output of a merge that stops early is #6981,
+which builds on this branch.
 
-Queries that fall back to `NormalScanExecState` with a pushed-down LIMIT
-above 8192 fail with:
+## Problem
 
+A merger holds a shared buffer content lock for the entire merge.
+Content locks are LWLocks, so interrupts are deferred while it is held:
+a cancel or SIGTERM stops the merge only at tantivy's next
+`wants_cancel()` poll, the writer-level interrupt check between polls
+never fires, and the ERROR is raised only after the lock is released.
+VACUUM's wait for the exclusive content lock cannot be cancelled at all.
+
+A heavyweight page lock instead (an earlier revision of this PR) queues
+new mergers behind a waiting VACUUM, which stops foreground
+backpressure. Dropping the coordination is not an option: VACUUM must
+wait for admitted mergers before selecting segments, and its final
+reader/merger barrier must survive.
+
+## Coordination objects
+
+| Object | Who holds it | What it protects |
+|---|---|---|
+| **MergeLock**, the merge page's exclusive content lock | Mergers
+during selection and completion; VAC
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -5120,6 +5120,7 @@ dependencies = [
+  "pgrx",
+  "pgrx-tests",
+  "postcard",
++ "postgres",
+  "proptest 1.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
+  "prost 0.14.4",
+  "rand 0.10.3",
 ```
-ERROR:  min > max. min = 100000, max = 8192
-```
 
-For example, `ORDER BY pdb.score(id) DESC, id DESC LIMIT 100000` on a
-table with a text key. Only `pdb.score` can be pushed down, so TopK is
-declined. The scan falls back to Normal with a Sort above it, and the
-scan still gets the LIMIT.
-
-## Why
-
-Regression from #6526. In `normal.rs`, `(rem *
-self.batch_scale).clamp(rem, BATCH_SIZE)` panics whenever `rem >
-BATCH_SIZE`, because `Ord::clamp` requires `min <= max`. 0.26.0 isn't
-affected.
-
-## How
-
-Replace it with `rem.saturating_mul(self.batch_scale).min(BATCH_SIZE)`.
-`batch_scale >= 1`, so the lower bound wasn't needed. `saturating_mul`
-also stops the multiplication from overflowing for very large LIMITs.
-
-## Tests
-
-New pg_regress test `normal_scan_large_limit`. It checks that the plan
-uses `NormalScanExecState` and runs LIMIT 12000, 100000 and `i64::MAX`.
-All of these errored before the fix.
-
-🤖 Generated with Claude Code
-
-**File**: `docs/project/changelog/unreleased/6959.stability.mdx` (added, +5/-0)
+**File**: `docs/project/changelog/unreleased/6740.stability.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +header: stability
 +---
 +
-+A query with a `LIMIT` above 8192 no longer fails with `min > max. min = ..., max = 8192` when only part of its `ORDER BY` can be pushed down, such as `ORDER BY pdb.score(id) DESC, id DESC` on a table with a text key. This regressed in 0.26.1.
++- Fixed delayed cancellation and termination during segment merges and made VACUUM's wait for mergers interruptible, while preserving foreground merging during that wait. VACUUM's buffer-pin waits support cancellation and `statement_timeout`, not `lock_timeout`.
 ```
 
-**File**: `pg_search/src/postgres/customscan/basescan/exec_methods/normal.rs` (modified, +1/-1)
+**File**: `nix/pg_search.nix` (modified, +1/-1)
 ```diff
-@@ -104,7 +104,7 @@ impl NormalScanExecState {
-                     if rem == 0 {
-                         BATCH_SIZE
-                     } else {
--                        (rem * self.batch_scale).clamp(rem, BATCH_SIZE)
-+                        rem.saturating_mul(self.batch_scale).min(BATCH_SIZE)
-                     }
-                 }
-                 None => BATCH_SIZE,
+@@ -65,7 +65,7 @@ buildPgrxExtension (finalAttrs: {
+   # If maintainers forget to do so, Nix will throw an error message that begins
+   # like this and then provides the correct new hash:
+   # error: hash mismatch in fixed-output derivation '...'
+-  cargoHash = "sha256-TqEOOJfxgTFZD6j2RP/joQv9KxdBFOm3df1cONsZcY0=";
++  cargoHash = "sha256-gPXpWm9uw86JdlVgQTQ9HcheWmnjIbrF3ES3x5a+a9s=";
+ 
+   inherit cargo-pgrx postgresql;
+ 
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/normal_scan_large_limit.out` (added, +82/-0)
+**File**: `pg_search/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,82 @@
-+-- Tests that NormalScanExecState handles a pushed-down LIMIT larger than its
-+-- internal batch size (8192). A text key tiebreak means only pdb.score() can be
-+-- pushed down, so TopK is declined and the Normal scan receives the LIMIT.
-+\i common/common_setup.sql
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+-- Disable parallel workers to avoid differences in plans
-+SET max_parallel_workers_per_gather = 0;
-+SET enable_indexscan to OFF;
-+SET paradedb.enable_columnar_exec = true;
-+SET paradedb.planner_warnings = 'off';
-+DROP TABLE IF EXISTS normal_large_limit CASCADE;
-+CREATE TABLE normal_large_limit (id TEXT PRIMARY KEY, body TEXT);
-+INSERT INTO normal_large_limit
-+SELECT 'k' || g, 'hello world ' || (g % 7) FROM generate_series(1, 20000) g;
-+CREATE INDEX normal_large_limit_idx ON normal_large_limit USING bm25 (id, body);
-+EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF)
-+SELECT id, pdb.score(id) FROM normal_large_limit
-+WHERE body @@@ 'hello'
-+ORDER BY pdb.score(id) DESC, id DESC
-+LIMIT 100000;
-+                                                                        QUERY PLAN                                                                         
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Limit
-+   ->  Sort
-+         Sort Key: (pdb.score(id)) DESC, id DESC
-+         ->  Custom Scan (ParadeDB Base Scan) on normal_large_limit
-+               Table: normal_large_limit
-+               Index: normal_large_limit_idx
-+               Exec Method: NormalScanExecState
-+               Scores: true
-+               Tantivy Query: {"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"hello","lenient":null,"conjunction_mode":null}}}}
-+(9 rows)
-+
-+-- LIMIT just above the batch size
-+SELECT count(*) FROM (
-+    SELECT id, pdb.score(id) FROM normal_large_limit
-+    WHERE body @@@ 'hello'
-+    ORDER BY pdb.score(id) DESC, id DESC
-+    LIMIT 12000
-+) s;
-+ count 
-+-------
-+ 12000
-+(1 row)
-+
-+-- LIMIT above the number of matching rows
-+SELECT count(*) FROM (
-+    SELECT id, pdb.score(id) FROM normal_large_limit
-+    WHERE body @@@ 'hello'
-+    ORDER BY pdb.score(id) DESC, id DESC
-+    LIMIT 100000
-+) s;
-+ count 
-+-------
-+ 20000
-+(1 row)
-+
-+-- LIMIT near usize::MAX must not overflow the batch size computation
-+SELECT count(*) FROM (
-+    SELECT id, pdb.score(id) FROM normal_large_limit
-+    WHERE body @@@ 'hello'
-+    ORDER BY pdb.score(id) DESC, id DESC
-+    LIMIT 9223372036854775807
-+) s;
-+ count 
-+-------
-+ 20000
-+(1 row)
-+
-+DROP TABLE normal_large_limit CASCADE;
-+RESET paradedb.planner_warnings;
-+\i common/common_cleanup.sql
-+-- Reset parallel workers setting to default
-+RESET max_parallel_workers_per_gather;
-+RESET enable_indexscan;
-+RESET paradedb.enable_columnar_exec;
-+SELECT 'Common tests cleanup complete' AS status; 
-+            status             
-+-------------------------------
-+ Common tests cleanup complete
-+(1 row)
-+
+@@ -113,5 +113,6 @@ superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "s
+ 
+ [dev-dependencies]
+ pgrx-tests.workspace = true
++postgres = "0.19.14"
+ rstest = "0.27.0"
+ proptest = "1.11.0"
 ```
 
-**File**: `pg_search/tests/pg_regress/sql/normal_scan_large_limit.sql` (added, +45/-0)
+**File**: `pg_search/src/index/writer/index.rs` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,45 @@
-+-- Tests that NormalScanExecState handles a pushed-down LIMIT larger than its
-+-- internal batch size (8192). A text key tiebreak means only pdb.score() can be
-+-- pushed down, so TopK is declined and the Normal scan receives the LIMIT.
-+\i common/common_setup.sql
-+SET paradedb.planner_warnings = 'off';
+@@ -633,6 +633,8 @@ impl Mergeable for SearchIndexMerger {
+         // We cannot call `check_for_interrupts!()` here because `merge_index` in
+         // `postgres/merge.rs` relies on `merge_segments` returning `Err` so it can remove its
+         // `MergeEntry` before unwinding (see https://github.com/paradedb/paradedb/issues/6962).
++        // The block writers underneath do check for interrupts; an entry orphaned by such an
++        // ERROR is retired by `MergeEntry::is_live` once its xmin is no longer in progress.
+         let new_segment = writer.merge_foreground(segment_ids, true)?;
+ 
+         if let Some(new_segment) = new_segment.as_ref() {
+```
+
+**File**: `pg_search/src/postgres/delete.rs` (modified, +13/-15)
+```diff
+@@ -103,28 +103,24 @@ pub unsafe extern "C-unwind" fn ambulkdelete(
+         callback(&mut ctid, callback_state)
+     };
+ 
+-    // First, we need an exclusive lock on the CLEANUP_LOCK. Once we get it, we know that there
+-    // are no concurrent merges happening. We signal background merge workers via an advisory lock
+-    // so they exit early and we don't wait for long-running merges to complete.
++    // Signal background merge workers via an advisory lock so they yield between candidates.
+     // Open metadata before taking the signal to keep the lock window small.
+     let mut metadata = MetaPage::open(&index_relation);
+     let signal = Rc::new(RefCell::new(Some(
+         VacuumSignal::new(index_relation.oid()).lock(),
+     )));
+     let signal_finally = signal.clone();
+ 
+-    // Ensure the signal advisory lock is released if a PostgreSQL ERROR
+-    // occurs while acquiring cleanup_lock_exclusive.
+-    let cleanup_lock = PgTryBuilder::new(AssertUnwindSafe(|| {
+-        // Acquire cleanup_lock - blocks until workers release
+-        let cleanup_lock = metadata.cleanup_lock_exclusive();
++    // AdvisoryLock's Drop skips the unlock while an ERROR unwinds, so release the signal here.
++    let merge_lock = PgTryBuilder::new(AssertUnwindSafe(|| {
++        let merge_lock = metadata.acquire_merge_lock_for_cleanup();
+ 
+         // Workers have exited - release signal
+         if let Some(lock) = signal.borrow_mut().take() {
+             drop(lock);
+         }
+ 
+-        cleanup_lock
++        merge_lock
+     }))
+     .finally(move || {
+         // Release signal if error occurred before we released it
+@@ -134,23 +130,22 @@ pub unsafe extern "C-unwind" fn ambulkdelete(
+     })
+     .execute();
+ 
+-    // take the MergeLock
+-    let merge_lock = metadata.acquire_merge_lock();
+-
+     // garbage_collect reclaims stale entries (owning backend exited or transaction ended) left
+     // behind by a cancelled or crashed merge.
+     //
+     // We don't assert the list is empty afterwards. A merge that errored between writing its
+     // MergeEntry and removing it leaves a not-yet-recyclable entry (backend alive, xmin in
+     // progress) that survives garbage_collect. Such an entry is a harmless leftover, not a
+-    // concurrent merge -- we hold the CLEANUP_LOCK exclusively, and a live merge holds it shared
+-    // for its whole duration -- and a later garbage_collect reclaims it.
++    // concurrent merge: the cleanup acquisition above waited out admitted mergers and MergeLock
++    // blocks new selection. A later garbage_collect reclaims it.
+     merge_lock
+         .merge_list()
+         .garbage_collect(pg_sys::ReadNextFullTransactionId());
+ 
+     let mutable_segments = metadata.freeze_mutable_segments();
+-    drop(cleanup_lock);
 +
-+DROP TABLE IF EXISTS normal_large_limit CASCADE;
-+CREATE TABLE normal_large_limit (id TEXT PRIMARY KEY, body TEXT);
-+INSERT INTO normal_large_limit
-+SELECT 'k' || g, 'hello world ' || (g % 7) FROM generate_series(1, 20000) g;
-+CREATE INDEX normal_large_limit_idx ON normal_large_limit USING bm25 (id, body);
++    #[cfg(feature = "pg_test")]
++    crate::postgres::storage::coordination_test::vacuum_setup_pause();
+ 
+     let reader = SearchIndexReader::empty(&index_relation, MvccSatisfies::Vacuum)
+         .expect("ambulkdelete: should be able to open a SearchIndexReader");
+@@ -164,6 +159,9 @@ pub unsafe extern "C-unwind" fn ambulkdelete(
+     // It's important to drop the merge lock after the `vacuum_sentinel` is pinned
+     drop(merge_lock);
+ 
++    #[cfg(feature = "pg_test")]
++    crate::postgres::storage::coordination_test::vacuum_pause();
 +
-+EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF)
-+SELECT id, pdb.score(id) FROM normal_large_limit
-+WHERE body @@@ 'hello'
-+ORDER BY pdb.score(id) DESC, id DESC
-+LIMIT 100000;
-+
-+-- LIMIT just above the batch size
-+SELECT count(*) FROM (
-+    SELECT id, pdb.score(id) FROM normal_large_limit
-+    WHERE body @@@ 'hello'
-+    ORDER BY pdb.score(id) DESC, id DESC
-+    LIMIT 12000
-+) s;
-+
-+-- LIMIT above the number of matching rows
-+SELECT count(*) FROM (
-+    SELECT id, pdb.score(id) FROM normal_large_limit
-+    WHERE body @@@ 'hello'
-+    ORDER BY pdb.score(id) DESC, id DESC
-+    LIMIT 100000
-+) s;
-+
-+-- LIMIT near usize::MAX must not overflow the batch size computation
-+SELECT count(*) FROM (
-+    SELECT id, pdb.score(id) FROM normal_large_limit
-+    WHERE body @@@ 'hello'
-+    ORDER BY pdb.score(id) DESC, id DESC
-+    LIMIT 9223372036854775807
-+) s;
-+
-+DROP TABLE normal_large_limit CASCADE;
-+RESET paradedb.planner_warnings;
-+\i common/common_cleanup.sql
+     let mut old_metas = Vec::new();
+     let mut new_metas = Vec::new();
+ 
+```
+
+**File**: `pg_search/src/postgres/insert.rs` (modified, +4/-3)
+```diff
+@@ -443,9 +443,10 @@ pub fn insertcleanup(state: &InsertState, mode: InsertMode) {
+         if created_segment {
+             do_merge(
+                 &state.indexrel,
+-                MergeStyle::Insert,
+-                Some(pg_sys::GetCurrentFullTransactionId()),
+-                Some(pg_sys::ReadNextFullTransactionId()),
++                MergeStyle::Insert {
++                    current_xid: pg_sys::GetCurrentFullTransactionId(),
++                    next_xid: pg_sys::ReadNextFullTransactionId(),
++                },
+             )
+             .expect("should be able to merge");
+         }
+```
+
+**File**: `pg_search/src/postgres/merge.rs` (modified, +50/-49)
+```diff
+@@ -25,10 +25,10 @@ use crate::postgres::locks::AdvisoryLock;
+ use crate::postgres::ps_status::{MERGING, set_ps_display_suffix};
+ use crate::postgres::storage::LinkedItemList;
+ use crate::postgres::storage::block::{MVCCEntry, SegmentMetaEntry};
+-use crate::postgres::storage::buffer::{Buffer, BufferManager};
++use crate::postgres::storage::buffer::BufferManager;
+ use crate::postgres::storage::fsm::FreeSpaceManager;
+ use crate::postgres::storage::merge::MergeLock;
+-use crate::postgres::storage::metadata::MetaPage;
++use crate::postgres::storage::metadata::{MergePins, MetaPage};
+ 
+ use pgrx::bgworkers::*;
+ use pgrx::pg_sys::panic::CaughtError;
+@@ -85,23 +85,27 @@ fn merge_crash_details(caught: &CaughtError) -> Option<serde_json::Value> {
+     }))
+ }
+ 
+-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+-#[repr(u8)]
++#[derive(Debug, Clone, Copy)]
+ pub(crate) enum MergeStyle {
+-    Insert,
++    /// An INSERT created a segment. A foreground merge runs inside that statement's transaction
++    /// and publishes under these ids.
++    Insert {
++        current_xid: pg_sys::FullTransactionId,
++        next_xid: pg_sys::FullTransactionId,
++    },
++    /// VACUUM finished; only a background merge may follow.
+     Vacuum,
+ }
+ 
+-impl TryFrom<u8> for MergeStyle {
+-    type Error = anyhow::Error;
+-
+-    fn try_from(value: u8) -> Result<Self, Self::Error> {
+-        Ok(match value {
+-            0 => MergeStyle::Insert,
+-            1 => MergeStyle::Vacuum,
+-            _ => anyhow::bail!("invalid merge style: {value}"),
+-        })
+-    }
++/// Who runs a merge, which decides what happens between candidates.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) enum MergeMode {
++    /// Runs inside the statement that triggered it: ignores the VACUUM signal and returns blocks
++    /// to the FSM once, after the last candidate.
++    Foreground,
++    /// Runs in a background worker: yields to a waiting VACUUM between candidates and returns
++    /// blocks to the FSM after each one.
++    Background,
+ }
+ 
+ #[repr(C)]
+@@ -279,7 +283,7 @@ impl IndexLayerSizes {
+ /// We need backpressure if there are more than 2 mutable segments present during an insert
+ #[inline]
+ fn need_backpressure(style: MergeStyle, segment_metas: LinkedItemList<SegmentMetaEntry>) -> bool {
+-    if style != MergeStyle::Insert {
++    if !matches!(style, MergeStyle::Insert { .. }) {
+         return false;
+     }
+ 
+@@ -298,12 +302,7 @@ fn need_backpressure(style: MergeStyle, segment_metas: LinkedItemList<SegmentMet
+ ///
+ /// First merge into the smaller layers in the foreground,
+ /// then launch a background worker to merge down the larger layers.
+-pub unsafe fn do_merge(
+-    index: &PgSearchRelation,
+-    style: MergeStyle,
+-    current_xid: Option<pg_sys::FullTransactionId>,
+-    next_xid: Option<pg_sys::FullTransactionId>,
+-) -> anyhow::Result<()> {
++pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::Result<()> {
+     // don't kick off merges for invalid indexes
+     if !index.is_valid() {
+         return Ok(());
+@@ -315,7 +314,7 @@ pub unsafe fn do_merge(
+     // apply backpressure if there are too many mutable segments
+     // this means forcing a foreground merge of the mutable segments
+     let need_backpressure = need_backpressure(style, metadata.segment_metas());
+-    let cleanup_lock = metadata.cleanup_lock_shared();
++    let merge_pins = metadata.pin_merge();
+     let merge_lock = metadata.acquire_merge_lock();
+     let foreground_layer_sizes = layer_sizes.foreground_layer_sizes.clone();
+ 
+@@ -339,10 +338,13 @@ pub unsafe fn do_merge(
+         // if we need (and think we can do) a background merge then we prefer to do that
+         // we no longer need to hold the [`MergeLock`] as we're not merging in the foreground
+         drop(merge_lock);
+-        drop(cleanup_lock);
++        drop(merge_pins);
+ 
+         try_launch_background_merger(index, largest_layer_size);
+-    } else if style == MergeStyle::Insert
++    } else if let MergeStyle::Insert {
++        current_xid,
++        next_xid,
++    } = style
+         && (!foreground_layer_sizes.is_empty() || need_backpressure)
+     {
+         let foreground_layer_sizes = if foreground_layer_sizes.is_empty() {
+@@ -355,11 +357,10 @@ pub unsafe fn do_merge(
+             index,
+             foreground_merge_policy,
+             merge_lock,
+-            cleanup_lock,
+-            false,
+-            false,
+-            current_xid.expect("foreground merging requires a current transaction id"),
+-            next_xid.expect("foreground merging requires a next transaction id"),
++            merge_pins,
++            MergeMode::Foreground,
++            current_xid,
++            next_xid,
+         );
+ 
+         // The foreground merge only covers the foreground layers, so the background layers still
+@@ -476,7 +477,7 @@ unsafe extern "C-unwind" fn background_merge(arg: pg_sys::Datum) {
+         let layer_sizes = IndexLayerSizes::from(&index);
+         let merge_policy = LayeredMergePolicy::new(laye
 ```
 
 ---
 
-### Incident Patch 2: `a8cd30c8` (2026-10-22)
-**Commit Message**: fix: preserve Numeric64 comparison semantics without overflowing (#6978)
-
-# Ticket(s) Closed
-
-- Closes #6102
+### Incident Patch 2: `ae0f70b0` (2026-10-24)
+**Commit Message**: refactor: Consolidate benchmark publishing, snapshots, and workload image builds (#6749)
 
 ## What
 
-Replaces #6369, originally authored by Javier Garcia (@IamYipi). Replays
-his four commits with authorship and original commit references
-preserved, followed by a separate finishing commit.
+Consolidate benchmark result publishing and heap snapshot generation,
+build Antithesis and benchmarker workload images through the same source
+Dockerfile, and rename the Hacker News benchmark dataset to
+`hackernews`.
 
 ## Why
 
-Rounding Numeric64 query literals changes comparison results, and
-computing an off-grid ceiling can overflow.
+The benchmark suites duplicated gh-pages publishing, snapshot generation
+had two entry points, and Antithesis compiled and packaged pg_search
+separately despite needing the same commit-to-workload-image flow as
+benchmarker.
 
 ## How
 
-Use exact grid comparisons and overflow-safe bounds while preserving NaN
-ordering and storage rounding. Also fix off-grid negation pruning and
-check negative-floor overflow.
+- Add `publish-benchmark-results`, used by benchmarker, queries, and
+Stressgres. Preserve existing series names, history directories, metric
+directions, thresholds, baseline policies, and comment behavior. All
+three publishers now generate fresh ParadeDB GitHub App tokens before
+publishing. Keep k6 extraction/dashboard publishing, Stressgres CSV
+conversion, and query paired-bootstrap comparisons in their suite
+actions; the publisher leaves its local Pages clone available for
+bootstrap comparisons.
+- Extend `generate-benchmark-snapshots.yml` to select Stack Overflow,
+Cohere, Stack Exchange, Wikipedia, or all. Native datasets retain
+pgB
 
-## Tests
+**File**: `.github/actions/benchmark-queries/action.yml` (modified, +37/-19)
+```diff
+@@ -14,14 +14,17 @@ inputs:
+   ref:
+     description: "Git ref or short SHA to report in benchmarks"
+     required: true
+-  github_token:
+-    description: "GitHub token to authenticate with"
++  github_app_client_id:
++    description: "ParadeDB GitHub App client ID"
++    required: true
++  github_app_private_key:
++    description: "ParadeDB GitHub App private key"
+     required: true
+   fail_on_error:
+     description: "Whether to fail on query errors. Set to 'false' for backfills against older versions."
+     required: false
+     default: "true"
+-  publish:
++  publish_baseline:
+     description: "Whether to push results to the gh-pages baseline that later runs are diffed against. Only a run on main should; every run compares against the baseline regardless."
+     required: false
+     default: "false"
+@@ -101,27 +104,42 @@ runs:
+         PG_VERSION: ${{ env.pg_version }}
+       run: ./.github/scripts/render_crashdump.sh
+ 
+-    # Necessary to avoid "destination path is not empty" error
+-    - name: Cleanup Previous Benchmark Publish Working Directory
++    - name: Generate GitHub App Token
++      id: app-token
++      uses: actions/create-github-app-token@v3.2.0 # Keep the exact pin because actionlint 1.7.12 has stale @v3 metadata that rejects client-id
++      with:
++        client-id: ${{ inputs.github_app_client_id }}
++        private-key: ${{ inputs.github_app_private_key }}
++
++    - name: Wait for App Token to Become Usable
+       shell: bash
+-      run: rm -rf ./benchmark-data-repository
++      env:
++        APP_TOKEN: ${{ steps.app-token.outputs.token }}
++      run: |
++        auth="Authorization: Basic $(printf 'x-access-token:%s' "$APP_TOKEN" | base64 -w0)"
++        for attempt in $(seq 1 10); do
++          if git -c http.extraheader="$auth" ls-remote \
++              "https://github.com/${GITHUB_REPOSITORY}.git" HEAD >/dev/null 2>&1; then
++            echo "App token usable after ${attempt} attempt(s)"
++            exit 0
++          fi
++          echo "App token not usable yet (attempt ${attempt}/10); retrying in 5s"
++          sleep 5
++        done
++        echo "App token never became usable after 10 attempts" >&2
++        exit 1
+ 
+     - name: Publish Benchmark Metrics
+-      uses: benchmark-action/github-action-benchmark@v1
++      uses: ./.github/actions/publish-benchmark-results
+       with:
+         name: "pg_search '${{ inputs.dataset }} (${{ inputs.index }})' (${{ env.ROWS_LABEL }} rows)"
+         ref: ${{ inputs.ref }}
+-        tool: customSmallerIsBetter
+-        output-file-path: benchmarks/results.json
+-        github-token: ${{ inputs.github_token }}
+-        gh-repository: github.com/${{ github.repository }}
+-        gh-pages-branch: gh-pages
+-        auto-push: ${{ inputs.publish }}
+-        benchmark-data-dir-path: benchmarks
+-        alert-threshold: ${{ inputs.alert_threshold }}
+-        comment-on-alert: true # We comment and alert rather than failing, so regressions are reported on GitHub
+-        alert-comment-cc-users: "@${{ github.actor }}"
+-        comment-always: ${{ github.event_name == 'pull_request' }}
++        metrics_file: benchmarks/results.json
++        github_token: ${{ steps.app-token.outputs.token }}
++        publish_baseline: ${{ inputs.publish_baseline }}
++        pages_directory: benchmarks
++        alert_threshold: ${{ inputs.alert_threshold }}
++        comment_summary: ${{ github.event_name == 'pull_request' }}
+ 
+     # The publish step above appends the current run to its local gh-pages clone, so the script
+     # takes the second-to-last entry as the baseline.
+@@ -143,7 +161,7 @@ runs:
+       if: inputs.alert_strategy == 'paired-bootstrap' && steps.paired_bootstrap.outputs.alert == 'true'
+       shell: bash
+       env:
+-        GH_TOKEN: ${{ inputs.github_token }}
++        GH_TOKEN: ${{ steps.app-token.outputs.token }}
+       run: |
+         printf '\ncc @%s\n' "${GITHUB_ACTOR}" >> benchmark-alert.md
+         gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/comments" \
+```
 
-128 numeric unit tests and six exact PostgreSQL 17 regressions pass,
-including the requested overflow case with verified pushdown. The new
-regression fails before the fix. Formatting and workspace-wide Clippy
-pass; full suites and hosted CI were not run locally.
+**File**: `.github/actions/benchmark-stressgres/action.yml` (modified, +14/-34)
+```diff
+@@ -126,49 +126,29 @@ runs:
+         echo "App token never became usable after 10 attempts" >&2
+         exit 1
+ 
+-    # Necessary to avoid "destination path is not empty" error
+-    - name: Cleanup Previous Benchmark Publish Working Directory
+-      shell: bash
+-      run: rm -rf ./benchmark-data-repository
+-
+     - name: Publish TPS Metrics
+-      uses: benchmark-action/github-action-benchmark@v1
++      uses: ./.github/actions/publish-benchmark-results
+       with:
+         name: "pg_search ${{ inputs.test_file }} Performance - TPS"
+         ref: ${{ inputs.ref }}
+-        tool: customBiggerIsBetter
+-        output-file-path: pg_search_tps.json
+-        github-token: ${{ steps.app-token.outputs.token }}
+-        gh-repository: github.com/${{ github.repository }}
+-        gh-pages-branch: gh-pages
+-        auto-push: ${{ github.event_name != 'pull_request' }}
+-        benchmark-data-dir-path: stressgres
+-        alert-threshold: "115%"
+-        comment-on-alert: true # We comment and alert rather than failing, so regressions are reported on GitHub
+-        alert-comment-cc-users: "@${{ github.actor }}"
+-        comment-always: ${{ github.event_name == 'pull_request' }}
+-
+-    # Necessary to avoid "destination path is not empty" error
+-    - name: Cleanup Previous Benchmark Publish Working Directory
+-      shell: bash
+-      run: rm -rf ./benchmark-data-repository
++        direction: bigger
++        metrics_file: pg_search_tps.json
++        github_token: ${{ steps.app-token.outputs.token }}
++        publish_baseline: ${{ github.event_name != 'pull_request' }}
++        pages_directory: stressgres
++        comment_summary: ${{ github.event_name == 'pull_request' }}
+ 
+     - name: Publish Other Metrics
+-      uses: benchmark-action/github-action-benchmark@v1
++      uses: ./.github/actions/publish-benchmark-results
+       with:
+         name: "pg_search ${{ inputs.test_file }} Performance - Other Metrics"
+         ref: ${{ inputs.ref }}
+-        tool: customSmallerIsBetter
+-        output-file-path: pg_search_other.json
+-        github-token: ${{ steps.app-token.outputs.token }}
+-        gh-repository: github.com/${{ github.repository }}
+-        gh-pages-branch: gh-pages
+-        auto-push: ${{ github.event_name != 'pull_request' }}
+-        benchmark-data-dir-path: stressgres
+-        alert-threshold: "110%"
+-        comment-on-alert: true
+-        alert-comment-cc-users: "@${{ github.actor }}"
+-        comment-always: ${{ github.event_name == 'pull_request' }}
++        metrics_file: pg_search_other.json
++        github_token: ${{ steps.app-token.outputs.token }}
++        publish_baseline: ${{ github.event_name != 'pull_request' }}
++        pages_directory: stressgres
++        alert_threshold: "110%"
++        comment_summary: ${{ github.event_name == 'pull_request' }}
+ 
+     - name: Print Postgres Logs
+       if: always()
+```
 
----------
+**File**: `.github/actions/build-paradedb-image/action.yml` (modified, +29/-4)
+```diff
+@@ -1,5 +1,5 @@
+ name: Build ParadeDB Image
+-description: Build ParadeDB Docker image with pg_search compiled from source
++description: Compile pg_search at a selected ref and build a ParadeDB workload image
+ 
+ inputs:
+   ref:
+@@ -17,6 +17,26 @@ inputs:
+     description: "Scope for GHA cache"
+     required: false
+     default: "benchmarker-source-pg18-arm64"
++  dst:
++    description: "Build the instrumented dst profile (currently Antithesis, requires linux/amd64)"
++    required: false
++    default: "false"
++  platforms:
++    description: "Target platforms (empty uses the runner architecture)"
++    required: false
++    default: ""
++  labels:
++    description: "Newline-separated image metadata labels"
++    required: false
++    default: ""
++  push:
++    description: "Push image_tag to the registry (caller must log in first)"
++    required: false
++    default: "false"
++  load:
++    description: "Load the image into the local Docker daemon"
++    required: false
++    default: "true"
+ 
+ outputs:
+   short_commit:
+@@ -43,14 +63,19 @@ runs:
+     - name: Set Up Docker Buildx
+       uses: docker/setup-buildx-action@v4
+ 
+-    - name: Build ParadeDB image from source
++    - name: Build ParadeDB Image
+       uses: docker/build-push-action@v7
+       with:
+         context: pg_search_source
+         file: docker/Dockerfile.source
+-        build-args: BASE_IMAGE=${{ inputs.base_image }}
++        platforms: ${{ inputs.platforms }}
++        build-args: |
++          BASE_IMAGE=${{ inputs.base_image }}
++          DST=${{ inputs.dst }}
+         pull: true
+-        load: true
++        push: ${{ inputs.push == 'true' }}
++        load: ${{ inputs.load == 'true' }}
+         tags: ${{ inputs.image_tag }}
++        labels: ${{ inputs.labels }}
+         cache-from: type=gha,scope=${{ inputs.cache_scope }}
+         cache-to: type=gha,mode=max,scope=${{ inputs.cache_scope }}
+```
 
-Co-authored-by: Javier Garcia <[REDACTED_EMAIL]>
-Co-authored-by: Mohammad Dashti <[REDACTED_EMAIL]>
+**File**: `.github/actions/publish-benchmark-results/action.yml` (added, +74/-0)
+```diff
+@@ -0,0 +1,74 @@
++name: Publish Benchmark Results
++description: Publish prepared benchmark metrics to gh-pages and report regressions
++
++inputs:
++  name:
++    description: "Benchmark suite name"
++    required: true
++  metrics_file:
++    description: "Prepared github-action-benchmark metrics JSON"
++    required: true
++  ref:
++    description: "Git ref or commit benchmarked"
++    required: true
++  github_token:
++    description: "ParadeDB GitHub App installation token"
++    required: true
++  direction:
++    description: "Metric direction: smaller or bigger"
++    required: false
++    default: "smaller"
++  pages_directory:
++    description: "Metrics directory on gh-pages"
++    required: true
++  publish_baseline:
++    description: "Whether to write the baseline to gh-pages"
++    required: false
++    default: "false"
++  alert_threshold:
++    description: "Regression threshold ratio"
++    required: false
++    default: "115%"
++  comment_on_regression:
++    description: "Whether to post a regression warning when the threshold is exceeded"
++    required: false
++    default: "true"
++  comment_summary:
++    description: "Whether to post a comparison summary even without a regression"
++    required: false
++    default: "false"
++
++runs:
++  using: composite
++  steps:
++    - name: Validate Metric Direction
++      shell: bash
++      env:
++        DIRECTION: ${{ inputs.direction }}
++      run: |
++        case "$DIRECTION" in
++          smaller|bigger) ;;
++          *) echo "Invalid metric direction: $DIRECTION" >&2; exit 1 ;;
++        esac
++
++    # Leave the new clone in place for query benchmark bootstrap comparisons.
++    - name: Cleanup Previous Benchmark Publish Working Directory
++      shell: bash
++      run: rm -rf ./benchmark-data-repository
++
++    - name: Publish Metrics
++      uses: benchmark-action/github-action-benchmark@v1
++      with:
++        name: ${{ inputs.name }}
++        ref: ${{ inputs.ref }}
++        tool: ${{ inputs.direction == 'bigger' && 'customBiggerIsBetter' || 'customSmallerIsBetter' }}
++        output-file-path: ${{ inputs.metrics_file }}
++        github-token: ${{ inputs.github_token }}
++        gh-repository: github.com/${{ github.repository }}
++        gh-pages-branch: gh-pages
++        benchmark-data-dir-path: ${{ inputs.pages_directory }}
++        auto-push: ${{ inputs.publish_baseline == 'true' }}
++        alert-threshold: ${{ inputs.alert_threshold }}
++        comment-on-alert: ${{ inputs.comment_on_regression == 'true' }}
++        alert-comment-cc-users: "@${{ github.actor }}"
++        comment-always: ${{ inputs.comment_summary == 'true' }}
+```
 
-**File**: `docs/project/changelog/unreleased/6978.stability.mdx` (added, +5/-0)
+**File**: `.github/actions/publish-benchmarker-results/action.yml` (modified, +59/-66)
+```diff
+@@ -3,62 +3,74 @@ description: Extract latency and QPS metrics, upload dashboards, publish to gh-p
+ 
+ inputs:
+   dataset:
+-    description: "Dataset name (e.g. hn-ci, stackexchange)"
++    description: "Dataset name (e.g. hackernews, stackexchange)"
+     required: true
+   short_commit:
+     description: "Short commit SHA"
+     required: true
+   ref:
+     description: "Git ref or commit benchmarked"
+     required: true
+-  image_tag:
+-    description: "Image tag tested"
+-    required: false
+-    default: "paradedb-source:ci"
+-  results_dir:
+-    description: "Directory containing results json and html files"
+-    required: false
+-    default: "benchmarker/results"
+-  metrics_file:
+-    description: "Path to write extracted latency metrics json"
+-    required: false
+-    default: "benchmarker/benchmarker_metrics.json"
+-  throughput_metrics_file:
+-    description: "Path to write extracted QPS metrics json"
+-    required: false
+-    default: "benchmarker/benchmarker_throughput_metrics.json"
+-  github_token:
+-    description: "GitHub token for publishing and comments"
++  github_app_client_id:
++    description: "ParadeDB GitHub App client ID"
++    required: true
++  github_app_private_key:
++    description: "ParadeDB GitHub App private key"
+     required: true
+   pr_number:
+     description: "PR number to comment on (empty if not a PR)"
+     required: false
+     default: ""
+-  auto_push:
+-    description: "Whether to auto-push baseline metrics to gh-pages"
++  publish_baseline:
++    description: "Whether to publish baseline metrics to gh-pages"
+     required: false
+     default: "false"
+ 
+ runs:
+   using: composite
+   steps:
++    - name: Generate GitHub App Token
++      id: app-token
++      uses: actions/create-github-app-token@v3.2.0 # Keep the exact pin because actionlint 1.7.12 has stale @v3 metadata that rejects client-id
++      with:
++        client-id: ${{ inputs.github_app_client_id }}
++        private-key: ${{ inputs.github_app_private_key }}
++
++    - name: Wait for App Token to Become Usable
++      shell: bash
++      env:
++        APP_TOKEN: ${{ steps.app-token.outputs.token }}
++      run: |
++        auth="Authorization: Basic $(printf 'x-access-token:%s' "$APP_TOKEN" | base64 -w0)"
++        for attempt in $(seq 1 10); do
++          if git -c http.extraheader="$auth" ls-remote \
++              "https://github.com/${GITHUB_REPOSITORY}.git" HEAD >/dev/null 2>&1; then
++            echo "App token usable after ${attempt} attempt(s)"
++            exit 0
++          fi
++          echo "App token not usable yet (attempt ${attempt}/10); retrying in 5s"
++          sleep 5
++        done
++        echo "App token never became usable after 10 attempts" >&2
++        exit 1
++
+     - name: Upload dashboards
+       uses: actions/upload-artifact@v7
+       with:
+         overwrite: true
+         retention-days: 30
+         name: benchmarker-dashboards-${{ inputs.dataset }}-${{ inputs.short_commit }}
+         path: |
+-          ${{ inputs.results_dir }}/*.json
+-          ${{ inputs.results_dir }}/*.html
++          benchmarker/results/*.json
++          benchmarker/results/*.html
+         if-no-files-found: warn
+ 
+     - name: Extract tracked metrics
+       shell: bash
+       env:
+-        RESULTS_DIR: ${{ inputs.results_dir }}
+-        METRICS_FILE: ${{ inputs.metrics_file }}
+-        THROUGHPUT_METRICS_FILE: ${{ inputs.throughput_metrics_file }}
++        RESULTS_DIR: benchmarker/results
++        METRICS_FILE: benchmarker/benchmarker_metrics.json
++        THROUGHPUT_METRICS_FILE: benchmarker/benchmarker_throughput_metrics.json
+       run: |
+         set -euo pipefail
+         shopt -s nullglob
+@@ -118,29 +130,19 @@ runs:
+           cat "${METRICS_FILE}" "${THROUGHPUT_METRICS_FILE}"
+         fi
+ 
+-    - name: Cleanup Previous Benchmark Publish Working Directory
+-      shell: bash
+-      run: rm -rf ./benchmark-data-repository
+-
+     - name: Publish Latency Metrics (p50, p95, and p99)
+       id: publish_latency
+-      if: hashFiles(inputs.metrics_file) != ''
++      if: hashFiles('benchmarker/benchmarker_metrics.json') != ''
+       continue-on-error: true
+-      uses: benchmark-action/github-action-benchmark@v1
++      uses: ./.github/actions/publish-benchmark-results
+       with:
+         name: "benchmarker ${{ inputs.dataset }} (latency)"
+         ref: ${{ inputs.ref }}
+-        tool: customSmallerIsBetter
+-        output-file-path: ${{ inputs.metrics_file }}
+-        github-token: ${{ inputs.github_token }}
+-        gh-repository: github.com/${{ github.repository }}
+-        gh-pages-branch: gh-pages
+-        benchmark-data-dir-path: benchmarker
+-        auto-push: ${{ inputs.auto_push == 'true' }}
+-        alert-threshold: "115%"
+-        comment-on-alert: ${{ inputs.pr_number == '' }}
+-        alert-comment-cc-users: "@${{ github.actor }}"
+-        comment-always: false
++        metrics_file: benchmarker/benchmarker_metrics.json
++        github_token: ${{ steps.app-token.outputs.token }}
++        pages_directory: benchmarker
++  
+```
+
+**File**: `.github/workflows/benchmark-pg_search-benchmarker.yml` (modified, +26/-32)
+```diff
+@@ -1,6 +1,6 @@
+ # Benchmark pg_search (Benchmarker)
+ #
+-# Runs the benchmarker suite on hn-ci, stackexchange, and wikipedia, indexing
++# Runs the benchmarker suite on hackernews, stackexchange, and wikipedia, indexing
+ # with a pg_search compiled from this repo's source and overlaid onto a
+ # released ParadeDB image. StackExchange and Wikipedia use their native
+ # workloads from benchmarker dataset prefixes in S3. Heap-backed runs exclude
+@@ -15,41 +15,34 @@ on:
+     paths:
+       - ".github/actions/build-paradedb-image/**"
+       - ".github/actions/publish-benchmarker-results/**"
++      - ".github/actions/publish-benchmark-results/**"
+       - ".github/actions/setup-benchmarker/**"
+       - ".github/workflows/benchmark-pg_search-benchmarker.yml"
+       - "docker/Dockerfile.source"
+       - "Cargo.lock"
+       - "**/*.rs"
+       - "**/*.toml"
+   pull_request:
+-    types: [labeled] # Opt in with `benchmark-benchmarker` (all) or `benchmark-benchmarker-{hn,stackexchange,wikipedia}`.
++    types: [labeled] # Opt in with `benchmarks`, `benchmark-benchmarker` (all), or `benchmark-benchmarker-{hackernews,stackexchange,wikipedia}`.
+   workflow_dispatch:
+     inputs:
+       dataset:
+-        description: "Which dataset(s) to benchmark: 'all', 'hn-ci', 'stackexchange', or 'wikipedia'."
++        description: "Which dataset(s) to benchmark: 'all', 'hackernews', 'stackexchange', or 'wikipedia'."
+         required: false
+         type: string
+         default: "all"
+       commit:
+         description: "pg_search commit/ref to benchmark. Defaults to the triggering ref (main on a manual run)."
+         required: false
+         default: ""
+-      benchmarker_hn_ref:
+-        description: "benchmarker repo ref for hn-ci (branch/tag/SHA)."
++      benchmarker_hackernews_ref:
++        description: "benchmarker repo ref for hackernews (branch/tag/SHA)."
+         required: false
+         default: "main"
+-      benchmarker_stackexchange_repo:
+-        description: "benchmarker repo to clone for stackexchange."
+-        required: false
+-        default: "paradedb/benchmarker"
+       benchmarker_stackexchange_ref:
+         description: "benchmarker repo ref for stackexchange (branch/tag/SHA)."
+         required: false
+         default: "main"
+-      benchmarker_wikipedia_repo:
+-        description: "benchmarker repo to clone for wikipedia."
+-        required: false
+-        default: "paradedb/benchmarker"
+       benchmarker_wikipedia_ref:
+         description: "benchmarker repo ref for wikipedia (branch/tag/SHA)."
+         required: false
+@@ -66,8 +59,8 @@ permissions:
+ # No concurrency group: let every run complete and append to gh-pages history.
+ 
+ jobs:
+-  benchmark-hn:
+-    name: Benchmarker (hn-ci)
++  benchmark-hackernews:
++    name: Benchmarker (hackernews)
+     runs-on:
+       - runs-on=${{ github.run_id }}
+       - retry=when-interrupted
+@@ -76,25 +69,27 @@ jobs:
+       - extras=s3-cache # S3-backed cache; https://runs-on.com/caching/magic-cache/
+       # No EBS volume: on-machine NVMe avoids run-to-run variance.
+     if: >-
+-      (github.event_name == 'workflow_dispatch' && (inputs.dataset == 'all' || inputs.dataset == 'hn-ci' || inputs.dataset == '')) ||
+-      (github.event_name == 'pull_request' && (github.event.label.name == 'benchmark-benchmarker' || github.event.label.name == 'benchmark-benchmarker-hn'))
++      (github.event_name == 'workflow_dispatch' && (inputs.dataset == 'all' || inputs.dataset == 'hackernews' || inputs.dataset == '')) ||
++      (github.event_name == 'pull_request' && (github.event.label.name == 'benchmarks' || github.event.label.name == 'benchmark-benchmarker' || github.event.label.name == 'benchmark-benchmarker-hackernews'))
+     env:
+-      DATASET: hn-ci
++      DATASET: hackernews
++      # Keep the existing archive key; the loader extracts into datasets/${DATASET}.
+       DATASET_S3: s3://paradedb-benchmarker/datasets/hn-ci.tar.gz
+       IMAGE_TAG: paradedb-source:ci
+ 
+     steps:
+       # The label triggers this run; remove it so it can be re-applied to re-run.
+       - name: Maybe Remove Label
+-        if: github.event_name == 'pull_request' && (github.event.label.name == 'benchmark-benchmarker' || github.event.label.name == 'benchmark-benchmarker-hn')
++        if: github.event_name == 'pull_request' && (github.event.label.name == 'benchmarks' || github.event.label.name == 'benchmark-benchmarker' || github.event.label.name == 'benchmark-benchmarker-hackernews')
+         env:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           PR_NUMBER: ${{ github.event.pull_request.number }}
+         run: |
+           gh pr edit "${PR_NUMBER}" \
+             --repo "${GITHUB_REPOSITORY}" \
++            --remove-label benchmarks \
+             --remove-label benchmark-benchmarker \
+-            --remove-label benchmark-benchmarker-hn || true
++            --remove-label benchmark-benchmarker-hackernews || true
+ 
+       - name: Determine Ref to Benchmark
+         id: determine-ref
+@@ -129,8 +124,7 @@ 
+```
+
+**File**: `.github/workflows/benchmark-pg_search-queries.yml` (modified, +30/-19)
+```diff
+@@ -5,14 +5,15 @@
+ 
+ name: Benchmark pg_search (Queries)
+ 
+-# We run benchmarks on push to `main` and on benchmark-labeled PRs. stackoverflow runs by default;
+-# cohere is opt-in via the benchmark-cohere-{hnsw,ivfflat} labels (or a manual run).
++# Stack Overflow runs on push to main. The benchmarks label also runs every Cohere index.
++# Individual datasets and indexes can be selected with their labels or a manual run.
+ on:
+   push:
+     branches:
+       - main
+     paths:
+       - ".github/actions/benchmark-queries/**"
++      - ".github/actions/publish-benchmark-results/**"
+       - ".github/actions/benchmarks-from-main/**"
+       - ".github/actions/setup-benchmark-cluster/**"
+       - ".github/actions/setup-pg-search-build-environment/**"
+@@ -27,7 +28,7 @@ on:
+   workflow_dispatch:
+     inputs:
+       dataset:
+-        description: "Dataset to benchmark on a manual run. Ignored otherwise: push and the benchmarks/benchmark-stackoverflow labels run stackoverflow; benchmark-cohere-{hnsw,ivfflat} labels run cohere."
++        description: "Dataset to benchmark on a manual run. Ignored otherwise: push and benchmark-stackoverflow run Stack Overflow; benchmarks runs Stack Overflow and every Cohere index."
+         required: true
+         type: choice
+         options:
+@@ -76,11 +77,17 @@ permissions:
+ jobs:
+   benchmark-pg_search-queries:
+     name: Run Benchmark Jobs
++    strategy:
++      fail-fast: false
++      max-parallel: 2
++      matrix:
++        # The empty entry retains the usual dataset selection. Other entries run one Cohere index.
++        cohere_index: ${{ fromJSON(github.event.label.name == 'benchmarks' && '["", "hnsw", "ivfflat", "vchord", "pg_search", "pgvectorscale"]' || '[""]') }}
+     # pgvectorscale sweeps query_search_list_size to its 10000 maximum on the filtered arms, and
+     # post-filter streaming at 1% selectivity makes the top of that ladder enormously more expensive
+     # per point than any other index here. Its first run died at the 360m default. A day is enough
+     # to measure it rather than truncate the sweep; every other arm keeps the default it fits in.
+-    timeout-minutes: ${{ (inputs.cohere_index == 'pgvectorscale' || github.event.label.name == 'benchmark-cohere-pgvectorscale') && 1440 || 360 }}
++    timeout-minutes: ${{ (matrix.cohere_index == 'pgvectorscale' || inputs.cohere_index == 'pgvectorscale' || github.event.label.name == 'benchmark-cohere-pgvectorscale') && 1440 || 360 }}
+     runs-on:
+       # To configure the runners: https://runs-on.com/configuration/job-labels/#how-it-works (runs in us-east-1)
+       - runs-on=${{ github.run_id }}
+@@ -107,14 +114,13 @@ jobs:
+       BACKREST_REPO_S3_KEY_TYPE: shared
+       # Which datasets this run benchmarks, resolved once.
+       # stackoverflow: push to main, the benchmarks/benchmark-stackoverflow PR labels, or a manual run.
+-      # cohere: opt-in only -- the benchmark-cohere-{hnsw,ivfflat} PR labels, or a manual run. The
+-      # chosen index comes from the dispatch input or the label name (no default).
+-      RUN_STACKOVERFLOW: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.dataset == 'all' || inputs.dataset == 'stackoverflow')) || (github.event_name == 'pull_request' && contains(fromJson('["benchmarks", "benchmark-stackoverflow"]'), github.event.label.name)) }}
+-      RUN_COHERE: ${{ (github.event_name == 'workflow_dispatch' && (inputs.dataset == 'all' || inputs.dataset == 'cohere')) || (github.event_name == 'pull_request' && contains(fromJson('["benchmark-cohere-hnsw", "benchmark-cohere-ivfflat", "benchmark-cohere-vchord", "benchmark-cohere-pg_search", "benchmark-cohere-pgvectorscale"]'), github.event.label.name)) }}
++      # Cohere runs for every matrix index under benchmarks, or the individually selected index.
++      RUN_STACKOVERFLOW: ${{ matrix.cohere_index == '' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.dataset == 'all' || inputs.dataset == 'stackoverflow')) || (github.event_name == 'pull_request' && contains(fromJson('["benchmarks", "benchmark-stackoverflow"]'), github.event.label.name))) }}
++      RUN_COHERE: ${{ matrix.cohere_index != '' || (github.event_name == 'workflow_dispatch' && (inputs.dataset == 'all' || inputs.dataset == 'cohere')) || (github.event_name == 'pull_request' && contains(fromJson('["benchmark-cohere-hnsw", "benchmark-cohere-ivfflat", "benchmark-cohere-vchord", "benchmark-cohere-pg_search", "benchmark-cohere-pgvectorscale"]'), github.event.label.name)) }}
+       # Only main writes the baseline. Every other run still fetches it and diffs against it,
+       # so a PR gets its comparison without being able to move the reference point.
+       PUBLISH_BASELINE: ${{ github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.publish_baseline) }}
+-      COHERE_INDEX: ${{ inputs.cohere_index || (github.event.label.name == 'benchmark-cohere-ivfflat' && 'ivfflat') || (github.event.label.name
+```
+
+**File**: `.github/workflows/generate-benchmark-snapshots.yml` (modified, +152/-11)
+```diff
+@@ -2,13 +2,12 @@
+ #
+ # Generate Benchmark Heap Snapshots
+ #
+-# Loads a dataset's heap (load-heap) and captures it as a pgBackRest snapshot (snapshot-heap),
+-# uploading to s3://paradedb-ci-benchmarks/snapshots/{dataset}/{size}/. Runs on the same CI runners
+-# as the benchmark workflow, so the snapshot's Postgres data directory is platform-compatible with
+-# the cluster that restores it. The benchmark workflow then just restore-heaps these.
+-#
+-# Prerequisite: each dataset's sampled source data must already be in the CI bucket at
+-# s3://paradedb-ci-benchmarks/datasets/{dataset}/sampled/{size}/{csv|parquet}/.
++# Stack Overflow and Cohere: native pgrx clusters backed up with pgBackRest to
++# s3://paradedb-ci-benchmarks/snapshots/{dataset}/{size}/. Sampled source data must
++# exist at datasets/{dataset}/sampled/{size}/{csv|parquet}/ in that bucket.
++# Stack Exchange and Wikipedia: benchmarker Docker heaps archived to
++# s3://paradedb-ci-benchmarks/snapshots/benchmarker/{dataset}/heap.tar.zst.
++# Each path uses the same platform and format as its benchmark's restore path.
+ 
+ name: Generate Benchmark Snapshots
+ 
+@@ -23,11 +22,26 @@ on:
+           - all
+           - stackoverflow
+           - cohere
++          - stackexchange
++          - wikipedia
+         default: all
+       size:
+-        description: "Optional single size to snapshot (e.g. 100k, 1m, 20m). Blank = all sizes for the dataset."
++        description: "Optional size for stackoverflow/cohere (e.g. 100k, 1m, 20m). Blank = all sizes. Not supported for stackexchange/wikipedia."
++        required: false
++        default: ""
++      benchmarker_ref:
++        description: "Benchmarker ref for stackexchange/wikipedia (branch/tag/SHA)."
++        required: false
++        default: "main"
++      dataset_source:
++        description: "Optional S3 prefix override. Defaults to s3://paradedb-benchmarker/datasets/<dataset>/."
+         required: false
++        type: string
+         default: ""
++      base_paradedb_image:
++        description: "Released image for benchmarker heap loading."
++        required: false
++        default: "paradedb/paradedb:latest-pg18"
+ 
+ permissions:
+   contents: read
+@@ -39,14 +53,16 @@ jobs:
+     name: Resolve Snapshot Matrix
+     runs-on: ubuntu-latest
+     outputs:
+-      matrix: ${{ steps.build.outputs.matrix }}
++      native: ${{ steps.build.outputs.native }}
++      benchmarker: ${{ steps.build.outputs.benchmarker }}
+     steps:
+       - name: Build matrix
+         id: build
+         env:
+           DATASET: ${{ inputs.dataset }}
+           SIZE: ${{ inputs.size }}
+         run: |
++          set -euo pipefail
+           all='[
+             {"dataset":"stackoverflow","size":"100k"},
+             {"dataset":"stackoverflow","size":"1m"},
+@@ -58,11 +74,19 @@ jobs:
+             --arg ds "${DATASET:-all}" --arg sz "${SIZE}" \
+             '[ .[] | select(($ds=="all" or .dataset==$ds) and ($sz=="" or .size==$sz)) ]')
+           echo "Selected entries: $include"
+-          echo "matrix={\"include\":$include}" >> "$GITHUB_OUTPUT"
++          docker=$(jq -cn --arg ds "${DATASET:-all}" --arg sz "$SIZE" \
++            '["stackexchange", "wikipedia"] | map(select(($ds=="all" or .==$ds) and $sz==""))')
++          if [ "$include" = '[]' ] && [ "$docker" = '[]' ]; then
++            echo "No snapshot matches dataset=$DATASET size=$SIZE" >&2
++            exit 1
++          fi
++          echo "native=$include" >> "$GITHUB_OUTPUT"
++          echo "benchmarker=$docker" >> "$GITHUB_OUTPUT"
+ 
+   generate:
+     name: Snapshot ${{ matrix.dataset }} (${{ matrix.size }})
+     needs: prep
++    if: needs.prep.outputs.native != '[]'
+     runs-on:
+       # To configure the runners: https://runs-on.com/configuration/job-labels/#how-it-works (runs in us-east-1)
+       - runs-on=${{ github.run_id }}
+@@ -72,7 +96,8 @@ jobs:
+       - extras=s3-cache
+     strategy:
+       fail-fast: false
+-      matrix: ${{ fromJson(needs.prep.outputs.matrix) }}
++      matrix:
++        include: ${{ fromJSON(needs.prep.outputs.native) }}
+     env:
+       pg_version: 18
+       BACKREST_STANZA: bench
+@@ -153,3 +178,119 @@ jobs:
+             --repo-endpoint "${BACKREST_REPO_ENDPOINT}" \
+             --repo-s3-key-type "${BACKREST_REPO_S3_KEY_TYPE}" \
+             --process-max 8
++
++  generate-benchmarker:
++    name: Snapshot ${{ matrix.dataset }} (benchmarker)
++    needs: prep
++    if: needs.prep.outputs.benchmarker != '[]'
++    strategy:
++      fail-fast: false
++      matrix:
++        dataset: ${{ fromJSON(needs.prep.outputs.benchmarker) }}
++    runs-on:
++      - runs-on=${{ github.run_id }}
++      - retry=when-interrupted
++      - family=c8gd.metal-24xl
++      - image=ubuntu26-full-arm64
++      - extras=s3-cache
++    env:
++      BACKREST_REPO_BUCKET: paradedb-ci-benchmarks
++      SNAPSHOT_PREFIX: snapshots/benchmarker
++      DATASET: ${{ matrix.dataset }}
++      DATASET_SOURCE: ${{ inputs.dataset_source || format('s3://paradedb-benchmarker/datasets/{0}/', matrix.dataset) }}
++      PARADEDB
+```
+
+---
+
+### Incident Patch 3: `24919e6c` (2026-10-24)
+**Commit Message**: fix: parse numeric fields in query strings (#6209)
+
+# Ticket(s) Closed
+
+- Closes #6105
+
+## What
+
+Fix `NUMERIC` literals, range bounds, and `IN` sets in explicitly
+fielded `pdb.parse()` queries and in `pdb.parse_with_field()`.
+
+## Why
+
+Tantivy reads the physical field type, not PostgreSQL's logical
+`NUMERIC` type. Passing numeric text directly could return wrong rows,
+no rows, or parse errors.
+
+Fixed-precision comparisons must also preserve exact values. A literal
+between two stored values must match nothing, and each range bound must
+move in the correct direction.
+
+## How
+
+- Extend the existing query AST walker to resolve numeric fields and
+rewrite their literals, bounds, and set elements.
+- Validate literals through PostgreSQL's `numeric_in` via `AnyNumeric`,
+then use normalized numeric text.
+- Use the shared conversion and bound helpers from #6978. Preserve
+off-grid and out-of-domain equality as a no-match query.
+- Encode `Numeric64` values as scaled `i64` text and `NumericBytes`
+values as version-aware decimal bytes. Use `base64` directly for
+standard Base64 encoding. The direct dependency is `0.22.1`, which was
+already in `Cargo.lock` transitively.
+- Report strict-mode errors a
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -5096,6 +5096,7 @@ dependencies = [
+  "arrow-select 59.2.0",
+  "async-stream",
+  "async-trait",
++ "base64 0.22.1",
+  "bigdecimal",
+  "bincode 2.0.1",
+  "bitpacking",
+```
+
+**File**: `docs/project/changelog/unreleased/6209.stability.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +header: stability
 +---
 +
-+Filters that compare a `NUMERIC(p, s)` column with `p` of 18 or less to a literal carrying more decimal places than `s`, such as `price = 10.005` on a `numeric(10,2)` column, now return the same rows as PostgreSQL. The pushed-down query used to round the literal to the column's scale first, so equality, `IN` and range filters could match the wrong rows. Comparing the column with a very large literal, such as `price > 1e17`, no longer raises an error.
++- Fixed `pdb.parse()` queries on `NUMERIC` fields that returned wrong rows, no rows, or parse errors. Literals, ranges, and sets use exact comparisons, and invalid input follows strict or lenient parsing rules (#6105).
 ```
 
-**File**: `pg_search/src/query/numeric.rs` (modified, +175/-97)
+**File**: `nix/pg_search.nix` (modified, +1/-1)
 ```diff
-@@ -32,7 +32,7 @@ use crate::postgres::pdb_owned_value::PdbOwnedValue;
- use crate::postgres::types::is_datetime_type;
- use crate::schema::SearchFieldType;
- use anyhow::Result;
--use decimal_bytes::Decimal;
-+use decimal_bytes::{Decimal, Decimal64NoScale};
+@@ -65,7 +65,7 @@ buildPgrxExtension (finalAttrs: {
+   # If maintainers forget to do so, Nix will throw an error message that begins
+   # like this and then provides the correct new hash:
+   # error: hash mismatch in fixed-output derivation '...'
+-  cargoHash = "sha256-gPXpWm9uw86JdlVgQTQ9HcheWmnjIbrF3ES3x5a+a9s=";
++  cargoHash = "sha256-oyQ90QGSKo45odJy31IGsecgVmwYmplKPQZXNayIW6s=";
  
- // ============================================================================
- // Numeric64 Scaling (I64 Fixed-Point)
-@@ -48,8 +48,6 @@ use decimal_bytes::Decimal;
- /// scale_i64("123.45", 2) // Returns Ok(12345)
- /// ```
- pub fn scale_i64(numeric_str: &str, scale: i16) -> Result<i64> {
--    use decimal_bytes::Decimal64NoScale;
--
-     let decimal = Decimal64NoScale::new(numeric_str, scale as i32).map_err(|e| {
-         anyhow::anyhow!(
-             "Failed to scale '{}' with scale {}: {:?}. This may occur if the value exceeds i64 range after scaling.",
-@@ -62,46 +60,6 @@ pub fn scale_i64(numeric_str: &str, scale: i16) -> Result<i64> {
-     Ok(decimal.value())
- }
+   inherit cargo-pgrx postgresql;
  
--/// Scale an OwnedValue to I64 fixed-point representation.
--///
--/// Handles Str, I64, U64, and F64 values, converting to scaled I64.
--/// Uses direct primitive constructors (`from_i64`, `from_u64`, `from_f64`)
--/// for efficient conversion without string intermediates.
--///
--/// # Example
--/// ```ignore
--/// scale_owned_value(OwnedValue::Str("123.45"), 2) // Returns Ok(OwnedValue::I64(12345))
--/// scale_owned_value(OwnedValue::I64(100), 2) // Returns Ok(OwnedValue::I64(10000))
--/// ```
--pub fn scale_owned_value(value: PdbOwnedValue, scale: i16) -> Result<PdbOwnedValue> {
--    use decimal_bytes::Decimal64NoScale;
--
--    let scale_i32 = scale as i32;
--
--    let scaled = match &value {
--        // Use direct primitive constructors for efficiency
--        PdbOwnedValue::I64(i) => Decimal64NoScale::from_i64(*i, scale_i32)
--            .map_err(|e| anyhow::anyhow!("Failed to scale i64 {}: {:?}", i, e))?
--            .value(),
--        PdbOwnedValue::U64(u) => Decimal64NoScale::from_u64(*u, scale_i32)
--            .map_err(|e| anyhow::anyhow!("Failed to scale u64 {}: {:?}", u, e))?
--            .value(),
--        PdbOwnedValue::F64(f) => Decimal64NoScale::from_f64(*f, scale_i32)
--            .map_err(|e| anyhow::anyhow!("Failed to scale f64 {}: {:?}", f, e))?
--            .value(),
--        // Fall back to string parsing for string values
--        PdbOwnedValue::Str(s) => scale_i64(s, scale)?,
--        _ => {
--            return Err(anyhow::anyhow!(
--                "Cannot scale non-numeric value: {:?}",
--                value
--            ));
--        }
--    };
--
--    Ok(PdbOwnedValue::I64(scaled))
--}
--
- // ============================================================================
- // NumericBytes Conversions
- // ============================================================================
-@@ -266,12 +224,14 @@ pub fn string_to_f64(value: PdbOwnedValue) -> PdbOwnedValue {
- 
- /// The integers that a field holds: the values of an `I64` or a `U64` field, or the bounds of
- /// the ranges in an `int4range` or an `int8range` field, which are stored as `I64` values. Dates
--/// and times are stored in `I64` fields too, but they are not numbers.
-+/// and times are stored in `I64` fields too, but they are not numbers. `Numeric64` holds
-+/// scaled integers plus sentinels for NaN and the infinities.
- #[derive(Clone, Copy)]
- enum IntDomain {
-     I32,
-     I64,
-     U64,
-+    Numeric64 { scale: i16 },
- }
- 
- impl IntDomain {
-@@ -281,6 +241,7 @@ impl IntDomain {
-         match field_type {
-             SearchFieldType::I64(oid) if !is_datetime_type(*oid) => Some(Self::I64),
-             SearchFieldType::U64(_) => Some(Self::U64),
-+            SearchFieldType::Numeric64(_, scale) => Some(Self::Numeric64 { scale: *scale }),
-             SearchFieldType::Range(oid) => match (*oid).try_into() {
-                 Ok(BuiltinOid::INT4RANGEOID) => Some(Self::I32),
-                 Ok(BuiltinOid::INT8RANGEOID) => Some(Self::I64),
-@@ -295,6 +256,7 @@ impl IntDomain {
-             Self::I32 => i32::MIN.into(),
-             Self::I64 => i64::MIN.into(),
-             Self::U64 => u64::MIN.into(),
-+            Self::Numeric64 { .. } => Decimal64NoScale::min_value().value().into(),
-         }
-     }
- 
-@@ -303,13 +265,14 @@ impl IntDomain {
-             Self::I32 => i32::MAX.into(),
-             Self::I64 => i64::MAX.into(),
-             Self::U64 => u64::MAX.into(),
-+            Self::Numeric64 { .. } => Decimal64NoScale::max_value().value().into(),
-         }
-     }
- 
-     /// `n`, an integer of the domain, as a value of the field's type.
-     fn value(self, n: i128) -> PdbOwnedValue {
-         match self {
--            Self::I32 | Self::I64 => {
-+            Self::I32 | Self::I64 | Self::Numeric64 { .. } => {
-                 PdbOwnedValue::I64(i64::try_from(n).expect("n should fit an i64"))
-             }
-             Self::U64 => PdbOwnedValue::U64(u64::try_from(n).expect("n should fit a u64")),
-@@ -341,27 +304,49 @@ pub fn clamp_to_int_domain(value: &PdbOwnedValue, field_type: &SearchFieldType)
-     {
-         return No
 ```
 
-**File**: `pg_search/src/query/pdb_query.rs` (modified, +7/-9)
+**File**: `pg_search/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -23,8 +23,8 @@ use crate::postgres::types::{is_datetime_type, is_pgoid_datetime_type};
+@@ -36,6 +36,7 @@ arrow-array = "59.1.0"
+ arrow-buffer = "59.1.0"
+ arrow-schema = "59.1.0"
+ arrow-select = "59.1.0"
++base64 = "0.22.1"
+ bitpacking = "0.9.3"
+ chrono = "0.4.45"
+ time = "0.3.47"
+```
+
+**File**: `pg_search/src/query/pdb_query.rs` (modified, +289/-54)
+```diff
+@@ -19,7 +19,7 @@ use crate::api::FieldName;
+ use crate::api::version::{Version, VersionInfo};
+ use crate::postgres::datetime::PostgresDateTime;
+ use crate::postgres::pdb_owned_value::PdbOwnedValue;
+-use crate::postgres::types::{is_datetime_type, is_pgoid_datetime_type};
++use crate::postgres::types::is_datetime_type;
  use crate::query::more_like_this::MoreLikeThisQueryBuilder;
  use crate::query::numeric::{
      clamp_int_bounds, convert_value_for_field, convert_value_for_range_field,
--    is_outside_int_domain, map_bound, numeric_bound_to_bytes, scale_numeric_bound, string_to_f64,
--    string_to_i64, string_to_json_numeric,
-+    is_outside_int_domain, map_bound, numeric_bound_to_bytes, string_to_f64, string_to_i64,
-+    string_to_json_numeric,
+@@ -34,6 +34,10 @@ use crate::query::{
+     QueryError, SearchQueryInput, check_range_bounds, coerce_bound_to_field_type, value_to_term,
  };
- use crate::query::pdb_query::pdb::{FuzzyData, ScoreAdjustStyle, SlopData};
- use crate::query::proximity::query::ProximityQuery;
-@@ -1607,12 +1607,6 @@ pub(crate) fn canonicalize_range_bounds_for_field(
-     // Handle NUMERIC field types with special storage strategies
-     // Also handle string-encoded numeric values for JSON and other numeric fields
-     let bounds = match search_field_type {
--        SearchFieldType::Numeric64(_, scale) => {
--            // Scale bounds for I64 fixed-point storage
--            let lower = scale_numeric_bound(lower_bound, scale)?;
--            let upper = scale_numeric_bound(upper_bound, scale)?;
--            (lower, upper)
--        }
-         SearchFieldType::NumericBytes(..) => {
-             // Convert bounds to lexicographically sortable bytes
-             let lower = numeric_bound_to_bytes(lower_bound, index_created_by_version)?;
-@@ -1631,7 +1625,7 @@ pub(crate) fn canonicalize_range_bounds_for_field(
-             let upper = map_bound(upper_bound, string_to_i64);
-             check_range_bounds(typeoid, lower, upper, index_created_by_version)?
-         }
--        SearchFieldType::I64(_) | SearchFieldType::U64(_) => {
-+        SearchFieldType::I64(_) | SearchFieldType::U64(_) | SearchFieldType::Numeric64(..) => {
-             let (lower, upper) = clamp_int_bounds(&search_field_type, lower_bound, upper_bound)?;
-             check_range_bounds(typeoid, lower, upper, index_created_by_version)?
-         }
-@@ -2011,6 +2005,10 @@ fn parse_with_field<QueryParserCtor: Fn() -> QueryParser>(
+ use crate::schema::{IndexRecordOption, SearchField, SearchFieldType, SearchIndexSchema};
++use anyhow::Context;
++use base64::Engine;
++use base64::engine::general_purpose::STANDARD;
++use pgrx::AnyNumeric;
+ use pgrx::PgOid;
+ use pgrx::pg_sys::BuiltinOid;
+ use pgrx::{InOutFuncs, StringInfo, pg_extern, pg_schema};
+@@ -2004,13 +2008,16 @@ fn parse_with_field<QueryParserCtor: Fn() -> QueryParser>(
+         SearchFieldType::Numeric64(_, _) | SearchFieldType::NumericBytes(..)
      ) {
          // Convert the query string to the appropriate numeric format
-         let value = PdbOwnedValue::Str(query_string.trim().to_string());
-+        // An impossible numeric term must not fall back to parsing the physical I64 value.
-+        if is_outside_int_domain(&value, &field_type) {
-+            return Ok(Box::new(EmptyQuery));
-+        }
-         if let Ok(converted) = convert_value_for_field(value, &field_type, index_created_by_version)
-         {
+-        let value = PdbOwnedValue::Str(query_string.trim().to_string());
+-        // An impossible numeric term must not fall back to parsing the physical I64 value.
+-        if is_outside_int_domain(&value, &field_type) {
+-            return Ok(Box::new(EmptyQuery));
+-        }
+-        if let Ok(converted) = convert_value_for_field(value, &field_type, index_created_by_version)
+-        {
++        if let Ok(converted) = numeric_literal_to_field_value(
++            query_string.trim(),
++            field,
++            &field_type,
++            index_created_by_version,
++        ) {
++            let Some(converted) = converted else {
++                // No value the field can hold equals the literal.
++                return Ok(Box::new(EmptyQuery));
++            };
              let tantivy_field_type = search_field.field_entry().field_type();
-```
-
-**File**: `pg_search/tests/pg_regress/expected/numeric64_high_precision_literal.out` (added, +467/-0)
-```diff
-@@ -0,0 +1,467 @@
-+\i common/common_setup.sql
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+-- Disable parallel workers to avoid differences in plans
-+SET max_parallel_workers_per_gather = 0;
-+SET enable_indexscan to OFF;
-+SET paradedb.enable_columnar_exec = true;
-+-- A NUMERIC literal is compared with a Numeric64 column as PostgreSQL compares it, including a
-+-- literal far below one step of the column's scale (1e-41 against NUMERIC(10,2), where dividing
-+-- by 10^39 does not fit in an i128) and one with more significant digits than an i128 holds.
-+-- Such a literal is not on the column's grid: an equality term matches nothing, and a range
-+-- bound moves to the neighbouring grid point on the side the operator keeps.
-+CREATE TABLE numeric64_high_precision (
-+    id SERIAL PRIMARY KEY,
-+    price NUMERIC(10, 2)
-+);
-+INSERT INTO numeric64_high_precision (price) VALUES
-+    (-0.01), (0.00), (0.01), (1.23), (1.24);
-+CREATE INDEX numeric64_high_precision_idx ON numeric64_high_precision USING paradedb (
-+    id, price
-+);
-+EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price = 1e-41
-+ORDER BY id;
-+                                                                          QUERY PLAN                                                                           
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Sort
-+   Output: id, price
-+   Sort Key: numeric64_high_precision.id
-+   ->  Custom Scan (ParadeDB Base Scan) on public.numeric64_high_precision
-+         Output: id, price
-+         Table: numeric64_high_precision
-+         Index: numeric64_high_precision_idx
-+         Worker Selection: Cost model
-+         Exec Method: ColumnarExecState
-+         Columnar: id, price
-+         Scores: false
-+         Tantivy Query: {"boolean":{"must":[{"with_index":{"query":"all"}},{"term":{"field":"price","value":"0.00000000000000000000000000000000000000001"}}]}}
-+(12 rows)
-+
-+EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price > 1e-41
-+ORDER BY id;
-+                                                                                              QUERY PLAN                                                                                              
-+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Sort
-+   Output: id, price
-+   Sort Key: numeric64_high_precision.id
-+   ->  Custom Scan (ParadeDB Base Scan) on public.numeric64_high_precision
-+         Output: id, price
-+         Table: numeric64_high_precision
-+         Index: numeric64_high_precision_idx
-+         Worker Selection: Cost model
-+         Exec Method: ColumnarExecState
-+         Columnar: id, price
-+         Scores: false
-+         Tantivy Query: {"boolean":{"must":[{"with_index":{"query":"all"}},{"range":{"field":"price","lower_bound":{"excluded":"0.00000000000000000000000000000000000000001"},"upper_bound":null}}]}}
-+(12 rows)
-+
-+-- Far below one step of the scale: no row equals it, and 0.00 < 1e-41 < 0.01.
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price = 1e-41 ORDER BY id;
-+ id | price 
-+----+-------
-+(0 rows)
-+
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price > 1e-41 ORDER BY id;
-+ id | price 
-+----+-------
-+  3 |  0.01
-+  4 |  1.23
-+  5 |  1.24
-+(3 rows)
-+
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price >= 1e-41 ORDER BY id;
-+ id | price 
-+----+-------
-+  3 |  0.01
-+  4 |  1.23
-+  5 |  1.24
-+(3 rows)
-+
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price < 1e-41 ORDER BY id;
-+ id | price 
-+----+-------
-+  1 | -0.01
-+  2 |  0.00
-+(2 rows)
-+
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price <= 1e-41 ORDER BY id;
-+ id | price 
-+----+-------
-+  1 | -0.01
-+  2 |  0.00
-+(2 rows)
-+
-+-- The same on the negative side: -0.01 < -1e-41 < 0.00.
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price = -1e-41 ORDER BY id;
-+ id | price 
-+----+-------
-+(0 rows)
-+
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price >= -1e-41 ORDER BY id;
-+ id | price 
-+----+-------
-+  2 |  0.00
-+  3 |  0.01
-+  4 |  1.23
-+  5 |  1.24
-+(4 rows)
-+
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price < -1e-41 ORDER BY id;
-+ id | price 
-+----+-------
-+  1 | -0.01
-+(1 row)
-+
-+-- More significant digits than an i128 holds: 1.23 < literal < 1.24.
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price = 1.2300000000000000000000000000000000000000000000001
-+ORDER BY id;
-+ id | price 
-+---
-```
-
-**File**: `pg_search/tests/pg_regress/sql/numeric64_high_precision_literal.sql` (added, +198/-0)
-```diff
-@@ -0,0 +1,198 @@
-+\i common/common_setup.sql
-+
-+-- A NUMERIC literal is compared with a Numeric64 column as PostgreSQL compares it, including a
-+-- literal far below one step of the column's scale (1e-41 against NUMERIC(10,2), where dividing
-+-- by 10^39 does not fit in an i128) and one with more significant digits than an i128 holds.
-+-- Such a literal is not on the column's grid: an equality term matches nothing, and a range
-+-- bound moves to the neighbouring grid point on the side the operator keeps.
-+
-+CREATE TABLE numeric64_high_precision (
-+    id SERIAL PRIMARY KEY,
-+    price NUMERIC(10, 2)
-+);
-+
-+INSERT INTO numeric64_high_precision (price) VALUES
-+    (-0.01), (0.00), (0.01), (1.23), (1.24);
-+
-+CREATE INDEX numeric64_high_precision_idx ON numeric64_high_precision USING paradedb (
-+    id, price
-+);
-+
-+EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price = 1e-41
-+ORDER BY id;
-+
-+EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price > 1e-41
-+ORDER BY id;
-+
-+-- Far below one step of the scale: no row equals it, and 0.00 < 1e-41 < 0.01.
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price = 1e-41 ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price > 1e-41 ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price >= 1e-41 ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price < 1e-41 ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price <= 1e-41 ORDER BY id;
-+
-+-- The same on the negative side: -0.01 < -1e-41 < 0.00.
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price = -1e-41 ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price >= -1e-41 ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price < -1e-41 ORDER BY id;
-+
-+-- More significant digits than an i128 holds: 1.23 < literal < 1.24.
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price = 1.2300000000000000000000000000000000000000000000001
-+ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price > 1.2300000000000000000000000000000000000000000000001
-+ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price <= 1.2300000000000000000000000000000000000000000000001
-+ORDER BY id;
-+
-+-- PostgreSQL's own answers, without the index, for comparison.
-+SELECT
-+    count(*) FILTER (WHERE price = 1e-41) AS eq,
-+    count(*) FILTER (WHERE price > 1e-41) AS gt,
-+    count(*) FILTER (WHERE price >= 1e-41) AS ge,
-+    count(*) FILTER (WHERE price < 1e-41) AS lt,
-+    count(*) FILTER (WHERE price <= 1e-41) AS le,
-+    count(*) FILTER (WHERE price = -1e-41) AS eq_neg,
-+    count(*) FILTER (WHERE price >= -1e-41) AS ge_neg,
-+    count(*) FILTER (WHERE price < -1e-41) AS lt_neg,
-+    count(*) FILTER (WHERE price = 1.2300000000000000000000000000000000000000000000001) AS eq_long,
-+    count(*) FILTER (WHERE price > 1.2300000000000000000000000000000000000000000000001) AS gt_long,
-+    count(*) FILTER (WHERE price <= 1.2300000000000000000000000000000000000000000000001) AS le_long
-+FROM numeric64_high_precision;
-+
-+-- The ceiling of this scale-2 literal exceeds i64::MAX. It must not wrap and
-+-- match ordinary rows. NaN sorts above every finite literal in PostgreSQL.
-+EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price > 92233720368547758.075
-+ORDER BY id;
-+
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price > 92233720368547758.075 ORDER BY id;
-+
-+INSERT INTO numeric64_high_precision (price) VALUES ('NaN'), (NULL);
-+
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price > 92233720368547758.075 ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price >= 92233720368547758.075 ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price < 92233720368547758.075 ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price <= 92233720368547758.075 ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price = 92233720368547758.075 ORDER BY id;
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price <> 92233720368547758.075 ORDER BY id;
-+
-+-- An exact grid point at i64::MAX must not be mistaken for the NaN sentinel.
-+SELECT id, price FROM numeric64_high_precision
-+WHERE id @@@ paradedb.all() AND price = 92233720368547758.07 ORDER BY id;
-+
-+-- Check both 
-```
-
----
-
-### Incident Patch 3: `c20bd97a` (2026-10-21)
-**Commit Message**: fix: act on cancel and SIGTERM during DataFusion scans, regex walks and IVF training (#6886)
-
-## Ticket(s) Closed
-
-- Closes #6881
-- Closes #6884
-- Closes #6885
-
-## What
-
-This PR makes DataFusion scans, term dictionary walks and IVF training
-react to `pg_cancel_backend`, `pg_terminate_backend` and
-`statement_timeout` while they run, not when they finish.
-
-## Why
-
-A fast shutdown waits for every backend. #6881 came out of a one-hour
-switchover where the last backend standing couldn't be interrupted. The
-other two turned up while looking for similar paths.
-
-- `block_on_next` holds interrupts for the whole `block_on`, so a serial
-hash aggregate ignores every signal until its first output batch.
-- A regex walks a segment's whole dictionary in one tantivy call, and
-the only check sits between segments. A cancel sent during the walk is
-dropped once the query finishes on its own.
-- IVF training reads an in-memory sample once, and the reads are the
-only cancel poll. `wants_cancel` also ignores `ProcDiePending`, so a
-`SIGTERM` waits for every tantivy loop that polls it.
-
-## How
-
-- The scan stream polls `cancel_pending()` before each batch and bails
-with `interrupted()`, like the MPP transpor
-
-**File**: `pg_search/src/index/directory/mvcc.rs` (modified, +3/-0)
-```diff
-@@ -1014,8 +1014,11 @@ impl Directory for MVCCDirectory {
+             let term = value_to_term(
+                 search_field.field(),
+@@ -2024,7 +2031,8 @@ fn parse_with_field<QueryParserCtor: Fn() -> QueryParser>(
+                 IndexRecordOption::WithFreqs.into(),
+             )));
+         }
+-        // If conversion fails, fall through to standard parsing (will likely error)
++        // A query string that is not one NUMERIC literal, such as `[1 TO 2]`, is parsed below,
++        // which converts each NUMERIC phrase in it or reports the invalid one.
      }
  
-     fn wants_cancel(&self) -> bool {
-+        // The merger's SIGTERM handler sets `ProcDiePending`, so a fast shutdown has to stop
-+        // the loops that poll here too, not only a query cancel.
-         unsafe {
-             pg_sys::QueryCancelPending != 0
-+                || pg_sys::ProcDiePending != 0
-                 || !pg_sys::IsTransactionState()
-                 || pg_sys::IsAbortedTransactionBlockState()
-         }
-```
-
-**File**: `pg_search/src/lib.rs` (modified, +7/-0)
-```diff
-@@ -117,6 +117,10 @@ pub fn available_parallelism() -> usize {
+     if matches!(search_field.field_entry().field_type(), FieldType::Facet(_)) {
+@@ -2278,108 +2286,272 @@ pub(super) fn parse_tantivy_query(
+ ) -> anyhow::Result<Box<dyn Query>> {
+     if lenient {
+         let (mut ast, _) = query_grammar::parse_query_lenient(query_string);
+-        if index_created_by_version.stores_datetimes_in_i64() {
+-            rewrite_timestamp_literals(&mut ast, schema);
+-        }
++        rewrite_field_literals(&mut ast, schema, index_created_by_version, lenient)?;
+         let (parsed_query, _) = parser.build_query_from_user_input_ast_lenient(ast);
+         Ok(parsed_query)
+     } else {
+         let mut ast = query_grammar::parse_query(query_string)
+             .map_err(|_| QueryError::GrammarParseError(query_string.to_string()))?;
+-        if index_created_by_version.stores_datetimes_in_i64() {
+-            rewrite_timestamp_literals(&mut ast, schema);
+-        }
++        rewrite_field_literals(&mut ast, schema, index_created_by_version, lenient)?;
+         let parsed_query = parser
+             .build_query_from_user_input_ast(ast)
+             .map_err(|err| QueryError::ParseError(err, query_string.to_string()))?;
+         Ok(parsed_query)
+     }
  }
  
- /// Initializes option parsing
-+fn check_for_interrupts() {
-+    pgrx::check_for_interrupts!();
-+}
-+
- #[allow(clippy::missing_safety_doc)]
- #[allow(non_snake_case)]
- #[pg_guard]
-@@ -146,6 +150,9 @@ pub unsafe extern "C-unwind" fn _PG_init() {
-     postgres::options::init();
-     postgres::build_logging::init();
-     gucs::init();
-+    // A term dictionary walk is one tantivy call that runs for seconds on a big segment, and
-+    // pg_search's own checks sit between segments.
-+    tantivy_common::interrupt::set_interrupt_check(check_for_interrupts);
- 
-     // RegisterCustomRmgr can only be called during shared_preload_libraries init. If pg_search
-     // was loaded via plain CREATE EXTENSION (no preload), skip
+-/// Walks the parsed user query AST and rewrites date/timestamp-string phrases as i64s.
+-/// Best-effort: phrases that fail to parse as datetimes are left untouched, which
+-/// preserves the original tantivy error path for genuinely malformed input.
+-pub(super) fn rewrite_timestamp_literals(ast: &mut UserInputAst, schema: &SearchIndexSchema) {
++/// Walks the parsed user query AST and rewrites logical Postgres values to their physical Tantivy
++/// representation. Invalid NUMERIC phrases return an error unless parsing is lenient.
++fn rewrite_field_literals(
++    ast: &mut UserInputAst,
++    schema: &SearchIndexSchema,
++    index_created_by_version: Option<Version>,
++    lenient: bool,
++) -> anyhow::Result<()> {
+     match ast {
+         UserInputAst::Clause(children) => {
+             for (_, child) in children {
+-                rewrite_timestamp_literals(child, schema);
++                rewrite_field_literals(child, schema, index_created_by_version, lenient)?;
++            }
++        }
++        UserInputAst::Boost(inner, _) => {
++            rewrite_field_literals(inner, schema, index_created_by_version, lenient)?;
++        }
++        UserInputAst::Leaf(leaf) => {
++            if !rewrite_leaf(leaf, schema, index_created_
 ```
 
-**File**: `pg_search/src/postgres/customscan/basescan/exec_methods/fast_fields/columnar.rs` (modified, +7/-1)
+**File**: `pg_search/tests/pg_regress/expected/numeric64_high_precision_literal.out` (modified, +1/-2)
 ```diff
-@@ -53,7 +53,13 @@ fn poll_next_sync<S: futures::Stream + Unpin>(
-     pgrx::check_for_interrupts!();
- 
-     // Use tokio runtime to drive the stream (same pattern as JoinScan)
--    runtime.block_on(async { stream.next().await })
-+    let next = runtime.block_on(async { stream.next().await });
-+
-+    // The scan stream bails with a plain error on a pending cancel or die. Let Postgres report
-+    // the interrupt itself, so the client sees the right SQLSTATE and not that error.
-+    pgrx::check_for_interrupts!();
-+
-+    next
- }
- 
- struct Inner {
+@@ -437,8 +437,7 @@ WHERE price @@@ pdb.term('abc') ORDER BY id;
+ ERROR:  Str("abc") is not a number
+ SELECT id, price FROM numeric64_high_precision
+ WHERE price @@@ pdb.parse_with_field('12,34') ORDER BY id;
+-ERROR:  could not parse query string 'price:(12,34)'.
+-           make sure to use column:term pairs, and to capitalize AND/OR.
++ERROR:  invalid NUMERIC value '12,34' for field 'price'
+ DROP TABLE numeric64_high_precision;
+ CREATE TABLE numeric64_negative_scale (id int PRIMARY KEY, price numeric(8, -2));
+ INSERT INTO numeric64_negative_scale VALUES (1, 1200), (2, 123400), (3, 'NaN');
 ```
 
-**File**: `pg_search/src/query/proximity/mod.rs` (modified, +4/-1)
+**File**: `pg_search/tests/pg_regress/expected/parse.out` (modified, +470/-3)
 ```diff
-@@ -135,7 +135,10 @@ mod pdb {
-                         tantivy_fst::Regex::new(pattern.as_str()).unwrap_or_else(|e| panic!("{e}"));
-                     let inverted_index = segment_reader.inverted_index(field)?;
-                     let dict = inverted_index.terms();
--                    let mut term_stream = dict.search_with_state(regex).into_stream()?;
-+                    let mut term_stream = dict
-+                        .search_with_state(regex)
-+                        .interruptible()
-+                        .into_stream()?;
+@@ -8,10 +8,28 @@ CALL paradedb.create_paradedb_test_table(
+   schema_name => 'public',
+   table_name => 'mock_items'
+ );
+-ALTER TABLE mock_items ADD COLUMN created_at_tz TIMESTAMPTZ, ADD COLUMN latest_available_time_tz TIMETZ;
+-UPDATE mock_items SET created_at_tz = created_at AT TIME ZONE 'UTC', latest_available_time_tz = (latest_available_time || '+00')::timetz;
++ALTER TABLE mock_items
++    ADD COLUMN created_at_tz TIMESTAMPTZ,
++    ADD COLUMN latest_available_time_tz TIMETZ,
++    ADD COLUMN arbitrary_precision NUMERIC,
++    ADD COLUMN fixed_precision NUMERIC(10, 2);
++UPDATE mock_items SET
++    created_at_tz = created_at AT TIME ZONE 'UTC',
++    latest_available_time_tz = (latest_available_time || '+00')::timetz,
++    arbitrary_precision = CASE id
++        WHEN 1 THEN 1234
++        WHEN 2 THEN 5678
++        WHEN 3 THEN -100
++        WHEN 4 THEN 100000000000000000000.123
++    END,
++    fixed_precision = CASE id
++        WHEN 1 THEN 1.00
++        WHEN 2 THEN 0.01
++        WHEN 3 THEN 1.23
++        WHEN 4 THEN 2.50
++    END;
+ CREATE INDEX on mock_items
+-USING paradedb (id, description, rating, category, metadata, created_at, last_updated_date, latest_available_time, created_at_tz, latest_available_time_tz);
++USING paradedb (id, description, rating, category, metadata, created_at, last_updated_date, latest_available_time, created_at_tz, latest_available_time_tz, arbitrary_precision, fixed_precision);
+ SELECT id, description, category FROM mock_items
+ WHERE id @@@ pdb.parse('description:(running shoes) AND category:footwear');
+  id |     description     | category 
+@@ -74,4 +92,453 @@ WHERE id @@@ pdb.parse('latest_available_time_tz:"09:12:34+00"') ORDER BY id;
+   1 | Ergonomic metal keyboard | 09:12:34+00
+ (1 row)
  
-                     let mut terms = Vec::new();
-                     while let Some((bytes, ..)) = term_stream.next() {
++-- Global parsing must apply the same logical-to-physical conversion as field-specific parsing.
++-- INTEGER is the control: its logical and physical values are identical.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('id:1') ORDER BY id;
++ id 
++----
++  1
++(1 row)
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse_with_field('1') ORDER BY id;
++ id 
++----
++  1
++(1 row)
++
++-- Unlimited NUMERIC uses the NumericBytes representation.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision:1234') ORDER BY id;
++ id 
++----
++  1
++(1 row)
++
++SELECT id FROM mock_items
++WHERE arbitrary_precision @@@ pdb.parse_with_field('1234') ORDER BY id;
++ id 
++----
++  1
++(1 row)
++
++-- NUMERIC(10,2) uses a scaled Numeric64 representation.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision:1') ORDER BY id;
++ id 
++----
++  1
++(1 row)
++
++SELECT id FROM mock_items
++WHERE fixed_precision @@@ pdb.parse_with_field('1') ORDER BY id;
++ id 
++----
++  1
++(1 row)
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision:1.23') ORDER BY id;
++ id 
++----
++  3
++(1 row)
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision:100000000000000000000.123') ORDER BY id;
++ id 
++----
++  4
++(1 row)
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision:-100') ORDER BY id;
++ id 
++----
++  3
++(1 row)
++
++-- Conversion also applies to range bounds and each field in a compound AST.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision:[1 TO 2]') ORDER BY id;
++ id 
++----
++  1
++  3
++(2 rows)
++
++SELECT id FROM mock_items
++WHERE fixed_precision @@@ pdb.parse_with_field('[1 TO 2]') ORDER BY id;
++ id 
++----
++  1
++  3
++(2 rows)
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision:[-100 TO 1234]') ORDER BY id;
++ id 
++----
++  1
++  3
++(2 rows)
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision: IN [0.01 2.5]') ORDER BY id;
++ id 
++----
++  2
++  4
++(2 rows)
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision: IN [1234 -100]') ORDER BY id;
++ id 
++----
++  1
++  3
++(2 rows)
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('(arbitrary_precision:1234 AND fixed_precision:1) OR id:2') ORDER BY id;
++ id 
++----
++  1
++  2
++(2 rows)
++
++-- Invalid NUMERIC literals, range bounds, and set elements report a numeric conversion error.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision:not-a-number') ORDER BY id;
++ERROR:  invalid NUMERIC value 'not-a-number' for field 'arbitrary_precision'
++SELECT id FROM mock_items
++WHERE fixed_precision @@@ pdb.parse_with_field('not-a-number') ORDER BY id;
++ERROR:  invalid NUMERIC value 'not-a-number' for field 'fixed_precision'
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision:[1 TO not-a-number]') ORDER BY id;
++ERROR:  invalid NUMERIC value 'not-a-number' for field 'fixed_precision'
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision: IN [1234 not-a-number]') ORDER BY id;
++ERROR:  invalid NUMERIC value 'not-a-number' for field 'arbitrary_precision'
++-- PostgreSQL rejects these, so they must not be rounded or read as zero.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision:1.2x') ORDER BY id;
++ERROR:  invalid 
 ```
 
-**File**: `pg_search/src/scan/execution_plan.rs` (modified, +7/-0)
+**File**: `pg_search/tests/pg_regress/sql/parse.sql` (modified, +251/-3)
 ```diff
-@@ -68,6 +68,7 @@ use crate::index::reader::index::SearchIndexReader;
- use crate::index::stats::{PartitionSegments, segments_for_partition};
- use crate::postgres::ParallelScanState;
- use crate::postgres::customscan::explain::ExplainFormat;
-+use crate::postgres::customscan::mpp::interrupt::{cancel_pending, interrupted};
- use crate::postgres::customscan::parallel::segment_view;
- use crate::postgres::heap::VisibilityChecker;
- use crate::postgres::options::{SortByDirection, SortByField};
-@@ -1402,6 +1403,12 @@ impl ExecutionPlan for PgSearchScanPlan {
-                 if scanner.can_pushdown_score_threshold() {
-                     scanner.set_score_threshold(score_threshold);
-                 }
-+                // `block_on_next` holds interrupts while this stream runs, so the scanner's own
-+                // check can't fire. Bail out instead and let the caller act on the interrupt
-+                // once `block_on` has returned.
-+                if cancel_pending() {
-+                    Err::<(), DataFusionError>(interrupted())?;
-+                }
-                 let next_batch = scanner.next(
-                     &ffhelper,
-                     &mut visibility,
+@@ -5,11 +5,29 @@ CALL paradedb.create_paradedb_test_table(
+   table_name => 'mock_items'
+ );
+ 
+-ALTER TABLE mock_items ADD COLUMN created_at_tz TIMESTAMPTZ, ADD COLUMN latest_available_time_tz TIMETZ;
+-UPDATE mock_items SET created_at_tz = created_at AT TIME ZONE 'UTC', latest_available_time_tz = (latest_available_time || '+00')::timetz;
++ALTER TABLE mock_items
++    ADD COLUMN created_at_tz TIMESTAMPTZ,
++    ADD COLUMN latest_available_time_tz TIMETZ,
++    ADD COLUMN arbitrary_precision NUMERIC,
++    ADD COLUMN fixed_precision NUMERIC(10, 2);
++UPDATE mock_items SET
++    created_at_tz = created_at AT TIME ZONE 'UTC',
++    latest_available_time_tz = (latest_available_time || '+00')::timetz,
++    arbitrary_precision = CASE id
++        WHEN 1 THEN 1234
++        WHEN 2 THEN 5678
++        WHEN 3 THEN -100
++        WHEN 4 THEN 100000000000000000000.123
++    END,
++    fixed_precision = CASE id
++        WHEN 1 THEN 1.00
++        WHEN 2 THEN 0.01
++        WHEN 3 THEN 1.23
++        WHEN 4 THEN 2.50
++    END;
+ 
+ CREATE INDEX on mock_items
+-USING paradedb (id, description, rating, category, metadata, created_at, last_updated_date, latest_available_time, created_at_tz, latest_available_time_tz);
++USING paradedb (id, description, rating, category, metadata, created_at, last_updated_date, latest_available_time, created_at_tz, latest_available_time_tz, arbitrary_precision, fixed_precision);
+ 
+ SELECT id, description, category FROM mock_items
+ WHERE id @@@ pdb.parse('description:(running shoes) AND category:footwear');
+@@ -35,4 +53,234 @@ WHERE id @@@ pdb.parse('created_at_tz:"2023-05-01 09:12:34+00"') ORDER BY id;
+ SELECT id, description, latest_available_time_tz FROM mock_items
+ WHERE id @@@ pdb.parse('latest_available_time_tz:"09:12:34+00"') ORDER BY id;
+ 
++-- Global parsing must apply the same logical-to-physical conversion as field-specific parsing.
++-- INTEGER is the control: its logical and physical values are identical.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('id:1') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse_with_field('1') ORDER BY id;
++
++-- Unlimited NUMERIC uses the NumericBytes representation.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision:1234') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE arbitrary_precision @@@ pdb.parse_with_field('1234') ORDER BY id;
++
++-- NUMERIC(10,2) uses a scaled Numeric64 representation.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision:1') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE fixed_precision @@@ pdb.parse_with_field('1') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision:1.23') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision:100000000000000000000.123') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision:-100') ORDER BY id;
++
++-- Conversion also applies to range bounds and each field in a compound AST.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision:[1 TO 2]') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE fixed_precision @@@ pdb.parse_with_field('[1 TO 2]') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision:[-100 TO 1234]') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision: IN [0.01 2.5]') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision: IN [1234 -100]') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('(arbitrary_precision:1234 AND fixed_precision:1) OR id:2') ORDER BY id;
++
++-- Invalid NUMERIC literals, range bounds, and set elements report a numeric conversion error.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision:not-a-number') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE fixed_precision @@@ pdb.parse_with_field('not-a-number') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision:[1 TO not-a-number]') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision: IN [1234 not-a-number]') ORDER BY id;
++
++-- PostgreSQL rejects these, so they must not be rounded or read as zero.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision:1.2x') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE fixed_precision @@@ pdb.parse_with_field('1.2x') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision:1..2') ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision:""') ORDER BY id;
++
++-- Lenient parsing still ignores invalid phrases and converts the remaining NUMERIC values.
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('arbitrary_precision:not-a-number OR fixed_precision:1.23', lenient => true) ORDER BY id;
++
++SELECT id FROM mock_items
++WHERE id @@@ pdb.parse('fixed_precision: IN [not-a-number 1.23]', lenient => true) ORDER BY id;
++
++-- Tantivy's lenient parser makes an invalid bound unbounded, so 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6995** (2026-10-23): chore: remove Docker Scout policy checks from 0.26.x (@philippemnoel)
-- **PR #6993** (2026-10-23): chore: Generate Dockerfiles for v0.26.3 (@paradedb-github-bot[bot])
-- **PR #6992** (2026-10-23): chore: Generate Dockerfiles for v0.26.3 (@paradedb-github-bot[bot])
-- **PR #6990** (2026-10-22): perf: Prune segments before estimation and aggregate execution (@paradedb-github-bot[bot])
-- **PR #6989** (2026-10-22): perf: order an all-inner join by the planner's row estimates (@paradedb-github-bot[bot])
-- **PR #6988** (2026-10-22): fix: count ParadeDB index scans in `pg_stat_user_indexes` (@paradedb-github-bot[bot])
+- **PR #7019** (2026-10-24): test: use a unique tiebreaker in generated_subquery (@philippemnoel)
+- **PR #7016** (2026-10-24): fix: make merges and VACUUM's merger wait interruptible (@paradedb-github-bot[bot])
+- **PR #7014** (2026-10-24): test: use a unique tiebreaker in generated_paging_small (@abelmarnk)
+- **PR #7013** (2026-10-24): fix: search predicates above an Append opened the partitioned parent index (@mdashti)
+- **PR #7011** (2026-10-24): ci: standardize RunsOn setup before cache and artifact operations (@paradedb-github-bot[bot])
+- **PR #7010** (2026-10-24): ci: standardize RunsOn setup before cache and artifact operations (@philippemnoel)
 
 ---
 
@@ -3151,25 +3929,21 @@ with `interrupted()`, like the MPP transpor
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Normal scan panics with min > max when pushed-down LIMIT exceeds 8192 (#6959)
+## X. make merges and VACUUM's merger wait interruptible (#6740)
 
 **RULE**:
-When implementing operations in `docs/project/changelog/unreleased/6959.stability.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bdae88a1`: Normal scan panics with min > max when pushed-down LIMIT exceeds 8192 (#6959). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `185c6094`: make merges and VACUUM's merger wait interruptible (#6740). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/6959.stability.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
----
-header: stability
----
-
-A query with a `LIMIT` above 8192 no longer fails with `min > max. min = ..., max = 8192` when only part of its `ORDER BY` can be pushed down, such as `ORDER BY pdb.score(id) DESC, id DESC` on a table with a text key. This regressed in 0.26.1.
+ "postgres",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3179,4 +3953,4 @@ A query with a `LIMIT` above 8192 no longer fails with `min > max. min = ..., ma
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bdae88a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `185c6094` are properly handled with clean fallback behavior.

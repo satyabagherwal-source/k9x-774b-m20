@@ -4821,3 +4821,6 @@ Every entry in this ledger must capture:
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `058a1e8f` | Multi-dimensional audit evidence | 2026-10-25T12:32:07.155Z |
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-25T12:38:58.001Z |
 | `learn-github-sayanarijit-xplr` | `https://github.com/sayanarijit/xplr` | `f692d972` | Multi-dimensional audit evidence | 2026-10-25T12:39:00.585Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `9c6fc8a2` | Multi-dimensional audit evidence | 2026-10-25T12:45:30.289Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `1b30ad1b` | Multi-dimensional audit evidence | 2026-10-25T12:45:40.520Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-25T12:50:26.312Z |

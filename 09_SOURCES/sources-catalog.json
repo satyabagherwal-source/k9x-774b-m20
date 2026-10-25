@@ -1295,8 +1295,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
     "license": "Open-Source",
-    "contentHash": "2ac4056aa3026f38d8111ffa73dbcc78f44d9ce897dfe158816bf2e193f0c851",
-    "lastHarvestedAt": "2026-10-20T17:49:23.366Z",
+    "contentHash": "6171825c3eb738169c3550ce61972a2507f98ef15aab57e9da9e247b9d1e10ea",
+    "lastHarvestedAt": "2026-10-25T12:50:26.312Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
   },
   "iliyami-macsai": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "c9d7861d",
+    "sourceVersion": "9c6fc8a2",
     "license": "MIT",
-    "contentHash": "95b26ae9476cb16fc776567fbd4ba8d7ca11511d2c8ee6245a68c23a2365f855",
-    "lastHarvestedAt": "2026-10-22T19:35:37.328Z",
+    "contentHash": "8d95ae1fe2718ba7d7d43f8c200a18a919f737c69f0981e82dcca68ed406701d",
+    "lastHarvestedAt": "2026-10-25T12:45:30.289Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "c3e82fe4",
+    "sourceVersion": "1b30ad1b",
     "license": "AGPL-3.0",
-    "contentHash": "215d6a25e4a7a164f34bc9e0e865982c0f6a093737986cc49a7f8c2f85373618",
-    "lastHarvestedAt": "2026-10-23T05:50:33.805Z",
+    "contentHash": "a3ae5b9dad346cf8764d3b9c9c1bdb99bf1bf09b619a3ba62f7389c7d6c3233d",
+    "lastHarvestedAt": "2026-10-25T12:45:40.520Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {

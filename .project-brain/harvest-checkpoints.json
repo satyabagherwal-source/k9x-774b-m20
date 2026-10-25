@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T12:39:00.594Z",
+  "last_updated": "2026-10-25T12:50:26.319Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2023,15 +2023,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "content_hash": "bde7af3085bc2dbef40994bba81b601141507b3405f6fb3dc1ffb202b160e73f",
-      "verified_at": "2026-10-25T05:52:29.699Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "content_hash": "6171825c3eb738169c3550ce61972a2507f98ef15aab57e9da9e247b9d1e10ea",
+      "verified_at": "2026-10-25T12:50:26.319Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:52:29.699Z"
+      "last_updated": "2026-10-25T12:50:26.319Z"
     },
     "iliyami/MacSai": {
       "repository": "iliyami/MacSai",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "95b26ae9476cb16fc776567fbd4ba8d7ca11511d2c8ee6245a68c23a2365f855",
-      "verified_at": "2026-10-22T19:35:37.336Z",
+      "content_hash": "8d95ae1fe2718ba7d7d43f8c200a18a919f737c69f0981e82dcca68ed406701d",
+      "verified_at": "2026-10-25T12:45:30.295Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:35:37.336Z"
+      "last_updated": "2026-10-25T12:45:30.295Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "215d6a25e4a7a164f34bc9e0e865982c0f6a093737986cc49a7f8c2f85373618",
-      "verified_at": "2026-10-23T05:50:33.817Z",
+      "content_hash": "a3ae5b9dad346cf8764d3b9c9c1bdb99bf1bf09b619a3ba62f7389c7d6c3233d",
+      "verified_at": "2026-10-25T12:45:40.527Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T05:50:33.817Z"
+      "last_updated": "2026-10-25T12:45:40.527Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
