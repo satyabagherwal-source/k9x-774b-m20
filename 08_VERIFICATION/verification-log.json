@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-0E1O",
-    "timestamp": "2026-10-21T02:33:58.812Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "21dd040667af9ae5ff6c3f187b8fe4d8c2d99f65172456610c179f9a6476b5bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-COZY",
-    "timestamp": "2026-10-21T02:43:32.878Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-    "contentHash": "7d46ed98fd860931aae61b671330ff899c8bc608c942c8e9038f7d96f7627938",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-KR9B",
     "timestamp": "2026-10-21T02:49:49.055Z",
     "repository": "buresdv/Cork",
@@ -7490,6 +7460,36 @@
     "repository": "ydb-platform/ydb",
     "learningId": "learn-github-ydb-platform-ydb",
     "contentHash": "a381baabbf12294b13ba8f2ea984d33287e7be4c9c43d0dee63ca427c79e95b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-R1R5",
+    "timestamp": "2026-10-25T04:25:22.337Z",
+    "repository": "Bingsu/adetailer",
+    "learningId": "learn-huggingface-bingsu-adetailer",
+    "contentHash": "2ac4dee7eeb71af512c3ac328c6c5dc823640a2cf560e30203a98be3187a84cd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-R3VX",
+    "timestamp": "2026-10-25T04:25:25.101Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "c81bc195a0d841ad78a53f7ff24a4f6a8c00821e1fe19d42bcd8d8dc4a841121",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

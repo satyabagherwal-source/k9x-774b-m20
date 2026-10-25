@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T04:19:00.909Z",
+  "last_updated": "2026-10-25T04:25:25.116Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1685,14 +1685,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-bingsu-adetailer",
-      "content_hash": "c2fd7ab3c13578b1b693e51c36fa8bd160cbc85850992b9b5e0a38c25571127f",
-      "verified_at": "2026-10-20T12:24:54.199Z",
+      "content_hash": "2ac4dee7eeb71af512c3ac328c6c5dc823640a2cf560e30203a98be3187a84cd",
+      "verified_at": "2026-10-25T04:25:22.355Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:24:54.199Z"
+      "last_updated": "2026-10-25T04:25:22.365Z"
     },
     "lilylilith/QI_2.1_AnyAngle": {
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "aba69d13fcac4d03873853b228083ebaa130dbb558a3a3372aa3490d444f0d99",
-      "verified_at": "2026-10-22T17:31:54.194Z",
+      "content_hash": "c81bc195a0d841ad78a53f7ff24a4f6a8c00821e1fe19d42bcd8d8dc4a841121",
+      "verified_at": "2026-10-25T04:25:25.115Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:31:54.194Z"
+      "last_updated": "2026-10-25T04:25:25.115Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",

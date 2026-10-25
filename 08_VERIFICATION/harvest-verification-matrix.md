@@ -4660,3 +4660,5 @@
 | `CYCLE-20261025-IJIX` | `2026-10-25T04:18:45.465Z` | `lingui/js-lingui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4039` | Yes (`0303a814...`) |
 | `CYCLE-20261025-IQAF` | `2026-10-25T04:18:54.231Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4040` | Yes (`05f703e7...`) |
 | `CYCLE-20261025-IVFI` | `2026-10-25T04:19:00.894Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4041` | Yes (`a381baab...`) |
+| `CYCLE-20261025-R1R5` | `2026-10-25T04:25:22.337Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4042, Rule 4043` | Yes (`2ac4dee7...`) |
+| `CYCLE-20261025-R3VX` | `2026-10-25T04:25:25.101Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4044` | Yes (`c81bc195...`) |

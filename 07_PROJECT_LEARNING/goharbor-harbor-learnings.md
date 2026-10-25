@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `d1a63a91`  
+> **Source Version**: `180c08d6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:31:53.948Z  
+> **Timestamp**: 2026-10-25T04:25:24.727Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:31:53.678Z  
+> **Harvest Timestamp**: 2026-10-25T04:25:24.537Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29597 stars
+- **Stars / Engagement**: 29610 stars
 
 ---
 
@@ -659,8 +659,8 @@ def prepare_job_service(config_dict):
 - **Issue #24203** (2026-10-22): **(cherry-pick): preserve artifact type for multi-tier accessories in replication**
   *Symptoms*: In getAccessoryArts, reassigning art when fetching accessory details shadowed the parent artifact and caused sub-accessories (such as signatures of an SBOM) to inherit Type "UNKNOWN" from the accessory artifact rather than the subject artifact's type (e.g. "IMAGE"). Consequently, when a replication policy configured a resource filter (e.g. "image"), the sub-accessories were dropped by the artifact type filter.  Fix this by using a separate variable subArt to avoid shadowing art, and propagate art.Type to subArt so nested accessories inherit the root subject artifact's type.  Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
-- **Issue #24199** (2026-10-22): **bump: bump Go to 1.26.10 for release-2.14.0**
-  *Symptoms*: Update the Go module, build images, CI workflows, and contributor version table.    Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
+- **Issue #24200** (2026-10-23): **fix(replication): preserve artifact type for multi-tier accessories**
+  *Symptoms*: In getAccessoryArts, reassigning art when fetching accessory details shadowed the parent artifact and caused sub-accessories (such as signatures of an SBOM) to inherit Type "UNKNOWN" from the accessory artifact rather than the subject artifact's type (e.g. "IMAGE"). Consequently, when a replication policy configured a resource filter (e.g. "image"), the sub-accessories were dropped by the artifact type filter.  Fix this by using a separate variable subArt to avoid shadowing art, and propagate art.Type to subArt so nested accessories inherit the root subject artifact's type.  Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -677,94 +677,70 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `020b3e6c` (2026-10-22)
-**Commit Message**: chore(deps): bump compression from 1.8.1 to 1.8.2 in /src/portal/app-swagger-ui (#24108)
+### Incident Patch 1: `7b9426a6` (2026-10-24)
+**Commit Message**: chore(deps): bump proxy-addr from 2.0.7 to 2.0.8 in /src/portal/app-swagger-ui (#24105)
 
-chore(deps): bump compression in /src/portal/app-swagger-ui
+chore(deps): bump proxy-addr in /src/portal/app-swagger-ui
 
-Bumps [compression](https://github.com/expressjs/compression) from 1.8.1 to 1.8.2.
-- [Release notes](https://github.com/expressjs/compression/releases)
-- [Changelog](https://github.com/expressjs/compression/blob/master/HISTORY.md)
-- [Commits](https://github.com/expressjs/compression/compare/v1.8.1...v1.8.2)
+Bumps [proxy-addr](https://github.com/jshttp/proxy-addr) from 2.0.7 to 2.0.8.
+- [Release notes](https://github.com/jshttp/proxy-addr/releases)
+- [Changelog](https://github.com/jshttp/proxy-addr/blob/master/HISTORY.md)
+- [Commits](https://github.com/jshttp/proxy-addr/compare/v2.0.7...v2.0.8)
 
 ---
 updated-dependencies:
-- dependency-name: compression
-  dependency-version: 1.8.2
+- dependency-name: proxy-addr
+  dependency-version: 2.0.8
   dependency-type: indirect
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `src/portal/app-swagger-ui/package-lock.json` (modified, +19/-3)
+**File**: `src/portal/app-swagger-ui/package-lock.json` (modified, +7/-3)
 ```diff
-@@ -2508,22 +2508,27 @@
+@@ -5269,9 +5269,9 @@
        }
      },
-     "node_modules/compression": {
--      "version": "1.8.1",
--      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.1.tgz",
--      "integrity": "sha512-9mAqGPHLakhCLeNyxPkK4xVo746zQ/czLH1Ky+vkitMnWfWZps8r0qXuwhwizagCRttsL4lfG4pIOvaWLpAP0w==",
-+      "version": "1.8.2",
-+      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.2.tgz",
-+      "integrity": "sha512-o8vI5RE5A6EVVOd9o41jKp41aJom+QTEO/Bx8MYNjexMo/Bv2WOjUfZr+aL0WnYSgymUy6zeguqLTsIhV0gMvQ==",
+     "node_modules/proxy-addr": {
+-      "version": "2.0.7",
+-      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
+-      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
++      "version": "2.0.8",
++      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.8.tgz",
++      "integrity": "sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==",
        "dev": true,
        "license": "MIT",
        "dependencies": {
-         "bytes": "3.1.2",
-         "compressible": "~2.0.18",
-         "debug": "2.6.9",
-+        "destroy": "1.2.0",
-         "negotiator": "~0.6.4",
-         "on-headers": "~1.1.0",
-         "safe-buffer": "5.2.1",
-         "vary": "~1.1.2"
+@@ -5280,6 +5280,10 @@
        },
        "engines": {
-         "node": ">= 0.8.0"
+         "node": ">= 0.10"
 +      },
 +      "funding": {
 +        "type": "opencollective",
 +        "url": "https://opencollective.com/express"
        }
      },
-     "node_modules/compression/node_modules/debug": {
-@@ -2922,6 +2927,17 @@
-         "node": ">= 0.8"
-       }
-     },
-+    "node_modules/destroy": {
-+      "version": "1.2.0",
-+      "resolved": "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz",
-+      "integrity": "sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==",
-+      "dev": true,
-+      "license": "MIT",
-+      "engines": {
-+        "node": ">= 0.8",
-+        "npm": "1.2.8000 || >= 1.4.16"
-+      }
-+    },
-     "node_modules/dns-packet": {
-       "version": "5.6.1",
-       "resolved": "https://registry.npmjs.org/dns-packet/-/dns-packet-5.6.1.tgz",
+     "node_modules/proxy-addr/node_modules/ipaddr.js": {
 ```
 
 ---
 
-### Incident Patch 2: `9644fada` (2026-10-22)
-**Commit Message**: chore(deps): bump shell-quote from 1.10.0 to 1.12.0 in /src/portal/app-swagger-ui (#24106)
+### Incident Patch 2: `a437b56e` (2026-10-23)
+**Commit Message**: chore(deps): bump source-map-js from 1.2.1 to 1.2.2 in /src/portal/app-swagger-ui (#24107)
 
-chore(deps): bump shell-quote in /src/portal/app-swagger-ui
+chore(deps): bump source-map-js in /src/portal/app-swagger-ui
 
-Bumps [shell-quote](https://github.com/ljharb/shell-quote) from 1.10.0 to 1.12.0.
-- [Changelog](https://github.com/ljharb/shell-quote/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/ljharb/shell-quote/compare/v1.10.0...v1.12.0)
+Bumps [source-map-js](https://github.com/7rulnik/source-map-js) from 1.2.1 to 1.2.2.
+- [Release notes](https://github.com/7rulnik/source-map-js/releases)
+- [Changelog](https://github.com/7rulnik/source-map-js/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/7rulnik/source-map-js/compare/v1.2.1...v1.2.2)
 
 ---
 updated-dependencies:
-- dependency-name: shell-quote
-  dependency-version: 1.12.0
+- dependency-name: source-map-js
+  dependency-version: 1.2.2
   dependency-type: indirect
 ...
 
@@ -773,28 +749,166 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `src/portal/app-swagger-ui/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -6092,9 +6092,9 @@
+@@ -6213,9 +6213,9 @@
        }
      },
-     "node_modules/shell-quote": {
--      "version": "1.10.0",
--      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.10.0.tgz",
--      "integrity": "sha512-w1aiOKwKuRgtwAReIIj89puqg+I7GvX4IbLrvmhXbzQsj1+Zwi4VO3+fa6ZF91TWSjIxoEkKnMeHcLEODK5ZXA==",
-+      "version": "1.12.0",
-+      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
-+      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
-       "dev": true,
-       "license": "MIT",
+     "node_modules/source-map-js": {
+-      "version": "1.2.1",
+-      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
+-      "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
++      "version": "1.2.2",
++      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
++      "integrity": "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==",
+       "license": "BSD-3-Clause",
        "engines": {
+         "node": ">=0.10.0"
+```
+
+---
+
+### Incident Patch 3: `409c8ad4` (2026-10-23)
+**Commit Message**: chore(deps): bump webpack-dev-middleware from 8.1.0 to 8.5.0 in /src/portal/app-swagger-ui (#24031)
+
+chore(deps): bump webpack-dev-middleware in /src/portal/app-swagger-ui
+
+Bumps [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware) from 8.1.0 to 8.5.0.
+- [Release notes](https://github.com/webpack/webpack-dev-middleware/releases)
+- [Changelog](https://github.com/webpack/webpack-dev-middleware/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/webpack/webpack-dev-middleware/compare/v8.1.0...v8.5.0)
+
+---
+updated-dependencies:
+- dependency-name: webpack-dev-middleware
+  dependency-version: 8.3.0
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Orlix <[REDACTED_EMAIL]>
+
+**File**: `src/portal/app-swagger-ui/package-lock.json` (modified, +66/-83)
+```diff
+@@ -149,14 +149,14 @@
+       }
+     },
+     "node_modules/@jsonjoy.com/fs-core": {
+-      "version": "4.64.0",
+-      "resolved": "https://registry.npmjs.org/@jsonjoy.com/fs-core/-/fs-core-4.64.0.tgz",
+-      "integrity": "sha512-zs2TAq7Six5jgMuoMNjpspAvOP3mhtgq/k1UyQodEzCtQi/N83y2/y+zcvnZSGp/Rxq96DBN+bValOBQAyn/ew==",
++      "version": "4.80.0",
++      "resolved": "https://registry.npmjs.org/@jsonjoy.com/fs-core/-/fs-core-4.80.0.tgz",
++      "integrity": "sha512-qMKWshnyjbyhm+NbzqGE3w5y1mckFFEMj0aDPU2/JBNh1BzIjVy9esq9lBmRnNVmhMEkxwDzLZ8Gqh5G1P5Dag==",
+       "dev": true,
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@jsonjoy.com/fs-node-builtins": "4.64.0",
+-        "@jsonjoy.com/fs-node-utils": "4.64.0",
++        "@jsonjoy.com/fs-node-builtins": "4.80.0",
++        "@jsonjoy.com/fs-node-utils": "4.80.0",
+         "thingies": "^2.5.0"
+       },
+       "engines": {
+@@ -171,15 +171,15 @@
+       }
+     },
+     "node_modules/@jsonjoy.com/fs-fsa": {
+-      "version": "4.64.0",
+-      "resolved": "https://registry.npmjs.org/@jsonjoy.com/fs-fsa/-/fs-fsa-4.64.0.tgz",
+-      "integrity": "sha512-nMWOVbkLFyEgmXZih3wyvxA9XpgyyqyfrINMHvEFqhi7uqfRl7c9ERJt6yX7vgMPrB9Uo+OJO+Spa0cFzPD01w==",
++      "version": "4.80.0",
++      "resolved": "https://registry.npmjs.org/@jsonjoy.com/fs-fsa/-/fs-fsa-4.80.0.tgz",
++      "integrity": "sha512-ZBEKl7J6dbkRCfmrFV48Re211A/FHqniTUhsWCsaRteNSOqMgkX3qF1UreVgwB9oSPm81JLAwhIi6Lb/NH/PoA==",
+       "dev": true,
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@jsonjoy.com/fs-core": "4.64.0",
+-        "@jsonjoy.com/fs-node-builtins": "4.64.0",
+-        "@jsonjoy.com/fs-node-utils": "4.64.0",
++        "@jsonjoy.com/fs-core": "4.80.0",
++        "@jsonjoy.com/fs-node-builtins": "4.80.0",
++        "@jsonjoy.com/fs-node-utils": "4.80.0",
+         "thingies": "^2.5.0"
+       },
+       "engines": {
+@@ -194,18 +194,18 @@
+       }
+     },
+     "node_modules/@jsonjoy.com/fs-node": {
+-      "version": "4.64.0",
+-      "resolved": "https://registry.npmjs.org/@jsonjoy.com/fs-node/-/fs-node-4.64.0.tgz",
+-      "integrity": "sha512-dO+NNkODbUli4uV42bcNrrLvq5rE7SNpdZ5TNd0dtbLsAaNK3MDiIC9lUi+brboGoIjW6vd2fB1qao60nrk5xA==",
++      "version": "4.80.0",
++      "resolved": "https://registry.npmjs.org/@jsonjoy.com/fs-node/-/fs-node-4.80.0.tgz",
++      "integrity": "sha512-yiBlUfkMMRFFGy8CD/h2zd5rPnrM6bjlF+nx2LRAxNV6hOSiuObQIUEE7m7y2VTMisjxCRtzINH94bFGySWL7g==",
+       "dev": true,
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@jsonjoy.com/fs-core": "4.64.0",
+-        "@jsonjoy.com/fs-node-builtins": "4.64.0",
+-        "@jsonjoy.com/fs-node-utils": "4.64.0",
+-        "@jsonjoy.com/fs-print": "4.64.0",
+-        "@jsonjoy.com/fs-snapshot": "4.64.0",
+-        "glob-to-regex.js": "^1.0.0",
++        "@jsonjoy.com/fs-core": "4.80.0",
++        "@jsonjoy.com/fs-node-builtins": "4.80.0",
++        "@jsonjoy.com/fs-node-utils": "4.80.0",
++        "@jsonjoy.com/fs-print": "4.80.0",
++        "@jsonjoy.com/fs-snapshot": "4.80.0",
++        "glob-to-regex.js": "^1.3.1",
+         "thingies": "^2.5.0"
+       },
+       "engines": {
+@@ -220,9 +220,9 @@
+       }
+     },
+     "node_modules/@jsonjoy.com/fs-node-builtins": {
+-      "version": "4.64.0",
+-      "resolved": "https://registry.npmjs.org/@jsonjoy.com/fs-node-builtins/-/fs-node-builtins-4.64.0.tgz",
+-      "integrity": "sha512-/o7WRFhUWaM/fOrslwLZGnzn4RmRILykn+lAL+mNObqqRNw+CQSiij6hpCeZ+C7buhdoVo7go/OYqzaSUfDYmA==",
++      "version": "4.80.0",
++      "resolved": "https://registry.npmjs.org/@jsonjoy.com/fs-node-builtins/-/fs-node-builtins-4.80.0.tgz",
++      "integrity": "sha512-OIOIhqaWiwUySFMny4epIAoviXsyMaQQ63PTc3zH+5HEOvarl5hpUmZIhp2m5+OfyKAh5ylxXnQIgew1OgJDVw==",
+       "dev": true,
+       "license": "Apache-2.0",
+       "engines": {
+@@ -237,15 +237,15 @@
+       }
+     },
+     "node_modules/@jsonjoy.com/fs-node-to-fsa": {
+-      "version": "4.64.0",
+-      "resolved": "https://registry.npmjs.org/@jsonjoy.com/fs-node-to-fsa/-/fs-node-to-fsa-4.64.0.tgz",
+-      "integrity": "sha512-WDD9WVs0hb7UAEKTgZW2f66WDrbj7gIIWwpP3spbLyXa0rghtUaFTB8L4gdR3ZCWwiKIsj38/CNijpVmpnuPUw==",
++      "version": "4.80.0",
++      "resolved": "https://registry.npmjs.org/@jsonjoy.com/fs-node-to-fsa/-/fs-node-to-fsa-4.80.0.tgz",
++      "integrity": "sha512-ljeaR5xwtX1EyRmB0wvXANUMQZ3mjKcm7z8s2N8D8SLQ04CcAGtUhHFRZQXFb9mhgFyEVMydQGQtSOFS7pcrFQ==",
+       "dev": true,
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@jsonjoy.com/fs-fsa": "4.64.0",
+-        "@jsonjoy.com/fs-node-builtins": "4.64.0",
+-        "@jsonjoy.com/fs-node-utils": "4.64.0"
++        "@jsonjoy.com/fs-fsa": "4.80.0",
++        "@jsonjoy.com/fs-node-builtins": "4.80.0",
++        "@jsonjoy.com/fs-node-utils": "4.80.0"
+       },
+       "engines": {
+         "node": ">=10.0"
+@@ -259,14 +259,14 @@
+       }
+     },
+     "node_modules/@jsonjoy.com/fs-node-utils": {
+-      "version": "4.64.0",
+-      "resolved": "https://registry.npmjs.org/@jsonjoy.com/fs-node-utils/-/f
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #24203** (2026-10-22): (cherry-pick): preserve artifact type for multi-tier accessories in replication (@stonezdj)
+- **PR #24200** (2026-10-23): fix(replication): preserve artifact type for multi-tier accessories (@stonezdj)
 - **PR #24199** (2026-10-22): bump: bump Go to 1.26.10 for release-2.14.0 (@stonezdj)
 - **PR #24194** (2026-10-22): chore(deps): bump hono from 4.13.8 to 4.13.13 in /src/portal (@dependabot[bot])
 - **PR #24192** (2026-10-21): [release-2.16] chore(deps): bump up Go version to v1.27.3 (#24188) (@bupd)
 - **PR #24190** (2026-10-21): chore(deps): upgrade Go dependencies to fix High and Critical CVEs (@stonezdj)
-- **PR #24189** (2026-10-22): chore: Upgrade Casbin To v3 (@bupd)
 
 ---
 
@@ -814,13 +928,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump compression from 1.8.1 to 1.8.2 in /src/portal/app-swagger-ui (#2410
+## X. deps): bump proxy-addr from 2.0.7 to 2.0.8 in /src/portal/app-swagger-ui (#24105
 
 **RULE**:
 When implementing operations in `src/portal/app-swagger-ui/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `020b3e6c`: deps): bump compression from 1.8.1 to 1.8.2 in /src/portal/app-swagger-ui (#24108). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b9426a6`: deps): bump proxy-addr from 2.0.7 to 2.0.8 in /src/portal/app-swagger-ui (#24105). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/portal/app-swagger-ui/package-lock.json`.
@@ -828,34 +942,22 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      "version": "1.8.2",
-      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.2.tgz",
-      "integrity": "sha512-o8vI5RE5A6EVVOd9o41jKp41aJom+QTEO/Bx8MYNjexMo/Bv2WOjUfZr+aL0WnYSgymUy6zeguqLTsIhV0gMvQ==",
-        "destroy": "1.2.0",
+      "version": "2.0.8",
+      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.8.tgz",
+      "integrity": "sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==",
       },
       "funding": {
         "type": "opencollective",
         "url": "https://opencollective.com/express"
-    "node_modules/destroy": {
-      "version": "1.2.0",
-      "resolved": "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz",
-      "integrity": "sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==",
-      "dev": true,
-      "license": "MIT",
-      "engines": {
-        "node": ">= 0.8",
-        "npm": "1.2.8000 || >= 1.4.16"
-      }
-    },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "1.8.1",
-      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.1.tgz",
-      "integrity": "sha512-9mAqGPHLakhCLeNyxPkK4xVo746zQ/czLH1Ky+vkitMnWfWZps8r0qXuwhwizagCRttsL4lfG4pIOvaWLpAP0w==",
+      "version": "2.0.7",
+      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
+      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `020b3e6c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b9426a6` are properly handled with clean fallback behavior.

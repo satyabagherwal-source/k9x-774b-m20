@@ -35,8 +35,8 @@
     "sourceUrl": "https://huggingface.co/Bingsu/adetailer",
     "sourceVersion": "hf-bingsu-adetailer",
     "license": "Open-Source",
-    "contentHash": "c2fd7ab3c13578b1b693e51c36fa8bd160cbc85850992b9b5e0a38c25571127f",
-    "lastHarvestedAt": "2026-10-20T12:24:54.192Z",
+    "contentHash": "2ac4dee7eeb71af512c3ac328c6c5dc823640a2cf560e30203a98be3187a84cd",
+    "lastHarvestedAt": "2026-10-25T04:25:22.340Z",
     "learningId": "learn-huggingface-bingsu-adetailer"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "d1a63a91",
+    "sourceVersion": "180c08d6",
     "license": "Apache-2.0",
-    "contentHash": "aba69d13fcac4d03873853b228083ebaa130dbb558a3a3372aa3490d444f0d99",
-    "lastHarvestedAt": "2026-10-22T17:31:54.188Z",
+    "contentHash": "c81bc195a0d841ad78a53f7ff24a4f6a8c00821e1fe19d42bcd8d8dc4a841121",
+    "lastHarvestedAt": "2026-10-25T04:25:25.107Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
