@@ -3,7 +3,7 @@
 > **Source Version**: `6d3e9d68`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:38:28.226Z  
+> **Timestamp**: 2026-10-25T18:34:44.324Z  
 > **Learning ID**: `learn-github-microsoft-fluentui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-fluentui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/fluentui](https://github.com/microsoft/fluentui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:38:27.150Z  
+> **Harvest Timestamp**: 2026-10-25T18:34:43.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fluent UI web represents a collection of utilities, React components, and web components for building web applications.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 20362 stars
+- **Stars / Engagement**: 20366 stars
 
 ---
 
@@ -1545,13 +1545,13 @@ module.exports = [
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #36995** (2026-10-25): **fix(react-headless-components-preview): remove keyborg and react-tabster from the headless bundle**
+  *Symptoms*: > [!NOTE] > Stacked on #36994. Until that merges, this diff also contains its commit (`92c4b9cd`), including a second `react-aria` change file. Only the last commit belongs to this PR. I'll rebase once #36994 lands and mark this ready.  ## Previous Behavior  The headless bundle still pulled in `keyborg` and `@fluentui/react-tabster` through: - `useActiveDescendant` (`react-aria`), via `useOnKeyboardNavigationChange` - `useListbox` (`react-combobox`), via `useOnKeyboardNavigationChange` - the shared combobox trigger slot, via `useSetKeyboardNavigation` - the headless `Tooltip`, via `KEYBORG_FOCUSIN` and `useIsNavigatingWithKeyboard`  ## New Behavior  - **`react-utilities`** gets two `@internal` helpers:   - `useKeyboardModality(onChange?)` returns a stable getter: `true` after a keyboard interaction, `false` after a pointer interaction, `undefined` before either. All instances in a document share **one** set of document listeners, ref-counted and removed when the last subscriber unmounts. Synthetic screen-reader clicks keep the keyboard modality.   - `isFocusVisible(element)` returns `undefined` when `:focus-visible` isn't supported, so each caller picks its own fallback explicitly. - **`useActiveDescendant`** reads the shared modality and falls back to `:focus-visible` on the active parent when no interaction has been tracked yet (for example, when a keydown mounts and autofocuses a standalone Listbox). - **`useListbox`** uses the same getter. It no longer keeps `isNavigating
+
 - **Issue #36982** (2026-10-23): **Canary: verify PR preview site deployment of PR-controlled content (inert marker only)**
   *Symptoms*: Security research verification. This PR changes exactly one file (apps/pr-deploy-site/index.html) by appending a single inert HTML comment marker (CANARY-FLUENTUI-20261023-8b7ea3). Purpose: verify whether static content from a fork PR is deployed verbatim to the public PR preview site (fluentuipr.z22.web.core.windows.net/pull/<this PR>/) by the workflow_run deploy workflow, without content validation. The marker contains no scripts, no links, and no impersonation, and has no functional effect. I will close this PR after verification.
   **Post-Mortem & Fix Analysis**:
   > Canary verification complete, closing as planned.
-
-- **Issue #36981** (2026-10-22): **fix(web-components): height for empty vertical divider**
-  *Symptoms*: ## Previous Behavior  Dividers uses `:host([orientation='vertical']:empty)` to apply a different `min-heigth` when the component has no slotted content. But this doesn’t work because the `:empty` selector would not select white space only contents. While the CSS spec has changed to include white space only contents, no browser has implemented this change.  As a result, when the vertical divider is empty, its `min-height` is `84px` instead of `20px`.  <img width="141" height="120" alt="Image" src="https://github.com/user-attachments/assets/aa2a5301-6680-4c2d-b154-c4628a9dafeb" />  ## New Behavior  No longer rely on `:empty`. Because we require the slotted content to be an element rather than pure text (for typesetting), we could use `:host(:has(*))` (and `@scope { :scope:has(*) { ... } }` for Chromium) to apply different styles. This change also removes the unnecessary component height and rely on the pseudo elements’ heights.  <img width="187" height="119" alt="Image" src="https://github.com/user-attachments/assets/42411719-04d6-49c1-a49f-66f64d665c03" />  ## Related Issue(s)  - Fixes #31623  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1717,12 +1717,12 @@ Observed empirical fixes and code patches:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #36995** (closed): fix(react-headless-components-preview): remove keyborg and react-tabster from the headless bundle (@dmytrokirpa)
 - **PR #36982** (closed): Canary: verify PR preview site deployment of PR-controlled content (inert marker only) (@idleicefire)
 - **PR #36981** (2026-10-22): fix(web-components): height for empty vertical divider (@marchbox)
 - **PR #36980** (2026-10-22): docs(public-docsite-v9): add RangeSlider preview stories (@mainframev)
 - **PR #36979** (2026-10-22): fix(react-headless-components-preview): emit data-disabled on ImageSwatch (@mainframev)
 - **PR #36978** (2026-10-22): feat(react-components): export existing Menu base hooks (@PaulGMardling)
-- **PR #36975** (2026-10-22): fix: add aria-controls to PopoverTrigger and name the Default story surface (@mainframev)
 
 ---
 

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T18:28:20.545Z",
-  "total_cycles_completed": 4920,
-  "total_learnings_persisted": 4920,
-  "total_rules_promoted": 4295,
+  "last_updated": "2026-10-25T18:34:44.599Z",
+  "total_cycles_completed": 4922,
+  "total_learnings_persisted": 4922,
+  "total_rules_promoted": 4296,
   "history": [
-    {
-      "timestamp": "2026-10-25T08:44:00.582Z",
-      "repository": "makecindy/cindy",
-      "learningId": "learn-github-makecindy-cindy",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T08:44:18.832Z",
-      "repository": "komi-store/komi-store",
-      "learningId": "learn-github-komi-store-komi-store",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T08:56:55.764Z",
       "repository": "kumahq/kuma",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T18:28:20.545Z",
       "repository": "grpc/grpc-rust",
       "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:34:44.404Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:34:44.599Z",
+      "repository": "microsoft/fluentui",
+      "learningId": "learn-github-microsoft-fluentui",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

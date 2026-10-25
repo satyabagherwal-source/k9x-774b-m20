@@ -4950,3 +4950,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-25T18:28:18.791Z |
 | `learn-github-react-bootstrap-react-bootstrap` | `https://github.com/react-bootstrap/react-bootstrap` | `6461dcd6` | Multi-dimensional audit evidence | 2026-10-25T18:28:18.822Z |
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `0ecf9253` | Multi-dimensional audit evidence | 2026-10-25T18:28:20.540Z |
+| `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-25T18:34:44.399Z |
+| `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `6d3e9d68` | Multi-dimensional audit evidence | 2026-10-25T18:34:44.594Z |

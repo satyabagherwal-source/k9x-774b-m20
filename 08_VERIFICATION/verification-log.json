@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-ZOAC",
-    "timestamp": "2026-10-22T21:28:50.100Z",
-    "repository": "RDFLib/rdflib",
-    "learningId": "learn-github-rdflib-rdflib",
-    "contentHash": "869fd9c1ca1921e296b867e82790ef89c46e237b7ac3fa1a117fe071defbc884",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-ZPGF",
-    "timestamp": "2026-10-22T21:28:51.615Z",
-    "repository": "TypeWhisper/typewhisper-mac",
-    "learningId": "learn-github-typewhisper-typewhisper-mac",
-    "contentHash": "3f9676ed555b31d171a2f366ec769bcc24e9b63dd59d2b23128c6673de633d5f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-ZUC9",
     "timestamp": "2026-10-22T21:28:57.945Z",
     "repository": "alibaba/zvec",
@@ -7490,6 +7460,36 @@
     "repository": "grpc/grpc-rust",
     "learningId": "learn-github-grpc-grpc-rust",
     "contentHash": "66d6323c7237f376be7300f07de219871bdfe7a1f8ecc465a48989236056f21e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-3CBV",
+    "timestamp": "2026-10-25T18:34:44.395Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+    "contentHash": "93d9d2f03d3f0164e733243634d005078d44b01a2cfd4a1859c2525fd15518e7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-3CHB",
+    "timestamp": "2026-10-25T18:34:44.591Z",
+    "repository": "microsoft/fluentui",
+    "learningId": "learn-github-microsoft-fluentui",
+    "contentHash": "5c3c7badcc9bb5e72c3af8cf3768e88054710d349029ce733d521e065e0846c2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

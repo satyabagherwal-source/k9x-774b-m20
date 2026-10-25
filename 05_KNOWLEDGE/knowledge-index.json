@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T18:28:20.469Z",
+  "last_updated": "2026-10-25T18:34:44.536Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18444,7 +18444,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
       "source_version": "hf-compvis-stable-diffusion-v1-4",
-      "content_hash": "9dcf5063e2a86b6e05c831a10a02dbab1a33b99dc1088236dc3b1360588ef090",
+      "content_hash": "93d9d2f03d3f0164e733243634d005078d44b01a2cfd4a1859c2525fd15518e7",
       "dossier_path": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
       "promoted_rules": [
@@ -18523,7 +18523,7 @@
         "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv49semm",
         "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv4n5mw6"
       ],
-      "verified_at": "2026-10-20T22:51:59.403Z",
+      "verified_at": "2026-10-25T18:34:44.329Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34957,7 +34957,7 @@
       "platform": "github",
       "source_url": "https://github.com/microsoft/fluentui",
       "source_version": "6d3e9d68",
-      "content_hash": "1a665bd028fdc2c50ff2fbee72184611030f3ad9ced9c7406e530a52eb189e37",
+      "content_hash": "5c3c7badcc9bb5e72c3af8cf3768e88054710d349029ce733d521e065e0846c2",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "promoted_rules": [
@@ -35014,7 +35014,7 @@
         {
           "number": 4016,
           "title": "web-components): height for empty vertical divider (#36981)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35022,7 +35022,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:38:28.537Z",
+      "verified_at": "2026-10-25T18:34:44.524Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119528,7 +119528,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T03:38:28.537Z"
+      "verified_at": "2026-10-25T18:34:44.524Z"
     },
     "rule-4017": {
       "learning_id": "rule-4017",

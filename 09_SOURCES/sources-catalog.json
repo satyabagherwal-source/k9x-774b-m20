@@ -805,8 +805,8 @@
     "sourceUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceVersion": "hf-compvis-stable-diffusion-v1-4",
     "license": "Open-Source",
-    "contentHash": "9dcf5063e2a86b6e05c831a10a02dbab1a33b99dc1088236dc3b1360588ef090",
-    "lastHarvestedAt": "2026-10-20T22:51:59.446Z",
+    "contentHash": "93d9d2f03d3f0164e733243634d005078d44b01a2cfd4a1859c2525fd15518e7",
+    "lastHarvestedAt": "2026-10-25T18:34:44.399Z",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4"
   },
   "hf-meta-llama-meta-llama-3-8b": {
@@ -3985,8 +3985,8 @@
     "sourceUrl": "https://github.com/microsoft/fluentui",
     "sourceVersion": "6d3e9d68",
     "license": "NOASSERTION",
-    "contentHash": "1a665bd028fdc2c50ff2fbee72184611030f3ad9ced9c7406e530a52eb189e37",
-    "lastHarvestedAt": "2026-10-25T03:38:28.604Z",
+    "contentHash": "5c3c7badcc9bb5e72c3af8cf3768e88054710d349029ce733d521e065e0846c2",
+    "lastHarvestedAt": "2026-10-25T18:34:44.594Z",
     "learningId": "learn-github-microsoft-fluentui"
   },
   "o2sh-onefetch": {

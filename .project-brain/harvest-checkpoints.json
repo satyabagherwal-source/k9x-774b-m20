@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T18:28:20.548Z",
+  "last_updated": "2026-10-25T18:34:44.607Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1040,14 +1040,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "content_hash": "9dcf5063e2a86b6e05c831a10a02dbab1a33b99dc1088236dc3b1360588ef090",
-      "verified_at": "2026-10-20T22:51:59.452Z",
+      "content_hash": "93d9d2f03d3f0164e733243634d005078d44b01a2cfd4a1859c2525fd15518e7",
+      "verified_at": "2026-10-25T18:34:44.407Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:51:59.452Z"
+      "last_updated": "2026-10-25T18:34:44.407Z"
     },
     "meta-llama/Meta-Llama-3-8B": {
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -6096,14 +6096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-fluentui",
-      "content_hash": "1a665bd028fdc2c50ff2fbee72184611030f3ad9ced9c7406e530a52eb189e37",
-      "verified_at": "2026-10-25T03:38:28.621Z",
+      "content_hash": "5c3c7badcc9bb5e72c3af8cf3768e88054710d349029ce733d521e065e0846c2",
+      "verified_at": "2026-10-25T18:34:44.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:38:28.621Z"
+      "last_updated": "2026-10-25T18:34:44.602Z"
     },
     "o2sh/onefetch": {
       "repository": "o2sh/onefetch",
