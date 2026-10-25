@@ -4629,3 +4629,6 @@ Every entry in this ledger must capture:
 | `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `23159a8e` | Multi-dimensional audit evidence | 2026-10-25T02:50:29.534Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `4236a423` | Multi-dimensional audit evidence | 2026-10-25T02:58:25.782Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `c37cecee` | Multi-dimensional audit evidence | 2026-10-25T02:58:32.657Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `0144a88d` | Multi-dimensional audit evidence | 2026-10-25T03:06:07.341Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `d19307cc` | Multi-dimensional audit evidence | 2026-10-25T03:06:14.153Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `b84d5f97` | Multi-dimensional audit evidence | 2026-10-25T03:06:18.998Z |

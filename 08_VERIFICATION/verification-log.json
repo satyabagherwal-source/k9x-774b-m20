@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-HTUV",
-    "timestamp": "2026-10-21T00:55:33.991Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "d90a3c7cbaa5a4a2df14011c3991dd0c6c68a073ec12dccd2e471272ca00be3a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-HXDX",
-    "timestamp": "2026-10-21T00:55:38.565Z",
-    "repository": "NirDiamant/RAG_Techniques",
-    "learningId": "learn-github-nirdiamant-rag_techniques",
-    "contentHash": "7eebeff289415b4efaa02843ba7aef1011b6385f095c7b222af7759680fb3dc4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-JD8D",
-    "timestamp": "2026-10-21T00:56:45.757Z",
-    "repository": "meta-llama/Llama-2-7b-chat-hf",
-    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-    "contentHash": "dcb8eed888917fa3626e2418119593ba757189a4e792e08feeea65963252c433",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-TBZC",
     "timestamp": "2026-10-21T01:04:30.696Z",
     "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
@@ -7492,6 +7447,51 @@
     "contentHash": "df4dee240e30b63e81ba96ad5fd28a0bb373921668ad9ee7c95dbe3ccf3257ff",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-X4RU",
+    "timestamp": "2026-10-25T03:06:07.338Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "36c7f9231e71ac8d2bc4a37f5751cfcfaf689c896778af5d25de3aade83f4d38",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-XA12",
+    "timestamp": "2026-10-25T03:06:14.150Z",
+    "repository": "kubernetes-sigs/aws-load-balancer-controller",
+    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+    "contentHash": "e71325c1c96c6f72301bac6cfda1238136b4b210694ea27d8822b6d321049d52",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-XDRN",
+    "timestamp": "2026-10-25T03:06:18.995Z",
+    "repository": "rqlite/rqlite",
+    "learningId": "learn-github-rqlite-rqlite",
+    "contentHash": "1f005ead0f4b056db2eb98a86c8a6be26c5343f4bd09bda811e75bc2c3029744",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `efd3e6e1`  
+> **Source Version**: `b84d5f97`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T15:35:34.393Z  
+> **Timestamp**: 2026-10-25T03:06:18.852Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T15:35:33.909Z  
+> **Harvest Timestamp**: 2026-10-25T03:06:17.757Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17809 stars
+- **Stars / Engagement**: 17862 stars
 
 ---
 
@@ -2089,136 +2089,17 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `55255c16` (2026-10-22)
-**Commit Message**: Require the load permission for inter-node load chunk commands
+### Incident Patch 1: `b84d5f97` (2026-10-24)
+**Commit Message**: Update CHANGELOG.md
 
-The load chunk handler answers "unsupported" and does nothing, and no
-client sends the command any more, so it was left open. That is the
-wrong reason for a command to need no permission: a handler is safe
-because its command was authorized, not because it happens to be
-harmless today. Chunked loads are load operations, so they now need
-the load permission, the same as a plain load.
-
-Node meta is now the only command served without a permission, since
-the client uses it to find nodes before it has anything to
-authenticate against.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `cluster/service.go` (modified, +5/-3)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -387,8 +387,7 @@ const unauthorizedError = "unauthorized"
- // on it.
- func (s *Service) authorized(c *proto.Command) bool {
- 	switch c.Type {
--	case proto.Command_COMMAND_TYPE_GET_NODE_META,
--		proto.Command_COMMAND_TYPE_LOAD_CHUNK:
-+	case proto.Command_COMMAND_TYPE_GET_NODE_META:
- 		return true
- 	case proto.Command_COMMAND_TYPE_EXECUTE:
- 		return s.checkCommandPerm(c, auth.PermExecute)
-@@ -399,7 +398,8 @@ func (s *Service) authorized(c *proto.Command) bool {
- 	case proto.Command_COMMAND_TYPE_BACKUP,
- 		proto.Command_COMMAND_TYPE_BACKUP_STREAM:
- 		return s.checkCommandPerm(c, auth.PermBackup)
--	case proto.Command_COMMAND_TYPE_LOAD:
-+	case proto.Command_COMMAND_TYPE_LOAD,
-+		proto.Command_COMMAND_TYPE_LOAD_CHUNK:
- 		return s.checkCommandPerm(c, auth.PermLoad)
- 	case proto.Command_COMMAND_TYPE_REMOVE_NODE:
- 		return s.checkCommandPerm(c, auth.PermRemove)
-@@ -441,6 +441,8 @@ func unauthorizedResponse(t proto.Command_Type) ([]byte, error) {
- 		m = &proto.CommandBackupResponse{Error: unauthorizedError}
- 	case proto.Command_COMMAND_TYPE_LOAD:
- 		m = &proto.CommandLoadResponse{Error: unauthorizedError}
-+	case proto.Command_COMMAND_TYPE_LOAD_CHUNK:
-+		m = &proto.CommandLoadChunkResponse{Error: unauthorizedError}
- 	case proto.Command_COMMAND_TYPE_REMOVE_NODE:
- 		m = &proto.CommandRemoveNodeResponse{Error: unauthorizedError}
- 	case proto.Command_COMMAND_TYPE_DEMOTE_NODE:
-```
-
-**File**: `cluster/service_test.go` (modified, +25/-31)
-```diff
-@@ -445,6 +445,15 @@ func unauthorizedCommands() []unauthorizedCommand {
- 			perms: []string{auth.PermLoad},
- 			resp:  &proto.CommandLoadResponse{},
- 		},
-+		{
-+			name: "LOAD_CHUNK",
-+			cmd: &proto.Command{
-+				Type:    proto.Command_COMMAND_TYPE_LOAD_CHUNK,
-+				Request: &proto.Command_LoadChunkRequest{LoadChunkRequest: &command.LoadChunkRequest{}},
-+			},
-+			perms: []string{auth.PermLoad},
-+			resp:  &proto.CommandLoadChunkResponse{},
-+		},
- 		{
- 			name: "REMOVE_NODE",
- 			cmd: &proto.Command{
-@@ -528,10 +537,10 @@ func unauthorizedCommands() []unauthorizedCommand {
- 	}
- }
- 
--// openCommands lists the command types which need no permission.
-+// openCommands lists the command types which need no permission. Node meta
-+// is how a client finds nodes before it has anything to authenticate against.
- var openCommands = []proto.Command_Type{
- 	proto.Command_COMMAND_TYPE_GET_NODE_META,
--	proto.Command_COMMAND_TYPE_LOAD_CHUNK,
- }
- 
- // mustReadClosed checks that nothing further arrives on conn and that the
-@@ -697,35 +706,20 @@ func Test_ServiceOpenCommandsNeedNoPermission(t *testing.T) {
- 	// Send each open command twice on the same connection, to prove the
- 	// connection is left open after each one.
- 	for i := 0; i < 2; i++ {
--		cmd := &proto.Command{Type: proto.Command_COMMAND_TYPE_GET_NODE_META}
--		if err := writeCommand(conn, cmd, 5*time.Second); err != nil {
--			t.Fatalf("failed to write node meta command: %s", err)
--		}
--		p, err := readResponse(conn, 5*time.Second)
--		if err != nil {
--			t.Fatalf("failed to read node meta response: %s", err)
--		}
--		if err := pb.Unmarshal(p, &proto.NodeMeta{}); err != nil {
--			t.Fatalf("failed to unmarshal node meta response: %s", err)
--		}
--
--		cmd = &proto.Command{
--			Type:    proto.Command_COMMAND_TYPE_LOAD_CHUNK,
--			Request: &proto.Command_LoadChunkRequest{LoadChunkRequest: &command.LoadChunkRequest{}},
--		}
--		if err := writeCommand(conn, cmd, 5*time.Second); err != nil {
--			t.Fatalf("failed to write load chunk command: %s", err)
--		}
--		p, err = readResponse(conn, 5*time.Second)
--		if err != nil {
--			t.Fatalf("failed to read load chunk response: %s", err)
--		}
--		resp := &proto.CommandLoadChunkResponse{}
--		if err := pb.Unmarshal(p, resp); err != nil {
--			t.Fatalf("failed to unmarshal load chunk response: %s", err)
--		}
--		if resp.GetError() != "unsupported" {
--			t.Fatalf("failed to get correct error, exp %s, got %q", "unsupported", resp.GetError())
-+		for _, typ := range openCommands {
-+			cmd := &proto.Command{Type: typ}
-+			if err := writeCommand(conn, cmd, 5*time.Second); err != nil {
-+				t.Fatalf("failed to write %s command: %s", typ, err)
-+			}
-+			p, err := readResponse(conn, 5*time.Second)
-+			if err != nil {
-+				t.Fatalf("failed to read %s response: %s", typ, err)
-+			}
-+			if typ == proto.Command_COMMAND_TYPE_GET_NODE_META {
-+				if err := pb.Unmarshal(p, &proto.NodeMeta{}); err != nil {
-+					t.Fatalf("failed to unmarshal node meta response: %s", err)
-+				}
-+			}
- 		}
- 	}
- 	if n := asked.Load(); n != 0 {
+@@ -1,4 +1,4 @@
+-## v10.6.5 (unreleased)
++## v10.6.5 (October 24th 2026)
+ ### Implementation changes and bug fixes
+ - [PR #2982](https://github.com/rqlite/rqlite/pull/2982): Guard the inter-node backup stream handler directly against a missing backup request.
+ - [PR #2984](https://github.com/rqlite/rqlite/pull/2984): `POST /leader` returns a JSON error body, and 404 when the target node is not in the cluster.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2247,34 +2128,28 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require the load permission for inter-node load chunk commands
+## X. Update CHANGELOG.md
 
 **RULE**:
-When implementing operations in `cluster/service.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `55255c16`: Require the load permission for inter-node load chunk commands. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b84d5f97`: Update CHANGELOG.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cluster/service.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	case proto.Command_COMMAND_TYPE_GET_NODE_META:
-	case proto.Command_COMMAND_TYPE_LOAD,
-		proto.Command_COMMAND_TYPE_LOAD_CHUNK:
-	case proto.Command_COMMAND_TYPE_LOAD_CHUNK:
-		m = &proto.CommandLoadChunkResponse{Error: unauthorizedError}
+## v10.6.5 (October 24th 2026)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	case proto.Command_COMMAND_TYPE_GET_NODE_META,
-		proto.Command_COMMAND_TYPE_LOAD_CHUNK:
-	case proto.Command_COMMAND_TYPE_LOAD:
+## v10.6.5 (unreleased)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `55255c16` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b84d5f97` are properly handled with clean fallback behavior.

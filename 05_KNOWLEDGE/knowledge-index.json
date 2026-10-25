@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T02:58:32.608Z",
+  "last_updated": "2026-10-25T03:06:18.952Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8610,8 +8610,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "303943fd",
-      "content_hash": "803df35c5fc5d7770691607002d761f5a86dc6d30f3717d7621ad5995c4ca2c9",
+      "source_version": "0144a88d",
+      "content_hash": "36c7f9231e71ac8d2bc4a37f5751cfcfaf689c896778af5d25de3aade83f4d38",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -8634,6 +8634,11 @@
           "number": 3558,
           "title": "dpi/dns): recognize successful ANY answers (#690)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4004,
+          "title": "update dependencies for security audit (#698)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8641,7 +8646,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T16:25:44.335Z",
+      "verified_at": "2026-10-25T03:06:07.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30271,8 +30276,8 @@
       "slug": "kubernetes-sigs-aws-load-balancer-controller",
       "platform": "github",
       "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "cce96f2c",
-      "content_hash": "85e942ba49606646b416d161223a357c7af81c3e6f912bdeba69e113a6bb8def",
+      "source_version": "d19307cc",
+      "content_hash": "e71325c1c96c6f72301bac6cfda1238136b4b210694ea27d8822b6d321049d52",
       "dossier_path": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "promoted_rules": [
@@ -30305,6 +30310,11 @@
           "number": 3633,
           "title": "cut v3.6.1 release (#4934)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4005,
+          "title": "cut v3.6.2 release (#4937)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30312,7 +30322,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:22:22.770Z",
+      "verified_at": "2026-10-25T03:06:14.098Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41615,8 +41625,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "efd3e6e1",
-      "content_hash": "5c995f82d7f036f30882ab15a26b9f9575936f3920834d22f687f5d5f88e2704",
+      "source_version": "b84d5f97",
+      "content_hash": "1f005ead0f4b056db2eb98a86c8a6be26c5343f4bd09bda811e75bc2c3029744",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -41646,7 +41656,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:35:34.712Z",
+      "verified_at": "2026-10-25T03:06:18.939Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117300,6 +117310,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T02:58:32.598Z"
+    },
+    "rule-4004": {
+      "learning_id": "rule-4004",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4004,
+      "title": "update dependencies for security audit (#698)",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "0144a88d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:06:07.288Z"
+    },
+    "rule-4005": {
+      "learning_id": "rule-4005",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4005,
+      "title": "cut v3.6.2 release (#4937)",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "d19307cc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:06:14.098Z"
     }
   },
   "aliases": {

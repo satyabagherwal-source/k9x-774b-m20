@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source**: github ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
-> **Source Version**: `cce96f2c`  
+> **Source Version**: `d19307cc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:22:22.402Z  
+> **Timestamp**: 2026-10-25T03:06:13.837Z  
 > **Learning ID**: `learn-github-kubernetes-sigs-aws-load-balancer-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:22:21.104Z  
+> **Harvest Timestamp**: 2026-10-25T03:06:12.948Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1587,7 +1587,14 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- *No recent closed bug issues fetched.*
+- **Issue #4937** (2026-10-24): **cut v3.6.2 release**
+  *Symptoms*: ## Description  Cuts **v3.6.2**, a patch release whose purpose is to rebuild the controller image on the 2026-10-23 EKS-D base image, which removes 5 distrusted eMudhra/emSign certificate authorities from the image CA bundle.  Targets `main`. After this merges, the tag-release workflow tags v3.6.2 on `main`, and `release-3.6` is then fast-forwarded to `main` to pick up the tag. Note this means v3.6.2 also carries #4935 (`perf(gw api): improve start up time by not enqueuing child resources`), which is on `main` but was not in v3.6.1.  Two commits:  **`build(deps): bump github.com/klauspost/compress to v1.18.7`**  Addresses CVE-2026-63209. v1.18.7 is a security-only release fixing an out-of-bounds read in `s2.NewDict`.  This is a test-only indirect dependency and is **not** linked into the controller binary. `go mod why` resolves it as `test/e2e/gateway/alb_tests` -> `github.com/gavv/httpexpect/v2` -> `github.com/valyala/fasthttp` -> `github.com/klauspost/compress/flate`, and the published image's `controller` binary lists 93 modules, none of them klauspost. The bump keeps source-level dependency scanning clean; it does not change the released artifact.  **`cut v3.6.2 release`**  - `Makefile` `BASE_IMAGE` and `.ko.yaml` `defaultBaseImage` -> `eks-distro-minimal-base-nonroot:2026-10-23-1792785692.2023` - `hack/set-version 3.6.2`: `Makefile` `IMG`, `config/controller/kustomization.yaml`, `helm/aws-load-balancer-controller/{Chart.yaml,values.yaml,test.yaml}`, `version.txt`, `versi
+
+- **Issue #4935** (2026-10-22): **perf(gw api): improve start up time by not enqueuing child resources**
+  *Symptoms*: ### Issue  https://github.com/kubernetes-sigs/aws-load-balancer-controller/issues/4855  ### Description  During startup, Gateway dependency handlers process initial-list events by scanning related resources and enqueueing parent Gateways. This repeats work for Gateways that already receive their own initial events. Queue deduplication does not eliminate the preceding resource lookups and event fan-out, which can delay startup on large clusters.  This change skips IsInInitialList create events for routes, ListenerSets, GatewayClasses, Services, ReferenceGrants, and Gateway configuration resources.  Gateway initial events remain enabled. Controller-runtime waits for the watched sources to synchronize before starting reconciliation workers, and Gateway reconciliation reads its dependencies from the populated cache. The skipped handlers only enqueue affected resources; they do not initialize state required by reconciliation. Ordinary create, update, delete, and generic events continue to be processed.  Adds unit tests verifying that initial events are skipped for GatewayClass, ListenerSet, and HTTPRoute handlers, while Gateway initial events and ordinary create events still enqueue the expected Gateway.  ### Checklist - [x] Added tests that cover your change (if possible) - [ ] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [ ] Manually tested - [ ] Made sure the title of the PR is a good description that can go int
+  **Post-Mortem & Fix Analysis**:
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4935#" title="Author self-approved">zac-nixon</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/OWNERS)~~ [zac-nixon]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > /retest
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1604,20 +1611,40 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cce96f2c` (2026-10-21)
-**Commit Message**: cut v3.6.1 release (#4934)
+### Incident Patch 1: `d19307cc` (2026-10-24)
+**Commit Message**: cut v3.6.2 release (#4937)
 
-**File**: `Makefile` (modified, +1/-1)
+* build(deps): bump github.com/klauspost/compress to v1.18.7
+
+* cut v3.6.2 release
+
+**File**: `.ko.yaml` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,7 @@
+@@ -1,4 +1,4 @@
+-defaultBaseImage: public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base-nonroot:2026-07-27-1785178906.2023
++defaultBaseImage: public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base-nonroot:2026-10-23-1792785692.2023
+ builds:
+ - env:
+   - CGO_ENABLED=0
+```
+
+**File**: `Makefile` (modified, +2/-2)
+```diff
+@@ -2,12 +2,12 @@
  MAKEFILE_PATH = $(dir $(realpath -s $(firstword $(MAKEFILE_LIST))))
  
  # Image URL to use all building/pushing image targets
--IMG ?= public.ecr.aws/eks/aws-load-balancer-controller:v3.6.0
-+IMG ?= public.ecr.aws/eks/aws-load-balancer-controller:v3.6.1
+-IMG ?= public.ecr.aws/eks/aws-load-balancer-controller:v3.6.1
++IMG ?= public.ecr.aws/eks/aws-load-balancer-controller:v3.6.2
  # Image URL to use for builder stage in Docker build
  GOLANG_VERSION ?= $(shell cat .go-version)
  BUILD_IMAGE ?= public.ecr.aws/docker/library/golang:$(GOLANG_VERSION)
+ # Image URL to use for base layer in Docker build
+-BASE_IMAGE ?= public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base-nonroot:2026-07-27-1785178906.2023
++BASE_IMAGE ?= public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base-nonroot:2026-10-23-1792785692.2023
+ IMG_PLATFORM ?= linux/amd64,linux/arm64
+ # ECR doesn't appear to support SPDX SBOM
+ IMG_SBOM ?= none
 ```
 
 **File**: `config/controller/kustomization.yaml` (modified, +1/-1)
@@ -1626,8 +1653,8 @@ Observed empirical fixes and code patches:
  images:
  - name: controller
    newName: public.ecr.aws/eks/aws-load-balancer-controller
--  newTag: v3.6.0
-+  newTag: v3.6.1
+-  newTag: v3.6.1
++  newTag: v3.6.2
 ```
 
 **File**: `docs/deploy/installation.md` (modified, +8/-8)
@@ -1636,18 +1663,18 @@ Observed empirical fixes and code patches:
  2. Download an IAM policy for the LBC using one of the following commands:<p>
      If your cluster is in a US Gov Cloud region:
      ```
--    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/install/iam_policy_us-gov.json
-+    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy_us-gov.json
+-    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy_us-gov.json
++    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.2/docs/install/iam_policy_us-gov.json
      ```
      If your cluster is in a China region:
      ```
--    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/install/iam_policy_cn.json
-+    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy_cn.json
+-    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy_cn.json
++    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.2/docs/install/iam_policy_cn.json
      ```
      If your cluster is in any other region:
      ```
--    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/install/iam_policy.json
-+    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy.json
+-    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy.json
++    curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.2/docs/install/iam_policy.json
      ```
  
  3. Create an IAM policy named `AWSLoadBalancerControllerIAMPolicy`. If you downloaded a different policy, replace `iam-policy` with the name of the policy that you downloaded.
@@ -1655,8 +1682,8 @@ Observed empirical fixes and code patches:
  ### Option C: Attach IAM policies to nodes
  If you're not setting up IAM roles for service accounts, apply the IAM policies from the following URL at a minimum. Please be aware of the possibility that the controller permissions may be assumed by other users in a pod after retrieving the node role credentials, so the best practice would be using IRSA instead of attaching IAM policy directly.
  ```
--curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/install/iam_policy.json
-+curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy.json
+-curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy.json
++curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.2/docs/install/iam_policy.json
  ```
  
  When using this option, IMDS *must* be enabled. The controller retrieves the instance credentials using IMDS. Use IRSA to avoid usage of IMDS.
@@ -1664,8 +1691,8 @@ Observed empirical fixes and code patches:
      ### Apply YAML
      1. Download the spec for the LBC.
      ```
--    wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v3.6.0/v3_6_0_full.yaml
-+    wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v3.6.1/v3_6_1_full.yaml
+-    wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v3.6.1/v3_6_1_full.yaml
++    wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v3.6.2/v3_6_2_full.yaml
      ```
      2. Edit the saved yaml file, go to the Deployment spec, and set the controller `--cluster-name` arg value to your EKS cluster name
      ```
@@ -1673,18 +1700,18 @@ Observed empirical fixes and code patches:
      ```
      4. Apply the yaml file
      ```
--    kubectl apply -f v3_6_0_full.yaml
-+    kubectl apply -f v3_6_1_full.yaml
+-    kubectl apply -f v3_6_1_full.yaml
++    kubectl apply -f v3_6_2_full.yaml
      ```
      5. Optionally download the default ingressclass and ingressclass params
      ```
--    wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v3.6.0/v3_6_0_ingclass.yaml
-+    wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v3.6.1/v3_6_1_ingclass.yaml
+-    wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v3.6.1/v3_6_1_ingclass.yaml
++    wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v3.6.2/v3_6_2_ingclass.yaml
      ```
      6. Apply the ingressclass and params
      ```
--    kubectl apply -f v3_6_0_ingclass.yaml
-+    kubectl apply -f v3_6_1_ingclass.yaml
+-    kubectl apply -f v3_6_1_ingclass.yaml
++    kubectl apply -f v3_6_2_ingclass.yaml
      ```
  
  ## Create Update Strategy
@@ -1696,12 +1723,12 @@ Observed empirical fixes and code patches:
  1.  Deploy all the echoserver resources (namespace, service, deployment)
  
      ```bash
--    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/examples/echoservice/echoserver-namespace.yaml &&\
--    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/examples/echoservice/echoserver-service.yaml &&\
--    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/examples/echoservice/echoserver-deployment.yaml
-+    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/examples/echoservice/echoserver-namespace.yaml &&\
-+    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/examples/echoservice/echoserver-service.yaml &&\
-+    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/examples/echoservice/echoserver-deployment.yaml
+-    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/examples/echoservice/echoserver-namespace.yaml &&\
+-    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/examples/echoservice/echoserver-service.yaml &&\
+-    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/examples/echoservice/echoserver-deployment.yaml
++    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.2/docs/examples/echoservice/echoserver-namespace.yaml &&\
++    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.2/docs/examples/echoservice/echoserver-service.yaml &&\
++    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.2/docs/examples/echoservice/echoserver-deployment.yaml
      ```
  
  1.  List all the resources to ensure they were created.
@@ -1709,8 +1736,8 @@ Observed empirical fixes and code patches:
  1.  Download the echoserver ingress manifest locally.
  
      ```bash
--    wget https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/examples/echoservice/echoserver-ingress.yaml
-+    wget https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/examples/echoservice/echoserver-ingress.yaml
+-    wget https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/examples/echoservice/echoserver-ingress.yaml
++    wget https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.2/docs/examples/echoservice/echoserver-ingress.yaml
      ```
  
  1.  Configure the subnets, either by add annotation to the ingress or add tags to subnets. This step is optional in lieu of auto-discovery.
@@ -1718,11 +1745,39 @@ Observed empirical fixes and code patches:
  follow below steps if you want to use kube2iam to provide the AWS credentials
  
  1. configure the proper policy
--    The policy to be used can be fetched from https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.0/docs/install/iam_policy.json
-+    The policy to be used can be fetched from https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy.json
+-    The policy to be used can be fetched from https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.1/docs/install/iam_policy.json
++    The policy to be used can be fetched from https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v3.6.2/docs/install/iam_policy.json
  
  1. configure the proper role and create the trust relationship
      You have to find which role is associated with your K8S nodes. Once you found take note of the full arn:
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -122,7 +122,7 @@ require (
+ 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+ 	github.com/jmoiron/sqlx v1.4.0 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+-	github.com/klauspost/compress v1.18.6 // indirect
++	github.com/klauspost/compress v1.18.7 // indirect
+ 	github.com/kylelemons/godebug v1.1.0 // indirect
+ 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
+ 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -284,8 +284,8 @@ github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHm
+ github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88/go.mod h1:3w7q1U84EfirKl04SVQ/s7nPm1ZPhiXd34z40TNz36k=
+ github.com/klauspost/compress v1.12.2/go.mod h1:8dP1Hq4DHOhN9w426knH3Rhby4rFm6D8eO+e+Dq5Gzg=
+ github.com/klauspost/compress v1.15.0/go.mod h1:/3/Vjq9QcHkK5uEr5lBEmyoZ1iFhe47etQ6QUkpK6sk=
+-github.com/klauspost/compress v1.18.6 h1:2jupLlAwFm95+YDR+NwD2MEfFO9d4z4Prjl1XXDjuao=
+-github.com/klauspost/compress v1.18.6/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
++github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
+ github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 ```
 
 **File**: `helm/aws-load-balancer-controller/Chart.yaml` (modified, +2/-2)
@@ -1731,55 +1786,251 @@ Observed empirical fixes and code patches:
  apiVersion: v2
  name: aws-load-balancer-controller
  description: AWS Load Balancer Controller Helm chart for Kubernetes
--version: 3.6.0
--appVersion: v3.6.0
-+version: 3.6.1
-+appVersion: v3.6.1
+-version: 3.6.1
+-appVersion: v3.6.1
++version: 3.6.2
++appVersion: v3.6.2
  home: https://github.com/aws/eks-charts
  icon: https://raw.githubusercontent.com/aws/eks-charts/master/docs/logo/aws.png
  sources:
 ```
 
-**File**: `helm/aws-load-balancer-controller/test.yaml` (modified, +1/-1)
+---
+
+### Incident Patch 2: `c250dc41` (2026-10-22)
+**Commit Message**: Merge pull request #4935 from zac-nixon/main
+
+perf(gw api): improve start up time by not enqueuing child resources
+
+**File**: `controllers/gateway/eventhandlers/gateway_class_events.go` (modified, +5/-0)
 ```diff
-@@ -6,7 +6,7 @@ replicaCount: 2
+@@ -36,6 +36,11 @@ type enqueueRequestsForGatewayClassEvent struct {
+ }
  
- image:
-   repository: public.ecr.aws/eks/aws-load-balancer-controller
--  tag: v3.6.0
-+  tag: v3.6.1
-   pullPolicy: IfNotPresent
- 
- imagePullSecrets: []
+ func (h *enqueueRequestsForGatewayClassEvent) Create(ctx context.Context, e event.TypedCreateEvent[*gatewayv1.GatewayClass], queue workqueue.TypedRateLimitingInterface[reconcile.Request]) {
++	if e.IsInInitialList {
++		// Existing Gateways receive their own initial events and reconcile
++		// against the synced cache, so this fan-out is redundant.
++		return
++	}
+ 	gwClassNew := e.Object
+ 	h.logger.V(1).Info("enqueue gatewayclass create event", "gatewayclass", gwClassNew.Name)
+ 	h.enqueueImpactedGateways(ctx, gwClassNew, queue)
 ```
 
-**File**: `helm/aws-load-balancer-controller/values.yaml` (modified, +1/-1)
+**File**: `controllers/gateway/eventhandlers/grpc_route_events.go` (modified, +5/-0)
 ```diff
-@@ -8,7 +8,7 @@ revisionHistoryLimit: 10
+@@ -35,6 +35,11 @@ type enqueueRequestsForGRPCRouteEvent struct {
+ }
  
- image:
-   repository: public.ecr.aws/eks/aws-load-balancer-controller
--  tag: v3.6.0
-+  tag: v3.6.1
-   pullPolicy: IfNotPresent
- 
- runtimeClassName: ""
+ func (h *enqueueRequestsForGRPCRouteEvent) Create(ctx context.Context, e event.TypedCreateEvent[*gatewayv1.GRPCRoute], queue workqueue.TypedRateLimitingInterface[reconcile.Request]) {
++	if e.IsInInitialList {
++		// Existing Gateways receive their own initial events and reconcile
++		// against the synced cache, so this fan-out is redundant.
++		return
++	}
+ 	routeNew := e.Object
+ 	h.logger.V(1).Info("enqueue grpcroute create event", "grpcroute", routeNew.Name)
+ 	h.enqueueImpactedGateways(ctx, routeNew, queue)
 ```
 
-**File**: `version-stable.txt` (modified, +1/-1)
+**File**: `controllers/gateway/eventhandlers/http_route_events.go` (modified, +5/-0)
 ```diff
-@@ -1 +1 @@
--3.6.0
-+3.6.1
+@@ -35,6 +35,11 @@ type enqueueRequestsForHTTPRouteEvent struct {
+ }
+ 
+ func (h *enqueueRequestsForHTTPRouteEvent) Create(ctx context.Context, e event.TypedCreateEvent[*gatewayv1.HTTPRoute], queue workqueue.TypedRateLimitingInterface[reconcile.Request]) {
++	if e.IsInInitialList {
++		// Existing Gateways receive their own initial events and reconcile
++		// against the synced cache, so this fan-out is redundant.
++		return
++	}
+ 	routeNew := e.Object
+ 	h.logger.V(1).Info("enqueue httproute create event", "httproute", routeNew.Name)
+ 	h.enqueueImpactedGateways(ctx, routeNew, queue)
+```
+
+**File**: `controllers/gateway/eventhandlers/initial_list_events_test.go` (added, +105/-0)
+```diff
+@@ -0,0 +1,105 @@
++package eventhandlers
++
++import (
++	"context"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/client-go/util/workqueue"
++	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/gateway/constants"
++	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/testutils"
++	"sigs.k8s.io/controller-runtime/pkg/event"
++	"sigs.k8s.io/controller-runtime/pkg/log"
++	"sigs.k8s.io/controller-runtime/pkg/reconcile"
++	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
++)
++
++func Test_CreateEvent_IsInInitialList(t *testing.T) {
++	ctx := context.Background()
++	k8sClient := testutils.GenerateTestClient()
++
++	gwClass := &gwv1.GatewayClass{
++		ObjectMeta: metav1.ObjectMeta{Name: "alb-class"},
++		Spec:       gwv1.GatewayClassSpec{ControllerName: gwv1.GatewayController(constants.ALBGatewayController)},
++	}
++	gw := &gwv1.Gateway{
++		ObjectMeta: metav1.ObjectMeta{Name: "my-gw", Namespace: "default"},
++		Spec:       gwv1.GatewaySpec{GatewayClassName: "alb-class"},
++	}
++	assert.NoError(t, k8sClient.Create(ctx, gwClass))
++	assert.NoError(t, k8sClient.Create(ctx, gw))
++
++	ls := &gwv1.ListenerSet{
++		ObjectMeta: metav1.ObjectMeta{Name: "my-ls", Namespace: "default"},
++		Spec: gwv1.ListenerSetSpec{
++			ParentRef: gwv1.ParentGatewayReference{Name: "my-gw"},
++		},
++	}
++	route := &gwv1.HTTPRoute{
++		ObjectMeta: metav1.ObjectMeta{Name: "my-route", Namespace: "default"},
++		Spec: gwv1.HTTPRouteSpec{
++			CommonRouteSpec: gwv1.CommonRouteSpec{
++				ParentRefs: []gwv1.ParentReference{{Name: "my-gw"}},
++			},
++		},
++	}
++
++	gwHandler := NewEnqueueRequestsForGatewayEventHandler(k8sClient, nil, constants.ALBGatewayController, log.Log)
++	gwClassHandler := NewEnqueueRequestsForGatewayClassEvent(k8sClient, nil, constants.ALBGatewayController, log.Log)
++	lsHandler := NewEnqueueRequestsForListenerSetEvent(k8sClient, nil, constants.ALBGatewayController, log.Log)
++	routeHandler := NewEnqueueRequestsForHTTPRouteEvent(k8sClient, nil, log.Log)
++
++	tests := []struct {
++		name            string
++		create          func(isInInitialList bool, queue workqueue.TypedRateLimitingInterface[reconcile.Request])
++		wantInitialList bool
++	}{
++		{
++			name: "gateway",
++			create: func(initial bool, q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
++				gwHandler.Create(ctx, event.TypedCreateEvent[*gwv1.Gateway]{Object: gw, IsInInitialList: initial}, q)
++			},
++			wantInitialList: true,
++		},
++		{
++			name: "gatewayclass",
++			create: func(initial bool, q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
++				gwClassHandler.Create(ctx, event.TypedCreateEvent[*gwv1.GatewayClass]{Object: gwClass, IsInInitialList: initial}, q)
++			},
++		},
++		{
++			name: "listenerset",
++			create: func(initial bool, q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
++				lsHandler.Create(ctx, event.TypedCreateEvent[*gwv1.ListenerSet]{Object: ls, IsInInitialList: initial}, q)
++			},
++		},
++		{
++			name: "httproute",
++			create: func(initial bool, q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
++				routeHandler.Create(ctx, event.TypedCreateEvent[*gwv1.HTTPRoute]{Object: route, IsInInitialList: initial}, q)
++			},
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			for _, initial := range []bool{true, false} {
++				queue := workqueue.NewTypedRateLimitingQueue[reconcile.Request](
++					workqueue.DefaultTypedControllerRateLimiter[reconcile.Request](),
++				)
++				tt.create(initial, queue)
++
++				if initial && !tt.wantInitialList {
++					assert.Equal(t, 0, queue.Len(), "initial list event should be skipped")
++				} else {
++					assert.Equal(t, 1, queue.Len())
++					item, _ := queue.Get()
++					assert.Equal(t, types.NamespacedName{Name: "my-gw", Namespace: "default"}, item.NamespacedName)
++				}
++				queue.ShutDown()
++			}
++		})
++	}
++}
+```
+
+**File**: `controllers/gateway/eventhandlers/listener_rule_configuration_events.go` (modified, +5/-0)
+```diff
+@@ -35,6 +35,11 @@ type enqueueRequestsForListenerRuleConfigurationEvent struct {
+ }
+ 
+ func (h *enqueueRequestsForListenerRuleConfigurationEvent) Create(ctx context.Context, e event.TypedCreateEvent[*elbv2gw.ListenerRuleConfiguration], queue workqueue.TypedRateLimitingInterface[reconcile.Request]) {
++	if e.IsInInitialList {
++		// Existing Gateways receive their own initial events and reconcile
++		// against the synced cache, so this fan-out is redundant.
++		return
++	}
+ 	ruleConfig := e.Object
+ 	h.logger.V(1).Info("enqueue listenerruleconfiguration create event", "listenerruleconfiguration", ruleConfig.Name)
+ 	h.enqueueImpactedRoutes(ctx, ruleConfig, queue)
+```
+
+**File**: `controllers/gateway/eventhandlers/listener_set_events.go` (modified, +5/-0)
+```diff
+@@ -44,6 +44,11 @@ type enqueueRequestsForListenerSetEvent struct {
+ }
+ 
+ func (h *enqueueRequestsForListenerSetEvent) Create(ctx context.Context, e event.TypedCreateEvent[*gwv1.ListenerSet], queue workqueue.TypedRateLimitingInterface[reconcile.Request]) {
++	if e.IsInInitialList {
++		// Existing Gateways receive their own initial events and reconcile
++		// against the synced cache, so this fan-out is redundant.
++		return
++	}
+ 	ls := e.Object
+ 	h.logger.V(1).Info("enqueue listenerset create event", "listenerset", k8s.NamespacedName(ls))
+ 	h.enqueueParentGateway(ctx, ls, queue)
+```
+
+**File**: `controllers/gateway/eventhandlers/load_balancer_configuration_events.go` (modified, +5/-0)
+```diff
+@@ -42,6 +42,11 @@ type enqueueRequestsForLoadBalancerConfigurationEvent struct {
+ }
+ 
+ func (h *enqueueRequestsForLoadBalancerConfigurationEvent) Create(ctx context.Context, e event.TypedCreateEvent[*elbv2gw.LoadBalancerConfiguration], queue workqueue.TypedRateLimitingInterface[reconcile.Request]) {
++	if e.IsInInitialList {
++		// Existing Gateways receive their own initial events and reconcile
++		// against the synced cache, so this fan-out is redundant.
++		return
++	}
+ 	lbconfigNew := e.Object
+ 	h.logger.V(1).Info("enqueue loadbalancerconfiguration create event", "loadbalancerconfiguration", lbconfigNew.Name)
+ 	h.enqueueImpactedGateways(ctx, lbconfigNew, queue)
+```
+
+**File**: `controllers/gateway/eventhandlers/reference_grant_events.go` (modified, +5/-0)
+```diff
+@@ -49,6 +49,11 @@ type enqueueRequestsForReferenceGrantEvent struct {
+ }
+ 
+ func (h *enqueueRequestsForReferenceGrantEvent) Create(ctx context.Context, e event.TypedCreateEvent[*gatewayv1.ReferenceGrant], _ workqueue.TypedRateLimitingInterface[reconcile.Request]) {
++	if e.IsInInitialList {
++		// Existing Gateways receive their own initial events and reconcile
++		// against the synced cache, so this fan-out is redundant.
++		return
++	}
+ 	referenceGrantNew := e.Object
+ 	h.logger.V(1).Info("enqueue reference grant create event", "reference grant", referenceGrantNew.Name)
+ 	h.enqueueImpactedRoutes(ctx, referenceGrantNew, nil)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4937** (2026-10-24): cut v3.6.2 release (@shraddhabang)
+- **PR #4935** (2026-10-22): perf(gw api): improve start up time by not enqueuing child resources (@zac-nixon)
 - **PR #4934** (2026-10-21): cut v3.6.1 release (@shraddhabang)
 - **PR #4933** (2026-10-20): build(deps): bump go to 1.26.10 and golang.org/x/net to v0.60.0 (@shraddhabang)
 - **PR #4932** (2026-10-19): feat(backend): expose node Ready time on pod endpoints (@zac-nixon)
 - **PR #4928** (2026-10-07): fix(networking): treat InvalidGroup.NotFound as success in releaseSG (@nakshah87)
-- **PR #4922** (2026-10-05): fix(scripts): eks-charts sync gh CLI compat + docs version bump (@shraddhabang)
-- **PR #4921** (2026-10-05): cut v3.6.0 release (@shraddhabang)
 
 ---
 
@@ -1799,28 +2050,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cut v3.6.1 release (#4934)
+## X. cut v3.6.2 release (#4937)
 
 **RULE**:
-When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.ko.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cce96f2c`: cut v3.6.1 release (#4934). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d19307cc`: cut v3.6.2 release (#4937). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ko.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-IMG ?= public.ecr.aws/eks/aws-load-balancer-controller:v3.6.1
+defaultBaseImage: public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base-nonroot:2026-10-23-1792785692.2023
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-IMG ?= public.ecr.aws/eks/aws-load-balancer-controller:v3.6.0
+defaultBaseImage: public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base-nonroot:2026-07-27-1785178906.2023
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cce96f2c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d19307cc` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T02:42:37.067Z",
+  "last_updated": "2026-10-25T03:06:19.002Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2587,6 +2587,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-bitnami-sealed-secrets"
+    },
+    {
+      "id": "CD-XDRU",
+      "directive_title": "Update CHANGELOG.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "rqlite/rqlite",
+      "source_commit": "b84d5f97",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-rqlite-rqlite"
     }
   ]
 }

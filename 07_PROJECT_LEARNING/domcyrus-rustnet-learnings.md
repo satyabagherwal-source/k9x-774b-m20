@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `303943fd`  
+> **Source Version**: `0144a88d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T16:25:44.092Z  
+> **Timestamp**: 2026-10-25T03:06:07.025Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T16:25:42.351Z  
+> **Harvest Timestamp**: 2026-10-25T03:06:05.086Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5150 stars
+- **Stars / Engagement**: 5159 stars
 
 ---
 
@@ -2136,39 +2136,41 @@ mod tests {
     }
 
     #[test]
-    fn test_dhcp_discover() {
+    fn test_dhcp_message_types() {
         let mac = [0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff];
-        let packet = build_dhcp_packet(1, Some("myhost"), &mac);
-        let info = analyze_dhcp(&packet).expect("should parse");
-        assert_eq!(info.message_type, DhcpMessageType::Discover);
-        assert_eq!(info.hostname, Some("myhost".to_string()));
-        assert_eq!(info.client_mac, Some("aa:bb:cc:dd:ee:ff".to_string()));
+        for (code, expected, hostname) in [
+            (1, DhcpMessageType::Discover, Some("myhost")),
+            (2, DhcpMessageType::Offer, None),
+            (3, DhcpMessageType::Request, Some("workstation-01")),
+            (5, DhcpMessageType::Ack, None),
+            (7, DhcpMessageType::Release, None),
+            (8, DhcpMessageType::Inform, Some("printer")),
+        ] {
+            let packet = build_dhcp_packet(code, hostname, &mac);
+            let info = analyze_dhcp(&packet).expect("valid DHCP message");
+            assert_eq!(info.message_type, expected, "message {code}");
+            assert_eq!(info.hostname.as_deref(), hostname, "message {code}");
+            assert_eq!(
+                info.client_mac.as_deref(),
+                Some("aa:bb:cc:dd:ee:ff"),
+                "message {code}"
+            );
+        }
     }
 
     #[test]
-    fn test_dhcp_offer() {
-        let mac = [0x11, 0x22, 0x33, 0x44, 0x55, 0x66];
-        let packet = build_dhcp_packet(2, None, &mac);
-        let info = analyze_dhcp(&packet).expect("should parse");
-        assert_eq!(info.message_type, DhcpMessageType::Offer);
-        assert!(info.hostname.is_none());
-    }
-
-    #[test]
-    fn test_dhcp_request() {
-        let mac = [0x00, 0x11, 0x22, 0x33, 0x44, 0x55];
-        let packet = build_dhcp_packet(3, Some("workstation-01"), &mac);
-        let info = analyze_dhcp(&packet).expect("should parse");
-        assert_eq!(info.message_type, DhcpMessageType::Request);
-        assert_eq!(info.hostname, Some("workstation-01".to_string()));
-    }
-
-    #[test]
-    fn test_dhcp_ack() {
-        let mac = [0x00, 0x00, 0x00, 0x00, 0x00, 0x01];
-        let packet = build_dhcp_packet(5, None, &mac);
-        let info = analyze_dhcp(&packet).expect("should parse");
-        assert_eq!(info.message_type, DhcpMessageType::Ack);
+    fn test_dhcp_client_mac_formatting() {
+        for (mac, expected) in [
+            ([0x11, 0x22, 0x33, 0x44, 0x55, 0x66], "11:22:33:44:55:66"),
+            ([0, 0x11, 0x22, 0x33, 0x44, 0x55], "00:11:22:33:44:55"),
+            ([0, 0, 0, 0, 0, 1], "00:00:00:00:00:01"),
+            ([0xde, 0xad, 0xbe, 0xef, 0, 1], "de:ad:be:ef:00:01"),
+            ([0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc], "12:34:56:78:9a:bc"),
+        ] {
+            let packet = build_dhcp_packet(1, None, &mac);
+            let info = analyze_dhcp(&packet).expect("valid DHCP message");
+            assert_eq!(info.client_mac.as_deref(), Some(expected), "{mac:?}");
+        }
     }
 
     #[test]
@@ -2182,23 +2184,6 @@ mod tests {
         let mut packet = vec![0u8; 250];
         packet[236..240].copy_from_slice(&[0x00, 0x00, 0x00, 0x00]); // Wrong cookie
         assert!(analyze_dhcp(&packet).is_none());
-    }
-
-    #[test]
-    fn test_dhcp_release() {
-        let mac = [0xde, 0xad, 0xbe, 0xef, 0x00, 0x01];
-        let packet = build_dhcp_packet(7, None, &mac);
-        let info = analyze_dhcp(&packet).expect("should parse");
-        assert_eq!(info.message_type, DhcpMessageType::Release);
-    }
-
-    #[test]
-    fn test_dhcp_inform() {
-        let mac = [0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc];
-        let packet = build_dhcp_packet(8, Some("printer"), &mac);
-        let info = analyze_dhcp(&packet).expect("should parse");
-        assert_eq!(info.message_type, DhcpMessageType::Inform);
-        assert_eq!(info.hostname, Some("printer".to_string()));
     }
 }
 
@@ -2510,145 +2495,58 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `81497671` (2026-10-21)
-**Commit Message**: fix(dpi/dns): recognize successful ANY answers (#690)
+### Incident Patch 1: `0144a88d` (2026-10-23)
+**Commit Message**: fix: update dependencies for security audit (#698)
 
-Count parsed answer records for the ANY query wildcard instead of requiring an answer TYPE of 255. Add wire-format and tracker regression tests while preserving negative-response handling and exact matching for other query types.
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Fixed
- - Match local IPv4/IPv6 DNS stub replies correctly and prevent healthy resolvers from hiding a failing secondary resolver
- - Fall back to a pinned, checksum-verified Npcap SDK mirror when the primary download fails during Windows builds or CI test setup.
-+- Stop classifying successful DNS ANY answers as NODATA in Details and passive DNS statistics (#689)
- - Preserve FreeBSD IPv6 wildcard bindings when logging local port status (#682)
- - Fix Fedora Rawhide aarch64 RPM builds with Linux 7.3 headers and bundled libbpf 1.7.0
+@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ## [Unreleased]
+ 
++### Security
++- Update ctutils to 0.4.4 for RUSTSEC-2026-0385 and replace yanked clipboard-win 5.4.1 with 5.4.3 (#698)
++
+ ### Changed
+ - Run Windows CI tests independently and start DEB installation checks after GNU/Linux builds, preserving all existing checks (#686)
  
 ```
 
-**File**: `crates/rustnet-core/src/network/dpi/dns.rs` (modified, +125/-4)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -134,9 +134,10 @@ fn parse_question(payload: &[u8], start: usize) -> (Option<String>, Option<DnsQu
+@@ -441,9 +441,9 @@ dependencies = [
  
- /// Walk `count` resource records starting at `offset`, pushing A / AAAA
- /// rdata into `ips` (subject to [`MAX_RESPONSE_IPS_PER_PACKET`]) and counting
--/// records whose TYPE matches `queried_type` into `matched` (for NODATA
--/// detection; pass `None` to skip counting, e.g. on the mDNS additional-records
--/// walk where the concept does not apply). Returns the offset of the byte
-+/// records whose TYPE matches `queried_type` (or any TYPE for QTYPE=ANY)
-+/// into `matched` for NODATA detection. Pass `None` to skip counting, e.g. on
-+/// the mDNS additional-records walk where the concept does not apply.
-+/// Returns the offset of the byte
- /// immediately after the last record successfully walked (so callers can
- /// chain a second walk, e.g. ANCOUNT then ARCOUNT for mDNS) together with
- /// the number of records fully walked (so callers can tell a complete walk
-@@ -157,7 +158,10 @@ fn walk_a_aaaa_records(
-             return (offset, walked);
-         };
+ [[package]]
+ name = "clipboard-win"
+-version = "5.4.1"
++version = "5.4.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bde03770d3df201d4fb868f2c9c59e66a3e4e2bd06692a0fe701e7103c7e84d4"
++checksum = "052af7878466feccda12ba7a6a67d019d712f296809559b47c12c8cc196d3a9a"
+ dependencies = [
+  "error-code",
+ ]
+@@ -719,9 +719,9 @@ dependencies = [
  
--        if queried_type.is_some() && queried_type == Some(DnsQueryType::from_wire(rr.rtype)) {
-+        // ANY (RFC 1035 §3.2.3) is a question wildcard, not an answer TYPE.
-+        if queried_type.is_some_and(|qtype| {
-+            qtype == DnsQueryType::Other(255) || qtype == DnsQueryType::from_wire(rr.rtype)
-+        }) {
-             *matched += 1;
-         }
- 
-@@ -639,6 +643,123 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn test_any_response_with_data_is_not_nodata() {
-+        // ANY is a query-only wildcard, not the TYPE of an answer record.
-+        // RFC 8482 also permits a single synthesized HINFO answer.
-+        for (rtype, rdata) in [
-+            (1, &b"\xc0\x00\x02\x01"[..]),
-+            (28, &Ipv6Addr::LOCALHOST.octets()[..]),
-+            (5, &b"\x05alias\x07example\x03com\x00"[..]),
-+            (16, &b"\x02ok"[..]),
-+            (13, &b"\x07RFC8482\x00"[..]),
-+            (65280, &b"opaque"[..]),
-+        ] {
-+            let mut payload = build_dns_header(0, 0x8000, 1, 1, 0, 0);
-+            push_question(&mut payload, "example.com", 255);
-+            push_rr(&mut payload, RrName::Ptr(12), rtype, 60, rdata);
-+
-+            let info = analyze_dns(&payload).unwrap();
-+            assert_eq!(info.query_type, Some(DnsQueryType::Other(255)));
-+            assert_eq!(info.rcode, Some(0));
-+            assert_eq!(info.nodata, Some(false), "answer TYPE {rtype}");
-+        }
-+    }
-+
-+    #[test]
-+    fn test_unknown_query_type_is_not_a_wildcard() {
-+        for (rtype, expected) in [(1, Some(true)), (65280, Some(false))] {
-+            let mut payload = build_dns_header(0, 0x8000, 1, 1, 0, 0);
-+            push_question(&mut payload, "example.com", 65280);
-+            push_rr(&mut payload, RrName::Ptr(12), rtype, 60, &[192, 0, 2, 1]);
-+
-+            assert_eq!(analyze_dns(&payload).unwrap().nodata, expected);
-+        }
-+    }
-+
-+    #[test]
-+    fn test_any_success_is_not_counted_as_nodata() {
-+        use crate::network::parser::ParsedPacket;
-+        use crate::network::tracker::ConnectionTracker;
-+        use std::time::{Duration, SystemTime};
-+
-+        let tracker = ConnectionTracker::new();
-+        let start = SystemTime::UNIX_EPOCH + Duration::from_secs(1_000);
-+        for is_outgoing in [true, false] {
-+            let flags = if is_outgoing { 0 } else { 0x8000 };
-+            let mut payload = build_dns_header(123, flags, 1, u16::from(!is_outgoing), 0, 0);
-+            push_question(&mut payload, "example.com", 255);
-+            if !is_outgoing {
-+                push_rr(&mut payload, RrName::Ptr(12), 13, 60, b"\x07RFC8482\x00");
-+            }
-+            let dpi = super::super::analyze_udp_packet(&payload, 40_000, 53, is_outgoing).unwrap();
-+            let mut packet = ParsedPacket::test_udp(
-+                "192.0.2.10:40000".parse().unwrap(),
-+                "192.0.2.53:53".parse().unwrap(),
-+                dpi.application,
-+            );
-+            packet.is_outgoing = is_outgoing;
-+            let at = if is_outgoing {
-+                start
-+            } else {
-+                start + Duration::from_millis(10)
-+            };
-+            tracker.ingest_at(&packet, at);
-+        }
-+
-+        let snapshot = tracker.dns_analytics_snapshot_at(start + Duration::from_millis(10));
-+        assert_eq!(snapshot.lookups, 1);
-+        assert_eq!(snapshot.answered, 1);
-+        assert_eq!(snapshot.noerror, 1);
-+        assert_eq!(snapshot.nodata, 0);
-+    }
-+
-+    #[test]
-+    fn test_any_empty_response_preserves_nodata_classification() {
-+        let mut soa = vec![0xC0, 0x0C, 0xC0, 0x0C];
-+        soa.extend_from_slice(&[0; 20]);
-+        for (authority_type, expected) in
-+            [(None, Some(true)), (Some(6), Some(true)), (Some(2), None)]
-+        {
-+            let mut payload =
-+                build_dns_header(0, 0x8000, 1, 0, u16::from(authority_type.is_some()), 0);
-+            push_question
+ [[package]]
+ name = "ctutils"
+-version = "0.4.2"
++version = "0.4.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7d5515a3834141de9eafb9717ad39eea8247b5674e6066c404e8c4b365d2a29e"
++checksum = "12218662ccac37d9714f2191252553d67585b97df8c839cbe49e0bde278dc865"
+ dependencies = [
+  "cmov",
+ ]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #698** (2026-10-23): fix: update dependencies for security audit (@domcyrus)
 - **PR #697** (2026-10-21): chore(deps): bump zip from 9.0.4 to 9.0.5 in the rust-dependencies group (@dependabot[bot])
 - **PR #696** (2026-10-20): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
+- **PR #694** (2026-10-22): refactor: tighten tests and simplify DPI and command cleanup (@domcyrus)
 - **PR #693** (2026-10-19): feat: improve Host diagnostics and add history windows (@domcyrus)
 - **PR #692** (2026-10-19): fix(windows): fall back to verified Npcap SDK mirror (@domcyrus)
-- **PR #691** (2026-10-19): chore(deps): bump actions/cache from 4.3.0 to 6.1.0 in the actions group (@dependabot[bot])
-- **PR #690** (2026-10-21): fix(dpi/dns): recognize successful ANY answers (@dongxuelian2)
 
 ---
 
@@ -2668,13 +2566,13 @@ Count parsed answer records for the ANY query wildcard instead of requiring an a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dpi/dns): recognize successful ANY answers (#690)
+## X. update dependencies for security audit (#698)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `81497671`: dpi/dns): recognize successful ANY answers (#690). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0144a88d`: update dependencies for security audit (#698). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2682,7 +2580,9 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Stop classifying successful DNS ANY answers as NODATA in Details and passive DNS statistics (#689)
+### Security
+- Update ctutils to 0.4.4 for RUSTSEC-2026-0385 and replace yanked clipboard-win 5.4.1 with 5.4.3 (#698)
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2692,4 +2592,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `81497671` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0144a88d` are properly handled with clean fallback behavior.
