@@ -3,7 +3,7 @@
 > **Source Version**: `hf-mistralai`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T01:10:35.775Z  
+> **Timestamp**: 2026-10-25T20:55:45.011Z  
 > **Learning ID**: `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1](https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T01:10:35.156Z  
+> **Harvest Timestamp**: 2026-10-25T20:55:44.178Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 223995 downloads | 4772 likes
+- **Stars / Engagement**: 241424 downloads | 4773 likes
 
 ---
 

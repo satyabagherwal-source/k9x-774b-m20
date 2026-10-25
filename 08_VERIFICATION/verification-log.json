@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-SUEN",
-    "timestamp": "2026-10-23T07:39:22.991Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "e9348a6d51ed86e2b97e3f99b3d0a78a851d59fbefad0030bbec1f35b9555eca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-SWVY",
     "timestamp": "2026-10-23T07:39:26.207Z",
     "repository": "hashicorp/terraform",
@@ -7492,6 +7477,21 @@
     "contentHash": "20c6d8e5860f7201d484d6bc476926d49022b8a40b3ab98feb91f08076d129ee",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-4OQ2",
+    "timestamp": "2026-10-25T20:55:45.194Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "efab3bc387f5b405e01c2c73f19a4479d54c34347de867187204449ccfa9c5cf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

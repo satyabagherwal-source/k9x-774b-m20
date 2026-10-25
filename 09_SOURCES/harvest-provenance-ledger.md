@@ -4997,3 +4997,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-25T20:49:13.792Z |
 | `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `2e354062` | Multi-dimensional audit evidence | 2026-10-25T20:49:20.125Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `47398198` | Multi-dimensional audit evidence | 2026-10-25T20:49:24.506Z |
+| `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-25T20:55:45.198Z |
