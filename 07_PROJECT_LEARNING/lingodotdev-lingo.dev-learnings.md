@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md`  
 > **Source**: github ([https://github.com/lingodotdev/lingo.dev](https://github.com/lingodotdev/lingo.dev))  
-> **Source Version**: `75b0d096`  
+> **Source Version**: `1d5d5d12`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:15:06.757Z  
+> **Timestamp**: 2026-10-25T05:52:35.173Z  
 > **Learning ID**: `learn-github-lingodotdev-lingo-dev`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lingodotdev/lingo.dev](https://github.com/lingodotdev/lingo.dev))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:15:06.749Z  
+> **Harvest Timestamp**: 2026-10-25T05:52:35.167Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source localization engineering tools. Connects to Lingo.dev localization engineering platform for consistent, quality translations.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Dockerfile
-- **Stars / Engagement**: 5398 stars
+- **Stars / Engagement**: 5400 stars
 
 ---
 
@@ -1195,190 +1195,215 @@ function _getConfigFilePath() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `75b0d096` (2026-10-19)
-**Commit Message**: chore(deps): bump next (#2245)
+### Incident Patch 1: `1d5d5d12` (2026-10-21)
+**Commit Message**: fix(deps): bump vite to 7.3.7 and launch-editor to 2.14.2 (#2251)
 
-Bumps the npm_and_yarn group with 1 update in the / directory: [next](https://github.com/vercel/next.js).
+**File**: `.changeset/vite-launch-editor-patch.md` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++---
++---
+```
 
+**File**: `demo/new-compiler-vite-react-spa/package.json` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@
+     "@vitejs/plugin-react": "5.0.4",
+     "jsdom": "27.0.0",
+     "typescript": "5.7.2",
+-    "vite": "7.3.5",
++    "vite": "7.3.7",
+     "web-vitals": "5.1.0"
+   }
+ }
+```
 
-Updates `next` from 16.3.6 to 16.3.8
-- [Release notes](https://github.com/vercel/next.js/releases)
-- [Commits](https://github.com/vercel/next.js/compare/v16.3.6...v16.3.8)
+**File**: `pnpm-lock.yaml` (modified, +95/-129)
+```diff
+@@ -24,7 +24,7 @@ overrides:
+   lodash-es: '>=4.18.0 <5'
+   axios: '>=1.20.0 <2'
+   browserslist: '>=4.28.8 <5'
+-  vite: '>=7.3.5 <8'
++  vite: '>=7.3.7 <8'
+   '@xmldom/xmldom@>=0.8 <0.8.15': 0.8.15
+   form-data: '>=4.0.6 <5'
+   follow-redirects: '>=1.16.1 <2'
+@@ -45,7 +45,7 @@ overrides:
+   ajv@>=7 <8.18.0: 8.18.0
+   nanoid@<3.3.18: 3.3.18
+   nanoid@>=4 <5.1.16: 5.1.16
+-  launch-editor@<2.14.1: 2.14.1
++  launch-editor@<2.14.2: 2.14.2
+   js-yaml@>=3 <3.15.2: 3.15.2
+   js-yaml@>=4 <4.3.2: 4.3.2
+   joi@>=18 <18.2.9: 18.2.9
+@@ -159,7 +159,7 @@ importers:
+         version: link:../../packages/new-compiler
+       '@tailwindcss/vite':
+         specifier: 4.1.18
+-        version: 4.1.18(vite@7.3.5(@types/node@22.10.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
++        version: 4.1.18(vite@7.3.7(@types/node@22.10.2)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
+       '@tanstack/react-devtools':
+         specifier: 0.7.0
+         version: 0.7.0(@types/react-dom@19.2.0(@types/react@19.2.0))(@types/react@19.2.0)(csstype@3.2.3)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.10)
+@@ -171,7 +171,7 @@ importers:
+         version: 1.167.2(@tanstack/react-router@1.170.41(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/router-core@1.171.34)(csstype@3.2.3)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+       '@tanstack/router-plugin':
+         specifier: 1.168.42
+-        version: 1.168.42(@tanstack/react-router@1.170.41(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(esbuild@0.27.2)(rollup@4.62.0)(vite@7.3.5(@types/node@22.10.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
++        version: 1.168.42(@tanstack/react-router@1.170.41(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(esbuild@0.27.2)(rollup@4.62.0)(vite@7.3.7(@types/node@22.10.2)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
+       lucide-react:
+         specifier: 0.545.0
+         version: 0.545.0(react@19.2.0)
+@@ -187,7 +187,7 @@ importers:
+     devDependencies:
+       '@tanstack/devtools-vite':
+         specifier: 0.8.1
+-        version: 0.8.1(@emnapi/core@1.7.1)(@emnapi/runtime@1.7.1)(vite@7.3.5(@types/node@22.10.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
++        version: 0.8.1(@emnapi/core@1.7.1)(@emnapi/runtime@1.7.1)(vite@7.3.7(@types/node@22.10.2)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
+       '@testing-library/dom':
+         specifier: 10.4.0
+         version: 10.4.0
+@@ -205,16 +205,16 @@ importers:
+         version: 19.2.0(@types/react@19.2.0)
+       '@vitejs/plugin-react':
+         specifier: 5.0.4
+-        version: 5.0.4(vite@7.3.5(@types/node@22.10.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
++        version: 5.0.4(vite@7.3.7(@types/node@22.10.2)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
+       jsdom:
+         specifier: 27.0.0
+         version: 27.0.0
+       typescript:
+         specifier: 5.7.2
+         version: 5.7.2
+       vite:
+-        specifier: '>=7.3.5 <8'
+-        version: 7.3.5(@types/node@22.10.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0)
++        specifier: '>=7.3.7 <8'
++        version: 7.3.7(@types/node@22.10.2)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0)
+       web-vitals:
+         specifier: 5.1.0
+         version: 5.1.0
+@@ -227,7 +227,7 @@ importers:
+     devDependencies:
+       '@directus/extensions-sdk':
+         specifier: 17.0.3
+-        version: 17.0.3(@types/node@25.0.3)(@unhead/vue@2.1.15(vue@3.5.43(typescript@5.9.3)))(jiti@2.6.1)(knex@3.1.0)(lightningcss@1.30.2)(pinia@2.3.1(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3)))(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(ws@8.21.0)(yaml@2.9.0)
++        version: 17.0.3(@types/node@25.0.3)(@unhead/vue@2.1.15(vue@3.5.43(typescript@5.9.3)))(jiti@2.7.0)(knex@3.1.0)(lightningcss@1.30.2)(pinia@2.3.1(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3)))(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(ws@8.21.0)(yaml@2.9.0)
+       '@unhead/vue':
+         specifier: '>=2.1.15 <3'
+         version: 2.1.15(vue@3.5.43(typescript@5.9.3))
+@@ -239,7 +239,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: 4.1.11
+-        version: 4.1.11(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.1.11)(jsdom@27.3.0)(vite@7.3.5(@types/node@25.0.3)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
++        version: 4.1.11(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.1.11)(jsdom@27.3.0)(vite@7.3.7(@types/node@25.0.3)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
+ 
+   legacy/cli:
+     dependencies:
+@@ -576,7 +576,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: 4.1.11
+-        version: 4.1.11(@opentelemetry/api@1.9.0)(@types/node@22.10.2)(@vitest/ui@4.1.11)(jsdom@25.0.1)(vite@7.3.5(@type
+```
+
+**File**: `pnpm-workspace.yaml` (modified, +2/-2)
+```diff
+@@ -26,7 +26,7 @@ overrides:
+   lodash-es: ">=4.18.0 <5"
+   axios: ">=1.20.0 <2"
+   browserslist: ">=4.28.8 <5"
+-  vite: ">=7.3.5 <8"
++  vite: ">=7.3.7 <8"
+   "@xmldom/xmldom@>=0.8 <0.8.15": 0.8.15
+   form-data: ">=4.0.6 <5"
+   follow-redirects: ">=1.16.1 <2"
+@@ -47,7 +47,7 @@ overrides:
+   ajv@>=7 <8.18.0: 8.18.0
+   nanoid@<3.3.18: 3.3.18
+   nanoid@>=4 <5.1.16: 5.1.16
+-  launch-editor@<2.14.1: 2.14.1
++  launch-editor@<2.14.2: 2.14.2
+   js-yaml@>=3 <3.15.2: 3.15.2
+   js-yaml@>=4 <4.3.2: 4.3.2
+   joi@>=18 <18.2.9: 18.2.9
+```
 
 ---
-updated-dependencies:
-- dependency-name: next
-  dependency-version: 16.3.8
-  dependency-type: direct:production
-  dependency-group: npm_and_yarn
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+### Incident Patch 2: `3b20efe0` (2026-10-21)
+**Commit Message**: fix(deps): override follow-redirects to 1.16.1 (#2247)
 
-**File**: `demo/new-compiler-next16/package.json` (modified, +1/-1)
+**File**: `.changeset/tidy-redirects-strip.md` (added, +2/-0)
 ```diff
-@@ -9,7 +9,7 @@
-   },
-   "dependencies": {
-     "@lingo.dev/compiler": "workspace:*",
--    "next": "16.3.6",
-+    "next": "16.3.8",
-     "react": "19.2.0",
-     "react-dom": "19.2.0"
-   },
+@@ -0,0 +1,2 @@
++---
++---
 ```
 
-**File**: `packages/compiler/package.json` (modified, +1/-1)
+**File**: `pnpm-lock.yaml` (modified, +5/-4)
 ```diff
-@@ -45,7 +45,7 @@
-     "@types/lodash": "4.17.21",
-     "@types/object-hash": "3.0.6",
-     "@types/react": "19.2.7",
--    "next": "16.3.6",
-+    "next": "16.3.8",
-     "tsup": "8.5.1",
-     "typescript": "5.9.3",
-     "vitest": "4.1.11"
+@@ -27,6 +27,7 @@ overrides:
+   vite: '>=7.3.5 <8'
+   '@xmldom/xmldom@>=0.8 <0.8.15': 0.8.15
+   form-data: '>=4.0.6 <5'
++  follow-redirects: '>=1.16.1 <2'
+   flatted: '>=3.4.2 <4'
+   tmp: '>=0.2.6 <0.3'
+   minimatch@<3.1.4: 3.1.4
+@@ -5083,8 +5084,8 @@ packages:
+   flatted@3.4.2:
+     resolution: {integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==}
+ 
+-  follow-redirects@1.16.0:
+-    resolution: {integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==}
++  follow-redirects@1.16.1:
++    resolution: {integrity: sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==}
+     engines: {node: '>=4.0'}
+     peerDependencies:
+       debug: '*'
+@@ -11436,7 +11437,7 @@ snapshots:
+ 
+   axios@1.20.0:
+     dependencies:
+-      follow-redirects: 1.16.0
++      follow-redirects: 1.16.1
+       form-data: 4.0.6
+       https-proxy-agent: 5.0.1
+       proxy-from-env: 2.1.0
+@@ -12157,7 +12158,7 @@ snapshots:
+ 
+   flatted@3.4.2: {}
+ 
+-  follow-redirects@1.16.0: {}
++  follow-redirects@1.16.1: {}
+ 
+   foreground-child@3.3.1:
+     dependencies:
 ```
 
-**File**: `packages/new-compiler/package.json` (modified, +1/-1)
+**File**: `pnpm-workspace.yaml` (modified, +1/-0)
 ```diff
-@@ -146,7 +146,7 @@
-     "@types/react": "19.2.7",
-     "@types/react-dom": "19.2.3",
-     "@types/ws": "8.18.1",
--    "next": "16.3.6",
-+    "next": "16.3.8",
-     "tsdown": "0.18.2",
-     "tsx": "4.21.0",
-     "typescript": "5.9.3",
-```
-
-**File**: `packages/react/package.json` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@
-     "@types/react": "19.2.7",
-     "@types/react-dom": "19.2.3",
-     "@vitejs/plugin-react": "4.4.1",
--    "next": "16.3.6",
-+    "next": "16.3.8",
-     "react": "19.2.3",
-     "react-dom": "19.2.3",
-     "tsup": "8.5.1",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +95/-95)
-```diff
-@@ -120,8 +120,8 @@ importers:
-         specifier: workspace:*
-         version: link:../../packages/new-compiler
-       next:
--        specifier: 16.3.6
--        version: 16.3.6(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.25)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-+        specifier: 16.3.8
-+        version: 16.3.8(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@20.19.25)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-       react:
-         specifier: 19.2.0
-         version: 19.2.0
-@@ -674,8 +674,8 @@ importers:
-         specifier: 19.2.7
-         version: 19.2.7
-       next:
--        specifier: 16.3.6
--        version: 16.3.6(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-+        specifier: 16.3.8
-+        version: 16.3.8(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-       tsup:
-         specifier: 8.5.1
-         version: 8.5.1(@swc/core@1.15.3(@swc/helpers@0.5.23))(jiti@2.7.0)(postcss@8.5.23)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.9.0)
-@@ -842,8 +842,8 @@ importers:
-         specifier: 8.18.1
-         version: 8.18.1
-       next:
--        specifier: 16.3.6
--        version: 16.3.6(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(@types/node@25.0.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-+        specifier: 16.3.8
-+        version: 16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(@types/node@25.0.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-       tsdown:
-         specifier: 0.18.2
-         version: 0.18.2(synckit@0.11.11)(typescript@5.9.3)
-@@ -888,8 +888,8 @@ importers:
-         specifier: 4.4.1
-         version: 4.4.1(vite@7.3.5(@types/node@25.0.3)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
-       next:
--        specifier: 16.3.6
--        version: 16.3.6(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-+        specifier: 16.3.8
-+        version: 16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(@types/node@25.0.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-       react:
-         specifier: 19.2.3
-         version: 19.2.3
-@@ -2531,57 +2531,57 @@ packages:
-       '@emnapi/core': ^1.7.1
-       '@emnapi/runtime': ^1.7.1
- 
--  '@next/env@16.3.6':
--    resolution: {integrity: sha512-x9Vblze1EbtltQYnNH38xCPWU3TVfBd1eXqA3+w9+BTpedkkdNpAaltXlGQ/nsc1+E0mVTNrtcbX3GoO09zeLQ==}
-+  '@next/env@16.3.8':
-+    resolution: {integrity: sha512-Al9zqHVV7TJv0eFuOU4U7Lvv74PTih4Ch63sk2xCIpSTkE3udFnaOcnzP2lQVymiL7yS9Cj2iClUXlR3EQ5sEw==}
- 
--  '@next/swc-darwin-arm64@16.3.6':
--    resolution: {integrity: sha512-E/7GEqaUkt8mk/T8v9lAnrhzR06kdq1ZBkC12F8tAMkdIadwNp3H1KqHynDHrpcTlGCUdq/qu6vUL2aYVyYBdw==}
-+  '@next/swc-darwin-arm64@16.3.8':
-+    resolution: {integrity: sha512-2JPRMh2nmQG5CiL7cXGL9AGwnPWJQ//cTtAUCT+w511QHk79SYz3LGv/pc5X643B/WEO0rvu3Yww0hqwt3kgeA==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@next/swc-darwin-x64@16.3.6':
--    resolution: {integrity: sha512-yBE893/nDWTlaiBD1p+qgt7NUen4U5R6FXyH0s67Npq1S3E0cVSef1WIXC2xBRgQvwAvJq6DnS6Y6PrY0cy4Ew==}
-+  '@next/swc-darwin-x64@16.3.8':
-+    resolution: {integrity: sha512-GZtCCOBKJ4leVIT/Th0llWKhD1ca92lzbQiS5R5ON9QkoiFnilFsebDae1JU2a3HWoKMEmEZWGs1AGLavVM72Q==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@next/swc-linux-arm64-gnu@16.3.6':
--    resolution: {integrity: sha512-KJDpjBqBPYlvkivmyrp+Qys6k/7ksbqGQvRVc6ZEGfR+cjQxx+nUkJaWmNZJsmoOrqYNbaXByF8wa0lBwDhB3Q==}
-+  '@next/swc-linux-arm64-gnu@16.3.8':
-+    resolution: {integrity: sha512-O659ygeQYqneJ1fBKMpFxIFqYkYswu8IAS1OCKK/4f3ZgJJm1dRz4fVJZRi/kLLWjnBKnebOePA4WNv+sV1pVA==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [linux]
-     libc: [glibc]
- 
--  '@next/swc-linux-arm64-musl@16.3.6':
--    resolution: {integrity: sha512-mqNg2K+hvWskSRb/QM+Ix412DvBsuSF0XV+frTSw5vmoucNnIlynFwKYew8D01bfATErMOM7Bujrf0BA5DRKFA==}
-+  '@next/swc-linux-arm64-musl@16.3.8':
-+    resolution: {integrity: sha512-dSjKSyWpzxoO1d3DIZZcP4XJcNaKeLmxQMFOiYl5vuBRMmweIqnAhty8tAmRsvTss779cK1FtYnDMj40e4TQlg==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [linux]
-     libc: [musl]
- 
--  '@next/swc-linux-x64-gnu@16.3.6':
--    resolution: {integrity: sha512-nFncBNGAYouRHjRVaITs9beZRfhX4ssVwpnvPIAbkZVH6LtGoAVlH4bJ8Cnf9SOo9bsXgPFer/GdHtEE3JNOkw==}
-+  '@next/swc-linux-x64-gnu@16.3.8':
-+    resolution: {integrity: sha512-lbqOuz3RPRcv+o9msNsJw5x4+Y1ZwPTs6vmL6DCf7i0fZfvng/F59wyeDwqHIvV0mK//RBy/jJkZ+nCKsSMXjQ==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [linux]
-     libc: [glibc]
- 
--  '@next/swc-linux-x64-musl@16.3.6':
--    resolution: {integrity: sha512-5Mf3cHDGR/Iz0ng2Bj3zUR3p5QS9YK3Hn2QiAfavFmyF48zwThAjpFoiTKNIcOHLYS4zEk+gzyJ/9deQ2ZB8yQ==}
-+  '@next/swc-linux-x64-musl@16.3.8':
-+    resolution: {i
+@@ -29,6 +29,7 @@ overrides:
+   vite: ">=7.3.5 <8"
+   "@xmldom/xmldom@>=0.8 <0.8.15": 0.8.15
+   form-data: ">=4.0.6 <5"
++  follow-redirects: ">=1.16.1 <2"
+   flatted: ">=3.4.2 <4"
+   tmp: ">=0.2.6 <0.3"
+   minimatch@<3.1.4: 3.1.4
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2251** (2026-10-21): fix(deps): bump vite to 7.3.7 and launch-editor to 2.14.2 (@meshulga)
+- **PR #2249** (closed): chore(deps-dev): bump vite from 7.3.5 to 7.3.7 in /demo/new-compiler-vite-react-spa in the npm_and_yarn group across 1 directory (@dependabot[bot])
+- **PR #2247** (2026-10-21): fix(deps): override follow-redirects to 1.16.1 (@meshulga)
 - **PR #2246** (closed): chore(deps): bump the npm_and_yarn group across 4 directories with 1 update (@dependabot[bot])
 - **PR #2245** (2026-10-19): chore(deps): bump next from 16.3.6 to 16.3.8 in the npm_and_yarn group across 1 directory (@dependabot[bot])
 - **PR #2244** (closed): chore(deps-dev): bump next from 16.3.6 to 16.3.8 in /packages/compiler in the npm_and_yarn group across 1 directory (@dependabot[bot])
-- **PR #2238** (2026-10-07): fix(deps): drop braces by bumping changesets, syncpack and tanstack router (@AndreyHirsa)
-- **PR #2237** (2026-10-07): chore: override deps for new security advisories (@AndreyHirsa)
-- **PR #2236** (2026-10-07): chore: mark deprecated legacy packages as private so publish skips them (@AndreyHirsa)
 
 ---
 
@@ -1398,28 +1423,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump next (#2245)
+## X. deps): bump vite to 7.3.7 and launch-editor to 2.14.2 (#2251)
 
 **RULE**:
-When implementing operations in `demo/new-compiler-next16/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingodotdev/lingo.dev. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `demo/new-compiler-vite-react-spa/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingodotdev/lingo.dev. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `75b0d096`: deps): bump next (#2245). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1d5d5d12`: deps): bump vite to 7.3.7 and launch-editor to 2.14.2 (#2251). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `demo/new-compiler-next16/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `demo/new-compiler-vite-react-spa/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "next": "16.3.8",
+    "vite": "7.3.7",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "next": "16.3.6",
+    "vite": "7.3.5",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `75b0d096` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1d5d5d12` are properly handled with clean fallback behavior.

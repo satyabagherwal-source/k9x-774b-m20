@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T05:46:16.080Z",
-  "total_cycles_completed": 4669,
-  "total_learnings_persisted": 4669,
-  "total_rules_promoted": 3955,
+  "last_updated": "2026-10-25T05:52:38.069Z",
+  "total_cycles_completed": 4674,
+  "total_learnings_persisted": 4674,
+  "total_rules_promoted": 3958,
   "history": [
-    {
-      "timestamp": "2026-10-23T07:39:40.749Z",
-      "repository": "react-hook-form/react-hook-form",
-      "learningId": "learn-github-react-hook-form-react-hook-form",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T07:39:45.979Z",
-      "repository": "vitest-dev/vitest",
-      "learningId": "learn-github-vitest-dev-vitest",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T08:03:59.748Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T08:10:06.948Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T08:22:52.019Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T08:23:29.478Z",
       "repository": "mattermost/mattermost",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-25T05:46:16.080Z",
       "repository": "genkit-ai/genkit",
       "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:52:29.538Z",
+      "repository": "elastic/eui",
+      "learningId": "learn-github-elastic-eui",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:52:29.696Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:52:31.598Z",
+      "repository": "biomejs/biome",
+      "learningId": "learn-github-biomejs-biome",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:52:35.547Z",
+      "repository": "lingodotdev/lingo.dev",
+      "learningId": "learn-github-lingodotdev-lingo-dev",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:52:38.069Z",
+      "repository": "alexellis/k3sup",
+      "learningId": "learn-github-alexellis-k3sup",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

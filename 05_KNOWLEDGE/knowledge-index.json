@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T05:46:16.027Z",
+  "last_updated": "2026-10-25T05:52:37.998Z",
   "total_verified_learnings": 1082,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1226,17 +1226,23 @@
       "slug": "alexellis-k3sup",
       "platform": "github",
       "source_url": "https://github.com/alexellis/k3sup",
-      "source_version": "2fa773c9",
-      "content_hash": "3d7437311c9bc96e680395bec9f71e811dd97ce7fe8c5e91967e645be14efadc",
+      "source_version": "07ee3911",
+      "content_hash": "c70fbce74dca37ab64262cfcf709cd9729d44aae7732c5bd25ab2b5aaaec3f2e",
       "dossier_path": "07_PROJECT_LEARNING/alexellis-k3sup-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alexellis-k3sup-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": "EXISTING",
+          "title": "Update Go dependencies",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:32:39.323Z",
+      "verified_at": "2026-10-25T05:52:37.986Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4143,8 +4149,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "e83e08a9",
-      "content_hash": "e66303c1b25e3a685e16dcc7e4309474d10a36e34b3abfe071b35e6e99750f7c",
+      "source_version": "260fbc13",
+      "content_hash": "030116ca2e52e3997df97c0e04cafe0c64680f533b598b9a00566d32eca14eff",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -4167,6 +4173,11 @@
           "number": 3619,
           "title": "format/js): keep parens around an instantiation expression before `!` and herita",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4086,
+          "title": "format/md): preserve newline between block quote and list (#12662)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4174,7 +4185,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:56:51.542Z",
+      "verified_at": "2026-10-25T05:52:31.501Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9452,8 +9463,8 @@
       "slug": "elastic-eui",
       "platform": "github",
       "source_url": "https://github.com/elastic/eui",
-      "source_version": "8cdf5a58",
-      "content_hash": "e56f4d2eade9c347148aa497e0070c5cbe54dea4d3fb7cd9927bde5ef8602cb5",
+      "source_version": "1d4161ec",
+      "content_hash": "d3f794986f25e0c6d94d27772c65d9d759372e9950a17be2d59907ab2fcdcac2",
       "dossier_path": "07_PROJECT_LEARNING/elastic-eui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/elastic-eui-learnings.md",
       "promoted_rules": [
@@ -9483,7 +9494,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:03:13.977Z",
+      "verified_at": "2026-10-25T05:52:29.430Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14261,7 +14272,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "12b8a47994a9a84d8ea63051e22c7adce249c1c1ac409f694ea1ab029cfc4764",
+      "content_hash": "bde7af3085bc2dbef40994bba81b601141507b3405f6fb3dc1ffb202b160e73f",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -14631,7 +14642,7 @@
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv42kq8l",
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho"
       ],
-      "verified_at": "2026-10-20T13:53:45.411Z",
+      "verified_at": "2026-10-25T05:52:29.623Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31563,8 +31574,8 @@
       "slug": "lingodotdev-lingo.dev",
       "platform": "github",
       "source_url": "https://github.com/lingodotdev/lingo.dev",
-      "source_version": "75b0d096",
-      "content_hash": "e2bdff160f4b6abbe25f6647ed0aed73dae73f0054ee4f8c0e0bf786c44690f6",
+      "source_version": "1d5d5d12",
+      "content_hash": "1107f803b609869c939bd34fac715b1647ed6c5e18ffdd127a880fae726d5174",
       "dossier_path": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
       "promoted_rules": [
@@ -31577,6 +31588,11 @@
           "number": 3255,
           "title": "deps): bump next (#2245)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4087,
+          "title": "deps): bump vite to 7.3.7 and launch-editor to 2.14.2 (#2251)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31584,7 +31600,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:15:07.123Z",
+      "verified_at": "2026-10-25T05:52:35.469Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -118901,6 +118917,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T05:46:16.017Z"
+    },
+    "rule-4086": {
+      "learning_id": "rule-4086",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4086,
+      "title": "format/md): preserve newline between block quote and list (#12662)",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "260fbc13",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:52:31.501Z"
+    },
+    "rule-4087": {
+      "learning_id": "rule-4087",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4087,
+      "title": "deps): bump vite to 7.3.7 and launch-editor to 2.14.2 (#2251)",
+      "source_url": "https://github.com/lingodotdev/lingo.dev",
+      "source_version": "1d5d5d12",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:52:35.469Z"
     }
   },
   "aliases": {

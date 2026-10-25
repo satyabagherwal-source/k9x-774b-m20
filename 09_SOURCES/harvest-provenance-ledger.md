@@ -4699,3 +4699,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-25T05:46:03.022Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `157caa55` | Multi-dimensional audit evidence | 2026-10-25T05:46:04.447Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `3d67720d` | Multi-dimensional audit evidence | 2026-10-25T05:46:16.072Z |
+| `learn-github-elastic-eui` | `https://github.com/elastic/eui` | `1d4161ec` | Multi-dimensional audit evidence | 2026-10-25T05:52:29.532Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-25T05:52:29.691Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `260fbc13` | Multi-dimensional audit evidence | 2026-10-25T05:52:31.588Z |
+| `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `1d5d5d12` | Multi-dimensional audit evidence | 2026-10-25T05:52:35.537Z |
+| `learn-github-alexellis-k3sup` | `https://github.com/alexellis/k3sup` | `07ee3911` | Multi-dimensional audit evidence | 2026-10-25T05:52:38.057Z |

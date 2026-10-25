@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/elastic-eui-learnings.md`  
 > **Source**: github ([https://github.com/elastic/eui](https://github.com/elastic/eui))  
-> **Source Version**: `8cdf5a58`  
+> **Source Version**: `1d4161ec`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T19:03:13.678Z  
+> **Timestamp**: 2026-10-25T05:52:29.333Z  
 > **Learning ID**: `learn-github-elastic-eui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/elastic-eui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/elastic/eui](https://github.com/elastic/eui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T19:03:12.531Z  
+> **Harvest Timestamp**: 2026-10-25T05:52:28.280Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Elastic UI Framework 🙌
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6374 stars
+- **Stars / Engagement**: 6375 stars
 
 ---
 
@@ -611,17 +611,14 @@ export function hasA11yPropForComponent(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10230** (2026-10-22): **[Chore] Add Kibana prep commit for the EuiSideNav selectors**
-  *Symptoms*: Registers https://github.com/elastic/kibana/pull/299589 under `@next`. It replaces the raw `.euiSideNavItem` and `.euiSideNavItemButton__label` classes that `scout_no_raw_eui_selectors` will flag once #10229 ships. Merge this before or together with #10229.
-  **Post-Mortem & Fix Analysis**:
-  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-deploy-docs/builds/5928) * Commit: e0f70272847d2b97ab858100b5098d45825677eb * [Documentation website](https://eui.elastic.co/pr_10230/) * [Storybook](https://eui.elastic.co/pr_10230/storybook/) * :no_entry_sign: Visual regression tests skipped: No VRT-relevant paths changed   <!--buildkite-pr-comment-eui-deploy-docs {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-deploy-docs/builds/5928","number":5928,"commit":"e0f70272847d2b97ab858100b5098d45825677eb"}],"number":5928} buildkite-pr-comment-->
-  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-pull-request-test-and-deploy/builds/8301) * Commit: e0f70272847d2b97ab858100b5098d45825677eb  <!--buildkite-pr-comment-eui-pull-request-test-and-deploy {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-pull-request-test-and-deploy/builds/8301","number":8301,"commit":"e0f70272847d2b97ab858100b5098d45825677eb"}],"number":8301} buildkite-pr-comment-->
+- **Issue #10238** (2026-10-23): **[Dependencies] Bump vulnerable dev dependencies within existing ranges**
+  *Symptoms*: ## Summary  Lockfile-only bump of dev and tooling dependencies that have published security fixes within the ranges we already declare. No `package.json` changes, nothing in the published `@elastic/eui` runtime dependencies.  | Package | From | To | Pulled in by | | --- | --- | --- | --- | | vite | 7.3.6 | 7.3.7 | `@elastic/eui` devDep (Storybook) | | launch-editor | 2.6.1 | 2.14.2 | `webpack-dev-server` | | follow-redirects | 1.15.3, 1.15.6, 1.16.0 | 1.16.1 | `axios` (`wait-on`, `@storybook/test-runner`) | | markdown-it | 14.1.0 | 14.3.3 | `typedoc` | | undici | 6.21.1 | 6.29.1 | `@elastic/elasticsearch` (`eui-usage-analytics`) | | socks / ip-address | 2.7.1, 2.8.3 / 9.0.5 | 2.8.10 / 10.7.4 | `node-gyp` and `sigstore` tooling | | terser-webpack-plugin | 5.3.5, 5.3.10, 5.3.14 | 5.6.1 | `webpack` (Docusaurus); drops its `serialize-javascript` dependency | | express / body-parser / qs | 4.18.2 / 1.20.1 / 6.11.0, 6.15.2 | 4.22.3 / 1.20.9 / 6.16.1 | `webpack-dev-server`, `http-server` | | ws | 7.5.9 / 8.14.2, 8.17.0, 8.21.1 | 7.5.13 / 8.22.0 | `webpack-dev-server`, `webpack-bundle-analyzer`, `jsdom`, Storybook | | nanoid | 3.3.4, 3.3.6, 3.3.7, 3.3.16 | 3.3.20 | `postcss` | | postcss-selector-parser | 6.0.10, 6.0.13, 6.1.0 / 7.1.0 | 6.1.5 / 7.1.7 | `cssnano`, `css-loader`, `stylelint`, `postcss-preset-env` plugins |  Some copies can't be fixed without a major bump and are left as is: `qs@6.10.4` (Cypress), `serialize-javascript` 6.0.x (Docusaurus' `copy-webpack-plugin` and `css-mi
 
-- **Issue #10229** (2026-10-22): **[test-helpers] Add EuiSideNavObject**
-  *Symptoms*: ## Summary  Adds `EuiSideNavObject`. About 13 references to `euiSideNav` classes exist in Kibana Scout and FTR tests as hand written selectors.  - Guard `.euiSideNav`, items addressed by exact label. - `getItems()`, `item(label)`, `select(label)`, `getSelected()`, `expand(label)` for accordion items. Closed branches are not in the DOM, so `expand` first.  ## Kibana prep  Publishing `.euiSideNavItem` and `.euiSideNavItemButton__label` makes Kibana's `scout_no_raw_eui_selectors` flag two existing files. The prep commit will be linked here and registered in `kibana-prep-commits` before this merges.  ## QA  - 6 specs pass against Storybook. - `tsc` clean.
+- **Issue #10236** (2026-10-23): **[CI] Bump Node.js to 24.22.1**
+  *Symptoms*: ## Summary  Bumps Node.js from 24.19.0 to 24.22.1, the [October 2026 Node.js security release](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases) (CVE-2026-111497, CVE-2026-106069, CVE-2026-105481, CVE-2026-106072, CVE-2026-106073, CVE-2026-106074).  - `.nvmrc` - CI Docker image base in `packages/eui/scripts/docker-ci/Dockerfile` - `DOCKER_BASE_IMAGE` in `.buildkite/scripts/lifecycle/pre_command.sh`: `eui/ci:6.7` → `eui/ci:6.8`  `docker.elastic.co/eui/ci:6.8` is already built from this Dockerfile and published (Node v24.22.1, linux/amd64). After merge, the CI VM image needs a rebuild from the new `.nvmrc` via the `ci-vm-images` pipeline.  Locally on Node 24.22.1, `yarn workspace @elastic/eui run build` and Storybook startup run with no errors or Node deprecation warnings.  Only dev and CI tooling is affected. Nothing changes in the published packages.  ### API Changes  None.  ## Impact Assessment  **Impact level:** 🟢 None  ## Release Readiness  - [ ] ~~**Documentation**~~ - [ ] ~~**Figma**~~ - [ ] ~~**Migration guide**~~ - [ ] ~~**Adoption plan**~~  ### QA instructions for reviewer  - [x] `docker manifest inspect docker.elastic.co/eui/ci:6.8` shows `linux/amd64`. - [ ] CI passes on the new image. 
   **Post-Mortem & Fix Analysis**:
-  > Kibana prep commit: https://github.com/elastic/kibana/pull/299589. Registration in `kibana-prep-commits` is in a separate PR, merge that one first.
-  > Thanks @Dosant I though I had merged this PR but it turns out I didn't 😅 I included the pre commit here in this one 👍 
+  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-pull-request-test-and-deploy/builds/8324) * Commit: f5a3606fb1e64311b9842d176587363e58624834  <!--buildkite-pr-comment-eui-pull-request-test-and-deploy {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-pull-request-test-and-deploy/builds/8324","number":8324,"commit":"f5a3606fb1e64311b9842d176587363e58624834"}],"number":8324} buildkite-pr-comment-->
+  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-deploy-docs/builds/5954) * Commit: f5a3606fb1e64311b9842d176587363e58624834 * [Documentation website](https://eui.elastic.co/pr_10236/) * [Storybook](https://eui.elastic.co/pr_10236/storybook/) * :white_check_mark: Visual regression tests passed   <!--buildkite-pr-comment-eui-deploy-docs {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-deploy-docs/builds/5954","number":5954,"commit":"f5a3606fb1e64311b9842d176587363e58624834"}],"number":5954} buildkite-pr-comment-->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -638,8 +635,27 @@ export function hasA11yPropForComponent(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8cdf5a58` (2026-10-22)
-**Commit Message**: [test-helpers] Add EuiSideNavObject (#10229)
+### Incident Patch 1: `05ac983e` (2026-10-23)
+**Commit Message**: fix(ci): remove invalid queue: max from Kibana dependencies workflow concurrency (#10231)
+
+Co-authored-by: Claude Sonnet 5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/update_kibana_dependencies__open_pr.yml` (modified, +0/-1)
+```diff
+@@ -43,7 +43,6 @@ concurrency:
+   # A newer run for the same source PR supersedes the older run and reports
+   # status for the latest commits.
+   cancel-in-progress: ${{ !!inputs.source_pr_number }}
+-  queue: max
+ permissions:
+   contents: read
+   id-token: write
+```
+
+---
+
+### Incident Patch 2: `af925019` (2026-10-23)
+**Commit Message**: [test-helpers] Add EuiCallOutObject (#10234)
 
 **File**: `packages/release-cli/kibana-prep-commits` (modified, +1/-0)
 ```diff
@@ -647,69 +663,67 @@ Observed empirical fixes and code patches:
  # Nightly cherry-picks both sections, skipping commits that are missing or already applied.
  
  # @next
-+https://github.com/elastic/kibana/pull/299589/commits/f23a90a18b48b9d5d6aca0078fdfe983e46a8633
++https://github.com/elastic/kibana/pull/299882/commits/ced5b8fc0de17b394f574d3b3800eddbc5ccb1f0
+ https://github.com/elastic/kibana/pull/299589/commits/f23a90a18b48b9d5d6aca0078fdfe983e46a8633
  https://github.com/elastic/kibana/pull/299489/commits/7b13b631bb435fd4b8a244978e7afa11f6391bac
  
- # @previous
 ```
 
 **File**: `packages/test-helpers/README.md` (modified, +1/-0)
 ```diff
-@@ -51,6 +51,7 @@ their own version at runtime.
- | `EuiSuperSelectObject` | [src/components/form/super_select/README.md](src/components/form/super_select/README.md) |
- | `EuiGlobalToastListObject` | [src/components/toast/README.md](src/components/toast/README.md) |
- | `EuiSelectableObject` | [src/components/selectable/README.md](src/components/selectable/README.md) |
-+| `EuiSideNavObject` | [src/components/side_nav/README.md](src/components/side_nav/README.md) |
- | `EuiDraggableObject` | [src/components/drag_and_drop/README.md](src/components/drag_and_drop/README.md) |
- | `EuiFilterButtonObject` | [src/components/filter_button/README.md](src/components/filter_button/README.md) |
- | `EuiRangeObject` | [src/components/form/range/README.md](src/components/form/range/README.md) |
+@@ -65,6 +65,7 @@ their own version at runtime.
+ | `EuiTableObject` | [src/components/table/README.md](src/components/table/README.md) |
+ | `EuiPaginationObject` | [src/components/pagination/README.md](src/components/pagination/README.md) |
+ | `EuiBasicTableObject` | [src/components/basic_table/README.md](src/components/basic_table/README.md) |
++| `EuiCallOutObject` | [src/components/call_out/README.md](src/components/call_out/README.md) |
+ | `EuiColorPickerObject` | [src/components/color_picker/README.md](src/components/color_picker/README.md) |
+ | `EuiTreeViewObject` | [src/components/tree_view/README.md](src/components/tree_view/README.md) |
+ | `EuiToolTipObject` | [src/components/tool_tip/README.md](src/components/tool_tip/README.md) |
 ```
 
-**File**: `packages/test-helpers/changelogs/upcoming/10229.md` (added, +1/-0)
+**File**: `packages/test-helpers/changelogs/upcoming/10234.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+- Added `EuiSideNavObject` with `getItems()`, `item(label)`, `select(label)`, `getSelected()` and `expand(label)`
++- Added `EuiCallOutObject` with `getTitle()`, `getText()`, `getColor()`, `dismissButton` and `dismiss()`
 ```
 
-**File**: `packages/test-helpers/src/components/side_nav/README.md` (added, +31/-0)
+**File**: `packages/test-helpers/src/components/call_out/README.md` (added, +29/-0)
 ```diff
-@@ -0,0 +1,31 @@
-+# EuiSideNavObject
+@@ -0,0 +1,29 @@
++# EuiCallOutObject
 +
-+Playwright Component Object for [EuiSideNav](https://eui.elastic.co/docs/components/navigation/side-nav/).
++Playwright Component Object for [EuiCallOut](https://eui.elastic.co/docs/components/display/callout/).
 +
 +## Usage
 +
 +```ts
-+import { EuiSideNavObject } from '@elastic/eui-test-helpers';
++import { EuiCallOutObject } from '@elastic/eui-test-helpers';
 +
-+const sideNav = new EuiSideNavObject(page, 'mySideNav');
-+await sideNav.expand('Data');
-+await sideNav.select('Index Management');
++const callOut = new EuiCallOutObject(page, 'myCallOut');
++expect(await callOut.getColor()).toBe('warning');
++expect(await callOut.getTitle()).toBe('Index is read only');
 +```
 +
-+Set `data-test-subj` on `<EuiSideNav>`. EUI spreads it onto the `<nav>`, which the component-type guard verifies. Items are addressed by their exact label.
++Set `data-test-subj` on `<EuiCallOut>`. EUI puts it on the panel root and derives `<subj>__message`, `<subj>__content` and `<subj>__actions` for the inner blocks. The root lookup matches whole tokens, so those derived values are not mistaken for the root.
 +
 +## API
 +
 +| Member | Description |
 +|---|---|
-+| `getItems()` | The labels of every rendered item, in document order. |
-+| `item(label)` | `Locator` for the clickable element of the item with exactly this label. |
-+| `select(label)` | Click the item. Selection is owned by the consumer, usually a route change, so nothing is asserted afterwards. |
-+| `getSelected()` | The label of the selected item, or `null`. |
-+| `expand(label)` | Expand an accordion item (children, no link or click handler) and wait for its children. No-op if already open. |
-+
-+Closed branches are not in the DOM at all, so `item()` and `getItems()` only see what is rendered. Expand the parent first.
++| `getTitle()` | The title text, or an empty string without a `title`. |
++| `getText()` | The `text` block, or an empty string without a `text`. |
++| `getColor()` | The color variant read from the root class: `primary`, `success`, `warning` or `danger`. |
++| `dismissButton` | `Locator` for the dismiss button, found by its test subj or its cross icon so a `dismissButtonProps` test subj override still works. Zero elements without `onDismiss`. |
++| `dismiss()` | Click the dismiss button. What follows is the consumer's `onDismiss`, nothing is asserted. |
 +
 +## Deliberately excluded
 +
-+The mobile toggle (`isOpenOnMobile`), the responsive variant is a Kibana layout concern. Custom `renderItem` output is supported only as far as it keeps EUI's item classes.
++Custom `children` and `actions` are consumer content, use `locator` to reach them. The `announceOnMount` live region renders a second, off-screen copy of the content under `role="status"`, it is outside the root and does not affect this object.
 ```
 
-**File**: `packages/test-helpers/src/components/side_nav/selectors.ts` (added, +35/-0)
+**File**: `packages/test-helpers/src/components/call_out/selectors.ts` (added, +36/-0)
 ```diff
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,36 @@
 +/*
 + * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
 + * or more contributor license agreements. Licensed under the Elastic License
@@ -720,48 +734,49 @@ Observed empirical fixes and code patches:
 +
 +/**
 + * Stable selectors for
-+ * {@link https://eui.elastic.co/docs/components/navigation/side-nav/|EuiSideNav}.
-+ * `*_SELECTOR` values are CSS.
++ * {@link https://eui.elastic.co/docs/components/display/callout/|EuiCallOut}.
++ * `*_SELECTOR` values are CSS, `*_TEST_SUBJ` values are `data-test-subj` names EUI sets itself.
 + */
-+export const EuiSideNavSelectors = {
-+  /** The `<nav>` root carrying the consumer's `data-test-subj`. */
-+  ROOT_SELECTOR: '.euiSideNav',
++export const EuiCallOutSelectors = {
++  /** The panel root carrying the consumer's `data-test-subj`. */
++  ROOT_SELECTOR: '.euiCallOut',
 +
-+  /** An item wrapper at any depth. Closed branches are not rendered at all. */
-+  ITEM_SELECTOR: '.euiSideNavItem',
++  /** The title element, rendered only with a `title`. */
++  TITLE_SELECTOR: '.euiCallOutHeader__title',
 +
-+  /** The clickable part of an item, an `<a>`, `<button>` or `<div>` depending on its props. */
-+  ITEM_BUTTON_SELECTOR: '.euiSideNavItemButton',
++  /** The `text` block, rendered only with a `text`. */
++  TEXT_SELECTOR: '.euiCallOut__text',
 +
-+  /** The item button of the selected item. */
-+  SELECTED_ITEM_BUTTON_SELECTOR: '.euiSideNavItemButton-isSelected',
++  /** Prefix of the root class that carries the color, e.g. `euiCallOut--warning`. */
++  COLOR_CLASS_PREFIX: 'euiCallOut--',
 +
-+  /** The item button of an expanded accordion item. */
-+  OPEN_ITEM_BUTTON_SELECTOR: '.euiSideNavItemButton-isOpen',
++  /** The dismiss button, rendered only with `onDismiss`. */
++  DISMISS_BUTTON_TEST_SUBJ: 'euiDismissCalloutButton',
 +
-+  /** The text label inside an item button. */
-+  ITEM_LABEL_SELECTOR: '.euiSideNavItemButton__label',
-+
-+  /** The container of an item's child items, rendered only while open. */
-+  CHILD_ITEMS_SELECTOR: '.euiSideNavItem__items',
++  /**
++   * The dismiss button by its test subj, or by its cross icon when
++   * `dismissButtonProps` replaced the test subj.
++   */
++  DISMISS_BUTTON_SELECTOR:
++    '[data-test-subj="euiDismissCalloutButton"], button:has([data-icon-type="cross"])',
 +};
 ```
 
 **File**: `packages/test-helpers/src/index.ts` (modified, +1/-0)
 ```diff
-@@ -12,6 +12,7 @@ export { EuiDataGridObject } from './playwright/components/datagrid/object';
- export { EuiSuperSelectObject } from './playwright/components/form/super_select/object';
- export { EuiGlobalToastListObject } from './playwright/components/toast/object';
- export { EuiSelectableObject } from './playwright/components/selectable/object';
-+export { EuiSideNavObject } from './playwright/components/side_nav/object';
- export { EuiDraggableObject } from './playwright/components/drag_and_drop/object';
- export { EuiFilterButtonObject } from './playwright/components/filter_button/object';
- export { EuiRangeObject } from './playwright/components/form/range/object';
+@@ -26,6 +26,7 @@ export { EuiModalObject } from './playwright/components/modal/object';
+ export { EuiTableObject } from './playwright/components/table/object';
+ export { EuiPaginationObject } from './playwright/components/pagination/object';
+ export { EuiBasicTableObject } from './playwright/components/basic_table/object';
++export { EuiCallOutObject } from './playwright/components/call_out/object';
+ export { EuiColorPickerObject } from './playwright/components/color_picker/object';
+ export { EuiTreeViewObject } from './playwright/components/tree_view/object';
+ export { EuiToolTipObject } from './playwright/components/tool_tip/object';
 ```
 
-**File**: `packages/test-helpers/src/playwright/components/side_nav/object.spec.ts` (added, +86/-0)
+**File**: `packages/test-helpers/src/playwright/components/call_out/object.props.spec.ts` (added, +43/-0)
 ```diff
-@@ -0,0 +1,86 @@
+@@ -0,0 +1,43 @@
 +/*
 + * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
 + * or more contributor license agreements. Licensed under the Elastic License
@@ -772,85 +787,42 @@ Observed empirical fixes and code patches:
 +
 +import { test, expect } from '@playwright/test';
 +
-+import { EuiSideNavObject } from './object';
++import { EuiCallOutObject } from './object';
 +import { storyUrl } from '../../../storybook';
 +
 +/**
-+ * Validates `EuiSideNavObject` against the live component in EUI Storybook.
-+ * The Playground story has four root items. "Trunk 1" is an accordion item
-+ * that starts closed, and a deep branch under "Trunk 2" is selected.
++ * Validates `EuiCallOutObject` against a dismissible call out. The Playground
++ * story's `onDismiss` toggle logs the callback instead of unmounting, so the
++ * click itself is the observable outcome.
 + */
 +
-+const TEST_SUBJ = 'testSideNav';
++const TEST_SUBJ = 'testCallOut';
 +
-+const PLAYGROUND_URL = storyUrl(
-+  'navigation-euisidenav--playground',
-+  `data-test-subj:${TEST_SUBJ}`
-+);
-+
-+test.describe('EuiSideNavObject', () => {
-+  let sideNav: EuiSideNavObject;
++test.describe('EuiCallOutObject (onDismiss)', () => {
++  let callOut: EuiCallOutObject;
 +
 +  test.beforeEach(async ({ page }) => {
-+    await page.goto(PLAYGROUND_URL);
-+    sideNav = new EuiSideNavObject(page, TEST_SUBJ);
-+    await sideNav.locator.waitFor({ state: 'visible' });
++    await page.goto(
++      storyUrl(
++        'display-euicallout--playground',
++        `data-test-subj:${TEST_SUBJ};onDismiss:!true`
++      )
++    );
++    callOut = new EuiCallOutObject(page, TEST_SUBJ);
++    await callOut.locator.waitFor({ state: 'visible' });
 +  });
 +
-+  test.describe('getItems', () => {
-+    test('lists rendered items only, closed branches are absent', async () => {
-+      const items = await sideNav.getItems();
++  test('exposes the dismiss button and clicks it', async () => {
++    await expect(callOut.dismissButton).toBeVisible();
 +
-+      expect(items).toContain('Root item with carets');
-+      expect(items).toContain('Trunk 1');
-+      expect(items).not.toContain('Emphasized branch');
-+    });
-+  });
++    await callOut.dismiss();
 +
-+  test.describe('item', () => {
-+    test('matches the exact label, not a label that contains it', async () => {
-+      await expect(sideNav.item('Trunk 2')).toHaveCount(1);
-+      await expect(sideNav.item('Trunk')).toHaveCount(0);
-+    });
-+  });
-+
-+  test.describe('getSelected', () => {
-+    test('reads the selected item', async () => {
-+      expect(await sideNav.getSelected()).toBe(
-+        'All parents are open because this branch is selected'
-+      );
-+    });
-+  });
-+
-+  test.describe('expand', () => {
-+    test('opens an accordion item and renders its children', async () => {
-+      await sideNav.expand('Trunk 1');
-+
-+      await expect(sideNav.item('Emphasized branch')).toBeVisible();
-+    });
-+
-+    test('is a no-op on an open item', async () => {
-+      await sideNav.expand('Trunk 1');
-+      await sideNav.expand('Trunk 1');
-+
-+      await expect(sideNav.item('Emphasized branch')).toBeVisible();
-+    });
-+  });
-+
-+  test.describe('select', () => {
-+    test('clicks the item', async () => {
-+      await sideNav.expand('Trunk 1');
-+      await sideNav.expand('Emphasized branch');
-+
-+      await sideNav.select('Yet another branch');
-+
-+      await expect(sideNav.item('Yet another branch')).toBeFocused();
-+    });
++    await expect(callOut.dismissButton).toBeFocused();
 +  });
 +});
 ```
 
-**File**: `packages/test-helpers/src/playwright/components/side_nav/object.ts` (added, +91/-0)
+**File**: `packages/test-helpers/src/playwright/components/call_out/object.spec.ts` (added, +91/-0)
 ```diff
 @@ -0,0 +1,91 @@
 +/*
@@ -861,139 +833,267 @@ Observed empirical fixes and code patches:
 + * Side Public License, v 1.
 + */
 +
-+import { expect, type Locator } from '@playwright/test';
++import { test, expect } from '@playwright/test';
 +
-+import { BaseObject, type ObjectScope } from '../../base_object';
-+import { EuiSideNavSelectors } from '../../../components/side_nav/selectors';
++import { EuiCallOutObject } from './object';
++import { storyUrl } from '../../../storybook';
 +
 +/**
-+ * Playwright Component Object for {@link
-+ * https://eui.elastic.co/docs/components/navigation/side-nav/ EuiSideNav}.
-+ *
-+ * `testSubj` must be set on `EuiSideNav` itself, EUI spreads it onto the
-+ * `<nav>`. Items are addressed by their exact label. Closed branches are
-+ * not in the DOM, expand their parent first.
++ * Validates `EuiCallOutObject` against the live component in EUI Storybook.
++ * The Playground story has a title and text and no dismiss button.
 + */
-+export class EuiSideNavObject extends BaseObject {
-+  constructor(scope: ObjectScope, testSubj: string) {
-+    super(scope, testSubj, EuiSideNavSelectors.ROOT_SELECTOR);
-+  }
 +
-+  /** The labels of every rendered item, in document order. */
-+  async getItems(): Promise<string[]> {
-+    return this.root
-+      .locator(EuiSideNavSelectors.ITEM_LABEL_SELECTOR)
-+      .allInnerTexts();
-+  }
++const TEST_SUBJ = 'testCallOut';
 +
-+  /**
-+   * The clickable element of the item with exactly this label. Matches the
-+   * label span, so icon text does not interfere, then climbs to its button.
-+   * Chained from `root`, so it stays in the root's frame.
-+   */
-+  item(label: string): Locator {
-+    return this.root
-+      .locator(EuiSideNavSelectors.ITEM_LABEL_SELECTOR)
-+      .filter({ hasText: new RegExp(`^${escapeRegExp(label)}$`) })
-+      .locator(ITEM_BUTTON_ANCESTOR_XPATH);
-+  }
++const STORY_ID = 'display-euicallout--playground';
 +
-+  /**
-+   * Click the item with this label. Selection is owned by the consumer
-+   * (usually a route change), so nothing is asserted afterwards.
-+   */
-+  async select(label: string): Promise<void> {
-+    await this.item(label).click();
-+  }
++test.describe('EuiCallOutObject', () => {
++  let callOut: EuiCallOutObject;
 +
-+  /** The label of the selected item, or null when none is selected. */
-+  async getSelected(): Promise<string | null> {
-+    const selected = this.root
-+      .locator(EuiSideNavSelectors.SELECTED_ITEM_BUTTON_SELECTOR)
-+      .locator(EuiSideNavSelectors.ITEM_LABEL_SELECTOR);
-+    if ((await selected.count()) === 0) {
-+      return null;
-+    }
-+    return selected.first().innerText();
-+  }
++  test.beforeEach(async ({ page }) => {
++    await page.goto(storyUrl(STORY_ID, `data-test-subj:${TEST_SUBJ}`));
++    callOut = new EuiCallOutObject(page, TEST_SUBJ);
++    await callOut.locator.waitFor({ state: 'visible' });
++  });
 +
-+  /**
-+   * Expand an accordion item (one with children and no link or click
-+   * handler) and wait for its children to render. A no-op if already open.
-+   */
-+  async expand(label: string): Promise<void> {
-+    const button = this.item(label);
-+    if (await this.isOpen(button)) {
-+      return;
-+    }
-+    await button.click();
-+    await expect.poll(() => this.isOpen(button)).toBe(true);
-+  }
++  test('resolves the root, not the derived inner blocks', async () => {
++    await expect(callOut.locator).toHaveCount(1);
++    await expect(callOut.locator).toHaveAttribute('data-test-subj', TEST_SUBJ);
++  });
 +
-+  private isOpen(button: Locator): Promise<boolean> {
-+    return button.evaluate(
-+      (el, openClass) => el.matches(openClass),
-+      EuiSideNavSelectors.OPEN_ITEM_BUTTON_SELECTOR
-+    );
-+  }
-+}
++  test('reads the panel when a shared token also matches a derived block', async ({
++    page,
++  }) => {
++    // `notice shared__message` still carries the `notice` token.
++    await page.goto(storyUrl(STORY_ID, 'data-test-subj:notice%20shared'));
++    const shared = new EuiCallOutObject(page, 'notice');
++    await shared.locator.waitFor({ state: 'visible' });
 +
-+/** Nearest ancestor carrying the exact `euiSideNavItemButton` class token. */
-+const ITEM_BUTTON_ANCESTOR_XPATH =
-+  "xpath=ancestor::*[contains(concat(' ', normalize-space(@class), ' '), ' euiSideNavItemButton ')][1]";
++    await expect(shared.locator).toHaveCount(1);
++    expect(await shared.getColor()).toBe('primary');
++    expect(await shared.getTitle()).toBe('Callout title');
++  });
 +
-+const escapeRegExp = (text: string): string =>
-+  text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
++  test.describe('getTitle and getText', () => {
++    test('read the title and the text block', async () => {
++      expect(await callOut.getTitle()).toBe('Callout title');
++      expect(await callOut.getText()).toBe('A short callout text');
++    });
++
++    test('return an empty string when the text prop is absent', async ({
++      page,
++    }) => {
++      await page.goto(
++        storyUrl(STORY_ID, `data-test-subj:${TEST_SUBJ};text:!undefined`)
++      );
++      const titleOnly = new EuiCallOutObject(page, TEST_SUBJ);
++      await titleOnly.locator.waitFor({ state: 'visible' });
++
++      expect(await titleOnly.getTitle()).toBe('Callout title');
++      expect(await titleOnly.getText()).toBe('');
++    });
++  });
++
++  test.describe('getColor', () => {
++    test('reads the default color', async () => {
++      expect(await callOut.getColor()).toBe('primary');
++    });
++
++    test('reads a non default color', async ({ page }) => {
++      await page.goto(
++        storyUrl(STORY_ID, `data-test-subj:${TEST_SUBJ};color:warning`)
++      );
++      const warning = new EuiCallOutObject(page, TEST_SUBJ);
++      await warning.locator.waitFor({ state: 'visible' });
++
++      expect(await warning.getColor()).toBe('warning');
++    });
++  });
++
++  test.describe('dismissButton', () => {
++    test('is absent without onDismiss', async () => {
++      await expect(callOut.dismissButton).toHaveCount(0);
++    });
++  });
++});
 ```
 
 ---
 
-### Incident Patch 2: `93e83c3a` (2026-10-21)
-**Commit Message**: fix(docs): update list group icon names (#10225)
+### Incident Patch 3: `fde3925a` (2026-10-23)
+**Commit Message**: [test-helpers] Add EuiFieldSearchObject and EuiSearchBarObject (#10222)
 
-**File**: `packages/website/docs/components/display/list-group.mdx` (modified, +2/-2)
+**File**: `packages/eui/src/components/search_bar/search_bar.stories.tsx` (modified, +17/-0)
 ```diff
-@@ -88,12 +88,12 @@ const myContent = [
-   {
-     label: 'Fourth link',
-     href: '#/display/list-group',
--    iconType: 'copyClipboard',
-+    iconType: 'copy',
+@@ -157,3 +157,20 @@ export const Playground: Story = {
+     toolsRight: false as any,
    },
-   {
-     label: 'Fifth link will open in new tab',
-     href: 'http://www.elastic.co',
--    iconType: 'crosshairs',
-+    iconType: 'crosshair',
-     target: '_blank',
-   },
- ];
+ };
++
++export const WithBoxTestSubj: Story = {
++  name: 'With box data-test-subj',
++  parameters: {
++    vrt: {
++      // Same render as the Playground, only adds a test subj for test tooling
++      skip: true,
++    },
++  },
++  args: {
++    ...Playground.args,
++    box: {
++      ...Playground.args?.box,
++      'data-test-subj': 'searchBarBox',
++    },
++  },
++};
 ```
 
----
-
-### Incident Patch 3: `56ce7812` (2026-10-21)
-**Commit Message**: [Chore] Add Kibana prep commit for the EuiTable and EuiFieldSearch selectors (#10227)
-
-**File**: `packages/release-cli/kibana-prep-commits` (modified, +1/-0)
+**File**: `packages/test-helpers/README.md` (modified, +2/-0)
 ```diff
-@@ -8,6 +8,7 @@
- # Nightly cherry-picks both sections, skipping commits that are missing or already applied.
- 
- # @next
-+https://github.com/elastic/kibana/pull/299489/commits/7b13b631bb435fd4b8a244978e7afa11f6391bac
- 
- # @previous
- https://github.com/elastic/kibana/pull/297371/commits/0d43f4812682853c907322054eb99967c18d83df
+@@ -54,6 +54,8 @@ their own version at runtime.
+ | `EuiSideNavObject` | [src/components/side_nav/README.md](src/components/side_nav/README.md) |
+ | `EuiDraggableObject` | [src/components/drag_and_drop/README.md](src/components/drag_and_drop/README.md) |
+ | `EuiFilterButtonObject` | [src/components/filter_button/README.md](src/components/filter_button/README.md) |
++| `EuiFieldSearchObject` | [src/components/form/field_search/README.md](src/components/form/field_search/README.md) |
++| `EuiSearchBarObject` | [src/components/search_bar/README.md](src/components/search_bar/README.md) |
+ | `EuiRangeObject` | [src/components/form/range/README.md](src/components/form/range/README.md) |
+ | `EuiPopoverObject` | [src/components/popover/README.md](src/components/popover/README.md) |
+ | `EuiFlyoutObject` | [src/components/flyout/README.md](src/components/flyout/README.md) |
+```
+
+**File**: `packages/test-helpers/changelogs/upcoming/10222.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++- Added `EuiFieldSearchObject` with `setQuery(text)`, `getQuery()` and `clear()`, and `EuiSearchBarObject` for the same input reached through the search bar `box` prop
+```
+
+**File**: `packages/test-helpers/src/components/form/field_search/README.md` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++# EuiFieldSearchObject
++
++Playwright Component Object for [EuiFieldSearch](https://eui.elastic.co/docs/components/forms/search-and-filter/search/).
++
++## Usage
++
++```ts
++import { EuiFieldSearchObject } from '@elastic/eui-test-helpers';
++
++const search = new EuiFieldSearchObject(page, 'mySearch');
++await search.setQuery('logs');
++expect(await search.getQuery()).toBe('logs');
++```
++
++Set `data-test-subj` on `<EuiFieldSearch>`. EUI spreads it onto the `<input type="search">`, which the component-type guard verifies.
++
++## API
++
++| Member | Description |
++|---|---|
++| `setQuery(text)` | Replace the text and submit it with Enter. Triggers `onSearch` for both the incremental and the plain variant. |
++| `getQuery()` | The current text of the input. |
++| `clear()` | Empty the input and submit, so `onSearch` receives an empty query. |
++
++`clear()` does not use the clear button since it only renders with `isClearable` and a value. Submitting an empty query has the same effect.
++
++## Deliberately excluded
++
++Per keystroke `onSearch` of the incremental variant. `setQuery` fills the text in one go and submits once. Use `locator.pressSequentially()` if a test needs every keystroke.
+```
+
+**File**: `packages/test-helpers/src/components/form/field_search/selectors.ts` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++/*
++ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
++ * or more contributor license agreements. Licensed under the Elastic License
++ * 2.0 and the Server Side Public License, v 1; you may not use this file except
++ * in compliance with, at your election, the Elastic License 2.0 or the Server
++ * Side Public License, v 1.
++ */
++
++/**
++ * Stable selectors for
++ * {@link https://eui.elastic.co/docs/components/forms/search-and-filter/search/|EuiFieldSearch}.
++ * `*_SELECTOR` values are CSS, `*_TEST_SUBJ` values are `data-test-subj` names EUI sets itself.
++ */
++export const EuiFieldSearchSelectors = {
++  /** The `<input type="search">` carrying the consumer's `data-test-subj`. */
++  ROOT_SELECTOR: '.euiFieldSearch',
++
++  /** The clear button next to the input, rendered only with `isClearable` and a value. */
++  CLEAR_BUTTON_TEST_SUBJ: 'clearSearchButton',
++};
+```
+
+**File**: `packages/test-helpers/src/components/search_bar/README.md` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++# EuiSearchBarObject
++
++Playwright Component Object for [EuiSearchBar](https://eui.elastic.co/docs/components/forms/search-and-filter/search-bar/).
++
++## Usage
++
++```ts
++import { EuiSearchBarObject } from '@elastic/eui-test-helpers';
++
++const searchBar = new EuiSearchBarObject(page, 'mySearchBar');
++await searchBar.setQuery('type:dashboard');
++```
++
++The search bar has no root of its own. Pass the subj through the `box` prop, `box={{ 'data-test-subj': 'mySearchBar' }}`, EUI puts it on the search input. This object is [EuiFieldSearchObject](../form/field_search/README.md) under the search bar's own name, same API: `setQuery(text)`, `getQuery()`, `clear()`.
++
++## Deliberately excluded
++
++The filter buttons next to the box are `EuiFilterButton`, use `EuiFilterButtonObject`. Query parsing and the error tooltip are consumer facing results of `onChange`, assert on them in the test.
+```
+
+**File**: `packages/test-helpers/src/components/search_bar/selectors.ts` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++/*
++ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
++ * or more contributor license agreements. Licensed under the Elastic License
++ * 2.0 and the Server Side Public License, v 1; you may not use this file except
++ * in compliance with, at your election, the Elastic License 2.0 or the Server
++ * Side Public License, v 1.
++ */
++
++/**
++ * Stable selectors for
++ * {@link https://eui.elastic.co/docs/components/forms/search-and-filter/search-bar/|EuiSearchBar}.
++ * `*_SELECTOR` values are CSS.
++ */
++export const EuiSearchBarSelectors = {
++  /** The wrapper of the search box. */
++  SEARCH_HOLDER_SELECTOR: '.euiSearchBar__searchHolder',
++
++  /** The wrapper of the filter buttons, rendered only with `filters`. */
++  FILTERS_HOLDER_SELECTOR: '.euiSearchBar__filtersHolder',
++};
+```
+
+**File**: `packages/test-helpers/src/index.ts` (modified, +2/-0)
+```diff
+@@ -15,6 +15,8 @@ export { EuiSelectableObject } from './playwright/components/selectable/object';
+ export { EuiSideNavObject } from './playwright/components/side_nav/object';
+ export { EuiDraggableObject } from './playwright/components/drag_and_drop/object';
+ export { EuiFilterButtonObject } from './playwright/components/filter_button/object';
++export { EuiFieldSearchObject } from './playwright/components/form/field_search/object';
++export { EuiSearchBarObject } from './playwright/components/search_bar/object';
+ export { EuiRangeObject } from './playwright/components/form/range/object';
+ export { EuiPopoverObject } from './playwright/components/popover/object';
+ export { EuiFlyoutObject } from './playwright/components/flyout/object';
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10238** (2026-10-23): [Dependencies] Bump vulnerable dev dependencies within existing ranges (@Dosant)
+- **PR #10236** (2026-10-23): [CI] Bump Node.js to 24.22.1 (@Dosant)
+- **PR #10234** (2026-10-23): [test-helpers] Add EuiCallOutObject (@steliosmavro)
+- **PR #10231** (2026-10-23): fix(ci): remove invalid queue: max from Kibana dependencies workflow concurrency (@eokoneyo)
 - **PR #10230** (closed): [Chore] Add Kibana prep commit for the EuiSideNav selectors (@steliosmavro)
 - **PR #10229** (2026-10-22): [test-helpers] Add EuiSideNavObject (@steliosmavro)
-- **PR #10227** (2026-10-21): [Chore] Add Kibana prep commit for the EuiTable and EuiFieldSearch selectors (@steliosmavro)
-- **PR #10225** (2026-10-21): fix(docs): update list group icon names (@angeles-mzb)
-- **PR #10224** (2026-10-20): Re-enabling Figma EUI lib link (@JoseLuisGJ)
-- **PR #10223** (2026-10-22): [ESLint] Replace PlayFunctionContext with StoryContext (@yushiwuzhengjianyuzi)
 
 ---
 
@@ -1007,34 +1107,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. [test-helpers] Add EuiSideNavObject (#10229)
-
-**RULE**:
-When implementing operations in `packages/release-cli/kibana-prep-commits`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in elastic/eui. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `8cdf5a58`: [test-helpers] Add EuiSideNavObject (#10229). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/release-cli/kibana-prep-commits`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-https://github.com/elastic/kibana/pull/299589/commits/f23a90a18b48b9d5d6aca0078fdfe983e46a8633
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8cdf5a58` are properly handled with clean fallback behavior.

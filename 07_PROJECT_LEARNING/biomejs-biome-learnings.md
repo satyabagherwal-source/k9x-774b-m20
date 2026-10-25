@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source**: github ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
-> **Source Version**: `e83e08a9`  
+> **Source Version**: `260fbc13`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T15:56:51.244Z  
+> **Timestamp**: 2026-10-25T05:52:31.209Z  
 > **Learning ID**: `learn-github-biomejs-biome`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T15:56:50.386Z  
+> **Harvest Timestamp**: 2026-10-25T05:52:31.201Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A toolchain for web projects, aimed to provide functionalities to maintain them. Biome offers formatter and linter, usable via CLI and LSP.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 25985 stars
+- **Stars / Engagement**: 25990 stars
 
 ---
 
@@ -870,7 +870,11 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- *No recent closed bug issues fetched.*
+- **Issue #12670** (2026-10-25): **fix(migrate): carry Prettier's bracketSpacing into the top-level**
+  *Symptoms*: ## Summary  Fixes #12669  - Problem: `biome migrate prettier` migrates Prettier's top-level `bracketSpacing` only to `javascript.formatter.bracketSpacing`. The top-level `formatter.bracketSpacing` is always set to the default value `true`. Because of this, after migrating from a configuration with `bracketSpacing: false`, JSON and GraphQL files get spaces inside the brackets. - Change: In `prettier.rs`, where the top-level formatter is built, I changed `Some(BracketSpacing::default())` to `Some(value.bracket_spacing.into())`. It now uses the same value as the JS formatter. I also removed the `BracketSpacing` import, which is no longer used. - I added a changeset (patch). It says that `bracketSpacing` is now also migrated to the top-level `formatter.bracketSpacing`, so JSON and GraphQL files are formatted with the same bracket spacing as JS files. - Related: [biomejs/biome#12643](https://github.com/biomejs/biome/issues/12643) and [biomejs/biome#12649](https://github.com/biomejs/biome/pull/12649) are about `bracketSpacing` inside `overrides`. This fix is a separate one, about the top-level setting.  repro: https://aletheia-works.github.io/vivarium/repro/biome/migrate-top-level-bracket-spacing/  ## Test Plan  - I added a snapshot test, `prettier_migrate_bracket_spacing`. It checks that when `.prettierrc` is `{ "bracketSpacing": false }`, both `formatter.bracketSpacing` and `javascript.formatter.bracketSpacing` are `false` in the generated `biome.json`. - `cargo test -p biome_cli
+
+- **Issue #12669** (2026-10-25): **🐛 `biome migrate prettier` doesn't migrate Prettier's `bracketSpacing` to the top-level `formatter.bracketSpacing`**
+  *Symptoms*: ### Environment information  <details>  ```bash  CLI:   Version:                      2.6.3   Color support:                true  Platform:   CPU Architecture:             x86_64   OS:                           windows  Environment:   BIOME_DISTRIBUTION:                npm   BIOME_LOG_FILE:                    unset   BIOME_LOG_PATH:                    unset   BIOME_LOG_PREFIX_NAME:             unset   BIOME_LOG_LEVEL:                   unset   BIOME_LOG_KIND:                    unset   BIOME_CONFIG_PATH:                 unset   BIOME_THREADS:                     unset   BIOME_WATCHER_KIND:                unset   BIOME_WATCHER_POLLING_INTERVAL:    unset   BIOME_BINARY:                      unset   RUST_BACKTRACE:                    unset   NO_COLOR:                     unset   TERM:                         unset   JS_RUNTIME_VERSION:           v26.12.1   JS_RUNTIME_NAME:              node   NODE_PACKAGE_MANAGER:         bun/1.4.3  Biome Configuration:   Status:                       Loaded successfully.   Path:                         biome.json   Formatter enabled:            true   Linter enabled:               true   Assist enabled:               true   VCS enabled:                  true   HTML full support enabled:    unset  Files:   Ignore Unknown:               unset   Includes:                     **, !**/*.svg  Workspace:   Open Documents:               0  ```  </details>   ### What happened?  - `biome migrate prettier` migrates the top-level `bracketSpacing` in `.pret
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -887,943 +891,994 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d3e8a1e` (2026-10-22)
-**Commit Message**: fix(format/js): keep parens around an instantiation expression before `!` and heritage type arguments (#12540)
+### Incident Patch 1: `8c836eb1` (2026-10-24)
+**Commit Message**: fix(format/md): preserve newline between block quote and list (#12662)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.changeset/fix-instantiation-expression-non-null.md` (added, +12/-0)
+**File**: `.changeset/fix-markdown-blank-line-after-blockquote.md` (added, +12/-0)
 ```diff
 @@ -0,0 +1,12 @@
 +---
 +"@biomejs/biome": patch
 +---
 +
-+Fixed the formatter removing the parentheses around an instantiation expression before a non-null assertion or type arguments of a class heritage, which produced code that doesn't parse.
++Fixed [#12645](https://github.com/biomejs/biome/issues/12645): the Markdown formatter no longer removes the blank line between a blockquote and the list that follows it, matching Prettier.
 +
-+```diff
-+- const a = make<T>!;
-++ const a = (make<T>)!;
-+- class D extends B<T><T> {}
-++ class D extends (B<T>)<T> {}
++```md
++> A note.
++
++- one
++- two
 +```
 ```
 
-**File**: `crates/biome_js_formatter/tests/specs/ts/expression/instantiation_expression_non_null.ts` (added, +11/-0)
+**File**: `.changeset/fix-markdown-blank-line-after-table.md` (added, +13/-0)
 ```diff
-@@ -0,0 +1,11 @@
-+// Without the parentheses, `make<T>!` and `extends B<T><T>` don't parse.
-+const a = (make<T>)!;
-+(make<T>)!.b;
-+(make<T>)!();
-+y = (make<T>)!.c<U>;
-+class D extends (B<T>)<T> {}
-+(class E extends (B<T>)<T> {});
+@@ -0,0 +1,13 @@
++---
++"@biomejs/biome": patch
++---
 +
-+// These don't need them.
-+class C extends (B<T>) {}
-+x = make<T>;
++Fixed [#12663](https://github.com/biomejs/biome/issues/12663): the Markdown formatter no longer removes the blank line between a table and the list that follows it, matching Prettier.
++
++```md
++| Table |
++| ----- |
++| Value |
++
++- Hello
++```
 ```
 
-**File**: `crates/biome_js_formatter/tests/specs/ts/expression/instantiation_expression_non_null.ts.snap` (added, +39/-0)
+**File**: `crates/biome_markdown_formatter/src/markdown/lists/block_list.rs` (modified, +6/-2)
 ```diff
-@@ -0,0 +1,39 @@
+@@ -329,8 +329,12 @@ impl PreviousBlock {
+                 AnyMdBlock::AnyMdLeafBlock(AnyMdLeafBlock::MdHtmlBlock(html)) if !html.is_html_comment()
+             ) || matches!(
+                 block,
+-                AnyMdBlock::AnyMdLeafBlock(AnyMdLeafBlock::MdParagraph(_))
+-            )
++                AnyMdBlock::AnyMdLeafBlock(
++                    AnyMdLeafBlock::MdParagraph(_) | AnyMdLeafBlock::GfmTable(_)
++                )
++            ) || block
++                .as_any_md_container_block()
++                .is_some_and(|container| container.as_md_quote().is_some())
+         })
+     }
+ }
+```
+
+**File**: `crates/biome_markdown_formatter/tests/specs/markdown/blockquote_before_list.md` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++Some text:
++
++> A note.
++
++- one
++- two
++
++> Another note.
++
++1. one
++2. two
++
++> Several blank lines.
++
++
++
++- one
++
++> No blank line.
++- one
++
++> Multi-line
++> quote.
++
++- one
++
++> Nested quote:
++> > inner
++
++- one
++
++> ```
++> code
++> ```
++
++- one
++
++> Trailing quote marker.
++>
++
++- one
+```
+
+**File**: `crates/biome_markdown_formatter/tests/specs/markdown/blockquote_before_list.md.snap` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
 +---
 +source: crates/biome_formatter_test/src/snapshot_builder.rs
-+info: ts/expression/instantiation_expression_non_null.ts
++info: markdown/blockquote_before_list.md
 +---
 +
 +# Input
 +
-+```ts
-+// Without the parentheses, `make<T>!` and `extends B<T><T>` don't parse.
-+const a = (make<T>)!;
-+(make<T>)!.b;
-+(make<T>)!();
-+y = (make<T>)!.c<U>;
-+class D extends (B<T>)<T> {}
-+(class E extends (B<T>)<T> {});
++```md
++Some text:
 +
-+// These don't need them.
-+class C extends (B<T>) {}
-+x = make<T>;
++> A note.
++
++- one
++- two
++
++> Another note.
++
++1. one
++2. two
++
++> Several blank lines.
++
++
++
++- one
++
++> No blank line.
++- one
++
++> Multi-line
++> quote.
++
++- one
++
++> Nested quote:
++> > inner
++
++- one
++
++> ```
++> code
++> ```
++
++- one
++
++> Trailing quote marker.
++>
++
++- one
 +
 +```
 +
 +
 +# Formatted
 +
-+```ts
-+// Without the parentheses, `make<T>!` and `extends B<T><T>` don't parse.
-+const a = (make<T>)!;
-+(make<T>)!.b;
-+(make<T>)!();
-+y = (make<T>)!.c<U>;
-+class D extends (B<T>)<T> {}
-+(class E extends (B<T>)<T> {});
++```md
++Some text:
 +
-+// These don't need them.
-+class C extends B<T> {}
-+x = make<T>;
++> A note.
++
++- one
++- two
++
++> Another note.
++
++1. one
++2. two
++
++> Several blank lines.
++
++
++
++- one
++
++> No blank line.
++- one
++
++> Multi-line
++> quote.
++
++- one
++
++> Nested quote:
++> > inner
++
++- one
++
++> ```
++> code
++> ```
++
++- one
++
++> Trailing quote marker.
++>
++
++- one
 +
 +```
 ```
 
-**File**: `crates/biome_js_syntax/src/parentheses/expression.rs` (modified, +15/-5)
+**File**: `crates/biome_markdown_formatter/tests/specs/markdown/gfm/table-after-paragraph.md.snap` (modified, +1/-0)
 ```diff
-@@ -9,9 +9,9 @@ use crate::{
-     JsBigintLiteralExpression, JsBinaryExpression, JsBinaryOperator, JsBooleanLiteralExpression,
-     JsCallExpression, JsClassExpression, JsComputedMemberAssignment, JsComputedMemberExpression,
-     JsComputedMemberName, JsConditionalExpression, JsExpressionStatement, JsExpressionTemplateRoot,
--    JsForStatement, JsFunctionExpression, JsIdentifierExpression, JsImportCallExpression,
--    JsImportMetaExpression, JsInExpression, JsInstanceofExpression, JsLogicalExpression,
--    JsLogicalOperator, JsMetavariable, JsNewExpression, JsNewTargetExpression,
-+    JsExtendsClause, JsForStatement, JsFunctionExpression, JsIdentifierExpression,
-+    JsImportCallExpression, JsImportMetaExpression, JsInExpression, JsInstanceofExpression,
-+    JsLogicalExpression, JsLogicalOperator, JsMetavariable, JsNewExpression, JsNewTargetExpression,
-     JsNullLiteralExpression, JsNumberLiteralExpression, JsObjectExpression,
-     JsParenthesizedExpression, JsPostUpdateExpression, JsPreUpdateExpression, JsPreUpdateOperator,
-     JsRegexLiteralExpression, JsSequenceExpression, JsStaticMemberExpression,
-@@ -715,8 +715,18 @@ impl NeedsParentheses for TsAsExpression {
- impl NeedsParentheses for TsInstantiationExpression {
-     #[inline]
-     fn needs_parentheses(&self) -> bool {
--        // `(a<T>)<U>`: `a<T><U>` does not parse
--        if self.parent::<Self>().is_some() {
-+        // `(a<T>)<U>` and `(a<T>)!`: `a<T><U>` and `a<T>!` do not parse
-+        if self.parent::<Self>().is_some()
-+            || self.parent::<TsNonNullAssertionExpression>().is_some()
-+        {
-+            return true;
-+        }
+@@ -48,6 +48,7 @@ intro
+ > | a   | b   |
+ > | --- | --- |
+ > | c   | d   |
 +
-+        // `class A extends (B<T>)<U> {}`: `extends B<T><U>` does not parse
-+        if self
-+            .parent::<JsExtendsClause>()
-+            .is_some_and(|clause| clause.type_arguments().is_some())
-+        {
-             return true;
-         }
- 
+ - intro
+   | a   | b   |
+   | --- | --- |
+```
+
+**File**: `crates/biome_markdown_formatter/tests/specs/markdown/gfm/table-before-list.md` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++| Table |
++| ----- |
++| Value |
++
++- Hello
++
++| Table |
++| ----- |
++| Value |
++
++1. one
++2. two
++
++| Many blank lines |
++| ---------------- |
++| Value |
++
++
++
++- Hello
++
++| No blank line |
++| ------------- |
++| Value |
++- Hello
++
+```
+
+**File**: `crates/biome_markdown_formatter/tests/specs/markdown/gfm/table-before-list.md.snap` (added, +80/-0)
+```diff
+@@ -0,0 +1,80 @@
++---
++source: crates/biome_formatter_test/src/snapshot_builder.rs
++info: markdown/gfm/table-before-list.md
++---
++
++# Input
++
++```md
++| Table |
++| ----- |
++| Value |
++
++- Hello
++
++| Table |
++| ----- |
++| Value |
++
++1. one
++2. two
++
++| Many blank lines |
++| ---------------- |
++| Value |
++
++
++
++- Hello
++
++| No blank line |
++| ------------- |
++| Value |
++- Hello
++
++
++```
++
++
++# Options
++
++```json
++{
++  "markdown": {
++    "parser": {
++      "gfm": true
++    }
++  }
++}
++```
++
++# Formatted
++
++```md
++| Table |
++| ----- |
++| Value |
++
++- Hello
++
++| Table |
++| ----- |
++| Value |
++
++1. one
++2. two
++
++| Many blank lines |
++| ---------------- |
++| Value            |
++
++
++
++- Hello
++
++| No blank line |
++| ------------- |
++| Value         |
++- Hello
++
++```
 ```
 
 ---
 
-### Incident Patch 2: `95209076` (2026-10-22)
-**Commit Message**: fix(css): sort properties inside keyframe steps (#12415)
+### Incident Patch 2: `260fbc13` (2026-10-25)
+**Commit Message**: fix(migrate): carry Prettier's bracketSpacing into the top-level (#12670)
 
-**File**: `.changeset/tricky-coins-end.md` (added, +5/-0)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/fix-prettier-migrate-override-bracket-spacing.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,5 @@
+@@ -2,4 +2,4 @@
+ "@biomejs/biome": patch
+ ---
+ 
+-Fixed [#12643](https://github.com/biomejs/biome/issues/12643): Biome now migrates the Prettier option `bracketSpacing` when it is set inside `overrides`. The option is migrated to the `formatter.bracketSpacing` of the matching Biome override.
++Fixed [#12643](https://github.com/biomejs/biome/issues/12643) and [#12669](https://github.com/biomejs/biome/issues/12669): Biome now migrates the Prettier option `bracketSpacing` to `formatter.bracketSpacing`, both at the top level and inside `overrides`. JSON and GraphQL files are now formatted with the same bracket spacing as JavaScript files.
+```
+
+**File**: `crates/biome_cli/src/execute/migrate/prettier.rs` (modified, +2/-4)
+```diff
+@@ -10,9 +10,7 @@ use biome_console::{Console, ConsoleExt, markup};
+ use biome_deserialize::json::deserialize_from_json_str;
+ use biome_deserialize_macros::Deserializable;
+ use biome_diagnostics::{DiagnosticExt, PrintDiagnostic};
+-use biome_formatter::{
+-    AttributePosition, BracketSpacing, Expand, IndentWidth, LineEnding, LineWidth, QuoteStyle,
+-};
++use biome_formatter::{AttributePosition, Expand, IndentWidth, LineEnding, LineWidth, QuoteStyle};
+ use biome_fs::{FileSystem, OpenOptions};
+ use biome_html_formatter::context::SelfCloseVoidElements;
+ use biome_js_formatter::context::{ArrowParentheses, QuoteProperties, Semicolons, TrailingCommas};
+@@ -260,7 +258,7 @@ impl TryFrom<PrettierConfiguration> for biome_configuration::Configuration {
+             line_ending: Some(value.end_of_line.into()),
+             bracket_same_line: Some(value.bracket_line.into()),
+             attribute_position: Some(AttributePosition::default()),
+-            bracket_spacing: Some(BracketSpacing::default()),
++            bracket_spacing: Some(value.bracket_spacing.into()),
+             delimiter_spacing: None,
+             expand: Some(value.object_wrap.into()),
+             format_with_errors: Some(false.into()),
+```
+
+**File**: `crates/biome_cli/tests/commands/migrate_prettier.rs` (modified, +31/-0)
+```diff
+@@ -610,3 +610,34 @@ fn prettier_migrate_override_bracket_spacing() {
+         result,
+     ));
+ }
++
++#[test]
++fn prettier_migrate_bracket_spacing() {
++    let fs = MemoryFileSystem::default();
++    let mut console = BufferConsole::default();
++
++    let configuration = r#"{}"#;
++    let prettier = r#"{ "bracketSpacing": false }"#;
++
++    let configuration_path = Utf8Path::new("biome.json");
++    fs.insert(configuration_path.into(), configuration.as_bytes());
++
++    let prettier_path = Utf8Path::new(".prettierrc");
++    fs.insert(prettier_path.into(), prettier.as_bytes());
++
++    let (fs, result) = run_cli(
++        fs,
++        &mut console,
++        Args::from(["migrate", "prettier", "--write"].as_slice()),
++    );
++
++    assert!(result.is_ok(), "run_cli returned {result:?}");
++
++    assert_cli_snapshot(SnapshotPayload::new(
++        module_path!(),
++        "prettier_migrate_bracket_spacing",
++        fs,
++        console,
++        result,
++    ));
++}
+```
+
+**File**: `crates/biome_cli/tests/snapshots/main_commands_migrate_prettier/prettier_migrate_bracket_spacing.snap` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++---
++source: crates/biome_cli/tests/snap_test.rs
++expression: redactor(content)
++---
++## Command
++
++```shell
++biome migrate prettier --write
++```
++
++## `biome.json`
++
++```json
++{
++  "formatter": {
++    "enabled": true,
++    "formatWithErrors": false,
++    "indentStyle": "space",
++    "indentWidth": 2,
++    "lineEnding": "lf",
++    "lineWidth": 80,
++    "attributePosition": "auto",
++    "bracketSameLine": false,
++    "bracketSpacing": false,
++    "expand": "auto",
++    "useEditorconfig": true
++  },
++  "javascript": {
++    "formatter": {
++      "jsxQuoteStyle": "double",
++      "quoteProperties": "asNeeded",
++      "trailingCommas": "all",
++      "semicolons": "always",
++      "arrowParentheses": "always",
++      "bracketSameLine": false,
++      "quoteStyle": "double",
++      "attributePosition": "auto",
++      "bracketSpacing": false
++    }
++  },
++  "html": {
++    "formatter": {
++      "indentScriptAndStyle": false,
++      "selfCloseVoidElements": "always"
++    }
++  }
++}
++```
++
++## `.prettierrc`
++
++```prettierrc
++{ "bracketSpacing": false }
++```
++
++# Emitted Messages
++
++```block
++.prettierrc has been successfully migrated.
++```
++
++```block
++configuration ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  i Migration results:
++  
++  - biome.json: configuration successfully migrated.
++  
++
++```
+```
+
+---
+
+### Incident Patch 3: `92c9e81b` (2026-10-24)
+**Commit Message**: feat(lint): add noNull (#12470)
+
+**File**: `.changeset/add-no-null-rule.md` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
 +---
 +"@biomejs/biome": patch
 +---
 +
-+Fixed [#12412](https://github.com/biomejs/biome/discussions/12412): [`useSortedProperties`](https://biomejs.dev/assist/actions/use-sorted-properties/) now sorts properties inside `@keyframes` animations in CSS and SCSS.
++Added the nursery rule [`noNull`](https://biomejs.dev/linter/rules/no-null/), which reports uses of the `null` literal and suggests `undefined` instead. Strict comparisons such as `foo === null` are allowed.
++
++```js
++let foo = null;
++```
 ```
 
-**File**: `crates/biome_css_analyze/src/assist/source/use_sorted_properties.rs` (modified, +71/-15)
+**File**: `crates/biome_cli/src/execute/migrate/eslint_any_rule_to_biome.rs` (modified, +12/-0)
 ```diff
-@@ -7,13 +7,16 @@ use biome_analyze::{
-     Ast, FixKind, Rule, RuleDiagnostic, context::RuleContext, declare_source_rule,
- };
- use biome_console::markup;
--use biome_css_factory::make::css_declaration_or_rule_list;
-+use biome_css_factory::make::{
-+    css_declaration_list, css_declaration_or_at_rule_list, css_declaration_or_rule_list,
+@@ -6107,6 +6107,18 @@ pub(crate) fn migrate_eslint_any_rule(
+                 .get_or_insert(Default::default());
+             rule.set_level(rule.level().max(rule_severity.into()));
+         }
++        "unicorn/no-null" => {
++            if !options.include_nursery {
++                results.add(eslint_name, eslint_to_biome::RuleMigrationResult::Nursery);
++                return false;
++            }
++            let group = rules.nursery.get_or_insert_with(Default::default);
++            let rule = group
++                .unwrap_group_as_mut()
++                .no_null
++                .get_or_insert(Default::default());
++            rule.set_level(rule.level().max(rule_severity.into()));
++        }
+         "unicorn/no-process-exit" => {
+             if !options.include_inspired {
+                 results.add(eslint_name, eslint_to_biome::RuleMigrationResult::Inspired);
+```
+
+**File**: `crates/biome_configuration/src/analyzer/linter/rules.rs` (modified, +4/-0)
+```diff
+@@ -292,6 +292,7 @@ pub enum RuleName {
+     NoNoninteractiveElementToInteractiveRole,
+     NoNoninteractiveTabindex,
+     NoNonoctalDecimalEscape,
++    NoNull,
+     NoObjectConstructor,
+     NoObsoleteAttributes,
+     NoObsoleteTags,
+@@ -943,6 +944,7 @@ impl RuleName {
+             }
+             Self::NoNoninteractiveTabindex => "noNoninteractiveTabindex",
+             Self::NoNonoctalDecimalEscape => "noNonoctalDecimalEscape",
++            Self::NoNull => "noNull",
+             Self::NoObjectConstructor => "noObjectConstructor",
+             Self::NoObsoleteAttributes => "noObsoleteAttributes",
+             Self::NoObsoleteTags => "noObsoleteTags",
+@@ -1590,6 +1592,7 @@ impl RuleName {
+             Self::NoNoninteractiveElementToInteractiveRole => RuleGroup::A11y,
+             Self::NoNoninteractiveTabindex => RuleGroup::A11y,
+             Self::NoNonoctalDecimalEscape => RuleGroup::Correctness,
++            Self::NoNull => RuleGroup::Nursery,
+             Self::NoObjectConstructor => RuleGroup::Nursery,
+             Self::NoObsoleteAttributes => RuleGroup::Nursery,
+             Self::NoObsoleteTags => RuleGroup::Nursery,
+@@ -2246,6 +2249,7 @@ impl std::str::FromStr for RuleName {
+             }
+             "noNoninteractiveTabindex" => Ok(Self::NoNoninteractiveTabindex),
+             "noNonoctalDecimalEscape" => Ok(Self::NoNonoctalDecimalEscape),
++            "noNull" => Ok(Self::NoNull),
+             "noObjectConstructor" => Ok(Self::NoObjectConstructor),
+             "noObsoleteAttributes" => Ok(Self::NoObsoleteAttributes),
+             "noObsoleteTags" => Ok(Self::NoObsoleteTags),
+```
+
+**File**: `crates/biome_configuration/src/generated/linter_options_check.rs` (modified, +5/-0)
+```diff
+@@ -948,6 +948,11 @@ pub fn config_side_rule_options_types() -> Vec<(&'static str, &'static str, Type
+     result.push(("a11y", "noNoninteractiveElementToInteractiveRole", TypeId::of::<biome_rule_options::no_noninteractive_element_to_interactive_role::NoNoninteractiveElementToInteractiveRoleOptions>()));
+     result.push(("a11y", "noNoninteractiveTabindex", TypeId::of::<biome_rule_options::no_noninteractive_tabindex::NoNoninteractiveTabindexOptions>()));
+     result.push(("correctness", "noNonoctalDecimalEscape", TypeId::of::<biome_rule_options::no_nonoctal_decimal_escape::NoNonoctalDecimalEscapeOptions>()));
++    result.push((
++        "nursery",
++        "noNull",
++        TypeId::of::<biome_rule_options::no_null::NoNullOptions>(),
++    ));
+     result.push((
+         "nursery",
+         "noObjectConstructor",
+```
+
+**File**: `crates/biome_diagnostics_categories/src/categories.rs` (modified, +1/-0)
+```diff
+@@ -263,6 +263,7 @@ define_categories! {
+     "lint/nursery/noNestedTemplateLiterals": "https://biomejs.dev/linter/rules/no-nested-template-literals",
+     "lint/nursery/noNewRequire": "https://biomejs.dev/linter/rules/no-new-require",
+     "lint/nursery/noNonScalableViewport": "https://biomejs.dev/linter/rules/no-non-scalable-viewport",
++    "lint/nursery/noNull": "https://biomejs.dev/linter/rules/no-null",
+     "lint/nursery/noObjectConstructor": "https://biomejs.dev/linter/rules/no-object-constructor",
+     "lint/nursery/noObsoleteAttributes": "https://biomejs.dev/linter/rules/no-obsolete-attributes",
+     "lint/nursery/noObsoleteTags": "https://biomejs.dev/linter/rules/no-obsolete-tags",
+```
+
+**File**: `crates/biome_js_analyze/src/lint/nursery/no_null.rs` (added, +255/-0)
+```diff
+@@ -0,0 +1,255 @@
++use biome_analyze::{
++    Ast, FixKind, Rule, RuleDiagnostic, RuleSource, context::RuleContext, declare_lint_rule,
 +};
- use biome_css_syntax::{
-     AnyCssDeclarationName, AnyCssDeclarationOrRule, AnyCssProperty, AnyCssRule,
--    CssDeclarationOrRuleBlock, CssDeclarationOrRuleList, CssDeclarationWithSemicolon,
--    CssSyntaxKind, CssSyntaxToken, TextRange, keywords::VENDOR_PREFIXES,
-+    CssDeclarationBlock, CssDeclarationOrAtRuleBlock, CssDeclarationOrRuleBlock,
-+    CssDeclarationWithSemicolon, CssKeyframesItem, CssLanguage, CssSyntaxKind, CssSyntaxToken,
-+    TextRange, keywords::VENDOR_PREFIXES,
- };
--use biome_rowan::{AstNode, BatchMutationExt, TokenText};
-+use biome_rowan::{AstNode, BatchMutationExt, TokenText, declare_node_union};
- use biome_rule_options::use_sorted_properties::UseSortedPropertiesOptions;
- use biome_string_case::StrOnlyExtension;
- use std::{
-@@ -29,6 +32,8 @@ declare_source_rule! {
-     /// Custom properties come first, and nested rules or at-rules such as `@media` come after
-     /// declarations.
-     ///
-+    /// Properties inside CSS and SCSS keyframe steps use the same order.
++use biome_console::markup;
++use biome_diagnostics::Severity;
++use biome_js_factory::make;
++use biome_js_syntax::{
++    AnyJsCallArgument, AnyJsExpression, JsBinaryExpression, JsCallArgumentList, JsCallArguments,
++    JsCallExpression, JsIdentifierExpression, JsNullLiteralExpression, JsSyntaxKind,
++    JsUnaryExpression, T,
++};
++use biome_parser::{TokenSet, token_set};
++use biome_rowan::{AstNode, AstSeparatedList, BatchMutationExt};
++use biome_rule_options::no_null::NoNullOptions;
++
++use crate::JsRuleAction;
++
++declare_lint_rule! {
++    /// Disallow the use of the `null` literal.
 +    ///
-     /// The main groups are:
-     ///
-     /// 1. Custom properties.
-@@ -67,6 +72,15 @@ declare_source_rule! {
-     /// }
-     /// ```
-     ///
-+    /// ```css,expect_diff
-+    /// @keyframes fade {
-+    ///   from {
-+    ///     opacity: 0;
-+    ///     display: block;
-+    ///   }
++    /// JavaScript has two values that mean "no value": `null` and `undefined`.
++    /// Code that uses both has to check for both, and it's easy to forget one of them.
++    /// Using only `undefined` keeps missing values consistent across a codebase.
++    ///
++    /// Strict comparisons such as `foo === null` are allowed, because code often needs to check for `null` values that come from other libraries or from APIs such as `JSON.parse()`.
++    ///
++    /// Some common APIs require `null` as an argument and are allowed:
++    /// - `Object.create(null)`, which creates an object with no prototype.
++    /// - `useRef(null)` and `React.useRef(null)`, the usual way to create a React ref for an element.
++    /// - `parent.insertBefore(node, null)`, which adds `node` at the end of `parent`.
++    ///
++    /// The fix replaces `null` with `undefined`.
++    /// It isn't applied automatically, because other code may check for `null` with `===`, and TypeScript types that include `null` may not accept `undefined`.
++    ///
++    /// ## Examples
++    ///
++    /// ### Invalid
++    ///
++    /// ```js,expect_diagnostic
++    /// let foo = null;
++    /// ```
++    ///
++    /// ```js,expect_diagnostic
++    /// if (bar == null) {}
++    /// ```
++    ///
++    /// ```js,expect_diagnostic
++    /// function getUser() {
++    ///     return null;
 +    /// }
 +    /// ```
 +    ///
-     /// ### Valid
-     ///
-     /// ```css
-@@ -97,28 +111,49 @@ declare_source_rule! {
-     }
- }
- 
-+declare_node_union! {
-+    pub AnySortableBlockLike = CssDeclarationOrRuleBlock | CssDeclarationBlock | CssDeclarationOrAtRuleBlock
++    /// ```js,expect_diagnostic
++    /// foo(null);
++    /// ```
++    ///
++    /// ### Valid
++    ///
++    /// ```js
++    /// let foo;
++    /// if (bar == undefined) {}
++    /// if (bar === null) {}
++    /// const dictionary = Object.create(null);
++    /// const ref = useRef(null);
++    /// parent.insertBefore(node, null);
++    /// ```
++    ///
++    /// ## See Also
++    ///
++    /// - To remove `undefined` that is assigned to a variable when it is declared, see [`noUselessUndefinedInitialization`](https://biomejs.dev/linter/rules/no-useless-undefined-initialization/).
++    ///
++    pub NoNull {
++        version: "next",
++        name: "noNull",
++        language: "js",
++        sources: &[RuleSource::EslintUnicorn("no-null").same()],
++        recommended: false,
++        severity: Severity::Information,
++        fix_kind: FixKind::Unsafe,
++    }
 +}
 +
- pub struct UseSortedPropertiesState {
-     /// The containing node
--    block: CssDeclarationOrRuleBlock,
-+    block: AnySortableBlockLike,
-     /// The items to be sorted in their original order
-     original_properties: Vec<AnyCssDeclarationOrRule>,
-     /// The items in their sorted order, or [None] if sorting would be unsafe or if the rule contains unknown items.
-     sorted_properties: Option<RecessOrderProperties>,
- }
- 
- impl Rule for UseSortedProperties {
--    type Query = Ast<CssDeclarationOrRuleBlock>;
-+    type Query = Ast<AnySortableBlockLike>;
-     type State = UseSortedPropertiesState;
-     type Signals = Option<Self::State>;
-     type Options = UseSortedPropertiesOptions;
- 
-     fn run(ctx: &RuleContext<Self>) -> Option<Self::State> {
-         let node = ctx.query();
- 
--        let original_properties = node
--            .items()
--            .into_iter()
--            .collect::<Vec<AnyCssDeclarationOrRule>>();
-+        // Declaration and declaration-or-at-rule blocks also occur in descriptor at-rules
-+        // such as @font-face; only sort them when they belong to a keyframe step.
-+        if !matches!(node, AnySortableBlockLike::CssDeclarationOrRuleBlock(_)) {
-+            CssKeyframesItem::cast(node.syntax().parent()?)?;
++impl Rule for NoNull {
++    type Query = Ast<JsNullLiteralExpression>;
++    type State = NullUsage;
++    type Signals = Option<Self::State>;
++    type Options = NoNullOptions;
++
++    fn run(ctx: &RuleContext<Self>) -> Self::Signals {
++        let node = AnyJsExpression::AnyJsLiteralExpression(ctx.query().clone().into());
++        let outer = node.outer_expression()?;
++
++        if let Some(binary) = outer.parent::<JsBinaryExpression>() {
++            let operator = binary.operator_token().ok()?;
++            if STRICT_EQUALITY_OPERATORS.contains(operator.kind()) {
++                return None;
++            }
 +        }
 +
-+        let original_properties = match node {
-+            AnySortableBlockLike::CssDeclarationOrRuleBlock(block) => {
-+                block.items().into_iter().collect::<Vec<_>>()
-+            }
-+            AnySortableBlockLike::CssDeclarationBlock(block) => block
-+                .declarations()
-+                .into_iter()
-+                .map(|declaration| AnyCssDeclarationOrRule::cast(declaration.into_syntax()))
-+                .collect::<Option<Vec<_>>>()?,
-+            AnySortableBlockLike::CssDeclarationOrAtRuleBlock(block) => block
-+                .items()
-+                .into_iter()
-+                .map(|declaration| AnyCssDeclarationOrRule::cast(declaration.into_syntax()))
-+                .collect::<Option<Vec<_>>>()?,
-+        };
- 
-         // Template steps can depend on declarations before enclosing controls or content blocks.
-         // Native keyframe lists do not use the declaration-or-rule list alternative.
-@@ -184,7 +219,26 @@ impl Rule for UseSortedProperties {
-         }
- 
-         let mut mutation = ctx.root().begin();
--        mutation.replace_node_discard_trivia(state.block.items(), sorted_properties.as_sorted()?);
-+        match &state.block {
-+            AnySortableBlockLike::CssDeclarationOrRuleBlock(block) => {
-+                mutation.replace_node_discard_trivia(
-+                    block.items(),
-+                    css_declaration_or_rule_list(sorted_properties.sorted_items()?),
-+                );
-+            }
-+            AnySortableBlockLike::CssDeclarationBlock(block) => {
-+                mutation.replace_node_discard_trivia(
-+                    block.declarations(),
-+                    css_declaration_list(sorted_properties.sorted_items()?),
-+                );
-+            }
-+            AnySortableBlockLike::CssDeclarationOrAtRu
-```
-
-**File**: `crates/biome_css_analyze/tests/specs/source/useSortedProperties/keyframes.css` (added, +77/-0)
-```diff
-@@ -0,0 +1,77 @@
-+/* should generate diagnostics */
-+@keyframes fade {
-+  from {
-+    opacity: 0;
-+    display: block;
-+  }
-+  50%, 75% {
-+    color: red;
-+    /* Keep this comment with display. */
-+    display: block;
-+  }
-+  to {
-+    color: red;
-+    display: block;
-+  }
-+}
++        if is_allowed_argument(&outer) {
++            return None;
++        }
 +
-+@-webkit-keyframes fade {
-+  to {
-+    transform: translateX(10px);
-+    opacity: 1;
-+  }
-+}
++        // `delete undefined` is an error in strict mode code, so there is nothing to replace
++        // the operand with.
++        let is_delete_operand = outer.parent::<JsUnaryExpression>().is_some_and(|unary| {
++            unary
++                .operator_token()
++                .is_ok_and(|operator| operator.kind() == T![delete])
++        });
 +
-+@media (prefers-reduced-motion: no-preference) {
-+  @keyframes slide {
-+    to {
-+      transform: translateX(10px);
-+      opacity: 1;
++        Some(if is_delete_operand {
++            NullUsage::DeleteOperand
++        } else {
++            NullUsage::Value
++        })
 +    }
-+  }
-+}
 +
-+@keyframes unsafe {
-+  from {
-+    margin-top: 1px;
-+    margin: 0;
-+  }
-+}
++    fn diagnostic(ctx: &RuleContext<Self>, state: &Self::State) -> Option<RuleDiagnostic> {
++        let diagnostic = RuleDiagnostic::new(
++            rule_category!(),
++            ctx.query().range(),
++            markup! {
++                "Unexpected use of "<Emphasis>"null"</Emphasis>"."
++            },
++        )
++        .note(markup! {
++            "Using both "<Emphasis>"null"</Emphasis>" and "<Emphasis>"undefined"</Emphasis>" for missing values means code has to check for both."
++        });
++        Some(match state {
++            NullUsage::DeleteOperand => diagnostic,
++            NullUsage::Value => diagnostic.note(markup! {
++                "Use "<Emphasis>"undefined"</Emphasis>" instead."
++            }),
++        })
++    }
 +
-+@keyframes unchanged {
-+  from {
-+    display: block;
-+    opacity: 0;
-+  }
-+  50% {
-+    color: red;
-+    unknown-property: 0;
-+    display: block;
-+  }
-+  to {
-+    color: red;
-+    color: blue;
-+  }
-+}
-+
-+@font-face {
-+  font-style: normal;
-+  font-family: example;
-+}
-+
-+@keyframes no-semicolon {
-+  to {
-+    color: red;
-+    display: block
-+  }
-+}
-+
-+@keyframes duplicates {
-+  to {
-+    color: red;
-+    color: blue;
-+    ;
-+    display: block;
-+    --alpha: 1;
-+  }
-+}
++    fn action(ctx: &RuleContext<Self>, state: &Self::State) -> 
 ```
 
-**File**: `crates/biome_css_analyze/tests/specs/source/useSortedProperties/keyframes.css.snap` (added, +321/-0)
+**File**: `crates/biome_js_analyze/tests/specs/nursery/noNull/invalid.js` (added, +54/-0)
 ```diff
-@@ -0,0 +1,321 @@
+@@ -0,0 +1,54 @@
++/* should generate diagnostics */
++const a = null;
++let b = null;
++var c = 1, d = null, e = 2;
++let f = (null);
++let g = /* comment */ null /* trailing */;
++let { h } = null;
++foo(null);
++foo(bar, null);
++new HttpResponse(null);
++foo([null]);
++foo(bar ?? null);
++foo(...[null]);
++x = null;
++if (foo == null) {}
++if (foo != null) {}
++if (null == foo) {}
++if (null != foo) {}
++function returnsNull() {
++	return null;
++}
++const arrow = () => null;
++const object = { key: null };
++delete null;
++delete ((null));
++delete [null][0];
++new Object.create(null);
++new foo.insertBefore(bar, null);
++create(null);
++insertBefore(bar, null);
++Object["create"](null);
++foo["insertBefore"](bar, null);
++Object[create](null);
++foo[insertBefore](bar, null);
++Object.notCreate(null);
++foo.notInsertBefore(foo, null);
++NotObject.create(null);
++lib.Object.create(null);
++Object.create(...[null]);
++Object.create(null, bar, extraArgument);
++Object.create(null, ...rest);
++Object?.create(null);
++Object.create?.(null);
++foo.insertBefore(null);
++foo.insertBefore(foo, null, bar);
++foo.insertBefore(...[foo], null);
++foo.insertBefore(null, bar);
++foo.insertBefore?.(bar, null);
++Object.create(bar, null);
++useRef?.(null);
++useRef(null, extra);
++React.useRef?.(null);
++React?.useRef(null);
++React.useRef(null, extra);
+```
+
+**File**: `crates/biome_js_analyze/tests/specs/nursery/noNull/invalid.js.snap` (added, +1567/-0)
+```diff
+@@ -0,0 +1,1567 @@
 +---
-+source: crates/biome_css_analyze/tests/spec_tests.rs
-+expression: keyframes.css
++source: crates/biome_js_analyze/tests/spec_tests.rs
++expression: invalid.js
 +---
 +# Input
-+```css
++```js
 +/* should generate diagnostics */
-+@keyframes fade {
-+  from {
-+    opacity: 0;
-+    display: block;
-+  }
-+  50%, 75% {
-+    color: red;
-+    /* Keep this comment with display. */
-+    display: block;
-+  }
-+  to {
-+    color: red;
-+    display: block;
-+  }
++const a = null;
++let b = null;
++var c = 1, d = null, e = 2;
++let f = (null);
++let g = /* comment */ null /* trailing */;
++let { h } = null;
++foo(null);
++foo(bar, null);
++new HttpResponse(null);
++foo([null]);
++foo(bar ?? null);
++foo(...[null]);
++x = null;
++if (foo == null) {}
++if (foo != null) {}
++if (null == foo) {}
++if (null != foo) {}
++function returnsNull() {
++	return null;
 +}
-+
-+@-webkit-keyframes fade {
-+  to {
-+    transform: translateX(10px);
-+    opacity: 1;
-+  }
-+}
-+
-+@media (prefers-reduced-motion: no-preference) {
-+  @keyframes slide {
-+    to {
-+      transform: translateX(10px);
-+      opacity: 1;
-+    }
-+  }
-+}
-+
-+@keyframes unsafe {
-+  from {
-+    margin-top: 1px;
-+    margin: 0;
-+  }
-+}
-+
-+@keyframes unchanged {
-+  from {
-+    display: block;
-+    opacity: 0;
-+  }
-+  50% {
-+    color: red;
-+    unknown-property: 0;
-+    display: block;
-+  }
-+  to {
-+    color: red;
-+    color: blue;
-+  }
-+}
-+
-+@font-face {
-+  font-style: normal;
-+  font-family: example;
-+}
-+
-+@keyframes no-semicolon {
-+  to {
-+    color: red;
-+    display: block
-+  }
-+}
-+
-+@keyframes duplicates {
-+  to {
-+    color: red;
-+    color: blue;
-+    ;
-+    display: block;
-+    --alpha: 1;
-+  }
-+}
++const arrow = () => null;
++const object = { key: null };
++delete null;
++delete ((null));
++delete [null][0];
++new Object.create(null);
++new foo.insertBefore(bar, null);
++create(null);
++insertBefore(bar, null);
++Object["create"](null);
++foo["insertBefore"](bar, null);
++Object[create](null);
++foo[insertBefore](bar, null);
++Object.notCreate(null);
++foo.notInsertBefore(foo, null);
++NotObject.create(null);
++lib.Object.create(null);
++Object.create(...[null]);
++Object.create(null, bar, extraArgument);
++Object.create(null, ...rest);
++Object?.create(null);
++Object.create?.(null);
++foo.insertBefore(null);
++foo.insertBefore(foo, null, bar);
++foo.insertBefore(...[foo], null);
++foo.insertBefore(null, bar);
++foo.insertBefore?.(bar, null);
++Object.create(bar, null);
++useRef?.(null);
++useRef(null, extra);
++React.useRef?.(null);
++React?.useRef(null);
++React.useRef(null, extra);
 +
 +```
 +
 +# Diagnostics
 +```
-+keyframes.css:3:8 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++invalid.js:2:11 lint/nursery/noNull  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+  i The properties are not sorted.
++  i Unexpected use of null.
 +  
 +    1 │ /* should generate diagnostics */
-+    2 │ @keyframes fade {
-+  > 3 │   from {
-+      │        ^
-+  > 4 │     opacity: 0;
-+  > 5 │     display: block;
-+  > 6 │   }
-+      │   ^
-+    7 │   50%, 75% {
-+    8 │     color: red;
++  > 2 │ const a = null;
++      │           ^^^^
++    3 │ let b = null;
++    4 │ var c = 1, d = null, e = 2;
 +  
-+  i Safe fix: Sort these properties
++  i Using both null and undefined for missing values means code has to check for both.
 +  
-+     2  2 │   @keyframes fade {
-+     3  3 │     from {
-+     4    │ - ····opacity:·0;
-+     5    │ - ····display:·block;
-+        4 │ + ····display:·block;
-+        5 │ + ····opacity:·0;
-+     6  6 │     }
-+     7  7 │     50%, 75% {
++  i Use undefined instead.
++  
++  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
++  
++  i Unsafe fix: Replace with undefined.
++  
++     1  1 │   /* should generate diagnostics */
++     2    │ - const·a·=·null;
++        2 │ + const·a·=·undefined;
++     3  3 │   let b = null;
++     4  4 │   var c = 1, d = null, e = 2;
 +  
 +
 +```
 +
 +```
-+keyframes.css:7:12 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++invalid.js:3:9 lint/nursery/noNull  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+  i The properties are not sorted.
-+  
-+     5 │     display: block;
-+     6 │   }
-+   > 7 │   50%, 75% {
-+       │            ^
-+   > 8 │     color: red;
-+   > 9 │     /* Keep this comment with display. */
-+  > 10 │     display: block;
-+  > 11 │   }
-+       │   ^
-+    12 │   to {
-+    13 │     color: red;
-+  
-+  i Safe fix: Sort these properties
-+  
-+     6  6 │     }
-+     7  7 │     50%, 75% {
-+     8    │ - ····color:·red;
-+     9    │ - ····/*·Keep·this·comment·with·display.·*/
-+    10    │ - ····display:·block;
-+        8 │ + ····/*·Keep·this·comment·with·display.·*/
-+        9 │ + ····display:·block;
-+       10 │ + ····color:·red;
-+    11 11 │     }
-+    12 12 │     to {
-+  
-+
-+```
-+
-+```
-+keyframes.css:12:6 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  i The properties are not sorted.
-+  
-+    10 │     display: block;
-+    11 │   }
-+  > 12 │   to {
-+       │      ^
-+  > 13 │     color: red;
-+  > 14 │     display: block;
-+  > 15 │   }
-+       │   ^
-+    16 │ }
-+    17 │ 
-+  
-+  i Safe fix: Sort these properties
-+  
-+    11 11 │     }
-+    12 12 │     to {
-+    13    │ - ····color:·red;
-+    14    │ - ····display:·block;
-+       13 │ + ····display:·block;
-+       14 │ + ····color:·red;
-+    15 15 │     }
-+    16 16 │   }
-+  
-+
-+```
-+
-+```
-+keyframes.css:19:6 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  i The properties are not sorted.
-+  
-+    18 │ @-webkit-keyframes fade {
-+  > 19 │   to {
-+       │      ^
-+  > 20 │     transform: translateX(10px);
-+  > 21 │     opacity: 1;
-+  > 22 │   }
-+       │   ^
-+    23 │ }
-+    24 │ 
-+  
-+  i Safe fix: Sort these properties
-+  
-+    18 18 │   @-webkit-keyframes fade {
-+    19 19 │     to {
-+    20    │ - ····transform:·translateX(10px);
-+    21    │ - ····opacity:·1;
-+       20 │ + ····opacity:·1;
-+       21 │ + ····transform:·translateX(10px);
-+    22 22 │     }
-+    23 23 │   }
-+  
-+
-+```
-+
-+```
-+keyframes.css:27:8 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  i The properties are not sorted.
-+  
-+    25 │ @media (prefers-reduced-motion: no-preference) {
-+    26 │   @keyframes slide {
-+  > 27 │     to {
-+       │        ^
-+  > 28 │       transform: translateX(10px);
-+  > 29 │       opacity: 1;
-+  > 30 │     }
-+       │     ^
-+    31 │   }
-+    32 │ }
-+  
-+  i Safe fix: Sort these properties
-+  
-+    26 26 │     @keyframes slide {
-+    27 27 │       to {
-+    28    │ - ······transform:·translateX(10px);
-+    29    │ - ······opacity:·1;
-+       28 │ + ······opacity:·1;
-+       29 │ + ······transform:·translateX(10px);
-+    30 30 │       }
-+    31 31 │     }
-+  
-+
-+```
-+
-+```
-+keyframes.css:35:8 assist/source/useSortedProperties ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  i The properties are not sorted.
-+  
-+    34 │ @keyframes unsafe {
-+  > 35 │   from {
-+       │        ^
-+  > 36 │     margin-top: 1px;
-+  > 37 │     margin: 0;
-+  > 38 │   }
-+       │   ^
-+    3
-```
-
-**File**: `crates/biome_css_analyze/tests/specs/source/useSortedProperties/keyframes.scss` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+/* should generate diagnostics */
-+@keyframes fade {
-+  from {
-+    opacity: 0;
-+    display: block;
-+  }
-+  to {
-+    color: red;
-+    display: block;
-+  }
-+}
-+
-+@keyframes no-semicolon {
-+  to {
-+    color: red;
-+    display: block // display comment
-+  }
-+}
-```
-
-**File**: `crates/biome_css_analyze/tests/specs/source/useSortedProperties/keyframes.scss.snap` (added, +116/-0)
-```diff
-@@ -0,0 +1,116 @@
-+---
-+source: crates/biome_css_analyze/tests/spec_tests.rs
-+expression: keyframes.scss
-+---
-+# Input
-+```css
-+/* should generate diagnostics */
-+@keyframes fade {
-+  from {
-+    opacity: 0;
-+    display: block;
-+  }
-+  to {
-+    color: red;
-+    display: block;
-+  }
-+}
-+
-+@keyframes no-semicolon {
-+  to {
-+    color: red;
-+    display: block // display comment
-+  }
-+}
-+
-+```
-+
-+# Diagnostics
-+```
-+keyframes.scss:3:8 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  i The properties are not sorted.
++  i Unexpected use of null.
 +  
 +    1 │ /* should generate diagnostics */
-+    2 │ @keyframes fade {
-+  > 3 │   from {
-+      │        ^
-+  > 4 │     opacity: 0;
-+  > 5 │     display: block;
-+  > 6 │   }
-+      │   ^
-+    7 │   to {
-+    8 │     color: red;
++    2 │ const a = null;
++  > 3 │ let b = null;
++      │         ^^^^
++    4 │ var c = 1, d = null, e = 2;
++    5 │ let f = (null);
 +  
-+  i Safe fix: Sort these properties
++  i Using both null and undefined for missing values means code has to check for both.
 +  
-+     2  2 │   @keyframes fade {
-+     3  3 │     from {
-+     4    │ - ····opacity:·0;
-+     5    │ - ····display:·block;
-+        4 │ + ····display:·block;
-+        5 │ + ····opacity:·0;
-+     6  6 │     }
-+     7  7 │     to {
++  i Use undefined instead.
 +  
-+
-+```
-+
-+```
-+keyframes.scss:7:6 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-+
-+  i The properties are not sorted.
++  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
 +  
-+     5 │     display: block;
-+     6 │   }
-+   > 7 │   to {
-+       │      ^
-+   > 8 │     color: red;
-+   > 9 │     display: block;
-+  > 10 │   }
-+       │   ^
-+    11 │ }
-+    12 │ 
++  i Unsafe fix: Replace with undefined.
 +  
-+  i Safe fix: Sort these properties
-+  
-+     6  6 │     }
-+     7  7 │     to {
-+     8    │ - ····color:·red;
-+     9    │ - ····display:·block;
-+        8 │ + ····display:·block;
-+        9 │ + ····color:·red;
-+    10 10 │     }
-+    11 11 │   }
++     1  1 │   /* should generate diagnostics */
++     2  2 │   const a = null;
++     3    │ - let·b·=·null;
++        3 │ + let·b·=·undefined;
++     4  4 │   var c = 1, d = null, e = 2;
++     5  5 │   let f = (null);
 +  
 +
 +```
 +
 +```
-+keyframes.scss:14:6 assist/source/useSortedProperties  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++invalid.js:4:16 lint/nursery/noNull  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+  i The properties are not sorted.
++  i Unexpected use of null.
 +  
-+    13 │ @keyframes no-semicolon {
-+  > 14 │   to {
-+       │      ^
-+  > 15 │     color: red;
-+  > 16 │     display: block // display comment
-+  > 17 │   }
-+       │   ^
-+    18 │ }
-+    19 │ 
++    2 │ const a = null;
++    3 │ let b = null;
++  > 4 │ var c = 1, d = null, e = 2;
++      │                ^^^^
++    5 │ let f = (null);
++    6 │ let g = /* comment */ null /* trailing */;
 +  
-+  i Safe fix: Sort these properties
++  i Using both null and undefined for missing values means code has to check for both.
 +  
-+    13 13 │   @keyframes no-semicolon {
-+    14 14 │     to {
-+    15    │ - ····color:·red;
-+    16    │ - ····display:·block·//·display·comment
-+       15 │ + ····display:·block;·//·display·comment
-+       16 │ + ····color:·red;
-+    17 17 │     }
-+    18 18 │   }
++  i Use undefined instead.
++  
++  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
++  
++  i Unsafe fix: Replace with undefined.
++  
++     2  2 │   const a = null;
++     3  3 │   let b = null;
++     4    │ - var·c·=·1,·d·=·null,·e·=·2;
++        4 │ + var·c·=·1,·d·=·undefined,·e·=·2;
++     5  5 │   let f = (null);
++     6  6 │   let g = /* comment */ null /* trailing */;
 +  
 +
 +```
-```
-
----
-
-### Incident Patch 3: `438997f3` (2026-10-22)
-**Commit Message**: fix(format/js): keep parens around an instantiation expression before `+`, `-`, `<` and `>` (#12536)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.changeset/fix-instantiation-expression-before-operator.md` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+---
-+"@biomejs/biome": patch
-+---
-+
-+Fixed the formatter removing the parentheses around an instantiation expression before `+`, `-`, `<`, `>`, `>=`, `>>` and `>>>`. TypeScript reads `make<T> + y` as `make < T > +y`, and `make<T> >> y` doesn't parse.
-+
-+```diff
-+- x = make<T> + y;
-++ x = (make<T>) + y;
-+- x = make<T> >> y;
-++ x = (make<T>) >> y;
-+```
-```
-
-**File**: `crates/biome_js_formatter/tests/specs/ts/expression/instantiation_expression_before_comparison.ts` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+// Without the parentheses, these don't parse.
-+x = (make<T>) < y;
-+x = (make<T>) > y;
-+x = (make<T>) >= y;
-+x = (make<T>) >> y;
-+x = (make<T>) >>> y;
-```
-
-**File**: `crates/biome_js_formatter/tests/specs/ts/expression/instantiation_expression_before_comparison.ts.snap` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+---
-+source: crates/biome_formatter_test/src/snapshot_builder.rs
-+info: ts/expression/instantiation_expression_before_comparison.ts
-+---
-+
-+# Input
-+
-+```ts
-+// Without the parentheses, these don't parse.
-+x = (make<T>) < y;
-+x = (make<T>) > y;
-+x = (make<T>) >= y;
-+x = (make<T>) >> y;
-+x = (make<T>) >>> y;
 +
 +```
++invalid.js:5:10 lint/nursery/noNull  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+
-+# Formatted
-+
-+```ts
-+// Without the parentheses, these don't parse.
-+x = (make<T>) < y;
-+x = (make<T>) > y;
-+x = (make<T>) >= y;
-+x = (make<T>) >> y;
-+x = (make<T>) >>> y;
-+
-+```
-```
-
-**File**: `crates/biome_js_formatter/tests/specs/ts/expression/instantiation_expression_before_operator.ts` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+// `make<T> + y` reads as `make < T > +y`, so these parentheses must be kept.
-+x = (make<T>) + y;
-+x = (make<T>) - y;
-+x = (a + make<T>) - y;
-+x = (typeof make<T>) + y;
-+x = (<any>(make<T>)) + y;
-+
-+// Other operators parse fine after the type arguments.
-+x = (make<T>) * y;
-+x = (make<T>) <= y;
-+x = (make<T>) === y;
-+x = y + make<T>;
-```
-
-**File**: `crates/biome_js_formatter/tests/specs/ts/expression/instantiation_expression_before_operator.ts.snap` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+---
-+source: crates/biome_formatter_test/src/snapshot_builder.rs
-+info: ts/expression/instantiation_expression_before_operator.ts
-+---
-+
-+# Input
-+
-+```ts
-+// `make<T> + y` reads as `make < T > +y`, so these parentheses must be kept.
-+x = (make<T>) + y;
-+x = (make<T>) - y;
-+x = (a + make<T>) - y;
-+x = (typeof make<T>) + y;
-+x = (<any>(make<T>)) + y;
-+
-+// Other operators parse fine after the type arguments.
-+x = (make<T>) * y;
-+x = (make<T>) <= y;
-+x = (make<T>) === y;
-+x = y + make<T>;
-+
-+```
-+
-+
-+# Formatted
-+
-+```ts
-+// `make<T> + y` reads as `make < T > +y`, so these parentheses must be kept.
-+x = (make<T>) + y;
-+x = (make<T>) - y;
-+x = a + (make<T>) - y;
-+x = typeof (make<T>) + y;
-+x = <any>(make<T>) + y;
-+
-+// Other operators parse fine after the type arguments.
-+x = make<T> * y;
-+x = make<T> <= y;
-+x = make<T> === y;
-+x = y + make<T>;
-+
-+```
-```
-
-**File**: `crates/biome_js_syntax/src/parentheses/expression.rs` (modified, +37/-0)
-```diff
-@@ -720,6 +720,10 @@ impl NeedsParentheses for TsInstantiationExpression {
-             return true;
-         }
- 
-+        if is_followed_by_operator_after_type_arguments(self) {
-+            return true;
-+        }
-+
-         self.parent::<AnyJsMemberExpression>()
-             .is_some_and(|member_expr| {
-                 member_expr
-@@ -729,6 +733,39 @@ impl NeedsParentheses for TsInstantiationExpression {
-     }
- }
- 
-+/// TypeScript reads `a<T> + b` as `a < T > +b` and rejects `a<T> >> b`,
-+/// also when `a<T>` only ends the left operand (`(c + a<T>) - b`, `(typeof a<T>) + b`).
-+fn is_followed_by_operator_after_type_arguments(node: &TsInstantiationExpression) -> bool {
-+    let mut expression = AnyJsExpression::from(node.clone());
-+    while let Some(parent) = expression.parent::<AnyJsExpression>() {
-+        match &parent {
-+            AnyJsExpression::JsBinaryExpression(binary) => {
-+                if binary.right().is_ok_and(|right| right == expression) {
-+                    expression = parent;
-+                    continue;
-+                }
-+
-+                return binary.left().is_ok_and(|left| left == expression)
-+                    && matches!(
-+                        binary.operator(),
-+                        Ok(JsBinaryOperator::Plus
-+                            | JsBinaryOperator::Minus
-+                            | JsBinaryOperator::LessThan
-+                            | JsBinaryOperator::GreaterThan
-+                            | JsBinaryOperator::GreaterThanOrEqual
-+                            | JsBinaryOperator::RightShift
-+                            | JsBinaryOperator::UnsignedRightShift)
-+                    );
-+            }
-+            AnyJsExpression::JsUnaryExpression(_)
-+            | AnyJsExpression::TsTypeAssertionExpression(_) => expression = parent,
-+            _ => return false,
-+        }
-+    }
-+
-+    false
-+}
-+
- impl NeedsParentheses for TsNonNullAssertionExpression {
-     #[inline]
-     fn needs_parentheses(&self) -> bool {
++  i Unexpected use of null.
++  
++    3 │ let b = null;
++    4 │ var c = 1, d = null, e = 2;
++  > 5 │ let f = (null);
++      │          ^^^^
++    6 │ let g = /* comment */ null /* trailing */;
++    7 │ let { h } = null;
++  
++  i Using both null and undefined for missing values means code has to check for both.
++  
++  i Use undefined instead.
++  
++  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
++  
++  i Unsafe fix: Replace with undefined.
++  
++     3  3 │   let b = null;
++     4  4 │   var c = 1, d = null, e = 2;
++     5    │ - let·f·=·(null);
++        5 │ + let·f·=·(undefined);
++     6  6 │   let g = /* comment */ null /* trailing */;
++     7  7 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12540** (2026-10-22): fix(format/js): keep parens around an instantiation expression before `!` and heritage type arguments (@vidigoat)
-- **PR #12539** (2026-10-22): feat(eslint): allow migration of react/self-closing-comp (@jelly)
-- **PR #12536** (2026-10-22): fix(format/js): keep parens around an instantiation expression before `+`, `-`, `<` and `>` (@vidigoat)
-- **PR #12534** (2026-10-22): feat: improve noIdenticalTestTitle diagnostics (@Netail)
-- **PR #12530** (2026-10-22): fix(noUselessElse): don't treat switch without default as breaking early (@dyc3)
-- **PR #12528** (2026-10-22): fix(lint): check SCSS nested properties by their emitted name in noUnknownProperty (@ff1451)
+- **PR #12670** (2026-10-25): fix(migrate): carry Prettier's bracketSpacing into the top-level (@JamBalaya56562)
+- **PR #12662** (2026-10-24): fix(format/md): preserve newline between block quote and list (@dyc3)
+- **PR #12660** (closed): fix(format/js): keep parens around a generic function type in a type assertion (@vidigoat)
+- **PR #12649** (2026-10-24): fix(migrate): carry Prettier's bracketSpacing in overrides (@JamBalaya56562)
+- **PR #12637** (2026-10-24): refactor(analyze): remove the rule-count limit on analyzer groups (@dyc3)
+- **PR #12618** (2026-10-24): perf(rowan): refactor grand_parent() to not allocate a red node for parent (@dyc3)
 
 ---
 
@@ -1843,16 +1898,16 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. format/js): keep parens around an instantiation expression before `!` and herita
+## X. format/md): preserve newline between block quote and list (#12662)
 
 **RULE**:
-When implementing operations in `.changeset/fix-instantiation-expression-non-null.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/fix-markdown-blank-line-after-blockquote.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d3e8a1e`: format/js): keep parens around an instantiation expression before `!` and heritage type arguments (#12540). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c836eb1`: format/md): preserve newline between block quote and list (#12662). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-instantiation-expression-non-null.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-markdown-blank-line-after-blockquote.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
@@ -1861,13 +1916,13 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 "@biomejs/biome": patch
 ---
 
-Fixed the formatter removing the parentheses around an instantiation expression before a non-null assertion or type arguments of a class heritage, which produced code that doesn't parse.
+Fixed [#12645](https://github.com/biomejs/biome/issues/12645): the Markdown formatter no longer removes the blank line between a blockquote and the list that follows it, matching Prettier.
 
-```diff
-- const a = make<T>!;
-+ const a = (make<T>)!;
-- class D extends B<T><T> {}
-+ class D extends (B<T>)<T> {}
+```md
+> A note.
+
+- one
+- two
 ```
 ```
 
@@ -1878,4 +1933,4 @@ Fixed the formatter removing the parentheses around an instantiation expression 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d3e8a1e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c836eb1` are properly handled with clean fallback behavior.

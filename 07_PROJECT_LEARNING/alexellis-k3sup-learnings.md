@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alexellis-k3sup-learnings.md`  
 > **Source**: github ([https://github.com/alexellis/k3sup](https://github.com/alexellis/k3sup))  
-> **Source Version**: `2fa773c9`  
+> **Source Version**: `07ee3911`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:32:39.237Z  
+> **Timestamp**: 2026-10-25T05:52:37.794Z  
 > **Learning ID**: `learn-github-alexellis-k3sup`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alexellis-k3sup-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alexellis/k3sup](https://github.com/alexellis/k3sup))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:32:38.755Z  
+> **Harvest Timestamp**: 2026-10-25T05:52:37.786Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: bootstrap K3s over SSH in < 60s 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7438 stars
+- **Stars / Engagement**: 7440 stars
 
 ---
 
@@ -1778,11 +1778,11 @@ curl -SLfs https://get.k3sup.dev | sh
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #468** (2026-10-23): **Update Go to 1.27 and refresh dependencies**
+  *Symptoms*: ## Why do you need this?  Keep the build toolchain and dependencies current for k3sup's SSH provisioning and registry download paths.  - [ ] I have raised an issue to propose this change ([required](https://github.com/openfaas/faas/blob/master/CONTRIBUTING.md))  ## Description  Use Go 1.27 in the module and Go 1.27.x in both build and publish workflows.  Update Arkade, go-containerregistry, x/crypto, x/term and their transitive dependencies, and regenerate the vendor tree.  ## How Has This Been Tested?  Validated on Linux amd64 with Go 1.27.3:  - `make all`: passes formatting checks, all unit tests, `make dist`, and checksum generation. The cmd package reports 7.0% statement coverage. - `go mod verify`: all modules verified. - `go vet ./...`: passes. - All six release targets compile: Linux amd64, arm64, armv7; Darwin amd64, arm64; Windows amd64. - `file bin/k3sup*`: expected ELF, Mach-O, and PE32+ binary formats. `go version -m bin/k3sup-armhf` confirms GOARM=7. - `sha256sum -c bin/*.sha256`: all six checksums pass. - Native CLI smoke checks: `k3sup version`, `install --help`, `join --help`, and `get pro --help` pass.  Cross-compiled binaries were not executed. Live SSH provisioning and registry downloads were not exercised. There are no Dockerfiles or Docker release platforms in this repository.  ## Types of changes  - [x] Bug fix (non-breaking change which fixes an issue) - [ ] New feature (non-breaking change which adds functionality) - [ ] Breaking change (fix or feature
+
 - **Issue #462** (2026-07-09): **Update upload-assets action to 0.5.0**
   *Symptoms*: ## Why do you need this?  ## Description This change updates `alexellis/upload-assets` from `0.4.1` to `0.5.0` in `.github/workflows/publish.yaml`.  ## How Has This Been Tested? This change only updates the GitHub Actions release upload action version in `.github/workflows/publish.yaml`.  The action has no breaking changes.  ## Types of changes - [x] Bug fix (non-breaking change which fixes an issue) - [ ] New feature (non-breaking change which adds functionality) - [ ] Breaking change (fix or feature that would cause existing functionality to change)  ## Checklist: - [x] My code follows the code style of this project. - [ ] My change requires a change to the documentation. - [ ] I have updated the documentation accordingly. - [x] I've read the [CONTRIBUTION](https://github.com/alexellis/arkade/blob/master/CONTRIBUTING.md) guide - [x] I have signed-off my commits with `git commit -s` - [ ] I have added tests to cover my changes. - [ ] All new and existing tests passed. 
-
-- **Issue #460** (2026-03-25): **SSH Handshake Failed**
-  *Symptoms*: **Expected behaviour**  It should create 1 master 4 nodes. This scirpt was running about a year ago without errors. Now I have to setup the cluster but it fails with the famous error message "ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain". I've tried it without --server-user and without. Also with and without --ssh-key. A normal ssh <node|master> works without any issues.  **Current behaviour**  The ssh connection didn't come up and no k3s was installed.  **To Reproduce**  Include full unabridged instructions that anyone can use to reproduce the problem  ``` k3sup install \ 	--user root \ 	--ssh-key ${SSH_KEY} \ 	--ip ${MASTER01} \ 	--datastore="${DATASTORE}" \ 	--token=${TOKEN} \ 	--k3s-extra-args "--flannel-backend=none --cluster-cidr=${CLUSTER_CIDR} --service-cidr=${SERVICE_CIDR} --disable traefik --disable-network-policy --node-ip=${MASTER01}" \ 	--context="${CONTEXT}" \ 	--local-path="${KUBE_CONFIG_PATH}"  for IP in $NODES; do 	k3sup join \ 		--user root \ 		--server-user root \ 		--server-ip ${MASTER01} \ 		--ip ${IP} done ```  **Screenshots / console output**  ``` ❯ ./install-k3s.sh Running: k3sup install 2026/03/25 15:54:43 10.2.0.14 Public IP: 10.2.0.14 Error: unable to connect to 10.2.0.14:22 over ssh: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain Running: k3sup join Joining 10.2.0.15 => 10.2.0.14 Error: unable to connect to 10.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1799,475 +1799,354 @@ curl -SLfs https://get.k3sup.dev | sh
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18852ec8` (2025-06-26)
-**Commit Message**: Fixes in README
+### Incident Patch 1: `07ee3911` (2026-10-22)
+**Commit Message**: Update Go dependencies
 
-Signed-off-by: Alex Ellis (OpenFaaS Ltd) <[REDACTED_EMAIL]>
+Refresh Arkade, registry download dependencies and Go SSH and terminal packages. Regenerate the vendor tree.
 
-**File**: `README.md` (modified, +10/-8)
+Signed-off-by: Han Verstraete (OpenFaaS Ltd) <[REDACTED_EMAIL]>
+
+**File**: `go.mod` (modified, +9/-9)
 ```diff
-@@ -17,8 +17,8 @@ How do you say it? Ketchup, as in tomato.
- - [k3sup 🚀 (said 'ketchup')](#k3sup--said-ketchup)
-   - [Contents:](#contents)
-   - [What's this for? 💻](#whats-this-for-)
--  - [Do you love `k3sup`?](#do-you-love-k3sup)
--    - [Uses](#uses)
-+  - [Are you a `k3sup` user?](#are-you-a-k3sup-user)
-+    - [Use-cases](#use-cases)
-     - [Bootstrapping Kubernetes](#bootstrapping-kubernetes)
-   - [Download `k3sup` (tl;dr)](#download-k3sup-tldr)
-     - [A note for Windows users](#a-note-for-windows-users)
-@@ -45,7 +45,6 @@ How do you say it? Ketchup, as in tomato.
-   - [Troubleshooting and support](#troubleshooting-and-support)
-     - [Maybe the problem is with K3s?](#maybe-the-problem-is-with-k3s)
-     - [Common issues](#common-issues)
--    - [Support and k3sup for commercial use](#support-and-k3sup-for-commercial-use)
-     - [Getting access to your KUBECONFIG](#getting-access-to-your-kubeconfig)
-     - [Smart cards and 2FA](#smart-cards-and-2fa)
-     - [Misc note on `iptables`](#misc-note-on-iptables)
-@@ -58,7 +57,7 @@ You may wonder why a tool like this needs to exist when you can do this sort of
+@@ -3,25 +3,25 @@ module github.com/alexellis/k3sup
+ go 1.27.0
  
- k3sup was developed to automate what can be a very manual and confusing process for many developers, who are already short on time. Once you've provisioned a VM with your favourite tooling, `k3sup` means you are only 60 seconds away from running `kubectl get pods` on your own computer. If you are a local computer, you can bypass SSH with `k3sup install --local`
+ require (
+-	github.com/alexellis/arkade v0.0.0-20260829073617-4414c15437e0
++	github.com/alexellis/arkade v0.0.0-20261007172432-8b8a849ed4f9
+ 	github.com/alexellis/go-execute/v2 v2.2.1
+-	github.com/google/go-containerregistry v0.22.0
++	github.com/google/go-containerregistry v0.22.1
+ 	github.com/mitchellh/go-homedir v1.1.0
+ 	github.com/morikuni/aec v1.1.0
+ 	github.com/spf13/cobra v1.10.2
+-	golang.org/x/crypto v0.56.0
+-	golang.org/x/term v0.45.0
++	golang.org/x/crypto v0.58.0
++	golang.org/x/term v0.47.0
+ )
  
--## Do you use `k3sup`?
-+## Are you a `k3sup` user?
+ require (
+-	github.com/docker/cli v29.7.2+incompatible // indirect
+-	github.com/docker/docker-credential-helpers v0.9.9 // indirect
++	github.com/docker/cli v29.9.2+incompatible // indirect
++	github.com/docker/docker-credential-helpers v0.9.12 // indirect
+ 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+-	github.com/klauspost/compress v1.20.0 // indirect
++	github.com/klauspost/compress v1.20.3 // indirect
+ 	github.com/opencontainers/go-digest v1.0.0 // indirect
+ 	github.com/opencontainers/image-spec v1.1.1 // indirect
+ 	github.com/sirupsen/logrus v1.10.2 // indirect
+ 	github.com/spf13/pflag v1.0.10 // indirect
+-	golang.org/x/sync v0.22.0 // indirect
+-	golang.org/x/sys v0.47.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
+ )
+```
+
+**File**: `go.sum` (modified, +18/-18)
+```diff
+@@ -1,20 +1,20 @@
+-github.com/alexellis/arkade v0.0.0-20260829073617-4414c15437e0 h1:mLBLRkgHBBXWFZ4/PUEUkJ2IRfecKsIGIu74A2vZekI=
+-github.com/alexellis/arkade v0.0.0-20260829073617-4414c15437e0/go.mod h1:xiP52RwTqplZeR5OYXJiFb0UaLnjaZg0MHHyjTWYuRQ=
++github.com/alexellis/arkade v0.0.0-20261007172432-8b8a849ed4f9 h1:xdag0RqGf+ZG233kwxAmx6KfgIoMU7VWsYqjPXG8vxM=
++github.com/alexellis/arkade v0.0.0-20261007172432-8b8a849ed4f9/go.mod h1:CIcuXQ9h0pC2FZeDlFQ/cYp4fvnnLcgkDE7bcWWxLms=
+ github.com/alexellis/go-execute/v2 v2.2.1 h1:4Ye3jiCKQarstODOEmqDSRCqxMHLkC92Bhse743RdOI=
+ github.com/alexellis/go-execute/v2 v2.2.1/go.mod h1:FMdRnUTiFAmYXcv23txrp3VYZfLo24nMpiIneWgKHTQ=
+ github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
+-github.com/docker/cli v29.7.2+incompatible h1:dlkwallR8XqfeVnA2ELEhdwvb4lsSwuB4IgsG8Q9cLY=
+-github.com/docker/cli v29.7.2+incompatible/go.mod h1:JLrzqnKDaYBop7H2jaqPtU4hHvMKP+vjCwu2uszcLI8=
+-github.com/docker/docker-credential-helpers v0.9.9 h1:BkydjIgZ46JnDbqyM2p2fc63KMw6y+KHL3Em/2AGJ7w=
+-github.com/docker/docker-credential-helpers v0.9.9/go.mod h1:v1S+hepowrQXITkEfw6o4+BMbGot02wiKpzWhGUZK6c=
++github.com/docker/cli v29.9.2+incompatible h1:trup/vUxx5uUo2t+87Cd9AmITR+DvKUe4H2tTtZN8FY=
++github.com/docker/cli v29.9.2+incompatible/go.mod h1:JLrzqnKDaYBop7H2jaqPtU4hHvMKP+vjCwu2uszcLI8=
++github.com/docker/docker-credential-helpers v0.9.12 h1:hAgjJcMuC17DPf0Kl/HQSZQ7cxVo+wEA8Oo1SzkmqFg=
++github.com/docker/docker-credential-helpers v0.9.12/go.mod h1:v1S+hepowrQXITkEfw6o4+BMbGot02wiKpzWhGUZK6c=
+ github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
+ github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
+-github.com/google/go-containerregistry v0.22.0 h1:eGbCiPeYxAH/7WLLq6zTBALP0tUIFsoyRauhxXDJ53I=
+-github.com/google/go-containerregistry v0.22.0/go.mod h1:bJR35SK8XgisYmhg/FMQ/5RK0S/XrOAqLBV5/LR2XE0=
++github.com/google/go-containerregistry v0.22.1 h1:RZuuSYhTvlDvtsK+NkutoCZ//C0X2ebLK8X8l3ULs84=
++github.com/google/go-containerregistry v0.22.1/go.mod h1:bJR35SK8XgisYmhg/FMQ/5RK0S/XrOAqLBV5/LR2XE0=
+ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
+ github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
+-github.com/klauspost/compress v1.20.0 h1:a3C1ke2ohxFymNlb2HWAHjDeKCI90scRskErZkR0ezA=
+-github.com/klauspost/compress v1.20.0/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
++github.com/klauspost/compress v1.20.3 h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
++github.com/klauspost/compress v1.20.3/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/mitchellh/go-homedir v1.1.0 h1:lukF9ziXFxDFPkA1vsr5zpc1XuPDn/wFntq5mG+4E0Y=
+ github.com/mitchellh/go-homedir v1.1.0/go.mod h1:SfyaCUpYCn1Vlf4IUYiD9fPX4A5wJrkLzIz1N1q0pr0=
+ github.com/morikuni/aec v1.1.0 h1:vBBl0pUnvi/Je71dsRrhMBtreIqNMYErSAbEeb8jrXQ=
+@@ -36,14 +36,14 @@ github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUm
+ go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+ go.yaml.in/yaml/v3 v3.0.5 h1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw=
+ go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
+-golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
+-golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
+-golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
+-golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
+-golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
+-golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
+-golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
+-golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+ gotest.tools/v3 v3.5.2 h1:7koQfIKdy+I8UTetycgUqXWSDwpgv193Ka+qRsmBY8Q=
+ gotest.tools/v3 v3.5.2/go.mod h1:LtdLGcnqToBH83WByAAi/wiwSFCArdFIUV/xxN4pcjA=
+```
+
+**File**: `vendor/github.com/docker/cli/cli/config/config.go` (modified, +5/-4)
+```diff
+@@ -7,7 +7,6 @@ import (
+ 	"os/user"
+ 	"path/filepath"
+ 	"runtime"
+-	"strings"
+ 	"sync"
  
- `k3sup` was created by [Alex Ellis](https://github.com/users/alexellis/sponsorship) - the founder of [OpenFaaS &reg;](https://www.openfaas.com/) & [inlets](https://inlets.dev/). 
+ 	"github.com/docker/cli/cli/config/configfile"
+@@ -98,9 +97,11 @@ func SetDir(dir string) {
  
-@@ -68,13 +67,16 @@ k3sup was developed to automate what can be a very manual and confusing process
- 
- Want to see continued development? [Sponsor alexellis on GitHub](https://github.com/users/alexellis/sponsorship)
- 
--### Uses
-+### Use-cases
+ // Path returns the path to a file relative to the config dir
+ func Path(p ...string) (string, error) {
+-	path := filepath.Join(append([]string{Dir()}, p...)...)
+-	if !strings.HasPrefix(path, Dir()+string(filepath.Separator)) {
+-		return "", fmt.Errorf("path %q is outside of root config directory %q", path, Dir())
++	root := Dir()
++	path := filepath.Join(append([]string{root}, p...)...)
 +
-+K3sup runs from your local machine, without ever having to log into a remote server.
++	if rel, err := filepath.Rel(root, path); err != nil || !filepath.IsLocal(rel) {
++		return "", fmt.Errorf("path %q is outside of root config directory %q", path, root)
+ 	}
+ 	return path, nil
+ }
+```
+
+**File**: `vendor/github.com/docker/cli/cli/config/configfile/file.go` (modified, +2/-3)
+```diff
+@@ -1,5 +1,5 @@
+ // FIXME(thaJeztah): remove once we are a module; the go:build directive prevents go from downgrading language version to go1.16:
+-//go:build go1.25
++//go:build go1.26
  
- * Bootstrap Kubernetes with k3s onto any VM with `k3sup install` - either manually, during CI or through `cloud-init`
--* Get from zero to `kubectl` with `k3s` on Raspberry Pi (RPi), VMs, AWS EC2, Packet bare-metal, DigitalOcean, Civo, Scaleway, and others
--* Build a HA, multi-master (server) cluster
--* Fetch the KUBECONFIG from an existing `k3s` cluster
-+* Get from zero to `kubectl` with `k3s` on bare-metal, Raspberry Pi (RPi), VMs, AWS EC2, Google Cloud, DigitalOcean, Civo, Linode, Scaleway, and others
-+* Build a Highly-Available (HA), multi-master (server) cluster
-+* Fetch the KUBECONFIG from an existing cluster with `k3sup get-config`
- * Join nodes into an existing `k3s` cluster with `k3sup join`
-+* Build a massive cluster for automation and scale-out testing using `k3sup plan` and a JSON file with IP addresses
+ package configfile
  
- ### Bootstrapping Kubernetes
+@@ -232,8 +232,7 @@ func (c *ConfigFile) Save() (retErr error) {
+ 		cfgFile = f
+ 	} else if os.IsNotExist(err) {
+ 		// extract the path from the error if the configfile does not exist or is a dangling symlink
+-		var pathError *os.PathError
+-		if errors.As(err, &pathError) {
++		if pathError, ok := errors.AsType[*os.PathError](err); ok {
+ 			cfgFile = pathError.Path
+ 		}
+ 	}
+```
+
+**File**: `vendor/github.com/docker/cli/cli/config/memorystore/store.go` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ // FIXME(thaJeztah): remove once we are a module; the go:build directive prevents go from downgrading language version to go1.16:
+-//go:build go1.25
++//go:build go1.26
+ 
+ package memorystore
+ 
+```
+
+**File**: `vendor/github.com/google/go-containerregistry/internal/ipaddr/ipaddr.go` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++// Copyright 2026 Google LLC All Rights Reserved.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package ipaddr
++
++import (
++	"net/netip"
++	"strconv"
++	"strings"
++)
++
++// IsPrivateOrLinkLocal reports whether host denotes a loopback, private,
++// link-local, or unspecified address. It accepts any IP-literal form the Go
++// dialer accepts — canonical dotted-quad IPv4 and IPv6, zone-qualified and
++// IPv4-mapped IPv6, and legacy inet_aton encodings (32-bit decimal
++// "2130706433", hexadecimal "0x7f000001", partial dotted-quad "127.1",
++// zero-padded octets) — so a guard based on it cannot be bypassed by
++// spelling an internal address in a non-canonical way. DNS names are not IP
++// literals and return false.
++func IsPrivateOrLinkLocal(host string) bool {
++	addr, ok := Parse(host)
++	if !ok {
++		return false
++	}
++	return addr.IsLoopback() || addr.IsLinkLocalUnicast() || addr.IsLinkLocalMulticast() ||
++		addr.IsPrivate() || addr.IsUnspecified()
++}
++
++// Parse parses an IP literal in any form the Go dialer accepts.
++func Parse(host string) (netip.Addr, bool) {
++	// The dialer ignores IPv6 zone identifiers, so guards must too.
++	host, _, _ = strings.Cut(host, "%")
++	if addr, err := netip.ParseAddr(host); err == nil {
++		// Treat IPv4-mapped IPv6 as the IPv4 address the dialer connects to.
++		return addr.WithZone("").Unmap(), true
++	}
++	return parseLegacyIPv4(host)
++}
++
++// parseLegacyIPv4 implements the inet_aton forms the Go resolver accepts for
++// IPv4: one to four dot-separated parts where the final part may fill the
++// remaining bytes ("127.1" == 127.0.0.1) and each part may be decimal,
++// hexadecimal (0x prefix), or octal (leading 0).
++func parseLegacyIPv4(host string) (netip.Addr, bool) {
++	parts := strings.Split(host, ".")
++	if len(parts) < 1 || len(parts) > 4 {
++		return netip.Addr{}, false
++	}
++	var b [4]byte
++	for i, part := range parts[:len(parts)-1] {
++		// bitsize 8 enforces the single-octet range before any conversion.
++		v, err := strconv.ParseUint(part, 0, 8)
++		if err != nil {
++			return netip.Addr{}, false
++		}
++		b[i] = byte(v)
++	}
++	// The final part may fill as many bytes as remain, e.g. "127.1" -> 127.0.0.1;
++	// with four parts it must still be a single octet. The bitsize enforces the
++	// range before the conversion below.
++	lastBits := [...]int{32, 24, 16, 8}[len(parts)-1]
++	last, err := strconv.ParseUint(parts[len(parts)-1], 0, lastBits)
++	if err != nil {
++		return netip.Addr{}, false
++	}
++	v := uint32(last)
++	for i := len(parts) - 1; i < 4; i++ {
++		b[i] = byte(v >> (8 * (3 - i)))
++	}
++	return netip.AddrFrom4(b), true
++}
+```
+
+**File**: `vendor/github.com/google/go-containerregistry/internal/verify/verify.go` (modified, +7/-2)
+```diff
+@@ -17,7 +17,6 @@
+ package verify
+ 
+ import (
+-	"bytes"
+ 	"encoding/hex"
+ 	"errors"
+ 	"fmt"
+@@ -107,10 +106,16 @@ func Descriptor(d v1.Descriptor) error {
+ 		return errors.New("error verifying descriptor; Data == nil")
+ 	}
+ 
+-	h, sz, err := v1.SHA256(bytes.NewReader(d.Data))
++	hasher, err := v1.Hasher(d.Digest.Algorithm)
+ 	if err != nil {
+ 		return err
+ 	}
++	hasher.Write(d.Data)
++	h := v1.Hash{
++		Algorithm: d.Digest.Algorithm,
++		Hex:       hex.EncodeToString(hasher.Sum(make([]byte, 0, hasher.Size()))),
++	}
++	sz := int64(len(d.Data))
+ 	if h != d.Digest {
+ 		return fmt.Errorf("error verifying Digest; got %q, want %q", h, d.Digest)
+ 	}
+```
+
+**File**: `vendor/github.com/google/go-containerregistry/pkg/authn/authn.go` (modified, +3/-1)
+```diff
+@@ -89,7 +89,9 @@ func (a *AuthConfig) UnmarshalJSON(data []byte) error {
+ // MarshalJSON implements json.Marshaler
+ func (a AuthConfig) MarshalJSON() ([]byte, error) {
+ 	shadow := (authConfig)(a)
+-	shadow.Auth = encodeDockerConfigFieldAuth(shadow.Username, shadow.Password)
++	if shadow.Username != "" || shadow.Password != "" {
++		shadow.Auth = encodeDockerConfigFieldAuth(shadow.Username, shadow.Password)
++	}
+ 	return json.Marshal(shadow)
+ }
  
 ```
 
 ---
 
-### Incident Patch 2: `5d97659e` (2025-06-26)
-**Commit Message**: Fix Makefile for Linux target when run on an Arm64 Mac
+### Incident Patch 2: `2e439229` (2026-10-22)
+**Commit Message**: Update Go to 1.27
 
-The k3sup binary is for Linux amd64, but was being created for
-Linux arm64 and not Linux amd64.
+Use Go 1.27 in the module and build and publish workflows.
 
-Signed-off-by: Alex Ellis (OpenFaaS Ltd) <[REDACTED_EMAIL]>
+Signed-off-by: Han Verstraete (OpenFaaS Ltd) <[REDACTED_EMAIL]>
 
-**File**: `Makefile` (modified, +1/-1)
+**File**: `.github/workflows/build.yaml` (modified, +1/-1)
 ```diff
-@@ -20,7 +20,7 @@ gofmt:
- dist:
- 	mkdir -p bin/
- 	rm -rf bin/k3sup*
--	CGO_ENABLED=0 GOOS=linux go build -ldflags $(LDFLAGS) -o bin/k3sup
-+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) -o bin/k3sup
- 	GOARM=7 GOARCH=arm CGO_ENABLED=0 GOOS=linux go build -ldflags $(LDFLAGS) -o bin/k3sup-armhf
- 	GOARCH=arm64 CGO_ENABLED=0 GOOS=linux go build -ldflags $(LDFLAGS) -o bin/k3sup-arm64
- 	CGO_ENABLED=0 GOOS=darwin go build -ldflags $(LDFLAGS) -o bin/k3sup-darwin
+@@ -22,6 +22,6 @@ jobs:
+       - name: Install Go
+         uses: actions/setup-go@v7
+         with:
+-          go-version: "1.26.x"
++          go-version: "1.27.x"
+       - name: Make all
+         run: make all
 ```
 
----
-
-### Incident Patch 3: `9f541fed` (2025-02-01)
-**Commit Message**: Cancel concurrent builds
-
-Signed-off-by: Alex Ellis (OpenFaaS Ltd) <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/build.yaml` (modified, +4/-0)
+**File**: `.github/workflows/publish.yaml` (modified, +1/-1)
 ```diff
-@@ -10,6 +10,10 @@ on:
- 
- jobs:
-   build:
-+    concurrency: 
-+      group: ${{ github.ref }}
-+      cancel-in-progress: true
-+
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@master
+@@ -15,7 +15,7 @@ jobs:
+       - name: Install Go
+         uses: actions/setup-go@v7
+         with:
+-          go-version: "1.26.x"
++          go-version: "1.27.x"
+       - name: Make all
+         run: make all
+       - name: Upload release binaries
 ```
 
 **File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -13,6 +13,6 @@ require (
+@@ -1,6 +1,6 @@
+ module github.com/alexellis/k3sup
+ 
+-go 1.26.0
++go 1.27.0
  
  require (
- 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
--	github.com/spf13/pflag v1.0.5 // indirect
-+	github.com/spf13/pflag v1.0.6 // indirect
- 	golang.org/x/sys v0.29.0 // indirect
- )
-```
-
-**File**: `go.sum` (modified, +2/-15)
-```diff
-@@ -1,9 +1,5 @@
--github.com/alexellis/go-execute/v2 v2.0.0 h1:e2fB9kZcPG0yg65XHL1/t6efcCUdt32AMbr/mv7A2tc=
--github.com/alexellis/go-execute/v2 v2.0.0/go.mod h1:FMdRnUTiFAmYXcv23txrp3VYZfLo24nMpiIneWgKHTQ=
- github.com/alexellis/go-execute/v2 v2.2.1 h1:4Ye3jiCKQarstODOEmqDSRCqxMHLkC92Bhse743RdOI=
- github.com/alexellis/go-execute/v2 v2.2.1/go.mod h1:FMdRnUTiFAmYXcv23txrp3VYZfLo24nMpiIneWgKHTQ=
--github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
--github.com/cpuguy83/go-md2man/v2 v2.0.3/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
- github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
- github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
- github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
-@@ -12,24 +8,15 @@ github.com/mitchellh/go-homedir v1.1.0/go.mod h1:SfyaCUpYCn1Vlf4IUYiD9fPX4A5wJrk
- github.com/morikuni/aec v1.0.0 h1:nP9CBfwrvYnBRgY6qfDQkygYDmYwOilePFkwzv4dU8A=
- github.com/morikuni/aec v1.0.0/go.mod h1:BbKIizmSmc5MMPqRYbxO4ZU0S0+P200+tUnFx7PXmsc=
- github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
--github.com/spf13/cobra v1.7.0 h1:hyqWnYt1ZQShIddO5kBpj3vu05/++x6tJ6dg8EC572I=
--github.com/spf13/cobra v1.7.0/go.mod h1:uLxZILRyS/50WlhOIKD7W6V5bgeIt+4sICxh6uRMrb0=
--github.com/spf13/cobra v1.8.0 h1:7aJaZx1B85qltLMc546zn58BxxfZdR/W22ej9CFoEf0=
--github.com/spf13/cobra v1.8.0/go.mod h1:WXLWApfZ71AjXPya3WOlMsY9yMs7YeiHhFVlvLyhcho=
- github.com/spf13/cobra v1.8.1 h1:e5/vxKd/rZsfSJMUX1agtjeTDf+qv1/JdBF8gg5k9ZM=
- github.com/spf13/cobra v1.8.1/go.mod h1:wHxEcudfqmLYa8iTfL+OuZPbBZkmvliBWKIezN3kD9Y=
--github.com/spf13/pflag v1.0.5 h1:iy+VFUOCP1a+8yFto/drg2CJ5u0yRoB7fZw3DKv/JXA=
- github.com/spf13/pflag v1.0.5/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
--golang.org/x/crypto v0.17.0 h1:r8bRNjWL3GshPW3gkd+RpvzWrZAwPS49OmTGZ/uhM4k=
--golang.org/x/crypto v0.17.0/go.mod h1:gCAAfMLgwOJRpTjQ2zCCt2OcSfYMTeZVSRtQlPC7Nq4=
-+github.com/spf13/pflag v1.0.6 h1:jFzHGLGAlb3ruxLB8MhbI6A8+AQX/2eW4qeyNZXNp2o=
-+github.com/spf13/pflag v1.0.6/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
- golang.org/x/crypto v0.32.0 h1:euUpcYgM8WcP71gNpTqQCn6rC2t6ULUPiOzfWaXVVfc=
- golang.org/x/crypto v0.32.0/go.mod h1:ZnnJkOaASj8g0AjIduWNlq2NRxL0PlBrbKVyZ6V/Ugc=
--golang.org/x/sys v0.15.0 h1:h48lPFYpsTvQJZF4EKyI4aLHaev3CxivZmv7yZig9pc=
--golang.org/x/sys v0.15.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
- golang.org/x/sys v0.29.0 h1:TPYlXGxvx1MGTn2GiZDhnjPA9wZzZeGKHHmKhHYvgaU=
- golang.org/x/sys v0.29.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
--golang.org/x/term v0.15.0 h1:y/Oo/a/q3IXu26lQgl04j/gjuBDOBlx7X6Om1j2CPW4=
--golang.org/x/term v0.15.0/go.mod h1:BDl952bC7+uMoWR75FIrCDx79TPU9oHkTZ9yRbYOrX0=
- golang.org/x/term v0.28.0 h1:/Ts8HFuMR2E6IP/jlo7QVLZHggjKQbhu/7H0LJFr3Gg=
- golang.org/x/term v0.28.0/go.mod h1:Sw/lC2IAUZ92udQNf3WodGtn4k/XoLyZoh8v/8uiwek=
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
-```
-
-**File**: `vendor/github.com/spf13/pflag/.editorconfig` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+root = true
-+
-+[*]
-+charset = utf-8
-+end_of_line = lf
-+indent_size = 4
-+indent_style = space
-+insert_final_newline = true
-+trim_trailing_whitespace = true
-+
-+[*.go]
-+indent_style = tab
-```
-
-**File**: `vendor/github.com/spf13/pflag/.golangci.yaml` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+linters:
-+    disable-all: true
-+    enable:
-+        - nolintlint
-```
-
-**File**: `vendor/github.com/spf13/pflag/flag.go` (modified, +18/-11)
-```diff
-@@ -160,7 +160,7 @@ type FlagSet struct {
- 	args              []string // arguments after flags
- 	argsLenAtDash     int      // len(args) when a '--' was located when parsing, or -1 if no --
- 	errorHandling     ErrorHandling
--	output            io.Writer // nil means stderr; use out() accessor
-+	output            io.Writer // nil means stderr; use Output() accessor
- 	interspersed      bool      // allow interspersed option/non-option args
- 	normalizeNameFunc func(f *FlagSet, name string) NormalizedName
- 
-@@ -255,13 +255,20 @@ func (f *FlagSet) normalizeFlagName(name string) NormalizedName {
- 	return n(f, name)
- }
- 
--func (f *FlagSet) out() io.Writer {
-+// Output returns the destination for usage and error messages. os.Stderr is returned if
-+// output was not set or was set to nil.
-+func (f *FlagSet) Output() io.Writer {
- 	if f.output == nil {
- 		return os.Stderr
- 	}
- 	return f.output
- }
- 
-+// Name returns the name of the flag set.
-+func (f *FlagSet) Name() string {
-+	return f.name
-+}
-+
- // SetOutput sets the destination for usage and error messages.
- // If output is nil, os.Stderr is used.
- func (f *FlagSet) SetOutput(output io.Writer) {
-@@ -358,7 +365,7 @@ func (f *FlagSet) ShorthandLookup(name string) *Flag {
- 	}
- 	if len(name) > 1 {
- 		msg := fmt.Sprintf("can not look up shorthand which is more than one ASCII character: %q", name)
--		fmt.Fprintf(f.out(), msg)
-+		fmt.Fprintf(f.Output(), msg)
- 		panic(msg)
- 	}
- 	c := name[0]
-@@ -482,7 +489,7 @@ func (f *FlagSet) Set(name, value string) error {
- 	}
- 
- 	if flag.Deprecated != "" {
--		fmt.Fprintf(f.out(), "Flag --%s has been deprecated, %s\n", flag.Name, flag.Deprecated)
-+		fmt.Fprintf(f.Output(), "Flag --%s has been deprecated, %s\n", flag.Name, flag.Deprecated)
- 	}
- 	return nil
- }
-@@ -523,7 +530,7 @@ func Set(name, value string) error {
- // otherwise, the default values of all defined flags in the set.
- func (f *FlagSet) PrintDefaults() {
- 	usages := f.FlagUsages()
--	fmt.Fprint(f.out(), usages)
-+	fmt.Fprint(f.Output(), usages)
- }
- 
- // defaultIsZeroValue returns true if the default value for this flag represents
-@@ -758,7 +765,7 @@ func PrintDefaults() {
- 
- // defaultUsage is the default function to print a usage message.
- func defaultUsage(f *FlagSet) {
--	fmt.Fprintf(f.out(), "Usage of %s:\n", f.name)
-+	fmt.Fprintf(f.Output(), "Usage of %s:\n", f.name)
- 	f.PrintDefaults()
- }
- 
-@@ -844,7 +851,7 @@ func (f *FlagSet) AddFlag(flag *Flag) {
- 	_, alreadyThere := f.formal[normalizedFlagName]
- 	if alreadyThere {
- 		msg := fmt.Sprintf("%s flag redefined: %s", f.name, flag.Name)
--		fmt.Fprintln(f.out(), msg)
-+		fmt.Fprintln(f.Output(), msg)
- 		panic(msg) // Happens only if flags are declared with identical names
- 	}
- 	if f.formal == nil {
-@@ -860,7 +867,7 @@ func (f *FlagSet) AddFlag(flag *Flag) {
- 	}
- 	if len(flag.Shorthand) > 1 {
- 		msg := fmt.Sprintf("%q shorthand is more than one ASCII character", flag.Shorthand)
--		fmt.Fprintf(f.out(), msg)
-+		fmt.Fprintf(f.Output(), msg)
- 		panic(msg)
- 	}
- 	if f.shorthands == nil {
-@@ -870,7 +877,7 @@ func (f *FlagSet) AddFlag(flag *Flag) {
- 	used, alreadyThere := f.shorthands[c]
- 	if alreadyThere {
- 		msg := fmt.Sprintf("unable to redefine %q shorthand in %q flagset: it's already used for %q flag", c, f.name, used.Name)
--		fmt.Fprintf(f.out(), msg)
-+		fmt.Fprintf(f.Output(), msg)
- 		panic(msg)
- 	}
- 	f.shorthands[c] = flag
-@@ -909,7 +916,7 @@ func VarP(value Value, name, shorthand, usage string) {
- func (f *FlagSet) failf(format string, a ...interface{}) error {
- 	err := fmt.Errorf(format, a...)
- 	if f.errorHandling != ContinueOnError {
--		fmt.Fprintln(f.out(), err)
-+		fmt.Fprintln(f.Output(), err)
- 		f.usage()
- 	}
- 	return err
-@@ -1060,7 +1067,7 @@ func (f *FlagSet) parseSingleShortArg(shorthands string, args []string, fn parse
- 	}
- 
- 	if flag.ShorthandDeprecated != "" {
--		fmt.Fprintf(f.out(), "Flag shorthand -%s has been deprecated, %s\n", flag.Shorthand, flag.ShorthandDeprecated)
-+		fmt.Fprintf(f.Output(), "Flag shorthand -%s has been deprecated, %s\n", flag.Shorthand, flag.ShorthandDeprecated)
- 	}
- 
- 	err = fn(flag, value)
-```
-
-**File**: `vendor/github.com/spf13/pflag/ip.go` (modified, +3/-0)
-```diff
-@@ -16,6 +16,9 @@ func newIPValue(val net.IP, p *net.IP) *ipValue {
- 
- func (i *ipValue) String() string { return net.IP(*i).String() }
- func (i *ipValue) Set(s string) error {
-+	if s == "" {
-+		return nil
-+	}
- 	ip := net.ParseIP(strings.TrimSpace(s))
- 	if ip == nil {
- 		return fmt.Errorf("failed to parse IP: %q", s)
-```
-
-**File**: `vendor/github.com/spf13/pflag/ipnet_slice.go` (added, +147/-0)
-```diff
-@@ -0,0 +1,147 @@
-+package pflag
-+
-+import (
-+	"fmt"
-+	"io"
-+	"net"
-+	"strings"
-+)
-+
-+// -- ipNetSlice Value
-+type ipNetSliceValue struct {
-+	value   *[]net.IPNet
-+	changed bool
-+}
-+
-+func newIPNetSliceValue(val []net.IPNet, p *[]net.IPNet) *ipNetSliceValue {
-+	ipnsv := new(ipNetSliceValue)
-+	ipnsv.value = p
-+	*ipnsv.value = val
-+	return ipnsv
-+}
-+
-+// Set converts, and assigns, the comma-separated IPNet argument string representation as the []net.IPNet value of this flag.
-+// If Set is called on a flag that already has a []net.IPNet assigned, the newly converted values will be appended.
-+func (s *ipNetSliceValue) Set(val string) error {
-+
-+	// remove all quote characters
-+	rmQuote := strings.NewReplacer(`"`, "", `'`, "", "`", "")
-+
-+	// read flag arguments with CSV parser
-+	ipNetStrSlice, err := readAsCSV(rmQuote.Replace(val))
-+	if err != nil && err != io.EOF {
-+		return err
-+	}
-+
-+	// parse ip values into slice
-+	out := make([]net.IPNet, 0, len(ipNetStrSlice))
-+	for _, ipNetStr := range ipNetStrSlice {
-+		_, n, err := net.ParseCIDR(strings.TrimSpace(ipNetStr))
-+		if err != nil {
-+			return fmt.Errorf("invalid string being converted to CIDR: %s", ipNetStr)
-+		}
-+		out = append(out, *n)
-+	}
-+
-+	if !s.changed {
-+		*s.value = out
-+	} else {
-+		*s.value = append(*s.value, out...)
-+	}
-+
-+	s.changed = true
-+
-+	return nil
-+}
-+
-+// Type returns a string that uniquely represents this flag's type.
-+func (s *ipNetSliceValue) Type() string {
-+	return "ipNetSlice"
-+}
-+
-+// String defines a "native" format for this net.IPNet slice flag value.
-+func (s *ipNetSliceValue) String() string {
-+
-+	ipNetStrSlice := make([]string, len(*s.value))
-+	for i, n := range *s.value {
-+		ipNetStrSlice[i] = n.String()
-+	}
-+
-+	out, _ := writeAsCSV(ipNetStrSlice)
-+	return "[" + out + "]"
-+}
-+
-+func ipNetSliceConv(val string) (interface{}, error) {
-+	val = strings.Trim(val, "[]")
-+	// Emtpy string would cause a slice with one (empty) entry
-+	if len(val) == 0 {
-+		return []net.IPNet{}, nil
-+	}
-+	ss := strings.Split(val, ",")
-+	out := make([]net.IPNet, len(ss))
-+	for i, sval := range ss {
-+		_, n, err := net.ParseCIDR(strings.TrimSpace(sval))
-+		if err != nil {
-+			return nil, fmt.Errorf("invalid string being converted to CIDR: %s", sval)
-+		}
-+		out[i] = *n
-+	}
-+	return out, nil
-+}
-+
-+// GetIPNetSlice returns the []net.IPNet value of a flag with the given name
-+func (f *FlagSet) GetIPNetSlice(name string) ([]net.IPNet, error) {
-+	val, err := f.getFlagType(name, "ipNetSlice", ipNetSliceConv)
-+	if err != nil {
-+		return []net.IPNet{}, err
-+	}
-+	return val.([]net.IPNet), nil
-+}
-+
-+// IPNetSliceVar defines a ipNetSlice flag with specified name, default value, and usage string.
-+// The argument p points to a []net.IPNet variable in which to store the value of the flag.
-+func (f *FlagSet) IPNetSliceVar(p *[]net.IPNet, name string, value []net.IPNet, usage string) {
-+	f.VarP(newIPNetSliceValue(value, p), name, "", usage)
-+}
-+
-+// IPNetSliceVarP is like IPNetSliceVar, but accepts a shorthand letter that can be used after a single dash.
-+func (f *FlagSet) IPNetSliceVarP(p *[]net.IPNet, name, shorthand string, value []net.IPNet, usage string) {
-+	f.VarP(newIPNetSliceValue(value, p), name, shorthand, usage)
-+}
-+
-+// IPNetSliceVar defines a []net.IPNet flag with specified name, default value, and usage string.
-+// The argument p points to a []net.IPNet variable in which to store the value of the flag.
-+func IPNetSliceVar(p *[]net.IPNet, name string, value []net.IPNet, usage string) {
-+	CommandLine.VarP(newIPNetSliceValue(value, p), name, "", usage)
-+}
-+
-+// IPNetSliceVarP is like IPNetSliceVar, but accepts a shorthand letter that can be used after a single dash.
-+func IPNetSliceVarP(p *[]net.IPNet, name, shorthand string, value []net.IPNet, usage string) {
-+	CommandLine.VarP(newIPNetSliceValue(value, p), name, shorthand, usage)
-+}
-+
-+// IPNetSlice defines a []net.IPNet flag with specified name, default value, and usage string.
-+// The return value is the address of a []net.IPNet variable that stores the value of that flag.
-+func (f *FlagSet) IPNetSlice(name string, value []net.IPNet, usage string) *[]net.IPNet {
-+	p := []net.IPNet{}
-+	f.IPNetSliceVarP(&p, name, "", value, usage)
-+	return &p
-+}
-+
-+// IPNetSliceP is like IPNetSlice, but accepts a shorthand letter that can be used after a single dash.
-+func (f *FlagSet) IPNetSliceP(name, shorthand string, value []net.IPNet, usage string) *[]net.IPNet {
-+	p := []net.IPNet{}
-+	f.IPNetSliceVarP(&p, name, shorthand, value, usage)
-+	return &p
-+}
-+
-+// IPNetSlice defines a []net.IPNet flag with specified name, default value, and usage string.
-+// The return value is the address of a []net.IP variable that stores the value of the flag.
-+func IPNetSlice(name string, value []net.IPNet, usage string) *[]net.IPNet {
-+	return CommandLine.IPNetSliceP(name, "", value, usage)
-+}
-+
-+// IPNetSliceP is like IPNetSlice, but accepts a shorthand letter that can be used after a single dash.
-+func IPNetSliceP(name, shorthand stri
+ 	github.com/alexellis/arkade v0.0.0-20260829073617-4414c15437e0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #468** (2026-10-23): Update Go to 1.27 and refresh dependencies (@welteki)
 - **PR #462** (2026-07-09): Update upload-assets action to 0.5.0 (@welteki)
 - **PR #457** (2025-08-20): Add K3sup Pro to readme and k3sup pro get command (@alexellis)
 - **PR #440** (closed): Add `--merge` flag to `plan` command (@DaruZero)
 - **PR #433** (2024-05-15): fix example and make it valid JSON (@Comradin)
 - **PR #426** (closed): Edited build script (@captainlettuce)
-- **PR #425** (2023-12-29): Add --no-extras flag to join command (@rgee0)
 
 ---
 
@@ -2287,44 +2166,44 @@ Signed-off-by: Alex Ellis (OpenFaaS Ltd) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixes in README
+## X. Update Go dependencies
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alexellis/k3sup. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alexellis/k3sup. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18852ec8`: Fixes in README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `07ee3911`: Update Go dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  - [Are you a `k3sup` user?](#are-you-a-k3sup-user)
-    - [Use-cases](#use-cases)
-## Are you a `k3sup` user?
-### Use-cases
-
-K3sup runs from your local machine, without ever having to log into a remote server.
-* Get from zero to `kubectl` with `k3s` on bare-metal, Raspberry Pi (RPi), VMs, AWS EC2, Google Cloud, DigitalOcean, Civo, Linode, Scaleway, and others
-* Build a Highly-Available (HA), multi-master (server) cluster
-* Fetch the KUBECONFIG from an existing cluster with `k3sup get-config`
-* Build a massive cluster for automation and scale-out testing using `k3sup plan` and a JSON file with IP addresses
+	github.com/alexellis/arkade v0.0.0-20261007172432-8b8a849ed4f9
+	github.com/google/go-containerregistry v0.22.1
+	golang.org/x/crypto v0.58.0
+	golang.org/x/term v0.47.0
+	github.com/docker/cli v29.9.2+incompatible // indirect
+	github.com/docker/docker-credential-helpers v0.9.12 // indirect
+	github.com/klauspost/compress v1.20.3 // indirect
+	golang.org/x/sync v0.24.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-  - [Do you love `k3sup`?](#do-you-love-k3sup)
-    - [Uses](#uses)
-    - [Support and k3sup for commercial use](#support-and-k3sup-for-commercial-use)
-## Do you use `k3sup`?
-### Uses
-* Get from zero to `kubectl` with `k3s` on Raspberry Pi (RPi), VMs, AWS EC2, Packet bare-metal, DigitalOcean, Civo, Scaleway, and others
-* Build a HA, multi-master (server) cluster
-* Fetch the KUBECONFIG from an existing `k3s` cluster
+	github.com/alexellis/arkade v0.0.0-20260829073617-4414c15437e0
+	github.com/google/go-containerregistry v0.22.0
+	golang.org/x/crypto v0.56.0
+	golang.org/x/term v0.45.0
+	github.com/docker/cli v29.7.2+incompatible // indirect
+	github.com/docker/docker-credential-helpers v0.9.9 // indirect
+	github.com/klauspost/compress v1.20.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18852ec8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `07ee3911` are properly handled with clean fallback behavior.

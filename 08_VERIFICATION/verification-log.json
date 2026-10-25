@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-NORK",
-    "timestamp": "2026-10-21T04:16:04.640Z",
-    "repository": "xerj-org/xerj",
-    "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "f2a7724e385313cf5124df21e8be1e278871231c0402891380ccc0609faaf8cd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-V9EZ",
-    "timestamp": "2026-10-21T04:21:57.995Z",
-    "repository": "dockview/dockview",
-    "learningId": "learn-github-dockview-dockview",
-    "contentHash": "ad5cd8e75e50262397979627c9498b6c6b300d6ec4f5a694e90b7e8ecd43d6ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-V9KI",
-    "timestamp": "2026-10-21T04:21:58.194Z",
-    "repository": "argmaxinc/whisperkit-coreml",
-    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-    "contentHash": "5d960ed25268eca54cfa2bf7e2368e9719c5205d4254dba4ed45b4b10aef411f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-2YZG",
-    "timestamp": "2026-10-21T04:27:57.724Z",
-    "repository": "Qwen/Qwen3-8B",
-    "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "912edbbb3ed5d8afe82bb5af18e53c51e6646904b6071e4383a65fd0df85f20c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-DNW2",
-    "timestamp": "2026-10-21T04:36:16.562Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-    "contentHash": "5514742189d58e8fa8218d0a6ce427e5a8da9373362a50a1adc026143fec34b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-M5RK",
     "timestamp": "2026-10-21T04:42:52.976Z",
     "repository": "carbon-design-system/carbon",
@@ -7490,6 +7415,81 @@
     "repository": "genkit-ai/genkit",
     "learningId": "learn-github-genkit-ai-genkit",
     "contentHash": "c10764253e3467311a475df1fb470c6865d7ec568b471a47b975b9032fc419f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-V32W",
+    "timestamp": "2026-10-25T05:52:29.528Z",
+    "repository": "elastic/eui",
+    "learningId": "learn-github-elastic-eui",
+    "contentHash": "d3f794986f25e0c6d94d27772c65d9d759372e9950a17be2d59907ab2fcdcac2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-V37C",
+    "timestamp": "2026-10-25T05:52:29.688Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "bde7af3085bc2dbef40994bba81b601141507b3405f6fb3dc1ffb202b160e73f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-V4O1",
+    "timestamp": "2026-10-25T05:52:31.585Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "030116ca2e52e3997df97c0e04cafe0c64680f533b598b9a00566d32eca14eff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-V7PQ",
+    "timestamp": "2026-10-25T05:52:35.534Z",
+    "repository": "lingodotdev/lingo.dev",
+    "learningId": "learn-github-lingodotdev-lingo-dev",
+    "contentHash": "1107f803b609869c939bd34fac715b1647ed6c5e18ffdd127a880fae726d5174",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-V9NQ",
+    "timestamp": "2026-10-25T05:52:38.054Z",
+    "repository": "alexellis/k3sup",
+    "learningId": "learn-github-alexellis-k3sup",
+    "contentHash": "c70fbce74dca37ab64262cfcf709cd9729d44aae7732c5bd25ab2b5aaaec3f2e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
