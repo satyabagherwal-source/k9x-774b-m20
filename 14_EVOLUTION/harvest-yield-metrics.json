@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T05:14:47.107Z",
-  "total_cycles_completed": 4658,
-  "total_learnings_persisted": 4658,
-  "total_rules_promoted": 3940,
+  "last_updated": "2026-10-25T05:21:20.621Z",
+  "total_cycles_completed": 4660,
+  "total_learnings_persisted": 4660,
+  "total_rules_promoted": 3943,
   "history": [
-    {
-      "timestamp": "2026-10-23T06:49:43.608Z",
-      "repository": "fastapi/fastapi",
-      "learningId": "learn-github-fastapi-fastapi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T06:49:47.687Z",
-      "repository": "TanStack/query",
-      "learningId": "learn-github-tanstack-query",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T06:49:55.065Z",
       "repository": "zarf-dev/zarf",
@@ -1403,6 +1389,20 @@
       "repository": "jialinyyzz/humanizer",
       "learningId": "learn-huggingface-jialinyyzz-humanizer",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:21:11.927Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:21:20.621Z",
+      "repository": "MariaDB/server",
+      "learningId": "learn-github-mariadb-server",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

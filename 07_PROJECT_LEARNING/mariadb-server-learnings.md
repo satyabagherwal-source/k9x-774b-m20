@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `bcdb4c4c`  
+> **Source Version**: `c894d977`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:25:45.046Z  
+> **Timestamp**: 2026-10-25T05:21:20.153Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:25:45.041Z  
+> **Harvest Timestamp**: 2026-10-25T05:21:19.952Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8417 stars
+- **Stars / Engagement**: 8445 stars
 
 ---
 
@@ -1595,11 +1595,13 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5949** (2026-10-22): **MDEV-41657 TO_DATE no longer works as a variable**
-  *Symptoms*: TO_DATE was added as a reserved keyword rather than just function so additional and unnecessary restriction where placed including the restriction of TO_DATE as a variable or column name.  Demoted TO_DATE to just function name.
+- **Issue #5973** (2026-10-24): **DuckDB: read VARCHAR values without a per-cell cast (P-Core Change #1)**
+  *Symptoms*: `store_duckdb_field_in_mysql_format()` got the text of a result cell with `Value::GetValue<string>()`. In DuckDB that is `ToString()`, which runs `DefaultCastAs(VARCHAR)` for every cell, also when the value already is a VARCHAR. SET, ENUM and (var)char columns arrive as VARCHAR, so every cell of such a column paid for a cast that returns the same string.  This adds `value_as_string()`, which returns the string of a VARCHAR value by reference and converts any other type as before. It is used for the (var)char, ENUM, SET and DECIMAL branches. The date and time branches and the BLOB branches are unchanged. The text stored in the field is the same, so there is no change in results. Only `storage/duckdb/convertor/duckdb_select.cc` changes (+22/-3).  Measured on a debug build of current 11.4, 50000 rows, median of 15 runs after subtracting the connection cost, two runs each (ms):  | select | before | after | |---|---|---| | varchar column | 202 / 210 | 150 / 153 | | SET column | 239 / 241 | 178 / 184 | | ENUM column | 223 / 225 | 170 / 177 | | `select *` | 651 / 665 | 504 / 505 | | int / bigint column | 70 / 71 | 70 / 71 | | `select *` on the same rows in InnoDB (control) | 310 / 311 | 317 |  These are debug build numbers on a laptop, so they show the relative gain and not release build speed.  Checks: - a `group_concat` md5 over id, varchar, SET and ENUM of all 50000 rows is equal between the DuckDB table and an InnoDB copy - `duckdb.create_table_column`, `duckdb.feature_duckdb_da
+  **Post-Mortem & Fix Analysis**:
+  > Closing: rebased on 11.4 with #5970 and measured; returning the string by reference gives no measurable gain over #5970's copy (debug build, 50k rows, strings up to 1000 chars).
 
-- **Issue #5939** (2026-10-22): **MDEV-41490 ignore_db_dirs not working with SST**
-  *Symptoms*: rsync and mariabackup SST ignored ignore_db_dirs: rsync copied and deleted such directories like a normal schema dir, and mariabackup's joiner wiped them during its pre-apply cleanup, failing SST outright on a read-only mount. A directory name is also unvalidated by the server, so it was spliced unchecked into an eval'd rsync filter.  Fix both SST scripts to read ignore_db_dirs and exclude those directories, accepting only safe characters in the name.  Assisted-by: https://mariadb.org/governance/governance-ai-policy/
+- **Issue #5970** (2026-10-24): **MDEV-41208: SIGABRT in duckdb::DuckDBAssertInternal**
+  *Symptoms*: stringify non-VARCHAR DuckDB values for MariaDB string fields  Mixed COALESCE is VARCHAR in MariaDB and INTEGER in DuckDB, so GetValueUnsafe<string>() asserted PhysicalType::VARCHAR. Convert with ToString() unless DuckDB actually stored a string.  https://jira.mariadb.org/browse/MDEV-41208
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1616,212 +1618,136 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bcdb4c4c` (2026-03-19)
-**Commit Message**: [MDEV-36841] Warn when slave timeout drops below heartbeat period
+### Incident Patch 1: `9cdcb266` (2026-10-01)
+**Commit Message**: MDEV-41240 I_S.TABLES crash with TABLE_NAME and a subquery
 
-When CHANGE MASTER sets master_heartbeat_period to a value greater than
-@@GLOBAL.slave_net_timeout, a ER_SLAVE_HEARTBEAT_VALUE_OUT_OF_RANGE_MAX
-warning is emitted. However, the reverse scenario, lowering
-slave_net_timeout below an existing master_heartbeat_period, produced no
-warning.
+Do not use the fast path when the query has a subquery. Evaluating
+that predicate while get_all_tables() uses a temporary MEM_ROOT
+freed the subquery JOIN before outer JOIN cleanup.
 
-Add an on_check callback for slave_net_timeout that iterates all
-Master_info entries and warns if any heartbeat period exceeds the
-requested timeout. Connections that are not configured are skipped. A
-DEFAULT heartbeat period is skipped unless --master-heartbeat-period was
-given at startup: without it the period follows slave_net_timeout/2 and
-can never exceed the timeout, but with it the period is a fixed value
-and is checked like an explicit one.
-
-The warning is reported with a new, generalized error
-ER_OPERATION_INVALIDATES_CONFIGURED_SLAVE, which names the affected
-replication connection and carries a parameterized description of the
-misconfiguration. Naming the connection matters for multi-source: when
-several connections exceed the new timeout, the user can see exactly
-which ones are problematic. One warning is emitted per affec
-
-**File**: `mysql-test/suite/binlog_in_engine/rpl_heartbeat.result` (modified, +2/-0)
+**File**: `mysql-test/main/mdev_31342.result` (modified, +64/-0)
 ```diff
-@@ -14,6 +14,8 @@ show status like 'Slave_heartbeat_period';;
- Variable_name	Slave_heartbeat_period
- Value	4.000
- set @@global.slave_net_timeout= 3 /* must be a warning */;
-+Warnings:
-+Warning	4276	This operation leaves replication connection '' with an invalid configuration: the heartbeat period (4.000 seconds) exceeds the requested slave_net_timeout (3 seconds); a sensible value for the period should be less than the timeout
- reset slave;
- connection master;
- drop table if exists t1;
-```
-
-**File**: `mysql-test/suite/multi_source/slave_net_timeout_heartbeat.opt` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+--master-heartbeat-period=30
-```
-
-**File**: `mysql-test/suite/multi_source/slave_net_timeout_heartbeat.result` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+connect  slave,127.0.0.1,root,,,$SERVER_MYPORT_3;
-+connection slave;
-+SET @restore_slave_net_timeout= @@global.slave_net_timeout;
-+SET @@global.slave_net_timeout= 60;
-+change master 'slave1' to master_port=MYPORT_1, master_host='127.0.0.1', master_user='root', master_ssl_verify_server_cert=0, master_heartbeat_period=40;
-+change master 'slave2' to master_port=MYPORT_2, master_host='127.0.0.1', master_user='root', master_ssl_verify_server_cert=0, master_heartbeat_period=50;
-+change master 'slave3' to master_port=MYPORT_1, master_host='localhost', master_user='root', master_ssl_verify_server_cert=0;
-+SET @@global.slave_net_timeout= 20;
-+SHOW WARNINGS;
-+Level	Code	Message
-+Warning	4276	This operation leaves replication connection 'slave1' with an invalid configuration: the heartbeat period (40.000 seconds) exceeds the requested slave_net_timeout (20 seconds); a sensible value for the period should be less than the timeout
-+Warning	4276	This operation leaves replication connection 'slave2' with an invalid configuration: the heartbeat period (50.000 seconds) exceeds the requested slave_net_timeout (20 seconds); a sensible value for the period should be less than the timeout
-+Warning	4276	This operation leaves replication connection 'slave3' with an invalid configuration: the heartbeat period (30.000 seconds) exceeds the requested slave_net_timeout (20 seconds); a sensible value for the period should be less than the timeout
-+SET @@global.slave_net_timeout= @restore_slave_net_timeout;
-+include/reset_master_slave.inc
-+disconnect slave;
-+connection default;
-```
-
-**File**: `mysql-test/suite/multi_source/slave_net_timeout_heartbeat.test` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
+@@ -919,3 +919,67 @@ information_schema.TABLES.TABLE_NAME	user	user	4	4	0	0	4.0000	NULL	ENUM('user')
+ # MDEV-41204: client cursor protocol uses fallback
+ # (also covered by running this test with --cursor-protocol)
+ #
 +#
-+# MDEV-36841: Lowering @@global.slave_net_timeout below an explicitly
-+# configured master_heartbeat_period warns once per replication connection.
++# MDEV-41240: exact TABLE_NAME lookup plus a materialised subquery
 +#
-+# With multi-source replication there can be more than one connection whose
-+# heartbeat period exceeds the new timeout, so the warning names each affected
-+# connection.  This test configures two named connections, each with an
-+# explicit heartbeat period above the timeout we set next, and verifies that a
-+# separate warning is emitted for both.
-+#
-+# The server is started with --master-heartbeat-period=30, so a third
-+# connection left at the DEFAULT heartbeat period resolves to a fixed 30
-+# seconds rather than slave_net_timeout/2, and must warn as well.
-+#
-+--source include/not_embedded.inc
-+
-+--connect (slave,127.0.0.1,root,,,$SERVER_MYPORT_3)
-+
-+--connection slave
-+SET @restore_slave_net_timeout= @@global.slave_net_timeout;
-+SET @@global.slave_net_timeout= 60;
-+
-+# Two sources, each with an explicit heartbeat period below the current
-+# timeout (60), so configuring them does not warn.
-+--replace_result $SERVER_MYPORT_1 MYPORT_1
-+eval change master 'slave1' to master_port=$SERVER_MYPORT_1, master_host='127.0.0.1', master_user='root', master_ssl_verify_server_cert=0, master_heartbeat_period=40;
-+--replace_result $SERVER_MYPORT_2 MYPORT_2
-+eval change master 'slave2' to master_port=$SERVER_MYPORT_2, master_host='127.0.0.1', master_user='root', master_ssl_verify_server_cert=0, master_heartbeat_period=50;
-+# DEFAULT heartbeat period, i.e. --master-heartbeat-period=30.  The
-+# connection is never started; 'localhost' only avoids the host:port
-+# conflict with 'slave1'.
-+--replace_result $SERVER_MYPORT_1 MYPORT_1
-+eval change master 'slave3' to master_port=$SERVER_MYPORT_1, master_host='localhost', master_user='root', master_ssl_verify_server_cert=0;
-+
-+# Lowering the timeout below all three heartbeat periods must warn once per
-+# connection.  Warnings are pushed in master_info hash order, which is not
-+# deterministic, so capture them with a sorted SHOW WARNINGS.
-+--disable_warnings
-+SET @@global.slave_net_timeout= 20;
-+--enable_warnings
-+--sorted_result
-+SHOW WARNINGS;
-+
-+# Clean up
-+SET @@global.slave_net_timeout= @restore_slave_net_timeout;
-+--source include/reset_master_slave.inc
-+--disconnect slave
-+--connection default
++CREATE DATABASE mdev41240;
++CREATE TABLE mdev41240.t1(a INT);
++EXPLAIN FORMAT=JSON SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
++WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
++  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
++EXPLAIN
++{
++  "query_block": {
++    "select_id": 1,
++    "cost": 0.01423506,
++    "nested_loop": [
++      {
++        "table": {
++          "table_name": "TABLES",
++          "access_type": "ALL",
++          "key": "TABLE_SCHEMA,TABLE_NAME",
++          "loops": 1,
++          "cost": 0.01423506,
++          "attached_condition": "information_schema.`TABLES`.TABLE_SCHEMA = 'mdev41240' and information_schema.`TABLES`.`TABLE_NAME` = 't1' and <in_optimizer>(information_schema.`TABLES`.`TABLE_NAME`,<exists>(subquery#2))",
++          "skip_open_table": true,
++          "scanned_databases": 0
++        }
++      }
++    ],
++    "subqueries": [
++      {
++        "query_block": {
++          "union_result": {
++            "table_name": "<union2,3>",
++            "access_type": "ALL",
++            "query_specifications": [
++              {
++                "query_block": {
++                  "select_id": 2,
++                  "table": {
++                    "message": "No tables used"
++                  }
++                }
++              },
++              {
++                "query_block": {
++                  "select_id": 3,
++                  "operation": "UNION",
++                  "table": {
++                    "message": "No tables used"
++                  }
++                }
++              }
++            ]
++          }
++        }
++      }
++    ]
++  }
++}
++SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
++WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
++  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
++TABLE_NAME
++t1
++DROP DATABASE mdev41240;
 ```
 
-**File**: `mysql-test/suite/rpl/r/rpl_heartbeat.result` (modified, +2/-0)
+**File**: `mysql-test/main/mdev_31342.test` (modified, +14/-0)
 ```diff
-@@ -14,6 +14,8 @@ show status like 'Slave_heartbeat_period';;
- Variable_name	Slave_heartbeat_period
- Value	4.000
- set @@global.slave_net_timeout= 3 /* must be a warning */;
-+Warnings:
-+Warning	4276	This operation leaves replication connection '' with an invalid configuration: the heartbeat period (4.000 seconds) exceeds the requested slave_net_timeout (3 seconds); a sensible value for the period should be less than the timeout
- reset slave;
- connection master;
- drop table if exists t1;
-```
-
-**File**: `mysql-test/suite/rpl/r/rpl_heartbeat_basic.result` (modified, +10/-1)
-```diff
-@@ -54,11 +54,20 @@ Slave_heartbeat_period	25.000
- SET @@global.slave_net_timeout=@restore_slave_net_timeout;
- include/reset_slave.inc
- 
--*** Warning if updated slave_net_timeout < slave_heartbeat_timeout ***
-+*** No warning if slave_net_timeout lowered with default heartbeat_period ***
- SET @@global.slave_net_timeout=FLOOR(SLAVE_HEARTBEAT_TIMEOUT)-1;
- SET @@global.slave_net_timeout=@restore_slave_net_timeout;
- RESET SLAVE;
- 
-+*** Warning if slave_net_timeout set below explicit heartbeat_period ***
-+SET @@global.slave_net_timeout=60;
-+CHANGE MASTER TO MASTER_HOST='127.0.0.1', MASTER_PORT=MASTER_PORT, MASTER_USER='root', MASTER_CONNECT_RETRY=20, MASTER_HEARTBEAT_PERIOD=40;
-+SET @@global.slave_net_timeout=20;
-+Warnings:
-+Warning	4276	This operation leaves replication connection '' with an invalid configuration: the heartbeat period (40.000 seconds) exceeds the requested slave_net_timeout (20 seconds); a sensible value for the period should be less than the timeout
-+SET @@global.slave_net_timeout=@restore_slave_net_timeout;
-+RESET SLAVE;
+@@ -396,3 +396,17 @@ WHERE TABLE_SCHEMA='mysql' AND TABLE_NAME='user' PROCEDURE ANALYSE();
+ --echo # MDEV-41204: client cursor protocol uses fallback
+ --echo # (also covered by running this test with --cursor-protocol)
+ --echo #
 +
- *** Warning if updated slave_heartbeat_timeout > slave_net_timeout ***
- CHANGE MASTER TO MASTER_HOST='127.0.0.1', MASTER_PORT=MASTER_PORT, MASTER_USER='root', MASTER_CONNECT_RETRY=20, MASTER_HEARTBEAT_PERIOD=SLAVE_NET_TIMEOUT;
- Warnings:
++--echo #
++--echo # MDEV-41240: exact TABLE_NAME lookup plus a materialised subquery
++--echo #
++CREATE DATABASE mdev41240;
++CREATE TABLE mdev41240.t1(a INT);
++--replace_regex /`tables`/`TABLES`/ /"tables"/"TABLES"/
++EXPLAIN FORMAT=JSON SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
++WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
++  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
++SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
++WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
++  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
++DROP DATABASE mdev41240;
 ```
 
-**File**: `mysql-test/suite/rpl/t/rpl_heartbeat_basic.test` (modified, +12/-2)
+**File**: `sql/sql_show.cc` (modified, +11/-0)
 ```diff
-@@ -104,15 +104,25 @@ SET @@global.slave_net_timeout=@restore_slave_net_timeout;
- --source include/reset_slave.inc
- --echo
- 
--# Set slave_net_timeout less than current value of slave_heartbeat_period
----echo *** Warning if updated slave_net_timeout < slave_heartbeat_timeout ***
-+# No warning when heartbeat_period is DEFAULT (automatically slave_net_timeout/2)
-+--echo *** No warning if slave_net_timeout lowered with default heartbeat_period ***
- let $slave_heartbeat_timeout= query_get_value(SHOW GLOBAL STATUS LIKE 'slave_heartbeat_period', Value, 1);
- --replace_result $slave_heartbeat_timeout SLAVE_HEARTBEAT_TIMEOUT
- eval SET @@global.slave_net_timeout=FLOOR($slave_heartbeat_timeout)-1;
- SET @@global.slave_net_timeout=@restore_slave_net_timeout;
- RESET SLAVE;
- --echo
- 
-+# Set slave_net_timeout less than explicitly set slave_heartbeat_period (MDEV-36841)
-+--echo *** Warning if slave_net_timeout set below explicit heartbeat_period ***
-+SET @@global.slave_net_timeout=60;
-+--replace_result $MASTER_MYPORT MASTER_PORT
-+eval CHANGE MASTER TO MASTER_HOST='127.0.0.1', MASTER_PORT=$MASTER_MYPORT, MASTER_USER='root', MASTER_CONNECT_RETRY=$connect_retry, MASTER_HEARTBEAT_PERIOD=40;
-+SET @@global.slave_net_timeout=20;
-+SET @@global.slave_net_timeout=@restore_slave_net_timeout;
-+RESET SLAVE;
-+--echo
-+
- # Set value of slave_heartbeat_period greater than slave_net_timeout
- --echo *** Warning if updated slave_heartbeat_timeout > slave_net_timeout ***
- let $slave_net_timeout= query_get_value(SHOW VARIABLES LIKE 'slave_net_timeout', Value, 1);
-```
-
-**File**: `sql/share/errmsg-utf8.txt` (modified, +2/-0)
-```diff
-@@ -12427,3 +12427,5 @@ ER_INVALID_HOST_NETMASK
-         eng "Invalid masked host '%s' for user '%s'"
- ER_ACL_ENTRY_IGNORED_BAD_HOST_MASK
-         eng "'%s' entry '%s' ignored, the host is not a valid ip/netmask"
-+ER_OPERATION_INVALIDATES_CONFIGURED_SLAVE
-+        eng "This operation leaves replication connection '%s' with an invalid configuration: %s"
+@@ -4272,6 +4272,17 @@ static bool is_simple_is_query(THD *thd)
+     DBUG_PRINT("info", ("SQL_BUFFER_RESULT, using fallback path"));
+     return false;
+   }
++  /*
++    A subquery in WHERE is evaluated from schema_table_store_record()
++    while get_all_tables() may be using a temporary MEM_ROOT. Freeing
++    that root leaves the subquery JOIN dangling.
++  */
++  if (sel->first_inner_unit() ||
++      (sel->where && sel->where->with_subquery()))
++  {
++    DBUG_PRINT("info", ("subquery in I_S query, using fallback path"));
++    return false;
++  }
+   /*
+     Only allow no LIMIT, or LIMIT 1 exactly. Any other explicit LIMIT n
+     is rejected until a general LIMIT implementation is validated.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5949** (2026-10-22): MDEV-41657 TO_DATE no longer works as a variable (@grooverdan)
-- **PR #5939** (2026-10-22): MDEV-41490 ignore_db_dirs not working with SST (@janlindstrom)
-- **PR #5938** (2026-10-21): MDEV-41669 ALTER TABLE…IMPORT TABLESPACE may break MVCC (@dr-m)
-- **PR #5937** (2026-10-21): MDEV-41661: Leak and corruption on btr_page_reorganize_low() (@dr-m)
-- **PR #5932** (2026-10-21): MDEV-40616: MSAN - use-of-uninitialized-value in extract_date_time() (@raghunandanbhat)
-- **PR #5926** (2026-10-20): 10.11 mdev 40727 (@janlindstrom)
+- **PR #5973** (closed): DuckDB: read VARCHAR values without a per-cell cast (P-Core Change #1) (@GoldenEmperor1177)
+- **PR #5970** (2026-10-24): MDEV-41208: SIGABRT in duckdb::DuckDBAssertInternal (@itzanway)
+- **PR #5967** (closed): MDEV-41684: Embedded: prepared TIME parameter reports column length 16 instead of 23 (@Omar-Abdo1)
+- **PR #5962** (2026-10-23): Fix a UBSAN runtime error on MacOSX. (@gkodinov)
+- **PR #5961** (2026-10-23): MDEV-41566 Allow ROW_NUMBER as unquoted column name (@sanja-byelkin)
+- **PR #5959** (closed): MDEV-41566 Allow ROW_NUMBER as unquoted column name (@sanja-byelkin)
 
 ---
 
@@ -1841,22 +1767,58 @@ which ones are problematic. One warning is emitted per affec
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MDEV-36841] Warn when slave timeout drops below heartbeat period
+## X. MDEV-41240 I_S.TABLES crash with TABLE_NAME and a subquery
 
 **RULE**:
-When implementing operations in `mysql-test/suite/binlog_in_engine/rpl_heartbeat.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mysql-test/main/mdev_31342.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bcdb4c4c`: [MDEV-36841] Warn when slave timeout drops below heartbeat period. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9cdcb266`: MDEV-41240 I_S.TABLES crash with TABLE_NAME and a subquery. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/suite/binlog_in_engine/rpl_heartbeat.result`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/main/mdev_31342.result`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-Warnings:
-Warning	4276	This operation leaves replication connection '' with an invalid configuration: the heartbeat period (4.000 seconds) exceeds the requested slave_net_timeout (3 seconds); a sensible value for the period should be less than the timeout
+#
+# MDEV-41240: exact TABLE_NAME lookup plus a materialised subquery
+#
+CREATE DATABASE mdev41240;
+CREATE TABLE mdev41240.t1(a INT);
+EXPLAIN FORMAT=JSON SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
+  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
+EXPLAIN
+{
+  "query_block": {
+    "select_id": 1,
+    "cost": 0.01423506,
+    "nested_loop": [
+      {
+        "table": {
+          "table_name": "TABLES",
+          "access_type": "ALL",
+          "key": "TABLE_SCHEMA,TABLE_NAME",
+          "loops": 1,
+          "cost": 0.01423506,
+          "attached_condition": "information_schema.`TABLES`.TABLE_SCHEMA = 'mdev41240' and information_schema.`TABLES`.`TABLE_NAME` = 't1' and <in_optimizer>(information_schema.`TABLES`.`TABLE_NAME`,<exists>(subquery#2))",
+          "skip_open_table": true,
+          "scanned_databases": 0
+        }
+      }
+    ],
+    "subqueries": [
+      {
+        "query_block": {
+          "union_result": {
+            "table_name": "<union2,3>",
+            "access_type": "ALL",
+            "query_specifications": [
+              {
+                "query_block": {
+                  "select_id": 2,
+                  "t
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1866,4 +1828,4 @@ Warning	4276	This operation leaves replication connection '' with an invalid con
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bcdb4c4c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9cdcb266` are properly handled with clean fallback behavior.

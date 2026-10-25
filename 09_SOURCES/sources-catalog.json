@@ -95,8 +95,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceVersion": "hf-autotrust-jev-27b-vl",
     "license": "Open-Source",
-    "contentHash": "aadcbb797d895f1c77c493d3f833c16602f8df1aae5e2c9dddf8f369ee083731",
-    "lastHarvestedAt": "2026-10-20T13:27:36.664Z",
+    "contentHash": "066ff796f8b1b2d92c16a239ecfec588b61d41397b69a01bc1d2d6ddde223567",
+    "lastHarvestedAt": "2026-10-25T05:21:11.915Z",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl"
   },
   "hf-autotrust-gev-26b-decide": {
@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "bcdb4c4c",
+    "sourceVersion": "c894d977",
     "license": "GPL-2.0",
-    "contentHash": "332c226130ea5ffaeca3c60e3ac879928d4c300ad8c9c876e060c742f8b83813",
-    "lastHarvestedAt": "2026-10-22T17:25:45.385Z",
+    "contentHash": "907d3ccf5933241d59b09456489399828165c4b36e81b80859140701a44468c7",
+    "lastHarvestedAt": "2026-10-25T05:21:20.611Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {

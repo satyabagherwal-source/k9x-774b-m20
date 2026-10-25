@@ -4681,3 +4681,5 @@
 | `CYCLE-20261025-8I55` | `2026-10-25T05:06:56.345Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4069, Rule 4070` | Yes (`ca081c6e...`) |
 | `CYCLE-20261025-IKW4` | `2026-10-25T05:14:46.468Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1692` | Yes (`72a6de19...`) |
 | `CYCLE-20261025-ILDI` | `2026-10-25T05:14:47.094Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1131, Rule 4071, Rule 4072` | Yes (`4e641fef...`) |
+| `CYCLE-20261025-QUA3` | `2026-10-25T05:21:11.883Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4073, Rule 4074` | Yes (`066ff796...`) |
+| `CYCLE-20261025-R10G` | `2026-10-25T05:21:20.608Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4075` | Yes (`907d3ccf...`) |

@@ -4688,3 +4688,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-25T05:06:56.348Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `fc10d048` | Multi-dimensional audit evidence | 2026-10-25T05:14:46.472Z |
 | `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-25T05:14:47.098Z |
+| `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-25T05:21:11.915Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `c894d977` | Multi-dimensional audit evidence | 2026-10-25T05:21:20.611Z |

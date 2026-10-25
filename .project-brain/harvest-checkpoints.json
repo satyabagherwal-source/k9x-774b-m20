@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T05:14:47.111Z",
+  "last_updated": "2026-10-25T05:21:20.625Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1775,14 +1775,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
-      "content_hash": "aadcbb797d895f1c77c493d3f833c16602f8df1aae5e2c9dddf8f369ee083731",
-      "verified_at": "2026-10-20T13:27:36.673Z",
+      "content_hash": "066ff796f8b1b2d92c16a239ecfec588b61d41397b69a01bc1d2d6ddde223567",
+      "verified_at": "2026-10-25T05:21:11.932Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T13:27:36.673Z"
+      "last_updated": "2026-10-25T05:21:11.932Z"
     },
     "autotrust/GEV-26B-Decide": {
       "repository": "autotrust/GEV-26B-Decide",
@@ -8856,14 +8856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mariadb-server",
-      "content_hash": "332c226130ea5ffaeca3c60e3ac879928d4c300ad8c9c876e060c742f8b83813",
-      "verified_at": "2026-10-22T17:25:45.396Z",
+      "content_hash": "907d3ccf5933241d59b09456489399828165c4b36e81b80859140701a44468c7",
+      "verified_at": "2026-10-25T05:21:20.624Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:25:45.396Z"
+      "last_updated": "2026-10-25T05:21:20.624Z"
     },
     "NG-ZORRO/ng-zorro-antd": {
       "repository": "NG-ZORRO/ng-zorro-antd",

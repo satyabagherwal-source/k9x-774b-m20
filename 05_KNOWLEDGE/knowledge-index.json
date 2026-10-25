@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T05:14:47.036Z",
+  "last_updated": "2026-10-25T05:21:20.548Z",
   "total_verified_learnings": 1082,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15739,7 +15739,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "aadcbb797d895f1c77c493d3f833c16602f8df1aae5e2c9dddf8f369ee083731",
+      "content_hash": "066ff796f8b1b2d92c16a239ecfec588b61d41397b69a01bc1d2d6ddde223567",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -15796,6 +15796,16 @@
           "number": 3192,
           "title": "Dual-Path Inference Architecture (System 1 / System 2)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4073,
+          "title": "Hybrid Attention Interval Invariant for Long-Context LVLMs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4074,
+          "title": "Stochastic Generation Calibration for Decision Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15815,7 +15825,7 @@
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr",
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
       ],
-      "verified_at": "2026-10-20T13:27:36.604Z",
+      "verified_at": "2026-10-25T05:21:11.802Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32494,8 +32504,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "bcdb4c4c",
-      "content_hash": "332c226130ea5ffaeca3c60e3ac879928d4c300ad8c9c876e060c742f8b83813",
+      "source_version": "c894d977",
+      "content_hash": "907d3ccf5933241d59b09456489399828165c4b36e81b80859140701a44468c7",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -32513,6 +32523,11 @@
           "number": 3662,
           "title": "[MDEV-36841] Warn when slave timeout drops below heartbeat period",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4075,
+          "title": "MDEV-41240 I_S.TABLES crash with TABLE_NAME and a subquery",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32520,7 +32535,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:25:45.326Z",
+      "verified_at": "2026-10-25T05:21:20.526Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -118649,6 +118664,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T05:14:47.016Z"
+    },
+    "rule-4073": {
+      "learning_id": "rule-4073",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4073,
+      "title": "Hybrid Attention Interval Invariant for Long-Context LVLMs",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:21:11.802Z"
+    },
+    "rule-4074": {
+      "learning_id": "rule-4074",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4074,
+      "title": "Stochastic Generation Calibration for Decision Models",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:21:11.803Z"
+    },
+    "rule-4075": {
+      "learning_id": "rule-4075",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4075,
+      "title": "MDEV-41240 I_S.TABLES crash with TABLE_NAME and a subquery",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "c894d977",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:21:20.526Z"
     }
   },
   "aliases": {
