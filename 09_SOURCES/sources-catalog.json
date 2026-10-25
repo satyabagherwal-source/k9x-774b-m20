@@ -915,8 +915,8 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-120b",
     "sourceVersion": "hf-openai-gpt-oss-120b",
     "license": "Open-Source",
-    "contentHash": "dc6557cc2fe2e642379d599e255233296780de4686311084364b7cdbade2f9e3",
-    "lastHarvestedAt": "2026-10-21T00:21:48.797Z",
+    "contentHash": "7d20cf47c2afe248be5c89b3797a0d0db0e48243535d7e3d323fcdab69bc6804",
+    "lastHarvestedAt": "2026-10-25T20:04:41.173Z",
     "learningId": "learn-huggingface-openai-gpt-oss-120b"
   },
   "hf-zai-org-glm-5.2": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "bc01a991",
+    "sourceVersion": "b33f3ef5",
     "license": "NOASSERTION",
-    "contentHash": "2a8eae2bae0d67667a58e5905b13896a96fd3bdeecc8b03a13504a441f369ba2",
-    "lastHarvestedAt": "2026-10-24T20:11:11.275Z",
+    "contentHash": "19fb1a2ee3657d007a787783ff3da0eee7d70938bb663828e9bc0862c0f90e6f",
+    "lastHarvestedAt": "2026-10-25T20:04:42.868Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {
@@ -8253,10 +8253,10 @@
     "repository": "buresdv/Cork",
     "platform": "github",
     "sourceUrl": "https://github.com/buresdv/Cork",
-    "sourceVersion": "d4accc45",
+    "sourceVersion": "523abb0e",
     "license": "NOASSERTION",
-    "contentHash": "d3e235b277943a362164f2d44ebbd76522a245887305a02c70f52b64b1c0cc40",
-    "lastHarvestedAt": "2026-10-21T02:49:49.063Z",
+    "contentHash": "87048aa7a243e6046f08d0dc8a015c3ba8c10e3e9424051ef1172d26b17ae73f",
+    "lastHarvestedAt": "2026-10-25T20:04:47.693Z",
     "learningId": "learn-github-buresdv-cork"
   },
   "productdevbook-port-killer": {
@@ -10718,5 +10718,15 @@
     "contentHash": "973b37627992402e40a401b8dd721fb79618a941f43a029a26df2ee11599e3f2",
     "lastHarvestedAt": "2026-10-25T15:43:06.876Z",
     "learningId": "learn-github-kajisho5-ffmpeg-skill"
+  },
+  "windmill-labs-windmill": {
+    "repository": "windmill-labs/windmill",
+    "platform": "github",
+    "sourceUrl": "https://github.com/windmill-labs/windmill",
+    "sourceVersion": "a72484b2",
+    "license": "NOASSERTION",
+    "contentHash": "34cc763778dd68501203d40d3d4b0876fbc5ea8bbb55d9544fe33ddc8f2a4483",
+    "lastHarvestedAt": "2026-10-25T20:04:38.705Z",
+    "learningId": "learn-github-windmill-labs-windmill"
   }
 }

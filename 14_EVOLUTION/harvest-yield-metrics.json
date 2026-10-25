@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T19:58:22.457Z",
-  "total_cycles_completed": 4951,
-  "total_learnings_persisted": 4951,
-  "total_rules_promoted": 4319,
+  "last_updated": "2026-10-25T20:04:47.698Z",
+  "total_cycles_completed": 4955,
+  "total_learnings_persisted": 4955,
+  "total_rules_promoted": 4322,
   "history": [
-    {
-      "timestamp": "2026-10-25T10:43:10.487Z",
-      "repository": "BurntSushi/ripgrep",
-      "learningId": "learn-github-burntsushi-ripgrep",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T10:43:23.876Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T10:43:27.912Z",
-      "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T10:49:35.565Z",
-      "repository": "kotest/kotest",
-      "learningId": "learn-github-kotest-kotest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T10:53:10.008Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-25T19:58:22.457Z",
       "repository": "goharbor/harbor",
       "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T20:04:38.710Z",
+      "repository": "windmill-labs/windmill",
+      "learningId": "learn-github-windmill-labs-windmill",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T20:04:41.178Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T20:04:42.873Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T20:04:47.698Z",
+      "repository": "buresdv/Cork",
+      "learningId": "learn-github-buresdv-cork",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -4974,3 +4974,7 @@
 | `CYCLE-20261025-UHGY` | `2026-10-25T19:51:50.002Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4434` | Yes (`4527f595...`) |
 | `CYCLE-20261025-2ORQ` | `2026-10-25T19:58:12.710Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`1b309041...`) |
 | `CYCLE-20261025-2WA9` | `2026-10-25T19:58:22.449Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4435` | Yes (`1b5aa31a...`) |
+| `CYCLE-20261025-AYLQ` | `2026-10-25T20:04:38.702Z` | `windmill-labs/windmill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4436` | Yes (`34cc7637...`) |
+| `CYCLE-20261025-B0IA` | `2026-10-25T20:04:41.170Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`7d20cf47...`) |
+| `CYCLE-20261025-B1TD` | `2026-10-25T20:04:42.865Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4437` | Yes (`19fb1a2e...`) |
+| `CYCLE-20261025-B5JE` | `2026-10-25T20:04:47.690Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4438` | Yes (`87048aa7...`) |

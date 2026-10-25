@@ -18658,5 +18658,20 @@
     "qualityScore": 1701,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-25T15:34:35.842Z"
+  },
+  {
+    "name": "windmill",
+    "fullName": "windmill-labs/windmill",
+    "url": "https://github.com/windmill-labs/windmill",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Code-first platform for workflows, apps and AI agents, on the fastest self-hostable orchestrator. Business teams build with AI, engineers control what ships. Open-source alternative to Lovable, Retool and Temporal.",
+    "stars": 18263,
+    "forks": 1127,
+    "openIssues": 864,
+    "language": "Rust",
+    "qualityScore": 9820,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-25T20:00:52.633Z"
   }
 ]

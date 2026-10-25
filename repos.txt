@@ -4454,3 +4454,7 @@ https://huggingface.co/Nanbeige/Nanbeige4.3-33B
 # --- Automatically Discovered by AI Scout Engine [2026-10-25T15:37:59.914Z] ---
 # [AI-AGENTS] kajisho5/ffmpeg-skill (1701 score) - Local video editor for coding agents: 42 FFmpeg tools with a machine-readable co
 https://github.com/kajisho5/ffmpeg-skill
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-25T20:04:32.835Z] ---
+# [AI-AGENTS] windmill-labs/windmill (9820 score) - Code-first platform for workflows, apps and AI agents, on the fastest self-hosta
+https://github.com/windmill-labs/windmill

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T19:58:22.387Z",
-  "total_verified_learnings": 1088,
+  "last_updated": "2026-10-25T20:04:47.634Z",
+  "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4844,8 +4844,8 @@
       "slug": "buresdv-cork",
       "platform": "github",
       "source_url": "https://github.com/buresdv/Cork",
-      "source_version": "d4accc45",
-      "content_hash": "d3e235b277943a362164f2d44ebbd76522a245887305a02c70f52b64b1c0cc40",
+      "source_version": "523abb0e",
+      "content_hash": "87048aa7a243e6046f08d0dc8a015c3ba8c10e3e9424051ef1172d26b17ae73f",
       "dossier_path": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "promoted_rules": [
@@ -4858,6 +4858,11 @@
           "number": 3495,
           "title": "~ Version Bump",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4438,
+          "title": "Merge pull request #682 from modeezie/main",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4865,7 +4870,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:49:48.982Z",
+      "verified_at": "2026-10-25T20:04:47.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8429,8 +8434,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "bc01a991",
-      "content_hash": "2a8eae2bae0d67667a58e5905b13896a96fd3bdeecc8b03a13504a441f369ba2",
+      "source_version": "b33f3ef5",
+      "content_hash": "19fb1a2ee3657d007a787783ff3da0eee7d70938bb663828e9bc0862c0f90e6f",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -8458,6 +8463,11 @@
           "number": 3942,
           "title": "cli): preserve security metadata and reject ambiguous hook settings",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4437,
+          "title": "normalize): never take an option word for timeout's duration or chrt's program (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8465,7 +8475,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:11:11.233Z",
+      "verified_at": "2026-10-25T20:04:42.799Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23797,7 +23807,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-120b",
       "source_version": "hf-openai-gpt-oss-120b",
-      "content_hash": "dc6557cc2fe2e642379d599e255233296780de4686311084364b7cdbade2f9e3",
+      "content_hash": "7d20cf47c2afe248be5c89b3797a0d0db0e48243535d7e3d323fcdab69bc6804",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "promoted_rules": [],
@@ -23819,7 +23829,7 @@
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4ayjzd",
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4oc8h1"
       ],
-      "verified_at": "2026-10-21T00:21:48.735Z",
+      "verified_at": "2026-10-25T20:04:41.103Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125775,6 +125785,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T19:58:22.368Z"
+    },
+    "learn-github-windmill-labs-windmill": {
+      "learning_id": "learn-github-windmill-labs-windmill",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "windmill-labs/windmill",
+      "repository": "windmill-labs/windmill",
+      "slug": "windmill-labs-windmill",
+      "platform": "github",
+      "source_url": "https://github.com/windmill-labs/windmill",
+      "source_version": "a72484b2",
+      "content_hash": "34cc763778dd68501203d40d3d4b0876fbc5ea8bbb55d9544fe33ddc8f2a4483",
+      "dossier_path": "07_PROJECT_LEARNING/windmill-labs-windmill-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/windmill-labs-windmill-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4436,
+          "title": "share settings.yaml's git sync block between a fork and its parent (#11974)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-25T20:04:38.636Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4436": {
+      "learning_id": "rule-4436",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4436,
+      "title": "share settings.yaml's git sync block between a fork and its parent (#11974)",
+      "source_url": "https://github.com/windmill-labs/windmill",
+      "source_version": "a72484b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T20:04:38.636Z"
+    },
+    "rule-4437": {
+      "learning_id": "rule-4437",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4437,
+      "title": "normalize): never take an option word for timeout's duration or chrt's program (",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "b33f3ef5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T20:04:42.799Z"
+    },
+    "rule-4438": {
+      "learning_id": "rule-4438",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4438,
+      "title": "Merge pull request #682 from modeezie/main",
+      "source_url": "https://github.com/buresdv/Cork",
+      "source_version": "523abb0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T20:04:47.622Z"
     }
   },
   "aliases": {

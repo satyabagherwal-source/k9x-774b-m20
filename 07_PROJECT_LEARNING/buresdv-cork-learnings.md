@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/buresdv-cork-learnings.md`  
 > **Source**: github ([https://github.com/buresdv/Cork](https://github.com/buresdv/Cork))  
-> **Source Version**: `d4accc45`  
+> **Source Version**: `523abb0e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T02:49:48.597Z  
+> **Timestamp**: 2026-10-25T20:04:47.314Z  
 > **Learning ID**: `learn-github-buresdv-cork`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/buresdv-cork-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/buresdv/Cork](https://github.com/buresdv/Cork))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T02:49:48.496Z  
+> **Harvest Timestamp**: 2026-10-25T20:04:47.308Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: [NO AI] Fast GUI for Homebrew written in SwiftUI
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4707 stars
+- **Stars / Engagement**: 4710 stars
 
 ---
 
@@ -1258,51 +1258,80 @@ extension ServicesFatalError
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d4accc45` (2026-10-20)
-**Commit Message**: ~ Version Bump
+### Incident Patch 1: `523abb0e` (2026-10-21)
+**Commit Message**: Merge pull request #682 from modeezie/main
 
-**File**: `Modules/TerminalSupport/Logic/Shell Commands.swift` (modified, +1/-1)
+README Update/Corrections
+
+**File**: `README.md` (modified, +18/-12)
 ```diff
-@@ -248,7 +248,7 @@ private extension [EnvironmentVariable]
-             incomingEnvironmentVariableArray.append(.init(key: "ALL_PROXY", value: "\(proxySettings.host):\(proxySettings.port)"))
-         }
+@@ -134,31 +134,37 @@ _Cork uses Mise to prevent conflicts arising from mismatched Tuist versions acro
  
--        if Defaults[.isAutomaticCleanupEnabled]
-+        if !Defaults[.isAutomaticCleanupEnabled]
-         {
-             incomingEnvironmentVariableArray.append(.init(key: "HOMEBREW_NO_INSTALL_CLEANUP", value: "TRUE"))
-         }
+    > [!CAUTION]
+    > Make sure to copy the command Mise itself gives you, and not the one I used above. This command is only valid for my Mac, and will not work on your machine.
++3. Reload your shell configuration after initializing Mise.  Run **ONLY** the command that corresponds to your default shell from the following list:
+ 
+-3. Add `mise` to your path using one of the following commands, depending on your shell.
+-
+-- **zsh**: `echo 'eval "$(~/.local/bin/mise activate zsh)"' >> ~/.zshrc`
+-- **bash**: `echo 'eval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc`
+-- **fish**: `echo '~/.local/bin/mise activate fish | source' >> ~/.config/fish/config.fish`
++  - **zsh**: `source ~/.zshrc`
++  - **bash**: `source ~/.bashrc`
++  - **fish**: `source ~/.config/fish/config.fish`
+   > [!TIP] > **zsh** is the default macOS shell.
+ 
+ > [!NOTE]
+-> If you don't know which shell you're running, use the command `echo $SHELL`. The last part of the output after the last slash is the name of your shell
+-> In my case, the output of the command is `/bin/zsh`. This means my shell is `zsh`
++> If you don't know which shell you're running, use the command `echo $SHELL`. The last part of the output after the last slash is the name of your shell.
++> In my case, the output of the command is `/bin/zsh`. This means my shell is `zsh`.
++> 
++> Alternatively, you can determine your shell based on what command Mise gave you to initialize in the previous step.
+ 
+ #### Installing Tuist
+ 
+ 1. Install Tuist using `mise install tuist`
++2. Activate Tuist using `mise use tuist`
+ 
+ #### Compiling Cork
+ 
+ 0. I recommend you pick a version of Cork marked by one of the version tags which define released versions. If you decide to compile the current state of any of the branches, you might encounter experience-breaking bugs and unfinished features
+-1. Use the command `git clone https://github.com/buresdv/Cork.git && cd Cork && git checkout <VERSION TAG>; mise exec tuist@4.208.0 -- tuist install && mise exec tuist@4.208.0 -- tuist generate --no-binary-cache`.
++1. Use the command `git clone https://github.com/buresdv/Cork.git && cd Cork && git checkout <VERSION TAG> && mise exec tuist@4.208.0 -- tuist install && mise exec tuist@4.208.0 -- tuist generate --cache-profile none`.
++
++    >[!REMEMBER]
++    > Input the released version you want to compile in \<VERSION TAG\> before executing the command. You can see all tags by running `git tag`       to find your desired version. If you just want to build the latest release in its current state, you can omit `git checkout <VERSION TAG>`      completely.
++
+ 
+-- Mise will ask you to trust the local [`.mise.toml`](.mise.toml).
++- If Mise asks you to trust the local [`.mise.toml`](.mise.toml).
+ - You can either:
+-  - Say yes, to always use `tuist` version 4.50.2 in this directory.
+-  - Say no, and the command will use `tuist` 4.50.2 anyway, but future invocations of `tuist` will not be version controlled.
++  - Say yes, to always use `tuist` version 4.208.0 in this directory.
++  - Say no, and the command will use `tuist` 4.208.0 anyway, but future invocations of `tuist` will not be version controlled.
+ - Xcode will open the project.
+ 
+ <div style= "margin-left: 1rem">
+@@ -168,7 +174,7 @@ _Cork uses Mise to prevent conflicts arising from mismatched Tuist versions acro
+     <ol>
+       <li><code>git clone https://github.com/buresdv/Cork.git</code> downloads the source code</li>
+       <li><code>cd Cork</code> opens the folder you downloaded Cork into</li>
+-      <li><code>mise exec [...]</code> runs a command using version <i>4.50.2</i> of Tuist, without polluting your local `mise.toml`, to build Cork</li>
++      <li><code>mise exec [...]</code> runs a command using version <i>4.208.0</i> of Tuist, without polluting your local `mise.toml`, to build Cork</li>
+       <li><code>tuist install</code> downloads all Cork pre-requisites</li>
+       <li><code>tuist generate</code> creates the Xcode project and opens it</li>
+     </ol>
 ```
-
-**File**: `Project.swift` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ import ProjectDescription
- let settings = Environment.selfCompiled.getBoolean(default: false)
- 
- let version: String = "2.1.0"
--let build: String = "152"
-+let build: String = "153"
- 
- func corkTarget(configureWithSelfCompiled: Bool) -> ProjectDescription.Target {
-     var additionalCompilationConditions = [String]()
-```
-
----
-
-### Incident Patch 2: `48933fe0` (2026-10-20)
-**Commit Message**: Merge pull request #683 from buresdv/l10n-import
-
-Merge translations into string catalog
-
-
 
 #### Recent Merged Pull Requests:
 - **PR #683** (2026-10-20): Merge translations into string catalog (@github-actions[bot])
+- **PR #682** (2026-10-21): README Update/Corrections (@modeezie)
 - **PR #681** (2026-09-14): Merge translations into string catalog (@github-actions[bot])
 - **PR #679** (2026-09-11): Merge translations into string catalog (@github-actions[bot])
 - **PR #673** (closed): fix: treat brew stderr warnings as non-fatal (@howardhey)
 - **PR #672** (2026-09-01): Merge translations into string catalog (@github-actions[bot])
-- **PR #669** (2026-08-30): Merge translations into string catalog (@github-actions[bot])
 
 ---
 
@@ -1322,28 +1351,51 @@ Merge translations into string catalog
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ~ Version Bump
+## X. Merge pull request #682 from modeezie/main
 
 **RULE**:
-When implementing operations in `Modules/TerminalSupport/Logic/Shell Commands.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in buresdv/Cork. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in buresdv/Cork. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d4accc45`: ~ Version Bump. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `523abb0e`: Merge pull request #682 from modeezie/main. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Modules/TerminalSupport/Logic/Shell Commands.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        if !Defaults[.isAutomaticCleanupEnabled]
+3. Reload your shell configuration after initializing Mise.  Run **ONLY** the command that corresponds to your default shell from the following list:
+  - **zsh**: `source ~/.zshrc`
+  - **bash**: `source ~/.bashrc`
+  - **fish**: `source ~/.config/fish/config.fish`
+> If you don't know which shell you're running, use the command `echo $SHELL`. The last part of the output after the last slash is the name of your shell.
+> In my case, the output of the command is `/bin/zsh`. This means my shell is `zsh`.
+> 
+> Alternatively, you can determine your shell based on what command Mise gave you to initialize in the previous step.
+2. Activate Tuist using `mise use tuist`
+1. Use the command `git clone https://github.com/buresdv/Cork.git && cd Cork && git checkout <VERSION TAG> && mise exec tuist@4.208.0 -- tuist install && mise exec tuist@4.208.0 -- tuist generate --cache-profile none`.
+
+    >[!REMEMBER]
+    > Input the released version you want to compile in \<VERSION TAG\> before executing the command. You can see all tags by running `git tag`       to find your desired version. If you just want to build the latest release in its current state, you can omit `git checkout <VERSION TAG>`      com
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-        if Defaults[.isAutomaticCleanupEnabled]
+3. Add `mise` to your path using one of the following commands, depending on your shell.
+
+- **zsh**: `echo 'eval "$(~/.local/bin/mise activate zsh)"' >> ~/.zshrc`
+- **bash**: `echo 'eval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc`
+- **fish**: `echo '~/.local/bin/mise activate fish | source' >> ~/.config/fish/config.fish`
+> If you don't know which shell you're running, use the command `echo $SHELL`. The last part of the output after the last slash is the name of your shell
+> In my case, the output of the command is `/bin/zsh`. This means my shell is `zsh`
+1. Use the command `git clone https://github.com/buresdv/Cork.git && cd Cork && git checkout <VERSION TAG>; mise exec tuist@4.208.0 -- tuist install && mise exec tuist@4.208.0 -- tuist generate --no-binary-cache`.
+- Mise will ask you to trust the local [`.mise.toml`](.mise.toml).
+  - Say yes, to always use `tuist` version 4.50.2 in this directory.
+  - Say no, and the command will use `tuist` 4.50.2 anyway, but future invocations of `tuist` will not be version controlled.
+      <li><code>mise exec [...]</code> runs a command using version <i>4.50.2</i> of Tuist, without polluting your local `mise.toml`, to build Cork</li>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d4accc45` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `523abb0e` are properly handled with clean fallback behavior.

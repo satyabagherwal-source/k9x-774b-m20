@@ -4981,3 +4981,7 @@ Every entry in this ledger must capture:
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `67e7cf4c` | Multi-dimensional audit evidence | 2026-10-25T19:51:50.006Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-25T19:58:12.713Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `716de991` | Multi-dimensional audit evidence | 2026-10-25T19:58:22.453Z |
+| `learn-github-windmill-labs-windmill` | `https://github.com/windmill-labs/windmill` | `a72484b2` | Multi-dimensional audit evidence | 2026-10-25T20:04:38.705Z |
+| `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-25T20:04:41.173Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `b33f3ef5` | Multi-dimensional audit evidence | 2026-10-25T20:04:42.868Z |
+| `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `523abb0e` | Multi-dimensional audit evidence | 2026-10-25T20:04:47.693Z |
