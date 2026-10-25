@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T06:32:02.592Z",
-  "total_cycles_completed": 4687,
-  "total_learnings_persisted": 4687,
-  "total_rules_promoted": 3983,
+  "last_updated": "2026-10-25T06:38:30.932Z",
+  "total_cycles_completed": 4690,
+  "total_learnings_persisted": 4690,
+  "total_rules_promoted": 3988,
   "history": [
-    {
-      "timestamp": "2026-10-23T09:20:54.223Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T09:35:42.640Z",
-      "repository": "avajs/ava",
-      "learningId": "learn-github-avajs-ava",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T09:35:46.182Z",
-      "repository": "encoredev/encore",
-      "learningId": "learn-github-encoredev-encore",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T09:35:52.787Z",
       "repository": "lioensky/VCPToolBox",
@@ -1403,6 +1382,27 @@
       "repository": "autotrust/JEV-35B-NVFP4",
       "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:38:17.814Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:38:24.066Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:38:30.932Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-RX62",
-    "timestamp": "2026-10-21T05:15:21.386Z",
-    "repository": "hartemyaakoub/seo-toolkit",
-    "learningId": "learn-github-hartemyaakoub-seo-toolkit",
-    "contentHash": "cedf0ad66619dd294faf7cfc2422f080b928c3468900c4fa8e610e869da9f1c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-S134",
-    "timestamp": "2026-10-21T05:15:26.464Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "88ae601050e590be002e1156c1583ea42e321263b893c461de32f048ebbb44e6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-S46O",
-    "timestamp": "2026-10-21T05:15:30.480Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "13a207510be18d0b462f1e018fd52387104cebdc62e10507b1203658f55e8c09",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-0CBI",
     "timestamp": "2026-10-21T05:21:54.270Z",
     "repository": "saltstack/salt",
@@ -7492,6 +7447,51 @@
     "contentHash": "8791d6c23d1ea70a99696e49ee4bcf434e0b66c115b9998b81c9662fa88fa69d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-HZNZ",
+    "timestamp": "2026-10-25T06:38:17.807Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "71dc756e2b1e456b28f395329a5ef7e924f60451ac50cac42711985ec40ac847",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-I4HN",
+    "timestamp": "2026-10-25T06:38:24.059Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "03351615b630a95aa8707a32d0b4509e73a620ea169ba50d6baa75aa18c2738f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-I9SE",
+    "timestamp": "2026-10-25T06:38:30.926Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "4fd4954a0c9110eddea3c58590ef1b239481dd4409f42eac2c0143224daa9572",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

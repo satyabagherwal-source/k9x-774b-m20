@@ -165,8 +165,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
     "sourceVersion": "hf-baai-bge-small-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "56f51ec3d357fc360d6431e6c6217540ed220f5fc59129cf46b4c90452bdca55",
-    "lastHarvestedAt": "2026-10-20T14:32:01.785Z",
+    "contentHash": "03351615b630a95aa8707a32d0b4509e73a620ea169ba50d6baa75aa18c2738f",
+    "lastHarvestedAt": "2026-10-25T06:38:24.062Z",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "22a275d2",
+    "sourceVersion": "09f919bc",
     "license": "MIT",
-    "contentHash": "a44f1dec9bc15706d79560b07c70973addc26b09dab9d161d0a7914e4982f981",
-    "lastHarvestedAt": "2026-10-22T18:24:22.929Z",
+    "contentHash": "4fd4954a0c9110eddea3c58590ef1b239481dd4409f42eac2c0143224daa9572",
+    "lastHarvestedAt": "2026-10-25T06:38:30.928Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "f1d90329",
+    "sourceVersion": "3493ce30",
     "license": "MIT",
-    "contentHash": "703b7f8aea7dd86d75184700d118b44b3c320ccdeb50ce87e7f0956dc1f00352",
-    "lastHarvestedAt": "2026-10-22T16:22:18.348Z",
+    "contentHash": "71dc756e2b1e456b28f395329a5ef7e924f60451ac50cac42711985ec40ac847",
+    "lastHarvestedAt": "2026-10-25T06:38:17.810Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {

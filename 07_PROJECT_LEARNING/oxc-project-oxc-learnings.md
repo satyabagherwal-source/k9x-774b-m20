@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `f1d90329`  
+> **Source Version**: `3493ce30`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:22:17.908Z  
+> **Timestamp**: 2026-10-25T06:38:17.502Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:22:15.501Z  
+> **Harvest Timestamp**: 2026-10-25T06:38:16.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23183 stars
+- **Stars / Engagement**: 23217 stars
 
 ---
 
@@ -1229,7 +1229,16 @@ impl ResolvedDispatchConfig {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- *No recent closed bug issues fetched.*
+- **Issue #28149** (2026-10-25): **perf(minifier): reuse is_error_constructor and simplify substitute_global_new_expression**
+  *Symptoms*: remove redundant string comparisons when replacing global new expression with call. reuse `is_error_constructor` from ecma
+  **Post-Mortem & Fix Analysis**:
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 87` untouched benchmarks   `⏩ 9` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>armano2:perf/is_native_error_name</code> (92df512) with <code>main</code> (a22c9f2)</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/armano2%3Aperf%2Fis_native_error_name?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 9 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click here and archive them to remove them fro
+
+- **Issue #28139** (2026-10-23): **perf(parser): move annotation comment handling out of hot paths**
+  *Symptoms*: Applying `@__PURE__` and `@__NO_SIDE_EFFECTS__` comments is rare, so move it into `#[cold]` helpers to keep `with_pure_comments`, `parse_assignment_expression` and `parse_statement_list_item` small.
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"6ba6494c23fe0ba4d114fb64a90e7ce1de47052b","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-23T22:54:07.864753Z">2026-10-23T22:54:07.864753Z</relative-time> | `6ba6494` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
+  > ### Merge activity  * **Oct 23, 10:53 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Oct 23, 10:58 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Oct 23, 11:02 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1246,587 +1255,312 @@ impl ResolvedDispatchConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e0f8937a` (2026-10-22)
-**Commit Message**: fix(react-compiler): compile a `try` whose `catch` is unreachable instead of panicking (#28066)
+### Incident Patch 1: `9ce5ee45` (2026-10-22)
+**Commit Message**: chore(deps): update rustls webpki crates for security advisories (#28112)
 
-Fixes #27404
+Updates `webpki-roots` 1.0.8 -> 1.0.10, `webpki-root-certs` 1.0.8 -> 1.0.10, and `rustls-webpki` 0.103.15 -> 0.103.16 to resolve RUSTSEC-2026-0381, RUSTSEC-2026-0382, and RUSTSEC-2026-0383.
 
-```jsx
-export function Component() {
-  let x = 0;
-  try {
-    const unused = 1;
-  } catch {
-    x = 2;
-  }
-  return <div>{x}</div>;
-}
-```
-
-Before: `assertion failed: Found a block with a single predecessor but where a phi has multiple (2) operands`, which aborts the process in release builds (Vite with `oxc-transform-react`, oxlint `react/*` rules).
-After: compiles, with `x` folded to the constant `0`.
-
-## Cause
-
-Once dead-code elimination empties the `try` body, `prune_maybe_throws` removes the edge to the `catch`, and the catch blocks become unreachable. Two references to them were left behind:
-
-- The phi at the join after the `try` kept an operand for the catch path, so `merge_consecutive_blocks` hit its `assert_eq!`.
-- The join's `preds` still counted the removed blocks, so it was not merged into its real predecessor. When the `catch` had more than one block, the code after the `try` was silently dropped: `try { const u = 1 } catch { if (c) a(); else b(); } return <div />` compiled to `function Component(props) {}`.
-
-Babel's React Compiler (1.0.0 and upstream main at `
-
-**File**: `crates/oxc_linter/src/rules/react/invariant.rs` (modified, +13/-0)
+**File**: `Cargo.lock` (modified, +11/-11)
 ```diff
-@@ -47,6 +47,19 @@ fn test() {
-         // A named function expression can capture its private name in a callback.
-         "export const ExportedName = function Node() { return <Tree renderItem={() => <Node />} />; };",
-         "export const ExportedName = function Node({ value }) { return <Tree renderItem={() => () => <Node value={value} />} />; };",
-+        // A `try` that cannot throw, with a `catch` that reassigns an outer variable.
-+        // https://github.com/oxc-project/oxc/issues/27404
-+        "
-+export function Component() {
-+  let x = 0;
-+  try {
-+    const unused = 1;
-+  } catch {
-+    x = 2;
-+  }
-+  return <div>{x}</div>;
-+}
-+",
-         // ---- PluginTest-test.ts ----
-         // [Invariant] Defined after use
-         // (OK because invariants are only meant for the compiler team's consumption)
-```
-
-**File**: `crates/oxc_react_compiler/fixtures/try-catch-unreachable-catch-in-loop.js` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+// A `try` that cannot throw inside a loop: the `catch` is pruned on every iteration.
-+function Component(props) {
-+  let x = 0;
-+  for (let i = 0; i < props.count; i++) {
-+    try {
-+      const unused = 1;
-+    } catch {
-+      x = i;
-+    }
-+  }
-+  return <div>{x}</div>;
-+}
-+
-+export const FIXTURE_ENTRYPOINT = {
-+  fn: Component,
-+  params: [{count: 3}],
-+  sequentialRenders: [{count: 3}, {count: 0}],
-+};
-```
-
-**File**: `crates/oxc_react_compiler/fixtures/try-catch-unreachable-catch-reassigns-outer.js` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+// The `try` body cannot throw, so the `catch` is pruned and `x` is always `0`.
-+export function Component() {
-+  let x = 0;
-+  try {
-+    const unused = 1;
-+  } catch {
-+    x = 2;
-+  }
-+  return <div>{x}</div>;
-+}
-+
-+export const FIXTURE_ENTRYPOINT = {
-+  fn: Component,
-+  params: [{}],
-+};
-```
-
-**File**: `crates/oxc_react_compiler/fixtures/try-catch-unreachable-catch-with-if.js` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+// The `try` body cannot throw, so the `catch` (and the `if` inside it) is pruned.
-+function Component(props) {
-+  let x = props.value;
-+  try {
-+    const unused = 1;
-+  } catch {
-+    if (props.cond) {
-+      x = 1;
-+    } else {
-+      x = 2;
-+    }
-+  }
-+  return <div>{x}</div>;
-+}
-+
-+export const FIXTURE_ENTRYPOINT = {
-+  fn: Component,
-+  params: [{value: 0, cond: true}],
-+  sequentialRenders: [
-+    {value: 0, cond: true},
-+    {value: 1, cond: false},
-+    {value: 1, cond: true},
-+  ],
-+};
-```
-
-**File**: `crates/oxc_react_compiler/fixtures/try-catch-unreachable-catch-without-reassignment.js` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+// The `try` body cannot throw, so the `catch` is pruned. The code after the `try`
-+// must survive even though no variable needs a phi at the join.
-+function Component(props) {
-+  try {
-+    const unused = 1;
-+  } catch {
-+    if (props.cond) {
-+      props.onError();
-+    } else {
-+      props.onFallback();
-+    }
-+  }
-+  return <div>{props.value}</div>;
-+}
-+
-+export const FIXTURE_ENTRYPOINT = {
-+  fn: Component,
-+  params: [{value: 'a', cond: true}],
-+  sequentialRenders: [
-+    {value: 'a', cond: true},
-+    {value: 'b', cond: false},
-+  ],
-+};
-```
-
-**File**: `crates/oxc_react_compiler/fixtures/try-catch-unreachable-nested-catch.js` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+// Neither `try` body can throw, so both `catch` blocks are pruned.
-+function Component(props) {
-+  let x = props.value;
-+  try {
-+    try {
-+      const unused = 1;
-+    } catch {
-+      x = 1;
-+    }
-+  } catch {
-+    x = 2;
-+  }
-+  return <div>{x}</div>;
-+}
-+
-+export const FIXTURE_ENTRYPOINT = {
-+  fn: Component,
-+  params: [{value: 0}],
-+  sequentialRenders: [{value: 0}, {value: 3}],
-+};
-```
-
-**File**: `crates/oxc_react_compiler/src/diagnostics.rs` (modified, +12/-0)
-```diff
-@@ -1482,6 +1482,18 @@ where
-         }))
- }
+@@ -280,7 +280,7 @@ version = "3.1.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
+ dependencies = [
+- "windows-sys 0.52.0",
++ "windows-sys 0.59.0",
+ ]
  
-+#[cold]
-+pub fn invariant_single_predecessor_phi_has_multiple_operands(
-+    operands: impl Display,
-+) -> OxcDiagnostic {
-+    diagnostic(
-+        ErrorCategory::Invariant,
-+        format!(
-+            "Found a block with a single predecessor but where a phi has multiple ({operands}) operands"
-+        ),
-+    )
-+}
-+
- #[cold]
- pub fn missing_phi_predecessor_mapping(
-     predecessor: impl Display,
-```
-
-**File**: `crates/oxc_react_compiler/src/react_compiler/entrypoint/pipeline.rs` (modified, +4/-4)
-```diff
-@@ -132,7 +132,7 @@ pub fn compile_fn<'a, const EMIT: bool>(
-         return Ok(None);
-     }
+ [[package]]
+@@ -688,7 +688,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.52.0",
++ "windows-sys 0.59.0",
+ ]
  
--    prune_maybe_throws(&mut hir, &mut env.functions, &env.identifiers, env.allocator)?;
-+    prune_maybe_throws(&mut hir, &mut env)?;
+ [[package]]
+@@ -3384,7 +3384,7 @@ dependencies = [
+  "errno",
+  "libc",
+  "linux-raw-sys",
+- "windows-sys 0.52.0",
++ "windows-sys 0.59.0",
+ ]
  
-     validate_context_variable_lvalues(&hir, &mut env)?;
+ [[package]]
+@@ -3413,9 +3413,9 @@ dependencies = [
  
-@@ -141,9 +141,9 @@ pub fn compile_fn<'a, const EMIT: bool>(
+ [[package]]
+ name = "rustls-webpki"
+-version = "0.103.15"
++version = "0.103.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
++checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+ dependencies = [
+  "ring",
+  "rustls-pki-types",
+@@ -3803,7 +3803,7 @@ dependencies = [
+  "getrandom 0.4.3",
+  "once_cell",
+  "rustix",
+- "windows-sys 0.52.0",
++ "windows-sys 0.59.0",
+ ]
  
-     drop_manual_memoization(&mut hir, &mut env)?;
+ [[package]]
+@@ -4275,18 +4275,18 @@ dependencies = [
  
--    inline_immediately_invoked_function_expressions(&mut hir, &mut env);
-+    inline_immediately_invoked_function_expressions(&mut hir, &mut env)?;
+ [[package]]
+ name = "webpki-root-certs"
+-version = "1.0.8"
++version = "1.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0d46a5a140e6f7afeccd8eae97eff335163939eac8b929834875168b29b3d267"
++checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
+ dependencies = [
+  "rustls-pki-types",
+ ]
  
--    merge_consecutive_blocks(&mut hir, &mut env.functions, env.allocator);
-+    merge_consecutive_blocks(&mut hir, &mut env.functions, env.allocator)?;
+ [[package]]
+ name = "webpki-roots"
+-version = "1.0.8"
++version = "1.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bf85cb06032201fa7c6f829d7db5a7e5aa45bcc0655327713065f6f0576731bf"
++checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+ dependencies = [
+  "rustls-pki-types",
+ ]
+@@ -4337,7 +4337,7 @@ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+ dependencies = [
+- "windows-sys 0.52.0",
++ "windows-sys 0.59.0",
+ ]
  
-     assert_consistent_identifiers(&hir, &env.identifiers)?;
-     assert_terminal_successors_exist(&hir)?;
-@@ -184,7 +184,7 @@ pub fn compile_fn<'a, const EMIT: bool>(
- 
-     dead_code_elimination(&mut hir, &env);
- 
--    prune_maybe_throws(&mut hir, &mut env.functions, &env.identifiers, env.allocator)?;
-+    prune_maybe_throws(&mut hir, &mut env)?;
- 
-     infer_mutation_aliasing_ranges(&mut hir, &mut env, false)?;
- 
+ [[package]]
 ```
 
 ---
 
-### Incident Patch 2: `999496e4` (2026-10-22)
-**Commit Message**: fix(formatter): measure a short key by its display width (#28026)
+### Incident Patch 2: `7f3c9086` (2026-10-23)
+**Commit Message**: fix(linter/eslint/array-callback-return): check callbacks passed with extra arguments (#28133)
 
-`js/object-prop-break-in/short-keys.js` is in the "Not idempotent" list
-of the Prettier conformance report. The cause is how a property key's
-width is measured for the short-key check (`width < indent_width +
-MIN_OVERLAP_FOR_BREAK`):
+Fixes #28128
 
-- a quoted key goes through `FormatLiteralStringToken::width()`, its
-display width (`'古体诗'` -> 6)
-- an unquoted key goes through `SourceText::span_width()`, its `char`
-count (`古体诗` -> 3)
+`array-callback-return` only checked array method calls with exactly one
+argument, so a callback followed by anything else was skipped. That's
+why `reduce`/`reduceRight` with an initial value were never reported.
+The same thing happened to `foo.map(cb, thisArg)` and `Array.from(x, cb,
+thisArg)`.
 
-So the first pass breaks after `'古体诗':` like Prettier, unquotes the key,
-and the second pass sees a 3-wide key and joins the line again:
+ESLint's rule checks the first argument (the second for
+`Array.from`/`Array.fromAsync`) no matter how many arguments follow it.
+This PR does the same.
 
 ```js
-// pass 1 (same as Prettier)
-  古体诗:
-    "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-// pass 2
-  古体诗: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
+[1, 2].reduce((total, x) => {
+  if (x > 1) {
+    return total + x;
+  }
+}, 0); // now reported, same as ESLint
 ```
 
-An unquoted wide key (`古体诗: ...` in the input) never breaks at all,
-unlike Prettier, whose `isObjectPropertyWithShortKey` uses
-`getStringWidth`.
+Tests: new pass/fail cases for `reduce`/`reduceRight` with an initial
+value, `map` with `thisArg`, `Array.from` with `thisArg`, and a callback
+that isn't the first argument (`foo.reduce(bar, function() {})` stays
+unreported). Snapshot updated. `cargo test -p oxc_linter`, `cargo clippy
+-p oxc_linter --all-targets -- -D warnings` and `cargo fmt --check`
+pass.
 
-This makes `span_width` return the display width
-(`UnicodeWidthStr::width`). Its only callers are these key-width checks
-(object/binding/assignment-target properties, plain and computed), so
-nothing e
+AI disclosure: I used an AI assistant while writing this change. I
+reviewed the code and tests myself.
 
-**File**: `crates/oxc_formatter/tests/fixtures/js/unicode/wide-char-short-key.js` (added, +11/-0)
+---------
+
+Co-authored-by: Cameron <[REDACTED_EMAIL]>
+
+**File**: `crates/oxc_linter/src/rules/eslint/array_callback_return/mod.rs` (modified, +14/-3)
 ```diff
-@@ -0,0 +1,11 @@
-+// A key is short by its display width (wide characters count as 2), quoted or not.
-+// `古体诗` is 6 wide, so like `abcdef` it is not short, and the value moves to the next line.
-+x = {
-+  古体诗: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  "古体诗": "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  [古体]: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  abcdef: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  古: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about-xxxxxx",
-+};
-+var { 古体诗: 古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned" } = x;
-+({ 古体诗: 古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned" } = x);
-```
-
-**File**: `crates/oxc_formatter/tests/fixtures/js/unicode/wide-char-short-key.js.snap` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+---
-+source: crates/oxc_formatter/tests/fixtures/mod.rs
-+---
-+==================== Input ====================
-+// A key is short by its display width (wide characters count as 2), quoted or not.
-+// `古体诗` is 6 wide, so like `abcdef` it is not short, and the value moves to the next line.
-+x = {
-+  古体诗: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  "古体诗": "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  [古体]: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  abcdef: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  古: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about-xxxxxx",
-+};
-+var { 古体诗: 古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned" } = x;
-+({ 古体诗: 古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned" } = x);
-+
-+==================== Output ====================
-+------------------
-+{ printWidth: 80 }
-+------------------
-+// A key is short by its display width (wide characters count as 2), quoted or not.
-+// `古体诗` is 6 wide, so like `abcdef` it is not short, and the value moves to the next line.
-+x = {
-+  古体诗:
-+    "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  古体诗:
-+    "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  [古体]:
-+    "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  abcdef:
-+    "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  古: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about-xxxxxx",
-+};
-+var {
-+  古体诗:
-+    古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned",
-+} = x;
-+({
-+  古体诗:
-+    古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned",
-+} = x);
-+
-+-------------------
-+{ printWidth: 100 }
-+-------------------
-+// A key is short by its display width (wide characters count as 2), quoted or not.
-+// `古体诗` is 6 wide, so like `abcdef` it is not short, and the value moves to the next line.
-+x = {
-+  古体诗: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  古体诗: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  [古体]: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  abcdef: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about",
-+  古: "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned-about-xxxxxx",
-+};
-+var { 古体诗: 古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned" } = x;
-+({ 古体诗: 古 = "https://prettier.io/docs/en/rationale.html#what-prettier-is-concerned" } = x);
-+
-+===================== End =====================
-```
-
-**File**: `crates/oxc_formatter/tests/snapshots/conformance__prettier-js.snap` (modified, +0/-1)
-```diff
-@@ -92,6 +92,5 @@ js compatibility: 1033/1123 (91.99%), 23 files skipped
- - js/comments/first-argument/first-argument.js
- - js/for/continue-and-break-comment-without-blocks.js
- - js/function/issue-12967.js
--- js/object-prop-break-in/short-keys.js
- - jsx/comments/in-attributes.js
- - jsx/spread/child.js
-```
-
-**File**: `crates/oxc_formatter_core/src/source/text.rs` (modified, +4/-2)
-```diff
-@@ -1,5 +1,7 @@
- use std::ops::Deref;
+@@ -390,7 +390,7 @@ pub fn get_array_method_info<'a>(
  
-+use unicode_width::UnicodeWidthStr;
+                 // Array.from
+                 if callee.is_specific_member_access("Array", "from")
+-                    && call.arguments.len() == 2
++                    && call.arguments.len() >= 2
+                     && let Some(call_arg) = call.arguments[1].as_expression()
+                     && call_arg.span() == current_node.kind().span()
+                 {
+@@ -399,7 +399,7 @@ pub fn get_array_method_info<'a>(
+ 
+                 // Array.fromAsync
+                 if callee.is_specific_member_access("Array", "fromAsync")
+-                    && call.arguments.len() == 2
++                    && call.arguments.len() >= 2
+                     && let Some(call_arg) = call.arguments[1].as_expression()
+                     && call_arg.span() == current_node.kind().span()
+                 {
+@@ -410,8 +410,9 @@ pub fn get_array_method_info<'a>(
+                 let (array_method_span, array_method) = callee.static_property_info()?;
+                 let array_method = array_method.as_str()?;
+ 
++                // The callback is the first argument; any further arguments (an initial
++                // value for `reduce`/`reduceRight`, or a `thisArg`) don't change that.
+                 if TARGET_METHODS.contains(&array_method)
+-                    && call.arguments.len() == 1
+                     && let Some(call_arg) = call.arguments.first()
+                     && call_arg
+                         .as_expression()
+@@ -686,6 +687,11 @@ fn test() {
+   });"#,
+             Some(serde_json::json!([{"allowImplicit": true}])),
+         ),
++        ("[1, 2].reduce((total, x) => total + x, 0)", None),
++        ("[1, 2].reduceRight((total, x) => { return total + x; }, 0)", None),
++        ("foo.map(function() { return 1; }, thisArg)", None),
++        ("Array.from(x, function() { return 1; }, thisArg)", None),
++        ("foo.reduce(bar, function() {})", None),
+     ];
+ 
+     let fail = vec![
+@@ -976,6 +982,11 @@ const _test = fruits.map((fruit) => {
+             "foo.forEach(x => { if (a === b) { return (x + a); } });",
+             Some(serde_json::json!([{"allowVoid": true, "checkForEach": true}])),
+         ),
++        ("[1, 2].reduce((total, x) => { if (x > 1) { return total + x; } }, 0)", None),
++        ("[1, 2].reduceRight((total, x) => { if (x > 1) { return total + x; } }, 0)", None),
++        ("foo.reduce(function() {}, 0)", None),
++        ("foo.map(function() {}, thisArg)", None),
++        ("Array.from(x, function() {}, thisArg)", None),
+     ];
+ 
+     Tester::new(ArrayCallbackReturn::NAME, ArrayCallbackReturn::PLUGIN, pass, fail)
+```
+
+**File**: `crates/oxc_linter/src/snapshots/eslint_array_callback_return.snap` (modified, +44/-0)
+```diff
+@@ -1240,3 +1240,47 @@ source: crates/oxc_linter/src/tester.rs
+    ·        ╰── "Array.prototype.forEach" is called here.
+    ╰────
+   help: Expected the return expression to be started with `void`
 +
- use oxc_span::{GetSpan, Span};
- 
- /// Source text wrapper providing mechanical byte/offset access for the formatter.
-@@ -110,8 +112,8 @@ impl<'a> SourceText<'a> {
-     }
- 
-     // Utility methods
--    /// Get character count of span
-+    /// Get the display width of span, the same measure as a printed string's width (wide characters count as 2)
-     pub fn span_width(&self, span: Span) -> usize {
--        self.text_for(&span).chars().count()
-+        self.text_for(&span).width()
-     }
- }
++  ⚠ eslint(array-callback-return): Callback for array method "Array.prototype.reduce" may reach the end of an `if` without returning
++   ╭─[array_callback_return.tsx:1:8]
++ 1 │ [1, 2].reduce((total, x) => { if (x > 1) { return total + x; } }, 0)
++   ·        ───┬──            ──   ────────────────┬───────────────
++   ·           │               │                   ╰── This path may reach the end of the callback.
++   ·           ╰── "Array.prototype.reduce" is called here.
++   ╰────
++  help: This `if` has no `else` branch, so the callback may reach the end without a `return`. Add an `else`, or add a final `return`/`throw` after the `if`.
++        Return a value on each path (or enable `allowImplicit` to allow `return;`).
++
++  ⚠ eslint(array-callback-return): Callback for array method "Array.prototype.reduceRight" may reach the end of an `if` without returning
++   ╭─[array_callback_return.tsx:1:8]
++ 1 │ [1, 2].reduceRight((total, x) => { if (x > 1) { return total + x; } }, 0)
++   ·        ─────┬─────            ──   ────────────────┬───────────────
++   ·             │                  │                   ╰── This path may reach the end of the callback.
++   ·             ╰── "Array.prototype.reduceRight" is called here.
++   ╰────
++  help: This `if` has no `else` branch, so the callback may reach the end without a `return`. Add an `else`, or add a final `return`/`throw` after the `if`.
++        Return a value on each path (or enable `allowImplicit` to allow `return;`).
++
++  ⚠ eslint(array-callback-return): Callback for array method "Array.prototype.reduce" does not return on all code paths
++   ╭─[array_callback_return.tsx:1:23]
++ 1 │ foo.reduce(function() {}, 0)
++   ·                       ──
++   ╰────
++  help: "Array.prototype.reduce" uses the callback's return value. Add a `return` on every possible code path.
++        Return a value on each path (or enable `allowImplicit` to allow `return;`).
++
++  ⚠ eslint(array-callback-return): Callback for array method "Array.prototype.map" does not return on all code paths
++   ╭─[array_callback_return.tsx:1:20]
++ 1 │ foo.map(function() {}, thisArg)
++   ·                    ──
++   ╰────
++  help: "Array.prototype.map" uses the callback's return value. Add a `return` on every possible code path.
++        Return a value on each path (or enable `allowImplicit` to allow `return;`).
++
++  ⚠ eslint(array-callback-return): Callback for array method "Array.from" does not return on all code paths
++   ╭─[array_callback_return.tsx:1:26]
++ 1 │ Array.from(x, function() {}, thisArg)
++   ·                          ──
++   ╰────
++  help: "Array.from" uses the callback's return value. Add a `return` on every possible code path.
++        Return a value on each path (or enable `allowImplicit` to allow `return;`).
 ```
 
 ---
 
-### Incident Patch 3: `7e9aa449` (2026-10-22)
-**Commit Message**: fix(formatter): keep parens around a looser operand of an instantiation expression (#28025)
+### Incident Patch 3: `0e6498f7` (2026-10-23)
+**Commit Message**: perf(tasks): build the coverage profile without cross-crate LTO (#28007)
 
-When the operand of an instantiation expression binds looser than the
-type arguments, the formatter drops its parentheses:
+> AI disclosure: this PR, the measurements behind it, and this description were produced with Claude Code at a maintainer's request. It should get human review before it leaves draft.
 
-```ts
-// input
-x = (c ? a : b)<T>;
-x = (y++)<T>;
-x = (a as B)<T>;
+## Summary
 
-// before
-x = c ? a : b<T>;   // instantiates only `b`
-x = y++<T>;         // does not parse
-x = a as B<T>;      // `B<T>` is now the type
+This PR does three things:
+- **`Cargo.toml`:** `[profile.coverage]` changes from `lto = "thin"` to `lto = false`.
+- **`AGENTS.md`:** adds an opt-in note on incremental compilation for this profile, with its measured cost.
+- **`AGENTS.md`:** the `cargo coverage -- <tool>` examples become `cargo coverage <tool>`; the old form runs every suite.
 
-// after: unchanged from the input
+## Why
+
+With `lto = "thin"`, the library crates are compiled to bitcode only (`-C linker-plugin-lto`). The final binary (`-C lto=thin`) then re-optimizes and re-codegens the whole program on every rebuild. After a one-line `oxc_minifier` edit, `cargo build --timings` showed where the time went:
+
+| | `oxc_minifier` lib | `oxc_minsize` lib | `oxc_minsize` bin |
+|---|---|---|---|
+| `lto = "thin"` | 5.2s | 1.9s | **19.4s** (whole-program ThinLTO) |
+| `lto = false` | 7.2s | 2.3s | **0.7s** (plain link) |
+
+Every binary built with this profile pays that step separately. That covers th
+
+**File**: `AGENTS.md` (modified, +3/-3)
+```diff
+@@ -160,8 +160,8 @@ just conformance                       # Run all conformance tests (alias: cargo
+ cargo test -p <crate_name>             # Test specific crate
+ 
+ # Conformance for specific tools
+-cargo coverage -- parser               # Parser conformance
+-cargo coverage -- transformer          # Transformer conformance
++cargo coverage parser                  # Parser conformance
++cargo coverage transformer             # Transformer conformance
+ cargo run -p oxc_transform_conformance # Transformer Babel tests
+ 
+ # NAPI packages
+@@ -175,7 +175,7 @@ Each crate follows distinct testing patterns:
+ #### oxc_parser
+ 
+ - **Conformance only** via `tasks/coverage`
+-- **Command**: `cargo coverage -- parser`
++- **Command**: `cargo coverage parser`
+ - **Suites**: Test262, Babel, TypeScript
+ - **Special**: `just allocs` for allocation tracking
+ 
 ```
 
-The same happens for binary/logical operands, `++y`, unary operators
-(`!`, `typeof`, `void`, `delete`, `-`), `satisfies` and `<B>x`. Found by
-formatting Biome's `ts/expression/instantiation_expression.ts` fixture
-twice: the second pass failed to parse.
-
-`<T>` binds like a non-null `!`, so this adds
-`TSInstantiationExpression` next to `TSNonNullExpression` in the three
-helpers that decide those parens (`type_cast_like_needs_parens`,
-`binary_like_needs_parens`, `update_or_lower_expression_needs_parens`).
-Operands that don't need them (`(a.b)<T>`, `(a())<T>`, `` (a`x`)<T> ``)
-still lose them.
-
-Prettier (pinned version and 3.9.10) prints the broken form too, so I
-extended `DIVERGENCES.md#instantiation-expression-parens` and its pi
-
-**File**: `crates/oxc_formatter/DIVERGENCES.md` (modified, +14/-1)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -850,7 +850,7 @@ Before an optional call's `?.`, Prettier moves an own-line comment into the argu
+@@ -346,7 +346,7 @@ inherits = "release"
+ panic = "unwind"
+ opt-level = 2 # Compile faster
+ codegen-units = 256 # Compile faster
+-lto = "thin" # Faster compile time with thin LTO
++lto = false # Compile faster: cross-crate LTO re-optimizes the whole binary on every rebuild
+ debug-assertions = true # Make sure `debug_assert!`s pass
+ overflow-checks = true # Catch arithmetic overflow errors
  
- ## instantiation-expression-parens
- 
--- Why: semantics (Prettier's output no longer parses; prettier/prettier#20177)
-+- Why: semantics (Prettier's output no longer parses or changes structure; prettier/prettier#20177, prettier/prettier#20345)
- - Pin: `tests/fixtures/ts/parenthesis/instantiation-expression-parens.ts`
- 
- ```ts
-@@ -860,20 +860,29 @@ const a = (make<T>)!;
- x = (make<T>) + y;
- export default (class {})<string>;
- (class {})<string>;
-+x = (c ? a : b)<T>;
-+x = (y++)<T>;
-+x = (a as B)<T>;
- 
- // ours
- const a = (make<T>)!;
- (make<T>)<U>();
- x = (make<T>) + y;
- export default (class {})<string>;
- (class {})<string>;
-+x = (c ? a : b)<T>;
-+x = (y++)<T>;
-+x = (a as B)<T>;
- 
- // prettier
- const a = make<T>!;
- make<T><U>();
- x = make<T> + y;
- export default class {}<string>;
- class {}<string>;
-+x = c ? a : b<T>;
-+x = y++<T>;
-+x = a as B<T>;
- ```
- 
- Prettier drops the parens around an instantiation expression before `!`,
-@@ -884,6 +893,10 @@ Prettier `main` still drops them before type arguments (`make<T><U>()` does not
- and before a binary `+`, `-`, `<` or `>`-led operator, also when `make<T>` only ends the left operand
- (`make<T> + y` and `a + make<T> - y` parse as `make < T > +y`).
- 
-+Prettier also drops the parens around an operand that binds looser than the type arguments.
-+The type arguments then attach to its last piece only (`c ? a : b<T>`, `a as B<T>`), or the output no longer parses (`y++<T>`).
-+Fixed in Prettier `main` by prettier/prettier#20345, which we follow.
-+
- ## export-default-leftmost-parens
- 
- - Why: uniform-rule (same construct, same output: expression statement)
-```
-
-**File**: `crates/oxc_formatter/src/parentheses/expression.rs` (modified, +3/-0)
-```diff
-@@ -844,6 +844,7 @@ fn type_cast_like_needs_parens(span: Span, parent: &AstNodes<'_, '_>) -> bool {
-         | AstNodes::UnaryExpression(_)
-         | AstNodes::AwaitExpression(_)
-         | AstNodes::TSNonNullExpression(_)
-+        | AstNodes::TSInstantiationExpression(_)
-         // template tag
-         | AstNodes::TaggedTemplateExpression(_)
-         // in spread
-@@ -978,6 +979,7 @@ fn binary_like_needs_parens(
-         | AstNodes::TSTypeAssertion(_)
-         | AstNodes::AwaitExpression(_)
-         | AstNodes::TSNonNullExpression(_)
-+        | AstNodes::TSInstantiationExpression(_)
-         | AstNodes::SpreadElement(_)
-         | AstNodes::JSXSpreadAttribute(_)
-         | AstNodes::ChainExpression(_)
-@@ -1081,6 +1083,7 @@ fn unary_like_expression_needs_parens(node: UnaryLike<'_, '_>) -> bool {
- fn update_or_lower_expression_needs_parens(span: Span, parent: &AstNodes<'_, '_>) -> bool {
-     match parent {
-         AstNodes::TSNonNullExpression(_)
-+        | AstNodes::TSInstantiationExpression(_)
-         | AstNodes::StaticMemberExpression(_)
-         | AstNodes::PrivateFieldExpression(_)
-         | AstNodes::TaggedTemplateExpression(_) => return true,
-```
-
-**File**: `crates/oxc_formatter/tests/fixtures/ts/parenthesis/instantiation-expression-parens.ts` (modified, +10/-0)
-```diff
-@@ -15,3 +15,13 @@ export default (function () {})<string>;
- export default (class {})<string> as A;
- (class {})<string>;
- (function () {})<string>;
-+x = (c ? a : b)<T>;
-+x = (y++)<T>;
-+x = (++y)<T>;
-+x = (a + b)<T>;
-+x = (a ?? b)<T>;
-+x = (!a)<T>;
-+x = (typeof a)<T>;
-+x = (a as B)<T>;
-+x = (a satisfies B)<T>;
-+x = (<B>a)<T>;
-```
-
-**File**: `crates/oxc_formatter/tests/fixtures/ts/parenthesis/instantiation-expression-parens.ts.snap` (modified, +30/-0)
-```diff
-@@ -19,6 +19,16 @@ export default (function () {})<string>;
- export default (class {})<string> as A;
- (class {})<string>;
- (function () {})<string>;
-+x = (c ? a : b)<T>;
-+x = (y++)<T>;
-+x = (++y)<T>;
-+x = (a + b)<T>;
-+x = (a ?? b)<T>;
-+x = (!a)<T>;
-+x = (typeof a)<T>;
-+x = (a as B)<T>;
-+x = (a satisfies B)<T>;
-+x = (<B>a)<T>;
- 
- ==================== Output ====================
- ------------------
-@@ -41,6 +51,16 @@ export default (function () {})<string>;
- export default (class {})<string> as A;
- (class {})<string>;
- (function () {})<string>;
-+x = (c ? a : b)<T>;
-+x = (y++)<T>;
-+x = (++y)<T>;
-+x = (a + b)<T>;
-+x = (a ?? b)<T>;
-+x = (!a)<T>;
-+x = (typeof a)<T>;
-+x = (a as B)<T>;
-+x = (a satisfies B)<T>;
-+x = (<B>a)<T>;
- 
- -------------------
- { printWidth: 100 }
-@@ -62,5 +82,15 @@ export default (function () {})<string>;
- export default (class {})<string> as A;
- (class {})<string>;
- (function () {})<string>;
-+x = (c ? a : b)<T>;
-+x = (y++)<T>;
-+x = (++y)<T>;
-+x = (a + b)<T>;
-+x = (a ?? b)<T>;
-+x = (!a)<T>;
-+x = (typeof a)<T>;
-+x = (a as B)<T>;
-+x = (a satisfies B)<T>;
-+x = (<B>a)<T>;
- 
- ===================== End =====================
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28099** (2026-10-22): refactor(formatter_core): remove JS-only method (@leaysgur)
-- **PR #28098** (2026-10-22): fix(formatter): measure width heuristics by display width (@leaysgur)
-- **PR #28097** (2026-10-22): refactor(formatter): add `AstNodes::is_binary_like` for parent paren checks (@leaysgur)
-- **PR #28096** (2026-10-22): fix(formatter): keep parens around private `in` expressions (@leaysgur)
-- **PR #28095** (2026-10-22): docs(formatter_core): document text width divergence (@leaysgur)
-- **PR #28093** (2026-10-22): test(oxfmt): skip entries under symlinked dirs in snapshot (@leaysgur)
+- **PR #28149** (2026-10-25): perf(minifier): reuse is_error_constructor and simplify substitute_global_new_expression (@armano2)
+- **PR #28139** (2026-10-23): perf(parser): move annotation comment handling out of hot paths (@camc314)
+- **PR #28138** (2026-10-23): fix(linter): use the type-aware rule's severity when another plugin has a rule with the same name (@NavpreetSSidhu)
+- **PR #28133** (2026-10-23): fix(linter/eslint/array-callback-return): check callbacks passed with extra arguments (@sarankumar1325)
+- **PR #28132** (2026-10-23): feat(oxlint): export `Oxlintrc` type (@Sysix)
+- **PR #28118** (2026-10-23): feat(oxlint): require mininum oxlint-tsgolint version v7.0.2005 (@camc314)
 
 ---
 
@@ -1846,40 +1580,48 @@ extended `DIVERGENCES.md#instantiation-expression-parens` and its pi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. react-compiler): compile a `try` whose `catch` is unreachable instead of panicki
+## X. deps): update rustls webpki crates for security advisories (#28112)
 
 **RULE**:
-When implementing operations in `crates/oxc_linter/src/rules/react/invariant.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e0f8937a`: react-compiler): compile a `try` whose `catch` is unreachable instead of panicking (#28066). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ce5ee45`: deps): update rustls webpki crates for security advisories (#28112). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/react/invariant.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // A `try` that cannot throw, with a `catch` that reassigns an outer variable.
-        // https://github.com/oxc-project/oxc/issues/27404
-        "
-export function Component() {
-  let x = 0;
-  try {
-    const unused = 1;
-  } catch {
-    x = 2;
-  }
-  return <div>{x}</div>;
-}
-",
+ "windows-sys 0.59.0",
+ "windows-sys 0.59.0",
+ "windows-sys 0.59.0",
+version = "0.103.16"
+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+ "windows-sys 0.59.0",
+version = "1.0.10"
+checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
+version = "1.0.10"
+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+ "windows-sys 0.59.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+version = "0.103.15"
+checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
+ "windows-sys 0.52.0",
+version = "1.0.8"
+checksum = "0d46a5a140e6f7afeccd8eae97eff335163939eac8b929834875168b29b3d267"
+version = "1.0.8"
+checksum = "bf85cb06032201fa7c6f829d7db5a7e5aa45bcc0655327713065f6f0576731bf"
+ "windows-sys 0.52.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e0f8937a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ce5ee45` are properly handled with clean fallback behavior.

@@ -4710,3 +4710,6 @@
 | `CYCLE-20261025-1ZUW` | `2026-10-25T06:25:51.560Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4105, Rule 4106, Rule 4107` | Yes (`6107085b...`) |
 | `CYCLE-20261025-9TQK` | `2026-10-25T06:31:56.876Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4108` | Yes (`d4d9db03...`) |
 | `CYCLE-20261025-9Y56` | `2026-10-25T06:32:02.587Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4109, Rule 4110, Rule 4111` | Yes (`8791d6c2...`) |
+| `CYCLE-20261025-HZNZ` | `2026-10-25T06:38:17.807Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4112` | Yes (`71dc756e...`) |
+| `CYCLE-20261025-I4HN` | `2026-10-25T06:38:24.059Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 972, Rule 4113, Rule 4114` | Yes (`03351615...`) |
+| `CYCLE-20261025-I9SE` | `2026-10-25T06:38:30.926Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4115` | Yes (`4fd4954a...`) |

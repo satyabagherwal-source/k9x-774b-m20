@@ -4717,3 +4717,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-25T06:25:51.564Z |
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `179664ea` | Multi-dimensional audit evidence | 2026-10-25T06:31:56.881Z |
 | `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-25T06:32:02.589Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `3493ce30` | Multi-dimensional audit evidence | 2026-10-25T06:38:17.810Z |
+| `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-25T06:38:24.062Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `09f919bc` | Multi-dimensional audit evidence | 2026-10-25T06:38:30.928Z |
