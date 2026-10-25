@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T11:53:47.618Z",
+  "last_updated": "2026-10-25T11:59:59.344Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -425,14 +425,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "c236a982190187d2b9c5772dd681bffdf49dacd795728b4623fe4a74735ab2f4",
-      "verified_at": "2026-10-20T17:03:48.088Z",
+      "content_hash": "ad9506a9b892d9afa5f8e7423d323a9b72b0721a161539cb1e8abe1d0fd0e82f",
+      "verified_at": "2026-10-25T11:59:59.340Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:03:48.088Z"
+      "last_updated": "2026-10-25T11:59:59.340Z"
     },
     "Viggle/Qwen-Image-2.1-viggle-turbo": {
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -4371,14 +4371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-watchexec-watchexec",
-      "content_hash": "4c7f91f4a4417e430abb6721e66ee821b20da25bcb75b7902aba44cbc7381042",
-      "verified_at": "2026-10-19T13:14:44.785Z",
+      "content_hash": "fa5f6e694489a9a0f1d4888e9dc7181692a85fad95507da8711653f28ecb48f1",
+      "verified_at": "2026-10-25T11:59:45.101Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T13:14:44.785Z"
+      "last_updated": "2026-10-25T11:59:45.101Z"
     },
     "streetwriters/notesnook": {
       "repository": "streetwriters/notesnook",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "291421d5869bfd0bc6a4376b9e8e8dc672677cd5f6195a4ea5ee9424b3186960",
-      "verified_at": "2026-10-23T06:02:55.131Z",
+      "content_hash": "a7aace4e10de28c62daade59f447c5bbcdd49c7aa89e2dce431c9c8b44cca51f",
+      "verified_at": "2026-10-25T11:59:52.948Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:02:55.131Z"
+      "last_updated": "2026-10-25T11:59:52.948Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",
@@ -10641,14 +10641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apollographql-apollo-kotlin",
-      "content_hash": "b3e5fb6ce3588df4e5698554a292a5b0bbc504d7c0f9ad22787fb443b1b568ac",
-      "verified_at": "2026-10-19T07:38:35.192Z",
+      "content_hash": "a4a7294e609f5f660a4f7187e647a16526be77d2a684bdfc64e1bbada1adfa5e",
+      "verified_at": "2026-10-25T11:59:51.018Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:38:35.192Z"
+      "last_updated": "2026-10-25T11:59:51.018Z"
     },
     "crate-ci/typos": {
       "repository": "crate-ci/typos",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "296fe9a3fd17270a17d706406644921c75d13d85626be595521bff05441b8b74",
-      "verified_at": "2026-10-22T21:35:25.942Z",
+      "content_hash": "979f0a51f5143395114948845c8e6a42cda351ed8f64def0167af5def252e59d",
+      "verified_at": "2026-10-25T11:59:58.056Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:35:25.942Z"
+      "last_updated": "2026-10-25T11:59:58.056Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",

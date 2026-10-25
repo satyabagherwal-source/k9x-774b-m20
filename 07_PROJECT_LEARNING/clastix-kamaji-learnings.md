@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `38c2563a`  
+> **Source Version**: `f9bfdd48`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:02:54.983Z  
+> **Timestamp**: 2026-10-25T11:59:52.714Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:02:54.664Z  
+> **Harvest Timestamp**: 2026-10-25T11:59:52.711Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2055 stars
+- **Stars / Engagement**: 2056 stars
 
 ---
 
@@ -743,264 +743,155 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34dd780a` (2026-10-21)
-**Commit Message**: fix(cmd): bind the zap logger flags on the root command (#1383)
+### Incident Patch 1: `9292caba` (2026-10-23)
+**Commit Message**: fix(tcp): refresh endpoint after address changes (#1392)
 
-The manager and kubeconfig-generator commands built the zap logger and
-called ctrl.SetLogger while the command was constructed, before cobra
-parsed the command line. The --zap-* flags were bound to options that
-were already copied, so they never changed the logger. The migrate
-command had no zap flags and logged through whichever logger the other
-two commands had set.
-
-Bind the zap flags once on the root command's persistent flags and call
-ctrl.SetLogger in the root PersistentPreRun, which runs after the flags
-are parsed. Drop the per-command blocks. The default stays development
-mode with the console encoder, and migrate now accepts the same flags.
+Changing networkProfile.address can leave controlPlaneEndpoint at the
+previous address when the Service itself does not change. Compare the
+declared endpoint in the Service status check, preserving the existing
+result when the address is unavailable.
 
 Signed-off-by: spicysharkco <[REDACTED_EMAIL]>
 
-**File**: `cmd/kubeconfig-generator/cmd.go` (modified, +0/-10)
+**File**: `internal/resources/k8s_service_resource.go` (modified, +5/-2)
 ```diff
-@@ -4,7 +4,6 @@
- package kubeconfiggenerator
- 
- import (
--	"flag"
- 	"fmt"
- 	"io"
- 	"os"
-@@ -20,7 +19,6 @@ import (
- 	"sigs.k8s.io/controller-runtime/pkg/cache"
- 	"sigs.k8s.io/controller-runtime/pkg/event"
- 	"sigs.k8s.io/controller-runtime/pkg/healthz"
--	"sigs.k8s.io/controller-runtime/pkg/log/zap"
- 
- 	cmdutils "github.com/clastix/kamaji/cmd/utils"
- 	"github.com/clastix/kamaji/controllers"
-@@ -149,14 +147,6 @@ func NewCmd(scheme *runtime.Scheme) *cobra.Command {
- 			return nil
- 		},
- 	}
--	// Setting zap logger
--	zapfs := flag.NewFlagSet("zap", flag.ExitOnError)
--	opts := zap.Options{
--		Development: true,
--	}
--	opts.BindFlags(zapfs)
--	cmd.Flags().AddGoFlagSet(zapfs)
--	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
- 	// Setting CLI flags
- 	cmd.Flags().StringVar(&metricsBindAddress, "metrics-bind-address", ":8090", "The address the metric endpoint binds to.")
- 	cmd.Flags().BoolVar(&metricsSecure, "metrics-secure", false, "If set, the metrics endpoint is served over HTTPS and requires a bearer token authorized against the manager's kamaji-metrics-reader ClusterRole, instead of being served in plaintext without authentication.")
-```
-
-**File**: `cmd/manager/cmd.go` (modified, +0/-10)
-```diff
-@@ -4,7 +4,6 @@
- package manager
- 
- import (
--	"flag"
- 	"fmt"
- 	"io"
- 	"net/http"
-@@ -23,7 +22,6 @@ import (
- 	"sigs.k8s.io/controller-runtime/pkg/cache"
- 	"sigs.k8s.io/controller-runtime/pkg/event"
- 	"sigs.k8s.io/controller-runtime/pkg/healthz"
--	"sigs.k8s.io/controller-runtime/pkg/log/zap"
- 	ctrlwebhook "sigs.k8s.io/controller-runtime/pkg/webhook"
- 	gatewayv1 "sigs.k8s.io/gateway-api/apis/v1"
- 
-@@ -336,14 +334,6 @@ func NewCmd(scheme *runtime.Scheme) *cobra.Command {
- 		},
- 	}
- 
--	// Setting zap logger
--	zapfs := flag.NewFlagSet("zap", flag.ExitOnError)
--	opts := zap.Options{
--		Development: true,
--	}
--	opts.BindFlags(zapfs)
--	cmd.Flags().AddGoFlagSet(zapfs)
--	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
- 	// Setting CLI flags
- 	cmd.Flags().StringVar(&metricsBindAddress, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
- 	cmd.Flags().BoolVar(&metricsSecure, "metrics-secure", false, "If set, the metrics endpoint is served over HTTPS and requires a bearer token authorized against the manager's kamaji-metrics-reader ClusterRole, instead of being served in plaintext without authentication.")
-```
-
-**File**: `cmd/root.go` (modified, +15/-1)
-```diff
-@@ -4,22 +4,33 @@
- package cmd
- 
- import (
-+	"flag"
-+
- 	"github.com/spf13/cobra"
- 	_ "go.uber.org/automaxprocs" // Automatically set `GOMAXPROCS` to match Linux container CPU quota.
- 	"k8s.io/apimachinery/pkg/runtime"
- 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
- 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
- 	appsv1 "k8s.io/kubernetes/pkg/apis/apps/v1"
-+	ctrl "sigs.k8s.io/controller-runtime"
-+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
- 	gatewayv1 "sigs.k8s.io/gateway-api/apis/v1"
- 
- 	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
- )
- 
- func NewCmd(scheme *runtime.Scheme) *cobra.Command {
--	return &cobra.Command{
-+	zapfs := flag.NewFlagSet("zap", flag.ExitOnError)
-+	opts := zap.Options{
-+		Development: true,
-+	}
-+	opts.BindFlags(zapfs)
-+
-+	cmd := &cobra.Command{
- 		Use:   "kamaji",
- 		Short: "Build and operate Kubernetes at scale with a fraction of operational burden.",
- 		PersistentPreRun: func(*cobra.Command, []string) {
-+			ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
- 			utilruntime.Must(clientgoscheme.AddToScheme(scheme))
- 			utilruntime.Must(kamajiv1alpha1.AddToScheme(scheme))
- 			utilruntime.Must(appsv1.RegisterDefaults(scheme))
-@@ -28,4 +39,7 @@ func NewCmd(scheme *runtime.Scheme) *cobra.Command {
- 			utilruntime.Must(gatewayv1.Install(scheme))
- 		},
- 	}
-+	cmd.PersistentFlags().AddGoFlagSet(zapfs)
-+
-+	return cmd
+@@ -33,10 +33,13 @@ func (r *KubernetesServiceResource) GetHistogram() prometheus.Histogram {
+ 	return serviceCollector
  }
+ 
+-func (r *KubernetesServiceResource) ShouldStatusBeUpdated(_ context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
++func (r *KubernetesServiceResource) ShouldStatusBeUpdated(ctx context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
++	address, err := tenantControlPlane.DeclaredControlPlaneAddress(ctx, r.Client)
++
+ 	return tenantControlPlane.Status.Kubernetes.Service.Name != r.resource.GetName() ||
+ 		tenantControlPlane.Status.Kubernetes.Service.Namespace != r.resource.GetNamespace() ||
+-		tenantControlPlane.Status.Kubernetes.Service.Port != r.resource.Spec.Ports[0].Port
++		tenantControlPlane.Status.Kubernetes.Service.Port != r.resource.Spec.Ports[0].Port ||
++		err == nil && tenantControlPlane.Status.ControlPlaneEndpoint != net.JoinHostPort(address, strconv.FormatInt(int64(tenantControlPlane.Spec.NetworkProfile.Port), 10))
+ }
+ 
+ func (r *KubernetesServiceResource) ShouldCleanup(*kamajiv1alpha1.TenantControlPlane) bool {
 ```
 
----
-
-### Incident Patch 2: `c2e28336` (2026-10-22)
-**Commit Message**: fix(e2e): wait for freeze webhook enforcement before asserting writes (#1387)
-
-A freshly created ValidatingWebhookConfiguration is enforced asynchronously
-by the tenant API server admission plugin, so a write issued right after the
-webhook is observed can bypass it: the Consistently assertion failed after
-4ms with a nil error on a first delete that never reached the webhook.
-
-Probe with a throwaway Namespace until blocking is effective before
-asserting it stays effective for the migration window.
-
-**File**: `e2e/tcp_migration_test.go` (modified, +15/-0)
+**File**: `internal/resources/k8s_service_resource_test.go` (modified, +32/-0)
 ```diff
-@@ -176,6 +176,21 @@ func featureTestMigration(driver string) {
- 		}
- 
- 		By("ensuring changes are not allowed")
-+		// A freshly created ValidatingWebhookConfiguration is enforced asynchronously by
-+		// the API server admission plugin: a write issued right after the webhook has
-+		// been observed can bypass it entirely. Probe with a throwaway Namespace until
-+		// blocking is effective - the probe must be disposable, since a bypassed delete
-+		// succeeds and removes the object - before asserting blocking is consistent.
-+		Eventually(func() error {
-+			probe := &corev1.Namespace{}
-+			probe.SetName(fmt.Sprintf("freeze-probe-%s", rand.String(5)))
-+
-+			if err := tcpClient.Create(context.Background(), probe); err != nil {
-+				return err
-+			}
-+
-+			return tcpClient.Delete(context.Background(), probe)
-+		}, time.Minute, time.Second).Should(HaveOccurred())
- 		Consistently(func() error {
- 			return tcpClient.Delete(context.Background(), ns)
- 		}, 10*time.Second, time.Second).Should(HaveOccurred())
-```
-
----
-
-### Incident Patch 3: `38c2563a` (2026-10-23)
-**Commit Message**: fix(tcp): clear removed DataStore overrides (#1389)
-
-Removing dataStoreOverrides left the previous etcd-servers-overrides
-argument on kube-apiserver because the argument merge kept it once
-it was no longer managed. Drop it from the previous arguments when
-no overrides remain. Values in extraArgs.apiServer are still applied.
-
-Signed-off-by: spicysharkco <[REDACTED_EMAIL]>
-
-**File**: `internal/builders/controlplane/deployment.go` (modified, +7/-0)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"crypto/md5"
- 	"fmt"
- 	"path"
-+	"slices"
- 	"sort"
- 	"strings"
- 
-@@ -763,6 +764,12 @@ func (d Deployment) buildKubeAPIServerCommand(tenantControlPlane kamajiv1alpha1.
- 
- 	if len(d.DataStoreOverrides) != 0 {
- 		managed["--etcd-servers-overrides"] = d.etcdServersOverrides()
-+	} else {
-+		current = slices.DeleteFunc(current, func(arg string) bool {
-+			flag, _, _ := strings.Cut(arg, "=")
-+
-+			return flag == "--etcd-servers-overrides"
-+		})
- 	}
- 	// The Konnectivity addon flag is rendered together with the managed flags,
- 	// in sorted position, so that the argument list is deterministic from the
-```
-
-**File**: `internal/builders/controlplane/deployment_test.go` (modified, +30/-0)
-```diff
-@@ -38,6 +38,36 @@ var _ = Describe("Controlplane Deployment", func() {
+@@ -433,3 +433,35 @@ var _ = Describe("KubernetesServiceResource ExternalIPs", func() {
+ 		Expect(reconcile().Spec.ExternalIPs).To(Equal([]string{"203.0.113.10"}))
  	})
+ })
++
++var _ = Describe("KubernetesServiceResource control plane endpoint", func() {
++	DescribeTable("refreshes status after an address change", func(serviceType kamajiv1alpha1.ServiceType, address, endpoint string, expected bool) {
++		ctx := context.Background()
++		tcp := &kamajiv1alpha1.TenantControlPlane{
++			ObjectMeta: metav1.ObjectMeta{Name: "test-tcp", Namespace: "default"},
++			Spec: kamajiv1alpha1.TenantControlPlaneSpec{
++				ControlPlane: kamajiv1alpha1.ControlPlane{
++					Service: kamajiv1alpha1.ServiceSpec{ServiceType: serviceType},
++				},
++				NetworkProfile: kamajiv1alpha1.NetworkProfileSpec{Address: address, Port: 6443},
++			},
++		}
++		resource := &resources.KubernetesServiceResource{
++			Client: fake.NewClientBuilder().WithScheme(runtimeScheme).Build(),
++		}
++		Expect(resource.Define(ctx, tcp)).To(Succeed())
++		_, err := resource.CreateOrUpdate(ctx, tcp)
++		Expect(err).NotTo(HaveOccurred())
++		tcp.Status.Kubernetes.Service.Name = tcp.Name
++		tcp.Status.Kubernetes.Service.Namespace = tcp.Namespace
++		tcp.Status.Kubernetes.Service.Port = tcp.Spec.NetworkProfile.Port
++		tcp.Status.ControlPlaneEndpoint = endpoint
++
++		Expect(resource.ShouldStatusBeUpdated(ctx, tcp)).To(Equal(expected))
++	},
++		Entry("changed ClusterIP address", kamajiv1alpha1.ServiceTypeClusterIP, "203.0.113.20", "203.0.113.10:6443", true),
++		Entry("changed NodePort address", kamajiv1alpha1.ServiceTypeNodePort, "203.0.113.20", "203.0.113.10:6443", true),
++		Entry("unchanged address and port", kamajiv1alpha1.ServiceTypeClusterIP, "203.0.113.10", "203.0.113.10:6443", false),
++		Entry("LoadBalancer without ingress", kamajiv1alpha1.ServiceTypeLoadBalancer, "", "", false),
++	)
++})
+```
+
+---
+
+### Incident Patch 2: `f9bfdd48` (2026-10-23)
+**Commit Message**: fix(datastore): keep MySQL TLS config off the global driver registry (#1390)
+
+**File**: `internal/datastore/mysql.go` (modified, +6/-11)
+```diff
+@@ -250,23 +250,18 @@ func NewMySQLConnection(config ConnectionConfig) (Connection, error) {
+ 		return nil, err
+ 	}
  
- 	Describe("DataStoreOverrides flag generation", func() {
-+		It("drops the flag after DataStoreOverrides are removed", func() {
-+			d.DataStore.Spec.Driver = kamajiv1alpha1.EtcdDriver
-+			tcp := kamajiv1alpha1.TenantControlPlane{}
-+			first := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
-+			Expect(first).To(ContainElement("--etcd-servers-overrides=/events#https://etcd-0;https://etcd-1;https://etcd-2"))
+-	tlsKey := "mysql"
+-
+-	if config.TLSConfig != nil {
+-		if err = mysql.RegisterTLSConfig(tlsKey, config.TLSConfig); err != nil {
+-			return nil, err
+-		}
+-		mysqlConfig.TLSConfig = tlsKey
+-	}
+-
++	// Not mysql.RegisterTLSConfig: that registry is process-global, so a shared key lets
++	// concurrent reconciles of different DataStores swap each other's CA and client key.
++	mysqlConfig.TLS = config.TLSConfig
+ 	mysqlConfig.DBName = config.DBName
+-	parsedDSN := mysqlConfig.FormatDSN()
+ 
+-	db, err := sql.Open("mysql", parsedDSN)
++	connector, err := mysql.NewConnector(mysqlConfig)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 
++	db := sql.OpenDB(connector)
 +
-+			d.DataStoreOverrides = nil
-+			current := append(first, "--watch-cache=false")
-+			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", current)
-+			Expect(got).To(ContainElement("--watch-cache=false"))
-+			Expect(got).To(Equal(d.buildKubeAPIServerCommand(tcp, "192.0.2.1", []string{"--watch-cache=false"})))
-+		})
+ 	return &MySQLConnection{db: db, config: mysqlConfig, connector: config.Endpoints[0]}, nil
+ }
+ 
+```
+
+**File**: `internal/datastore/mysql_test.go` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++// Copyright 2022 Clastix Labs
++// SPDX-License-Identifier: Apache-2.0
 +
-+		It("keeps user extraArgs after DataStoreOverrides are emptied", func() {
-+			d.DataStore.Spec.Driver = kamajiv1alpha1.EtcdDriver
-+			extraArgs := []string{
-+				"--service-account-issuer=https://issuer-two.example.com",
-+				"--service-account-issuer=https://issuer-one.example.com",
-+				"--etcd-servers-overrides=/events#https://custom-etcd",
-+			}
-+			tcp := kamajiv1alpha1.TenantControlPlane{}
-+			tcp.Spec.ControlPlane.Deployment.ExtraArgs = &kamajiv1alpha1.ControlPlaneExtraArgs{APIServer: extraArgs}
-+			first := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
++package datastore
 +
-+			d.DataStoreOverrides = []DataStoreOverrides{}
-+			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", first)
-+			Expect(got).To(Equal(d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)))
-+			Expect(got[len(got)-len(extraArgs):]).To(Equal(extraArgs))
-+		})
++import (
++	"crypto/tls"
++	"testing"
 +
- 		It("should generate valid --etcd-servers-overrides value", func() {
- 			etcdSerVersOverrides := d.etcdServersOverrides()
- 			Expect(etcdSerVersOverrides).To(Equal("/events#https://etcd-0;https://etcd-1;https://etcd-2"))
++	"github.com/go-sql-driver/mysql"
++)
++
++func TestMySQLConnectionDoesNotRegisterGlobalTLSConfig(t *testing.T) {
++	conn, err := NewMySQLConnection(ConnectionConfig{
++		User:      "root",
++		Endpoints: []ConnectionEndpoint{{Host: "127.0.0.1", Port: 3306}},
++		DBName:    "kine",
++		TLSConfig: &tls.Config{ServerName: "datastore-a", MinVersion: tls.VersionTLS12},
++	})
++	if err != nil {
++		t.Fatalf("NewMySQLConnection() error = %v", err)
++	}
++	t.Cleanup(func() { _ = conn.Close() })
++
++	if _, err := mysql.ParseDSN("root@tcp(127.0.0.1:3306)/kine?tls=mysql"); err == nil {
++		t.Fatal(`TLS config is registered under the process-global key "mysql", want it kept on the connection`)
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1392** (2026-10-23): fix(tcp): refresh endpoint after address changes (@spicysharkco)
+- **PR #1390** (2026-10-23): fix(datastore): keep MySQL TLS config off the global driver registry (@somaz94)
 - **PR #1389** (2026-10-23): fix(tcp): clear removed DataStore overrides (@spicysharkco)
 - **PR #1387** (2026-10-22): fix(e2e): wait for freeze webhook enforcement before asserting writes (@Sphinxgaia)
 - **PR #1386** (2026-10-22): feat: headless control plane service support (@Sphinxgaia)
 - **PR #1383** (2026-10-21): fix(cmd): bind the zap logger flags on the root command (@spicysharkco)
-- **PR #1381** (2026-10-20): docs(reference): fix --datastore and --migrate-image rows (@spicysharkco)
-- **PR #1379** (2026-10-20): docs(guides): fix write permissions field names (@spicysharkco)
 
 ---
 
@@ -1014,3 +905,39 @@ Signed-off-by: spicysharkco <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. tcp): refresh endpoint after address changes (#1392)
+
+**RULE**:
+When implementing operations in `internal/resources/k8s_service_resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9292caba`: tcp): refresh endpoint after address changes (#1392). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/resources/k8s_service_resource.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+func (r *KubernetesServiceResource) ShouldStatusBeUpdated(ctx context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
+	address, err := tenantControlPlane.DeclaredControlPlaneAddress(ctx, r.Client)
+
+		tenantControlPlane.Status.Kubernetes.Service.Port != r.resource.Spec.Ports[0].Port ||
+		err == nil && tenantControlPlane.Status.ControlPlaneEndpoint != net.JoinHostPort(address, strconv.FormatInt(int64(tenantControlPlane.Spec.NetworkProfile.Port), 10))
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+func (r *KubernetesServiceResource) ShouldStatusBeUpdated(_ context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
+		tenantControlPlane.Status.Kubernetes.Service.Port != r.resource.Spec.Ports[0].Port
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9292caba` are properly handled with clean fallback behavior.

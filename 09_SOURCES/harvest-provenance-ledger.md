@@ -4801,3 +4801,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-25T11:43:48.337Z |
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `80591248` | Multi-dimensional audit evidence | 2026-10-25T11:53:45.329Z |
 | `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-10-25T11:53:47.610Z |
+| `learn-github-watchexec-watchexec` | `https://github.com/watchexec/watchexec` | `a7170667` | Multi-dimensional audit evidence | 2026-10-25T11:59:45.096Z |
+| `learn-github-apollographql-apollo-kotlin` | `https://github.com/apollographql/apollo-kotlin` | `6c78aafe` | Multi-dimensional audit evidence | 2026-10-25T11:59:51.013Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `f9bfdd48` | Multi-dimensional audit evidence | 2026-10-25T11:59:52.943Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `71d0dcf6` | Multi-dimensional audit evidence | 2026-10-25T11:59:58.051Z |
+| `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-25T11:59:59.335Z |

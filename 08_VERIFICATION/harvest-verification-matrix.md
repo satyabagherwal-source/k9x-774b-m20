@@ -4794,3 +4794,8 @@
 | `CYCLE-20261025-EVLA` | `2026-10-25T11:43:48.334Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4271, Rule 4272` | Yes (`f3a59d38...`) |
 | `CYCLE-20261025-RO8E` | `2026-10-25T11:53:45.326Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4273` | Yes (`94b160fb...`) |
 | `CYCLE-20261025-RPZQ` | `2026-10-25T11:53:47.606Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`81c7d7ad...`) |
+| `CYCLE-20261025-ZDTV` | `2026-10-25T11:59:45.091Z` | `watchexec/watchexec` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/watchexec-watchexec-learnings.md` | Yes (`fa5f6e69...`) |
+| `CYCLE-20261025-ZIEB` | `2026-10-25T11:59:51.011Z` | `apollographql/apollo-kotlin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4274` | Yes (`a4a7294e...`) |
+| `CYCLE-20261025-ZJVW` | `2026-10-25T11:59:52.940Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4275` | Yes (`a7aace4e...`) |
+| `CYCLE-20261025-ZNTT` | `2026-10-25T11:59:58.049Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4276` | Yes (`979f0a51...`) |
+| `CYCLE-20261025-ZOTH` | `2026-10-25T11:59:59.333Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4277, Rule 4278` | Yes (`ad9506a9...`) |

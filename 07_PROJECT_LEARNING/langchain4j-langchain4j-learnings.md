@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `8f32a2fd`  
+> **Source Version**: `71d0dcf6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:35:25.583Z  
+> **Timestamp**: 2026-10-25T11:59:57.839Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:35:25.437Z  
+> **Harvest Timestamp**: 2026-10-25T11:59:57.835Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13281 stars
+- **Stars / Engagement**: 13294 stars
 
 ---
 
@@ -838,567 +838,172 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2d715774` (2026-10-22)
-**Commit Message**: Fix flaky nightly tests and make nightly builds more robust
+### Incident Patch 1: `2b48a4af` (2026-10-23)
+**Commit Message**: Bump Jackson to 2.22.4 and 3.2.4 to fix DoS advisories (#6808)
 
-- Gemini (Vertex AI, Google GenAI) streaming ITs: do not require more than
-  one partial response after a tool call, and disable the parallel tool calls
-  test, as already done for Google AI Gemini
-- JSON schema enum ITs: make the input texts unambiguous
-- concurrent tool execution ITs: make both tools overlap in time, so that they
-  cannot run on the same pooled thread; fail after 10 s instead of hanging
-- immediate tool memory ITs: ask explicitly to use the tool in the second turn
-- Google GenAI ITs: disable thinking in the shared models (tiny maxOutputTokens
-  budgets were used up by thinking) and do not depend on how the generated code
-  formats its output
-- nightly workflows: retry the install step once, so that a transient Maven
-  Central failure does not skip all tests of a job
-- nightly workflows: shift the clock used for the Jackson 3 rotation, so that
-  exactly one nightly runs on Jackson 3 each night
+## Issue
+No separate issue: this is a security dependency update.
 
-**File**: `.github/workflows/nightly_jdk17.yaml` (modified, +5/-3)
+## Change
+Bumps Jackson to the latest patch releases of both lines:
+
+- `jackson.version` (Jackson 2): 2.22.1 -> 2.22.4, in
+`langchain4j-parent/pom.xml` and the override in
+`langchain4j-milvus-v2/pom.xml`
+- `jackson3.version` (Jackson 3, used by the opt-in Jackson 3 modules):
+3.2.2 -> 3.2.4, in `langchain4j-parent/pom.xml`
+
+Both versions are imported through the `jackson-bom`s, so all Jackson
+artifacts move together. `jackson-annotations` has no patch versions
+since 2.20; both BOMs keep managing it at `2.22`, so nothing changes
+there.
+
+The current versions are affected by these advisories, all fixed by this
+bump:
+
+| Advisory | Severity | Artifact | Affects 2.22.1 | Affects 3.2.2 |
+|---|---|---|---|---|
+|
+[GHSA-p6pp-m3f8-5c89](https://github.com/advisories/GHSA-p6pp-m3f8-5c89)
+(CVE-2026-89407): ReDoS in `NumberInput.PATTERN_FLOAT` | high |
+jackson-core | yes (fixed in 2.22.3) | no (fixed in 3.2.2) |
+|
+[GHSA-7hhh-6rmp-j9qf](https://github.com/advisories/GHSA-7hhh-6rmp-j9qf)
+(CVE-2026-89425): unbounded `StringBuilder` growth in
+`_reportInvalidToken()` | hig
+
+**File**: `langchain4j-milvus-v2/pom.xml` (modified, +1/-1)
 ```diff
-@@ -82,9 +82,10 @@ jobs:
-         # format. One of the three nightlies runs the integration tests on Jackson 3 instead of
-         # Jackson 2, so every night exactly one does and each JDK takes its turn every third day.
-         # Deterministic rather than random: given the date you can tell which ran, and re-running
--        # the same day reproduces it.
-+        # the same day reproduces it. The clock is shifted by 3 hours so that all nightlies of one
-+        # night (22:00, 01:00 and 04:00 UTC) share the same day number.
-         run: |
--          if [ $(( 10#$(date -u +%j) % 3 )) -eq 0 ]; then
-+          if [ $(( 10#$(date -u -d '+3 hours' +%j) % 3 )) -eq 0 ]; then
-             echo "profile=-Pjackson3" >> "$GITHUB_OUTPUT"
-             echo "label=Jackson 3" >> "$GITHUB_OUTPUT"
-             echo "::notice title=JSON codec::Integration tests are running on Jackson 3 tonight (JDK 17)."
-@@ -103,7 +104,8 @@ jobs:
-           echo "Building modules: $modules"
-           
-           ## compile and install ALL modules to avoid running integration tests on dependent modules in the step below
--          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
-+          ## retried once, as a transient Maven Central failure would otherwise skip all tests of this job
-+          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install || mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
+@@ -14,7 +14,7 @@
  
-           mvn -B -U verify ${{ steps.jackson3.outputs.profile }} \
-             -pl "${modules}" \
+     <properties>
+         <milvus-sdk-java.version>2.6.14</milvus-sdk-java.version>
+-        <jackson.version>2.22.1</jackson.version>
++        <jackson.version>2.22.4</jackson.version>
+         <skipMilvusITs>${skipITs}</skipMilvusITs>
+     </properties>
+ 
 ```
 
-**File**: `.github/workflows/nightly_jdk21.yaml` (modified, +5/-3)
+**File**: `langchain4j-parent/pom.xml` (modified, +2/-2)
 ```diff
-@@ -82,9 +82,10 @@ jobs:
-         # format. One of the three nightlies runs the integration tests on Jackson 3 instead of
-         # Jackson 2, so every night exactly one does and each JDK takes its turn every third day.
-         # Deterministic rather than random: given the date you can tell which ran, and re-running
--        # the same day reproduces it.
-+        # the same day reproduces it. The clock is shifted by 3 hours so that all nightlies of one
-+        # night (22:00, 01:00 and 04:00 UTC) share the same day number.
-         run: |
--          if [ $(( 10#$(date -u +%j) % 3 )) -eq 1 ]; then
-+          if [ $(( 10#$(date -u -d '+3 hours' +%j) % 3 )) -eq 1 ]; then
-             echo "profile=-Pjackson3" >> "$GITHUB_OUTPUT"
-             echo "label=Jackson 3" >> "$GITHUB_OUTPUT"
-             echo "::notice title=JSON codec::Integration tests are running on Jackson 3 tonight (JDK 21)."
-@@ -103,7 +104,8 @@ jobs:
-           echo "Building modules: $modules"
-           
-           ## compile and install ALL modules to avoid running integration tests on dependent modules in the step below
--          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
-+          ## retried once, as a transient Maven Central failure would otherwise skip all tests of this job
-+          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install || mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
- 
-           mvn -B -U verify ${{ steps.jackson3.outputs.profile }} \
-             -pl "${modules}" \
-```
-
-**File**: `.github/workflows/nightly_jdk25.yaml` (modified, +5/-3)
-```diff
-@@ -82,9 +82,10 @@ jobs:
-         # format. One of the three nightlies runs the integration tests on Jackson 3 instead of
-         # Jackson 2, so every night exactly one does and each JDK takes its turn every third day.
-         # Deterministic rather than random: given the date you can tell which ran, and re-running
--        # the same day reproduces it.
-+        # the same day reproduces it. The clock is shifted by 3 hours so that all nightlies of one
-+        # night (22:00, 01:00 and 04:00 UTC) share the same day number.
-         run: |
--          if [ $(( 10#$(date -u +%j) % 3 )) -eq 2 ]; then
-+          if [ $(( 10#$(date -u -d '+3 hours' +%j) % 3 )) -eq 2 ]; then
-             echo "profile=-Pjackson3" >> "$GITHUB_OUTPUT"
-             echo "label=Jackson 3" >> "$GITHUB_OUTPUT"
-             echo "::notice title=JSON codec::Integration tests are running on Jackson 3 tonight (JDK 25)."
-@@ -99,7 +100,8 @@ jobs:
-           echo "Building modules: $modules"
-           
-           ## compile and install ALL modules to avoid running integration tests on dependent modules in the step below
--          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
-+          ## retried once, as a transient Maven Central failure would otherwise skip all tests of this job
-+          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install || mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
- 
-           mvn -B -U verify ${{ steps.jackson3.outputs.profile }} \
-             -pl "${modules}" \
-```
-
-**File**: `.github/workflows/nightly_oracle.yaml` (modified, +2/-1)
-```diff
-@@ -31,7 +31,8 @@ jobs:
-       - name: Build with JDK 17
-         run: |
-           ## compile and install ALL modules to avoid running integration tests on dependent modules in the step below
--          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
-+          ## retried once, as a transient Maven Central failure would otherwise skip all tests of this job
-+          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install || mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
- 
-           mvn -B -U verify \
-             -pl langchain4j-oracle \
-```
-
-**File**: `langchain4j-google-genai/src/test/java/dev/langchain4j/model/google/genai/GoogleGenAiChatModelIT.java` (modified, +2/-1)
-```diff
-@@ -27,6 +27,7 @@ class GoogleGenAiChatModelIT extends AbstractChatModelIT {
-     static final GoogleGenAiChatModel GOOGLE_GEN_AI_CHAT_MODEL = GoogleGenAiChatModel.builder()
-             .apiKey(System.getenv("GOOGLE_AI_GEMINI_API_KEY"))
-             .modelName("gemini-3.8-flash")
-+            .thinkingBudget(0)
-             .build();
- 
-     @Override
-@@ -169,7 +170,7 @@ void should_run_code_with_code_execution_tool() {
- 
-         assertThat(answer)
-                 .contains("Code executed:\n```python\n")
--                .contains("Output:\n```\n1267650600228229401496703205376");
-+                .containsPattern("Output:\\n```\\n[^`]*1267650600228229401496703205376");
-     }
- 
-     @Override
-```
-
-**File**: `langchain4j-google-genai/src/test/java/dev/langchain4j/model/google/genai/GoogleGenAiStreamingChatModelIT.java` (modified, +12/-1)
-```diff
-@@ -14,6 +14,7 @@
- import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
- import dev.langchain4j.model.output.TokenUsage;
- import java.util.List;
-+import org.junit.jupiter.api.Disabled;
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
- import org.mockito.InOrder;
-@@ -25,6 +26,7 @@ class GoogleGenAiStreamingChatModelIT extends AbstractStreamingChatModelIT {
-             GoogleGenAiStreamingChatModel.builder()
-                     .apiKey(System.getenv("GOOGLE_AI_GEMINI_API_KEY"))
-                     .modelName("gemini-3.8-flash")
-+                    .thinkingBudget(0)
-                     .build();
- 
-     @Override
-@@ -80,6 +82,15 @@ protected void verifyToolCallbacks(StreamingChatResponseHandler handler, InOrder
-         io.verify(handler).onCompleteToolCall(complete(1, id2, "getTime", "{\"country\":\"France\"}"));
-     }
- 
-+    @Override
-+    protected boolean assertTimesOnPartialResponseWasCalled() {
-+        return false; // after a tool call, Gemini often streams the final (short) answer in a single chunk
-+    }
-+
-+    @Disabled("Gemini cannot do it reliably")
-+    @Override
-+    protected void should_execute_multiple_tools_in_parallel_then_answer(StreamingChatModel model) {}
-+
-     @Override
-     protected Class<? extends ChatResponseMetadata> chatResponseMetadataType(StreamingChatModel model) {
-         return GoogleGenAiChatResponseMetadata.class;
-@@ -145,7 +156,7 @@ void should_stream_code_run_with_code_execution_tool() {
- 
-         assertThat(handler.get().aiMessage().text())
-                 .contains("Code executed:\n```python\n")
--                .contains("Output:\n```\n1267650600228229401496703205376");
-+                .containsPattern("Output:\\n```\\n[^`]*1267650600228229401496703205376");
-     }
- 
-     @Override
-```
-
-**File**: `langchain4j-vertex-ai-gemini/src/test/java/dev/langchain4j/model/vertexai/gemini/common/VertexAiGeminiStreamingChatModelIT.java` (modified, +10/-0)
-```diff
-@@ -6,6 +6,7 @@
- import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
- import dev.langchain4j.model.vertexai.gemini.VertexAiGeminiStreamingChatModel;
- import org.junit.jupiter.api.AfterEach;
-+import org.junit.jupiter.api.Disabled;
- import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
- import org.mockito.InOrder;
- 
-@@ -92,6 +93,15 @@ protected boolean assertTokenUsage() {
-         return false; // TODO thinking tokens are not reported correctly
-     }
- 
-+    @Override
-+    protected boolean assertTimesOnPartialResponseWasCalled() {
-+        return false; // after a tool call, Gemini often streams the final (short) answer in a single chunk
-+    }
-+
-+    @Disabled("Gemini cannot do it reliably")
-+    @Override
-+    protected void should_execute_multiple_tools_in_parallel_then_answer(StreamingChatModel model) {}
-+
-     @Override
-     public StreamingChatModel createModelWith(ChatModelListener listener) {
-         return null; // TODO implement
-```
-
-**File**: `langchain4j/src/test/java/dev/langchain4j/service/AiServicesWithToolsIT.java` (modified, +18/-5)
-```diff
-@@ -71,6 +71,7 @@
- import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.ConcurrentHashMap;
- import java.util.concurrent.ConcurrentLinkedQueue;
-+import java.util.concurrent.CountDownLatch;
- import java.util.concurrent.Executor;
- import java.util.concurrent.Executors;
- import java.util.concurrent.atomic.AtomicInteger;
-@@ -415,15 +416,21 @@ class Tools {
-             final Queue<Thread> getCurrentTimeThreads = new ConcurrentLinkedQueue<>();
-             final Queue<Thread> getCurrentTemperatureThreads = new ConcurrentLinkedQueue<>();
- 
-+            final CountDownLatch latch = new CountDownLatch(2);
-+
-             @Tool
--            String getCurrentTime(String city) {
-+            String getCurrentTime(String city) throws InterruptedException {
-                 getCurrentTimeThreads.add(Thread.currentThread());
-+                latch.countDown();
-+                assertThat(latch.await(10, SECONDS)).isTrue(); // to make sure both tools overlap in time and are executed in different threads
-                 return CURRENT_TIME;
-             }
- 
-             @Tool
--            String getCurrentTemperature(String city) {
-+            String getCurrentTemperature(String city) throws InterruptedException {
-                 getCurrentTemperatureThreads.add(Thread.currentThread());
-+                latch.countDown();
-+                assertThat(latch.await(10, SECONDS)).isTrue(); // to make sure both tools overlap in time and are executed in different threads
-                 return CURRENT_TEMPERATURE;
-             }
-         }
-@@ -641,7 +648,7 @@ void should_execute_multiple_tools_in_parallel_then_answer(ChatModel chatModel)
-     @ParameterizedTest
-     @NullSource
-     @MethodSource("executors")
--    void should_execute_multiple_tools_in_parallel_concurrently_then_answer(Executor executor) {
-+    void should_execute_multiple_tools_in_parallel_concurrently_then_answer(Executor executor) throws Exception {
- 
-         // given
-         class Tools {
-@@ -652,15 +659,21 @@ class Tools {
-             final Queue<Thread> getCurrentTimeThreads = new ConcurrentLinkedQueue<>();
-             final Queue<Thread> getCurrentTemperatureThreads = new ConcurrentLinkedQueue<>();
- 
-+            final CountDownLatch latch = new CountDownLatch(2);
-+
-             @Tool
--            String getCurrentTime(String city) {
-+            String getCurrentTime(String city) throws InterruptedException {
-                 getCurrentTimeThreads.add(Thread.currentThread());
-+                latch.countDown();
-+                assertThat(latch.await(10, SECONDS)).isTrue(); // to make sure both tools overlap in time and are executed in different threads
-                 return CURRENT_TIME;
-             }
- 
-             @Tool
--            String getCurrentTemperature(String city) {
-+            String getCurrentTemperature(String city) throws InterruptedException {
-                 getCurrentTemperatureThreads.add(Thread.currentThread());
-+                latch.countDown();
-+                assertThat(latch.await(10, SECONDS)).isTrue(); // to make sure both tools overlap in time and are executed in different threads
-                 return CURRENT_TEMPERATURE;
-             }
-         }
+@@ -56,8 +56,8 @@
+         <aws.java.sdk.version>2.42.4</aws.java.sdk.version>
+         <azure-sdk.version>1.3.7</azure-sdk.version>
+         <blockhound.version>1.0.17.RELEASE</blockhound.version>
+-        <jackson.version>2.22.1</jackson.version>
+-        <jackson3.version>3.2.2</jackson3.version>
++        <jackson.version>2.22.4</jackson.version>
++        <jackson3.version>3.2.4</jackson3.version>
+         <jspecify.version>1.0.1</jspecify.version>
+         <jtokkit.version>1.1.0</jtokkit.version>
+         <junit.version>6.0.3</junit.version>
 ```
 
 ---
 
-### Incident Patch 2: `035ee132` (2026-10-21)
-**Commit Message**: fix(agentic): throw a clear error when a planner agent has no Planner (#6781)
+### Incident Patch 2: `7dd1df48` (2026-10-23)
+**Commit Message**: Update dependency org.codehaus.mojo:build-helper-maven-plugin to v3.6.2 (#6429)
 
-## Problem
+This PR contains the following updates:
 
-A declarative planner agent built via `@PlannerAgent` but **without** a
-`@PlannerSupplier` method fails with an opaque `NullPointerException`
-instead of a clear configuration error:
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+|
+[org.codehaus.mojo:build-helper-maven-plugin](https://www.mojohaus.org/build-helper-maven-plugin/)
+([source](https://redirect.github.com/mojohaus/build-helper-maven-plugin))
+| `3.6.0` → `3.6.2` |
+![age](https://developer.mend.io/api/mc/badges/age/maven/org.codehaus.mojo:build-helper-maven-plugin/3.6.2?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/org.codehaus.mojo:build-helper-maven-plugin/3.6.0/3.6.2?slim=true)
+|
 
-```
-java.lang.NullPointerException: Cannot invoke "java.util.function.Supplier.get()"
-    because "plannerSupplier" is null
-    at dev.langchain4j.agentic.internal.AbstractServiceBuilder.build(AbstractServiceBuilder.java:183)
-```
+---
 
-`PlannerBasedServiceImpl.configurePlanner()` constructed an
-`IllegalArgumentException` in the `ifPresentOrElse(...)` else branch but
-never threw it, so `plannerSupplier` stayed `null` and the failure only
-surfaced later as an NPE in `PlannerBasedInvocationHandler`'s
-constructor (`plannerSupplier.get()`), losing the intended message.
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/2069) for more information.
 
-Closes #6779.
+---
 
-## Root cause
+### Release Notes
 
-It is tempting to "just add the missing `throw`" in that else branch,
-but that breaks the **programmatic** builder path. `configurePlanner()`
-runs in the constructor and is shared by both ways of building a planner
-agent:
+<details>
+<summary>mojohaus/build-helper-maven-plugin
+(org.codehaus.mojo:build-helper-maven-plugin)</summary>
 
-- **Declarative**: `@PlannerAgent` + a `@PlannerSupplier` method.
-- **Programmatic**:
-`AgenticServices.pla
+###
+[`v3.6.2`](https://redirect.github.com/mojohaus/build-helper-maven-plugin/releases/tag/3.6.2)
 
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/planner/PlannerBasedServiceImpl.java` (modified, +13/-11)
+[Compare
+Source](https://redirect.github.com/mojohaus/build-helper-maven-plugin/compare/3.6.1
+
+**File**: `langchain4j-core/pom.xml` (modified, +1/-1)
 ```diff
-@@ -7,12 +7,13 @@
- import static dev.langchain4j.agentic.internal.AgentUtil.getAnnotatedMethodOnClass;
- import static dev.langchain4j.agentic.internal.AgentUtil.validateAgentClass;
- 
--import java.lang.reflect.Method;
--import java.util.function.Supplier;
- import dev.langchain4j.agentic.declarative.PlannerSupplier;
- import dev.langchain4j.agentic.internal.AbstractServiceBuilder;
-+import java.lang.reflect.Method;
-+import java.util.function.Supplier;
- 
--public class PlannerBasedServiceImpl<T> extends AbstractServiceBuilder<T, PlannerBasedService<T>> implements PlannerBasedService<T> {
-+public class PlannerBasedServiceImpl<T> extends AbstractServiceBuilder<T, PlannerBasedService<T>>
-+        implements PlannerBasedService<T> {
- 
-     private Supplier<Planner> plannerSupplier;
- 
-@@ -38,20 +39,21 @@ public PlannerBasedService<T> planner(Supplier<Planner> plannerSupplier) {
- 
-     @Override
-     public T build() {
-+        if (plannerSupplier == null) {
-+            throw new IllegalArgumentException(
-+                    "A planner agent requires a Planner, provided either via planner(...) or, for declarative agents, "
-+                            + "a method annotated with @PlannerSupplier that returns the Planner instance.");
-+        }
-         return build(plannerSupplier);
-     }
- 
-     private void configurePlanner(Class<T> agentServiceClass) {
-         configureOutput(agentServiceClass, this);
-         buildAgentFeatures(agentServiceClass, this);
- 
--        getAnnotatedMethodOnClass(agentServiceClass, PlannerSupplier.class)
--                .ifPresentOrElse(
--                        method -> {
--                            checkReturnType(method, Planner.class);
--                            planner(() -> invokeStatic(method));
--                        },
--                        () -> new IllegalArgumentException(
--                                "A planner agent requires a method annotated with @PlannerSupplier that returns the Planner instance."));
-+        getAnnotatedMethodOnClass(agentServiceClass, PlannerSupplier.class).ifPresent(method -> {
-+            checkReturnType(method, Planner.class);
-+            planner(() -> invokeStatic(method));
-+        });
-     }
+@@ -92,7 +92,7 @@
+             <plugin>
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>build-helper-maven-plugin</artifactId>
+-                <version>3.6.0</version>
++                <version>3.6.2</version>
+                 <executions>
+                     <execution>
+                         <goals>
+```
+
+---
+
+### Incident Patch 3: `115766cd` (2026-10-23)
+**Commit Message**: Renovate: group related updates, skip db2 hotfix builds, keep onnxrun… (#6816)
+
+…time below 1.24
+
+Google Cloud libraries and docker-java artifacts fail dependency
+convergence when updated one by one. com.ibm.db2:jcc "_special_"
+versions are IBM hotfix builds. onnxruntime 1.24+ no longer ships the
+macOS Intel native library.
+
+**File**: `renovate.json5` (modified, +21/-0)
+```diff
+@@ -15,6 +15,27 @@
+                 "/^tools\\.jackson[.:]/"
+             ],
+             "prPriority": 10
++        },
++        {
++            // these come from the same Google release train; updated separately, they fail dependency convergence
++            "matchPackageNames": ["com.google.cloud:*"],
++            "groupName": "Google Cloud libraries"
++        },
++        {
++            // updated separately, they fail dependency convergence
++            "matchPackageNames": ["com.github.docker-java:*"],
++            "groupName": "docker-java"
++        },
++        {
++            // "_special_" versions are IBM hotfix builds, not regular releases
++            "matchPackageNames": ["com.ibm.db2:jcc"],
++            "allowedVersions": "!/_special_/"
++        },
++        {
++            // 1.24+ no longer ships the native library for macOS on Intel, which would break in-process models there
++            "matchPackageNames": ["com.microsoft.onnxruntime:*"],
++            "allowedVersions": "(,1.24)",
++            "groupName": "onnxruntime"
+         }
+     ]
  }
 ```
 
-**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/PlannerSupplierMissingTest.java` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+package dev.langchain4j.agentic;
-+
-+import static org.assertj.core.api.Assertions.assertThatThrownBy;
-+
-+import dev.langchain4j.agentic.declarative.PlannerAgent;
-+import dev.langchain4j.service.V;
-+import org.junit.jupiter.api.Test;
-+
-+class PlannerSupplierMissingTest {
-+
-+    public interface MissingSupplierPlannerAgent {
-+
-+        @PlannerAgent(
-+                outputKey = "result",
-+                subAgents = {})
-+        String run(@V("input") String input);
-+
-+        // Intentionally no method annotated with @PlannerSupplier.
-+    }
-+
-+    @Test
-+    void missing_planner_supplier_throws_clear_exception() {
-+        assertThatThrownBy(() -> AgenticServices.createAgenticSystem(MissingSupplierPlannerAgent.class))
-+                .isInstanceOf(IllegalArgumentException.class)
-+                .hasMessageContaining("@PlannerSupplier");
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `f315628b` (2026-10-21)
-**Commit Message**: Fix registration of inherited listeners for non-AI agents (#6764)
-
-<!--
-Thank you so much for your contribution!
-
-Please fill in all the sections below.
-Please open the PR as ready for review (not as a draft), with tests and
-documentation already included.
-Please note that PRs with breaking changes, or without tests and
-documentation, will be rejected.
-
-Please note that PRs will be reviewed based on the priority of the
-issues they address.
-We ask for your patience. We are doing our best to review your PR as
-quickly as possible.
-Please refrain from pinging and asking when it will be reviewed. Thank
-you for understanding!
--->
-
-## Issue
-<!-- Please specify the ID of the issue this PR is addressing. For
-example: "Closes #1234" or "Fixes #1234" -->
-Closes #6763
-
-## Change
-<!-- Please describe the changes you made. -->
-
-
-## General checklist
-<!-- Please double-check the following points and mark them like this:
-[X] -->
-- [X] There are no breaking changes (API, behaviour)
-- [X] I have added unit and/or integration tests for my change
-- [ ] The tests cover both positive and negative cases
-- [X] I have manually run all the unit and integration tests in the
-module I have added/changed, and t
-
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/NonAiAgentInstance.java` (modified, +15/-1)
-```diff
-@@ -1,6 +1,7 @@
- package dev.langchain4j.agentic.internal;
- 
- import dev.langchain4j.agentic.observability.AgentListener;
-+import dev.langchain4j.agentic.observability.ComposedAgentListener;
- import dev.langchain4j.agentic.planner.AgentArgument;
- import dev.langchain4j.agentic.planner.AgentCondition;
- import dev.langchain4j.agentic.planner.AgentInstance;
-@@ -121,11 +122,21 @@ public AgentListener listener() {
- 
-     @Override
-     public void registerInheritedParentListener(AgentListener parentListener) {
--        if (parentListener != null && parentListener.inheritedBySubagents()) {
-+        if (parentListener != null && parentListener.inheritedBySubagents() && isNewListener(listener, parentListener)) {
-             listener = composeWithInherited(listener(), parentListener);
-         }
-     }
- 
-+    private static boolean isNewListener(AgentListener currentListener, AgentListener newListener) {
-+        if (newListener == currentListener) {
-+            return false;
-+        }
-+        if (currentListener instanceof ComposedAgentListener composed) {
-+            return !composed.contains(newListener);
-+        }
-+        return true;
-+    }
-+
-     @Override
-     public boolean equals(Object obj) {
-         if (obj == this) return true;
-@@ -164,6 +175,9 @@ public String toString() {
-     @Override
-     public void setParent(InternalAgent parent) {
-         this.parent = parent;
-+        if (parent != null) {
-+            registerInheritedParentListener(parent.listener());
-+        }
-     }
- 
-     @Override
-```
-
-**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/observability/NonAiAgentListenerInheritanceTest.java` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+package dev.langchain4j.agentic.observability;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
-+
-+import dev.langchain4j.agentic.AgenticServices;
-+import dev.langchain4j.agentic.AgenticServices.AgenticScopeFunction;
-+import dev.langchain4j.agentic.UntypedAgent;
-+import java.util.List;
-+import java.util.Map;
-+import org.junit.jupiter.api.Test;
-+
-+/**
-+ * A non-AI agent inherits the listener of its parent when the parent is set, like AI and composed agents do: a
-+ * non-AI agent that is a direct sub-agent of the monitored root used to be missing from the monitor, while one
-+ * nested under a composed sub-agent received the monitor through that sub-agent.
-+ */
-+class NonAiAgentListenerInheritanceTest {
-+
-+    @Test
-+    void non_ai_agent_directly_under_the_monitored_root_is_recorded() {
-+        AgentMonitor monitor = new AgentMonitor();
-+        AgenticScopeFunction<String> fetch = AgenticServices.nonAiAgentBuilder(scope -> "fetched")
-+                .name("fetch")
-+                .outputKey("data")
-+                .build();
-+        UntypedAgent root = AgenticServices.sequenceBuilder()
-+                .subAgents(fetch)
-+                .outputKey("data")
-+                .listener(monitor)
-+                .build();
-+
-+        root.invoke(Map.of());
-+
-+        assertThat(monitor.successfulExecutions()).hasSize(1);
-+        List<AgentInvocation> nested =
-+                monitor.successfulExecutions().get(0).topLevelInvocations().nestedInvocations();
-+        assertThat(nested).extracting(invocation -> invocation.agent().name()).containsExactly("fetch");
-+    }
-+
-+    @Test
-+    void non_ai_agent_under_a_nested_sequence_is_recorded() {
-+        AgentMonitor monitor = new AgentMonitor();
-+        AgenticScopeFunction<String> fetch = AgenticServices.nonAiAgentBuilder(scope -> "fetched")
-+                .name("fetch")
-+                .outputKey("data")
-+                .build();
-+        UntypedAgent inner = AgenticServices.sequenceBuilder()
-+                .subAgents(fetch)
-+                .outputKey("data")
-+                .build();
-+        UntypedAgent root = AgenticServices.sequenceBuilder()
-+                .subAgents(inner)
-+                .outputKey("data")
-+                .listener(monitor)
-+                .build();
-+
-+        root.invoke(Map.of());
-+
-+        List<AgentInvocation> innerInvocations = monitor.successfulExecutions()
-+                .get(0)
-+                .topLevelInvocations()
-+                .nestedInvocations()
-+                .get(0)
-+                .nestedInvocations();
-+        assertThat(innerInvocations)
-+                .extracting(invocation -> invocation.agent().name())
-+                .containsExactly("fetch");
-+    }
-+}
-```
-
 #### Recent Merged Pull Requests:
-- **PR #6803** (2026-10-22): Decision models: add `from(...)` factories, deprecate `of(...)` (@dliubarskyi)
-- **PR #6786** (2026-10-22): AI Services: complete and consistent observability events (@dliubarskyi)
-- **PR #6781** (2026-10-21): fix(agentic): throw a clear error when a planner agent has no Planner (@zxc210)
-- **PR #6778** (2026-10-22): Resolve SupplierParameterResolver parameters on every static method of declarative agents (@mariofusco)
-- **PR #6777** (2026-10-22): chore(deps): bump launch-editor from 2.14.1 to 2.14.2 in /docs (@dependabot[bot])
-- **PR #6770** (2026-10-21): chore(deps): bump follow-redirects from 1.16.0 to 1.16.1 in /docs (@dependabot[bot])
+- **PR #6831** (closed): Fix two flaky streaming tests (@dliubarskyi)
+- **PR #6819** (2026-10-23): langchain4j-test: LLM judges and assertions on chat requests (@dliubarskyi)
+- **PR #6816** (2026-10-23): Renovate: group related updates, skip db2 hotfix builds, keep onnxrun… (@dliubarskyi)
+- **PR #6815** (2026-10-23): Update onnxruntime to 1.23.2 (@dliubarskyi)
+- **PR #6814** (2026-10-23): Integration tests: use the project's Jackson version in the Quarkus and Spring test apps (@dliubarskyi)
+- **PR #6813** (2026-10-23): Update docker-java to 3.7.1 (@dliubarskyi)
 
 ---
 
@@ -1418,34 +1023,28 @@ module I have added/changed, and t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. flaky nightly tests and make nightly builds more robust
+## X. Bump Jackson to 2.22.4 and 3.2.4 to fix DoS advisories (#6808)
 
 **RULE**:
-When implementing operations in `.github/workflows/nightly_jdk17.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `langchain4j-milvus-v2/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2d715774`: flaky nightly tests and make nightly builds more robust. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b48a4af`: Bump Jackson to 2.22.4 and 3.2.4 to fix DoS advisories (#6808). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly_jdk17.yaml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-milvus-v2/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        # the same day reproduces it. The clock is shifted by 3 hours so that all nightlies of one
-        # night (22:00, 01:00 and 04:00 UTC) share the same day number.
-          if [ $(( 10#$(date -u -d '+3 hours' +%j) % 3 )) -eq 0 ]; then
-          ## retried once, as a transient Maven Central failure would otherwise skip all tests of this job
-          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install || mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
+        <jackson.version>2.22.4</jackson.version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        # the same day reproduces it.
-          if [ $(( 10#$(date -u +%j) % 3 )) -eq 0 ]; then
-          mvn -B -U -T8C -DskipTests -DskipITs -DembeddingsSkipCache install
+        <jackson.version>2.22.1</jackson.version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2d715774` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b48a4af` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T11:53:47.555Z",
+  "last_updated": "2026-10-25T11:59:59.303Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2274,8 +2274,8 @@
       "slug": "apollographql-apollo-kotlin",
       "platform": "github",
       "source_url": "https://github.com/apollographql/apollo-kotlin",
-      "source_version": "afe947c8",
-      "content_hash": "b3e5fb6ce3588df4e5698554a292a5b0bbc504d7c0f9ad22787fb443b1b568ac",
+      "source_version": "6c78aafe",
+      "content_hash": "a4a7294e609f5f660a4f7187e647a16526be77d2a684bdfc64e1bbada1adfa5e",
       "dossier_path": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
       "promoted_rules": [
@@ -2293,6 +2293,11 @@
           "number": 2322,
           "title": "Lossless Primitive Boundary Casting Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4274,
+          "title": "Allow GET for introspection queries (#7041)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2300,7 +2305,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:38:35.131Z",
+      "verified_at": "2026-10-25T11:59:50.974Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6130,8 +6135,8 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "38c2563a",
-      "content_hash": "291421d5869bfd0bc6a4376b9e8e8dc672677cd5f6195a4ea5ee9424b3186960",
+      "source_version": "f9bfdd48",
+      "content_hash": "a7aace4e10de28c62daade59f447c5bbcdd49c7aa89e2dce431c9c8b44cca51f",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
@@ -6154,6 +6159,11 @@
           "number": 3511,
           "title": "docs(guides): fix write permissions field names (#1379)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4275,
+          "title": "tcp): refresh endpoint after address changes (#1392)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6161,7 +6171,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:02:55.060Z",
+      "verified_at": "2026-10-25T11:59:52.906Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24117,7 +24127,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "c236a982190187d2b9c5772dd681bffdf49dacd795728b4623fe4a74735ab2f4",
+      "content_hash": "ad9506a9b892d9afa5f8e7423d323a9b72b0721a161539cb1e8abe1d0fd0e82f",
       "dossier_path": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "promoted_rules": [
@@ -24142,6 +24152,16 @@
           "number": 1254,
           "title": "Decoupled Precision Boundary for Vision-Language Cross-Attention",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4277,
+          "title": "Ternary Weight Inference Kernel Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4278,
+          "title": "Hybrid Attention Context Window Management",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24162,7 +24182,7 @@
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv44xvpe",
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4i78uo"
       ],
-      "verified_at": "2026-10-20T17:03:48.006Z",
+      "verified_at": "2026-10-25T11:59:59.297Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31549,8 +31569,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "8f32a2fd",
-      "content_hash": "296fe9a3fd17270a17d706406644921c75d13d85626be595521bff05441b8b74",
+      "source_version": "71d0dcf6",
+      "content_hash": "979f0a51f5143395114948845c8e6a42cda351ed8f64def0167af5def252e59d",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -31578,6 +31598,11 @@
           "number": 3756,
           "title": "flaky nightly tests and make nightly builds more robust",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4276,
+          "title": "Bump Jackson to 2.22.4 and 3.2.4 to fix DoS advisories (#6808)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31585,7 +31610,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:35:25.861Z",
+      "verified_at": "2026-10-25T11:59:58.012Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50613,8 +50638,8 @@
       "slug": "watchexec-watchexec",
       "platform": "github",
       "source_url": "https://github.com/watchexec/watchexec",
-      "source_version": "87bd4693",
-      "content_hash": "4c7f91f4a4417e430abb6721e66ee821b20da25bcb75b7902aba44cbc7381042",
+      "source_version": "a7170667",
+      "content_hash": "fa5f6e694489a9a0f1d4888e9dc7181692a85fad95507da8711653f28ecb48f1",
       "dossier_path": "07_PROJECT_LEARNING/watchexec-watchexec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/watchexec-watchexec-learnings.md",
       "promoted_rules": [
@@ -50634,7 +50659,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T13:14:44.749Z",
+      "verified_at": "2026-10-25T11:59:45.050Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122578,6 +122603,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T11:53:45.261Z"
+    },
+    "rule-4274": {
+      "learning_id": "rule-4274",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4274,
+      "title": "Allow GET for introspection queries (#7041)",
+      "source_url": "https://github.com/apollographql/apollo-kotlin",
+      "source_version": "6c78aafe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:59:50.974Z"
+    },
+    "rule-4275": {
+      "learning_id": "rule-4275",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4275,
+      "title": "tcp): refresh endpoint after address changes (#1392)",
+      "source_url": "https://github.com/clastix/kamaji",
+      "source_version": "f9bfdd48",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:59:52.906Z"
+    },
+    "rule-4276": {
+      "learning_id": "rule-4276",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4276,
+      "title": "Bump Jackson to 2.22.4 and 3.2.4 to fix DoS advisories (#6808)",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "71d0dcf6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:59:58.012Z"
+    },
+    "rule-4277": {
+      "learning_id": "rule-4277",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4277,
+      "title": "Ternary Weight Inference Kernel Isolation",
+      "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:59:59.297Z"
+    },
+    "rule-4278": {
+      "learning_id": "rule-4278",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4278,
+      "title": "Hybrid Attention Context Window Management",
+      "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:59:59.297Z"
     }
   },
   "aliases": {

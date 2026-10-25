@@ -355,8 +355,8 @@
     "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
     "sourceVersion": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "c236a982190187d2b9c5772dd681bffdf49dacd795728b4623fe4a74735ab2f4",
-    "lastHarvestedAt": "2026-10-20T17:03:48.080Z",
+    "contentHash": "ad9506a9b892d9afa5f8e7423d323a9b72b0721a161539cb1e8abe1d0fd0e82f",
+    "lastHarvestedAt": "2026-10-25T11:59:59.335Z",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
@@ -2823,10 +2823,10 @@
     "repository": "watchexec/watchexec",
     "platform": "github",
     "sourceUrl": "https://github.com/watchexec/watchexec",
-    "sourceVersion": "87bd4693",
+    "sourceVersion": "a7170667",
     "license": "Apache-2.0",
-    "contentHash": "4c7f91f4a4417e430abb6721e66ee821b20da25bcb75b7902aba44cbc7381042",
-    "lastHarvestedAt": "2026-10-19T13:14:44.781Z",
+    "contentHash": "fa5f6e694489a9a0f1d4888e9dc7181692a85fad95507da8711653f28ecb48f1",
+    "lastHarvestedAt": "2026-10-25T11:59:45.096Z",
     "learningId": "learn-github-watchexec-watchexec"
   },
   "streetwriters-notesnook": {
@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "38c2563a",
+    "sourceVersion": "f9bfdd48",
     "license": "Apache-2.0",
-    "contentHash": "291421d5869bfd0bc6a4376b9e8e8dc672677cd5f6195a4ea5ee9424b3186960",
-    "lastHarvestedAt": "2026-10-23T06:02:55.125Z",
+    "contentHash": "a7aace4e10de28c62daade59f447c5bbcdd49c7aa89e2dce431c9c8b44cca51f",
+    "lastHarvestedAt": "2026-10-25T11:59:52.943Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {
@@ -7063,10 +7063,10 @@
     "repository": "apollographql/apollo-kotlin",
     "platform": "github",
     "sourceUrl": "https://github.com/apollographql/apollo-kotlin",
-    "sourceVersion": "afe947c8",
+    "sourceVersion": "6c78aafe",
     "license": "MIT",
-    "contentHash": "b3e5fb6ce3588df4e5698554a292a5b0bbc504d7c0f9ad22787fb443b1b568ac",
-    "lastHarvestedAt": "2026-10-19T07:38:35.186Z",
+    "contentHash": "a4a7294e609f5f660a4f7187e647a16526be77d2a684bdfc64e1bbada1adfa5e",
+    "lastHarvestedAt": "2026-10-25T11:59:51.013Z",
     "learningId": "learn-github-apollographql-apollo-kotlin"
   },
   "crate-ci-typos": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "8f32a2fd",
+    "sourceVersion": "71d0dcf6",
     "license": "Apache-2.0",
-    "contentHash": "296fe9a3fd17270a17d706406644921c75d13d85626be595521bff05441b8b74",
-    "lastHarvestedAt": "2026-10-22T21:35:25.930Z",
+    "contentHash": "979f0a51f5143395114948845c8e6a42cda351ed8f64def0167af5def252e59d",
+    "lastHarvestedAt": "2026-10-25T11:59:58.051Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
