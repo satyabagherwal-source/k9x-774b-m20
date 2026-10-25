@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T14:44:30.238Z",
+  "last_updated": "2026-10-25T14:50:59.225Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -650,14 +650,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "f4958d7f9a3a734e60370287605dd050043f7b4d126db957c674bb84b327de2e",
-      "verified_at": "2026-10-20T19:23:36.505Z",
+      "content_hash": "51516e80bba96a1c027d01838bca8c33a9d71c07341ed085d048a89286f6d604",
+      "verified_at": "2026-10-25T14:50:44.675Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:23:36.505Z"
+      "last_updated": "2026-10-25T14:50:44.675Z"
     },
     "unsloth/Qwen-Image-2.1-GGUF": {
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -4281,14 +4281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "6f72ceb8985df38328d07f18a286c38db4dea8a9265559e5fd1028d2bb8cda06",
-      "verified_at": "2026-10-23T08:26:36.575Z",
+      "content_hash": "d159dfdbdbdbf0158b110e60e288e510327178fab197e338cace2ade0e9d3fdf",
+      "verified_at": "2026-10-25T14:50:59.220Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T08:26:36.575Z"
+      "last_updated": "2026-10-25T14:50:59.220Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",
@@ -7716,14 +7716,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-cyberdefense-goad",
-      "content_hash": "8c8695de433fe789d2b3b1924e65e7c5acaa141287a4142df53932aa5c354b7d",
-      "verified_at": "2026-10-19T02:55:02.626Z",
+      "content_hash": "ff9d41d3d726a2bb6224890561a25b227d078cd06b075c30049c7e6f49681af0",
+      "verified_at": "2026-10-25T14:50:54.528Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:55:02.626Z"
+      "last_updated": "2026-10-25T14:50:54.528Z"
     },
     "trinodb/trino": {
       "repository": "trinodb/trino",

@@ -4861,3 +4861,6 @@
 | `CYCLE-20261025-UZI7` | `2026-10-25T14:44:17.599Z` | `bvaughn/react-virtualized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4349` | Yes (`e16d8f5b...`) |
 | `CYCLE-20261025-V7GQ` | `2026-10-25T14:44:27.914Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4350, Rule 4351, Rule 4352` | Yes (`9d31fed7...`) |
 | `CYCLE-20261025-V98W` | `2026-10-25T14:44:30.224Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4353` | Yes (`1b9c8709...`) |
+| `CYCLE-20261025-3A61` | `2026-10-25T14:50:44.665Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`51516e80...`) |
+| `CYCLE-20261025-3HRQ` | `2026-10-25T14:50:54.518Z` | `Orange-Cyberdefense/GOAD` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4354` | Yes (`ff9d41d3...`) |
+| `CYCLE-20261025-3LE2` | `2026-10-25T14:50:59.210Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4355` | Yes (`d159dfdb...`) |

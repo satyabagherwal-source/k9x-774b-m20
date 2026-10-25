@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-ZWQ6",
-    "timestamp": "2026-10-22T17:45:04.110Z",
-    "repository": "gravitl/netmaker",
-    "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "73625fce8abd27d89456e82a6e7941cafa7bc10181bf5faf7965d6e9d60b2816",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-ZYAV",
-    "timestamp": "2026-10-22T17:45:06.151Z",
-    "repository": "genkit-ai/genkit",
-    "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "e0ab9c143bdc680640343623f10e7b610a51d1a6524016243446ce29252fac53",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-01YT",
-    "timestamp": "2026-10-22T17:45:10.901Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "7fc47718fd5a7edb351c10486ff0406a6496509e3fc6124640f43104af3745ab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-8FWP",
     "timestamp": "2026-10-22T17:51:42.217Z",
     "repository": "Automattic/harper",
@@ -7490,6 +7445,51 @@
     "repository": "meshery/meshery",
     "learningId": "learn-github-meshery-meshery",
     "contentHash": "1b9c87096685db4353a722c66ca8337447d98d7f00f02c626cb17e031ee2dee5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-3A61",
+    "timestamp": "2026-10-25T14:50:44.665Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+    "contentHash": "51516e80bba96a1c027d01838bca8c33a9d71c07341ed085d048a89286f6d604",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-3HRQ",
+    "timestamp": "2026-10-25T14:50:54.518Z",
+    "repository": "Orange-Cyberdefense/GOAD",
+    "learningId": "learn-github-orange-cyberdefense-goad",
+    "contentHash": "ff9d41d3d726a2bb6224890561a25b227d078cd06b075c30049c7e6f49681af0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-3LE2",
+    "timestamp": "2026-10-25T14:50:59.210Z",
+    "repository": "xerj-org/xerj",
+    "learningId": "learn-github-xerj-org-xerj",
+    "contentHash": "d159dfdbdbdbf0158b110e60e288e510327178fab197e338cace2ade0e9d3fdf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -4868,3 +4868,6 @@ Every entry in this ledger must capture:
 | `learn-github-bvaughn-react-virtualized` | `https://github.com/bvaughn/react-virtualized` | `fe90ae02` | Multi-dimensional audit evidence | 2026-10-25T14:44:17.602Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-25T14:44:27.917Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `ac82f3a1` | Multi-dimensional audit evidence | 2026-10-25T14:44:30.227Z |
+| `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-10-25T14:50:44.668Z |
+| `learn-github-orange-cyberdefense-goad` | `https://github.com/Orange-Cyberdefense/GOAD` | `74af01eb` | Multi-dimensional audit evidence | 2026-10-25T14:50:54.521Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `d6ef7fbb` | Multi-dimensional audit evidence | 2026-10-25T14:50:59.212Z |

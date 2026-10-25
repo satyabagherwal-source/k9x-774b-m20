@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-cyberdefense-goad-learnings.md`  
 > **Source**: github ([https://github.com/Orange-Cyberdefense/GOAD](https://github.com/Orange-Cyberdefense/GOAD))  
-> **Source Version**: `992307ad`  
+> **Source Version**: `74af01eb`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:55:02.342Z  
+> **Timestamp**: 2026-10-25T14:50:54.082Z  
 > **Learning ID**: `learn-github-orange-cyberdefense-goad`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-cyberdefense-goad-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-Cyberdefense/GOAD](https://github.com/Orange-Cyberdefense/GOAD))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:55:02.334Z  
+> **Harvest Timestamp**: 2026-10-25T14:50:54.076Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: game of active directory
 - **Primary Language / Ecosystem**: PowerShell
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 8503 stars
+- **Stars / Engagement**: 8529 stars
 
 ---
 
@@ -2821,139 +2821,141 @@ class Command:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba8ef63a` (2026-03-10)
-**Commit Message**: fix ludus v2 fix regression
+### Incident Patch 1: `9ac9827b` (2026-10-01)
+**Commit Message**: fix(mssql): working SQL 2019 Express download url and WinRM memory quota
 
-**File**: `goad/provider/ludus/ludus.py` (modified, +11/-10)
+- The direct download.microsoft.com link for SQL2019-SSEI-Expr.exe now
+  returns 404, which breaks servers.yml on GOAD/NHA. Use the stable
+  Microsoft fwlink (866658) that redirects to the current file.
+- SQL Server setup launched through WinRM died with
+  System.OutOfMemoryException because the default MaxMemoryPerShellMB
+  (800MB on Windows Server 2019) applies to the setup process, leaving a
+  half-installed instance that later fails with "master.mdf already
+  exists". Raise the quota to 4096MB before the install.
+
+**File**: `ansible/roles/mssql/defaults/main.yml` (modified, +1/-1)
 ```diff
-@@ -10,16 +10,17 @@ def _get_ludus_major_version(config):
-     """Run `ludus version` and return the major version number (1 or 2). Defaults to 1 on failure or the value of LUDUS_VERSION environment variable."""
-     if 'LUDUS_VERSION' in os.environ:
-         return int(os.environ['LUDUS_VERSION'])
--    api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
--    command = CommandFactory.get_command()
--    # Version command does not require a lab path; cwd=None uses current directory
--    output = command.run_ludus_result(['version'], None, api_key, do_log=False)
--    if not output:
--        return 1
--    # Match first digit sequence (e.g. "1.2.3", "v2.0.0", "Version: 2.0.0")
--    match = re.search(r'(\d+)\.(\d+)\.(\d+)', output)
--    if match:
--        return int(match.group(1))
-+    # THERE is a regression with that on other providers so fallback to export LUDUS_VERSION=2 for v2
-+    # api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
-+    # command = CommandFactory.get_command()
-+    # ## Version command does not require a lab path; cwd=None uses current directory
-+    # output = command.run_ludus_result(['version'], None, api_key, do_log=False)
-+    # if not output:
-+    #     return 1
-+    # # Match first digit sequence (e.g. "1.2.3", "v2.0.0", "Version: 2.0.0")
-+    # match = re.search(r'(\d+)\.(\d+)\.(\d+)', output)
-+    # if match:
-+    #     return int(match.group(1))
-     return 1
+@@ -7,7 +7,7 @@ sql_version: MSSQL_2019
+ #sql_version: MSSQL_2022
  
+ # SQL2019-SSEI-Expr.exe
+-download_url_2019: https://download.microsoft.com/download/7/f/8/7f8a9c43-8c8a-4f7c-9f92-83c18d96b681/SQL2019-SSEI-Expr.exe
++download_url_2019: https://go.microsoft.com/fwlink/?linkid=866658
+ # SQL2022-SSEI-Eval.exe
+ download_url_2022: https://go.microsoft.com/fwlink/?linkid=2215202&clcid=0x409&culture=en-us&country=us
  
 ```
 
----
-
-### Incident Patch 2: `7ae54d16` (2026-03-12)
-**Commit Message**: fix compatibility
-
-**File**: `goad/command/cmd.py` (modified, +8/-3)
+**File**: `ansible/roles/mssql/tasks/main.yml` (modified, +10/-0)
 ```diff
-@@ -12,14 +12,16 @@ def __init__(self):
-         self.terraform_bin = ''
- 
-     # CHECK
--    def is_in_path(self, bin_file):
-+    def is_in_path(self, bin_file, show_log=True):
-         command = f'which {bin_file} >/dev/null'
-         try:
-             subprocess.run(command, shell=True, check=True)
--            Log.success(f'{bin_file} found in PATH')
-+            if show_log:
-+                Log.success(f'{bin_file} found in PATH')
-             return True
-         except subprocess.CalledProcessError as e:
--            Log.error(f'{bin_file} not found in PATH')
-+            if show_log:
-+                Log.error(f'{bin_file} not found in PATH')
-             return False
- 
-     def check_vagrant(self):
-@@ -178,6 +180,9 @@ def run_terraform_output(self, args, path):
-             Log.error(f"An error occurred while running the command: {e}")
-         return None
- 
-+    def on_ludus(self):
-+        return self.is_in_path('ludus', False)
+@@ -1,3 +1,13 @@
++# SQL Server setup is launched through WinRM; the default per-shell memory quota
++# (800MB on Windows Server 2019) makes setup.exe die with System.OutOfMemoryException
++# and leaves a half-installed instance behind. Raise it before installing.
++- name: Raise WinRM shell memory quota for SQL Server setup
++  win_shell: |
++    $current = [int](Get-Item WSMan:\localhost\Shell\MaxMemoryPerShellMB).Value
++    if ($current -lt 4096) { Set-Item WSMan:\localhost\Shell\MaxMemoryPerShellMB 4096; Write-Output "changed" } else { Write-Output "ok" }
++  register: winrs_quota
++  changed_when: "'changed' in winrs_quota.stdout"
 +
-     def run_ludus(self, args, path, api_key, user_id='', impersonation=False):
-         # linux only
-         pass
+ - name: Reboot before install (long timeout in case of update)
+   win_reboot:
+     reboot_timeout: 1200
 ```
 
-**File**: `goad/provider/ludus/ludus.py` (modified, +11/-10)
+---
+
+### Incident Patch 2: `74af01eb` (2026-10-23)
+**Commit Message**: Merge pull request #524 from SecurityEveryDay/fix/mssql-install
+
+SQL Server 2019 Express and SSMS installation on srv02/srv03
+
+**File**: `ansible/roles/mssql/defaults/main.yml` (modified, +1/-1)
 ```diff
-@@ -15,16 +15,17 @@ def _get_ludus_major_version(config):
-         return int(os.environ['LUDUS_VERSION'])
-     api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
-     command = CommandFactory.get_command()
--    output = command.run_ludus_result(['version', '--json'], None, api_key, do_log=False)
--    if not output:
--        return 1
--    try:
--        version_json = json.loads(output)
--        version = version_json.get('version', '')
--        if version:
--            return int(version.split('.')[0])
--    except (json.JSONDecodeError, KeyError, ValueError):
--        pass
-+    if command.on_ludus():
-+        output = command.run_ludus_result(['version', '--json'], None, api_key, do_log=False)
-+        if not output:
-+            return 1
-+        try:
-+            version_json = json.loads(output)
-+            version = version_json.get('version', '')
-+            if version:
-+                return int(version.split('.')[0])
-+        except (json.JSONDecodeError, KeyError, ValueError):
-+            pass
-     return 1
+@@ -7,7 +7,7 @@ sql_version: MSSQL_2019
+ #sql_version: MSSQL_2022
  
+ # SQL2019-SSEI-Expr.exe
+-download_url_2019: https://download.microsoft.com/download/7/f/8/7f8a9c43-8c8a-4f7c-9f92-83c18d96b681/SQL2019-SSEI-Expr.exe
++download_url_2019: https://go.microsoft.com/fwlink/?linkid=866658
+ # SQL2022-SSEI-Eval.exe
+ download_url_2022: https://go.microsoft.com/fwlink/?linkid=2215202&clcid=0x409&culture=en-us&country=us
+ 
+```
+
+**File**: `ansible/roles/mssql/tasks/main.yml` (modified, +10/-0)
+```diff
+@@ -1,3 +1,13 @@
++# SQL Server setup is launched through WinRM; the default per-shell memory quota
++# (800MB on Windows Server 2019) makes setup.exe die with System.OutOfMemoryException
++# and leaves a half-installed instance behind. Raise it before installing.
++- name: Raise WinRM shell memory quota for SQL Server setup
++  win_shell: |
++    $current = [int](Get-Item WSMan:\localhost\Shell\MaxMemoryPerShellMB).Value
++    if ($current -lt 4096) { Set-Item WSMan:\localhost\Shell\MaxMemoryPerShellMB 4096; Write-Output "changed" } else { Write-Output "ok" }
++  register: winrs_quota
++  changed_when: "'changed' in winrs_quota.stdout"
++
+ - name: Reboot before install (long timeout in case of update)
+   win_reboot:
+     reboot_timeout: 1200
+```
+
+**File**: `ansible/roles/mssql_ssms/tasks/main.yml` (modified, +4/-1)
+```diff
+@@ -5,7 +5,10 @@
+ 
+ - name: get the installer
+   win_get_url:
+-      url: 'https://aka.ms/ssmsfullsetup'
++      # aka.ms/ssmsfullsetup now serves SSMS 21/22 (Visual Studio installer based),
++      # whose bootstrapper hangs forever when run from a WinRM session and installs
++      # to a different path. Pin the classic SSMS 18.12.1 installer instead.
++      url: 'https://go.microsoft.com/fwlink/?linkid=2199013&clcid=0x409'
+       dest: 'c:\setup\mssql\SSMS_installer.exe'
+   when: not ssms_installer_file.stat.exists
  
 ```
 
 ---
 
-### Incident Patch 3: `2c39dc9a` (2026-03-11)
-**Commit Message**: fix(ludus): 🐛 fix SSH options to not store host keys; allows duplicate builds on the same IP range (i.e. destroy then rebuild)
+### Incident Patch 3: `a5eab82c` (2026-10-01)
+**Commit Message**: fix(mssql_ssms): pin SSMS 18 installer, aka.ms link now serves SSMS 22
 
-Signed-off-by: kernel-sanders <[REDACTED_EMAIL]>
+https://aka.ms/ssmsfullsetup now downloads the SSMS 21/22 bootstrapper
+(vs_SSMS.exe, Visual Studio installer based). Run from a WinRM session
+with "/install /quiet /norestart" it hangs forever without any network
+activity, and even when it works it installs to a different folder than
+the one checked by the role, so the install is retried on every run.
 
-**File**: `ad/DRACARYS/providers/ludus/inventory` (modified, +1/-1)
+Use the Microsoft fwlink for the classic SSMS 18.12.1 installer
+(SSMS-Setup-ENU.exe), which supports the silent switches and installs to
+"Microsoft SQL Server Management Studio 18" as the role expects.
+
+**File**: `ansible/roles/mssql_ssms/tasks/main.yml` (modified, +4/-1)
 ```diff
-@@ -4,7 +4,7 @@
- ; ------------------------------------------------
- dc01 ansible_host={{ip_range}}.10 dns_domain=dc01 dict_key=dc01
- srv01 ansible_host={{ip_range}}.11 dns_domain=dc01 dict_key=srv01
--lx01 ansible_host={{ip_range}}.12  dict_key=lx01 ansible_connection=ssh ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-+lx01 ansible_host={{ip_range}}.12 dict_key=lx01 ansible_connection=ssh ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+@@ -5,7 +5,10 @@
  
- [all:vars]
- force_dns_server=no
+ - name: get the installer
+   win_get_url:
+-      url: 'https://aka.ms/ssmsfullsetup'
++      # aka.ms/ssmsfullsetup now serves SSMS 21/22 (Visual Studio installer based),
++      # whose bootstrapper hangs forever when run from a WinRM session and installs
++      # to a different path. Pin the classic SSMS 18.12.1 installer instead.
++      url: 'https://go.microsoft.com/fwlink/?linkid=2199013&clcid=0x409'
+       dest: 'c:\setup\mssql\SSMS_installer.exe'
+   when: not ssms_installer_file.stat.exists
+ 
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #526** (closed): chore: stage upstream PR batch A for testing (@agnivesh)
+- **PR #524** (2026-10-23): SQL Server 2019 Express and SSMS installation on srv02/srv03 (@SecurityEveryDay)
 - **PR #506** (closed): Update inventory - elk (@ghost)
 - **PR #505** (closed): Update inventory - wazuh (@ghost)
 - **PR #504** (closed): Update inventory - guacamole (@ghost)
 - **PR #503** (closed): Update inventory - extension, lx01 (@ghost)
-- **PR #499** (closed): Adfs and stuff (@ryokubaka)
 
 ---
 
@@ -2973,47 +2975,28 @@ Signed-off-by: kernel-sanders <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ludus v2 fix regression
+## X. mssql): working SQL 2019 Express download url and WinRM memory quota
 
 **RULE**:
-When implementing operations in `goad/provider/ludus/ludus.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-Cyberdefense/GOAD. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ansible/roles/mssql/defaults/main.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-Cyberdefense/GOAD. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba8ef63a`: ludus v2 fix regression. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ac9827b`: mssql): working SQL 2019 Express download url and WinRM memory quota. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PowerShell data structures, boundary deserialization, API parsing, or resource lifecycles matching `goad/provider/ludus/ludus.py`.
+Subsystems managing PowerShell data structures, boundary deserialization, API parsing, or resource lifecycles matching `ansible/roles/mssql/defaults/main.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```powershell
 // Verified production-grade fix pattern:
-    # THERE is a regression with that on other providers so fallback to export LUDUS_VERSION=2 for v2
-    # api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
-    # command = CommandFactory.get_command()
-    # ## Version command does not require a lab path; cwd=None uses current directory
-    # output = command.run_ludus_result(['version'], None, api_key, do_log=False)
-    # if not output:
-    #     return 1
-    # # Match first digit sequence (e.g. "1.2.3", "v2.0.0", "Version: 2.0.0")
-    # match = re.search(r'(\d+)\.(\d+)\.(\d+)', output)
-    # if match:
-    #     return int(match.group(1))
+download_url_2019: https://go.microsoft.com/fwlink/?linkid=866658
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```powershell
 // Anti-pattern to NEVER write (induced failure mode):
-    api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
-    command = CommandFactory.get_command()
-    # Version command does not require a lab path; cwd=None uses current directory
-    output = command.run_ludus_result(['version'], None, api_key, do_log=False)
-    if not output:
-        return 1
-    # Match first digit sequence (e.g. "1.2.3", "v2.0.0", "Version: 2.0.0")
-    match = re.search(r'(\d+)\.(\d+)\.(\d+)', output)
-    if match:
-        return int(match.group(1))
+download_url_2019: https://download.microsoft.com/download/7/f/8/7f8a9c43-8c8a-4f7c-9f92-83c18d96b681/SQL2019-SSEI-Expr.exe
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba8ef63a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ac9827b` are properly handled with clean fallback behavior.

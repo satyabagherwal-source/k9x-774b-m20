@@ -525,8 +525,8 @@
     "sourceUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "sourceVersion": "hf-akatz-ai-minimax-h3-character-swap-lora",
     "license": "Open-Source",
-    "contentHash": "f4958d7f9a3a734e60370287605dd050043f7b4d126db957c674bb84b327de2e",
-    "lastHarvestedAt": "2026-10-20T19:23:36.498Z",
+    "contentHash": "51516e80bba96a1c027d01838bca8c33a9d71c07341ed085d048a89286f6d604",
+    "lastHarvestedAt": "2026-10-25T14:50:44.668Z",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "214f243f",
+    "sourceVersion": "d6ef7fbb",
     "license": "Apache-2.0",
-    "contentHash": "6f72ceb8985df38328d07f18a286c38db4dea8a9265559e5fd1028d2bb8cda06",
-    "lastHarvestedAt": "2026-10-23T08:26:36.562Z",
+    "contentHash": "d159dfdbdbdbf0158b110e60e288e510327178fab197e338cace2ade0e9d3fdf",
+    "lastHarvestedAt": "2026-10-25T14:50:59.212Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -5063,10 +5063,10 @@
     "repository": "Orange-Cyberdefense/GOAD",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "sourceVersion": "992307ad",
+    "sourceVersion": "74af01eb",
     "license": "GPL-3.0",
-    "contentHash": "8c8695de433fe789d2b3b1924e65e7c5acaa141287a4142df53932aa5c354b7d",
-    "lastHarvestedAt": "2026-10-19T02:55:02.621Z",
+    "contentHash": "ff9d41d3d726a2bb6224890561a25b227d078cd06b075c30049c7e6f49681af0",
+    "lastHarvestedAt": "2026-10-25T14:50:54.521Z",
     "learningId": "learn-github-orange-cyberdefense-goad"
   },
   "trinodb-trino": {

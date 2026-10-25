@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T14:44:30.230Z",
-  "total_cycles_completed": 4838,
-  "total_learnings_persisted": 4838,
-  "total_rules_promoted": 4232,
+  "last_updated": "2026-10-25T14:50:59.217Z",
+  "total_cycles_completed": 4841,
+  "total_learnings_persisted": 4841,
+  "total_rules_promoted": 4234,
   "history": [
-    {
-      "timestamp": "2026-10-25T04:25:25.112Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:31:49.159Z",
-      "repository": "lilylilith/QI_2.1_AnyAngle",
-      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:31:51.967Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T04:38:00.469Z",
       "repository": "glincker/thesvg",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-25T14:44:30.230Z",
       "repository": "meshery/meshery",
       "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:50:44.672Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:50:54.525Z",
+      "repository": "Orange-Cyberdefense/GOAD",
+      "learningId": "learn-github-orange-cyberdefense-goad",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:50:59.217Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

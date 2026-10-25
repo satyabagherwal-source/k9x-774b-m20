@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T14:44:30.181Z",
+  "last_updated": "2026-10-25T14:50:59.156Z",
   "total_verified_learnings": 1086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14925,7 +14925,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "f4958d7f9a3a734e60370287605dd050043f7b4d126db957c674bb84b327de2e",
+      "content_hash": "51516e80bba96a1c027d01838bca8c33a9d71c07341ed085d048a89286f6d604",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [
@@ -14993,7 +14993,7 @@
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv46r4cy",
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95"
       ],
-      "verified_at": "2026-10-20T19:23:36.434Z",
+      "verified_at": "2026-10-25T14:50:44.598Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39245,14 +39245,19 @@
       "slug": "orange-cyberdefense-goad",
       "platform": "github",
       "source_url": "https://github.com/Orange-Cyberdefense/GOAD",
-      "source_version": "992307ad",
-      "content_hash": "8c8695de433fe789d2b3b1924e65e7c5acaa141287a4142df53932aa5c354b7d",
+      "source_version": "74af01eb",
+      "content_hash": "ff9d41d3d726a2bb6224890561a25b227d078cd06b075c30049c7e6f49681af0",
       "dossier_path": "07_PROJECT_LEARNING/orange-cyberdefense-goad-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-cyberdefense-goad-learnings.md",
       "promoted_rules": [
         {
           "number": 2046,
           "title": "ludus v2 fix regression",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4354,
+          "title": "mssql): working SQL 2019 Express download url and WinRM memory quota",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -39261,7 +39266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:55:02.556Z",
+      "verified_at": "2026-10-25T14:50:54.443Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51487,8 +51492,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "214f243f",
-      "content_hash": "6f72ceb8985df38328d07f18a286c38db4dea8a9265559e5fd1028d2bb8cda06",
+      "source_version": "d6ef7fbb",
+      "content_hash": "d159dfdbdbdbf0158b110e60e288e510327178fab197e338cace2ade0e9d3fdf",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -51531,6 +51536,11 @@
           "number": 3835,
           "title": "Length-Aware Tensor Microbatching Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4355,
+          "title": "Batch: land 11 reviewed fixes (rc.100) (#2377)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51538,7 +51548,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T08:26:36.496Z",
+      "verified_at": "2026-10-25T14:50:59.137Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124147,6 +124157,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T14:44:30.171Z"
+    },
+    "rule-4354": {
+      "learning_id": "rule-4354",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4354,
+      "title": "mssql): working SQL 2019 Express download url and WinRM memory quota",
+      "source_url": "https://github.com/Orange-Cyberdefense/GOAD",
+      "source_version": "74af01eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:50:54.443Z"
+    },
+    "rule-4355": {
+      "learning_id": "rule-4355",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4355,
+      "title": "Batch: land 11 reviewed fixes (rc.100) (#2377)",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "d6ef7fbb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:50:59.137Z"
     }
   },
   "aliases": {
