@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `9224e5f6`  
+> **Source Version**: `796c21ca`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:56:12.441Z  
+> **Timestamp**: 2026-10-25T18:15:34.218Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:56:12.434Z  
+> **Harvest Timestamp**: 2026-10-25T18:15:34.209Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,259 +2203,217 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9224e5f6` (2026-10-25)
-**Commit Message**: fix: QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs review (#4916)
+### Incident Patch 1: `796c21ca` (2026-10-25)
+**Commit Message**: deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (#4917)
 
-* fix: QSV_SNIFF_PREAMBLE skips the preamble rows it finds
+* deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd
 
-Config sniffed the rows above the header and then ignored them, so a
-title line was read as the header. The Config readers now open files
-past the sniffed preamble, and the Polars-based commands (count, sqlp,
-joinp, pivotp, to parquet, writestat, profile, scoresql's plan) pass
-the same count to with_skip_lines.
+Moves the polars, polars-core and polars-arrow pins from d02c621 to
+7f902bd ("Python Polars 2.1.0", pola-rs/polars#30124), 14 commits ahead.
+Crate version (0.55.1), rust-toolchain (nightly-2026-09-01), the workspace
+[patch] and the crates/polars feature list are unchanged, so no other
+manifest edits are needed. Cargo.lock has a single polars tree and no
+unused patches.
 
-- Indexes still describe the file as stored (Config::index_reader), and
-  a file with a preamble is never read through its index.
-- QSV_SNIFF_DELIMITER alone only sniffs the delimiter; snappy files are
-  no longer sniffed (their bytes are compressed).
-- input keeps its own record-level skip for --auto-skip, so the preamble
-  isn't skipped twice (also in --skip-lastlines' row count), and skips it
-  under the env var without --auto-skip too.
+The upstream commits are mostly out-of-core/streaming memory work, plus
+COUNT(DISTINCT) in the streaming group-by (#30281) and boolean-expression
+simplification (#30293). Probed 14 NULL-heavy boolean and COUNT(DISTINCT)
+queries, plain and --streaming, on both pins: identical output.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix: preamble skipping in join seeks, luau autoindex, joinp all-string schema
+* docs: cite #4917 in the Polars CHANGELOG entry
 
-Follow-ups to the QSV_SNIFF_PREAMBLE change (roborev 5836):
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-- join recorded row positions relative to the reader's start (past the
-  preamble) but se
+---------
 
-**File**: `CHANGELOG.md` (modified, +5/-0)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **Looser: `dynamicEnum` no longer rejects empty cells.** In a column whose `type` allows null (e.g. `["string", "null"]`), an empty cell that `dynamicEnum` used to reject now passes, because no reference file can list null. To keep rejecting empty cells, remove `"null"` from the column's `type`.
-   - **Stricter: `uniqueCombinedWith` must name columns the CSV has.** A column name missing from the header (a typo, or a column only some files have) used to be skipped silently, so uniqueness was checked on fewer columns. Now the schema fails to compile (`'uniqueCombinedWith' column "x" is not in the CSV header`) and no rows are validated. The same goes for a column index past the last column, and for an index whose header name a later column repeats. A schema shared across files with different columns needs a `uniqueCombinedWith` that fits each file.
- 
-+- **`QSV_SNIFF_PREAMBLE` now skips the preamble rows it finds, so commands can return fewer rows and a different header** ([#4916](https://github.com/dathere/qsv/pull/4916)). It used to sniff the number of rows above the header and then ignore it (only `input --auto-skip` used it), so a title line above the header was read as the header. Now every command reads from the header, including `count`, `stats`, `input`, the Polars-based commands (`sqlp`, `joinp`, `pivotp`, `to parquet`, `writestat`) and the DuckDB queries of `scoresql --duckdb` and `describegpt`. A file with a preamble is read without its index, and `qsv index` still indexes the file as stored. Stats caches and Polars schemas are kept apart for the two modes, so turning the env var on or off never reuses one built the other way (a schema of the rows past an N-line preamble is `<file>.skip<N>.pschema.json`). `QSV_SNIFF_DELIMITER` alone now only sniffs the delimiter. Not covered: stdin and Polars SQL's `read_csv()` table function. **If you set `QSV_SNIFF_PREAMBLE`, check your results:** unset it to keep the old behavior, or use `input --skip-lines` to control the skip yourself.
-+
- ### Added
- - **`viz smart`: optional live mode for Data Schematics with [qsv-clientd](https://github.com/dathere/qsv-client)** ([#4848](https://github.com/dathere/qsv/pull/4848)).
-   - **Embedded source block.** Smart HTML now embeds a `qsv-schematic-source` JSON block. It contains the qsv version, a per-render `schematic_uuid`, a BLAKE3 fingerprint of the input (local files only; memory-mapped and multithreaded, about 0.05s per GB from the OS cache, skipped with `--no-daemon-bridge`), the row count, the PID and the smart arguments.
-@@ -100,6 +102,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
- 
- ### Fixed
-+- **`QSV_SNIFF_DELIMITER` no longer sets the output delimiter from the file being replaced** ([#4916](https://github.com/dathere/qsv/pull/4916)). With `-o out.csv` and an existing semicolon-delimited `out.csv`, the new output was written with semicolons, because the output path was sniffed like an input. Writers now use the delimiter from `--delimiter`, the extension or `QSV_DEFAULT_DELIMITER`, as without the env var.
-+- **`count` and `frequency` report a missing `dc:` entry** ([#4916](https://github.com/dathere/qsv/pull/4916)). They printed a bare `No such file or directory` for a `dc:` name that isn't cached, where other commands say `dc: cache entry '…' not found. Fetch it first…`. Their index lookup now checks the input's format error first, as the readers do.
-+- **`QSV_TOGGLE_HEADERS` accepts the usual true values** ([#4916](https://github.com/dathere/qsv/pull/4916)). It only toggled when set to exactly `1`, so `QSV_TOGGLE_HEADERS = True` (as `dotenv.template` writes it) silently did nothing. It now reads `1`, `true`, `yes`, `on` and the rest like the other boolean env vars, in every command and in `writestat`'s stats-cache check.
- - **A data file changed in the same second as its index no longer reuses the stale index.** ([#4915](https://github.com/dathere/qsv/pull/4915)) Index staleness compared whole-second mtimes with `>`, so a file rewritten in the same second the index was built looked current. `qsv count` then reported the old row count at exit 0, and commands that seek through the index could read the wrong rows. Mtimes are now compared at full precision, and an index whose mtime equals its data's (on filesystems with coarse timestamps, or mtimes copied from an archive) is rebuilt rather than trusted. That can mean one extra rebuild for a very small file indexed right after it was writt
+@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **New: `CREATE [OR REPLACE] TEMP TABLE`** in `.sql` scripts ([#30256](https://github.com/pola-rs/polars/pull/30256)). It works like `CREATE TABLE`.
+   - Unchanged on both revs: `REGEXP_REPLACE`, `REAL`/`DECIMAL` division and `CORR`/`COVAR` results.
+   - Also lower memory for CSV scans of wide rows ([#30165](https://github.com/pola-rs/polars/pull/30165)), out-of-core streaming windows and sorts, and smaller SQL code size.
++- **deps: Polars bumped to the Python Polars 2.1.0 release commit [`7f902bd`](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
+ - **deps: Polars bumped to upstream rev [`34cc518`](https://github.com/pola-rs/polars/commit/34cc5185a9d7c83e9e3b6b63022fe596c6aebb53)** (from `c7da28c`, [#4875](https://github.com/dathere/qsv/pull/4875)). No `sqlp` result that already worked changes; every difference is a query that used to fail.
+   - **Fixed: `COUNT(*)` over a `UNION ALL ... LIMIT n`** panicked ([#30150](https://github.com/pola-rs/polars/pull/30150)).
+   - **Fixed: a correlated subquery whose table has a column named like the outer table** (`WHERE w.g = t.g` where `w` has a column `t`) failed with `StructFieldNotFound` ([#30149](https://github.com/pola-rs/polars/pull/30149)). This regressed in the `c7da28c` bump.
 ```
 
-**File**: `docs/ENVIRONMENT_VARIABLES.md` (modified, +3/-3)
+**File**: `Cargo.lock` (modified, +28/-28)
 ```diff
-@@ -5,10 +5,10 @@
- | `QSV_DOTENV_PATH` | The full pathname of the dotenv file to load, OVERRIDING existing environment variables. This takes precedence over any other dotenv files in the filesystem. Set to "<NONE>" to disable dotenv processing. |
- | `QSV_DEFAULT_DELIMITER` | single ascii character to use as delimiter when reading stdin or a file without a recognized extension. Files ending in `.csv`, `.tsv`/`.tab` or `.ssv` (or their `.sz` snappy variants) are always read with comma, tab or semicolon respectively, and the `--delimiter` option overrides this variable. Defaults to "," (comma) when not set. Note that this will also set the delimiter for qsv's output to stdout.<br>However, using the `--output` option, regardless of this environment variable, will automatically change the delimiter used in the generated file based on the file extension - i.e. comma for `.csv`; tab for `.tsv` & `.tab` ; and semicolon for `.ssv` files.<br>Exception: `joinp`, `sqlp`, `scoresql` and `readstat` always use tab for a `.tsv`/`.tab` path and semicolon for an `.ssv` path, whether reading it or writing it with `--output`, even when `--delimiter` is given. |
- | `QSV_STDIN_SPOOL` | Set by qsv itself, not by users: when qsv copies piped stdin to a temp `stdin.csv` and then runs qsv subprocesses on it (e.g. `describegpt`, `moarstats`, `profile`), it passes the temp file's path in this variable so the subprocesses also read it with stdin's delimiter (`QSV_DEFAULT_DELIMITER`) rather than the comma its `.csv` name implies. |
--| `QSV_SNIFF_DELIMITER` | if set, the delimiter is automatically detected. Overrides `QSV_DEFAULT_DELIMITER` and the file extension; the `--delimiter` option still takes precedence. Note that this does not work with stdin. |
--| `QSV_SNIFF_PREAMBLE` | if set, qsv will attempt to sniff the number of preamble rows. |
-+| `QSV_SNIFF_DELIMITER` | if set, the delimiter is automatically detected. Overrides `QSV_DEFAULT_DELIMITER` and the file extension; the `--delimiter` option still takes precedence. Note that this does not work with stdin. Only inputs are sniffed: an existing output file being replaced doesn't set the delimiter qsv writes with. |
-+| `QSV_SNIFF_PREAMBLE` | if set, qsv sniffs the preamble rows above the header (a title or a "generated on" line, say) and skips them, so the header is the first row read. It also sniffs the delimiter, as `QSV_SNIFF_DELIMITER` does. Only files are sniffed, not stdin. The Polars-based commands (`sqlp`, `joinp`, `pivotp`, `to parquet`, …) and the DuckDB queries of `scoresql` and `describegpt` skip the rows too, but Polars SQL's `read_csv()` table function reads the file as stored. A file with a preamble is never read through its index, and `qsv index` still indexes the file as stored. Stats caches and Polars schemas are kept apart for the two modes: a schema of the rows past an N-line preamble is `<file>.skip<N>.pschema.json`. |
- | `QSV_NO_HEADERS` | if set, the first row will **NOT** be interpreted as headers. Supersedes `QSV_TOGGLE_HEADERS`. |
--| `QSV_TOGGLE_HEADERS` | if set to `1`, toggles header setting - i.e. inverts qsv header behavior, with no headers being the default, & setting `--no-headers` will actually mean headers will not be ignored. |
-+| `QSV_TOGGLE_HEADERS` | if set to a true value (`1`, `true`, `yes`, `on`, ...), toggles header setting - i.e. inverts qsv header behavior, with no headers being the default, & setting `--no-headers` will actually mean headers will not be ignored. |
- | `QSV_ANTIMODES_LEN` | set to the maximum number of characters when listing "antimodes" in `stats`. Otherwise, the default is 100. Set to 0 to disable length limiting. |
- | `QSV_AUTOINDEX_SIZE` | if set, specifies the minimum file size (in bytes) of a CSV file before an index is automatically created. Note that stale indices are automatically updated regardless of this setting. |
- | `QSV_STATSCACHE_MODE` | Specifies how the stats cache is used by "smart" commands. Valid values are:<br />  * auto - use the stats cache if it's valid (the stats-jsonl file exists and is current) - default.<br />  * force - if the cache does not exist, create it by running stats.<br />  * none - do not use the stats cache, even if it exists. |
+@@ -6037,7 +6037,7 @@ dependencies = [
+ [[package]]
+ name = "polars"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
++source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+  "getrandom 0.2.17",
+  "getrandom 0.4.3",
+@@ -6062,7 +6062,7 @@ dependencies = [
+ [[package]]
+ name = "polars-arrow"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
++source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+  "atoi_simd",
+  "avro-schema",
+@@ -6106,7 +6106,7 @@ dependencies = [
+ [[package]]
+ name = "polars-async"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
++source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+  "atomic-waker",
+  "crossbeam-channel",
+@@ -6125,7 +6125,7 @@ dependencies = [
+ [[package]]
+ name = "polars-buffer"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
++source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+  "bytemuck",
+  "either",
+@@ -6137,7 +6137,7 @@ dependencies = [
+ [[package]]
+ name = "polars-compute"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
++source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+  "atoi_simd",
+  "bytemuck",
+@@ -6162,7 +6162,7 @@ dependencies = [
+ [[package]]
+ name = "polars-config"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
++source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+  "polars-error",
+  "serde",
+@@ -6172,7 +6172,7 @@ dependencies = [
+ [[package]]
+ name = "polars-core"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
++source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+  "atoi_simd",
+  "bitflags 2.13.2",
+@@ -6213,7 +6213,7 @@ dependencies = [
+ [[package]]
+ name = "polars-defs"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
++source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+  "chrono",
+  "chrono-tz",
+@@ -6229,7 +6229,7 @@ dependencies = [
+ [[package]]
+ name = "polars-descriptions"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
++source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+  "serde",
+  "strum_macros 0.28.0",
+@@ -6238,7 +6238,7 @@ dependencies = [
+ [[package]]
+ name = "polars-dtype"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
++source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+  "boxcar",
+  "hashbrown 0.17.1",
+@@ -6252,7 +6252,7 @@ dependencies = [
+ [[package]]
+ name = "polars-error"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
++source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+  "avro-schema",
+  "object_store",
+@@ -6266,7 +6266,7 @@ dependencies = [
+ [[package]]
+ name = "polars-expr"
+ version = "0.55.1"
+-source = "git+https://github.com/pola-rs/polars?rev=d02c62175ad906f3c54cda7a0d917e6a72f73865#d02c62175ad906f3c54cda7a0d917e6a72f73865"
++source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ dependencies = [
+  "bitflag
 ```
 
-**File**: `docs/contributor/STATS_QUICK_REFERENCE.md` (modified, +2/-2)
+**File**: `Cargo.toml` (modified, +5/-5)
 ```diff
-@@ -175,7 +175,7 @@ Bob,25,87.2" | ./target/release/qsv stats
- - Full technical guide: `STATS_TECHNICAL_GUIDE.md` (this repo)
- - qsv wiki: https://github.com/dathere/qsv/wiki
- - stats command docs: `/docs/PERFORMANCE.md`
--- Test cases: `tests/test_stats.rs` (~9,319 lines)
-+- Test cases: `tests/test_stats.rs` (~10,383 lines)
+@@ -532,8 +532,8 @@ serial_test = { version = "4.0", features = ["file_locks"] }
+ [patch.crates-io]
+ # polars-readstat-rs depends on these directly; redirect them onto the same git polars
+ # revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io.
+-polars-core  = { git = "https://github.com/pola-rs/polars", rev = "d02c62175ad906f3c54cda7a0d917e6a72f73865" }
+-polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "d02c62175ad906f3c54cda7a0d917e6a72f73865" }
++polars-core  = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92" }
++polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92" }
+ # Polars (since py-2.0.0) calls HashTable::prefetch_{get,insert}, which exist only in its
+ # hashbrown fork (https://github.com/rust-lang/hashbrown/pull/727). Polars' own workspace
+ # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
+@@ -595,9 +595,9 @@ webdriver-downloader = { git = "https://github.com/jqnatividad/webdriver-downloa
+ #     (e.g. py-1.19.0:52ea381 to indicate that we are Python Polars 1.19.0,
+ #      and the commit hash 52ea381)
+ # ================================
+-# QSV_POLARS_REV=py-2.0.0:d02c621
+-# polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.0.0", optional = true }
+-polars = { git = "https://github.com/pola-rs/polars", rev = "d02c62175ad906f3c54cda7a0d917e6a72f73865", optional = true }
++# QSV_POLARS_REV=py-2.1.0:7f902bd
++# polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
++polars = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92", optional = true }
  
- ## Quick Debugging
- 
-@@ -204,7 +204,7 @@ cat file.stats.csv.data.jsonl | jq . | head
- | `src/config.rs` | CSV reader configuration |
- | `src/select.rs` | Column selection logic |
- | `src/util.rs` | Utility functions |
--| `tests/test_stats.rs` | Comprehensive test suite (~9,319 lines) |
-+| `tests/test_stats.rs` | Comprehensive test suite (~10,383 lines) |
- | `Cargo.toml` | Dependencies (see `stats` and `csv` crates) |
- 
- ---
+ # Apache DataSketches (t-digest, HLL, Frequent Items) — upstream C++ does not
+ # support big-endian targets, so we exclude the crate on big-endian builds.
 ```
 
-**File**: `dotenv.template` (modified, +2/-1)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -40,7 +40,8 @@
- # Note that this does not work with stdin.
- QSV_SNIFF_DELIMITER = False
- 
--# if true, qsv will attempt to sniff the number of preamble rows.
-+# if true, qsv sniffs the preamble rows above the header (and the delimiter)
-+# and skips them, so the header is the first row read. Does not work with stdin.
- # QSV_SNIFF_PREAMBLE = False
- 
- # if true, the first row will **NOT** be interpreted as headers.
+@@ -114,7 +114,7 @@
+ 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
+ 🗄️: [Extended input support](#extended-input-support).  
+ 🗃️: [Limited Extended input support](#limited-extended-input-support).  
+-🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.0.0:d02c621](https://img.shields.io/badge/polars-0.55.1:py--2.0.0:d02c621-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.0.0) vectorized query engine.  
++🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:7f902bd](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:7f902bd-blue?logo=polars)](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92) vectorized query engine.  
+ 🤖: command uses Natural Language Processing or Generative AI.  
+ 🏎️: multithreaded and/or faster when an index (📇) is available.  
+ 🚀: multithreaded even without an index.  
 ```
 
-**File**: `src/cmd/clean.rs` (modified, +36/-1)
+**File**: `docs/help/TableOfContents.md` (modified, +1/-1)
 ```diff
-@@ -382,13 +382,27 @@ fn handle_pschema(path: &Path, full: &str, stale: bool, victims: &mut Vec<(PathB
-     let Some(base) = full.strip_suffix(".pschema.json") else {
-         return;
-     };
--    let source = PathBuf::from(base);
-+    // a source can itself be named like `x.skip2` (under QSV_SKIP_FORMAT_CHECK)
-+    let source = if Path::new(base).exists() {
-+        PathBuf::from(base)
-+    } else {
-+        PathBuf::from(strip_skip_suffix(base))
-+    };
-     if stale && !stale_or_orphaned(path, Some(&source)) {
-         return;
-     }
-     push_if_exists(victims, path.to_path_buf());
- }
- 
-+/// `<source>.skip<N>` -> `<source>`: a polars schema of the rows past `N` preamble lines that
-+/// `QSV_SNIFF_PREAMBLE` skipped (see `util::pschema_path`).
-+fn strip_skip_suffix(base: &str) -> &str {
-+    match base.rsplit_once(".skip") {
-+        Some((source, n)) if !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit()) => source,
-+        _ => base,
-+    }
-+}
-+
- fn handle_moarstats(path: &Path, full: &str, stale: bool, victims: &mut Vec<(PathBuf, u64)>) {
-     let Some(base) = full
-         .strip_suffix(".stats.bivariate.joined.csv")
-@@ -496,6 +510,27 @@ fn candidate_anchors(src: &Path) -> Vec<PathBuf> {
-     let full = src.to_string_lossy();
-     v.push(PathBuf::from(format!("{full}.schema.json")));
-     v.push(PathBuf::from(format!("{full}.pschema.json")));
-+    // and its `<source>.skip<N>.pschema.json` variants (see `strip_skip_suffix`)
-+    // a bare file name's parent is "", which read_dir rejects
-+    let dir = if parent.as_os_str().is_empty() {
-+        Path::new(".")
-+    } else {
-+        parent
-+    };
-+    if let (Some(name), Ok(entries)) = (src.file_name(), fs::read_dir(dir)) {
-+        let prefix = format!("{}.skip", name.to_string_lossy());
-+        for entry in entries.flatten() {
-+            let file_name = entry.file_name();
-+            let file_name = file_name.to_string_lossy();
-+            if file_name
-+                .strip_prefix(&prefix)
-+                .and_then(|rest| rest.strip_suffix(".pschema.json"))
-+                .is_some_and(|n| !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit()))
-+            {
-+                v.push(parent.join(&*file_name));
-+            }
-+        }
-+    }
-     v.push(PathBuf::from(format!("{full}.valid")));
-     v.push(PathBuf::from(format!("{full}.invalid")));
-     v.push(PathBuf::from(format!("{full}.validation-errors.tsv")));
-```
-
-**File**: `src/cmd/count.rs` (modified, +5/-0)
-```diff
-@@ -545,6 +545,7 @@ pub fn polars_count_input(conf: &Config) -> CliResult<u64> {
-         };
- 
-         let delimiter = read_conf.get_delimiter();
-+        let preamble_lines = read_conf.preamble_lines()?;
- 
-         {
-             // First, try to read the first row to check if the file is empty
-@@ -555,6 +556,7 @@ pub fn polars_count_input(conf: &Config) -> CliResult<u64> {
-             let schema_df = LazyCsvReader::new(PlRefPath::new(&*filepath.to_string_lossy()))
-                 .with_separator(delimiter)
-                 .with_comment_prefix(comment_prefix.clone())
-+                .with_skip_lines(preamble_lines)
-                 .with_n_rows(Some(1))
-                 .with_ignore_errors(true)
-                 .finish()?
-@@ -584,6 +586,9 @@ pub fn polars_count_input(conf: &Config) -> CliResult<u64> {
-         let lazy_df = LazyCsvReader::new(PlRefPath::new(&*filepath.to_string_lossy()))
-             .with_separator(delimiter)
-             .with_comment_prefix(comment_prefix)
-+            // sniffed preamble rows (QSV_SNIFF_PREAMBLE) sit above the header; skipped as raw
-+            // lines, as the Config readers skip them
-+            .with_skip_lines(preamble_lines)
-             .with_ignore_errors(true)
-             .finish()?;
- 
-```
-
-**File**: `src/cmd/describegpt.rs` (modified, +12/-3)
-```diff
-@@ -4731,7 +4731,10 @@ fn format_phase_markdown(
-                 READ_CSV_AUTO_REGEX
-                     .replace_all(
-                         &formatted_output,
--                        format!("read_csv_auto('{escaped_path}', strict_mode=false)"),
-+                        format!(
-+                            "read_csv_auto('{escaped_path}', strict_mode=false{})",
-+                            crate::config::duckdb_skip_arg(Path::new(input_path))
-+                        ),
-                     )
-                     .into_owned()
-             } else {
-@@ -5757,14 +5760,20 @@ fn execute_sql_query_phase(
-             sql_query = READ_CSV_AUTO_REGEX
-                 .replace_all(
-                     &sql_query,
--                    format!("read_csv_auto('{escaped_path}', strict_mode=false)"),
-+                    format!(
-+                        "read_csv_auto('{escaped_path}', strict_mode=false{})",
-+                        crate::config::duckdb_skip_arg(Path::new(input_path))
-+                    ),
-                 )
-                 .into_owned();
-         } else {
-             // Fallback: replace {INPUT_TABLE_NAME} directly
-             sql_query = sql_query.replace(
-                 INPUT_TABLE_NAME,
--                &format!("read_csv_auto('{escaped_path}', strict_mode=false)"),
-+                &format!(
-+                    "read_csv_auto('{escaped_path}', strict_mode=false{})",
-+                    crate::config::duckdb_skip_arg(Path::new(input_path))
-+                ),
-             );
-         }
-         log::debug!("DuckDB SQL query:\n{sql_query}");
-```
-
-**File**: `src/cmd/index.rs` (modified, +1/-1)
-```diff
-@@ -61,7 +61,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     };
- 
-     let rconfig = Config::new(Some(args.arg_input).as_ref());
--    let mut rdr = rconfig.reader_file()?;
-+    let mut rdr = rconfig.index_reader()?;
- 
-     // build into a temp beside `pidx` and rename into place only once the index is complete.
-     // Writing straight to `pidx` destroyed a pre-existing good index and left a partial one
+@@ -96,7 +96,7 @@
+ 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
+ 🗄️: [Extended input support](../../README.md#extended-input-support).  
+ 🗃️: [Limited Extended input support](../../README.md#limited-extended-input-support).  
+-🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.0.0:d02c621](https://img.shields.io/badge/polars-0.55.1:py--2.0.0:d02c621-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.0.0) vectorized query engine.  
++🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:7f902bd](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:7f902bd-blue?logo=polars)](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92) vectorized query engine.  
+ 🤖: command uses Natural Language Processing or Generative AI.  
+ 🏎️: multithreaded and/or faster when an index (📇) is available.  
+ 🚀: multithreaded even without an index.  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4917** (2026-10-25): deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (@jqnatividad)
 - **PR #4916** (2026-10-25): fix: QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs review (@jqnatividad)
 - **PR #4915** (2026-10-25): fix(index): compare index staleness at full mtime precision (@jqnatividad)
 - **PR #4914** (2026-10-25): fix: describegpt subprocesses and `to parquet` read piped stdin / .tsv with the right delimiter (@jqnatividad)
 - **PR #4913** (2026-10-25): fix(validate): uniqueCombinedWith column checks, duplicate-header indices, dynamicEnum index, schema URLs (@jqnatividad)
 - **PR #4912** (2026-10-24): fix(validate): #4911 follow-ups (boolean dynamicEnum, $id-scoped $refs, test helper) (@jqnatividad)
-- **PR #4911** (2026-10-24): fix(validate): dynamicEnum on numeric/nullable columns, $ref types, multi-type arrays (@jqnatividad)
 
 ---
 
@@ -2475,13 +2433,13 @@ Follow-ups to the QSV_SNIFF_PREAMBLE change (roborev 5836):
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs rev
+## X. deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (#4917)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9224e5f6`: QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs review (#4916). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `796c21ca`: deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (#4917). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2489,9 +2447,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`QSV_SNIFF_PREAMBLE` now skips the preamble rows it finds, so commands can return fewer rows and a different header** ([#4916](https://github.com/dathere/qsv/pull/4916)). It used to sniff the number of rows above the header and then ignore it (only `input --auto-skip` used it), so a title line above the header was read as the header. Now every command reads from the header, including `count`, `stats`, `input`, the Polars-based commands (`sqlp`, `joinp`, `pivotp`, `to parquet`, `writestat`) and the DuckDB queries of `scoresql --duckdb` and `describegpt`. A file with a preamble is read without its index, and `qsv index` still indexes the file as stored. Stats caches and Polars schemas are kept apart for the two modes, so turning the env var on or off never reuses one built the other way (a schema of the rows past an N-line preamble is `<file>.skip<N>.pschema.json`). `QSV_SNIFF_DELIMITER` alone now only sniffs the delimiter. Not covered: stdin and Polars SQL's `read_csv()` table function. **If you set `QSV_SNIFF_PREAMBLE`, check your results:** unset it to keep the old behavior, or use `input --skip-lines` to control the skip yourself.
-
-- **`QSV_SNIFF_DELIMITER` no longer sets the
+- **deps: Polars bumped to the Python Polars 2.1.0 release commit [`7f902bd`](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2501,4 +2457,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9224e5f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `796c21ca` are properly handled with clean fallback behavior.

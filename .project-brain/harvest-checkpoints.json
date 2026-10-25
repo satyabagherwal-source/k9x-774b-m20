@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T18:09:00.621Z",
+  "last_updated": "2026-10-25T18:15:34.612Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1924,14 +1924,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "content_hash": "bb34440346b0cd1fc6d91819348cbe6dec69b1696f478b5ef743861fc90275bd",
-      "verified_at": "2026-10-20T22:32:49.547Z",
+      "content_hash": "91718c64b8ce20c25b4f6b7f4e428fa63d78c6898c6726256336367122a30223",
+      "verified_at": "2026-10-25T18:15:28.748Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:32:49.547Z"
+      "last_updated": "2026-10-25T18:15:28.748Z"
     },
     "slopus/happy": {
       "repository": "slopus/happy",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "fd30d27ff120219d42b6a04c206f0639a94eff30037688ff520cc844faa7e711",
-      "verified_at": "2026-10-25T15:56:12.831Z",
+      "content_hash": "a9c31fb766979a1edd943c64082118aeb6a53fecc1877931f4780f5a1176b618",
+      "verified_at": "2026-10-25T18:15:34.607Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T15:56:12.831Z"
+      "last_updated": "2026-10-25T18:15:34.607Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -6606,14 +6606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typedb-typedb",
-      "content_hash": "49ab057325dbbcc7a7a6b6f0b5ec8cdf3a5f415f983131686c3adc5f1ea725c3",
-      "verified_at": "2026-10-24T20:31:15.941Z",
+      "content_hash": "2673a5c6d41815377fc76766ea6f7b359bd70efd0217c1782807f52ce7343cf8",
+      "verified_at": "2026-10-25T18:15:32.852Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T20:31:15.941Z"
+      "last_updated": "2026-10-25T18:15:32.852Z"
     },
     "mfontanini/presenterm": {
       "repository": "mfontanini/presenterm",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "2a46901ee6bec79a042e0849fa01aa9c1ea845bf0e2b9eec2d9d51a539031ccd",
-      "verified_at": "2026-10-23T10:24:11.347Z",
+      "content_hash": "7256a57567b0c2dd4edeb06f83768af7a439bbce0d765fdac25e76c3d0294aa1",
+      "verified_at": "2026-10-25T18:15:20.623Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:24:11.347Z"
+      "last_updated": "2026-10-25T18:15:20.623Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "5d80cee2c83c284802c5cf5b40b46e642866319907ea85e722624f18a8073ad4",
-      "verified_at": "2026-10-25T02:25:23.239Z",
+      "content_hash": "214f38576504481778bbcb89621897e53af61562a205c404165d71e661500812",
+      "verified_at": "2026-10-25T18:15:28.972Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:25:23.239Z"
+      "last_updated": "2026-10-25T18:15:28.972Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",

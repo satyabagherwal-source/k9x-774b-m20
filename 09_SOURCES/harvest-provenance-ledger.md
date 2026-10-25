@@ -4941,3 +4941,8 @@ Every entry in this ledger must capture:
 | `learn-github-alin23-lunar` | `https://github.com/alin23/Lunar` | `06950e25` | Multi-dimensional audit evidence | 2026-10-25T18:08:55.760Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `e471c770` | Multi-dimensional audit evidence | 2026-10-25T18:08:58.444Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `b71e0f30` | Multi-dimensional audit evidence | 2026-10-25T18:09:00.606Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `047ddf53` | Multi-dimensional audit evidence | 2026-10-25T18:15:20.615Z |
+| `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-25T18:15:28.740Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `1bcd8820` | Multi-dimensional audit evidence | 2026-10-25T18:15:28.965Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `fe883d1b` | Multi-dimensional audit evidence | 2026-10-25T18:15:32.845Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `796c21ca` | Multi-dimensional audit evidence | 2026-10-25T18:15:34.599Z |

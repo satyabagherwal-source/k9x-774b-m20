@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T18:09:00.545Z",
+  "last_updated": "2026-10-25T18:15:34.541Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7821,8 +7821,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "9224e5f6",
-      "content_hash": "fd30d27ff120219d42b6a04c206f0639a94eff30037688ff520cc844faa7e711",
+      "source_version": "796c21ca",
+      "content_hash": "a9c31fb766979a1edd943c64082118aeb6a53fecc1877931f4780f5a1176b618",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8015,6 +8015,11 @@
           "number": 4374,
           "title": "QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs rev",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4410,
+          "title": "deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (#4917)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8022,7 +8027,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:56:12.703Z",
+      "verified_at": "2026-10-25T18:15:34.530Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9852,8 +9857,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "992efbfa",
-      "content_hash": "2a46901ee6bec79a042e0849fa01aa9c1ea845bf0e2b9eec2d9d51a539031ccd",
+      "source_version": "047ddf53",
+      "content_hash": "7256a57567b0c2dd4edeb06f83768af7a439bbce0d765fdac25e76c3d0294aa1",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -9893,7 +9898,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:24:11.263Z",
+      "verified_at": "2026-10-25T18:15:20.540Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15873,7 +15878,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "bb34440346b0cd1fc6d91819348cbe6dec69b1696f478b5ef743861fc90275bd",
+      "content_hash": "91718c64b8ce20c25b4f6b7f4e428fa63d78c6898c6726256336367122a30223",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -15896,6 +15901,16 @@
           "number": 2461,
           "title": "GGUF Quantization Integrity for Drop-in Replacement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4407,
+          "title": "Semantic Decoupling via Vector Projection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4408,
+          "title": "GGUF Quantization Integrity for Mixed-Precision Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15910,7 +15925,7 @@
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv49gron",
         "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv4mtxpo"
       ],
-      "verified_at": "2026-10-20T22:32:49.454Z",
+      "verified_at": "2026-10-25T18:15:28.663Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48092,7 +48107,7 @@
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
       "source_version": "1bcd8820",
-      "content_hash": "5d80cee2c83c284802c5cf5b40b46e642866319907ea85e722624f18a8073ad4",
+      "content_hash": "214f38576504481778bbcb89621897e53af61562a205c404165d71e661500812",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -48124,7 +48139,7 @@
         {
           "number": 3977,
           "title": "Prevent RPCFactory connection leaks after shutdown (#12658)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48132,7 +48147,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:25:23.160Z",
+      "verified_at": "2026-10-25T18:15:28.895Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49844,8 +49859,8 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "3c809f9d",
-      "content_hash": "49ab057325dbbcc7a7a6b6f0b5ec8cdf3a5f415f983131686c3adc5f1ea725c3",
+      "source_version": "fe883d1b",
+      "content_hash": "2673a5c6d41815377fc76766ea6f7b359bd70efd0217c1782807f52ce7343cf8",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
@@ -49878,6 +49893,11 @@
           "number": 3951,
           "title": "Big-Endian Lexicographical Byte Vector Incrementation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4409,
+          "title": "concurrent read queries within a transaction over HTTP (#8036)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49885,7 +49905,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:31:15.862Z",
+      "verified_at": "2026-10-25T18:15:32.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -118966,7 +118986,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T02:25:23.160Z"
+      "verified_at": "2026-10-25T18:15:28.895Z"
     },
     "rule-3978": {
       "learning_id": "rule-3978",
@@ -125224,6 +125244,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T18:09:00.533Z"
+    },
+    "rule-4407": {
+      "learning_id": "rule-4407",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4407,
+      "title": "Semantic Decoupling via Vector Projection",
+      "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T18:15:28.663Z"
+    },
+    "rule-4408": {
+      "learning_id": "rule-4408",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4408,
+      "title": "GGUF Quantization Integrity for Mixed-Precision Models",
+      "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T18:15:28.663Z"
+    },
+    "rule-4409": {
+      "learning_id": "rule-4409",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4409,
+      "title": "concurrent read queries within a transaction over HTTP (#8036)",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "fe883d1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T18:15:32.760Z"
+    },
+    "rule-4410": {
+      "learning_id": "rule-4410",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4410,
+      "title": "deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (#4917)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "796c21ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T18:15:34.530Z"
     }
   },
   "aliases": {

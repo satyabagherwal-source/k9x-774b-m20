@@ -3,7 +3,7 @@
 > **Source Version**: `1bcd8820`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:25:22.873Z  
+> **Timestamp**: 2026-10-25T18:15:28.701Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:25:22.325Z  
+> **Harvest Timestamp**: 2026-10-25T18:15:28.141Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 23965 stars
+- **Stars / Engagement**: 23978 stars
 
 ---
 
@@ -2778,12 +2778,12 @@ the cluster histories never matched.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12720** (2026-10-25): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 - **PR #12712** (2026-10-24): Cloud/v1.33.0-164: Merge revisioned task queue user data during replication (@rkannan82)
 - **PR #12709** (2026-10-24): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 - **PR #12700** (2026-10-24): WCP: Read multi batch event ranges from the XDC cache (@simvlad)
 - **PR #12695** (2026-10-23): Blacklist internal Nexus caller headers by default (@prathyushpv)
 - **PR #12693** (2026-10-23): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12692** (2026-10-23): Update test shard salt (@temporal-cicd[bot])
 
 ---
 

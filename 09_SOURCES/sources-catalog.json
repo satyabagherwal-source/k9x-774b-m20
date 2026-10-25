@@ -775,8 +775,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "bb34440346b0cd1fc6d91819348cbe6dec69b1696f478b5ef743861fc90275bd",
-    "lastHarvestedAt": "2026-10-20T22:32:49.540Z",
+    "contentHash": "91718c64b8ce20c25b4f6b7f4e428fa63d78c6898c6726256336367122a30223",
+    "lastHarvestedAt": "2026-10-25T18:15:28.740Z",
     "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "9224e5f6",
+    "sourceVersion": "796c21ca",
     "license": "NOASSERTION",
-    "contentHash": "fd30d27ff120219d42b6a04c206f0639a94eff30037688ff520cc844faa7e711",
-    "lastHarvestedAt": "2026-10-25T15:56:12.824Z",
+    "contentHash": "a9c31fb766979a1edd943c64082118aeb6a53fecc1877931f4780f5a1176b618",
+    "lastHarvestedAt": "2026-10-25T18:15:34.599Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "3c809f9d",
+    "sourceVersion": "fe883d1b",
     "license": "MPL-2.0",
-    "contentHash": "49ab057325dbbcc7a7a6b6f0b5ec8cdf3a5f415f983131686c3adc5f1ea725c3",
-    "lastHarvestedAt": "2026-10-24T20:31:15.929Z",
+    "contentHash": "2673a5c6d41815377fc76766ea6f7b359bd70efd0217c1782807f52ce7343cf8",
+    "lastHarvestedAt": "2026-10-25T18:15:32.845Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "992efbfa",
+    "sourceVersion": "047ddf53",
     "license": "Apache-2.0",
-    "contentHash": "2a46901ee6bec79a042e0849fa01aa9c1ea845bf0e2b9eec2d9d51a539031ccd",
-    "lastHarvestedAt": "2026-10-23T10:24:11.333Z",
+    "contentHash": "7256a57567b0c2dd4edeb06f83768af7a439bbce0d765fdac25e76c3d0294aa1",
+    "lastHarvestedAt": "2026-10-25T18:15:20.615Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -6465,8 +6465,8 @@
     "sourceUrl": "https://github.com/temporalio/temporal",
     "sourceVersion": "1bcd8820",
     "license": "MIT",
-    "contentHash": "5d80cee2c83c284802c5cf5b40b46e642866319907ea85e722624f18a8073ad4",
-    "lastHarvestedAt": "2026-10-25T02:25:23.226Z",
+    "contentHash": "214f38576504481778bbcb89621897e53af61562a205c404165d71e661500812",
+    "lastHarvestedAt": "2026-10-25T18:15:28.965Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {

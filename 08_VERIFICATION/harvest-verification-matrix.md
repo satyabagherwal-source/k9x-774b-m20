@@ -4934,3 +4934,8 @@
 | `CYCLE-20261025-65E5` | `2026-10-25T18:08:55.757Z` | `alin23/Lunar` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/alin23-lunar-learnings.md` | Yes (`3a12c4a4...`) |
 | `CYCLE-20261025-67GP` | `2026-10-25T18:08:58.441Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4405` | Yes (`91d45098...`) |
 | `CYCLE-20261025-694R` | `2026-10-25T18:09:00.603Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4406` | Yes (`a7b249b4...`) |
+| `CYCLE-20261025-EECK` | `2026-10-25T18:15:20.612Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md` | Yes (`7256a575...`) |
+| `CYCLE-20261025-EKM9` | `2026-10-25T18:15:28.737Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4407, Rule 4408` | Yes (`91718c64...`) |
+| `CYCLE-20261025-EKSH` | `2026-10-25T18:15:28.961Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3977` | Yes (`214f3857...`) |
+| `CYCLE-20261025-ENS9` | `2026-10-25T18:15:32.841Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4409` | Yes (`2673a5c6...`) |
+| `CYCLE-20261025-EP50` | `2026-10-25T18:15:34.596Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4410` | Yes (`a9c31fb7...`) |
