@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T20:55:45.140Z",
+  "last_updated": "2026-10-25T21:02:21.707Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47777,8 +47777,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "b71e0f30",
-      "content_hash": "a7b249b4ceac097ddad4824604e48af23ff8dbbd57764a96f436b2530e3edbff",
+      "source_version": "a1e51f49",
+      "content_hash": "12b25180ce3a9beab7fe5aa01657560b06f307b29691d370b1a0373abded375b",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -47836,6 +47836,11 @@
           "number": 4406,
           "title": "go.mod: update gliderssh to remove data race on timeouts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4448,
+          "title": "tsnet: authorize ListenSSH peers, fix PTY emulation and session queue bound",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47843,7 +47848,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T18:09:00.533Z",
+      "verified_at": "2026-10-25T21:02:15.912Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52600,8 +52605,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "e79b6a7c",
-      "content_hash": "36f1ac4797798fbf122ded1c56058933ce39f74d794af2d328cdcdb864049d62",
+      "source_version": "0f38c118",
+      "content_hash": "e982eec13d8e6ebb14b7deb8550c8a6472932f2a7854d8d4be64c91732cf869b",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -52634,6 +52639,11 @@
           "number": 4053,
           "title": "YT-29127: Fix calculation of layers/files* job statistics. Add missing statistic",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4449,
+          "title": "Prepare Rust 1.95 and shared crate dependencies (1/4)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52641,7 +52651,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:44:22.705Z",
+      "verified_at": "2026-10-25T21:02:21.689Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62235,7 +62245,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/datalab-to/indra-ocr",
       "source_version": "hf-datalab-to-indra-ocr",
-      "content_hash": "2dc8492d252427d6f87a7656083dd65e9221cf25e238412508bb7dabe9194832",
+      "content_hash": "bd34cb5eda857f45f6e4fd4870756269909a2eb2dee5ba0ae58e46b5de8273a2",
       "dossier_path": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "promoted_rules": [
@@ -62260,7 +62270,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T01:17:40.131Z",
+      "verified_at": "2026-10-25T21:02:04.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126036,6 +126046,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T20:49:24.462Z"
+    },
+    "rule-4448": {
+      "learning_id": "rule-4448",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4448,
+      "title": "tsnet: authorize ListenSSH peers, fix PTY emulation and session queue bound",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "a1e51f49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T21:02:15.912Z"
+    },
+    "rule-4449": {
+      "learning_id": "rule-4449",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4449,
+      "title": "Prepare Rust 1.95 and shared crate dependencies (1/4)",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "0f38c118",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T21:02:21.689Z"
     }
   },
   "aliases": {

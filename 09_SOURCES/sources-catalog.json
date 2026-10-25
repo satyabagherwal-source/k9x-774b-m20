@@ -1715,8 +1715,8 @@
     "sourceUrl": "https://huggingface.co/datalab-to/indra-ocr",
     "sourceVersion": "hf-datalab-to-indra-ocr",
     "license": "Open-Source",
-    "contentHash": "2dc8492d252427d6f87a7656083dd65e9221cf25e238412508bb7dabe9194832",
-    "lastHarvestedAt": "2026-10-21T01:17:40.182Z",
+    "contentHash": "bd34cb5eda857f45f6e4fd4870756269909a2eb2dee5ba0ae58e46b5de8273a2",
+    "lastHarvestedAt": "2026-10-25T21:02:04.831Z",
     "learningId": "learn-huggingface-datalab-to-indra-ocr"
   },
   "chrisryugj-kordoc": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "b71e0f30",
+    "sourceVersion": "a1e51f49",
     "license": "BSD-3-Clause",
-    "contentHash": "a7b249b4ceac097ddad4824604e48af23ff8dbbd57764a96f436b2530e3edbff",
-    "lastHarvestedAt": "2026-10-25T18:09:00.606Z",
+    "contentHash": "12b25180ce3a9beab7fe5aa01657560b06f307b29691d370b1a0373abded375b",
+    "lastHarvestedAt": "2026-10-25T21:02:15.981Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "e79b6a7c",
+    "sourceVersion": "0f38c118",
     "license": "Apache-2.0",
-    "contentHash": "36f1ac4797798fbf122ded1c56058933ce39f74d794af2d328cdcdb864049d62",
-    "lastHarvestedAt": "2026-10-25T04:44:22.746Z",
+    "contentHash": "e982eec13d8e6ebb14b7deb8550c8a6472932f2a7854d8d4be64c91732cf869b",
+    "lastHarvestedAt": "2026-10-25T21:02:21.766Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {

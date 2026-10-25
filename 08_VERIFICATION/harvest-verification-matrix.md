@@ -4991,3 +4991,6 @@
 | `CYCLE-20261025-WFLN` | `2026-10-25T20:49:20.123Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md` | Yes (`97ce928d...`) |
 | `CYCLE-20261025-WIZB` | `2026-10-25T20:49:24.503Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4447` | Yes (`20c6d8e5...`) |
 | `CYCLE-20261025-4OQ2` | `2026-10-25T20:55:45.194Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`efab3bc3...`) |
+| `CYCLE-20261025-CTNH` | `2026-10-25T21:02:04.829Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md` | Yes (`bd34cb5e...`) |
+| `CYCLE-20261025-D296` | `2026-10-25T21:02:15.978Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4448` | Yes (`12b25180...`) |
+| `CYCLE-20261025-D6PU` | `2026-10-25T21:02:21.762Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4449` | Yes (`e982eec1...`) |

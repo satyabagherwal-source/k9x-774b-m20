@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `e79b6a7c`  
+> **Source Version**: `0f38c118`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:44:22.531Z  
+> **Timestamp**: 2026-10-25T21:02:21.358Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:44:22.371Z  
+> **Harvest Timestamp**: 2026-10-25T21:02:21.353Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2324 stars
+- **Stars / Engagement**: 2325 stars
 
 ---
 
@@ -1198,623 +1198,305 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9c517496` (2026-10-24)
-**Commit Message**: YT-29127: Fix calculation of layers/files* job statistics. Add missing statistics.
+### Incident Patch 1: `0f38c118` (2026-10-25)
+**Commit Message**: Prepare Rust 1.95 and shared crate dependencies (1/4)
 
-This patch reworks exec-node job artifact statistics: layers/files served from cache are no longer reported as network downloads, and a breakdown between actual cache hits and waits for a concurrent fetch is added.
+Update the shared Rust toolchain to 1.95.0, align the existing crate versions and import the first 236 additional crates needed for source builds of the remaining Rust libraries and Python extensions. Update the existing librsvg, cryptography, Temporal and tars_search dependencies to the aligned versions.
 
-* Changelog entry
-Type: fix
-Component: map-reduce
+Keep this batch closed under normal, host, proc-macro and build-script dependencies. The contrib/crates RECURSE contains only available crates and preserves platform guards. The remaining binary imports are switched in part 4.
 
-Fixed per-job artifact statistics of exec nodes: previously it was not possible to distinguish a real cache hit from waiting for another job, nor to tell which cache served a layer; `layers_downloaded_size` now includes only layers actually fetched over the network. New per-job layer and file statistics added: `layers_layer_cache_hit_size`, `layers_chunk_cache_hit_size`, `layers_layer_cache_async_hit_size`/`layers_chunk_cache_async_hit_size` (+ async-hit durations) and `files_chunk_cache_async_hit_size` (+ async-hit duration). Async hits (a concurrent fetch awaited) no longer inflate `cache_hit_artifacts_size`. NOTE: monitoring dashboards and alerts that rely on the old values of `layers_downloaded_size`, `layers_cached_size` and `cache_hit_artifacts_size` must be recalibrated.
+Validation: the partial contrib/crates tree builds on Linux musl. The complete migration passed 50 new checks and 13 existing integration checks before partitioning.
 
-**Problem**
+Part 1 of 4: shared crates and build support; two more crate batches follow, then the 21 consumer migrations.
 
-Exec-node job statistics `layers_downloaded_si
+https://nda.ya.ru/t/gxgIVuek7v7tm9
+commit_hash:5a927a3bb3ef397c59c0cb36b1b4554137384321
 
-**File**: `yt/yt/server/node/exec_node/artifact.h` (modified, +35/-5)
+**File**: `build/conf/license.json` (modified, +1/-0)
 ```diff
-@@ -17,15 +17,45 @@ namespace NYT::NExecNode {
- 
- ////////////////////////////////////////////////////////////////////////////////
- 
--struct TArtifactDownloadOptions
-+DEFINE_ENUM(ECacheEventType,
-+    (Miss)
-+    (Hit)
-+    (AsyncHit)
-+);
-+
-+////////////////////////////////////////////////////////////////////////////////
-+
-+struct TArtifactDownloadContext
- {
-     NChunkClient::TTrafficMeterPtr TrafficMeter;
-     std::vector<std::string> WorkloadDescriptorAnnotations;
- 
--    //! Called after a layer artifact is downloaded (and imported, for Porto layers).
--    //! Parameters: downloadCpuDuration (network fetch), importCpuDuration (Porto import; zero for SquashFS),
--    //!             importSize (compressed archive size of the imported layer; zero for SquashFS).
--    TCallback<void(TCpuDuration downloadCpuDuration, TCpuDuration importCpuDuration, i64 importSize)> OnLayerDownloaded;
-+    //! Called when a layer is served from the layer volume cache (tmpfs, SLRU or SquashFS volume cache)
-+    //! instead of being fetched over the network.
-+    TCallback<void(i64 compressedDataSize)> OnLayerCacheHit;
-+
-+    //! Called when a layer is served from the local chunk cache instead of being fetched over the network.
-+    //! NB: in rare fallback cases (see OnLayerDownloaded) this callback fires optimistically
-+    //! even though the layer is re-downloaded over the network.
-+    TCallback<void(i64 compressedDataSize)> OnChunkCacheHit;
-+
-+    //! Called when a layer was awaited while another job was inserting it into the layer volume cache.
-+    //! Parameters: asyncHitCpuDuration (time the concurrent insertion was awaited), compressedDataSize.
-+    TCallback<void(TCpuDuration asyncHitCpuDuration, i64 compressedDataSize)> OnLayerCacheAsyncHit;
-+
-+    //! Called when a layer was awaited while another job was fetching it into the chunk cache.
-+    //! Parameters: asyncHitCpuDuration (time the concurrent fetch was awaited), compressedDataSize.
-+    TCallback<void(TCpuDuration asyncHitCpuDuration, i64 compressedDataSize)> OnChunkCacheAsyncHit;
-+
-+    //! Called after a layer artifact is fetched over the network; skipped when it is served locally.
-+    //! NB: rare fallbacks (a corrupted registered chunk, an empty pending registration) re-download
-+    //! over the network while the event is still Hit: OnChunkCacheHit fires instead
-+    //! of this callback, and the network bytes go unaccounted.
-+    //! Parameters: downloadCpuDuration, downloadedSize (compressed artifact size).
-+    TCallback<void(TCpuDuration downloadCpuDuration, i64 downloadedSize)> OnLayerDownloaded;
-+
-+    //! Called after a layer artifact is successfully imported into Porto.
-+    TCallback<void(TCpuDuration importCpuDuration, i64 importedSize)> OnLayerImported;
- };
- 
- ////////////////////////////////////////////////////////////////////////////////
+@@ -217,6 +217,7 @@
+             "CC-BY-4.0",
+             "CC-PDDC",
+             "CC0-1.0",
++            "CDLA-Permissive-2.0",
+             "Cmu-Computing-Services",
+             "CUP-Parser",
+             "curl",
 ```
 
-**File**: `yt/yt/server/node/exec_node/artifact_cache.cpp` (modified, +45/-43)
+**File**: `build/platform/rust/resources.json` (modified, +5/-5)
 ```diff
-@@ -75,6 +75,7 @@
- #include <yt/yt/core/misc/serialize.h>
- 
- #include <library/cpp/yt/memory/atomic_intrusive_ptr.h>
-+#include <library/cpp/yt/memory/non_null_ptr.h>
- #include <library/cpp/yt/memory/ref.h>
- 
- #include <util/generic/algorithm.h>
-@@ -564,8 +565,8 @@ class TArtifactCache::TImpl
- 
-     TFuture<TArtifactPtr> DownloadArtifact(
-         const TArtifactKey& key,
--        const TArtifactDownloadOptions& artifactDownloadOptions,
--        bool* fetchedFromCache = nullptr)
-+        const TArtifactDownloadContext& artifactDownloadContext,
-+        TNonNullPtr<ECacheEventType> cacheEventType)
-     {
-         YT_ASSERT_THREAD_AFFINITY_ANY();
- 
-@@ -577,7 +578,7 @@ class TArtifactCache::TImpl
-         traceContext->PackBaggage(std::move(baggage));
- 
-         auto chunkReadOptions = MakeClientChunkReadOptions(
--            artifactDownloadOptions,
-+            artifactDownloadContext,
-             /*bypassArtifactCache*/ false);
- 
-         auto Logger = ExecNodeLogger()
-@@ -594,42 +595,42 @@ class TArtifactCache::TImpl
- 
-         if (cookie.IsActive()) {
-             auto future = ExtractRegisteredChunk(key);
--            if (fetchedFromCache) {
--                // NB: fetchedFromCache is set optimistically before validation completes.
--                // If DoValidateChunk finds corruption and falls back to DoDownloadArtifact,
--                // the artifact will be fetched over the network despite fetchedFromCache=true.
--                *fetchedFromCache = !future.IsSet() || future.GetOrCrash().ValueOrDefault(std::nullopt).has_value();
--            }
-+            // NB: cacheEventType is set optimistically before validation completes.
-+            // If DoValidateChunk finds corruption or a pending registration yields no chunk, we fall back
-+            // to DoDownloadArtifact and the artifact is fetched over the network despite the Hit event type.
-+            *cacheEventType = future.IsSet() && !future.GetOrCrash().ValueOrDefault(std::nullopt).has_value()
-+                ? ECacheEventType::Miss
-+                : ECacheEventType::Hit;
-             return future.Apply(BIND([=, this, this_ = MakeStrong(this), cookie = std::move(cookie)] (const TErrorOr<std::optional<TRegisteredChunkDescriptor>>& optionalDescriptor) mutable {
-                 if (optionalDescriptor.IsOK() && optionalDescriptor.ValueOrCrash().has_value()) {
-                     // Artifact is on disk but not in the in-memory SLRU index (e.g. after node restart).
--                    DoValidateArtifact(std::move(cookie), key, artifactDownloadOptions, chunkReadOptions, *optionalDescriptor.ValueOrCrash(), Logger);
-+                    DoValidateArtifact(std::move(cookie), key, artifactDownloadContext, chunkReadOptions, *optionalDescriptor.ValueOrCrash(), Logger);
-                 } else {
-                     if (!optionalDescriptor.IsOK()) {
-                         YT_TLOG_WARNING("Error extracting registered chunk")
-                             .With(optionalDescriptor);
-                     }
--                    DoDownloadArtifact(std::move(cookie), key, artifactDownloadOptions, chunkReadOptions, Logger);
-+                    DoDownloadArtifact(std::move(cookie), key, artifactDownloadContext, chunkReadOptions, Logger);
-                 }
-                 return cookieValue.As<TArtifactPtr>();
-             }));
-         } else {
-             YT_TLOG_INFO("Artifact is either found in cache or is being downloaded");
--            if (fetchedFromCache) {
--                *fetchedFromCache = true;
--            }
-+            *cacheEventType = cookieValue.IsSet() && cookieValue.GetOrCrash().IsOK()
-+                ? ECacheEventType::Hit
-+                : ECacheEventType::AsyncHit;
+@@ -1,19 +1,19 @@
+ {
+     "by_platform": {
+         "darwin-arm64": {
+-            "uri": "sbr:14106255984"
++            "uri": "sbr:14121998947"
+         },
+         "darwin-x86_64": {
+-            "uri": "sbr:14106244638"
++            "uri": "sbr:14121997147"
+         },
+         "linux-aarch64": {
+-            "uri": "sbr:14106240493"
++            "uri": "sbr:14121996555"
+         },
+         "linux-x86_64": {
+-            "uri": "sbr:14106237045"
++            "uri": "sbr:14121996114"
+         },
+         "win32-x86_64": {
+-            "uri": "sbr:14105412528"
++            "uri": "sbr:14122000721"
          }
-         return cookieValue.As<TArtifactPtr>();
      }
- 
-     std::function<void(IOutputStream*)> MakeArtifactDownloadProducer(
-         const TArtifactKey& key,
--        const TArtifactDownloadOptions& artifactDownloadOptions)
-+        const TArtifactDownloadContext& artifactDownloadContext)
-     {
-         YT_ASSERT_THREAD_AFFINITY_ANY();
- 
-         auto chunkReadOptions = MakeClientChunkReadOptions(
--            artifactDownloadOptions,
-+            artifactDownloadContext,
-             /*bypassArtifactCache*/ true);
- 
-         decltype(&TImpl::MakeTableProducer) producerBuilder;
-@@ -647,7 +648,7 @@ class TArtifactCache::TImpl
- 
-         return (this->*producerBuilder)(
-             key,
--            artifactDownloadOptions.TrafficMeter,
-+            artifactDownloadContext.TrafficMeter,
-             chunkReadOptions,
-             // TODO(babenko): throttle preparation
-             GetUnlimitedThrottler());
-@@ -846,7 +847,8 @@ class TArtifactCache::TImpl
- 
-                     guard.Release();
- 
--                    auto errorOrChunk = WaitFor(DownloadArtifact(artifactKey, /*artifactDownloadOptions*/ {}));
-+                    auto cacheEventType = ECacheEventType::Miss;
-+                    auto errorOrChunk = WaitFor(DownloadArtifact(artifactKey, /*a
+ }
 ```
 
-**File**: `yt/yt/server/node/exec_node/artifact_cache.h` (modified, +5/-3)
+**File**: `build/rust/staticlib/lib.rs` (modified, +4/-0)
 ```diff
-@@ -20,6 +20,8 @@
- 
- #include <yt/yt/core/misc/error.h>
- 
-+#include <library/cpp/yt/memory/non_null_ptr.h>
+@@ -1,2 +1,6 @@
+ // Fixed standard library, system allocator and abort-on-panic runtime.
+ // Application crates are linked separately through their native archives.
 +
- namespace NYT::NExecNode {
- 
- ////////////////////////////////////////////////////////////////////////////////
-@@ -56,13 +58,13 @@ class TArtifactCache
-      */
-     TFuture<TArtifactPtr> DownloadArtifact(
-         const TArtifactKey& key,
--        const TArtifactDownloadOptions& artifactDownloadOptions,
--        bool* fetchedFromCache = nullptr);
-+        const TArtifactDownloadContext& artifactDownloadContext,
-+        TNonNullPtr<ECacheEventType> cacheEventType);
- 
-     //! Constructs a producer that will download the artifact and feed its content to a stream.
-     std::function<void(IOutputStream*)> MakeArtifactDownloadProducer(
-         const TArtifactKey& key,
--        const TArtifactDownloadOptions& artifactDownloadOptions);
-+        const TArtifactDownloadContext& artifactDownloadContext);
- 
-     //! Remove chunks from cache.
-     TFuture<void> RemoveArtifactsByLocation(const TCacheLocationPtr& location, bool forbidSlruResurrection);
++// Target libraries such as syn/proc-macro2 also reference standard-library
++// monomorphizations exported by proc_macro, even outside the compiler process.
++extern crate proc_macro;
 ```
 
-**File**: `yt/yt/server/node/exec_node/job.cpp` (modified, +102/-36)
+**File**: `build/scripts/rust.py` (modified, +7/-1)
 ```diff
-@@ -662,8 +662,8 @@ void TJob::PrepareArtifact(
-                     .With("CompressedDataSize", artifact.Key.GetCompressedDataSize());
+@@ -42,6 +42,10 @@ def toolchain_environment(args, work):
+         "CARGO_MANIFEST_DIR": str(args.manifest_dir.resolve()),
+         "CARGO_PKG_NAME": args.name, "CARGO_CRATE_NAME": args.name.replace("-", "_"),
+         "CARGO_PKG_VERSION": args.version,
++        "CARGO_PKG_AUTHORS": "", "CARGO_PKG_DESCRIPTION": "",
++        "CARGO_PKG_HOMEPAGE": "", "CARGO_PKG_REPOSITORY": "",
++        "CARGO_PKG_LICENSE": "", "CARGO_PKG_LICENSE_FILE": "",
++        "CARGO_PKG_README": "", "CARGO_PKG_RUST_VERSION": "",
+         "CC": env["HOST_CC"],
+         "CXX": env["HOST_CXX"],
+         "AR": env["HOST_AR"],
+@@ -95,7 +99,9 @@ def externs(args):
+         alias = aliases.get(relative, alias)
+         result += ["--extern", alias + "=" + str(Path(path).resolve().with_suffix(".rlib"))]
+     for path in args.proc_macros:
+-        result += ["--extern", dependency_name(path) + "=" + str(Path(path).resolve())]
++        relative = Path(path).resolve().parent.relative_to(args.build_root.resolve()).as_posix()
++        alias = aliases.get(relative, dependency_name(path))
++        result += ["--extern", alias + "=" + str(Path(path).resolve())]
+     return result
  
-                 const auto& artifactCache = Bootstrap_->GetArtifactCache();
--                auto downloadOptions = MakeArtifactDownloadOptions();
--                auto producer = artifactCache->MakeArtifactDownloadProducer(artifact.Key, downloadOptions);
-+                auto downloadContext = MakeArtifactDownloadContext();
-+                auto producer = artifactCache->MakeArtifactDownloadProducer(artifact.Key, downloadContext);
- 
-                 auto bypassCpuStartTime = GetCpuInstant();
-                 ArtifactPrepareFutures_.push_back(
-@@ -2612,7 +2612,7 @@ void TJob::PrepareWorkspace()
-         .Job = MakeStrong(this),
-         .CommandUser = CommonConfig_->SetupCommandUser,
- 
--        .ArtifactDownloadOptions = MakeArtifactDownloadOptions(),
-+        .ArtifactDownloadContext = MakeArtifactDownloadContext(),
- 
-         .FSSecretary = FSSecretary_,
-         .Binds = binds,
-@@ -2630,9 +2630,6 @@ void TJob::PrepareWorkspace()
-         Invoker_,
-         std::move(context));
- 
--    workspaceBuilder->SubscribeUpdateArtifactStatistics(
--        BIND_NO_PROPAGATE(&TJob::UpdateArtifactStatistics, MakeWeak(this)));
--
-     // TODO(pogorelov): Refactor it. Phase should be changed in callback, not in signal handler.
-     // We intentionally subscribe here without Via(Invoker_) to prevent data race.
-     workspaceBuilder->SubscribeUpdateBuilderPhase(
-@@ -3773,7 +3770,7 @@ TUserSandboxOptions TJob::BuildUserSandboxOptions()
-     return options;
- }
- 
--TArtifactDownloadOptions TJob::MakeArtifactDownloadOptions()
-+TArtifactDownloadContext TJob::MakeArtifactDownloadContext()
- {
-     YT_ASSERT_THREAD_AFFINITY(JobThread);
- 
-@@ -3783,20 +3780,52 @@ TArtifactDownloadOptions TJob::MakeArtifactDownloadOptions()
-         Format("AuthenticatedUser: %v", JobSpecExt_.authenticated_user()),
-     };
- 
--    auto options = TArtifactDownloadOptions{
-+    auto context = TArtifactDownloadContext{
-         .TrafficMeter = TrafficMeter_,
-+        .OnLayerCacheHit = BIND_NO_PROPAGATE([this, this_ = MakeStrong(this)] (i64 compressedDataSize) {
-+            ArtifactStatistics_.CacheHitArtifactsSize += compressedDataSize;
-+            ArtifactStatistics_.LayersCachedSize += compressedDataSize;
-+            ArtifactStatistics_.LayersLayerCacheHitSize += compressedDataSize;
-+        }).Via(Invoker_),
-+        .OnChunkCacheHit = BIND_NO_PROPAGATE([this, this_ = MakeStrong(this)] (i64 compressedDataSize) {
-+            ArtifactStatistics_.CacheHitArtifactsSize += compressedDataSize;
-+            ArtifactStatistics_.LayersCachedSize += compressedDataSize;
-+            ArtifactStatistics_.LayersChunkCacheHitSize += compressedDataSize;
-+        }).Via(Invoker_),
-+        .OnLayerCacheAsyncHit = BIND_NO_PROPAGATE([this, this_ = MakeStrong(this)] (
-+            TCpuDuration asyncHitCpuDuration,
-+            i64 compressedDataSize)
-+        {
-+            ArtifactStatistics_.LayersCachedSize += compressedDataSize;
-+            ArtifactStatistics_.LayersLayerCacheAsyncHitSize += compressedDataSize;
-+            ArtifactStatistics_.LayersLayerCacheAsyncHitCpuDuration += asyncHitCpuDuration;
-+        }).Via(Invoker_),
-+        .OnChunkCacheAsyncHit = BIND_NO_PROPAGATE([this, this_ = MakeStrong(this)] (
-+            TCpuDuration asyncHitCpuDuration,
-+            i64 compressedDataSize)
-+        {
-+            ArtifactStatistics_.LayersCachedSize += compressedDataSize;
-+            ArtifactStatistics_.LayersChunkCacheAsyncHitSize += compressedDataSize;
-+            ArtifactStatistics_.LayersChunkCacheAsyncHitCpuDuration += asyncHitCpuDuration;
-+        }).Via(Invoker_),
-         .OnLayerDownloaded = BIND_NO_PROPAGATE([this, this_ = MakeStrong(this)] (
-             TCpuDuration downloadCpuDuration,
--            TCpuDuration importCpuDuration,
--            i64 importSize)
-+            i64 downloadedSize)
-         {
-+            ArtifactStatistics_.CacheMissArtifactsSize += downloadedSize;
-+            ArtifactStatistics_.LayersDownloadedSize += downloadedSize;
-             ArtifactStatistics_.LayersDownloadCpuDuration += downloadCpuDuration;
-+        }).Via(Invoker_),
-+        .OnLayerImported = BIND_NO_PROPAGATE([this, this_ = MakeStrong(this)] (
-+            TCpuDuration importCpuDuration,
-+            i64 importedSize)
-+        {
-             ArtifactStatistics_.LayersImportCpuDuration += importCpuDuration;
--            ArtifactStatistics_.LayersImportedSize += importSize;
-+            ArtifactStatistics_.LayersImportedSize += importedSize;
-         }).Via(Invoker_),
-     };
- 
--    return options;
-+    return context;
- }
- 
- // Start async artifacts download.
-@@ -3823,17 +3852,18 @@ TFuture<std::vector<TArtifactPtr>> TJob::DownloadArtifacts()
-             .With("SandboxKind", artifact.SandboxKind)
-             .With("CompressedDataSize", artifact.Key.GetCompressedDataSize());
- 
--        auto downloadOptions = MakeArt
-```
-
-**File**: `yt/yt/server/node/exec_node/job.h` (modified, +3/-4)
-```diff
-@@ -589,7 +589,7 @@ class TJob
- 
-     TNetworkAttributes BuildNetworkAttributes(NControllerAgent::TNetworkProject networkProject) const;
- 
--    TArtifactDownloadOptions MakeArtifactDownloadOptions();
-+    TArtifactDownloadContext MakeArtifactDownloadContext();
- 
-     // Start async artifacts download.
-     TFuture<std::vector<TArtifactPtr>> DownloadArtifacts();
-@@ -614,10 +614,9 @@ class TJob
- 
-     void UpdateIOStatistics(const TStatistics& statistics);
- 
--    void UpdateArtifactStatistics(
-+    void UpdateFileArtifactStatistics(
-         i64 compressedDataSize,
--        bool cacheHit,
--        bool isLayer);
-+        ECacheEventType cacheEventType);
- 
-     std::vector<TShellCommandConfigPtr> GetSetupCommands();
  
 ```
 
-**File**: `yt/yt/server/node/exec_node/job_workspace_builder.cpp` (modified, +3/-17)
+**File**: `contrib/crates/Inflector-0.11.4/ya.make` (modified, +39/-0)
 ```diff
-@@ -152,16 +152,6 @@ void TJobWorkspaceBuilder::SetJobPhase(EJobPhase phase)
-     UpdateBuilderPhase_.Fire(phase);
- }
+@@ -45,4 +45,43 @@ LICENSE("BSD-2-Clause")
+ VERSION(0.11.4)
+ ORIGINAL_SOURCE(https://static.crates.io/crates/Inflector/Inflector-0.11.4.crate)
  
--void TJobWorkspaceBuilder::UpdateArtifactStatistics(
--    i64 compressedDataSize,
--    bool cacheHit,
--    bool isLayer)
--{
--    YT_ASSERT_THREAD_AFFINITY(JobThread);
--
--    UpdateArtifactStatistics_.Fire(compressedDataSize, cacheHit, isLayer);
--}
--
- TFuture<void> TJobWorkspaceBuilder::DoBuildSlotRootDirectory()
- {
-     YT_ASSERT_THREAD_AFFINITY(JobThread);
-@@ -645,10 +635,6 @@ class TPortoJobWorkspaceBuilder
-         std::vector<TOverlayLayerPreparationOptions> layerOptions;
-         layerOptions.reserve(totalLayerCount);
-         for (const auto& key : uniqueLayers) {
--            UpdateArtifactStatistics(
--                key.GetCompressedDataSize(),
--                slot->IsLayerCached(key),
--                /*isLayer*/ true);
-             layerOptions.push_back(TOverlayLayerPreparationOptions{
-                 .ArtifactKey = key,
-             });
-@@ -663,7 +649,7 @@ class TPortoJobWorkspaceBuilder
-         auto layerFutures = slot->PrepareLayers(
-             Context_.Job->GetId(),
-             layerOptions,
--            Context_.ArtifactDownloadOptions);
-+            Context_.ArtifactDownloadContext);
-         YT_VERIFY(layerFutures.size() == layerOptions.size());
- 
-         return AllSucceeded(std::move(layerFutures))
-@@ -736,7 +722,7 @@ class TPortoJobWorkspaceBuilder
- 
-             TVolumePreparationOptions options;
-             options.JobId = Context_.Job->GetId();
--            options.ArtifactDownloadOptions = Context_.ArtifactDownloadOptions;
-+            options.ArtifactDownloadContext = Context_.ArtifactDownloadContext;
-             options.UserSandboxOptions = Context_.UserSandboxOptions;
- 
-             return slot->PrepareRootVolume(
-@@ -839,7 +825,7 @@ class TPortoJobWorkspaceBuilder
- 
-             TVolumePreparationOptions options;
-             options.JobId = Context_.Job->GetId();
--            options.ArtifactDownloadOptions = Context_.ArtifactDownloadOptions;
-+            options.ArtifactDownloadContext = Context_.ArtifactDownloadContext;
- 
-             return slot->PrepareGpuCheckVolume(
-                 Context_.FSSecretary->GetPreparedGpuCheckVolumeOverlayData(),
++CRATE_FEATURES(
++    default
++    heavyweight
++    lazy_static
++    regex
++)
++
++PEERDIR(
++    contrib/crates/lazy_static-1.5.1
++    contrib/crates/regex-1.13.1
++)
++
++CRATE_SOURCES(
++    src/cases/camelcase/mod.rs
++    src/cases/case/mod.rs
++    src/cases/classcase/mod.rs
++    src/cases/kebabcase/mod.rs
++    src/cases/mod.rs
++    src/cases/pascalcase/mod.rs
++    src/cases/screamingsnakecase/mod.rs
++    src/cases/sentencecase/mod.rs
++    src/cases/snakecase/mod.rs
++    src/cases/tablecase/mod.rs
++    src/cases/titlecase/mod.rs
++    src/cases/traincase/mod.rs
++    src/lib.rs
++    src/numbers/deordinalize/mod.rs
++    src/numbers/mod.rs
++    src/numbers/ordinalize/mod.rs
++    src/string/constants/mod.rs
++    src/string/deconstantize/mod.rs
++    src/string/demodulize/mod.rs
++    src/string/mod.rs
++    src/string/pluralize/mod.rs
++    src/string/singularize/mod.rs
++    src/suffix/foreignkey/mod.rs
++    src/suffix/mod.rs
++)
++
+ END()
 ```
 
-**File**: `yt/yt/server/node/exec_node/job_workspace_builder.h` (modified, +1/-7)
+**File**: `contrib/crates/aho-corasick-1.1.5/COPYING` (added, +3/-0)
 ```diff
-@@ -42,7 +42,7 @@ struct TJobWorkspaceBuildingContext
-     TJobPtr Job;
-     std::string CommandUser;
- 
--    TArtifactDownloadOptions ArtifactDownloadOptions;
-+    TArtifactDownloadContext ArtifactDownloadContext;
- 
-     TJobFSSecretaryPtr FSSecretary;
-     std::vector<NContainers::TBind> Binds;
-@@ -114,7 +114,6 @@ class TJobWorkspaceBuilder
- {
- public:
-     DEFINE_SIGNAL(void(EJobPhase phase), UpdateBuilderPhase);
--    DEFINE_SIGNAL(void(i64 compressedDataSize, bool cacheHit, bool isLayer), UpdateArtifactStatistics);
-     DEFINE_SIGNAL(void(TJobWorkspaceBuilderTimePoints), UpdateTimePoints);
- 
- public:
-@@ -174,11 +173,6 @@ class TJobWorkspaceBuilder
- 
-     void SetJobPhase(EJobPhase phase);
- 
--    void UpdateArtifactStatistics(
--        i64 compressedDataSize,
--        bool cacheHit,
--        bool isLayer);
--
-     void MakeArtifactSymlinks();
- 
-     //! We first create files for artifact binds and then create actual container
+@@ -0,0 +1,3 @@
++This project is dual-licensed under the Unlicense and MIT licenses.
++
++You may use this code under the terms of either license.
 ```
 
-**File**: `yt/yt/server/node/exec_node/preparation_options.h` (modified, +1/-1)
+**File**: `contrib/crates/aho-corasick-1.1.5/Cargo.lock` (added, +30/-0)
 ```diff
-@@ -64,7 +64,7 @@ struct TVolumePreparationOptions
- {
-     TJobId JobId;
-     TUserSandboxOptions UserSandboxOptions;
--    TArtifactDownloadOptions ArtifactDownloadOptions;
-+    TArtifactDownloadContext ArtifactDownloadContext;
- };
- 
- ////////////////////////////////////////////////////////////////////////////////
+@@ -0,0 +1,30 @@
++# This file is automatically @generated by Cargo.
++# It is not intended for manual editing.
++version = 3
++
++[[package]]
++name = "aho-corasick"
++version = "1.1.5"
++dependencies = [
++ "doc-comment",
++ "log",
++ "memchr",
++]
++
++[[package]]
++name = "doc-comment"
++version = "0.3.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "780955b8b195a21ab8e4ac6b60dd1dbdcec1dc6c51c0617964b08c81785e12c9"
++
++[[package]]
++name = "log"
++version = "0.4.33"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0ceec5bc11778974d1bcb055b18002eba7f4b3518b6a0081b3af5f21666da9ad"
++
++[[package]]
++name = "memchr"
++version = "2.8.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
+```
+
+**File**: `contrib/crates/aho-corasick-1.1.5/Cargo.toml` (added, +80/-0)
+```diff
+@@ -0,0 +1,80 @@
++# THIS FILE IS AUTOMATICALLY GENERATED BY CARGO
++#
++# When uploading crates to the registry Cargo will automatically
++# "normalize" Cargo.toml files for maximal compatibility
++# with all versions of Cargo and also rewrite `path` dependencies
++# to registry (e.g., crates.io) dependencies.
++#
++# If you are reading this file be aware that the original Cargo.toml
++# will likely look very different (and much more reasonable).
++# See Cargo.toml.orig for the original contents.
++
++[package]
++edition = "2021"
++rust-version = "1.60.0"
++name = "aho-corasick"
++version = "1.1.5"
++authors = ["Andrew Gallant <jamslam@gmail.com>"]
++build = false
++exclude = [
++    "/aho-corasick-debug",
++    "/benchmarks",
++    "/tmp",
++]
++autolib = false
++autobins = false
++autoexamples = false
++autotests = false
++autobenches = false
++description = "Fast multiple substring searching."
++homepage = "https://github.com/BurntSushi/aho-corasick"
++readme = "README.md"
++keywords = [
++    "string",
++    "search",
++    "text",
++    "pattern",
++    "multi",
++]
++categories = ["text-processing"]
++license = "Unlicense OR MIT"
++repository = "https://github.com/BurntSushi/aho-corasick"
++
++[package.metadata.docs.rs]
++all-features = true
++rustdoc-args = [
++    "--cfg",
++    "docsrs",
++    "--generate-link-to-definition",
++]
++
++[features]
++default = [
++    "std",
++    "perf-literal",
++]
++logging = ["dep:log"]
++perf-literal = ["dep:memchr"]
++std = ["memchr?/std"]
++
++[lib]
++name = "aho_corasick"
++path = "src/lib.rs"
++
++[dependencies.log]
++version = "0.4.17"
++optional = true
++
++[dependencies.memchr]
++version = "2.4.0"
++optional = true
++default-features = false
++
++[dev-dependencies.doc-comment]
++version = "0.3.3"
++
++[profile.bench]
++debug = 2
++
++[profile.release]
++debug = 2
 ```
 
 ---
 
-### Incident Patch 2: `ee5b35a4` (2026-10-23)
-**Commit Message**: fix brotli: CVE-2026-111497 fix
+### Incident Patch 2: `23400929` (2026-10-25)
+**Commit Message**: YT-30164: Wait for node RPC readiness in test_sequoia_replica_modifications_throttling
 
-накладываю патч из https://github.com/google/brotli/commit/da9806362874b9bd4b552a3af360b5d6347beb12
-commit_hash:bac55515aa86c5864cd683a2844a377f7d95acab
+After `start_nodes(sync=False)` the test waited only for `state == online`. A node registers at master (`bootstrap.cpp:1196`) before its RPC server starts listening (`bootstrap.cpp:1306`), so it can be online and chosen as a write target while still refusing connections.
 
-**File**: `contrib/libs/brotli/c/dec/decode.c` (modified, +59/-30)
+In the failing run node `localhost:16196` was online at 11:15:41.5 but its bus server started at 11:15:42.9. `write_table("//tmp/t2")` at 11:15:41.9 got `Connection refused` from both allocated targets, banned them, and the reallocation found nothing: only three nodes carry `default` since https://nda.ya.ru/t/hMzNrV3s7vD7gp, and the upload replication factor is 2.
+
+`Env.synchronize()` runs the queued `nodes_ready` check, which also probes each node's orchid (`yt_env.py`).
+commit_hash:897342b29a26be36c12332fbeacfa16b9c2e59b2
+
+**File**: `yt/yt/tests/integration/sequoia/test_sequoia_objects.py` (modified, +2/-2)
 ```diff
-@@ -1124,7 +1124,7 @@ static BrotliDecoderErrorCode DecodeContextMap(brotli_reg_t context_map_size,
+@@ -1012,7 +1012,7 @@ def get_node_count(state):
+         assert get_node_count("online") < self.NUM_NODES
  
- /* Decodes a command or literal and updates block type ring-buffer.
-    Reads 3..54 bits. */
--static BROTLI_INLINE BROTLI_BOOL DecodeBlockTypeAndLength(
-+static BROTLI_INLINE BrotliDecoderErrorCode DecodeBlockTypeAndLength(
-     int safe, BrotliDecoderState* s, int tree_type) {
-   brotli_reg_t max_block_type = s->num_block_types[tree_type];
-   const HuffmanCode* type_tree = &s->block_type_trees[
-@@ -1135,7 +1135,7 @@ static BROTLI_INLINE BROTLI_BOOL DecodeBlockTypeAndLength(
-   brotli_reg_t* ringbuffer = &s->block_type_rb[tree_type * 2];
-   brotli_reg_t block_type;
-   if (max_block_type <= 1) {
--    return BROTLI_FALSE;
-+    return BROTLI_DECODER_ERROR_FORMAT_BLOCK_SWITCH;
-   }
+         set("//sys/@config/chunk_manager/sequoia_chunk_replicas/sleep_duration_before_sequoia_replica_modifications", 0)
+-        wait(lambda: get_node_count("online") == self.NUM_NODES)
++        self.Env.synchronize()
  
-   /* Read 0..15 + 3..39 bits. */
-@@ -1145,11 +1145,13 @@ static BROTLI_INLINE BROTLI_BOOL DecodeBlockTypeAndLength(
-   } else {
-     BrotliBitReaderState memento;
-     BrotliBitReaderSaveState(br, &memento);
--    if (!SafeReadSymbol(type_tree, br, &block_type)) return BROTLI_FALSE;
-+    if (!SafeReadSymbol(type_tree, br, &block_type)) {
-+      return BROTLI_DECODER_NEEDS_MORE_INPUT;
-+    }
-     if (!SafeReadBlockLength(s, &s->block_length[tree_type], len_tree, br)) {
-       s->substate_read_block_length = BROTLI_STATE_READ_BLOCK_LENGTH_NONE;
-       BrotliBitReaderRestoreState(br, &memento);
--      return BROTLI_FALSE;
-+      return BROTLI_DECODER_NEEDS_MORE_INPUT;
-     }
-   }
+         set("//sys/@config/chunk_manager/sequoia_chunk_replicas/max_concurrent_sequoia_replica_modifications", 0)
+         create("table", "//tmp/t2")
+@@ -1048,7 +1048,7 @@ def get_node_count(state):
+         assert get_node_count("online") < self.NUM_NODES
  
-@@ -1165,7 +1167,7 @@ static BROTLI_INLINE BROTLI_BOOL DecodeBlockTypeAndLength(
-   }
-   ringbuffer[0] = ringbuffer[1];
-   ringbuffer[1] = block_type;
--  return BROTLI_TRUE;
-+  return BROTLI_DECODER_SUCCESS;
- }
+         set("//sys/@config/chunk_manager/sequoia_chunk_replicas/sleep_duration_before_sequoia_replica_modifications", 0)
+-        wait(lambda: get_node_count("online") == self.NUM_NODES)
++        self.Env.synchronize()
  
- static BROTLI_INLINE void DetectTrivialLiteralBlockTypes(
-@@ -1202,62 +1204,68 @@ static BROTLI_INLINE void PrepareLiteralDecoding(BrotliDecoderState* s) {
- 
- /* Decodes the block type and updates the state for literal context.
-    Reads 3..54 bits. */
--static BROTLI_INLINE BROTLI_BOOL DecodeLiteralBlockSwitchInternal(
-+static BROTLI_INLINE BrotliDecoderErrorCode DecodeLiteralBlockSwitchInternal(
-     int safe, BrotliDecoderState* s) {
--  if (!DecodeBlockTypeAndLength(safe, s, 0)) {
--    return BROTLI_FALSE;
-+  BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 0);
-+  if (result != BROTLI_DECODER_SUCCESS) {
-+    return result;
-   }
-   PrepareLiteralDecoding(s);
--  return BROTLI_TRUE;
-+  return BROTLI_DECODER_SUCCESS;
- }
- 
--static void BROTLI_NOINLINE DecodeLiteralBlockSwitch(BrotliDecoderState* s) {
--  DecodeLiteralBlockSwitchInternal(0, s);
-+static BROTLI_NOINLINE BrotliDecoderErrorCode
-+DecodeLiteralBlockSwitch(BrotliDecoderState* s) {
-+  return DecodeLiteralBlockSwitchInternal(0, s);
- }
- 
--static BROTLI_BOOL BROTLI_NOINLINE SafeDecodeLiteralBlockSwitch(
-+static BROTLI_NOINLINE BrotliDecoderErrorCode SafeDecodeLiteralBlockSwitch(
-     BrotliDecoderState* s) {
-   return DecodeLiteralBlockSwitchInternal(1, s);
- }
- 
- /* Block switch for insert/copy length.
-    Reads 3..54 bits. */
--static BROTLI_INLINE BROTLI_BOOL DecodeCommandBlockSwitchInternal(
-+static BROTLI_INLINE BrotliDecoderErrorCode DecodeCommandBlockSwitchInternal(
-     int safe, BrotliDecoderState* s) {
--  if (!DecodeBlockTypeAndLength(safe, s, 1)) {
--    return BROTLI_FALSE;
-+  BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 1);
-+  if (result != BROTLI_DECODER_SUCCESS) {
-+    return result;
-   }
-   s->htree_command = s->insert_copy_hgroup.htrees[s->block_type_rb[3]];
--  return BROTLI_TRUE;
-+  return BROTLI_DECODER_SUCCESS;
- }
- 
--static void BROTLI_NOINLINE DecodeCommandBlockSwitch(BrotliDecoderState* s) {
--  DecodeCommandBlockSwitchInternal(0, s);
-+static BROTLI_NOINLINE BrotliDecoderErrorCode
-+DecodeCommandBlockSwitch(BrotliDecoderState* s) {
-+  return DecodeCommandBlockSwitchInternal(0, s);
- }
- 
--static BROTLI_BOOL BROTLI_NOINLINE SafeDecodeCommandBlockSwitch(
--    BrotliDecoderState* s) {
-+static BROTLI_NOINLINE BrotliDecoderErrorCode
-+SafeDecodeCommandBlockSwitch(BrotliDecoderState* s) {
-   return DecodeCommandBlockSwitchInternal(1, s);
- }
- 
- /* Block switch for distance codes.
-    Reads 3..54 bits. */
--static BROTLI_INLINE BROTLI_BOOL DecodeDistanceBlockSwitchInternal(
-+static BROTLI_INLINE BrotliDecoderErrorCode DecodeDistanceBlockSwitchInternal(
-     int safe, BrotliDecoderState* s) {
--  if (!DecodeBlockTypeAndLength(safe, s, 2)) {
--    return BROTLI_FALSE;
-+  BrotliDecoderErrorCode result = DecodeBlockTypeAndLength(safe, s, 2);
-+  if (result != BROTLI_DECODER_SUCCESS) {
-+    return result;
-   }
-   s->dist_context_map_slice = s->dist_context_map +
-       (s->block_type_rb[5] << BROTLI_DISTANCE_CONTEXT_BITS);
-   s->dist_htree_index = s->dist_context_map_slice[s->distance_context];
--  return BROTLI_TRUE;
-+  return BROTLI_DECODER_SUCCESS;
- }
- 
--static void BROTLI_NOINLINE DecodeDistanceBlockSwitch(BrotliDecoderState* s) {
--  DecodeDistanceBlockSwitchInternal(0, s);
-+static BROTLI_NOINLINE BrotliDecoderErrorCode
-+DecodeDistanceBlockSwitch(BrotliDecod
-```
-
-**File**: `contrib/libs/brotli/c/include/brotli/decode.h` (modified, +1/-3)
-```diff
-@@ -85,9 +85,7 @@ typedef enum {
-   BROTLI_ERROR_CODE(_ERROR_FORMAT_, PADDING_1, -14) SEPARATOR              \
-   BROTLI_ERROR_CODE(_ERROR_FORMAT_, PADDING_2, -15) SEPARATOR              \
-   BROTLI_ERROR_CODE(_ERROR_FORMAT_, DISTANCE, -16) SEPARATOR               \
--                                                                           \
--  /* -17 code is reserved */                                               \
--                                                                           \
-+  BROTLI_ERROR_CODE(_ERROR_FORMAT_, BLOCK_SWITCH, -17) SEPARATOR           \
-   BROTLI_ERROR_CODE(_ERROR_, COMPOUND_DICTIONARY, -18) SEPARATOR           \
-   BROTLI_ERROR_CODE(_ERROR_, DICTIONARY_NOT_SET, -19) SEPARATOR            \
-   BROTLI_ERROR_CODE(_ERROR_, INVALID_ARGUMENTS, -20) SEPARATOR             \
-```
-
----
-
-### Incident Patch 3: `e79b6a7c` (2026-10-25)
-**Commit Message**: Bun 1.4.4 и общие файлы в корне build/platform/bun
-
-Стандартный Bun обновлён до 1.4.4. Добавлены проверенные ресурсы для Linux x86_64/ARM64 и macOS x86_64/ARM64: каждый содержит ровно один исполняемый `bun` из официального релиза. В [Bun 1.4.0](https://bun.com/blog/bun-v1.4) отдельную x64-сборку `-march=haswell` убрали; единый бинарник использует доступные SIMD-инструкции во время выполнения, поэтому shell-wrapper и отдельные modern/baseline-файлы удалены.
-
-Текущую версию выбирает `build/platform/bun/bun.sbr.json`: на него указывает `formula` для `ya tool bun`, корневой `ya.make` используется в `TS_USE_BUN()`, а `nots/cli` получает тот же Bun через `ya tool bun`. `1.4.4/bun.sbr.json` и ресурсы 1.3.14 сохранены для закреплённых потребителей. Следующее обновление стандартной версии требует только смены корневого JSON.
-
-README переписан на русский; инструкция и общий `upload.sh` находятся в корне. Скрипт принимает версию >= 1.4.0, проверяет SHA256, упаковывает один бинарник и сохраняет receipts загрузки. Для переноса README и скрипта, а также копирования корневых manifest/ya.make сохранён `copy-info`. CI-фильтр nots покрывает весь каталог Bun.
-
-Проверено локально: все четыре новых рес
-
-**File**: `build/conf/ts/ts.conf` (modified, +1/-1)
-```diff
-@@ -287,7 +287,7 @@ macro TS_BUILD_ENV(Data...) {
- ###
- ### Adds `bun` binary for host platform.
- macro TS_USE_BUN() {
--    PEERDIR(build/platform/bun/1.3.14)
-+    PEERDIR(build/platform/bun)
-     SET(BUN_ARG --bun-bin $BUN_RESOURCE_GLOBAL/bun)
- }
+         set("//sys/@config/chunk_manager/sequoia_chunk_replicas/throttle_sequoia_replica_modifications", False)
  
 ```
 
@@ -1844,55 +1526,28 @@ README переписан на русский; инструкция и общи�
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-29127: Fix calculation of layers/files* job statistics. Add missing statistic
+## X. Prepare Rust 1.95 and shared crate dependencies (1/4)
 
 **RULE**:
-When implementing operations in `yt/yt/server/node/exec_node/artifact.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build/conf/license.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9c517496`: YT-29127: Fix calculation of layers/files* job statistics. Add missing statistics.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0f38c118`: Prepare Rust 1.95 and shared crate dependencies (1/4). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/node/exec_node/artifact.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/conf/license.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-DEFINE_ENUM(ECacheEventType,
-    (Miss)
-    (Hit)
-    (AsyncHit)
-);
-
-////////////////////////////////////////////////////////////////////////////////
-
-struct TArtifactDownloadContext
-    //! Called when a layer is served from the layer volume cache (tmpfs, SLRU or SquashFS volume cache)
-    //! instead of being fetched over the network.
-    TCallback<void(i64 compressedDataSize)> OnLayerCacheHit;
-
-    //! Called when a layer is served from the local chunk cache instead of being fetched over the network.
-    //! NB: in rare fallback cases (see OnLayerDownloaded) this callback fires optimistically
-    //! even though the layer is re-downloaded over the network.
-    TCallback<void(i64 compressedDataSize)> OnChunkCacheHit;
-
-    //! Called when a layer was awaited while another job was inserting it into the layer volume cache.
-    //! Parameters: asyncHitCpuDuration (time the concurrent insertion was awaited), compressedDataSize.
-    TCallback<void(TCpuDuration asyncHitCpuDuration, i64 compressedDataSize)> OnLayerCacheAsyncHit;
-
-    //! Called when a layer was awaited while another job was fetching it into the chunk cache.
-    //! Parameters: asyncHitCpuDuration (time the concurrent fet
+            "CDLA-Permissive-2.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-struct TArtifactDownloadOptions
-    //! Called after a layer artifact is downloaded (and imported, for Porto layers).
-    //! Parameters: downloadCpuDuration (network fetch), importCpuDuration (Porto import; zero for SquashFS),
-    //!             importSize (compressed archive size of the imported layer; zero for SquashFS).
-    TCallback<void(TCpuDuration downloadCpuDuration, TCpuDuration importCpuDuration, i64 importSize)> OnLayerDownloaded;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9c517496` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0f38c118` are properly handled with clean fallback behavior.

@@ -4998,3 +4998,6 @@ Every entry in this ledger must capture:
 | `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `2e354062` | Multi-dimensional audit evidence | 2026-10-25T20:49:20.125Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `47398198` | Multi-dimensional audit evidence | 2026-10-25T20:49:24.506Z |
 | `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-25T20:55:45.198Z |
+| `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-10-25T21:02:04.831Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `a1e51f49` | Multi-dimensional audit evidence | 2026-10-25T21:02:15.981Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `0f38c118` | Multi-dimensional audit evidence | 2026-10-25T21:02:21.766Z |

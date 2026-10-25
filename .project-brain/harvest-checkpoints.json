@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T20:55:45.211Z",
+  "last_updated": "2026-10-25T21:02:21.776Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2706,14 +2706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-datalab-to-indra-ocr",
-      "content_hash": "2dc8492d252427d6f87a7656083dd65e9221cf25e238412508bb7dabe9194832",
-      "verified_at": "2026-10-21T01:17:40.189Z",
+      "content_hash": "bd34cb5eda857f45f6e4fd4870756269909a2eb2dee5ba0ae58e46b5de8273a2",
+      "verified_at": "2026-10-25T21:02:04.837Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T01:17:40.189Z"
+      "last_updated": "2026-10-25T21:02:04.838Z"
     },
     "chrisryugj/kordoc": {
       "repository": "chrisryugj/kordoc",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "a7b249b4ceac097ddad4824604e48af23ff8dbbd57764a96f436b2530e3edbff",
-      "verified_at": "2026-10-25T18:09:00.614Z",
+      "content_hash": "12b25180ce3a9beab7fe5aa01657560b06f307b29691d370b1a0373abded375b",
+      "verified_at": "2026-10-25T21:02:15.991Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T18:09:00.614Z"
+      "last_updated": "2026-10-25T21:02:15.991Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "36f1ac4797798fbf122ded1c56058933ce39f74d794af2d328cdcdb864049d62",
-      "verified_at": "2026-10-25T04:44:22.756Z",
+      "content_hash": "e982eec13d8e6ebb14b7deb8550c8a6472932f2a7854d8d4be64c91732cf869b",
+      "verified_at": "2026-10-25T21:02:21.772Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:44:22.756Z"
+      "last_updated": "2026-10-25T21:02:21.772Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",

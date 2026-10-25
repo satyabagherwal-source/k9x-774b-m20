@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-SWVY",
-    "timestamp": "2026-10-23T07:39:26.207Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "346a4eb42c2ef7d269eac9928be7c93eb2bf3d892d1a708e646da6badcc2567f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-T83K",
-    "timestamp": "2026-10-23T07:39:40.736Z",
-    "repository": "react-hook-form/react-hook-form",
-    "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "22fee60f73d170b516281702a724709739354f2704ed62079b8555a66c1167ff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-TC4U",
-    "timestamp": "2026-10-23T07:39:45.966Z",
-    "repository": "vitest-dev/vitest",
-    "learningId": "learn-github-vitest-dev-vitest",
-    "contentHash": "bc56cf0ac6fe2bfbb2c945096789b7777c270bc2cc16b93bae5e7d578844cadf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-OHVC",
     "timestamp": "2026-10-23T08:03:59.736Z",
     "repository": "mitmproxy/mitmproxy",
@@ -7492,6 +7447,51 @@
     "contentHash": "efab3bc387f5b405e01c2c73f19a4479d54c34347de867187204449ccfa9c5cf",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-CTNH",
+    "timestamp": "2026-10-25T21:02:04.829Z",
+    "repository": "datalab-to/indra-ocr",
+    "learningId": "learn-huggingface-datalab-to-indra-ocr",
+    "contentHash": "bd34cb5eda857f45f6e4fd4870756269909a2eb2dee5ba0ae58e46b5de8273a2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-D296",
+    "timestamp": "2026-10-25T21:02:15.978Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "12b25180ce3a9beab7fe5aa01657560b06f307b29691d370b1a0373abded375b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-D6PU",
+    "timestamp": "2026-10-25T21:02:21.762Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "e982eec13d8e6ebb14b7deb8550c8a6472932f2a7854d8d4be64c91732cf869b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
