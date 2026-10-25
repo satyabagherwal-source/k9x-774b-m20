@@ -295,8 +295,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
     "sourceVersion": "hf-meta-llama-llama-3.1-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "d7caec617c6997c5838ad0680458872169c898ca69eb8a4d176a476376ae2e8a",
-    "lastHarvestedAt": "2026-10-20T16:15:00.025Z",
+    "contentHash": "5ae60e76de227c03683fdfbba0b2d9c913b4afe65dd77f4d619888c5dd0ddd2c",
+    "lastHarvestedAt": "2026-10-25T10:43:27.908Z",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct"
   },
   "hf-xingchen-agi-teleocr": {
@@ -2463,10 +2463,10 @@
     "repository": "BurntSushi/ripgrep",
     "platform": "github",
     "sourceUrl": "https://github.com/BurntSushi/ripgrep",
-    "sourceVersion": "3fce3b5b",
+    "sourceVersion": "6892bc2b",
     "license": "Unlicense",
-    "contentHash": "2e076f8dd69975ae192d205cc1e09be93fa9e6317ba538da7e64ed6ad11e2536",
-    "lastHarvestedAt": "2026-10-18T21:33:30.056Z",
+    "contentHash": "fac00586c8a6c72669e1b4330ea05fb0669d6c6436027f518918ccbfa9153e63",
+    "lastHarvestedAt": "2026-10-25T10:43:10.482Z",
     "learningId": "learn-github-burntsushi-ripgrep"
   },
   "cosscom-coss": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "18cebee8",
+    "sourceVersion": "155f3050",
     "license": "NOASSERTION",
-    "contentHash": "c72f6b4d9054b943a0674804f18936a48c8d8c547c33773140f1eb8e299811d6",
-    "lastHarvestedAt": "2026-10-22T20:45:36.986Z",
+    "contentHash": "6268861045df576e319009a9a57b9bc4027c6af139a379df0fd0287b194199c3",
+    "lastHarvestedAt": "2026-10-25T10:43:23.871Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {

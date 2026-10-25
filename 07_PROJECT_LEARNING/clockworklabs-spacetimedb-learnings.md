@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `18cebee8`  
+> **Source Version**: `155f3050`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:45:36.556Z  
+> **Timestamp**: 2026-10-25T10:43:23.718Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:45:36.549Z  
+> **Harvest Timestamp**: 2026-10-25T10:43:22.399Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25328 stars
+- **Stars / Engagement**: 25381 stars
 
 ---
 
@@ -810,373 +810,1071 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18cebee8` (2026-10-22)
-**Commit Message**: View docs updated for the current args feature (#6353)
+### Incident Patch 1: `155f3050` (2026-10-23)
+**Commit Message**: Docs - Add guides to How To Guides (#6060)
 
 # Description of Changes
 
-Small docs update for #6324 to lay out the current usage and
-limitations.
+Adds short guides to the **How To Guides** section of the docs: pages
+that each solve one precise problem, with module code in TypeScript, C#,
+Rust and C++, plus client code. They're grouped into three new
+categories, listed in the sidebar after the existing how-to pages, with
+URLs under `/how-to/games/`, `/how-to/social/` and
+`/how-to/app-patterns/`:
 
-# API and ABI breaking changes
+- **Games**: top 100 leaderboard, fixed-rate game tick, matchmaking
+queue, skill-based matchmaking with OpenSkill, turn-based game with turn
+timeouts, syncing only what's near the player, hiding information from
+players, seasonal leaderboard reset
+- **Social**: unique and non-offensive usernames, friends or follow
+list, chat rooms and private DMs, typing indicators, unread counts and
+notifications
+- **Common app patterns**: pagination, admin and moderator roles (with
+and without SpacetimeAuth), sending an email, calling an external API,
+calling an AI model (from the module or from a sidecar), seeding initial
+data
 
-None
+Written guides are also listed on the section's index page.
+`docs/GUIDES_TODO.md` tracks which guides are written. Each guide will
+also get a short-forma
 
-# Rollback safety impact
-
-n/a
-
-# Expected complexity level and risk
-
-1 - Light docs update
-
-# Testing
-
-- [x] Each code block was tested in a small throwaway
-
----------
-
-Signed-off-by: Jason Larabie <[REDACTED_EMAIL]>
-Co-authored-by: joshua-spacetime <[REDACTED_EMAIL]>
-
-**File**: `docs/docs/00200-core-concepts/00200-functions/00500-views.md` (modified, +73/-2)
+**File**: `docs/GUIDES_TODO.md` (added, +40/-0)
 ```diff
-@@ -21,7 +21,7 @@ Views provide several benefits:
- 
- ## Defining Views
- 
--Views must be declared as `public` with an explicit `name`, and they accept only a context parameter - no user-defined arguments beyond the context type.
-+Views must be declared as `public` with an explicit `name`. They take a context parameter and can also accept [user-defined arguments](#views-with-arguments) in TypeScript, C#, and Rust.
- 
- <Tabs groupId="server-language" queryString>
- <TabItem value="typescript" label="TypeScript">
-@@ -84,7 +84,7 @@ export const playersForLevel = spacetimedb.anonymousView(
- );
- ```
- 
--The handler signature is `(ctx) => rows`, where `rows` must be either an array or option of product values.
-+The handler signature is `(ctx) => rows`, or `(ctx, args) => rows` for [views with arguments](#views-with-arguments), where `rows` must be either an array or option of product values.
- 
- </TabItem>
- <TabItem value="csharp" label="C#">
-@@ -812,6 +812,77 @@ SELECT * FROM players_for_level;
- 
- When subscribed to, views automatically update when their underlying tables change, providing real-time updates to clients.
- 
-+### Views with Arguments
+@@ -0,0 +1,40 @@
++# Guides to write
 +
-+Views can accept arguments to select which data to return. For example, using the player level table defined above, this view returns player level rows at the requested level:
++Short guides, each focused on one precise topic. Check off each one once it's written.
++
++Each guide has a stub page under `docs/00250-how-to/` (one folder per section below, numbered from `01000`),
++wired into the sidebar in `sidebars.ts` under the "How To Guides" header. Once a guide is written, also list it
++on the section's index page, `docs/00250-how-to/00000-index.md`. The stubs are regular published pages, so don't
++merge this branch to `master` until every guide is written, or remove the unfinished stubs first.
++
++Each guide will also get a short-format video (done later, once the written guides exist).
++
++## Games
++
++- [x] How to make a top 100 leaderboard
++- [x] Run a fixed-rate game tick
++- [x] Build a matchmaking queue
++- [x] Skill-based matchmaking with OpenSkill
++- [x] Make a turn-based game with turn timeouts
++- [x] Only sync what's near the player
++- [x] Hide information from players
++- [x] Reset a leaderboard each season
++
++## Social
++
++- [x] Keep usernames unique and block offensive ones
++- [x] Build a friends or follow list
++- [x] Chat rooms and private DMs
++- [x] Typing indicators and other short-lived signals
++- [x] Unread counts and notifications
++
++## Common app patterns
++
++- [x] Paginate or infinite-scroll a large table
++- [x] Admin and moderator roles
++- [x] Send an email from your module
++- [x] Call an external API from your module
++- [x] Call an AI model from your module
++- [x] Call an AI model from a sidecar
++- [x] Seed initial data on first publish
++- [x] Store files in S3
+```
+
+**File**: `docs/docs/00250-how-to/00000-index.md` (modified, +38/-3)
+```diff
+@@ -5,16 +5,51 @@ slug: /how-to
+ 
+ Step-by-step guides for common tasks.
+ 
+-- **Development**
++- **Troubleshooting**
++  - [Troubleshooting](./00050-troubleshooting.md) - Fix common problems with logins, modules and clients
++
++- **App Patterns**
++  - [Pagination](./01200-common-app-patterns/00100-pagination.md) - Load a large feed one page at a time with a view that takes the page number and page size
++  - [Admin and Moderator Roles](./01200-common-app-patterns/00200-admin-roles.md) - Let moderators and admins do what regular users can't, checked in each reducer
++  - [Send an Email](./01200-common-app-patterns/00400-send-email.md) - Queue emails from reducers and send them from a scheduled procedure, with retries
++  - [Call an External API](./01200-common-app-patterns/00500-call-external-api.md) - Fetch data from a web API on a schedule and store it in a table that clients subscribe to
++  - [Call an AI Model](./01200-common-app-patterns/00550-call-ai-model.md) - Generate text from a procedure without exposing your API key
++  - [Call an AI Model from a Sidecar](./01200-common-app-patterns/00560-call-ai-model-sidecar.md) - Answer players with a separate program next to your database
++  - [Seed Initial Data](./01200-common-app-patterns/00600-seed-initial-data.md) - Fill tables when the database is created, and update them later with an owner-only reducer
++  - [Store Files in S3](./01200-common-app-patterns/00700-store-files-in-s3.md) - Let players upload and download files directly to a private bucket, with URLs your module signs
++
++- **Social Features**
++  - [Unique Usernames](./01100-social/00100-unique-usernames.md) - Keep names unique and reject offensive ones with a word list and a moderation API
++  - [Friends or Follow List](./01100-social/00200-friends-list.md) - Let players follow each other and see their own lists live
++  - [Chat Rooms and Private DMs](./01100-social/00300-chat-rooms-and-dms.md) - Let players chat in rooms and send direct messages that only the right players receive
++  - [Typing Indicators](./01100-social/00400-typing-indicators.md) - Show who's typing with an event table, without storing anything
++  - [Unread Counts](./01100-social/00500-unread-counts.md) - Show how many messages each room has that the player hasn't read, and notify them about new ones
++
++- **Multiplayer Games**
++  - [Top 100 Leaderboard](./01000-games/00100-top-100-leaderboard.md) - Keep a live top 100 that clients subscribe to
++  - [Fixed-Rate Game Tick](./01000-games/00200-fixed-rate-game-tick.md) - Run game logic on a schedule
++  - [Matchmaking Queue](./01000-games/00300-matchmaking-queue.md) - Pair waiting players into matches
++  - [Skill-Based Matchmaking](./01000-games/00350-skill-based-matchmaking.md) - Match players of similar skill with OpenSkill
++  - [Turn-Based Game](./01000-games/00400-turn-based-game.md) - Enforce turns and time limits on the server
++  - [Sync Nearby Players](./01000-games/00500-sync-nearby-entities.md) - Send each client only what's near its player
++  - [Hide Information](./01000-games/00600-hide-information.md) - Keep tables private and show each player only what they may see
++  - [Seasonal Leaderboard](./01000-games/00700-seasonal-leaderboard-reset.md) - Start the leaderboard over each season and keep a hall of fame
++
++- **Develop**
+   - [Unit Testing](./00900-unit-testing.md) - Test Rust and TypeScript modules against an in-memory database
++  - [Logging](./00300-logging.md) - Set up logging for debugging
+ 
+-- **Deployment**
++- **Deploy**
+   - [Deploy to MainCloud](./00100-deploy/00100-maincloud.md) - Deploy to SpacetimeDB's managed cloud
+   - [Railway](./00100-deploy/00300-railway.md) - Deploy SpacetimeDB with the official Railway template
+   - [Self-Hosting](./00100-deploy/00200-self-hosting.md) - Run SpacetimeDB on your own infrastructure
++  - [Azure VMs and Key Rotation](./00700-self-hosted-key-rotation.md) - Rotate JWT signing keys on self-hosted servers without breaking `spacetime publish`
+ 
+ - **Database Features**
+   - [PostgreSQL Compatibility](./00200-pg-wire.md) - Connect with PostgreSQL clients
+-  - [Logging](./00300-logging.md) - Set up logging for debugging
+   - [Row-Level Security](./00400-row-level-security.md) - Fine-grained access control
+   - [Reject Connections](./00500-reject-client-connections.md) - Control client access
++
++- **Migrate**
++  - [From 1.0 to 2.0](./00600-migrating-to-2.0.md) - Update your code for the breaking changes in SpacetimeDB 2.0
++  - [From Convex](./00800-migrating-from-convex.md) - Move an app backend from Convex to a SpacetimeDB module
+```
+
+**File**: `docs/docs/00250-how-to/01000-games/00100-top-100-leaderboard.md` (added, +452/-0)
+```diff
+@@ -0,0 +1,452 @@
++---
++title: How to make a top 100 leaderboard
++slug: /how-to/games/top-100-leaderboard
++---
++
++import Tabs from '@theme/Tabs';
++import TabItem from '@theme/TabItem';
++import { CppModuleVersionNotice } from "@site/src/components/CppModuleVersionNotice";
++
++:::note Prerequisites
++You need a module and a client connected to it. If you don't have them yet, follow the [quickstart](../../00100-intro/00100-getting-started/00100-getting-started.md) for your language first.
++:::
++
++In this guide, you'll build a leaderboard that shows the 100 best scores in your game and updates live on every client. You'll use an [index](../../00200-core-concepts/00300-tables/00300-indexes.md) to read scores, an anonymous [view](../../00200-core-concepts/00200-functions/00500-views.md) to pick the top 100, and a [subscription](../../00200-core-concepts/00400-subscriptions.md) to keep each client up to date.
++
++## How it works
++
++- A private `player_score` table stores each player's best score, with an index on the score.
++- A `submit_score` reducer records a new score.
++- A public `top_100` view reads every score through the index and returns the 100 highest.
++- Clients subscribe to `top_100`, never to `player_score` itself.
++
++The view is anonymous: it returns the same rows no matter who asks. SpacetimeDB computes it once and shares the result with every subscribed client, instead of computing it once per client.
++
++## Define the table
++
++Add a table that holds one row per player, with an index on the `score` column. The view needs this index: views can't scan a whole table with `iter()`, so they read rows through indexes instead.
 +
 +<Tabs groupId="server-language" queryString>
 +<TabItem value="typescript" label="TypeScript">
 +
-+Pass a parameter object before the return type. The handler receives the arguments as an object after the context:
-+
 +```typescript
-+export const playersAtLevel = spacetimedb.anonymousView(
-+  { name: 'players_at_level', public: true },
-+  { level: t.u64() },
-+  t.array(playerLevels.rowType),
-+  (ctx, { level }) => Array.from(ctx.db.playerLevels.level.filter(level))
++import { schema, table, t, Range } from 'spacetimedb/server';
++
++const playerScore = table(
++  { name: 'player_score' },
++  {
++    identity: t.identity().primaryKey(),
++    name: t.string(),
++    score: t.u64().index('btree'),
++  }
 +);
++
++const spacetimedb = schema({ playerScore });
++export default spacetimedb;
 +```
 +
 +</TabItem>
 +<TabItem value="csharp" label="C#">
 +
-+Add parameters after the context:
-+
 +```csharp
-+[SpacetimeDB.View(Accessor = "PlayersAtLevel", Name = "players_at_level", Public = true)]
-+public static List<PlayerLevel> PlayersAtLevel(AnonymousViewContext ctx, ulong level)
++using SpacetimeDB;
++
++public static partial class Module
 +{
-+    return ctx.Db.PlayerLevel.Level.Filter(level).ToList();
++    [SpacetimeDB.Table(Accessor = "PlayerScore")]
++    public partial struct PlayerScore
++    {
++        [SpacetimeDB.PrimaryKey]
++        public Identity Identity;
++
++        public string Name;
++
++        [SpacetimeDB.Index.BTree]
++        public ulong Score;
++    }
 +}
 +```
 +
 +</TabItem>
 +<TabItem value="rust" label="Rust">
 +
-+Add parameters after the context:
-+
 +```rust
-+#[view(accessor = players_at_level, public)]
-+fn players_at_level(ctx: &AnonymousViewContext, level: u64) -> Vec<PlayerLevel> {
-+    ctx.db.player_level().level().filter(level).collect()
++use spacetimedb::{view, AnonymousViewContext, Identity, ReducerContext, Table};
++
++#[spacetimedb::table(accessor = player_score)]
++pub struct PlayerScore {
++    #[primary_key]
++    identity: Identity,
++    name: String,
++    #[index(btree)]
++    score: u64,
 +}
 +```
 +
 +</TabItem>
 +<TabItem value="cpp" label="C++">
 +
-+C++ modules do not yet support views with arguments.
++<CppModuleVersionNotice />
++
++```cpp
++#include <spacetimedb.h>
++#include <algorithm>
++using namespace SpacetimeDB;
++
++struct PlayerScore {
++    Identity identity;
++    std::string name;
++    uint64_t score;
++};
++SPACETIMEDB_STRUCT(PlayerScore, identity, name, score)
++SPACETIMEDB_TABLE(PlayerScore, player_score, Private)
++FIELD_PrimaryKey(player_score, identity)
++FIELD_Index(player_score, score)
++```
 +
 +</TabItem>
 +</Tabs>
 +
-+Query or subscribe to the view by passing positional SQL literals in parameter order:
++The table is private, so clients can't subscribe to it directly. They only see the 100 rows the view returns, however many players you have.
 +
-+```sql
-+SELECT * FROM players_at_level(2);
-+```
-+> NOTE: When you subscribe to the same view with different arguments the client cache contains the union of the results, and the row callbacks for that view report changes from all subscribed arguments without identifying which arguments produced each row.
-+
-+Views that return a [query builder](#query-builder-in-views) can also take arguments. Anonymous views are shared among all subscribers that pass the same argument values.
-+
-+:::note Client query builders
-+TypeScript and C# client query builders do not yet support views with arguments. Use SQL strings instead. In the Rust client query builder, a view's accessor takes its arguments directly.
++:::tip
++Keep scores in their own table. The view re-runs every time a row in `player_score` changes. If the score lived on a row that changes often, like a player's position, the leaderboard would be recomputed on every movement.
 +:::
 +
-+#### Limitations
++## Submit a score
 +
-+- **SQL**: Only `SELECT * FROM view_name(args)` is supported. Queries cannot add `WHERE` clauses, column lists, aggregates, or joins, so put any filtering inside the view.
-+- **Arguments**: Arguments must be positional SQL literals that match the declared types. From SQL, parameters can be booleans, integers, strings, byte arrays, `Identity`, `ConnectionId`, `Timestamp`, or `Uuid`. Floating-point parameters, named arguments, and expressions are not supported.
-+- **Primary keys**: Views with arguments cannot have a primary key. In TypeScript, primary-key metadata is automatically omitted from the returned row type.
-+- **Subscriptions**: Subscribe to each view and set of arguments explicitly. Subscribe-all helpers such as `subscribeToAllTables`, `SubscribeToAllTables`, and `subscribe_to_all_tables` skip views with arguments.
++Add a reducer that records a score for the player who calls it. It only keeps a player's best score: a lower score than the one already stored is ignored.
 +
- ## Why Views Cannot Use `.iter()`
- 
- You may notice that views can only access table data through indexed lookups (`.find()` and `.filter()` on indexed columns) and table-level metadata lookups like `count()`, not through `.iter()` which scans all rows. This is a deliberate design choice for performance.
++<Tabs groupId="server-language" queryString>
++<TabItem value="typescript" label="TypeScript">
++
++```typescript
++export const submitScore = spacetimedb.reducer(
++  { name: t.string(), score: t.u64() },
++  (ctx, { name, score }) => {
++    const existing = ctx.db.playerScore.identity.find(ctx.sender);
++    if (!existing) {
++      ctx.db.playerScore.insert({ identity: ctx.sender, name, score });
++    } else if (score > existing.score) {
++      // Keep the player's best score.
++      ctx.db.playerScore.identity.update({ ...existing, name, score });
++    }
++  }
++);
++```
++
++</TabItem>
++<TabItem value="csharp" label="C#">
++
++```csharp
++public static partial class Module
++{
++    [SpacetimeDB.Reducer]
++    public static void SubmitScore(ReducerContext ctx, string name, ulong score)
++    {
++        if (ctx.Db.PlayerScore.Identity.Find(ctx.Sender) is not PlayerScore existing)
++        {
++            ctx.Db.PlayerScore.Insert(new PlayerScore { Identity = ctx.Sender, Name = name, Score = score });
++        }
++        else if (score > existing.Score)
++        {
++            // Keep the player's best score.
++            existing.Name = na
 ```
 
-**File**: `docs/docs/00250-how-to/00800-migrating-from-convex.md` (modified, +8/-5)
+**File**: `docs/docs/00250-how-to/01000-games/00200-fixed-rate-game-tick.md` (added, +467/-0)
 ```diff
-@@ -43,7 +43,7 @@ tables. Use procedures only when you need side effects such as outbound HTTP.
- | Action                                    | Procedure                                                                 | Use a [procedure](/docs/functions/procedures) when the function needs side effects, especially outbound HTTP. If it only updates database state, migrate it to a reducer.                             |
- | HTTP Action                               | HTTP handler                                                              | Use an [HTTP handler](/docs/functions/http-handlers) for inbound HTTP routes such as webhooks or public HTTP APIs. Use a procedure for callable side-effecting functions that are not HTTP endpoints. |
- | Internal query / mutation / action        | Private reducer, private procedure, helper function, or private table     | Keep helper logic unexported when it should not be callable by clients. Use private tables for server-only data.                                                                                      |
--| Function args                             | Reducer, procedure, or view arguments                                     | Reducers and procedures accept typed arguments. Views currently do not accept user-defined arguments beyond the context.                                                                              |
-+| Function args                             | Reducer, procedure, or view arguments                                     | Reducers, procedures, and views accept typed arguments. Views have [argument limitations](/docs/functions/views#limitations).                                                                         |
- | Function return value                     | Procedure return value, view result, subscribed rows, or event table row  | Reducers should not return data. Put durable state in tables, derived read results in views, one-shot notifications in event tables, and side-effect results in procedure returns.                    |
- | `ctx.db`                                  | `ctx.db` / `ctx.Db` / `ctx.db.*()`                                        | Reducers and views get transactional database access through their context. Procedures must open a transaction explicitly with `withTx` / `WithTx`.                                                   |
- | `ctx.auth.getUserIdentity()`              | `ctx.sender`, `ctx.Sender`, `ctx.sender()` and `senderAuth` claims        | Use the caller's `Identity` for authorization. Use auth claims when you need issuer, subject, audience, or custom claims.                                                                             |
-@@ -306,10 +306,13 @@ export const messagesWithAuthors = spacetimeDb.anonymousView(
- );
- ```
- 
--Views currently do not take arbitrary client arguments. If a Convex query takes
--arguments, either subscribe with a parameterized SQL/query-builder expression
--from the client, model the argument as part of the subscribed table data, or
--create a view whose result can be filtered by the client's subscription.
-+If a Convex query takes arguments, define a
-+[view with arguments](/docs/functions/views#views-with-arguments) and subscribe
-+with `SELECT * FROM view_name(args)`. Arguments must be SQL literals, and the
-+subscription cannot add filters, column lists, or joins to the view call. If you
-+need filters or argument types that views don't support, you can model the
-+arguments as part of the subscribed table data, or create a view whose result
-+can be filtered by the client's subscription.
- 
- ### 5. Split actions into reducers and procedures
- 
+@@ -0,0 +1,467 @@
++---
++title: Run a fixed-rate game tick
++slug: /how-to/games/fixed-rate-game-tick
++---
++
++import Tabs from '@theme/Tabs';
++import TabItem from '@theme/TabItem';
++import { CppModuleVersionNotice } from "@site/src/components/CppModuleVersionNotice";
++
++:::note Prerequisites
++You need a module you can publish. If you don't have one yet, follow the [quickstart](../../00100-intro/00100-getting-started/00100-getting-started.md) for your language first.
++:::
++
++In this guide, you'll run your game's server logic at a fixed rate: a reducer that SpacetimeDB calls 20 times per second, which moves every entity in the world. You'll use a [schedule table](../../00200-core-concepts/00300-tables/00500-schedule-tables.md) to call the reducer and the `init` [lifecycle reducer](../../00200-core-concepts/00200-functions/00300-reducers/00500-lifecycle.md) to start it.
++
++## How it works
++
++- A `tick_timer` schedule table holds one row that tells SpacetimeDB to call the `tick` reducer every 50 milliseconds.
++- The `init` reducer inserts that row when the database is created.
++- The `tick` reducer measures how much time has passed since the last tick, then moves each entity by its velocity.
++
++## Define the tables
++
++Add three tables:
++
++- `tick_timer` is the schedule table. Its `scheduled_at` column says when to call `tick`.
++- `tick_state` is a private table with a single row that stores when the last tick ran.
++- `entity` holds the things your tick moves. It's public, so clients can subscribe to it.
++
++<Tabs groupId="server-language" queryString>
++<TabItem value="typescript" label="TypeScript">
++
++```typescript
++import { ScheduleAt } from 'spacetimedb';
++import { schema, table, t, type InferSchema, type ReducerCtx } from 'spacetimedb/server';
++
++// 50 ms between ticks: 20 ticks per second.
++const TICK_INTERVAL_MICROS = 50_000n;
++
++const tickTimer = table(
++  { name: 'tick_timer' },
++  {
++    scheduledId: t.u64().primaryKey().autoInc(),
++    scheduledAt: t.scheduleAt(),
++  }
++);
++
++const tickState = table(
++  { name: 'tick_state' },
++  {
++    id: t.u8().primaryKey(),
++    lastTick: t.timestamp(),
++  }
++);
++
++const entity = table(
++  { name: 'entity', public: true },
++  {
++    id: t.u64().primaryKey().autoInc(),
++    x: t.f32(),
++    y: t.f32(),
++    velocityX: t.f32(),
++    velocityY: t.f32(),
++  }
++);
++
++const spacetimedb = schema({ tickTimer, tickState, entity });
++export default spacetimedb;
++
++type Ctx = ReducerCtx<InferSchema<typeof spacetimedb>>;
++```
++
++</TabItem>
++<TabItem value="csharp" label="C#">
++
++```csharp
++using SpacetimeDB;
++
++public static partial class Module
++{
++    // 50 ms between ticks: 20 ticks per second.
++    static readonly TimeSpan TickInterval = TimeSpan.FromMilliseconds(50);
++
++    [SpacetimeDB.Table(Accessor = "TickTimer", Scheduled = "Tick", ScheduledAt = "ScheduledAt")]
++    public partial struct TickTimer
++    {
++        [SpacetimeDB.PrimaryKey]
++        [SpacetimeDB.AutoInc]
++        public ulong ScheduledId;
++        public ScheduleAt ScheduledAt;
++    }
++
++    [SpacetimeDB.Table(Accessor = "TickState")]
++    public partial struct TickState
++    {
++        [SpacetimeDB.PrimaryKey]
++        public byte Id;
++        public Timestamp LastTick;
++    }
++
++    [SpacetimeDB.Table(Accessor = "Entity", Public = true)]
++    public partial struct Entity
++    {
++        [SpacetimeDB.PrimaryKey]
++        [SpacetimeDB.AutoInc]
++        public ulong Id;
++        public float X;
++        public float Y;
++        public float VelocityX;
++        public float VelocityY;
++    }
++}
++```
++
++</TabItem>
++<TabItem value="rust" label="Rust">
++
++```rust
++use spacetimedb::{reducer, table, ReducerContext, ScheduleAt, Table, Timestamp};
++use std::time::Duration;
++
++// 50 ms between ticks: 20 ticks per second.
++const TICK_INTERVAL: Duration = Duration::from_millis(50);
++
++#[table(accessor = tick_timer, scheduled(tick))]
++pub struct TickTimer {
++    #[primary_key]
++    #[auto_inc]
++    scheduled_id: u64,
++    scheduled_at: ScheduleAt,
++}
++
++#[table(accessor = tick_state)]
++pub struct TickState {
++    #[primary_key]
++    id: u8,
++    last_tick: Timestamp,
++}
++
++#[table(accessor = entity, public)]
++pub struct Entity {
++    #[primary_key]
++    #[auto_inc]
++    id: u64,
++    x: f32,
++    y: f32,
++    velocity_x: f32,
++    velocity_y: f32,
++}
++```
++
++</TabItem>
++<TabItem value="cpp" label="C++">
++
++<CppModuleVersionNotice />
++
++```cpp
++#include <spacetimedb.h>
++using namespace SpacetimeDB;
++
++// 50 ms between ticks: 20 ticks per second.
++const TimeDuration TICK_INTERVAL = TimeDuration::from_millis(50);
++
++struct TickTimer {
++    uint64_t scheduled_id;
++    ScheduleAt scheduled_at;
++};
++SPACETIMEDB_STRUCT(TickTimer, scheduled_id, scheduled_at)
++SPACETIMEDB_TABLE(TickTimer, tick_timer, Private)
++FIELD_PrimaryKeyAutoInc(tick_timer, scheduled_id)
++SPACETIMEDB_SCHEDULE(tick_timer, 1, tick)  // Column 1 is scheduled_at
++
++struct TickState {
++    uint8_t id;
++    Timestamp last_tick;
++};
++SPACETIMEDB_STRUCT(TickState,
 ```
 
----
-
-### Incident Patch 2: `8d51670a` (2026-10-22)
-**Commit Message**: CI - check and refresh outdated rustup (#6351)
-
-# Description of Changes
-
-Updates the CI to install updated rustup, where necessary.
-
-# API and ABI breaking changes
-
-None.
-
-# Rollback safety impact
-
-n/a
-
-# Expected complexity level and risk
-
-1
-
-# Testing
-If the existing CI passes, I'm happy.
-
-Spot-checked the rustup step to ensure that it's installing 1.29.2.
-
----------
-
-Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
-
-**File**: `.github/actions/ensure-rustup/action.yml` (added, +48/-0)
+**File**: `docs/docs/00250-how-to/01000-games/00300-matchmaking-queue.md` (added, +631/-0)
 ```diff
-@@ -0,0 +1,48 @@
-+name: Ensure updated rustup
-+description: Update or install rustup and print its version, preserving Rust toolchains
-+runs:
-+  using: composite
-+  steps:
-+    - name: Check whether rustup is installed
-+      id: rustup
-+      shell: bash
-+      run: |
-+        if which rustup; then
-+          echo "installed=true" >> "$GITHUB_OUTPUT"
-+        else
-+          echo "installed=false" >> "$GITHUB_OUTPUT"
-+        fi
+@@ -0,0 +1,631 @@
++---
++title: Build a matchmaking queue
++slug: /how-to/games/matchmaking-queue
++---
 +
-+    - name: Update rustup
-+      id: update
-+      continue-on-error: true # Package-managed rustup may disable self-update.
-+      if: steps.rustup.outputs.installed == 'true'
-+      shell: bash
-+      run: rustup self update
++import Tabs from '@theme/Tabs';
++import TabItem from '@theme/TabItem';
++import { CppModuleVersionNotice } from "@site/src/components/CppModuleVersionNotice";
 +
-+    - name: Install rustup on Linux or macOS if needed
-+      if: (steps.rustup.outputs.installed == 'false' || steps.update.outcome == 'failure') && runner.os != 'Windows'
-+      shell: bash
-+      run: |
-+        curl --proto '=https' --tlsv1.2 --retry 3 -fsSL https://sh.rustup.rs \
-+          | sh -s -- -y --no-modify-path --default-toolchain none
-+        echo "${CARGO_HOME:-$HOME/.cargo}/bin" >> "$GITHUB_PATH"
++:::note Prerequisites
++You need a module and a client connected to it. If you don't have them yet, follow the [quickstart](../../00100-intro/00100-getting-started/00100-getting-started.md) for your language first.
++:::
 +
-+    - name: Install rustup on Windows if needed
-+      if: (steps.rustup.outputs.installed == 'false' || steps.update.outcome == 'failure') && runner.os == 'Windows'
-+      shell: bash
-+      run: |
-+        case "$RUNNER_ARCH" in
-+          X64) host_arch=x86_64 ;;
-+          ARM64) host_arch=aarch64 ;;
-+          *) echo "Unsupported Windows architecture: $RUNNER_ARCH" >&2; exit 1 ;;
-+        esac
-+        installer="$(mktemp -d)/rustup-init.exe"
-+        curl --proto '=https' --tlsv1.2 --retry 3 -fsSL \
-+          "https://win.rustup.rs/$host_arch" -o "$installer"
-+        "$installer" -y --no-modify-path --default-toolchain none
-+        echo "$(cygpath -u "${CARGO_HOME:-$USERPROFILE/.cargo}")/bin" >> "$GITHUB_PATH"
++In this guide, you'll build a matchmaking queue: players ask to find a match, wait in a queue, and are put into a 4-player match as soon as enough players are waiting. You'll use [reducers](../../00200-core-concepts/00200-functions/00300-reducers/00300-reducers.md) to join and leave the queue, the `client_disconnected` [lifecycle reducer](../../00200-core-concepts/00200-functions/00300-reducers/00500-lifecycle.md) to clean up after players who leave, and a per-player [view](../../00200-core-concepts/00200-functions/00500-views.md) to tell each player about their match.
 +
-+    - name: Print updated rustup version
-+      shell: bash
-+      run: rustup --version
++## How it works
++
++- A private `queue_entry` table holds the players who are waiting.
++- A `join_queue` reducer adds the caller to the queue, then creates a match if enough players are waiting.
++- A `leave_queue` reducer and the `client_disconnected` reducer remove players from the queue.
++- Private `game_match` and `match_player` tables record each match and its players.
++- A public `my_match` view returns the players in the caller's match, and nothing else.
++
++## Define the tables
++
++Add three tables. All of them are private: players only learn about their own match, through the view.
++
++- `queue_entry` has one row per waiting player, with the time they joined.
++- `game_match` has one row per match.
++- `match_player` has one row per player in a match. Its primary key is the player's identity, so a player can only be in one match at a time. It has an index on `match_id`, to find every player in a match.
++
++<Tabs groupId="server-language" queryString>
++<TabItem value="typescript" label="TypeScript">
++
++```typescript
++import { schema, table, t, SenderError, type InferSchema, type ReducerCtx } from 'spacetimedb/server';
++
++// Number of players in each match.
++const MATCH_SIZE = 4;
++
++const queueEntry = table(
++  { name: 'queue_entry' },
++  {
++    identity: t.identity().primaryKey(),
++    joinedAt: t.timestamp(),
++  }
++);
++
++const gameMatch = table(
++  { name: 'game_match' },
++  {
++    id: t.u64().primaryKey().autoInc(),
++    createdAt: t.timestamp(),
++  }
++);
++
++const matchPlayer = table(
++  { name: 'match_player' },
++  {
++    identity: t.identity().primaryKey(),
++    matchId: t.u64().index('btree'),
++  }
++);
++
++const spacetimedb = schema({ queueEntry, gameMatch, matchPlayer });
++export default spacetimedb;
++
++type Ctx = ReducerCtx<InferSchema<typeof spacetimedb>>;
++```
++
++</TabItem>
++<TabItem value="csharp" label="C#">
++
++```csharp
++using SpacetimeDB;
++
++public static partial class Module
++{
++    // Number of players in each match.
++    const int MatchSize = 4;
++
++    [SpacetimeDB.Table(Accessor = "QueueEntry")]
++    public partial struct QueueEntry
++    {
++        [SpacetimeDB.PrimaryKey]
++        public Identity Identity;
++        public Timestamp JoinedAt;
++    }
++
++    [SpacetimeDB.Table(Accessor = "GameMatch")]
++    public partial struct GameMatch
++    {
++        [SpacetimeDB.PrimaryKey]
++        [SpacetimeDB.AutoInc]
++        public ulong Id;
++        public Timestamp CreatedAt;
++    }
++
++    [SpacetimeDB.Table(Accessor = "MatchPlayer")]
++    public partial struct MatchPlayer
++    {
++        [SpacetimeDB.PrimaryKey]
++        public Identity Identity;
++
++        [SpacetimeDB.Index.BTree]
++        public ulong MatchId;
++    }
++}
++```
++
++</TabItem>
++<TabItem value="rust" label="Rust">
++
++```rust
++use spacetimedb::{reducer, table, view, Identity, ReducerContext, Table, Timestamp, ViewContext};
++
++// Number of players in each match.
++const MATCH_SIZE: usize = 4;
++
++#[table(accessor = queue_entry)]
++pub struct QueueEntry {
++    #[primary_key]
++    identity: Identity,
++    joined_at: Timestamp,
++}
++
++#[table(accessor = game_match)]
++pub struct GameMatch {
++    #[primary_key]
++    #[auto_inc]
++    id: u64,
++    created_at: Timestamp,
++}
++
++#[table(accessor = match_player)]
++pub struct MatchPlayer {
++    #[primary_key]
++    identity: Identity,
++    #[index(btree)]
++    match_id: u64,
++}
++```
++
++</TabItem>
++<TabItem value="cpp" label="C++">
++
++<CppModuleVersionNotice />
++
++```cpp
++#include <spacetimedb.h>
++#include <algorithm>
++using namespace SpacetimeDB;
++
++// Number of players in each match.
++constexpr size_t MATCH_SIZE = 4;
++
++struct QueueEntry {
++    Identity identity;
++    Timestamp joined_at;
++};
++SPACETIMEDB_STRUCT(QueueEntry, identity, joined_at)
++SPACETIMEDB_TABLE(QueueEntry, queue_entry, Private)
++FIELD_PrimaryKey(queue_entry, identity)
++
++struct GameMatch {
++    uint64_t id;
++    Timestamp created_at;
++};
++SPACETIMEDB_STRUCT(GameMatch, id, created_at)
++SP
 ```
 
-**File**: `.github/workflows/benchmarks.yml` (modified, +21/-2)
+**File**: `docs/docs/00250-how-to/01000-games/00350-skill-based-matchmaking.md` (added, +1024/-0)
 ```diff
-@@ -68,6 +68,14 @@ jobs:
-         if: ${{ env.PR_NUMBER }}
-         run: echo "PR_REF=$(gh pr view $PR_NUMBER --json headRefName --jq .headRefName)" >>"$GITHUB_ENV"
- 
-+      - name: Checkout trusted rustup action
-+        uses: actions/checkout@v4
-+        with:
-+          ref: ${{ github.sha }}
+@@ -0,0 +1,1024 @@
++---
++title: Skill-based matchmaking with OpenSkill
++slug: /how-to/games/skill-based-matchmaking
++---
 +
-+      - name: Check and update rustup
-+        uses: ./.github/actions/ensure-rustup
++import Tabs from '@theme/Tabs';
++import TabItem from '@theme/TabItem';
++import { CppModuleVersionNotice } from "@site/src/components/CppModuleVersionNotice";
 +
-       - name: Checkout sources
-         uses: actions/checkout@v4
-         with:
-@@ -200,11 +208,10 @@ jobs:
-         run: |
-           rm -fr /stdb/*
- 
--      - name: Install valgrind & iai-callgrind-runner
-+      - name: Install benchmark system dependencies
-         run: |
-           apt-get update
-           apt-get install -y valgrind protobuf-compiler bash sudo curl gh
--          cargo install --git https://github.com/clockworklabs/iai-callgrind.git --branch main iai-callgrind-runner
-           git config --global --add safe.directory /__w/SpacetimeDB/SpacetimeDB
- 
-       # can't do this off self hosted:
-@@ -231,6 +238,18 @@ jobs:
-         shell: bash
-         run: echo "PR_REF=$(gh pr view $PR_NUMBER --json headRefName --jq .headRefName)" >>"$GITHUB_ENV"
- 
-+      - name: Checkout trusted rustup action
-+        uses: actions/checkout@v4
-+        with:
-+          ref: ${{ github.sha }}
++:::note Prerequisites
++You need a module and a client connected to it. If you don't have them yet, follow the [quickstart](../../00100-intro/00100-getting-started/00100-getting-started.md) for your language first. This guide builds on [Build a matchmaking queue](./00300-matchmaking-queue.md), so read that one first.
++:::
 +
-+      # Rustup comes from the job container, so updating the fleet VM image does not update it.
-+      - name: Check and update rustup
-+        uses: ./.github/actions/ensure-rustup
++In this guide, you'll put players of similar skill in the same match, and update each player's skill after every match. Skill is measured with [OpenSkill](https://openskill.me), an open-source rating system that, like TrueSkill, rates players in teams as well as one-on-one. Matches have two teams, and a single constant switches between 1v1 and 2v2. You'll use a [schedule table](../../00200-core-concepts/00300-tables/00500-schedule-tables.md) to look for matches every second, allowing a wider skill gap the longer players wait.
 +
-+      - name: Install iai-callgrind-runner
-+        run: cargo install --git https://github.com/clockworklabs/iai-callgrind.git --branch main iai-callgrind-runner
++## How it works
 +
-       - name: Checkout sources
-         uses: actions/checkout@v3
-         with:
++- A public `player_rating` table holds each player's rating: `mu`, their estimated skill, and `sigma`, how uncertain that estimate is. New players start at a `mu` of 25 and a `sigma` of 8.33.
++- A `join_queue` reducer adds the caller to the queue with their current `mu`.
++- A `match_players` reducer runs every second. It sorts the waiting players by `mu`, and creates a match from any group of neighbours whose skill gap is small enough. The allowed gap grows with time spent waiting, so nobody waits forever.
++- Each match has two teams. Players are dealt to the teams so that both get a similar total skill.
++- A `finish_match` function, which your game logic calls when a match ends, updates the rating of every player in it.
++
++## Install OpenSkill
++
++<Tabs groupId="server-language" queryString>
++<TabItem value="typescript" label="TypeScript">
++
++Add the [`openskill`](https://www.npmjs.com/package/openskill) package to your module:
++
++```bash
++npm install openskill
++```
++
++</TabItem>
++<TabItem value="csharp" label="C#">
++
++Add the [`OpenSkillSharp`](https://www.nuget.org/packages/OpenSkillSharp) package to your module:
++
++```bash
++dotnet add package OpenSkillSharp
++```
++
++</TabItem>
++<TabItem value="rust" label="Rust">
++
++Add the [`skillratings`](https://crates.io/crates/skillratings) crate to your module. Its `weng_lin` module implements the Weng-Lin algorithm, which is what OpenSkill is built on:
++
++```bash
++cargo add skillratings
++```
++
++</TabItem>
++<TabItem value="cpp" label="C++">
++
++<CppModuleVersionNotice />
++
++There's no OpenSkill library for C++ yet. Instead, you'll write the rating update yourself: it's a short function, shown in [Update ratings when a match ends](#update-ratings-when-a-match-ends).
++
++</TabItem>
++</Tabs>
++
++## Define the tables
++
++Start from the tables of the matchmaking queue guide, and make three changes:
++
++- `queue_entry` also stores the player's `mu`, so `match_players` can sort the queue without looking up every rating.
++- `match_player` has a `team` column, 0 or 1.
++- A new `player_rating` table holds every player's rating. It's public, so anyone can see anyone's rating.
++
++Then add `matchmaking_timer`, the schedule table that calls `match_players`.
++
++<Tabs groupId="server-language" queryString>
++<TabItem value="typescript" label="TypeScript">
++
++```typescript
++import { ScheduleAt } from 'spacetimedb';
++import { schema, table, t, SenderError, type InferSchema, type ReducerCtx } from 'spacetimedb/server';
++import { rate, rating } from 'openskill';
++
++// Players on each team: 1 for 1v1 matches, 2 for 2v2, and so on.
++const TEAM_SIZE = 2;
++const MATCH_SIZE = 2 * TEAM_SIZE;
++
++// The largest skill gap allowed in a match, and how much it grows
++// for each second the longest-waiting player has waited.
++const STARTING_GAP = 2;
++const GAP_GROWTH_PER_SECOND = 0.2;
++
++const playerRating = table(
++  { name: 'player_rating', public: true },
++  {
++    identity: t.identity().primaryKey(),
++    mu: t.f64(),
++    sigma: t.f64(),
++  }
++);
++
++const queueEntry = table(
++  { name: 'queue_entry' },
++  {
++    identity: t.identity().primaryKey(),
++    joinedAt: t.timestamp(),
++    mu: t.f64(),
++  }
++);
++
++const gameMatch = table(
++  { name: 'game_match' },
++  {
++    id: t.u64().primaryKey().autoInc(),
++    createdAt: t.timestamp(),
++  }
++);
++
++const matchPlayer = table(
++  { name: 'match_player' },
++  {
++    identity: t.identity().primaryKey(),
++    matchId: t.u64().index('btree'),
++    team: t.u8(),
++  }
++);
++
++const matchmakingTimer = table(
++  { name: 'matchmaking_timer' },
++  {
++    scheduledId: t.u64().primaryKey().autoInc(),
++    scheduledAt: t.scheduleAt(),
++  }
++);
++
++const spacetimedb = schema({ playerRating, queueEntry, gameMatch, matchPlayer, matchmakingTimer });
++export default spacetimedb;
++
++type Ctx = ReducerCtx<InferSchema<typeof spacetime
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +7/-0)
+**File**: `docs/docs/00250-how-to/01000-games/00400-turn-based-game.md` (added, +886/-0)
 ```diff
-@@ -1577,6 +1577,10 @@ jobs:
-       - *find-git-ref
-       - *checkout-sources
- 
-+      # Fleet VM images maintain rustup; only update it here for the other runners in this matrix.
-+      - name: Check and update rustup
-+        if: ${{ matrix.runner != 'spacetimedb-linux-small' }}
-+        uses: ./.github/actions/ensure-rustup
-       - name: Install Rust
-         uses: dsherret/rust-toolchain-file@v1
-       - name: Set default rust toolchain
-@@ -1666,6 +1670,9 @@ jobs:
-         uses: actions/checkout@v4
-         with:
-           ref: ${{ env.GIT_REF }}
-+      # Rustup comes from the job container, so updating the fleet VM image does not update it.
-+      - name: Check and update rustup
-+        uses: ./.github/actions/ensure-rustup
-       - uses: dsherret/rust-toolchain-file@v1
-       - name: Set default rust toolchain
-         run: rustup default $(rustup show active-toolchain | cut -d' ' -f1)
+@@ -0,0 +1,886 @@
++---
++title: Make a turn-based game with turn timeouts
++slug: /how-to/games/turn-based-game
++---
++
++import Tabs from '@theme/Tabs';
++import TabItem from '@theme/TabItem';
++import { CppModuleVersionNotice } from "@site/src/components/CppModuleVersionNotice";
++
++:::note Prerequisites
++You need a module and a client connected to it. If you don't have them yet, follow the [quickstart](../../00100-intro/00100-getting-started/00100-getting-started.md) for your language first.
++:::
++
++In this guide, you'll build a game of tic-tac-toe where each player has 30 seconds to make a move, and loses the game if they run out of time. The server checks every move, so players can't cheat. You'll use a [reducer](../../00200-core-concepts/00200-functions/00300-reducers/00300-reducers.md) to check and apply moves, and a [schedule table](../../00200-core-concepts/00300-tables/00500-schedule-tables.md) to end turns that take too long.
++
++The same pattern works for any turn-based game, such as a card game or a strategy game: replace the board and the rules with your own.
++
++## How it works
++
++- A private `game` table holds each game: its players, its board, whose turn it is, and when that turn times out.
++- A `make_move` reducer checks that a move is legal, applies it, then gives the turn to the other player.
++- A private `turn_timer` schedule table holds one timer per game in progress. When the current turn's deadline passes, it calls the `turn_timeout` reducer.
++- Each move replaces the game's timer with a new one. If the timer fires, the player whose turn it is forfeits.
++- A `my_games` view returns the caller's games. Clients subscribe to it, and show the board and a countdown.
++
++## Define the tables
++
++Add two tables and a view:
++
++- `game` has one row per game. It's private: players read their games through the `my_games` view. It has an index on each player column. The view combines the two columns with `or`, and SpacetimeDB can't use an index for an `or`, so it reads every game. That's fine while the table is small. If you expect many games, split the view in two, one for each player column, as the [chat guide does for DMs](../01100-social/00300-chat-rooms-and-dms.md#show-each-player-their-messages): each view then reads only the caller's games through its index.
++- `turn_timer` is the schedule table. It's private too: clients read the deadline from their games instead. Its `game_id` column is unique, so a game never has more than one timer.
++- `my_games` is a public view that returns the caller's games, as X or as O. Keeping tables private and exposing what clients need through views is the recommended practice: see [Hide information from players](./00600-hide-information.md).
++
++<Tabs groupId="server-language" queryString>
++<TabItem value="typescript" label="TypeScript">
++
++```typescript
++import { ScheduleAt, Timestamp, type Identity } from 'spacetimedb';
++import { schema, table, t, SenderError, type InferSchema, type ReducerCtx } from 'spacetimedb/server';
++
++// How long each player has to make a move: 30 seconds.
++const TURN_TIME_LIMIT_MICROS = 30_000_000n;
++
++const game = table(
++  { name: 'game' },
++  {
++    id: t.u64().primaryKey().autoInc(),
++    playerX: t.identity().index('btree'),
++    playerO: t.identity().index('btree'),
++    // The 9 cells, row by row: 'X', 'O', or '-' when empty.
++    board: t.string(),
++    // The player whose turn it is.
++    turn: t.identity(),
++    // When the current turn times out.
++    turnDeadline: t.timestamp(),
++    finished: t.bool(),
++    // The winner, or undefined while the game is in progress or after a draw.
++    winner: t.option(t.identity()),
++  }
++);
++
++const turnTimer = table(
++  { name: 'turn_timer' },
++  {
++    scheduledId: t.u64().primaryKey().autoInc(),
++    scheduledAt: t.scheduleAt(),
++    gameId: t.u64().unique(),
++  }
++);
++
++const spacetimedb = schema({ game, turnTimer });
++export default spacetimedb;
++
++type Ctx = ReducerCtx<InferSchema<typeof spacetimedb>>;
++
++export const myGames = spacetimedb.view(
++  { name: 'my_games', public: true },
++  t.array(game.rowType),
++  ctx => ctx.from.game.where(g => g.playerX.eq(ctx.sender).or(g.playerO.eq(ctx.sender)))
++);
++```
++
++</TabItem>
++<TabItem value="csharp" label="C#">
++
++```csharp
++using SpacetimeDB;
++
++public static partial class Module
++{
++    // How long each player has to make a move.
++    static readonly TimeDuration TurnTimeLimit = TimeDuration.FromSeconds(30);
++
++    [SpacetimeDB.Table(Accessor = "Game")]
++    public partial struct Game
++    {
++        [SpacetimeDB.PrimaryKey]
++        [SpacetimeDB.AutoInc]
++        public ulong Id;
++
++        [SpacetimeDB.Index.BTree]
++        public Identity PlayerX;
++
++        [SpacetimeDB.Index.BTree]
++        public Identity PlayerO;
++
++        // The 9 cells, row by row: 'X', 'O', or '-' when empty.
++        public string Board;
++
++        // The player whose turn it is.
++        public Identity Turn;
++
++        // When the current turn times out.
++     
 ```
 
-**File**: `.github/workflows/llm-benchmark-periodic.yml` (modified, +2/-0)
+**File**: `docs/docs/00250-how-to/01000-games/00500-sync-nearby-entities.md` (added, +613/-0)
 ```diff
-@@ -280,6 +280,8 @@ jobs:
-       - name: Checkout repository
-         uses: actions/checkout@v4
- 
-+      - name: Check and update rustup
-+        uses: ./.github/actions/ensure-rustup
-       - uses: dsherret/rust-toolchain-file@v1
- 
-       - name: Download analysis reports
-```
-
-**File**: `.github/workflows/package.yml` (modified, +4/-0)
-```diff
-@@ -56,6 +56,10 @@ jobs:
-           echo "CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++"                 >> $GITHUB_ENV
-           echo "AR_aarch64_unknown_linux_gnu=aarch64-linux-gnu-ar"                   >> $GITHUB_ENV
- 
-+      # Fleet VM images maintain rustup; only update it here for the other runners in this matrix.
-+      - name: Check and update rustup
-+        if: ${{ matrix.runner != 'spacetimedb-windows-runner' }}
-+        uses: ./.github/actions/ensure-rustup
-       - name: Install Rust
-         uses: dsherret/rust-toolchain-file@v1
-       - name: Set default rust toolchain
-```
-
-**File**: `.github/workflows/release.yml` (modified, +2/-0)
-```diff
-@@ -318,6 +318,8 @@ jobs:
- 
-       # The TypeScript package's prepublish hook builds the portable datastore
-       # Wasm from source, so npm publishing needs Rust and wasm-bindgen.
-+      - name: Check and update rustup
-+        uses: ./.github/actions/ensure-rustup
-       - name: Install Rust toolchain
-         uses: dsherret/rust-toolchain-file@v1
-       - name: Set default rust toolchain
+@@ -0,0 +1,613 @@
++---
++title: "Only sync what's near the player"
++slug: /how-to/games/sync-nearby-entities
++---
++
++import Tabs from '@theme/Tabs';
++import TabItem from '@theme/TabItem';
++import { CppModuleVersionNotice } from "@site/src/components/CppModuleVersionNotice";
++
++:::note Prerequisites
++You need a module and a client connected to it. If you don't have them yet, follow the [quickstart](../../00100-intro/00100-getting-started/00100-getting-started.md) for your language first.
++:::
++
++In this guide, you'll make each client receive only the players near it, rather than every player in the world. You'll split the world into square chunks, store the chunk each player is in, and have each client [subscribe](../../00200-core-concepts/00400-subscriptions.md) to the chunks around its player, moving that subscription as the player moves.
++
++:::warning This doesn't hide players
++Clients choose what they subscribe to, and the `player` table is public, so a modified client can subscribe to every chunk and see every player. This guide reduces what honest clients download. If players must not be able to see where other players are, for example hidden units in a strategy game, the server has to decide what each client can see: see [Hide information from players](./00600-hide-information.md).
++:::
++
++## How it works
++
++- The world is a grid of square chunks, each 100 units wide.
++- A public `player` table holds each player's position and the chunk they're in, with an index on the chunk.
++- A `move_player` reducer updates the player's position and chunk.
++- Each client subscribes to its own row, and to the players in its chunk and the 8 chunks around it.
++- When the player enters a new chunk, the client subscribes to the new chunks, then drops its old subscription.
++
++## Define the table
++
++Add a `player` table with one row per online player. `chunk` is a single number that identifies a chunk: `chunk_y * 100 + chunk_x`. Its index lets SpacetimeDB find the players in a chunk directly, without scanning the whole table.
++
++The world here is 10,000 units wide, or 100 chunks per side. Use the size of your own world.
++
++<Tabs groupId="server-language" queryString>
++<TabItem value="typescript" label="TypeScript">
++
++```typescript
++import { schema, table, t, SenderError } from 'spacetimedb/server';
++
++// The world is a square, split into 100 x 100 square chunks.
++const WORLD_SIZE = 10_000;
++const CHUNK_SIZE = 100;
++const CHUNKS_PER_SIDE = 100;
++
++const player = table(
++  { name: 'player', public: true },
++  {
++    identity: t.identity().primaryKey(),
++    x: t.f32(),
++    y: t.f32(),
++    // The chunk the player is in. Updated whenever the player moves.
++    chunk: t.u32().index('btree'),
++  }
++);
++
++const spacetimedb = schema({ player });
++export default spacetimedb;
++```
++
++</TabItem>
++<TabItem value="csharp" label="C#">
++
++```csharp
++using SpacetimeDB;
++
++public static partial class Module
++{
++    // The world is a square, split into 100 x 100 square chunks.
++    const float WorldSize = 10_000f;
++    const float ChunkSize = 100f;
++    const uint ChunksPerSide = 100;
++
++    [SpacetimeDB.Table(Accessor = "Player", Public = true)]
++    public partial struct Player
++    {
++        [SpacetimeDB.PrimaryKey]
++        public Identity Identity;
++        public float X;
++        public float Y;
++
++        // The chunk the player is in. Updated whenever the player moves.
++        [SpacetimeDB.Index.BTree]
++        public uint Chunk;
++    }
++}
++```
++
++</TabItem>
++<TabItem value="rust" label="Rust">
++
++```rust
++use spacetimedb::{reducer, table, Identity, ReducerContext, Table};
++
++// The world is a square, split into 100 x 100 square chunks.
++const WORLD_SIZE: f32 = 10_000.0;
++const CHUNK_SIZE: f32 = 100.0;
++const CHUNKS_PER_SIDE: u32 = 100;
++
++#[table(accessor = player, public)]
++pub struct Player {
++    #[primary_key]
++    identity: Identity,
++    x: f32,
++    y: f32,
++    // The chunk the player is in. Updated whenever the player moves.
++    #[index(btree)]
++    chunk: u32,
++}
++```
++
++</TabItem>
++<TabItem value="cpp" label="C++">
++
++<CppModuleVersionNotice />
++
++```cpp
++#include <spacetimedb.h>
++using namespace SpacetimeDB;
++
++// The world is a square, split into 100 x 100 square chunks.
++constexpr float WORLD_SIZE = 10'000.0f;
++constexpr float CHUNK_SIZE = 100.0f;
++constexpr uint32_t CHUNKS_PER_SIDE = 100;
++
++struct Player {
++    Identity identity;
++    float x;
++    float y;
++    // The chunk the player is in. Updated whenever the player moves.
++    uint32_t chunk;
++};
++SPACETIMEDB_STRUCT(Player, identity, x, y, chunk)
++SPACETIMEDB_TABLE(Player, player, Public)
++FIELD_PrimaryKey(player, identity)
++FIELD_Index(player, chunk)
++```
++
++</TabItem>
++</Tabs>
++
++## Track each player's chunk
++
++Add a `chunk_at` function that returns the chunk containing a position, and keep `chunk` up to date wherever a player's position changes:
++
++- The `client_connected` [lifecycle reducer](../../00200-core-concepts/00200-functions/00300-reducers/00
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6362** (2026-10-24): docs: document IDC receiver bindings and CLI configuration (@clockwork-labs-bot)
+- **PR #6357** (closed): Test cache-warmed Linux and Windows staging runners (@bfops)
 - **PR #6354** (2026-10-22): Release - Work around crates.io ratelimiting (@bfops)
 - **PR #6353** (2026-10-22): View docs updated for the current args feature (@JasonAtClockwork)
 - **PR #6351** (2026-10-22): CI - check and refresh outdated rustup (@bfops)
 - **PR #6345** (closed): ci: qualify Linux and Windows staging runners (@bfops)
-- **PR #6343** (2026-10-20): Promoting our "How To Guides" to top-level documentation. (@krisajenkins)
-- **PR #6324** (2026-10-19): Enable simplified arguments for views (@JasonAtClockwork)
 
 ---
 
@@ -1196,55 +1894,58 @@ Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. View docs updated for the current args feature (#6353)
+## X. Docs - Add guides to How To Guides (#6060)
 
 **RULE**:
-When implementing operations in `docs/docs/00200-core-concepts/00200-functions/00500-views.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/GUIDES_TODO.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18cebee8`: View docs updated for the current args feature (#6353). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `155f3050`: Docs - Add guides to How To Guides (#6060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/00200-core-concepts/00200-functions/00500-views.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/GUIDES_TODO.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Views must be declared as `public` with an explicit `name`. They take a context parameter and can also accept [user-defined arguments](#views-with-arguments) in TypeScript, C#, and Rust.
-The handler signature is `(ctx) => rows`, or `(ctx, args) => rows` for [views with arguments](#views-with-arguments), where `rows` must be either an array or option of product values.
-### Views with Arguments
+# Guides to write
 
-Views can accept arguments to select which data to return. For example, using the player level table defined above, this view returns player level rows at the requested level:
+Short guides, each focused on one precise topic. Check off each one once it's written.
 
-<Tabs groupId="server-language" queryString>
-<TabItem value="typescript" label="TypeScript">
+Each guide has a stub page under `docs/00250-how-to/` (one folder per section below, numbered from `01000`),
+wired into the sidebar in `sidebars.ts` under the "How To Guides" header. Once a guide is written, also list it
+on the section's index page, `docs/00250-how-to/00000-index.md`. The stubs are regular published pages, so don't
+merge this branch to `master` until every guide is written, or remove the unfinished stubs first.
 
-Pass a parameter object before the return type. The handler receives the arguments as an object after the context:
+Each guide will also get a short-format video (done later, once the written guides exist).
 
-```typescript
-export const playersAtLevel = spacetimedb.anonymousView(
-  { name: 'players_at_level', public: true },
-  { level: t.u64() },
-  t.array(playerLevels.rowType),
-  (ctx, { level }) => Array.from(ctx.db.playerLevels.level.filter(level))
-);
-```
+## Games
 
-</TabItem>
-<TabItem value="csharp" label="C#">
+- [x] How to make a top 100 leaderboard
+- [x] Run a fixed-rate game tick
+- [x] Build a matchmaking queue
+- [x] Skill-based matchmaking with OpenSkill
+- [x] Make a turn-based game with turn timeouts
+- [x] Only sync what's near the player
+- [x] Hide information from players
+- [x] Reset a leaderboard each season
 
-Add parameters after the context:
+## Social
 
-```csharp
-[SpacetimeDB.View(Accessor = "PlayersAtLevel", Name = "players_at_lev
+- [x] Keep usernames unique and block offensive ones
+- [x] Build a friends or follow list
+- [x] Chat rooms and private DMs
+- [x] Typing indicators and other short-lived signals
+- [x] Unread counts and notifications
+
+## Common app patte
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-Views must be declared as `public` with an explicit `name`, and they accept only a context parameter - no user-defined arguments beyond the context type.
-The handler signature is `(ctx) => rows`, where `rows` must be either an array or option of product values.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18cebee8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `155f3050` are properly handled with clean fallback behavior.

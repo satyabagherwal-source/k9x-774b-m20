@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T10:36:25.654Z",
+  "last_updated": "2026-10-25T10:43:27.920Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -335,14 +335,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-      "content_hash": "d7caec617c6997c5838ad0680458872169c898ca69eb8a4d176a476376ae2e8a",
-      "verified_at": "2026-10-20T16:15:00.033Z",
+      "content_hash": "5ae60e76de227c03683fdfbba0b2d9c913b4afe65dd77f4d619888c5dd0ddd2c",
+      "verified_at": "2026-10-25T10:43:27.915Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:15:00.033Z"
+      "last_updated": "2026-10-25T10:43:27.915Z"
     },
     "XingChen-AGI/TeleOCR": {
       "repository": "XingChen-AGI/TeleOCR",
@@ -3831,14 +3831,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-burntsushi-ripgrep",
-      "content_hash": "2e076f8dd69975ae192d205cc1e09be93fa9e6317ba538da7e64ed6ad11e2536",
-      "verified_at": "2026-10-18T21:33:30.063Z",
+      "content_hash": "fac00586c8a6c72669e1b4330ea05fb0669d6c6436027f518918ccbfa9153e63",
+      "verified_at": "2026-10-25T10:43:10.489Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:33:30.063Z"
+      "last_updated": "2026-10-25T10:43:10.489Z"
     },
     "cosscom/coss": {
       "repository": "cosscom/coss",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "c72f6b4d9054b943a0674804f18936a48c8d8c547c33773140f1eb8e299811d6",
-      "verified_at": "2026-10-22T20:45:37.000Z",
+      "content_hash": "6268861045df576e319009a9a57b9bc4027c6af139a379df0fd0287b194199c3",
+      "verified_at": "2026-10-25T10:43:23.879Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:45:37.000Z"
+      "last_updated": "2026-10-25T10:43:23.879Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",

@@ -4774,3 +4774,6 @@
 | `CYCLE-20261025-03VA` | `2026-10-25T10:36:19.990Z` | `ducaale/xh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4241` | Yes (`dd4b014c...`) |
 | `CYCLE-20261025-07Y1` | `2026-10-25T10:36:25.273Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4115` | Yes (`2e9744e5...`) |
 | `CYCLE-20261025-0886` | `2026-10-25T10:36:25.638Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4242, Rule 4243, Rule 4244` | Yes (`0d3171e6...`) |
+| `CYCLE-20261025-8WLS` | `2026-10-25T10:43:10.480Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md` | Yes (`fac00586...`) |
+| `CYCLE-20261025-96XI` | `2026-10-25T10:43:23.862Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md` | Yes (`62688610...`) |
+| `CYCLE-20261025-9A1T` | `2026-10-25T10:43:27.905Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4245, Rule 4246, Rule 4247` | Yes (`5ae60e76...`) |

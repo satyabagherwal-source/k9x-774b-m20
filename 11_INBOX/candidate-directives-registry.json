@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T10:16:52.881Z",
+  "last_updated": "2026-10-25T10:43:23.875Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2631,6 +2631,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-vikejs-vike"
+    },
+    {
+      "id": "CD-96XV",
+      "directive_title": "Docs - Add guides to How To Guides (#6060)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "clockworklabs/SpacetimeDB",
+      "source_commit": "155f3050",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-clockworklabs-spacetimedb"
     }
   ]
 }

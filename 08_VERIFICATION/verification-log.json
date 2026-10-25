@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-7EY3",
-    "timestamp": "2026-10-21T18:59:13.131Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d79e74e3d91eedf93058ff2c098db1bf4e6ce63395080c7894f780ce4a731d7c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-FP0F",
-    "timestamp": "2026-10-21T19:05:39.423Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "9d4db0f7119fbc768cef053a1c4e839bcc99f4ce100ec5705096de07a9ab5098",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-FTIA",
-    "timestamp": "2026-10-21T19:05:45.250Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "fab7ef7f5b1a8ead94700c4c2ce6e51b574330af5f147530ed5da230ad323e01",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-FXR3",
     "timestamp": "2026-10-21T19:05:50.751Z",
     "repository": "microsoft/agent-governance-toolkit",
@@ -7490,6 +7445,51 @@
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
     "contentHash": "0d3171e686841fd01d464dd9e1114ff656852a88070e72ee8c118ce616c7e9b8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-8WLS",
+    "timestamp": "2026-10-25T10:43:10.480Z",
+    "repository": "BurntSushi/ripgrep",
+    "learningId": "learn-github-burntsushi-ripgrep",
+    "contentHash": "fac00586c8a6c72669e1b4330ea05fb0669d6c6436027f518918ccbfa9153e63",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-96XI",
+    "timestamp": "2026-10-25T10:43:23.862Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "6268861045df576e319009a9a57b9bc4027c6af139a379df0fd0287b194199c3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-9A1T",
+    "timestamp": "2026-10-25T10:43:27.905Z",
+    "repository": "meta-llama/Llama-3.1-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+    "contentHash": "5ae60e76de227c03683fdfbba0b2d9c913b4afe65dd77f4d619888c5dd0ddd2c",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

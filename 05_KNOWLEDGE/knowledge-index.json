@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T10:36:25.584Z",
+  "last_updated": "2026-10-25T10:43:27.860Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4827,8 +4827,8 @@
       "slug": "burntsushi-ripgrep",
       "platform": "github",
       "source_url": "https://github.com/BurntSushi/ripgrep",
-      "source_version": "3fce3b5b",
-      "content_hash": "2e076f8dd69975ae192d205cc1e09be93fa9e6317ba538da7e64ed6ad11e2536",
+      "source_version": "6892bc2b",
+      "content_hash": "fac00586c8a6c72669e1b4330ea05fb0669d6c6436027f518918ccbfa9153e63",
       "dossier_path": "07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
       "promoted_rules": [
@@ -4848,7 +4848,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:33:30.011Z",
+      "verified_at": "2026-10-25T10:43:10.403Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6304,8 +6304,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "18cebee8",
-      "content_hash": "c72f6b4d9054b943a0674804f18936a48c8d8c547c33773140f1eb8e299811d6",
+      "source_version": "155f3050",
+      "content_hash": "6268861045df576e319009a9a57b9bc4027c6af139a379df0fd0287b194199c3",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -6350,7 +6350,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:45:36.909Z",
+      "verified_at": "2026-10-25T10:43:23.799Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22069,7 +22069,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "d7caec617c6997c5838ad0680458872169c898ca69eb8a4d176a476376ae2e8a",
+      "content_hash": "5ae60e76de227c03683fdfbba0b2d9c913b4afe65dd77f4d619888c5dd0ddd2c",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -22174,6 +22174,21 @@
           "number": 2036,
           "title": "Deterministic Sampling for Reproducibility",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4245,
+          "title": "KV-Cache Memory Bound & Context Window Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4246,
+          "title": "Tokenizer Detokenization & Special Token Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4247,
+          "title": "Quantization Precision & Dequantization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22194,7 +22209,7 @@
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf"
       ],
-      "verified_at": "2026-10-20T16:14:59.950Z",
+      "verified_at": "2026-10-25T10:43:27.851Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122026,6 +122041,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T10:36:25.573Z"
+    },
+    "rule-4245": {
+      "learning_id": "rule-4245",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4245,
+      "title": "KV-Cache Memory Bound & Context Window Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:43:27.851Z"
+    },
+    "rule-4246": {
+      "learning_id": "rule-4246",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4246,
+      "title": "Tokenizer Detokenization & Special Token Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:43:27.851Z"
+    },
+    "rule-4247": {
+      "learning_id": "rule-4247",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4247,
+      "title": "Quantization Precision & Dequantization Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:43:27.851Z"
     }
   },
   "aliases": {
