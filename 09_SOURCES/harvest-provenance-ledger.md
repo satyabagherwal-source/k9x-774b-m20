@@ -4960,3 +4960,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-10-25T19:06:27.349Z |
 | `learn-github-rsuite-rsuite` | `https://github.com/rsuite/rsuite` | `71175b9a` | Multi-dimensional audit evidence | 2026-10-25T19:06:27.609Z |
 | `learn-github-mlua-rs-mlua` | `https://github.com/mlua-rs/mlua` | `ff96ed78` | Multi-dimensional audit evidence | 2026-10-25T19:06:28.493Z |
+| `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-25T19:12:49.506Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `9df9e7ce` | Multi-dimensional audit evidence | 2026-10-25T19:12:49.716Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `2a510f71` | Multi-dimensional audit evidence | 2026-10-25T19:12:58.894Z |

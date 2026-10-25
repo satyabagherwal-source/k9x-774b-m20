@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T19:06:28.502Z",
+  "last_updated": "2026-10-25T19:12:58.907Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1085,14 +1085,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-whisper-large-v3",
-      "content_hash": "7307c5fa451c8c662c45cdff71daa264d8ce5eeabf1dea41577a60076676caee",
-      "verified_at": "2026-10-20T23:31:27.904Z",
+      "content_hash": "2eb621946b1db8442fc54789c7cc27857859b9ce1b7284420b8bcb63a33672cc",
+      "verified_at": "2026-10-25T19:12:49.513Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T23:31:27.904Z"
+      "last_updated": "2026-10-25T19:12:49.513Z"
     },
     "black-forest-labs/FLUX.1-schnell": {
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "0f65d4d6bf1486288f380059138312bda470ece2de148b5005be76b4b65d8bd5",
-      "verified_at": "2026-10-23T11:37:41.778Z",
+      "content_hash": "4a12ca1e59a8db9a73f29cd351751e3bba9816ba2095d2b56ccdf3878ae7693f",
+      "verified_at": "2026-10-25T19:12:49.723Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T11:37:41.778Z"
+      "last_updated": "2026-10-25T19:12:49.723Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "8282a93062d14a118d8a6930442b216082000b8f28416f87496ba27c6c24dc54",
-      "verified_at": "2026-10-25T03:38:40.559Z",
+      "content_hash": "f0464548799d1e6ed21a6fb552c61629855da69d9005c91ae464f7e1485af5a9",
+      "verified_at": "2026-10-25T19:12:58.902Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:38:40.559Z"
+      "last_updated": "2026-10-25T19:12:58.902Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",

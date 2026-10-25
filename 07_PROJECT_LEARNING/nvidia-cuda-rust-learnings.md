@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `ad0a42c8`  
+> **Source Version**: `9df9e7ce`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T11:37:41.300Z  
+> **Timestamp**: 2026-10-25T19:12:49.360Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T11:37:39.715Z  
+> **Harvest Timestamp**: 2026-10-25T19:12:49.353Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3779 stars
+- **Stars / Engagement**: 3792 stars
 
 ---
 
@@ -2166,368 +2166,127 @@ impl<T> DeviceBuffer<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9718b438` (2026-10-22)
-**Commit Message**: fix(cutile): retain source origins for generated code and host checks (#1602)
+### Incident Patch 1: `fc747196` (2026-10-23)
+**Commit Message**: fix: bump example tokio pins past RUSTSEC-2026-0386 (#1619)
 
-Preserve source locations and inline caller chains for const-generic arrays,
-generated reduction bodies, and checks relocated to the host. Keep deduplicated
-check origins private to the compiler and render them through the existing
-diagnostic API.
+## Summary
 
-Part of #1475. The remaining frontend items and debugger/backend fixes remain
-tracked separately; this does not close the full source-location audit.
+Fixes #1618.
+[RUSTSEC-2026-0386](https://rustsec.org/advisories/RUSTSEC-2026-0386)
+rejects `tokio` before 1.53.3 on the 1.53 line. These locks move to
+1.54.1:
 
-Validated with the CPU/assembler suites, source-location regressions, live
-CUDA-GDB tests, GPU host-check enforcement, host/Tile semver checks, and all
-25 active CI checks on 825de3e38f6472d3c47a3d00602af8648a2eeb16.
+- `cuda-oxide/crates/rustc-codegen-cuda/examples/async_mlp`
+- `cuda-oxide/crates/rustc-codegen-cuda/examples/async_vecadd`
+- `cuda-oxide/crates/rustc-codegen-cuda/examples/cutile_inter_kernel`
+- `cutile-rs/Cargo.lock` (`cutile-rs/deny.toml` checks advisories and
+does not ignore this one)
+-
+`cutile-rs/cutile-benchmarks/paper/app_exp1_work_distribution/bimodal_gemms_rust`
 
-Signed-off-by: Melih Elibol <[REDACTED_EMAIL]>
+`launch_overhead_rust` still pins `tokio` 1.53.0. Its manifest patches
+dependencies to a local path outside this tree, so that lock was not
+updated here.
 
-**File**: `cutile-rs/CHANGELOG.md` (modified, +8/-0)
+## Test plan
+
+- [ ] `cargo-deny / deny.toml governs the example workspaces` passes
+- [ ] `bash cuda-oxide/scripts/sync-example-locks.sh --check` still
+reports one version per crate
+- [ ] `cargo deny --manifest-path cutile-rs/Cargo.toml --locked check`
+passes advisories
+
+---------
+
+Signed-off-by: Roman Ivanov <[REDACTED_EMAIL]>
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/async_mlp/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
+@@ -824,9 +824,9 @@ dependencies = [
  
- ## [Unreleased]
- 
-+### Fixed
-+
-+- Const-generic array bindings retain their function or method signature as
-+  their source origin, and generated reduction bodies retain the reduction
-+  call's location and inline chain.
-+- Failed host launch checks report their original accesses and inline callers,
-+  retaining distinct origins when equivalent predicates share one comparison.
-+
- ### Changed
- 
- - cuTile Rust now lives in the [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust)
+ [[package]]
+ name = "tokio"
+-version = "1.52.3"
++version = "1.54.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
++checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+ dependencies = [
+  "pin-project-lite",
+  "tokio-macros",
 ```
 
-**File**: `cutile-rs/cutile-book/guide/debugging-and-profiling.md` (modified, +9/-0)
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/async_vecadd/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -230,6 +230,15 @@ when inlined, including across modules. Core operations are attributed to
- the user's call site. Multiple generated instructions can still map to one
- Rust line; this is not a one-to-one mapping, especially with optimization.
+@@ -824,9 +824,9 @@ dependencies = [
  
-+Generated const-generic array bindings use the containing function or method's
-+signature as their source origin. Generated reduction bodies use the reduction
-+call's location, including its inline caller chain.
-+
-+Checks moved to the host launcher report the original access and its inline
-+callers when validation fails, including in builds without device debug info.
-+If several accesses share one launch check, its diagnostic retains each
-+distinct source origin while the predicate is evaluated only once.
-+
- ## Profiling
- 
- Use NVIDIA **Nsight Compute** (`ncu`, reports opened with `ncu-ui`) for
+ [[package]]
+ name = "tokio"
+-version = "1.52.3"
++version = "1.54.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
++checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+ dependencies = [
+  "pin-project-lite",
+  "tokio-macros",
 ```
 
-**File**: `cutile-rs/cutile-compiler/src/compile_api.rs` (modified, +1/-1)
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/cutile_inter_kernel/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -302,7 +302,7 @@ impl<F: Fn() -> crate::ast::Module> KernelCompiler<F> {
-             hoisted: compiler.check_stats.hoisted.get(),
-             in_place: compiler.check_stats.in_place.get(),
-         };
--        let launch_checks = compiler.launch_checks.borrow().clone();
-+        let launch_checks = compiler.launch_checks();
-         Ok(CompileArtifacts {
-             module,
-             bytecode_version: self.bytecode_version,
+@@ -1017,9 +1017,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "tokio"
+-version = "1.52.3"
++version = "1.54.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
++checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+ dependencies = [
+  "bytes",
+  "libc",
 ```
 
-**File**: `cutile-rs/cutile-compiler/src/compiler/_function.rs` (modified, +21/-10)
+**File**: `cutile-rs/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -9,6 +9,7 @@
- //! the old CUDATileFunctionCompiler.
+@@ -1812,9 +1812,9 @@ dependencies = [
  
- use super::_module::CUDATileModules;
-+use super::launch_checks::LaunchChecks;
- use crate::ast::{SourceLocation, SpanBase};
- use crate::bounds::Bounds;
- use crate::error::{JITError, SpannedJITError};
-@@ -72,7 +73,7 @@ pub struct CUDATileFunctionCompiler<'m> {
-     /// (`Resolution::Launch`). Interior-mutable because compile passes take
-     /// `&self`; merged into the `Validator` in [`Self::get_validator`] and run
-     /// once per launch by the host `validate_launch`.
--    pub(crate) launch_checks: RefCell<Vec<cuda_async::predicate::LaunchCheck>>,
-+    launch_checks: RefCell<LaunchChecks>,
-     pub(crate) gpu_name: String,
-     pub(crate) target_capabilities: Option<cutile_ir::capabilities::TargetCapabilities>,
-     pub(crate) optimization_hints: OptimizationHints,
-@@ -187,6 +188,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-         a_axis: usize,
-         b_tensor: &str,
-         b_axis: usize,
-+        span: &proc_macro2::Span,
-     ) -> bool {
-         use cuda_async::predicate::{Atom, Predicate, Term};
-         // Resolve both tensor names to param indices; if either is not a
-@@ -212,6 +214,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-         self.lower_obligation(
-             predicate,
-             format!("dim({a_tensor}, {a_axis}) == dim({b_tensor}, {b_axis})"),
-+            span,
-         )
-     }
- 
-@@ -238,6 +241,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-         b_tensor: &str,
-         b_axis: usize,
-         tile: i32,
-+        span: &proc_macro2::Span,
-     ) -> bool {
-         use crate::passes::obligation::{resolve, Obligation, Resolution};
-         use cuda_async::predicate::{Atom, Predicate, Term};
-@@ -296,6 +300,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-             format!(
-                 "ceil(dim({a_tensor}, {a_axis})/{tile}) <= ceil(dim({b_tensor}, {b_axis})/{tile})"
-             ),
-+            span,
-         )
-     }
- 
-@@ -315,25 +320,28 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-         &self,
-         predicate: cuda_async::predicate::Predicate,
-         cause: impl Into<String>,
-+        span: &proc_macro2::Span,
-     ) -> bool {
-         use crate::passes::obligation::{resolve, Obligation, Resolution};
-         let obligation = Obligation::new(predicate, cause);
-         match resolve(&obligation, &self.assumptions) {
-             Resolution::Jit => true,
-             Resolution::Launch(check) => {
--                // Canonical predicates make duplicate detection exact. Two
--                // obligations reducing to the same host compare (e.g. a shared
--                // `Dim`'s divisibility, once per binding) cost one check.
--                let mut checks = self.launch_checks.borrow_mut();
--                if !checks.iter().any(|c| c.predicate == check.predicate) {
--                    checks.push(check);
--                }
-+                self.launch_checks
-+                    .borrow_mut()
-+                    .insert(check, &self.ir_location(span));
-                 true
-             }
-             Resolution::Device => false,
-         }
-     }
- 
-+    /// Export checks with their source origins rendered in the existing host
-+    /// diagnostic field. Structured origins remain internal to the compiler.
-+    pub(crate) fn launch_checks(&self) -> Vec<cuda_async::predicate::LaunchCheck> {
-+        self.launch_checks.borrow().to_host_checks()
-+    }
-+
-     /// The kernel-visible extent of `partition`'s axis `axis`, taken from the
-     /// *declared* parameter shape.
-     ///
-@@ -660,7 +668,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-             assumptions,
-             param_index,
-             param_is_mutable,
--            launch_checks: RefCell::new(Vec::new()),
-+            launch_checks: RefCell::new(LaunchChecks::default()),
-             gpu_name,
-             target_capabilities: None,
-             optimization_hints,
-@@ -1177,6 +1185,9 @@ impl<'m> CUDATileFunctionCompiler<'m> {
- 
-         // Add arrays as variables.
-         for (key, value) in generic_vars.ordered_inst_array() {
-+            // Binding materialization has no expression in the source. Use
-+            // the user signature, not the generated ABI wrapper's span.
-+            let _source = self.push_opaque_call_site(&self._function.sig.span());
-             let arr_expr = syn::parse2::<syn::Expr>(format!("{value:?}").parse().unwrap()).unwrap();
-             let arr_ty =
-                 syn::parse2::<syn::Type>(format!("[i32;{}]", value.len()).parse().unwrap())
-@@ -1253,7 +1264,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-         let mut validator = self.validator.clone();
-         // Surface the launch checks hoisted during compilation so the host runs
-         // them at launch.
--        validator.launch_checks = self.launch_checks.borrow().clone();
-+        validator.launch_checks = self.launch_checks();
-         validator
-     }
- 
+ [[package]]
+ name = "tokio"
+-version = "1.52.1"
++version = "1.54.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b67dee974fe86fd92cc45b7a95fdd2f99a36a6d7b0d431a231178d3d670bbcc6"
++checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+ dependencies = [
+  "bytes",
+  "libc",
 ```
 
-**File**: `cutile-rs/cutile-compiler/src/compiler/checks/goals.rs` (modified, +6/-2)
+**File**: `cutile-rs/cutile-benchmarks/paper/app_exp1_work_distribution/bimodal_gemms_rust/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -173,6 +173,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-         &self,
-         goals: &AxisGoals<'_>,
-         partition: &TileRustValue,
-+        span: &Span,
-     ) -> bool {
-         if let (Some(origin), Some(target)) = (
-             goals.index.partition_axis_origin.as_ref(),
-@@ -192,6 +193,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-                     target,
-                     goals.extent_axis,
-                     goals.tile,
-+                    span,
-                 )
-             {
-                 return true;
-@@ -238,6 +240,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-         &self,
-         goals: &AxisGoals<'_>,
-         partition: &TileRustValue,
-+        span: &Span,
-     ) -> bool {
-         use cuda_async::predicate::{Atom, Predicate, Term};
-         let Some(term) = goals.index.term.as_ref() else {
-@@ -275,7 +278,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-             "num_tile_blocks({k}) <= ceil(extent({tensor}, {})/{})",
-             goals.extent_axis, goals.tile
-         );
--        self.lower_obligation(le, cause)
-+        self.lower_obligation(le, cause, span)
-     }
+@@ -861,9 +861,9 @@ dependencies = [
  
-     /// The entailment/launch rung for a constant zero coordinate against a
-@@ -300,6 +303,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-         &self,
-         goals: &AxisGoals<'_>,
-         partition: &TileRustValue,
-+        span: &Span,
-     ) -> bool {
-         use cuda_async::predicate::{Predicate, Term};
-         if goals.static_extent.is_some() {
-@@ -322,7 +326,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-             "partition access on axis {} of `{tensor}` requires a non-empty extent",
-             goals.extent_axis
-         );
--        self.lower_obligation(predicate, cause)
-+        self.lower_obligation(predicate, cause, span)
-     }
- 
-     /// The runtime scalar holding the extent for a goal whose static
-```
-
-**File**: `cutile-rs/cutile-compiler/src/compiler/checks/mod.rs` (modified, +20/-4)
-```diff
-@@ -170,7 +170,11 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-                 // Rung 1/3: axis provenance — a same-view iterand, or a
-                 // foreign iterand whose axis a declared root-dimension
-                 // equality relates to this one.
--                if self.discharge_by_axis_provenance(&axis_goals, &partition_value) {
-+                if self.discharge_by_axis_provenance(
-+                    &axis_goals,
-+                    &partition_value,
-+                    &call_expr.span(),
-+                ) {
-                     self.count_discharged();
-                     continue;
-                 }
-@@ -195,7 +199,11 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-                 // grid-bounded by the execution model; the residual
-                 // grid-vs-tile-count claim moves to a launch check
-                 // (goals.rs, discharge_by_block_id_axiom).
--                if self.discharge_by_block_id_axiom(&axis_goals, &partition_value) {
-+                if self.discharge_by_block_id_axiom(
-+                    &axis_goals,
-+                    &partition_value,
-+                    &call_expr.span(),
-+                ) {
-                     self.count_discharged();
-                     continue;
-                 }
-@@ -208,7 +216,11 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-             // undischarged checks are compile errors rather than device
-             // placements.
-             if self.check_opts.relocate_to_launch
--                && self.hoist_zero_coordinate_nonempty_extent(&axis_goals, &partition_value)
-+                && self.hoist_zero_coordinate_nonempty_extent(
-+                    &axis_goals,
-+                    &partition_value,
-+                    &call_expr.span(),
-+                )
-             {
-                 self.count_discharged();
-                 continue;
-@@ -346,7 +358,11 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-             }
-             // Rung 3/4: a constant `[0, 0]` coordinate against a dynamic
-             // extent reduces to `extent > 0`, a launch-known predicate.
--            if self.hoist_zero_coordinate_nonempty_extent(&axis_goals, &partition) {
-+            if self.hoist_zero_coordinate_nonempty_extent(
-+                &axis_goals,
-+                &partition,
-+                &call_expr.span(),
-+            ) {
-                 self.count_discharged();
-                 continue;
-             }
-```
-
-**File**: `cutile-rs/cutile-compiler/src/compiler/compile_expression.rs` (modified, +10/-4)
-```diff
-@@ -1018,7 +1018,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-                 "`with_bounds` bound {axis}: the partitioned extent must be divisible by the tile \
-                  extent {tile_dim}, or the declared bound undercounts the tiles on axis {axis}"
-             );
--            if self.lower_obligation(divisibility, cause) {
-+            if self.lower_obligation(divisibility, cause, span) {
-                 return Ok(());
-             }
-         }
-@@ -1056,8 +1056,8 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-                         (c - 1) * tile_dim,
-                         c * tile_dim
-                     );
--                    if self.lower_obligation(above, cause.clone())
--                        && self.lower_obligation(not_above, cause)
-+                    if self.lower_obligation(above, cause.clone(), span)
-+                        && self.lower_obligation(not_above, cause, span)
-                     {
-                         return Ok(());
-                     }
-@@ -1357,7 +1357,13 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-                     }
-                 }
-                 if let (Some(receiver_name), Some(other_name)) = (&receiver_name, &other_name) {
--                    if self.resolve_dim_eq(receiver_name, axis, other_name, axis) {
-+                    if self.resolve_dim_eq(
-+                        receiver_name,
-+                        axis,
-+                        other_name,
-+                        axis,
-+                        &method_call.span(),
-+                    ) {
-                         self.check_stats
-                             .discharged
-                             .set(self.check_stats.discharged.get() + 1);
-```
-
-**File**: `cutile-rs/cutile-compiler/src/compiler/compile_inline.rs` (modified, +2/-0)
-```diff
-@@ -196,6 +196,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-             }
-             // Add function call CGAs arrays as variables.
-             for (key, value) in call_generic_vars.ordered_inst_array() {
-+                let _source = self.push_opaque_call_site(&fn_item.sig.span());
-                 let arr_expr = syn::parse2::<Expr>(format!("{value:?}").parse().unwrap()).unwrap();
-                 let arr_ty =
-                     syn::parse2::<Type>(format!("[i32;{}]", value.len()).parse().unwrap()).unwrap();
-@@ -433,6 +434,7 @@ impl<'m> CUDATileFunctionCompiler<'m> {
-                 call_variables.vars.insert(key.to_string(), tr_val);
-             }
-             for (key, value) in call_generic_vars.ordered_inst_array() {
-+                let _source = self.push_opaque_call_site(&impl_method.sig.span());
-                 let arr_expr = syn::parse2::<Expr>(format!("{value:?}").parse().unwrap()).unwrap();
-                 let arr_ty =
-                     syn::parse2::<Type>(format!("[i32;{}]", value.len()).parse().unwrap()).unwrap();
+ [[package]]
+ name = "tokio"
+-version = "1.52.3"
++version = "1.54.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
++checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+ dependencies = [
+  "pin-project-lite",
+  "tokio-macros",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1640** (2026-10-25): docs(book): soften dark-mode SVG fill colors across cute and compiler diagrams (@nihalpasham)
+- **PR #1626** (closed): Support one uniform i32 capture in checked block callbacks (@tpn)
+- **PR #1619** (2026-10-23): fix: bump example tokio pins past RUSTSEC-2026-0386 (@roivanov)
 - **PR #1617** (2026-10-23): docs(cuda-oxide): update remaining nightly references and doctor check for 1.99.1 (@nihalpasham)
 - **PR #1616** (2026-10-23): chore(cuda-oxide): update flake.lock for 1.99.1, scaffold config, and clean up docs (@nihalpasham)
 - **PR #1615** (2026-10-23): chore(cute-rs): sync shared host crate versions to v0.5.0 in lockfiles (@nihalpasham)
-- **PR #1614** (2026-10-22): chore: prepare shared host and Tile crates for v0.5.0 (@elibol)
-- **PR #1609** (2026-10-23): cuda-oxide: move SIMT toolchain pin to stable 1.99.1 (@nihalpasham)
-- **PR #1602** (2026-10-22): fix(cutile): retain source origins for generated code and host checks (@elibol)
 
 ---
 
@@ -2547,35 +2306,30 @@ Signed-off-by: Melih Elibol <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cutile): retain source origins for generated code and host checks (#1602)
+## X. bump example tokio pins past RUSTSEC-2026-0386 (#1619)
 
 **RULE**:
-When implementing operations in `cutile-rs/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cuda-oxide/crates/rustc-codegen-cuda/examples/async_mlp/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9718b438`: cutile): retain source origins for generated code and host checks (#1602). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc747196`: bump example tokio pins past RUSTSEC-2026-0386 (#1619). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cutile-rs/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/rustc-codegen-cuda/examples/async_mlp/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Fixed
-
-- Const-generic array bindings retain their function or method signature as
-  their source origin, and generated reduction bodies retain the reduction
-  call's location and inline chain.
-- Failed host launch checks report their original accesses and inline callers,
-  retaining distinct origins when equivalent predicates share one comparison.
-
+version = "1.54.1"
+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "1.52.3"
+checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9718b438` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc747196` are properly handled with clean fallback behavior.

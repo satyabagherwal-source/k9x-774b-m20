@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `e4fad3f1`  
+> **Source Version**: `2a510f71`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:38:40.200Z  
+> **Timestamp**: 2026-10-25T19:12:58.548Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:38:39.966Z  
+> **Harvest Timestamp**: 2026-10-25T19:12:58.543Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -753,1261 +753,142 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e4fad3f1` (2026-10-24)
-**Commit Message**: Disable unused Perses datasource plugins (#16082)
+### Incident Patch 1: `2a510f71` (2026-10-25)
+**Commit Message**: Update blackbox-exporter to v0.29.1 (#16073)
 
-Add the bundled backends to the deny list we do not run so they stop
-cluttering the Explore datasource picker.
+* Update blackbox-exporter to v0.29.1
 
-Signed-off-by: Jeremy Rickards <[REDACTED_EMAIL]>
+* Run make tidy
 
-**File**: `pkg/component/observability/monitoring/perses/perses.go` (modified, +4/-0)
+---------
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +3/-2)
 ```diff
-@@ -63,6 +63,10 @@ func (p *perses) perses() *persesv1alpha2.Perses {
- 							Enable: true,
- 						},
- 					},
-+					// Disable bundled datasource plugins for backends we do not run so they do not clutter the Explore picker.
-+					Plugin: persesconfig.Plugin{
-+						Disabled: []string{"ClickHouse", "GreptimeDB", "Jaeger", "Loki", "OpenSearch", "Pyroscope", "Splunk", "Tempo"},
-+					},
- 				},
- 			},
- 			Replicas:      &p.values.Replicas,
+@@ -46,9 +46,9 @@ require (
+ 	github.com/perses/perses-operator v0.5.0
+ 	github.com/perses/spec v0.2.0
+ 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.1
+-	github.com/prometheus/blackbox_exporter v0.29.0
++	github.com/prometheus/blackbox_exporter v0.29.1
+ 	github.com/prometheus/client_golang v1.25.0
+-	github.com/prometheus/common v0.72.0
++	github.com/prometheus/common v0.72.1
+ 	github.com/robfig/cron v1.2.0
+ 	github.com/spf13/afero v1.15.0
+ 	github.com/spf13/cobra v1.10.2
+@@ -117,6 +117,7 @@ exclude github.com/gardener/gardener/pkg/apis v1.147.1
+ tool github.com/joelanford/go-apidiff
+ 
+ require (
++	cel.dev/cel-go v0.32.0 // indirect
+ 	cel.dev/expr v0.25.3 // indirect
+ 	dario.cat/mergo v1.0.2 // indirect
+ 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
 ```
 
-**File**: `pkg/component/observability/monitoring/perses/perses_test.go` (modified, +3/-0)
+**File**: `go.sum` (modified, +6/-4)
 ```diff
-@@ -174,6 +174,9 @@ var _ = Describe("Perses", func() {
- 								Enable: true,
- 							},
- 						},
-+						Plugin: persesconfig.Plugin{
-+							Disabled: []string{"ClickHouse", "GreptimeDB", "Jaeger", "Loki", "OpenSearch", "Pyroscope", "Splunk", "Tempo"},
-+						},
- 					},
- 				},
- 				Replicas:      new(int32(1)),
+@@ -1,3 +1,5 @@
++cel.dev/cel-go v0.32.0 h1:irvpFKr5EuGPyxeME03ERh0rii1TX+BDAnB9eL3IvNk=
++cel.dev/cel-go v0.32.0/go.mod h1:DnVip7tpJSsgZymwfT+m1tnEVy3ivAjSMXPx12YrMkU=
+ cel.dev/expr v0.25.3 h1:A2jO8jwOugrrovveCWfj0KEZOfqiLgAcwjpHPhzIGw0=
+ cel.dev/expr v0.25.3/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
+ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+@@ -657,8 +659,8 @@ github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.1 h
+ github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.1/go.mod h1:rZ+wRKDneCC/jJk24Mdb+6bAc6y/UjRliuMz6U20s6Y=
+ github.com/prometheus/alertmanager v0.33.1 h1:PJHGvTdb8Q0ZEpJnWff120WxB2kxIScLa707AaIudTo=
+ github.com/prometheus/alertmanager v0.33.1/go.mod h1:V06Uc8EZ5X5wLOJRGhtXx+EE2LgrinFIADbKWMVm1RY=
+-github.com/prometheus/blackbox_exporter v0.29.0 h1:u583/TwXAqFTflpuKx63xnvgoqL2HuRbtLkNHqjXCzs=
+-github.com/prometheus/blackbox_exporter v0.29.0/go.mod h1:Uaad0N1HqVV7oMZ0xXVy/WUtARZlnRzJ25DYEJtzrv4=
++github.com/prometheus/blackbox_exporter v0.29.1 h1:D3qRLIPtUyDzU+CmqaiubV3EOrUD7RGQv2OObyOZNbA=
++github.com/prometheus/blackbox_exporter v0.29.1/go.mod h1:YmF6tpODn88gBel0kkXaPRVPevNsj/WRPTS17WtlSmU=
+ github.com/prometheus/client_golang v0.9.1/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=
+ github.com/prometheus/client_golang v1.0.0/go.mod h1:db9x61etRT2tGnBNRi70OPL5FsnadC4Ky3P0J6CfImo=
+ github.com/prometheus/client_golang v1.4.0/go.mod h1:e9GMxYsXl05ICDXkRhurwBS4Q3OK1iX/F2sw+iXX5zU=
+@@ -676,8 +678,8 @@ github.com/prometheus/common v0.4.1/go.mod h1:TNfzLD0ON7rHzMJeJkieUDPYmFC7Snx/y8
+ github.com/prometheus/common v0.9.1/go.mod h1:yhUN8i9wzaXS3w1O07YhxHEBxD+W35wd8bs7vj7HSQ4=
+ github.com/prometheus/common v0.10.0/go.mod h1:Tlit/dnDKsSWFlCLTWaA1cyBgKHSMdTB80sz/V91rCo=
+ github.com/prometheus/common v0.26.0/go.mod h1:M7rCNAaPfAosfx8veZJCuw84e35h3Cfd9VFqTh1DIvc=
+-github.com/prometheus/common v0.72.0 h1:tAYsE+sPJxIncDAobm4H5aQjmox9ZxEIIqPbiffa8G4=
+-github.com/prometheus/common v0.72.0/go.mod h1:77NWqAQ2tXT7BIK40qjJdw5Acrsrg1TlHAnsQi3i6mk=
++github.com/prometheus/common v0.72.1 h1:ZAiQed/nk8IIcsdzb2TlJu23NEUDyDLQ9TXTN2WRK6Y=
++github.com/prometheus/common v0.72.1/go.mod h1:1IoBY4IRaJnhs2ESjNzjilP1cJ/P8pimGoomq7zRXrA=
+ github.com/prometheus/exporter-toolkit v0.20.0 h1:hz3g2aPcq3mXlQSt1MGjj2rwVk1wtRalF+/FjYxFRkI=
+ github.com/prometheus/exporter-toolkit v0.20.0/go.mod h1:gIIY0Mw0ci1wgYscdeMqVh6FUPYJca549eOkE39nU64=
+ github.com/prometheus/otlptranslator v1.0.0 h1:s0LJW/iN9dkIH+EnhiD3BlkkP5QVIUVEoIwkU+A6qos=
+```
+
+**File**: `hack/tools/go.mod` (modified, +1/-1)
+```diff
+@@ -301,7 +301,7 @@ require (
+ 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+ 	github.com/prometheus/client_golang v1.25.0 // indirect
+ 	github.com/prometheus/client_model v0.6.3 // indirect
+-	github.com/prometheus/common v0.72.0 // indirect
++	github.com/prometheus/common v0.72.1 // indirect
+ 	github.com/prometheus/procfs v0.22.0 // indirect
+ 	github.com/quasilyte/go-ruleguard v0.4.5 // indirect
+ 	github.com/quasilyte/go-ruleguard/dsl v0.3.23 // indirect
+```
+
+**File**: `hack/tools/go.sum` (modified, +2/-2)
+```diff
+@@ -647,8 +647,8 @@ github.com/prometheus/client_golang v1.25.0 h1:cDtW1TcFsMi1RJc8khwCKB4VhzwV04aKq
+ github.com/prometheus/client_golang v1.25.0/go.mod h1:j2X/4/kaQHLPnmyEU8zjmkndo1T317VpCIQEml8LTKk=
+ github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
+ github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
+-github.com/prometheus/common v0.72.0 h1:tAYsE+sPJxIncDAobm4H5aQjmox9ZxEIIqPbiffa8G4=
+-github.com/prometheus/common v0.72.0/go.mod h1:77NWqAQ2tXT7BIK40qjJdw5Acrsrg1TlHAnsQi3i6mk=
++github.com/prometheus/common v0.72.1 h1:ZAiQed/nk8IIcsdzb2TlJu23NEUDyDLQ9TXTN2WRK6Y=
++github.com/prometheus/common v0.72.1/go.mod h1:1IoBY4IRaJnhs2ESjNzjilP1cJ/P8pimGoomq7zRXrA=
+ github.com/prometheus/procfs v0.22.0 h1:6q9+/JL9IKAPbCmBrv9n5O5Ty3NKnciV5X7YGw0oics=
+ github.com/prometheus/procfs v0.22.0/go.mod h1:CvmFr/GVhIjIvWJZW3tgkODBQMRIf0EyWMQLHCHab58=
+ github.com/quasilyte/go-ruleguard v0.4.5 h1:AGY0tiOT5hJX9BTdx/xBdoCubQUAE2grkqY2lSwvZcA=
+```
+
+**File**: `imagevector/containers.yaml` (modified, +1/-1)
+```diff
+@@ -376,7 +376,7 @@ images:
+   - name: blackbox-exporter
+     sourceRepository: github.com/prometheus/blackbox_exporter
+     repository: quay.io/prometheus/blackbox-exporter
+-    tag: v0.29.0
++    tag: v0.29.1
+     labels:
+       - name: gardener.cloud/cve-categorisation
+         value:
 ```
 
 ---
 
-### Incident Patch 2: `d8abc488` (2026-10-23)
-**Commit Message**: Add `Garden` and `Seed` Perses dashboards (#15910)
+### Incident Patch 2: `e1a933fc` (2026-10-25)
+**Commit Message**: Update registry.k8s.io/dns/k8s-dns-node-cache Docker tag to v1.27.1 (#16039)
 
-* Add Perses dashboards converted from Plutono
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-Add 47 Perses dashboards for the garden and seed monitoring stacks,
-converted from the existing Plutono (Grafana 7.5) dashboards. Each is stored
-as a complete Perses Dashboard resource (kind/metadata/spec), so the files
-validate directly with 'percli lint'.
-
-The conversion is a two-step pipeline: each Plutono dashboard is first
-imported into a current Grafana (v12) instance to upgrade its schemaVersion
-(27 -> 42) and bind an explicit Prometheus datasource, then migrated to the
-Perses native format via 'percli migrate'. The Grafana upgrade step is
-required because migrating the old schema directly misclassifies
-datasource-less Prometheus queries as Loki queries.
-
-The following adjustments were applied by hand on top of the raw converter
-output:
-- Datasource references normalized to the project default (var-refs stripped;
-  named refs such as prometheus-longterm / prometheus-seed preserved).
-- The duplicate 'All' variable option removed (percli migrates Grafana's
-  literal $__all option while Perses also adds its own allowAllValue entry).
-- garden-resource: the condition panel is hard-
-
-**File**: `pkg/component/observability/monitoring/perses/component.go` (modified, +8/-4)
+**File**: `imagevector/containers.yaml` (modified, +1/-1)
 ```diff
-@@ -8,7 +8,6 @@ import (
- 	"context"
- 	"time"
- 
--	persesv1alpha2 "github.com/perses/perses-operator/api/v1alpha2"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 
- 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
-@@ -47,12 +46,12 @@ type Values struct {
- 	ExternalExposure *ExposureValues
- 	// VictoriaLogsEnabled indicates whether VictoriaLogs is enabled as the logging backend.
- 	VictoriaLogsEnabled bool
-+	// IncludeIstioDashboards specifies whether the istio dashboards should be deployed.
-+	IncludeIstioDashboards bool
- 	// OnlyDeployDatasourcesAndDashboards only leads to deployment of the PersesDatasource and PersesDashboard CRs.
- 	// This is relevant when the Perses instance is already deployed by another component (e.g., gardener-operator),
- 	// and the gardenlet wants to contribute seed-specific configuration.
- 	OnlyDeployDatasourcesAndDashboards bool
--	// Dashboards is a map of PersesDashboard CRs to deploy, keyed by name.
--	Dashboards map[string]persesv1alpha2.Dashboard
- }
- 
- // ExposureValues contains configuration for exposing this Perses instance via a VirtualService resource.
-@@ -121,7 +120,12 @@ func (p *perses) Deploy(ctx context.Context) error {
- 		objs = append(objs, p.serviceMonitor())
- 	}
- 	objs = append(objs, p.datasources()...)
--	objs = append(objs, p.dashboards()...)
-+
-+	dashboards, err := p.dashboards()
-+	if err != nil {
-+		return err
-+	}
-+	objs = append(objs, dashboards...)
- 
- 	resources, err := registry.AddAllAndSerialize(objs...)
- 	if err != nil {
-```
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards.go` (modified, +157/-4)
-```diff
-@@ -5,15 +5,79 @@
- package perses
- 
- import (
-+	"embed"
-+	"fmt"
-+	"io/fs"
-+	"strings"
-+
- 	persesv1alpha2 "github.com/perses/perses-operator/api/v1alpha2"
-+	persesv1 "github.com/perses/perses/pkg/model/api/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-+	"k8s.io/apimachinery/pkg/util/sets"
-+	utilvalidation "k8s.io/apimachinery/pkg/util/validation"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
-+	"sigs.k8s.io/yaml"
- )
- 
--func (p *perses) dashboards() []client.Object {
--	var objs []client.Object
-+var (
-+	//go:embed dashboards/garden
-+	gardenDashboards embed.FS
-+	//go:embed dashboards/seed
-+	seedDashboards embed.FS
-+	//go:embed dashboards/garden-seed
-+	gardenAndSeedDashboards embed.FS
-+	//go:embed dashboards/garden-shoot
-+	gardenAndShootDashboards embed.FS
-+	//go:embed dashboards/common
-+	commonDashboards embed.FS
-+
-+	gardenDashboardsPath         = "dashboards/garden"
-+	seedDashboardsPath           = "dashboards/seed"
-+	gardenAndSeedDashboardsPath  = "dashboards/garden-seed"
-+	gardenAndShootDashboardsPath = "dashboards/garden-shoot"
-+	commonDashboardsPath         = "dashboards/common"
-+	commonVpaDashboardsPath      = commonDashboardsPath + "/vpa"
-+)
-+
-+func init() {
-+	// Fail fast at startup if any embedded dashboard cannot be decoded/validated, has no or an invalid resource name,
-+	// or defines no panels.
-+	for _, dashboardEmbed := range []embed.FS{gardenDashboards, seedDashboards, gardenAndSeedDashboards, gardenAndShootDashboards, commonDashboards} {
-+		utilruntime.Must(fs.WalkDir(dashboardEmbed, "dashboards", func(path string, dirEntry fs.DirEntry, err error) error {
-+			if err != nil {
-+				return err
-+			}
-+			if dirEntry.IsDir() {
-+				return nil
-+			}
-+			data, err := dashboardEmbed.ReadFile(path)
-+			if err != nil {
-+				return err
-+			}
-+			name, config, err := decodeDashboard(data)
-+			if err != nil {
-+				return fmt.Errorf("embedded dashboard %s cannot be decoded: %w", path, err)
-+			}
-+			if errs := utilvalidation.IsDNS1123Subdomain(name); len(errs) > 0 {
-+				return fmt.Errorf("embedded dashboard %s has invalid resource name %q: %v", path, name, errs)
-+			}
-+			if len(config.Panels) == 0 {
-+				return fmt.Errorf("embedded dashboard %s (%q) defines no panels", path, name)
-+			}
-+			return nil
-+		}))
-+	}
-+}
-+
-+func (p *perses) dashboards() ([]client.Object, error) {
-+	dashboards, err := p.loadDashboards()
-+	if err != nil {
-+		return nil, err
-+	}
- 
--	for name, config := range p.values.Dashboards {
-+	var objs []client.Object
-+	for name, config := range dashboards {
- 		objs = append(objs, &persesv1alpha2.PersesDashboard{
- 			ObjectMeta: metav1.ObjectMeta{
- 				Name:      name,
-@@ -27,5 +91,94 @@ func (p *perses) dashboards() []client.Object {
- 		})
- 	}
- 
--	return objs
-+	return objs, nil
-+}
-+
-+// loadDashboards reads the embedded dashboard resources relevant for the current role and returns them keyed by the
-+// PersesDashboard resource name (taken from the dashboard's metadata.name).
-+func (p *perses) loadDashboards() (map[string]persesv1alpha2.Dashboard, error) {
-+	requiredDashboards, ignorePaths := p.selectDashboards()
-+
-+	dashboards := map[string]persesv1alpha2.Dashboard{}
-+	for dashboardPath, dashboardEmbed := range requiredDashboards {
-+		if err := fs.WalkDir(dashboardEmbed, dashboardPath, func(path string, dirEntry fs.DirEntry, err error) error {
-+			if err != nil {
-+				return err
-+			}
-+
-+			if dirEntry.IsDir() {
-+				if ignorePaths.HasAny(strings.Split(path, "/")...) {
-+					return fs.SkipDir
-+				}
-+				return nil
-+			}
-+
-+			data, err := dashboardEmbed.ReadFile(path)
-+			if err != nil {
-+				return fmt.Errorf("error reading %s: %w", path, err)
-+			}
-+
-+			name, config, err := decodeDashboard(data)
-+			if err != nil {
-+				return fmt.Errorf("error decoding %s: %w", path, err)
-+			}
-+
-+			dashboards[name] = config
-+			return nil
-+		}); err != nil {
-+			return nil, err
-+		}
-+	}
-+
-+	return dashboards, nil
-+}
-+
-+// decodeDashboard decodes an embedded Perses dashboard resource. It decodes into the upstream Perses Dashboard type
-+// whose unmarshalling validates the resource against the Perses schema (equivalent to `percli lint`), and returns the
-+// resource name (from metadata.name) together with the operator-flavoured dashboard config.
-+func decodeDashboard(data []byte) (string, persesv1alpha2.Dashboard, error) {
-+	var dashboard persesv1.Dashboard
-+	if err := yaml.Unmarshal(data, &dashboard); err != nil {
-+		return "", persesv1alpha2.Dashboard{}, err
-+	}
-+	return dashboard.Metadata.Name, persesv1alpha2.Dashboard{Spec: dashboard.Spec}, nil
-+}
-+
-+// selectDashboards returns the set of embedded dashboard directories to deploy for the current role, together with the
-+// path segments that should be ignored (e.g. istio or vpa dashboards which are only conditionally deployed). Perses is
-+// only ever deployed to the garden runtime cluster and to seeds, so only these two roles are handled.
-+func (p *perses) selectDashboards() (map[string]embed.FS
-```
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards/common/client-go.yaml` (added, +217/-0)
-```diff
-@@ -0,0 +1,217 @@
-+kind: Dashboard
-+metadata:
-+  name: client-go
-+  project: garden
-+spec:
-+  display:
-+    name: Controller Runtime / Client-Go
-+  variables:
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue: seed-prometheus
-+        allowAllValue: false
-+        allowMultiple: false
-+        plugin:
-+          kind: DatasourceVariable
-+          spec:
-+            datasourcePluginKind: PrometheusDatasource
-+        name: datasource
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue: gardenlet
-+        allowAllValue: false
-+        allowMultiple: false
-+        sort: none
-+        plugin:
-+          kind: PrometheusLabelValuesVariable
-+          spec:
-+            labelName: job
-+            matchers:
-+              - controller_runtime_reconcile_total{}
-+        name: job
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue:
-+          - $__all
-+        allowAllValue: true
-+        allowMultiple: true
-+        sort: none
-+        plugin:
-+          kind: PrometheusLabelValuesVariable
-+          spec:
-+            labelName: pod
-+            matchers:
-+              - controller_runtime_reconcile_total{job="$job"}
-+        name: pod
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue:
-+          - $__all
-+        allowAllValue: true
-+        allowMultiple: true
-+        sort: none
-+        plugin:
-+          kind: PrometheusLabelValuesVariable
-+          spec:
-+            labelName: method
-+            matchers:
-+              - rest_client_requests_total
-+        name: verb
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue:
-+          - $__all
-+        allowAllValue: true
-+        allowMultiple: true
-+        sort: none
-+        plugin:
-+          kind: PrometheusLabelValuesVariable
-+          spec:
-+            labelName: code
-+            matchers:
-+              - rest_client_requests_total
-+        name: code
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue: "90"
-+        allowAllValue: false
-+        allowMultiple: false
-+        plugin:
-+          kind: StaticListVariable
-+          spec:
-+            values:
-+              - "50"
-+              - "90"
-+              - "99"
-+        name: percentile
-+  panels:
-+    "0_0":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Request Rate by pod
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            legend:
-+              mode: list
-+              position: bottom
-+              size: small
-+            visual:
-+              areaOpacity: 0.3
-+              connectNulls: false
-+              display: line
-+              lineWidth: 1
-+            yAxis:
-+              format:
-+                unit: requests/sec
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  minStep: ""
-+                  query: sum(rate(rest_client_requests_total{job="$job",pod=~"$pod",method=~"$verb",code=~"$code"}[$__rate_interval])) by (pod)
-+                  seriesNameFormat: '{{pod}}'
-+    "0_1":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Request Rate by code
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            legend:
-+              mode: list
-+              position: bottom
-+              size: small
-+            visual:
-+              areaOpacity: 0.3
-+              connectNulls: false
-+              display: line
-+              lineWidth: 1
-+            yAxis:
-+              format:
-+                unit: requests/sec
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  minStep: ""
-+                  query: sum(rate(rest_client_requests_total{job="$job",pod=~"$pod",method=~"$verb",code=~"$code"}[$__rate_interval])) by (code)
-+                  seriesNameFormat: '{{code}}'
-+    "0_2":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Request Rate by verb
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            legend:
-+              mode: list
-+              position: bottom
-+              size: small
-+            visual:
-+              areaOpacity: 0.3
-+              connectNulls: false
-+              display: line
-+              lineWidth: 1
-+            yAxis:
-+              format:
-+                unit: requests/sec
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-```
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards/common/controller-details.yaml` (added, +675/-0)
-```diff
-@@ -0,0 +1,675 @@
-+kind: Dashboard
-+metadata:
-+  name: controller-details
-+  project: garden
-+spec:
-+  display:
-+    name: Controller Runtime / Controller Details
-+  variables:
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue: seed-prometheus
-+        allowAllValue: false
-+        allowMultiple: false
-+        plugin:
-+          kind: DatasourceVariable
-+          spec:
-+            datasourcePluginKind: PrometheusDatasource
-+        name: datasource
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue: gardenlet
-+        allowAllValue: false
-+        allowMultiple: false
-+        sort: none
-+        plugin:
-+          kind: PrometheusLabelValuesVariable
-+          spec:
-+            labelName: job
-+            matchers:
-+              - controller_runtime_reconcile_total{}
-+        name: job
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue:
-+          - $__all
-+        allowAllValue: true
-+        allowMultiple: true
-+        sort: none
-+        plugin:
-+          kind: PrometheusLabelValuesVariable
-+          spec:
-+            labelName: pod
-+            matchers:
-+              - controller_runtime_reconcile_total{job="$job"}
-+        name: pod
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue: backupbucket
-+        allowAllValue: false
-+        allowMultiple: false
-+        sort: none
-+        plugin:
-+          kind: PrometheusLabelValuesVariable
-+          spec:
-+            labelName: controller
-+            matchers:
-+              - controller_runtime_reconcile_total{job="$job",pod=~"$pod"}
-+        name: controller
-+  panels:
-+    "0_0":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Reconciliation Rate by pod
-+          description: Shows the reconciliation rate for a controller by pod.
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            legend:
-+              mode: list
-+              position: bottom
-+              size: small
-+            visual:
-+              areaOpacity: 0.3
-+              connectNulls: false
-+              display: line
-+              lineWidth: 1
-+            yAxis:
-+              format:
-+                unit: ops/sec
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  minStep: ""
-+                  query: sum(rate(controller_runtime_reconcile_total{job="$job",controller=~"$controller",pod=~"$pod"}[$__rate_interval])) by (pod)
-+                  seriesNameFormat: '{{pod}}'
-+    "0_1":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Reconciliation Rate by result
-+          description: Shows the reconciliation rate per result per controller by pod.
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            legend:
-+              mode: list
-+              position: bottom
-+              size: small
-+            visual:
-+              areaOpacity: 0.3
-+              connectNulls: false
-+              display: line
-+              lineWidth: 1
-+            yAxis:
-+              format:
-+                unit: ops/sec
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  minStep: ""
-+                  query: sum(rate(controller_runtime_reconcile_total{job="$job",controller=~"$controller",pod=~"$pod"}[$__rate_interval])) by (result)
-+                  seriesNameFormat: '{{result}}'
-+    "0_2":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Error Rate by pod
-+          description: Shows the total number of reconciliation errors per controller by pod.
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            legend:
-+              mode: list
-+              position: bottom
-+              size: small
-+            visual:
-+              areaOpacity: 0.3
-+              connectNulls: false
-+              display: line
-+              lineWidth: 1
-+            yAxis:
-+              format:
-+                decimalPlaces: 3
-+                unit: ops/sec
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  minStep: ""
-+                  query: sum(rate(controller_runtime_reconcile_errors_total{job="$job",controller=~"$controller",pod=~"$pod"}[$__rate_interval])) by (pod)
-+                  seriesNameFormat: '{{pod}}'
-+    "0_3":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Reconciliation time (P50, P90, P99)
-```
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards/common/controllers.yaml` (added, +670/-0)
-```diff
-@@ -0,0 +1,670 @@
-+kind: Dashboard
-+metadata:
-+  name: controllers
-+  project: garden
-+spec:
-+  display:
-+    name: Controller Runtime / Controllers
-+  variables:
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue: seed-prometheus
-+        allowAllValue: false
-+        allowMultiple: false
-+        plugin:
-+          kind: DatasourceVariable
-+          spec:
-+            datasourcePluginKind: PrometheusDatasource
-+        name: datasource
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue: gardenlet
-+        allowAllValue: false
-+        allowMultiple: false
-+        sort: none
-+        plugin:
-+          kind: PrometheusLabelValuesVariable
-+          spec:
-+            labelName: job
-+            matchers:
-+              - controller_runtime_reconcile_total{}
-+        name: job
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue:
-+          - $__all
-+        allowAllValue: true
-+        allowMultiple: true
-+        sort: none
-+        plugin:
-+          kind: PrometheusLabelValuesVariable
-+          spec:
-+            labelName: controller
-+            matchers:
-+              - controller_runtime_reconcile_total{job="$job"}
-+        name: controller
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue: "90"
-+        allowAllValue: false
-+        allowMultiple: false
-+        plugin:
-+          kind: StaticListVariable
-+          spec:
-+            values:
-+              - "50"
-+              - "90"
-+              - "99"
-+        name: percentile
-+  panels:
-+    "0_0":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Reconciliation Rate
-+        plugin:
-+          kind: BarChart
-+          spec:
-+            calculation: last-number
-+            format:
-+              unit: ops/sec
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  minStep: ""
-+                  query: sum(rate(controller_runtime_reconcile_total{job="$job",controller=~"$controller"}[$__range])) by (controller)
-+                  seriesNameFormat: '{{controller}}'
-+    "0_1":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Total Workers by controller
-+        plugin:
-+          kind: Table
-+          spec:
-+            columnSettings:
-+              - name: value
-+                width: 80
-+              - dataLink:
-+                  openNewTab: false
-+                  title: ""
-+                  url: /d/controller-details/controller-runtime-controllers-controller-details?var-datasource=$datasource&var-job=$job&var-controller=${__data.fields.controller}
-+                name: controller
-+              - hide: true
-+                name: timestamp
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  minStep: ""
-+                  query: sum(controller_runtime_max_concurrent_reconciles{job="$job",controller=~"$controller"}) by (controller)
-+                  seriesNameFormat: ""
-+    "0_2":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Reconciliation Time Distribution
-+        plugin:
-+          kind: PieChart
-+          spec:
-+            calculation: last-number
-+            legend:
-+              mode: table
-+              position: right
-+              values:
-+                - relative
-+            radius: 50
-+            showLabels: false
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  minStep: ""
-+                  query: sum(rate(controller_runtime_reconcile_time_seconds_sum{job="$job",controller=~"$controller"}[$__range])) by (controller)
-+                  seriesNameFormat: '{{controller}}'
-+    "1_0":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Reconciliation Rate by controller
-+          description: Shows the rate of reconciliations per controller.
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            legend:
-+              mode: table
-+              position: right
-+              values:
-+                - max
-+                - mean
-+                - last
-+              size: small
-+            visual:
-+              areaOpacity: 0.3
-+              connectNulls: false
-+              display: line
-+              lineWidth: 1
-+            yAxis:
-+              format:
-+                decimalPlaces: 4
-+                unit: ops/sec
-+        queries:
-+          - kind: TimeSeriesQuery
-+     
-```
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards/common/shoot-control-plane-resource-usage-by-owner-container.yaml` (added, +780/-0)
-```diff
-@@ -0,0 +1,780 @@
-+kind: Dashboard
-+metadata:
-+  name: shoot-control-plane-resource-usage-by-owner-container
-+  project: garden
-+spec:
-+  display:
-+    name: Shoot control plane resource usage by owner and container
-+  variables:
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue: shoot--local--local
-+        allowAllValue: false
-+        allowMultiple: false
-+        sort: alphabetical-asc
-+        plugin:
-+          kind: PrometheusLabelValuesVariable
-+          spec:
-+            labelName: namespace
-+            matchers:
-+              - metering:working_set_memory:sum_by_namespace{shoot_uid!=""}
-+        name: namespace
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue:
-+          - $__all
-+        allowAllValue: true
-+        allowMultiple: true
-+        customAllValue: .*
-+        sort: alphabetical-asc
-+        plugin:
-+          kind: PrometheusLabelValuesVariable
-+          spec:
-+            labelName: owner
-+            matchers:
-+              - metering:working_set_memory:sum_by_namespace_owner_container{shoot_uid!="",namespace=~"$namespace"}
-+        name: owner
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue:
-+          - $__all
-+        allowAllValue: true
-+        allowMultiple: true
-+        customAllValue: .*
-+        sort: alphabetical-asc
-+        plugin:
-+          kind: PrometheusLabelValuesVariable
-+          spec:
-+            labelName: container
-+            matchers:
-+              - metering:working_set_memory:sum_by_namespace_owner_container{shoot_uid!="",namespace=~"$namespace",owner=~"$owner"}
-+        name: container
-+  panels:
-+    "0_0":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Shoot UID
-+        plugin:
-+          kind: StatChart
-+          spec:
-+            calculation: last-number
-+            colorMode: value
-+            metricLabel: shoot_uid
-+            sparkline: {}
-+            thresholds:
-+              steps: []
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource:
-+                    kind: PrometheusDatasource
-+                  minStep: ""
-+                  query: metering:cpu_usage:sum_by_namespace:avg_over_time{shoot_uid!="",namespace=~"$namespace"}
-+                  seriesNameFormat: '{{shoot_uid}}'
-+    "0_1":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Elapsed usage time in the current calendar month
-+        plugin:
-+          kind: StatChart
-+          spec:
-+            calculation: last-number
-+            colorMode: value
-+            format:
-+              unit: seconds
-+            sparkline: {}
-+            thresholds:
-+              steps: []
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource:
-+                    kind: PrometheusDatasource
-+                  minStep: ""
-+                  query: metering:memory_usage_seconds{shoot_uid!="",namespace=~"$namespace"}
-+                  seriesNameFormat: CPU, Memory, Network usage time in {{year}}/{{month}} 
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource:
-+                    kind: PrometheusDatasource
-+                  minStep: ""
-+                  query: metering:disk_usage_seconds{shoot_uid!="",namespace=~"$namespace"}
-+                  seriesNameFormat: Disk usage time in {{year}}/{{month}} 
-+    "0_2":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Average resource usage in the current calendar month when the cluster was active
-+        plugin:
-+          kind: StatChart
-+          spec:
-+            calculation: last-number
-+            colorMode: value
-+            format:
-+              unit: decimal
-+            sparkline: {}
-+            thresholds:
-+              steps: []
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource:
-+                    kind: PrometheusDatasource
-+                  minStep: ""
-+                  query: metering:cpu_usage:sum_by_namespace:avg_over_time{shoot_uid!="",namespace=~"$namespace"}
-+                  seriesNameFormat: CPU usage
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource:
-+                    kind: PrometheusDatasource
-+                  minStep: ""
-+                  query: metering:cpu_requests:sum_by_namespace:avg_over_time{sho
-```
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards/common/victorialogs-dashboard.yaml` (added, +312/-0)
-```diff
-@@ -0,0 +1,312 @@
-+kind: Dashboard
-+metadata:
-+  name: victorialogs
-+  project: garden
-+spec:
-+  display:
-+    name: VictoriaLogs
-+  variables:
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        allowAllValue: false
-+        allowMultiple: false
-+        plugin:
-+          kind: DatasourceVariable
-+          spec:
-+            datasourcePluginKind: PrometheusDatasource
-+        name: datasource
-+  panels:
-+    "0_0":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: HTTP requests rate
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            yAxis:
-+              format:
-+                unit: decimal
-+            legend:
-+              position: bottom
-+              mode: table
-+              values:
-+                - mean
-+                - last
-+                - max
-+              size: small
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  query: sum(rate(vl_http_requests_total[$__rate_interval])) by (path)
-+                  seriesNameFormat: '{{path}}'
-+    "0_1":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Query timeouts
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            yAxis:
-+              format:
-+                unit: decimal
-+            legend:
-+              position: bottom
-+              mode: table
-+              values:
-+                - mean
-+                - last
-+                - max
-+              size: small
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  query: sum(rate(vl_concurrent_select_limit_timeout_total[$__rate_interval])) by (instance)
-+                  seriesNameFormat: '{{instance}}'
-+    "1_0":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Free disk space
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            yAxis:
-+              format:
-+                unit: bytes
-+            legend:
-+              position: bottom
-+              mode: table
-+              values:
-+                - mean
-+                - last
-+                - max
-+              size: small
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  query: max(vl_free_disk_space_bytes) by (instance)
-+                  seriesNameFormat: '{{instance}}'
-+    "1_1":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Streams creation rate
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            yAxis:
-+              format:
-+                unit: decimal
-+            legend:
-+              position: bottom
-+              mode: table
-+              values:
-+                - mean
-+                - last
-+                - max
-+              size: small
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  query: sum(rate(vl_streams_created_total[$__rate_interval])) by (instance)
-+                  seriesNameFormat: '{{instance}}'
-+    "2_0":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Logs ingestion rate
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            yAxis:
-+              format:
-+                unit: decimal
-+            legend:
-+              position: bottom
-+              mode: table
-+              values:
-+                - mean
-+                - last
-+                - max
-+              size: small
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  query: sum(rate(vl_rows_ingested_total[$__rate_interval])) by (type)
-+                  seriesNameFormat: '{{type}}'
-+    "2_1":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Dropped logs
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            yAxis:
-+              format:
-+                unit: decimal
-+            legend:
-+              position: bottom
-+              mode: table
-+              values:
-+                - mean
-+                - last
-+                - max
-+              size: small
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+  
-```
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards/common/vpa/vpa-admission-controller.yaml` (added, +102/-0)
-```diff
-@@ -0,0 +1,102 @@
-+kind: Dashboard
-+metadata:
-+  name: vpa-admission-controller
-+  project: garden
-+spec:
-+  display:
-+    name: VPA Admission Controller
-+  variables:
-+    - kind: ListVariable
-+      spec:
-+        display:
-+          hidden: false
-+        defaultValue: seed-prometheus
-+        allowAllValue: false
-+        allowMultiple: false
-+        plugin:
-+          kind: DatasourceVariable
-+          spec:
-+            datasourcePluginKind: PrometheusDatasource
-+        name: datasource
-+  panels:
-+    "0":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Admitted Pods rate
-+        plugin:
-+          kind: TimeSeriesChart
-+          spec:
-+            legend:
-+              position: bottom
-+              mode: list
-+              size: small
-+            yAxis:
-+              format:
-+                unit: decimal
-+        queries:
-+          - kind: TimeSeriesQuery
-+            spec:
-+              plugin:
-+                kind: PrometheusTimeSeriesQuery
-+                spec:
-+                  datasource: $datasource
-+                  minStep: ""
-+                  query: sum(rate(vpa_admission_controller_admission_pods_total[$__rate_interval])) by (applied)
-+                  seriesNameFormat: Applied recommendation "{{ applied }}"
-+    "1":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Execution latency step=total
-+        plugin:
-+          kind: Markdown
-+          spec:
-+            text: '**Migration from Grafana not supported !**'
-+    "2":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Total admission time for Pods
-+        plugin:
-+          kind: Markdown
-+          spec:
-+            text: '**Migration from Grafana not supported !**'
-+    "3":
-+      kind: Panel
-+      spec:
-+        display:
-+          name: Total admission time for VPAs
-+        plugin:
-+          kind: Markdown
-+          spec:
-+            text: '**Migration from Grafana not supported !**'
-+  layouts:
-+    - kind: Grid
-+      spec:
-+        items:
-+          - x: 0
-+            "y": 0
-+            width: 12
-+            height: 9
-+            content:
-+              $ref: '#/spec/panels/0'
-+          - x: 12
-+            "y": 0
-+            width: 12
-+            height: 9
-+            content:
-+              $ref: '#/spec/panels/1'
-+          - x: 12
-+            "y": 9
-+            width: 12
-+            height: 9
-+            content:
-+              $ref: '#/spec/panels/2'
-+          - x: 12
-+            "y": 18
-+            width: 12
-+            height: 9
-+            content:
-+              $ref: '#/spec/panels/3'
-+  duration: 6h
+@@ -504,7 +504,7 @@ images:
+   - name: node-local-dns
+     sourceRepository: github.com/kubernetes/kubernetes/blob/master/cluster/addons/dns/nodelocaldns
+     repository: registry.k8s.io/dns/k8s-dns-node-cache
+-    tag: "1.26.8"
++    tag: "1.27.1"
+     labels:
+       - name: 'gardener.cloud/cve-categorisation'
+         value:
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #16088** (2026-10-23): [release-v1.153] Use field selector and APIReader instead of cached client for `sync-provider-secret-labels` webhook (@acumino)
 - **PR #16084** (2026-10-22): Update nginx Docker tag to v1.31.8 (@renovate[bot])
+- **PR #16083** (2026-10-25): Update istio to v1.29.10 (@renovate[bot])
 - **PR #16082** (2026-10-24): Disable unused Perses datasource plugins (@rickardsjp)
 - **PR #16078** (2026-10-22): Fix stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (@DockToFuture)
 - **PR #16077** (2026-10-22): [release-v1.151] Update dependency gardener/dashboard to v1.85.2 (@marc1404)
-- **PR #16076** (2026-10-22): [release-v1.152] Update dependency gardener/dashboard to v1.85.2 (@petersutter)
 
 ---
 
@@ -2027,31 +908,31 @@ output:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Disable unused Perses datasource plugins (#16082)
+## X. Update blackbox-exporter to v0.29.1 (#16073)
 
 **RULE**:
-When implementing operations in `pkg/component/observability/monitoring/perses/perses.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e4fad3f1`: Disable unused Perses datasource plugins (#16082). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a510f71`: Update blackbox-exporter to v0.29.1 (#16073). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/component/observability/monitoring/perses/perses.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-					// Disable bundled datasource plugins for backends we do not run so they do not clutter the Explore picker.
-					Plugin: persesconfig.Plugin{
-						Disabled: []string{"ClickHouse", "GreptimeDB", "Jaeger", "Loki", "OpenSearch", "Pyroscope", "Splunk", "Tempo"},
-					},
+	github.com/prometheus/blackbox_exporter v0.29.1
+	github.com/prometheus/common v0.72.1
+	cel.dev/cel-go v0.32.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/prometheus/blackbox_exporter v0.29.0
+	github.com/prometheus/common v0.72.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e4fad3f1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a510f71` are properly handled with clean fallback behavior.

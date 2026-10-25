@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T19:06:28.417Z",
+  "last_updated": "2026-10-25T19:12:58.836Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12118,8 +12118,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "e4fad3f1",
-      "content_hash": "8282a93062d14a118d8a6930442b216082000b8f28416f87496ba27c6c24dc54",
+      "source_version": "2a510f71",
+      "content_hash": "f0464548799d1e6ed21a6fb552c61629855da69d9005c91ae464f7e1485af5a9",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -12152,6 +12152,11 @@
           "number": 4019,
           "title": "Disable unused Perses datasource plugins (#16082)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4420,
+          "title": "Update blackbox-exporter to v0.29.1 (#16073)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12159,7 +12164,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:38:40.482Z",
+      "verified_at": "2026-10-25T19:12:58.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23841,7 +23846,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/whisper-large-v3",
       "source_version": "hf-openai-whisper-large-v3",
-      "content_hash": "7307c5fa451c8c662c45cdff71daa264d8ce5eeabf1dea41577a60076676caee",
+      "content_hash": "2eb621946b1db8442fc54789c7cc27857859b9ce1b7284420b8bcb63a33672cc",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "promoted_rules": [],
@@ -23863,7 +23868,7 @@
         "learn-huggingface-hf-openai-whisper-large-v3-mv4a7pcw",
         "learn-huggingface-hf-openai-whisper-large-v3-mv4nl1uq"
       ],
-      "verified_at": "2026-10-20T23:31:27.782Z",
+      "verified_at": "2026-10-25T19:12:49.443Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38073,8 +38078,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "ad0a42c8",
-      "content_hash": "0f65d4d6bf1486288f380059138312bda470ece2de148b5005be76b4b65d8bd5",
+      "source_version": "9df9e7ce",
+      "content_hash": "4a12ca1e59a8db9a73f29cd351751e3bba9816ba2095d2b56ccdf3878ae7693f",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -38112,6 +38117,11 @@
           "number": 3904,
           "title": "cutile): retain source origins for generated code and host checks (#1602)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4419,
+          "title": "bump example tokio pins past RUSTSEC-2026-0386 (#1619)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38119,7 +38129,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:37:41.669Z",
+      "verified_at": "2026-10-25T19:12:49.654Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125452,6 +125462,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T19:06:28.406Z"
+    },
+    "rule-4419": {
+      "learning_id": "rule-4419",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4419,
+      "title": "bump example tokio pins past RUSTSEC-2026-0386 (#1619)",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "9df9e7ce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:12:49.654Z"
+    },
+    "rule-4420": {
+      "learning_id": "rule-4420",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4420,
+      "title": "Update blackbox-exporter to v0.29.1 (#16073)",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "2a510f71",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:12:58.826Z"
     }
   },
   "aliases": {
