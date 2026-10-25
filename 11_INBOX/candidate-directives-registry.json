@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T16:09:09.932Z",
+  "last_updated": "2026-10-25T16:28:34.512Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2763,6 +2763,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-seekstorm-seekstorm"
+    },
+    {
+      "id": "CD-L3DC",
+      "directive_title": "Add SECURITY.md (#542)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "LLPhant/LLPhant",
+      "source_commit": "b9e6030a",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-llphant-llphant"
     }
   ]
 }

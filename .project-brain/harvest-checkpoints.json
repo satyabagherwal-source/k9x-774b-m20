@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T16:21:49.908Z",
+  "last_updated": "2026-10-25T16:28:34.522Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -815,14 +815,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-canberkkkkkk-ema-lightning",
-      "content_hash": "d2118af29e84b5fc4b64346d0f0e54d56f263849ab126d182be3964f20bd3c94",
-      "verified_at": "2026-10-20T20:54:20.367Z",
+      "content_hash": "200645d600c2a4323b7d0c9adbcd33790de1a17d313c9c463402cd5e86d8b5a2",
+      "verified_at": "2026-10-25T16:28:20.870Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:54:20.367Z"
+      "last_updated": "2026-10-25T16:28:20.870Z"
     },
     "google/embeddinggemma-2": {
       "repository": "google/embeddinggemma-2",
@@ -5421,14 +5421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-llphant-llphant",
-      "content_hash": "fc49a4ad087e9dca73f19a273df310c06039ad549e936e6c7e5de35dcfebce73",
-      "verified_at": "2026-10-23T11:11:57.014Z",
+      "content_hash": "b353f0570ac925111758507b71de7726d47650dfd6903477499084cbf9ac718c",
+      "verified_at": "2026-10-25T16:28:34.521Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T11:11:57.014Z"
+      "last_updated": "2026-10-25T16:28:34.521Z"
     },
     "ant-design/pro-components": {
       "repository": "ant-design/pro-components",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T16:21:49.838Z",
+  "last_updated": "2026-10-25T16:28:34.444Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17652,7 +17652,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
       "source_version": "hf-canberkkkkkk-ema-lightning",
-      "content_hash": "d2118af29e84b5fc4b64346d0f0e54d56f263849ab126d182be3964f20bd3c94",
+      "content_hash": "200645d600c2a4323b7d0c9adbcd33790de1a17d313c9c463402cd5e86d8b5a2",
       "dossier_path": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "promoted_rules": [
@@ -17700,7 +17700,7 @@
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv485u82",
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv4lfa5g"
       ],
-      "verified_at": "2026-10-20T20:54:20.295Z",
+      "verified_at": "2026-10-25T16:28:20.790Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32783,8 +32783,8 @@
       "slug": "llphant-llphant",
       "platform": "github",
       "source_url": "https://github.com/LLPhant/LLPhant",
-      "source_version": "4dd63b69",
-      "content_hash": "fc49a4ad087e9dca73f19a273df310c06039ad549e936e6c7e5de35dcfebce73",
+      "source_version": "b9e6030a",
+      "content_hash": "b353f0570ac925111758507b71de7726d47650dfd6903477499084cbf9ac718c",
       "dossier_path": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "promoted_rules": [
@@ -32814,7 +32814,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:11:56.954Z",
+      "verified_at": "2026-10-25T16:28:34.428Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

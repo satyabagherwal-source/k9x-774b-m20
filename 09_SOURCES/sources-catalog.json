@@ -655,8 +655,8 @@
     "sourceUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
     "sourceVersion": "hf-canberkkkkkk-ema-lightning",
     "license": "Open-Source",
-    "contentHash": "d2118af29e84b5fc4b64346d0f0e54d56f263849ab126d182be3964f20bd3c94",
-    "lastHarvestedAt": "2026-10-20T20:54:20.359Z",
+    "contentHash": "200645d600c2a4323b7d0c9adbcd33790de1a17d313c9c463402cd5e86d8b5a2",
+    "lastHarvestedAt": "2026-10-25T16:28:20.862Z",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning"
   },
   "hf-google-embeddinggemma-2": {
@@ -3533,10 +3533,10 @@
     "repository": "LLPhant/LLPhant",
     "platform": "github",
     "sourceUrl": "https://github.com/LLPhant/LLPhant",
-    "sourceVersion": "4dd63b69",
+    "sourceVersion": "b9e6030a",
     "license": "MIT",
-    "contentHash": "fc49a4ad087e9dca73f19a273df310c06039ad549e936e6c7e5de35dcfebce73",
-    "lastHarvestedAt": "2026-10-23T11:11:57.007Z",
+    "contentHash": "b353f0570ac925111758507b71de7726d47650dfd6903477499084cbf9ac718c",
+    "lastHarvestedAt": "2026-10-25T16:28:34.507Z",
     "learningId": "learn-github-llphant-llphant"
   },
   "ant-design-pro-components": {

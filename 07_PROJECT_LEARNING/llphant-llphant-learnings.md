@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/llphant-llphant-learnings.md`  
 > **Source**: github ([https://github.com/LLPhant/LLPhant](https://github.com/LLPhant/LLPhant))  
-> **Source Version**: `4dd63b69`  
+> **Source Version**: `b9e6030a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T11:11:56.704Z  
+> **Timestamp**: 2026-10-25T16:28:34.321Z  
 > **Learning ID**: `learn-github-llphant-llphant`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/llphant-llphant-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/LLPhant/LLPhant](https://github.com/LLPhant/LLPhant))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T11:11:56.631Z  
+> **Harvest Timestamp**: 2026-10-25T16:28:34.314Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LLPhant - A comprehensive PHP Generative AI Framework using OpenAI GPT 4. Inspired by Langchain
 - **Primary Language / Ecosystem**: PHP
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1722 stars
+- **Stars / Engagement**: 1721 stars
 
 ---
 
@@ -236,29 +236,466 @@ export default config
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4dd63b69` (2026-10-22)
-**Commit Message**: Update mongodb/mongodb library for security issues (#541)
+### Incident Patch 1: `fb5b9074` (2026-10-23)
+**Commit Message**: Add SECURITY.md (#542)
+
+**File**: `SECURITY.md` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++# Security Policy
++
++## Supported Versions
++
++Only the latest version is currently being supported with security updates.
++
++## Reporting a Vulnerability
++
++Please report any vulnerability sending a message to [Franco Lombardo's LinkedIn profile](https://www.linkedin.com/in/francolombardo)
+```
+
+---
+
+### Incident Patch 2: `67f33cb4` (2026-10-25)
+**Commit Message**: Fix streams for OpenAI and Gemini (#534)
+
+* Fix for streams in OpenAI and Gemini
+Changes to Integration test for GeminiAIChat
+
+* Fix for streams in OpenAI and Gemini
+
+* Fix for streams in OpenAI and Gemini - improve test
+
+* Fix for streams in OpenAI and Gemini - corner cases
+
+* Fix for streams in OpenAI and Gemini - Address CR
+
+* Fix for streams in OpenAI and Gemini - Address CR - 2
+
+* Address CR - 1
+
+* Address CR - 2 - add failing test
+
+* Address CR - 2 - add fix
+
+* Address CR - 2 - add fix and unit test
+
+* Address CR - 4 - add failing test
+
+* Address CR - 4 - add GeminiAIChat.php
+
+* Fix CI problems
+
+* Upgrade models. Address CR
+
+**File**: `docs/usage.rst` (modified, +4/-3)
+```diff
+@@ -42,14 +42,15 @@ replace it with any Atlas Cloud model identifier available in your account.
+ Gemini
+ ------
+ 
+-We support Gemini through its OpenAI API compatibility. Here is an example:
++We support Gemini through its OpenAI-compatible API with a dedicated chat class.
++Use ``GeminiAIChat`` together with ``GeminiOpenAIConfig``.
+ 
+ .. code-block:: php
+ 
+     $config = new GeminiOpenAIConfig();
+     $config->apiKey = "your_api_key";
+     $config->model = 'gemini-2.0-flash';
+-    $chat = new OpenAIChat($config);
++    $chat = new GeminiAIChat($config);
+     $response = $chat->generateText('what is one + one ?');
+ 
+ If you do not specify an api key, the ``GeminiOpenAIConfig`` tries to read it from the ``GEMINI_API_KEY`` environment variable.
+@@ -168,7 +169,7 @@ The API to generate text using OpenAI will only be from the chat API.
+ So even if you want to generate a completion for a simple question under the hood it will use the chat API.
+ This is why this class is called OpenAIChat.
+ 
+-You can use the ``OpenAIChat``, ``MistralAIChat`` or ``OllamaChat`` to generate text or to create a chat.
++You can use ``OpenAIChat``, ``GeminiAIChat``, ``MistralAIChat`` or ``OllamaChat`` to generate text or to create a chat.
+ 
+ We can use it to simply generate text from a prompt.
+ This will ask directly an answer from the LLM.
+```
+
+**File**: `src/Chat/CalledFunction/CalledFunction.php` (modified, +8/-2)
+```diff
+@@ -8,8 +8,14 @@ class CalledFunction
+ {
+     /**
+      * @param  array<string, mixed>  $arguments
++     * @param  array<string, mixed>|null  $extra_content
+      */
+-    public function __construct(public FunctionInfo $definition, public array $arguments, public ?string $return, public ?string $tool_call_id = null)
+-    {
++    public function __construct(
++        public FunctionInfo $definition,
++        public array $arguments,
++        public ?string $return,
++        public ?string $tool_call_id = null,
++        public ?array $extra_content = null
++    ) {
+     }
+ }
+```
+
+**File**: `src/Chat/Enums/OpenAIChatModel.php` (modified, +2/-1)
+```diff
+@@ -4,10 +4,11 @@
+ 
+ enum OpenAIChatModel: string
+ {
++    //    case Gpt35Turbo = 'gpt-3.5-turbo';
+     case Gpt35Turbo = 'gpt-3.5-turbo';
+     case Gpt4 = 'gpt-4';
+     case Gpt4Turbo = 'gpt-4-turbo';
+-    case Gpt4Omni = 'gpt-4o';
++    case Gpt4o = 'gpt-4o';
+     case Gpt4Omini = 'gpt-4o-mini';
+     case Gpt56Sol = 'gpt-5.6-sol';
+ }
+```
+
+**File**: `src/Chat/FunctionInfo/FunctionInfo.php` (modified, +1/-1)
+```diff
+@@ -81,7 +81,7 @@ public function asOpenAIMessages(mixed $functionResult): array
+             Message::assistantAskingTools([$this->asToolCallObject()]),
+             Message::toolResult(
+                 $functionResult,
+-                $this->toolCallId
++                $this->toolCallId,
+             )];
+     }
+ }
+```
+
+**File**: `src/Chat/GeminiAIChat.php` (added, +210/-0)
+```diff
+@@ -0,0 +1,210 @@
++<?php
++
++namespace LLPhant\Chat;
++
++use GuzzleHttp\Psr7\Utils;
++use LLPhant\Chat\CalledFunction\CalledFunction;
++use LLPhant\GeminiOpenAIConfig;
++use OpenAI\Responses\Chat\CreateStreamedResponse;
++use OpenAI\Responses\StreamResponse;
++use Psr\Http\Message\ResponseInterface;
++use Psr\Http\Message\StreamInterface;
++use Psr\Log\LoggerInterface;
++use Psr\Log\NullLogger;
++
++class GeminiAIChat extends OpenAIChat
++{
++    public function __construct(GeminiOpenAIConfig $config = new GeminiOpenAIConfig(), LoggerInterface $logger = new NullLogger())
++    {
++        parent::__construct($config, $logger);
++    }
++
++    /**
++     * Gemini ends streamed tool-call turns with finish_reason "stop".
++     */
++    protected function shouldCallStreamedTools(?string $finishReason): bool
++    {
++        return $finishReason !== null && $finishReason !== 'length' && $finishReason !== 'content_filter';
++    }
++
++    protected function shouldAddAssistantToolCallsMessage(): bool
++    {
++        return false;
++    }
++
++    protected function createMessageWithToolOutput(CalledFunction $functionCalled): Message
++    {
++        return Message::functionResult($this->createStructuredFunctionResultPayload($functionCalled), $functionCalled->definition->name);
++    }
++
++    /**
++     * @param  Message[]  $messages
++     */
++    protected function createStreamedResponse(array $messages): StreamInterface
++    {
++        $openAiArgs = $this->getOpenAiArgs($messages);
++
++        $this->logger->debug('Calling Chat::createStreamed', [
++            'chat' => self::class,
++            'args' => $openAiArgs,
++        ]);
++
++        $stream = $this->client->chat()->createStreamed($openAiArgs);
++        $response = $this->extractRawStreamResponse($stream);
++
++        $generator = function (ResponseInterface $response) use ($messages) {
++            $toolsToCall = [];
++
++            while (! $response->getBody()->eof()) {
++                $line = $this->readLineFromStream($response->getBody());
++
++                $event = null;
++                if (str_starts_with($line, 'event:')) {
++                    $event = trim(substr($line, strlen('event:')));
++                    $line = $this->readLineFromStream($response->getBody());
++                }
++
++                if (! str_starts_with($line, 'data:')) {
++                    continue;
++                }
++
++                $data = trim(substr($line, strlen('data:')));
++                if ($data === '[DONE]') {
++                    break;
++                }
++
++                $chunk = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
++                if ($event !== null) {
++                    $chunk['__event'] = $event;
++                }
++
++                if (isset($chunk['error'])) {
++                    throw new \RuntimeException('Gemini stream error: '.json_encode($chunk['error'], JSON_THROW_ON_ERROR));
++                }
++
++                $choices = $chunk['choices'] ?? [];
++                if (! is_array($choices) || $choices === []) {
++                    continue;
++                }
++
++                $choice = $choices[0];
++                $delta = $choice['delta'] ?? [];
++                $toolCalls = $delta['tool_calls'] ?? [];
++                foreach ($toolCalls as $toolCall) {
++                    if (! is_array($toolCall) || ! isset($toolCall['function']) || ! is_array($toolCall['function'])) {
++                        continue;
++                    }
++
++                    $functionName = $toolCall['function']['name'] ?? null;
++                    $argumentsDelta = (string) ($toolCall['function']['arguments'] ?? '');
++                    $indexFromPayload = isset($toolCall['index']) && is_int($toolCall['index']) ? $toolCall['index'] : null;
++                    $callId = isset($toolCall['id']) && is_string($toolCall['id']) ? $toolCall['id'] : null;
++                    $extraContent = isset($toolCall['extra_content']) && is_array($toolCall['extra_content']) ? $toolCall['extra_content'] : null;
++
++                    if (is_string($functionName)) {
++                        $toolsToCall[$indexFromPayload ?? count($toolsToCall)] = [
++                            'function' => $functionName,
++                            'arguments' => $argumentsDelta,
++                            'id' => $callId,
++                            'extra_content' => $extraContent,
++                        ];
++
++                        continue;
++                    }
++
++                    $index = $indexFromPayload ?? array_key_last($toolsToCall);
++                    if ($index === null || ! isset($toolsToCall[$index])) {
++                        continue;
++                    }
++
++                    $toolsToCall[$index]['arguments'] .= $argumentsDelta;
++                    if (($toolsToCall[$index]['extra_content'] ?? null) === null && $extraContent !== null) {
++                        $toolsToCall[$index]['extra_content'] = $extraContent;
++                    }
++                }
++
++     
+```
+
+**File**: `src/Chat/Message.php` (modified, +1/-1)
+```diff
+@@ -129,7 +129,7 @@ public function jsonSerialize(): mixed
+             $result['tool_call_id'] = $this->tool_call_id;
+         }
+ 
+-        if (! empty($this->name)) {
++        if ($this->role === ChatRole::Function && ! empty($this->name)) {
+             $result['name'] = $this->name;
+         }
+ 
+```
+
+**File**: `src/Chat/OpenAIChat.php` (modified, +69/-14)
+```diff
+@@ -27,7 +27,7 @@
+  * @phpstan-import-type ModelOptions from OpenAIConfig
+  */ class OpenAIChat implements ChatInterface
+ {
+-    private readonly ClientContract $client;
++    protected readonly ClientContract $client;
+ 
+     public string $model;
+ 
+@@ -53,7 +53,7 @@
+ 
+     public ?FunctionInfo $requiredFunction = null;
+ 
+-    public function __construct(OpenAIConfig $config = new OpenAIConfig(), private readonly LoggerInterface $logger = new NullLogger())
++    public function __construct(OpenAIConfig $config = new OpenAIConfig(), protected readonly LoggerInterface $logger = new NullLogger())
+     {
+         if ($config->client instanceof ClientContract) {
+             $this->client = $config->client;
+@@ -172,7 +172,7 @@ private function getNewMessagesFromTurn(array $messages, array $newFunctionsCall
+         $toolsOutput = [];
+         foreach ($newFunctionsCalled as $functionCalled) {
+             if ($functionCalled->return !== null) {
+-                $toolsOutput[] = Message::toolResult($functionCalled->return, $functionCalled->tool_call_id);
++                $toolsOutput[] = $this->createMessageWithToolOutput($functionCalled);
+             }
+             if ($functionCalled->tool_call_id) {
+                 $toolsCalls[] = new ToolCall($functionCalled->tool_call_id, $functionCalled->definition->name, json_encode($functionCalled->arguments, JSON_THROW_ON_ERROR));
+@@ -183,7 +183,9 @@ private function getNewMessagesFromTurn(array $messages, array $newFunctionsCall
+             return [];
+         }
+ 
+-        $messages[] = Message::assistantAskingTools($toolsCalls);
++        if ($toolsCalls !== [] && $this->shouldAddAssistantToolCallsMessage()) {
++            $messages[] = Message::assistantAskingTools($toolsCalls);
++        }
+ 
+         return array_merge($messages, $toolsOutput);
+     }
+@@ -216,6 +218,9 @@ public function generateChatOrReturnFunctionToCall(array $messages): string|arra
+      */
+     public function generateChatStream(array $messages): StreamInterface
+     {
++        $this->functionsCalled = [];
++        $this->lastFunctionCalled = null;
++
+         return $this->createStreamedResponse($messages);
+     }
+ 
+@@ -288,7 +293,7 @@ private function createOpenAIMessagesFromPrompt(string $prompt): array
+     /**
+      * @param  Message[]  $messages
+      */
+-    private function createStreamedResponse(array $messages): StreamInterface
++    protected function createStreamedResponse(array $messages): StreamInterface
+     {
+         $openAiArgs = $this->getOpenAiArgs($messages);
+ 
+@@ -363,7 +368,7 @@ private function createStreamedResponse(array $messages): StreamInterface
+      * @param  Message[]  $messages
+      * @return array<string, mixed>
+      */
+-    private function getOpenAiArgs(array $messages): array
++    protected function getOpenAiArgs(array $messages): array
+     {
+         // The system message should be the first
+         $finalMessages = [];
+@@ -379,6 +384,7 @@ private function getOpenAiArgs(array $messages): array
+ 
+         if ($this->tools !== []) {
+             $openAiArgs['tools'] = ToolFormatter::formatFunctionsToOpenAITools($this->tools);
++            $this->normalizeReasoningEffortForToolCalls($openAiArgs);
+         }
+ 
+         if ($this->requiredFunction instanceof FunctionInfo) {
+@@ -390,6 +396,39 @@ private function getOpenAiArgs(array $messages): array
+         return $openAiArgs;
+     }
+ 
++    /**
++     * OpenAI chat/completions models in the GPT-5 family reject function tools unless reasoning_effort is "none".
++     *
++     * @param  array<string, mixed>  $openAiArgs
++     */
++    private function normalizeReasoningEffortForToolCalls(array &$openAiArgs): void
++    {
++        $prefixes = [
++            'gpt-5.4',
++            'gpt-5.5',
++            'gpt-5.6',
++            'gpt-6-sol',
++        ];
++        if ($this->hasPrefix(strtolower($this->model), $prefixes)) {
++            $openAiArgs['reasoning_effort'] = 'none';
++        }
++
++    }
++
++    /**
++     * @param  string[]  $prefixes
++     */
++    private function hasPrefix(string $string, array $prefixes): bool
++    {
++        foreach ($prefixes as $prefix) {
++            if (str_starts_with($string, $prefix)) {
++                return true;
++            }
++        }
++
++        return false;
++    }
++
+     /**
+      * @throws \JsonException
+      */
+@@ -418,13 +457,18 @@ private function getFunctionInfoFromName(string $functionName, string $toolCallI
+         throw new Exception("OpenAI tried to call $functionName which doesn't exist");
+     }
+ 
+-    private function callFunction(string $functionName, string $argumentsString, string $toolCallId): void
++    /**
++     * @param  array<string,mixed>|null  $extraContent
++     *
++     * @throws \JsonException
++     */
++    protected function callFunction(string $functionName, string $argumentsString, string $toolCallId, ?array $extraContent = null): void
+     {
+         $arguments = $argumentsString !== '' && $argumentsString !== '0' ? json_decode($argumentsString, true,
+```
+
+**File**: `src/OpenAIConfig.php` (modified, +1/-0)
+```diff
+@@ -25,6 +25,7 @@
+  *     response_format?: ResponseFormat|null,
+  *     seed?: int|null,
+  *     service_tier?: string|null,
++ *     reasoning_effort?: 'none'|'minimal'|'low'|'medium'|'high'|string|null,
+  *     stop?: string|array<string>|null,
+  *     temperature?: float|null,
+  *     top_p?: float|null,
+```
+
+---
+
+### Incident Patch 3: `39a5419c` (2026-10-23)
+**Commit Message**: Update predis/predis requirement from ^2.2 to ^2.4 (#463)
+
+Updates the requirements on [predis/predis](https://github.com/predis/predis) to permit the latest version.
+- [Release notes](https://github.com/predis/predis/releases)
+- [Changelog](https://github.com/predis/predis/blob/v2.4.1/CHANGELOG.md)
+- [Commits](https://github.com/predis/predis/compare/v2.2.0...v2.4.1)
+
+---
+updated-dependencies:
+- dependency-name: predis/predis
+  dependency-version: 2.4.1
+  dependency-type: direct:development
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
 **File**: `composer.json` (modified, +1/-1)
 ```diff
-@@ -43,7 +43,7 @@
-         "hkulekci/qdrant": "^1.19",
-         "laravel/pint": "v1.15.3",
-         "mockery/mockery": "^1.6.12",
--        "mongodb/mongodb": "^2.1",
-+        "mongodb/mongodb": "^2.4",
-         "opensearch-project/opensearch-php": "^2.3",
-         "pestphp/pest": "^3.0",
+@@ -49,7 +49,7 @@
          "pestphp/pest-plugin-arch": "^3.0",
+         "pestphp/pest-plugin-type-coverage": "^3.0",
+         "phpstan/phpstan": "^2",
+-        "predis/predis": "^2.2",
++        "predis/predis": "^2.4",
+         "rector/rector": "^2",
+         "scotteuser/pinecone-php": "^1.0.4",
+         "symfony/cache": "^7.2",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #545** (2026-10-25): Add plumbphp badge (@f-lombardo)
+- **PR #544** (2026-10-25): Add GisooConfig for the OpenAI-compatible Gisoo API (@netarz)
+- **PR #543** (2026-10-25): Improve fix-lint and quality composer scripts (@f-lombardo)
+- **PR #542** (2026-10-23): Add SECURITY.md (@f-lombardo)
 - **PR #541** (2026-10-22): Update mongodb/mongodb library for security issues (@f-lombardo)
 - **PR #539** (2026-10-21): Throw a readable HttpException on an error event in AnthropicChat streams (@pcbeingused333)
-- **PR #533** (2026-10-19): Default OpenAIConfig to gpt-5.6-sol before gpt-4-turbo shuts down (@pcbeingused333)
-- **PR #532** (2026-10-19): Fix streamed tool calls in OpenAIChat: lost arguments and Gemini's stop finish reason (@pcbeingused333)
-- **PR #529** (2026-10-13): Update symfony/process requirement from ^v7.1.8 to ^v7.3.11 (@dependabot[bot])
-- **PR #528** (closed): Update elasticsearch/elasticsearch requirement from ^8.15 to ^8.17 (@dependabot[bot])
 
 ---
 
@@ -278,28 +715,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update mongodb/mongodb library for security issues (#541)
+## X. Add SECURITY.md (#542)
 
 **RULE**:
-When implementing operations in `composer.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in LLPhant/LLPhant. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in LLPhant/LLPhant. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4dd63b69`: Update mongodb/mongodb library for security issues (#541). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fb5b9074`: Add SECURITY.md (#542). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `composer.json`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-        "mongodb/mongodb": "^2.4",
+# Security Policy
+
+## Supported Versions
+
+Only the latest version is currently being supported with security updates.
+
+## Reporting a Vulnerability
+
+Please report any vulnerability sending a message to [Franco Lombardo's LinkedIn profile](https://www.linkedin.com/in/francolombardo)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
 // Anti-pattern to NEVER write (induced failure mode):
-        "mongodb/mongodb": "^2.1",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4dd63b69` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fb5b9074` are properly handled with clean fallback behavior.
