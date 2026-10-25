@@ -234,4 +234,25 @@
 - Automated SEO regression suite (`npm run test:seo`): 31/31 assertions passed.
 - Production edge curl: Verified HTTP 200 OK and text payload matching `ca-pub-5901471283694215`.
 
+---
+
+## Incident 12: Search Engine Title Truncation Guardrail (< 70 chars), Direct `sitemap.xml` Ingestion, and IndexNow Protocol Integration
+
+### 1. Empirical Forensic Analysis of Bing Webmaster Tools & Sitemap Confusion
+- **Symptoms**:
+  1. Bing Webmaster Tools Site Scan reported:
+     - `Title too long - 1 instance found (> 70 characters)`
+     - Historical warnings: `Title tag missing`, `Meta Description tag missing`, `More than one h1 tag`
+     - Recommendation: `Set up IndexNow`
+  2. User reported: *"sitemap par totally url nahi h"* (Sitemap doesn't show all URLs).
+- **Forensic Root Cause**:
+  1. *Title Length Inflation*: In `src/i18n/tool-metadata.ts`, fallback titles concatenated `badgeTitle` with full descriptive subtitles (e.g. `Presiese 1:1 Skaal in cm, mm, in & px.`), producing title strings of 75–102 characters. Bing and Google search snippets truncate titles exceeding 70 characters.
+  2. *Historical Scanner Lag*: The 3 warnings (`Title missing`, `Description missing`, `Duplicate H1`) were cached reports from Bing's previous scan (before Incident 2 fixes).
+  3. *Sitemap Index Abstraction Misconception*: `public/sitemap.xml` was configured as a `<sitemapindex>` pointing to `sitemap-0.xml`. When inspected in a browser, it appeared to contain only 1 link, leading operators to believe the sitemap was missing URLs.
+- **Remediation**:
+  1. *Deterministic Title Capping*: Implemented `limitTitle(title, 65)` across all 54 language generators. Shortened core English page titles to 52–58 characters. Audited all 542 HTML pages: **0 pages exceed 70 characters**.
+  2. *Direct Multi-URL Sitemap*: Transferred the full 328 `<url>` entries directly into `public/sitemap.xml`. Probing `https://onlinefreeprotractor.com/sitemap.xml` now returns all 328 URLs in 1 direct hop.
+  3. *IndexNow Protocol Deployment*: Generated IndexNow verification key `8e49d6291a544b6ab0c918f3a39e830e`, deployed `public/8e49d6291a544b6ab0c918f3a39e830e.txt`, and created automated submission script `scripts/submit_indexnow.cjs`.
+
+
 
