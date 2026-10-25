@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `8ce7a3c5`  
+> **Source Version**: `ac82f3a1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T09:58:07.007Z  
+> **Timestamp**: 2026-10-25T14:44:29.915Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T09:58:06.117Z  
+> **Harvest Timestamp**: 2026-10-25T14:44:29.703Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12042 stars
+- **Stars / Engagement**: 12051 stars
 
 ---
 
@@ -804,11 +804,14 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22528** (2026-10-22): **[Newcomer's Meet]: Add maanvi-chetwani.md with introduction**
-  *Symptoms*: **Notes for Reviewers**  - This PR fixes #  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added a brief note with the text “hi, i am maanvi.” No user-facing functionality changed.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #22560** (2026-10-24): **docs: add Tristan Brian introduction**
+  *Symptoms*: ## Notes for Reviewers  - Adds my introduction to the Meshery community meeting notes. - Documentation-only change; no application code or tests affected.  **[[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)**  - [ ] Yes, I signed my commits.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added a profile featuring Brian Kioko’s education, software engineering and backend/cybersecurity interests, and GitHub and LinkedIn links.   * The profile also notes an LFX Mentorship goal involving Meshery, Layer5, and open-source collaboration.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/22560?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review.  <details> <summary><strong><picture><img src="https://storage.googleapis.com/coderabbit_public_asset
+  > 📖 Docs preview: https://docs.meshery.io/pr-preview/pr-22560/ <!-- Sticky Pull Request Commentpr-preview -->
 
-- **Issue #22521** (2026-10-22): **ci(release): grant the Helm chart releaser its token permissions**
-  *Symptoms*: **Notes for reviewers**  The stable release workflow has ended in `startup_failure` for v1.0.72 and v1.0.73 (runs 39505500898 and 39739390015), so those tags got no Docker images, Helm charts or mesheryctl release. The workflow file is unchanged since June, and v1.0.71 built on Oct 11.  **Cause.** The repository's default `GITHUB_TOKEN` permission is `read` (the org default is `write`). `helm-chart-releaser.yml` declares `contents: write` and `packages: write`, and GitHub won't start a run when a called workflow asks for more than the calling job grants.  **Fix.** `build-and-release-stable.yml` now defaults to `contents: read` and grants `contents: write` and `packages: write` only on `call-helm-chart-releaser`. The other jobs publish with PATs or Docker Hub credentials, not the job token. actionlint finds nothing.   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Chores**   * Updated permissions for stable build and Helm chart release automation. There are no changes to user-facing functionality.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #22558** (2026-10-24): **[Docs] Introduction - AryaBhatt**
+  *Symptoms*: Added personal information and goals for Arya Bhatt.  **Notes for Reviewers** - Added introduction file under docs/meetings/2026/week-of-10-22-2026/ - This PR fixes #  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [X ] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added an Arya Bhatt profile featuring an introductory bio, education and role information, and links to GitHub and LinkedIn.   * The profile also describes an LFX Mentorship goal focused on contributing to Meshery under Layer5.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,10 +828,83 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89911e9c` (2026-10-22)
-**Commit Message**: Merge pull request #22453 from ayanasarkar/docs/fix-governance-links
+### Incident Patch 1: `cfa38789` (2026-10-24)
+**Commit Message**: Merge pull request #22300 from Paramveersingh-S/fix/docs-workspaces-crds-typos
 
-[Docs] Fix two stale links in GOVERNANCE.md
+[Docs] Fix typos, missing words, and duplicate tokens in Workspaces and Operator CRDs guides
+
+**File**: `docs/content/en/concepts/logical/workspaces.md` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ Workspaces facilitate collaboration between you and your teams, allow you to con
+ - Access to Workspaces may be granted to one or more teams.
+ - As a point of collaboration to facilitate work, Workspaces may have zero or more Environments associated.
+ 
+-After creating a Workspace, of your next steps is to resource that Workspace. Like a shared drive (or or shared collection of files). Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
++After creating a Workspace, one of your next steps is to resource that Workspace. Like a shared drive (or a shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
+ 
+ ## Key Components
+ 
+```
+
+**File**: `docs/content/en/reference/meshery-operator-crds.md` (modified, +10/-10)
+```diff
+@@ -35,20 +35,20 @@ spec:
+ 
+ The following section outlines the fields and their descriptions
+ 
+-- **apiVersion** – API version being used. Must be **v1alpha1** as its the only version supported at the moment.
+-- **kind** – Resource type. Must be set to **Broker**, also helps in quering for custom resources in the cluster using its plural form **brokers**
++- **apiVersion** – API version being used. Must be **v1alpha1** as it's the only version supported at the moment.
++- **kind** – Resource type. Must be set to **Broker**, also helps in querying for custom resources in the cluster using its plural form **brokers**
+ - **metadata** - The metadata section allows us to pass data that uniquely identifies a specific custom resource. For Broker, the following metadata is required
+   - **name** : The name of this custom resource
+   - **namespace**: The namespace that this custom resource will live in, usually **meshery** namespace
+   - **labels**: labels are used to organize kubernetes objects and can be used to filter for objects either by kubectl or the Kubernetes API
+     - **app**: The name of the application, in this case **meshery**
+     - **component**: In the architecture diagram of meshery, the section that this application belongs to, for this case the **controller**
+     - **version**: The current version of the meshery application as from its release
+-  - **annotations**: Annotations are used to provide non-indentifying attributes of a resource i.e cannot be used in filtration, but are informational attributes of an object
+-    - **meshery/component-type**: The component type pf this custom resource with respect to meshery design, for this case **management-plane**
++  - **annotations**: Annotations are used to provide non-identifying attributes of a resource i.e cannot be used in filtration, but are informational attributes of an object
++    - **meshery/component-type**: The component type of this custom resource with respect to meshery design, for this case **management-plane**
+ - **spec**
+   The specification section defines the desired state of our custom resource that Kubernetes can then use to take corrective measures to bring the cluster to.
+-  - **size**: The size is an integer value denoting the number of Broker instances that that should be in one cluster, currently it is advised to have one Broker instance in a cluster but that can be scaled vertically up or down depending on load.
++  - **size**: The size is an integer value denoting the number of Broker instances that should be in one cluster, currently it is advised to have one Broker instance in a cluster but that can be scaled vertically up or down depending on load.
+ 
+ ### Usage
+ 
+@@ -108,9 +108,9 @@ spec:
+ 
+ The following section outlines the fields and their descriptions
+ 
+-- **apiVersion** – API version being used. Must be **v1alpha1** as its the only version supported at the moment.
++- **apiVersion** – API version being used. Must be **v1alpha1** as it's the only version supported at the moment.
+ 
+-- **kind** – Resource type. Must be set to **MeshSync**, also helps in quering for custom resources in the cluster using its plural form **meshsyncs**
++- **kind** – Resource type. Must be set to **MeshSync**, also helps in querying for custom resources in the cluster using its plural form **meshsyncs**
+ 
+ - **metadata** - The metadata section allows us to pass data that uniquely identifies a specific custom resource. For MeshSync, the following metadata is required
+ 
+@@ -121,12 +121,12 @@ The following section outlines the fields and their descriptions
+     - **app**: The name of the application, in this case **meshery**
+     - **component**: In the architecture diagram of meshery, the section that this application belongs to, for this case the **controller**
+     - **version**: The current version of the meshery application as from its release
+-  - **annotations**: Annotations are used to provide non-indentifying attributes of a resource i.e cannot be used in filtration, but are informational attributes of an object
+-    - **meshery/component-type**: The component type pf this custom resource with respect to meshery design, for this case **management-plane**
++  - **annotations**: Annotations are used to provide non-identifying attributes of a resource i.e cannot be used in filtration, but are informational attributes of an object
++    - **meshery/component-type**: The component type of this custom resource with respect to meshery design, for this case **management-plane**
+ 
+ - **spec**
+   The specification section defines the desired state of our custom resource that Kubernetes can then use to take corrective measures to bring the cluster to.
+-  - **size**: The size is an integer value denoting the number of MeshSync instances that that should be in one cluster, currently only one instance of MeshSync is supported.
++  - **size**: The size is an integer value denoting the number of MeshSync instances that should be in one cluster, currently
+```
+
+---
+
+### Incident Patch 2: `b8386bab` (2026-10-24)
+**Commit Message**: Merge branch 'master' into fix/docs-workspaces-crds-typos
 
 **File**: `.github/label-commenter-config.yml` (modified, +2/-2)
 ```diff
@@ -869,667 +945,621 @@ Observed empirical fixes and code patches:
  maintained as part of the project's Incubation self-assessment rather than published
 ```
 
----
-
-### Incident Patch 2: `da6fcff3` (2026-10-22)
-**Commit Message**: Merge branch 'master' into docs/fix-governance-links
-
-**File**: `.github/agents/meshery-docs-contributor.md` (modified, +1/-1)
-```diff
-@@ -544,7 +544,7 @@ make docs
- - **Prevention**: Check the shortcode file in `docs/layouts/shortcodes/` — if it calls `.Inner`, use `{{% %}}` when wrapping Markdown body content
- 
- #### Problem: Generated CLI reference docs drift
--- **Solution**: Do not edit files under `docs/content/en/references/reference/mesheryctl/` directly; they are auto-generated from `mesheryctl` Cobra command definitions. Edit the `Short`, `Long`, or `Example` fields in the relevant Go source file instead
-+- **Solution**: Do not edit files under `docs/content/en/reference/mesheryctl/` directly; they are auto-generated from `mesheryctl` Cobra command definitions. Edit the `Short`, `Long`, or `Example` fields in the relevant Go source file instead
- - **Prevention**: Note `# This file is auto-generated` comments at the top of generated files; treat them as read-only
- 
- ## Documentation Patterns
-```
-
-**File**: `.github/workflows/build-and-release-stable.yml` (modified, +12/-0)
-```diff
-@@ -4,6 +4,14 @@ on:
-     tags:
-       - "v*"
- 
-+# Repository GITHUB_TOKEN default is read. A called workflow cannot request
-+# more than the calling job grants. Only helm-chart-releaser.yml declares
-+# more than contents: read; that grant is on call-helm-chart-releaser.
-+# Goreleaser and Homebrew publish with PATs (RELEASE_NOTES_PAT, GH_ACCESS_TOKEN),
-+# not this token. No job uses OIDC.
-+permissions:
-+  contents: read
-+
- jobs:
-   build:
-     name: Docker build and push
-@@ -92,6 +100,10 @@ jobs:
-     needs:
-       - build
-     name: Release Helm Charts
-+    # Same set helm-chart-releaser.yml declares at workflow scope.
-+    permissions:
-+      contents: write
-+      packages: write
-     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
-     secrets: inherit
-   # call-aks-playground-deploy-workflow:
-```
-
-**File**: `.github/workflows/mesheryctl-ci.yml` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ jobs:
-           check-latest: "true"
-       - name: Remove current docs pages for mesheryctl
-         run: |
--          find docs/content/en/reference/references/mesheryctl -mindepth 1 ! -name '_index.md' -exec rm -rf {} +
-+          find docs/content/en/reference/mesheryctl -mindepth 1 ! -name '_index.md' -exec rm -rf {} +
-       - name: Run script 📜
-         run: |
-           cd mesheryctl
-```
-
-**File**: `docs/catalog/deployment/0d10efaf-433e-4e3f-a2ff-ec6a4178f52f.md` (added, +21/-0)
+**File**: `docs/catalog/deployment/2acfea0e-f26c-4d1c-b602-eb1c2aff279e.md` (added, +21/-0)
 ```diff
 @@ -0,0 +1,21 @@
 +---
 +layout: item
-+name: Kratos.ai
++name: Load- Balancer-AWS-Architecture
++publishedVersion: 0.0.12
++userId: 6d8f0768-ad93-4eaa-8ba2-81d733dd694e
++userName: Brian Kioko
++userAvatarURL: 
++type: deployment
++compatibility:
++    - aws-apigatewayv2-controller
++patternId: 2acfea0e-f26c-4d1c-b602-eb1c2aff279e
++image: /assets/images/logos/service-mesh-pattern.svg
++patternInfo: |
++  This%20design%20illustrates%20a%20robust%20and%20scalable%20architecture%20for%20deploying%20applications%20on%20Amazon%20Web%20Services%20(AWS)%20with%20load%20balancing%20capabilities.%20This%20design%20leverages%20AWS%20Elastic%20Load%20Balancers%20(ELB)%20to%20distribute%20incoming%20traffic%20across%20multiple%20instances%20of%20your%20application%2C%20ensuring%20high%20availability%20and%20reliability.%20The%20architecture%20typically%20includes%20Auto%20Scaling%20groups%20to%20automatically%20adjust%20the%20number%20of%20running%20instances%20based%20on%20traffic%20demand%2C%20further%20enhancing%20the%20system%E2%80%99s%20ability%20to%20handle%20varying%20loads.
++patternCaveats: |
++  1.%20AWS%20services%20can%20accumulate%20costs%20quickly%2C%20especially%20with%20high%20traffic%20volumes%20and%20large-scale%20deployments.%20It's%20essential%20to%20monitor%20and%20manage%20usage%20to%20avoid%20unexpected%20expenses.%0A%0A2.%20Network%20latency%20can%20be%20introduced%20by%20load%20balancers%20and%20cross-region%20data%20transfers.%20It's%20important%20to%20design%20your%20architecture%20to%20minimize%20latency%2C%20particularly%20for%20latency-sensitive%20applications.
++createdAt: 2026-10-23T08:17:27Z
++permalink: catalog/deployment/load-balancer-aws-architecture-2acfea0e-f26c-4d1c-b602-eb1c2aff279e.html
++URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/2acfea0e-f26c-4d1c-b602-eb1c2aff279e/0.0.12/design.yml'
++downloadLink: 2acfea0e-f26c-4d1c-b602-eb1c2aff279e/design.yml
++---
+\ No newline at end of file
+```
+
+**File**: `docs/catalog/deployment/8ee7c57f-66bf-4b50-83d0-7960145b74e5.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++---
++layout: item
++name: aws-infra
++publishedVersion: 0.0.3
++userId: 6d8f0768-ad93-4eaa-8ba2-81d733dd694e
++userName: Brian Kioko
++userAvatarURL: 
++type: deployment
++compatibility:
++    - aws-ec2-controller
++patternId: 8ee7c57f-66bf-4b50-83d0-7960145b74e5
++image: /assets/images/logos/service-mesh-pattern.svg
++patternInfo: |
++  A%20reference%20architecture%20for%20a%20load-balanced%20web%20application%20on%20AWS.%20An%20internet-facing%20Elastic%20Load%20Balancer%20distributes%20incoming%20traffic%20across%20two%20EC2%20web%20servers%20deployed%20in%20separate%20Availability%20Zones%2C%20both%20of%20which%20connect%20to%20a%20managed%20RDS%20database%20for%20persistence.%20The%20design%20is%20organized%20inside%20a%20Kubernetes%20Namespace%20container%20and%20expresses%20the%20traffic%20flow%2C%20the%20multi-AZ%20redundancy%20pattern%2C%20and%20the%20containment%20hierarchy%20as%20Meshery%20relationships.%20Use%20it%20as%20a%20starting%20point%20for%20reviewing%2C%20adapting%2C%20or%20documenting%20a%20three-tier%20AWS%20topology%20before%20provisioning%20it%20with%20ACK%2C%20Terraform%2C%20or%20CloudFormation.
++patternCaveats: |
++  %E2%9A%A0%EF%B8%8F%20This%20is%20a%20reference%20topology%2C%20not%20a%20deployable%20stack%0AThe%20AWS%20components%20in%20this%20design%20are%20annotation-style%20components%20(isAnnotation%3A%20true)%20with%20placeholder%20configuration.%20Their%20configuration%20blocks%20carry%20only%20metadata.namespace%3A%20default%20%E2%80%94%20no%20AMI%2C%20instance%20type%2C%20subnet%2C%20listener%2C%20or%20target-group%20settings.%20Importing%20and%20deploying%20this%20design%20as-is%20will%20not%20provision%20real%20AWS%20infrastructure.%20It%20renders%20the%20intended%20architecture%20visually%20and%20structurally%3B%20turning%20it%20into%20running%20infrastructure%20requires%20populating%20each%20component's%20configuration%20(or%20exporting%20to%20Terraform%2FCloudFormation%20and%20completing%20the%20resource%20definitions%20there).
++createdAt: 2026-10-23T09:43:42Z
++permalink: catalog/deployment/aws-infra-8ee7c57f-66bf-4b50-83d0-7960145b74e5.html
++URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/8ee7c57f-66bf-4b50-83d0-7960145b74e5/0.0.3/design.yml'
++downloadLink: 8ee7c57f-66bf-4b50-83d0-7960145b74e5/design.yml
++---
+\ No newline at end of file
+```
+
+**File**: `docs/catalog/deployment/a7701717-2abc-4223-aab0-3eb09693561e.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++---
++layout: item
++name: autoscaling-demo
 +publishedVersion: 0.0.2
-+userId: 87abd189-8f0b-44e1-ae6f-5692de43f131
-+userName: Prabhat Mathur
-+userAvatarURL: https://lh3.googleusercontent.com/a/ACg8ocLeZdPu9gAgMui3ioPMU2te9u-wue5WgvDZqVncyXfTCuXeaA=s96-c
-+type: deployment
-+compatibility:
-+    - kubernetes
-+patternId: 0d10efaf-433e-4e3f-a2ff-ec6a4178f52f
-+image: /assets/images/logos/service-mesh-pattern.svg
-+patternInfo: |
-+  Kubernetes%20deployment%20design%20for%20Kratos.ai%2C%20an%20intelligent%20market%20intelligence%20platform.%20Includes%20a%20Node.js%20API%20gateway%20(portfolio%20management%2C%20trading%20simulation%2C%20live%20P%26L%20tracking)%2C%20an%20async%20FastAPI%20ML%20service%20running%20an%20LSTM%2FGRU%20PyTorch%20encoder%20and%20FinBERT%20for%20market%20regime%20detection%20(Stable%20Growth%2C%20Volatile%2C%20Crisis)%20with%20confidence%20scoring%2C%20and%20a%20Redis%20cache%20layer.%20MongoDB%20Atlas%20is%20used%20as%20the%20external%20data%20store%20and%20is%20not%20deployed%20in-cluster.
-+patternCaveats: |
-+  MongoDB%20connection%20is%20external%20(Atlas)%20%E2%80%94%20the%20Secret%20in%20this%20design%20is%20a%20placeholder%20and%20must%20be%20replaced%20with%20a%20real%20connection%20string%20or%20wired%20through%20Meshery%20Connections%2FCredentials%20before%20deploy.%0ARedis%20runs%20as%20a%20single%20replica%20with%20no%20persistence%20configured%20%E2%80%94%20cache%20loss%20on%20pod%20restart%20is%20expected%3B%20not%20suitable%20as%20a%20source%20of%20truth.%0AThe%20FastAPI%20service%20assumes%20model%20artifacts%20(LSTM%2FGRU%20encoder%2C%20FinBERT)%20are%20pre-loaded%20onto%20the%20mounted%20PVC%20(kratos-model-pvc)%3B%20the%20design%20does%20not%20include%20a%20model-sync%2Finit%20step.%0ANo%20GPU%20resource%20requests%20are%20defined%20for%20the%20ML%20service%20%E2%80%94%20PyTorch%20inference%20will%20run%20on%20CPU%20unless%20you%20add%20nvidia.com%2Fgpu%20limits%20and%20a%20compatible%20node%20pool.%0AResource%20requests%2Flimits%20(CPU%2C%20memory%2C%20storage)%20are%20placeholder%20values%20and%20haven't%20been%20load-tested%20against%20real%20inference%20throughput.%0ANo%20liveness%2Freadiness%20probes%2C%20HPA%2C%20NetworkPolicy%2C%20or%20Ingress%20are%20defined%20%E2%80%94%20this%20design%20is%20deploy-ready%20for%20a%20dev%2Fstaging%20cluster%2C%20not%20production-hardened.%0AImage%20references%20(kratos-ai%2Fnode-gateway%3A%20latest%2C%20kratos-ai%2Ffastapi-service%3A%20latest)%20are%20placeholders%20%E2%80%94%20replace%20with%20your%20actual%20registry%20paths%20and%20pin%20to%20a%20specific%20tag%20rather%20than%20latest.
-+createdAt: 2026-08-18T11:32:55Z
-+permalink: catalog/deployment/kratos-ai-0d10efaf-433e-4e3f-a2ff-ec6a4178f52f.html
-+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/0d10efaf-433e-4e3f-a2ff-ec6a4178f52f/0.0.2/design.yml'
-+downloadLink: 0d10efaf-433e-4e3f-a2ff-ec6a4178f52f/design.yml
-+---
-\ No newline at end of file
-```
-
-**File**: `docs/catalog/deployment/0f8e5810-46fe-4817-9a29-c00b33416609.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+---
-+layout: item
-+name: Non-Semantic Relationship Example
-+publishedVersion: 0.0.109
-+userId: 31f6d8d7-de53-4d07-95e7-b6f4940739c8
-+userName: Piyush Sharma
-+userAvatarURL: https://avatars.githubusercontent.com/u/198256714?v=4
-+type: deployment
-+compatibility:
-+    - kubernetes
-+patternId: 0f8e5810-46fe-4817-9a29-c00b33416609
-+image: /assets/images/logos/service-mesh-pattern.svg
-+patternInfo: |
-+  A%20visual%20example%20of%20a%20non-semantic%20relationship%20where%20a%20Rectangle%20annotation%20groups%20a%20Kubernetes%20Pod%20and%20Service%20without%20affecting%20their%20deployment%20or%20lifecycle.
-+patternCaveats: |
-+  The%20Rectangle%20is%20a%20visual%20annotation%20only.%20It%20does%20not%20create%20a%20semantic%20relationship%20between%20the%20Pod%20and%20Service%20and%20does%20not%20affect%20deployment%2C%20configuration%2C%20or%20resource%20lifecycle.
-+createdAt: 2026-08-29T21:52:18Z
-+permalink: catalog/deployment/non-semantic-relationship-example-0f8e5810-46fe-4817-9a29-c00b33416609.html
-+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/0f8e5810-46fe-4817-9a29-c00b33416609/0.0.109/design.yml'
-+downloadLink: 0f8e5810-46fe-4817-9a29-c00b33416609/design.yml
-+---
-\ No newline at end of file
-```
-
-**File**: `docs/catalog/deployment/13bda770-d372-4878-a00d-e5b78b8d9434.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+---
-+layout: item
-+name: Simple Badge Design
-+publishedVersion: 0.0.4
-+userId: 86bd7d32-2bb8-4dc8-97f0-f6ea7b0b2e89
-+userName: Mantavya Kumar
-+userAvatarURL: https://lh3.googleusercontent.com/a/ACg8ocJBeTByloEha3ZWonmeVdecOeYCbkRm7Pwx37oFYAVhRKEHj0iprg=s96-c
-+type: deployment
-+compatibility:
-+    - kubernetes
-+patternId: 13bda770-d372-4878-a00d-e5b78b8d9434
-+image: /assets/images/logos/service-mesh-pattern.svg
-+patternInfo: |
-+  A%20simple%20badge%20design%20configuration%20built%20in%20Meshery%20Kanvas%20to%20easily%20deploy%20and%20visualize%20badge%20components.
-+patternCaveats: |
-+  Requires%20an%20active%20Kubernetes%20cluster%20connection%20and%20appropriate%20permissions%20in%20your%20workspace.
-+createdAt: 2026-10-13T16:59:17Z
-+permalink: catalog/deployment/simple-badge-design-13bda770-d372-4878-a00d-e5b78b8d9434.html
-+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/13bda770-d372-4878-a00d-e5b78b8d9434/0.0.4/design.yml'
-+downloadLink: 13bda770-d372-4878-a00d-e5b78b8d9434/design.yml
-+---
-\ No newline at end of file
-```
-
-**File**: `docs/catalog/deployment/147167e7-c443-4ef4-b51b-4ab2101bd68b.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+---
-+layout: item
-+name: Solar Monitor
-+publishedVersion: 0.0.31
-+userId: b9d1f0ef-9cff-4d48-b8b0-33036a4274ab
-+userName: Adhar Chaudhari
++userId: 6d8f0768-ad93-4eaa-8ba2-81d733dd694e
++userName: Brian Kioko
 +userAvatarURL: 
 +type: deployment
 +compatibility:
 +    - kubernetes
-+patternId: 147167e7-c443-4ef4-b51b-4ab2101bd68b
++patternId: a7701717-2abc-4223-aab0-3eb09693561e
 +image: /assets/images/logos/service-mesh-pattern.svg
 +patternInfo: |
-+  A%20basic%20solar%20monitoring%20architecture%20that%20collects%20solar%20data%2C%20processes%20measurements%2C%20and%20presents%20the%20results%20through%20a%20monitoring%20dashboard.
++  A%20horizontally%20auto-scaling%20Kubernetes%20web%20application.%20A%20Deployment%20runs%20the%20web%20tier%20behind%20a%20ClusterIP%20Service%2C%20while%20a%20HorizontalPodAutoscaler%20dynamically%20adjusts%20replicas%20between%202%20and%2010%20based%20on%20CPU%20utilization.%20All%20resources%20live%20in%20a%20dedicated%20Namespace.%20This%20pattern%20demonstrates%20Kubernetes-native%20elasticity%20with%20minimal%20component%20count%3A%20traffic%20scales%20with%20demand%2C%20failed%20pods%20are%20replaced%20automatically%2C%20and%20idle%20load%20collapses%20back%20to%20the%20two-replica%20floor.%20It%20runs%20on%20any%20conformant%20Kubernetes%20cluster%2C%20including%20EKS%2C%20GKE%2C%20AKS%2C%20kind%2C%20and%20minikube.
 +patternCaveats: |
-+  This%20is%20a%20conceptual%20architecture%20for%20demonstration%20in%20Meshery.%20The%20data%20collector%20represents%20the%20service%20receiving%20data%20from%20solar%20sensors.%20The%20design%20does%20not%20include%20physical%20sensor%20hardware%2C%20persistent%20storage%2C%20or%20production%20deployment%20configuration.
-+createdAt: 2026-09-04T14:04:09Z
-+permalink: catalog/deployment/solar-monitor-147167e7-c443-4ef4-b51b-4ab2101bd68b.html
-+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/147167e7-c443-4ef4-b51b-4ab2101bd68b/0.0.31/design.yml'
-+downloadLink: 147167e7-c443-4ef4-b51b-4ab2101bd68b/design.yml
++  Requires%20metrics-server.%20The%20HPA%20cannot%20function%20without%20metrics-server%20installed%20in%20the%20cluster%2C%20because%20it%20depends%20on%20the%20resource%20metrics%20API%20to%20read%20CPU%20utilization.%20Most%20managed%20clusters%20(EKS%2C%20GKE%2C%20AKS)%20include%20it%20by%20default%3B%20kind%20and%20minikube%20may%20require%20enabling%20the%20metrics-server%20addon%20manually.%20Without%20it%2C%20the%20HPA%20will%20report%20%3Cunknown%3E%20metrics%20and%20will%20not%20scale.%0A%0AThe%20image%20is%20a%20placeholder.%20nginx%3A1.27-alpine%20is%20used%20to%20demonstrate%20the%20pattern.%20Replace%20it%20with%20your%20actual%20application%20image%20and%20adjust%20resources.requests.cpu%20accordingly%20%E2%80%94%20HPA%20CPU%20targets%20are%20calculated%20as%20a%20percentage%20of%20the%20requested%20CPU%2C%20so%20a%20missing%20or%20too-small%20request%20value%20will%20distort%20scaling%20behaviour.%0A%0ACPU%20is%20a%20proxy%20metric.%20This%20HPA%20scales%20on%20CPU%20utilization.%20Applications%20that%20are%20I%2FO-bound%2C%20queue-depth-bound%2C%20or%20memory-bound%20should%20use%20custom%20or%20external%20metrics%20instead%20of%20%E2%80%94%20or%20in%20addition%20to%20%E2%80%94%20CPU.%20The%20design%20is%20intentionally%20minimal%3B%20adding%20custom%20metrics%20requires%20Prometheus%20or%20another%20metrics%20adapter.
++createdAt: 2026-10-23T09:49:06Z
++permalink: catalog/deployment/autoscaling-demo-a7701717-2abc-4223-aab0-3eb09693561e.html
++URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/a7701717-2abc-4223-aab0-3eb09693561e/0.0.2/design.yml'
++downloadLink: a7701717-2abc-4223-aab0-3eb09693561e/design.yml
 +---
 \ No newline at end of file
 ```
 
-**File**: `docs/catalog/deployment/14b05c40-d973-440a-9a34-a8a5b68a7d47.md` (added, +21/-0)
+**File**: `docs/content/en/extensions/models/aws-cloudwatchlogs-controller/components/delivery-destination/icons/color/delivery-destination-color.svg` (added, +1/-0)
 ```diff
-@@ -0,0 +1,21 @@
-+---
-+layout: item
-+name: Edge AI Rescue System
-+publishedVersion: 0.0.4
-+userId: 559b1e18-f997-42fa-ac72-fa27ea21dc1f
-+userName: ayushi Srivastava
-+userAvatarURL: https://lh3.googleusercontent.com/a/ACg8ocKGqphjG9mDkz_E1puN-TmziCDLMm1inWGKvcPm13sce7UTIg=s96-c
-+type: deployment
-+compatibility:
-+    - kubernetes
-+patternId: 14b05c40-d973-440a-9a34-a8a5b68a7d47
-+image: /assets/images/logos/service-mesh-pattern.svg
-+patternInfo: |
-+  An%20edge%20AI-based%20rescue%20system%20designed%20for%20emergency%20response%20applications.%20It%20uses%20Kubernetes%20deployments%20and%20services%20to%20separate%20AI%20inference%20and%20backend%20workloads%2C%20enabling%20scalable%20and%20modular%20processing%20for%20autonomous%20rescue%20operations.
-+patternCaveats: |
-+  The%20system%20requires%20suitable%20edge%20hardware%20and%20sufficient%20compute%20resources%20for%20AI%20inference.%20Network%20connectivity%20may%20affect%20communication%20between%20services%2C%20and%20model%20performance%20depends%20on%20the%20quality%20of%20the%20deployed%20AI%20model%20and%20available%20sensor%20data.
-+createdAt: 2026-09-01T05:07:31Z
-+permalink: catalog/deployment/edge-ai-rescue-system-14b05c40-d973-440a-9a34-a8a5b68a7d47.html
-+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/14b05c40-d973-440a-9a34-a8a5b68a7d47/0.0.4/design.yml'
-+downloadLink: 14b05c40-d973-440a-9a34-a8a5b68a7d47/design.yml
-+---
+@@ -0,0 +1 @@
++<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"> <g id="Icon-Architecture/32/Arch_Amazon-CloudWatch_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Icon-Architecture-BG/32/Management-Governance" fill="#E7157B"> <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect> </g> <path d="M27.6299844,24.1243419 C27.6299844,22.2207948 26.0499046,20.6723135 24.1075134,20.6723135 C22.1651223,20.6723135 20.5850425,22.2207948 20.5850425,24.1243419 C20.5850425,26.027889 22.1651223,27.5763703 24.1075134,27.5763703 C26.0499046,27.5763703 27.6299844,26.027889 27.6299844,24.1243419 L27.6299844,24.1243419 Z M28.6364047,24.1243419 C28.6364047,26.5713369 26.6044421,28.5626641 24.1075134,28.5626641 C21.6105848,28.5626641 19.5786222,26.5713369 19.5786222,24.1243419 C19.5786222,21.6773469 21.6105848,19.6860197 24.1075134,19.6860197 C26.6044421,19.6860197 28.6364047,21.6773469 28.6364047,24.1243419 L28.6364047,24.1243419 Z M32.9116779,30.7029217 L29.5250737,27.7134651 C29.2362311,28.1306674 28.8950547,28.5064453 28.5166406,28.8457304 L31.8841229,31.8223652 C32.2001388,32.0995137 32.6862398,32.0738701 32.9690439,31.7661464 C33.2508416,31.459409 33.2256811,30.9810565 32.9116779,30.7029217 L32.9116779,30.7029217 Z M24.1075134,29.5489579 C27.1589797,29.5489579 29.6428249,27.1157711 29.6428249,24.1243419 C29.6428249,21.1329127 27.1589797,18.6997259 24.1075134,18.6997259 C21.0560472,18.6997259 18.572202,21.1329127 18.572202,24.1243419 C18.572202,27.1157711 21.0560472,29.5489579 24.1075134,29.5489579 L24.1075134,29.5489579 Z M33.5859795,29.9710917 C34.3106021,30.6131689 34.3689745,31.7138729 33.7168142,32.425977 C33.3655735,32.8066864 32.8824918,33 32.3963908,33 C31.9726878,33 31.5489849,32.8530422 31.2108277,32.5551815 L27.7165365,29.4661092 C26.6809301,30.1407342 25.4410203,30.5352517 24.1075134,30.5352517 C20.5005032,30.5352517 17.5657817,27.6592189 17.5657817,24.1243419 C17.5657817,20.5894648 20.5005032,17.713432 24.1075134,17.713432 C27.7145237,17.713432 30.6492452,20.5894648 30.6492452,24.1243419 C30.6492452,25.0918961 30.4228006,26.0071768 30.0292903,26.8307321 L33.5859795,29.9710917 Z M10.5922957,24.6174888 L15.5529412,24.6174888 L15.5529412,25.6037826 L10.5862572,25.6037826 C10.0287003,25.5978649 9.42988027,25.3976472 8.79986118,25.0080611 C7.75620337,24.3738742 6,22.8806254 6,20.0351677 C6,16.5930022 8.41037654,15.3285736 9.81231997,14.8847413 C9.80124935,14.7220029 9.79621725,14.5572918 9.79621725,14.3925807 C9.79621725,11.5885474 11.7376019,8.67898061 14.3110186,7.62759139 C17.3242408,6.39077894 20.5135867,7.00523999 22.8424432,9.26582544 C23.5710914,9.97299811 24.1699115,10.83206 24.6278327,11.8292031 C25.2417491,11.3222481 26.0026028,11.0421406 26.8047198,11.0421406 C28.3656776,11.0421406 30.1238938,12.2069536 30.430852,14.7545506 C31.8871421,15.0810138 35,16.2300461 35,20.0756057 C35,21.7276479 34.4333854,23.0650623 33.3132396,24.047411 L32.6409509,23.3136084 C33.5386778,22.5255596 33.9935797,21.4357049 33.9935797,20.0756057 C33.9935797,16.6936042 31.10616,15.8532819 29.8642374,15.6491191 C29.7293771,15.6274206 29.6106195,15.5524623 29.5331251,15.4419974 C29.4546243,15.3315324 29.427451,15.1954239 29.4536179,15.0642468 C29.3066805,12.9900709 28.0164498,12.0284344 26.8047198,12.0284344 C26.0478917,12.0284344 25.3383654,12.389418 24.8572965,13.0186734 C24.7475967,13.1646449 24.5624154,13.2356581 24.3802533,13.211987 C24.1980913,13.1853571 24.044109,13.0620704 23.9817109,12.8914415 C23.5489502,11.7197245 22.9279889,10.7363895 22.1349297,9.96708034 C20.1029672,7.9944927 17.3232344,7.45893515 14.6984904,8.53794059 C12.513552,9.4305365 10.8026375,12.0018045 10.8026375,14.3925807 C10.8026375,14.6608526 10.8187402,14.9291246 10.8509457,15.1865473 C10.8690613,15.326601 10.8247788,15.467641 10.7291688,15.5741607 C10.6526809,15.658982 10.550026,15.7142145 10.4383134,15.7339403 C9.14204407,16.0613899 7.00642027,17.0536015 7.00642027,20.0351677 C7.00642027,22.2849039 8.27249696,23.5266478 9.33326393,24.1726703 C9.80628145,24.4646133 10.228978,24.6135436 10.5922957,24.6174888 L10.5922957,24.6174888 Z" id="Amazon-CloudWatch_Icon_32_Squid" fill="#FFFFFF"></path> </g></svg>
+\ No newline at end of file
+```
+
+**File**: `docs/content/en/extensions/models/aws-cloudwatchlogs-controller/components/delivery-destination/icons/white/delivery-destination-white.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"> <g id="Icon-Architecture/32/Arch_Amazon-CloudWatch_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <path d="M27.6299844,24.1243419 C27.6299844,22.2207948 26.0499046,20.6723135 24.1075134,20.6723135 C22.1651223,20.6723135 20.5850425,22.2207948 20.5850425,24.1243419 C20.5850425,26.027889 22.1651223,27.5763703 24.1075134,27.5763703 C26.0499046,27.5763703 27.6299844,26.027889 27.6299844,24.1243419 L27.6299844,24.1243419 Z M28.6364047,24.1243419 C28.6364047,26.5713369 26.6044421,28.5626641 24.1075134,28.5626641 C21.6105848,28.5626641 19.5786222,26.5713369 19.5786222,24.1243419 C19.5786222,21.6773469 21.6105848,19.6860197 24.1075134,19.6860197 C26.6044421,19.6860197 28.6364047,21.6773469 28.6364047,24.1243419 L28.6364047,24.1243419 Z M32.9116779,30.7029217 L29.5250737,27.7134651 C29.2362311,28.1306674 28.8950547,28.5064453 28.5166406,28.8457304 L31.8841229,31.8223652 C32.2001388,32.0995137 32.6862398,32.0738701 32.9690439,31.7661464 C33.2508416,31.459409 33.2256811,30.9810565 32.9116779,30.7029217 L32.9116779,30.7029217 Z M24.1075134,29.5489579 C27.1589797,29.5489579 29.6428249,27.1157711 29.6428249,24.1243419 C29.6428249,21.1329127 27.1589797,18.6997259 24.1075134,18.6997259 C21.0560472,18.6997259 18.572202,21.1329127 18.572202,24.1243419 C18.572202,27.1157711 21.0560472,29.5489579 24.1075134,29.5489579 L24.1075134,29.5489579 Z M33.5859795,29.9710917 C34.3106021,30.6131689 34.3689745,31.7138729 33.7168142,32.425977 C33.3655735,32.8066864 32.8824918,33 32.3963908,33 C31.9726878,33 31.5489849,32.8530422 31.2108277,32.5551815 L27.7165365,29.4661092 C26.6809301,30.1407342 25.4410203,30.5352517 24.1075134,30.5352517 C20.5005032,30.5352517 17.5657817,27.6592189 17.5657817,24.1243419 C17.5657817,20.5894648 20.5005032,17.713432 24.1075134,17.713432 C27.7145237,17.713432 30.6492452,20.5894648 30.6492452,24.1243419 C30.6492452,25.0918961 30.4228006,26.0071768 30.0292903,26.8307321 L33.5859795,29.9710917 Z M10.5922957,24.6174888 L15.5529412,24.6174888 L15.5529412,25.6037826 L10.5862572,25.6037826 C10.0287003,25.5978649 9.42988027,25.3976472 8.79986118,25.0080611 C7.75620337,24.3738742 6,22.8806254 6,20.0351677 C6,16.5930022 8.41037654,15.3285736 9.81231997,14.8847413 C9.80124935,14.7220029 9.79621725,14.5572918 9.79621725,14.3925807 C9.79621725,11.5885474 11.7376019,8.67898061 14.3110186,7.62759139 C17.3242408,6.39077894 20.5135867,7.00523999 22.8424432,9.26582544 C23.5710914,9.97299811 24.1699115,10.83206 24.6278327,11.8292031 C25.2417491,11.3222481 26.0026028,11.0421406 26.8047198,11.0421406 C28.3656776,11.0421406 30.1238938,12.2069536 30.430852,14.7545506 C31.8871421,15.0810138 35,16.2300461 35,20.0756057 C35,21.7276479 34.4333854,23.0650623 33.3132396,24.047411 L32.6409509,23.3136084 C33.5386778,22.5255596 33.9935797,21.4357049 33.9935797,20.0756057 C33.9935797,16.6936042 31.10616,15.8532819 29.8642374,15.6491191 C29.7293771,15.6274206 29.6106195,15.5524623 29.5331251,15.4419974 C29.4546243,15.3315324 29.427451,15.1954239 29.4536179,15.0642468 C29.3066805,12.9900709 28.0164498,12.0284344 26.8047198,12.0284344 C26.0478917,12.0284344 25.3383654,12.389418 24.8572965,13.0186734 C24.7475967,13.1646449 24.5624154,13.2356581 24.3802533,13.211987 C24.1980913,13.1853571 24.044109,13.0620704 23.9817109,12.8914415 C23.5489502,11.7197245 22.9279889,10.7363895 22.1349297,9.96708034 C20.1029672,7.9944927 17.3232344,7.45893515 14.6984904,8.53794059 C12.513552,9.4305365 10.8026375,12.0018045 10.8026375,14.3925807 C10.8026375,14.6608526 10.8187402,14.9291246 10.8509457,15.1865473 C10.8690613,15.326601 10.8247788,15.467641 10.7291688,15.5741607 C10.6526809,15.658982 10.550026,15.7142145 10.4383134,15.7339403 C9.14204407,16.0613899 7.00642027,17.0536015 7.00642027,20.0351677 C7.00642027,22.2849039 8.27249696,23.5266478 9.33326393,24.1726703 C9.80628145,24.4646133 10.228978,24.6135436 10.5922957,24.6174888 L10.5922957,24.6174888 Z" id="Amazon-CloudWatch_Icon_32_Squid" fill="#FFFFFF"></path> </g></svg>
+\ No newline at end of file
+```
+
+**File**: `docs/content/en/extensions/models/aws-cloudwatchlogs-controller/components/delivery-source/icons/color/delivery-source-color.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"> <g id="Icon-Architecture/32/Arch_Amazon-CloudWatch_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Icon-Architecture-BG/32/Management-Governance" fill="#E7157B"> <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect> </g> <path d="M27.6299844,24.1243419 C27.6299844,22.2207948 26.0499046,20.6723135 24.1075134,20.6723135 C22.1651223,20.6723135 20.5850425,22.2207948 20.5850425,24.1243419 C20.5850425,26.027889 22.1651223,27.5763703 24.1075134,27.5763703 C26.0499046,27.5763703 27.6299844,26.027889 27.6299844,24.1243419 L27.6299844,24.1243419 Z M28.6364047,24.1243419 C28.6364047,26.5713369 26.6044421,28.5626641 24.1075134,28.5626641 C21.6105848,28.5626641 19.5786222,26.5713369 19.5786222,24.1243419 C19.5786222,21.6773469 21.6105848,19.6860197 24.1075134,19.6860197 C26.6044421,19.6860197 28.6364047,21.6773469 28.6364047,24.1243419 L28.6364047,24.1243419 Z M32.9116779,30.7029217 L29.5250737,27.7134651 C29.2362311,28.1306674 28.8950547,28.5064453 28.5166406,28.8457304 L31.8841229,31.8223652 C32.2001388,32.0995137 32.6862398,32.0738701 32.9690439,31.7661464 C33.2508416,31.459409 33.2256811,30.9810565 32.9116779,30.7029217 L32.9116779,30.7029217 Z M24.1075134,29.5489579 C27.1589797,29.5489579 29.6428249,27.1157711 29.6428249,24.1243419 C29.6428249,21.1329127 27.1589797,18.6997259 24.1075134,18.6997259 C21.0560472,18.6997259 18.572202,21.1329127 18.572202,24.1243419 C18.572202,27.1157711 21.0560472,29.5489579 24.1075134,29.5489579 L24.1075134,29.5489579 Z M33.5859795,29.9710917 C34.3106021,30.6131689 34.3689745,31.7138729 33.7168142,32.425977 C33.3655735,32.8066864 32.8824918,33 32.3963908,33 C31.9726878,33 31.5489849,32.8530422 31.2108277,32.5551815 L27.7165365,29.4661092 C26.6809301,30.1407342 25.4410203,30.5352517 24.1075134,30.5352517 C20.5005032,30.5352517 17.5657817,27.6592189 17.5657817,24.1243419 C17.5657817,20.5894648 20.5005032,17.713432 24.1075134,17.713432 C27.7145237,17.713432 30.6492452,20.5894648 30.6492452,24.1243419 C30.6492452,25.0918961 30.4228006,26.0071768 30.0292903,26.8307321 L33.5859795,29.9710917 Z M10.5922957,24.6174888 L15.5529412,24.6174888 L15.5529412,25.6037826 L10.5862572,25.6037826 C10.0287003,25.5978649 9.42988027,25.3976472 8.79986118,25.0080611 C7.75620337,24.3738742 6,22.8806254 6,20.0351677 C6,16.5930022 8.41037654,15.3285736 9.81231997,14.8847413 C9.80124935,14.7220029 9.79621725,14.5572918 9.79621725,14.3925807 C9.79621725,11.5885474 11.7376019,8.67898061 14.3110186,7.62759139 C17.3242408,6.39077894 20.5135867,7.00523999 22.8424432,9.26582544 C23.5710914,9.97299811 24.1699115,10.83206 24.6278327,11.8292031 C25.2417491,11.3222481 26.0026028,11.0421406 26.8047198,11.0421406 C28.3656776,11.0421406 30.1238938,12.2069536 30.430852,14.7545506 C31.8871421,15.0810138 35,16.2300461 35,20.0756057 C35,21.7276479 34.4333854,23.0650623 33.3132396,24.047411 L32.6409509,23.3136084 C33.5386778,22.5255596 33.9935797,21.4357049 33.9935797,20.0756057 C33.9935797,16.6936042 31.10616,15.8532819 29.8642374,15.6491191 C29.7293771,15.6274206 29.6106195,15.5524623 29.5331251,15.4419974 C29.4546243,15.3315324 29.427451,15.1954239 29.4536179,15.0642468 C29.3066805,12.9900709 28.0164498,12.0284344 26.8047198,12.0284344 C26.0478917,12.0284344 25.3383654,12.389418 24.8572965,13.0186734 C24.7475967,13.1646449 24.5624154,13.2356581 24.3802533,13.211987 C24.1980913,13.1853571 24.044109,13.0620704 23.9817109,12.8914415 C23.5489502,11.7197245 22.9279889,10.7363895 22.1349297,9.96708034 C20.1029672,7.9944927 17.3232344,7.45893515 14.6984904,8.53794059 C12.513552,9.4305365 10.8026375,12.0018045 10.8026375,14.3925807 C10.8026375,14.6608526 10.8187402,14.9291246 10.8509457,15.1865473 C10.8690613,15.326601 10.8247788,15.467641 10.7291688,15.5741607 C10.6526809,15.658982 10.550026,15.7142145 10.4383134,15.7339403 C9.14204407,16.0613899 7.00642027,17.0536015 7.00642027,20.0351677 C7.00642027,22.2849039 8.27249696,23.5266478 9.33326393,24.1726703 C9.80628145,24.4646133 10.228978,24.6135436 10.5922957,24.6174888 L10.5922957,24.6174888 Z" id="Amazon-CloudWatch_Icon_32_Squid" fill="#FFFFFF"></path> </g></svg>
 \ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 3: `1c845db0` (2026-10-22)
-**Commit Message**: Merge pull request #22520 from meshery/fix/remote-provider-connection-shapes
+### Incident Patch 3: `b1516039` (2026-10-24)
+**Commit Message**: Merge pull request #22464 from rudrakshSoni-dev/fix/dry-run-discovery-and-namespaces
 
-fix(server): accept both remote provider connection response shapes
+Fix(server): resolve dry-run GVR discovery and in-design namespaces
 
-**File**: `server/models/remote_connection_decode.go` (added, +91/-0)
+**File**: `server/handlers/design_engine_handler.go` (modified, +72/-14)
 ```diff
-@@ -0,0 +1,91 @@
-+package models
+@@ -34,7 +34,9 @@ import (
+ 	pattern "github.com/meshery/schemas/models/v1beta3/design"
+ 	"github.com/pkg/errors"
+ 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
++	meta "k8s.io/apimachinery/pkg/api/meta"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/restmapper"
+ 
+ 	patternHelpers "github.com/meshery/meshkit/models/patterns"
+ )
+@@ -408,17 +410,41 @@ func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
+ 	}
+ }
+ 
+-// v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
+-// NOTE: Currently tied to kubernetes
+-// Returns ComponentName->ContextID->Response
++// DryRun executes server-side dry-run validation of the specified components across all target Kubernetes contexts.
++// It pre-scans declared namespaces in the design to handle dependencies and initializes discovery RESTMappers per cluster.
++// Returns ComponentName -> ContextID -> Response.
+ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition) (resp map[string]map[string]patterncore.DryRunResponseWrapper, err error) {
+-	for _, cmp := range comps {
+-		for ctxID, kc := range sap.ctxTokubeconfig {
+-			cl, err := meshkube.New([]byte(kc))
+-			if err != nil {
+-				return resp, err
++	// 1. Scan all components in the design/pattern and collect declared namespaces
++	declaredNamespaces := collectDeclaredNamespaces(comps)
++
++	// 2. Initialize meshkube.Client and DiscoveryRESTMapper ONCE per target cluster before looping over components
++	type clusterContext struct {
++		client *meshkube.Client
++		mapper meta.RESTMapper
++	}
++	clusters := make(map[string]clusterContext, len(sap.ctxTokubeconfig))
++	for ctxID, kc := range sap.ctxTokubeconfig {
++		cl, err := meshkube.New([]byte(kc))
++		if err != nil {
++			return resp, err
++		}
++		var mapper meta.RESTMapper
++		if cl.KubeClient != nil {
++			gr, err := restmapper.GetAPIGroupResources(cl.KubeClient.Discovery())
++			if len(gr) > 0 {
++				mapper = restmapper.NewDiscoveryRESTMapper(gr)
++			}
++			if err != nil && sap.log != nil {
++				sap.log.Warn(fmt.Errorf("discovery RESTMapper failed on context %s, falling back to default mapping: %w", ctxID, err))
+ 			}
+-			dResp, err := dryRunComponent(cl, cmp, sap.opIsDelete)
++		}
++		clusters[ctxID] = clusterContext{client: cl, mapper: mapper}
++	}
++
++	// 3. Loop over components and dry-run them across initialized clusters
++	for _, cmp := range comps {
++		for ctxID, cluster := range clusters {
++			dResp, err := dryRunComponent(cluster.client, cmp, sap.opIsDelete, cluster.mapper, declaredNamespaces)
+ 			if err != nil {
+ 				return resp, err
+ 			}
+@@ -434,12 +460,44 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
+ 	return
+ }
+ 
+-func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, isDelete bool) (patterncore.DryRunResponseWrapper, error) {
+-	st, ok, err := k8s.DryRunHelper(cl, *cmd, isDelete)
+-	dResp := patterncore.DryRunResponseWrapper{Success: ok, Component: cmd}
++// collectDeclaredNamespaces returns the names of the Namespace components declared in the design.
++func collectDeclaredNamespaces(comps []*component.ComponentDefinition) map[string]bool {
++	declaredNamespaces := make(map[string]bool)
++	for _, cmp := range comps {
++		if cmp == nil || !strings.EqualFold(cmp.Component.Kind, "Namespace") {
++			continue
++		}
++		if nsName := getNamespaceNameFromComponent(cmp); nsName != "" {
++			declaredNamespaces[nsName] = true
++		}
++	}
++	return declaredNamespaces
++}
++
++// getNamespaceNameFromComponent returns the name a Namespace component is created with on deploy.
++// meshkit's converter.CreateK8sResourceStructure sets metadata.name to the component's DisplayName and
++// ignores metadata.name in the configuration, so DisplayName is the only name dry-run may register.
++func getNamespaceNameFromComponent(cmp *component.ComponentDefinition) string {
++	if cmp == nil {
++		return ""
++	}
++	return cmp.DisplayName
++}
++
++// dryRunComponent executes dry-run validation for a single component against a Kubernetes cluster client,
++// applying discovery REST mapping and in-design declared namespace suppression options.
++func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, isDelete bool, mapper meta.RESTMapper, declaredNamespaces map[string]bool) (patterncore.DryRunResponseWrapper, error) {
++	st, ok, err := k8s.DryRunHelper(cl, *cmd, isDelete, k8s.DryRunOptions{
++		RESTMapper:         mapper,
++		DeclaredNamespaces: declaredNamespaces,
++	})
++	cmpCopy := *cmd
++	dResp := patterncore.DryRunResponseWrapper{Success: ok, Component: &cmpCopy}
+ 	if ok {
+-		dResp.Component.Configuration = filterConfiguration(st)
+-	} else if err != nil {
++		if !isDelete {
++			dResp.Component.Configuration = filterConfiguration(st)
++		}
++	} else if err != nil && (len(st) == 0 || st["status"] != "Failure") {
+ 		dResp.Error = &patterncore.DryRunResponse{Status: err.Error()}
+ 	} else {
+ 		dResp.Error = parseDryRunFailure(st, cmd.DisplayName)
+```
+
+**File**: `server/handlers/design_engine_handler_test.go` (modified, +333/-0)
+```diff
+@@ -1,13 +1,28 @@
+ package handlers
+ 
+ import (
++	"bytes"
++	"encoding/json"
++	"fmt"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"sync"
+ 	"testing"
+ 
+ 	"github.com/gofrs/uuid"
+ 	"github.com/meshery/meshery/server/models/pattern/planner"
+ 	"github.com/meshery/meshkit/logger"
++	meshkube "github.com/meshery/meshkit/utils/kubernetes"
+ 	"github.com/meshery/schemas/models/v1beta2/component"
+ 	pattern "github.com/meshery/schemas/models/v1beta3/design"
++	kubeerror "k8s.io/apimachinery/pkg/api/errors"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/apimachinery/pkg/runtime/serializer"
++	"k8s.io/client-go/kubernetes"
++	"k8s.io/client-go/rest/fake"
+ )
+ 
+ func mutateTestComponent(displayName, kind string) *component.ComponentDefinition {
+@@ -114,3 +129,321 @@ func TestMutateDoesNotRepeatADependencyTheDesignAlreadyDeclares(t *testing.T) {
+ 		t.Errorf("%q depends on %v, want [%q]", widget.DisplayName, dependsOn, crd.DisplayName)
+ 	}
+ }
++
++// TestGetNamespaceNameFromComponent tests extracting namespace names from component metadata, configuration, or display name fallback.
++func TestGetNamespaceNameFromComponent(t *testing.T) {
++	t.Run("returns DisplayName even when metadata.name differs", func(t *testing.T) {
++		cmp := &component.ComponentDefinition{
++			DisplayName: "staging",
++			Configuration: map[string]interface{}{
++				"metadata": map[string]interface{}{
++					"name": "production",
++				},
++			},
++		}
++		if name := getNamespaceNameFromComponent(cmp); name != "staging" {
++			t.Errorf("got %q, want %q", name, "staging")
++		}
++	})
++
++	t.Run("returns DisplayName without configuration", func(t *testing.T) {
++		cmp := &component.ComponentDefinition{
++			DisplayName: "fallback-display-name",
++		}
++		if name := getNamespaceNameFromComponent(cmp); name != "fallback-display-name" {
++			t.Errorf("got %q, want %q", name, "fallback-display-name")
++		}
++	})
++
++	t.Run("returns empty string for nil component", func(t *testing.T) {
++		if name := getNamespaceNameFromComponent(nil); name != "" {
++			t.Errorf("got %q, want empty string", name)
++		}
++	})
++}
++
++// TestCollectDeclaredNamespaces pins that a Namespace is registered under the name deploy creates it with,
++// its DisplayName, and never under a differing metadata.name.
++func TestCollectDeclaredNamespaces(t *testing.T) {
++	ns := mutateTestComponent("staging", "Namespace")
++	ns.Configuration = map[string]interface{}{
++		"metadata": map[string]interface{}{"name": "production"},
++	}
++	workload := mutateTestComponent("web", "Deployment")
++
++	got := collectDeclaredNamespaces([]*component.ComponentDefinition{ns, workload, nil})
++
++	if len(got) != 1 || !got["staging"] {
++		t.Fatalf("got %v, want only %q declared", got, "staging")
++	}
++	if got["production"] {
++		t.Errorf("metadata.name %q must not be registered; deploy creates the Namespace as %q", "production", "staging")
++	}
++}
++
++// fakeCluster is a stand-in API server for DryRun tests. It serves discovery for core/v1 and
++// networking.k8s.io/v1 unless discovery is broken, records the path of every dry-run request, and
++// answers dry-runs with the response chosen by respond.
++type fakeCluster struct {
++	server *httptest.Server
++	mu     sync.Mutex
++	paths  []string
++}
++
++func newFakeCluster(t *testing.T, brokenDiscovery bool, respond func(path string, body []byte) (int, interface{})) *fakeCluster {
++	t.Helper()
++
++	discovery := map[string]interface{}{
++		"/api": metav1.APIVersions{
++			TypeMeta: metav1.TypeMeta{Kind: "APIVersions"},
++			Versions: []string{"v1"},
++		},
++		"/apis": metav1.APIGroupList{
++			TypeMeta: metav1.TypeMeta{Kind: "APIGroupList", APIVersion: "v1"},
++			Groups: []metav1.APIGroup{{
++				Name:             "networking.k8s.io",
++				Versions:         []metav1.GroupVersionForDiscovery{{GroupVersion: "networking.k8s.io/v1", Version: "v1"}},
++				PreferredVersion: metav1.GroupVersionForDiscovery{GroupVersion: "networking.k8s.io/v1", Version: "v1"},
++			}},
++		},
++		"/api/v1": metav1.APIResourceList{
++			TypeMeta:     metav1.TypeMeta{Kind: "APIResourceList", APIVersion: "v1"},
++			GroupVersion: "v1",
++			APIResources: []metav1.APIResource{{Name: "namespaces", Kind: "Namespace", Verbs: []string{"create", "delete", "get"}}},
++		},
++		"/apis/networking.k8s.io/v1": metav1.APIResourceList{
++			TypeMeta:     metav1.TypeMeta{Kind: "APIResourceList", APIVersion: "v1"},
++			GroupVersion: "networking.k8s.io/v1",
++			APIResources: []metav1.APIResource{{Name: "ingresses", Namespaced: true, Kind: "Ingress", Verbs: []string{"create", "delete", "get"}}},
++		},
++	}
++
++	fc := &fakeCluster{}
++	fc.server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Content-Type", "application/json")
++
++		if r.URL.Query().Get("dryRun") != "All" {
++			obj, ok := discovery[r.URL.Path]
++			if brokenDiscovery || !ok {
++				w.WriteHeader(http.StatusInternalServerError)
++				return
++			}
++			_ = json.NewEncoder(w).E
+```
+
+**File**: `server/models/pattern/patterns/k8s/k8s.go` (modified, +260/-28)
+```diff
+@@ -3,6 +3,7 @@ package k8s
+ import (
+ 	"context"
+ 	"encoding/json"
++	"errors"
+ 	"fmt"
+ 	"strings"
+ 
+@@ -13,6 +14,10 @@ import (
+ 
+ 	meshkube "github.com/meshery/meshkit/utils/kubernetes"
+ 	"gopkg.in/yaml.v2"
++	kubeerror "k8s.io/apimachinery/pkg/api/errors"
++	"k8s.io/apimachinery/pkg/api/meta"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	"k8s.io/client-go/rest"
+ )
+ 
+@@ -39,55 +44,106 @@ func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isD
+ 	return nil
+ }
+ 
+-func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition, isDelete bool) (st map[string]interface{}, success bool, err error) {
++// DryRunOptions encapsulates configuration parameters for dry-run validation,
++// including a discovery RESTMapper for dynamic resource resolution and in-design declared namespaces.
++type DryRunOptions struct {
++	RESTMapper         meta.RESTMapper
++	DeclaredNamespaces map[string]bool
++}
++
++// DryRunHelper performs server-side dry-run validation for a component definition against the client's cluster,
++// using opts for discovery-based resource resolution and in-design declared namespaces.
++func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition, isDelete bool, opts DryRunOptions) (st map[string]interface{}, success bool, err error) {
++	if client == nil || client.KubeClient == nil {
++		return nil, false, ErrDryRun(fmt.Errorf("kubernetes client is nil"), "")
++	}
+ 	resource := converter.CreateK8sResourceStructure(&comp)
+-	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
+ 	namespace := getNamespaceForComponent(&comp)
+-	return dryRun(client.KubeClient.RESTClient(), resource, namespace, isDelete)
++	return dryRun(client.KubeClient.RESTClient(), resource, namespace, isDelete, opts)
+ }
+ 
+ // dryRun performs a dry-run operation on the given Kubernetes resource using the provided REST client.
+ // It constructs the appropriate API request based on the resource type and operation (create/update or delete).
+ // Returns the status response from the Kubernetes server, a success flag, and any encountered error.
+-// TODO: add more tests for this function
+-func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespace string, isDelete bool) (st map[string]interface{}, success bool, err error) {
+-	// Validate resource has required fields
+-	if k8sResource["kind"] == "" || k8sResource["apiVersion"] == "" {
+-		err = ErrDryRun(fmt.Errorf("invalid resource or namespace not provided"), "\"kind\" and \"apiVersion\" cannot be empty")
+-		return
++func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespace string, isDelete bool, opts DryRunOptions) (st map[string]interface{}, success bool, err error) {
++	if rClient == nil {
++		return nil, false, ErrDryRun(fmt.Errorf("RESTClient is nil"), "")
+ 	}
+ 
+-	// Determine API path prefix (api vs apis)
+-	aV := k8sResource["apiVersion"].(string)
+-	apiString := "api"
+-	if len(strings.Split(aV, "/")) > 1 {
+-		// for non-core resources, the endpoint should use 'apis' instead of 'api'
+-		apiString += "s"
++	st, success, reqErr := executeDryRunRequest(rClient, k8sResource, namespace, isDelete, opts.RESTMapper)
++
++	// Suppress 404 NotFound on undeploy dry-runs only when the object being deleted is what is missing
++	if isDelete {
++		if isDeleteTargetNotFound(reqErr, st, k8sResource, namespace, opts.RESTMapper) {
++			return map[string]interface{}{"status": "Success"}, true, nil
++		}
++		if !success && st != nil && st["status"] == "Failure" {
++			return st, false, nil
++		}
++		return st, success, reqErr
+ 	}
+ 
+-	// Build the base resource path
+-	resourcePath := kindToResource(k8sResource["kind"].(string))
+-	basePath := fmt.Sprintf("/%s/%s", apiString, aV)
++	// For create dry-runs, account for in-design namespaces
++	if !success && opts.DeclaredNamespaces != nil && opts.DeclaredNamespaces[namespace] && isMissingNamespaceError(reqErr, st, namespace) {
++		// Substitute "default" namespace on a copy of the unstructured object and re-run create dry-run
++		resourceCopy := deepCopyMap(k8sResource)
++		if resourceCopy == nil {
++			resourceCopy = make(map[string]interface{})
++		}
++		metaMap, ok := resourceCopy["metadata"].(map[string]interface{})
++		if !ok || metaMap == nil {
++			metaMap = make(map[string]interface{})
++			resourceCopy["metadata"] = metaMap
++		}
++		metaMap["namespace"] = "default"
+ 
+-	// Add namespace to path if provided
+-	if namespace != "" {
+-		basePath = fmt.Sprintf("%s/namespaces/%s", basePath, namespace)
++		stDef, okDef, reqErrDef := executeDryRunRequest(rClient, resourceCopy, "default", false, opts.RESTMapper)
++		if okDef {
++			return stDef, true, nil
++		}
++		// The API server checks for a name conflict only after admission and schema validation have passed, so
++		// an unrelated object of the same name in default still means the workload is valid. Return the
++		// workload itself, so the component's configuration in the
+```
+
+**File**: `server/models/pattern/patterns/k8s/k8s_test.go` (added, +903/-0)
+```diff
+@@ -0,0 +1,903 @@
++package k8s
 +
 +import (
 +	"bytes"
 +	"encoding/json"
-+	"errors"
-+	"net/http"
-+
-+	"github.com/gofrs/uuid"
-+	"github.com/meshery/meshery/server/models/connections"
-+	"github.com/meshery/schemas/models/core"
-+)
-+
-+// errRemoteProviderConnectionMissing means the body parsed as JSON but was
-+// neither a ConnectionPage with an entry nor a bare Connection.
-+var errRemoteProviderConnectionMissing = errors.New("remote provider response did not include a connection")
-+
-+// decodeRemoteProviderConnection reads a remote-provider register or delete
-+// body. registerConnection is moving from a ConnectionPage to a bare
-+// Connection, so both shapes are accepted:
-+//
-+//   - an object with a connections array is a ConnectionPage and yields its
-+//     first entry. A null first entry is returned as (nil, nil), which is
-+//     what SaveConnection did when the page contained [null].
-+//   - any other non-empty object is a bare Connection (a non-nil id, or any
-+//     other fields and no connections array).
-+//
-+// An empty page, JSON null, or an empty object returns
-+// errRemoteProviderConnectionMissing. An empty or invalid payload returns
-+// the encoding/json error so callers can keep treating it as a malformed body.
-+func decodeRemoteProviderConnection(body []byte) (*connections.Connection, error) {
-+	trimmed := bytes.TrimSpace(body)
-+	if len(trimmed) == 0 {
-+		var discard struct{}
-+		return nil, json.Unmarshal(trimmed, &discard)
-+	}
-+
-+	var probe map[string]json.RawMessage
-+	if err := json.Unmarshal(trimmed, &probe); err != nil {
-+		return nil, err
-+	}
-+	if probe == nil {
-+		return nil, errRemoteProviderConnectionMissing
-+	}
-+
-+	if _, isPage := probe["connections"]; isPage {
-+		var page connections.ConnectionPage
-+		if err := json.Unmarshal(trimmed, &page); err != nil {
-+			return nil, err
-+		}
-+		if len(page.Connections) > 0 {
-+			return page.Connections[0], nil
-+		}
-+		return nil, errRemoteProviderConnectionMissing
-+	}
-+
-+	if len(probe) == 0 {
-+		return nil, errRemoteProviderConnectionMissing
-+	}
-+
-+	var conn connections.Connection
-+	if err := json.Unmarshal(trimmed, &conn); err != nil {
-+		return nil, err
-+	}
-+	return &conn, nil
-+}
-+
-+// connectionFromRemoteDelete turns a successful delete response into a
-+// connection callers can dereference. 204 and an empty body carry only the
-+// id that was deleted. A JSON body is a bare Connection or a ConnectionPage;
-+// when that body does not include an id, the deleted id is filled in.
-+func connectionFromRemoteDelete(body []byte, status int, connectionID core.Uuid) (*connections.Connection, error) {
-+	if status == http.StatusNoContent || len(bytes.TrimSpace(body)) == 0 {
-+		return &connections.Connection{ID: connectionID}, nil
-+	}
-+
-+	decoded, err := decodeRemoteProviderConnection(body)
-+	if err != nil {
-+		if errors.Is(err, errRemoteProviderConnectionMissing) {
-+			return &connections.Connection{ID: connectionID}, nil
-+		}
-+		return nil, err
-+	}
-+	if decoded == nil {
-+		decoded = &connections.Connection{}
-+	}
-+	if decoded.ID == uuid.Nil {
-+		decoded.ID = connectionID
-+	}
-+	return decoded, nil
-+}
-```
-
-**File**: `server/models/remote_connection_decode_test.go` (added, +127/-0)
-```diff
-@@ -0,0 +1,127 @@
-+package models
-+
-+import (
-+	"errors"
-+	"testing"
-+
-+	"github.com/gofrs/uuid"
-+)
-+
-+func TestDecodeRemoteProviderConnection(t *testing.T) {
-+	const (
-+		firstID   = "11111111-1111-1111-1111-111111111111"
-+		secondID  = "22222222-2222-2222-2222-222222222222"
-+		firstJSON = `{"id":"` + firstID + `","name":"prod","kind":"kubernetes","type":"platform","subType":"orchestrator","status":"discovered"}`
-+	)
-+
-+	cases := []struct {
-+		name        string
-+		body        string
-+		wantMissing bool
-+		wantJSONErr bool
-+		wantNilConn bool
-+		wantID      string
-+		wantName    string
-+	}{
-+		{
-+			name:     "page uses the first connection",
-+			body:     `{"page":0,"page_size":2,"total_count":2,"connections":[` + firstJSON + `,{"id":"` + secondID + `","name":"other","kind":"kubernetes","status":"discovered"}]}`,
-+			wantID:   firstID,
-+			wantName: "prod",
-+		},
-+		{
-+			name:     "camelCase page metadata",
-+			body:     `{"page":0,"pageSize":1,"totalCount":1,"connections":[` + firstJSON + `]}`,
-+			wantID:   firstID,
-+			wantName: "prod",
-+		},
-+		{
-+			name:     "bare connection",
-+			body:     firstJSON,
-+			wantID:   firstID,
-+			wantName: "prod",
-+		},
-+		{
-+			name:     "bare connection without an id",
-+			body:     `{"name":"prod","kind":"kubernetes"}`,
-+			wantName: "prod",
-+		},
-+		{
-+			name:        "empty page",
-+			body:        `{"page":0,"page_size":0,"total_count":0,"connections":[]}`,
-+			wantMissing: true,
-+		},
-+		{
-+			name:        "null connections array",
-+			body:        `{"page":0,"page_size":0,"total_count":0,"connections":null}`,
-+			wantMissing: true,
-+		},
-+		{
-+			name:        "empty object",
-+			body:        `{}`,
-+			wantMissing: true,
-+		},
-+		{
-+			name:        "json null",
-+			body:        `null`,
-+			wantMissing: true,
-+		},
-+		{
-+			name:        "null page entry",
-+			body:        `{"connections":[null]}`,
-+			wantNilConn: true,
-+		},
-+		{
-+			name:        "empty body",
-+			body:        `   `,
-+			wantJSONErr: true,
-+		},
-+		{
-+			name:        "invalid json",
-+			body:        `{`,
-+			wantJSONErr: true,
-+		},
-+	}
-+
-+	for _, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			conn, err := decodeRemoteProviderConnection([]byte(tc.body))
-+			if tc.wantMissing {
-+				if !errors.Is(err, errRemoteProviderConnectionMissing) {
-+					t.Fatalf("err = %v, want missing connection", err)
-+				}
-+				if conn != nil {
-+					t.Fatalf("connection = %+v, want nil", conn)
-+				}
-+				return
-+			}
-+			if tc.wantJSONErr {
-+				if err == nil || errors.Is(err, errRemoteProviderConnectionMissing) {
-+					t.Fatalf("err = %v, want a JSON error", err)
-+				}
-+				return
-+			}
-+			if err != nil {
-+				t.Fatalf("decode: %v", err)
-+			}
-+			if tc.wantNilConn {
-+				if conn != nil {
-+					t.Fatalf("connection = %+v, want nil", conn)
-+				}
-+				return
-+			}
-+			if conn == nil {
-+				t.Fatal("connection is nil")
-+			}
-+			if tc.wantID != "" && conn.ID.String() != tc.wantID {
-+				t.Errorf("id = %s, want %s", conn.ID, tc.wantID)
-+			}
-+			if tc.wantID == "" && conn.ID != uuid.Nil {
-+				t.Errorf("id = %s, want nil", conn.ID)
-+			}
-+			if conn.Name != tc.wantName {
-+				t.Errorf("name = %q, want %q", conn.Name, tc.wantName)
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `server/models/remote_provider.go` (modified, +25/-21)
-```diff
-@@ -1181,10 +1181,9 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
- 		return connections.Connection{}, err
- 	}
- 	if connection == nil {
--		// SaveConnection can return (nil, nil) when the remote provider answers
--		// 2xx but the connection page is empty or carries a null element. Guard
--		// the dereference below so a malformed response is a structured error,
--		// not a panic.
-+		// SaveConnection returns (nil, nil) when a 2xx page's first entry is
-+		// null. An empty page is already an error. Guard the dereference
-+		// below so a malformed response is a structured error, not a panic.
- 		err := ErrPersistConnection(fmt.Errorf("remote provider returned a nil connection for kubernetes context %q", conn.Name))
- 		l.Log.Error(err)
- 		return connections.Connection{}, err
-@@ -4557,18 +4556,20 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
- 	l.Log.Debugf("RemoteProvider::SaveConnection: bdr value is [%s]", string(bdr))
- 
- 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
--		connectionPage := &connections.ConnectionPage{}
--		err = json.Unmarshal(bdr, connectionPage)
--		if err != nil {
--			return nil, ErrUnmarshal(err, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
-+		// 200 and 201 may be a ConnectionPage (current Cloud) or a bare
-+		// Connection (v1beta3 registerConnection). Anything else on these
-+		// statuses is still a failure to save.
-+		decoded, decErr := decodeRemoteProviderConnection(bdr)
-+		if decErr != nil {
-+			if errors.Is(decErr, errRemoteProviderConnectionMissing) {
-+				return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
-+			}
-+			return nil, ErrUnmarshal(decErr, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
- 		}
--		l.Log.Debugf("RemoteProvider::SaveConnection: parsed %d connection(s) (page=%d, pageSize=%d, totalCount=%d)",
--			len(connectionPage.Connections), connectionPage.Page, connectionPage.PageSize, connectionPage.TotalCount)
--		// On POST request to Remote Provider API, the response always contains single entry/connection.
--		if len(connectionPage.Connections) > 0 {
--			return connectionPage.Connections[0], nil
-+		if decoded != nil {
-+			l.Log.Debugf("RemoteProvider::SaveConnection: parsed connection %s (%s)", decoded.Name, decoded.ID)
- 		}
--		return nil, ErrPost(fmt.Errorf("failed to save the connection"), string(bdr), resp.StatusCode)
-+		return decoded, nil
- 	}
- 
- 	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), string(bdr), resp.StatusCode)
-@@ -4877,13 +4878,13 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID core.U
- 		return nil, ErrDataRead(err, "Connection: "+connectionID.String())
- 	}
- 
--	if resp.StatusCode == http.StatusOK {
-+	// deleteConnection is moving from 200 with a Connection body to 204 with
-+	// an empty body. Any 2xx is success. A JSON body may be a bare Connection
-+	// or a ConnectionPage (first entry). An empty body still has to return a
-+	// connection, because callers dereference the result.
-+	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
- 		l.Log.Info("connection deleted from remote provider")
--		var conn connections.Connection
--		if err = json.Unmarshal(bdr, &conn); err != nil {
--			return nil, err
--		}
--		return &conn, nil
-+		return connectionFromRemoteDelete(bdr, resp.StatusCode, connectionID)
- 	}
- 	err = ErrDelete(fmt.Errorf("error while deleting connection: %s", bdr), string(bdr), resp.StatusCode)
- 	l.Log.Error(err)
-@@ -4920,7 +4921,10 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
- 		_ = resp.Body.Close()
- 	}()
- 
--	if resp.StatusCode == http.StatusOK {
-+	// Same success range as DeleteConnection: 200 with a body and 204 No Content
-+	// both mean the meshery connection is gone. This endpoint does not return
-+	// the deleted row.
-+	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
- 		return nil
- 	}
- 
-```
-
-**File**: `server/models/remote_provider_connections_test.go` (modified, +199/-0)
-```diff
-@@ -1,15 +1,34 @@
- package models
- 
- import (
 +	"fmt"
 +	"io"
- 	"net/http"
- 	"net/http/httptest"
++	"net/http"
 +	"strings"
- 	"testing"
- 
- 	"github.com/gofrs/uuid"
-+	"github.com/meshery/meshery/server/models/connections"
- 	"github.com/meshery/meshery/server/models/httputil"
- 	"github.com/meshery/meshkit/errors"
- )
- 
-+const (
-+	remoteShapeConnectionID = "11111111-1111-1111-1111-111111111111"
-+	remoteShapeOtherID      = "22222222-2222-2222-2222-222222222222"
++	"testing"
++
++	"github.com/meshery/schemas/models/v1beta2/component"
++	kubeerror "k8s.io/apimachinery/pkg/api/errors"
++	"k8s.io/apimachinery/pkg/api/meta"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/apimachinery/pkg/runtime/serializer"
++	"k8s.io/client-go/rest/fake"
 +)
 +
-+func remoteConnectionJSON(id, name string) string {
-+	return fmt.Sprintf(`{"id":%q,"name":%q,"kind":"kubernetes","type":"platform","subType":"orchestrator","status":"discovered"}`, id, name)
++// newTestRESTMapper constructs a mock meta.RESTMapper configured with irregular plural Kubernetes resources for unit testing.
++func newTestRESTMapper() meta.RESTMapper {
++	groupVersions := []schema.GroupVersion{
++		{Group: "", Version: "v1"},
++		{Group: "apps", Version: "v1"},
++		{Group: "networking.k8s.io", Version: "v1"},
++		{Group: "storage.k8s.io", Version: "v1"},
++	}
++	mapper := meta.NewDefaultRESTMapper(groupVersions)
++
++	// Add irregular plural kinds
++	mapper.AddSpecific(
++		schema.GroupVersionKind{Group: "networking.k8s.io", Version: "v1", Kind: "Ingress"},
++		schema.GroupVersionResource{Group: "networking.k8s.io", Version: "v1", Resource: "ingresses"},
++		schema.GroupVersionResource{Group: "networking.k8s.io", Version: "v1", Resource: "ingress"},
++		meta.RESTScopeNamespace,
++	)
++	mapper.AddSpecific(
++		schema.GroupVersionKind{Group: "networking.k8s.io", Version: "v1", Kind: "NetworkPolicy"},
++		schema.GroupVersionResource{Group: "networking.k8s.io", Version: "v1", Resource: "networkpolicies"},
++		schema.GroupVersionResource{Group: "networking.k8s.io", Version: "v1", Resource: "networkpolicy"},
++		meta.RESTScopeNamespace,
++	)
++	mapper.AddSpecific(
++		schema.GroupVersionKind{Group: "storage.k8s.io", Version: "v1", Kind: "StorageClass"},
++		schema.GroupVersionResource{Group: "storage.k8s.io", Version: "v1", Resource: "storageclasses"},
++		schema.GroupVersionResource{Group: "storage.k8s.io", Version: "v1", Resource: "storageclass"},
++		meta.RESTScopeRoot,
++	)
++	mapper.AddSpecific(
++		schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Endpoints"},
++		schema.GroupVersionResource{Group: "", Version: "v1", Resource: "endpoints"},
++		schema.GroupVersionResource{Group: "", Version: "v1", Resource: "endpoint"},
++		meta.RESTScopeNamespace,
++	)
++	mapper.AddSpecific(
++		schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Namespace"},
++		schema.GroupVersionResource{Group: "", Version: "v1", Resource: "namespaces"},
++		schema.GroupVersionResource{Group: "", Version: "v1", Resource: "namespace"},
++		meta.RESTScopeRoot,
++	)
++
++	return mapper
 +}
 +
-+func persistConnectionCapability() Capabilities {
-+	return Capabilities{
-+		{Feature: PersistConnection, Endpoint: "/api/integrations/connections"},
++// newFakeRESTClient constructs a fake Kubernetes REST client using the provided HTTP round-trip handler function.
++func newFakeRESTClient(fn func(req *http.Request) (*http.Response, error)) *fake.RESTClient {
++	scheme := runtime.NewScheme()
++	codecs := serializer.NewCodecFactory(scheme)
++	return &fake.RESTClient{
++		NegotiatedSerializer: codecs.WithoutConversion(),
++		GroupVersion:         schema.GroupVersion{Group: "", Version: "v1"},
++		Client:               fake.CreateHTTPClient(fn),
 +	}
 +}
 +
- // newDeleteConnectionRequest builds the inbound request DeleteConnection reads
- // its provider token off. RemoteProvider.GetToken takes the token from the
- // session cookie, so a request without one never reaches the outbound call.
-@@ -114,3 +133,183 @@ func TestRemoteProviderDeleteConnectionUnreachableProvider(t *testing.T) {
- 		t.Errorf("expected no provider status for an unreachable provider, got %d", status)
- 	}
- }
++// jsonResponse serializes an object into JSON and wraps it in an HTTP response with the specified status code.
++func jsonResponse(statusCode int, obj interface{}) (*http.Response, error) {
++	data, err := json.Marshal(obj)
++	if err != nil {
++		return nil, err
++	}
++	resp := &http.Response{
++		StatusCode: statusCode,
++		Header:     http.Header{"Content-Type": []string{"application/json"}},
++		Body:       io.NopCloser(bytes.NewReader(data)),
++	}
++	return resp, nil
++}
 +
-+func TestRemoteProviderSaveConnectionResponseShapes(t *testing.T) {
-+	prod := remoteConnectionJSON(remoteShapeConnectionID, "prod")
-+	other := remoteConnectionJSON(remoteShapeOtherID, "other")
-+	page := fmt.Sprintf(`{"page":0,"page_size":2,"total_count":2,"connections":[%s,%s]}`, prod, other)
++// TestResolveResourcePath_IrregularPlurals tests dynamic resource path resolution for irregular plural Kubernetes resources.
++func TestResolveResourcePath_IrregularPlurals(t *testing.T) {
++	mapper := newTestRESTMapper()
 +
-+	cases := []struct {
-+		name     string
-+		status   int
-+		body     string
-+		wantErr  bool
-+		wantID   string
-+		wantName string
++	tests := []struct {
++		name             string
++		k8sResource      map[string]interface{}
++		namespace        string
++		useMapper        bool
++		wantBasePath     string
++		wantResourcePath string
 +	}{
-+		{name: "201 page", status: http.StatusCreated, body: page, wantID: remoteShapeConnectionID, wantName: "prod"},
-+		{name: "201 bare connection", status: http.StatusCreated, body: prod, wantID: remoteShapeConnectionID, wantName: "prod"},
-+		{name: "200 bare connection", status: http.StatusOK, body: prod, wantID: remoteShapeConnectionID, wantName: "prod"},
-+		{name: "201 empty page", status: http.StatusCreated, body: `{"page":0,"page_size":0,"total_count":0,"connections":[]}`, wantErr: true},
-+		{name: "400", status: http.StatusBadRequest, body: `{"error":"bad"}`, wantErr: true},
-+	}
-+
-+	for _, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				if r.Method != http.MethodPost {
-+					t.Errorf("method = %s, want POST", r.Method)
-+				}
-+				if !strings.HasSuffix(r.URL.Path, "/api/integrations/connections") {
-+					t.Errorf("path = %s, want the persist-connection endpoint", r.URL.Path)
-+				}
-+				w.WriteHeader(tc.status)
-+				_, _ = io.WriteString(w, tc.body)
-+			}))
-+			defer server.Close()
-+
-+			provider := newTestRemoteProvider(t, server.URL)
-+			provider.Capabilities = persistConnectionCapability()
-+
-+			conn, err := provider.SaveConnection(&connections.ConnectionPayload{
-+				Name:   "prod",
-+				Kind:   "kubernetes",
-+				Type:   "platform",
-+				Status: connections.DISCOVERED,
-+			}, "test-token", true)
-+			if tc.wantErr {
-+				if err == nil {
-+					t.Fatalf("expected an error, got connection %+v", conn)
-+				}
-+				if conn != nil {
-+					t.Errorf("connection = %+v, want nil alongside the error", conn)
-+				}
-+				if errors.GetCode(err) != ErrPostCode {
-+					t.Errorf("error code = %q, want %q (err: %v)", errors.GetCode(err), ErrPostCode, err)
-+				}
-+				// WithProviderStatus only records 4xx and 5xx. A 2xx that
-+				// still failed to yield a connection stays an ErrPost without
-+				// a provider status tag.
-+				if tc.status >= http.StatusBadRequest {
-+					got, ok := httputil.ProviderStatusCode(err)
-+					if !ok || got != tc.status {
-+						t.Errorf("provider status = %d (ok=%v), want %d", got, ok, tc.status)
-+					}
-+				}
-+				return
-+			}
-+			if err != nil {
-+				t.Fatalf("SaveConnection: %v", err)
-+			}
-+			if conn == nil {
-+				t.Fatal("connection is nil")
-+			}
-+			if conn.ID.String() != tc.wantID {
-+				t.Errorf("id = %s, want %s", conn.ID, tc.wantID)
-+			}
-+			if conn.Name != tc.wantName {
-+				t.Errorf("name = %q, want %q", conn.Name, tc.wantName)
-+			}
-+		})
-+	}
-+}
-+
-+func TestRemoteProviderDeleteConnectionResponseShapes(t *testing.T) {
-+	bodyID := remoteShapeConnectionID
-+	bare := remoteConnectionJSON(bodyID, "prod")
-+	page := fmt.Sprintf(`{"page":0,"page_size":1,"total_count":1,"connections":[%s]}`, bare)
-+
-+	cases := []struct {
-+		name     string
-+		status   int
-+		body     string
-+		wantErr  bool
-+		wantBody bool
-+		wantName string
-+	}{
-+		{name: "200 connection", status: http.StatusOK, body: bare, wantBody: true, wantName: "prod"},
-+		{name: "200 page", status: http.StatusOK, body: page, wantBody: true, wantName: "prod"},
-+		{name: "204 empty", status: http.StatusNoContent, wantName: ""},
-+		{name: "200 empty body", status: http.StatusOK, wantName: ""},
-+		{name: "404", status: http.StatusNotFound, body: `{"error":"no such connection"}`, wa
++		{
++			name: "Ingress with RESTMapper discovers ingresses",
++			k8sResource: map[string]interface{}{
++				"apiVersion": "networking.k8s.io/v1",
++				"kind":       "Ingress",
++			},
++			namespace:        "test-ns",
++			useMapper:        true,
++			wantBasePath:     "/apis/networking.k8s.io/v1/namespaces/test-ns",
++			wantResourcePath: "ingresses",
++		},
++		{
++			name: "NetworkPolicy with RESTMapper discovers networkpolicies",
++			k8sResource: map[string]interface{}{
++				"apiVersion": "networking.k8s.io/v1",
++				"kind":       "NetworkPolicy",
++			},
++			namespace:        "prod",
++			useMapper:        true,
++			wantBasePath:     "/apis/networking.k8s.io/v1/namespaces/prod",
++			wantResourcePath: "networkpolicies",
++		},
++		{
++			name: "StorageClass with RESTMapper discovers storageclasses and root scope",
++			k8sResource: map[string]interface{}{
++				"apiVersion": "storage.k8s.io/v1",
++				"kind":       "StorageClass",
++			},
++			namespace:        "ignored-ns",
++			useMapper:        true,
++			wantBasePath:     "/apis/s
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22528** (2026-10-22): [Newcomer's Meet]: Add maanvi-chetwani.md with introduction (@Maanvi212006)
-- **PR #22521** (2026-10-22): ci(release): grant the Helm chart releaser its token permissions (@leecalcote)
-- **PR #22520** (2026-10-22): fix(server): accept both remote provider connection response shapes (@leecalcote)
-- **PR #22514** (2026-10-22): docs: verify tutorials and extension troubleshooting guide against current behavior (@jijillery)
-- **PR #22513** (closed): fix(mesheryctl): use platform-independent invalid path error in design undeploy (fixes #22494) (@kyyril)
-- **PR #22512** (2026-10-22): docs: add guides for deploying designs, sharing clusters, and running mesheryctl in CI (@jijillery)
+- **PR #22560** (2026-10-24): docs: add Tristan Brian introduction (@TristanBrian)
+- **PR #22558** (2026-10-24): [Docs] Introduction - AryaBhatt (@AryaBhatt45)
+- **PR #22557** (2026-10-24): introduction- Pranav Gupta (@sabertooth-123)
+- **PR #22554** (closed): docs: add Paul Anyebe introduction (@cutewizzy11)
+- **PR #22548** (2026-10-23): Create Dipansu Mishra.md with personal details (@dipansumishra9797-sudo)
+- **PR #22547** (closed): Create Dipansu Mishra.md with personal details (@dipansumishra9797-sudo)
 
 ---
 
@@ -1549,30 +1579,28 @@ fix(server): accept both remote provider connection response shapes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #22453 from ayanasarkar/docs/fix-governance-links
+## X. Merge pull request #22300 from Paramveersingh-S/fix/docs-workspaces-crds-typos
 
 **RULE**:
-When implementing operations in `.github/label-commenter-config.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/content/en/concepts/logical/workspaces.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89911e9c`: Merge pull request #22453 from ayanasarkar/docs/fix-governance-links. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfa38789`: Merge pull request #22300 from Paramveersingh-S/fix/docs-workspaces-crds-typos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/label-commenter-config.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/content/en/concepts/logical/workspaces.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community/meshmates/) or any other [community member](https://meshery.io/community) for assistance.
-        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community/meshmates/) or any other [community member](https://meshery.io/community) for assistance.
+After creating a Workspace, one of your next steps is to resource that Workspace. Like a shared drive (or a shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
-        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
+After creating a Workspace, of your next steps is to resource that Workspace. Like a shared drive (or or shared collection of files). Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89911e9c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfa38789` are properly handled with clean fallback behavior.

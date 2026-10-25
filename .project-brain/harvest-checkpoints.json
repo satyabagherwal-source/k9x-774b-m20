@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T14:38:09.383Z",
+  "last_updated": "2026-10-25T14:44:30.238Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -635,14 +635,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "content_hash": "3a435e677f0c89f1d2aa54dced5ab1c1e2339587ef05d33b174470b373f831ef",
-      "verified_at": "2026-10-20T19:17:05.778Z",
+      "content_hash": "9d31fed7497129d49bbffd92e5c857cd22e6130a32bcf02deccb160668affa3c",
+      "verified_at": "2026-10-25T14:44:27.930Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:17:05.778Z"
+      "last_updated": "2026-10-25T14:44:27.930Z"
     },
     "akatz-ai/MiniMax-H3-Character-Swap-LoRA": {
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -3276,14 +3276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bvaughn-react-virtualized",
-      "content_hash": "6f64da06063ed2dba18caa1b26e862e572b8fb077a706f744edf8f3609452fc3",
-      "verified_at": "2026-10-19T07:40:24.149Z",
+      "content_hash": "e16d8f5b74bdb1cf97e0973d3e0e1b5842e021cf696b098479db090f7058db4f",
+      "verified_at": "2026-10-25T14:44:17.609Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:40:24.149Z"
+      "last_updated": "2026-10-25T14:44:17.609Z"
     },
     "dkhamsing/open-source-ios-apps": {
       "repository": "dkhamsing/open-source-ios-apps",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "b34a58833d92c6829425fbf96025acd3338a325a0b31e85a6ee1bbce41f94607",
-      "verified_at": "2026-10-23T09:58:07.328Z",
+      "content_hash": "1b9c87096685db4353a722c66ca8337447d98d7f00f02c626cb17e031ee2dee5",
+      "verified_at": "2026-10-25T14:44:30.233Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T09:58:07.328Z"
+      "last_updated": "2026-10-25T14:44:30.233Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",

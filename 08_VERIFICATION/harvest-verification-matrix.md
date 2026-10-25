@@ -4858,3 +4858,6 @@
 | `CYCLE-20261025-MZRE` | `2026-10-25T14:38:04.682Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4345` | Yes (`a7b92528...`) |
 | `CYCLE-20261025-N2UN` | `2026-10-25T14:38:08.687Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4346, Rule 4347, Rule 4348` | Yes (`535883a8...`) |
 | `CYCLE-20261025-N3DL` | `2026-10-25T14:38:09.369Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | Yes (`6ec740fb...`) |
+| `CYCLE-20261025-UZI7` | `2026-10-25T14:44:17.599Z` | `bvaughn/react-virtualized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4349` | Yes (`e16d8f5b...`) |
+| `CYCLE-20261025-V7GQ` | `2026-10-25T14:44:27.914Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4350, Rule 4351, Rule 4352` | Yes (`9d31fed7...`) |
+| `CYCLE-20261025-V98W` | `2026-10-25T14:44:30.224Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4353` | Yes (`1b9c8709...`) |

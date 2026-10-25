@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-RFGE",
-    "timestamp": "2026-10-22T17:38:28.478Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "aad2319a09c0299e04a975df3ccc741dae8dc11d6f19aec9b446c71c6530fb06",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-ZMTW",
-    "timestamp": "2026-10-22T17:44:51.284Z",
-    "repository": "lingui/js-lingui",
-    "learningId": "learn-github-lingui-js-lingui",
-    "contentHash": "24d0b56d8ed7aa5167900ef63e79cff13234bff195136303030ebee69ff8f777",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-ZQXL",
-    "timestamp": "2026-10-22T17:44:56.601Z",
-    "repository": "iii-hq/iii",
-    "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "f73c2a143d72bff7ad53a70c4346499fc9e4eabfc4f4f951216875ec922686b7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-ZWQ6",
     "timestamp": "2026-10-22T17:45:04.110Z",
     "repository": "gravitl/netmaker",
@@ -7492,6 +7447,51 @@
     "contentHash": "6ec740fb37bdd2b1069a35fc2d5c333c7cc43b504df8abd901350ffba87fe51c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-UZI7",
+    "timestamp": "2026-10-25T14:44:17.599Z",
+    "repository": "bvaughn/react-virtualized",
+    "learningId": "learn-github-bvaughn-react-virtualized",
+    "contentHash": "e16d8f5b74bdb1cf97e0973d3e0e1b5842e021cf696b098479db090f7058db4f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-V7GQ",
+    "timestamp": "2026-10-25T14:44:27.914Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+    "contentHash": "9d31fed7497129d49bbffd92e5c857cd22e6130a32bcf02deccb160668affa3c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-V98W",
+    "timestamp": "2026-10-25T14:44:30.224Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "1b9c87096685db4353a722c66ca8337447d98d7f00f02c626cb17e031ee2dee5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

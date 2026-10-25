@@ -4865,3 +4865,6 @@ Every entry in this ledger must capture:
 | `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `6082ae0f` | Multi-dimensional audit evidence | 2026-10-25T14:38:04.685Z |
 | `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-25T14:38:08.690Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `f46ee551` | Multi-dimensional audit evidence | 2026-10-25T14:38:09.372Z |
+| `learn-github-bvaughn-react-virtualized` | `https://github.com/bvaughn/react-virtualized` | `fe90ae02` | Multi-dimensional audit evidence | 2026-10-25T14:44:17.602Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-25T14:44:27.917Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `ac82f3a1` | Multi-dimensional audit evidence | 2026-10-25T14:44:30.227Z |

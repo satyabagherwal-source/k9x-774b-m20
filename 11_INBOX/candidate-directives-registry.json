@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T14:38:09.377Z",
+  "last_updated": "2026-10-25T14:44:27.921Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2708,6 +2708,50 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-projectdiscovery-nuclei"
+    },
+    {
+      "id": "CD-V7GX",
+      "directive_title": "Micro-Syntax & Token-Level Precision",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_commit": "hf-deepseek-",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
+    },
+    {
+      "id": "CD-V7GX",
+      "directive_title": "Infinite Loop & Recursion Guards",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_commit": "hf-deepseek-",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
+    },
+    {
+      "id": "CD-V7GX",
+      "directive_title": "Backend Concurrency & Memory Safety",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_commit": "hf-deepseek-",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
+    },
+    {
+      "id": "CD-V7GX",
+      "directive_title": "Defect & Error Prevention (\"Galti Pakadna\")",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_commit": "hf-deepseek-",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
     }
   ]
 }

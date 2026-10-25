@@ -515,8 +515,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "3a435e677f0c89f1d2aa54dced5ab1c1e2339587ef05d33b174470b373f831ef",
-    "lastHarvestedAt": "2026-10-20T19:17:05.760Z",
+    "contentHash": "9d31fed7497129d49bbffd92e5c857cd22e6130a32bcf02deccb160668affa3c",
+    "lastHarvestedAt": "2026-10-25T14:44:27.917Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
@@ -2093,10 +2093,10 @@
     "repository": "bvaughn/react-virtualized",
     "platform": "github",
     "sourceUrl": "https://github.com/bvaughn/react-virtualized",
-    "sourceVersion": "dad013db",
+    "sourceVersion": "fe90ae02",
     "license": "MIT",
-    "contentHash": "6f64da06063ed2dba18caa1b26e862e572b8fb077a706f744edf8f3609452fc3",
-    "lastHarvestedAt": "2026-10-19T07:40:24.143Z",
+    "contentHash": "e16d8f5b74bdb1cf97e0973d3e0e1b5842e021cf696b098479db090f7058db4f",
+    "lastHarvestedAt": "2026-10-25T14:44:17.602Z",
     "learningId": "learn-github-bvaughn-react-virtualized"
   },
   "dkhamsing-open-source-ios-apps": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "8ce7a3c5",
+    "sourceVersion": "ac82f3a1",
     "license": "Apache-2.0",
-    "contentHash": "b34a58833d92c6829425fbf96025acd3338a325a0b31e85a6ee1bbce41f94607",
-    "lastHarvestedAt": "2026-10-23T09:58:07.316Z",
+    "contentHash": "1b9c87096685db4353a722c66ca8337447d98d7f00f02c626cb17e031ee2dee5",
+    "lastHarvestedAt": "2026-10-25T14:44:30.227Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {

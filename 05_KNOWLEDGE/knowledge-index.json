@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T14:38:09.303Z",
+  "last_updated": "2026-10-25T14:44:30.181Z",
   "total_verified_learnings": 1086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19736,7 +19736,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "3a435e677f0c89f1d2aa54dced5ab1c1e2339587ef05d33b174470b373f831ef",
+      "content_hash": "9d31fed7497129d49bbffd92e5c857cd22e6130a32bcf02deccb160668affa3c",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "promoted_rules": [
@@ -19791,6 +19791,21 @@
           "number": 2191,
           "title": "Dynamic SwiGLU Output Saturation Bound Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4350,
+          "title": "Static Attention Mode Partitioning for KV Cache Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4351,
+          "title": "Causal Encoder-Decoder (CED) KV Projection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4352,
+          "title": "SWA Bounded Replay for Local Context Reconstruction",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19811,7 +19826,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv46mzeq",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e"
       ],
-      "verified_at": "2026-10-20T19:17:05.685Z",
+      "verified_at": "2026-10-25T14:44:27.858Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34260,8 +34275,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "8ce7a3c5",
-      "content_hash": "b34a58833d92c6829425fbf96025acd3338a325a0b31e85a6ee1bbce41f94607",
+      "source_version": "ac82f3a1",
+      "content_hash": "1b9c87096685db4353a722c66ca8337447d98d7f00f02c626cb17e031ee2dee5",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -34289,6 +34304,11 @@
           "number": 3864,
           "title": "Merge pull request #22453 from ayanasarkar/docs/fix-governance-links",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4353,
+          "title": "Merge pull request #22300 from Paramveersingh-S/fix/docs-workspaces-crds-typos",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34296,7 +34316,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T09:58:07.259Z",
+      "verified_at": "2026-10-25T14:44:30.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84885,8 +84905,8 @@
       "slug": "bvaughn-react-virtualized",
       "platform": "github",
       "source_url": "https://github.com/bvaughn/react-virtualized",
-      "source_version": "dad013db",
-      "content_hash": "6f64da06063ed2dba18caa1b26e862e572b8fb077a706f744edf8f3609452fc3",
+      "source_version": "fe90ae02",
+      "content_hash": "e16d8f5b74bdb1cf97e0973d3e0e1b5842e021cf696b098479db090f7058db4f",
       "dossier_path": "07_PROJECT_LEARNING/bvaughn-react-virtualized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bvaughn-react-virtualized-learnings.md",
       "promoted_rules": [
@@ -84909,6 +84929,11 @@
           "number": 2325,
           "title": "Scroll-Phase Conditional Caching with Mutation Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4349,
+          "title": "Update react-lib-tools to 0.0.69",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -84916,7 +84941,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:40:24.088Z",
+      "verified_at": "2026-10-25T14:44:17.545Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124052,6 +124077,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T14:38:08.623Z"
+    },
+    "rule-4349": {
+      "learning_id": "rule-4349",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4349,
+      "title": "Update react-lib-tools to 0.0.69",
+      "source_url": "https://github.com/bvaughn/react-virtualized",
+      "source_version": "fe90ae02",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:44:17.545Z"
+    },
+    "rule-4350": {
+      "learning_id": "rule-4350",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4350,
+      "title": "Static Attention Mode Partitioning for KV Cache Efficiency",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:44:27.858Z"
+    },
+    "rule-4351": {
+      "learning_id": "rule-4351",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4351,
+      "title": "Causal Encoder-Decoder (CED) KV Projection Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:44:27.858Z"
+    },
+    "rule-4352": {
+      "learning_id": "rule-4352",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4352,
+      "title": "SWA Bounded Replay for Local Context Reconstruction",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:44:27.858Z"
+    },
+    "rule-4353": {
+      "learning_id": "rule-4353",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4353,
+      "title": "Merge pull request #22300 from Paramveersingh-S/fix/docs-workspaces-crds-typos",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "ac82f3a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:44:30.171Z"
     }
   },
   "aliases": {

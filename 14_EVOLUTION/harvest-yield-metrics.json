@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T14:38:09.379Z",
-  "total_cycles_completed": 4835,
-  "total_learnings_persisted": 4835,
-  "total_rules_promoted": 4227,
+  "last_updated": "2026-10-25T14:44:30.230Z",
+  "total_cycles_completed": 4838,
+  "total_learnings_persisted": 4838,
+  "total_rules_promoted": 4232,
   "history": [
-    {
-      "timestamp": "2026-10-25T04:18:54.242Z",
-      "repository": "zeromicro/go-zero",
-      "learningId": "learn-github-zeromicro-go-zero",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:19:00.906Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:25:22.351Z",
-      "repository": "Bingsu/adetailer",
-      "learningId": "learn-huggingface-bingsu-adetailer",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T04:25:25.112Z",
       "repository": "goharbor/harbor",
@@ -1403,6 +1382,27 @@
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:44:17.606Z",
+      "repository": "bvaughn/react-virtualized",
+      "learningId": "learn-github-bvaughn-react-virtualized",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:44:27.923Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:44:30.230Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
