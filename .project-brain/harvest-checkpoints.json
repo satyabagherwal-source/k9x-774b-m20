@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T03:38:40.560Z",
+  "last_updated": "2026-10-25T03:45:10.964Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "a843d372ac399a592871f731bdc387d6314b7c4c4716cad185066db67f384094",
-      "verified_at": "2026-10-25T02:42:40.095Z",
+      "content_hash": "fdf620f048b92f200fa341c42b6d0fc204fa6bf9100ac15f0737a19f8a71bc25",
+      "verified_at": "2026-10-25T03:45:10.026Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:42:40.095Z"
+      "last_updated": "2026-10-25T03:45:10.026Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -2931,14 +2931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlcove-robots-txt-tester",
-      "content_hash": "92f5f71dbd5e1612dabc98311994200929c6ae3ead8f63d6d1aa5350fd3376b6",
-      "verified_at": "2026-10-20T11:39:09.872Z",
+      "content_hash": "c50b8e49b5587df14a87f0fdd486ad0d7676b0b690104e778b84bd031930c6f8",
+      "verified_at": "2026-10-25T03:45:01.591Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:39:09.872Z"
+      "last_updated": "2026-10-25T03:45:01.591Z"
     },
     "CrawlCove/hreflang-checker": {
       "repository": "CrawlCove/hreflang-checker",
@@ -7311,14 +7311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-gesture-handler",
-      "content_hash": "cd5378b6af2b4336aa2b5f99c19d4a89ff8a29b87d685eb4f80cd506d43ec115",
-      "verified_at": "2026-10-20T14:25:25.737Z",
+      "content_hash": "77b66daa9618a23b97c27e0beff0f562407d5ef35acc225eb2fb22f7a9e1d31f",
+      "verified_at": "2026-10-25T03:45:03.939Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:25:25.737Z"
+      "last_updated": "2026-10-25T03:45:03.939Z"
     },
     "aws/aws-cdk": {
       "repository": "aws/aws-cdk",
@@ -7881,14 +7881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-citusdata-citus",
-      "content_hash": "f9f364bc700570fd0806d1b4b714a8e7b6e0914fc3b2b5258854d423904a94fa",
-      "verified_at": "2026-10-20T21:08:10.721Z",
+      "content_hash": "844a7c23aac2f87afeeae978527ed78296f5981b4720ab4488a7b86f12d39cf6",
+      "verified_at": "2026-10-25T03:45:10.964Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:08:10.721Z"
+      "last_updated": "2026-10-25T03:45:10.964Z"
     },
     "reshaped-ui/reshaped": {
       "repository": "reshaped-ui/reshaped",

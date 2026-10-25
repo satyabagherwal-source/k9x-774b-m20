@@ -4646,3 +4646,7 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `bbd1b685` | Multi-dimensional audit evidence | 2026-10-25T03:38:35.803Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `ab599433` | Multi-dimensional audit evidence | 2026-10-25T03:38:38.805Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `e4fad3f1` | Multi-dimensional audit evidence | 2026-10-25T03:38:40.547Z |
+| `learn-github-crawlcove-robots-txt-tester` | `https://github.com/CrawlCove/crawlcove-robots-txt-tester` | `63245304` | Multi-dimensional audit evidence | 2026-10-25T03:45:01.577Z |
+| `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `a83496bf` | Multi-dimensional audit evidence | 2026-10-25T03:45:03.931Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `21c27035` | Multi-dimensional audit evidence | 2026-10-25T03:45:10.013Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `5ca742e8` | Multi-dimensional audit evidence | 2026-10-25T03:45:10.950Z |

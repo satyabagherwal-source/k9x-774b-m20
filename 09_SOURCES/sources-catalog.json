@@ -1865,8 +1865,8 @@
     "sourceUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
     "sourceVersion": "63245304",
     "license": "MIT",
-    "contentHash": "92f5f71dbd5e1612dabc98311994200929c6ae3ead8f63d6d1aa5350fd3376b6",
-    "lastHarvestedAt": "2026-10-20T11:39:09.867Z",
+    "contentHash": "c50b8e49b5587df14a87f0fdd486ad0d7676b0b690104e778b84bd031930c6f8",
+    "lastHarvestedAt": "2026-10-25T03:45:01.577Z",
     "learningId": "learn-github-crawlcove-robots-txt-tester"
   },
   "crawlcove-crawlcove-hreflang-checker": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "a7796e20",
+    "sourceVersion": "21c27035",
     "license": "Apache-2.0",
-    "contentHash": "8e885ab0268bc697e3d3e86b5b9769d4add02e7fccd277e43cbf5f9749962cce",
-    "lastHarvestedAt": "2026-10-22T16:22:26.524Z",
+    "contentHash": "fdf620f048b92f200fa341c42b6d0fc204fa6bf9100ac15f0737a19f8a71bc25",
+    "lastHarvestedAt": "2026-10-25T03:45:10.013Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -4793,10 +4793,10 @@
     "repository": "software-mansion/react-native-gesture-handler",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-gesture-handler",
-    "sourceVersion": "0c12342f",
+    "sourceVersion": "a83496bf",
     "license": "MIT",
-    "contentHash": "cd5378b6af2b4336aa2b5f99c19d4a89ff8a29b87d685eb4f80cd506d43ec115",
-    "lastHarvestedAt": "2026-10-20T14:25:25.729Z",
+    "contentHash": "77b66daa9618a23b97c27e0beff0f562407d5ef35acc225eb2fb22f7a9e1d31f",
+    "lastHarvestedAt": "2026-10-25T03:45:03.931Z",
     "learningId": "learn-github-software-mansion-react-native-gesture-handler"
   },
   "aws-aws-cdk": {
@@ -5173,10 +5173,10 @@
     "repository": "citusdata/citus",
     "platform": "github",
     "sourceUrl": "https://github.com/citusdata/citus",
-    "sourceVersion": "fadced9e",
+    "sourceVersion": "5ca742e8",
     "license": "AGPL-3.0",
-    "contentHash": "f9f364bc700570fd0806d1b4b714a8e7b6e0914fc3b2b5258854d423904a94fa",
-    "lastHarvestedAt": "2026-10-20T21:08:10.713Z",
+    "contentHash": "844a7c23aac2f87afeeae978527ed78296f5981b4720ab4488a7b86f12d39cf6",
+    "lastHarvestedAt": "2026-10-25T03:45:10.950Z",
     "learningId": "learn-github-citusdata-citus"
   },
   "reshaped-ui-reshaped": {

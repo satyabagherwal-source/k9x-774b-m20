@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source**: github ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
-> **Source Version**: `fadced9e`  
+> **Source Version**: `5ca742e8`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:08:10.300Z  
+> **Timestamp**: 2026-10-25T03:45:10.589Z  
 > **Learning ID**: `learn-github-citusdata-citus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:08:10.292Z  
+> **Harvest Timestamp**: 2026-10-25T03:45:10.460Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Distributed PostgreSQL as an extension
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 12820 stars
+- **Stars / Engagement**: 12826 stars
 
 ---
 
@@ -2563,312 +2563,481 @@ ColumnarStorageGetReservedRowNumber(Relation rel, bool force)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fadced9e` (2026-10-20)
-**Commit Message**: Parallelize citus_check_cluster_node_health across source nodes (#8935)
+### Incident Patch 1: `5ca742e8` (2026-10-23)
+**Commit Message**: PG19: propagate EXPLAIN IO to worker nodes (#8807)
 
-DESCRIPTION: Parallelizes connectivity checks in
-citus_check_cluster_node_health
+Propagate PostgreSQL 19 RC1 EXPLAIN IO to worker nodes.
 
-### Problem
+## Stack
 
-`citus_check_cluster_node_health()` checks connectivity between every
-ordered pair
-of active readable nodes, including self-pairs. It ran these probes one
-after another.
-On a 33-node cluster that is 1,089 probes, and during cluster
-initialization this
-query took longer than the caller's command timeout:
+Native stack layer 3: #8929 -> #8805 -> #8807
 
-```sql
-SELECT json_agg(row_to_json(h)) AS healthcheck
-FROM citus_check_cluster_node_health() h;
-```
+This PR is based on `ihalatci-pg19-repack-lock-fix` at
+`805849c8ed7b3fa5e77edf289c5e2b159b4bb529`.
 
-### Change
+## Changes
 
-Only `StoreAllConnectivityChecks()` in `operations/health_check.c`
-changes:
+- Propagate `ExplainState.io` to worker EXPLAIN commands on PostgreSQL
+19+.
+- Preserve `INSTRUMENT_IO` through the saved-plan EXPLAIN ANALYZE path.
+- Cover both saved-plan and live remote-EXPLAIN paths in `pg19`
+regression tests.
+- Keep PostgreSQL 17/18 behavior unchanged through existing version
+guards.
 
-1. Open connections to all source nodes at the same time
-(`StartNodeConnection` +
-`FinishConnectionListEstablishment`). An unreachable source now costs
-one
-   connection timeout in total instead of one per source.
-2. For each target node, in sorted order, send
-`citus_check_connection_to_node(target)` to every source, then wait for
-all
-sources with `WaitForAllConnections(..., raiseInterrupts = true)` before
-   reading results and moving on to the next target.
-3. Store the results in an N×N matrix and write the tuplestore in the
-ori
+The diff relative to #8805 is limited to:
 
-**File**: `src/backend/distributed/operations/health_check.c` (modified, +122/-43)
+- `src/backend/distributed/planner/multi_explain.c`
+- `src/test/regress/bin/normalize.sed`
+- `src/test/regress/sql/pg19.sql`
+- `src/test/regress/expected/pg19.out`
+
+## Validation
+
+- PostgreSQL 19rc1 Citus configure, build, and install: passed.
+- `src/test/regress/citus_tests/run_test.py pg19`: passed (7/7).
+- `src/test/regress/citus_tests/run_test.py multi_explain`: passed
+(16/16).
+- `src/test/regress/citus_tests/run_test.py multi_mx_explain`: passed
+(10/10).
+- PostgreSQL 17.10 configure/build: passed.
+- PostgreSQL 18.4 configure/build: passed.
+- `citus_indent --che
+
+**File**: `src/backend/distributed/planner/multi_explain.c` (modified, +29/-1)
 ```diff
-@@ -92,12 +92,21 @@ citus_check_cluster_node_health(PG_FUNCTION_ARGS)
-  * nodes, and report success status.
-  *
-  * Algorithm is:
-+ * connections = connectConcurrently(activeReadableNodeList)
-+ * for targetNode in activeReadableNodeList:
-+ *   for c in connections:
-+ *     c.send("SELECT citus_check_connection_to_node(targetNode.name, targetNode.port")
-+ *   wait for all connections
-+ *   collect the result of each source node for targetNode
-  * for sourceNode in activeReadableNodeList:
-- *   c = connectToNode(sourceNode)
-  *   for targetNode in activeReadableNodeList:
-- *     result = c.execute("SELECT citus_check_connection_to_node(targetNode.name, targetNode.port")
-  *     emit sourceNode.name, sourceNode.port, targetNode.name, targetNode.port, result
-  *
-+ * Each source node still checks the target nodes one at a time and in the sorted
-+ * order, but all source nodes check the same target node concurrently. Hence, at most
-+ * one probe is in flight per source node, and a target node may receive one probe
-+ * connection from each of the source nodes at the same time.
-+ *
-  * -- result -> true  -> connection attempt from source to target succeeded
-  * -- result -> false -> connection attempt from source to target failed
-  * -- result -> NULL  -> connection attempt from the current node to source node failed
-@@ -117,71 +126,141 @@ StoreAllConnectivityChecks(Tuplestorestate *tupleStore, TupleDesc tupleDescripto
- 	/* we want to check for connectivity in a deterministic order */
- 	workerNodeList = SortList(workerNodeList, CompareWorkerNodes);
+@@ -111,6 +111,9 @@ typedef struct
+ 	bool memory;
+ 	ExplainSerializeOption serialize;
+ 	ExplainFormat format;
++#if PG_VERSION_NUM >= PG_VERSION_19
++	bool io;
++#endif
+ } ExplainOptions;
  
--	/*
--	 * We iterate over the workerNodeList twice, for source and target worker nodes. This
--	 * operation is safe for foreach_declared_ptr macro, as long as we use different variables for
--	 * each iteration.
--	 */
-+	int nodeCount = list_length(workerNodeList);
-+
-+	/* open the connections to all source nodes concurrently */
-+	MultiConnection **sourceConnections = palloc0(nodeCount * sizeof(MultiConnection *));
-+	List *sourceConnectionList = NIL;
-+	int sourceIndex = 0;
-+
- 	WorkerNode *sourceWorkerNode = NULL;
- 	foreach_declared_ptr(sourceWorkerNode, workerNodeList)
+ 
+@@ -912,7 +915,9 @@ RemoteExplain(Task *task, ExplainState *es, ParamListInfo params)
+ {
+ 	/*
+ 	 * For EXPLAIN EXECUTE we still use the old method, so task->fetchedExplainAnalyzePlan
+-	 * can be NULL for some cases of es->analyze == true.
++	 * can be NULL for some cases of es->analyze == true.  A distributed subplan can
++	 * also end up here when its re-planned task ids do not match the ids its saved
++	 * output was stored under; that is a known bug, see #8952.
+ 	 */
+ 	if (es->analyze && task->fetchedExplainAnalyzePlan)
  	{
--		const char *sourceNodeName = sourceWorkerNode->workerName;
--		const int sourceNodePort = sourceWorkerNode->workerPort;
- 		int32 connectionFlags = 0;
-+		MultiConnection *connection =
-+			StartNodeConnection(connectionFlags, sourceWorkerNode->workerName,
-+								sourceWorkerNode->workerPort);
+@@ -1209,6 +1214,9 @@ BuildRemoteExplainQuery(char *queryString, ExplainState *es)
+ 					 "COSTS %s, BUFFERS %s, WAL %s, "
+ 					 "TIMING %s, SUMMARY %s, "
+ 					 "MEMORY %s, SERIALIZE %s, "
++#if PG_VERSION_NUM >= PG_VERSION_19
++					 "IO %s, "
++#endif
+ 					 "FORMAT %s) %s",
+ 					 es->analyze ? "TRUE" : "FALSE",
+ 					 es->verbose ? "TRUE" : "FALSE",
+@@ -1219,6 +1227,9 @@ BuildRemoteExplainQuery(char *queryString, ExplainState *es)
+ 					 es->summary ? "TRUE" : "FALSE",
+ 					 es->memory ? "TRUE" : "FALSE",
+ 					 serializeStr,
++#if PG_VERSION_NUM >= PG_VERSION_19
++					 es->io ? "TRUE" : "FALSE",
++#endif
+ 					 formatStr,
+ 					 queryString);
  
--		/* open a connection to the source node using the synchronous api */
--		MultiConnection *connectionToSourceNode =
--			GetNodeConnection(connectionFlags, sourceNodeName, sourceNodePort);
-+		sourceConnections[sourceIndex++] = connection;
-+		sourceConnectionList = lappend(sourceConnectionList, connection);
-+	}
+@@ -1354,6 +1365,9 @@ worker_save_query_explain_analyze(PG_FUNCTION_ARGS)
+ 	es->memory = ExtractFieldBoolean(explainOptions, "memory", es->memory);
+ 	es->serialize = ExtractFieldExplainSerialize(explainOptions, "serialize",
+ 												 es->serialize);
++#if PG_VERSION_NUM >= PG_VERSION_19
++	es->io = ExtractFieldBoolean(explainOptions, "io", es->io);
++#endif
  
--		/* the second iteration over workerNodeList for the target worker nodes. */
--		WorkerNode *targetWorkerNode = NULL;
--		foreach_declared_ptr(targetWorkerNode, workerNodeList)
--		{
--			const char *targetNodeName = targetWorkerNode->workerName;
--			const int targetNodePort = targetWorkerNode->workerPort;
-+	FinishConnectionListEstablishment(sourceConnectionList);
+ 	TupleDesc tupleDescriptor = NULL;
+ 	Tuplestorestate *tupleStore = SetupTuplestore(fcinfo, &tupleDescriptor);
+@@ -1584,6 +1598,9 @@ CitusExplainOneQuery(Query *query, int cursorOptions, IntoClause *into,
+ 	CurrentDistributedQueryExplainOptions.format = es->format;
+ 	CurrentDistributedQueryExplainOptions.memory = es->memory;
+ 	CurrentDistributedQueryExplainOptions.serialize = es->serialize;
++#if PG_VERSION_NUM >= PG_VERSION_19
++	CurrentDistributedQueryExplainOptions.io = es->io;
++#endif
  
--			char *connectivityCheckCommandToTargetNode =
--				GetConnectivityCheckCommand(targetNodeName, targetNodePort);
-+	/* results are indexed by [sourceIndex * nodeCount + targetIndex] */
-+	bool *checkSucceeded = palloc0(nodeCount * nodeCount * sizeof(bool));
-+	bool *checkResultIsNull = palloc0(nodeCount * nodeCount * sizeof(bool));
-+	bool *commandSent = palloc0(nodeCount * sizeof(bool));
+ 	/* rest is copied from ExplainOneQuery() */
+ 	instr_time planstart,
+@@ -1989,13 +2006,19 @@ WrapQueryForExplainAnalyze(const char *queryString, TupleDesc tupleDesc,
+ 	appendStringInfo(explainOptions,
+ 					 "{\"verbose\": %s, \"costs\": %s, \"buffers\": %s, \"wal\": %s, "
+ 					 "\"memory\": %s, \"serialize\": \"%s\", "
++#if PG_VERSION_NUM >= PG_VERSION_19
++					 "\"io\": %s, "
++#endif
+ 					 "\"timing\": %s, \"summary\": %s, \"format\": \"%s\"}",
+ 					 CurrentDistributedQueryExplainOptions.verbose ? "true" : "false",
+ 					 CurrentDistributedQueryExplainOptions.costs ? "true" : "false",
+ 					 CurrentDistributedQueryExplainOptions.buffers ? "true" : "false",
+ 					 CurrentDistributedQueryExplainOptions.wal ? "true" : "false",
+ 					 CurrentDistributedQueryExplainOptions.memory ? "true" : "false",
+ 					 ExplainSerializeStr(CurrentDistributedQueryExplainOptions.serialize),
++#if PG_VERSION_NUM >= PG_VERSION_19
++					 CurrentDistributedQueryExplainOptions.io ? "true" : "false",
++#endif
+ 					 CurrentDistributedQueryExplainOptions.timing ? "true" : "false",
+ 					 CurrentDistributedQueryExplainOptions.summary ? "true" : "false",
+ 					 ExplainFormatStr(CurrentDistributedQueryExplainOptions.format));
+@@ -2265,6 +2288,11 @@ ExplainWorkerPlan(PlannedStmt *plannedstmt, DistributedSubPlan *subPlan, DestRec
+ 	if (es->wal)
+ 		instrument_option |= INSTRUMENT_WAL;
  
--			PGresult *result = NULL;
--			int executionResult =
--				ExecuteOptionalRemoteCommand(connectionToSourceNode,
--											 connectivityCheckCommandToTargetNode,
--											 &result);
-+	int targetIndex = 0;
-+	WorkerNode *targetWorkerNode = NULL;
-+	foreach_declared_ptr(targetWorkerNode, workerNodeList)
-+	{
-+		char *connectivityCheckCommandToTargetNode =
-+			GetConnectivityCheckCommand(targetWorkerNode->workerName,
-+										targetWorkerNode->workerPort);
-+		List *pendingConnectionList = NIL;
- 
--			/* get ready for the next tuple */
--			memset(values, 0, sizeof(values));
--			memset(isNulls, false, sizeof(isNulls));
-+		for (sourceIndex = 0; sourceIndex < nodeCount; sourceIndex++)
-+		{
-+			MultiConnection *connection = sourceConnections[sourceIndex];
-+			int resultIndex = sourceIndex * nodeCount + targetIndex;
- 
--			values[0] = PointerGetDatum(cstring_to_text(sourceNodeName));
--			values[1] = Int32GetDatum(sourceNodePort);
--			values[2] = PointerGetDatum(cstring_to_text(targetNodeName));
--			values[3] = Int32GetDatum(targetNodePort);
-+			commandSent[sourceIndex] =
-+				SendRemoteCommand(connection, connectivityCheckCommandToTargetNode) != 0;
- 
- 			/*
--			 * If we could not send the query or the result was not ok, set success field
--			 * to NULL. This may indicate connection errors to a worker node, however that
--			 * node can potentially connect to other nodes.
-+			 * If we could not send the query, set success field to NULL. This may
-+			 * indicate connec
++#if PG_VERSION_NUM >= PG_VERSION_19
++	if (es->io)
++		instrument_option |= INSTRUMENT_IO;
++#endif
++
+ 	/*
+ 	 * We always collect timing for the entire statement, even when node-level
+ 	 * timing is off, so we don't look at es->timing here.  (We could skip
 ```
 
-**File**: `src/test/regress/citus_tests/test/test_cluster_node_health.py` (added, +241/-0)
+**File**: `src/test/regress/bin/normalize.sed` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,241 @@
-+import contextlib
-+import re
-+import socket
-+import threading
-+import time
+@@ -475,3 +475,9 @@ s/local_table_5_col_1_fkey_([0-9]+)/local_table_5_col_1_fkey1_\1/g
+ # these rules can be removed when PG19 is the minimum supported version
+ /^([[:space:]]*)139264$/ s/139264$/131072/
+ /^([[:space:]]*[0-9]+[[:space:]]+[|][[:space:]]+)139264$/ s/139264$/131072/
 +
-+import psycopg
-+import pytest
++# PG19 adds the IO option to EXPLAIN. Citus spells every option out, so remote
++# EXPLAIN commands carry a no-op "IO FALSE" that earlier versions do not send.
++# these rules can be removed when PG19 is the minimum supported version
++s/, IO FALSE,/,/g
++s/"io": false, //g
+```
+
+**File**: `src/test/regress/expected/pg19.out` (modified, +71/-0)
+```diff
+@@ -1042,3 +1042,74 @@ SET client_min_messages TO WARNING;
+ DROP SCHEMA pg19_repack CASCADE;
+ RESET client_min_messages;
+ RESET search_path;
++--
++-- EXPLAIN (ANALYZE, IO) has to reach the worker nodes (#8770).  PG19 added the
++-- IO option; Citus forwards a fixed set of options to the workers, so without
++-- explicit support the distributed plan silently comes back with no IO info.
++--
++CREATE SCHEMA pg19_explain_io;
++SET search_path TO pg19_explain_io;
++-- only assert on the presence of the IO section: the prefetch numbers depend on
++-- effective_io_concurrency and on the host
++CREATE FUNCTION explain_has_prefetch(explain_command text)
++RETURNS BOOLEAN AS $$
++DECLARE
++	query_plan text;
++BEGIN
++	FOR query_plan IN EXECUTE explain_command LOOP
++		IF query_plan ILIKE '%Prefetch:%' THEN
++			RETURN true;
++		END IF;
++	END LOOP;
++	RETURN false;
++END; $$ LANGUAGE plpgsql;
++CREATE TABLE explain_io(a int, b int);
++SELECT create_distributed_table('explain_io', 'a');
++ create_distributed_table
++---------------------------------------------------------------------
 +
-+PROBE_QUERY_PREFIX = "SELECT citus_check_connection_to_node("
-+ACTIVE_PROBES_QUERY = """
-+    SELECT count(*) FROM pg_stat_activity
-+    WHERE state = 'active' AND pid <> pg_backend_pid() AND starts_with(query, %s)
-+"""
++(1 row)
 +
++INSERT INTO explain_io SELECT g, g FROM generate_series(1, 10) g;
++SELECT explain_has_prefetch($$
++	EXPLAIN (ANALYZE, IO, COSTS OFF, TIMING OFF, SUMMARY OFF)
++	SELECT count(*) FROM explain_io $$);
++ explain_has_prefetch
++---------------------------------------------------------------------
++ t
++(1 row)
 +
-+class BlackholeServer:
-+    """A TCP server that accepts connections but never replies
++-- without IO the worker plans must not contain the section
++SELECT explain_has_prefetch($$
++	EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF, SUMMARY OFF)
++	SELECT count(*) FROM explain_io $$);
++ explain_has_prefetch
++---------------------------------------------------------------------
++ f
++(1 row)
 +
-+    Every Postgres connection attempt to it hangs until the client gives up,
-+    which lets us make each connectivity check towards it take exactly
-+    citus.node_connection_timeout on the node that runs the check.
-+    """
++-- IO also has to be preserved in the saved plans for distributed subplans.
++SET citus.explain_all_tasks TO on;
++SELECT explain_has_prefetch($$
++	EXPLAIN (ANALYZE, IO, COSTS OFF, TIMING OFF, SUMMARY OFF)
++	WITH cte_1 AS MATERIALIZED (SELECT * FROM explain_io)
++	SELECT count(*) FROM cte_1 $$);
++ explain_has_prefetch
++---------------------------------------------------------------------
++ t
++(1 row)
 +
-+    def __init__(self):
-+        self.host = "127.0.0.1"
-+        self.listener = socket.create_server((self.host, 0), backlog=128)
-+        self.port = self.listener.getsockname()[1]
-+        self.lock = threading.Lock()
-+        self.connections = set()
-+        self.peak_connection_count = 0
-+        threading.Thread(target=self._accept_loop, daemon=True).start()
++SELECT explain_has_prefetch($$
++	EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF, SUMMARY OFF)
++	WITH cte_1 AS MATERIALIZED (SELECT * FROM explain_io)
++	SELECT count(*) FROM cte_1 $$);
++ explain_has_prefetch
++---------------------------------------------------------------------
++ f
++(1 row)
 +
-+    def _accept_loop(self):
-+        while True:
-+            try:
-+                connection, _ = self.listener.accept()
-+            except OSError:
-+                return
++RESET citus.explain_all_tasks;
++SET client_min_messages TO WARNING;
++DROP SCHEMA pg19_explain_io CASCADE;
++RESET client_min_messages;
++RESET search_path;
+```
+
+**File**: `src/test/regress/sql/pg19.sql` (modified, +53/-0)
+```diff
+@@ -789,3 +789,56 @@ SET client_min_messages TO WARNING;
+ DROP SCHEMA pg19_repack CASCADE;
+ RESET client_min_messages;
+ RESET search_path;
 +
-+            with self.lock:
-+                self.connections.add(connection)
-+                self.peak_connection_count = max(
-+                    self.peak_connection_count, len(self.connections)
-+                )
-+            threading.Thread(target=self._hold, args=(connection,), daemon=True).start()
++--
++-- EXPLAIN (ANALYZE, IO) has to reach the worker nodes (#8770).  PG19 added the
++-- IO option; Citus forwards a fixed set of options to the workers, so without
++-- explicit support the distributed plan silently comes back with no IO info.
++--
++CREATE SCHEMA pg19_explain_io;
++SET search_path TO pg19_explain_io;
 +
-+    def _hold(self, connection):
-+        # read until the client closes the connection, but never answer
-+        try:
-+            while connection.recv(1024):
-+                pass
-+        except OSError:
-+            # A client disconnect or server shutdown can interrupt recv().
-+            pass
++-- only assert on the presence of the IO section: the prefetch numbers depend on
++-- effective_io_concurrency and on the host
++CREATE FUNCTION explain_has_prefetch(explain_command text)
++RETURNS BOOLEAN AS $$
++DECLARE
++	query_plan text;
++BEGIN
++	FOR query_plan IN EXECUTE explain_command LOOP
++		IF query_plan ILIKE '%Prefetch:%' THEN
++			RETURN true;
++		END IF;
++	END LOOP;
++	RETURN false;
++END; $$ LANGUAGE plpgsql;
 +
-+        with self.lock:
-+            self.connections.discard(connection)
-+        connection.close()
++CREATE TABLE explain_io(a int, b int);
++SELECT create_distributed_table('explain_io', 'a');
++INSERT INTO explain_io SELECT g, g FROM generate_series(1, 10) g;
 +
-+    @property
-+    def connection_count(self):
-+        with self.lock:
-+            return len(self.connections)
++SELECT explain_has_prefetch($$
++	EXPLAIN (ANALYZE, IO, COSTS OFF, TIMING OFF, SUMMARY OFF)
++	SELECT count(*) FROM explain_io $$);
 +
-+    def close(self):
-+        self.listener.shutdown(socket.SHUT_RDWR)
-+        self.listener.close()
-+        with self.lock:
-+            for connection in self.connections:
-+                connection.shutdown(socket.SHUT_RDWR)
++-- without IO the worker plans must not contain the section
++SELECT explain_has_prefetch($$
++	EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF, SUMMARY OFF)
++	SELECT count(*) FROM explain_io $$);
 +
++-- IO also has to be preserved in the saved plans for distributed subplans.
++SET citus.explain_all_tasks TO on;
++SELECT explain_has_prefetch($$
++	EXPLAIN (ANALYZE, IO, COSTS OFF, TIMING OFF, SUMMARY OFF)
++	WITH cte_1 AS MATERIALIZED (SELECT * FROM explain_io)
++	SELECT count(*) FROM cte_1 $$);
++SELECT explain_has_prefetch($$
++	EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF, SUMMARY OFF)
++	WITH cte_1 AS MATERIALIZED (SELECT * FROM explain_io)
++	SELECT count(*) FROM cte_1 $$);
++RESET citus.explain_all_tasks;
 +
-+def set_node_connection_timeout(cluster, timeout_ms):
-+    """Sets the timeout of the connectivity checks on every source node
++SET client_min_messages TO WARNING;
++DROP SCHEMA pg19_explain_io CASCADE;
++RESET client_min_messages;
++RESET search_path;
+```
+
+---
+
+### Incident Patch 2: `117df089` (2026-10-23)
+**Commit Message**: PG19: use ShareUpdateExclusiveLock for REPACK CONCURRENTLY (#8805)
+
+PG19 RC1: match PostgreSQL's ShareUpdateExclusiveLock for REPACK
+(CONCURRENTLY), avoiding a preprocessing lock escalation that can mask
+the
+unsupported distributed-table error or hang repack on a local table.
+
+Native stack layer 2: #8929 -> #8805 -> #8807.
+
+Validation (Ubuntu 22.04 WSL under `/home/ihalatci/Development`):
+
+- `PG_CONFIG=.../postgresql-install/bin/pg_config ./configure && make
+-j8 && make install` with PostgreSQL 19rc1: passed.
+- `PATH=.../postgresql-install/bin:$PATH
+src/test/regress/citus_tests/run_test.py pg19`: all 7 tests passed,
+including `pg19`.
+- `PG_CONFIG=~/.pgenv/pgsql-17.10/bin/pg_config ./configure && make
+-j8`: passed.
+- `PG_CONFIG=~/.pgenv/pgsql-18.4/bin/pg_config ./configure && make -j8`:
+passed.
+- `citus_indent --check --quiet`: passed.
+- `git diff --check 7259ac9c94e9a6595eac092b18afc47b69197d4a..HEAD`:
+passed.
+- `make check-style`: `black` and `isort` passed; `flake8` reached
+pre-existing naming violations in unchanged Python files, unrelated to
+this C/SQL-only diff.
+
+Fixes #8756
+
+Co-authored-by: Ibrahim Halatci <[REDACTED_EMAIL]>
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+Copi
+
+**File**: `src/backend/distributed/commands/cluster.c` (modified, +11/-1)
+```diff
+@@ -64,7 +64,17 @@ PreprocessClusterStmt(Node *node, const char *clusterCommand,
+ 
+ 	/* PostgreSQL uses access exclusive lock for CLUSTER command */
+ #if PG_VERSION_NUM >= PG_VERSION_19
 +
-+    Each check runs in a backend on its source node, so the timeout towards
-+    the target is determined by the setting on the source, not on the node
-+    that runs citus_check_cluster_node_health().
-+    """
-+    for node in cluster.nodes:
-+        node.configure(f"citus.node_connection_timeout = {timeout_ms}")
-+        node.reload()
++	/*
++	 * PostgreSQL deliberately runs REPACK (CONCURRENTLY) under
++	 * ShareUpdateExclusiveLock instead (RepackLockLevel() in repack.c).  Taking
++	 * AccessExclusiveLock here would block the repack decoding worker when it
++	 * locks the relation to export its logical snapshot, so the command would
++	 * wait forever on RepackWorkerExport.  Match PostgreSQL's lock level.
++	 */
++	bool concurrently = RepackStmtOptionEnabled(clusterStmt, "concurrently");
+ 	Oid relationId = RangeVarGetRelid(clusterStmt->relation->relation,
++									  concurrently ? ShareUpdateExclusiveLock :
+ 									  AccessExclusiveLock, missingOK);
+ #else
+ 	Oid relationId = RangeVarGetRelid(clusterStmt->relation, AccessExclusiveLock,
+@@ -125,7 +135,7 @@ PreprocessClusterStmt(Node *node, const char *clusterCommand,
+ 	 * worker_apply_shard_ddl_command, and ANALYZE has no defined per-shard
+ 	 * semantics yet.  Reject both here, before any shard placement is touched.
+ 	 */
+-	if (RepackStmtOptionEnabled(clusterStmt, "concurrently"))
++	if (concurrently)
+ 	{
+ 		ereport(ERROR, (errmsg("cannot run %s command", commandName),
+ 						errdetail("CONCURRENTLY option is currently unsupported "
+```
+
+**File**: `src/test/regress/expected/pg19.out` (modified, +41/-0)
+```diff
+@@ -293,6 +293,26 @@ JOIN rf_before b USING (shardid);
+ (1 row)
+ 
+ DROP TABLE IF EXISTS rf_before;
++-- lock ordering: the rejection must fire WITHOUT first waiting on an exclusive lock.
++-- PG19 defines REPACK (CONCURRENTLY) to hold only ShareUpdateExclusiveLock until the
++-- final swap, so Citus must not escalate to AccessExclusiveLock merely to reject the
++-- statement.  Park a conflicting AccessShareLock in a prepared transaction -- it
++-- conflicts with AccessExclusiveLock but not with ShareUpdateExclusiveLock -- and set a
++-- short lock_timeout: a correctly ordered rejection names the unsupported option, a late
++-- one is killed by the lock timeout instead.  DDL propagation is switched off around the
++-- LOCK so that it stays a local statement: otherwise it opens a coordinated transaction
++-- and PREPARE TRANSACTION is refused.
++SET citus.enable_ddl_propagation TO off;
++BEGIN;
++LOCK TABLE repack_test IN ACCESS SHARE MODE;
++PREPARE TRANSACTION 'repack_test_lock_holder';
++RESET citus.enable_ddl_propagation;
++SET lock_timeout = '2s';
++REPACK (CONCURRENTLY) repack_test USING INDEX repack_test_a_idx;
++ERROR:  cannot run REPACK command
++DETAIL:  CONCURRENTLY option is currently unsupported for distributed tables.
++RESET lock_timeout;
++ROLLBACK PREPARED 'repack_test_lock_holder';
+ -- data is preserved by the ordinary REPACKs above
+ SELECT count(*) AS rows_after_disabled_option_repack FROM repack_test;
+  rows_after_disabled_option_repack
+@@ -1001,3 +1021,24 @@ DROP ROLE pg19_owner, pg19_grantor_a, pg19_grantor_b, pg19_actor, pg19_grantee;
+ DROP ROLE "Grant Owner", pg19_grantee2;
+ RESET client_min_messages;
+ RESET search_path;
++-- PG19 REPACK (CONCURRENTLY) must not be escalated to AccessExclusiveLock by
++-- Citus: that blocks the repack decoding worker and hangs forever, even on a
++-- plain local table.  Bound the statement so that a regression shows up as a
++-- diff rather than as a CI timeout.
++CREATE SCHEMA pg19_repack;
++SET search_path TO pg19_repack;
++CREATE TABLE repack_local (a int PRIMARY KEY, b text);
++INSERT INTO repack_local SELECT i, 'v' || i FROM generate_series(1, 100) i;
++SET statement_timeout = '60s';
++REPACK (CONCURRENTLY) repack_local;
++RESET statement_timeout;
++SELECT count(*) FROM repack_local;
++ count
++---------------------------------------------------------------------
++   100
++(1 row)
 +
-+    for node in cluster.nodes:
-+        node.poll_query_until(
-+            "SELECT setting::int = %s FROM pg_settings WHERE name = 'citus.node_connection_timeout'",
-+            (timeout_ms,),
-+        )
++SET client_min_messages TO WARNING;
++DROP SCHEMA pg19_repack CASCADE;
++RESET client_min_messages;
++RESET search_path;
+```
+
+**File**: `src/test/regress/sql/pg19.sql` (modified, +38/-0)
+```diff
+@@ -230,6 +230,27 @@ FROM run_command_on_shards('repack_test',
+ JOIN rf_before b USING (shardid);
+ DROP TABLE IF EXISTS rf_before;
+ 
++-- lock ordering: the rejection must fire WITHOUT first waiting on an exclusive lock.
++-- PG19 defines REPACK (CONCURRENTLY) to hold only ShareUpdateExclusiveLock until the
++-- final swap, so Citus must not escalate to AccessExclusiveLock merely to reject the
++-- statement.  Park a conflicting AccessShareLock in a prepared transaction -- it
++-- conflicts with AccessExclusiveLock but not with ShareUpdateExclusiveLock -- and set a
++-- short lock_timeout: a correctly ordered rejection names the unsupported option, a late
++-- one is killed by the lock timeout instead.  DDL propagation is switched off around the
++-- LOCK so that it stays a local statement: otherwise it opens a coordinated transaction
++-- and PREPARE TRANSACTION is refused.
++SET citus.enable_ddl_propagation TO off;
++BEGIN;
++LOCK TABLE repack_test IN ACCESS SHARE MODE;
++PREPARE TRANSACTION 'repack_test_lock_holder';
++RESET citus.enable_ddl_propagation;
 +
++SET lock_timeout = '2s';
++REPACK (CONCURRENTLY) repack_test USING INDEX repack_test_a_idx;
++RESET lock_timeout;
 +
-+def add_fake_nodes(cur, blackholes):
-+    for i, blackhole in enumerate(blackholes):
-+        cur.execute(
-+            "INSERT INTO pg_dist_node (nodeid, groupid, nodename, nodeport) VALUES (%s, %s, %s, %s)",
-+            (1000000 + i, 1000000 + i, blackhole.host, blackhole.port),
-+        )
++ROLLBACK PREPARED 'repack_test_lock_holder';
 +
+ -- data is preserved by the ordinary REPACKs above
+ SELECT count(*) AS rows_after_disabled_option_repack FROM repack_test;
+ 
+@@ -751,3 +772,20 @@ DROP ROLE pg19_owner, pg19_grantor_a, pg19_grantor_b, pg19_actor, pg19_grantee;
+ DROP ROLE "Grant Owner", pg19_grantee2;
+ RESET client_min_messages;
+ RESET search_path;
 +
-+def test_cluster_node_health_checks_sources_concurrently(cluster):
-+    timeout_ms = 1000
-+    timeout = timeout_ms / 1000
-+    set_node_connection_timeout(cluster, timeout_ms)
-+
-+    blackholes = [BlackholeServer() for _ in range(3)]
-+    try:
-+        with cluster.coordinator.cur(autocommit=False) as cur:
-+            add_fake_nodes(cur, blackholes)
-+
-+            start = time.monotonic()
-+            cur.execute(
-+                "SELECT from_nodename, from_nodeport, to_nodename, to_nodeport, result "
-+                "FROM citus_check_cluster_node_health()"
-+            )
-+            rows = cur.fetchall()
-+            elapsed = time.monotonic() - start
-+
-+            cur.connection.rollback()
-+    finally:
-+        for blackhole in blackholes:
-+            blackhole.close()
-+
-+    real_nodes = [(node.host, node.port) for node in cluster.nodes]
-+    fake_nodes = [(blackhole.host, blackhole.port) for blackhole in blackholes]
-+
-+    # rows are emitted in source-major order over the sorted node list
-+    all_nodes = sorted(real_nodes + fake_nodes)
-+    expected_rows = []
-+    for source in all_nodes:
-+        for target in all_nodes:
-+            if source in fake_nodes:
-+                result = None
-+            elif target in fake_nodes:
-+                result = False
-+            else:
-+                result = True
-+            expected_rows.append((*source, *target, result))
-+
-+    assert rows == expected_rows
-+
-+    # Executing the checks one by one waits for one timeout for every
-+    # connection to a fake source node, and for one timeout for every check
-+    # from a real source node to a fake target node. Executing them
-+    # concurrently waits for one timeout while connectin
++-- PG19 REPACK (CONCURRENTLY) must not be escalated to AccessExclusiveLock by
++-- Citus: that blocks the repack decoding worker and hangs forever, even on a
++-- plain local table.  Bound the statement so that a regression shows up as a
++-- diff rather than as a CI timeout.
++CREATE SCHEMA pg19_repack;
++SET search_path TO pg19_repack;
++CREATE TABLE repack_local (a int PRIMARY KEY, b text);
++INSERT INTO repack_local SELECT i, 'v' || i FROM generate_series(1, 100) i;
++SET statement_timeout = '60s';
++REPACK (CONCURRENTLY) repack_local;
++RESET statement_timeout;
++SELECT count(*) FROM repack_local;
++SET client_min_messages TO WARNING;
++DROP SCHEMA pg19_repack CASCADE;
++RESET client_min_messages;
++RESET search_path;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8938** (2026-10-20): Backport #8935: Parallelize cluster node health checks (release-13.2) (@vlkncetin)
-- **PR #8937** (2026-10-20): Backport #8935: Parallelize cluster node health checks (release-12.1) (@vlkncetin)
-- **PR #8935** (2026-10-20): Parallelize citus_check_cluster_node_health across source nodes (@vlkncetin)
-- **PR #8929** (2026-10-16): Update PostgreSQL 19 CI to RC1 (@ihalatci)
-- **PR #8924** (2026-10-14): Backport #8864: Fix incorrect column references in pushed-down HAVING clauses (release-13.2) (@KardelenCeren)
-- **PR #8921** (2026-10-14): Backport #8864: Fix incorrect column references in pushed-down HAVING clauses (release-14.0) (@KardelenCeren)
+- **PR #8951** (2026-10-23): Release 13.5.0 (@ihalatci)
+- **PR #8950** (2026-10-23): Update changelog for Citus 14.3.0 (@ihalatci)
+- **PR #8946** (2026-10-23): Evaluate replayed object definitions in the owner context (release-14.0) (@ihalatci)
+- **PR #8945** (2026-10-23): Evaluate replayed object definitions in the owner's context (release-13.2) (@ihalatci)
+- **PR #8944** (2026-10-23): Use an empty search path for internal SPI queries (release-14.0) (@ihalatci)
+- **PR #8943** (2026-10-23): Use an empty search path for internal SPI queries (release-13.2) (@ihalatci)
 
 ---
 
@@ -2888,76 +3057,56 @@ ori
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Parallelize citus_check_cluster_node_health across source nodes (#8935)
+## X. PG19: propagate EXPLAIN IO to worker nodes (#8807)
 
 **RULE**:
-When implementing operations in `src/backend/distributed/operations/health_check.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/backend/distributed/planner/multi_explain.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fadced9e`: Parallelize citus_check_cluster_node_health across source nodes (#8935). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ca742e8`: PG19: propagate EXPLAIN IO to worker nodes (#8807). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/operations/health_check.c`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/planner/multi_explain.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
- * connections = connectConcurrently(activeReadableNodeList)
- * for targetNode in activeReadableNodeList:
- *   for c in connections:
- *     c.send("SELECT citus_check_connection_to_node(targetNode.name, targetNode.port")
- *   wait for all connections
- *   collect the result of each source node for targetNode
- * Each source node still checks the target nodes one at a time and in the sorted
- * order, but all source nodes check the same target node concurrently. Hence, at most
- * one probe is in flight per source node, and a target node may receive one probe
- * connection from each of the source nodes at the same time.
- *
-	int nodeCount = list_length(workerNodeList);
+#if PG_VERSION_NUM >= PG_VERSION_19
+	bool io;
+#endif
+	 * can be NULL for some cases of es->analyze == true.  A distributed subplan can
+	 * also end up here when its re-planned task ids do not match the ids its saved
+	 * output was stored under; that is a known bug, see #8952.
+#if PG_VERSION_NUM >= PG_VERSION_19
+					 "IO %s, "
+#endif
+#if PG_VERSION_NUM >= PG_VERSION_19
+					 es->io ? "TRUE" : "FALSE",
+#endif
+#if PG_VERSION_NUM >= PG_VERSION_19
+	es->io = ExtractFieldBoolean(explainOptions, "io", es->io);
+#endif
+#if PG_VERSION_NUM >= PG_VERSION_19
+	CurrentDistributedQueryExplainOptions.io = es->io;
+#endif
+#if PG_VERSION_NUM >= PG_VERSION_19
+					 "\"io\": %s, "
+#endif
+#if PG_VERSION_NUM >= PG_VERSION_19
+					 CurrentDistributedQueryExplainOptions.io ? "true" : "false",
+#endif
+#if PG_VERSION_NUM >= PG_VERSION_19
+	if (es->io)
+		instrument_option |= INSTRUMENT_IO;
+#endif
 
-	/* open the connections to all source nodes concurrently */
-	MultiConnection **sourceConnections = palloc0(nodeCount * sizeof(MultiConnection *));
-	List *sourceConnectionList = NIL;
-	int sourceIndex = 0;
-
-		MultiConnection *connection =
-			StartNodeConnection(connectionFlags, sourceWorkerNode->workerName,
-								sourceWorkerNode->workerPort);
-		sourceConnections[sourceIndex++] = connection;
-		sourceConnectionList = lappend(sourceConnectionList, connection);
-	}
-	FinishConnectionListEstablishment(sourceConnectionList);
-	
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
- *   c = connectToNode(sourceNode)
- *     result = c.execute("SELECT citus_check_connection_to_node(targetNode.name, targetNode.port")
-	/*
-	 * We iterate over the workerNodeList twice, for source and target worker nodes. This
-	 * operation is safe for foreach_declared_ptr macro, as long as we use different variables for
-	 * each iteration.
-	 */
-		const char *sourceNodeName = sourceWorkerNode->workerName;
-		const int sourceNodePort = sourceWorkerNode->workerPort;
-		/* open a connection to the source node using the synchronous api */
-		MultiConnection *connectionToSourceNode =
-			GetNodeConnection(connectionFlags, sourceNodeName, sourceNodePort);
-		/* the second iteration over workerNodeList for the target worker nodes. */
-		WorkerNode *targetWorkerNode = NULL;
-		foreach_declared_ptr(targetWorkerNode, workerNodeList)
-		{
-			const char *targetNodeName = targetWorkerNode->workerName;
-			const int targetNodePort = targetWorkerNode->workerPort;
-			char *connectivityCheckCommandToTargetNode =
-				GetConnectivityCheckCommand(targetNodeName, targetNodePort);
-			PGresult *result = NULL;
-			int executionResult =
-				ExecuteOptionalRemoteCommand(connectionToSourceNode,
-											 connectivity
+	 * can be NULL for some cases of es->analyze == true.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fadced9e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ca742e8` are properly handled with clean fallback behavior.

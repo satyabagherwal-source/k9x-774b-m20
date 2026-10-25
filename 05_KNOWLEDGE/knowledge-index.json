@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T03:38:40.492Z",
+  "last_updated": "2026-10-25T03:45:10.892Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5936,8 +5936,8 @@
       "slug": "citusdata-citus",
       "platform": "github",
       "source_url": "https://github.com/citusdata/citus",
-      "source_version": "fadced9e",
-      "content_hash": "f9f364bc700570fd0806d1b4b714a8e7b6e0914fc3b2b5258854d423904a94fa",
+      "source_version": "5ca742e8",
+      "content_hash": "844a7c23aac2f87afeeae978527ed78296f5981b4720ab4488a7b86f12d39cf6",
       "dossier_path": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "promoted_rules": [
@@ -5950,6 +5950,11 @@
           "number": 3382,
           "title": "Parallelize citus_check_cluster_node_health across source nodes (#8935)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4021,
+          "title": "PG19: propagate EXPLAIN IO to worker nodes (#8807)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5957,7 +5962,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:08:10.634Z",
+      "verified_at": "2026-10-25T03:45:10.881Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44232,8 +44237,8 @@
       "slug": "software-mansion-react-native-gesture-handler",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-gesture-handler",
-      "source_version": "0c12342f",
-      "content_hash": "cd5378b6af2b4336aa2b5f99c19d4a89ff8a29b87d685eb4f80cd506d43ec115",
+      "source_version": "a83496bf",
+      "content_hash": "77b66daa9618a23b97c27e0beff0f562407d5ef35acc225eb2fb22f7a9e1d31f",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
       "promoted_rules": [
@@ -44246,6 +44251,11 @@
           "number": 3218,
           "title": "[Jest] Mock `installUIRuntimeBindings` in `jestSetup.js` (#4615)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4020,
+          "title": "Keep Reanimated deep imports out of web bundles (#4620)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44253,7 +44263,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T14:25:25.650Z",
+      "verified_at": "2026-10-25T03:45:03.863Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59568,13 +59578,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "21c27035",
-      "content_hash": "a843d372ac399a592871f731bdc387d6314b7c4c4716cad185066db67f384094",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "fdf620f048b92f200fa341c42b6d0fc204fa6bf9100ac15f0737a19f8a71bc25",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -59614,7 +59624,7 @@
         {
           "number": 3992,
           "title": "Bump crates with security advisories",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59622,7 +59632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:42:40.027Z",
+      "verified_at": "2026-10-25T03:45:09.943Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61533,7 +61543,7 @@
       "platform": "github",
       "source_url": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
       "source_version": "63245304",
-      "content_hash": "92f5f71dbd5e1612dabc98311994200929c6ae3ead8f63d6d1aa5350fd3376b6",
+      "content_hash": "c50b8e49b5587df14a87f0fdd486ad0d7676b0b690104e778b84bd031930c6f8",
       "dossier_path": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlcove-crawlcove-robots-txt-tester-learnings.md",
       "promoted_rules": [
@@ -61549,7 +61559,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:39:09.823Z",
+      "verified_at": "2026-10-25T03:45:01.508Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84765,7 +84775,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T11:39:09.823Z"
+      "verified_at": "2026-10-25T03:45:01.508Z"
     },
     "rule-1782": {
       "learning_id": "rule-1782",
@@ -117218,14 +117228,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3992,
       "title": "Bump crates with security advisories",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "21c27035",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T02:42:40.027Z"
+      "verified_at": "2026-10-25T03:45:09.943Z"
     },
     "rule-3993": {
       "learning_id": "rule-3993",
@@ -117604,6 +117614,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T03:38:40.482Z"
+    },
+    "rule-4020": {
+      "learning_id": "rule-4020",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4020,
+      "title": "Keep Reanimated deep imports out of web bundles (#4620)",
+      "source_url": "https://github.com/software-mansion/react-native-gesture-handler",
+      "source_version": "a83496bf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:45:03.863Z"
+    },
+    "rule-4021": {
+      "learning_id": "rule-4021",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4021,
+      "title": "PG19: propagate EXPLAIN IO to worker nodes (#8807)",
+      "source_url": "https://github.com/citusdata/citus",
+      "source_version": "5ca742e8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:45:10.881Z"
     }
   },
   "aliases": {

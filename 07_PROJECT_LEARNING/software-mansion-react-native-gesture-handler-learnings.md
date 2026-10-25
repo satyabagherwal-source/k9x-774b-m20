@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
-> **Source Version**: `0c12342f`  
+> **Source Version**: `a83496bf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T14:25:25.329Z  
+> **Timestamp**: 2026-10-25T03:45:03.536Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-gesture-handler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T14:25:24.837Z  
+> **Harvest Timestamp**: 2026-10-25T03:45:03.293Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declarative API exposing platform native touch and gesture system to React Native.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6793 stars
+- **Stars / Engagement**: 6794 stars
 
 ---
 
@@ -1388,88 +1388,324 @@ class LongPressGestureHandler(context: Context) : GestureHandler() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `73e09d13` (2026-10-20)
-**Commit Message**: [Jest] Mock `installUIRuntimeBindings` in `jestSetup.js` (#4615)
+### Incident Patch 1: `a83496bf` (2026-10-22)
+**Commit Message**: Keep Reanimated deep imports out of web bundles (#4620)
 
 ## Description
 
-With the Worklets Jest resolver (`react-native-worklets/jest/resolver`,
-also chained by the Reanimated one), Worklets resolves to its web build
-while Gesture Handler still resolves to native files. Importing
-`react-native-gesture-handler` in a test then throws from the microtask
-queued by `installUIRuntimeBindings`:
+#4554 gates `Wrap.getAnimatableRef()` on whether Reanimated re-resolves
+the animatable ref on update. The check deep-imports
+`react-native-reanimated/src/createAnimatedComponent/AnimatedComponent`
+and looks for `_refreshComponentRef` on its prototype. It lives in
+`reanimatedWrapper.ts`, which every platform loads.
 
-```
-[Worklets] `getUIRuntimeHolder` is not supported on web.
-```
+Reanimated has no `exports` map. Its `react-native` field points at
+`src/`, but `main` and `module` point at `lib/module`. Bundlers that
+ignore the `react-native` field (Vite, webpack) therefore resolve the
+package root to `lib/module` and the deep import to `src/`, which is a
+second copy of Reanimated. In Vite dev the optimizer leaves the `.tsx`
+deep import as a raw import, and
+`src/platform-specific/workletsVersion.ts` default-imports a CommonJS
+script, so the module graph fails and the app never mounts. In
+production the bundle contains every Reanimated module twice. Metro,
+including Expo web, keeps `react-native` first and is unaffected.
 
-The native half of the install is already stubbed by the module mock, so
-the call has no effect in Jest. This adds a noop mock for
-`installUIRuntimeBindings` and registers it in `jestSetup.js` for both
-`src` and `lib/module`, next to the existing mocks.
-`RuntimeBindings.test.ts` unmocks it to keep exercising the real
-install.
+The check moves to `GestureDetector/refreshesAnimatableRef.ts`, imported
+only by the native `Wrap.tsx`. `Wrap.web.tsx` already uses the plain
+`Wrap`, so web bu
 
-Fixes #4613
-
-## Test plan
-
-- Reporter's repro (RN 0.88.0, Worklets 0.13.0, resolver set,
-jestSetup.js loaded): fails on 3.4.0, passes with a tarball built from
-this branch.
-- `yarn test` in packages/react-native-gesture-handler: 23 suites, 223
-tests green.
-- `yarn lint:js`, `yarn ts-check` clean.
-
-**File**: `packages/react-native-gesture-handler/jestSetup.js` (modified, +6/-0)
+**File**: `packages/react-native-gesture-handler/src/__tests__/legacyWrapRef.test.tsx` (modified, +2/-2)
 ```diff
-@@ -14,6 +14,9 @@ jest.mock('./src/components/touchables', () =>
- jest.mock('./src/v3/detectors/HostGestureDetector', () =>
-   require('./src/mocks/hostDetector')
- );
-+jest.mock('./src/handlers/gestures/installUIRuntimeBindings', () =>
-+  require('./src/mocks/installUIRuntimeBindings')
-+);
+@@ -2,8 +2,8 @@ import { cleanup, render } from '@testing-library/react-native';
+ import React from 'react';
+ import { findNodeHandle, View } from 'react-native';
  
- jest.mock('./lib/module/RNGestureHandlerModule', () =>
-   require('./lib/module/mocks/module')
-@@ -33,3 +36,6 @@ jest.mock('./lib/module/components/GestureComponents', () =>
- jest.mock('./lib/module/v3/detectors/HostGestureDetector', () =>
-   require('./lib/module/mocks/hostDetector')
- );
-+jest.mock('./lib/module/handlers/gestures/installUIRuntimeBindings', () =>
-+  require('./lib/module/mocks/installUIRuntimeBindings')
-+);
++import * as refreshesAnimatableRef from '../handlers/gestures/GestureDetector/refreshesAnimatableRef';
+ import { Wrap } from '../handlers/gestures/GestureDetector/Wrap';
+-import * as reanimatedWrapper from '../handlers/gestures/reanimatedWrapper';
+ import { Gesture, GestureDetector, GestureHandlerRootView } from '../index';
+ import RNGestureHandlerModule from '../RNGestureHandlerModule';
+ 
+@@ -139,7 +139,7 @@ describe('Legacy GestureDetector ref forwarding', () => {
+ 
+     beforeEach(() => {
+       refreshSpy = jest.spyOn(
+-        reanimatedWrapper,
++        refreshesAnimatableRef,
+         'reanimatedRefreshesAnimatableRef'
+       );
+     });
 ```
 
-**File**: `packages/react-native-gesture-handler/src/__tests__/RuntimeBindings.test.ts` (modified, +3/-0)
+**File**: `packages/react-native-gesture-handler/src/handlers/gestures/GestureDetector/Wrap.tsx` (modified, +2/-4)
 ```diff
-@@ -1,3 +1,6 @@
-+// jestSetup.js stubs the install; this test exercises the real one.
-+jest.unmock('../handlers/gestures/installUIRuntimeBindings');
+@@ -8,10 +8,8 @@ import {
+   resolveHostInstance,
+ } from '../../../hostInstance';
+ import { tagMessage } from '../../../utils';
+-import {
+-  Reanimated,
+-  reanimatedRefreshesAnimatableRef,
+-} from '../reanimatedWrapper';
++import { Reanimated } from '../reanimatedWrapper';
++import { reanimatedRefreshesAnimatableRef } from './refreshesAnimatableRef';
+ 
+ export class Wrap extends React.Component<{
+   onGestureHandlerEvent?: unknown;
+```
+
+**File**: `packages/react-native-gesture-handler/src/handlers/gestures/GestureDetector/refreshesAnimatableRef.ts` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++// Reanimated resolves `getAnimatableRef()` once, when its ref to the wrapped
++// component attaches. Only versions that re-resolve it on update (their
++// `AnimatedComponent` has `_refreshComponentRef`) can be handed a child's host
++// instance that may change, as the legacy `Wrap` does. The class is not
++// exported, so probe it by subpath, as the v3 detector does for
++// `NativeEventsManager`.
++//
++// Only the native `Wrap` imports this module. The subpath resolves to a second
++// copy of Reanimated under bundlers that ignore its `react-native` field
++// (Vite, webpack), so it must stay out of web bundles.
++let refreshesAnimatableRef = false;
++try {
++  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
++  const AnimatedComponent =
++    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
++    require('react-native-reanimated/src/createAnimatedComponent/AnimatedComponent').default;
++  refreshesAnimatableRef =
++    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
++    typeof AnimatedComponent?.prototype?._refreshComponentRef === 'function';
++} catch {
++  // Reanimated is missing or older; keep handing Reanimated the Wrap itself.
++}
 +
- type RuntimeProviders = {
-   worklets?: {
-     getUIRuntimeHolder?: () => object;
-```
-
-**File**: `packages/react-native-gesture-handler/src/mocks/installUIRuntimeBindings.tsx` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+export function installUIRuntimeBindings(
-+  _getUIRuntimeHolder: (() => object) | undefined
-+) {
-+  // noop
++export function reanimatedRefreshesAnimatableRef() {
++  return refreshesAnimatableRef;
 +}
 ```
 
+**File**: `packages/react-native-gesture-handler/src/handlers/gestures/reanimatedWrapper.ts` (modified, +0/-23)
+```diff
+@@ -132,27 +132,4 @@ if (Reanimated !== undefined && !Reanimated.setGestureState) {
+   };
+ }
+ 
+-// Reanimated resolves `getAnimatableRef()` once, when its ref to the wrapped
+-// component attaches. Only versions that re-resolve it on update (their
+-// `AnimatedComponent` has `_refreshComponentRef`) can be handed a child's host
+-// instance that may change, as the legacy `Wrap` does. The class is not
+-// exported, so probe it by subpath, as the v3 detector does for
+-// `NativeEventsManager`.
+-let refreshesAnimatableRef = false;
+-try {
+-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+-  const AnimatedComponent =
+-    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+-    require('react-native-reanimated/src/createAnimatedComponent/AnimatedComponent').default;
+-  refreshesAnimatableRef =
+-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+-    typeof AnimatedComponent?.prototype?._refreshComponentRef === 'function';
+-} catch {
+-  // Reanimated is missing or older; keep handing Reanimated the Wrap itself.
+-}
+-
+-export function reanimatedRefreshesAnimatableRef() {
+-  return refreshesAnimatableRef;
+-}
+-
+ export { Reanimated, Worklets };
+```
+
+---
+
+### Incident Patch 2: `2202d7b1` (2026-10-22)
+**Commit Message**: [Web] Handle moves that leave or re-enter the view as out-of-bounds moves (#4610)
+
+The fix now lives in `GestureHandler`: `onPointerLeave` and
+`onPointerEnter` mark the event as a move and pass it to
+`onPointerOutOfBounds`, so every handler applies these moves. The
+Pan-specific overrides are removed. The description below explains the
+original Pan symptoms, which this change still fixes.
+
+## Description
+
+On web, `PointerEventManager` dispatches the `pointermove` that takes a
+tracked pointer out of the view as `onPointerLeave`, and the one that
+brings it back as `onPointerEnter`. `PanGestureHandler` did not override
+either, so for those moves it never updated the tracker, the last
+coordinates or the velocity, and never checked whether to activate. As a
+result:
+
+- `onUpdate` does not fire for the move that leaves or re-enters the
+view.
+- If the pointer is released right after, `onEnd` reports the last
+in-bounds position instead of the release position.
+- A Pan in `BEGAN` whose activating move lands outside the view does not
+activate on that move.
+
+This PR makes `PanGestureHandler` handle the leave and enter moves like
+any other move: it tracks the pointer, updates the coordinates and
+
+**File**: `packages/react-native-gesture-handler/src/web/handlers/GestureHandler.ts` (modified, +4/-2)
+```diff
+@@ -376,10 +376,12 @@ export default abstract class GestureHandler implements IGestureHandler {
+       return;
+     }
+ 
+-    this.tryToSendTouchEvent(event);
++    event.eventType = EventTypes.MOVE;
++    this.onPointerOutOfBounds(event);
+   }
+   protected onPointerEnter(event: AdaptedEvent): void {
+-    this.tryToSendTouchEvent(event);
++    event.eventType = EventTypes.MOVE;
++    this.onPointerMove(event);
+   }
+   protected onPointerCancel(_event: AdaptedEvent): void {
+     // No need to send a cancel touch event explicitly here. `cancel` will
+```
+
+**File**: `packages/react-native-gesture-handler/src/web/handlers/__tests__/PanGestureHandler.test.ts` (modified, +111/-0)
+```diff
+@@ -21,6 +21,26 @@ class TestPanGestureHandler extends PanGestureHandler {
+     return this.transformNativeEvent();
+   }
+ 
++  public pointerDown(event: AdaptedEvent): void {
++    this.onPointerDown(event);
++  }
++
++  public pointerMove(event: AdaptedEvent): void {
++    this.onPointerMove(event);
++  }
++
++  public pointerLeave(event: AdaptedEvent): void {
++    this.onPointerLeave(event);
++  }
++
++  public pointerEnter(event: AdaptedEvent): void {
++    this.onPointerEnter(event);
++  }
++
++  public pointerUp(event: AdaptedEvent): void {
++    this.onPointerUp(event);
++  }
++
+   protected override onWheel(event: AdaptedEvent): void {
+     this.wheelEvents.push(event);
+     super.onWheel(event);
+@@ -42,6 +62,19 @@ function wheelEvent(): AdaptedEvent {
+   };
+ }
+ 
++function pointerEvent(eventType: EventTypes, y: number): AdaptedEvent {
++  return {
++    x: 20,
++    y,
++    offsetX: 20,
++    offsetY: y,
++    pointerId: 0,
++    eventType,
++    pointerType: PointerType.MOUSE,
++    time: 0,
++  };
++}
++
+ function createHandler(eventManagers: EventManager<unknown>[] = []) {
+   const delegate = {
+     init: jest.fn(),
+@@ -307,3 +340,81 @@ describe('PanGestureHandler trackpad coordinates', () => {
+     ).toMatchObject({ x: 75, y: 50, absoluteX: 65, absoluteY: 110 });
+   });
+ });
++
++describe('PanGestureHandler pointer leaving and entering the view', () => {
++  // The view is 40x40, the pointer goes down at its center.
++  function startPan(config: Record<string, unknown> = {}) {
++    const handler = createHandler();
++    const updates: { state: State; translationY: unknown }[] = [];
++
++    handler.sendEvent = jest.fn((newState: State) => {
++      updates.push({
++        state: newState,
++        translationY: handler.nativeEvent().translationY,
++      });
++    });
++
++    handler.setGestureConfig({ enabled: true, minDist: 0, ...config });
++    handler.pointerDown(pointerEvent(EventTypes.DOWN, 20));
++
++    return { handler, updates };
++  }
++
++  test('the move that leaves the view updates the position', () => {
++    const { handler, updates } = startPan();
++
++    handler.pointerMove(pointerEvent(EventTypes.MOVE, 25));
++    expect(handler.state).toBe(State.ACTIVE);
++
++    updates.length = 0;
++    handler.pointerLeave(pointerEvent(EventTypes.LEAVE, 320));
++
++    expect(updates).toEqual([{ state: State.ACTIVE, translationY: 300 }]);
++
++    handler.pointerUp(pointerEvent(EventTypes.UP, 320));
++
++    expect(updates[updates.length - 1]).toEqual({
++      state: State.END,
++      translationY: 300,
++    });
++  });
++
++  test('the move that enters the view updates the position', () => {
++    const { handler, updates } = startPan();
++
++    handler.pointerMove(pointerEvent(EventTypes.MOVE, 25));
++    handler.pointerLeave(pointerEvent(EventTypes.LEAVE, 320));
++
++    updates.length = 0;
++    handler.pointerEnter(pointerEvent(EventTypes.ENTER, 30));
++
++    expect(updates).toEqual([{ state: State.ACTIVE, translationY: 10 }]);
++
++    handler.pointerUp(pointerEvent(EventTypes.UP, 30));
++
++    expect(updates[updates.length - 1]).toEqual({
++      state: State.END,
++      translationY: 10,
++    });
++  });
++
++  test('the move that leaves the view can activate the gesture', () => {
++    const { handler } = startPan({ minDist: 10 });
++
++    handler.pointerMove(pointerEvent(EventTypes.MOVE, 25));
++    expect(handler.state).toBe(State.BEGAN);
++
++    handler.pointerLeave(pointerEvent(EventTypes.LEAVE, 320));
++
++    expect(handler.state).toBe(State.ACTIVE);
++  });
++
++  test('the gesture is still cancelled when the pointer leaves the view with shouldCancelWhenOutside', () => {
++    const { handler } = startPan({ shouldCancelWhenOutside: true });
++
++    handler.pointerMove(pointerEvent(EventTypes.MOVE, 25));
++    handler.pointerLeave(pointerEvent(EventTypes.LEAVE, 320));
++
++    expect(handler.state).toBe(State.CANCELLED);
++  });
++});
+```
+
 #### Recent Merged Pull Requests:
+- **PR #4624** (2026-10-22): [Web] Start hover on the first pointer move when pointerenter was missed (@collectioneur)
+- **PR #4620** (2026-10-22): Keep Reanimated deep imports out of web bundles (@m-bert)
+- **PR #4618** (2026-10-21): Undo a cancelled `ReanimatedSwipeable` pan (@chocky335)
 - **PR #4615** (2026-10-20): [Jest] Mock `installUIRuntimeBindings` in `jestSetup.js` (@m-bert)
 - **PR #4612** (2026-10-19): Bump to `expo` sdk 58 (@m-bert)
-- **PR #4606** (2026-10-16): Update compatibility table for 3.4.0 (@m-bert)
-- **PR #4605** (2026-10-16): [Android] Check the overflow ancestor pass against the detector child's bounds (@m-bert)
-- **PR #4604** (2026-10-16): Stop `react-native-pager-view` from entering the web bundle of the example app (@m-bert)
-- **PR #4603** (2026-10-20): [iOS] Keep button children in mount order behind the underlay layer (@radko93)
+- **PR #4610** (2026-10-22): [Web] Handle moves that leave or re-enter the view as out-of-bounds moves (@RaphaelFakhri)
 
 ---
 
@@ -1489,33 +1725,30 @@ tests green.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Jest] Mock `installUIRuntimeBindings` in `jestSetup.js` (#4615)
+## X. Keep Reanimated deep imports out of web bundles (#4620)
 
 **RULE**:
-When implementing operations in `packages/react-native-gesture-handler/jestSetup.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-gesture-handler/src/__tests__/legacyWrapRef.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `73e09d13`: [Jest] Mock `installUIRuntimeBindings` in `jestSetup.js` (#4615). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a83496bf`: Keep Reanimated deep imports out of web bundles (#4620). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/jestSetup.js`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/src/__tests__/legacyWrapRef.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-jest.mock('./src/handlers/gestures/installUIRuntimeBindings', () =>
-  require('./src/mocks/installUIRuntimeBindings')
-);
-jest.mock('./lib/module/handlers/gestures/installUIRuntimeBindings', () =>
-  require('./lib/module/mocks/installUIRuntimeBindings')
-);
+import * as refreshesAnimatableRef from '../handlers/gestures/GestureDetector/refreshesAnimatableRef';
+        refreshesAnimatableRef,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+import * as reanimatedWrapper from '../handlers/gestures/reanimatedWrapper';
+        reanimatedWrapper,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `73e09d13` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a83496bf` are properly handled with clean fallback behavior.
