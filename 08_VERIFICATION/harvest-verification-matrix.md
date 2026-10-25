@@ -4930,3 +4930,7 @@
 | `CYCLE-20261025-TMT5` | `2026-10-25T17:59:11.801Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`c0f76c22...`) |
 | `CYCLE-20261025-TR7F` | `2026-10-25T17:59:17.499Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4402` | Yes (`cc77505e...`) |
 | `CYCLE-20261025-XWXG` | `2026-10-25T18:02:31.540Z` | `honojs/hono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4403, Rule 4404` | Yes (`386f23cf...`) |
+| `CYCLE-20261025-60S3` | `2026-10-25T18:08:49.779Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`35d3a5f7...`) |
+| `CYCLE-20261025-65E5` | `2026-10-25T18:08:55.757Z` | `alin23/Lunar` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/alin23-lunar-learnings.md` | Yes (`3a12c4a4...`) |
+| `CYCLE-20261025-67GP` | `2026-10-25T18:08:58.441Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4405` | Yes (`91d45098...`) |
+| `CYCLE-20261025-694R` | `2026-10-25T18:09:00.603Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4406` | Yes (`a7b249b4...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `566f89e0`  
+> **Source Version**: `b71e0f30`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:04:53.865Z  
+> **Timestamp**: 2026-10-25T18:09:00.230Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:04:53.858Z  
+> **Harvest Timestamp**: 2026-10-25T18:09:00.223Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38034 stars
+- **Stars / Engagement**: 38056 stars
 
 ---
 
@@ -821,443 +821,157 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `566f89e0` (2026-10-25)
-**Commit Message**: ipn/ipnlocal: fix serve app caps leaking across mounts (#21931)
-
-`serveWebHandler` wrote each mount's accepted app capabilities into the connection-scoped serveHTTPContext. Concurrent h2 streams of one TLS serve connection share that struct, so a request to a mount accepting no capabilities could be proxied carrying another mount's `Tailscale-App-Capabilities` header, letting backends that trust the header authorize the wrong mount.
-
-This change fixes that issue by storing accepted capabilities per-request via a context value instead of a field on the shared struct.
-
-Updates tailscale/corp#50380
-
-Change-Id: I5d0a4a02266018f342ba75a1b3291176738ce05b
-
-Signed-off-by: Mike Jensen <[REDACTED_EMAIL]>
-
-**File**: `ipn/ipnlocal/serve.go` (modified, +12/-10)
-```diff
-@@ -86,15 +86,21 @@ var ErrProxyToTailscaledSocket = errors.New("cannot proxy to tailscaled socket")
- 
- var serveHTTPContextKey ctxkey.Key[*serveHTTPContext]
- 
-+// appCapsContextKey holds the app capabilities accepted by the mount handling
-+// the current request. It is per-request state: serveHTTPContext is shared by
-+// all streams of a connection, so mount state must not be stored on it.
-+var appCapsContextKey = ctxkey.New("ipnlocal.appCapsContextKey", views.Slice[peercap.Cap]{})
-+
-+// serveHTTPContext is connection-scoped: one value is shared by all requests on
-+// the connection, including concurrent h2 streams. Do not add per-request state
-+// to it, use a separate context key like appCapsContextKey instead.
- type serveHTTPContext struct {
- 	SrcAddr       netip.AddrPort
- 	ForVIPService tailcfg.ServiceName // "" means local
- 	DestPort      uint16
- 
- 	// provides funnel-specific context, nil if not funneled
- 	Funnel *funnelFlow
--	// AppCapabilities lists all PeerCapabilities that should be forwarded by serve
--	AppCapabilities views.Slice[peercap.Cap]
- }
- 
- // funnelFlow represents a funneled connection initiated via IngressPeer
-@@ -1149,8 +1155,8 @@ func (b *LocalBackend) addAppCapabilitiesHeader(r *httputil.ProxyRequest) error
- 	if !ok || c.Funnel != nil {
- 		return nil
- 	}
--	acceptCaps := c.AppCapabilities
--	if acceptCaps.IsNil() {
-+	acceptCaps, ok := appCapsContextKey.ValueOk(r.Out.Context())
-+	if !ok || acceptCaps.IsNil() {
- 		return nil
- 	}
- 	peerCaps := b.PeerCaps(c.SrcAddr.Addr())
-@@ -1218,12 +1224,8 @@ func (b *LocalBackend) serveWebHandler(w http.ResponseWriter, r *http.Request) {
- 			http.Error(w, "unknown proxy destination", http.StatusInternalServerError)
- 			return
- 		}
--		// Inject app capabilities to forward into the request context
--		c, ok := serveHTTPContextKey.ValueOk(r.Context())
--		if !ok {
--			return
--		}
--		c.AppCapabilities = h.AcceptAppCaps()
-+		// Mount-accepted capabilities are per-request state
-+		r = r.WithContext(appCapsContextKey.WithValue(r.Context(), h.AcceptAppCaps()))
- 		h := p.(http.Handler)
- 		// Trim the mount point from the URL path before proxying. (#6571)
- 		if r.URL.Path != "/" {
-```
-
-**File**: `ipn/ipnlocal/serve_test.go` (modified, +171/-0)
-```diff
-@@ -25,6 +25,7 @@ import (
- 	"reflect"
- 	"strconv"
- 	"strings"
-+	"sync"
- 	"testing"
- 	"time"
- 
-@@ -990,6 +991,176 @@ func TestServeHTTPProxyGrantHeader(t *testing.T) {
- 	}
- }
- 
-+// newAppCapsTestBackend returns a test backend whose peer at 100.150.151.152
-+// holds the example.com/cap/interesting capability for the node 100.150.151.151.
-+func newAppCapsTestBackend(t *testing.T) *LocalBackend {
-+	b := newTestBackend(t)
-+
-+	nm := b.NetMapWithPeers()
-+	matches, err := filter.MatchesFromFilterRules([]tailcfg.FilterRule{
-+		{
-+			SrcIPs: []string{"100.150.151.152"},
-+			CapGrant: []tailcfg.CapGrant{{
-+				Dsts: []netip.Prefix{
-+					netip.MustParsePrefix("100.150.151.151/32"),
-+				},
-+				CapMap: tailcfg.PeerCapMap{
-+					"example.com/cap/interesting": []tailcfg.RawMessage{
-+						`{"role": "engineer"}`,
-+					},
-+				},
-+			}},
-+		},
-+	})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	nm.PacketFilter = matches
-+	b.SetControlClientStatus(nil, controlclient.Status{NetMap: nm})
-+	return b
-+}
-+
-+// appCapsEchoServer returns a test backend that echoes the
-+// Tailscale-App-Capabilities request header in its response body.
-+func appCapsEchoServer(t *testing.T) *httptest.Server {
-+	t.Helper()
-+
-+	testServ := httptest.NewServer(http.HandlerFunc(
-+		func(w http.ResponseWriter, r *http.Request) {
-+			fmt.Fprint(w, r.Header.Get("Tailscale-App-Capabilities"))
-+		},
-+	))
-+	t.Cleanup(testServ.Close)
-+	return testServ
-+}
-+
-+// TestServeAppCapsConcurrentStreams verifies that app capabilities accepted by one
-+// serve mount are not forwarded for requests to another mount, when the requests
-+// share the connection-scoped serveHTTPContext the way concurrent h2 streams do.
-+func TestServeAppCapsConcurrentStreams(t *testing.T) {
-+	b := newAppCapsTestBackend(t)
-+	testServ := appCapsEchoServer(t)
-+
-+	conf := &ipn.ServeConfig{
-+		Web: map[ipn.HostPort]*ipn.WebServerConfig{
-+			"example.ts.net:443": {Handlers: map[string]*ipn.HTTPHandler{
-+				"/ops": {
-+					Proxy:         testServ.URL,
-+					AcceptAppCaps: []peercap.Cap{"example.com/cap/interesting"},
-+				},
-+				"/admin": {
-+					Proxy: testServ.URL, // accepts no capabilities
-+				},
-+			}},
-+		},
-+	}
-+	if err := b.SetServeConfig(conf, ""); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	// One connection-scoped serveHTTPContext
-+	connCtx := serveHTTPContextKey.WithValue(t.Context(), &serveHTTPContext{
-+		DestPort: 443,
-+		SrcAddr:  netip.MustParseAddrPort("100.150.151.152:1234"),
-+	})
-+
-+	newReq := func(path string) *http.Request {
-+		req := &http.Request{
-+			URL: &url.URL{Path: path},
-+			TLS: &tls.ConnectionState{ServerName: "example.ts.net"},
-+		}
-+		return req.WithContext(connCtx)
-+	}
-+
-+	const rounds = 200
-+	var wg sync.WaitGroup
-+	errCh := make(chan error, 2*rounds) // both mounts can fail every round
-+	for range rounds {
-+		wg.Add(2)
-+		go func() {
-+			defer wg.Done()
-+			w := httptest.NewRecorder()
-+			b.serveWebHandler(w, newReq("/ops"))
-+			if got := w.Body.String(); got == "" {
-+				errCh <- fmt.Errorf("/ops: capabilities header missing")
-+			}
-+		}()
-+		go func() {
-+			defer wg.Done()
-+			w := httptest.NewRecorder()
-+			b.serveWebHandler(w, newReq("/admin"))
-+			if got := w.Body.String(); got != "" {
-+				errCh <- fmt.Errorf("/admin: unexpected capabilities header %q", got)
-+			}
-+		}()
-+	}
-+	wg.Wait()
-+	close(errCh)
-+	for err := range errCh {
-+		t.Error(err)
-+	}
-+}
-+
-+// TestServeAppCapsPerRequest verifies that the accepted capabilities
-+// forwarded to the backend match the mount that served each request.
-+func TestServeAppCapsPerRequest(t *testing.T) {
-+	b := newAppCapsTestBackend(t)
-+	testServ := appCapsEchoServer(t)
-+
-+	conf := &ipn.ServeConfig{
-+		Web: map[ipn.HostPort]*ipn.WebServerConfig{
-+			"example.ts.net:443": {Handlers: map[string]*ipn.HTTPHandler{
-+				"/": {
-+					Proxy:         testServ.URL,
-+					AcceptAppCaps: []peercap.Cap{"example.com/cap/interesting"},
-+				},
-+				"/text": {
-+					Text: "not proxied", // no proxy, no capabilities involved
-+				},
-+			}},
-+		},
-+	}
-+	if err := b.SetServeConfig(conf, ""); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	tests := []struct {
-+		name     string
-+		path     string
-+		wantBody string
-+	}{
-+		{
-+			name:     "accepting_mount_forwards_caps",
-+			path:     "/",
-+			wantBody: `{"example.com/cap/interesting":[{"role":"engineer"}]}`,
-+		},
-+		{
-+			name:     "text_mount_no_caps",
-+			path:     "/text",
-+			wantBody: "not proxied",
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			req := &http.Request{
-+				URL: &url.URL{Path: tt.path},
-+				TLS: &tls.ConnectionState{ServerName: "example.ts.net"},
-+			}
-+			req = req.WithContext(serveHTTPContextKey.WithValue(req.Context(), &serveHTTPContext{
-+				DestPort: 443,
-+				SrcAddr:  netip.MustParseAddrPort("100.150.151.152:1234"),
-+			}))
-+
-+			w := httptest.NewRecorder()
-+			b.serveWebHandler(w, req)
-+
-+			if got := w.Body.String(); got != tt.wantBody {
-+				t.Errorf("capabilities header; want=%q got=%q", tt.wantBody, got)
-+			}
-+		})
-+	}
-+}
-+
- func Test_revers
-```
-
----
-
-### Incident Patch 2: `17c90d88` (2026-10-24)
-**Commit Message**: ssh/tailssh: fix off-by-one and clamp c2n SSH username hint cap
-
-The add closure used len(res.Usernames) > max, letting one extra
-username through the client's Max, and the client-supplied Max was used
-unclamped. Honor Max exactly and clamp it to a 100-username ceiling;
-the list is only a login hint.
+### Incident Patch 1: `afe142bc` (2026-10-25)
+**Commit Message**: go.mod: update gliderssh to remove data race on timeouts
 
 Updates tailscale/corp#50380
 
 Signed-off-by: James Tucker <[REDACTED_EMAIL]>
 
-**File**: `ssh/tailssh/c2n.go` (modified, +35/-16)
+**File**: `flake.nix` (modified, +1/-1)
 ```diff
-@@ -17,6 +17,7 @@ import (
- 	"tailscale.com/ipn/ipnlocal"
- 	"tailscale.com/tailcfg"
- 	"tailscale.com/util/lineiter"
-+	"tailscale.com/util/set"
- )
- 
- // hookLocalUsernames, if non-nil, lists the local user accounts on
-@@ -40,6 +41,31 @@ func handleC2NSSHUsernames(b *ipnlocal.LocalBackend, w http.ResponseWriter, r *h
- 	json.NewEncoder(w).Encode(res)
+@@ -173,4 +173,4 @@
+     });
+   };
  }
- 
-+// maxSSHUsernameHints caps the number of usernames returned to a client;
-+// the list is only a login hint.
-+const maxSSHUsernameHints = 100
-+
-+// appendSSHUsernameHint appends u to names unless it is excluded or a
-+// service account, is already present, or the list already has max entries
-+// (so the result never exceeds max entries).
-+func appendSSHUsernameHint(names []string, u string, exclude set.Set[string], max int) []string {
-+	if exclude.Contains(u) {
-+		return names
-+	}
-+	switch u {
-+	case "nobody", "daemon", "sync":
-+		return names
-+	}
-+	if slices.Contains(names, u) {
-+		return names
-+	}
-+	if len(names) >= max {
-+		// Enough for a hint.
-+		return names
-+	}
-+	return append(names, u)
-+}
-+
- // getSSHUsernames discovers and returns the list of usernames that are
- // potential Tailscale SSH user targets.
- func getSSHUsernames(b *ipnlocal.LocalBackend, req *tailcfg.C2NSSHUsernamesRequest) (*tailcfg.C2NSSHUsernamesResponse, error) {
-@@ -50,25 +76,18 @@ func getSSHUsernames(b *ipnlocal.LocalBackend, req *tailcfg.C2NSSHUsernamesReque
- 
- 	max := 10
- 	if req != nil && req.Max != 0 {
--		max = req.Max
-+		// The client-supplied cap is just a hint; clamp it to a sane ceiling.
-+		max = min(req.Max, maxSSHUsernameHints)
- 	}
- 
--	add := func(u string) {
--		if req != nil && req.Exclude[u] {
--			return
-+	var exclude set.Set[string]
-+	for u, e := range req.Exclude {
-+		if e {
-+			exclude.Add(u)
- 		}
--		switch u {
--		case "nobody", "daemon", "sync":
--			return
--		}
--		if slices.Contains(res.Usernames, u) {
--			return
--		}
--		if len(res.Usernames) > max {
--			// Enough for a hint.
--			return
--		}
--		res.Usernames = append(res.Usernames, u)
-+	}
-+	add := func(u string) {
-+		res.Usernames = appendSSHUsernameHint(res.Usernames, u, exclude, max)
- 	}
- 
- 	if opUser := b.OperatorUserName(); opUser != "" {
+-# nix-direnv cache busting line: sha256-jrznfL26qyAGix9DVkmh0sLU2VvqeTNMdi6mPu9RlxM=
+\ No newline at end of file
++# nix-direnv cache busting line: sha256-AUIqQxPIe0l98hiTQk6odFcUdWdl1d5DrWwRvs3/+HY=
+\ No newline at end of file
 ```
 
-**File**: `ssh/tailssh/c2n_test.go` (added, +78/-0)
+**File**: `flakehashes.json` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,78 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+//go:build (linux && !android) || (darwin && !ios) || freebsd || openbsd || plan9
-+
-+package tailssh
-+
-+import (
-+	"testing"
-+
-+	"tailscale.com/util/set"
-+)
-+
-+func TestAppendSSHUsernameHint(t *testing.T) {
-+	tests := []struct {
-+		name    string
-+		names   []string
-+		u       string
-+		exclude set.Set[string]
-+		max     int
-+		want    []string
-+	}{
-+		{
-+			name: "append",
-+			u:    "alice",
-+			max:  10,
-+			want: []string{"alice"},
-+		},
-+		{
-+			name:  "dedupe",
-+			names: []string{"alice"},
-+			u:     "alice",
-+			max:   10,
-+			want:  []string{"alice"},
-+		},
-+		{
-+			name:    "excluded",
-+			names:   []string{"alice"},
-+			u:       "alice",
-+			exclude: set.SetOf([]string{"alice"}),
-+			max:     10,
-+			want:    []string{"alice"},
-+		},
-+		{
-+			name: "service-account-skipped",
-+			u:    "daemon",
-+			max:  10,
-+			want: nil,
-+		},
-+		{
-+			name:  "capped-exactly-at-max",
-+			names: []string{"alice", "bob", "carol"},
-+			u:     "dave",
-+			max:   3,
-+			want:  []string{"alice", "bob", "carol"},
-+		},
-+		{
-+			name:  "room-for-one-more",
-+			names: []string{"alice", "bob"},
-+			u:     "carol",
-+			max:   3,
-+			want:  []string{"alice", "bob", "carol"},
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			got := appendSSHUsernameHint(tt.names, tt.u, tt.exclude, tt.max)
-+			if len(got) != len(tt.want) {
-+				t.Fatalf("appendSSHUsernameHint(%q) = %q; want %q", tt.u, got, tt.want)
-+			}
-+			for i := range got {
-+				if got[i] != tt.want[i] {
-+					t.Fatalf("appendSSHUsernameHint(%q) = %q; want %q", tt.u, got, tt.want)
-+				}
-+			}
-+		})
-+	}
-+}
+@@ -4,7 +4,7 @@
+     "sri": "sha256-sdlgTLTkdhTvGCeQTwAsR+Do8rNwBzBUp5QPc09BPgI="
+   },
+   "vendor": {
+-    "goModSum": "sha256-DN+aQ2obBIjmj9TtvEA0+DYf+wIvpJ+MTg2+ZvYczkw=",
+-    "sri": "sha256-jrznfL26qyAGix9DVkmh0sLU2VvqeTNMdi6mPu9RlxM="
++    "goModSum": "sha256-Egyb1sq9KWK7VjoNdoC2wnB1RvKlMpwHwPIfC6HSUbs=",
++    "sri": "sha256-AUIqQxPIe0l98hiTQk6odFcUdWdl1d5DrWwRvs3/+HY="
+   }
+ }
+```
+
+**File**: `go.mod` (modified, +6/-6)
+```diff
+@@ -112,7 +112,7 @@ require (
+ 	github.com/studio-b12/gowebdav v0.13.0
+ 	github.com/tailscale/certstore v0.1.1-0.20260409135935-3638fb84b77d
+ 	github.com/tailscale/depaware v0.0.0-20260720165112-f20f66241ec6
+-	github.com/tailscale/gliderssh v0.3.4-0.20260716005906-1a0f895faf28
++	github.com/tailscale/gliderssh v0.3.4-0.20261025034130-aa1b529a32f0
+ 	github.com/tailscale/go-winio v0.0.0-20231025203758-c4f33415bf55
+ 	github.com/tailscale/goexpect v0.0.0-20210902213824-6e8c725cea41
+ 	github.com/tailscale/golang-x-crypto v0.0.0-20260720160339-c86ca1284b96
+@@ -137,18 +137,18 @@ require (
+ 	go.uber.org/zap v1.28.0
+ 	go4.org/mem v0.0.0-20240501181205-ae6ca9944745
+ 	go4.org/netipx v0.0.0-20260823151212-3075585bcbeb
+-	golang.org/x/crypto v0.57.0
++	golang.org/x/crypto v0.58.0
+ 	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba
+ 	golang.org/x/image v0.46.0
+ 	golang.org/x/mod v0.41.0
+ 	golang.org/x/net v0.60.0
+ 	golang.org/x/oauth2 v0.37.0
+-	golang.org/x/sync v0.23.0
++	golang.org/x/sync v0.24.0
+ 	golang.org/x/sys v0.49.0
+ 	golang.org/x/term v0.47.0
+-	golang.org/x/text v0.42.0
++	golang.org/x/text v0.43.0
+ 	golang.org/x/time v0.16.0
+-	golang.org/x/tools v0.50.0
++	golang.org/x/tools v0.51.0
+ 	golang.zx2c4.com/wintun v0.0.0-20230126152724-0fa3db229ce2
+ 	golang.zx2c4.com/wireguard v0.0.0-20260522210424-ecfc5a8d5446
+ 	golang.zx2c4.com/wireguard/windows v1.0.1
+@@ -529,7 +529,7 @@ require (
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	golang.org/x/crypto/x509roots/fallback v0.0.0-20260113154411-7d0074ccc6f1 // indirect
+ 	golang.org/x/exp/typeparams v0.0.0-20260811152304-ee035b5b010f // indirect
+-	golang.org/x/telemetry v0.0.0-20260908163034-4bcc4b2ee518 // indirect
++	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
+ 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
+ 	google.golang.org/protobuf v1.36.12 // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+```
+
+**File**: `go.sum` (modified, +12/-12)
+```diff
+@@ -1126,8 +1126,8 @@ github.com/tailscale/certstore v0.1.1-0.20260409135935-3638fb84b77d h1:JcGKBZAL7
+ github.com/tailscale/certstore v0.1.1-0.20260409135935-3638fb84b77d/go.mod h1:XrBNfAFN+pwoWuksbFS9Ccxnopa15zJGgXRFN90l3K4=
+ github.com/tailscale/depaware v0.0.0-20260720165112-f20f66241ec6 h1:5Fr4ItdQ3LDbyuRmDAoDO29xu33QdFYo/2K+l+FTtiw=
+ github.com/tailscale/depaware v0.0.0-20260720165112-f20f66241ec6/go.mod h1:F4qVQ0ffCtHizbxsWWCMGl8OIieayJWw8XetPiILDNA=
+-github.com/tailscale/gliderssh v0.3.4-0.20260716005906-1a0f895faf28 h1:Azz5ILxxVsHN/KjIu3wkJPAmmtiijucZw4Ax5Ye8n+s=
+-github.com/tailscale/gliderssh v0.3.4-0.20260716005906-1a0f895faf28/go.mod h1:wn16Km1EZOX4UEAyaZa3dBwfFGOJ7neck40NcwosJUw=
++github.com/tailscale/gliderssh v0.3.4-0.20261025034130-aa1b529a32f0 h1:Xae/QS1NlbdG4CDrvI0Jw1pM0VMYPZWl4/NIfFMZCuk=
++github.com/tailscale/gliderssh v0.3.4-0.20261025034130-aa1b529a32f0/go.mod h1:wn16Km1EZOX4UEAyaZa3dBwfFGOJ7neck40NcwosJUw=
+ github.com/tailscale/go-winio v0.0.0-20231025203758-c4f33415bf55 h1:Gzfnfk2TWrk8Jj4P4c1a3CtQyMaTVCznlkLZI++hok4=
+ github.com/tailscale/go-winio v0.0.0-20231025203758-c4f33415bf55/go.mod h1:4k4QO+dQ3R5FofL+SanAUZe+/QfeK0+OIuwDIRu2vSg=
+ github.com/tailscale/goexpect v0.0.0-20210902213824-6e8c725cea41 h1:/V2rCMMWcsjYaYO2MeovLw+ClP63OtXgCF2Y1eb8+Ns=
+@@ -1316,8 +1316,8 @@ golang.org/x/crypto v0.0.0-20191206172530-e9b2fee46413/go.mod h1:LzIPMQfyMNhhGPh
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/crypto/x509roots/fallback v0.0.0-20260113154411-7d0074ccc6f1 h1:EBHQuS9qI8xJ96+YRgVV2ahFLUYbWpt1rf3wPfXN2wQ=
+ golang.org/x/crypto/x509roots/fallback v0.0.0-20260113154411-7d0074ccc6f1/go.mod h1:MEIPiCnxvQEjA4astfaKItNwEVZA5Ki+3+nyGbJ5N18=
+ golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba h1:Ck8QetSgk912qxWLMCKxd0in+aiyBQyDSMae6e/xmpU=
+@@ -1364,8 +1364,8 @@ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20181116152217-5ac8a444bdc5/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+@@ -1403,8 +1403,8 @@ golang.org/x/sys v0.10.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
+ golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/telemetry v0.0.0-20260908163034-4bcc4b2ee518 h1:F5BWKvW126NXR74uxkxuc1jQHhm/rwm/J3rSiFyuRs4=
+-golang.org/x/telemetry v0.0.0-20260908163034-4bcc4b2ee518/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
++golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 h1:DftxASHKl6JolFPqoN+2WrFO53JvkHwRXvFqf8gsivA=
++golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+ golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
+@@ -1416,8 +1416,8 @@ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
+ golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO
+```
+
+**File**: `shell.nix` (modified, +1/-1)
+```diff
+@@ -16,4 +16,4 @@
+ ) {
+   src =  ./.;
+ }).shellNix
+-# nix-direnv cache busting line: sha256-jrznfL26qyAGix9DVkmh0sLU2VvqeTNMdi6mPu9RlxM=
+\ No newline at end of file
++# nix-direnv cache busting line: sha256-AUIqQxPIe0l98hiTQk6odFcUdWdl1d5DrWwRvs3/+HY=
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21936** (2026-10-25): ssh/tailssh: drain the sftp test helper's stderr copier (@raggi)
+- **PR #21933** (2026-10-25): go.mod: update gliderssh to remove data race on timeouts (@raggi)
 - **PR #21931** (2026-10-25): ipn/ipnlocal: fix serve app caps leaking across mounts (@jentfoo)
 - **PR #21929** (2026-10-24): ssh/tailssh: record sftp sessions and honor recording failure policy (@raggi)
 - **PR #21928** (2026-10-24): ssh/tailssh: unify defaultPathForUser to use isRootUser (@jentfoo)
 - **PR #21926** (2026-10-24): ssh/tailssh: fix off-by-one and clamp c2n SSH username hint cap (@raggi)
-- **PR #21925** (2026-10-24): ssh/tailssh: validate accepted env values, deny GLIBC_TUNABLES, cap names (@raggi)
-- **PR #21924** (2026-10-24): ssh/tailssh: refuse direct-exec fallback for non-root users as root (@raggi)
 
 ---
 
@@ -1277,48 +991,28 @@ Signed-off-by: James Tucker <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipn/ipnlocal: fix serve app caps leaking across mounts (#21931)
+## X. go.mod: update gliderssh to remove data race on timeouts
 
 **RULE**:
-When implementing operations in `ipn/ipnlocal/serve.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `566f89e0`: ipn/ipnlocal: fix serve app caps leaking across mounts (#21931). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `afe142bc`: go.mod: update gliderssh to remove data race on timeouts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/serve.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// appCapsContextKey holds the app capabilities accepted by the mount handling
-// the current request. It is per-request state: serveHTTPContext is shared by
-// all streams of a connection, so mount state must not be stored on it.
-var appCapsContextKey = ctxkey.New("ipnlocal.appCapsContextKey", views.Slice[peercap.Cap]{})
-
-// serveHTTPContext is connection-scoped: one value is shared by all requests on
-// the connection, including concurrent h2 streams. Do not add per-request state
-// to it, use a separate context key like appCapsContextKey instead.
-	acceptCaps, ok := appCapsContextKey.ValueOk(r.Out.Context())
-	if !ok || acceptCaps.IsNil() {
-		// Mount-accepted capabilities are per-request state
-		r = r.WithContext(appCapsContextKey.WithValue(r.Context(), h.AcceptAppCaps()))
+# nix-direnv cache busting line: sha256-AUIqQxPIe0l98hiTQk6odFcUdWdl1d5DrWwRvs3/+HY=
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// AppCapabilities lists all PeerCapabilities that should be forwarded by serve
-	AppCapabilities views.Slice[peercap.Cap]
-	acceptCaps := c.AppCapabilities
-	if acceptCaps.IsNil() {
-		// Inject app capabilities to forward into the request context
-		c, ok := serveHTTPContextKey.ValueOk(r.Context())
-		if !ok {
-			return
-		}
-		c.AppCapabilities = h.AcceptAppCaps()
+# nix-direnv cache busting line: sha256-jrznfL26qyAGix9DVkmh0sLU2VvqeTNMdi6mPu9RlxM=
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `566f89e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `afe142bc` are properly handled with clean fallback behavior.

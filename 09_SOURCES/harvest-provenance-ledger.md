@@ -4937,3 +4937,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-25T17:59:11.807Z |
 | `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `abbde3ce` | Multi-dimensional audit evidence | 2026-10-25T17:59:17.502Z |
 | `learn-github-honojs-hono` | `https://github.com/honojs/hono` | `bac5c4a8` | Multi-dimensional audit evidence | 2026-10-25T18:02:31.543Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-25T18:08:49.782Z |
+| `learn-github-alin23-lunar` | `https://github.com/alin23/Lunar` | `06950e25` | Multi-dimensional audit evidence | 2026-10-25T18:08:55.760Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `e471c770` | Multi-dimensional audit evidence | 2026-10-25T18:08:58.444Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `b71e0f30` | Multi-dimensional audit evidence | 2026-10-25T18:09:00.606Z |

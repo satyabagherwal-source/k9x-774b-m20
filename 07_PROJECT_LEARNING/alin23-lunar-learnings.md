@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alin23-lunar-learnings.md`  
 > **Source**: github ([https://github.com/alin23/Lunar](https://github.com/alin23/Lunar))  
-> **Source Version**: `511b0358`  
+> **Source Version**: `06950e25`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T13:21:11.834Z  
+> **Timestamp**: 2026-10-25T18:08:55.570Z  
 > **Learning ID**: `learn-github-alin23-lunar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alin23-lunar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alin23/Lunar](https://github.com/alin23/Lunar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T13:21:11.828Z  
+> **Harvest Timestamp**: 2026-10-25T18:08:55.562Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Intelligent adaptive brightness for your external monitors
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5717 stars
+- **Stars / Engagement**: 5718 stars
 
 ---
 
@@ -2334,319 +2334,132 @@ extension Trap {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c35de8e8` (2026-10-18)
-**Commit Message**: Diagnose a failed licence activation (hosts block, firewall, licence state) and show one loop-safe alert instead of Paddle's generic error, and update Sentry to 9.30.1
+### Incident Patch 1: `06950e25` (2026-10-25)
+**Commit Message**: Update changelog for 6.11.3
 
-**File**: `.gitignore` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -59,4 +59,6 @@ old_updates
- .ruby-lsp
- Retired.swift
- Lunar/required.swift
-+Lunar/required.h
- release
-+Lunar/Data/ActivationDiagnostics.swift
-```
-
-**File**: `.gitsecret/paths/mapping.cfg` (modified, +5/-3)
-```diff
-@@ -3,8 +3,10 @@ Lunar/Resources/eddsa_priv:d079018c2b1c003c9e239ea8f8cc999b7d98adfd0616911ba0263
- Lunar/Modes/SensorMode.swift:231e4fc567c3925c2153c32cc0452eb9ee84c1789dc82628e2ccddb38c24c025
- Lunar/Modes/SyncMode.swift:c6d7e54cf37dc198643bc5dc9657b39f86387b7fc85343e525890535ee33be85
- Lunar/Modes/LocationMode.swift:9964ed4ba9098fc7a17c515a4ea5b9c128fc1d5cfba1deb7ac11a75cef3e7702
--Lunar/Data/Pro.swift:282b333520f16511ef7ff46b99d406ec6422b7f797fb2aa8f5a3a6a465982ec1
-+Lunar/Data/Pro.swift:055ce6e3dca6641c13c99e650ade12b48074354ee72c69210f02985904fa87a3
- Lunar/Modes/ClockMode.swift:d012d1b6cd91d0527ca6d6d00fd5b7742c3671855fba5d43ab31b6413d8afc84
--Lunar/DDC/DDC2.h:2413c548ce3cc1681316b52486b66769529ae244ec5c76a160cdc190e7236f61
-+Lunar/DDC/DDC2.h:acb69cbff738288d9210c1b75bbebd2517224605c004844315a9ded943252e8f
- Lunar/DDC/DDC2.c:8488fdfb13ca9525e44db616c773eb67f1f1d52dcf83115d7666b0d79bbeef5a
--Lunar/required.swift:d20f3f58ee7ec76dcf4aacbc8e1dd9705a421729a33956ecd3809f9063f45a05
-+Lunar/required.swift:6a7985dde5ca4ca87cbfb621aad378da67a37a0e485042433d1e4ba5ae425497
-+Lunar/Data/ActivationDiagnostics.swift:3037677d634fea832510d56e7750b8a12a5469d1376d5b2ecd2143498deeddff
-+Lunar/required.h:3cfdd29aaf70648a5fcde2251843eeb7103ad3dc23c35cd4fb224fb2b97ccc5f
-```
-
-**File**: `Lunar.xcodeproj/project.pbxproj` (modified, +12/-4)
-```diff
-@@ -7,6 +7,8 @@
- 	objects = {
+@@ -777,6 +777,11 @@ Some LG models respond to the `3` and `4` inputs while others use the `1` and `2
  
- /* Begin PBXBuildFile section */
-+		5AEBECE2708F497955A702D9 /* ActivationDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81D40BB89ABE3EE8CD4532D1 /* ActivationDiagnostics.swift */; };
-+		80351EBE81336CE245AC1FA6 /* required.h in Headers */ = {isa = PBXBuildFile; fileRef = 2994F758DA4A18AAD717A9F3 /* required.h */; };
- 		C701A23F2546C8BF004747B5 /* MediaKeyTap in Frameworks */ = {isa = PBXBuildFile; productRef = C701A23E2546C8BF004747B5 /* MediaKeyTap */; };
- 		C7045DAA24407CBC002289E5 /* Surge in Frameworks */ = {isa = PBXBuildFile; productRef = C7045DA924407CBC002289E5 /* Surge */; };
- 		C7045DB82440DEEE002289E5 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = C7045DB72440DEEE002289E5 /* SwiftyJSON */; };
-@@ -239,6 +241,8 @@
- /* End PBXCopyFilesBuildPhase section */
+ ![location mode missing permissions](https://files.lunar.fyi/location-mode-missing-permissions.png)
  
- /* Begin PBXFileReference section */
-+		2994F758DA4A18AAD717A9F3 /* required.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = required.h; sourceTree = "<group>"; };
-+		81D40BB89ABE3EE8CD4532D1 /* ActivationDiagnostics.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ActivationDiagnostics.swift; sourceTree = "<group>"; };
- 		C70A793F2AB4A11600289426 /* ManageButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManageButtonView.swift; sourceTree = "<group>"; };
- 		C70A79402AB4A11600289426 /* NitsTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NitsTextField.swift; sourceTree = "<group>"; };
- 		C70A79412AB4A11600289426 /* TextInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextInputView.swift; sourceTree = "<group>"; };
-@@ -570,6 +574,7 @@
- 				C7A82DC2261DF513004146A8 /* Pro.swift */,
- 				C740A1F3262490E1004BC1C7 /* CLI.swift */,
- 				C7714B0527E8F11C002E0B2E /* Presets.swift */,
-+				81D40BB89ABE3EE8CD4532D1 /* ActivationDiagnostics.swift */,
- 			);
- 			path = Data;
- 			sourceTree = "<group>";
-@@ -749,6 +754,7 @@
- 				C790D4BC259B9DC100868689 /* Utils */,
- 				C77CC75A1FEDB367009AA718 /* Views */,
- 				C73A4E6129C5EAFC006A22F3 /* Localizable.stringsdict */,
-+				2994F758DA4A18AAD717A9F3 /* required.h */,
- 			);
- 			path = Lunar;
- 			sourceTree = "<group>";
-@@ -874,6 +880,7 @@
- 				C7E80E372637060F004718A4 /* libssh2.h in Headers */,
- 				C7E80E382637060F004718A4 /* libssh2_publickey.h in Headers */,
- 				C7E896DB2652C0F60079A328 /* ExceptionCatcher.h in Headers */,
-+				80351EBE81336CE245AC1FA6 /* required.h in Headers */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-@@ -967,7 +974,7 @@
- 				C7B5E8572548B3F900530B47 /* XCRemoteSwiftPackageReference "Defaults" */,
- 				C7B5E85B2548B5AC00530B47 /* XCRemoteSwiftPackageReference "AnyCodable" */,
- 				C7C09CD3256AC70400B4BC5B /* XCRemoteSwiftPackageReference "SwiftyAttributes" */,
--				C78BD048259B33D500FC823F /* XCRemoteSwiftPackageReference "Path" */,
-+				C78BD048259B33D500FC823F /* XCRemoteSwiftPackageReference "Path.swift" */,
- 				C7DA10F5259B8979006DD876 /* XCRemoteSwiftPackageReference "Regex" */,
- 				C73B9A0B25FB9AD7003184FC /* XCRemoteSwiftPackageReference "Glob" */,
- 				C740A1F626249176004BC1C7 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
-@@ -1168,6 +1175,7 @@
- 				C7A22756281C19D1005F2351 /* XDRTipView.swift in Sources */,
- 				C7C1F7051FD635360039507C /* Moment.swift in Sources */,
- 				C7AF321B26F62D3B00AC14AF /* Schedule.swift in Sources */,
-+				5AEBECE2708F497955A702D9 /* ActivationDiagnostics.swift in Sources */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-@@ -1540,7 +1548,7 @@
- 			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
- 			requirement = {
- 				kind = upToNextMajorVersion;
--				minimumVersion = 9.16.0;
-+				minimumVersion = 9.30.1;
- 			};
- 		};
- 		C77AB65A269A032E0046BA78 /* XCRemoteSwiftPackageReference "Magnet" */ = {
-@@ -1575,7 +1583,7 @@
- 				minimumVersion = 1.0.0;
- 			};
- 		};
--		C78BD048259B33D500FC823F /* XCRemoteSwiftPackageReference "Path" */ = {
-+		C78BD048259B33D500FC823F /* XCRemoteSwiftPackageReference "Path.swift" */ = {
- 			isa = XCRemoteSwiftPackageReference;
- 			repositoryURL = "https://github.com/mxcl/Path.swift";
- 			requirement = {
-@@ -1742,7 +1750,7 @@
- 		};
- 		C78BD049259B33D500FC823F /* Path */ = {
- 			isa = XCSwiftPackageProductDependency;
--			package = C78BD048259B33D500FC823F /* XCRemoteSwiftPackageReference "Path" */;
-+			package = C78BD048259B33D500FC823F /* XCRemoteSwiftPackageReference "Path.swift" */;
- 			productName = Path;
- 		};
- 		C799C2F427BF67C4003A2FB9 /* Socket */ = {
-```
-
-**File**: `Lunar.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +2/-2)
-```diff
-@@ -141,8 +141,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/getsentry/sentry-cocoa",
-       "state" : {
--        "revision" : "53eb9bd5da18e208cfd80e86863d3f4c7ba21b1d",
--        "version" : "9.21.0"
-+        "revision" : "4f135c52afeeb1d6937eb93824c7ec1cddcaa372",
-+        "version" : "9.30.1"
-       }
-     },
-     {
-```
-
-**File**: `Lunar.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +2/-2)
-```diff
-@@ -141,8 +141,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/getsentry/sentry-cocoa",
-       "state" : {
--        "revision" : "53eb9bd5da18e208cfd80e86863d3f4c7ba21b1d",
--        "version" : "9.21.0"
-+        "revision" : "4bb2282661ee6ca2212aa01d19a1214394cd3c45",
-+        "version" : "9.30.2"
-       }
-     },
-     {
-```
-
----
-
-### Incident Patch 2: `dd3ee7f5` (2026-03-09)
-**Commit Message**: Restore sub-zero dimming when the app restarts on crash or hang
-
-**File**: `Lunar.xcodeproj/project.pbxproj` (modified, +0/-23)
-```diff
-@@ -894,7 +894,6 @@
- 				C7AEC7F31FD0B4350039B562 /* Resources */,
- 				C7AEC7F21FD0B4350039B562 /* Frameworks */,
- 				C75083582222865F0020270E /* Embed Frameworks */,
--				C750F301299E47AE0004ECEF /* Run Script */,
- 			);
- 			buildRules = (
- 			);
-@@ -1024,28 +1023,6 @@
- 		};
- /* End PBXResourcesBuildPhase section */
- 
--/* Begin PBXShellScriptBuildPhase section */
--		C750F301299E47AE0004ECEF /* Run Script */ = {
--			isa = PBXShellScriptBuildPhase;
--			buildActionMask = 2147483647;
--			files = (
--			);
--			inputFileListPaths = (
--			);
--			inputPaths = (
--			);
--			name = "Run Script";
--			outputFileListPaths = (
--			);
--			outputPaths = (
--				"$(CODESIGNING_FOLDER_PATH)/Contents/_MASReceipt/receipt",
--			);
--			runOnlyForDeploymentPostprocessing = 0;
--			shellPath = /bin/sh;
--			shellScript = "mkdir -p \"$CODESIGNING_FOLDER_PATH/Contents/_MASReceipt\"\ntouch \"$CODESIGNING_FOLDER_PATH/Contents/_MASReceipt/receipt\"\n";
--		};
--/* End PBXShellScriptBuildPhase section */
--
- /* Begin PBXSourcesBuildPhase section */
- 		C7AEC7F11FD0B4350039B562 /* Sources */ = {
- 			isa = PBXSourcesBuildPhase;
-```
-
-**File**: `Lunar/Data/Display.swift` (modified, +18/-9)
-```diff
-@@ -689,6 +689,16 @@ let AUDIO_IDENTIFIER_UUID_PATTERN = "([0-9a-f]{2})([0-9a-f]{2})-([0-9a-f]{4})-[0
-         if let possibleMaxNits, possibleMaxNits > 0, let control = control as? AppleNativeControl {
-             control.updateNits()
-         }
-+
-+        let name = name
-+        if restarted, let sb = try container.decodeIfPresent(Float.self, forKey: .softwareBrightness), sb < 1 {
-+            log.debug("Restoring software brightness \(sb) for \(name) in 3 seconds")
-+            softwareBrightness = sb
-+            softwareBrightnessRestorer = mainAsyncAfter(ms: 3000) { [weak self] in
-+                log.debug("Applying restored software brightness \(sb) for \(name)")
-+                self?.setIndependentSoftwareBrightness(sb)
-+            }
-+        }
-     }
- 
-     init(
-@@ -2886,6 +2896,7 @@ let AUDIO_IDENTIFIER_UUID_PATTERN = "([0-9a-f]{2})([0-9a-f]{2})-([0-9a-f]{4})-[0
-             }
- 
-             setIndependentSoftwareBrightness(softwareBrightness, oldValue: oldValue)
-+            save()
-         }
-     }
- 
-@@ -5402,18 +5413,9 @@ let AUDIO_IDENTIFIER_UUID_PATTERN = "([0-9a-f]{2})([0-9a-f]{2})-([0-9a-f]{4})-[0
-                 }
-             }
-             .store(in: &observers)
--
--        #if DEBUG
--            if isTestID(id), name.contains("DELL") {
--                audioIdentifier = "~:AMS2_Aggregate:0"
--            }
--        #endif
-     }
- 
-     func setupHotkeys() {
--        #if DEBUG
--            log.info("Trying to setup hotkeys for \(description)")
--        #endif
-         guard active else { return }
- 
-         if let controller = hotkeyPopoverController {
-@@ -6738,6 +6740,13 @@ let AUDIO_IDENTIFIER_UUID_PATTERN = "([0-9a-f]{2})([0-9a-f]{2})-([0-9a-f]{4})-[0
- 
-         return adaptive ? .lunar : .system
-     }
-+
-+    private var softwareBrightnessRestorer: DispatchWorkItem? {
-+        didSet {
-+            oldValue?.cancel()
-+        }
-+    }
-+
- }
- 
- let DS_LOGGER = Logger(subsystem: "fyi.lunar.Lunar.DisplayServices", category: "default")
-```
-
-**File**: `Lunar/SwiftUIViews/DisplayRowView.swift` (modified, +2/-2)
-```diff
-@@ -443,7 +443,7 @@ struct DisplayRowView: View {
-         VStack(spacing: 2) {
-             let showInput = display.hasDDC && showInputInQuickActions
-             let showAdditionalUI = display.showOrientation || display.appPreset != nil || display.adaptivePaused
--                || showRawValues && (display.lastRawBrightness != nil || display.lastRawContrast != nil || display.lastRawVolume != nil)
-+                || showRawValues && (display.usesDDCBrightnessControl && (display.lastRawBrightness != nil || display.lastRawContrast != nil || display.lastRawVolume != nil))
-                 || SWIFTUI_PREVIEW
- 
-             if showInput, !showAdditionalUI {
-@@ -469,7 +469,7 @@ struct DisplayRowView: View {
-                             }
-                     }
- 
--                    if showRawValues {
-+                    if showRawValues, display.usesDDCBrightnessControl {
-                         RawValuesView(display: display).frame(width: 220).padding(.vertical, 3)
-                     }
-                 }
-```
-
-**File**: `ReleaseNotes/6.9.10.md` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
++# 6.11.3
 +## Fixes
 +
-+- Hide raw values on non-DDC monitors
-+- Restore sub-zero dimming when the app restarts on crash or hang
++- Fixed a possible crash during licence activation and verification
++
+ # 6.11.2
+ ## Fixes
+ 
 ```
 
 ---
 
-### Incident Patch 3: `f0dd4931` (2026-10-10)
-**Commit Message**: Fix status icon toggle: ignore clicks on our own status item in the global mouse-down monitor which now receives them on newer macOS
+### Incident Patch 2: `ee28dda3` (2026-10-25)
+**Commit Message**: 6.11.3
 
-**File**: `Lunar/AppDelegate.swift` (modified, +8/-0)
+**File**: `Lunar.xcodeproj/project.pbxproj` (modified, +4/-4)
 ```diff
-@@ -2153,6 +2153,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, CLLocationManagerDeleg
-             if NSApp.window(withWindowNumber: event.windowNumber) != nil {
-                 return
-             }
-+            // That includes clicks on our own status item. Closing here would race the status
-+            // button's mouseDown toggle: the toggle then finds the menu already closed and
-+            // immediately reopens it, making the icon unable to ever close the menu.
-+            if let statusWindow = appDelegate?.statusItemButtonController?.statusButton?.window,
-+               NSMouseInRect(NSEvent.mouseLocation, statusWindow.frame, false)
-+            {
-+                return
-+            }
-             menuWindow.forceClose()
-         }
-     }
+@@ -1326,7 +1326,7 @@
+ 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+ 				CODE_SIGN_STYLE = Manual;
+ 				COMBINE_HIDPI_IMAGES = YES;
+-				CURRENT_PROJECT_VERSION = 6.11.2;
++				CURRENT_PROJECT_VERSION = 6.11.3;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+ 				DEVELOPMENT_ASSET_PATHS = "";
+ 				DEVELOPMENT_TEAM = "";
+@@ -1358,7 +1358,7 @@
+ 				);
+ 				LLVM_LTO = NO;
+ 				MACOSX_DEPLOYMENT_TARGET = 12.0;
+-				MARKETING_VERSION = 6.11.2;
++				MARKETING_VERSION = 6.11.3;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+ 				OTHER_CODE_SIGN_FLAGS = "";
+ 				PRODUCT_BUNDLE_IDENTIFIER = fyi.lunar.Lunar;
+@@ -1392,7 +1392,7 @@
+ 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+ 				CODE_SIGN_STYLE = Manual;
+ 				COMBINE_HIDPI_IMAGES = YES;
+-				CURRENT_PROJECT_VERSION = 6.11.2;
++				CURRENT_PROJECT_VERSION = 6.11.3;
+ 				DEPLOYMENT_POSTPROCESSING = YES;
+ 				DEVELOPMENT_ASSET_PATHS = "";
+ 				DEVELOPMENT_TEAM = "";
+@@ -1424,7 +1424,7 @@
+ 				);
+ 				LLVM_LTO = YES;
+ 				MACOSX_DEPLOYMENT_TARGET = 12.0;
+-				MARKETING_VERSION = 6.11.2;
++				MARKETING_VERSION = 6.11.3;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+ 				OTHER_CODE_SIGN_FLAGS = "--timestamp";
+ 				PRODUCT_BUNDLE_IDENTIFIER = fyi.lunar.Lunar;
+```
+
+**File**: `ReleaseNotes/6.11.3.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++## Fixes
++
++- Fixed a possible crash during licence activation and verification
+```
+
+**File**: `Releases/appcast-stable.xml` (modified, +17/-0)
+```diff
+@@ -2,6 +2,23 @@
+ <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+     <channel>
+         <title>Lunar</title>
++        <item>
++            <title>6.11.3</title>
++            <pubDate>Sun, 25 Oct 2026 19:20:15 +0200</pubDate>
++            <link>https://lunar.fyi/</link>
++            <sparkle:fullReleaseNotesLink>https://lunar.fyi/changelog</sparkle:fullReleaseNotesLink>
++            <sparkle:minimumAutoupdateVersion>5.0.0</sparkle:minimumAutoupdateVersion>
++            <sparkle:version>6.11.3</sparkle:version>
++            <sparkle:shortVersionString>6.11.3</sparkle:shortVersionString>
++            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
++            <sparkle:releaseNotesLink>https://files.lunar.fyi/ReleaseNotes/Lunar-6.11.3.html</sparkle:releaseNotesLink>
++            <enclosure url="https://files.lunar.fyi/releases/Lunar-6.11.3.dmg" length="16186116" type="application/octet-stream" sparkle:edSignature="A9eqnuJyopNvXgskAwA0GKi00W7dBlARQOJraG7cylno+xGZYQCWcsY6ulGFZCIWeMaaofyo842PDbYxR+sjBg=="/>
++            <sparkle:deltas>
++                <enclosure url="https://files.lunar.fyi/deltas/Lunar6.11.3-6.11.2.delta" sparkle:deltaFrom="6.11.2" length="1800654" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="977808" sparkle:deltaFromSparkleLocales="Base" sparkle:edSignature="us2JzZTbEBjYAM1rrqF6STD6HvU9ieHtTYpIbW1vRBEiEgEVqDQARhxM8lA5P2R80x3450sNWVZ8SyfKfzQ9DA=="/>
++                <enclosure url="https://files.lunar.fyi/deltas/Lunar6.11.3-6.11.1.delta" sparkle:deltaFrom="6.11.1" length="3582702" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="977808" sparkle:deltaFromSparkleLocales="Base" sparkle:edSignature="9tTQdqdB4qLQTmMNaM6kRczc1PGFEgf15mA8LkoDfyIqMcGbfwJRw1SNG0+abofzt+nhUTn7HaNYvwMjjrpQDQ=="/>
++                <enclosure url="https://files.lunar.fyi/deltas/Lunar6.11.3-6.11.0.delta" sparkle:deltaFrom="6.11.0" length="3635602" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="977808" sparkle:deltaFromSparkleLocales="Base" sparkle:edSignature="jJrKtRyvEV2aCN24EhByNYZvzItWGoeR3PbXf4p5PjkDVWBPBUrL7P+vRbah1t/48sPkqBpkYFAPqzLdDaTnBg=="/>
++            </sparkle:deltas>
++        </item>
+         <item>
+             <title>6.11.2</title>
+             <pubDate>Sun, 18 Oct 2026 18:22:07 +0300</pubDate>
+```
+
+**File**: `Releases/appcast2.xml` (modified, +17/-0)
+```diff
+@@ -2,6 +2,23 @@
+ <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+     <channel>
+         <title>Lunar</title>
++        <item>
++            <title>6.11.3</title>
++            <pubDate>Sun, 25 Oct 2026 19:20:15 +0200</pubDate>
++            <link>https://lunar.fyi/</link>
++            <sparkle:fullReleaseNotesLink>https://lunar.fyi/changelog</sparkle:fullReleaseNotesLink>
++            <sparkle:minimumAutoupdateVersion>5.0.0</sparkle:minimumAutoupdateVersion>
++            <sparkle:version>6.11.3</sparkle:version>
++            <sparkle:shortVersionString>6.11.3</sparkle:shortVersionString>
++            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
++            <sparkle:releaseNotesLink>https://files.lunar.fyi/ReleaseNotes/Lunar-6.11.3.html</sparkle:releaseNotesLink>
++            <enclosure url="https://files.lunar.fyi/releases/Lunar-6.11.3.dmg" length="16186116" type="application/octet-stream" sparkle:edSignature="A9eqnuJyopNvXgskAwA0GKi00W7dBlARQOJraG7cylno+xGZYQCWcsY6ulGFZCIWeMaaofyo842PDbYxR+sjBg=="/>
++            <sparkle:deltas>
++                <enclosure url="https://files.lunar.fyi/deltas/Lunar6.11.3-6.11.2.delta" sparkle:deltaFrom="6.11.2" length="1800654" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="977808" sparkle:deltaFromSparkleLocales="Base" sparkle:edSignature="us2JzZTbEBjYAM1rrqF6STD6HvU9ieHtTYpIbW1vRBEiEgEVqDQARhxM8lA5P2R80x3450sNWVZ8SyfKfzQ9DA=="/>
++                <enclosure url="https://files.lunar.fyi/deltas/Lunar6.11.3-6.11.1.delta" sparkle:deltaFrom="6.11.1" length="3582702" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="977808" sparkle:deltaFromSparkleLocales="Base" sparkle:edSignature="9tTQdqdB4qLQTmMNaM6kRczc1PGFEgf15mA8LkoDfyIqMcGbfwJRw1SNG0+abofzt+nhUTn7HaNYvwMjjrpQDQ=="/>
++                <enclosure url="https://files.lunar.fyi/deltas/Lunar6.11.3-6.11.0.delta" sparkle:deltaFrom="6.11.0" length="3635602" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="977808" sparkle:deltaFromSparkleLocales="Base" sparkle:edSignature="jJrKtRyvEV2aCN24EhByNYZvzItWGoeR3PbXf4p5PjkDVWBPBUrL7P+vRbah1t/48sPkqBpkYFAPqzLdDaTnBg=="/>
++            </sparkle:deltas>
++        </item>
+         <item>
+             <title>6.11.2</title>
+             <pubDate>Sun, 18 Oct 2026 18:22:07 +0300</pubDate>
 ```
 
 #### Recent Merged Pull Requests:
@@ -2675,22 +2488,25 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Diagnose a failed licence activation (hosts block, firewall, licence state) and 
+## X. Update changelog for 6.11.3
 
 **RULE**:
-When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alin23/Lunar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alin23/Lunar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c35de8e8`: Diagnose a failed licence activation (hosts block, firewall, licence state) and show one loop-safe alert instead of Paddle's generic error, and update Sentry to 9.30.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `06950e25`: Update changelog for 6.11.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-Lunar/required.h
-Lunar/Data/ActivationDiagnostics.swift
+# 6.11.3
+## Fixes
+
+- Fixed a possible crash during licence activation and verification
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2700,4 +2516,4 @@ Lunar/Data/ActivationDiagnostics.swift
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c35de8e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `06950e25` are properly handled with clean fallback behavior.

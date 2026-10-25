@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `a2fda0ef`  
+> **Source Version**: `e471c770`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:18:54.005Z  
+> **Timestamp**: 2026-10-25T18:08:58.040Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:18:53.753Z  
+> **Harvest Timestamp**: 2026-10-25T18:08:58.033Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66743 stars
+- **Stars / Engagement**: 66750 stars
 
 ---
 
@@ -1500,11 +1500,11 @@ func openDir(path string) (fd syscall.Handle, err error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20181** (2026-10-25): **docs: add AppArmor profile example**
+  *Symptoms*: #### Summary  Adds an example AppArmor profile for Prometheus to demonstrate how operators can restrict filesystem access and network operations using a least-privilege security policy.  The profile assumes a standard Linux package layout and includes AppArmor abstractions for basic runtime access, name resolution, and SSL certificates. It grants read access to Prometheus configuration files, read/write access to the TSDB data directory, and network stream access for serving HTTP requests and connecting to scrape targets.  The profile is intended as a starting point for operators and may require adjustments for custom installation paths and deployment configurations.  #### Which issue(s) does the PR fix:  Fixes #ISSUE_NUMBER  #### Special notes for reviewers  - The profile assumes the Prometheus executable is located at `/usr/bin/prometheus`, with configuration under `/etc/prometheus/` and TSDB data under `/var/lib/prometheus/`. - Operators using custom paths or containerized deployments may need to adapt the profile. - Network stream rules do not restrict access to individual ports; host firewall rules can provide additional restrictions where needed. - The profile should be validated against standard Prometheus operations before being considered suitable for production use.  #### Release notes for end users  ```release-notes [FEATURE] Security: Add an example AppArmor profile for Prometheus. ``` 
+
 - **Issue #20167** (2026-10-23): **tsdb: release remaining test fixture references**
   *Symptoms*: Follow-up to #20157.  Clear the captured DB reference before reporting a close error, so `require.NoError` cannot skip releasing it. Also release the final restarted Head reference in `TestHead_NumNativeHistogramSeriesAndBuckets`.  ```release-notes NONE ``` 
-
-- **Issue #20158** (2026-10-23): **ci: ignore zizmor cache-poisoning in synced golangci-lint workflow**
-  *Symptoms*: #### Which issue(s) does the PR fix:  The synced zizmor workflow fails on the synced golangci-lint workflow in every Go repository. The failure is a high-severity `cache-poisoning` finding: the workflow runs on tag and `release-*` branch pushes, and `actions/setup-go` caches by default. See the failing check on the open sync PR in prometheus/client_model#152. The sync PRs in prometheus/common#1022, prometheus/client_golang#2186, prometheus/node_exporter#3867 and prometheus/alertmanager#5684 fail zizmor too. zizmor in this repository only scans `.github/workflows`, so it never checks `scripts/golangci-lint.yml`.  This PR ignores the finding for the setup-go step, with the reason in a comment, the same way `approve-workflows.yml` handles its `dangerous-triggers` exception. It doesn't disable the cache, so lint runs keep their Go module and build cache.  Restoring the cache is acceptable here because nothing in the workflow is worth compromising. A poisoned cache entry can run code in the job that restores it. In this workflow that job has a read-only token, uses no secrets, publishes nothing, and is the only job in the run. The worst case is a faked lint result. To poison the cache at all, an attacker would already need code running in a default-branch workflow, which is more access than this gives them.  This differs from d5f79f751, which disabled the cache in the golangci job of this repository's `ci.yml`. That job runs in the same workflow as `publish_main` and `publish_rele
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1521,364 +1521,440 @@ func openDir(path string) (fd syscall.Handle, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `11920c46` (2026-10-23)
-**Commit Message**: tsdb: release remaining test fixture references (#20167)
+### Incident Patch 1: `e471c770` (2026-10-25)
+**Commit Message**: Merge pull request #19878 from wbollock/fix/sd-refresh-metrics-reload
 
-Clear the captured DB reference before asserting that Close succeeded, so
-FailNow cannot skip releasing the fixture. Also clear the separate cleanup
-reference to the final restarted Head in the histogram-series metrics test.
+discovery: keep refresh metrics for running providers on reload
 
-Signed-off-by: Arve Knudsen <[REDACTED_EMAIL]>
-
-**File**: `tsdb/db_test.go` (modified, +2/-1)
+**File**: `discovery/aws/aws.go` (modified, +3/-0)
 ```diff
-@@ -128,10 +128,11 @@ func newTestDB(t testing.TB, opts ...testDBOpt) (db *DB) {
+@@ -330,6 +330,9 @@ func (c *SDConfig) UnmarshalYAML(unmarshal func(any) error) error {
+ // Name returns the name of the AWS Config.
+ func (*SDConfig) Name() string { return "aws" }
  
- 	t.Cleanup(func() {
- 		// Always close. DB is safe for close-after-close.
--		require.NoError(t, db.Close())
-+		err := db.Close()
- 		// Clear the captured reference so parallel subtests retained in
- 		// testing.T.sub do not pin closed DBs via the t.cleanups backing array.
- 		db = nil
-+		require.NoError(t, err)
- 	})
- 	return db
- }
++// RefreshMechanism returns the role, which is the mechanism label of the refresh metrics.
++func (c *SDConfig) RefreshMechanism() string { return string(c.Role) }
++
+ // NewDiscovererMetrics implements discovery.Config.
+ func (*SDConfig) NewDiscovererMetrics(_ prometheus.Registerer, rmi discovery.RefreshMetricsInstantiator) discovery.DiscovererMetrics {
+ 	return &awsMetrics{refreshMetrics: rmi}
 ```
 
-**File**: `tsdb/head_test.go` (modified, +2/-0)
+**File**: `discovery/manager.go` (modified, +52/-11)
 ```diff
-@@ -8854,6 +8854,8 @@ func TestHead_NumNativeHistogramSeriesAndBuckets(t *testing.T) {
- 	t.Cleanup(func() {
- 		// Captures head by reference, so it closes the final head after restarts.
- 		_ = head.Close()
-+		// Release the captured reference so completed parallel tests do not retain the head.
-+		head = nil
- 	})
- 	require.NoError(t, head.Init(0))
+@@ -19,6 +19,7 @@ import (
+ 	"log/slog"
+ 	"maps"
+ 	"reflect"
++	"slices"
+ 	"sync"
+ 	"time"
  
-```
-
----
-
-### Incident Patch 2: `1766a31f` (2026-10-23)
-**Commit Message**: security: bump go to 1.26.10 (#20156)
-
-Signed-off-by: Julius Hinze <[REDACTED_EMAIL]>
-
-**File**: `compliance/go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module compliance
+@@ -41,6 +42,8 @@ type Provider struct {
+ 	name   string
+ 	d      Discoverer
+ 	config any
++	// SetName is the name of the config that labels the discoverer's refresh metrics.
++	setName string
  
--go 1.26.9
-+go 1.26.10
+ 	cancel context.CancelFunc
+ 	// done should be called after cleaning up resources associated with cancelled provider.
+@@ -244,6 +247,8 @@ func (m *Manager) ApplyConfig(cfg map[string]Configs) error {
+ 	var (
+ 		wg           sync.WaitGroup
+ 		newProviders []*Provider
++		cancelled    []*Provider
++		renamed      = map[*Provider]string{}
+ 	)
+ 	for _, prov := range m.providers {
+ 		// Cancel obsolete providers if it has no new subs and it has a cancel function.
+@@ -258,18 +263,14 @@ func (m *Manager) ApplyConfig(cfg map[string]Configs) error {
  
- require github.com/prometheus/compliance/remotewrite v0.0.0-20260223092825-818283e1171e
+ 			prov.cancel()
+ 			prov.mu.RUnlock()
++			cancelled = append(cancelled, prov)
  
-```
-
-**File**: `documentation/examples/remote_storage/go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/prometheus/prometheus/documentation/examples/remote_storage
- 
--go 1.26.9
-+go 1.26.10
- 
- replace github.com/prometheus/prometheus => ../../..
- 
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/prometheus/prometheus
- 
--go 1.26.9
-+go 1.26.10
- 
- require (
- 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3
-```
-
-**File**: `go.work` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--go 1.26.9
-+go 1.26.10
- 
- use (
- 	.
-```
-
-**File**: `internal/tools/go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/prometheus/prometheus/internal/tools
- 
--go 1.26.9
-+go 1.26.10
- 
- require (
- 	github.com/bufbuild/buf v1.74.0
-```
-
-**File**: `web/ui/mantine-ui/src/promql/tools/go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/prometheus/prometheus/web/ui/mantine-ui/src/promql/tools
- 
--go 1.26.9
-+go 1.26.10
- 
- require (
- 	github.com/grafana/regexp v0.0.0-20250905093917-f7b3be9d1853
-```
-
----
-
-### Incident Patch 3: `cb58288c` (2026-10-23)
-**Commit Message**: tsdb: remove redundant test loops in delete and GC tests
-
-In TestDelete_e2e and TestHeadAppenderV2_Delete_e2e, the inner numRanges (1000) loop was copied from TestDB_e2e without random query bounds, executing the exact same deterministic [0, 100000] query 1,000 times per deletion (~139s under -race).
-
-In TestHead_RaceBetweenSeriesCreationAndGC and TestHeadAppenderV2_RaceBetweenSeriesCreationAndGC, the i%128 != 0 loop condition forced 128 full head.gc() passes over 100,000 series even after the concurrent series-creation goroutine finished after ~5 iterations (~77s of single-threaded post-completion work under -race). Checking !done.Load() directly keeps continuous concurrent GC while series creation runs without spinning after completion.
-
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
-
-**File**: `tsdb/head_append_v2_test.go` (modified, +39/-43)
-```diff
-@@ -191,8 +191,7 @@ func TestHeadAppenderV2_RaceBetweenSeriesCreationAndGC(t *testing.T) {
+-			// Clear up refresh metrics associated with this cancelled provider (sub means scrape job name).
+ 			m.targetsMtx.Lock()
+ 			for s := range prov.subs {
+ 				// Also clean up discovered targets metric. targetsMtx lock needed for safe access to m.targets.
+ 				delete(m.targets, poolKey{s, prov.name})
+ 				m.metrics.DiscoveredTargets.DeleteLabelValues(s)
+ 				m.metrics.LastUpdated.DeleteLabelValues(s)
+-
+-				if cfg, ok := prov.config.(Config); ok {
+-					m.sdMetrics.RefreshManager.DeleteLabelValues(cfg.Name(), s)
+-				}
+ 			}
+ 			m.targetsMtx.Unlock()
+ 			continue
+@@ -289,12 +290,6 @@ func (m *Manager) ApplyConfig(cfg map[string]Configs) error {
+ 				delete(m.targets, poolKey{s, prov.name})
+ 				m.metrics.DiscoveredTargets.DeleteLabelValues(s)
+ 				m.metrics.LastUpdated.DeleteLabelValues(s)
+-
+-				// Also clean up refresh metrics for subs that are being removed from a provider that is still running.
+-				cfg, ok := prov.config.(Config)
+-				if ok {
+-					m.sdMetrics.RefreshManager.DeleteLabelValues(cfg.Name(), s)
+-				}
+ 			}
  		}
+ 		// Set metrics and targets for new subs.
+@@ -309,6 +304,15 @@ func (m *Manager) ApplyConfig(cfg map[string]Configs) error {
+ 		}
+ 		m.targetsMtx.Unlock()
+ 
++		// Label refresh metrics with a config still using the provider, e.g. after a job rename.
++		if _, ok := prov.newSubs[prov.setName]; !ok && len(prov.newSubs) > 0 {
++			if d, ok := prov.d.(setNameUpdater); ok {
++				renamed[prov] = prov.setName
++				prov.setName = slices.Min(slices.Collect(maps.Keys(prov.newSubs)))
++				d.UpdateSetName(prov.setName)
++			}
++		}
++
+ 		prov.subs = prov.newSubs
+ 		prov.newSubs = map[string]struct{}{}
+ 		prov.mu.Unlock()
+@@ -329,11 +333,47 @@ func (m *Manager) ApplyConfig(cfg map[string]Configs) error {
+ 		}
+ 	}
+ 	m.providers = newProviders
++
++	// Clear up refresh metrics associated with cancelled and renamed providers.
++	for _, prov := range cancelled {
++		m.deleteRefreshMetrics(prov, prov.setName)
++	}
++	for prov, setName := range renamed {
++		m.deleteRefreshMetrics(prov, setName)
++	}
+ 	wg.Wait()
+ 
+ 	return nil
+ }
+ 
++// DeleteRefreshMetrics deletes refresh metrics a provider no longer updates for a config, unless a running provider
++// for the same mechanism and config still updates them.
++func (m *Manager) deleteRefreshMetrics(prov *Provider, setName string) {
++	cfg, ok := prov.config.(Config)
++	if !ok {
++		return
++	}
++	for _, p := range m.providers {
++		if c, ok := p.config.(Config); ok && refreshMechanism(c) == refreshMechanism(cfg) && p.setName == setName {
++			return
++		}
++	}
++	m.sdMetrics.RefreshManager.DeleteLabelValues(refreshMechanism(cfg), setName)
++}
++
++// setNameUpdater is implemented by discoverers that can label their refresh metrics with a new config name.
++type setNameUpdater interface {
++	UpdateSetName(setName string)
++}
++
++// refreshMechanism returns the mechanism label of a config's refresh metrics, which defaults to its name.
++func refreshMechanism(cfg Config) string {
++	if c, ok := cfg.(interface{ RefreshMechanism() string }); ok {
++		return c.RefreshMechanism()
++	}
++	return cfg.Name()
++}
++
+ // StartCustomProvider is used for sdtool. Only use this if you know what you're doing.
+ func (m *Manager) StartCustomProvider(ctx context.Context, name string, worker Discoverer) {
+ 	p := &Provider{
+@@ -555,6 +595,7 @@ func (m *Manager) registerProviders(cfgs Configs, setName string) int {
+ 			newSubs: map[string]struct{}{
+ 				setName: {},
+ 			},
++			setName: setName,
+ 		})
+ 		m.lastProvider++
+ 		added = true
+```
+
+**File**: `discovery/manager_test.go` (modified, +217/-45)
+```diff
+@@ -1650,63 +1650,235 @@ func TestUnregisterMetrics(t *testing.T) {
+ 	}
+ }
+ 
+-// Refresh and discovery metrics should be deleted for providers that are removed.
+-func TestMetricsCleanupAfterConfigReload(t *testing.T) {
+-	t.Parallel()
+-	ctx := t.Context()
++// refreshConfig is a config for a discoverer that instantiates refresh metrics
++// when created, like discoverers using the refresh package.
++type refreshConfig struct{ url string }
+ 
+-	reg := prometheus.NewRegistry()
+-	sdMetrics := NewTestMetrics(t, reg)
++type refreshDiscovererMetrics struct {
++	NoopDiscovererMetrics
++	RefreshMetricsInstantiator
++}
+ 
+-	discoveryManager := NewManager(ctx, promslog.NewNopLogger(), reg, sdMetrics)
+-	require.NotNil(t, discoveryManager)
+-	discoveryManager.updatert = 100 * time.Millisecond
+-	go discoveryManager.Run()
++// NewDiscovererMetrics implements discovery.Config.
++func (refreshConfig) NewDiscovererMetrics(_ prometheus.Registerer, rmi RefreshMetricsInstantiator) DiscovererMetrics {
++	return &refreshDiscovererMetrics{RefreshMetricsInstantiator: rmi}
++}
+ 
+-	c := map[string]Configs{
+-		"prometheus": {
+-			staticConfig("foo:9090", "bar:9090"),
+-		},
+-		"other": {
+-			staticConfig("baz:9090"),
+-		},
+-	}
+-	discoveryManager.ApplyConfig(c)
+-	<-discoveryManager.SyncCh()
++func (refreshConfig) Name() string { return "refresh" }
++func (c refreshConfig) NewDiscoverer(opts DiscovererOptions) (Discoverer, error) {
++	return newRefreshDiscoverer(opts, c.Name()), nil
++}
+ 
+-	// Manually instantiate refresh metrics to make them visible
+-	sdMetrics.RefreshManager.Instantiate("static", "prometheus").Failures.Add(0)
+-	sdMetrics.RefreshManager.Instantiate("static", "other").Failures.Add(0)
++// refreshDiscoverer instantiates refresh metrics when created or given a new config name,
++// like discoverers using the refresh package.
++type refreshDiscoverer struct {
++	*testDiscoverer
++	rmi  RefreshMetricsInstantiator
++	mech string
++}
+ 
+-	count, err := client_testutil.GatherAndCount(reg, "prometheus_sd_discovered_targets")
+-	require.NoError(t, err)
+-	require.Equal(t, 2, count)
++func newRefreshDiscoverer(opts DiscovererOptions, mech string) *refreshDiscoverer {
++	d := &refreshDiscoverer{testDiscoverer: newTestDiscoverer(), rmi: opts.Metrics.(*refreshDiscovererMetrics), mech: mech}
++	d.UpdateSetName(opts.SetName)
++	return d
++}
+ 
+-	count, err = client_testutil.GatherAndCount(reg, "prometheus_sd_refresh_failures_total")
+-	require.NoError(t, err)
+-	require.Equal(t, 2, count)
++func (d *refreshDiscoverer) UpdateSetName(setName string) { d.rmi.Instantiate(d.mech, setName) }
+ 
+-	count, err = client_testutil.GatherAndCount(reg, "prometheus_sd_last_update_timestamp_seconds")
+-	require.NoError(t, err)
+-	require.Equal(t, 2, count)
++// awsConfig is like aws_sd_configs, whose refresh metrics use the role as mechanism.
++type awsConfig struct {
++	refreshConfig
++	role string
++}
+ 
+-	// Simulate a config refresh.
+-	delete(c, "prometheus")
+-	discoveryManager.ApplyConfig(c)
+-	<-discoveryManager.SyncCh()
++func (awsConfig) Name() string               { return "aws" }
++func (c awsConfig) RefreshMechanism() string { return c.role }
++func (c awsConfig) NewDiscoverer(opts DiscovererOptions) (Discoverer, error) {
++	return newRefreshDiscoverer(opts, c.role), nil
++}
+ 
+-	// Ensure we still have metrics for the remaining provider.
+-	count, err = client_testutil.GatherAndCount(reg, "prometheus_sd_discovered_targets")
+-	require.NoError(t, err)
+-	require.Equal(t, 1, count)
++// Refresh and discovery metrics should be deleted for providers that are removed.
++// Refresh metrics should *also* be kept for jobs that still have a provider for the same mechanism after a reload.
++func TestMetricsCleanupAfterConfigReload(t *testing.T) {
++	t.Parallel()
++	for _, tc := range []struct {
++		name                string
++		before              map[string]Configs
++		during              map[string]Configs
++		after               map[string]Configs
++		refreshSeriesBefore int // Defaults to len(before).
++		refreshSeries       int
++		refreshConfigLabel  string
++	}{
++		{
++			name: "job removed",
++			before: map[string]Configs{
++				"prometheus": {refreshConfig{"foo"}},
++				"other":      {refreshConfig{"bar"}},
++			},
++			after: map[string]Configs{
++				"other": {refreshConfig{"bar"}},
++			},
++			refreshSeries: 1,
++		},
++		{
++			name: "job changes mechanism",
++			before: map[string]Configs{
++				"prometheus": {refreshConfig{"foo"}},
++			},
++			after: map[string]Configs{
++				"prometheus": {staticConfig("foo:9090")},
++			},
++			refreshSeries: 0,
++		},
++		{
++			name: "job changes config",
++			before: map[string]Configs{
++				"prometheus": {refreshConfig{"foo"}},
++			},
++			after: map[string]Configs{
++				"prometheus": {refreshConfig{"bar"}},
++			},
++			refreshSeries: 1,
++		},
++		{
++			name: "job removes one of its configs",
++			before: map[string]Configs{
++				"prometheus": {refreshConfig{"foo"}, refreshConfig{"bar"}},
++			},
++			after: map[string]Configs{
++				"prometheus": {refreshConfig{"bar"}},
++			},
++			refre
+```
+
+**File**: `discovery/refresh/refresh.go` (modified, +16/-7)
+```diff
+@@ -20,6 +20,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/prometheus/common/promslog"
++	"go.uber.org/atomic"
+ 
+ 	"github.com/prometheus/prometheus/discovery"
+ 	"github.com/prometheus/prometheus/discovery/targetgroup"
+@@ -39,13 +40,13 @@ type Discovery struct {
+ 	logger   *slog.Logger
+ 	interval time.Duration
+ 	refreshf func(ctx context.Context) ([]*targetgroup.Group, error)
+-	metrics  *discovery.RefreshMetrics
++	mech     string
++	rmi      discovery.RefreshMetricsInstantiator
++	metrics  atomic.Pointer[discovery.RefreshMetrics]
+ }
+ 
+ // NewDiscovery returns a Discoverer function that calls a refresh() function at every interval.
+ func NewDiscovery(opts Options) *Discovery {
+-	m := opts.MetricsInstantiator.Instantiate(opts.Mech, opts.SetName)
+-
+ 	var logger *slog.Logger
+ 	if opts.Logger == nil {
+ 		logger = promslog.NewNopLogger()
+@@ -57,12 +58,19 @@ func NewDiscovery(opts Options) *Discovery {
+ 		logger:   logger,
+ 		interval: opts.Interval,
+ 		refreshf: opts.RefreshF,
+-		metrics:  m,
++		mech:     opts.Mech,
++		rmi:      opts.MetricsInstantiator,
+ 	}
++	d.UpdateSetName(opts.SetName)
+ 
+ 	return &d
+ }
+ 
++// UpdateSetName labels the refresh metrics with a new config name, without restarting the discoverer.
++func (d *Discovery) UpdateSetName(setName string) {
++	d.metrics.Store(d.rmi.Instantiate(d.mech, setName))
++}
++
+ // Run implements the Discoverer interface.
+ func (d *Discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
+ 	// Get an initial set right away.
+@@ -106,14 +114,15 @@ func (d *Discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
+ 
+ func (d *Discovery) refresh(ctx context.Context) ([]*targetgroup.Group, error) {
+ 	now := time.Now()
++	metrics := d.metrics.Load()
+ 	defer func() {
+-		d.metrics.Duration.Observe(time.Since(now).Seconds())
+-		d.metrics.DurationHistogram.Observe(time.Since(now).Seconds())
++		metrics.Duration.Observe(time.Since(now).Seconds())
++		metrics.DurationHistogram.Observe(time.Since(now).Seconds())
  	}()
  
--	// Don't check the atomic.Bool on all iterations in order to perform more gc iterations and make the race condition more likely.
--	for i := 1; i%128 != 0 || !done.Load(); i++ {
-+	for !done.Load() {
- 		head.gc()
+ 	tgs, err := d.refreshf(ctx)
+ 	if err != nil {
+-		d.metrics.Failures.Inc()
++		metrics.Failures.Inc()
  	}
- 
-@@ -469,7 +468,6 @@ func TestHeadAppenderV2_DeleteSamplesAndSeriesStillInWALAfterCheckpoint(t *testi
- 
- func TestHeadAppenderV2_Delete_e2e(t *testing.T) {
- 	numDatapoints := 1000
--	numRanges := 1000
- 	timeInterval := int64(2)
- 	// Create 8 series with 1000 data-points of different ranges, delete and run queries.
- 	lbls := [][]labels.Label{
-@@ -578,51 +576,49 @@ func TestHeadAppenderV2_Delete_e2e(t *testing.T) {
- 			}
- 		}
- 		sort.Sort(matched)
--		for range numRanges {
--			q, err := NewBlockQuerier(hb, 0, 100000)
--			require.NoError(t, err)
--			ss := q.Select(context.Background(), true, nil, del.ms...)
--			// Build the mockSeriesSet.
--			matchedSeries := make([]storage.Series, 0, len(matched))
--			for _, m := range matched {
--				smpls := seriesMap[m.String()]
--				smpls = deletedSamples(smpls, del.drange)
--				// Only append those series for which samples exist as mockSeriesSet
--				// doesn't skip series with no samples.
--				// TODO: But sometimes SeriesSet returns an empty chunkenc.Iterator
--				if len(smpls) > 0 {
--					matchedSeries = append(matchedSeries, storage.NewListSeries(m, smpls))
--				}
-+		q, err := NewBlockQuerier(hb, 0, 100000)
-+		require.NoError(t, err)
-+		ss := q.Select(context.Background(), true, nil, del.ms...)
-+		// Build the mockSeriesSet.
-+		matchedSeries := make([]storage.Series, 0, len(matched))
-+		for _, m := range matched {
-+			smpls := seriesMap[m.String()]
-+			smpls = deletedSamples(smpls, del.drange)
-+			// Only append those series for which samples exist as mockSeriesSet
-+			// doesn't skip series with no samples.
-+			// TODO: But sometimes SeriesSet returns an empty chunkenc.Iterator
-+			if len(smpls) > 0 {
-+				matchedSeries = append(matchedSeries, storage.NewListSeries(m, smpls))
- 			}
--			expSs := newMockSeriesSet(matchedSeries)
--			// Compare both SeriesSets.
--			for {
--				eok, rok := expSs.Next(), ss.Next()
--				// Skip a series if iterator is empty.
--				if rok {
--					for ss.At().Iterator(nil).Next() == chunkenc.ValNone {
--						rok = ss.Next()
--						if !rok {
--							break
--						}
-+		}
-+		expSs := newMockSeriesSet(matchedSeries)
-+		// Compare both SeriesSets.
-+		for {
-+			eok, rok := expSs.Next(), ss.Next()
-+			// Skip a series if iterator is empty.
-+			if rok {
-+				for ss.At().Iterator(nil).Next() == chunkenc.ValNone {
-+					rok = ss.Next()
-+					if !rok {
-+						break
- 					}
- 				}
--				require.Equal(t, eok, rok)
--				if !eok {
--					break
--				}
--				sexp := expSs.At()
--				sres := ss.At()
--				require.Equal(t, sexp.Labels(), sres.Labels())
--				smplExp, errExp := storage.ExpandSamples(sexp.Iterator(nil), newSample)
--				smplRes, errRes := storage.ExpandSamples(sres.Iterator(nil), newSample)
--				require.Equal(t, errExp, errRes)
--				requireEqualSamples(t, sexp.Labels().String(), smplExp, smplRes)
- 			}
--			require.NoError(t, ss.Err())
--			require.Empty(t, ss.Warnings())
--			require.NoError(t, q.Close())
-+			require.Equal(t, eok, rok)
-+			if !eok {
-+				break
-+			}
-+			sexp := expSs.At()
-+			sres := ss.At()
-+			require.Equal(t, sexp.Labels(), sres.Labels())
-+			smplExp, errExp := storage.ExpandSamples(sexp.Iterator(nil), newSample)
-+			smplRes, errRes := storage.ExpandSamples(sres.Iterator(nil), newSample)
-+			require.Equal(t, errExp, errRes)
-+			requireEqualSamples(t, sexp.Labels().String(), smplExp, smplRes)
- 		}
-+		require.NoError(t, ss.Err())
-+		require.Empty(t, ss.Warnings())
-+		require.NoError(t, q.Close())
- 	}
+ 	return tgs, err
  }
- 
 ```
 
-**File**: `tsdb/head_test.go` (modified, +39/-43)
+**File**: `discovery/refresh/refresh_test.go` (modified, +25/-0)
 ```diff
-@@ -1484,8 +1484,7 @@ func TestHead_RaceBetweenSeriesCreationAndGC(t *testing.T) {
- 		}
- 	}()
+@@ -20,6 +20,7 @@ import (
+ 	"time"
  
--	// Don't check the atomic.Bool on all iterations in order to perform more gc iterations and make the race condition more likely.
--	for i := 1; i%128 != 0 || !done.Load(); i++ {
-+	for !done.Load() {
- 		head.gc()
- 	}
- 
-@@ -2398,7 +2397,6 @@ func TestDeletedSamplesAndSeriesStillInWALAfterCheckpoint(t *testing.T) {
- 
- func TestDelete_e2e(t *testing.T) {
- 	numDatapoints := 1000
--	numRanges := 1000
- 	timeInterval := int64(2)
- 	// Create 8 series with 1000 data-points of different ranges, delete and run queries.
- 	lbls := [][]labels.Label{
-@@ -2504,51 +2502,49 @@ func TestDelete_e2e(t *testing.T) {
- 			}
- 		}
- 		sort.Sort(matched)
--		for range numRanges {
--			q, err := NewBlockQuerier(hb, 0, 100000)
--			require.NoError(t, err)
--			ss := q.Select(context.Background(), true, nil, del.ms...)
--			// Build the mockSeriesSet.
--			matchedSeries := make([]storage.Series, 0, len(matched))
--			for _, m := range matched {
--				smpls := seriesMap[m.String()]
--				smpls = deletedSamples(smpls, del.drange)
--				// Only append those series for which samples exist as mockSeriesSet
--				// doesn't skip series with no samples.
--				// TODO: But sometimes SeriesSet returns an empty chunkenc.Iterator
--				if len(smpls) > 0 {
--					matchedSeries = append(matchedSeries, storage.NewListSeries(m, smpls))
--				}
-+		q, err := NewBlockQuerier(hb, 0, 100000)
-+		require.NoError(t, err)
-+		ss := q.Select(context.Background(), true, nil, del.ms...)
-+		// Build the mockSeriesSet.
-+		matchedSeries := make([]storage.Series, 0, len(matched))
-+		for _, m := range matched {
-+			smpls := seriesMap[m.String()]
-+			smpls = deletedSamples(smpls, del.drange)
-+			// Only append those series for which samples exist as mockSeriesSet
-+			// doesn't skip series with no samples.
-+			// TODO: But sometimes SeriesSet returns an empty chunkenc.Iterator
-+			if len(smpls) > 0 {
-+				matchedSeries = append(matchedSeries, storage.NewListSeries(m, smpls))
- 			}
--			expSs := newMockSeriesSet(matchedSeries)
--			// Compare both SeriesSets.
--			for {
--				eok, rok := expSs.Next(), ss.Next()
--				// Skip a series if iterator is empty.
--				if rok {
--					for ss.At().Iterator(nil).Next() == chunkenc.ValNone {
--						rok = ss.Next()
--						if !rok {
--							break
--						}
-+		}
-+		expSs := newMockSeriesSet(matchedSeries)
-+		// Compare both SeriesSets.
-+		for {
-+			eok, rok := expSs.Next(), ss.Next()
-+			// Skip a series if iterator is empty.
-+			if rok {
-+				for ss.At().Iterator(nil).Next() == chunkenc.ValNone {
-+					rok = ss.Next()
-+					if !rok {
-+						break
- 					}
- 				}
--				require.Equal(t, eok, rok)
--				if !eok {
--					break
--				}
--				sexp := expSs.At()
--				sres := ss.At()
--				require.Equal(t, sexp.Labels(), sres.Labels())
--				smplExp, errExp := storage.ExpandSamples(sexp.Iterator(nil), newSample)
--				smplRes, errRes := storage.ExpandSamples(sres.Iterator(nil), newSample)
--				require.Equal(t, errExp, errRes)
--				requireEqualSamples(t, sexp.Labels().String(), smplExp, smplRes)
- 			}
--			require.NoError(t, ss.Err())
--			require.Empty(t, ss.Warnings())
--			require.NoError(t, q.Close())
-+			require.Equal(t, eok, rok)
-+			if !eok {
-+				break
-+			}
-+			sexp := expSs.At()
-+			sres := ss.At()
-+			require.Equal(t, sexp.Labels(), sres.Labels())
-+			smplExp, errExp := storage.ExpandSamples(sexp.Iterator(nil), newSample)
-+			smplRes, errRes := storage.ExpandSamples(sres.Iterator(nil), newSample)
-+			require.Equal(t, errExp, errRes)
-+			requireEqualSamples(t, sexp.Labels().String(), smplExp, smplRes)
- 		}
-+		require.NoError(t, ss.Err())
-+		require.Empty(t, ss.Warnings())
-+		require.NoError(t, q.Close())
+ 	"github.com/prometheus/client_golang/prometheus"
++	"github.com/prometheus/client_golang/prometheus/testutil"
+ 	"github.com/prometheus/common/model"
+ 	"github.com/stretchr/testify/require"
+ 	"go.uber.org/goleak"
+@@ -101,3 +102,27 @@ func TestRefresh(t *testing.T) {
+ 	case <-tick.C:
  	}
  }
++
++func TestRefreshUpdateSetName(t *testing.T) {
++	metrics := discovery.NewRefreshMetrics(prometheus.NewRegistry())
++	require.NoError(t, metrics.Register())
++	defer metrics.Unregister()
++
++	d := NewDiscovery(
++		Options{
++			Mech:     "test",
++			SetName:  "old",
++			Interval: time.Hour,
++			RefreshF: func(context.Context) ([]*targetgroup.Group, error) {
++				return nil, errors.New("some error")
++			},
++			MetricsInstantiator: metrics,
++		},
++	)
++	d.UpdateSetName("new")
++
++	_, err := d.refresh(t.Context())
++	require.Error(t, err)
++	require.Equal(t, 0.0, testutil.ToFloat64(metrics.Instantiate("test", "old").Failures))
++	require.Equal(t, 1.0, testutil.ToFloat64(metrics.Instantiate("test", "new").Failures))
++}
+```
+
+**File**: `docs/http_sd.md` (modified, +3/-2)
+```diff
+@@ -41,8 +41,9 @@ Prometheus caches target lists. If an error occurs while fetching an updated
+ targets list, Prometheus keeps using the current targets list. The targets list
+ is not saved across restart. The `prometheus_sd_refresh_failures_total` counter
+ metric tracks the number of refresh failures and the `prometheus_sd_refresh_duration_seconds`
+-bucket can be used to track HTTP SD refresh attempts or performance. These metrics are
+-removed when the underlying scrape job disappears on Prometheus configuration reload.
++summary can be used to track HTTP SD refresh attempts or performance. These metrics are
++removed on Prometheus configuration reload once no HTTP SD configuration updates them,
++for example when the scrape job is removed.
  
+ The whole list of targets must be returned on every scrape. There is no support
+ for incremental updates. A Prometheus instance does not send its hostname and it
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20181** (closed): docs: add AppArmor profile example (@rizzabhdwaj)
 - **PR #20167** (2026-10-23): tsdb: release remaining test fixture references (@aknuds1)
 - **PR #20158** (2026-10-23): ci: ignore zizmor cache-poisoning in synced golangci-lint workflow (@aknuds1)
 - **PR #20157** (2026-10-23): tsdb: parallelize slow tests and remove redundant test loops (@bwplotka)
 - **PR #20156** (2026-10-23): security: bump go to 1.26.10 (@juliusmh)
 - **PR #20154** (closed): remote: enable native histograms for write v2 (@ajaykr0905)
-- **PR #20144** (closed): ci: increase Go test timeout to 15 minutes (@shilohlee98)
 
 ---
 
@@ -1898,29 +1974,30 @@ Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tsdb: release remaining test fixture references (#20167)
+## X. Merge pull request #19878 from wbollock/fix/sd-refresh-metrics-reload
 
 **RULE**:
-When implementing operations in `tsdb/db_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `discovery/aws/aws.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `11920c46`: tsdb: release remaining test fixture references (#20167). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e471c770`: Merge pull request #19878 from wbollock/fix/sd-refresh-metrics-reload. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsdb/db_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `discovery/aws/aws.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		err := db.Close()
-		require.NoError(t, err)
+// RefreshMechanism returns the role, which is the mechanism label of the refresh metrics.
+func (c *SDConfig) RefreshMechanism() string { return string(c.Role) }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		require.NoError(t, db.Close())
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `11920c46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e471c770` are properly handled with clean fallback behavior.

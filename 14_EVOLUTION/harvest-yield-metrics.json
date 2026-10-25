@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T18:02:31.547Z",
-  "total_cycles_completed": 4907,
-  "total_learnings_persisted": 4907,
-  "total_rules_promoted": 4286,
+  "last_updated": "2026-10-25T18:09:00.610Z",
+  "total_cycles_completed": 4911,
+  "total_learnings_persisted": 4911,
+  "total_rules_promoted": 4288,
   "history": [
-    {
-      "timestamp": "2026-10-25T07:38:48.776Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T07:38:56.381Z",
-      "repository": "bergside/typeui",
-      "learningId": "learn-github-bergside-typeui",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T07:39:33.171Z",
-      "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T07:52:18.394Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T07:53:37.174Z",
       "repository": "FrancisRing/Prism",
@@ -1403,6 +1375,34 @@
       "repository": "honojs/hono",
       "learningId": "learn-github-honojs-hono",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:08:49.787Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:08:55.767Z",
+      "repository": "alin23/Lunar",
+      "learningId": "learn-github-alin23-lunar",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:08:58.449Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:09:00.610Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

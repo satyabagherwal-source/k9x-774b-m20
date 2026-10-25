@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T16:28:34.512Z",
+  "last_updated": "2026-10-25T18:08:55.765Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2774,6 +2774,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-llphant-llphant"
+    },
+    {
+      "id": "CD-65ED",
+      "directive_title": "Update changelog for 6.11.3",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "alin23/Lunar",
+      "source_commit": "06950e25",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-alin23-lunar"
     }
   ]
 }
