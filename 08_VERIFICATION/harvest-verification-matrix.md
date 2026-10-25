@@ -4996,3 +4996,5 @@
 | `CYCLE-20261025-D6PU` | `2026-10-25T21:02:21.762Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4449` | Yes (`e982eec1...`) |
 | `CYCLE-20261025-LB6N` | `2026-10-25T21:08:40.799Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`e95ef162...`) |
 | `CYCLE-20261025-LBC1` | `2026-10-25T21:08:40.993Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3483` | Yes (`36721dc2...`) |
+| `CYCLE-20261025-TSIX` | `2026-10-25T21:15:16.521Z` | `touchlab/SKIE` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4450` | Yes (`a256d453...`) |
+| `CYCLE-20261025-TYB7` | `2026-10-25T21:15:24.019Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`dc847eb4...`) |

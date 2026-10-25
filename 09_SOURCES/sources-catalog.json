@@ -1005,8 +1005,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceVersion": "hf-baidu-unlimited-ocr",
     "license": "Open-Source",
-    "contentHash": "ad0dc3e5d958bb476276f70b9f3a3112fd0cb2809eceef54a804dd7c2d2b80f2",
-    "lastHarvestedAt": "2026-10-21T01:30:05.913Z",
+    "contentHash": "dc847eb4210547a18775ca5e702fab2e3170686087e0db2ff447d7c1a1e78c74",
+    "lastHarvestedAt": "2026-10-25T21:15:24.022Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr"
   },
   "hf-aleph-alpha-kolibri-1": {
@@ -8373,10 +8373,10 @@
     "repository": "touchlab/SKIE",
     "platform": "github",
     "sourceUrl": "https://github.com/touchlab/SKIE",
-    "sourceVersion": "e3e85015",
+    "sourceVersion": "25bb2b91",
     "license": "Apache-2.0",
-    "contentHash": "b9a6ec9d54aca364c1fe82e1c980f88a3b9d04968d0092ac8cc3f83c0e549fba",
-    "lastHarvestedAt": "2026-10-19T16:37:20.242Z",
+    "contentHash": "a256d453f2ca6bffa2215fff9e80d2021ac60e6085755afd287cf9d6030300e1",
+    "lastHarvestedAt": "2026-10-25T21:15:16.524Z",
     "learningId": "learn-github-touchlab-skie"
   },
   "touchlab-xcode-kotlin": {

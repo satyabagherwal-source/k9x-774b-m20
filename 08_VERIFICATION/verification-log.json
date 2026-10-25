@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-CRJB",
-    "timestamp": "2026-10-23T08:22:52.007Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "bd1cf5c1ffb7885ec77421db46e82b0458e15768ba9cea7e3849b7204b7a6eff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-DKFV",
-    "timestamp": "2026-10-23T08:23:29.467Z",
-    "repository": "mattermost/mattermost",
-    "learningId": "learn-github-mattermost-mattermost",
-    "contentHash": "65a757438bd702430c92ceb78d61c2ccb72b0d17271054ffc97eef8bdb253c4e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-HKSV",
     "timestamp": "2026-10-23T08:26:36.559Z",
     "repository": "xerj-org/xerj",
@@ -7492,6 +7462,36 @@
     "contentHash": "36721dc20052739b00d07c3cbd20e661f320b735eec5acdba64989b1c975f237",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-TSIX",
+    "timestamp": "2026-10-25T21:15:16.521Z",
+    "repository": "touchlab/SKIE",
+    "learningId": "learn-github-touchlab-skie",
+    "contentHash": "a256d453f2ca6bffa2215fff9e80d2021ac60e6085755afd287cf9d6030300e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-TYB7",
+    "timestamp": "2026-10-25T21:15:24.019Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr",
+    "contentHash": "dc847eb4210547a18775ca5e702fab2e3170686087e0db2ff447d7c1a1e78c74",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

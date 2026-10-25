@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T21:08:41.000Z",
-  "total_cycles_completed": 4973,
-  "total_learnings_persisted": 4973,
-  "total_rules_promoted": 4335,
+  "last_updated": "2026-10-25T21:15:24.027Z",
+  "total_cycles_completed": 4975,
+  "total_learnings_persisted": 4975,
+  "total_rules_promoted": 4336,
   "history": [
-    {
-      "timestamp": "2026-10-25T11:59:52.946Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T11:59:58.054Z",
-      "repository": "langchain4j/langchain4j",
-      "learningId": "learn-github-langchain4j-langchain4j",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T11:59:59.338Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -1403,6 +1389,20 @@
       "repository": "primer/react",
       "learningId": "learn-github-primer-react",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T21:15:16.530Z",
+      "repository": "touchlab/SKIE",
+      "learningId": "learn-github-touchlab-skie",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T21:15:24.027Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

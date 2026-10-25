@@ -5003,3 +5003,5 @@ Every entry in this ledger must capture:
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `0f38c118` | Multi-dimensional audit evidence | 2026-10-25T21:02:21.766Z |
 | `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-25T21:08:40.803Z |
 | `learn-github-primer-react` | `https://github.com/primer/react` | `190fafd9` | Multi-dimensional audit evidence | 2026-10-25T21:08:40.996Z |
+| `learn-github-touchlab-skie` | `https://github.com/touchlab/SKIE` | `25bb2b91` | Multi-dimensional audit evidence | 2026-10-25T21:15:16.524Z |
+| `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-25T21:15:24.022Z |

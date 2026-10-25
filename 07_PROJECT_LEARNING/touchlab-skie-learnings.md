@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/touchlab-skie-learnings.md`  
 > **Source**: github ([https://github.com/touchlab/SKIE](https://github.com/touchlab/SKIE))  
-> **Source Version**: `e3e85015`  
+> **Source Version**: `25bb2b91`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:37:19.985Z  
+> **Timestamp**: 2026-10-25T21:15:16.143Z  
 > **Learning ID**: `learn-github-touchlab-skie`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/touchlab-skie-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/touchlab/SKIE](https://github.com/touchlab/SKIE))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:37:19.979Z  
+> **Harvest Timestamp**: 2026-10-25T21:15:15.742Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: SKIE - Swift Kotlin Interface Enhancer
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1337 stars
+- **Stars / Engagement**: 1338 stars
 
 ---
 
@@ -478,469 +478,62 @@ class FrameworkLayout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `74444363` (2026-07-01)
-**Commit Message**: Fix configuration cache serialization of the Swift source set
+### Incident Patch 1: `25bb2b91` (2026-10-25)
+**Commit Message**: Add support for Kotlin 2.4.21 (#211)
 
-SwiftBundlingConfigurator exposed the bundled Swift sources as a live
-DefaultSourceDirectorySet and attached it as a task input. That type is
-not supported by Gradle's configuration cache, so once SKIE's Kotlin
-source-set container becomes reachable from a stored task graph (for
-example a consumer link-task action that captures the KotlinNativeTarget),
-storing the entry fails and the cache is discarded.
+Declare 2.4.21 as a sub-compiler of the 2.4.20 baseline, following the
+2.3.21 and 2.4.10 patch-bump pattern. No new source-set shims or test
+directories: 2.4.21 changelog has no compiler-internal API changes.
 
-Expose the Swift sources as a ConfigurableFileCollection of the source
-directories (filtered to **/*.swift) instead. It stores resolved paths
-rather than the source-set container and its actions, so it is
-serializable even when reached from the task graph. Behavior is unchanged.
+Verified:
+- linker plugin and gradle plugin-shim-impl compile against
+  2.4.20[2.4.21] with kotlin-native-compiler-embeddable 2.4.21 resolved
+- functional canary coroutines/flow/combine (5 cases) passes
+- library canary kotlinx-coroutines-core, kotlinx-serialization-core,
+  ktor-client-core pass
 
-Add a regression test that recreates the reachability condition and
-asserts SKIE contributes no SourceDirectorySet problem to the
-configuration cache report.
-
-Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
-
-**File**: `SKIE/skie-gradle/plugin-impl/src/main/kotlin/co/touchlab/skie/plugin/switflink/SwiftBundlingConfigurator.kt` (modified, +13/-14)
+**File**: `common-gradle/gradle.properties` (modified, +2/-1)
 ```diff
-@@ -11,7 +11,7 @@ import co.touchlab.skie.plugin.util.writeToZip
- import co.touchlab.skie.util.cache.syncDirectoryContentIfDifferent
- import co.touchlab.skie.util.file.isKlib
- import org.gradle.api.Project
--import org.gradle.api.file.SourceDirectorySet
-+import org.gradle.api.file.FileCollection
- import org.gradle.api.provider.Provider
- import java.io.File
+@@ -15,7 +15,7 @@ kotlin.suppressGradlePluginWarnings=IncorrectCompileOnlyDependencyWarning
  
-@@ -38,12 +38,12 @@ object SwiftBundlingConfigurator {
+ pluginId=co.touchlab.skie
  
-         val baseName = lowerCamelCaseName("processSwiftSources", compilationPrefix, compilation.target.name)
+-versionSupport.kotlin=2.0.0(2.0.10), 2.0.20(2.0.21), 2.1.0(2.1.10), 2.1.20(2.1.21), 2.2.0(2.2.10), 2.2.20(2.2.21), 2.3.0(2.3.10), 2.3.20(2.3.21), 2.4.0(2.4.10), 2.4.20
++versionSupport.kotlin=2.0.0(2.0.10), 2.0.20(2.0.21), 2.1.0(2.1.10), 2.1.20(2.1.21), 2.2.0(2.2.10), 2.2.20(2.2.21), 2.3.0(2.3.10), 2.3.20(2.3.21), 2.4.0(2.4.10), 2.4.20(2.4.21)
+ versionSupport.kotlin.klibCompiler=2.0.21
+ #versionSupport.kotlin.enabledVersions=2.0.0
+ #versionSupport.kotlin.enabledVersions=2.0.20
+@@ -29,6 +29,7 @@ versionSupport.kotlin.klibCompiler=2.0.21
+ #versionSupport.kotlin.enabledVersions=2.4.0
+ #versionSupport.kotlin.enabledVersions=2.4.10
+ #versionSupport.kotlin.enabledVersions=2.4.20
++#versionSupport.kotlin.enabledVersions=2.4.21
  
--        val swiftSourceSet = createSwiftSourceSet(compilation)
-+        val swiftSourceFiles = createSwiftSourceFiles(compilation)
+ #skie.kgpVersion=2.2.0
  
-         val isSwiftBundlingEnabledProperty = skieExtension.swiftBundling.enabled
- 
-         return registerSkieTask<ProcessSwiftSourcesTask>(baseName) {
--            inputs.files(swiftSourceSet)
-+            inputs.files(swiftSourceFiles)
-             output.set(compilation.skieCompilationDirectory.map { it.swift.bundled.directory })
- 
-             onlyIf {
-@@ -52,20 +52,19 @@ object SwiftBundlingConfigurator {
-         }
-     }
- 
--    private fun Project.createSwiftSourceSet(compilation: KotlinNativeCompilationShim): SourceDirectorySet {
--        val swiftSourceSetName = "${compilation.target.name}:${compilation.name} Swift sources"
-+    private fun Project.createSwiftSourceFiles(compilation: KotlinNativeCompilationShim): FileCollection {
-+        // A ConfigurableFileCollection populated with concrete directories is serializable by the
-+        // Gradle configuration cache (it stores resolved paths, not the source set container or its
-+        // actions). Using a SourceDirectorySet here instead captures a non-serializable
-+        // DefaultSourceDirectorySet into the task graph and discards the configuration cache entry.
-+        val swiftSourceFiles = objects.fileCollection()
- 
--        val swiftSourceSet = objects.sourceDirectorySet(swiftSourceSetName, swiftSourceSetName).apply {
--            filter.include("**/*.swift")
-+        compilation.allKotlinSourceSets.all {
-+            swiftSourceFiles.from(layout.projectDirectory.dir(swiftSourceDirectory))
-         }
- 
--        compilation.allKotlinSourceSets.configureEach {
--            val swiftDirectory = project.layout.projectDirectory.dir(swiftSourceDirectory)
--
--            swiftSourceSet.srcDirs(swiftDirectory)
--        }
--
--        return swiftSourceSet
-+        // Preserve the previous filter.include("**/*.swift") behavior for up-to-date checks.
-+        return swiftSourceFiles.asFileTree.matching { include("**/*.swift") }
-     }
- 
-     private fun KotlinNativeCompilationShim.configureCompileTask(processSwiftSourcesTaskProvider: Provider<ProcessSwiftSourcesTask>) {
 ```
 
-**File**: `test-runner/src/test/kotlin/co/touchlab/skie/test/suite/gradle/configurationcache/GradleConfigurationCacheTests.kt` (modified, +89/-0)
+**File**: `dev-support/build.gradle.kts` (modified, +2/-1)
 ```diff
-@@ -13,7 +13,9 @@ import co.touchlab.skie.test.util.LinkMode
- import co.touchlab.skie.test.util.StringBuilderScope
- import org.gradle.testkit.runner.BuildResult
- import org.gradle.testkit.runner.TaskOutcome
-+import org.gradle.testkit.runner.UnexpectedBuildFailure
- import kotlin.test.assertEquals
-+import kotlin.test.assertFalse
- 
- @Suppress("ClassName")
- @Smoke
-@@ -134,6 +136,93 @@ class GradleConfigurationCacheTests: BaseGradleTests() {
-         )
-     }
- 
-+    // Regression test for the DefaultSourceDirectorySet serialization failure SKIE caused on the
-+    // link-framework graph: SwiftBundlingConfigurator.createSwiftSourceSet() built a live
-+    // SourceDirectorySet and let it reach the configuration cache, which cannot serialize it.
-+    //
-+    // The failure only surfaces when something puts SKIE's Kotlin-source-set container on a
-+    // serialization path. In the wild that is a consumer build action that captures the
-+    // KotlinNativeTarget (e.g. a doLast on the link task); a plain SKIE project never does, which is
-+    // why the `assemble` cases above — and even an unmodified link build — don't reproduce it. We
-+    // recreate that reachability here with a target-capturing doLast, then assert SKIE contributes no
-+    // SourceDirectorySet problem of its own. Unrelated KGP problems (its own `actualResources`
-+    // SourceDirectorySet and StoredPropertyStorage/ReferenceQueue) are expected to remain — they are
-+    // dragged in by the same capture and are not SKIE's to fix — so the assertion keys on SKIE's own
-+    // `createSwiftSourceSet` frame rather than the generic problem type.
-+    @MatrixTest
-+    fun `framework link does not put SKIE swift sources in the configuration cache`(
-+        kotlinVersion: KotlinVersion,
-+    ) {
-+        rootBuildFile(kotlinVersion) {
-+            kotlin {
-+                targets(KotlinTarget.Native)
-+
-+                includeCoroutinesDependency()
-+
-+                registerNativeFrameworks(
-+                    kotlinVersion = kotlinVersion,
-+                    buildConfiguration = BuildConfiguration.Debug,
-+                    linkMode = LinkMode.Dynamic,
-+                )
-+            }
-+
-+            // Capture the KotlinNativeTarget in a stored link-task action. This makes
-+            // target.binaries -> SKIE's KGP shims -> the swift source set reachable from the
-+            // configuration cache, reproducing the consumer condition under which the bug fired.
-+            appendLines(
-+                """
-+                kotlin.targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().configureEach {
-+                    val capturedTarget = this
-+                    binaries.withType<org.jetbrains.kotlin.gradle.plugin.mpp.Framework>().configureEach {
-+                        linkTaskProvider.get().doLast { println(capturedTarget.binaries.size) }
-+                    }
-+                }
-+                """.trimIndent(),
-+            )
-+        }
-+
-+        // Templates.basic ships a bundled Swift source under src/commonMain/swift.
-+        copyToCommonMain(Templates.basic)
-+
-+        // `--dry-run` keeps configuration (and the configuration cache store) but skips the native
-+        // link. The build is EXPECTED to fail here regardless of SKIE: the unrelated KGP problem
-+        // (ReferenceQueue in StoredPropertyStorage) is a hard serialization error that aborts the
-+        // store even under `--configuration-cache-problems=warn`. That failure is orthogonal to the
-+        // SKIE bug, so we tolerate it and assert on the configuration cache report, which Gradle
-+        // writes either way.
-+        val buildFailure = try {
-+            runGradle(
-+                arguments = arrayOf(
-+                    ":linkDebugFrameworkIosArm64",
-+                    "--dry-run",
-+                    "--configuration-cache-problems=warn",
-+                ),
-+                assertResult = null,
-+            )
-+            null
-+        } catch (failure: UnexpectedBuildFailure) {
-+            failure
-+        }
-+
-+        val report = testProjectDir.walkTopDown()
-+            .firstOrNull { it.name == "configuration-cache-report.html" }
-+            ?.readText()
-+
-+        if (report == null) {
-+            // No report means no configuration cache problems at all. If the build nonetheless
-+            // failed, it failed for some unrelated reason we should surface rather than swallow.
-+            buildFailure?.let { throw it }
-+            return
-+        }
-+
-+        assertFalse(
-+            report.contains("createSwiftSourceSet"),
-+            "SKIE put its swift SourceDirectorySet on the configuration cache serialization path " +
-+                "(SwiftBundlingConfigurator.createSwiftSourceSet). It must expose the swift sources as a " +
-+                "serializable FileCollection instead.",
-+        )
-+    }
-+
-     override fun StringBuilderScope.appendAdditionalGradleProperties() {
-         +"org.gradle.configuratio
-```
-
----
-
-### Incident Patch 2: `daced5dc` (2026-06-11)
-**Commit Message**: Add regression test for external dependency reporting
-
-**File**: `SKIE/acceptance-tests/framework/src/main/kotlin/co/touchlab/skie/acceptancetests/framework/internal/skie/TestSkiePhasesRegistrar.kt` (modified, +3/-0)
-```diff
-@@ -16,5 +16,8 @@ class TestSkiePhasesRegistrar : SkiePluginRegistrar {
-             add(VerifyTestPhasesAreExecutedPhase)
-             add(VerifyFrameworkHeaderPhase)
-         }
-+        initPhaseContext.skiePhaseScheduler.kirPhases.modify {
-+            add(VerifyExternalDependenciesAreReportedPhase)
-+        }
-     }
- }
-```
-
-**File**: `SKIE/acceptance-tests/framework/src/main/kotlin/co/touchlab/skie/acceptancetests/framework/internal/skie/VerifyExternalDependenciesAreReportedPhase.kt` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+package co.touchlab.skie.acceptancetests.framework.internal.skie
-+
-+import co.touchlab.skie.phases.KirPhase
-+import co.touchlab.skie.phases.descriptorProvider
-+
-+/**
-+ * Regression guard for the Kotlin 2.4.0 external-dependency reporting fix.
-+ *
-+ * Kotlin 2.4.0 removed `UserVisibleIrModulesSupport`, and SKIE now reconstructs `descriptorProvider.externalDependencies`
-+ * by deserializing the `-Xexternal-dependencies` file the Kotlin Gradle plugin forwards to the native link. None of the
-+ * existing test harnesses pass that file, so this behavior was previously untested (the broken `emptySet()` stub passed
-+ * the whole suite).
-+ *
-+ * When a compiled test module contains a class named [MARKER_CLASS_NAME], this phase asserts that the external
-+ * dependencies were actually reported (the set is non-empty and contains [EXPECTED_MODULE]). With the broken stub the
-+ * set is empty, so the [check] fails and crashes the compilation, turning the regression red. For every other test the
-+ * marker class is absent and this phase is a no-op.
-+ */
-+object VerifyExternalDependenciesAreReportedPhase : KirPhase {
-+
-+    context(KirPhase.Context)
-+    override suspend fun execute() {
-+        val hasMarker = descriptorProvider.exposedClasses.any { it.name.asString() == MARKER_CLASS_NAME }
-+        if (!hasMarker) {
-+            return
-+        }
-+
-+        val reported = descriptorProvider.externalDependencies
-+
-+        check(reported.isNotEmpty()) {
-+            "External dependencies were not reported. `getExternalDependencies` should read the -Xexternal-dependencies " +
-+                "file, but `descriptorProvider.externalDependencies` was empty."
-+        }
-+
-+        val reportedNames = reported.flatMap { it.id.uniqueNames }
-+        check(EXPECTED_MODULE in reportedNames) {
-+            "Expected external dependency '$EXPECTED_MODULE' to be reported, but got: $reportedNames"
-+        }
-+    }
-+
-+    const val MARKER_CLASS_NAME: String = "VerifyExternalDependenciesAreReported"
-+
-+    const val EXPECTED_MODULE: String = "com.example:foo"
-+}
-```
-
-**File**: `SKIE/acceptance-tests/framework/src/main/kotlin/co/touchlab/skie/acceptancetests/framework/internal/testrunner/phases/kotlin/CompilerArgumentsProvider.kt` (modified, +3/-0)
-```diff
-@@ -16,6 +16,7 @@ class CompilerArgumentsProvider(
-     val buildConfiguration: BuildConfiguration = TestDefaults.buildConfiguration ?: BuildConfiguration.Debug,
-     val target: Target = TestDefaults.target ?: Target.current,
-     val optIn: List<String> = emptyList(),
-+    val externalDependencies: String? = null,
- ) {
- 
-     fun compile(
-@@ -75,6 +76,8 @@ class CompilerArgumentsProvider(
-             libraries = dependencies.toTypedArray()
-             exportedLibraries = exportedDependencies.toTypedArray()
- 
-+            externalDependencies = this@CompilerArgumentsProvider.externalDependencies
-+
-             target = this@CompilerArgumentsProvider.target.kotlinName
- 
-             overrideKonanProperties = (overrideKonanProperties ?: arrayOf()) + arrayOf(
-```
-
-**File**: `SKIE/acceptance-tests/libraries/src/test/kotlin/co/touchlab/skie/plugin/libraries/ExternalDependenciesReportingTest.kt` (added, +93/-0)
-```diff
-@@ -0,0 +1,93 @@
-+package co.touchlab.skie.plugin.libraries
-+
-+import co.touchlab.skie.acceptance_tests_framework.BuildConfig
-+import co.touchlab.skie.acceptancetests.framework.TempFileSystem
-+import co.touchlab.skie.acceptancetests.framework.internal.testrunner.IntermediateResult
-+import co.touchlab.skie.acceptancetests.framework.internal.testrunner.TestLogger
-+import co.touchlab.skie.acceptancetests.framework.internal.testrunner.phases.kotlin.CompilerArgumentsProvider
-+import co.touchlab.skie.acceptancetests.framework.internal.testrunner.phases.kotlin.KotlinTestCompiler
-+import co.touchlab.skie.acceptancetests.framework.internal.testrunner.phases.kotlin.KotlinTestLinker
-+import co.touchlab.skie.configuration.provider.CompilerSkieConfigurationData
-+import io.kotest.assertions.fail
-+import io.kotest.core.spec.style.FunSpec
-+import java.nio.file.Files
-+import kotlin.io.path.absolutePathString
-+import kotlin.io.path.writeText
-+
-+/**
-+ * Regression test for external-dependency reporting after the Kotlin 2.4.0 `UserVisibleIrModulesSupport` removal.
-+ *
-+ * On 2.4.0 SKIE reconstructs `descriptorProvider.externalDependencies` by deserializing the `-Xexternal-dependencies`
-+ * file the Kotlin Gradle plugin forwards to the native link. None of the existing harnesses pass that file, so the
-+ * broken `getExternalDependencies() = emptySet()` stub silently passed the whole suite. This test supplies a real
-+ * `-Xexternal-dependencies` file and relies on [co.touchlab.skie.acceptancetests.framework.internal.skie.VerifyExternalDependenciesAreReportedPhase]
-+ * (active only when the compiled module contains the marker class below) to crash the SKIE compilation if the external
-+ * dependencies are not reported.
-+ *
-+ * Pass: the SKIE link succeeds (external dependencies were reported). Fail (with the stub): the link errors.
-+ */
-+class ExternalDependenciesReportingTest : FunSpec({
-+
-+    System.setProperty("konan.home", BuildConfig.KONAN_HOME)
-+
-+    test("SKIE reports external dependencies from the -Xexternal-dependencies file") {
-+        val tempFileSystem = TempFileSystem(Files.createTempDirectory("skie-external-dependencies-test"))
-+        val testLogger = TestLogger()
-+
-+        // The marker class activates VerifyExternalDependenciesAreReportedPhase for this compilation only.
-+        val sourceFile = tempFileSystem.createFile("VerifyExternalDependenciesAreReported.kt")
-+        sourceFile.writeText(
-+            """
-+            class VerifyExternalDependenciesAreReported {
-+                fun marker(): Int = 0
-+            }
-+            """.trimIndent(),
-+        )
-+
-+        // A real -Xexternal-dependencies file in `ResolvedDependenciesSupport`'s format: one external module
-+        // (`com.example:foo:1.2.3`) depending on the source code module (index 0).
-+        val externalKlibPath = tempFileSystem.createFile("com.example.foo.klib").absolutePathString()
-+        val externalDependenciesFile = tempFileSystem.createFile("external.deps")
-+        externalDependenciesFile.writeText(
-+            buildString {
-+                appendLine("0 co.touchlab.skie:kotlin")
-+                appendLine("1 com.example:foo[1.2.3] #0[1.2.3]")
-+                appendLine("\t$externalKlibPath")
-+            },
-+        )
-+
-+        val compilerArgumentsProvider = CompilerArgumentsProvider(
-+            externalDependencies = externalDependenciesFile.absolutePathString(),
-+        )
-+
-+        val klib = when (val compileResult = KotlinTestCompiler(tempFileSystem, testLogger).compile(
-+            kotlinFiles = listOf(sourceFile),
-+            compilerArgumentsProvider = compilerArgumentsProvider,
-+        )) {
-+            is IntermediateResult.Value -> compileResult.value
-+            is IntermediateResult.Error -> fail("Kotlin compilation failed: ${compileResult.testResult}")
-+        }
-+
-+        val linkResult = KotlinTestLinker(tempFileSystem, testLogger).link(
-+            klib = klib,
-+            skieConfigurationData = CompilerSkieConfigurationData(
-+                groups = listOf(
-+                    CompilerSkieConfigurationData.Group(
-+                        target = "",
-+                        overridesAnnotations = false,
-+                        items = mapOf("TestConfigurationKeys.EnableVerifyFrameworkHeaderPhase" to "false"),
-+                    ),
-+                ),
-+            ),
-+            compilerArgumentsProvider = compilerArgumentsProvider,
-+        )
-+
-+        when (linkResult) {
-+            is IntermediateResult.Value -> Unit
-+            is IntermediateResult.Error -> fail(
-+                "SKIE link failed — external dependencies were not reported (getExternalDependencies returned empty?). " +
-+                    "Result: ${linkResult.testResult}",
-+            )
-+        }
-+    }
-+})
-```
-
----
-
-### Incident Patch 3: `f2b3b038` (2026-06-11)
-**Commit Message**: Restore external dependency reporting and fix the value-parameter shim
-
-**File**: `SKIE/kotlin-compiler/linker-plugin/src/2.4.0../kotlin/co/touchlab/skie/compat/IrCompat.kt` (modified, +10/-3)
-```diff
-@@ -19,17 +19,24 @@ internal typealias SkieIrAnnotation = org.jetbrains.kotlin.ir.expressions.IrAnno
-  * Kotlin 2.4.0 removed the dedicated value-parameter/receiver/argument accessors from the IR tree in favor of a single
-  * positional `parameters`/`arguments` list keyed by [IrParameterKind]. These shims preserve the pre-2.4.0 semantics so
-  * the shared `main` source set stays version-agnostic.
-+ *
-+ * Pre-2.4.0 `IrFunction.valueParameters` returned both [IrParameterKind.Regular] and [IrParameterKind.Context]
-+ * parameters (in that positional order, context first), so [isSkieValueParameter] matches that to stay faithful even
-+ * for functions that carry context parameters.
-  */
-+private val IrValueParameter.isSkieValueParameter: Boolean
-+    get() = kind == IrParameterKind.Regular || kind == IrParameterKind.Context
-+
- internal val IrFunction.skieValueParameters: List<IrValueParameter>
--    get() = parameters.filter { it.kind == IrParameterKind.Regular }
-+    get() = parameters.filter { it.isSkieValueParameter }
- 
- internal val IrFunction.skieExtensionReceiverParameter: IrValueParameter?
-     get() = parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
- 
- internal fun IrFunctionAccessExpression.skiePutValueArgument(index: Int, valueArgument: IrExpression?) {
--    val regularParameters = symbol.owner.parameters.filter { it.kind == IrParameterKind.Regular }
-+    val valueParameters = symbol.owner.parameters.filter { it.isSkieValueParameter }
- 
--    arguments[regularParameters[index].indexInParameters] = valueArgument
-+    arguments[valueParameters[index].indexInParameters] = valueArgument
+@@ -7,7 +7,8 @@ plugins {
+ //     kotlin("multiplatform") version "2.3.20" apply false
+ //     kotlin("multiplatform") version "2.4.0" apply false
+ //     kotlin("multiplatform") version "2.4.10" apply false
+-    kotlin("multiplatform") version "2.4.20" apply false
++//     kotlin("multiplatform") version "2.4.20" apply false
++    kotlin("multiplatform") version "2.4.21" apply false
  }
  
- internal fun IrFunctionAccessExpression.skiePutTypeArgument(index: Int, type: IrType?) {
-```
-
-**File**: `SKIE/kotlin-compiler/linker-plugin/src/2.4.0../kotlin/co/touchlab/skie/kir/descriptor/externalDependencies.kt` (modified, +25/-8)
-```diff
-@@ -1,16 +1,33 @@
-+@file:Suppress("invisible_reference", "invisible_member")
-+
- package co.touchlab.skie.kir.descriptor
- 
- import co.touchlab.skie.compat.KonanConfig
-+import org.jetbrains.kotlin.utils.ResolvedDependenciesSupport
- import org.jetbrains.kotlin.utils.ResolvedDependency
- 
- /**
-- * Kotlin 2.4.0 removed `UserVisibleIrModulesSupport`, which previously exposed the external (3rd-party) dependency
-- * modules together with their coordinates and artifact paths. There is no replacement that maps resolved libraries back
-- * to their dependency coordinates, so external dependencies can no longer be reported.
-+ * Kotlin 2.4.0 removed `UserVisibleIrModulesSupport` (KT-84684, "[PL] Clean-up: Remove UserVisibleIrModulesSupport
-+ * from IR linker"), which previously exposed the external (3rd-party) dependency modules together with their
-+ * coordinates and artifact paths.
-+ *
-+ * The underlying data is still available though: the build system (Kotlin Gradle plugin) still serializes the resolved
-+ * dependency graph into the file passed via `-Xexternal-dependencies` (stored on the compiler config as
-+ * [KonanConfig.externalDependenciesFile]), and the `ResolvedDependenciesSupport.deserialize` API is still public.
-  *
-- * As a result, all non-built-in resolved libraries are treated as local modules (see
-- * [NativeDescriptorProvider.localLibraries]) and the per-module analytics no longer distinguish external libraries.
-+ * The removed `UserVisibleIrModulesSupport.externalDependencyModules` (the only thing SKIE read) was simply
-+ * `deserialize(externalDependenciesFile).modules`, so we reproduce that here directly. The Kotlin/Native-specific
-+ * enrichment in the removed class (manifest versions, platform-library compression) only affected the linkage-error
-+ * display path (`getUserVisibleModules`), which SKIE never used.
-  */
--@Suppress("UNUSED_PARAMETER")
--internal fun getExternalDependencies(konanConfig: KonanConfig): Set<ResolvedDependency> =
--    emptySet()
-+internal fun getExternalDependencies(konanConfig: KonanConfig): Set<ResolvedDependency> {
-+    val externalDependenciesFile = konanConfig.externalDependenciesFile ?: return emptySet()
-+    if (!externalDependenciesFile.exists) return emptySet()
-+
-+    val externalDependenciesText = String(externalDependenciesFile.readBytes())
-+
-+    return ResolvedDependenciesSupport
-+        .deserialize(externalDependenciesText) { _, _ -> }
-+        .modules
-+        .toSet()
-+}
+ buildscript {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #211** (2026-10-25): Add support for Kotlin 2.4.21 (@carlonzo)
 - **PR #209** (closed): Make Swift bundling input relocatable for Gradle build cache (@Coder-Star)
 - **PR #203** (closed): Propagate Kotlin KDoc to generated Swift declarations (@Sharang-1)
 - **PR #202** (2026-09-25): Kotlin 2.4.20 support (@carlonzo)
 - **PR #201** (2026-07-21): Allow Skie to run with Kotlin 2.4.10 (@carlonzo)
 - **PR #198** (2026-07-13): Fix configuration cache serialization of the Swift source set (@C2H6O)
-- **PR #196** (2026-07-13): Improve support for isolated projects (@OndraBasler)
 
 ---
 
@@ -960,53 +553,29 @@ Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. configuration cache serialization of the Swift source set
+## X. Add support for Kotlin 2.4.21 (#211)
 
 **RULE**:
-When implementing operations in `SKIE/skie-gradle/plugin-impl/src/main/kotlin/co/touchlab/skie/plugin/switflink/SwiftBundlingConfigurator.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in touchlab/SKIE. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common-gradle/gradle.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in touchlab/SKIE. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `74444363`: configuration cache serialization of the Swift source set. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `25bb2b91`: Add support for Kotlin 2.4.21 (#211). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `SKIE/skie-gradle/plugin-impl/src/main/kotlin/co/touchlab/skie/plugin/switflink/SwiftBundlingConfigurator.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `common-gradle/gradle.properties`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import org.gradle.api.file.FileCollection
-        val swiftSourceFiles = createSwiftSourceFiles(compilation)
-            inputs.files(swiftSourceFiles)
-    private fun Project.createSwiftSourceFiles(compilation: KotlinNativeCompilationShim): FileCollection {
-        // A ConfigurableFileCollection populated with concrete directories is serializable by the
-        // Gradle configuration cache (it stores resolved paths, not the source set container or its
-        // actions). Using a SourceDirectorySet here instead captures a non-serializable
-        // DefaultSourceDirectorySet into the task graph and discards the configuration cache entry.
-        val swiftSourceFiles = objects.fileCollection()
-        compilation.allKotlinSourceSets.all {
-            swiftSourceFiles.from(layout.projectDirectory.dir(swiftSourceDirectory))
-        // Preserve the previous filter.include("**/*.swift") behavior for up-to-date checks.
-        return swiftSourceFiles.asFileTree.matching { include("**/*.swift") }
+versionSupport.kotlin=2.0.0(2.0.10), 2.0.20(2.0.21), 2.1.0(2.1.10), 2.1.20(2.1.21), 2.2.0(2.2.10), 2.2.20(2.2.21), 2.3.0(2.3.10), 2.3.20(2.3.21), 2.4.0(2.4.10), 2.4.20(2.4.21)
+#versionSupport.kotlin.enabledVersions=2.4.21
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-import org.gradle.api.file.SourceDirectorySet
-        val swiftSourceSet = createSwiftSourceSet(compilation)
-            inputs.files(swiftSourceSet)
-    private fun Project.createSwiftSourceSet(compilation: KotlinNativeCompilationShim): SourceDirectorySet {
-        val swiftSourceSetName = "${compilation.target.name}:${compilation.name} Swift sources"
-        val swiftSourceSet = objects.sourceDirectorySet(swiftSourceSetName, swiftSourceSetName).apply {
-            filter.include("**/*.swift")
-        compilation.allKotlinSourceSets.configureEach {
-            val swiftDirectory = project.layout.projectDirectory.dir(swiftSourceDirectory)
-
-            swiftSourceSet.srcDirs(swiftDirectory)
-        }
-
-        return swiftSourceSet
+versionSupport.kotlin=2.0.0(2.0.10), 2.0.20(2.0.21), 2.1.0(2.1.10), 2.1.20(2.1.21), 2.2.0(2.2.10), 2.2.20(2.2.21), 2.3.0(2.3.10), 2.3.20(2.3.21), 2.4.0(2.4.10), 2.4.20
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `74444363` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `25bb2b91` are properly handled with clean fallback behavior.

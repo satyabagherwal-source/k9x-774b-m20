@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T21:08:40.940Z",
+  "last_updated": "2026-10-25T21:15:23.965Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17063,7 +17063,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR",
       "source_version": "hf-baidu-unlimited-ocr",
-      "content_hash": "ad0dc3e5d958bb476276f70b9f3a3112fd0cb2809eceef54a804dd7c2d2b80f2",
+      "content_hash": "dc847eb4210547a18775ca5e702fab2e3170686087e0db2ff447d7c1a1e78c74",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "promoted_rules": [],
@@ -17084,7 +17084,7 @@
         "learn-huggingface-hf-baidu-unlimited-ocr-mv3x7ph4",
         "learn-huggingface-hf-baidu-unlimited-ocr-mv4bx9rt"
       ],
-      "verified_at": "2026-10-21T01:30:05.835Z",
+      "verified_at": "2026-10-25T21:15:23.954Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49269,14 +49269,19 @@
       "slug": "touchlab-skie",
       "platform": "github",
       "source_url": "https://github.com/touchlab/SKIE",
-      "source_version": "e3e85015",
-      "content_hash": "b9a6ec9d54aca364c1fe82e1c980f88a3b9d04968d0092ac8cc3f83c0e549fba",
+      "source_version": "25bb2b91",
+      "content_hash": "a256d453f2ca6bffa2215fff9e80d2021ac60e6085755afd287cf9d6030300e1",
       "dossier_path": "07_PROJECT_LEARNING/touchlab-skie-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/touchlab-skie-learnings.md",
       "promoted_rules": [
         {
           "number": 2684,
           "title": "configuration cache serialization of the Swift source set",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4450,
+          "title": "Add support for Kotlin 2.4.21 (#211)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -49285,7 +49290,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:37:20.184Z",
+      "verified_at": "2026-10-25T21:15:16.452Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126074,6 +126079,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T21:02:21.689Z"
+    },
+    "rule-4450": {
+      "learning_id": "rule-4450",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4450,
+      "title": "Add support for Kotlin 2.4.21 (#211)",
+      "source_url": "https://github.com/touchlab/SKIE",
+      "source_version": "25bb2b91",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T21:15:16.452Z"
     }
   },
   "aliases": {
