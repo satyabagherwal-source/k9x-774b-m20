@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `3e7bf93e`  
+> **Source Version**: `1805a79d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T16:44:28.094Z  
+> **Timestamp**: 2026-10-25T12:32:01.103Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T16:44:28.085Z  
+> **Harvest Timestamp**: 2026-10-25T12:32:00.604Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2615 stars
+- **Stars / Engagement**: 2620 stars
 
 ---
 
@@ -1418,713 +1418,187 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b312ba5c` (2026-10-20)
-**Commit Message**: fix(sdk/python): stop retrying permanent status callbacks (#1109)
+### Incident Patch 1: `1805a79d` (2026-10-24)
+**Commit Message**: chore(release): v0.1.143 [skip ci]
 
-* fix(sdk/python): stop retrying execution status callbacks on non-retryable 4xx
-
-Align _post_execution_status with the Go SDK's postExecutionStatus:
-transport errors, 408, 429, and 5xx retry up to five times with 1+2+4+8s
-backoff and a 30s per-attempt timeout; every other HTTP status returns
-immediately. 404 is permanent now that #1086 persists the execution row.
-
-Refs #1088
-
-Co-authored-by: Steven Huang <[REDACTED_EMAIL]>
-
-* fix(sdk/python): retry status callbacks only on transport failures
-
-Match Go postExecutionStatus: resend httpx.TransportError (including
-timeouts), the requests connection and timeout errors from the sync
-fallback, and HTTP 408, 429, and 5xx. Fail fast on request-construction
-and programming errors such as InvalidURL and TypeError.
-
-CancelledError still leaves the loop immediately. A permanent HTTP
-status is logged once, and the stale no-cover pragma on the handler
-is gone.
-
-Refs #1088
-
-Co-authored-by: Steven Huang <[REDACTED_EMAIL]>
-
-* fix(sdk/python): retry interrupted callback response bodies
-
-* fix(control-plane): fail legacy dispatch on execution insert errors
-
-Return a structured 500 bef
-
-**File**: `control-plane/internal/handlers/reasoners.go` (modified, +11/-3)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -96,7 +96,7 @@ func persistLegacyAcknowledgement(ctx context.Context, storageProvider storage.S
- // createLegacyExecutionRecord writes the executions row for a legacy
- // /reasoners or /skills call before it is dispatched, so the agent's
- // status callback (POST /api/v1/executions/:id/status) finds it.
--func createLegacyExecutionRecord(ctx context.Context, storageProvider storage.StorageProvider, wfExec *types.WorkflowExecution) {
-+func createLegacyExecutionRecord(ctx context.Context, storageProvider storage.StorageProvider, wfExec *types.WorkflowExecution) error {
- 	exec := &types.Execution{
- 		ExecutionID:       wfExec.ExecutionID,
- 		RunID:             wfExec.WorkflowID,
-@@ -117,7 +117,9 @@ func createLegacyExecutionRecord(ctx context.Context, storageProvider storage.St
- 			Err(err).
- 			Str("execution_id", wfExec.ExecutionID).
- 			Msg("failed to create execution record for legacy call")
-+		return err
- 	}
-+	return nil
- }
+@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
  
- // finalizeLegacyExecutionRecord copies the outcome of a legacy call onto its
-@@ -317,7 +319,10 @@ func ExecuteReasonerHandler(storageProvider storage.StorageProvider) gin.Handler
- 		}
- 		workflowExecution.InputData = inputJSON
- 		workflowExecution.InputSize = len(inputJSON)
--		createLegacyExecutionRecord(ctx, storageProvider, workflowExecution)
-+		if err := createLegacyExecutionRecord(ctx, storageProvider, workflowExecution); err != nil {
-+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create execution record"})
-+			return
-+		}
+ <!-- changelog:entries -->
  
- 		agentURL, endpointErr := checkedAgentURL(targetNode, &parsedTarget{TargetName: reasonerName, TargetType: "reasoner"})
- 		if endpointErr != nil {
-@@ -719,7 +724,10 @@ func ExecuteSkillHandler(storageProvider storage.StorageProvider) gin.HandlerFun
- 		}
- 		workflowExecution.InputData = inputJSON
- 		workflowExecution.InputSize = len(inputJSON)
--		createLegacyExecutionRecord(ctx, storageProvider, workflowExecution)
-+		if err := createLegacyExecutionRecord(ctx, storageProvider, workflowExecution); err != nil {
-+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create execution record"})
-+			return
-+		}
++## [0.1.143] - 2026-10-24
++
+ ## [0.1.143-rc.5] - 2026-10-24
  
- 		agentURL, endpointErr := checkedAgentURL(targetNode, &parsedTarget{TargetName: skillName, TargetType: "skill"})
- 		if endpointErr != nil {
+ 
 ```
 
-**File**: `control-plane/internal/handlers/reasoners_test.go` (modified, +75/-39)
+**File**: `VERSION` (modified, +1/-1)
 ```diff
-@@ -9,6 +9,7 @@ import (
- 	"net/http/httptest"
- 	"path/filepath"
- 	"strings"
-+	"sync/atomic"
- 	"testing"
- 	"time"
- 
-@@ -135,8 +136,8 @@ func TestExecuteReasonerHandler_NodeLookupAndAvailabilityErrors(t *testing.T) {
- 		{
- 			name: "node not found",
- 			store: &reasonerHandlerStorage{
--				exec:                 newTestExecutionStorage(nil),
--				getAgentErr:          errors.New("missing"),
-+				exec:        newTestExecutionStorage(nil),
-+				getAgentErr: errors.New("missing"),
- 			},
- 			wantCode:   http.StatusNotFound,
- 			wantErrMsg: "node 'node-404' not found",
-@@ -547,43 +548,6 @@ func TestExecuteReasonerHandler_AgentStatusCallbackFindsExecution(t *testing.T)
- 	require.Equal(t, "agent reported failure", *final.ErrorMessage)
- }
- 
--type failingCreateRecordStorage struct {
--	*reasonerHandlerStorage
--}
--
--func (s *failingCreateRecordStorage) CreateExecutionRecord(ctx context.Context, execution *types.Execution) error {
--	return errors.New("insert failed")
--}
--
--// A failed executions insert is logged and the legacy call still goes through,
--// so the endpoint gains no new failure mode.
--func TestExecuteReasonerHandler_ExecutionRowInsertFailureDoesNotFailCall(t *testing.T) {
--	gin.SetMode(gin.TestMode)
--
--	store := newReasonerHandlerStorage(nil)
--	observed := make(chan legacyDispatchObservation, 1)
--	agentServer := legacyRowAgent(t, store, observed)
--	defer agentServer.Close()
--	store.agent = newReasonerAgent(agentServer.URL)
--
--	router := gin.New()
--	router.POST("/reasoners/:reasoner_id", ExecuteReasonerHandler(&failingCreateRecordStorage{store}))
--
--	req := httptest.NewRequest(http.MethodPost, "/reasoners/node-1.ping", strings.NewReader(`{}`))
--	req.Header.Set("Content-Type", "application/json")
--	resp := httptest.NewRecorder()
--	router.ServeHTTP(resp, req)
--	require.Equal(t, http.StatusOK, resp.Code)
--
--	obs := <-observed
--	require.Nil(t, obs.record)
--
--	wfExec, err := store.GetWorkflowExecution(context.Background(), obs.executionID)
--	require.NoError(t, err)
--	require.NotNil(t, wfExec)
--	require.Equal(t, string(types.ExecutionStatusSucceeded), string(wfExec.Status))
--}
--
- // newLegacyLocalStorage opens a real LocalStorage for the legacy lifecycle
- // tests, so the terminal-state guards and context handling of the real store
- // apply.
-@@ -637,6 +601,78 @@ var legacyEndpoints = []legacyEndpoint{
- 	},
- }
- 
-+type failedLegacyInsertStorage struct {
-+	storage.StorageProvider
-+	attempts int
-+}
-+
-+func (s *failedLegacyInsertStorage) CreateExecutionRecord(context.Context, *types.Execution) error {
-+	s.attempts++
-+	return errors.New("injected execution insert failure: private database details")
-+}
-+
-+func TestLegacyExecute_ExecutionInsertFailureStopsDispatch(t *testing.T) {
-+	gin.SetMode(gin.TestMode)
-+	for _, endpoint := range legacyEndpoints {
-+		for _, deployment := range []string{"standard", "serverless"} {
-+			t.Run(endpoint.name+"/"+deployment, func(t *testing.T) {
-+				var dispatches atomic.Int32
-+				agentServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+					dispatches.Add(1)
-+					w.Header().Set("Content-Type", "application/json")
-+					_, _ = w.Write([]byte(`{"ok":true}`))
-+				}))
-+				defer agentServer.Close()
-+				agent := endpoint.agent(agentServer.URL)
-+				agent.DeploymentType = deployment
-+				base := newReasonerHandlerStorage(agent)
-+				store := &failedLegacyInsertStorage{StorageProvider: base}
-+				router := gin.New()
-+				endpoint.mount(router, store)
-+				req := httptest.NewRequest(http.MethodPost, endpoint.path, strings.NewReader(`{"input":{"q":1}}`))
-+				req.Header.Set("Content-Type", "application/json")
-+				resp := httptest.NewRecorder()
-+				router.ServeHTTP(resp, req)
-+
-+				require.Equal(t, http.StatusInternalServerError, resp.Code, resp.Body.String())
-+				require.JSONEq(t, `{"error":"failed to create execution record"}`, resp.Body.String())
-+				require.Contains(t, resp.Header().Get("Content-Type"), "application/json")
-+				require.Equal(t, 1, store.attempts)
-+				require.Zero(t, dispatches.Load(), "failed persistence must prevent agent dispatch")
-+				workflows, err := base.QueryWorkflowExecutions(context.Background(), types.WorkflowExecutionFilters{})
-+				require.NoError(t, err)
-+				require.Empty(t, workflows, "rejected work must not leave a running workflow")
-+			})
-+		}
-+	}
-+}
-+
-+func TestLegacyExecute_ServerlessCreatesExecutionRowBeforeDispatch(t *testing.T) {
-+	gin.SetMode(gin.TestMode)
-+	for _, endpoint := range legacyEndpoints {
-+		t.Run(endpoint.name, func(t *testing.T) {
-+			store := newReasonerHandlerStorage(nil)
-+			observed := make(chan legacyDispatchObservation, 1)
-+			agentServer := legacyRowAgent(t, store, observed)
-+			defer agentServer.Close()
-+			store.agent = endpoint.agent(agentServer.URL)
-+			store.agent.DeploymentType = "serverless"
-+			router := gin.New()
-+			endpoint.mount(router, store)
-+			req := httptest.NewRequest(http.MethodPost, endpoint.path, strings.NewReader(`{"input":{"q":1}}`))
-+			req.Header.Set("Con
+@@ -1 +1 @@
+-0.1.143-rc.5
++0.1.143
 ```
 
-**File**: `sdk/python/agentfield/agent.py` (modified, +80/-2)
+**File**: `control-plane/internal/templates/go/go.mod.tmpl` (modified, +1/-1)
 ```diff
-@@ -638,6 +638,57 @@ async def shutdown(self, timeout: int = 5):
-             self._dispatcher_task = None
+@@ -2,4 +2,4 @@ module {{.GoModule}}
  
+ go 1.23
  
-+def _is_transient_status_callback(status_code: int) -> bool:
-+    """Return whether an execution status-callback HTTP status is retryable.
-+
-+    Mirrors the Go SDK's ``isTransientPollStatus`` (``sdk/go/agent/agent.go``),
-+    which ``postExecutionStatus`` uses to decide whether to resend a callback.
-+    408 (request timeout), 429 (too many requests), and any 5xx are transient.
-+    Every other status is permanent: resending a 400, 401, 403, 404, or 409
-+    cannot succeed, so the caller must fail fast.
-+    """
-+    if status_code in (408, 429):
-+        return True
-+    return status_code >= 500
-+
-+
-+def _is_retryable_status_callback_error(exc: BaseException) -> bool:
-+    """Return whether a status-callback exception is worth resending.
-+
-+    Go retries errors from ``http.Client.Do`` and returns immediately when
-+    ``http.NewRequest`` fails. ``httpx.TransportError`` is that Do bucket:
-+    connect/read/write/pool timeouts, network errors, and protocol errors.
-+    ``httpx.TimeoutException`` is a ``TransportError``. The sync fallback in
-+    ``AgentFieldClient._async_request`` raises the requests equivalents
-+    (``ConnectionError`` and ``Timeout``), plus ``ChunkedEncodingError`` and
-+    ``ContentDecodingError`` from eagerly reading a broken response body.
-+    Bare ``TimeoutError`` and ``ConnectionError`` cover the same failures if
-+    they surface unwrapped.
-+
-+    Request-construction and programming errors are permanent. That includes
-+    ``httpx.InvalidURL``, ``requests.exceptions.InvalidURL``, and ``TypeError``.
-+    """
-+    if isinstance(exc, (TimeoutError, ConnectionError)):
-+        return True
-+
-+    import httpx
-+
-+    if isinstance(exc, httpx.TransportError):
-+        return True
-+
-+    import requests
-+
-+    return isinstance(
-+        exc,
-+        (
-+            requests.exceptions.ConnectionError,
-+            requests.exceptions.Timeout,
-+            requests.exceptions.ChunkedEncodingError,
-+            requests.exceptions.ContentDecodingError,
-+        ),
-+    )
-+
-+
- class Agent(FastAPI):
-     """
-     AgentField Agent - FastAPI subclass for creating AI agent nodes.
-@@ -2953,7 +3004,11 @@ async def _post_execution_status(
-         safe_payload = jsonable_encoder(payload)
-         shutting_down = getattr(self, "_shutdown_cancelling", False)
-         attempts = 1 if shutting_down else max_retries
-+        # Match the Go SDK: 30s per attempt, five attempts, backoff of
-+        # 1s, 2s, 4s, 8s (``time.Second << attempt``). Shutdown still sends
-+        # a single 5s attempt so a stuck callback cannot hold process exit.
-         request_timeout = 5.0 if shutting_down else 30.0
-+        permanent_status: Optional[int] = None
-         for attempt in range(attempts):
-             try:
-                 response = await self.client._async_request(
-@@ -2969,10 +3024,26 @@ async def _post_execution_status(
-                             f"Sent async status update for {execution_id} (attempt {attempt + 1})"
-                         )
-                     return
-+                if not _is_transient_status_callback(response.status_code):
-+                    # A client error such as 404 (unknown execution) or 409
-+                    # (terminal status conflict) will not change on a resend,
-+                    # so fail fast instead of backing off. The single error
-+                    # log is below; a warning here would report the same failure twice.
-+                    permanent_status = response.status_code
-+                    break
-                 log_warn(
-                     f"Async status update failed with {response.status_code} for execution {execution_id}"
-                 )
--            except Exception as exc:  # pragma: no cover - network errors
-+            except Exception as exc:
-+                if not _is_retryable_status_callback_error(exc):
-+                    # Bad URLs and programming errors (TypeError) will not
-+                    # succeed on a resend. Log once and return so the
-+                    # exhaustion message below does not fire as well.
-+                    log_error(
-+                        f"Async status update for {execution_id} failed: "
-+                        f"{exc}; not retrying"
-+                    )
-+                    return
-                 log_warn(
-                     f"Async status update attempt {attempt + 1} failed for {execution_id}: {exc}"
-                 )
-@@ -2983,8 +3054,15 @@ async def _post_execution_status(
-                 f"Abandoning async status for {execution_id} during shutdown "
-                 f"after {request_timeout:g}s attempt"
-             )
-+        elif permanent_status is not None:
-+            log_error(
-+                f"Async status update for {execution_id} failed with "
-+                f"{permanent_status}; not retrying"
-+            )
-         else:
--            log_error(f"Failed to d
+-require github.com/Agent-Field/agentfield/sdk/go v0.1.143-rc.5
++require github.com/Agent-Field/agentfield/sdk/go v0.1.143
 ```
 
-**File**: `sdk/python/tests/test_async_execution.py` (modified, +479/-3)
+**File**: `control-plane/internal/templates/python/requirements.txt.tmpl` (modified, +1/-1)
 ```diff
-@@ -1,12 +1,20 @@
- import asyncio
-+import json
-+import threading
- import time
-+from http.server import BaseHTTPRequestHandler, HTTPServer
- 
- import httpx
- import pytest
-+import requests
- 
--from agentfield.agent import Agent
-+from agentfield.agent import (
-+    Agent,
-+    _is_retryable_status_callback_error,
-+    _is_transient_status_callback,
-+)
- from agentfield.agent_pause import PauseClock
--from agentfield.client import AgentFieldClient, ApprovalResult
-+from agentfield.client import AgentFieldClient, AgentFieldClientError, ApprovalResult
- 
- 
- @pytest.mark.asyncio
-@@ -69,7 +77,7 @@ def __init__(self, status_code: int):
-     async def fake_request(self, method, url, **kwargs):
-         attempts["count"] += 1
-         if attempts["count"] < 3:
--            raise RuntimeError("transient error")
-+            raise httpx.ConnectError("connection refused")
-         return DummyResponse(200)
- 
-     monkeypatch.setattr(AgentFieldClient, "_async_request", fake_request)
-@@ -92,6 +100,474 @@ async def fake_sleep(delay):
-     assert sleeps == [1, 2]
- 
- 
-+def test_is_transient_status_callback_matches_go_policy():
-+    """Same contract as Go ``isTransientPollStatus``: 408, 429, and 5xx only."""
-+    for code in (408, 429, 500, 502, 503, 504, 599):
-+        assert _is_transient_status_callback(code), code
-+    for code in (100, 204, 301, 302, 400, 401, 403, 404, 409, 418, 422, 499):
-+        assert not _is_transient_status_callback(code), code
-+
-+
-+def test_is_retryable_status_callback_error_matches_transport_failures():
-+    """Do-equivalent failures retry; request-construction and bugs do not."""
-+    retryable = (
-+        httpx.ConnectTimeout("timed out"),
-+        httpx.ReadTimeout("timed out"),
-+        httpx.WriteTimeout("timed out"),
-+        httpx.PoolTimeout("timed out"),
-+        httpx.ConnectError("connection refused"),
-+        httpx.RemoteProtocolError("malformed response"),
-+        TimeoutError("timed out"),
-+        ConnectionResetError("reset"),
-+        requests.exceptions.Timeout("timed out"),
-+        requests.exceptions.ConnectionError("connection refused"),
-+        requests.exceptions.ConnectTimeout("timed out"),
-+        requests.exceptions.ChunkedEncodingError("incomplete response"),
-+        requests.exceptions.ContentDecodingError("invalid gzip response"),
-+    )
-+    for exc in retryable:
-+        assert _is_retryable_status_callback_error(exc), type(exc)
-+
-+    permanent = (
-+        httpx.InvalidURL("http://[::1"),
-+        TypeError("bad payload"),
-+        RuntimeError("bug"),
-+        ValueError("bug"),
-+        requests.exceptions.InvalidURL("http://[::1"),
-+        requests.exceptions.MissingSchema("control-plane"),
-+        asyncio.CancelledError(),
-+    )
-+    for exc in permanent:
-+        assert not _is_retryable_status_callback_error(exc), type(exc)
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("status_code", [400, 401, 403, 404, 409])
-+async def test_post_execution_status_does_not_retry_permanent_client_errors(
-+    monkeypatch, status_code
-+):
-+    agent = Agent(
-+        node_id="test-agent", agentfield_server="http://control", auto_register=False
-+    )
-+    attempts = {"count": 0}
-+    timeouts = []
-+
-+    class DummyResponse:
-+        def __init__(self, code: int):
-+            self.status_code = code
-+
-+    async def fake_request(self, method, url, **kwargs):
-+        attempts["count"] += 1
-+        timeouts.append(kwargs.get("timeout"))
-+        return DummyResponse(status_code)
-+
-+    monkeypatch.setattr(AgentFieldClient, "_async_request", fake_request)
-+
-+    sleeps = []
-+
-+    async def fake_sleep(delay):
-+        sleeps.append(delay)
-+
-+    monkeypatch.setattr(asyncio, "sleep", fake_sleep)
-+
-+    warns = []
-+    errors = []
-+
-+    def capture_warn(message, **kwargs):
-+        warns.append(message)
-+
-+    def capture_error(message, **kwargs):
-+        errors.append(message)
-+
-+    monkeypatch.setattr("agentfield.agent.log_warn", capture_warn)
-+    monkeypatch.setattr("agentfield.agent.log_error", capture_error)
-+
-+    await agent._post_execution_status(
-+        "http://control/api/v1/executions/exec-1/status",
-+        {"status": "succeeded"},
-+        "exec-1",
-+    )
-+
-+    assert attempts["count"] == 1
-+    assert sleeps == []
-+    assert timeouts == [30.0]
-+    assert warns == []
-+    assert len(errors) == 1
-+    assert str(status_code) in errors[0]
-+    assert "not retrying" in errors[0]
-+
-+
-+@pytest.mark.integration
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("first_response", ["truncated", "invalid-gzip", 401, 404])
-+async def test_post_execution_status_requests_fallback(monkeypatch, first_response):
-+    """Exercise eager response reads through the real requests fallback."""
-+    received = []
-+
-+    class CallbackHandler(BaseHTTPRequestHandler):
-+        def do_POST(self):
-+            payload = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
-+            received.append((self.path, payload))
-+            first_attempt = len(receive
+@@ -1 +1 @@
+-agentfield>=0.1.142
++agentfield>=0.1.143
+```
+
+**File**: `control-plane/internal/templates/typescript/package.json.tmpl` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@
+     "lint": "tsc --noEmit"
+   },
+   "dependencies": {
+-    "@agentfield/sdk": "^0.1.142",
++    "@agentfield/sdk": "^0.1.143",
+     "dotenv": "^16.4.5",
+     "zod": "^3.22.4"
+   },
+```
+
+**File**: `examples/python_agent_nodes/agentic_rag/requirements.txt` (modified, +1/-1)
+```diff
+@@ -1,3 +1,3 @@
+-agentfield>=0.1.142
++agentfield>=0.1.143
+ fastembed>=0.2.0
+ numpy>=1.24.0
+```
+
+**File**: `examples/python_agent_nodes/documentation_chatbot/requirements.txt` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+ fastembed>=0.3.4
+ pydantic>=2.7.4
+-agentfield>=0.1.142
++agentfield>=0.1.143
+ httpx>=0.27.0
+```
+
+**File**: `examples/python_agent_nodes/hello_world_rag/requirements.txt` (modified, +1/-1)
+```diff
+@@ -1,2 +1,2 @@
+-agentfield>=0.1.142
++agentfield>=0.1.143
+ fastembed>=0.2.0
 ```
 
 ---
 
-### Incident Patch 2: `a053d68c` (2026-10-20)
-**Commit Message**: fix(sdk/python): parse remaining boolean env flags with the SDK-wide vocabulary (#1089) (#1123)
+### Incident Patch 2: `dbb394aa` (2026-10-24)
+**Commit Message**: chore(release): v0.1.143-rc.5 [skip ci]
 
-**File**: `sdk/python/agentfield/agent.py` (modified, +3/-7)
+**File**: `CHANGELOG.md` (modified, +13/-0)
 ```diff
-@@ -69,7 +69,7 @@
- )
- from agentfield.multimodal_response import MultimodalResponse
- from agentfield.run_async import run_coroutine, fire_and_forget
--from agentfield.async_config import AsyncConfig
-+from agentfield.async_config import AsyncConfig, _env_flag_default_off
- from agentfield.async_execution_manager import AsyncExecutionManager
- from agentfield.pydantic_utils import convert_function_args, should_convert_args
- from agentfield.session_turn_detection import TurnDetection
-@@ -179,18 +179,14 @@ def _docstring_summary(func: Callable) -> str:
-     aiohttp = None
+@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
  
+ <!-- changelog:entries -->
  
--# Values that count as "on" for opt-in boolean environment variables.
--_TRUTHY_ENV_VALUES = frozenset({"1", "true", "yes"})
--
--
- def _env_flag_enabled(name: str) -> bool:
--    """Return True when ``name`` is set to a truthy value (``1``/``true``/``yes``).
-+    """Return True when ``name`` is set to a truthy value (1/true/yes/on).
++## [0.1.143-rc.5] - 2026-10-24
++
++
++### Other
++
++- Make CodeAF the default harness, installed automatically with AgentField (#1128)
++
++CodeAF (the renamed aforge-v2) becomes the default harness in the Python, Go and TypeScript SDKs. A provider-less harness call runs `codeaf exec --json` headless. CodeAF v0.8.2 is pinned and sha256-verified, and it is installed by install.sh/install.ps1, desktop launch, af skill install, af install, the agent and cloud images, `af codeaf ensure`, and a lazy first-call download in each SDK.
++
++`provider="aforge"` is an alias that runs CodeAF. Legacy pins (AFORGE_BIN, aforge_bin, aforgeBin, Go BinPath) keep the original aforge adapter, and AGENTFIELD_AFORGE_COMMAND / AFORGE_MODEL are honored as fallbacks.
++
++Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com> (647e31c)
++
+ ## [0.1.143-rc.4] - 2026-10-20
  
-     Comparison is case-insensitive and tolerates surrounding whitespace. Unset,
-     empty and unrecognised values are all treated as False, so a flag has to be
-     opted into deliberately.
-     """
--    return (os.getenv(name) or "").strip().lower() in _TRUTHY_ENV_VALUES
-+    return _env_flag_default_off(os.getenv(name) or "")
- 
- 
- def _detect_container_ip() -> Optional[str]:
-```
-
-**File**: `sdk/python/agentfield/agent_server.py` (modified, +5/-2)
-```diff
-@@ -9,6 +9,7 @@
- 
- import uvicorn
- from agentfield.agent_utils import AgentUtils
-+from agentfield.async_config import _env_flag_default_off
- from agentfield.logger import log_debug, log_error, log_info, log_success, log_warn
- from agentfield.utils import get_free_port
- from fastapi import FastAPI, Request
-@@ -754,7 +755,7 @@ def serve(
-             env_port = os.getenv("PORT")
-             if env_port and env_port.isdigit():
-                 suggested_port = int(env_port)
--                if os.getenv("AGENTFIELD_STRICT_PORT") == "1":
-+                if _env_flag_default_off(os.getenv("AGENTFIELD_STRICT_PORT") or ""):
-                     # The AgentField runner assigned this exact port and polls it
-                     # for readiness. Bind it authoritatively — never silently move
-                     # to another port, or the runner would poll a port nothing is
-@@ -789,7 +790,9 @@ def serve(
-                         port = get_free_port()  # Fallback to default range
-                         if self.agent.dev_mode:
-                             log_debug(f"Using fallback port: {port}")
--            elif auto_port or os.getenv("AGENTFIELD_AUTO_PORT") == "true":
-+            elif auto_port or _env_flag_default_off(
-+                os.getenv("AGENTFIELD_AUTO_PORT") or ""
-+            ):
-                 # Auto-port mode: find any available port
-                 try:
-                     port = get_free_port()
-```
-
-**File**: `sdk/python/agentfield/async_config.py` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ def _env_flag_default_on(value: str) -> bool:
- def _env_flag_default_off(value: str) -> bool:
-     """_env_flag for a caller whose flag defaults to False.
- 
--    Imported by logger.py for the AGENTFIELD_LOG_* flags.
-+    Used by logger.py, agent.py and agent_server.py for their opt-in flags.
-     """
-     try:
-         return _env_flag(value)
-```
-
-**File**: `sdk/python/agentfield/logger.py` (modified, +8/-5)
-```diff
-@@ -17,6 +17,7 @@
- from typing import TYPE_CHECKING, Any, Dict, Optional
- 
- from . import log_writer
-+from .async_config import _env_flag_default_off
- from .execution_context import ExecutionContext, get_current_context
- 
- if TYPE_CHECKING:
-@@ -108,13 +109,15 @@ def __init__(self, name: str = "agentfield"):
-         # Configuration from environment variables - default to WARNING (only important events)
-         self.log_level = os.getenv("AGENTFIELD_LOG_LEVEL", "WARNING").upper()
-         self.truncate_length = int(os.getenv("AGENTFIELD_LOG_TRUNCATE", "200"))
--        self.show_payloads = (
--            os.getenv("AGENTFIELD_LOG_PAYLOADS", "false").lower() == "true"
-+        self.show_payloads = _env_flag_default_off(
-+            os.getenv("AGENTFIELD_LOG_PAYLOADS", "false")
-         )
--        self.show_tracking = (
--            os.getenv("AGENTFIELD_LOG_TRACKING", "false").lower() == "true"
-+        self.show_tracking = _env_flag_default_off(
-+            os.getenv("AGENTFIELD_LOG_TRACKING", "false")
-+        )
-+        self.show_fire = _env_flag_default_off(
-+            os.getenv("AGENTFIELD_LOG_FIRE", "false")
-         )
--        self.show_fire = os.getenv("AGENTFIELD_LOG_FIRE", "false").lower() == "true"
-         # Set logger level based on configuration
-         self.logger.setLevel(_LEVEL_TO_LOGGING.get(self.log_level, logging.WARNING))
  
 ```
 
-**File**: `sdk/python/tests/test_agent_networking.py` (modified, +3/-1)
+**File**: `VERSION` (modified, +1/-1)
 ```diff
-@@ -335,7 +335,9 @@ def test_explicit_callback_argument_is_preferred_over_env_var(monkeypatch):
-     assert "http://from-env:8001" in candidates
- 
- 
--@pytest.mark.parametrize("value", ["1", "true", "TRUE", "Yes", "  yes  "])
-+@pytest.mark.parametrize(
-+    "value", ["1", "true", "TRUE", "Yes", "  yes  ", "on", "ON", " On "]
-+)
- def test_disable_flag_truthy_values_skip_the_probe(monkeypatch, value):
-     probe_calls = _stub_callback_environment(monkeypatch)
-     monkeypatch.setenv("AGENTFIELD_DISABLE_IP_DETECTION", value)
+@@ -1 +1 @@
+-0.1.143-rc.4
++0.1.143-rc.5
 ```
 
-**File**: `sdk/python/tests/test_agent_server.py` (modified, +54/-0)
+**File**: `control-plane/internal/templates/go/go.mod.tmpl` (modified, +1/-1)
 ```diff
-@@ -848,3 +848,57 @@ async def stuck():
-             await stuck_task
-         except (asyncio.CancelledError, BaseException):
-             pass
-+
-+
-+# ---------------------------------------------------------------------------
-+# Port-selection env flags
-+# ---------------------------------------------------------------------------
-+
-+
-+@pytest.mark.parametrize("value", ["1", "true", "YES", " on "])
-+def test_strict_port_flag_accepts_truthy_vocabulary(monkeypatch, value):
-+    monkeypatch.setenv("PORT", "8123")
-+    monkeypatch.setenv("AGENTFIELD_STRICT_PORT", value)
-+    monkeypatch.setattr(
-+        "agentfield.agent_server.AgentUtils.is_port_available", lambda port: False
-+    )
-+
-+    with pytest.raises(RuntimeError, match="assigned port 8123 is unavailable"):
-+        AgentServer(make_agent_app()).serve()
-+
-+
-+class _AutoPortPicked(Exception):
-+    pass
-+
-+
-+@pytest.mark.parametrize("value", ["1", "true", "Yes", "on"])
-+def test_auto_port_flag_accepts_truthy_vocabulary(monkeypatch, value):
-+    monkeypatch.delenv("PORT", raising=False)
-+    monkeypatch.setenv("AGENTFIELD_AUTO_PORT", value)
-+
-+    def fake_get_free_port(*args, **kwargs):
-+        raise _AutoPortPicked
-+
-+    monkeypatch.setattr("agentfield.agent_server.get_free_port", fake_get_free_port)
-+
-+    with pytest.raises(_AutoPortPicked):
-+        AgentServer(make_agent_app()).serve()
-+
-+
-+@pytest.mark.parametrize("value", ["0", "false", "off", "maybe"])
-+def test_auto_port_flag_off_uses_default_port(monkeypatch, value):
-+    monkeypatch.delenv("PORT", raising=False)
-+    monkeypatch.setenv("AGENTFIELD_AUTO_PORT", value)
-+    checked = []
-+
-+    def fake_is_port_available(port):
-+        checked.append(port)
-+        raise _AutoPortPicked
-+
-+    monkeypatch.setattr(
-+        "agentfield.agent_server.AgentUtils.is_port_available", fake_is_port_available
-+    )
-+
-+    with pytest.raises(_AutoPortPicked):
-+        AgentServer(make_agent_app()).serve()
-+    assert checked == [8001]
+@@ -2,4 +2,4 @@ module {{.GoModule}}
+ 
+ go 1.23
+ 
+-require github.com/Agent-Field/agentfield/sdk/go v0.1.143-rc.4
++require github.com/Agent-Field/agentfield/sdk/go v0.1.143-rc.5
 ```
 
-**File**: `sdk/python/tests/test_execution_logger.py` (modified, +23/-0)
+**File**: `sdk/python/agentfield/__init__.py` (modified, +1/-1)
 ```diff
-@@ -307,3 +307,26 @@ def test_format_payload_handles_non_serializable(base_logger):
-     test_data = {1, 2, 3}
-     formatted = base_logger._format_payload(test_data)
-     assert "{1, 2, 3}" in formatted
-+
-+
-+@pytest.mark.unit
-+@pytest.mark.parametrize("value", ["1", "true", "TRUE", "yes", " on "])
-+def test_log_flags_accept_truthy_vocabulary(monkeypatch, value):
-+    """AGENTFIELD_LOG_* opt-in flags share the SDK-wide truthy vocabulary."""
-+    for name in ("PAYLOADS", "TRACKING", "FIRE"):
-+        monkeypatch.setenv(f"AGENTFIELD_LOG_{name}", value)
-+    logger = AgentFieldLogger(name="flag-test")
-+    assert logger.show_payloads is True
-+    assert logger.show_tracking is True
-+    assert logger.show_fire is True
-+
-+
-+@pytest.mark.unit
-+@pytest.mark.parametrize("value", ["", "0", "false", "no", "off", "maybe"])
-+def test_log_flags_stay_off_for_other_values(monkeypatch, value):
-+    for name in ("PAYLOADS", "TRACKING", "FIRE"):
-+        monkeypatch.setenv(f"AGENTFIELD_LOG_{name}", value)
-+    logger = AgentFieldLogger(name="flag-test")
-+    assert logger.show_payloads is False
-+    assert logger.show_tracking is False
-+    assert logger.show_fire is False
+@@ -195,4 +195,4 @@
+     "reasoner",
+ ]
+ 
+-__version__ = "0.1.143-rc.4"
++__version__ = "0.1.143-rc.5"
+```
+
+**File**: `sdk/python/pyproject.toml` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
+ 
+ [project]
+ name = "agentfield"
+-version = "0.1.143-rc.4"
++version = "0.1.143-rc.5"
+ description = "Python SDK for the AgentField control plane"
+ readme = "README.md"
+ license = {text = "Apache-2.0"}
+```
+
+**File**: `sdk/python/uv.lock` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ resolution-markers = [
+ 
+ [[package]]
+ name = "agentfield"
+-version = "0.1.143rc4"
++version = "0.1.143rc5"
+ source = { editable = "." }
+ dependencies = [
+     { name = "aiohttp" },
+```
+
+**File**: `sdk/typescript/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@agentfield/sdk",
+-  "version": "0.1.143-rc.4",
++  "version": "0.1.143-rc.5",
+   "description": "AgentField TypeScript SDK",
+   "type": "module",
+   "main": "dist/index.js",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1128** (2026-10-24): Make CodeAF the default harness, installed automatically with AgentField (@AbirAbbas)
 - **PR #1123** (2026-10-20): fix(sdk/python): parse remaining boolean env flags with the SDK-wide vocabulary (@ShryukGrandhi)
 - **PR #1122** (2026-10-19): fix(control-plane): refuse IPv4-embedding and special-use ranges in the webhook URL guard (@AbirAbbas)
 - **PR #1121** (2026-10-19): fix(control-plane): run session tool calls through the execute pipeline in-process (@AbirAbbas)
 - **PR #1120** (2026-10-19): test(sdk/python): drop the stale enable_mcp kwarg from Agent fixtures (@AbirAbbas)
 - **PR #1119** (2026-10-19): fix(control-plane): preserve DID identities across restarts and home path changes (@AbirAbbas)
-- **PR #1118** (2026-10-19): fix(web): render untrusted markdown and links safely in the UI (@AbirAbbas)
 
 ---
 
@@ -2144,40 +1618,29 @@ Return a structured 500 bef
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk/python): stop retrying permanent status callbacks (#1109)
+## X. release): v0.1.143 [skip ci]
 
 **RULE**:
-When implementing operations in `control-plane/internal/handlers/reasoners.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b312ba5c`: sdk/python): stop retrying permanent status callbacks (#1109). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1805a79d`: release): v0.1.143 [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `control-plane/internal/handlers/reasoners.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func createLegacyExecutionRecord(ctx context.Context, storageProvider storage.StorageProvider, wfExec *types.WorkflowExecution) error {
-		return err
-	return nil
-		if err := createLegacyExecutionRecord(ctx, storageProvider, workflowExecution); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create execution record"})
-			return
-		}
-		if err := createLegacyExecutionRecord(ctx, storageProvider, workflowExecution); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create execution record"})
-			return
-		}
+## [0.1.143] - 2026-10-24
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-func createLegacyExecutionRecord(ctx context.Context, storageProvider storage.StorageProvider, wfExec *types.WorkflowExecution) {
-		createLegacyExecutionRecord(ctx, storageProvider, workflowExecution)
-		createLegacyExecutionRecord(ctx, storageProvider, workflowExecution)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b312ba5c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1805a79d` are properly handled with clean fallback behavior.

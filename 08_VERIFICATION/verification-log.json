@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-D85H",
-    "timestamp": "2026-10-22T16:03:26.981Z",
-    "repository": "facebook/folly",
-    "learningId": "learn-github-facebook-folly",
-    "contentHash": "085a287e2c906b20417e948aade048f3c023257699fdf4004e6621cbbb4bad28",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-DBRZ",
-    "timestamp": "2026-10-22T16:03:31.679Z",
-    "repository": "bitnami/sealed-secrets",
-    "learningId": "learn-github-bitnami-sealed-secrets",
-    "contentHash": "ef006d5c9fea3a0f38b13ed8e0e7b67ba87cc55dc358d853cfa6364eea348c06",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-LLBH",
-    "timestamp": "2026-10-22T16:09:57.293Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "d3939490257d8634aef44fbeed60fa2070aed2799c128a22baa185f35d94e98b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-LNNL",
-    "timestamp": "2026-10-22T16:10:00.321Z",
-    "repository": "chakra-ui/zag",
-    "learningId": "learn-github-chakra-ui-zag",
-    "contentHash": "e621f5677d6443ed875b5059055c60ef0f1fd06ca22d5af96fd6773bc12f68d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-LP9H",
     "timestamp": "2026-10-22T16:10:02.405Z",
     "repository": "RevenueCat/purchases-ios",
@@ -7492,6 +7432,66 @@
     "contentHash": "b3548a1629d50855be860b67a745ed1597a78df215fa75621b3d5ea7366fec3a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-4VDH",
+    "timestamp": "2026-10-25T12:32:00.725Z",
+    "repository": "Tencent-TDS/KuiklyUI",
+    "learningId": "learn-github-tencent-tds-kuiklyui",
+    "contentHash": "779e19819e90fb97e3912ca6729de371a2a4973f7a25c7caff61234acf18ca55",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-4VT3",
+    "timestamp": "2026-10-25T12:32:01.287Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "6fdc7cfbf7bb5e1752e39bae7341f16571407031baf71f75b95bcaa48453e1b6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-4Z9O",
+    "timestamp": "2026-10-25T12:32:05.772Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-supersoniclabs-julia-1",
+    "contentHash": "3582f7c9b1a7671dba61d1e2fd1dd5fe51601e93ffe46a7e2116cb10fe010ce6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-50C0",
+    "timestamp": "2026-10-25T12:32:07.152Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "ddd10d71b7df8a505d68bfbb07d67f5853fc03965df940a20bb8889796a9d0cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

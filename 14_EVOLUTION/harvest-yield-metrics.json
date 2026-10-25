@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T12:23:10.965Z",
-  "total_cycles_completed": 4785,
-  "total_learnings_persisted": 4785,
-  "total_rules_promoted": 4164,
+  "last_updated": "2026-10-25T12:32:07.160Z",
+  "total_cycles_completed": 4789,
+  "total_learnings_persisted": 4789,
+  "total_rules_promoted": 4169,
   "history": [
-    {
-      "timestamp": "2026-10-25T02:26:47.974Z",
-      "repository": "chakra-ui/zag",
-      "learningId": "learn-github-chakra-ui-zag",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T02:27:22.999Z",
-      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T02:36:08.696Z",
-      "repository": "ant-design/pro-components",
-      "learningId": "learn-github-ant-design-pro-components",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T02:36:17.625Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T02:36:19.162Z",
       "repository": "nolabs-ai/nono",
@@ -1403,6 +1375,34 @@
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
       "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T12:32:00.733Z",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "learningId": "learn-github-tencent-tds-kuiklyui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T12:32:01.297Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T12:32:05.779Z",
+      "repository": "SupersonicLabs/Julia-1",
+      "learningId": "learn-huggingface-supersoniclabs-julia-1",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T12:32:07.160Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

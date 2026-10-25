@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source**: github ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
-> **Source Version**: `323dce03`  
+> **Source Version**: `dc92c104`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T20:14:21.503Z  
+> **Timestamp**: 2026-10-25T12:32:00.344Z  
 > **Learning ID**: `learn-github-tencent-tds-kuiklyui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T20:14:21.346Z  
+> **Harvest Timestamp**: 2026-10-25T12:31:58.992Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kotlin Multiplatform UI framework from Tencent TDS — high-performance, one codebase for six platforms, with dynamic delivery.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3590 stars
+- **Stars / Engagement**: 3600 stars
 
 ---
 
@@ -756,11 +756,11 @@ class Animatable<T, V : AnimationVector>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1811** (2026-10-20): **fix(android): 用 WindowInsets.Type 计算 safeAreaInsets**
-  *Symptoms*: ## 问题背景  `PageData.safeAreaInsets` 由 Android 渲染层 `KuiklyRenderView.SafeAreaCompat.getInsets()` 计算，再按 `"top left bottom right"` 传给页面。页面（包括底部 TabBar）只应消费这个值，不应该自己猜导航栏高度。  当前 API 30+ 仍在读已经废弃的：  ```kotlin windowInsets.stableInsetBottom ```  `stableInset*` 在不同厂商、不同导航模式下可能返回过时或不完整的值。实测一台设备的窗口信息里，导航栏区域约为：  ```text 132px / density 3 = 44dp ```  但 Kuikly 传给页面的 `safeAreaInsets.bottom` 是 `16dp`。底部栏如果按这个值留白，就会比真实导航区域少一截。  这不是宿主页面的消费问题。宿主不负责重新计算安全区；修正在 Kuikly Android 渲染框架里。  ## 原因  `#1462` 为了避免软键盘把 `safeAreaInsets.bottom` 抬成 IME 高度，把四个方向都改成了 `stableInset*`，并禁止在 `stableInset == 0` 时回退到 `systemWindowInset*`（后者在键盘弹出时包含 IME）。  这个方向是对的：安全区不能包含键盘。但 `stableInset*` 从 API 30 起已废弃，也不能代表当前系统栏。部分设备上它会停在一个偏小的值（例如 16dp），而 `WindowInsets.Type.navigationBars()` 才是真实导航栏。  下面三种做法都不能用来修这个问题：  1. 读 `Settings.Secure.navigation_mode`，再按三键/手势模式推算高度。导航模式和 inset 不是一一对应的，分屏、隐藏导航栏、厂商手势条都会算错。 2. 继续在 API 30+ 使用 `stableInsetBottom`。 3. 把 px 再除一次 density，或把 px 直接当 dp。`formatSafeAreaInsetsForKuikly` 已经用 `context.toDpF()` 转过一次。  ## 解决方案  修改点：`core-render-android/.../KuiklyRenderView.kt` 的 `SafeAreaCompat`。不依赖 AndroidX `WindowInsetsCompat`，因为框架要兼容不含这些 API 的低版本 androidx。  API 30+ 改用 `WindowInsets.getInsets(Type)`：  - `statusBars | navigationBars | displayCutout` - 再与 `mandatorySystemGestures` 各边取 `max`  各边取最大值而不是相加。状态栏和刘海、导航栏和底部强制手势区通常是同一块区域，相加会算两次。  这样三种真实状态都能从窗口 inset 得到，而不用读导航模式：  | 设备状态 | 期望的 bottom | | --- | --- | | 三键导航，导航栏约 44dp | `navigationBars.bottom`，不再停在偏小的 `stableInsetBottom` | | 手势导航，导航栏为 0，但底部有强制手势区 | `mandat
+- **Issue #1823** (2026-10-23): **feat(scroller): add iOS 26 scroll edge effect attrs on Scroller/List**
+  *Symptoms*: Let apps hide UIScrollView top/bottom edge effects per scroll container instead of relying on navigation bar subtree walks; document Kuikly 2.30.0+ and safe no-op on older OS and other platforms.
 
-- **Issue #1810** (2026-10-20): **fix: resolve multi-level nested scroll penetration on Android and iOS**
-  *Symptoms*: ## Summary  Fixes multi-level nested scroll penetration: with three levels of nesting, dragging the innermost list skips the intermediate layer and scrolls the outermost container directly. Two platform-specific causes are fixed.  **The whole fix is opt-in and off by default**, so existing behaviour is untouched unless the host App explicitly enables it.  ```kotlin // Android, call once before rendering KRRecyclerView.enableMultiLevelNestedScrollFix() ```  ```objc // iOS, call once at App startup [NestedScrollCoordinator enableMultiLevelNestedScrollFix]; ```  **Android (`KRRecyclerView.kt`)**  The `PARENT_FIRST` / `SELF_FIRST` decision in `scrollParentIfNeeded()` only inspected the direct child:  ``` PARENT_FIRST -> always let the parent scroll SELF_FIRST   -> let the parent scroll when !target.canScrollVertically() ```  With three levels, whether the parent can consume a scroll depends on the whole chain from the parent up to the root, not on the direct child alone, so the middle layer was bypassed.  Cache the nested child in `onStartNestedScroll()` and extract `handleStartNestedScroll()`, then add:  - `canNestedScrollVertically(direction)` — recursively answers "can this view still scroll in this direction", taking the nested child's own scroll mode into account. With no nested child (or the child not itself in a nested scroll), it degrades to plain `canScrollVertically()`. - `nestedParentCanScrollVerticallyFirst(parentDy)` — guards the `PARENT_FIRST` branch. Returns `false
+- **Issue #1822** (2026-10-23): **feat(ios): add UINavigationBar and UIToolbar Kuikly components**
+  *Symptoms*: Introduce Kotlin APIs and iOS render implementations for system navigation bar and toolbar chrome, register view types in ViewConst, and add UINavigationBarDemoPage.  Document usage in ios-uikit-chrome.md. In the demo host, allow the navigation controller bar while clearing host UINavigationItem chrome and hiding UIToolbar to avoid duplicate system back buttons when using Kuikly bars.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -777,553 +777,413 @@ class Animatable<T, V : AnimationVector>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `55fdaeb5` (2026-10-20)
-**Commit Message**: fix: resolve multi-level nested scroll penetration on Android and iOS (#1810)
+### Incident Patch 1: `6b65fb29` (2026-10-23)
+**Commit Message**: fix(ios): keep fontWeight and italic on font resolution fallback and add font family alias adapter (#1796)
 
-Three-level nested scrolling can be penetrated: when the user drags the
-innermost list, the intermediate layer is skipped and the outermost
-container scrolls directly. Two platform-specific causes are fixed here.
+* fix(ios): keep fontWeight and italic on font resolution fallback and add font family alias adapter
 
-The fix is guarded by an opt-in switch that defaults to off, so existing
-behaviour is unchanged until the host App explicitly enables it. When the
-switch is off, shouldScrollParentY runs the original code path verbatim
-and no additional state is recorded; the iOS changes are likewise skipped.
+- Remove the early return to system regular font in +[KRConvertUtil UIFont:] when fontFamily lookup fails, which silently dropped fontWeight and fontStyle
+- Resolve fontWeight before all font resolution paths so both the adapter and the system-font fallback receive it
+- Reorder the font resolution chain: static registration -> new adapter -> hr_loadCustomFont -> componentExpandHandler -> system font with weight/italic
+- Add optional KuiklyFontProtocol adapter hr_fontWithFontFamily:fontSize:fontWeight:contextParams: so business can map a fontFamily alias directly to a UIFont, aligning with Android/HarmonyOS alias support
+- Inject contextParam into shadows created by KuiklyRenderLayerHandler (aligned with the TurboDisplay path) so dynamic font loading works on normal pages; nil-guarded since shadow creation runs on the context thread
+- Demo: KRFontHandler implements the adapter, extracts the real PostScript name via CGFontCopyPostScriptName and skips duplicate registration; add
 
-Android (KRRecyclerView.kt)
-
-The parent-first / self-first decision in scrollParentIfNeeded() only
-inspected the direct child:
-
-  PARENT_FIRST -> always let the parent scroll
-  SELF_FIRST   -> let the parent scroll when !target.canScrollVertically()
-
-With three levels, "can the parent consume this scroll" depends on the
-whole chain from the parent up to the root, not on the direct child alone,
-so the middle layer was bypassed.
-
-Cache the nested child in onStartNestedScroll() and extract
-handleStartNestedScroll(), then add:
-
-  canNestedScrollVertically(direction)
-    Recursively answers "can this view stil
-
-**File**: `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/expand/component/list/KRRecyclerView.kt` (modified, +142/-6)
+**File**: `core-render-ios/Extension/BridgeProtocol/KuiklyRenderBridge.h` (modified, +9/-0)
 ```diff
-@@ -169,6 +169,11 @@ class KRRecyclerView : RecyclerView, IKuiklyRenderViewExport, NestedScrollingChi
-      */
-     private var scrollWithParent = true
+@@ -147,6 +147,15 @@ typedef void(^ImageCompletionBlock)(UIImage * _Nullable image, NSError * _Nullab
+  */
+ - (UIFont *)hr_fontWithFontFamily:(NSString *)fontfamily fontSize:(CGFloat)fontSize fontWeight:(UIFontWeight)fontWeight;
  
-+    /**
-+     * cache child View
-+     */
-+    private var nestedChildView:KRRecyclerView? = null
++/*
++ * 自定义字体创建
++ * @param fontfamily 字体名
++ * @param fontSize 字体大小
++ * @param fontWeight 字体weight
++ * @return 返回自定义字体 （注：若返回nil，则走sdk自身默认创建字体逻辑）
++ */
++- (UIFont *)hr_fontWithFontFamily:(NSString *)fontfamily fontSize:(CGFloat)fontSize fontWeight:(UIFontWeight)fontWeight isItalic:(BOOL)isItalic;
 +
-     private var lastScrollParentX = 0
- 
-     private var lastScrollParentY = 0
-@@ -1478,6 +1483,24 @@ class KRRecyclerView : RecyclerView, IKuiklyRenderViewExport, NestedScrollingChi
-         const val VIEW_NAME = "KRListView"
-         const val VIEW_NAME_SCROLL_VIEW = "KRScrollView"
- 
-+        /**
-+         * 多层嵌套滚动穿透修复开关，默认关闭。
-+         *
-+         * 关闭时 [shouldScrollParentY] 沿用改动前只检查直接子 View 的判定逻辑；
-+         * 开启后改为沿嵌套链递归判定，修复三层嵌套时中间层被穿透的问题。
-+         * 由宿主 App 在初始化阶段显式开启，不对 Kotlin DSL 暴露。
-+         */
-+        private var sMultiLevelNestedScrollFixEnabled: Boolean = false
-+        internal val multiLevelNestedScrollFixEnabled: Boolean
-+            get() = sMultiLevelNestedScrollFixEnabled
+ /*
+  * 扩展Kotlin文本组件的text属性-后置处理
+  * @param text 源文本
+```
+
+**File**: `core-render-ios/Extension/Category/KRConvertUtil.m` (modified, +79/-29)
+```diff
+@@ -37,25 +37,7 @@ + (UIFont *)UIFont:(id)json {
+     CGFloat fontSize = [self CGFloat:json[@"fontSize"]] ?: 15;
+     KuiklyContextParam* contextParam = json[@"contextParam"];
+     
+-    if (fontFamily && fontFamily.length) {
+-        UIFont* font = [UIFont fontWithName:fontFamily size:fontSize];      // 判断字体是否已经在info.plist中注册
+-        if (font) {
+-            return font;
+-        }
+-        
+-        // 未静态注册，则调用业务方hr_loadCustomFont
+-        if (contextParam && [KRFontModule hr_loadCustomFont:fontFamily contextParams:contextParam]) {
+-            UIFont* font = [UIFont fontWithName:fontFamily size:fontSize];      // 以上下文参数ContextParam作为路径来源，动态加载字体
+-            if (font) {
+-                return font;
+-            }
+-        } else {
+-            // 动态加载字体失败，返回系统默认字体
+-            return [UIFont systemFontOfSize:fontSize];
+-        }
+-    }
+-    
+-    // 执行默认字体加载，所覆盖的场景有：fontFamily为nil或者为空、ContextParam为nil、业务方字体加载失败
++    // fontWeight 需先于所有字体解析路径确定，供字体适配器及兜底系统字体使用
+     static dispatch_once_t onceToken;
+     static NSDictionary *gFontWeightMap = nil;
+     dispatch_once(&onceToken, ^{
+@@ -74,30 +56,98 @@ + (UIFont *)UIFont:(id)json {
+         };
+     });
+     UIFontWeight fontWeight = [(gFontWeightMap[json[@"fontWeight"]?:@""] ?: @(UIFontWeightRegular)) doubleValue];
+-    
++    BOOL isItalic = [@"italic" isEqual:json[@"fontStyle"]];
 +
-+        /**
-+         * 开启多层嵌套滚动穿透修复，需在渲染开始前调用。
-+         */
-+        fun enableMultiLevelNestedScrollFix() {
-+            sMultiLevelNestedScrollFixEnabled = true
-+        }
-+
-         private const val CONTENT_OFFSET_X = "contentOffsetX"
-         private const val CONTENT_OFFSET_Y = "contentOffsetY"
- 
-@@ -1562,6 +1585,25 @@ class KRRecyclerView : RecyclerView, IKuiklyRenderViewExport, NestedScrollingChi
-         child: View, target: View, axes: Int,
-         type: Int
-     ): Boolean {
-+        val accept = handleStartNestedScroll(axes, type)
-+        // 开关关闭时不记录 child，存量路径完全不产生额外状态。
-+        if (multiLevelNestedScrollFixEnabled) {
-+            if (target is KRRecyclerView && accept) {
-+                nestedChildView = target
-+            } else {
-+                nestedChildView = null
++    // 情形 1: generic family（Compose FontFamily 定义的类别名，非具体字体名）
++    // 直接映射为系统对应风格字体并保留 weight/style，避免按字体名查找与业务动态注册的无效调用
+     if (fontFamily.length) {
+-        UIFont *font = nil;
+-        if ([[KuiklyRenderBridge componentExpandHandler] respondsToSelector:@selector(hr_fontWithFontFamily:fontSize:fontWeight:)]) {
++        NSString *lowercaseFamily = fontFamily.lowercaseString;
++        if ([lowercaseFamily isEqualToString:@"serif"] || [lowercaseFamily isEqualToString:@"monospace"]) {
++            UIFont *genericFont = [self p_systemDesignFontWithGenericFamily:lowercaseFamily
++                                                                   fontSize:fontSize
++                                                                 fontWeight:fontWeight
++                                                                     italic:isItalic];
++            if (genericFont) {
++                return genericFont;
 +            }
++            fontFamily = nil; // iOS 13 以下无对应 Design，回落系统字体
++        } else if ([lowercaseFamily isEqualToString:@"cursive"]) {
++            // iOS 无手写 Design；映射系统内置手写字体（Android 端 cursive 同样解析为系统手写体）
++            // 手写体本身倾斜，不再叠加 fontStyle；无汉字字形，中文由系统逐字回落，与 Android 行为一致
++            NSString *scriptName = fontWeight >= UIFontWeightBold ? @"SnellRoundhand-Bold" : @"SnellRoundhand";
++            UIFont *scriptFont = [UIFont fontWithName:scriptName size:fontSize];
++            if (scriptFont) {
++                return scriptFont;
++            }
++            fontFamily = nil; // 未找到时回落系统字体
++        } else if ([lowercaseFamily isEqualToString:@"sans-serif"] ||
++                   [lowercaseFamily isEqualToString:@"system-ui"]) {
++            fontFamily = nil; // 无独立字形对应，回落系统字体
 +        }
-+        return accept
 +    }
 +
-+    /**
-+     * 处理嵌套滚动开始事件
-+     * @param axes 滚动轴向
-+     * @param type 事件类型（Touch/Non-Touch）
-+     * @return 是否接受嵌套滚动
-+     */
-+    private fun handleStartNestedScroll(axes: Int, type: Int): Boolean {
-         if (!isScrollEnabled()) {
-             return false
-         }
-@@ -1915,12 +1957,22 @@ class KRRecyclerView : RecyclerView, IKuiklyRenderViewExport, NestedScrollingChi
-             return
-         }
- 
--        val shouldScrollParentY = when {
--            parentDy > 0 && target.scrollForwardMode == KRNestedScrollMode.PARENT_FIRST -> true
--            parentDy < 0 && target.scrollBackwardMode == KRNestedScrollMode.PARENT_FIRST -> true
--            parentDy > 0 && target.scrollForwardMode == KRNestedScrollMode.SELF_FIRST && !target.canScrollVertically(parentDy) -> true
--            parentDy < 0 && target.scrollBackwardMode == KRNestedScrollMode.SELF_FIRST && !target.canScrollVertically(parentDy) -> true
--            else -> false
-+        val shouldScrollParentY = if (multiLevelNestedScrollFixEnabled) {
-+            when {
-+                parentDy > 0 && target.scrollForwardMode == KRNestedScrollMode.PARENT_FIRST && !nestedParentCanScrollVerticallyFirst(parentDy) -> true
-+                parentDy < 0 && target.scrollBackwardMode == KRNestedScrollMode.PARENT_FIRST && !nestedParentCanScrollVerticallyFirst(parentDy) -> true
-+                parentDy > 0 && target.scrollForwardMode == KRNestedScrollMode.SELF_FIRST && !target.canNestedScrollVertically(parentDy) -> true
-+                parentDy < 0 && target.scrollBackwardMode == KRNestedScrollMode.SELF_FIRST && !target.canNestedScrollVertically(parentDy) -> true
-+                else -> false
++    if (fontFamily.length) {
++        // 情形 2: 静态注册（info.plist）
++        UIFont *font = [UIFont fontWithName:fontFamily size:fontSize];
++        if (font) {
++            return font;
++        }
++        // 情形 3: 动态注册字体后再按 fontFamily 获取
++        if (contextParam && [KRFontModule hr_loadCustomFont:fontFamily contextParams:contextParam]) {
++            font = [UIFont fontWithName:fontFamily size:fontSize];
++            if (font) {
++                return font;
 +            }
-+        } else {
-+            when {
-+                parentDy > 0 && target.scrollForwardMode == KRNestedScrollMode.PARENT_FIRST -> true
-+                parentDy < 0 && target.scrollBackwardMode == KRNestedScrollMode.PARENT_FIRST -> true
-+                parentDy > 0 && target.scrollForwardMode == KRNestedScrollMode.SELF_FIRST && !target.canScrollVertically(parentDy) -> true
-+                parentDy < 0 && target.scrollBackwardMode == KRNestedScrollMode.SELF_FIRST && !target.canScrollVertically(parentDy) -> true
-+                else -> false
-+            }
++        }
++        
++        // 情形 4: componentExpandHandler 自定义字体创建（weight/italic 作为参数传出，返回值原样使用）
++        if ([[KuiklyRenderBridge componentExpandHandler] respondsToSelector:@selector(hr_fontWithFontFamily:fontSize:fontWeight:isItalic:)]) {
++            font = [[KuiklyRenderBridge componentExpandHandler] hr_fontWithFontFamily:fontFamily fontSize:fontSize fontWeight:fontWeight isItalic:isItalic];
++        }
++        if (font == nil && [[KuiklyRenderBridge componentExpandHandler] respondsToSelector:@selector(hr_fontWithFontFamily:fontSize:fontWeight:)]) {
+             font = [[KuiklyRenderBridge componentExpandHandler] hr_fontWithFontFamily:fontFamily fontSize:fontSize fontWeight:fontWeight];
          }
- 
-         var didConsumeY = false  // 标记是否已经设置了 consumed[1]
-@@ -1986,6 +2038,90 @@ class KRRecyclerView : RecyclerView, IKuiklyRenderViewExport, NestedScrollingChi
+         if (font == nil && [[KuiklyRenderBridge componentExpandHandler] respondsToSelector:@selector(hr_fontWithFontFamily:fontSize:)]) {
+             font = [[KuiklyRenderBridge componentExpandHandler] hr_fontWithFontFamily:fontFamily fontSize:fontSize];
+         }
+-        if (font == nil) {
+-            font = [UIFont fontWithName:fontFamily size:fontSize];
+-        }
+         if (font) {
+             return font;
          }
      }
- 
-+    /**
-+     * 判断当前父嵌套View是否能够滚动（根据scrollMode模式判断）
-+     * @param parentDy 滚动方向，> 0 表示向前/向下，< 0 表示向后/向上
-+     * @return 当前View是否能够滚动
-+     */
-+    private fun nestedParentCanScrollVerticallyFirst(parentDy: Int): Boolean {
-+        // 没有嵌套滚动父级，不能让父级滚动
-+        if (!hasNestedScrollingParent()) {
-+            return false
-+        }
+-    
+-    if (json[@"fontStyle"] && [@"italic" isEqualToString:json[@"fontStyle"]]) {
+-        return [self italicFontWithSize:fontSize bold:fontWeight >=UIFontWeightBold itatic:YES weight:fontWeight];
 +
-+        // 查找父嵌套容器
-+        val parentRecyclerView = findNestedParentRecyclerView()
-+
-+        // 根据滚动方向选择对应的scrollMode
-+        val scrollMode = if (parentDy > 0) {
-+            scrollForwardMode
-+        } else {
-+            scrollBackwardMode
-+        }
-+
-+        // 根据模式判断父View是否应该滚动
-+        return when (scrollMode) {
-+            KRNestedScrollMode.SELF_ONLY -> {
-+                
++    // 情形 5.1: 带 weight/style 的系统字体
++    if (isItalic) {
++        return [
 ```
 
-**File**: `core-render-ios/Extension/Components/KRScrollView.m` (modified, +4/-0)
+**File**: `core-render-ios/Handler/KuiklyRenderLayerHandler.mm` (modified, +6/-1)
 ```diff
-@@ -21,6 +21,7 @@
- #import "KRConvertUtil.h"
- #import "KRScrollViewOffsetAnimator.h"
- #import "KRScrollView+NestedScroll.h"
-+#import "NestedScrollCoordinator.h"
- #import "NSObject+KR.h"
- #import "KRContentOffsetAnimator.h"
- 
-@@ -955,6 +956,9 @@ - (void)setFrame:(CGRect)frame {
+@@ -251,7 +251,12 @@ - (void)p_createShadowHandlerWithTag:(NSNumber*)tag viewName:(NSString*)viewName
+         _shadowRegistry = [[NSMutableDictionary alloc] init];
      }
-     [super setFrame:frame];
-     [self syncScrollViewContentSize];
-+    if (scrollView && [NestedScrollCoordinator multiLevelNestedScrollFixEnabled]) {
-+        scrollView.skipNestScrollLock = NO;
+     NSAssert(!_shadowRegistry[tag], @"shadow did created");
+-    _shadowRegistry[tag] = [KRClassFromString(viewName) hrv_createShadow];
++    id<KuiklyRenderShadowProtocol> shadow = [KRClassFromString(viewName) hrv_createShadow];
++    // 对齐 TurboDisplay 向 shadow 注入 contextParam，供字体动态加载使用；shadow 在 context 线程创建，不走 setContextParamToShadow:（主线程断言）
++    if (_contextParam) {
++        [shadow hrv_setPropWithKey:@"contextParam" propValue:_contextParam];
 +    }
++    _shadowRegistry[tag] = shadow;
  }
- - (void)didMoveToSuperview {
-     [super didMoveToSuperview];
+ 
+ - (void)p_removeShadowWithTag:(NSNumber*)tag {
 ```
 
-**File**: `core-render-ios/Extension/Components/NestScroll/NestedScrollCoordinator.h` (modified, +8/-0)
+**File**: `demo/src/commonMain/kotlin/com/tencent/kuikly/demo/pages/debug/BugReproIosGenericFontWeightPage.kt` (added, +134/-0)
 ```diff
-@@ -41,6 +41,14 @@ NS_ASSUME_NONNULL_BEGIN
- /// Reset transient drag/lock state for Compose reuse.
- - (void)prepareForComposeReuse;
- 
-+/// Enable the multi-level (3+ layer) nested scroll penetration fix.
-+/// Defaults to NO; call once during App startup before any Kuikly page is rendered.
-+/// When disabled, nested scroll behaves exactly as before the fix.
-++ (void)enableMultiLevelNestedScrollFix;
+@@ -0,0 +1,134 @@
++/*
++ * Tencent is pleased to support the open source community by making KuiklyUI
++ * available.
++ * Copyright (C) 2025 Tencent. All rights reserved.
++ * Licensed under the License of KuiklyUI;
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
 +
-+/// Whether the multi-level nested scroll penetration fix is enabled.
-++ (BOOL)multiLevelNestedScrollFixEnabled;
++package com.tencent.kuikly.demo.pages.debug
 +
- @end
- 
- NS_ASSUME_NONNULL_END
-```
-
-**File**: `core-render-ios/Extension/Components/NestScroll/NestedScrollCoordinator.mm` (modified, +43/-1)
-```diff
-@@ -455,13 +455,55 @@ - (BOOL)shouldRecognizeScrollGestureSimultaneouslyWithView:(UIView *)view {
-             return YES;
-         }
-     } else if (self.outerScrollView.nestedGestureDelegate) {
--        return [self.outerScrollView.nestedGestureDelegate shouldRecognizeScrollGestureSimultaneouslyWithView:view];
-+        BOOL result = [self.outerScrollView.nestedGestureDelegate
-+                       shouldRecognizeScrollGestureSimultaneouslyWithView:view];
-+        if (result && [[self class] multiLevelNestedScrollFixEnabled]) {
-+            // Fix 3-layer penetration bug:
-+            // Chain forwarding succeeded, meaning the innermost (e.g. BLUE) established
-+            // a simultaneous gesture with the outermost (e.g. outerScroller), bypassing
-+            // the middle layer (e.g. WaterfallList).
-+            //
-+            // When the middle layer's panGesture doesn't participate in dragging
-+            // (offset=0 + bounces=NO + scrolling toward edge), its WillBeginDragging
-+            // won't fire, so activeInnerScrollView on the outermost layer stays nil.
-+            // This causes the "Not active inner return 2" early-return in scrollViewDidScroll,
-+            // skipping all lock logic and letting the outer scroll freely.
-+            //
-+            // Fix: proactively establish middle-layer <-> outer-layer relationship here,
-+            // so cascadeLock can propagate correctly even when the middle layer is inactive.
-+            UIScrollView<NestedScrollProtocol> *middleLayer = self.outerScrollView;
-+            if ([view conformsToProtocol:@protocol(NestedScrollProtocol)]) {
-+                UIScrollView<NestedScrollProtocol> *outerLayer =
-+                    (UIScrollView<NestedScrollProtocol> *)view;
-+                // Only fill in if not already set, to avoid overwriting a valid relationship
-+                // established by a normal WillBeginDragging flow.
-+                if (!outerLayer.activeInnerScrollView) {
-+                    outerLayer.activeInnerScrollView = middleLayer;
-+                    NSLogTrace(@"chain forwarding: set outerLayer(%p).activeInner = middleLayer(%p)", outerLayer, middleLayer);
-+                }
-+                if (!middleLayer.activeOuterScrollView) {
-+                    middleLayer.activeOuterScrollView = outerLayer;
-+                    NSLogTrace(@"chain forwarding: set middleLayer(%p).activeOuter = outerLayer(%p)", middleLayer, outerLayer);
-+                }
-+            }
++import androidx.compose.runtime.Composable
++import com.tencent.kuikly.compose.ComposeContainer
++import com.tencent.kuikly.compose.foundation.background
++import com.tencent.kuikly.compose.foundation.layout.Column
++import com.tencent.kuikly.compose.foundation.layout.fillMaxSize
++import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
++import com.tencent.kuikly.compose.foundation.layout.padding
++import com.tencent.kuikly.compose.foundation.lazy.LazyColumn
++import com.tencent.kuikly.compose.material3.MaterialTheme
++import com.tencent.kuikly.compose.material3.Text
++import com.tencent.kuikly.compose.setContent
++import com.tencent.kuikly.compose.ui.Modifier
++import com.tencent.kuikly.compose.ui.graphics.Color
++import com.tencent.kuikly.compose.ui.text.TextStyle
++import com.tencent.kuikly.compose.ui.text.font.FontFamily
++import com.tencent.kuikly.compose.ui.text.font.FontStyle
++import com.tencent.kuikly.compose.ui.text.font.FontWeight
++import com.tencent.kuikly.compose.ui.text.font.KuiklyFont
++import com.tencent.kuikly.compose.ui.unit.dp
++import com.tencent.kuikly.compose.ui.unit.sp
++import com.tencent.kuikly.core.annotations.Page
++
++/**
++ * iOS 字体解析验证页：generic family 映射、字体加载失败时回落系统字体并保留字重与斜体
++ */
++@Page("BugReproIosGenericFontWeightPage")
++internal class BugReproIosGenericFontWeightPage : ComposeContainer() {
++    override fun willInit() {
++        super.willInit()
++        setContent {
++            GenericFontWeightContent()
 +        }
-+        return result;
-     }
-     return NO;
- }
- 
- #pragma mark - Utils
- 
-+static BOOL sMultiLevelNestedScrollFixEnabled = NO;
-+
-++ (void)enableMultiLevelNestedScrollFix {
-+    sMultiLevelNestedScrollFixEnabled = YES;
++    }
 +}
 +
-++ (BOOL)multiLevelNestedScrollFixEnabled {
-+    return sMultiLevelNestedScrollFixEnabled;
++private class FontCase(
++    val title: String,
++    val expect: String,
++    val style: TextStyle,
++)
++
++private const val SAMPLE_TEXT = "Kuikly 字重 Aa 123"
++
++@Composable
++private fun fontCases(): List<FontCase> = listOf(
++    FontCase("Default · Normal", "Regular 基准", TextStyle(fontFamily = FontFamily.Default, fontWeight = FontWeight.Normal)),
++    FontCase("Default · Bold", "Bold 基准", TextStyle(fontFamily = FontFamily.Default, fontWeight = FontWeight.Bold)),
++    FontCase("SansSerif · Bold", "与 Default·Bold 一致", TextStyle(fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Bold)),
++    FontCase("SansSerif · Medium", "Medium", TextStyle(fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Medium)),
++    FontCase("SansSerif · Bold Italic", "Bold 斜体", TextStyle(fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic)),
++    FontCase("Serif · Bold", "iOS: New York Bold", TextStyle(fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold)),
++    FontCase("Monospace · Bold", "iOS: SF Mono Bold", TextStyle(fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)),
++    FontCase("Cursive · Bold", "iOS: Snell Roundhand 手写体 Bold", TextStyle(fontFamily = FontFamily.Cursive, fontWeight = FontWeight.Bold)),
++    FontCase(
++        "不存在的自定义字体 · Bold Italic",
++        "回落系统字体并保留 Bold 斜体",
++        TextStyle(
++            fontFamily = FontFamily(KuiklyFont("NotExistFont", FontWeight.Bold, FontStyle.Italic)),
++            fontWeight = FontWeight.Bold,
++            fontStyle = FontStyle.Italic,
++        ),
++    ),
++    FontCase(
++        "真实字体名 Satisfy-Regular（静态注册）",
++        "Satisfy 手写体",
++        TextStyle(fontFamily = FontFamily(KuiklyFont("Satisfy-Regular", FontWeight.Normal, FontStyle.Normal))),
++    ),
++    FontCase(
++        "未注册字体名 UnknownFont · Bold",
++        "回落系统字体 Bold",
++        TextStyle(
++            fontFamily = FontFamily(KuiklyFont("UnknownFont", FontWeight.Bold, FontStyle.Normal)),
++            fontWeight = FontWeight.Bold,
++        ),
++    ),
++    FontCase("Material typography.titleMedium", "SansSerif + Medium", MaterialTheme.typography.titleMedium),
++    FontCase("Material typography.titleLarge", "SansSerif + Normal", MaterialTheme.typography.titleLarge),
++)
++
++@Composable
++private fun GenericFontWeightContent() {
++    val cases = fontCases()
++    LazyColumn(
++        modifier = Modifier
++            .fillMaxSize()
++            .background(Color(0xFFF5F5F5)),
++    ) {
++        item(key = "header") {
++            Text(
++                text = "iOS generic font family 字重 / 斜体 / 字体别名",
++                modifier = Modifier.fillMaxWidth().padding(16.dp),
++                fontSize = 18.sp,
++                fontWeight = FontWeight.Bold,
++     
+```
+
+**File**: `docs/API/components/text.md` (modified, +1/-1)
+```diff
+@@ -253,7 +253,7 @@ internal class FontSizePage : BasePager() {
+ | fontFamily | 字体名称  | String |
+ 
+ :::tip 注意
+-如果需要使用自定义字体，安卓和鸿蒙端需要实现[自定义字体适配器](../../QuickStart/android.md#自定义字体适配器)，iOS端需要在系统中[注册字体](https://developer.apple.com/documentation/uikit/adding-a-custom-font-to-your-app?language=objc)，H5端需要判断字体加载完成后[重新测量](../../DevGuide/h5-custom-font.md)。
++如果需要使用自定义字体，安卓和鸿蒙端需要实现[自定义字体适配器](../../QuickStart/android.md#自定义字体适配器)，iOS端除在系统中[注册字体](https://developer.apple.com/documentation/uikit/adding-a-custom-font-to-your-app?language=objc)外，也可实现[自定义字体适配器（FontModule，仅iOS）](../../QuickStart/iOS.md#实现自定义字体适配器-fontmodule)支持别名映射与动态加载，H5端需要判断字体加载完成后[重新测量](../../DevGuide/h5-custom-font.md)。
+ :::
+ 示例：
+ ```kotlin
+```
+
+**File**: `docs/QuickStart/iOS.md` (modified, +93/-0)
+```diff
+@@ -755,3 +755,96 @@ class TestPage : Pager(){
+ - 框架引入有libpag库，业务可直接继承libpag的PAGview，获取处理PAG的相关能力
+ - PAG适配器的定义与实现可参考类似的`KRVideoViewHandler`与`KRAPNGViewHandler`的实现
+ :::
++
++### 实现自定义字体适配器 FontModule
++
++业务实现 `KuiklyFontProtocol` 并通过 `registerFontHandler:` 注册后，可以扩展 iOS 端的自定义字体加载能力：
++
++```objc
++// 注册（一般放在 Handler 的 +load 中）
+++ (void)load {
++    [KuiklyRenderBridge registerFontHandler:[[KRFontHandler alloc] init]];
++}
++```
++
++协议提供以下可选方法，按需实现。
++
++#### 方法：动态注册字体文件
++
++```objc
++- (BOOL)hr_loadCustomFont:(NSString *)fontFamily contextParams:(KuiklyContextParam *)contextParam;
++```
++
++区别 info.plist 静态注册，用于在运行时获取 ContextParams 内的字体文件并完成注册。
++
++| 参数 | 说明 |
++|:----|:----|
++| fontFamily | 字体的真实名称（与字体文件内嵌名称一致） |
++| contextParam | 页面资源上下文，可用其 `resourceFolderUrl` 定位字体资源路径 |
++
++注册完成后，**框架会按同一个 `fontFamily` 字符串查找字体**，因此业务必须注册与 `fontFamily` 名称一致的字体文件，否则查找失败。
++
++#### 方法：自定义字体加载（componentExpandHandler 通道）
++
++以下方法定义于 `componentExpandHandler`（`KuiklyRenderBridge.h` 的 `KuiklyRenderComponentExpandProtocol`），**不属于 `KuiklyFontProtocol`**，但同样面向业务开放。需要完全接管字体构建的业务直接使用此处即可。
++
++通过 `[KuiklyRenderBridge registerComponentExpandHandler:]` 注册（一般放在 Handler 的 `+load` 中）。框架按以下顺序尝试，任一返回非 nil 即使用：
++
++```objc
++- (UIFont *)hr_fontWithFontFamily:(NSString *)fontFamily
++                         fontSize:(CGFloat)fontSize
++                       fontWeight:(UIFontWeight)fontWeight
++                        isItalic:(BOOL)isItalic;   // 优先：weight 与 italic 均传出
++
++- (UIFont *)hr_fontWithFontFamily:(NSString *)fontFamily
++                         fontSize:(CGFloat)fontSize
++                       fontWeight:(UIFontWeight)fontWeight;
++
++- (UIFont *)hr_fontWithFontFamily:(NSString *)fontFamily
++                         fontSize:(CGFloat)fontSize;
++```
++
++| 参数 | 说明 |
++|:----|:----|
++| fontFamily | Kotlin 侧设置的 `fontFamily` 原始字符串，**可为业务别名**，业务自行维护"别名 → 字体"的映射 |
++| fontSize | 目标字号，创建 `UIFont` 时传入 |
++| fontWeight | 目标字重；多字重字体族据此选择对应字面的字体文件 |
++| isItalic | 是否斜体 |
++
++**框架原样使用返回的 UIFont**（`fontWeight`/`italic` 已作为参数传出，样式由业务自行处理）；返回 `nil` 则继续走框架默认逻辑，最终回落系统字体。
++
++```objc
+++ (void)load {
++    [KuiklyRenderBridge registerComponentExpandHandler:[self new]];
 +}
 +
- + (id<ScrollableProtocol>)findNestedOuterScrollView:(UIScrollView *)innerScrollView {
-     // Use superview.superview since scrollview is a subview of view.
-     UIView *innerWrapperView = innerScrollView.superview;
++- (UIFont *)hr_fontWithFontFamily:(NSString *)fontFamily
++                         fontSize:(CGFloat)fontSize
++                       fontWeight:(UIFontWeight)fontWeight
++                        isItalic:(BOOL)isItalic {
++    // fontFamily 可为业务别名（如 iconfont 占位名），在此定位并注册字体文件后返回对应 UIFont
++    if ([fontFamily isEqualToString:@"iconfont"]) {
++        return [UIFont fontWithName:@"IconFont-Regular" size:fontSize];
++    }
++    return nil; // 返回 nil 走框架默认逻辑
++}
++```
++
++:::: warning iOS 自定义字体 与 动态注册
++- 自定义（三方）字体建议**不要与 `fontWeight`/`fontStyle` 组合使用**，三端对自定义字体的字重/斜体处理策略不同：iOS 的字重固化在字体文件中，框架加载 fontFamily 时不会叠加字重/斜体；每个字重/斜体都是一款独立的字体（独立 PostScript Name），需在 fontFamily 中直接指定对应名称，例如 `CustomSans` 的 Bold 字面是 `CustomSans-Bold`，系统字体 `PingFangSC-Regular` 的 Medium 字面是 `PingFangSC-Medium`；
++- 若自定义字体需体现 `fontWeight`/`fontStyle`，则确保三端加载的字体文件所示的字体效果本就一致；
++::::
++
++#### 使用步骤
++
++1. 静态注册（info.plist 的 `UIAppFonts`）或系统字体：Kotlin 侧直接使用字体真实名称，无需实现任何方法。
++2. 字体文件需要运行时动态下发/加载：实现 `hr_loadCustomFont:contextParams:`，按 `fontFamily` 注册对应的字体文件。
++3. 未注册或查找失败时，框架依次尝试 `componentExpandHandler` 的 `hr_fontWithFontFamily:...` 系列方法（`fontWeight`/`italic` 作为参数传出，返回的 UIFont 原样使用），最终回落系统字体并保留 `fontWeight`/`fontStyle`。
++
++::: tip generic family 说明
++Compose `FontFamily` 的 4 个类别名由框架内置处理，无需业务介入：
++1. `serif` 映射为系统衬线字体（New York）、`monospace` 映射为系统等宽字体（SF Mono）（二者需 iOS 13+）；
++2. `cursive` 映射为系统内置手写字体（Snell Roundhand，加粗用 SnellRoundhand-Bold，中文逐字回落系统字体）；
++3. `sans-serif` 回落系统无衬线字体。
++4. `serif`/`monospace`/`sans-serif` 均保留 `fontWeight`/`fontStyle`；`cursive` 保留 `fontWeight`，但 `fontStyle` 不生效（手写体本身倾斜，无斜体字面）。注意两端字体产品不同（如 Android 用 Noto Serif、iOS 用 New York），字形无法完全一致。
++:::
 ```
 
 ---
 
-### Incident Patch 2: `6e4902e9` (2026-10-19)
-**Commit Message**: feat(a2ui): kuikly common support for a2ui (#1807)
+### Incident Patch 2: `844f8e9c` (2026-10-23)
+**Commit Message**: feat(ios): add UINavigationBar and UIToolbar Kuikly components (#1822)
 
-* feat(a2ui): kuikly common support for a2ui
+* feat(ios): add UINavigationBar and UIToolbar Kuikly components
 
-* feat(a2ui): fix kotlin js compile error
+Introduce Kotlin APIs and iOS render implementations for system navigation bar
+and toolbar chrome, register view types in ViewConst, and add UINavigationBarDemoPage.
 
-* feat(a2ui): optimize forceRenderView
+Document usage in ios-uikit-chrome.md. In the demo host, allow the navigation
+controller bar while clearing host UINavigationItem chrome and hiding UIToolbar
+to avoid duplicate system back buttons when using Kuikly bars.
 
-* feat(a2ui): fix android and ios audio view custom event
+---------
 
-* feat(a2ui): optimize forceRenderView and add internal
+Co-authored-by: elixxli <[REDACTED_EMAIL]>
 
-**File**: `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/adapter/IKRAudioViewAdapter.kt` (added, +101/-0)
+**File**: `core-render-ios/Extension/AdvancedComps/UINavigationBar/KRUIBarButtonItem.h` (added, +30/-0)
 ```diff
-@@ -0,0 +1,101 @@
-+/*
-+ * Tencent is pleased to support the open source community by making KuiklyUI
-+ * available.
-+ * Copyright (C) 2025 Tencent. All rights reserved.
-+ * Licensed under the License of KuiklyUI;
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package com.tencent.kuikly.core.render.android.adapter
-+
-+import android.content.Context
-+import com.tencent.kuikly.core.render.android.expand.component.KRAudioPlayState
-+
-+/**
-+ * 音频播放器适配器。宿主通过实现该接口提供具体的音频播放实现（如 MediaPlayer / ExoPlayer），
-+ * 并注册到 [KuiklyRenderAdapterManager.krAudioViewAdapter]。
-+ *
-+ * 设计上对齐 [IKRVideoViewAdapter]，但去除了画面相关能力（resizeMode / 首帧）。
-+ */
-+interface IKRAudioViewAdapter {
-+
-+    /**
-+     * @param context 上下文
-+     * @param src 数据源（音频 URL）
-+     * @param listener 播放器事件变化回调代理（播放状态变化 / 播放时间变化）
-+     */
-+    fun createAudioView(context: Context, src: String, listener: IKRAudioViewListener): IKRAudioView
-+}
-+
-+interface IKRAudioView {
-+
-+    /**
-+     * 播放音频
-+     */
-+    fun play()
-+
-+    /**
-+     * 暂停音频
-+     */
-+    fun pause()
-+
-+    /**
-+     * 停止并销毁音频
-+     */
-+    fun stop()
-+
-+    /**
-+     * 设置倍速（1.0, 1.5, 2.0）
-+     */
-+    fun setRate(rate: Float)
-+
-+    /**
-+     * seek 音频
-+     * @param seekToTimeMs 时间，单位毫秒
-+     */
-+    fun seekToTime(seekToTimeMs: Long)
-+
-+    /**
-+     * kuikly 侧设置的属性，一般用于业务扩展使用
-+     */
-+    fun setProp(propKey: String, propValue: Any): Boolean
-+
-+    /**
-+     * kuikly 侧调用方法，一般用于业务扩展使用
-+     */
-+    fun call(method: String, params: String?)
-+}
-+
-+interface IKRAudioViewListener {
-+
-+    /**
-+     * 播放状态发生变化时回调
-+     * @param playState 播放状态
-+     * @param extInfo 扩展参数
-+     */
-+    fun audioPlayStateDidChangedWithState(playState: KRAudioPlayState, extInfo: Map<String, String>)
-+
-+    /**
-+     * 播放时间发生变化时回调
-+     * @param currentTime 当前播放时间，单位毫秒
-+     * @param totalTime 音频总时长，单位毫秒
-+     */
-+    fun playTimeDidChangedWithCurrentTime(currentTime: Long, totalTime: Long)
-+
-+    /**
-+     * 业务自定义扩展事件通用通道。
-+     *
-+     * 对齐 [IKRVideoViewListener.customEventWithInfo] 以及 OHOS 侧的
-+     * `IKRAudioViewListener.onCustomEventWithInfo`，使 Kotlin DSL 中
-+     * `AudioEvent.customEvent` 在三端均走专有事件通道而非 setProp 透传。
-+     * @param eventInfo 自定义事件携带的键值对
-+     */
-+    fun customEventWithInfo(eventInfo: Map<String, String>)
-+}
-```
-
-**File**: `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/adapter/KuiklyRenderAdapterManager.kt` (modified, +5/-0)
-```diff
-@@ -80,6 +80,11 @@ object KuiklyRenderAdapterManager {
-      */
-     var krVideoViewAdapter: IKRVideoViewAdapter? = null
- 
-+    /**
-+     * AudioView适配器
-+     */
-+    var krAudioViewAdapter: IKRAudioViewAdapter? = null
-+
-     /**
-      * 文本后置处理器适配器
-      */
-```
-
-**File**: `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/expand/KuiklyRenderViewBaseDelegator.kt` (modified, +3/-0)
-```diff
-@@ -466,6 +466,9 @@ open class KuiklyRenderViewBaseDelegator(private val delegate: KuiklyRenderViewB
-             renderViewExport(KRVideoView.VIEW_NAME, { context ->
-                 KRVideoView(context)
-             })
-+            renderViewExport(KRAudioView.VIEW_NAME, { context ->
-+                KRAudioView(context)
-+            })
-             renderViewExport(KRAPNGView.VIEW_NAME, { context ->
-                 KRAPNGView(context)
-             })
-```
-
-**File**: `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/expand/component/KRAudioView.kt` (added, +210/-0)
-```diff
-@@ -0,0 +1,210 @@
-+/*
-+ * Tencent is pleased to support the open source community by making KuiklyUI
-+ * available.
-+ * Copyright (C) 2025 Tencent. All rights reserved.
-+ * Licensed under the License of KuiklyUI;
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package com.tencent.kuikly.core.render.android.expand.component
-+
-+import android.content.Context
-+import android.view.View
-+import android.view.ViewGroup
-+import com.tencent.kuikly.core.render.android.adapter.IKRAudioView
-+import com.tencent.kuikly.core.render.android.adapter.IKRAudioViewListener
-+import com.tencent.kuikly.core.render.android.adapter.KuiklyRenderAdapterManager
-+import com.tencent.kuikly.core.render.android.css.ktx.frameHeight
-+import com.tencent.kuikly.core.render.android.css.ktx.frameWidth
-+import com.tencent.kuikly.core.render.android.css.ktx.toNumberFloat
-+import com.tencent.kuikly.core.render.android.export.KuiklyRenderCallback
-+
-+/**
-+ * 音频播放原生组件。
-+ *
-+ * 定义流程对齐 [KRVideoView]：自身仅作为容器与属性桥接层，真正的播放与控件 UI
-+ * 由宿主注册的 [KuiklyRenderAdapterManager.krAudioViewAdapter] 创建的 [IKRAudioView] 提供。
-+ * 与视频不同，音频没有画面拉伸模式与首帧回调。
-+ */
-+class KRAudioView(context: Context) : KRView(context), IKRAudioViewListener {
-+
-+    private var audioView: IKRAudioView? = null
-+    private var src: String = ""
-+    private var playControl = KRAudioViewPlayControl.KRAudioViewPlayControlNone
-+    private var rate = -1f
-+
-+    private var stateChangeCallback: KuiklyRenderCallback? = null
-+    private var playTimeChangeCallback: KuiklyRenderCallback? = null
-+    private var customEventCallback: KuiklyRenderCallback? = null
-+
-+    override val reusable: Boolean
-+        get() = false
-+
-+    override fun setProp(propKey: String, propValue: Any): Boolean {
-+        var result = super.setProp(propKey, propValue)
-+        if (!result) {
-+            result = when (propKey) {
-+                PROP_SRC -> {
-+                    setSrc(propValue as String)
-+                    true
-+                }
-+                PROP_RATE -> {
-+                    setRate(propValue.toNumberFloat())
-+                    true
-+                }
-+                PROP_SEEK -> {
-+                    audioView?.seekToTime((propValue.toNumberFloat()).toLong())
-+                    true
-+                }
-+                PROP_PLAY_CONTROL -> {
-+                    setPlayControl(KRAudioViewPlayControl.from(propValue as Int))
-+                    true
-+                }
-+                PROP_STATE_CHANGE_CALLBACK -> {
-+                    stateChangeCallback = propValue as KuiklyRenderCallback
-+                    true
-+                }
-+                PROP_PLAY_TIME_CHANGE_CALLBACK -> {
-+                    playTimeChangeCallback = propValue as KuiklyRenderCallback
-+                    true
-+                }
-+                PROP_CUSTOM_EVENT_CALLBACK -> {
-+                    customEventCallback = propValue as KuiklyRenderCallback
-+                    true
-+                }
-+                else -> audioView?.setProp(propKey, propValue) ?: false
-+            }
-+        }
-+        return result
-+    }
-+
-+    override fun call(method: String, params: String?, callback: KuiklyRenderCallback?): Any? {
-+        val result = super.call(method, params, callback)
-+        audioView?.call(method, params)
-+        return result
-+    }
-+
-+    override fun setLayoutParams(params: ViewGroup.LayoutParams?) {
-+        super.setLayoutParams(params)
-+        createAudioViewIfNeed()
-+        (audioView as? View)?.also {
-+            it.layoutParams = LayoutParams(frameWidth, frameHeight)
-+        }
-+    }
-+
-+    override fun audioPlayStateDidChangedWithState(
-+        playState: KRAudioPlayState,
-+        extInfo: Map<String, String>
-+    ) {
-+        stateChangeCallback?.invoke(mapOf(
-+            "state" to playState.ordinal,
-+            "extInfo" to extInfo
-+        ))
-+    }
-+
-+    override fun playTimeDidChangedWithCurrentTime(currentTime: Long, totalTime: Long) {
-+        playTimeChangeCallback?.invoke(mapOf(
-+            "currentTime" to currentTime,
-+            "totalTime" to totalTime
-+        ))
-+    }
-+
-+    override fun customEventWithInfo(eventInfo: Map<String, String>) {
-+        customEventCallback?.invoke(eventInfo)
-+    }
-+
-+    override fun onDestroy() {
-+        super.onDestroy()
-+        audioView?.stop()
-+    }
-+
-+    private fun setPlayControl(playControl: KRAudioViewPlayControl) {
-+        this.playControl = playControl
-+        when (playControl) {
-+            KRAudioViewPlayControl.KRAudioViewPlayControlPlay -> audioView?.play()
-```
-
-**File**: `core-render-ios/Extension/AdvancedComps/KRAudioView.h` (added, +118/-0)
-```diff
-@@ -0,0 +1,118 @@
+@@ -0,0 +1,30 @@
 +/*
 + * Tencent is pleased to support the open source community by making KuiklyUI
 + * available.
@@ -1341,112 +1201,24 @@ handleStartNestedScroll(), then add:
 +
 +#import "KRUIKit.h" // [macOS]
 +#import "KuiklyRenderViewExportProtocol.h"
++
++#if !TARGET_OS_OSX // [macOS]
++
 +NS_ASSUME_NONNULL_BEGIN
-+@protocol KRAudioViewProtocol;
-+@protocol KRAudioViewDelegate;
 +
-+/*
-+ * 创建音频播放器视图实例闭包
-+ * @param src 初始化的播放源数据（一般为音频 cdn url）
-+ * @param frame 初始化视图位置大小
-+ * @return 返回一个实现了 KRAudioViewProtocol 协议且为 UIView 子类的播放器实例
-+ */
-+typedef id<KRAudioViewProtocol> _Nonnull (^AudioViewCreator)(NSString *src, CGRect frame);
-+
-+
-+@interface KRAudioView : UIView<KuiklyRenderViewExportProtocol>
-+
-+/*
-+ * @brief 注册 AudioView 实现
-+ * @param creator 创建 AudioView 实例
-+ */
-++ (void)registerAudioViewCreator:(AudioViewCreator)creator;
++/// Kuikly 侧 UIBarButtonItem，挂到导航栏左上 / 右上。
++@interface KRUIBarButtonItem : UIView<KuiklyRenderViewExportProtocol>
 +
 +@end
-+
-+@protocol KRAudioViewProtocol <NSObject>
-+
-+@required
-+/*
-+ * 播放器事件变化回调代理(如：播放状态变化回调 or 播放时间变化回调该代理)
-+ */
-+@property (nonatomic, weak) id<KRAudioViewDelegate> kra_delegate;
-+/*
-+ * 播放音频
-+ */
-+- (void)kra_play;
-+/*
-+ * 暂停音频
-+ */
-+- (void)kra_pause;
-+/*
-+ * 停止并销毁音频
-+ */
-+- (void)kra_stop;
-+/*
-+ * 设置倍速（1.0, 1.5, 2.0）
-+ */
-+- (void)kra_setRate:(CGFloat)rate;
-+/*
-+ * seek 音频
-+ * @param seekTotime 时间，单位毫秒
-+ */
-+- (void)kra_seekToTime:(NSUInteger)seekTotime;
-+
-+@optional
-+/*
-+ * kuikly 侧设置的属性，一般用于业务扩展使用
-+ */
-+- (void)kra_setPropWithKey:(NSString *)propKey propValue:(id)propValue;
-+/*
-+ * kuikly 侧调用方法，一般用于业务扩展使用
-+ */
-+- (void)kra_callWithMethod:(NSString * _Nonnull)method
-+                    params:(NSString * _Nullable)params;
-+@end
-+
-+//播放状态
-+typedef NS_ENUM(NSInteger, KRAudioPlayState) {
-+    KRAudioPlayStateUnknown = 0,
-+    KRAudioPlayStatePlaying = 1, // 正在播放中
-+    KRAudioPlayStateCaching = 2, // 缓冲中
-+    KRAudioPlayStatePaused = 3,  // 播放暂停
-+    KRAudioPlayStatePlayEnd = 4, // 播放结束
-+    KRAudioPlayStateFailed = 5,   // 播放失败
-+};
-+
-+
-+@protocol KRAudioViewDelegate <NSObject>
-+
-+@required
-+/*
-+ * @brief 播放状态发生变化时回调
-+ */
-+- (void)audioPlayStateDidChangedWithState:(KRAudioPlayState)playState extInfo:(NSDictionary<NSString *, NSString *> *)extInfo;
-+/*
-+ * @brief 播放时间发生变化时回调
-+ * @param currentTime 当前播放时间，单位毫秒
-+ * @param totalTime 音频总时长，单位毫秒
-+ */
-+- (void)playTimeDidChangedWithCurrentTime:(NSUInteger)currentTime totalTime:(NSUInteger)totalTime;
-+/*
-+ * @brief 业务自定义扩展事件通用通道。
-+ * 对齐 KRVideoViewDelegate 的 customEventWithInfo:，使 Kotlin DSL 中
-+ * AudioEvent.customEvent 在三端均走专有事件通道而非 setProp 透传。
-+ * @param eventInfo 自定义事件携带的键值对
-+ */
-+- (void)customEventWithInfo:(NSDictionary<NSString *, NSString *> *)eventInfo;
-+
-+@end
-+
-+
 +
 +NS_ASSUME_NONNULL_END
++
++#endif
 ```
 
-**File**: `core-render-ios/Extension/AdvancedComps/KRAudioView.m` (added, +163/-0)
+**File**: `core-render-ios/Extension/AdvancedComps/UINavigationBar/KRUIBarButtonItem.m` (added, +432/-0)
 ```diff
-@@ -0,0 +1,163 @@
+@@ -0,0 +1,432 @@
 +/*
 + * Tencent is pleased to support the open source community by making KuiklyUI
 + * available.
@@ -1462,51 +1234,57 @@ handleStartNestedScroll(), then add:
 + * limitations under the License.
 + */
 +
-+#import "KRAudioView.h"
++#import "KRUIBarButtonItem.h"
 +#import "KRComponentDefine.h"
-+#import "KRConvertUtil.h"
++#import "KRUIBarImage.h"
++#import "KRUINavigationBarItemPlacement.h"
++#import "KRUINavigationBarKit.h"
++#import "KRUIBarButtonItemKit.h"
++#import "KuiklyRenderView.h"
++#import "NSObject+KR.h"
 +
-+/// 播控操作状态化维护，对齐 com.tencent.kuikly.core.views.AudioPlayControl
-+typedef NS_ENUM(NSInteger, KRAudioViewPlayControl) {
-+    KRAudioViewPlayControlNone = 0,
-+    KRAudioViewPlayControlPlay = 1, // 操作播放音频
-+    KRAudioViewPlayControlPause = 2, // 操作暂停音频
-+    KRAudioViewPlayControlStop = 3   // 操作停止音频
-+};
-+
-+static AudioViewCreator gAudioViewCreator;
-+
-+@interface KRAudioView()<KRAudioViewDelegate>
-+
-+@property (nonatomic, strong) id<KRAudioViewProtocol> audioView;
-+/// 播放源属性
-+@property (nonatomic, strong) NSString *css_src;
-+/// 播控操作属性
-+@property (nonatomic, strong) NSNumber *css_playControl;
-+/// 倍速属性
-+@property (nonatomic, strong) NSNumber *css_rate;
-+/// seek 属性（毫秒）
-+@property (nonatomic, strong) NSNumber *css_seek;
-+/// 播放状态变化事件
-+@property (nonatomic, strong) KuiklyRenderCallback css_stateChange;
-+/// 播放时间变化事件
-+@property (nonatomic, strong) KuiklyRenderCallback css_playTimeChange;
-+/// 通用扩展事件
-+@property (nonatomic, strong) KuiklyRenderCallback css_customEvent;
-+
++#if !TARGET_OS_OSX // [macOS]
++@interface KRUIBarButtonItem ()
++@property (nonatomic, copy) NSString *css_placement;
++@property (nonatomic, copy) NSString *css_symbol;
++@property (nonatomic, copy) NSString *css_src;
++@property (nonatomic, strong) id css_template;
++@property (nonatomic, copy) NSString *css_title;
++@property (nonatomic, copy) NSString *css_index;
++@property (nonatomic, copy) NSString *css_itemGroup;
++@property (nonatomic, copy) NSString *css_axis;
++@property (nonatomic, strong) id css_tintColor;
++@property (nonatomic, strong) UIBarButtonItem *barButtonItem;
++@property (nonatomic, copy) NSString *itemIdentifier;
++@property (nonatomic, assign) NSInteger animationToken;
++@property (nonatomic, assign) NSInteger imageToken;
++@property (nonatomic, assign) BOOL syncFlushScheduled;
++@property (nonatomic, copy) NSString *appliedPlacement;
++@property (nonatomic, assign) NSInteger appliedGroup;
++@property (nonatomic, assign) NSInteger appliedIndex;
++@property (nonatomic, copy) NSString *appliedImageKey;
++@property (nonatomic, assign) BOOL installedOnNavigationBar;
 +@end
 +
-+@implementation KRAudioView
-+@synthesize hr_rootView;
++@implementation KRUIBarButtonItem
 +
-++ (void)registerAudioViewCreator:(AudioViewCreator)creator {
-+    gAudioViewCreator = creator;
-+    NSAssert(gAudioViewCreator, @"creator 不能为空");
-+}
++@synthesize hr_rootView;
 +
 +- (instancetype)initWithFrame:(CGRect)frame {
 +    if (self = [super initWithFrame:frame]) {
-+        NSAssert(gAudioViewCreator, @"should registerAudioViewCreator");
++        self.hidden = YES;
++        self.alpha = 0;
++        self.userInteractionEnabled = NO;
++        self.backgroundColor = [UIColor clearColor];
++        _css_placement = @"trailing";
++        _css_symbol = @"ellipsis.circle";
++        _css_src = @"";
++        _css_template = @"true";
++        _css_title = @"";
++        _css_index = @"0";
++        _css_itemGroup = @"0";
++        _css_axis = @"automatic";
++        _itemIdentifier = [NSString stringWithFormat:@"kr_nav_kit_%p", self];
 +    }
 +    return self;
 +}
@@ -1515,168 +1293,599 @@ handleStartNestedScroll(), then add:
 +
 +- (void)hrv_setPropWithKey:(NSString *)propKey propValue:(id)propValue {
 +    KUIKLY_SET_CSS_COMMON_PROP;
-+    if ([_audioView respondsToSelector:@selector(kra_setPropWithKey:propValue:)]) {
-+        [_audioView kra_setPropWithKey:propKey propValue:propValue];
-+    }
 +}
 +
 +- (void)hrv_callWithMethod:(NSString *)method params:(NSString *)params callback:(KuiklyRenderCallback)callback {
 +    KUIKLY_CALL_CSS_METHOD;
-+    if ([_audioView respondsToSelector:@selector(kra_callWithMethod:params:)]) {
-+        [_audioView kra_callWithMethod:method params:params];
-+    }
 +}
 +
-+#pragma mark - css 属性
++- (void)hrv_prepareForeReuse {
++    [self p_uninstallFromNavigationItem];
++}
++
++- (void)setCss_placement:(NSString *)css_placement {
++    BOOL placementChanged = ![(_css_placement ?: @"") isEqualToString:(css_placement ?: @"")];
++    if (placementChanged && self.barButtonItem) {
++        [self p_uninstallFromNavigationItem];
++    }
++    _css_placement = [css_placement copy];
++    [self p_enqueueNavigationItemApply];
++}
++
++- (void)setCss_symbol:(NSString *)css_symbol {
++    _css_symbol = [css_symbol copy];
++    [self p_enqueueNavigationItemApply];
++}
 +
 +- (void)setCss_src:(NSString *)css_src {
-+    if (!_css_src && css_src.length) { // 播放器不复用，一次绑定 src 即可
-+        _css_src = css_src;
-+        [self p_createAudioViewIfNeed];
-+    }
++    _css_src = [css_src copy];
++    [self p_enqueueNavigationItemApply];
 +}
 +
-+- (void)setCss_playControl:(NSNumber *)css_playControl {
-+    _css_playControl = css_playControl;
-+    switch ([css_playControl intValue]) {
-+        case KRAudioViewPlayControlPlay:
-+            [_audioView kra_play];
-+            break;
-+        case KRAudioViewPlayControlPause:
-+            [_audioView kra_pause];
-+            break;
-+        case KRAudioViewPlayControlStop:
-+            [_audioView kra_stop];
-+            break;
-+        default:
-+            break;
-+    }
++- (void)setCss_template:(id)css_template {
++    _css_template = css_template;
++    [self p_enqueueNavigationItemApply];
 +}
 +
-+- (void)setCss_rate:(NSNumber *)css_rate {
-+    _css_rate = css_rate;
-+    [_audioView kra_setRate:[css_rate floatValue]];
-+}
-+
-+- (void)setCss_seek:(NSNumber *)css_seek {
-+    _css_seek = css_seek;
-+    [_audioView kra_seekToTime:(NSUInteger)[css_seek unsignedIntegerValue]];
-+}
-+
-+- (void)setFrame:(CGRect)frame {
-+    [super setFrame:frame];
-+    [self p_createAudioViewIfNeed];
-+    ((UIView *)_audioView).frame = self.bounds;
-+}
-+
-+#pragma mark - KRAudioViewDelegate
-+
-+- (void)audioPlayStateDidChangedWithState:(KRAudioPlayState)playState extInfo:(NSDictionary<NSString *, NSString *> *)extInfo {
-+    if (_css_stateChange) {
-+        _css_stateChange(@{@"state" : @(playState), @"extInfo": extInfo ?: @{}});
-+    }
-+}
-+
-+- (void)playTimeDidChangedWithCurrentTime:(NSUInteger)currentTime totalTime:(NSUInteger)totalTime {
-+    if (_css_playTimeChange) {
-+        _css_playTimeChange(@{@"currentTime" : @(currentTime), @"totalTime": @(totalTime)});
-+    }
-+}
-+
-+- (void)customEventWithInfo:(NSDictionary<NSString *,NSString *> *)eventInfo {
-+    if (_css_customEvent) {
-+        _css_customEvent(eventInfo);
-+    }
-+}
-+
-+#pragma mark - private
-+
-+- (void)p_createAudioViewIfNeed {
-+    if (_audioView) {
++- (void)setCss_title:(NSString *)css_title {
++    _css_title = [css_title copy];
++    if (self.barButtonItem) {
++        NSString *symbol = self.css_symbol.length ? self.css_symbol : @"ellipsis.circle";
++        self.barButtonItem.accessibilityLabel = _css_title.length ? _css_title : symbol;
 +        return;
 +    }
-+    NSAssert(gAudioViewCreator, @"宿主未注册AudioView实现，却使用了AudioView");
-+    if (_css_src.length && !CGSizeEqualToSize(self.bounds.size, CGSizeZero) && gAudioViewCreator) {
-+        _audioView = gAudioViewCreator(_css_src, self.bounds);
-+        _
-```
-
-**File**: `core-render-ios/Extension/Category/UIView+CSS.m` (modified, +12/-0)
-```diff
-@@ -1565,6 +1565,18 @@ @implementation CSSBorderLayer {
- - (instancetype)initWithCSSBorder:(CSSBorder *)border {
-     if (self = [super init]) {
-         _border = border;
-+        // CAShapeLayer defaults `fillColor` to opaque black. If this border
-+        // layer is added as a sublayer BEFORE its first `layoutSublayers`
-+        // runs, the layer paints a solid black rectangle across its full bounds
-+        // (because `path` is also still nil, so CAShapeLayer falls back
-+        // to filling the entire bounds rect). Visually this produces the
-+        // reported "半透明黑 rectangle growing from top-left to full card
-+        // size" flash. Force fillColor to clear here so the layer is a
-+        // pure no-op until `layoutSublayers` fills in the real stroke.
-+        self.fillColor = [UIColor clearColor].CGColor;
-+        // Also make sure stroke starts empty — nothing to paint until
-+        // layoutSublayers sets the real border color.
-+        self.strokeColor = [UIColor clearColor].CGColor;
-     }
-     return self;
- }
-```
-
-**File**: `core-render-ios/Handler/KuiklyRenderFrameworkContextHandler.m` (modified, +25/-0)
-```diff
-@@ -190,10 +190,16 @@ + (Class _Nullable)entryClassWithFrameworkName:(NSString *)frameworkName {
-     NSString *firstChar = [[frameworkName uppercaseString] substringWithRange:NSMakeRange(0, 1)];
-     // 首字母大写后的framework名
-     frameworkName = [NSString stringWithFormat:@"%@%@", firstChar, [frameworkName substringFromIndex:1]];
-+    // 候选1：首字母大写后原样拼接 KuiklyCoreEntry
-     NSString *entryClassName = [NSString stringWithFormat:@"%@KuiklyCoreEntry", frameworkName];
-     if (!NSClassFromString(entryClassName)) {
-+        // 候选2：剥掉小写字母（Kotlin/Native 缓存模式对不含数字的 baseName 生成的类名前缀）
-         entryClassName = [NSString stringWithFormat:@"%@KuiklyCoreEntry",  [self removeLowerCaseCharacters:frameworkName]];
-     }
-+    if (!NSClassFromString(entryClassName)) {
-+        // 候选3：只保留 A-Z 大写字母（Kotlin/Native 对含数字的 baseName 也会把数字剥掉，再拼接 KuiklyCoreEntry）
-+        entryClassName = [NSString stringWithFormat:@"%@KuiklyCoreEntry", [self keepUppercaseLetterCharacters:frameworkName]];
-+    }
-     // 动态遵循协议，以便运行时设置其代理
-     NSString *entryDelegateName = [NSString stringWithFormat:@"%@Delegate", entryClassName];
-     Protocol *entryDelegateProtocol = NSProtocolFromString(entryDelegateName);
-@@ -219,5 +225,24 @@ + (NSString *)removeLowerCaseCharacters:(NSString *)input {
-     return result;
- }
- 
-+/*
-+ * @brief 只保留 A-Z 大写字母，剥掉数字、小写字母、其他字符
-+ * @discussion 用于处理含数字的 framework baseName。Kotlin/Native
-+ * 生成的 ObjC 类前缀会把数字也剥掉，
-+ * 因此比 removeLowerCaseCharacters 更激进。
-+ */
-++ (NSString *)keepUppercaseLetterCharacters:(NSString *)input {
-+    NSMutableString *result = [[NSMutableString alloc] init];
-+    NSUInteger length = input.length;
-+
-+    for (NSUInteger i = 0; i < length; i++) {
-+        unichar character = [input characterAtIndex:i];
-+        if (character >= 'A' && character <= 'Z') {
-+            [result appendFormat:@"%C", character];
-+        }
-+    }
-+    return result;
++    [self p_enqueueNavigationItemApply];
 +}
 +
- 
- @end
++- (void)setCss_index:(NSString *)css_index {
++    _css_index = [css_index copy];
++    [self p_enqueueNavigationItemApply];
++}
++
++- (void)setCss_itemGroup:(NSString *)css_itemGroup {
++    _css_itemGroup = [css_itemGroup copy];
++    [self p_enqueueNavigationItemApply];
++}
++
++- (void)setCss_axis:(NSString *)css_axis {
++    _css_axis = [css_axis copy];
++    if (self.barButtonItem) {
++        KRUIBarButtonItemApplyAxis(self.barButtonItem, _css_axis);
++        return;
++    }
++    [self p_enqueueNavigationItemApply];
++}
++
++- (void)setCss_tintColor:(id)css_tintColor {
++    _css_tintColor = css_tintColor;
++    if (self.barButtonItem && [self p_shouldShow]) {
++        UIColor *tint = css_tintColor ? [UIView css_color:css_tintColor] : nil;
++        if (tint) {
++    
+```
+
+**File**: `core-render-ios/Extension/AdvancedComps/UINavigationBar/KRUIBarButtonItemContentHost.h` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++/*
++ * Tencent is pleased to support the open source community by making KuiklyUI
++ * available.
++ * Copyright (C) 2025 Tencent. All rights reserved.
++ * Licensed under the License of KuiklyUI;
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#import "KRUIKit.h" // [macOS]
++#import "KuiklyRenderViewExportProtocol.h"
++
++#if !TARGET_OS_OSX // [macOS]
++
++NS_ASSUME_NONNULL_BEGIN
++
++/// Kuikly `navItemContent`：子 View 进入 contentView，经 `UIBarButtonItem.customView` 挂到导航栏。
++@interface KRUIBarButtonItemContentHost : UIView<KuiklyRenderViewExportProtocol>
++
++@end
++
++NS_ASSUME_NONNULL_END
++
++#endif
+```
+
+**File**: `core-render-ios/Extension/AdvancedComps/UINavigationBar/KRUIBarButtonItemContentHost.m` (added, +411/-0)
+```diff
+@@ -0,0 +1,411 @@
++/*
++ * Tencent is pleased to support the open source community by making KuiklyUI
++ * available.
++ * Copyright (C) 2025 Tencent. All rights reserved.
++ * Licensed under the License of KuiklyUI;
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#import "KRUIBarButtonItemContentHost.h"
++#import "UIView+CSS.h"
++#import "KRComponentDefine.h"
++#import "KRUINavigationBarItemPlacement.h"
++#import "KRUINavigationBarKit.h"
++#import "KRUIBarButtonItemKit.h"
++#import "KuiklyRenderView.h"
++#import "NSObject+KR.h"
++
++#if !TARGET_OS_OSX // [macOS]
++/// 与系统 `UIBarButtonItem` 可点区域对齐，避免 customView 偏小导致液态玻璃圆角偏心。
++static const CGFloat kKRNavItemContentStandardSide = 44.0;
++
++@interface KRUIBarButtonItemContentHost ()
++@property (nonatomic, strong) UIView *contentView;
++@property (nonatomic, strong) UIView *itemContainer;
++@property (nonatomic, copy) NSString *css_placement;
++@property (nonatomic, copy) NSString *css_title;
++@property (nonatomic, copy) NSString *css_index;
++@property (nonatomic, copy) NSString *css_itemGroup;
++@property (nonatomic, copy) NSString *css_axis;
++@property (nonatomic, copy) NSString *css_edgeInsetTop;
++@property (nonatomic, strong) UIBarButtonItem *barButtonItem;
++@property (nonatomic, copy) NSString *itemIdentifier;
++@property (nonatomic, assign) BOOL syncingAttachment;
++@property (nonatomic, assign) BOOL syncFlushScheduled;
++@property (nonatomic, copy) NSString *appliedPlacement;
++@property (nonatomic, assign) NSInteger appliedGroup;
++@property (nonatomic, assign) NSInteger appliedIndex;
++@property (nonatomic, assign) CGFloat appliedTopInset;
++@property (nonatomic, assign) BOOL appliedToNavigationBar;
++@end
++
++@implementation KRUIBarButtonItemContentHost
++
++@synthesize hr_rootView;
++
++- (instancetype)initWithFrame:(CGRect)frame {
++    if (self = [super initWithFrame:frame]) {
++        _contentView = [[UIView alloc] initWithFrame:CGRectZero];
++        _contentView.backgroundColor = [UIColor clearColor];
++        [self addSubview:_contentView];
++        self.backgroundColor = [UIColor clearColor];
++        self.clipsToBounds = NO;
++        self.hidden = YES;
++        self.alpha = 0;
++        self.userInteractionEnabled = NO;
++        _css_placement = @"trailing";
++        _css_title = @"";
++        _css_index = @"0";
++        _css_itemGroup = @"0";
++        _css_axis = @"automatic";
++        _itemIdentifier = [NSString stringWithFormat:@"kr_nav_kit_content_%p", self];
++    }
++    return self;
++}
++
++#pragma mark - KuiklyRenderViewExportProtocol
++
++- (void)hrv_setPropWithKey:(NSString *)propKey propValue:(id)propValue {
++    if ([propKey isEqualToString:@"click"]) {
++        if ([self css_setPropWithKey:propKey value:propValue]) {
++            [self p_forwardHostClickToContainer];
++        }
++        return;
++    }
++    KUIKLY_SET_CSS_COMMON_PROP;
++}
++
++- (void)hrv_callWithMethod:(NSString *)method params:(NSString *)params callback:(KuiklyRenderCallback)callback {
++    KUIKLY_CALL_CSS_METHOD;
++}
++
++- (void)hrv_prepareForeReuse {
++    [self p_uninstallFromNavigationItem];
++}
++
++- (void)hrv_insertSubview:(UIView *)subView atIndex:(NSInteger)index {
++    UIView *view = subView.kr_commonWrapperView ?: subView;
++    if (index < 0 || index >= (NSInteger)_contentView.subviews.count) {
++        [_contentView addSubview:view];
++    } else {
++        [_contentView insertSubview:view atIndex:index];
++    }
++    [self p_enqueueNavigationItemContentApply];
++}
++
++#pragma mark - css
++
++- (void)setCss_placement:(NSString *)css_placement {
++    BOOL changed = ![(_css_placement ?: @"") isEqualToString:(css_placement ?: @"")];
++    if (changed && self.barButtonItem) {
++        [self p_uninstallFromNavigationItem];
++    }
++    _css_placement = [css_placement copy];
++    [self p_enqueueNavigationItemContentApply];
++}
++
++- (void)setCss_title:(NSString *)css_title {
++    _css_title = [css_title copy];
++    if (self.barButtonItem) {
++        self.barButtonItem.accessibilityLabel = _css_title.length ? _css_title : @"custom";
++    }
++}
++
++- (void)setCss_index:(NSString *)css_index {
++    _css_index = [css_index copy];
++    [self p_enqueueNavigationItemContentApply];
++}
++
++- (void)setCss_itemGroup:(NSString *)css_itemGroup {
++    _css_itemGroup = [css_itemGroup copy];
++    [self p_enqueueNavigationItemContentApply];
++}
++
++- (void)setCss_axis:(NSString *)css_axis {
++    _css_axis = [css_axis copy];
++    if (self.barButtonItem) {
++        KRUIBarButtonItemApplyAxis(self.barButtonItem, _css_axis ?: @"automatic");
++        return;
++    }
++    [self p_enqueueNav
+```
+
+**File**: `core-render-ios/Extension/AdvancedComps/UINavigationBar/KRUIBarButtonItemKit.h` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++/*
++ * Tencent is pleased to support the open source community by making KuiklyUI
++ * available.
++ * Copyright (C) 2025 Tencent. All rights reserved.
++ * Licensed under the License of KuiklyUI;
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#import "KRUIKit.h" // [macOS]
++
++#if !TARGET_OS_OSX // [macOS]
++
++NS_ASSUME_NONNULL_BEGIN
++
++/// iOS 26+ 液态玻璃 `UIBarButtonItem` 背景（编译 SDK 未声明属性时用 runtime / KVC，与 UINavigationBar 一致）。
++void KRUIBarButtonItemApplyGlassBackground(UIBarButtonItem *item, BOOL sharesBackground);
++
++/// iOS 27.1+ `UIBarButtonItem.axisBehavior`（Duo 竖栏 / 横栏）。
++void KRUIBarButtonItemApplyAxis(UIBarButtonItem *item, NSString *axis);
++
++/// 是否为 UIToolbar 上的可操作项（排除 FlexibleSpace / FixedSpace）。
++BOOL KRUIToolbarBarButtonItemIsAction(UIBarButtonItem *item);
++
++/// 对 toolbar 上所有 action 项统一刷新玻璃背景。
++void KRUIToolbarSyncActionItemsChrome(NSArray<UIBarButtonItem *> *toolbarItems,
++                                          UIViewController * _Nullable viewController);
++
++NS_ASSUME_NONNULL_END
++
++#endif
+```
+
+**File**: `core-render-ios/Extension/AdvancedComps/UINavigationBar/KRUIBarButtonItemKit.m` (added, +126/-0)
+```diff
+@@ -0,0 +1,126 @@
++/*
++ * Tencent is pleased to support the open source community by making KuiklyUI
++ * available.
++ * Copyright (C) 2025 Tencent. All rights reserved.
++ * Licensed under the License of KuiklyUI;
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#import "KRUIBarButtonItemKit.h"
++
++#if !TARGET_OS_OSX // [macOS]
++
++static void KRSetBarButtonItemBool(UIBarButtonItem *item, NSString *setterName, BOOL value) {
++    SEL selector = NSSelectorFromString(setterName);
++    if (![item respondsToSelector:selector]) {
++        return;
++    }
++    void (*imp)(id, SEL, BOOL) = (void (*)(id, SEL, BOOL))[(id)item methodForSelector:selector];
++    imp(item, selector, value);
++}
++
++void KRUIBarButtonItemApplyGlassBackground(UIBarButtonItem *item, BOOL sharesBackground) {
++    if (!item) {
++        return;
++    }
++    if (@available(iOS 26.0, *)) {
++#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 260000
++        if ([item respondsToSelector:@selector(setSharesBackground:)]
++            && [item respondsToSelector:@selector(setHidesSharedBackground:)]) {
++            KRSetBarButtonItemBool(item, @"setSharesBackground:", sharesBackground);
++            KRSetBarButtonItemBool(item, @"setHidesSharedBackground:", !sharesBackground);
++            return;
++        }
++#endif
++        @try {
++            [item setValue:@(sharesBackground) forKey:@"sharesBackground"];
++            [item setValue:@(!sharesBackground) forKey:@"hidesSharedBackground"];
++        } @catch (__unused NSException *exception) {
++        }
++    }
++}
++
++BOOL KRUIToolbarBarButtonItemIsAction(UIBarButtonItem *item) {
++    if (!item) {
++        return NO;
++    }
++    if (item.customView != nil) {
++        return YES;
++    }
++    if (@available(iOS 14.0, *)) {
++        if (item.primaryAction != nil) {
++            return YES;
++        }
++    }
++    if (item.target != nil) {
++        return YES;
++    }
++    return NO;
++}
++
++void KRUIToolbarSyncActionItemsChrome(NSArray<UIBarButtonItem *> *toolbarItems,
++                                          UIViewController *viewController) {
++    (void)viewController;
++    if (toolbarItems.count == 0) {
++        return;
++    }
++    for (UIBarButtonItem *item in toolbarItems) {
++        if (!KRUIToolbarBarButtonItemIsAction(item)) {
++            continue;
++        }
++        NSString *identifier = item.accessibilityIdentifier;
++        if (identifier.length == 0 || ![identifier hasPrefix:@"kr_toolbar_"]) {
++            continue;
++        }
++        KRUIBarButtonItemApplyGlassBackground(item, YES);
++    }
++}
++
++void KRUIBarButtonItemApplyAxis(UIBarButtonItem *item, NSString *axis) {
++#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 270100
++    if (@available(iOS 27.1, *)) {
++        NSString *value = axis.lowercaseString ?: @"";
++        if ([value isEqualToString:@"horizontalonly"]) {
++            item.axisBehavior = UIBarButtonItemAxisBehaviorHorizontalOnly;
++        } else if ([value isEqualToString:@"verticalpreferred"]) {
++            item.axisBehavior = UIBarButtonItemAxisBehaviorVerticalPreferred;
++        } else {
++            item.axisBehavior = UIBarButtonItemAxisBehaviorAutomatic;
++        }
++    }
++#else
++    (void)item;
++    (void)axis;
++#endif
++}
++
++#else // [macOS] Toolbar 未实现；占位符号供链接，参数用 id 避免 macOS 无 UIBarButtonItem。
++
++void KRUIBarButtonItemApplyGlassBackground(id item, BOOL sharesBackground) {
++    (void)item;
++    (void)sharesBackground;
++}
++
++void KRUIBarButtonItemApplyAxis(id item, NSString *axis) {
++    (void)item;
++    (void)axis;
++}
++
++BOOL KRUIToolbarBarButtonItemIsAction(id item) {
++    (void)item;
++    return NO;
++}
++
++void KRUIToolbarSyncActionItemsChrome(NSArray *toolbarItems, id viewController) {
++    (void)toolbarItems;
++    (void)viewController;
++}
++
++#endif
+```
+
+**File**: `core-render-ios/Extension/AdvancedComps/UINavigationBar/KRUIBarImage.h` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++/*
++ * Tencent is pleased to support the open source community by making KuiklyUI
++ * available.
++ * Copyright (C) 2025 Tencent. All rights reserved.
++ * Licensed under the License of KuiklyUI;
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#import "KRUIKit.h" // [macOS]
++
++#if !TARGET_OS_OSX // [macOS]
++
++NS_ASSUME_NONNULL_BEGIN
++
++@interface KRUIBarImage : NSObject
++
++/// 与 UIFontWeightRegular 等一致；iOS 13+ 用于 SF Symbol 配置。
++FOUNDATION_EXPORT const CGFloat KRUIBarImageSymbolFontWeightRegular;
++
++/// src 优先于 SF Symbol。支持 assets://、file://、data:image、http(s)、imageNamed。
+++ (void)resolveSrc:(nullable NSString *)src
++            symbol:(nullable NSString *)symbol
++    symbolFontWeight:(CGFloat)symbolFontWeight
++       useTemplate:(BOOL)useTemplate
++          rootView:(nullable UIView *)rootView
++        completion:(void (^)(UIImage * _Nullable image))completion;
++
++@end
++
++NS_ASSUME_NONNULL_END
++
++#endif
+```
+
+**File**: `core-render-ios/Extension/AdvancedComps/UINavigationBar/KRUIBarImage.m` (added, +207/-0)
+```diff
+@@ -0,0 +1,207 @@
++/*
++ * Tencent is pleased to support the open source community by making KuiklyUI
++ * available.
++ * Copyright (C) 2025 Tencent. All rights reserved.
++ * Licensed under the License of KuiklyUI;
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#import "KRUIBarImage.h"
++#import "KuiklyRenderView.h"
++#import "KuiklyContextParam.h"
++#import "KuiklyRenderBridge.h"
++
++#if !TARGET_OS_OSX // [macOS]
++static NSString * const kKRBarImageAssetsPrefix = @"assets://";
++static NSString * const kKRBarImageFilePrefix = @"file://";
++static NSString * const kKRBarImageBase64Prefix = @"data:image";
++
++// 与 UIFontWeightRegular / UIImageSymbolWeightRegular 相同（0.0）；不能用宏做全局 const 初值。
++const CGFloat KRUIBarImageSymbolFontWeightRegular = 0.0;
++
++@implementation KRUIBarImage
++
+++ (UIImage *)p_symbolNamed:(NSString *)symbol fontWeight:(CGFloat)fontWeight {
++    if (symbol.length == 0) {
++        return nil;
++    }
++    if (@available(iOS 13.0, *)) {
++        UIImage *image = [UIImage systemImageNamed:symbol];
++        UIImageSymbolWeight weight = (UIImageSymbolWeight)fontWeight;
++        UIImageSymbolConfiguration *config =
++            [UIImageSymbolConfiguration configurationWithPointSize:17 weight:weight];
++        return [image imageWithConfiguration:config] ?: image;
++    }
++    return nil;
++}
++
+++ (UIImage *)p_fitBarImage:(UIImage *)image {
++    if (!image) {
++        return nil;
++    }
++    CGFloat maxSide = MAX(image.size.width, image.size.height);
++    if (maxSide <= 0 || maxSide <= 24.0) {
++        return image;
++    }
++    CGFloat scale = 22.0 / maxSide;
++    CGSize size = CGSizeMake(image.size.width * scale, image.size.height * scale);
++    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:size];
++    return [renderer imageWithActions:^(UIGraphicsImageRendererContext * _Nonnull rendererContext) {
++        (void)rendererContext;
++        [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
++    }];
++}
++
+++ (UIImage *)p_finishImage:(UIImage *)image useTemplate:(BOOL)useTemplate isSymbol:(BOOL)isSymbol {
++    if (!image) {
++        return nil;
++    }
++    UIImage *sized = isSymbol ? image : [self p_fitBarImage:image];
++    if (isSymbol) {
++        return sized;
++    }
++    return [sized imageWithRenderingMode:useTemplate ? UIImageRenderingModeAlwaysTemplate
++                                                     : UIImageRenderingModeAlwaysOriginal];
++}
++
+++ (UIImage *)p_imageFromBase64:(NSString *)src {
++    NSRange range = [src rangeOfString:@";base64,"];
++    if (range.location == NSNotFound) {
++        return nil;
++    }
++    NSString *payload = [src substringFromIndex:range.location + range.length];
++    NSData *data = [[NSData alloc] initWithBase64EncodedString:payload
++                                                       options:NSDataBase64DecodingIgnoreUnknownCharacters];
++    return data ? [UIImage imageWithData:data] : nil;
++}
++
+++ (UIImage *)p_namedImage:(NSString *)name {
++    if (name.length == 0) {
++        return nil;
++    }
++    return [UIImage imageNamed:name.lastPathComponent] ?: [UIImage imageNamed:name];
++}
++
+++ (void)p_loadURLString:(NSString *)urlString
++            useTemplate:(BOOL)useTemplate
++                 symbol:(NSString *)symbol
++         symbolFontWeight:(CGFloat)symbolFontWeight
++             completion:(void (^)(UIImage *image))completion {
++    if ([urlString hasPrefix:kKRBarImageFilePrefix] || [urlString hasPrefix:@"/"]) {
++        NSString *path = [urlString hasPrefix:kKRBarImageFilePrefix]
++            ? [urlString substringFromIndex:kKRBarImageFilePrefix.length]
++            : urlString;
++        UIImage *local = [UIImage imageWithContentsOfFile:path];
++        if (local) {
++            completion([self p_finishImage:local useTemplate:useTemplate isSymbol:NO]);
++            return;
++        }
++    }
++    id<KuiklyRenderComponentExpandProtocol> handler = [KuiklyRenderBridge componentExpandHandler];
++    if ([handler respondsToSelector:@selector(hr_setImageWithUrl:imageParams:complete:)]) {
++        [handler hr_setImageWithUrl:urlString imageParams:nil complete:^(UIImage *image, NSError *error, NSURL *imageURL) {
++            (void)error;
++            (void)imageURL;
++            dispatch_async(dispatch_get_main_queue(), ^{
++                if (image) {
++                    completion([self p_finishImage:image useTemplate:useTemplate isSymbol:NO]);
++                } else {
++                    completion([self p_finishImage:[self p_symbolNamed:symbol fontWeight:symbolFontWeig
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1811** (closed): fix(android): 用 WindowInsets.Type 计算 safeAreaInsets (@yukiykchen)
-- **PR #1810** (2026-10-20): fix: resolve multi-level nested scroll penetration on Android and iOS (@zenipchen)
-- **PR #1809** (closed): fix: resolve multi-level nested scroll penetration on Android and iOS (@zenipchen)
-- **PR #1808** (2026-10-19): perf(compose): avoid Long allocations on animation and layout (@luoyibu)
-- **PR #1807** (2026-10-19): feat(a2ui): kuikly common support for a2ui (@etkmao)
-- **PR #1806** (2026-10-20): perf(ohos): optimize utf transcoding with simdutf (@ruifanyuan)
+- **PR #1823** (2026-10-23): feat(scroller): add iOS 26 scroll edge effect attrs on Scroller/List (@elixxli)
+- **PR #1822** (2026-10-23): feat(ios): add UINavigationBar and UIToolbar Kuikly components (@elixxli)
+- **PR #1819** (closed): fix(compose): serialize pager rendering with snapshot scheduling (@yukiykchen)
+- **PR #1818** (2026-10-23): feat(ohos): add an LLDB formatter for KRJSON words (@ruifanyuan)
+- **PR #1815** (2026-10-23): feat(ohos): support all text selection types (@ruifanyuan)
+- **PR #1814** (2026-10-21): docs: add 2.29.0 version description to changelog (@RoeKun)
 
 ---
 
@@ -1696,74 +1905,36 @@ handleStartNestedScroll(), then add:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. resolve multi-level nested scroll penetration on Android and iOS (#1810)
+## X. ios): keep fontWeight and italic on font resolution fallback and add font family
 
 **RULE**:
-When implementing operations in `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/expand/component/list/KRRecyclerView.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core-render-ios/Extension/BridgeProtocol/KuiklyRenderBridge.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `55fdaeb5`: resolve multi-level nested scroll penetration on Android and iOS (#1810). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6b65fb29`: ios): keep fontWeight and italic on font resolution fallback and add font family alias adapter (#1796). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/expand/component/list/KRRecyclerView.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-ios/Extension/BridgeProtocol/KuiklyRenderBridge.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    /**
-     * cache child View
-     */
-    private var nestedChildView:KRRecyclerView? = null
+/*
+ * 自定义字体创建
+ * @param fontfamily 字体名
+ * @param fontSize 字体大小
+ * @param fontWeight 字体weight
+ * @return 返回自定义字体 （注：若返回nil，则走sdk自身默认创建字体逻辑）
+ */
+- (UIFont *)hr_fontWithFontFamily:(NSString *)fontfamily fontSize:(CGFloat)fontSize fontWeight:(UIFontWeight)fontWeight isItalic:(BOOL)isItalic;
 
-        /**
-         * 多层嵌套滚动穿透修复开关，默认关闭。
-         *
-         * 关闭时 [shouldScrollParentY] 沿用改动前只检查直接子 View 的判定逻辑；
-         * 开启后改为沿嵌套链递归判定，修复三层嵌套时中间层被穿透的问题。
-         * 由宿主 App 在初始化阶段显式开启，不对 Kotlin DSL 暴露。
-         */
-        private var sMultiLevelNestedScrollFixEnabled: Boolean = false
-        internal val multiLevelNestedScrollFixEnabled: Boolean
-            get() = sMultiLevelNestedScrollFixEnabled
-
-        /**
-         * 开启多层嵌套滚动穿透修复，需在渲染开始前调用。
-         */
-        fun enableMultiLevelNestedScrollFix() {
-            sMultiLevelNestedScrollFixEnabled = true
-        }
-
-        val accept = handleStartNestedScroll(axes, type)
-        // 开关关闭时不记录 child，存量路径完全不产生额外状态。
-        if (multiLevelNestedScrollFixEnabled) {
-            if (target is KRRecyclerView && accept) {
-                nestedChildView = target
-            } else {
-                nestedChildView = null
-            }
-        }
-        return accept
-    }
-
-    /**
-     * 处理嵌套滚动开始事件
-     * @param axes 滚动轴向
-     * @param type 事件类型（Touch/Non-Touch）
-     * @return 是否接受嵌套滚动
-     */
-    private fun handleStartNestedScroll(axes: Int,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-        val shouldScrollParentY = when {
-            parentDy > 0 && target.scrollForwardMode == KRNestedScrollMode.PARENT_FIRST -> true
-            parentDy < 0 && target.scrollBackwardMode == KRNestedScrollMode.PARENT_FIRST -> true
-            parentDy > 0 && target.scrollForwardMode == KRNestedScrollMode.SELF_FIRST && !target.canScrollVertically(parentDy) -> true
-            parentDy < 0 && target.scrollBackwardMode == KRNestedScrollMode.SELF_FIRST && !target.canScrollVertically(parentDy) -> true
-            else -> false
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `55fdaeb5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6b65fb29` are properly handled with clean fallback behavior.

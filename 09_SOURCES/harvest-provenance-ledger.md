@@ -4815,3 +4815,7 @@ Every entry in this ledger must capture:
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `21cf7bff` | Multi-dimensional audit evidence | 2026-10-25T12:23:03.174Z |
 | `learn-github-joreilly-peopleinspace` | `https://github.com/joreilly/PeopleInSpace` | `8b77f91d` | Multi-dimensional audit evidence | 2026-10-25T12:23:07.234Z |
 | `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-25T12:23:10.961Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `dc92c104` | Multi-dimensional audit evidence | 2026-10-25T12:32:00.728Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `1805a79d` | Multi-dimensional audit evidence | 2026-10-25T12:32:01.290Z |
+| `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-10-25T12:32:05.775Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `058a1e8f` | Multi-dimensional audit evidence | 2026-10-25T12:32:07.155Z |

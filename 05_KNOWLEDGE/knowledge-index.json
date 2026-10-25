@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T12:23:10.926Z",
+  "last_updated": "2026-10-25T12:32:07.097Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -661,8 +661,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "3e7bf93e",
-      "content_hash": "b72db8ca8384daf1a04bd3998deaa4a1375662656c2ee5e24884439023d68fdc",
+      "source_version": "1805a79d",
+      "content_hash": "6fdc7cfbf7bb5e1752e39bae7341f16571407031baf71f75b95bcaa48453e1b6",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -687,7 +687,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:44:28.481Z",
+      "verified_at": "2026-10-25T12:32:01.203Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7568,8 +7568,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "b69afdc2",
-      "content_hash": "a4c80db5a623a17ecd2be956b507d3fed96a1c2857a83b682aa25fcf8046e94e",
+      "source_version": "058a1e8f",
+      "content_hash": "ddd10d71b7df8a505d68bfbb07d67f5853fc03965df940a20bb8889796a9d0cf",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -7592,6 +7592,11 @@
           "number": 3764,
           "title": "query): keep constant NULL columns through exchange, spill and merge (#20777)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4293,
+          "title": "query): release queued acquire entry when future is dropped (#20629)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7599,7 +7604,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T05:30:30.968Z",
+      "verified_at": "2026-10-25T12:32:07.086Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25837,7 +25842,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "9240779bf5df68f22103017cac85499d367b7d950455c09f981cde76c4bd39d6",
+      "content_hash": "3582f7c9b1a7671dba61d1e2fd1dd5fe51601e93ffe46a7e2116cb10fe010ce6",
       "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "promoted_rules": [
@@ -25883,6 +25888,21 @@
           "number": 1330,
           "title": "Benchmark Protocol Strictness Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4290,
+          "title": "The \"Closed-Set Decision\" Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4291,
+          "title": "The \"Strict Encoding\" Inference Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4292,
+          "title": "The \"Benchmark Provenance\" Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25903,7 +25923,7 @@
         "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
         "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
       ],
-      "verified_at": "2026-10-20T17:29:21.339Z",
+      "verified_at": "2026-10-25T12:32:05.705Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47651,8 +47671,8 @@
       "slug": "tencent-tds-kuiklyui",
       "platform": "github",
       "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-      "source_version": "323dce03",
-      "content_hash": "18456a56b9de338489048fdc083b8427ed2764ea5280fb2f5983346806751e69",
+      "source_version": "dc92c104",
+      "content_hash": "779e19819e90fb97e3912ca6729de371a2a4973f7a25c7caff61234acf18ca55",
       "dossier_path": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "promoted_rules": [
@@ -47675,6 +47695,11 @@
           "number": 3364,
           "title": "resolve multi-level nested scroll penetration on Android and iOS (#1810)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4289,
+          "title": "ios): keep fontWeight and italic on font resolution fallback and add font family",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47682,7 +47707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:14:21.708Z",
+      "verified_at": "2026-10-25T12:32:00.658Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122868,6 +122893,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T12:23:10.919Z"
+    },
+    "rule-4289": {
+      "learning_id": "rule-4289",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4289,
+      "title": "ios): keep fontWeight and italic on font resolution fallback and add font family",
+      "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "source_version": "dc92c104",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:32:00.658Z"
+    },
+    "rule-4290": {
+      "learning_id": "rule-4290",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4290,
+      "title": "The \"Closed-Set Decision\" Invariant",
+      "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+      "source_version": "hf-supersoniclabs-julia-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:32:05.705Z"
+    },
+    "rule-4291": {
+      "learning_id": "rule-4291",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4291,
+      "title": "The \"Strict Encoding\" Inference Invariant",
+      "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+      "source_version": "hf-supersoniclabs-julia-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:32:05.705Z"
+    },
+    "rule-4292": {
+      "learning_id": "rule-4292",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4292,
+      "title": "The \"Benchmark Provenance\" Invariant",
+      "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+      "source_version": "hf-supersoniclabs-julia-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:32:05.705Z"
+    },
+    "rule-4293": {
+      "learning_id": "rule-4293",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4293,
+      "title": "query): release queued acquire entry when future is dropped (#20629)",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "058a1e8f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:32:07.086Z"
     }
   },
   "aliases": {

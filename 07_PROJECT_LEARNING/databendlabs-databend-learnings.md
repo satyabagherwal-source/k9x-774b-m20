@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `b69afdc2`  
+> **Source Version**: `058a1e8f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T05:30:30.696Z  
+> **Timestamp**: 2026-10-25T12:32:06.782Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T05:30:29.230Z  
+> **Harvest Timestamp**: 2026-10-25T12:32:06.239Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9475 stars
+- **Stars / Engagement**: 9479 stars
 
 ---
 
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20822** (2026-10-23): **chore(meta): reuse source-option read when validating MV source**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Address the duplicate source-metadata read in item 2 of #20286.  When `CREATE MATERIALIZED VIEW` includes a source-options update, `create_table()` already reads the source metadata, checks its sequence, and adds an exact source CAS condition. Reuse that read's source ID and dropped status for MV validation when both requests refer to the same source, avoiding the redundant lookup within that transaction attempt.  - Keep the existing lookup when there is no source-options update or the source IDs differ. - Recompute the local status on every retry. Do not clone or cache the full `TableMeta`. - Preserve the source CAS, atomic metadata publication, privilege model, and persistent formats. - Extend the existing `materialized_view_lifecycle` cases to reject missing/dropped MV sources without publishing the source-options update.  The documentation and old-binary compatibility follow-ups are covered by databendlabs/databend-docs#3532, which is still open. This PR addresses the code follow-up only and intentionally does not auto-close #20286.  ## Tests  - [x] Unit Test — existing schema API integration suite - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  Passed locally:  ```sh CARGO_BUILD_JOBS=4 RUST_MIN_STACK=16777216 cargo nextest run --offline \   -p databend-common-meta-schema-api-tests --test it \   -E 'test(test_schema_api_single_node) | test(tes
+
 - **Issue #20821** (2026-10-23): **fix(query): cap window top-n cardinality estimate by partition count**
   *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Cardinality estimation for the common "top-N per key" pattern  ```sql SELECT ... FROM (   SELECT ..., row_number() OVER (PARTITION BY k1, k2, k3 ORDER BY d DESC) AS rn FROM t ) WHERE rn = 1 ```  passed the whole input cardinality through the `Window` / `WindowPartition` nodes, and in some shapes through the `Filter` as well, although the output is bounded by `distinct partition keys × N`. The bad estimate is harmless for the standalone subquery but misleads join ordering and join type selection when such a subquery is joined to other tables.  ### Root cause  `RulePushDownFilterWindowTopN` records the per-partition `top`, but statistics derivation only used it to bound the ranking column's value range and ndv:  - Single window function (`Window` over `Sort { window_partition }`): `top` lives on `Sort.window_partition.top`, which `Sort::derive_stats` ignored. `WindowPartition` and `Window` kept the input cardinality; the `Filter` estimate was only right by accident for a single partition column with `rn = 1`, and wrong for multi-column keys or `rank() <= N` (full input). - Several window functions (`WindowGroup`): `top` is set on the window, so the ranking column got ndv 1 in range `[1, 1]` while the group cardinality stayed at the input, which made `rn = 1` estimated as keeping every row.  ### Fix  - `plans/window.rs`: add `estimate_partition_count` (returns `None` whe
-
-- **Issue #20816** (2026-10-22): **ci(query): cover numeric ranges with string bounds**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Add regression coverage for #20775: numeric columns compared against string bounds could incorrectly lose rows when the range folder compared the string constants lexicographically. The same issue made DELETE and UPDATE silently leave matching rows unchanged.  The runtime fix is already present on `main` in #20653 (`ff2ad63dcf`): range folding skips constraints whose constant and column types do not match. This PR adds tests only; it does not change production behavior.  - Cover INT, BIGINT, DOUBLE, nullable values, both conjunction functions, reversed comparisons, and numeric versus lexicographic contradictions in expression tests. - Add SQL coverage for individual bounds, BETWEEN, equality/range combinations, STRING-column semantics, and the stored results of DELETE and UPDATE. - Extend the HTTP parameter test with string-bound INT/DOUBLE ranges and a numeric-parameter control.  Related: #20775, #20653.  ## Tests  - [x] Unit Test - [x] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [ ] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [ ] Documentation Update - [ ] Refactoring - [ ] Performance Improvement - [x] Other (please describ
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,2164 +1217,637 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dfd462ac` (2026-10-21)
-**Commit Message**: fix(query): keep constant NULL columns through exchange, spill and merge (#20777)
+### Incident Patch 1: `45a88e44` (2026-10-23)
+**Commit Message**: fix(query): release queued acquire entry when future is dropped (#20629)
 
-* fix(query): read all-NULL columns as constant after exchange and spill
+* fix(query): release queued acquire entry when future is dropped
 
-Arrow has no constant column, so a constant NULL column (for example the
-NULL padding of a UNION ALL branch) is written out in full when a block is
-exchanged between nodes or spilled. Reading it back built a full column, so
-the padding stayed at full width in memory from then on, e.g. in window
-partition buffers and restored spill pages.
+A queued `AcquireQueueFuture` registers its entry in the queue on the
+first pending poll and only unregisters it when it completes. If the
+caller cancels the acquisition by dropping the future, the entry (and
+the query context and session it keeps alive) stays in the queue
+indefinitely, so the queue length keeps growing and the session slot
+is never released.
 
-Add DataBlock::from_record_batch_keep_null_const, which reads each column
-with Value::from_arrow_rs, as table reads have done since #17581, so a column
-whose values are all NULL comes back as a constant NULL. Use it in the
-exchange deserializers and the spill reader. A batch with no rows is read as
-before, as Value::from_arrow_rs takes an empty array as all NULL. Other
-from_record_batch callers are unchanged.
+Implement `PinnedDrop` for `AcquireQueueFuture` to remove any entry
+still owned by the future. Completed acquisitions have already
+released the key, so this is a no-op for them.
 
-* fix(query): keep constant columns in sort merge output
+Add regression tests covering dropped acquisitions, repeated abort
+notifications, a real queued query with `max_active_sessions = 1`, and
+exactly-once cleanup on success or explicit removal.
 
-DataBlockVec::take built every output column with a builder, so a constant
-column of the merged blocks, such as NULL padding, came out of every sort
-merge at full width, including the window partition restore merge.
+Refs #20606
 
-Return a cons
+* fix(query): only drop queue entries owned by the cancelled acquire
 
-**File**: `src/query/expression/src/block_vec.rs` (modified, +54/-1)
+Queue keys are not unique. `add_entity` replaces an existing entry with
+the same key, so when a replaced acquisition is cancelled, an
+unconditional `remove_entity(&key)` would delete the entry now owned by
+the other acquisition. That acquisit
+
+**File**: `src/query/service/src/sessions/queue_mgr.rs` (modified, +13/-0)
 ```diff
-@@ -34,6 +34,7 @@ use crate::ColumnBuilder;
- use crate::ColumnView;
- use crate::DataBlock;
- use crate::LimitType;
-+use crate::Scalar;
- use crate::SortColumnDescription;
- use crate::SortCompare;
- use crate::TakeIndex;
-@@ -71,6 +72,7 @@ struct TypeHandler {
-     push: fn(&mut ColumnStorage, BlockEntry) -> Result<()>,
-     replace: fn(&mut ColumnStorage, usize, BlockEntry),
-     take: fn(&ColumnStorage, &ChunkIndex) -> BlockEntry,
-+    const_scalar: fn(&ColumnStorage, &ChunkIndex) -> Option<Scalar>,
-     sort_indices: fn(&mut SortCompare, &ColumnStorage, &RowLocations),
-     require_same_type: bool,
- }
-@@ -82,6 +84,7 @@ impl TypeHandler {
-             push: DataBlockVec::push_typed::<T>,
-             replace: DataBlockVec::replace_typed::<T>,
-             take: DataBlockVec::take_typed::<T>,
-+            const_scalar: DataBlockVec::const_scalar_typed::<T>,
-             sort_indices: DataBlockVec::sort_indices_by_typed::<T>,
-             require_same_type,
-         }
-@@ -93,6 +96,7 @@ impl TypeHandler {
-             push: DataBlockVec::push_typed::<NullableType<T>>,
-             replace: DataBlockVec::replace_typed::<NullableType<T>>,
-             take: DataBlockVec::take_typed::<NullableType<T>>,
-+            const_scalar: DataBlockVec::const_scalar_typed::<NullableType<T>>,
-             sort_indices: DataBlockVec::sort_indices_by_nullable_typed::<T>,
-             require_same_type: true,
-         }
-@@ -108,6 +112,7 @@ impl TypeHandler {
-             push: DataBlockVec::push_typed::<TColumn>,
-             replace: DataBlockVec::replace_typed::<TColumn>,
-             take: DataBlockVec::take_primitive::<TSimple>,
-+            const_scalar: DataBlockVec::const_scalar_typed::<TColumn>,
-             sort_indices: DataBlockVec::sort_indices_by_typed::<TColumn>,
-             require_same_type: false,
-         }
-@@ -123,6 +128,7 @@ impl TypeHandler {
-             push: DataBlockVec::push_typed::<NullableType<TColumn>>,
-             replace: DataBlockVec::replace_typed::<NullableType<TColumn>>,
-             take: DataBlockVec::take_nullable_primitive::<TSimple>,
-+            const_scalar: DataBlockVec::const_scalar_typed::<NullableType<TColumn>>,
-             sort_indices: DataBlockVec::sort_indices_by_nullable_typed::<TColumn>,
-             require_same_type: true,
-         }
-@@ -138,6 +144,7 @@ impl TypeHandler {
-             push: DataBlockVec::push_typed::<T>,
-             replace: DataBlockVec::replace_typed::<T>,
-             take: DataBlockVec::take_binary::<T>,
-+            const_scalar: DataBlockVec::const_scalar_typed::<T>,
-             sort_indices: DataBlockVec::sort_indices_by_typed::<T>,
-             require_same_type: false,
-         }
-@@ -153,6 +160,7 @@ impl TypeHandler {
-             push: DataBlockVec::push_typed::<NullableType<T>>,
-             replace: DataBlockVec::replace_typed::<NullableType<T>>,
-             take: DataBlockVec::take_nullable_binary::<T>,
-+            const_scalar: DataBlockVec::const_scalar_typed::<NullableType<T>>,
-             sort_indices: DataBlockVec::sort_indices_by_nullable_typed::<T>,
-             require_same_type: true,
-         }
-@@ -164,6 +172,7 @@ impl TypeHandler {
-             push: DataBlockVec::push_typed::<StringType>,
-             replace: DataBlockVec::replace_typed::<StringType>,
-             take: DataBlockVec::take_string,
-+            const_scalar: DataBlockVec::const_scalar_typed::<StringType>,
-             sort_indices: DataBlockVec::sort_indices_by_typed::<StringType>,
-             require_same_type: false,
-         }
-@@ -175,6 +184,7 @@ impl TypeHandler {
-             push: DataBlockVec::push_typed::<NullableType<StringType>>,
-             replace: DataBlockVec::replace_typed::<NullableType<StringType>>,
-             take: DataBlockVec::take_nullable_string,
-+            const_scalar: DataBlockVec::const_scalar_typed::<NullableType<StringType>>,
-             sort_indices: DataBlockVec::sort_indices_by_nullable_typed::<StringType>,
-             require_same_type: true,
-         }
-@@ -186,6 +196,7 @@ impl TypeHandler {
-             push: DataBlockVec::push_typed::<BooleanType>,
-             replace: DataBlockVec::replace_typed::<BooleanType>,
-             take: DataBlockVec::take_boolean,
-+            const_scalar: DataBlockVec::const_scalar_typed::<BooleanType>,
-             sort_indices: DataBlockVec::sort_indices_by_typed::<BooleanType>,
-             require_same_type: false,
-         }
-@@ -197,6 +208,7 @@ impl TypeHandler {
-             push: DataBlockVec::push_typed::<NullableType<BooleanType>>,
-             replace: DataBlockVec::replace_typed::<NullableType<BooleanType>>,
-             take: DataBlockVec::take_nullable_boolean,
-+            const_scalar: DataBlockVec::const_scalar_typed::<NullableType<BooleanType>>,
-             sort_indices: DataBlockVec::sort_indices_by_nullable_typed::<BooleanType>,
-             require_same_type: true,
-         }
-@@ -309,7 +321,24 @@ impl DataBlockVec {
-             .iter()
-             .map(|column| {
-     
-```
-
-**File**: `src/query/expression/src/converts/arrow/from.rs` (modified, +34/-3)
-```diff
-@@ -40,6 +40,7 @@ use super::ARROW_EXT_TYPE_TIMESTAMP_TIMEZONE;
- use super::ARROW_EXT_TYPE_VARIANT;
- use super::ARROW_EXT_TYPE_VECTOR;
- use super::EXTENSION_KEY;
-+use crate::BlockEntry;
- use crate::Column;
- use crate::DataBlock;
- use crate::DataField;
-@@ -244,6 +245,26 @@ impl TryFrom<&Schema> for TableSchema {
- 
- impl DataBlock {
-     pub fn from_record_batch(schema: &DataSchema, batch: &RecordBatch) -> Result<Self> {
-+        Self::from_record_batch_impl(schema, batch, false)
-+    }
-+
-+    /// Like [`Self::from_record_batch`], but reads columns with
-+    /// [`Value::from_arrow_rs`] as table reads do, so a column whose values are
-+    /// all NULL is read back as a constant NULL. Arrow has no constant column,
-+    /// so a constant NULL column is written out in full; reading it back as a
-+    /// full column would keep it at full width in memory.
-+    pub fn from_record_batch_keep_null_const(
-+        schema: &DataSchema,
-+        batch: &RecordBatch,
-+    ) -> Result<Self> {
-+        Self::from_record_batch_impl(schema, batch, true)
-+    }
-+
-+    fn from_record_batch_impl(
-+        schema: &DataSchema,
-+        batch: &RecordBatch,
-+        keep_null_const: bool,
-+    ) -> Result<Self> {
-         assert_eq!(
-             schema.num_fields(),
-             batch.num_columns(),
-@@ -264,12 +285,22 @@ impl DataBlock {
-             return Ok(DataBlock::new(vec![], batch.num_rows()));
-         }
- 
--        let mut columns = Vec::with_capacity(batch.columns().len());
-+        let num_rows = batch.num_rows();
-+        // Value::from_arrow_rs takes an array of no rows as all NULL.
-+        let keep_null_const = keep_null_const && num_rows > 0;
-+        let mut entries = Vec::with_capacity(batch.columns().len());
-         for (array, field) in batch.columns().iter().zip(schema.fields()) {
--            columns.push(Column::from_arrow_rs(array.clone(), field.data_type())?)
-+            let data_type = field.data_type();
-+            let entry = if keep_null_const {
-+                let value = Value::from_arrow_rs(array.clone(), data_type)?;
-+                BlockEntry::new(value, || (data_type.clone(), num_rows))
-+            } else {
-+                Column::from_arrow_rs(array.clone(), data_type)?.into()
-+            };
-+            entries.push(entry);
-         }
- 
--        Ok(DataBlock::new_from_columns(columns))
-+        Ok(DataBlock::new(entries, num_rows))
-     }
- }
- 
-```
-
-**File**: `src/query/expression/src/kernels/stream_partition.rs` (modified, +248/-82)
-```diff
-@@ -23,9 +23,11 @@ use crate::BlockEntry;
- use crate::Column;
- use crate::ColumnBuilder;
- use crate::DataBlock;
-+use crate::Scalar;
- use crate::types::AnyType;
- use crate::types::ArrayColumn;
- use crate::types::BinaryColumn;
-+use crate::types::DataType;
- use crate::types::DecimalColumn;
- use crate::types::DecimalColumnBuilder;
- use crate::types::NullableColumn;
-@@ -43,9 +45,191 @@ use crate::types::string::StringColumnBuilder;
- use crate::with_decimal_type;
- use crate::with_number_mapped_type;
- 
-+/// Bytes a constant takes once it is copied into a builder, as
-+/// `base + rows * per_64_rows / 64`.
-+#[derive(Clone, Copy)]
-+struct ExpandedSize {
-+    base: usize,
-+    per_64_rows: usize,
-+}
-+
-+impl ExpandedSize {
-+    fn measure(scalar: &Scalar, data_type: &DataType) -> Self {
-+        let size = |rows| {
-+            let mut builder = ColumnBuilder::with_capacity(data_type, rows);
-+            copy_const(scalar, data_type, rows, &mut builder);
-+            builder.memory_size()
-+        };
-+        let (size_64, size_128) = (size(64), size(128));
-+        let per_64_rows = size_128.saturating_sub(size_64);
-+        ExpandedSize {
-+            base: size_64.saturating_sub(per_64_rows),
-+            per_64_rows,
-+        }
-+    }
-+
-+    fn of(&self, rows: usize) -> usize {
-+        self.base + rows * self.per_64_rows / 64
-+    }
-+}
-+
-+/// The rows of one column waiting in a partition. A column whose rows so far
-+/// are all the same constant stays a constant instead of being copied.
-+enum PendingColumn {
-+    /// No rows. `data_type` and `capacity` are those of the next builder.
-+    Empty {
-+        data_type: DataType,
-+        capacity: usize,
-+    },
-+    Const {
-+        scalar: Scalar,
-+        data_type: DataType,
-+        rows: usize,
-+        // Counted as if copied, so blocks are cut where they would be if the
-+        // constant had been expanded.
-+        size: ExpandedSize,
-+    },
-+    Builder(ColumnBuilder),
-+}
-+
-+impl PendingColumn {
-+    /// Add `rows` of a constant if they can stay constant: no rows yet, or
-+    /// only rows of the same constant. Returns false otherwise.
-+    fn try_push_const(
-+        &mut self,
-+        scalar: &Scalar,
-+        data_type: &DataType,
-+        rows: usize,
-+        size: &mut impl FnMut() -> ExpandedSize,
-+    ) -> bool {
-+        match self {
-+            PendingColumn::Empty {
-+                data_type: expected,
-+                ..
-+            } if expected == data_type => {
-+                *self = PendingColumn::Const {
-+                    scalar: scalar.clone(),
-+                    data_type: data_type.clone(),
-+                    rows,
-+                    size: size(),
-+                };
-+                true
-+            }
-+            PendingColumn::Const {
-+                scalar: pending,
-+                data_type: pending_type,
-+                rows: pending_rows,
-+                ..
-+            } if pending == scalar && pending_type == data_type => {
-+                *pending_rows += rows;
-+                true
-+            }
-+            _ => false,
-+        }
-+    }
-+
-+    fn push_column<I: Index>(&mut self, indices: &[I], column: &Column) {
-+        copy_column(indices, column, self.builder(indices.len()));
-+    }
-+
-+    /// Turn the pending rows into a builder with room for `additional` more.
-+    fn builder(&mut self, additional: usize) -> &mut ColumnBuilder {
-+        match self {
-+            PendingColumn::Empty {
-+                data_type,
-+                capacity,
-+            } => {
-+                let builder = ColumnBuilder::with_capacity(data_type, (*capacity).max(additional));
-+                *self = PendingColumn::Builder(builder);
-+            }
-+            PendingColumn::Const {
-+                scalar,
-+                data_type,
-+                rows,
-+                ..
-+            } => {
-+                let mut builder = ColumnBuilder::with_capacity(data_type, *rows + additional);
-+                copy_const(scalar, data_type, *rows, &mut builder);
-+                *self = PendingColumn::Builder(builder);
-+            }
-+            PendingColumn::Builder(_) => {}
-+        }
-+        match self {
-+            PendingColumn::Builder(builder) => builder,
-+            _ => unreachable!(),
-+        }
-+    }
-+
-+    fn memory_size(&self) -> usize {
-+        match self {
-+            PendingColumn::Empty { .. } => 0,
-+            PendingColumn::Const { rows, size, .. } => size.of(*rows),
-+            PendingColumn::Builder(builder) => builder.memory_size(),
-+        }
-+    }
-+
-+    /// Take the pending rows. The next builder gets room for as many rows when
-+    /// `keep_capacity` is set.
-+    fn take(&mut self, keep_capacity: bool) -> BlockEntry {
-+        let placeholder = PendingColumn::Empty {
-+            data_type: DataType::Null,
-+            capacity: 0,
-+        };
-+        let (entry, data_type, rows) = match std::mem::replace(self, placeholder) {
-+            PendingColumn::Empty { data_type, .. } => 
-```
-
-**File**: `src/query/expression/tests/it/arrow.rs` (modified, +71/-0)
-```diff
-@@ -18,8 +18,16 @@ use arrow_array::ArrayRef;
- use arrow_array::DictionaryArray;
- use arrow_array::Int32Array;
- use arrow_array::StringArray;
-+use databend_common_exception::Result;
-+use databend_common_expression::BlockEntry;
- use databend_common_expression::Column;
-+use databend_common_expression::DataBlock;
-+use databend_common_expression::FromData;
-+use databend_common_expression::Scalar;
- use databend_common_expression::types::DataType;
-+use databend_common_expression::types::Int32Type;
-+use databend_common_expression::types::Int64Type;
-+use databend_common_expression::types::NumberDataType;
- 
- #[test]
- fn test_from_arrow_rs() {
-@@ -46,3 +54,66 @@ fn test_from_arrow_rs() {
-         assert_eq!(c.len(), arr.len());
-     }
+@@ -491,6 +491,19 @@ where T: Future<Output =  std::result::Result<std::result::Result<Permit, E>, El
+     key: Option<Data::Key>,
+     manager: Arc<QueueManager<Data>>,
  }
 +
-+fn null_const_round_trip_block(num_rows: usize) -> DataBlock {
-+    let nullable_int = DataType::Number(NumberDataType::Int64).wrap_nullable();
-+    DataBlock::new(
-+        vec![
-+            Int32Type::from_data((0..num_rows as i32).collect::<Vec<_>>()).into(),
-+            BlockEntry::new_const_column(nullable_int.clone(), Scalar::Null, num_rows),
-+            BlockEntry::new_const_column(DataType::String.wrap_nullable(), Scalar::Null, num_rows),
-+            // Some NULLs, but not all.
-+            Int64Type::from_opt_data((0..num_rows as i64).map(|i| (i > 0).then_some(i)).collect())
-+                .into(),
-+            // A nullable column that is all NULL as a full column.
-+            BlockEntry::new_const_column(nullable_int, Scalar::Null, num_rows)
-+                .to_column()
-+                .into(),
-+        ],
-+        num_rows,
-+    )
-+}
-+
-+#[test]
-+fn test_from_record_batch_keep_null_const() -> Result<()> {
-+    let block = null_const_round_trip_block(4);
-+    let schema = block.infer_schema();
-+    let batch = block.clone().to_record_batch_with_dataschema(&schema)?;
-+
-+    // The default conversion keeps every column full.
-+    let full = DataBlock::from_record_batch(&schema, &batch)?;
-+    assert!(
-+        full.columns()
-+            .iter()
-+            .all(|entry| entry.as_column().is_some())
-+    );
-+
-+    let kept = DataBlock::from_record_batch_keep_null_const(&schema, &batch)?;
-+    assert_eq!(kept.num_rows(), 4);
-+    for (offset, is_const) in [false, true, true, false, true].into_iter().enumerate() {
-+        let entry = kept.get_by_offset(offset);
-+        assert_eq!(entry.as_scalar().is_some(), is_const, "column {offset}");
-+        if is_const {
-+            assert_eq!(entry.as_scalar(), Some(&Scalar::Null));
-+        }
-+        assert_eq!(entry.data_type(), block.get_by_offset(offset).data_type());
-+        assert_eq!(entry.to_column(), block.get_by_offset(offset).to_column());
-+    }
-+    Ok(())
-+}
-+
-+#[test]
-+fn test_from_record_batch_keep_null_const_empty() -> Result<()> {
-+    // No rows: nothing is all NULL, a non-nullable column must stay a column.
-+    let block = null_const_round_trip_block(0);
-+    let schema = block.infer_schema();
-+    let batch = block.to_record_batch_with_dataschema(&schema)?;
-+    let kept = DataBlock::from_record_batch_keep_null_const(&schema, &batch)?;
-+    assert_eq!(kept.num_rows(), 0);
-+    assert!(
-+        kept.columns()
-+            .iter()
-+            .all(|entry| entry.as_column().is_some())
-+    );
-+    Ok(())
-+}
-```
-
-**File**: `src/query/expression/tests/it/block_vec.rs` (modified, +114/-0)
-```diff
-@@ -16,17 +16,21 @@ use std::sync::Arc;
- 
- use databend_common_exception::Result;
- use databend_common_expression::BlockEntry;
-+use databend_common_expression::ChunkIndex;
- use databend_common_expression::Column;
- use databend_common_expression::DataBlock;
- use databend_common_expression::DataBlockVec;
- use databend_common_expression::FromData;
- use databend_common_expression::LimitType;
-+use databend_common_expression::Scalar;
- use databend_common_expression::SortColumnDescription;
- use databend_common_expression::types::BinaryType;
- use databend_common_expression::types::BooleanType;
-+use databend_common_expression::types::DataType;
- use databend_common_expression::types::DateType;
- use databend_common_expression::types::Int32Type;
- use databend_common_expression::types::Int64Type;
-+use databend_common_expression::types::NumberDataType;
- use databend_common_expression::types::StringType;
- use databend_common_expression::types::TimestampType;
- use databend_common_expression::types::UInt64Type;
-@@ -188,3 +192,113 @@ proptest! {
-         ).expect("sort_limit equivalence check failed");
-     }
- }
-+
-+fn const_entry(data_type: DataType, scalar: Scalar, num_rows: usize) -> BlockEntry {
-+    BlockEntry::new_const_column(data_type, scalar, num_rows)
-+}
-+
-+fn nullable_null_block(num_rows: usize, start: i32) -> DataBlock {
-+    DataBlock::new(
-+        vec![
-+            Int32Type::from_data((start..start + num_rows as i32).collect::<Vec<_>>()).into(),
-+            const_entry(
-+                DataType::Number(NumberDataType::Int64).wrap_nullable(),
-+                Scalar::Null,
-+                num_rows,
-+            ),
-+            const_entry(DataType::String, Scalar::String("x".to_string()), num_rows),
-+        ],
-+        num_rows,
-+    )
-+}
-+
-+#[test]
-+fn test_take_keeps_const_from_const_blocks() -> Result<()> {
-+    let blocks = vec![nullable_null_block(3, 0), nullable_null_block(4, 10)];
-+    let expected = DataBlock::concat(&blocks)?;
-+    let vec = DataBlockVec::from_blocks(blocks)?;
-+
-+    let mut indices = ChunkIndex::default();
-+    indices.push_merge(1, 2);
-+    indices.push_merge_range(0, 0, 2);
-+    indices.push_merge(1, 0);
-+    indices.push_repeat(0, 2, 2);
-+    let actual = vec.take(&indices);
-+
-+    assert_eq!(actual.num_rows(), 6);
-+    assert!(actual.get_by_offset(0).as_column().is_some());
-+    for offset in [1, 2] {
-+        let entry = actual.get_by_offset(offset);
-+        assert!(entry.as_scalar().is_some(), "column {offset} is not const");
-+        assert_eq!(
-+            entry.data_type(),
-+            expected.get_by_offset(offset).data_type()
-+        );
-+        assert_eq!(entry.len(), 6);
-+    }
-+    assert_eq!(actual.get_by_offset(1).as_scalar(), Some(&Scalar::Null));
-+    assert_eq!(
-+        actual.get_by_offset(0).to_column(),
-+        Int32Type::from_data(vec![12, 0, 1, 10, 2, 2])
-+    );
-+    Ok(())
-+}
-+
-+#[test]
-+fn test_take_const_ignores_blocks_not_taken() -> Result<()> {
-+    // A merge holds blocks it does not take from in this output, such as
-+    // drained ones replaced by empty columns.
-+    let column_block = DataBlock::new(
-+        vec![
-+            Int32Type::from_data(vec![7, 8]).into(),
-+            Int64Type::from_opt_data(vec![Some(1), None]).into(),
-+            StringType::from_data(vec!["a", "b"]).into(),
-+        ],
-+        2,
-+    );
-+    let mut vec = DataBlockVec::from_blocks(vec![nullable_null_block(2, 0), column_block])?;
-+    vec.replace_with_empty(1);
-+
-+    let mut indices = ChunkIndex::default();
-+    indices.push_merge_range(0, 0, 2);
-+    let actual = vec.take(&indices);
-+    assert_eq!(actual.get_by_offset(1).as_scalar(), Some(&Scalar::Null));
-+    assert_eq!(
-+        actual.get_by_offset(2).as_scalar(),
-+        Some(&Scalar::String("x".to_string()))
-+    );
-+    Ok(())
-+}
-+
-+#[test]
-+fn test_take_expands_mixed_or_different_const() -> Result<()> {
-+    let column_block = DataBlock::new(
-+        vec![
-+            Int32Type::from_data(vec![7, 8]).into(),
-+            Int64Type::from_opt_data(vec![Some(1), None]).into(),
-+            const_entry(DataType::String, Scalar::String("y".to_string()), 2),
-+        ],
-+        2,
-+    );
-+    let blocks = vec![nullable_null_block(2, 0), column_block];
-+    let vec = DataBlockVec::from_blocks(blocks)?;
-+
-+    let mut indices = ChunkIndex::default();
-+    indices.push_merge(1, 1);
-+    indices.push_merge(0, 0);
-+    indices.push_merge(1, 0);
-+    let actual = vec.take(&indices);
-+
-+    // Const NULL mixed with a column, and two different constants.
-+    assert!(actual.get_by_offset(1).as_column().is_some());
-+    assert!(actual.get_by_offset(2).as_column().is_some());
-+    assert_eq!(
-+        actual.get_by_offset(1).to_column(),
-+        Int64Type::from_opt_data(vec![None, None, Some(1)])
-+    );
-+    assert_eq!(
-+        actual.get_by_offset(2).to_column(),
-+        StringType::from_data(vec!["y", "x", "y"])
-+    );
-+    Ok(())
-+}
-```
-
-**File**: `src/query/expression/tests/it/main.rs` (modified, +1/-0)
-```diff
-@@ -45,6 +45,7 @@ mod scalar_hash;
- mod schema;
- mod serde;
- mod sort;
-+mod stream_partition;
- mod types;
- 
- mod like_pattern_escape;
-```
-
-**File**: `src/query/expression/tests/it/stream_partition.rs` (added, +228/-0)
-```diff
-@@ -0,0 +1,228 @@
-+// Copyright 2021 Datafuse Labs
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use std::collections::HashSet;
-+
-+use databend_common_expression::BlockEntry;
-+use databend_common_expression::BlockPartitionStream;
-+use databend_common_expression::DataBlock;
-+use databend_common_expression::FromData;
-+use databend_common_expression::Scalar;
-+use databend_common_expression::types::DataType;
-+use databend_common_expression::types::Int32Type;
-+use databend_common_expression::types::Int64Type;
-+use databend_common_expression::types::NumberDataType;
-+use databend_common_expression::types::StringType;
-+
-+fn nullable_int64() -> DataType {
-+    DataType::Number(NumberDataType::Int64).wrap_nullable()
-+}
-+
-+/// An Int32 column 0..rows starting at `start`, a constant NULL and a
-+/// constant string.
-+fn const_block(rows: usize, start: i32, text: &str) -> DataBlock {
-+    DataBlock::new(
-+        vec![
-+            Int32Type::from_data((start..start + rows as i32).collect::<Vec<_>>()).into(),
-+            BlockEntry::new_const_column(nullable_int64(), Scalar::Null, rows),
-+            BlockEntry::new_const_column(DataType::String, Scalar::String(text.to_string()), rows),
-+        ],
-+        rows,
-+    )
-+}
-+
-+fn column_block(rows: usize, start: i32) -> DataBlock {
-+    DataBlock::new(
-+        vec![
-+            Int32Type::from_data((start..start + rows as i32).collect::<Vec<_>>()).into(),
-+            Int64Type::from_opt_data((0..rows as i64).map(Some).collect()).into(),
-+            StringType::from_data((0..rows).map(|i| i.to_string()).collect::<Vec<_>>()).into(),
-+        ],
-+        rows,
-+    )
-+}
-+
-+/// The block with every constant expanded, as the stream used to copy it.
-+fn expanded(block: &DataBlock) -> DataBlock {
-+    let columns = block
-+        .columns()
-+        .iter()
-+        .map(|entry| entry.to_column().into())
-+        .collect();
-+    DataBlock::new(columns, block.num_rows())
-+}
-+
-+fn assert_same_values(actual: &DataBlock, expected: &DataBlock) {
-+    assert_eq!(actual.num_rows(), expected.num_rows());
-+    assert_eq!(actual.num_columns(), expected.num_columns());
-+    for (a, e) in actual.columns().iter().zip(expected.columns()) {
-+        assert_eq!(a.data_type(), e.data_type());
-+        assert_eq!(a.to_column(), e.to_column());
-+    }
-+}
-+
-+/// Partition every block with `indices_of`, into a stream fed the blocks as
-+/// they are and one fed them expanded, and check that both cut the same
-+/// blocks with the same values.
-+fn assert_same_as_expanded(
-+    blocks: &[DataBlock],
-+    indices_of: impl Fn(usize) -> u64,
-+    rows_threshold: usize,
-+    bytes_threshold: usize,
-+) -> Vec<(usize, DataBlock)> {
-+    let mut stream = BlockPartitionStream::create(rows_threshold, bytes_threshold, 2);
-+    let mut reference = BlockPartitionStream::create(rows_threshold, bytes_threshold, 2);
-+    let mut output = Vec::new();
-+    for block in blocks {
-+        let indices = (0..block.num_rows()).map(&indices_of).collect::<Vec<_>>();
-+        let actual = stream.partition(indices.clone(), block.clone(), true);
-+        let expected = reference.partition(indices, expanded(block), true);
-+        assert_eq!(actual.len(), expected.len());
-+        for ((id, a), (expected_id, e)) in actual.iter().zip(expected.iter()) {
-+            assert_eq!(id, expected_id);
-+            assert_same_values(a, e);
-+        }
-+        output.extend(actual);
-+    }
-+    for id in 0..2 {
-+        let actual = stream.finalize_partition(id);
-+        let expected = reference.finalize_partition(id);
-+        assert_eq!(actual.is_some(), expected.is_some());
-+        if let (Some(a), Some(e)) = (&actual, &expected) {
-+            assert_same_values(a, e);
-+        }
-+        output.extend(actual.map(|block| (id, block)));
-+    }
-+    output
-+}
-+
-+#[test]
-+fn test_partition_keeps_constants() {
-+    let blocks = vec![const_block(5, 0, "x"), const_block(7, 5, "x")];
-+    let output = assert_same_as_expanded(&blocks, |row| (row % 2) as u64, 0, 0);
-+    assert_eq!(output.len(), 2);
-+    for (_, block) in &output {
-+        assert!(block.get_by_offset(0).as_column().is_some());
-+        assert_eq!(block.get_by_offset(1).as_scalar(), Some(&Scalar::Null));
-+        assert_eq!(
-+            block.get_by_offset(2).as_scalar(),
-+            Some(&Scalar::String("x".to_string()))
-+        );
-+    }
-+}
-+
-+#[test]
-+fn test_partition_expands_mixed_rows() {
-+    // A constant followed by a column, and two differen
-```
-
-**File**: `src/query/service/src/servers/flight/v1/exchange/serde/exchange_deserializer.rs` (modified, +1/-1)
-```diff
-@@ -120,7 +120,7 @@ pub fn deserialize_block(
-     }
- 
-     let batch = flight_data_to_arrow_batch(&fragment_data.data, arrow_schema, &dictionaries_by_id)?;
--    let data_block = DataBlock::from_record_batch(schema, &batch)?;
-+    let data_block = DataBlock::from_record_batch_keep_null_const(schema, &batch)?;
-     Ok(data_block)
- }
- 
-```
-
----
-
-### Incident Patch 2: `4a53da8a` (2026-10-22)
-**Commit Message**: fix(expression): keep float DEFAULT values exact across SQL text (#20779)
-
-* fix(expression): preserve float precision in SQL display
-
-Use native float formatting for SQL constants while preserving NaN and infinity casts. Keep block and diagnostic formatting unchanged.
-
-Add bitwise round-trip coverage and SQL DEFAULT regressions. Relates to #20751; Decimal-to-float conversion rounding remains separate.
-
-* fix(expression): keep float DEFAULT values exact across SQL text
-
-Stored DEFAULT expressions are rendered with Expr::sql_display and
-parsed again, so a float default could change value: sql_display
-truncates floats, and float literals bind as decimals whose
-conversion to float rounded up to three times
-(t as f64 / 10^scale).
-
-Convert decimal to float with a single rounding: a float division
-when both operands are exact, an exact u256 quotient with a sticky
-bit for scales within Decimal128, and the standard parser for the
-remaining Decimal256 values and f32 subnormal results. Values and
-domains now share Decimal::to_float32/to_float64.
-
-Split SQL rendering by purpose. sql_display stays as on main for
-EXPLAIN and error messages; the new Expr::to_sql_string renders
-constants, includi
-
-**File**: `src/query/expression/src/types/decimal.rs` (modified, +182/-12)
-```diff
-@@ -683,6 +683,176 @@ pub trait Decimal:
-     }
- }
- 
-+/// `10^n` for every Decimal128 scale.
-+const U128_POW10: [u128; 39] = {
-+    let mut table = [1u128; 39];
-+    let mut i = 1;
-+    while i < table.len() {
-+        table[i] = table[i - 1] * 10;
-+        i += 1;
-+    }
-+    table
-+};
-+
-+/// The float operations that decimal-to-float conversion needs, for `f32` and `f64`.
-+trait DecimalTargetFloat:
-+    Copy + 'static + Div<Output = Self> + Neg<Output = Self> + std::str::FromStr<Err: Debug>
++impl<Data: QueueData, T, Permit, E> PinnedDrop for AcquireQueueFuture<Data, T, Permit, E>
++where T: Future<Output = std::result::Result<std::result::Result<Permit, E>, Elapsed>>
 +{
-+    const ZERO: Self;
-+    /// Total width of the encoding.
-+    const BITS: u32;
-+    /// Significand bits, including the implicit leading bit.
-+    const MANTISSA_DIGITS: u32;
-+    /// Powers of ten that the type represents exactly.
-+    const EXACT_POW10: &'static [Self];
-+
-+    /// Rounds to nearest, ties to even.
-+    fn from_i128(value: i128) -> Self;
-+    /// Rounds to nearest, ties to even.
-+    fn from_u128(value: u128) -> Self;
-+    fn to_bits_u64(self) -> u64;
-+    fn from_bits_u64(bits: u64) -> Self;
-+}
-+
-+impl DecimalTargetFloat for f64 {
-+    const ZERO: Self = 0.0;
-+    const BITS: u32 = u64::BITS;
-+    const MANTISSA_DIGITS: u32 = f64::MANTISSA_DIGITS;
-+    const EXACT_POW10: &'static [Self] = &[
-+        1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15, 1e16,
-+        1e17, 1e18, 1e19, 1e20, 1e21, 1e22,
-+    ];
-+
-+    fn from_i128(value: i128) -> Self {
-+        value as f64
-+    }
-+
-+    fn from_u128(value: u128) -> Self {
-+        value as f64
-+    }
-+
-+    fn to_bits_u64(self) -> u64 {
-+        self.to_bits()
-+    }
-+
-+    fn from_bits_u64(bits: u64) -> Self {
-+        f64::from_bits(bits)
-+    }
-+}
-+
-+impl DecimalTargetFloat for f32 {
-+    const ZERO: Self = 0.0;
-+    const BITS: u32 = u32::BITS;
-+    const MANTISSA_DIGITS: u32 = f32::MANTISSA_DIGITS;
-+    const EXACT_POW10: &'static [Self] = &[1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10];
-+
-+    fn from_i128(value: i128) -> Self {
-+        value as f32
-+    }
-+
-+    fn from_u128(value: u128) -> Self {
-+        value as f32
-+    }
-+
-+    fn to_bits_u64(self) -> u64 {
-+        self.to_bits() as u64
-+    }
-+
-+    fn from_bits_u64(bits: u64) -> Self {
-+        f32::from_bits(bits as u32)
-+    }
-+}
-+
-+/// Converts `mantissa * 10^-scale` to the nearest float.
-+///
-+/// The result must round exactly once to be the nearest float; the naive integer cast,
-+/// power and division round up to three times. Three paths each round once:
-+/// - a float division, when the mantissa fits in the significand and `10^scale` is in
-+///   the exact power table, so both operands are exact;
-+/// - an exact integer quotient (`scaled_u128_to_float`) for scales within Decimal128,
-+///   which covers every Decimal64 and Decimal128 value;
-+/// - the standard library's correctly rounded parser for the rest: scales beyond 38,
-+///   and subnormal results, which only `f32` reaches.
-+///
-+/// Decimal256 mantissas beyond i128 go straight to the parser.
-+fn decimal_i128_to_float<F: DecimalTargetFloat>(mantissa: i128, scale: u8) -> F {
-+    if scale == 0 {
-+        return F::from_i128(mantissa);
-+    }
-+    let magnitude = mantissa.unsigned_abs();
-+    if magnitude <= 1 << F::MANTISSA_DIGITS && (scale as usize) < F::EXACT_POW10.len() {
-+        return F::from_i128(mantissa) / F::EXACT_POW10[scale as usize];
-+    }
-+    if (scale as usize) < U128_POW10.len() {
-+        if let Some(value) = scaled_u128_to_float::<F>(magnitude, scale) {
-+            return if mantissa < 0 { -value } else { value };
-+        }
-+    }
-+    parse_scaled_decimal(mantissa, scale)
-+}
-+
-+/// Converts `magnitude * 10^-scale`, with `scale <= 38`, rounding once; `None` when the
-+/// result is subnormal.
-+///
-+/// `q = floor(magnitude * 2^k / 10^scale)` is computed exactly, with `k` chosen so that
-+/// `q` has 64 or 65 bits. Setting the lowest bit of `q` when the division leaves a
-+/// remainder (a sticky bit) preserves the rounding decision of the exact quotient,
-+/// because that bit lies below the rounding position of the float. The integer cast is
-+/// then the only rounding, and scaling by `2^-k` through the exponent field is exact
-+/// while the result stays normal.
-+fn scaled_u128_to_float<F: DecimalTargetFloat>(magnitude: u128, scale: u8) -> Option<F> {
-+    if magnitude == 0 {
-+        return Some(F::ZERO);
-+    }
-+    let divisor = U128_POW10[scale as usize];
-+    let magnitude_bits = (u128::BITS - magnitude.leading_zeros()) as i32;
-+    let divisor_bits = (u128::BITS - divisor.leading_zeros()) as i32;
-+    // At most 64 + 127 bits are shifted, so both operands fit in u256.
-+    let k = 64 + divisor_bits - magnitude_bits;
-+    let (dividend, divisor) = if k >= 0 {
-+        (u256::from(magnitude) << k as u32, u256::from(divisor))
-+    } else {
-+        (
-+            u256::from(magnitude),
-+            u256::from(divisor) << k.unsigned_abs(),
-+        )
-+    };
-+    let quotient = dividend / divisor;
-+    let sticky = quotient * divisor != dividend;
-+    l
-```
-
-**File**: `src/query/expression/src/utils/display.rs` (modified, +199/-55)
-```diff
-@@ -365,6 +365,107 @@ impl Display for Scalar {
-     }
- }
- 
-+/// Formats a scalar as SQL text that rebinds to the same value.
-+///
-+/// `Display` serves block, diagnostic and `Expr::sql_display` output, where floats are
-+/// truncated to a fixed number of fractional digits. `Expr::to_sql_string` text is
-+/// parsed again, for example as a stored DEFAULT expression, so every float, including
-+/// those nested in arrays, maps, tuples and vectors, keeps the shortest digits that
-+/// round-trip.
-+struct SqlScalar<'a, 'b>(&'b ScalarRef<'a>);
-+
-+impl Display for SqlScalar<'_, '_> {
-+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-+        match self.0 {
-+            ScalarRef::Number(NumberScalar::Float32(v)) => write_sql_float(f, **v, "Float32"),
-+            ScalarRef::Number(NumberScalar::Float64(v)) => write_sql_float(f, **v, "Float64"),
-+            ScalarRef::Binary(_) => write!(f, "from_hex('{}')::string", self.0),
-+            ScalarRef::Array(col) => {
-+                write!(f, "[")?;
-+                for (i, value) in col.iter().enumerate() {
-+                    if i > 0 {
-+                        write!(f, ", ")?;
-+                    }
-+                    write!(f, "{}", SqlScalar(&value))?;
-+                }
-+                write!(f, "]")
-+            }
-+            ScalarRef::Map(col) => {
-+                write!(f, "{{")?;
-+                let kv_col = KvPair::<AnyType, AnyType>::try_downcast_column(col).unwrap();
-+                for (i, (key, value)) in kv_col.iter().enumerate() {
-+                    if i > 0 {
-+                        write!(f, ", ")?;
-+                    }
-+                    write!(f, "{}:{}", SqlScalar(&key), SqlScalar(&value))?;
-+                }
-+                write!(f, "}}")
-+            }
-+            ScalarRef::Tuple(fields) => {
-+                write!(f, "(")?;
-+                for (i, field) in fields.iter().enumerate() {
-+                    if i > 0 {
-+                        write!(f, ", ")?;
-+                    }
-+                    write!(f, "{}", SqlScalar(field))?;
-+                }
-+                if fields.len() < 2 {
-+                    write!(f, ",")?;
-+                }
-+                write!(f, ")")
-+            }
-+            ScalarRef::Vector(VectorScalarRef::Float32(vals)) => {
-+                write!(f, "[")?;
-+                for (i, value) in vals.iter().enumerate() {
-+                    if i > 0 {
-+                        write!(f, ", ")?;
-+                    }
-+                    write_sql_float(f, **value, "Float32")?;
-+                }
-+                write!(f, "]")
-+            }
-+            other => write!(f, "{other}"),
++    fn drop(this: Pin<&mut Self>) {
++        let this = this.project();
++        // Cancellation can drop the future without polling it to completion.
++        // Release the registered entry and the query context it owns in that case.
++        if let Some(key) = this.key.take() {
++            this.manager.remove_entity(&key);
 +        }
 +    }
 +}
-+
-+/// NaN and infinities have no numeric literal, so they are written as string casts.
-+fn write_sql_float_string(value: f64, type_name: &str) -> String {
-+    if value.is_nan() {
-+        format!("'nan'::{type_name}")
-+    } else if value < 0.0 {
-+        format!("'-inf'::{type_name}")
-+    } else {
-+        format!("'inf'::{type_name}")
-+    }
-+}
-+
-+/// Writes the shortest digits that parse back to `value`.
-+///
-+/// Positional notation is used when the decimal exponent is in `-6..=20` (the range
-+/// JavaScript prints positionally); outside it, positional text grows to hundreds of
-+/// digits, so scientific notation is used instead. NaN and infinities have no numeric
-+/// literal and are written as string casts. The sign of zero is not preserved, because
-+/// `-0` parses as the integer zero; the zero class compares equal, see
-+/// `docs/designs/20260921-float-value-semantics.md`.
-+fn write_sql_float<T>(f: &mut Formatter, value: T, type_name: &str) -> std::fmt::Result
-+where T: Copy + Display + std::fmt::LowerExp + Into<f64> {
-+    let wide: f64 = value.into();
-+    if !wide.is_finite() {
-+        return f.write_str(&write_sql_float_string(wide, type_name));
-+    }
-+    let scientific = format!("{value:e}");
-+    let exponent = scientific
-+        .rsplit_once('e')
-+        .and_then(|(_, exp)| exp.parse::<i32>().ok())
-+        .unwrap_or_default();
-+    if (-6..=20).contains(&exponent) {
-+        write!(f, "{value}")
-+    } else {
-+        f.write_str(&scientific)
-+    }
-+}
-+
- // convert scalar value to string without quotes
- pub fn scalar_ref_to_string(value: &ScalarRef) -> String {
-     match value {
-@@ -997,18 +1098,45 @@ impl<I: ColumnIndex> ExprVisitor<I> for ExprFormatter<'_, '_> {
-     }
  }
  
-+/// How `Expr::write_sql` renders constants.
-+#[derive(Clone, Copy)]
-+enum SqlStyle {
-+    /// For people: EXPLAIN, error messages and plan output. Floats are truncated like
-+    /// block output so that plans stay stable across platforms.
-+    Display,
-+    /// For text that is stored and parsed again: every constant rebinds to the same
-+    /// value.
-+    RoundTrip,
-+}
-+
- impl<Index: ColumnIndex> Expr<Index> {
-+    /// Renders the expression as SQL for people, in EXPLAIN, error messages and plan
-+    /// output. Float constants are truncated, so the text may not rebind 
+ impl<Data: QueueData, T, Permit, E> AcquireQueueFuture<Data, T, Permit, E>
 ```
 
-**File**: `src/query/expression/tests/it/decimal.rs` (modified, +137/-0)
+**File**: `src/query/service/tests/it/sessions/queue_mgr.rs` (modified, +157/-0)
 ```diff
-@@ -210,3 +210,140 @@ fn test_from_bigint() {
-         assert_eq!(i256::from_bigint(r), b);
-     }
- }
-+
-+/// The nearest float to `mantissa * 10^-scale`, from the correctly rounded std parser.
-+fn nearest<T: std::str::FromStr>(mantissa: impl std::fmt::Display, scale: u8) -> T
-+where T::Err: std::fmt::Debug {
-+    format!("{mantissa}e-{scale}").parse().unwrap()
-+}
-+
-+#[test]
-+fn test_decimal_to_float_is_correctly_rounded() {
-+    // Mantissas beyond 2^53 (2^24 for f32) or scales beyond 10^22 (10^10 for f32) are
-+    // rounded more than once by a naive integer-cast-then-divide conversion.
-+    let cases_f64 = [
-+        (37349299999999996_i128, 17, 0.37349299999999996_f64),
-+        (15990461000457081, 16, 1.5990461000457081),
-+        (9553820000000001, 13, 955.3820000000001),
-+        (-5294551535166176, 10, -529455.1535166176),
-+        (15, 17, 1.5e-16),
-+        (1, 38, 1e-38),
-+        (i128::MAX, 0, i128::MAX as f64),
-+    ];
-+    for (mantissa, scale, expected) in cases_f64 {
-+        assert_eq!(mantissa.to_float64(scale), expected, "{mantissa}e-{scale}");
-+        assert_eq!(i256::from(mantissa).to_float64(scale), expected);
-+        if let Ok(m) = i64::try_from(mantissa) {
-+            assert_eq!(m.to_float64(scale), expected, "{mantissa}e-{scale}");
-+        }
-+    }
-+
-+    let cases_f32 = [
-+        (33333334_i128, 8, 0.33333334_f32),
-+        (1, 20, 1e-20),
-+        (30000004, 8, 0.30000004),
-+        (15, 17, 1.5e-16),
-+        // Subnormal f32 results.
-+        (1, 38, 1e-38),
-+        (-11, 39, -1.1e-38),
-+        (i128::MAX, 38, 1.7014118),
-+    ];
-+    for (mantissa, scale, expected) in cases_f32 {
-+        assert_eq!(mantissa.to_float32(scale), expected, "{mantissa}e-{scale}");
-+        assert_eq!(i256::from(mantissa).to_float32(scale), expected);
-+        if let Ok(m) = i64::try_from(mantissa) {
-+            assert_eq!(m.to_float32(scale), expected, "{mantissa}e-{scale}");
-+        }
-+    }
-+
-+    // Beyond the i128 range.
-+    let big = i256::from_words(i128::MAX / 3, 12345);
-+    assert_eq!(big.to_float64(76), nearest::<f64>(big, 76));
-+    assert_eq!(big.to_float32(76), nearest::<f32>(big, 76));
-+    assert_eq!(
-+        i256::DECIMAL_MIN.to_float64(0),
-+        nearest::<f64>(i256::DECIMAL_MIN, 0)
-+    );
-+}
-+
-+#[test]
-+fn test_decimal_to_float_rounds_halfway_cases() {
-+    // Mantissas at scale 37 just below, at and just above the midpoint between two
-+    // adjacent floats `lo` (even significand) and `lo + 1 ulp`. Random inputs almost
-+    // never hit a midpoint, where a lost remainder flips the result.
-+    let f64_cases = [
-+        (
-+            0x3ff0_0000_0000_0000_u64,
-+            10000000000000001110223024625156540423_i128,
-+        ),
-+        (
-+            0x3ff0_0000_0000_6072,
-+            10000000000054823923179014855122659355,
-+        ),
-+    ];
-+    for (lo_bits, below) in f64_cases {
-+        let (lo, hi) = (f64::from_bits(lo_bits), f64::from_bits(lo_bits + 1));
-+        assert_eq!(below.to_float64(37), lo, "{below}e-37");
-+        assert_eq!((below + 1).to_float64(37), hi, "{}e-37", below + 1);
-+        assert_eq!(i256::from(below + 1).to_float64(37), hi);
-+    }
-+
-+    // For f32 the midpoints are exact decimals: a tie rounds to the even `lo`.
-+    let f32_cases = [
-+        (0x3f80_0000_u32, 10000000596046447753906250000000000000_i128),
-+        (0x3f80_6072, 10029433369636535644531250000000000000),
-+    ];
-+    for (lo_bits, tie) in f32_cases {
-+        let (lo, hi) = (f32::from_bits(lo_bits), f32::from_bits(lo_bits + 1));
-+        assert_eq!((tie - 1).to_float32(37), lo, "{}e-37", tie - 1);
-+        assert_eq!(tie.to_float32(37), lo, "{tie}e-37");
-+        assert_eq!((tie + 1).to_float32(37), hi, "{}e-37", tie + 1);
-+        assert_eq!(i256::from(tie + 1).to_float32(37), hi);
-+    }
-+}
-+
-+proptest::proptest! {
-+    #[test]
-+    fn test_decimal128_to_float_matches_nearest(mantissa: i128, scale in 0u8..=38) {
-+        proptest::prop_assert_eq!(mantissa.to_float64(scale), nearest::<f64>(mantissa, scale));
-+        proptest::prop_assert_eq!(mantissa.to_float32(scale), nearest::<f32>(mantissa, scale));
-+    }
-+
-+    // Uniform i128 values are almost all 127 bits wide; also cover narrow mantissas,
-+    // which take the fast path or produce small and subnormal results.
-+    #[test]
-+    fn test_narrow_decimal128_to_float_matches_nearest(
-+        mantissa: i128,
-+        shift in 0u32..127,
-+        scale in 0u8..=38,
-+    ) {
-+        let mantissa = mantissa >> shift;
-+        proptest::prop_assert_eq!(mantissa.to_float64(scale), nearest::<f64>(mantissa, scale));
-+        proptest::prop_assert_eq!(mantissa.to_float32(scale), nearest::<f32>(mantissa, scale));
-+    }
-+
-+    // Decimal256 values within i128 but beyond scale 38.
-+    #[test]
-+    fn test_decimal256_small_mantissa_to_float_matches_nearest(
-+        mantissa: i128,
-+        shift in 0u32..127,
-+        scale in 39u8..=76,
-+    ) {
-+        let mantissa = i256::from(mantissa >> shift);
-+        propte
-```
-
-**File**: `src/query/expression/tests/it/display.rs` (modified, +274/-0)
-```diff
-@@ -12,13 +12,25 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
+@@ -14,6 +14,8 @@
  
-+use std::borrow::Cow;
-+
-+use databend_common_expression::Column;
-+use databend_common_expression::Constant;
-+use databend_common_expression::ConstantFolder;
-+use databend_common_expression::DataBlock;
-+use databend_common_expression::Expr;
-+use databend_common_expression::FromData;
-+use databend_common_expression::FunctionContext;
- use databend_common_expression::FunctionDomain;
- use databend_common_expression::FunctionRegistry;
- use databend_common_expression::RawExpr;
- use databend_common_expression::Scalar;
- use databend_common_expression::Value;
- use databend_common_expression::type_check;
- use databend_common_expression::types::*;
-+use databend_common_expression_test_support::parse_raw_expr;
-+use databend_common_functions::BUILTIN_FUNCTIONS;
-+use proptest::prelude::*;
- 
- #[test]
- fn test_fmt_expr() {
-@@ -59,3 +71,265 @@ fn test_fmt_expr() {
-         format!("{}", expr.fmt_with_options(true))
-     );
- }
-+
-+fn fold(sql: &str) -> Expr {
-+    fold_with_columns(sql, &[])
-+}
-+
-+fn fold_with_columns(sql: &str, columns: &[(&str, DataType)]) -> Expr {
-+    let raw_expr = parse_raw_expr(sql, columns, &BUILTIN_FUNCTIONS);
-+    let expr = type_check::check(&raw_expr, &BUILTIN_FUNCTIONS).unwrap();
-+    ConstantFolder::fold(
-+        Cow::Owned(expr),
-+        &FunctionContext::default(),
-+        &BUILTIN_FUNCTIONS,
-+    )
-+    .0
-+    .into_owned()
-+}
-+
-+/// Renders a constant with `to_sql_string` and rebinds the text under a cast to its own
-+/// type, as a stored DEFAULT is rebound under the column type. Returns the SQL text and
-+/// the rebound constant.
-+fn sql_round_trip(scalar: Scalar, data_type: DataType) -> (String, Scalar) {
-+    let sql = Expr::<usize>::Constant(Constant {
-+        span: None,
-+        scalar,
-+        data_type: data_type.clone(),
-+    })
-+    .to_sql_string();
-+    let restored = fold(&format!("CAST({sql} AS {data_type})"));
-+    let restored = restored
-+        .as_constant()
-+        .unwrap_or_else(|| panic!("`{sql}` does not fold to a constant"))
-+        .scalar
-+        .clone();
-+    (sql, restored)
-+}
-+
-+fn check_f64_sql_round_trip(value: f64) -> String {
-+    let (sql, restored) = sql_round_trip(
-+        Scalar::Number(NumberScalar::Float64(value.into())),
-+        Float64Type::data_type(),
-+    );
-+    let Scalar::Number(NumberScalar::Float64(restored)) = restored else {
-+        panic!("`{sql}` rebinds to {restored:?}");
-+    };
-+    assert_float_restored(value, *restored, value.to_bits(), restored.to_bits(), &sql);
-+    sql
-+}
-+
-+fn check_f32_sql_round_trip(value: f32) -> String {
-+    let (sql, restored) = sql_round_trip(
-+        Scalar::Number(NumberScalar::Float32(value.into())),
-+        Float32Type::data_type(),
-+    );
-+    let Scalar::Number(NumberScalar::Float32(restored)) = restored else {
-+        panic!("`{sql}` rebinds to {restored:?}");
-+    };
-+    assert_float_restored(
-+        value as f64,
-+        *restored as f64,
-+        value.to_bits() as u64,
-+        restored.to_bits() as u64,
-+        &sql,
-+    );
-+    sql
-+}
-+
-+/// Floats must rebind bit-identically, except for the members of the zero and NaN
-+/// equality classes, which only need to stay in their class
-+/// (docs/designs/20260921-float-value-semantics.md).
-+fn assert_float_restored(value: f64, restored: f64, bits: u64, restored_bits: u64, sql: &str) {
-+    if value.is_nan() {
-+        assert!(restored.is_nan(), "{value:?} -> `{sql}` -> {restored:?}");
-+    } else if value == 0.0 {
-+        assert_eq!(restored, 0.0, "{value:?} -> `{sql}`");
-+    } else {
-+        assert_eq!(restored_bits, bits, "{value:?} -> `{sql}` -> {restored:?}");
-+    }
-+}
-+
-+#[test]
-+fn test_float_to_sql_string_round_trip() {
-+    // Adjacent floats, mantissas beyond 2^53 or scales beyond 10^22 that a naive
-+    // decimal-to-float division rounds twice, subnormals, and the extremes.
-+    let cases = [
-+        (0.0_f64, "0"),
-+        (-0.0, "-0"),
-+        (0.3, "0.3"),
-+        (0.30000000000000004, "0.30000000000000004"),
-+        (0.37349299999999996, "0.37349299999999996"),
-+        (1.5990461000457081, "1.5990461000457081"),
-+        (955.3820000000001, "955.3820000000001"),
-+        (-529455.1535166176, "-529455.1535166176"),
-+        (123456789.12345679, "123456789.12345679"),
-+        (0.000001, "0.000001"),
-+        (1.5e-7, "1.5e-7"),
-+        (1.5e-16, "1.5e-16"),
-+        (-1.5e-16, "-1.5e-16"),
-+        (-3.443861187166828e-233, "-3.443861187166828e-233"),
-+        (1.2345678901234568e20, "123456789012345680000"),
-+        (1e21, "1e21"),
-+        (f64::MIN_POSITIVE, "2.2250738585072014e-308"),
-+        (f64::from_bits(1), "5e-324"),
-+        (f64::MAX, "1.7976931348623157e308"),
-+        (f64::MIN, "-1.7976931348623157e308"),
-+        (f64::NAN, "'nan'::Float64"),
-+        (f64::INFINITY, "'inf'::Float64"),
-+        (f64::NEG_INFINITY, "'-inf'::Float64"),
-+    ];
-+    for (value,
-```
-
-**File**: `src/query/functions/src/scalars/decimal/src/cast.rs` (modified, +14/-16)
-```diff
-@@ -1048,35 +1048,33 @@ pub fn decimal_to_decimal_fast(
-     (value, dest_type)
+ use std::collections::HashMap;
+ use std::sync::Arc;
++use std::sync::atomic::AtomicUsize;
++use std::sync::atomic::Ordering;
+ use std::time::Duration;
+ use std::time::Instant;
+ use std::time::SystemTime;
+@@ -26,18 +28,22 @@ use databend_common_base::runtime::workload_group::MAX_CONCURRENCY_QUOTA_KEY;
+ use databend_common_base::runtime::workload_group::QuotaValue;
+ use databend_common_base::runtime::workload_group::WorkloadGroup;
+ use databend_common_base::runtime::workload_group::WorkloadGroupResource;
++use databend_common_catalog::session_type::SessionType;
+ use databend_common_exception::ErrorCode;
+ use databend_common_exception::Result;
+ use databend_common_meta_store::MetaStore;
+ use databend_common_meta_store::MetaStoreProvider;
+ use databend_common_sql::Planner;
++use databend_common_version::BUILD_INFO;
+ use databend_meta_client::RpcClientConf;
+ use databend_meta_runtime::DatabendRuntime;
+ use databend_query::interpreters::InterpreterFactory;
+ use databend_query::sessions::QueryEntry;
+ use databend_query::sessions::QueueData;
+ use databend_query::sessions::QueueManager;
++use databend_query::sessions::SessionManager;
+ use databend_query::sessions::TableContextSettings;
++use databend_query::test_kits::ConfigBuilder;
+ use databend_query::test_kits::TestFixture;
+ use log::error;
+ use tokio::sync::Mutex;
+@@ -48,6 +54,7 @@ struct TestData<const PASSED: bool = false> {
+     acquire_id: String,
+     abort_notify: Arc<WatchNotify>,
+     test_timeout: Duration,
++    wait_exits: Arc<AtomicUsize>,
  }
  
-+// Delegates to `Decimal::to_float32`/`to_float64` so that values and domains
-+// (see `register_decimal_to_float`) use the same correctly rounded conversion.
- trait DecimalConvert<T, U> {
--    fn convert(t: T, _scale: i32) -> U;
-+    fn convert(t: T, scale: u8) -> U;
- }
- 
- impl DecimalConvert<i128, F32> for F32 {
--    fn convert(t: i128, scale: i32) -> F32 {
--        let div = 10f32.powi(scale);
--        ((t as f32) / div).into()
-+    fn convert(t: i128, scale: u8) -> F32 {
-+        t.to_float32(scale).into()
-     }
- }
- 
- impl DecimalConvert<i128, F64> for F64 {
--    fn convert(t: i128, scale: i32) -> F64 {
--        let div = 10f64.powi(scale);
--        ((t as f64) / div).into()
-+    fn convert(t: i128, scale: u8) -> F64 {
-+        t.to_float64(scale).into()
-     }
- }
- 
- impl DecimalConvert<i256, F32> for F32 {
--    fn convert(t: i256, scale: i32) -> F32 {
--        let div = 10f32.powi(scale);
--        (f32::from(t) / div).into()
-+    fn convert(t: i256, scale: u8) -> F32 {
-+        t.to_float32(scale).into()
-     }
- }
- 
- impl DecimalConvert<i256, F64> for F64 {
--    fn convert(t: i256, scale: i32) -> F64 {
--        let div = 10f64.powi(scale);
--        (f64::from(t) / div).into()
-+    fn convert(t: i256, scale: u8) -> F64 {
-+        t.to_float64(scale).into()
-     }
- }
- 
-@@ -1090,21 +1088,21 @@ where
-     match from_type {
-         DecimalDataType::Decimal64(size) => {
-             let value = arg.try_downcast().unwrap();
--            let scale = size.scale() as i32;
-+            let scale = size.scale();
-             vectorize_1_arg::<Decimal64As128Type, NumberType<T>>(|x, _| T::convert(x, scale))(
-                 value, ctx,
-             )
+ impl<const PASSED: bool> std::fmt::Debug for TestData<PASSED> {
+@@ -67,6 +74,7 @@ impl<const PASSED: bool> TestData<PASSED> {
+             acquire_id,
+             abort_notify: Arc::new(WatchNotify::new()),
+             test_timeout: Duration::from_secs(1000),
++            wait_exits: Arc::new(AtomicUsize::new(0)),
          }
-         DecimalDataType::Decimal128(size) => {
-             let value = arg.try_downcast().unwrap();
--            let scale = size.scale() as i32;
-+            let scale = size.scale();
-             vectorize_1_arg::<DecimalType<i128>, NumberType<T>>(|x, _| T::convert(x, scale))(
-                 value, ctx,
-             )
-         }
-         DecimalDataType::Decimal256(size) => {
-             let value = arg.try_downcast().unwrap();
--            let scale = size.scale() as i32;
-+            let scale = size.scale();
-             vectorize_1_arg::<DecimalType<i256>, NumberType<T>>(|x, _| T::convert(x, scale))(
-                 value, ctx,
-             )
-```
-
-**File**: `src/query/sql/src/planner/binder/default_expr.rs` (modified, +1/-1)
-```diff
-@@ -163,7 +163,7 @@ impl DefaultExprBinder {
-         } else {
-             (scalar_expr.as_expr()?, false)
-         };
--        Ok((expr.sql_display(), is_deterministic, is_nextval))
-+        Ok((expr.to_sql_string(), is_deterministic, is_nextval))
      }
  
-     pub fn parse(&mut self, default_expr: &str) -> Result<AExpr> {
-```
-
-**File**: `tests/sqllogictests/suites/query/index/09_vector_index/09_0000_vector_index_base.test` (modified, +16/-16)
-```diff
-@@ -118,7 +118,7 @@ query IR
- SELECT id, cosine_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271, 0.73689797, 0.49985862, 0.64527255, 0.29313098]::vector(8)) AS similarity FROM t1 ORDER BY similarity ASC LIMIT 5;
- ----
- 1 0.0
--10 0.0592916
-+10 0.05929166
- 12 0.085179806
- 8 0.13477594
- 3 0.13801938
-@@ -135,11 +135,11 @@ SELECT id, cosine_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.315
- query IR
- SELECT id, cosine_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.31591033, 0.48453478, 0.51902057, 0.74154714, 0.75059576]::vector(8)) AS similarity FROM t1 ORDER BY similarity ASC LIMIT 5;
- ----
--4 0.031086385
-+4 0.031086326
- 2 0.075579524
--10 0.09369081
--11 0.097252846
--16 0.105270445
-+10 0.09369075
-+11 0.097252786
-+16 0.10527027
+@@ -76,6 +84,7 @@ impl<const PASSED: bool> TestData<PASSED> {
+             acquire_id,
+             abort_notify: Arc::new(WatchNotify::new()),
+             test_timeout: timeout,
++            wait_exits: Arc::new(AtomicUsize::new(0)),
+         }
+     }
+ }
+@@ -107,6 +116,10 @@ impl<const PASSED: bool> QueueData for TestData<PASSED> {
+         !PASSED
+     }
  
- query IR
- SELECT id, l1_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271, 0.73689797, 0.49985862, 0.64527255, 0.29313098]::vector(8)) AS similarity FROM t ORDER BY similarity ASC LIMIT 5;
-@@ -153,9 +153,9 @@ SELECT id, l1_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271
- query IR
- SELECT id, l1_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271, 0.73689797, 0.49985862, 0.64527255, 0.29313098]::vector(8)) AS similarity FROM t1 ORDER BY similarity ASC LIMIT 5;
- ----
--1 1.4901161e-7
--10 1.5290257
--12 1.7164081
-+1 0.0
-+10 1.5290259
-+12 1.7164079
- 8 1.7851611
- 15 1.8448958
++    fn exit_wait_pending(&self, _wait_time: Duration) {
++        self.wait_exits.fetch_add(1, Ordering::SeqCst);
++    }
++
+     fn get_abort_notify(&self) -> Arc<WatchNotify> {
+         self.abort_notify.clone()
+     }
+@@ -523,6 +536,110 @@ async fn test_watch_abort_notify_immediate_abort() -> anyhow::Result<()> {
+     Ok(())
+ }
  
-@@ -172,10 +172,10 @@ query IR
- SELECT id, l1_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.31591033, 0.48453478, 0.51902057, 0.74154714, 0.75059576]::vector(8)) AS similarity FROM t1 ORDER BY similarity ASC LIMIT 5;
- ----
- 4 0.86807996
--6 1.571893
-+6 1.5718925
- 16 1.6951541
- 2 1.8405688
--11 1.8465424
-+11 1.8465419
- 
- query IR
- SELECT id, l2_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271, 0.73689797, 0.49985862, 0.64527255, 0.29313098]::vector(8)) AS similarity FROM t ORDER BY similarity ASC LIMIT 5;
-@@ -189,11 +189,11 @@ SELECT id, l2_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271
- query IR
- SELECT id, l2_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271, 0.73689797, 0.49985862, 0.64527255, 0.29313098]::vector(8)) AS similarity FROM t1 ORDER BY similarity ASC LIMIT 5;
- ----
--1 8.940697e-8
-+1 0.0
- 10 0.63450795
--12 0.7636615
-+12 0.76366144
- 8 0.91897535
--3 0.93300396
-+3 0.9330039
- 
- query IR
- SELECT id, l2_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.31591033, 0.48453478, 0.51902057, 0.74154714, 0.75059576]::vector(8)) AS similarity FROM t ORDER BY similarity ASC LIMIT 5;
-@@ -208,9 +208,9 @@ query IR
- SELECT id, l2_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.31591033, 0.48453478, 0.51902057, 0.74154714, 0.75059576]::vector(8)) AS similarity FROM t1 ORDER BY similarity ASC LIMIT 5;
- ----
- 4 0.40161562
--16 0.7057761
--2 0.7328551
--6 0.73338425
-+16 0.7057762
-+2 0.732855
-+6 0.7333842
- 11 0.76073563
- 
- 
-```
-
-**File**: `tests/sqllogictests/suites/query/issues/issue_20751.test` (added, +89/-0)
-```diff
-@@ -0,0 +1,89 @@
-+# Float DEFAULT values must survive SQL serialization without decimal rounding.
-+# Compare values rather than their display so a formatter cannot hide corruption.
-+# Literals bind as decimals; the d_wide, d_tiny, f_third and f_tiny values are ones
-+# that a decimal-to-float conversion rounding more than once gets wrong.
-+statement ok
-+CREATE OR REPLACE TABLE issue_20751 (
-+    id INT,
-+    d DOUBLE DEFAULT 0.30000000000000004,
-+    d_small DOUBLE DEFAULT 1.5e-16,
-+    f FLOAT DEFAULT 0.30000004,
-+    f_small FLOAT DEFAULT 1.5e-16,
-+    folded DOUBLE DEFAULT (CAST('0.1' AS DOUBLE) + CAST('0.2' AS DOUBLE)),
-+    d_wide DOUBLE DEFAULT 0.37349299999999996,
-+    d_tiny DOUBLE DEFAULT -3.443861187166828e-233,
-+    f_third FLOAT DEFAULT 0.33333334,
-+    f_tiny FLOAT DEFAULT 1e-20,
-+    arr ARRAY(DOUBLE) DEFAULT [CAST('1.5e-16' AS DOUBLE), CAST('0.30000000000000004' AS DOUBLE)]
-+)
++#[tokio::test(flavor = "multi_thread")]
++async fn test_dropped_acquire_releases_queue_entry() -> anyhow::Result<()> {
++    let queue = QueueManager::<TestData>::create(1, create_meta_store().await?, false);
++    let holder = queue
++        .acquire(TestData::new("drop_wait".into(), "holder".into()))
++        .await?;
 +
-+# Omitted columns, explicit DEFAULT, and INSERT SELECT all use stored defaults.
-+statement ok
-+INSERT INTO issue_20751 (id) VALUES (1)
++    let data = TestData::new("drop_wait".into(), "waiter".into());
++    let wait_exits = data.wait_exits.clone();
++    let mut acquire = Box::pin(queue.acquire(data));
++    assert!(futures::poll!(acquire.as_mut()).is_pending());
++    assert_eq!(queue.length(), 1);
++    let weak_data = Arc::downgrade(&queue.list()[0]);
 +
-+statement ok
-+INSERT INTO issue_20751 VALUES (2, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT)
++    // Dropping the caller's future must clean up even without an abort notification.
++    drop(acquire);
++    assert_eq!(queue.length(), 0);
++    assert!(weak_data.upgrade().is_none());
++    assert_eq!(wait_exits.load(Ordering::SeqCst), 1);
 +
-+statement ok
-+INSERT INTO issue_20751 (id) SELECT 3
++    drop(holder);
++    let _guard = queue
++        .acquire(TestData::new("drop_wait".into(), "next".into()))
++        .await?;
++    Ok(())
++}
 +
-+query IBBBBBBBBBB
-+SELECT id,
-+       d = CAST('0.30000000000000004' AS DOUBLE),
-+       d_small = CAST('1.5e-16' AS DOUBLE),
-+       f = CAST('0.30000004' AS FLOAT),
-+       f_small = CAST('1.5e-16' AS FLOAT),
-+       folded = CAST('0.30000000000000004' AS DOUBLE),
-+       d_wide = CAST('0.37349299999999996' AS DOUBLE),
-+       d_tiny = CAST('-3.443861187166828e-233' AS DOUBLE),
-+       f_third = CAST('0.33333334' AS FLOAT),
-+       f_tiny = CAST('1e-20' AS FLOAT),
-+       arr = [CAST('1.5e-16' AS DOUBLE), CAST('0.30000000000000004' AS DOUBLE)]
-+FROM issue_20751 ORDER BY id
-+----
-+1 1 1 1 1 1 1 1 1 1 1
-+2 1 1 1 1 1 1 1 1 1 1
-+3 1 1 1 1 1 1 1 1 1 1
++#[tokio::test(flavor = "multi_thread")]
++async fn test_aborted_queued_query_releases_session() -> anyhow::Result<()> {
++    let mut config = ConfigBuilder::create().config();
++    config.query.common.max_active_sessions = 1;
++    let fixture = TestFixture::setup_with_config(&config).await?;
++    let queue = QueueManager::<QueryEntry>::create(1, create_meta_store().await?, false);
 +
-+# Stored defaults keep the shortest round-trip digits, also inside arrays.
-+query TT
-+SELECT name, default_expression FROM system.columns
-+WHERE database = currentDatabase() AND table = 'issue_20751'
-+  AND name IN ('d_wide', 'd_tiny', 'f_tiny', 'arr')
-+ORDER BY name
-+----
-+arr [1.5e-16, 0.30000000000000004]
-+d_tiny -3.443861187166828e-233
-+d_wide 0.37349299999999996
-+f_tiny 1e-20
++    let holder_ctx = fixture.new_query_ctx().await?;
++    let extras = Planner::new(holder_ctx.clone()).parse_sql("SELECT 1")?;
++    let _holder = queue
++        .acquire(QueryEntry::create_entry(&holder_ctx, &extras, true)?)
++        .await?;
 +
-+# Literals convert to the nearest float, not only stored defaults.
-+query BB
-+SELECT 0.37349299999999996::DOUBLE = CAST('0.37349299999999996' AS DOUBLE),
-+       1e-20::FLOAT = CAST('1e-20' AS FLOAT)
-+----
-+1 1
++    let session = fixture.new_session_with_type(SessionType::MySQL).await?;
++    let session_id = session.get_id();
++    let weak_session = Arc::downgrade(&session);
++    let ctx = session.create_query_context(&BUILD_INFO).await?;
++    let weak_ctx = Arc::downgrade(&ctx);
++    let entry = QueryEntry::create_entry(&ctx, &extras, true)?;
++    let abort_notify = entry.get_abort_notify();
++    drop(ctx);
++    drop(session);
 +
-+# Old blocks and newly inserted rows must agree on added-column defaults.
-+statement ok
-+ALTER TABLE issue_20751 ADD COLUMN added_d DOUBLE DEFAULT 0.30000000000000004
-+
-+statement ok
-+ALTER TABLE issue_20751 ADD COLUMN added_f FLOAT DEFAULT 1.5e-16
-+
-+statement ok
-+INSERT INTO issue_20751 (id) VALUES (4)
-+
-+query IBB
-+SELECT id,
-+       added_d = CAST('0.30000000000000004' AS DOUBLE),
-+       added_f = CAST('1.5e-16' AS FLOAT)
-+FROM issue_20751 ORDER BY id
-+----
-+1 1 1
-+2 1 1
-+3 1 1
-+4 1 1
-+
-+statement ok
-+DROP TABLE issue_20751
++    let mut acquire = Box::pin(queue.acquire(entry));
++    assert!(futures::poll!(acquire.as_mut()).is_pending());
++    assert_eq!(queue.length(), 1);
++    assert!(weak_session.upgrade().is_some());
++    assert!(
++        SessionManager::instance()
++            .create_session(SessionType::MySQL)
++            .await
++         
 ```
 
 ---
 
-### Incident Patch 3: `83fa6173` (2026-10-21)
-**Commit Message**: fix(query): correct decimal text parsing and JSON precision (#20788)
+### Incident Patch 2: `058a1e8f` (2026-10-23)
+**Commit Message**: chore(build): generate the embedded meta-service code once (#20814)
 
-* fix(query): correct decimal text parsing and JSON precision
+* chore(build): generate the embedded meta-service code once
 
-* test(query): cover decimal text decoder contracts
+`create_meta_store::<DatabendRuntime>()` is an async fn, so its state
+machine, down to the embedded openraft node and the tasks it spawns, was
+code-generated in every crate that awaited it, including databend-query,
+the last crate before linking. meta-store itself had none of that code.
 
-* perf(expression): batch decimal coefficient accumulation
+Add a non-generic `create_default_meta_store()` returning a boxed
+`dyn Future`, so the code is generated once in meta-store and callers
+only go through the vtable. Switch all callers to it and drop the now
+unused databend-meta-runtime dependency from catalog, users and sql
+test-support.
 
-Accumulate decimal digits in 18-digit i64 chunks before merging into the target width, avoiding per-digit checked Decimal128/256 arithmetic. Keep rounding digits separate and skip unnecessary scale multiplication.
+databend-query: LLVM IR 12.39M -> 10.71M lines; its lib build drops by
+about 4s without incremental and 6s with it. No behavior change; one
+extra allocation per meta-store creation at startup.
 
-Preserve the historical zero-exponent interpretation of bare exponent markers and signs, while retaining checked i32 exponent parsing. Cover compatibility and chunk boundaries in parser and SQL regressions.
+* fix(test): import DatabendRuntime in users external access tests
 
-* test(query): reject decimal carry overflow in text imports
+The tests merged from main relied on user_api.rs importing
+DatabendRuntime, which this branch removed together with the
+databend-meta-runtime dependency. Import it in the test module and
+keep the crate as a dev-dependency only.
 
-* fix(query): honor decimal rounding settings in input decoders
-
-Pass numeric_cast_option through JSON, CSV/TSV, fast VALUES, and nested DECIMAL decoding. Cover rounding/truncating behavior and carry overflow in SQL, with explicit session settings.
-
-Deduplicate chunk appends via an inline value helper, derive the saw-digit flag, and document the intentional i32 exponent bound without saturation.
-
-**File**: `src/query/expression/Cargo.toml` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +0/-2)
 ```diff
-@@ -60,7 +60,7 @@ recursive = { workspace = true }
- rust_decimal = { workspace = true }
- rustls = { workspace = true }
- serde = { workspace = true }
--serde_json = { workspace = true }
-+serde_json = { workspace = true, features = ["arbitrary_precision"] }
- smallvec = { workspace = true }
- strength_reduce = { workspace = true }
- terminal_size = { workspace = true }
+@@ -3075,7 +3075,6 @@ dependencies = [
+  "databend-common-storage",
+  "databend-common-users",
+  "databend-meta-client 260205.13.5",
+- "databend-meta-runtime",
+  "databend-storages-common-session",
+  "databend-storages-common-table-meta",
+  "dyn-clone",
+@@ -4008,7 +4007,6 @@ dependencies = [
+  "databend-common-storage",
+  "databend-common-users",
+  "databend-meta-client 260205.13.5",
+- "databend-meta-runtime",
+  "databend-storages-common-session",
+  "databend-storages-common-table-meta",
+  "goldenfile",
 ```
 
-**File**: `src/query/expression/src/utils/serialize.rs` (modified, +134/-259)
+**File**: `src/meta/store/src/lib.rs` (modified, +13/-0)
 ```diff
-@@ -12,7 +12,6 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
+@@ -16,6 +16,7 @@ databend_common_tracing::register_module_tag!("[META_CLIENT]", "databend_meta_cl
  
--use std::cmp::Ordering;
- use std::result::Result;
+ pub(crate) mod local;
  
- use chrono::NaiveDate;
-@@ -29,303 +28,179 @@ pub fn uniform_date(date: NaiveDate) -> i32 {
-         .num_days() as i32
++use std::future::Future;
+ use std::ops::Deref;
+ use std::pin::Pin;
+ use std::sync::Arc;
+@@ -213,6 +214,18 @@ impl MetaStoreProvider {
+         MetaStoreProvider { rpc_conf }
+     }
+ 
++    /// [`Self::create_meta_store`] for the production runtime.
++    ///
++    /// The embedded meta-service behind it is a whole openraft node. An `async fn`'s state
++    /// machine is code-generated in every crate that polls it, so returning it as a boxed
++    /// `dyn Future` makes this crate the only one that generates the raft code; callers only go
++    /// through the vtable.
++    pub fn create_default_meta_store(
++        &self,
++    ) -> Pin<Box<dyn Future<Output = Result<MetaStore, CreationError>> + Send + '_>> {
++        Box::pin(self.create_meta_store::<DatabendRuntime>())
++    }
++
+     pub async fn create_meta_store<RT: RuntimeApi>(&self) -> Result<MetaStore, CreationError> {
+         if self.rpc_conf.local_mode() {
+             let local = match &self.rpc_conf.embedded_dir {
+```
+
+**File**: `src/query/catalog/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -27,7 +27,6 @@ databend-common-statistics = { workspace = true }
+ databend-common-storage = { workspace = true }
+ databend-common-users = { workspace = true }
+ databend-meta-client = { workspace = true }
+-databend-meta-runtime = { workspace = true }
+ databend-storages-common-session = { workspace = true }
+ databend-storages-common-table-meta = { workspace = true }
+ dyn-clone = { workspace = true }
+```
+
+**File**: `src/query/catalog/src/catalog/manager.rs` (modified, +3/-7)
+```diff
+@@ -39,7 +39,6 @@ use databend_common_meta_app::tenant::Tenant;
+ use databend_common_meta_store::MetaStore;
+ use databend_common_meta_store::MetaStoreProvider;
+ use databend_meta_client::types::anyerror::func_name;
+-use databend_meta_runtime::DatabendRuntime;
+ use databend_storages_common_session::SessionState;
+ use parking_lot::RwLock;
+ 
+@@ -94,12 +93,9 @@ impl CatalogManager {
+         let meta = {
+             let provider = Arc::new(MetaStoreProvider::new(conf.meta.to_meta_grpc_client_conf()));
+ 
+-            provider
+-                .create_meta_store::<DatabendRuntime>()
+-                .await
+-                .map_err(|e| {
+-                    ErrorCode::MetaServiceError(format!("Failed to create meta store: {}", e))
+-                })?
++            provider.create_default_meta_store().await.map_err(|e| {
++                ErrorCode::MetaServiceError(format!("Failed to create meta store: {}", e))
++            })?
+         };
+ 
+         let tenant = conf.query.tenant_id.clone();
+```
+
+**File**: `src/query/ee/src/resource_management/mod.rs` (modified, +1/-5)
+```diff
+@@ -26,7 +26,6 @@ use databend_common_exception::Result;
+ use databend_common_management::WarehouseMgr;
+ use databend_common_meta_store::MetaStoreProvider;
+ use databend_enterprise_resources_management::ResourcesManagement;
+-use databend_meta_runtime::DatabendRuntime;
+ use databend_query::sessions::BuildInfoRef;
+ pub use resources_management_kubernetes::KubernetesResourcesManagement;
+ pub use resources_management_self_managed::SelfManagedResourcesManagement;
+@@ -52,10 +51,7 @@ pub async fn init_resources_management(cfg: &InnerConfig, version: BuildInfoRef)
+                 "system_managed" => {
+                     let meta_api_provider =
+                         MetaStoreProvider::new(cfg.meta.to_meta_grpc_client_conf());
+-                    match meta_api_provider
+-                        .create_meta_store::<DatabendRuntime>()
+-                        .await
+-                    {
++                    match meta_api_provider.create_default_meta_store().await {
+                         Err(cause) => {
+                             let err = ErrorCode::MetaServiceError(format!(
+                                 "Failed to create meta store: {}",
+```
+
+**File**: `src/query/ee/tests/it/storages/fuse/operations/clone.rs` (modified, +1/-2)
+```diff
+@@ -20,7 +20,6 @@ use databend_common_meta_app::principal::UserPrivilegeType;
+ use databend_common_meta_store::MetaStoreProvider;
+ use databend_common_storages_fuse::FuseTable;
+ use databend_enterprise_query::test_kits::context::EESetup;
+-use databend_meta_runtime::DatabendRuntime;
+ use databend_query::sessions::TableContextTableAccess;
+ use databend_query::test_kits::TestFixture;
+ use databend_query::test_kits::query_count;
+@@ -48,7 +47,7 @@ async fn assert_secured_rows(
+ async fn test_clone_inherited_policies_for_restricted_owner() -> anyhow::Result<()> {
+     // Catalog metadata and policy APIs must share one Meta service, as they do in production.
+     let meta = MetaStoreProvider::new(MetaConfig::default().to_meta_grpc_client_conf())
+-        .create_meta_store::<DatabendRuntime>()
++        .create_default_meta_store()
+         .await?;
+     let mut setup = EESetup::new();
+     setup.config_mut().meta.endpoints = meta.inner().endpoints.clone();
+```
+
+**File**: `src/query/ee/tests/it/storages/fuse/operations/vacuum.rs` (modified, +1/-5)
+```diff
+@@ -57,7 +57,6 @@ use databend_enterprise_vacuum_handler::vacuum_handler::VacuumTempOptions;
+ use databend_meta_client::kvapi::KvApiExt;
+ use databend_meta_client::kvapi::ListOptions;
+ use databend_meta_client::types::TxnRequest;
+-use databend_meta_runtime::DatabendRuntime;
+ use databend_query::sessions::TableContextSettings;
+ use databend_query::sessions::TableContextTableAccess;
+ use databend_query::test_kits::*;
+@@ -1585,10 +1584,7 @@ async fn new_local_meta() -> MetaStore {
+     let meta_config = MetaConfig::default();
+     let config = meta_config.to_meta_grpc_client_conf();
+     let provider = MetaStoreProvider::new(config);
+-    provider
+-        .create_meta_store::<DatabendRuntime>()
+-        .await
+-        .unwrap()
++    provider.create_default_meta_store().await.unwrap()
  }
  
-+/// Parse a decimal at a known precision and scale, optionally rounding half away from zero.
-+/// In prefix mode (`exact = false`), return the number of bytes consumed before the delimiter.
-+/// For compatibility, an exponent marker with no digits (after an optional sign) means
-+/// exponent zero; the marker and sign are consumed. Explicit exponents must fit in `i32`,
-+/// including for zero mantissas or values that would otherwise round to zero. This is
-+/// intentional: out-of-range exponents are treated as malformed rather than saturated.
- // Used in function, so we don't want to return ErrorCode with backtrace
- pub fn read_decimal_with_size<T: Decimal>(
-     buf: &[u8],
-     size: DecimalSize,
-     exact: bool,
-     rounding_mode: bool,
- ) -> Result<(T, usize), String> {
--    // Read one more digit for round
--    let (n, d, e, n_read) =
--        read_decimal::<T>(buf, (size.precision() + 1) as u32, size.scale() as _, exact)?;
--    if d as i32 + e > (size.precision() - size.scale()) as i32 {
--        return Err(decimal_overflow_error());
-+    if buf.is_empty() {
-+        return Err(decimal_parse_error("empty"));
-     }
--    let scale_diff = e + size.scale() as i32;
- 
--    let n = match scale_diff.cmp(&0) {
--        Ordering::Less => {
--            let scale_diff = -scale_diff as u8;
--            let mut round_val = None;
--            if rounding_mode {
--                // Checking whether numbers need to be added or subtracted to calculate rounding
--                if let Some(r) = n.checked_rem(T::e(scale_diff)) {
--                    if let Some(m) = r.checked_div(T::e(scale_diff - 1)) {
--                        if m >= T::from_i64(5) {
--                            round_val = Some(T::one());
--                        } else if m <= T::from_i64(-5) {
--                            round_val = Some(T::minus_one());
--                        }
--                    }
-+    let negative = buf[0] == b'-';
-+    let start = usize::from(matches!(buf[0], b'+' | b'-'));
-+    let mut pos = start;
-+    let mut has_point = false;
-+    let mut significant_digits = 0usize;
-+    let mut fractional_digits = 0usize;
-+    // Locate the decimal point and exponent before accumulating a coefficient. A
-+    // long mantissa can still fit after applying its exponent, e.g. 10000e-4.
-+    while pos < buf.len() {
-+        match buf[pos] {
-+            b'0'..=b'9' => {
-+                if has_point {
-+                    fractional_digits += 1;
-+                }
-+                if significant_digits > 0 || buf[pos] != b'0' {
-+                    significant_digits += 1;
-                 }
-             }
--            // e < 0, than -e is the actual scale, (-e) > scale means we need to cut more
--            let n = n
--                .checked_div(T::e(scale_diff))
--                .ok_or_else(decimal_overflow_error)?;
--            if let Some(val) = round_val {
--                n.checked_add(val).ok_or_else(decimal_overflow_error)?
--            } else {
--                n
--            }
-+            b'.' if !has_point => has_point = true,
-+            b'e' | b'E' => break,
-+            _ if exact => return Err(decimal_parse_error("unexpected char")),
-+            _ => break,
-         }
--        Ordering::Greater => n
--            .checked_mul(T::e(scale_diff as _))
--            .ok_or_else(decimal_overflow_error)?,
--        Ordering::Equal => n,
--    };
--    Ok((n, n_read))
--}
--
--/// Return (n, n_digits, exponent, bytes_consumed), where:
--///   value = n * 10^exponent.
--///   n has n_digits digits, with no leading or fraction trailing zero.
--///   Excessive digits in a fraction are discarded (not rounded)
--/// no information is lost except excessive digits cut due to max_digits and max_scales.
--/// e.g '010.010' return (1001, 4 -2, 7)
--/// usage:
--///   used directly: for example 'select 1.1' should return a decimal
--///   used read_decimal_with_size: for example 'select 1.1' should return a decimal
--pub fn read_decimal<T: Decimal>(
--    buf: &[u8],
--    max_digits: u32,
--    mut max_scales: u32,
--    exact: bool,
--) -> Result<(T, u8, i32, usize), String> {
--    if buf.is_empty() {
--        return Err(decimal_parse_error("empty"));
-+        pos += 1;
-     }
--
--    let mut n = T::zero();
--    let mut pos = 0;
--    let len = buf.len();
--
--    let sign = match buf[0] {
--        b'+' => {
-+    // The scan consumed only digits and at most one decimal point.
-+    let has_digits = pos - start > usize::from(has_point);
-+    if !has_digits {
-+        return Err(decimal_parse_error("no digits"));
-+    }
-+    let mantissa = &buf[start..pos];
-+    let mut exponent = 0i32;
-+    if pos < buf.len() && matches!(buf[pos], b'e' | b'E') {
-+        pos +
+ #[tokio::test(flavor = "multi_thread")]
 ```
 
-**File**: `src/query/expression/tests/it/decimal.rs` (modified, +98/-95)
+**File**: `src/query/service/src/catalogs/default/mutable_catalog.rs` (modified, +3/-7)
 ```diff
-@@ -12,7 +12,6 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
+@@ -139,7 +139,6 @@ use databend_common_users::GrantObjectVisibilityChecker;
+ use databend_meta_client::types::Change;
+ use databend_meta_client::types::MetaId;
+ use databend_meta_client::types::SeqV;
+-use databend_meta_runtime::DatabendRuntime;
+ use fastrace::func_name;
+ use log::info;
+ use log::warn;
+@@ -193,12 +192,9 @@ impl MutableCatalog {
+         let meta = {
+             let provider = Arc::new(MetaStoreProvider::new(conf.meta.to_meta_grpc_client_conf()));
  
--use databend_common_expression::serialize::read_decimal;
- use databend_common_expression::serialize::read_decimal_with_size;
- use databend_common_expression::type_check::common_super_type;
- use databend_common_expression::types::DataType;
-@@ -23,109 +22,113 @@ use databend_common_expression::types::i256;
- use num_bigint::BigInt;
- use pretty_assertions::assert_eq;
+-            provider
+-                .create_meta_store::<DatabendRuntime>()
+-                .await
+-                .map_err(|e| {
+-                    ErrorCode::MetaServiceError(format!("Failed to create meta store: {}", e))
+-                })?
++            provider.create_default_meta_store().await.map_err(|e| {
++                ErrorCode::MetaServiceError(format!("Failed to create meta store: {}", e))
++            })?
+         };
  
-+// SQL tests cover decimal values and import failures. Keep direct tests for the
-+// parser contracts that SQL imports do not expose: truncation and prefix length.
- #[test]
--fn test_decimal_text_exact() -> anyhow::Result<()> {
--    let cases = vec!["", ".e", ".", ".a", "-", "+", "e1", "a", "1e1e1", "1.1.1"];
--
--    for s in cases {
--        let r = read_decimal::<i128>(s.as_bytes(), 10, 5, true);
--        assert!(r.is_err(), "{s}: {r:?}");
--    }
--    Ok(())
--}
--
--#[test]
--fn test_decimal_text() -> anyhow::Result<()> {
--    let cases = vec![
--        ("0#", (0i128, 0, 0, 1)),
--        ("+0#", (0i128, 0, 0, 2)),
--        ("-0#", (0i128, 0, 0, 2)),
--        ("00#", (0i128, 0, 0, 2)),
--        ("0.0#", (0i128, 0, 0, 3)),
--        ("00.0#", (0i128, 0, 0, 4)),
--        ("00.00#", (0i128, 0, 0, 5)),
--        (".0#", (0i128, 0, 0, 2)),
--        (".00#", (0i128, 0, 0, 3)),
--        ("0.#", (0i128, 0, 0, 2)),
--        ("1#", (1i128, 1, 0, 1)),
--        ("-1#", (-1i128, 1, 0, 2)),
--        ("10#", (10i128, 2, 0, 2)),
--        ("15.0e-1#", (15i128, 2, -1, 7)),
--        ("15.0e1#", (15i128, 2, 1, 6)),
--        ("15.0e-11#", (15i128, 2, -11, 8)),
--        ("010.010#", (1001i128, 4, -2, 7)),
--        ("0120.0210#", (120021i128, 6, -3, 9)),
--        ("0120.0210e3#", (120021i128, 6, 0, 11)),
--        ("0120.0210e-1#", (120021i128, 6, -4, 12)),
--    ];
--
--    for (s, l) in cases {
--        let r = read_decimal::<i128>(s.as_bytes(), 10, 10, false);
--        match r {
--            Ok(r) => assert_eq!(l, r, "{s}: {l:?} != {r:?}"),
--            Err(e) => panic!("{s}: {l:?} != {e:?}"),
-+fn test_decimal_with_size_modes() {
-+    fn check<T: Decimal>() {
-+        let size = DecimalSize::new_unchecked(6, 3);
-+        for (text, truncated, rounded) in [
-+            ("+0001.2345", 1234, 1235),
-+            ("-0001.2345", -1234, -1235),
-+            (".0005", 0, 1),
-+            ("-.0005", 0, -1),
-+            ("0.", 0, 0),
-+            ("12.345E-1", 1234, 1235),
-+            (".0210e3", 21000, 21000),
-+            ("0120.0210e-1", 12002, 12002),
-+            ("1.5e+1", 15000, 15000),
-+            // Preserve the historical zero-exponent interpretation and consume e/sign.
-+            ("1e", 1000, 1000),
-+            ("1e+", 1000, 1000),
-+            ("1e-", 1000, 1000),
-+            ("1.5e", 1500, 1500),
-+            ("1.5E+", 1500, 1500),
-+            ("-1.5e-", -1500, -1500),
-+            ("0e+", 0, 0),
-+            ("1e-2147483648", 0, 0),
-+            ("0e2147483647", 0, 0),
-+        ] {
-+            for rounding_mode in [false, true] {
-+                let expected = T::from_i64(if rounding_mode { rounded } else { truncated });
-+                // A later field's exponent must not affect the current number.
-+                for suffix in ["", ",2e10", ")", "\t3", "\n4"] {
-+                    let input = format!("{text}{suffix}");
-+                    assert_eq!(
-+                        read_decimal_with_size::<T>(input.as_bytes(), size, false, rounding_mode)
-+                            .unwrap(),
-+                        (expected, text.len()),
-+                        "{input:?}, rounding={rounding_mode}"
-+                    );
-+                    let exact =
-+                        read_decimal_with_size::<T>(input.as_bytes(), size, true, rounding_mode);
-+                    if suffix.is_empty() {
-+                        assert_eq!(exact.unwrap(), (expected, text.len()));
-+                    } else {
-+                        assert!(exact.is_err(), "{input:?}");
-+                    }
-+                }
-+            }
-+        }
-+        // Truncation succeeds at the precision limit where rounding would overflow.
-+        for (text, coefficient) in [("999.9995", 999999), ("-999.9995", -999999)] {
-+            assert_eq!(
-+                read_decimal_with_size::<T>(text.as_bytes(), size, true, false).unwrap(),
-+                (T::from_i64(coefficient), text.len())
-+            );
-+            assert!(read_decimal_with_size::<T>(text.as_bytes(), size, true, true).is_err());
-+        }
-+        for text in ["1e10,", "1e-2147483649,", "0e9999999999,"] {
-+            assert!(
-+                read_decimal_with_size::<T>(text.as_bytes(), size, false, true).is_err(),
-+                "{text}"
-+            );
-+        }
-+        // Consume exactly the coefficient across full/partial 18-digit chunks,
-+        // including all-zero chunks, without absorbing the next field.
-+        let size = DecimalSize::new_unchecked(T::MAX_PRECISION, 0)
+         let tenant = conf.query.tenant_id.clone();
 ```
 
-**File**: `src/query/formats/src/field_decoder/fast_values.rs` (modified, +6/-1)
-```diff
-@@ -242,7 +242,12 @@ impl FastFieldDecoderValues {
-         reader: &mut Cursor<R>,
-     ) -> Result<()> {
-         let buf = Cursor::split(reader).1;
--        let (n, n_read) = read_decimal_with_size(buf, size, false, true)?;
-+        let (n, n_read) = read_decimal_with_size(
-+            buf,
-+            size,
-+            false,
-+            self.common_settings.settings.is_rounding_mode,
-+        )?;
-         column.push(n);
-         reader.consume(n_read);
-         Ok(())
-```
+---
 
-**File**: `src/query/formats/src/field_decoder/json_ast.rs` (modified, +34/-1)
+### Incident Patch 3: `b6fada3a` (2026-10-23)
+**Commit Message**: fix(optimizer): avoid incorrect anti joins for expression keys (#20804)
+
+* fix(optimizer): require a column witness for outer-to-anti rewrites
+
+* test(optimizer): focus expression-key anti-join regression in SQL
+
+* test(optimizer): record expression-key anti-join plans
+
+---------
+
+Co-authored-by: dantengsky <[REDACTED_EMAIL]>
+
+**File**: `src/query/sql/src/planner/optimizer/optimizers/rule/join_rules/push_down_filter_join/outer_join_to_anti_join.rs` (modified, +6/-2)
 ```diff
-@@ -261,7 +261,7 @@ impl FieldJsonAstDecoder {
-         size: DecimalSize,
-         value: &Value,
-     ) -> Result<()> {
--        column.push(read_decimal_from_json(value, size)?);
-+        column.push(read_decimal_from_json(value, size, self.is_rounding_mode)?);
-         Ok(())
-     }
+@@ -25,7 +25,8 @@ use crate::plans::ScalarExpr;
+ use crate::plans::ScalarItem;
  
-@@ -621,6 +621,39 @@ mod tests {
+ /// Convert an outer-join exclusion pattern to the corresponding anti join when
+-/// the null-tested expression is a regular equi-key on the null-extended side:
++/// the null-tested expression is a direct column and a regular equi-key on the
++/// null-extended side:
+ ///
+ /// ```text
+ /// Filter(right_key IS NULL)
+@@ -38,6 +39,8 @@ use crate::plans::ScalarItem;
+ /// A matched row cannot have a NULL regular equi-join key, even when the source
+ /// column itself is nullable. Therefore the filter keeps exactly the preserved
+ /// side's unmatched rows. Null-equal join conditions are deliberately excluded.
++/// An arbitrary equi-key expression may map null-extended inputs to a non-NULL
++/// value, so its NULL test does not necessarily select unmatched rows.
+ pub fn outer_join_to_anti_join(s_expr: &SExpr, metadata: MetadataRef) -> Result<Option<SExpr>> {
+     let filter = s_expr.plan().as_filter().unwrap();
+     let join_expr = s_expr.unary_child();
+@@ -49,7 +52,8 @@ pub fn outer_join_to_anti_join(s_expr: &SExpr, metadata: MetadataRef) -> Result<
+     };
  
-     use super::*;
+     let Some(predicate_index) = filter.predicates.iter().position(|predicate| {
+-        let Some(null_tested_expr) = null_tested_expr(predicate) else {
++        let Some(null_tested_expr @ ScalarExpr::BoundColumnRef(_)) = null_tested_expr(predicate)
++        else {
+             return false;
+         };
  
-+    #[test]
-+    fn test_read_float64() -> Result<()> {
-+        let decoder = FieldJsonAstDecoder::create(&InputFormatSettings::default(), false);
-+        let data_type = TableDataType::Number(NumberDataType::Float64);
-+        let cases = [
-+            "0",
-+            "-0.0",
-+            "165.6263",
-+            "-0.0003",
-+            "99999999999999.9999",
-+            "1.23456789012345678e13",
-+            "18446744073709551615",
-+            "2.2250738585072014e-308",
-+            "5e-324",
-+            "1.7976931348623157e308",
-+        ];
-+        for text in cases {
-+            let value = serde_json::from_str(text).unwrap();
-+            let mut builder = ColumnBuilder::with_capacity(&DataType::from(&data_type), 1);
-+            decoder.read_field_with_data_type(&mut builder, &value, &data_type)?;
-+            let column = builder.build();
-+            let ScalarRef::Number(NumberScalar::Float64(actual)) = column.index(0).unwrap() else {
-+                unreachable!()
-+            };
-+            assert_eq!(
-+                actual.0.to_bits(),
-+                text.parse::<f64>().unwrap().to_bits(),
-+                "{text}"
-+            );
-+        }
-+        Ok(())
-+    }
-+
-     #[test]
-     fn test_read_tuple_object_by_field_name() -> Result<()> {
-         let decoder = FieldJsonAstDecoder::create(&InputFormatSettings::default(), false);
 ```
 
-**File**: `src/query/formats/src/field_decoder/nested.rs` (modified, +6/-1)
+**File**: `src/query/sql/tests/it/optimizer/outer_join_to_anti.rs` (modified, +18/-0)
 ```diff
-@@ -244,7 +244,12 @@ impl NestedValues {
-         reader: &mut Cursor<R>,
-     ) -> Result<()> {
-         let buf = Cursor::split(reader).1;
--        let (n, n_read) = read_decimal_with_size(buf, size, false, true)?;
-+        let (n, n_read) = read_decimal_with_size(
-+            buf,
-+            size,
-+            false,
-+            self.common_settings.settings.is_rounding_mode,
-+        )?;
-         column.push(n);
-         reader.consume(n_read);
-         Ok(())
+@@ -120,6 +120,24 @@ LIMIT 10",
+ FROM outer_to_anti_left AS l
+ RIGHT JOIN outer_to_anti_right AS r ON l.k = r.k
+ WHERE l.keep IS NULL",
++        },
++        SqlTestCase {
++            name: "left_expression_key_is_not_anti_join",
++            description: "IF returns 0 on an unmatched right side, so its NULL test must not become a left anti join.",
++            setup_sqls: &[LEFT_TABLE, RIGHT_TABLE],
++            sql: "SELECT l.k
++FROM outer_to_anti_left AS l
++LEFT JOIN outer_to_anti_right AS r ON l.k = IF(r.k IS NULL, 0, r.payload)
++WHERE IF(r.k IS NULL, 0, r.payload) IS NULL",
++        },
++        SqlTestCase {
++            name: "right_expression_key_is_not_anti_join",
++            description: "The RIGHT JOIN mirror must also avoid the expression-key anti rewrite; later valid simplifications are allowed.",
++            setup_sqls: &[LEFT_TABLE, RIGHT_TABLE],
++            sql: "SELECT l.k
++FROM outer_to_anti_right AS r
++RIGHT JOIN outer_to_anti_left AS l ON IF(r.k IS NULL, 0, r.payload) = l.k
++WHERE IF(r.k IS NULL, 0, r.payload) IS NULL",
+         },
+         SqlTestCase {
+             name: "null_safe_condition_keeps_left_outer",
 ```
 
-**File**: `src/query/formats/src/field_decoder/separated_text.rs` (modified, +6/-1)
+**File**: `src/query/sql/tests/it/optimizer/outer_join_to_anti.txt` (modified, +90/-0)
 ```diff
-@@ -234,7 +234,12 @@ impl SeparatedTextDecoder {
-         size: DecimalSize,
-         data: &[u8],
-     ) -> Result<()> {
--        let (n, n_read) = read_decimal_with_size(data, size, false, true)?;
-+        let (n, n_read) = read_decimal_with_size(
-+            data,
-+            size,
-+            false,
-+            self.common_settings.settings.is_rounding_mode,
-+        )?;
-         if n_read != data.len() {
-             return Err(ErrorCode::BadBytes(
-                 "unexpected remaining bytes".to_string(),
+@@ -372,6 +372,96 @@ Filter
+         └── limit: NONE
+ 
+ 
++=== left_expression_key_is_not_anti_join ===
++description: IF returns 0 on an unmatched right side, so its NULL test must not become a left anti join.
++sql: SELECT l.k
++FROM outer_to_anti_left AS l
++LEFT JOIN outer_to_anti_right AS r ON l.k = IF(r.k IS NULL, 0, r.payload)
++WHERE IF(r.k IS NULL, 0, r.payload) IS NULL
++raw_plan:
++EvalScalar
++├── scalars: [outer_to_anti_left.k (#0) AS (#0)]
++└── Filter
++    ├── filters: [not(is_not_null(if(not(is_not_null(outer_to_anti_right.k (#3))), 0, outer_to_anti_right.payload (#5))))]
++    └── Join(Left)
++        ├── build keys: [if(not(is_not_null(outer_to_anti_right.k (#3))), 0, outer_to_anti_right.payload (#5))]
++        ├── probe keys: [outer_to_anti_left.k (#0)]
++        ├── other filters: []
++        ├── Scan
++        │   ├── table: default.outer_to_anti_right (#1)
++        │   ├── filters: []
++        │   ├── order by: []
++        │   └── limit: NONE
++        └── Scan
++            ├── table: default.outer_to_anti_left (#0)
++            ├── filters: []
++            ├── order by: []
++            └── limit: NONE
++
++optimized_plan:
++EvalScalar
++├── scalars: [outer_to_anti_left.k (#0) AS (#0), outer_to_anti_right.k (#3) AS (#6), outer_to_anti_right.payload (#5) AS (#7)]
++└── Join(Inner)
++    ├── build keys: [if(not(is_not_null(outer_to_anti_right.k (#3))), 0, outer_to_anti_right.payload (#5))]
++    ├── probe keys: [outer_to_anti_left.k (#0)]
++    ├── other filters: []
++    ├── Scan
++    │   ├── table: default.outer_to_anti_right (#1)
++    │   ├── filters: [not(is_not_null(if(not(is_not_null(outer_to_anti_right.k (#3))), 0, outer_to_anti_right.payload (#5))))]
++    │   ├── order by: []
++    │   └── limit: NONE
++    └── Scan
++        ├── table: default.outer_to_anti_left (#0)
++        ├── filters: []
++        ├── order by: []
++        └── limit: NONE
++
++
++=== right_expression_key_is_not_anti_join ===
++description: The RIGHT JOIN mirror must also avoid the expression-key anti rewrite; later valid simplifications are allowed.
++sql: SELECT l.k
++FROM outer_to_anti_right AS r
++RIGHT JOIN outer_to_anti_left AS l ON IF(r.k IS NULL, 0, r.payload) = l.k
++WHERE IF(r.k IS NULL, 0, r.payload) IS NULL
++raw_plan:
++EvalScalar
++├── scalars: [outer_to_anti_left.k (#3) AS (#3)]
++└── Filter
++    ├── filters: [not(is_not_null(if(not(is_not_null(outer_to_anti_right.k (#0))), 0, outer_to_anti_right.payload (#2))))]
++    └── Join(Right)
++        ├── build keys: [outer_to_anti_left.k (#3)]
++        ├── probe keys: [if(not(is_not_null(outer_to_anti_right.k (#0))), 0, outer_to_anti_right.payload (#2))]
++        ├── other filters: []
++        ├── Scan
++        │   ├── table: default.outer_to_anti_left (#1)
++        │   ├── filters: []
++        │   ├── order by: []
++        │   └── limit: NONE
++        └── Scan
++            ├── table: default.outer_to_anti_right (#0)
++            ├── filters: []
++            ├── order by: []
++            └── limit: NONE
++
++optimized_plan:
++EvalScalar
++├── scalars: [outer_to_anti_left.k (#3) AS (#3), outer_to_anti_right.k (#0) AS (#6), outer_to_anti_right.payload (#2) AS (#7)]
++└── Join(Inner)
++    ├── build keys: [outer_to_anti_left.k (#3)]
++    ├── probe keys: [if(not(is_not_null(outer_to_anti_right.k (#0))), 0, outer_to_anti_right.payload (#2))]
++    ├── other filters: []
++    ├── Scan
++    │   ├── table: default.outer_to_anti_left (#1)
++    │   ├── filters: []
++    │   ├── order by: []
++    │   └── limit: NONE
++    └── Scan
++        ├── table: default.outer_to_anti_right (#0)
++        ├── filters: [not(is_not_null(if(not(is_not_null(outer_to_anti_right.k (#0))), 0, outer_to_anti_right.payload (#2))))]
++        ├── order by: []
++        └── limit: NONE
++
++
+ === null_safe_condition_keeps_left_outer ===
+ description: A null-safe condition is not a regular equi-key in the raw plan and must remain a left outer join.
+ sql: SELECT l.k, r.k
 ```
 
-**File**: `tests/sqllogictests/suites/stage/formats/csv/csv_decimal_input.test` (added, +216/-0)
+**File**: `tests/sqllogictests/suites/query/join/outer_join_to_anti.test` (modified, +31/-0)
 ```diff
-@@ -0,0 +1,216 @@
-+# Shared decimal parsing must work independently of the JSON-number decoder.
+@@ -74,6 +74,37 @@ where l.k is null;
+ ----
+ NULL 90 NULL
+ 
++# Use NULL keys and payloads so IF can return NULL on source rows, but 0
++# for an unmatched row. That makes IS NULL different from an anti-join test.
 +statement ok
-+set numeric_cast_option = 'rounding'
-+
-+statement ok
-+create or replace table decimal_text_input (d decimal(1, 0))
-+
-+statement ok
-+insert into decimal_text_input values (10000000000000000000e-19)
-+
-+query T
-+select d::string from decimal_text_input
-+----
-+1
-+
-+# The fast VALUES decoder must consume an exponent marker/sign even without digits.
-+statement ok
-+insert into decimal_text_input values (1e), (1e+), (1e-)
-+
-+query II
-+select count(*), sum(d)::int from decimal_text_input
-+----
-+4 4
++create or replace table outer_to_anti_left(k int);
 +
 +statement ok
-+drop table decimal_text_input
++create or replace table outer_to_anti_right(k int, payload int);
 +
-+# Unlike the compatibility cases above, the old fast VALUES path accepted this
-+# rounding carry and stored an out-of-range coefficient instead of falling back.
 +statement ok
-+create or replace table decimal_values_carry (d decimal(4, 2))
++insert into outer_to_anti_left values (0), (1), (2);
 +
-+statement error Decimal overflow
-+insert into decimal_values_carry values (99.995)
++statement ok
++insert into outer_to_anti_right values (null, null), (1, null), (1, 1);
 +
++# No row passes. In particular, unmatched key 2 gets IF(NULL IS NULL,0,NULL)
++# = 0, which is not NULL. The old anti rewrite incorrectly returns 2.
 +query I
-+select count(*) from decimal_values_carry
++select l.k
++from outer_to_anti_left l
++left join outer_to_anti_right r on l.k = if(r.k is null, 0, r.payload)
++where if(r.k is null, 0, r.payload) is null;
 +----
-+0
 +
-+statement ok
-+set numeric_cast_option = 'truncating'
-+
-+statement ok
-+insert into decimal_values_carry values (99.995), (-99.995)
-+
-+query T
-+select d::string from decimal_values_carry order by d
++# The same data/query with RIGHT JOIN must also return no rows.
++query I
++select l.k
++from outer_to_anti_right r
++right join outer_to_anti_left l on if(r.k is null, 0, r.payload) = l.k
++where if(r.k is null, 0, r.payload) is null;
 +----
-+-99.99
-+99.99
 +
-+statement ok
-+set numeric_cast_option = 'rounding'
-+
-+statement ok
-+drop table decimal_values_carry
-+
-+# Write raw text, not decimal values, so COPY receives the original mantissas.
-+# The scalar field uses the CSV decoder; the array elements use the nested decoder.
-+statement ok
-+create or replace stage csv_decimal_input
-+
-+statement ok
-+copy into @csv_decimal_input/ from (
-+    select '1|10000000000000000000e-19|[10000000000000000000e-19,-10000000000000000000e-19]'
-+    union all select '2|.0210e3|[.0210e3,0120.0210e-1]'
-+    union all select '3|1e|[1e,1.5e]'
-+    union all select '4|1e+|[1e+,1e-]'
-+    union all select '5|-1e-|[-1.5e,-1e+]'
-+    union all select '6|1.2345|[1.2345,-1.2345]'
-+    union all select '7|-1.2345|[-1.2345,1.2345]'
-+)
-+file_format = (type = csv field_delimiter = '~' quote = '`' quote_style = 'quote_minimal' compression = none)
-+
-+statement ok
-+create or replace table decimal_csv_input (id int, d decimal(6, 3), a array(decimal(6, 3)))
-+
-+statement ok
-+copy into decimal_csv_input from @csv_decimal_input/
-+file_format = (type = csv field_delimiter = '|')
-+
-+query ITTT
-+select id, d::string, a[1]::string, a[2]::string from decimal_csv_input order by id
-+----
-+1 1.000 1.000 -1.000
-+2 21.000 21.000 12.002
-+3 1.000 1.000 1.500
-+4 1.000 1.000 1.000
-+5 -1.000 -1.500 -1.000
-+6 1.235 1.235 -1.235
-+7 -1.235 -1.235 1.235
-+
-+statement ok
-+set numeric_cast_option = 'truncating'
-+
-+statement ok
-+truncate table decimal_csv_input
-+
-+statement ok
-+copy into decimal_csv_input from @csv_decimal_input/
-+file_format = (type = csv field_delimiter = '|') force = true
-+
-+query ITTT
-+select id, d::string, a[1]::string, a[2]::string from decimal_csv_input where id >= 6 order by id
-+----
-+6 1.234 1.234 -1.234
-+7 -1.234 -1.234 1.234
-+
-+# TSV uses the same scalar and nested settings, with the same raw fixture.
-+statement ok
-+truncate table decimal_csv_input
-+
-+statement ok
-+copy into decimal_csv_input from @csv_decimal_input/
-+file_format = (type = tsv field_delimiter = '|') force = true
-+
-+query ITTT
-+select id, d::string, a[1]::string, a[2]::string from decimal_csv_input where id >= 6 order by id
-+----
-+6 1.234 1.234 -1.234
-+7 -1.234 -1.234 1.234
-+
-+statement ok
-+set numeric_cast_option = 'rounding'
-+
-+statement ok
-+truncate table decimal_csv_input
-+
-+statement ok
-+copy into decimal_csv_input from @csv_decimal_input/
-+file_format = (type = tsv field_delimiter = '|') force = true
-+
-+query ITTT
-+select id, d::string, a[1]::string, a[2]::string from decimal_csv_input where id >= 6 order by id
-+----
-+6 1.235 1.235 -1.235
-+7 -1.235 -1.235 1.235
-+
-+# Exercise scalar VALUES and its nested array decoder under both settings.
-+statement ok
-+truncate table decimal_csv_input
-+
-+statement ok
-+insert into decimal_csv_input values (8, 1.2345, [1.2345, -1.2345]), (9, -1.2345, [-1.2345, 1.2345])
-+
-+query ITTT
-+select id, d::string, a[1]::string, a[2]::string from decimal_csv_input order by id
-+----
-+8 1.235 1.235 -1.235
-+9 -1.235 -1.235 1.235
-+
-+statement ok
-+set numeric_cast_option = 'truncating'
-+
-+statement ok
-+truncate table decimal_csv_input
-+
-+statement ok
-+insert into decimal_csv_input values (8, 1.2345, [1.2345, -1.2345]), (9, -1.2345, [-1.2345, 1.2345])
-+
-+query ITTT
-+select id, d::string, a[1]::string, a[2]::string from decimal_csv_input order by id
-+----
-+8 1.234 1.234 -1.234
-+9 -1.234 -1.234 1.234
-+
-+statement ok
-+set numeric_cast_option = 'rounding'
-+
-+# Exact text parsing also keeps the historical missing-exponent interpretation.
-+query TTT
-+select '1e'::decimal(6, 3)::string, '1e+'::decimal(6, 3)::string, '1.5e-'::decimal(6, 3)::string
-+----
-+1.000 1.000 1.500
-+
-+statement ok
-+drop table decimal_csv_input
-+
-+# Keep the original field text so CSV, not a prior decimal c
+ statement ok
+ drop table outer_to_anti_left;
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20822** (2026-10-23): chore(meta): reuse source-option read when validating MV source (@zhyass)
 - **PR #20821** (closed): fix(query): cap window top-n cardinality estimate by partition count (@dqhl76)
 - **PR #20816** (2026-10-22): ci(query): cover numeric ranges with string bounds (@KKould)
-- **PR #20808** (2026-10-22): fix(udf): isolate Python scalar scripts with bounded workers (@sundy-li)
-- **PR #20807** (2026-10-22): refactor(query): unify stream consumption metadata requests (@zhyass)
-- **PR #20797** (2026-10-20): fix(query): reclaim metadata of dropped tables with retired engines (@SkyFan2002)
-- **PR #20796** (2026-10-20): fix(query): isolate stream batches from source table cache (@zhyass)
+- **PR #20815** (2026-10-23): feat(storage): detect S3 region via AWS_REGION regional endpoint (@dantengsky)
+- **PR #20814** (2026-10-23): chore(build): generate the embedded meta-service code once (@sundy-li)
+- **PR #20812** (2026-10-23): fix(query): accelerate single-key hash shuffle (@dqhl76)
 
 ---
 
@@ -3394,32 +1867,33 @@ Deduplicate chunk appends via an inline value helper, derive the saw-digit flag,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): keep constant NULL columns through exchange, spill and merge (#20777)
+## X. query): release queued acquire entry when future is dropped (#20629)
 
 **RULE**:
-When implementing operations in `src/query/expression/src/block_vec.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/service/src/sessions/queue_mgr.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dfd462ac`: query): keep constant NULL columns through exchange, spill and merge (#20777). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `45a88e44`: query): release queued acquire entry when future is dropped (#20629). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/block_vec.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/sessions/queue_mgr.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::Scalar;
-    const_scalar: fn(&ColumnStorage, &ChunkIndex) -> Option<Scalar>,
-            const_scalar: DataBlockVec::const_scalar_typed::<T>,
-            const_scalar: DataBlockVec::const_scalar_typed::<NullableType<T>>,
-            const_scalar: DataBlockVec::const_scalar_typed::<TColumn>,
-            const_scalar: DataBlockVec::const_scalar_typed::<NullableType<TColumn>>,
-            const_scalar: DataBlockVec::const_scalar_typed::<T>,
-            const_scalar: DataBlockVec::const_scalar_typed::<NullableType<T>>,
-            const_scalar: DataBlockVec::const_scalar_typed::<StringType>,
-            const_scalar: DataBlockVec::const_scalar_typed::<NullableType<StringType>>,
-            const_scalar: DataBlockVec::const_scalar_typed::<BooleanType>,
-            const_scalar: DataBlockVec::const_scalar_typed::<NullableType<BooleanType>>,
+
+impl<Data: QueueData, T, Permit, E> PinnedDrop for AcquireQueueFuture<Data, T, Permit, E>
+where T: Future<Output = std::result::Result<std::result::Result<Permit, E>, Elapsed>>
+{
+    fn drop(this: Pin<&mut Self>) {
+        let this = this.project();
+        // Cancellation can drop the future without polling it to completion.
+        // Release the registered entry and the query context it owns in that case.
+        if let Some(key) = this.key.take() {
+            this.manager.remove_entity(&key);
+        }
+    }
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3429,4 +1903,4 @@ use crate::Scalar;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dfd462ac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `45a88e44` are properly handled with clean fallback behavior.

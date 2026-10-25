@@ -395,8 +395,8 @@
     "sourceUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceVersion": "hf-supersoniclabs-julia-1",
     "license": "Open-Source",
-    "contentHash": "9240779bf5df68f22103017cac85499d367b7d950455c09f981cde76c4bd39d6",
-    "lastHarvestedAt": "2026-10-20T17:29:21.419Z",
+    "contentHash": "3582f7c9b1a7671dba61d1e2fd1dd5fe51601e93ffe46a7e2116cb10fe010ce6",
+    "lastHarvestedAt": "2026-10-25T12:32:05.775Z",
     "learningId": "learn-huggingface-supersoniclabs-julia-1"
   },
   "hf-apple-lensvlm-9b": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "3e7bf93e",
+    "sourceVersion": "1805a79d",
     "license": "Apache-2.0",
-    "contentHash": "b72db8ca8384daf1a04bd3998deaa4a1375662656c2ee5e24884439023d68fdc",
-    "lastHarvestedAt": "2026-10-20T16:44:28.584Z",
+    "contentHash": "6fdc7cfbf7bb5e1752e39bae7341f16571407031baf71f75b95bcaa48453e1b6",
+    "lastHarvestedAt": "2026-10-25T12:32:01.290Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -7233,10 +7233,10 @@
     "repository": "Tencent-TDS/KuiklyUI",
     "platform": "github",
     "sourceUrl": "https://github.com/Tencent-TDS/KuiklyUI",
-    "sourceVersion": "323dce03",
+    "sourceVersion": "dc92c104",
     "license": "NOASSERTION",
-    "contentHash": "18456a56b9de338489048fdc083b8427ed2764ea5280fb2f5983346806751e69",
-    "lastHarvestedAt": "2026-10-20T20:14:21.754Z",
+    "contentHash": "779e19819e90fb97e3912ca6729de371a2a4973f7a25c7caff61234acf18ca55",
+    "lastHarvestedAt": "2026-10-25T12:32:00.728Z",
     "learningId": "learn-github-tencent-tds-kuiklyui"
   },
   "seaql-sea-orm": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "b69afdc2",
+    "sourceVersion": "058a1e8f",
     "license": "Apache-2.0",
-    "contentHash": "a4c80db5a623a17ecd2be956b507d3fed96a1c2857a83b682aa25fcf8046e94e",
-    "lastHarvestedAt": "2026-10-23T05:30:31.032Z",
+    "contentHash": "ddd10d71b7df8a505d68bfbb07d67f5853fc03965df940a20bb8889796a9d0cf",
+    "lastHarvestedAt": "2026-10-25T12:32:07.155Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
