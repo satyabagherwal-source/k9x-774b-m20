@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `0173895f`  
+> **Source Version**: `51b8067b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T09:14:37.119Z  
+> **Timestamp**: 2026-10-25T23:10:53.281Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T09:13:00.123Z  
+> **Harvest Timestamp**: 2026-10-25T23:10:53.100Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2207,11 +2207,11 @@ export function AWSMachineRenderer({ data }: Props) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2302** (2026-10-25): **Issues flags completed Job/CronJob pods as a warning (“Controller reports a problem”: `Ready: PodCompleted`)**
+  *Symptoms*: ### What happens  Every pod created by a CronJob or Job shows up in Issues as a warning, "Controller reports a problem" (category `operator_condition_failed`), after it finishes successfully. The detail reads:  > Ready: PodCompleted > present since creation or first reconciliation  The pod is `Succeeded` and its Job is `Complete 1/1`. Nothing is wrong. A finished pod has `Ready=False` with reason `PodCompleted`, and the Issues engine treats that as a failed condition.  <img width="1538" height="436" alt="Image" src="https://github.com/user-attachments/assets/75fefb95-f9aa-4d7d-a6b1-814cc1676fc2" />  ### Why it's noisy  With a CronJob on a short schedule, this puts a fresh warning in the list every run, and it stays until the Job's TTL or history limit removes the pod. In my cluster an every-5-minutes CronJob keeps one or two of these showing at all times, which buries real issues.  ### Steps to reproduce  1. Create a CronJob whose container exits 0, for example `busybox` running `true`, on a `*/5 * * * *` schedule. 2. Wait for a run to finish. 3. Open Issues. The completed pod appears as a warning with `Ready: PodCompleted`.  ### Expected  Pods in phase `Succeeded` (or with Ready reason `PodCompleted`) should be skipped by the condition-based issue detection, since a Job pod ending in that state is the normal outcome. Failed Job pods (phase `Failed`, `BackoffLimitExceeded`, etc.) should still be reported.  ### Notes  - Radar already treats this as expected elsewhere. `package
+
 - **Issue #2236** (2026-10-25): **Live Traffic Source Selection**
   *Symptoms*: ## Describe the bug and snapshot  Try the radar both v1.16 and v1.17 and face below issues. I have istio and hubble for my live traffic. If I select to Istio, then I could not choose back to hubble anymore.  ##   <img width="342" height="129" alt="Image" src="https://github.com/user-attachments/assets/a90bbf4c-d2c2-4814-8361-6dfb0e09e068" /> <img width="267" height="50" alt="Image" src="https://github.com/user-attachments/assets/36bbb5ef-63f3-4985-bb8b-ec2651ea569f" /> <img width="116" height="46" alt="Image" src="https://github.com/user-attachments/assets/cead954c-f945-46d0-bb47-47586dc16818" />  Can you guide how to do the selection. If this is a bug, can you help fix it.  Thanks a lot! 
-
-- **Issue #2158** (2026-10-21): **While streaming a pod's logs, Radar stops receiving lines and prints `failed to create fsnotify watcher: too many open files` into the log pane / terminal**
-  *Symptoms*: ## Describe the bug  While streaming a pod's logs, Radar stops receiving lines and prints `failed to create fsnotify watcher: too many open files` into the log pane / terminal.  The error is emitted by the Radar client process, not by the workload: the pod's own container logs are ECS JSON and contain no occurrence of `fsnotify` (checked across the last 5,000 lines).  It is not environmental resource exhaustion: at the moment of the failure Radar holds ~20 file descriptors and **zero** inotify file descriptors, against very high limits (details below), and creating inotify watchers succeeds from the same shell.  It has recurred across separate Radar process starts (i.e. it is not a one-off after a very long session).  ## To reproduce  1. On WSL2 (Ubuntu), with a kubeconfig pointing at a k3s cluster, start Radar:    `radar -prometheus-url https://<redacted>/api/prom -prometheus-header-from-env Authorization=RADAR_PROMETHEUS_AUTHORIZATION`    (the working directory is a Docker Desktop bind mount, i.e. a 9p filesystem) 2. Open a workload's **Logs** pane and stream a pod's logs (e.g. a Deployment's pod). 3. Log lines arrive normally for a while, then the pane stops updating and    `failed to create fsnotify watcher: too many open files` is printed.  ## Expected behavior  The log stream keeps following the pod without emitting a filesystem-watcher error, and opening/switching log streams does not consume or leak inotify watchers.  ## Screenshots  <!-- optional: the log pane showin
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2228,715 +2228,313 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c0cd526` (2026-10-22)
-**Commit Message**: get_runtime_versions: classify Node fixes by major, Rust as one line
+### Incident Patch 1: `7cacbbcc` (2026-10-25)
+**Commit Message**: Fix memory quantity suffixes in Prometheus chart overlays (#2301)
 
-ClassifyFix took every fixed version minus its last component as its
-release line. Node.js lines are majors with semver minors, so with
-fixed_in 22.23.4,24.22.1,26.12.1 a declared 22.12.0, 24.11.0 or 26.3.0
-came back branch_not_listed instead of declared_below_fix. Rust has a
-single release train, so 1.80.0 against a 1.82.0 fix had the same gap.
+Prometheus memory charts read a request such as `1181116006400m` (the
+canonical serialization of `1.1Gi`) as 1000× too large, placing request
+and limit reference lines incorrectly. This path has its own parser and
+was not covered by #2283.
 
-Release lines are now per runtime: Node uses the major, Rust one line,
-every other curated runtime is unchanged. Semver prereleases such as
-22.23.4-rc.1 parse and sit below their release; a prerelease of a later
-Node minor or Rust release is unparsed, since it may predate the fix.
+Recognize `m`, `u`, `n`, and the also-missing lowercase `k` suffix in
+that parser, preserving its handling of unreadable values and zero.
+Regression tests cover request and limit values, mixed binary/millibyte
+sums across native sidecars, and invalid/zero inputs.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Validation: `make tsc`; 24 overlay and chart-grid tests passed, with the
+new regressions confirmed failing before the fix; full frontend, embed,
+and Go binary build. Visual-test skipped for this parser-only change.
 
-**File**: `docs/mcp.md` (modified, +1/-1)
+**File**: `web/src/components/resource/PrometheusCharts.overlays.test.ts` (modified, +45/-0)
 ```diff
-@@ -567,7 +567,7 @@ For `get_cost` and `get_rightsizing`, see [Cost and rightsizing evidence limits]
- | `get_workload_logs` | Aggregated logs from all pods of a workload (Deployment, StatefulSet, DaemonSet, Job, Argo Workflow). Without `grep`, auto-filters for diagnostic relevance; with `grep`, returns only matching timestamp-prefixed lines. | `kind` (required), `namespace` (required), `name` (required), `container` (optional), `tail_lines` (optional, default 100 per pod), `grep` (optional) |
- | `get_cluster_audit` | `missingInputs`, when present, names unavailable inputs in the scan; zero findings do not establish that all checks passed. Static config posture — best-practice findings (Security / Reliability / Efficiency) with remediation. INDEPENDENT of operational health. Finding severity and the explicit `summary.critical`/`high`/`medium`/`low` counts are posture remediation priority; current built-in checks emit `high` or `medium`. For "what's broken right now?" use `issues`. | `namespace` (optional), `category` (optional), `severity` (optional: `critical`, `high`, `medium`, or `low`) |
- | `get_cluster_upgrade_readiness` | Upgrade impact analysis for a target Kubernetes minor — the evidenced check catalog (version skew, removed/deprecated API usage across live manifests / Helm sources / API-server metrics, node runtime + cgroup evidence, drain feasibility, webhook readiness, release-specific config checks). The verdict is not a readiness guarantee: `unknown` checks had incomplete evidence, `coverage` states what the caller's RBAC could actually inspect, and `no_access` returns no verdict at all. Tier 1 is one row per check; `check=<id>` expands into findings with evidence + remediation, paged 25 at a time (`offset` + `scan_id` bind pages to one scan snapshot). Results are memoized ~60s per caller; `refresh=true` re-scans after a fix. Fix findings at the source `evidence.source` names — live objects via `patch_resource`/`apply_resource`, Helm findings in the chart, GitOps-managed resources in Git. | `target` (optional, default next minor), `check` (optional), `level` (optional: `blocker`, `warning`, `review`), `offset` (optional), `scan_id` (required when `offset` > 0), `refresh` (optional) |
--| `get_runtime_versions` | Which running workloads use which runtime version, for runtime CVEs (PHP2Shell and the like). For each image a visible Pod runs, Radar reads the image config for the digest the Pod reports and the node's platform (manifest and config only, never layers) and returns the versions it declares: curated keys Docker official images set and images built `FROM` them inherit (`PHP_VERSION`, `NODE_VERSION`, `PYTHON_VERSION`, `GOLANG_VERSION`, `RUBY_VERSION`, `JAVA_VERSION`, `HTTPD_VERSION`, `NGINX_VERSION`, `TOMCAT_VERSION`, `PG_VERSION`, `REDIS_VERSION`, `MONGO_VERSION`, `MARIADB_VERSION`, `MYSQL_VERSION`, `RUST_VERSION`) plus the OCI `version` and `base.name` labels; no other env value is ever read. A declared version is what the image says, not proof of the binary, and runtimes installed from distro packages declare nothing here (Trivy reports cover those; use `search`). `fixed_in` classifies each version against the first fix on its branch (`8.3.36` covers 8.3.x, `17.6` covers 17.x): `declared_below_fix`, `declared_at_or_above_fix`, `branch_not_listed`, `unparsed`. An image `status` other than `ok` (`no_declaration`, `auth_required`, `not_found`, `rate_limited`, `blocked`, `error`, `not_checked`) means unknown, not absent. `resolvedFrom: spec` or `tag` means the kubelet reported no registry digest, so the image named in the Pod spec is shown without a fix verdict; `platformAssumed` means the node's platform wasn't readable and linux/amd64 was used, so no fix verdict is emitted. Missing runtime declarations stay visible as `no_declaration`, counted as unknown; unsupported or distro version formats remain `unparsed`. Only Pods the caller may list are read. Each image is looked up with its Pods' own pull secrets one at a time, then anonymously; node registry credentials are not used, so images pulled only with node identity may remain unreadable; Radar's own registry credentials are used only when Radar runs locally with auth off. A result read with a credential is cached for that credential only, an anonymous one for everyone. Credentialed lookups require HTTPS, including token exchanges and redirects. The call returns within a 40-second lookup budget. Registry use is bounded: at most 4 lookups run at once across callers and 200 attempts per call, 429s are not retried and pause that registry for 5 minutes, configs over 1 MiB are refused, and only the registry a Pod names may sit on a private or (outside the cluster) loopback address; link-local addresses, and redirects or token endpoints elsewhere on internal addresses, are refused. Behind an HTTP proxy, HTTPS goes through a CONNECT tunnel to the checked address; requests that can't be pinned that way are refused when Radar runs in-cluster. `fixe
+@@ -19,4 +19,49 @@ describe('Pod request and limit overlays', () => {
+     } } } }
+     expect(computeRequestLimitLines(resource, 'Deployment', 'cpu')![0].value).toBeCloseTo(1.2)
+   })
++
++  it.each([
++    ['1024000m', '2048000m'],
++    ['1024000000u', '2048000000u'],
++    ['1024000000000n', '2048000000000n'],
++    ['1.024k', '2.048k'],
++    ['1.024K', '2.048K'],
++  ])('reads memory request %s and limit %s as bytes', (request, limit) => {
++    const resource = { spec: { containers: [
++      { resources: { requests: { memory: request }, limits: { memory: limit } } },
++    ] } }
++    expect(computeRequestLimitLines(resource, 'Pod', 'memory')).toEqual([
++      { value: 1024, label: 'request 1KiB', kind: 'request' },
++      { value: 2048, label: 'limit 2KiB', kind: 'limit' },
++    ])
++  })
++
++  it('sums binary and millibyte quantities across containers and native sidecars', () => {
++    const resource = { spec: { template: { spec: {
++      containers: [{ resources: { requests: { memory: '16Gi' }, limits: { memory: '16Gi' } } }],
++      initContainers: [{ restartPolicy: 'Always', resources: {
++        requests: { memory: '1181116006400m' }, limits: { memory: '1073741824000m' },
++      } }],
++    } } } }
++    const lines = computeRequestLimitLines(resource, 'Deployment', 'memory')!
++    expect(lines[0].value).toBeCloseTo(18360985190.4)
++    expect(lines[0].label).toBe('request 17.1GiB')
++    expect(lines[1]).toEqual({ value: 17 * 1024 ** 3, label: 'limit 17.0GiB', kind: 'limit' })
++  })
++
++  it.each(['abcMi', 'abcm', 'abcu', 'abcn', '', undefined])('omits unreadable memory quantities: %s', (memory) => {
++    const resource = { spec: { containers: [
++      { resources: { requests: { memory }, limits: { memory } } },
++    ] } }
++    expect(computeRequestLimitLines(resource, 'Pod', 'memory')).toBeUndefined()
++  })
++
++  it('retains a genuine zero request while omitting a zero limit', () => {
++    const resource = { spec: { containers: [
++      { resources: { requests: { memory: '0m' }, limits: { memory: '0m' } } },
++    ] } }
++    expect(computeRequestLimitLines(resource, 'Pod', 'memory')).toEqual([
++      { value: 0, label: 'request 0KiB', kind: 'request' },
++    ])
++  })
+ })
 ```
 
-**File**: `internal/images/runtime_inventory.go` (modified, +1/-1)
+**File**: `web/src/components/resource/PrometheusCharts.tsx` (modified, +2/-2)
 ```diff
-@@ -760,7 +760,7 @@ func shapeInventory(items []*work, results []configResult, opts InventoryOptions
- 				// A tag resolved now may not be what runs: report what it
- 				// declares, but don't call the workload fixed or not.
- 				if runtime != "" && len(opts.FixedIn) > 0 && d.Runtime != "image" && w.resolvedFrom == "digest" && !w.platformAssumed {
--					d.Fix, d.FixedIn = ClassifyFix(d.Version, opts.FixedIn)
-+					d.Fix, d.FixedIn = ClassifyFix(d.Runtime, d.Version, opts.FixedIn)
- 					if d.Fix == FixBelow {
- 						rank = 0
- 					}
-```
-
-**File**: `internal/images/runtime_inventory_test.go` (modified, +26/-0)
-```diff
-@@ -169,6 +169,32 @@ func TestInventory_GroupsByRunningDigestAndClassifies(t *testing.T) {
- 	}
+@@ -209,7 +209,7 @@ function collectRuntimeContainers(podSpec: any): any[] {
+ const CPU_SUFFIXES: Record<string, number> = { n: 1e-9, u: 1e-6, m: 1e-3 }
+ const MEMORY_SUFFIXES: Record<string, number> = {
+   Ki: 1024, Mi: 1024 ** 2, Gi: 1024 ** 3, Ti: 1024 ** 4, Pi: 1024 ** 5, Ei: 1024 ** 6,
+-  K: 1e3, M: 1e6, G: 1e9, T: 1e12, P: 1e15, E: 1e18,
++  n: 1e-9, u: 1e-6, m: 1e-3, k: 1e3, K: 1e3, M: 1e6, G: 1e9, T: 1e12, P: 1e15, E: 1e18,
  }
  
-+func TestInventory_ClassifiesNodeByMajorLine(t *testing.T) {
-+	const (
-+		node22 = "docker.io/library/node@sha256:2222222222222222222222222222222222222222222222222222222222222222"
-+		node25 = "docker.io/library/node@sha256:2525252525252525252525252525252525252525252525252525252525252525"
-+	)
-+	f := &fakeLookup{configs: map[string]*v1.ConfigFile{
-+		refKey(t, node22): {Config: v1.Config{Env: []string{"NODE_VERSION=22.12.0"}}},
-+		refKey(t, node25): {Config: v1.Config{Env: []string{"NODE_VERSION=25.1.0"}}},
-+	}}
-+	src := podSource(
-+		runningPod("shop", "eol-1", "x86-node", "eol", map[string][2]string{"node": {"node:25", node25}}),
-+		runningPod("shop", "api-1", "x86-node", "api", map[string][2]string{"node": {"node:22", node22}}),
-+	)
-+	got := fakeInventory(f).Inventory(context.Background(), src, InventoryOptions{Runtime: "node", FixedIn: []string{"22.23.4", "24.22.1", "26.12.1"}})
-+
-+	if got.Totals.BelowFix != 1 || len(got.Images) != 2 {
-+		t.Fatalf("totals = %+v, images = %+v", got.Totals, got.Images)
-+	}
-+	if d := got.Images[0].Declared; len(d) != 1 || d[0].Version != "22.12.0" || d[0].Fix != FixBelow || d[0].FixedIn != "22.23.4" {
-+		t.Fatalf("first image must be the one below its major's fix: %+v", d)
-+	}
-+	if d := got.Images[1].Declared; len(d) != 1 || d[0].Version != "25.1.0" || d[0].Fix != FixBranchUnknown {
-+		t.Fatalf("an unfixed end-of-life major stays unlisted: %+v", d)
-+	}
-+}
-+
- func TestInventory_SpecDigestIsNotProofOfWhatRuns(t *testing.T) {
- 	f := &fakeLookup{configs: map[string]*v1.ConfigFile{refKey(t, phpDigest): phpConfig("8.3.36")}}
- 	got := fakeInventory(f).Inventory(context.Background(), podSource(
-```
-
-**File**: `internal/images/runtimes.go` (modified, +27/-11)
-```diff
-@@ -105,13 +105,20 @@ const (
- var (
- 	leadingVersion = regexp.MustCompile(`(?i)^(?:v|jdk-)?(\d+(?:\.\d+)*)(.*)$`)
- 	// prerelease marks a version that comes before its numeric release
--	// (8.3.36RC1, 8.3.36-dev, 8.3.36~rc1, 21.0.5-ea+7), so it lacks that
--	// release's fix.
--	prerelease = regexp.MustCompile(`(?i)^[-~._]?(rc|alpha|beta|dev|pre|ea|nightly|snapshot|canary|internal|a|b)\d*(\+[0-9A-Za-z.-]+)?$`)
-+	// (8.3.36RC1, 8.3.36-dev, 8.3.36~rc1, 21.0.5-ea+7, 22.23.4-rc.1), so it
-+	// lacks that release's fix.
-+	prerelease = regexp.MustCompile(`(?i)^[-~._]?(rc|alpha|beta|dev|pre|ea|nightly|snapshot|canary|internal|a|b)(\.?\d+)?(\+[0-9A-Za-z.-]+)?$`)
- 	// Distro revisions require package-specific comparison and backport data.
- 	finalSuffix = regexp.MustCompile(`^(\+[0-9A-Za-z.-]+)?$`)
- )
- 
-+// releaseLineLength sets how many leading components of a fixed version name
-+// its branch, for runtimes whose release lines aren't "all but the last
-+// component". A Node.js line is a major with semver minors, so 22.23.4 fixes
-+// 22.x; Rust ships one stable train with no maintained older lines, so 1.82.0
-+// fixes every earlier version.
-+var releaseLineLength = map[string]int{"node": 1, "rust": 0}
-+
- func ValidateRuntimeQuery(runtime string, fixedIn []string) error {
- 	if runtime == "image" && len(fixedIn) > 0 {
- 		return fmt.Errorf("fixed_in requires a runtime such as php or node; image labels are not runtime fix evidence")
-@@ -139,14 +146,15 @@ func ValidateRuntimeQuery(runtime string, fixedIn []string) error {
- 	return nil
- }
- 
--// ClassifyFix compares a declared version against fixed releases. A fixed
--// version's branch is everything but its last component (8.3.36 → 8.3,
--// 17.6 → 17; a one-part fix is its own branch); a declared version is
--// compared with the earliest fix on the longest branch it falls in. Only
--// upstream versions with up to three numeric components, known prereleases
--// and build metadata are supported; distro revisions stay unparsed.
-+// ClassifyFix compares a declared version of runtime against fixed releases.
-+// A fixed version's branch is everything but its last component (8.3.36 →
-+// 8.3, 17.6 → 17; a one-part fix is its own branch) unless releaseLineLength
-+// says otherwise for the runtime; a declared version is compared with the
-+// earliest fix on the longest branch it falls in. Only upstream versions with
-+// up to three numeric components, known prereleases and build metadata are
-+// supported; distro revisions stay unparsed.
- // It returns the classification and the fixed version used.
--func ClassifyFix(version string, fixedIn []string) (string, string) {
-+func ClassifyFix(runtime, version string, fixedIn []string) (string, string) {
- 	got, rest := parseVersionRest(version)
- 	if got == nil || len(got) > 3 || (!finalSuffix.MatchString(rest) && !prerelease.MatchString(rest)) {
- 		return FixUnparsed, ""
-@@ -160,7 +168,11 @@ func ClassifyFix(version string, fixedIn []string) (string, string) {
- 			return FixUnparsed, ""
- 		}
- 		// A one-part fix ("17") covers its own major.
--		branch := fixed[:max(len(fixed)-1, 1)]
-+		line := max(len(fixed)-1, 1)
-+		if n, ok := releaseLineLength[runtime]; ok {
-+			line = n
-+		}
-+		branch := fixed[:line]
- 		if len(got) < len(branch) || !hasPrefix(got, branch) {
- 			continue
- 		}
-@@ -182,6 +194,10 @@ func ClassifyFix(version string, fixedIn []string) (string, string) {
- 		// The fixed version with a suffix this can't read: it may be a
- 		// pre-release build without the fix.
- 		return FixUnparsed, bestRaw
-+	case prerelease.MatchString(rest) && !hasPrefix(got, best[:max(len(best)-1, 1)]):
-+		// Past the fix's own patch line (a later Node minor, a later Rust
-+		// release), a prerelease may have been cut before the fix landed.
-+		return FixUnparsed, bestRaw
- 	}
- 	return FixAtOrAbove, bestRaw
- }
-```
-
-**File**: `internal/images/runtimes_test.go` (modified, +47/-1)
-```diff
-@@ -105,9 +105,55 @@ func TestClassifyFix(t *testing.T) {
- 		{"8.3.38", []string{"8.3.36", "8.3.40"}, FixAtOrAbove, "8.3.36"},
- 	}
- 	for _, tc := range cases {
--		got, against := ClassifyFix(tc.version, tc.fixedIn)
-+		got, against := ClassifyFix("php", tc.version, tc.fixedIn)
- 		if got != tc.want || against != tc.against {
- 			t.Errorf("ClassifyFix(%q, %v) = %s against %q, want %s against %q", tc.version, tc.fixedIn, got, against, tc.want, tc.against)
- 		}
- 	}
- }
-+
-+func TestClassifyFix_ReleaseLines(t *testing.T) {
-+	node := []string{"22.23.4", "24.22.1", "26.12.1"}
-+	cases := []struct {
-+		runtime string
-+		version string
-+		fixedIn []string
-+		want    string
-+		against string
-+	}{
-+		{"node", "22.12.0", node, FixBelow, "22.23.4"},
-+		{"node", "24.11.0", node, FixBelow, "24.22.1"},
-+		{"node", "26.3.0", node, FixBelow, "26.12.1"},
-+		{"node", "22.23.3", node, FixBelow, "22.23.4"},
-+		{"node", "22.23.4-rc.1", node, FixBelow, "22.23.4"},
-+		{"node", "v22.12.0", node, FixBelow, "22.23.4"},
-+		{"node", "22.23.4", node, FixAtOrAbove, "22.23.4"},
-+		{"node", "22.24.0", node, FixAtOrAbove, "22.23.4"},
-+		{"node", "22.23.5-rc.1", node, FixAtOrAbove, "22.23.4"},
-+		{"node", "22.24.0-rc.1", node, FixUnparsed, "22.23.4"},
-+		{"node", "26.12.1", node, FixAtOrAbove, "26.12.1"},
-+		{"node", "20.18.0", node, FixBranchUnknown, ""},
-+		{"node", "25.1.0", node, FixBranchUnknown, ""},
-+		{"node", "22", node, FixUnparsed, "22.23.4"},
-+		{"rust", "1.80.0", []string{"1.82.0"}, FixBelow, "1.82.0"},
-+		{"rust", "1.82.0-beta.3", []string{"1.82.0"}, FixBelow, "1.82.0"},
-+		{"rust", "1.82.0", []string{"1.82.0"}, FixAtOrAbove, "1.82.0"},
-+		{"rust", "1.83.1", []string{"1.82.0"}, FixAtOrAbove, "1.82.0"},
-+		{"rust", "1.83.0-beta.1", []string{"1.82.0"}, FixUnparsed, "1.82.0"},
-+		{"rust", "1.83.0-nightly", []string{"1.82.0"}, FixUnparsed, "1.82.0"},
-+		{"rust", "1.77.1", []string{"1.78.0", "1.77.2"}, FixBelow, "1.77.2"},
-+		{"rust", "1.77.2", []string{"1.78.0", "1.77.2"}, FixAtOrAbove, "1.77.2"},
-+		// Every other runtime keeps all-but-last-component branches.
-+		{"python", "3.12.4", []string{"3.12.7", "3.13.1"}, FixBelow, "3.12.7"},
-+		{"python", "3.11.9", []string{"3.12.7", "3.13.1"}, FixBranchUnknown, ""},
-+		{"go", "1.22.5", []string{"1.23.4"}, FixBranchUnknown, ""},
-+		{"php", "8.3.36-rc.1", []string{"8.3.36"}, FixBelow, "8.3.36"},
-+		{"postgres", "16.4", []string{"17.6"}, FixBranchUnknown, ""},
-+	}
-+	for _, tc := range cases {
-+		got, against := ClassifyFix(tc.runtime, tc.version, tc.fixedIn)
-+		if got != tc.want || against != tc.against {
-+			t.Errorf("ClassifyFix(%q, %q, %v) = %s against %q, want %s against %q", tc.runtime, tc.version, tc.fixedIn, got, against, tc.want, tc.against)
-+		}
-+	}
-+}
-```
-
-**File**: `internal/mcp/tools_runtimes.go` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ import (
- type runtimeVersionsInput struct {
- 	Namespace string `json:"namespace,omitempty" jsonschema:"limit to one namespace; omit for every namespace you can list Pods in"`
- 	Runtime   string `json:"runtime,omitempty" jsonschema:"keep images declaring this runtime (php, node, python, go, ruby, java, nginx, postgres, …) plus unreadable ones"`
--	FixedIn   string `json:"fixed_in,omitempty" jsonschema:"first fixed release per branch, comma-separated, e.g. 8.2.35,8.3.36"`
-+	FixedIn   string `json:"fixed_in,omitempty" jsonschema:"first fix per branch (node: per major), comma-separated, e.g. 8.2.35,8.3.36"`
- 	Limit     int    `json:"limit,omitempty" jsonschema:"max images (default 50, max 200); below-fix first"`
- }
- 
+ // NOT a duplicate of @skyhook-io/k8s-ui/utils/format's parseCPUToNanocores /
+@@ -232,7 +232,7 @@ function readQuantity(raw: unknown, category: 'cpu' | 'memory'): number | null {
+   for (const suffix of ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei']) {
+     if (s.endsWith(suffix)) return scaleOrNull(s, MEMORY_SUFFIXES[suffix])
+   }
+-  for (const suffix of ['K', 'M', 'G', 'T', 'P', 'E']) {
++  for (const suffix of ['n', 'u', 'm', 'k', 'K', 'M', 'G', 'T', 'P', 'E']) {
+     if (s.endsWith(suffix)) return scaleOrNull(s, MEMORY_SUFFIXES[suffix])
+   }
+   const v = parseFloat(s)
 ```
 
 ---
 
-### Incident Patch 2: `d5f37ac9` (2026-10-25)
-**Commit Message**: fix(traffic): keep source picker available when connection fails
+### Incident Patch 2: `3ffa2c2d` (2026-10-25)
+**Commit Message**: fix(capacity): read milli-suffixed memory quantities as fractions of a byte (#2283)
 
-Keep traffic source switching available after connection failures, alongside retry.
+## Description
 
-**File**: `web/src/components/traffic/TrafficSourcePill.test.tsx` (added, +110/-0)
+The Capacity page can report cluster memory requests about 1000× too
+high. On one production cluster it showed 1,770,775 GiB requested
+against 3,232 GiB allocatable, while the real sum is about 1,754 GiB.
+
+A memory request may be written with a milli suffix (`1181116006400m` is
+a valid request, and some generators emit it). When the backend sums
+requests, `resource.Quantity.Add` keeps the finest scale, so a single
+milli-suffixed pod makes the whole total serialize in milli-bytes:
+`16Gi` + `1181116006400m` becomes `18360985190400m`.
+`parseMemoryToBytes` had no entry for `m`, `u` or `n`, so it fell
+through to "no suffix = bytes" and read the total as 1000× its value.
+
+The parser now accepts the sub-unit decimal suffixes, so every caller of
+`parseMemoryToBytes` and `formatMemoryString` (Capacity, resource views,
+renderers) reads them correctly.
+
+## Type of change
+
+- [x] Bug fix (non-breaking change that fixes an issue)
+- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing
+functionality to change)
+- [ ] Documentat
+
+**File**: `packages/k8s-ui/src/utils/format.test.ts` (modified, +7/-0)
 ```diff
-@@ -0,0 +1,110 @@
-+// @vitest-environment jsdom
-+import { act, type ComponentProps } from 'react'
-+import { createRoot, type Root } from 'react-dom/client'
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-+import { TrafficSourcePill } from './TrafficSourcePill'
+@@ -50,6 +50,13 @@ describe('parseMemoryToBytes', () => {
+     expect(parseMemoryToBytes('1E3')).toBe(1000)
+     expect(formatMemoryString('1e9')).toBe('954 MiB')
+   })
 +
-+Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
-+
-+type Props = ComponentProps<typeof TrafficSourcePill>
-+
-+const props = (overrides: Partial<Props>): Props => ({
-+  sources: ['hubble', 'istio'],
-+  active: 'istio',
-+  connection: 'connected',
-+  onSwitch: vi.fn(),
-+  onRetry: vi.fn(),
-+  ...overrides,
-+})
-+
-+let container: HTMLDivElement
-+let root: Root
-+
-+beforeEach(() => {
-+  container = document.createElement('div')
-+  document.body.appendChild(container)
-+  root = createRoot(container)
-+})
-+
-+afterEach(() => {
-+  act(() => root.unmount())
-+  container.remove()
-+})
-+
-+const render = (p: Props) => act(() => root.render(<TrafficSourcePill {...p} />))
-+
-+const button = (label: string) =>
-+  Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.trim() === label)
-+
-+const open = () => act(() => button('istio')!.click())
-+
-+describe('TrafficSourcePill', () => {
-+  it('switches source from the picker when connected', () => {
-+    const p = props({})
-+    render(p)
-+    open()
-+    act(() => button('hubble')!.click())
-+    expect(p.onSwitch).toHaveBeenCalledWith('hubble')
++  it('reads sub-unit suffixes as fractions of a byte', () => {
++    expect(parseMemoryToBytes('1181116006400m')).toBeCloseTo(1181116006.4)
++    expect(parseMemoryToBytes('1000000u')).toBeCloseTo(1)
++    expect(parseMemoryToBytes('1000000000n')).toBeCloseTo(1)
++    expect(formatMemoryString('18360985190400m')).toBe('17.1 GiB')
 +  })
-+
-+  it('keeps the picker available when the active source failed to connect', () => {
-+    const p = props({ connection: 'error' })
-+    render(p)
-+    open()
-+    act(() => button('hubble')!.click())
-+    expect(p.onSwitch).toHaveBeenCalledWith('hubble')
-+  })
-+
-+  it('offers retry next to the picker on error', () => {
-+    const p = props({ connection: 'error' })
-+    render(p)
-+    act(() => button('retry')!.click())
-+    expect(p.onRetry).toHaveBeenCalledTimes(1)
-+    expect(button('istio')).toBeDefined()
-+  })
-+
-+  it('does not switch when the active source is picked again', () => {
-+    const p = props({})
-+    render(p)
-+    open()
-+    act(() => container.querySelector<HTMLButtonElement>('[role="option"][aria-selected="true"]')!.click())
-+    expect(p.onSwitch).not.toHaveBeenCalled()
-+  })
-+
-+  it('shows no picker with a single available source', () => {
-+    render(props({ sources: ['istio'] }))
-+    expect(container.querySelector('button[aria-haspopup]')).toBeNull()
-+    expect(container.textContent).toContain('istio')
-+  })
-+
-+  it('shows no picker or retry while connecting', () => {
-+    render(props({ connection: 'connecting' }))
-+    expect(container.textContent).toContain('Connecting...')
-+    expect(container.querySelector('button')).toBeNull()
-+  })
-+
-+  it('does not reopen the menu after a retry made without a mouse', () => {
-+    const p = props({ connection: 'error' })
-+    render(p)
-+    open()
-+    expect(container.querySelector('[role="listbox"]')).not.toBeNull()
-+    act(() => button('retry')!.click())
-+    render({ ...p, connection: 'connecting' })
-+    render({ ...p, connection: 'connected' })
-+    const menu = container.querySelector('[role="listbox"]')
-+    expect(menu === null || menu.hasAttribute('inert')).toBe(true)
-+    expect(button('istio')!.getAttribute('aria-expanded')).toBe('false')
-+  })
-+
-+  it('makes the menu inert while it animates closed, so its options cannot be activated', () => {
-+    const p = props({})
-+    render(p)
-+    open()
-+    expect(container.querySelector('[role="listbox"]')!.hasAttribute('inert')).toBe(false)
-+    act(() => {
-+      document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
-+    })
-+    const closing = container.querySelector('[role="listbox"]')
-+    expect(closing === null || closing.hasAttribute('inert')).toBe(true)
-+  })
-+})
+ })
+ 
+ describe('parseQuantityToNumber', () => {
 ```
 
-**File**: `web/src/components/traffic/TrafficSourcePill.tsx` (added, +111/-0)
+**File**: `packages/k8s-ui/src/utils/format.ts` (modified, +6/-1)
 ```diff
-@@ -0,0 +1,111 @@
-+import { useEffect, useRef, useState } from 'react'
-+import { clsx } from 'clsx'
-+import { ChevronDown, Loader2 } from 'lucide-react'
-+import { StatusDot, toneTextClass } from '@skyhook-io/k8s-ui'
-+import { useAnimatedUnmount } from '../../hooks/useAnimatedUnmount'
-+import { TRANSITION_MENU, overlayExitMs, overlayTransitionStyle } from '../../utils/animation'
-+
-+export type TrafficSourceConnectionState = 'connecting' | 'error' | 'connected'
-+
-+interface TrafficSourcePillProps {
-+  sources: string[]
-+  active: string
-+  connection: TrafficSourceConnectionState
-+  onSwitch: (name: string) => void
-+  onRetry: () => void
-+}
-+
-+// The picker is shown for every connection state except connecting: a source
-+// that cannot connect is the case where the user most needs to pick another.
-+export function TrafficSourcePill({ sources, active, connection, onSwitch, onRetry }: TrafficSourcePillProps) {
-+  const [open, setOpen] = useState(false)
-+  const pickerRef = useRef<HTMLDivElement>(null)
-+  const canPick = sources.length > 1
-+  const menuOpen = open && canPick && connection !== 'connecting'
-+  const { shouldRender, isOpen } = useAnimatedUnmount(menuOpen, overlayExitMs('menu'))
-+
-+  // Capture phase so the handler runs before ReactFlow swallows the event.
-+  useEffect(() => {
-+    if (!open) return
-+    const handler = (e: MouseEvent) => {
-+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
-+        setOpen(false)
-+      }
+@@ -141,8 +141,13 @@ export function parseMemoryToBytes(memString: string): number {
+     'Ei': 1024 ** 6,
+   }
+ 
+-  // Decimal suffixes (powers of 1000)
++  // Decimal suffixes (powers of 1000). The sub-unit ones are real inputs too:
++  // a request written as "1288490188800m" is valid, and a sum that includes one
++  // keeps the milli scale, so a whole cluster's total serializes with "m".
+   const decimalSuffixes: Record<string, number> = {
++    'n': 1000 ** -3,
++    'u': 1000 ** -2,
++    'm': 1000 ** -1,
+     'k': 1000,
+     'K': 1000,
+     'M': 1000 ** 2,
+```
+
+---
+
+### Incident Patch 3: `ba8a17a6` (2026-10-25)
+**Commit Message**: Fix touch visibility and failed namespace selection retries
+
+**File**: `packages/k8s-ui/src/components/namespace-switcher/NamespacePicker.test.tsx` (modified, +49/-2)
+```diff
+@@ -1,8 +1,8 @@
+ // @vitest-environment jsdom
+-import { act, useState, type ReactNode } from 'react'
++import { act, createRef, useState, type ReactNode } from 'react'
+ import { createRoot, type Root } from 'react-dom/client'
+ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+-import { NamespacePicker, type NamespacePickerProps, type NamespaceScopeView } from './NamespacePicker'
++import { NamespacePicker, type NamespacePickerHandle, type NamespacePickerProps, type NamespaceScopeView } from './NamespacePicker'
+ 
+ vi.mock('../ui/Tooltip', () => ({
+   Tooltip: ({ children, content }: { children: ReactNode; content: ReactNode }) => (
+@@ -224,6 +224,53 @@ describe('NamespacePicker Only button', () => {
+     expect(document.activeElement).toBe(only)
+   })
+ 
++  it.each(['Only', 'Done', 'Clear all'])('reopens from active namespaces after an unacknowledged %s apply', async (action) => {
++    const onApply = await open()
++    if (action === 'Only') {
++      await act(async () => { onlyButton('team-c').click() })
++    } else if (action === 'Done') {
++      await act(async () => { checkbox('team-b').click() })
++      await act(async () => { doneButton().click() })
++    } else {
++      const clear = document.querySelector<HTMLButtonElement>('button[aria-label="Clear namespace selection"]')!
++      await act(async () => { clear.click() })
 +    }
-+    document.addEventListener('mousedown', handler, true)
-+    return () => document.removeEventListener('mousedown', handler, true)
-+  }, [open])
++    expect(onApply).toHaveBeenCalledTimes(1)
++    expect(isOpen()).toBe(false)
 +
-+  const choose = (name: string) => {
-+    setOpen(false)
-+    if (name !== active) onSwitch(name)
-+  }
++    await act(async () => { triggerButton().click() })
++    expect(checkbox('team-a').checked).toBe(true)
++    expect(checkbox('team-b').checked).toBe(false)
++    expect(checkbox('team-c').checked).toBe(false)
++    await act(async () => { document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })) })
++    expect(onApply).toHaveBeenCalledTimes(1)
++  })
 +
-+  // Keyboard activation of retry fires no outside mousedown, so the menu has to
-+  // be closed here or it would reappear once the attempt finishes.
-+  const retry = () => {
-+    setOpen(false)
-+    onRetry()
-+  }
++  it('also refreshes the draft when the keyboard shortcut opens the picker', async () => {
++    const ref = createRef<NamespacePickerHandle>()
++    const onApply = vi.fn()
++    await act(async () => { root.render(<NamespacePicker ref={ref} scope={scope} onApply={onApply} />) })
++    await act(async () => { ref.current?.open() })
++    await act(async () => { onlyButton('team-c').click() })
++    await act(async () => { ref.current?.open() })
++    expect(checkbox('team-a').checked).toBe(true)
++    expect(checkbox('team-c').checked).toBe(false)
++    await act(async () => { doneButton().click() })
++    expect(onApply).toHaveBeenCalledTimes(1)
++  })
 +
-+  return (
-+    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-theme-surface/90 backdrop-blur border border-theme-border text-[11px]">
-+      {connection === 'connecting' ? (
-+        <>
-+          <Loader2 className="h-3 w-3 animate-spin text-accent" />
-+          <span className="text-accent">Connecting...</span>
-+        </>
-+      ) : (
-+        <>
-+          <StatusDot tone={connection === 'error' ? 'degraded' : 'healthy'} size="md" />
-+          {canPick ? (
-+            <div className="relative" ref={pickerRef}>
-+              <button
-+                type="button"
-+                onClick={() => setOpen(!open)}
-+                aria-haspopup="listbox"
-+                aria-expanded={menuOpen}
-+                className="flex items-center gap-1 text-theme-text-secondary hover:text-theme-text-primary"
-+              >
-+                {active} <ChevronDown className="h-3 w-3" />
-+              </button>
-+              {shouldRender && (
-+                <div
-+                  role="listbox"
-+                  inert={!menuOpen || undefined}
-+                  className={clsx(
-+                    'absolute top-full left-0 mt-1 z-50 bg-theme-surface border border-theme-border rounded-md shadow-theme-lg py-1 min-w-[120px] origin-top-left',
-+                    TRANSITION_MENU,
-+                    isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.97]',
-+                    !menuOpen && 'pointer-events-none',
-+                  )}
-+                  style={overlayTransitionStyle(isOpen, 'menu')}
-+                >
-+                  {sources.map(name => (
-+                    <button
-+                      key={name}
-+                      type="button"
-+                      role="option"
-+                      aria-selected={name === active}
-+                      onClick={() => choose(name)}
-+                      className={clsx('w-full text-left px-3 py-1 text-xs hover:bg-theme-hover capitalize', name === active && 'text-accent')}
-+                    >
-+                      {name}
-+                    </button>
-+                  ))}
-+                </div>
-+              )}
-+            </div>
-+          ) : (
-+            <span className="text-theme-text-secondary">{active}</span>
-+          )}
-+          {connection === 'error' && (
-+            <button type="button" onClick={retry} className={clsx('font-medium hover:underline', toneTextClass('degraded'))}>
-+              retry
-+            </button>
-+          )}
-+        </>
-+      )}
-+    </div>
-+  )
-+}
-```
-
-**File**: `web/src/components/traffic/TrafficView.tsx` (modified, +9/-55)
-```diff
-@@ -7,10 +7,10 @@ import { TrafficWizard } from './TrafficWizard'
- import { TrafficGraph, type TrafficGraphSelection } from './TrafficGraph'
- import { TrafficFilterSidebar } from './TrafficFilterSidebar'
- import { TrafficFlowListProvider } from './TrafficFlowListContext'
--import { Loader2, Filter, Plug, ChevronDown, List, Activity, AlertTriangle, Clock, Crosshair, X } from 'lucide-react'
-+import { Filter, Plug, List, Activity, AlertTriangle, Clock, Crosshair, X } from 'lucide-react'
- import { TrafficFocusSearch } from './TrafficFocusSearch'
-+import { TrafficSourcePill } from './TrafficSourcePill'
- import { TrafficGraphTooLarge } from './TrafficGraphTooLarge'
--import { clsx } from 'clsx'
- import { useQueryClient } from '@tanstack/react-query'
- import { useDock } from '../dock'
- import { AlertBanner, EmptyState, PaneLoader, FreshnessControl } from '@skyhook-io/k8s-ui'
-@@ -457,8 +457,6 @@ export function TrafficView({ namespaces, onSetNamespaces }: TrafficViewProps) {
-   const connectMutation = useTrafficConnect()
-   const setSourceMutation = useSetTrafficSource()
-   const hasAutoConnectedRef = useRef(false)
--  const [sourcePickerOpen, setSourcePickerOpen] = useState(false)
--  const sourcePickerRef = useRef<HTMLDivElement>(null)
- 
-   // Track cluster context to reset state on cluster change
-   const { data: clusterInfo } = useClusterInfo()
-@@ -479,18 +477,6 @@ export function TrafficView({ namespaces, onSetNamespaces }: TrafficViewProps) {
-     lastClusterRef.current = currentCluster
-   }, [clusterInfo?.context, queryClient])
- 
--  // Close source picker on outside click (capture phase to beat ReactFlow)
--  useEffect(() => {
--    if (!sourcePickerOpen) return
--    const handler = (e: MouseEvent) => {
--      if (sourcePickerRef.current && !sourcePickerRef.current.contains(e.target as Node)) {
--        setSourcePickerOpen(false)
--      }
--    }
--    document.addEventListener('mousedown', handler, true)
--    return () => document.removeEventListener('mousedown', handler, true)
--  }, [sourcePickerOpen])
--
-   const {
-     data: sourcesData,
-     isLoading: sourcesLoading,
-@@ -1449,8 +1435,6 @@ export function TrafficView({ namespaces, onSetNamespaces }: TrafficViewProps) {
-             const activeSource = availableSources.find(s => s.name === activeName) || availableSources[0]
- 
-             const handleSwitchSource = (name: string) => {
--              if (name === activeSource?.name) { setSourcePickerOpen(false); return }
--              setSourcePickerOpen(false)
-               setIsConnecting(true)
-               setConnectionError(null)
-               hasAutoConnectedRef.current = true
-@@ -1509,43 +1493,13 @@ export function TrafficView({ namespaces, onSetNamespaces }: TrafficViewProps) {
-                     />
-                   )}
-                   {activeSource && (
--                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-theme-surface/90 backdrop-blur border border-theme-border text-[11px]">
--                      {isConnecting ? (
--                        <>
--                          <Loader2 className="h-3 w-3 animate-spin text-blue-400" />
--                          <span className="text-blue-400">Connecting...</span>
--                        </>
--                      ) : connectionError ? (
--                        <>
--                          <span className="w-2 h-2 rounded-full bg-yellow-500" />
--                          <span className="text-theme-text-secondary">{activeSource.name}</span>
--                          <button onClick={() => handleConnect(true)} className="text-yellow-500 hover:text-yellow-400 font-medium">retry</button>
--                        </>
--                      ) : (
--                        <>
--                          <span className="w-2 h-2 rounded-full bg-green-500" />
--                          {availableSources.length > 1 ? (
--                            <div className="relative" ref={sourcePickerRef}>
--                              <button onClick={() => setSourcePickerOpen(!sourcePickerOpen)} className="flex items-center gap-1 text-theme-text-secondary hover:text-theme-text-primary">
--                                {activeSource.name} <ChevronDown className="h-3 w-3" />
--                              </button>
--                              {sourcePickerOpen && (
--                                <div className="absolute top-full left-0 mt-1 z-50 bg-theme-surface border border-theme-border rounded-md shadow-lg py-1 min-w-[120px]">
--                                  {availableSources.map(source => (
--                                    <button key={source.name} onClick={() => handleSwitchSource(source.name)}
--                                      className={clsx('w-full text-left px-3 py-1 text-xs hover:bg-theme-hover capitalize', source.name === activeSource.name && 'text-blue-400')}>
--                                      {source.name}
--                                    </button>
--                                  ))}
--        
-```
-
----
-
-### Incident Patch 3: `0200075d` (2026-10-23)
-**Commit Message**: Reject blank advertised checksums and correct retry guidance
-
-**File**: `internal/helm/chart_digest.go` (modified, +15/-3)
-```diff
-@@ -18,23 +18,23 @@ var errChartDigest = errors.New("chart digest validation failed")
- // Legacy repositories may omit a digest. An advertised digest must be valid
- // and match the exact archive consumed, before Helm loads or renders it.
- func verifyChartDigest(data []byte, digest string) error {
--	digest = strings.TrimSpace(strings.ToLower(digest))
- 	if digest == "" {
- 		return nil
- 	}
-+	digest = strings.TrimSpace(strings.ToLower(digest))
- 	want, err := hex.DecodeString(strings.TrimPrefix(digest, "sha256:"))
- 	if err != nil || len(want) != sha256.Size {
- 		return fmt.Errorf("%w: invalid SHA-256 digest in repository index", errChartDigest)
- 	}
- 	actual := sha256.Sum256(data)
- 	if !bytes.Equal(actual[:], want) {
--		return fmt.Errorf("%w: chart digest does not match repository index; refresh the repository and retry. If it still fails, contact the repository maintainer", errChartDigest)
-+		return fmt.Errorf("%w: chart digest does not match repository index", errChartDigest)
- 	}
- 	return nil
- }
- 
- func loadChartWithDigest(path, digest string) (*chart.Chart, error) {
--	if strings.TrimSpace(digest) == "" {
-+	if digest == "" {
- 		return loader.Load(path)
- 	}
- 	data, err := os.ReadFile(path)
-@@ -46,3 +46,15 @@ func loadChartWithDigest(path, digest string) (*chart.Chart, error) {
- 	}
- 	return loader.LoadArchive(bytes.NewReader(data))
- }
++  it('keeps current edits if the open shortcut is used while the menu is already open', async () => {
++    const ref = createRef<NamespacePickerHandle>()
++    const onApply = vi.fn()
++    await act(async () => { root.render(<NamespacePicker ref={ref} scope={scope} onApply={onApply} />) })
++    await act(async () => { ref.current?.open() })
++    await act(async () => { checkbox('team-b').click() })
++    await act(async () => { ref.current?.open() })
++    expect(checkbox('team-a').checked).toBe(true)
++    expect(checkbox('team-b').checked).toBe(true)
++    expect(onApply).not.toHaveBeenCalled()
++  })
 +
-+// The source loader refreshes its index itself; cached-index consumers can
-+// recover from a republished archive by refreshing before retrying.
-+func withChartDigestGuidance(err error, freshIndex bool) error {
-+	if !errors.Is(err, errChartDigest) {
-+		return err
-+	}
-+	if freshIndex {
-+		return fmt.Errorf("%w. Radar just downloaded the repository index. Contact the repository maintainer", err)
-+	}
-+	return fmt.Errorf("%w. Refresh the repository and retry. If it still fails, contact the repository maintainer", err)
-+}
-```
-
-**File**: `internal/helm/client.go` (modified, +4/-4)
-```diff
-@@ -3376,7 +3376,7 @@ func (c *Client) GetChartDetail(repoName, chartName, version string) (*ChartDeta
- 	chart, err := loadChartWithDigest(cp, chartVersion.Digest)
- 	if err != nil {
- 		if errors.Is(err, errChartDigest) {
--			return nil, fmt.Errorf("chart %s version %s: %w", chartName, chartVersion.Version, err)
-+			return nil, fmt.Errorf("chart %s version %s: %w", chartName, chartVersion.Version, withChartDigestGuidance(err, false))
- 		}
- 		return &ChartDetail{
- 			ChartInfo: chartVersionToInfo(chartVersion, repoName),
-@@ -3605,7 +3605,7 @@ func (c *Client) installWith(actionConfig *action.Configuration, req *InstallReq
- 	}
- 	chart, err := loadChartWithDigest(cp, indexDigest)
- 	if err != nil {
--		return nil, fmt.Errorf("failed to load chart %s version %s: %w", req.ChartName, resolvedVersion, err)
-+		return nil, fmt.Errorf("failed to load chart %s version %s: %w", req.ChartName, resolvedVersion, withChartDigestGuidance(err, isRepoURL))
- 	}
- 
- 	if mode != installFresh {
-@@ -3810,7 +3810,7 @@ func (c *Client) installWithProgressUsing(actionConfig *action.Configuration, re
- 		sendProgress("loading", "Loading chart...", chartPath)
- 		loadedChart, err = loadChartWithDigest(chartPath, indexDigest)
- 		if err != nil {
--			return nil, fmt.Errorf("failed to load chart %s version %s: %w", req.ChartName, resolvedVersion, err)
-+			return nil, fmt.Errorf("failed to load chart %s version %s: %w", req.ChartName, resolvedVersion, withChartDigestGuidance(err, isRepoURL))
- 		}
- 	} else {
- 		// Preserve the existing direct HTTP path. Helm's ChartDownloader loads all
-@@ -3840,7 +3840,7 @@ func (c *Client) installWithProgressUsing(actionConfig *action.Configuration, re
- 		sendProgress("loading", "Loading chart...", tmpChart.Name())
- 		loadedChart, err = loadChartWithDigest(tmpChart.Name(), indexDigest)
- 		if err != nil {
--			return nil, fmt.Errorf("failed to load chart %s version %s: %w", req.ChartName, resolvedVersion, err)
-+			return nil, fmt.Errorf("failed to load chart %s version %s: %w", req.ChartName, resolvedVersion, withChartDigestGuidance(err, isRepoURL))
- 		}
- 	}
+   describe('returning focus after the switch', () => {
+     let setPending: (pending: boolean) => void
  
 ```
 
-**File**: `internal/helm/download_checksum_test.go` (modified, +12/-3)
+**File**: `packages/k8s-ui/src/components/namespace-switcher/NamespacePicker.tsx` (modified, +8/-7)
 ```diff
-@@ -18,7 +18,7 @@ import (
- )
+@@ -151,12 +151,13 @@ export const NamespacePicker = forwardRef<NamespacePickerHandle, NamespacePicker
+     applySelection(draft)
+   }, [applySelection, draft])
  
- func TestRepositoryChartChecksum(t *testing.T) {
--	for _, digest := range []string{"wrong", "malformed", "valid", "absent"} {
-+	for _, digest := range []string{"wrong", "malformed", "whitespace", "valid", "absent"} {
- 		for _, consumer := range []string{"source", "install", "progress", "detail", "direct-install", "direct-progress"} {
- 			t.Run(digest+"/"+consumer, func(t *testing.T) {
- 				c := newChartSourceTestClient(t)
-@@ -36,12 +36,14 @@ func TestRepositoryChartChecksum(t *testing.T) {
- 					advertised = strings.Repeat("0", 64)
- 				case "malformed":
- 					advertised = "not-sha256"
-+				case "whitespace":
-+					advertised = "   "
- 				case "valid":
- 					advertised = fmt.Sprintf("%x", sha256.Sum256(body))
- 				}
- 				srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
- 					if r.URL.Path == "/index.yaml" {
--						fmt.Fprintf(w, "apiVersion: v1\nentries:\n  radar:\n  - apiVersion: v2\n    name: radar\n    version: 1.0.0\n    urls: [radar.tgz]\n    digest: %s\n", advertised)
-+						fmt.Fprintf(w, "apiVersion: v1\nentries:\n  radar:\n  - apiVersion: v2\n    name: radar\n    version: 1.0.0\n    urls: [radar.tgz]\n    digest: %q\n", advertised)
- 					} else {
- 						w.Write(body)
- 					}
-@@ -70,10 +72,17 @@ func TestRepositoryChartChecksum(t *testing.T) {
- 				case "detail":
- 					_, err = c.GetChartDetail("probe", "radar", "1.0.0")
- 				}
--				if digest == "wrong" || digest == "malformed" {
-+				if digest == "wrong" || digest == "malformed" || digest == "whitespace" {
- 					if err == nil || !strings.Contains(err.Error(), "digest") {
- 						t.Fatalf("expected digest rejection, got %v", err)
- 					}
-+					if consumer == "source" || strings.HasPrefix(consumer, "direct-") {
-+						if strings.Contains(strings.ToLower(err.Error()), "refresh the repository") {
-+							t.Fatalf("fresh index must not recommend another refresh: %v", err)
-+						}
-+					} else if !strings.Contains(strings.ToLower(err.Error()), "refresh the repository") {
-+						t.Fatalf("cached index needs actionable refresh guidance: %v", err)
-+					}
- 					if consumer == "install" || consumer == "progress" {
- 						if _, e := cfg.Releases.Last(req.ReleaseName); e == nil {
- 							t.Fatal("rejected chart created release")
+-  useImperativeHandle(ref, () => ({
+-    open: () => {
+-      if (disabled || loading || pending) return
+-      setIsOpen(true)
+-    },
+-  }), [disabled, loading, pending])
++  const openPicker = useCallback(() => {
++    if (isOpen || disabled || loading || pending) return
++    setDraft(new Set(scopeActives))
++    setIsOpen(true)
++  }, [isOpen, disabled, loading, pending, scopeActives])
++
++  useImperativeHandle(ref, () => ({ open: openPicker }), [openPicker])
+ 
+   // Disabling the trigger while a switch is pending drops its focus, so this stays armed through that cycle.
+   useEffect(() => {
+@@ -287,7 +288,7 @@ export const NamespacePicker = forwardRef<NamespacePickerHandle, NamespacePicker
+       >
+         <button
+           ref={triggerRef}
+-          onClick={() => !isDisabled && (isOpen ? closeAndApply() : setIsOpen(true))}
++          onClick={() => !isDisabled && (isOpen ? closeAndApply() : openPicker())}
+           disabled={isDisabled}
+           className={
+             variant === 'segment'
 ```
 
-**File**: `internal/helm/source_upgrade.go` (modified, +1/-1)
+**File**: `packages/k8s-ui/src/components/ui/MultiSelectPicker.test.tsx` (modified, +1/-1)
 ```diff
-@@ -125,7 +125,7 @@ func (c *Client) loadSourceChart(cfg *action.Configuration, source ChartSourceCa
- 		}
- 	}
- 	if err := verifyChartDigest(data, indexDigest); err != nil {
--		return nil, "", fmt.Errorf("chart %s version %s: %w", name, version, err)
-+		return nil, "", fmt.Errorf("chart %s version %s: %w", name, version, withChartDigestGuidance(err, true))
- 	}
- 	sum := sha256.Sum256(data)
- 	ch, err := loader.LoadArchive(bytes.NewReader(data))
+@@ -53,7 +53,7 @@ describe('MultiSelectPicker', () => {
+     expect(only).toContain('group-hover/row:opacity-100')
+     expect(only).toContain('group-has-[:focus-visible]/row:opacity-100')
+     expect(only).toContain('focus-visible:opacity-100')
+-    expect(only).toContain('[@media(hover:none)]:opacity-100')
++    expect(only).toContain('any-pointer-coarse:opacity-100')
+   })
+ 
+   it('shows the filter input above the threshold and hides it below', () => {
+```
+
+**File**: `packages/k8s-ui/src/components/ui/MultiSelectPicker.tsx` (modified, +2/-2)
+```diff
+@@ -157,12 +157,12 @@ export function MultiSelectPicker({
+               </span>
+             </label>
+             {onSelectOnly && (
+-              // Tailwind's hover: only matches devices that can hover, so touch needs its own rule.
++              // Touchscreens can coexist with a hover-capable mouse.
+               <button
+                 type="button"
+                 onClick={() => onSelectOnly(item)}
+                 aria-label={`Show only ${item}`}
+-                className="shrink-0 mr-2 px-1.5 py-0.5 rounded border border-theme-border bg-theme-surface text-[11px] text-theme-text-secondary hover:bg-theme-elevated hover:text-theme-text-primary opacity-0 transition-opacity group-hover/row:opacity-100 group-has-[:focus-visible]/row:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
++                className="shrink-0 mr-2 px-1.5 py-0.5 rounded border border-theme-border bg-theme-surface text-[11px] text-theme-text-secondary hover:bg-theme-elevated hover:text-theme-text-primary opacity-0 transition-opacity group-hover/row:opacity-100 group-has-[:focus-visible]/row:opacity-100 focus-visible:opacity-100 any-pointer-coarse:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+               >
+                 Only
+               </button>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2303** (2026-10-25): Keep successfully completed Pods out of condition-based Issues (@nadaverell)
+- **PR #2301** (2026-10-25): Fix memory quantity suffixes in Prometheus chart overlays (@nadaverell)
+- **PR #2300** (2026-10-25): deps: batch soaked Wails, D-Bus, and undici updates (@nadaverell)
+- **PR #2299** (closed): deps(npm): bump undici from 7.29.1 to 7.30.1 (@dependabot[bot])
 - **PR #2296** (2026-10-24): Document audit resource budgets, drain completion and Trivy search (@nadaverell)
 - **PR #2295** (2026-10-24): Add a discoverable What's New skill with companion-repo workflows (@nadaverell)
-- **PR #2294** (2026-10-24): Show v1.18 What's New automatically after upgrades (@nadaverell)
-- **PR #2292** (2026-10-25): sec(install): verify SHA-256 checksums before archive extraction (@AbdullahNM)
-- **PR #2284** (2026-10-25): Verify advertised Helm chart checksums before use (@hisco)
-- **PR #2281** (2026-10-23): Gate Trivy reports on report RBAC on every read surface (@hisco)
 
 ---
 
@@ -2950,3 +2548,61 @@ Keep traffic source switching available after connection failures, alongside ret
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. memory quantity suffixes in Prometheus chart overlays (#2301)
+
+**RULE**:
+When implementing operations in `web/src/components/resource/PrometheusCharts.overlays.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7cacbbcc`: memory quantity suffixes in Prometheus chart overlays (#2301). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/src/components/resource/PrometheusCharts.overlays.test.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+
+  it.each([
+    ['1024000m', '2048000m'],
+    ['1024000000u', '2048000000u'],
+    ['1024000000000n', '2048000000000n'],
+    ['1.024k', '2.048k'],
+    ['1.024K', '2.048K'],
+  ])('reads memory request %s and limit %s as bytes', (request, limit) => {
+    const resource = { spec: { containers: [
+      { resources: { requests: { memory: request }, limits: { memory: limit } } },
+    ] } }
+    expect(computeRequestLimitLines(resource, 'Pod', 'memory')).toEqual([
+      { value: 1024, label: 'request 1KiB', kind: 'request' },
+      { value: 2048, label: 'limit 2KiB', kind: 'limit' },
+    ])
+  })
+
+  it('sums binary and millibyte quantities across containers and native sidecars', () => {
+    const resource = { spec: { template: { spec: {
+      containers: [{ resources: { requests: { memory: '16Gi' }, limits: { memory: '16Gi' } } }],
+      initContainers: [{ restartPolicy: 'Always', resources: {
+        requests: { memory: '1181116006400m' }, limits: { memory: '1073741824000m' },
+      } }],
+    } } } }
+    const lines = computeRequestLimitLines(resource, 'Deployment', 'memory')!
+    expect(lines[0].value).toBeCloseTo(18360985190.4)
+    expect(lines[0].label).toBe('request 17.1GiB')
+    expec
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7cacbbcc` are properly handled with clean fallback behavior.

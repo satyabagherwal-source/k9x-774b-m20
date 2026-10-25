@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T23:04:47.684Z",
+  "last_updated": "2026-10-25T23:10:57.396Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35757,8 +35757,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "a5bb8b9c",
-      "content_hash": "785d38a67ba7a61222ce601aea746b8ef94536d776a28ad668c756688689a7d4",
+      "source_version": "9b1fcab1",
+      "content_hash": "2e3761b103ec6f360d7917f636377e223217a30ad777c261e5a86f8f9b517ae6",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -35791,6 +35791,11 @@
           "number": 4147,
           "title": "Defensive Buffer Sanitization at Ingress Protocol Boundaries",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4486,
+          "title": "cross-env compat prisma reset command",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35798,7 +35803,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T07:19:00.003Z",
+      "verified_at": "2026-10-25T23:10:57.388Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45743,8 +45748,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "0173895f",
-      "content_hash": "4416fcbf42adb2e559c176d237c24d979ff19b146df546858245a911dfe8dd4d",
+      "source_version": "51b8067b",
+      "content_hash": "932ac2442c2977fba6194c1a76605af343e987561909ab907438e99df1a96fd8",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -45777,6 +45782,11 @@
           "number": 3740,
           "title": "Enforce --disable-exec on the exec, debug and pod-file routes (#2269)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4485,
+          "title": "memory quantity suffixes in Prometheus chart overlays (#2301)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45784,7 +45794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T09:14:37.234Z",
+      "verified_at": "2026-10-25T23:10:53.511Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60789,7 +60799,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b",
-      "content_hash": "f0fdab9fcf06e07887ce9725870bae487ed79f423ff72cae31afa8a3d2b05906",
+      "content_hash": "16f7a60c68eb142058af41a45f37d562591ca6225fa01135eb8009574688e611",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "promoted_rules": [
@@ -60807,6 +60817,21 @@
           "number": 948,
           "title": "Context Window Enforcement Boundary Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4346,
+          "title": "Sparse MoE Routing Stability Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4483,
+          "title": "Heterogeneous Layer Stacking Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4484,
+          "title": "Tied Embedding Memory Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60814,7 +60839,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T03:11:40.941Z",
+      "verified_at": "2026-10-25T23:10:53.369Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124697,14 +124722,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 4346,
       "title": "Sparse MoE Routing Stability Invariant",
-      "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
-      "source_version": "hf-inclusionai-ming-image-0.1-design",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T14:38:08.623Z"
+      "verified_at": "2026-10-25T23:10:53.369Z"
     },
     "rule-4347": {
       "learning_id": "rule-4347",
@@ -126702,6 +126727,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T22:56:43.916Z"
+    },
+    "rule-4483": {
+      "learning_id": "rule-4483",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4483,
+      "title": "Heterogeneous Layer Stacking Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T23:10:53.369Z"
+    },
+    "rule-4484": {
+      "learning_id": "rule-4484",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4484,
+      "title": "Tied Embedding Memory Consistency Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T23:10:53.369Z"
+    },
+    "rule-4485": {
+      "learning_id": "rule-4485",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4485,
+      "title": "memory quantity suffixes in Prometheus chart overlays (#2301)",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "51b8067b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T23:10:53.511Z"
+    },
+    "rule-4486": {
+      "learning_id": "rule-4486",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4486,
+      "title": "cross-env compat prisma reset command",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "9b1fcab1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T23:10:57.388Z"
     }
   },
   "aliases": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T23:04:47.744Z",
-  "total_cycles_completed": 5008,
-  "total_learnings_persisted": 5008,
-  "total_rules_promoted": 4369,
+  "last_updated": "2026-10-25T23:10:57.455Z",
+  "total_cycles_completed": 5011,
+  "total_learnings_persisted": 5011,
+  "total_rules_promoted": 4374,
   "history": [
-    {
-      "timestamp": "2026-10-25T13:30:59.849Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T13:42:19.166Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T13:42:22.690Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T13:42:26.288Z",
       "repository": "Ontos-AI/knowhere",
@@ -1403,6 +1382,27 @@
       "repository": "BAAI/bge-reranker-v2-m3",
       "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T23:10:53.433Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T23:10:53.561Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T23:10:57.455Z",
+      "repository": "Mintplex-Labs/anything-llm",
+      "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

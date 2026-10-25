@@ -1445,8 +1445,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b",
     "license": "Open-Source",
-    "contentHash": "f0fdab9fcf06e07887ce9725870bae487ed79f423ff72cae31afa8a3d2b05906",
-    "lastHarvestedAt": "2026-10-21T03:11:41.022Z",
+    "contentHash": "16f7a60c68eb142058af41a45f37d562591ca6225fa01135eb8009574688e611",
+    "lastHarvestedAt": "2026-10-25T23:10:53.428Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b"
   },
   "hf-fishaudio-drama-3": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "0173895f",
+    "sourceVersion": "51b8067b",
     "license": "Apache-2.0",
-    "contentHash": "4416fcbf42adb2e559c176d237c24d979ff19b146df546858245a911dfe8dd4d",
-    "lastHarvestedAt": "2026-10-25T09:14:37.316Z",
+    "contentHash": "932ac2442c2977fba6194c1a76605af343e987561909ab907438e99df1a96fd8",
+    "lastHarvestedAt": "2026-10-25T23:10:53.557Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "a5bb8b9c",
+    "sourceVersion": "9b1fcab1",
     "license": "MIT",
-    "contentHash": "785d38a67ba7a61222ce601aea746b8ef94536d776a28ad668c756688689a7d4",
-    "lastHarvestedAt": "2026-10-25T07:19:00.083Z",
+    "contentHash": "2e3761b103ec6f360d7917f636377e223217a30ad777c261e5a86f8f9b517ae6",
+    "lastHarvestedAt": "2026-10-25T23:10:57.451Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {

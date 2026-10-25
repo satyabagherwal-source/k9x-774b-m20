@@ -5031,3 +5031,6 @@
 | `CYCLE-20261025-DM2J` | `2026-10-25T22:54:40.123Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4480` | Yes (`b1b2657f...`) |
 | `CYCLE-20261025-G9NM` | `2026-10-25T22:56:44.002Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4481, Rule 4482` | Yes (`9dd4b529...`) |
 | `CYCLE-20261025-QMWO` | `2026-10-25T23:04:47.736Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`bedd2d2e...`) |
+| `CYCLE-20261025-YH2P` | `2026-10-25T23:10:53.425Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4483, Rule 4346, Rule 4484` | Yes (`16f7a60c...`) |
+| `CYCLE-20261025-YH6B` | `2026-10-25T23:10:53.555Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4485` | Yes (`932ac244...`) |
+| `CYCLE-20261025-YK6G` | `2026-10-25T23:10:57.448Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4486` | Yes (`2e3761b1...`) |

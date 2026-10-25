@@ -5038,3 +5038,6 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `ba036280` | Multi-dimensional audit evidence | 2026-10-25T22:54:40.127Z |
 | `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-10-25T22:56:44.005Z |
 | `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-25T23:04:47.739Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-25T23:10:53.428Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `51b8067b` | Multi-dimensional audit evidence | 2026-10-25T23:10:53.557Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `9b1fcab1` | Multi-dimensional audit evidence | 2026-10-25T23:10:57.451Z |
