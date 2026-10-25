@@ -7498,5 +7498,28 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261025-OEF124",
+    "timestamp": "2026-10-25T15:39:07.790Z",
+    "repository": "local/old-english-font-free",
+    "learningId": "learn-local-old-english-font-free-v3-124",
+    "contentHash": "16836c99fe9a94b21a6403e7577f121bf53f6dd11c54b5a4860a077675bd8278",
+    "status": "PROMOTED_AND_VERIFIED",
+    "promotedRulesCount": 5,
+    "promotedRules": [
+      4366,
+      4367,
+      4368,
+      4369,
+      4370
+    ],
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true,
+      "retrieval_verified": true
+    }
   }
 ]

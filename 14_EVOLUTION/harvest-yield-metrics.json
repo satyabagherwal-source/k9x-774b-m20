@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T15:26:52.769Z",
+  "last_updated": "2026-10-25T15:39:23.272Z",
   "total_cycles_completed": 4856,
-  "total_learnings_persisted": 4856,
-  "total_rules_promoted": 4245,
+  "total_learnings_persisted": 4857,
+  "total_rules_promoted": 4250,
   "history": [
     {
       "timestamp": "2026-10-25T05:14:46.483Z",
@@ -1404,6 +1404,19 @@
       "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:39:23.273Z",
+      "event": "LOCAL_PROJECT_HARVEST_COMPLETE",
+      "source": "old-english-font-free",
+      "promotedRules": [
+        4366,
+        4367,
+        4368,
+        4369,
+        4370
+      ],
+      "dossier": "07_PROJECT_LEARNING/old-english-font-learnings.md"
     }
   ]
 }

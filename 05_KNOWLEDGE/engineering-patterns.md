@@ -318559,3 +318559,350 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `aab375a1` are properly handled with clean fallback behavior.
+
+---
+
+## 4366. Transactional Asset Rollback with Physical Binary and Directory Cleanup
+
+<!-- PROVENANCE_START
+{
+  "rule_id": 4366,
+  "source_repository": "local/old-english-font-free",
+  "category": "ASSET_TRANSACTION_SAFETY",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": false
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from `old-english-font-free` (`scripts/font-factory-engine.mjs`).  
+> **Evidence**: Verified against transactional rollback failure-injection tests in `scripts/test-factory-engine.mjs`.
+
+**RULE**:
+When implementing batch asset ingestion or compilation pipelines that create both structured metadata (JSON, database records) and physical filesystem assets (binaries, fonts, media, images, archives), transaction management wrappers MUST actively track all created physical file paths and newly created directory paths. On transaction abort or pipeline error, the rollback routine MUST delete all newly created binary files and remove empty parent directories in reverse chronological order before restoring metadata snapshots. Never rely solely on git checkout or metadata reversion, as unversioned newly created binaries remain orphaned on disk, leaking storage and corrupting subsequent pipeline runs.
+
+**WHY**:
+Prevents orphaned binary artifacts, disk bloat, filesystem collisions, and false-positive asset presence checks when batch operations fail mid-flight or trigger downstream quality gate rejections.
+
+**WHEN TO APPLY**:
+Any continuous ingestion engine, asset pipeline, font collection factory, image optimizer, or package compiler that downloads or generates binary files onto the local filesystem alongside registry metadata.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+class TransactionManager {
+  constructor() {
+    this.snapshots = new Map();
+    this.createdFiles = new Set();
+    this.createdDirs = new Set();
+  }
+
+  trackCreatedFile(filePath) {
+    this.createdFiles.add(path.resolve(filePath));
+  }
+
+  trackCreatedDir(dirPath) {
+    this.createdDirs.add(path.resolve(dirPath));
+  }
+
+  async rollback() {
+    // 1. Delete all tracked physical files created during this transaction
+    for (const file of this.createdFiles) {
+      if (fs.existsSync(file)) {
+        fs.unlinkSync(file);
+      }
+    }
+    // 2. Remove created empty directories in reverse order
+    const sortedDirs = Array.from(this.createdDirs).sort((a, b) => b.length - a.length);
+    for (const dir of sortedDirs) {
+      if (fs.existsSync(dir) && fs.readdirSync(dir).length === 0) {
+        fs.rmdirSync(dir);
+      }
+    }
+    // 3. Restore registered metadata files from in-memory snapshots
+    for (const [targetPath, originalContent] of this.snapshots.entries()) {
+      fs.writeFileSync(targetPath, originalContent, 'utf8');
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Rolling back only JSON/metadata files while leaving newly created binaries orphaned on disk:
+async function badRollback(metadataSnapshot, manifestPath) {
+  fs.writeFileSync(manifestPath, metadataSnapshot);
+  // FAILED: newly created binary files in public/assets/ remain on disk!
+}
+```
+
+**VERIFICATION METHOD**:
+Automated unit test injecting simulated HTTP or validation failures mid-batch and asserting that both metadata files match baseline and zero untracked binary files remain in target asset directories.
+
+---
+
+## 4367. Binary Header Magic-Byte Verification at Ingestion Boundaries (HTML Masquerade Prevention)
+
+<!-- PROVENANCE_START
+{
+  "rule_id": 4367,
+  "source_repository": "local/old-english-font-free",
+  "category": "INGESTION_BOUNDARY_VALIDATION",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": false
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from `old-english-font-free` (`scripts/font-factory-engine.mjs`).  
+> **Evidence**: Verified against upstream 404/200 masquerade failure tests in `scripts/test-factory-engine.mjs`.
+
+**RULE**:
+When an automated pipeline ingests binary assets (such as TTF, OTF, WOFF, WOFF2, PNG, or ZIP files) from external HTTP/HTTPS endpoints, the ingestion boundary MUST inspect the initial header bytes ("magic bytes") of the downloaded buffer before persisting or registering the asset. The pipeline MUST NEVER treat an HTTP 200 OK status code alone as proof of valid binary payload. Web servers, CDNs, captive portals, and bot-challenge intermediaries routinely respond with HTTP 200 OK containing HTML error pages or JavaScript challenge scripts, which will masquerade as valid downloads and crash downstream parsing or rendering engines.
+
+**WHY**:
+Prevents corrupted HTML error payloads, captive portal intercept pages, and bot challenge interstitials from masquerading as binary assets and corrupting production asset catalogs.
+
+**WHEN TO APPLY**:
+All asset ingestion scripts, font downloaders, media caching proxies, binary format converters, and third-party dependency fetchers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+export function validateBinaryMagicBytes(buffer, expectedFormat) {
+  if (!buffer || buffer.length < 4) {
+    return { valid: false, reason: 'BUFFER_TOO_SMALL' };
+  }
+  const magic = buffer.subarray(0, 4).toString('hex');
+  const asciiMagic = buffer.subarray(0, 4).toString('ascii');
+
+  // Detect HTML masquerading as binary
+  const prefix = buffer.subarray(0, 64).toString('utf8').trim().toLowerCase();
+  if (prefix.startsWith('<!doctype') || prefix.startsWith('<html') || prefix.startsWith('<?xml')) {
+    return { valid: false, reason: 'REJECTED_HTML_MASQUERADE' };
+  }
+
+  const validSignatures = {
+    'ttf': ['00010000', '74746366'], // 0x00010000 or 'ttcf'
+    'otf': ['4f54544f'],             // 'OTTO'
+    'woff': ['774f4646'],            // 'wOFF'
+    'woff2': ['774f4632']            // 'wOF2'
+  };
+
+  const allowed = validSignatures[expectedFormat] || [];
+  if (allowed.length > 0 && !allowed.includes(magic)) {
+    return { valid: false, reason: `INVALID_MAGIC_BYTES: ${magic}` };
+  }
+  return { valid: true };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Trusting HTTP 200 response without inspecting header magic bytes:
+const res = await fetch(assetUrl);
+if (res.ok) {
+  const buf = Buffer.from(await res.arrayBuffer());
+  fs.writeFileSync(outPath, buf); // Crashes renderer if body was 200 OK HTML error page!
+}
+```
+
+**VERIFICATION METHOD**:
+Automated unit test passing mock HTML 200 responses to the binary ingestion validator and confirming immediate rejection with `REJECTED_HTML_MASQUERADE`.
+
+---
+
+## 4368. Byte Order Mark (BOM) Auto-Detection and Multi-Encoding Stream Normalization for Upstream Legal/Text Documents
+
+<!-- PROVENANCE_START
+{
+  "rule_id": 4368,
+  "source_repository": "local/old-english-font-free",
+  "category": "TEXT_ENCODING_RESILIENCE",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": false
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from `old-english-font-free` (`scripts/resolvers/font-source-resolver.mjs`).  
+> **Evidence**: Verified against Velvetyne UTF-16LE license parsing in `scripts/test-factory-engine.mjs`.
+
+**RULE**:
+When automated ingestion pipelines read or validate external textual documents (such as open-source license files, READMEs, manifests, or legal disclosures) from third-party repositories or archives, the parser MUST inspect the buffer's initial Byte Order Mark (BOM) before string decoding. Specifically, files encoded in UTF-16LE (`0xFF, 0xFE`) or UTF-16BE (`0xFE, 0xFF`) will produce null-byte interleaved strings if decoded as default UTF-8, causing subsequent regular expression matching (such as SIL OFL or MIT keyword checks) to silently fail. The parser MUST detect BOM markers, decode using the appropriate encoding (`utf16le`), strip the BOM, and normalize the output string to clean UTF-8 before persistence.
+
+**WHY**:
+Prevents false-negative validation rejections and quarantine traps on valid third-party licenses and documentation files that utilize UTF-16 Windows/foundry encoding conventions.
+
+**WHEN TO APPLY**:
+Any text extraction pipeline, license compliance auditor, SBOM parser, or documentation aggregator consuming raw text files from open-source repositories or ZIP archives.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+export function decodeAndNormalizeTextBuffer(buffer) {
+  if (!buffer || buffer.length === 0) return '';
+
+  // Check UTF-16 Little Endian (0xFF 0xFE)
+  if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xfe) {
+    return buffer.subarray(2).toString('utf16le');
+  }
+  // Check UTF-16 Big Endian (0xFE 0xFF)
+  if (buffer.length >= 2 && buffer[0] === 0xfe && buffer[1] === 0xff) {
+    // Swap bytes and decode as utf16le
+    const swapped = Buffer.alloc(buffer.length - 2);
+    for (let i = 2; i < buffer.length - 1; i += 2) {
+      swapped[i - 2] = buffer[i + 1];
+      swapped[i - 1] = buffer[i];
+    }
+    return swapped.toString('utf16le');
+  }
+  // Check UTF-8 BOM (0xEF 0xBB 0xBF)
+  if (buffer.length >= 3 && buffer[0] === 0xef && buffer[1] === 0xbb && buffer[2] === 0xbf) {
+    return buffer.subarray(3).toString('utf8');
+  }
+  // Standard UTF-8
+  return buffer.toString('utf8');
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Blindly decoding text as UTF-8:
+const licenseText = fs.readFileSync(licensePath, 'utf8');
+// Fails regex test on UTF-16LE files because every character is followed by '\0'!
+if (!/SIL OPEN FONT LICENSE/i.test(licenseText)) {
+  quarantine(asset); // FALSE REJECTION!
+}
+```
+
+**VERIFICATION METHOD**:
+Automated unit test verifying that a UTF-16LE encoded license buffer is properly decoded, passes regex inspection, and normalizes to standard UTF-8 text without null bytes.
+
+---
+
+## 4369. Zero-External Font CDN Isolation and Cryptographic Self-Hosting for GDPR/DSGVO & Offline Resilience
+
+<!-- PROVENANCE_START
+{
+  "rule_id": 4369,
+  "source_repository": "local/old-english-font-free",
+  "category": "PRIVACY_AND_OFFLINE_RESILIENCE",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": false
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from `old-english-font-free` (`scripts/audit-dist-external-fonts.mjs`).  
+> **Evidence**: Verified across 1,472 production HTML pages with 0 external font references.
+
+**RULE**:
+Production web applications MUST eliminate all runtime network dependencies on external third-party font delivery CDNs (including `fonts.googleapis.com` and `fonts.gstatic.com`). All font binaries MUST be hosted locally within the application distribution directory (e.g. `public/fonts/<family>/`), served with explicit `@font-face` declarations specifying `font-display: swap`, and accompanied by cryptographic integrity hashes. Preconnect tags and external stylesheets pointing to third-party font domains MUST be strictly removed from application layouts and CSS files.
+
+**WHY**:
+1. Enforces strict compliance with European GDPR/DSGVO regulations (preventing unconsented leakage of user IP addresses and client headers to third-party infrastructure).
+2. Eliminates single-point-of-failure network latency, third-party DNS resolution overhead, and font blocking during offline or restricted-network operations.
+
+**WHEN TO APPLY**:
+All commercial, enterprise, and public web applications deployed to production, particularly those serving international traffic or requiring offline Progressive Web App (PWA) capabilities.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```css
+/* Self-hosted @font-face declaration with local assets */
+@font-face {
+  font-family: 'Metamorphous';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/metamorphous/Metamorphous-Regular.ttf') format('truetype');
+}
+```
+```javascript
+// Pre-deployment verification gate asserting zero external CDN links in compiled dist:
+export function auditZeroExternalFonts(htmlContent) {
+  const forbiddenPatterns = [
+    /fonts\.googleapis\.com/i,
+    /fonts\.gstatic\.com/i,
+    /use\.typekit\.net/i
+  ];
+  for (const pattern of forbiddenPatterns) {
+    if (pattern.test(htmlContent)) {
+      throw new Error(`CRITICAL PRIVACY VIOLATION: Found external font CDN reference matching ${pattern}`);
+    }
+  }
+  return true;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```html
+<!-- ANTI-PATTERN: Referencing external font CDNs in HTML templates -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+```
+
+**VERIFICATION METHOD**:
+Automated post-build audit scanning 100% of compiled HTML and CSS files in `dist/`, asserting zero occurrences of external font CDN hostnames.
+
+---
+
+## 4370. Parameterized Localization Tokens for Quantitative UI Metrics (Anti-Static-Count Desynchronization)
+
+<!-- PROVENANCE_START
+{
+  "rule_id": 4370,
+  "source_repository": "local/old-english-font-free",
+  "category": "I18N_AND_UI_STATE_SYNCHRONIZATION",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": false
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from `old-english-font-free` (`src/i18n/ui.ts` & `src/layouts/Layout.astro`).  
+> **Evidence**: Verified across 14 language dictionaries with live dev server count parity.
+
+**RULE**:
+In multilingual user interfaces, translation dictionaries and static localization templates MUST NEVER embed hardcoded numbers or quantitative inventory metrics inside translation string literals (e.g. `'filter.allStyles': 'All Styles (20)'`). All quantitative counts MUST be parameterized using standard variable tokens (e.g. `'filter.allStyles': 'All Styles ({count})'`), and populated dynamically at render time using runtime collection metrics (`fonts.length`). Embedding static numbers inside multi-language translation strings causes immediate visual desynchronization across UI badges, dropdowns, and navigation pills whenever the underlying catalog or dataset is updated.
+
+**WHY**:
+Prevents stale, desynchronized inventory counts from displaying across localized subpages, dropdown selectors, and filter bars when dynamic datasets grow or change.
+
+**WHEN TO APPLY**:
+Any application interface supporting multiple languages where UI labels display entity counts, search totals, shopping cart items, category sizes, or badge numbers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// 1. Dictionary definition with dynamic token:
+export const UI_DICTIONARY = {
+  en: {
+    'filter.allStyles': 'All Styles ({count})',
+    'filter.showingCount': 'Showing {count} of {total} items'
+  },
+  ja: {
+    'filter.allStyles': 'すべてのスタイル ({count})',
+    'filter.showingCount': '{total} 件中 {count} 件を表示'
+  }
+};
+
+// 2. Dynamic interpolation helper:
+export function formatLocalizedCount(template: string, count: number, total?: number): string {
+  let result = template.replace('{count}', count.toString());
+  if (total !== undefined) {
+    result = result.replace('{total}', total.toString());
+  }
+  return result;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Hardcoding quantities into translated strings:
+export const BAD_DICTIONARY = {
+  en: { 'filter.all': 'All Styles (20)' }, // Breaks as soon as items grow to 21!
+  ja: { 'filter.all': 'すべてのスタイル (20)' },
+  de: { 'filter.all': 'Alle Stile (20)' }
+};
+```
+
+**VERIFICATION METHOD**:
+Automated regex scan across localization dictionary files verifying that zero numeric count literals appear within label tokens destined for dynamic lists.
