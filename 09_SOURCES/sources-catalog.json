@@ -65,8 +65,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceVersion": "hf-zai-org-glm-5.3",
     "license": "Open-Source",
-    "contentHash": "94dc1005ae54cee87295096be2e7f9d93d70832502930809e72bb3b63f775a7d",
-    "lastHarvestedAt": "2026-10-20T12:50:50.266Z",
+    "contentHash": "700603ba3dcd07968a86aee49678fc8085893f400779a8e7487311477ee75f6a",
+    "lastHarvestedAt": "2026-10-25T04:44:16.366Z",
     "learningId": "learn-huggingface-zai-org-glm-5-3"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "b901fb8a",
+    "sourceVersion": "e21e6365",
     "license": "MIT",
-    "contentHash": "fb4fdf9cf60e13dc396bed90d678584e0b034638dc9b582f968f5301fc1e85f3",
-    "lastHarvestedAt": "2026-10-24T20:19:25.289Z",
+    "contentHash": "6a4c7d2d66790abcaab4aefc52d18230917ae05818b0ce45dd138adde09c1853",
+    "lastHarvestedAt": "2026-10-25T04:44:18.177Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "d565603d",
+    "sourceVersion": "e79b6a7c",
     "license": "Apache-2.0",
-    "contentHash": "eae32945948b207e81d4e1270247ab2cdb7f8e082c84bc99f1f92b367e2ee19a",
-    "lastHarvestedAt": "2026-10-22T16:58:22.077Z",
+    "contentHash": "36f1ac4797798fbf122ded1c56058933ce39f74d794af2d328cdcdb864049d62",
+    "lastHarvestedAt": "2026-10-25T04:44:22.746Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {

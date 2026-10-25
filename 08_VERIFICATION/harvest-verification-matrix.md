@@ -4667,3 +4667,6 @@
 | `CYCLE-20261025-7AQ2` | `2026-10-25T04:38:00.458Z` | `glincker/thesvg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4047` | Yes (`42ddb249...`) |
 | `CYCLE-20261025-7DBP` | `2026-10-25T04:38:03.829Z` | `killercup/cargo-edit` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/killercup-cargo-edit-learnings.md` | Yes (`d56c7ccc...`) |
 | `CYCLE-20261025-7K1R` | `2026-10-25T04:38:12.543Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 314, Rule 315, Rule 4048` | Yes (`679489d3...`) |
+| `CYCLE-20261025-FCRW` | `2026-10-25T04:44:16.364Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4049, Rule 4050, Rule 4051` | Yes (`700603ba...`) |
+| `CYCLE-20261025-FE67` | `2026-10-25T04:44:18.175Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4052` | Yes (`6a4c7d2d...`) |
+| `CYCLE-20261025-FHP4` | `2026-10-25T04:44:22.744Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4053` | Yes (`36f1ac47...`) |

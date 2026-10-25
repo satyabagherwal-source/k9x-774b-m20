@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-V1K3",
-    "timestamp": "2026-10-21T02:57:48.963Z",
-    "repository": "carbon-design-system/carbon-components-svelte",
-    "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-    "contentHash": "cd8732dd298035fe3119c75a1217a6d514740ddf91cafece77aad805bb16acf3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-4PUO",
-    "timestamp": "2026-10-21T03:05:20.352Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-    "contentHash": "9550dce7c57b28b4623b9fd5e801188ad30a51a2659b468b5f6394717627a985",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-CVKQ",
-    "timestamp": "2026-10-21T03:11:41.018Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-    "contentHash": "f0fdab9fcf06e07887ce9725870bae487ed79f423ff72cae31afa8a3d2b05906",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-L1Z1",
     "timestamp": "2026-10-21T03:18:02.557Z",
     "repository": "franken-ui/ui",
@@ -7492,6 +7447,51 @@
     "contentHash": "679489d313570bed2d58fc53e3d53605be1909059d46477b26793d4b87e478c4",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-FCRW",
+    "timestamp": "2026-10-25T04:44:16.364Z",
+    "repository": "zai-org/GLM-5.3",
+    "learningId": "learn-huggingface-zai-org-glm-5-3",
+    "contentHash": "700603ba3dcd07968a86aee49678fc8085893f400779a8e7487311477ee75f6a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-FE67",
+    "timestamp": "2026-10-25T04:44:18.175Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "6a4c7d2d66790abcaab4aefc52d18230917ae05818b0ce45dd138adde09c1853",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-FHP4",
+    "timestamp": "2026-10-25T04:44:22.744Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "36f1ac4797798fbf122ded1c56058933ce39f74d794af2d328cdcdb864049d62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T04:38:12.553Z",
-  "total_cycles_completed": 4644,
-  "total_learnings_persisted": 4644,
-  "total_rules_promoted": 3914,
+  "last_updated": "2026-10-25T04:44:22.753Z",
+  "total_cycles_completed": 4647,
+  "total_learnings_persisted": 4647,
+  "total_rules_promoted": 3919,
   "history": [
-    {
-      "timestamp": "2026-10-23T06:02:55.128Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T06:09:24.089Z",
-      "repository": "iliyami/MacSai",
-      "learningId": "learn-github-iliyami-macsai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T06:09:24.152Z",
-      "repository": "google/closure-compiler",
-      "learningId": "learn-github-google-closure-compiler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T06:10:29.030Z",
       "repository": "taiga-family/taiga-ui",
@@ -1403,6 +1382,27 @@
       "repository": "BAAI/bge-large-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:44:16.374Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-zai-org-glm-5-3",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:44:18.180Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:44:22.753Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

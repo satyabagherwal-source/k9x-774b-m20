@@ -4674,3 +4674,6 @@ Every entry in this ledger must capture:
 | `learn-github-glincker-thesvg` | `https://github.com/glincker/thesvg` | `fbc9da41` | Multi-dimensional audit evidence | 2026-10-25T04:38:00.461Z |
 | `learn-github-killercup-cargo-edit` | `https://github.com/killercup/cargo-edit` | `5cf6c0ba` | Multi-dimensional audit evidence | 2026-10-25T04:38:03.832Z |
 | `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-25T04:38:12.546Z |
+| `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-25T04:44:16.366Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `e21e6365` | Multi-dimensional audit evidence | 2026-10-25T04:44:18.177Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `e79b6a7c` | Multi-dimensional audit evidence | 2026-10-25T04:44:22.746Z |

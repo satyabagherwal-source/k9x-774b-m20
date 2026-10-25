@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T04:38:12.499Z",
+  "last_updated": "2026-10-25T04:44:22.712Z",
   "total_verified_learnings": 1082,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26643,7 +26643,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.3",
       "source_version": "hf-zai-org-glm-5.3",
-      "content_hash": "94dc1005ae54cee87295096be2e7f9d93d70832502930809e72bb3b63f775a7d",
+      "content_hash": "700603ba3dcd07968a86aee49678fc8085893f400779a8e7487311477ee75f6a",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "promoted_rules": [
@@ -26681,6 +26681,21 @@
           "number": 3172,
           "title": "Sparse Indexer Cadence & Layer Sharing Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4049,
+          "title": "Hybrid Dense-Sparse Layer Initialization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4050,
+          "title": "Indexer Top-K Selection Boundary Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4051,
+          "title": "BFloat16 Precision Enforcement for MoE Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26700,7 +26715,7 @@
         "learn-huggingface-hf-zai-org-glm-5-3-mv413j49",
         "learn-huggingface-hf-zai-org-glm-5-3-mv4f1uxu"
       ],
-      "verified_at": "2026-10-20T12:50:50.184Z",
+      "verified_at": "2026-10-25T04:44:16.325Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39779,8 +39794,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "b901fb8a",
-      "content_hash": "fb4fdf9cf60e13dc396bed90d678584e0b034638dc9b582f968f5301fc1e85f3",
+      "source_version": "e21e6365",
+      "content_hash": "6a4c7d2d66790abcaab4aefc52d18230917ae05818b0ce45dd138adde09c1853",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -39808,6 +39823,11 @@
           "number": 3948,
           "title": "Merge pull request #7756 from baturdenada/fix/dialer-panic",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4052,
+          "title": "Merge pull request #7922 from MasterchiefGalaxy/fix/offline-http-preserve-respon",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39815,7 +39835,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:19:25.204Z",
+      "verified_at": "2026-10-25T04:44:18.136Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50805,8 +50825,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "d565603d",
-      "content_hash": "eae32945948b207e81d4e1270247ab2cdb7f8e082c84bc99f1f92b367e2ee19a",
+      "source_version": "e79b6a7c",
+      "content_hash": "36f1ac4797798fbf122ded1c56058933ce39f74d794af2d328cdcdb864049d62",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -50834,6 +50854,11 @@
           "number": 3651,
           "title": "YQL-21692 fix tidy & sans",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4053,
+          "title": "YT-29127: Fix calculation of layers/files* job statistics. Add missing statistic",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50841,7 +50866,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:58:22.003Z",
+      "verified_at": "2026-10-25T04:44:22.705Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -118188,6 +118213,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T04:38:12.485Z"
+    },
+    "rule-4049": {
+      "learning_id": "rule-4049",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4049,
+      "title": "Hybrid Dense-Sparse Layer Initialization Invariant",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.3",
+      "source_version": "hf-zai-org-glm-5.3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:44:16.325Z"
+    },
+    "rule-4050": {
+      "learning_id": "rule-4050",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4050,
+      "title": "Indexer Top-K Selection Boundary Guard",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.3",
+      "source_version": "hf-zai-org-glm-5.3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:44:16.325Z"
+    },
+    "rule-4051": {
+      "learning_id": "rule-4051",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4051,
+      "title": "BFloat16 Precision Enforcement for MoE Models",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.3",
+      "source_version": "hf-zai-org-glm-5.3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:44:16.325Z"
+    },
+    "rule-4052": {
+      "learning_id": "rule-4052",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4052,
+      "title": "Merge pull request #7922 from MasterchiefGalaxy/fix/offline-http-preserve-respon",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "e21e6365",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:44:18.136Z"
+    },
+    "rule-4053": {
+      "learning_id": "rule-4053",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4053,
+      "title": "YT-29127: Fix calculation of layers/files* job statistics. Add missing statistic",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "e79b6a7c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:44:22.705Z"
     }
   },
   "aliases": {

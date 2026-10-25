@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T04:38:12.557Z",
+  "last_updated": "2026-10-25T04:44:22.756Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1730,14 +1730,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
-      "content_hash": "94dc1005ae54cee87295096be2e7f9d93d70832502930809e72bb3b63f775a7d",
-      "verified_at": "2026-10-20T12:50:50.273Z",
+      "content_hash": "700603ba3dcd07968a86aee49678fc8085893f400779a8e7487311477ee75f6a",
+      "verified_at": "2026-10-25T04:44:16.376Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:50:50.273Z"
+      "last_updated": "2026-10-25T04:44:16.376Z"
     },
     "mudler/locate-anything.cpp-gguf": {
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "fb4fdf9cf60e13dc396bed90d678584e0b034638dc9b582f968f5301fc1e85f3",
-      "verified_at": "2026-10-24T20:19:25.302Z",
+      "content_hash": "6a4c7d2d66790abcaab4aefc52d18230917ae05818b0ce45dd138adde09c1853",
+      "verified_at": "2026-10-25T04:44:18.183Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T20:19:25.302Z"
+      "last_updated": "2026-10-25T04:44:18.183Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "eae32945948b207e81d4e1270247ab2cdb7f8e082c84bc99f1f92b367e2ee19a",
-      "verified_at": "2026-10-22T16:58:22.090Z",
+      "content_hash": "36f1ac4797798fbf122ded1c56058933ce39f74d794af2d328cdcdb864049d62",
+      "verified_at": "2026-10-25T04:44:22.756Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:58:22.090Z"
+      "last_updated": "2026-10-25T04:44:22.756Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
