@@ -4432,3 +4432,9 @@ https://github.com/ShiGuangSchedule/shiguangschedule
 # --- Automatically Discovered by AI Scout Engine [2026-10-25T04:37:54.628Z] ---
 # [AI-AGENTS] glincker/thesvg (1774 score) - The open SVG brand library: 7,600+ brand logos and cloud icons (AWS, Azure, GCP)
 https://github.com/glincker/thesvg
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-25T05:58:34.133Z] ---
+# [HUGGINGFACE-AI-MODELS] orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF (1583 score) - Verified Hugging Face Model: orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGU
+https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF
+# [HUGGINGFACE-AI-MODELS] HuggingFaceBio/Carbon-X (2090 score) - Verified Hugging Face Model: HuggingFaceBio/Carbon-X (152 likes, 570 downloads)
+https://huggingface.co/HuggingFaceBio/Carbon-X

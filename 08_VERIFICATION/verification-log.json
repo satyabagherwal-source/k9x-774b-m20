@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-M5RK",
-    "timestamp": "2026-10-21T04:42:52.976Z",
-    "repository": "carbon-design-system/carbon",
-    "learningId": "learn-github-carbon-design-system-carbon",
-    "contentHash": "e36d584514b518ba1b409fa38bb960b7cc4420784306b8729ca8f854f4840623",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-M6EF",
-    "timestamp": "2026-10-21T04:42:53.799Z",
-    "repository": "google/vit-base-patch16-224",
-    "learningId": "learn-huggingface-google-vit-base-patch16-224",
-    "contentHash": "22a26985d60495d75b83277d10a47e1d7eba90b16d25d7a1b0e11a6ccbc45533",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-MBMV",
-    "timestamp": "2026-10-21T04:43:00.583Z",
-    "repository": "electron/electron",
-    "learningId": "learn-github-electron-electron",
-    "contentHash": "e9e869ec950f9b2c500f23af1ecbaeaeceff477816798e132480276f3bfe8b36",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-MDRE",
-    "timestamp": "2026-10-21T04:43:03.338Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "147b84754d3a753dceda79f0c48b1085d98b2ff75150b6e0912a82d9a523141b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-MGGL",
     "timestamp": "2026-10-21T04:43:06.837Z",
     "repository": "lioensky/VCPToolBox",
@@ -7492,6 +7432,66 @@
     "contentHash": "c70fbce74dca37ab64262cfcf709cd9729d44aae7732c5bd25ab2b5aaaec3f2e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-32OS",
+    "timestamp": "2026-10-25T05:58:42.268Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "98aac2a78a7f1e865bf452cbea0577f11caad81afb54ac62d139c8693fc90a7b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-34LV",
+    "timestamp": "2026-10-25T05:58:44.755Z",
+    "repository": "HuggingFaceBio/Carbon-X",
+    "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+    "contentHash": "bdf9980e019d2532492bcaac4fd8dc9199fc35081f43577c367ee50d25019759",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-3EPF",
+    "timestamp": "2026-10-25T05:58:57.843Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "7558a29a4775b9ac1dfb8b1e20a9bd2a777bfc4336da419f5fe02fbd9fa89f9e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-3F1K",
+    "timestamp": "2026-10-25T05:58:58.280Z",
+    "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+    "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
+    "contentHash": "d43e03a6b461a048966d3005217c353fe2b415025a704db8c352e772f7b364b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

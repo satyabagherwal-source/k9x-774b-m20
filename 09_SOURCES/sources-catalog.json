@@ -145,8 +145,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
     "sourceVersion": "hf-sentence-transformers-all-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "21fa75ed214b200b670d7fd96bf851c8e1751fa257ad57f4c438222c462e96e2",
-    "lastHarvestedAt": "2026-10-20T14:00:37.248Z",
+    "contentHash": "98aac2a78a7f1e865bf452cbea0577f11caad81afb54ac62d139c8693fc90a7b",
+    "lastHarvestedAt": "2026-10-25T05:58:42.271Z",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "2211c107",
+    "sourceVersion": "8e3eb7ad",
     "license": "Apache-2.0",
-    "contentHash": "c5dbbdf58d8c91ea6191198bfb16b0f4af0c3a38fe57a668a4b70c470922a6b2",
-    "lastHarvestedAt": "2026-10-22T17:58:25.585Z",
+    "contentHash": "7558a29a4775b9ac1dfb8b1e20a9bd2a777bfc4336da419f5fe02fbd9fa89f9e",
+    "lastHarvestedAt": "2026-10-25T05:58:57.845Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -10658,5 +10658,25 @@
     "contentHash": "42ddb249d87efc15b9a6ef561e31d3d11752047fa102ea789d04e823d4b382e9",
     "lastHarvestedAt": "2026-10-25T04:38:00.461Z",
     "learningId": "learn-github-glincker-thesvg"
+  },
+  "hf-huggingfacebio-carbon-x": {
+    "repository": "HuggingFaceBio/Carbon-X",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+    "sourceVersion": "hf-huggingfacebio-carbon-x",
+    "license": "Open-Source",
+    "contentHash": "bdf9980e019d2532492bcaac4fd8dc9199fc35081f43577c367ee50d25019759",
+    "lastHarvestedAt": "2026-10-25T05:58:44.758Z",
+    "learningId": "learn-huggingface-huggingfacebio-carbon-x"
+  },
+  "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf": {
+    "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+    "sourceVersion": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+    "license": "Open-Source",
+    "contentHash": "d43e03a6b461a048966d3005217c353fe2b415025a704db8c352e772f7b364b9",
+    "lastHarvestedAt": "2026-10-25T05:58:58.283Z",
+    "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf"
   }
 }

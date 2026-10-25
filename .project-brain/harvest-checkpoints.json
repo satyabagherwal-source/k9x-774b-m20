@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T05:52:38.076Z",
+  "last_updated": "2026-10-25T05:58:58.294Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -81,14 +81,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "21fa75ed214b200b670d7fd96bf851c8e1751fa257ad57f4c438222c462e96e2",
-      "verified_at": "2026-10-20T14:00:37.255Z",
+      "content_hash": "98aac2a78a7f1e865bf452cbea0577f11caad81afb54ac62d139c8693fc90a7b",
+      "verified_at": "2026-10-25T05:58:42.278Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:00:37.255Z"
+      "last_updated": "2026-10-25T05:58:42.278Z"
     },
     "cross-encoder/ms-marco-MiniLM-L6-v2": {
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "c5dbbdf58d8c91ea6191198bfb16b0f4af0c3a38fe57a668a4b70c470922a6b2",
-      "verified_at": "2026-10-22T17:58:25.598Z",
+      "content_hash": "7558a29a4775b9ac1dfb8b1e20a9bd2a777bfc4336da419f5fe02fbd9fa89f9e",
+      "verified_at": "2026-10-25T05:58:57.857Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:58:25.598Z"
+      "last_updated": "2026-10-25T05:58:57.857Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -16019,6 +16019,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-25T04:38:00.472Z"
+    },
+    "HuggingFaceBio/Carbon-X": {
+      "repository": "HuggingFaceBio/Carbon-X",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-huggingfacebio-carbon-x",
+      "content_hash": "bdf9980e019d2532492bcaac4fd8dc9199fc35081f43577c367ee50d25019759",
+      "verified_at": "2026-10-25T05:58:44.768Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-25T05:58:44.768Z"
+    },
+    "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF": {
+      "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
+      "content_hash": "d43e03a6b461a048966d3005217c353fe2b415025a704db8c352e772f7b364b9",
+      "verified_at": "2026-10-25T05:58:58.294Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-25T05:58:58.294Z"
     }
   },
   "repos": {

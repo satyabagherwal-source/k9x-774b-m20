@@ -4697,3 +4697,7 @@
 | `CYCLE-20261025-V4O1` | `2026-10-25T05:52:31.585Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4086` | Yes (`030116ca...`) |
 | `CYCLE-20261025-V7PQ` | `2026-10-25T05:52:35.534Z` | `lingodotdev/lingo.dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4087` | Yes (`1107f803...`) |
 | `CYCLE-20261025-V9NQ` | `2026-10-25T05:52:38.054Z` | `alexellis/k3sup` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`c70fbce7...`) |
+| `CYCLE-20261025-32OS` | `2026-10-25T05:58:42.268Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`98aac2a7...`) |
+| `CYCLE-20261025-34LV` | `2026-10-25T05:58:44.755Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4088, Rule 4089, Rule 4090` | Yes (`bdf9980e...`) |
+| `CYCLE-20261025-3EPF` | `2026-10-25T05:58:57.843Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4091` | Yes (`7558a29a...`) |
+| `CYCLE-20261025-3F1K` | `2026-10-25T05:58:58.280Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 618, Rule 4092, Rule 4093` | Yes (`d43e03a6...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `2211c107`  
+> **Source Version**: `8e3eb7ad`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:58:25.146Z  
+> **Timestamp**: 2026-10-25T05:58:57.529Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:58:24.957Z  
+> **Harvest Timestamp**: 2026-10-25T05:58:56.758Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50541 stars
+- **Stars / Engagement**: 50587 stars
 
 ---
 
@@ -1320,8 +1320,8 @@ private:
 - **Issue #127270** (2026-10-22): **Wrong result: `DateTime64 < DateTime` skips parts and granules whose rows lie in the boundary second**
   *Symptoms*: ### Describe what's wrong  When a `DateTime64` column in the partition key or sorting key is compared with a strict `<` against a `DateTime` value, the min-max and primary-key analysis rounds the bound to whole seconds and turns `ts < X` into `ts in (-Inf, X-1]`. A part or granule whose rows all lie in the second `[X-1, X)` (for example `23:59:59.250`) is then skipped, though every row in it satisfies the predicate. The query returns fewer rows without any error. The same filter with a `DateTime64` bound, or with index analysis disabled, returns the right rows. `>` against a `DateTime` bound behaves the same way at the low end.  ### Does it reproduce on the most recent release?  Yes: 26.8.1.1184 (clickhouse-local, official build) and 26.3.17.4 (server).  ### How to reproduce  ```sql CREATE TABLE t (ts DateTime64(3, 'UTC'), k UInt8) ENGINE = MergeTree PARTITION BY toYYYYMMDD(ts) ORDER BY (k, ts);  SYSTEM STOP MERGES t; INSERT INTO t VALUES ('2026-10-10 12:00:00.000', 1); INSERT INTO t VALUES ('2026-10-10 23:59:59.250', 1), ('2026-10-10 23:59:59.750', 1);  -- Every row is before 2026-10-11 00:00:00, so each query should return 3. SELECT count() FROM t WHERE ts < toDateTime('2026-10-11 00:00:00', 'UTC');            -- 1 SELECT count() FROM t WHERE ts < toDateTime64('2026-10-11 00:00:00', 3, 'UTC');        -- 3 SELECT count() FROM t WHERE ts < toDateTime('2026-10-11 00:00:00', 'UTC') SETTINGS use_primary_key = 0, use_partition_pruning = 0;                               -- 3 SELEC
 
-- **Issue #126856** (2026-10-20): **`count() WHERE date32_col = toDate32('1900-01-01')` returns the number of `1970-01-01` rows (sparsity trivial-count rewrite uses the wrong Date32 default)**
-  *Symptoms*: ### Company or project name  _No response_  ### Describe what's wrong   With default settings, `SELECT count() FROM t WHERE d = toDate32('1900-01-01')` on a MergeTree `Date32` column is answered by the "trivial count with sparsity filter" optimization from the part's `num_defaults` counter. That counter counts rows whose stored value is bitwise zero, i.e. `1970-01-01`. `1900-01-01`, however, is what `DataTypeDate32::getDefault()` returns. So:  - `count() WHERE d = toDate32('1900-01-01')` returns the number of `1970-01-01` rows; - `count() WHERE d != toDate32('1900-01-01')` returns the number of `1900-01-01` rows (it should be all other rows).  The rows themselves are intact: `SELECT ... WHERE d = toDate32('1900-01-01')`, `count(d)`, `countIf(d = toDate32('1900-01-01'))` and the same query with `optimize_trivial_count_with_sparsity_filter = 0` all return the right number. `INSERT ... SELECT count()` is rewritten too, so the wrong count gets persisted: `INSERT INTO s SELECT count() FROM t WHERE d = toDate32('1900-01-01')` stores 980 (master 26.11.1.144, 39618113). The column doesn't have to be sparse: on a table holding just `1900-01-01` and `2000-02-29` the count is 0. Typed constants trigger it (`toDate32('1900-01-01')`, `CAST('1900-01-01' AS Date32)`, `defaultValueOfTypeName('Date32')`); a plain string literal `d = '1900-01-01'` isn't rewritten and is correct.  `1900-01-01` is the minimum and default value of `Date32`, so it's a common "unknown date" sentinel, and `count() W
+- **Issue #127233** (2026-10-24): **A single `EIO` while reading `checksums.txt` / `columns.txt` / `count.txt` at start-up detaches the whole part as `broken-on-start`; its rows silently disappear from the table**
+  *Symptoms*: ### Company or project name  _No response_  ### Describe what's wrong   While a MergeTree table is loaded at server start, one failed read (`EIO`) of one small part metadata file treats the part like a corrupted one. A failed read means the read errored, not that the content is wrong. The server logs "is broken and needs manual correction" and renames the part to `detached/broken-on-start_<name>`. The table then starts without it:  - `SELECT` returns the remaining rows (0 of 300 below) with no error and no warning to the client. - The decision is not undone when the I/O error goes away. The data stays in `detached/` until an administrator notices it in `system.detached_parts` or the server log, renames the directory back by hand (`ATTACH PART 'broken-on-start_all_1_1_0'` fails with `BAD_DATA_PART_NAME`) and attaches it. - The `max_suspicious_broken_parts` / `max_suspicious_broken_parts_bytes` guards do not stop this for small parts or for a few of them.  The same result occurs for the first read of `checksums.txt`, `columns.txt`, `count.txt` and `serialization.json`. The other files of the part (`data.bin`, ...) are intact, and without the injected fault the same part loads with all its rows. `isRetryableException` (used in `loadDataPart` to decide between "rethrow" and "mark broken") already treats `ErrnoException` with `EMFILE`/`ENOMEM`, network errors and S3/Azure retryable errors as not-a-corruption, but not `EIO`.   ### Does it reproduce on the most recent release?  Yes 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,171 +1338,282 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a65d0fa6` (2026-10-22)
-**Commit Message**: Merge pull request #125725 from groeneai/jemalloc-darwin-prof-dump-fork-deadlock
+### Incident Patch 1: `e9699fe9` (2026-10-24)
+**Commit Message**: Merge pull request #127439 from ClickHouse/fix-merge-block-empty-input
 
-Fix a macOS hang between jemalloc heap profile dumps and starting a child process
+Fix `LOGICAL_ERROR` in ReplacingMergeTree variants on empty block after insert deduplication
 
-**File**: `contrib/jemalloc` (modified, +1/-1)
+**File**: `src/Storages/MergeTree/MergeTreeDataWriter.cpp` (modified, +5/-0)
 ```diff
-@@ -1 +1 @@
--Subproject commit d21c86122de12135a951e6057fcdc8412d3ca740
-+Subproject commit 06adceacf1e1b7dcd67f83cb99083e4baf1d5401
+@@ -610,6 +610,11 @@ Block MergeTreeDataWriter::mergeBlock(
+     span.addAttribute("clickhouse.rows", block_size);
+     span.addAttribute("clickhouse.columns", header->columns());
+ 
++    /// The block can lose all its rows before this point, e.g. when insert deduplication removes
++    /// duplicate rows of a materialized view block. Merging algorithms do not expect an empty input.
++    if (block_size == 0)
++        return *header;
++
+     auto get_merging_algorithm = [&]() -> std::shared_ptr<IMergingAlgorithm>
+     {
+         switch (merging_params.mode)
+```
+
+**File**: `tests/queries/0_stateless/05443_async_insert_mv_dedup_empty_partition_block.reference` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++src	0	1
++src	1	2
++tgt	0	1
+```
+
+**File**: `tests/queries/0_stateless/05443_async_insert_mv_dedup_empty_partition_block.sql` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++-- Two async inserts with the same `insert_deduplication_token` but different data are coalesced
++-- into one batch. In the materialized view target, the rows of the two tokens land in different
++-- partitions. For the partition of the second (duplicate) token, self-deduplication removes all
++-- rows, and the recalculated block for that partition is empty. The empty block used to reach
++-- `MergeTreeDataWriter::mergeBlock` and trigger the "Required source after the first merge is
++-- not 0" logical error with `optimize_on_insert` enabled and a `ReplacingMergeTree` target.
++
++DROP TABLE IF EXISTS mv_dedup_empty;
++DROP TABLE IF EXISTS tgt_dedup_empty;
++DROP TABLE IF EXISTS src_dedup_empty;
++
++CREATE TABLE src_dedup_empty (p UInt64, v UInt64) ENGINE = MergeTree ORDER BY v;
++CREATE TABLE tgt_dedup_empty (p UInt64, v UInt64) ENGINE = ReplacingMergeTree PARTITION BY p ORDER BY v
++    SETTINGS non_replicated_deduplication_window = 100;
++CREATE MATERIALIZED VIEW mv_dedup_empty TO tgt_dedup_empty AS SELECT p, v FROM src_dedup_empty;
++
++SET async_insert = 1;
++SET wait_for_async_insert = 0;
++SET async_insert_deduplicate = 1;
++SET deduplicate_blocks_in_dependent_materialized_views = 1;
++SET optimize_on_insert = 1;
++-- Prevent an automatic flush between the two inserts; the flush below is explicit.
++SET async_insert_busy_timeout_min_ms = 600000;
++SET async_insert_busy_timeout_max_ms = 600000;
++SET async_insert_use_adaptive_busy_timeout = 0;
++
++INSERT INTO src_dedup_empty SETTINGS insert_deduplication_token = 'tok' VALUES (0, 1);
++INSERT INTO src_dedup_empty SETTINGS insert_deduplication_token = 'tok' VALUES (1, 2);
++
++SYSTEM FLUSH ASYNC INSERT QUEUE src_dedup_empty;
++
++-- The source table has no deduplication window, so it keeps both rows. In the target table the
++-- second insert is a duplicate of the first by token, so only the first row survives.
++SELECT 'src', p, v FROM src_dedup_empty ORDER BY v;
++SELECT 'tgt', p, v FROM tgt_dedup_empty ORDER BY v;
++
++DROP TABLE mv_dedup_empty;
++DROP TABLE tgt_dedup_empty;
++DROP TABLE src_dedup_empty;
 ```
 
 ---
 
-### Incident Patch 2: `406082d3` (2026-10-22)
-**Commit Message**: Merge pull request #113673 from groeneai/groeneai/fix-refresh-randomize-for-overflow
+### Incident Patch 2: `b866a0ab` (2026-10-24)
+**Commit Message**: Merge pull request #120216 from groeneai/fix-system-stack-trace-self-deadlock
 
-Fix signed integer overflow in refreshable materialized view `RANDOMIZE FOR`
+Fix a deadlock when one query reads system.stack_trace twice
 
-**File**: `src/Storages/MaterializedView/RefreshSchedule.cpp` (modified, +6/-1)
+**File**: `src/Storages/System/StorageSystemStackTrace.cpp` (modified, +19/-10)
 ```diff
-@@ -2,6 +2,8 @@
+@@ -3,6 +3,7 @@
+ #include <poll.h>
+ #include <Storages/System/SystemTableSourceRegistry.h>
  
- #include <Common/thread_local_rng.h>
++#include <chrono>
+ #include <mutex>
+ #include <unordered_map>
+ #include <memory>
+@@ -89,14 +90,18 @@ std::atomic<uintptr_t> expected_responding_thread = 0;
+ #endif
  
-+#include <algorithm>
+ /** Notes:
+-  * Only one query from the table can be processed at the moment of time.
+-  * This is ensured by the mutex in StorageSystemStackTraceSource.
++  * Only one collection of stack traces can run at the moment of time.
++  * This is ensured by the mutex below, which StackTraceSource holds while it fills one block only:
++  * a single query plan can read this table more than once, on one thread.
+   * We obtain information about threads by sending signal and receiving info from the signal handler.
+   * Information is passed via global variables and pipe is used for signaling.
+   * Actually we can send all information via pipe, but we read from it with timeout just in case,
+   * so it's convenient to use it only for signaling.
+   */
+-std::mutex mutex;
++std::timed_mutex mutex;
 +
- namespace DB
- {
++/// strsignal is not thread-safe and the description never changes, so it is resolved once.
++const std::string signal_description = strsignal(STACK_TRACE_SERVICE_SIGNAL); /// NOLINT(concurrency-mt-unsafe)
  
-@@ -70,7 +72,10 @@ std::chrono::sys_seconds RefreshSchedule::advance(std::chrono::sys_seconds last_
+ StackTrace stack_trace{NoCapture{}};
  
- std::chrono::system_clock::time_point RefreshSchedule::addRandomSpread(std::chrono::system_clock::time_point when, Int64 randomness) const
- {
--    return when + std::chrono::milliseconds(Int64(static_cast<double>(spread.minSeconds()) * 1e3 / 2 * static_cast<double>(randomness) / 1e9));
-+    /// RANDOMIZE FOR is unbounded, so compute in Int128 and cap the offset at about 95 years.
-+    constexpr Int64 max_offset_ms = 3'000'000'000'000;
-+    const Int128 offset_ms = Int128(spread.minSeconds()) * randomness / 2'000'000;
-+    return when + std::chrono::milliseconds(Int64(std::clamp<Int128>(offset_ms, -max_offset_ms, max_offset_ms)));
- }
+@@ -423,9 +428,6 @@ class StackTraceSource final : public ISource
+ #ifdef OS_LINUX
+         , proc_it("/proc/self/task")
+ #endif
+-        /// It shouldn't be possible to do concurrent reads from this table.
+-        , lock(mutex)
+-        , signal_str(strsignal(STACK_TRACE_SERVICE_SIGNAL)) /// NOLINT(concurrency-mt-unsafe) // not thread-safe but ok in this context
+     {
+         /// Create a mask of what columns are needed in the result.
+         NameSet names_set(column_names.begin(), column_names.end());
+@@ -442,6 +444,13 @@ class StackTraceSource final : public ISource
+ protected:
+     Chunk generate() override
+     {
++        /// The signal protocol passes data through process-global state, so collections must not
++        /// overlap. One block at a time is enough, and one plan may read this table twice on one thread.
++        std::unique_lock lock(mutex, std::defer_lock);
++        while (!lock.try_lock_for(std::chrono::milliseconds(50)))
++            if (isCancelled())
++                return {};
++
+         MutableColumns res_columns = header->cloneEmptyColumns();
  
- }
+         ColumnPtr thread_ids;
+@@ -468,6 +477,9 @@ class StackTraceSource final : public ISource
+ 
+         for (UInt64 tid : thread_ids_data)
+         {
++            if (isCancelled())
++                return {};
++
+             size_t res_index = 0;
+ 
+             String thread_name;
+@@ -584,7 +596,7 @@ class StackTraceSource final : public ISource
+                 }
+ 
+                 if (signal_blocked)
+-                    LOG_DEBUG(log, "Thread {} ({}) blocks SIG{} signal", tid, thread_name, signal_str);
++                    LOG_DEBUG(log, "Thread {} ({}) blocks SIG{} signal", tid, thread_name, signal_description);
+                 else
+                     LOG_DEBUG(log, "Cannot obtain a stack trace for thread {} ({})", tid, thread_name);
+ 
+@@ -654,9 +666,6 @@ class StackTraceSource final : public ISource
+     size_t signals_sent = 0;
+     size_t signals_sent_ms = 0;
+ 
+-    std::unique_lock<std::mutex> lock;
+-    const char * signal_str;
+-
+     ColumnPtr getFilteredThreadIds()
+     {
+         MutableColumnPtr all_thread_ids = ColumnUInt64::create();
 ```
 
-**File**: `tests/queries/0_stateless/04757_refreshable_mv_randomize_for_overflow.reference` (added, +1/-0)
+**File**: `tests/queries/0_stateless/05218_system_stack_trace_concurrent_reads.reference` (added, +2/-0)
 ```diff
-@@ -0,0 +1 @@
-+1
+@@ -0,0 +1,2 @@
++two reads in one query finished
++a concurrent reader is not blocked by a slow consumer
 ```
 
-**File**: `tests/queries/0_stateless/04757_refreshable_mv_randomize_for_overflow.sh` (added, +25/-0)
+**File**: `tests/queries/0_stateless/05218_system_stack_trace_concurrent_reads.sh` (added, +71/-0)
 ```diff
-@@ -0,0 +1,25 @@
+@@ -0,0 +1,71 @@
 +#!/usr/bin/env bash
-+# Tags: memory-engine, atomic-database
 +
-+CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 +# shellcheck source=../shell_config.sh
-+. "$CUR_DIR"/../shell_config.sh
++. "$CURDIR"/../shell_config.sh
 +
-+# An absurd RANDOMIZE FOR caps the offset at 3e9 seconds. The first timeslot is 2170-01-01, so both
-+# signs of the offset stay in the future and the view is scheduled without refreshing.
-+$CLICKHOUSE_CLIENT -q "
-+    create materialized view rmv refresh every 200 year randomize for 10000000000000000000 second
-+        (x Int64) engine Memory as select 1 as x;"
++# Both reads of this table in one plan are built one after the other on the same thread, so an exclusion
++# between readers that spans pipeline construction leaves the second one waiting on a mutex its own thread
++# already holds. The oracle is the outer timeout: both rows must arrive.
++# One thread per block, five blocks: the cost does not depend on how many threads the server runs, and
++# each read passes through the exclusion five times instead of once.
++if timeout 60 ${CLICKHOUSE_CLIENT} --max_execution_time 50 --query "
++        SELECT count(trace) > 0 FROM (SELECT trace FROM system.stack_trace LIMIT 5 SETTINGS max_block_size = 1)
++        UNION ALL
++        SELECT count(trace) > 0 FROM (SELECT trace FROM system.stack_trace LIMIT 5 SETTINGS max_block_size = 1)
++    " 2>&1 | tr '\n' ' ' | grep -q -E '^1 1 *$'
++then
++    echo 'two reads in one query finished'
++else
++    echo 'two reads in one query did not finish'
++fi
 +
-+# next_refresh_time is a UInt32 DateTime, so the expected instants are compared modulo 2^32.
-+query="
-+    with toInt64(toDateTime64('2170-01-01 00:00:00', 0, 'UTC')) as slot
-+    select status = 'Scheduled' and last_refresh_time is null
-+        and toUInt32(next_refresh_time) in ((slot - 3000000000) % 4294967296, (slot + 3000000000) % 4294967296)
-+    from system.view_refreshes where database = currentDatabase() and view = 'rmv'"
++# The exclusion covers one collected block, not a whole query, so a reader whose rows go to a slow
++# consumer must not keep other readers out for as long as its own query runs.
++HOLDER_ID="stack_trace_holder_${CLICKHOUSE_DATABASE}"
++HOLDER_ERR="${CLICKHOUSE_TMP}/05218_holder_${CLICKHOUSE_TEST_UNIQUE_NAME}.stderr"
++${CLICKHOUSE_CLIENT} --query_id "${HOLDER_ID}" --query "
++    SELECT sleepEachRow(2), length(trace) FROM system.stack_trace LIMIT 30
++    SETTINGS max_block_size = 1, max_execution_time = 120 FORMAT Null" 2>"${HOLDER_ERR}" &
++HOLDER_PID=$!
 +
-+for _ in {1..100}; do
-+    [ "$($CLICKHOUSE_CLIENT -q "$query")" = 1 ] && break
-+    sleep 0.1
++for _ in {1..100}
++do
++    [ "$(${CLICKHOUSE_CLIENT} -q "SELECT count() FROM system.processes WHERE query_id = '${HOLDER_ID}'")" = "1" ] && break
++    sleep 0.2
 +done
-+$CLICKHOUSE_CLIENT -q "$query"
++sleep 1
++
++# Without a live holder the probe below measures an uncontended mutex and would pass while testing nothing.
++if [ "$(${CLICKHOUSE_CLIENT} -q "SELECT count() FROM system.processes WHERE query_id = '${HOLDER_ID}'")" != "1" ]
++then
++    echo 'holder is not running'
++    cat "${HOLDER_ERR}"
++fi
++
++if timeout 30 ${CLICKHOUSE_CLIENT} --max_execution_time 25 -q "
++        SELECT count(trace) > 0 FROM (SELECT trace FROM system.stack_trace LIMIT 5 SETTINGS max_block_size = 1)" | grep -q -F '1'
++then
++    probe_ok=1
++else
++    probe_ok=0
++fi
++
++# A holder that exited during the probe leaves an uncontended mutex, so the probe would pass while
++# testing nothing.
++if [ "$(${CLICKHOUSE_CLIENT} -q "SELECT count() FROM system.processes WHERE query_id = '${HOLDER_ID}'")" != "1" ]
++then
++    echo 'holder exited during the probe'
++    cat "${HOLDER_ERR}"
++elif [ "$probe_ok" = "1" ]
++then
++    echo 'a concurrent reader is not blocked by a slow consumer'
++else
++    echo 'a concurrent reader is blocked by a slow consumer'
++fi
++
++# The holder is not needed any more. It reports QUERY_WAS_CANCELLED, which is not a test failure.
++${CLICKHOUSE_CLIENT} -q "KILL QUERY WHERE query_id = '${HOLDER_ID}' ASYNC FORMAT Null" 2>/dev/null
++kill "${HOLDER_PID}" 2>/dev/null
++wait "${HOLDER_PID}" 2>/dev/null || true
++rm -f "${HOLDER_ERR}"
 ```
 
 ---
 
-### Incident Patch 3: `e7f8720c` (2026-10-22)
-**Commit Message**: Merge pull request #127070 from ClickHouse/fix-05136-text-log-time-bound
+### Incident Patch 3: `13f51585` (2026-10-24)
+**Commit Message**: Merge pull request #127515 from groeneai/fix-05401-small-granules-timeout
 
-Bound the text_log queries of 05136_no_blob_threads_on_plain_disks by time
+Fix `05401_autopr_set_transplant_unpaired_sets` timeout with small randomized index granules
 
-**File**: `tests/queries/0_stateless/05136_no_blob_threads_on_plain_disks.sh` (modified, +21/-11)
+**File**: `tests/queries/0_stateless/05401_autopr_set_transplant_unpaired_sets.sql` (modified, +4/-0)
 ```diff
-@@ -9,45 +9,55 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
- # shellcheck source=../shell_config.sh
- . "$CUR_DIR"/../shell_config.sh
- 
-+# Custom disks stay registered until the server restarts, so each run uses its own disk names to start the
-+# threads again and write fresh log lines.
-+LOCAL_DISK="05136_local_metadata_${CLICKHOUSE_DATABASE}"
-+PLAIN_DISK="05136_plain_rewritable_${CLICKHOUSE_DATABASE}"
+@@ -1,3 +1,7 @@
++-- Random settings limits: index_granularity=(8192, None); index_granularity_bytes=(10485760, None)
++-- Every query reads the whole table in one thread with tiny read tasks, so the run time grows with the
++-- number of granules: small randomized granules push the test past the timeout.
 +
- ${CLICKHOUSE_CLIENT} --multiline -q "
- -- The \`local\` metadata of a disk lives in \`disks/<disk name>/\`, and a \`local\` object storage deletes its
---- own root directory once it becomes empty, so \`path\` must not be \`disks/05136_local_metadata/\` here.
-+-- own root directory once it becomes empty, so \`path\` must not be \`disks/<disk name>/\` here.
- CREATE TABLE t_local_metadata (a Int32) ENGINE = MergeTree ORDER BY a
- SETTINGS disk = disk(
--    name = '05136_local_metadata',
-+    name = '${LOCAL_DISK}',
-     type = 'object_storage',
-     object_storage_type = 'local',
-     metadata_type = 'local',
--    path = '${CLICKHOUSE_DISKS_FILES}/05136_local_metadata_blobs/');
-+    path = '${CLICKHOUSE_DISKS_FILES}/${LOCAL_DISK}_blobs/');
- 
- CREATE TABLE t_plain_rewritable (a Int32) ENGINE = MergeTree ORDER BY a
- SETTINGS disk = disk(
--    name = '05136_plain_rewritable',
-+    name = '${PLAIN_DISK}',
-     type = 'object_storage',
-     object_storage_type = 'local',
-     metadata_type = 'plain_rewritable',
--    path = '${CLICKHOUSE_DISKS_FILES}/05136_plain_rewritable/');
-+    path = '${CLICKHOUSE_DISKS_FILES}/${PLAIN_DISK}/');
- 
- SYSTEM FLUSH LOGS text_log;
- 
- SELECT 'local metadata, blob killer started', count() > 0 FROM system.text_log
--WHERE logger_name = '05136_local_metadata::BlobKillerThread' AND message LIKE 'Execution started%';
-+WHERE logger_name = '${LOCAL_DISK}::BlobKillerThread' AND message LIKE 'Execution started%'
-+    AND event_date >= yesterday() AND event_time >= now() - INTERVAL 10 MINUTE;
- 
- -- The copier reports this at startup even when \`data_background_replication\` is not enabled.
- SELECT 'local metadata, blob copier not needed', count() > 0 FROM system.text_log
--WHERE logger_name = '05136_local_metadata::BlobCopierThread' AND message LIKE 'Execution is not needed%';
-+WHERE logger_name = '${LOCAL_DISK}::BlobCopierThread' AND message LIKE 'Execution is not needed%'
-+    AND event_date >= yesterday() AND event_time >= now() - INTERVAL 10 MINUTE;
- 
- SELECT 'plain_rewritable, blob killer started', count() FROM system.text_log
--WHERE logger_name = '05136_plain_rewritable::BlobKillerThread' AND message LIKE 'Execution started%';
-+WHERE logger_name = '${PLAIN_DISK}::BlobKillerThread' AND message LIKE 'Execution started%'
-+    AND event_date >= yesterday() AND event_time >= now() - INTERVAL 10 MINUTE;
- 
- SELECT 'plain_rewritable, blob killer not needed', count() > 0 FROM system.text_log
--WHERE logger_name = '05136_plain_rewritable::BlobKillerThread' AND message LIKE 'Execution is not needed%';
-+WHERE logger_name = '${PLAIN_DISK}::BlobKillerThread' AND message LIKE 'Execution is not needed%'
-+    AND event_date >= yesterday() AND event_time >= now() - INTERVAL 10 MINUTE;
- 
- SELECT 'plain_rewritable, blob copier not needed', count() > 0 FROM system.text_log
--WHERE logger_name = '05136_plain_rewritable::BlobCopierThread' AND message LIKE 'Execution is not needed%';
-+WHERE logger_name = '${PLAIN_DISK}::BlobCopierThread' AND message LIKE 'Execution is not needed%'
-+    AND event_date >= yesterday() AND event_time >= now() - INTERVAL 10 MINUTE;
- 
- -- Nothing is deferred on such a disk, so waiting for the cleanup returns immediately instead of hanging.
--SYSTEM WAIT BLOBS CLEANUP '05136_plain_rewritable';
-+SYSTEM WAIT BLOBS CLEANUP '${PLAIN_DISK}';
- 
- DROP TABLE t_local_metadata;
- DROP TABLE t_plain_rewritable;
+ -- When automatic parallel replicas switches a query, the sets the single-node plan has already
+ -- prepared are handed to the parallel-replicas plan, paired by hash. A set that has no counterpart
+ -- used to fail the query with "Cannot find a matching set in the map of sets from single-replica plan";
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #127424** (2026-10-22): Backport #126954 to 26.10: Evaluate followers' read-time skip indexes over the ranges analyzed on the initiator (@robot-ch-test-poll)
-- **PR #127398** (closed): Revert "Query condition cache for TopK reads of data lakes" (@nikitamikhaylov)
-- **PR #127395** (2026-10-22): Backport #123999 to 26.9: Fix rows skipped when a sub-second `DateTime64` key is compared with an integer by `>` or `<` (@robot-clickhouse)
-- **PR #127394** (2026-10-22): Backport #123999 to 26.8: Fix rows skipped when a sub-second `DateTime64` key is compared with an integer by `>` or `<` (@robot-clickhouse)
-- **PR #127393** (2026-10-22): Backport #123999 to 26.7: Fix rows skipped when a sub-second `DateTime64` key is compared with an integer by `>` or `<` (@robot-clickhouse)
-- **PR #127390** (2026-10-22): Make `04413_documentation_no_indented_lines` linear in the number of lines (@cv4g)
+- **PR #127758** (2026-10-25): Backport #127286 to 26.3: Reject too deep cursors instead of exhausting the stack (@robot-ch-test-poll2)
+- **PR #127756** (2026-10-25): Backport #105578 to 26.3: Fix TTL expressions with subcolumns causing exception on INSERT and merge (@robot-ch-test-poll2)
+- **PR #127743** (2026-10-24): Backport #122063 to 26.10: Implement ColumnFunction::structureEquals for lazy materialization squashing (@robot-clickhouse)
+- **PR #127709** (2026-10-24): Backport #127439 to 26.10: Fix `LOGICAL_ERROR` in ReplacingMergeTree variants on empty block after insert deduplication (@robot-clickhouse-ci-1)
+- **PR #127708** (2026-10-24): Backport #127439 to 26.9: Fix `LOGICAL_ERROR` in ReplacingMergeTree variants on empty block after insert deduplication (@robot-clickhouse-ci-1)
+- **PR #127707** (2026-10-24): Backport #127439 to 26.8: Fix `LOGICAL_ERROR` in ReplacingMergeTree variants on empty block after insert deduplication (@robot-clickhouse-ci-1)
 
 ---
 
@@ -1522,28 +1633,32 @@ Bound the text_log queries of 05136_no_blob_threads_on_plain_disks by time
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #125725 from groeneai/jemalloc-darwin-prof-dump-fork-deadlock
+## X. Merge pull request #127439 from ClickHouse/fix-merge-block-empty-input
 
 **RULE**:
-When implementing operations in `contrib/jemalloc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Storages/MergeTree/MergeTreeDataWriter.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a65d0fa6`: Merge pull request #125725 from groeneai/jemalloc-darwin-prof-dump-fork-deadlock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e9699fe9`: Merge pull request #127439 from ClickHouse/fix-merge-block-empty-input. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `contrib/jemalloc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/MergeTree/MergeTreeDataWriter.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-Subproject commit 06adceacf1e1b7dcd67f83cb99083e4baf1d5401
+    /// The block can lose all its rows before this point, e.g. when insert deduplication removes
+    /// duplicate rows of a materialized view block. Merging algorithms do not expect an empty input.
+    if (block_size == 0)
+        return *header;
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-Subproject commit d21c86122de12135a951e6057fcdc8412d3ca740
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a65d0fa6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e9699fe9` are properly handled with clean fallback behavior.

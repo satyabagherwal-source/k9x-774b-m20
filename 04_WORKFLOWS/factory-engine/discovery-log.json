@@ -18577,5 +18577,29 @@
     "qualityScore": 1774,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-25T04:34:22.326Z"
+  },
+  {
+    "name": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+    "fullName": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+    "url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF (158 likes, 3 downloads)",
+    "likes": 158,
+    "downloads": 3,
+    "qualityScore": 1583,
+    "discoveredAt": "2026-10-25T05:56:26.300Z"
+  },
+  {
+    "name": "HuggingFaceBio/Carbon-X",
+    "fullName": "HuggingFaceBio/Carbon-X",
+    "url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: HuggingFaceBio/Carbon-X (152 likes, 570 downloads)",
+    "likes": 152,
+    "downloads": 570,
+    "qualityScore": 2090,
+    "discoveredAt": "2026-10-25T05:56:26.300Z"
   }
 ]

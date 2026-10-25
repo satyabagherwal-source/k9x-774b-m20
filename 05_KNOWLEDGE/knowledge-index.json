@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T05:52:37.998Z",
-  "total_verified_learnings": 1082,
+  "last_updated": "2026-10-25T05:58:58.236Z",
+  "total_verified_learnings": 1084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6116,8 +6116,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "2211c107",
-      "content_hash": "c5dbbdf58d8c91ea6191198bfb16b0f4af0c3a38fe57a668a4b70c470922a6b2",
+      "source_version": "8e3eb7ad",
+      "content_hash": "7558a29a4775b9ac1dfb8b1e20a9bd2a777bfc4336da419f5fe02fbd9fa89f9e",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -6155,6 +6155,11 @@
           "number": 3682,
           "title": "Merge pull request #125725 from groeneai/jemalloc-darwin-prof-dump-fork-deadlock",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4091,
+          "title": "Merge pull request #127439 from ClickHouse/fix-merge-block-empty-input",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6162,7 +6167,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:58:25.510Z",
+      "verified_at": "2026-10-25T05:58:57.773Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24446,7 +24451,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
       "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "21fa75ed214b200b670d7fd96bf851c8e1751fa257ad57f4c438222c462e96e2",
+      "content_hash": "98aac2a78a7f1e865bf452cbea0577f11caad81afb54ac62d139c8693fc90a7b",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -24829,7 +24834,7 @@
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv42ove4",
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65"
       ],
-      "verified_at": "2026-10-20T14:00:37.171Z",
+      "verified_at": "2026-10-25T05:58:42.217Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68559,15 +68564,15 @@
       "learning_id": "rule-618",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 618,
-      "title": "Binary Artifact Integrity & Metadata Consistency Invariant (Harvested from orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Binary Artifact Integrity & Metadata Consistency Invariant",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.812Z"
+      "verified_at": "2026-10-25T05:58:58.227Z"
     },
     "rule-619": {
       "learning_id": "rule-619",
@@ -118945,6 +118950,176 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T05:52:35.469Z"
+    },
+    "learn-huggingface-huggingfacebio-carbon-x": {
+      "learning_id": "learn-huggingface-huggingfacebio-carbon-x",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "HuggingFaceBio/Carbon-X",
+      "repository": "HuggingFaceBio/Carbon-X",
+      "slug": "hf-huggingfacebio-carbon-x",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "content_hash": "bdf9980e019d2532492bcaac4fd8dc9199fc35081f43577c367ee50d25019759",
+      "dossier_path": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4088,
+          "title": "Tokenizer‑Model Special‑Token Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4089,
+          "title": "Attention‑Head Alignment with Hidden Size",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4090,
+          "title": "Generation‑Sampling Hyper‑Parameter Coherence",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-25T05:58:44.703Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4088": {
+      "learning_id": "rule-4088",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4088,
+      "title": "Tokenizer‑Model Special‑Token Consistency",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:58:44.703Z"
+    },
+    "rule-4089": {
+      "learning_id": "rule-4089",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4089,
+      "title": "Attention‑Head Alignment with Hidden Size",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:58:44.703Z"
+    },
+    "rule-4090": {
+      "learning_id": "rule-4090",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4090,
+      "title": "Generation‑Sampling Hyper‑Parameter Coherence",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:58:44.703Z"
+    },
+    "rule-4091": {
+      "learning_id": "rule-4091",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4091,
+      "title": "Merge pull request #127439 from ClickHouse/fix-merge-block-empty-input",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "8e3eb7ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:58:57.773Z"
+    },
+    "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf": {
+      "learning_id": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "slug": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "content_hash": "d43e03a6b461a048966d3005217c353fe2b415025a704db8c352e772f7b364b9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 618,
+          "title": "Binary Artifact Integrity & Metadata Consistency Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4092,
+          "title": "Quantization Precision Loss & Hallucination Guardrail",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4093,
+          "title": "Abliterated Model Safety Boundary Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-25T05:58:58.227Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4092": {
+      "learning_id": "rule-4092",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4092,
+      "title": "Quantization Precision Loss & Hallucination Guardrail",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:58:58.227Z"
+    },
+    "rule-4093": {
+      "learning_id": "rule-4093",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4093,
+      "title": "Abliterated Model Safety Boundary Enforcement",
+      "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:58:58.227Z"
     }
   },
   "aliases": {

@@ -4704,3 +4704,7 @@ Every entry in this ledger must capture:
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `260fbc13` | Multi-dimensional audit evidence | 2026-10-25T05:52:31.588Z |
 | `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `1d5d5d12` | Multi-dimensional audit evidence | 2026-10-25T05:52:35.537Z |
 | `learn-github-alexellis-k3sup` | `https://github.com/alexellis/k3sup` | `07ee3911` | Multi-dimensional audit evidence | 2026-10-25T05:52:38.057Z |
+| `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-25T05:58:42.271Z |
+| `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-10-25T05:58:44.758Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `8e3eb7ad` | Multi-dimensional audit evidence | 2026-10-25T05:58:57.845Z |
+| `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-25T05:58:58.283Z |
