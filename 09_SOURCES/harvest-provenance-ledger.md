@@ -4792,3 +4792,9 @@ Every entry in this ledger must capture:
 | `learn-github-guokaigdg-animal-island-ui` | `https://github.com/guokaigdg/animal-island-ui` | `8df30b8f` | Multi-dimensional audit evidence | 2026-10-25T11:20:46.711Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `62bbcebf` | Multi-dimensional audit evidence | 2026-10-25T11:20:49.955Z |
 | `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-25T11:20:55.261Z |
+| `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `f0b31631` | Multi-dimensional audit evidence | 2026-10-25T11:31:38.830Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `615ca692` | Multi-dimensional audit evidence | 2026-10-25T11:31:43.651Z |
+| `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `d00d3409` | Multi-dimensional audit evidence | 2026-10-25T11:31:45.543Z |
+| `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `834e9701` | Multi-dimensional audit evidence | 2026-10-25T11:31:50.427Z |
+| `learn-github-taiga-family-taiga-ui` | `https://github.com/taiga-family/taiga-ui` | `fd585329` | Multi-dimensional audit evidence | 2026-10-25T11:33:35.982Z |
+| `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-25T11:34:42.304Z |

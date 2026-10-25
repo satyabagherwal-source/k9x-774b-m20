@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md`  
 > **Source**: github ([https://github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide))  
-> **Source Version**: `d48a7ab5`  
+> **Source Version**: `f0b31631`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:58:07.531Z  
+> **Timestamp**: 2026-10-25T11:31:38.447Z  
 > **Learning ID**: `learn-github-ajeetdsouza-zoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:58:07.061Z  
+> **Harvest Timestamp**: 2026-10-25T11:31:37.426Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A smarter cd command. Supports all major shells.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40182 stars
+- **Stars / Engagement**: 40284 stars
 
 ---
 
@@ -1392,116 +1392,139 @@ impl Run for Remove {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a6d2d4c` (2026-10-01)
-**Commit Message**: fix: handle broken pipe in query --interactive (#1314)
-
-query_interactive printed the fzf selection with bare print! macros, which panic on EPIPE. Use the pipe_exit convention introduced for broken pipes in #137 like the rest of the command already does.
-
-The final flush makes the error surface deterministically even if stdout buffering would otherwise defer the failed write to process exit.
-
-Co-authored-by: Mathjk <[REDACTED_EMAIL]>
-
-**File**: `src/cmd/query.rs` (modified, +4/-3)
-```diff
-@@ -43,13 +43,14 @@ impl Query {
-             }
-         };
- 
-+        let stdout = &mut io::stdout();
-         if self.score {
--            print!("{selection}");
-+            write!(stdout, "{selection}").pipe_exit("stdout")?;
-         } else {
-             let path = selection.get(7..).context("could not read selection from fzf")?;
--            print!("{path}");
-+            write!(stdout, "{path}").pipe_exit("stdout")?;
-         }
--        Ok(())
-+        stdout.flush().pipe_exit("stdout")
-     }
- 
-     fn query_list(&self, stream: &mut Stream, now: Epoch) -> Result<()> {
-```
-
----
-
-### Incident Patch 2: `f84f9a3e` (2026-07-04)
-**Commit Message**: Fix link in CHANGELOG
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -584,6 +584,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - GitHub Actions pipeline to build and upload releases.
- - Add support for Zsh.
- 
-+[0.10.0]: https://github.com/ajeetdsouza/zoxide/compare/v0.9.9...v0.10.0
- [0.9.9]: https://github.com/ajeetdsouza/zoxide/compare/v0.9.8...v0.9.9
- [0.9.8]: https://github.com/ajeetdsouza/zoxide/compare/v0.9.7...v0.9.8
- [0.9.7]: https://github.com/ajeetdsouza/zoxide/compare/v0.9.6...v0.9.7
-```
-
----
-
-### Incident Patch 3: `8a3f76da` (2026-08-18)
-**Commit Message**: Fix minimum supported Nushell version in README (#1284)
+### Incident Patch 1: `816227d0` (2026-10-24)
+**Commit Message**: build: check completions in a test instead of writing them from build.rs (#1338)
 
 Co-authored-by: Ajeet D'Souza <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Changed
+@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Bash/Zsh: fix `z` failing on Cygwin/MSYS2 due to `cygpath` being passed a bad string.
+ - Nushell: `z` now handles relative paths through symlinked directories.
+ - POSIX: fix `z` failing to enter directories whose names start with `-`.
++- Build: fix compilation failing when the source directory is read-only.
  
- - `import` now takes a subcommand instead of the `--from` flag.
-+- Nushell: upgrade minimum supported version to v0.106.0.
- 
- ### Fixed
- 
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -268,7 +268,7 @@ zoxide can be installed in 4 easy steps:
-    > ```
-    >
-    > **Note:**
--   > zoxide only supports Nushell v0.89.0+.
-+   > zoxide only supports Nushell v0.106.0+.
- 
-    </details>
+ ## [0.10.0] - 2026-07-04
  
 ```
 
-**File**: `man/man1/zoxide-init.1` (modified, +1/-1)
+**File**: `build.rs` (modified, +21/-11)
 ```diff
-@@ -45,7 +45,7 @@ Now, add this to the \fBend\fR of your config file (find it by running
-     \fBsource ~/.zoxide.nu\fR
- .fi
- .sp
--Note: zoxide only supports Nushell v0.89.0+.
-+Note: zoxide only supports Nushell v0.106.0+.
- .TP
- .B powershell
- Add this to the \fBend\fR of your config file (find it by running \fBecho
+@@ -1,9 +1,11 @@
+ #[path = "src/cmd/cmd.rs"]
+ mod cmd;
+ 
+-use std::{env, io};
++use std::path::Path;
++use std::{env, fs, io};
+ 
+ use clap::CommandFactory as _;
++use clap_complete::Generator;
+ use clap_complete::shells::{Bash, Elvish, Fish, PowerShell, Zsh};
+ use clap_complete_fig::Fig;
+ use clap_complete_nushell::Nushell;
+@@ -16,21 +18,29 @@ fn main() -> io::Result<()> {
+     println!("cargo:rerun-if-changed=src/");
+     println!("cargo:rerun-if-changed=templates/");
+     println!("cargo:rerun-if-changed=tests/");
+-    generate_completions()
++
++    generate_completions(Bash)?;
++    generate_completions(Elvish)?;
++    generate_completions(Fig)?;
++    generate_completions(Fish)?;
++    generate_completions(Nushell)?;
++    generate_completions(PowerShell)?;
++    generate_completions(Zsh)?;
++
++    Ok(())
+ }
+ 
+-fn generate_completions() -> io::Result<()> {
++/// Writes a shell's completions only if they differ from the committed file.
++fn generate_completions(generator: impl Generator) -> io::Result<()> {
+     const BIN_NAME: &str = env!("CARGO_PKG_NAME");
+     const OUT_DIR: &str = "contrib/completions";
+-    let cmd = &mut Cmd::command();
+ 
+-    clap_complete::generate_to(Bash, cmd, BIN_NAME, OUT_DIR)?;
+-    clap_complete::generate_to(Elvish, cmd, BIN_NAME, OUT_DIR)?;
+-    clap_complete::generate_to(Fig, cmd, BIN_NAME, OUT_DIR)?;
+-    clap_complete::generate_to(Fish, cmd, BIN_NAME, OUT_DIR)?;
+-    clap_complete::generate_to(Nushell, cmd, BIN_NAME, OUT_DIR)?;
+-    clap_complete::generate_to(PowerShell, cmd, BIN_NAME, OUT_DIR)?;
+-    clap_complete::generate_to(Zsh, cmd, BIN_NAME, OUT_DIR)?;
++    let path = Path::new(OUT_DIR).join(generator.file_name(BIN_NAME));
++    let mut generated = Vec::new();
++    clap_complete::generate(generator, &mut Cmd::command(), BIN_NAME, &mut generated);
+ 
++    if !fs::read(&path).is_ok_and(|content| content == generated) {
++        fs::write(&path, generated)?;
++    }
+     Ok(())
+ }
 ```
 
-**File**: `templates/nushell.txt` (modified, +1/-1)
+---
+
+### Incident Patch 2: `a053d911` (2026-10-23)
+**Commit Message**: docs: fix the complexity claim on Database::remove (#1344)
+
+Co-authored-by: Ajeet D'Souza <[REDACTED_EMAIL]>
+
+**File**: `src/db/mod.rs` (modified, +1/-1)
 ```diff
-@@ -104,4 +104,4 @@ export alias {{cmd}}i = __zoxide_zi
- #
- #   source ~/.zoxide.nu
- #
--# Note: zoxide only supports Nushell v0.89.0+.
-+# Note: zoxide only supports Nushell v0.106.0+.
+@@ -128,7 +128,7 @@ impl Database {
+     }
+ 
+     /// Removes the directory with `path` from the store. This does not preserve
+-    /// ordering, but is O(1).
++    /// ordering.
+     pub fn remove(&mut self, path: impl AsRef<str>) -> bool {
+         match self.dirs().iter().position(|dir| dir.path == path.as_ref()) {
+             Some(idx) => {
+```
+
+---
+
+### Incident Patch 3: `06017833` (2026-10-23)
+**Commit Message**: fix(posix): allow z to enter directories starting with a dash (#1346)
+
+Co-authored-by: Ajeet D'Souza <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Import: fetch atuin history in UTC instead of the local timezone.
+ - Bash/Zsh: fix `z` failing on Cygwin/MSYS2 due to `cygpath` being passed a bad string.
+ - Nushell: `z` now handles relative paths through symlinked directories.
++- POSIX: fix `z` failing to enter directories whose names start with `-`.
+ 
+ ## [0.10.0] - 2026-07-04
+ 
+```
+
+**File**: `templates/posix.txt` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ __zoxide_pwd() {
+ # cd + custom logic based on the value of _ZO_ECHO.
+ __zoxide_cd() {
+     # shellcheck disable=SC2164
+-    \command cd "$@" {%- if echo %} && __zoxide_pwd {%- endif %}
++    \command cd -- "$@" {%- if echo %} && __zoxide_pwd {%- endif %}
+ }
+ 
+ {{ section }}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1328** (2026-10-18): docs: sync zoxide-import man page with the current CLI (@ump45nose)
-- **PR #1317** (2026-10-03): Define __zoxide_doctor for all hooks in POSIX init (@ajeetdsouza)
-- **PR #1314** (2026-10-01): Fix panic on closed stdout in query --interactive (@Mathjk)
-- **PR #1312** (2026-10-01): Bump taiki-e/install-action from 2.87.20 to 2.87.21 (@dependabot[bot])
-- **PR #1309** (2026-09-28): Bump taiki-e/install-action from 2.87.15 to 2.87.20 (@dependabot[bot])
-- **PR #1305** (2026-09-21): Bump taiki-e/install-action from 2.87.11 to 2.87.15 (@dependabot[bot])
+- **PR #1349** (2026-10-24): Avoid firing the ERR trap from the Bash hook in array PROMPT_COMMAND (@ajeetdsouza)
+- **PR #1347** (closed): docs: describe the PATHS behavior in the zoxide-remove man page (@ump45nose)
+- **PR #1346** (2026-10-23): fix(posix): allow z to enter directories starting with a dash (@56steve)
+- **PR #1344** (2026-10-23): docs: fix the complexity claim on Database::remove (@ump45nose)
+- **PR #1342** (2026-10-24): PowerShell: keep $LASTEXITCODE across the prompt hook (@meop)
+- **PR #1341** (closed): docs: zoxide-import man page wrongly claimed autojump scores are not imported (@ump45nose)
 
 ---
 
@@ -1521,33 +1544,28 @@ Co-authored-by: Ajeet D'Souza <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. handle broken pipe in query --interactive (#1314)
+## X. build: check completions in a test instead of writing them from build.rs (#1338)
 
 **RULE**:
-When implementing operations in `src/cmd/query.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ajeetdsouza/zoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ajeetdsouza/zoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a6d2d4c`: handle broken pipe in query --interactive (#1314). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `816227d0`: build: check completions in a test instead of writing them from build.rs (#1338). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/query.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let stdout = &mut io::stdout();
-            write!(stdout, "{selection}").pipe_exit("stdout")?;
-            write!(stdout, "{path}").pipe_exit("stdout")?;
-        stdout.flush().pipe_exit("stdout")
+- Build: fix compilation failing when the source directory is read-only.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            print!("{selection}");
-            print!("{path}");
-        Ok(())
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a6d2d4c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `816227d0` are properly handled with clean fallback behavior.

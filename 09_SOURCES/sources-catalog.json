@@ -325,8 +325,8 @@
     "sourceUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
     "sourceVersion": "hf-contrastive-lm-clm-v0.1-8b",
     "license": "Open-Source",
-    "contentHash": "c806da9cb7a001f75c9034df1ab5977933b5b3089ed1d2f840c51c4782676378",
-    "lastHarvestedAt": "2026-10-20T16:44:29.444Z",
+    "contentHash": "1e1d688c3ea9d22241bb39fb30d33029cea193d5b6694cb26f74d4c353d60632",
+    "lastHarvestedAt": "2026-10-25T11:34:42.304Z",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b"
   },
   "hf-nvidia-nemotron-3-diarization": {
@@ -2663,10 +2663,10 @@
     "repository": "ajeetdsouza/zoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/ajeetdsouza/zoxide",
-    "sourceVersion": "d48a7ab5",
+    "sourceVersion": "f0b31631",
     "license": "MIT",
-    "contentHash": "99b3f5be27f488309e4b8f5eb7f8174dc47e1cbb255d77a3b9fbf4bf00b476b1",
-    "lastHarvestedAt": "2026-10-18T21:58:07.711Z",
+    "contentHash": "c800bd2238a6790c8707c98ab6de741d05e4bfdbcfb0ddcf844fd8c38f0d033b",
+    "lastHarvestedAt": "2026-10-25T11:31:38.830Z",
     "learningId": "learn-github-ajeetdsouza-zoxide"
   },
   "react-native-elements-react-native-elements": {
@@ -3963,10 +3963,10 @@
     "repository": "argoproj/argo-events",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-events",
-    "sourceVersion": "493c412d",
+    "sourceVersion": "d00d3409",
     "license": "Apache-2.0",
-    "contentHash": "97b25be3fc86cfc879c0989ede6ff17630a4d2fb58aa4dd4870688b295fa667c",
-    "lastHarvestedAt": "2026-10-19T00:16:37.572Z",
+    "contentHash": "02544d22d9c3a9e01ddf2dd6b9c8610c2fe87b43710fbd3a0f74ba5687c41ce0",
+    "lastHarvestedAt": "2026-10-25T11:31:45.543Z",
     "learningId": "learn-github-argoproj-argo-events"
   },
   "helixdb-helix-db": {
@@ -6033,10 +6033,10 @@
     "repository": "taiga-family/taiga-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/taiga-family/taiga-ui",
-    "sourceVersion": "8dc19751",
+    "sourceVersion": "fd585329",
     "license": "Apache-2.0",
-    "contentHash": "a4f7e21a6de5e1dae723820df546048703bfec9376b07e470ba18e76079ac044",
-    "lastHarvestedAt": "2026-10-23T06:10:29.020Z",
+    "contentHash": "42b2fc8ddfb93d6b7b9d7038c3c8371b65850ca02bff56c65cd96d3bf62a8a8a",
+    "lastHarvestedAt": "2026-10-25T11:33:35.982Z",
     "learningId": "learn-github-taiga-family-taiga-ui"
   },
   "u-root-u-root": {
@@ -6923,10 +6923,10 @@
     "repository": "onejs/one",
     "platform": "github",
     "sourceUrl": "https://github.com/onejs/one",
-    "sourceVersion": "3b9bcb26",
+    "sourceVersion": "615ca692",
     "license": "NOASSERTION",
-    "contentHash": "d1144645d42282226fd534afb189b927c541103aca34389d8e2c55f904d6fbf1",
-    "lastHarvestedAt": "2026-10-20T19:23:34.525Z",
+    "contentHash": "8624d60d6e3bcd664b72bb521b7cefc50467f25452cd49303dc655d11fe8167f",
+    "lastHarvestedAt": "2026-10-25T11:31:43.651Z",
     "learningId": "learn-github-onejs-one"
   },
   "influxdata-influxdb": {
@@ -7243,10 +7243,10 @@
     "repository": "SeaQL/sea-orm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeaQL/sea-orm",
-    "sourceVersion": "0c14cae4",
+    "sourceVersion": "834e9701",
     "license": "Apache-2.0",
-    "contentHash": "b8d4f7edb960904da3e32b30e4ed9fb8d9ff6bab9749b16a9ae65601e8c5d7cf",
-    "lastHarvestedAt": "2026-10-19T08:14:49.142Z",
+    "contentHash": "5e8f2d6762c52b56e40adcf069942be4eea7d0871ea2b70e476d861203e0ca7b",
+    "lastHarvestedAt": "2026-10-25T11:31:50.427Z",
     "learningId": "learn-github-seaql-sea-orm"
   },
   "mobilenativefoundation-store": {

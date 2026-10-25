@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T11:20:55.266Z",
-  "total_cycles_completed": 4762,
-  "total_learnings_persisted": 4762,
-  "total_rules_promoted": 4137,
+  "last_updated": "2026-10-25T11:34:42.309Z",
+  "total_cycles_completed": 4768,
+  "total_learnings_persisted": 4768,
+  "total_rules_promoted": 4145,
   "history": [
-    {
-      "timestamp": "2026-10-24T20:19:13.475Z",
-      "repository": "Comfy-Org/MOSS-Image",
-      "learningId": "learn-huggingface-comfy-org-moss-image",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T20:19:25.299Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T20:31:15.938Z",
-      "repository": "typedb/typedb",
-      "learningId": "learn-github-typedb-typedb",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T20:31:18.112Z",
-      "repository": "facebook/docusaurus",
-      "learningId": "learn-github-facebook-docusaurus",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T20:31:21.134Z",
-      "repository": "yvgude/lean-ctx",
-      "learningId": "learn-github-yvgude-lean-ctx",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T20:31:21.163Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-24T20:41:57.306Z",
       "repository": "lokoe-mehdi/scouter",
@@ -1403,6 +1361,48 @@
       "repository": "Qwen/Qwen-Image-2.1",
       "learningId": "learn-huggingface-qwen-qwen-image-2-1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:31:38.835Z",
+      "repository": "ajeetdsouza/zoxide",
+      "learningId": "learn-github-ajeetdsouza-zoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:31:43.658Z",
+      "repository": "onejs/one",
+      "learningId": "learn-github-onejs-one",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:31:45.548Z",
+      "repository": "argoproj/argo-events",
+      "learningId": "learn-github-argoproj-argo-events",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:31:50.432Z",
+      "repository": "SeaQL/sea-orm",
+      "learningId": "learn-github-seaql-sea-orm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:33:35.986Z",
+      "repository": "taiga-family/taiga-ui",
+      "learningId": "learn-github-taiga-family-taiga-ui",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:34:42.309Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

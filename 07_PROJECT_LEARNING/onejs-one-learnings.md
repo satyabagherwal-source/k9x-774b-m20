@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source**: github ([https://github.com/onejs/one](https://github.com/onejs/one))  
-> **Source Version**: `3b9bcb26`  
+> **Source Version**: `615ca692`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:23:34.221Z  
+> **Timestamp**: 2026-10-25T11:31:43.274Z  
 > **Learning ID**: `learn-github-onejs-one`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/onejs/one](https://github.com/onejs/one))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:23:34.213Z  
+> **Harvest Timestamp**: 2026-10-25T11:31:42.735Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ❶ One lets you target React web and React Native with a single Vite plugin. Everything you need to build great websites and apps with unified routing.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4610 stars
+- **Stars / Engagement**: 4611 stars
 
 ---
 
@@ -1883,294 +1883,560 @@ class OneBackgroundWorker(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `70bd54a3` (2026-10-20)
-**Commit Message**: Upgrade Tamagui dependencies to 3.1.0
+### Incident Patch 1: `8ed5415e` (2026-10-24)
+**Commit Message**: fix(vxrn): preserve client output during generation (#1028)
 
-Validation: frozen Bun install, manypkg dependency check, site typecheck, installed and locked 129-package family audit, homepage and docs browser renders. Prior worker completed site production build after removing diagnostic override. One typecheck fails on missing generated dist/esm/cli/workerPool.mjs declaration. No native checks.
-Team-Machine-Session: r110697
+* fix(vxrn): preserve client output during generation
 
-**File**: `apps/onestack.dev/package.json` (modified, +10/-10)
+Validation: focused build lifecycle integration failed before the fix with manifest ENOENT and passed after it using actual Vite builds and real files. Covers retained client manifest/assets, stale server replacement with emptyOutDir disabled, ESM/CJS, full/client-only cleanup, and mocked native cleanup/dispatch. Focused oxlint, oxfmt and git diff --check passed. No native bundle or full framework build.
+
+* fix(one): retain generation route metadata
+
+Reuse retained buildInfo client chunk paths and cache key during generation, and replace owned generated page, loader, API and middleware output. Restore the direct native platform check for declaration narrowing.
+
+Validation: vxrn package declaration emit and lifecycle integration pass. Actual One/Vite mixed-route proof reproduced omitted SSR, lost shared-chunk mapping and cache-key drift on 7a2c68c544, then passed with unchanged client bytes, retained route metadata, refreshed loader data and stale output removal. Generated SSR with loader/middleware and API requests passed. Both changed packages built JS locally. One d
+
+**File**: `apps/onestack.dev/data/docs/one-build.mdx` (modified, +2/-0)
 ```diff
-@@ -24,27 +24,27 @@
-     "@callstack/liquid-glass": "^0.8.1",
-     "@react-navigation/native": "8.0.0-alpha.51",
-     "@supabase/supabase-js": "^2.44.4",
--    "@tamagui/react-native-web": "3.0.18",
--    "@tamagui/sheet": "3.0.18",
--    "@tamagui/themes": "3.0.18",
--    "@tamagui/use-store": "3.0.18",
-+    "@tamagui/react-native-web": "3.1.0",
-+    "@tamagui/sheet": "3.1.0",
-+    "@tamagui/themes": "3.1.0",
-+    "@tamagui/use-store": "3.1.0",
-     "@vxrn/color-scheme": "workspace:*",
-     "@vxrn/mdx-rust": "workspace:*",
-     "body-scroll-lock": "^4.0.0-beta.0",
-     "one": "workspace:*",
-     "react": "19.3.0",
-     "react-native": "0.88.0",
-     "react-native-screens": "~4.30.0",
--    "tamagui": "3.0.18",
--    "@tamagui/helpers-icon": "3.0.18",
-+    "tamagui": "3.1.0",
-+    "@tamagui/helpers-icon": "3.1.0",
-     "react-native-svg": "15.15.4",
--    "@tamagui/config": "3.0.18",
--    "@tamagui/react-native-svg": "3.0.18",
--    "@tamagui/react-native-web-lite": "3.0.18"
-+    "@tamagui/config": "3.1.0",
-+    "@tamagui/react-native-svg": "3.1.0",
-+    "@tamagui/react-native-web-lite": "3.1.0"
-   },
-   "devDependencies": {
-     "@algolia/client-search": "^5.8.1",
--    "@tamagui/vite-plugin": "3.0.18",
-+    "@tamagui/vite-plugin": "3.1.0",
-     "@vxrn/test": "workspace:*",
-     "gray-matter": "^4.0.3",
-     "marked": "^14.1.2",
+@@ -31,6 +31,8 @@ Ensure your `.env` file has a `ONE_SERVER_URL` set to your production URL, like:
+ ONE_SERVER_URL=https://onestack.dev
+ ```
+ 
++After a successful web build, `one build --step generate` reuses the existing client assets, Vite manifest, and `buildInfo.json` while rebuilding the server and generating pages. Keep these outputs together. Run a full build first, and run it again when client code or routes change.
++
+ We provide a production server based on Hono with `one serve` that handles loaders, SSR, and API routes for you. You can choose a deploy target for that server. This can be chosen via your Vite configuration:
+ 
+ ```tsx fileName=vite.config.ts
 ```
 
-**File**: `examples/testflight/package.json` (modified, +4/-4)
+**File**: `bun.lock` (modified, +19/-14)
 ```diff
-@@ -25,7 +25,7 @@
+@@ -1,5 +1,5 @@
+ {
+-  "lockfileVersion": 1,
++  "lockfileVersion": 3,
+   "configVersion": 0,
+   "workspaces": {
+     "": {
+@@ -31,7 +31,7 @@
+         "ultra-runner": "^3.10.5",
+         "update-ts-references": "^3.4.0",
+         "vxrn": "workspace:*",
+-        "zod": "3.25.67",
++        "zod": "4.6.6",
+       },
+     },
+     "apps/one-tray": {
+@@ -921,7 +921,7 @@
+         "date-fns": "^3.6.0",
+         "ms": "^2.1.3",
+         "one": "workspace:*",
+-        "zod": "3.25.67",
++        "zod": "4.6.6",
+       },
+       "devDependencies": {
+         "@types/ms": "^0.7.34",
+@@ -1464,6 +1464,9 @@
+     "@babel/plugin-transform-modules-systemjs": "7.29.4",
      "@callstack/liquid-glass": "^0.8.1",
-     "@react-navigation/native": "8.0.0-alpha.51",
-     "@react-navigation/native-stack": "8.0.0-alpha.59",
--    "@tamagui/config": "3.0.18",
-+    "@tamagui/config": "3.1.0",
-     "@vxrn/color-scheme": "workspace:*",
-     "better-sqlite3": "^11.2.1",
-     "dotenv": "^17.2.1",
-@@ -41,15 +41,15 @@
-     "react-native-svg": "15.15.4",
-     "react-native-web": "^0.21.2",
-     "react-native-worklets": "~0.13.0",
--    "tamagui": "3.0.18",
--    "@tamagui/helpers-icon": "3.0.18"
-+    "tamagui": "3.1.0",
-+    "@tamagui/helpers-icon": "3.1.0"
-   },
-   "devDependencies": {
-     "@biomejs/biome": "2.5.15",
-     "@faker-js/faker": "next",
-     "@react-native-community/cli": "^20.2.0",
-     "@react-native-community/template": "^0.88.0",
--    "@tamagui/vite-plugin": "3.0.18",
-+    "@tamagui/vite-plugin": "3.1.0",
-     "tsx": "^4.20.6",
-     "vite": "^8.2.2",
-     "typescript": "7.0.2"
-```
-
-**File**: `package.json` (modified, +3/-3)
-```diff
-@@ -161,7 +161,7 @@
-     "@hono/node-server": "^1.19.14",
-     "@manypkg/cli": "^0.25.1",
-     "@react-native-swc/worklets-plugin": "0.1.5",
--    "@tamagui/web": "3.0.18",
-+    "@tamagui/web": "3.1.0",
-     "@take-out/cli": "0.4.17",
-     "@types/react": "^19.3.0",
-     "axios": "1.20.0",
-@@ -176,15 +176,15 @@
-     "playwright": "^1.58.2",
-     "prettier": "^3.5.3",
-     "shell-quote": "1.11.0",
--    "tamagui": "3.0.18",
-+    "tamagui": "3.1.0",
-     "ts-pattern": "^5.6.2",
-     "turbo": "^2.9.18",
+     "@cloudflare/vite-plugin": "1.41.0",
++    "@expo/cli": {
++      "zod": "4.6.6",
++    },
+     "@isaacs/brace-expansion": "5.0.1",
+     "@react-navigation/bottom-tabs": "8.0.0-alpha.57",
+     "@react-navigation/core": "8.0.0-alpha.41",
+@@ -1535,7 +1538,7 @@
+     "tmp": "0.2.7",
+     "toml": "5.0.1",
      "typescript": "7.0.2",
+-    "undici": "7.29.1",
++    "undici": "7.30.1",
+     "uuid": "11.1.1",
+     "vite": "8.3.4",
+     "ws": "8.21.0",
+@@ -3285,7 +3288,7 @@
+ 
+     "blake3-wasm": ["blake3-wasm@2.1.5", "", {}, "sha512-F1+K8EbfOZE49dtoPtmxUQrpXaBIl3ICvasLh+nJta0xkz+9kF/7uet9fLnwKqhDrmj6g+6K3Tw9yQPUg2ka5g=="],
+ 
+-    "body-parser": ["body-parser@1.20.8", "", { "dependencies": { "bytes": "~3.1.2", "content-type": "~1.0.5", "debug": "2.6.9", "depd": "2.0.0", "destroy": "~1.2.0", "http-errors": "~2.0.1", "iconv-lite": "~0.4.24", "on-finished": "~2.4.1", "qs": "~6.16.0", "raw-body": "~2.5.3", "type-is": "~1.6.18", "unpipe": "~1.0.0" } }, "sha512-JNcyFQ64OiijEkPzUBTCe+hyPXUD/3LEldGQ6iF5LR1w00mx9o7xtDWHXBY2iItjdCFGoilOLNQbH943ut7pHA=="],
++    "body-parser": ["body-parser@1.20.9", "", { "dependencies": { "bytes": "~3.1.2", "content-type": "~1.0.5", "debug": "2.6.9", "depd": "2.0.0", "destroy": "~1.2.0", "http-errors": "~2.0.1", "iconv-lite": "~0.4.24", "on-finished": "~2.4.1", "qs": "~6.16.0", "raw-body": "~2.5.3", "type-is": "~1.6.18", "unpipe": "~1.0.0" } }, "sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw=="],
+ 
+     "body-scroll-lock": ["body-scroll-lock@4.0.0-beta.0", "", {}, "sha512-a7tP5+0Mw3YlUJcGAKUqIBkYYGlYxk2fnCasq/FUph1hadxlTRjF+gAcZksxANnaMnALjxEddmSi/H3OR8ugcQ=="],
+ 
+@@ -5291,7 +5294,7 @@
+ 
+     "unbox-primitive": ["unbox-primitive@1.1.0", "", { "dependencies": { "call-bound": "^1.0.3", "has-bigints": "^1.0.2", "has-symbols": "^1.1.0", "which-boxed-primitive": "^1.1.1" } }, "sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw=="],
+ 
+-    "undici": ["undici@7.29.1", "", {}, "sha512-RYONW2MeafgYlkVOKYKkA/Ag7BmXqgIWCa8t1m0JcxrQg9pI9lEqRhAOruOBCbAohOa/gkCF+iPi9hrgvTzu6Q=="],
++    "undici": ["undici@7.30.1", "", {}, "sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg=="],
+ 
+     "undici-types": ["undici-types@7.24.6", "", {}, "sha512-WRNW+sJgj5OBN4/0JpHFqtqzhpbnV0GuB+OozA9gCL7a993SmU+1JBZCzLNxYsbMfIeDL+lTsphD5jN5N+n0zg=="],
+ 
+@@ -5481,7 +5484,7 @@
+ 
+     "zip-stream": ["zip-stream@6.0.1", "", { "dependencies": { "archiver-utils": "^5.0.0", "compress-commons": "^6.0.2", "readable-stream": "^4.0.0" } }, "sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA=="],
+ 
+-    "zod": ["zod@3.25.67", "", {}, "sha512-idA2YXwpCdqUSKRCACDE6ItZD9TZzy3OZMtpfLoh6oPR47lipysRrJfjzMqFxQ3uJuUPyUeWe1r9vLH33xO/Qw=="],
++    "zod": ["zod@4.6.6", "", {}, "sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA=="],
+ 
+     "zustand": ["zustand@5.0.15", "", { "peerDependencies": { "@types/react": ">=18.0.0", "immer": ">=9.0.6", "react": ">=18.0.0", "use-sync-external-store": ">=1.2.0" }, "optionalPeers": ["@types/react", "immer", "react", "use-sync-external-store"] }, "sha512-MpSEjRiBkA9crSYeOUH32rJC7SVqAbm0Fqcqge/bUi2PPoLcBWKOsG+C8mevmpr8TwXHBVkChbbJiyvkE+i/3A=="],
+ 
+@@ -5587,8 +5590,6 @@
+ 
+     "@expo/cli/pretty-format": ["pretty-format@29.7.0", "", { "dependencies": { "@jest/schemas": "^29.6.3", "ansi-styles": "^5.0.0", "react-is": "^18.0.0" } }, "sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ=="],
+ 
+-    "@expo/cli/zod": ["zod@3.25.76", "", {}, "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="],
+-
+     "@expo/devcert/debug": ["debug@3.2.7", "", { "dependencies": { "ms": "^2.1.1" } }, "sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ=="],
+ 
+     "@expo/metro-config/hermes-parser": ["hermes-parser@0.36.1", "", { "dependencies": { "hermes-estree": "0.36.1" } }, "sha512-GApNk4zLHi2UWoWZZkx7LNCOSzLSc5lB55pZ/PhK7ycFeg7u5LcF88p/WbpIi1XUDtE0MpHE3uRR3u3KB7TjSQ=="],
+@@ -5667,7 +5668,7 @@
+ 
+     "@react-native-community/cli-config/cosmiconfig": ["cosmiconfig@9.0.0", "", { "dependencies": { "env-paths": "^2.2.
+```
+
+**File**: `package.json` (modified, +3/-2)
+```diff
+@@ -85,7 +85,8 @@
+     "@xmldom/xmldom": "0.9.12",
+     "fast-xml-parser": "5.9.0",
+     "tar": "7.5.11",
+-    "undici": "7.29.1",
++    "undici": "7.30.1",
++    "@expo/cli/zod": "4.6.6",
+     "esbuild": "0.28.1",
+     "vite": "8.3.4",
+     "rolldown": "1.2.13",
+@@ -184,7 +185,7 @@
      "ultra-runner": "^3.10.5",
      "update-ts-references": "^3.4.0",
      "vxrn": "workspace:*",
-     "zod": "3.25.67",
--    "@tamagui/cli": "3.0.18"
-+    "@tamagui/cli": "3.1.0"
+-    "zod": "3.25.67",
++    "zod": "4.6.6",
+     "@tamagui/cli": "3.1.3"
    },
    "upgradeSets": {
-     "takeout": [
 ```
 
-**File**: `packages/color-scheme/package.json` (modified, +1/-1)
+**File**: `packages/one/src/cli/build.ts` (modified, +50/-3)
 ```diff
-@@ -34,7 +34,7 @@
-     "@vxrn/use-isomorphic-layout-effect": "workspace:*"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.0.18",
-+    "@tamagui/build": "3.1.0",
-     "react": "19.3.0",
-     "react-native": "0.88.0",
-     "vitest": "^4.1.0"
+@@ -246,6 +246,17 @@ export async function build(args: {
+   // respect vite's build.outDir config, default to 'dist'
+   const outDir = viteLoadedConfig?.config?.build?.outDir ?? 'dist'
+ 
++  // buildInfo retains route-to-client chunks even for modules merged into shared chunks
++  const previousBuildInfo: One.BuildInfo | undefined =
++    args.platform === 'web' && args.step === 'generate'
++      ? await FSExtra.readJSON(toAbsolute(`${outDir}/buildInfo.json`))
++      : undefined
++
++  if (previousBuildInfo) {
++    constants.setCacheKey(previousBuildInfo.constants.CACHE_KEY)
++    process.env.ONE_CACHE_KEY = constants.CACHE_KEY
++  }
++
+   const manifest = getManifest({
+     routerRoot,
+     ignoredRouteFiles: oneOptions.router?.ignoredRouteFiles,
+@@ -286,6 +297,33 @@ export async function build(args: {
+   // picked to still be free after the bundle, which another process can take.
+   const { options } = vxrnOutput
+ 
++  if (previousBuildInfo) {
++    const generatedFiles = new Set([
++      ...Object.values(previousBuildInfo.routeMap),
++      ...Object.keys(previousBuildInfo.preloads),
++      ...Object.keys(previousBuildInfo.cssPreloads),
++      ...Object.keys(previousBuildInfo.loaders),
++    ])
++    for (const loaderPath of Object.keys(previousBuildInfo.loaders)) {
++      if (!loaderPath) continue
++      generatedFiles.add(loaderPath.replace(/\.js$/, '.native.js'))
++      generatedFiles.add(
++        loaderPath.replace(
++          constants.LOADER_JS_POSTFIX,
++          constants.NATIVE_LOADER_JS_POSTFIX_UNCACHED
++        )
++      )
++    }
++    await Promise.all([
++      ...['api', 'middlewares', 'static'].map((folder) =>
++        FSExtra.remove(join(outDir, folder))
++      ),
++      ...[...generatedFiles]
++        .filter(Boolean)
++        .map((file) => FSExtra.remove(join(outDir, 'client', file))),
++    ])
++  }
++
+   const { optimizeDeps } = getOptimizeDeps('build')
+   const { rolldownOptions: _rolldownOptions, ...optimizeDepsNoRolldown } = optimizeDeps
+ 
+@@ -543,11 +581,11 @@ export async function build(args: {
+   // another route re-exports from stops being a dynamic entry and lands in a
+   // plain shared chunk, which has no facade and so gets no source-path key in
+   // the manifest either. the facade pass runs second so it wins where both hit.
+-  const clientChunksBySource = new Map<string, { fileName: string; imports: string[] }>()
++  const clientChunksBySource = new Map<string, { fileName: string }>()
+   if (vxrnOutput.clientOutput) {
+     for (const chunk of vxrnOutput.clientOutput) {
+       if (chunk.type !== 'chunk') continue
+-      const info = { fileName: chunk.fileName, imports: chunk.imports || [] }
++      const info = { fileName: chunk.fileName }
+       for (const moduleId of chunk.moduleIds ?? []) {
+         clientChunksBySource.set(moduleId, info)
+       }
+@@ -556,7 +594,16 @@ export async function build(args: {
+       if (chunk.type !== 'chunk' || !chunk.facadeModuleId) continue
+       clientChunksBySource.set(chunk.facadeModuleId, {
+         fileName: chunk.fileName,
+-        imports: chunk.imports || [],
++      })
++    }
++  } else if (previousBuildInfo) {
++    for (const route of Object.values(previousBuildInfo.routeToBuildInfo)) {
++      if (!route.clientJsPath) continue
++      const modulePath = normalizePath(
++        join(resolve(process.cwd(), options.root), routerRoot, route.routeFile.slice(2))
++      )
++      clientChunksBySource.set(modulePath, {
++        fileName: normalizePath(relative(clientDir, route.clientJsPath)),
+       })
+     }
+   }
 ```
 
-**File**: `packages/compiler/package.json` (modified, +1/-1)
+**File**: `packages/vxrn/src/exports/build.lifecycle.test.ts` (added, +151/-0)
 ```diff
-@@ -58,7 +58,7 @@
-   },
-   "devDependencies": {
-     "@jridgewell/trace-mapping": "^0.3.25",
--    "@tamagui/build": "3.0.18",
-+    "@tamagui/build": "3.1.0",
-     "depcheck": "^1.4.7",
-     "react-native-worklets": "~0.13.0",
-     "rolldown": "^1.2.8",
+@@ -0,0 +1,151 @@
++import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
++import { tmpdir } from 'node:os'
++import { join } from 'node:path'
++import { afterEach, expect, it, vi } from 'vitest'
++
++const { nativeBuild } = vi.hoisted(() => ({ nativeBuild: vi.fn() }))
++
++vi.mock('../config/getOptionsFilled', () => ({
++  fillOptions: async (options: object) => ({ ...options, root: process.cwd() }),
++}))
++vi.mock('../utils/patches', () => ({ applyBuiltInPatches: async () => {} }))
++vi.mock('../config/getOptimizeDeps', () => ({
++  getOptimizeDeps: () => ({
++    optimizeDeps: { include: [], exclude: [], needsInterop: [] },
++  }),
++}))
++vi.mock('vite', async (importOriginal) => ({
++  ...(await importOriginal<typeof import('vite')>()),
++  loadConfigFromFile: async () => ({
++    config: { build: { outDir: 'output', emptyOutDir: false } },
++  }),
++}))
++vi.mock('../config/getBaseViteConfigWithPlugins', () => ({
++  getBaseViteConfigWithPlugins: async () => ({
++    root: process.cwd(),
++    plugins: [
++      {
++        name: 'build-lifecycle-fixture',
++        resolveId: (id: string) =>
++          id === 'virtual:one-entry' ? '\0virtual:one-entry' : undefined,
++        load: (id: string) =>
++          id === '\0virtual:one-entry'
++            ? 'export const render = () => "rendered"; globalThis.rendered = render()'
++            : undefined,
++      },
++    ],
++    build: { rolldownOptions: { output: { entryFileNames: '_virtual_one-entry.js' } } },
++  }),
++}))
++vi.mock('../rn-commands/bundle/buildBundle', () => ({ buildBundle: nativeBuild }))
++
++import { build } from './build'
++
++const originalCwd = process.cwd()
++const originalEnv = { ...process.env }
++const originalPlugins = globalThis.__vxrnAddWebPluginsProd
++let root: string | undefined
++
++afterEach(async () => {
++  process.chdir(originalCwd)
++  process.env = { ...originalEnv }
++  globalThis.__vxrnAddWebPluginsProd = originalPlugins
++  if (root) await rm(root, { recursive: true, force: true })
++})
++
++it('reuses client output for generation while cleaning rebuilt output', async () => {
++  root = await mkdtemp(join(tmpdir(), 'vxrn-build-lifecycle-'))
++  process.chdir(root)
++  process.env.NODE_ENV = 'production'
++  process.env.ONE_SERVER_URL = 'https://example.com'
++  globalThis.__vxrnAddWebPluginsProd = []
++  const options = { skipEnv: true }
++
++  const full = await build(options, { platform: 'web' })
++  expect(full?.clientOutput?.length).toBeGreaterThan(0)
++  expect(full?.serverOutput?.length).toBeGreaterThan(0)
++  const manifestPath = 'output/client/.vite/manifest.json'
++  const manifest = await readFile(manifestPath, 'utf8')
++  const clientFile = Object.values(JSON.parse(manifest))[0] as { file: string }
++  const assetPath = join('output/client', clientFile.file)
++  const asset = await readFile(assetPath)
++  const serverEntry = await readFile(full!.serverEntry, 'utf8')
++  await writeFile(full!.serverEntry, 'old server entry')
++  await writeFile('output/server/stale.js', 'old server chunk')
++  await writeFile('output/client/keep.txt', 'retained client output')
++
++  const generated = await build(options, { platform: 'web', step: 'generate' })
++  expect(generated?.clientOutput).toBeUndefined()
++  expect(generated?.serverOutput?.length).toBeGreaterThan(0)
++  expect(generated?.clientManifest).toEqual(JSON.parse(manifest))
++  expect(await readFile(generated!.serverEntry, 'utf8')).toBe(serverEntry)
++  expect(await readFile(manifestPath, 'utf8')).toBe(manifest)
++  expect(await readFile(assetPath)).toEqual(asset)
++  expect(await readFile('output/client/keep.txt', 'utf8')).toBe('retained client output')
++  await expect(readFile('output/server/stale.js')).rejects.toMatchObject({
++    code: 'ENOENT',
++  })
++
++  // generation also supports cjs servers and the default web platform
++  const cjs = await build(
++    { ...options, build: { server: { outputFormat: 'cjs' } } },
++    { step: 'generate' }
++  )
++  expect(cjs?.serverEntry).toBe(
++    join(process.cwd(), 'output/server/_virtual_one-entry.cjs')
++  )
++  expect(await readFile(cjs!.serverEntry, 'utf8')).toContain('exports.render')
++  expect(cjs?.clientManifest).toEqual(JSON.parse(manifest))
++  await expect(readFile('output/server/_virtual_one-entry.js')).rejects.toMatchObject({
++    code: 'ENOENT',
++  })
++
++  // full builds replace all previous output, including client and unrelated files
++  await writeFile('output/stale.txt', 'old output')
++  await build(options, { platform: 'web' })
++  for (const path of ['output/stale.txt', 'output/client/keep.txt']) {
++    await expect(readFile(path)).rejects.toMatchObject({ code: 'ENOENT' })
++  }
++
++  // disabling the server still produces a fresh client without reading a manifest
++  const client = await build(
++    { ...options, build: { server: false } },
++    { platform: 'web' }
++  )
++  expect(client?.clientOutput?.length).toBeGreaterThan(0)
++  expect(client?.serverOutput).toBeUndefined()
++  expect(client?.clientManifest).toBeUndefined()
++  await expect(readFile('outp
 ```
 
-**File**: `packages/create-vxrn/package.json` (modified, +1/-1)
+**File**: `packages/vxrn/src/exports/build.ts` (modified, +6/-11)
 ```diff
-@@ -44,7 +44,7 @@
-     "yocto-spinner": "^0.1.0"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.0.18",
-+    "@tamagui/build": "3.1.0",
-     "@types/prompts": "^2.4.9",
-     "typescript": "7.0.2"
-   },
+@@ -19,8 +19,6 @@ import { getServerCJSSetting, getServerEntry } from '../utils/getServerEntry'
+ import { applyBuiltInPatches } from '../utils/patches'
+ import { loadEnv } from './loadEnv'
+ 
+-const { existsSync } = FSExtra
+-
+ const disableOptimizationConfig = {
+   optimizeDeps: {},
+ 
+@@ -79,15 +77,12 @@ export const build = async (optionsIn: VXRNOptions, buildArgs: BuildArgs = {}) =
+ 
+   const outDir = userViteConfig?.build?.outDir ?? 'dist'
+ 
+-  // clean
+-  await Promise.all([
+-    (async () => {
+-      // lets always clean output folder for now to be sure were correct
+-      if (existsSync(outDir)) {
+-        await rm(outDir, { recursive: true, force: true })
+-      }
+-    })(),
+-  ])
++  const isNativeBuild = buildArgs.platform === 'ios' || buildArgs.platform === 'android'
++
++  // generation reuses client assets and their manifest, but rebuilds the server
++  const cleanDir =
++    buildArgs.step === 'generate' && !isNativeBuild ? `${outDir}/server` : outDir
++  await rm(cleanDir, { recursive: true, force: true })
+ 
+   if (buildArgs.platform === 'ios' || buildArgs.platform === 'android') {
+     const { buildBundle } = await import('../rn-commands/bundle/buildBundle')
 ```
 
-**File**: `packages/debug/package.json` (modified, +1/-1)
+**File**: `tests/test-build-unified/package.json` (modified, +1/-1)
 ```diff
-@@ -33,7 +33,7 @@
-     "debug": "^4.3.7"
+@@ -14,7 +14,7 @@
+     "date-fns": "^3.6.0",
+     "ms": "^2.1.3",
+     "one": "workspace:*",
+-    "zod": "3.25.67"
++    "zod": "4.6.6"
    },
    "devDependencies": {
--    "@tamagui/build": "3.0.18",
-+    "@tamagui/build": "3.1.0",
-     "@types/debug": "^4"
-   },
-   "publishConfig": {
-```
-
-**File**: `packages/emitter/package.json` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@
-     "react": "^19.3.0"
-   },
-   "devDependencies": {
--    "@tamagui/build": "3.0.18",
-+    "@tamagui/build": "3.1.0",
-     "react": "19.3.0"
-   },
-   "publishConfig": {
+     "@types/ms": "^0.7.34",
 ```
 
 ---
 
-### Incident Patch 2: `016d07f4` (2026-10-20)
-**Commit Message**: Keep Android fixture investigation in the PR
+### Incident Patch 2: `f8042e16` (2026-10-23)
+**Commit Message**: Fix plist patch registry context
 
-Validation: git diff --check passed. Only an investigation document was removed and a comment added; runtime logic and the previously passing seven snapshot checks are unchanged.
+Validation: reproduced original hunk failure with Bun 1.4.4 and an empty isolated cache. Repaired patch passed a frozen install of all 2002 workspace packages using copied manifests, the unchanged bun.lock, and a fresh private cache; lifecycle scripts disabled. Focused Bun and Node probes verified normal, BOM and leading whitespace XML, text/xml parser input, malformed-root rejection, and exact installed-source equivalence to the original parsing contract. git diff --check passed.
+Team-Machine-Session: r119395
 
-**File**: `docs/android-fixture-failures.md` (removed, +0/-52)
+**File**: `patches/plist@3.1.0.patch` (modified, +2/-4)
 ```diff
-@@ -1,52 +0,0 @@
--# Android native fixture failure diagnosis
--
--The Metro Android proof in `test-native-android.yml` exposed two independent
--failures. This records the investigation requested on 2026-10-19.
--
--## Speech replacement
--
--TESTED by inspection of run [39392854088](https://github.com/onejs/one/actions/runs/39392854088):
--Google's service processes A's cancellation at 08:51:17.957, reports CANCELLED at
--17.959, releases its audio focus at 17.980, and closes the audio stream at 17.987.
--B's service `onStartListening` follows at 17.989 with a different audio client.
--B opens its microphone at 18.074. At 19.103 its network recognizer reports S3 gRPC
--error -83103, translated into Android ERROR_CLIENT (5). Its offline recognizer
--also reports a missing language pack. The retained 84-speech-session-b-opens
--capture already shows `A: start`, `B: start,error:unknown`, and the code-5 message.
--
--The [Android SpeechRecognizer contract](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/speech/SpeechRecognizer.java)
--requires waiting for results or error after `stopListening`. It specifies no
--completion callback to await after `cancel`.
--[RecognitionService](https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/main/core/java/android/speech/RecognitionService.java)
--serializes cancel and start through its handler. Cancel invokes the provider and
--clears the old listener's session; start rejects an already-active listener or a
--full service. One retires the cancelled recognizer and uses a new listener for B.
--
--INFERRED: the observed failure is in the speech provider, with no demonstrated
--violation of One's cancellation contract. B was accepted and opened before the
--remote service failed. A framework rejection of B before opening, or evidence
--that One reused A's listener, would contradict this conclusion. Google's private
--S3 error does not establish its internal cause, and a provider race remains
--possible. No native lifecycle change is justified by these captures.
--
--Replacement, abort and stop checks now reject terminal errors immediately,
--including when a log starts with `start`. Opening requires a live session;
--stopping still requires `end`,
--and A must stay silent after replacement or abort. Service errors remain failures
--with the step, session log, and provider message attached.
--
--## Back while the keyboard is open
--
--TESTED by inspection of run [39382647762 attempt 1](https://github.com/onejs/one/actions/runs/39382647762/attempts/1):
--at 07:15:32.754 Back is followed by IME hiding, with onHidden at 33.149. The final
--capture still contains the inputs screen. The fixture now dismisses a shown IME,
--awaits hidden state while requiring that the inputs screen remains, then presses
--Back to navigate home. No retry or extended timeout is involved.
--
--## Wait diagnostics
--
--Timeouts name the failed diagnostic conjuncts, or the named step's predicate when
--there are no conjunct labels. A mount-marker count is included only when the last
--usable snapshot actually has zero or multiple matches. Missing snapshots are
--reported separately. The existing snapshot harness exercises present and absent
--markers against the same failing predicate.
-```
-
-**File**: `tests/native-features/scripts/one-native-conformance.android.ts` (modified, +1/-0)
-```diff
-@@ -5400,6 +5400,7 @@ async function run(config: Config) {
-       /^start(,transcript)*$/.test(speechLog(nodes, name) ?? '')
-     const speechEnded = (nodes: Node[], name: string) =>
-       /(^|,)end$/.test(speechLog(nodes, name) ?? '')
-+    // a provider error after an accepted start fails the step; cancel has no completion callback: https://developer.android.com/reference/android/speech/SpeechRecognizer#cancel()
-     const expectSpeech = (
-       name: string,
-       predicate: (nodes: Node[]) => boolean,
+@@ -1,11 +1,9 @@
+ diff --git a/lib/parse.js b/lib/parse.js
+-index b4ff0f65b9fe9e43b381f46f6451f1c53f93c641..1bad3a8a4d268c1849e91300998bb7c8138547f5 100644
++index b5e7496a28d0664933a14f4fcd89682c8a349d3f..97acf770b40a08b36f602c46e524498f8f906823 100644
+ --- a/lib/parse.js
+ +++ b/lib/parse.js
+-@@ -63,7 +63,8 @@ function isEmptyNode(node) {
+-  */
++@@ -65,5 +65,6 @@
+  function parse (xml) {
+-   // prevent the parser from logging non-fatal errors
+ -  var doc = new DOMParser().parseFromString(xml);
+ +  xml = xml.replace(/^\uFEFF/, '').trimStart();
+ +  var doc = new DOMParser().parseFromString(xml, 'text/xml');
 ```
 
 ---
 
-### Incident Patch 3: `e2fb9dba` (2026-10-20)
-**Commit Message**: Fix explicit timeline fixture assertion
+### Incident Patch 3: `615ca692` (2026-10-25)
+**Commit Message**: Stream local release builds and clean up cancellation (#1045)
 
-Validation: claimed iPhone 16 iOS 27 simulator with the archived CI consumer app; baseline explicit assertion fails, corrected Timeline group passes all 3 tests with --retry=0. Plain SwiftUI control reproduces indices 0 then 1. oxlint: 0 errors, 1 existing warning; git diff --check passes.
+Validation: inert actual-code Turbo child/grandchild controls passed output-before-exit, success/failure, SIGINT/SIGTERM/SIGHUP cleanup, pipe EOF and unrelated-process survival; focused oxfmt, oxlint and git diff --check passed. No release or package build run.
+Team-Machine-Session: r128422
 
-**File**: `tests/native-features/tests/native-features.test.ios.ts` (modified, +5/-3)
+**File**: `scripts/release-build.ts` (added, +73/-0)
 ```diff
-@@ -1237,12 +1237,14 @@ describe('one native integration tests', () => {
-       await captureScreenshot(driver, 'one-native-timeline-view-periodic')
-     })
+@@ -0,0 +1,73 @@
++import { spawn } from 'node:child_process'
++import { constants } from 'node:os'
++import { pipeline } from 'node:stream/promises'
++
++export class LocalBuildCancelled extends Error {
++  constructor(readonly signal: NodeJS.Signals) {
++    super(`Local package build cancelled by ${signal}`)
++  }
++
++  get exitCode() {
++    return 128 + constants.signals[this.signal]
++  }
++}
++
++export async function runLocalBuild(packageNames: string[]): Promise<void> {
++  const child = spawn(
++    'bun',
++    ['x', 'turbo', 'run', 'build', ...packageNames.map((name) => `--filter=${name}`)],
++    { detached: true, stdio: ['ignore', 'pipe', 'pipe'] }
++  )
++  const signals = ['SIGINT', 'SIGTERM', 'SIGHUP'] as const
++  let cancellation: LocalBuildCancelled | undefined
++  let stopped: Promise<void> | undefined
++
++  const killGroup = (signal: NodeJS.Signals) => {
++    if (!child.pid) return
++    try {
++      process.kill(-child.pid, signal)
++    } catch (error) {
++      if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error
++    }
++  }
++  const cancel = (signal: NodeJS.Signals) => {
++    if (cancellation) return
++    cancellation = new LocalBuildCancelled(signal)
++    killGroup(signal)
++    // descendants may ignore cancellation or outlive the group leader.
++    stopped = new Promise((resolve) => {
++      setTimeout(() => {
++        killGroup('SIGKILL')
++        resolve()
++      }, 1000)
++    })
++  }
++  const handlers = signals.map((signal) => {
++    const handler = () => cancel(signal)
++    process.on(signal, handler)
++    return [signal, handler] as const
++  })
++
++  try {
++    const closed = new Promise<void>((resolve, reject) => {
++      child.once('error', reject)
++      child.once('close', (code, signal) => {
++        if (code === 0) resolve()
++        else reject(new Error(`Local package build failed (${signal ?? code})`))
++      })
++    })
++    // wait for both pipes even when the command fails or is cancelled.
++    const results = await Promise.allSettled([
++      closed,
++      pipeline(child.stdout!, process.stdout, { end: false }),
++      pipeline(child.stderr!, process.stderr, { end: false }),
++    ])
++    await stopped
++    if (cancellation) throw cancellation
++    for (const result of results) {
++      if (result.status === 'rejected') throw result.reason
++    }
++  } finally {
++    for (const [signal, handler] of handlers) process.removeListener(signal, handler)
++  }
++}
+```
+
+**File**: `scripts/release.ts` (modified, +3/-12)
+```diff
+@@ -7,6 +7,7 @@ import fs, { ensureDir, writeJson, writeJSON } from 'fs-extra'
+ import pMap from 'p-map'
+ import prompts from 'prompts'
+ import { spawnify } from './spawnify'
++import { LocalBuildCancelled, runLocalBuild } from './release-build'
+ import {
+   ensureNpmAuthentication,
+   isExactVersionPublishedOnNpm,
+@@ -756,17 +757,7 @@ if (intoIdx !== -1) {
  
--    test('explicit schedule settles on its last past date', sharedTestOptions, async () => {
-+    test('explicit schedule delivers native entries in order', sharedTestOptions, async () => {
-       const view = await waitForElement(driver, 'one-native-timeline-view-explicit')
-+      const trail = view.$('XCUIElementTypeStaticText')
-       await view.waitUntil(
--        async () => (await view.getText()).includes('2026-10-12T11:00:00.000Z'),
--        { timeout: 10_000, timeoutMsg: 'explicit timeline did not show its last date' }
-+        async () => (await trail.getText()) === 'explicit entries 0 1',
-+        { timeout: 10_000, timeoutMsg: 'explicit timeline did not deliver its entries in order' }
-       )
-+      await captureScreenshot(driver, 'one-native-timeline-view-explicit')
-     })
+     try {
+       if (!skipBuild) {
+-        await execFile(
+-          'bun',
+-          [
+-            'x',
+-            'turbo',
+-            'run',
+-            'build',
+-            ...targetPackages.map(({ name }) => `--filter=${name}`),
+-          ],
+-          { maxBuffer: 50 * 1024 * 1024 }
+-        )
++        await runLocalBuild(targetPackages.map(({ name }) => name))
+       }
  
-     test('an invalid schedule throws instead of mounting', sharedTestOptions, async () => {
+       let released = 0
+@@ -862,7 +853,7 @@ if (intoIdx !== -1) {
+     .then(() => process.exit(0))
+     .catch((err) => {
+       console.error(err)
+-      process.exit(1)
++      process.exit(err instanceof LocalBuildCancelled ? err.exitCode : 1)
+     })
+ } else {
+   run()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #990** (2026-10-20): Capture iOS bundle transport diagnostics (@natew)
-- **PR #987** (2026-10-20): Tap OutlineGroup disclosure controls in iOS tests (@natew)
-- **PR #986** (closed): Revert vxrn dev server multipart streaming (#982) (@natew)
-- **PR #985** (2026-10-20): Await Android editor readiness before state fixture input (@natew)
-- **PR #984** (2026-10-20): Fix Android fixture Back sequencing and speech diagnostics (@natew)
-- **PR #983** (2026-10-20): Fix explicit timeline fixture assertion (@natew)
+- **PR #1045** (2026-10-25): Stream local release builds and clean up cancellation (@natew)
+- **PR #1043** (2026-10-25): fix: wait for the simulator automation session in the Shortcuts warmup (@natew)
+- **PR #1041** (2026-10-24): Mac: add PopUpButton and a prominent push button (@natew)
+- **PR #1038** (2026-10-24): Serve image fixture sources from the dev server (@natew)
+- **PR #1037** (2026-10-24): Create main queue modules before the bundle evaluates on iOS (@natew)
+- **PR #1036** (2026-10-24): Preserve JSX type arguments in source inspector (@natew)
 
 ---
 
@@ -2190,46 +2456,29 @@ Validation: claimed iPhone 16 iOS 27 simulator with the archived CI consumer app
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Upgrade Tamagui dependencies to 3.1.0
+## X. vxrn): preserve client output during generation (#1028)
 
 **RULE**:
-When implementing operations in `apps/onestack.dev/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/onestack.dev/data/docs/one-build.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `70bd54a3`: Upgrade Tamagui dependencies to 3.1.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ed5415e`: vxrn): preserve client output during generation (#1028). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/onestack.dev/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/onestack.dev/data/docs/one-build.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@tamagui/react-native-web": "3.1.0",
-    "@tamagui/sheet": "3.1.0",
-    "@tamagui/themes": "3.1.0",
-    "@tamagui/use-store": "3.1.0",
-    "tamagui": "3.1.0",
-    "@tamagui/helpers-icon": "3.1.0",
-    "@tamagui/config": "3.1.0",
-    "@tamagui/react-native-svg": "3.1.0",
-    "@tamagui/react-native-web-lite": "3.1.0"
-    "@tamagui/vite-plugin": "3.1.0",
+After a successful web build, `one build --step generate` reuses the existing client assets, Vite manifest, and `buildInfo.json` while rebuilding the server and generating pages. Keep these outputs together. Run a full build first, and run it again when client code or routes change.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@tamagui/react-native-web": "3.0.18",
-    "@tamagui/sheet": "3.0.18",
-    "@tamagui/themes": "3.0.18",
-    "@tamagui/use-store": "3.0.18",
-    "tamagui": "3.0.18",
-    "@tamagui/helpers-icon": "3.0.18",
-    "@tamagui/config": "3.0.18",
-    "@tamagui/react-native-svg": "3.0.18",
-    "@tamagui/react-native-web-lite": "3.0.18"
-    "@tamagui/vite-plugin": "3.0.18",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `70bd54a3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ed5415e` are properly handled with clean fallback behavior.

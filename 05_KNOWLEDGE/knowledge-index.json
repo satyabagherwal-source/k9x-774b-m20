@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T11:20:55.214Z",
+  "last_updated": "2026-10-25T11:34:42.229Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1074,14 +1074,19 @@
       "slug": "ajeetdsouza-zoxide",
       "platform": "github",
       "source_url": "https://github.com/ajeetdsouza/zoxide",
-      "source_version": "d48a7ab5",
-      "content_hash": "99b3f5be27f488309e4b8f5eb7f8174dc47e1cbb255d77a3b9fbf4bf00b476b1",
+      "source_version": "f0b31631",
+      "content_hash": "c800bd2238a6790c8707c98ab6de741d05e4bfdbcfb0ddcf844fd8c38f0d033b",
       "dossier_path": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
       "promoted_rules": [
         {
           "number": 1752,
           "title": "handle broken pipe in query --interactive (#1314)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4263,
+          "title": "build: check completions in a test instead of writing them from build.rs (#1338)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -1090,7 +1095,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:58:07.666Z",
+      "verified_at": "2026-10-25T11:31:38.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -2836,14 +2841,19 @@
       "slug": "argoproj-argo-events",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-events",
-      "source_version": "493c412d",
-      "content_hash": "97b25be3fc86cfc879c0989ede6ff17630a4d2fb58aa4dd4870688b295fa667c",
+      "source_version": "d00d3409",
+      "content_hash": "02544d22d9c3a9e01ddf2dd6b9c8610c2fe87b43710fbd3a0f74ba5687c41ce0",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
       "promoted_rules": [
         {
           "number": 1904,
           "title": "docs): invalid code in the doc (#4213)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4265,
+          "title": "deps): bump google.golang.org/api from 0.303.0 to 0.306.0 (#4236)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -2852,7 +2862,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:16:37.517Z",
+      "verified_at": "2026-10-25T11:31:45.473Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18311,7 +18321,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
       "source_version": "hf-contrastive-lm-clm-v0.1-8b",
-      "content_hash": "c806da9cb7a001f75c9034df1ab5977933b5b3089ed1d2f840c51c4782676378",
+      "content_hash": "1e1d688c3ea9d22241bb39fb30d33029cea193d5b6694cb26f74d4c353d60632",
       "dossier_path": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "promoted_rules": [
@@ -18351,6 +18361,16 @@
           "number": 3275,
           "title": "Embedding Caching for Best-of-N Ranking",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4269,
+          "title": "Dual-Encoder Asymmetric Projection Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4270,
+          "title": "Last-Token Causal Sequence Pooling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18371,7 +18391,7 @@
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv44mqua",
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4hvkw7"
       ],
-      "verified_at": "2026-10-20T16:44:29.353Z",
+      "verified_at": "2026-10-25T11:34:42.218Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38023,8 +38043,8 @@
       "slug": "onejs-one",
       "platform": "github",
       "source_url": "https://github.com/onejs/one",
-      "source_version": "3b9bcb26",
-      "content_hash": "d1144645d42282226fd534afb189b927c541103aca34389d8e2c55f904d6fbf1",
+      "source_version": "615ca692",
+      "content_hash": "8624d60d6e3bcd664b72bb521b7cefc50467f25452cd49303dc655d11fe8167f",
       "dossier_path": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "promoted_rules": [
@@ -38047,6 +38067,11 @@
           "number": 3340,
           "title": "Upgrade Tamagui dependencies to 3.1.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4264,
+          "title": "vxrn): preserve client output during generation (#1028)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38054,7 +38079,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:23:34.461Z",
+      "verified_at": "2026-10-25T11:31:43.577Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43448,8 +43473,8 @@
       "slug": "seaql-sea-orm",
       "platform": "github",
       "source_url": "https://github.com/SeaQL/sea-orm",
-      "source_version": "0c14cae4",
-      "content_hash": "b8d4f7edb960904da3e32b30e4ed9fb8d9ff6bab9749b16a9ae65601e8c5d7cf",
+      "source_version": "834e9701",
+      "content_hash": "5e8f2d6762c52b56e40adcf069942be4eea7d0871ea2b70e476d861203e0ca7b",
       "dossier_path": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "promoted_rules": [
@@ -43467,6 +43492,11 @@
           "number": 2390,
           "title": "Proxy Type Bridge Null-Safety & Sign Preservation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4266,
+          "title": "Avoid allocating the prefixed column name in TryGetable::try_get (#3242)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43474,7 +43504,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:14:49.104Z",
+      "verified_at": "2026-10-25T11:31:50.355Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46872,8 +46902,8 @@
       "slug": "taiga-family-taiga-ui",
       "platform": "github",
       "source_url": "https://github.com/taiga-family/taiga-ui",
-      "source_version": "8dc19751",
-      "content_hash": "a4f7e21a6de5e1dae723820df546048703bfec9376b07e470ba18e76079ac044",
+      "source_version": "fd585329",
+      "content_hash": "42b2fc8ddfb93d6b7b9d7038c3c8371b65850ca02bff56c65cd96d3bf62a8a8a",
       "dossier_path": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/taiga-family-taiga-ui-learnings.md",
       "promoted_rules": [
@@ -46916,6 +46946,16 @@
           "number": 3784,
           "title": "Singularity-Proof Geometric Arc Path Generation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4267,
+          "title": "Ephemeral Range Invalidation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4268,
+          "title": "Containing-Block Isolation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46923,7 +46963,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:10:28.951Z",
+      "verified_at": "2026-10-25T11:33:35.895Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122368,6 +122408,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T11:20:55.204Z"
+    },
+    "rule-4263": {
+      "learning_id": "rule-4263",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4263,
+      "title": "build: check completions in a test instead of writing them from build.rs (#1338)",
+      "source_url": "https://github.com/ajeetdsouza/zoxide",
+      "source_version": "f0b31631",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:31:38.760Z"
+    },
+    "rule-4264": {
+      "learning_id": "rule-4264",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4264,
+      "title": "vxrn): preserve client output during generation (#1028)",
+      "source_url": "https://github.com/onejs/one",
+      "source_version": "615ca692",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:31:43.577Z"
+    },
+    "rule-4265": {
+      "learning_id": "rule-4265",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4265,
+      "title": "deps): bump google.golang.org/api from 0.303.0 to 0.306.0 (#4236)",
+      "source_url": "https://github.com/argoproj/argo-events",
+      "source_version": "d00d3409",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:31:45.473Z"
+    },
+    "rule-4266": {
+      "learning_id": "rule-4266",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4266,
+      "title": "Avoid allocating the prefixed column name in TryGetable::try_get (#3242)",
+      "source_url": "https://github.com/SeaQL/sea-orm",
+      "source_version": "834e9701",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:31:50.356Z"
+    },
+    "rule-4267": {
+      "learning_id": "rule-4267",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4267,
+      "title": "Ephemeral Range Invalidation Rule",
+      "source_url": "https://github.com/taiga-family/taiga-ui",
+      "source_version": "fd585329",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:33:35.895Z"
+    },
+    "rule-4268": {
+      "learning_id": "rule-4268",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4268,
+      "title": "Containing-Block Isolation Rule",
+      "source_url": "https://github.com/taiga-family/taiga-ui",
+      "source_version": "fd585329",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:33:35.895Z"
+    },
+    "rule-4269": {
+      "learning_id": "rule-4269",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4269,
+      "title": "Dual-Encoder Asymmetric Projection Isolation",
+      "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:34:42.218Z"
+    },
+    "rule-4270": {
+      "learning_id": "rule-4270",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4270,
+      "title": "Last-Token Causal Sequence Pooling Invariant",
+      "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:34:42.218Z"
     }
   },
   "aliases": {

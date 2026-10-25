@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-4U1U",
-    "timestamp": "2026-10-22T15:28:55.842Z",
-    "repository": "RecursiveSI/flint",
-    "learningId": "learn-huggingface-recursivesi-flint",
-    "contentHash": "4868085fd591f11d29377e5fefe6de2af0511c5f2276e52645c5beb271fe471d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-4X75",
-    "timestamp": "2026-10-22T15:28:59.921Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "c91698dd65888416310fb9d8e7c69f9cb8624685f3f3b68c96052ca3e2e901f5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-4ZGV",
-    "timestamp": "2026-10-22T15:29:02.863Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "489f8bc3fc7b99bbc6cdc0fb767de23e963b5b4a9e5fab629071bd210582baf2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-51EE",
-    "timestamp": "2026-10-22T15:29:05.366Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "85dbc4d63e7bd2535b80db0de111525b443b585a5b47d5d1a2598b359f7758a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-CZUR",
-    "timestamp": "2026-10-22T15:35:16.611Z",
-    "repository": "Qwen/Qwen3-14B",
-    "learningId": "learn-huggingface-qwen-qwen3-14b",
-    "contentHash": "92cd05134bde50952de1dde99820e1342a4b2ab1bcab63a4649693bf6ef0c76f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-DAFK",
-    "timestamp": "2026-10-22T15:35:30.320Z",
-    "repository": "k3s-io/k3s",
-    "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "9691403d108d27975334e207df72dd5da5c5c8a92cf19bd526ce3a694d9ddd31",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-DDBG",
     "timestamp": "2026-10-22T15:35:34.060Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7402,96 @@
     "contentHash": "4577f352edaf8085d3508476f4abbdb4bd2ec4e540c7800ce6c85748a95ef61c",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-Z8P7",
+    "timestamp": "2026-10-25T11:31:38.827Z",
+    "repository": "ajeetdsouza/zoxide",
+    "learningId": "learn-github-ajeetdsouza-zoxide",
+    "contentHash": "c800bd2238a6790c8707c98ab6de741d05e4bfdbcfb0ddcf844fd8c38f0d033b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ZCF2",
+    "timestamp": "2026-10-25T11:31:43.646Z",
+    "repository": "onejs/one",
+    "learningId": "learn-github-onejs-one",
+    "contentHash": "8624d60d6e3bcd664b72bb521b7cefc50467f25452cd49303dc655d11fe8167f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ZDVO",
+    "timestamp": "2026-10-25T11:31:45.540Z",
+    "repository": "argoproj/argo-events",
+    "learningId": "learn-github-argoproj-argo-events",
+    "contentHash": "02544d22d9c3a9e01ddf2dd6b9c8610c2fe87b43710fbd3a0f74ba5687c41ce0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ZHNB",
+    "timestamp": "2026-10-25T11:31:50.423Z",
+    "repository": "SeaQL/sea-orm",
+    "learningId": "learn-github-seaql-sea-orm",
+    "contentHash": "5e8f2d6762c52b56e40adcf069942be4eea7d0871ea2b70e476d861203e0ca7b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-1R3F",
+    "timestamp": "2026-10-25T11:33:35.979Z",
+    "repository": "taiga-family/taiga-ui",
+    "learningId": "learn-github-taiga-family-taiga-ui",
+    "contentHash": "42b2fc8ddfb93d6b7b9d7038c3c8371b65850ca02bff56c65cd96d3bf62a8a8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-369P",
+    "timestamp": "2026-10-25T11:34:42.301Z",
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+    "contentHash": "1e1d688c3ea9d22241bb39fb30d33029cea193d5b6694cb26f74d4c353d60632",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

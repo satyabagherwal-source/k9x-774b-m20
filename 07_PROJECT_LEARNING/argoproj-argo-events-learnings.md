@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
-> **Source Version**: `493c412d`  
+> **Source Version**: `d00d3409`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:16:37.342Z  
+> **Timestamp**: 2026-10-25T11:31:45.166Z  
 > **Learning ID**: `learn-github-argoproj-argo-events`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:16:36.935Z  
+> **Harvest Timestamp**: 2026-10-25T11:31:44.751Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event-driven Automation Framework for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2705 stars
+- **Stars / Engagement**: 2706 stars
 
 ---
 
@@ -1046,257 +1046,144 @@ func (g *gerritWebhookService) Delete(project, remoteName string) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `109b9ff0` (2026-10-06)
-**Commit Message**: fix(docs): invalid code in the doc (#4213)
+### Incident Patch 1: `d00d3409` (2026-10-24)
+**Commit Message**: chore(deps): bump google.golang.org/api from 0.303.0 to 0.306.0 (#4236)
 
-Signed-off-by: Derek Wang <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `docs/tutorials/08-github-trigger-workflow.md` (modified, +72/-38)
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -1,32 +1,41 @@
- # Trigger Argo Workflows from GitHub (Events + Workflows)
- 
--This tutorial wires **Argo Events** to **Argo Workflows** so that a GitHub webhook (for example a pull request event) submits a Workflow. It is the end-to-end path teams use for �run a pipeline when code changes.�
-+This tutorial wires **Argo Events** to **Argo Workflows** so that a GitHub
-+webhook (for example a pull request event) submits a Workflow. It is the
-+end-to-end path teams use for “run a pipeline when code changes.”
- 
--If you only need a generic HTTP webhook, start with the [Quick Start](../quick_start.md) instead. Event-source details live in [GitHub EventSource](../eventsources/setup/github.md); trigger details live in [Argo Workflow Trigger](../sensors/triggers/argo-workflow.md).
-+If you only need a generic HTTP webhook, start with the
-+[Quick Start](../quick_start.md) instead. Event-source details live in
-+[GitHub EventSource](../eventsources/setup/github.md); trigger details live in
-+[Argo Workflow Trigger](../sensors/triggers/argo-workflow.md).
- 
- ## What you will install
- 
--| Component | Role |
--| --- | --- |
--| Argo Workflows | Runs `Workflow` objects |
-+| Component                           | Role                                            |
-+| ----------------------------------- | ----------------------------------------------- |
-+| Argo Workflows                      | Runs `Workflow` objects                         |
- | Argo Events (controller + EventBus) | Receives GitHub webhooks and triggers workflows |
--| GitHub EventSource | Registers/handles the GitHub webhook |
--| Sensor | Maps a GitHub event to a Workflow create/submit |
-+| GitHub EventSource                  | Registers/handles the GitHub webhook            |
-+| Sensor                              | Maps a GitHub event to a Workflow create/submit |
- 
- ```
- GitHub webhook ? EventSource Service ? EventBus ? Sensor ? Workflow (Argo Workflows)
- ```
- 
- ## Prerequisites
- 
--1. A Kubernetes cluster and `kubectl`.
--2. [Argo Workflows](https://argoproj.github.io/argo-workflows/) installed so the workflow controller can see the namespace where Sensors create Workflows (cluster-wide install, or `--managed-namespace` including that namespace). Example cluster-scoped install:
-+1.  A Kubernetes cluster and `kubectl`.
-+2.  [Argo Workflows](https://argoproj.github.io/argo-workflows/) installed so
-+    the workflow controller can see the namespace where Sensors create Workflows
-+    (cluster-wide install, or `--managed-namespace` including that namespace).
-+    Example cluster-scoped install:
- 
-         export ARGO_WORKFLOWS_VERSION=3.5.4
-         kubectl create namespace argo
-         kubectl apply -n argo -f https://github.com/argoproj/argo-workflows/releases/download/v$ARGO_WORKFLOWS_VERSION/install.yaml
- 
--3. A GitHub repository where you can add a webhook (or allow Argo Events to create one via API token).
-+3.  A GitHub repository where you can add a webhook (or allow Argo Events to
-+    create one via API token).
- 
- ## 1. Install Argo Events
- 
-@@ -41,16 +50,20 @@ Create an EventBus in the same namespace Sensors/EventSources will use:
- 
- ## 2. RBAC for Sensors and Workflows
- 
--The Sensor needs permission to create Workflows. Workflow pods need their own SA as usual:
-+The Sensor needs permission to create Workflows. Workflow pods need their own SA
-+as usual:
- 
-         kubectl apply -n argo-events -f https://raw.githubusercontent.com/argoproj/argo-events/stable/examples/rbac/sensor-rbac.yaml
-         kubectl apply -n argo-events -f https://raw.githubusercontent.com/argoproj/argo-events/stable/examples/rbac/workflow-rbac.yaml
- 
--The example Sensor uses `serviceAccountName: operate-workflow-sa`. Reuse that name or change both the RBAC and the Sensor.
-+The example Sensor uses `serviceAccountName: operate-workflow-sa`. Reuse that
-+name or change both the RBAC and the Sensor.
- 
- ## 3. GitHub credentials
- 
--Create a fine-grained or classic personal access token with permission to manage repository hooks (`repo` or hook-related scopes). Base64-encode the token and an optional webhook secret:
-+Create a fine-grained or classic personal access token with permission to manage
-+repository hooks (`repo` or hook-related scopes). Base64-encode the token and an
-+optional webhook secret:
- 
-         echo -n "YOUR_GITHUB_TOKEN" | base64
-         echo -n "YOUR_WEBHOOK_SECRET" | base64
-@@ -74,37 +87,49 @@ Start from the upstream example and set your repository and webhook URL:
- 
- Edit at least:
- 
--* `spec.github.example.repositories` � owner/name of your repo
--* `spec.github.example.webhook.url` � **publicly reachable** URL of the EventSource service (Ingress, LoadBalancer, or a tunnel for local demos)
-+- `spec.github.example.repositories` — owner/name of your repo
-+- `spec.github.example.webhook.url` — **publicly reachable** URL of the
-+  EventSource service (Ingress, LoadBalancer, or a tunnel for local demos)
- 
--The EventSource Service name is `<event-source-name>-eventsource-svc
+@@ -89,7 +89,7 @@ require (
+ 	go.yaml.in/yaml/v3 v3.0.5
+ 	golang.org/x/crypto v0.58.0
+ 	golang.org/x/tools v0.52.0
+-	google.golang.org/api v0.303.0
++	google.golang.org/api v0.306.0
+ 	google.golang.org/grpc v1.84.0
+ 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.2
+ 	google.golang.org/protobuf v1.36.12
+@@ -360,7 +360,7 @@ require (
+ 	gomodules.xyz/notify v0.1.1 // indirect
+ 	google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20261012220534-4341edf3f941 // indirect
+-	google.golang.org/genproto/googleapis/rpc v0.0.0-20261005182115-fad411399dd8 // indirect
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b // indirect
+ 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
+ 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
+```
+
+**File**: `go.sum` (modified, +4/-4)
+```diff
+@@ -1165,8 +1165,8 @@ gomodules.xyz/notify v0.1.1/go.mod h1:QgQyU4xEA/plJcDeT66J2Go2V7U4c0pD9wjo7HfFil
+ gomodules.xyz/version v0.1.0/go.mod h1:Y8xuV02mL/45psyPKG3NCVOwvAOy6T5Kx0l3rCjKSjU=
+ gonum.org/v1/gonum v0.17.0 h1:VbpOemQlsSMrYmn7T2OUvQ4dqxQXU+ouZFQsZOx50z4=
+ gonum.org/v1/gonum v0.17.0/go.mod h1:El3tOrEuMpv2UdMrbNlKEh9vd86bmQ6vqIcDwxEOc1E=
+-google.golang.org/api v0.303.0 h1:W0OL6l18x57wvSVOCeG4dyqV0xc8AucBnFqA3gH22YE=
+-google.golang.org/api v0.303.0/go.mod h1:dcjRWAy1QdjGb3Z67Qu0gdBWH2gL8Qoy/RI2ZVuvdeE=
++google.golang.org/api v0.306.0 h1:jbakJtAJAO1d8PUFandqfYHuf/ecaeTgoas7+hpXLHc=
++google.golang.org/api v0.306.0/go.mod h1:4XMH+b/ZEfuTbK7FnrFRY9c4xfFHVflGTKuy/i5wUmE=
+ google.golang.org/appengine v1.1.0/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9YwlJXL52JkM=
+ google.golang.org/appengine v1.4.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=
+ google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8/go.mod h1:JiN7NxoALGmiZfu7CAH4rXhgtRTLTxftemlI0sWmxmc=
+@@ -1177,8 +1177,8 @@ google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d h1:C9v1o0/4quuhOAf
+ google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d/go.mod h1:Wz2wFJntZFmLGo7pLDXZ3wYk5hyc0Mb+SkHhDDXT+lU=
+ google.golang.org/genproto/googleapis/api v0.0.0-20261012220534-4341edf3f941 h1:DS/w3N8rsfrwxwgGSj6WhMsPo7aNQGmDx74J81zd0NQ=
+ google.golang.org/genproto/googleapis/api v0.0.0-20261012220534-4341edf3f941/go.mod h1:AuGAdi9KnXss7xbLxIKhCvk+Ro/SxpET/iS45DNYN+M=
+-google.golang.org/genproto/googleapis/rpc v0.0.0-20261005182115-fad411399dd8 h1:0SXBqli5dnuCKMjI/X3FM226zEaEa0GUcSCJtN1vL2o=
+-google.golang.org/genproto/googleapis/rpc v0.0.0-20261005182115-fad411399dd8/go.mod h1:OaIUM3+LpYcK2GXM4FTmhWoIq371Owdr+Cc7/BsYHHc=
++google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b h1:6WNWHZk91dp4gZ25642OALkuG1UVNZbwENJD19DnB8k=
++google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b/go.mod h1:OaIUM3+LpYcK2GXM4FTmhWoIq371Owdr+Cc7/BsYHHc=
+ google.golang.org/grpc v1.19.0/go.mod h1:mqu4LbDTu4XGKhr4mRzUsmM4RtVoemTSY81AxZiDr8c=
+ google.golang.org/grpc v1.23.0/go.mod h1:Y5yQAOtifL1yxbo5wqy6BxZv8vAUGQwXBOALyacEbxg=
+ google.golang.org/grpc v1.25.1/go.mod h1:c3i+UQWmh7LiEpx4sFZnkU36qjEYZ0imhYfXVyQciAY=
 ```
 
 ---
 
-### Incident Patch 2: `52ed4610` (2026-09-20)
-**Commit Message**: fix(eventsources): ack/nack AMQP messages when consume.autoAck is false (#4179)
+### Incident Patch 2: `01467367` (2026-10-24)
+**Commit Message**: chore(deps): bump github.com/Azure/azure-sdk-for-go/sdk/azidentity from 1.14.1 to 1.15.0 (#4239)
 
-Signed-off-by: Pujitha Paladugu <[REDACTED_EMAIL]>
-Co-authored-by: Pujitha Paladugu <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `pkg/eventsources/sources/amqp/start.go` (modified, +20/-0)
+**File**: `go.mod` (modified, +4/-4)
 ```diff
-@@ -185,16 +185,36 @@ func (el *EventListener) handleOne(amqpEventSource *aev1.AMQPEventSource, msg am
- 
- 	bodyBytes, err := json.Marshal(body)
- 	if err != nil {
-+		el.nack(amqpEventSource, msg, log)
- 		return fmt.Errorf("failed to marshal the message, message-id: %s, %w", msg.MessageId, err)
- 	}
- 
- 	log.Info("dispatching event ...")
- 	if err = dispatch(bodyBytes); err != nil {
-+		el.nack(amqpEventSource, msg, log)
- 		return fmt.Errorf("failed to dispatch AMQP event, %w", err)
- 	}
-+
-+	if !amqpEventSource.Consume.AutoAck {
-+		if err := msg.Ack(false); err != nil {
-+			log.Errorw("failed to ack the message", zap.Any("message-id", msg.MessageId), zap.Error(err))
-+		}
-+	}
- 	return nil
- }
- 
-+// nack negatively acknowledges and requeues a message that failed processing.
-+// It is a no-op when the channel was set up with AutoAck, since the broker
-+// already acknowledged the message on delivery in that case.
-+func (el *EventListener) nack(amqpEventSource *aev1.AMQPEventSource, msg amqplib.Delivery, log *zap.SugaredLogger) {
-+	if amqpEventSource.Consume.AutoAck {
-+		return
-+	}
-+	if err := msg.Nack(false, true); err != nil {
-+		log.Errorw("failed to nack the message", zap.Any("message-id", msg.MessageId), zap.Error(err))
-+	}
-+}
-+
- // setDefaults sets the default values in case the user hasn't defined them
- // helps also to keep retro-compatibility with current dpeloyments
- func setDefaults(eventSource *aev1.AMQPEventSource) {
+@@ -13,7 +13,7 @@ require (
+ 	dario.cat/mergo v1.0.2
+ 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20221103172237-443f56ff4ba8
+ 	github.com/Azure/azure-event-hubs-go/v3 v3.6.2
+-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1
++	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0
+ 	github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs v1.4.0
+ 	github.com/Azure/azure-sdk-for-go/sdk/messaging/azservicebus v1.11.0
+ 	github.com/Azure/azure-sdk-for-go/sdk/storage/azqueue v1.0.1
+@@ -116,8 +116,8 @@ require (
+ 	github.com/AthenZ/athenz v1.10.39 // indirect
+ 	github.com/Azure/azure-amqp-common-go/v4 v4.2.0 // indirect
+ 	github.com/Azure/azure-sdk-for-go v65.0.0+incompatible // indirect
+-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1 // indirect
+-	github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0 // indirect
++	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3 // indirect
++	github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0 // indirect
+ 	github.com/Azure/go-amqp v1.7.0 // indirect
+ 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
+ 	github.com/Azure/go-autorest/autorest v0.11.28 // indirect
+@@ -127,7 +127,7 @@ require (
+ 	github.com/Azure/go-autorest/autorest/validation v0.3.1 // indirect
+ 	github.com/Azure/go-autorest/logger v0.2.1 // indirect
+ 	github.com/Azure/go-autorest/tracing v0.6.0 // indirect
+-	github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 // indirect
++	github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 // indirect
+ 	github.com/DataDog/zstd v1.5.0 // indirect
+ 	github.com/Masterminds/goutils v1.1.1 // indirect
+ 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
 ```
 
-**File**: `pkg/eventsources/sources/amqp/start_test.go` (modified, +83/-0)
+**File**: `go.sum` (modified, +8/-8)
 ```diff
-@@ -17,11 +17,94 @@ limitations under the License.
- package amqp
- 
- import (
-+	"errors"
- 	"testing"
- 
-+	amqplib "github.com/rabbitmq/amqp091-go"
- 	"github.com/stretchr/testify/assert"
-+	"go.uber.org/zap/zaptest"
-+
-+	aev1 "github.com/argoproj/argo-events/pkg/apis/events/v1alpha1"
-+	eventsourcecommon "github.com/argoproj/argo-events/pkg/eventsources/common"
-+	metrics "github.com/argoproj/argo-events/pkg/metrics"
- )
- 
-+// mockAcknowledger records the Ack/Nack calls made against a Delivery so
-+// tests can assert on manual acknowledgement behavior.
-+type mockAcknowledger struct {
-+	acked   bool
-+	nacked  bool
-+	requeue bool
-+}
-+
-+func (m *mockAcknowledger) Ack(tag uint64, multiple bool) error {
-+	m.acked = true
-+	return nil
-+}
-+
-+func (m *mockAcknowledger) Nack(tag uint64, multiple, requeue bool) error {
-+	m.nacked = true
-+	m.requeue = requeue
-+	return nil
-+}
-+
-+func (m *mockAcknowledger) Reject(tag uint64, requeue bool) error {
-+	return nil
-+}
-+
-+func newEventListener() *EventListener {
-+	return &EventListener{
-+		EventSourceName: "esName",
-+		EventName:       "eName",
-+		Metrics:         metrics.NewMetrics("ns"),
-+	}
-+}
-+
-+func TestHandleOne_ManualAck(t *testing.T) {
-+	el := newEventListener()
-+	amqpEventSource := &aev1.AMQPEventSource{
-+		Consume: &aev1.AMQPConsumeConfig{AutoAck: false},
-+	}
-+	ack := &mockAcknowledger{}
-+	msg := amqplib.Delivery{Acknowledger: ack, Body: []byte(`{"a":"b"}`)}
-+
-+	dispatch := func(b []byte, opts ...eventsourcecommon.Option) error { return nil }
-+	err := el.handleOne(amqpEventSource, msg, dispatch, zaptest.NewLogger(t).Sugar())
-+	assert.NoError(t, err)
-+	assert.True(t, ack.acked, "expected the message to be acked after a successful dispatch")
-+	assert.False(t, ack.nacked)
-+}
-+
-+func TestHandleOne_ManualNackOnDispatchFailure(t *testing.T) {
-+	el := newEventListener()
-+	amqpEventSource := &aev1.AMQPEventSource{
-+		Consume: &aev1.AMQPConsumeConfig{AutoAck: false},
-+	}
-+	ack := &mockAcknowledger{}
-+	msg := amqplib.Delivery{Acknowledger: ack, Body: []byte(`{"a":"b"}`)}
-+
-+	dispatch := func(b []byte, opts ...eventsourcecommon.Option) error { return errors.New("dispatch failed") }
-+	err := el.handleOne(amqpEventSource, msg, dispatch, zaptest.NewLogger(t).Sugar())
-+	assert.Error(t, err)
-+	assert.True(t, ack.nacked, "expected the message to be nacked and requeued after a failed dispatch")
-+	assert.True(t, ack.requeue)
-+	assert.False(t, ack.acked)
-+}
-+
-+func TestHandleOne_AutoAckSkipsManualAck(t *testing.T) {
-+	el := newEventListener()
-+	amqpEventSource := &aev1.AMQPEventSource{
-+		Consume: &aev1.AMQPConsumeConfig{AutoAck: true},
-+	}
-+	// No Acknowledger set: manual Ack/Nack would return
-+	// amqplib.ErrDeliveryNotInitialized if mistakenly called.
-+	msg := amqplib.Delivery{Body: []byte(`{"a":"b"}`)}
-+
-+	dispatch := func(b []byte, opts ...eventsourcecommon.Option) error { return nil }
-+	err := el.handleOne(amqpEventSource, msg, dispatch, zaptest.NewLogger(t).Sugar())
-+	assert.NoError(t, err)
-+}
-+
- func TestParseYamlTable(t *testing.T) {
- 	table, err := parseYamlTable("")
- 	assert.Nil(t, err)
+@@ -29,14 +29,14 @@ github.com/Azure/azure-event-hubs-go/v3 v3.6.2 h1:7rNj1/iqS/i3mUKokA2n2eMYO72TB7
+ github.com/Azure/azure-event-hubs-go/v3 v3.6.2/go.mod h1:n+ocYr9j2JCLYqUqz9eI+lx/TEAtL/g6rZzyTFSuIpc=
+ github.com/Azure/azure-sdk-for-go v65.0.0+incompatible h1:HzKLt3kIwMm4KeJYTdx9EbjRYTySD/t8i1Ee/W5EGXw=
+ github.com/Azure/azure-sdk-for-go v65.0.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
+-github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1 h1:zvXfGJCWvywnCA814d8ZiVyt+fm9nnTE8xSb99zRyfo=
+-github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1/go.mod h1:iptorS+VYKFL2N6PnebpS91dubG35eAOEERnT4PJbQU=
+-github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1 h1:u93s+zU2JD62im61Bm5CZIc1ZrOJaIAWEg0WOrMVkEo=
+-github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.1/go.mod h1:oXtinPO4OLj9d1DOTrqrL1oRwGhcqadvAmrl6wTeGlk=
++github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3 h1:qgnWTiWs1G7AqcKZegFvkJD1bmXJcaDU3uC0ELSgZ5U=
++github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3/go.mod h1:XtxD48QPInqoj+GMlcRlXHEYsoOxFnP6w2JgIZ9rDS4=
++github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0 h1:w3gDUJlJ0BfBsHH02DCBDwbkmMSXJqBj6nBOCo9iocY=
++github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0/go.mod h1:7scl8mG/IFLVjJ9ef/ltdND2T1z0CkgVSaQoUxLvmeU=
+ github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0 h1:xFaZZ+IubdftrDHnGGwZ6QvQ3KHTtWl2MCK+GMt2vxs=
+ github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0/go.mod h1:mCBhUhlMjLLJKr5aqw2TNS/VqJOie8MzWq3DAMJeKso=
+-github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0 h1:fhqpLE3UEXi9lPaBRpQ6XuRW0nU7hgg4zlmZZa+a9q4=
+-github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0/go.mod h1:7dCRMLwisfRH3dBupKeNCioWYUZ4SS09Z14H+7i8ZoY=
++github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0 h1:Terj1CMW4+NY5CpWjSRkqLoxh2DkYDdv/FH2z0897Uc=
++github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0/go.mod h1:7Ut2Qw9vcwpLW5Q4MBy43uSxXS7tK2yjs94OJ6j5thE=
+ github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs v1.4.0 h1:BwmN55GUUfwFPSd44bxBVkFD8yJAp+LLjGRjSnpbeUM=
+ github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs v1.4.0/go.mod h1:OowfWwCcXlcn1Nkk6oTxeCuGNRElKtYpzkF1/gZ42Ig=
+ github.com/Azure/azure-sdk-for-go/sdk/messaging/azservicebus v1.11.0 h1:bq6fFmNF//35QT8FdiZcvm5XvYe0kuj4GgUoqqOz4BU=
+@@ -75,8 +75,8 @@ github.com/Azure/go-autorest/tracing v0.6.0 h1:TYi4+3m5t6K48TGI9AUdb+IzbnSxvnvUM
+ github.com/Azure/go-autorest/tracing v0.6.0/go.mod h1:+vhtPC754Xsa23ID7GlGsrdKBpUA79WCAKPPZVC2DeU=
+ github.com/AzureAD/microsoft-authentication-extensions-for-go/cache v0.1.1 h1:WJTmL004Abzc5wDB5VtZG2PJk5ndYDgVacGqfirKxjM=
+ github.com/AzureAD/microsoft-authentication-extensions-for-go/cache v0.1.1/go.mod h1:tCcJZ0uHAmvjsVYzEFivsRTN00oz5BEsRgQHu5JZ9WE=
+-github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 h1:Nljr4q1GRA/5vCrMONS+g4u4LRHNgOXVSh3O43J2CnI=
+-github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0/go.mod h1:Y33QHnf0FfdVewFFISOGe20mkZbxX4H839o955/PoeI=
++github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 h1:0O6j18nQDoIff6/mtosT5LNU2WehEwp+LqfX6699oqY=
++github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1/go.mod h1:xdYAf5bjkOpsd3auA8riiJW4vneBubt9caavL7626jQ=
+ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+ github.com/DataDog/datadog-go v2.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4239** (2026-10-24): chore(deps): bump github.com/Azure/azure-sdk-for-go/sdk/azidentity from 1.14.1 to 1.15.0 (@dependabot[bot])
+- **PR #4238** (2026-10-24): chore(deps): bump github.com/grpc-ecosystem/grpc-gateway/v2 from 2.31.0 to 2.32.0 (@dependabot[bot])
+- **PR #4237** (2026-10-24): chore(deps): bump github.com/rabbitmq/amqp091-go from 1.15.0 to 1.16.0 (@dependabot[bot])
+- **PR #4236** (2026-10-24): chore(deps): bump google.golang.org/api from 0.303.0 to 0.306.0 (@dependabot[bot])
+- **PR #4233** (closed): fix(docs): Update broken hrefs (@fguendling)
 - **PR #4232** (2026-10-17): chore(deps): bump github.com/nats-io/nats-server/v2 from 2.15.0 to 2.15.1 (@dependabot[bot])
-- **PR #4231** (2026-10-17): chore(deps): bump golang.org/x/tools from 0.51.0 to 0.52.0 (@dependabot[bot])
-- **PR #4230** (2026-10-17): chore(deps): bump golang.org/x/crypto from 0.57.0 to 0.58.0 (@dependabot[bot])
-- **PR #4229** (closed): chore(deps): bump sigs.k8s.io/controller-tools from 0.17.3 to 0.23.0 (@dependabot[bot])
-- **PR #4228** (2026-10-17): chore(deps): bump github.com/Azure/azure-sdk-for-go/sdk/messaging/azservicebus from 1.10.0 to 1.11.0 (@dependabot[bot])
-- **PR #4227** (2026-10-17): chore(deps): bump github.com/minio/minio-go/v7 from 7.3.0 to 7.4.1 (@dependabot[bot])
 
 ---
 
@@ -1316,54 +1203,30 @@ Co-authored-by: Pujitha Paladugu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs): invalid code in the doc (#4213)
+## X. deps): bump google.golang.org/api from 0.303.0 to 0.306.0 (#4236)
 
 **RULE**:
-When implementing operations in `docs/tutorials/08-github-trigger-workflow.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `109b9ff0`: docs): invalid code in the doc (#4213). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d00d3409`: deps): bump google.golang.org/api from 0.303.0 to 0.306.0 (#4236). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/tutorials/08-github-trigger-workflow.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-This tutorial wires **Argo Events** to **Argo Workflows** so that a GitHub
-webhook (for example a pull request event) submits a Workflow. It is the
-end-to-end path teams use for “run a pipeline when code changes.”
-If you only need a generic HTTP webhook, start with the
-[Quick Start](../quick_start.md) instead. Event-source details live in
-[GitHub EventSource](../eventsources/setup/github.md); trigger details live in
-[Argo Workflow Trigger](../sensors/triggers/argo-workflow.md).
-| Component                           | Role                                            |
-| ----------------------------------- | ----------------------------------------------- |
-| Argo Workflows                      | Runs `Workflow` objects                         |
-| GitHub EventSource                  | Registers/handles the GitHub webhook            |
-| Sensor                              | Maps a GitHub event to a Workflow create/submit |
-1.  A Kubernetes cluster and `kubectl`.
-2.  [Argo Workflows](https://argoproj.github.io/argo-workflows/) installed so
-    the workflow controller can see the namespace where Sensors create Workflows
-    (cluster-wide install, or `--managed-namespace` including that n
+	google.golang.org/api v0.306.0
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-This tutorial wires **Argo Events** to **Argo Workflows** so that a GitHub webhook (for example a pull request event) submits a Workflow. It is the end-to-end path teams use for �run a pipeline when code changes.�
-If you only need a generic HTTP webhook, start with the [Quick Start](../quick_start.md) instead. Event-source details live in [GitHub EventSource](../eventsources/setup/github.md); trigger details live in [Argo Workflow Trigger](../sensors/triggers/argo-workflow.md).
-| Component | Role |
-| --- | --- |
-| Argo Workflows | Runs `Workflow` objects |
-| GitHub EventSource | Registers/handles the GitHub webhook |
-| Sensor | Maps a GitHub event to a Workflow create/submit |
-1. A Kubernetes cluster and `kubectl`.
-2. [Argo Workflows](https://argoproj.github.io/argo-workflows/) installed so the workflow controller can see the namespace where Sensors create Workflows (cluster-wide install, or `--managed-namespace` including that namespace). Example cluster-scoped install:
-3. A GitHub repository where you can add a webhook (or allow Argo Events to create one via API token).
-The Sensor needs permission to create Workflows. Workflow pods need their own SA as usual:
-The example Sensor u
+	google.golang.org/api v0.303.0
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20261005182115-fad411399dd8 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `109b9ff0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d00d3409` are properly handled with clean fallback behavior.

@@ -4785,3 +4785,9 @@
 | `CYCLE-20261025-L9IS` | `2026-10-25T11:20:46.708Z` | `guokaigdg/animal-island-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4258` | Yes (`b4d7d103...`) |
 | `CYCLE-20261025-LC0W` | `2026-10-25T11:20:49.952Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4259` | Yes (`6541c3f9...`) |
 | `CYCLE-20261025-LG4A` | `2026-10-25T11:20:55.258Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4260, Rule 4261, Rule 4262` | Yes (`4577f352...`) |
+| `CYCLE-20261025-Z8P7` | `2026-10-25T11:31:38.827Z` | `ajeetdsouza/zoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4263` | Yes (`c800bd22...`) |
+| `CYCLE-20261025-ZCF2` | `2026-10-25T11:31:43.646Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4264` | Yes (`8624d60d...`) |
+| `CYCLE-20261025-ZDVO` | `2026-10-25T11:31:45.540Z` | `argoproj/argo-events` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4265` | Yes (`02544d22...`) |
+| `CYCLE-20261025-ZHNB` | `2026-10-25T11:31:50.423Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4266` | Yes (`5e8f2d67...`) |
+| `CYCLE-20261025-1R3F` | `2026-10-25T11:33:35.979Z` | `taiga-family/taiga-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4267, Rule 4268` | Yes (`42b2fc8d...`) |
+| `CYCLE-20261025-369P` | `2026-10-25T11:34:42.301Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4269, Rule 4270` | Yes (`1e1d688c...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T11:20:55.273Z",
+  "last_updated": "2026-10-25T11:34:42.313Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -380,14 +380,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "content_hash": "c806da9cb7a001f75c9034df1ab5977933b5b3089ed1d2f840c51c4782676378",
-      "verified_at": "2026-10-20T16:44:29.451Z",
+      "content_hash": "1e1d688c3ea9d22241bb39fb30d33029cea193d5b6694cb26f74d4c353d60632",
+      "verified_at": "2026-10-25T11:34:42.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:44:29.451Z"
+      "last_updated": "2026-10-25T11:34:42.312Z"
     },
     "nvidia/Nemotron-3-Diarization": {
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -4131,14 +4131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ajeetdsouza-zoxide",
-      "content_hash": "99b3f5be27f488309e4b8f5eb7f8174dc47e1cbb255d77a3b9fbf4bf00b476b1",
-      "verified_at": "2026-10-18T21:58:07.714Z",
+      "content_hash": "c800bd2238a6790c8707c98ab6de741d05e4bfdbcfb0ddcf844fd8c38f0d033b",
+      "verified_at": "2026-10-25T11:31:38.839Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:58:07.714Z"
+      "last_updated": "2026-10-25T11:31:38.839Z"
     },
     "react-native-elements/react-native-elements": {
       "repository": "react-native-elements/react-native-elements",
@@ -6066,14 +6066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-events",
-      "content_hash": "97b25be3fc86cfc879c0989ede6ff17630a4d2fb58aa4dd4870688b295fa667c",
-      "verified_at": "2026-10-19T00:16:37.576Z",
+      "content_hash": "02544d22d9c3a9e01ddf2dd6b9c8610c2fe87b43710fbd3a0f74ba5687c41ce0",
+      "verified_at": "2026-10-25T11:31:45.552Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:16:37.576Z"
+      "last_updated": "2026-10-25T11:31:45.552Z"
     },
     "HelixDB/helix-db": {
       "repository": "HelixDB/helix-db",
@@ -9171,14 +9171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-taiga-family-taiga-ui",
-      "content_hash": "a4f7e21a6de5e1dae723820df546048703bfec9376b07e470ba18e76079ac044",
-      "verified_at": "2026-10-23T06:10:29.034Z",
+      "content_hash": "42b2fc8ddfb93d6b7b9d7038c3c8371b65850ca02bff56c65cd96d3bf62a8a8a",
+      "verified_at": "2026-10-25T11:33:35.989Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:10:29.034Z"
+      "last_updated": "2026-10-25T11:33:35.989Z"
     },
     "u-root/u-root": {
       "repository": "u-root/u-root",
@@ -10446,14 +10446,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-onejs-one",
-      "content_hash": "d1144645d42282226fd534afb189b927c541103aca34389d8e2c55f904d6fbf1",
-      "verified_at": "2026-10-20T19:23:34.533Z",
+      "content_hash": "8624d60d6e3bcd664b72bb521b7cefc50467f25452cd49303dc655d11fe8167f",
+      "verified_at": "2026-10-25T11:31:43.662Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:23:34.533Z"
+      "last_updated": "2026-10-25T11:31:43.662Z"
     },
     "influxdata/influxdb": {
       "repository": "influxdata/influxdb",
@@ -10911,14 +10911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seaql-sea-orm",
-      "content_hash": "b8d4f7edb960904da3e32b30e4ed9fb8d9ff6bab9749b16a9ae65601e8c5d7cf",
-      "verified_at": "2026-10-19T08:14:49.146Z",
+      "content_hash": "5e8f2d6762c52b56e40adcf069942be4eea7d0871ea2b70e476d861203e0ca7b",
+      "verified_at": "2026-10-25T11:31:50.435Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:14:49.146Z"
+      "last_updated": "2026-10-25T11:31:50.435Z"
     },
     "MobileNativeFoundation/Store": {
       "repository": "MobileNativeFoundation/Store",
