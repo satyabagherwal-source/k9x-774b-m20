@@ -4848,3 +4848,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-25T13:57:11.453Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `7e12743d` | Multi-dimensional audit evidence | 2026-10-25T13:57:17.456Z |
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `2acd554c` | Multi-dimensional audit evidence | 2026-10-25T13:57:20.663Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `b09a8a5f` | Multi-dimensional audit evidence | 2026-10-25T14:03:16.707Z |
+| `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `23fe304f` | Multi-dimensional audit evidence | 2026-10-25T14:03:22.121Z |
+| `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-10-25T14:03:25.763Z |
+| `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `dae6d3a0` | Multi-dimensional audit evidence | 2026-10-25T14:03:28.793Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `63ada8be` | Multi-dimensional audit evidence | 2026-10-25T14:03:30.689Z |

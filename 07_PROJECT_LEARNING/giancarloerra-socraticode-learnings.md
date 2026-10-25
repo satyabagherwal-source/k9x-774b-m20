@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md`  
 > **Source**: github ([https://github.com/giancarloerra/SocratiCode](https://github.com/giancarloerra/SocratiCode))  
-> **Source Version**: `eb94e073`  
+> **Source Version**: `dae6d3a0`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:26:22.576Z  
+> **Timestamp**: 2026-10-25T14:03:28.538Z  
 > **Learning ID**: `learn-github-giancarloerra-socraticode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/giancarloerra/SocratiCode](https://github.com/giancarloerra/SocratiCode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:26:22.125Z  
+> **Harvest Timestamp**: 2026-10-25T14:03:28.342Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Enterprise-grade (40m+ LOC) codebase intelligence, zero-setup, local & private Plugin/Skill/Extension or MCP: hybrid semantic search, polyglot dependency graphs, symbol-level impact analysis & call-flow, interactive HTML viewer, cross-project & branch-aware search, DB/API/infra knowledge. 61% less tokens, 84% fewer calls, 37x faster. Cloud in beta.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3343 stars
+- **Stars / Engagement**: 3354 stars
 
 ---
 
@@ -969,841 +969,1103 @@ main().catch((err) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0418bd97` (2026-10-07)
-**Commit Message**: fix(symbol-graph): retry Qdrant requests once on a closed connection
+### Incident Patch 1: `692963c2` (2026-10-19)
+**Commit Message**: fix(graph): resolve C# names only through the scopes and imports C# uses
 
-When the event loop is blocked past Qdrant's 5 s keep-alive, the server
-closes an idle pooled connection that undici cannot see close until the
-loop runs again. undici's own idle-socket check runs in the check phase
-that follows the blocked callback, before a poll phase can read the close,
-so the next request is written to the dead socket and fails with
-`fetch failed` caused by `SocketError: other side closed [UND_ERR_SOCKET]`.
+A C# path is now answered only by a symbol whose exact full name C# would
+bind from the caller: its enclosing types and namespaces, innermost first,
+then what is imported at that line. The suffix fallback is gone, so a path
+no visible symbol matches stays unresolved instead of binding a same-named
+type in another namespace.
 
-On a large project this hits both directions:
+- `global::` anchors are kept on the written path and looked up in the
+  global namespace alone; a file-level alias target is anchored the same way.
+- `using`s and aliases inside a namespace block apply to that block only.
+- An extern-alias path (`Legacy::X.Y`) is not resolved.
+- `this.` and `base.` calls resolve to the caller's own type and its bases;
+  any other receiver (a variable, a call result, `?.`) stays unresolved.
+- A static call on a .NET framework type is `engine` unless a project type
+  of that name is visible, in which case a missing member stays unresolved.
 
-- Writes: call-site resolution runs synchronously between the file-import
-  graph's last Qdrant write and the symbol graph's first, so the symbol
-  graph is never saved.
-- Reads: the symbol-graph cache loads every name and reverse shard at
-  once, and parsing large responses blocks the loop while other pooled
-  sockets go stale, so a process's first query can fail with
-  `loadReverseShard failed for bucket N: fetch failed`.
+Tests: regressions through extractor and resolver for each case above, each
+checked red against a mutation of the code it covers.
 
-Every symbol-store Qdrant request (collection checks, upserts, and every
-shard and payload load) now runs once more when its cause chain holds
-UND_ERR_SOCKET. All of these requests are idempotent. Any other error, and
-a s
-
-**File**: `src/services/qdrant.ts` (modified, +12/-1)
+**File**: `src/constants.ts` (modified, +7/-0)
 ```diff
-@@ -59,20 +59,31 @@ async function withRetry<T>(
-  * the one part a user can act on, so every symbol-graph failure looked
-  * identical. Appends that reason when present, and looks through a `cause`
-  * chain so an error already wrapped by {@link wrapQdrantError} still resolves.
-+ *
-+ * Without a server reason, appends the innermost cause's message and `code`
-+ * instead, so a transport failure reads as
-+ * `fetch failed: other side closed [UND_ERR_SOCKET]` rather than `fetch failed`.
+@@ -844,6 +844,13 @@ export const GODOT_BUILTIN_FUNCTIONS = new Set<string>([
+   "connect", "disconnect", "is_connected",
+ ]);
+ 
++/**
++ * The leading segment a C# edge keeps for a `global::`-anchored path
++ * (`global::App.Calc`): the path names members of the global namespace only,
++ * never a scope the reference sits in.
++ */
++export const CS_GLOBAL_ANCHOR = "global::";
++
+ /**
+  * .NET framework and language-level type names a C# file names without the
+  * project declaring them: `Task`, `List`, `DateTime`, and the conventional
+```
+
+**File**: `src/services/graph-symbol-resolution.ts` (modified, +180/-55)
+```diff
+@@ -26,7 +26,7 @@
+  *   from unresolved callees — they don't count against resolution %.
   */
- export function describeQdrantError(err: unknown): string {
-   const base = err instanceof Error ? err.message : String(err);
-   // Walk the cause chain (bounded — these are never deep) looking for the
-   // client's `data` envelope, which may sit on the error or on its cause.
-   let current: unknown = err;
-+  let innermost: unknown;
-   for (let depth = 0; depth < 5 && current; depth++) {
-     const reason = (current as { data?: { status?: { error?: unknown } } })?.data?.status?.error;
-     if (typeof reason === "string" && reason.length > 0) {
-       return base.includes(reason) ? base : `${base}: ${reason}`;
-     }
-+    if (current !== err) innermost = current;
-     current = (current as { cause?: unknown })?.cause;
-   }
--  return base;
-+  if (!(innermost instanceof Error)) return base;
-+  const { message } = innermost;
-+  const code = (innermost as { code?: unknown }).code;
-+  const tag = typeof code === "string" ? code : "";
-+  const detail = message && tag ? `${message} [${tag}]` : message || tag;
-+  return base.includes(detail) ? base : `${base}: ${detail}`;
+ 
+-import { CS_BUILTIN_TYPES, GODOT_BUILTIN_CLASSES, GODOT_BUILTIN_FUNCTIONS } from "../constants.js";
++import { CS_BUILTIN_TYPES, CS_GLOBAL_ANCHOR, GODOT_BUILTIN_CLASSES, GODOT_BUILTIN_FUNCTIONS } from "../constants.js";
+ import type { CodeGraph, SymbolEdge, SymbolNode } from "../types.js";
+ import { phpFoldCase } from "./graph-php-case.js";
+ import type { RustUseBinding } from "./graph-symbols.js";
+@@ -60,16 +60,6 @@ function csFullNameOf(s: SymbolNode): string {
+   return s.csFullName ?? s.qualifiedName;
  }
  
- /**
-```
-
-**File**: `src/services/symbol-graph-store.ts` (modified, +64/-12)
-```diff
-@@ -15,6 +15,7 @@
-  */
+-/**
+- * Whether the dotted `path` a C# edge writes names `s`: its full name is the
+- * path, or ends in `.path`. `Billing.Calc` names `App.Billing.Calc` and never
+- * `App.Other.Calc`; a bare `Calc` names both.
+- */
+-function csNamedBy(s: SymbolNode, path: string): boolean {
+-  const full = csFullNameOf(s);
+-  return full === path || full.endsWith(`.${path}`);
+-}
+-
+ type GdscriptSceneEntry = readonly [file: string, symbols: Map<string, SymbolNode[]>];
  
- import { createHash, randomUUID } from "node:crypto";
-+import type { QdrantClient } from "@qdrant/js-client-rest";
- import {
-   symgraphFileCollectionName,
-   symgraphIndexCollectionName,
-@@ -33,6 +34,57 @@ import type {
- import { logger } from "./logger.js";
- import { getClient, isAlreadyExistsError } from "./qdrant.js";
- 
-+/** True when the error's cause chain holds undici's closed-socket error. */
-+function isClosedSocketError(err: unknown): boolean {
-+  let current: unknown = err;
-+  for (let depth = 0; depth < 5 && current; depth++) {
-+    if ((current as { code?: unknown }).code === "UND_ERR_SOCKET") return true;
-+    current = (current as { cause?: unknown }).cause;
-+  }
-+  return false;
-+}
-+
-+/**
-+ * Run a Qdrant request, and run it once more if it failed on a connection the
-+ * server had already closed. Every other failure, and a second failure,
-+ * propagate unchanged.
-+ */
-+async function retryOnClosedSocket<T>(operation: string, request: () => Promise<T>): Promise<T> {
-+  try {
-+    return await request();
-+  } catch (err) {
-+    if (!isClosedSocketError(err)) throw err;
-+    logger.warn("Symbol-graph Qdrant request hit a connection the server had closed; retrying once", { operation });
-+    return request();
-+  }
-+}
-+
-+type SymbolStoreClient = Pick<
-+  QdrantClient,
-+  "getCollections" | "createCollection" | "deleteCollection" | "upsert" | "retrieve" | "delete" | "scroll"
-+>;
-+
-+/**
-+ * The Qdrant client every symbol-store request goes through.
-+ *
-+ * A closed-socket failure can follow a request the server already applied, and
-+ * the retry sends it again. A method belongs here only if a repeat leaves the
-+ * same end state; a repeated `createCollection` answers "already exists", and
-+ * its caller must accept that reply.
-+ */
-+function storeClient(): SymbolStoreClient {
-+  const qdrant = getClient();
-+  return {
-+    getCollections: (...args) => retryOnClosedSocket("getCollections", () => qdrant.getCollections(...args)),
-+    createCollection: (...args) => retryOnClosedSocket("createCollection", () => qdrant.createCollection(...args)),
-+    deleteCollection: (...args) => retryOnClosedSocket("deleteCollection", () => qdrant.deleteCollection(...args)),
-+    upsert: (...args) => retryOnClosedSocket("upsert", () => qdrant.upsert(...args)),
-+    retrieve: (...args) => retryOnClosedSocket("retrieve", () => qdrant.retrieve(...args)),
-+    delete: (...args) => retryOnClosedSocket("delete", () => qdrant.delete(...args)),
-+    scroll: (...args) => retryOnClosedSocket("scroll", () => qdrant.scroll(...args)),
-+  };
-+}
-+
- // ── Shard key helpers ────────────────────────────────────────────────────
- 
- /** Map a symbol name to its name-index shard key (`a`–`z` or `_`). */
-@@ -176,7 +228,7 @@ async function upsertWithinBudget(
-   points: SymgraphPoint[],
-   describe: (index: number) => string,
- ): Promise<void> {
--  const qdrant = getClient();
-+  const qdrant = storeClient();
-   let batch: SymgraphPoint[] = [];
-   let batchBytes = 0;
- 
-@@ -282,7 +334,7 @@ async function saveShardPoints<V>(
-   payloadFor: (entries: Record<string, V>, part: number, parts: number) => Record<string, unknown>,
-   generation?: string,
- ): Promise<void> {
--  const qdrant = getClient();
-+  const qdrant = storeClient();
- 
-   const single: SymgraphPoint = {
-     id: primaryId,
-@@ -381,7 +433,7 @@ async function loadShardPoints<V>(
-   entriesOf: (payload: Record<string, unknown> | null | undefined) => Record<string, V> | null,
-   logContext: Record<string, unknown>,
- ): Promise<Record<string, V> | null> {
--  const qdrant = getClient();
-+  const qdrant = storeClient();
-   const primary = await qdrant.retrieve(collName, { ids: [primaryId], with_payload: true });
-   if (primary.length === 0) return null;
- 
-@@ -495,7 +547,7 @@ async function ensureCollection(name: string): Promise<void> {
-   if (current) return current;
- 
-   const attempt = (async () => {
--    const qdrant = getClient();
-+    const qdrant = storeClient();
-     const collections = await qdrant.getCollections();
-     const exists = collections.collections.some((c) => c.name === name);
-     if (!exists) {
-@@ -546,7 +598,7 @@ export async function saveSymbolGraphMeta(
- ): Promise<void> {
-   const collName = symgraphMetaCollectionName(projectId);
-   await ensureCollection(collName);
--  const qdrant = getClient();
-+  const qdrant = storeClient();
-   const point: SymgraphPoint = { id: metaPointId(projectId), vector: [0], payload: { meta } };
-   // Counters only, so it cannot realistically overflow — guarded anyway so
-   // this file has no unguarded upsert path (#99).
-@@ -561,7 +613,7 @@ export async function loadSymbolGraphMeta(
-   try {
-     const collName = symgraphMetaCollectionName(projectId);
-     await ensureCollection(collName);
--    const qdrant = getClient();
-+    const qdrant = storeClient();
-     const points = await qdrant.retrieve(collName, {
-       ids: [metaPointId(projectId)],
-       with_payload: true,
-@@ -604,7 +656,7 @@ export async 
-```
-
-**File**: `tests/helpers/idle-closing-qdrant-server.mjs` (added, +110/-0)
-```diff
-@@ -0,0 +1,110 @@
-+// SPDX-License-Identifier: AGPL-3.0-only
-+// Copyright (C) 2026 Giancarlo Erra - Altaire Limited
-+
-+/**
-+ * Minimal Qdrant REST server, run as a worker thread so it keeps serving
-+ * while the test thread is blocked. Serves a subset of the routes the
-+ * symbol-graph store uses: list collections, create a collection (any method
-+ * on `/collections/<name>`, DELETE included), upsert points (PUT on
-+ * `/collections/<name>/points`) and retrieve points by id (any other method
-+ * there). Every other path, point delete and scroll included, answers 404.
-+ *
-+ * workerData: { idleMs } — close a keep-alive connection idle this long.
-+ * Posts { port } once listening, then answers messages from the parent:
-+ *   { id, type: "reset", close?, reject? } — clear all state; `close`
-+ *     ({ method, path, count }) closes the connection without a reply for the
-+ *     next `count` matching requests; `reject` ({ method, path }) answers the
-+ *     next matching request with HTTP 400. `path` is a RegExp source.
-+ *     Replies { id }.
-+ *   { id, type: "requests" } — replies { id, requests: ["METHOD /path", …] }.
-+ */
-+
-+import { createServer } from "node:http";
-+import { parentPort, workerData } from "node:worker_threads";
-+
-+const collections = new Map();
-+let requests = [];
-+let close = null;
-+let reject = null;
-+
-+const matches = (route, method, path) => route && method === route.method && new RegExp(route.path).test(path);
-+
-+function reply(res, status, result) {
-+  const body = JSON.stringify(status === 200 ? { result, status: "ok", time: 0 } : { status: { error: result } });
-+  res.writeHead(status, { "content-type": "application/json", "content-length": Buffer.byteLength(body) });
-+  res.end(body);
-+}
-+
-+// A half-close (end, not destroy) leaves the server reading, so a request the
-+// client then writes gets no RST and the client reads EOF: UND_ERR_SOCKET, not
-+// a platform-dependent ECONNRESET.
-+function halfClose(socket) {
-+  socket.halfClosed = true;
-+  socket.end();
-+}
-+
-+function handle(req, res, raw) {
-+  const path = new URL(req.url, "http://fixture").pathname;
-+  requests.push(`${req.method} ${path}`);
-+  if (req.socket.halfClosed) {
-+    req.socket.destroy();
-+    return;
-+  }
-+  if (close?.count > 0 && matches(close, req.method, path)) {
-+    close.count--;
-+    halfClose(req.socket);
-+    return;
-+  }
-+  if (matches(reject, req.method, path)) {
-+    reject = null;
-+    reply(res, 400, "fixture rejection");
-+    return;
-+  }
-+  const body = raw.length > 0 ? JSON.parse(raw) : {};
-+  const [, name, points] = path.match(/^\/collections\/([^/]+)(\/points)?$/) ?? [];
-+  if (req.method === "GET" && path === "/collections") {
-+    reply(res, 200, { collections: [...collections.keys()].map((n) => ({ name: n })) });
-+  } else if (name && !points) {
-+    if (!collections.has(name)) collections.set(name, new Map());
-+    reply(res, 200, true);
-+  } else if (name && req.method === "PUT") {
-+    const coll = collections.get(name) ?? new Map();
-+    for (const point of body.points) coll.set(String(point.id), point);
-+    collections.set(name, coll);
-+    reply(res, 200, { operation_id: 0, status: "completed" });
-+  } else if (name) {
-+    const coll = collections.get(name) ?? new Map();
-+    reply(res, 200, body.ids.map(String).filter((id) => coll.has(id)).map((id) => coll.get(id)));
-+  } else {
-+    reply(res, 404, "not found");
-+  }
-+}
-+
-+const server = createServer((req, res) => {
-+  clearTimeout(req.socket.idleTimer);
-+  const chunks = [];
-+  req.on("data", (chunk) => chunks.push(chunk));
-+  req.on("end", () => {
-+    res.on("finish", () => {
-+      req.socket.idleTimer = setTimeout(() => halfClose(req.socket), workerData.idleMs);
-+    });
-+    handle(req, res, Buffer.concat(chunks).toString("utf8"));
-+  });
-+});
-+// A non-zero keepAliveTimeout makes Node send `Keep-Alive: timeout=N`, and
-+// undici never reuses a socket whose hint is under its 2 s threshold.
-+server.keepAliveTimeout = 0;
-+
-+parentPort.on("message", (msg) => {
-+  if (msg.type === "reset") {
-+    collections.clear();
-+    requests = [];
-+    close = msg.close ? { ...msg.close } : null;
-+    reject = msg.reject ?? null;
-+    parentPort.postMessage({ id: msg.id });
-+  } else if (msg.type === "requests") {
-+    parentPort.postMessage({ id: msg.id, requests });
-+  }
-+});
-+
-+server.listen(0, "127.0.0.1", () => parentPort.postMessage({ port: server.address().port }));
-```
-
-**File**: `tests/unit/symbol-graph-stale-socket.test.ts` (added, +116/-0)
-```diff
-@@ -0,0 +1,116 @@
-+// SPDX-License-Identifier: AGPL-3.0-only
-+// Copyright (C) 2026 Giancarlo Erra - Altaire Limited
-+import { Worker } from "node:worker_threads";
-+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-+import type { SymbolGraphFilePayload } from "../../src/types.js";
-+
-+/**
-+ * A synchronous step that outlasts the server's keep-alive leaves the client
-+ * holding a connection the server has closed, and the next request fails with
-+ * `fetch failed` caused by `other side closed [UND_ERR_SOCKET]`. The fixture
-+ * server runs on its own thread so it can close the connection while this
-+ * thread is blocked.
-+ */
-+describe("symbol-graph store: requests on a connection closed during a slow step", () => {
-+  const IDLE_MS = 50;
-+  const UPSERT = { method: "PUT", path: "^/collections/[^/]+/points$" };
-+
-+  const originalQdrantUrl = process.env.QDRANT_URL;
-+  let server: Worker;
-+  let nextId = 0;
-+  let store: typeof import("../../src/services/symbol-graph-store.js");
-+  let describeQdrantError: typeof import("../../src/services/qdrant.js").describeQdrantError;
-+
-+  function ask<T>(msg: Record<string, unknown>): Promise<T> {
-+    const id = ++nextId;
-+    return new Promise((resolve) => {
-+      const onMessage = (reply: { id?: number }) => {
-+        if (reply.id !== id) return;
-+        server.off("message", onMessage);
-+        resolve(reply as T);
-+      };
-+      server.on("message", onMessage);
-+      server.postMessage({ ...msg, id });
-+    });
-+  }
-+
-+  /**
-+   * Block the thread past the server's idle timeout. Call it right after a
-+   * Qdrant response: an event-loop turn in between lets undici's idle-socket
-+   * check read the close before the next request is written.
-+   */
-+  function slowSynchronousStep(): void {
-+    const end = Date.now() + IDLE_MS * 4;
-+    while (Date.now() < end) {
-+      // busy-wait: the event loop must not run
+ /** Normalize relative path components like `foo/../bar` -> `bar` */
+@@ -941,27 +931,149 @@ export function resolveCallSites(
+     }
+     return [];
+   };
++  // C# symbols by id, for the scope an edge's caller sits in.
++  let csSymbolIndex: Map<string, SymbolNode> | undefined;
++  const csSymbolById = (id: string): SymbolNode | undefined => {
++    if (!csSymbolIndex) {
++      csSymbolIndex = new Map();
++      for (const syms of symbolsByFile.values()) for (const s of syms) if (s.language === "csharp") csSymbolIndex.set(s.id, s);
 +    }
-+  }
-+
-+  beforeAll(async () => {
-+    server = new Worker(new URL("../helpers/idle-closing-qdrant-server.mjs", import.meta.url), {
-+      workerData: { idleMs: IDLE_MS },
-+    });
-+    const { port } = await new Promise<{ port: number }>((resolve) => server.once("message", resolve));
-+    process.env.QDRANT_URL = `http://127.0.0.1:${port}`;
-+    store = await import("../../src/services/symbol-graph-store.js");
-+    ({ describeQdrantError } = await import("../../src/services/qdrant.js"));
-+  });
-+
-+  afterAll(async () => {
-+    await server.terminate();
-+    if (originalQdrantUrl === undefined) delete process.env.QDRANT_URL;
-+    else process.env.QDRANT_URL = originalQdrantUrl;
-+  });
-+
-+  beforeEach(async () => {
-+    await ask({ type: "reset" });
-+    store.resetSymbolGraphCollectionCache();
-+  });
-+
-+  const payload = (version: string): SymbolGraphFilePayload => ({
-+    file: "src/a.ts",
-+    language: "typescript",
-+    contentHash: version,
-+    symbols: [],
-+    outgoingCalls: [],
-+  });
-+
-+  it("retries an upsert sent after the slow step, and stores the payload", async () => {
-+    await store.saveFilePayloads("p", [payload("v1")], "g1");
-+    slowSynchronousStep();
-+    await store.saveFilePayloads("p", [payload("v2")], "g1");
-+    expect(await store.loadFilePayload("p", "src/a.ts", "g1"), "payload written after the slow step").toEqual(payload("v2"));
-+  });
-+
-+  it("retries a collection check sent after the slow step", async () => {
-+    await store.saveFilePayloads("p", [payload("v1")], "g1");
-+    store.resetSymbolGraphCollectionCache();
-+    slowSynchronousStep();
-+    await store.saveFilePayloads("p", [payload("v2")], "g1");
-+    expect(await store.loadFilePayload("p", "src/a.ts", "g1"), "payload written after the slow step").toEqual(payload("v2"));
-+  });
-+
-+  it("retries a shard load sent after the slow step", async () => {
-+    const reverseEdges = { "src/a.ts#alpha": ["src/b.ts#beta"] };
-+    await store.saveReverseShard("p", 9, reverseEdges, "g1");
-+    slowSynchronousStep();
-+    expect(await store.loadReverseShard("p", 9, "g1"), "shard read after the slow step").toEqual(reverseEdges);
-+  });
-+
-+  it("fails when the retry also hits a closed connection, and names the socket error", async () => {
-+    await ask({ type: "reset", close: { ...UPSERT, count: 2 } });
-+    const err = await store.saveFilePayloads("p", [payload("v1")], "g1").then(
-+      () => null,
-+      (e: unknown) => e,
-+    );
-+    expect(err, "second consecutive close must reject").not.toBeNull();
-+    expect(describeQdrantError(err)).toBe("fetch failed: other side closed [UND_ERR_SOCKET]");
-+  });
-+
-+  it("does not retry a request the server answered with an error", async () => {
-+    await ask({ type: "reset", reject: UPSERT });
-+    await expect(store.saveFilePayloads("p", [payload("v1")], "g1")).rejects.toThrow();
-+    const { requests } = await ask<{ requests: string[] }>({ type: "requests" });
-+    expect(requests.filter((r) => r.startsWith("PUT ") && r.endsWith("/points")), "upsert sent exactly once").toHaveLength(1);
-+  });
-+})
++    return csSymbolIndex.get(id);
++  };
++  // `global using`s by the directory of the file declaring them.
++  let csGlobalUsingDirs: Array<[dir: string, namespaces: string[]]> | undefined;
++  const csUsingsCache = new Map<string, string[]>();
+   /**
+-   * The project type a base written in `t`'s declaration names, looked up as
+-   * C# looks it up rather than by name across the project: an exact full name
+-   * under each enclosing type and namespace, innermost first, then under each
+-   * namespace the file imports. Two types imported under one name are an
+-   * ambiguity C# itself rejects, so neither is followed. Every part of a
+-   * partial type is returned.
++   * What a C# reference at `line` of `file` imports: the file's own top-level
++   * `using`s, those of every namespace block enclosing that line, then the
++   * `global using`s of every file in a directory above it — the project an
++   * SDK-style `.csproj` rooted at that directory compiles.
+    */
+-  const csBaseType = (t: SymbolNode, path: string): SymbolNode[] => {
++  const csUsingsAt = (file: string, line: number): string[] => {
++    const module = (symbolsByFile.get(file) ?? []).find((s) => s.kind === "module");
++    let fileWide = csUsingsCache.get(file);
++    if (!fileWide) {
++      if (!csGlobalUsingDirs) {
++        csGlobalUsingDirs = [];
++        for (const [f, syms] of symbolsByFile.entries()) {
++          const globals = syms.find((s) => s.kind === "module")?.csGlobalUsings;
++          if (globals) csGlobalUsingDirs.push([f.includes("/") ? f.slice(0, f.lastIndexOf("/") + 1) : "", globals]);
++        }
++      }
++      const inherited = csGlobalUsingDirs.filter(([dir]) => file.startsWith(dir)).flatMap(([, ns]) => ns);
++      fileWide = Array.from(new Set([...(module?.csUsings ?? []), ...inherited]));
++      csUsingsCache.set(file, fileWide);
++    }
++    const scoped = (module?.csScopedUsings ?? []).filter((b) => b.line <= line && line <= b.endLine);
++    return scoped.length === 0 ? fileWide : Array.from(new Set([...scoped.flatMap((b) => b.usings), ...fileWide]));
++  };
++  /**
++   * The scopes C# looks a name up in from inside `sym`, innermost first: the
++   * type itself when `sym` is one, then each enclosing type and namespace,
++   * then the global namespace (`""`). `null` when `sym` has no full name — a
++   * file-level caller, or a graph persisted before `csFullName` — whose names
++   * are then looked up from the global namespace and the imports alone.
++   */
++  const csScopesOf = (sym: SymbolNode | undefined): string[] | null => {
++    if (!sym?.csFullName) return null;
++    const parts = sym.csFullName.split(".");
++    const scopes: string[] = [];
++    for (let n = CS_TYPE_KINDS.has(sym.kind) ? parts.length : parts.length - 1; n >= 1; n--) {
++      scopes.push(parts.slice(0, n).join("."));
++    }
++    scopes.push("");
++    return scopes;
++  };
++  /**
++   * The symbols a dotted `path` written at `line` of `file` names, looked up
++   * as C# looks a name up rather than by name across the project, and never
++   * by file proximity: an exact full name under each of `scopes`, innermost
++   * first, then under each namespace or type imported there. Two types
++   * imported under one name are an ambiguity C# itself rejects, so neither is
++   * answered; a `global::`-anchored path is looked up in the global namespace
++   * alone. Every part of a partial t
 ```
 
----
-
-### Incident Patch 2: `3e3b4b3d` (2026-09-28)
-**Commit Message**: Merge pull request #193 from giancarloerra/ge/issue-192-dependency-security
-
-chore(deps): update patched dependencies
-
-**File**: `package-lock.json` (modified, +71/-67)
+**File**: `src/services/graph-symbols.ts` (modified, +121/-47)
 ```diff
-@@ -52,11 +52,11 @@
-         "@release-it/conventional-changelog": "^11.0.0",
-         "@types/node": "^22.13.4",
-         "@types/proper-lockfile": "^4.1.4",
--        "@vitest/coverage-v8": "^4.0.18",
-+        "@vitest/coverage-v8": "^4.1.11",
-         "release-it": "^20.0.1",
-         "tsx": "^4.19.4",
-         "typescript": "^5.7.3",
--        "vitest": "^4.0.18"
-+        "vitest": "^4.1.11"
-       },
-       "engines": {
-         "node": ">=18.17.0"
-@@ -2694,14 +2694,14 @@
-       "license": "MIT"
-     },
-     "node_modules/@vitest/coverage-v8": {
--      "version": "4.1.10",
--      "resolved": "https://registry.npmjs.org/@vitest/coverage-v8/-/coverage-v8-4.1.10.tgz",
--      "integrity": "sha512-IM49HmthevbgAO4anp1hwtoT9wYe59w0LR00gr+eagHE+ZJ5lK4sLPeO0ubgoJcwLk6dehU3R24N+FbEEKDc8g==",
-+      "version": "4.1.11",
-+      "resolved": "https://registry.npmjs.org/@vitest/coverage-v8/-/coverage-v8-4.1.11.tgz",
-+      "integrity": "sha512-8MVGEFnJIcdGjcbfKmeq8z0pZHH0JlVtoVZH9Q/qwUp6wyFnEJUBMrw9DCaj+ra3vShGmhavjalMIhPNxZAUcw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@bcoe/v8-coverage": "^1.0.2",
--        "@vitest/utils": "4.1.10",
-+        "@vitest/utils": "4.1.11",
-         "ast-v8-to-istanbul": "^1.0.0",
-         "istanbul-lib-coverage": "^3.2.2",
-         "istanbul-lib-report": "^3.0.1",
-@@ -2715,8 +2715,8 @@
-         "url": "https://opencollective.com/vitest"
-       },
-       "peerDependencies": {
--        "@vitest/browser": "4.1.10",
--        "vitest": "4.1.10"
-+        "@vitest/browser": "4.1.11",
-+        "vitest": "4.1.11"
-       },
-       "peerDependenciesMeta": {
-         "@vitest/browser": {
-@@ -2725,16 +2725,16 @@
-       }
-     },
-     "node_modules/@vitest/expect": {
--      "version": "4.1.10",
--      "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.10.tgz",
--      "integrity": "sha512-YsCn+qAk1GWjQOWFEsEcL2gNQ0zmVmQu3T03qP6UyjhtmdtwtbuI+DASn/7iQB3HGTXkdBwGddzxPlmiql5vlA==",
-+      "version": "4.1.11",
-+      "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.11.tgz",
-+      "integrity": "sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "@standard-schema/spec": "^1.1.0",
-         "@types/chai": "^5.2.2",
--        "@vitest/spy": "4.1.10",
--        "@vitest/utils": "4.1.10",
-+        "@vitest/spy": "4.1.11",
-+        "@vitest/utils": "4.1.11",
-         "chai": "^6.2.2",
-         "tinyrainbow": "^3.1.0"
-       },
-@@ -2743,13 +2743,13 @@
-       }
-     },
-     "node_modules/@vitest/mocker": {
--      "version": "4.1.10",
--      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-4.1.10.tgz",
--      "integrity": "sha512-v0xaezt+DKEmKfaxg133ldzADrwLGd7Ze1MfQQTYfvs8OqZIwbxyxaYURivwV7sWy5fqn3rH5uOrSp07bp44Ow==",
-+      "version": "4.1.11",
-+      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-4.1.11.tgz",
-+      "integrity": "sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@vitest/spy": "4.1.10",
-+        "@vitest/spy": "4.1.11",
-         "estree-walker": "^3.0.3",
-         "magic-string": "^0.30.21"
-       },
-@@ -2770,9 +2770,9 @@
-       }
-     },
-     "node_modules/@vitest/pretty-format": {
--      "version": "4.1.10",
--      "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-4.1.10.tgz",
--      "integrity": "sha512-W1HsjSH4MXQ9YfmmhLAoIYf1HRfekQCGngeIgcei6MP5QQGWUe0gkopdZQaVCFO+JDJMrAJGwa5pRpNpvy4P8Q==",
-+      "version": "4.1.11",
-+      "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-4.1.11.tgz",
-+      "integrity": "sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -2783,28 +2783,28 @@
-       }
-     },
-     "node_modules/@vitest/runner": {
--      "version": "4.1.10",
--      "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-4.1.10.tgz",
--      "integrity": "sha512-IKI6kpIH+LmpROplyLwBBaCfMgOZOMsygVa6BARD6ahA04VRuJSa6OaVG7kRvSEMD870Vd91rSSw0eegtWyLGg==",
-+      "version": "4.1.11",
-+      "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-4.1.11.tgz",
-+      "integrity": "sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "@vitest/utils": "4.1.10",
-+        "@vitest/utils": "4.1.11",
-         "pathe": "^2.0.3"
-       },
-       "funding": {
-         "url": "https://opencollective.com/vitest"
-       }
-     },
-     "node_modules/@vitest/snapshot": {
--      "version": "4.1.10",
--      "resolved": "https://registry.npmjs.org/@vitest/snapshot/-/snapshot-4.1.10.tgz",
--      "integrity": "sha512-xRkfOT1qpTAi/Ti4Y1LtfRc3kEuqxGw59eN2jN9
-```
-
-**File**: `package.json` (modified, +3/-3)
-```diff
-@@ -107,11 +107,11 @@
-     "@release-it/conventional-changelog": "^11.0.0",
-     "@types/node": "^22.13.4",
-     "@types/proper-lockfile": "^4.1.4",
--    "@vitest/coverage-v8": "^4.0.18",
-+    "@vitest/coverage-v8": "^4.1.11",
-     "release-it": "^20.0.1",
-     "tsx": "^4.19.4",
-     "typescript": "^5.7.3",
--    "vitest": "^4.0.18"
-+    "vitest": "^4.1.11"
-   },
-   "engines": {
-     "node": ">=18.17.0"
-@@ -122,7 +122,7 @@
-     },
-     "postcss": "8.5.23",
-     "release-it": {
--      "undici": "7.29.0"
-+      "undici": "7.29.1"
-     }
-   }
+@@ -8,7 +8,7 @@
+  */
+ 
+ import { Lang, parse } from "@ast-grep/napi";
+-import { getLanguageFromExtension } from "../constants.js";
++import { CS_GLOBAL_ANCHOR, getLanguageFromExtension } from "../constants.js";
+ import type { EdgeKind, SymbolEdge, SymbolKind, SymbolNode } from "../types.js";
+ import { analyzeElixirTemplate, isElixirTemplateExtension } from "./elixir-templates.js";
+ import { phpFoldCase } from "./graph-php-case.js";
+@@ -63,7 +63,8 @@ export interface ExtractedSymbols {
+     csMemberReceiver?: boolean;
+     callSite: { file: string; line: number };
+     /** Receiver expression for method calls (e.g. "fighter" in "fighter.take_damage()").
+-     *  Present only for attribute_call nodes; bare calls have no receiver. */
++     *  GDScript: present only for attribute_call nodes; bare calls have no receiver.
++     *  C#: `this`, `base` or `?`; see {@link SymbolEdge.receiver}. */
+     receiver?: string;
+     /** True when this call represents a GDScript `signal_name.emit()`. */
+     signalEmit?: boolean;
+@@ -2472,12 +2473,21 @@ function csWithin(inner: CsRange, outer: CsRange): boolean {
+   return outer.start <= inner.start && inner.end <= outer.end;
  }
-```
-
----
-
-### Incident Patch 3: `e5bf9161` (2026-10-07)
-**Commit Message**: Merge pull request #200 from megadoom99/fix/jvm-kmp-source-sets
-
-fix(graph): resolve JVM imports in Kotlin Multiplatform / Gradle source sets
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-0)
-```diff
-@@ -51,6 +51,8 @@ jobs:
-       - run: npm ci
-       - run: git --version
-       - run: npx vitest run tests/unit/git-state.test.ts tests/unit/git-refresh.test.ts tests/unit/git-lock.test.ts tests/unit/local-index-ownership.test.ts
-+      - name: Verify JVM source-set resolution on Windows
-+        run: npx vitest run tests/unit/graph-resolution.test.ts -t "JVM multi-module resolution"
  
-   git-refresh-integration:
-     name: Git Refresh with Qdrant and Ollama
-```
-
-**File**: `src/services/graph-resolution.ts` (modified, +97/-25)
-```diff
-@@ -12,6 +12,36 @@ import { createIgnoreFilter, shouldIgnore } from "./ignore.js";
- 
- // ── Module resolution ────────────────────────────────────────────────────
- 
-+/**
-+ * Whether `seg` names a JVM source-set directory in a `src/<sourceSet>/<lang>`
-+ * layout. `main` covers the classic Maven/Gradle convention; the `*Main` forms
-+ * cover Kotlin Multiplatform and Gradle source sets (`commonMain`, `androidMain`,
-+ * `iosMain`, `jvmMain`, `nativeMain`, `desktopMain`, `appleMain`, `iosArm64Main`, ...).
-+ */
-+export function isJvmSourceSetDir(seg: string): boolean {
-+  if (seg === "main") return true;
-+  return /^(common|android|ios|jvm|native|desktop|macos|linux|mingw|watchos|tvos|wasm|js|uikit|apple)[A-Za-z0-9]*Main$/.test(
-+    seg,
-+  );
-+}
++/** The leading path segment for a `global::` anchor, kept wherever the path is recorded. */
++const CS_GLOBAL = CS_GLOBAL_ANCHOR;
 +
-+// Preserve the original src/main boundary even beneath a KMP-shaped directory.
-+function findJvmSourceSetBoundary(parts: string[]): number {
-+  const jvmLangs = new Set(["java", "kotlin", "scala"]);
-+  let kmpIndex = -1;
-+  for (let i = 0; i < parts.length - 2; i++) {
-+    if (parts[i] !== "src" || !jvmLangs.has(parts[i + 2])) continue;
-+    if (parts[i + 1] === "main") return i;
-+    if (kmpIndex === -1 && isJvmSourceSetDir(parts[i + 1])) kmpIndex = i;
-+  }
-+  return kmpIndex;
-+}
-+
-+// Keep the existing Map<string, string> view while retaining KMP alternatives.
-+class JvmSuffixMap extends Map<string, string> {
-+  readonly sourceSets = new Map<string, Map<string, string>>();
++/** A name path as an edge records it: `Ns.Calc`, or `global::Ns.Calc` for an anchored one. */
++function csJoin(path: string[]): string {
++  return path[0] === CS_GLOBAL ? CS_GLOBAL + path.slice(1).join(".") : path.join(".");
 +}
 +
  /**
-  * Build a suffix lookup map for JVM (Java/Kotlin/Scala) files in multi-module projects.
-  *
-@@ -26,38 +56,43 @@ import { createIgnoreFilter, shouldIgnore } from "./ignore.js";
-  *
-  * Call this once per graph build and pass the result to resolveImport.
-  *
-- * When two modules provide the same class path, the first one iterated wins, so
-- * `fileSet`'s order decides between them — pass a lexicographically ordered set
-- * (as `buildCodeGraph` does) for a stable pick. Either file resolves the import;
-- * ordering only settles which, so an unordered caller gets a valid map with an
-- * arbitrary winner.
-+ * Classic src/main sources take precedence over KMP source sets. The map view
-+ * retains the first file within each group; resolveImport can also select a
-+ * retained KMP candidate matching the importing source set. Pass a
-+ * lexicographically ordered set (as buildCodeGraph does) for stable picks.
-+ * Keys are normalized, but values retain the input fileSet paths.
+  * The dotted path a name-only type or expression spells, type arguments
+- * dropped: `["Ns", "Calc"]` for `Ns.Calc`, `global::Ns.Calc` and `Ns.Calc<T>`,
+- * whether written as a type or as a member-access receiver. `null` when any
+- * part is not a name — `this`, `base`, a call, an element access, or an
+- * extern alias other than `global`, whose target no symbol records.
++ * dropped: `["Ns", "Calc"]` for `Ns.Calc` and `Ns.Calc<T>`, and
++ * `[CS_GLOBAL, "Ns", "Calc"]` for `global::Ns.Calc`, whether written as a
++ * type or as a member-access receiver. `null` when any part is not a name —
++ * `this`, `base`, a call, an element access, or an extern alias other than
++ * `global`, whose target no symbol records.
   */
- export function buildJvmSuffixMap(fileSet: Set<string>): Map<string, string> {
--  const map = new Map<string, string>();
-+  const map = new JvmSuffixMap();
-   const jvmExts = new Set([".java", ".kt", ".kts", ".scala"]);
-+  const classicClassPaths = new Set<string>();
- 
-   for (const f of fileSet) {
-     if (!jvmExts.has(path.extname(f))) continue;
- 
-     // Split on either separator so the logic works on Windows and POSIX.
-     const parts = f.split(/[\\/]/);
- 
--    // Find the first occurrence of src/main/<lang> boundary.
--    const jvmLangs = new Set(["java", "kotlin", "scala"]);
--    const idx = parts.findIndex(
--      (p, i) =>
--        p === "src" &&
--        parts[i + 1] === "main" &&
--        jvmLangs.has(parts[i + 2]),
--    );
-+    const idx = findJvmSourceSetBoundary(parts);
- 
-     if (idx !== -1) {
--      // classPath = everything after src/main/<lang>, e.g. com/example/Foo.java
-+      // classPath = everything after src/<sourceSet>/<lang>, e.g. com/example/Foo.java
-       const classPath = parts.slice(idx + 3).join("/");
--      // Only register the first match to avoid ambiguity for duplicate class names.
--      if (!map.has(classPath)) {
-+      const classic = parts[idx + 1] === "main";
-+      if (!classic) {
-+        const sourceSet = parts[idx + 1];
-+        let candidates = map.sourceSets.get(sourceSet);
-+        if (!candidates) {
-+          candidates = new Map<string, string>();
-+          map.sourceSets.set(sourceSet, candidates);
-+        }
-+        if (!candidates.has(classPath)) candidates.set(classPath, f);
-+      }
-+      // A KMP file cannot replace an existing classic winner.
-+      if (!map.has(classPath) || (classic && !classicClassPaths.has(classPath))) {
-         map.set(classPath, f);
-       }
-+      if (classic) classicClassPaths.add(classPath);
+ // biome-ignore lint/suspicious/noExplicitAny: ast-grep node type leaks through
+ function csNamePath(node: any): string[] | null {
+@@ -2495,8 +2505,11 @@ function csNamePath(node: any): string[] | null {
+       const last = csNamePath(csNameField(node));
+       return head && last ? [...head, ...last] : null;
      }
+-    case "alias_qualified_name":
+-      return node.field?.("alias")?.text() === "global" ? csNamePath(csNameField(node)) : null;
++    case "alias_qualified_name": {
++      if (node.field?.("alias")?.text() !== "global") return null;
++      const rest = csNamePath(csNameField(node));
++      return rest ? [CS_GLOBAL, ...rest] : null;
++    }
+     default:
+       return null;
    }
- 
-@@ -2812,7 +2847,7 @@ export function resolveImport(
- 
-       // 2. Try common source directories (Maven/Gradle single-module convention).
-       const jvmSrcDirs = [
--        `src/main/${language}`,  // src/main/java, src/main/kotlin, src/main/scala
-+        `src/main/${language}`, // src/main/java, src/main/kotlin, src/main/scala
-         "src/main",
-         "src",
-       ];
-@@ -2823,18 +2858,55 @@ export function resolveImport(
-         if (inSrc) return inSrc;
-       }
- 
--      // 3. Fallback: suffix-map lookup for multi-module Maven/Gradle projects.
--      //    e.g. module-a/sub/src/main/java/com/example/Foo.java
--      //    The map is built once per graph build (O(n)) and looked up in O(1).
-+      // 3. Preserve classic mu
+@@ -2515,7 +2528,7 @@ function csQualifiedNames(root: any): {
+   // biome-ignore lint/suspicious/noExplicitAny: ast-grep node type leaks through
+   isSegment: (id: any) => boolean;
+   // biome-ignore lint/suspicious/noExplicitAny: ast-grep node type leaks through
+-  writtenQualifier: (id: any) => string | null;
++  writtenQualifier: (id: any) => string[] | null;
+ } {
+   // Start offsets of the identifiers that are qualifier segments.
+   const segments = new Set<number>();
+@@ -2534,23 +2547,26 @@ function csQualifiedNames(root: any): {
+   // Terminal identifier's start → the path written before it; `null` when it
+   // is not a plain path (an extern alias), so no reference is drawn rather
+   // than a bare one that would bind whatever same-named type is nearest.
+-  const written = new Map<number, string | null>();
++  const written = new Map<number, string[] | null>();
+   for (const qn of safeFindAll(root, "qualified_name")) {
+     const qualifier = qn.field?.("qualifier") ?? null;
+     if (qualifier) markSegments(qualifier);
+     const head = csTypeHeadIdentifier(csNameField(qn));
+-    const path = csNamePath(qualifier);
+-    if (head) written.set(csRange(head).start, path ? path.join(".") : null);
++    if (head) written.set(csRange(head).start, csNamePath(qualifier));
+   }
+   for (const aqn of safeFindAll(root, "alias_qualified_name")) {
+     const alias = aqn.field?.("alias") ?? null;
+     if (alias) markSegments(alias);
+     const head = csTypeHeadIdentifier(csNameField(aqn));
+-    if (head) written.set(csRange(head).start, alias?.text() === "global" ? "" : null);
++    if (head) written.set(csRange(head).start, alias?.text() === "global" ? [CS_GLOBAL] : null);
+   }
+   return {
+     isSegment: (id) => segments.has(csRange(id).start),
+-    writtenQualifier: (id) => written.get(csRange(id).start) ?? "",
++    // Only a missing entry means "written bare": `null` must reach the caller's skip.
++    writtenQualifier: (id) => {
++      const path = written.get(csRange(id).start);
++      return path
 ```
 
-**File**: `tests/unit/graph-resolution.test.ts` (modified, +257/-5)
+**File**: `src/types.ts` (modified, +32/-10)
 ```diff
-@@ -4849,9 +4849,9 @@ describe("graph-resolution", () => {
+@@ -197,20 +197,35 @@ export interface SymbolNode {
+    * C# types only: the base class and interfaces as the declaration writes
+    * them, type arguments dropped and the file's `using` aliases written out
+    * (`App.Data.Repository`, `IFoo`). Resolution looks each one up as C# does —
+-   * the enclosing types and namespaces, innermost first, then
+-   * {@link csUsings} — and follows it to find a member the type inherits from
++   * the enclosing types and namespaces, innermost first, then the namespaces
++   * its file imports — and follows it to find a member the type inherits from
+    * another project type. Absent when the type names no base, and on every
+    * graph persisted before it existed.
+    */
+   csBases?: string[];
+   /**
+-   * C# types with {@link csBases} only: the namespaces the declaring file
+-   * imports with `using` (aliases and `using static` excluded), where a base
+-   * the enclosing namespaces do not declare is looked for. A `global using`
+-   * in another file is not seen, so a base imported only by one stays
+-   * unresolved.
++   * C# `<module>` symbols only: the namespaces the file imports with a
++   * file-level `using`, and the types it imports with `using static` (whose
++   * nested types become visible by name), its own `global using`s included,
++   * aliases excluded. A type name the enclosing scopes do not declare is
++   * looked for under them. Absent when the file imports none.
+    */
+   csUsings?: string[];
++  /**
++   * C# `<module>` symbols only: the imports declared inside a namespace block,
++   * with the block's lines. They apply to references within those lines only,
++   * so a sibling block's imports never reach them. Absent when no block has any.
++   */
++  csScopedUsings?: Array<{ line: number; endLine: number; usings: string[] }>;
++  /**
++   * C# `<module>` symbols only: the namespaces and types the file imports
++   * with `global using`. Resolution applies them to every C# file under the file's
++   * directory — the files an SDK-style project rooted there compiles, where
++   * `GlobalUsings.cs` conventionally sits. A `<Using Include>` item in a
++   * `.csproj` is not read, so a type imported only through one stays
++   * unresolved.
++   */
++  csGlobalUsings?: string[];
+ }
  
-       const map = buildJvmSuffixMap(project.fileSet);
+ /** Kind of relationship an edge represents */
+@@ -269,8 +284,12 @@ export interface SymbolEdge {
+    * qualify statically — `$obj->m()`, `$class::m()`, `Cls::$m()`, `self::`,
+    * `static::`, `parent::` and bare function calls.
+    *
+-   * C# writes it as the call site spells it, dots kept and type arguments
+-   * dropped: `Billing.Calc` for `Billing.Calc.Compute()`. An object creation
++   * C# writes it as the call site spells it, dots kept, type arguments
++   * dropped and the file's `using` alias in scope written out:
++   * `Billing.Calc` for `Billing.Calc.Compute()`, `global::Billing.Calc` when
++   * the source anchors it. A receiver that is a variable (`repo.Save()`) is
++   * kept too, so the call is never answered by its bare name; no type matches
++   * it, and the edge stays unresolved. An object creation
+    * `new Billing.Calc()` carries the whole type path, `Billing.Calc`, with
+    * `Calc` as the callee — a member cannot share its class's name in C#, so
+    * the repeated name marks a constructor call without ambiguity.
+@@ -288,7 +307,10 @@ export interface SymbolEdge {
+   csMemberReceiver?: boolean;
+   callSite: { file: string; line: number };
+   /** Receiver expression for method calls (e.g. "fighter" in "fighter.take_damage()").
+-   *  Used by GDScript receiver-type resolution. Absent for bare function calls. */
++   *  Used by GDScript receiver-type resolution. Absent for bare function calls.
++   *  C# sets it only where the receiver is no name path: `this`, `base`, or `?`
++   *  for any other expression (a call result, `a?.b`, an element access) —
++   *  such a call is answered from the caller's own type or its bases, or not at all. */
+   receiver?: string;
+   /** True when a GDScript call edge represents `signal_name.emit()`.
+    *  Optional so symbol graphs built before signal-edge support remain readable. */
+```
+
+**File**: `tests/unit/graph-symbol-resolution-csharp.test.ts` (modified, +208/-24)
+```diff
+@@ -31,6 +31,7 @@ describe("C# qualified calls and type references at the resolver", () => {
+     language: "csharp",
+   });
+   const node = (relativePath: string, dependencies: string[]) => ({
++    filePath: relativePath,
+     relativePath,
+     imports: [],
+     exports: [],
+@@ -117,7 +118,7 @@ describe("C# extractor-to-resolver regressions", () => {
+     }
+     const graph: CodeGraph = {
+       nodes: Object.keys(files).map((relativePath) => ({
+-        relativePath, imports: [], exports: [], dependencies: [], dependents: [], language: "csharp",
++        filePath: relativePath, relativePath, imports: [], exports: [], dependencies: [], dependents: [], language: "csharp",
+       })),
+       edges: [],
+     };
+@@ -188,23 +189,23 @@ describe("C# extractor-to-resolver regressions", () => {
+   });
  
--      expect(map.has(`com${path.sep}example${path.sep}Foo.java`)).toBe(true);
--      expect(map.has(`com${path.sep}example${path.sep}Bar.kt`)).toBe(true);
--      expect(map.has(`com${path.sep}example${path.sep}Baz.scala`)).toBe(true);
-+      expect(map.has("com/example/Foo.java")).toBe(true);
-+      expect(map.has("com/example/Bar.kt")).toBe(true);
-+      expect(map.has("com/example/Baz.scala")).toBe(true);
-     });
+   it("resolves a project's own framework-named type, bare, qualified and created, and marks .NET's as engine", () => {
+-    const jobs = "namespace App.Jobs { public class Task { } }";
++    const jobs = "namespace App.Chores { public class Task { } }";
+     const caller = [
+       "namespace App {",
+       "  public class Runner {",
+-      "    void Go(Jobs.Task a, System.Threading.Tasks.Task b) {",
+-      "      var t = new Jobs.Task();",
++      "    void Go(Chores.Task a, System.Threading.Tasks.Task b) {",
++      "      var t = new Chores.Task();",
+       "      var l = new List<int>();",
+       "    }",
+       "  }",
+       "}",
+     ].join("\n");
+-    const { at } = run({ "Jobs/Task.cs": jobs, "Runner.cs": caller });
++    const { at } = run({ "Chores/Task.cs": jobs, "Runner.cs": caller });
+     expect(at("Runner.cs", 3, "type_reference", "Task")).toEqual([
+-      { confidence: "unique", targets: ["App.Jobs.Task"] },
++      { confidence: "unique", targets: ["App.Chores.Task"] },
+       { confidence: "engine", targets: [] },
+     ]);
+-    expect(at("Runner.cs", 4, "call", "Task")).toEqual([{ confidence: "unique", targets: ["App.Jobs.Task"] }]);
++    expect(at("Runner.cs", 4, "call", "Task")).toEqual([{ confidence: "unique", targets: ["App.Chores.Task"] }]);
+     expect(at("Runner.cs", 5, "call", "List")).toEqual([{ confidence: "engine", targets: [] }]);
+     expect(at("Runner.cs", 5, "type_reference", "List")).toEqual([{ confidence: "engine", targets: [] }]);
+   });
+@@ -231,25 +232,25 @@ describe("C# extractor-to-resolver regressions", () => {
+   });
  
-     it("returns empty map when project has no JVM files", () => {
-@@ -4869,8 +4869,8 @@ describe("graph-resolution", () => {
-       });
+   it("falls back to a shorter receiver prefix only when that type declares the next segment", () => {
+-    // `Billing.Rates` is an external namespace and class; the project's own `Billing` has no `Rates`.
++    // `Billing.Tariffs` is an external namespace and class; the project's own `Billing` has no `Tariffs`.
+     const decls = "namespace App.Other { public class Billing { public static int Total; } }";
+-    const caller = "namespace App { public class Host {\n  void Go() { Billing.Rates.Load(); }\n} }";
++    const caller = "namespace App { public class Host {\n  void Go() { Billing.Tariffs.Load(); }\n} }";
+     const { at } = run({ "Billing.cs": decls, "Host.cs": caller });
+-    expect(at("Host.cs", 2, "type_reference", "Rates")).toEqual([{ confidence: "unresolved", targets: [] }]);
++    expect(at("Host.cs", 2, "type_reference", "Tariffs")).toEqual([{ confidence: "unresolved", targets: [] }]);
+   });
  
-       const map = buildJvmSuffixMap(project.fileSet);
--      expect(map.has(`com${path.sep}example${path.sep}Foo.java`)).toBe(true);
--      expect(map.has(`com${path.sep}example${path.sep}FooTest.java`)).toBe(false);
-+      expect(map.has("com/example/Foo.java")).toBe(true);
-+      expect(map.has("com/example/FooTest.java")).toBe(false);
-     });
+   it("takes a declared field, constant or enum member as the next segment", () => {
+     const decls = [
+       "namespace App {",
+       "  public class OrderState { public static readonly OrderState Open = new(); public int Id; }",
+-      "  public static class Limits { public const int MaxItems = 100; }",
++      "  public static class Limits { public const int MaxWidgets = 100; }",
+       "  public enum Mode { Fast, Slow }",
+       "}",
+     ].join("\n");
+-    const caller = "namespace App { public class Host {\n  object Go() => (OrderState.Open.Id, Limits.MaxItems.ToString(), Mode.Fast.ToString());\n} }";
++    const caller = "namespace App { public class Host {\n  object Go() => (OrderState.Open.Id, Limits.MaxWidgets.ToString(), Mode.Fast.ToString());\n} }";
+     const { at } = run({ "Decls.cs": decls, "Host.cs": caller });
+     expect(at("Host.cs", 2, "type_reference", "Open")).toEqual([{ confidence: "unique", targets: ["App.OrderState"] }]);
+-    expect(at("Host.cs", 2, "type_reference", "MaxItems")).toEqual([{ confidence: "unique", targets: ["App.Limits"] }]);
++    expect(at("Host.cs", 2, "type_reference", "MaxWidgets")).toEqual([{ confidence: "unique", targets: ["App.Limits"] }]);
+     expect(at("Host.cs", 2, "type_reference", "Fast")).toEqual([{ confidence: "unique", targets: ["App.Mode"] }]);
+   });
  
-     it("resolves a Java import in a multi-module Maven project via suffix map", () => {
-@@ -4959,5 +4959,257 @@ describe("graph-resolution", () => {
+@@ -277,17 +278,17 @@ describe("C# extractor-to-resolver regressions", () => {
+     const decls = [
+       "namespace App {",
+       "  public class BaseSeeder { public static int Shelf; public static BaseSeeder Create() => new(); }",
+-      "  public class OrderSeeder : BaseSeeder { }",
++      "  public class HarborSeeder : BaseSeeder { }",
+       "  p
+```
+
+**File**: `tests/unit/graph-symbols.test.ts` (modified, +7/-3)
+```diff
+@@ -686,7 +686,8 @@ namespace App {
+       const src = "using Repo = App.Data.Repository;\nnamespace App { public record R(int X) : Base(X), IFoo; public class C : Repo, Ns.IBar<Item> { } }\n";
+       const out = extractSymbolsAndCalls(src, "csharp" as unknown as Lang, ".cs", "R.cs");
+       expect(out.symbols.find((s) => s.name === "R")?.csBases).toEqual(["Base", "IFoo"]);
+-      expect(out.symbols.find((s) => s.name === "C")?.csBases).toEqual(["App.Data.Repository", "Ns.IBar"]);
++      // A file-level alias names its target from the global namespace.
++      expect(out.symbols.find((s) => s.name === "C")?.csBases).toEqual(["global::App.Data.Repository", "Ns.IBar"]);
+       const refs = out.rawCalls.filter((c) => c.kind === "type_reference").map((c) => c.calleeName);
+       expect(refs).toEqual(expect.arrayContaining(["Base", "IFoo", "Repository", "IBar", "Item"]));
+       expect(refs).not.toContain("X");
+@@ -707,7 +708,7 @@ public class Service {
+       const out = extractSymbolsAndCalls(src, "csharp" as unknown as Lang, ".cs", "Service.cs");
+       const refs = out.rawCalls.filter((c) => c.kind === "type_reference");
+       const written = refs.map((c) => (c.calleeQualifier ? `${c.calleeQualifier}.${c.calleeName}` : c.calleeName));
+-      expect(written).toEqual(expect.arrayContaining(["Order.Order", "System.Collections.Generic.IList", "MyApp.Domain.Item", "Ns.Calc", "Billing.Calc", "Config.Instance"]));
++      expect(written).toEqual(expect.arrayContaining(["Order.Order", "System.Collections.Generic.IList", "MyApp.Domain.Item", "global::Ns.Calc", "Billing.Calc", "Config.Instance"]));
+       // No qualifier segment becomes a type of its own.
+       for (const segment of ["System", "Collections", "Generic", "MyApp", "Domain", "Ns", "Billing"]) {
+         expect(refs.find((c) => c.calleeName === segment)).toBeUndefined();
+@@ -740,8 +741,11 @@ public class Service {
+       const calls = out.rawCalls.filter((c) => c.kind === "call");
+       expect(calls.find((c) => c.calleeName === "Calc")).toBeTruthy();
+       const compute = calls.filter((c) => c.calleeName === "Compute");
+-      expect(compute.map((c) => c.calleeQualifier)).toEqual(["Calc", undefined, undefined]);
++      // A variable receiver keeps its written path; the resolver finds no type by that name.
++      expect(compute.map((c) => c.calleeQualifier)).toEqual(["Calc", "_calc", undefined]);
+       expect(calls.find((c) => c.calleeName === "Run")?.calleeQualifier).toBeUndefined();
++      expect(calls.find((c) => c.calleeName === "Run")?.receiver).toBe("this");
++      expect(compute.map((c) => c.receiver)).toEqual([undefined, undefined, undefined]);
+       expect(calls.find((c) => c.calleeName === "Make")?.calleeQualifier).toBe("Helper");
+       // The field type (line 3), `new Calc()` (line 4) and the static call's receiver (line 6) reference `Calc`;
+       // `_calc.Compute` and `this.Run` reference no type.
+```
+
+---
+
+### Incident Patch 2: `5f424765` (2026-10-21)
+**Commit Message**: fix(search): name the filter when a filtered codebase_search finds nothing
+
+fileFilter and languageFilter are exact keyword matches, so a directory,
+glob, bare name of a nested file, or language alias matches nothing. The
+empty result then told the caller to index an already-indexed project.
+
+A filtered search that returns nothing now names the filter and the form
+it accepts. It keeps the indexing hint when the collection holds no
+chunks, adds a codebase_status note while indexing is in progress, names
+both filters together when both are set, and states no cause across
+linked projects, where a failed collection search is skipped. The
+minScore and unfiltered replies are unchanged.
+
+The fileFilter and languageFilter descriptions and the
+codebase-exploration skill docs now state the exact-match form.
+
+Closes #207
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `DEVELOPER.md` (modified, +2/-2)
+```diff
+@@ -1177,8 +1177,8 @@ Parameters:
+   query: string           — Natural language search query (required)
+   projectPath?: string    — Absolute path (defaults to cwd)
+   limit?: number          — 1-50 (default 10)
+-  fileFilter?: string     — Filter by relative file path
+-  languageFilter?: string — Filter by language name
++  fileFilter?: string     — Exact match on one file's relative path, as a result header shows it
++  languageFilter?: string — Exact match on a language label, as a result header shows it
+   minScore?: number       — 0-1, minimum RRF score threshold (default: 0.10, env: SEARCH_MIN_SCORE)
  
-       expect(result).toBeNull();
-     });
+ Returns: Ranked code chunks with file paths, line numbers, language, similarity scores, and content
+```
+
+**File**: `skills/codebase-exploration/SKILL.md` (modified, +2/-1)
+```diff
+@@ -24,7 +24,8 @@ Hybrid semantic + keyword search (vector + BM25, RRF-fused) runs in a single cal
+ - **Broad queries for orientation**: "how is authentication handled", "database connection setup", "error handling patterns"
+ - **Precise queries for symbol lookup**: exact function names, constants, type names
+ - Prefer search results to infer which files to read — do not speculatively open files
+-- Use `fileFilter` to narrow to a specific file path, `languageFilter` for a specific language
++- Use `fileFilter` to narrow to one file, exactly as a result header shows its path; a directory, glob or bare name of a file below the root matches nothing
++- Use `languageFilter` to narrow to one language, exactly as a result header shows its label in brackets (e.g. `typescript`, not `ts`)
+ - Adjust `minScore` (default 0.10) for precision vs recall — lower for more results, higher for stricter matching
+ 
+ **When to use grep instead**: If you already know the exact identifier, error string, or regex pattern, grep/ripgrep is faster and more precise — no semantic gap to bridge. Use `codebase_search` when exploring, asking conceptual questions, or when you don't know which files to look in.
+```
+
+**File**: `skills/codebase-exploration/references/tool-reference.md` (modified, +3/-3)
+```diff
+@@ -9,8 +9,8 @@ Semantic search across an indexed codebase. Only use after `codebase_index` is c
+ | `query` | string | yes | — | Natural language search query (e.g. "authentication middleware", "database connection setup") |
+ | `projectPath` | string | no | cwd | Absolute path to the project directory |
+ | `limit` | number (1-50) | no | 10 | Maximum results. Override globally via `SEARCH_DEFAULT_LIMIT` env var |
+-| `fileFilter` | string | no | — | Filter results to a specific file path (relative) |
+-| `languageFilter` | string | no | — | Filter results to a specific language (e.g. "typescript", "python") |
++| `fileFilter` | string | no | — | Filter results to one file, given exactly as a result header shows its path (e.g. "src/index.ts"). Directories, globs, lists and bare names of files below the root match nothing |
++| `languageFilter` | string | no | — | Filter results to one language, given exactly as a result header shows its label in brackets (e.g. "typescript", "python", "go"); aliases such as "ts" or "py" match nothing |
+ | `minScore` | number (0-1) | no | 0.10 | Minimum RRF score threshold. Override via `SEARCH_MIN_SCORE`. Set to 0 to disable |
+ 
+ **Returns:** Ranked code chunks with file paths, line numbers, language, and RRF scores.
+@@ -188,7 +188,7 @@ Display information about SocratiCode and all its tools.
+ ### Search tips
+ - A single `codebase_search` returns ranked snippets from the entire codebase in milliseconds — far cheaper than opening files speculatively
+ - The RRF score combines semantic similarity and keyword match; higher scores = better relevance
+-- Use `fileFilter` when you know the area, `languageFilter` when cross-language results are noisy
++- Use `fileFilter` when you know the exact file (it cannot narrow to a directory), `languageFilter` when cross-language results are noisy
+ - Lower `minScore` to 0 when exploring broadly; raise it for precision
+ 
+ ### Graph tips
+```
+
+**File**: `src/index.ts` (modified, +2/-2)
+```diff
+@@ -153,11 +153,11 @@ server.tool(
+       .optional(),
+     fileFilter: z
+       .string()
+-      .describe("Filter results to a specific file path (relative).")
++      .describe("Filter results to one file, given exactly as a result header shows its path (e.g. 'src/index.ts'). Directories, globs, lists and bare names of files below the root match nothing.")
+       .optional(),
+     languageFilter: z
+       .string()
+-      .describe("Filter results to a specific language (e.g. 'typescript', 'python').")
++      .describe("Filter results to one language, given exactly as a result header shows its label in brackets (e.g. 'typescript', 'python', 'go'); aliases such as 'ts' or 'py' match nothing.")
+       .optional(),
+     minScore: z
+       .number()
+```
+
+**File**: `src/tools/query-tools.ts` (modified, +48/-0)
+```diff
+@@ -118,6 +118,52 @@ async function appendWatcherState(
+   }
+ }
+ 
++/** Explain an empty filtered search by the filter, the index state, or both. */
++async function filteredNoResultsLines(
++  query: string,
++  resolvedPath: string,
++  collection: string,
++  fileFilter: string | undefined,
++  languageFilter: string | undefined,
++  includeLinked: boolean | undefined,
++): Promise<string[]> {
++  const indexing = isIndexingInProgress(resolvedPath);
++  if (!includeLinked && !indexing && ((await getCollectionInfo(collection))?.pointsCount ?? 0) === 0) {
++    return [
++      `No results found for "${query}" in project ${resolvedPath}.`,
++      "Make sure the project has been indexed first using codebase_index.",
++    ];
++  }
 +
-+    // ── Kotlin Multiplatform / Gradle source sets ────────────────────────
++  const filters: string[] = [];
++  const hints: string[] = [];
++  if (fileFilter) {
++    filters.push(`fileFilter "${fileFilter}"`);
++    hints.push(
++      "fileFilter takes one file path exactly as a result header shows it (e.g. src/index.ts); directories, globs, lists and bare names of files below the root match nothing. Omit fileFilter to search everything.",
++    );
++  }
++  if (languageFilter) {
++    filters.push(`languageFilter "${languageFilter}"`);
++    hints.push(
++      "languageFilter takes a language label exactly as a result header shows it in brackets (e.g. typescript, python, go), not an alias such as ts or py.",
++    );
++  }
++  if (indexing) {
++    hints.push("Indexing is in progress, so matching files may not be indexed yet; codebase_status shows progress.");
++  }
 +
-+    it("builds a suffix map for Kotlin Multiplatform source sets", () => {
-+      project = createTempProject({
-+        [`core${path.sep}shared${path.sep}src${path.sep}commonMain${path.sep}kotlin${path.sep}com${path.sep}example${path.sep}Shared.kt`]: "",
-+        [`composeApp${path.sep}src${path.sep}iosMain${path.sep}kotlin${path.sep}com${path.sep}example${path.sep}Ios.kt`]: "",
-+        [`core${path.sep}data${path.sep}src${path.sep}androidMain${path.sep}kotlin${path.sep}com${path.sep}example${path.sep}Android.kt`]: "",
-+        [`core${path.sep}logic${path.sep}src${path.sep}jvmMain${path.sep}kotlin${path.sep}com${path.sep}example${path.sep}Desktop.kt`]: "",
++  if (includeLinked) {
++    return [`No results found for "${query}" in project ${resolvedPath} or its linked projects with ${filters.join(" and ")}.`, ...hints];
++  }
++  const miss = filters.length > 1
++    ? `${filters.join(" and ")} together matched no indexed chunk`
++    : fileFilter
++      ? `${filters[0]} matched no indexed file`
++      : `${filters[0]} matched no indexed chunk`;
++  return [`No results found for "${query}" in project ${resolvedPath}: ${miss}.`, ...hints];
++}
++
+ /** Run a query or status request with the selected mode's Git freshness notice. */
+ export async function handleQueryTool(
+   name: string,
+@@ -173,6 +219,8 @@ async function dispatchQueryTool(
+             `No results above score threshold ${minScore.toFixed(2)} for "${query}" in project ${resolvedPath}.`,
+             `${filteredCount} result${filteredCount === 1 ? " was" : "s were"} below the threshold. Try a broader query or lower the minScore parameter.`,
+           );
++        } else if (fileFilter || languageFilter) {
++          lines.push(...await filteredNoResultsLines(query, resolvedPath, collection, fileFilter, languageFilter, includeLinked));
+         } else {
+           lines.push(
+             `No results found for "${query}" in project ${resolvedPath}.`,
+```
+
+**File**: `tests/integration/tools.test.ts` (modified, +13/-0)
+```diff
+@@ -556,6 +556,19 @@ describe.skipIf(!dockerAvailable)(
+ 
+         expect(result).toBeDefined();
+       }, 30_000);
++
++      it("restricts results to the exact relative path given as fileFilter", async () => {
++        const result = await handleQueryTool("codebase_search", {
++          query: "authentication user login",
++          projectPath: fixture.root,
++          fileFilter: "src/index.ts",
++          minScore: 0,
++        });
++
++        const headers = result.split("\n").filter((line) => line.startsWith("--- "));
++        expect(headers.length, "an exact relative path must return that file's chunks").toBeGreaterThan(0);
++        expect(headers.every((line) => line.startsWith("--- src/index.ts ")), headers.join("\n")).toBe(true);
++      }, 30_000);
+     });
+ 
+     describe("codebase_status builder version (#120)", () => {
+```
+
+**File**: `tests/unit/query-tools.test.ts` (modified, +95/-0)
+```diff
+@@ -116,9 +116,11 @@ vi.mock("../../src/constants.js", async (importOriginal) => {
+ // ── Imports (after mocks) ────────────────────────────────────────────────
+ 
+ import { ensureQdrantReady } from "../../src/services/docker.js";
++import { isIndexingInProgress } from "../../src/services/indexer.js";
+ import { handleQueryTool } from "../../src/tools/query-tools.js";
+ 
+ const mockEnsureQdrantReady = vi.mocked(ensureQdrantReady);
++const mockIsIndexingInProgress = vi.mocked(isIndexingInProgress);
+ 
+ // ── Tests ────────────────────────────────────────────────────────────────
+ 
+@@ -279,6 +281,99 @@ describe("manual indexing watcher status", () => {
+   });
+ });
+ 
++describe("codebase_search — filtered search with no results", () => {
++  beforeEach(() => {
++    vi.clearAllMocks();
++    mockGetCollectionInfo.mockResolvedValue({ pointsCount: 3, status: "green" });
++    mockSearchChunks.mockResolvedValueOnce([]);
++  });
++
++  afterEach(() => {
++    mockIsIndexingInProgress.mockReturnValue(false);
++  });
++
++  it("blames a fileFilter that matched no file, not the index", async () => {
++    const output = await handleQueryTool("codebase_search", {
++      projectPath: TEST_PATH,
++      query: "value",
++      fileFilter: "src/",
++    });
++
++    expect(output).toContain('fileFilter "src/"');
++    expect(output).toContain("one file path exactly as a result header shows it");
++    expect(output).not.toContain("codebase_index");
++  });
++
++  it("blames a languageFilter that matched no language, not the index", async () => {
++    const output = await handleQueryTool("codebase_search", {
++      projectPath: TEST_PATH,
++      query: "value",
++      languageFilter: "ts",
++    });
++
++    expect(output).toContain('languageFilter "ts"');
++    expect(output).toContain("language label exactly as a result header shows it in brackets");
++    expect(output).not.toContain("codebase_index");
++  });
++
++  it("blames both filters together when both are set, not the file path alone", async () => {
++    const output = await handleQueryTool("codebase_search", {
++      projectPath: TEST_PATH,
++      query: "value",
++      fileFilter: "src/index.ts",
++      languageFilter: "python",
++    });
++
++    expect(output).toContain('fileFilter "src/index.ts" and languageFilter "python" together matched no indexed chunk');
++    expect(output).not.toContain("matched no indexed file");
++  });
++
++  it("states no cause for a filtered miss across linked projects, whose failed searches are skipped", async () => {
++    mockGetCollectionInfo.mockResolvedValue({ pointsCount: 0, status: "green" });
++    mockSearchMultipleCollections.mockResolvedValueOnce([]);
++
++    const output = await handleQueryTool("codebase_search", {
++      projectPath: TEST_PATH,
++      query: "value",
++      fileFilter: "src/",
++      includeLinked: true,
++    });
++
++    expect(output).toContain('with fileFilter "src/"');
++    expect(output).toContain("one file path exactly as a result header shows it");
++    expect(output).not.toContain("matched no indexed");
++    expect(output).not.toContain("codebase_index");
++  });
++
++  it("says a correctly filtered file may not be indexed yet while indexing runs", async () => {
++    mockIsIndexingInProgress.mockReturnValue(true);
++    mockGetCollectionInfo.mockResolvedValue({ pointsCount: 0, status: "green" });
++
++    const output = await handleQueryTool("codebase_search", {
++      projectPath: TEST_PATH,
++      query: "value",
++      fileFilter: "src/index.ts",
++    });
++
++    expect(output).toContain('fileFilter "src/index.ts"');
++    expect(output).toContain("codebase_status");
++    expect(output).not.toContain("codebase_index");
++  });
++
++  it("keeps the indexing hint when the collection holds no chunks", async () => {
++    mockGetCollectionInfo.mockResolvedValue({ pointsCount: 0, status: "green" });
++
++    const output = await handleQueryTool("codebase_search", {
++      projectPath: TEST_PATH,
++      query: "value",
++      fileFilter: "src/index.ts",
++    });
++
++    expect(output).toContain("Make sure the project has been indexed first using codebase_index.");
++    expect(output).not.toContain("one file path exactly as a result header shows it");
++  });
++});
++
+ // ── includeLinked tests ──────────────────────────────────────────────────
+ 
+ describe("codebase_search — includeLinked parameter", () => {
+```
+
+---
+
+### Incident Patch 3: `d9b87002` (2026-10-20)
+**Commit Message**: fix(graph): bind C# aliases where declared, and type-named values by type identity
+
+An alias declared in a namespace block now has its target looked up as
+C# resolves it. The lookup starts at the block's namespace and goes
+outward, without the block's own imports. It never starts from where
+the alias is used, so a nested namespace at the use site can no longer
+redirect it. The written path keeps the declaring namespace as its
+anchor (`App.Shop::Billing.Calc`); `global::` stays as written. When
+that lookup finds nothing, the reference stays unresolved.
+
+A value whose declared type ends in its own name is read as the type
+only when both readings name one type. `csSelfTypedMembers` now keeps
+the declared type, and resolution compares it with what the name finds
+from the caller. A qualified type naming another type (`Other.Status
+Status`) or a nullable value type is still a value. For a local or
+parameter, only a plain `Status Status` qualifies.
+
+A switch expression arm now scopes its pattern variables, so a variable
+in one arm no longer hides a type in a sibling arm.
+
+**File**: `src/constants.ts` (modified, +3/-1)
+```diff
+@@ -847,7 +847,9 @@ export const GODOT_BUILTIN_FUNCTIONS = new Set<string>([
+ /**
+  * The leading segment a C# edge keeps for a `global::`-anchored path
+  * (`global::App.Calc`): the path names members of the global namespace only,
+- * never a scope the reference sits in.
++ * never a scope the reference sits in. A path written through a `using`
++ * alias declared in a namespace block carries that namespace as its anchor
++ * instead (`App.Shop::Billing.Calc`), and is looked up from there outward.
+  */
+ export const CS_GLOBAL_ANCHOR = "global::";
+ 
+```
+
+**File**: `src/services/graph-symbol-resolution.ts` (modified, +68/-19)
+```diff
+@@ -1038,17 +1038,41 @@ export function resolveCallSites(
+    * there. An import brings in types, not namespaces, so `X.Y` is taken from
+    * one only when `X` is a type it imports. Two types imported under one name
+    * at one level are an ambiguity C# itself rejects, so neither is answered; a
+-   * `global::`-anchored path is looked up in the global namespace alone. Every
+-   * part of a partial type is answered.
++   * `global::`-anchored path is looked up in the global namespace alone. A
++   * path an alias declared in a namespace block wrote out (`App.Shop::X.Y`)
++   * is looked up as C# resolves the alias: from that namespace outward,
++   * without the declaring block's own imports, never from where it is used.
++   * Every part of a partial type is answered.
+    */
+   const csLookup = (context: CsContext, written: string, accept: (s: SymbolNode) => boolean): SymbolNode[] => {
+-    const anchored = written.startsWith(CS_GLOBAL_ANCHOR);
+-    const path = anchored ? written.slice(CS_GLOBAL_ANCHOR.length) : written;
++    const cut = written.indexOf("::");
++    const path = cut >= 0 ? written.slice(cut + 2) : written;
+     const name = path.slice(path.lastIndexOf(".") + 1);
+     const first = path.split(".")[0];
+     const candidates = (csByName().get(name) ?? []).filter(accept);
+     const named = (full: string) => candidates.filter((s) => csFullNameOf(s) === full);
+-    if (anchored) return named(path);
++    // `null` when no import at this level names `path`, `[]` when two do.
++    const imported = (imports: string[]): SymbolNode[] | null => {
++      const found = imports
++        .filter((u) => first === path || csTypesNamed(`${u}.${first}`).length > 0)
++        .flatMap((u) => named(`${u}.${path}`));
++      const distinct = new Set(found.map(csFullNameOf)).size;
++      return distinct === 0 ? null : distinct === 1 ? found : [];
++    };
++    if (written.startsWith(CS_GLOBAL_ANCHOR)) return named(path);
++    if (cut >= 0) {
++      const parts = written.slice(0, cut).split(".");
++      for (let n = parts.length; n >= 0; n--) {
++        const namespace = parts.slice(0, n).join(".");
++        const found = named(namespace ? `${namespace}.${path}` : path);
++        if (found.length > 0) return found;
++        if (n === parts.length) continue;
++        const level = context.levels.find((l) => l.namespace === namespace);
++        const fromImports = imported(level?.imports ?? []);
++        if (fromImports) return fromImports;
++      }
++      return [];
++    }
+     for (const scope of context.types) {
+       const found = named(`${scope}.${path}`);
+       if (found.length > 0) return found;
+@@ -1059,12 +1083,8 @@ export function resolveCallSites(
+     for (const { namespace, imports } of context.levels) {
+       const found = named(namespace ? `${namespace}.${path}` : path);
+       if (found.length > 0) return found;
+-      const imported = imports
+-        .filter((u) => first === path || csTypesNamed(`${u}.${first}`).length > 0)
+-        .flatMap((u) => named(`${u}.${path}`));
+-      const distinct = new Set(imported.map(csFullNameOf)).size;
+-      if (distinct === 1) return imported;
+-      if (distinct > 1) return [];
++      const fromImports = imported(imports);
++      if (fromImports) return fromImports;
+     }
+     return [];
+   };
+@@ -1134,19 +1154,23 @@ export function resolveCallSites(
+   /**
+    * Whether the project type `full` declares `name` as a value — a field,
+    * property, constant, event or enum member, its own or inherited from a
+-   * project base — other than one typed as itself (`csSelfTypedMembers`).
++   * project base. A member typed as itself (`csSelfTypedMembers`) is a value
++   * unless both readings name one type from `context` (`csSameTypeReading`).
+    */
+-  const csValueMember = (full: string, name: string, seen = new Set<string>()): boolean => {
++  const csValueMember = (full: string, name: string, context: CsContext, seen = new Set<string>()): boolean => {
+     if (seen.has(full)) return false;
+     seen.add(full);
+     const parts = csTypesNamed(full);
+-    if (parts.some((p) => p.csSelfTypedMembers?.includes(name))) return false;
++    for (const part of parts) {
++      const self = part.csSelfTypedMembers?.find((m) => m.name === name);
++      if (self) return !csSameTypeReading(part, self, name, context);
++    }
+     if (parts.some((p) => p.csMembers?.includes(name))) return true;
+     const member = `${full}.${name}`;
+     if ((csByName().get(name) ?? []).some((s) => s.kind === "variable" && csFullNameOf(s) === member)) return true;
+     for (const part of parts) {
+       for (const base of part.csBases ?? []) {
+-        for (const b of csBaseType(part, base)) if (csValueMember(csFullNameOf(b), name, seen)) return true;
++        for (const b of csBaseType(part, base)) if (csValueMember(csFullNameOf(b), name, context, seen)) return true;
+       }
+     }
+     return false;
+@@ -1161,10 +1185,33 @@ export function resolveCallSites(
+   const csHeadIsValue = (context: CsContex
+```
+
+**File**: `src/services/graph-symbols.ts` (modified, +43/-15)
+```diff
+@@ -2476,9 +2476,13 @@ function csWithin(inner: CsRange, outer: CsRange): boolean {
+ /** The leading path segment for a `global::` anchor, kept wherever the path is recorded. */
+ const CS_GLOBAL = CS_GLOBAL_ANCHOR;
+ 
+-/** A name path as an edge records it: `Ns.Calc`, or `global::Ns.Calc` for an anchored one. */
++/**
++ * A name path as an edge records it: `Ns.Calc`, or with its anchor segment
++ * (`CS_GLOBAL`, or `App.Shop::` for an alias declared in `namespace App.Shop`)
++ * joined to it: `global::Ns.Calc`, `App.Shop::Ns.Calc`.
++ */
+ function csJoin(path: string[]): string {
+-  return path[0] === CS_GLOBAL ? CS_GLOBAL + path.slice(1).join(".") : path.join(".");
++  return path[0]?.endsWith("::") ? path[0] + path.slice(1).join(".") : path.join(".");
+ }
+ 
+ /**
+@@ -2694,9 +2698,12 @@ function extractFromCSharp(
+     if (!target) continue;
+     const block = blockOf(u);
+     if (alias && named.length >= 2) {
+-      // A file-level alias is resolved from the global namespace; one in a
+-      // block, like any name there, from that block.
+-      const anchored = block || target[0] === CS_GLOBAL ? target : [CS_GLOBAL, ...target];
++      // An alias's target is looked up where the alias is declared, never
++      // where it is used: a file-level one from the global namespace, one in a
++      // block from the block's namespace outward (`App.Shop::`), so a nearer
++      // namespace at the use cannot redirect it. `global::` stays as written.
++      const anchor = block ? `${block.namespace}::` : CS_GLOBAL;
++      const anchored = target[0] === CS_GLOBAL ? target : [anchor, ...target];
+       const list = aliases.get(alias.text()) ?? [];
+       list.push({ block: block?.range ?? null, target: anchored });
+       aliases.set(alias.text(), list);
+@@ -2798,14 +2805,26 @@ function extractFromCSharp(
+     }
+     return owner?.sym ?? null;
+   };
+-  // A value whose declared type is written with its own name (`Status Status`)
+-  // may be read as either in C#, the "Color Color" rule: it never hides the
+-  // type of that name, and the type lookup decides.
++  // C# reads a value whose type has the value's own name either way (the
++  // "Color Color" rule), so `Status Status` hides no type `Status`, but only
++  // when both readings name the same type. The declared type's written path
++  // is kept when its last segment is the value's name: a plain name or a
++  // qualified one, `?` allowed; an array, a pointer or a generic is another type.
+   // biome-ignore lint/suspicious/noExplicitAny: ast-grep node type leaks through
+-  const typedAsItself = (type: any, name: string): boolean => csTypeHeadIdentifier(type)?.text() === name;
++  const typedAsItself = (type: any, name: string): { path: string[]; nullable: boolean } | null => {
++    const nullable = type?.kind() === "nullable_type";
++    const inner = nullable ? (type.field?.("type") ?? type.children?.()?.[0] ?? null) : type;
++    const kind = inner?.kind();
++    if (kind !== "identifier" && kind !== "qualified_name" && kind !== "alias_qualified_name") return null;
++    const path = csNamePath(inner);
++    return path && path[path.length - 1] === name ? { path, nullable } : null;
++  };
+   // Each type's value members and nested types by name, read below to tell a
+-  // receiver that is a value from one that is a type.
++  // receiver that is a value from one that is a type. A member typed as itself
++  // is neither: whether it hides the type is left to resolution, which can
++  // compare the two readings (`csSelfTypedMembers`).
+   const valueMembers = new Map<SymbolNode, Set<string>>();
++  const selfTypedMembers = new Map<SymbolNode, Set<string>>();
+   const nestedTypes = new Map<SymbolNode, Set<string>>();
+   const addName = (map: Map<SymbolNode, Set<string>>, sym: SymbolNode, name: string) => {
+     const names = map.get(sym);
+@@ -2823,9 +2842,15 @@ function extractFromCSharp(
+       owner.csMembers ??= [];
+       owner.csMembers.push(name);
+     }
+-    if (type && typedAsItself(type, name)) {
++    const self = type ? typedAsItself(type, name) : null;
++    if (self) {
+       owner.csSelfTypedMembers ??= [];
+-      owner.csSelfTypedMembers.push(name);
++      owner.csSelfTypedMembers.push({
++        name,
++        type: csJoin(expandAt(self.path, csRange(type).start)),
++        ...(self.nullable ? { nullable: true } : {}),
 +      });
++      addName(selfTypedMembers, owner, name);
+     } else addName(valueMembers, owner, name);
+   };
+   for (const k of ["field_declaration", "event_field_declaration"]) {
+@@ -2859,7 +2884,7 @@ function extractFromCSharp(
+   // a parameter. A pattern variable is given its whole block, which over-
+   // rather than under-states where it is visible.
+   const localScopes = new Set([
+-    "block", "switch_section", "for_statement", "foreach_statement", "using_statement", "fixed_statement",
++    "block", "switch_section", "switch_expression_arm", "for_statement", "foreach_statement", "using_statement", "fixed_statement",
+     "catch_clause", "lambda_ex
+```
+
+**File**: `src/types.ts` (modified, +9/-7)
+```diff
+@@ -194,14 +194,16 @@ export interface SymbolNode {
+    */
+   csMembers?: string[];
+   /**
+-   * C# types only: the fields and properties whose declared type is written
+-   * with their own name (`Status Status`). C# lets such a name be read as the
+-   * value or as the type (the "Color Color" rule), so it never hides the type
+-   * of that name from an expression. Every other field, property, constant,
+-   * event and enum member of the type does: a receiver starting with it is a
+-   * value, and its access names no type. Absent when the type declares none.
++   * C# types only: the fields and properties whose declared type ends in
++   * their own name (`Status Status`, `Other.Status Status`, `Status? Status`),
++   * with that type as written (`type`, aliases written out) and whether it is
++   * nullable. C# reads such a name as the value or as the type (the "Color
++   * Color" rule) only when both readings name the same type, which resolution
++   * checks; otherwise it is a value. Every other field, property, constant,
++   * event and enum member of the type is a value: a receiver starting with it
++   * names no type. Absent when the type declares none.
+    */
+-  csSelfTypedMembers?: string[];
++  csSelfTypedMembers?: Array<{ name: string; type: string; nullable?: boolean }>;
+   /**
+    * C# types only: the base class and interfaces as the declaration writes
+    * them, type arguments dropped and the file's `using` aliases written out
+```
+
+**File**: `tests/unit/graph-symbol-resolution-csharp.test.ts` (modified, +83/-0)
+```diff
+@@ -603,6 +603,89 @@ describe("C# extractor-to-resolver regressions", () => {
+     expect(print("Outer.cs", 3)).toEqual([{ confidence: "local", targets: ["App.Outer.Inner.Report.Print"] }]);
+   });
+ 
++  it("binds a namespace block's alias where it is declared, never where it is used", () => {
++    const files = {
++      "Root.cs": "namespace Billing { public class Calc { public static int Compute() => 1; } }",
++      "Inner.cs": "namespace App.Inner.Billing { public class Calc { public static int Compute() => 2; } }",
++      "Lost.cs": "namespace App.Inner.Missing { public class Calc { public static int Compute() => 3; } }",
++      "Tools.cs": "namespace Tools { public class Kit { public static int Make() => 4; } }",
++      "Shop.cs": [
++        "namespace App { using Tools; using C = Billing.Calc; using D = Missing.Calc; using K = Kit;",
++        "  namespace Inner { public class Shop {",
++        "    int A(C c) => C.Compute();",
++        "    int B() => D.Compute();",
++        "    int E() => K.Make() + Kit.Make();",
++        "  } }",
++        "}",
++      ].join("\n"),
++    };
++    const { at } = run(files);
++    // `Billing.Calc` is read from `App`, where the alias is declared: `App.Inner.Billing` is not in sight there.
++    expect(at("Shop.cs", 3, "call", "Compute")).toEqual([{ confidence: "unique", targets: ["Billing.Calc.Compute"] }]);
++    expect(at("Shop.cs", 3, "type_reference", "Calc")).toEqual([{ confidence: "unique", targets: ["Billing.Calc"] }]);
++    // From `App` no `Missing` exists: the alias names nothing, and the use site is not searched instead.
++    expect(at("Shop.cs", 4, "call", "Compute")).toEqual([{ confidence: "unresolved", targets: [] }]);
++    // An alias target never sees its own block's imports; a use in the block does.
++    expect(at("Shop.cs", 5, "call", "Make")).toEqual([
++      { confidence: "unresolved", targets: [] },
++      { confidence: "unique", targets: ["Tools.Kit.Make"] },
++    ]);
++  });
 +
-+      const map = buildJvmSuffixMap(project.fileSet);
++  it("reads a value typed as itself as the type only when both readings name one type", () => {
++    const files = {
++      "Phase.cs": "namespace App { public class Phase { public static int Parse() => 1; } public enum Tier { Faint } }",
++      "Other.cs": "namespace App.Other { public class Phase { public int Parse() => 2; } }",
++      "Voyage.cs": [
++        "namespace App { public class Voyage {",
++        "  public Other.Phase Phase { get; }",
++        "  int A() => Phase.Parse();",
++        "} }",
++      ].join("\n"),
++      "Lantern.cs": "namespace App { public class Lantern {\n  public App.Phase Phase { get; }\n  int B() => Phase.Parse();\n} }",
++      "Quiver.cs": "namespace App { public class Quiver {\n  public Phase Phase { get; }\n  int C() => Phase.Parse();\n} }",
++      "Beacon.cs": "namespace App { public class Beacon {\n  public Tier? Tier { get; }\n  object D() => Tier.Faint;\n} }",
++      "Params.cs": [
++        "namespace App { public class Params {",
++        "  int E(Other.Phase Phase) => Phase.Parse();",
++        "  int F(Phase Phase) => Phase.Parse();",
++        "} }",
++      ].join("\n"),
++    };
++    const { at } = run(files);
++    const parse = (file: string, line: number) => at(file, line, "call", "Parse");
++    const unresolved = [{ confidence: "unresolved", targets: [] }];
++    const phase = [{ confidence: "unique", targets: ["App.Phase.Parse"] }];
++    // `Other.Phase Phase` is a value: `Phase` alone names another type.
++    expect(parse("Voyage.cs", 3)).toEqual(unresolved);
++    expect(at("Voyage.cs", 3, "type_reference", "Phase")).toEqual(unresolved);
++    expect(parse("Params.cs", 2)).toEqual(unresolved);
++    // Written plain or qualified, the same type both ways: the static method.
++    expect(parse("Lantern.cs", 3)).toEqual(phase);
++    expect(parse("Quiver.cs", 3)).toEqual(phase);
++    expect(parse("Params.cs", 3)).toEqual(phase);
++    // `Tier?` of an enum is `Nullable<Tier>`, another type than `Tier`.
++    expect(at("Beacon.cs", 3, "type_reference", "Tier")).toEqual(unresolved);
++  });
 +
-+      expect(map.has("com/example/Shared.kt")).toBe(true);
-+      expect(map.has("com/example/Ios.kt")).toBe(true);
-+      expect(map.has("com/example/Android.kt")).toBe(true);
-+      expect(map.has("com/example/Desktop.kt")).toBe(true);
-+    });
++  it("keeps a switch arm's pattern variable inside its arm", () => {
++    const files = {
++      "Calc.cs": "namespace App { public class Calc { public static int Compute() => 1; } public interface IShape { int Print(); } }",
++      "Sorter.cs": [
++        "namespace App { public class Sorter {",
++        "  int Go(object o) => o switch {",
++        "    IShape Calc => Calc.Print(),",
++        "    int n => Calc.Compute(),",
++        "    _ => 0,",
++        "  };",
++        "} }",
++      ].join("\n"),
++    };
++    const { at } = run(files);
++    expect(at("Sorter.cs", 3, "call", "Print")).toEqual([{ confidence: "unresolved", targets: [] }]);
++    expect(at("Sorter.cs", 4, "call", "Compute")).toEqual([{ confidence: "unique", targets: ["App.Calc.Compute"] }]);
++  });
 +
-+    it.each([
-+      "appleMain", "iosArm64Main", "iosSimulatorArm64Main", "linuxX64Main",
-+      "macosArm64Main", "mingwX64Main", "watchosArm64Main",
-+    ])("registers standard KMP source set %s", (sourceSet) => {
-+      const sourcePath = `shared/src/${sourceSet}/kotlin/com/example/Util.kt`;
-+      const map = buildJvmSuffixMap(new Set([sourcePath]));
-+
-+      expect(map.get("com/example/Util.kt")).toBe(sourcePath);
-+    });
-+
-+    it.each(["/", "\\"])("preserves classic duplicate selection with %s separators", (sep) => {
-+      const kmpPath = "android/src/androidMain/kotlin/com/example/Util.kt".replaceAll("/", sep);
-+      const firstClassicPath = "module-a/src/main/kotlin/com/example/Util.kt".replaceAll("/", sep);
-+      const secondClassicPath = "module-b/src/main/kotlin/com/example/Util.kt".replaceAll("/", sep);
-+      const map = buildJvmSuffixMap(new Set([kmpPath, firstClassicPath, secondClassicPath]));
-+
-+      // Adding KMP files must not change the winner in an existing classic project.
-+      expect(map.get("com/example/Util.kt")).toBe(firstClassicPath);
-+    });
-+
-+    it("normalizes backslash source paths only in suffix-map keys", () => {
-+      const sharedPath = "shared\\src\\commonMain\\kotlin\\com\\example\\Util.kt";
-+      const map = buildJvmSuffixMap(new Set([sharedPath]));
-+
-+      expect([...map]).toEqual([["com/example/Util.kt", sharedPath]]);
-+    });
-+
-+    it("preserves a classic boundary nested beneath a KMP-shaped directory", () => {
-+      const classicPath = "module/src/commonMain/kotlin/nested/src/main/kotlin/com/example/Util.kt";
-+      const map = buildJvmSuffixMap(new Set([classicPath]));
-+
-+      expect([...map]).toEqual([["com/example/Util.kt", classicPath]]);
-+    });
-+
-+    it("ignores KMP test source sets", () => {
-+      const map = buildJvmSuffixMap(new Set([
-+        "shared/src/commonTest/kotlin/com/example/CommonTest.kt",
-+        "app/src/jvmTest/kotlin/com/example/JvmTest.kt",
-+        "shared/src/appleTest/kotlin/com/example/AppleTest.kt",
-+        "app/src/iosArm64Test/kotlin/com/example/IosTest.kt",
-+      ]));
-+
-+      expect(map.size).toBe(0);
-+    });
-+
-+    it.each([
-+      ["", false], ["", true], ["shared/", false], ["shared/", true],
-+    ])("prefers the importing KMP source set under %s with a map: %s", (prefix, useMap) => {
-+      const androidPath = `${prefix}src/androidMain/kotlin/com/example/Util.kt`;
-+      const iosPath = `${prefix}src/iosMain/kotlin/com/example/Util.kt`;
-+      const callerPath = `${prefix}src/iosMain/kotlin/com/example/App.kt`;
-+      project = createTempProject({ [androidPath]: "", [iosPath]: "", [callerPath]: "" });
-+
-+      const result = resolveImport(
-+        "co
+   it("leaves a path through an extern alias unresolved", () => {
+     const files = {
+       "Billing/Calc.cs": "namespace App.Billing { public class Calc { public static int Compute() => 1; 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #210** (2026-10-23): fix(search): name the filter when a filtered codebase_search finds nothing (@gnyan-zadara)
+- **PR #209** (2026-10-23): fix(graph): name C# declarations by their name field and capture type, creation and qualified-call edges (@pcherkashin)
 - **PR #206** (2026-10-15): fix(graph): name attributed PHP declarations by their name field (@pma1999)
 - **PR #204** (2026-10-10): feat(graph): add limit to codebase_symbol, codebase_impact and codebase_flow (@shaitourchin)
 - **PR #202** (2026-10-07): fix(symbol-graph): retry Qdrant requests once on a closed connection (@shaitourchin)
 - **PR #200** (2026-10-07): fix(graph): resolve JVM imports in Kotlin Multiplatform / Gradle source sets (@megadoom99)
-- **PR #199** (2026-10-02): chore(deps): patch brace-expansion and ip-address (@giancarloerra)
-- **PR #198** (2026-10-02): feat: opt-in cleanup of retired local indexes (@giancarloerra)
 
 ---
 
@@ -1823,39 +2085,34 @@ fix(graph): resolve JVM imports in Kotlin Multiplatform / Gradle source sets
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. symbol-graph): retry Qdrant requests once on a closed connection
+## X. graph): resolve C# names only through the scopes and imports C# uses
 
 **RULE**:
-When implementing operations in `src/services/qdrant.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in giancarloerra/SocratiCode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/constants.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in giancarloerra/SocratiCode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0418bd97`: symbol-graph): retry Qdrant requests once on a closed connection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `692963c2`: graph): resolve C# names only through the scopes and imports C# uses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/services/qdrant.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/constants.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
- *
- * Without a server reason, appends the innermost cause's message and `code`
- * instead, so a transport failure reads as
- * `fetch failed: other side closed [UND_ERR_SOCKET]` rather than `fetch failed`.
-  let innermost: unknown;
-    if (current !== err) innermost = current;
-  if (!(innermost instanceof Error)) return base;
-  const { message } = innermost;
-  const code = (innermost as { code?: unknown }).code;
-  const tag = typeof code === "string" ? code : "";
-  const detail = message && tag ? `${message} [${tag}]` : message || tag;
-  return base.includes(detail) ? base : `${base}: ${detail}`;
+/**
+ * The leading segment a C# edge keeps for a `global::`-anchored path
+ * (`global::App.Calc`): the path names members of the global namespace only,
+ * never a scope the reference sits in.
+ */
+export const CS_GLOBAL_ANCHOR = "global::";
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  return base;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0418bd97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `692963c2` are properly handled with clean fallback behavior.

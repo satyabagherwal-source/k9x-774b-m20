@@ -465,8 +465,8 @@
     "sourceUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceVersion": "hf-phocinae-phocinae-largha-150m-v1",
     "license": "Open-Source",
-    "contentHash": "366adf8a41f794e5e599cca730dd4d51ff36ba5901af5e0b12e1a645ff32f94c",
-    "lastHarvestedAt": "2026-10-20T18:43:15.267Z",
+    "contentHash": "8cf5794a21609745e1dfc393b71f6c926693fab2dec59f902950efc8677c488a",
+    "lastHarvestedAt": "2026-10-25T14:03:25.763Z",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1"
   },
   "hf-comfy-org-qwen-image-2.1": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "6741854c",
+    "sourceVersion": "63ada8be",
     "license": "Apache-2.0",
-    "contentHash": "7b2169e6a550439ab1092aaaff5943839a66575d84b59bc6055e911edd00fe3c",
-    "lastHarvestedAt": "2026-10-24T19:28:40.759Z",
+    "contentHash": "558f67c02d81de4f4756b7e8dd4c2eb60bff91da78e8b3c4dac61eaf266ce83d",
+    "lastHarvestedAt": "2026-10-25T14:03:30.689Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2413,10 +2413,10 @@
     "repository": "giancarloerra/SocratiCode",
     "platform": "github",
     "sourceUrl": "https://github.com/giancarloerra/SocratiCode",
-    "sourceVersion": "eb94e073",
+    "sourceVersion": "dae6d3a0",
     "license": "AGPL-3.0",
-    "contentHash": "61680081e3749c51f2a04cbf976cc13112a85a1af8176d06851e9ac11d3d265e",
-    "lastHarvestedAt": "2026-10-18T21:26:22.699Z",
+    "contentHash": "47ce8713c9c6b333dfd2147de5f6f8b0d8152cab84ea2cfbf60f196465e65fa7",
+    "lastHarvestedAt": "2026-10-25T14:03:28.793Z",
     "learningId": "learn-github-giancarloerra-socraticode"
   },
   "jaredpalmer-formik": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "7206efd0",
+    "sourceVersion": "b09a8a5f",
     "license": "MIT",
-    "contentHash": "4639e821cf92ce63d0b695b98194dd115f927d953af44df54c4d0cc1bc6d978b",
-    "lastHarvestedAt": "2026-10-22T20:51:52.066Z",
+    "contentHash": "020bc2b320fab13cad792449cbef2c36590d1a177639d7294d91d44a3d5926be",
+    "lastHarvestedAt": "2026-10-25T14:03:16.707Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -7533,10 +7533,10 @@
     "repository": "microsoft/react-native-windows",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/react-native-windows",
-    "sourceVersion": "cf0d3767",
+    "sourceVersion": "23fe304f",
     "license": "NOASSERTION",
-    "contentHash": "986c81cd90fbd8f6b4cfde0afd61a31eeef9dd1749182c6830a394e1812bf88b",
-    "lastHarvestedAt": "2026-10-19T09:35:20.737Z",
+    "contentHash": "51cfaf337fd8d5bfd31126feca4c7573a1055f75842a63209c1b0a12d0e28409",
+    "lastHarvestedAt": "2026-10-25T14:03:22.121Z",
     "learningId": "learn-github-microsoft-react-native-windows"
   },
   "paradedb-paradedb": {

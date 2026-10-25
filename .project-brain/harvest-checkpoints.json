@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T13:57:20.675Z",
+  "last_updated": "2026-10-25T14:03:30.696Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1835,14 +1835,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "366adf8a41f794e5e599cca730dd4d51ff36ba5901af5e0b12e1a645ff32f94c",
-      "verified_at": "2026-10-20T18:43:15.274Z",
+      "content_hash": "8cf5794a21609745e1dfc393b71f6c926693fab2dec59f902950efc8677c488a",
+      "verified_at": "2026-10-25T14:03:25.769Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T18:43:15.275Z"
+      "last_updated": "2026-10-25T14:03:25.769Z"
     },
     "microsoft/FrogNano-4B-2609": {
       "repository": "microsoft/FrogNano-4B-2609",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "7b2169e6a550439ab1092aaaff5943839a66575d84b59bc6055e911edd00fe3c",
-      "verified_at": "2026-10-24T19:28:40.768Z",
+      "content_hash": "558f67c02d81de4f4756b7e8dd4c2eb60bff91da78e8b3c4dac61eaf266ce83d",
+      "verified_at": "2026-10-25T14:03:30.695Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T19:28:40.768Z"
+      "last_updated": "2026-10-25T14:03:30.695Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -3756,14 +3756,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-giancarloerra-socraticode",
-      "content_hash": "61680081e3749c51f2a04cbf976cc13112a85a1af8176d06851e9ac11d3d265e",
-      "verified_at": "2026-10-18T21:26:22.701Z",
+      "content_hash": "47ce8713c9c6b333dfd2147de5f6f8b0d8152cab84ea2cfbf60f196465e65fa7",
+      "verified_at": "2026-10-25T14:03:28.800Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:26:22.701Z"
+      "last_updated": "2026-10-25T14:03:28.800Z"
     },
     "jaredpalmer/formik": {
       "repository": "jaredpalmer/formik",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "4639e821cf92ce63d0b695b98194dd115f927d953af44df54c4d0cc1bc6d978b",
-      "verified_at": "2026-10-22T20:51:52.079Z",
+      "content_hash": "020bc2b320fab13cad792449cbef2c36590d1a177639d7294d91d44a3d5926be",
+      "verified_at": "2026-10-25T14:03:16.714Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:51:52.079Z"
+      "last_updated": "2026-10-25T14:03:16.714Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -11346,14 +11346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-react-native-windows",
-      "content_hash": "986c81cd90fbd8f6b4cfde0afd61a31eeef9dd1749182c6830a394e1812bf88b",
-      "verified_at": "2026-10-19T09:35:20.743Z",
+      "content_hash": "51cfaf337fd8d5bfd31126feca4c7573a1055f75842a63209c1b0a12d0e28409",
+      "verified_at": "2026-10-25T14:03:22.127Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:35:20.743Z"
+      "last_updated": "2026-10-25T14:03:22.127Z"
     },
     "paradedb/paradedb": {
       "repository": "paradedb/paradedb",

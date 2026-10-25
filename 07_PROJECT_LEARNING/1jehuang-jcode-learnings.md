@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `7206efd0`  
+> **Source Version**: `b09a8a5f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:51:51.729Z  
+> **Timestamp**: 2026-10-25T14:03:16.456Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:51:51.261Z  
+> **Harvest Timestamp**: 2026-10-25T14:03:16.126Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21127 stars
+- **Stars / Engagement**: 21195 stars
 
 ---
 
@@ -2390,11 +2390,11 @@ impl Agent {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1927** (2026-10-21): **Windows Build & Test fails to compile jcode-base: router_transfer tests use std::os::unix unconditionally**
-  *Symptoms*: The router_transfer test module uses std::os::unix::fs::PermissionsExt, mode() and symlink() without cfg gating, so the native Windows Build & Test job fails with 5 compile errors (run 39553590253):  - E0433 cannot find `unix` in `os` at router_transfer.rs:436 and :635 - E0599 no method named `mode` at :519, :523, :618  The Windows Cross-Target Check job stays green only because it runs cargo xwin check without --all-targets, so test code is never type-checked there.  Proposed fix (branch ready): keep every portable assertion running on all platforms and gate only the unix pieces. The permission asserts move behind an #[cfg(unix)] helper (assert_owner_only_unix), the destination-symlink section gets an #[cfg(unix)] block. Verified with cargo check --target x86_64-pc-windows-gnu --tests: master shows the same 5 errors as CI, the branch compiles clean; full test module passes on macOS (5/5).
+- **Issue #1952** (2026-10-24): **bedrock tests pollute real user config on macOS (XDG_CONFIG_HOME ignored by app_config_dir)**
+  *Symptoms*: On macOS, `jcode-provider-bedrock` tests pollute the user's real config directory and then fail each other, because test isolation relies on `XDG_CONFIG_HOME` but the config path does not.  What happens:  1. Tests in `crates/jcode-provider-bedrock/src/tests.rs` set `XDG_CONFIG_HOME` to a tempdir and expect `app_config_dir()` to follow it. 2. `app_config_dir()` (`crates/jcode-storage/src/lib.rs:221`) uses `dirs::config_dir()`, which on macOS ignores `XDG_CONFIG_HOME` and returns `~/Library/Application Support`. 3. Tests then call `save_env_value_to_env_file(...)` (`configured_profile_from_bedrock_env_overrides_stale_bearer_token`, `detects_bedrock_login_env_file_credentials`, and friends), which writes real files: the user's `~/Library/Application Support/jcode/bedrock.env` gets fixture values like `AWS_BEARER_TOKEN_BEDROCK=expired-bearer-token`, `JCODE_BEDROCK_PROFILE=jcode-operator`. 4. Later runs read that same real file back, so assertions like `assert!(!BedrockProvider::has_credentials())` fail depending on machine state. On my machine:  ``` cargo test -p jcode-provider-bedrock --lib ... test tests::detects_env_credentials_requires_region_and_credential_hint ... FAILED test tests::detects_bedrock_login_env_file_credentials ... FAILED ```  Two failure modes in one bug: tests write into the user's real config (data pollution), and tests read whatever the user's real config contains (order and machine dependent). Same root cause as #1947's family: env-var isolation that the 
 
-- **Issue #1925** (2026-10-21): **Venice AI is in the login catalog but has no ProviderChoice, so --provider venice cannot be selected and provider_matrix fails**
-  *Symptoms*: Since b0b2df567 (providers: add Venice AI) the login catalog carries VENICE_LOGIN_PROVIDER, but the CLI ProviderChoice enum was never extended. Two visible failures on master:  - `choice_for_login_provider(venice)` returns None, so the interactive login   path cannot map the catalog entry back to a CLI choice. - CI: tests/provider_matrix.rs panics with "venice should map to a   ProviderChoice" in provider_matrix_explicit_compatible_choice_overrides_stale_active_profile_state_space,   and `login_provider_choice_table_round_trips_catalog_providers` fails the   same way ("provider venice is in the catalog but not the CLI choice table").  Same class as the closed OrcaRouter gap in #1341.  Proposed fix (branch ready): add the Venice variant mirroring Celeris, arg value "venice", aliases from the catalog descriptor, the PROVIDER_CHOICE_LOGIN_PROVIDERS entry and the compatible-runtime init arm.  Tests: provider_matrix passes (9/9) with the fix; both jcode lib invariant tests pass. Reproduced on master 28d51019f before the fix.
+- **Issue #1950** (2026-10-24): **harness_api capability ledger test fails: AccountUsage untriaged (introduced d467dcb13)**
+  *Symptoms*: `cargo test -p jcode-harness-api --lib every_reference_client_capability_is_triaged` fails on current master (b2f9f9d8d):  ``` these daemon requests are used by the TUI/desktop but have no reviewed disposition in the harness API capability ledger: ["AccountUsage"] ```  Repro (deterministic, no env needed):  ``` cargo test -p jcode-harness-api --lib every_reference_client_capability_is_triaged ```  Bisected first-bad: d467dcb13 `feat(tui): receive daemon-owned account quota refreshes`. It added the `AccountUsage` request usage in the TUI but no matching entry in `LEDGER` in `crates/jcode-harness-api/src/harness_api_tests/capability_coverage.rs`. The test was green at 2f7039193 (Oct 14) and red from d467dcb13 on.  This suite is not part of CI's ubuntu/macos unit runs (CI runs app-core, jcode-base, embedding, tui unit suites only), so the failure ships silently on master.  Fix shape: add `("AccountUsage", ClientInternal)` (or the reviewed disposition you prefer) to `LEDGER`, then the test passes. Happy to send a small PR with the ledger entry plus a CI wiring suggestion (add `-p jcode-harness-api --lib` to the ubuntu test matrix) if useful.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2411,242 +2411,1315 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89e46951` (2026-10-22)
-**Commit Message**: fix(ci): restore green master for v0.99.1
+### Incident Patch 1: `214e22d6` (2026-10-24)
+**Commit Message**: feat(tui): show waiting todo clocks and live dependency progress
 
-- Muse device-login credentials were invisible to auto provider detection
-  because the compatible transport only read env/config keys (provider
-  matrix failures).
-- Fix clippy -D warnings errors and dead-code warnings.
-- Refresh size, panic and swallowed-error ratchet budgets for v0.99.1 growth.
-
-**File**: `crates/jcode-app-core/src/server/turn_failover.rs` (modified, +1/-1)
+**File**: `crates/jcode-tui/src/tui/app/state_ui_messages.rs` (modified, +40/-40)
 ```diff
-@@ -162,7 +162,7 @@ pub(super) async fn process_message_with_server_failover(
-     enabled: bool,
- ) -> anyhow::Result<()> {
-     let reminder = system_reminder.clone();
--    let mut result = super::client_lifecycle::process_message_streaming_mpsc(
-+    let result = super::client_lifecycle::process_message_streaming_mpsc(
-         Arc::clone(&agent),
-         content,
-         images,
-```
-
-**File**: `crates/jcode-app-core/src/tool/browser_jev.rs` (modified, +1/-0)
-```diff
-@@ -24,6 +24,7 @@ impl JevTransport {
-     }
- }
- 
-+#[cfg(test)]
- fn request_body(request: &DecisionRequest) -> Result<Value> {
-     request_body_for_model(request, &crate::jev::browser_jev_model_label())
- }
-```
-
-**File**: `crates/jcode-base/src/auth/muse.rs` (modified, +1/-0)
-```diff
-@@ -176,6 +176,7 @@ impl std::fmt::Debug for DeviceChallenge {
- /// Single poll attempt outcome. [`poll_login`] performs exactly one token
- /// request and never sleeps; the caller loops honoring `interval`.
- #[derive(Debug, Clone)]
-+#[allow(clippy::large_enum_variant)] // One-shot poll result, never stored in bulk.
- pub enum PollOutcome {
-     /// User has not approved yet; poll again after `interval` seconds.
-     Pending,
-```
-
-**File**: `crates/jcode-base/src/auth/transfer.rs` (modified, +6/-5)
-```diff
-@@ -603,7 +603,7 @@ fn publish_in(
-         return Err(TransferError::Io);
-     }
-     let staged = Staged {
--        directory: &directory,
-+        directory,
-         name: temporary,
-     };
-     let mut file = unsafe { File::from_raw_fd(fd) };
-@@ -771,10 +771,11 @@ fn cloud_store(
-         return Err(TransferError::InvalidStore);
-     }
-     let (accounts, active, _, _) = cloud_keys(provider);
--    if let Some(selection) = value.get(active) {
--        if !selection.is_null() && !selection.as_str().is_some_and(valid_cloud_label) {
--            return Err(TransferError::InvalidStore);
--        }
-+    if let Some(selection) = value.get(active)
-+        && !selection.is_null()
-+        && !selection.as_str().is_some_and(valid_cloud_label)
-+    {
-+        return Err(TransferError::InvalidStore);
-     }
-     if let Some(entries) = value.get(accounts) {
-         let entries = entries.as_array().ok_or(TransferError::InvalidStore)?;
-```
-
-**File**: `crates/jcode-base/src/jev.rs` (modified, +1/-0)
-```diff
-@@ -621,6 +621,7 @@ fn request_body(
-     request_body_for(JevPurpose::Memory, provider, state, questions)
- }
- 
-+#[cfg(test)]
- fn request_body_for(
-     purpose: JevPurpose,
-     provider: JevProvider,
-```
-
-**File**: `crates/jcode-base/src/provider/openrouter.rs` (modified, +1/-1)
-```diff
-@@ -81,7 +81,7 @@ pub fn has_openrouter_credentials() -> bool {
- pub fn get_api_key() -> Option<String> {
-     let key_name = configured_api_key_name();
-     let env_file = configured_env_file_name();
--    load_api_key_from_env_or_config(&key_name, &env_file)
-+    crate::provider_catalog::load_runtime_api_key(&key_name, &env_file)
- }
- 
- /// OpenRouter API base URL
-```
-
-**File**: `crates/jcode-base/src/provider_catalog.rs` (modified, +2/-1)
-```diff
-@@ -12,7 +12,8 @@ pub const MINIMAX_CHINA_SETUP_URL: &str = "https://platform.minimaxi.com/docs/ll
- 
- mod profile_credentials;
- pub use profile_credentials::{
--    load_openai_compatible_profile_api_key, openai_compatible_profile_is_configured,
-+    load_openai_compatible_profile_api_key, load_runtime_api_key,
-+    openai_compatible_profile_is_configured,
- };
- 
- pub fn api_base_uses_localhost(raw: &str) -> bool {
-```
-
-**File**: `crates/jcode-base/src/provider_catalog/profile_credentials.rs` (modified, +17/-0)
-```diff
-@@ -21,6 +21,23 @@ pub fn load_openai_compatible_profile_api_key(
-     load_api_key_from_env_or_config(&profile.api_key_env, &profile.env_file)
- }
- 
-+/// Resolve the shared compatible-transport key from its configured env name and
-+/// file. The Muse subscription route stores its minted key in a Jcode-managed
-+/// credential file rather than an env file, so credential presence checks must
-+/// consult that store too or a signed-in Muse account looks unconfigured.
-+pub fn load_runtime_api_key(key_name: &str, env_file: &str) -> Option<String> {
-+    if let Some(key) = load_api_key_from_env_or_config(key_name, env_file) {
-+        return Some(key);
+@@ -227,50 +227,50 @@ impl App {
+     /// Disk state survives a TUI reload and also overrides a retained running
+     /// row when completion arrived before the UI consumed its notification.
+     pub(super) fn todo_waits_on_background_task(&self, todo: &crate::todo::TodoItem) -> bool {
++        crate::todo::todo_waits_on_running_task(todo, |task_id| {
++            self.running_todo_background_dependency(task_id).is_some()
++        })
 +    }
-+    if key_name == "JCODE_MUSE_SUBSCRIPTION_API_KEY" && env_file == "muse-subscription.env" {
-+        crate::auth::muse::ensure_enabled().ok()?;
-+        return crate::auth::muse::load_credentials()
-+            .ok()
-+            .map(|credentials| credentials.api_key);
-+    }
-+    None
++
++    pub(super) fn running_todo_background_dependency(
++        &self,
++        task_id: &str,
++    ) -> Option<crate::background::TaskStatusFile> {
+         let session_id = self
+             .remote_session_id
+             .as_deref()
+             .unwrap_or(&self.session.id);
+-        crate::todo::todo_waits_on_running_task(todo, |task_id| {
+-            if std::path::Path::new(task_id)
+-                .file_name()
+-                .and_then(|s| s.to_str())
+-                != Some(task_id)
+-            {
+-                return false;
+-            }
+-            let row = self
+-                .background_task_rows
+-                .iter()
+-                .find(|row| row.task_id == task_id);
+-            if row.is_some_and(|row| row.status != crate::tui::BackgroundTaskRowStatus::Running) {
+-                return false;
+-            }
+-            let status = std::fs::read(crate::background::global().status_path_for(task_id))
+-                .ok()
+-                .and_then(|bytes| {
+-                    serde_json::from_slice::<crate::background::TaskStatusFile>(&bytes).ok()
+-                });
+-            if let Some(status) = status {
+-                // Retained UI rows are presentation history, not proof that a
+-                // task survived a crash. Detached commands belong to their
+-                // child PID, while in-process tasks belong to the daemon.
+-                let owner = if status.detached {
+-                    status.pid
+-                } else {
+-                    status.owner_pid.or(status.pid)
+-                };
+-                if owner.is_some_and(|pid| {
+-                    pid == 0 || pid > i32::MAX as u32 || !crate::platform::is_process_running(pid)
+-                }) {
+-                    return false;
+-                }
+-                return status.task_id == task_id
+-                    && status.session_id == session_id
+-                    && status.status == crate::bus::BackgroundTaskStatus::Running;
+-            }
+-            false
+-        })
++        if std::path::Path::new(task_id)
++            .file_name()
++            .and_then(|s| s.to_str())
++            != Some(task_id)
++        {
++            return None;
++        }
++        if self.background_task_rows.iter().any(|row| {
++            row.task_id == task_id && row.status != crate::tui::BackgroundTaskRowStatus::Running
++        }) {
++            return None;
++        }
++        let status: crate::background::TaskStatusFile = serde_json::from_slice(
++            &std::fs::read(crate::background::global().status_path_for(task_id)).ok()?,
++        )
++        .ok()?;
++        // UI rows are history, not proof that an owner survived a crash.
++        let owner = if status.detached {
++            status.pid
++        } else {
++            status.owner_pid.or(status.pid)
++        };
++        if owner.is_none_or(|pid| {
++            pid == 0 || pid > i32::MAX as u32 || !crate::platform::is_process_running(pid)
++        }) {
++            return None;
++        }
++        (status.task_id == task_id
++            && status.session_id == session_id
++            && status.status == crate::bus::BackgroundTaskStatus::Running)
++            .then_some(status)
+     }
+ 
+     pub(super) fn all_open_todos_wait_on_background_tasks(&self) -> bool {
+```
+
+**File**: `crates/jcode-tui/src/tui/app/tests/background_todo_dependencies.rs` (modified, +37/-2)
+```diff
+@@ -152,14 +152,18 @@ fn background_dependency_dead_owner_or_detached_child_is_actionable() {
+         // This PID is outside the OS PID range and cannot name a live process.
+         let dead_pid = i32::MAX as u32;
+         assert!(!crate::platform::is_process_running(dead_pid));
+-        for detached in [false, true] {
++        for (detached, owner) in [
++            (false, Some(dead_pid)),
++            (true, Some(dead_pid)),
++            (false, None),
++        ] {
+             let mut app = waiting_dependency_test_app();
+             let task = format!("tui-orphan-{}", app.session.id);
+             let fixture = live_dependency_fixture(&app, &task);
+             let mut status: serde_json::Value =
+                 serde_json::from_slice(&std::fs::read(&fixture.0).unwrap()).unwrap();
+             status["detached"] = detached.into();
+-            status[if detached { "pid" } else { "owner_pid" }] = dead_pid.into();
++            status[if detached { "pid" } else { "owner_pid" }] = owner.into();
+             std::fs::write(&fixture.0, serde_json::to_vec(&status).unwrap()).unwrap();
+             app.upsert_running_background_task(task.clone(), "Orphan build".into(), None);
+             crate::todo::save_todos(&app.session.id, &[dependency_todo("recover", &task)]).unwrap();
+@@ -169,6 +173,37 @@ fn background_dependency_dead_owner_or_detached_child_is_actionable() {
+     });
+ }
+ 
++#[test]
++fn background_dependency_card_refresh_tracks_only_live_task_progress() {
++    with_temp_jcode_home(|| {
++        let mut app = waiting_dependency_test_app();
++        let task = format!("tui-card-{}", app.session.id);
++        let _fixture = live_dependency_fixture(&app, &task);
++        let todo = dependency_todo("waiting", &task);
++        crate::todo::save_todos(&app.session.id, &[todo.clone()]).unwrap();
++        app.upsert_running_background_task(task.clone(), "Build 🦀".into(), Some(25.0));
++        app.show_todo_card();
++        let payload: serde_json::Value =
++            serde_json::from_str(&app.display_messages.last().unwrap().content).unwrap();
++        assert_eq!(payload["background_tasks"][0]["percent"], 25.0);
++        app.upsert_running_background_task(task.clone(), "Build 🦀".into(), Some(65.0));
++        assert!(app.refresh_todo_card_if_needed());
++        let payload: serde_json::Value =
++            serde_json::from_str(&app.display_messages.last().unwrap().content).unwrap();
++        assert_eq!(payload["background_tasks"][0]["percent"], 65.0);
++        app.finish_background_task(
++            task,
++            "Build 🦀".into(),
++            crate::tui::BackgroundTaskRowStatus::Completed,
++        );
++        assert!(app.refresh_todo_card_if_needed());
++        let payload: serde_json::Value =
++            serde_json::from_str(&app.display_messages.last().unwrap().content).unwrap();
++        assert_eq!(payload["background_tasks"], serde_json::json!([]));
++        assert!(app.todo_card_background_tasks(&[todo]).is_empty());
++    });
 +}
 +
- pub fn openai_compatible_profile_is_configured(profile: OpenAiCompatibleProfile) -> bool {
-     // A named profile or unrelated Meta API key must not make this native
-     // subscription route appear configured.
+ #[test]
+ fn background_dependency_reload_reads_session_scoped_task_state() {
+     with_temp_jcode_home(|| {
+```
+
+**File**: `crates/jcode-tui/src/tui/app/todos_view.rs` (modified, +74/-7)
+```diff
+@@ -50,9 +50,11 @@ impl App {
+         let todos = load_current_session_todos(session_id.as_deref());
+         let goals = load_current_session_goals(session_id.as_deref());
+         let plan = load_current_session_plan(session_id.as_deref());
+-        let content = todo_card_payload_json(&todos, &plan, &goals);
++        let tasks = self.todo_card_background_tasks(&todos);
++        let content = with_background_tasks(todo_card_payload_json(&todos, &plan, &goals), &tasks);
+         self.todo_card_rendered_hash =
+-            hash_todos_payload(session_id.as_deref(), &todos, &plan, &goals);
++            hash_todos_payload(session_id.as_deref(), &todos, &plan, &goals)
++                ^ hash_background_tasks(&tasks);
+ 
+         if let Some(idx) = self.latest_todo_card_index() {
+             if idx + 1 == self.display_messages.len() {
+@@ -78,12 +80,14 @@ impl App {
+         let todos = load_current_session_todos(session_id.as_deref());
+         let goals = load_current_session_goals(session_id.as_deref());
+         let plan = load_current_session_plan(session_id.as_deref());
+-        let next_hash = hash_todos_payload(session_id.as_deref(), &todos, &plan, &goals);
++        let tasks = self.todo_card_background_tasks(&todos);
++        let next_hash = hash_todos_payload(session_id.as_deref(), &todos, &plan, &goals)
++            ^ hash_background_tasks(&tasks);
+         if next_hash == self.todo_card_rendered_hash {
+             return false;
+         }
+         self.todo_card_rendered_hash = next_hash;
+-        let content = todo_card_payload_json(&todos, &plan, &goals);
++        let content = with_background_tasks(todo_card_payload_json(&todos, &plan, &goals), &tasks);
+         self.replace_display_message_content(idx, content)
+     }
+ 
+@@ -122,18 +126,59 @@ impl App {
+         let goals = load_current_session_goals(session_id.as_deref());
+         let plan = load_current_session_plan(session_id.as_deref());
+         let agents = self.todo_card_agents(&todos);
++        let tasks = self.todo_card_background_tasks(&todos);
+         let next_hash = hash_todos_payload(session_id.as_deref(), &todos, &plan, &goals)
+-            ^ hash_todo_card_agents(&agents);
++            ^ hash_todo_card_agents(&agents)
++            ^ hash_background_tasks(&tasks);
+         if next_hash == self.pinned_todos_rendered_hash && self.pinned_todos_payload.is_some() {
+             return false;
+         }
+         self.pinned_todos_rendered_hash = next_hash;
+-        self.pinned_todos_payload = Some(todo_card_payload_json_with_agents(
+-            &todos, &plan, &goals, &agents,
++        self.pinned_todos_payload = Some(with_background_tasks(
++            todo_card_payload_json_with_agents(&todos, &plan, &goals, &agents),
++            &tasks,
+         ));
+         true
+     }
+ 
++    pub(super) fn todo_card_background_tasks(
++        &self,
++        todos: &[TodoItem],
++    ) -> Vec<crate::tui::ui::TodoCardBackgroundTask> {
++        let mut tasks = Vec::new();
++        for todo in todos {
++            if !crate::todo::is_incomplete_todo(todo) {
++                continue;
++            }
++            for id in &todo.waiting_on {
++                if tasks
++                    .iter()
++                    .any(|task: &crate::tui::ui::TodoCardBackgroundTask| &task.task_id == id)
++                {
++                    continue;
++                }
++                let Some(status) = self.running_todo_background_dependency(id) else {
++                    continue;
++                };
++                let row = self
++                    .background_task_rows_ref()
++                    .iter()
++                    .find(|row| &row.task_id == id);
++                tasks.push(crate::tui::ui::TodoCardBackgroundTask {
++                    task_id: id.clone(),
++                    label: row
++                        .map(|row| row.label.clone())
++                        .or(status.display_name)
++                        .unwrap_or(status.tool_name),
++                    percent: row
++                        .and_then(|row| row.percent)
++                        .or_else(|| status.progress.and_then(|progress| progress.percent)),
++                });
++            }
++        }
++        tasks
++    }
++
+     /// Swarm workers referenced by `assigned_to` on any todo, snapshotted from
+     /// the live member list the client already receives.
+     fn todo_card_agents(&self, todos: &[TodoItem]) -> Vec<crate::tui::ui::TodoCardAgent> {
+@@ -447,6 +492,28 @@ fn todo_card_payload_json(
+     todo_card_payload_json_with_agents(todos, plan, goals, &[])
+ }
+ 
++fn with_background_tasks(
++    content: String,
++    tasks: &[crate::tui::ui::TodoCardBackgroundTask],
++) -> String {
++    let Ok(mut payload) = serde_json::from_str::<serde_json::Value>(&content) else {
++        return content;
++    };
++    payload["background_tasks"] = serde_json::to_value(tasks).unwrap_or_default();
++    payload.to_string()
++}
++
++fn hash_background_tasks(tasks: &[crate::tui::ui::TodoCardBackgroundT
+```
+
+**File**: `crates/jcode-tui/src/tui/ui.rs` (modified, +1/-1)
+```diff
+@@ -141,7 +141,7 @@ use memory_ui::{group_into_tiles, render_memory_tiles, split_by_display_width};
+ use messages::get_cached_message_lines;
+ #[cfg_attr(test, allow(unused_imports))]
+ pub(crate) use messages::{
+-    SWARM_AGENT_SNAPSHOT_TITLE, TodoCardAgent, compact_swarm_await_summary,
++    SWARM_AGENT_SNAPSHOT_TITLE, TodoCardAgent, TodoCardBackgroundTask, compact_swarm_await_summary,
+     encode_swarm_agent_snapshot, render_assistant_message, render_background_task_message,
+     render_reasoning_message, render_swarm_message, render_system_message, render_tool_message,
+     render_usage_message,
+```
+
+**File**: `crates/jcode-tui/src/tui/ui_messages.rs` (modified, +145/-17)
+```diff
+@@ -1207,6 +1207,14 @@ pub(crate) fn render_overnight_message(
+     lines
+ }
+ 
++/// Only currently running, session-validated dependencies enter this snapshot.
++#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
++pub(crate) struct TodoCardBackgroundTask {
++    pub task_id: String,
++    pub label: String,
++    pub percent: Option<f32>,
++}
++
+ #[derive(serde::Deserialize)]
+ #[serde(untagged)]
+ enum TodoCardPayload {
+@@ -1220,6 +1228,8 @@ enum TodoCardPayload {
+         /// Swarm workers referenced by `TodoItem::assigned_to`.
+         #[serde(default)]
+         agents: Vec<TodoCardAgent>,
++        #[serde(default)]
++        background_tasks: Vec<TodoCardBackgroundTask>,
+     },
+     Legacy(Vec<crate::todo::TodoItem>),
+ }
+@@ -1264,19 +1274,22 @@ impl TodoCardPayload {
+         crate::todo::TodoPlan,
+         Vec<crate::todo::TodoGoal>,
+         Vec<TodoCardAgent>,
++        Vec<TodoCardBackgroundTask>,
+     ) {
+         match self {
+             Self::Current {
+                 todos,
+                 plan,
+                 goals,
+                 agents,
+-            } => (todos, plan, goals, agents),
++                background_tasks,
++            } => (todos, plan, goals, agents, background_tasks),
+             Self::Legacy(todos) => (
+                 todos,
+                 crate::todo::TodoPlan::default(),
+                 Vec::new(),
+                 Vec::new(),
++                Vec::new(),
+             ),
+         }
+     }
+@@ -1433,7 +1446,7 @@ fn render_todos_message_with_cap(
+     let Ok(payload) = serde_json::from_str::<TodoCardPayload>(&msg.content) else {
+         return render_system_message(msg, width, diff_mode);
+     };
+-    let (todos, plan, goals, agents) = payload.into_parts();
++    let (todos, plan, goals, agents, background_tasks) = payload.into_parts();
+ 
+     let centered = markdown::center_code_blocks();
+     let meta_style = Style::default().fg(todo_meta_color());
+@@ -1485,7 +1498,14 @@ fn render_todos_message_with_cap(
+             ));
+             let goal = todo_card_goal_for_group(&goals, None);
+             push_todo_goal_details(&mut lines, goal, base_indent, inner_width, compact_details);
+-            push_stage_lines(&mut lines, &all_refs, &agents, base_indent, inner_width);
++            push_stage_lines(
++                &mut lines,
++                &all_refs,
++                &agents,
++                &background_tasks,
++                base_indent,
++                inner_width,
++            );
+         } else if has_groups {
+             lines.push(render_todo_stage_status_header(
+                 &all_refs,
+@@ -1514,7 +1534,14 @@ fn render_todos_message_with_cap(
+                     inner_width,
+                 ));
+                 push_todo_goal_details(&mut lines, goal, base_indent, inner_width, compact_details);
+-                push_todo_item_lines(&mut lines, items, &agents, base_indent, inner_width);
++                push_todo_item_lines(
++                    &mut lines,
++                    items,
++                    &agents,
++                    &background_tasks,
++                    base_indent,
++                    inner_width,
++                );
+             }
+         } else {
+             let goal = todo_card_goal_for_group(&goals, None);
+@@ -1527,7 +1554,14 @@ fn render_todos_message_with_cap(
+             if goal.is_some() {
+                 push_todo_goal_details(&mut lines, goal, base_indent, inner_width, compact_details);
+             }
+-            push_todo_item_lines(&mut lines, &all_refs, &agents, base_indent, inner_width);
++            push_todo_item_lines(
++                &mut lines,
++                &all_refs,
++                &agents,
++                &background_tasks,
++                base_indent,
++                inner_width,
++            );
+         }
+     }
+ 
+@@ -1722,13 +1756,15 @@ fn push_todo_item_lines(
+     lines: &mut Vec<Line<'static>>,
+     todos: &[&crate::todo::TodoItem],
+     agents: &[TodoCardAgent],
++    background_tasks: &[TodoCardBackgroundTask],
+     base_indent: &str,
+     inner_width: usize,
+ ) {
+     for todo in todos {
+-        lines.push(render_todo_item_line(
++        lines.push(render_todo_item_line_with_background(
+             todo,
+             agents,
++            background_tasks,
+             base_indent,
+             inner_width,
+         ));
+@@ -2264,6 +2300,108 @@ fn render_todo_card_item_line(
+     todo_card_line(todo_card_item_spans(todo, false), base_indent, inner_width)
+ }
+ 
++fn todo_running_dependencies<'a>(
++    todo: &crate::todo::TodoItem,
++    tasks: &'a [TodoCardBackgroundTask],
++) -> Vec<&'a TodoCardBackgroundTask> {
++    if !crate::todo::is_incomplete_todo(todo) {
++        return Vec::new();
++    }
++    tasks
++        .iter()
++        .filter(|task| todo.waiting_on.contains(&task.task_id))
++        .collect()
++}
++
++fn render_todo_item_line_with_background(
++    todo: &crate::todo::TodoItem,
++    agents: &[TodoCardAgent],
++    tasks: &[TodoCardBackgroundTask],
++    base_inden
+```
+
+**File**: `crates/jcode-tui/src/tui/ui_messages/tests.rs` (modified, +109/-13)
+```diff
+@@ -1211,26 +1211,122 @@ fn render_overnight_message_uses_rounded_progress_card() {
+ }
+ 
+ #[test]
+-fn background_dependency_todo_card_annotation_is_width_safe() {
++fn background_dependency_todo_card_clock_and_progress_are_width_safe() {
+     use unicode_width::UnicodeWidthStr;
+     let todo = crate::todo::TodoItem {
+         id: "wait".into(),
+-        content: "等待 build 🦀".into(),
++        content: "等待 build 🦀 with a long task title".into(),
+         status: "pending".into(),
+-        waiting_on: vec!["build-task".into()],
++        waiting_on: vec!["build-task".into(), "test-task".into()],
+         ..Default::default()
+     };
+-    let wide = render_todo_card_item_line(&todo, "", 60);
+-    assert!(extract_line_text(&wide).contains("[bg dependency]"));
+-    for width in 0..40 {
+-        let line = render_todo_card_item_line(&todo, "", width);
+-        assert!(extract_line_text(&line).width() <= width);
++    let tasks = vec![
++        TodoCardBackgroundTask {
++            task_id: "build-task".into(),
++            label: "构建 🦀".into(),
++            percent: Some(40.0),
++        },
++        TodoCardBackgroundTask {
++            task_id: "test-task".into(),
++            label: "tests".into(),
++            percent: Some(75.0),
++        },
++    ];
++    let wide = render_todo_item_line_with_background(&todo, &[], &tasks, "", 160);
++    let text = extract_line_text(&wide);
++    assert!(text.contains("🕒"), "{text}");
++    assert!(!text.contains('○'), "{text}");
++    assert!(text.contains("构建 🦀") && text.contains("tests"), "{text}");
++    assert!(text.contains('▰') && text.contains('▱'), "{text}");
++    assert!(text.find("等待").unwrap() < text.find("构建").unwrap());
++    for width in 0..160 {
++        let line = render_todo_item_line_with_background(&todo, &[], &tasks, "", width);
++        assert!(extract_line_text(&line).width() <= width, "width={width}");
++    }
++    // A terminal or unknown reference is absent from the live snapshot.
++    let resolved = extract_line_text(&render_todo_item_line_with_background(
++        &todo,
++        &[],
++        &[],
++        "",
++        80,
++    ));
++    assert!(!resolved.contains("🕒") && !resolved.contains('%'));
++    assert!(resolved.contains('○'));
++    for status in ["completed", "cancelled"] {
++        let mut done = todo.clone();
++        done.status = status.into();
++        let text = extract_line_text(&render_todo_item_line_with_background(
++            &done,
++            &[],
++            &tasks,
++            "",
++            80,
++        ));
++        assert!(!text.contains("🕒") && !text.contains('%'));
++    }
++}
++
++#[test]
++fn background_dependency_indeterminate_progress_is_not_fabricated() {
++    let todo = crate::todo::TodoItem {
++        waiting_on: vec!["task".into()],
++        status: "in_progress".into(),
++        content: "Wait for task".into(),
++        ..Default::default()
++    };
++    let tasks = vec![TodoCardBackgroundTask {
++        task_id: "task".into(),
++        label: "build".into(),
++        percent: None,
++    }];
++    let text = extract_line_text(&render_todo_item_line_with_background(
++        &todo,
++        &[],
++        &tasks,
++        "",
++        80,
++    ));
++    assert!(text.contains("🕒") && text.contains("running"));
++    assert!(!text.contains('%'));
++}
++
++#[test]
++fn background_dependency_clock_and_progress_render_in_flat_and_stage_cards() {
++    use unicode_width::UnicodeWidthStr;
++    for stage in [None, Some(1)] {
++        let todo = crate::todo::TodoItem {
++            id: "wait".into(),
++            content: "Await build".into(),
++            status: "in_progress".into(),
++            stage,
++            group: stage.map(|_| "compile".into()),
++            waiting_on: vec!["task".into()],
++            ..Default::default()
++        };
++        let message = DisplayMessage::todos(serde_json::json!({
++            "todos": [todo], "background_tasks": [{"task_id":"task", "label":"build", "percent":40.0}]
++        }).to_string());
++        let lines = render_todos_message(&message, 100, crate::config::DiffDisplayMode::Off);
++        let text = lines
++            .iter()
++            .map(extract_line_text)
++            .collect::<Vec<_>>()
++            .join("\n");
++        assert!(
++            text.contains("🕒") && text.contains("build") && text.contains('%'),
++            "{text}"
++        );
++        for width in 20..100 {
++            for line in render_todos_message(&message, width, crate::config::DiffDisplayMode::Off) {
++                assert!(
++                    extract_line_text(&line).width() <= width as usize,
++                    "width={width}: {}",
++                    extract_line_text(&line)
++                );
++            }
++        }
+     }
+-    let mut done = todo;
+-    done.status = "completed".into();
+-    assert!(
+-        !extract_line_text(&render_todo_card_item_line(&done, "", 60)).contains("bg dependency")
+-    );
+ }
+ 
+ #[test]
+```
+
+**File**: `crates/jcode-tui/src/tui/ui_todo_stages.rs` (modified, +18/-0)
+```diff
+@@ -740,6 +740,7 @@ pub(crate) fn push_stage_lines(
+     lines: &mut Vec<Line<'static>>,
+     todos: &[&crate::todo::TodoItem],
+     agents: &[TodoCardAgent],
++    background_tasks: &[TodoCardBackgroundTask],
+     base_indent: &str,
+     inner_width: usize,
+ ) {
+@@ -778,6 +779,23 @@ pub(crate) fn push_stage_lines(
+         // dimmed (with its titles and dots) while the phase has not started.
+         let later = current.is_some_and(|current| phase > current);
+         let items = items_of(lane);
++        // Expand a waiting lane so its dependency progress belongs to the
++        // corresponding todo rather than an ambiguous lane-wide status dot.
++        if items
++            .iter()
++            .any(|todo| !todo_running_dependencies(todo, background_tasks).is_empty())
++        {
++            for todo in &items {
++                lines.push(render_todo_item_line_with_background(
++                    todo,
++                    agents,
++                    background_tasks,
++                    base_indent,
++                    inner_width,
++                ));
++            }
++            continue;
++        }
+         let statuses = lane_item_statuses(&items, agents);
+         let mut row = lane_strip_spans(&statuses, strip_width);
+         if name_width > 0 {
 ```
 
 ---
 
-### Incident Patch 2: `7206efd0` (2026-10-22)
-**Commit Message**: fix(ci): patch rustls-webpki/webpki-roots advisories, drop unused app-core deps
+### Incident Patch 2: `3d23e001` (2026-10-24)
+**Commit Message**: fix(tui): reject stale todo background dependencies across crashes and transfers
 
-**File**: `Cargo.lock` (modified, +6/-8)
+**File**: `crates/jcode-tui/src/tui/app/commands.rs` (modified, +6/-1)
 ```diff
-@@ -3397,9 +3397,7 @@ dependencies = [
-  "dirs",
-  "flate2",
-  "futures",
-- "glob",
-  "global-hotkey",
-- "ignore",
-  "jcode-agent-runtime",
-  "jcode-ambient-types",
-  "jcode-applet-types",
-@@ -7163,9 +7161,9 @@ checksum = "f87165f0995f63a9fbeea62b64d10b4d9d8e78ec6d7d51fb2125fda7bb36788f"
- 
- [[package]]
- name = "rustls-webpki"
--version = "0.103.15"
-+version = "0.103.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
- dependencies = [
-  "aws-lc-rs",
-  "ring",
-@@ -9130,18 +9128,18 @@ dependencies = [
- 
- [[package]]
- name = "webpki-root-certs"
--version = "1.0.7"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f31141ce3fc3e300ae89b78c0dd67f9708061d1d2eda54b8209346fd6be9a92c"
-+checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
- dependencies = [
-  "rustls-pki-types",
- ]
- 
- [[package]]
- name = "webpki-roots"
--version = "1.0.6"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "22cfaf3c063993ff62e73cb4311efde4db1efb31ab78a3e5c457939ad5cc0bed"
-+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
- dependencies = [
-  "rustls-pki-types",
- ]
+@@ -370,7 +370,12 @@ pub(super) fn create_transfer_session_from_parent(
+     parent: &crate::session::Session,
+     compaction: Option<crate::session::StoredCompactionState>,
+ ) -> anyhow::Result<(String, String)> {
+-    let todos = crate::todo::load_todos(parent_session_id).unwrap_or_default();
++    let mut todos = crate::todo::load_todos(parent_session_id).unwrap_or_default();
++    // Background task IDs belong to the parent session. Transfer the work,
++    // not foreign dependencies, and leave the parent's durable todos intact.
++    for todo in &mut todos {
++        todo.waiting_on.clear();
++    }
+     let mut child = crate::session::Session::create(Some(parent_session_id.to_string()), None);
+     child.messages.clear();
+     child.compaction = compaction;
 ```
 
-**File**: `crates/jcode-app-core/Cargo.toml` (modified, +0/-2)
+**File**: `crates/jcode-tui/src/tui/app/input_help.rs` (modified, +1/-0)
 ```diff
-@@ -35,8 +35,6 @@ serde_json = { version = "1", features = ["raw_value"] }
- # CLI
- 
- # File operations
--glob = "0.3"
--ignore = "0.4"
- similar = "2"            # diffing for edits
- 
- # Utilities
+@@ -136,6 +136,7 @@ impl App {
+                 /poke or /poke on arms auto-poke and immediately pokes if work remains.\n\
+                 /poke off disarms auto-poke and clears any queued poke follow-ups.\n\
+                 /poke status shows whether auto-poke is currently armed.\n\
++                Explicit todo waiting_on pauses only those todos while their background tasks run, uses no retry budget, and wakes on completion.\n\
+                 If a turn is currently running, the poke is queued and sent right after that turn finishes.\n\
+                 Injects a reminder with the number of incomplete todos and prompts the model to either\n\
+                 finish the work, update the todo list to reflect what is done, or ask for user input if genuinely blocked."
 ```
 
----
-
-### Incident Patch 3: `00a214b3` (2026-10-22)
-**Commit Message**: tui: show no auto-routing accounts hint as plain text
-
-**File**: `crates/jcode-tui/src/tui/ui_header/account_router.rs` (modified, +1/-2)
+**File**: `crates/jcode-tui/src/tui/app/state_ui_messages.rs` (modified, +14/-1)
 ```diff
-@@ -305,9 +305,8 @@ fn inventory_lines(
+@@ -252,11 +252,24 @@ impl App {
+                     serde_json::from_slice::<crate::background::TaskStatusFile>(&bytes).ok()
+                 });
+             if let Some(status) = status {
++                // Retained UI rows are presentation history, not proof that a
++                // task survived a crash. Detached commands belong to their
++                // child PID, while in-process tasks belong to the daemon.
++                let owner = if status.detached {
++                    status.pid
++                } else {
++                    status.owner_pid.or(status.pid)
++                };
++                if owner.is_some_and(|pid| {
++                    pid == 0 || pid > i32::MAX as u32 || !crate::platform::is_process_running(pid)
++                }) {
++                    return false;
++                }
+                 return status.task_id == task_id
+                     && status.session_id == session_id
+                     && status.status == crate::bus::BackgroundTaskStatus::Running;
+             }
+-            row.is_some()
++            false
          })
-         .collect();
-     if lines.is_empty() {
--        lines.push(Line::styled(
-+        lines.push(Line::raw(
-             "No auto-routing accounts · /login to add credential",
--            Style::default().fg(dim_color()),
+     }
+ 
+```
+
+**File**: `crates/jcode-tui/src/tui/app/tests/background_todo_dependencies.rs` (modified, +72/-1)
+```diff
+@@ -17,11 +17,36 @@ fn dependency_todo(id: &str, task_id: &str) -> crate::todo::TodoItem {
+     }
+ }
+ 
++struct DependencyTaskFixture(std::path::PathBuf);
++
++impl Drop for DependencyTaskFixture {
++    fn drop(&mut self) {
++        let _ = std::fs::remove_file(&self.0);
++    }
++}
++
++fn live_dependency_fixture(app: &App, task: &str) -> DependencyTaskFixture {
++    let path = crate::background::global().status_path_for(task);
++    std::fs::create_dir_all(path.parent().unwrap()).unwrap();
++    std::fs::write(
++        &path,
++        serde_json::to_vec(&serde_json::json!({
++            "task_id": task, "tool_name": "bash", "session_id": app.session.id,
++            "status": "running", "started_at": "2026-10-24T09:00:00Z",
++            "owner_pid": std::process::id()
++        }))
++        .unwrap(),
++    )
++    .unwrap();
++    DependencyTaskFixture(path)
++}
++
+ #[test]
+ fn background_dependency_waiting_only_suppresses_review_and_resets_budget() {
+     with_temp_jcode_home(|| {
+         let mut app = waiting_dependency_test_app();
+         let task = format!("tui-wait-{}", app.session.id);
++        let _fixture = live_dependency_fixture(&app, &task);
+         app.upsert_running_background_task(task.clone(), "Build".into(), None);
+         crate::todo::save_todos(&app.session.id, &[dependency_todo("waiting", &task)]).unwrap();
+         app.auto_poke_attempts = crate::todo::INCOMPLETE_TODO_MAX_ATTEMPTS;
+@@ -56,6 +81,7 @@ fn background_dependency_mixed_poke_targets_only_actionable_ids() {
+     with_temp_jcode_home(|| {
+         let mut app = waiting_dependency_test_app();
+         let task = format!("tui-wait-{}", app.session.id);
++        let _fixture = live_dependency_fixture(&app, &task);
+         app.upsert_running_background_task(task.clone(), "Build".into(), None);
+         let mut actionable = dependency_todo("ready-id", &task);
+         actionable.waiting_on.clear();
+@@ -86,6 +112,7 @@ fn background_dependency_terminal_or_unknown_resumes_actionable_work() {
+             crate::todo::save_todos(&app.session.id, &[dependency_todo("resume-id", &task)])
+                 .unwrap();
+             if let Some(status) = terminal {
++                let _fixture = live_dependency_fixture(&app, &task);
+                 app.upsert_running_background_task(task.clone(), "Build".into(), None);
+                 assert!(!app.schedule_auto_poke_followup_if_needed());
+                 app.finish_background_task(task, "Build".into(), status);
+@@ -99,6 +126,49 @@ fn background_dependency_terminal_or_unknown_resumes_actionable_work() {
+     });
+ }
+ 
++#[test]
++fn background_dependency_stale_row_missing_or_malformed_state_is_actionable() {
++    with_temp_jcode_home(|| {
++        for malformed in [false, true] {
++            let mut app = waiting_dependency_test_app();
++            let task = format!("tui-stale-{}", app.session.id);
++            let fixture = live_dependency_fixture(&app, &task);
++            if malformed {
++                std::fs::write(&fixture.0, b"not valid task state").unwrap();
++            } else {
++                std::fs::remove_file(&fixture.0).unwrap();
++            }
++            app.upsert_running_background_task(task.clone(), "Stale build".into(), None);
++            crate::todo::save_todos(&app.session.id, &[dependency_todo("recover", &task)]).unwrap();
++            assert!(app.schedule_auto_poke_followup_if_needed());
++            assert_eq!(app.queued_messages.len(), 1);
++        }
++    });
++}
++
++#[test]
++fn background_dependency_dead_owner_or_detached_child_is_actionable() {
++    with_temp_jcode_home(|| {
++        // This PID is outside the OS PID range and cannot name a live process.
++        let dead_pid = i32::MAX as u32;
++        assert!(!crate::platform::is_process_running(dead_pid));
++        for detached in [false, true] {
++            let mut app = waiting_dependency_test_app();
++            let task = format!("tui-orphan-{}", app.session.id);
++            let fixture = live_dependency_fixture(&app, &task);
++            let mut status: serde_json::Value =
++                serde_json::from_slice(&std::fs::read(&fixture.0).unwrap()).unwrap();
++            status["detached"] = detached.into();
++            status[if detached { "pid" } else { "owner_pid" }] = dead_pid.into();
++            std::fs::write(&fixture.0, serde_json::to_vec(&status).unwrap()).unwrap();
++            app.upsert_running_background_task(task.clone(), "Orphan build".into(), None);
++            crate::todo::save_todos(&app.session.id, &[dependency_todo("recover", &task)]).unwrap();
++            assert!(app.schedule_auto_poke_followup_if_needed());
++            assert_eq!(app.queued_messages.len(), 1);
++        }
++    });
++}
++
+ #[test]
+ fn background_dependency_reload_reads_session_scoped_task_state() {
+     with_temp_jcode_home(|| {
+@@ -108,7 +178,8 @@ fn background_dependency_reload_reads_session_scoped_task_state() {
+         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+         let mut status = serde_json::js
+```
+
+**File**: `crates/jcode-tui/src/tui/app/tests/remote_startup_input_02/part_01.rs` (modified, +6/-1)
+```diff
+@@ -1419,7 +1419,7 @@ fn test_create_transfer_session_from_parent_copies_todos_and_uses_compacted_cont
+                 confidence: None,
+                 completion_confidence: None,
+                 confidence_history: Vec::new(),
+-                waiting_on: Vec::new(),
++                waiting_on: vec!["parent-build-task".to_string()],
+             }],
+         )
+         .expect("save todos");
+@@ -1442,6 +1442,11 @@ fn test_create_transfer_session_from_parent_copies_todos_and_uses_compacted_cont
+         assert_eq!(child.working_dir.as_deref(), Some("/tmp"));
+         assert_eq!(child_todos.len(), 1);
+         assert_eq!(child_todos[0].content, "Carry this forward");
++        assert!(child_todos[0].waiting_on.is_empty());
++        assert_eq!(
++            crate::todo::load_todos(&app.session.id).unwrap()[0].waiting_on,
++            ["parent-build-task"]
++        );
+         for prompt in [None, Some("")] {
+             app.session.system_prompt = prompt.map(str::to_string);
+             let (child_id, _) = super::commands::create_transfer_session_from_parent(
+```
+
+**File**: `crates/jcode-tui/src/tui/ui_messages.rs` (modified, +1/-1)
+```diff
+@@ -2292,7 +2292,7 @@ fn todo_card_item_spans(todo: &crate::todo::TodoItem, with_confidence: bool) ->
+                 && todo.status != "completed"
+                 && todo.status != "cancelled"
+             {
+-                format!("[waiting bg] {}", todo.content)
++                format!("[bg dependency] {}", todo.content)
+             } else {
+                 todo.content.clone()
+             },
+```
+
+**File**: `crates/jcode-tui/src/tui/ui_messages/tests.rs` (modified, +4/-2)
+```diff
+@@ -1221,14 +1221,16 @@ fn background_dependency_todo_card_annotation_is_width_safe() {
+         ..Default::default()
+     };
+     let wide = render_todo_card_item_line(&todo, "", 60);
+-    assert!(extract_line_text(&wide).contains("[waiting bg]"));
++    assert!(extract_line_text(&wide).contains("[bg dependency]"));
+     for width in 0..40 {
+         let line = render_todo_card_item_line(&todo, "", width);
+         assert!(extract_line_text(&line).width() <= width);
+     }
+     let mut done = todo;
+     done.status = "completed".into();
+-    assert!(!extract_line_text(&render_todo_card_item_line(&done, "", 60)).contains("waiting"));
++    assert!(
++        !extract_line_text(&render_todo_card_item_line(&done, "", 60)).contains("bg dependency")
++    );
+ }
+ 
+ #[test]
+```
+
+---
+
+### Incident Patch 3: `77eb2732` (2026-10-24)
+**Commit Message**: Tag cache misses with verified unchanged-prefix evidence
+
+**File**: `crates/jcode-base/src/kv_cache_monitor.rs` (modified, +82/-1)
+```diff
+@@ -70,6 +70,20 @@ pub struct RequestSignature {
+ }
+ 
+ impl RequestSignature {
++    /// Positive evidence requires complete per-message fingerprints, not an
++    /// absent signature or an aggregate-hash fallback.
++    pub fn checked_prefix_unchanged(&self, previous: &RequestSignature) -> bool {
++        previous.message_count > 0
++            && previous.system_static_hash != 0
++            && previous.tools_hash != 0
++            && previous.message_hashes.len() == previous.message_count
++            && self.message_hashes.len() == self.message_count
++            && self.system_static_hash == previous.system_static_hash
++            && self.tools_hash == previous.tools_hash
++            && self.tool_count == previous.tool_count
++            && self.extends(previous)
++    }
++
+     /// Whether `self` extends `previous` without modifying earlier messages.
+     pub fn extends(&self, previous: &RequestSignature) -> bool {
+         if previous.message_count > self.message_count {
+@@ -169,6 +183,9 @@ impl MissReason {
+ #[derive(Debug, Clone, PartialEq, Eq)]
+ pub struct KvCacheMiss {
+     pub reason: MissReason,
++    /// Checked system, tool and prior-message fingerprints are unchanged.
++    /// This is evidence about the prefix, not proof of a provider-side cause.
++    pub prefix_unchanged: bool,
+     /// Tokens expected to be served from cache (previous reusable boundary).
+     pub expected_tokens: u64,
+     /// Tokens the provider reported as read from cache.
+@@ -193,6 +210,11 @@ impl KvCacheMiss {
+             );
+         }
+         let tokens = format_token_count(self.missed_tokens);
++        let prefix_tag = if self.prefix_unchanged {
++            " [prefix unchanged]"
++        } else {
++            ""
++        };
+         let detail = if self.detail.is_empty() {
+             self.reason.detail()
+         } else {
+@@ -207,7 +229,7 @@ impl KvCacheMiss {
+                 self.reason.id()
+             ),
+             (None, false) => format!(
+-                "KV cache miss [{}]: ~{tokens} tokens resent ({detail}).",
++                "KV cache miss [{}]{prefix_tag}: ~{tokens} tokens resent ({detail}).",
+                 self.reason.id()
+             ),
+         }
+@@ -522,6 +544,10 @@ fn classify(
+     );
+     Some(KvCacheMiss {
+         reason,
++        prefix_unchanged: matches!(reason, MissReason::LowRead | MissReason::ZeroRead)
++            && pending
++                .signature
++                .checked_prefix_unchanged(&baseline.signature),
+         expected_tokens: expected,
+         read_tokens,
+         missed_tokens: missed,
+@@ -677,6 +703,61 @@ mod tests {
+         assert_eq!(monitor.finish_request(52_000, Some(49_800)), None);
+     }
+ 
++    #[test]
++    fn prefix_unchanged_tag_requires_complete_matching_fingerprints() {
++        for change in [
++            "none",
++            "system",
++            "tools",
++            "tool_count",
++            "message",
++            "missing",
++            "partial",
++            "missing_system",
++            "missing_tools",
++        ] {
++            let mut monitor = KvCacheMonitor::new();
++            let mut previous = sig(&[10, 11]);
++            let mut current = sig(&[10, 11, 12]);
++            match change {
++                "system" => current.system_static_hash += 1,
++                "tools" => current.tools_hash += 1,
++                "tool_count" => current.tool_count += 1,
++                "message" => current.message_hashes[0] += 1,
++                "missing" => {
++                    previous.message_hashes.clear();
++                    current = previous.clone();
++                }
++                "partial" => {
++                    previous.message_hashes.pop();
++                    current.message_hashes.pop();
++                }
++                "missing_system" => {
++                    previous.system_static_hash = 0;
++                    current.system_static_hash = 0;
++                }
++                "missing_tools" => {
++                    previous.tools_hash = 0;
++                    current.tools_hash = 0;
++                }
++                _ => {}
++            }
++            monitor.begin_request(route(), previous);
++            assert!(monitor.finish_request(50_000, Some(0)).is_none());
++            monitor.begin_request(route(), current);
++            let miss = monitor.finish_request(52_000, Some(0)).expect("miss");
++            assert_eq!(miss.prefix_unchanged, change == "none", "{change}");
++            assert_eq!(
++                miss.message().contains("[prefix unchanged]"),
++                change == "none",
++                "{change}"
++            );
++        }
++        assert!(
++            !RequestSignature::default().checked_prefix_unchanged(&RequestSignature::default())
++        );
++    }
++
+     #[test]
+     fn small_real_loss_on_large_warm_prefix_is_not_hidden_by_percent() {
+         let mut monitor = KvCacheMonitor::new();
+```
+
+**File**: `crates/jcode-tui/src/tui/app.rs` (modified, +31/-1)
+```diff
+@@ -2645,16 +2645,46 @@ impl App {
+             return;
+         }
+ 
++        let prefix_tag = if matches!(
++            reason,
++            KvCacheMissReason::LowRead | KvCacheMissReason::ZeroRead
++        ) && Self::kv_cache_checked_prefix_unchanged(request)
++        {
++            " [prefix unchanged]"
++        } else {
++            ""
++        };
+         self.push_kv_cache_notice(format!(
+-            "{} KV cache miss [{}] {}: ~{} tokens resent ({}). See KV_CACHE_USAGE in logs.",
++            "{} KV cache miss [{}]{} {}: ~{} tokens resent ({}). See KV_CACHE_USAGE in logs.",
+             if harness_change { "⚠️" } else { "ℹ️" },
+             reason.label(),
++            prefix_tag,
+             usage,
+             token_label,
+             detail,
          ));
      }
-     lines
+ 
++    fn kv_cache_checked_prefix_unchanged(request: &PendingKvCacheRequest) -> bool {
++        let Some((previous, current)) = request
++            .baseline
++            .as_ref()
++            .and_then(|baseline| baseline.signature.as_ref())
++            .zip(request.signature.as_ref())
++        else {
++            return false;
++        };
++        previous.message_count > 0
++            && previous.system_static_hash != 0
++            && previous.tools_hash != 0
++            && previous.message_hashes.len() == previous.message_count
++            && current.message_hashes.len() == current.message_count
++            && current.system_static_hash == previous.system_static_hash
++            && current.tools_hash == previous.tools_hash
++            && current.tool_count == previous.tool_count
++            && Self::kv_cache_signatures_prefix_match(current, previous)
++    }
++
+     /// Specific, human-readable cause: what changed (from -> to) and the
+     /// timing evidence. Shares wording with the daemon-side monitor.
+     fn kv_cache_miss_detail(
+```
+
+**File**: `crates/jcode-tui/src/tui/app/remote/kv_cache_miss_tests.rs` (modified, +79/-0)
+```diff
+@@ -14,6 +14,85 @@ fn miss(reason: &str) -> ServerEvent {
+     }
+ }
+ 
++#[test]
++fn remote_prefix_tag_upgrades_provisional_notice_once_and_preserves_counters() {
++    for reason in [
++        KvCacheMissReason::LowRead,
++        KvCacheMissReason::HarnessToolsChanged,
++    ] {
++        let mut app = create_test_app();
++        app.kv_cache.kv_cache_turn_number = Some(2);
++        app.kv_cache.kv_cache_turn_call_index = 3;
++        app.kv_cache.kv_cache_miss_samples.push(KvCacheMissSample {
++            turn_number: 2,
++            call_index: 3,
++            missed_tokens: 15_618,
++            reason,
++        });
++        let content = format!(
++            "ℹ️ KV cache miss [{}] turn 2 call 3: 4.35K cached / 20K expected tokens: ~15.6K tokens resent (provisional).",
++            reason.label()
++        );
++        app.push_display_message(DisplayMessage::system(content.clone()));
++        let count = app.display_messages.len();
++        let daemon = "KV cache miss [low_read] [prefix unchanged]: ~15.6K tokens resent";
++        let expected_upgrade = reason == KvCacheMissReason::LowRead;
++        assert_eq!(
++            handle_kv_cache_miss(&mut app, "low_read", 15_618, daemon.into(), true),
++            expected_upgrade
++        );
++        assert_eq!(app.display_messages.len(), count);
++        let notice = &app.display_messages[count - 1].content;
++        assert_eq!(notice.contains("[prefix unchanged]"), expected_upgrade);
++        assert!(notice.contains("turn 2 call 3: 4.35K cached / 20K expected tokens"));
++        if !expected_upgrade {
++            assert_eq!(notice, &content);
++        }
++        assert!(!handle_kv_cache_miss(
++            &mut app,
++            "low_read",
++            15_618,
++            daemon.into(),
++            true
++        ));
++        assert_eq!(app.display_messages.len(), count);
++    }
++}
++
++#[test]
++fn remote_prefix_tag_is_revoked_by_authoritative_harness_change() {
++    for (reason, expected) in [
++        ("system_changed", KvCacheMissReason::HarnessSystemChanged),
++        ("tools_changed", KvCacheMissReason::HarnessToolsChanged),
++        ("prefix_changed", KvCacheMissReason::HarnessPrefixChanged),
++    ] {
++        let mut app = create_test_app();
++        app.kv_cache.kv_cache_turn_number = Some(2);
++        app.kv_cache.kv_cache_turn_call_index = 3;
++        app.kv_cache.kv_cache_miss_samples.push(KvCacheMissSample {
++            turn_number: 2,
++            call_index: 3,
++            missed_tokens: 15_618,
++            reason: KvCacheMissReason::LowRead,
++        });
++        app.push_display_message(DisplayMessage::system(
++            "ℹ️ KV cache miss [low read] [prefix unchanged] turn 2 call 3: provisional",
++        ));
++        let count = app.display_messages.len();
++        let corrected = format!("KV cache miss [{reason}]: ~15.6K tokens resent");
++        assert!(handle_kv_cache_miss(
++            &mut app,
++            reason,
++            15_618,
++            corrected.clone(),
++            true
++        ));
++        assert_eq!(app.display_messages.len(), count);
++        assert_eq!(app.display_messages[count - 1].content, corrected);
++        assert_eq!(app.kv_cache.kv_cache_miss_samples[0].reason, expected);
++    }
++}
++
+ #[test]
+ fn remote_kv_cache_miss_without_baseline_is_visible_in_order() {
+     let mut app = create_test_app();
+```
+
+**File**: `crates/jcode-tui/src/tui/app/remote/server_events.rs` (modified, +31/-0)
+```diff
+@@ -151,6 +151,32 @@ fn handle_kv_cache_miss(
+             .iter_mut()
+             .find(|sample| sample.turn_number == turn_number && sample.call_index == call_index)
+         {
++            // The daemon can have complete request fingerprints after a
++            // reconnect while the client only has provisional usage telemetry.
++            // Upgrade evidence in place without losing local turn/hit counters.
++            if notices_enabled
++                && matches!(reason, "low_read" | "zero_read")
++                && matches!(
++                    sample.reason,
++                    KvCacheMissReason::LowRead | KvCacheMissReason::ZeroRead
++                )
++                && message.contains("] [prefix unchanged]")
++            {
++                let marker = format!("turn {turn_number} call {call_index}:");
++                if let Some(idx) = app.display_messages.iter().rposition(|entry| {
++                    entry.role == "system"
++                        && entry.content.contains("KV cache miss [")
++                        && entry.content.contains(&marker)
++                        && !entry.content.contains("] [prefix unchanged]")
++                }) {
++                    let tagged = app.display_messages[idx].content.replacen(
++                        "] ",
++                        "] [prefix unchanged] ",
++                        1,
++                    );
++                    return app.replace_display_message_content(idx, tagged);
++                }
++            }
+             // TokenUsage can arrive before the daemon's native-compaction
+             // attribution. Correct that provisional local notice in place,
+             // rather than deduplicating away the more authoritative cause.
+@@ -161,6 +187,11 @@ fn handle_kv_cache_miss(
+                 "daily_rollover" => Some(KvCacheMissReason::DailyRollover),
+                 // The daemon knows the account actually used after a failover.
+                 "account_switch" => Some(KvCacheMissReason::AccountSwitch),
++                // Never retain a provisional unchanged-prefix tag when the
++                // daemon detected a real change in its request fingerprints.
++                "system_changed" => Some(KvCacheMissReason::HarnessSystemChanged),
++                "tools_changed" => Some(KvCacheMissReason::HarnessToolsChanged),
++                "prefix_changed" => Some(KvCacheMissReason::HarnessPrefixChanged),
+                 _ => None,
+             };
+             if let Some(authoritative) = authoritative
+```
+
+**File**: `crates/jcode-tui/src/tui/app/tests/cache_diagnostics.rs` (modified, +70/-0)
+```diff
+@@ -65,6 +65,76 @@ fn cache_diagnostic_fixture() -> (App, PendingKvCacheRequest) {
+     (app, request)
+ }
+ 
++#[test]
++fn kv_cache_prefix_tag_requires_positive_complete_evidence() {
++    for change in [
++        "none",
++        "system",
++        "tools",
++        "tool_count",
++        "message",
++        "missing",
++        "partial",
++        "missing_system",
++        "missing_tools",
++    ] {
++        let (mut app, mut request) = cache_diagnostic_fixture();
++        let current = request.signature.as_mut().unwrap();
++        match change {
++            "system" => current.system_static_hash += 1,
++            "tools" => current.tools_hash += 1,
++            "tool_count" => current.tool_count += 1,
++            "message" => current.message_hashes[0] += 1,
++            "missing" => request.baseline.as_mut().unwrap().signature = None,
++            "partial" => current.message_hashes.clear(),
++            "missing_system" => {
++                current.system_static_hash = 0;
++                request
++                    .baseline
++                    .as_mut()
++                    .unwrap()
++                    .signature
++                    .as_mut()
++                    .unwrap()
++                    .system_static_hash = 0;
++            }
++            "missing_tools" => {
++                current.tools_hash = 0;
++                request
++                    .baseline
++                    .as_mut()
++                    .unwrap()
++                    .signature
++                    .as_mut()
++                    .unwrap()
++                    .tools_hash = 0;
++            }
++            _ => {}
++        }
++        assert_eq!(
++            App::kv_cache_checked_prefix_unchanged(&request),
++            change == "none",
++            "{change}"
++        );
++        for reason in [
++            KvCacheMissReason::LowRead,
++            KvCacheMissReason::ZeroRead,
++            KvCacheMissReason::HarnessToolsChanged,
++        ] {
++            let completed = request.baseline.as_ref().unwrap().completed_at;
++            app.maybe_push_kv_cache_miss_notice(
++                &request, reason, 30_000, 20_000, 50_000, completed,
++            );
++            let notice = &app.display_messages().last().expect("notice").content;
++            assert_eq!(
++                notice.contains("[prefix unchanged]"),
++                change == "none" && reason != KvCacheMissReason::HarnessToolsChanged,
++                "{change}: {notice}"
++            );
++        }
++    }
++}
++
+ #[test]
+ fn kv_cache_diagnostics_show_idle_gap_not_generation_time() {
+     let (app, request) = cache_diagnostic_fixture();
+```
+
+**File**: `crates/jcode-tui/src/tui/ui_messages.rs` (modified, +30/-0)
+```diff
+@@ -598,6 +598,12 @@ fn kv_cache_footer_summary(body: &str) -> Option<String> {
+         None => kind.to_string(),
+     };
+     let mut parts = vec![lead, reason];
++    if body
++        .split_once(']')
++        .is_some_and(|(_, tail)| tail.trim_start().starts_with("[prefix unchanged]"))
++    {
++        parts.push("prefix unchanged".to_string());
++    }
+     if let Some(hit) = hit {
+         parts.push(format!("{hit:.0}% hit"));
+     }
+@@ -5224,6 +5230,30 @@ mod tests;
+ 
+ #[cfg(test)]
+ mod kv_cache_footer_tests {
++    #[test]
++    fn preserves_prefix_evidence_tag_and_keeps_footer_width_bounded() {
++        let body = "KV cache miss [low read] [prefix unchanged] turn 2 call 3: 4.35K cached / 20K expected tokens: ~15.6K tokens resent (cause unconfirmed).";
++        assert_eq!(
++            super::kv_cache_footer_summary(body).as_deref(),
++            Some("15.6K KV cache miss · low read · prefix unchanged · 22% hit")
++        );
++        let message = super::DisplayMessage::system(format!("ℹ️ {body}"));
++        for width in [12_u16, 30, 80, 120] {
++            let lines = super::render_kv_cache_footer(&message, width).unwrap();
++            assert_eq!(lines.len(), 1);
++            assert!(lines[0].width() <= usize::from(width));
++            if width >= 80 {
++                assert!(lines[0].to_string().contains("prefix unchanged"));
++            }
++        }
++        let unrelated = "KV cache miss [low read] turn 2: ~15K tokens resent (detail mentions [prefix unchanged]).";
++        assert!(
++            !super::kv_cache_footer_summary(unrelated)
++                .unwrap()
++                .contains("prefix unchanged")
++        );
++    }
++
+     #[test]
+     fn summarizes_miss_reason_missed_and_hit_pct() {
+         let s = super::kv_cache_footer_summary(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1967** (closed): feat: per-session env for tool-spawned processes (@johnnyfish)
+- **PR #1965** (closed): chore(ci): refresh ratchet budgets for post-v0.99.1 growth (@ianalitis)
+- **PR #1963** (closed): style(tui): apply rustfmt to master fmt drift so the Format guardrail stops failing every PR (@ianalitis)
+- **PR #1959** (closed): fix(security): cure cargo-audit red from RUSTSEC-2026-0387 and RUSTSEC-2026-0385 (@alecuba16)
+- **PR #1954** (2026-10-24): fix: bound agentgrep memory, cancel searches, report Windows usage (@1jehuang)
 - **PR #1917** (2026-10-21): Fix image rendering inside Zellij with classic Kitty placements (@anateus)
-- **PR #1916** (2026-10-21): Add configurable Kagi web search backend (@anateus)
-- **PR #1903** (closed): test: seed muse-subscription credentials in the provider_matrix sandbox (@alecuba16)
-- **PR #1900** (closed): fix: fresh sessions honor config default_model over pool head (@alecuba16)
-- **PR #1890** (2026-10-19): Make Jev decision models configurable (@Tapraj-Pathak)
-- **PR #1886** (2026-10-19): feat(provider): native Muse subscription login without the Muse CLI (@vallabha717)
 
 ---
 
@@ -2666,28 +3739,87 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): restore green master for v0.99.1
+## X. tui): show waiting todo clocks and live dependency progress
 
 **RULE**:
-When implementing operations in `crates/jcode-app-core/src/server/turn_failover.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/jcode-tui/src/tui/app/state_ui_messages.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89e46951`: ci): restore green master for v0.99.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `214e22d6`: tui): show waiting todo clocks and live dependency progress. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-app-core/src/server/turn_failover.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/app/state_ui_messages.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let result = super::client_lifecycle::process_message_streaming_mpsc(
+        crate::todo::todo_waits_on_running_task(todo, |task_id| {
+            self.running_todo_background_dependency(task_id).is_some()
+        })
+    }
+
+    pub(super) fn running_todo_background_dependency(
+        &self,
+        task_id: &str,
+    ) -> Option<crate::background::TaskStatusFile> {
+        if std::path::Path::new(task_id)
+            .file_name()
+            .and_then(|s| s.to_str())
+            != Some(task_id)
+        {
+            return None;
+        }
+        if self.background_task_rows.iter().any(|row| {
+            row.task_id == task_id && row.status != crate::tui::BackgroundTaskRowStatus::Running
+        }) {
+            return None;
+        }
+        let status: crate::background::TaskStatusFile = serde_json::from_slice(
+            &std::fs::read(crate::background::global().status_path_for(task_id)).ok()?,
+        )
+        .ok()?;
+        // UI rows are history, not proof that an owner survived a crash.
+        let owner = if status.detached {
+            status.pid
+        } else {
+            status.owner_pid.or(status.pid)
+        };
+        if owner.is_none_or(|pid| {
+            pid == 0 || pid > i32::MAX as u32 || !crate::platform::is_process_run
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let mut result = super::client_lifecycle::process_message_streaming_mpsc(
+        crate::todo::todo_waits_on_running_task(todo, |task_id| {
+            if std::path::Path::new(task_id)
+                .file_name()
+                .and_then(|s| s.to_str())
+                != Some(task_id)
+            {
+                return false;
+            }
+            let row = self
+                .background_task_rows
+                .iter()
+                .find(|row| row.task_id == task_id);
+            if row.is_some_and(|row| row.status != crate::tui::BackgroundTaskRowStatus::Running) {
+                return false;
+            }
+            let status = std::fs::read(crate::background::global().status_path_for(task_id))
+                .ok()
+                .and_then(|bytes| {
+                    serde_json::from_slice::<crate::background::TaskStatusFile>(&bytes).ok()
+                });
+            if let Some(status) = status {
+                // Retained UI rows are presentation history, not proof that a
+                // task survived a crash. Detached commands belong to their
+                // child PID, while in-process tasks belong to the daemon.
+                let owner = if status.detached {
+                    status.pid
+                } else {
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89e46951` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `214e22d6` are properly handled with clean fallback behavior.

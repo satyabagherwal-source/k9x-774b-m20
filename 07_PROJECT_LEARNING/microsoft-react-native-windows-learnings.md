@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
-> **Source Version**: `cf0d3767`  
+> **Source Version**: `23fe304f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T09:35:20.526Z  
+> **Timestamp**: 2026-10-25T14:03:21.874Z  
 > **Learning ID**: `learn-github-microsoft-react-native-windows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T09:35:19.992Z  
+> **Harvest Timestamp**: 2026-10-25T14:03:21.868Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A framework for building native Windows apps with React.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17359 stars
+- **Stars / Engagement**: 17362 stars
 
 ---
 
@@ -1566,152 +1566,391 @@ export default FocusManager;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba65c6b4` (2026-08-21)
-**Commit Message**: Fix crash modifying outline property (#16386)
+### Incident Patch 1: `23fe304f` (2026-10-24)
+**Commit Message**: 📦 Bump the all-dependencies group across 1 directory with 14 updates (#16491)
 
-* Fix crash modifying outline property
+Bumps the all-dependencies group with 14 updates in the / directory:
 
-* Change files
+| Package | From | To |
+| --- | --- | --- |
+| [ts-jest](https://github.com/kulshekhar/ts-jest) | `29.4.12` | `29.4.14` |
+| [@types/react](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/react) | `19.2.18` | `19.3.0` |
+| [@types/async](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/async) | `3.2.25` | `3.2.26` |
+| [@types/lodash](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/lodash) | `4.17.25` | `4.17.26` |
+| [@types/react-test-renderer](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/react-test-renderer) | `19.1.0` | `19.3.0` |
+| [@microsoft/1ds-core-js](https://github.com/microsoft/ApplicationInsights-JS) | `4.4.3` | `4.4.5` |
+| [@microsoft/1ds-post-js](https://github.com/microsoft/ApplicationInsights-JS) | `4.4.3` | `4.4.5` |
+| [@microsoft/api-extractor](https://github.com/microsoft/rushstack/tree/HEAD/apps/api-extractor) | `7.59.0` | `7.59.4` |
+| [eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest) | `29.16.6` | `29.16.11` |
+| [mem
 
-**File**: `change/react-native-windows-c1af9f4d-e4f1-4dea-9a73-b66033f3bb8d.json` (added, +7/-0)
+**File**: `yarn.lock` (modified, +201/-200)
 ```diff
-@@ -0,0 +1,7 @@
-+{
-+  "type": "prerelease",
-+  "comment": "Fix crash modifying outline property",
-+  "packageName": "react-native-windows",
-+  "email": "30809111+acoates-ms@users.noreply.github.com",
-+  "dependentChangeType": "patch"
-+}
-```
-
-**File**: `vnext/Microsoft.ReactNative/Fabric/Composition/BorderPrimitive.cpp` (modified, +1/-1)
-```diff
-@@ -713,7 +713,7 @@ BorderPrimitive::BorderPrimitive(
-     : m_outer(&outer), m_rootVisual(rootVisual), m_ownsRootVisual(false) {}
+@@ -2840,107 +2840,107 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- BorderPrimitive::BorderPrimitive(winrt::Microsoft::ReactNative::Composition::implementation::ComponentView &outer)
--    : m_outer(&outer), m_rootVisual(outer.CompositionContext().CreateSpriteVisual()) {}
-+    : m_outer(&outer), m_rootVisual(outer.CompositionContext().CreateSpriteVisual()), m_ownsRootVisual(true) {}
+-"@jsonjoy.com/fs-core@npm:4.69.1":
+-  version: 4.69.1
+-  resolution: "@jsonjoy.com/fs-core@npm:4.69.1"
++"@jsonjoy.com/fs-core@npm:4.80.0":
++  version: 4.80.0
++  resolution: "@jsonjoy.com/fs-core@npm:4.80.0"
+   dependencies:
+-    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
+-    "@jsonjoy.com/fs-node-utils": "npm:4.69.1"
++    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
++    "@jsonjoy.com/fs-node-utils": "npm:4.80.0"
+     thingies: "npm:^2.5.0"
+   peerDependencies:
+     tslib: 2
+-  checksum: 10c0/83b4302db0a485769b87d4c0bcb20a3da890ec12821051555ab75179629cb65e704db0e98e37da1f29b694fc0f67f64e6763377bdee8d128b32fa838bb305fe9
++  checksum: 10c0/dddfc154fd16ab6bab67916794d91c0aed4d267a02f8e3a1d3062bc2966d727cade1648f550280ea3a9f044aee01dfd1ce56e449682f50a34075be724615cfaa
+   languageName: node
+   linkType: hard
  
- winrt::Microsoft::ReactNative::Composition::Experimental::IVisual BorderPrimitive::RootVisual() const noexcept {
-   return m_rootVisual;
+-"@jsonjoy.com/fs-fsa@npm:4.69.1":
+-  version: 4.69.1
+-  resolution: "@jsonjoy.com/fs-fsa@npm:4.69.1"
++"@jsonjoy.com/fs-fsa@npm:4.80.0":
++  version: 4.80.0
++  resolution: "@jsonjoy.com/fs-fsa@npm:4.80.0"
+   dependencies:
+-    "@jsonjoy.com/fs-core": "npm:4.69.1"
+-    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
+-    "@jsonjoy.com/fs-node-utils": "npm:4.69.1"
++    "@jsonjoy.com/fs-core": "npm:4.80.0"
++    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
++    "@jsonjoy.com/fs-node-utils": "npm:4.80.0"
+     thingies: "npm:^2.5.0"
+   peerDependencies:
+     tslib: 2
+-  checksum: 10c0/26be9b5a0846f635155380cbb23c905a77908b5ccd77bf3671e68063242d516a36275217f7bc869055944e0b5a0d5f6afa43e4622c71dd83431ee7e3df6e78da
++  checksum: 10c0/fc5ddfccae167cb79ba1de4bee1636d73a8289c00fe6978950bfff09c2244a802063d19d55e9f27b6945e70a981b75dfede1efd9ca022c1ed6180653a41611fa
+   languageName: node
+   linkType: hard
+ 
+-"@jsonjoy.com/fs-node-builtins@npm:4.69.1":
+-  version: 4.69.1
+-  resolution: "@jsonjoy.com/fs-node-builtins@npm:4.69.1"
++"@jsonjoy.com/fs-node-builtins@npm:4.80.0":
++  version: 4.80.0
++  resolution: "@jsonjoy.com/fs-node-builtins@npm:4.80.0"
+   peerDependencies:
+     tslib: 2
+-  checksum: 10c0/eb76b47ab4b3bc250d74e8e3a89e70d7196c4c543ef73e6fc560f00393a2cd16745ff2bbdf57458997c324074c0a11e42e9c7321bec56db1372686ac6a569338
++  checksum: 10c0/9324295979e8be14f64cf8ce54d9b49fe50a42f3ade9301ac00d7c7841da26ff25aa0c37f02edd8ca3247b07b6791db9e68d76e7f0d5dc51e8c2da090c514b3d
+   languageName: node
+   linkType: hard
+ 
+-"@jsonjoy.com/fs-node-to-fsa@npm:4.69.1":
+-  version: 4.69.1
+-  resolution: "@jsonjoy.com/fs-node-to-fsa@npm:4.69.1"
++"@jsonjoy.com/fs-node-to-fsa@npm:4.80.0":
++  version: 4.80.0
++  resolution: "@jsonjoy.com/fs-node-to-fsa@npm:4.80.0"
+   dependencies:
+-    "@jsonjoy.com/fs-fsa": "npm:4.69.1"
+-    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
+-    "@jsonjoy.com/fs-node-utils": "npm:4.69.1"
++    "@jsonjoy.com/fs-fsa": "npm:4.80.0"
++    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
++    "@jsonjoy.com/fs-node-utils": "npm:4.80.0"
+   peerDependencies:
+     tslib: 2
+-  checksum: 10c0/8c740984a40550b2f46d63c83365b207daa01fe4123884ea0004fabc3317d147d2a522a2bf8c9ef523d7ad1f8c72c440b2df161c4058bf816f26599a251865dd
++  checksum: 10c0/53eebb78689e18c851f31dc1f9cea4f427225f3314eca41eefef55fcd894f40bfef829b400f1873675e9823edc67cc9f678da4812b40ae87efed13f215c350c8
+   languageName: node
+   linkType: hard
+ 
+-"@jsonjoy.com/fs-node-utils@npm:4.69.1":
+-  version: 4.69.1
+-  resolution: "@jsonjoy.com/fs-node-utils@npm:4.69.1"
++"@jsonjoy.com/fs-node-utils@npm:4.80.0":
++  version: 4.80.0
++  resolution: "@jsonjoy.com/fs-node-utils@npm:4.80.0"
+   dependencies:
+-    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
+-    glob-to-regex.js: "npm:^1.0.1"
++    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
++    glob-to-regex.js: "npm:^1.3.1"
+   peerDependencies:
+     tslib: 2
+-  checksum: 10c0/13a18aa6ab97e8cd7349448cb3a9ee7914959b99c22445d626ee28fa38ded2270c637e45e9486a0f870702c55519a2a9fc2c0b21d77fd266a49fcf2843d5057f
++  checksum: 10c0/718465fd60009a32a76fae8582e7e88eff2047cc613c764c9ae0a6aa74ad4319b062e35849bb2325d24cfdc5e5ff2894027bbc0a4a647c8334437d1db1db9920
+   languageName: node
+   linkType: hard
+ 
+-"@jsonjoy.com/fs-node@npm:4.69.1":
+-  version: 4.69.1
+-  resolution: "@jsonjoy.com/fs-node@npm:4.69.1"
++"@jsonjoy.com/fs-node@npm:4.80.0":
++  version: 4.80.0
++  resolution: "@jsonjoy.com/fs-node@npm:4.80.0"
+   dependencies:
+-    "@jsonjoy.com/fs-core": "npm:4.69.1"
+-    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
+-    "@jsonjoy.com/fs-node-utils": "npm:4.69.1"
+-    "@jsonjoy.com/fs-print": "npm:4.69.1"
+-    "@jsonjoy.com/fs-snapshot": "npm:4.69.1"
+-    glob-to-regex.js: "npm:^1.0.0"
++    "@jsonjoy.com/fs-core": "npm:4.80.0"
++    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
++    "@jsonjoy.com/fs-node-utils": "npm:4.80.0"
++    "@jsonjoy.com/fs-print": "npm:4.80.0"
++    "@jsonjoy.com/fs-snapshot": "npm:4.80.0"
++    glob-to-regex.js: "npm:^1.3.1"
+     thingies: "npm:^2.5.0"
+   peerDependencies:
+     tslib: 2
+-  checksum: 10c0/d87832573e0cb266bd544f38c487f30b4726d0e061967
 ```
 
 ---
 
-### Incident Patch 2: `811b4433` (2026-10-15)
-**Commit Message**: Fix single-line TextInput text drawn below center on ARM64 (#16482)
+### Incident Patch 2: `b7001f1c` (2026-10-24)
+**Commit Message**: Route npm, Yarn, and NuGet restores through PackageFeedProxy (#16501)
 
-GetContentSize() passed TxGetNaturalSize a height extent of LONG_MAX
-scaled to HIMETRIC, which doesn't fit in a LONG. The out-of-range
-float-to-LONG conversion gives LONG_MIN on x64 but saturates to LONG_MAX
-on ARM64. TxGetNaturalSize treats a negative extent as unconstrained,
-but a positive one as a zoom reference, so on ARM64 the huge height
-scaled the natural size down to about 0. Any large positive value does
-this: 1000000 also returns 0.
+* Route npm, Yarn, and NuGet restores through PackageFeedProxy
 
-Since #15754, single-line text is centered using this height, so on
-ARM64 the text and placeholder were drawn from the middle of the box
-down and the bottom of the glyphs was clipped. Pass -1, which is
-unconstrained on every architecture and matches what x64 already got.
+Keep ADO-only V8 packages on their mapped feed and preserve publication destinations.
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `change/react-native-windows-77fda7b1-66d2-49d3-998b-cbe38717cf0e.json` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+{
-+  "type": "prerelease",
-+  "comment": "Fix single-line TextInput text drawn below center by measuring content with an unconstrained height",
-+  "packageName": "react-native-windows",
-+  "email": "ryan.fowler@singlewire.com",
-+  "dependentChangeType": "patch"
-+}
-```
+* Add package-feed migration change file
 
-**File**: `vnext/Microsoft.ReactNative/Fabric/Composition/TextInput/WindowsTextInputComponentView.cpp` (modified, +4/-1)
-```diff
-@@ -1396,7 +1396,10 @@ std::pair<float, float> WindowsTextInputComponentView::GetContentSize() const no
- 
-   SIZE extentHimetric = {
-       static_cast<LONG>(availableWidth * scale * HIMETRIC_PER_INCH / dpi),
--      static_cast<LONG>(std::numeric_limits<LONG>::max() * HIMETRIC_PER_INCH / dpi)};
-+      // -1 measures without zoom, matching how this host draws (TxGetExtent returns E_NOTIMPL).
-+      // A positive extent is taken as a zoom reference; LONG_MAX scaled to HIMETRIC saturated to a
-+      // huge positive value on ARM64 and shrank the natural height to about 0.
-+      -1};
- 
-   SIZE naturalSize = {0, 0};
- 
-```
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
----
+* Address Copilot: clarify internal SDK feed opt-in
 
-### Incident Patch 3: `56d0ff9e` (2026-10-16)
-**Commit Message**: Fix touch timestamps so PanResponder handles every move (#16483)
+Direct local internal SDK testing through the helper that adds both the NuGet source and its package mapping.
 
-* Fix touch timestamps so PanResponder handles every move
-
-UpdateActiveTouch never set Touch::timeStamp, which core now uses for the
-JS event timestamp. It kept the value from when the touch was created on
-press, so every move in a gesture had the same timestamp and PanResponder
-dropped all moves after the first. Set it on every update.
-
-Also fix the deprecated Float timestamp: it was epoch milliseconds stored
-in a 32-bit float, which only resolves to ~131 s, and in the wrong units
-(the field is seconds). Store seconds from a recent origin instead.
-
-Fixes #14119
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Change files
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: acoates-ms <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `change/react-native-windows-616b8467-8959-43d7-8f2a-8cb3c5897fa8.json` (added, +7/-0)
+**File**: `.ado/README.md` (modified, +23/-13)
 ```diff
-@@ -0,0 +1,7 @@
-+{
-+  "type": "prerelease",
-+  "comment": "Fix touch timestamps so PanResponder handles every move",
-+  "packageName": "react-native-windows",
-+  "email": "ryan.fowler@singlewire.com",
-+  "dependentChangeType": "patch"
-+}
+@@ -81,16 +81,25 @@ All repository resources pin `ref: refs/tags/release`.
+ ## Package feed and network isolation
+ 
+ ISS agents run under 1ES **Network Isolation**, which blocks egress to public CDNs.
+-The pipelines source packages only from the `ms/react-native-public` Azure Artifacts
+-feed and neutralize three background egress attempts that green builds would
+-otherwise hide:
+-
+-- **Feed registry:** `variables/shared.yml` points npm and Yarn at the
+-  `ms/react-native-public` feed (`NPM_CONFIG_REGISTRY` / `YARN_NPM_REGISTRY_SERVER`).
+-  On CI, `templates/auth-npm-feed.yml` mints a managed-identity token and writes it
+-  to `~/.npmrc` and `~/.yarnrc.yml` before any install.
++The pipelines use approved package feeds and neutralize three background egress
++attempts that green builds would otherwise hide:
++
++- **NuGet restores:** the root `NuGet.Config` maps NuGet.org dependencies to
++  `https://packagefeedproxy.microsoft.io/nuget/v3/index.json` anonymously.
++  Only `ReactNative.V8Jsi.Windows*` and `Microsoft.JavaScript.V8*` use the
++  `ms/react-native-public` ADO feed, where these V8 packages are published.
++  CI imports this policy for generated apps/libraries and third-party configs;
++  CLI-init tests also retain their local feed for freshly built RNW packages.
++  NuGet 6.0 or later is required to enforce these source mappings.
++  BinSkim downloads use the same proxy instead of nuget.org.
++- **Package registries:** `variables/shared.yml` routes npm/npx and Yarn through
++  the anonymous PackageFeedProxy (`NPM_CONFIG_REGISTRY` /
++  `YARN_NPM_REGISTRY_SERVER`) in both PR and Continuous validation.
++  `templates/auth-npm-feed.yml` keeps the managed-identity token scoped to direct
++  Azure Artifacts requests in `~/.npmrc` and passes it to the Verdaccio uplink;
++  Yarn does not send the token to the proxy.
+ - **Verdaccio (CLI init tests):** `verdaccio/generate-config.js` emits the config at
+-  runtime, so the uplink targets the feed (with the CI token when present) while
++  runtime, so the uplink uses the proxy for PRs and the ADO feed with the CI token while
+   local packages still publish offline. The former static `config.yaml` was removed.
+ - **React Native DevTools:** `RNDT_DEV: 1` stops DevTools from fetching its
+   standalone shell binary from a Facebook CDN when Metro starts. The debugger is
+@@ -101,10 +110,11 @@ otherwise hide:
+   reapplies the same policy per job as an interim belt until the updated image
+   ships; it can be dropped once a rebuilt image is confirmed clean.
+ 
+-Public PR builds read this feed **anonymously**, so they can only restore versions
+-an authenticated identity has already saved. `warm-feed-pipeline.yml` (the
+-`@rnw-scripts/warm-feed` tool) runs on a schedule to re-pull the latest patch of
+-every npm/NuGet line already in the feed and keep those anonymous restores working.
++PackageFeedProxy restores are **anonymous** and do not depend on the RNW feed
++warm-up. The scheduled warm-up maintained on `main` still populates the ADO feed
++for its remaining consumers. Publishing and authenticated feed maintenance keep
++their existing endpoints; NuGet defaults shipped in generated apps/libraries
++are unchanged.
+ 
+ ## SDL and Component Governance
+ 
 ```
 
-**File**: `vnext/Microsoft.ReactNative/Fabric/Composition/CompositionEventHandler.cpp` (modified, +6/-2)
+**File**: `.ado/build-template.yml` (modified, +1/-2)
 ```diff
-@@ -1038,9 +1038,13 @@ void CompositionEventHandler::UpdateActiveTouch(
-   activeTouch.touch.screenPoint.y = ptScaled.y;
-   activeTouch.touch.offsetPoint.x = ptLocal.x;
-   activeTouch.touch.offsetPoint.y = ptLocal.y;
-+  // Restamp on every update; PanResponder ignores moves whose timestamp hasn't advanced.
-+  activeTouch.touch.timeStamp = facebook::react::HighResTimeStamp::now();
-+  // The deprecated timestamp is in seconds and is a 32-bit float, so measure it from a recent origin to keep
-+  // sub-millisecond precision.
-+  static const auto s_timestampOrigin = facebook::react::HighResTimeStamp::now();
-   activeTouch.touch.timestamp = static_cast<facebook::react::Float>(
--      std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
--          .count());
-+      (activeTouch.touch.timeStamp - s_timestampOrigin).toDOMHighResTimeStamp() / 1000.0);
-   activeTouch.touch.force = 0;
-   // activeTouch.touch.isBarrelButton = false;
-   // activeTouch.touch.shiftKey = false;
+@@ -164,7 +164,7 @@ extends:
+               version: '24.x'
+             displayName: Use Node.js 24.x
+ 
+-          # CI is network-isolated; authenticate to the package feed before any npm/Yarn use.
++          # CI is network-isolated; acquire the feed token used by the Verdaccio uplink.
+           - ${{ if eq(parameters.buildEnvironment, 'Continuous') }}:
+             - template: .ado/templates/auth-npm-feed.yml@self
+ 
+@@ -550,4 +550,3 @@ extends:
+           parameters:
+             buildEnvironment: ${{ parameters.buildEnvironment }}
+             AgentPool: ${{ parameters.AgentPool }}
+-
+```
+
+**File**: `.ado/scripts/build.js` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ const sourcesPath = path.resolve(__dirname, "..", "..");
+ 
+ const binskimPackageName = "Microsoft.CodeAnalysis.BinSkim";
+ const binskimVersion = "4.4.9";
+-const binskimNuGetSource = "https://api.nuget.org/v3/index.json";
++const binskimNuGetSource = "https://packagefeedproxy.microsoft.io/nuget/v3/index.json";
+ 
+ const options = {
+   help:          { type: "boolean", default: false },
+```
+
+**File**: `.ado/templates/auth-npm-feed.yml` (modified, +1/-4)
+```diff
+@@ -1,4 +1,4 @@
+-# Authenticates npm and Yarn 4 to the ms/react-native-public feed with the build's managed identity.
++# Acquires a managed-identity token for direct npm requests and the Verdaccio feed uplink.
+ steps:
+ - task: AzureCLI@2
+   displayName: Authenticate to the package feed
+@@ -11,8 +11,5 @@ steps:
+       if ([string]::IsNullOrWhiteSpace($token)) { throw 'Failed to acquire a package feed access token.' }
+       Write-Host "##vso[task.setsecret]$token"
+       Write-Host "##vso[task.setvariable variable=RNW_NPM_FEED_TOKEN;issecret=true]$token"
+-      Write-Host "##vso[task.setvariable variable=NPM_CONFIG_REGISTRY]https://pkgs.dev.azure.com/ms/react-native/_packaging/react-native-public/npm/registry/"
+-      Write-Host "##vso[task.setvariable variable=YARN_NPM_REGISTRY_SERVER]https://pkgs.dev.azure.com/ms/react-native/_packaging/react-native-public/npm/registry/"
+       $reg = '//pkgs.dev.azure.com/ms/react-native/_packaging/react-native-public/npm/registry/'
+       Set-Content -Path (Join-Path $env:USERPROFILE '.npmrc') -Encoding ascii -Value "${reg}:_authToken=$token"
+-      Set-Content -Path (Join-Path $env:USERPROFILE '.yarnrc.yml') -Encoding ascii -Value @('npmAlwaysAuth: true', "npmAuthToken: $token")
+```
+
+**File**: `.ado/templates/prepare-build-env.yml` (modified, +28/-2)
+```diff
+@@ -44,11 +44,37 @@ steps:
+       Get-Process -Name BackgroundDownload -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+     displayName: Disable VS Installer background download
+ 
+-  # The commit tag in the nuspec requires that we use at least nuget 5.8 (because things break with nuget versions before and Vs 16.8 or later)
++  # NuGet 6.0 or later is required to enforce package source mappings.
+   - task: NuGetToolInstaller@1
+     displayName: Set NuGet version
+     inputs:
+-      versionSpec: ">=5.8.0"
++      versionSpec: ">=6.0.0"
++
++  # Third-party configs must retain the repository's sources and mappings under network isolation.
++  - pwsh: |
++      [xml] $repoConfig = Get-Content -LiteralPath '$(Build.SourcesDirectory)\NuGet.Config'
++      $root = Join-Path '$(Build.SourcesDirectory)' 'node_modules'
++      $globs = @((Join-Path $root '*\windows\NuGet.Config'), (Join-Path $root '@*\*\windows\NuGet.Config'))
++      $configs = Get-ChildItem -Path $globs -File -ErrorAction SilentlyContinue |
++        Where-Object { Select-String -Path $_.FullName -Pattern 'api\.nuget\.org' -Quiet -ErrorAction SilentlyContinue }
++      if (-not $configs) {
++        Write-Host 'No non-compliant node_modules NuGet.Config files found.'
++        return
++      }
++      foreach ($file in $configs) {
++        [xml] $config = Get-Content -LiteralPath $file.FullName
++        if (-not $config.configuration.packageSources) { continue }
++        foreach ($name in @('packageSources', 'packageSourceMapping')) {
++          $existing = $config.configuration.SelectSingleNode($name)
++          if ($existing) {
++            [void] $config.configuration.RemoveChild($existing)
++          }
++          [void] $config.configuration.AppendChild($config.ImportNode($repoConfig.configuration.SelectSingleNode($name), $true))
++        }
++        $config.Save($file.FullName)
++        Write-Host "Rewrote $($file.FullName) to use the approved NuGet source mappings."
++      }
++    displayName: Enforce compliant NuGet feed in node_modules
+ 
+   - template: set-appx-platforms.yml
+     parameters:
+```
+
+**File**: `.ado/templates/prepare-js-env.yml` (modified, +1/-1)
+```diff
+@@ -23,7 +23,7 @@ steps:
+     displayName: Ensure npm directory for npx commands
+     condition: eq(variables['Agent.OS'], 'Windows_NT')
+ 
+-  # CI is network-isolated; authenticate to the package feed before install.
++  # CI is network-isolated; acquire the feed token used by the Verdaccio uplink.
+   - ${{ if eq(parameters.buildEnvironment, 'Continuous') }}:
+     - template: auth-npm-feed.yml
+ 
+```
+
+**File**: `.ado/templates/react-native-init-windows.yml` (modified, +16/-1)
+```diff
+@@ -110,9 +110,12 @@ steps:
+         $configPaths += 'example\NuGet.config'
+       }
+ 
++      [xml] $repoConfig = Get-Content -LiteralPath '$(Build.SourcesDirectory)\NuGet.Config'
+       $sources = [ordered]@{
+         TestFeed = '$(System.DefaultWorkingDirectory)\NugetTestFeed'
+-        'react-native' = 'https://pkgs.dev.azure.com/ms/react-native/_packaging/react-native-public/nuget/v3/index.json'
++      }
++      foreach ($source in $repoConfig.configuration.packageSources.add) {
++        $sources[$source.key] = $source.value
+       }
+ 
+       foreach ($configPath in $configPaths) {
+@@ -131,6 +134,18 @@ steps:
+           $element.SetAttribute('value', $source.Value)
+           [void] $packageSources.AppendChild($element)
+         }
++        $existingMapping = $config.configuration.packageSourceMapping
++        if ($existingMapping) {
++          [void] $config.configuration.RemoveChild($existingMapping)
++        }
++        $mapping = $config.ImportNode($repoConfig.configuration.packageSourceMapping, $true)
++        $localSource = $config.CreateElement('packageSource')
++        $localSource.SetAttribute('key', 'TestFeed')
++        $pattern = $config.CreateElement('package')
++        $pattern.SetAttribute('pattern', '*')
++        [void] $localSource.AppendChild($pattern)
++        [void] $mapping.AppendChild($localSource)
++        [void] $config.configuration.AppendChild($mapping)
+         $config.Save((Resolve-Path -LiteralPath $configPath))
+         Write-Host "Updated $configPath"
+       }
+```
+
+**File**: `.ado/variables/shared.yml` (modified, +1/-2)
+```diff
+@@ -6,8 +6,7 @@ variables:
+   NPM_CONFIG_YES: false
+   NPM_CONFIG_CACHE: $(Agent.TempDirectory)/.npmCache
+ 
+-  # Pull-request builds do not have a feed token, so use the anonymous proxy by default.
+-  # Continuous builds switch to the authenticated feed in auth-npm-feed.yml.
++  # Route npm and Yarn through the anonymous proxy so validation does not require feed authentication.
+   NPM_CONFIG_REGISTRY: https://packagefeedproxy.microsoft.io/npm/
+   YARN_NPM_REGISTRY_SERVER: https://packagefeedproxy.microsoft.io/npm/
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16490** (2026-10-18): Fix nightly library scaffold version selection (@vmoroz)
-- **PR #16489** (2026-10-19): Use YAML to control pipeline triggers (@vmoroz)
-- **PR #16484** (2026-10-15): Promote React Native Windows 0.85 to latest (@anuagragith)
-- **PR #16483** (2026-10-16): Fix touch timestamps so PanResponder handles every move (@ryfow)
-- **PR #16482** (2026-10-15): Fix single-line TextInput text drawn below center on ARM64 (@ryfow)
-- **PR #16480** (2026-10-13): [0.84] Route validation npm requests through package proxy (@anuagragith)
+- **PR #16503** (2026-10-24): [0.84] Fix Jest ESLint plugin resolution (@vmoroz)
+- **PR #16502** (2026-10-24): [0.85] Route npm, Yarn, and NuGet restores through PackageFeedProxy (@vmoroz)
+- **PR #16501** (2026-10-24): Route npm, Yarn, and NuGet restores through PackageFeedProxy (@vmoroz)
+- **PR #16500** (2026-10-24): [0.83] Route npm, Yarn, and NuGet restores through PackageFeedProxy (@vmoroz)
+- **PR #16499** (2026-10-24): [0.81] Route npm, Yarn, and NuGet restores through PackageFeedProxy (@vmoroz)
+- **PR #16498** (2026-10-24): [0.84] Route NuGet restores through PackageFeedProxy (@vmoroz)
 
 ---
 
@@ -1731,34 +1970,72 @@ Co-authored-by: acoates-ms <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crash modifying outline property (#16386)
+## X. 📦 Bump the all-dependencies group across 1 directory with 14 updates (#16491)
 
 **RULE**:
-When implementing operations in `change/react-native-windows-c1af9f4d-e4f1-4dea-9a73-b66033f3bb8d.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba65c6b4`: crash modifying outline property (#16386). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23fe304f`: 📦 Bump the all-dependencies group across 1 directory with 14 updates (#16491). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/react-native-windows-c1af9f4d-e4f1-4dea-9a73-b66033f3bb8d.json`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yarn.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-{
-  "type": "prerelease",
-  "comment": "Fix crash modifying outline property",
-  "packageName": "react-native-windows",
-  "email": "30809111+acoates-ms@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
+"@jsonjoy.com/fs-core@npm:4.80.0":
+  version: 4.80.0
+  resolution: "@jsonjoy.com/fs-core@npm:4.80.0"
+    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
+    "@jsonjoy.com/fs-node-utils": "npm:4.80.0"
+  checksum: 10c0/dddfc154fd16ab6bab67916794d91c0aed4d267a02f8e3a1d3062bc2966d727cade1648f550280ea3a9f044aee01dfd1ce56e449682f50a34075be724615cfaa
+"@jsonjoy.com/fs-fsa@npm:4.80.0":
+  version: 4.80.0
+  resolution: "@jsonjoy.com/fs-fsa@npm:4.80.0"
+    "@jsonjoy.com/fs-core": "npm:4.80.0"
+    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
+    "@jsonjoy.com/fs-node-utils": "npm:4.80.0"
+  checksum: 10c0/fc5ddfccae167cb79ba1de4bee1636d73a8289c00fe6978950bfff09c2244a802063d19d55e9f27b6945e70a981b75dfede1efd9ca022c1ed6180653a41611fa
+"@jsonjoy.com/fs-node-builtins@npm:4.80.0":
+  version: 4.80.0
+  resolution: "@jsonjoy.com/fs-node-builtins@npm:4.80.0"
+  checksum: 10c0/9324295979e8be14f64cf8ce54d9b49fe50a42f3ade9301ac00d7c7841da26ff25aa0c37f02edd8ca3247b07b6791db9e68d76e7f0d5dc51e8c2da090c514b3d
+"@jsonjoy.com/fs-node-to-fsa@npm:4.80.0":
+  version: 4.80.0
+  resolution: "@jsonjoy.com/fs-node-to-fsa@npm:4.80.0"
+    "@jsonjoy.com/fs-fsa": "npm:4.80.0"
+    "@jsonjoy.com/fs-node-builtins": "npm:4.80.0"
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+"@jsonjoy.com/fs-core@npm:4.69.1":
+  version: 4.69.1
+  resolution: "@jsonjoy.com/fs-core@npm:4.69.1"
+    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
+    "@jsonjoy.com/fs-node-utils": "npm:4.69.1"
+  checksum: 10c0/83b4302db0a485769b87d4c0bcb20a3da890ec12821051555ab75179629cb65e704db0e98e37da1f29b694fc0f67f64e6763377bdee8d128b32fa838bb305fe9
+"@jsonjoy.com/fs-fsa@npm:4.69.1":
+  version: 4.69.1
+  resolution: "@jsonjoy.com/fs-fsa@npm:4.69.1"
+    "@jsonjoy.com/fs-core": "npm:4.69.1"
+    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
+    "@jsonjoy.com/fs-node-utils": "npm:4.69.1"
+  checksum: 10c0/26be9b5a0846f635155380cbb23c905a77908b5ccd77bf3671e68063242d516a36275217f7bc869055944e0b5a0d5f6afa43e4622c71dd83431ee7e3df6e78da
+"@jsonjoy.com/fs-node-builtins@npm:4.69.1":
+  version: 4.69.1
+  resolution: "@jsonjoy.com/fs-node-builtins@npm:4.69.1"
+  checksum: 10c0/eb76b47ab4b3bc250d74e8e3a89e70d7196c4c543ef73e6fc560f00393a2cd16745ff2bbdf57458997c324074c0a11e42e9c7321bec56db1372686ac6a569338
+"@jsonjoy.com/fs-node-to-fsa@npm:4.69.1":
+  version: 4.69.1
+  resolution: "@jsonjoy.com/fs-node-to-fsa@npm:4.69.1"
+    "@jsonjoy.com/fs-fsa": "npm:4.69.1"
+    "@jsonjoy.com/fs-node-builtins": "npm:4.69.1"
+   
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba65c6b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23fe304f` are properly handled with clean fallback behavior.

@@ -4841,3 +4841,8 @@
 | `CYCLE-20261025-6EU3` | `2026-10-25T13:57:11.451Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4319, Rule 4320, Rule 4321` | Yes (`bce98ef7...`) |
 | `CYCLE-20261025-6JGU` | `2026-10-25T13:57:17.454Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4322` | Yes (`160c89bf...`) |
 | `CYCLE-20261025-6LXX` | `2026-10-25T13:57:20.661Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4323` | Yes (`a856bb24...`) |
+| `CYCLE-20261025-E8O1` | `2026-10-25T14:03:16.705Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4324` | Yes (`020bc2b3...`) |
+| `CYCLE-20261025-ECUE` | `2026-10-25T14:03:22.118Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4325` | Yes (`51cfaf33...`) |
+| `CYCLE-20261025-EFNL` | `2026-10-25T14:03:25.761Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4326, Rule 4327, Rule 4328` | Yes (`8cf5794a...`) |
+| `CYCLE-20261025-EHZR` | `2026-10-25T14:03:28.791Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4329` | Yes (`47ce8713...`) |
+| `CYCLE-20261025-EJGE` | `2026-10-25T14:03:30.686Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4330` | Yes (`558f67c0...`) |

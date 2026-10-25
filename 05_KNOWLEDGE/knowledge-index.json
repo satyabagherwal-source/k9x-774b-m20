@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T13:57:20.628Z",
+  "last_updated": "2026-10-25T14:03:30.653Z",
   "total_verified_learnings": 1086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -87,8 +87,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "7206efd0",
-      "content_hash": "4639e821cf92ce63d0b695b98194dd115f927d953af44df54c4d0cc1bc6d978b",
+      "source_version": "b09a8a5f",
+      "content_hash": "020bc2b320fab13cad792449cbef2c36590d1a177639d7294d91d44a3d5926be",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -126,6 +126,11 @@
           "number": 3733,
           "title": "ci): restore green master for v0.99.1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4324,
+          "title": "tui): show waiting todo clocks and live dependency progress",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -133,7 +138,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:51:52.001Z",
+      "verified_at": "2026-10-25T14:03:16.661Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12322,14 +12327,19 @@
       "slug": "giancarloerra-socraticode",
       "platform": "github",
       "source_url": "https://github.com/giancarloerra/SocratiCode",
-      "source_version": "eb94e073",
-      "content_hash": "61680081e3749c51f2a04cbf976cc13112a85a1af8176d06851e9ac11d3d265e",
+      "source_version": "dae6d3a0",
+      "content_hash": "47ce8713c9c6b333dfd2147de5f6f8b0d8152cab84ea2cfbf60f196465e65fa7",
       "dossier_path": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "promoted_rules": [
         {
           "number": 1725,
           "title": "symbol-graph): retry Qdrant requests once on a closed connection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4329,
+          "title": "graph): resolve C# names only through the scopes and imports C# uses",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -12338,7 +12348,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:26:22.673Z",
+      "verified_at": "2026-10-25T14:03:28.743Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24115,7 +24125,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
       "source_version": "hf-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "366adf8a41f794e5e599cca730dd4d51ff36ba5901af5e0b12e1a645ff32f94c",
+      "content_hash": "8cf5794a21609745e1dfc393b71f6c926693fab2dec59f902950efc8677c488a",
       "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "promoted_rules": [
@@ -24162,6 +24172,21 @@
           "number": 1485,
           "title": "Zero-Token Output for Guardrail Safety",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4326,
+          "title": "Zero-Output-Token Decision Classification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4327,
+          "title": "Hybrid Attention for Latency-Optimized BERT Variants",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4328,
+          "title": "Option-Order Invariance in Multi-Choice Classification",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24180,7 +24205,7 @@
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv463krd",
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc"
       ],
-      "verified_at": "2026-10-20T18:43:15.185Z",
+      "verified_at": "2026-10-25T14:03:25.719Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34744,14 +34769,19 @@
       "slug": "microsoft-react-native-windows",
       "platform": "github",
       "source_url": "https://github.com/microsoft/react-native-windows",
-      "source_version": "cf0d3767",
-      "content_hash": "986c81cd90fbd8f6b4cfde0afd61a31eeef9dd1749182c6830a394e1812bf88b",
+      "source_version": "23fe304f",
+      "content_hash": "51cfaf337fd8d5bfd31126feca4c7573a1055f75842a63209c1b0a12d0e28409",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "promoted_rules": [
         {
           "number": 2468,
           "title": "crash modifying outline property (#16386)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4325,
+          "title": "📦 Bump the all-dependencies group across 1 directory with 14 updates (#16491)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -34760,7 +34790,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:35:20.692Z",
+      "verified_at": "2026-10-25T14:03:22.078Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37575,8 +37605,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "6741854c",
-      "content_hash": "7b2169e6a550439ab1092aaaff5943839a66575d84b59bc6055e911edd00fe3c",
+      "source_version": "63ada8be",
+      "content_hash": "558f67c02d81de4f4756b7e8dd4c2eb60bff91da78e8b3c4dac61eaf266ce83d",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -37624,6 +37654,11 @@
           "number": 3916,
           "title": "Buffer REPL colon-suite headers with comments",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4330,
+          "title": "Add NUC categories and selection policy",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37631,7 +37666,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:28:40.717Z",
+      "verified_at": "2026-10-25T14:03:30.646Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -123572,6 +123607,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T13:57:20.621Z"
+    },
+    "rule-4324": {
+      "learning_id": "rule-4324",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4324,
+      "title": "tui): show waiting todo clocks and live dependency progress",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "b09a8a5f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:03:16.661Z"
+    },
+    "rule-4325": {
+      "learning_id": "rule-4325",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4325,
+      "title": "📦 Bump the all-dependencies group across 1 directory with 14 updates (#16491)",
+      "source_url": "https://github.com/microsoft/react-native-windows",
+      "source_version": "23fe304f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:03:22.078Z"
+    },
+    "rule-4326": {
+      "learning_id": "rule-4326",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4326,
+      "title": "Zero-Output-Token Decision Classification",
+      "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+      "source_version": "hf-phocinae-phocinae-largha-150m-v1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:03:25.719Z"
+    },
+    "rule-4327": {
+      "learning_id": "rule-4327",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4327,
+      "title": "Hybrid Attention for Latency-Optimized BERT Variants",
+      "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+      "source_version": "hf-phocinae-phocinae-largha-150m-v1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:03:25.719Z"
+    },
+    "rule-4328": {
+      "learning_id": "rule-4328",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4328,
+      "title": "Option-Order Invariance in Multi-Choice Classification",
+      "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+      "source_version": "hf-phocinae-phocinae-largha-150m-v1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:03:25.719Z"
+    },
+    "rule-4329": {
+      "learning_id": "rule-4329",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4329,
+      "title": "graph): resolve C# names only through the scopes and imports C# uses",
+      "source_url": "https://github.com/giancarloerra/SocratiCode",
+      "source_version": "dae6d3a0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:03:28.743Z"
+    },
+    "rule-4330": {
+      "learning_id": "rule-4330",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4330,
+      "title": "Add NUC categories and selection policy",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "63ada8be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:03:30.646Z"
     }
   },
   "aliases": {
