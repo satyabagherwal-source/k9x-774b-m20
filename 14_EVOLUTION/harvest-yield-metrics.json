@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T15:43:06.880Z",
-  "total_cycles_completed": 4860,
-  "total_learnings_persisted": 4860,
-  "total_rules_promoted": 4250,
+  "last_updated": "2026-10-25T15:49:43.847Z",
+  "total_cycles_completed": 4863,
+  "total_learnings_persisted": 4863,
+  "total_rules_promoted": 4252,
   "history": [
-    {
-      "timestamp": "2026-10-25T05:27:41.061Z",
-      "repository": "react/metro",
-      "learningId": "learn-github-react-metro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T05:27:45.430Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T05:27:49.127Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T05:34:03.402Z",
       "repository": "apache/arrow",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-25T15:43:06.880Z",
       "repository": "kajisho5/ffmpeg-skill",
       "learningId": "learn-github-kajisho5-ffmpeg-skill",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:49:29.468Z",
+      "repository": "PSRben/VisionHOPE",
+      "learningId": "learn-huggingface-psrben-visionhope",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:49:35.891Z",
+      "repository": "thaw-app/Thaw",
+      "learningId": "learn-github-thaw-app-thaw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:49:43.847Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

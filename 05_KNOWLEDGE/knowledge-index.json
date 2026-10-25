@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T15:43:06.826Z",
+  "last_updated": "2026-10-25T15:49:43.785Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24421,7 +24421,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "1f7c05fd69f6f8c131cc3c3a6f72970df7558ef41eba609896d655a20e8f6cb4",
+      "content_hash": "15dc6e3e17d206cd27f95e597581ee6eb8ed985868d4b88d864dedd1e683a57d",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [
@@ -24513,7 +24513,7 @@
         "learn-huggingface-hf-psrben-visionhope-mv47isqm",
         "learn-huggingface-hf-psrben-visionhope-mv4ksdgc"
       ],
-      "verified_at": "2026-10-20T20:14:21.044Z",
+      "verified_at": "2026-10-25T15:49:29.394Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33662,8 +33662,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "68fe0510",
-      "content_hash": "9a2b6d41b02a04b300c50654b99afa811207827b67d8758013a7717871bc6744",
+      "source_version": "9dcd26be",
+      "content_hash": "edd967d9ff6f54f4cc9c36fd31f7681fa9bba67f2d6667e7d414db2e05d475b6",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -33681,6 +33681,11 @@
           "number": 3869,
           "title": "frontend): persist default role selection (#30709)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4372,
+          "title": "python-sdk): preserve resolved ORM schemas in clone and branch builders (#31062)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33688,7 +33693,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:09:48.442Z",
+      "verified_at": "2026-10-25T15:49:43.774Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48098,8 +48103,8 @@
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "5ab93e49",
-      "content_hash": "7bd18227b275614b1e728217d8e096d69b6ad37f7cf5eedb381c8e23fed2a61f",
+      "source_version": "3e434793",
+      "content_hash": "b11a92717e62bfa4a6d195c120c80f2c55b5135936e204bb143ef76f1b407e40",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "promoted_rules": [
@@ -48122,6 +48127,11 @@
           "number": 3416,
           "title": "build(deps): bump the github-actions group with 4 updates (#1361)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4371,
+          "title": "docs(issues): split the bug form by version and require a log from the moment it",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48129,7 +48139,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:39:26.292Z",
+      "verified_at": "2026-10-25T15:49:35.797Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124530,6 +124540,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T15:43:06.816Z"
+    },
+    "rule-4371": {
+      "learning_id": "rule-4371",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4371,
+      "title": "docs(issues): split the bug form by version and require a log from the moment it",
+      "source_url": "https://github.com/thaw-app/Thaw",
+      "source_version": "3e434793",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:49:35.797Z"
+    },
+    "rule-4372": {
+      "learning_id": "rule-4372",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4372,
+      "title": "python-sdk): preserve resolved ORM schemas in clone and branch builders (#31062)",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "9dcd26be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:49:43.774Z"
     }
   },
   "aliases": {

@@ -4890,3 +4890,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-10-25T15:38:20.235Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `14ecdbc0` | Multi-dimensional audit evidence | 2026-10-25T15:38:22.591Z |
 | `learn-github-kajisho5-ffmpeg-skill` | `https://github.com/kajisho5/ffmpeg-skill` | `f2d90ea6` | Multi-dimensional audit evidence | 2026-10-25T15:43:06.876Z |
+| `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-10-25T15:49:29.463Z |
+| `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `3e434793` | Multi-dimensional audit evidence | 2026-10-25T15:49:35.886Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `9dcd26be` | Multi-dimensional audit evidence | 2026-10-25T15:49:43.842Z |

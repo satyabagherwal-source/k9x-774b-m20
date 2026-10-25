@@ -595,8 +595,8 @@
     "sourceUrl": "https://huggingface.co/PSRben/VisionHOPE",
     "sourceVersion": "hf-psrben-visionhope",
     "license": "Open-Source",
-    "contentHash": "1f7c05fd69f6f8c131cc3c3a6f72970df7558ef41eba609896d655a20e8f6cb4",
-    "lastHarvestedAt": "2026-10-20T20:14:21.094Z",
+    "contentHash": "15dc6e3e17d206cd27f95e597581ee6eb8ed985868d4b88d864dedd1e683a57d",
+    "lastHarvestedAt": "2026-10-25T15:49:29.463Z",
     "learningId": "learn-huggingface-psrben-visionhope"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "68fe0510",
+    "sourceVersion": "9dcd26be",
     "license": "Apache-2.0",
-    "contentHash": "9a2b6d41b02a04b300c50654b99afa811207827b67d8758013a7717871bc6744",
-    "lastHarvestedAt": "2026-10-23T10:09:48.505Z",
+    "contentHash": "edd967d9ff6f54f4cc9c36fd31f7681fa9bba67f2d6667e7d414db2e05d475b6",
+    "lastHarvestedAt": "2026-10-25T15:49:43.842Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -7833,10 +7833,10 @@
     "repository": "thaw-app/Thaw",
     "platform": "github",
     "sourceUrl": "https://github.com/thaw-app/Thaw",
-    "sourceVersion": "5ab93e49",
+    "sourceVersion": "3e434793",
     "license": "GPL-3.0",
-    "contentHash": "7bd18227b275614b1e728217d8e096d69b6ad37f7cf5eedb381c8e23fed2a61f",
-    "lastHarvestedAt": "2026-10-20T22:39:26.374Z",
+    "contentHash": "b11a92717e62bfa4a6d195c120c80f2c55b5135936e204bb143ef76f1b407e40",
+    "lastHarvestedAt": "2026-10-25T15:49:35.886Z",
     "learningId": "learn-github-thaw-app-thaw"
   },
   "rtk-ai-rtk": {

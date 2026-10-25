@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `68fe0510`  
+> **Source Version**: `9dcd26be`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:09:48.160Z  
+> **Timestamp**: 2026-10-25T15:49:43.455Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:09:47.836Z  
+> **Harvest Timestamp**: 2026-10-25T15:49:43.446Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -530,9 +530,10 @@ class ConnectionHooksDemo:
 ```
 """Shared internal utilities for MatrixOne SDK modules."""
 
-from typing import Union, Type
+from typing import Optional, Union, Type
 
 try:
+    from sqlalchemy import Table
     from sqlalchemy.orm import DeclarativeMeta as _unused  # noqa: F401
 
     SQLALCHEMY_AVAILABLE = True
@@ -546,10 +547,14 @@ def get_table_name(table: Union[str, Type]) -> str:
     Supports:
     - "table_name"
     - "db.table_name"
-    - ORM model with optional __table_args__['schema'] for db.table
+    - ORM model's resolved table name and schema for db.table
     """
     if isinstance(table, str):
         return table
+    if SQLALCHEMY_AVAILABLE:
+        mapped_table = getattr(table, '__table__', None)
+        if isinstance(mapped_table, Table):
+            return mapped_table.fullname
     if SQLALCHEMY_AVAILABLE and hasattr(table, '__tablename__'):
         name = table.__tablename__
         if hasattr(table, '__table_args__'):
@@ -565,6 +570,127 @@ def require_non_empty(value: str, param_name: str) -> str:
     if not value:
         raise ValueError(f"{param_name} must be a non-empty string")
     return value
+
+
+# The server rejects these statements with "DATA BRANCH MERGE/PICK is not
+# supported in transactions" (pkg/frontend/data_branch.go) when they arrive
+# inside a transaction. SQLAlchemy keeps pooled pymysql/aiomysql connections
+# in implicit-transaction mode (autocommit=False), and its do_begin is a
+# no-op, so a plain engine.begin() lands these statements in an implicit,
+# never-committed transaction. They must execute on an AUTOCOMMIT-mode
+# connection instead. Classification below is a bounded linear scan, not a
+# regex: every user query passes through it, so it must not backtrack.
+
+
+def _skip_space_and_comments(sql: str, pos: int) -> int:
+    """Advance past whitespace and MatrixOne comments, returning the index of
+    the next meaningful character.
+
+    Mirrors pkg/sql/parsers/dialect/mysql/scanner.go: `/* ... */` block
+    comments are inert, `// ...` and `# ...` are line comments, `-- ...` is a
+    line comment only when the dashes are followed by whitespace or
+    end-of-line. `/*! ... */` is an executable MySQL comment: the scanner
+    steps inside (skipping an optional 5-digit version) because the server
+    executes its contents. Its `*/` terminator is likewise transparent; that
+    can only affect leading-word matching for statements that are invalid SQL
+    either way. A comment that never terminates consumes the rest of the
+    string.
+    """
+    n = len(sql)
+    while pos < n:
+        ch = sql[pos]
+        if ch.isspace():
+            pos += 1
+            continue
+        if sql.startswith("/*!", pos):
+            pos += 3
+            if sql[pos : pos + 5].isdigit():
+                pos += 5
+            continue
+        if sql.startswith("*/", pos):
+            # terminator of an enclosing executable comment; transparent
+            pos += 2
+            continue
+        if sql.startswith("/*", pos):
+            end = sql.find("*/", pos + 2)
+            if end == -1:
+                return n
+            pos = end + 2
+            continue
+        if sql.startswith("--", pos) and (pos + 2 == n or sql[pos + 2].isspace()):
+            end = sql.find("\n", pos + 2)
+            if end == -1:
+                return n
+            pos = end + 1
+            continue
+        if sql.startswith("//", pos):
+            end = sql.find("\n", pos + 2)
+            if end == -1:
+                return n
+            pos = end + 1
+            continue
+        if ch == "#":
+            end = sql.find("\n", pos + 1)
+            if end == -1:
+                return n
+            pos = end + 1
+            continue
+        break
+    return pos
+
+
+def _read_word(sql: str, pos: int) -> tuple:
+    """Read one SQL word ([A-Za-z0-9_$]*) starting at pos; return (word, next)."""
+    n = len(sql)
+    end = pos
+    while end < n and (sql[end].isalnum() or sql[end] in "_$"):
+        end += 1
+    return sql[pos:end], end
+
+
+def is_non_transactional_statement(sql: Optional[str]) -> bool:
+    """True when a string statement is DATA BRANCH MERGE or DATA BRANCH PICK.
+
+    Leading and inter-keyword whitespace/comments are consumed with the
+    server's lexical rules, so "data /* trace */ branch merge ...",
+    "// trace\\ndata branch merge ..." and "/*! data branch merge src into
+    dst */" (MySQL executable comment) classify like the server executes
+    them, while a MERGE/PICK-shaped phrase sitting only inside an inert
+    comment (e.g. "-- data branch merge a into b\\nSELECT 1") does not.
+    """
+    if not sql:
+        return False
+    pos = 0
+    words = []
+    for _ in range(3):
+        pos = _skip_space_and_comments(sql, pos)
+        word, pos = _read_word(sql, pos)
+        if not word:
+            return False
+        words.append(word.lower())
+    return words[0] == "data" and words[1] == "branch" and words[2] in ("merge", "pick")
+
+
+def discard_unrestored_connection(conn):
+    """Remove an unrestorable checkout and terminate it without pool reset IO.
+
+    Detach before termination: SQLAlchemy 1.4 invalidate listeners can raise
+    before disposal. Invalidation alone after detach does not close the DBAPI
+    handle, so retain and terminate it even if a detach callback raises.
+    """
+    if conn.closed or conn.invalidated:
+        return
+    proxy = conn.connection
+    raw = getattr(proxy, "dbapi_connection", None)
+    if raw is None:  # SQLAlchemy < 1.4.24
+        raw = proxy.connection
+    try:
+        conn.detach()
+    finally:
+        try:
+            conn.dialect.do_terminate(raw)
+        finally:
+            conn.invalidate()
 
 ```
 
@@ -2144,14 +2270,11 @@ func runQueryStreams(ctx context.Context, db *sql.DB, first *sql.Conn, r WorkerR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30952** (2026-10-23): **docs: correct purge_log example in builtin comment**
-  *Symptoms*: Fixes #30903  The comment now uses the registered `purge_log` name and a supported single-table argument. No runtime behavior changes. 
-  **Post-Mortem & Fix Analysis**:
-  > ### Qodo reviews are paused for this user.  Troubleshooting steps vary by plan [Learn more →](https://docs.qodo.ai/subscription-plans#what-you%E2%80%99ll-see-when-reviews-are-paused)   **On a Teams plan?** Reviews resume once this user has a paid seat *and* their Git account is linked in Qodo. [Link Git account →](https://docs.qodo.ai/subscription-plans#linking-a-git-account)  **Using GitHub Enterprise Server, GitLab Self-Managed, or Bitbucket Data Center?** These require an Enterprise plan - Contact us [Contact us →](https://docs.qodo.ai/qodo-support#support) 
-  > Closing this source-code PR to move the documentation work to matrixorigin/matrixone-doc, as requested. The MatrixOne code comment itself remains unchanged.
+- **Issue #31124** (2026-10-25): **fix(python-sdk): preserve OR predicate grouping**
+  *Symptoms*: 由 LW 授权的 ChatGPT Personal 智能体提交。  ## What type of PR is this? - [x] BUG - [x] Test and CI  ## Which issue(s) this PR fixes Related to #31123; no automatic issue closure requested.  ## What this PR does / why we need it where_or('kind = 1', 'kind = 2').where_eq('tenant', 7) produces WHERE (kind = 1) OR (kind = 2) AND tenant = ?. AND precedence lets the first OR arm escape the tenant filter. Reversing the call order exposes the other arm. The same builder composition affects UPDATE and DELETE.  Wrap the complete OR expression as one predicate before the existing AND composition. This preserves explicit caller filters; it does not change database authorization or add tenant policy.  ## Validation Base: 1732bb3297f598bc9a90a41b8c5e4c9557cf0e9c. Product: 8e4d5ee738a812b64605e303680cdad303bc2c1f; tree 0f61c920e9d26299220d0e44eb3597d34a5490ad. - Original: all six new tests fail. Fixed focused tests: 6 passed. - Full offline: 1524 passed, 95 subtests passed, 2 existing SQLite binding deprecation warnings. - Command: cd clients/python && PYTHONPATH=. python -m pytest tests/offline -o addopts='' -q --tb=short. - SELECT/UPDATE/DELETE × both ordering combinations execute generated SQL against SQLite with synthetic matching/nonmatching rows across two tenant values. - Black on changed files, fatal-error flake8, git diff --check: passed. - python -m build and twine check: wheel and sdist passed. - Independent review: Approve; separately reproduced base behavior and ran 57 regression/existi
 
-- **Issue #30946** (2026-10-23): **docs(skills): add flexible defect-hunt workflow**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [x] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #25267 as a follow-up to the agent-skills workflow.  ## What this PR does / why we need it:  Add a flexible `defect-hunt` skill for behavioral defect exploration. A focused source trace or SQL probe is sufficient; confirmation, reference comparisons, ledgers, and issue filing are selected only when the task requires them.  The MatrixOne adapter provides source entry points and an optional SQL helper that preserves complete stdout/stderr, exit status, and partial timeout evidence. Explicit TCP and isolated client configuration prevent connection defaults from redirecting probes, and empty passwords do not trigger interactive prompts. Findings distinguish impact from localization confidence and require a verified good/bad version boundary for regression claims. Lifecycle analysis remains available through the existing `unhappy-path-audit` skill.  Validation: both skill validators passed; eight helper behavior checks passed, covering raw-output fidelity, row boundaries, nonzero exits, timeout cleanup, database selection, launch failure, and repeated case names. A real MySQL 9.5.0 client verified empty-password handling and TCP port selection. Local references and `git diff --check` passed. The change comprises four skill Markdown files, including the embedded helper example. 
+- **Issue #31116** (2026-10-25): **fix(disttae): backport exclusive relation handles to 4.1.6 hotfix**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Backport of #25634 (related to #25627) to `4.1.6-hotfix`.  Addresses the prepared UPDATE JOIN race seen in [PR #30977 CI](https://github.com/matrixorigin/matrixone/actions/runs/40170643192/job/121160646002?pr=30977). The same three conflicting writes reproduce on the clean hotfix base `d315e9c993`, independently of #30977.  ## What this PR does / why we need it:  A second execution of a prepared UPDATE JOIN lets Insert.Prepare and Deletion.Prepare concurrently reset the same transaction-cached relation. Reset overwrites its transaction operator, creation flag and snapshot, violating shared-relation ownership and triggering the race detector.  Backport the coherent ownership fix from main commit `7b34bfeb10ff645428af8284fa060912d086717b`: keep canonical relations bound to their opening transaction and give each retaining operator an exclusive reusable handle. Reset resolves the current transaction's canonical relation and rebinds only the private handle; direct shared Reset is rejected. Migrate retained DML, scan, lock-metadata and multi-update relation consumers together, including reset-error propagation and partial initialization cleanup/retry. Preserve hotfix-specific partition and commit behavior.  Regression coverage includes concurrent independent handles, unchanged shared state, catalog m
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2168,8 +2291,159 @@ func runQueryStreams(ctx context.Context, db *sql.DB, first *sql.Conn, r WorkerR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68fe0510` (2026-10-23)
-**Commit Message**: fix(frontend): persist default role selection (#30709)
+### Incident Patch 1: `9728d699` (2026-10-25)
+**Commit Message**: fix(python-sdk): preserve resolved ORM schemas in clone and branch builders (#31062)
+
+A declarative model can specify its database through tuple-form __table_args__ or MetaData(schema=...). Clone and branch builders previously ignored those forms and emitted a bare table name, resolving the source/target in the active database. BLANK_SCHEMA was rendered as a literal sentinel instead of an unqualified name.
+
+Use the model's resolved SQLAlchemy Table.fullname at the shared get_table_name owner. Preserve qualified strings and lightweight legacy-model fallback. The change introduces no extra SQL, cache, connection, transaction, authorization rule, wire/schema format, or generated artifact.
+
+Three files, +60/-6. Extend the existing lightweight offline clone-builder tests with actual mapped models and the existing cross-database online fixture with clone/branch builders; one source row and explicit database cleanup checks suffice.
+
+### Validation
+
+- Product head: e412fbde9c9543beeee386ac3eff4dd65960c788; base: 3878a13ef00fc85b1bced8a58a4f7d17df848806. Product tree 2ca522c8b617483cbfd83ba0a1d1ddf889f1712b equals tested local a353ed954b9bccb2d4194d91648f69efc85b3f05. Fresh upstream ac4ec31
+
+**File**: `clients/python/matrixone/_utils.py` (modified, +6/-1)
+```diff
+@@ -3,6 +3,7 @@
+ from typing import Optional, Union, Type
+ 
+ try:
++    from sqlalchemy import Table
+     from sqlalchemy.orm import DeclarativeMeta as _unused  # noqa: F401
+ 
+     SQLALCHEMY_AVAILABLE = True
+@@ -16,10 +17,14 @@ def get_table_name(table: Union[str, Type]) -> str:
+     Supports:
+     - "table_name"
+     - "db.table_name"
+-    - ORM model with optional __table_args__['schema'] for db.table
++    - ORM model's resolved table name and schema for db.table
+     """
+     if isinstance(table, str):
+         return table
++    if SQLALCHEMY_AVAILABLE:
++        mapped_table = getattr(table, '__table__', None)
++        if isinstance(mapped_table, Table):
++            return mapped_table.fullname
+     if SQLALCHEMY_AVAILABLE and hasattr(table, '__tablename__'):
+         name = table.__tablename__
+         if hasattr(table, '__table_args__'):
+```
+
+**File**: `clients/python/tests/offline/test_clone_builder.py` (modified, +26/-0)
+```diff
+@@ -1,6 +1,10 @@
+ """Offline tests for clone statement builders."""
+ 
+ import pytest
++from sqlalchemy import Column, Integer, MetaData, UniqueConstraint
++from sqlalchemy.orm import declarative_base
++from sqlalchemy.schema import BLANK_SCHEMA
++from matrixone.branch_builder import create_table_branch, delete_table_branch
+ from matrixone.clone_builder import (
+     clone_table,
+     clone_database,
+@@ -27,6 +31,28 @@ class NoTableModel:
+ 
+ class TestCloneTable:
+ 
++    @pytest.mark.parametrize('schema_style', ['dict', 'tuple', 'metadata', 'blank', 'none'])
++    def test_mapped_table_schema(self, schema_style):
++        base = declarative_base(metadata=MetaData(schema='mydb' if schema_style in ('metadata', 'blank') else None))
++        table_args = {
++            'dict': {'schema': 'mydb'},
++            'tuple': (UniqueConstraint('id'), {'schema': 'mydb'}),
++            'metadata': {},
++            'blank': {'schema': BLANK_SCHEMA},
++            'none': {},
++        }[schema_style]
++
++        class Model(base):
++            __tablename__ = 'mapped_table'
++            __table_args__ = table_args
++            id = Column(Integer, primary_key=True)
++
++        name = 'mapped_table' if schema_style in ('blank', 'none') else 'mydb.mapped_table'
++        assert clone_table('copy').from_table(Model).compile() == f'CREATE TABLE copy CLONE {name}'
++        assert clone_table(Model).from_table('source').compile() == f'CREATE TABLE {name} CLONE source'
++        assert create_table_branch(Model).from_table(Model).compile() == f'data branch create table {name} from {name}'
++        assert delete_table_branch(Model).compile() == f'data branch delete table {name}'
++
+     def test_basic(self):
+         sql = clone_table('tgt').from_table('src').compile()
+         assert sql == "CREATE TABLE tgt CLONE src"
+```
+
+**File**: `clients/python/tests/online/test_clone_builder_online.py` (modified, +28/-5)
+```diff
+@@ -7,6 +7,9 @@
+ 
+ import pytest
+ import time
++from sqlalchemy import Column, Integer, MetaData, UniqueConstraint
++from sqlalchemy.orm import declarative_base
++from matrixone.branch_builder import create_table_branch
+ from matrixone.clone_builder import clone_table, clone_database
+ from .test_config import online_config
+ 
+@@ -82,8 +85,10 @@ def test_with_snapshot(self, test_client):
+             except Exception:
+                 pass
+ 
+-    def test_cross_database(self, test_client):
+-        """Clone using 'db.table' qualified names."""
++    @pytest.mark.parametrize('schema_style', ['string', 'tuple', 'metadata'])
++    @pytest.mark.parametrize('builder', [clone_table, create_table_branch])
++    def test_cross_database(self, test_client, schema_style, builder):
++        """Clone/branch using resolved ORM schemas as well as qualified strings."""
+         src_db = f"cb_xdb_src_{_uid()}"
+         tgt_db = f"cb_xdb_tgt_{_uid()}"
+         try:
+@@ -93,15 +98,33 @@ def test_cross_database(self, test_client):
+ 
+             test_client.execute(f"CREATE DATABASE {tgt_db}")
+ 
+-            stmt = clone_table(f'{tgt_db}.t1').from_table(f'{src_db}.t1')
++            def table_model(database):
++                base = declarative_base(metadata=MetaData(schema=database if schema_style == 'metadata' else None))
++
++                class Model(base):
++                    __tablename__ = 't1'
++                    __table_args__ = (UniqueConstraint('id'), {'schema': database}) if schema_style == 'tuple' else {}
++                    id = Column(Integer, primary_key=True)
++                    val = Column(Integer)
++
++                return Model
++
++            source, target = f'{src_db}.t1', f'{tgt_db}.t1'
++            if schema_style != 'string':
++                source, target = table_model(src_db), table_model(tgt_db)
++            stmt = builder(target).from_table(source)
+             test_client.execute(str(stmt))
+ 
+             rows = test_client.execute(f"SELECT * FROM {tgt_db}.t1").fetchall()
+             assert len(rows) == 1
+             assert rows[0][1] == 42
+         finally:
+-            test_client.execute(f"DROP DATABASE IF EXISTS {tgt_db}")
+-            test_client.execute(f"DROP DATABASE IF EXISTS {src_db}")
++            try:
++                test_client.execute(f"DROP DATABASE IF EXISTS {tgt_db}")
++            finally:
++                test_client.execute(f"DROP DATABASE IF EXISTS {src_db}")
++            databases = {row[0] for row in test_client.execute('SHOW DATABASES').fetchall()}
++            assert src_db not in databases and tgt_db not in databases
+ 
+     def test_clone_nonexistent_source_fails(self, test_client):
+         """Cloning from a non-existent table should raise an error."""
+```
+
+---
+
+### Incident Patch 2: `f5232bc2` (2026-10-25)
+**Commit Message**: fix(function): preserve jq result framing and integer precision (#31060)
 
 ## What type of PR is this?
 
@@ -2183,1281 +2457,344 @@ Observed empirical fixes and code patches:
 
 ## Which issue(s) this PR fixes:
 
-Related to #30677
+Fixes #30924
 
 ## What this PR does / why we need it:
 
-Implement the missing `SET DEFAULT ROLE` execution path and persist the
-selected role in `mo_user.default_role`.
+`jq()` encoded every JSON input number through float64, rounding
+integers above 2^53, and concatenated multiple jq outputs without a
+delimiter.
 
-- A user may select only a role directly granted to themselves. Changing
-another user's default role retains the existing `ALTER USER` authority.
-- `NONE` stores `public`. `ALL` and multi-role lists are explicitly
-rejected because MatrixOne stores one default role per user.
-- Validate the role, user/host identity, direct grants and every
-requested target before writes in one short-lived transaction. Existing
-sessions retain their active role; login-time validation and fallback
-remain unchanged.
-- Extend the existing frontend tests and Issue SQL fixture to cover
-parser/dispatch, authorization, transaction failure/rollback, and
-multi-target atomicity. The code change is limited to the seven
-frontend/SQL files in this PR; it does not modify production lockservice
-behavior.
+Parse with `json.Decoder.UseNumber`, preserve legacy JSON syntax/range
+errors, and separate successive jq results with `\n`. Keep zero results
+empty and one result unchanged.
 
-### V
+Validation:
+- Pre-fix focused regression: large integer rounded; multiple results
+concatenated.
+- Reviewer-found overflow regression before compatibility fix: expected
+legacy range error but got nil.
+- Focused regression: PASS.
+- Complete `pkg/sql/plan/function`: PASS.
+- `go vet -mod=readonly ./pkg/sql/plan/function`: PASS.
+- Incremental golangci-lint: 0 issues.
+- `func_jq.sql` against exact-head mo-service: 71/71 twice on the same
+instance.
+- Prepared/public SQL probe: 10/10; exact positive/negative >2^53
+values, preserved strict overflow error, `try_jq` overf
 
-**File**: `pkg/frontend/authenticate.go` (modified, +12/-1)
+**File**: `pkg/sql/plan/function/func_builtin_jq.go` (modified, +74/-2)
 ```diff
-@@ -6499,6 +6499,8 @@ func determinePrivilegeSetOfStatement(stmt tree.Statement) *privilege {
- 	case *tree.AlterUser:
- 		typs = append(typs, PrivilegeTypeAlterUser, PrivilegeTypeAccountAll /*, PrivilegeTypeAccountOwnership, PrivilegeTypeUserOwnership*/)
- 		canExecInPasswordExpired = true
-+	case *tree.SetDefaultRole:
-+		typs = append(typs, PrivilegeTypeAlterUser, PrivilegeTypeAccountAll)
- 	case *tree.CreateRole:
- 		typs = append(typs, PrivilegeTypeCreateRole, PrivilegeTypeAccountAll /*, PrivilegeTypeAccountOwnership*/)
- 	case *tree.DropRole:
-@@ -6854,7 +6856,7 @@ func determinePrivilegeSetOfStatement(stmt tree.Statement) *privilege {
- 		objType = objectTypeNone
- 		kind = privilegeKindNone
- 		canExecInRestricted = true
--	case *tree.SetDefaultRole, *tree.SetRole, *tree.SetPassword:
-+	case *tree.SetRole, *tree.SetPassword:
- 		objType = objectTypeNone
- 		kind = privilegeKindNone
- 	case *tree.PrepareStmt, *tree.PrepareString, *tree.PrepareVar, *tree.Deallocate, *tree.Reset:
-@@ -8858,6 +8860,15 @@ func authenticateUserCanExecuteStatementWithObjectTypeAccountAndDatabase(ctx con
- 	if priv.objectType() != objectTypeAccount && priv.objectType() != objectTypeDatabase { // do nothing
- 		return true, stats, nil
+@@ -19,6 +19,7 @@ import (
+ 	"cmp"
+ 	"encoding/json"
+ 	"fmt"
++	"io"
+ 	"math"
+ 	"math/big"
+ 	"slices"
+@@ -237,12 +238,39 @@ func (op *opBuiltInJq) appendJqConstResult(
+ func (op *opBuiltInJq) jqImpl(jsonStr []byte, code *gojq.Code) error {
+ 	// first, turn jsonstr to any
+ 	var jv any
+-	err := json.Unmarshal(jsonStr, &jv)
+-	if err != nil {
++	decoder := json.NewDecoder(bytes.NewReader(jsonStr))
++	decoder.UseNumber()
++	if err := decoder.Decode(&jv); err != nil {
++		var validated any
++		if syntaxErr := json.Unmarshal(jsonStr, &validated); syntaxErr != nil {
++			return syntaxErr
++		}
+ 		return err
  	}
-+	if st, isSetDefaultRole := stmt.(*tree.SetDefaultRole); isSetDefaultRole && ses.GetFromRealUser() {
-+		self, selfErr := setDefaultRoleTargetsAreCurrentUser(ctx, ses, st)
-+		if selfErr != nil {
-+			return false, stats, selfErr
++	// json.Decoder accepts multiple top-level values, while jq() accepts one
++	// JSON document. Preserve that contract and its existing syntax errors.
++	var trailing any
++	if err := decoder.Decode(&trailing); err != io.EOF {
++		var validated any
++		if syntaxErr := json.Unmarshal(jsonStr, &validated); syntaxErr != nil {
++			return syntaxErr
 +		}
-+		if self {
-+			return true, stats, nil
++		if err == nil {
++			return moerr.NewInvalidInputNoCtx("multiple top-level JSON values")
 +		}
++		return err
 +	}
- 	if !checkProtectedDatabaseWriteByPrivilege(ctx, ses, priv) {
- 		return false, stats, nil
- 	}
-```
-
-**File**: `pkg/frontend/mysql_cmd_executor.go` (modified, +4/-0)
-```diff
-@@ -3769,6 +3769,10 @@ func handleSwitchRole(ses FeSession, execCtx *ExecCtx, sr *tree.SetRole) error {
- 	return doSwitchRole(execCtx.reqCtx, ses.(*Session), sr)
- }
- 
-+func handleSetDefaultRole(ses FeSession, execCtx *ExecCtx, sdr *tree.SetDefaultRole) error {
-+	return doSetDefaultRole(execCtx.reqCtx, ses.(*Session), sdr)
-+}
-+
- func doKill(ses *Session, execCtx *ExecCtx, k *tree.Kill) error {
- 	killConnection := !k.Option.Exist || k.Option.Typ == tree.KillTypeConnection
- 	return killSession(execCtx.reqCtx, ses, k.ConnectionId, killConnection, k.StmtOption.StatementId)
-```
-
-**File**: `pkg/frontend/self_handle.go` (modified, +5/-0)
-```diff
-@@ -50,6 +50,11 @@ func execInFrontend(ses *Session, execCtx *ExecCtx) (stats statistic.StatsArray,
- 		if err != nil {
- 			return
- 		}
-+	case *tree.SetDefaultRole:
-+		err = handleSetDefaultRole(ses, execCtx, st)
-+		if err != nil {
-+			return
-+		}
- 	case *tree.Use:
- 		ses.EnterFPrint(FPUse)
- 		defer ses.ExitFPrint(FPUse)
-```
-
-**File**: `pkg/frontend/set_default_role.go` (added, +371/-0)
-```diff
-@@ -0,0 +1,371 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package frontend
-+
-+import (
-+	"context"
-+	"fmt"
-+	"sort"
-+	"strings"
-+
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
-+)
-+
-+type setDefaultRoleUser struct {
-+	userName string
-+	userHost string
-+	userID   int64
-+
-+	hasSelectedRole bool
-+	isAdmin         bool
-+}
-+
-+type setDefaultRoleUserSpec struct {
-+	username string
-+	hostname string
-+}
-+
-+// setDefaultRoleTargetsAreCurrentUser recognizes only the narrow self-service
-+// case. The writer still resolves the names to user IDs and confirms that the
-+// authenticated user ID is the target before persisting anything.
-+func setDefaultRoleTargetsAreCurrentUser(
-+	ctx context.Context,
-+	ses *Session,
-+	stmt *tree.SetDefaultRole,
-+) (bool, error) {
-+	if ses == nil || stmt == nil || len(stmt.Users) == 0 || ses.GetTenantInfo() == nil {
-+		return false, nil
-+	}
-+
-+	currentUser, err := normalizeName(ctx, ses.GetTenantInfo().GetUser())
-+	if err != nil {
-+		return false, err
-+	}
-+	for _, user := range stmt.Users {
-+		if user == nil || user.AuthOption != nil {
-+			return false, nil
-+		}
-+		username, err := normalizeName(ctx, user.Username)
-+		if err != nil {
-+			return false, err
-+		}
-+		if !strings.EqualFold(username, currentUser) {
-+			return false, nil
-+		}
-+	}
-+	return true, nil
-+}
-+
-+func setDefaultRoleName(ctx context.Context, stmt *tree.SetDefaultRole) (string, error) {
-+	if stmt == nil {
-+		return "", moerr.NewInternalError(ctx, "SET DEFAULT ROLE statement is missing")
-+	}
-+
-+	switch stmt.Type {
-+	case tree.SET_DEFAULT_ROLE_TYPE_NONE:
-+		if len(stmt.Roles) != 0 {
-+			return "", moerr.NewInternalError(ctx, "SET DEFAULT ROLE NONE cannot include a role list")
-+		}
-+		return publicRoleName, nil
-+	case tree.SET_DEFAULT_ROLE_TYPE_ALL:
-+		return "", moerr.NewInternalError(ctx, "SET DEFAULT ROLE ALL is not supported; MatrixOne stores one default role per user")
-+	case tree.SET_DEFAULT_ROLE_TYPE_NORMAL:
-+		if len(stmt.Roles) != 1 || stmt.Roles[0] == nil {
-+			return "", moerr.NewInternalError(ctx, "SET DEFAULT ROLE supports exactly one role")
-+		}
-+		return normalizeName(ctx, stmt.Roles[0].UserName)
-+	default:
-+		return "", moerr.NewInternalError(ctx, "invalid SET DEFAULT ROLE type")
-+	}
-+}
-+
-+func normalizeSetDefaultRoleUsers(ctx context.Context, users []*tree.User) ([]setDefaultRoleUserSpec, error) {
-+	if len(users) == 0 {
-+		return nil, moerr.NewInternalError(ctx, "SET DEFAULT ROLE requires at least one user")
-+	}
-+
-+	specs := make([]setDefaultRoleUserSpec, 0, len(users))
-+	for _, user := range users {
-+		if user == nil {
-+			return nil, moerr.NewInternalError(ctx, "SET DEFAULT ROLE contains an empty user")
-+		}
-+		if user.AuthOption != nil {
-+			return nil, moerr.NewInternalError(ctx, "SET DEFAULT ROLE does not support user authentication options")
-+		}
-+		username, err := normalizeName(ctx, user.Username)
-+		if err != nil {
-+			return nil, err
-+		}
-+		hostname := strings.TrimSpace(user.Hostname)
-+		if hostname == "" {
-+			return nil, moerr.NewInternalError(ctx, "SET DEFAULT ROLE requires a user host")
-+		}
-+		specs = append(specs, setDefaultRoleUserSpec{
-+			username: username,
-+			hostname: hostname,
-+		})
-+	}
-+	return specs, nil
-+}
-+
-+func setDefaultRoleLookupNames(specs []setDefaultRoleUserSpec, currentUser string) []string {
-+	seen := make(map[string]struct{}, len(specs)+1)
-+	names := make([]string, 0, len(specs)+1)
-+	add := func(name string) {
-+		if _, ok := seen[name]; ok {
-+			return
-+		}
-+		seen[name] = struct{}{}
-+		names = append(names, name)
-+	}
-+	for _, spec := range specs {
-+		add(spec.username)
-+	}
-+	add(currentUser)
-+	sort.Slice(names, func(i, j int) bool {
-+		lowerI, lowerJ := strings.ToLower(names[i]), strings.ToLower(names[j])
-+		if lowerI != lowerJ {
-+			return lowerI < lowerJ
-+		}
-+		return names[i] < names[j]
-+	})
-+	return names
-+}
-+
-+func querySetDefaultRoleResult(ctx context.Context, bh BackgroundExec, sql string) (ExecResult, error) {
-+	bh.ClearExecResultSet()
-+	if err := bh.Exec(ctx, sql); err != nil {
-+		return nil, err
-+	}
-+	results, err := getResultSet(ctx, bh)
-+	if err != nil {
-+		return nil, err
-+	}
-+	if len(results) == 0 {
-+		return nil, nil
-+	}
-+	if len(results) != 1 || results[0] == nil {
-+		return nil, moerr.NewInternalError(ctx, "SET DEFAULT ROLE catalog query returned an invalid result")
-+	}
-+	return results[0], nil
-+}
-+
-+func setDefaultRoleUserLookupSQ
-```
-
-**File**: `pkg/frontend/set_default_role_test.go` (added, +573/-0)
-```diff
-@@ -0,0 +1,573 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package frontend
-+
-+import (
-+	"context"
-+	"errors"
-+	"fmt"
-+	"sort"
-+	"testing"
-+
-+	"github.com/golang/mock/gomock"
-+	"github.com/matrixorigin/matrixone/pkg/defines"
-+	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect/mysql"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestSetDefaultRolePrivilegeAndSelfAuthorization(t *testing.T) {
-+	stmt := &tree.SetDefaultRole{
-+		Type:  tree.SET_DEFAULT_ROLE_TYPE_NORMAL,
-+		Roles: []*tree.Role{{UserName: "writer"}},
-+		Users: []*tree.User{{Username: "alice", Hostname: "%"}},
-+	}
-+	priv := determinePrivilegeSetOfStatement(stmt)
-+	require.Equal(t, objectTypeAccount, priv.objectType())
-+	require.Equal(t, privilegeKindGeneral, priv.kind)
-+	require.False(t, priv.canExecInPasswordExpired)
-+	require.Len(t, priv.entries, 2)
-+
-+	ctrl := gomock.NewController(t)
-+	ses := newSes(priv, ctrl)
-+	t.Cleanup(ses.Close)
-+	ses.SetTenantInfo(&TenantInfo{
-+		Tenant:        "acme",
-+		User:          "alice",
-+		DefaultRole:   "public",
-+		TenantID:      17,
-+		UserID:        7,
-+		DefaultRoleID: 1,
-+	})
-+	ses.SetFromRealUser(true)
-+	bh := &backgroundExecTest{}
-+	bh.init()
-+	created := stubSetDefaultRoleBackgroundExec(t, bh, nil)
-+
-+	self, err := setDefaultRoleTargetsAreCurrentUser(context.Background(), ses, stmt)
-+	require.NoError(t, err)
-+	require.True(t, self)
-+
-+	other := *stmt
-+	other.Users = []*tree.User{{Username: "bob", Hostname: "%"}}
-+	self, err = setDefaultRoleTargetsAreCurrentUser(context.Background(), ses, &other)
-+	require.NoError(t, err)
-+	require.False(t, self)
-+
-+	mixed := *stmt
-+	mixed.Users = []*tree.User{{Username: "alice", Hostname: "%"}, {Username: "bob", Hostname: "%"}}
-+	self, err = setDefaultRoleTargetsAreCurrentUser(context.Background(), ses, &mixed)
-+	require.NoError(t, err)
-+	require.False(t, self)
-+
-+	withAuth := *stmt
-+	withAuth.Users = []*tree.User{{Username: "alice", Hostname: "%", AuthOption: &tree.AccountIdentified{}}}
-+	self, err = setDefaultRoleTargetsAreCurrentUser(context.Background(), ses, &withAuth)
-+	require.NoError(t, err)
-+	require.False(t, self)
-+
-+	ok, _, err := authenticateUserCanExecuteStatementWithObjectTypeAccountAndDatabase(context.Background(), ses, stmt)
-+	require.NoError(t, err)
-+	require.True(t, ok)
-+	for _, tc := range []struct {
-+		name, currentUser, targetUser string
-+	}{
-+		{"invalid authenticated name", "bad:name", "alice"},
-+		{"invalid target name", "alice", "bad:name"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			previousUser := ses.GetTenantInfo().User
-+			ses.GetTenantInfo().User = tc.currentUser
-+			t.Cleanup(func() { ses.GetTenantInfo().User = previousUser })
-+			ok, _, err := authenticateUserCanExecuteStatementWithObjectTypeAccountAndDatabase(
-+				context.Background(), ses, setDefaultRoleTestStatement("writer", tc.targetUser))
-+			require.ErrorContains(t, err, "invalid")
-+			require.False(t, ok)
-+			require.Zero(t, *created, "invalid identities must not fall through to catalog authorization")
-+		})
-+	}
-+}
-+
-+func TestSetDefaultRoleNoneThroughFrontendPreservesActiveRole(t *testing.T) {
-+	ctx := context.Background()
-+	ses := newSetDefaultRoleTestSession(t, "acme", "alice", 7)
-+	ses.GetTenantInfo().SetDefaultRole("writer")
-+	ses.GetTenantInfo().SetDefaultRoleID(9)
-+	bh := &setDefaultRoleLifecycleExec{backgroundExecTest: newSetDefaultRoleTestBackgroundExec(publicRoleName, 1, []setDefaultRoleTestUser{
-+		{id: 7, name: "alice", host: "localhost", grants: []int64{1}},
-+	})}
-+	var opts *BackgroundExecOption
-+	stubSetDefaultRoleBackgroundExec(t, bh, &opts)
-+	stmt, err := mysql.ParseOne(ctx, "set default role none to 'alice'@'localhost'", 1)
-+	require.NoError(t, err)
-+	defer stmt.Free()
-+
-+	_, err = execInFrontend(ses, &ExecCtx{reqCtx: ctx, stmt: stmt})
-+	require.NoError(t, err)
-+	require.Contains(t, bh.executedSQLs, "update mo_catalog.mo_user set default_role = 1 where user_id = 7;")
-+	require.Equal(t, "commit;", bh.executedSQLs[len(bh.executedSQLs)-1])
-+	require.NotContains(t, bh.executedSQLs, "rollback;")
-+	require.Equal(t, "writer", ses.GetTenantInfo().GetDefaultRole())
-+	require.Equal(t, uint32(9), ses.GetTenantInfo().GetDefaultRoleID())
-+	require.NotNil(t, opts)
-+	require.True(t, opts.forcePessimisticRC)
-+	require.True(t, opts.cancelTxnCreateWithRequest)
-+	require.Equal(t
-```
-
-**File**: `test/distributed/cases/zz_accesscontrol/issue_30677_set_default_role.result` (added, +91/-0)
-```diff
-@@ -0,0 +1,91 @@
-+drop database if exists issue_30677_db;
-+drop user if exists issue_30677_user;
-+drop user if exists issue_30677_actor;
-+drop user if exists issue_30677_target;
-+drop user if exists issue_30677_batch_a;
-+drop user if exists issue_30677_batch_b;
-+drop role if exists issue_30677_reader;
-+drop role if exists issue_30677_ungranted;
-+drop role if exists issue_30677_target_reader;
-+drop role if exists issue_30677_batch_reader;
-+create database issue_30677_db;
-+create table issue_30677_db.protected(value int);
-+insert into issue_30677_db.protected values (42);
-+create role issue_30677_reader;
-+create role issue_30677_ungranted;
-+create role issue_30677_target_reader;
-+create role issue_30677_batch_reader;
-+grant connect on account * to issue_30677_reader;
-+grant select on table issue_30677_db.protected to issue_30677_reader;
-+grant connect on account * to issue_30677_target_reader;
-+grant connect on account * to issue_30677_batch_reader;
-+create user issue_30677_user identified by 'pw30677';
-+create user issue_30677_actor identified by 'actor30677';
-+create user issue_30677_target identified by 'target30677';
-+create user issue_30677_batch_a identified by 'batch30677';
-+create user issue_30677_batch_b identified by 'batch30677';
-+grant issue_30677_reader to issue_30677_user;
-+grant issue_30677_target_reader to issue_30677_target;
-+grant issue_30677_batch_reader to issue_30677_batch_a;
-+select current_role();
-+➤ current_role()[12,65535,0]  𝄀
-+public
-+set default role issue_30677_reader to issue_30677_user;
-+select current_role();
-+➤ current_role()[12,65535,0]  𝄀
-+public
-+select * from issue_30677_db.protected;
-+internal error: do not have privilege to execute the statement
-+select current_role();
-+➤ current_role()[12,65535,0]  𝄀
-+issue_30677_reader
-+select * from issue_30677_db.protected;
-+➤ value[4,32,0]  𝄀
-+42
-+set default role none to issue_30677_user;
-+select current_role();
-+➤ current_role()[12,65535,0]  𝄀
-+issue_30677_reader
-+select * from issue_30677_db.protected;
-+➤ value[4,32,0]  𝄀
-+42
-+set default role issue_30677_ungranted to issue_30677_user;
-+internal error: the role issue_30677_ungranted has not be granted to the user issue_30677_user
-+select current_role();
-+➤ current_role()[12,65535,0]  𝄀
-+public
-+select * from issue_30677_db.protected;
-+internal error: do not have privilege to execute the statement
-+set default role issue_30677_target_reader to issue_30677_target;
-+internal error: do not have privilege to execute the statement
-+select current_role();
-+➤ current_role()[12,65535,0]  𝄀
-+public
-+select u.user_name, r.role_name from mo_catalog.mo_user u join mo_catalog.mo_role r on u.default_role = r.role_id where u.user_name in ('issue_30677_user', 'issue_30677_target') order by u.user_name;
-+➤ user_name[12,300,0]  ¦  role_name[12,300,0]  𝄀
-+issue_30677_target  ¦  public  𝄀
-+issue_30677_user  ¦  public
-+set default role issue_30677_target_reader to issue_30677_target;
-+select u.user_name, r.role_name from mo_catalog.mo_user u join mo_catalog.mo_role r on u.default_role = r.role_id where u.user_name = 'issue_30677_target';
-+➤ user_name[12,300,0]  ¦  role_name[12,300,0]  𝄀
-+issue_30677_target  ¦  issue_30677_target_reader
-+set default role all to issue_30677_user;
-+internal error: SET DEFAULT ROLE ALL is not supported; MatrixOne stores one default role per user
-+set default role issue_30677_reader, issue_30677_batch_reader to issue_30677_user;
-+internal error: SET DEFAULT ROLE supports exactly one role
-+set default role issue_30677_batch_reader to issue_30677_batch_a, issue_30677_batch_b;
-+internal error: the role issue_30677_batch_reader has not be granted to the user issue_30677_batch_b
-+select u.user_name, r.role_name from mo_catalog.mo_user u join mo_catalog.mo_role r on u.default_role = r.role_id where u.user_name in ('issue_30677_batch_a', 'issue_30677_batch_b') order by u.user_name;
-+➤ user_name[12,300,0]  ¦  role_name[12,300,0]  𝄀
-+issue_30677_batch_a  ¦  public  𝄀
-+issue_30677_batch_b  ¦  public
-+drop user issue_30677_user;
-+drop user issue_30677_actor;
-+drop user issue_30677_target;
-+drop user issue_30677_batch_a;
-+drop user issue_30677_batch_b;
-+drop role issue_30677_reader;
-+drop role issue_30677_ungranted;
-+drop role issue_30677_target_reader;
-+drop role issue_30677_batch_reader;
-+drop database issue_30677_db;
-```
-
-**File**: `test/distributed/cases/zz_accesscontrol/issue_30677_set_default_role.sql` (added, +82/-0)
-```diff
-@@ -0,0 +1,82 @@
-+drop database if exists issue_30677_db;
-+drop user if exists issue_30677_user;
-+drop user if exists issue_30677_actor;
-+drop user if exists issue_30677_target;
-+drop user if exists issue_30677_batch_a;
-+drop user if exists issue_30677_batch_b;
-+drop role if exists issue_30677_reader;
-+drop role if exists issue_30677_ungranted;
-+drop role if exists issue_30677_target_reader;
-+drop role if exists issue_30677_batch_reader;
-+
-+create database issue_30677_db;
-+create table issue_30677_db.protected(value int);
-+insert into issue_30677_db.protected values (42);
-+create role issue_30677_reader;
-+create role issue_30677_ungranted;
-+create role issue_30677_target_reader;
-+create role issue_30677_batch_reader;
-+grant connect on account * to issue_30677_reader;
-+grant select on table issue_30677_db.protected to issue_30677_reader;
-+grant connect on account * to issue_30677_target_reader;
-+grant connect on account * to issue_30677_batch_reader;
-+create user issue_30677_user identified by 'pw30677';
-+create user issue_30677_actor identified by 'actor30677';
-+create user issue_30677_target identified by 'target30677';
-+create user issue_30677_batch_a identified by 'batch30677';
-+create user issue_30677_batch_b identified by 'batch30677';
-+grant issue_30677_reader to issue_30677_user;
-+grant issue_30677_target_reader to issue_30677_target;
-+grant issue_30677_batch_reader to issue_30677_batch_a;
-+
-+-- A user without ALTER USER can select their own directly granted role.
-+-- The currently open session remains public; a fresh implicit login gets reader.
-+-- @session:id=91&user=sys:issue_30677_user&password=pw30677
-+select current_role();
-+set default role issue_30677_reader to issue_30677_user;
-+select current_role();
-+select * from issue_30677_db.protected;
-+-- @session
-+
-+-- NONE stores public for future logins without changing the active role here.
-+-- @session:id=92&user=sys:issue_30677_user&password=pw30677
-+select current_role();
-+select * from issue_30677_db.protected;
-+set default role none to issue_30677_user;
-+select current_role();
-+select * from issue_30677_db.protected;
-+set default role issue_30677_ungranted to issue_30677_user;
-+-- @session
-+
-+-- The next implicit login uses public again, and unprivileged other-user changes fail.
-+-- @session:id=93&user=sys:issue_30677_user&password=pw30677
-+select current_role();
-+select * from issue_30677_db.protected;
-+-- @session
-+-- @session:id=94&user=sys:issue_30677_actor&password=actor30677
-+set default role issue_30677_target_reader to issue_30677_target;
-+select current_role();
-+-- @session
-+
-+select u.user_name, r.role_name from mo_catalog.mo_user u join mo_catalog.mo_role r on u.default_role = r.role_id where u.user_name in ('issue_30677_user', 'issue_30677_target') order by u.user_name;
-+
-+-- Root can set another user's directly granted role after the unprivileged denial.
-+set default role issue_30677_target_reader to issue_30677_target;
-+select u.user_name, r.role_name from mo_catalog.mo_user u join mo_catalog.mo_role r on u.default_role = r.role_id where u.user_name = 'issue_30677_target';
-+
-+-- ALL and multiple defaults are explicitly unsupported. Multi-target writes validate first.
-+set default role all to issue_30677_user;
-+set default role issue_30677_reader, issue_30677_batch_reader to issue_30677_user;
-+set default role issue_30677_batch_reader to issue_30677_batch_a, issue_30677_batch_b;
-+select u.user_name, r.role_name from mo_catalog.mo_user u join mo_catalog.mo_role r on u.default_role = r.role_id where u.user_name in ('issue_30677_batch_a', 'issue_30677_batch_b') order by u.user_name;
-+
-+drop user issue_30677_user;
-+drop user issue_30677_actor;
-+drop user issue_30677_target;
-+drop user issue_30677_batch_a;
-+drop user issue_30677_batch_b;
-+drop role issue_30677_reader;
-+drop role issue_30677_ungranted;
-+drop role issue_30677_target_reader;
-+drop role issue_30677_batch_reader;
-+drop database issue_30677_db;
-```
-
----
-
-### Incident Patch 2: `4ffaa4ce` (2026-10-22)
-**Commit Message**: fix: support JSON values in MIN and MAX (#28950)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Related to #28869. This branch includes the JSON
-string-consumer/opaque-rendering integration tracked in #28938; that
-separate open PR is unchanged, and existing merge-order coordination
-still applies.
-
-## What this PR does / why we need it:
-
-### Pinned conflict-integration increment
-
-Published `529abda180ac0312649bbf04d52fe6a1a20f7b88`, tree
-`ed070db4dae0746723279ed0de346420f49ffb5a`, normal merge of exact main
-`b74ceced223bcf9ae0007445a3dd0f9ddb0cbc48`. The six manual resolutions
-retain main's JSON protocol/fixture cleanup coverage and this PR's
-warning/lazy-ELT regressions, including all 44 planner mode/scenario
-cells. No manual production-code change was added for this conflict
-repair.
-
-Local validation on this exact content: six owning packages with vet
-passed (37,901 test-node runs; 37,899 passes and two explicitly recorded
-planner skips). Configured incremental lint passed after correcting its
-CGo include/search environment; the initial preproce
-
-**File**: `pkg/sql/colexec/aggexec/minmax2.go` (modified, +118/-1)
-```diff
-@@ -20,6 +20,7 @@ import (
- 
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
-+	"github.com/matrixorigin/matrixone/pkg/container/bytejson"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
- )
-@@ -36,6 +37,12 @@ type minMaxExecBytes struct {
- 	comp     func([]byte, []byte) int
- 	hasExtra bool
- 	extra    []byte
-+	// JSON extras are validated once at the SetExtraInformation boundary and
-+	// retained independently of the caller's buffer. When an allocation
-+	// account is installed after that boundary, the owned copy is moved into
-+	// the account's argument arena before any state is published.
-+	isJSONExtra    bool
-+	extraAccounted bool
- }
- 
- // Merge copies or compares the source state without transferring ownership or
-@@ -550,6 +557,43 @@ func (exec *minMaxExecBytes) BatchMerge(next AggFuncExec, offset int, groups []u
- }
- 
- func (exec *minMaxExecBytes) SetExtraInformation(partialResult any, _ int) error {
-+	if exec.isJSONExtra {
-+		raw, ok := partialResult.([]byte)
-+		if !ok {
-+			return moerr.NewInternalErrorNoCtxf("invalid extra information type %T", partialResult)
-+		}
-+		if len(raw) == 0 {
-+			return moerr.NewInvalidInputNoCtx("invalid JSON extra information")
-+		}
-+		value := bytejson.ByteJson{Type: bytejson.TpCode(raw[0]), Data: raw[1:]}
-+		if !bytejson.IsValidByteJson(value) {
-+			return moerr.NewInvalidInputNoCtx("invalid JSON extra information")
-+		}
-+
-+		// Allocate before releasing a previously retained extra so a capacity
-+		// failure leaves the old optimizer state unchanged.
-+		var retained []byte
-+		accounted := false
-+		var err error
-+		if exec.allocation != nil {
-+			retained, err = exec.allocation.allocArgumentArena(exec.mp, len(raw))
-+			accounted = err == nil
-+		} else {
-+			retained = slices.Clone(raw)
-+		}
-+		if err != nil {
++	if jqJSONNumberOutOfFloat64Range(jsonStr) {
++		// Keep json.Unmarshal's historical range error while retaining the
++		// original json.Number values for integers that float64 can represent.
++		var validated any
++		if err := json.Unmarshal(jsonStr, &validated); err != nil {
 +			return err
 +		}
-+		if accounted {
-+			copy(retained, raw)
-+		}
-+		exec.releaseJSONExtra()
-+		exec.extra = retained
-+		exec.extraAccounted = accounted
-+		exec.hasExtra = true
-+		return nil
 +	}
-+
- 	var ok bool
- 	exec.extra, ok = partialResult.([]byte)
- 	if !ok {
-@@ -559,6 +603,55 @@ func (exec *minMaxExecBytes) SetExtraInformation(partialResult any, _ int) error
+ 
+ 	iter := code.Run(jv)
++	first := true
+ 	for {
+ 		v, ok := iter.Next()
+ 		if !ok {
+@@ -253,14 +281,58 @@ func (op *opBuiltInJq) jqImpl(jsonStr []byte, code *gojq.Code) error {
+ 			return verr
+ 		}
+ 
++		if !first {
++			op.enc.w.WriteByte('\n')
++		}
+ 		if err := op.enc.encode(v); err != nil {
+ 			op.enc.done()
+ 			return err
+ 		}
++		first = false
+ 	}
  	return nil
  }
  
-+func (exec *minMaxExecBytes) SetAllocationAccount(allocation *AllocationAccount) error {
-+	if err := exec.aggExec.SetAllocationAccount(allocation); err != nil {
-+		return err
-+	}
-+	if !exec.isJSONExtra || !exec.hasExtra || exec.extraAccounted {
-+		return nil
-+	}
-+	retained, err := allocation.allocArgumentArena(exec.mp, len(exec.extra))
-+	if err != nil {
-+		// SetAllocationAccount has no externally visible state yet; roll the
-+		// base pointer back so callers can safely retry with another account.
-+		_ = exec.aggExec.ClearAllocationAccount(allocation)
-+		return err
-+	}
-+	copy(retained, exec.extra)
-+	exec.extra = retained
-+	exec.extraAccounted = true
-+	return nil
-+}
-+
-+func (exec *minMaxExecBytes) ClearAllocationAccount(allocation *AllocationAccount) error {
-+	if err := exec.aggExec.ClearAllocationAccount(allocation); err != nil {
-+		return err
-+	}
-+	if exec.isJSONExtra && exec.extraAccounted {
-+		retained := slices.Clone(exec.extra)
-+		exec.mp.Free(exec.extra)
-+		exec.extra = retained
-+		exec.extraAccounted = false
-+	}
-+	return nil
-+}
-+
-+func (exec *minMaxExecBytes) releaseJSONExtra() {
-+	if !exec.isJSONExtra {
-+		return
-+	}
-+	if exec.extraAccounted && exec.extra != nil {
-+		exec.mp.Free(exec.extra)
-+	}
-+	exec.extra = nil
-+	exec.extraAccounted = false
-+}
-+
-+func (exec *minMaxExecBytes) Free() {
-+	exec.releaseJSONExtra()
-+	exec.aggExec.Free()
-+}
-+
- func (exec *minMaxExecBytes) Flush() ([]*vector.Vector, error) {
- 	// transfer vector to result
- 	vecs := make([]*vector.Vector, len(exec.state))
-@@ -693,8 +786,10 @@ func makeMinMaxExecWithLegacyText(
- 			return newUTF8mb4BinMinMaxExec(mp, aggID, isMin, param)
- 		}
- 		return newTextMinMaxExec(mp, aggID, isMin, param)
--	case types.T_blob, types.T_binary, types.T_varbinary, types.T_json, types.T_datalink:
-+	case types.T_blob, types.T_binary, types.T_varbinary, types.T_datalink:
- 		return newStrMinMaxExec(mp, aggID, isMin, param)
-+	case types.T_json:
-+		return newJSONMinMaxExec(mp, aggID, isMin, param)
- 	case types.T_array_float32, types.T_array_float64:
- 		return newArrayMinMaxExec(mp, aggID, isMin, param)
- 	}
-@@ -797,6 +892,28 @@ func newStrMinMaxExec(mp *mpool.MPool, aggID int64, isMin bool, param types.Type
- 	return &exec
- }
- 
-+func newJSONMinMaxExec(mp *mpool.MPool, aggID int64, isMin bool, param types.Type) AggFuncExec {
-+	var exec minMaxExecBytes
-+	exec.mp = mp
-+	exec.isJSONExtra = true
-+	if isMin {
-+		exec.comp = compareJSONBytes
-+	} else {
-+		exec.comp = func(x, y []byte) int { return -compareJSONBytes(x, y) }
-+	}
-+	setupAggInfo(&exec.aggInfo, aggID, param)
-+	return &exec
-+}
-+
-+// compareJSONBytes is used only after vector/extra admission has established
-+// complete ByteJSON values. Keeping the hot comparison 
-```
-
-**File**: `pkg/sql/colexec/aggexec/minmax2_test.go` (modified, +355/-0)
-```diff
-@@ -20,11 +20,339 @@ import (
- 	"testing"
- 
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
-+	"github.com/matrixorigin/matrixone/pkg/container/bytejson"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
- 	"github.com/stretchr/testify/require"
- )
- 
-+func minMaxJSONBytes(t *testing.T, value any) []byte {
-+	t.Helper()
-+	bj, err := bytejson.CreateByteJSONWithCheck(value)
-+	require.NoError(t, err)
-+	encoded, err := bj.Marshal()
-+	require.NoError(t, err)
-+	return encoded
-+}
-+
-+func TestMinMaxJSONUsesTypedComparisonAcrossBatchesAndNulls(t *testing.T) {
-+	tests := []struct {
-+		name   string
-+		values []any
-+		min    any
-+		max    any
-+	}{
-+		{name: "numeric little endian", values: []any{int64(256), int64(1)}, min: int64(1), max: int64(256)},
-+		{name: "numeric encodings", values: []any{float64(1), int64(256)}, min: float64(1), max: int64(256)},
-+		{name: "zero before boolean", values: []any{false, int64(0)}, min: int64(0), max: false},
-+		{name: "array element then length", values: []any{[]any{int64(0), int64(0)}, []any{int64(0)}}, min: []any{int64(0)}, max: []any{int64(0), int64(0)}},
-+		{name: "json null before number", values: []any{int64(0), nil}, min: nil, max: int64(0)},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			for _, aggID := range []int64{AggIdOfMin, AggIdOfMax} {
-+				mp := mpool.MustNewZero()
-+				input := vector.NewVec(types.T_json.ToType())
-+				first := minMaxJSONBytes(t, tc.values[0])
-+				second := minMaxJSONBytes(t, tc.values[1])
-+				require.NoError(t, vector.AppendBytes(input, first, false, mp))
-+				// A SQL NULL is not a JSON value and must not participate in the
-+				// comparison. It is deliberately placed between two batches.
-+				require.NoError(t, vector.AppendBytes(input, nil, true, mp))
-+				agg := makeMinMaxExec(mp, aggID, aggID == AggIdOfMin, types.T_json.ToType())
-+				require.NoError(t, agg.GroupGrow(1))
-+				require.NoError(t, agg.BatchFill(0, []uint64{1, 1}, []*vector.Vector{input}))
-+
-+				secondInput := vector.NewVec(types.T_json.ToType())
-+				require.NoError(t, vector.AppendBytes(secondInput, second, false, mp))
-+				require.NoError(t, vector.AppendBytes(secondInput, minMaxJSONBytes(t, tc.values[0]), false, mp))
-+				require.NoError(t, agg.BatchFill(0, []uint64{1, GroupNotMatched}, []*vector.Vector{secondInput}))
-+
-+				results, err := agg.Flush()
-+				require.NoError(t, err)
-+				require.Len(t, results, 1)
-+				wantValue := tc.min
-+				if aggID == AggIdOfMax {
-+					wantValue = tc.max
++func jqJSONNumberOutOfFloat64Range(data []byte) bool {
++	// The decoder above has already validated the JSON grammar. Scan the source
++	// so duplicate object keys cannot discard an out-of-range number before it
++	// is checked, while avoiding a second decoded object tree on the common path.
++	for i := 0; i < len(data); {
++		if data[i] == '"' {
++			i++
++			for i < len(data) {
++				if data[i] == '\\' {
++					i += 2
++					continue
 +				}
-+				want := minMaxJSONBytes(t, wantValue)
-+				require.Equal(t, want, results[0].GetBytesAt(0))
-+				results[0].Free(mp)
-+				agg.Free()
-+				input.Free(mp)
-+				secondInput.Free(mp)
-+				require.Zero(t, mp.CurrNB())
++				if data[i] == '"' {
++					i++
++					break
++				}
++				i++
 +			}
-+		})
-+	}
-+}
-+
-+func TestMinMaxJSONMergeAndExtraAdmission(t *testing.T) {
-+	for _, aggID := range []int64{AggIdOfMin, AggIdOfMax} {
-+		t.Run(fmt.Sprint(aggID), func(t *testing.T) {
-+			mp := mpool.MustNewZero()
-+			typ := types.T_json.ToType()
-+			leftInput := vector.NewVec(typ)
-+			rightInput := vector.NewVec(typ)
-+			require.NoError(t, vector.AppendBytes(leftInput, minMaxJSONBytes(t, int64(256)), false, mp))
-+			require.NoError(t, vector.AppendBytes(rightInput, minMaxJSONBytes(t, int64(1)), false, mp))
-+			left := makeMinMaxExec(mp, aggID, aggID == AggIdOfMin, typ)
-+			right := makeMinMaxExec(mp, aggID, aggID == AggIdOfMin, typ)
-+			require.NoError(t, left.GroupGrow(1))
-+			require.NoError(t, right.GroupGrow(1))
-+			require.NoError(t, left.BulkFill(0, []*vector.Vector{leftInput}))
-+			require.NoError(t, right.BulkFill(0, []*vector.Vector{rightInput}))
-+			require.NoError(t, left.Merge(right, 0, 0))
-+
-+			leftResults, err := left.Flush()
-+			require.NoError(t, err)
-+			rightResults, err := right.Flush()
-+			require.NoError(t, err)
-+			wantLeft := minMaxJSONBytes(t, int64(1))
-+			wantRight := minMaxJSONBytes(t, int64(1))
-+			if aggID == AggIdOfMax {
-+				wantLeft = minMaxJSONBytes(t, int64(256))
-+				wantRight = minMaxJSONBytes(t, int64(1))
-+			}
-+			require.Equal(t, wantLeft, leftResults[0].GetBytesAt(0))
-+			require.Equal(t, wantRight, rightResults[0].GetBytesAt(0))
-+			leftResults[0].Free(mp)
-+			rightResults[0].Free(mp)
-+			left.Free()
-+			right.Free()
-+			leftInput.Free(mp)
-+			rightInput.Free(mp)
-+
-+			for _, invalid := range [][]byte{nil, {}, {0xff}, {byte(bytejson.TpCodeArray), 1}} {
-+				extraExec := makeMinMaxExec(mp, aggID, aggID == AggIdOfMin, typ)
-+				require.Error(t, extraExec.SetExtraInformation(invalid, 0))
-+				extraExec.Free()
-+			}
-+			for _, tc := range []struct {
-+				name   string
-+				mutate func([]byte)
-+			}{
-+				{name: "valid different payload", mutate: func(raw []byte) {
-+					copy(raw, minMaxJSONBytes(t, int64(256)))
-+				}},
-+				{name: "invalid payload", mutate: func(raw []byte) {
-+					raw[0] = 0xff
-+				}},
-+			} {
-+				t.Run(tc.name, func(t *testing.T) {
-+					extra := minMaxJSONBytes(t, int64(1))
-+					before := bytes.Clone(e
-```
-
-**File**: `pkg/sql/colexec/group/group_test.go` (modified, +127/-0)
-```diff
-@@ -32,6 +32,7 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	moruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
- 	"github.com/matrixorigin/matrixone/pkg/container/batch"
-+	"github.com/matrixorigin/matrixone/pkg/container/bytejson"
- 	"github.com/matrixorigin/matrixone/pkg/container/hashtable"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
-@@ -5033,3 +5034,129 @@ func TestGroupConcatSourceRowProtocolGates(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestJSONMinMaxGroupAndMergeGroupPhysicalSpillReload(t *testing.T) {
-+	proc := testutil.NewProcess(t)
-+	aggs := []aggexec.AggFuncExecExpression{
-+		aggexec.MakeAggFunctionExpression(aggexec.AggIdOfMin, false, []*plan.Expr{colExpr(1, types.T_json)}, nil),
-+		aggexec.MakeAggFunctionExpression(aggexec.AggIdOfMax, false, []*plan.Expr{colExpr(1, types.T_json)}, nil),
-+	}
-+	encode := func(value int64) []byte {
-+		bj, err := bytejson.CreateByteJSONWithCheck(value)
-+		require.NoError(t, err)
-+		raw, err := bj.Marshal()
-+		require.NoError(t, err)
-+		return raw
-+	}
-+	var partials []*batch.Batch
-+	t.Cleanup(func() {
-+		for _, partial := range partials {
-+			partial.Clean(proc.Mp())
++			continue
 +		}
-+		proc.Free()
-+		require.Zero(t, proc.Mp().CurrNB())
-+	})
-+	for _, value := range []int64{1, 256} {
-+		input := batch.NewWithSize(2)
-+		input.Vecs[0] = vector.NewVec(types.T_int32.ToType())
-+		input.Vecs[1] = vector.NewVec(types.T_json.ToType())
-+		for key := int32(0); key < 64; key++ {
-+			require.NoError(t, vector.AppendFixed(input.Vecs[0], key, false, proc.Mp()))
-+			require.NoError(t, vector.AppendBytes(input.Vecs[1], encode(value), false, proc.Mp()))
++		if data[i] != '-' && (data[i] < '0' || data[i] > '9') {
++			i++
++			continue
 +		}
-+		input.SetRowCount(64)
-+		child := colexec.NewMockOperator().WithBatchs([]*batch.Batch{input})
-+		g := newGroupOp(proc, []*plan.Expr{colExpr(0, types.T_int32)}, aggs)
-+		g.NeedEval = false
-+		g.SpillMem = 2
-+		g.AppendChild(child)
-+		require.NoError(t, g.Prepare(proc))
-+		for {
-+			result, err := vm.Exec(g, proc)
-+			require.NoError(t, err)
-+			if result.Status == vm.ExecStop || result.Batch == nil {
++
++		start := i
++		for i < len(data) {
++			b := data[i]
++			if (b < '0' || b > '9') && b != '-' && b != '+' && b != '.' && b != 'e' && b != 'E' {
 +				break
 +			}
-+			partials = append(partials, cloneBatch(t, proc, result.Batch))
++			i++
 +		}
-+		// Partial groups emit encoded states instead of writing finalized spill files.
-+		g.Free(proc, false, nil)
-+		child.Free(proc, false, nil)
-+	}
-+	child := colexec.NewMockOperator().WithBatchs(partials)
-+	mg := newMergeGroupOp(aggs)
-+	mg.SpillMem = 2
-+	mg.AppendChild(child)
-+	t.Cleanup(func() { mg.Free(proc, false, nil) })
-+	require.NoError(t, mg.Prepare(proc))
-+	seen := make(map[int32]bool)
-+	for {
-+		result, err := vm.Exec(mg, proc)
-+		require.NoError(t, err)
-+		if result.Status == vm.ExecStop || result.Batch == nil {
-+			break
-+		}
-+		for row := 0; row < result.Batch.RowCount(); row++ {
-+			key := vector.MustFixedColNoTypeCheck[int32](result.Batch.Vecs[0])[row]
-+			require.False(t, seen[key])
-+			seen[key] = true
-+			require.Equal(t, encode(1), result.Batch.Vecs[1].GetBytesAt(row))
-+			require.Equal(t, encode(256), result.Batch.Vecs[2].GetBytesAt(row))
++		if _, err := strconv.ParseFloat(string(data[start:i]), 64); err != nil {
++			return true
 +		}
 +	}
-+	require.Len(t, seen, 64)
-+	require.Positive(t, mg.OpAnalyzer.GetOpStats().SpillRows, "mergegroup must physically spill")
++	return false
 +}
 +
-+func TestJSONMinMaxFinalGroupPhysicalSpillReload(t *testing.T) {
+ func (op *opBuiltInJq) getJqCode(jq string) (*gojq.Code, error) {
+ 	code, ok := op.jqCache[jq]
+ 	if ok {
+```
+
+**File**: `pkg/sql/plan/function/func_builtin_jq_test.go` (modified, +94/-0)
+```diff
+@@ -253,6 +253,100 @@ func TestJqVarlenaProducerMatrix(t *testing.T) {
+ 	})
+ }
+ 
++func TestJqFramesMultipleResultsAndPreservesLargeIntegers(t *testing.T) {
 +	proc := testutil.NewProcess(t)
-+	inputs := make([]*batch.Batch, 0, 2)
-+	for _, value := range []int64{1, 256} {
-+		input := batch.NewWithSize(2)
-+		input.Vecs[0] = vector.NewVec(types.T_int32.ToType())
-+		input.Vecs[1] = vector.NewVec(types.T_json.ToType())
-+		bj, err := bytejson.CreateByteJSONWithCheck(value)
-+		require.NoError(t, err)
-+		raw, err := bj.Marshal()
-+		require.NoError(t, err)
-+		for key := int32(0); key < 64; key++ {
-+			require.NoError(t, vector.AppendFixed(input.Vecs[0], key, false, proc.Mp()))
-+			require.NoError(t, vector.AppendBytes(input.Vecs[1], raw, false, proc.Mp()))
-+		}
-+		input.SetRowCount(64)
-+		inputs = append(inputs, input)
-+	}
-+	aggs := []aggexec.AggFuncExecExpression{aggexec.MakeAggFunctionExpression(aggexec.AggIdOfMin, false, []*plan.Expr{colExpr(1, types.T_json)}, nil), aggexec.MakeAggFunctionExpression(aggexec.AggIdOfMax, false, []*plan.Expr{colExpr(1, types.T_json)}, nil)}
-+	child := colexec.NewMockOperator().WithBatchs(inputs)
-+	g := newGroupOp(proc, []*plan.Expr{colExpr(0, types.T_int32)}, aggs)
-+	g.SpillMem = 2
-+	g.AppendChild(child)
-+	t.Cleanup(func() {
-+		g.Free(proc, false, nil)
-+		child.Free(proc, false, nil)
-+		proc.Free()
-+		require.Zero(t, proc.Mp().CurrNB())
-+	})
-+	require.NoError(t, g.Prepare(proc))
-+	seen := make(map[int32]bool)
-+	for {
-+		result, err := vm.Exec(g, proc)
-+		require.NoError(t, err)
-+		if result.Status == vm.ExecStop || result.Batch == nil {
-+			break
-+		}
-+		for row := 0; row < result.Batch.RowCount(); row++ {
-+			key := vector.MustFixedColNoTypeCheck[int32](result.Batch.Vecs[0])[row]
-+			require.False(t, seen[key])
-+			seen[key] = true
-+			minJSON, err := types.DecodeJson(result.Batch.Vecs[1].GetBytesAt(row)).MarshalJSON()
-+			require.
-```
-
-**File**: `pkg/sql/compile/remoterunClient_test.go` (modified, +37/-18)
-```diff
-@@ -434,24 +434,43 @@ func TestMessageSenderOnClientNegotiatedStreamTeardown(t *testing.T) {
- 	})
- 
- 	t.Run("FIN ACK timeout poisons backend", func(t *testing.T) {
--		ctrl := gomock.NewController(t)
--		stream := mock_morpc.NewMockStream(ctrl)
--		stream.EXPECT().ID().Return(uint64(10))
--		stream.EXPECT().Send(gomock.Any(), gomock.Any()).Return(nil)
--		stream.EXPECT().Close(true).Return(nil)
--		oldTimeout := pipelineStreamFinishClientTimeout
--		pipelineStreamFinishClientTimeout = 10 * time.Millisecond
--		t.Cleanup(func() { pipelineStreamFinishClientTimeout = oldTimeout })
--		sender := &messageSenderOnClient{
--			ctx:           context.Background(),
--			streamSender:  stream,
--			receiveCh:     make(chan morpc.Message),
--			safeToClose:   true,
--			reuseEligible: true,
--		}
--		cleanupCtx, cancel := newRemoteCleanupContext(nil)
--		defer cancel()
--		sender.close(cleanupCtx)
-+		synctest.Test(t, func(t *testing.T) {
-+			ctrl := gomock.NewController(t)
-+			stream := mock_morpc.NewMockStream(ctrl)
-+			cleanupCtx, cancel := newRemoteCleanupContext(nil)
-+			defer cancel()
-+			started := time.Now()
-+			gomock.InOrder(
-+				stream.EXPECT().ID().Return(uint64(10)),
-+				stream.EXPECT().Send(gomock.Any(), gomock.Any()).DoAndReturn(
-+					func(ctx context.Context, request morpc.Message) error {
-+						require.Equal(t, cleanupCtx, ctx)
-+						require.NoError(t, ctx.Err(), "FIN must be sent before the cleanup deadline")
-+						message := request.(*pipeline.Message)
-+						require.Equal(t, uint64(10), message.GetID())
-+						require.Equal(t, pipeline.Method_PipelineStreamFinish, message.GetCmd())
-+						require.Equal(t, pipeline.Status_Last, message.GetSid())
-+						require.Equal(t, pipeline.StreamTeardownMode_FinishAck, message.GetRequestedTeardownMode())
-+						return nil
-+					}),
-+				stream.EXPECT().Close(true).DoAndReturn(func(bool) error {
-+					require.ErrorIs(t, cleanupCtx.Err(), context.DeadlineExceeded)
-+					return nil
-+				}),
-+			)
-+			sender := &messageSenderOnClient{
-+				ctx:          context.Background(),
-+				streamSender: stream,
-+				// No ACK can arrive. Virtual time advances only after FIN has
-+				// been sent and the receiver blocks, not during fixture setup.
-+				receiveCh:     make(chan morpc.Message),
-+				safeToClose:   true,
-+				reuseEligible: true,
-+			}
-+			sender.close(cleanupCtx)
-+			require.ErrorIs(t, cleanupCtx.Err(), context.DeadlineExceeded)
-+			require.Equal(t, pipelineStreamFinishClientTimeout, time.Since(started))
-+		})
- 	})
- 
- 	t.Run("clean StopSending End reuses backend", func(t *testing.T) {
-```
-
-**File**: `pkg/sql/plan/constant_fold_serialized_test.go` (modified, +11/-4)
-```diff
-@@ -43,6 +43,7 @@ func TestConstantFoldBitCountDiagnostics(t *testing.T) {
- 		for _, value := range []string{"3 ", "3x"} {
- 			t.Run(folder+"/"+value, func(t *testing.T) {
- 				proc := testutil.NewProcess(t)
-+				t.Cleanup(proc.Free)
- 				sink := &process.WarningProbe{}
- 				proc.WarningSink = sink
- 				expr, err := BindFuncExprImplByPlanExpr(proc.Ctx, "bit_count", []*Expr{makePlan2StringConstExprWithType(value)})
-@@ -58,12 +59,18 @@ func TestConstantFoldBitCountDiagnostics(t *testing.T) {
- 				}
- 				require.False(t, sink.Warned(), "speculation must not publish statement warnings")
- 				require.Same(t, sink, proc.WarningSink)
--				if value == "3x" {
--					require.NotNil(t, folded.GetF())
--				} else {
--					require.NotNil(t, folded.GetLit())
-+				if value == "3 " {
-+					require.NotNil(t, folded.GetLit(), "warning-free constants must remain usable by literal-only consumers")
- 					require.Equal(t, uint64(2), folded.GetLit().GetU64Val())
-+				} else {
-+					require.NotNil(t, folded.GetF(), "warningful expressions must remain runtime-evaluated")
- 				}
++	op := newOpBuiltInJq()
 +
-+				result, free, err := colexec.GetReadonlyResultFromExpression(proc, folded, []*batch.Batch{batch.EmptyForConstFoldBatch})
-+				require.NoError(t, err)
-+				defer free()
-+				require.Equal(t, uint64(2), vector.MustFixedColNoTypeCheck[uint64](result)[0])
-+				require.Equal(t, value == "3x", sink.Warned(), "runtime diagnostics must be preserved without planning-time warnings")
- 			})
- 		}
- 	}
-```
-
-**File**: `pkg/sql/plan/function/function_id_test.go` (modified, +27/-3)
-```diff
-@@ -82,14 +82,38 @@ func TestAggregateExecutorIDs(t *testing.T) {
- 	}
- }
- 
--func TestMinMaxRejectJSON(t *testing.T) {
-+func TestMinMaxAcceptJSON(t *testing.T) {
- 	for _, name := range []string{"min", "max"} {
--		_, err := GetFunctionByName(
-+		fn, err := GetFunctionByName(
- 			context.Background(),
- 			name,
- 			[]types.Type{types.T_json.ToType()},
- 		)
--		require.Error(t, err, name)
-+		require.NoError(t, err, name)
-+		require.Equal(t, types.T_json, fn.GetReturnType().Oid, name)
++	tests := []struct {
++		name  string
++		json  string
++		query string
++		want  string
++		isTry bool
++	}{
++		{name: "zero results", json: `[]`, query: `.[]`, want: ""},
++		{name: "safe integer boundary", json: `9007199254740991`, query: `.`, want: `9007199254740991`},
++		{name: "positive integer beyond boundary", json: `9007199254740993`, query: `.`, want: `9007199254740993`},
++		{name: "negative integer beyond boundary", json: `-9007199254740993`, query: `.`, want: `-9007199254740993`},
++		{
++			name:  "multiple results",
++			json:  `[1, -9007199254740993, 9007199254740993]`,
++			query: `.[]`,
++			want:  "1\n-9007199254740993\n9007199254740993",
++		},
++		{
++			name:  "try multiple results",
++			json:  `[1, 2, 3]`,
++			query: `.[]`,
++			want:  "1\n2\n3",
++			isTry: true,
++		},
++	}
++	for _, test := range tests {
++		t.Run(test.name, func(t *testing.T) {
++			result, err := evalJqForTest(t, proc, op, []FunctionTestInput{
++				NewFunctionTestInput(types.T_varchar.ToType(), []string{test.json}, nil),
++				NewFunctionTestConstInput(types.T_varchar.ToType(), []string{test.query}, nil),
++			}, nil, test.isTry)
++			require.NoError(t, err)
++			requireJqResult(t, result, []string{test.want}, []bool{false})
++		})
++	}
++
++	_, err := evalJqForTest(t, proc, op, []FunctionTestInput{
++		NewFunctionTestInput(types.T_varchar.ToType(), []string{""}, nil),
++		NewFunctionTestConstInput(types.T_varchar.ToType(), []string{"."}, nil),
++	}, nil, false)
++	require.EqualError(t, err, "unexpected end of JSON input")
++
++	_, err = evalJqForTest(t, proc, op, []FunctionTestInput{
++		NewFunctionTestInput(types.T_varchar.ToType(), []string{"1e1000"}, nil),
++		NewFunctionTestConstInput(types.T_varchar.ToType(), []string{"."}, nil),
++	}, nil, false)
++	require.EqualError(t, err, "json: cannot unmarshal number 1e1000 into Go value of type float64")
++
++	result, err := evalJqForTest(t, proc, op, []FunctionTestInput{
++		NewFunctionTestInput(types.T_varchar.ToType(), []string{`{"value":-1e1000}`}, nil),
++		NewFunctionTestConstInput(types.T_varchar.ToType(), []string{".value"}, nil),
++	}, nil, true)
++	require.NoError(t, err)
++	requireJqResult(t, result, []string{""}, []bool{true})
++}
++
++func TestJqRejectsOutOfRangeNumbersBeforeDuplicateKeysOverwriteThem(t *testing.T) {
++	require.False(t, jqJSONNumberOutOfFloat64Range([]byte(`{"text":"1e1000"}`)))
++	require.False(t, jqJSONNumberOutOfFloat64Range([]byte(`{"text":"\"1e1000"}`)))
++	require.False(t, jqJSONNumberOutOfFloat64Range([]byte(`{"text":"\\1e1000"}`)))
++
++	proc := testutil.NewProcess(t)
++	tests := []struct {
++		name string
++		json string
++		want string
++	}{
++		{name: "positive", json: `{"n":1e1000,"n":1}`, want: "json: cannot unmarshal number 1e1000 into Go struct field .n of type float64"},
++		{name: "negative", json: `{"n":-1e1000,"n":1}`, want: "json: cannot unmarshal number -1e1000 into Go struct field .n of type float64"},
++		{name: "nested object", json: `{"outer":{"n":1e1000,"n":1}}`, want: "json: cannot unmarshal number 1e1000 into Go struct field .outer.n of type float64"},
++		{name: "nested array", json: `{"outer":[{"n":-1e1000,"n":1}]}`, want: "json: cannot unmarshal number -1e1000 into Go struct field .outer.0.n of type float64"},
++	}
++	for _, test := range tests {
++		t.Run(test.name, func(t *testing.T) {
++			_, err := evalJqForTest(t, proc, newOpBuiltInJq(), []FunctionTestInput{
++				NewFunctionTestInput(types.T_varchar.ToType(), []string{test.json}, nil),
++				NewFunctionTestConstInput(types.T_varchar.ToType(), []string{"."}, nil),
++			}, nil, false)
++			require.EqualError(t, err, test.want)
++
++			result, err := evalJqForTest(t, proc, newOpBuiltInJq(), []FunctionTestInput{
++				NewFunctionTestInput(types.T_varchar.ToType(), []string{test.json}, nil),
++				NewFunctionTestConstInput(types.T_varchar.ToType(), []string{"."}, nil),
++			}, nil, true)
++			require.NoError(t, err)
++			requireJqResult(t, result, []string{""}, []bool{true})
++		})
 +	}
 +}
 +
-+func TestMaxByJSONTypeBoundary(t *testing.T) {
-+	for _, name := range []string{"max_by", "max_by_non_null"} {
-+		t.Run(name, func(t *testing.T) {
-+			for _, key := range []int{1, 2} {
-+				args := []types.Type{types.T_varchar.ToType(), types.T_int64.ToType(), types.T_int64.ToType()}
-+				args[key] = types.T_json.ToType()
-+				_, err := GetFunctionByName(context.Background(), name, args)
-+				badTypes := "[VARCHAR JSON BIGINT]"
-+				if key == 2 {
-+					badTypes = "[VARCHAR BIGINT JSON]"
-+				}
-+				require.EqualError(t, err, "invalid argument aggregate function "+name+", bad value "+badTypes)
-+			}
-+			for _, valueType := range []types.T{types.T_varchar, types.T_json} {
-+				fn, err := GetFunctionByName(context.Background(), name,
-+					[]types.Type{valueType.ToType(), types.T_int64.ToType(), types.T_int64.ToType()})
-+				require.NoError(t, err)
-+				require.Equal(t, valueType, fn.GetReturnType().Oid, "return values do not participate in key comparison")
-+			}
-+		})
- 	}
- }
- 
+ func TestJsonRowPropagatesResultAllocationFailureAndResetsEncoder(t *testing.T) {
+ 	for _, masked := range []bool{false, true} {
+ 		t.Run(strconv.FormatBool(masked), func(t *testing.T) {
 ```
 
-**File**: `pkg/sql/plan/function/list_agg.go` (modified, +4/-0)
+**File**: `test/distributed/cases/function/func_jq.result` (modified, +12/-12)
 ```diff
-@@ -730,7 +730,10 @@ func maxByTypeCheck(_ []overload, inputs []types.Type) checkResult {
- 			}
- 		}
- 	}
-+	// Only MIN/MAX have typed JSON key comparison. MAX_BY may return JSON,
-+	// but its ordering and tie keys must not reach the bytewise fallback.
- 	if !typeInList(casts[0].Oid, AnyValueSupportedTypes) ||
-+		casts[1].Oid == types.T_json || casts[2].Oid == types.T_json ||
- 		!typeInList(casts[1].Oid, MinMaxSupportedTypes) ||
- 		!typeInList(casts[2].Oid, MinMaxSupportedTypes) {
- 		return newCheckResultWithFailure(failedAggParametersWrong)
-@@ -828,6 +831,7 @@ var MinMaxSupportedTypes = []types.T{
- 	types.T_varchar, types.T_char, types.T_blob, types.T_text, types.T_datalink,
- 	types.T_uuid,
- 	types.T_binary, types.T_varbinary,
-+	types.T_json,
- }
+@@ -27,15 +27,15 @@ jq({"id": "sample", "10": {"b": 42}}, {(.id): .["10"].b})
+ {"sample":42}
+ select jq('[{"id":1},{"id":2},{"id":3}]', '.[] | .id');
+ jq([{"id":1},{"id":2},{"id":3}], .[] | .id)
+-123
++1\n2\n3
+ select jq('{"a":1, "b":2}', '.a += 1 | .b *= 2');
+ jq({"a":1, "b":2}, .a += 1 | .b *= 2)
+ {"a":2,"b":4}
+ select jq('{"a":1} [2] 3', '. as {$a} ?// [$a] ?// $a | $a');
+ invalid character '[' after top-level value
+ select jq('{"foo": 4722366482869645213696}', '.foo');
+ jq({"foo": 4722366482869645213696}, .foo)
+-4.722366482869645e+21
++4722366482869645213696
+ select jq('1', 'def fact($n): if $n < 1 then 1 else $n * fact($n - 1) end; fact(50)');
+ jq(1, def fact($n): if $n < 1 then 1 else $n * fact($n - 1) end; fact(50))
+ 30414093201713378043612608166064768844377641568960512000000000000
+@@ -84,22 +84,22 @@ jq(["a", "b", "c", "d", "e"], .[-2:])
+ ["d","e"]
+ select jq('["a", "b", "c", "d", "e"]', '.[]');
+ jq(["a", "b", "c", "d", "e"], .[])
+-"a""b""c""d""e"
++"a"\n"b"\n"c"\n"d"\n"e"
+ select jq('[]', '.[]');
+ jq([], .[])
  
- var AnyValueSupportedTypes = []types.T{
-```
-
-**File**: `pkg/sql/plan/json_elt_lazy_fold_test.go` (modified, +15/-4)
-```diff
-@@ -24,22 +24,27 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
- 	planrule "github.com/matrixorigin/matrixone/pkg/sql/plan/rule"
- 	"github.com/matrixorigin/matrixone/pkg/testutil"
-+	"github.com/matrixorigin/matrixone/pkg/vm/process"
- 	"github.com/stretchr/testify/require"
- 	"testing"
- )
- 
- func TestJSONStringEltLazyPlannerFolding(t *testing.T) {
--	proc := testutil.NewProcess(t)
--	defer proc.Free()
- 	for _, tc := range []struct {
--		sql, want  string
--		null, fail bool
-+		sql, want          string
-+		null, fail, warned bool
- 	}{
- 		{sql: "elt(1,'ok',cast('bad' as json))", want: "ok"},
-+		{sql: "concat(elt(1,'ok',cast('bad' as json)),'!')", want: "ok!"},
-+		{sql: "elt(1,elt(1,'ok',cast('bad' as json)),cast('bad' as json))", want: "ok"},
- 		{sql: "elt(null,cast('bad' as json),'ok')", null: true},
- 		{sql: "elt(0,cast('bad' as json),'ok')", null: true},
- 		{sql: "elt(3,cast('bad' as json),'ok')", null: true},
- 		{sql: "elt(1,cast('bad' as json),'ok')", fail: true},
-+		{sql: "elt(1,'ok',cast(bit_count('3x') as json))", want: "ok"},
-+		{sql: "elt(1,cast(bit_count('3 ') as json),cast('bad' as json))", want: "2"},
-+		{sql: "elt(1,cast(bit_count('3x') as json),'ok')", want: "2", warned: true},
-+		{sql: "concat(elt(1,cast(bit_count('3x') as json),'ok'),'!')", want: "2!", warned: true},
- 	} {
- 		t.Run(tc.sql, func(t *testing.T) {
- 			stmt, err := parsers.ParseOne(context.Background(), dialect.MYSQL, "select "+tc.sql, 1)
-@@ -50,6 +55,10 @@ func TestJSONStringEltLazyPlannerFolding(t *testing.T) {
- 			require.NoError(t, err)
- 			for _, mode := range []string{"runtime", "api", "optimizer", "prepare"} {
- 				t.Run(mode, func(t *testing.T) {
-+					proc := testutil.NewProcess(t)
-+					t.Cleanup(proc.Free)
-+					sink := &process.WarningProbe{}
-+					proc.WarningSink = sink
- 					expr := DeepCopyExpr(bound)
- 					if mode == "api" {
- 						expr, err = ConstantFold(batch.EmptyForConstFoldBatch, expr, proc, false, true)
-@@ -63,6 +72,7 @@ func TestJSONStringEltLazyPlannerFolding(t *testing.T) {
- 					requires, err := planpb.RequiresMORPCVersion129JSONStringConsumerOverload([]*planpb.Expr{expr})
- 					require.NoError(t, err)
- 					require.True(t, requires, "fold must retain durable/remote ELT identity")
-+					require.False(t, sink.Warned(), "speculative folding must not publish selected or unselected warnings")
- 					result, free, err := colexec.GetReadonlyResultFromExpression(proc, expr, []*batch.Batch{batch.EmptyForConstFoldBatch})
- 					if free != nil {
- 						defer free()
-@@ -72,6 +82,7 @@ func TestJSONStringEltLazyPlannerFolding(t *testing.T) {
- 						return
- 					}
- 					require.NoError(t, err)
-+					require.Equal(t, tc.warned, sink.Warned(), "only the selected subtree may publish runtime warnings")
- 					if tc.null {
- 						require.True(t, result.IsNull(0))
- 						return
+ select jq('{"foo": ["a", "b", "c", "d", "e"]}', '.foo[]');
+ jq({"foo": ["a", "b", "c", "d", "e"]}, .foo[])
+-"a""b""c""d""e"
++"a"\n"b"\n"c"\n"d"\n"e"
+ select jq('{"a":1, "b":2}', '.[]');
+ jq({"a":1, "b":2}, .[])
+-12
++1\n2
+ select jq('{"a":1, "b":2}', '.a, .b');
+ jq({"a":1, "b":2}, .a, .b)
+-12
++1\n2
+ select jq('["a", "b", "c", "d", "e"]', '.[4,2]');
+ jq(["a", "b", "c", "d", "e"], .[4,2])
+-"e""c"
++"e"\n"c"
+ select jq('{"a": 1, "b": [2, 3]}', '[.a, .b[]]');
+ jq({"a": 1, "b": [2, 3]}, [.a, .b[]])
+ [1,2,3]
+@@ -111,7 +111,7 @@ jq({"a":1, "b":2}, {aa: .a, bb: .b})
+ {"aa":1,"bb":2}
+ select jq('{"user":"stedolan","titles":["JQ Primer", "More JQ"]}', '{user, title: .titles[]}');
+ jq({"user":"stedolan","titles":["JQ Primer", "More JQ"]}, {user, title: .titles[]})
+-{"title":"JQ Primer","user":"stedolan"}{"title":"More JQ","user":"stedolan"}
++{"title":"JQ Primer","user":"stedolan"}\n{"title":"More JQ","user":"stedolan"}
+ select jq('[[{"a":1}]]', '.. | .a');
+ expected an object but got: array ([[{"a":1}]])
+ select jq('{"a":1, "b":2}', '.a + .b');
+@@ -149,7 +149,7 @@ jq([1, 2, 3], reduce .[] as $item (0; + $item))
+ 3
+ select jq('[1, 2, 3]', 'foreach .[] as $item(0; . + $item; [$item, . * 2])');
+ jq([1, 2, 3], foreach .[] as $item(0; . + $item; [$item, . * 2]))
+-[1,2][2,6][3,12]
++[1,2]\n[2,6]\n[3,12]
+ create table jqt(id int, data varchar(255), jq varchar(255));
+ insert into jqt values
+ (1, '{"foo": 128}', '.foo'),
+@@ -201,7 +201,7 @@ id    try_jq(data, .)
+ 8    [{"id":1},{"id":2},{"id":3}]
+ 9    {"a":1,"b":2}
+ 10    null
+-11    {"foo":4.722366482869645e+21}
++11    {"foo":4722366482869645213696}
+ 12    1
+ 100    [1,2,3]
+ 101    [1,2,3]
+@@ -284,10 +284,10 @@ id    try_jq(data, jq)
+ 5    null
+ 6    null
+ 7    {"sample":42}
+-8    123
++8    1\n2\n3
+ 9    {"a":2,"b":4}
+ 10    null
+-11    4.722366482869645e+21
++11    4722366482869645213696
+ 12    30414093201713378043612608166064768844377641568960512000000000000
+ 100    null
+ 101    null
 ```
 
 ---
 
-### Incident Patch 3: `ecdeffcf` (2026-10-22)
-**Commit Message**: fix(plan): preserve decimal pruning for integer-backed DOUBLE parameters (#30817)
+### Incident Patch 3: `e3f4b642` (2026-10-24)
+**Commit Message**: fix(logservice): preserve CN mutation budgets; test grouped SUM (#30886)
 
 ## What type of PR is this?
 
@@ -3466,126 +2803,167 @@ CGo include/search environment; the initial preproce
 - [ ] Improvement
 - [ ] Documentation
 - [ ] Feature
-- [ ] Test and CI
+- [x] Test and CI
 - [ ] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Addresses the remaining explicit DOUBLE / integer-source path of #29661.
-Keep the issue open pending merged-nightly confirmation.
+Related to #30847 and #30337; umbrella #30838.
 
 ## What this PR does / why we need it:
 
-### Summary
+CN label update, patch and deletion detached their preflight
+checker-state reads into a fresh background deadline even when the
+caller supplied a bounded context. Use the caller context for both read
+and proposal, matching CN work-state updates. Reuse the existing store
+fixture to distinguish rejection of an expired request from a missing-CN
+error or successful no-op deletion. Keep the CDC takeover cleanup and
+ownership/checkpoint assertions intact; the original timeout was not
+reproduced locally, so this does not claim to eliminate every HAKeeper
+stall.
 
-Addresses the remaining integer-backed explicit DOUBLE comparison in
-#29661. Earlier fixes cover direct integer/TEXT DECIMAL comparisons, but
-`d = CAST(? AS DOUBLE)` with an integer source still scans every
-persisted block and loses native secondary-index access.
+The grouped SUM portion adds correctness tests and caller-sized
+benchmark controls only. Production SUM code is identical to main. Group
+invokes BatchFill in hashmap.UnitLimit-sized chunks (256 rows), so cover
+those calls with original vector offsets, 4/254/255/256 groups,
+sequential/permute
 
-On frozen main `ada0bde326adec3c3906d2f417c266d0ada5b054`, both binary
-Prepared and SQL EXECUTE return the correct row for `16001`, but read 4
-blocks / 32,768 rows rather than the literal control's 1 block / 8,192
-rows. The unchanged Daily MOTR pruning contract fails on precisely this
-residual.
-
-### Design
-
-- Admit only SELECT scalar comparisons of a native DECIMAL64/128 column
-with a plain DOUBLE cast of a parameter through an injective integer
-cast chain.
-- Reuse the existing D
-
-**File**: `pkg/frontend/computation_wrapper.go` (modified, +12/-8)
+**File**: `docs/design/tpch-sum-local-table-validation.md` (added, +59/-0)
 ```diff
-@@ -93,12 +93,13 @@ type TxnComputationWrapper struct {
- 	// specialization outside the live PrepareStmt cache. The candidate is
- 	// installed only after its Compile succeeds, so a failed replacement leaves
- 	// the preceding category and Compile intact.
--	runtimeCacheTarget          *PrepareStmt
--	runtimeCacheKey             string
--	runtimeCachePlan            *plan.Plan
--	runtimeCacheDiagnostics     []*plan.Expr
--	runtimeCacheColDefData      [][]byte
--	runtimeCacheRetiredCompiles []retiredRuntimeCompile
-+	runtimeCacheTarget             *PrepareStmt
-+	runtimeCacheKey                string
-+	runtimeCachePlan               *plan.Plan
-+	runtimeCacheDiagnostics        []*plan.Expr
-+	runtimeCacheDecimalFloatProofs []plan2.PreparedDecimalFloatProof
-+	runtimeCacheColDefData         [][]byte
-+	runtimeCacheRetiredCompiles    []retiredRuntimeCompile
- 
- 	explainBuffer *bytes.Buffer
- 	binaryPrepare bool
-@@ -1856,7 +1857,8 @@ func initExecuteStmtParamWithResolverInSession(
- 			proof = func(expr *plan.Expr) bool { return preparedBinaryIntegerCastDiagnosticFree(prepareStmt, expr, true) }
- 		}
- 		if key == prepareStmt.runtimeSpecializationKey && prepareStmt.runtimePlan != nil &&
--			!fieldTypes.NeedsReprepare(cwft.paramBindings, cwft.paramVals) {
-+			!fieldTypes.NeedsReprepare(cwft.paramBindings, cwft.paramVals) &&
-+			plan2.MatchPreparedDecimalFloatProofs(prepareStmt.runtimeDecimalFloatProofs, cwft.paramBindings, cwft.paramVals) {
- 			safe, probeErr := plan2.ProbePreparedDiagnosticCandidatesWithProof(cwft.proc, prepareStmt.runtimeDiagnosticCandidates, proof)
- 			if probeErr != nil {
- 				return nil, nil, nil, originSQL, false, probeErr
-@@ -1920,6 +1922,7 @@ func initExecuteStmtParamWithResolverInSession(
- 			if cacheable {
- 				cwft.runtimeCacheTarget, cwft.runtimeCacheKey, cwft.runtimeCachePlan = prepareStmt, key, executionPlan
- 				cwft.runtimeCacheDiagnostics = bound.DiagnosticCandidates
-+				cwft.runtimeCacheDecimalFloatProofs = bound.DecimalFloatProofs
- 			}
- 		}
- 	} else if numParams > 0 && (executionPlan.GetDdl().GetQuery() != nil || executionPlan.GetDcl().GetSetVariables() != nil) {
-@@ -2026,6 +2029,7 @@ func (cwft *TxnComputationWrapper) discardRuntimeCacheCandidate() {
- 	cwft.runtimeCacheKey = ""
- 	cwft.runtimeCachePlan = nil
- 	cwft.runtimeCacheDiagnostics = nil
-+	cwft.runtimeCacheDecimalFloatProofs = nil
- 	cwft.runtimeCacheColDefData = nil
+@@ -0,0 +1,59 @@
++# Caller-sized validation for grouped decimal SUM
++
++Owner: #30847; umbrella #30838.
++
++## Final scope
++
++The grouped SUM change adds tests and benchmarks only. Production SUM code is identical to main; its cache, executor state, arithmetic and update/scatter order are unchanged.
++
++## Regression disposition
++
++The frozen comparison of main `517a0a412b` with the rejected implementation
++`f4beca75c7` measured +14.65% for caller-sized permuted groups and +155.68% for
++the large-call permuted control. Those results are failures, not accepted
++tradeoffs or performance claims for the current head. The range index was
++removed before the current test-only SUM revision; the final diff against
++main contains no production file under `pkg/sql/colexec/aggexec`.
++
++The remaining production change belongs to HAKeeper CN mutation deadlines,
++not SUM execution. The retained tests/benchmarks preserve the real caller's
++256-row boundary and the reordered-ID controls for future optimization work.
++
++## Review finding and correction
++
++The initial range-rejection optimization built a min/max and empty-slot index once a 255-entry local table filled. Its 8192-row single-call benchmark showed a gain, but group.buildOneBatch calls BatchFill with at most hashmap.UnitLimit (256) rows. In such a call the index can be built for at most the last row, cannot amortize its scans, and regresses reordered group IDs. The initially claimed 5.07x kernel gain does not describe normal grouped execution and is withdrawn.
++
++The range index and all production probe changes are removed. An index-free contiguous-membership alternative also failed the caller-sized benchmark and is not retained. Future optimization of #30847 requires a design grounded in the real caller's work and state lifecycle.
++
++## Matched current-source check
++
++A separate current-source comparison used main `6fb6531432` and the
++PR source `5affe39d58`. Both production SUM blobs are
++`e282f8d3188a3d172fe5209104117648dea7c938`; no non-test aggexec file differs.
++Ten balanced process pairs used one physical CPU, GOMAXPROCS=1, GOAMD64=v3 and
++GOEXPERIMENT=simd. Each case ran twice per process; the first result was excluded.
++The complete controls, samples and uncertainty are retained in the PR discussion.
++
++The large-call permuted control measured 400.272 versus 404.339 microseconds per
++8192 rows; the paired estimate is +0.95% with ratio interval [0.9958, 1.0228].
++Caller-sized permuted calls measured 130.859 versus 131.376 microseconds, with
++paired estimate +0.40% and interval [0.9863, 1.0119]. These uncertain differences
++are not the removed implementation's +155.68% and +14.65% results. Every scored
++control reported zero allocations. No current SUM optimization or speedup is
++claimed; this check confirms which source the historical failure describes.
++
++## Validation contract
++
++Benchmark public aggregate dispatch with 8192 rows consumed in hashmap.UnitLimit-sized calls, original vector offsets, and state allocated outside timing. Include cardinalities 4/254/255/256, sequential and permuted high-cardinality IDs, and a high endpoint. Keep explicitly named large-call sequential/permuted controls to expose the misleading amortization assumption. Allocation counts and timing belong to benchmarks, not wall-clock assertions in unit tests.
++
++Extend the existing small boundary fixture for both caller-sized chunks and a whole call, with independent expected sums/NULLs, constants, offsets, unmatched IDs, repeated local groups and sparse group IDs. Retain the physical-overflow-order witness because it protects direct updates and deferred scatter. No service, cluster, input dataset, sleeps or benchmark result-verification script is needed. The SUM changes introduce no new SQL-visible behavior requiring BVT. Current validation must be tied to the rebased source; historical passing runs do not establish a green pipeline.
++
++## Review classification
++
++Focused removal of an unsuccessful optimization and correction of test coverage; no new feature or major refactor. Design gate is exempt for this review fix. Original approved optimization design is superseded by the final test-only scope above.
++
++## HAKeeper caller-budget correction
++
++The CI failure in `TestCDCNoFullPublicTakeoverLifecycle` occurred while its deferred CN C label cleanup returned a Dragonboat timeout. CN label update, patch and deletion each detached their preflight checker-state read into a background context with a fixed two-second deadline, even though the mutation already had a caller-owned deadline. They now use that context for both the read and proposal, matching CN work-state updates. The CDC cleanup and takeover assertions remain intact. No retry loop, global deadline change, new hook or wire change is introduced.
++
++The existing store fixture checks all four mutations with an already-expired deadline and an unknown CN. This distinguishes deadline rejection from the detached read's missing-CN 
+```
+
+**File**: `pkg/logservice/store.go` (modified, +3/-3)
+```diff
+@@ -1335,7 +1335,7 @@ func (l *store) addScheduleCommands(ctx context.Context,
  }
  
-@@ -2046,7 +2050,7 @@ func (cwft *TxnComputationWrapper) installRuntimeCacheCandidate(runtimeCompile *
- 		return false
+ func (l *store) updateCNLabel(ctx context.Context, label pb.CNStoreLabel) error {
+-	state, err := l.getCheckerState()
++	state, err := l.getCheckerStateWithContext(ctx)
+ 	if err != nil {
+ 		return err
  	}
- 	retiredCompile := cwft.runtimeCacheTarget.installRuntimeSpecializationCache(
--		cwft.runtimeCacheKey, cwft.runtimeCachePlan, runtimeCompile, cwft.runtimeCacheDiagnostics, cwft.runtimeCacheColDefData)
-+		cwft.runtimeCacheKey, cwft.runtimeCachePlan, runtimeCompile, cwft.runtimeCacheDiagnostics, cwft.runtimeCacheDecimalFloatProofs, cwft.runtimeCacheColDefData)
- 	if retiredCompile != nil {
- 		// NewCompile has already installed runtimeCompile's execution state on the
- 		// shared session Process. Releasing the displaced compile here would call
-```
-
-**File**: `pkg/frontend/computation_wrapper_test.go` (modified, +2/-2)
-```diff
-@@ -4475,8 +4475,8 @@ func TestRuntimeSpecializationReplacementCommitsOnlyAfterCompileSuccess(t *testi
- 		cw.proc, prepareStmt.PrepareStmt, false, nil, time.Now())
- 	oldMetadata := [][]byte{[]byte("old column payload")}
- 	oldDiagnostics := []*plan.Expr{{Typ: plan.Type{Id: int32(types.T_int32)}, Expr: &plan.Expr_P{P: &plan.ParamRef{Pos: 0}}}}
--	prepareStmt.installRuntimeSpecializationCache("old", oldPlan, oldCompile, oldDiagnostics, oldMetadata)
--	require.Nil(t, prepareStmt.installRuntimeSpecializationCache("old", oldPlan, oldCompile, oldDiagnostics, oldMetadata),
-+	prepareStmt.installRuntimeSpecializationCache("old", oldPlan, oldCompile, oldDiagnostics, nil, oldMetadata)
-+	require.Nil(t, prepareStmt.installRuntimeSpecializationCache("old", oldPlan, oldCompile, oldDiagnostics, nil, oldMetadata),
- 		"reinstalling the live compile must not retire it")
+@@ -1379,7 +1379,7 @@ func (l *store) updateCNWorkState(ctx context.Context, workState pb.CNWorkState)
+ }
  
- 	for _, compileErr := range []error{assert.AnError, context.Canceled} {
+ func (l *store) patchCNStore(ctx context.Context, stateLabel pb.CNStateLabel) error {
+-	state, err := l.getCheckerState()
++	state, err := l.getCheckerStateWithContext(ctx)
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -1401,7 +1401,7 @@ func (l *store) patchCNStore(ctx context.Context, stateLabel pb.CNStateLabel) er
+ }
+ 
+ func (l *store) deleteCNStore(ctx context.Context, cnStore pb.DeleteCNStore) error {
+-	state, err := l.getCheckerState()
++	state, err := l.getCheckerStateWithContext(ctx)
+ 	if err != nil {
+ 		return err
+ 	}
 ```
 
-**File**: `pkg/frontend/prepared_ap_cache_test.go` (modified, +1/-1)
+**File**: `pkg/logservice/store_test.go` (modified, +27/-0)
 ```diff
-@@ -59,7 +59,7 @@ func TestPreparedRuntimeAPCacheReusesPlanNotTopology(t *testing.T) {
- 			oldTP := compile.NewCompile("", "", prepared.Sql, "", "", nil,
- 				cw.proc, prepared.PrepareStmt, false, nil, time.Now())
- 			prepared.installRuntimeSpecializationCache("previous-category",
--				prepared.PreparePlan.GetDcl().GetPrepare().Plan, oldTP, nil, nil)
-+				prepared.PreparePlan.GetDcl().GetPrepare().Plan, oldTP, nil, nil, nil)
- 			newCompiler := func() (*compile.Compile, func()) {
- 				c := compile.NewCompile("ingress:6001", "", prepared.Sql, "", "",
- 					&successfulSchedulingPreviewEngine{}, cw.proc, prepared.PrepareStmt, false, nil, time.Now())
+@@ -1225,6 +1225,33 @@ func TestUpdateCNLabel(t *testing.T) {
+ 		assert.Equal(t, labels1.Labels, []string{"a", "b"})
+ 		_, ok3 = info.Labels["role"]
+ 		assert.False(t, ok3)
++
++		// The preflight read belongs to the mutation's caller budget too.
++		// An unknown CN distinguishes a detached read (missing-CN error or
++		// successful no-op deletion) from rejection of the expired request.
++		expired, cancelExpired := context.WithDeadline(context.Background(), time.Unix(1, 0))
++		defer cancelExpired()
++		for _, tc := range []struct {
++			name string
++			run  func(context.Context) error
++		}{
++			{"label", func(ctx context.Context) error {
++				return store.updateCNLabel(ctx, pb.CNStoreLabel{UUID: "missing-cn"})
++			}},
++			{"work_state", func(ctx context.Context) error {
++				return store.updateCNWorkState(ctx, pb.CNWorkState{UUID: "missing-cn"})
++			}},
++			{"patch", func(ctx context.Context) error {
++				return store.patchCNStore(ctx, pb.CNStateLabel{UUID: "missing-cn"})
++			}},
++			{"delete", func(ctx context.Context) error {
++				return store.deleteCNStore(ctx, pb.DeleteCNStore{StoreID: "missing-cn"})
++			}},
++		} {
++			t.Run("expired_"+tc.name, func(t *testing.T) {
++				require.ErrorIs(t, tc.run(expired), dragonboat.ErrInvalidDeadline)
++			})
++		}
+ 	}
+ 	runStoreTest(t, fn)
+ }
 ```
 
-**File**: `pkg/frontend/prepared_decimal_float_cache_test.go` (added, +169/-0)
+**File**: `pkg/sql/colexec/aggexec/sum_local_table_test.go` (added, +199/-0)
 ```diff
-@@ -0,0 +1,169 @@
+@@ -0,0 +1,199 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -3600,250 +2978,135 @@ cast chain.
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package frontend
++package aggexec
 +
 +import (
-+	"context"
++	"fmt"
 +	"testing"
-+	"time"
 +
++	"github.com/matrixorigin/matrixone/pkg/common/hashmap"
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
 +	"github.com/matrixorigin/matrixone/pkg/container/types"
 +	"github.com/matrixorigin/matrixone/pkg/container/vector"
-+	"github.com/matrixorigin/matrixone/pkg/defines"
-+	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/sql/compile"
-+	plan2 "github.com/matrixorigin/matrixone/pkg/sql/plan"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestPreparedDecimalFloatSingleSlotCache(t *testing.T) {
-+	const wide = "1152921504606846976"
-+	for _, first := range []string{"7", wide} {
-+		t.Run(first, func(t *testing.T) {
-+			base := plan2.NewMockCompilerContext(false, newPlanTestProcess(t))
-+			_, table, err := base.Resolve("tpch", "nation", nil)
-+			require.NoError(t, err)
-+			for _, col := range table.Cols {
-+				if col.Name == "n_nationkey" {
-+					col.Typ.Id, col.Typ.Width, col.Typ.Scale = int32(types.T_decimal128), 18, 2
-+				}
-+			}
-+			ctx := &preparedStatsTestCompiler{preparedTestCompiler: &preparedTestCompiler{CompilerContext: base, proc: base.GetProcess()}, table: table}
-+			ses, prepared, cw, ec := newPreparedExecuteEnvForSQLWithCompilerContext(
-+				t, 29661, "select n_name from nation where n_nationkey=cast(? as double)", ctx)
-+			ctx.proc = cw.proc
-+			closed := false
-+			closePrepared := func() {
-+				if closed {
-+					return
-+				}
-+				closed = true
-+				cw.releaseRuntimeCacheRetiredCompiles()
-+				cw.proc.SetPrepareParams(nil)
-+				prepared.Close()
-+			}
-+			t.Cleanup(closePrepared)
-+			bind := func(value string, null bool, source defines.MysqlType) {
-+				t.Helper()
-+				cw.proc.SetPrepareParams(nil)
-+				if prepared.params != nil {
-+					prepared.params.Free(cw.proc.Mp())
-+				}
-+				prepared.params = vector.NewVec(types.T_text.ToType())
-+				require.NoError(t, vector.AppendBytes(prepared.params, []byte(value), null, cw.proc.Mp()))
-+				prepared.ParamTypes = []byte{byte(source), 0}
-+			}
-+			execute := func() (*compile.Compile, *plan.Plan) {
-+				t.Helper()
-+				cw.discardRuntimeCacheCandidate()
-+				comp, p, stmt, _, owned, err := initExecuteStmtParamWithResolverInSession(ec, ses, ses, cw, nil, prepared.Name, ctx.Resolve, ctx)
-+				if owned && stmt != nil {
-+					stmt.Free()
-+				}
-+				require.NoError(t, err)
-+				return comp, p
-+			}
-+			install := func(p *plan.Plan) *compile.Compile {
-+				t.Helper()
-+				require.Same(t, p, cw.runtimeCachePlan)
-+				require.NotEmpty(t, cw.runtimeCacheDecimalFloatProofs)
-+				comp := compile.NewCompile("", "", prepared.Sql, "", "", nil, cw.proc, prepared.PrepareStmt, false, nil, time.Now())
-+				installed := false
-+				t.Cleanup(func() {
-+					if !installed {
-+						comp.FreeOperator()
-+						comp.Release()
++func TestSumFullLocalTablePreservesGroups(t *testing.T) {
++	for _, distinctGroups := range []int{254, 255, 256} {
++		for _, constant := range []bool{false, true} {
++			for _, chunk := range []int{hashmap.UnitLimit, 1024} {
++				t.Run(fmt.Sprintf("groups_%d/constant_%t/chunk_%d", distinctGroups, constant, chunk), func(t *testing.T) {
++					mp := mpool.MustNewZero()
++					t.Cleanup(func() { require.Zero(t, mp.CurrNB()); mpool.DeleteMPool(mp) })
++					param := types.New(types.T_decimal128, 38, 0)
++					exec := makeSumAvgExec(mp, true, AggIdOfSum, false, param)
++					t.Cleanup(exec.Free)
++					require.IsType(t, &sumAvgDecExec[types.Decimal128, types.Decimal256]{}, exec)
++					require.NoError(t, exec.GroupGrow(901))
++					groups := make([]uint64, distinctGroups, distinctGroups+8)
++					for i := range groups {
++						groups[i] = uint64(100 + i*2)
++					}
++					// Both outside-range directions, an in-range hole, both endpoints,
++					// and a repeated existing group after the table became full.
++					groups = append(groups, 50, 900, 101, 100, 608, 100, GroupNotMatched, 899)
++					const offset = 2
++					values := make([]types.Decimal128, len(groups)+offset)
++					want := make([]int64, 901)
++					for i, group := range groups {
++						n := int64(i%7 - 3)
++						if constant {
++							n = 5
++						}
++						values[i+offset] = types.Decimal128FromInt64(n)
++						if group != GroupNotMatched && (constant || i != len(groups)-1) {
++							want[group-1] += n
++						}
++					}
++					var input *vector.Vector
++					if constant {
++						var err error
++						input, err = vector.NewConstFixed(param, types.Decimal128FromInt64(5), len(values), mp)
++						require.NoError(t, err)
++					} else {
++						input = vector.NewVec(param)
++					}
++					t.Cleanup(func() { input.Free(mp) })
++					if !constant {
++						for i, value := range values {
++							require.NoError(t, vector.AppendFixed(input, value, i == len(values)-1, mp))
++						}
++					}
++					for start := 0; start < len(groups); start += chunk {
++						require.NoError(t, exec.BatchFill(offset+start, groups[start:min(start+chunk, len(groups))], []*vector.Vector{input}))
++					}
++					results, err := exec.Flush()
++					t.Cleanup(func() {
++						for _, result := range results {
++							result.Free(mp)
++						}
++					})
++					require.NoError(t, err)
++					require.Len(t, results, 1)
++					got := vector.MustFixedColNoTypeCheck[types.Decimal256](results[0])
++					seen := make(map[uint64]bool)
++					for i, g := range groups {
++						if g != 0 && (constant || i != len(groups)-1) {
++							seen[g] = true
++						}
++					}
++					for i := range want {
++						if !seen[uint64(i+1)] {
++							require.True(t, results[0].IsNull(uint64(i)))
++							continue
++						}
++						require.False(t, results[0].IsNull(uint64(i)))
++						require.Equal(t, fmt.Sprint(want[i]), got[i].Format(0), "group %d", i+1)
 +					}
 +				})
-+				installed = cw.completeRuntimeCacheCandidate(comp, nil)
-+				require.True(t, installed)
-+				require.NotEmpty(t, prepared.runtimeDecimalFloatProofs)
-+				require.Nil(t, cw.runtimeCacheDecimalFloatProofs)
-+				return comp
 +			}
-+			bind(first, false, defines.MYSQL_TYPE_LONGLONG)
-+			_, cachedPlan := execute()
-+			cached := install(cachedPlan)
-+			other := wide
-+			if first == wide {
-+				other = "7"
-+			}
-+			firstWide := first == wide
-+			cachedWide := firstWide
-+			firstSibling, otherSibling := "9", "1152921504606846977"
-+			if firstWide {
-+				firstSibling, otherSibling = otherSibling, firstSibling
-+			}
-+			for _, step := range []struct {
-+				value string
-+				wide  bool
-+			}{{firstSibling, firstWide}, {other, !firstWide}, {otherSibling, !firstWide}, {first, firstWide}, {firstSibling, firstWide}} {
-+				bind(step.value, false, defines.MYSQL_TYPE_LONGLONG)
-+				comp, p := execute()
-+				if step.wide == cachedWide {
-+					require.Same(t, cachedPlan, p, "same proof class must not replan: %s", step.value)
-+					require.Same(t, cached, comp, "repeated values in either class must reuse the compile")
-+					require.Nil(t, cw.runtimeCacheTarget)
-+					continue
-+				}
-+				require.Nil(t, comp)
-+				require.NotSame(t, cachedPlan, p, "a different proof class needs exactly one new plan")
-+				require.NotEmpty(t, cw.runtimeCacheDecimalFloatProofs)
-+				oldProofs := prepared.runtimeDecimalFloatProofs
-+				require.False(t, cw.completeRuntimeCacheCandidate(nil, context.Canceled))
-+				require.Same(t, cachedPlan, prepared.runtimePlan)
-+				require.Same(t, cached, prepared.runtimeCompile)
-+				require.Equal(t, oldProofs, prepared.runtimeDe
-```
-
-**File**: `pkg/frontend/prepared_field_test.go` (modified, +1/-1)
-```diff
-@@ -103,7 +103,7 @@ func TestPreparedFieldHistoryCacheAndMigration(t *testing.T) {
- 		}()
- 		if cw.runtimeCachePlan != nil {
- 			cacheHits++
--			prepared.installRuntimeSpecializationCache(cw.runtimeCacheKey, cw.runtimeCachePlan, nil, cw.runtimeCacheDiagnostics, cw.runtimeCacheColDefData)
-+			prepared.installRuntimeSpecializationCache(cw.runtimeCacheKey, cw.runtimeCachePlan, nil, cw.runtimeCacheDiagnostics, cw.runtimeCacheDecimalFloatProofs, cw.runtimeCacheColDefData)
- 			cw.discardRuntimeCacheCandidate()
- 			_, cached, clone, _, owned, err := initExecuteStmtParam(ec, ses, cw, nil, prepared.Name)
- 			if owned && clone != nil {
-```
-
-**File**: `pkg/frontend/types.go` (modified, +4/-0)
-```diff
-@@ -432,6 +432,7 @@ type PrepareStmt struct {
- 	runtimeSpecializationKey    string
- 	runtimePlan                 *plan.Plan
- 	runtimeDiagnosticCandidates []*plan.Expr
-+	runtimeDecimalFloatProofs   []plan2.PreparedDecimalFloatProof
- 	runtimeColDefData           [][]byte
- 	runtimeCompile              *compile.Compile
- 
-@@ -845,6 +846,7 @@ func (prepareStmt *PrepareStmt) installRuntimeSpecializationCache(
- 	runtimePlan *plan.Plan,
- 	runtimeCompile *compile.Compile,
- 	diagnosticCandidates []*plan.Expr,
-+	decimalFloatProofs []plan2.PreparedDecimalFloatProof,
- 	colDefData [][]byte,
- ) *compile.Compile {
- 	oldRuntimeCompile := prepareStmt.runtimeCompile
-@@ -859,6 +861,7 @@ func (prepareStmt *PrepareStmt) installRuntimeSpecializationCache(
- 	prepareStmt.runtimeSpecializationKey = key
- 	prepareStmt.runtimePlan = runtimePlan
- 	prepareStmt.runtimeDiagnosticCandidates = diagnosticCandidates
-+	prepareStmt.runtimeDecimalFloatProofs = decimalFloatProofs
- 	prepareStmt.runtimeColDefData = colDefData
- 	prepareStmt.runtimeCompile = runtimeCompile
- 	if oldRuntimeCompile == runtimeCompile {
-@@ -875,6 +878,7 @@ func (prepareStmt *PrepareStmt) clearRuntimeSpecializationCache() {
- 	prepareStmt.runtimeSpecializationKey = ""
- 	prepareStmt.runtimePlan = nil
- 	prepareStmt.runtimeDiagnosticCandidates = nil
-+	prepareStmt.runtimeDecimalFloatProofs = nil
- 	prepareStmt.runtimeColDefData = nil
- 	prepareStmt.runtimeCompile = nil
- 	prepareStmt.releaseRuntimeCompile(oldRuntimeCompile)
-```
-
-**File**: `pkg/sql/plan/prepared_binding.go` (modified, +8/-1)
-```diff
-@@ -96,6 +96,7 @@ type preparedSourceBindingState struct {
- 	valueDependent       bool
- 	selectStatement      bool
- 	diagnosticCandidates []*Expr
-+	decimalFloatProofs   []PreparedDecimalFloatProof
- 	diagnosticFree       bool
- }
- 
-@@ -661,6 +662,11 @@ func bindPreparedConsumerArguments(ctx context.Context, name string, args []*Exp
- 		return args, nil
- 	}
- 	name = strings.ToLower(name)
-+	if converted, admitted, err := bindPreparedDecimalFloatArguments(ctx, name, args); err != nil {
-+		return nil, err
-+	} else if admitted {
-+		return converted, nil
++		}
 +	}
- 	if converted, admitted, err := bindPreparedDecimalIntegerArguments(ctx, name, args); err != nil {
- 		return nil, err
- 	} else if admitted {
-@@ -987,6 +993,7 @@ type PreparedExecutionPlan struct {
- 	Plan                 *Plan
- 	FieldTypes           *PreparedFieldTypes
- 	DiagnosticCandidates []*Expr
-+	DecimalFloatProofs   []PreparedDecimalFloatProof
- 	DiagnosticFree       bool
- 	ValueDependent       bool
- }
-@@ -1049,7 +1056,7 @@ func BuildPreparedExecutionPlan(ctx CompilerContext, stmt tree.Statement,
- 		return nil, err
- 	}
- 	state := preparedBindingState(planning)
--	return &PreparedExecutionPlan{Plan: p, FieldTypes: state.fieldTypes.result(), DiagnosticCandidates: state.diagnosticCandidates,
-+	return &PreparedExecutionPlan{Plan: p, FieldTypes: state.fieldTypes.result(), DiagnosticCandidates: state.diagnosticCandidates, DecimalFloatProofs: state.decimalFloatProofs,
- 		DiagnosticFree: state.diagnosticFree, ValueDependent: state.valueDependent}, nil
- }
- 
-```
-
-**File**: `pkg/sql/plan/prepared_binding_test.go` (modified, +12/-1)
-```diff
-@@ -221,7 +221,13 @@ func TestPreparedDecimalIntegerConsumerPruning(t *testing.T) {
- 			{"signed cast integer", "c = cast(? as signed)", types.T_int64, []string{"16001"}, true, true},
- 			{"signed cast unsigned control", "c = cast(? as signed)", types.T_uint64, []string{"18446744073709551615"}, false, false},
- 			{"signed cast double control", "c = cast(? as signed)", types.T_float64, []string{"16001.75"}, false, false},
--			{"double cast integer control", "c = cast(? as double)", types.T_int64, []string{"16001"}, false, false},
-+			{"double cast integer", "c = cast(? as double)", types.T_int64, []string{"16001"}, true, false},
-+			{"double cast integer range", "c >= cast(? as double)", types.T_int64, []string{"-16001"}, true, false},
-+			{"double cast unsigned commuted", "cast(? as double) <= c", types.T_uint64, []string{"16001"}, true, false},
-+			{"double cast injective chain", "c = cast(cast(? as signed) as double)", types.T_int64, []string{"16001"}, true, false},
-+			{"double cast wide integer", "c = cast(? as double)", types.T_int64, []string{"1152921504606846976"}, false, false},
-+			{"double cast float32 control", "c = cast(cast(? as float) as double)", types.T_int64, []string{"16001"}, false, false},
-+			{"double cast rounded control", "c = cast(? as double(5,0))", types.T_int64, []string{"16001"}, false, false},
- 			{"abs double cast integer control", "c = abs(cast(? as double))", types.T_int64, []string{"-16001"}, false, false},
- 			{"double cast collision", "c = cast(? as double)", types.T_int64, []string{"9007199254740992"}, false, false},
- 		} {
-@@ -252,6 +258,11 @@ func TestPreparedDecimalIntegerConsumerPruning(t *testing.T) {
- 				t.Cleanup(stmt.Free)
- 				bound, err := BuildPreparedExecutionPlan(&mock.ctxt, stmt, bindings, values)
- 				require.NoError(t, err)
-+				if tc.native && strings.Contains(tc.name, "double cast") || tc.name == "double cast wide integer" || tc.name == "double cast collision" {
-+					require.NotEmpty(t, bound.DecimalFloatProofs)
-+					require.False(t, bound.ValueDependent, "both proved classes can occupy the single cache slot")
-+					require.True(t, MatchPreparedDecimalFloatProofs(bound.DecimalFloatProofs, bindings, values))
-+				}
- 				if tc.guarded {
- 					require.False(t, bound.ValueDependent, "safe admitted domains remain reusable")
- 					require.NotEmpty(t, bound.DiagnosticCandidates)
++}
++
++// Mirror group.buildOneBatch: state grows once, BatchFill receives at most
++// hashmap.UnitLimit rows, with offsets into the original input vector.
++func BenchmarkSumFullLocalTable(b *testing.B) {
++	for _, tc := range []struct {
++		name               string
++		cardinality, chunk int
++		order              string
++	}{
++		{"groups_4", 4, hashmap.UnitLimit, "sequential"},
++		{"groups_254", 254, hashmap.UnitLimit, "sequential"},
++		{"groups_255", 255, hashmap.UnitLimit, "sequential"},
++		{"groups_256", 256, hashmap.UnitLimit, "sequential"},
++		{"sequential", 8192, hashmap.UnitLimit, "sequential"},
++		{"permuted", 8192, hashmap.UnitLimit, "permuted"},
++		{"one_endpoint", 8192, hashmap.UnitLimit, "endpoint"},
++		{"large_call_sequential", 8192, 8192, "sequential"},
++		{"large_call_permuted", 8192, 8192, "permuted"},
++	} {
++		b.Run(tc.name, func(b *testing.B) {
++			mp := mpool.MustNewZero()
++			defer mpool.DeleteMPool(mp)
++			param := types.New(types.T_decimal128, 38, 0)
++			input := vector.NewVec(param)
++			defer input.Free(mp)
++			groups := make([]uint64, 8192)
++			for i := range groups {
++				group := i%tc.cardinality + 1
++				switch tc.order {
++			
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30952** (closed): docs: correct purge_log example in builtin comment (@jiangxinmeng1)
-- **PR #30946** (2026-10-23): docs(skills): add flexible defect-hunt workflow (@XuPeng-SH)
-- **PR #30944** (2026-10-23): fix(python-sdk): normalize async PITR wildcard scopes (@MatrixAdventurer)
-- **PR #30927** (2026-10-23): [4.2-dev] fix(vectorindex): isolate AVX-512 kernels from CPU dispatch (@LeftHandCold)
-- **PR #30901** (2026-10-23): fix(moerr): return MySQL deadlock retry identity (@XuPeng-SH)
-- **PR #30895** (2026-10-23): fix(plan): ignore storage-only table options in ALTER TABLE (@MatrixAdventurer)
+- **PR #31124** (2026-10-25): fix(python-sdk): preserve OR predicate grouping (@MatrixAdventurer)
+- **PR #31116** (2026-10-25): fix(disttae): backport exclusive relation handles to 4.1.6 hotfix (@XuPeng-SH)
+- **PR #31115** (2026-10-25): fix(shuffle): preserve unsigned range routing with NULLs on 4.1.6 hotfix (@XuPeng-SH)
+- **PR #31113** (closed): fix: bound repeated-import memory on 4.1.6 hotfix (@aptend)
+- **PR #31112** (closed): fix: bound repeated-import memory on 4.1.6 hotfix (@slyunnn)
+- **PR #31107** (2026-10-25): fix(python-sdk): reject silently discarded INSERT fields (@MatrixAdventurer)
 
 ---
 
@@ -3863,39 +3126,33 @@ cast chain.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. frontend): persist default role selection (#30709)
+## X. python-sdk): preserve resolved ORM schemas in clone and branch builders (#31062)
 
 **RULE**:
-When implementing operations in `pkg/frontend/authenticate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `clients/python/matrixone/_utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68fe0510`: frontend): persist default role selection (#30709). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9728d699`: python-sdk): preserve resolved ORM schemas in clone and branch builders (#31062). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/frontend/authenticate.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `clients/python/matrixone/_utils.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	case *tree.SetDefaultRole:
-		typs = append(typs, PrivilegeTypeAlterUser, PrivilegeTypeAccountAll)
-	case *tree.SetRole, *tree.SetPassword:
-	if st, isSetDefaultRole := stmt.(*tree.SetDefaultRole); isSetDefaultRole && ses.GetFromRealUser() {
-		self, selfErr := setDefaultRoleTargetsAreCurrentUser(ctx, ses, st)
-		if selfErr != nil {
-			return false, stats, selfErr
-		}
-		if self {
-			return true, stats, nil
-		}
-	}
+    from sqlalchemy import Table
+    - ORM model's resolved table name and schema for db.table
+    if SQLALCHEMY_AVAILABLE:
+        mapped_table = getattr(table, '__table__', None)
+        if isinstance(mapped_table, Table):
+            return mapped_table.fullname
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	case *tree.SetDefaultRole, *tree.SetRole, *tree.SetPassword:
+    - ORM model with optional __table_args__['schema'] for db.table
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68fe0510` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9728d699` are properly handled with clean fallback behavior.

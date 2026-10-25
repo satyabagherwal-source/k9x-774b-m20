@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-MFKO",
-    "timestamp": "2026-10-22T18:30:34.584Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "5ca2e518c42f9d597e331e84efeb51bcad6f01da63e216f88477080dc7ad3ee6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-MLVW",
-    "timestamp": "2026-10-22T18:30:42.765Z",
-    "repository": "chaos-mesh/chaos-mesh",
-    "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "5da1aa4c1c9da347464bc70ab5d1076aafe278871a72974da48a44332545117e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-VB5N",
-    "timestamp": "2026-10-22T18:37:28.763Z",
-    "repository": "lxml/lxml",
-    "learningId": "learn-github-lxml-lxml",
-    "contentHash": "e8b671d0373abe0cf3a0afce19355b17e6b8260435a61c18e2d846f2b73be6fc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-VGL9",
     "timestamp": "2026-10-22T18:37:35.805Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7445,51 @@
     "repository": "kajisho5/ffmpeg-skill",
     "learningId": "learn-github-kajisho5-ffmpeg-skill",
     "contentHash": "973b37627992402e40a401b8dd721fb79618a941f43a029a26df2ee11599e3f2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-6TX0",
+    "timestamp": "2026-10-25T15:49:29.460Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "15dc6e3e17d206cd27f95e597581ee6eb8ed985868d4b88d864dedd1e683a57d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-6YVF",
+    "timestamp": "2026-10-25T15:49:35.883Z",
+    "repository": "thaw-app/Thaw",
+    "learningId": "learn-github-thaw-app-thaw",
+    "contentHash": "b11a92717e62bfa4a6d195c120c80f2c55b5135936e204bb143ef76f1b407e40",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-750F",
+    "timestamp": "2026-10-25T15:49:43.839Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "edd967d9ff6f54f4cc9c36fd31f7681fa9bba67f2d6667e7d414db2e05d475b6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

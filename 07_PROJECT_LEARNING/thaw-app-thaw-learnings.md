@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md`  
 > **Source**: github ([https://github.com/thaw-app/Thaw](https://github.com/thaw-app/Thaw))  
-> **Source Version**: `5ab93e49`  
+> **Source Version**: `3e434793`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T22:39:25.968Z  
+> **Timestamp**: 2026-10-25T15:49:35.472Z  
 > **Learning ID**: `learn-github-thaw-app-thaw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/thaw-app/Thaw](https://github.com/thaw-app/Thaw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T22:39:25.959Z  
+> **Harvest Timestamp**: 2026-10-25T15:49:35.461Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open source menu bar manager
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12202 stars
+- **Stars / Engagement**: 12285 stars
 
 ---
 
@@ -1204,74 +1204,489 @@ nonisolated extension WindowInfo: Hashable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ab93e49` (2026-10-19)
-**Commit Message**: build(deps): bump the github-actions group with 4 updates (#1361)
+### Incident Patch 1: `956ef982` (2026-10-21)
+**Commit Message**: docs(issues): split the bug form by version and require a log from the moment it happens (#1371)
 
-Bumps the github-actions group with 4 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action), [ossf/scorecard-action](https://github.com/ossf/scorecard-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).
+* docs(issues): split the bug form by version and require a log from the moment it happens
 
+Reports often came with a log of Thaw starting up and nothing of the bug, because logging was turned on afterwards. There are now two bug forms, Thaw 3 on macOS 27 and Thaw 2 on macOS 26, each labelled for its macOS and showing only its own log steps. Both say to turn logging on before reproducing, ask for the log in its own required field, and point to the macOS crash report when Thaw crashes first. Screenshots and recordings move to an optional field.
 
-Updates `github/codeql-action/init` from 4.38.3 to 4.39.0
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/24c54180a607b1449ed407dd24f251e4e9147c8d...6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee)
+They also say any app with Accessibility access, such as all-in-one utilities, automation tools and other menu bar managers, can click, move or hide menu bar items or press Thaw's icon, and ask reporters to confirm the problem still happens with them quit. The forms add an Area dropdown and a display setup that says whether a display has a notch, the Thaw 3 form takes the version block About copies and asks for the hiding method and item arrangement, and both carry the English-only and follow-up rules the feature form already had. The chooser ge
 
-Updates `github/codeql-action/analyze` from 4.38.3 to 4.39.0
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/24c54180a607b1449ed407dd24f251e4e9147c8d...6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee)
-
-Updates `ossf/scorecard-action` from 2.4.4 to 2.5.0
-- [Release notes](https://github.com/o
-
-**File**: `.github/workflows/codeql.yml` (modified, +2/-2)
+**File**: `.github/ISSUE_TEMPLATE/1-bug-thaw-3.yml` (added, +143/-0)
 ```diff
-@@ -31,7 +31,7 @@ jobs:
-           persist-credentials: false
- 
-       - name: Initialize CodeQL
--        uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-+        uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-         with:
-           languages: swift
-           build-mode: manual
-@@ -54,6 +54,6 @@ jobs:
-             CODE_SIGNING_ALLOWED=NO
- 
-       - name: Perform CodeQL Analysis
--        uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-+        uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-         with:
-           category: "/language:swift"
+@@ -0,0 +1,143 @@
++name: Bug in Thaw 3 (macOS 27)
++description: Report something broken or behaving wrong in Thaw 3.
++title: "[Bug] "
++type: bug
++labels: ["macos-27"]
++projects: ["thaw-app/1"]
++body:
++  - type: markdown
++    attributes:
++      value: |
++        **Before you file a bug:**
++
++        1. Search [Frequent Issues](https://github.com/thaw-app/Thaw/blob/development/FREQUENT_ISSUES.md) and [existing issues](https://github.com/thaw-app/Thaw/issues?q=is%3Aissue).
++        2. Quit all-in-one utility apps, automation tools and other menu bar managers, then check the problem still happens. Apps with Accessibility access can click and move menu bar items, and press Thaw's icon.
++        3. Turn on logging: Settings > Troubleshooting > Diagnostics > **Detailed logging**.
++        4. Make the problem happen again, then wait 10 seconds.
++        5. Click **Show Log Files in Finder** and attach the newest `thaw_….log` below.
++
++        If Thaw crashed before you could turn on logging, attach the crash report instead: in Console, choose Crash Reports, right-click the newest Thaw entry, choose Reveal in Finder, rename the file from `.ips` to `.txt`, and attach it.
++
++        Thaw is made by a small team, so we close reports that have no log, that another app caused, or that get no reply after two follow-ups. You can reopen with the details any time. Write in English; machine translation is fine.
++
++  - type: dropdown
++    id: area
++    attributes:
++      label: Area
++      options:
++        - Menu bar and hiding
++        - Layout and moving items
++        - Thaw Bar
++        - Appearance
++        - Settings
++        - Profiles
++        - Shortcuts
++        - Updates
++        - Onboarding and permissions
++        - Other
++    validations:
++      required: true
++
++  - type: textarea
++    id: description
++    attributes:
++      label: What happened?
++      description: What went wrong, and what you expected instead.
++    validations:
++      required: true
++
++  - type: textarea
++    id: steps
++    attributes:
++      label: Steps to reproduce
++      placeholder: |
++        1.
++        2.
++        3.
++    validations:
++      required: true
++
++  - type: upload
++    id: log
++    attributes:
++      label: Diagnostic log
++      description: The newest `thaw_….log` from step 5, or the crash report renamed to `.txt`. GitHub doesn't accept `.ips` files.
++    validations:
++      required: true
++
++  - type: upload
++    id: evidence
++    attributes:
++      label: Screenshots or a screen recording
++      description: Optional. Helps with anything you can see, like icons in the wrong place.
++    validations:
++      required: false
++
++  - type: textarea
++    id: version_info
++    attributes:
++      label: Version info
++      description: In Settings > About, click the copy button next to the version, then paste it here.
++      placeholder: |
++        Thaw 3.0.0-beta.3 (116)
++        Commit: 33605ef8f
++        macOS: Version 27.2 (Build 26B5112a)
++      render: text
++    validations:
++      required: true
++
++  - type: dropdown
++    id: hiding_method
++    attributes:
++      label: Hiding method
++      description: Settings > Layout > Options.
++      options:
++        - Native
++        - Standard
++        - Everything
++    validations:
++      required: true
++
++  - type: dropdown
++    id: arrangement
++    attributes:
++      label: Item arrangement
++      description: Settings > Layout > Options.
++      options:
++        - Automatic
++        - Manual
++    validations:
++      required: true
++
++  - type: dropdown
++    id: monitor_setup
++    attributes:
++      label: Display setup
++      description: Optional. Some layout and notch bugs only happen on one kind of setup.
++      options:
++        - One display, no notch
++        - One display with a notch
++        - Several displays, none with a notch
++        - Several displays, one with a notch
++    validations:
++      required: false
++
++  - type: textarea
++    id: additional
++    attributes:
++      label: When did it start? Anything else?
++      description: The first version with the problem, other menu bar apps, your setup.
++    validations:
++      required: false
++
++  - type: checkboxes
++    id: checks
++    attributes:
++      label: Before you submit
++      options:
++        - label: I attached a log from the moment the problem happened, or a crash report if Thaw crashed first.
++          required: true
++        - label: The problem still happens with utility, automation and other menu bar apps quit.
++          required: true
++        - label: I'm on the latest release for my channel and searched existing issues.
++          required: true
 ```
 
-**File**: `.github/workflows/scorecard.yml` (modified, +2/-2)
+**File**: `.github/ISSUE_TEMPLATE/2-bug-thaw-2.yml` (added, +124/-0)
 ```diff
-@@ -35,7 +35,7 @@ jobs:
-           persist-credentials: false
+@@ -0,0 +1,124 @@
++name: Bug in Thaw 2 (macOS 26)
++description: Report something broken or behaving wrong in Thaw 2.
++title: "[Bug] "
++type: bug
++labels: ["macos-26"]
++projects: ["thaw-app/1"]
++body:
++  - type: markdown
++    attributes:
++      value: |
++        **Before you file a bug:**
++
++        1. Search [Frequent Issues](https://github.com/thaw-app/Thaw/blob/development/FREQUENT_ISSUES.md) and [existing issues](https://github.com/thaw-app/Thaw/issues?q=is%3Aissue).
++        2. Quit all-in-one utility apps, automation tools and other menu bar managers, then check the problem still happens. Apps with Accessibility access can click and move menu bar items, and press Thaw's icon.
++        3. Turn on logging: Settings > Tools > Diagnostics > **Enable diagnostic logging**.
++        4. Make the problem happen again, then wait 10 seconds.
++        5. Click **Show Log Files in Finder** and attach the newest `thaw_….log` below.
++
++        If Thaw crashed before you could turn on logging, attach the crash report instead: in Console, choose Crash Reports, right-click the newest Thaw entry, choose Reveal in Finder, rename the file from `.ips` to `.txt`, and attach it.
++
++        Thaw is made by a small team, so we close reports that have no log, that another app caused, or that get no reply after two follow-ups. You can reopen with the details any time. Write in English; machine translation is fine.
++
++  - type: dropdown
++    id: area
++    attributes:
++      label: Area
++      options:
++        - Menu bar and hiding
++        - Layout and moving items
++        - Thaw Bar
++        - Appearance
++        - Settings
++        - Profiles
++        - Shortcuts
++        - Updates
++        - Onboarding and permissions
++        - Other
++    validations:
++      required: true
++
++  - type: textarea
++    id: description
++    attributes:
++      label: What happened?
++      description: What went wrong, and what you expected instead.
++    validations:
++      required: true
++
++  - type: textarea
++    id: steps
++    attributes:
++      label: Steps to reproduce
++      placeholder: |
++        1.
++        2.
++        3.
++    validations:
++      required: true
++
++  - type: upload
++    id: log
++    attributes:
++      label: Diagnostic log
++      description: The newest `thaw_….log` from step 5, or the crash report renamed to `.txt`. GitHub doesn't accept `.ips` files.
++    validations:
++      required: true
++
++  - type: upload
++    id: evidence
++    attributes:
++      label: Screenshots or a screen recording
++      description: Optional. Helps with anything you can see, like icons in the wrong place.
++    validations:
++      required: false
++
++  - type: input
++    id: app_version
++    attributes:
++      label: Thaw version
++      description: In Settings > About, click the copy button next to the version, then paste it here.
++      placeholder: Version 2.1.0 (63)
++    validations:
++      required: true
++
++  - type: input
++    id: macos_version
++    attributes:
++      label: macOS version
++      placeholder: e.g. 26.6.2 (Tahoe)
++    validations:
++      required: true
++
++  - type: dropdown
++    id: monitor_setup
++    attributes:
++      label: Display setup
++      description: Optional. Some layout and notch bugs only happen on one kind of setup.
++      options:
++        - One display, no notch
++        - One display with a notch
++        - Several displays, none with a notch
++        - Several displays, one with a notch
++    validations:
++      required: false
++
++  - type: textarea
++    id: additional
++    attributes:
++      label: When did it start? Anything else?
++      description: The first version with the problem, other menu bar apps, your setup.
++    validations:
++      required: false
++
++  - type: checkboxes
++    id: checks
++    attributes:
++      label: Before you submit
++      options:
++        - label: I attached a log from the moment the problem happened, or a crash report if Thaw crashed first.
++          required: true
++        - label: The problem still happens with utility, automation and other menu bar apps quit.
++          required: true
++        - label: I'm on the latest release for my channel and searched existing issues.
++          required: true
+```
+
+**File**: `.github/ISSUE_TEMPLATE/bug_report.yml` (removed, +0/-82)
+```diff
+@@ -1,82 +0,0 @@
+-name: Bug Report
+-description: Report something broken or behaving wrong.
+-title: "[Bug] "
+-type: bug
+-projects: ["thaw-app/1"]
+-body:
+-  - type: markdown
+-    attributes:
+-      value: |
+-        Check [Frequent Issues](https://github.com/thaw-app/Thaw/blob/development/FREQUENT_ISSUES.md) and search [open and closed issues](https://github.com/thaw-app/Thaw/issues?q=is%3Aissue) first.
+-
+-        On Thaw 3.0 and macOS 27, read the [known macOS 27 limitations](https://github.com/thaw-app/Thaw/blob/development/FREQUENT_ISSUES.md#known-macos-27-limitations) too. Those don't need a report.
+-
+-        **Issues are English only.** Machine translation (AI or any other tool) is accepted.
+-
+-        Thaw is free and run by a small team with limited time, so reports with clear steps and logs are looked at first. Issues that lack the requested details, or get no reply after two follow-ups from us, are closed. Issues with no activity are marked stale after 10 days and closed after about 14. Reopen with the missing details at any time.
+-
+-  - type: textarea
+-    id: description
+-    attributes:
+-      label: What happened?
+-      description: What went wrong, and what you expected instead.
+-    validations:
+-      required: true
+-
+-  - type: textarea
+-    id: steps
+-    attributes:
+-      label: Steps to reproduce
+-      placeholder: |
+-        1.
+-        2.
+-        3.
+-    validations:
+-      required: true
+-
+-  - type: upload
+-    id: evidence
+-    attributes:
+-      label: Logs, screenshots, or a screen recording
+-      description: |
+-        Attach at least one. We can rarely do anything with a report that gives us nothing to look at.
+-
+-        A screenshot or a short recording covers most visual bugs. If the app crashes, freezes, or the problem looks timing related, a diagnostic log helps far more: Settings, Advanced, Diagnostics, turn on diagnostic logging, reproduce the bug, then attach the log.
+-    validations:
+-      required: true
+-
+-  - type: input
+-    id: app_version
+-    attributes:
+-      label: Thaw version
+-      description: 2.x runs on macOS 26, 3.0 on macOS 27.
+-      placeholder: e.g. 2.1.0-beta.5 or 3.0.0-alpha.6
+-    validations:
+-      required: true
+-
+-  - type: input
+-    id: macos_version
+-    attributes:
+-      label: macOS version
+-      placeholder: e.g. 26.6.2 (Tahoe) or 27.0 (Golden Gate)
+-    validations:
+-      required: true
+-
+-  - type: dropdown
+-    id: monitor_setup
+-    attributes:
+-      label: Display setup
+-      description: Optional. Plenty of layout and notch bugs only happen on one kind of setup.
+-      options:
+-        - Single display
+-        - Multiple displays
+-    validations:
+-      required: false
+-
+-  - type: textarea
+-    id: additional
+-    attributes:
+-      label: Anything else?
+-      description: Configuration, other menu bar apps, when it started happening.
+-    validations:
+-      required: false
+```
+
+**File**: `.github/ISSUE_TEMPLATE/config.yml` (modified, +3/-0)
+```diff
+@@ -9,3 +9,6 @@ contact_links:
+   - name: Discord
+     url: https://discord.gg/KDfWjWDnR4
+     about: Questions and help from the community.
++  - name: Questions and ideas
++    url: https://github.com/orgs/thaw-app/discussions
++    about: Ask a question or share an idea in Discussions, not as an issue.
+```
+
+**File**: `.github/ISSUE_TEMPLATE/feature_request.yml` (modified, +14/-14)
+```diff
+@@ -7,50 +7,50 @@ body:
+   - type: markdown
+     attributes:
+       value: |
+-        **Before submitting:** Search [open & closed suggestions](https://github.com/thaw-app/Thaw/issues?q=is%3Aissue+-type%3ABug) for duplicates.
++        **Before you suggest something:**
  
-       - name: "Run analysis"
--        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
-+        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
-         with:
-           results_file: results.sarif
-           results_format: sarif
-@@ -53,6 +53,6 @@ jobs:
-           retention-days: 5
+-        **Issues are English only.** Machine translation (AI or any other tool) is accepted.
++        1. Search [existing suggestions](https://github.com/thaw-app/Thaw/issues?q=is%3Aissue+-type%3ABug) for duplicates.
++        2. Describe the problem you want solved, then how you'd like it to work.
  
-       - name: "Upload to code-scanning"
--        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-         with:
-           sarif_file: results.sarif
+-        Thaw is free and run by a small team with limited time, so requests with a clear use case and a proposed solution are looked at first. Issues that lack the requested details, or get no reply after two follow-ups from us, are closed. Issues with no activity are marked stale after 10 days and closed after about 14. Reopen with the missing details at any time.
++        We look at requests with a clear use case and a proposed solution first. We close requests that lack these details or get no reply after two follow-ups. Inactive requests are marked stale after 10 days and closed after about 14. You can reopen any time. Write in English; machine translation is fine.
+ 
+   - type: checkboxes
+     id: checks
+     attributes:
+-      label: Pre-submission checklist
++      label: Before you submit
+       options:
+-        - label: I searched existing issues (open & closed) and found no duplicates
++        - label: I searched existing issues and found no duplicate
+           required: true
+ 
+   - type: textarea
+     id: problem
+     attributes:
+-      label: Problem / Use Case
+-      description: What are you trying to do that isn't possible or convenient right now?
++      label: The problem
++      description: What you want to do that Thaw makes hard or impossible today.
+       placeholder: "I'd like to be able to…"
+     validations:
+       required: true
+ 
+   - type: textarea
+     id: solution
+     attributes:
+-      label: Proposed Solution
+-      description: How do you envision this working?
+-      placeholder: A clear and concise description of what you'd like to happen.
++      label: How it could work
++      placeholder: What you'd like Thaw to do.
+     validations:
+       required: true
+ 
+   - type: textarea
+     id: alternatives
+     attributes:
+-      label: Alternatives Considered
+-      description: Any workarounds you've tried or other ways this could work.
++      label: Other options you tried
++      description: Workarounds, or other ways it could work.
+     validations:
+       required: false
+ 
+   - type: textarea
+     id: additional
+     attributes:
+-      label: Additional Context
+-      description: Screenshots, mockups, screen recordings, or anything else helpful.
++      label: Anything else?
++      description: Screenshots, mockups or recordings.
+     validations:
+       required: false
+```
+
+---
+
+### Incident Patch 2: `b5028062` (2026-10-21)
+**Commit Message**: docs(issues): drop the duplicate security link from the issue chooser (#1372)
+
+GitHub adds its own Report a security vulnerability entry while private vulnerability reporting is on, so the chooser listed it twice. The contact link in config.yml is gone; GitHub's entry stays and leads to the same private advisory form.
+
+Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
+
+**File**: `.github/ISSUE_TEMPLATE/config.yml` (modified, +0/-3)
+```diff
+@@ -3,9 +3,6 @@ contact_links:
+   - name: Frequent issues
+     url: https://github.com/thaw-app/Thaw/blob/development/FREQUENT_ISSUES.md
+     about: Answers to the most common problems, including a missing Thaw icon.
+-  - name: Report a security vulnerability
+-    url: https://github.com/thaw-app/Thaw/security/advisories/new
+-    about: Report privately. Please don't open a public issue for security problems.
+   - name: Discord
+     url: https://discord.gg/KDfWjWDnR4
+     about: Questions and help from the community.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1376** (2026-10-22): fix(menubar): leave visible icons alone while the bar moves to a new main display (@camguillory)
+- **PR #1372** (2026-10-21): docs(issues): drop the duplicate security link from the issue chooser (@diazdesandi)
+- **PR #1371** (2026-10-21): docs(issues): split the bug form by version and require a log from the moment it happens (@diazdesandi)
+- **PR #1365** (2026-10-21): New Crowdin updates (@stonerl)
 - **PR #1364** (2026-10-20): chore(release): prepare 3.0.0-beta.3 (116) (@diazdesandi)
 - **PR #1361** (2026-10-19): build(deps): bump the github-actions group with 4 updates (@dependabot[bot])
-- **PR #1358** (2026-10-18): fix(sections): read sections from the bar only when Thaw starts (@diazdesandi)
-- **PR #1354** (2026-10-18): fix(layout): show the multi-select tip and drop What's New experiments (@diazdesandi)
-- **PR #1344** (2026-10-17): chore(release): prepare 3.0.0-alpha.10 (115) (@diazdesandi)
-- **PR #1332** (2026-10-14): docs: sync the website docs, 2.1.0 notes and contributor rules (@diazdesandi)
 
 ---
 
@@ -1291,30 +1706,48 @@ Updates `ossf/scorecard-action` from 2.4.4 to 2.5.0
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump the github-actions group with 4 updates (#1361)
+## X. docs(issues): split the bug form by version and require a log from the moment it
 
 **RULE**:
-When implementing operations in `.github/workflows/codeql.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in thaw-app/Thaw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/ISSUE_TEMPLATE/1-bug-thaw-3.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in thaw-app/Thaw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ab93e49`: build(deps): bump the github-actions group with 4 updates (#1361). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `956ef982`: docs(issues): split the bug form by version and require a log from the moment it happens (#1371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codeql.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/1-bug-thaw-3.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-        uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+name: Bug in Thaw 3 (macOS 27)
+description: Report something broken or behaving wrong in Thaw 3.
+title: "[Bug] "
+type: bug
+labels: ["macos-27"]
+projects: ["thaw-app/1"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before you file a bug:**
+
+        1. Search [Frequent Issues](https://github.com/thaw-app/Thaw/blob/development/FREQUENT_ISSUES.md) and [existing issues](https://github.com/thaw-app/Thaw/issues?q=is%3Aissue).
+        2. Quit all-in-one utility apps, automation tools and other menu bar managers, then check the problem still happens. Apps with Accessibility access can click and move menu bar items, and press Thaw's icon.
+        3. Turn on logging: Settings > Troubleshooting > Diagnostics > **Detailed logging**.
+        4. Make the problem happen again, then wait 10 seconds.
+        5. Click **Show Log Files in Finder** and attach the newest `thaw_….log` below.
+
+        If Thaw crashed before you could turn on logging, attach the crash report instead: in Console, choose Crash Reports, right-click the newest Thaw entry, choose Reveal in Finder, rename the file from `.ips` to `.txt`, and attach it.
+
+        Thaw is made by a small team, so we close report
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-        uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ab93e49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `956ef982` are properly handled with clean fallback behavior.

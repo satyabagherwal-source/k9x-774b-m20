@@ -4883,3 +4883,6 @@
 | `CYCLE-20261025-SHJC` | `2026-10-25T15:38:20.232Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4367, Rule 4368` | Yes (`5c12e79e...`) |
 | `CYCLE-20261025-SJCS` | `2026-10-25T15:38:22.588Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4369` | Yes (`f46b1bdb...`) |
 | `CYCLE-20261025-YMPL` | `2026-10-25T15:43:06.873Z` | `kajisho5/ffmpeg-skill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4370` | Yes (`973b3762...`) |
+| `CYCLE-20261025-6TX0` | `2026-10-25T15:49:29.460Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md` | Yes (`15dc6e3e...`) |
+| `CYCLE-20261025-6YVF` | `2026-10-25T15:49:35.883Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4371` | Yes (`b11a9271...`) |
+| `CYCLE-20261025-750F` | `2026-10-25T15:49:43.839Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4372` | Yes (`edd967d9...`) |
