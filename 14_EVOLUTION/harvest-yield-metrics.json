@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T17:36:31.834Z",
-  "total_cycles_completed": 4897,
-  "total_learnings_persisted": 4897,
-  "total_rules_promoted": 4276,
+  "last_updated": "2026-10-25T17:42:51.607Z",
+  "total_cycles_completed": 4901,
+  "total_learnings_persisted": 4901,
+  "total_rules_promoted": 4281,
   "history": [
-    {
-      "timestamp": "2026-10-25T07:05:13.734Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-cactus-compute-whistle",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T07:05:16.663Z",
-      "repository": "shoutem/ui",
-      "learningId": "learn-github-shoutem-ui",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T07:05:31.497Z",
-      "repository": "reshaped-ui/reshaped",
-      "learningId": "learn-github-reshaped-ui-reshaped",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T07:06:22.190Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T07:18:16.476Z",
       "repository": "Qwen/Qwen3.8-27B",
@@ -1403,6 +1375,34 @@
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T17:42:43.082Z",
+      "repository": "TableProApp/TablePro",
+      "learningId": "learn-github-tableproapp-tablepro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T17:42:45.045Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T17:42:47.050Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T17:42:51.607Z",
+      "repository": "Qwen/Qwen3-0.6B",
+      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

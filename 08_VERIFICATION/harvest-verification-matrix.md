@@ -4920,3 +4920,7 @@
 | `CYCLE-20261025-SATR` | `2026-10-25T17:30:09.999Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`42cb4607...`) |
 | `CYCLE-20261025-SE8Z` | `2026-10-25T17:30:14.435Z` | `webrtc-rs/webrtc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4395` | Yes (`30feeed0...`) |
 | `CYCLE-20261025-0HG3` | `2026-10-25T17:36:31.827Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`a59b993d...`) |
+| `CYCLE-20261025-8FWL` | `2026-10-25T17:42:43.077Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4396` | Yes (`2c205e04...`) |
+| `CYCLE-20261025-8HF4` | `2026-10-25T17:42:45.040Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md` | Yes (`760d8fd1...`) |
+| `CYCLE-20261025-8IYT` | `2026-10-25T17:42:47.045Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4397` | Yes (`51a007fe...`) |
+| `CYCLE-20261025-8MHA` | `2026-10-25T17:42:51.598Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1518, Rule 4398, Rule 4399` | Yes (`e30ad12c...`) |

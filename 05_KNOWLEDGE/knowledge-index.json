@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T17:36:31.782Z",
+  "last_updated": "2026-10-25T17:42:51.567Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10140,8 +10140,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "7ffbe9cc",
-      "content_hash": "7de1988ffb5d9c624c2c1219b9efb47c72992f43ebd8e87af98fd0ead143c9ef",
+      "source_version": "66e8caf4",
+      "content_hash": "760d8fd10919287c97c56f8bd94160306f1b2b0f83b793ec91e9125956a3a67c",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -10176,7 +10176,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:55:04.179Z",
+      "verified_at": "2026-10-25T17:42:44.997Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24778,7 +24778,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "fe6ba8693fd3013c4be4379e1e13eaa2c88743cb71509cbc971ea9d9dcbb8143",
+      "content_hash": "e30ad12c2112d687a6b96fe0a0bfa773981665c43cf0ed6eae1751fa14aa9ede",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "promoted_rules": [
@@ -24793,6 +24793,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 1518,
+          "title": "GQA KV-Cache Memory Optimization Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 2422,
           "title": "Multi-Terminal End-Of-Sequence Token Handling Rule",
           "status": "PROMOTED_AND_VERIFIED"
@@ -24805,6 +24810,16 @@
         {
           "number": 2424,
           "title": "Presence Penalty Loop Breaker Invariant for Sub-1B Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4398,
+          "title": "BFloat16 Dynamic Range Stability Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4399,
+          "title": "Tied Embeddings Parameter Consistency Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -24826,7 +24841,7 @@
         "learn-huggingface-hf-qwen-qwen3-0-6b-mv494roa",
         "learn-huggingface-hf-qwen-qwen3-0-6b-mv4mie4v"
       ],
-      "verified_at": "2026-10-20T22:06:37.792Z",
+      "verified_at": "2026-10-25T17:42:51.560Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35589,8 +35604,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "05237822",
-      "content_hash": "3c65adf1fb2c52706911638e242ec2cbbc6b98998e38a432bb545844fe3f3db4",
+      "source_version": "9125647f",
+      "content_hash": "51a007fe3f62facf98ed06d4bc83b1c392617c46691a7489178e046bd867519d",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -35658,6 +35673,11 @@
           "number": 4219,
           "title": "outdated example paths in the docs (#8512)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4397,
+          "title": "Require Brotli 1.2.1 for upstream decoder fix (#8514)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35665,7 +35685,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T09:53:58.930Z",
+      "verified_at": "2026-10-25T17:42:47.007Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47358,8 +47378,8 @@
       "slug": "tableproapp-tablepro",
       "platform": "github",
       "source_url": "https://github.com/TableProApp/TablePro",
-      "source_version": "2e6102cb",
-      "content_hash": "6a2ae4a3c90f370b698336b464c36f356d22d55e866533387c689fa8a0257036",
+      "source_version": "94367b10",
+      "content_hash": "2c205e048914e5d7df869a20befef19f87191fcaaa9ae76a1a1a1643285386f8",
       "dossier_path": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "promoted_rules": [
@@ -47372,6 +47392,11 @@
           "number": 3456,
           "title": "security): keep the OSS Scanner image within the scanner's disk (#3698)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4396,
+          "title": "test(linux): retry a fixture's start when its image pull fails (#3828)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47379,7 +47404,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:28:19.507Z",
+      "verified_at": "2026-10-25T17:42:43.039Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -82640,15 +82665,15 @@
       "learning_id": "rule-1518",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1518,
-      "title": "GQA KV-Cache Memory Optimization Invariant (Harvested from Qwen/Qwen3-8B)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "GQA KV-Cache Memory Optimization Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+      "source_version": "hf-qwen-qwen3-0.6b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.820Z"
+      "verified_at": "2026-10-25T17:42:51.560Z"
     },
     "rule-1519": {
       "learning_id": "rule-1519",
@@ -125010,6 +125035,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T17:30:14.379Z"
+    },
+    "rule-4396": {
+      "learning_id": "rule-4396",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4396,
+      "title": "test(linux): retry a fixture's start when its image pull fails (#3828)",
+      "source_url": "https://github.com/TableProApp/TablePro",
+      "source_version": "94367b10",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:42:43.039Z"
+    },
+    "rule-4397": {
+      "learning_id": "rule-4397",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4397,
+      "title": "Require Brotli 1.2.1 for upstream decoder fix (#8514)",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "9125647f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:42:47.007Z"
+    },
+    "rule-4398": {
+      "learning_id": "rule-4398",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4398,
+      "title": "BFloat16 Dynamic Range Stability Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+      "source_version": "hf-qwen-qwen3-0.6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:42:51.560Z"
+    },
+    "rule-4399": {
+      "learning_id": "rule-4399",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4399,
+      "title": "Tied Embeddings Parameter Consistency Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+      "source_version": "hf-qwen-qwen3-0.6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:42:51.560Z"
     }
   },
   "aliases": {

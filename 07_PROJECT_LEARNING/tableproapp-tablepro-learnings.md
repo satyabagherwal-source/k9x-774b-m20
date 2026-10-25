@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source**: github ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
-> **Source Version**: `2e6102cb`  
+> **Source Version**: `94367b10`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T00:28:19.266Z  
+> **Timestamp**: 2026-10-25T17:42:42.856Z  
 > **Learning ID**: `learn-github-tableproapp-tablepro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T00:28:18.900Z  
+> **Harvest Timestamp**: 2026-10-25T17:42:42.541Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Free and open source database client built natively for developers
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6282 stars
+- **Stars / Engagement**: 6318 stars
 
 ---
 
@@ -320,6 +320,7 @@ let package = Package(
         .library(name: "TableProSync", targets: ["TableProSync"]),
         .library(name: "TableProAnalytics", targets: ["TableProAnalytics"]),
         .library(name: "TableProMSSQLCore", targets: ["TableProMSSQLCore"]),
+        .library(name: "TableProKerberos", targets: ["TableProKerberos"]),
         .library(name: "TableProTeradataCore", targets: ["TableProTeradataCore"]),
         .library(name: "TableProTrinoCore", targets: ["TableProTrinoCore"]),
         .library(name: "TableProTLSClientIdentity", targets: ["TableProTLSClientIdentity"]),
@@ -432,6 +433,11 @@ let package = Package(
             path: "Sources/TableProMSSQLCore"
         ),
         .target(
+            name: "TableProKerberos",
+            dependencies: ["TableProCoreTypes"],
+            path: "Sources/TableProKerberos"
+        ),
+        .target(
             name: "TableProTeradataCore",
             dependencies: [],
             path: "Sources/TableProTeradataCore"
@@ -535,11 +541,7 @@ let package = Package(
             dependencies: ["CSQLite"],
             path: "Sources/TableProSQLiteCore"
         ),
-        // Linked by a plugin bundle, so never TableProPluginKit: the plugin would carry its own copy of PluginKit's types.
-        .target(
-            name: "TableProMySQLCore",
-            dependencies: ["TableProGeometry"],
-            path: "Sources/TableP
+        // Linked by a plu
 ```
 
 ### Core Architecture Module: `apple/Packages/TableProCore/Sources/CSQLite/include/sqlite3.h`
@@ -1329,38 +1331,151 @@ public struct AnalyticsPayload: Encodable, Sendable {
 
 ### Core Architecture Module: `apple/Packages/TableProCore/Sources/TableProAutocomplete/DerivedTableParser.swift`
 ```
-//
-//  DerivedTableParser.swift
-//  TablePro
-//
-//  Parses derived-table subqueries and CTEs into their output column names so
-//  autocomplete can resolve `alias.` against a subquery's SELECT list.
-//
-
 import Foundation
 
-/// A derived table (FROM/JOIN subquery or CTE) and the column names its SELECT
-/// list produces. Columns come from the query text, not the live schema.
-internal struct DerivedTable: Equatable, Sendable {
+struct DerivedTable: Equatable, Sendable {
     let alias: String
-    let columns: [String]
+    let projection: DerivedProjection
+    let isCommonTableExpression: Bool
+
+    // What the statement text names, before the catalog expands a `*`.
+    var columns: [String] {
+        projection.columns { _ in nil }
+    }
 }
 
-/// Scans a SQL statement once and extracts every referenceable derived table:
-/// FROM/JOIN subqueries with an alias, and CTEs defined in a WITH clause. The
-/// scan is paren-, string-, and comment-aware and uses O(1) NSString access.
-internal struct DerivedTableParser {
+// A `*` stays a table until the provider can ask the catalog for its columns.
+struct DerivedProjection: Hashable, Sendable {
+    struct Table: Hashable, Sendable {
+        let name: String
+        let schema: String?
+    }
+
+    enum Entry: Hashable, Sendable {
+        case column(String)
+        case unnamed
+        case allColumns(Table)
+        case nested(DerivedProjection)
+        // A USING join outputs its join columns once, ahead of what is left of each side.
+        case excluding([String], DerivedProjection)
+        // A NATURAL join does the same for the columns both sides share, which only the catalog can name.
+        case natural(DerivedProjection, DerivedProjection)
+    }
+
+    var entries: [Entry]
+    // `name (a, b) AS (...)` and `AS x(a, b)` rename the output by position and keep the rest.
+    var declaredNames: [String] = []
+
+    static let empty = DerivedProjection(entries: [])
+
+    var tables: [Table] {
+        entries.flatMap { entry -> [Table] in
+            switch entry {
+            case .allColumns(let table): return [table]
+            case .nested(let projection), .excluding(_, let projection): return projection.tables
+            case .natural(let left, let right): return left.tables + right.tables
+            case .column, .unnamed: return []
+            }
+        }
+    }
+
+    func declaring(_ names: [String]) -> DerivedProjection {
+        guard !names.isEmpty else { return self }
+        guard declaredNames.isEmpty else { return DerivedProjection(entries: [.nested(self)], declaredNames: names) }
+        return DerivedProjection(entries: entries, declaredNames: names)
+    }
+
+    // `expand` answers nil for a table it cannot read, whose width also hides where the declared names land. Names
+    // stay case-sensitive, since `"Value"` and `"value"` are two columns.
+    func columns(expanding expand: (Table) -> [String]?) -> [String] {
+        var seen = Set<String>()
+        return resolve(expand).names.compactMap { $0 }.filter { seen.insert($0).inserted }
+    }
+
+    private func resolve(_ expand: (Table) -> [String]?) -> (names: [String?], knownWidth: Int?) {
+        var names: [String?] = []
+        var knownWidth: Int?
+        for entry in entries {
+            switch entry {
+            case .column(let name):
+                names.append(name)
+            case .unnamed:
+                names.append(nil)
+            case .allColumns(let table):
+                if let columns = expand(table) {
+                    names += columns.map { Optional($0) }
+                } else if knownWidth == nil {
+                    knownWidth = names.count
+                }
+            case .nested(let projection):
+                let inner = projection.resolve(expand)
+                if knownWidth == nil, let innerWidth = inner.knownWidth {
+                    knownWidth = names.count + innerWidth
+                }
+                names += inner.names
+            case .excluding(let excluded, let projection):
+                let inner = projection.resolve(expand)
+                let dropped = Set(excluded.map { $0.lowercased() })
+                let keeps: (String?) -> Bool = { name in name.map { !dropped.contains($0.lowercased()) } ?? true }
+                if knownWidth == nil, let innerWidth = inner.knownWidth {
+                    knownWidth = names.count + inner.names[..<innerWidth].filter(keeps).count
+                }
+                names += inner.names.filter(keeps)
+            case .natural(let left, let right):
+                let lhs = left.resolve(expand)
+                let rhs = right.resolve(expand)
+                guard lhs.knownWidth == nil, rhs.knownWidth == nil else {
+                    if knownWidth == nil { knownWidth = names.count }
+                    names += lhs.names + rhs.names
+                    continue
+                }
+                let rightNames = Set(rhs.names.compactMap { $0?.lowercased() })
+                let shared = Set(lhs.names.compactMap { $0?.lowercased() }.filter { rightNames.contains($0) })
+                let isShared: (String?) -> Bool = { name in name.map { shared.contains($0.lowercased()) } ?? false }
+                names += lhs.names.filter(isShared) + lhs.names.filter { !isShared($0) } + rhs.names.filter { !isShared($0) }
+            }
+        }
+        let known = knownWidth ?? names.count
+        for (index, name) in declaredNames.enumerated() where index < known {
+            names[index] = name
+        }
+        guard declaredNames.count > known else { return (names, knownWidth) }
+        // A declared name past an unread `*` still names a column, only not which one it replaces.
+        names.insert(contentsOf: declaredNames[known...].map { Optional($0) }, at: known)
+        return (names, knownWidth.map { _ in declaredNames.count })
+    }
+}
+
+// Read from the analyzer's code view, where comments and literal bodies are blank and quoted names are masked, so a
+// parenthesis or quote inside one never counts, whatever the engine's quoting rules.
+struct SQLTokenStream {
+    enum Kind {
+        case word, quoted, literal, number, openParen, closeParen, comma, dot, star, other
+    }
+
+    struct Token {
+        let kind: Kind
+        let range: NSRange
+        let upper: String
+        var partner: Int
+    }
+
+    let tokens: [Token]
+    let original: NSString
+
     private static let space: unichar = 0x20
     private static let tab: unichar = 0x09
     private static let newline: unichar = 0x0A
+    private static let verticalTab: unichar = 0x0B
+    private static let formFeed: unichar = 0x0C
     private static let cr: unichar = 0x0D
+    private static let noBreakSpace: unichar = 0xA0
+    private static let dollar: unichar = 0x24
     private static let openParen: unichar = 0x28
     private static let closeParen: unichar = 0x29
+    private static let star: unichar = 0x2A
     private static let comma: unichar = 0x2C
     private static let dot: unichar = 0x2E
-    private static let hyphen: unichar = 0x2D
-    private static let slash: unichar = 0x2F
-    private static let star: unichar = 0x2A
     private static let underscore: unichar = 0x5F
     private static let singleQuote: unichar = 0x27
     private static let doubleQuote: unichar = 0x22
@@ -1368,199 +1483,92 @@ internal struct DerivedTableParser {
     private static let openBracket: unichar = 0x5B
     private static let closeBracket: unichar = 0x5D
 
-    private static let clauseKeywords: Set<String> = [
-        "FROM", "WHERE", "GROUP", "HAVING", "ORDER", "LIMIT", "OFFSET",
-        "UNION", "INTERSECT", "EXCEPT", "WINDOW", "FETCH", "INTO", "FOR"
-    ]
-
-    private static let nonAliasKeywords: Set<String> = [
-        "ON", "USING", "WHERE", "GROUP", "ORDER", "HAVING", "LIMIT", "OFFSET",
-        "UNION", "INTERSECT", "EXCEPT", "JOIN", "INNER", "LEFT", "RIGHT",
-        "FULL", "CROSS", "NATURAL", "AS", "SET", "RETURNING", "WINDOW"
-    ]
-
-    private static let identifierPathCharacters = CharacterSet(charactersIn:
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.`\"[]")
-    private static let quoteCharacters = CharacterSet(charactersIn: "`\"[]")
-
-    func parse(_ statement: String) -> [DerivedTable] {
-        let ns = statement as NSString
-        let length = ns.length
-        var results: [DerivedTable] = []
-        var seen = Set<String>()
-        var i = 0
-        while i < length {
-            if let skipped = skipNonCode(in: ns, at: i, limit: length) {
-                i = skipped
+    init(code: NSString, original: NSString, bracketQuotes: Bool) {
+        self.original = original
+        let length = min(code.length, original.length)
+        var tokens: [Token] = []
+        var openParens: [Int] = []
+        var index = 0
+        while index < length {
+            let unit = code.character(at: index)
+            if Self.isWhitespace(unit) {
+                index += 1
                 continue
             }
-            if ns.character(at: i) == Self.openParen, innerStartsWithSelect(in: ns, openIdx: i, limit: length) {
-                let close = matchingParen(in: ns, openAt: i, limit: length)
-                let preceding = precedingToken(in: ns, before: i)
-                if let table = classify(in: ns, preceding: preceding, open: i, close: close, limit: length),
-                   seen.insert(table.alias.lowercased()).inserted {
-                    results.append(table)
+            let start = index
+            let kind: Kind
+            if Self.isWordStart(unit) {
+                index += 1
+                while index < length, Self.isWordPart(code.character(at: index)) { index += 1 }
+                kind = .word
+            } else if unit >= 0x30 && unit <= 0x39 {
+                index += 1
+                while index < length, Self.isWordPart(code.character(at: index)) || code.character(at: index) == Self.dot {
+                    index += 1
                 }
-                i = close + 1
-                continue
-            }
-            i += 1
-        }
-        return results
-    }
-
-    // MARK: - Classification
-
-    private func classify(
-        in ns: NSString, preceding: (text: String, start: Int),
-        open: Int, close: Int, limit: Int
-    ) -> DerivedTable? {
-        let kind = preceding.text.uppercased()
-        if kind == "AS" {
-            return parseCTE(in: ns, asStart: preceding.start, subOpen: open, subClose: close)
-        }
-        if kind == "FROM" || kind == "JOIN" || preceding.text == "," {
-            return parseDerived(in: ns, subOpen: open, subClose: close, limit: limit)
-        }
-        return nil
-    }
-
-    private func parseDerived(in ns: NSString, subOpen: Int, subClose: Int, limit: Int) -> DerivedTable? {
-        let columns = selectListColumns(in: innerText(in: ns, open: subOpen, close: subClose))
-        var cursor = firstCode(in: ns, from: subClose + 1, limit: limit)
-        guard cursor < limit else { return nil }
-        if let word = readWord(in: ns, at: cursor, limit: limit), word.text.uppercased() == "AS" {
-            cursor = firstCode(in: ns, from: word.end, limit: limit)
-        }
-        guard cursor < limit, let alias = readAliasForward(in: ns, at: cursor, limit: limit) else { return nil }
-        guard !Self.nonAliasKeywords.contains(alias.uppercased()) else { return nil }
-        return DerivedTable(alias: alias, columns: columns)
-    }
-
-    private func parseCTE(in ns: NSString, asStart: Int, subOpen: Int, subClose: Int) -> DerivedTable? {
-        var explicitColumns: [String]?
-        var nameEnd = lastCodeIndex(in: ns, before: asStart)
-        guard nameEnd >= 0 else { return nil }
-        if ns.character(at: nameEnd) == Self.closeParen {
-            let openColumn = matchingParenBackward(in: ns, closeAt: nameEnd)
-            guard openColumn >= 0 else { return nil }
-            explicitColumns = columnListNames(in: ns, open: openColumn, close: nameEnd)
-            nameEnd = lastCodeIndex(in: ns, before: openColumn)
-            guard nameEnd >= 0 else { return nil }
-        }
-        guard let name = readAliasBackward(in: ns, endingAt: nameEnd) else { return nil }
-        let columns = explicitColumns ?? selectListColumns(in: innerText(in: ns, open: subOpen, close: subClose))
-        return DerivedTable(alias: name, columns: columns)
-    }
-
-    // MARK: - SELECT list
-
-    private func selectListColumns(in inner: String) -> [String] {
-        let ns = inner as NSString
-        let length = ns.length
-        guard let select = topLevelKeyword(in: ns, start: 0, end: length, keywords: ["SELECT"]),
-              select.word.uppercased() == "SELECT" else {
-            return []
-        }
-        let listStart = selectListStart(in: ns, after: select.end, limit: length)
-        let listEnd = topLevelKeyword(in: ns, start: listStart, end: length, keywords: Self.clauseKeywords)?.start ?? length
-        guard listStart < listEnd else { return [] }
-
-        var names: [String] = []
-        var seen = Set<String>()
-        for item in topLevelItems(in: ns, start: listStart, end: listEnd) {
-            guard let name = deriveColumnName(item), seen.insert(name.lowercased()).inserted else { continue }
-            names.append(name)
-        }
-        return names
-    }
-
-    /// Skip a leading `DISTINCT`/`ALL` (and a `DISTINCT ON (...)` group) so the
-    /// list scan starts at the first projected expression.
-    private func selectListStart(in ns: NSString, after selectEnd: Int, limit: Int) -> Int {
-        var start = firstCode(in: ns, from: selectEnd, limit: limit)
-        guard let modifier = readWord(in: ns, at: start, limit: limit),
-              modifier.text.uppercased() == "DISTINCT" || modifier.text.uppercased() == "ALL" else {
-            return start
-        }
-        start = firstCode(in: ns, from: modifier.end, limit: limit)
-        guard let on = readWord(in: ns, at: start, limit: limit), on.text.uppercased() == "ON" else {
-            return start
-        }
-        let parenStart = firstCode(in: ns, from: on.end, limit: limit)
-        guard parenStart < limit, ns.character(at: parenStart) == Self.openParen else {
-            return start
-        }
-        return matchingParen(in: ns, openAt: parenStart, limit: limit) + 1
-    }
-
-    private func deriveColumnName(_ rawItem: String) -> String? {
-        let trimmed = rawItem.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return nil }
-        let ns = trimmed as NSString
-        let length = ns.length
-        if let asKeyword = topLevelKeyword(in: ns, start: 0, end: length, keywords: ["AS"]) {
-            let aliasStart = firstCode(in: ns, from: asKeyword.end, limit: length)
-            guard aliasStart < length else { return nil }
-            return readAliasForward(in: ns, at: aliasStart, limit: length)
-        }
-        return plainColumnName(trimmed)
-    }
-
-    private func plainColumnName(_ item: String) -> String? {
-        guard !item.contains("*"),
-              item.unicodeScalars.allSatisfy(Self.identifierPathCharacters.contains) else { return nil }
-        guard let last = item.split(separator: ".").last else { return nil }
-        let cleaned = String(last).trimmingCharacters(in: Self.quoteCharacters)
-        guard !cleaned.isEmpty, cleaned.unicodeScalars.allSatisfy(isIdentifier) else { return nil }
-        return cleaned
-    }
-
-    private func isIdentifier(_ scalar: Unicode.Scalar) -> Bool {
-        CharacterSet.alphanumerics.contains(scalar) || scalar == "_"
-    }
-
-    // MARK: - Token scanning
-
-    private func topLevelKeyword(
-        in ns: NSString, start: Int, end: Int, keywords: Set<String>
-    ) -> (word: String, start: Int, end: Int)? {
-        var i = start
-        var depth = 0
-        while i < end {
-            if let skipped = skipNonCode(in: ns, at: i, limit: end) {
-                i = skipped
-                continue
-            }
-            let c = ns.character(at: i)
-            if c == Self.openParen {
-                depth += 1
-                i += 1
-                continue
-            }
-            if c == Self.closeParen {
-                depth -= 1
-                i += 1
-                continue
-            }
-            if depth == 0, isWordStart(c) {
-                var j = i + 1
-                while j < end, isWordChar(ns.character(at: j)) { j += 1 }
-                let word = ns.substring(with: NSRange(location: i, length: j - i))
-                if keywords.contains(word.uppercased()) {
-                    return (word, i, j)
+                kind = .number
+            } else if unit == Self.doubleQuote || unit == Self.backtick || (bracketQuotes && unit == Self.openBracket) {
+                index = Self.end(closing: unit == Self.openBracket ? Self.closeBracket : unit, in: code, from: index, length)
+                kind = .quoted
+            } else if unit == Self.singleQuote {
+                index = Self.end(closing: Self.singleQuote, in: code, from: index, length)
+                kind = .literal
+            } else {
+                index += 1
+                switch unit {
+                case Self.openParen: kind = .openParen
+                case Self.closeParen: kind = .closeParen
+                case Self.comma: kind = .comma
+                case Self.dot: kind = .dot
+                case Self.star: kind = .star
+                default: kind = .other
                 }
-                i = j
-                continue
             }
-            i += 1
+            let range = NSRange(location: start, length: index - start)
+            let upper = kind == .word ? original.substring(with: range).uppercased() : ""
+            tokens.append(Token(kind: kind, range: range, upper: upper, partner: -1))
+            if kind == .openParen {
+                openParens.append(tokens.count - 1)
+            } else if kind == .closeParen, let open = openParens.popLast() {
+                tokens[open].partner = tokens.count - 1
+                tokens[tokens.count - 1].partner = open
+            }
         }
-        return nil
+        for open in openParens {
+            tokens[open].partner = tokens.count
+        }
+        self.tokens = tokens
     }
 
-    private func topLevelItems(in ns: NSString, start: Int, end: Int) -> [String] {
-        var items: [String] = []
-        var d
+    var count: Int { tokens.count }
+
+    func text(_ index: Int) -> String {
+        original.substring(with: tokens[index].range)
+    }
+
+    func isWord(_ index: Int, _ upper: String) -> Bool {
+        index >= 0 && index < tokens.count && tokens[index].kind == .word && tokens[index].upper == upper
+    }
+
+    func isWord(_ index: Int, in words: Set<String>) -> Bool {
+        index >= 0 && index < tokens.count && tokens[index].kind == .word && words.contains(tokens[index].upper)
+    }
+
+    func kind(_ index: Int) -> Kind? {
+        index >= 0 && index < tokens.count ? tokens[index].kind : nil
+    }
+
+    func isName(_ index: Int) -> Bool {
+        kind(index) == .word || kind(index) == .quoted
+    }
+
+    func name(_ index: Int) -> String {
+        Self.unquoted(text(index))
+    }
+
+    // The index after an open parenthesis's partner, or the end when it never closes.
+    func after(_ open: Int) -> Int {
+        min(tokens[open].partner, tokens.count - 1) 
 ```
 
 
@@ -1569,11 +1577,11 @@ internal struct DerivedTableParser {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3676** (2026-10-19): **~/Library/Application%20Support/TablePro/Registry/URLCache folder created at startup**
-  *Symptoms*: ### What happened?  Instead of storing the `Registry/URLCache` folder in `~/Library/Application Support/TablePro/`, it's being placed in `~/Library/Application%20Support/TablePro/`. Not a major issue, but it makes the Library folder look messy. :) Thank you!  ### Steps to reproduce  Launch TablePro.  ### Expected behavior  Files should be stored in "Application Support", not "Application%20Support".  ### Database type  None  ### TablePro version  0.82.0 (820099)  ### Platform  macOS  ### OS version & hardware  macOS 15.8 / Apple Silicon  ### Installed from (Linux)  None  ### Debugging information (Linux)  ```text  ```  ### Screenshots / Logs  _No response_
+- **Issue #3791** (2026-10-22): **fix(safe-mode): read MySQL, MariaDB and TiDB executable comments as each server runs them**
+  *Symptoms*: ## Summary  - New `SQLExecutableCommentReadings`: the texts a MySQL, MariaDB or TiDB server may run from a statement, one per server family and version threshold. A skipped or plain comment is blanked, a run comment is unwrapped. - Modelled per server: `/*!NNNNN` skipped above the server's version past one nested `/* */`, MariaDB's `/*!50700`..`/*!99999` band, 5 or 6 version digits, `/*M!` plain on MySQL, `/*T!` run on TiDB, `/*m!` plain everywhere, OceanBase's flat retry. - Every gate reads all of them through `SQLLexicalReadings.lexings(of:)` and keeps the worst: Safe Mode levels, MCP, AI chat, AppleScript, the CLI, dashboard tiles, iOS, catalog refresh, row write refusal. - A text with more than 32 distinct versions is read as its worst case. - When no comment can move a statement boundary, each statement is read under its own comments only, so a mysqldump costs about 4 scans instead of one per version. - The lexer takes only `/*!` and `/*M!` as executable, and lexes a run body as code: nested comments, `#` and `-- `, no second level. The PluginKit lexer matches. - File markers match across comments and spaces (`INTO/**/OUTFILE`, `LOAD_FILE (`), and `ALTER TABLE ... TRUNCATE PARTITION` is destructive. - `MySQLSessionFootprint` reads the statement behind a version comment a server may skip. - SQL import reads a run conditional comment's body as code, and reads mysqldump's `DELIMITER ;;`. - Probe `apple/scripts/probes/check-mysql-executable-comments.sh`: passes on MySQL 8.0.
 
-- **Issue #3658** (2026-10-20): **Reopen Last Session drops connections that were on the strip but not connected**
-  *Symptoms*: ### What happened?  Reported in #3551. With **Reopen Last Session** on, quitting from the Dock and opening TablePro again brings back only the connections that were connected at quit. An entry that sat on the connections strip without a live connection is gone after the relaunch.  The screen recording in #3551 shows it. The strip holds three connected entries (two MySQL, one Redis). The user opens a fourth MySQL connection from the connection switcher and presses **Cancel** while it connects. The entry stays on the strip as **Not Connected** with a **Connect** button. After **Quit** from the Dock and a relaunch, the strip has three entries.  What the code does today:  - The recovery list keeps a connection only when its coordinator was activated or its workspace phase keeps restore intent (`apple/TablePro/Core/Storage/RecoveryConnectionList.swift:18`). - `ConnectionWindowPhaseMachine.retainsRestoreIntent` returns false for `.unavailable(.cancelled)`, `.unavailable(.disconnectedByUser)` and `.idle` (`apple/TablePro/Core/Services/Infrastructure/ConnectionWindowPhaseMachine.swift:121`). - `SessionRecoveryTracker.connectionIds()` also drops a connection the user disconnected (`apple/TablePro/Core/Storage/SessionRecoveryTracker.swift:29`). - `LastOpenConnections.json` stores only those ids (`apple/TablePro/Core/Storage/LastOpenConnectionsStorage.swift:31`), and `reopenLastSession()` opens exactly that list (`apple/TablePro/Core/Services/Infrastructure/LaunchEnvironment.swift:171`)
+- **Issue #3789** (2026-10-22): **fix(quick-switcher): highlight the selected Open Quickly row after a search**
+  *Symptoms*: ## Summary  - Open Quickly draws its results with one flat `ForEach` and no `.id` on a row. The nested `ForEach(groups) { ForEach(items) }` in a `LazyVStack` kept a row realized under a removed group (Tables, Recent) on screen once a search moved its item into the results, and never updated it: no highlight, no bold match, and a stale second highlight. - New `QuickSwitcherList` owns that rule and the scrolling for Open Quickly, Jump to Column and the recent-tab switcher. - A section header draws inside its group's first row, so arrowing back up shows it again. - The list scrolls to the selection on each new search. A query whose best match was the scrolled-away selection left it off screen (Open Quickly, Jump to Column). - An arrow pressed before a new query's results land is replayed on those results, in order. It moved in the old list and was then reset. - The two filter functions are `@concurrent`. Under approachable concurrency they ran on the main actor: 100 to 400 ms per keystroke in the Connections scope with 5 to 10 connections of 2,000 tables. - Completion list: a click selects at once instead of after the double-click interval (about 350 ms), and the list scrolls only as far as the row needs, so a double click stays on its row.  | | Light | Dark | | --- | --- | --- | | Before | ![Before, light](https://github.com/user-attachments/assets/5adbb051-e355-4afb-8482-6e82c2de6041) | ![Before, dark](https://github.com/user-attachments/assets/dd864d61-1d45-4acc-8d46-24d3b20d
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1590,257 +1598,1433 @@ internal struct DerivedTableParser {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c584da5a` (2026-10-20)
-**Commit Message**: fix(security): keep the OSS Scanner image within the scanner's disk (#3698)
+### Incident Patch 1: `2f0a3ba9` (2026-10-24)
+**Commit Message**: test(linux): retry a fixture's start when its image pull fails (#3828)
 
-**File**: `.oss-scanner/Dockerfile` (modified, +9/-2)
+**File**: `linux/crates/ssh/tests/openssh_session.rs` (modified, +8/-7)
 ```diff
-@@ -25,14 +25,21 @@ RUN curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs \
- COPY . /src
- WORKDIR /src
+@@ -9,9 +9,9 @@ use secrecy::SecretString;
+ use tablepro_core::credentials::{CredentialInteraction, PromptPurpose, PromptReply};
+ use tablepro_core::{LivenessPolicy, NetworkEndpoint, SshFailure, TransportError, TransportRoute};
+ use tablepro_ssh::{SshAuth, SshConfig, SshDestination, SshRuntimeCell, SshServices, SshSession, forget_host_key};
++use tablepro_test_fixtures::start_container;
+ use tablepro_test_support::FakePrompter;
+ use testcontainers::core::{IntoContainerPort, WaitFor};
+-use testcontainers::runners::AsyncRunner;
+ use testcontainers::{ContainerAsync, GenericImage, ImageExt};
+ use tokio::io::AsyncReadExt;
+ use tokio_util::sync::CancellationToken;
+@@ -45,12 +45,13 @@ fn write_config(config: &Path, known_hosts: &Path, strict_host_key_checking: &st
+ }
  
-+# Full debug info linked into every test binary filled the scanner's disk. Split debug info keeps one
-+# copy per crate, which gdb still reads.
-+ENV CARGO_PROFILE_DEV_SPLIT_DEBUGINFO=unpacked \
-+    CARGO_INCREMENTAL=0
+ async fn start() -> TestResult<Fixture> {
+-    let container = GenericImage::new("alpine", "3.22")
+-        .with_exposed_port(2222.tcp())
+-        .with_wait_for(WaitFor::message_on_stderr("Server listening on"))
+-        .with_cmd(["sh", "-c", SSHD_SCRIPT])
+-        .start()
+-        .await?;
++    let container = start_container(|| {
++        GenericImage::new("alpine", "3.22")
++            .with_exposed_port(2222.tcp())
++            .with_wait_for(WaitFor::message_on_stderr("Server listening on"))
++            .with_cmd(["sh", "-c", SSHD_SCRIPT])
++    })
++    .await?;
+     let host = container.get_host().await?.to_string();
+     let port = container.get_host_port_ipv4(2222).await?;
+ 
+```
+
+**File**: `linux/crates/test-fixtures/src/cassandra_fixture.rs` (modified, +27/-22)
+```diff
+@@ -1,12 +1,12 @@
+ use std::time::Duration;
+ 
+ use testcontainers::core::IntoContainerPort;
+-use testcontainers::runners::AsyncRunner;
+ use testcontainers::{ContainerAsync, ContainerRequest, GenericImage, ImageExt};
+ use tokio::time::Instant;
+ 
+ use crate::container_file::with_files;
+ use crate::container_report::{container_state, log_tail};
++use crate::container_start::start_container;
+ use crate::{
+     CassandraFlavour, CassandraTls, ContainerFile, ExecOutput, FixtureCredentials, FixtureError, PkiFile, TestNetwork,
+     TestPki,
+@@ -166,29 +166,34 @@ impl CassandraFixture {
+         // ScyllaDB's image exposes "9042" with no protocol, so publishing every
+         // exposed port gives Docker 28 two 9042/tcp bindings on one host port.
+         // Host port 0 lets Docker pick one.
+-        let mut request: ContainerRequest<GenericImage> =
+-            image.with_cmd(command).with_mapped_port(0, Self::CONTAINER_PORT.tcp());
+-        if flavour == CassandraFlavour::Cassandra {
+-            // A joining node waits out the ring delay to learn who owns
+-            // which tokens, so only the first node skips it.
+-            let options = match &seed {
+-                None => Self::fast_start_options(),
+-                Some(_) => "-Dcassandra.superuser_setup_delay_ms=0",
+-            };
+-            request = request
+-                .with_env_var("MAX_HEAP_SIZE", CASSANDRA_HEAP)
+-                .with_env_var("HEAP_NEWSIZE", CASSANDRA_NEW_HEAP)
+-                .with_env_var("JVM_EXTRA_OPTS", options);
+-            if let Some(seed) = &seed {
+-                request = request.with_env_var("CASSANDRA_SEEDS", seed.as_str());
+-            }
+-        }
+         let network_alias = network.as_ref().map(|(_, alias)| alias.clone());
+-        if let Some((network, alias)) = &network {
+-            request = request.with_network(network.name()).with_container_name(alias.as_str());
+-        }
+         let files = Self::files(flavour, server_version, tls, &pki, &password)?;
+-        let container = with_files(request, files).start().await?;
++        let container = start_container(|| {
++            let mut request: ContainerRequest<GenericImage> = image
++                .clone()
++                .with_cmd(command.clone())
++                .with_mapped_port(0, Self::CONTAINER_PORT.tcp());
++            if flavour == CassandraFlavour::Cassandra {
++                // A joining node waits out the ring delay to learn who owns
++                // which tokens, so only the first node skips it.
++                let options = match &seed {
++                    None => Self::fast_start_options(),
++                    Some(_) => "-Dcassandra.superuser_setup_delay_ms=0",
++                };
++                request = request
++                    .with_env_var("MAX_HEAP_SIZE", CASSANDRA_HEAP)
++                    .with_env_var("HEAP_NEWSIZE", CASSANDRA_NEW_HEAP)
++                    .with_env_var("JVM_EXTRA_OPTS", options);
++                if let Some(seed) = &seed {
++                    request = request.with_env_var("CASSANDRA_SEEDS", seed.as_str());
++                }
++            }
++            if let Some((network, alias)) = &network {
++                request = request.with_network(network.name()).with_container_name(alias.as_str());
++            }
++            with_files(request, files.clone())
++        })
++        .await?;
+         let host = container.get_host().await?.to_string();
+         let port = container.get_host_port_ipv4(Self::CONTAINER_PORT).await?;
+         let fixture = Self {
+```
+
+**File**: `linux/crates/test-fixtures/src/clickhouse_fixture.rs` (modified, +14/-11)
+```diff
+@@ -1,14 +1,14 @@
+ use std::time::Duration;
+ 
+ use testcontainers::core::IntoContainerPort;
+-use testcontainers::runners::AsyncRunner;
+ use testcontainers::{ContainerAsync, ContainerRequest, GenericImage, ImageExt, TestcontainersError};
+ use tokio::io::{AsyncReadExt, AsyncWriteExt};
+ use tokio::net::TcpStream;
+ use tokio::time::Instant;
+ 
+ use crate::container_file::with_files;
+ use crate::container_report::{container_state, log_tail};
++use crate::container_start::start_container;
+ use crate::{
+     ClickHouseVersion, ContainerFile, ExecOutput, FixtureCredentials, FixtureError, PkiFile, ServerVersion,
+     TestNetwork, TestPki,
+@@ -60,19 +60,22 @@ impl ClickHouseFixture {
+         let pki = TestPki::generate()?;
+         let password = FixtureCredentials::generate_password();
+         let version = ClickHouseVersion::selected()?;
+-        let mut request: ContainerRequest<GenericImage> = version
+-            .image()
+-            .generic()
+-            .with_exposed_port(HTTP_PORT.tcp())
+-            .with_exposed_port(HTTPS_PORT.tcp())
+-            .into();
+         let network_alias = network.map(|network| network.container_name(Self::NETWORK_ROLE));
+-        if let (Some(network), Some(alias)) = (network, &network_alias) {
+-            request = request.with_network(network.name()).with_container_name(alias);
+-        }
+         let mut files = Self::files(&pki, &password)?;
+         files.extend(extra_files);
+-        let container = with_files(request, files).start().await?;
++        let container = start_container(|| {
++            let mut request: ContainerRequest<GenericImage> = version
++                .image()
++                .generic()
++                .with_exposed_port(HTTP_PORT.tcp())
++                .with_exposed_port(HTTPS_PORT.tcp())
++                .into();
++            if let (Some(network), Some(alias)) = (network, &network_alias) {
++                request = request.with_network(network.name()).with_container_name(alias);
++            }
++            with_files(request, files.clone())
++        })
++        .await?;
+         let (host, http_port, https_port) = match published(&container).await {
+             Ok(published) => published,
+             Err(error) => {
+```
+
+**File**: `linux/crates/test-fixtures/src/container_start.rs` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++use std::time::Duration;
 +
- # Linux app. Meson keeps Cargo's home and target under _build, so later runs go through `meson devenv`.
-+# One layer, so the app crate meson test builds and devenv rebuilds (TABLEPRO_LIBEXECDIR differs) is
-+# stored once; devenv goes last because agents use it.
- RUN cd linux \
-     && meson setup _build -Dprofile=development \
-     && meson compile -C _build \
-     && meson devenv -C _build cargo fetch --locked \
-+    && (xvfb-run -a dbus-run-session -- meson test -C _build --print-errorlogs \
-+        || echo "WARNING: meson test reported failures") \
-     && meson devenv -C _build cargo test --locked --workspace --no-run
--RUN cd linux && (xvfb-run -a dbus-run-session -- meson test -C _build --print-errorlogs \
--    || echo "WARNING: meson test reported failures")
++use testcontainers::core::error::ClientError;
++use testcontainers::runners::AsyncRunner;
++use testcontainers::{ContainerAsync, ContainerRequest, Image, TestcontainersError};
++
++use crate::FixtureError;
++
++const START_ATTEMPTS: u32 = 3;
++const PULL_RETRY_DELAY: Duration = Duration::from_secs(5);
++
++/// Starts the container `request` builds, building and starting it again
++/// when pulling its image failed. testcontainers pulls once, so a pull the
++/// registry cut short ("bytes remaining on stream") failed every test that
++/// needed the image. A request is consumed by its start, hence the builder.
++pub async fn start_container<I: Image>(
++    request: impl Fn() -> ContainerRequest<I>,
++) -> Result<ContainerAsync<I>, FixtureError> {
++    let mut attempt = 1;
++    loop {
++        match request().start().await {
++            Err(TestcontainersError::Client(ClientError::PullImage { .. })) if attempt < START_ATTEMPTS => {
++                attempt += 1;
++                tokio::time::sleep(PULL_RETRY_DELAY).await;
++            }
++            started => return Ok(started?),
++        }
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use std::time::Instant;
++
++    use testcontainers::GenericImage;
++
++    use super::*;
++
++    #[tokio::test]
++    #[ignore = "requires docker"]
++    async fn a_pull_that_keeps_failing_is_tried_three_times_and_reported() {
++        let started = Instant::now();
++
++        let error = start_container(|| GenericImage::new("alpine", "tablepro-no-such-tag").into())
++            .await
++            .err()
++            .unwrap();
++
++        let FixtureError::Container(TestcontainersError::Client(ClientError::PullImage { descriptor, .. })) = &error
++        else {
++            panic!("unexpected error: {error}");
++        };
++        assert_eq!(descriptor, "alpine:tablepro-no-such-tag");
++        assert!(
++            started.elapsed() >= PULL_RETRY_DELAY * (START_ATTEMPTS - 1),
++            "took {:?}",
++            started.elapsed()
++        );
++    }
++}
+```
+
+**File**: `linux/crates/test-fixtures/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -6,6 +6,7 @@ mod clickhouse_fixture;
+ mod clickhouse_version;
+ mod container_file;
+ mod container_report;
++mod container_start;
+ mod exec_output;
+ mod fixture_credentials;
+ mod fixture_error;
+@@ -51,6 +52,7 @@ pub use cassandra_version::CassandraVersion;
+ pub use clickhouse_fixture::ClickHouseFixture;
+ pub use clickhouse_version::ClickHouseVersion;
+ pub use container_file::ContainerFile;
++pub use container_start::start_container;
+ pub use exec_output::ExecOutput;
+ pub use fixture_credentials::FixtureCredentials;
+ pub use fixture_error::FixtureError;
+```
+
+**File**: `linux/crates/test-fixtures/src/mongo_fixture.rs` (modified, +20/-16)
+```diff
+@@ -1,10 +1,10 @@
+ use std::time::Duration;
  
- # Each target .oss-scanner/swift/Package.swift names is linked in from TableProCore, so a patch to the
- # linked files is a patch to the app.
+ use testcontainers::core::{IntoContainerPort, WaitFor};
+-use testcontainers::runners::AsyncRunner;
+ use testcontainers::{ContainerAsync, ContainerRequest, GenericImage, ImageExt};
+ 
+ use crate::container_file::with_files;
++use crate::container_start::start_container;
+ use crate::{
+     ContainerFile, ExecOutput, FixtureCredentials, FixtureError, MongoVersion, PkiFile, ServerVersion, TestNetwork,
+     TestPki,
+@@ -100,22 +100,26 @@ impl MongoFixture {
+         let pki = TestPki::generate()?;
+         let password = FixtureCredentials::generate_password();
+         let version = MongoVersion::selected()?;
+-        let mut request: ContainerRequest<GenericImage> = version
+-            .image()
+-            .generic()
+-            .with_wait_for(WaitFor::message_on_stdout(READY))
+-            .with_exposed_port(PORT.tcp())
+-            .with_exposed_port(CERTIFICATE_PORT.tcp())
+-            .with_entrypoint("sh")
+-            .with_cmd([format!("{CONFIG_DIR}/start.sh")])
+-            .with_env_var("TABLEPRO_PASSWORD", &password)
+-            .with_env_var("TABLEPRO_TLS", if listening == Listening::Tls { "1" } else { "0" })
+-            .with_startup_timeout(READY_TIMEOUT);
+         let network_alias = network.map(|network| network.container_name(Self::NETWORK_ROLE));
+-        if let (Some(network), Some(alias)) = (network, &network_alias) {
+-            request = request.with_network(network.name()).with_container_name(alias);
+-        }
+-        let container = with_files(request, Self::files(&pki)?).start().await?;
++        let files = Self::files(&pki)?;
++        let container = start_container(|| {
++            let mut request: ContainerRequest<GenericImage> = version
++                .image()
++                .generic()
++                .with_wait_for(WaitFor::message_on_stdout(READY))
++                .with_exposed_port(PORT.tcp())
++                .with_exposed_port(CERTIFICATE_PORT.tcp())
++                .with_entrypoint("sh")
++                .with_cmd([format!("{CONFIG_DIR}/start.sh")])
++                .with_env_var("TABLEPRO_PASSWORD", &password)
++                .with_env_var("TABLEPRO_TLS", if listening == Listening::Tls { "1" } else { "0" })
++                .with_startup_timeout(READY_TIMEOUT);
++            if let (Some(network), Some(alias)) = (network, &network_alias) {
++                request = request.with_network(network.name()).with_container_name(alias);
++            }
++            with_files(request, files.clone())
++        })
++        .await?;
+         let host = container.get_host().await?.to_string();
+         let port = container.get_host_port_ipv4(PORT).await?;
+         let certificate_port = match listening {
+```
+
+**File**: `linux/crates/test-fixtures/src/mssql_fixture.rs` (modified, +15/-11)
+```diff
+@@ -1,11 +1,11 @@
+ use std::time::Duration;
+ 
+-use testcontainers::runners::AsyncRunner;
+ use testcontainers::{ContainerAsync, ImageExt};
+ use testcontainers_modules::mssql_server::MssqlServer;
+ use uuid::Uuid;
+ 
+ use crate::container_file::with_files;
++use crate::container_start::start_container;
+ use crate::{
+     ContainerFile, ExecOutput, FixtureCredentials, FixtureError, MssqlVersion, PkiFile, ServerVersion, TestPki,
+ };
+@@ -32,16 +32,20 @@ impl MssqlFixture {
+         let password = format!("Tp1!{}", Uuid::new_v4().simple());
+         let version = MssqlVersion::selected()?;
+         let image = version.image();
+-        let request = MssqlServer::default()
+-            .with_accept_eula()
+-            .with_sa_password(&password)
+-            .with_name(image.name)
+-            .with_tag(image.tag)
+-            .with_startup_timeout(STARTUP_TIMEOUT)
+-            // SQL Server otherwise takes 80% of the host's memory, and a
+-            // container left behind by a killed test keeps all of it.
+-            .with_env_var("MSSQL_MEMORY_LIMIT_MB", MEMORY_LIMIT_MB);
+-        let container = with_files(request, Self::files(&pki)?).start().await?;
++        let files = Self::files(&pki)?;
++        let container = start_container(|| {
++            let request = MssqlServer::default()
++                .with_accept_eula()
++                .with_sa_password(&password)
++                .with_name(image.name)
++                .with_tag(image.tag)
++                .with_startup_timeout(STARTUP_TIMEOUT)
++                // SQL Server otherwise takes 80% of the host's memory, and a
++                // container left behind by a killed test keeps all of it.
++                .with_env_var("MSSQL_MEMORY_LIMIT_MB", MEMORY_LIMIT_MB);
++            with_files(request, files.clone())
++        })
++        .await?;
+         let host = container.get_host().await?.to_string();
+         let port = container.get_host_port_ipv4(CONTAINER_PORT).await?;
+         Ok(Self {
+```
+
+**File**: `linux/crates/test-fixtures/src/mysql_fixture.rs` (modified, +16/-13)
+```diff
+@@ -1,8 +1,8 @@
+ use testcontainers::core::IntoContainerPort;
+-use testcontainers::runners::AsyncRunner;
+ use testcontainers::{ContainerAsync, GenericImage, ImageExt};
+ 
+ use crate::container_file::with_files;
++use crate::container_start::start_container;
+ use crate::{
+     ContainerFile, ExecOutput, FixtureCredentials, FixtureError, MysqlFlavour, MysqlOptions, PkiFile, TestNetwork,
+     TestPki,
+@@ -51,19 +51,22 @@ impl MysqlFixture {
+             .into_iter()
+             .fold(release.generic(), GenericImage::with_wait_for)
+             .with_exposed_port(Self::CONTAINER_PORT.tcp());
+-        let mut request = image
+-            .with_env_var(format!("{prefix}_ROOT_PASSWORD"), &root_password)
+-            .with_env_var(format!("{prefix}_DATABASE"), DATABASE)
+-            .with_env_var(format!("{prefix}_USER"), PASSWORD_USER)
+-            .with_env_var(format!("{prefix}_PASSWORD"), &password)
+-            .with_cmd(Self::server_arguments(&options));
+         let network_alias = network.map(|network| network.container_name(Self::NETWORK_ROLE));
+-        if let (Some(network), Some(alias)) = (network, &network_alias) {
+-            request = request.with_network(network.name()).with_container_name(alias);
+-        }
+-        let container = with_files(request, Self::files(&pki, &options, &certificate_password)?)
+-            .start()
+-            .await?;
++        let files = Self::files(&pki, &options, &certificate_password)?;
++        let container = start_container(|| {
++            let mut request = image
++                .clone()
++                .with_env_var(format!("{prefix}_ROOT_PASSWORD"), &root_password)
++                .with_env_var(format!("{prefix}_DATABASE"), DATABASE)
++                .with_env_var(format!("{prefix}_USER"), PASSWORD_USER)
++                .with_env_var(format!("{prefix}_PASSWORD"), &password)
++                .with_cmd(Self::server_arguments(&options));
++            if let (Some(network), Some(alias)) = (network, &network_alias) {
++                request = request.with_network(network.name()).with_container_name(alias);
++            }
++            with_files(request, files.clone())
++        })
++        .await?;
+         let host = container.get_host().await?.to_string();
+         let port = container.get_host_port_ipv4(Self::CONTAINER_PORT).await?;
+         Ok(Self {
 ```
 
 ---
 
-### Incident Patch 2: `fdfa678e` (2026-10-20)
-**Commit Message**: fix(security): build the OSS Scanner image on the official Swift image (#3696)
+### Incident Patch 2: `94367b10` (2026-10-25)
+**Commit Message**: refactor(data-grid)!: rebuild the macOS data grid on one model and native AppKit (#3833)
 
-**File**: `.oss-scanner/Dockerfile` (modified, +4/-23)
+**File**: `.claude/rules/data-grid.md` (modified, +60/-13)
 ```diff
-@@ -2,19 +2,17 @@
- # The scanner builds it online, then scans offline, so every dependency a test needs is fetched here.
- # The Mac and iOS apps need Xcode and are scanned as source; this builds the Linux app and the
- # TableProCore targets that compile on Linux.
--FROM ubuntu:26.04
-+# The official Swift image is Ubuntu 26.04 with the toolchain installed, the base the Linux app needs.
-+FROM swift:6.4.1-resolute
+@@ -1,21 +1,68 @@
+ ---
+ paths:
+-  - "apple/TablePro/Views/Results/**/*"
++  - "apple/TablePro/Views/DataGrid/**/*"
+   - "apple/TablePro/Core/DataGrid/**/*"
++  - "apple/TablePro/Views/Results/**/*"
++  - "apple/TableProTests/Views/DataGrid/**/*"
++  - "apple/TableProTests/Core/DataGrid/**/*"
+   - "apple/TableProTests/Views/Results/**/*"
+ ---
  
- ENV DEBIAN_FRONTEND=noninteractive
+ # Data grid
  
--# The first group mirrors the Linux fast job in .github/workflows/build-linux.yml, the second the
--# official swift:6.4-resolute image.
-+# Mirrors the Linux fast job in .github/workflows/build-linux.yml.
- RUN apt-get update && apt-get install -y --no-install-recommends \
--      ca-certificates curl git gnupg2 libarchive-tools \
-+      ca-certificates curl git \
-       build-essential pkgconf meson ninja-build gettext desktop-file-utils appstream libglib2.0-bin \
-       libxml2-utils libgtk-4-dev libadwaita-1-dev libgtksourceview-5-dev libsqlite3-dev libkrb5-dev \
-       clang libclang-dev adwaita-icon-theme locales gnome-keyring openssh-client xvfb xauth dbus-daemon \
--      binutils binutils-gold libc6-dev libcurl4-openssl-dev libedit2 libgcc-15-dev libpython3-dev \
--      libstdc++-15-dev libxml2-dev libncurses-dev libz3-dev tzdata unzip zlib1g-dev \
-     && rm -rf /var/lib/apt/lists/* \
-     && localedef -i en_US -f UTF-8 en_US.UTF-8
+-- **Selection indices are display positions**, not `TableRows.rows` indices. Resolve them through `DisplayRowMapping` (or `TableViewCoordinator.displayRow(at:)` and `tableRowsIndex(forDisplayRow:)`) before reading or changing a row; they match only while no sort or value filter applies.
+-- **Cells are drawn, not mounted.** `tableView(_:viewFor:row:)` returns nil for data columns and `DataGridRowView` draws the visible cells, and every column stays attached. Never hide off-screen columns with `NSTableColumn.isHidden`: each write costs O(attached columns).
+-- **Find data columns through `DataGridColumnPool.presentsColumn` and `firstPresentedColumnIndex`**, never a fixed index into `tableColumns` (the row-number column and pool slots sit there too).
+-- **The header draws all of its own chrome** through `SortableHeaderChrome`: the cell never calls `super.draw`, and `highlightedTableColumn` stays unset, because AppKit paints a fixed-height band that does not fit the taller header. Sort state goes through `SortableHeaderView.applySortState(_:schema:)`, which also sets each header cell's accessibility sort direction.
+-- **A themed header draws its own cells.** `NSTableHeaderView.draw` paints AppKit's band over the header fill before the cells, so while `dataGrid.headerBackground` is themed `SortableHeaderView` draws each column's header cell itself, the dragged one included; an unthemed header keeps `super.draw`.
+-- **Row selection is `NSTableRowView`'s own** unless the theme overrides `gridSelection` or `gridInactiveSelection`, so the default theme follows Accent and focus. The gutter and a selected column heading read `DataGridBodyChrome.selectionColor(emphasized:scope:)` so they match the row. A theme change repaints visible rows; it never reloads data.
+-- **A translucent theme selection is flattened once.** The row, the gutter and a heading sit on three different bases, so `DataGridBodyChrome.themedSelectionColor(emphasized:scope:)` lays the selection over the grid background and all three paint that opaque color with any alpha.
+-- **A range outline stays apart from its fill.** Natively a multi-cell range is outlined in the selection color at 70%. Under a themed `dataGrid.selection` that outline would vanish into the opaque fill, so `GridSelectionOverlay.rangeBorderColor(_:)` takes the active cell's border color instead (`dataGrid.focusBorder`, else Accent) at 70%.
+-- **The grid reads its colors through its `ThemeScope`.** `DataGridView(themeScope:)` hands it to `TableViewCoordinator`, and every grid color read goes through `coordinator.themeScope`, `KeyHandlingTableView.themeScope` and `SortableHeaderView.themeScope` included. `ThemeEngine.shared` supplies only the fonts and the cache counters that follow a system color change. A new scope repaints in place with no reload. Read `scope.resolved` once per draw, not once per cell. Scopes: `.claude/rules/theme.md`.
+-- **`gridStyleMask` stays empty; `DataGridBodyChrome` draws column separators and the stripes.** AppKit's vertical grid lines add one subview per column and make every layout pass quadratic. Take separator positions from `presentsColumn` and `rect(ofColumn:)`.
+-- **Scroll the grid with `NSView.scroll(_:)`**, never `clipView.scroll(to:)` plus `reflectScrolledClipView`, which leaves the header behind.
+-- **Accessibility goes through `DataGridCellAccessibilityView`**, mounted for on-screen rows once `DataGridAccessibility.isActive`; `NSTableView` builds its cell tree from views only. Keep that path working whenever row drawing changes.
++Three layers, knowledge pointing one way: an owner's adapter, then `DataGridModel` (`Core/DataGrid`), then the AppKit view (`Views/DataGrid`). The value editors and viewers stay in `Views/Results`.
++
++## Model
++
++- **`DataGridModel` holds the grid's state** and outlives every mount: column set, row order, selection, sort, value filter, column layout, display formats, find and the edit session. Its owner holds it strongly; the data tab keeps one per tab on `MainContentCoordinator`.
++- **An owner talks to the model, never to the view.** It implements `DataGridDataSource` and `DataGridActions` in an adapter class and calls `reloadRows()` when its rows were replaced or `apply(_ delta:)` when they changed. The model keeps the selection by identity and sends the mounted view one `DataGridChange`.
++- **Rows are `RowID`, columns are `DataGridColumnID`.** `DataGridRowOrder` maps display rows, and `DataGridColumnSet` is the only converter between data index, display position and pane. A bare `Int` is a display position, valid only inside one call: capture the IDs before a popover,
+```
+
+**File**: `.claude/rules/theme.md` (modified, +4/-3)
+```diff
+@@ -19,16 +19,17 @@ paths:
  
-@@ -24,23 +22,6 @@ ENV RUSTUP_HOME=/opt/rustup \
- RUN curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs \
-       | sh -s -- -y --no-modify-path --profile minimal --default-toolchain 1.98 --component rustfmt,clippy
+ - `TableProTheme` is Foundation only, so the iOS app can adopt it; AppKit and SwiftUI code stays in `apple/TablePro/Theme`.
+ - **`ThemeSlot` is the one registry.** A slot exists only while a view reads it: removing its last reader removes the slot.
+-- `isOverridden(_:)` means the slot draws a theme color, set or derived: ask it before swapping a native drawing path (row selection, caret, header). Only the theme editor asks `hasExplicitColor(_:)`.
+-- **Adding a slot bumps `ThemeSchema.current`.** The decoder reads every schema from 3 up and refuses a newer one or an unknown key, rather than load a file without colors its author wrote. The bump renames the sync content kind (Sync).
++- `isOverridden(_:)` means the slot draws a theme color, set or derived: ask it before swapping a native drawing path (a code table's selection, the caret). Only the theme editor asks `hasExplicitColor(_:)`.
++- **Adding a slot bumps `ThemeSchema.current`.** `ThemeFileFormat` reads only the current schema: an older or newer one, or an unknown key, is refused rather than loaded without colors its author wrote, so a bump stops every older file from loading. The bump renames the sync content kind (Sync).
++- **Removing a slot never bumps the schema.** Its key joins `ThemeFileFormat.retiredKeys`, which the decoder drops, so a file that still carries it loads without it.
+ - **An imported file is untrusted.** `ThemeFileImporter` checks the size before it reads, mints a fresh id every time, and never follows a VS Code `include` out of the file's folder.
  
--ARG SWIFT_VERSION=6.4.1
--RUN set -e; \
--    case "$(dpkg --print-architecture)" in \
--      amd64) suffix='' ;; \
--      arm64) suffix='-aarch64' ;; \
--      *) echo "unsupported architecture" >&2; exit 1 ;; \
--    esac; \
--    url="https://download.swift.org/swift-${SWIFT_VERSION}-release/ubuntu2604${suffix}/swift-${SWIFT_VERSION}-RELEASE/swift-${SWIFT_VERSION}-RELEASE-ubuntu26.04${suffix}.tar.gz"; \
--    curl -fsSL "$url" -o /tmp/swift.tar.gz "$url.sig" -o /tmp/swift.tar.gz.sig; \
--    export GNUPGHOME="$(mktemp -d)"; \
--    curl -fsSL https://www.swift.org/keys/all-keys.asc | gpg --batch --quiet --import; \
--    gpg --batch --verify /tmp/swift.tar.gz.sig /tmp/swift.tar.gz; \
--    bsdtar -xzf /tmp/swift.tar.gz -C / --strip-components=1; \
--    chmod -R o+r /usr/lib/swift; \
--    rm -rf "$GNUPGHOME" /tmp/swift.tar.gz /tmp/swift.tar.gz.sig; \
--    swift --version
+ ## Reading colors
+ 
+ - **A scoped carrier reads through its `ThemeScope`, never `ThemeEngine.shared`.** Only the theme editor preview uses `.fixed(_:)`, and a new definition is a new scope.
+ - `palette.color(_:otherwise:)` returns a new object on every call: never compare it to skip a write. Bake `resolved` into a `CGColor` only inside the drawing view's appearance (`resolved.cgColor(_:otherwise:in:)`).
+ - **Hold every AppKit carrier** (`ThemeTextViewStyle`, `ThemeTableChrome`, never on a source list) **as a stored property.** Its subscription and row views hold it weakly, so one held in a local stops at the first theme change.
+-- `NSTableHeaderView` paints over anything beneath it, so `ThemeTableChrome` swaps in `ThemeTableHeaderView` while the header is themed.
++- **Header and selection are always the system's.** No slot colors a table header, a records row's selection or its selected text, or the data grid's active-cell border, so they follow Accent, focus and Increase Contrast. `ThemeTableChrome` never replaces a header; only a code table recolors its selection, with `editor.selection`.
+ - **A theme change has to reach the view.** SwiftUI caches `Color(nsColor:)` by object identity, so a view reading the engine holds `@ObservedObject private var themeEngine = ThemeEngine.shared`; an AppKit view that bakes a color re-bakes on `AppEvents.shared.themeChanged`. `withAlphaComponent` on a system color outside `NSColor(name:dynamicProvider:)` freezes it.
+ - **No theme color on selectable-row text**: it does not turn white on the emphasized selection. Never put `.themeForeground` on a container of selectable rows; `ThemeTableChrome.recordsTextSlot(...)` picks a records cell's slot.
+ 
+```
+
+**File**: `.claude/rules/ui-tests.md` (modified, +3/-1)
+```diff
+@@ -52,7 +52,9 @@ The UI plan holds end-to-end flows only. Swift Testing rules, isolation and shar
+ ## The grid
+ 
+ - Every grid read and click goes through `FixtureGrid` (`cell`, `value`, `waitForValue`, `clickCell`, `editCell`, `clickHeader`) or `gridPoint(in:of:dy:)`.
+-- `FixtureGrid` matches a cell by the identifier `DataGridCellAccessibilityView`, the leaf that carries the value, not the AXCell wrapper AppKit puts around it.
++- `dataGrid(in:)` matches the main table, `data-grid`, which publishes every column. The frozen pane laid over its leading edge, `data-grid-frozen`, is hidden from accessibility.
++- `FixtureGrid` matches a cell by the identifier `data-grid-cell`, the leaf that carries the value, not the AXCell wrapper AppKit puts around it, and by the label `Row r, column c: `. Both count from 1: `r` is the row number on screen, page offset included, and `c` the column's display position, so hiding or moving a column renumbers the ones after it.
++- A plain `clickHeader` sorts by that column alone and flips it on the next click; `clickHeader(_:modifiers: .option)` adds it as another key. A right-click opens the header or cell menu and never moves the selection.
+ - `FixtureFile.rows` and `FixtureFile.execute` read and write the fixture database directly, to set up or check data without the UI.
+ - Never call `click()` on a grid element. Rows and cells read as obscured by their columns, a row element has an empty frame so an offset click lands on the window's close button, and a header never becomes hittable. The app side is in `.claude/rules/data-grid.md`.
+ - A point offset from the grid measures from its top edge, above the header. Take `dy` from a row's frame (`row.frame.midY - grid.frame.minY`); a small constant hits the header and opens the column menu.
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProTheme/Import/VSCodeThemeImporter.swift` (modified, +1/-1)
+```diff
+@@ -167,7 +167,7 @@ private extension ThemeDefinition {
+             switch slot.fallback {
+             case .system, .defaultSyntax:
+                 continue
+-            case .slot, .derived, .paired:
++            case .slot, .derived:
+                 var unset = result
+                 unset.overrides[slot] = nil
+                 if unset.value(for: slot) == result.value(for: slot) {
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProTheme/Import/VSCodeThemeMapping.swift` (modified, +1/-15)
+```diff
+@@ -22,9 +22,7 @@ private extension VSCodeColorSource {
+ }
+ 
+ internal extension ThemeSlot {
+-    // An empty list leaves the slot to its fallback. So does a source list that stops short: the
+-    // alternate row, the header, the header text, the bools and the selection text are derived by
+-    // `fallback` from the background, text and selection, which is what VS Code paints there too.
++    // A list that stops short leaves the slot to `fallback`, which derives the stripe and the bools the way VS Code paints them.
+     var vscodeSources: [VSCodeColorSource] {
+         switch self {
+         case .windowBackdrop:
+@@ -84,20 +82,8 @@ internal extension ThemeSlot {
+             return [.color("editor.foreground")]
+         case .gridAlternateRow:
+             return [.color("keybindingTable.rowsBackground"), .color("tree.tableOddRowsBackground")]
+-        case .gridHeaderBackground:
+-            return [.color("keybindingTable.headerBackground"), .color("tree.tableOddRowsBackground")]
+-        case .gridHeaderText:
+-            return [.color("foreground")]
+         case .gridLine:
+             return [.color("tree.tableColumnsBorder")]
+-        case .gridSelection:
+-            return [.color("list.activeSelectionBackground")]
+-        case .gridSelectionText:
+-            return [.color("list.activeSelectionForeground")]
+-        case .gridInactiveSelection:
+-            return [.color("list.inactiveSelectionBackground")]
+-        case .gridFocusBorder:
+-            return [.color("list.focusOutline"), .color("focusBorder")]
+         case .gridNullValue:
+             // The grid draws NULL as placeholder text. `descriptionForeground` equals the text color in
+             // One Dark Pro, so NULL would not read as absent.
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProTheme/ThemeDefinition.swift` (modified, +4/-20)
+```diff
+@@ -1,8 +1,5 @@
+ import Foundation
+ 
+-/// A theme is a set of colors for the content views and the window backdrop. A slot it leaves out
+-/// draws what its `ThemeSlot.fallback` says, so Default Light and Default Dark declare nothing and
+-/// render exactly like a native app, following Accent, Highlight and Increase Contrast.
+ public struct ThemeDefinition: Identifiable, Equatable, Sendable {
+     public var id: String
+     public var name: String
+@@ -35,26 +32,23 @@ public struct ThemeDefinition: Identifiable, Equatable, Sendable {
+         !isBuiltIn
+     }
+ 
+-    /// The file sets this slot. Only the theme editor asks: a derived slot draws a theme color the
+-    /// file never wrote, and an explicit selection text draws nothing without a selection.
++    // Only the theme editor asks: a derived slot draws a theme color the file never wrote.
+     public func hasExplicitColor(_ slot: ThemeSlot) -> Bool {
+         overrides[slot] != nil
+     }
+ 
+-    /// The format has no increased-contrast variant, so a slot that yields to Increase Contrast draws
+-    /// native there even where the theme sets it.
++    // The format has no increased-contrast variant, so a yielding slot draws native there.
+     public func value(for slot: ThemeSlot, highContrast: Bool = false) -> ThemeSlotValue {
+         if slot.yieldsToIncreasedContrast, highContrast {
+             return .system(slot)
+         }
+-        if let explicit = overrides[slot], allowsExplicitColor(for: slot, highContrast: highContrast) {
++        if let explicit = overrides[slot] {
+             return .themed(slot.requiresOpaque ? explicit.opaque : explicit)
+         }
+         return fallbackValue(for: slot, highContrast: highContrast)
+     }
+ 
+-    /// The slot draws a theme color, set or derived. Every surface that swaps a native drawing path
+-    /// for the theme's asks this.
++    // Set or derived. Every surface that swaps a native drawing path for the theme's asks this.
+     public func isOverridden(_ slot: ThemeSlot, highContrast: Bool) -> Bool {
+         value(for: slot, highContrast: highContrast).isThemed
+     }
+@@ -63,11 +57,6 @@ public struct ThemeDefinition: Identifiable, Equatable, Sendable {
+         isOverridden(slot, highContrast: false)
+     }
+ 
+-    private func allowsExplicitColor(for slot: ThemeSlot, highContrast: Bool) -> Bool {
+-        guard case let .paired(partner, _) = slot.fallback else { return true }
+-        return value(for: partner, highContrast: highContrast).isThemed
+-    }
 -
- COPY . /src
- WORKDIR /src
+     private func fallbackValue(for slot: ThemeSlot, highContrast: Bool) -> ThemeSlotValue {
+         switch slot.fallback {
+         case .system:
+@@ -80,16 +69,11 @@ public struct ThemeDefinition: Identifiable, Equatable, Sendable {
+         case let .derived(base, rule):
+             guard let baseColor = value(for: base, highContrast: highContrast).themedColor else { return .system(slot) }
+             return .themed(derive(rule, from: baseColor, highContrast: highContrast))
+-        case let .paired(partner, fallback):
+-            guard value(for: partner, highContrast: highContrast).isThemed else { return .system(slot) }
+-            return value(for: fallback, highContrast: highContrast)
+         }
+     }
  
+     private func derive(_ rule: ThemeDerivationRule, from base: ThemeColor, highContrast: Bool) -> ThemeColor {
+         switch rule {
+-        case .same:
+-            return base
+         case let .stripe(toward):
+             let target = value(for: toward, highContrast: highContrast).themedColor
+                 ?? (appearance == .dark ? .white : .black)
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProTheme/ThemeFileFormat.swift` (modified, +21/-27)
+```diff
+@@ -1,11 +1,6 @@
+ import Foundation
+ 
+-/// Format 3 dropped the pane and status groups, made every color optional and removed `system:`
+-/// values. Format 2 never shipped in a release, and format 1 files carried fonts the app now keeps in
+-/// settings.
+-///
+-/// Adding a slot bumps `current`. The decoder keeps reading every older format, and an unknown key
+-/// stays an error: a file is refused rather than loaded without colors its author wrote.
++// Removing a slot never bumps it: the slot's key joins `ThemeFileFormat.retiredKeys`.
+ public enum ThemeSchema {
+     public static let current = 3
+ }
+@@ -15,7 +10,7 @@ public enum ThemeIdentifier {
+ 
+     private static let pattern = #"^[A-Za-z0-9._-]+$"#
+ 
+-    /// Plain enough to be a file name on every file system TablePro writes to.
++    // Plain enough to be a file name on every file system TablePro writes to.
+     public static func isValid(_ id: String) -> Bool {
+         id.utf8.count <= maximumLength
+             && id.range(of: pattern, options: .regularExpression) != nil
+@@ -27,21 +22,24 @@ public enum ThemeIdentifier {
+     }
+ }
+ 
+-/// The theme file format, and the only place a file can be rejected. Every color is optional: a
+-/// slot the file leaves out draws its fallback. What is refused is anything that would otherwise
+-/// load as something the author did not write: an unknown key, an unparseable color, missing
+-/// metadata, another format.
+-///
+-/// Foundation keeps the first of two equal keys at one level, so that duplicate cannot be seen.
++// Foundation keeps the first of two equal keys at one level, so that duplicate cannot be seen.
+ public enum ThemeFileFormat {
+     public static let maximumTextLength = 100
+ 
+-    /// What `decode` does with a name or author that is not one line of at most `maximumTextLength`.
++    // Removed slots: a file that still carries one loads without it.
++    static let retiredKeys: Set<String> = [
++        "dataGrid.headerBackground",
++        "dataGrid.headerText",
++        "dataGrid.selection",
++        "dataGrid.selectionText",
++        "dataGrid.inactiveSelection",
++        "dataGrid.focusBorder",
++    ]
++
+     public enum TextPolicy: Sendable {
+-        /// Refuses it: a file someone picked, and every record another Mac sent.
++        // A file someone picked, and every record another Mac sent.
+         case strict
+-        /// Folds it onto one line and cuts it at the cap. TablePro 0.81 wrote names and authors with
+-        /// neither limit, and a theme it saved still loads; the next save writes the repaired text.
++        // TablePro 0.81 wrote names and authors with no limit; the next save writes the repaired text.
+         case repaired
+     }
+ 
+@@ -97,7 +95,6 @@ public enum ThemeFileFormat {
+         )
+     }
+ 
+-    /// Writes what `decode` reads back unchanged: a trimmed name and author, and opaque fills.
+     public static func encode(_ theme: ThemeDefinition) throws -> Data {
+         guard ThemeIdentifier.isValid(theme.id) else { throw ThemeLoadError.invalidIdentifier(theme.id) }
+         let name = try validatedName(theme.name, policy: .strict)
+@@ -124,8 +121,7 @@ public enum ThemeFileFormat {
+ 
+     // MARK: - Reading
+ 
+-    /// `JSONDecoder` rather than `JSONSerialization`: its underlying error names the character and
+-    /// where it is, which is what a person fixing the file by hand needs.
++    // `JSONDecoder` over `JSONSerialization`: its error names the character and where it is.
+     private static func parse(_ data: Data) throws -> ThemeJSONNode {
+         do {
+             return try JSONDecoder().decode(ThemeJSONNode.self, from: data)
+@@ -141,6 +137,7 @@ public enum ThemeFileFormat {
+         let leaves = root
+             .filter { MetadataKey(rawValue: $0.key) == nil }
+             .flatMap { key, node in node.leaves(prefix: key) }
++            .filter { !retiredKeys.contains($0.path) }
+             .sorted { $0.path < $1.path }
+ 
+         var parsed: [ThemeSlot: ThemeColor] = [:]
+@@ -182,7 +179,7 @@ public enum ThemeFileFormat {
+         return repaired(text)
+     }
+ 
+-    /// Every scalar `isSingleLine` refuses splits words, so the next save's strict check passes.
++    // Every scalar `isSingleLine` refuses splits words, so the next save's strict check passes.
+     private static func repaired(_ text: String) -> String {
+         let separators = CharacterSet.whitespacesAndNewlines.union(.controlCharacters)
+         let words = text.components(separatedBy: separators).filter { !$0.isEmpty }
+@@ -194,8 +191,7 @@ public enum ThemeFileFormat {
+         text.trimmingCharacters(in: .whitespacesAndNewlines)
+     }
+ 
+-    /// `controlCharacters` holds the ASCII line breaks; `newlines` adds the Unicode line and paragraph
+-    /// separators.
++    // `newlines` adds the Unicode line and paragraph separators to the ASCII breaks.
+     private static func isSingleLine(_ text: String) -> Bool {
+         !text.unicodeScalars.contains { CharacterSet.controlCharacters.contains($0) || CharacterSe
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProTheme/ThemeSlot.swift` (modified, +11/-42)
+```diff
+@@ -1,8 +1,5 @@
+ import Foundation
+ 
+-/// The single registry every slot goes through. A slot exists here because a call site reads it.
+-/// The decoder, the encoder and the theme editor all enumerate this list rather than keeping their
+-/// own copies.
+ public enum ThemeSlot: String, CaseIterable, Sendable {
+     case windowBackdrop = "window.background"
+ 
+@@ -27,13 +24,7 @@ public enum ThemeSlot: String, CaseIterable, Sendable {
+     case gridBackground = "dataGrid.background"
+     case gridText = "dataGrid.text"
+     case gridAlternateRow = "dataGrid.alternateRow"
+-    case gridHeaderBackground = "dataGrid.headerBackground"
+-    case gridHeaderText = "dataGrid.headerText"
+     case gridLine = "dataGrid.gridLine"
+-    case gridSelection = "dataGrid.selection"
+-    case gridSelectionText = "dataGrid.selectionText"
+-    case gridInactiveSelection = "dataGrid.inactiveSelection"
+-    case gridFocusBorder = "dataGrid.focusBorder"
+     case gridNullValue = "dataGrid.nullValue"
+     case gridBoolTrue = "dataGrid.boolTrue"
+     case gridBoolFalse = "dataGrid.boolFalse"
+@@ -43,7 +34,6 @@ public enum ThemeSlot: String, CaseIterable, Sendable {
+     case gridDeleted = "dataGrid.deleted"
+     case gridDeletedText = "dataGrid.deletedText"
+ 
+-    /// The group of the file format: the slot's dotted path starts with the group's key.
+     public var group: ThemeSlotGroup {
+         switch self {
+         case .windowBackdrop:
+@@ -54,15 +44,13 @@ public enum ThemeSlot: String, CaseIterable, Sendable {
+         case .syntaxKeyword, .syntaxString, .syntaxNumber, .syntaxComment,
+              .syntaxNull, .syntaxOperator, .syntaxFunction, .syntaxType:
+             return .syntax
+-        case .gridBackground, .gridText, .gridAlternateRow, .gridHeaderBackground, .gridHeaderText,
+-             .gridLine, .gridSelection, .gridSelectionText, .gridInactiveSelection, .gridFocusBorder,
++        case .gridBackground, .gridText, .gridAlternateRow, .gridLine,
+              .gridNullValue, .gridBoolTrue, .gridBoolFalse, .gridRowNumber,
+              .gridModified, .gridInserted, .gridDeleted, .gridDeletedText:
+             return .dataGrid
+         }
+     }
+ 
+-    /// Where the theme editor lists the slot.
+     public var section: ThemeSlotSection {
+         switch self {
+         case .windowBackdrop:
+@@ -73,50 +61,43 @@ public enum ThemeSlot: String, CaseIterable, Sendable {
+         case .syntaxKeyword, .syntaxString, .syntaxNumber, .syntaxComment,
+              .syntaxNull, .syntaxOperator, .syntaxFunction, .syntaxType:
+             return .syntax
+-        case .gridBackground, .gridText, .gridAlternateRow, .gridHeaderBackground, .gridHeaderText,
+-             .gridLine, .gridNullValue, .gridBoolTrue, .gridBoolFalse, .gridRowNumber:
++        case .gridBackground, .gridText, .gridAlternateRow, .gridLine,
++             .gridNullValue, .gridBoolTrue, .gridBoolFalse, .gridRowNumber:
+             return .dataGrid
+-        case .gridSelection, .gridSelectionText, .gridInactiveSelection, .gridFocusBorder:
+-            return .selection
+         case .gridModified, .gridInserted, .gridDeleted, .gridDeletedText:
+             return .changes
+         }
+     }
+ 
+-    /// Only the backdrop: content slots keep the theme under Increase Contrast, as they always have.
++    // Content keeps the theme under Increase Contrast; only the backdrop yields.
+     public var yieldsToIncreasedContrast: Bool {
+         group == .window
+     }
+ 
+-    /// Fills that sit under everything else. A translucent window color shows the desktop through the
+-    /// window, so these never carry alpha.
++    // A translucent fill under everything else would show the desktop through the window.
+     public var requiresOpaque: Bool {
+         switch self {
+-        case .windowBackdrop, .editorBackground, .gridBackground, .gridHeaderBackground:
++        case .windowBackdrop, .editorBackground, .gridBackground:
+             return true
+         case .editorText, .editorCursor, .editorSelection, .editorCurrentLine, .editorCurrentStatement,
+              .editorLineNumber, .editorInvisibles,
+              .syntaxKeyword, .syntaxString, .syntaxNumber, .syntaxComment,
+              .syntaxNull, .syntaxOperator, .syntaxFunction, .syntaxType,
+-             .gridText, .gridAlternateRow, .gridHeaderText, .gridLine, .gridSelection, .gridSelectionText,
+-             .gridInactiveSelection, .gridFocusBorder, .gridNullValue, .gridBoolTrue, .gridBoolFalse,
++             .gridText, .gridAlternateRow, .gridLine, .gridNullValue, .gridBoolTrue, .gridBoolFalse,
+              .gridRowNumber, .gridModified, .gridInserted, .gridDeleted, .gridDeletedText:
+             return false
+         }
+     }
+ 
+-    /// Washes drawn over content, where an alpha channel is the point.
+     public var offersOpacity: Bool {
+         switch self {
+         case .editorSelection, .editorCurrentLine, .editorCurrentStatement, .editorInvisibles,
+-             .gridAlternateRow, .gridSelection, .gridInactiveSelection,
 ```
 
 ---
 
-### Incident Patch 3: `46f74584` (2026-10-20)
-**Commit Message**: chore(security): add the OSS Scanner build image and threat model (#3695)
+### Incident Patch 3: `79cdb079` (2026-10-25)
+**Commit Message**: perf(editor): build the query tab in AppKit and read the sidebar listing when the filter takes focus (#3834)
 
-**File**: `.oss-scanner/Dockerfile` (added, +67/-0)
+**File**: `apple/Packages/TableProEditor/Sources/TableProEditorKit/SourceEditor/SourceEditor.swift` (modified, +18/-11)
 ```diff
-@@ -0,0 +1,67 @@
-+# Build image for Anthropic's OSS Scanner (github.com/anthropics/oss-scanner/tree/main/projects/tablepro).
-+# The scanner builds it online, then scans offline, so every dependency a test needs is fetched here.
-+# The Mac and iOS apps need Xcode and are scanned as source; this builds the Linux app and the
-+# TableProCore targets that compile on Linux.
-+FROM ubuntu:26.04
-+
-+ENV DEBIAN_FRONTEND=noninteractive
-+
-+# The first group mirrors the Linux fast job in .github/workflows/build-linux.yml, the second the
-+# official swift:6.4-resolute image.
-+RUN apt-get update && apt-get install -y --no-install-recommends \
-+      ca-certificates curl git gnupg2 libarchive-tools \
-+      build-essential pkgconf meson ninja-build gettext desktop-file-utils appstream libglib2.0-bin \
-+      libxml2-utils libgtk-4-dev libadwaita-1-dev libgtksourceview-5-dev libsqlite3-dev libkrb5-dev \
-+      clang libclang-dev adwaita-icon-theme locales gnome-keyring openssh-client xvfb xauth dbus-daemon \
-+      binutils binutils-gold libc6-dev libcurl4-openssl-dev libedit2 libgcc-15-dev libpython3-dev \
-+      libstdc++-15-dev libxml2-dev libncurses-dev libz3-dev tzdata unzip zlib1g-dev \
-+    && rm -rf /var/lib/apt/lists/* \
-+    && localedef -i en_US -f UTF-8 en_US.UTF-8
-+
-+ENV RUSTUP_HOME=/opt/rustup \
-+    CARGO_HOME=/opt/cargo \
-+    PATH=/opt/cargo/bin:$PATH
-+RUN curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs \
-+      | sh -s -- -y --no-modify-path --profile minimal --default-toolchain 1.98 --component rustfmt,clippy
-+
-+ARG SWIFT_VERSION=6.4.1
-+RUN set -e; \
-+    case "$(dpkg --print-architecture)" in \
-+      amd64) suffix='' ;; \
-+      arm64) suffix='-aarch64' ;; \
-+      *) echo "unsupported architecture" >&2; exit 1 ;; \
-+    esac; \
-+    url="https://download.swift.org/swift-${SWIFT_VERSION}-release/ubuntu2604${suffix}/swift-${SWIFT_VERSION}-RELEASE/swift-${SWIFT_VERSION}-RELEASE-ubuntu26.04${suffix}.tar.gz"; \
-+    curl -fsSL "$url" -o /tmp/swift.tar.gz "$url.sig" -o /tmp/swift.tar.gz.sig; \
-+    export GNUPGHOME="$(mktemp -d)"; \
-+    curl -fsSL https://www.swift.org/keys/all-keys.asc | gpg --batch --quiet --import; \
-+    gpg --batch --verify /tmp/swift.tar.gz.sig /tmp/swift.tar.gz; \
-+    bsdtar -xzf /tmp/swift.tar.gz -C / --strip-components=1; \
-+    chmod -R o+r /usr/lib/swift; \
-+    rm -rf "$GNUPGHOME" /tmp/swift.tar.gz /tmp/swift.tar.gz.sig; \
-+    swift --version
-+
-+COPY . /src
-+WORKDIR /src
-+
-+# Linux app. Meson keeps Cargo's home and target under _build, so later runs go through `meson devenv`.
-+RUN cd linux \
-+    && meson setup _build -Dprofile=development \
-+    && meson compile -C _build \
-+    && meson devenv -C _build cargo fetch --locked \
-+    && meson devenv -C _build cargo test --locked --workspace --no-run
-+RUN cd linux && (xvfb-run -a dbus-run-session -- meson test -C _build --print-errorlogs \
-+    || echo "WARNING: meson test reported failures")
-+
-+# Each target .oss-scanner/swift/Package.swift names is linked in from TableProCore, so a patch to the
-+# linked files is a patch to the app.
-+RUN cd .oss-scanner/swift \
-+    && mkdir -p Sources Tests \
-+    && for name in $(grep -oE 'name: "[A-Za-z]+"' Package.swift | cut -d'"' -f2 | grep -vx TableProCoreLinux); do \
-+         case "$name" in *Tests) dir=Tests ;; *) dir=Sources ;; esac; \
-+         ln -s "/src/apple/Packages/TableProCore/$dir/$name" "$dir/$name"; \
-+       done \
-+    && swift build --build-tests \
-+    && (swift test --skip-build || echo "WARNING: swift test reported failures")
-+
-+ENV CARGO_NET_OFFLINE=true
-```
-
-**File**: `.oss-scanner/swift/Package.swift` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+// swift-tools-version: 6.0
-+
-+// The apple/Packages/TableProCore targets that compile on Linux. The rest need Apple frameworks.
-+// .oss-scanner/Dockerfile links each target's folder in from TableProCore by name.
-+import PackageDescription
-+
-+let package = Package(
-+    name: "TableProCoreLinux",
-+    targets: [
-+        .target(name: "TableProSQLGrammar"),
-+        .target(name: "CSQLite"),
-+        .target(name: "TableProSQLiteCore", dependencies: ["CSQLite"]),
-+        .target(name: "TableProLogRedaction"),
-+        .target(name: "TableProCoreTypes"),
-+        .target(name: "TableProDocumentPath"),
-+        .target(name: "TableProJavaScriptText"),
-+        .testTarget(name: "TableProSQLGrammarTests", dependencies: ["TableProSQLGrammar"]),
-+        .testTarget(name: "TableProLogRedactionTests", dependencies: ["TableProLogRedaction"])
-+    ]
-+)
-```
-
-**File**: `.oss-scanner/threat_model.md` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+# Threat model
-+
-+## What TablePro does
-+
-+TablePro is a database client. Two apps share this repository and no code:
-+
-+- `apple/`: the Mac and iPhone/iPad apps, in Swift. They need Xcode, so the image cannot build them. A few `apple/Packages/TableProCore` targets compile on Linux and are built (see How to exercise it); everything else is source only.
-+- `linux/`: the Linux app, in Rust with GTK 4. The image builds it and its tests.
-+
-+The user is trusted: the SQL they type, the connections they create, the plugins they install by hand.
-+
-+## Where untrusted input enters
-+
-+1. **The database server and the network to it.** A malicious or compromised server, or anyone on the path when TLS is not verified, controls every byte of the protocol, every result set and every error message. This includes the HTTP and REST engines and the SSH server of a tunnel.
-+2. **Database contents.** Cell values (text, BLOBs, JSON, images, PHP-serialized data), table, column and schema names, comments and object definitions can be written by another user of a shared database.
-+3. **Files the user opens or imports.** `.sql`, CSV/TSV, JSON/JSONL, XLSX, Parquet, SQLite and DuckDB files, `.tablepro` connection bundles, connection files from other apps (TablePlus, DBeaver, DataGrip, Navicat `.ncx`, Sequel Ace, Beekeeper), project folders scanned for credentials (`.env`, docker-compose, framework configs), `~/.pgpass`, `~/.ssh/config`.
-+4. **Links.** `tablepro://` deep links and database URLs (`postgresql://`, `mysql://`, `mongodb+srv://` and others in `apple/TablePro/Info.plist`) opened from a browser or another app.
-+5. **Local MCP clients.** The Mac app runs an MCP server on loopback. A process without a valid token, or a client acting beyond its token's scopes and connection allowlist, is untrusted. So are web pages reaching that port (DNS rebinding) and the remote MCP servers TablePro connects to as a client.
-+6. **AI model output.** Tool calls from a model, which database contents can steer by prompt injection.
-+7. **The plugin registry and the update feed.** Nothing from `updates.tablepro.app` or the network may run without a valid signature.
-+
-+## Components that matter most
-+
-+1. Code in this repository that parses server responses:
-+   - Swift: `apple/Plugins/*DriverPlugin`, the HTTP and REST engines (Trino, ClickHouse, Etcd, Google REST, DynamoDB, Snowflake, Elasticsearch and others), Teradata's TD2 protocol, Kafka with its Snappy decoder, and the C interop that reads cells out of libpq, libmariadb, FreeTDS, libmongoc, hiredis and libcassandra.
-+   - Rust: `linux/crates/drivers/*`, `linux/crates/net`.
-+2. File parsers: `apple/Packages/TableProCore/Sources/TableProTabularIO` (its own ZIP reader, XLSX XML, delimited text), `TableProImport` (`.tablepro` bundles, PBKDF2 and AES-GCM), `apple/TablePro/Core/Services/Export/ForeignApp/` (other apps' files, the Navicat cipher, a KDBX reader), `apple/TablePro/Core/Services/ProjectImport/`, `linux/crates/core/src/import`.
-+3. Deep links: `apple/TablePro/Core/Services/Infrastructure/DeeplinkParser.swift`, `ExternalConnectionGate.swift`, `apple/TablePro/Core/Utilities/Connection/ConnectionURLParser.swift`.
-+4. MCP server: `apple/TablePro/Core/MCP/` and `apple/Packages/TableProMacCore/Sources/TableProMCP/` (a hand-written HTTP parser, bearer tokens, PKCE pairing, Origin and Host checks, `MCPStatementGate`).
-+5. AI tools that run SQL: `apple/TablePro/Core/AI/Chat/Tools/`, `ToolApprovalCenter.swift`.
-+6. Plugin install and load: `apple/TablePro/Core/Plugins/Registry/`, `PluginInstaller.swift`, `PluginCodeSignatureVerifier.swift`, `PluginManager+Validation.swift`. The app is not sandboxed and disables library validation, so this check is the only gate.
-+7. Secrets: `apple/TablePro/Core/Storage/KeychainHelper.swift`, `apple/TablePro/Core/Sync/SyncRecordMapper.swift` (passwords must never reach CloudKit), `linux/crates/storage/src/secrets`, `TableProLogRedaction`, the MCP error redactor.
-+8. SQL the app builds from data: `apple/TablePro/Core/ChangeTracking/SQLStatementGenerator.swift`, `apple/TablePro/Core/Database/FilterSQLGenerator.swift`, `SQLEscaping.swift`, `DialectQuoteHelper.swift`, each driver's `quoteIdentifier`; on Linux `linux/crates/core/src/dml`, `linux/crates/core/src/filter/validate_raw_predicate.rs` and each driver's `dialect.rs`. A crafted table or column name that escapes quoting runs SQL with the user's privileges.
-+9. SSH and TLS: `apple/TablePro/Core/SSH/` (libssh2, host key prompts), `apple/Packages/TableProMacCore/Sources/TableProSSHConfig`, `linux/crates/ssh` (drives the system `ssh`, so watch for option injection from connection fields), `linux/crates/net/src/tls`.
-+10. Rendering of cell values: the out-of-process image renderer (`apple/TablePro/CLI/ImageRenderMain.swift`), `apple/TablePro/Core/Services/Formatting/PhpSerializeParser.swift`, the MongoDB shell's JavaScriptCore runtime.
-+
-+Matter least: layout, theming and localization code, `linux/cra
-```
-
-**File**: `AGENTS.md` (modified, +1/-0)
-```diff
-@@ -9,6 +9,7 @@ Native database clients that share no code: `apple/` holds the macOS and iOS app
- - `.claude/`: the path-scoped rules and the `fix-issue` and `release` skills, which Codex sees through `.agents/skills/`.
- - `scripts/`: `banned-words.txt` with `check-banned-words.sh`, the PR title and changed-path checks in `scripts/ci`, and the towncrier pin in `scripts/release`.
- - `appcast.xml`: the legacy feed apps up to 0.81 read from `main` (`apple/RELEASING.md`, Channels).
-+- `.oss-scanner/`: the build image and threat model for Anthropic's OSS Scanner. Renaming a TableProCore target that `.oss-scanner/swift/Package.swift` lists updates it there too.
- - Docs site: TableProApp/docs, cloned beside this repo as `../tablepro-docs`, under its own `AGENTS.md`.
+@@ -100,12 +100,16 @@ public struct SourceEditor: NSViewControllerRepresentable {
+     public typealias NSViewControllerType = TextViewController
  
- ## Principles
+     public func makeNSViewController(context: Context) -> TextViewController {
++        makeController(coordinator: context.coordinator)
++    }
++
++    func makeController(coordinator: Coordinator) -> TextViewController {
+         let controller = TextViewController(
+             string: "",
+             language: language,
+             configuration: configuration,
+             cursorPositions: state.cursorPositions ?? [],
+-            highlightProviders: context.coordinator.highlightProviders,
++            highlightProviders: coordinator.highlightProviders,
+             foldProvider: foldProvider,
+             undoManager: undoManager,
+             coordinators: coordinators,
+@@ -124,7 +128,7 @@ public struct SourceEditor: NSViewControllerRepresentable {
+             controller.setCursorPositions(state.cursorPositions ?? [])
+         }
+ 
+-        context.coordinator.setController(controller)
++        coordinator.setController(controller)
+         return controller
+     }
+ 
+@@ -152,35 +156,38 @@ public struct SourceEditor: NSViewControllerRepresentable {
+     }
+ 
+     public func updateNSViewController(_ controller: TextViewController, context: Context) {
++        update(controller, coordinator: context.coordinator)
++    }
++
++    func update(_ controller: TextViewController, coordinator: Coordinator) {
+         controller.completionDelegate = completionDelegate
+ 
+-        context.coordinator.updateHighlightProviders(highlightProviders)
++        coordinator.updateHighlightProviders(highlightProviders)
+ 
+-        context.coordinator.textSync.text = text
++        coordinator.textSync.text = text
+         if case .binding(let binding) = text {
+-            context.coordinator.textSync.applyRepresentableText(binding.wrappedValue, controller: controller)
++            coordinator.textSync.applyRepresentableText(binding.wrappedValue, controller: controller)
+         }
+ 
+-        if !context.coordinator.phase.consumePendingEditorChange() {
+-            context.coordinator.phase.applyRepresentableValue {
+-                updateControllerWithState(state, controller: controller, coordinator: context.coordinator)
++        if !coordinator.phase.consumePendingEditorChange() {
++            coordinator.phase.applyRepresentableValue {
++                updateControllerWithState(state, controller: controller, coordinator: coordinator)
+             }
+         }
+ 
+         // Do manual diffing to reduce the amount of reloads.
+         // This helps a lot in view performance, as it otherwise gets triggered on each environment change.
+-        guard !paramsAreEqual(controller: controller, coordinator: context.coordinator) else {
++        guard !paramsAreEqual(controller: controller, coordinator: coordinator) else {
+             return
+         }
+ 
+         if controller.language != language {
+             controller.language = language
+         }
+         controller.configuration = configuration
+-        updateHighlighting(controller, coordinator: context.coordinator)
++        updateHighlighting(controller, coordinator: coordinator)
+ 
+         controller.reloadUI()
+-        return
+     }
+ 
+     /// Compares against ``Coordinator/lastSyncedState``, never the editor's live state, which runs ahead of the binding
+```
+
+**File**: `apple/Packages/TableProEditor/Sources/TableProEditorKit/SourceEditor/SourceEditorHost.swift` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++//
++//  SourceEditorHost.swift
++//  TableProEditorKit
++//
++
++import AppKit
++import SwiftUI
++
++/// ``SourceEditor`` for an AppKit container: the same controller, two-way sync and teardown, with no SwiftUI host
++/// around the editor.
++@MainActor
++public final class SourceEditorHost {
++    public let controller: TextViewController
++    /// Runs when the editor writes its state, before the write is applied back, as `onChange` does in SwiftUI.
++    public var onStateChange: ((_ old: SourceEditorState, _ new: SourceEditorState) -> Void)?
++
++    private let box: StateBox
++    private let coordinator: SourceEditor.Coordinator
++    private var editor: SourceEditor
++
++    public var state: SourceEditorState { box.state }
++
++    public init(state: SourceEditorState = SourceEditorState(), _ makeEditor: (Binding<SourceEditorState>) -> SourceEditor) {
++        let box = StateBox(state: state)
++        let editor = makeEditor(box.binding)
++        let coordinator = editor.makeCoordinator()
++        self.box = box
++        self.editor = editor
++        self.coordinator = coordinator
++        controller = editor.makeController(coordinator: coordinator)
++        box.onWrite = { [weak self] old, new in self?.stateDidChange(from: old, to: new) }
++    }
++
++    public func update(_ makeEditor: (Binding<SourceEditorState>) -> SourceEditor) {
++        editor = makeEditor(box.binding)
++        editor.update(controller, coordinator: coordinator)
++    }
++
++    public func dismantle() {
++        SourceEditor.dismantleNSViewController(controller, coordinator: coordinator)
++    }
++
++    // A SwiftUI state write leads to an update pass that consumes the editor's change latch; without one the latch
++    // would swallow the next text the owner pushes.
++    private func stateDidChange(from old: SourceEditorState, to new: SourceEditorState) {
++        onStateChange?(old, new)
++        editor.update(controller, coordinator: coordinator)
++    }
++}
++
++@MainActor
++private final class StateBox {
++    var state: SourceEditorState
++    var onWrite: ((SourceEditorState, SourceEditorState) -> Void)?
++
++    init(state: SourceEditorState) {
++        self.state = state
++    }
++
++    var binding: Binding<SourceEditorState> {
++        Binding(
++            get: { [weak self] in self?.state ?? SourceEditorState() },
++            set: { [weak self] newValue in
++                guard let self else { return }
++                let old = state
++                state = newValue
++                onWrite?(old, newValue)
++            }
++        )
++    }
++}
+```
+
+**File**: `apple/Packages/TableProEditor/Tests/TableProEditorKitTests/SourceEditorHostTests.swift` (added, +112/-0)
+```diff
+@@ -0,0 +1,112 @@
++//
++//  SourceEditorHostTests.swift
++//  TableProEditorKitTests
++//
++//  An AppKit container gets the editor with the same two-way sync SwiftUI gives it. A state write the editor makes
++//  latches its change; under SwiftUI the write's update pass consumes the latch, and here the host has to.
++//
++
++import AppKit
++import SwiftUI
++@testable import TableProEditorKit
++import Testing
++
++@MainActor
++private final class Owner {
++    var text: String
++    var reportedStates: [SourceEditorState] = []
++    let coordinator: RecordingCoordinator
++
++    init(text: String, coordinator: RecordingCoordinator = RecordingCoordinator()) {
++        self.text = text
++        self.coordinator = coordinator
++    }
++
++    var textBinding: Binding<String> {
++        Binding(get: { self.text }, set: { self.text = $0 })
++    }
++
++    func editor(_ state: Binding<SourceEditorState>) -> SourceEditor {
++        SourceEditor(
++            textBinding,
++            language: .default,
++            configuration: Mock.config(),
++            state: state,
++            highlightProviders: [],
++            coordinators: [coordinator]
++        )
++    }
++}
++
++private final class RecordingCoordinator: TextViewCoordinator {
++    private(set) var destroyCount = 0
++
++    func prepareCoordinator(controller: TextViewController) {}
++
++    func destroy() {
++        destroyCount += 1
++    }
++}
++
++@MainActor
++struct SourceEditorHostTests {
++    private func mount(_ owner: Owner) -> (SourceEditorHost, NSWindow) {
++        let host = SourceEditorHost { owner.editor($0) }
++        host.onStateChange = { _, new in owner.reportedStates.append(new) }
++        let window = NSWindow(
++            contentRect: NSRect(x: 0, y: 0, width: 600, height: 400),
++            styleMask: [.titled],
++            backing: .buffered,
++            defer: false
++        )
++        window.isReleasedWhenClosed = false
++        window.contentView = host.controller.view
++        window.contentView?.layoutSubtreeIfNeeded()
++        return (host, window)
++    }
++
++    @Test("The owner's text reaches the editor, and an edit reaches the owner")
++    func textSyncsBothWays() {
++        let owner = Owner(text: "SELECT 1")
++        let (host, window) = mount(owner)
++        defer { window.orderOut(nil) }
++        #expect(host.controller.textView.string == "SELECT 1")
++
++        owner.text = "SELECT 2"
++        host.update { owner.editor($0) }
++        #expect(host.controller.textView.string == "SELECT 2")
++
++        host.controller.textView.replaceCharacters(in: NSRange(location: 8, length: 0), with: "0")
++        #expect(owner.text == "SELECT 20")
++    }
++
++    @Test("A caret the editor reports is passed on and does not swallow the owner's next text")
++    func stateWriteKeepsTheNextTextPush() {
++        let owner = Owner(text: "SELECT 1")
++        let (host, window) = mount(owner)
++        defer { window.orderOut(nil) }
++
++        let caret = NSRange(location: 3, length: 0)
++        host.controller.setCursorPositions([CursorPosition(range: caret)])
++        let held = host.state.cursorPositions?.map { $0.range }
++        let reported = owner.reportedStates.last?.cursorPositions?.map { $0.range }
++        #expect(held == [caret])
++        #expect(reported == [caret])
++
++        owner.text = "SELECT 42"
++        host.update { owner.editor($0) }
++        #expect(host.controller.textView.string == "SELECT 42")
++    }
++
++    @Test("dismantle destroys each text coordinator once")
++    func dismantleDestroysCoordinatorsOnce() {
++        let owner = Owner(text: "SELECT 1")
++        let (host, window) = mount(owner)
++        defer { window.orderOut(nil) }
++
++        host.dismantle()
++
++        #expect(owner.coordinator.destroyCount == 1)
++        #expect(host.controller.textCoordinators.values().isEmpty)
++    }
++}
+```
+
+**File**: `apple/TablePro/Core/Services/Infrastructure/SidebarContainerViewController.swift` (modified, +26/-1)
+```diff
+@@ -12,7 +12,7 @@ internal final class SidebarContainerViewController: NSViewController {
+     /// Which list the rows below show. Window chrome like the field under it, so it stands through
+     /// a connection switch and follows the connection on screen.
+     private let scopeControl = SidebarScopeControl()
+-    private let searchField = NSSearchField()
++    private let searchField = SidebarFilterField()
+     /// Sidebar chrome, like the field it shares a row with, so it survives a connection switch and
+     /// writes settings that are not scoped to one. Hidden on the Favorites tab, whose list draws
+     /// none of what these options settle.
+@@ -121,6 +121,7 @@ internal final class SidebarContainerViewController: NSViewController {
+         searchField.controlSize = .regular
+         searchField.sendsSearchStringImmediately = true
+         searchField.delegate = self
++        searchField.onFocus = { [weak self] in self?.writeFilterFocus(true) }
+         searchField.setAccessibilityIdentifier("sidebar-filter")
+         searchField.setAccessibilityLabel(String(localized: "Filter"))
+ 
+@@ -234,6 +235,8 @@ internal final class SidebarContainerViewController: NSViewController {
+         /// being repointed at a different one.
+         filterPopover?.close()
+         filterPopover = nil
++        // The connection the field leaves would never hear its editing end.
++        if state !== sidebarState { writeFilterFocus(false) }
+         self.sidebarState = state
+         guard let state else {
+             /// `syncFromState` is the only writer of these, and it cannot run without a state, so
+@@ -328,6 +331,10 @@ extension SidebarContainerViewController: NSSearchFieldDelegate {
+         writeSearchText("")
+     }
+ 
++    func controlTextDidEndEditing(_ obj: Notification) {
++        writeFilterFocus(false)
++    }
++
+     /// Down from the filter field hands focus to the list.
+     ///
+     /// It names the list rather than asking the key view loop for whatever comes next. With the
+@@ -350,6 +357,24 @@ extension SidebarContainerViewController: NSSearchFieldDelegate {
+             sidebarState.favoritesSearchText = text
+         }
+     }
++
++    // Favorites filters its own list and never reads the all-schema listing, so only Tables marks focus.
++    private func writeFilterFocus(_ isFocused: Bool) {
++        guard let sidebarState, sidebarState.isFilterFieldFocused != isFocused else { return }
++        guard !isFocused || sidebarState.selectedSidebarTab == .tables else { return }
++        sidebarState.isFilterFieldFocused = isFocused
++    }
++}
++
++// The delegate hears of editing only from the first keystroke, and a search starts at focus.
++private final class SidebarFilterField: NSSearchField {
++    var onFocus: (() -> Void)?
++
++    override func becomeFirstResponder() -> Bool {
++        let became = super.becomeFirstResponder()
++        if became { onFocus?() }
++        return became
++    }
+ }
+ 
+ private final class ObservationContinuationBox: @unchecked Sendable {
+```
+
+**File**: `apple/TablePro/Models/UI/SharedSidebarState.swift` (modified, +1/-0)
+```diff
+@@ -28,6 +28,7 @@ final class SharedSidebarState: ObservableObject {
+ 
+     @Published var searchText: String = ""
+     @Published var favoritesSearchText: String = ""
++    @Published var isFilterFieldFocused = false
+ 
+     @Published var recentTables: [RecentTableEntry] = []
+ 
+```
+
+**File**: `apple/TablePro/ViewModels/SidebarViewModel.swift` (modified, +27/-3)
+```diff
+@@ -101,7 +101,8 @@ final class SidebarViewModel: ObservableObject {
+         searchTextObservation = sharedState.onMainActorChange { [weak self] in
+             guard let self else { return }
+             self.scheduleFilterQueryUpdate(oldValue: self.filterQuery)
+-            // The schema filter lives there too, and an edit to it during a search selects another listing.
++            self.noteFilterFieldFocus()
++            // The field's focus and the schema filter live there too: focus starts a search, and a filter edit selects another listing.
+             self.loadAllSchemaTablesForSearch()
+         }
+     }
+@@ -111,11 +112,33 @@ final class SidebarViewModel: ObservableObject {
+             invalidateFilterCaches()
+             if filterQuery.isEmpty { listingMatchesMemo.removeAll() }
+             // Once per search, not per keystroke: a failed or partly unlisted listing was read again on every refinement.
+-            if oldValue.isEmpty { listingDemand.reset() }
++            if oldValue.isEmpty {
++                if searchStartedAtFocus {
++                    searchStartedAtFocus = false
++                } else {
++                    listingDemand.reset()
++                }
++            }
+             loadAllSchemaTablesForSearch()
+         }
+     }
+ 
++    private var wasFilterFieldFocused = false
++    // A search starts at focus or at its first character, whichever comes first, and asks for a listing once.
++    private var searchStartedAtFocus = false
++
++    private func noteFilterFieldFocus() {
++        let isFocused = sharedState.isFilterFieldFocused
++        guard isFocused != wasFilterFieldFocused else { return }
++        wasFilterFieldFocused = isFocused
++        if isFocused, filterQuery.isEmpty {
++            listingDemand.reset()
++            searchStartedAtFocus = true
++        } else if !isFocused {
++            searchStartedAtFocus = false
++        }
++    }
++
+     private var listingMatchesMemo = DatabaseTreeFilter.SchemaListingMatchesMemo()
+ 
+     private var listingDemand = AllSchemaTablesDemand()
+@@ -570,7 +593,8 @@ final class SidebarViewModel: ObservableObject {
+     /// for them. It is asked for here rather than by the outline, because a flat list with no local
+     /// match shows "No Results" in place of the outline, which then never sees the search at all.
+     private func loadAllSchemaTablesForSearch() {
+-        guard !filterQuery.isEmpty else { return }
++        // A focused field is a search about to start, and its first keystroke would otherwise wait out the read.
++        guard !filterQuery.isEmpty || sharedState.isFilterFieldFocused else { return }
+         let service = DatabaseTreeMetadataService.shared
+         let connectionId = connectionId
+         loadAttachedSchemaObjectsForSearch(service: service)
+```
+
+**File**: `apple/TablePro/Views/Components/CollapsibleSplitController.swift` (added, +79/-0)
+```diff
+@@ -0,0 +1,79 @@
++//
++//  CollapsibleSplitController.swift
++//  TablePro
++//
++
++import AppKit
++
++/// A top pane over a collapsible bottom pane, divider thin and remembered.
++@MainActor
++internal final class CollapsibleSplitController: ResizeCursorSplitViewController {
++    nonisolated static let defaultTopMinimumThickness: CGFloat = 100
++    nonisolated static let defaultBottomMinimumThickness: CGFloat = 150
++
++    /// What a split using the defaults needs before its own constraints become unsatisfiable.
++    /// An enclosing split whose pane hosts one of these must not promise less than this.
++    nonisolated static var combinedMinimumThickness: CGFloat {
++        defaultTopMinimumThickness + defaultBottomMinimumThickness + 10
++    }
++
++    let topItem: NSSplitViewItem
++    let bottomItem: NSSplitViewItem
++    /// The divider is draggable and double-clickable, so AppKit owns the collapsed state as much as the
++    /// owner does; a change the user makes is reported back rather than snapped away on the next update.
++    var onUserCollapseChange: ((Bool) -> Void)?
++
++    private var lastCollapsedState: Bool
++    private var collapseObservation: NSKeyValueObservation?
++    private var isApplyingProgrammatically = false
++
++    init(
++        top: NSViewController,
++        bottom: NSViewController,
++        autosaveName: String,
++        topMinimumThickness: CGFloat = defaultTopMinimumThickness,
++        bottomMinimumThickness: CGFloat = defaultBottomMinimumThickness,
++        isBottomCollapsed: Bool
++    ) {
++        topItem = NSSplitViewItem(viewController: top)
++        topItem.minimumThickness = topMinimumThickness
++        bottomItem = NSSplitViewItem(viewController: bottom)
++        bottomItem.canCollapse = true
++        bottomItem.minimumThickness = bottomMinimumThickness
++        lastCollapsedState = isBottomCollapsed
++        super.init(nibName: nil, bundle: nil)
++
++        splitView.isVertical = false
++        splitView.dividerStyle = .thin
++        addSplitViewItem(topItem)
++        addSplitViewItem(bottomItem)
++
++        // After the items are added; set earlier it does not record the divider, and adjustSubviews then resets it.
++        splitView.autosaveName = SplitViewAutosaveName.current(autosaveName)
++
++        collapseObservation = bottomItem.observe(\.isCollapsed, options: [.new]) { [weak self] observed, _ in
++            nonisolated(unsafe) let observedItem = observed
++            MainActor.assumeIsolated {
++                guard let self, !self.isApplyingProgrammatically else { return }
++                self.lastCollapsedState = observedItem.isCollapsed
++                self.onUserCollapseChange?(observedItem.isCollapsed)
++            }
++        }
++
++        // Assigned either way, so the owner's state wins over whatever the autosave record restored.
++        bottomItem.isCollapsed = isBottomCollapsed
++    }
++
++    @available(*, unavailable)
++    required init?(coder: NSCoder) {
++        fatalError("init(coder:) has not been implemented")
++    }
++
++    func setBottomCollapsed(_ collapsed: Bool) {
++        guard collapsed != lastCollapsedState else { return }
++        lastCollapsedState = collapsed
++        isApplyingProgrammatically = true
++        defer { isApplyingProgrammatically = false }
++        bottomItem.animator().isCollapsed = collapsed
++    }
++}
+```
+
+**File**: `apple/TablePro/Views/Components/VerticalCollapsibleSplitView.swift` (removed, +0/-121)
+```diff
+@@ -1,121 +0,0 @@
+-import AppKit
+-import SwiftUI
+-
+-struct VerticalCollapsibleSplitView<TopContent: View, BottomContent: View>: NSViewControllerRepresentable {
+-    static var defaultTopMinimumThickness: CGFloat { 100 }
+-    static var defaultBottomMinimumThickness: CGFloat { 150 }
+-
+-    /// What a split using the defaults needs before its own constraints become unsatisfiable.
+-    /// An enclosing split whose pane hosts one of these must not promise less than this.
+-    static var combinedMinimumThickness: CGFloat {
+-        defaultTopMinimumThickness + defaultBottomMinimumThickness + 10
+-    }
+-
+-    @Binding var isBottomCollapsed: Bool
+-    var autosaveName: String
+-    var topMinimumThickness: CGFloat = VerticalCollapsibleSplitView.defaultTopMinimumThickness
+-    var bottomMinimumThickness: CGFloat = VerticalCollapsibleSplitView.defaultBottomMinimumThickness
+-    @ViewBuilder var topContent: TopContent
+-    @ViewBuilder var bottomContent: BottomContent
+-
+-    func makeCoordinator() -> Coordinator {
+-        Coordinator()
+-    }
+-
+-    func makeNSViewController(context: Context) -> NSSplitViewController {
+-        let splitViewController = ResizeCursorSplitViewController()
+-        splitViewController.splitView.isVertical = false
+-        splitViewController.splitView.dividerStyle = .thin
+-
+-        let topController = NSHostingController(rootView: topContent)
+-        let topItem = NSSplitViewItem(viewController: topController)
+-        topItem.minimumThickness = topMinimumThickness
+-
+-        let bottomController = NSHostingController(rootView: bottomContent)
+-        let bottomItem = NSSplitViewItem(viewController: bottomController)
+-        bottomItem.canCollapse = true
+-        bottomItem.minimumThickness = bottomMinimumThickness
+-
+-        // Without this the hosting controllers report their content's ideal size as a
+-        // preferredContentSize, which this split view forwards to the window: wide results
+-        // content then outranks a divider drag and the editor/results divider stops moving.
+-        topController.sizingOptions = []
+-        bottomController.sizingOptions = []
+-
+-        splitViewController.addSplitViewItem(topItem)
+-        splitViewController.addSplitViewItem(bottomItem)
+-
+-        // autosaveName is assigned after the items are added; setting it earlier does not record
+-        // the divider, and adjustSubviews then resets it.
+-        splitViewController.splitView.autosaveName = SplitViewAutosaveName.current(autosaveName)
+-
+-        context.coordinator.topController = topController
+-        context.coordinator.bottomController = bottomController
+-        context.coordinator.bottomItem = bottomItem
+-        context.coordinator.lastCollapsedState = isBottomCollapsed
+-        context.coordinator.onUserCollapseChange = { collapsed in
+-            guard isBottomCollapsed != collapsed else { return }
+-            isBottomCollapsed = collapsed
+-        }
+-        context.coordinator.observeCollapse(of: bottomItem)
+-
+-        /// Assigned either way, so the tab's own state wins over whatever the autosave record
+-        /// restored. Collapsing only when the binding says so let a record that was saved collapsed
+-        /// leave a pane collapsed against a tab whose `isResultsCollapsed` is false, and nothing
+-        /// afterwards expanded it.
+-        bottomItem.isCollapsed = isBottomCollapsed
+-
+-        return splitViewController
+-    }
+-
+-    func updateNSViewController(_ splitViewController: NSSplitViewController, context: Context) {
+-        context.coordinator.topController?.rootView = topContent
+-        context.coordinator.bottomController?.rootView = bottomContent
+-
+-        guard let bottomItem = context.coordinator.bottomItem else { return }
+-        let wasCollapsed = context.coordinator.lastCollapsedState
+-
+-        context.coordinator.onUserCollapseChange = { collapsed in
+-            guard isBottomCollapsed != collapsed else { return }
+-            isBottomCollapsed = collapsed
+-        }
+-
+-        guard isBottomCollapsed != wasCollapsed else { return }
+-        context.coordinator.lastCollapsedState = isBottomCollapsed
+-        context.coordinator.applyProgrammatically {
+-            bottomItem.animator().isCollapsed = isBottomCollapsed
+-        }
+-    }
+-
+-    /// The divider is draggable and double-clickable, so AppKit owns this state as much as
+-    /// SwiftUI does. Observing it back keeps the persisted value honest instead of letting the
+-    /// two drift until the next programmatic toggle snaps the pane back.
+-    @MainActor
+-    final class Coordinator {
+-        var topController: NSHostingController<TopContent>?
+-        var bottomController: NSHostingController<BottomContent>?
+-        var bottomItem: NSSplitViewItem?
+-        var lastCollapsedState = false
+-        var onUserCollapseChange: ((Bool) -> Void)?
+-
+-        private var collapseObservation: NSKeyValueObservation?
+-        private var isApplyingProgrammatically = false
+-
+-        func 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3724** (2026-10-20): build(linux): take rustls-webpki 0.103.16 and webpki-roots 1.0.10 for RUSTSEC-2026-0381 and 0382 (@datlechin)
-- **PR #3723** (2026-10-20): feat(connections): show a saved password and test a password source (@datlechin)
-- **PR #3721** (2026-10-20): feat(connections): connect PostgreSQL through a local Unix socket (@datlechin)
-- **PR #3719** (2026-10-20): feat(plugin-cassandra): list user-defined types, offer them in the type picker and drop them (@datlechin)
-- **PR #3718** (2026-10-20): feat(datagrid): choose the format Cmd+C copies rows in (@datlechin)
-- **PR #3716** (2026-10-20): feat(cassandra): set the consistency level per connection and with CONSISTENCY (@datlechin)
+- **PR #3834** (2026-10-25): perf(editor): build the query tab in AppKit and read the sidebar listing when the filter takes focus (@datlechin)
+- **PR #3833** (2026-10-25): refactor(data-grid)!: rebuild the macOS data grid on one model and native AppKit (@datlechin)
+- **PR #3831** (2026-10-25): perf(sidebar): build the find bar on first use and drop the Oracle listing's partition join (@datlechin)
+- **PR #3830** (2026-10-24): perf(sidebar): time and fix the sidebar, Open Quickly and autocomplete on 50,000 tables (@datlechin)
+- **PR #3829** (2026-10-24): fix(linux-drivers): count an aggregate's documents for itcount() in MongoDB (@datlechin)
+- **PR #3828** (2026-10-24): test(linux): retry a fixture's start when its image pull fails (@datlechin)
 
 ---
 
@@ -1860,37 +3044,41 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): keep the OSS Scanner image within the scanner's disk (#3698)
+## X. test(linux): retry a fixture's start when its image pull fails (#3828)
 
 **RULE**:
-When implementing operations in `.oss-scanner/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `linux/crates/ssh/tests/openssh_session.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c584da5a`: security): keep the OSS Scanner image within the scanner's disk (#3698). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f0a3ba9`: test(linux): retry a fixture's start when its image pull fails (#3828). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.oss-scanner/Dockerfile`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `linux/crates/ssh/tests/openssh_session.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-# Full debug info linked into every test binary filled the scanner's disk. Split debug info keeps one
-# copy per crate, which gdb still reads.
-ENV CARGO_PROFILE_DEV_SPLIT_DEBUGINFO=unpacked \
-    CARGO_INCREMENTAL=0
-
-# One layer, so the app crate meson test builds and devenv rebuilds (TABLEPRO_LIBEXECDIR differs) is
-# stored once; devenv goes last because agents use it.
-    && (xvfb-run -a dbus-run-session -- meson test -C _build --print-errorlogs \
-        || echo "WARNING: meson test reported failures") \
+use tablepro_test_fixtures::start_container;
+    let container = start_container(|| {
+        GenericImage::new("alpine", "3.22")
+            .with_exposed_port(2222.tcp())
+            .with_wait_for(WaitFor::message_on_stderr("Server listening on"))
+            .with_cmd(["sh", "-c", SSHD_SCRIPT])
+    })
+    .await?;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-RUN cd linux && (xvfb-run -a dbus-run-session -- meson test -C _build --print-errorlogs \
-    || echo "WARNING: meson test reported failures")
+use testcontainers::runners::AsyncRunner;
+    let container = GenericImage::new("alpine", "3.22")
+        .with_exposed_port(2222.tcp())
+        .with_wait_for(WaitFor::message_on_stderr("Server listening on"))
+        .with_cmd(["sh", "-c", SSHD_SCRIPT])
+        .start()
+        .await?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c584da5a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f0a3ba9` are properly handled with clean fallback behavior.

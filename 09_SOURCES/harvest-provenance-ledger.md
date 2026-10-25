@@ -4927,3 +4927,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-25T17:30:10.001Z |
 | `learn-github-webrtc-rs-webrtc` | `https://github.com/webrtc-rs/webrtc` | `a53d7ac4` | Multi-dimensional audit evidence | 2026-10-25T17:30:14.438Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-25T17:36:31.830Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `94367b10` | Multi-dimensional audit evidence | 2026-10-25T17:42:43.078Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `66e8caf4` | Multi-dimensional audit evidence | 2026-10-25T17:42:45.042Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `9125647f` | Multi-dimensional audit evidence | 2026-10-25T17:42:47.047Z |
+| `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-25T17:42:51.604Z |

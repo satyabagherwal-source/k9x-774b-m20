@@ -745,8 +745,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B",
     "sourceVersion": "hf-qwen-qwen3-0.6b",
     "license": "Open-Source",
-    "contentHash": "fe6ba8693fd3013c4be4379e1e13eaa2c88743cb71509cbc971ea9d9dcbb8143",
-    "lastHarvestedAt": "2026-10-20T22:06:37.853Z",
+    "contentHash": "e30ad12c2112d687a6b96fe0a0bfa773981665c43cf0ed6eae1751fa14aa9ede",
+    "lastHarvestedAt": "2026-10-25T17:42:51.604Z",
     "learningId": "learn-huggingface-qwen-qwen3-0-6b"
   },
   "hf-google-t5-t5-small": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "05237822",
+    "sourceVersion": "9125647f",
     "license": "MIT",
-    "contentHash": "3c65adf1fb2c52706911638e242ec2cbbc6b98998e38a432bb545844fe3f3db4",
-    "lastHarvestedAt": "2026-10-25T09:53:59.010Z",
+    "contentHash": "51a007fe3f62facf98ed06d4bc83b1c392617c46691a7489178e046bd867519d",
+    "lastHarvestedAt": "2026-10-25T17:42:47.047Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "7ffbe9cc",
+    "sourceVersion": "66e8caf4",
     "license": "Apache-2.0",
-    "contentHash": "7de1988ffb5d9c624c2c1219b9efb47c72992f43ebd8e87af98fd0ead143c9ef",
-    "lastHarvestedAt": "2026-10-24T20:55:04.252Z",
+    "contentHash": "760d8fd10919287c97c56f8bd94160306f1b2b0f83b793ec91e9125956a3a67c",
+    "lastHarvestedAt": "2026-10-25T17:42:45.042Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -8043,10 +8043,10 @@
     "repository": "TableProApp/TablePro",
     "platform": "github",
     "sourceUrl": "https://github.com/TableProApp/TablePro",
-    "sourceVersion": "2e6102cb",
+    "sourceVersion": "94367b10",
     "license": "AGPL-3.0",
-    "contentHash": "6a2ae4a3c90f370b698336b464c36f356d22d55e866533387c689fa8a0257036",
-    "lastHarvestedAt": "2026-10-21T00:28:19.579Z",
+    "contentHash": "2c205e048914e5d7df869a20befef19f87191fcaaa9ae76a1a1a1643285386f8",
+    "lastHarvestedAt": "2026-10-25T17:42:43.078Z",
     "learningId": "learn-github-tableproapp-tablepro"
   },
   "twostraws-controlroom": {

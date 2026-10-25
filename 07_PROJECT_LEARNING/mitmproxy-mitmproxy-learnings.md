@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source**: github ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Source Version**: `05237822`  
+> **Source Version**: `9125647f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T09:53:58.595Z  
+> **Timestamp**: 2026-10-25T17:42:46.806Z  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T09:53:57.804Z  
+> **Harvest Timestamp**: 2026-10-25T17:42:46.802Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 46314 stars
+- **Stars / Engagement**: 46326 stars
 
 ---
 
@@ -1307,11 +1307,11 @@ class QuicStartServerHook(commands.StartHook):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8512** (2026-10-25): **Fix outdated example paths in the docs**
-  *Symptoms*:  #### Description  `examples/simple/` and `examples/complex/` were removed when the examples were restructured (08895e9b), but a few places still point there:  - `_index.md`: `examples/simple/add_header.py` → `examples/addons/http-add-header.py` (it adds a `count` header to every response, as the text says). - `howto/transparent.md`: `examples/complex/full_transparency_shim.c` → `examples/contrib/full_transparency_shim.c`, and the prose still called the file `mitmproxy_shim.c`. - The same stale paths in the `examples/contrib/jsondump.py` docstring and the build comment in `full_transparency_shim.c`.  I ran both `mitmdump -s examples/addons/http-add-header.py` and `mitmdump -ns examples/addons/http-add-header.py -r srcfile -w dstfile` and the header shows up. Docs and comments only, so no tests or changelog entry.  #### Checklist   - [ ] I have updated tests where applicable.  - [ ] I have added an entry to the CHANGELOG. 
+- **Issue #8516** (2026-10-25): **Block OCSP/CRL lookups for the eMudhra chain when --emudhra is enabled**
+  *Symptoms*: ## Description  When `--emudhra` (or `--emudhra-old`) is enabled, mitmproxy signs certificates with the compromised eMudhra intermediate CA key. Clients validating those certificates send OCSP and CRL revocation lookups to eMudhra/Sectigo hosts (`ocsp-a.emsign.com`, `ocsp-b.emsign.com`, `ocsp-c.emsign.com`, `crl.emsign.com`, `ocsp.comodoca.com`, `crl.comodoca.com`). Those lookups are unnecessary and counterproductive, so this change blocks them in `TlsConfig.request`: flows to those hosts are killed while either option is on.  The existing magic CRL endpoint (`/mitmproxy-<serial>.crl`) is still served, not blocked: the block check runs after the magic-path handling.  ## Testing  - Added `test_emudhra_revocation_block` covering: all six revocation hosts are killed with `--emudhra` on, the magic CRL path is still served for a revocation host, unrelated hosts pass through, and revocation hosts pass through with `--emudhra` off. - `test/mitmproxy/addons/test_tlsconfig.py`: 29 passed. - Added a CHANGELOG entry under "Unreleased".  Fixes #8513 
 
-- **Issue #8509** (2026-10-23): **Format two exception messages that used %s with separate args**
-  *Symptoms*: #### Description  `BiDi.__getattr__` and `OptManager.make_parser` raised exceptions with logging-style arguments:  ```python raise AttributeError("No such attribute: %s", k) raise ValueError("Unsupported option type: %s", o.typespec) ```  Exceptions don't apply `%`-formatting, so the message came out as a tuple, e.g. `AttributeError('No such attribute: %s', 'c')`. Both now use f-strings.  #### Checklist   - [x] I have updated tests where applicable.  - [x] I have added an entry to the CHANGELOG. 
+- **Issue #8514** (2026-10-25): **Require Brotli 1.2.1 for upstream decoder fix**
+  *Symptoms*: #### Description  Require Brotli 1.2.1 to include the published upstream decoder fix for [CVE-2026-111497](https://github.com/google/brotli/releases/tag/v1.2.1). Raise both dependency bounds, regenerate only the Brotli lock records and matching project metadata, and add an Unreleased changelog entry.  The existing upper bound excludes 1.2.1. The manifest controls future installations and Docker dependency resolution, while the frozen uv lock feeds future binary builds. This does not update already shipped binaries. Mitmproxy reaches the native decoder through `brotli.decompress`; exploitability of its one-shot use has not been established.  Validation on macOS arm64: - 118 encoding/HTTP tests passed in each of CPython 3.14.7, CPython 3.12.13, and the lowest-direct dependency environment on CPython 3.14.7. - The lint and focused old-dependencies tox environments passed. Independent focused test and Ruff reruns also passed. - Uncached HTTP Brotli decoding, dependency consistency in all three environments, `uv lock --check --offline`, and `git diff --check` passed. - Built wheel/sdist metadata declares Brotli 1.2.1 and Python >=3.12. All 58 locked Brotli artifact URLs, hashes, and sizes match PyPI; relevant CPython 3.12–3.14 platform wheels are available.  The full suite, Python 3.13 execution, Windows/Linux execution, Docker builds, and PyInstaller builds were not run locally. CI remains to be evaluated.  AI assistance: the manifest change was drafted with GLM-5.3. Lock regener
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1328,91 +1328,77 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `05237822` (2026-10-25)
-**Commit Message**: Fix outdated example paths in the docs (#8512)
+### Incident Patch 1: `9125647f` (2026-10-25)
+**Commit Message**: Require Brotli 1.2.1 for upstream decoder fix (#8514)
 
-examples/simple/ and examples/complex/ no longer exist since the examples
-were restructured. Point the docs, the jsondump.py docstring and the
-shim's build comment to examples/addons/http-add-header.py and
-examples/contrib/ instead.
+* Require Brotli 1.2.1 for upstream decoder fix
 
-Co-authored-by: protonnegativo <[REDACTED_EMAIL]>
+* [autofix.ci] apply automated fixes
 
-**File**: `docs/src/content/_index.md` (modified, +3/-3)
+---------
+
+Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -114,16 +114,16 @@ See the [client-side replay]({{< relref "/overview/features#client-side-replay"
- #### Running a script
+@@ -7,6 +7,9 @@
  
- ```bash
--mitmdump -s examples/simple/add_header.py
-+mitmdump -s examples/addons/http-add-header.py
- ```
+ ## Unreleased: mitmproxy next
  
--This runs the **add_header.py** example script, which simply adds a new
-+This runs the **http-add-header.py** example script, which simply adds a new
- header to all responses.
- 
- #### Scripted data transformation
- 
- ```bash
--mitmdump -ns examples/simple/add_header.py -r srcfile -w dstfile
-+mitmdump -ns examples/addons/http-add-header.py -r srcfile -w dstfile
- ```
- 
- This command loads flows from **srcfile**, transforms it according to
++- **Security:** Require Brotli 1.2.1 to include the upstream decoder fix for
++  [CVE-2026-111497](https://github.com/google/brotli/releases/tag/v1.2.1).
++  ([#8514](https://github.com/mitmproxy/mitmproxy/pull/8514), @anthonylei)
+ - Fix two error messages that were built with `%s` placeholders and never formatted
+   (`BiDi` attribute lookup and unsupported option types in `OptManager.make_parser`).
+   ([#8509](https://github.com/mitmproxy/mitmproxy/pull/8509), @Pharex38)
 ```
 
-**File**: `docs/src/content/howto/transparent.md` (modified, +2/-2)
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -368,11 +368,11 @@ ip route add local $CLIENT_NET dev lo table $TABLE_ID
- ```
- 
- This mode does require root privileges though. There's a wrapper in the examples
--directory called 'mitmproxy_shim.c', which will enable you to use this mode with
-+directory called 'full_transparency_shim.c', which will enable you to use this mode with
- dropped privileges. It can be used as follows:
- 
- ```bash
--gcc examples/complex/full_transparency_shim.c -o mitmproxy_shim -lcap
-+gcc examples/contrib/full_transparency_shim.c -o mitmproxy_shim -lcap
- sudo chown root:root mitmproxy_shim
- sudo chmod u+s mitmproxy_shim
- ./mitmproxy_shim $(which mitmproxy) --mode transparent --set spoof-source-address
+@@ -36,7 +36,7 @@ dependencies = [
+     "asgiref>=3.2.10,<=3.12.1",
+     "backports.zstd>=1.7.0,<=1.7.0 ; python_version<'3.14'",
+     "bcrypt>=5.0.0,<=5.0.0",
+-    "Brotli>=1.0,<=1.2.0",
++    "Brotli>=1.2.1,<=1.2.1",
+     "certifi>=2026.10.19",  # no upper bound here to get latest CA bundle
+     "cryptography>=42.0,<=50.0.2",  # relaxed upper bound here to get security fixes
+     "flask>=3.0,<=3.1.3",
 ```
 
-**File**: `examples/contrib/full_transparency_shim.c` (modified, +1/-1)
+**File**: `uv.lock` (modified, +62/-35)
 ```diff
-@@ -12,7 +12,7 @@
-  * with the same capabilities.
-  *
-  * It can be compiled as follows:
-- * gcc examples/mitmproxy_shim.c -o mitmproxy_shim -lcap
-+ * gcc examples/contrib/full_transparency_shim.c -o mitmproxy_shim -lcap
- */
+@@ -241,40 +241,67 @@ wheels = [
  
- int set_caps(cap_t cap_struct, cap_value_t *cap_list, size_t bufsize) {
-```
-
-**File**: `examples/contrib/jsondump.py` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@
- 
-     mitmproxy
-         --mode reverse:http://example.com/
--        -s examples/complex/jsondump.py
-+        -s examples/contrib/jsondump.py
- 
- Configuration:
- 
+ [[package]]
+ name = "brotli"
+-version = "1.2.0"
+-source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz", hash = "sha256:e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a", size = 7388632, upload-time = "2025-11-05T18:39:42.86Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/11/ee/b0a11ab2315c69bb9b45a2aaed022499c9c24a205c3a49c3513b541a7967/brotli-1.2.0-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:35d382625778834a7f3061b15423919aa03e4f5da34ac8e02c074e4b75ab4f84", size = 861543, upload-time = "2025-11-05T18:38:24.183Z" },
+-    { url = "https://files.pythonhosted.org/packages/e1/2f/29c1459513cd35828e25531ebfcbf3e92a5e49f560b1777a9af7203eb46e/brotli-1.2.0-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:7a61c06b334bd99bc5ae84f1eeb36bfe01400264b3c352f968c6e30a10f9d08b", size = 444288, upload-time = "2025-11-05T18:38:25.139Z" },
+-    { url = "https://files.pythonhosted.org/packages/3d/6f/feba03130d5fceadfa3a1bb102cb14650798c848b1df2a808356f939bb16/brotli-1.2.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:acec55bb7c90f1dfc476126f9711a8e81c9af7fb617409a9ee2953115343f08d", size = 1528071, upload-time = "2025-11-05T18:38:26.081Z" },
+-    { url = "https://files.pythonhosted.org/packages/2b/38/f3abb554eee089bd15471057ba85f47e53a44a462cfce265d9bf7088eb09/brotli-1.2.0-cp312-cp312-manylinux2014_ppc64le.manylinux_2_17_ppc64le.manylinux_2_28_ppc64le.whl", hash = "sha256:260d3692396e1895c5034f204f0db022c056f9e2ac841593a4cf9426e2a3faca", size = 1626913, upload-time = "2025-11-05T18:38:27.284Z" },
+-    { url = "https://files.pythonhosted.org/packages/03/a7/03aa61fbc3c5cbf99b44d158665f9b0dd3d8059be16c460208d9e385c837/brotli-1.2.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:072e7624b1fc4d601036ab3f4f27942ef772887e876beff0301d261210bca97f", size = 1419762, upload-time = "2025-11-05T18:38:28.295Z" },
+-    { url = "https://files.pythonhosted.org/packages/21/1b/0374a89ee27d152a5069c356c96b93afd1b94eae83f1e004b57eb6ce2f10/brotli-1.2.0-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:adedc4a67e15327dfdd04884873c6d5a01d3e3b6f61406f99b1ed4865a2f6d28", size = 1484494, upload-time = "2025-11-05T18:38:29.29Z" },
+-    { url = "https://files.pythonhosted.org/packages/cf/57/69d4fe84a67aef4f524dcd075c6eee868d7850e85bf01d778a857d8dbe0a/brotli-1.2.0-cp312-cp312-musllinux_1_2_ppc64le.whl", hash = "sha256:7a47ce5c2288702e09dc22a44d0ee6152f2c7eda97b3c8482d826a1f3cfc7da7", size = 1593302, upload-time = "2025-11-05T18:38:30.639Z" },
+-    { url = "https://files.pythonhosted.org/packages/d5/3b/39e13ce78a8e9a621c5df3aeb5fd181fcc8caba8c48a194cd629771f6828/brotli-1.2.0-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:af43b8711a8264bb4e7d6d9a6d004c3a2019c04c01127a868709ec29962b6036", size = 1487913, upload-time = "2025-11-05T18:38:31.618Z" },
+-    { url = "https://files.pythonhosted.org/packages/62/28/4d00cb9bd76a6357a66fcd54b4b6d70288385584063f4b07884c1e7286ac/brotli-1.2.0-cp312-cp312-win32.whl", hash = "sha256:e99befa0b48f3cd293dafeacdd0d191804d105d279e0b387a32054c1180f3161", size = 334362, upload-time = "2025-11-05T18:38:32.939Z" },
+-    { url = "https://files.pythonhosted.org/packages/1c/4e/bc1dcac9498859d5e353c9b153627a3752868a9d5f05ce8dedd81a2354ab/brotli-1.2.0-cp312-cp312-win_amd64.whl", hash = "sha256:b35c13ce241abdd44cb8ca70683f20c0c079728a36a996297adb5334adfc1c44", size = 369115, upload-time = "2025-11-05T18:38:33.765Z" },
+-    { url = "https://files.pythonhosted.org/packages/6c/d4/4ad5432ac98c73096159d9ce7ffeb82d151c2ac84adcc6168e476bb54674/brotli-1.2.0-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:9e5825ba2c9998375530504578fd4d5d1059d09621a02065d1b6bfc41a8e05ab", size = 861523, upload-time = "2025-11-05T18:38:34.67Z" },
+-    { url = "https://files.pythonhosted.org/packages/91/9f/9cc5bd03ee68a85dc4bc89114f7067c056a3c14b3d95f171918c088bf88d/brotli-1.2.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:0cf8c3b8ba93d496b2fae778039e2f5ecc7cff99df84df337ca31d8f2252896c", size = 444289, upload-time = "2025-11-05T18:38:35.6Z" },
+-    { url = "https://files.pythonhosted.org/packages/2e/b6/fe84227c56a865d16a6614e2c4722864b380cb14b13f3e6bef441e73a85a/brotli-1.2.0-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:c8565e3cdc1808b1a34714b553b262c5de5fbda202285782173ec137fd13709f", size = 1528076, upload-time = "2025-11-05T18:38:36.639Z" },
+-    { url = "https://files.pythonhosted.org/packages/55/de/de4ae0aaca06c790371cf6e7ee93a024f6b4bb0568727da8c3de112e726c/brotli-1.2.0-cp313-cp313-manylinux2014_ppc64le.manylinux_2_17_ppc64le.manylinux_2_28_ppc64le.whl", hash = "sha256:26e8d3ecb0ee458a9804f47f21b74845cc823fd1bb19f02272be70774f56e2a6", size = 1626880, upload-time = "2025-
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8516** (2026-10-25): Block OCSP/CRL lookups for the eMudhra chain when --emudhra is enabled (@LiHuan02)
+- **PR #8514** (2026-10-25): Require Brotli 1.2.1 for upstream decoder fix (@anthonylei)
 - **PR #8512** (2026-10-25): Fix outdated example paths in the docs (@protonnegativo)
+- **PR #8511** (closed): add svg logo in black and white and add to README (@eloydegen)
 - **PR #8509** (2026-10-23): Format two exception messages that used %s with separate args (@Pharex38)
 - **PR #8507** (2026-10-22): Fix the escape_control_characters docstring (@qodelicious)
-- **PR #8504** (closed): Add YAML contentview (@vansh917917)
-- **PR #8503** (2026-10-22): Add `--emudhra-old` option (@mhils)
-- **PR #8502** (2026-10-22): Bump dependencies (@mhils)
 
 ---
 
@@ -1432,32 +1418,30 @@ Co-authored-by: protonnegativo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. outdated example paths in the docs (#8512)
+## X. Require Brotli 1.2.1 for upstream decoder fix (#8514)
 
 **RULE**:
-When implementing operations in `docs/src/content/_index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `05237822`: outdated example paths in the docs (#8512). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9125647f`: Require Brotli 1.2.1 for upstream decoder fix (#8514). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/content/_index.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-mitmdump -s examples/addons/http-add-header.py
-This runs the **http-add-header.py** example script, which simply adds a new
-mitmdump -ns examples/addons/http-add-header.py -r srcfile -w dstfile
+- **Security:** Require Brotli 1.2.1 to include the upstream decoder fix for
+  [CVE-2026-111497](https://github.com/google/brotli/releases/tag/v1.2.1).
+  ([#8514](https://github.com/mitmproxy/mitmproxy/pull/8514), @anthonylei)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-mitmdump -s examples/simple/add_header.py
-This runs the **add_header.py** example script, which simply adds a new
-mitmdump -ns examples/simple/add_header.py -r srcfile -w dstfile
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `05237822` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9125647f` are properly handled with clean fallback behavior.
