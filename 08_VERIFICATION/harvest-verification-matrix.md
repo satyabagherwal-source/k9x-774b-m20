@@ -4855,3 +4855,6 @@
 | `CYCLE-20261025-6LWA` | `2026-10-25T14:25:20.218Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1131, Rule 4339, Rule 4340` | Yes (`cfec98b6...`) |
 | `CYCLE-20261025-EQAQ` | `2026-10-25T14:31:39.170Z` | `angular/angular` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4341` | Yes (`739e0d11...`) |
 | `CYCLE-20261025-ETN8` | `2026-10-25T14:31:43.508Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4342, Rule 4343, Rule 4344` | Yes (`1758a10a...`) |
+| `CYCLE-20261025-MZRE` | `2026-10-25T14:38:04.682Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4345` | Yes (`a7b92528...`) |
+| `CYCLE-20261025-N2UN` | `2026-10-25T14:38:08.687Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4346, Rule 4347, Rule 4348` | Yes (`535883a8...`) |
+| `CYCLE-20261025-N3DL` | `2026-10-25T14:38:09.369Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | Yes (`6ec740fb...`) |

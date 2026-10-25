@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-J5RH",
-    "timestamp": "2026-10-22T17:32:02.669Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "c2deffd64dab79fad523991104714d2bb4e2c68d1fadf4333662fbc3b4345ef3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-RDVF",
-    "timestamp": "2026-10-22T17:38:26.427Z",
-    "repository": "go-kratos/kratos",
-    "learningId": "learn-github-go-kratos-kratos",
-    "contentHash": "ec1c033cccffd799c74c0ed2eaa8d8c802e619040f223ff89bbe6d459dc17405",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-REXL",
-    "timestamp": "2026-10-22T17:38:27.801Z",
-    "repository": "rsuite/rsuite",
-    "learningId": "learn-github-rsuite-rsuite",
-    "contentHash": "3653297c30c769ecd2d853bba9d36d395a24ab642f0738dbbe7ccbc41731e1fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-RFGE",
     "timestamp": "2026-10-22T17:38:28.478Z",
     "repository": "trufflesecurity/trufflehog",
@@ -7492,6 +7447,51 @@
     "contentHash": "1758a10a102349b138684fb042fbc03a1cde7a50f824905a84d899f3659952c3",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-MZRE",
+    "timestamp": "2026-10-25T14:38:04.682Z",
+    "repository": "msasikanth/twine",
+    "learningId": "learn-github-msasikanth-twine",
+    "contentHash": "a7b92528322be9c7c494fa8d493cf21068b789b699e2c6ec6d0392b2a5e79f52",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-N2UN",
+    "timestamp": "2026-10-25T14:38:08.687Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "535883a849695ad62adeb82fbf0bacb8d016c5a8a202aed6d62a3037d699ac58",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-N3DL",
+    "timestamp": "2026-10-25T14:38:09.369Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "6ec740fb37bdd2b1069a35fc2d5c333c7cc43b504df8abd901350ffba87fe51c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

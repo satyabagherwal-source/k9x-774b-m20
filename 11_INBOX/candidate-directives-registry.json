@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T12:56:43.534Z",
+  "last_updated": "2026-10-25T14:38:09.377Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2697,6 +2697,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-flox-flox"
+    },
+    {
+      "id": "CD-N3DT",
+      "directive_title": "Empirical Invariant Guard in lazy.go",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "projectdiscovery/nuclei",
+      "source_commit": "f46ee551",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-projectdiscovery-nuclei"
     }
   ]
 }

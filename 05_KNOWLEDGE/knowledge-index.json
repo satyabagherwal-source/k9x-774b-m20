@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T14:31:43.456Z",
+  "last_updated": "2026-10-25T14:38:09.303Z",
   "total_verified_learnings": 1086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21127,7 +21127,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "5cd92aac8b070afdc1d8beef9231a88d1d8e24b09c12c50dd3090b3b737c7c7d",
+      "content_hash": "535883a849695ad62adeb82fbf0bacb8d016c5a8a202aed6d62a3037d699ac58",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "promoted_rules": [
@@ -21188,6 +21188,21 @@
           "number": 2182,
           "title": "RGBA Transparency Prompt Injection Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4346,
+          "title": "Sparse MoE Routing Stability Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4347,
+          "title": "RGBA Transparency Boundary Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4348,
+          "title": "Resolution Bucketing Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21208,7 +21223,7 @@
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws"
       ],
-      "verified_at": "2026-10-20T19:10:41.624Z",
+      "verified_at": "2026-10-25T14:38:08.623Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36134,14 +36149,19 @@
       "slug": "msasikanth-twine",
       "platform": "github",
       "source_url": "https://github.com/msasikanth/twine",
-      "source_version": "ca63e338",
-      "content_hash": "904048898b550788fc3c22ab7c289c24221c22add17b47e56d45bfcf3bd124ab",
+      "source_version": "6082ae0f",
+      "content_hash": "a7b92528322be9c7c494fa8d493cf21068b789b699e2c6ec6d0392b2a5e79f52",
       "dossier_path": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "promoted_rules": [
         {
           "number": 2485,
           "title": "Bundle SQLite native libraries for macOS App Store builds",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4345,
+          "title": "Improve UI performance and layout efficiency",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -36150,7 +36170,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:10:01.756Z",
+      "verified_at": "2026-10-25T14:38:04.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40904,8 +40924,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "e21e6365",
-      "content_hash": "6a4c7d2d66790abcaab4aefc52d18230917ae05818b0ce45dd138adde09c1853",
+      "source_version": "f46ee551",
+      "content_hash": "6ec740fb37bdd2b1069a35fc2d5c333c7cc43b504df8abd901350ffba87fe51c",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -40945,7 +40965,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:44:18.136Z",
+      "verified_at": "2026-10-25T14:38:09.287Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -123976,6 +123996,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T14:31:43.438Z"
+    },
+    "rule-4345": {
+      "learning_id": "rule-4345",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4345,
+      "title": "Improve UI performance and layout efficiency",
+      "source_url": "https://github.com/msasikanth/twine",
+      "source_version": "6082ae0f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:38:04.617Z"
+    },
+    "rule-4346": {
+      "learning_id": "rule-4346",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4346,
+      "title": "Sparse MoE Routing Stability Invariant",
+      "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+      "source_version": "hf-inclusionai-ming-image-0.1-design",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:38:08.623Z"
+    },
+    "rule-4347": {
+      "learning_id": "rule-4347",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4347,
+      "title": "RGBA Transparency Boundary Integrity",
+      "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+      "source_version": "hf-inclusionai-ming-image-0.1-design",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:38:08.623Z"
+    },
+    "rule-4348": {
+      "learning_id": "rule-4348",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4348,
+      "title": "Resolution Bucketing Consistency",
+      "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+      "source_version": "hf-inclusionai-ming-image-0.1-design",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:38:08.623Z"
     }
   },
   "aliases": {

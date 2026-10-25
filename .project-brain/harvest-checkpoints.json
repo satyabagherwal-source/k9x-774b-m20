@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T14:31:43.523Z",
+  "last_updated": "2026-10-25T14:38:09.383Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -620,14 +620,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "content_hash": "5cd92aac8b070afdc1d8beef9231a88d1d8e24b09c12c50dd3090b3b737c7c7d",
-      "verified_at": "2026-10-20T19:10:41.702Z",
+      "content_hash": "535883a849695ad62adeb82fbf0bacb8d016c5a8a202aed6d62a3037d699ac58",
+      "verified_at": "2026-10-25T14:38:08.697Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:10:41.702Z"
+      "last_updated": "2026-10-25T14:38:08.697Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "6a4c7d2d66790abcaab4aefc52d18230917ae05818b0ce45dd138adde09c1853",
-      "verified_at": "2026-10-25T04:44:18.183Z",
+      "content_hash": "6ec740fb37bdd2b1069a35fc2d5c333c7cc43b504df8abd901350ffba87fe51c",
+      "verified_at": "2026-10-25T14:38:09.382Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:44:18.183Z"
+      "last_updated": "2026-10-25T14:38:09.382Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -11526,14 +11526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-msasikanth-twine",
-      "content_hash": "904048898b550788fc3c22ab7c289c24221c22add17b47e56d45bfcf3bd124ab",
-      "verified_at": "2026-10-19T10:10:01.826Z",
+      "content_hash": "a7b92528322be9c7c494fa8d493cf21068b789b699e2c6ec6d0392b2a5e79f52",
+      "verified_at": "2026-10-25T14:38:04.693Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:10:01.826Z"
+      "last_updated": "2026-10-25T14:38:04.693Z"
     },
     "facebook/folly": {
       "repository": "facebook/folly",

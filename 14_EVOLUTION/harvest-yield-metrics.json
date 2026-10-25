@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T14:31:43.515Z",
-  "total_cycles_completed": 4832,
-  "total_learnings_persisted": 4832,
-  "total_rules_promoted": 4223,
+  "last_updated": "2026-10-25T14:38:09.379Z",
+  "total_cycles_completed": 4835,
+  "total_learnings_persisted": 4835,
+  "total_rules_promoted": 4227,
   "history": [
-    {
-      "timestamp": "2026-10-25T04:12:39.974Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:18:44.349Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:18:45.477Z",
-      "repository": "lingui/js-lingui",
-      "learningId": "learn-github-lingui-js-lingui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T04:18:54.242Z",
       "repository": "zeromicro/go-zero",
@@ -1403,6 +1382,27 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:38:04.690Z",
+      "repository": "msasikanth/twine",
+      "learningId": "learn-github-msasikanth-twine",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:38:08.694Z",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:38:09.379Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

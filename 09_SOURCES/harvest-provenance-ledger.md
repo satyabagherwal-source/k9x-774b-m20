@@ -4862,3 +4862,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-25T14:25:20.222Z |
 | `learn-github-angular-angular` | `https://github.com/angular/angular` | `bd4e7816` | Multi-dimensional audit evidence | 2026-10-25T14:31:39.173Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-25T14:31:43.511Z |
+| `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `6082ae0f` | Multi-dimensional audit evidence | 2026-10-25T14:38:04.685Z |
+| `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-25T14:38:08.690Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `f46ee551` | Multi-dimensional audit evidence | 2026-10-25T14:38:09.372Z |

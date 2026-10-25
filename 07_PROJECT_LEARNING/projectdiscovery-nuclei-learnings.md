@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `e21e6365`  
+> **Source Version**: `f46ee551`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:44:17.942Z  
+> **Timestamp**: 2026-10-25T14:38:09.191Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:44:17.359Z  
+> **Harvest Timestamp**: 2026-10-25T14:38:08.920Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32296 stars
+- **Stars / Engagement**: 32303 stars
 
 ---
 
@@ -1410,533 +1410,378 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e21e6365` (2026-10-24)
-**Commit Message**: Merge pull request #7922 from MasterchiefGalaxy/fix/offline-http-preserve-response
+### Incident Patch 1: `48e04c73` (2026-10-25)
+**Commit Message**: fix ignore
 
-fix(offlinehttp): preserve response content during HTTP version normalization
-
-**File**: `pkg/protocols/offlinehttp/read_response.go` (modified, +1/-1)
+**File**: `internal/runner/lazy.go` (modified, +24/-19)
 ```diff
-@@ -8,7 +8,7 @@ import (
- 	"strings"
+@@ -39,25 +39,30 @@ func GetAuthTmplStore(opts *types.Options, catalog catalog.Catalog, execOpts *pr
+ 		}
+ 		tmpls = append(tmpls, data...)
+ 	}
+-	opts.Templates = tmpls
+-	opts.Workflows = nil
+-	opts.RemoteTemplateDomainList = nil
+-	opts.TemplateURLs = nil
+-	opts.WorkflowURLs = nil
+-	opts.ExcludedTemplates = nil
+-	opts.Tags = nil
+-	opts.ExcludeTags = nil
+-	opts.IncludeTemplates = nil
+-	opts.Authors = nil
+-	opts.Severities = nil
+-	opts.ExcludeSeverities = nil
+-	opts.IncludeTags = nil
+-	opts.IncludeIds = nil
+-	opts.ExcludeIds = nil
+-	opts.Protocols = nil
+-	opts.ExcludeProtocols = nil
+-	opts.IncludeConditions = nil
+-	cfg := loader.NewConfig(opts, catalog, execOpts)
++	// The auth store only wants the secret-file templates. Copy first so
++	// this scoping cannot clear Templates, ExcludeTags, or the other filters
++	// on the caller's options. The CLI already copies; the SDK passes the
++	// engine options directly.
++	scoped := opts.Copy()
++	scoped.Templates = tmpls
++	scoped.Workflows = nil
++	scoped.RemoteTemplateDomainList = nil
++	scoped.TemplateURLs = nil
++	scoped.WorkflowURLs = nil
++	scoped.ExcludedTemplates = nil
++	scoped.Tags = nil
++	scoped.ExcludeTags = nil
++	scoped.IncludeTemplates = nil
++	scoped.Authors = nil
++	scoped.Severities = nil
++	scoped.ExcludeSeverities = nil
++	scoped.IncludeTags = nil
++	scoped.IncludeIds = nil
++	scoped.ExcludeIds = nil
++	scoped.Protocols = nil
++	scoped.ExcludeProtocols = nil
++	scoped.IncludeConditions = nil
++	cfg := loader.NewConfig(scoped, catalog, execOpts)
+ 	cfg.StoreId = loader.AuthStoreId
+ 	store, err := loader.New(cfg)
+ 	if err != nil {
+```
+
+**File**: `lib/ignorefile_test.go` (modified, +61/-1)
+```diff
+@@ -8,9 +8,15 @@ import (
+ 	"testing"
+ 
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/catalog/config"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+ 	"github.com/stretchr/testify/require"
  )
  
--var noMinor = regexp.MustCompile(`HTTP/([0-9]) `)
-+var noMinor = regexp.MustCompile(`^HTTP/([0-9]) `)
++// Update checks are disabled explicitly so this pins corrupt-file rejection on
++// its own. The ignore file is read after init's update block, which may replace
++// a corrupt file via UpdateIgnoreFile — with update checks left on, this test
++// would assert rejection or repair depending on whether the process could reach
++// the network.
+ func TestNewNucleiEngineRejectsCorruptActiveIgnoreFile(t *testing.T) {
+ 	root := t.TempDir()
+ 	path := filepath.Join(root, config.NucleiIgnoreFileName)
+@@ -21,8 +27,62 @@ func TestNewNucleiEngineRejectsCorruptActiveIgnoreFile(t *testing.T) {
+ 	t.Cleanup(func() { cfg.SetTemplatesDir(oldRoot) })
+ 	cfg.SetTemplatesDir(root)
  
- // readResponseFromString reads a raw http response from a string.
- func readResponseFromString(data string) (*http.Response, error) {
-```
-
-**File**: `pkg/protocols/offlinehttp/read_response_preservation_test.go` (added, +93/-0)
-```diff
-@@ -0,0 +1,93 @@
-+package offlinehttp
-+
-+import (
-+	"fmt"
-+	"io"
-+	"testing"
-+)
-+
-+func TestReadResponsePreservesHTTPVersionText(t *testing.T) {
-+	body := "Supports HTTP/2 and HTTP/3."
-+	tests := []struct {
-+		name   string
-+		raw    string
-+		proto  string
-+		status string
-+		header string
-+	}{
-+		{
-+			name:   "body without content length",
-+			raw:    "HTTP/1.1 200 OK\r\n\r\n" + body,
-+			proto:  "HTTP/1.1",
-+			status: "200 OK",
-+		},
-+		{
-+			name:   "body with content length",
-+			raw:    fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Length: %d\r\n\r\n%s", len(body), body),
-+			proto:  "HTTP/1.1",
-+			status: "200 OK",
-+		},
-+		{
-+			name:   "chunked body",
-+			raw:    fmt.Sprintf("HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n%x\r\n%s\r\n0\r\n\r\n", len(body), body),
-+			proto:  "HTTP/1.1",
-+			status: "200 OK",
-+		},
-+		{
-+			name:   "header value",
-+			raw:    "HTTP/1.1 200 OK\r\nServer: HTTP/2 gateway\r\n\r\n" + body,
-+			proto:  "HTTP/1.1",
-+			status: "200 OK",
-+			header: "HTTP/2 gateway",
-+		},
-+		{
-+			name:   "reason phrase",
-+			raw:    "HTTP/1.1 200 HTTP/2 supported\r\n\r\n" + body,
-+			proto:  "HTTP/1.1",
-+			status: "200 HTTP/2 supported",
-+		},
-+		{
-+			name:   "HTTP 2 missing minor version",
-+			raw:    "HTTP/2 200 OK\r\n\r\n" + body,
-+			proto:  "HTTP/2.0",
-+			status: "200 OK",
-+		},
-+		{
-+			name:   "HTTP 3 missing minor version",
-+			raw:    "HTTP/3 200 OK\r\n\r\n" + body,
-+			proto:  "HTTP/3.0",
-+			status: "200 OK",
-+		},
-+		{
-+			name:   "request followed by response",
-+			raw:    "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/1.1 200 OK\r\n\r\n" + body,
-+			proto:  "HTTP/1.1",
-+			status: "200 OK",
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			resp, err := readResponseFromString(tt.raw)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			defer func() { _ = resp.Body.Close() }()
-+			got, err := io.ReadAll(resp.Body)
-+			if err != nil {
-+				t.Fatalf("read response body: %v", err)
-+			}
-+			if string(got) != body {
-+				t.Errorf("body = %q, want %q", got, body)
-+			}
-+			if resp.Proto != tt.proto {
-+				t.Errorf("protocol = %q, want %q", resp.Proto, tt.proto)
-+			}
-+			if resp.Status != tt.status {
-+				t.Errorf("status = %q, want %q", resp.Status, tt.status)
-+			}
-+			if got := resp.Header.Get("Server"); got != tt.header {
-+				t.Errorf("Server header = %q, want %q", got, tt.header)
-+			}
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `f1702dc4` (2026-10-24)
-**Commit Message**: Merge pull request #7908 from gnuletik/fix/js-redis-reply-cap
-
-fix(js): cap what a redis connection may read
-
-**File**: `pkg/js/libs/redis/redis.go` (modified, +179/-20)
-```diff
-@@ -1,8 +1,13 @@
- package redis
- 
- import (
-+	"bytes"
- 	"context"
-+	"errors"
- 	"fmt"
-+	"io"
-+	"net"
-+	"strconv"
- 	"time"
- 
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
-@@ -30,11 +35,7 @@ func getServerInfo(ctx context.Context, executionId string, host string, port in
- 		return "", protocolstate.ErrHostDenied.Msgf(host)
- 	}
- 	// create a new client
--	client := redis.NewClient(&redis.Options{
--		Addr:     fmt.Sprintf("%s:%d", host, port),
--		Password: "", // no password set
--		DB:       0,  // use default DB
--	})
-+	client := newClient(fmt.Sprintf("%s:%d", host, port), "")
- 	defer func() {
- 		_ = client.Close()
- 	}()
-@@ -72,11 +73,7 @@ func connect(ctx context.Context, executionId string, host string, port int, pas
- 		return false, protocolstate.ErrHostDenied.Msgf(host)
- 	}
- 	// create a new client
--	client := redis.NewClient(&redis.Options{
--		Addr:     fmt.Sprintf("%s:%d", host, port),
--		Password: password, // no password set
--		DB:       0,        // use default DB
--	})
-+	client := newClient(fmt.Sprintf("%s:%d", host, port), password)
- 	defer func() {
- 		_ = client.Close()
- 	}()
-@@ -112,11 +109,7 @@ func getServerInfoAuth(ctx context.Context, executionId string, host string, por
- 		return "", protocolstate.ErrHostDenied.Msgf(host)
- 	}
- 	// create a new client
--	client := redis.NewClient(&redis.Options{
--		Addr:     fmt.Sprintf("%s:%d", host, port),
--		Password: password, // no password set
--		DB:       0,        // use default DB
--	})
-+	client := newClient(fmt.Sprintf("%s:%d", host, port), password)
- 	defer func() {
- 		_ = client.Close()
- 	}()
-@@ -187,11 +180,7 @@ func RunLuaScript(ctx context.Context, host string, port int, password string, s
- 		return false, protocolstate.ErrHostDenied.Msgf(host)
- 	}
- 	// create a new client
--	client := redis.NewClient(&redis.Options{
--		Addr:     fmt.Sprintf("%s:%d", host, port),
--		Password: password,
--		DB:       0, // use default DB
--	})
-+	client := newClient(fmt.Sprintf("%s:%d", host, port), password)
- 	defer func() {
- 		_ = client.Close()
- 	}()
-@@ -261,3 +250,173 @@ func RunLuaScript(ctx context.Context, host string, port int, password string, s
- 
- 	return infoCmd.Val(), nil
+-	engine, err := NewNucleiEngineCtx(context.Background())
++	engine, err := NewNucleiEngineCtx(context.Background(), DisableUpdateCheck())
+ 	require.Nil(t, engine)
+ 	require.ErrorContains(t, err, "error parsing")
+ 	require.ErrorContains(t, err, strconv.Quote(path))
  }
 +
-+// maxReadBytes bounds what one connection may read. go-redis reads a reply line until "\n" with
-+// no length limit, so a port that streams bytes without one was buffered for as long as it kept
-+// sending. The replies these calls expect, INFO included, are a few kilobytes.
++// TestIgnoreFileSurvivesAuthTemplateStore pins two init orderings.
 +//
-+// A RESP length header is rejected before it is returned. go-redis allocates the declared
-+// bulk size, or one interface per array element, before reading the payload.
-+const maxReadBytes = 16 << 20
++// The ignore file is read after the update block, so a file this same call
++// creates is the one that becomes the deny-list. GetAuthTmplStore also runs
++// during init whenever SecretsFile is set. It must scope a copy of the
++// options: the caller's Templates and ExcludeTags stay put, and the ignore
++// file is still applied on top.
++//
++// A static-only secrets file is enough to build that store.
++func TestIgnoreFileSurvivesAuthTemplateStore(t *testing.T) {
++	root := t.TempDir()
++	require.NoError(t, os.WriteFile(
++		filepath.Join(root, config.NucleiIgnoreFileName),
++		[]byte("tags:\n  - dos\nfiles:\n  - dns/soa-detect.yaml\n"),
++		0o600,
++	))
 +
-+// maxAggregate is how many array, set, map, attribute, or push elements fit in maxReadBytes,
-+// since each element is an interface value.
-+const maxAggregate = maxReadBytes / 16
++	cfg := config.DefaultConfig
++	oldRoot := cfg.TemplatesDirectory
++	t.Cleanup(func() { cfg.SetTemplatesDir(oldRoot) })
++	cfg.SetTemplatesDir(root)
 +
-+var errReadLimit = fmt.Errorf("redis: reply exceeds %d bytes", maxReadBytes)
++	secrets := filepath.Join(root, "secrets.yaml")
++	require.NoError(t, os.WriteFile(secrets, []byte(`static:
++  - type: header
++    domains:
++      - example.com
++    headers:
++      - key: x-api-key
++        value: not-a-real-secret
++`), 0o600))
 +
-+// newClient is redis.NewClient on the default dialer, with each connection's reads capped at
-+// maxReadBytes.
-+func newClient(addr, password string) *redis.Client {
-+	opts := &redis.Options{
-+		Addr:     addr,
-+		Password: password,
-+		DB:       0,
-+	}
-+	dial := redis.NewDialer(opts)
-+	opts.Dialer = func(ctx context.Context, network, addr string) (net.Conn, error) {
-+		conn, err := dial(ctx, network, addr)
-+		if err != nil {
-+			return nil, err
-+		}
-+		return &limitedConn{Conn: conn, remaining: maxReadBytes}, nil
-+	}
++	opts := types.DefaultOptions()
++	opts.SecretsFile = []string{secrets}
++	opts.Templates = []string{"http/kept.yaml"}
++	opts.ExcludeTags = []string{"custom"}
 +
-+	return redis.NewClient(opts)
++	engine, err := NewNucleiEngineCtx(context.Background(),
++		WithOptions(opts),
++		DisableUpdateCheck(),
++	)
++	require.NoError(t, err)
++	t.Cleanup(engine.Close)
++
++	require.Equal(t, []string{"http/kept.yaml"}, []string(engine.Options().Templates),
++		"the auth store must not replace the caller's template list")
++	require.Contains(t, []string(engine.Options().ExcludeTags), "custom",
++		"the caller's own excluded tags must survive auth-store setup")
++	require.Contains(t, []string(engine.Options().ExcludeTags), "dos",
++		"the .nuclei-ignore deny-list must be applied after auth-store setup")
++	require.Contains(t, []string(engine.Options().ExcludedTemplates), "dns/soa-detect.yaml",
++		"the files section must be applied too")
 +}
-+
-+// limitedConn fails a read once remaining is spent, and withholds a RESP length line whose
-+// declared size is over the cap so go-redis never allocates it.
-+type limitedConn struct {
-+	net.Conn
-+	remaining int64
-+	pending   []byte
-+	partial   []byte
-+	err       error
-+	scratch   [32 << 10]byte
-+}
-+
-+func (c *limitedConn) Read(b []byte) (int, error) {
-+	if len(b) == 0 {
-+		return 0, nil
-+	}
-+	if len(c.pending) == 0 {
-+		if err := c.fill(); err != nil {
-+			return 0, err
-+		}
-+	}
-+	n := copy(b, c.pending)
-+	c.pending = c.pending[n:]
-+	return n, nil
-+}
-+
-+func (c *limitedConn) fill() error {
-+	if len(c.pending) > 0 {
-+		return nil
-+	}
-+	if c.err != nil {
-+		return c.err
-+	}
-+	for len(c.pending) == 0 {
-+		if c.remaining <= 0 {
-+			c.err = errReadLimit
-+			return c.err
-+		}
-+		want := int64(len(c.scratch))
-+		if want > c.remaining {
-+			want = c.remaining
-+		}
-+		n, err := c.Conn.Read(c.scratch[:want])
-+		if n > 0 {
-+			c.remaining -= int64(n)
-+			if aerr := c.accept(c.scratch[:n]); aerr != nil {
-+				c.err = aerr
-+				if len(c.pending) > 0 {
-+					return nil
-+				}
-+				return aerr
-+			}
-+		}
-+		if err != nil {
-+			// A read deadline belongs to one call. go-redis peeks for push notifications
-+			// with a few microseconds of deadline, and on Windows that peek always runs.
-+			// Keeping the timeout fails the command that follows.
-+			if timeoutErr(err) {
-+				if len(c.pending) > 0 {
-+					return nil
-+				}
-+				return err
-+			}
-+			c.err = err
-+			if len(c.pending) > 0 {
-+
 ```
 
-**File**: `pkg/js/libs/redis/redis_test.go` (added, +309/-0)
+**File**: `lib/sdk.go` (modified, +5/-1)
 ```diff
-@@ -0,0 +1,309 @@
-+package redis
-+
-+import (
-+	"bufio"
-+	"bytes"
-+	"context"
-+	"fmt"
-+	"net"
-+	"runtime"
-+	"strconv"
-+	"strings"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// A port that streams bytes without a newline used to be buffered whole: go-redis reads a reply
-+// line until "\n" with no length limit.
-+func TestGetServerInfoAuthBoundsAReplyWithoutNewline(t *testing.T) {
-+	listener, err := net.Listen("tcp", "127.0.0.1:0")
-+	require.NoError(t, err)
-+	t.Cleanup(func() {
-+		_ = listener.Close()
-+	})
-+
-+	// Bounded so the test cannot exhaust the machine when the limit is missing.
-+	const streamBytes = 256 << 20
-+	chunk := bytes.Repeat([]byte("A"), 32<<10)
-+	go func() {
-+		for {
-+			conn, err := listener.Accept()
-+			if err != nil {
-+				return
-+			}
-+			go func() {
-+				defer func() {
-+					_ = conn.Close()
-+				}()
-+				for sent := 0; sent < streamBytes; sent += len(chunk) {
-+					if _, err := conn.Write(chunk); err != nil {
-+						return
-+					}
-+				}
-+			}()
-+		}
-+	}()
-+
-+	executionID := "redis-" + strings.ReplaceAll(t.Name(), "/", "-")
-+	require.NoError(t, protocolstate.Init(&types.Options{ExecutionId: executionID}))
-+	t.Cleanup(func() {
-+		protocolstate.Close(executionID)
-+	})
-+
-+	addr, ok := listener.Addr().(*net.TCPAddr)
-+	require.True(t, ok)
-+
-+	runtime.GC()
-+	var before runtime.MemStats
-+	runtime.ReadMemStats(&before)
-+
-+	var peak atomic.Uint64
-+	done := make(chan struct{})
-+	go func() {
-+		for {
-+			select {
-+			case <-done:
-+				return
-+			case <-time.After(10 * time.Millisecond):
-+			}
-+			var m runtime.MemStats
-+			runtime.ReadMemStats(&m)
-+			if m.HeapInuse > peak.Load() {
-+				peak.Store(m.HeapInuse)
-+			}
-+		}
-+	}()
-+
-+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-+	defer cancel()
-+	_, err = getServerInfoAuth(ctx, executionID, "127.0.0.1", addr.Port, "")
-+	close(done)
-+
-+	require.Error(t, err)
-+	growth := int64(peak.Load()) - int64(before.HeapInuse)
-+	require.Less(t, growth, int64(64<<20), "heap grew %d MiB reading one reply", growth>>20)
-+}
-+
-+func TestGetServerInfoAuthReadsAnInfoReply(t *testing.T) {
-+	listener, err := net.Listen("tcp", "127.0.0.1:0")
-+	require.NoError(t, err)
-+	t.Cleanup(func() {
-+		_ = listener.Close()
-+	})
-+
-+	const info = "# Server\r\nredis_version:7.2.4\r\n"
-+	go func() {
-+		for {
-+			conn, err := listener.Accept()
-+			if err != nil {
-+				return
-+			}
-+			go serveRESP(conn, info)
-+		}
-+	}()
-+
-+	executionID := "redis-" + strings.ReplaceAll(t.Name(), "/", "-")
-+	require.NoError(t, protocolstate.Init(&types.Options{ExecutionId: executionID}))
-+	t.Cleanup(func() {
-+		protocolstate.Close(executionID)
-+	})
-+
-+	addr, ok := listener.Addr().(*net.TCPAddr)
-+	require.True(t, ok)
-+
-+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-+	defer cancel()
-+	got, err := getServerInfoAuth(ctx, executionID, "127.0.0.1", addr.Port, "")
-+	require.NoError(t, err)
-+	require.Equal(t, info, got)
-+}
-+
-+// serveRESP answers HELLO as a Redis without RESP3 does, so the client falls back to RESP2, and
-+// CLIENT, PING and INFO as a Redis would.
-+func serveRESP(conn net.Conn, info string) {
-+	defer func() {
-+		_ = conn.Close()
-+	}()
-+
-+	rd := bufio.NewReader(conn)
-+	for {
-+		command, err := readRESPCommand(rd)
-+		if err != nil {
-+			return
-+		}
-+
-+		var reply string
-+		switch strings.ToUpper(command) {
-+		case "HELLO":
-+			reply = "-ERR unknown command 'HELLO'\r\n"
-+		case "PING":
-+			reply = "+PONG\r\n"
-+		case "INFO":
-+			reply = fmt.Sprintf("$%d\r\n%s\r\n", len(info), info)
-+		default:
-+			reply = "+OK\r\n"
-+		}
-+		if _, err := conn.Write([]byte(reply)); err != nil {
-+			return
-+		}
-+	}
-+}
-+
-+// readRESPCommand reads one request array and returns its command name.
-+func readRESPCommand(rd *bufio.Reader) (string, error) {
-+	header, err := rd.ReadString('\n')
-+	if err != nil {
-+		return "", err
-+	}
-+	count, err := strconv.Atoi(strings.TrimSpace(strings.TrimPrefix(header, "*")))
-+	if err != nil {
-+		return "", err
+@@ -257,7 +257,7 @@ func (e *NucleiEngine) closeInternal() {
+ 	if e.hostErrCache != nil {
+ 		e.hostErrCache.Close()
+ 	}
+-	if e.executerOpts.RateLimiter != nil {
++	if e.executerOpts != nil && e.executerOpts.RateLimiter != nil {
+ 		e.executerOpts.RateLimiter.Stop()
+ 	}
+ 	if e.rateLimiter != nil {
+@@ -386,6 +386,10 @@ func NewNucleiEngineCtx(ctx context.Context, options ...NucleiSDKOptions) (*Nucl
+ 		}
+ 	}
+ 	if err := e.init(ctx); err != nil {
++		// init may already own interactsh, a browser, a temp dir, and
++		// reporting. Close is safe on a partial engine: executerOpts is
++		// checked, and protocolinit.Close is a no-op before Init.
++		e.Close()
+ 		return nil, err
+ 	}
+ 	return e, nil
+```
+
+**File**: `lib/sdk_private.go` (modified, +20/-4)
+```diff
+@@ -187,10 +187,6 @@ func (e *NucleiEngine) init(ctx context.Context) error {
+ 		return err
+ 	}
+ 
+-	if err := e.loadIgnoreFile(); err != nil {
+-		return err
+-	}
+-
+ 	if e.opts.Parser != nil {
+ 		if op, ok := e.opts.Parser.(*templates.Parser); ok {
+ 			e.parser = op
+@@ -385,6 +381,26 @@ func (e *NucleiEngine) init(ctx context.Context) error {
+ 		}
+ 	}
+ 
++	// Read .nuclei-ignore LAST, once init has finished managing that file and
++	// the options it writes into.
++	//
++	// It must come after the update block above: init creates or replaces the
++	// ignore file there (UpdateIgnoreFile), so reading earlier reads a file this
++	// same call is about to write. On a host without a pre-existing ignore file
++	// — a fresh install, or any container whose filesystem was reset — the read
++	// found nothing, warned, and left the engine with an empty deny-list for its
++	// whole lifetime, because ExcludeTags is never re-read after init. Reading
++	// afterwards also makes the corrupt-file check recoverable rather than fatal:
++	// a malformed local file that IgnoreFileNeedsUpdate replaces no longer fails
++	// the scan.
++	//
++	// GetAuthTmplStore scopes a copy of the options, so it no longer clears
++	// the engine filters. This read is still what installs the deny-list, and
++	// it has to follow the update block above.
++	if err := e.loadIgnoreFile(); err != nil {
++		return err
 +	}
 +
-+	var command string
-+	for i := range count {
-+		if _, err := rd.ReadString('\n'); err != nil { // $<len>
-+			return "", err
-+		}
-+		arg, err := rd.ReadString('\n')
-+		if err != nil {
-+			return "", err
-+		}
-+		if i == 0 {
-+			command = strings.TrimSpace(arg)
-+		}
-+	}
-+
-+	return command, nil
-+}
-+
-+func TestLengthTooLarge(t *testing.T) {
-+	tests := []struct {
-+		line string
-+		want bool
-+	}{
-+		{line: fmt.Sprintf("$%d\r\n", maxReadBytes), want: false},
-+		{line: fmt.Sprintf("$%d\r\n", maxReadBytes+1), want: true},
-+		{line: "$-1\r\n", want: false},
-+		{line: "+OK\r\n", want: false},
-+		{line: fmt.Sprintf("*%d\r\n", maxAggregate), want: false},
-+		{line: fmt.Sprintf("*%d\r\n", maxAggregate+1), want: true},
-+		{line: "$999999999999999999999\r\n", want: true},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.line, func(t *testing.T) {
-+			require.Equal(t, tt.want, lengt
+ 	return nil
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 3: `d13b58d9` (2026-10-24)
-**Commit Message**: fix lint
+### Incident Patch 2: `e1f65603` (2026-10-25)
+**Commit Message**: fix idle
 
-**File**: `pkg/protocols/offlinehttp/read_response_preservation_test.go` (modified, +1/-1)
+**File**: `pkg/protocols/http/httpclientpool/clientpool.go` (modified, +3/-2)
 ```diff
-@@ -71,7 +71,7 @@ func TestReadResponsePreservesHTTPVersionText(t *testing.T) {
- 			if err != nil {
- 				t.Fatal(err)
+@@ -127,6 +127,7 @@ func (t *connTrackingTransport) RoundTrip(req *http.Request) (*http.Response, er
+ 	// update both the global counters and the per-host bucket from one trace.
+ 	host := normalizeHost(req.URL)
+ 	var used atomic.Pointer[desyncConn]
++	var generation atomic.Uint64
+ 	trace := &httptrace.ClientTrace{
+ 		GotConn: func(info httptrace.GotConnInfo) {
+ 			if info.Reused {
+@@ -136,7 +137,7 @@ func (t *connTrackingTransport) RoundTrip(req *http.Request) (*http.Response, er
  			}
--			defer resp.Body.Close()
-+			defer func() { _ = resp.Body.Close() }()
- 			got, err := io.ReadAll(resp.Body)
- 			if err != nil {
- 				t.Fatalf("read response body: %v", err)
+ 			recordHostConn(host, info.Reused)
+ 			if tracked, ok := info.Conn.(*desyncConn); ok {
+-				tracked.markBusy()
++				generation.Store(tracked.markBusy())
+ 				used.Store(tracked)
+ 			}
+ 		},
+@@ -145,7 +146,7 @@ func (t *connTrackingTransport) RoundTrip(req *http.Request) (*http.Response, er
+ 				return
+ 			}
+ 			if tracked := used.Load(); tracked != nil {
+-				tracked.markIdle()
++				tracked.markIdle(generation.Load())
+ 			}
+ 		},
+ 	}
+```
+
+**File**: `pkg/protocols/http/httpclientpool/desync_conn.go` (modified, +31/-10)
+```diff
+@@ -26,9 +26,13 @@ import (
+ // Closing and quarantining only stops the host from doing it again.
+ type desyncConn struct {
+ 	net.Conn
+-	host      string
+-	onPoison  func(host string)
+-	idle      atomic.Bool
++	host     string
++	onPoison func(host string)
++	// state packs the request generation in the high bits and the idle bit in
++	// the low bit. markIdle only sets that bit for the generation it was given,
++	// so a PutIdleConn that lands after the next request has taken the
++	// connection cannot mark the live exchange idle.
++	state     atomic.Uint64
+ 	poisoned  atomic.Bool
+ 	closeOnce sync.Once
+ }
+@@ -46,22 +50,39 @@ func newDesyncConn(conn net.Conn, addr string, onPoison func(host string)) net.C
+ 
+ func (c *desyncConn) Read(b []byte) (int, error) {
+ 	n, err := c.Conn.Read(b)
+-	if n > 0 && c.idle.Load() {
++	if n > 0 && c.state.Load()&1 == 1 {
+ 		c.poison()
+ 	}
+ 	return n, err
+ }
+ 
+-func (c *desyncConn) markBusy() {
+-	c.idle.Store(false)
++// markBusy records that a request now owns the connection and returns that
++// generation. The matching markIdle is the only one allowed to mark it idle.
++func (c *desyncConn) markBusy() uint64 {
++	for {
++		old := c.state.Load()
++		gen := (old >> 1) + 1
++		if c.state.CompareAndSwap(old, gen<<1) {
++			return gen
++		}
++	}
+ }
+ 
+-func (c *desyncConn) markIdle() {
+-	c.idle.Store(true)
++func (c *desyncConn) markIdle(gen uint64) {
++	idle := (gen << 1) | 1
++	for {
++		old := c.state.Load()
++		if old>>1 != gen {
++			return
++		}
++		if c.state.CompareAndSwap(old, idle) {
++			return
++		}
++	}
+ }
+ 
+ func (c *desyncConn) Close() error {
+-	c.idle.Store(false)
++	c.state.Store(0)
+ 	return c.Conn.Close()
+ }
+ 
+@@ -85,7 +106,7 @@ func (c *desyncConn) poison() {
+ 	if !c.poisoned.CompareAndSwap(false, true) {
+ 		return
+ 	}
+-	c.idle.Store(false)
++	c.state.Store(0)
+ 	if c.onPoison != nil {
+ 		c.onPoison(c.host)
+ 	}
+```
+
+**File**: `pkg/protocols/http/httpclientpool/desync_conn_test.go` (modified, +28/-2)
+```diff
+@@ -304,14 +304,40 @@ func TestDesyncConnStartsBusy(t *testing.T) {
+ 	recorder.requireQuiet(t)
+ }
+ 
++func TestDesyncConnIgnoresStaleIdleAfterReuse(t *testing.T) {
++	client, server := net.Pipe()
++	t.Cleanup(func() { _ = server.Close() })
++
++	recorder := newQuarantineRecorder()
++	tracked := newDesyncConn(client, "stale.test:80", recorder.record).(*desyncConn)
++	t.Cleanup(func() { _ = tracked.Close() })
++
++	first := tracked.markBusy()
++	second := tracked.markBusy()
++	tracked.markIdle(first)
++
++	go func() { _, _ = io.WriteString(server, "HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nok") }()
++
++	buffer := make([]byte, 128)
++	_, err := tracked.Read(buffer)
++	require.NoError(t, err)
++	require.False(t, tracked.poisoned.Load(), "a late idle mark must not poison the request that already took the connection")
++	recorder.requireQuiet(t)
++
++	tracked.markIdle(second)
++	go func() { _, _ = io.WriteString(server, "left") }()
++	_, err = tracked.Read(buffer)
++	require.NoError(t, err)
++	require.Equal(t, "stale.test", recorder.await(t))
++}
++
+ func TestDesyncConnPoisonsOnBytesWhileIdleAndClosesConnection(t *testing.T) {
+ 	client, server := net.Pipe()
+ 	t.Cleanup(func() { _ = server.Close() })
+ 
+ 	recorder := newQuarantineRecorder()
+ 	tracked := newDesyncConn(client, "idle.test:80", recorder.record).(*desyncConn)
+-	tracked.markBusy()
+-	tracked.markIdle()
++	tracked.markIdle(tracked.markBusy())
+ 
+ 	go func() { _, _ = io.WriteString(server, "HTTP/1.1 200 OK\r\nContent-Length: 5\r\n\r\nstale") }()
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7930** (2026-10-25): Keep template options on compiled-cache hits (@Mzack9999)
+- **PR #7929** (2026-10-25): Read the nuclei ignore file after init updates it (@Mzack9999)
 - **PR #7922** (2026-10-24): fix(offlinehttp): preserve response content during HTTP version normalization (@MasterchiefGalaxy)
 - **PR #7910** (2026-10-23): fix(js): cap what an smtp connection may read (@gnuletik)
 - **PR #7908** (2026-10-24): fix(js): cap what a redis connection may read (@gnuletik)
 - **PR #7906** (2026-10-23): fix(js): close ldap and smtp connections when the template ends (@gnuletik)
-- **PR #7904** (2026-10-23): fix(runner): use protocolstate fastdialer for default interactsh client (#7903) (@TassioSales)
-- **PR #7902** (2026-10-23): bump Go toolchain for CVE-2026-111943 (@dogancanbakir)
 
 ---
 
@@ -1956,28 +1801,69 @@ fix(js): cap what a redis connection may read
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7922 from MasterchiefGalaxy/fix/offline-http-preserve-respon
+## X. Empirical Invariant Guard in lazy.go
 
 **RULE**:
-When implementing operations in `pkg/protocols/offlinehttp/read_response.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/runner/lazy.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e21e6365`: Merge pull request #7922 from MasterchiefGalaxy/fix/offline-http-preserve-response. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `48e04c73`: ignore. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/offlinehttp/read_response.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/runner/lazy.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-var noMinor = regexp.MustCompile(`^HTTP/([0-9]) `)
+	// The auth store only wants the secret-file templates. Copy first so
+	// this scoping cannot clear Templates, ExcludeTags, or the other filters
+	// on the caller's options. The CLI already copies; the SDK passes the
+	// engine options directly.
+	scoped := opts.Copy()
+	scoped.Templates = tmpls
+	scoped.Workflows = nil
+	scoped.RemoteTemplateDomainList = nil
+	scoped.TemplateURLs = nil
+	scoped.WorkflowURLs = nil
+	scoped.ExcludedTemplates = nil
+	scoped.Tags = nil
+	scoped.ExcludeTags = nil
+	scoped.IncludeTemplates = nil
+	scoped.Authors = nil
+	scoped.Severities = nil
+	scoped.ExcludeSeverities = nil
+	scoped.IncludeTags = nil
+	scoped.IncludeIds = nil
+	scoped.ExcludeIds = nil
+	scoped.Protocols = nil
+	scoped.ExcludeProtocols = nil
+	scoped.IncludeConditions = nil
+	cfg := loader.NewConfig(scoped, catalog, execOpts)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-var noMinor = regexp.MustCompile(`HTTP/([0-9]) `)
+	opts.Templates = tmpls
+	opts.Workflows = nil
+	opts.RemoteTemplateDomainList = nil
+	opts.TemplateURLs = nil
+	opts.WorkflowURLs = nil
+	opts.ExcludedTemplates = nil
+	opts.Tags = nil
+	opts.ExcludeTags = nil
+	opts.IncludeTemplates = nil
+	opts.Authors = nil
+	opts.Severities = nil
+	opts.ExcludeSeverities = nil
+	opts.IncludeTags = nil
+	opts.IncludeIds = nil
+	opts.ExcludeIds = nil
+	opts.Protocols = nil
+	opts.ExcludeProtocols = nil
+	opts.IncludeConditions = nil
+	cfg := loader.NewConfig(opts, catalog, execOpts)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e21e6365` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `48e04c73` are properly handled with clean fallback behavior.

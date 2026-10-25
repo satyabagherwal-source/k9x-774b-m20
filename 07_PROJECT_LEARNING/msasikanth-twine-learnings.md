@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/msasikanth-twine-learnings.md`  
 > **Source**: github ([https://github.com/msasikanth/twine](https://github.com/msasikanth/twine))  
-> **Source Version**: `ca63e338`  
+> **Source Version**: `6082ae0f`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:10:01.542Z  
+> **Timestamp**: 2026-10-25T14:38:04.317Z  
 > **Learning ID**: `learn-github-msasikanth-twine`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/msasikanth-twine-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/msasikanth/twine](https://github.com/msasikanth/twine))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:10:01.535Z  
+> **Harvest Timestamp**: 2026-10-25T14:38:04.082Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Twine: A multiplatform RSS reader built using Kotlin and Compose
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2427 stars
+- **Stars / Engagement**: 2435 stars
 
 ---
 
@@ -652,11 +652,11 @@ object PermissionRequestBridge {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1915** (2026-08-24): **Fetch full article in reader view fails for Engadget**
-  *Symptoms*: **Describe the bug** For the Engadget feed, the button to fetch full article in reader view doesn't produce any result. It works in other RSS apps like Feeder though.  **To Reproduce** Steps to reproduce the behavior: 1. Add Engadget feed in Twine (https://www.engadget.com/rss.xml) 2. Open an article of Engadget. 3. Click the button to fetch full article in reader view. 4. Nothing happens.  **Screen Capture** https://github.com/user-attachments/assets/883190ff-b0e8-41f5-afd6-ce6a3471e706   **Feed Information** https://www.engadget.com/rss.xml  **Device Information**  - Device: Samsung Galaxy S25 Plus  - OS: Android 16  - App Version: 3.7.0-FOSS  **Stacktrace** N/A 
+- **Issue #1960** (2026-10-24): **app jumps ahead to next article on open**
+  *Symptoms*: **Describe the bug** When I open an article the app frequently skips ahead to the next article immediately. This happens most frequently on a cold start of the app, however it's not 100% reproducible. It even happens occasionally when swiping between articles, not only on first article open.   I have been hitting this problem since the introduction of save on open/auto save of read state. This plus the lack of consistent reproduction leads me to believe this is caused by a race condition on opening an article and marking the article as read.  **To Reproduce** Steps to reproduce the behavior: 1. Fully close the app 2. Open the app 3. Tap on the first unread article 4. Expected: I see the article I tapped on 5. Actual: the app immediately moves to the next article  **Screenshots** https://github.com/user-attachments/assets/af6c2f5a-a215-4a46-aaa8-115e787fa3a3   **Feed Information** All feeds  **Device Information**  - Device: Unihertz JellyMax  - OS: Android 15  - App Version 3.9.0  **Stacktrace** N/a   
 
-- **Issue #1913** (2026-08-23): **Getting 403 when adding a certain feed**
-  *Symptoms*: **Describe the bug** When trying to add Firstpost's feed, app throws 403. This feed opens fine in the browser and other RSS apps like Feeder.  **To Reproduce** Steps to reproduce the behavior: 1. Open Twine. 2. Add a new feed: https://www.firstpost.com/commonfeeds/v1/mfp/rss/india.xml 3. Hit "Add Feed" button. 4. App throws 403. 5. Open the feed directly in a browser, it'll open without issues.  **Screenshots** ![Screenshot_20260822_180400_Twine.jpg](https://github.com/user-attachments/assets/796f70c0-4b76-4719-948a-52264c6c5153)   **Feed Information** https://www.firstpost.com/commonfeeds/v1/mfp/rss/india.xml  **Device Information**  - Device: Galaxy S25 Plus  - OS: Android 16  - App Version: 3.7.0-FOSS  **Stacktrace** N/A 
+- **Issue #1959** (2026-10-24): **Acast RSS feeds for podcasts are not recognised**
+  *Symptoms*: **Describe the bug** Acast RSS feeds for podcasts are not recognised as containing valid RSS/Atom feeds.  **To Reproduce** Steps to reproduce the behavior: 1. Go to Acast and get the RSS feed of a podcast 2. Add the feed in Twine.  <img width="1224" height="2700" alt="Image" src="https://github.com/user-attachments/assets/6c865bc7-3920-4821-9729-ee6db887797f" />  Acast has a support page about a similar issue, I'm not sure if it's the same issue: https://learn.acast.com/en/articles/3505629-why-do-distribution-platforms-sometimes-say-that-my-rss-feed-is-invalid  **Feed Information** - https://feeds.acast.com/public/shows/73fe3ede-5c5c-4850-96a8-30db8dbae8bf - https://feeds.acast.com/public/shows/6b2fc9ba-b9b7-4b7a-b980-e0024facd926   **Device Information**  - Device: Fairphone 5  - OS: Android 15  - App Version: 3.9.0  **Stacktrace** NA 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -673,292 +673,593 @@ object PermissionRequestBridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59f80f60` (2026-08-30)
-**Commit Message**: Bundle SQLite native libraries for macOS App Store builds
+### Incident Patch 1: `33fab980` (2026-10-25)
+**Commit Message**: Improve UI performance and layout efficiency
 
-**File**: `core/data/src/jvmMain/kotlin/dev/sasikanth/rss/reader/data/database/DriverFactory.jvm.kt` (modified, +19/-0)
+- Optimize relative time formatting by providing a cached `DateTimeFormat` through a new `LocalRelativeDateFormatter` composition local.
+- Improve `FeaturedPostItem` title height balancing using a custom `Modifier.layout` to avoid unnecessary recompositions caused by measuring text lines.
+- Reduce layout overhead by replacing `.background()` with `.drawBehind()` in list items and using `drawWithCache` for complex UI elements like `PostActionBar` and the pinned sources bar.
+- Optimize source selection logic in the navigation drawer and group screens by using ID sets for O(1) lookups.
+- Hoist `contentPadding` and configuration lookups out of `PostListItem` to improve list scrolling performance.
+- Implement `ActionTooltip` to conditionally provide tooltips only on desktop platforms, reducing state overhead on mobile.
+- Replace `onGloballyPositioned` with more efficient alternatives like `onPlaced` or `onSizeChanged` for layout tracking.
+- Update `HomeScreen` to use `computedStateOf` for scroll-to-top visibility logic and remove unnecessary `derivedStateOf` usages elsewhere.
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/App.kt` (modified, +2/-2)
 ```diff
-@@ -25,6 +25,8 @@ import me.tatarka.inject.annotations.Inject
- actual class DriverFactory(private val codeMigrations: Array<AfterVersion>) {
- 
-   actual fun createDriver(): SqlDriver {
-+    useBundledSqliteNativeLibrary()
-+
-     val databasePath = File(System.getProperty("user.home"), ".twine/${DB_NAME}")
-     databasePath.parentFile.mkdirs()
- 
-@@ -47,6 +49,23 @@ actual class DriverFactory(private val codeMigrations: Array<AfterVersion>) {
-     return driver
-   }
- 
-+  // Without this sqlite-jdbc unpacks its native library into a temp directory and loads it
-+  // from there, which macOS refuses for a sandboxed App Store build. The packaged app ships a
-+  // signed copy in its resources; outside a package the property is absent and the default
-+  // extraction path is used.
-+  private fun useBundledSqliteNativeLibrary() {
-+    val resourcesDir = System.getProperty("compose.application.resources.dir") ?: return
-+    val library = File(resourcesDir, SQLITE_LIBRARY_NAME)
-+    if (!library.exists()) return
-+
-+    System.setProperty("org.sqlite.lib.path", resourcesDir)
-+    System.setProperty("org.sqlite.lib.name", SQLITE_LIBRARY_NAME)
-+  }
-+
-+  private companion object {
-+    const val SQLITE_LIBRARY_NAME = "libsqlitejdbc.dylib"
-+  }
-+
-   private fun readUserVersion(databasePath: File): Long {
-     val driver = JdbcSqliteDriver(url = "jdbc:sqlite:${databasePath.absolutePath}")
-     driver.use { driver ->
+@@ -51,7 +51,7 @@ import androidx.compose.ui.draw.dropShadow
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.input.key.onKeyEvent
+ import androidx.compose.ui.input.pointer.pointerHoverIcon
+-import androidx.compose.ui.layout.onGloballyPositioned
++import androidx.compose.ui.layout.onPlaced
+ import androidx.compose.ui.layout.positionInParent
+ import androidx.compose.ui.platform.LocalDensity
+ import androidx.compose.ui.platform.LocalWindowInfo
+@@ -568,7 +568,7 @@ fun App(
+             VerticalDragHandle(
+               modifier =
+                 Modifier.pointerHoverIcon(horizontalResizePointerIcon)
+-                  .onGloballyPositioned { coordinates ->
++                  .onPlaced { coordinates ->
+                     val center = coordinates.positionInParent().x + coordinates.size.width / 2f
+                     dividerCenterPx.floatValue = center
+                     if (isDragged) {
 ```
 
-**File**: `desktopApp/build.gradle.kts` (modified, +30/-0)
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/feeds/ui/FeedGroupItem.kt` (modified, +2/-2)
 ```diff
-@@ -9,6 +9,7 @@
-  *
-  */
+@@ -20,7 +20,6 @@ package dev.sasikanth.rss.reader.feeds.ui
+ import androidx.compose.animation.animateColorAsState
+ import androidx.compose.foundation.ExperimentalFoundationApi
+ import androidx.compose.foundation.LocalIndication
+-import androidx.compose.foundation.background
+ import androidx.compose.foundation.combinedClickable
+ import androidx.compose.foundation.interaction.MutableInteractionSource
+ import androidx.compose.foundation.layout.Box
+@@ -44,6 +43,7 @@ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.clip
++import androidx.compose.ui.draw.drawBehind
+ import androidx.compose.ui.geometry.Offset
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+@@ -101,7 +101,7 @@ internal fun FeedGroupItem(
+       Modifier.fillMaxWidth()
+         .then(modifier)
+         .clip(MaterialTheme.shapes.large)
+-        .background(backgroundColor)
++        .drawBehind { drawRect(backgroundColor) }
+         .combinedClickable(
+           interactionSource = interactionSource ?: remember { MutableInteractionSource() },
+           indication = LocalIndication.current,
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/feeds/ui/FeedListItem.kt` (modified, +2/-2)
+```diff
+@@ -19,7 +19,6 @@ package dev.sasikanth.rss.reader.feeds.ui
+ import androidx.compose.animation.animateColorAsState
+ import androidx.compose.foundation.ExperimentalFoundationApi
+ import androidx.compose.foundation.LocalIndication
+-import androidx.compose.foundation.background
+ import androidx.compose.foundation.combinedClickable
+ import androidx.compose.foundation.interaction.MutableInteractionSource
+ import androidx.compose.foundation.layout.Box
+@@ -43,6 +42,7 @@ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.clip
++import androidx.compose.ui.draw.drawBehind
+ import androidx.compose.ui.geometry.Offset
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+@@ -103,7 +103,7 @@ internal fun FeedListItem(
+       Modifier.fillMaxWidth()
+         .then(modifier)
+         .clip(RoundedCornerShape(16.dp))
+-        .background(backgroundColor)
++        .drawBehind { drawRect(backgroundColor) }
+         .combinedClickable(
+           interactionSource = interactionSource ?: remember { MutableInteractionSource() },
+           indication = LocalIndication.current,
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/feeds/ui/common/SourcesAll.kt` (modified, +3/-3)
+```diff
+@@ -93,7 +93,7 @@ internal fun LazyListScope.allSources(
+   numberOfFeedGroups: Int,
+   sources: LazyPagingItems<SourceListItem>,
+   hideFeedsWithoutUnreadPosts: Boolean,
+-  selectedSources: Set<Source>,
++  selectedSourceIds: Set<String>,
+   activeSource: Source?,
+   canShowUnreadPostsCount: Boolean,
+   isInMultiSelectMode: Boolean,
+@@ -147,7 +147,7 @@ internal fun LazyListScope.allSources(
+                 isInMultiSelectMode = isInMultiSelectMode,
+                 selected =
+                   if (isInMultiSelectMode) {
+-                    selectedSources.any { it.id == source.id }
++                    selectedSourceIds.contains(source.id)
+                   } else {
+                     activeSource?.id == source.id
+                   },
+@@ -225,7 +225,7 @@ internal fun LazyListScope.allSources(
+                 isInMultiSelectMode = isInMultiSelectMode,
+                 isFeedSelected =
+                   if (isInMultiSelectMode) {
+-                    selectedSources.any { it.id == source.id }
++                    selectedSourceIds.contains(source.id)
+                   } else {
+                     activeSource?.id == source.id
+                   },
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/feeds/ui/common/SourcesSearchResults.kt` (modified, +2/-2)
+```diff
+@@ -45,7 +45,7 @@ import twine.shared.generated.resources.markAllAsRead
  
-+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
- import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+ internal fun LazyListScope.sourcesSearchResults(
+   searchResults: LazyPagingItems<Feed>,
+-  selectedSources: Set<Source>,
++  selectedSourceIds: Set<String>,
+   activeSource: Source?,
+   canShowUnreadPostsCount: Boolean,
+   isInMultiSelectMode: Boolean,
+@@ -75,7 +75,7 @@ internal fun LazyListScope.sourcesSearchResults(
+         isInMultiSelectMode = isInMultiSelectMode,
+         isFeedSelected =
+           if (isInMultiSelectMode) {
+-            selectedSources.any { it.id == feed.id }
++            selectedSourceIds.contains(feed.id)
+           } else {
+             activeSource?.id == feed.id
+           },
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/feeds/ui/pinned/PinnedSourcesBottomBar.kt` (modified, +32/-29)
+```diff
+@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.draw.drawBehind
++import androidx.compose.ui.draw.drawWithCache
+ import androidx.compose.ui.draw.drawWithContent
+ import androidx.compose.ui.draw.shadow
+ import androidx.compose.ui.geometry.Offset
+@@ -50,7 +51,7 @@ import androidx.compose.ui.graphics.drawOutline
+ import androidx.compose.ui.graphics.drawscope.Stroke
+ import androidx.compose.ui.graphics.graphicsLayer
+ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+-import androidx.compose.ui.layout.onGloballyPositioned
++import androidx.compose.ui.layout.onSizeChanged
+ import androidx.compose.ui.platform.LocalHapticFeedback
+ import androidx.compose.ui.text.style.TextAlign
+ import androidx.compose.ui.unit.dp
+@@ -141,8 +142,8 @@ internal fun PinnedSourcesBottomBar(
  
- plugins {
-@@ -34,6 +35,33 @@ kotlin {
+   Row(
+     modifier =
+-      Modifier.onGloballyPositioned { coordinates ->
+-          val height = coordinates.size.height.toFloat()
++      Modifier.onSizeChanged { size ->
++          val height = size.height.toFloat()
+           if (scrollBehavior != null && scrollBehavior.state.heightOffsetLimit != -height) {
+             scrollBehavior.state.heightOffsetLimit = -height
+           }
+@@ -174,33 +175,35 @@ internal fun PinnedSourcesBottomBar(
+     LazyRow(
+       state = lazyListState,
+       modifier =
+-        Modifier.weight(1f).fillMaxHeight().drawWithContent {
+-          drawContent()
+-
++        Modifier.weight(1f).fillMaxHeight().drawWithCache {
+           val fadeWidth = BOTTOM_BAR_FADE_WIDTH.toPx()
+-          if (startFade > 0f) {
+-            drawRect(
+-              brush =
+-                Brush.horizontalGradient(
+-                  colorStops = fadeStops(colorScheme.bottomSheet, startFade, reversed = false),
+-                  startX = 0f,
+-                  endX = fadeWidth,
+-                ),
+-              size = size.copy(width = fadeWidth),
++          val fadeSize = size.copy(width = fadeWidth)
++          val startBrush =
++            Brush.horizontalGradient(
++              colorStops = fadeStops(colorScheme.bottomSheet, reversed = false),
++              startX = 0f,
++              endX = fadeWidth,
+             )
+-          }
+-
+-          if (endFade > 0f) {
+-            drawRect(
+-              brush =
+-                Brush.horizontalGradient(
+-                  colorStops = fadeStops(colorScheme.bottomSheet, endFade, reversed = true),
+-                  startX = size.width - fadeWidth,
+-                  endX = size.width,
+-                ),
+-              topLeft = Offset(size.width - fadeWidth, 0f),
+-              size = size.copy(width = fadeWidth),
++          val endBrush =
++            Brush.horizontalGradient(
++              colorStops = fadeStops(colorScheme.bottomSheet, reversed = true),
++              startX = size.width - fadeWidth,
++              endX = size.width,
+             )
++          val endTopLeft = Offset(size.width - fadeWidth, 0f)
++
++          onDrawWithContent {
++            drawContent()
++
++            val start = startFade
++            if (start > 0f) {
++              drawRect(brush = startBrush, size = fadeSize, alpha = start)
++            }
++
++            val end = endFade
++            if (end > 0f) {
++              drawRect(brush = endBrush, topLeft = endTopLeft, size = fadeSize, alpha = end)
++            }
+           }
+         },
+       verticalAlignment = Alignment.CenterVertically,
+@@ -299,11 +302,11 @@ private fun SourceItem(
+ 
+ private val BOTTOM_BAR_FADE_WIDTH = 40.dp
+ 
+-private fun fadeStops(color: Color, progress: Float, reversed: Boolean): Array<Pair<Float, Color>> {
++private fun fadeStops(color: Color, reversed: Boolean): Array<Pair<Float, Color>> {
+   val alphas = floatArrayOf(1f, 0.94f, 0.78f, 0.5f, 0.22f, 0.06f, 0f)
+   return Array(alphas.size) { index ->
+     val position = index / (alphas.size - 1).toFloat()
+     val alpha = if (reversed) alphas[alphas.size - 1 - index] else alphas[index]
+-    position to color.copy(alpha = alpha * progress)
++    position to color.copy(alpha = alpha)
    }
  }
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/group/ui/GroupScreen.kt` (modified, +4/-1)
+```diff
+@@ -198,6 +198,9 @@ private fun GroupContent(
+     },
+     containerColor = AppTheme.colorScheme.backdrop,
+   ) { innerPadding ->
++    val selectedSourceIds =
++      remember(state.selectedSources) { state.selectedSources.mapTo(mutableSetOf()) { it.id } }
++
+     LazyColumn(
+       modifier = Modifier.restrictContentWidth(),
+       contentPadding =
+@@ -221,7 +224,7 @@ private fun GroupContent(
+             feed = feed,
+             canShowUnreadPostsCount = false,
+             isInMultiSelectMode = state.isInMultiSelectMode,
+-            isFeedSelected = state.selectedSources.any { it.id == feed.id },
++            isFeedSelected = selectedSourceIds.contains(feed.id),
+             onFeedClick = { dispatch(GroupEvent.OnFeedClicked(feed)) },
+             onFeedSelected = { dispatch(GroupEvent.OnFeedClicked(feed)) },
+             dropdownMenuContent = { onDismiss ->
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/home/ui/FeaturedPostItem.kt` (modified, +27/-6)
+```diff
+@@ -39,15 +39,18 @@ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.graphics.BlendMode
+ import androidx.compose.ui.graphics.graphicsLayer
++import androidx.compose.ui.layout.layout
+ import androidx.compose.ui.platform.LocalDensity
+ import androidx.compose.ui.text.style.TextOverflow
++import androidx.compose.ui.unit.Constraints
+ import androidx.compose.ui.unit.dp
+ import androidx.window.core.layout.WindowSizeClass
+ import dev.sasikanth.rss.reader.core.model.local.ResolvedPost
+ import dev.sasikanth.rss.reader.ui.AppTheme
+ import dev.sasikanth.rss.reader.utils.Constants
+ import dev.sasikanth.rss.reader.utils.LocalWindowSizeClass
+ import dev.sasikanth.rss.reader.utils.formatRelativeTime
++import kotlin.math.roundToInt
  
-+// sqlite-jdbc extracts its bundled native library to a temp directory on first use, and an
-+// App Store build may only load code that is signed inside its own bundle. Unpacking it here
-+// puts it in app resources, where Compose signs it along with the other native libraries.
-+val sqliteJdbcNatives: Provider<List<FileTree>> =
-+  configurations.named("jvmRuntimeClasspath").map { configuration ->
-+    configuration.incoming
-+      .artifactView {
-+        componentFilter { id -> id is ModuleComponentIdentifier && id.module == "sqlite-jdbc" }
+ private val featuredItemPadding: PaddingValues
+   @Composable
+@@ -61,6 +64,16 @@ private val featuredItemPadding: PaddingValues
+     }
+   }
+ 
++/**
++ * The title reserves three lines worth of height so every page of the pager is the same height. The
++ * line count is only known once the title is laid out, so it is kept off the snapshot system and
++ * read back in the filler's own measure pass; writing it to state would make the Layout phase
++ * invalidate a Composition read and compose every page twice.
++ */
++private class TitleFiller {
++  var heightPx = 0f
++}
++
+ @Composable
+ internal fun FeaturedPostItem(
+   item: ResolvedPost,
+@@ -89,7 +102,7 @@ internal fun FeaturedPostItem(
+     val density = LocalDensity.current
+     val titleTextStyle = MaterialTheme.typography.headlineMedium
+     val titleMaxLines = 3
+-    var dynamicTitlePadding by remember(item.link) { mutableStateOf(0.dp) }
++    val titleFiller = remember(item.link) { TitleFiller() }
+ 
+     featuredImage()
+ 
+@@ -113,10 +126,12 @@ internal fun FeaturedPostItem(
+       overflow = TextOverflow.Ellipsis,
+       onTextLayout = { textLayoutResult ->
+         val numberOfLines = textLayoutResult.lineCount
+-        if (numberOfLines < titleMaxLines) {
+-          val lineHeight = with(density) { titleTextStyle.lineHeight.toDp() }
+-          dynamicTitlePadding = lineHeight * (titleMaxLines - numberOfLines)
+-        }
++        titleFiller.heightPx =
++          if (numberOfLines < titleMaxLines) {
++            with(density) { titleTextStyle.lineHeight.toPx() } * (titleMaxLines - numberOfLines)
++          } else {
++            0f
++          }
+       },
+     )
+ 
+@@ -131,7 +146,13 @@ internal fun FeaturedPostItem(
+       overflow = TextOverflow.Ellipsis,
+     )
+ 
+-    Spacer(Modifier.requiredHeight(dynamicTitlePadding))
++    Spacer(
++      Modifier.layout { measurable, _ ->
++        val height = titleFiller.heightPx.roundToInt()
++        val placeable = measurable.measure(Constraints.fixed(width = 0, height = height))
++        layout(0, height) { placeable.place(0, 0) }
 +      }
-+      .files
-+      .map { zipTree(it) }
-+  }
-+
-+val unpackSqliteNatives by
-+  tasks.registering(Sync::class) {
-+    from(sqliteJdbcNatives) {
-+      include("org/sqlite/native/Mac/aarch64/**")
-+      eachFile { relativePath = RelativePath(true, "macos-arm64", name) }
-+    }
-+    from(sqliteJdbcNatives) {
-+      include("org/sqlite/native/Mac/x86_64/**")
-+      eachFile { relativePath = RelativePath(true, "macos-x64", name) }
-+    }
-+    includeEmptyDirs = false
-+    into(layout.buildDirectory.dir("appResources"))
-+  }
-+
- compose.desktop {
-   application {
-     mainClass = "dev.sasikanth.rss.reader.MainKt"
-@@ -51,6 +79,8 @@ compose.desktop {
++    )
  
-       buildTypes.release.proguard { configurationFiles.from(project.file("proguard-rules.pro")) }
+     Spacer(modifier = Modifier.requiredHeight(4.dp))
  
-+      appResourcesRootDir.fileProvider(unpackSqliteNatives.map { it.destinationDir })
-+
-       macOS {
-         bundleID = "dev.sasikanth.rss.reader"
-         iconFile.set(project.file("icon.icns"))
 ```
 
 ---
 
-### Incident Patch 2: `24b1ea76` (2026-08-30)
-**Commit Message**: Fix desktop version resolution on push and parallelise macOS trigger
+### Incident Patch 2: `a8d218c9` (2026-10-24)
+**Commit Message**: Update dependencies and fix build errors
 
-- Skip the Tramline step unless an input is present. The action calls `json.loads` on the raw input with no guard, so it threw a `JSONDecodeError` on every push to main where no Tramline input exists; a skipped step yields empty outputs and falls through to the release tag or nearest git tag as intended.
-- Move the macOS App Store dispatch out of the iOS build job into its own job. It only needs `tramline-input`, which is available immediately, so both platforms now build in parallel instead of macOS waiting on the iOS archive and TestFlight upload.
-- Scope `actions: write` to the dispatch job rather than the whole workflow.
-
-Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/desktop_distributables.yml` (modified, +1/-0)
+**File**: `androidApp/build.gradle.kts` (modified, +6/-1)
 ```diff
-@@ -48,6 +48,7 @@ jobs:
-           fetch-depth: 0
-       - name: Configure Tramline
-         id: tramline
-+        if: ${{ github.event.inputs.tramline-input != '' }}
-         uses: tramlinehq/deploy-action@v0.1.7
-         with:
-           input: ${{ github.event.inputs.tramline-input }}
+@@ -42,7 +42,12 @@ plugins {
+ }
+ 
+ android {
+-  compileSdk = libs.versions.android.sdk.compile.get().toInt()
++  compileSdk {
++    version =
++      release(libs.versions.android.sdk.compile.get().toInt()) {
++        minorApiLevel = libs.versions.android.sdk.minor.get().toInt()
++      }
++  }
+   namespace = "dev.sasikanth.rss.reader"
+ 
+   defaultConfig {
 ```
 
-**File**: `.github/workflows/ios_prod_release.yml` (modified, +19/-15)
+**File**: `core/base/build.gradle.kts` (modified, +6/-1)
 ```diff
-@@ -7,10 +7,26 @@ on:
-         description: "Tramline input"
-         required: false
+@@ -33,7 +33,12 @@ kotlin {
+     namespace = "dev.sasikanth.rss.reader.core.base"
  
--permissions:
--  actions: write
--
- jobs:
-+  trigger-macos:
-+    name: Trigger macOS App Store build
-+    runs-on: ubuntu-latest
-+    if: ${{ github.event.inputs.tramline-input != '' }}
-+    permissions:
-+      actions: write
-+    steps:
-+      - name: Build and upload macOS to TestFlight
-+        env:
-+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          GH_REPO: ${{ github.repository }}
-+          TRAMLINE_INPUT: ${{ github.event.inputs.tramline-input }}
-+        run: |
-+          gh workflow run desktop_distributables.yml \
-+            --ref "$GITHUB_REF_NAME" \
-+            -f tramline-input="$TRAMLINE_INPUT" \
-+            -f app_store_only=true \
-+            -f upload_to_app_store=true
-+
-   build:
-     runs-on: macos-26
-     env:
-@@ -111,15 +127,3 @@ jobs:
-         with:
-           name: app
-           path: ${{ runner.temp }}/build/twine.ipa
--
--      - name: Build and upload macOS to TestFlight
--        if: ${{ github.event.inputs.tramline-input != '' }}
--        env:
--          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
--          TRAMLINE_INPUT: ${{ github.event.inputs.tramline-input }}
--        run: |
--          gh workflow run desktop_distributables.yml \
--            --ref "$GITHUB_REF_NAME" \
--            -f tramline-input="$TRAMLINE_INPUT" \
--            -f app_store_only=true \
--            -f upload_to_app_store=true
+     minSdk = libs.versions.android.sdk.min.get().toInt()
+-    compileSdk = libs.versions.android.sdk.compile.get().toInt()
++    compileSdk {
++      version =
++        release(libs.versions.android.sdk.compile.get().toInt()) {
++          minorApiLevel = libs.versions.android.sdk.minor.get().toInt()
++        }
++    }
+ 
+     androidResources { enable = true }
+ 
 ```
 
----
-
-### Incident Patch 3: `8863ff75` (2026-08-30)
-**Commit Message**: Trigger macOS App Store build from iOS Tramline releases
-
-- Accept `tramline-input` in the desktop workflow and resolve the version from Tramline before falling back to the release tag or nearest git tag.
-- Dispatch the desktop workflow at the end of `ios_prod_release.yml` so the Mac App Store build decodes the same input and lands on identical version numbers; Tramline has no macOS train to target it directly.
-- Add `app_store_only` so a nightly builds only the App Store package, skipping the DMG, MSI and DEB bundlers.
-
-**File**: `.github/workflows/desktop_distributables.yml` (modified, +25/-5)
+**File**: `core/data/build.gradle.kts` (modified, +6/-1)
 ```diff
-@@ -13,6 +13,13 @@ on:
-       - '.github/workflows/desktop_distributables.yml'
-   workflow_dispatch:
-     inputs:
-+      tramline-input:
-+        description: "Tramline input"
-+        required: false
-+      app_store_only:
-+        description: "Build only the Mac App Store package, skipping DMG/MSI/DEB"
-+        type: boolean
-+        default: false
-       upload_to_app_store:
-         description: "Upload the Mac App Store package to App Store Connect"
-         type: boolean
-@@ -39,21 +46,32 @@ jobs:
-       - uses: actions/checkout@v6
-         with:
-           fetch-depth: 0
-+      - name: Configure Tramline
-+        id: tramline
-+        uses: tramlinehq/deploy-action@v0.1.7
-+        with:
-+          input: ${{ github.event.inputs.tramline-input }}
-       - id: resolve
-         env:
-+          TRAMLINE_VERSION_NAME: ${{ steps.tramline.outputs.version_name }}
-+          TRAMLINE_VERSION_CODE: ${{ steps.tramline.outputs.version_code }}
-           RELEASE_TAG: ${{ github.event.release.tag_name }}
-         run: |
--          TAG="$RELEASE_TAG"
--          if [ -z "$TAG" ]; then
--            TAG="$(git describe --tags --abbrev=0 2>/dev/null || echo 1.0.0)"
-+          NAME="$TRAMLINE_VERSION_NAME"
-+          if [ -z "$NAME" ]; then
-+            NAME="$RELEASE_TAG"
-+          fi
-+          if [ -z "$NAME" ]; then
-+            NAME="$(git describe --tags --abbrev=0 2>/dev/null || echo 1.0.0)"
-           fi
--          echo "name=${TAG#v}" >> "$GITHUB_OUTPUT"
--          echo "code=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
-+          echo "name=${NAME#v}" >> "$GITHUB_OUTPUT"
-+          echo "code=${TRAMLINE_VERSION_CODE:-${{ github.run_number }}}" >> "$GITHUB_OUTPUT"
+@@ -37,7 +37,12 @@ kotlin {
+     namespace = "dev.sasikanth.rss.reader.data"
  
-   build-macos:
-     name: Build macOS DMG
-     runs-on: macos-latest
-     needs: version
-+    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.app_store_only }}
-     timeout-minutes: 30
-     env:
-       ORG_GRADLE_PROJECT_VERSION_NAME: ${{ needs.version.outputs.name }}
-@@ -229,6 +247,7 @@ jobs:
-     name: Build Windows MSI
-     runs-on: windows-latest
-     needs: version
-+    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.app_store_only }}
-     env:
-       ORG_GRADLE_PROJECT_VERSION_NAME: ${{ needs.version.outputs.name }}
-       ORG_GRADLE_PROJECT_VERSION_CODE: ${{ needs.version.outputs.code }}
-@@ -257,6 +276,7 @@ jobs:
-     name: Build Linux DEB
-     runs-on: ubuntu-latest
-     needs: version
-+    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.app_store_only }}
-     env:
-       ORG_GRADLE_PROJECT_VERSION_NAME: ${{ needs.version.outputs.name }}
-       ORG_GRADLE_PROJECT_VERSION_CODE: ${{ needs.version.outputs.code }}
+     minSdk = libs.versions.android.sdk.min.get().toInt()
+-    compileSdk = libs.versions.android.sdk.compile.get().toInt()
++    compileSdk {
++      version =
++        release(libs.versions.android.sdk.compile.get().toInt()) {
++          minorApiLevel = libs.versions.android.sdk.minor.get().toInt()
++        }
++    }
+ 
+     withHostTestBuilder {}.configure {}
+     withDeviceTest { instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
 ```
 
-**File**: `.github/workflows/ios_prod_release.yml` (modified, +15/-0)
+**File**: `core/data/src/commonMain/sqldelight/dev/sasikanth/rss/reader/data/database/Feed.sq` (modified, +1/-0)
 ```diff
-@@ -7,6 +7,9 @@ on:
-         description: "Tramline input"
-         required: false
+@@ -86,6 +86,7 @@ SELECT
+ FROM feed f
+ LEFT JOIN post p ON f.id = p.sourceId AND p.postDate > :postsAfter AND p.createdAt < :postsUpperBound
+ WHERE f.id = :id AND f.isDeleted = 0
++GROUP BY f.id
+ ORDER BY pinnedAt DESC, f.createdAt DESC LIMIT 1;
  
-+permissions:
-+  actions: write
-+
- jobs:
-   build:
-     runs-on: macos-26
-@@ -108,3 +111,15 @@ jobs:
-         with:
-           name: app
-           path: ${{ runner.temp }}/build/twine.ipa
-+
-+      - name: Build and upload macOS to TestFlight
-+        if: ${{ github.event.inputs.tramline-input != '' }}
-+        env:
-+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          TRAMLINE_INPUT: ${{ github.event.inputs.tramline-input }}
-+        run: |
-+          gh workflow run desktop_distributables.yml \
-+            --ref "$GITHUB_REF_NAME" \
-+            -f tramline-input="$TRAMLINE_INPUT" \
-+            -f app_store_only=true \
-+            -f upload_to_app_store=true
+ updateFeedName:
+```
+
+**File**: `core/network/build.gradle.kts` (modified, +6/-1)
+```diff
+@@ -36,7 +36,12 @@ kotlin {
+     namespace = "dev.sasikanth.rss.reader.core.network"
+ 
+     minSdk = libs.versions.android.sdk.min.get().toInt()
+-    compileSdk = libs.versions.android.sdk.compile.get().toInt()
++    compileSdk {
++      version =
++        release(libs.versions.android.sdk.compile.get().toInt()) {
++          minorApiLevel = libs.versions.android.sdk.minor.get().toInt()
++        }
++    }
+ 
+     withHostTestBuilder {}.configure {}
+     withDeviceTest { instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
+```
+
+**File**: `core/network/src/commonMain/kotlin/dev/sasikanth/rss/reader/core/network/di/NetworkComponent.kt` (modified, +1/-1)
+```diff
+@@ -60,7 +60,7 @@ fun <T : HttpClientEngineConfig> httpClient(
+       logger =
+         object : Logger {
+           override fun log(message: String) {
+-            KermitLogger.i("HttpClient") {
++            KermitLogger.i(tag = "HttpClient") {
+               """
+               |---
+               |$message
+```
+
+**File**: `core/network/src/commonMain/kotlin/dev/sasikanth/rss/reader/core/network/utils/ByteReadChannelExt.kt` (modified, +2/-2)
+```diff
+@@ -18,7 +18,7 @@
+ package dev.sasikanth.rss.reader.core.network.utils
+ 
+ import io.ktor.utils.io.ByteReadChannel
+-import io.ktor.utils.io.readRemaining
++import io.ktor.utils.io.readBuffer
+ import korlibs.io.lang.Charset
+ import korlibs.io.lang.Charsets
+ import kotlinx.io.readByteArray
+@@ -29,7 +29,7 @@ internal suspend fun ByteReadChannel.toCharIterator(
+   charset: Charset,
+   platformPageSize: Long,
+ ): CharIterator {
+-  val bytes = readRemaining().readByteArray()
++  val bytes = readBuffer().readByteArray()
+ 
+   val firstChunkSize = minOf(bytes.size, platformPageSize.toInt())
+   val encodingContent = buildString { Charsets.UTF8.decode(this, bytes, 0, firstChunkSize) }
+```
+
+**File**: `gradle/libs.versions.toml` (modified, +31/-30)
+```diff
+@@ -1,65 +1,66 @@
+ [versions]
+-kotlin = "2.4.10"
+-android_gradle_plugin = "9.3.2"
+-compose = "1.12.0"
+-compose-material3 = "1.12.0-alpha03"
+-compose_material3_adaptive = "1.3.0-beta02"
++kotlin = "2.4.21"
++android_gradle_plugin = "9.4.1"
++compose = "1.13.0-beta01"
++compose-material3 = "1.13.0-beta01"
++compose_material3_adaptive = "1.4.0-alpha01"
+ 
+ android_sdk_compile = "37"
++android_sdk_minor = "1"
+ android_sdk_target = "37"
+ android_sdk_min = "26"
+ 
+-sqldelight = "2.3.2"
+-ktor = "3.5.2"
++sqldelight = "2.4.1"
++ktor = "3.6.0"
+ kotlinx_coroutines = "1.11.0"
+ kotlinx_date_time = "0.8.0"
+-kotlinx_immutable_collections = "0.5.1"
+-kotlinx_serialization_json = "1.11.0"
++kotlinx_immutable_collections = "0.5.2"
++kotlinx_serialization_json = "1.12.0"
+ kotlinx_io = "0.9.1"
+ androidx_activity = "1.13.0"
+ androidx_appcompat = "1.8.0"
+-androidx_core = "1.19.0"
+-androidx_collection = "1.6.0"
++androidx_core = "1.19.1"
++androidx_collection = "1.7.0"
+ androidx_test_runner = "1.7.0"
+ androidx_test_rules = "1.7.0"
+-androidx_work = "2.11.2"
+-androidx_datastore = "1.2.1"
++androidx_work = "2.12.0"
++androidx_datastore = "1.3.0"
+ androidx_browser = "1.10.0"
+-androidx_annotation = "1.10.0"
++androidx_annotation = "1.11.0"
+ androidx_graphics_shapes = "1.1.0"
+-coil = "3.6.0"
+-spotless = "8.10.0"
++coil = "3.6.3"
++spotless = "8.10.4"
+ ktfmt = "0.61"
+ kotlininject = "0.9.0"
+ ksp = "2.3.10"
+ ksoup = "0.2.6"
+ sqliteAndroid = "3.49.0"
+ desugarJdk = "2.1.5"
+ atomicfu = "0.33.0"
+-paging = "3.5.1"
++paging = "3.5.3"
+ stately = "2.1.0"
+-xmlutil = "1.0.2"
++xmlutil = "1.0.2.1"
+ ktxml = "1.0.0"
+ uuid = "0.8.4"
+ bugsnag-plugin = "8.2.0"
+-bugsnag = "6.27.0"
++bugsnag = "6.28.0"
+ google-play-review = "2.0.2"
+-crashkios-bugsnag = "0.9.0"
+-kermit = "2.1.0"
++crashkios-bugsnag = "0.10.1"
++kermit = "2.2.0"
+ reorderable = "3.1.0"
+ korlibs = "6.0.0"
+-filekit = "0.15.0"
++filekit = "0.16.0"
+ leakcanary = "2.14"
+-markdown = "0.44.0"
+-revenuecat = "3.5.1"
+-landscapist = "2.11.0"
++markdown = "0.46.0"
++revenuecat = "3.14.0"
++landscapist = "2.13.2"
+ viewmodel = "2.11.0"
+-multiplatform-nav3-ui = "1.1.1"
+-navigationevent-compose = "1.1.2"
+-glance = "1.2.0-rc01"
++multiplatform-nav3-ui = "1.1.2"
++navigationevent-compose = "1.2.0"
++glance = "1.2.0"
+ material-kolor = "5.0.1"
+-htmlunit = "5.4.0"
+-androidx_media3 = "1.11.0"
++htmlunit = "5.6.0"
++androidx_media3 = "1.11.1"
+ vlcj = "4.12.1"
+ 
+ [libraries]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1966** (2026-10-25): [300.110.*] Pre-release merge (@tramline-github[bot])
+- **PR #1965** (2026-10-25): [300.109.*] Pre-release merge (@tramline-github[bot])
+- **PR #1964** (2026-10-24): [300.108.*] Pre-release merge (@tramline-github[bot])
+- **PR #1962** (2026-10-24): [300.107.*] Pre-release merge (@tramline-github[bot])
 - **PR #1948** (closed): Show full featured images without crop or empty space (@camilopaezz)
 - **PR #1945** (2026-09-09): [300.106.*] Pre-release merge (@tramline-github[bot])
-- **PR #1943** (closed): New Crowdin updates (@msasikanth)
-- **PR #1942** (2026-08-31): [300.105.*] Pre-release merge (@tramline-github[bot])
-- **PR #1941** (2026-08-30): [300.104.*] Pre-release merge (@tramline-github[bot])
-- **PR #1940** (2026-08-30): [300.103.*] Pre-release merge (@tramline-github[bot])
 
 ---
 
@@ -978,46 +1279,30 @@ Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bundle SQLite native libraries for macOS App Store builds
+## X. Improve UI performance and layout efficiency
 
 **RULE**:
-When implementing operations in `core/data/src/jvmMain/kotlin/dev/sasikanth/rss/reader/data/database/DriverFactory.jvm.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in msasikanth/twine. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/App.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in msasikanth/twine. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59f80f60`: Bundle SQLite native libraries for macOS App Store builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `33fab980`: Improve UI performance and layout efficiency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/data/src/jvmMain/kotlin/dev/sasikanth/rss/reader/data/database/DriverFactory.jvm.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/App.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    useBundledSqliteNativeLibrary()
-
-  // Without this sqlite-jdbc unpacks its native library into a temp directory and loads it
-  // from there, which macOS refuses for a sandboxed App Store build. The packaged app ships a
-  // signed copy in its resources; outside a package the property is absent and the default
-  // extraction path is used.
-  private fun useBundledSqliteNativeLibrary() {
-    val resourcesDir = System.getProperty("compose.application.resources.dir") ?: return
-    val library = File(resourcesDir, SQLITE_LIBRARY_NAME)
-    if (!library.exists()) return
-
-    System.setProperty("org.sqlite.lib.path", resourcesDir)
-    System.setProperty("org.sqlite.lib.name", SQLITE_LIBRARY_NAME)
-  }
-
-  private companion object {
-    const val SQLITE_LIBRARY_NAME = "libsqlitejdbc.dylib"
-  }
-
+import androidx.compose.ui.layout.onPlaced
+                  .onPlaced { coordinates ->
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+import androidx.compose.ui.layout.onGloballyPositioned
+                  .onGloballyPositioned { coordinates ->
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59f80f60` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `33fab980` are properly handled with clean fallback behavior.

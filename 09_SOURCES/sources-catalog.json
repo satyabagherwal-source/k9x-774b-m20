@@ -505,8 +505,8 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
     "license": "Open-Source",
-    "contentHash": "5cd92aac8b070afdc1d8beef9231a88d1d8e24b09c12c50dd3090b3b737c7c7d",
-    "lastHarvestedAt": "2026-10-20T19:10:41.696Z",
+    "contentHash": "535883a849695ad62adeb82fbf0bacb8d016c5a8a202aed6d62a3037d699ac58",
+    "lastHarvestedAt": "2026-10-25T14:38:08.690Z",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "e21e6365",
+    "sourceVersion": "f46ee551",
     "license": "MIT",
-    "contentHash": "6a4c7d2d66790abcaab4aefc52d18230917ae05818b0ce45dd138adde09c1853",
-    "lastHarvestedAt": "2026-10-25T04:44:18.177Z",
+    "contentHash": "6ec740fb37bdd2b1069a35fc2d5c333c7cc43b504df8abd901350ffba87fe51c",
+    "lastHarvestedAt": "2026-10-25T14:38:09.372Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -7653,10 +7653,10 @@
     "repository": "msasikanth/twine",
     "platform": "github",
     "sourceUrl": "https://github.com/msasikanth/twine",
-    "sourceVersion": "ca63e338",
+    "sourceVersion": "6082ae0f",
     "license": "GPL-3.0",
-    "contentHash": "904048898b550788fc3c22ab7c289c24221c22add17b47e56d45bfcf3bd124ab",
-    "lastHarvestedAt": "2026-10-19T10:10:01.820Z",
+    "contentHash": "a7b92528322be9c7c494fa8d493cf21068b789b699e2c6ec6d0392b2a5e79f52",
+    "lastHarvestedAt": "2026-10-25T14:38:04.685Z",
     "learningId": "learn-github-msasikanth-twine"
   },
   "facebook-folly": {
