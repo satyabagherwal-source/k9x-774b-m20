@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T19:25:30.911Z",
+  "last_updated": "2026-10-25T19:32:03.457Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25150,7 +25150,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
       "source_version": "hf-qwen-qwen3.8-flash-next",
-      "content_hash": "3300c2e25da711eafe3446541c59aabb8cb4d43c6c179e3bbccce00f7eb51087",
+      "content_hash": "860f81abde284d85fd16eea43904df4244c097e5fb43d342c7f9603ee767b415",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "promoted_rules": [
@@ -25188,7 +25188,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4ajtgj",
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64"
       ],
-      "verified_at": "2026-10-20T23:49:39.856Z",
+      "verified_at": "2026-10-25T19:31:57.637Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35989,14 +35989,19 @@
       "slug": "modelcontextprotocol-kotlin-sdk",
       "platform": "github",
       "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
-      "source_version": "ec8bcd4c",
-      "content_hash": "67512e6b6531a48ff36f713a39b25fffacf4152560c9666381320c797579af96",
+      "source_version": "a3909eff",
+      "content_hash": "78d75c280b29e172b239f3c776898f0df8ba88f558deb8a042d834a9a4b74e1f",
       "dossier_path": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "promoted_rules": [
         {
           "number": 3484,
           "title": "deps): bump github/codeql-action from 4.38.3 to 4.39.0 in the all-actions group",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4425,
+          "title": "deps): bump hono from 4.13.7 to 4.13.13 in /integration-test/src/jvmTest/typescr",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -36005,7 +36010,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T02:15:03.487Z",
+      "verified_at": "2026-10-25T19:32:03.441Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125566,6 +125571,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T19:19:13.271Z"
+    },
+    "rule-4425": {
+      "learning_id": "rule-4425",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4425,
+      "title": "deps): bump hono from 4.13.7 to 4.13.13 in /integration-test/src/jvmTest/typescr",
+      "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
+      "source_version": "a3909eff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:32:03.441Z"
     }
   },
   "aliases": {

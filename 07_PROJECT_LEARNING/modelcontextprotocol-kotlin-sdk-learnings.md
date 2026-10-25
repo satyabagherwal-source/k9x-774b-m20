@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source**: github ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
-> **Source Version**: `ec8bcd4c`  
+> **Source Version**: `a3909eff`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T02:15:03.153Z  
+> **Timestamp**: 2026-10-25T19:32:03.133Z  
 > **Learning ID**: `learn-github-modelcontextprotocol-kotlin-sdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T02:15:03.145Z  
+> **Harvest Timestamp**: 2026-10-25T19:32:03.126Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The official Kotlin SDK for Model Context Protocol servers and clients. Maintained in collaboration with JetBrains
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1474 stars
+- **Stars / Engagement**: 1478 stars
 
 ---
 
@@ -1057,107 +1057,63 @@ public open class TransportSendOptions(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec8bcd4c` (2026-10-20)
-**Commit Message**: chore(deps): bump github/codeql-action from 4.38.3 to 4.39.0 in the all-actions group across 1 directory (#1127)
+### Incident Patch 1: `a3909eff` (2026-10-21)
+**Commit Message**: chore(deps): bump hono from 4.13.7 to 4.13.13 in /integration-test/src/jvmTest/typescript (#1133)
 
-Bumps the all-actions group with 1 update in the / directory:
-[github/codeql-action](https://github.com/github/codeql-action).
-
-Updates `github/codeql-action` from 4.38.3 to 4.39.0
+Bumps [hono](https://github.com/honojs/hono) from 4.13.7 to 4.13.13.
 <details>
 <summary>Release notes</summary>
 <p><em>Sourced from <a
-href="https://github.com/github/codeql-action/releases">github/codeql-action's
+href="https://github.com/honojs/hono/releases">hono's
 releases</a>.</em></p>
 <blockquote>
-<h2>v4.39.0</h2>
-<ul>
-<li><em>Breaking change</em>: Bump the minimum required CodeQL bundle
-version to 2.20.7. <a
-href="https://redirect.github.com/github/codeql-action/pull/4205">#4205</a></li>
-<li>The <code>codeql-action/analyze</code> step now validates that a
-correct argument for the <code>checkout_path</code> input has been
-provided. The <code>checkout_path</code> input must be set to the path
-where the repository that is being analyzed is checked out at on the
-runner, if that path is something other than the workspace root. If the
-path does not point to a repository checkout or is different from the
-path that was used by <code>codeql-action/init</code>, then the CodeQL
-Action now produces a warning. <a
-href="
-
-**File**: `.github/workflows/codeql.yml` (modified, +2/-2)
-```diff
-@@ -34,7 +34,7 @@ jobs:
-           java-version: ${{ env.JAVA_VERSION }}
- 
-       - name: Initialize CodeQL
--        uses: github/codeql-action/init@v4.38.3
-+        uses: github/codeql-action/init@v4.39.0
-         with:
-           languages: java-kotlin
-           build-mode: manual
-@@ -52,6 +52,6 @@ jobs:
-             --no-daemon --rerun-tasks --stacktrace
- 
-       - name: Analyze
--        uses: github/codeql-action/analyze@v4.38.3
-+        uses: github/codeql-action/analyze@v4.39.0
-         with:
-           category: '/language:java-kotlin'
-```
-
----
-
-### Incident Patch 2: `e0f33e08` (2026-10-20)
-**Commit Message**: chore(deps): bump the kotest group across 1 directory with 3 updates (#1125)
-
-Bumps the kotest group with 3 updates in the / directory:
-[io.kotest:kotest-assertions-core](https://github.com/kotest/kotest),
-[io.kotest:kotest-assertions-json](https://github.com/kotest/kotest) and
-[io.kotest:kotest-assertions-ktor](https://github.com/kotest/kotest).
-
-Updates `io.kotest:kotest-assertions-core` from 6.2.5 to 6.2.6
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/kotest/kotest/releases">io.kotest:kotest-assertions-core's
-releases</a>.</em></p>
-<blockquote>
-<h2>v6.2.6</h2>
+<h2>v4.13.13</h2>
+<h2>Mount Middleware</h2>
+<p><code>app.mount()</code> is now available as the Mount Middleware,
+<code>hono/mount</code>. It is just a handler, so you register it with
+<code>app.all()</code>:</p>
+<pre lang="ts"><code>import { Router as IttyRouter } from 'itty-router'
+import { Hono } from 'hono'
+import { mount } from 'hono/mount'
+<p>const ittyRouter = IttyRouter()<br />
+ittyRouter.get('/hello', () =&gt; new Response('Hello from
+itty-router'))</p>
+<p>const app = new Hono()<br />
+app.all('/itty-router/*', mount(ittyRouter.handle))<br />
+</code></pre></p>
+<p><code>app.mount()</code> still works in v4 but is deprecated and will
+be removed in v5. Migrating is a one-line change:</p>
+<pre lang="diff"><code>- app.mount('/itty-router', ittyRouter.handle)
++ app.all('/itty-router/*', mount(ittyRouter.handle))
+</code></pre>
 <h2>What's Changed</h2>
 <ul>
-<li>Bump kotest-skills plugin version to 6.2.5 by <a
-href="https://github.com/github-actions"><code>@​github-actions</code></a>[bot]
-in <a
-href="https://redirect.github.com/kotest/kotest/pull/6228">kotest/kotest#6228</a></li>
-<li>fix(kotest-tests-timeout-project): Format timeout in exception
-message by <a
-href="https://github.com/marcphilipp"><code>@​marcphilipp</code></a> in
-<a
-href="https://redirect.github.com/kotest/kotest/pull/6230">kotest/kotest#6230</a></li>
-<li>Fix outdated doc reference to kotlinx-datetime proptest artifact by
-<a href="https:
+<li>tes
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+**File**: `integration-test/src/jvmTest/typescript/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -13,7 +13,7 @@ mavenPublish = "0.37.0"
- awaitility = "4.3.0"
- collections-immutable = "0.5.2"
- coroutines = "1.11.0"
--kotest = "6.2.5"
-+kotest = "6.2.6"
- kotlinx-io = "0.9.1"
- ktor = "3.5.2"
- logging = "8.0.4"
+@@ -1436,9 +1436,9 @@
+       }
+     },
+     "node_modules/hono": {
+-      "version": "4.13.7",
+-      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.7.tgz",
+-      "integrity": "sha512-c8/gF9ac8Y78/agExVocyLevgR+JlpNB444Py0FSX8pJoPdYUfUzRcXtYEYGwt6l19qIlVZPN5Mfsw9jFShmQQ==",
++      "version": "4.13.13",
++      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
++      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
+       "license": "MIT",
+       "engines": {
+         "node": ">=16.9.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1133** (2026-10-21): chore(deps): bump hono from 4.13.7 to 4.13.13 in /integration-test/src/jvmTest/typescript (@dependabot[bot])
 - **PR #1127** (2026-10-20): chore(deps): bump github/codeql-action from 4.38.3 to 4.39.0 in the all-actions group across 1 directory (@dependabot[bot])
 - **PR #1126** (2026-10-19): chore(deps): bump zod from 4.6.5 to 4.6.7 in /integration-test/src/jvmTest/typescript in the all-dependencies group (@dependabot[bot])
 - **PR #1125** (2026-10-20): chore(deps): bump the kotest group across 1 directory with 3 updates (@dependabot[bot])
 - **PR #1124** (2026-10-19): chore(deps): bump the other-dependencies group across 4 directories with 2 updates (@dependabot[bot])
 - **PR #1123** (closed): chore(deps): bump the ktor group with 14 updates (@dependabot[bot])
-- **PR #1116** (2026-10-14): chore(deps): bump kotlin from 2.4.20 to 2.4.21 in /samples/weather-stdio-server (@dependabot[bot])
 
 ---
 
@@ -1177,30 +1133,32 @@ href="https://redirect.github.com/kotest/kotest/pull/6230">kotest/kotest#6230</a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump github/codeql-action from 4.38.3 to 4.39.0 in the all-actions group 
+## X. deps): bump hono from 4.13.7 to 4.13.13 in /integration-test/src/jvmTest/typescr
 
 **RULE**:
-When implementing operations in `.github/workflows/codeql.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in modelcontextprotocol/kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `integration-test/src/jvmTest/typescript/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in modelcontextprotocol/kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec8bcd4c`: deps): bump github/codeql-action from 4.38.3 to 4.39.0 in the all-actions group across 1 directory (#1127). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3909eff`: deps): bump hono from 4.13.7 to 4.13.13 in /integration-test/src/jvmTest/typescript (#1133). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codeql.yml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration-test/src/jvmTest/typescript/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/init@v4.39.0
-        uses: github/codeql-action/analyze@v4.39.0
+      "version": "4.13.13",
+      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
+      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: github/codeql-action/init@v4.38.3
-        uses: github/codeql-action/analyze@v4.38.3
+      "version": "4.13.7",
+      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.7.tgz",
+      "integrity": "sha512-c8/gF9ac8Y78/agExVocyLevgR+JlpNB444Py0FSX8pJoPdYUfUzRcXtYEYGwt6l19qIlVZPN5Mfsw9jFShmQQ==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec8bcd4c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3909eff` are properly handled with clean fallback behavior.

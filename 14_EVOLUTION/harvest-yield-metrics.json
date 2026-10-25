@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T19:25:30.973Z",
-  "total_cycles_completed": 4937,
-  "total_learnings_persisted": 4937,
-  "total_rules_promoted": 4308,
+  "last_updated": "2026-10-25T19:32:03.522Z",
+  "total_cycles_completed": 4939,
+  "total_learnings_persisted": 4939,
+  "total_rules_promoted": 4309,
   "history": [
-    {
-      "timestamp": "2026-10-25T10:10:49.327Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T10:10:52.089Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T10:10:53.083Z",
       "repository": "InsertKoinIO/koin",
@@ -1403,6 +1389,20 @@
       "repository": "MiniMaxAI/MiniMax-H3",
       "learningId": "learn-huggingface-minimaxai-minimax-h3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:31:57.710Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:32:03.522Z",
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -875,8 +875,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceVersion": "hf-qwen-qwen3.8-flash-next",
     "license": "Open-Source",
-    "contentHash": "3300c2e25da711eafe3446541c59aabb8cb4d43c6c179e3bbccce00f7eb51087",
-    "lastHarvestedAt": "2026-10-20T23:49:39.915Z",
+    "contentHash": "860f81abde284d85fd16eea43904df4244c097e5fb43d342c7f9603ee767b415",
+    "lastHarvestedAt": "2026-10-25T19:31:57.706Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
@@ -8203,10 +8203,10 @@
     "repository": "modelcontextprotocol/kotlin-sdk",
     "platform": "github",
     "sourceUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
-    "sourceVersion": "ec8bcd4c",
+    "sourceVersion": "a3909eff",
     "license": "NOASSERTION",
-    "contentHash": "67512e6b6531a48ff36f713a39b25fffacf4152560c9666381320c797579af96",
-    "lastHarvestedAt": "2026-10-21T02:15:03.565Z",
+    "contentHash": "78d75c280b29e172b239f3c776898f0df8ba88f558deb8a042d834a9a4b74e1f",
+    "lastHarvestedAt": "2026-10-25T19:32:03.517Z",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk"
   },
   "ivanvorobei-swiftui": {

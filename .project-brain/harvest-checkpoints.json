@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T19:25:30.982Z",
+  "last_updated": "2026-10-25T19:32:03.531Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1130,14 +1130,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "content_hash": "3300c2e25da711eafe3446541c59aabb8cb4d43c6c179e3bbccce00f7eb51087",
-      "verified_at": "2026-10-20T23:49:39.927Z",
+      "content_hash": "860f81abde284d85fd16eea43904df4244c097e5fb43d342c7f9603ee767b415",
+      "verified_at": "2026-10-25T19:31:57.714Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T23:49:39.927Z"
+      "last_updated": "2026-10-25T19:31:57.714Z"
     },
     "deepseek-ai/DeepSeek-V4-Pro": {
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -12336,14 +12336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "content_hash": "67512e6b6531a48ff36f713a39b25fffacf4152560c9666381320c797579af96",
-      "verified_at": "2026-10-21T02:15:03.573Z",
+      "content_hash": "78d75c280b29e172b239f3c776898f0df8ba88f558deb8a042d834a9a4b74e1f",
+      "verified_at": "2026-10-25T19:32:03.526Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:15:03.573Z"
+      "last_updated": "2026-10-25T19:32:03.526Z"
     },
     "ivanvorobei/SwiftUI": {
       "repository": "ivanvorobei/SwiftUI",
