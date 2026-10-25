@@ -1245,8 +1245,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceVersion": "hf-google-gemma-4-31b-it",
     "license": "Open-Source",
-    "contentHash": "c48f091e94f151c3293bf74c8a31b7678942ae63edb2ae38e2c0988c74b50483",
-    "lastHarvestedAt": "2026-10-20T12:03:42.431Z",
+    "contentHash": "309aacb8699faa0054caa34f078e19428790420dabb0b6fafe3aa266c94b5910",
+    "lastHarvestedAt": "2026-10-25T04:05:52.648Z",
     "learningId": "learn-huggingface-google-gemma-4-31b-it"
   },
   "hf-baai-bge-base-en-v1.5": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "730f9fab",
+    "sourceVersion": "d00af7d2",
     "license": "NOASSERTION",
-    "contentHash": "9ae356823ee232e2d2cf74632da90d871f98e37e4de5fca08e9efe1130b26660",
-    "lastHarvestedAt": "2026-10-22T16:22:32.472Z",
+    "contentHash": "43b9863746dd409476dcc82c601425dbe7acb16cd1a83a1315f37bc1c55336ca",
+    "lastHarvestedAt": "2026-10-25T04:06:07.069Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {

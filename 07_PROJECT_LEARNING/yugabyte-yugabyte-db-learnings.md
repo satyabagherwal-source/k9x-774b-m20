@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `730f9fab`  
+> **Source Version**: `d00af7d2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:22:32.030Z  
+> **Timestamp**: 2026-10-25T04:06:06.724Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:22:30.056Z  
+> **Harvest Timestamp**: 2026-10-25T04:06:06.715Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10616 stars
+- **Stars / Engagement**: 10624 stars
 
 ---
 
@@ -2249,7 +2249,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- *No recent closed bug issues fetched.*
+- **Issue #35783** (2026-10-24): **SIGSEGV (PC=0) on the first RPC when the container's CPU count is smaller than the host CPU ids: `ThreadSafeObjectPool` sizes per-CPU pools from `/proc/cpuinfo` but indexes them by `sched_getcpu()`**
+  *Symptoms*: **Environment:** YugabyteDB 2025.2.7.0-b107 (official tarball; 2024.2 LTS behaves the same), single node started with `yugabyted start --advertise_address=127.0.0.1 --base_dir=/var/lib/yugabyte --background=true`. Running inside an unprivileged Incus 7.5.1 container (`images:ubuntu/24.04`, cgroup v2) with lxcfs virtualising `/proc/cpuinfo`, on a 128-thread host, Ubuntu 24.04, kernel 7.2.11. The same build runs crash-free on the host itself and in VMs.  **What happens:** with a floating CPU limit (`limits.cpu=4`, so the container sees 4 processors in `/proc/cpuinfo`, `nproc` and `SC_NPROCESSORS_ONLN`, while its threads are scheduled on host CPUs 23, 80, 119, 122), yb-master and yb-admin die with SIGSEGV at address 0 on the first RPC, and `yugabyted start` fails. The crash is deterministic.  | CPU limit | CPUs visible | host CPU ids seen by `sched_getcpu()` | result | | --- | --- | --- | --- | | 4 (floating) | 4 | 23, 80, 119, 122 | SIGSEGV, PC=0 on the first RPC | | pinned 0-3 | 4 | 0-3 | no crash: 10 min of YSQL + YCQL load, about 1080 iterations | | pinned 4-7 | 4 | 4-7 | SIGSEGV, PC=0, same stack |  **Stack** (YugabyteDB's own signal handler):  ``` *** SIGSEGV (@0x0) received by PID ... ; stack trace: ***     @ yb::Trace::GetAndInitArena()     @ yb::Trace::NewEntry()     @ yb::Trace::MaybeGetNewTrace()     @ yb::Trace::MaybeGetNewTraceForParent()     @ yb::rpc::RpcCommand::RpcCommand()     @ yb::master::GetLeaderMasterRpc::SendRpc()     @ yb::client::YBClient::Data::DoSetMa
+
+- **Issue #35766** (2026-10-24): **[#35199] YSQL: Fix PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 by lengthening the YSQL lease**
+  *Symptoms*: ## Summary  Under sanitizers, master leader failover after the SIGKILL can take about 20s because of 10 missed heartbeats and a possible split vote, which is longer than the base fixture's 10s `master_ysql_operation_lease_ttl_ms`. When the leases expire, the tservers kill their Postgres sessions, including the in-flight `CREATE INDEX` and the test's own connection. `PgIndexBackfillMultiMaster` now overrides `UpdateMiniClusterOptions` to set `--master_ysql_operation_lease_ttl_ms=40000`, so the leases outlast the failover.  --- _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._  ## Test plan  ./yb_build.sh tsan --clang21 --cxx-test pg_index_backfill-test --gtest-filter PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 -n 100 --stop-at-failure -- -p 6 ./yb_build.sh asan --clang21 --cxx-test pg_index_backfill-test --gtest-filter PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 -n 100 --stop-at-failure -- -p 6 Ran the above locally each with no failures. Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI dashboard rate for reference: - clang21-asan: 9/14 iterations failed locally; CSI 17/50 - clang21-tsan: 9/9 iterations failed locally; CSI 25/48 Machine: GCP n2-standard-16, AlmaLinux 8.10 (Cerulean Leopard) x86_64, 16 vCPU, 63 GiB RAM, Intel(R) Xeon(R) CPU @ 2.80GHz 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2266,681 +2270,599 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `029efa15` (2026-10-22)
-**Commit Message**: [#34610,#34829,#35049] YSQL: Fix COPY crash and memory growth from per-row context guards
+### Incident Patch 1: `c48c3dbf` (2026-10-23)
+**Commit Message**: [#34664] YSQL: Fix RemoteBootstrapITest.TestRBSWithLazySuperblockFlush leader-failover delay
 
 Summary:
-This diff removes YB's 2020 per-row context guards from `CopyFrom()`, so COPY's per-row loop switches memory contexts as upstream does again, and adds a switch to the per-tuple context around the YB insert and its index inserts. The YB guards caused a crash with row triggers whose functions are declared with SET or SECURITY DEFINER (#34610), memory growth with COPY ... WHERE (#34829), and memory growth when COPY's input switches from a foreign partition to a YB one (#35049).
+When the tserver being tombstoned was the tablet's Raft leader, the other peers only started an election after the failure-detection timeout, which is longer under TSAN (`--leader_failure_max_missed_heartbeat_periods=20`). Remote bootstrap then waited for the new leader and started 40-45s after the restart, past the 30s the test allows for the `TEST_pause_rbs_before_download_wal` log line. Before tombstoning the tablet, the test now steps it down with `itest::LeaderStepDown` if that tserver leads it, and waits for `GetTabletLeaderIndex` to return a different leader with a lease, so remote bootstrap starts right away. Only this tablet's leadership moves, so no tserver-wide leader blacklist or cleanup is needed.
 
-**Problem**
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
 
-- **Crash (#34610).** COPY crashes the backend when a row trigger's function is declared with a SET clause (`CREATE/ALTER FUNCTION ... SET`) or SECURITY DEFINER, a common pattern for audit triggers.
-  - **BEFORE ROW** triggers crash on any YB table, with or without batching: the trigger's second call uses freed memory. On a partitioned table, each partition's trigger is looked up separately, so the second call needs a second row in the same partition.
-  - **AFTER ROW** triggers crash only when COPY loads in batches and the trigger is on a partition of the table COPY runs on, for example a trigger on
+Test Plan:
+./yb_build.sh tsan --clang21 --cxx-test remote_bootstrap-itest --gtest-filter RemoteBootstrapITest.TestRBSWithLazySuperblockFlush -n 100 --stop-at-failure -- -p 6
+Ran the above locally with no failures.
+Before the fix, this te
 
-**File**: `src/postgres/src/backend/commands/copyfrom.c` (modified, +24/-33)
+**File**: `src/yb/integration-tests/remote_bootstrap-itest.cc` (modified, +19/-1)
 ```diff
-@@ -1033,22 +1033,16 @@ CopyFrom(CopyFromState cstate)
- 	 */
- 	for (int i = 0; cstate->opts.batch_size == 0 || i < cstate->opts.batch_size; i++)
- 	{
--		if (IsYBRelation(resultRelInfo->ri_RelationDesc))
--			MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
--
- 		TupleTableSlot *myslot;
- 		bool		skip_tuple;
+@@ -2271,8 +2271,26 @@ void RemoteBootstrapITest::RBSWithLazySuperblockFlush(int num_tables) {
+   ASSERT_EQ(user_tablet_ids.size(), 1);
+   string tablet_id = user_tablet_ids[0];
  
- 		CHECK_FOR_INTERRUPTS();
- 
--		if (!IsYBRelation(resultRelInfo->ri_RelationDesc))
--		{
--			/*
--			 * Reset the per-tuple exprcontext. We do this after every tuple, to
--			 * clean-up after expression evaluations etc.
--			 */
--			ResetPerTupleExprContext(estate);
--		}
-+		/*
-+		 * Reset the per-tuple exprcontext. We do this after every tuple, to
-+		 * clean-up after expression evaluations etc.
-+		 */
-+		ResetPerTupleExprContext(estate);
- 
- 		/* select slot to (initially) load row into */
- 		if (insertMethod == CIM_SINGLE || proute)
-@@ -1069,8 +1063,7 @@ CopyFrom(CopyFromState cstate)
- 		 * Switch to per-tuple context before calling NextCopyFrom, which does
- 		 * evaluate default expressions etc. and requires per-tuple context.
- 		 */
--		if (!IsYBRelation(resultRelInfo->ri_RelationDesc))
--			MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
-+		MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
- 
- 		ExecClearTuple(myslot);
- 
-@@ -1090,8 +1083,7 @@ CopyFrom(CopyFromState cstate)
- 		myslot->tts_tableOid = RelationGetRelid(target_resultRelInfo->ri_RelationDesc);
- 
- 		/* Triggers and stuff need to be invoked in query context. */
--		if (!IsYBRelation(resultRelInfo->ri_RelationDesc))
--			MemoryContextSwitchTo(oldcontext);
-+		MemoryContextSwitchTo(oldcontext);
- 
- 		if (cstate->whereClause)
- 		{
-@@ -1220,14 +1212,6 @@ CopyFrom(CopyFromState cstate)
- 				}
- 			}
- 
--			/*
--			 * Tuple memory will be allocated to per row memory context
--			 * which will be cleaned up after every row gets processed.
--			 * Thus there is no need to clean the tuple memory.
--			 */
--			if (IsYBRelation(resultRelInfo->ri_RelationDesc))
--				myslot->tts_flags &= ~TTS_FLAG_SHOULDFREE;
--
- 			/* ensure that triggers etc see the right relation  */
- 			myslot->tts_tableOid = RelationGetRelid(resultRelInfo->ri_RelationDesc);
- 		}
-@@ -1307,6 +1291,14 @@ CopyFrom(CopyFromState cstate)
- 					/* OK, store the tuple */
- 					if (IsYBRelation(resultRelInfo->ri_RelationDesc))
- 					{
-+						/*
-+						 * YB: the insert path allocates per-row temporaries
-+						 * (e.g. the ybctid) in the current context; run it in
-+						 * the per-tuple context so they are freed every row.
-+						 */
-+						MemoryContext yb_saved_cxt =
-+							MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
+-  // Delete tablet and shutdown one tserver.
++  // Move leadership off the tserver to tombstone. Otherwise the other peers only notice the leader
++  // is gone after the failure detection timeout, which under TSAN delays RBS past the wait below.
+   auto* const ts_to_bootstrap = cluster_->tablet_server(ts_idx_to_bootstrap);
++  ASSERT_OK(WaitFor(
++      [&]() -> Result<bool> {
++        auto leader = cluster_->GetTabletLeaderIndex(tablet_id, /* require_lease = */ true);
++        if (!leader.ok()) {
++          return false;
++        }
++        if (*leader != ts_idx_to_bootstrap) {
++          return true;
++        }
++        WARN_NOT_OK(
++            itest::LeaderStepDown(ts, tablet_id, /* new_leader = */ nullptr, timeout),
++            "Leader step down failed");
++        return false;
++      },
++      timeout, "Waiting for leader to move off ts_idx_to_bootstrap"));
 +
- 						/* Update the tuple with table oid */
- 						myslot->tts_tableOid =
- 							RelationGetRelid(resultRelInfo->ri_RelationDesc);
-@@ -1332,18 +1324,15 @@ CopyFrom(CopyFromState cstate)
- 																   false,
- 																   NULL,
- 																   NIL);
-+						MemoryContextSwitchTo(yb_saved_cxt);
- 					}
- 					else if (resultRelInfo->ri_FdwRoutine != NULL)
- 					{
--						MemoryContext saved_context;
--
--						saved_context = MemoryContextSwitchTo(estate->es_query_cxt);
- 						myslot = resultRelInfo->ri_FdwRoutine->ExecForeignInsert(estate,
- 																				 resultRelInfo,
- 																				 myslot,
- 																				 NULL);
- 
--						MemoryContextSwitchTo(saved_context);
- 						if (myslot == NULL) /* "do nothing" */
- 							continue;	/* next tuple please */
- 
-@@ -1386,16 +1375,18 @@ CopyFrom(CopyFromState cstate)
- 			 */
- 			++processed;
- 		}
--
--		/*
--		 * Free context per row.
--		 */
--		if (IsYBRelation(cstate->rel))
--			ResetPerTupleExprContext(estate);
- 	}
- 
- 	if (cstate->opts.batch_size > 0)
- 	{
-+		/*
-+		 * YB: Fire AFTER triggers in the query context, as upstream does
-+		 * before AfterTriggerEndQuery() at the end of CopyFrom(). The last
-+		 * batch gets here in the per-tuple context, from the break after
-+		 * NextCopyFrom().
-+		 */
-+		MemoryContextSwitchTo(oldcontext);
-+
- 		/*
- 		 * Handle queued AFTER triggers before committing. If there are errors,
- 		 * do not commit the current batch.
-```
-
-**File**: `src/postgres/src/test/regress/expected/yb.orig.feature_copy.out` (modified, +162/-0)
-```diff
-@@ -527,6 +527,160 @@ select * from v ORDER BY a,b;
-  1 | 10
- (6 rows)
- 
-+-- Row triggers whose function is declared with SET or SECURITY DEFINER (#34610):
-+-- BEFORE ROW and AFTER ROW, with each kind of function, in two setups:
-+--   copy_trig_*        a plain table, with the trigger on it; no partition
-+--                      involved.
-+--   copy_trig_*_part   a partitioned table; COPY loads this table.
-+--   copy_trig_*_part1  copy_trig_*_part's only partition, with the trigger.
-+-- Every COPY loads 3 rows with rows_per_transaction 2. In the plain setup, the
-+-- table's own trigger turns batching off (hence the WARNING); in the
-+-- partitioned setup, the 3 rows take 2 batches. Keep the 3 rows: the bug needs
-+-- a trigger's function to run again after the per-row reset freed its cached
-+-- state. That takes a second row for a BEFORE ROW trigger and a later batch for
-+-- an AFTER ROW trigger.
-+create or replace function copy_trig_set_fn() returns trigger
-+  language plpgsql set work_mem = '64MB'
-+  as $$begin raise notice '% %: a = %', tg_when, tg_table_name, new.a; return new; end$$;
-+create or replace function copy_trig_secdef_fn() returns trigger
-+  language plpgsql security definer
-+  as $$begin raise notice '% %: a = %', tg_when, tg_table_name, new.a; return new; end$$;
-+create table copy_trig_before_set (a int, b int);
-+create trigger copy_trig_before_set_trig before insert on copy_trig_before_set
-+  for each row execute procedure copy_trig_set_fn();
-+copy copy_trig_before_set from stdin with (rows_per_transaction 2);
-+WARNING:  ROWS_PER_TRANSACTION is not supported on table with non RI trigger
-+DETAIL:  Defaulting to using one transaction for the entire copy.
-+HINT:  Set rows_per_transaction option to `0` to disable batching and remove this warning.
-+NOTICE:  BEFORE copy_trig_before_set: a = 1
-+NOTICE:  BEFORE copy_trig_before_set: a = 2
-+NOTICE:  BEFORE copy_trig_before_set: a = 3
-+select * from copy_trig_before_set ORDER BY a;
-+ a | b 
-+---+---
-+ 1 | 1
-+ 2 | 1
-+ 3 | 1
-+(3 rows)
-+
-+create table copy_trig_before_set_part (a int, b int) partition by list (b);
-+create table copy_trig_before_set_part1 partition of copy_trig_before_set_part for values in (1);
-+create trigger copy_trig_before_set_part1_trig before insert on copy_trig_before_set_part1
-+  for each row execute procedure copy_trig_set_fn();
-+copy copy_trig_before_set_part from stdin with (rows_per_transaction 2);
-+NOTICE:  BEFORE copy_trig_before_set_part1: a = 1
-+NOTICE:  BEFORE copy_trig_before_set_part1: a = 2
-+NOTICE:  BEFORE copy_trig_before_set_part1: a = 3
-+select * from copy_trig_before_set_part ORDER BY a;
-+ a | b 
-+---+---
-+ 1 | 1
-+ 2 | 1
-+ 3 | 1
-+(3 rows)
-+
-+create table copy_trig_before_secdef (a int, b int);
-+create trigger copy_trig_before_secdef_trig before insert on copy_trig_before_secdef
-+  for each row execute procedure copy_trig_secdef_fn();
-+copy copy_trig_before_secdef from stdin with (rows_per_transaction 2);
-+WARNING:  ROWS_PER_TRANSACTION is not supported on table with non RI trigger
-+DETAIL:  Defaulting to using one transaction for the entire copy.
-+HINT:  Set rows_per_transaction option to `0` to disable batching and remove this warning.
-+NOTICE:  BEFORE copy_trig_before_secdef: a = 1
-+NOTICE:  BEFORE copy_trig_before_secdef: a = 2
-+NOTICE:  BEFORE copy_trig_before_secdef: a = 3
-+select * from copy_trig_before_secdef ORDER BY a;
-+ a | b 
-+---+---
-+ 1 | 1
-+ 2 | 1
-+ 3 | 1
-+(3 rows)
-+
-+create table copy_trig_before_secdef_part (a int, b int) partition by list (b);
-+create table copy_trig_before_secdef_part1 partition of copy_trig_before_secdef_part for values in (1);
-+create trigger copy_trig_before_secdef_part1_trig before insert on copy_trig_before_secdef_part1
-+  for each row execute procedure copy_trig_secdef_fn();
-+copy copy_trig_before_secdef_part from stdin with (rows_per_transaction 2);
-+NOTICE:  BEFORE copy_trig_before_secdef_part1: a = 1
-+NOTICE:  BEFORE copy_trig_before_secdef_part1: a = 2
-+NOTICE:  BEFORE copy_trig_before_secdef_part1: a = 3
-+select * from copy_trig_before_secdef_part ORDER BY a;
-+ a | b 
-+---+---
-+ 1 | 1
-+ 2 | 1
-+ 3 | 1
-+(3 rows)
-+
-+create table copy_trig_after_set (a int, b int);
-+create trigger copy_trig_after_set_trig after insert on copy_trig_after_set
-+  for each row execute procedure copy_trig_set_fn();
-+copy copy_trig_after_set from stdin with (rows_per_transaction 2);
-+WARNING:  ROWS_PER_TRANSACTION is not supported on table with non RI trigger
-+DETAIL:  Defaulting to using one transaction for the entire copy.
-+HINT:  Set rows_per_transaction option to `0` to disable batching and remove this warning.
-+NOTICE:  AFTER copy_trig_after_set: a = 1
-+NOTICE:  AFTER copy_trig_after_set: a = 2
-+NOTICE:  AFTER copy_trig_after_set: a = 3
-+select * from copy_trig_after_set ORDER BY a;
-+ a | b 
-+---+---
-+ 1 | 1
-+ 2 | 1
-+ 3 | 1
-+(3 rows)
-+
-+create table copy_trig_after_set_part (a int, b int) partition by list (b);
-+create table copy_trig_after_set_part1 partition of copy_trig_after_set_part f
-```
-
-**File**: `src/postgres/src/test/regress/expected/yb.orig.feature_copy_1.out` (modified, +162/-0)
-```diff
-@@ -530,6 +530,160 @@ select * from v ORDER BY a,b;
-  1 | 10
- (6 rows)
- 
-+-- Row triggers whose function is declared with SET or SECURITY DEFINER (#34610):
-+-- BEFORE ROW and AFTER ROW, with each kind of function, in two setups:
-+--   copy_trig_*        a plain table, with the trigger on it; no partition
-+--                      involved.
-+--   copy_trig_*_part   a partitioned table; COPY loads this table.
-+--   copy_trig_*_part1  copy_trig_*_part's only partition, with the trigger.
-+-- Every COPY loads 3 rows with rows_per_transaction 2. In the plain setup, the
-+-- table's own trigger turns batching off (hence the WARNING); in the
-+-- partitioned setup, the 3 rows take 2 batches. Keep the 3 rows: the bug needs
-+-- a trigger's function to run again after the per-row reset freed its cached
-+-- state. That takes a second row for a BEFORE ROW trigger and a later batch for
-+-- an AFTER ROW trigger.
-+create or replace function copy_trig_set_fn() returns trigger
-+  language plpgsql set work_mem = '64MB'
-+  as $$begin raise notice '% %: a = %', tg_when, tg_table_name, new.a; return new; end$$;
-+create or replace function copy_trig_secdef_fn() returns trigger
-+  language plpgsql security definer
-+  as $$begin raise notice '% %: a = %', tg_when, tg_table_name, new.a; return new; end$$;
-+create table copy_trig_before_set (a int, b int);
-+create trigger copy_trig_before_set_trig before insert on copy_trig_before_set
-+  for each row execute procedure copy_trig_set_fn();
-+copy copy_trig_before_set from stdin with (rows_per_transaction 2);
-+WARNING:  ROWS_PER_TRANSACTION is not supported on table with non RI trigger
-+DETAIL:  Defaulting to using one transaction for the entire copy.
-+HINT:  Set rows_per_transaction option to `0` to disable batching and remove this warning.
-+NOTICE:  BEFORE copy_trig_before_set: a = 1
-+NOTICE:  BEFORE copy_trig_before_set: a = 2
-+NOTICE:  BEFORE copy_trig_before_set: a = 3
-+select * from copy_trig_before_set ORDER BY a;
-+ a | b 
-+---+---
-+ 1 | 1
-+ 2 | 1
-+ 3 | 1
-+(3 rows)
-+
-+create table copy_trig_before_set_part (a int, b int) partition by list (b);
-+create table copy_trig_before_set_part1 partition of copy_trig_before_set_part for values in (1);
-+create trigger copy_trig_before_set_part1_trig before insert on copy_trig_before_set_part1
-+  for each row execute procedure copy_trig_set_fn();
-+copy copy_trig_before_set_part from stdin with (rows_per_transaction 2);
-+NOTICE:  BEFORE copy_trig_before_set_part1: a = 1
-+NOTICE:  BEFORE copy_trig_before_set_part1: a = 2
-+NOTICE:  BEFORE copy_trig_before_set_part1: a = 3
-+select * from copy_trig_before_set_part ORDER BY a;
-+ a | b 
-+---+---
-+ 1 | 1
-+ 2 | 1
-+ 3 | 1
-+(3 rows)
-+
-+create table copy_trig_before_secdef (a int, b int);
-+create trigger copy_trig_before_secdef_trig before insert on copy_trig_before_secdef
-+  for each row execute procedure copy_trig_secdef_fn();
-+copy copy_trig_before_secdef from stdin with (rows_per_transaction 2);
-+WARNING:  ROWS_PER_TRANSACTION is not supported on table with non RI trigger
-+DETAIL:  Defaulting to using one transaction for the entire copy.
-+HINT:  Set rows_per_transaction option to `0` to disable batching and remove this warning.
-+NOTICE:  BEFORE copy_trig_before_secdef: a = 1
-+NOTICE:  BEFORE copy_trig_before_secdef: a = 2
-+NOTICE:  BEFORE copy_trig_before_secdef: a = 3
-+select * from copy_trig_before_secdef ORDER BY a;
-+ a | b 
-+---+---
-+ 1 | 1
-+ 2 | 1
-+ 3 | 1
-+(3 rows)
-+
-+create table copy_trig_before_secdef_part (a int, b int) partition by list (b);
-+create table copy_trig_before_secdef_part1 partition of copy_trig_before_secdef_part for values in (1);
-+create trigger copy_trig_before_secdef_part1_trig before insert on copy_trig_before_secdef_part1
-+  for each row execute procedure copy_trig_secdef_fn();
-+copy copy_trig_before_secdef_part from stdin with (rows_per_transaction 2);
-+NOTICE:  BEFORE copy_trig_before_secdef_part1: a = 1
-+NOTICE:  BEFORE copy_trig_before_secdef_part1: a = 2
-+NOTICE:  BEFORE copy_trig_before_secdef_part1: a = 3
-+select * from copy_trig_before_secdef_part ORDER BY a;
-+ a | b 
-+---+---
-+ 1 | 1
-+ 2 | 1
-+ 3 | 1
-+(3 rows)
-+
-+create table copy_trig_after_set (a int, b int);
-+create trigger copy_trig_after_set_trig after insert on copy_trig_after_set
-+  for each row execute procedure copy_trig_set_fn();
-+copy copy_trig_after_set from stdin with (rows_per_transaction 2);
-+WARNING:  ROWS_PER_TRANSACTION is not supported on table with non RI trigger
-+DETAIL:  Defaulting to using one transaction for the entire copy.
-+HINT:  Set rows_per_transaction option to `0` to disable batching and remove this warning.
-+NOTICE:  AFTER copy_trig_after_set: a = 1
-+NOTICE:  AFTER copy_trig_after_set: a = 2
-+NOTICE:  AFTER copy_trig_after_set: a = 3
-+select * from copy_trig_after_set ORDER BY a;
-+ a | b 
-+---+---
-+ 1 | 1
-+ 2 | 1
-+ 3 | 1
-+(3 rows)
-+
-+create table copy_trig_after_set_part (a int, b int) partition by list (b);
-+create table copy_trig_after_set_part1 partition of copy_trig_after_set_part f
-```
-
-**File**: `src/postgres/src/test/regress/sql/yb.orig.feature_copy.sql` (modified, +119/-0)
-```diff
-@@ -399,6 +399,117 @@ copy v (b) from stdin;
- 
- select * from v ORDER BY a,b;
- 
-+-- Row triggers whose function is declared with SET or SECURITY DEFINER (#34610):
-+-- BEFORE ROW and AFTER ROW, with each kind of function, in two setups:
-+--   copy_trig_*        a plain table, with the trigger on it; no partition
-+--                      involved.
-+--   copy_trig_*_part   a partitioned table; COPY loads this table.
-+--   copy_trig_*_part1  copy_trig_*_part's only partition, with the trigger.
-+-- Every COPY loads 3 rows with rows_per_transaction 2. In the plain setup, the
-+-- table's own trigger turns batching off (hence the WARNING); in the
-+-- partitioned setup, the 3 rows take 2 batches. Keep the 3 rows: the bug needs
-+-- a trigger's function to run again after the per-row reset freed its cached
-+-- state. That takes a second row for a BEFORE ROW trigger and a later batch for
-+-- an AFTER ROW trigger.
-+create or replace function copy_trig_set_fn() returns trigger
-+  language plpgsql set work_mem = '64MB'
-+  as $$begin raise notice '% %: a = %', tg_when, tg_table_name, new.a; return new; end$$;
-+create or replace function copy_trig_secdef_fn() returns trigger
-+  language plpgsql security definer
-+  as $$begin raise notice '% %: a = %', tg_when, tg_table_name, new.a; return new; end$$;
-+
-+create table copy_trig_before_set (a int, b int);
-+create trigger copy_trig_before_set_trig before insert on copy_trig_before_set
-+  for each row execute procedure copy_trig_set_fn();
-+copy copy_trig_before_set from stdin with (rows_per_transaction 2);
-+1	1
-+2	1
-+3	1
-+\.
-+
-+select * from copy_trig_before_set ORDER BY a;
-+
-+create table copy_trig_before_set_part (a int, b int) partition by list (b);
-+create table copy_trig_before_set_part1 partition of copy_trig_before_set_part for values in (1);
-+create trigger copy_trig_before_set_part1_trig before insert on copy_trig_before_set_part1
-+  for each row execute procedure copy_trig_set_fn();
-+copy copy_trig_before_set_part from stdin with (rows_per_transaction 2);
-+1	1
-+2	1
-+3	1
-+\.
-+
-+select * from copy_trig_before_set_part ORDER BY a;
-+
-+create table copy_trig_before_secdef (a int, b int);
-+create trigger copy_trig_before_secdef_trig before insert on copy_trig_before_secdef
-+  for each row execute procedure copy_trig_secdef_fn();
-+copy copy_trig_before_secdef from stdin with (rows_per_transaction 2);
-+1	1
-+2	1
-+3	1
-+\.
-+
-+select * from copy_trig_before_secdef ORDER BY a;
-+
-+create table copy_trig_before_secdef_part (a int, b int) partition by list (b);
-+create table copy_trig_before_secdef_part1 partition of copy_trig_before_secdef_part for values in (1);
-+create trigger copy_trig_before_secdef_part1_trig before insert on copy_trig_before_secdef_part1
-+  for each row execute procedure copy_trig_secdef_fn();
-+copy copy_trig_before_secdef_part from stdin with (rows_per_transaction 2);
-+1	1
-+2	1
-+3	1
-+\.
-+
-+select * from copy_trig_before_secdef_part ORDER BY a;
-+
-+create table copy_trig_after_set (a int, b int);
-+create trigger copy_trig_after_set_trig after insert on copy_trig_after_set
-+  for each row execute procedure copy_trig_set_fn();
-+copy copy_trig_after_set from stdin with (rows_per_transaction 2);
-+1	1
-+2	1
-+3	1
-+\.
-+
-+select * from copy_trig_after_set ORDER BY a;
-+
-+create table copy_trig_after_set_part (a int, b int) partition by list (b);
-+create table copy_trig_after_set_part1 partition of copy_trig_after_set_part for values in (1);
-+create trigger copy_trig_after_set_part1_trig after insert on copy_trig_after_set_part1
-+  for each row execute procedure copy_trig_set_fn();
-+copy copy_trig_after_set_part from stdin with (rows_per_transaction 2);
-+1	1
-+2	1
-+3	1
-+\.
-+
-+select * from copy_trig_after_set_part ORDER BY a;
-+
-+create table copy_trig_after_secdef (a int, b int);
-+create trigger copy_trig_after_secdef_trig after insert on copy_trig_after_secdef
-+  for each row execute procedure copy_trig_secdef_fn();
-+copy copy_trig_after_secdef from stdin with (rows_per_transaction 2);
-+1	1
-+2	1
-+3	1
-+\.
-+
-+select * from copy_trig_after_secdef ORDER BY a;
-+
-+create table copy_trig_after_secdef_part (a int, b int) partition by list (b);
-+create table copy_trig_after_secdef_part1 partition of copy_trig_after_secdef_part for values in (1);
-+create trigger copy_trig_after_secdef_part1_trig after insert on copy_trig_after_secdef_part1
-+  for each row execute procedure copy_trig_secdef_fn();
-+copy copy_trig_after_secdef_part from stdin with (rows_per_transaction 2);
-+1	1
-+2	1
-+3	1
-+\.
-+
-+select * from copy_trig_after_secdef_part ORDER BY a;
-+
- -- Test various copy options
- create table copy_options (a int primary key, b int);
- 
-@@ -533,3 +644,11 @@ DROP TABLE v;
- DROP TABLE copy_options;
- DROP TABLE main_table;
- DROP TABLE ref_table;
-+DROP TABLE copy_trig_before_set;
-+DROP TABLE copy_trig_before_set_part;
-+DROP TABLE copy_trig_before_secdef;
-+DROP TABLE copy_trig_before_secdef_part;
-+DROP TABLE copy_trig_after_set;
-+DROP TABLE copy_trig_after_set_part;
-+DROP TABLE copy_trig_after
++  // Delete tablet and shutdown one tserver.
+   ASSERT_OK(WaitFor(
+       [&tablet_id, ts, timeout]() -> Result<bool> {
+         const auto s = itest::DeleteTablet(
 ```
 
 ---
 
-### Incident Patch 2: `c88cb2cd` (2026-10-21)
-**Commit Message**: [#35262] YSQL: Fix log waiter race in PgGlobalViewsTest.TestJoinsAreNotPushedDown (#35531)
+### Incident Patch 2: `0c633a06` (2026-10-24)
+**Commit Message**: [#35159] DocDB: Build replica placement candidates once per table instead of per tablet (#35162)
 
 ## Summary
 
-`VerifyQueryPushdowns` created each tserver's `LogWaiter` inside the
-thread it spawned, but it returned right away and the caller then ran
-the query. A tserver could therefore log the pushed-down query before
-its waiter was listening; in the failing run ts-3 logged it about 2ms
-too early, so the waiter missed it and timed out after `30s`. The fix
-creates each `LogWaiter` as a `std::shared_ptr` on the calling thread
-before `VerifyQueryPushdowns` returns, and the thread only calls
-`WaitFor(30s)`.
+Stacked on #35161 (incremental load ordering).
+
+For every tablet of a table, `SelectReplicasForTablet` re-read and
+validated the table's
+replication info, rebuilt the per-placement `TSDescriptorVector` and the
+per-block tserver
+lists, and resolved every pick from the load-ordered uuid list back to a
+descriptor with a
+linear scan over all tservers. None of that depends on the tablet.
+
+`BuildPlacementCandidates` now does it once per table in
+`ProcessPendingAssignmentsPerTable`:
+for the live placement and each read replica placement it records which
+tservers (by index
+into `ts_descs`) each placement block allows, the union, and the
+per-block min and effective
+max. `SelectReplicasForTablet` then works on index bitmaps only:
+minimums per block first,
+leftovers to the least loaded allowed tservers up to each block's cap,
+same order and same
+caps as before. `SelectReplica` becomes a scan of the load order
+filtered by two bool vectors.
+
+Behavior change: a placement block whose tservers were already taken by
+an earlier block, possible
+with overlapping table-level placements such as 
+
+**File**: `src/yb/master/catalog_manager-test.cc` (modified, +197/-21)
+```diff
+@@ -31,6 +31,7 @@
+ //
+ 
+ #include "yb/common/constants.h"
++#include "yb/master/catalog_manager.h"
+ #include "yb/master/catalog_manager-test_base.h"
+ #include "yb/master/catalog_manager_util.h"
+ #include "yb/master/master_client.pb.h"
+@@ -604,10 +605,11 @@ TEST(TestCatalogManagerEnterprise, TestLoadBalancedReadOnlySameAz) {
+ 
+ namespace {
+ 
+-std::vector<TabletServerId> SortedUuids(const CMPerTableLoadState& state) {
++std::vector<TabletServerId> SortedUuids(
++    const CMPerTableLoadState& state, const TSDescriptorVector& ts_descs) {
+   std::vector<TabletServerId> result;
+   for (size_t idx : state.sorted_by_load()) {
+-    result.push_back(state.uuid(idx));
++    result.push_back(ts_descs[idx]->permanent_uuid());
+   }
+   return result;
+ }
+@@ -620,11 +622,11 @@ TEST(TestCatalogManager, PerTableLoadStateOrder) {
+   CMGlobalLoadState global_state;
+   global_state.per_ts_replica_load_ = {{"0000", 5}, {"1111", 3}, {"2222", 3}, {"3333", 9}};
+   CMPerTableLoadState state(&global_state);
+-  state.per_ts_replica_load_ = {{"0000", 2}, {"1111", 2}, {"2222", 2}, {"3333", 0}};
+-  ASSERT_OK(state.Init(ts_descs));
++  ASSERT_OK(state.Init(ts_descs, {{"0000", 2}, {"1111", 2}, {"2222", 2}, {"3333", 0}}));
+ 
+   // Table load first, then global load, then uuid.
+-  ASSERT_EQ(SortedUuids(state), (std::vector<TabletServerId>{"3333", "1111", "2222", "0000"}));
++  ASSERT_EQ(SortedUuids(state, ts_descs),
++            (std::vector<TabletServerId>{"3333", "1111", "2222", "0000"}));
+ }
+ 
+ TEST(TestCatalogManager, PerTableLoadStateAddReplica) {
+@@ -633,41 +635,215 @@ TEST(TestCatalogManager, PerTableLoadStateAddReplica) {
+   CMGlobalLoadState global_state;
+   global_state.per_ts_replica_load_ = {{"0000", 0}, {"1111", 0}, {"2222", 0}, {"3333", 0}};
+   CMPerTableLoadState state(&global_state);
+-  state.per_ts_replica_load_ = {{"0000", 0}, {"1111", 0}, {"2222", 0}, {"3333", 0}};
+-  ASSERT_OK(state.Init(ts_descs));
+-  ASSERT_EQ(SortedUuids(state), (std::vector<TabletServerId>{"0000", "1111", "2222", "3333"}));
++  ASSERT_OK(state.Init(ts_descs, {{"0000", 0}, {"1111", 0}, {"2222", 0}, {"3333", 0}}));
++  ASSERT_EQ(SortedUuids(state, ts_descs),
++            (std::vector<TabletServerId>{"0000", "1111", "2222", "3333"}));
+ 
+   // The tserver that gained a replica moves behind every tserver with equal load.
+-  state.AddReplica("0000");
+-  ASSERT_EQ(SortedUuids(state), (std::vector<TabletServerId>{"1111", "2222", "3333", "0000"}));
+-  state.AddReplica("2222");
+-  ASSERT_EQ(SortedUuids(state), (std::vector<TabletServerId>{"1111", "3333", "0000", "2222"}));
+-  state.AddReplica("2222");
+-  ASSERT_EQ(SortedUuids(state), (std::vector<TabletServerId>{"1111", "3333", "0000", "2222"}));
+-  state.AddReplica("1111");
+-  state.AddReplica("3333");
+-  ASSERT_EQ(SortedUuids(state), (std::vector<TabletServerId>{"0000", "1111", "3333", "2222"}));
++  state.AddReplica(0);
++  ASSERT_EQ(SortedUuids(state, ts_descs),
++            (std::vector<TabletServerId>{"1111", "2222", "3333", "0000"}));
++  state.AddReplica(2);
++  ASSERT_EQ(SortedUuids(state, ts_descs),
++            (std::vector<TabletServerId>{"1111", "3333", "0000", "2222"}));
++  state.AddReplica(2);
++  ASSERT_EQ(SortedUuids(state, ts_descs),
++            (std::vector<TabletServerId>{"1111", "3333", "0000", "2222"}));
++  state.AddReplica(1);
++  state.AddReplica(3);
++  ASSERT_EQ(SortedUuids(state, ts_descs),
++            (std::vector<TabletServerId>{"0000", "1111", "3333", "2222"}));
+ 
+   // The global load follows the picks.
+   ASSERT_EQ(2, ASSERT_RESULT(global_state.GetGlobalReplicaLoad("2222")));
+   ASSERT_EQ(1, ASSERT_RESULT(global_state.GetGlobalReplicaLoad("0000")));
+ }
+ 
++using consensus::PeerMemberType;
++
++namespace {
++
++PlacementInfoPB MakePlacement(int num_replicas, const std::string& placement_uuid = "") {
++  PlacementInfoPB placement;
++  placement.set_num_replicas(num_replicas);
++  if (!placement_uuid.empty()) {
++    placement.set_placement_uuid(placement_uuid);
++  }
++  return placement;
++}
++
++// An empty zone makes a region-level block, which matches every zone of the default region.
++void AddBlock(
++    PlacementInfoPB* placement, const std::string& zone, int min_num_replicas,
++    std::optional<int> max_num_replicas = std::nullopt) {
++  auto* block = placement->add_placement_blocks();
++  block->mutable_cloud_info()->set_placement_cloud(default_cloud);
++  block->mutable_cloud_info()->set_placement_region(default_region);
++  if (!zone.empty()) {
++    block->mutable_cloud_info()->set_placement_zone(zone);
++  }
++  block->set_min_num_replicas(min_num_replicas);
++  if (max_num_replicas) {
++    block->set_max_num_replicas(*max_num_replicas);
++  }
++}
++
++struct LoadState {
++  CMGlobalLoadState global;
++  CMPerTableLoadState table{&global};
++};
++
++// Zero global load, the given per-table load (default 0) for every tserver.
++Status InitLoadState(
++    const TSDescriptorVector& ts_descs,
++    const std::unordered_map<TabletServerId, uint32_t>& table_load, LoadState* state) {
++  std::unordered_map<TabletServerId, 
+```
+
+**File**: `src/yb/master/catalog_manager.cc` (modified, +193/-178)
+```diff
+@@ -12591,11 +12591,21 @@ Status CatalogManager::ProcessPendingAssignmentsPerTable(
+   // For those tablets which need to be created in this round, assign replicas.
+   Status s;
+   std::unordered_set<TableInfo*> ok_status_tables;
++  Result<std::vector<PlacementCandidates>> candidates = std::vector<PlacementCandidates>();
++  TableInfoPtr table;
++  if (!deferred.needs_create_rpc.empty()) {
++    table = deferred.needs_create_rpc.front()->table();
++    candidates = BuildPlacementCandidates(table, ts_descs);
++  }
+   for (const TabletInfoPtr& tablet : deferred.needs_create_rpc) {
++    DCHECK_EQ(tablet->table(), table);
+     // NOTE: if we fail to select replicas on the first pass (due to
+     // insufficient Tablet Servers being online), we will still try
+     // again unless the tablet/table creation is cancelled.
+-    s = SelectReplicasForTablet(ts_descs, tablet, &table_load_state, global_load_state);
++    s = candidates.ok()
++        ? SelectReplicasForTablet(ts_descs, *candidates, tablet, &table_load_state,
++                                  global_load_state)
++        : candidates.status();
+     if (!s.ok()) {
+       LOG_WITH_FUNC(INFO) << "Select replicas for tablet " << tablet->id() << " failed: " << s;
+       s = s.CloneAndPrepend(Format(
+@@ -12711,31 +12721,106 @@ Status CatalogManager::SelectProtegeForTablet(
+   return Status::OK();
+ }
+ 
+-Status CatalogManager::SelectReplicasForTablet(
+-    const TSDescriptorVector& ts_descs, const TabletInfoPtr& tablet,
+-    CMPerTableLoadState* per_table_state, CMGlobalLoadState* global_state) {
+-  auto table_guard = tablet->table()->LockForRead();
++namespace {
+ 
+-  if (!table_guard->pb.IsInitialized()) {
+-    return STATUS_FORMAT(InvalidArgument,
+-        "TableInfo for tablet $0 is not initialized (aborted CreateTable attempt?)",
+-        tablet->tablet_id());
++// A tserver belongs to the placement that names its placement uuid; a placement without one is
++// the live placement, whose tservers have an empty placement uuid.
++bool TsInPlacement(const PlacementInfoPB& placement_info, const TSDescriptor& ts_desc) {
++  if (placement_info.has_placement_uuid()) {
++    return ts_desc.placement_uuid() == placement_info.placement_uuid();
+   }
++  return ts_desc.placement_uuid().empty();
++}
+ 
+-  // Neither tablespace case is set only for a table an older master created; place it by the
+-  // cluster default, as a custom tablespace is not known yet. The load balancer moves it later.
+-  const auto tablespace_id =
+-      table_guard->pb.has_tablespace_id() ? table_guard->pb.tablespace_id() : TablespaceId();
+-  auto replication_info = VERIFY_RESULT(GetTableReplicationInfo(
++}  // namespace
++
++Result<std::vector<CatalogManager::PlacementCandidates>> CatalogManager::BuildPlacementCandidates(
++    const TableInfoPtr& table, const TSDescriptorVector& ts_descs) {
++  ReplicationInfoPB replication_info;
++  {
++    auto table_guard = table->LockForRead();
++    if (!table_guard->pb.IsInitialized()) {
++      return STATUS_FORMAT(InvalidArgument,
++          "TableInfo for table $0 is not initialized (aborted CreateTable attempt?)", table->id());
++    }
++    // Neither tablespace case is set only for a table an older master created; place it by the
++    // cluster default, as a custom tablespace is not known yet. The load balancer moves it later.
++    const auto tablespace_id =
++        table_guard->pb.has_tablespace_id() ? table_guard->pb.tablespace_id() : TablespaceId();
++    replication_info = VERIFY_RESULT(GetTableReplicationInfo(
+         table_guard->pb.replication_info(), tablespace_id));
++  }
++
++  // Validate if we have enough tservers to put the replicas.
++  ValidateReplicationInfoRequestPB req;
++  *req.mutable_replication_info() = replication_info;
++  ValidateReplicationInfoResponsePB resp;
++  RETURN_NOT_OK(ValidateReplicationInfo(&req, &resp));
+ 
++  std::vector<PlacementCandidates> candidates;
++  candidates.push_back(VERIFY_RESULT(BuildPlacementCandidates(
++      replication_info.live_replicas(), ts_descs, PeerMemberType::VOTER)));
++  for (const auto& read_replicas : replication_info.read_replicas()) {
++    candidates.push_back(VERIFY_RESULT(BuildPlacementCandidates(
++        read_replicas, ts_descs, PeerMemberType::OBSERVER)));
++  }
++  return candidates;
++}
++
++Result<CatalogManager::PlacementCandidates> CatalogManager::BuildPlacementCandidates(
++    const PlacementInfoPB& placement_info, const TSDescriptorVector& ts_descs,
++    PeerMemberType member_type) {
++  PlacementCandidates result;
++  result.member_type = member_type;
++  result.nreplicas = GetNumReplicasOrGlobalReplicationFactor(placement_info);
++  result.num_allowed = 0;
++  result.all_allowed.assign(ts_descs.size(), false);
++  for (const auto& block : placement_info.placement_blocks()) {
++    result.blocks.push_back(PlacementCandidates::Block{
++        .min_num_replicas = static_cast<size_t>(block.min_num_replicas()),
++        .max_num_replicas = static_cast<size_t>(
++            GetEffectiveMaxNumReplicas(block, narrow_cast<
+```
+
+**File**: `src/yb/master/catalog_manager.h` (modified, +60/-50)
+```diff
+@@ -1066,22 +1066,34 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
+                                  const TSDescriptorVector& ts_descs,
+                                  ValidateReplicationInfoResponsePB* resp);
+ 
+-  // Loops through the table's placement infos and populates the corresponding config from
+-  // each placement.
+-  Status HandlePlacementUsingReplicationInfo(
+-      const ReplicationInfoPB& replication_info,
+-      const TSDescriptorVector& all_ts_descs,
+-      consensus::RaftConfigPB* config,
+-      CMPerTableLoadState* per_table_state,
+-      CMGlobalLoadState* global_state);
++  // The tservers allowed to host a table's replicas under one PlacementInfoPB (live or read
++  // replica). Built once per table and reused for every tablet of that table; the bool vectors
++  // are indexed like the ts_descs the candidates were built from.
++  struct PlacementCandidates {
++    struct Block {
++      size_t min_num_replicas;
++      // Effective maximum, a hard cap on replicas placed in the block.
++      size_t max_num_replicas;
++      size_t num_allowed;
++      std::vector<bool> allowed;
++    };
++    consensus::PeerMemberType member_type;
++    size_t nreplicas;
++    // Empty when the placement has no placement blocks.
++    std::vector<Block> blocks;
++    // Union of the blocks, or every tserver in the placement when there are none.
++    size_t num_allowed;
++    std::vector<bool> all_allowed;
++  };
++
++  // Resolves and validates the table's replication info and builds the candidates for its live
++  // placement and each read replica placement.
++  Result<std::vector<PlacementCandidates>> BuildPlacementCandidates(
++      const TableInfoPtr& table, const TSDescriptorVector& ts_descs);
+ 
+-  // Handles the config creation for a given placement.
+-  Status HandlePlacementUsingPlacementInfo(const PlacementInfoPB& placement_info,
+-                                           const TSDescriptorVector& ts_descs,
+-                                           consensus::PeerMemberType member_type,
+-                                           consensus::RaftConfigPB* config,
+-                                           CMPerTableLoadState* per_table_state,
+-                                           CMGlobalLoadState* global_state);
++  static Result<PlacementCandidates> BuildPlacementCandidates(
++      const PlacementInfoPB& placement_info, const TSDescriptorVector& ts_descs,
++      consensus::PeerMemberType member_type);
+ 
+   // Populates ts_descs with all tservers belonging to a certain placement.
+   void GetTsDescsFromPlacementInfo(const PlacementInfoPB& placement_info,
+@@ -2067,6 +2079,13 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
+   friend class ObjectLockLoader;
+ 
+   FRIEND_TEST(yb::MasterPartitionedTest, VerifyOldLeaderStepsDown);
++  FRIEND_TEST(TestCatalogManager, PlaceReplicasWithoutPlacementBlocks);
++  FRIEND_TEST(TestCatalogManager, PlaceReplicasPerBlockMinimums);
++  FRIEND_TEST(TestCatalogManager, PlaceReplicasBlockMaximumCapsLeftovers);
++  FRIEND_TEST(TestCatalogManager, PlaceReadReplicas);
++  FRIEND_TEST(TestCatalogManager, PlaceReplicasExcludesOtherPlacementUuids);
++  FRIEND_TEST(TestCatalogManager, PlaceReplicasBlockWithTooFewTservers);
++  FRIEND_TEST(TestCatalogManager, PlaceReplicasOverlappingBlocksFail);
+ 
+   // Called by SysCatalog::SysCatalogStateChanged when this node
+   // becomes the leader of a consensus configuration.
+@@ -2265,53 +2284,44 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
+       const TableId& table_id, const TabletInfos& tablets, const LeaderEpoch& epoch,
+       CMGlobalLoadState* global_load_state);
+ 
+-  // Select a tablet server from 'ts_descs' on which to place a new replica.
+-  // Any tablet servers in 'excluded' are not considered.
+-  // REQUIRES: 'ts_descs' must include at least one non-excluded server.
+-  std::shared_ptr<TSDescriptor> SelectReplica(
+-      const TSDescriptorVector& ts_descs,
+-      std::set<TabletServerId>* excluded,
+-      CMPerTableLoadState* per_table_state, CMGlobalLoadState* global_state);
++  // Index of the least loaded tserver that is in 'allowed' and not in 'excluded', if any.
++  static std::optional<size_t> SelectReplica(
++      const std::vector<bool>& allowed, const std::vector<bool>& excluded,
++      const CMPerTableLoadState& per_table_state);
+ 
+   // Select and assign a tablet server as the protege 'config'. This protege is selected from the
+   // set of tservers in 'global_state' that have the lowest current protege load.
+   Status SelectProtegeForTablet(
+       const TabletInfoPtr& tablet, consensus::RaftConfigPB* config,
+       CMGlobalLoadState* global_state);
+ 
+-  // Select N Replicas from online tablet servers (as specified by
+-  // 'ts_descs') for the specified tablet and populate the consensus configuration
+-  // object. If 'ts_descs' does not specify enough online tablet
+-  // servers to select the N replicas, return Status::
+```
+
+**File**: `src/yb/master/catalog_manager_util.cc` (modified, +14/-22)
+```diff
+@@ -597,17 +597,18 @@ size_t CatalogManagerUtil::GetReplicationFactor(const ReplicationInfoPB& replica
+   return FLAGS_replication_factor;
+ }
+ 
+-Status CMPerTableLoadState::Init(const TSDescriptorVector& ts_descs) {
++Status CMPerTableLoadState::Init(
++    const TSDescriptorVector& ts_descs,
++    const std::unordered_map<TabletServerId, uint32_t>& table_load) {
+   const size_t n = ts_descs.size();
+   uuids_.reserve(n);
+   table_load_.reserve(n);
+   global_load_.reserve(n);
+   for (const auto& ts : ts_descs) {
+     const auto& uuid = ts->permanent_uuid();
+-    auto it = per_ts_replica_load_.find(uuid);
+-    SCHECK(it != per_ts_replica_load_.end(), IllegalState,
+-           Format("per_ts_replica_load_ does not contain $0", uuid));
+-    index_[uuid] = uuids_.size();
++    auto it = table_load.find(uuid);
++    SCHECK(it != table_load.end(), IllegalState,
++           Format("table_load does not contain $0", uuid));
+     uuids_.push_back(uuid);
+     table_load_.push_back(it->second);
+     global_load_.push_back(VERIFY_RESULT(global_load_state_->GetGlobalReplicaLoad(uuid)));
+@@ -633,16 +634,11 @@ bool CMPerTableLoadState::LessLoaded(size_t a, size_t b) const {
+   return uuids_[a] < uuids_[b];
+ }
+ 
+-void CMPerTableLoadState::AddReplica(const TabletServerId& uuid) {
+-  auto it = index_.find(uuid);
+-  if (it == index_.end()) {
+-    LOG(DFATAL) << "Unknown tablet server " << uuid;
+-    return;
+-  }
+-  size_t idx = it->second;
++void CMPerTableLoadState::AddReplica(size_t idx) {
++  DCHECK_LT(idx, uuids_.size());
+   ++table_load_[idx];
+   ++global_load_[idx];
+-  ++global_load_state_->per_ts_replica_load_[uuid];
++  ++global_load_state_->per_ts_replica_load_[uuids_[idx]];
+   // The key only grew, so the entry can only move towards the loaded end.
+   size_t p = pos_[idx];
+   while (p + 1 < sorted_.size() && LessLoaded(sorted_[p + 1], idx)) {
+@@ -708,9 +704,9 @@ bool UseRelfilenodeForTableMatch(const SnapshotInfoPB& snapshot_pb) {
+   return snapshot_pb.format_version() == kUseRelfilenodeFormatVersion;
+ }
+ 
+-template <class LoadState>
+ Status CatalogManagerUtil::FillTableLoadState(
+-    const scoped_refptr<TableInfo>& table_info, LoadState* state) {
++    const scoped_refptr<TableInfo>& table_info,
++    std::unordered_map<TabletServerId, uint32_t>* per_ts_replica_load) {
+   auto tablets = VERIFY_RESULT(table_info->GetTabletsIncludeInactive());
+ 
+   for (const auto& tablet : tablets) {
+@@ -725,21 +721,17 @@ Status CatalogManagerUtil::FillTableLoadState(
+ 
+     for (const auto& loc : *replica_locs) {
+       // Ignore replica if not present in the tserver list passed.
+-      if (state->per_ts_replica_load_.count(loc.first) == 0) {
++      auto it = per_ts_replica_load->find(loc.first);
++      if (it == per_ts_replica_load->end()) {
+         continue;
+       }
+       // Account for this load.
+-      state->per_ts_replica_load_[loc.first]++;
++      ++it->second;
+     }
+   }
+   return Status::OK();
+ }
+ 
+-template Status CatalogManagerUtil::FillTableLoadState(
+-    const scoped_refptr<TableInfo>& table_info, CMPerTableLoadState* state);
+-template Status CatalogManagerUtil::FillTableLoadState(
+-    const scoped_refptr<TableInfo>& table_info, CMGlobalLoadState* state);
+-
+ Status ValidateVectorIndexBackend(const TableId& table_id, const SysTablesEntryPB& table) {
+   if (!table.has_index_info() || !table.index_info().has_vector_idx_options() ||
+       table.index_info().vector_idx_options().idx_type() != PgVectorIndexType::HNSW) {
+```
+
+**File**: `src/yb/master/catalog_manager_util.h` (modified, +10/-12)
+```diff
+@@ -129,9 +129,10 @@ class CatalogManagerUtil {
+ 
+   static Status CheckValidLeaderAffinity(const ReplicationInfoPB& replication_info);
+ 
+-  template<class LoadState>
++  // Adds the table's running replicas to the counts of the tservers already in the map.
+   static Status FillTableLoadState(
+-      const scoped_refptr<TableInfo>& table_info, LoadState* state);
++      const scoped_refptr<TableInfo>& table_info,
++      std::unordered_map<TabletServerId, uint32_t>* per_ts_replica_load);
+ 
+   static const google::protobuf::RepeatedPtrField<TableIdentifierPB>& SequenceDataFilter() {
+     std::call_once(sequences_data_table_filter_once_flag_, []() {
+@@ -211,26 +212,23 @@ class CMPerTableLoadState {
+   explicit CMPerTableLoadState(CMGlobalLoadState* global_state)
+     : global_load_state_(global_state) {}
+ 
+-  // Call once after per_ts_replica_load_ is filled; sorts by (table load, global load, uuid).
+-  Status Init(const TSDescriptorVector& ts_descs);
++  // 'table_load' is the table's replica count per tserver; sorts by (table load, global load,
++  // uuid).
++  Status Init(
++      const TSDescriptorVector& ts_descs,
++      const std::unordered_map<TabletServerId, uint32_t>& table_load);
+ 
+-  // Adds one replica on tserver 'uuid' and keeps the sorted order.
+-  void AddReplica(const TabletServerId& uuid);
++  // Adds one replica on tserver 'idx' and keeps the sorted order.
++  void AddReplica(size_t idx);
+ 
+   // Tserver indexes, least loaded first.
+   const std::vector<size_t>& sorted_by_load() const { return sorted_; }
+ 
+-  const TabletServerId& uuid(size_t idx) const { return uuids_[idx]; }
+-
+-  // Filled by CatalogManagerUtil::FillTableLoadState before Init().
+-  std::unordered_map<TabletServerId, uint32_t> per_ts_replica_load_;
+-
+  private:
+   bool LessLoaded(size_t a, size_t b) const;
+ 
+   CMGlobalLoadState* global_load_state_;
+   std::vector<TabletServerId> uuids_;
+-  std::unordered_map<TabletServerId, size_t> index_;
+   std::vector<uint32_t> table_load_;
+   // Mirror of global_load_state_->per_ts_replica_load_ for the tservers in uuids_.
+   std::vector<uint32_t> global_load_;
+```
 
 ---
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
-the failure logs, wrote the change, and verified it locally._
+
+### Incident Patch 3: `655f790c` (2026-10-24)
+**Commit Message**: [#34393] YSQL: Fix ClassCastException in TestYbQpm stress tests (#34502)
+
+## Summary
+
+`testYbQpmSimpleClockLru` and `testYbQpmTrueLru` fail every run with
+`expected:<10> but was:<1>`.
+
+Cause: `shuffleQueryInfo` does `(QueryInfo[]) list.toArray()` on an
+`Arrays.asList` list. Since JDK 9 that returns `Object[]` (JDK-6260652),
+so every stress thread throws `ClassCastException` before running any
+statement. The thread's `assertFalse(hitException)` fails inside the
+worker thread, which does not fail the test directly. The thread never
+appends its "done" line, so the main thread's count check fails instead.
+The exception was discarded, so the log showed no cause. See the
+correction comment on #34393: the shared connection and 7f964e967 are
+not involved.
+
+Fix: use `list.toArray(new QueryInfo[0])`, and log the exception a
+stress thread catches so a future failure shows its cause.
+
+Not changed: worker-thread assertions still do not propagate to JUnit;
+the completion count is what fails the test. That is unchanged existing
+behaviour and out of scope here.
 
 ## Test plan
 
-./yb_build.sh fastdebug --gcc15 --cxx-test pg_global_views-test
---gtest-filter PgGlobalViewsTest.TestJoinsAreNotPushedDown -n 180
-YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true
---stop-at-failure -- -p 6
-Ran the above locally with no failures.
-Before the fix, this test reproduced locally (same test command and -p /
-env as above, without --stop-at-failure) -- with the CSI dashboard rate
-for reference:
-- gcc15-fastdebug: 
+- [x] Before the fix, with the exception logged: all 10 stress threads
+hit `ClassCastException` at `shuffleQueryInfo` (JDK 
 
-**File**: `src/yb/yql/pgwrapper/pg_global_views-test.cc` (modified, +5/-2)
+**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/TestYbQpm.java` (modified, +2/-1)
 ```diff
-@@ -204,8 +204,11 @@ class PgGlobalViewsTest : public LibPqTestBase {
-     // exact suffix of the log line, i.e. the complete pushed-down query.
-     auto exact_wait_string = Format("$0\n", wait_string);
-     for (int i = 0; i < GetNumTabletServers(); ++i) {
--      thread_holder->AddThreadFunctor([this, exact_wait_string, i]() {
--        ASSERT_OK(LogWaiter(cluster_->tablet_server(i), exact_wait_string).WaitFor(30s));
-+      // Register the waiter before returning, so log lines emitted by the query the caller
-+      // runs next are not missed.
-+      auto waiter = std::make_shared<LogWaiter>(cluster_->tablet_server(i), exact_wait_string);
-+      thread_holder->AddThreadFunctor([waiter]() {
-+        ASSERT_OK(waiter->WaitFor(30s));
-       });
-     }
+@@ -1431,7 +1431,7 @@ public QueryInfo[] shuffleQueryInfo(QueryInfo[] queryInfo, Random randLocal) {
+     List<QueryInfo> list = Arrays.asList(queryInfo);
+     Collections.shuffle(list, randLocal);
+ 
+-    QueryInfo[] shuffledQueryInfo = (QueryInfo[]) list.toArray();
++    QueryInfo[] shuffledQueryInfo = list.toArray(new QueryInfo[0]);
+ 
+     return shuffledQueryInfo;
    }
-```
-
----
-
-### Incident Patch 3: `3719beea` (2026-10-20)
-**Commit Message**: [#34328] DocDB: Skip rows with NULL vectors in intents during vector index search
-
-Summary:
-A ybhnsw search failed with `Vector column (N) missing in row`, crashing debug builds, when a row with intents had a NULL vector, e.g. one written by a transaction that is not applied yet.
-`ReplaceIntentRows` now skips such a row, since a row without a vector is not a search result.
-A row whose vector the transaction set to NULL was also returned at the distance of its old vector, which the index keeps until the transaction is applied.
-`ReadIntentRowKeys` reads rows from intents only, where such a row reads as missing, as does a deleted row, so the filter kept its index entry.
-`DocRowwiseIterator` now returns every row with intents in this mode.
-
-Jira: DB-23876
-
-_automated · Claude Code (Opus 5.5)_
-
-Test Plan:
-./yb_build.sh --cxx-test pgwrapper_pg_vector_index-test --gtest_filter PgVectorIndexTest.NullVectorsInIntents/DistributedYbHnswUsearch
-./yb_build.sh --cxx-test pgwrapper_pg_vector_index-test --gtest_filter PgVectorIndexTest.NullVectorsInNotAppliedIntents/ColocatedYbHnswHnswlib
-New tests search inside the writing transaction, and from another session while the transaction is committed b
-
-**File**: `src/yb/docdb/doc_rowwise_iterator.cc` (modified, +8/-0)
-```diff
-@@ -860,6 +860,14 @@ Result<bool> DocRowwiseIterator::FetchNextImpl(TableRow table_row) {
-       break;
-     }
+@@ -1484,6 +1484,7 @@ public void executeStress(final QueryInfo[] queryInfo, int threadCount, long cac
+                 executeStmts(shuffledQueryInfo, false, debug, null);
  
-+    // Intents alone are not the whole row, e.g. a column set to NULL reads as not found. So this
-+    // mode returns every row with intents.
-+    if (seek_filter_ == SeekFilter::kIntentsOnly) {
-+      RETURN_NOT_OK(FillRow(table_row));
-+      prev_doc_found_ = DocReaderResult::kFoundNotFinished;
-+      break;
-+    }
-+
-     RETURN_NOT_OK(AdvanceIteratorToNextDesiredRow(/* row_finished= */ false,
-                                                   /* current_fetched_row_skipped */ true));
-   }
-```
-
-**File**: `src/yb/docdb/pgsql_operation.cc` (modified, +4/-2)
-```diff
-@@ -1014,8 +1014,10 @@ class VectorIndexKeyProvider {
-         continue;
-       }
-       auto vector_value = table_row.GetValueByIndex(indexed_column_index);
--      RSTATUS_DCHECK(vector_value, Corruption, "Vector column ($0) missing in row: $1",
--                     vector_index_.column_id(), table_row.ToString());
-+      if (!vector_value) {
-+        // A row with a NULL vector is not a search result.
-+        continue;
-+      }
-       auto encoded_value = dockv::EncodedDocVectorValue::FromSlice(vector_value->binary_value());
-       result_entries_.push_back(DocVectorIndexSearchResultEntry {
-         // TODO(vector_index) Avoid decoding vector_slice for each vector
-```
-
-**File**: `src/yb/yql/pgwrapper/pg_vector_index-test.cc` (modified, +43/-0)
-```diff
-@@ -893,6 +893,7 @@ class PgVectorIndexTest : public PgVectorIndexTestParamsDecorator<PgVectorIndexT
-       NonTransactionalWrites non_transactional_writes = NonTransactionalWrites::kFalse);
-   void TestMetric(const std::string& expected);
-   void TestRandom();
-+  void TestNullVectorsInIntents(bool commit);
- };
- 
- MAKE_VECTOR_INDEX_PARAM_TEST_SUITE(PgVectorIndexTest);
-@@ -1531,6 +1532,48 @@ TEST_P(PgVectorIndexTest, DeleteAndUpdate) {
-   ASSERT_NO_FATALS(VerifyRows(conn, AddFilter::kTrue, expected_filtered));
- }
- 
-+// The search merges rows from intents with the index results. A row without a vector there must
-+// be skipped, and must hide its old vector, which is still in the index.
-+void PgVectorIndexTest::TestNullVectorsInIntents(bool commit) {
-+  constexpr size_t kNumRows = 64;
-+  const std::string kCloseVector = "[0.125, 0.25, 0.375]";
-+
-+  auto conn = ASSERT_RESULT(MakeIndexAndFill(kNumRows));
-+  // So the search finds the filled rows in the index, not in intents.
-+  ASSERT_OK(WaitNoBackgroundInserts(WaitForIntents::kTrue, 30s * kTimeMultiplier));
-+  if (commit) {
-+    // Keep the committed rows in intents.
-+    ANNOTATE_UNPROTECTED_WRITE(FLAGS_TEST_transaction_ignore_applying_probability) = 1.0;
-+  }
-+
-+  ASSERT_OK(conn.StartTransaction(IsolationLevel::SNAPSHOT_ISOLATION));
-+  ASSERT_OK(conn.Execute("INSERT INTO test VALUES (1000, NULL), (1001, NULL)"));
-+  ASSERT_OK(conn.Execute("UPDATE test SET embedding = NULL WHERE id = 1"));
-+  ASSERT_OK(conn.Execute("UPDATE test SET embedding = NULL WHERE id = 3"));
-+  ASSERT_OK(conn.ExecuteFormat("UPDATE test SET embedding = '$0' WHERE id = 10", kCloseVector));
-+  if (commit) {
-+    ASSERT_OK(conn.CommitTransaction());
-+  }
-+
-+  std::vector<std::string> expected = {
-+    BuildRow(10, kCloseVector),
-+    ExpectedRow(2),
-+    ExpectedRow(4),
-+    ExpectedRow(5),
-+    ExpectedRow(6),
-+  };
-+  ASSERT_NO_FATALS(VerifyRows(conn, AddFilter::kFalse, expected));
-+  ASSERT_NO_FATALS(VerifyRows(conn, AddFilter::kTrue, {ExpectedRow(2)}));
-+}
-+
-+TEST_P(PgVectorIndexTest, NullVectorsInIntents) {
-+  TestNullVectorsInIntents(/* commit= */ false);
-+}
-+
-+TEST_P(PgVectorIndexTest, NullVectorsInNotAppliedIntents) {
-+  TestNullVectorsInIntents(/* commit= */ true);
-+}
-+
- TEST_P(PgVectorIndexTest, IndexCheck) {
-   constexpr size_t kNumRows = 64;
+             } catch (Exception e) {
++                LOG.error("Stress thread " + threadId + " failed", e);
+                 hitException = true;
+             }
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35631** (2026-10-22): [PLAT-23249] YBA: Promote itest-covered yba CLI commands and flags from preview to GA (@Deepti-yb)
-- **PR #35622** (2026-10-22): [BACKPORT 2026.1][PLAT-21847] YBA: Skip OTEL metrics scrape targets for servers a node does not run (#35192) (@Deepti-yb)
-- **PR #35554** (2026-10-22): [PLAT-23200] YBA: Target read replica releases in K8s YSQL major compatibility-flag step (@vipul-yb)
-- **PR #35532** (closed): [#35164] DocDB: DO NOT MERGE - benchmark build of #35175 with a runtime flag for the old wakeups (@kai-franz)
-- **PR #35531** (2026-10-21): [#35262] YSQL: Fix log waiter race in PgGlobalViewsTest.TestJoinsAreNotPushedDown (@csi-fix)
-- **PR #35486** (2026-10-22): [BACKPORT 2025.2][PLAT-23184] YBA: Keep PITR schedules on a Kubernetes upgrade that needs no finalize (#35442) (@vipul-yb)
+- **PR #35766** (closed): [#35199] YSQL: Fix PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 by lengthening the YSQL lease (@csi-fix)
+- **PR #35751** (2026-10-24): [#32301] YSQL: Retry a YSQL migration that fails with a serialization failure (@myang2021)
+- **PR #35711** (2026-10-23): [#35643] Docs: Document Connection Manager disconnecting sessions of a dropped role (@arpit-saxena)
+- **PR #35709** (2026-10-24): [PLAT-23213] YBA: Keep a failed task's rollback checkpoint when other tasks run on the broken universe (@vipul-yb)
+- **PR #35680** (2026-10-23): [BACKPORT 2026.1][#35550] DocDB: Count only the test table's peers in OrphanedTabletCleanupTest (#35558) (@hkimura)
+- **PR #35679** (2026-10-23): [BACKPORT 2025.2][#35550] DocDB: Count only the test table's peers in OrphanedTabletCleanupTest (#35558) (@hkimura)
 
 ---
 
@@ -2960,83 +2882,46 @@ New tests search inside the writing transaction, and from another session while 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#34610,#34829,#35049] YSQL: Fix COPY crash and memory growth from per-row conte
+## X. [#34664] YSQL: Fix RemoteBootstrapITest.TestRBSWithLazySuperblockFlush leader-fa
 
 **RULE**:
-When implementing operations in `src/postgres/src/backend/commands/copyfrom.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/yb/integration-tests/remote_bootstrap-itest.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `029efa15`: [#34610,#34829,#35049] YSQL: Fix COPY crash and memory growth from per-row context guards. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c48c3dbf`: [#34664] YSQL: Fix RemoteBootstrapITest.TestRBSWithLazySuperblockFlush leader-failover delay. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/src/backend/commands/copyfrom.c`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/integration-tests/remote_bootstrap-itest.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-		/*
-		 * Reset the per-tuple exprcontext. We do this after every tuple, to
-		 * clean-up after expression evaluations etc.
-		 */
-		ResetPerTupleExprContext(estate);
-		MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
-		MemoryContextSwitchTo(oldcontext);
-						/*
-						 * YB: the insert path allocates per-row temporaries
-						 * (e.g. the ybctid) in the current context; run it in
-						 * the per-tuple context so they are freed every row.
-						 */
-						MemoryContext yb_saved_cxt =
-							MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
+  // Move leadership off the tserver to tombstone. Otherwise the other peers only notice the leader
+  // is gone after the failure detection timeout, which under TSAN delays RBS past the wait below.
+  ASSERT_OK(WaitFor(
+      [&]() -> Result<bool> {
+        auto leader = cluster_->GetTabletLeaderIndex(tablet_id, /* require_lease = */ true);
+        if (!leader.ok()) {
+          return false;
+        }
+        if (*leader != ts_idx_to_bootstrap) {
+          return true;
+        }
+        WARN_NOT_OK(
+            itest::LeaderStepDown(ts, tablet_id, /* new_leader = */ nullptr, timeout),
+            "Leader step down failed");
+        return false;
+      },
+      timeout, "Waiting for leader to move off ts_idx_to_bootstrap"));
 
-						MemoryContextSwitchTo(yb_saved_cxt);
-		/*
-		 * YB: Fire AFTER triggers in the query context, as upstream does
-		 * before AfterTriggerEndQuery() at the end of CopyFrom(). The last
-		 * batch gets here in the per-tuple context, from the break after
-		 * NextCopyFrom().
-		 */
-		MemoryContextSwitchTo(oldcontext);
-
+  // Delete tablet and shutdown one tserver.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-		if (IsYBRelation(resultRelInfo->ri_RelationDesc))
-			MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
-
-		if (!IsYBRelation(resultRelInfo->ri_RelationDesc))
-		{
-			/*
-			 * Reset the per-tuple exprcontext. We do this after every tuple, to
-			 * clean-up after expression evaluations etc.
-			 */
-			ResetPerTupleExprContext(estate);
-		}
-		if (!IsYBRelation(resultRelInfo->ri_RelationDesc))
-			MemoryContextSwitchTo(GetPerTupleMemoryContext(estate));
-		if (!IsYBRelation(resultRelInfo->ri_RelationDesc))
-			MemoryContextSwitchTo(oldcontext);
-			/*
-			 * Tuple memory will be allocated to per row memory context
-			 * which will be cleaned up after every row gets processed.
-			 * Thus there is no need to clean the tuple memory.
-			 */
-			if (IsYBRelation(resultRelInfo->ri_RelationDesc))
-				myslot->tts_flags &= ~TTS_FLAG_SHOULDFREE;
-
-						MemoryContext saved_context;
-
-						saved_context = MemoryContextSwitchTo(estate->es_query_cxt);
-						MemoryContextSwitchTo(saved_context);
-
-		/*
-		 * Free context per row.
-		 */
-		if (IsYBRelation(cstate->rel))
-			ResetPerTupleExprContext(estate);
+  // Delete tablet and shutdown one tserver.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `029efa15` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c48c3dbf` are properly handled with clean fallback behavior.

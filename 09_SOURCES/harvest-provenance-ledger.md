@@ -4657,3 +4657,5 @@ Every entry in this ledger must capture:
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `72067296` | Multi-dimensional audit evidence | 2026-10-25T03:59:27.292Z |
 | `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `2a64ae16` | Multi-dimensional audit evidence | 2026-10-25T03:59:29.739Z |
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `1a172945` | Multi-dimensional audit evidence | 2026-10-25T03:59:34.704Z |
+| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-25T04:05:52.648Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `d00af7d2` | Multi-dimensional audit evidence | 2026-10-25T04:06:07.069Z |

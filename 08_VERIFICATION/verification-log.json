@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-KAJZ",
-    "timestamp": "2026-10-21T02:21:27.791Z",
-    "repository": "kumahq/kuma",
-    "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "3b6ab25465678cf039d00ac5672c122b6dfe9d105deec18b7d2edd0177cd2b8f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-KDHI",
-    "timestamp": "2026-10-21T02:21:31.590Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "2c652f4c3dfc695a40d59ec6f53553f56be9b5f93fff4743308c5d79d1c5b54e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-SB1L",
     "timestamp": "2026-10-21T02:27:41.673Z",
     "repository": "openai/clip-vit-base-patch32",
@@ -7490,6 +7460,36 @@
     "repository": "flux-iac/tofu-controller",
     "learningId": "learn-github-flux-iac-tofu-controller",
     "contentHash": "753974fd94470642633bc566014dbc18488dab99058f9ca54b5608c2012c11bd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-1Z7O",
+    "timestamp": "2026-10-25T04:05:52.644Z",
+    "repository": "google/gemma-4-31B-it",
+    "learningId": "learn-huggingface-google-gemma-4-31b-it",
+    "contentHash": "309aacb8699faa0054caa34f078e19428790420dabb0b6fafe3aa266c94b5910",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-2ACA",
+    "timestamp": "2026-10-25T04:06:07.066Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "43b9863746dd409476dcc82c601425dbe7acb16cd1a83a1315f37bc1c55336ca",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T03:59:34.711Z",
+  "last_updated": "2026-10-25T04:06:07.083Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1640,14 +1640,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-31b-it",
-      "content_hash": "c48f091e94f151c3293bf74c8a31b7678942ae63edb2ae38e2c0988c74b50483",
-      "verified_at": "2026-10-20T12:03:42.438Z",
+      "content_hash": "309aacb8699faa0054caa34f078e19428790420dabb0b6fafe3aa266c94b5910",
+      "verified_at": "2026-10-25T04:05:52.655Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:03:42.438Z"
+      "last_updated": "2026-10-25T04:05:52.655Z"
     },
     "BAAI/bge-base-en-v1.5": {
       "repository": "BAAI/bge-base-en-v1.5",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "9ae356823ee232e2d2cf74632da90d871f98e37e4de5fca08e9efe1130b26660",
-      "verified_at": "2026-10-22T16:22:32.478Z",
+      "content_hash": "43b9863746dd409476dcc82c601425dbe7acb16cd1a83a1315f37bc1c55336ca",
+      "verified_at": "2026-10-25T04:06:07.082Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:22:32.478Z"
+      "last_updated": "2026-10-25T04:06:07.082Z"
     },
     "React95/React95": {
       "repository": "React95/React95",

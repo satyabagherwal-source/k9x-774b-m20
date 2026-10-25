@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T03:59:34.621Z",
+  "last_updated": "2026-10-25T04:06:07.013Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20299,7 +20299,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "c48f091e94f151c3293bf74c8a31b7678942ae63edb2ae38e2c0988c74b50483",
+      "content_hash": "309aacb8699faa0054caa34f078e19428790420dabb0b6fafe3aa266c94b5910",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "promoted_rules": [
@@ -20356,7 +20356,7 @@
         "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a",
         "learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq"
       ],
-      "verified_at": "2026-10-20T12:03:42.374Z",
+      "verified_at": "2026-10-25T04:05:52.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50793,8 +50793,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "730f9fab",
-      "content_hash": "9ae356823ee232e2d2cf74632da90d871f98e37e4de5fca08e9efe1130b26660",
+      "source_version": "d00af7d2",
+      "content_hash": "43b9863746dd409476dcc82c601425dbe7acb16cd1a83a1315f37bc1c55336ca",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -50822,6 +50822,11 @@
           "number": 3635,
           "title": "[#34610,#34829,#35049] YSQL: Fix COPY crash and memory growth from per-row conte",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4034,
+          "title": "[#34664] YSQL: Fix RemoteBootstrapITest.TestRBSWithLazySuperblockFlush leader-fa",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50829,7 +50834,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:22:32.403Z",
+      "verified_at": "2026-10-25T04:06:07.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117870,6 +117875,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T03:59:34.602Z"
+    },
+    "rule-4034": {
+      "learning_id": "rule-4034",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4034,
+      "title": "[#34664] YSQL: Fix RemoteBootstrapITest.TestRBSWithLazySuperblockFlush leader-fa",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "d00af7d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:06:07.001Z"
     }
   },
   "aliases": {
