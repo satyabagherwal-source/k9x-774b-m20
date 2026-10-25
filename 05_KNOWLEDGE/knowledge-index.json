@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T02:05:13.475Z",
+  "last_updated": "2026-10-25T02:11:22.446Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33433,8 +33433,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "4888330a",
-      "content_hash": "5154e8e29edbf76dad9172c1ec5e18343030295207126985e13b6e87cba8b488",
+      "source_version": "70a4ab8e",
+      "content_hash": "f4d446086325dc54b5f06f1276c893a3de074ca9583956177fb6612ae46fda49",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -33482,6 +33482,11 @@
           "number": 3865,
           "title": "deps): Bump black (#4415)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3972,
+          "title": "haystack-agentmesh): charge TrustGate decay once per elapsed hour (#4401)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33489,7 +33494,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T09:58:08.044Z",
+      "verified_at": "2026-10-25T02:11:19.206Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37769,8 +37774,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "0a975e83",
-      "content_hash": "5d7ddc00ef533a632c2df5f3a0e096ad456f09109a48a3717efd03c79d4bfb16",
+      "source_version": "8830c516",
+      "content_hash": "866ac00d65f98c0279a609fba0271e08c079fd5663e75881746e4be5414e6bf5",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -37793,6 +37798,11 @@
           "number": 3609,
           "title": "Config driven imports in new runtime",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3971,
+          "title": "Add support for provider functions in tofu console",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37800,7 +37810,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:42:04.870Z",
+      "verified_at": "2026-10-25T02:11:17.442Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43856,14 +43866,19 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "a5c4fd22",
-      "content_hash": "9dbc63f00c56d179cb440f93757f6a20bcea876d26d0354bf6df3b43a25de4ca",
+      "source_version": "811dd4cd",
+      "content_hash": "0180c7a53059a6724258a74814f0d569ea6a5f6b05fc4f8432b399747e0d671a",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
         {
           "number": 1979,
           "title": "Fix/external compaction concurrency cap (#2110)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3973,
+          "title": "Add Atomix to list of adopters (#2188)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -43872,7 +43887,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:35:01.887Z",
+      "verified_at": "2026-10-25T02:11:22.440Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -116692,6 +116707,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T02:05:13.464Z"
+    },
+    "rule-3971": {
+      "learning_id": "rule-3971",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3971,
+      "title": "Add support for provider functions in tofu console",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "8830c516",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:11:17.442Z"
+    },
+    "rule-3972": {
+      "learning_id": "rule-3972",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3972,
+      "title": "haystack-agentmesh): charge TrustGate decay once per elapsed hour (#4401)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "70a4ab8e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:11:19.206Z"
+    },
+    "rule-3973": {
+      "learning_id": "rule-3973",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3973,
+      "title": "Add Atomix to list of adopters (#2188)",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "811dd4cd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:11:22.440Z"
     }
   },
   "aliases": {

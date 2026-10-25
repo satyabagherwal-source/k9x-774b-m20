@@ -4607,3 +4607,6 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `7ffbe9cc` | Multi-dimensional audit evidence | 2026-10-24T20:55:04.252Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `7b74cb41` | Multi-dimensional audit evidence | 2026-10-24T20:55:05.480Z |
 | `learn-github-shiguangschedule-shiguangschedule` | `https://github.com/ShiGuangSchedule/shiguangschedule` | `feabb68f` | Multi-dimensional audit evidence | 2026-10-25T02:05:13.531Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `8830c516` | Multi-dimensional audit evidence | 2026-10-25T02:11:17.483Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `70a4ab8e` | Multi-dimensional audit evidence | 2026-10-25T02:11:19.252Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `811dd4cd` | Multi-dimensional audit evidence | 2026-10-25T02:11:22.479Z |

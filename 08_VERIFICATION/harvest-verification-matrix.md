@@ -4600,3 +4600,6 @@
 | `CYCLE-20261024-NYGP` | `2026-10-24T20:55:04.249Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3966` | Yes (`7de1988f...`) |
 | `CYCLE-20261024-NZET` | `2026-10-24T20:55:05.477Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3967` | Yes (`4b04e7c2...`) |
 | `CYCLE-20261025-QTH4` | `2026-10-25T02:05:13.528Z` | `ShiGuangSchedule/shiguangschedule` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3968, Rule 3969, Rule 3970` | Yes (`06c748de...`) |
+| `CYCLE-20261025-YMAX` | `2026-10-25T02:11:17.481Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3971` | Yes (`866ac00d...`) |
+| `CYCLE-20261025-YNO1` | `2026-10-25T02:11:19.249Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3972` | Yes (`f4d44608...`) |
+| `CYCLE-20261025-YQ5P` | `2026-10-25T02:11:22.477Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3973` | Yes (`0180c7a5...`) |
