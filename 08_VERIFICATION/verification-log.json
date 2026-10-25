@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-3U7R",
-    "timestamp": "2026-10-21T02:08:40.119Z",
-    "repository": "primer/react",
-    "learningId": "learn-github-primer-react",
-    "contentHash": "2b7cfb2ca9654e109a19531074c3f32a106e3d87976400d3b4577830e42de1e6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-BXMY",
-    "timestamp": "2026-10-21T02:14:57.802Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-    "contentHash": "4115646a5581225ca333c570ece820e3b48ded6b0bb6f1b4a8296374441bee51",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-C22U",
-    "timestamp": "2026-10-21T02:15:03.558Z",
-    "repository": "modelcontextprotocol/kotlin-sdk",
-    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-    "contentHash": "67512e6b6531a48ff36f713a39b25fffacf4152560c9666381320c797579af96",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-KADS",
-    "timestamp": "2026-10-21T02:21:27.568Z",
-    "repository": "NaiveAI/Naive-N0.5-Flash",
-    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-    "contentHash": "8588d0f2f7ead8e5c0ce914250172e548e610c751dd50f0bc21c5340a5325e7c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-KAJZ",
     "timestamp": "2026-10-21T02:21:27.791Z",
     "repository": "kumahq/kuma",
@@ -7492,6 +7432,66 @@
     "contentHash": "b39cd79c4f070255b8f62d1825bd5a047ae249396209fd2c6564944a8a51807c",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-TOQW",
+    "timestamp": "2026-10-25T03:59:25.832Z",
+    "repository": "mui/base-ui",
+    "learningId": "learn-github-mui-base-ui",
+    "contentHash": "9b292d75f7cd9d16474cd75458557254d8df11743f110f3231ab1232d23b780e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-TPVD",
+    "timestamp": "2026-10-25T03:59:27.289Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "b2b6c53ee0393d44b3146dafff718e166ba72a1b5d33796fe562dd442b31e4f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-TRRC",
+    "timestamp": "2026-10-25T03:59:29.736Z",
+    "repository": "fastify/fastify",
+    "learningId": "learn-github-fastify-fastify",
+    "contentHash": "80df53976bb41362a23b66f54adf3402754c7a8a90a671b061050b1e737488cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-TVL8",
+    "timestamp": "2026-10-25T03:59:34.700Z",
+    "repository": "flux-iac/tofu-controller",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "753974fd94470642633bc566014dbc18488dab99058f9ca54b5608c2012c11bd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

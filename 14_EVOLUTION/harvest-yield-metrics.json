@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T03:53:00.329Z",
-  "total_cycles_completed": 4623,
-  "total_learnings_persisted": 4623,
-  "total_rules_promoted": 3891,
+  "last_updated": "2026-10-25T03:59:34.708Z",
+  "total_cycles_completed": 4627,
+  "total_learnings_persisted": 4627,
+  "total_rules_promoted": 3895,
   "history": [
-    {
-      "timestamp": "2026-10-22T21:35:16.118Z",
-      "repository": "RDFLib/pySHACL",
-      "learningId": "learn-github-rdflib-pyshacl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T21:35:20.220Z",
-      "repository": "Comfy-Org/Z-Image-Turbo",
-      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T21:35:25.939Z",
-      "repository": "langchain4j/langchain4j",
-      "learningId": "learn-github-langchain4j-langchain4j",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T21:41:46.194Z",
-      "repository": "vikejs/vike",
-      "learningId": "learn-github-vikejs-vike",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T21:47:59.908Z",
       "repository": "unsloth/flint-GGUF",
@@ -1403,6 +1375,34 @@
       "repository": "StarRocks/starrocks",
       "learningId": "learn-github-starrocks-starrocks",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:59:25.839Z",
+      "repository": "mui/base-ui",
+      "learningId": "learn-github-mui-base-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:59:27.302Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:59:29.749Z",
+      "repository": "fastify/fastify",
+      "learningId": "learn-github-fastify-fastify",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:59:34.708Z",
+      "repository": "flux-iac/tofu-controller",
+      "learningId": "learn-github-flux-iac-tofu-controller",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

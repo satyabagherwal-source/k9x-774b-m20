@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `102737e4`  
+> **Source Version**: `72067296`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T18:13:55.026Z  
+> **Timestamp**: 2026-10-25T03:59:26.827Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T18:13:54.547Z  
+> **Harvest Timestamp**: 2026-10-25T03:59:26.817Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4132 stars
+- **Stars / Engagement**: 4170 stars
 
 ---
 
@@ -1118,494 +1118,890 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `102737e4` (2026-10-21)
-**Commit Message**: feat(rust): add current-file path lookup (#262)
+### Incident Patch 1: `a2fa4b40` (2026-10-23)
+**Commit Message**: fix(rust): preserve command results when stdout closes early (#270)
 
-**File**: `rust/Cargo.lock` (modified, +2/-0)
-```diff
-@@ -4039,6 +4039,7 @@ dependencies = [
-  "zg-daemon",
-  "zg-daemon-protocol",
-  "zg-engine",
-+ "zg-testkit",
-  "zvec-rust",
-  "zvec-rust-build",
- ]
-@@ -4050,6 +4051,7 @@ dependencies = [
-  "chrono",
-  "clap",
-  "crossterm",
-+ "grep",
-  "serde_json",
-  "tempfile",
-  "thiserror",
-```
+CLI stdout used panicking print macros or propagated BrokenPipe before readiness checks. Ignore only broken-pipe writes at the output boundary so validation and cleanup continue, matching the Node.js CLI behavior.
 
-**File**: `rust/README.md` (modified, +38/-0)
+**File**: `rust/crates/zg-cli/src/install.rs` (modified, +32/-26)
 ```diff
-@@ -230,6 +230,33 @@ metadata included in search projections. Index format 5 uses this layout.
- Lexical search runs in-process with ripgrep's `grep` and `ignore` crates; the
- binary and ordinary CI jobs do not require a system `rg` executable.
+@@ -135,7 +135,7 @@ struct AgentOptions {
+ /// Returns an error when target selection, configuration validation, or an
+ /// atomic file update fails.
+ pub fn execute_install(args: &InstallArgs) -> Result<InstallOutcome, InstallError> {
+-    print_header();
++    print_header()?;
+     let detected = detect_agents();
+     let agents = resolve_agents(
+         args.targets.iter().chain(&args.positional_targets),
+@@ -144,7 +144,7 @@ pub fn execute_install(args: &InstallArgs) -> Result<InstallOutcome, InstallErro
+         "install",
+     )?;
+     if agents.is_empty() {
+-        println!("\nNo agent integrations selected.");
++        writeln!(crate::stdout(), "\nNo agent integrations selected.")?;
+         return Ok(InstallOutcome {
+             agent_labels: Vec::new(),
+             transport: args.transport.unwrap_or_default(),
+@@ -160,18 +160,18 @@ pub fn execute_install(args: &InstallArgs) -> Result<InstallOutcome, InstallErro
+         token_env: args.mcp_token_env.clone(),
+     };
  
-+A single file name or path, such as `zg auth.ts` or `zg src/auth.ts`, first
-+looks up current file paths. Matches use `#1 matchedBy=path src/auth.ts`, with
-+forward slashes on every platform and exact workspace-relative paths before suffix
-+matches. Ties use deterministic native path ordering; `--limit` bounds the list
-+(default: 10). Lookup uses the nearest workspace's saved scan rules and query
-+file filters, and includes empty files. It runs locally in direct, server, and
-+auto modes without loading a model, creating an index, or requiring a daemon.
-+File discovery does not apply index-only default exclusions for build directories,
-+lock files, or images; saved scanning rules and ignore files still apply.
-+File matches do not read or embed contents. If no file matches, lookup searches
-+the selected current source text literally using the same scan rules and filters.
-+A path mentioned only in source text returns those text matches. No match prints
-+`No matches.` instead of unrelated vector neighbors, even with an existing index.
-+Text results deduplicate complete structural entities before applying `--limit`;
-+multiple retrieval fragments of one function or Markdown section count once.
-+Literal matching and highlighting use the same smart-case rules: queries with
-+uppercase letters are case-sensitive; lowercase queries ignore case.
-+Results show line numbers, match/context markers, and structural headings. Terminal output also
-+shows coverage and per-file/per-hit metadata. Truncated file or text results warn
-+on stderr. Unlike the Node.js CLI, truncated text remains local instead of starting
-+indexed retrieval; direct, server, and auto modes share this behavior and never
-+require model loading or indexing. Native glob ordering, format aliases, ignore
-+handling, and path normalization retain the Rust CLI's existing semantics.
-+Explicit `--hybrid`, `--fts`, `--vector`, `--fuse`, symbol options, `--trace`, and
-+`--refresh` retain their indexed behavior. Text questions, URLs, and glob patterns
-+do not trigger automatic path lookup.
-+
- Managed `zg --rg` preserves literal pattern whitespace and supports empty
- patterns with `-e ''`. Matching options include fixed strings (`-F`), case
- selection (`-i`, `-s`, `-S`, with the last option winning), word/whole-line
-@@ -246,6 +273,17 @@ engine. PCRE2, compressed-file search, explicit encoding selection, and native
- ripgrep output-format switches other than file listing are rejected; Unicode
- BOM decoding is automatic.
- 
-+Automatic path lookup emits
-+`warning: automatically performing path lookup; use --hybrid to force hybrid search.`
-+on stderr only when the default query actually enters that branch. `--hybrid`
-+overrides the inference, including ambiguous inputs such as `config.timeout` and
-+`v1.2`.
-+
-+When no file path matches and lookup falls back to literal source search, it also
-+prints `warning: no matching file paths; searching current file contents literally (rg).`
-+on stderr. This appears for both text matches and `No matches.`; stdout contains
-+only the search results.
-+
- Use `zg --rg --files` for explicit file discovery:
- 
- ```sh
-```
-
-**File**: `rust/compat/allowed-differences.toml` (modified, +12/-0)
-```diff
-@@ -84,3 +84,15 @@ id = "mcp-workspace-status-storage-metadata"
- owner = "MCP/storage"
- reason = "Rust workspace_index.id 使用持久工作区名称而非 Node 的内部标识格式；调用方应将其视为不透明标识。Rust 尚未持久化 embedding 输入截断统计，因此不虚构 truncated_fragments=0，保留现有真实 status 统计。验证：status 序列化和引擎 info 回归；scan_diagnostics 的完整计数独立于有界样本。"
- removal_condition = "底层存储支持截断统计或统一工作区标识后补齐字段，并添加真实索引回归。"
-+
-+[[difference]]
-+id = "cli-path-lookup-local-admission"
-+owner = "CLI/current-source"
-+reason = "路径查找在 direct/server/auto 均先读取本地当前文件，显式 server 不跳过。文本覆盖被结果或候选上限截断时输出不完整警告，保持本地检索，不启动索引或补入无关向量近邻。验证：path_lookup_reports_file_and_text_truncation_without_indexing_in_all_modes、warm_index_path_lookups_return_current_text_or_no_matches_without_vector_neighbors。"
-+removal_condition = "Node.js 采用相同本地查找边界，或产品明确要求不完整路径文本查找继续使用索引后重新评估。"
-+
-+[[difference]]
-+id = "cli-path-lookup-native-selection"
-+owner = "CLI/file-selection"
-+reason = "文件命中同级排序保留跨运行确定的原生路径顺序，不依赖系统 locale；保留 Rust 已有混合 glob 输入顺序、引擎格式别名、非 Git 目录中的 ignore 处理，以及重复 ./、目录别名、Windows 扩展路径规范化。输出路径统一为正斜杠。结构预览使用引擎实际提供的元数据字段和明确内容坐标。"
-+removal_condition = "两端统一文件选择、结构元数据和排序契约后更新对照；不得为复制旧行为而破坏 Rust 已有扫描规则。"
-```
-
-**File**: `rust/compat/cli/path-lookup.json` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+{
-+  "schema_version": 1,
-+  "id": "cli.path-lookup.truncated-files",
-+  "description": "Current file names use ranked path labels and warn when the requested limit omits matches.",
-+  "input": {
-+    "argv": [
-+      "auth.ts",
-+      "--mode",
-+      "direct",
-+      "--limit",
-+      "1"
-+    ],
-+    "cwd_fixture": "path-lookup-two-files",
-+    "env": {
-+      "NO_COLOR": "1"
-+    }
-+  },
-+  "expected": {
-+    "exit_code": 0,
-+    "stdout": "#1 matchedBy=path a/auth.ts\n",
-+    "stderr": "warning: automatically performing path lookup; use --hybrid to force hybrid search.\nwarning: more matching files exist; use --limit to show more\n"
-+  }
-+}
-```
-
-**File**: `rust/compat/mode-differences.toml` (modified, +7/-0)
-```diff
-@@ -1,6 +1,13 @@
- # Direct and Server call the same ZvecGrep methods. Entries here are the only allowed
- # semantic differences and must be exercised by compatibility tests.
- 
-+[[difference]]
-+id = "path-lookup-is-local"
-+operation = "path_lookup"
-+direct = "look up current file names and literal source in the invoking process"
-+server = "use the same local lookup without requiring or contacting a daemon"
-+reason = "file names and exhaustive current text are independent of index availability; truncated local text explicitly reports incomplete coverage"
-+
- [[difference]]
- id = "managed-rg-is-local"
- operation = "lexical_search"
-```
-
-**File**: `rust/crates/zg-cli/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -11,6 +11,7 @@ publish.workspace = true
- chrono.workspace = true
- clap.workspace = true
- crossterm = { workspace = true, features = ["bracketed-paste"] }
-+grep.workspace = true
- # Configuration objects can contain first-match rules whose order must survive edits.
- serde_json = { workspace = true, features = ["preserve_order"] }
- thiserror.workspace = true
-```
-
-**File**: `rust/crates/zg-cli/src/lib.rs` (modified, +72/-0)
-```diff
-@@ -5,6 +5,7 @@ mod install;
- mod jsonc;
- mod managed_rg;
- mod management;
-+mod path_lookup;
- mod progress;
- mod render;
- mod setup;
-@@ -57,6 +58,7 @@ pub use install::{
-     resolve_server_url,
- };
- pub use managed_rg::{ManagedRgArgumentError, parse_managed_rg_args};
-+pub use path_lookup::write_path_lookup_result;
- pub use render::{
-     HelpTopicError, help_text, print_help, write_context_result, write_context_status,
-     write_context_with_options, write_file_paths,
-@@ -680,6 +682,7 @@ pub enum CliPlan {
-         mode: ClientMode,
-         home: Option<PathBuf>,
-         request: Box<ContextOptions>,
-+        path_lookup: bool,
-         output: OutputOptions,
-     },
-     Index {
-@@ -1350,6 +1353,7 @@ fn query_plan(
- ) -> Result<CliPlan, CliError> {
-     let mode = resolve_query_mode(&args)?;
-     validate_query(&args, mode)?;
-+    let path_lookup = uses_path_lookup(&args);
-     let home = args.home.clone();
-     let output = args.output_options(terminal);
-     let mut files = false;
-@@ -1442,10 +1446,38 @@ fn query_plan(
-         mode,
-         home,
-         request: Box::new(request),
-+        path_lookup,
-         output,
-     })
- }
- 
-+fn uses_path_lookup(args: &QueryArgs) -> bool {
-+    !args.rg
-+        && args.hybrid_queries.is_empty()
-+        && args.fts.is_empty()
-+        && args.vector.is_empty()
-+        && !args.fuse
-+        && !args.prefer_symbol
-+        && !args.trace
-+        && args.refresh.is_none()
-+        && args.symbol_types.is_empty()
-+        && args.values.len() == 1
-+        && is_path_query(&args.values[0])
-+}
-+
-+fn is_path_query(query: &str) -> bool {
-+    let query = query.trim();
-+    !query.is_empty()
-+        && !query.chars().any(char::is_whitespace)
-+        && !query.contains("://")
-+        && !query.contains(['?', '*', '<', '>', '|'])
-+        && (query.contains(['/', '\\'])
-+            || query.rsplit_once('.').is_some_and(|(_, extension)| {
-+                (1..=12).contains(&extension.len())
-+                    && extension.bytes().all(|byte| byte.is_ascii_alphanumeric())
-+            }))
-+}
-+
- fn index_plan(mut args: IndexArgs, current_dir: &Path) -> Result<CliPlan, CliError> {
-     args.model_cache = args
-         .model_cache
-@@ -1768,6 +1800,46 @@ mod tests {
+-    println!("\nInstalling integrations\n");
++    writeln!(crate::stdout(), "\nInstalling integrations\n")?;
+     for agent in &agents {
+         let result = install_agent(*agent, &options)?;
+-        println!("  ✓ {}", agent.label());
+-        println!("    MCP       configured");
++        writeln!(crate::stdout(), "  ✓ {}", agent.label())?;
++        writeln!(crate::stdout(), "    MCP       configured")?;
+         if let Some(path) = result.config_path {
+-            println!("    Config    {}", path.display());
++            writeln!(crate::stdout(), "    Config    {}", path.display())?;
          }
+         if let Some(note) = result.config_note {
+-            println!("    Note      {note}");
++            writeln!(crate::stdout(), "    Note      {note}")?;
+         }
+-        println!();
++        writeln!(crate::stdout())?;
      }
  
-+    #[test]
-+    fn only_ordinary_single_path_queries_enable_file_lookup() {
-+        for query in [
-+            "auth.ts",
-+            "config.timeout",
-+            "v1.2",
-+            "src/auth.ts",
-+            ".\\src\\auth.ts",
-+            ".gitignore",
-+            "src/auth",
-+        ] {
-+            let CliPlan::Query { path_lookup, .. } = plan(&["zg", query], false) else {
-+                panic!("query plan");
-+            };
-+            assert!(path_lookup, "{query}");
-+        }
-+        for args in [
-+            vec!["zg", "authentication"],
-+            vec!["zg", "find auth.ts"],
-+            vec!["zg", "auth.ts", "login"],
-+            vec!["zg", "https://example.com/auth.ts"],
-+            vec!["zg", "*.ts"],
-+            vec!["zg", "auth.ts", "--hybrid", "login"],
-+            vec!["zg", "--hybrid", "auth.ts"],
-+            vec!["zg", "--fts", "auth.ts"],
-+            vec!["zg", "--vector", "auth.ts"],
-+            vec!["zg", "auth.ts", "--fuse"],
-+            vec!["zg", "auth.ts", "--prefer-symbol"],
-+            vec!["zg", "auth.ts", "--trace"],
-+            vec!["zg", "auth.ts", "--refresh", "wait"],
-+            vec!["zg", "auth.ts", "--symbol-type", "function"],
-+            vec!["zg", "--rg", "auth.ts"],
-+        ] {
-+            let CliPlan::Query { path_lookup, .. } = plan(&args, false) else {
-+                panic!("query plan");
-+            };
-+            assert!(!path_lookup, "{args:?}");
-+        }
-+    }
-+
-     #[test]
-     fn search_is_default_and_old_command_words_remain_queries() {
-         for word in [
+     Ok(InstallOutcome {
+@@ -188,7 +188,7 @@ pub fn execute_install(args: &InstallArgs) -> Result<InstallOutcome, InstallErro
+ /// Returns an error when an existing configuration is invalid or a file update
+ /// fails.
+ pub fn execute_uninstall(args: &UninstallArgs) -> Result<(), InstallError> {
+-    print_header();
++    print_header()?;
+     let detected = detect_agents();
+     let agents = resolve_agents(
+         args.targets.iter().chain(&args.positional_targets),
+@@ -197,23 +197,27 @@ pub fn execute_uninstall(args: &UninstallArgs) -> Result<(), InstallError> {
+         "uninstall",
+     )?;
+     if agents.is_empty() {
+-        println!("\nNo agent integrations selected.");
++        writeln!(crate::stdout(), "\nNo agent integrations selected.")?;
+         return Ok(());
+     }
+ 
+-    println!("\nRemoving integrations\n");
++    writeln!(crate::stdout(), "\nRemoving integrations\n")?;
+     for agent in agents {
+         uninstall_agent(agent)?;
+-        println!("  ✓ {}", agent.label());
+-        println!("    integration removed");
++        writeln!(crate::stdout(), "  ✓ {}", agent.label())?;
++        writeln!(crate::stdout(), "    integration removed")?;
+     }
+-    println!("\nRestart the selected agents or start a new session to apply the change.");
++    writeln!(
++        crate::stdout(),
++        "\nRestart the selected agents or start a new session to apply the change."
++    )?;
+     Ok(())
+ }
+ 
+-fn print_header() {
+-    println!("zvec-grep setup");
+-    println!("{}", "─".repeat(40));
++fn print_header() -> io::Result<()> {
++    let mut output = crate::stdout();
++    writeln!(output, "zvec-grep setup")?;
++    writeln!(output, "{}", "─".repeat(40))
+ }
+ 
+ fn resolve_transport(
+@@ -226,8 +230,8 @@ fn resolve_transport(
+     if yes || !io::stdin().is_terminal() || !io::stdout().is_terminal() {
+         return Ok(McpInstallTransport::Stdio);
+     }
+-    print!("MCP transport [stdio] (stdio/http): ");
+-    io::stdout().flush()?;
++    write!(crate::stdout(), "MCP transport [stdio] (stdio/http): ")?;
++    crate::stdout().flush()?;
+     let mut answer = String::new();
+     io::stdin().read_line(&mut answer)?;
+     match answer.trim().to_ascii_lowercase().as_str() {
+@@ -262,14 +266,15 @@ fn resolve_agents<'a>(
+             .collect());
+     }
+ 
+-    println!(
++    writeln!(
++        crate::stdout(),
+         "\n{}\n",
+         if action == "install" {
+             "Choose agent integrations"
+         } else {
+             "Choose integrations to remove"
+         }
+-    );
++    )?;
+     prompt_agent_selection(detected)
+ }
+ 
+@@ -304,7 +309,7 @@ fn prompt_agent_selection(detected: &BTreeSet<Agent>) -> Result<Vec<Agent>, Inst
+         .iter()
+         .position(|agent| detected.contains(agent))
+         .unwrap_or(0);
+-    let mut output = io::stdout().lock();
++    let mut output = crate::stdout();
+     render_agent_selection(&mut output, active_index, detected, false)?;
+     loop {
+         let Event::Key(key) = event::read()? else {
+@@ -379,7 +384,8 @@ fn render_agent_selection(
+ 
+ fn prompt_agent_line_selection(detected: &BTreeSet<Agent>) -> Result<Vec<Agent>, InstallError> {
+     for (index, agent) 
 ```
 
-**File**: `rust/crates/zg-cli/src/path_lookup.rs` (added, +531/-0)
+**File**: `rust/crates/zg-cli/src/lib.rs` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,531 @@
-+//! Presentation of current file names and literal source matches.
+@@ -11,6 +11,7 @@ mod progress;
+ mod render;
+ mod setup;
+ mod status;
++mod stdio;
+ mod terminal;
+ mod theme;
+ pub use management::{
+@@ -24,6 +25,7 @@ pub use setup::{
+     prompt_setup_credential,
+ };
+ pub use status::{write_info_result, write_info_with_options};
++pub use stdio::stdout;
+ pub use terminal::{stderr_supports_ansi, stdout_supports_ansi};
+ 
+ use std::{
+```
+
+**File**: `rust/crates/zg-cli/src/render.rs` (modified, +4/-3)
+```diff
+@@ -326,9 +326,10 @@ pub fn help_text(topic: Option<&str>) -> Result<String, HelpTopicError> {
+ ///
+ /// # Errors
+ ///
+-/// Returns an error when `topic` is not part of the public help surface.
+-pub fn print_help(topic: Option<&str>) -> Result<(), HelpTopicError> {
+-    println!("{}", help_text(topic)?);
++/// Returns an error when `topic` is not part of the public help surface or
++/// stdout fails for a reason other than a closed pipe.
++pub fn print_help(topic: Option<&str>) -> Result<(), Box<dyn std::error::Error>> {
++    writeln!(crate::stdout(), "{}", help_text(topic)?)?;
+     Ok(())
+ }
+ 
+```
+
+**File**: `rust/crates/zg-cli/src/stdio.rs` (added, +81/-0)
+```diff
+@@ -0,0 +1,81 @@
++use std::io::{self, Write};
 +
-+use std::{
-+    io::{self, Write},
-+    path::Path,
-+};
-+
-+use grep::{matcher::Matcher, regex::RegexMatcherBuilder};
-+use zg_engine::api::{
-+    context::{
-+        ContextResult,
-+        options::SymbolType,
-+        result::{
-+            ContentRange, ContextCoverage, ContextItem, ContextItemKind, ContextItemStatus,
-+            EmptyReason, EntityMetadata,
-+        },
-+    },
-+    paths::PathLookupResult,
-+};
-+
-+use crate::{OutputOptions, theme::StatusTheme};
-+
-+/// Writes current-file lookup output and fallback or incomplete-coverage warnings.
++/// Locks CLI stdout, ignoring a consumer that closes its pipe early.
 +///
-+/// # Errors
-+/// Returns the underlying output or diagnostic writer error.
-+pub fn write_path_lookup_result(
-+    mut writer: impl Write,
-+    mut diagnostics: impl Write,
-+    result: &PathLookupResult,
-+    options: OutputOptions,
-+    terminal: bool,
-+) -> io::Result<()> {
-+    match result {
-+        PathLookupResult::Files(result) => {
-+            for (index, path) in result.paths.iter().enumerate() {
-+                writeln!(writer, "#{} matchedBy=path {}", index + 1, path_label(path))?;
-+            }
-+            if result.truncated {
-+                writeln!(
-+                    diagnostics,
-+                    "warning: more matching files exist; use --limit to show more"
-+                )?;
-+            }
++/// Only stdout writes and flushes suppress `BrokenPipe`; command validation and
++/// cleanup continue normally. Long-lived transports use their own stdout.
++#[must_use]
++pub fn stdout() -> impl Write {
++    IgnoreBrokenPipe(io::stdout().lock())
++}
++
++struct IgnoreBrokenPipe<W>(W);
++
++impl<W: Write> Write for IgnoreBrokenPipe<W> {
++    fn write(&mut self, buffer: &[u8]) -> io::Result<usize> {
++        match self.0.write(buffer) {
++            Err(error) if error.kind() == io::ErrorKind::BrokenPipe => Ok(buffer.len()),
++            result => result,
 +        }
-+        PathLookupResult::Text(result) => {
++    }
++
++    fn flush(&mut self) -> io::Result<()> {
++        match self.0.flush() {
++            Err(error) if error.kind() == io::ErrorKind::BrokenPipe => Ok(()),
++            result => result,
++        }
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    struct Consumer {
++        remaining: usize,
++        error: io::ErrorKind,
++    }
++
++    impl Write for Consumer {
++        fn write(&mut self, buffer: &[u8]) -> io::Result<usize> {
++            if self.remaining == 0 {
++                return Err(self.error.into());
++            }
++            let written = buffer.len().min(self.remaining);
++            self.remaining -= written;
++            Ok(written)
++        }
++
++        fn flush(&mut self) -> io::Result<()> {
++            Err(self.error.into())
++        }
++    }
++
++    #[test]
++    fn partial_consumption_and_broken_pipe_flush_are_ignored() {
++        let mut writer = IgnoreBrokenPipe(Consumer {
++            remaining: 3,
++            error: io::ErrorKind::BrokenPipe,
++        });
++        writer
++            .write_all(b"first chunk")
++            .expect("partial consumption");
++        writer.write_all(b"later chunk").expect("closed consumer");
++        writer.flush().expect("closed consumer flush");
++    }
++
++    #[test]
++    fn other_io_errors_are_propagated() {
++        for kind in [io::ErrorKind::PermissionDenied, io::ErrorKind::WriteZero] {
++            let mut writer = IgnoreBrokenPipe(Consumer {
++                remaining: 0,
++                error: kind,
++            });
++            assert_eq!(
++                writer.write_all(b"chunk").expect_err("write error").kind(),
++                kind
++            );
++            assert_eq!(writer.flush().expect_err("flush error").kind(), kind);
++        }
++    }
++}
+```
+
+**File**: `rust/crates/zg/src/main.rs` (modified, +49/-33)
+```diff
+@@ -1,6 +1,6 @@
+ use std::{
+     error::Error,
+-    io::{self, IsTerminal},
++    io::{self, IsTerminal, Write},
+     path::Path,
+     process::ExitCode,
+     sync::{
+@@ -66,7 +66,7 @@ fn run() -> Result<ExitCode, Box<dyn Error>> {
+         }
+         CliPlan::Version => {
+             warn();
+-            println!("{}", env!("CARGO_PKG_VERSION"));
++            writeln!(zg_cli::stdout(), "{}", env!("CARGO_PKG_VERSION"))?;
+             return Ok(ExitCode::SUCCESS);
+         }
+         _ => {}
+@@ -177,8 +177,8 @@ async fn execute_plan(plan: CliPlan) -> Result<ExitCode, Box<dyn Error>> {
+                     ("Model", reference, path)
+                 }
+             };
+-            println!("{label} config: {reference}");
+-            println!("Global config: {}", path.display());
++            writeln!(zg_cli::stdout(), "{label} config: {reference}")?;
++            writeln!(zg_cli::stdout(), "Global config: {}", path.display())?;
+             Ok(())
+         }
+         CliPlan::Auth(args) => {
+@@ -188,7 +188,7 @@ async fn execute_plan(plan: CliPlan) -> Result<ExitCode, Box<dyn Error>> {
+                 .ok_or_else(|| io::Error::other("auth root is required"))?;
+             if matches!(args.action, zg_cli::AuthAction::Revoke) {
+                 let count = zg_engine::authorization::revoke_all(root)?;
+-                zg_cli::write_authorization_revoke_result(io::stdout().lock(), count)?;
++                zg_cli::write_authorization_revoke_result(zg_cli::stdout(), count)?;
+                 return Ok(ExitCode::SUCCESS);
+             }
+             if matches!(args.action, zg_cli::AuthAction::Grant { .. }) {
+@@ -200,7 +200,7 @@ async fn execute_plan(plan: CliPlan) -> Result<ExitCode, Box<dyn Error>> {
+             }
+             let status = zg_engine::authorization::status_snapshot(root)?;
+             zg_cli::write_authorization_status(
+-                io::stdout().lock(),
++                zg_cli::stdout(),
+                 &status,
+                 if args.no_color {
+                     zg_cli::ColorMode::Never
+@@ -261,30 +261,44 @@ async fn execute_install_plan(args: &zg_cli::InstallArgs) -> Result<(), Box<dyn
+     };
+     if let Some(status) = &status {
+         if status.ready {
+-            println!("  ✓ Server");
+-            println!(
++            writeln!(zg_cli::stdout(), "  ✓ Server")?;
 +            writeln!(
-+                diagnostics,
-+                "warning: no matching file paths; searching current file contents literally (rg)."
++                zg_cli::stdout(),
+                 "    ready at {}",
+                 status
+                     .server_url
+                     .as_deref()
+                     .unwrap_or("http://127.0.0.1:7999/mcp")
+-            );
 +            )?;
-+            write_current_text(&mut writer, result, options, terminal)?;
-+            if result.coverage == ContextCoverage::RgTruncated {
-+                writeln!(
-+                    diagnostics,
-+                    "warning: text search reached the result or scan limit; search coverage is incomplete; narrow the query or use --limit to show more"
-+                )?;
-+            }
-+        }
-+    }
-+    Ok(())
+         } else {
+-            println!("  ○ Server");
+-            println!("    not started; run `zg --server on`");
++            writeln!(zg_cli::stdout(), "  ○ Server")?;
++            writeln!(zg_cli::stdout(), "    not started; run `zg --server on`")?;
+         }
+     } else {
+-        println!("  ○ Server");
+-        println!("    not started; run `zg --server on`");
++        writeln!(zg_cli::stdout(), "  ○ Server")?;
++        writeln!(zg_cli::stdout(), "    not started; run `zg --server on`")?;
+     }
+     if outcome.transport == McpInstallTransport::Stdio {
+-        println!("  ✓ Connection");
+-        println!("    stdio; reconnects start the server automatically");
++        writeln!(zg_cli::stdout(), "  ✓ Connection")?;
++        writeln!(
++            zg_cli::stdout(),
++            "    stdio; reconnects start the server automatically"
++        )?;
+     }
+-    println!("\nzvec-grep is ready\n");
+-    println!("  Agents       {}", outcome.agent_labels.join(", "));
+-    println!("  Remote data  Authorization requested on first remote use");
+-    println!("\nRestart the selected agents or start a new session to load the integration.");
++    writeln!(zg_cli::stdout(), "\nzvec-grep is ready\n")?;
++    writeln!(
++        zg_cli::stdout(),
++        "  Agents       {}",
++        outcome.agent_labels.join(", ")
++    )?;
++    writeln!(
++        zg_cli::stdout(),
++        "  Remote data  Authorization requested on first remote use"
++    )?;
++    writeln!(
++        zg_cli::stdout(),
++        "\nRestart the selected agents or start a new session to load the integration."
++    )?;
+     Ok(())
+ }
+ 
+@@ -334,7 +348,7 @@ async fn execute_request(
+             .await;
+         engine.close();
+         zg_cli::write_path_lookup_result(
+-            io::stdout().lock(),
++            zg_cli::stdout(),
+             io::stderr().lock(),
+             &result?,
+             output,
+@@ -390,7 +404,7 @@ async fn execute_context(
+             return Err(protocol_mismatch("context"));
+         };
+         zg_cli::write_context_with_options(
+-            io::stdout().lock(),
++            zg_cli::stdout(),
+             &result,
+             output,
+             zg_cli::stdout_supports_ansi(),
+@@ -754,7 +768,7 @@ async fn execute_direct_context(
+     }
+     engine.close();
+     zg_cli::write_context_with_options(
+-        io::stdout().lock(),
++        zg_cli::stdout(
+```
+
+**File**: `rust/crates/zg/tests/implicit_index.rs` (modified, +86/-0)
+```diff
+@@ -1,5 +1,6 @@
+ use std::{
+     fs,
++    io::Read,
+     net::TcpListener,
+     process::{Command, Output, Stdio},
+     sync::{
+@@ -200,6 +201,91 @@ fn status_check_ready_keeps_direct_and_server_exit_semantics() {
+     check("! Workspace index needs an update", false);
+ }
+ 
++fn with_closed_stdout(mut command: Command) -> Output {
++    let (reader, writer) = std::io::pipe().expect("stdout pipe");
++    drop(reader);
++    command
++        .stdout(Stdio::from(writer))
++        .output()
++        .expect("run with closed stdout")
 +}
 +
-+fn write_current_text(
-+    writer: &mut impl Write,
-+    result: &ContextResult,
-+    options: OutputOptions,
-+    terminal: bool,
-+) -> io::Result<()> {
-+    let theme = StatusTheme::new(options.color, terminal);
-+    let groups: Vec<_> = result
-+        .items
-+        .chunk_by(|left, right| left.relative_path == right.relative_path)
-+        .collect();
-+    if options.human {
-+        field(
-+            writer,
-+            theme,
-+            "Context",
-+            &format!("{} rg", path_label(&result.root)),
-+        )?;
-+        field(
-+            writer,
-+            theme,
-+            "Query",
-+            &highlight(&result.query, &result.query, theme.color),
-+        )?;
-+        let coverage = match result.coverage {
-+            ContextCoverage::RgExhaustive => theme.success("rg_exhaustive"),
-+            ContextCoverage::RgTruncated => theme.warning("rg_truncated"),
-+            ContextCoverage::RankedSample => "ranked_sample".to_owned(),
-+        };
-+        field(writer, theme, "Coverage", &coverage)?;
-+        field(writer, theme, "Files", &groups.len().to_string())?;
-+        field(writer, theme, "Hits", &result.items.len().to_string())?;
++#[test]
++fn closed_stdout_preserves_success_and_readiness_errors() {
++    let mut fixture = Fixture::new();
++    fixture.start_server();
++    for args in [
++        vec!["--version"],
++        vec!["--help"],
++        vec!["--server", "status"],
++        vec!["--status", "--mode", "direct"],
++        vec!["--status", "--mode", "server"],
++    ] {
++        let output = with_closed_stdout(fixture.command(&args));
++        assert_eq!(output.status.code(), Some(0), "{args:?}: {output:?}");
++        assert!(output.stderr.is_empty(), "{args:?}: {output:?}");
 +    }
-+    if groups.is_empty() {
-+        let reason = match result.diagnostics.empty_reason {
-+            Some(EmptyReason::NoSearchableFiles) => "No searchable files",
-+            Some(EmptyReason::NoMatches) | None => "No matches",
-+        };
-+        if options.human {
-+            field(writer, theme, "Reason", reason)?;
-+        } else {
-+            writeln!(writer, "{reason}.")?;
-+        }
-+        return Ok(());
++    for mode in ["direct", "server"] {
++        let output =
++            with_closed_stdout(fixture.command(&["--status", "--mode", mode, "--check-ready"]));
++        assert_eq!(output.status.code(), Some(1), "{mode}: {output:?}");
++        assert_eq!(
++            String::from_utf8_lossy(&output.stderr),
++            "Error: workspace index is not ready\n",
++            "{mode}: {output:?}"
++        );
 +    }
-+    for group in groups {
-+        if options.human {
-+            writeln!(writer)?;
-+            field(
-+                writer,
-+                theme,
-+                "File",
-+                &theme.path(&path_label(&group[0].relative_path)),
-+            )?;
-+            field(writer, theme, "Hits", &group.len().to_string())?;
-+        } else {
-+            writeln!(writer, "{}", path_label(&group[0].relative_path))?;
-+        }
-+        for item in group {
-+            if options.human {
-+                write_human_item(writer, item, theme)?;
-+                writeln!(writer, "  {}:", theme.label("Source"))?;
-+            } else if let Some(label) = structural_label(item) {
-+                let range = &item.container.as_ref().expect("structural container").range;
-+                writeln!(writer, "  {} [{label}]", range_label(range))?;
-+            }
-+            let indent = if options.human || structural_label(item).is_some() {
-+                "    "
-+            } else {
-+                "  "
-+            };
-+            write_source(writer, item, &result.query, indent, theme.color)?;
++    fixture.success(&[
++        "--index",
++        "--mode",
++        "direct",
++        "--embedding",
++        "local/potion-code-16m-v2",
++    ]);
++    for mode in ["direct", "server"] {
++        for args in [
++            vec!["--status", "--mode", mode, "--check-ready"],
++            vec!["--fts", "needle", "--mode", mode, "--refresh", "off"],
++        ] {
++            let output = with_closed_stdout(fixture.command(&args));
++            assert_eq!(output.status.code(), Some(0), "{args:?}: {output:?}");
++            assert!(output.stderr.is_empty(), "{args:?}: {output:?}");
 +        }
 +    }
-+    Ok(())
++    fixture.success(&["--server", "off"]);
++    fixture.server_started = false;
++    let output = with_closed_stdout(fixture.command(&["--server", "status", "--check-ready"]));
++    assert_eq!(output.status.code(), Some(1), "{output:?}");
++    assert_eq!(
++        String::from_utf8_lossy(&output.stderr),
++        "Error: server is not ready\n"
++    );
 +}
 +
-+fn write_human_item(
-+    writer: &mut impl Write,
-+    item: &ContextItem,
-+    theme: StatusTheme,
-+) -> io::Result<()> {
-+    let summary = match &item.metadata {
-+        Some(EntityMetada
++#[test]
++fn partial_stdout_consumption_keeps_query_successful() {
++    let fixture = Fixture::new();
++    fs::write(
++        fixture.root.path().join("source.txt"),
++        format!("needle {}\n", "x".repeat(400)).repeat(10_000),
++    )
++    .expect("large search fixture");
++    let mut child = fixture
++        .command(&["--rg", "needle", "source.txt", "--mode", "direct"])
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped())
++        .spawn()
++        .expect("query producer");
++    let mut stdout = child.stdout.take().expect("query stdout");
++    let mut prefix = [0; 100];
++    stdout.read_exact(&mut prefix).expect("consume first chunk");
++    assert!(String::from_utf8_lossy(&prefix).contains("source.txt"));
++    drop(stdout);
++    let output = child.wait_with_output().expect("query completion");
++    assert_eq!(output.status.code(), Some(0), "{output:?}");
++    assert!(output.stderr.is_empty(), "{output:?}");
++}
++
+ struct GatedEmbedding {
+     endpoint: String,
+     entered: Arc<Semaphore>,
+```
+
+**File**: `rust/crates/zg/tests/pi_install.rs` (modified, +27/-1)
+```diff
+@@ -1,4 +1,8 @@
+-use std::{fs, path::Path, process::Command};
++use std::{
++    fs,
++    path::Path,
++    process::{Command, Stdio},
++};
+ 
+ use serde_json::{Value, json};
+ use tempfile::TempDir;
+@@ -54,6 +58,28 @@ fn write_json(path: &Path, value: &Value) {
+     .expect("write JSON");
+ }
+ 
++#[test]
++fn closed_stdout_allows_installation_and_removal_to_complete() {
++    let temporary = TempDir::new().expect("tempdir");
++    let root = temporary.path();
++    let path = root.join("pi/mcp.json");
++    for action in ["--install", "--uninstall"] {
++        let (reader, writer) = std::io::pipe().expect("stdout pipe");
++        drop(reader);
++        let output = command(action, root)
++            .stdout(Stdio::from(writer))
++            .output()
++            .expect("run with closed stdout");
++        assert_eq!(output.status.code(), Some(0), "{action}: {output:?}");
++        assert!(output.stderr.is_empty(), "{action}: {output:?}");
++        assert_eq!(
++            read_json(&path)["mcpServers"]["zvec_grep"].is_object(),
++            action == "--install",
++            "{action} must complete after its first stdout write"
++        );
++    }
++}
++
+ #[test]
+ fn config_rewrites_preserve_ordered_exposure_rules_and_unrelated_servers() {
+     let temporary = TempDir::new().expect("tempdir");
 ```
 
 ---
 
-### Incident Patch 2: `1485e3aa` (2026-10-21)
-**Commit Message**: ci(rust): make release packaging manual-only (#280)
+### Incident Patch 2: `60ba7d98` (2026-10-23)
+**Commit Message**: fix(engine): join read cache maintenance on shutdown (#289)
 
-**File**: `.github/workflows/rust-publish.yml` (modified, +0/-6)
+Keep cache ownership separate from the state retained by maintenance so the
+last cache handle stops and joins the existing worker before native storage
+can outlive process teardown. Serialize concurrent closes through both the
+join and cache draining, and wake parked maintenance for prompt shutdown.
+
+Preserve in-flight leases, cache clone behavior, and one worker per cache.
+Add regression coverage for explicit close, final-owner drop, concurrent
+close calls, and cache reuse after dropping another owner.
+
+**File**: `rust/crates/zg-engine/src/storage/read_session.rs` (modified, +56/-15)
 ```diff
-@@ -1,12 +1,6 @@
- name: Publish Rust packages
+@@ -7,6 +7,7 @@ use std::{
+         Arc, Mutex, MutexGuard, OnceLock, Weak,
+         atomic::{AtomicBool, Ordering},
+     },
++    thread::JoinHandle,
+     time::{Duration, Instant},
+ };
  
- on:
--  push:
--    branches: [main, "release/rust-*"]
--    paths:
--      - "rust/**"
--      - ".github/workflows/rust-publish.yml"
--      - ".github/workflows/rust-package-build.yml"
-   workflow_dispatch:
-     inputs:
-       publish:
+@@ -22,7 +23,14 @@ static CACHES: OnceLock<Mutex<Vec<Weak<CacheInner>>>> = OnceLock::new();
+ 
+ #[derive(Clone)]
+ pub(crate) struct ReadSessionCache {
++    owner: Arc<CacheOwner>,
++}
++
++// The worker and registry only reference CacheInner, never CacheOwner. The last
++// cache handle can therefore stop and join maintenance without self-joining.
++struct CacheOwner {
+     inner: Arc<CacheInner>,
++    worker: Mutex<Option<JoinHandle<()>>>,
+ }
+ 
+ struct CacheInner {
+@@ -61,6 +69,13 @@ pub(crate) struct ReadSessionLease {
+ 
+ impl ReadSessionCache {
+     pub(crate) fn new(idle_timeout: Duration) -> std::io::Result<Self> {
++        Self::spawn(idle_timeout, maintain)
++    }
++
++    fn spawn(
++        idle_timeout: Duration,
++        maintenance: impl FnOnce(&Weak<CacheInner>) + Send + 'static,
++    ) -> std::io::Result<Self> {
+         let inner = Arc::new(CacheInner {
+             state: Mutex::new(CacheState::default()),
+             idle_timeout,
+@@ -69,21 +84,18 @@ impl ReadSessionCache {
+         let weak = Arc::downgrade(&inner);
+         // A native thread can release idle handles even when a synchronous writer
+         // is waiting for another process's cache on a single-threaded executor.
+-        std::thread::Builder::new()
++        let worker = std::thread::Builder::new()
+             .name("index-read-cache".into())
+-            .spawn(move || {
+-                while let Some(inner) = weak.upgrade() {
+-                    if !inner.reap(Instant::now()) {
+-                        break;
+-                    }
+-                    drop(inner);
+-                    std::thread::sleep(REAP_INTERVAL);
+-                }
+-            })?;
++            .spawn(move || maintenance(&weak))?;
+         let mut caches = lock(CACHES.get_or_init(Mutex::default));
+         caches.retain(|cache| cache.strong_count() > 0);
+         caches.push(Arc::downgrade(&inner));
+-        Ok(Self { inner })
++        Ok(Self {
++            owner: Arc::new(CacheOwner {
++                inner,
++                worker: Mutex::new(Some(worker)),
++            }),
++        })
+     }
+ 
+     /// The caller holds the workspace home read lock throughout the lease.
+@@ -106,8 +118,8 @@ impl ReadSessionCache {
+         open: impl FnOnce() -> EngineResult<IndexStore>,
+     ) -> EngineResult<ReadSessionLease> {
+         let slot = {
+-            let mut state = lock(&self.inner.state);
+-            if self.inner.closed.load(Ordering::Acquire) {
++            let mut state = lock(&self.owner.inner.state);
++            if self.owner.inner.closed.load(Ordering::Acquire) {
+                 return Err(EngineError::resource_closed(
+                     "index read cache has been closed",
+                 ));
+@@ -117,7 +129,7 @@ impl ReadSessionCache {
+         // Only this workspace waits for native open/close; the map owns entries,
+         // never native I/O. Concurrent misses for one workspace share this slot.
+         let mut entry = lock(&slot.entry);
+-        if self.inner.closed.load(Ordering::Acquire) {
++        if self.owner.inner.closed.load(Ordering::Acquire) {
+             return Err(EngineError::resource_closed(
+                 "index read cache has been closed",
+             ));
+@@ -153,7 +165,20 @@ impl ReadSessionCache {
+     }
+ 
+     pub(crate) fn close(&self) {
++        self.owner.close();
++    }
++}
++
++impl CacheOwner {
++    fn close(&self) {
+         self.inner.closed.store(true, Ordering::Release);
++        // Serialize the whole shutdown so every concurrent close waits for both
++        // maintenance and native retirement. No cache or slot lock is held at join.
++        let mut worker = lock(&self.worker);
++        if let Some(worker) = worker.take() {
++            worker.thread().unpark();
++            let _ = worker.join();
++        }
+         let entries = std::mem::take(&mut lock(&self.inner.state).entries);
+         // In-flight queries retain their own Arc until they finish. Native close
+         // runs after releasing the map lock, under the workspace's own slot lock.
+@@ -163,11 +188,27 @@ impl ReadSessionCache {
+     }
+ }
+ 
++impl Drop for CacheOwner {
++    fn drop(&mut self) {
++        self.close();
++    }
++}
++
++fn maintain(weak: &Weak<CacheInner>) {
++    while let Some(inner) = weak.upgrade() {
++        if !inner.reap(Instant::now()) {
++            break;
++        }
++        drop(inner);
++        std::thread::park_timeout(REAP_INTERVAL);
++    }
++}
++
+ impl std::fmt::Debug for ReadSessionCache {
+     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+         formatter
+             .debug_struct("ReadSessionCache")
+-            .field("entries", &lock(&self.inner.state).entries.len())
++            .field("entries", &lock(&self.owner.inner.state).entries.len())
+             .finish_non_exhaustive()
+     }
+ }
 ```
 
-**File**: `rust/README.md` (modified, +2/-2)
+**File**: `rust/crates/zg-engine/src/storage/read_session/tests.rs` (modified, +99/-6)
 ```diff
-@@ -517,8 +517,8 @@ The runtime library directory must include zvec's shared library and its
- the binary's directory.
+@@ -178,6 +178,96 @@ fn cache() -> ReadSessionCache {
+     ReadSessionCache::new(Duration::from_secs(60)).expect("cache worker")
+ }
  
- The `Publish Rust packages` workflow builds all five published native targets on matching
--GitHub runners. Pushes to `main` or `release/rust-*` branches and manual runs
--produce downloadable candidates without publishing to npm. Each runner installs
-+GitHub runners. It runs only through manual dispatch. With `publish` left at its
-+default `false`, it produces downloadable candidates without publishing to npm. Each runner installs
- its platform and meta tarballs, then runs `zg --version`, checks managed-rg,
- starts the packaged daemon, compares workspace status in direct and server
- modes, and stops the daemon. The server status request crosses the IPC boundary;
++fn assert_shutdown_waits_for_maintenance(shutdown: fn(ReadSessionCache), callers: usize) {
++    let (started, running) = std::sync::mpsc::channel();
++    let (release, released) = std::sync::mpsc::channel();
++    let cache = ReadSessionCache::spawn(Duration::from_secs(60), move |weak| {
++        // Native retirement can keep the inner state alive after the last
++        // public cache handle is dropped. Shutdown must wait for that work.
++        let _inner = weak.upgrade().expect("cache state");
++        started.send(()).expect("worker started");
++        released
++            .recv_timeout(Duration::from_secs(5))
++            .expect("release maintenance");
++    })
++    .expect("cache worker");
++    running
++        .recv_timeout(Duration::from_secs(5))
++        .expect("maintenance running");
++    let (closing, close_started) = std::sync::mpsc::channel();
++    let (closed, close_finished) = std::sync::mpsc::channel();
++    let mut caches = (1..callers).map(|_| cache.clone()).collect::<Vec<_>>();
++    caches.push(cache);
++    let closers = caches
++        .into_iter()
++        .map(|cache| {
++            let closing = closing.clone();
++            let closed = closed.clone();
++            std::thread::spawn(move || {
++                closing.send(()).expect("shutdown started");
++                shutdown(cache);
++                closed.send(()).expect("shutdown finished");
++            })
++        })
++        .collect::<Vec<_>>();
++    for _ in 0..callers {
++        close_started
++            .recv_timeout(Duration::from_secs(5))
++            .expect("start shutdown");
++    }
++    let premature_close = close_finished.recv_timeout(Duration::from_millis(100));
++    release.send(()).expect("release worker even on failure");
++    for _ in usize::from(premature_close.is_ok())..callers {
++        close_finished
++            .recv_timeout(Duration::from_secs(5))
++            .expect("shutdown completes after maintenance");
++    }
++    for closer in closers {
++        closer.join().expect("shutdown thread");
++    }
++    assert!(
++        matches!(
++            premature_close,
++            Err(std::sync::mpsc::RecvTimeoutError::Timeout)
++        ),
++        "shutdown returned before maintenance finished"
++    );
++}
++
++#[test]
++fn explicit_close_waits_for_maintenance() {
++    assert_shutdown_waits_for_maintenance(|cache| cache.close(), 1);
++}
++
++#[test]
++fn last_cache_drop_waits_for_maintenance() {
++    assert_shutdown_waits_for_maintenance(drop, 1);
++}
++
++#[test]
++fn concurrent_close_calls_wait_for_maintenance() {
++    assert_shutdown_waits_for_maintenance(|cache| cache.close(), 2);
++}
++
++#[test]
++fn dropping_a_clone_preserves_the_cache_until_the_last_owner() {
++    let fixture = Fixture::new();
++    let cache = cache();
++    let remaining = cache.clone();
++    let (home_lock, lease) = fixture.read(&cache);
++    let session = Arc::downgrade(&lease.session);
++    drop(lease);
++    drop(cache);
++    let lease = remaining
++        .acquire(&fixture.home, &fixture.storage_home)
++        .expect("remaining cache owner");
++    assert!(Weak::ptr_eq(&session, &Arc::downgrade(&lease.session)));
++    drop(lease);
++    drop(remaining);
++    assert_eq!(session.strong_count(), 0, "last owner closes idle storage");
++    drop(home_lock);
++}
++
+ #[test]
+ fn sequential_and_concurrent_queries_reuse_the_session() {
+     let fixture = Fixture::new();
+@@ -219,17 +309,20 @@ fn expiry_starts_at_final_release_and_protects_active_queries() {
+     let cache = cache();
+     let (home_lock, lease) = fixture.read(&cache);
+     let session = Arc::downgrade(&lease.session);
+-    cache.inner.reap(Instant::now() + Duration::from_secs(120));
++    cache
++        .owner
++        .inner
++        .reap(Instant::now() + Duration::from_secs(120));
+     assert!(
+         lease.storage().list_files().is_ok(),
+         "active query remains usable"
+     );
+     drop(lease);
+     drop(home_lock);
+     let released = Instant::now();
+-    cache.inner.reap(released + Duration::from_secs(59));
++    cache.owner.inner.reap(released + Duration::from_secs(59));
+     assert_eq!(session.strong_count(), 1);
+-    cache.inner.reap(released + Duration::from_secs(61));
++    cache.owner.inner.reap(released + Duration::from_secs(61));
+     assert_eq!(session.strong_count(), 0);
+ }
+ 
+@@ -292,7 +385,7 @@ fn maintenance_does_not_recreate_removed_lock_files() {
+     drop(home_lock);
+     let lock_file = fixture.home.join("locks/home");
+     fs::remove_file(&lock_file).expect("remove workspace lock");
+-    cache.inner.reap(Instant::now());
++    cache.owner.inner.reap(Instant::now());
+     assert!(
+         !lock_file.exists(),
+         "maintenance must not recreate deleted workspace paths"
+@@ -416,7 +509,7 @@ async fn indexed_queries_reuse_storage_but_resolve_the_current_manifest() {
+         .expect("first query");
+     assert_eq!(first.items.le
 ```
 
-**File**: `rust/npm/README.md` (modified, +2/-1)
+---
+
+### Incident Patch 3: `cccd3d58` (2026-10-23)
+**Commit Message**: fix(rust): update TLS trust dependencies for emSign compromise (#285)
+
+**File**: `rust/Cargo.lock` (modified, +6/-6)
 ```diff
-@@ -44,7 +44,8 @@ Release order:
+@@ -2547,9 +2547,9 @@ checksum = "f87165f0995f63a9fbeea62b64d10b4d9d8e78ec6d7d51fb2125fda7bb36788f"
  
- `.github/workflows/rust-publish.yml` builds and installs every target on its
- native runner, checks CLI startup, managed-rg and actual daemon IPC, and collects
--the candidates into a downloadable artifact. Regular runs do not publish.
-+the candidates into a downloadable artifact. The workflow runs only through
-+manual dispatch and does not publish unless `publish` is enabled.
- Intel macOS installation and runtime checks must pass before the other four
- platform builds start. Its ONNX Runtime with CoreML and zvec SDK are built from
- pinned sources, cached, and bundled with the native package. The Intel release
+ [[package]]
+ name = "rustls-webpki"
+-version = "0.103.15"
++version = "0.103.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
++checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+ dependencies = [
+  "aws-lc-rs",
+  "ring",
+@@ -3675,18 +3675,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "webpki-root-certs"
+-version = "1.0.9"
++version = "1.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b96554aa2acc8ccdb7e1c9a58a7a68dd5d13bccc69cd124cb09406db612a1c9b"
++checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
+ dependencies = [
+  "rustls-pki-types",
+ ]
+ 
+ [[package]]
+ name = "webpki-roots"
+-version = "1.0.9"
++version = "1.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
++checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+ dependencies = [
+  "rustls-pki-types",
+ ]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #290** (2026-10-23): ci(rust): reuse upstream zvec SDK resolution on Intel macOS (@egolearner)
+- **PR #289** (2026-10-23): fix(engine): join read cache maintenance on shutdown (@egolearner)
+- **PR #285** (2026-10-23): fix(rust): update TLS trust dependencies for emSign compromise (@egolearner)
+- **PR #283** (2026-10-22): chore(rust): upgrade zvec-rust to 0.8.0 (@egolearner)
+- **PR #281** (2026-10-22): fix(windows): normalize displayed paths and initialize ANSI per stream (@zhourrr)
 - **PR #280** (2026-10-21): ci(rust): make release packaging manual-only (@egolearner)
-- **PR #277** (2026-10-20): feat(rust): add managed rg file discovery (@egolearner)
-- **PR #275** (2026-10-20): ci: stop rerunning CI when only the PR description changes (@egolearner)
-- **PR #274** (2026-10-20): fix(bench): avoid the 10-second container shutdown wait (@Cuiyus)
-- **PR #272** (2026-10-19): ci(rust): run tests with nextest and stop per-commit release caches (@egolearner)
-- **PR #269** (2026-10-19): fix(engine): initialize new metadata fields in search test fixtures (@egolearner)
 
 ---
 
@@ -1625,29 +2021,75 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rust): add current-file path lookup (#262)
+## X. rust): preserve command results when stdout closes early (#270)
 
 **RULE**:
-When implementing operations in `rust/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/crates/zg-cli/src/install.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `102737e4`: rust): add current-file path lookup (#262). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a2fa4b40`: rust): preserve command results when stdout closes early (#270). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-cli/src/install.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "zg-testkit",
- "grep",
+    print_header()?;
+        writeln!(crate::stdout(), "\nNo agent integrations selected.")?;
+    writeln!(crate::stdout(), "\nInstalling integrations\n")?;
+        writeln!(crate::stdout(), "  ✓ {}", agent.label())?;
+        writeln!(crate::stdout(), "    MCP       configured")?;
+            writeln!(crate::stdout(), "    Config    {}", path.display())?;
+            writeln!(crate::stdout(), "    Note      {note}")?;
+        writeln!(crate::stdout())?;
+    print_header()?;
+        writeln!(crate::stdout(), "\nNo agent integrations selected.")?;
+    writeln!(crate::stdout(), "\nRemoving integrations\n")?;
+        writeln!(crate::stdout(), "  ✓ {}", agent.label())?;
+        writeln!(crate::stdout(), "    integration removed")?;
+    writeln!(
+        crate::stdout(),
+        "\nRestart the selected agents or start a new session to apply the change."
+    )?;
+fn print_header() -> io::Result<()> {
+    let mut output = crate::stdout();
+    writeln!(output, "zvec-grep setup")?;
+    writeln!(output, "{}", "─".repeat(40))
+    write!(crate::stdout(), "MCP transport [stdio] (stdio/http): ")?;
+    crate::stdout().flush()?;
+    writeln!(
+        crate::stdout(),
+    )?;
+    let mut output = cra
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    print_header();
+        println!("\nNo agent integrations selected.");
+    println!("\nInstalling integrations\n");
+        println!("  ✓ {}", agent.label());
+        println!("    MCP       configured");
+            println!("    Config    {}", path.display());
+            println!("    Note      {note}");
+        println!();
+    print_header();
+        println!("\nNo agent integrations selected.");
+    println!("\nRemoving integrations\n");
+        println!("  ✓ {}", agent.label());
+        println!("    integration removed");
+    println!("\nRestart the selected agents or start a new session to apply the change.");
+fn print_header() {
+    println!("zvec-grep setup");
+    println!("{}", "─".repeat(40));
+    print!("MCP transport [stdio] (stdio/http): ");
+    io::stdout().flush()?;
+    println!(
+    );
+    let mut output = io::stdout().lock();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `102737e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a2fa4b40` are properly handled with clean fallback behavior.

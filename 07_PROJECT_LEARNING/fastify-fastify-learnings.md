@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source**: github ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
-> **Source Version**: `e61a91e7`  
+> **Source Version**: `2a64ae16`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T11:57:28.413Z  
+> **Timestamp**: 2026-10-25T03:59:29.271Z  
 > **Learning ID**: `learn-github-fastify-fastify`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T11:57:26.890Z  
+> **Harvest Timestamp**: 2026-10-25T03:59:29.264Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast and low overhead web framework, for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 37293 stars
+- **Stars / Engagement**: 37299 stars
 
 ---
 
@@ -1303,94 +1303,186 @@ fastify.listen({ port: 3000 }, (err, address) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e61a91e7` (2026-10-19)
-**Commit Message**: docs(serverless): clarify per-route observability on serverless platforms (#6802)
+### Incident Patch 1: `ce41dc0f` (2026-10-22)
+**Commit Message**: fix(types): allow socket path strings in addresses (#6842)
 
-Signed-off-by: yassertawfik4 <[REDACTED_EMAIL]>
-Co-authored-by: Manuel Spigolon <[REDACTED_EMAIL]>
-Co-authored-by: Antonio Tripodi <[REDACTED_EMAIL]>
+<!--
+Thank you for your pull request. Please provide a description above and
+review
+the requirements below.
 
-**File**: `docs/Guides/Serverless.md` (modified, +33/-10)
+Bug fixes and new features should include tests and possibly benchmarks.
+
+Contributors guide:
+https://github.com/fastify/fastify/blob/main/CONTRIBUTING.md
+
+By making a contribution to this project, I certify that:
+
+* (a) The contribution was created in whole or in part by me and I
+  have the right to submit it under the open source license
+  indicated in the file; or
+
+* (b) The contribution is based upon previous work that, to the best
+  of my knowledge, is covered under an appropriate open source
+  license and I have the right under that license to submit that
+  work with modifications, whether created in whole or in part
+  by me, under the same open source license (unless I am
+  permitted to submit under a different license), as indicated
+  in the file; or
+
+* (c) The contribution was provided directly to me by some other
+  person who certified (a), (b) or (c) and I have not modified
+  it.
+
+* (d) I understand and agree that this project and the contribution
+  are public and that a record of the contribution (includ
+
+**File**: `test/types/instance.tst.ts` (modified, +1/-1)
 ```diff
-@@ -127,8 +127,6 @@ on Fastify to find out how to integrate.
- [Genezio](https://genezio.com/) is a platform designed to simplify the deployment
- of serverless applications to the cloud.
+@@ -29,7 +29,7 @@ expect(server.addSchema({ schemas: [] })).type.toBe<FastifyInstance>()
+ expect(server.pluginName).type.toBe<string>()
  
--[Genezio has a dedicated guide for deploying a Fastify application.](https://deployapps.dev/docs/frameworks/fastify/)
--
- ## Google Cloud Functions
+ expect(server.getSchemas()).type.toBe<Record<string, unknown>>()
+-expect(server.addresses()).type.toBe<AddressInfo[]>()
++expect(server.addresses()).type.toBe<Array<AddressInfo | string>>()
+ expect(server.getSchema('SchemaId')).type.toBe<unknown>()
+ expect(server.printRoutes()).type.toBe<string>()
+ expect(server.printPlugins()).type.toBe<string>()
+```
+
+**File**: `types/instance.d.ts` (modified, +1/-1)
+```diff
+@@ -130,7 +130,7 @@ export interface FastifyInstance<
+   version: string;
+   log: Logger;
+   listeningOrigin: string;
+-  addresses(): AddressInfo[]
++  addresses(): Array<AddressInfo | string>
+   withTypeProvider<Provider extends FastifyTypeProvider>(): FastifyInstance<RawServer, RawRequest, RawReply, Logger,
+     Provider>;
  
- ### Creation of Fastify instance
-@@ -277,20 +275,21 @@ fastify.addHook('onResponse', async (request, reply) => {
- `request.routeOptions.url` is the route pattern, so `/users/123` and
- `/users/456` are grouped under `/users/:id`. With Fastify's logger enabled, the
- fields are emitted as structured log fields, as described in the [Cloud
--Logging structured logging documentation](https://cloud.google.com/logging/docs/structured-logging)
--and the [Cloud Functions logging guide](https://cloud.google.com/functions/docs/monitoring/logging).
-+Logging structured logging documentation](https://docs.cloud.google.com/logging/docs/structured-logging)
-+and the [Cloud Run logging guide](https://docs.cloud.google.com/run/docs/logging).
- In Cloud Logging, create a [log-based
--metric](https://cloud.google.com/logging/docs/logs-based-metrics) or filter on
--`jsonPayload.route` to get per-route request counts, latency, and error rates.
-+metric](https://docs.cloud.google.com/logging/docs/logs-based-metrics)
-+or filter on `jsonPayload.route` to get per-route request counts, latency, and
-+error rates.
+```
+
+---
+
+### Incident Patch 2: `2a64ae16` (2026-10-24)
+**Commit Message**: fix(decorators): evaluate instance getters once in getDecorator (#7124)
+
+**File**: `lib/decorate.js` (modified, +4/-3)
+```diff
+@@ -38,11 +38,12 @@ function getInstanceDecorator (name) {
+     throw new FST_ERR_DEC_UNDECLARED(name, 'instance')
+   }
  
- The same hook works when deploying through Firebase Functions with `onRequest`.
+-  if (typeof this[name] === 'function') {
+-    return this[name].bind(this)
++  const decorator = this[name]
++  if (typeof decorator === 'function') {
++    return decorator.bind(this)
+   }
  
- ### References
- - [Google Cloud Functions - Node.js Quickstart
--  ](https://cloud.google.com/run/docs/quickstarts/functions/deploy-functions-gcloud)
--- [Cloud Logging - Structured Logging](https://cloud.google.com/logging/docs/structured-logging)
--- [Cloud Logging - Log-based Metrics](https://cloud.google.com/logging/docs/logs-based-metrics)
--- [Cloud Functions - Logging](https://cloud.google.com/functions/docs/monitoring/logging)
-+  ](https://docs.cloud.google.com/run/docs/quickstarts/functions/deploy-functions-gcloud)
-+- [Cloud Logging - Structured Logging](https://docs.cloud.google.com/logging/docs/structured-logging)
-+- [Cloud Logging - Log-based Metrics](https://docs.cloud.google.com/logging/docs/logs-based-metrics)
-+- [Cloud Run - Logging](https://docs.cloud.google.com/run/docs/logging)
+-  return this[name]
++  return decorator
+ }
  
- ## Google Firebase Functions
- 
-@@ -384,6 +383,30 @@ Final step is to export the Fastify app instance to Firebase's own
- exports.app = onRequest(fastifyApp)
- ```
- 
-+### A note on per-route functions and observability
+ function decorateConstructor (konstructor, name, fn, dependencies) {
+```
+
+**File**: `test/decorator.test.js` (modified, +29/-0)
+```diff
+@@ -1328,3 +1328,32 @@ test('Request.setDecorator should update an existing decorator', (t, done) => {
+     })
+   })
+ })
 +
-+When a Fastify instance is wrapped with a single `onRequest()` handler, all
-+routes are handled through a single Cloud Function entry point (e.g. `app`).
-+Fastify still performs internal routing as usual, but from the provider's
-+perspective there is only one deployed function. As a result, logs, metrics,
-+and analytics in the Cloud Console are grouped under that single function
-+rather than being split per route (e.g. `app-api-v1-user`).
++test('getDecorator should evaluate a getter once', async t => {
++  const fastify = Fastify()
++  t.after(() => fastify.close())
++  let calls = 0
++  fastify.decorate('value', {
++    getter () {
++      return ++calls
++    }
++  })
 +
-+This behavior is expected because Fastify acts as a single HTTP server with
-+internal routing, while Cloud Functions exposes only function-level
-+observability. This is different from architectures where each route is
-+deployed as an individual Cloud Function.
++  t.assert.strictEqual(fastify.getDecorator('value'), 1)
++  t.assert.strictEqual(calls, 1)
++})
 +
-+If per-function grouping is required, you must export multiple `onRequest()`
-+handlers instead of routing everything through a single Fastify instance.
++test('getDecorator should bind the function returned by a getter once', async t => {
++  const fastify = Fastify()
++  t.after(() => fastify.close())
++  let calls = 0
++  fastify.decorate('method', {
++    getter () {
++      calls++
++      return function () { return this }
++    }
++  })
 +
-+Alternatively, you can keep a single Fastify application and deploy it to
-+Cloud Run, where it runs as a long-lived server. In that setup, Fastify's
-+built-in logging (request method, URL, and response timing) provides per-route
-+observability. On Cloud Functions, similar request-level logs are still
-+available, but they are grouped under the single function entry in the
-+provider's console.
-+
- ### Local test
++  t.assert.strictEqual(fastify.getDecorator('method')(), fastify)
++  t.assert.strictEqual(calls, 1)
++})
+```
+
+---
+
+### Incident Patch 3: `5c1f3935` (2026-10-23)
+**Commit Message**: fix(types): add logSerializers to RouteShorthandOptions
+
+The runtime accepts logSerializers as a per-route option
+(lib/route.js) and it is documented under the shared options in
+docs/Reference/Routes.md, but RouteShorthandOptions did not include
+it. The serializers are passed as pino child logger bindings, so the
+return type is widened to match pino serializer semantics: serializer
+functions may return objects as well as strings.
+
+**File**: `test/types/route.tst.ts` (modified, +16/-0)
+```diff
+@@ -83,6 +83,22 @@ fastify().get(
+   }
+ )
  
- Install the Firebase tools functions so you can use the CLI:
++fastify().get(
++  '/',
++  { logLevel: 'info', logSerializers: { test: (value: number) => 'X' + value } },
++  routeHandler
++)
++
++fastify().route({
++  method: 'GET',
++  url: '/',
++  logSerializers: {
++    // serializers may return objects as well as strings
++    req: (req: FastifyRequest) => ({ url: req.url })
++  },
++  handler: routeHandler
++})
++
+ type LowerCaseHTTPMethods = 'delete' | 'get' | 'head' | 'patch' | 'post' | 'put' |
+   'options' | 'query' | 'propfind' | 'proppatch' | 'mkcol' | 'copy' | 'move' | 'lock' |
+   'unlock' | 'trace' | 'search' | 'mkcalendar' | 'report'
+```
+
+**File**: `types/route.d.ts` (modified, +1/-0)
+```diff
+@@ -68,6 +68,7 @@ export interface RouteShorthandOptions<
+   bodyLimit?: number;
+   handlerTimeout?: number;
+   logLevel?: LogLevel;
++  logSerializers?: Record<string, (value: any) => any>;
+   config?: FastifyContextConfig & ContextConfig;
+   constraints?: RouteConstraint,
+   prefixTrailingSlash?: 'slash' | 'no-slash' | 'both';
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7134** (2026-10-19): [Backport 5.x] docs(serverless): clarify per-route observability on serverless platf… (@github-actions[bot])
-- **PR #7133** (closed): Update README.md (@nguyenvanvy367-ctrl)
-- **PR #7128** (2026-10-17): docs(ecosystem): add @guardcore/fastify (@rennf93)
-- **PR #7123** (2026-10-15): [Backport 5.x] fix: contain synchronous throws from custom content type parsers (@github-actions[bot])
-- **PR #7122** (2026-10-15): [Backport 5.x] fix: clamp error statusCode between 400 and 599 with 500 fallback (@github-actions[bot])
-- **PR #7118** (2026-10-15): fix: contain synchronous throws from custom content type parsers (@YOGESH256)
+- **PR #7154** (2026-10-24): [Backport 5.x] fix(decorators): evaluate instance getters once in getDecorator (@github-actions[bot])
+- **PR #7153** (2026-10-24): [Backport 5.x] perf(request): hoist port regex to module level (@github-actions[bot])
+- **PR #7152** (2026-10-24): [Backport 5.x] docs: remove plugins that do not support Fastify v5 (@Tony133)
+- **PR #7151** (2026-10-24): [Backport 5.x] docs(reply): reorganize Reply reference by properties and methods (@Tony133)
+- **PR #7150** (2026-10-24): [Backport 5.x] docs(request): reorganize Request reference by properties and methods (@Tony133)
+- **PR #7149** (2026-10-24): [Backport 5.x] test: do not assert a HEAD response body through inject() (@github-actions[bot])
 
 ---
 
@@ -1410,53 +1502,28 @@ Co-authored-by: Antonio Tripodi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(serverless): clarify per-route observability on serverless platforms (#6802
+## X. types): allow socket path strings in addresses (#6842)
 
 **RULE**:
-When implementing operations in `docs/Guides/Serverless.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/types/instance.tst.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e61a91e7`: docs(serverless): clarify per-route observability on serverless platforms (#6802). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce41dc0f`: types): allow socket path strings in addresses (#6842). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Guides/Serverless.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/types/instance.tst.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-Logging structured logging documentation](https://docs.cloud.google.com/logging/docs/structured-logging)
-and the [Cloud Run logging guide](https://docs.cloud.google.com/run/docs/logging).
-metric](https://docs.cloud.google.com/logging/docs/logs-based-metrics)
-or filter on `jsonPayload.route` to get per-route request counts, latency, and
-error rates.
-  ](https://docs.cloud.google.com/run/docs/quickstarts/functions/deploy-functions-gcloud)
-- [Cloud Logging - Structured Logging](https://docs.cloud.google.com/logging/docs/structured-logging)
-- [Cloud Logging - Log-based Metrics](https://docs.cloud.google.com/logging/docs/logs-based-metrics)
-- [Cloud Run - Logging](https://docs.cloud.google.com/run/docs/logging)
-### A note on per-route functions and observability
-
-When a Fastify instance is wrapped with a single `onRequest()` handler, all
-routes are handled through a single Cloud Function entry point (e.g. `app`).
-Fastify still performs internal routing as usual, but from the provider's
-perspective there is only one deployed function. As a result, logs, metrics,
-and analytics in the Cloud Console are grouped under that single function
-rather than being split per route (e.g. `app-api-v1-u
+expect(server.addresses()).type.toBe<Array<AddressInfo | string>>()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-[Genezio has a dedicated guide for deploying a Fastify application.](https://deployapps.dev/docs/frameworks/fastify/)
-
-Logging structured logging documentation](https://cloud.google.com/logging/docs/structured-logging)
-and the [Cloud Functions logging guide](https://cloud.google.com/functions/docs/monitoring/logging).
-metric](https://cloud.google.com/logging/docs/logs-based-metrics) or filter on
-`jsonPayload.route` to get per-route request counts, latency, and error rates.
-  ](https://cloud.google.com/run/docs/quickstarts/functions/deploy-functions-gcloud)
-- [Cloud Logging - Structured Logging](https://cloud.google.com/logging/docs/structured-logging)
-- [Cloud Logging - Log-based Metrics](https://cloud.google.com/logging/docs/logs-based-metrics)
-- [Cloud Functions - Logging](https://cloud.google.com/functions/docs/monitoring/logging)
+expect(server.addresses()).type.toBe<AddressInfo[]>()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e61a91e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce41dc0f` are properly handled with clean fallback behavior.

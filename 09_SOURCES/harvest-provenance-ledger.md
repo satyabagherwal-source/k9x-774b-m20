@@ -4653,3 +4653,7 @@ Every entry in this ledger must capture:
 | `learn-github-arxanas-git-branchless` | `https://github.com/arxanas/git-branchless` | `f37244cb` | Multi-dimensional audit evidence | 2026-10-25T03:52:45.747Z |
 | `learn-github-crawlcove-xml-sitemap-validator` | `https://github.com/CrawlCove/crawlcove-sitemap-validator` | `caa1d0b5` | Multi-dimensional audit evidence | 2026-10-25T03:52:50.956Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `2aa0822f` | Multi-dimensional audit evidence | 2026-10-25T03:53:00.324Z |
+| `learn-github-mui-base-ui` | `https://github.com/mui/base-ui` | `c1294abd` | Multi-dimensional audit evidence | 2026-10-25T03:59:25.835Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `72067296` | Multi-dimensional audit evidence | 2026-10-25T03:59:27.292Z |
+| `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `2a64ae16` | Multi-dimensional audit evidence | 2026-10-25T03:59:29.739Z |
+| `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `1a172945` | Multi-dimensional audit evidence | 2026-10-25T03:59:34.704Z |

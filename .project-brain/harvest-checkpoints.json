@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T03:53:00.332Z",
+  "last_updated": "2026-10-25T03:59:34.711Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3141,14 +3141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastify-fastify",
-      "content_hash": "d80c79109bd6eb4cc39d35c7a0c999daa83127c83dda587dfb4af85c5f5c750c",
-      "verified_at": "2026-10-20T11:57:28.730Z",
+      "content_hash": "80df53976bb41362a23b66f54adf3402754c7a8a90a671b061050b1e737488cb",
+      "verified_at": "2026-10-25T03:59:29.752Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:57:28.730Z"
+      "last_updated": "2026-10-25T03:59:29.752Z"
     },
     "expressjs/express": {
       "repository": "expressjs/express",
@@ -6321,14 +6321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mui-base-ui",
-      "content_hash": "72aa381175047d2bdc47ea788192c2faca779a94d6e35780cee0b50693bea272",
-      "verified_at": "2026-10-22T17:25:32.423Z",
+      "content_hash": "9b292d75f7cd9d16474cd75458557254d8df11743f110f3231ab1232d23b780e",
+      "verified_at": "2026-10-25T03:59:25.842Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:25:32.423Z"
+      "last_updated": "2026-10-25T03:59:25.842Z"
     },
     "ekzhang/bore": {
       "repository": "ekzhang/bore",
@@ -10611,14 +10611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flux-iac-tofu-controller",
-      "content_hash": "6e6afb4ad1905c6f44dc67f42a8fa878ef89ccf815885d604cdb80f77802fb6d",
-      "verified_at": "2026-10-19T07:29:49.784Z",
+      "content_hash": "753974fd94470642633bc566014dbc18488dab99058f9ca54b5608c2012c11bd",
+      "verified_at": "2026-10-25T03:59:34.710Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:29:49.784Z"
+      "last_updated": "2026-10-25T03:59:34.710Z"
     },
     "clockworklabs/SpacetimeDB": {
       "repository": "clockworklabs/SpacetimeDB",
@@ -10746,14 +10746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zvec-ai-zvec-grep",
-      "content_hash": "89dad1e531934dd5a4e273e9db9941bb4d1d64d8b0ed89d70f19490b044b3d02",
-      "verified_at": "2026-10-21T18:13:55.248Z",
+      "content_hash": "b2b6c53ee0393d44b3146dafff718e166ba72a1b5d33796fe562dd442b31e4f9",
+      "verified_at": "2026-10-25T03:59:27.305Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:13:55.248Z"
+      "last_updated": "2026-10-25T03:59:27.305Z"
     },
     "JetBrains/kotlinconf-app": {
       "repository": "JetBrains/kotlinconf-app",

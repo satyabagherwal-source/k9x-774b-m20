@@ -4646,3 +4646,7 @@
 | `CYCLE-20261025-L41C` | `2026-10-25T03:52:45.744Z` | `arxanas/git-branchless` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4022, Rule 4023, Rule 4024` | Yes (`a4a853f3...`) |
 | `CYCLE-20261025-L821` | `2026-10-25T03:52:50.953Z` | `CrawlCove/xml-sitemap-validator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4025, Rule 4026, Rule 4027` | Yes (`34d60cf4...`) |
 | `CYCLE-20261025-LFA9` | `2026-10-25T03:53:00.321Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4028, Rule 4029` | Yes (`b39cd79c...`) |
+| `CYCLE-20261025-TOQW` | `2026-10-25T03:59:25.832Z` | `mui/base-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4030` | Yes (`9b292d75...`) |
+| `CYCLE-20261025-TPVD` | `2026-10-25T03:59:27.289Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4031` | Yes (`b2b6c53e...`) |
+| `CYCLE-20261025-TRRC` | `2026-10-25T03:59:29.736Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4032` | Yes (`80df5397...`) |
+| `CYCLE-20261025-TVL8` | `2026-10-25T03:59:34.700Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4033` | Yes (`753974fd...`) |

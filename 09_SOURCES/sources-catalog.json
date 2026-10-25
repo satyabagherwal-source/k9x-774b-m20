@@ -2003,10 +2003,10 @@
     "repository": "fastify/fastify",
     "platform": "github",
     "sourceUrl": "https://github.com/fastify/fastify",
-    "sourceVersion": "e61a91e7",
+    "sourceVersion": "2a64ae16",
     "license": "MIT",
-    "contentHash": "d80c79109bd6eb4cc39d35c7a0c999daa83127c83dda587dfb4af85c5f5c750c",
-    "lastHarvestedAt": "2026-10-20T11:57:28.722Z",
+    "contentHash": "80df53976bb41362a23b66f54adf3402754c7a8a90a671b061050b1e737488cb",
+    "lastHarvestedAt": "2026-10-25T03:59:29.739Z",
     "learningId": "learn-github-fastify-fastify"
   },
   "expressjs-express": {
@@ -4133,10 +4133,10 @@
     "repository": "mui/base-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/mui/base-ui",
-    "sourceVersion": "205831ca",
+    "sourceVersion": "c1294abd",
     "license": "MIT",
-    "contentHash": "72aa381175047d2bdc47ea788192c2faca779a94d6e35780cee0b50693bea272",
-    "lastHarvestedAt": "2026-10-22T17:25:32.388Z",
+    "contentHash": "9b292d75f7cd9d16474cd75458557254d8df11743f110f3231ab1232d23b780e",
+    "lastHarvestedAt": "2026-10-25T03:59:25.835Z",
     "learningId": "learn-github-mui-base-ui"
   },
   "ekzhang-bore": {
@@ -7043,10 +7043,10 @@
     "repository": "flux-iac/tofu-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/flux-iac/tofu-controller",
-    "sourceVersion": "8fc67730",
+    "sourceVersion": "1a172945",
     "license": "Apache-2.0",
-    "contentHash": "6e6afb4ad1905c6f44dc67f42a8fa878ef89ccf815885d604cdb80f77802fb6d",
-    "lastHarvestedAt": "2026-10-19T07:29:49.778Z",
+    "contentHash": "753974fd94470642633bc566014dbc18488dab99058f9ca54b5608c2012c11bd",
+    "lastHarvestedAt": "2026-10-25T03:59:34.704Z",
     "learningId": "learn-github-flux-iac-tofu-controller"
   },
   "clockworklabs-spacetimedb": {
@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "102737e4",
+    "sourceVersion": "72067296",
     "license": "Apache-2.0",
-    "contentHash": "89dad1e531934dd5a4e273e9db9941bb4d1d64d8b0ed89d70f19490b044b3d02",
-    "lastHarvestedAt": "2026-10-21T18:13:55.239Z",
+    "contentHash": "b2b6c53ee0393d44b3146dafff718e166ba72a1b5d33796fe562dd442b31e4f9",
+    "lastHarvestedAt": "2026-10-25T03:59:27.292Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {

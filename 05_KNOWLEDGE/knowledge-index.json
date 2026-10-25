@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T03:53:00.249Z",
+  "last_updated": "2026-10-25T03:59:34.621Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11392,8 +11392,8 @@
       "slug": "flux-iac-tofu-controller",
       "platform": "github",
       "source_url": "https://github.com/flux-iac/tofu-controller",
-      "source_version": "8fc67730",
-      "content_hash": "6e6afb4ad1905c6f44dc67f42a8fa878ef89ccf815885d604cdb80f77802fb6d",
+      "source_version": "1a172945",
+      "content_hash": "753974fd94470642633bc566014dbc18488dab99058f9ca54b5608c2012c11bd",
       "dossier_path": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "promoted_rules": [
@@ -11411,6 +11411,11 @@
           "number": 2313,
           "title": "Maximum Payload Etcd Bounded Multi-Chunk Reconstruction",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4033,
+          "title": "branch-planner): replace the PR source ref and only plan PRs targeting the track",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11418,7 +11423,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:29:49.723Z",
+      "verified_at": "2026-10-25T03:59:34.602Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35163,8 +35168,8 @@
       "slug": "mui-base-ui",
       "platform": "github",
       "source_url": "https://github.com/mui/base-ui",
-      "source_version": "205831ca",
-      "content_hash": "72aa381175047d2bdc47ea788192c2faca779a94d6e35780cee0b50693bea272",
+      "source_version": "c1294abd",
+      "content_hash": "9b292d75f7cd9d16474cd75458557254d8df11743f110f3231ab1232d23b780e",
       "dossier_path": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "promoted_rules": [
@@ -35202,6 +35207,11 @@
           "number": 3659,
           "title": "[dialog] Fix outside press crash when the target is the document (#6057)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4030,
+          "title": "[code-infra] Update Node.js and Next.js for security fixes (#6089)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35209,7 +35219,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:25:32.298Z",
+      "verified_at": "2026-10-25T03:59:25.734Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51667,8 +51677,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "102737e4",
-      "content_hash": "89dad1e531934dd5a4e273e9db9941bb4d1d64d8b0ed89d70f19490b044b3d02",
+      "source_version": "72067296",
+      "content_hash": "b2b6c53ee0393d44b3146dafff718e166ba72a1b5d33796fe562dd442b31e4f9",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -51711,6 +51721,11 @@
           "number": 3577,
           "title": "rust): add current-file path lookup (#262)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4031,
+          "title": "rust): preserve command results when stdout closes early (#270)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51718,7 +51733,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:13:55.200Z",
+      "verified_at": "2026-10-25T03:59:27.208Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85026,8 +85041,8 @@
       "slug": "fastify-fastify",
       "platform": "github",
       "source_url": "https://github.com/fastify/fastify",
-      "source_version": "e61a91e7",
-      "content_hash": "d80c79109bd6eb4cc39d35c7a0c999daa83127c83dda587dfb4af85c5f5c750c",
+      "source_version": "2a64ae16",
+      "content_hash": "80df53976bb41362a23b66f54adf3402754c7a8a90a671b061050b1e737488cb",
       "dossier_path": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "promoted_rules": [
@@ -85040,6 +85055,11 @@
           "number": 3154,
           "title": "docs(serverless): clarify per-route observability on serverless platforms (#6802",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4032,
+          "title": "types): allow socket path strings in addresses (#6842)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -85047,7 +85067,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:57:28.660Z",
+      "verified_at": "2026-10-25T03:59:29.653Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117794,6 +117814,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T03:53:00.238Z"
+    },
+    "rule-4030": {
+      "learning_id": "rule-4030",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4030,
+      "title": "[code-infra] Update Node.js and Next.js for security fixes (#6089)",
+      "source_url": "https://github.com/mui/base-ui",
+      "source_version": "c1294abd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:59:25.734Z"
+    },
+    "rule-4031": {
+      "learning_id": "rule-4031",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4031,
+      "title": "rust): preserve command results when stdout closes early (#270)",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "72067296",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:59:27.208Z"
+    },
+    "rule-4032": {
+      "learning_id": "rule-4032",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4032,
+      "title": "types): allow socket path strings in addresses (#6842)",
+      "source_url": "https://github.com/fastify/fastify",
+      "source_version": "2a64ae16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:59:29.653Z"
+    },
+    "rule-4033": {
+      "learning_id": "rule-4033",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4033,
+      "title": "branch-planner): replace the PR source ref and only plan PRs targeting the track",
+      "source_url": "https://github.com/flux-iac/tofu-controller",
+      "source_version": "1a172945",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:59:34.602Z"
     }
   },
   "aliases": {
