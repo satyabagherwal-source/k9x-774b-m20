@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T19:51:50.011Z",
-  "total_cycles_completed": 4949,
-  "total_learnings_persisted": 4949,
-  "total_rules_promoted": 4318,
+  "last_updated": "2026-10-25T19:58:22.457Z",
+  "total_cycles_completed": 4951,
+  "total_learnings_persisted": 4951,
+  "total_rules_promoted": 4319,
   "history": [
-    {
-      "timestamp": "2026-10-25T10:36:25.281Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T10:36:25.645Z",
-      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T10:43:10.487Z",
       "repository": "BurntSushi/ripgrep",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T19:51:50.011Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:58:12.718Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:58:22.457Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

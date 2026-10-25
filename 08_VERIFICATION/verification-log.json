@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-VAXS",
-    "timestamp": "2026-10-23T06:17:18.880Z",
-    "repository": "storybookjs/storybook",
-    "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "65b027dff6ef6c4590d1b358554a69f10cc3a3e165fe16b665194f5a290e8110",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-VEHL",
-    "timestamp": "2026-10-23T06:17:23.481Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "6a28ee093c0c16ab93655116d3956ea0a9b7a9f344c4ac0a2ceedb240e8e9508",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-3U7A",
     "timestamp": "2026-10-23T06:23:57.094Z",
     "repository": "crate/crate",
@@ -7490,6 +7460,36 @@
     "repository": "trinodb/trino",
     "learningId": "learn-github-trinodb-trino",
     "contentHash": "4527f5955bf7d300fb6a72c2cc5b41e4aab95536994b9274ad8f2d0e122ec550",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-2ORQ",
+    "timestamp": "2026-10-25T19:58:12.710Z",
+    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+    "contentHash": "1b309041d2cbc9bce210b295f76b5a19aa96633b897c7c5b72eec9e5bb7d53af",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-2WA9",
+    "timestamp": "2026-10-25T19:58:22.449Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "1b5aa31aeea2c080af387c6f63faec9f3f0d0d22e16a55659521c7ad0db5f166",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

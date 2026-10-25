@@ -4979,3 +4979,5 @@ Every entry in this ledger must capture:
 | `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `fd59ce39` | Multi-dimensional audit evidence | 2026-10-25T19:51:44.642Z |
 | `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-10-25T19:51:48.810Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `67e7cf4c` | Multi-dimensional audit evidence | 2026-10-25T19:51:50.006Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-25T19:58:12.713Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `716de991` | Multi-dimensional audit evidence | 2026-10-25T19:58:22.453Z |

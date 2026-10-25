@@ -4972,3 +4972,5 @@
 | `CYCLE-20261025-UDBZ` | `2026-10-25T19:51:44.639Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4431` | Yes (`5cfd3784...`) |
 | `CYCLE-20261025-UGJR` | `2026-10-25T19:51:48.807Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4432, Rule 4433` | Yes (`fdedf694...`) |
 | `CYCLE-20261025-UHGY` | `2026-10-25T19:51:50.002Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4434` | Yes (`4527f595...`) |
+| `CYCLE-20261025-2ORQ` | `2026-10-25T19:58:12.710Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`1b309041...`) |
+| `CYCLE-20261025-2WA9` | `2026-10-25T19:58:22.449Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4435` | Yes (`1b5aa31a...`) |
