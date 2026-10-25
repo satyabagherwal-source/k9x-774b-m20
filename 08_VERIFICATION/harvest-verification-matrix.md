@@ -4610,3 +4610,7 @@
 | `CYCLE-20261025-GTGQ` | `2026-10-25T02:25:26.570Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3978` | Yes (`9db6de5e...`) |
 | `CYCLE-20261025-IK9L` | `2026-10-25T02:26:47.961Z` | `chakra-ui/zag` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3979, Rule 3980, Rule 3981` | Yes (`ffd20793...`) |
 | `CYCLE-20261025-JBAJ` | `2026-10-25T02:27:22.987Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3982, Rule 3983, Rule 3984` | Yes (`a6ffc821...`) |
+| `CYCLE-20261025-UKX8` | `2026-10-25T02:36:08.684Z` | `ant-design/pro-components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3985` | Yes (`a9464a27...`) |
+| `CYCLE-20261025-URT9` | `2026-10-25T02:36:17.613Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3986, Rule 3987, Rule 3988` | Yes (`2110765d...`) |
+| `CYCLE-20261025-USZW` | `2026-10-25T02:36:19.148Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3989` | Yes (`b8ecfd55...`) |
+| `CYCLE-20261025-UUWR` | `2026-10-25T02:36:21.627Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3990` | Yes (`6b0e7b8b...`) |

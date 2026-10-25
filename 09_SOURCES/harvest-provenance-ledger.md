@@ -4617,3 +4617,7 @@ Every entry in this ledger must capture:
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `c8601f8f` | Multi-dimensional audit evidence | 2026-10-25T02:25:26.573Z |
 | `learn-github-chakra-ui-zag` | `https://github.com/chakra-ui/zag` | `86add962` | Multi-dimensional audit evidence | 2026-10-25T02:26:47.964Z |
 | `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-25T02:27:22.990Z |
+| `learn-github-ant-design-pro-components` | `https://github.com/ant-design/pro-components` | `060dad9d` | Multi-dimensional audit evidence | 2026-10-25T02:36:08.687Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-25T02:36:17.616Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `11d9e6b8` | Multi-dimensional audit evidence | 2026-10-25T02:36:19.151Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `24a991fd` | Multi-dimensional audit evidence | 2026-10-25T02:36:21.630Z |

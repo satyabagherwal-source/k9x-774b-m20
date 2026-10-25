@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T02:27:22.934Z",
+  "last_updated": "2026-10-25T02:36:21.577Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1880,14 +1880,19 @@
       "slug": "ant-design-pro-components",
       "platform": "github",
       "source_url": "https://github.com/ant-design/pro-components",
-      "source_version": "3bf43278",
-      "content_hash": "e9961ddf69440b20466741b37f947940637ff7d932da3d6db7391c08a72b2621",
+      "source_version": "060dad9d",
+      "content_hash": "a9464a27b4069180c7966e0ec1f3f5bb42435abb79feebc21471e89e5b581d0b",
       "dossier_path": "07_PROJECT_LEARNING/ant-design-pro-components-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ant-design-pro-components-learnings.md",
       "promoted_rules": [
         {
           "number": 1853,
           "title": "docs): changelog sidebar active state and demo iframe 404 (#9756)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3985,
+          "title": "table): remove duplicate selection column z-index rule",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -1896,7 +1901,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:32:44.221Z",
+      "verified_at": "2026-10-25T02:36:08.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36233,8 +36238,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "07ffbf88",
-      "content_hash": "489f8bc3fc7b99bbc6cdc0fb767de23e963b5b4a9e5fab629071bd210582baf2",
+      "source_version": "11d9e6b8",
+      "content_hash": "b8ecfd556af1b0b345e4aabcc7d694886330669f475f8d42a2921e24c59d4bf2",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -36267,6 +36272,11 @@
           "number": 3603,
           "title": "profiles): simplify package profile listing for fully qualified names (#2166)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3989,
+          "title": "proxy): answer 407 when an unauthenticated CONNECT arrives with an upstream prox",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36274,7 +36284,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:29:02.787Z",
+      "verified_at": "2026-10-25T02:36:19.084Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44514,14 +44524,19 @@
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "3b33609f",
-      "content_hash": "16bf406f9eb213afd37199093d39d8c1bc4b201b8500345e7c4017e390bb6ae1",
+      "source_version": "24a991fd",
+      "content_hash": "6b0e7b8b53d6488568e1a25c56d7876903da570d5780f932c7722587cd42a5c3",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "promoted_rules": [
         {
           "number": 1999,
           "title": "test(suite) :: share helpers, close pools deterministically, slim OIDC harness (",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3990,
+          "title": "Move detailed chart checks to minimal SQL fixtures (#1560)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -44530,7 +44545,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:57:11.106Z",
+      "verified_at": "2026-10-25T02:36:21.565Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104013,7 +104028,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
-      "content_hash": "7204624032db9c6ee09e141cd58ad4c66abe6aa916bccb6d97a3a82c08dd6876",
+      "content_hash": "2110765d6b297ba7e8dc94ba8fa27a4de822b1bba993fbb19a8ca9f376710cc5",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
       "promoted_rules": [
@@ -104031,6 +104046,21 @@
           "number": 3128,
           "title": "MoE Expert Precision and Routing Robustness",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3986,
+          "title": "Mixed-Precision Quantization Block Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3987,
+          "title": "YaRN RoPE Scaling Interpolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3988,
+          "title": "MoE Expert Routing Top-K Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -104038,7 +104068,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T10:19:20.800Z",
+      "verified_at": "2026-10-25T02:36:17.553Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -116958,6 +116988,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T02:27:22.923Z"
+    },
+    "rule-3985": {
+      "learning_id": "rule-3985",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3985,
+      "title": "table): remove duplicate selection column z-index rule",
+      "source_url": "https://github.com/ant-design/pro-components",
+      "source_version": "060dad9d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:36:08.622Z"
+    },
+    "rule-3986": {
+      "learning_id": "rule-3986",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3986,
+      "title": "Mixed-Precision Quantization Block Alignment Invariant",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:36:17.553Z"
+    },
+    "rule-3987": {
+      "learning_id": "rule-3987",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3987,
+      "title": "YaRN RoPE Scaling Interpolation Invariant",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:36:17.553Z"
+    },
+    "rule-3988": {
+      "learning_id": "rule-3988",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3988,
+      "title": "MoE Expert Routing Top-K Invariant",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:36:17.553Z"
+    },
+    "rule-3989": {
+      "learning_id": "rule-3989",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3989,
+      "title": "proxy): answer 407 when an unauthenticated CONNECT arrives with an upstream prox",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "11d9e6b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:36:19.084Z"
+    },
+    "rule-3990": {
+      "learning_id": "rule-3990",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3990,
+      "title": "Move detailed chart checks to minimal SQL fixtures (#1560)",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "24a991fd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:36:21.565Z"
     }
   },
   "aliases": {

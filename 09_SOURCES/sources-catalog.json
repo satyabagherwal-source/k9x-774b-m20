@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "07ffbf88",
+    "sourceVersion": "11d9e6b8",
     "license": "Apache-2.0",
-    "contentHash": "489f8bc3fc7b99bbc6cdc0fb767de23e963b5b4a9e5fab629071bd210582baf2",
-    "lastHarvestedAt": "2026-10-22T15:29:02.866Z",
+    "contentHash": "b8ecfd556af1b0b345e4aabcc7d694886330669f475f8d42a2921e24c59d4bf2",
+    "lastHarvestedAt": "2026-10-25T02:36:19.151Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -3543,10 +3543,10 @@
     "repository": "ant-design/pro-components",
     "platform": "github",
     "sourceUrl": "https://github.com/ant-design/pro-components",
-    "sourceVersion": "3bf43278",
+    "sourceVersion": "060dad9d",
     "license": "MIT",
-    "contentHash": "e9961ddf69440b20466741b37f947940637ff7d932da3d6db7391c08a72b2621",
-    "lastHarvestedAt": "2026-10-18T23:32:44.247Z",
+    "contentHash": "a9464a27b4069180c7966e0ec1f3f5bb42435abb79feebc21471e89e5b581d0b",
+    "lastHarvestedAt": "2026-10-25T02:36:08.687Z",
     "learningId": "learn-github-ant-design-pro-components"
   },
   "ratatui-ratatui": {
@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "3b33609f",
+    "sourceVersion": "24a991fd",
     "license": "MIT",
-    "contentHash": "16bf406f9eb213afd37199093d39d8c1bc4b201b8500345e7c4017e390bb6ae1",
-    "lastHarvestedAt": "2026-10-19T01:57:11.146Z",
+    "contentHash": "6b0e7b8b53d6488568e1a25c56d7876903da570d5780f932c7722587cd42a5c3",
+    "lastHarvestedAt": "2026-10-25T02:36:21.630Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {
@@ -10375,8 +10375,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "7204624032db9c6ee09e141cd58ad4c66abe6aa916bccb6d97a3a82c08dd6876",
-    "lastHarvestedAt": "2026-10-20T10:19:20.846Z",
+    "contentHash": "2110765d6b297ba7e8dc94ba8fa27a4de822b1bba993fbb19a8ca9f376710cc5",
+    "lastHarvestedAt": "2026-10-25T02:36:17.616Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8"
   },
   "hf-lodestones-moss-image-sft-8-steps-dmd": {

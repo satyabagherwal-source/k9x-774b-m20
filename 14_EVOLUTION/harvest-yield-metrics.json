@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T02:27:22.999Z",
-  "total_cycles_completed": 4587,
-  "total_learnings_persisted": 4587,
-  "total_rules_promoted": 3842,
+  "last_updated": "2026-10-25T02:36:21.640Z",
+  "total_cycles_completed": 4591,
+  "total_learnings_persisted": 4591,
+  "total_rules_promoted": 3848,
   "history": [
-    {
-      "timestamp": "2026-10-22T19:42:17.363Z",
-      "repository": "flox/flox",
-      "learningId": "learn-github-flox-flox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T19:42:26.561Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T20:15:50.617Z",
-      "repository": "reshaped-ui/reshaped",
-      "learningId": "learn-github-reshaped-ui-reshaped",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T20:22:04.297Z",
-      "repository": "lobehub/lobe-ui",
-      "learningId": "learn-github-lobehub-lobe-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T20:22:07.237Z",
       "repository": "Kuddev/pebrel",
@@ -1403,6 +1375,34 @@
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
       "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:36:08.696Z",
+      "repository": "ant-design/pro-components",
+      "learningId": "learn-github-ant-design-pro-components",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:36:17.625Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:36:19.162Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:36:21.640Z",
+      "repository": "sqlpage/SQLPage",
+      "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

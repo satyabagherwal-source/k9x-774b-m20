@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
-> **Source Version**: `3b33609f`  
+> **Source Version**: `24a991fd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:57:10.955Z  
+> **Timestamp**: 2026-10-25T02:36:21.286Z  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:57:10.949Z  
+> **Harvest Timestamp**: 2026-10-25T02:36:20.970Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast SQL-only data application builder. Automatically build a UI on top of SQL queries. 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2575 stars
+- **Stars / Engagement**: 2579 stars
 
 ---
 
@@ -1050,876 +1050,281 @@ window.addEventListener("pagehide", (event) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `250a8989` (2026-10-07)
-**Commit Message**: test(suite) :: share helpers, close pools deterministically, slim OIDC harness (#1529)
+### Incident Patch 1: `99c68467` (2026-10-24)
+**Commit Message**: Move detailed chart checks to minimal SQL fixtures (#1560)
 
-* test(suite) :: share helpers, close pools deterministically, slim OIDC harness
-
-Integration tests leaked every request's AppState: actix-web recycles
-test-built HttpRequestInner allocations into a per-request pool that the
-test path never drains, pinning database pools until process exit. Pooled
-ODBC connections keep cached prepared statements alive, which deadlocks
-Oracle's client at process exit. Close every test pool (clearing statement
-caches first, since close() alone leaves checked-out connections behind)
-while the test runtime is still alive, including after panics.
-
-Consolidate the suite around shared helpers (read_body_string,
-supports_database, request builders, OIDC login/config builders,
-multipart/webhook request builders) and share one AppState per test
-where possible, cutting duplication across oidc/uploads/requests/
-data_formats/errors/server_timing/cookies/core. Net negative LOC.
-
-* test: replace custom runtime with service-backed response helpers
-
-Give test requests an Actix service-owned pool so dropping the service releases application state. Centralize request setup with re
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-1)
+**File**: `tests/end-to-end/fixtures/chart/hidden-legend.sql` (added, +2/-0)
 ```diff
-@@ -99,6 +99,7 @@ jobs:
-             container: mssql
-             db_url: "mssql://root:Password123!@127.0.0.1/sqlpage"
-           - database: oracle
-+            test_args: --test-threads=2
-             container: oracle
-             db_url: "Driver=Oracle 23 ODBC driver;Dbq=//127.0.0.1:1521/FREEPDB1;Uid=root;Pwd=Password123!"
-           - database: duckdb
-@@ -142,7 +143,7 @@ jobs:
-         run: docker compose logs ${{ matrix.container }}
-       - name: Run tests against ${{ matrix.database }}
-         timeout-minutes: 5
--        run: scripts/run-test-binaries.sh
-+        run: scripts/run-test-binaries.sh ${{ matrix.test_args }}
-         env:
-           DATABASE_URL: ${{ matrix.db_url }}
-           MALLOC_CHECK_: 3
+@@ -0,0 +1,2 @@
++SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'bar' AS type, TRUE AS stacked, FALSE AS show_legend;
++WITH points(series, x, y) AS (VALUES ('CPU', 'Mon', 10), ('CPU', 'Tue', 20), ('GPU', 'Mon', 5), ('GPU', 'Tue', 15)) SELECT * FROM points;
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +8/-0)
-```diff
-@@ -96,6 +96,14 @@ export DATABASE_URL=mssql://root:Password123!@localhost/sqlpage
- cargo test
- ```
- 
-+Use `common::response_for(path)` for ordinary integration requests and
-+`common::response_with(path, config)` for custom configuration. Custom requests use
-+`common::response_from(request)`; tests sharing database or cache state use `common::send_request`.
-+These helpers use the production `create_app` routes and middleware through an Actix test service,
-+whose destructor drains its request pool.
-+Keep `#[actix_web::test]`; standalone `TestRequest::to_srv_request()` retains application state.
-+When testing Oracle locally, use `cargo test -- --test-threads=2` to avoid overwhelming the listener.
-+
- ### End-to-End Tests
- 
- We use Playwright for end-to-end testing of dynamic frontend features.
-```
-
-**File**: `scripts/run-test-binaries.sh` (modified, +1/-1)
-```diff
-@@ -13,6 +13,6 @@ fi
- 
- for test_binary in "${test_binaries[@]}"; do
-   echo "::group::$(basename "$test_binary")"
--  "$test_binary" --quiet
-+  "$test_binary" --quiet "$@"
-   echo "::endgroup::"
- done
-```
-
-**File**: `tests/basic/mod.rs` (modified, +8/-12)
-```diff
-@@ -4,22 +4,21 @@ use actix_web::{
-     test,
- };
- 
--use crate::common::req_path;
-+use crate::common::{response_for, response_with, test_config};
- 
- #[actix_web::test]
- async fn test_index_ok() {
--    let resp = req_path("/").await.unwrap();
-+    let resp = response_for("/").await;
-     assert_eq!(resp.status(), http::StatusCode::OK);
--    let body = test::read_body(resp).await;
--    assert!(body.starts_with(b"<!DOCTYPE html>"));
--    let body = String::from_utf8(body.to_vec()).unwrap();
-+    let body = crate::common::read_body_string(resp).await;
-+    assert!(body.starts_with("<!DOCTYPE html>"));
-     assert!(body.contains("It works !"));
-     assert!(!body.contains("error"));
- }
- 
- #[actix_web::test]
- async fn test_access_config_forbidden() {
--    let resp_result = req_path("/sqlpage/sqlpage.json").await;
-+    let resp_result = response_with("/sqlpage/sqlpage.json", test_config()).await;
-     assert!(
-         resp_result.is_err(),
-         "Accessing the config file should be forbidden, but we received a response: {resp_result:?}"
-@@ -35,19 +34,16 @@ async fn test_access_config_forbidden() {
- 
- #[actix_web::test]
- async fn test_static_files() {
--    let resp = req_path("/tests/it_works.txt").await.unwrap();
-+    let resp = response_for("/tests/it_works.txt").await;
-     assert_eq!(resp.status(), http::StatusCode::OK);
-     let body = test::read_body(resp).await;
-     assert_eq!(&body, &b"It works !"[..]);
- }
- 
- #[actix_web::test]
- async fn test_spaces_in_file_names() {
--    let resp = req_path("/tests/core/spaces%20in%20file%20name.sql")
--        .await
--        .unwrap();
-+    let resp = response_for("/tests/core/spaces%20in%20file%20name.sql").await;
-     assert_eq!(resp.status(), http::StatusCode::OK);
--    let body = test::read_body(resp).await;
--    let body_str = String::from_utf8(body.to_vec()).unwrap();
-+    let body_str = crate::common::read_body_string(resp).await;
-     assert!(body_str.contains("It works !"), "{body_str}");
- }
-```
-
-**File**: `tests/common/mod.rs` (modified, +78/-67)
-```diff
-@@ -3,112 +3,123 @@ use std::time::Duration;
- 
- use actix_web::{
-     App, HttpResponse, HttpServer,
--    dev::{ServiceRequest, fn_service},
-+    dev::{ServiceRequest, ServiceResponse, fn_service},
-     http::header,
-     http::header::ContentType,
--    test::TestRequest,
-+    test::{self, TestRequest},
-     web,
-     web::Data,
- };
- use sqlpage::{
-     AppState,
-     app_config::{AppConfig, test_database_url},
-     telemetry,
--    webserver::http::{form_config, main_handler, payload_config},
-+    webserver::http::create_app,
- };
- use tokio::sync::oneshot;
- use tokio::task::JoinHandle;
- 
--pub(crate) async fn get_request_to_with_data(
--    path: &str,
--    data: Data<AppState>,
--) -> actix_web::Result<TestRequest> {
--    Ok(TestRequest::get()
--        .uri(path)
-+/// Builds a GET request with the defaults used by the SQL fixtures.
-+pub(crate) fn request_for(path: impl AsRef<str>) -> TestRequest {
-+    TestRequest::get()
-+        .uri(path.as_ref())
-         .insert_header(ContentType::plaintext())
-         .insert_header(header::Accept::html())
--        .app_data(payload_config(&data))
--        .app_data(form_config(&data))
--        .app_data(data))
- }
- 
--pub(crate) async fn get_request_to(path: &str) -> actix_web::Result<TestRequest> {
--    let data = make_app_data().await;
--    get_request_to_with_data(path, data).await
-+pub(crate) fn multipart_request(path: &str, body: impl Into<web::Bytes>) -> TestRequest {
-+    request_for(path)
-+        .insert_header(("content-type", "multipart/form-data; boundary=1234567890"))
-+        .set_payload(body)
- }
- 
--pub(crate) async fn make_app_data_from_config(config: AppConfig) -> Data<AppState> {
--    let state = AppState::init(&config).await.unwrap();
--    Data::new(state)
-+pub(crate) async fn make_app_data_from_config(
-+    config: AppConfig,
-+) -> actix_web::Result<Data<AppState>> {
-+    init_log();
-+    AppState::init(&config)
-+        .await
-+        .map(Data::new)
-+        .map_err(actix_web::error::ErrorInternalServerError)
- }
- 
--pub(crate) async fn make_app_data() -> Data<AppState> {
--    init_log();
--    let config = test_config();
--    make_app_data_from_config(config).await
-+/// Sends a GET request with the default test configuration, failing the test on error.
-+pub(crate) async fn response_for(path: impl AsRef<str>) -> ServiceResponse {
-+    response_with(path.as_ref(), test_config())
-+        .await
-+        .unwrap_or_else(|err| panic!("Request to {} failed: {err:#}", path.as_ref()))
- }
- 
--pub(crate) async fn req_path(
-+/// Sends a GET request with custom application configuration.
-+pub(crate) async fn response_with(
-     path: impl AsRef<str>,
--) -> Result<actix_web::dev::ServiceResponse, actix_web::Error> {
--    let req = get_request_to(path.as_ref()).await?.to_srv_request();
--    main_handler(req).await
-+    config: AppConfig,
-+) -> actix_web::Result<ServiceResponse> {
-+    send_request(request_for(path), make_app_data_from_config(config).await?).await
- }
- 
--const REQ_TIMEOUT: Duration = Duration::from_secs(8);
--pub(crate) async fn req_path_with_app_data(
--    path: impl AsRef<str>,
--    app_data: Data<AppState>,
--) -> anyhow::Result<actix_web::dev::ServiceResponse> {
--    req_path_with_app_data_and_accept(path, app_data, header::Accept::html()).await
-+/// Sends a custom request with the default test configuration.
-+pub(crate) async fn response_from(request: TestRequest) -> actix_web::Result<ServiceResponse> {
-+    send_request(request, make_app_data_from_config(test_config()).await?).await
- }
- 
--pub(crate) async fn req_path_with_app_data_json(
-+/// Sends a GET request using existing state, for tests that share a database or cache.
-+pub(crate) async fn response_with_data(
-     path: impl AsRef<str>,
--    app_data: Data<AppState>,
--) -> anyhow::Result<actix_web::dev::ServiceResponse> {
--    req_path_with_app_data_and_accept(path, app_data, header::Accept::json()).await
-+    data: Data<AppState>,
-+) -> actix_web::Result<ServiceResponse> {
-+    send_request(request_for(path), data).await
- }
- 
--async fn req_path_with_app_data_and_accept(
--    path: impl AsRef<str>,
--    app_data: Data<AppState>,
--    accept: header::Accept,
--) -> anyhow::Result<actix_web::dev::ServiceResponse> {
--    let path = path.as_ref();
--    let req = TestRequest::get()
--        .uri(path)
--        .app_data(app_data)
--        .insert_header(("cookie", "test_cook=123"))
--        .insert_header(("authorization", "Basic dGVzdDp0ZXN0"))
--        .insert_header(accept)
--        .to_srv_request();
--    let resp = tokio::time::timeout(REQ_TIMEOUT, main_handler(req))
--        .await
--        .map_err(|e| anyhow::anyhow!("Request to {path} timed out: {e}"))?
--        .map_err(|e| {
--            anyhow::anyhow!(
--                "Request to {path} failed with status {}: {e:#}",
--                e.as_response_error().status_code()
--            )
--        })?;
--    Ok(resp)
-+/// Runs a request through the production app, including its routes and middleware.
-+/// Dropping the service disables an
-```
-
-**File**: `tests/cookies/mod.rs` (modified, +3/-5)
-```diff
-@@ -1,9 +1,9 @@
--use crate::common::req_path;
-+use crate::common::response_for;
- use actix_web::http::StatusCode;
- use actix_web::http::header::SET_COOKIE;
- 
- async fn set_cookie_header(path: &str) -> String {
--    let resp = req_path(path).await.unwrap();
-+    let resp = response_for(path).await;
-     resp.headers()
-         .get(SET_COOKIE)
-         .unwrap_or_else(|| panic!("{path} should have sent a Set-Cookie header"))
-@@ -33,9 +33,7 @@ async fn zero_turns_off_a_cookie_protection() {
- 
- #[actix_web::test]
- async fn a_page_made_only_of_header_components_still_sends_them() {
--    let resp = req_path("/tests/cookies/header_only_response.sql")
--        .await
--        .unwrap();
-+    let resp = response_for("/tests/cookies/header_only_response.sql").await;
-     assert_eq!(resp.status(), StatusCode::NO_CONTENT);
-     assert!(resp.headers().contains_key(SET_COOKIE));
- }
-```
-
-**File**: `tests/core/mod.rs` (modified, +81/-116)
-```diff
-@@ -1,24 +1,61 @@
--use actix_web::{http::StatusCode, test};
-+use actix_web::http::StatusCode;
- use sqlpage::{
-     AppState,
-     webserver::{self, make_placeholder},
- };
--use sqlx::executor::Executor as _;
- 
--use crate::common::{make_app_data_from_config, req_path, req_path_with_app_data, test_config};
-+use crate::common::{
-+    make_app_data_from_config, response_for, response_with, response_with_data, test_config,
-+};
- 
- mod path_aliases;
- 
-+/// Creates the `sqlpage_files` table if needed and stores `contents` at `path`.
-+/// Other tests share this database, so the table is never dropped.
-+async fn store_file_in_db(state: &AppState, path: &str, contents: &[u8]) {
-+    use sqlx::executor::Executor as _;
-+
-+    let create_table_sql =
-+        sqlpage::filesystem::DbFsQueries::get_create_table_sql(state.db.info.database_type);
-+    if state
-+        .db
-+        .connection
-+        .execute("SELECT 1 FROM sqlpage_files WHERE 1 = 0")
-+        .await
-+        .is_err()
-+    {
-+        state.db.connection.execute(create_table_sql).await.unwrap();
-+    }
-+    let delete_sql = format!("DELETE FROM sqlpage_files WHERE path = '{path}'");
-+    state
-+        .db
-+        .connection
-+        .execute(delete_sql.as_str())
-+        .await
-+        .unwrap();
-+    let insert_sql = format!(
-+        "INSERT INTO sqlpage_files(path, contents) VALUES ({}, {})",
-+        make_placeholder(state.db.info.kind, 1),
-+        make_placeholder(state.db.info.kind, 2)
-+    );
-+    sqlx::query::query(&insert_sql)
-+        .bind(path)
-+        .bind(contents)
-+        .execute(&state.db.connection)
-+        .await
-+        .unwrap();
-+}
-+
- #[actix_web::test]
- async fn test_concurrent_requests() {
-     let components = [
-         "table", "form", "card", "datagrid", "hero", "list", "timeline",
-     ];
--    let app_data = make_app_data_from_config(test_config()).await;
-+    let app_data = crate::common::make_app_data().await;
-     let reqs = (0..64)
-         .map(|i| {
-             let component = components[i % components.len()];
--            req_path_with_app_data(
-+            response_with_data(
-                 format!("/tests/components/any_component.sql?component={component}"),
-                 app_data.clone(),
-             )
-@@ -28,12 +65,8 @@ async fn test_concurrent_requests() {
-     for result in results {
-         let resp = result.unwrap();
-         assert_eq!(resp.status(), StatusCode::OK);
--        let body = test::read_body(resp).await;
--        assert!(
--            body.starts_with(b"<!DOCTYPE html>"),
--            "Expected html doctype"
--        );
--        let body = String::from_utf8(body.to_vec()).unwrap();
-+        let body = crate::common::read_body_string(resp).await;
-+        assert!(body.starts_with("<!DOCTYPE html>"), "Expected html doctype");
-         assert!(
-             body.contains("It works !"),
-             "Expected to contain: It works !, but got: {body}"
-@@ -44,11 +77,9 @@ async fn test_concurrent_requests() {
- 
- #[actix_web::test]
- async fn test_datagrid_description_presence_controls_placeholder() {
--    let resp = req_path("/tests/components/datagrid_icon_only.sql")
--        .await
--        .unwrap();
-+    let resp = response_for("/tests/components/datagrid_icon_only.sql").await;
-     assert_eq!(resp.status(), StatusCode::OK);
--    let body = String::from_utf8(test::read_body(resp).await.to_vec()).unwrap();
-+    let body = crate::common::read_body_string(resp).await;
-     assert!(body.contains("Facebook"), "{body}");
-     assert!(body.contains("Empty"), "{body}");
-     assert!(body.contains("Missing"), "{body}");
-@@ -66,50 +97,23 @@ async fn test_routing_with_db_fs() {
-     config.site_prefix = "/prefix/".to_string();
-     let state = AppState::init(&config).await.unwrap();
- 
--    if matches!(
--        state.db.info.database_type,
--        webserver::database::SupportedDatabase::Oracle
-+    if crate::common::supports_database(
-+        &state.db,
-+        &[webserver::database::SupportedDatabase::Oracle],
-     ) {
-         return;
-     }
- 
--    let create_table_sql =
--        sqlpage::filesystem::DbFsQueries::get_create_table_sql(state.db.info.database_type);
--    // Other tests share this database, so never drop a table their initialized state may use.
--    if state
--        .db
--        .connection
--        .execute("SELECT 1 FROM sqlpage_files WHERE 1 = 0")
--        .await
--        .is_err()
--    {
--        state.db.connection.execute(create_table_sql).await.unwrap();
--    }
--    state
--        .db
--        .connection
--        .execute("DELETE FROM sqlpage_files WHERE path = 'on_db.sql'")
--        .await
--        .unwrap();
--    let insert_sql = format!(
--        "INSERT INTO sqlpage_files(path, contents) VALUES ('on_db.sql', {})",
--        make_placeholder(state.db.info.kind, 1)
--    );
--    sqlx::query::query(&insert_sql)
--        .bind("select ''text'' as component, ''Hi from db !'' AS contents;".as_bytes())
--        .execute(&state.db.connection)
--        .await
--        .unwrap();
--
-```
-
-**File**: `tests/core/path_aliases.rs` (modified, +2/-4)
-```diff
-@@ -1,11 +1,9 @@
- use actix_web::{body::to_bytes, http::StatusCode};
--use sqlpage::webserver::http::main_handler;
- 
--use crate::common::get_request_to;
-+use crate::common::{response_with, test_config};
- 
- async fn assert_sql_response(path: &str, expected_status: StatusCode) {
--    let request = get_request_to(path).await.unwrap().to_srv_request();
--    let response = match main_handler(request).await {
-+    let response = match response_with(path, test_config()).await {
-         Ok(response) => response.into_parts().1,
-         Err(error) => error.error_response(),
-     };
-```
-
----
-
-### Incident Patch 2: `452bd771` (2026-10-13)
-**Commit Message**: Support prefix and suffix row-level parameters when using a 'select' element in a form (#1549)
-
-* Added prefix and suffix to 'select' form field
-
-Added support for prefix text, prefix icon and suffix text to form component when 'select' is the field type
-
-* Update CHANGELOG.md
-
-* Added a test for the 'prefix' row-level parameter on 'select' form field
-
-* Added a prefix icon to the 'select' form example
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -15,6 +15,7 @@
- - `cargo install sqlpage`, and any build from the crates.io tarball, no longer needs internet access. The browser libraries now come from npm and ship inside the published crate. Building from a git checkout needs `npm ci` first. Pre-built binaries and the Docker image are unaffected.
- - The browser libraries are now part of the browser scripts. SQLPage no longer defines the `window.tabler` and `window.bootstrap` globals; custom scripts that reached for them should load their own copy of Bootstrap.
- - The startup message now reports the address the server actually bound instead of the one it was configured with.
-+- Inside a form component you can now use the `prefix`, `prefix_icon` and `suffix` row-level parameters when `type` is `select`. 
- 
- ## v0.46.3
- 
-```
-
-**File**: `examples/official-site/sqlpage/migrations/01_documentation.sql` (modified, +1/-0)
-```diff
-@@ -386,6 +386,7 @@ In SQLite, the query would look like
- SELECT 
-     ''select'' as type,
-     ''Select a fruit...'' as empty_option,
-+    ''cherry'' as prefix_icon,
-     json_group_array(json_object(
-         ''label'', name,
-         ''value'', id
-```
-
-**File**: `sqlpage/templates/form.handlebars` (modified, +24/-20)
-```diff
-@@ -87,26 +87,30 @@
-                         {{~#if value includeZero=true}}{{value}}{{/if~}}
-                         </textarea>
-                     {{~else~}}{{#if (eq type 'select')~}}
--                        <select name="{{name}}" 
--                            class="form-select {{class}}"
--                        {{~#if id}} id="{{id}}" {{/if~}}
--                        {{~#if required}} required="required" {{/if~}}
--                        {{~#if autofocus}} autofocus {{/if~}}
--                        {{~#if disabled}}disabled {{/if~}}
--                        {{~#if multiple}} multiple {{/if~}}
--                        {{~#if (or dropdown searchable options_source)}} 
--                            data-pre-init="select-dropdown"
--                            data-sqlpage-js="{{static_path 'tomselect.js'}}"
--                        {{/if~}}
--                        {{~#if options_source}} data-options_source="{{options_source}}" {{/if~}}
--                        {{~#if placeholder}} placeholder="{{placeholder}}" {{/if~}}
--                        {{~#if create_new}} data-create_new={{create_new}} {{/if~}}
--                        >
--                        {{#if empty_option}}<option value="">{{empty_option}}</option>{{/if}}
--                        {{#each (parse_json options)}}
--                            <option value="{{value}}" {{#if (or (loose_eq ../value value) selected)}}selected{{/if}}>{{label}}</option>
--                        {{/each}}
--                        </select>
-+                        <div class="input-group">
-+                            {{#if prefix_icon}}<span class="input-group-text">{{icon_img prefix_icon}}</span>{{/if}}
-+                            {{#if prefix}}<span class="input-group-text">{{prefix}}</span>{{/if}}
-+                            <select name="{{name}}"  class="form-select {{class}}"
-+                                {{~#if id}} id="{{id}}" {{/if~}}
-+                                {{~#if required}} required="required" {{/if~}}
-+                                {{~#if autofocus}} autofocus {{/if~}}
-+                                {{~#if disabled}}disabled {{/if~}}
-+                                {{~#if multiple}} multiple {{/if~}}
-+                                {{~#if (or dropdown searchable options_source)}} 
-+                                    data-pre-init="select-dropdown"
-+                                    data-sqlpage-js="{{static_path 'tomselect.js'}}"
-+                                {{/if~}}
-+                                {{~#if options_source}} data-options_source="{{options_source}}" {{/if~}}
-+                                {{~#if placeholder}} placeholder="{{placeholder}}" {{/if~}}
-+                                {{~#if create_new}} data-create_new={{create_new}} {{/if~}}
-+                                >
-+                                {{#if empty_option}}<option value="">{{empty_option}}</option>{{/if}}
-+                                {{#each (parse_json options)}}
-+                                    <option value="{{value}}" {{#if (or (loose_eq ../value value) selected)}}selected{{/if}}>{{label}}</option>
-+                                {{/each}}
-+                            </select>
-+                            {{#if suffix}}<span class="input-group-text">{{suffix}}</span>{{/if}}
-+                        </div>
-                     {{else}}
-                         <div class="input-group">
-                             {{#if prefix_icon}}<span class="input-group-text">{{icon_img prefix_icon}}</span>{{/if}}
-```
-
-**File**: `tests/sql_test_files/component_rendering/form_select_uses_prefix.sql` (added, +4/-0)
+**File**: `tests/end-to-end/fixtures/chart/horizontal-reference-lines.sql` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
-+select 'form' as component;
-+select 'select' as type,
-+    'It works !' as prefix,
-+    '[{"label": "Orange", "value": 0}, {"label": "Apple", "value": 1}, {"label": "Banana", "value": 3}]' as options;
++SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'bar' AS type, TRUE AS horizontal, 100 AS ymax;
++SELECT 90 AS yline, 'full' AS label;
++SELECT 'db-1' AS xline, 'watched' AS label;
++WITH points(x, y) AS (VALUES ('backup-1', 41), ('db-1', 88)) SELECT * FROM points;
 ```
 
----
-
-### Incident Patch 3: `3b33609f` (2026-10-17)
-**Commit Message**: Gate selective CI with one required result check (#1553)
-
-**File**: `.github/workflows/ci.yml` (modified, +58/-1)
+**File**: `tests/end-to-end/fixtures/chart/stacked-time-series.sql` (modified, +1/-1)
 ```diff
-@@ -28,7 +28,31 @@ env:
-   REGISTRY_IMAGE: lovasoa/sqlpage
- 
- jobs:
-+  ci_selection:
-+    runs-on: ubuntu-latest
-+    permissions:
-+      pull-requests: read
-+    outputs:
-+      # Only a confirmed excluded-files-only PR may skip the core jobs.
-+      full: ${{ github.event_name != 'pull_request' || steps.paths.outputs.full != 'false' }}
-+    steps:
-+      - id: paths
-+        name: Select test jobs
-+        # The PR files API is limited to 3000 files; larger PRs select core jobs.
-+        if: github.event_name == 'pull_request' && github.event.pull_request.changed_files <= 3000
-+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
-+        with:
-+          predicate-quantifier: every
-+          filters: |
-+            full:
-+              - '!docs/**'
-+              - '!README.md'
-+              - '!.github/workflows/release.yml'
-+              - '!.github/workflows/official-site.yml'
-+
-   compile_and_lint:
-+    needs: ci_selection
-+    if: needs.ci_selection.outputs.full == 'true'
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v7
-@@ -62,6 +86,8 @@ jobs:
-           path: "target/debug/sqlpage"
- 
-   published_crate:
-+    needs: ci_selection
-+    if: needs.ci_selection.outputs.full == 'true'
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v7
-@@ -146,6 +172,8 @@ jobs:
-           MALLOC_PERTURB_: 10
- 
-   windows_test:
-+    needs: ci_selection
-+    if: needs.ci_selection.outputs.full == 'true'
-     runs-on: windows-latest
-     steps:
-       - uses: actions/checkout@v7
-@@ -210,6 +238,8 @@ jobs:
-           retention-days: 30
- 
-   docker_build:
-+    needs: ci_selection
-+    if: needs.ci_selection.outputs.full == 'true'
-     name: docker_build (${{ matrix.platform }}, ${{ matrix.variant }})
-     runs-on: ubuntu-latest
-     strategy:
-@@ -331,6 +361,8 @@ jobs:
-           if-no-files-found: error
-           retention-days: 1
-   hurl_examples:
-+    needs: ci_selection
-+    if: needs.ci_selection.outputs.full == 'true'
-     runs-on: ubuntu-latest
-     permissions:
-       contents: read
-@@ -393,7 +425,7 @@ jobs:
-   hurl:
-     name: hurl (${{ matrix.example }})
-     runs-on: ubuntu-latest
--    if: ${{ needs.hurl_examples.outputs.examples != '[]' }}
-+    if: ${{ needs.hurl_examples.result == 'success' && needs.hurl_examples.outputs.examples != '[]' }}
-     timeout-minutes: 15
-     needs:
-       - docker_build
-@@ -433,6 +465,31 @@ jobs:
-       - name: Run example Hurl test
-         run: scripts/test-examples-hurl.sh "${{ matrix.example }}"
- 
-+  # Require this single check in branch protection instead of individual jobs.
-+  ci_gate:
-+    name: CI gate
-+    if: always()
-+    needs:
-+      - ci_selection
-+      - compile_and_lint
-+      - published_crate
-+      - test
-+      - windows_test
-+      - playwright
-+      - docker_build
-+      - hurl_examples
-+      - hurl
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 5
-+    permissions:
-+      contents: read
-+    steps:
-+      - uses: actions/checkout@v7
-+      - name: Check selected job results
-+        run: node scripts/check-ci-results.mjs
-+        env:
-+          NEEDS_JSON: ${{ toJSON(needs) }}
-+
-   docker_push:
-     runs-on: ubuntu-latest
-     if: github.event_name == 'push'
+@@ -1,2 +1,2 @@
+ SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'area' AS type, TRUE AS stacked, TRUE AS time, 4 AS marker;
+-WITH points(series, x, y) AS (VALUES ('CPU', '2024-01-01T00:00:00Z', 10), ('CPU', '2024-01-01T00:01:00Z', 20), ('CPU', '2024-01-01T00:02:00Z', 30), ('CPU', '2024-01-01T00:03:00Z', 40), ('GPU', '2024-01-01T00:01:00Z', 50), ('GPU', '2024-01-01T00:02:00Z', 50), ('GPU', '2024-01-01T00:03:00Z', 50)) SELECT * FROM points;
++WITH points(series, x, y) AS (VALUES ('CPU', '2024-01-01T00:00:00Z', 10), ('CPU', '2024-01-01T00:01:00Z', 20), ('CPU', '2024-01-01T00:02:00Z', 30), ('CPU', '2024-01-01T00:03:00Z', 40), ('CPU', '2024-01-01T00:04:00Z', 30), ('GPU', '2024-01-01T00:01:00Z', 50), ('GPU', '2024-01-01T00:02:00Z', 50), ('GPU', '2024-01-01T00:03:00Z', 50)) SELECT * FROM points;
 ```
 
-**File**: `scripts/check-ci-results.mjs` (added, +57/-0)
+**File**: `tests/end-to-end/fixtures/chart/test.ts` (modified, +55/-2)
 ```diff
-@@ -0,0 +1,57 @@
-+// This always-run gate accepts only skips justified by successful selection.
-+function fail(message) {
-+  console.error(message);
-+  process.exit(1);
+@@ -308,6 +308,7 @@ test("gives a stacked series a zero at every x it did not measure", async ({
+     ["2024-01-01T00:01:00.000Z", 50],
+     ["2024-01-01T00:02:00.000Z", 50],
+     ["2024-01-01T00:03:00.000Z", 50],
++    ["2024-01-01T00:04:00.000Z", 0],
+   ]);
+ });
+ 
+@@ -316,8 +317,13 @@ test("stacks a series above the one it shares an x with", async ({ page }) => {
+   const [cpu, gpu] = chart.drawnPerSeries;
+   assert.ok(cpu && gpu, "Both series were drawn");
+ 
+-  expect(gpu.heights).toHaveLength(4);
+-  expect(gpu.heights[0]).toBe(cpu.heights[0]);
++  expect(cpu.lefts).toHaveLength(5);
++  expect(gpu.lefts).toEqual(cpu.lefts);
++  expect(gpu.heights).toHaveLength(5);
++  expect([gpu.heights[0], gpu.heights[4]]).toEqual([
++    cpu.heights[0],
++    cpu.heights[4],
++  ]);
+   const cpuHeight = cpu.heights[1];
+   assert.ok(cpuHeight !== undefined, "CPU has a second point");
+   expect(gpu.heights[1]).toBeLessThan(cpuHeight);
+@@ -507,6 +513,53 @@ test("gives every slice of a pie chart its label and its share", async ({
+   expect(chart.dataLabels).toEqual(["Yes: 65%", "No: 35%"]);
+ });
+ 
++test("shows series legends by default and hides them when requested", async ({
++  page,
++}) => {
++  await renderChart(page, "stacked-time-series");
++  await expect(page.locator("#test-chart .apexcharts-legend-text")).toHaveText([
++    "CPU",
++    "GPU",
++  ]);
++
++  await renderChart(page, "hidden-legend");
++  await expect(page.locator("#test-chart .apexcharts-legend")).toBeHidden();
++});
++
++for (const { axis, fixture, labels } of [
++  { axis: "y", fixture: "y-reference-band", labels: ["target", "throttling"] },
++  { axis: "x", fixture: "x-reference-band", labels: ["deploy", "incident"] },
++]) {
++  test(`draws a ${axis} reference line and band with their labels`, async ({
++    page,
++  }) => {
++    await renderChart(page, fixture);
++    const annotations = page.locator(
++      `#test-chart .apexcharts-${axis}axis-annotations`,
++    );
++    await expect(annotations.locator("line")).toHaveCount(1);
++    await expect(
++      annotations.locator(".apexcharts-annotation-rect"),
++    ).toHaveCount(1);
++    for (const label of labels) {
++      await expect(annotations.getByText(label, { exact: true })).toBeVisible();
++    }
++  });
 +}
 +
-+let jobs;
-+try {
-+  jobs = JSON.parse(process.env.NEEDS_JSON ?? "");
-+} catch {
-+  fail("Missing or invalid CI job results.");
-+}
-+if (!jobs || typeof jobs !== "object" || Array.isArray(jobs))
-+  fail("CI job results must be an object.");
++test("horizontal bars keep reference lines on their data axes", async ({
++  page,
++}) => {
++  await renderChart(page, "horizontal-reference-lines");
++  const down = page.locator("#test-chart .apexcharts-xaxis-annotations");
++  const across = page.locator("#test-chart .apexcharts-yaxis-annotations");
 +
-+if (jobs.ci_selection?.result !== "success")
-+  fail("CI change detection did not succeed.");
-+const full = jobs.ci_selection.outputs?.full;
-+if (full !== "true" && full !== "false")
-+  fail("CI change detection returned an ambiguous selection.");
++  await expect(down.locator("line")).toHaveCount(1);
++  await expect(down.getByText("full", { exact: true })).toBeVisible();
++  await expect(across.locator("line")).toHaveCount(1);
++  await expect(across.getByText("watched", { exact: true })).toBeVisible();
++});
 +
-+for (const [name, job] of Object.entries(jobs)) {
-+  if (!["success", "skipped"].includes(job?.result))
-+    fail(`${name} did not pass: ${job?.result ?? "missing result"}.`);
-+}
-+
-+if (full === "true") {
-+  for (const name of [
-+    "compile_and_lint",
-+    "published_crate",
-+    "test",
-+    "windows_test",
-+    "playwright",
-+    "docker_build",
-+    "hurl_examples",
-+  ]) {
-+    if (jobs[name]?.result !== "success")
-+      fail(`Required job ${name} did not run successfully.`);
-+  }
-+
-+  let examples;
-+  try {
-+    examples = JSON.parse(jobs.hurl_examples.outputs?.examples ?? "");
-+  } catch {
-+    fail("Hurl selection returned invalid JSON.");
-+  }
-+  if (
-+    !Array.isArray(examples) ||
-+    !examples.every((item) => typeof item === "string" && item.length > 0)
-+  )
-+    fail("Hurl selection must be an array of example names.");
-+  const allowed = examples.length > 0 ? ["success"] : ["success", "skipped"];
-+  if (!allowed.includes(jobs.hurl?.result))
-+    fail("Selected Hurl tests did not run successfully.");
-+}
-+
-+console.log("All selected CI jobs passed.");
+ test("draws a reference line that carries no label", async ({ page }) => {
+   const chart = await renderChart(page, "unlabeled-reference-lines");
+ 
 ```
 
-**File**: `tests/js/ci_gate.spec.ts` (added, +121/-0)
+**File**: `tests/end-to-end/fixtures/chart/x-reference-band.sql` (added, +4/-0)
 ```diff
-@@ -0,0 +1,121 @@
-+import assert from "node:assert/strict";
-+import { spawnSync } from "node:child_process";
-+import test from "node:test";
-+import { fileURLToPath } from "node:url";
-+
-+type Job = { result: string; outputs?: Record<string, string> };
-+const root = fileURLToPath(new URL("../../", import.meta.url));
-+const coreJobs = [
-+  "compile_and_lint",
-+  "published_crate",
-+  "test",
-+  "windows_test",
-+  "playwright",
-+  "docker_build",
-+  "hurl_examples",
-+];
-+
-+function results(full = true, examples: string[] = []) {
-+  const jobs: Record<string, Job> = Object.fromEntries(
-+    coreJobs.map((name) => [name, { result: full ? "success" : "skipped" }]),
-+  );
-+  jobs.ci_selection = { result: "success", outputs: { full: String(full) } };
-+  if (full)
-+    jobs.hurl_examples = {
-+      result: "success",
-+      outputs: { examples: JSON.stringify(examples) },
-+    };
-+  jobs.hurl = { result: full && examples.length > 0 ? "success" : "skipped" };
-+  return jobs;
-+}
-+
-+function check(jobs: unknown) {
-+  const run = spawnSync(process.execPath, ["scripts/check-ci-results.mjs"], {
-+    cwd: root,
-+    env: { ...process.env, NEEDS_JSON: JSON.stringify(jobs) },
-+    encoding: "utf8",
-+    timeout: 5_000,
-+  });
-+  assert.ifError(run.error);
-+  assert.equal(run.signal, null, run.stderr);
-+  return run.status;
-+}
-+
-+test("CI gate accepts intentionally skipped suites for a docs-only PR", () => {
-+  assert.equal(check(results(false)), 0);
-+});
-+
-+test("CI gate accepts successful suites and an empty Hurl selection", () => {
-+  assert.equal(check(results()), 0);
-+});
-+
-+test("CI gate accepts the selected Hurl examples after they pass", () => {
-+  assert.equal(check(results(true, ["examples/single sign on"])), 0);
-+});
-+
-+for (const name of [...coreJobs, "ci_selection", "hurl"]) {
-+  for (const result of ["failure", "cancelled"]) {
-+    test(`CI gate blocks ${name} ${result}`, () => {
-+      const jobs = results(true, ["examples/single sign on"]);
-+      jobs[name] = { ...jobs[name], result };
-+      assert.notEqual(check(jobs), 0);
-+    });
-+  }
-+}
-+
-+for (const name of coreJobs) {
-+  test(`CI gate blocks an unexpected ${name} skip`, () => {
-+    const jobs = results();
-+    jobs[name] = { ...jobs[name], result: "skipped" };
-+    assert.notEqual(check(jobs), 0);
-+  });
-+}
-+
-+test("CI gate blocks skipped Hurl tests when examples were selected", () => {
-+  const jobs = results(true, ["examples/single sign on"]);
-+  jobs.hurl = { result: "skipped" };
-+  assert.notEqual(check(jobs), 0);
-+});
-+
-+test("CI gate blocks missing results from a required job", () => {
-+  const jobs = results();
-+  delete jobs.test;
-+  assert.notEqual(check(jobs), 0);
-+});
-+
-+for (const full of [undefined, "", "unknown"]) {
-+  test(`CI gate blocks an ambiguous selection: ${String(full)}`, () => {
-+    const jobs = results(false);
-+    jobs.ci_selection = {
-+      result: "success",
-+      outputs: full === undefined ? {} : { full },
-+    };
-+    assert.notEqual(check(jobs), 0);
-+  });
-+}
-+
-+test("CI gate blocks a skipped change detector", () => {
-+  const jobs = results(false);
-+  jobs.ci_selection = { result: "skipped" };
-+  assert.notEqual(check(jobs), 0);
-+});
-+
-+for (const examples of ["", "invalid-json", "null", "{}", '[""]', "[true]"]) {
-+  test(`CI gate blocks an invalid Hurl selection: ${examples}`, () => {
-+    const jobs = results();
-+    jobs.hurl_examples = { result: "success", outputs: { examples } };
-+    assert.notEqual(check(jobs), 0);
-+  });
-+}
-+
-+test("CI gate rejects failed jobs even on a docs-only selection", () => {
-+  const jobs = results(false);
-+  jobs.test = { result: "failure" };
-+  assert.notEqual(check(jobs), 0);
-+});
-+
-+for (const jobs of [null, {}, [], { ci_selection: { result: "success" } }]) {
-+  test(`CI gate blocks malformed or incomplete result data: ${JSON.stringify(jobs)}`, () => {
-+    assert.notEqual(check(jobs), 0);
-+  });
-+}
+@@ -0,0 +1,4 @@
++SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'area' AS type, TRUE AS time;
++SELECT '2024-05-01T10:00:00Z' AS xline, 'deploy' AS label;
++SELECT '2024-05-01T11:30:00Z' AS xline, '2024-05-01T13:00:00Z' AS xline_end, 'incident' AS label;
++WITH points(x, y) AS (VALUES ('2024-05-01T08:00:00Z', 120), ('2024-05-01T12:00:00Z', 512), ('2024-05-01T15:00:00Z', 133)) SELECT * FROM points;
+```
+
+**File**: `tests/end-to-end/fixtures/chart/y-reference-band.sql` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'line' AS type, TRUE AS time, 100 AS ymax;
++SELECT 70 AS yline, 'target' AS label;
++SELECT 90 AS yline, 100 AS yline_end, 'throttling' AS label;
++WITH points(x, y) AS (VALUES ('2024-05-01T08:00:00Z', 52), ('2024-05-01T11:00:00Z', 83), ('2024-05-01T14:00:00Z', 63)) SELECT * FROM points;
+```
+
+**File**: `tests/end-to-end/official-site.spec.ts` (modified, +26/-123)
+```diff
+@@ -1,4 +1,4 @@
+-import { expect, type Locator, type Page, test } from "@playwright/test";
++import { expect, type Page, test } from "@playwright/test";
+ import {
+   checkModal,
+   checkTableFiltering,
+@@ -20,131 +20,38 @@ test("Open documentation", async ({ page }) => {
+   }
+ });
+ 
+-async function openChartDocumentation(page: Page) {
+-  await page.goto("/documentation.sql?component=chart#component");
+-  // This page initializes every documented chart, which can take several seconds.
+-  await expect(page.locator('[data-pre-init="chart"]')).toHaveCount(0, {
+-    timeout: 15_000,
+-  });
+-}
+-
+-test("chart", async ({ page }) => {
+-  await openChartDocumentation(page);
+-  await expect(page.getByText("Loading...")).toHaveCount(0);
+-  await expect(page.locator(".apexcharts-canvas").first()).toBeVisible();
+-});
+-
+-test("chart supports hiding legend", async ({ page }) => {
+-  await openChartDocumentation(page);
+-
+-  const expensesChart = page.locator(".card", {
+-    has: page.getByRole("heading", { name: "Expenses" }),
+-  });
+-
+-  await expect(expensesChart.locator(".apexcharts-canvas")).toBeVisible();
+-  await expect(expensesChart.locator(".apexcharts-legend")).toBeHidden();
+-});
+-
+-const DATA_POINT_MARKERS = ".apexcharts-series-markers > .apexcharts-marker";
+-
+-const chartCard = (page: Page, title: string) =>
+-  page.locator(".card", { has: page.getByRole("heading", { name: title }) });
+-
+-const drawnPoints = (card: Locator, series: string) =>
+-  card
+-    .locator(`.apexcharts-series[seriesName='${series}'] ${DATA_POINT_MARKERS}`)
+-    .evaluateAll((markers) =>
+-      markers.map((m) => ({
+-        x: m.getAttribute("cx"),
+-        y: m.getAttribute("cy"),
+-      })),
+-    );
+-
+-test("stacked chart draws every series at every x of the chart", async ({
+-  page,
+-}) => {
+-  await openChartDocumentation(page);
+-  const powerChart = chartCard(page, "Power draw");
+-  await expect(powerChart.locator(".apexcharts-canvas")).toBeVisible();
+-
+-  const cpu = await drawnPoints(powerChart, "CPU");
+-  const gpu = await drawnPoints(powerChart, "GPU");
+-
+-  expect(cpu).toHaveLength(4);
+-  expect(gpu.map((p) => p.x)).toEqual(cpu.map((p) => p.x));
+-});
+-
+-test("stacked chart raises a series only where it has a value", async ({
+-  page,
+-}) => {
+-  await openChartDocumentation(page);
+-  const powerChart = chartCard(page, "Power draw");
+-  await expect(powerChart.locator(".apexcharts-canvas")).toBeVisible();
+-
+-  const cpu = await drawnPoints(powerChart, "CPU");
+-  const gpu = await drawnPoints(powerChart, "GPU");
+-
+-  expect([gpu[0], gpu[3]]).toEqual([cpu[0], cpu[3]]);
+-  expect(Number(gpu[1]?.y)).toBeLessThan(Number(cpu[1]?.y));
+-});
+-
+-test("chart draws a yline as a line and a yline_end as a band", async ({
++test("chart documentation renders its examples without browser errors", async ({
+   page,
+ }) => {
+-  await openChartDocumentation(page);
+-
+-  const temperature = page.locator(".card", {
+-    has: page.getByRole("heading", { name: "CPU temperature" }),
++  const errors: string[] = [];
++  page.on("pageerror", (error) => errors.push(error.message));
++  page.on("console", (message) => {
++    if (message.type() === "error") errors.push(message.text());
+   });
+-  await expect(temperature.locator(".apexcharts-canvas")).toBeVisible();
+-
+-  const annotations = temperature.locator(".apexcharts-yaxis-annotations");
+-  const lines = annotations.locator("line");
+-  const bands = annotations.locator(".apexcharts-annotation-rect");
+-
+-  await expect(lines).toHaveCount(1);
+-  await expect(bands).toHaveCount(1);
+-  await expect(annotations.getByText("target")).toBeVisible();
+-  await expect(annotations.getByText("throttling")).toBeVisible();
+-});
+ 
+-test("chart draws an xline as a line and an xline_end as a band", async ({
+-  page,
+-}) => {
+-  await openChartDocumentation(page);
+-
+-  const latency = page.locator(".card", {
+-    has: page.getByRole("heading", { name: "Request latency" }),
++  await test.step("Open the chart reference", async () => {
++    await page.goto("/documentation.sql?component=chart#component");
++    await expect(
++      page.getByRole("heading", { name: "The chart component", exact: true }),
++    ).toBeVisible();
+   });
+-  await expect(latency.locator(".apexcharts-canvas")).toBeVisible();
+-
+-  const annotations = latency.locator(".apexcharts-xaxis-annotations");
+-  const lines = annotations.locator("line");
+-  const bands = annotations.locator(".apexcharts-annotation-rect");
+ 
+-  await expect(lines).toHaveCount(1);
+-  await expect(bands).toHaveCount(1);
+-  await expect(annotations.getByText("deploy")).toBeVisible();
+-  await expect(annotations.getByText("incident")).toBeVisible();
+-});
+-
+-test("horizontal chart draws a yline down it and an xline across it", async ({
+-  page,
+-}) => {
+-  await openChartDocumentation(page);
+-
+-  const disks = page.locator(".card", {
+-    has: page.getByRole("heading", { name: "Disk usage" }),
++  await test.step("Render every inline and embedded example", async () => {
++    // Work around Ch
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1560** (2026-10-24): Consolidate chart documentation tests and isolate rendering assertions (@lovasoa)
+- **PR #1559** (2026-10-23): Reuse repeated variable bindings for numbered placeholders (@lovasoa)
+- **PR #1557** (2026-10-24): Fuzz complete SQL file compilation across database dialects (@lovasoa)
+- **PR #1556** (2026-10-23): Expose connection-free SQL file compilation (@lovasoa)
 - **PR #1553** (2026-10-17): Run selected CI jobs behind one required gate (@lovasoa)
 - **PR #1552** (2026-10-17): Update the README video and fix required checks for docs-only PRs (@lovasoa)
-- **PR #1550** (2026-10-14): Add day-100 comparison to the official landing page (@lovasoa)
-- **PR #1549** (2026-10-13): Support prefix and suffix row-level parameters when using a 'select' element in a form (@francesco-cattoglio)
-- **PR #1548** (2026-10-13): Let the landing sculpture scroll natively in section grids (@lovasoa)
-- **PR #1547** (2026-10-12): Make Nix optional when using direnv (@lovasoa)
 
 ---
 
@@ -1939,29 +1344,29 @@ Added support for prefix text, prefix icon and suffix text to form component whe
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(suite) :: share helpers, close pools deterministically, slim OIDC harness (
+## X. Move detailed chart checks to minimal SQL fixtures (#1560)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/end-to-end/fixtures/chart/hidden-legend.sql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `250a8989`: test(suite) :: share helpers, close pools deterministically, slim OIDC harness (#1529). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `99c68467`: Move detailed chart checks to minimal SQL fixtures (#1560). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/end-to-end/fixtures/chart/hidden-legend.sql`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            test_args: --test-threads=2
-        run: scripts/run-test-binaries.sh ${{ matrix.test_args }}
+SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'bar' AS type, TRUE AS stacked, FALSE AS show_legend;
+WITH points(series, x, y) AS (VALUES ('CPU', 'Mon', 10), ('CPU', 'Tue', 20), ('GPU', 'Mon', 5), ('GPU', 'Tue', 15)) SELECT * FROM points;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        run: scripts/run-test-binaries.sh
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `250a8989` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `99c68467` are properly handled with clean fallback behavior.

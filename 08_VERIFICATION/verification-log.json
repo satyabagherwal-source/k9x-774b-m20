@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-AFYK",
-    "timestamp": "2026-10-21T00:21:49.772Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "1b82b2039e65e924e34106e27f4a71ed6e8f2785135c2bd3eaf200bb9e0091d2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-APSY",
-    "timestamp": "2026-10-21T00:22:02.530Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "3008496c3334a8e47d47d16c43d045a6d645d8e8343d6ecae3043a69e4cb5a00",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-ISQC",
-    "timestamp": "2026-10-21T00:28:19.572Z",
-    "repository": "TableProApp/TablePro",
-    "learningId": "learn-github-tableproapp-tablepro",
-    "contentHash": "6a2ae4a3c90f370b698336b464c36f356d22d55e866533387c689fa8a0257036",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-L0UN",
-    "timestamp": "2026-10-21T00:30:03.407Z",
-    "repository": "zai-org/GLM-5.2",
-    "learningId": "learn-huggingface-zai-org-glm-5-2",
-    "contentHash": "8318d2a8b24bd2b87cfc10a9ad4e00064b3a374f8a274e3c09c3cfa35245dc83",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-SZIS",
     "timestamp": "2026-10-21T00:36:14.932Z",
     "repository": "stabilityai/stable-diffusion-3-medium",
@@ -7492,6 +7432,66 @@
     "contentHash": "a6ffc821b6e2637abe21f0b1ca931118de1af06e7a2ec5eba76e4290c5e80522",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-UKX8",
+    "timestamp": "2026-10-25T02:36:08.684Z",
+    "repository": "ant-design/pro-components",
+    "learningId": "learn-github-ant-design-pro-components",
+    "contentHash": "a9464a27b4069180c7966e0ec1f3f5bb42435abb79feebc21471e89e5b581d0b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-URT9",
+    "timestamp": "2026-10-25T02:36:17.613Z",
+    "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+    "contentHash": "2110765d6b297ba7e8dc94ba8fa27a4de822b1bba993fbb19a8ca9f376710cc5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-USZW",
+    "timestamp": "2026-10-25T02:36:19.148Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "b8ecfd556af1b0b345e4aabcc7d694886330669f475f8d42a2921e24c59d4bf2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-UUWR",
+    "timestamp": "2026-10-25T02:36:21.627Z",
+    "repository": "sqlpage/SQLPage",
+    "learningId": "learn-github-sqlpage-sqlpage",
+    "contentHash": "6b0e7b8b53d6488568e1a25c56d7876903da570d5780f932c7722587cd42a5c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

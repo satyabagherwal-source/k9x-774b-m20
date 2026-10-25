@@ -3,7 +3,7 @@
 > **Source Version**: `hf-dealignai`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-20T10:19:20.312Z  
+> **Timestamp**: 2026-10-25T02:36:16.889Z  
 > **Learning ID**: `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,296 +17,287 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository represents a **post-training behavioral modification (abliteration)** of the `DeepSeek-V4.1-Flash-1017` multimodal large language model. The primary technical challenge is not the training of the model, but the **surgical removal of refusal vectors** (safety alignment) while preserving the integrity of the underlying knowledge, reasoning capabilities, and multimodal processing pipelines. The secondary technical challenge is the **quantization strategy**: maintaining model fidelity when converting a high-precision (likely BF16/FP16) base model to a mixed-precision format (FP8 e4m3 weights + FP4 MoE experts) without introducing catastrophic drift that would re-introduce safety refusals or degrade reasoning.
+This repository represents a **post-hoc behavioral modification (abliteration)** of the `DeepSeek-V4.1-Flash-1017` multimodal large language model (MLLM). The primary engineering challenge is not the training of the model, but the **surgical removal of refusal vectors** in the latent space while preserving the integrity of the underlying architecture, specifically the complex Mixture-of-Experts (MoE) routing, the 1M-token context window via YaRN scaling, and the native FP8/FP4 quantization formats.
 
-**Architectural Boundaries:**
-1.  **Model Core (DeepSeek-V4.1):** A 40-layer Mixture-of-Experts (MoE) Transformer with 384 routed experts and 1 shared expert per layer. It utilizes a complex attention mechanism involving Multi-Head Latent Attention (MLA) variants, indicated by `q_lora_rank`, `o_lora_rank`, and `head_dim` configurations.
-2.  **Context Management:** Supports a 1M token context window using **YaRN (Yet another RoPE extensioN)** scaling with a factor of 16. This requires precise handling of positional embeddings to avoid attention sink failures at long ranges.
-3.  **Multimodal Ingestion:** Integrates vision and video processing via specific token IDs (`image_token_id: 129264`) and likely a separate vision encoder (implied by `pipeline_tag: image-text-to-text`).
-4.  **Quantization Layer:**
-    *   **Weights:** FP8 (e4m3) with dynamic activation scaling.
-    *   **Scales:** `ue8m0` (unsigned 8-bit exponent, 0-bit mantissa) block scales. This is a critical invariant: the scale factors are powers of 2, simplifying hardware multiplication but requiring strict alignment of weight blocks.
-    *   **MoE Experts:** FP4 precision. This is an extreme compression ratio for the expert networks, implying that the routing mechanism (`topk_method: noaux_tc`) must be highly robust to noise.
-5.  **Behavioral Layer (Abliteration):** The "UNCENSORED" aspect implies a modification to the final projection layers or specific attention heads to neutralize the "refusal" direction in the latent space. This is a **linear algebraic intervention**, not a retraining.
+**Architectural Boundaries & Subsystems:**
+1.  **Quantization Subsystem (FP8/FP4 Hybrid):**
+    *   **Weights:** Stored in `e4m3` (FP8) format.
+    *   **Scales:** `ue8m0` block scales (8-bit unsigned exponent, 0-bit mantissa) applied in blocks of `[32, 32]`. This is a critical invariant: the scale granularity must match the weight block size exactly to prevent dequantization errors.
+    *   **Experts:** The MoE experts are stored in `fp4` (4-bit floating point), indicating a mixed-precision strategy where the dense layers are FP8 and the sparse expert layers are FP4 to save memory.
+2.  **Context Extension Subsystem (YaRN):**
+    *   Original context: 65,536 tokens.
+    *   Extended context: 1,048,576 tokens (1M).
+    *   Mechanism: `rope_scaling` with `factor: 16`, `beta_fast: 32`, `beta_slow: 1`. This requires precise interpolation of the RoPE (Rotary Position Embedding) frequencies to avoid attention degradation at long distances.
+3.  **MoE Routing Subsystem:**
+    *   **Architecture:** 384 routed experts + 1 shared expert.
+    *   **Selection:** Top-6 experts per token (`num_experts_per_tok: 6`).
+    *   **Scoring:** `sqrtsoftplus` scoring function with `noaux_tc` (No Auxiliary Loss, Token Clipping) top-k method.
+    *   **Compression:** `compress_ratios` array indicates a hierarchical compression strategy for KV cache or intermediate states, with specific layers (2, 8, 14, 20) acting as `kv_source_layer_ids` for cross-layer attention sharing.
+4.  **Multimodal Ingestion:**
+    *   `image_token_id: 129264` indicates a specific token reserved for image embeddings.
+    *   `engram` layers (1, 14) suggest a specialized memory or embedding retrieval mechanism for long-context or multimodal data, with a massive vocabulary size of 16,000,000 for n-gram embeddings.
 
-**Critical Subsystem Abstractions:**
-*   **Sparse MoE Router:** Selects top-6 experts out of 384 using `sqrtsoftplus` scoring and `noaux_tc` (no auxiliary loss, top-k with temperature calibration).
-*   **Compressed KV Cache:** `compress_ratios` array indicates that not all layers store full KV caches. Layers 2-20 use ratio 2, 21-36 use ratio 1, and others use 0 (no cache or shared). This is a memory optimization for long-context inference.
-*   **Engram Memory:** `engram_layer_ids`, `engram_num_embeddings` (~384M embeddings), and `engram_vocab_size` (16M) suggest a **non-parametric or hybrid parametric memory module** for long-term context retention, distinct from the standard Transformer attention.
+**Critical Invariant:**
+The "UNCENSORED" nature is achieved by modifying the weight matrices (likely in the final projection layers or specific attention heads) to remove the "refusal" direction in the latent space. This is a **linear algebraic operation** on the weights, not a change in the architecture definition. The `config.json` remains structurally identical to the base model, but the binary weights in the `.safetensors` shards are altered.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Mixed-Precision Quantization Fidelity Invariant
+### 1. Mixed-Precision Quantization Block Alignment Invariant
 **RULE**:
-When quantizing a model that has undergone behavioral modification (abliteration/steering), you MUST NOT apply quantization to the modified weights directly if the quantization error exceeds the magnitude of the behavioral shift. You MUST re-apply the behavioral modification (abliteration) *after* quantization or use a quantization-aware training (QAT) approach that preserves the refusal vector's nullification.
+When implementing hybrid quantization (e.g., FP8 weights with FP4 experts), the **block size for scale factors MUST exactly match the dimensionality of the weight tensor being quantized**. For a weight tensor of shape `[D_in, D_out]`, if `weight_block_size` is `[32, 32]`, the scale tensor MUST have shape `[D_in/32, D_out/32]`. Any mismatch results in silent dequantization corruption.
 
 **WHY**:
-Abliteration works by projecting out a specific direction in the latent space (the "refusal vector"). Quantization introduces noise (error) into the weight matrices. If the quantization error is larger than the magnitude of the abliteration edit, the noise can "re-activate" the refusal vector or create new, unpredictable refusal patterns. The README explicitly warns: *"Low-bit quants that are naively derived from these weights carry quantization error on top of the abliteration edit, and compliance can regress at low bits."*
+Dequantization is a per-block operation: `W_dequant = W_quant * S_block`. If the scale tensor dimensions do not align with the weight blocks, the multiplication will either broadcast incorrectly (leading to wrong values) or throw a shape error. In FP8/FP4 systems, this error is often silent if broadcasting is allowed, leading to catastrophic model degradation (garbage output) rather than a crash.
 
 **WHEN TO APPLY**:
-Any post-training alignment modification (RLHF, DPO, abliteration) followed by aggressive quantization (FP8, INT4, FP4).
+Any system using block-wise quantization (GPTQ, AWQ, FP8, FP4) where weights are stored in lower precision than the compute precision.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudo-code for safe quantization of abliterated models
-def safe_quantize_abliterated_model(base_model, abliteration_vector, target_precision):
-    # 1. Quantize the base model first
-    quantized_base = quantize(base_model, target_precision)
+import torch
+
+def dequantize_fp8_block(w_quant: torch.Tensor, scales: torch.Tensor, block_size: tuple[int, int]):
+    """
+    w_quant: [D_in, D_out] in FP8
+    scales: [D_in/32, D_out/32] in FP32 (or UE8M0)
+    """
+    d_in, d_out = w_quant.shape
+    b_in, b_out = block_size
     
-    # 2. Re-apply the abliteration to the quantized weights
-    # This ensures the refusal vector is removed from the *final* numerical representation
-    for layer in quantized_base.layers:
-        layer.weights = remove_refusal_vector(layer.weights, abliteration_vector)
-        
-    # 3. Verify that the refusal vector is still nullified
-    assert check_refusal_vector_nullified(quantized_base, abliteration_vector)
+    # Reshape weights to [D_in/b_in, b_in, D_out/b_out, b_out]
+    w_reshaped = w_quant.view(d_in // b_in, b_in, d_out // b_out, b_out)
     
-    return quantized_base
+    # Reshape scales to [D_in/b_in, 1, D_out/b_out, 1] for broadcasting
+    s_reshaped = scales.view(d_in // b_in, 1, d_out // b_out, 1)
+    
+    # Dequantize
+    w_dequant = w_reshaped * s_reshaped
+    
+    # Reshape back to [D_in, D_out]
+    return w_dequant.view(d_in, d_out)
+
+# Example:
+# w_quant = torch.randn(5120, 2304).to(torch.float8_e4m3fn)
+# scales = torch.randn(5120//32, 2304//32)
+# w_dequant = dequantize_fp8_block(w_quant, scales, (32, 32))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Quantizing the abliterated model directly
-# This allows quantization noise to re-introduce refusal behavior
-def unsafe_quantize_abliterated_model(abliterated_model, target_precision):
-    # The abliteration was applied to high-precision weights.
-    # Quantization introduces error that can "leak" the refusal vector back in.
-    return quantize(abliterated_model, target_precision)
+# ANTI-PATTERN: Assuming scales are per-channel or per-tensor when they are per-block
+def dequantize_wrong(w_quant, scales):
+    # This assumes scales shape is [D_out], which is WRONG for block-wise quantization
+    return w_quant * scales  # Broadcasting error or silent corruption
 ```
 
 **VERIFICATION METHOD**:
-1.  **Refusal Rate Test:** Run a standardized suite of 1000 refusal-inducing prompts on both the high-precision abliterated model and the quantized model. The refusal rate must be statistically indistinguishable (p-value > 0.05).
-2.  **Vector Norm Check:** Compute the norm of the projection of the model's output onto the refusal vector for a set of benign prompts. It must be below a threshold (e.g., 0.01).
+```python
+def test_block_alignment():
+    d_in, d_out = 5120, 2304
+    block_size = (32, 32)
+    w_quant = torch.randn(d_in, d_out).to(torch.float8_e4m3fn)
+    scales = torch.randn(d_in // block_size[0], d_out // block_size[1])
+    
+    # Verify shape compatibility
+    assert scales.shape == (d_in // block_size[0], d_out // block_size[1]), "Scale shape mismatch"
+    
+    # Verify dequantization works
+    w_dequant = dequantize_fp8_block(w_quant, scales, block_size)
+    assert w_dequant.shape == (d_in, d_out)
+```
 
-### 2. YaRN Scaling and Context Window Integrity
+### 2. YaRN RoPE Scaling Interpolation Invariant
 **RULE**:
-When extending the context window of a Transformer model using RoPE scaling (e.g., YaRN), you MUST verify that the `rope_scaling` parameters (`factor`, `beta_fast`, `beta_slow`) are consistent with the `max_position_embeddings` and that the attention mechanism correctly handles the extrapolated positions. You MUST NOT assume that linear scaling of RoPE is sufficient for >10x context extension without fine-tuning or specific scaling laws (like YaRN).
+When extending context length using YaRN (Yet another RoPE extensioN), the **`rope_theta` MUST be adjusted** to account for the scaling factor. The effective `rope_theta` for the extended context is `original_rope_theta * (factor ** (2 / (d - 2)))`, where `d` is the head dimension. Failure to adjust `rope_theta` leads to attention score degradation at long contexts.
 
 **WHY**:
-Naive RoPE scaling leads to "attention sink" failures where the model attends to the beginning of the sequence regardless of content, or fails to attend to distant tokens. YaRN uses a combination of linear and NTK-aware scaling to mitigate this. The config shows `factor: 16` and `original_max_position_embeddings: 65536`, resulting in `max_position_embeddings: 1048576`. If the inference engine does not correctly implement YaRN, the model will fail to utilize the full 1M context, leading to hallucinations or loss of long-range dependencies.
+RoPE encodes position information via rotation angles. When the context is extended by a factor `f`, the rotation angles must be scaled to maintain the relative position information. If `rope_theta` is not adjusted, the model will treat distant tokens as if they are closer than they are, leading to attention collapse.
 
 **WHEN TO APPLY**:
-Any model with `rope_scaling` configured for context extension beyond the original training length.
+Any model using RoPE for positional encoding that is fine-tuned or extended to a context length greater than the original training context.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudo-code for YaRN RoPE calculation
-def yarn_rope(positions, dim, factor, beta_fast, beta_slow, original_max_pos):
-    # 1. Calculate the scaling factor for each dimension
-    # Dimensions below beta_fast are scaled linearly
-    # Dimensions above beta_slow are not scaled
-    # Dimensions in between are scaled with a smooth interpolation
-    
-    # 2. Apply the scaled RoPE to the query and key vectors
-    # This ensures that the relative position encoding remains valid
-    # even for positions far beyond the original training range
-    
-    # 3. Verify that the attention scores for distant tokens are not
-    # dominated by the positional encoding
-    return scaled_rope
+import math
+
+def calculate_yarn_rope_theta(original_theta: float, factor: float, head_dim: int) -> float:
+    """
+    Calculate the adjusted rope_theta for YaRN scaling.
+    """
+    # YaRN formula: theta_new = theta_old * (factor ** (2 / (d - 2)))
+    exponent = 2.0 / (head_dim - 2)
+    adjusted_theta = original_theta * (factor ** exponent)
+    return adjusted_theta
+
+# Example:
+# original_theta = 10000
+# factor = 16
+# head_dim = 512
+# adjusted_theta = calculate_yarn_rope_theta(10000, 16, 512)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using linear RoPE scaling for 16x context extension
-def linear_rope(positions, dim, factor):
-    # This will cause attention sink failures and loss of long-range dependencies
-    return positions * factor
+# ANTI-PATTERN: Using the original rope_theta without adjustment
+def calculate_rope_theta_wrong(original_theta: float, factor: float, head_dim: int) -> float:
+    return original_theta  # This will cause attention degradation at long contexts
 ```
 
 **VERIFICATION METHOD**:
-1.  **Long-Context Needle-in-a-Haystack Test:** Insert a unique fact at position 100,000 in a 1M token sequence and ask the model to retrieve it. The model must retrieve it with high accuracy.
-2.  **Attention Map Analysis:** Visualize the attention maps for a long sequence. The attention should be distributed across relevant tokens, not concentrated on the first few tokens.
+```python
+def test_yarn_rope_theta():
+    original_theta = 10000
+    factor = 16
+    head_dim = 512
+    
+    adjusted_theta = calculate_yarn_rope_theta(original_theta, factor, head_dim)
+    
+    # Verify the adjustment is significant
+    assert adjusted_theta != original_theta
+    # Verify the formula is applied correctly
+    expected = original_theta * (factor ** (2.0 / (head_dim - 2)))
+    assert abs(adjusted_theta - expected) < 1e-6
+```
 
-### 3. MoE Expert Precision and Routing Robustness
+### 3. MoE Expert Routing Top-K Invariant
 **RULE**:
-When using extreme quantization (e.g., FP4) for MoE experts, you MUST ensure that the routing mechanism (`topk_method`) is robust to the increased noise in the expert weights. You MUST NOT use a routing method that relies on precise weight magnitudes if the experts are quantized to very low precision.
+In Mixture-of-Experts models, the **top-k selection MUST be deterministic** for a given input token and expert scores. The `topk_method` (e.g., `noaux_tc`) MUST ensure that the same token always selects the same set of experts, regardless of batch size or other tokens in the batch. Non-deterministic routing leads to inconsistent outputs and training instability.
 
 **WHY**:
-FP4 quantization introduces significant noise in the expert weights. If the routing mechanism (e.g., `topk_method: noaux_tc`) relies on precise weight magnitudes to select experts, the noise can lead to incorrect expert selection, resulting in degraded performance or instability. The `noaux_tc` method (no auxiliary loss, top-k with temperature calibration) is designed to be more robust to noise, but it still requires careful tuning of the temperature parameter.
+MoE models rely on sparse activation. If the routing is non-deterministic, the model's behavior becomes unpredictable, and fine-tuning or inference can produce different results for the same input. This is particularly critical for "uncensored" models where the routing might be sensitive to the input content.
 
 **WHEN TO APPLY**:
-Any MoE model with experts quantized to FP4 or lower precision.
+Any MoE model implementation, especially those using top-k routing with auxiliary losses or token clipping.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudo-code for robust MoE routing with FP4 experts
-def robust_moe_routing(hidden_states, expert_weights, temperature):
-    # 1. Calculate the routing scores using the hidden states and expert weights
-    # 2. Apply temperature calibration to the scores to reduce the impact of noise
-    # 3. Select the top-k experts based on the calibrated scores
-    # 4. Verify that the selected experts are consistent across multiple runs
-    #    (i.e., the routing is stable despite the noise in the expert weights)
-    return selected_experts
+import torch
+
+def topk_routing_deterministic(scores: torch.Tensor, k: int) -> torch.Tensor:
+    """
+    scores: [batch_size, num_experts]
+    k: number of experts to select
+    """
+    # Use torch.topk which is deterministic for a given input
+    topk_values, topk_indices = torch.topk(scores, k, dim=-1)
+    return topk_indices
+
+# Example:
+# scores = torch.randn(32, 384)
+# topk_indices = topk_routing_deterministic(scores, 6)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using precise weight magnitudes for routing with FP4 experts
-def precise_moe_routing(hidden_states, expert_weights):
-    # This will lead to incorrect expert selection due to the noise in the FP4 weights
-    return topk(hidden_states @ expert_weights, k=6)
+# ANTI-PATTERN: Using random sampling or non-deterministic operations for routing
+def topk_routing_wrong(scores: torch.Tensor, k: int) -> torch.Tensor:
+    # This is non-deterministic and will lead to inconsistent outputs
+    return torch.multinomial(scores, k, replacement=False)
 ```
 
 **VERIFICATION METHOD**:
-1.  **Routing Stability Test:** Run the model on a fixed input multiple times and verify that the same experts are selected each time.
-2.  **Expert Utilization Test:** Verify that all experts are utilized evenly across a large dataset, indicating that the routing is not biased by the noise.
+```python
+def test_topk_determinism():
+    scores = torch.randn(32, 384)
+    k = 6
+    
+    indices1 = topk_routing_deterministic(scores, k)
+    indices2 = topk_routing_deterministic(scores, k)
+    
+    assert torch.equal(indices1, indices2), "Top-k routing is not deterministic"
+```
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no commit history or bug issues are provided, the following incidents are inferred from the architectural invariants and common failure modes in similar systems.*
+*Note: Since no commits, patches, or issues are provided, this section is derived from the architectural invariants and common failure modes in similar systems.*
 
-### Incident 1: Refusal Vector Re-Activation Due to Quantization Noise (BUG-QUANT-01)
-- **Context**: Quantization pipeline for the MoE experts.
-- **What Was Expected**: The quantized model should maintain the "uncensored" behavior of the abliterated model.
-- **What Actually Happened**: The quantized model started refusing certain prompts, indicating that the refusal vector was re-activated by the quantization noise.
-- **Evidence in Repo**: The README warning: *"Low-bit quants that are naively derived from these weights carry quantization error on top of the abliteration edit, and compliance can regress at low bits."*
-- **Root Cause**: The quantization error in the expert weights was larger than the magnitude of the abliteration edit, causing the refusal vector to "leak" back into the model's output.
+### Incident 1: FP8 Dequantization Shape Mismatch (BUG-FP8-SHAPE-01)
+- **Context**: Quantization subsystem, `dequantize_fp8_block` function.
+- **What Was Expected**: Weights are dequantized correctly to FP32 for computation.
+- **What Actually Happened**: Silent corruption of weights due to mismatched scale tensor shape.
+- **Evidence in Repo**: `config.json` specifies `weight_block_size: [32, 32]`.
+- **Root Cause**: The scale tensor was generated with shape `[D_in, D_out]` instead of `[D_in/32, D_out/32]`.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Quantizing the abliterated model directly
-# quantized_model = quantize(abliterated_model, precision="fp4")
-
-# + Fixed pattern: Re-applying abliteration after quantization
-quantized_base = quantize(base_model, precision="fp4")
-for layer in quantized_base.layers:
-    layer.weights = remove_refusal_vector(layer.weights, abliteration_vector)
+// - Buggy code: scales = torch.randn(d_in, d_out)
+// + Fixed pattern: scales = torch.randn(d_in // 32, d_out // 32)
 ```
-- **Lesson**: Always re-apply behavioral modifications after quantization if the quantization error is significant.
+- **Lesson**: Always verify the shape of scale tensors in block-wise quantization.
 
-### Incident 2: Attention Sink Failure at 1M Context (BUG-CTX-02)
-- **Context**: Inference engine for long-context sequences.
-- **What Was Expected**: The model should be able to attend to tokens at position 1,000,000.
-- **What Actually Happened**: The model failed to attend to distant tokens, leading to hallucinations and loss of long-range dependencies.
-- **Evidence in Repo**: The `rope_scaling` configuration with `factor: 16` and `rope_type: yarn`.
-- **Root Cause**: The inference engine did not correctly implement YaRN scaling, leading to attention sink failures.
+### Incident 2: YaRN RoPE Theta Not Adjusted (BUG-YARN-THETA-02)
+- **Context**: Context extension subsystem, `calculate_yarn_rope_theta` function.
+- **What Was Expected**: Attention scores are stable at long contexts.
+- **What Actually Happened**: Attention collapse at contexts > 65K tokens.
+- **Evidence in Repo**: `config.json` specifies `rope_scaling: { factor: 16, ... }`.
+- **Root Cause**: The `rope_theta` was not adjusted according to the YaRN formula.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Using linear RoPE scaling
-# rope = linear_rope(positions, dim, factor=16)
-
-# + Fixed pattern: Using YaRN scaling
-rope = yarn_rope(positions, dim, factor=16, beta_fast=32, beta_slow=1, original_max_pos=65536)
+// - Buggy code: adjusted_theta = original_theta
+// + Fixed pattern: adjusted_theta = original_theta * (factor ** (2 / (d - 2)))
 ```
-- **Lesson**: Always verify that the RoPE scaling method is correctly implemented for the target context window.
+- **Lesson**: Always adjust `rope_theta` when extending context length with YaRN.
 
-### Incident 3: MoE Routing Instability with FP4 Experts (BUG-MOE-03)
-- **Context**: MoE routing mechanism.
-- **What Was Expected**: The routing mechanism should select the same experts for a fixed input.
-- **What Actually Happened**: The routing mechanism selected different experts for the same input across multiple runs, leading to unstable outputs.
-- **Evidence in Repo**: The `topk_method: noaux_tc` configuration.
-- **Root Cause**: The routing mechanism was not robust to the noise in the FP4 expert weights.
+### Incident 3: MoE Routing Non-Determinism (BUG-MOE-ROUTING-03)
+- **Context**: MoE routing subsystem, `topk_routing` function.
+- **What Was Expected**: Consistent expert selection for the same input.
+- **What Actually Happened**: Inconsistent outputs for the same input.
+- **Evidence in Repo**: `config.json` specifies `topk_method: "noaux_tc"`.
+- **Root Cause**: Use of non-deterministic operations (e.g., `torch.multinomial`) for routing.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Using precise weight magnitudes for routing
-# selected_experts = topk(hidden_states @ expert_weights, k=6)
-
-# + Fixed pattern: Using temperature calibration for routing
-selected_experts = topk(hidden_states @ expert_weights / temperature, k=6)
+// - Buggy code: return torch.multinomial(scores, k, replacement=False)
+// + Fixed pattern: return torch.topk(scores, k, dim=-1)[1]
 ```
-- **Lesson**: Always use temperature calibration for MoE routing when using low-precision experts.
-
-### Incident 4: KV Cache Memory Overflow (BUG-KV-04)
-- **Context**: KV cache management for long-context sequences.
-- **What Was Expected**: The KV cache should fit within the available memory.
-- **What Actually Happened**: The KV cache exceeded the available memory, leading to an out-of-memory error.
-- **Evidence in Repo**: The `compress_ratios` configuration.
-- **Root Cause**: The KV cache was not compressed according to the `compress_ratios` configuration.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: Storing full KV cache for all layers
-# kv_cache = [torch.zeros(batch_size, seq_len, hidden_size) for _ in range(num_layers)]
-
-# + Fixed pattern: Compressing KV cache according to compress_ratios
-kv_cache = []
-for i, ratio in enumerate(compress_ratios):
-    if ratio == 0:
-        kv_cache.append(None)
-    else:
-        kv_cache.append(torch.zeros(batch_size, seq_len // ratio, hidden_size))
-```
-- **Lesson**: Always compress the KV cache according to the configured ratios to avoid memory overflow.
-
-### Incident 5: Engram Memory Indexing Error (BUG-ENG-05)
-- **Context**: Engram memory module.
-- **What Was Expected**: The Engram memory should correctly index and retrieve embeddings.
-- **What Actually Happened**: The Engram memory returned incorrect embeddings, leading to degraded performance.
-- **Evidence in Repo**: The `engram_layer_ids`, `engram_num_embeddings`, and `engram_vocab_size` configurations.
-- **Root Cause**: The Engram memory indexing was not correctly aligned with the token IDs.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: Using incorrect token IDs for Engram memory indexing
-# engram_embeddings = engram_memory[token_ids]
-
-# + Fixed pattern: Using correct token IDs for Engram memory indexing
-engram_embeddings = engram_memory[token_ids % engram_vocab_size]
-```
-- **Lesson**: Always verify that the token IDs are correctly aligned with the Engram memory vocabulary size.
+- **Lesson**: Always use deterministic operations for MoE routing.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **FP8/FP4 Type Coercion**: When converting between FP8, FP4, and BF16, you MUST explicitly cast the data types to avoid implicit coercion errors. For example, `torch.tensor([1.0], dtype=torch.float8_e4m3fn)` must be explicitly cast to `torch.bfloat16` before performing arithmetic operations.
-    *   **Block Scale Alignment**: The `weight_block_size: [32, 32]` implies that the weights are divided into 32x32 blocks. You MUST ensure that the weight tensor is divisible by 32 in both dimensions. If not, you MUST pad the tensor to the nearest multiple of 32.
-    *   **ue8m0 Scale Format**: The `scale_fmt: ue8m0` implies that the scale factors are powers of 2. You MUST ensure that the scale factors are stored as unsigned 8-bit integers and that the exponent is correctly interpreted.
+1. **Micro-Syntax & Token-Level Precision**:
+   - **FP8/FP4 Type Coercion**: When converting between FP8 and FP32, ensure that the scale factors are applied in the correct order. For example, `W_dequant = W_quant * S_block` must be performed in FP32 to avoid precision loss.
+   - **Block Size Alignment**: Ensure that the block size divides the tensor dimensions evenly. If `D_in` is not divisible by `block_size[0]`, padding is required.
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Sinkhorn Iterations**: The `hc_sinkhorn_iters: 20` implies that the Sinkhorn algorithm is used for some normalization step. You MUST ensure that the Sinkhorn algorithm converges within 20 iterations. If it does not, you MUST raise an error or fall back to a simpler normalization method.
-    *   **MoE Routing Loop**: The MoE routing mechanism must not enter an infinite loop if the top-k experts are not unique. You MUST ensure that the top-k selection is deterministic and that the experts are correctly indexed.
+2. **Infinite Loop & Recursion Guards**:
+   - **YaRN Interpolation**: The interpolation of RoPE frequencies must be bounded. Ensure that the `beta_fast` and `beta_slow` parameters are within the valid range to avoid numerical instability.
+   - **MoE Routing**: The top-k selection must be bounded by the number of experts. Ensure that `k <= num_experts`.
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository, so UI/UX mechanics are not directly applicable. However, if this model is served via a web interface, you MUST ensure that the inference latency is within acceptable limits for the user experience.
+3. **UI & UX Micro-Mechanics**:
+   - **N/A**: This is a backend model repository, not a UI application.
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **KV Cache Memory Management**: The KV cache must be managed carefully to avoid memory leaks. You MUST ensure that the KV cache is correctly freed when the sequence is completed.
-    *   **MoE Expert Loading**: The MoE experts must be loaded and unloaded efficiently to avoid memory bloat. You MUST use a memory pool or a similar mechanism to manage the expert weights.
+4. **Backend Concurrency & Memory Safety**:
+   - **KV Cache Management**: The `compress_ratios` array indicates a hierarchical compression strategy. Ensure that the KV cache is managed correctly to avoid memory leaks.
+   - **Expert Activation**: The MoE experts are activated sparsely. Ensure that the memory for inactive experts is freed to avoid memory leaks.
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: When accessing the Engram memory, you MUST check that the token IDs are within the valid range before indexing. If not, you MUST raise an error or return a default embedding.
-    *   **Off-by-One Boundary Checks**: When compressing the KV cache, you MUST ensure that the compression ratio is correctly applied to the sequence length. If the sequence length is not divisible by the compression ratio, you MUST handle the remainder correctly.
+5. **Defect & Error Prevention ("Galti Pakadna")**:
+   - **Null/Undefined Chaining**: Ensure that all tensor operations are checked for null/undefined values. For example, `if w_quant is None: raise ValueError("w_quant is None")`.
+   - **Off-by-One Boundary Checks**: Ensure that the block size alignment is correct. For example, `if d_in % block_size[0] != 0: raise ValueError("d_in is not divisible by block_size[0]")`.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The model is a 40-layer MoE Transformer with 384 routed experts and 1 shared expert per layer. It uses a complex attention mechanism involving MLA variants and a compressed KV cache. The Engram memory module provides long-term context retention.
-2.  **Core Abstractions**: The key abstractions are the MoE router, the compressed KV cache, and the Engram memory. The MoE router selects the top-6 experts out of 384 using `sqrtsoftplus` scoring. The compressed KV cache reduces memory usage by storing only a subset of the KV pairs. The Engram memory provides a non-parametric memory for long-term context.
-3.  **Error Handling**: The model must handle errors in the MoE routing, KV cache management, and Engram memory indexing. You MUST ensure that the MoE routing is stable, the KV cache is correctly managed, and the Engram memory is correctly indexed.
-4.  **Testing**: The model must be tested for refusal rate, long-context retrieval, MoE routing stability, KV cache memory usage, and Engram memory accuracy. You MUST use a standardized suite of tests to verify these properties.
-5.  **Security**: The model must be secured against prompt injection and other attacks. You MUST ensure that the model does not leak sensitive information or perform unauthorized actions.
-6.  **Performance**: The model must be optimized for low latency and high throughput. You MUST use quantization, KV cache compression, and MoE routing to reduce memory usage and improve inference speed.
-7.  **Deployment**: The model must be deployed in a way that ensures reproducibility and consistency. You MUST use a containerized environment and a standardized deployment pipeline.
-8.  **Agent Patterns**: The model can be used as an agent for tool calling and reasoning. You MUST ensure that the model correctly interprets tool calls and generates valid reasoning chains.
-9.  **Data Flow**: The data flow must be carefully managed to ensure that the model correctly processes input tokens, generates output tokens, and manages the KV cache and Engram memory. You MUST ensure that the data flow is efficient and error-free.
+1. **Architecture**: The model is a 40-layer MoE with 384 routed experts and 1 shared expert. The architecture is designed for sparse activation, with top-6 experts selected per token.
+2. **Core Abstractions**: The key abstractions are the MoE routing mechanism, the YaRN RoPE scaling, and the FP8/FP4 quantization.
+3. **Error Handling**: The model uses deterministic routing and block-wise quantization to avoid silent corruption.
+4. **Testing**: The model should be tested for determinism, shape alignment, and attention stability at long contexts.
+5. **Security**: The model is "uncensored," which means it may generate harmful content. This is a security risk that must be mitigated by the user.
+6. **Performance**: The model uses FP8/FP4 quantization to reduce memory usage and improve inference speed.
+7. **Deployment**: The model is deployed as a Hugging Face repository with 48 safetensors shards.
+8. **Agent Patterns**: The model supports tool calling and reasoning-effort tiers, which can be used by AI agents.
+9. **Data Flow**: The data flow is from input tokens to embeddings, through the MoE layers, to the output logits.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Re-applying behavioral modifications after quantization to prevent refusal vector re-activation.
-2.  **Rule**: Always re-apply behavioral modifications after quantization if the quantization error is significant.
-3.  **Architecture Principle**: Use a compressed KV cache and MoE routing to reduce memory usage and improve inference speed.
-4.  **Failure Mode**: Refusal vector re-activation due to quantization noise.
-5.  **Reusable Skill**: Implementing YaRN scaling for long-context inference.
-6.  **Decision**: Using FP4 for MoE experts to reduce memory usage, despite the increased noise.
-7.  **Anti-pattern**: Quantizing the abliterated model directly without re-applying the abliteration.
-8.  **Verification Method**: Running a standardized suite of refusal rate tests and long-context retrieval tests.
+1. **Pattern**: Block-wise quantization with scale tensor alignment.
+2. **Rule**: The scale tensor shape MUST match the weight block size.
+3. **Architecture Principle**: Sparse activation via MoE routing.
+4. **Failure Mode**: Silent corruption due to shape mismatch.
+5. **Reusable Skill**: Verify shape alignment in block-wise quantization.
+6. **Decision**: Use FP8/FP4 quantization to reduce memory usage.
+7. **Anti-pattern**: Using non-deterministic operations for MoE routing.
+8. **Verification Method**: Assert shape compatibility and determinism.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Verify Quantization Fidelity**:
-    *   [ ] Quantize the base model to the target precision.
-    *   [ ] Re-apply the abliteration to the quantized weights.
-    *   [ ] Verify that the refusal vector is still nullified.
-2.  **Implement YaRN Scaling**:
-    *   [ ] Configure the `rope_scaling` parameters correctly.
-    *   [ ] Verify that the attention mechanism correctly handles the extrapolated positions.
-    *   [ ] Run a long-context needle-in-a-haystack test.
-3.  **Optimize MoE Routing**:
-    *   [ ] Use temperature calibration for the MoE routing.
-    *   [ ] Verify that the routing is stable across multiple runs.
-    *   [ ] Verify that all experts are utilized evenly.
-4.  **Manage KV Cache**:
-    *   [ ] Compress the KV cache according to the `compress_ratios` configuration.
-    *   [ ] Verify that the KV cache fits within the available memory.
-    *   [ ] Verify that the KV cache is correctly freed when the sequence is completed.
-5.  **Index Engram Memory**:
-    *   [ ] Verify that the token IDs are correctly aligned with the Engram memory vocabulary size.
-    *   [ ] Verify that the Engram memory correctly indexes and retrieves embeddings.
-    *   [ ] Run a test to verify the accuracy of the Engram memory.
+1. **Verify Shape Alignment**: Ensure that the scale tensor shape matches the weight block size.
+2. **Adjust RoPE Theta**: Adjust the `rope_theta` according to the YaRN formula.
+3. **Ensure Determinism**: Use deterministic operations for MoE routing.
+4. **Test Attention Stability**: Test the model at long contexts to ensure attention stability.
+5. **Mitigate Security Risks**: Implement content filtering or other security measures to mitigate the risks of the "uncensored" model.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ant-design-pro-components-learnings.md`  
 > **Source**: github ([https://github.com/ant-design/pro-components](https://github.com/ant-design/pro-components))  
-> **Source Version**: `3bf43278`  
+> **Source Version**: `060dad9d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:32:44.123Z  
+> **Timestamp**: 2026-10-25T02:36:08.340Z  
 > **Learning ID**: `learn-github-ant-design-pro-components`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ant-design-pro-components-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ant-design/pro-components](https://github.com/ant-design/pro-components))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:32:43.299Z  
+> **Harvest Timestamp**: 2026-10-25T02:36:07.278Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🏆 Use Ant Design like a Pro!
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4836 stars
+- **Stars / Engagement**: 4842 stars
 
 ---
 
@@ -414,11 +414,13 @@ export default () => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9762** (2026-10-16): **fix: keep open-key callbacks out of state updaters**
-  *Symptoms*: ## Summary  BaseMenu calls onOpenChange from a functional state updater. With controlled top navigation under React 19, React can run that updater while rendering BaseMenu; an application callback that updates parent state then triggers the render-phase warning.  Compute the next open keys from the current openKeys, pass the resulting value to setOpenKeysInner, and invoke onOpenChange afterward. Add a regression test for controlled top navigation.  Fixes #9759.  ## Verification  - pnpm exec vitest run tests/layout/index.test.tsx: 55 tests passed with the repository-pinned React 18.3.1. - React 19.3.0 reproduction: the new regression test fails before the fix with the reported warning and passes after the fix. - pnpm exec tsc --noEmit --project tsconfig.build.json: passed. - pnpm exec oxlint src/layout/components/SiderMenu/BaseMenu.tsx tests/layout/index.test.tsx: passed. - Full pnpm test: 223 test files passed; tests/list/index.test.tsx > List > support pagination failed (expected 5 items, received 3). tests/utils/getRealIndex.contract.test.ts timed out during the concurrent full run but passed standalone. The repository-wide typecheck also stops on an unresolved @ant-design/pro-components/form import in tests/form/pickProFormItemProps.test.ts; source-only typecheck passed.  > Submitted with OpenAI Codex  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  ## Summary by CodeRabbit  * **Bug Fixes**   * 修复受控菜单展开状态的更新行为，避免触发组件更新警告，并确保展开状态变更回调收到正确的菜单项。  <!
+- **Issue #9773** (2026-10-23): **👑 [需求] 希望 CheckCard 的 styles 中能新增 cover 的自定义样式**
+  *Symptoms*:   ### 🔩 所属模块或组件  `CheckCard`  ### 🥰 需求描述  `CheckCard` 的 `styles` 新增 `cover` 的自定义样式。  ### ⛰ 功能需求适用场景  <img width="261" height="264" alt="Image" src="https://github.com/user-attachments/assets/d4033bb9-f0c3-4888-9810-bc917fd0876c" />  通过自定义 cover 样式，可以消除 cover 的默认样式  ``` .ant-pro-checkcard-cover {     padding-inline: 4px;     padding-block: 4px; } ```   ### 🧐 解决方案  ``` styles?: {     body?: React.CSSProperties;     cover?: React.CSSProperties; }; ```  
+  **Post-Mortem & Fix Analysis**:
+  > 已支持，等下个版本
 
-- **Issue #9761** (2026-10-16): **fix(form): preserve input focus across popover validation**
-  *Symptoms*: ## Summary  - Keep the validation Popover and its trigger mounted while error and warning messages appear or clear. This preserves the same input DOM node and keyboard focus. - Control Popover visibility from validation state, reopening for new messages and closing when messages clear. Preserve caller-provided `open` and `onOpenChange` behavior. - Add a form regression that checks input identity and focus across invalid and valid transitions.  Fixes #9758.  ## Reproduction  The new regression fails against unchanged `master` with both React 18.3.1 (the repository lockfile) and React 19.2.0: validation replaces the input DOM node. It passes with this change on both versions. The temporary React 19 installation was reverted; this PR does not change dependencies or the lockfile.  ## Validation  - `pnpm exec vitest run tests/utils/inlineErrorFormItemFocus.test.tsx tests/utils/index.test.tsx`: 42 tests passed on the locked React 18 dependencies. - `pnpm run build` and `pnpm run typecheck`: passed (typecheck run after build, which generates package declarations). - Changed-file Oxlint, Prettier, UTF-8 decoding, and `git diff --check`: passed. - Attempted the full test suite. `tests/list/index.test.tsx > List > support pagination` failed with 3 rendered items versus 5 expected. The same failure reproduces with the original `InlineErrorFormItem` source; the full run was stopped after that unrelated failure.  <!-- This is an auto-generated comment: release notes by coderabbit.ai --> #
+- **Issue #9772** (2026-10-23): **fix: address ProList, DrawerForm, Menu, ellipsis and docs theme issues**
+  *Symptoms*: ## Changes - Fix ProList `scroll.y` so the list content scrolls while controls remain outside the scroll region (#9769). - Let DrawerForm align footer actions with `placement="start" | "end"` (#9767). - Stop overriding antd Menu active bar tokens in ProLayout and TopNavHeader (#9768). - Support `ellipsis: { tooltip: false }` while keeping text truncated (#9765). - Match documentation demo components to the Rspress light/dark theme (#9763).  ## Checks - `tsc -p tsconfig.build.json --noEmit` passed. - Targeted Vitest tests: 20 passed, 135 skipped. - Additional ellipsis tests: 12 passed, 30 skipped. - Oxlint passed on changed source files.  Docs typecheck could not run because the local checkout lacks Rspress packages. A pre-existing ProList pagination test still fails when run in isolation (expects five items, renders three); the new scroll test passes. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -435,510 +437,448 @@ export default () => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f722f6fd` (2026-10-13)
-**Commit Message**: fix(docs): changelog sidebar active state and demo iframe 404 (#9756)
+### Incident Patch 1: `091bbf43` (2026-10-23)
+**Commit Message**: fix(table): remove duplicate selection column z-index rule
 
-Rspress treated all changelog hash sidebar links as active because
-useActiveMatcher ignored the URL hash. Patch core to match hash targets.
+* fix(table): remove duplicate selection column z-index rule
 
-Iframe previews requested /~demo/:id without .html while the static site
-uses .html routes, so Vercel served the main app 404 inside the frame.
-Patch plugin-preview to normalize demo paths via normalizeHrefInRuntime.
+antd's Table selection column z-index rule targeted
+`ant-table-cell-fix-left`, a class rc-table v1.12 no longer emits (it only
+emits `fix-start`/`fix-end`). The rule was therefore dead code in antd v6,
+so a fixed selection column was painted under its adjacent fixed column.
 
-Convert remaining dumi <code src> tags to Rspress preview code blocks.
+That is an antd-side defect, fixed upstream in
+https://github.com/ant-design/ant-design/pull/58609 and released in antd
+6.6.7: the rule now targets `ant-table-cell-fix-start` and uses
+`calc(var(--z-offset, 0) + zIndexTableFixed)`.
 
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+pro-components no longer needs its own copy of the rule. Keeping it would
+shadow the upstream rule (identical specificity, injected later in the
+document) and silently drift from antd's implementation.
 
-**File**: `patches/@rspress__core@2.0.23.patch` (modified, +31/-3)
+- remove the selection column z-index rule from src/table/style/index.ts
+- bump antd to 6.6.7 in devDependencies, peerDependencies stays ^6.0.0
+- update the regression test to assert the rule comes from antd and that
+  pro-components no longer injects a duplicate
+
+Users on antd < 6.6.7 still hit the upstream issue and need to upgrade antd.
+
+Refs: https://github.com
+
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -1,12 +1,40 @@
-+diff --git a/dist/runtime/hooks/useActiveMatcher.js b/dist/runtime/hooks/useActiveMatcher.js
-+index 71b560f530828e4ed32fa1459a048409400b366d..6957ead1ea69739f4f28f70cb5da0713f918377f 100644
-+--- a/dist/runtime/hooks/useActiveMatcher.js
-++++ b/dist/runtime/hooks/useActiveMatcher.js
-+@@ -2,12 +2,22 @@ import { useCallback } from "react";
-+ import { useLocation } from "react-router-dom";
-+ import { isActive } from "../route.js";
-+ const useActiveMatcher = ()=>{
-+-    const { pathname: rawPathname } = useLocation();
-++    const { pathname: rawPathname, hash: rawHash } = useLocation();
-+     const activeMatcher = useCallback((link)=>{
-+         const pathname = decodeURIComponent(rawPathname);
-++        const hashIndex = link.indexOf("#");
-++        if (-1 !== hashIndex) {
-++            const linkPath = link.slice(0, hashIndex) || link;
-++            const linkHash = link.slice(hashIndex + 1);
-++            if (!isActive(linkPath, pathname)) return false;
-++            const currentHash = decodeURIComponent(rawHash || "").replace(/^#/, "");
-++            const targetHash = decodeURIComponent(linkHash);
-++            return currentHash.toLowerCase() === targetHash.toLowerCase();
-++        }
-+         return isActive(link, pathname);
-+     }, [
-+-        rawPathname
-++        rawPathname,
-++        rawHash
-+     ]);
-+     return activeMatcher;
-+ };
- diff --git a/dist/theme/components/SocialLinks/SocialLink.js b/dist/theme/components/SocialLinks/SocialLink.js
--index d437473083b8a83bc5f7a4297d25eb91811c1384..c4a8f2e1b9d3e5f6a7b8c9d0e1f2a3b4c5d6e7f 100644
-+index d437473083b8a83bc5f7a4297d25eb91811c1384..719adec5b18bfa3f8cb5dfc2623ef34212d099c4 100644
- --- a/dist/theme/components/SocialLinks/SocialLink.js
- +++ b/dist/theme/components/SocialLinks/SocialLink.js
--@@ -1,6 +1,6 @@
-+@@ -1,5 +1,5 @@
-  import { Fragment, jsx, jsxs } from "react/jsx-runtime";
- -import { socialLinks } from "@rspress/core/runtime";
- +import socialLinks from "virtual-social-links";
-  import "./index.css";
-  import { GithubStars } from "./GithubStars.js";
-  import { useHoverGroup } from "../HoverGroup/useHoverGroup.js";
-- const SocialLink = (props)=>{
+@@ -204,7 +204,7 @@
+     "@vitest/coverage-istanbul": "^4.1.11",
+     "@vitest/ui": "^4.1.11",
+     "animated-scroll-to": "^2.3.2",
+-    "antd": "^6.6.5",
++    "antd": "^6.6.7",
+     "chalk": "^5.6.2",
+     "copy-to-clipboard": "^4.0.2",
+     "cross-env": "^10.1.0",
 ```
 
-**File**: `patches/@rspress__plugin-preview@2.0.23.patch` (added, +33/-0)
+**File**: `pnpm-lock.yaml` (modified, +23/-10)
 ```diff
-@@ -0,0 +1,33 @@
-+diff --git a/static/global-components/common/getPageUrl.ts b/static/global-components/common/getPageUrl.ts
-+index c6e04605480037d5b21885db653c0244844138bf..a2809380abafd21f3a7cb9215885c8a8da64cfda 100644
-+--- a/static/global-components/common/getPageUrl.ts
-++++ b/static/global-components/common/getPageUrl.ts
-+@@ -1,7 +1,10 @@
-+-import { withBase } from '@rspress/core/runtime';
-++import { normalizeHrefInRuntime, withBase } from '@rspress/core/runtime';
-+ 
-+ const DEV_PORT = process.env.RSPRESS_IFRAME_DEV_PORT;
-+ 
-++const getDemoPagePath = (demoId: string) =>
-++  normalizeHrefInRuntime(`/~demo/${demoId}`);
-++
-+ /*
-+  * We must provide the complete address for scanning QR Code.
-+  */
-+@@ -9,7 +12,7 @@ export const getPageFullUrl = (demoId: string) => {
-+   if (DEV_PORT && import.meta.env.DEV) {
-+     return `http://${window.location.hostname}:${DEV_PORT}/${demoId}`;
-+   }
-+-  const url = `/~demo/${demoId}`;
-++  const url = getDemoPagePath(demoId);
-+   if (typeof window !== 'undefined') {
-+     return `${window.location.origin}${withBase(url)}`;
-+   }
-+@@ -21,6 +24,6 @@ export const getPageUrl = (demoId: string) => {
-+   if (DEV_PORT && import.meta.env.DEV) {
-+     return `http://${window.location.hostname}:${DEV_PORT}/${demoId}`;
-+   }
-+-  const url = `/~demo/${demoId}`;
-++  const url = getDemoPagePath(demoId);
-+   return withBase(url);
-+ };
-```
-
-**File**: `pnpm-lock.yaml` (modified, +10/-9)
-```diff
-@@ -179,7 +179,8 @@ overrides:
-   esbuild: '>=0.25.0'
+@@ -344,8 +344,8 @@ importers:
+         specifier: ^2.3.2
+         version: 2.3.2
+       antd:
+-        specifier: ^6.6.5
+-        version: 6.6.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
++        specifier: ^6.6.7
++        version: 6.6.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+       chalk:
+         specifier: ^5.6.2
+         version: 5.6.2
+@@ -1995,8 +1995,8 @@ packages:
+       react: '>=16.9.0'
+       react-dom: '>=16.9.0'
  
- patchedDependencies:
--  '@rspress/core@2.0.23': ed423a4e303b800ce05afb51395692d4666ae2f0e92e96362ae2b5dfcd3b058d
-+  '@rspress/core@2.0.23': 6838b8cfafbd91b8fb60686dd43e13579866f6a429d4db4a8619cbef7e1a6ddd
-+  '@rspress/plugin-preview@2.0.23': a55dfc5a82272467ae1d63c98d71a0c300aac7afa8546f86b65d4ab75578ef73
+-  '@rc-component/notification@2.0.9':
+-    resolution: {integrity: sha512-jQT5IVSWSHPTNFXQM2YQONPptjiKXZa4A4Kzwh2xkh3MkL31gRzyjb98N3QHBzLxsyGGJK1aNpn9j9aSO/O0dg==}
++  '@rc-component/notification@2.1.1':
++    resolution: {integrity: sha512-HD+Gx/HUjivBI6GZtfPVLjvOJZybSEIoE2upnmoVg4w9vZQHMaIPWP6B52cHWOGg+u48HBbO+HnyVNN8AKQxgQ==}
+     engines: {node: '>=8.x'}
+     peerDependencies:
+       react: '>=18.0.0'
+@@ -2166,6 +2166,12 @@ packages:
+       react: '>=18.0.0'
+       react-dom: '>=18.0.0'
  
- importers:
- 
-@@ -281,13 +282,13 @@ importers:
-         version: 1.0.3(@typescript/typescript6@6.0.2)(core-js@3.50.0)
-       '@rspress/core':
-         specifier: 2.0.23
--        version: 2.0.23(patch_hash=ed423a4e303b800ce05afb51395692d4666ae2f0e92e96362ae2b5dfcd3b058d)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(core-js@3.50.0)(micromark-util-types@2.0.3)(micromark@4.0.3(supports-color@7.2.0))(supports-color@7.2.0)
-+        version: 2.0.23(patch_hash=6838b8cfafbd91b8fb60686dd43e13579866f6a429d4db4a8619cbef7e1a6ddd)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(core-js@3.50.0)(micromark-util-types@2.0.3)(micromark@4.0.3(supports-color@7.2.0))(supports-color@7.2.0)
-       '@rspress/plugin-preview':
-         specifier: 2.0.23
--        version: 2.0.23(@rspack/core@2.2.8(@swc/helpers@0.5.23))(@rspress/core@2.0.23(patch_hash=ed423a4e303b800ce05afb51395692d4666ae2f0e92e96362ae2b5dfcd3b058d)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(core-js@3.50.0)(micromark-util-types@2.0.3)(micromark@4.0.3(supports-color@7.2.0))(supports-color@7.2.0))(core-js@3.50.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-+        version: 2.0.23(patch_hash=a55dfc5a82272467ae1d63c98d71a0c300aac7afa8546f86b65d4ab75578ef73)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(@rspress/core@2.0.23(patch_hash=6838b8cfafbd91b8fb60686dd43e13579866f6a429d4db4a8619cbef7e1a6ddd)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(core-js@3.50.0)(micromark-util-types@2.0.3)(micromark@4.0.3(supports-color@7.2.0))(supports-color@7.2.0))(core-js@3.50.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-       '@rspress/plugin-sitemap':
-         specifier: 2.0.23
--        version: 2.0.23(@rspress/core@2.0.23(patch_hash=ed423a4e303b800ce05afb51395692d4666ae2f0e92e96362ae2b5dfcd3b058d)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(core-js@3.50.0)(micromark-util-types@2.0.3)(micromark@4.0.3(supports-color@7.2.0))(supports-color@7.2.0))
-+        version: 2.0.23(@rspress/core@2.0.23(patch_hash=6838b8cfafbd91b8fb60686dd43e13579866f6a429d4db4a8619cbef7e1a6ddd)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(core-js@3.50.0)(micromark-util-types@2.0.3)(micromark@4.0.3(supports-color@7.2.0))(supports-color@7.2.0))
-       '@testing-library/dom':
-         specifier: ^10.4.2
-         version: 10.4.2
-@@ -7815,7 +7816,7 @@ snapshots:
-     optionalDependencies:
-       '@rspack/core': 2.2.8(@swc/helpers@0.5.23)
- 
--  '@rspress/core@2.0.23(patch_hash=ed423a4e303b800ce05afb51395692d4666ae2f0e92e96362ae2b5dfcd3b058d)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(core-js@3.50.0)(micromark-util-types@2.0.3)(micromark@4.0.3(supports-color@7.2.0))(supports-color@7.2.0)':
-+  '@rspress/core@2.0.23(patch_hash=6838b8cfafbd91b8fb60686dd43e13579866f6a429d4db4a8619cbef7e1a6ddd)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(core-js@3.50.0)(micromark-util-types@2.0.3)(micromark@4.0.3(supports-color@7.2.0))(supports-color@7.2.0)':
-     dependencies:
-       '@mdx-js/mdx': 3.1.1(supports-color@7.2.0)
-       '@mdx-js/react': 3.1.1(@types/react@18.3.31)(react@19.3.0)
-@@ -7863,11 +7864,11 @@ snapshots:
-       - micromark-util-types
-       - supports-color
- 
--  '@rspress/plugin-preview@2.0.23(@rspack/core@2.2.8(@swc/helpers@0.5.23))(@rspress/core@2.0.23(patch_hash=ed423a4e303b800ce05afb51395692d4666ae2f0e92e96362ae2b5dfcd3b058d)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(core-js@3.50.0)(micromark-util-types@2.0.3)(micromark@4.0.3(supports-color@7.2.0))(supports-color@7.2.0))(core-js@3.50.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-+  '@rspress/plugin-preview@2.0.23(patch_hash=a55dfc5a82272467ae1d63c98d71a0c300aac7afa8546f86b65d4ab75578ef73)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(@rspress/core@2.0.23(patch_hash=6838b8cfafbd91b8fb60686dd43e13579866f6a429d4db4a8619cbef7e1a6ddd)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(core-js@3.50.0)(micromark-util-types@2.0.3)(micromark@4.0.3(supports-color@7.2.0))(supports-color@7.2.0))(core-js@3.50.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-     dependencies:
-       '@rsbuild/core': 2.2.12(core-js@3.50.0)
-       '@rsbuild/plugin-react': 2.1.1(@rsbuild/core@2.2.12(core-js@3.50.0))(@rspack/core@2.2.8(@swc/helpers@0.5.23))
--      '@rspress/core': 2.0.23(patch_hash=ed423a4e303b800ce05afb51395692d4666ae2f0e92e96362ae2b5dfcd3b058d)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(core-js@3.50.0)(micromark-util-types@2.0.3)(micromark@4.0.3(supports-color@7.2.0))(supports-color@7.2.0)
-+      '@rspress/core': 2.0.23(patch_hash=6838b8cfafbd91b8fb60686dd43e13579866f6a429d4db4a8619cbef7e1a6ddd)(@rspack/core@2.2.8(@swc/helpers@0.5.23))(core-js@3.50.0)(micromark-util-types@2.0.3)(micromark@4.0.3(supports-color@7.2.0))(supports-color@7.2.0)
-       picocolors: 1.1.1
-```
-
-**File**: `pnpm-workspace.yaml` (modified, +1/-0)
-```diff
-@@ -27,3 +27,4 @@ allowBuilds:
-   yorkie: true
- patchedDependencies:
-   '@rspress/core@2.0.23': patches/@rspress__core@2.0.23.patch
-+  '@rspress/plugin-preview@2.0.23': patches/@rspress__plugin-preview@2.0.23.patch
-```
-
-**File**: `site/en-US/components/form.mdx` (modified, +2/-1)
-```diff
-@@ -18,7 +18,8 @@ Step-by-step forms, Modal forms, Drawer forms, Query forms, lightweight filters,
- 
- ## Issue regression scenarios
- 
--<code src="../../demos/form/issue-regression-gallery.tsx" title="Initialization, list conversion, and request refresh"></code>
-+```tsx file="<root>/demos/form/issue-regression-gallery.tsx" title="Initialization, list conversion, and request refresh" preview
-+```
- 
- ```tsx | pure
- // Set overall default values
-```
-
-**File**: `site/en-US/components/layout/index.mdx` (modified, +2/-1)
-```diff
-@@ -14,7 +14,8 @@ ProLayout can be used to reduce layout costs when content needs to be carried on
- 
- ## Issue regression scenarios
- 
--<code src="../../demos/layout/issue-regression-gallery.tsx" iframe="560" title="Mobile layout, navigation theme, and component tokens"></code>
-+```tsx file="<root>/demos/layout/issue-regression-gallery.tsx" title="Mobile layout, navigation theme, and component tokens" preview="iframe-follow" height="560"
-+```
- 
- ### Use with umi plugins
- 
-```
-
-**File**: `site/en-US/components/list.mdx` (modified, +2/-1)
-```diff
-@@ -16,7 +16,8 @@ When you need a standard list presentation, or need to flexibly switch between l
- 
- ### Issue regression scenarios
- 
--<code src="../../demos/list/issue-regression-gallery.tsx" background="var(--main-bg-color)" title="Display controls and live pagination state"></code>
-+```tsx file="<root>/demos/list/issue-regression-gallery.tsx" title="Display controls and live pagination state" preview
-+```
- 
- ### Basic usage
- 
-```
-
-**File**: `site/en-US/components/modal-form.mdx` (modified, +2/-1)
-```diff
-@@ -57,7 +57,8 @@ If the interaction must call `setFieldsValue` before opening the modal, set
- `modalProps={{ forceRender: true }}`. The following example is directly
- verifiable:
- 
--<code src="../../demos/form/modal-form/use-form-before-open.tsx" background="var(--main-bg-color)" title="useForm: set values before the first open"></code>
-+```tsx file="<root>/demos/form/modal-form/use-form-before-open.tsx" title="useForm: set values before the first open" preview
-+```
- 
- You can also avoid calling the instance too early:
- 
-```
-
----
-
-### Incident Patch 2: `c2471f92` (2026-10-12)
-**Commit Message**: fix(table): render light filter as a flat inline bar, not a toolbar card
-
-LightFilter is inserted into the toolbar's left side (Table.tsx
-isLightFilter), so the ProCard wrapper added in #9742 rendered an antd
-borderless Card (white bg + radius + shadow) inside the toolbar,
-creating a card-in-card block and breaking the toolbar's flat inline
-layout assumptions.
-
-Render LightFilter with a flat div again instead:
-
-- keep the skin classes (pro-card, pro-table-search-light-filter,
-  ghost, custom className) so it still follows the same design tokens,
-  but drop the card shape: no ant-card DOM, radius, shadow or border
-- cardBordered.search now only affects the QueryFilter/Form block and
-  is silently ignored for light filters (cardBordered.table unchanged);
-  the bordered light-filter outline was vestigial from upstream's
-  query-block class logic
-- QueryFilter/Form keep the real ProCard path from #9742 untouched
-
-Add a test asserting the light filter stays flat inside the toolbar
-even with cardBordered.search enabled, while the table area card
-still honors cardBordered.table.
-
-**File**: `src/table/components/Form/FormRender.tsx` (modified, +63/-40)
-```diff
-@@ -196,6 +196,68 @@ const FormRender = <T, U = any>({
-     },
-   };
- 
-+  const formNode = (
-+    <BetaSchemaForm<U>
-+      key={competentName}
-+      layoutType={competentName}
-+      columns={columnsList}
-+      type={type}
-+      {...loadingProps}
-+      {...getFromProps(isForm, searchConfig, competentName)}
-+      {...getFormConfigs(isForm, formConfig || {})}
-+      formRef={formRef}
-+      action={action}
-+      dateFormatter={dateFormatter}
-+      onInit={(values: T, form) => {
-+        formRef.current = form;
-+        // 触发一个 submit，之所以这里触发是为了保证 value 都被 format了
-+        if (type !== 'form') {
-+          // 修改 pageSize，变成从 url 中获取的
-+          const pageInfo = action.current?.pageInfo;
-+          // 从 values 里获取是因为有时候要从 url中获取的 pageSize。
-+          const {
-+            current = pageInfo?.current,
-+            pageSize = pageInfo?.pageSize,
-+          } = values as any;
-+          action.current?.setPageInfo?.({
-+            ...pageInfo,
-+            current: parseInt(current, 10),
-+            pageSize: parseInt(pageSize, 10),
-+          });
-+          /** 如果是手动模式不需要提交 */
-+          if (manualRequest) return;
-+          onSubmit?.(values, true);
-+        }
-+      }}
-+      onReset={(values: T) => {
-+        onReset?.(values);
-+      }}
-+      onFinish={(values: T) => {
-+        return onSubmit?.(values, false);
-+      }}
-+      initialValues={formConfig?.initialValues}
-+    />
-+  );
++  '@rc-component/util@1.14.0':
++    resolution: {integrity: sha512-qFpkGBCiyN3NNAU+FOnZdcdz7A/rXCg3JdQk+bujUKAExZgRqzf2yy1f4YN63Lwctic5FcK9rgjQ6aWbykqwEw==}
++    peerDependencies:
++      react: '>=18.0.0'
++      react-dom: '>=18.0.0'
 +
-+  // 轻量筛选是内联控件条：Table.tsx 的 isLightFilter 会把它插进工具栏左侧，
-+  // 套 ProCard（antd 路径 borderless = 白底 + 圆角 + 阴影）会形成卡中卡。
-+  // 回到平铺 div：保留皮肤类对齐 token，但不呈现卡片的形（圆角/阴影/边框），
-+  // cardBordered.search 仅作用于查询表单块，对 light 静默失效。
-+  if (competentName === 'LightFilter') {
-+    return (
-+      <div
-+        className={clsx(hashId, className, getPrefixCls('pro-card'), {
-+          [getPrefixCls('pro-table-search-light-filter')]: true,
-+          [`${className}-ghost`]: ghost,
-+          [(searchConfig as { className: string })?.className]:
-+            searchConfig !== false && searchConfig?.className,
-+        })}
-+      >
-+        {formNode}
-+      </div>
-+    );
-+  }
+   '@rc-component/virtual-list@1.5.2':
+     resolution: {integrity: sha512-igfe7NP9cOmDAhLy5z+Juz8fhjOMzMbF7TRoR/yqXIsbU6XZm4TU7ogcm5O553P0rLF6n0j5F6J+n15Izb1tqg==}
+     engines: {node: '>=8.x'}
+@@ -2870,8 +2876,8 @@ packages:
+     resolution: {integrity: sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA==}
+     engines: {node: '>=10'}
+ 
+-  antd@6.6.5:
+-    resolution: {integrity: sha512-biJB/aORNU2lvZZCX783S/g8atfE8akrEKRjRrsXVttoMtJbSHLf/Z29niv0blzt6H3BgKvhkQgHoUn5MgCx7w==}
++  antd@6.6.7:
++    resolution: {integrity: sha512-6D9oSAot26LIHYmR0ZyquOZY4WIcgRurZ/9//1GEJoo/vWvKV3E1PJPmB3orGkRlmGxArX3vSJFxQfRKr5qHZA==}
+     peerDependencies:
+       react: '>=18.0.0'
+       react-dom: '>=18.0.0'
+@@ -7458,7 +7464,7 @@ snapshots:
+       react: 18.3.1
+       react-dom: 18.3.1(react@18.3.1)
+ 
+-  '@rc-component/notification@2.0.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
++  '@rc-component/notification@2.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+     dependencies:
+       '@rc-component/motion': 1.3.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+       '@rc-component/util': 1.13.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+@@ -7657,6 +7663,13 @@ snapshots:
+       react-dom: 18.3.1(react@18.3.1)
+       react-is: 19.3.0
+ 
++  '@rc-component/util@1.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
++    dependencies:
++      is-mobile: 5.0.0
++      react: 18.3.1
++      react-dom: 18.3.1(react@18.3.1)
++      react-is: 19.3.0
 +
-   return (
-     <ProCard
-       // 搜索区复用 ProCard（基础路径即 antd Card），与表格区皮肤对齐。
-@@ -213,46 +275,7 @@ const FormRender = <T, U = any>({
-         body: { padding: 0 },
-       }}
-     >
--      <BetaSchemaForm<U>
--        key={competentName}
--        layoutType={competentName}
--        columns={columnsList}
--        type={type}
--        {...loadingProps}
--        {...getFromProps(isForm, searchConfig, competentName)}
--        {...getFormConfigs(isForm, formConfig || {})}
--        formRef={formRef}
--        action={action}
--        dateFormatter={dateFormatter}
--        onInit={(values: T, form) => {
--          formRef.current = form;
--          // 触发一个 submit，之所以这里触发是为了保证 value 都被 format了
--          if (type !== 'form') {
--            // 修改 pageSize，变成从 url 中获取的
--            const pageInfo = action.current?.pageInfo;
--            // 从 values 里获取是因为有时候要从 url中获取的 pageSize。
--            const {
--              current = pageInfo?.current,
--              pageSize = pageInfo?.pageSize,
--            } = values as any;
--            action.current?.setPageInfo?.({
--              ...pageInfo,
--              current: parseInt(current, 10),
--              pageSize: parseInt(pageSize, 10),
--            });
--            /** 如果是手动模式不需要提交 */
--            if (manualRequest) return;
--            onSubmit?.(values, true);
--          }
--        }}
--        onReset={(values: T) => {
--          onReset?.(values);
--        }}
--        onFinish={(values: T) => {
--          return onSubmit?.(values, false);
--        }}
--        initialValues={formConfig?.initialValues}
--      />
-+      {formNode}
-     </ProCard>
-   );
- };
+   '@rc-component/virtual-list@1.5.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+     dependencies:
+       '@babel/runtime': 8.0.7
+@@ -8331,7 +8344,7 @@ snapshots:
+ 
+   ansi-styles@5.2.0: {}
+ 
+-  antd@6.6.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
++  antd@6.6.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+     dependencies:
+       '@ant-design/colors': 8.0.1
+       '@ant-design/cssinjs': 2.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+@@ -8356,7 +8369,7 @@ snapshots:
+       '@rc-component/menu': 1.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+       '@rc-component/motion': 1.3.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+       '@rc-component/mutate-observer': 2.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+-      '@rc-component/notification': 2.0.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
++      '@rc-component/notification': 2.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+       '@rc-component/pagination': 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+       '@rc-component/picker': 1.12.2(dayjs@1.11.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+       '@rc-component/progress': 1.0.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+@@ -8376,7 +8389,7 @@ snapshots:
+       '@rc-component/tree-select': 1.16.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+       '@rc-component/trigger': 3.10.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+       '@rc-component/upload': 1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+-      '@rc-component/util': 1.13.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
++      '@rc-component/util': 1.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+       clsx: 2.1.1
+       dayjs: 1.11.23
+       react: 18.3.1
 ```
 
-**File**: `tests/table/search.test.tsx` (modified, +29/-0)
+**File**: `src/table/style/index.ts` (modified, +0/-4)
 ```diff
-@@ -1008,4 +1008,33 @@ describe('BasicTable Search', () => {
-       ).toHaveLength(0);
-     });
+@@ -50,10 +50,6 @@ const genProListStyle: GenerateStyle<ProListToken> = (token) => {
+           fontSize: token.fontSize,
+         },
+       },
+-      [`table tr th${token.antCls}-table-selection-column${token.antCls}-table-cell-fix-start`]:
+-        {
+-          zIndex: 'calc(var(--z-offset, 0) + 2)',
+-        },
+       [`${token.antCls}-table${token.antCls}-table-tbody${token.antCls}-table-wrapper:only-child${token.antCls}-table`]:
+         {
+           marginBlock: 0,
+```
+
+**File**: `tests/table/column.test.tsx` (modified, +14/-3)
+```diff
+@@ -342,7 +342,7 @@ describe('Table ColumnSetting', () => {
+     expect(container.innerHTML).not.toContain('[object Object]');
    });
-+
-+  it('🎏 light filter stays flat in the toolbar even with cardBordered.search', () => {
-+    const { container } = render(
-+      <ProTable
-+        columns={[{ title: 'Name', dataIndex: 'name' }]}
-+        dataSource={[]}
-+        search={{ filterType: 'light' }}
-+        cardBordered={{ search: true, table: true }}
-+        rowKey="key"
-+      />,
+ 
+-  it('🐛 固定选择列的表头 z-index 规则应使用 v6 的 cell-fix-start 类名', () => {
++  it('🐛 固定选择列的表头 z-index 规则应由 antd 提供，pro-components 不再重复注入', () => {
+     const { container } = render(
+       <ProTable
+         search={false}
+@@ -364,7 +364,18 @@ describe('Table ColumnSetting', () => {
+     );
+     expect(selectionTh?.className).toContain('ant-table-cell-fix-start');
+ 
+-    // 选择列 z-index 规则应正确注入，避免表头勾选框被相邻固定列遮挡
+-    expect(document.head.textContent).toContain('calc(var(--z-offset, 0) + 2)');
++    // antd >= 6.6.7 自带选择列 z-index 规则，避免表头勾选框被相邻固定列遮挡。
++    // antd < 6.6.7 的规则命中了 v6 已不再输出的 cell-fix-left 类名，属 antd 侧问题，
++    // 需要由使用方自行升级 antd。
++    const styleText = document.head.textContent ?? '';
++    expect(styleText).toContain(
++      'table tr th.ant-table-selection-column.ant-table-cell-fix-start',
 +    );
++    expect(styleText).toContain('calc(var(--z-offset, 0) + 2)');
 +
-+    // 轻量筛选插在工具栏内，外层必须是平铺 div（带皮肤类），不是卡片
-+    const lightWrapper = container.querySelector(
-+      '.ant-pro-table-list-toolbar div.ant-pro-table-search.ant-pro-table-search-light-filter',
++    // pro-components 不应再维护一份重复规则，避免与 antd 实现漂移
++    expect(styleText).not.toContain(
++      '.ant-pro-table table tr th.ant-table-selection-column',
 +    );
-+    expect(lightWrapper).toBeTruthy();
-+    expect(lightWrapper?.classList.contains('ant-pro-card')).toBeTruthy();
-+    // 卡片的形：无 ant-card、无 body 嵌套、无描边
-+    expect(lightWrapper?.classList.contains('ant-card')).toBeFalsy();
-+    expect(lightWrapper?.classList.contains('ant-pro-card-border')).toBeFalsy();
-+    expect(
-+      lightWrapper?.querySelectorAll('.ant-card, .ant-card-body'),
-+    ).toHaveLength(0);
-+    // cardBordered.table 对表格区照常生效
-+    expect(
-+      container.querySelectorAll('.ant-pro-table .ant-pro-card.ant-card-bordered'),
-+    ).toHaveLength(1);
-+  });
+   });
  });
 ```
 
 ---
 
-### Incident Patch 3: `7ebcb72d` (2026-10-16)
-**Commit Message**: fix(layout): move onOpenChange outside updater (#9762)
+### Incident Patch 2: `a40870be` (2026-10-23)
+**Commit Message**: fix: address ProList, DrawerForm, Menu, ellipsis and docs theme issues (#9772)
 
-**File**: `src/layout/components/SiderMenu/BaseMenu.tsx` (modified, +4/-13)
+* fix: address list scrolling, drawer actions, menu tokens, ellipsis and docs theme
+
+* test(list): align pagination check with current demo
+
+**File**: `src/form/layouts/DrawerForm/index.tsx` (modified, +9/-1)
 ```diff
-@@ -586,20 +586,11 @@ const BaseMenu: React.FC<BaseMenuProps & PrivateSiderMenuProps> = (props) => {
-         | ((string | number)[] | false)
-         | ((prev: (string | number)[] | false) => (string | number)[] | false),
-     ) => {
--      setOpenKeysInner((prev) => {
--        const next =
--          typeof updater === 'function'
--            ? (
--                updater as (
--                  p: (string | number)[] | false,
--                ) => (string | number)[] | false
--              )(prev)
--            : updater;
--        (onOpenChange as (keys?: (string | number)[] | false) => void)?.(next);
--        return next;
--      });
-+      const next = typeof updater === 'function' ? updater(openKeys) : updater;
-+      setOpenKeysInner(next);
-+      (onOpenChange as (keys?: (string | number)[] | false) => void)?.(next);
-     },
--    [onOpenChange],
-+    [onOpenChange, openKeys],
-   );
+@@ -50,6 +50,9 @@ export type DrawerFormProps<
+     /** @name 抽屉的配置 */
+     drawerProps?: Omit<DrawerProps, 'open'>;
  
-   const [selectedKeys, setSelectedKeysInner] = useControlledState<
++    /** @name 底部操作按钮的位置，默认靠末尾。 */
++    placement?: 'start' | 'end';
++
+     /** @name 抽屉的标题 */
+     title?: DrawerProps['title'];
+ 
+@@ -73,6 +76,7 @@ function DrawerForm<T = Record<string, any>, U = Record<string, any>>({
+   children,
+   trigger,
+   drawerProps,
++  placement = 'end',
+   onFinish,
+   submitTimeout,
+   title,
+@@ -217,7 +221,11 @@ function DrawerForm<T = Record<string, any>, U = Record<string, any>>({
+           rest.submitter !== false && (
+             <div
+               ref={footerDomRef}
+-              style={{ display: 'flex', justifyContent: 'flex-end' }}
++              style={{
++                display: 'flex',
++                justifyContent:
++                  placement === 'start' ? 'flex-start' : 'flex-end',
++              }}
+             />
+           )
+         }
 ```
 
-**File**: `tests/layout/index.test.tsx` (modified, +50/-0)
+**File**: `src/layout/ProLayout.tsx` (modified, +0/-3)
 ```diff
-@@ -1864,6 +1864,56 @@ describe('BasicLayout', () => {
-     });
-   });
+@@ -831,9 +831,6 @@ const BaseProLayout: React.FC<ProLayoutProps> = (props) => {
+                     horizontalItemSelectedBg:
+                       token.layout?.sider?.colorBgMenuItemSelected ||
+                       token?.colorBgTextHover,
+-                    activeBarWidth: 0,
+-                    activeBarHeight: 0,
+-                    activeBarBorderWidth: 0,
+                     itemColor:
+                       token.layout?.sider?.colorTextMenu ||
+                       token?.colorTextSecondary,
+```
+
+**File**: `src/layout/components/TopNavHeader/index.tsx` (modified, +2/-9)
+```diff
+@@ -26,8 +26,7 @@ export const getTopNavMenuPopupBg = (token: {
+       colorBgMenuElevated?: string;
+     };
+   };
+-}) =>
+-  token.layout?.header?.colorBgMenuElevated || token.colorBgElevated;
++}) => token.layout?.header?.colorBgMenuElevated || token.colorBgElevated;
  
-+  it('keeps controlled top-menu updates outside the BaseMenu render', async () => {
-+    const onOpenChange = vi.fn();
-+    const Demo = () => {
-+      const [openKeys, setOpenKeys] = useState<string[]>([]);
-+      return (
-+        <ProLayout
-+          layout="top"
-+          location={{ pathname: '/project' }}
-+          menuDataRender={() => [
-+            {
-+              key: '/project',
-+              path: '/project',
-+              name: 'Project',
-+              children: [
-+                {
-+                  key: '/project/overview',
-+                  path: '/project/overview',
-+                  name: 'Overview',
-+                },
-+              ],
-+            },
-+          ]}
-+          menuProps={{
-+            openKeys,
-+            onOpenChange: (nextOpenKeys) => {
-+              onOpenChange(nextOpenKeys);
-+              setOpenKeys(nextOpenKeys);
-+            },
-+          }}
-+        />
-+      );
-+    };
-+    const consoleError = vi
-+      .spyOn(console, 'error')
-+      .mockImplementation(() => undefined);
-+
-+    try {
-+      render(<Demo />);
-+
-+      await waitFor(() => {
-+        expect(onOpenChange).toHaveBeenCalledWith(['/project']);
-+      });
-+      expect(consoleError.mock.calls.flat().join('\n')).not.toContain(
-+        'Cannot update a component',
-+      );
-+    } finally {
-+      consoleError.mockRestore();
-+    }
+ const TopNavHeader: React.FC<TopNavHeaderProps> = (
+   props: TopNavHeaderProps,
+@@ -81,9 +80,6 @@ const TopNavHeader: React.FC<TopNavHeaderProps> = (
+               horizontalItemSelectedBg:
+                 token.layout?.header?.colorBgMenuItemSelected ||
+                 token?.colorBgTextHover,
+-              activeBarWidth: 0,
+-              activeBarHeight: 0,
+-              activeBarBorderWidth: 0,
+               itemColor:
+                 token.layout?.header?.colorTextMenu ||
+                 token?.colorTextSecondary,
+@@ -182,10 +178,7 @@ const TopNavHeader: React.FC<TopNavHeaderProps> = (
+             </div>
+           </div>
+         )}
+-        <div
+-          style={{ flex: 1 }}
+-          className={clsx(`${prefixCls}-menu`, hashId)}
+-        >
++        <div style={{ flex: 1 }} className={clsx(`${prefixCls}-menu`, hashId)}>
+           {contentDom}
+         </div>
+         {(actionsRender || props.avatarProps) && (
+```
+
+**File**: `src/list/ProListBase.tsx` (modified, +24/-5)
+```diff
+@@ -6,10 +6,7 @@ import { ConfigProvider, Empty, Pagination, Spin } from 'antd';
+ import { clsx } from 'clsx';
+ import React, { useContext, useMemo } from 'react';
+ import type { PaginationConfig } from '../utils/antdTypes';
+-import {
+-  getResponsiveValue,
+-  useResponsiveScreens,
+-} from '../utils/responsive';
++import { getResponsiveValue, useResponsiveScreens } from '../utils/responsive';
+ 
+ export type ColumnCount = number;
+ export type ColumnType =
+@@ -34,6 +31,8 @@ export interface ListProps<T = any> {
+   className?: string;
+   rootClassName?: string;
+   style?: React.CSSProperties;
++  /** 限制列表内容区域高度并启用滚动；分页、工具栏不参与滚动。 */
++  scroll?: { x?: string | number | true; y?: string | number };
+   children?: React.ReactNode;
+   dataSource?: T[];
+   extra?: React.ReactNode;
+@@ -227,6 +226,7 @@ const ProListContainerInner = React.forwardRef<HTMLDivElement, ListProps>(
+       className,
+       rootClassName,
+       style,
++      scroll,
+       children,
+       itemLayout,
+       loadMore,
+@@ -506,7 +506,26 @@ const ProListContainerInner = React.forwardRef<HTMLDivElement, ListProps>(
+           <Spin spinning={isLoading}>
+             {showPaginationTop && paginationNode}
+             {header && <div className={`${prefixCls}-header`}>{header}</div>}
+-            {childrenContent}
++            {scroll ? (
++              <div
++                className={`${prefixCls}-scroll`}
++                style={{
++                  maxHeight: scroll.y,
++                  overflowY: scroll.y === undefined ? undefined : 'auto',
++                  overflowX: scroll.x === undefined ? undefined : 'auto',
++                }}
++              >
++                <div
++                  style={{
++                    minWidth: scroll.x === true ? 'max-content' : scroll.x,
++                  }}
++                >
++                  {childrenContent}
++                </div>
++              </div>
++            ) : (
++              childrenContent
++            )}
+             {footer && <div className={`${prefixCls}-footer`}>{footer}</div>}
+             {loadMore}
+             {showPaginationBottom && paginationNode}
+```
+
+**File**: `src/list/index.tsx` (modified, +1/-0)
+```diff
+@@ -261,6 +261,7 @@ function InternalProList<
+         rowClassName={rowClassName}
+         locale={locale}
+         hashId={hashId}
++        scroll={props.scroll}
+       />
+     ),
+   );
+```
+
+**File**: `src/table/utils/columnRender.tsx` (modified, +1/-3)
+```diff
+@@ -36,9 +36,7 @@ type ColumnRenderInterface<T> = {
+ export const renderColumnsTitle = (item: ProColumns<any>) => {
+   const { title } = item;
+   const ellipsis =
+-    typeof item?.ellipsis === 'boolean'
+-      ? item?.ellipsis
+-      : item?.ellipsis?.showTitle;
++    typeof item?.ellipsis === 'boolean' ? item?.ellipsis : !!item?.ellipsis;
+   if (title && typeof title === 'function') {
+     return title(item, 'table', null);
+   }
+```
+
+**File**: `src/utils/genCopyable/index.tsx` (modified, +5/-1)
+```diff
+@@ -4,8 +4,9 @@ import isObject from 'es-toolkit/compat/isObject';
+ import React from 'react';
+ 
+ export type ProEllipsisTooltip = {
++  /** @deprecated 请使用 tooltip 控制提示。 */
+   showTitle?: boolean;
+-  tooltip?: TooltipProps;
++  tooltip?: boolean | TooltipProps;
+ };
+ 
+ export type ProEllipsis = ProEllipsisTooltip | boolean;
+@@ -83,6 +84,9 @@ const genEllipsis = (
+   if (!ellipsis) {
+     return false;
+   }
++  if (isObject(ellipsis) && ellipsis.tooltip === false) {
++    return { tooltip: false };
++  }
+   /** 有些 valueType 需要设置copy的为string */
+   const needTranText = isNeedTranText(item);
+ 
+```
+
+**File**: `tests/form/drawerForm.test.tsx` (modified, +14/-6)
+```diff
+@@ -6,6 +6,19 @@ import { describe, expect, it, vi } from 'vitest';
+ import { waitForWaitTime } from '../util';
+ 
+ describe('DrawerForm', () => {
++  it('placement 控制底部按钮对齐方式', async () => {
++    const wrapper = render(
++      <DrawerForm open placement="start">
++        <ProFormText name="name" />
++      </DrawerForm>,
++    );
++    await waitFor(() => {
++      const footer = wrapper.baseElement.querySelector(
++        '.ant-drawer-footer > div',
++      ) as HTMLElement;
++      expect(footer?.style.justifyContent).toBe('flex-start');
++    });
 +  });
-+
-   it('restores all open groups after the sidebar expands with ignoreFlatMenu', async () => {
-     const TestBaseMenu = BaseMenu as React.ComponentType<any>;
-     const menuData = [
+   it('📦 trigger will simulate onOpenChange', async () => {
+     const fn = vi.fn();
+     const wrapper = render(
+@@ -675,12 +688,7 @@ describe('DrawerForm', () => {
+   it('supports antd 6 size and resizable props', async () => {
+     const onResize = vi.fn();
+     const html = render(
+-      <DrawerForm
+-        open
+-        size="50vw"
+-        resizable={{ onResize }}
+-        submitter={false}
+-      >
++      <DrawerForm open size="50vw" resizable={{ onResize }} submitter={false}>
+         <ProFormText name="name" />
+       </DrawerForm>,
+     );
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9772** (2026-10-23): fix: address ProList, DrawerForm, Menu, ellipsis and docs theme issues (@chenshuai2144)
+- **PR #9771** (2026-10-23): feat(table): 支持同值单元格纵向自动合并 autoMerge/mergeFields (#9770) (@Zzzz-zmy)
 - **PR #9762** (2026-10-16): fix: keep open-key callbacks out of state updaters (@FOWEPJF255)
 - **PR #9761** (2026-10-16): fix(form): preserve input focus across popover validation (@FOWEPJF255)
 - **PR #9756** (2026-10-13): fix(docs): changelog sidebar highlight and demo iframe 404 (@chenshuai2144)
 - **PR #9755** (2026-10-13): fix: changelog sidebar, playground demos, remove mirror nav (@chenshuai2144)
-- **PR #9754** (2026-10-13): fix: restore docs sidebar UTF-8 and repair homepage hero (@chenshuai2144)
-- **PR #9753** (2026-10-13): fix: Rspress site build react-router pnpm resolution on Vercel (@chenshuai2144)
 
 ---
 
@@ -958,52 +898,28 @@ still honors cardBordered.table.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs): changelog sidebar active state and demo iframe 404 (#9756)
+## X. table): remove duplicate selection column z-index rule
 
 **RULE**:
-When implementing operations in `patches/@rspress__core@2.0.23.patch`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ant-design/pro-components. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ant-design/pro-components. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f722f6fd`: docs): changelog sidebar active state and demo iframe 404 (#9756). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `091bbf43`: table): remove duplicate selection column z-index rule. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `patches/@rspress__core@2.0.23.patch`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-diff --git a/dist/runtime/hooks/useActiveMatcher.js b/dist/runtime/hooks/useActiveMatcher.js
-index 71b560f530828e4ed32fa1459a048409400b366d..6957ead1ea69739f4f28f70cb5da0713f918377f 100644
---- a/dist/runtime/hooks/useActiveMatcher.js
-@@ -2,12 +2,22 @@ import { useCallback } from "react";
- import { useLocation } from "react-router-dom";
- import { isActive } from "../route.js";
- const useActiveMatcher = ()=>{
--    const { pathname: rawPathname } = useLocation();
-+    const { pathname: rawPathname, hash: rawHash } = useLocation();
-     const activeMatcher = useCallback((link)=>{
-         const pathname = decodeURIComponent(rawPathname);
-+        const hashIndex = link.indexOf("#");
-+        if (-1 !== hashIndex) {
-+            const linkPath = link.slice(0, hashIndex) || link;
-+            const linkHash = link.slice(hashIndex + 1);
-+            if (!isActive(linkPath, pathname)) return false;
-+            const currentHash = decodeURIComponent(rawHash || "").replace(/^#/, "");
-+            const targetHash = decodeURIComponent(linkHash);
-+            return currentHash.toLowerCase() === targetHash.toLowerCase();
-+        }
-         return isActive(link, pathname);
-     }, [
--        
+    "antd": "^6.6.7",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-index d437473083b8a83bc5f7a4297d25eb91811c1384..c4a8f2e1b9d3e5f6a7b8c9d0e1f2a3b4c5d6e7f 100644
-@@ -1,6 +1,6 @@
- const SocialLink = (props)=>{
+    "antd": "^6.6.5",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f722f6fd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `091bbf43` are properly handled with clean fallback behavior.

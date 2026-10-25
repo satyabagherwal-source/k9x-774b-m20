@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T02:27:23.003Z",
+  "last_updated": "2026-10-25T02:36:21.644Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "489f8bc3fc7b99bbc6cdc0fb767de23e963b5b4a9e5fab629071bd210582baf2",
-      "verified_at": "2026-10-22T15:29:02.878Z",
+      "content_hash": "b8ecfd556af1b0b345e4aabcc7d694886330669f475f8d42a2921e24c59d4bf2",
+      "verified_at": "2026-10-25T02:36:19.166Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:29:02.878Z"
+      "last_updated": "2026-10-25T02:36:19.166Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -5436,14 +5436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ant-design-pro-components",
-      "content_hash": "e9961ddf69440b20466741b37f947940637ff7d932da3d6db7391c08a72b2621",
-      "verified_at": "2026-10-18T23:32:44.252Z",
+      "content_hash": "a9464a27b4069180c7966e0ec1f3f5bb42435abb79feebc21471e89e5b581d0b",
+      "verified_at": "2026-10-25T02:36:08.699Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:32:44.252Z"
+      "last_updated": "2026-10-25T02:36:08.699Z"
     },
     "ratatui/ratatui": {
       "repository": "ratatui/ratatui",
@@ -7206,14 +7206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqlpage-sqlpage",
-      "content_hash": "16bf406f9eb213afd37199093d39d8c1bc4b201b8500345e7c4017e390bb6ae1",
-      "verified_at": "2026-10-19T01:57:11.150Z",
+      "content_hash": "6b0e7b8b53d6488568e1a25c56d7876903da570d5780f932c7722587cd42a5c3",
+      "verified_at": "2026-10-25T02:36:21.643Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:57:11.150Z"
+      "last_updated": "2026-10-25T02:36:21.643Z"
     },
     "DouyinFE/semi-design": {
       "repository": "DouyinFE/semi-design",
@@ -15576,14 +15576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-      "content_hash": "7204624032db9c6ee09e141cd58ad4c66abe6aa916bccb6d97a3a82c08dd6876",
-      "verified_at": "2026-10-20T10:19:20.852Z",
+      "content_hash": "2110765d6b297ba7e8dc94ba8fa27a4de822b1bba993fbb19a8ca9f376710cc5",
+      "verified_at": "2026-10-25T02:36:17.629Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T10:19:20.852Z"
+      "last_updated": "2026-10-25T02:36:17.629Z"
     },
     "lodestones/MOSS-Image-SFT-8-steps-dmd": {
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
