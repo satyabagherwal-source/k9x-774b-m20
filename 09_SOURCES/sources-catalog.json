@@ -565,8 +565,8 @@
     "sourceUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceVersion": "hf-alissonerdx-bfs-best-face-swap",
     "license": "Open-Source",
-    "contentHash": "47f039b49ee5d600f35d155d550cdf5895101f733073141f869f5b19acdaedc9",
-    "lastHarvestedAt": "2026-10-20T19:50:37.515Z",
+    "contentHash": "0e8b9f1d03ecd575010a9ed94d0bf2543cb75276d30a789f2040bfe3870de84c",
+    "lastHarvestedAt": "2026-10-25T15:15:56.936Z",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "214941a2",
+    "sourceVersion": "e2dc7bf0",
     "license": "NOASSERTION",
-    "contentHash": "b2db8fc0601dec6150d1ccc0b43b1a58bbe0a4823b763dbfab73e5e8ae30329e",
-    "lastHarvestedAt": "2026-10-23T09:35:52.780Z",
+    "contentHash": "5587bdb6ecfa1abab4f8c711e479082a50f790ea60e1ee177a2ae967575b1df8",
+    "lastHarvestedAt": "2026-10-25T15:16:11.448Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -7773,10 +7773,10 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-    "sourceVersion": "6235771c",
+    "sourceVersion": "ee413f1b",
     "license": "Apache-2.0",
-    "contentHash": "e12329761cac32644e8f6e87cd976eaee64b9fe031b57c6800c20318bd2a1a70",
-    "lastHarvestedAt": "2026-10-20T22:20:20.011Z",
+    "contentHash": "7313231ad861cf0c187e64a55a310a622e0a51233fab7f03a297c23cfb4cb0eb",
+    "lastHarvestedAt": "2026-10-25T15:16:04.392Z",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary"
   },
   "zed-industries-zed": {
@@ -10698,5 +10698,15 @@
     "contentHash": "1842bc6bc574de91d5fed07b0275760d813d8dcdfd4d432581df941d28e28b36",
     "lastHarvestedAt": "2026-10-25T13:46:00.168Z",
     "learningId": "learn-github-fei2411-ds-bot"
+  },
+  "hf-nanbeige-nanbeige4.3-33b": {
+    "repository": "Nanbeige/Nanbeige4.3-33B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
+    "sourceVersion": "hf-nanbeige-nanbeige4.3-33b",
+    "license": "Open-Source",
+    "contentHash": "545e22d7b2b9da911dd8d50d26dcaac22ee4a19b435a4c09cf6a29929c1ebb61",
+    "lastHarvestedAt": "2026-10-25T15:15:52.704Z",
+    "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b"
   }
 }

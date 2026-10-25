@@ -4446,3 +4446,7 @@ https://github.com/makecindy/cindy
 # --- Automatically Discovered by AI Scout Engine [2026-10-25T13:42:02.035Z] ---
 # [AI-AGENTS] Fei2411/DS-Bot (2471 score) - A team of long-lived bots for DeepSeek Harness, with main bots, bot-to-bot messa
 https://github.com/Fei2411/DS-Bot
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-25T15:15:48.756Z] ---
+# [HUGGINGFACE-AI-MODELS] Nanbeige/Nanbeige4.3-33B (1630 score) - Verified Hugging Face Model: Nanbeige/Nanbeige4.3-33B (163 likes, 0 downloads)
+https://huggingface.co/Nanbeige/Nanbeige4.3-33B

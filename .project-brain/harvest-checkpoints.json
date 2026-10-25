@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T15:09:59.215Z",
+  "last_updated": "2026-10-25T15:16:11.454Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -710,14 +710,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "content_hash": "47f039b49ee5d600f35d155d550cdf5895101f733073141f869f5b19acdaedc9",
-      "verified_at": "2026-10-20T19:50:37.524Z",
+      "content_hash": "0e8b9f1d03ecd575010a9ed94d0bf2543cb75276d30a789f2040bfe3870de84c",
+      "verified_at": "2026-10-25T15:15:56.942Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:50:37.524Z"
+      "last_updated": "2026-10-25T15:15:56.942Z"
     },
     "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "b2db8fc0601dec6150d1ccc0b43b1a58bbe0a4823b763dbfab73e5e8ae30329e",
-      "verified_at": "2026-10-23T09:35:52.789Z",
+      "content_hash": "5587bdb6ecfa1abab4f8c711e479082a50f790ea60e1ee177a2ae967575b1df8",
+      "verified_at": "2026-10-25T15:16:11.453Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T09:35:52.789Z"
+      "last_updated": "2026-10-25T15:16:11.453Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -11706,14 +11706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-linuxcommandlibrary",
-      "content_hash": "e12329761cac32644e8f6e87cd976eaee64b9fe031b57c6800c20318bd2a1a70",
-      "verified_at": "2026-10-20T22:20:20.019Z",
+      "content_hash": "7313231ad861cf0c187e64a55a310a622e0a51233fab7f03a297c23cfb4cb0eb",
+      "verified_at": "2026-10-25T15:16:04.398Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:20:20.019Z"
+      "last_updated": "2026-10-25T15:16:04.398Z"
     },
     "zed-industries/zed": {
       "repository": "zed-industries/zed",
@@ -16079,6 +16079,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-25T13:46:00.176Z"
+    },
+    "Nanbeige/Nanbeige4.3-33B": {
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+      "content_hash": "545e22d7b2b9da911dd8d50d26dcaac22ee4a19b435a4c09cf6a29929c1ebb61",
+      "verified_at": "2026-10-25T15:15:52.709Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-25T15:15:52.709Z"
     }
   },
   "repos": {

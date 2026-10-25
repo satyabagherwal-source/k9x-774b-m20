@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T15:09:59.206Z",
-  "total_cycles_completed": 4851,
-  "total_learnings_persisted": 4851,
-  "total_rules_promoted": 4243,
+  "last_updated": "2026-10-25T15:16:11.451Z",
+  "total_cycles_completed": 4855,
+  "total_learnings_persisted": 4855,
+  "total_rules_promoted": 4245,
   "history": [
-    {
-      "timestamp": "2026-10-25T04:58:31.438Z",
-      "repository": "agent-of-empires/agent-of-empires",
-      "learningId": "learn-github-agent-of-empires-agent-of-empires",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T05:04:52.686Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T05:04:54.225Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T05:06:38.969Z",
-      "repository": "pamburus/hl",
-      "learningId": "learn-github-pamburus-hl",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T05:06:56.352Z",
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -1403,6 +1375,34 @@
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:15:52.707Z",
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:15:56.939Z",
+      "repository": "Alissonerdx/BFS-Best-Face-Swap",
+      "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:16:04.396Z",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:16:11.451Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

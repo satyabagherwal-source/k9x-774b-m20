@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-P5OV",
-    "timestamp": "2026-10-22T18:04:42.127Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "be26f657ff7a9f84c62cb884b739ecc7561d678e6694789eca500f8f2790729a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-XCKF",
-    "timestamp": "2026-10-22T18:11:04.287Z",
-    "repository": "webrecorder/pywb",
-    "learningId": "learn-github-webrecorder-pywb",
-    "contentHash": "62f8659edffd679f1eb7ed7c8f35bcf0772bb7bc5e72ce9c8c60c59b5b951734",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-XGM1",
-    "timestamp": "2026-10-22T18:11:09.529Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "ba0bce382dd6340b9f463af75a3ed47feb9145a7e757a301db402dadd88eca03",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-XKXY",
-    "timestamp": "2026-10-22T18:11:15.142Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "246924596d592be6c597431afb361dba74fa3563621c62a459ef16c380ce2644",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-6124",
     "timestamp": "2026-10-22T18:17:49.276Z",
     "repository": "higress-group/higress",
@@ -7492,6 +7432,66 @@
     "contentHash": "c9835d77ccf4ae974762b1586e0f7950f88836a8ad6d6a2176eb28ca60e31e53",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ZLRX",
+    "timestamp": "2026-10-25T15:15:52.701Z",
+    "repository": "Nanbeige/Nanbeige4.3-33B",
+    "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+    "contentHash": "545e22d7b2b9da911dd8d50d26dcaac22ee4a19b435a4c09cf6a29929c1ebb61",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ZP1I",
+    "timestamp": "2026-10-25T15:15:56.934Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+    "contentHash": "0e8b9f1d03ecd575010a9ed94d0bf2543cb75276d30a789f2040bfe3870de84c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ZUSM",
+    "timestamp": "2026-10-25T15:16:04.390Z",
+    "repository": "SimonSchubert/LinuxCommandLibrary",
+    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+    "contentHash": "7313231ad861cf0c187e64a55a310a622e0a51233fab7f03a297c23cfb4cb0eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-008L",
+    "timestamp": "2026-10-25T15:16:11.445Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "5587bdb6ecfa1abab4f8c711e479082a50f790ea60e1ee177a2ae967575b1df8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

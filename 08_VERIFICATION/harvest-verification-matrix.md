@@ -4874,3 +4874,7 @@
 | `CYCLE-20261025-RQMA` | `2026-10-25T15:09:45.730Z` | `tamagui/tamagui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tamagui-tamagui-learnings.md` | Yes (`7a3183da...`) |
 | `CYCLE-20261025-RWXL` | `2026-10-25T15:09:53.913Z` | `goss-org/goss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4361` | Yes (`b73e696f...`) |
 | `CYCLE-20261025-S10E` | `2026-10-25T15:09:59.198Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 767, Rule 4362, Rule 4363` | Yes (`c9835d77...`) |
+| `CYCLE-20261025-ZLRX` | `2026-10-25T15:15:52.701Z` | `Nanbeige/Nanbeige4.3-33B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md` | Yes (`545e22d7...`) |
+| `CYCLE-20261025-ZP1I` | `2026-10-25T15:15:56.934Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`0e8b9f1d...`) |
+| `CYCLE-20261025-ZUSM` | `2026-10-25T15:16:04.390Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4364` | Yes (`7313231a...`) |
+| `CYCLE-20261025-008L` | `2026-10-25T15:16:11.445Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4365` | Yes (`5587bdb6...`) |

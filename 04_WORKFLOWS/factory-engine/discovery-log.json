@@ -18631,5 +18631,17 @@
     "qualityScore": 2471,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-25T13:38:16.002Z"
+  },
+  {
+    "name": "Nanbeige/Nanbeige4.3-33B",
+    "fullName": "Nanbeige/Nanbeige4.3-33B",
+    "url": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Nanbeige/Nanbeige4.3-33B (163 likes, 0 downloads)",
+    "likes": 163,
+    "downloads": 0,
+    "qualityScore": 1630,
+    "discoveredAt": "2026-10-25T15:13:40.832Z"
   }
 ]

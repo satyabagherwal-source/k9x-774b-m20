@@ -4881,3 +4881,7 @@ Every entry in this ledger must capture:
 | `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `32f3ba8b` | Multi-dimensional audit evidence | 2026-10-25T15:09:45.735Z |
 | `learn-github-goss-org-goss` | `https://github.com/goss-org/goss` | `e1210076` | Multi-dimensional audit evidence | 2026-10-25T15:09:53.916Z |
 | `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-25T15:09:59.202Z |
+| `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-10-25T15:15:52.704Z |
+| `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-10-25T15:15:56.936Z |
+| `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `ee413f1b` | Multi-dimensional audit evidence | 2026-10-25T15:16:04.392Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `e2dc7bf0` | Multi-dimensional audit evidence | 2026-10-25T15:16:11.448Z |
