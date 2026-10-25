@@ -1045,8 +1045,8 @@
     "sourceUrl": "https://huggingface.co/FermionResearch/Phonon-2",
     "sourceVersion": "hf-fermionresearch-phonon-2",
     "license": "Open-Source",
-    "contentHash": "afcfeaa28e2ea7723a953bcce82f682b32fa69fbc52972bc5da2149fec5b5aa9",
-    "lastHarvestedAt": "2026-10-21T01:55:44.501Z",
+    "contentHash": "c26a8217ed55595cdfefc9496bf314b87a1a3e5c1cad60abaa1da47f7a485cb8",
+    "lastHarvestedAt": "2026-10-25T21:46:49.062Z",
     "learningId": "learn-huggingface-fermionresearch-phonon-2"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "3ac379ef",
+    "sourceVersion": "59ad3bc5",
     "license": "GPL-3.0",
-    "contentHash": "9602a20d31adb0bd95ee1b8730a20bf71946031e75467c813efd558b68679d8d",
-    "lastHarvestedAt": "2026-10-25T03:15:32.829Z",
+    "contentHash": "79decd2ac35451c61d7cd2716976dd733c89f92ce843ffaeff2c703c4ec984af",
+    "lastHarvestedAt": "2026-10-25T21:46:49.692Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {

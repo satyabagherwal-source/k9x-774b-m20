@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T21:40:25.198Z",
-  "total_cycles_completed": 4981,
-  "total_learnings_persisted": 4981,
-  "total_rules_promoted": 4344,
+  "last_updated": "2026-10-25T21:46:49.700Z",
+  "total_cycles_completed": 4983,
+  "total_learnings_persisted": 4983,
+  "total_rules_promoted": 4345,
   "history": [
-    {
-      "timestamp": "2026-10-25T12:23:01.104Z",
-      "repository": "fastapi/fastapi",
-      "learningId": "learn-github-fastapi-fastapi",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T12:23:03.178Z",
-      "repository": "metalbear-co/mirrord",
-      "learningId": "learn-github-metalbear-co-mirrord",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T12:23:07.237Z",
       "repository": "joreilly/PeopleInSpace",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T21:40:25.198Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T21:46:49.067Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-fermionresearch-phonon-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T21:46:49.700Z",
+      "repository": "topgrade-rs/topgrade",
+      "learningId": "learn-github-topgrade-rs-topgrade",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

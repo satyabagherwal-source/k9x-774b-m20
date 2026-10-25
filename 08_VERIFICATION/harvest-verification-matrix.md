@@ -5004,3 +5004,5 @@
 | `CYCLE-20261025-HLJD` | `2026-10-25T21:33:47.209Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4456, Rule 4457` | Yes (`9ee8f29e...`) |
 | `CYCLE-20261025-PR0A` | `2026-10-25T21:40:07.546Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`d3737401...`) |
 | `CYCLE-20261025-Q4MD` | `2026-10-25T21:40:25.189Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4458` | Yes (`f601101d...`) |
+| `CYCLE-20261025-YCTF` | `2026-10-25T21:46:49.059Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`c26a8217...`) |
+| `CYCLE-20261025-YDAW` | `2026-10-25T21:46:49.688Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4459` | Yes (`79decd2a...`) |

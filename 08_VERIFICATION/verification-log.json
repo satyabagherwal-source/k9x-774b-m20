@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-4RH9",
-    "timestamp": "2026-10-23T08:44:38.301Z",
-    "repository": "kucherenko/jscpd",
-    "learningId": "learn-github-kucherenko-jscpd",
-    "contentHash": "68f70f58e708e18ca660c1e3d06081416020abfb0ef25d453702458e6ca221f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-HZE5",
-    "timestamp": "2026-10-23T08:54:55.085Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "94e0ff0653b720bab70c908b02568f1983ca740b77930844cbbf9751481cf46f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-O7H3",
     "timestamp": "2026-10-23T08:59:45.495Z",
     "repository": "cosscom/ui",
@@ -7490,6 +7460,36 @@
     "repository": "vespa-engine/vespa",
     "learningId": "learn-github-vespa-engine-vespa",
     "contentHash": "f601101d9b371aedc80636428d4211c268b0c888c73d9838bbe3a97c015e073e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-YCTF",
+    "timestamp": "2026-10-25T21:46:49.059Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-fermionresearch-phonon-2",
+    "contentHash": "c26a8217ed55595cdfefc9496bf314b87a1a3e5c1cad60abaa1da47f7a485cb8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-YDAW",
+    "timestamp": "2026-10-25T21:46:49.688Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "79decd2ac35451c61d7cd2716976dd733c89f92ce843ffaeff2c703c4ec984af",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
