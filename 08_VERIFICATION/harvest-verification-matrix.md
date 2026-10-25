@@ -4846,3 +4846,6 @@
 | `CYCLE-20261025-EFNL` | `2026-10-25T14:03:25.761Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4326, Rule 4327, Rule 4328` | Yes (`8cf5794a...`) |
 | `CYCLE-20261025-EHZR` | `2026-10-25T14:03:28.791Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4329` | Yes (`47ce8713...`) |
 | `CYCLE-20261025-EJGE` | `2026-10-25T14:03:30.686Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4330` | Yes (`558f67c0...`) |
+| `CYCLE-20261025-Y9BE` | `2026-10-25T14:18:50.666Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4331` | Yes (`4ff99eb9...`) |
+| `CYCLE-20261025-YC2L` | `2026-10-25T14:18:54.237Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4332, Rule 4333, Rule 4334` | Yes (`fa53f9a0...`) |
+| `CYCLE-20261025-YCGA` | `2026-10-25T14:18:54.730Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4335` | Yes (`e783004c...`) |

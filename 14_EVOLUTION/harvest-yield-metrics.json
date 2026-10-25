@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T14:03:30.693Z",
-  "total_cycles_completed": 4823,
-  "total_learnings_persisted": 4823,
-  "total_rules_promoted": 4208,
+  "last_updated": "2026-10-25T14:18:54.738Z",
+  "total_cycles_completed": 4826,
+  "total_learnings_persisted": 4826,
+  "total_rules_promoted": 4213,
   "history": [
-    {
-      "timestamp": "2026-10-25T03:59:25.839Z",
-      "repository": "mui/base-ui",
-      "learningId": "learn-github-mui-base-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T03:59:27.302Z",
-      "repository": "zvec-ai/zvec-grep",
-      "learningId": "learn-github-zvec-ai-zvec-grep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T03:59:29.749Z",
-      "repository": "fastify/fastify",
-      "learningId": "learn-github-fastify-fastify",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T03:59:34.708Z",
       "repository": "flux-iac/tofu-controller",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-25T14:03:30.693Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:18:50.674Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:18:54.245Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:18:54.738Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

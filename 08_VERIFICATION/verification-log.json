@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-2QDB",
-    "timestamp": "2026-10-22T17:19:16.223Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "207e503647d409f1b8d756ba35d38d97762b5ee92d76ab8fa4a54c71786a592d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-ASM9",
-    "timestamp": "2026-10-22T17:25:32.385Z",
-    "repository": "mui/base-ui",
-    "learningId": "learn-github-mui-base-ui",
-    "contentHash": "72aa381175047d2bdc47ea788192c2faca779a94d6e35780cee0b50693bea272",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-B0W0",
-    "timestamp": "2026-10-22T17:25:43.104Z",
-    "repository": "zeromicro/go-zero",
-    "learningId": "learn-github-zeromicro-go-zero",
-    "contentHash": "a38351b21e172f2efbd64fd26e3758dc3b68b3c04b415e5b29a65d73698d2d92",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-B1EL",
     "timestamp": "2026-10-22T17:25:43.773Z",
     "repository": "sigstore/cosign",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "558f67c02d81de4f4756b7e8dd4c2eb60bff91da78e8b3c4dac61eaf266ce83d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-Y9BE",
+    "timestamp": "2026-10-25T14:18:50.666Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "4ff99eb92e48ca24513e0277589dc58bd9761b5acfa2f377e2a1385b11f1a269",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-YC2L",
+    "timestamp": "2026-10-25T14:18:54.237Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+    "contentHash": "fa53f9a04e934d4f6b73554a636cf3782e0ae0c000aff774bd7866d13bf875f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-YCGA",
+    "timestamp": "2026-10-25T14:18:54.730Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "e783004c3e39de74290c1cf72aa1e870f8f74edb6fc71f0d374db010d8e49ac8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

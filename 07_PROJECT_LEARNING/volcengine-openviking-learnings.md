@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `0d546854`  
+> **Source Version**: `4ab22a49`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:49:58.246Z  
+> **Timestamp**: 2026-10-25T14:18:54.362Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:49:57.543Z  
+> **Harvest Timestamp**: 2026-10-25T14:18:54.231Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 40629 stars
+- **Stars / Engagement**: 40781 stars
 
 ---
 
@@ -1495,969 +1495,713 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d9db19ab` (2026-10-21)
-**Commit Message**: fix(gateway): tolerate non-string "type" values in client history (#6306)
+### Incident Patch 1: `d5022f57` (2026-10-23)
+**Commit Message**: fix(langchain): honor nested filters and index field selectors (#6404)
 
-Motivation: normalize() and several request-side helpers test a client
-supplied "type" with set membership. When a history item or content block
-carries an object there (e.g. an echoed JSON Schema fragment such as
-{"type": {"type": "string"}}), this raises TypeError: unhashable type: 'dict'.
-kernel.enhance() catches it and the request proceeds with
-degradation=memory_store_failure, so recall and capture are skipped for the
-whole turn while the HTTP status stays 200.
+* fix(langchain): match nested JSON store filters
 
-Approach: add protocols.string_type(), which returns the type only when it is
-a string and "" otherwise, and use it at the client-supplied membership checks
-in protocols.py, capture.py, tool_executor.py, tool_protocols/responses.py and
-tool_protocols/anthropic.py. normalize() and the text filter also no longer
-call .strip() on a non-string "text". Behaviour for well-formed input is
-unchanged; a malformed type is treated as "no type". Upstream-generated
-output items are left alone.
+(cherry picked from commit f6471b877ce1967455a7fd78015281c5f82308e5)
+Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
 
-Validation: ran `python -m pytest tests/gateway` (820 passed) and
-`ruff check` / `ruff format --check` on openviking_gateway and tests/gateway.
-The new tests/gateway/
+* fix(langchain): index LangGraph store field selectors
 
-**File**: `openviking_gateway/capture.py` (modified, +4/-4)
+(cherry picked from commit 3c7bcae3f5410b7b6d7c38ee17563721ccb8fe39)
+Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+
+* test(langgraph): cover filtered recall of selected fields
+
+Exercise selected index fields and nested filters together through sync, async and batch search. Check caller values remain unchanged and document projection refresh behavior in both guides.
+
+Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+
+* docs(langchain): clarify reserved nested filter operators
+
+Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+Co-authored-by: ktz03 <[REDACTED_EMAIL]>
+
+**File**: `docs/en/agent-integrations/07-langchain-langgraph.md` (modified, +5/-0)
 ```diff
-@@ -23,7 +23,7 @@
- from .capture_store import Document, LeaseLost
- from .models import Policy
- from .notices import without_notices
--from .protocols import clean_text, is_user, text_content, unwrap_client
-+from .protocols import clean_text, is_user, string_type, text_content, unwrap_client
- from .records import RecordKind as K
- from .tool_protocols import reply_chain
+@@ -271,6 +271,11 @@ errors propagate, and `put()` does not overwrite a record after a failed read.
+ `list_namespaces(prefix=("users", "*"))` matches one namespace label per `*`, including
+ when `root_uri` uses a peer home alias such as `viking://~/peers/support/memories/langgraph_store`.
  
-@@ -453,14 +453,14 @@ def capture_messages(messages, chain):
-     for message in messages:
-         if message.get("role") == "tool":
-             results[message.get("tool_call_id")] = message.get("content", "")
--        if message.get("type") in {"function_call_output", "custom_tool_call_output"}:
-+        if string_type(message) in {"function_call_output", "custom_tool_call_output"}:
-             results[message.get("call_id")] = message.get("output", "")
-         for block in message.get("content", []) if isinstance(message.get("content"), list) else []:
-             if isinstance(block, dict) and block.get("type") == "tool_result":
-                 results[block.get("tool_use_id")] = block.get("content", "")
-     output = []
-     for message, anchor in zip(messages, chain, strict=True):
--        if message.get("role") not in {"user", "assistant"} and message.get("type") not in {
-+        if message.get("role") not in {"user", "assistant"} and string_type(message) not in {
-             "function_call",
-             "custom_tool_call",
-         }:
-@@ -473,7 +473,7 @@ def capture_messages(messages, chain):
-         text = clean_text(unwrap_client(text))
-         parts = [{"type": "text", "text": text}] if text else []
-         calls = list(message.get("tool_calls") or [])
--        if message.get("type") in {"function_call", "custom_tool_call"}:
-+        if string_type(message) in {"function_call", "custom_tool_call"}:
-             calls.append(message)
-         calls.extend(
-             b
++`search()` accepts nested JSON filters such as `filter={"metadata": {"color": "blue"}}`.
++Filter keys `eq`, `ne`, `gt`, `gte`, `lt`, `lte` and `in` are reserved operator aliases at every nesting level.
++Use `index=["items[*].text"]` to index selected array fields while retaining the complete
++stored value. Existing index projections are updated when the item is written again.
++
+ ### LangGraph middleware
+ 
+ ```python
 ```
 
-**File**: `openviking_gateway/protocols.py` (modified, +16/-8)
+**File**: `docs/zh/agent-integrations/07-langchain-langgraph.md` (modified, +5/-0)
 ```diff
-@@ -124,6 +124,12 @@ def pairs(items):
-         return None
+@@ -258,6 +258,11 @@ store.put(("users", "ada"), "preferences", None)  # 值为 None 表示删除该
+ `list_namespaces(prefix=("users", "*"))` 中的每个 `*` 匹配一层命名空间，
+ 也适用于 `viking://~/peers/support/memories/langgraph_store` 这样的 peer 主目录别名。
  
++`search()` 支持 `filter={"metadata": {"color": "blue"}}` 这样的嵌套 JSON 筛选。
++筛选中的 `eq`、`ne`、`gt`、`gte`、`lt`、`lte` 和 `in` 在所有嵌套层级均为保留的运算符别名。
++使用 `index=["items[*].text"]` 可以只索引数组中的指定字段，同时保留完整的存储值。
++已有条目的索引会在再次写入该条目时更新。
++
+ ### LangGraph middleware
  
-+def string_type(value: Any) -> str:
-+    """A block's ``type`` when it is a string; malformed histories may carry an object."""
-+    kind = value.get("type") if isinstance(value, dict) else None
-+    return kind if isinstance(kind, str) else ""
-+
-+
- def text_content(message: dict) -> str:
-     content = message.get("content", "")
-     if isinstance(content, str):
-@@ -133,7 +139,7 @@ def text_content(message: dict) -> str:
-             x.get("text", "")
-             for x in content
-             if isinstance(x, dict)
--            and x.get("type") in {"text", "input_text", "output_text"}
-+            and string_type(x) in {"text", "input_text", "output_text"}
-             and isinstance(x.get("text", ""), str)
+ ```python
+```
+
+**File**: `integrations/frameworks/langchain/src/langchain_openviking/store.py` (modified, +29/-6)
+```diff
+@@ -35,6 +35,7 @@
+         PutOp,
+         SearchItem,
+         SearchOp,
++        get_text_at_path,
+     )
+ else:
+     try:
+@@ -47,6 +48,7 @@
+             PutOp,
+             SearchItem,
+             SearchOp,
++            get_text_at_path,
          )
-     return ""
-@@ -162,10 +168,10 @@ def normalize(value: Any) -> Any:
-             if not (
-                 isinstance(v, dict)
-                 and (
--                    v.get("type") in {"thinking", "redacted_thinking"}
-+                    string_type(v) in {"thinking", "redacted_thinking"}
-                     or (
--                        v.get("type") in {"text", "input_text", "output_text"}
--                        and not v.get("text", "").strip()
-+                        string_type(v) in {"text", "input_text", "output_text"}
-+                        and not (isinstance(v.get("text", ""), str) and v.get("text", "").strip())
-                     )
-                 )
-             )
-@@ -182,7 +188,7 @@ def normalize(value: Any) -> Any:
-             content = out["content"]
-             if isinstance(content, list) and len(content) == 1 and isinstance(content[0], dict):
-                 block = content[0]
--                if set(block) == {"type", "text"} and block["type"] in {
-+                if set(block) == {"type", "text"} and string_type(block) in {
-                     "text",
-                     "input_text",
-                     "output_text",
-@@ -191,7 +197,9 @@ def normalize(value: Any) -> Any:
-             if isinstance(content, str):
-                 content = unwrap_client(content).strip()
-             out["content"] = content
--        if out.get("type") in {"text", "input_text", "output_text"}:
-+        if string_type(out) in {"text", "input_text", "output_text"} and isinstance(
-+            out.get("text", ""), str
+     except ImportError:  # pragma: no cover - exercised by optional import path
+         _LANGGRAPH_IMPORT_ERROR = missing_dependency("langgraph", "langgraph")
+@@ -559,7 +561,11 @@ def _extract_uris(value: Any) -> list[str]:
+ 
+ def _project_value(value: dict[str, Any], index: bool | list[str] | None) -> dict[str, Any]:
+     if isinstance(index, list):
+-        return {field: _nested_value(value, field) for field in index}
++        projected = {field: _nested_value(value, field) for field in index}
++        for field in index:
++            if projected[field] is None:
++                projected[field] = get_text_at_path(value, field) or None
++        return projected
+     return value
+ 
+ 
+@@ -577,15 +583,32 @@ def _matches_filter(value: dict[str, Any], filter: dict[str, Any] | None) -> boo
+         return True
+     for path, expected in filter.items():
+         actual = _nested_value(value, path)
+-        if isinstance(expected, dict):
+-            for op, target in expected.items():
+-                if not _compare(actual, op, target):
+-                    return False
+-        elif actual != expected:
++        if not _matches_value(actual, expected):
+             return False
+     return True
+ 
+ 
++def _matches_value(actual: Any, expected: Any) -> bool:
++    if isinstance(expected, dict):
++        if any(
++            key.startswith("$") or key in {"eq", "ne", "gt", "gte", "lt", "lte", "in"}
++            for key in expected
 +        ):
-             out["text"] = unwrap_client(out.get("text", "")).strip()
-         # Responses message items may omit type/status/id when resent by a client.
-         # IDs of opaque items (item_reference, reasoning, calls) remain significant.
-@@ -316,7 +324,7 @@ def client_openviking_tools(body: dict, names) -> bool:
-             continue
-         # Hosted MCP servers (Responses mcp, Anthropic mcp_servers and mcp_toolset) list
-         # no tools, so their name is all there is.
--        server = definition.get("type") in {"mcp", "mcp_toolset", "url"}
-+        server = string_type(definition) in {"mcp", "mcp_toolset", "url"}
-         named_tool = isinstance(definition.get("name"), str) and not server
-         # A tool must be one of OpenViking's, so a connector's authenticate tool is not.
-         if any(
-@@ -436,7 +444,7 @@ def strip_thinking(messages: list[dict]) -> list[dict]:
-             message["content"] = [
-                 b
-                 for b in message["content"]
--                if b.get("type") not in {"thinking", "redacted_thinking"}
-+                if string_type(b) not in {"thinking", "redacted_thinking"}
-             ]
-     return result
- 
-```
-
-**File**: `openviking_gateway/tool_executor.py` (modified, +2/-1)
-```diff
-@@ -18,6 +18,7 @@
- from .capture_store import Document
- from .client import VikingError
- from .config import MOUNT_PATH
-+from .protocols import string_type
- from .state_store import get_state
- from .storage import digest
- from .tool_catalog import PREFIX, TOOL_OVERRIDES
-@@ -57,7 +58,7 @@ def attachments(body, protocol):
-         content = message.get("content", [])
-         if isinstance(content, list):
-             for part in content:
--                if isinstance(part, dict) and part.get("type") in {"file", "input_file"}:
-+                if string_type(part) in {"file", "input_file"}:
-                     output.append(part.get("file", part))
-                 elif isinstance(part, dict) and part.get("type") == "document":
-                     source = part.get("source", {})
-```
-
-**File**: `openviking_gateway/tool_protocols/anthropic.py` (modified, +3/-3)
-```diff
-@@ -6,7 +6,7 @@
- 
- import orjson
- 
--from ..protocols import strip_thinking, text_content
-+from ..protocols import string_type, strip_thinking, text_content
- from .common import (
-     SUMMARY_HEADROOM,
-     SummaryError,
-@@ -94,7 +94,7 @@ def split_reasoning(output):
-             blocks = [
-                 [position, block]
-                 for position, block in enumerate(content if isinstance(content, list) else [])
--                if isinstance(block, dict) and block.get("type") in THINKING
-+                if string_type(block) in THINKING
-             ]
-             if blocks:
-                 reasoning[index] = {"blocks": blocks}
-@@ -108,7 +108,7 @@ def restore_reasoning(previous, message, value):
-         if (
-             message.get("role") != "assistant"
-             or not isinstance(content, list)
--            or any(isinstance(b, dict) and b.get("type") in THINKING for b in content)
-+            or any(string_type(b) in THINKING for b in content)
-         ):
-             return [message]
-         # Blocks go back where the reply had them, so the client's form must equal it without them.
-```
-
-**File**: `openviking_gateway/tool_protocols/responses.py` (modified, +4/-4)
-```diff
-@@ -6,7 +6,7 @@
- import uuid
- 
- from ..notices import without_recall_notice
--from ..protocols import text_content
-+from ..protocols import string_type, text_content
- from .common import (
-     PREFIX,
-     SUMMARY_HEADROOM,
-@@ -44,18 +44,18 @@ def enhanced_supported(body):
- 
-     @staticmethod
-     def is_reply(message):
--        return message.get("role") == "assistant" or message.get("type") in {
-+        return message.get("role") == "assistant" or string_type(message) in {
-             "reasoning",
-             *CLIENT_CALLS,
-         }
- 
-     @staticmethod
-     def accepts_context(message):
--        return message.get("role") == "user" or message.get("type") in TOOL_OUTPUTS
-+        return message.get("role") == "user" or string_type(message) in TOOL_OUTPUTS
- 
-     @staticmethod
-     def append_context(message, text):
--        if message.get("type") in TOOL_OUTPUTS:
-+        if string_type(message) in TOOL_OUTPUTS:
-             append_text(message, "output", text, "input_text", joins_strings=True)
-         else:
-             append_text(message, "content", text, "input_text")
-```
-
-**File**: `tests/gateway/test_malformed_types.py` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+"""Histories whose ``type`` is not a string must not abort request processing."""
-+
-+from openviking_gateway.capture import capture_messages
-+from openviking_gateway.protocols import normalize, prefix_chain, strip_thinking, text_content
-+from openviking_gateway.tool_protocols import tool_protocol
-+
-+ODD = {"type": "string"}
-+
-+
-+def malformed():
-+    return {
-+        "role": "user",
-+        "type": ODD,
-+        "content": [{"type": ODD, "text": "hello"}, {"type": "text", "text": ODD}],
-+    }
-+
-+
-+def test_protocol_helpers_ignore_object_types():
-+    message = malformed()
-+    assert normalize([message])[0]["type"] == ODD
-+    assert len(prefix_chain([message])) == 1
-+    assert text_content(message) == ""
-+    assert strip_thinking([message])[0]["content"][0]["type"] == ODD
-+
-+
-+def test_capture_and_responses_ignore_object_types():
-+    message = malformed()
-+    assert capture_messages([message], ["a"]) == capture_messages([message], ["a"])
-+    protocol = tool_protocol("responses")
-+    assert protocol.accepts_context(message)
-+    assert not protocol.is_reply(message)
-```
-
----
-
-### Incident Patch 2: `c973ad1c` (2026-10-22)
-**Commit Message**: fix(session): respect configured thinking in patch merge and repair budget-exhausted extraction (#6104)
-
-* fix(session): respect configured thinking in patch merge and repair budget-exhausted extraction
-
-PatchMergePolicyOptimizer forced per-call thinking=True for experiences/
-trajectories merges, overriding a deployment's configured thinking=False
-(volcengine backend per-call value takes precedence over its config). The
-single format retry reused the same thinking mode and output cap without
-showing the model its truncated program, so a reasoning-heavy merge that
-consumed the completion budget failed terminally as parse_error after a
-~2h session commit (#6096).
-
-- policy_optimizer: add thinking field (bool | None, default None); None
-  defers to the VLM backend's configured thinking policy, explicit
-  True/False still override.
-- extract_loop: accept thinking: Optional[bool] = None and pass it
-  through verbatim so the backend default applies when unset; callers
-  passing True/False are unchanged.
-- extract_loop: classify a response as budget_exhausted when its
-  finish_reason is 'length' or its completion tokens reach the resolved
-  output cap; the single repair now appends the fa
-
-**File**: `openviking/models/vlm/backends/litellm_vlm.py` (modified, +20/-8)
-```diff
-@@ -473,8 +473,11 @@ def _call() -> Union[str, VLMResponse]:
-             elapsed = time.perf_counter() - t0
-             self._update_token_usage_from_response(response, duration_seconds=elapsed)
-             tracer.info(f"response={response}")
--            if tools:
--                return self._build_vlm_response(response, has_tools=True)
-+            if tools is not None:
-+                result = self._build_vlm_response(response, has_tools=True)
-+                if not tools:
-+                    result.content = self._clean_response(result.content or "")
-+                return result
-             return self._clean_response(self._extract_content_from_response(response))
- 
-         return _call()
-@@ -505,8 +508,11 @@ async def _call() -> Union[str, VLMResponse]:
-             elapsed = time.perf_counter() - t0
-             self._update_token_usage_from_response(response, duration_seconds=elapsed)
-             tracer.info(f"response={response}")
--            if tools:
--                return self._build_vlm_response(response, has_tools=True)
-+            if tools is not None:
-+                result = self._build_vlm_response(response, has_tools=True)
-+                if not tools:
-+                    result.content = self._clean_response(result.content or "")
-+                return result
-             return self._clean_response(self._extract_content_from_response(response))
- 
-         return await _call()
-@@ -529,8 +535,11 @@ def _call() -> Union[str, VLMResponse]:
-             response = completion(**kwargs)
-             elapsed = time.perf_counter() - t0
-             self._update_token_usage_from_response(response, duration_seconds=elapsed)
--            if tools:
--                return self._build_vlm_response(response, has_tools=True)
-+            if tools is not None:
-+                result = self._build_vlm_response(response, has_tools=True)
-+                if not tools:
-+                    result.content = self._clean_response(result.content or "")
-+                return result
-             return self._clean_response(self._extract_content_from_response(response))
- 
-         return _call()
-@@ -553,8 +562,11 @@ async def _call() -> Union[str, VLMResponse]:
-             response = await acompletion(**kwargs)
-             elapsed = time.perf_counter() - t0
-             self._update_token_usage_from_response(response, duration_seconds=elapsed)
--            if tools:
--                return self._build_vlm_response(response, has_tools=True)
-+            if tools is not None:
-+                result = self._build_vlm_response(response, has_tools=True)
-+                if not tools:
-+                    result.content = self._clean_response(result.content or "")
-+                return result
-             return self._clean_response(self._extract_content_from_response(response))
- 
-         return await _call()
-```
-
-**File**: `openviking/models/vlm/backends/openai_vlm.py` (modified, +4/-1)
-```diff
-@@ -386,7 +386,10 @@ async def _call() -> Union[str, VLMResponse]:
-             elapsed = time.perf_counter() - t0
-             if tools is not None:
-                 self._update_token_usage_from_response(response, duration_seconds=elapsed)
--                return self._build_vlm_response(response, has_tools=True)
-+                result = self._build_vlm_response(response, has_tools=True)
-+                if not tools:
-+                    result.content = self._clean_response(result.content or "")
-+                return result
-             return await self._extract_completion_content_async(response, elapsed)
- 
-         # 用 tracer.info 打印请求（人类可读格式）
-```
-
-**File**: `openviking/models/vlm/backends/volcengine_vlm.py` (modified, +20/-8)
-```diff
-@@ -231,9 +231,12 @@ def get_completion(
-             raise
-         elapsed = time.perf_counter() - t0
-         self._update_token_usage_from_response(response, duration_seconds=elapsed)
--        result = self._build_vlm_response(response, has_tools=bool(tools))
--        if tools:
-+        if tools is not None:
-+            result = self._build_vlm_response(response, has_tools=True)
-+            if not tools:
-+                result.content = self._clean_response(result.content or "")
-             return result
-+        result = self._build_vlm_response(response, has_tools=False)
-         return self._clean_response(str(result))
- 
-     @model_error_boundary
-@@ -292,9 +295,12 @@ async def _call() -> Union[str, VLMResponse]:
-                 raise
-             elapsed = time.perf_counter() - t0
-             self._update_token_usage_from_response(response, duration_seconds=elapsed)
--            result = self._build_vlm_response(response, has_tools=bool(tools))
--            if tools:
-+            if tools is not None:
-+                result = self._build_vlm_response(response, has_tools=True)
-+                if not tools:
-+                    result.content = self._clean_response(result.content or "")
-                 return result
-+            result = self._build_vlm_response(response, has_tools=False)
-             content = self._clean_response(str(result))
-             if content:
-                 tracer.info(f"message.content={content}")
-@@ -462,9 +468,12 @@ def get_vision_completion(
-             raise
-         elapsed = time.perf_counter() - t0
-         self._update_token_usage_from_response(response, duration_seconds=elapsed)
--        result = self._build_vlm_response(response, has_tools=bool(tools))
--        if tools:
-+        if tools is not None:
-+            result = self._build_vlm_response(response, has_tools=True)
-+            if not tools:
-+                result.content = self._clean_response(result.content or "")
-             return result
-+        result = self._build_vlm_response(response, has_tools=False)
-         return self._clean_response(str(result))
- 
-     @model_error_boundary
-@@ -513,7 +522,10 @@ async def get_vision_completion_async(
-             raise
-         elapsed = time.perf_counter() - t0
-         self._update_token_usage_from_response(response, duration_seconds=elapsed)
--        result = self._build_vlm_response(response, has_tools=bool(tools))
--        if tools:
-+        if tools is not None:
-+            result = self._build_vlm_response(response, has_tools=True)
-+            if not tools:
-+                result.content = self._clean_response(result.content or "")
-             return result
-+        result = self._build_vlm_response(response, has_tools=False)
-         return self._clean_response(str(result))
-```
-
-**File**: `openviking/models/vlm/base.py` (modified, +2/-1)
-```diff
-@@ -204,7 +204,8 @@ async def get_media_completion_async(
-             f"VLM provider {self.provider!r} does not support audio/video inputs"
-         )
- 
--    def _clean_response(self, content: str) -> str:
-+    @staticmethod
-+    def _clean_response(content: str) -> str:
-         """Strip reasoning tags (e.g. ``<think>...</think>``) from model output."""
-         return _THINK_TAG_RE.sub("", content).strip()
- 
-```
-
-**File**: `openviking/session/memory/extract_loop.py` (modified, +59/-6)
-```diff
-@@ -134,7 +134,7 @@ def __init__(
-         ctx: Optional[RequestContext] = None,
-         context_provider: Optional[Any] = None,  # ExtractContextProvider
-         isolation_handler: MemoryIsolationHandler = None,
--        thinking: bool = False,
-+        thinking: Optional[bool] = None,
-         max_output_tokens: Optional[int] = None,
-     ):
-         """
-@@ -147,7 +147,9 @@ def __init__(
-             max_iterations: Maximum number of ReAct iterations (default: 5)
-             ctx: Request context
-             context_provider: ExtractContextProvider - 必须提供（由 provider 加载 schema）
--            thinking: Whether to explicitly enable model thinking for this extraction loop.
-+            thinking: Per-call thinking override for this extraction loop. True/False
-+                force the mode for every call; None (default) defers to the VLM
-+                backend's configured thinking policy.
-             max_output_tokens: Per-call output cap for the extraction LLM. When None, the
-                 configured vlm.max_tokens is used, falling back to a value large enough for
-                 full memory rewrites so providers do not apply a small server-side default
-@@ -159,7 +161,7 @@ def __init__(
-         self.max_iterations = max_iterations
-         self.ctx = ctx
-         self.context_provider = context_provider
--        self.thinking = bool(thinking)
-+        self.thinking = thinking
-         self.max_output_tokens = max_output_tokens
-         # Resolved in run() via _resolve_effective_max_output_tokens(); default to
-         # the extraction floor so a direct _call_llm() before run() stays safe.
-@@ -402,10 +404,21 @@ async def run(self) -> Tuple[Optional[Any], List[Dict[str, Any]]]:
-             parse_error = self._last_parse_error
-             # Add format error message if parse failed (max 1 retry). This may raise
-             # max_iterations, granting one more attempt after this failure.
-+            if failure_kind == "budget_exhausted":
-+                # Truncation is not an ordinary format mistake: a same-cap format
-+                # retry would only hit the budget again, and replaying the
-+                # truncated output just grows the prompt. Fail fast with the
-+                # dedicated error recorded by _call_llm().
-+                raise RuntimeError(
-+                    f"Memory extraction aborted: {parse_error or failure_kind}"
-+                )
-+
-             if self._format_retry_count == 0:
-                 self._format_retry_count += 1
-                 max_iterations += 1
--                retry_reason = "refusal_text" if failure_kind == "refusal_text" else "format_retry"
-+                retry_reason = (
-+                    "refusal_text" if failure_kind == "refusal_text" else "format_retry"
-+                )
-                 tracer.info(f"Extended max_iterations to {max_iterations} for {retry_reason}")
-                 self._add_format_error_message(messages)
- 
-@@ -479,6 +492,25 @@ def _resolve_effective_max_output_tokens(self) -> None:
-             configured if configured is not None else _DEFAULT_EXTRACTION_MAX_OUTPUT_TOKENS
-         )
- 
-+    def _budget_exhausted_error(self, response: Any, content: str) -> str:
-+        """Build the dedicated, actionable error for a truncated response.
-+
-+        Truncation is detected only from the backend's explicit
-+        ``finish_reason == "length"``; token counters are never used to infer it.
-+        """
-+        usage = getattr(response, "usage", None)
-+        completion_tokens = usage.get("completion_tokens") if isinstance(usage, dict) else None
-+        details = (
-+            f"finish_reason='length', output cap={self._effective_max_output_tokens} tokens"
++            return all(_compare(actual, op, target) for op, target in expected.items())
++        return isinstance(actual, dict) and all(
++            _matches_value(actual.get(key), target) for key, target in expected.items()
 +        )
-+        if completion_tokens:
-+            details += f", completion_tokens={completion_tokens}"
++    if isinstance(expected, (list, tuple)):
 +        return (
-+            "Response was cut off by the output-token budget "
-+            f"({details}), response_preview={_preview_text(content)!r}. "
-+            "Raise vlm.max_tokens in ov.conf or reduce the memory context before retrying."
-+        )
-+
-     def _retryable_resolution_issues(self, operations: ResolvedOperations) -> List[Dict[str, Any]]:
-         issues: List[Dict[str, Any]] = []
-         for operation in operations.upsert_operations:
-@@ -1173,8 +1205,11 @@ async def _call_llm(
-         Returns:
-             Tuple of (tool_calls, operations) - one will be None, the other set
-         """
--        # Call LLM with tools - use tools from strategy
--        tools = None
-+        # Call LLM with tools - use tools from strategy. Pass tools=[] (not None)
-+        # when tools are disabled so backends following the OpenAI backend's
-+        # `tools is not None` convention still return a VLMResponse carrying
-+        # finish_reason and usage instead of a bare string.
-+        tools: Optional[List[Dict[str, Any]]] = []
-         tool_choice = None
-         if not self._disable_tools_for_iteration and self._tool_schemas:
-             tools = self._tool_
-```
-
-**File**: `openviking/session/train/components/policy_optimizer.py` (modified, +10/-1)
-```diff
-@@ -51,6 +51,15 @@ class PatchMergePolicyOptimizer:
-     memory_type: str = "experiences"
-     memory_registry: MemoryTypeRegistry | None = None
-     vlm_resolver: VLMResolver | None = None
-+    thinking: bool | None = None
-+    """Per-call thinking override for the merge extract loop.
-+
-+    None (default) defers to the VLM backend's configured ``thinking`` policy.
-+    True/False force the mode for every merge call, overriding the backend
-+    configuration. The optimizer never forces thinking on by itself: forcing
-+    ``thinking=True`` for experiences/trajectories merges made reasoning consume
-+    the whole completion budget and truncate the emitted program mid-string.
-+    """
- 
-     @tracer(
-         "train.policy_optimizer.patch_merge.plan",
-@@ -183,7 +192,7 @@ async def _run_merge_extract_loop(
-             context_provider=provider,
-             isolation_handler=isolation_handler,
-             max_iterations=1,
--            thinking=self.memory_type in {"trajectories", "experiences"},
-+            thinking=self.thinking,
-         )
-         operations, _ = await orchestrator.run()
-         return operations
-```
-
-**File**: `tests/session/memory/test_extract_loop_budget_recovery.py` (added, +370/-0)
-```diff
-@@ -0,0 +1,370 @@
-+# Copyright (c) 2026 Beijing Volcano Engine Technology Co., Ltd.
-+# SPDX-License-Identifier: AGPL-3.0
-+"""Tests for ExtractLoop truncation handling and thinking passthrough.
-+
-+Regression tests for https://github.com/volcengine/issues/6096, reworked after
-+review of PR #6104: truncation is detected only from an explicit
-+``finish_reason == "length"``, checked before parsing; ``tools=[]`` is passed so
-+real backends still return a ``VLMResponse`` with finish_reason and usage on the
-+patch-merge path (where ``PatchMergeContextProvider.get_tools() == []``); and
-+budget exhaustion is terminal — no cap doubling, no replay of the truncated
-+output, and no completion_tokens-based truncation inference.
-+"""
-+
-+from types import SimpleNamespace
-+from unittest.mock import AsyncMock, MagicMock, Mock, patch
-+
-+import pytest
-+
-+from openviking.models.vlm.base import ToolCall, VLMResponse
-+from openviking.session.memory.dataclass import MemoryTypeSchema
-+from openviking.session.memory.extract_loop import ExtractLoop
-+from openviking.session.memory.page_id_map import PageIdMap
-+
-+_DEFAULT_CAP = 32768
-+
-+_TRUNCATED_PROGRAM = (
-+    "sdk.upsert_preference(\n"
-+    '    topic="booking",\n'
-+    '    content="""The agent should deduplicate requests because\n'
-+)
-+
-+
-+class FakeContextProvider:
-+    read_file_contents = {}
-+
-+    def get_memory_schemas(self, ctx):
-+        return [
-+            MemoryTypeSchema(
-+                memory_type="preferences",
-+                description="Preferences",
-+                directory="viking://user/{user_space}/memories/preferences",
-+                filename_template="{topic}.md",
-+                fields=[],
++            isinstance(actual, (list, tuple))
++            and len(actual) == len(expected)
++            and all(
++                _matches_value(left, right) for left, right in zip(actual, expected, strict=False)
 +            )
-+        ]
-+
-+    def get_tools(self):
-+        # The real patch-merge path returns [] — this is what forced _call_llm
-+        # down the tools-less branch under review.
-+        return []
-+
-+    def get_extract_context(self):
-+        return SimpleNamespace(page_id_map=PageIdMap())
-+
-+    def get_output_language(self):
-+        return "en"
-+
-+    def instruction(self):
-+        return "Extract memory operations."
-+
-+    async def prefetch(self):
-+        return []
++        )
++    return actual == expected
 +
 +
-+def _length_response(
-+    completion_tokens: int = _DEFAULT_CAP,
-+    finish_reason: str = "length",
-+    content: str = _TRUNCATED_PROGRAM,
-+) -> VLMResponse:
-+    return VLMResponse(
-+        content=content,
-+        finish_reason=finish_reason,
-+        usage={"prompt_tokens": 100, "completion_tokens": completion_tokens},
-+    )
-+
-+
-+class ScriptedVLM:
-+    """Fake VLM that records per-call kwargs and replays scripted responses."""
-+
-+    model = "test-model"
-+
-+    def __init__(self, responses):
-+        self.responses = iter(responses)
-+        self.calls = []
-+
-+    async def get_completion_async(self, **kwargs):
-+        self.calls.append(kwargs)
-+        return next(self.responses)
-+
-+
-+def _user_contents(messages):
-+    return [message.get("content", "") for message in messages if message.get("role") == "user"]
-+
-+
-+def _assistant_contents(messages):
-+    return [
-+        message.get("content", "") for message in messages if message.get("role") == "assistant"
-+    ]
-+
-+
-+def _make_loop(vlm, **kwargs):
-+    isolation_handler = Mock()
-+    isolation_handler.get_read_scope.return_value = None
-+    isolation_handler.fill_identity_fields.side_effect = lambda item, **kwargs: item
-+    return ExtractLoop(
-+        vlm=vlm,
-+        viking_fs=MagicMock(),
-+        context_provider=FakeContextProvider(),
-+        isolation_handler=isolation_handler,
-+        max_iterations=1,
-+        **kwargs,
-+    )
-+
-+
-+async def _run_loop(loop):
-+    config = SimpleNamespace(
-+        memory=SimpleNamespace(link_enabled=False, extraction_output_format="python")
-+    )
-+    with (
-+        patch(
-+            "openviking.session.memory.extract_loop.get_openviking_config",
-+            return_value=config,
-+        ),
-+        patch(
-+            "openviking_cli.utils.config.get_openviking_config",
-+            return_value=config,
-+        ),
-+    ):
-+        loop._check_unread_existing_files = _async_return({})
-+        loop._validate_patch_operations = _async_return([])
-+        loop.finalize_operations = _async_return(None)
-+        # Await inside the patch context: run() is a coroutine, so returning it
-+        # would let the patches expire before the code under test executes.
-+        return await loop.run()
-+
-+
-+def _async_return(value):
-+    async def _call(*args, **kwargs):
-+        return value
-+
-+    return _call
-+
-+
-+class TestThinkingPassthrough:
-+    @pytest.mark.asyncio
-+    @pytest.mark.parametrize("thinking", [None, True, False])
-+    async def test_thinking_kwarg_is_forwarded_verbatim(self, thinking):
-+        vlm = ScriptedVLM(["sdk.commit()"])
-+        loop = _make_loop(vlm, thinking=thinking)
-+        await _run_loop(loop)
-+
-+        assert len(vlm.calls) == 1
-+        assert vlm.calls[0]["thinking"] is thinking
-+
-+
-+class TestToolsDisabledStillUsesVLMResponse:
-+    @pyt
+ def _compare(actual: Any, op: str, target: Any) -> bool:
+     if op in {"$eq", "eq"}:
+         return actual == target
 ```
 
-**File**: `tests/session/train/test_train_components.py` (modified, +79/-0)
+**File**: `integrations/frameworks/langchain/tests/unit/test_langchain_integration.py` (modified, +118/-1)
 ```diff
-@@ -751,6 +751,85 @@ async def run(self):
-     assert "+merged content" in captured["prefetch_messages"][-1]["content"]
+@@ -24,7 +24,7 @@
+     convert_to_openai_messages,
+ )
+ from langchain_core.runnables import RunnableLambda
+-from langgraph.store.base import InvalidNamespaceError, PutOp
++from langgraph.store.base import InvalidNamespaceError, PutOp, SearchOp
+ from openviking_sdk.errors import (
+     InvalidArgumentError,
+     NotFoundError,
+@@ -1894,6 +1894,58 @@ def rm(self, uri, recursive=False):
+     assert store.search(namespace, query="azure") == []
  
  
 +@pytest.mark.asyncio
-+async def test_patch_merge_policy_optimizer_thinking_defaults_to_config_passthrough(
-+    monkeypatch,
++@pytest.mark.parametrize("query", [None, "doc"])
++@pytest.mark.parametrize(
++    "filter, expected",
++    [
++        ({"metadata": {"color": "blue"}}, ["alpha"]),
++        ({"metadata": {"nested": {"owner": "ada"}}}, ["alpha"]),
++        ({"metadata": {"nested": {"rank": {"$gte": 2}}}}, ["alpha"]),
++        ({"metadata": {"detail.region": "eu"}}, ["alpha"]),
++        ({"tags": [{"role": "reviewer"}, "memory"]}, ["alpha"]),
++        ({"tags": [{"role": "reviewer"}]}, []),
++        ({"metadata": {}}, ["alpha", "beta"]),
++        ({"metadata": {"color": "black"}}, []),
++        ({"metadata.nested.rank": {"gte": 2}}, ["alpha"]),
++        ({"metadata.nested": {"$eq": {"rank": 3, "owner": "ada"}}}, ["alpha"]),
++        ({"metadata": {"eq": "blue", "label": "blue"}}, ["scalar"]),
++        ({"metadata": {"$unknown": "blue"}}, ["scalar"]),
++        ({"tags": ["reviewer", "memory"]}, ["scalar"]),
++        ({"kind": "doc"}, ["alpha", "beta", "scalar"]),
++    ],
++)
++async def test_langgraph_store_structured_filters(filter, expected, query):
++    store = OpenVikingStore(client=InMemoryOpenVikingClient())
++    for key, value in {
++        "alpha": {
++            "kind": "doc",
++            "metadata": {
++                "color": "blue",
++                "nested": {"rank": 3, "owner": "ada"},
++                "detail.region": "eu",
++            },
++            "tags": [{"role": "reviewer", "active": True}, "memory"],
++        },
++        "beta": {
++            "kind": "doc",
++            "metadata": {"color": "red", "nested": {"rank": 1, "owner": "bob"}},
++            "tags": [{"role": "reader", "active": True}, "memory"],
++        },
++        "scalar": {"kind": "doc", "metadata": "blue", "tags": ["reviewer", "memory"]},
++    }.items():
++        store.put(("users", "ada"), key, value)
++
++    op = SearchOp(("users",), filter=filter, query=query)
++    results = [
++        store.search(("users",), filter=filter, query=query),
++        await store.asearch(("users",), filter=filter, query=query),
++        store.batch([op])[0],
++        (await store.abatch([op]))[0],
++    ]
++    assert all(sorted(item.key for item in items) == expected for items in results)
++
++
+ def test_langgraph_store_semantic_search_keeps_peer_id_out_of_retrieval():
+     client = InMemoryOpenVikingClient()
+     store = OpenVikingStore(client=client, actor_peer_id="peer-store")
+@@ -1911,6 +1963,71 @@ def test_langgraph_store_rejects_ttl_writes():
+         store.put(("users", "ada"), "temporary", {"note": "expires"}, ttl=60)
+ 
+ 
++@pytest.mark.parametrize("use_default", [False, True])
++@pytest.mark.parametrize(
++    ("field", "query", "expected_match"),
++    [
++        ("$", "solstice", True),
++        ("", "solstice", True),
++        ("items[0].text", "pulsar", True),
++        ("items[-1].text", "galaxy", True),
++        ("items[*].text", "galaxy", True),
++        ("nested[*].parts[*].text", "aurora", True),
++        ("metadata.*", "quasar", True),
++        ("{text,metadata.title}", "nebula", True),
++        ("text", "nebula", True),
++        ("metadata.title", "quasar", True),
++        ("absent", "solstice", False),
++        ("literal[0]", "nova", True),
++    ],
++)
++@pytest.mark.asyncio
++async def test_langgraph_store_indexes_selected_field_paths(
++    field, query, expected_match, use_default
 +):
-+    """The optimizer must not force per-call thinking for experiences/trajectories.
++    value = {
++        "text": "nebula",
++        "metadata": {"title": "quasar"},
++        "items": [{"text": "pulsar"}, {"text": "galaxy"}],
++        "nested": [{"parts": [{"text": "aurora"}]}],
++        "literal[0]": "nova",
++        "ignored": "solstice",
++    }
++    original = deepcopy(value)
++    for mode in ("put", "aput", "batch", "abatch"):
++        client = InMemoryOpenVikingClient()
++        store = OpenVikingStore(client=client, index=[field] if use_default else None)
++        index = None if use_default else [field]
++        if mode == "put":
++            store.put(("documents",), "note", value, index=index)
++        elif mode == "aput":
++            await store.aput(("documents",), "note", value, index=index)
++        elif mode == "batch":
++            store.batch([PutOp(("documents",), "note", value, index=index)])
++        else:
++            await store.abatch([PutOp(("documents",), "note", value, index=index)])
 +
-+    Regression test for issue #6096: an operator-configured ``thinking=False`` VLM
-+    still received ``thinking=True`` on every patch-merge call.
-+    """
-+    from openviking.session.memory.dataclass import ResolvedOperations
-+
-+    captured = {}
-+
-+    class FakeExtractLoop:
-+        def __init__(self, **kwargs):
-+            captured.update(kwargs)
-+
-+        async def run(self):
-+            return ResolvedOperations(upsert_operations=[], delete_file_contents=[], errors=[]), []
-+
-+    monkeypatch.setattr(
-+        "openviking.session.train.components.policy_optimizer.ExtractLoop",
-+        FakeExtractLoop,
-+    )
-+
-+    policy_set = _experience_set()
-+    gradient = _patch_gradient(
-+        uri=policy_set.policies[0].uri,
-+        before="stale content",
-+        after="merged content",
-+    )
-+    await PatchMergePolicyOptimizer(viking_fs=FakeVikingFS({}), vlm=object()).plan(
-+        [gradient],
-+        policy_set,
-+        PatchMergePolicyOptimizerContext(request_context=fake_request_context()),
-+    )
-+
-+    assert captured["thinking"] is None
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("thinking", [True, False])
-+async def test_patch_merge_policy_optimizer_explicit_thinking_is_forwarded(monkeypatch, thinking):
-+    from openviking.session.memory.dataclass import ResolvedOperations
-+
-+    captured = {}
-+
-+    class FakeExtractLoop:
-+        def __init__(self, **kwargs):
-+            captured.update(kwargs)
-+
-+        async def run(self):
-+            return ResolvedOperations(upsert_operations=[], delete_file_contents=[], errors=[]), []
-+
-+    monkeypatch.setattr(
-+        "openviking.session.train.components.policy_optimizer.ExtractLoop",
-+        FakeExtractLoop,
-+    )
-+
-+    policy_set = _experience_set()
-+    gradient = _patch_gradient(
-+        uri=policy_set.policies[0].uri,
-+        before="stale content",
-+        after="merged content",
-+    )
-+    optimizer = PatchMergePolicyOptimizer(
-+        viking_fs=FakeVikingFS({}),
-+        vlm=object(),
-+        thinking=thinking,
-+    )
-+    await optimizer.plan(
-+        [gradient],
-+        policy_set,
-+        PatchMergePolicyOptimizerContext(request_context=fake_request_context()),
-+    )
-+
-+    assert captured["thinking"] is thinking
-+
-+
- @pytest.mark.asyncio
- async def test_patch_merge_policy_optimizer_merges_all_patch_gradients_once(monkeypatch):
-     from openviking.session.memory.dataclass import (
++        assert store.get(("documents",), "note").value == value
++        assert value == original
++        expected_keys = ["note"] if expected_match else []
++        assert [item.key for item in store.search(("documents",), query=query)] == expected_keys
++        filter = {"me
 ```
 
 ---
 
-### Incident Patch 3: `d7b32ac5` (2026-10-22)
-**Commit Message**: fix(claude-plugin): replay pending writes on Stop (#6394)
+### Incident Patch 2: `2260f689` (2026-10-23)
+**Commit Message**: fix(langchain): isolate session commits and report reset failures (#6479)
 
-SessionStart replays at most OPENVIKING_PENDING_REPLAY_LIMIT entries, and
-no other Claude Code hook drained the queue, so the newest deferred writes
-(usually the end of the failed turn) waited for the next session. The Stop
-hook now replays the queue, without consuming retries, before it sends the
-turn's new messages.
+* fix(langchain): isolate capture commit policies
 
-**File**: `examples/claude-code-memory-plugin/.claude-plugin/plugin.json` (modified, +1/-1)
+(cherry picked from commit e2440e409b14e1f47b95ceaec2a3b6d547140932)
+Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+
+* fix(langchain): report history reset recreation failures
+
+(cherry picked from commit 3b2591cde30a1e6e41f158bd1052795eeddfa814)
+Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+
+* test(langchain): validate session lifecycle fixes
+
+Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+Co-authored-by: ktz03 <[REDACTED_EMAIL]>
+
+**File**: `docs/en/agent-integrations/07-langchain-langgraph.md` (modified, +7/-0)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "openviking-memory",
--  "version": "0.7.16",
-+  "version": "0.7.17",
-   "description": "Long-term semantic memory for Claude Code, powered by OpenViking. Auto-recall relevant memories at session start and capture important information during conversations.",
-   "author": {
-     "name": "OpenViking",
+@@ -312,6 +312,13 @@ recorder.flush("support-thread-1")
+ recorder.close()
+ ```
+ 
++Pass `commit_policy=` to `record()` or `arecord()` to override the recorder's
++policy for that call without changing its default. `None` uses the default;
++`OpenVikingCommitPolicy(mode="never")` suppresses a new post-write commit, but
++still retries any previously failed commit. `history.clear()` and `aclear()`
++raise if deletion or recreation fails; a failed recreation leaves the old
++session deleted and does not acknowledge pending context references.
++
+ `record()` writes only the messages supplied by the caller. It filters framework
+ control messages, writes in server-safe batches, and applies the configured
+ commit policy. If a later batch or the post-write commit fails,
 ```
 
-**File**: `examples/claude-code-memory-plugin/package.json` (modified, +1/-1)
+**File**: `docs/zh/agent-integrations/07-langchain-langgraph.md` (modified, +5/-0)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "claude-code-openviking-memory",
--  "version": "0.7.16",
-+  "version": "0.7.17",
-   "description": "OpenViking memory plugin for Claude Code — semantic long-term memory",
-   "type": "module",
-   "scripts": {
+@@ -298,6 +298,11 @@ recorder.flush("support-thread-1")
+ recorder.close()
+ ```
+ 
++向 `record()` 或 `arecord()` 传入 `commit_policy=` 可仅覆盖本次调用的策略，
++不改变 recorder 的默认值。`None` 使用默认策略；`OpenVikingCommitPolicy(mode="never")`
++禁止本次写入后的新 commit，但仍会重试之前失败的 commit。`history.clear()` 和 `aclear()`
++会在删除或重建失败时抛出异常；重建失败时旧 session 已被删除，待确认的上下文引用不会被确认。
++
+ `record()` 只写入调用方传入的消息；它会过滤框架控制消息、按服务端限制分批写入，并应用已配置的
+ commit 策略。如果后续批次或写入后的 commit 失败，`OpenVikingPartialWriteError` 会报告已经
+ 确认写入的输入前缀，调用方可仅重试尚未写入的后缀；空后缀会安全地重试待完成的 commit。
 ```
 
-**File**: `examples/claude-code-memory-plugin/scripts/auto-capture.mjs` (modified, +8/-0)
+**File**: `integrations/frameworks/langchain/src/langchain_openviking/history.py` (modified, +2/-2)
 ```diff
-@@ -34,6 +34,7 @@ import {
-   makeFetchJSON,
- } from "./lib/ov-session.mjs";
- import { maybeDetach, readHookStdin } from "./lib/async-writer.mjs";
-+import { replayPending } from "./lib/pending-queue.mjs";
- import { readJsonState, writeJsonState } from "./lib/state.mjs";
- import { getEffectivePeerId } from "./lib/workspace-peer.mjs";
- import { runHookStage } from "./shared/agent-hook-runtime.mjs";
-@@ -317,6 +318,13 @@ async function main({ cfg, input, cwd }) {
-   const health = await fetchJSON("/health");
-   let result;
-   if (health.ok) {
-+    // SessionStart replays at most one capped batch, so drain more of the
-+    // queue here; older entries go out before this turn's messages.
-+    try {
-+      await replayPending(fetchJSON, log, { consumeRetries: false });
-+    } catch (err) {
-+      logError("pending-replay", err);
-+    }
-     result = await pushTurnsToOv(ovSessionId, captureTurns, effectivePeer.peerId, cfg);
-   } else if (isRetryableFailure(health)) {
-     logError("health_check", "server unreachable or unhealthy; enqueuing capture");
+@@ -185,15 +185,15 @@ async def aadd_messages(self, messages: Sequence[BaseMessage]) -> None:
+     def clear(self) -> None:
+         client = self._get_client()
+         call_openviking(client, "delete_session", session_id=self.session_id)
+-        self._ensure_session(client)
++        call_openviking(client, "create_session", session_id=self.session_id)
+         self._acknowledge_context_parts()
+ 
+     async def aclear(self) -> None:
+         """Asynchronously reset this OpenViking session."""
+ 
+         client = await self._get_async_client()
+         await acall_openviking(client, "delete_session", session_id=self.session_id)
+-        await self._aensure_session(client)
++        await acall_openviking(client, "create_session", session_id=self.session_id)
+         self._acknowledge_context_parts()
+ 
+     def close(self) -> None:
 ```
 
-**File**: `examples/claude-code-memory-plugin/scripts/auto-capture.test.mjs` (modified, +58/-1)
+**File**: `integrations/frameworks/langchain/src/langchain_openviking/middleware.py` (modified, +6/-4)
 ```diff
-@@ -6,8 +6,9 @@ import { dirname, join } from "node:path";
- import test from "node:test";
- import { fileURLToPath } from "node:url";
+@@ -312,10 +312,10 @@ def _capture(
+         plan = self._capture_plan(state, runtime)
+         if plan is None:
+             return None
+-        self.recorder.commit_policy = self.commit_policy if commit else None
++        policy = self.commit_policy if commit else None
+         if plan.unchanged:
+             with self._actor_peer_scope(plan.actor_peer_id):
+-                self.recorder.record(plan.session_id, ())
++                self.recorder.record(plan.session_id, (), commit_policy=policy)
+             self._pending_context_parts.pop(plan.key, None)
+             return None
+         try:
+@@ -325,6 +325,7 @@ def _capture(
+                     plan.messages[plan.start :],
+                     peer_id=plan.peer_id,
+                     context_parts=plan.context_parts,
++                    commit_policy=policy,
+                 )
+         except OpenVikingPartialWriteError as exc:
+             self._handle_partial_capture(plan, exc)
+@@ -347,10 +348,10 @@ async def _acapture(
+         plan = self._capture_plan(state, runtime)
+         if plan is None:
+             return None
+-        self.recorder.commit_policy = self.commit_policy if commit else None
++        policy = self.commit_policy if commit else None
+         if plan.unchanged:
+             with self._actor_peer_scope(plan.actor_peer_id):
+-                await self.recorder.arecord(plan.session_id, ())
++                await self.recorder.arecord(plan.session_id, (), commit_policy=policy)
+             self._pending_context_parts.pop(plan.key, None)
+             return None
+         try:
+@@ -360,6 +361,7 @@ async def _acapture(
+                     plan.messages[plan.start :],
+                     peer_id=plan.peer_id,
+                     context_parts=plan.context_parts,
++                    commit_policy=policy,
+                 )
+         except OpenVikingPartialWriteError as exc:
+             self._handle_partial_capture(plan, exc)
+```
+
+**File**: `integrations/frameworks/langchain/src/langchain_openviking/recording.py` (modified, +13/-4)
+```diff
+@@ -284,10 +284,16 @@ def record(
+         messages: Iterable[BaseMessage],
+         peer_id: str | None = None,
+         context_parts: Sequence[dict[str, Any]] = (),
++        *,
++        commit_policy: OpenVikingCommitPolicy | None = None,
+     ) -> OpenVikingRecordResult:
+-        """Persist a caller-selected batch and apply the configured commit policy."""
++        """Persist messages with a per-call policy, or the recorder default if None.
++
++        Use a ``never`` policy to suppress this call's post-write commit.
++        """
  
--import { readRequestBody, withMockOpenViking, writeJson } from "../../memory-plugin-shared/testing/support.mjs";
-+import { readRequestBody, withMockOpenViking, withPendingDir, writeJson } from "../../memory-plugin-shared/testing/support.mjs";
- import { extractCaptureTurns } from "./cc-transcript.mjs";
-+import { enqueue, listPending } from "./lib/pending-queue.mjs";
+         self._raise_if_closed()
++        policy = self.commit_policy if commit_policy is None else commit_policy
+         self._retry_pending_commit(session_id)
+         input_messages = list(messages)
+         prepared_messages = _prepare_messages(
+@@ -343,7 +349,7 @@ def record(
+             apply_commit_policy(
+                 client,
+                 session_id,
+-                self.commit_policy,
++                policy,
+                 persisted_pending_tokens=persisted_pending_tokens,
+             )
+         except Exception as exc:
+@@ -362,10 +368,13 @@ async def arecord(
+         messages: Iterable[BaseMessage],
+         peer_id: str | None = None,
+         context_parts: Sequence[dict[str, Any]] = (),
++        *,
++        commit_policy: OpenVikingCommitPolicy | None = None,
+     ) -> OpenVikingRecordResult:
+-        """Asynchronously persist messages and apply the configured commit policy."""
++        """Async ``record`` with the same per-call and default policy behavior."""
  
- const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
+         self._raise_if_closed()
++        policy = self.commit_policy if commit_policy is None else commit_policy
+         await self._aretry_pending_commit(session_id)
+         input_messages = list(messages)
+         prepared_messages = _prepare_messages(
+@@ -435,7 +444,7 @@ async def arecord(
+             await aapply_commit_policy(
+                 client,
+                 session_id,
+-                self.commit_policy,
++                policy,
+                 persisted_pending_tokens=persisted_pending_tokens,
+             )
+         except asyncio.CancelledError as exc:
+```
+
+**File**: `integrations/frameworks/langchain/tests/unit/test_langchain_host_history.py` (modified, +52/-0)
+```diff
+@@ -1,5 +1,7 @@
+ """Native host history and capture remain independent of OV archive summaries."""
  
-@@ -127,6 +128,62 @@ test("failed non-retryable capture keeps the cursor for a later retry", async ()
-   }
- });
++import asyncio
++import threading
+ from copy import deepcopy
+ from types import SimpleNamespace
  
-+test("Stop replays queued writes before sending the new turns", async () => {
-+  const root = await mkdtemp(join(tmpdir(), "ov-cc-capture-replay-"));
-+  const transcriptPath = join(root, "transcript.jsonl");
-+  const requests = [];
+@@ -290,3 +292,53 @@ def answer(messages):
+     else:
+         assert observed.content.startswith(f"{content}\n\n<openviking_context>")
+         assert "Deployment uses azure." in observed.content
 +
-+  try {
-+    await writeTranscript(transcriptPath);
-+    await withPendingDir(async (pendingDir) => {
-+      for (let i = 0; i < 20; i++) {
-+        await enqueue("addMessage", "cc-old-session", {
-+          role: "assistant",
-+          parts: [{ type: "text", text: `old ${i}` }],
-+        }, { createdAt: 1000 + i });
-+      }
 +
-+      await withMockOpenViking(async (req, res) => {
-+        const url = new URL(req.url, "http://127.0.0.1");
-+        if (req.method === "GET" && url.pathname === "/health") {
-+          writeJson(res, { status: "ok", result: { healthy: true } });
-+          return;
-+        }
-+        if (req.method === "POST" && url.pathname.endsWith("/messages/batch")) {
-+          const body = await readRequestBody(req);
-+          requests.push({ path: url.pathname, count: body.messages.length });
-+          writeJson(res, { status: "ok", result: { added: body.messages.length } });
-+          return;
-+        }
-+        if (req.method === "POST" && url.pathname.endsWith("/messages")) {
-+          const body = await readRequestBody(req);
-+          requests.push({ path: url.pathname, text: body.parts[0].text });
-+          writeJson(res, { status: "ok", result: {} });
-+          return;
-+        }
-+        writeJson(res, { status: "ok", result: {} });
-+      }, async (baseUrl) => {
-+        await runAutoCapture(
-+          { session_id: "capture-replay", transcript_path: transcriptPath, cwd: root },
-+          { ...hookEnv(root, baseUrl), OPENVIKING_PENDING_DIR: pendingDir },
-+        );
-+      });
++@pytest.mark.parametrize("capture_mode", ["sync", "async-sync-client", "async-native-client"])
++@pytest.mark.parametrize("first_commits", [False, True])
++@pytest.mark.asyncio
++async def test_concurrent_capture_hooks_keep_their_commit_policies(capture_mode, first_commits):
++    entered = threading.Event()
++    release = threading.Event()
 +
-+      assert.deepEqual(await listPending(), []);
-+    });
++    class PausedClient(NoContextClient):
++        def batch_add_messages(self, session_id, messages, **kwargs):
++            if session_id == "first":
++                entered.set()
++                assert release.wait(5), "other session did not finish its capture"
++            return super().batch_add_messages(session_id, messages, **kwargs)
 +
-+    assert.deepEqual(requests, [
-+      ...Array.from({ length: 20 }, (_, i) => ({
-+        path: "/api/v1/sessions/cc-old-session/messages",
-+        text: `old ${i}`,
-+      })),
-+      { path: "/api/v1/sessions/cc-capture-replay/messages/batch", count: 2 },
-+    ]);
-+  } finally {
-+    await rm(root, { recursive: true, force: true });
-+  }
-+});
++    class AsyncPausedClient(NoContextClient):
++        async def batch_add_messages(self, session_id, messages, **kwargs):
++            if session_id == "first":
++                entered.set()
++                assert await asyncio.to_thread(release.wait, 5), "other session did not finish"
++            return super().batch_add_messages(session_id, messages, **kwargs)
 +
- test("threshold commit archives every captured message", async () => {
-   const root = await mkdtemp(join(tmpdir(), "ov-cc-capture-commit-"));
-   const transcriptPath = join(root, "transcript.jsonl");
++    client = AsyncPausedClient() if capture_mode == "async-native-client" else PausedClient()
++    client_kwargs = {"async_client" if capture_mode == "async-native-client" else "client": client}
++    middleware = OpenVikingContextMiddleware(**client_kwargs, commit_on_after_agent=True)
++
++    async def capture(session_id, commit):
++        name = "after_agent" if commit else "before_model"
++        state = {"session_id": session_id, "messages": [HumanMessage(content=session_id)]}
++        if capture_mode != "sync":
++            await getattr(middleware, "a" + name)(state, None)
++        else:
++            await asyncio.to_thread(getattr(middleware, name), state, None)
++
++    first = asyncio.create_task(capture("first", first_commits))
++    try:
++        assert await asyncio.to_thread(entered.wait, 5)
++        await capture("second", not first_commits)
++    finally:
++        release.set()
++        await first
++        await middleware.aclose()
++
++    committed, pending = ("first", "second") if first_commits else ("second", "first")
++    assert len(client.archives[committed]) == 1
++    assert client.archives[committed][0]["messages"][0]["parts"][0]["text"] == committed
++    assert not client.sessions[committed]
++    assert not client.archives[pending]
++    assert client.sessions[pending][0]["parts"][0]["text"] == pending
+```
+
+**File**: `integrations/frameworks/langchain/tests/unit/test_langchain_recording.py` (modified, +129/-16)
+```diff
+@@ -15,6 +15,7 @@
+     SystemMessage,
+     ToolMessage,
+ )
++from openviking_sdk.errors import UnavailableError
+ 
+ import langchain_openviking.recording as recording_module
+ from langchain_openviking import (
+@@ -321,22 +322,48 @@ def test_recorder_ignores_filtered_only_batch_without_initializing_client():
+     assert client._initialized is False
+ 
+ 
+-def test_recorder_applies_commit_policy_once_after_all_batches():
++@pytest.mark.parametrize("asynchronous", [False, True])
++@pytest.mark.parametrize(
++    "override", [None, "always", "never", "threshold-met", "threshold-not-met"]
++)
++@pytest.mark.asyncio
++async def test_recorder_applies_commit_policy_once_after_all_batches(asynchronous, override):
+     client = TrackingOpenVikingClient()
+-    recorder = OpenVikingSessionRecorder(
+-        client=client,
+-        commit_policy=OpenVikingCommitPolicy(mode="always"),
+-    )
++    default = OpenVikingCommitPolicy(mode="always" if override in (None, "never") else "never")
++    recorder = OpenVikingSessionRecorder(client=client, commit_policy=default)
++    policy = None
++    if override in ("always", "never"):
++        policy = OpenVikingCommitPolicy(mode=override)
++    elif override is not None:
++        policy = OpenVikingCommitPolicy(
++            mode="pending_tokens",
++            pending_token_threshold=1 if override == "threshold-met" else 100_000,
++        )
+ 
+-    recorder.record(
++    async def record(session_id, messages, **kwargs):
++        if asynchronous:
++            return await recorder.arecord(session_id, messages, **kwargs)
++        return recorder.record(session_id, messages, **kwargs)
++
++    await record(
+         "recorder-commit",
+         [HumanMessage(content=f"Message {index}") for index in range(101)],
++        **({"commit_policy": policy} if override is not None else {}),
+     )
+ 
++    commits = override not in ("never", "threshold-not-met")
+     assert client.batch_sizes == [100, 1]
+-    assert client.commit_calls == ["recorder-commit"]
+-    assert client.sessions["recorder-commit"] == []
+-    assert len(client.archives["recorder-commit"][0]["messages"]) == 101
++    assert client.commit_calls == (["recorder-commit"] if commits else [])
++    if commits:
++        assert client.sessions["recorder-commit"] == []
++        assert len(client.archives["recorder-commit"][0]["messages"]) == 101
++    else:
++        assert len(client.sessions["recorder-commit"]) == 101
++        assert not client.archives["recorder-commit"]
++
++    await record("recorder-default", [HumanMessage(content="Use the default again.")])
++    assert bool(client.archives["recorder-default"]) == (default.mode == "always")
++    await recorder.aclose()
+ 
+ 
+ def test_recorder_reports_partial_progress_and_retries_only_unwritten_suffix():
+@@ -387,7 +414,12 @@ def batch_add_messages(
+     ]
+ 
+ 
+-def test_recorder_reports_commit_failure_and_retries_without_duplicate_writes():
++@pytest.mark.parametrize("asynchronous", [False, True])
++@pytest.mark.parametrize("override", [False, True])
++@pytest.mark.asyncio
++async def test_recorder_reports_commit_failure_and_retries_without_duplicate_writes(
++    asynchronous, override
++):
+     class FailFirstCommitClient(TrackingOpenVikingClient):
+         def commit_session(self, session_id: str, **kwargs: Any) -> dict[str, Any]:
+             self.commit_calls.append(session_id)
+@@ -398,15 +430,22 @@ def commit_session(self, session_id: str, **kwargs: Any) -> dict[str, Any]:
+     client = FailFirstCommitClient()
+     recorder = OpenVikingSessionRecorder(
+         client=client,
+-        commit_policy=OpenVikingCommitPolicy(mode="always"),
++        commit_policy=OpenVikingCommitPolicy(mode="never" if override else "always"),
+     )
++
++    async def record(messages, policy):
++        kwargs = {"commit_policy": OpenVikingCommitPolicy(mode=policy)} if override else {}
++        if asynchronous:
++            return await recorder.arecord("recorder-failed-commit", messages, **kwargs)
++        return recorder.record("recorder-failed-commit", messages, **kwargs)
++
+     messages = [
+         HumanMessage(content="Remember this turn."),
+         AIMessage(content="Remembered."),
+     ]
+ 
+     with pytest.raises(OpenVikingPartialWriteError, match="commit failed") as exc_info:
+-        recorder.record("recorder-failed-commit", messages)
++        await record(messages, "always")
+ 
+     assert exc_info.value.stage == "commit"
+     assert exc_info.value.commit_pending is True
+@@ -415,16 +454,15 @@ def commit_session(self, session_id: str, **kwargs: Any) -> dict[str, Any]:
+     assert client.batch_sizes == [2]
+     assert len(client.sessions["recorder-failed-commit"]) == 2
+ 
+-    recorder.record(
+-        "recorder-failed-commit",
+-        messages[exc_info.value.input_messages_consumed :],
+-    )
++    await record(messages[exc_info.value.input_messages_consumed :], "never")
+ 
+     assert client.batch_sizes == [2]
+     assert client.commit_calls == ["recorder-failed-commit", "recorder-failed-commit"]
+     assert client
+```
+
+---
+
+### Incident Patch 3: `4ab22a49` (2026-10-23)
+**Commit Message**: fix(release): pin wheel and CLI versions to release tag (#6488)
+
+**File**: `.github/workflows/_build.yml` (modified, +18/-2)
+```diff
+@@ -231,9 +231,17 @@ jobs:
+       shell: bash
+       run: |
+         OPENVIKING_VERSION=$(
+-          uv run --frozen python -c "from scripts.build_support.versioning import resolve_openviking_version; print(resolve_openviking_version())"
++          exact_tag=$(git describe --tags --exact-match "$GITHUB_SHA" 2>/dev/null || true)
++          if [[ "$exact_tag" =~ ^v[0-9]+(\.[0-9]+)*$ ]]; then
++            printf '%s\n' "${exact_tag#v}"
++          else
++            rm -f openviking/_version.py
++            rm -rf openviking.egg-info
++            env -u OPENVIKING_VERSION -u SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENVIKING uv run --frozen python -c "from scripts.build_support.versioning import resolve_openviking_version; print(resolve_openviking_version())"
++          fi
+         )
+         echo "OPENVIKING_VERSION=$OPENVIKING_VERSION" >> "$GITHUB_ENV"
++        echo "SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENVIKING=$OPENVIKING_VERSION" >> "$GITHUB_ENV"
+         echo "Resolved OpenViking version: $OPENVIKING_VERSION"
+ 
+     - name: Build Rust CLI (Linux)
+@@ -478,9 +486,17 @@ jobs:
+       shell: bash
+       run: |
+         OPENVIKING_VERSION=$(
+-          uv run --frozen python -c "from scripts.build_support.versioning import resolve_openviking_version; print(resolve_openviking_version())"
++          exact_tag=$(git describe --tags --exact-match "$GITHUB_SHA" 2>/dev/null || true)
++          if [[ "$exact_tag" =~ ^v[0-9]+(\.[0-9]+)*$ ]]; then
++            printf '%s\n' "${exact_tag#v}"
++          else
++            rm -f openviking/_version.py
++            rm -rf openviking.egg-info
++            env -u OPENVIKING_VERSION -u SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENVIKING uv run --frozen python -c "from scripts.build_support.versioning import resolve_openviking_version; print(resolve_openviking_version())"
++          fi
+         )
+         echo "OPENVIKING_VERSION=$OPENVIKING_VERSION" >> "$GITHUB_ENV"
++        echo "SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENVIKING=$OPENVIKING_VERSION" >> "$GITHUB_ENV"
+         echo "Resolved OpenViking version: $OPENVIKING_VERSION"
+ 
+     - name: Build Rust CLI (macOS/Windows)
+```
+
+**File**: `tests/misc/test_release_tag_selection.py` (modified, +20/-0)
+```diff
+@@ -44,3 +44,23 @@ def fake_get_version(**kwargs):
+         captured_kwargs["git_describe_command"]
+         == "git describe --dirty --tags --long --match v[0-9]*"
+     )
++
++
++def test_release_build_pins_cli_and_wheel_to_git_version() -> None:
++    workflow = (ROOT / ".github/workflows/_build.yml").read_text()
++
++    resolve_command = (
++        "env -u OPENVIKING_VERSION "
++        "-u SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENVIKING "
++        "uv run --frozen python -c"
++    )
++    pretend_version_export = (
++        'echo "SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENVIKING=$OPENVIKING_VERSION" '
++        '>> "$GITHUB_ENV"'
++    )
++
++    assert workflow.count(resolve_command) == 2
++    assert workflow.count(pretend_version_export) == 2
++    assert workflow.count('git describe --tags --exact-match "$GITHUB_SHA"') == 2
++    assert workflow.count("rm -f openviking/_version.py") == 2
++    assert workflow.count("rm -rf openviking.egg-info") == 2
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6463** (2026-10-23): feat(studio): align filesystem CLI commands and task interactions (@leowld)
-- **PR #6447** (2026-10-22): feat(connector): support oauth refs for document imports (@duyuxuan0518)
-- **PR #6435** (closed): feat(dsh-memory-plugin): add OpenViking console panel (@zrwangems)
-- **PR #6429** (2026-10-22): fix(memory): skip unfixable event resolution retries (@dannyward630)
-- **PR #6424** (2026-10-22): fix(pathlock): 调整 pathlock release 顺序，先执行内存 Registry lease 的移除，再通过 provider 删除 pathlock 文件 (@baojun-zhang)
-- **PR #6421** (2026-10-22): fix(memory): allow omitting optional supersedes field (@rjdotdev)
+- **PR #6511** (closed): test(gateway): add kind acceptance matrix and nightly workflow (@t0saki)
+- **PR #6510** (closed): feat(gateway): add standalone Helm deployment and operations guide (@t0saki)
+- **PR #6509** (closed): fix(gateway): respect OpenViking refusals and revoke rejected capture keys (@t0saki)
+- **PR #6507** (closed): feat(gateway): support stdout request log sink (@t0saki)
+- **PR #6506** (closed): feat(gateway): keep SSE streams alive during idle periods (@t0saki)
+- **PR #6504** (closed): feat(gateway): add Redis kernel storage and handle evicted tool receipts (@t0saki)
 
 ---
 
@@ -2477,34 +2221,32 @@ turn's new messages.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gateway): tolerate non-string "type" values in client history (#6306)
+## X. langchain): honor nested filters and index field selectors (#6404)
 
 **RULE**:
-When implementing operations in `openviking_gateway/capture.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/agent-integrations/07-langchain-langgraph.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d9db19ab`: gateway): tolerate non-string "type" values in client history (#6306). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d5022f57`: langchain): honor nested filters and index field selectors (#6404). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `openviking_gateway/capture.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/agent-integrations/07-langchain-langgraph.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from .protocols import clean_text, is_user, string_type, text_content, unwrap_client
-        if string_type(message) in {"function_call_output", "custom_tool_call_output"}:
-        if message.get("role") not in {"user", "assistant"} and string_type(message) not in {
-        if string_type(message) in {"function_call", "custom_tool_call"}:
+`search()` accepts nested JSON filters such as `filter={"metadata": {"color": "blue"}}`.
+Filter keys `eq`, `ne`, `gt`, `gte`, `lt`, `lte` and `in` are reserved operator aliases at every nesting level.
+Use `index=["items[*].text"]` to index selected array fields while retaining the complete
+stored value. Existing index projections are updated when the item is written again.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-from .protocols import clean_text, is_user, text_content, unwrap_client
-        if message.get("type") in {"function_call_output", "custom_tool_call_output"}:
-        if message.get("role") not in {"user", "assistant"} and message.get("type") not in {
-        if message.get("type") in {"function_call", "custom_tool_call"}:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d9db19ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d5022f57` are properly handled with clean fallback behavior.

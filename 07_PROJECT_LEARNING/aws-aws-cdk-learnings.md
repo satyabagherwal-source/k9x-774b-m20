@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `8bd6e534`  
+> **Source Version**: `d60598a6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T08:54:54.669Z  
+> **Timestamp**: 2026-10-25T14:18:50.268Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T08:54:53.807Z  
+> **Harvest Timestamp**: 2026-10-25T14:18:50.131Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12948 stars
+- **Stars / Engagement**: 12953 stars
 
 ---
 
@@ -1179,11 +1179,11 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #39344** (2026-10-24): **feat(lambda-nodejs): support repeated esbuild arguments**
+  *Symptoms*: ### Issue #  Closes #32260.  ### Description of changes  Allow string arrays in `BundlingOptions.esbuildArgs` for options that esbuild supports repeating. Every array item is emitted as a separate `--flag:value` argument, including options such as `--supported` that are outside the existing scalar colon-option list. Empty arrays emit no arguments. Existing string and boolean handling is unchanged.  Docker shell escaping and direct local spawning share the conversion. Updated README and JSDoc explain the array syntax and that single-value options should use strings or booleans.  ### Validation  Validated the review follow-up in commit `34ed9898`:  - JSII package compilation: 0 errors; 1 existing `constructs` development-dependency metadata warning. - Bundling suite: 69 tests and 1 existing snapshot passed. - Both updated repeated-argument tests fail against the original implementation and pass with the fix. They cover repeated `--supported` values in both Docker and local-spawn paths, while preserving scalar `--conditions=first,second` rendering. - ESLint passed for all three changed TypeScript files; `git diff --check` passed. - Real esbuild 0.28.1 smoke check using the updated conversion confirmed that both `--supported` overrides apply together and a single-value option supplied as an array is rejected by esbuild.  ### Integration deployment  The integration source is `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.repeated-esbuild-args.ts`. No 
+
 - **Issue #38940** (2026-10-01): **cdk: alias package published without matching aws-cdk version**
   *Symptoms*: ### Describe the bug  `cdk@2.1144.0` has been published to npm, but it depends on `aws-cdk@2.1144.0`, which does not appear to exist in the registry.  As a result, running npx cdk without a local aws-cdk dependency fails with: ``` npm error code ETARGET npm error notarget No matching version found for aws-cdk@2.1144.0. ```  This appears to be a publishing issue where the cdk alias package was released before the corresponding aws-cdk version.  ### Regression Issue  - [x] Select this option if this issue appears to be a regression.  ### Last Known Working CDK Library Version  2.1143.0  ### Expected Behavior  Have the separated npm publications match up and be consistent  ### Current Behavior  ``` npm error code ETARGET npm error notarget No matching version found for aws-cdk@2.1144.0. ```   ### Reproduction Steps  Run `npx cdk` without a (dev) dependency on `cdk` or `aws-cdk`  ### Possible Solution  _No response_  ### Additional Information/Context  _No response_  ### AWS CDK Library version (aws-cdk-lib)  n/a  ### AWS CDK CLI version  2.1144  ### Node.js Version  24  ### OS  macOS  ### Language  TypeScript  ### Language Version  _No response_  ### Other information  _No response_
-
-- **Issue #38932** (2026-10-06): **(core): Bump bundled `brace-expansion` to 5.0.12 to address CVE-2026-102276 / CVE-2026-102278**
-  *Symptoms*: ### Describe the bug  ## Summary  `aws-cdk-lib@2.271.0` (the current latest) bundles `minimatch@10.2.5`, which depends on `brace-expansion@5.0.9`. Two High advisories published on 2026-09-29 affect that version:  - **CVE-2026-102276** ([GHSA-6j4f-fj2g-mc7p](https://github.com/advisories/GHSA-6j4f-fj2g-mc7p)) — DoS via uncontrolled recursion in `parseCommaParts` causing stack exhaustion. CVSS 7.5. Affected `>= 4.0.0 < 5.0.10`, fixed in `5.0.10`. - **CVE-2026-102278** ([GHSA-qhr7-859c-m2p7](https://github.com/advisories/GHSA-qhr7-859c-m2p7)) — DoS via uncontrolled recursion on nested brace groups causing stack exhaustion. CVSS 7.5. Affected `>= 4.0.0 < 5.0.11`, fixed in `5.0.11`. - A Medium advisory, [GHSA-q2hr-2g5m-vwhr](https://github.com/advisories/GHSA-q2hr-2g5m-vwhr), is fixed in `5.0.12`.  CWE-400 / CWE-674.  ## Impact on consumers  SBOM-based dependency gates (Syft + Grype `--fail-on high` in our case) now fail every build of any project that depends on `aws-cdk-lib`, with no consumer-side remedy.  ## Why `npm overrides` cannot fix this  `minimatch` (and so `brace-expansion`) is in `aws-cdk-lib`'s `bundleDependencies`, so overrides in consuming projects have no effect. The fix has to ship inside `aws-cdk-lib`.  ## Related  - Open PR bumping the bundled copy to 5.0.12: #38929 - Same pattern last time: #38496, fixed by #38520 (bump to 5.0.9 for CVE-2026-69152)  ### Regression Issue  - [ ] Select this option if this issue appears to be a regression.  ### Last Known Working 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1200,451 +1200,341 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8bd6e534` (2026-10-22)
-**Commit Message**: chore(security-guardian): set rootDir for TypeScript 6 (#39440)
+### Incident Patch 1: `783a981d` (2026-10-23)
+**Commit Message**: fix(core): overly defensive plugin invocation leads to slowness (#39451)
 
-### Issue # (if applicable)
+The validation plugin path was written overly defensive: the core library would fingerprint the entire `cdk.out` directory before and after it would run validation plugins, just in case any had a bug or was "untrusted" and would modify the cloud assembly directory.
 
-Closes #<issue number here>.
+This is pessimizing synthesis time for all users, for the benefit of exceedingly few. Because, let's be honest: if you are running untrusted code on your computer, you have already lost, and this hashing trick isn't going to help you.
 
-### Reason for this change
+Make this an optional feature, switched on by using:
 
-The Security Guardian workflow fails on every PR since #39401 bumped TypeScript to 6.0. The `security-guardian` tool no longer builds: https://github.com/aws/aws-cdk/actions/runs/39812038601/job/119940591873?pr=39436 
+```ts
+new App({
+  confirmValidationPluginsDoNotMutate: true,
+});
 ```
-tsconfig.json(8,5): error TS5011: The common source directory of 'tsconfig.json' is './src'. The 'rootDir' setting must be explicitly set to this or another path to adjust your output's file layout.
-```
 
-### Description of changes
+Useful for people who are in the process of developing their own plugins and aren't sure if they've written `fs.readFile` or `fs.writeFile`.
 
-Set `"rootDir": "src"` in `tools/@aws-cdk/security-guardian/tsconfig.json`. TypeScript 6 no longer infers `rootDir` when `outDir` is set (TS5011).
+Maybe.
 
-TypeScript 5.9 inferred `src` here, because all compiled sources live in `src/` (`"include": ["src"]`). Setting it explicitly keeps the output at `dist/index.js`.
-
-### Describe any new or updated permissions being added
+I was going to take it out entirely but then decided to leave it in and make it optional, because this is "security related" and if we take it out altogether I can already hear the complaints. So the extra security theater now becomes opt-in.
 
 
+----
 
+*By submitting this pull request, I confirm that my contribution is made under the terms of the Ap
 
-### Description of how you validated changes
-
-
-
-### Checklist
-- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/main/CONTRIBUTING.md) and [DESIGN GUIDELINES](https://github.com/aws/aws-c
-
-**File**: `tools/@aws-cdk/security-guardian/tsconfig.json` (modified, +1/-0)
+**File**: `packages/aws-cdk-lib/core/lib/app.ts` (modified, +26/-2)
 ```diff
-@@ -6,6 +6,7 @@
-       "ES2022"
-     ],
-     "outDir": "dist",
-+    "rootDir": "src",
-     "isolatedModules": true,
-     "esModuleInterop": true,
-     "forceConsistentCasingInFileNames": true,
-```
-
----
-
-### Incident Patch 2: `8ce48a6f` (2026-10-21)
-**Commit Message**: fix(lambda-nodejs): preCompilation fails with TypeScript 6 or later (#39401)
-
-### Reason for this change
-
-`NodejsFunction` with `preCompilation: true` runs `tsc` on the entry file and passes the tsconfig options as CLI flags. TypeScript 6 and later reject this when a `tsconfig.json` is in the directory `tsc` runs from:
-
-```
-error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.
-```
-
-Local bundling runs `tsc` from the project root, where `preCompilation` requires the tsconfig to be, so it fails for every user with TypeScript 6 or later installed. Docker bundling runs from `/` by default and is not affected, unless the user sets `workingDirectory` to a directory containing a `tsconfig.json` (for example `/asset-input`). The bundling image installs the unpinned latest `typescript` (currently 7.x), so those users get the failure as soon as their image is rebuilt.
-
-We can't just always pass `--ignoreConfig`, because TypeScript 5 rejects it as an unknown option (TS5023). I checked all three versions:
-
-| TypeScript | Without flag | With `--ignoreConfig` |
-|---|---|---|
-| 5.9.3 | compiles | TS5023 |
-| 6.
-
-**File**: `package.json` (modified, +2/-2)
-```diff
-@@ -31,14 +31,14 @@
-     "jsii-diff": "1.142.0",
-     "jsii-pacmak": "1.142.0",
-     "jsii-reflect": "1.142.0",
--    "jsii-rosetta": "~5.9.71",
-+    "jsii-rosetta": "~6.0.20",
-     "lerna": "^8.2.4",
-     "nx": "^23",
-     "semver": "^7.8.5",
-     "standard-version": "^9.5.0",
-     "ts-jest": "^29.4.15",
-     "ts-node": "^10.9.2",
--    "typescript": "~5.9.3"
-+    "typescript": "~6.0.3"
-   },
-   "resolutions": {
-     "array-includes": "3.1.9",
-```
-
-**File**: `packages/@aws-cdk/aws-mediaconnect-alpha/tsconfig.json` (modified, +5/-1)
-```diff
-@@ -27,7 +27,11 @@
-     "composite": true,
-     "tsBuildInfoFile": "tsconfig.tsbuildinfo",
-     "esModuleInterop": true,
--    "isolatedModules": true
-+    "isolatedModules": true,
-+    "types": [
-+      "jest",
-+      "node"
-+    ]
-   },
-   "include": [
-     "**/*.ts"
-```
-
-**File**: `packages/@aws-cdk/aws-medialive-alpha/tsconfig.json` (modified, +5/-1)
-```diff
-@@ -27,7 +27,11 @@
-     "composite": true,
-     "tsBuildInfoFile": "tsconfig.tsbuildinfo",
-     "esModuleInterop": true,
--    "isolatedModules": true
-+    "isolatedModules": true,
-+    "types": [
-+      "jest",
-+      "node"
-+    ]
-   },
-   "include": [
-     "**/*.ts"
-```
-
-**File**: `packages/@aws-cdk/cfn-property-mixins/tsconfig.json` (modified, +1/-0)
-```diff
-@@ -1,5 +1,6 @@
- {
-   "compilerOptions": {
-+    "rootDir": ".",
-     "declarationMap": false,
-     "inlineSourceMap": false,
-     "alwaysStrict": true,
-```
-
-**File**: `packages/aws-cdk-lib/aws-lambda-nodejs/lib/bundling.ts` (modified, +29/-7)
-```diff
-@@ -6,7 +6,7 @@ import { PackageInstallation } from './package-installation';
- import { LockFile, PackageManager } from './package-manager';
- import type { BundlingOptions } from './types';
- import { OutputFormat, SourceMapMode } from './types';
--import { exec, extractDependencies, findUp, getTsconfigCompilerOptionsArray, isSdkV2Runtime } from './util';
-+import { exec, extractDependencies, findUp, getTsconfigCompilerOptionsArray, isSdkV2Runtime, tscRequiresIgnoreConfig } from './util';
- import type { Architecture, AssetCode } from '../../aws-lambda';
- import { Code, Runtime } from '../../aws-lambda';
- import * as cdk from '../../core';
-@@ -300,13 +300,14 @@ export class Bundling implements cdk.BundlingOptions {
-   private createBundlingCommand(scope: IConstruct, options: BundlingCommandOptions): string {
-     const pathJoin = osPathJoin(options.osPlatform);
-     const osCommand = new OsCommand(options.osPlatform);
-+    const tscRunner = options.tscRunner;
+@@ -186,6 +186,22 @@ export interface AppProps {
+    * @default - no PropertyInjectors
+    */
+   readonly propertyInjectors?: IPropertyInjector[];
++
++  /**
++   * Confirm that validation plugins treat the assembly directory as read-only
++   *
++   * Validation plugins should only read files in the `cdk.out` directory, and not modify or
++   * delete any.
++   *
++   * If this is set to `true`, the CDK will calculate a hash of all files in the
++   * assembly directory before running validation plugins and verify that the
++   * hashes match afterwards, to ensure no files got deleted or modified. You
++   * only need to set this if you do not trust your validation plugins to have
++   * been implemented correctly.
++   *
++   * @default false
++   */
++  readonly confirmValidationPluginsDoNotMutate?: boolean;
+ }
  
-     const steps = this.createBundlingSteps(scope, {
-       inputDir: options.inputDir,
-       outputDir: options.outputDir,
-       pathJoin,
-       esbuildRunner: [options.esbuildRunner],
--      tscRunner: options.tscRunner ? [options.tscRunner] : undefined,
-+      createTscStep: tscRunner ? (args) => dockerTscStep(tscRunner, args) : undefined,
-       createFileOps: (deps) => this.dockerFileOps(osCommand, pathJoin, options, deps),
+ /**
+@@ -229,6 +245,13 @@ export class App extends Stage {
+    */
+   public readonly _treeMetadata: boolean;
+ 
++  /**
++   * The setting of `confirmValidationPluginsDoNotMutate` from the app's initialization properties.
++   *
++   * @internal
++   */
++  public readonly _confirmValidationPluginsDoNotMutate: boolean;
++
+   /**
+    * The flag indicating whether the built-in CloudFormation validation is enabled.
+    *
+@@ -250,6 +273,7 @@ export class App extends Stage {
+       outdir: props.outdir ?? process.env[cxapi.OUTDIR_ENV],
      });
  
-@@ -411,7 +412,11 @@ export class Bundling implements cdk.BundlingOptions {
-           outputDir,
-           pathJoin: (...args: string[]) => path.join(...args),
-           esbuildRunner: esbuild.isWorkspacePackage ? this.packageManager.runBinCommand('esbuild') : ['esbuild'],
--          tscRunner: tsc && (tsc.isWorkspacePackage ? this.packageManager.runBinCommand('tsc') : ['tsc']),
-+          createTscStep: tsc && ((args) => {
-+            const tscRunner = tsc.isWorkspacePackage ? this.packageManager.runBinCommand('tsc') : ['tsc'];
-+            const ignoreConfig = tscRequiresIgnoreConfig(tsc.version) ? ['--ignoreConfig'] : [];
-+            return { type: 'spawn', command: [...tscRunner, ...args, ...ignoreConfig] };
-+          }),
-           createFileOps: (deps) => this.localFileOps(outputDir, deps),
-         });
- 
-@@ -449,8 +454,8 @@ export class Bundling implements cdk.BundlingOptions {
-         throw new ValidationError(lit`CannotFindTsconfigJsonPre`, 'Cannot find a `tsconfig.json` but `preCompilation` is set to `true`, please specify it via `tsconfig`', scope);
-       }
-       const compilerOptionsArray = getTsconfigCompilerOptionsArray(tsconfig);
--      if (options.tscRunner) {
--        steps.push({ type: 'spawn', command: [...options.tscRunner, entryPath, ...compilerOptionsArray] });
-+      if (options.createTscStep) {
-+        steps.push(options.createTscStep([entryPath, ...compilerOptionsArray]));
-       }
-       entryPath = entryPath.replace(/\.ts(x?)$/, '.js$1');
++    this._confirmValidationPluginsDoNotMutate = props.confirmValidationPluginsDoNotMutate ?? false;
+     this.initMark = performance.now();
+     this._builtinCloudFormationValidation = props.builtinCloudFormationValidation ?? true;
+     if (!PERF_STATE.loadTimeMeasured) {
+@@ -305,7 +329,7 @@ export class App extends Stage {
      }
-@@ -583,12 +588,29 @@ interface StepBuilderOptions {
-   readonly pathJoin: (...parts: string[]) => string;
-   /** The esbuild command as an argv array */
-   readonly esbuildRunner: string[];
--  /** The tsc command as an argv array, or undefined if not available */
--  readonly tscRunner?: string[];
-+  /**
-+   * Produces the tsc pre-compilation step for the given tsc arguments
-+   * (differs between local and Docker), or undefined if tsc is not available
-+   */
-+  readonly createTscStep?: (args: string[]) => BundlingStep;
-   /** Produces steps for nodeModules file operations (differs between local and Docker) */
-   readonly createFileOps: (deps: NodeModuleDeps) => BundlingStep[];
- }
- 
-+/**
-+ * Produces the tsc pre-compilation step for Docker bundling.
-+ *
-+ * The TypeScript version in the image is only known when the command runs
-+ * (the default image installs the latest release, and users can supply their own image),
-+ * so `--ignoreConfig` is added by the shell when `tsc --version` reports 6 or later.
-+ * See `tscRequiresIgnoreConfig()` for why the flag is version dependent.
-+ */
-+function dockerTscStep(tscRunner: string, args: string[]): BundlingStep {
-+  const tsc = posixShellEscape(tscRunner);
-+  const ignoreConfig = `$(TSC_VERSION=$(${tsc} --version); TSC_VERSION=\${TSC_VERSION##* }; [ "\${TSC_VERSION%%.*}" -ge 6 ] 2>/dev/null && echo --ignoreConfig)`;
-+  return { type: 'shell', commands: [`${preparePosixShellCommand([tscRunner, ...args])} ${ignoreConfig}`] };
-+}
-+
- /**
-  * Renders an array of BundlingSteps into a single shell command string for Docker execution.
-  * `spawn` steps are converted to shell commands via posixShellEscape.
-```
-
-**File**: `packages/aws-cdk-lib/aws-lambda-nodejs/lib/util.ts` (modified, +14/-0)
-```diff
-@@ -102,6 +102,20 @@ export function tryGetModuleVersionFromRequire(mod: string): string | undefined
    }
- }
  
-+/**
-+ * Whether the given TypeScript version needs `--ignoreConfig` to compile
-+ * files passed on the command line while a `tsconfig.json` is present.
-+ *
-+ * TypeScript 6 introduced error TS5112 for this situation, while older
-+ * versions reject `--ignoreConfig` as an unknown option.
-+ *
-+ * Accepts both a plain version (`6.0.3`) and the output of `tsc --version` (`Version 6.0.3`).
-+ */
-+export function tscRequiresIgnoreConfig(version: string): boolean {
-+  const match = version.match(/(\d+)\.\d+/);
-+  return match !== null && parseInt(match[1], 10) >= 6;
-+}
-+
+-  private loadContext(defaults: { [key: string]: string } = { }, final: { [key: string]: string } = {}) {
++  private loadContext(defaults: { [key: string]: string } = {}, final: { [key: string]: string } = {}) {
+     // prime with defaults passed through constructor
+     for (const [k, v] of Object.entries(defaults)) {
+       this.node.setContext(k, v);
+@@ -333,7 +357,7 @@ export class App extends Stage {
+    * Once an assembly has been synthesized, it cannot be modified. Subsequent
+    * calls will return the same assembly.
+    */
+-  public synth(options: StageSynthesisOptions = { }): public_cxapi.CloudAssembly {
++  public synth(options: StageSynthesisOptions = {}): public_cxapi.CloudAssembly {
+     // Synth may be called multiple times, we do not emit performance counters the
+     // second time. super.synth() already does caching.
+     if (this.alreadySynthed) {
+```
+
+**File**: `packages/aws-cdk-lib/core/lib/private/synthesis-validation.ts` (modified, +2/-2)
+```diff
+@@ -70,7 +70,7 @@ export function validateTemplates(root: IConstruct, outdir: string, assembly: pr
+ 
+   const suppressedByReport: Map<number, SuppressedViolation[]> = collectSuppressions(root, reports);
+ 
+-  const formatter = new PolicyValidationReportFormatter(new ConstructTree(root));
++  const formatter = new PolicyValidationReportFormatter(tree);
+   const reportJson = formatter.formatJson(reports, assembly.version, stackTraces, suppressedByReport);
+ 
+   // Always write validation report to disk
+@@ -439,7 +439,7 @@ function doInvokeValidationPlugins(
+     .map(p => p[0])
+     .filter(p => !isTrustedPlugin(p)));
+ 
+-  const preExistingFileHashes = untrustedPlugins.size > 0 ? snapshotFileHashes(outdir) : undefined;
++  const preExistingFileHashes = untrustedPlugins.size > 0 && root._confirmValidationPluginsDoNotMutate ? snapshotFileHashes(outdir) : undefined;
+ 
+   const ret = plugins.flatMap(([plugin, stacks]) => invokeSinglePlugin(plugin, Array.from(stacks)));
+ 
+```
+
+**File**: `packages/aws-cdk-lib/core/lib/stage.ts` (modified, +1/-1)
+```diff
+@@ -5,13 +5,13 @@ import { ValidationError } from './errors';
+ import { FeatureFlags } from './feature-flags';
+ import type { PermissionsBoundary } from './permissions-boundary';
+ import { STAGE_TYPE, stageOf } from './private/core-construct-finders';
++import { lit } from './private/literal-string';
+ import { synthesize } from './private/synthesis';
+ import { type IPropertyInjector, PropertyInjectors } from './prop-injectors';
+ import type { IPolicyValidationPlugin, IPolicyValidationPluginBeta1 } from './validation';
+ import { _toBeta1Plugin } from './validation';
+ import * as public_cxapi from '../../cx-api';
+ import { _convertCloudAssembly, _convertCloudAssemblyBuilder } from '../../cx-api';
+-import { lit } from './private/literal-string';
+ 
  /**
-  * Gets module version from package.json content
-  */
+  * Initialization props for a stage.
 ```
 
-**File**: `packages/aws-cdk-lib/aws-lambda-nodejs/test/bundling.test.ts` (modified, +38/-2)
+**File**: `packages/aws-cdk-lib/core/test/validation/synthesis-validation-symlink.test.ts` (modified, +2/-0)
 ```diff
-@@ -15,6 +15,8 @@ import * as util from '../lib/util';
- const STANDARD_RUNTIME = Runtime.NODEJS_20_X;
- const STANDARD_TARGET = 'node20';
- const STANDARD_EXTERNAL = '@aws-sdk/*';
-+// Docker bundling adds --ignoreConfig at run time when the image has TypeScript 6 or later
-+const DOCKER_TSC_IGNORE_CONFIG = '$(TSC_VERSION=$(\'tsc\' --version); TSC_VERSION=${TSC_VERSION##* }; [ "${TSC_VERSION%%.*}" -ge 6 ] 2>/dev/null && echo --ignoreConfig)';
- 
- let detectPackageInstallationMock: jest.SpyInstance<PackageInstallation | undefined>;
- const app = new App();
-@@ -957,7 +959,7 @@ test('esbuild bundling with pre compilations', () => {
-       command: [
-         'bash', '-c',
-         [
--          `'tsc' '/asset-input/test/bundling.test.ts' ${quotedCompilerOptions} &&`,
-+          `'tsc' '/asset-input/test/bundling.test.ts' ${quotedCompilerOptions} ${DOCKER_TSC_IGNORE_CONFIG} &&`,
-           `'esbuild' '--bundle' '/asset-input/test/bundling.test.js' '--target=${STANDARD_TARGET}' '--platform=node' '--outfile=/asset-output/index.js' '--external:${STANDARD_EXTERNAL}'`,
-         ].join(' '),
+@@ -39,6 +39,7 @@ describe('policy validation plugins tolerate symlinks in the cloud assembly (#38
+       policyValidationBeta1: [
+         { name: 'noop', validate: () => ({ success: true, violations: [] }) },
        ],
-@@ -1293,7 +1295,7 @@ test('Docker bundling with preCompilation uses getTsconfigCompilerOptionsArray f
-       command: [
-         'bash', '-c',
-         [
--          `'tsc' '/asset-input/test/bundling.test.ts' ${quotedCompilerOptions} &&`,
-+          `'tsc' '/asset-input/test/bundling.test.ts' ${quotedCompilerOptions} ${DOCKER_TSC_IGNORE_CONFIG} &&`,
-           `'esbuild' '--bundle' '/asset-input/test/bundling.test.js' '--target=${STANDARD_TARGET}' '--platform=node' '--outfile=/asset-output/index.js' '--external:${STANDARD_EXTERNAL}'`,
-         ].join(' '),
++      confirmValidationPluginsDoNotMutate: true,
+     });
+     const stack = new Stack(app, 'Stack');
+     new CfnResource(stack, 'Res', {
+@@ -109,6 +110,7 @@ describe('policy validation plugins tolerate readdir/lstat disagreement (#38653)
+       policyValidationBeta1: [
+         { name: 'noop', validate: () => ({ success: true, violations: [] }) },
        ],
-@@ -1547,6 +1549,40 @@ test('Local bundling with preCompilation spawns tsc directly', () => {
-   spawnSyncMock.mockRestore();
- });
- 
-+test.each([
-+  ['0.8.8', true, false],
-+  ['5.9.3', true, false],
-+  ['6.0.3', true, true],
-+  ['Version 7.0.2', false, true],
-+])('Local bundling with preCompilation and TypeScript %s (workspace package: %s) passes --ignoreConfig: %s', (tscVersion, isWorkspacePackage, expectIgnoreConfig) => {
-+  detectPackageInstallationMock.mockImplementation((module: string) => module === 'typescript'
-+    ? { isWorkspacePackage, version: tscVersion }
-+    : { isWorkspacePackage: true, version: '0.8.8' });
-+  const spawnSyncMock = jest.spyOn(child_process, 'spawnSync').mockReturnValue(spawnSyncMockReturnValue);
-+
-+  const packageLock = path.join(__dirname, '..', 'package-lock.json');
-+  const bundler = new Bundling(stack, {
-+    entry: __filename.replace('.js', '.ts'),
-+    projectRoot: path.dirname(packageLock),
-+    depsLockFilePath: packageLock,
-+    runtime: STANDARD_RUNTIME,
-+    preCompilation: true,
-+    architecture: Architecture.X86_64,
-+  });
-+
-+  bundler.local?.tryBundle('/outdir', { image: STANDARD_RUNTIME.bundlingDockerImage });
-+
-+  const tscCall = spawnSyncMock.mock.calls.find(c => (c[1] as string[])?.some(a => a.endsWith('.ts')));
-+  expect(tscCall).toBeDefined();
-+  if (expectIgnoreConfig) {
-+    expect(tscCall![1]).toContain('--ignoreConfig');
-+  } else {
-+    expect(tscCall![1]).not.toContain('--ignoreConfig');
-+  }
-+
-+  spawnSyncMock.mockRestore();
-+});
-+
- test('Local bundling with shell metacharacters in externalModules does not cause injection', () => {
-   const spawnSyncMock = jest.spyOn(child_process, 'spawnSync').mockReturnValue(spawnSyncMockReturnValue);
- 
++      confirmValidationPluginsDoNotMutate: true,
+     });
+     const stack = new Stack(app, 'Stack');
+     new CfnResource(stack, 'Res', {
 ```
 
-**File**: `packages/aws-cdk-lib/aws-lambda-nodejs/test/util.test.ts` (modified, +18/-1)
+**File**: `packages/aws-cdk-lib/core/test/validation/validation.test.ts` (modified, +16/-6)
 ```diff
-@@ -2,7 +2,7 @@ import child_process from 'child_process';
- import fs from 'fs';
- import path from 'path';
- import { bockfs } from '@aws-cdk/cdk-build-tools';
--import { callsites, exec, extractDependencies, findUp, findUpMultiple, getTsconfigCompilerOptions, getTsconfigCompilerOptionsArray } from '../lib/util';
-+import { callsites, exec, extractDependencies, findUp, findUpMultiple, getTsconfigCompilerOptions, getTsconfigCompilerOptionsArray, tscRequiresIgnoreConfig } from '../lib/util';
- 
- beforeEach(() => {
-   jest.clearAllMocks();
-@@ -309,3 +309,20 @@ describe('getTsconfigCompilerOptionsArray', () => {
-     expect(arrayResult[libIdx + 1]).toBe('es2022,dom');
+@@ -479,21 +479,26 @@ describe('validations', () => {
+     expect(report).toContain('ERROR Validation plugin \'broken-plugin\' failed: Something went wrong');
    });
- });
+ 
+-  test('plugin tries to modify a template', () => {
++  test.each([false, true])('plugin tries to modify a template with confirmValidationPluginsDoNotMutate: %s', (confirmValidationPluginsDoNotMutate) => {
+     const app = new NonStrictApp({
+       policyValidationBeta1: [
+         new RoguePlugin(),
+       ],
++      confirmValidationPluginsDoNotMutate,
+     });
+     const stack = new core.Stack(app);
+     new FailResource(stack, 'DefaultResource');
+-    expect(() => {
+-      app.synth();
+-    }).toThrow(/rogue-plugin.*modified the cloud assembly/);
 +
-+describe('tscRequiresIgnoreConfig', () => {
-+  test.each([
-+    ['3.9.10', false],
-+    ['5.9.3', false],
-+    ['Version 5.9.3', false],
-+    ['6.0.3', true],
-+    ['6.0.0-beta', true],
-+    ['Version 6.0.3', true],
-+    ['7.0.2', true],
-+    ['10.1.0', true],
-+    ['', false],
-+    ['garbage', false],
-+  ])('for %j returns %s', (version, expected) => {
-+    expect(tscRequiresIgnoreConfig(version)).toBe(expected);
-+  });
-+});
++    if (confirmValidationPluginsDoNotMutate) {
++      expect(() => { app.synth(); }).toThrow(/rogue-plugin.*modified the cloud assembly/);
++    } else {
++      expect(() => { app.synth(); }).not.toThrow();
++    }
+   });
+ 
+   test('plugin that writes new files to assembly is allowed', () => {
+     const app = new NonStrictApp({
++      confirmValidationPluginsDoNotMutate: true,
+       policyValidationBeta1: [
+         {
+           name: 'file-writer-plugin',
+@@ -516,8 +521,9 @@ describe('validations', () => {
+     expect(JSON.parse(fs.readFileSync(outputFile, 'utf-8'))).toEqual({ result: 'ok' });
+   });
+ 
+-  test('plugin that deletes pre-existing file is caught', () => {
++  test.each([false, true])('plugin that deletes pre-existing file is caught if confirmValidationPluginsDoNotMutate: %s', (confirmValidationPluginsDoNotMutate) => {
+     const app = new NonStrictApp({
++      confirmValidationPluginsDoNotMutate,
+       policyValidationBeta1: [
+         {
+           name: 'deleter-plugin',
+@@ -533,7 +539,11 @@ describe('validations', () => {
+       type: 'Test::Resource::Fake',
+       properties: { result: 'success' },
+     });
+-    expect(() => app.synth()).toThrow(/deleter-plugin.*modified the cloud assembly/);
++    if (confirmValidationPluginsDoNotMutate) {
++      expect(() => app.synth()).toThrow(/deleter-plugin.*modified the cloud assembly/);
++    } else {
++      expect(() => app.synth()).not.toThrow();
++    }
+   });
+ 
+   test('failSynthOnValidationErrors=false writes JSON but does not print or fail', () => {
 ```
 
 ---
 
-### Incident Patch 3: `641ff6fd` (2026-10-22)
-**Commit Message**: fix(stepfunctions-tasks): use a dedicated Lambda function for each EvaluateExpression task (#39436)
+### Incident Patch 2: `d60598a6` (2026-10-24)
+**Commit Message**: feat(lambda-nodejs): support repeated esbuild arguments (#39344)
 
-### Issue # (if applicable)
+### Issue #
 
-Closes #<issue number here>.
-
-### Reason for this change
-
-All EvaluateExpression tasks in a stack that use the same runtime and architecture are implemented by one shared SingletonFunction, including tasks that belong to different state machines. Each state machine's role is granted `lambda:InvokeFunction` on that one shared function. 
-A task's function should belong to the task, so that each state machine can invoke only the functions of its own tasks and a task's Lambda function follows the task's lifecycle.
+Closes #32260.
 
 ### Description of changes
 
-  - **Feature flag**: `@aws-cdk/aws-stepfunctions-tasks:evaluateExpressionDedicatedFunction`
-    - Default-on with an opt-out. The new behavior applies on upgrade, and `false` is the escape hatch to restore the shared singleton function.
-  - Each task creates its own `EvalNodejsFunction` (a plain lambda.Function) under the task's scope. The state machine's `lambda:InvokeFunction` grant is scoped to that task's function only.
-  - The dedicated functions in a stack share one execution role (EvalServiceRole… at stack scope
+Allow string arrays in `BundlingOptions.esbuildArgs` for options that esbuild supports repeating. Every array item is emitted as a separate `--flag:value` argument, including options such as `--supported` that are outside the existing scalar colon-option list. Empty arrays emit no arguments. Existing string and boolean handling is unchanged.
 
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/EvaluateExpressionArm64TestDefaultTestDeployAssertC985F24C.assets.json` (modified, +1/-1)
+Docker shell escaping and direct local spawning share the conversion. Updated README and JSDoc explain the array syntax and that single-value options should use strings or booleans.
+
+### Validation
+
+Validated the review follow-up in commit `34ed9898`:
+
+- JSII package compilation: 0 errors; 1 existing `constructs` development-dependency metadata warning.
+- Bundling suite: 69 tests and 1 existing snapshot passed.
+- Both updated repeated-argument tests fail against the original implementation and pass with the fix. They cover repeated `--supported` values in both Docker and local-spawn paths, while preserving scalar `--conditions=first,second` rendering.
+- ESLint passed for all three changed TypeScript files; `git diff --chec
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ-handlers/repeated-aliases.cjs` (added, +4/-0)
 ```diff
-@@ -1,5 +1,5 @@
- {
--  "version": "54.0.0",
-+  "version": "55.0.0",
-   "files": {
-     "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22": {
-       "displayName": "EvaluateExpressionArm64TestDefaultTestDeployAssertC985F24C Template",
+@@ -0,0 +1,4 @@
++const first = require('@first');
++const second = require('@second');
++
++exports.handler = async () => first.mult(3, 4) + second.mult(2, 3);
 ```
 
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/EvaluateExpressionArm64TestDefaultTestDeployAssertC985F24C.metadata.json` (modified, +6/-0)
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.repeated-esbuild-args.js.snapshot/RepeatedEsbuildArgs.assets.json` (added, +34/-0)
 ```diff
-@@ -1,4 +1,10 @@
- {
-+  "/EvaluateExpressionArm64Test/DefaultTest/DeployAssert": [
+@@ -0,0 +1,34 @@
++{
++  "version": "55.0.0",
++  "files": {
++    "026c762875acc67ccb3633d9eb2c298e6fccefae079c3637ff9ee401fec55ee5": {
++      "displayName": "Function/Code",
++      "source": {
++        "path": "asset.026c762875acc67ccb3633d9eb2c298e6fccefae079c3637ff9ee401fec55ee5",
++        "packaging": "zip"
++      },
++      "destinations": {
++        "current_account-current_region-d5cfaa5e": {
++          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
++          "objectKey": "026c762875acc67ccb3633d9eb2c298e6fccefae079c3637ff9ee401fec55ee5.zip",
++          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
++        }
++      }
++    },
++    "71833424ea0ab2a904e64a2fa63785f30b0ba4bbec078661709cdf000b6863f9": {
++      "displayName": "RepeatedEsbuildArgs Template",
++      "source": {
++        "path": "RepeatedEsbuildArgs.template.json",
++        "packaging": "file"
++      },
++      "destinations": {
++        "current_account-current_region-d9243b9d": {
++          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
++          "objectKey": "71833424ea0ab2a904e64a2fa63785f30b0ba4bbec078661709cdf000b6863f9.json",
++          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
++        }
++      }
++    }
++  },
++  "dockerImages": {}
++}
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.repeated-esbuild-args.js.snapshot/RepeatedEsbuildArgs.metadata.json` (added, +98/-0)
+```diff
+@@ -0,0 +1,98 @@
++{
++  "/RepeatedEsbuildArgs": [
 +    {
 +      "type": "aws:cdk:templateFile",
-+      "data": "EvaluateExpressionArm64TestDefaultTestDeployAssertC985F24C.template.json"
++      "data": "RepeatedEsbuildArgs.template.json"
 +    }
 +  ],
-   "/EvaluateExpressionArm64Test/DefaultTest/DeployAssert/BootstrapVersion": [
-     {
-       "type": "aws:cdk:logicalId",
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/aws-cdk-sfn-evaluate-expression-arm64-integ.assets.json` (modified, +5/-5)
-```diff
-@@ -1,8 +1,8 @@
- {
--  "version": "54.0.0",
-+  "version": "55.0.0",
-   "files": {
-     "c3f237981e8bcc3fdc75c6f7402efab5fdd7b3f9136ca3ab6430daeb27a43853": {
--      "displayName": "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/Code",
-+      "displayName": "EvaluateExpression/EvalFunction/Code",
-       "source": {
-         "path": "asset.c3f237981e8bcc3fdc75c6f7402efab5fdd7b3f9136ca3ab6430daeb27a43853",
-         "packaging": "zip"
-@@ -15,16 +15,16 @@
-         }
-       }
-     },
--    "65b04887b6b160bb26a03cbe547820884cec98d786199628158988f6fbbcfadd": {
-+    "8de50f8fbca7a4dede4a7d78388d76b6ffff0701723d1eb520279e574cea2451": {
-       "displayName": "aws-cdk-sfn-evaluate-expression-arm64-integ Template",
-       "source": {
-         "path": "aws-cdk-sfn-evaluate-expression-arm64-integ.template.json",
-         "packaging": "file"
-       },
-       "destinations": {
--        "current_account-current_region-95f942c5": {
-+        "current_account-current_region-dd191682": {
-           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
--          "objectKey": "65b04887b6b160bb26a03cbe547820884cec98d786199628158988f6fbbcfadd.json",
-+          "objectKey": "8de50f8fbca7a4dede4a7d78388d76b6ffff0701723d1eb520279e574cea2451.json",
-           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-         }
-       }
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/aws-cdk-sfn-evaluate-expression-arm64-integ.metadata.json` (modified, +100/-46)
-```diff
-@@ -1,26 +1,53 @@
- {
--  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10": [
-+  "/aws-cdk-sfn-evaluate-expression-arm64-integ": [
++  "/RepeatedEsbuildArgs/Function": [
 +    {
-+      "type": "aws:cdk:templateFile",
-+      "data": "aws-cdk-sfn-evaluate-expression-arm64-integ.template.json"
++      "type": "aws:cdk:analytics:construct",
++      "data": {
++        "entry": "*",
++        "runtime": "*",
++        "bundling": {
++          "esbuildArgs": "*"
++        },
++        "code": "*",
++        "handler": "*"
++      }
++    },
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": {
++        "entry": "*",
++        "runtime": "*",
++        "bundling": {
++          "esbuildArgs": "*"
++        }
++      }
 +    }
 +  ],
-+  "/aws-cdk-sfn-evaluate-expression-arm64-integ/EvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd": [
-     {
-       "type": "aws:cdk:analytics:construct",
--      "data": "*"
++  "/RepeatedEsbuildArgs/BootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "BootstrapVersion"
++    }
++  ],
++  "/RepeatedEsbuildArgs/CheckBootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "CheckBootstrapVersion"
++    }
++  ],
++  "/RepeatedEsbuildArgs/Function/ServiceRole": [
++    {
++      "type": "aws:cdk:analytics:construct",
 +      "data": {
 +        "assumedBy": {
 +          "principalAccount": "*",
@@ -1656,237 +1546,56 @@ A task's function should belong to the task, so that each state machine can invo
 +          }
 +        ]
 +      }
-     },
-     {
--      "type": "aws:cdk:is-custom-resource-handler-singleton",
--      "data": true
--    },
-+      "type": "aws:cdk:analytics:method",
-+      "data": {
-+        "withoutPolicyUpdates": []
-+      }
 +    }
 +  ],
-+  "/aws-cdk-sfn-evaluate-expression-arm64-integ/ImmutableRoleEvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd": [
-     {
--      "type": "aws:cdk:is-custom-resource-handler-runtime-family",
--      "data": 0
++  "/RepeatedEsbuildArgs/Function/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "Function76856677"
++    }
++  ],
++  "/RepeatedEsbuildArgs/Function/LogGroup": [
++    {
 +      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-     }
-   ],
-   "/aws-cdk-sfn-evaluate-expression-arm64-integ/StateMachine": [
-     {
-       "type": "aws:cdk:analytics:construct",
--      "data": "*"
-+      "data": {
-+        "definitionBody": "*",
-+        "timeout": "*"
-+      }
-     },
-     {
-       "type": "aws:cdk:analytics:method",
--      "data": "*"
-+      "data": {
-+        "addToRolePolicy": [
-+          {}
-+        ]
-+      }
-     }
-   ],
-   "/aws-cdk-sfn-evaluate-expression-arm64-integ/stateMachineArn": [
-@@ -44,51 +71,58 @@
-   "/aws-cdk-sfn-evaluate-expression-arm64-integ/EvaluateExpression/EvalFunction": [
-     {
-       "type": "aws:cdk:analytics:construct",
--      "data": "*"
-+      "data": {
-+        "runtime": "*",
-+        "architecture": "*",
-+        "role": "*",
-+        "code": "*",
-+        "handler": "*"
-+      }
-     },
-     {
--      "type": "aws:cdk:analytics:method",
--      "data": "*"
--    },
--    {
--      "type": "aws:cdk:analytics:method",
--      "data": "*"
--    }
--  ],
--  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/ServiceRole": [
--    {
--      "type": "aws:cdk:analytics:construct",
--      "data": "*"
-+      "type": "aws:cdk:is-custom-resource-handler-runtime-family",
-+      "data": 0
-     }
-   ],
--  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/Resource": [
-+  "/aws-cdk-sfn-evaluate-expression-arm64-integ/EvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd/Resource": [
-     {
-       "type": "aws:cdk:logicalId",
--      "data": "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f1028726088"
--    }
--  ],
--  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/LogGroup": [
--    {
--      "type": "aws:cdk:analytics:construct",
--      "data": "*"
-+      "data": "EvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd10E01C41"
-     }
-   ],
-   "/aws-cdk-sfn-evaluate-expression-arm64-integ/StateMachine/Role": [
-     {
-       "type": "aws:cdk:analytics:construct",
--      "data": "*"
-+      "data": {
-+        "assumedBy": {
-+          "principalAccount": "*",
-+          "assumeRoleAction": "*"
-+        }
-+      }
-     },
-     {
-       "type": "aws:cdk:analytics:method",
--      "data": "*"
-+      "data": {
-+        "addToPrincipalPolicy": [
-+          {}
-+        ]
-+      }
-     },
-     {
-       "type": "aws:cdk:analytics:method",
--      "data": "*"
-+      "data": {
-+        "attachInlinePolicy": [
-+          "*"
-+        ]
-+      }
-     },
-     {
-       "type": "aws:cdk:analytics:method",
--      "data": "*"
-+      "data": {
-+        "attachInlinePolicy": [
-+          "*"
-+        ]
-+      }
-     }
-   ],
-   "/aws-cdk-sfn-evaluate-expression-arm64-integ/StateMachine/Resource": [
-@@ -97,22 +131,18 @@
-       "data": "StateMachine2E01A3A5"
-     }
-   ],
--  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/ServiceRole/Resource": [
-+  "/aws-cdk-sfn-evaluate-expression-arm64-integ/EvaluateExpression/EvalFunction/Resource": [
-     {
-       "type": "aws:cdk:logicalId",
--      "data": "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10ServiceRole037E5D29"
-+      "data": "EvaluateExpressionEvalFunctionD463D928"
-     }
-   ],
--  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/Code/AssetBucket": [
-+  "/aws-cdk-sfn-evaluate-expression-arm64-integ/EvaluateExpression/EvalFunction/LogGroup": [
-     {
-       "type": "aws:cdk:analytics:construct",
--      "data": "*"
--    }
--  ],
--  "/aws-cdk-sfn-evaluate-expression-arm64-integ/Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10/LogGroup/Resource": [
--    {
--      "type": "aws:cdk:logicalId",
--      "data": "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10LogGroup29F31548"
 +      "data": {
 +        "logGroupName": "*"
 +      }
-     }
-   ],
-   "/aws-cdk-sfn-evaluate-expression-arm64-integ/StateMachine/Role/Resource": [
-@@ -128,
++    }
++  ],
++  "/RepeatedEsbuildArgs/Exports/Output{\"Ref\":\"Function76856677\"}": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "ExportsOutputRefFunction76856677C48862D5"
++    }
++  ],
++  "/RepeatedEsbuildArgs/Function/ServiceRole/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "FunctionServiceRole675BB04A"
++    }
++  ],
++  "/RepeatedEsbuildArgs/Function/Code/AssetBucket": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    }
++  ],
++  "/RepeatedEsbuildArgs/Function/LogGroup/Resource": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "FunctionLogGroup55B80E27"
++    }
++  ]
++}
+\ No newline at end of file
 ```
 
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/aws-cdk-sfn-evaluate-expression-arm64-integ.template.json` (modified, +39/-39)
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.repeated-esbuild-args.js.snapshot/RepeatedEsbuildArgs.template.json` (added, +120/-0)
 ```diff
-@@ -1,37 +1,6 @@
- {
-  "Resources": {
--  "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10ServiceRole037E5D29": {
--   "Type": "AWS::IAM::Role",
--   "Properties": {
--    "AssumeRolePolicyDocument": {
--     "Statement": [
--      {
--       "Action": "sts:AssumeRole",
--       "Effect": "Allow",
--       "Principal": {
--        "Service": "lambda.amazonaws.com"
--       }
--      }
--     ],
--     "Version": "2012-10-17"
--    },
--    "ManagedPolicyArns": [
--     {
--      "Fn::Join": [
--       "",
--       [
--        "arn:",
--        {
--         "Ref": "AWS::Partition"
--        },
--        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
--       ]
--      ]
--     }
--    ]
--   }
--  },
--  "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f1028726088": {
-+  "EvaluateExpressionEvalFunctionD463D928": {
-    "Type": "AWS::Lambda::Function",
-    "Properties": {
-     "Architectures": [
-@@ -46,17 +15,17 @@
-     "Handler": "index.handler",
-     "Role": {
-      "Fn::GetAtt": [
--      "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10ServiceRole037E5D29",
-+      "EvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd10E01C41",
-       "Arn"
-      ]
-     },
-     "Runtime": "nodejs24.x"
-    },
-    "DependsOn": [
--    "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10ServiceRole037E5D29"
-+    "EvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd10E01C41"
-    ]
-   },
--  "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f10LogGroup29F31548": {
-+  "EvaluateExpressionEvalFunctionLogGroup7C023450": {
-    "Type": "AWS::Logs::LogGroup",
-    "Properties": {
-     "LogGroupName": {
-@@ -65,7 +34,7 @@
-       [
-        "/aws/lambda/",
-        {
--        "Ref": "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f1028726088"
-+        "Ref": "EvaluateExpressionEvalFunctionD463D928"
-        }
-       ]
-      ]
-@@ -75,6 +44,37 @@
-    "UpdateReplacePolicy": "Retain",
-    "DeletionPolicy": "Retain"
-   },
-+  "EvalServiceRolef4f556a4ef7a49cd8036c5b0567376fd10E01C41": {
+@@ -0,0 +1,120 @@
++{
++ "Resources": {
++  "FunctionServiceRole675BB04A": {
 +   "Type": "AWS::IAM::Role",
 +   "Properties": {
 +    "AssumeRolePolicyDocument": {
@@ -1917,121 +1626,666 @@ A task's function should belong to the task, so that each state machine can invo
 +    ]
 +   }
 +  },
-   "StateMachineRoleB840431D": {
-    "Type": "AWS::IAM::Role",
-    "Properties": {
-@@ -132,7 +132,7 @@
-        "Resource": [
-         {
-          "Fn::GetAtt": [
--          "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f1028726088",
-+          "EvaluateExpressionEvalFunctionD463D928",
-           "Arn"
-          ]
-         },
-@@ -142,7 +142,7 @@
-           [
-            {
-             "Fn::GetAtt": [
--             "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f1028726088",
-+             "EvaluateExpressionEvalFunctionD463D928",
-              "Arn"
-             ]
-            },
-@@ -173,7 +173,7 @@
-        "{\"StartAt\":\"EvaluateExpression\",\"States\":{\"EvaluateExpression\":{\"End\":true,\"Type\":\"Task\",\"Resource\":\"",
-        {
-         "Fn::GetAtt": [
--         "Evalbe6d8ca19d2c4db3aeebf6f27f3f2f1028726088",
-+         "EvaluateExpressionEvalFunctionD463D928",
-          "Arn"
-         ]
-        },
++  "Function76856677": {
++   "Type": "AWS::Lambda::Function",
++   "Properties": {
++    "Code": {
++     "S3Bucket": {
++      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
++     },
++     "S3Key": "026c762875acc67ccb3633d9eb2c298e6fccefae079c3637ff9ee401fec55ee5.zip"
++    },
++    "Handler": "index.handler",
++    "Role": {
++     "Fn::GetAtt": [
++      "FunctionServiceRole675BB04A",
++      "Arn"
++     ]
++    },
++    "Runtime": "nodejs24.x"
++   },
++   "DependsOn": [
++    "FunctionServiceRole675BB04A"
++   ]
++  },
++  "FunctionLogGroup55B80E27": {
++   "Type": "AWS::Logs::LogGroup",
++   "Properties": {
++    "LogGroupName": {
++     "Fn::Join": [
++      "",
++      [
++       "/aws/lambda/",
++       {
++        "Ref": "Function76856677"
++       }
++      ]
++     ]
++    },
++    "RetentionInDays": 731
++   },
++   "UpdateReplacePolicy": "Retain",
++   "DeletionPolicy": "Retain"
++  }
++ },
++ "Outputs": {
++  "ExportsOutputRefFunction76856677C48862D5": {
++   "Value": {
++    "Ref": "Function76856677"
++   },
++   "Export": {
++    "Name": "RepeatedEsbuildArgs:ExportsOutputRefFunction76856677C48862D5"
++   }
++  }
++ },
++ "Parameters": {
++  "BootstrapVersion": {
++   "Type": "AWS::SSM::Parameter::Value<String>",
++   "Default": "/cdk-bootstrap/hnb659fds/version",
++   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
++  }
++ },
++ "Rules": {
++  "CheckBootstrapVersion": {
++   "Assertions": [
++    {
++     "Assert": {
++      "Fn::Not": [
++       {
++        "Fn::Contains": [
++         [
++          "1",
++          "2",
++          "3",
++          "4",
++          "5"
++         ],
++         {
++          "Ref": "BootstrapVersion"
++         }
++        ]
++       }
++      ]
++     },
++     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
++    }
++   ]
++  }
++ }
++}
+\ No newline at end of file
 ```
 
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/cdk.out` (modified, +1/-1)
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.repeated-esbuild-args.js.snapshot/RepeatedEsbuildArgsTestDefaultTestDeployAssert58230A37.assets.json` (added, +33/-0)
 ```diff
-@@ -1 +1 @@
--{"version":"54.0.0"}
-\ No newline at end of file
-+{"version":"55.0.0"}
-\ No newline at end of file
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/integ.json` (modified, +2/-2)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "version": "54.0.0",
+@@ -0,0 +1,33 @@
++{
 +  "version": "55.0.0",
-   "testCases": {
-     "EvaluateExpressionArm64Test/DefaultTest": {
-       "stacks": [
-@@ -10,5 +10,5 @@
-     }
-   },
-   "enableLookups": true,
--  "minimumCliVersion": "2.1131.0"
-+  "minimumCliVersion": "2.1145.0"
- }
++  "files": {
++    "28525eeaa8102e7c76166618f322bc002c9567ced3acda27a5571079b147804a": {
++      "source": {
++        "path": "asset.28525eeaa8102e7c76166618f322bc002c9567ced3acda27a5571079b147804a.bundle",
++        "packaging": "zip"
++      },
++      "destinations": {
++        "current_account-current_region-867ab199": {
++          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
++          "objectKey": "28525eeaa8102e7c76166618f322bc002c9567ced3acda27a5571079b147804a.zip",
++          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
++        }
++      }
++    },
++    "748a53640876371de51d8caeadc081a10ea21842aed9ff87342692af265f8a72": {
++      "displayName": "RepeatedEsbuildArgsTestDefaultTestDeployAssert58230A37 Template",
++      "source": {
++        "path": "RepeatedEsbuildArgsTestDefaultTestDeployAssert58230A37.template.json",
++        "packaging": "file"
++      },
++      "destinations": {
++        "current_account-current_region-256d5bde": {
++          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
++          "objectKey": "748a53640876371de51d8caeadc081a10ea21842aed9ff87342692af265f8a72.json",
++          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
++        }
++      }
++    }
++  },
++  "dockerImages": {}
++}
 \ No newline at end of file
 ```
 
-**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-stepfunctions-tasks/test/integ.evaluate-expression-arm64.js.snapshot/manifest.json` (modified, +18/-3)
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.repeated-esbuild-args.js.snapshot/RepeatedEsbuildArgsTestDefaultTestDeployAssert58230A37.metadata.json` (added, +82/-0)
 ```diff
-@@ -1,5 +1,5 @@
- {
--  "version": "54.0.0",
-+  "version": "55.0.0",
-   "artifacts": {
-     "aws-cdk-sfn-evaluate-expression-arm64-integ.assets": {
-       "type": "cdk:asset-manifest",
-@@ -18,7 +18,7 @@
-         "validateOnSynth": false,
-         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
-         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
--        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/65b04887b6b160bb26a03cbe547820884cec98d786199628158988f6fbbcfadd.json",
-+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/8de50f8fbca7a4dede4a7d78388d76b6ffff0701723d1eb520279e574cea2451.json",
-         "requiresBootstrapStackVersion": 6,
-         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
-         "additionalDependencies": [
-@@ -615,10 +615,25 @@
-           "@aws-cdk/aws-ecs:removeEmptyLoadBalancers": {
-             "recommendedValue": true,
-             "explanation": "Render an empty `LoadBalancers` array on an ECS service that has no target groups"
-+          },
-+          "@aws-cdk/aws-cloudfront:defaultViewerProtocolPolicyRedirectToHttps": {
-+            "recommendedValue": true,
-+            "explanation": "Default Distribution cache behaviors to redirect HTTP viewer requests to HTTPS"
-+          },
-+          "@aws-cdk/aws-apigateway:logGroupDestinationArnWithoutWildcard": {
-+            "recommendedValue": true,
-+            "explanation": "Render the API Gateway access log destination ARN without the trailing `:*`"
-+          },
-+          "@aws-cdk/aws-stepfunctions-tasks:evaluateExpressionDedicatedFunction": {
-+            "recommendedValue": true,
-+            "explanation": "When enabled, each EvaluateExpression task gets its own Lambda function",
-+            "unconfiguredBehavesLike": {
-+              "v2": true
-+            }
-           }
-         }
-       }
-     }
-   },
--  "minimumCliVersion": "2.1131.0"
-+  "minimumCliVersion": "2.1145.0"
- }
+@@ -0,0 +1,82 @@
++{
++  "/RepeatedEsbuildArgsTest/DefaultTest/DeployAssert": [
++    {
++      "type": "aws:cdk:warning",
++      "data": "No cross-stack-reference strength configured, defaulting to \"strong\". We recommend you set feature flag \"@aws-cdk/core:defaultCrossStackReferences\" to \"both\", then deploy everywhere, then set it to \"weak\". Alternatively, set it to \"strong\" explicitly to lock in the current producer-protecting behavior. (See: https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/README.md#reference-strength) [ack: @aws-cdk/core:crossStackReferencesDefaultStrong]",
++      "trace": [
++        "Annotations.addMessage (/workplace/alvazjor/aws-cdk-repo/pr-39344/packages/aws-cdk-lib/core/lib/annotations.js:244:29)",
++        "Annotations.addWarningV2 (/workplace/alvazjor/aws-cdk-repo/pr-39344/packages/aws-cdk-lib/core/lib/annotations.js:113:18)",
++        "resolveValue (/workplace/alvazjor/aws-cdk-repo/pr-39344/packages/aws-cdk-lib/core/lib/private/refs.js:215:54)",
++        "resolveReferencesInElements (/workplace/alvazjor/aws-cdk-repo/pr-39344/packages/aws-cdk-lib/core/lib/private/refs.js:139:30)",
++        "resolveReferences (/workplace/alvazjor/aws-cdk-repo/pr-39344/packages/aws-cdk-lib/core/lib/private/refs.js:124:5)",
++        "prepareApp (/workplace/alvazjor/aws-cdk-repo/pr-39344/packages/aws-cdk-lib/core/lib/private/prepare-app.js:35:36)",
++        "synthesize (/workplace/alvazjor/aws-cdk-repo/pr-39344/packages/aws-cdk-lib/core/lib/private/synthesis.js:72:36)",
++        "App.synth (/workplace/alvazjor/aws-cdk-repo/pr-39344/packages/aws-cdk-lib/core/lib/stage.js:230:96)",
++        "App.synth (/workplace/alvazjor/aws-cdk-repo/pr-39344/packages/aws-cdk-lib/core/lib/app.js:217:27)",
++        "process.<anonymous> (/workplace/alvazjor/aws-cdk-repo/pr-39344/packages/aws-cdk-lib/core/lib/app.js:164:51)",
++        "process.wrapper (node:events:639:12)",
++        "process.emit (node:events:514:28)"
++      ]
++    },
++    {
++      "type": "aws:cdk:templateFile",
++      "data": "RepeatedEsbuildArgsTestDefaultTestDeployAssert58230A37.template.json"
++    }
++  ],
++  "/RepeatedEsbuildArgsTest/DefaultTest/DeployAssert/BootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "BootstrapVersion"
++    }
++  ],
++  "/RepeatedEsbuildArgsTest/DefaultTest/DeployAssert/CheckBootstrapVersion": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "CheckBootstrapVersion"
++    }
++  ],
++  "/RepeatedEsbuildArgsTest/DefaultTest/DeployAssert/LambdaInvoke55933c6da447c7ea94ebd3a50e8557a8/Default": [
++    {
++      "type": "aws:cdk:analytics:construct",
++      "data": "*"
++    },
++    {
++      "type": "aws:cdk:analytics:method",
++      "data": "*"
++    },
++    {
++      "type": "aws:cdk:analytics:method",
++      "data": "*"
++    }
++  ],
++  "/RepeatedEsbuildArgsTest/DefaultTest/DeployAssert/LambdaInvoke55933c6da447c7ea94ebd3a50e8557a8/Invoke": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "LambdaInvoke55933c6da447c7ea94ebd3a50e8557a8InvokeA3F6E40A"
++    }
++  ],
++  "/RepeatedEsbuildArgsTest/DefaultTest/DeployAssert/LambdaInvoke55933c6da447c7ea94ebd3a50e8557a8/AssertionResults": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "AssertionResultsLambdaInvoke55933c6da447c7ea94ebd3a50e8557a8"
++    }
++  ],
++  "/RepeatedEsbuildArgsTest/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Role": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73"
++    }
++  ],
++  "/RepeatedEsbuildArgsTest/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Handler": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F"
++    }
++  ],
++  "/RepeatedEsbuildArgsTest/DefaultTest/DeployAssert/LambdaInvoke55933c6da447c7ea94ebd3a50e8557a8/Default/Default": [
++    {
++      "type": "aws:cdk:logicalId",
++      "data": "LambdaInvoke55933c6da447c7ea94ebd3a50e8557a8"
++    }
++  ]
++}
 \ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.repeated-esbuild-args.js.snapshot/RepeatedEsbuildArgsTestDefaultTestDeployAssert58230A37.template.json` (added, +191/-0)
+```diff
+@@ -0,0 +1,191 @@
++{
++ "Resources": {
++  "LambdaInvoke55933c6da447c7ea94ebd3a50e8557a8": {
++   "Type": "Custom::DeployAssert@SdkCallLambdainvoke",
++   "Properties": {
++    "ServiceToken": {
++     "Fn::GetAtt": [
++      "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F",
++      "Arn"
++     ]
++    },
++    "service": "Lambda",
++    "api": "invoke",
++    "expected": "{\"$ObjectLike\":{\"StatusCode\":200,\"Payload\":\"18\"}}",
++    "parameters": {
++     "FunctionName": {
++      "Fn::Join": [
++       "",
++       [
++        "\"",
++        {
++         "Fn::ImportValue": "RepeatedEsbuildArgs:ExportsOutputRefFunction76856677C48862D5"
++        },
++        "\""
++       ]
++      ]
++     }
++    },
++    "flattenResponse": "false",
++    "salt": "1792852871435"
++   },
++   "UpdateReplacePolicy": "Delete",
++   "DeletionPolicy": "Delete"
++  },
++  "LambdaInvoke55933c6da447c7ea94ebd3a50e8557a8InvokeA3F6E40A": {
++   "Type": "AWS::Lambda::Permission",
++   "Properties": {
++    "Action": "lambda:InvokeFunction",
++    "FunctionName": {
++     "Fn::ImportValue": "RepeatedEsbuildArgs:ExportsOutputRefFunction76856677C48862D5"
++    },
++    "Principal": {
++     "Fn::GetAtt": [
++      "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73",
++      "Arn"
++     ]
++    }
++   }
++  },
++  "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73": {
++   "Type": "AWS::IAM::Role",
++   "Properties": {
++    "AssumeRolePolicyDocument": {
++     "Version": "2012-10-17",
++     "Statement": [
++      {
++       "Action": "sts:AssumeRole",
++       "Effect": "Allow",
++       "Principal": {
++        "Service": "lambda.amazonaws.com"
++       }
++      }
++     ]
++    },
++    "ManagedPolicyArns": [
++     {
++      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
++     }
++    ],
++    "Policies": [
++     {
++      "PolicyName": "Inline",
++      "PolicyDocument": {
++       "Version": "2012-10-17",
++       "Statement": [
++        {
++         "Action": [
++          "lambda:Invoke"
++         ],
++         "Effect": "Allow",
++         "Resource": [
++          "*"
++         ]
++        },
++        {
++         "Action": [
++          "lambda:InvokeFunction"
++         ],
++         "Effect": "Allow",
++         "Resource": [
++          {
++           "Fn::Join": [
++            "",
++            [
++             "arn:",
++             {
++              "Ref": "AWS::Partition"
++             },
++             ":lambda:",
++             {
++              "Ref": "AWS::Region"
++             },
++             ":",
++             {
++              "Ref": "AWS::AccountId"
++             },
++             ":function:",
++             {
++              "Fn::ImportValue": "RepeatedEsbuildArgs:ExportsOutputRefFunction76856677C48862D5"
++             }
++            ]
++           ]
++          }
++         ]
++        }
++       ]
++      }
++     }
++    ]
++   }
++  },
++  "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F": {
++   "Type": "AWS::Lambda::Function",
++   "Properties": {
++    "Runtime": "nodejs24.x",
++    "Code": {
++     "S3Bucket": {
++      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
++     },
++     "S3Key": "28525eeaa8102e7c76166618f322bc002c9567ced3acda27a5571079b147804a.zip"
++    },
++    "Timeout": 120,
++    "Handler": "index.handler",
++    "Role": {
++     "Fn::GetAtt": [
++      "SingletonFunction1488541a7b23466481b69b4408076b81Role37ABCE73",
++      "Arn"
++     ]
++    },
++    "LoggingConfig": {
++     "LogFormat": "JSON",
++     "ApplicationLogLevel": "FATAL"
++    }
++   }
++  }
++ },
++ "Outputs": {
++  "AssertionResultsLambdaInvoke55933c6da447c7ea94ebd3a50e8557a8": {
++   "Value": {
++    "Fn::GetAtt": [
++     "LambdaInvoke55933c6da447c7ea94ebd3a50e8557a8",
++     "assertion"
++    ]
++   }
++  }
++ },
++ "Parameters": {
++  "BootstrapVersion": {
++   "Type": "AWS::SSM::Parameter::Value<String>",
++   "Default": "/cdk-bootstrap/hnb659fds/version",
++   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
++  }
++ },
++ "Rules": {
++  "CheckBootstrapVersion": {
++   "Assertions": [
++    {
++     "Assert": {
++      "Fn::Not": [
++       {
++        "Fn::Contains": [
++         [
++          "1",
++          "2",
++          "3",
++          "4",
++          "5"
++         ],
++         {
++          "Ref": "BootstrapVersion"
++         }
++        ]
++       }
++      ]
++     },
++     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
++    }
++   ]
++  }
++ }
++}
+\ No newline at end of file
+```
+
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.repeated-esbuild-args.js.snapshot/asset.026c762875acc67ccb3633d9eb2c298e6fccefae079c3637ff9ee401fec55ee5/index.js` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++"use strict";
++var __defProp = Object.defineProperty;
++var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
++var __getOwnPropNames = Object.getOwnPropertyNames;
++var __hasOwnProp = Object.prototype.hasOwnProperty;
++var __esm = (fn, res, err) => function __init() {
++  if (err) throw err[0];
++  try {
++    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
++  } catch (e) {
++    throw err = [e], e;
++  }
++};
++var __export = (target, all) => {
++  for (var name in all)
++    __defProp(target, name, { get: all[name], enumerable: true });
++};
++var __copyProps = (to, from, except, desc) => {
++  if (from && typeof from === "object" || typeof from === "function") {
++    for (let key of __getOwnPropNames(from))
++      if (!__hasOwnProp.call(to, key) && key !== except)
++        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
++  }
++  return to;
++};
++var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
++
++// packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ-handlers/util.ts
++var util_exports = {};
++__export(util_exports, {
++  add: () => add,
++  mult: () => mult
++});
++function add(a, b) {
++  return a + b;
++}
++function mult(a, b) {
++  return a * b;
++}
++var init_util = __esm({
++  "packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ-handlers/util.ts"() {
++    "use strict";
++  }
++});
++
++// packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ-handlers/repeated-aliases.cjs
++var first = (init_util(), __toCommonJS(util_exports));
++var second = (init_util(), __toCommonJS(util_exports));
++exports.handler = async () => first.mult(3, 4) + second.mult(2, 3);
+```
+
+---
+
+### Incident Patch 3: `5f51a822` (2026-10-23)
+**Commit Message**: feat(core): switch off built-in CloudFormation Validate using App prop (#39452)
+
+The built-in `CloudFormationValidatePlugin` could be switched off by running `cdk synth --no-validation` or `export CDK_VALIDATION=false`, but this was not super easy to find.
+
+It is now also configurable via a property to `App`.
+
+----
+
+*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*
+
+**File**: `packages/aws-cdk-lib/README.md` (modified, +7/-0)
+```diff
+@@ -1772,6 +1772,13 @@ An explicitly registered `CloudFormationValidatePlugin` still runs the CDK
+ default rules in addition to your custom rules; pass
+ `includeDefaultRules: false` to opt out of the default rules entirely.
+ 
++If you want to disable the automatic plugin registration without registering
++your own, you can do one of the following things:
++
++- Run `cdk synth --no-validation`.
++- Set `CDK_VALIDATION=false` in your environment.
++- Do `new App({ builtinCloudFormationValidation: false })`
++
+ ### Additional plugins
+ 
+ You can also add custom plugins like [cdk-nag](https://github.com/cdklabs/cdk-nag) and
+```
+
+**File**: `packages/aws-cdk-lib/core/lib/app.ts` (modified, +26/-0)
+```diff
+@@ -144,6 +144,24 @@ export interface AppProps {
+    */
+   readonly treeMetadata?: boolean;
+ 
++  /**
++   * Whether to enable built-in CloudFormation template validation.
++   *
++   * CDK ships with a CloudFormation template validation plugin that
++   * is enabled by default (see `CloudFormationValidationPlugin`).
++   *
++   * To disable the built-in validation, you can do one of these things:
++   *
++   * - Set this property to `false`.
++   * - Run `cdk synth --no-validation`.
++   * - Set `CDK_VALIDATION=false` in your environment.
++   * - Register a custom configured instance of `CloudFormationValidationPlugin`
++   *   on the `app` object.
++   *
++   * @default true
++   */
++  readonly builtinCloudFormationValidation?: boolean;
++
+   /**
+    * The stack synthesizer to use by default for all Stacks in the App
+    *
+@@ -211,6 +229,13 @@ export class App extends Stage {
+    */
+   public readonly _treeMetadata: boolean;
+ 
++  /**
++   * The flag indicating whether the built-in CloudFormation validation is enabled.
++   *
++   * @internal
++   */
++  public readonly _builtinCloudFormationValidation: boolean;
++
+   private readonly initMark: number;
+   private readonly performanceReporting: boolean;
+ 
+@@ -226,6 +251,7 @@ export class App extends Stage {
+     });
+ 
+     this.initMark = performance.now();
++    this._builtinCloudFormationValidation = props.builtinCloudFormationValidation ?? true;
+     if (!PERF_STATE.loadTimeMeasured) {
+       // Measure the load time of the application -- up until the construction of the first App
+       // object is considered "Load Time" (executing all require()s).
+```
+
+**File**: `packages/aws-cdk-lib/core/lib/private/synthesis-validation.ts` (modified, +7/-7)
+```diff
+@@ -9,13 +9,13 @@ import { collectAcknowledgedRules } from './collect-acknowledged-rule-ids';
+ import { lit } from './literal-string';
+ import * as cxapi from '../../../cx-api';
+ import { _convertCloudAssemblyBuilder } from '../../../cx-api/lib/legacy-moved';
+-import { App } from '../app';
++import type { App } from '../app';
+ import { _aspectTreeRevisionReader } from '../aspect';
+ import { AssumptionError, UnscopedValidationError } from '../errors';
+ import { FeatureFlags } from '../feature-flags';
+ import type { Stage } from '../stage';
+ import type { IPolicyValidationPlugin, PolicyValidationPluginReport, PolicyValidationStack, PolicyViolatingResource } from '../validation';
+-import { STAGE_TYPE } from './core-construct-finders';
++import { APP_TYPE, STAGE_TYPE } from './core-construct-finders';
+ import { profileSpan } from './perf';
+ import { CloudFormationValidatePlugin } from '../validation/cloudformation-validate-plugin';
+ import { ConstructTree } from '../validation/private/construct-tree';
+@@ -29,7 +29,7 @@ const LEGACY_POLICY_VALIDATION_FILE_PATH = 'policy-validation-report.json';
+  * Invoke validation plugins for all stages in an App.
+  */
+ export function validateTemplates(root: IConstruct, outdir: string, assembly: private_cxapi.CloudAssembly) {
+-  if (!App.isApp(root)) return;
++  if (!APP_TYPE.isMarked(root)) return;
+ 
+   using _span = profileSpan('validateTemplates', { telemetry: true });
+   const assemblies = getAssemblies(root, assembly);
+@@ -211,15 +211,15 @@ function getAssemblies(root: App, rootAssembly: private_cxapi.CloudAssembly): Ma
+ /**
+  * Return the list of plugins to invoke for the given stage
+  */
+-function pluginsToEvaluate(root: IConstruct, stage: Stage): IPolicyValidationPlugin[] {
++function pluginsToEvaluate(root: App, stage: Stage): IPolicyValidationPlugin[] {
+   const ret: IPolicyValidationPlugin[] = [];
+ 
+   // 1. User-registered plugins
+   ret.push(...stage._validationPlugins);
+ 
+   // 2. Default validation engine (runs unless the user registered one explicitly,
+   // or disabled validation via the CDK_VALIDATION environment variable)
+-  if (defaultValidationEnabled() && !hasUserRegisteredCloudFormationValidatePlugin(root)) {
++  if (defaultValidationEnabled(root) && !hasUserRegisteredCloudFormationValidatePlugin(root)) {
+     ret.push(CloudFormationValidatePlugin._singletonInstance());
+   }
+ 
+@@ -243,8 +243,8 @@ function pluginsToEvaluate(root: IConstruct, stage: Stage): IPolicyValidationPlu
+  *
+  * Explicitly user-registered validation plugins are not affected by this setting.
+  */
+-function defaultValidationEnabled(): boolean {
+-  return process.env.CDK_VALIDATION !== 'false';
++function defaultValidationEnabled(app: App): boolean {
++  return app._builtinCloudFormationValidation && process.env.CDK_VALIDATION !== 'false';
+ }
+ 
+ function downgradeCfnValidateErrorsToWarnings(reports: NamedValidationPluginReport[]) {
+```
+
+**File**: `packages/aws-cdk-lib/core/test/validation/cloudformation-validate-plugin.test.ts` (modified, +13/-2)
+```diff
+@@ -786,7 +786,7 @@ describe('CloudFormationValidatePlugin', () => {
+   });
+ });
+ 
+-describe('CDK_VALIDATION environment variable', () => {
++describe('tests that might mutate the environment', () => {
+   const originalCdkValidation = process.env.CDK_VALIDATION;
+ 
+   afterEach(() => {
+@@ -797,12 +797,13 @@ describe('CDK_VALIDATION environment variable', () => {
+     }
+   });
+ 
+-  function appWithInvalidResource() {
++  function appWithInvalidResource(props?: Partial<core.AppProps>) {
+     const app = new core.App({
+       context: {
+         [cxapi.VALIDATE_AGAINST_DEFAULT_RULES]: true,
+         [cxapi.FAIL_SYNTH_ON_VALIDATION_ERRORS_CONTEXT]: true,
+       },
++      ...props,
+     });
+     const stack = new core.Stack(app, 'TestStack');
+     new core.CfnResource(stack, 'MyBucket', {
+@@ -823,6 +824,16 @@ describe('CDK_VALIDATION environment variable', () => {
+     expect(process.exitCode).toBeUndefined();
+   });
+ 
++  test('{ builtinCloudFormationValidation: false } disables the auto-registered validation engine', () => {
++    const app = appWithInvalidResource({
++      builtinCloudFormationValidation: false,
++    });
++
++    // Would throw on BogusProperty if the default engine ran
++    expect(() => app.synth()).not.toThrow();
++    expect(process.exitCode).toBeUndefined();
++  });
++
+   test('CDK_VALIDATION=false does not disable explicitly registered plugins', () => {
+     process.env.CDK_VALIDATION = 'false';
+     const app = appWithInvalidResource();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39475** (closed): a (@Imadnajam)
+- **PR #39452** (2026-10-23): feat(core): switch off built-in CloudFormation Validate using App prop (@rix0rrr)
+- **PR #39451** (2026-10-23): fix(core): overly defensive plugin invocation leads to slowness (@rix0rrr)
 - **PR #39440** (2026-10-22): chore(security-guardian): set rootDir for TypeScript 6 (@kumsmrit)
+- **PR #39438** (2026-10-23): chore(custom-resource-handlers): remove unused aws-glue-alpha handler (@ozelalisen)
 - **PR #39436** (2026-10-22): fix(stepfunctions-tasks): use a dedicated Lambda function for each EvaluateExpression task (@kumsmrit)
-- **PR #39423** (2026-10-21): fix: add graduate tool to lerna.json (@kumsmrit)
-- **PR #39422** (closed): chore(deps): bump the pip group across 3 directories with 2 updates (@dependabot[bot])
-- **PR #39421** (2026-10-21): chore(deps): bump the pip group across 7 directories with 2 updates (@dependabot[bot])
-- **PR #39420** (2026-10-21): chore(deps): bump the uv group across 5 directories with 2 updates (@dependabot[bot])
 
 ---
 
@@ -2051,28 +2305,54 @@ A task's function should belong to the task, so that each state machine can invo
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security-guardian): set rootDir for TypeScript 6 (#39440)
+## X. core): overly defensive plugin invocation leads to slowness (#39451)
 
 **RULE**:
-When implementing operations in `tools/@aws-cdk/security-guardian/tsconfig.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/aws-cdk-lib/core/lib/app.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8bd6e534`: security-guardian): set rootDir for TypeScript 6 (#39440). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `783a981d`: core): overly defensive plugin invocation leads to slowness (#39451). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/@aws-cdk/security-guardian/tsconfig.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/aws-cdk-lib/core/lib/app.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "rootDir": "src",
+
+  /**
+   * Confirm that validation plugins treat the assembly directory as read-only
+   *
+   * Validation plugins should only read files in the `cdk.out` directory, and not modify or
+   * delete any.
+   *
+   * If this is set to `true`, the CDK will calculate a hash of all files in the
+   * assembly directory before running validation plugins and verify that the
+   * hashes match afterwards, to ensure no files got deleted or modified. You
+   * only need to set this if you do not trust your validation plugins to have
+   * been implemented correctly.
+   *
+   * @default false
+   */
+  readonly confirmValidationPluginsDoNotMutate?: boolean;
+  /**
+   * The setting of `confirmValidationPluginsDoNotMutate` from the app's initialization properties.
+   *
+   * @internal
+   */
+  public readonly _confirmValidationPluginsDoNotMutate: boolean;
+
+    this._confirmValidationPluginsDoNotMutate = props.confirmValidationPluginsDoNotMutate ?? false;
+  private loadContext(defaults: { [key: string]: string } = {}, final: { [key: string]: string } = {}) {
+  public synth(options: StageSynthesisOptions = {}): public_cxapi.CloudAssembly {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  private loadContext(defaults: { [key: string]: string } = { }, final: { [key: string]: string } = {}) {
+  public synth(options: StageSynthesisOptions = { }): public_cxapi.CloudAssembly {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8bd6e534` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `783a981d` are properly handled with clean fallback behavior.

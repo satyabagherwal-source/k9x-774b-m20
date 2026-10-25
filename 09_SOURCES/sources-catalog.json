@@ -475,8 +475,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
     "sourceVersion": "hf-comfy-org-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "ee3c5c7375847f6ba37a3648bb088d293d6a82271c7d2d031700b9ce86776368",
-    "lastHarvestedAt": "2026-10-20T18:51:45.945Z",
+    "contentHash": "fa53f9a04e934d4f6b73554a636cf3782e0ae0c000aff774bd7866d13bf875f0",
+    "lastHarvestedAt": "2026-10-25T14:18:54.241Z",
     "learningId": "learn-huggingface-comfy-org-qwen-image-2-1"
   },
   "hf-akhilaaa3-jev-omni": {
@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "0d546854",
+    "sourceVersion": "4ab22a49",
     "license": "AGPL-3.0",
-    "contentHash": "0a48af2bf48e9e30ac5253efcaf6d620fe438de099196d4f4de23878d59837d8",
-    "lastHarvestedAt": "2026-10-23T06:49:58.581Z",
+    "contentHash": "e783004c3e39de74290c1cf72aa1e870f8f74edb6fc71f0d374db010d8e49ac8",
+    "lastHarvestedAt": "2026-10-25T14:18:54.733Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "8bd6e534",
+    "sourceVersion": "d60598a6",
     "license": "Apache-2.0",
-    "contentHash": "94e0ff0653b720bab70c908b02568f1983ca740b77930844cbbf9751481cf46f",
-    "lastHarvestedAt": "2026-10-23T08:54:55.088Z",
+    "contentHash": "4ff99eb92e48ca24513e0277589dc58bd9761b5acfa2f377e2a1385b11f1a269",
+    "lastHarvestedAt": "2026-10-25T14:18:50.669Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
