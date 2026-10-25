@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T16:15:24.437Z",
-  "total_cycles_completed": 4873,
-  "total_learnings_persisted": 4873,
+  "last_updated": "2026-10-25T16:21:49.899Z",
+  "total_cycles_completed": 4874,
+  "total_learnings_persisted": 4874,
   "total_rules_promoted": 4258,
   "history": [
-    {
-      "timestamp": "2026-10-25T05:52:38.069Z",
-      "repository": "alexellis/k3sup",
-      "learningId": "learn-github-alexellis-k3sup",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T05:58:42.275Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1403,6 +1396,13 @@
       "repository": "fujiapple852/trippy",
       "learningId": "learn-github-fujiapple852-trippy",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T16:21:49.899Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
