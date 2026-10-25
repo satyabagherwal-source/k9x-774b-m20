@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md`  
 > **Source**: github ([https://github.com/webrtc-rs/webrtc](https://github.com/webrtc-rs/webrtc))  
-> **Source Version**: `f6b017b0`  
+> **Source Version**: `a53d7ac4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:54:54.688Z  
+> **Timestamp**: 2026-10-25T17:30:14.111Z  
 > **Learning ID**: `learn-github-webrtc-rs-webrtc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webrtc-rs/webrtc](https://github.com/webrtc-rs/webrtc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:54:54.679Z  
+> **Harvest Timestamp**: 2026-10-25T17:30:14.103Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Async-friendly WebRTC implementation in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5160 stars
+- **Stars / Engagement**: 5166 stars
 
 ---
 
@@ -2382,1743 +2382,759 @@ async fn async_main(cli: Cli) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `caa7f072` (2026-09-27)
-**Commit Message**: [v0.21.x] fix: release TURN allocations on close() on both runtimes (#903) (#912)
+### Incident Patch 1: `a53d7ac4` (2026-10-24)
+**Commit Message**: feat(webrtc): multiplex peer connections over a single UDP socket (UDPMux) (#918)
 
-* fix(turn): release allocations when TURN clients are retired (port of #895)
+* chore: bump the rtc submodule to master (with webrtc-rs/rtc#270)
 
-#895 landed on v0.20.x only. On master, retiring the TURN relayer's clients
-dropped them without releasing their allocations, so the server kept each
-one until its lifetime expired: on close(), on an ICE-restart rebind, and
-on a configuration change that recreates the clients.
+SettingEngine::ice_credentials / set_ice_credentials, which the UDP mux
+uses to pin each connection's credentials.
 
-Port it:
+* feat(webrtc): multiplex peer connections over a single UDP socket
 
-- RTCTurnRelayer::remove_client takes release_allocation. When set and the
-  client has a relay, Relay::close queues an authenticated Refresh with
-  LIFETIME=0 (RFC 8656 §7), drained into retirement_wouts, which poll_write
-  sends first and which a configuration reset does not clear. A socket
-  write failure retires without releasing: the socket can no longer
-  deliver it.
-- The driver sends those releases on both exit paths (the closing check at
-  the top of the loop and the Close event), through a small
-  release_turn_allocations helper, and before an ICE-restart rebind drops
-  the old sockets, since a release from a new socket would not match the
-  allocation's 5-tuple.
+Add webrtc::peer_connection::transport::udp_mux: a UDPMux trait and the
+built-in UDPMuxDefault, plus PeerConnectionBuilder::with_udp_mux. One
+bound socket serves any number of connections — the SRS/mediamtx
+deployment shape (Pion's ICEUDPMux equivalent) — where pinning
+with_udp_addrs to a fixed port fails the second connection's bind with
+EADDRINUSE.
 
-master's rtc-turn takes the time explicitly, so Relay::close is pa
+How it works:
 
-**File**: `src/peer_connection/driver.rs` (modified, +86/-6)
+- UDPMuxDefault owns the socket and a reader task. Inbound datagrams are
+  demultiplexed by the local ufrag in a STUN check's USERNAME (the only
+  traffic that carries one), then by learnt peer address for DTLS/SRTP;
+  a ufrag match re-points the address route, so a client reconnecting
+  from the same address with fresh credentials is not stranded on its
+  old connection's route.
+- A muxed connection gets a virtual AsyncUdpSocket (UdpMuxedConn) from
+  mux registration; the driver is otherwi
+
+**File**: `CHANGELOG.md` (modified, +14/-0)
 ```diff
-@@ -44,8 +44,10 @@ use rtc::shared::{FourTuple, TaggedBytesMut, TransportContext, TransportProtocol
- use rtc::{rtcp, rtp};
- use std::collections::hash_map::Entry;
- use std::collections::{HashMap, VecDeque};
-+use std::future::Future;
- use std::io::IoSliceMut;
- use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
-+use std::pin::Pin;
- use std::sync::Arc;
- use std::sync::atomic::Ordering;
- use std::time::{Duration, Instant};
-@@ -134,6 +136,67 @@ const DEFAULT_TIMEOUT_DURATION: Duration = Duration::from_secs(86400); // 1 day
- /// by elapsed time catches every shape.
- const MIN_IMMEDIATE_TIMEOUT_INTERVAL: Duration = Duration::from_millis(1);
+@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
-+thread_local! {
-+    /// The connection whose driver task this thread is polling at this moment, or `0`.
-+    static POLLING_DRIVER: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+ ### Added
+ 
++- **UDP multiplexing: many peer connections over one shared UDP socket** — new
++  `webrtc::peer_connection::transport::udp_mux` module with a `UDPMux` trait and the built-in
++  `UDPMuxDefault`. Handing one mux to every `PeerConnectionBuilder::with_udp_mux` serves any
++  number of connections from a single fixed UDP port (the SRS/mediamtx deployment shape),
++  where a pinned `with_udp_addrs` port fails the second connection's bind with `EADDRINUSE`.
++  The mux's reader demultiplexes inbound datagrams by the local ICE ufrag in each STUN check
++  and by learnt peer address for ufrag-less traffic (DTLS/SRTP/SRTCP); candidates are
++  advertised per interface on the mux's port, with inbound packets attributed to an interface
++  via `RecvMeta::dst_ip` (packet info) and outbound ones pinned with `Transmit::src_ip` on a
++  wildcard listen. Muxed connections gather host candidates only (the restriction Pion's
++  `ICEUDPMux` documents), and their ICE credentials are pinned at build time so the route
++  survives ICE restarts. `tests/udp_mux.rs` runs two connections on one fixed port end to end.
++  Requires `rtc` ≥ the commit that adds `SettingEngine::set_ice_credentials`/
++  `ice_credentials`.
+ - **Crypto provider selection** ([webrtc#839](https://github.com/webrtc-rs/webrtc/issues/839),
+   [rtc#128](https://github.com/webrtc-rs/rtc/issues/128)). New `crypto-ring` (default) and `crypto-aws-lc-rs`
+   Cargo features forward to `rtc`. They are additive: enabling both compiles both providers and
+```
+
+**File**: `Cargo.toml` (modified, +6/-0)
+```diff
+@@ -58,6 +58,7 @@ clap = { version = "4.6.1", features = ["derive"] }
+ anyhow = "1.0.103"
+ ctrlc = "3.5.2"
+ serde_json = "1.0.150"
++serde = { version = "1.0.228", features = ["derive"] }
+ hyper = { version = "0.14.32", features = ["full"] }
+ rand = "0.10.1"
+ base64 = "0.22.1"
+@@ -274,3 +275,8 @@ required-features = ["runtime-tokio"]
+ name = "stats"
+ path = "examples/stats/stats.rs"
+ bench = false
++
++[[example]]
++name = "udp-mux"
++path = "examples/udp-mux/udp-mux.rs"
++bench = false
+```
+
+**File**: `examples/udp-mux/demo.html` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++<!DOCTYPE html>
++<html>
++<head>
++  <meta charset="utf-8">
++  <title>UDP Mux DataChannel Test</title>
++</head>
++<body>
++  <h2>WebRTC DataChannel Test</h2>
++  <input id="msg" placeholder="Message">
++  <button id="sendBtn" disabled onclick="sendMsg()">Send</button>
++  <pre id="log"></pre>
++  <script>
++    const sessionId = crypto.randomUUID();
++    const pc = new RTCPeerConnection({iceServers: []});
++    const channel = pc.createDataChannel("chat");
++    const log = msg => document.getElementById("log").textContent += msg + "\n";
++    pc.onconnectionstatechange = () => log(`Connection state: ${pc.connectionState}`);
++    channel.onopen = () => {
++      log("DataChannel opened");
++      document.getElementById("sendBtn").disabled = false;
++    };
++    channel.onmessage = event => log(`Server: ${event.data}`);
++    pc.onicecandidate = event => {
++      if (event.candidate) fetch("/candidate", {
++        method: "POST",
++        headers: {"Content-Type": "application/json"},
++        body: JSON.stringify({session_id: sessionId, candidate: event.candidate})
++      });
++    };
++    async function start() {
++      const offer = await pc.createOffer();
++      await pc.setLocalDescription(offer);
++      const response = await fetch("/offer", {
++        method: "POST",
++        headers: {"Content-Type": "application/json"},
++        body: JSON.stringify({session_id: sessionId, offer})
++      });
++      if (!response.ok) throw new Error(`HTTP ${response.status}`);
++      await pc.setRemoteDescription(await response.json());
++    }
++    function sendMsg() {
++      const input = document.getElementById("msg");
++      if (input.value.trim() && channel.readyState === "open") {
++        channel.send(input.value);
++        log(`You: ${input.value}`);
++        input.value = "";
++      }
++    }
++    start().catch(error => log(`Connection failed: ${error.message}`));
++  </script>
++</body>
++</html>
+```
+
+**File**: `examples/udp-mux/udp-mux.rs` (added, +504/-0)
+```diff
+@@ -0,0 +1,504 @@
++//! udp-mux serves any number of browser data-channel sessions over **one** UDP port.
++//!
++//! This example demonstrates:
++//! - `UDPMuxDefault` sharing one UDP socket across every peer connection
++//! - HTTP signaling (offer → answer, trickle ICE), one browser tab per connection
++//! - Why: with per-connection binds (`with_udp_addrs`), pinning one port fails the second
++//!   connection with `EADDRINUSE`; with a mux, only the mux binds, so one firewall/forward
++//!   rule covers every session — the deployment shape of servers like SRS or mediamtx.
++//!
++//! Run it, open http://127.0.0.1:8080 in several browser tabs, and connect them all:
++//! every session's media arrives on UDP port 9002.
++
++use anyhow::Result;
++use futures::FutureExt;
++use hyper::service::{make_service_fn, service_fn};
++use hyper::{Body, Method, Request, Response, Server, StatusCode};
++use log::{error, info};
++use std::collections::HashMap;
++use std::net::SocketAddr;
++use std::sync::{Arc, Mutex};
++use std::time::{Duration, Instant};
++use webrtc::data_channel::{DataChannel, DataChannelEvent};
++use webrtc::peer_connection::transport::udp_mux::{UDPMux, UDPMuxDefault};
++use webrtc::peer_connection::{PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler};
++use webrtc::peer_connection::{
++    RTCIceCandidateInit, RTCIceGatheringState, RTCPeerConnectionState, RTCSessionDescription,
++};
++use webrtc::runtime::{Runtime, Sender, channel};
++
++#[path = "../common/mod.rs"]
++mod common;
++use common::{block_on, runtime, timeout};
++
++const DEMO_HTML: &str = include_str!("demo.html");
++
++/// The UDP port every session shares.
++const MUX_UDP_PORT: u16 = 9002;
++const MAX_PENDING_CANDIDATES: usize = 256;
++const DISCONNECTED_TIMEOUT: Duration = Duration::from_secs(60);
++const PENDING_CANDIDATE_TTL: Duration = Duration::from_secs(30);
++const INVALID_SESSION_ID: &str = "session_id must contain 1 to 128 bytes and no control characters";
++
++fn valid_session_id(id: &str) -> bool {
++    !id.is_empty() && id.len() <= 128 && !id.chars().any(char::is_control)
 +}
 +
-+/// Identifies a connection for [`POLLING_DRIVER`].
-+fn driver_id(inner: &Arc<PeerConnectionRef>) -> usize {
-+    Arc::as_ptr(inner) as usize
++#[derive(Default)]
++struct DisconnectWatchdog {
++    since: Mutex<Option<Instant>>,
 +}
 +
-+/// Whether the caller is running inside `inner`'s own driver task.
-+///
-+/// Application callbacks are awaited on the driver task, so this is true for a `close()`
-+/// called from one of them. Waiting there for the driver to finish can never succeed (it cannot
-+/// make progress until the callback returns), and aborting it would cut off the TURN releases it
-+/// sends on its way out.
-+pub(crate) fn is_polling_driver(inner: &Arc<PeerConnectionRef>) -> bool {
-+    POLLING_DRIVER.with(|polling| polling.get()) == driver_id(inner)
-+}
-+
-+/// Runs a connection's driver future, recording on the polling thread for the duration of every
-+/// poll which connection it belongs to, so [`is_polling_driver`] can answer from inside it.
-+///
-+/// Recorded per poll rather than per task because a multi-threaded runtime may poll the task on a
-+/// different thread each time; everything the driver awaits, callbacks included, runs within one
-+/// of those polls.
-+pub(crate) struct DriverTask {
-+    id: usize,
-+    future: Pin<Box<dyn Future<Output = ()> + Send>>,
-+}
-+
-+impl DriverTask {
-+    pub(crate) fn new(
-+        inner: &Arc<PeerConnectionRef>,
-+        future: impl Future<Output = ()> + Send + 'static,
-+    ) -> Self {
-+        Self {
-+            id: driver_id(inner),
-+            future: Box::pin(future),
++impl DisconnectWatchdog {
++    fn update(&self, state: RTCPeerConnectionState, now: Instant) {
++        let mut since = self.since.lock().unwrap();
++        if state == RTCPeerConnectionState::Disconnected {
++            since.get_or_insert(now);
++        } else {
++            *since = None;
 +        }
++    }
++
++    fn expired(&self, now: Instant) -> bool {
++        self.since
++            .lock()
++            .unwrap()
++            .is_some_and(|since| now.duration_since(since) >= DISCONNECTED_TIMEOUT)
 +    }
 +}
 +
-+impl Future for DriverTask {
-+    type Output = ();
-+
-+    fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
-+        /// Restores the previous marker even if the poll panics.
-+        struct Restore(usize);
-+        impl Drop for Restore {
-+            fn drop(&mut self) {
-+                POLLING_DRIVER.with(|polling| polling.set(self.0));
-+            }
-+        }
-+
-+        let this = self.get_mut();
-+        let _restore = Restore(POLLING_DRIVER.with(|polling| polling.replace(this.id)));
-+        this.future.as_mut().poll(cx)
-+    }
++struct Session {
++    generation: u64,
++    pc: Arc<dyn PeerConnection>,
++    watchdog: Arc<DisconnectWatchdog>,
 +}
 +
- /// Insert `sender` for `channel_id`, returning `true` if the channel should be announced.
- pub(crate) fn insert_data_channel_event_sender(
-     data_channels: &mut HashMap<RTCDataChannelId, Sender<DataChannelEvent>>,
-@@ -563,6 +626,15 @@ where
++type PendingCandidates = HashMap<String, Vec<(Instant, RTCIceCandidateInit)>>;
++
++fn prune_pending(candidates: &mut PendingCandidates, now: Instant) {
++    candidates.retain(|_, entries| {
++        entries.retain(|(received, _)| now.duration_since(*received) < PENDING_CANDIDATE_TTL);
++        !entries.is_empty()
++    });
++}
++
++// ── Shared state for HTTP handlers ─────────────────────────────────────────────
++
++#[derive(Clone)]
++struct AppState {
++    offer_tx: Sender<(
++        String,
++        RTCSessionDescription,
++        Sender<Result<RTCSessionDescription, String>>,
++    )>,
++    candidate_tx: Sender<(String, RTCIceCandidateInit)>,
++}
++
++#[derive(serde::Deserialize)]
++struct OfferRequest {
++    session_id: String,
++    offer: RTCSessionDescription,
++}
++
++#[derive(serde::Deserialize)]
++struct CandidateRequest {
++    session_id: String,
++    candidate: RTCIceCandidateInit,
++}
++
++// ── WebRTC event handler ───────────────────────────────────────────────────────
++
++struct Handler {
++    id: String,
++    generation: u64,
++    stopped_tx: async_channel::Sender<(String, u64)>,
++    watchdog: Arc<DisconnectWatchdog>,
++    gather_complete_tx: Sender<()>,
++    runtime: Arc<dyn Runtime>,
++}
++
++#[async_trait::async_trait]
++impl PeerConnectionEventHandler for Handler {
++    async fn on_ice_gathering_state_change(&self, state: RTCIceGatheringState) {
++        if state == RTCIceGatheringState::Complete {
++            let _ = self.gather_complete_tx.try_send(());
++        }
++    }
++
++    async fn on_connection_state_change(&self, state: RTCPeerConnectionState) {
++        self.watchdog.update(state, Instant::now());
++        info!("[session {}] connection state: {}", self.id, state);
++        if matches!(
++            state,
++            RTCPeerConnectionState::Failed | RTCPeerConnectionState::Closed
++        ) {
++            let _ = self.stopped_tx.try_send((self.id.clone(), self.generation));
++        }
++    }
++
++    async fn on_data_channel(&self, dc: Arc<dyn DataChannel>) {
++        let id = self.id.clone();
++        self.runtime.spawn(Box::pin(async move {
++            let label = dc.label().await.unwrap_or_default();
++            info!("[session {id}] data channe
+```
+
+**File**: `rtc` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-Subproject commit 07423df27fbbbaaf56f45ee43343f9836304a9da
++Subproject commit ec4696855a5c34319254f48aeda2eddb1225e8f7
+```
+
+**File**: `src/peer_connection/driver.rs` (modified, +357/-57)
+```diff
+@@ -12,14 +12,15 @@ use crate::media_stream::track_remote::static_rtp::TrackRemoteStaticRTP;
+ use crate::media_stream::track_remote::{TrackRemote, TrackRemoteEvent};
+ use crate::peer_connection::PeerConnectionRef;
+ use crate::peer_connection::transport::tcp_transport::RTCTcpTransport;
++use crate::peer_connection::transport::udp_mux::{UDPMux, UDPMuxConnHandle};
+ use crate::peer_connection::transport::{
+     MAX_GSO_BATCH_BYTES, MAX_GSO_SEGMENTS, MIN_GSO_RUN, SocketRecvResult, UDP_RECV_BUF_LEN,
+     gro_recv_buf_len, is_retryable_socket_recv_error,
+ };
+ use crate::rtp_transceiver::rtp_receiver::RtpReceiverImpl;
+ use crate::rtp_transceiver::{RtpReceiver, RtpTransceiverImpl};
+ use crate::runtime::{
+-    AsyncTcpStream, AsyncUdpSocket, EcnCodepoint, Receiver, RecvMeta, Sender, Transmit,
++    AsyncTcpStream, AsyncUdpSocket, EcnCodepoint, Receiver, RecvMeta, Runtime, Sender, Transmit,
+     TrySendError, channel,
+ };
+ use bytes::BytesMut;
+@@ -341,13 +342,15 @@ fn restage_retained_data_channel_events(
+ /// boxed-future convenience (`send_to`), which would cost one heap allocation per datagram
+ /// on the hot path. `segment_size` of `0` sends a single datagram; non-zero requests UDP
+ /// GSO — only valid when the socket reports `max_gso_segments() > 1`. `ecn` carries the raw
+-/// two codepoint bits.
++/// two codepoint bits. `src_ip` pins the datagram's source address on a wildcard socket (a
++/// shared mux socket is the case that needs it); `None` leaves the choice to the kernel.
+ async fn send_datagrams(
+     socket: &dyn AsyncUdpSocket,
+     buf: &[u8],
+     segment_size: usize,
+     target: SocketAddr,
+     ecn: Option<u8>,
++    src_ip: Option<IpAddr>,
+ ) -> Result<usize> {
+     let transmit = Transmit {
+         destination: target,
+@@ -356,7 +359,7 @@ async fn send_datagrams(
+         // `0` means "no segmentation": hand the whole buffer over as one datagram rather
+         // than asking the kernel to shred it into 0-byte segments.
+         segment_size: (segment_size != 0).then_some(segment_size),
+-        src_ip: None,
++        src_ip,
+     };
+     futures::future::poll_fn(|cx| socket.poll_send(cx, &transmit))
+         .await
+@@ -531,6 +534,20 @@ pub(crate) struct PeerConnectionDriver<A = SocketAddr> {
+     /// than the ones that existed when the connection was built.
+     udp_addrs: Vec<A>,
+     tcp_addrs: Vec<A>,
++    /// The shared socket this connection rides on, when it is muxed. Mutually exclusive with
++    /// binding `udp_addrs` per connection; see
++    /// [`udp_mux`](crate::peer_connection::transport::udp_mux).
++    udp_mux: Option<Arc<dyn UDPMux>>,
++    /// The connection's registration in `udp_mux`, registered once at first bind. On an ICE
++    /// restart the same registration gains the new ufrag via `add_ufrag` — its queue and
++    /// socket view never change. Kept separately from `udp_sockets`: that map keys the conn by
++    /// every advertised interface address for the write path, while the receive loop wants
++    /// exactly one entry for it.
++    mux_conn: Option<(UDPMuxConnHandle, Arc<dyn AsyncUdpSocket>)>,
++    /// The connection's current ICE ufrag on the mux.
++    mux_active_ufrag: Option<String>,
++    /// ufrags a restart rotated away from, still routable until their grace ends.
++    mux_ufrag_expiry: VecDeque<(Instant, String)>,
+     mdns_mode: MulticastDnsMode,
+     ice_servers: Vec<RTCIceServer>,
+     ice_gather_policy: RTCIceTransportPolicy,
+@@ -556,6 +573,7 @@ where
+         inner: Arc<PeerConnectionRef>,
+         udp_addrs: Vec<A>,
+         tcp_addrs: Vec<A>,
++        udp_mux: Option<Arc<dyn UDPMux>>,
+         mdns_mode: MulticastDnsMode,
+         ice_servers: Vec<RTCIceServer>,
+         ice_gather_policy: RTCIceTransportPolicy,
+@@ -592,6 +610,10 @@ where
+             pending_data_channel_events: HashMap::new(),
+             udp_addrs,
+             tcp_addrs,
++            udp_mux,
++            mux_conn: None,
++            mux_active_ufrag: None,
++            mux_ufrag_expiry: VecDeque::new(),
+             mdns_mode,
+             ice_servers,
+             ice_gather_policy,
+@@ -626,6 +648,10 @@ where
      async fn bind_transports(&mut self) -> Result<()> {
          let runtime = Arc::clone(&self.inner.runtime);
  
-+        // Release TURN allocations while the old UDP sockets still exist. Rebinding drops them
-+        // below, and a Refresh(0) sent from a new socket would not match the allocation's
-+        // 5-tuple, leaving it on the server until it expires. The initial bind has no previous
-+        // generation to release.
-+        if !self.udp_sockets.is_empty() {
-+            self.turn_relayer.close()?;
-+            self.poll_writes().await?;
++        if let Some(mux) = self.udp_mux.clone() {
++            return self.bind_muxed_transports(&mux).await;
 +        }
 +
-         // Drop before binding — see above. Also drops every accepted TCP stream, which is
-         // correct: they belong to the generation being replaced.
-         self.udp_sockets.clear();
-@@ -766,9 +838,7 @@ where
-             // momentarily full channel), this check still guarantees the loop —
-             // and thus a dedicated reactor thread — terminates instead of leaking.
-             if self.inner.closing.load(Ordering::Acquire) {
--                if let Err(err) = self.turn_relayer.close() {
--                    error!("Failed to close turn_relayer: {}", err);
--                }
-+                self.release_turn_allocations().await;
-                 return Ok(());
-             }
- 
-@@ -1678,9 +1748,7 @@ where
-                 self.tcp_transport.register_stream(four_tuple, stream);
-             }
-             PeerConnectionDriverEvent::Close => {
--                if let Err(err) = self.turn_relayer.close() {
--                    error!("Failed to close turn_relayer: {}", err);
--                }
-+                self.release_turn_allocations().await;
-                 return true;
-             }
+         // Release TURN allocations while the old UDP sockets still exist. Rebinding drops them
+         // below, and a Refresh(0) sent from a new socket would not match the allocation's
+         // 5-tuple, leaving it on the server until it expires. The initial bind has no previous
+@@ -665,6 +691,173 @@ where
+                 .insert(local_addr, runtime.wrap_udp_socket(socket)?);
          }
-@@ -1837,6 +1905,18 @@ where
-         messages
-     }
  
-+    /// Releases every TURN allocation (Refresh with LIFETIME=0) and se
++        self.bind_tcp_listeners(&runtime)?;
++        if self.udp_sockets.is_empty() && self.tcp_transport.is_empty() {
++            return Err(Error::Other(
++                "no udp_sockets or tcp_listeners available".to_owned(),
++            ));
++        }
 ```
 
-**File**: `src/peer_connection/mod.rs` (modified, +53/-28)
+**File**: `src/peer_connection/mod.rs` (modified, +95/-0)
 ```diff
-@@ -68,7 +68,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
+@@ -86,6 +86,7 @@ use crate::media_stream::track_local::TrackLocalEvent;
+ use crate::media_stream::track_local::static_rtp::TrackLocalStaticRTP;
+ use crate::media_stream::track_remote::TrackRemoteEvent;
+ use crate::peer_connection::driver::PeerConnectionDriverEvent;
++use crate::peer_connection::transport::udp_mux;
+ use crate::rtp_transceiver::rtp_sender::RtpSenderImpl;
+ pub use rtc::interceptor::Registry;
  
- use driver::{
-     APPLICATION_TO_DRIVER_EVENT_CHANNEL_CAPACITY, DRIVER_TO_DATA_CHANNEL_EVENT_CHANNEL_CAPACITY,
--    PeerConnectionDriver,
-+    DriverTask, PeerConnectionDriver, is_polling_driver,
- };
+@@ -184,6 +185,7 @@ pub struct PeerConnectionBuilder<A: ToSocketAddrs> {
+     handler: Option<Arc<dyn PeerConnectionEventHandler>>,
+     udp_addrs: Vec<A>,
+     tcp_addrs: Vec<A>,
++    udp_mux: Option<Arc<dyn udp_mux::UDPMux>>,
+     dedicated_reactor_pool_size: usize,
+     data_channel_send_buffer_limit: usize,
+     /// Held rather than forwarded immediately, so [`build`](Self::build) can resolve the crypto
+@@ -199,6 +201,7 @@ impl<A: ToSocketAddrs> Default for PeerConnectionBuilder<A> {
+             handler: None,
+             udp_addrs: vec![],
+             tcp_addrs: vec![],
++            udp_mux: None,
+             dedicated_reactor_pool_size: 0,
+             setting_engine: SettingEngine::default(),
+             // `usize::MAX` = unbounded: no send back-pressure unless the application
+@@ -285,6 +288,23 @@ impl<A: ToSocketAddrs> PeerConnectionBuilder<A> {
+         self
+     }
  
- use rtc::data_channel::{RTCDataChannelId, RTCDataChannelInit};
-@@ -449,6 +449,13 @@ pub trait PeerConnection: crate::sealed::Sealed + Send + Sync + 'static {
-     /// [`DataChannel::send`] calls blocked awaiting
-     /// capacity are woken with [`Error::ErrDataChannelClosed`].
-     ///
-+    /// TURN allocations are released on a best-effort basis: a Refresh with LIFETIME 0 is sent
-+    /// for each one before this returns, so the server frees them now rather than when their
-+    /// lifetime expires. `close()` waits at most about 100 ms for that; if the connection's
-+    /// driver cannot send them in time, it is stopped anyway and the allocations expire on the
-+    /// server. Called from an event-handler callback, which runs on the driver itself, it returns
-+    /// without waiting and the releases are sent as soon as the callback returns.
++    /// Shares one UDP socket across connections instead of binding per connection.
 +    ///
-     /// # Errors
-     ///
-     /// Returns an error if the driver could not be reached to perform the shutdown.
-@@ -716,15 +723,25 @@ pub trait PeerConnection: crate::sealed::Sealed + Send + Sync + 'static {
- ///
- /// Not exposed directly — obtained as an opaque `impl PeerConnection` from
- /// [`PeerConnectionBuilder::build`].
-+/// How long `close()` waits for the driver to finish its exit path before aborting it.
-+///
-+/// The exit path is local work: queue the TURN releases and hand them to the socket, with no
-+/// round trip, so it normally completes in a few milliseconds. This only caps the case of a driver
-+/// that cannot get there promptly — one blocked in an application callback, say — where releasing
-+/// the allocations is best effort and `close()` must not be held up for it.
-+const DRIVER_STOP_TIMEOUT: Duration = Duration::from_millis(100);
++    /// The mux owns the socket; this connection registers on it under its ICE ufrag and
++    /// receives the datagrams routed to that ufrag. This is the deployment shape of servers
++    /// like SRS or mediamtx: exactly one UDP port to open or forward, however many
++    /// connections the process serves. See [`udp_mux`] for how routing works and the
++    /// constraints (host candidates only; pinned ICE credentials).
++    ///
++    /// Mutually exclusive with [`with_udp_addrs`](Self::with_udp_addrs): the mux owns the
++    /// socket, so there is nothing left for a per-connection bind. ICE credentials are not
++    /// pinned by the mux — the driver registers whatever the agent holds at bind time and
++    /// re-registers under the rotated credentials on an ICE restart.
++    pub fn with_udp_mux(mut self, udp_mux: Arc<dyn udp_mux::UDPMux>) -> Self {
++        self.udp_mux = Some(udp_mux);
++        self
++    }
 +
- pub(crate) struct PeerConnectionImpl {
-     inner: Arc<PeerConnectionRef>,
-     driver_handle: Mutex<Option<Box<dyn JoinHandle>>>,
-+    /// Ends (`recv` returns `None`) once the driver future is gone, whether it ran to completion
-+    /// or was aborted: its sender lives in that future. `close()` waits on it.
-+    driver_stopped: Mutex<Option<crate::runtime::Receiver<()>>>,
-     /// Whether the driver runs on the shared bounded reactor pool (a task pinned to
--    /// one pool thread) rather than the general async runtime. When true, `close()`
--    /// waits for that task to finish and then aborts it, and `Drop` signals it to
--    /// stop (via [`PeerConnectionRef::closing`]) so a driver task is not left
--    /// running on a pool thread if the connection is dropped without an explicit
--    /// `close()`.
-+    /// one pool thread) rather than the general async runtime. When true, `Drop`
-+    /// signals it to stop (via [`PeerConnectionRef::closing`]) so a driver task is not
-+    /// left running on a pool thread if the connection is dropped without an explicit
-+    /// `close()`. (`close()` itself treats both runtimes alike.)
+     /// Set the size of the dedicated reactor pool used. Defaults to `0`, means disabled.
+     /// Values above `1024` are clamped down to it.
+     ///
+@@ -364,6 +384,33 @@ impl<A: ToSocketAddrs> PeerConnectionBuilder<A> {
+         };
+         self.setting_engine
+             .set_crypto_provider(crypto_provider.clone());
++
++        // A muxed connection registers under the ICE credentials the agent holds: the driver
++        // reads them at first bind and re-reads them after an ICE restart (which rotates
++        // them), so nothing is pinned here — the mux's routing key always tracks the agent's
++        // current ufrag.
++        let udp_mux = if let Some(mux) = self.udp_mux {
++            if !self.udp_addrs.is_empty() {
++                return Err(Error::Other(
++                    "`with_udp_addrs` and `with_udp_mux` are mutually exclusive: the mux owns \
++                     the socket, there is nothing left to bind"
++                        .to_owned(),
++                ));
++            }
++            Some(mux)
++        } else {
++            None
++        };
++
++        // Whether the application pinned ICE credentials on the setting engine. Pinned
++        // credentials survive into ICE restarts (rtc reuses them), which a muxed connection
++        // cannot tolerate — its routing ufrag must rotate — so the combination is refused at
++        // restart time (see `ensure_mux_credentials_can_restart`).
++        let pins_credentials = {
++            let (ufrag, pwd) = self.setting_engine.ice_credentials();
++            !ufrag.is_empty() || !pwd.is_empty()
++        };
++
+         let mdns_mode = self.setting_engine.multicast_dns().mode;
+         let turn_allocation_refresh_interval_cap =
+             self.setting_engine.turn_allocation_refresh_interval_cap();
+@@ -399,10 +446,12 @@ impl<A: ToSocketAddrs> PeerConnectionBuilder<A> {
+             discard_local_candidates_during_ice_restart,
+             self.udp_addrs,
+             self.tcp_addrs,
++            udp_mux,
+             self.dedicated_reactor_pool_size,
+             data_channel_send_buffer_limit,
+             turn_allocation_refresh_interval_cap,
+             crypto_provider,
++            pins_credentials,
+         )
+         .await
+     }
+@@ -746,6 +795,14 @@ pub(crate) struct PeerConnectionImpl {
+     /// left running on a pool thread if the connection is dropped without an explicit
+     /// `close()`. (`close()` itself treats both runtimes alike.)
      dedicated_reactor: bool,
- }
- 
-@@ -979,6 +996,7 @@ impl PeerConnectionImpl {
-                 ice_restart_rebind_pending: AtomicBool::new(false),
-             }),
-             driver_handle: Mutex::new(None),
-+            driver_stopped: Mutex::new(None),
-             dedicated_reactor: dedicated_reactor_pool_size > 0,
-         };
- 
-@@ -995,7 +1013,10 @@ impl PeerConnectionImpl {
-         // future, build the driver, report the init outcome, then run the event
-         // loop to completion.
-         let inner = peer_connection.inner.clone();
-+        let (driver_stopped_tx, driver_stopped_rx) = channel::<()>(1);
-         let run_driver = async move {
-+            // Dropped with this future, which is what `close()` waits for.
-+            let _driver_stopped = driver_stopped_tx;
-             let mut driver = PeerConnectionDriver::new(
-                 inner,
-                 udp_addrs,
-@@ -1018,12 +1039,14 @@ impl PeerConnectionImpl {
-             driver.signal_stopped();
-         };
- 
-+        let run_driver = DriverTask::new(&peer_connection.inner, run_driver);
-         let driver_handle = if dedicated_reactor_pool_size > 0 {
-             runtime.spawn_reactor(dedicated_reactor_pool_size, Box::pin(run_driver))
-         } else {
-             runtime.spawn(Box::pin(run_driver))
-         };
-         *peer_connection.driver_handle.lock().await = Some(driver_handle);
-+        *peer_connection.driver_stopped.lock().await = Some(driver_stopped_rx);
- 
-         // Surface init errors here rather than swallowing them on the driver
-         // thread. The driver reports its init outcome exactly once; a closed
-@@ -1097,30 +1120,31 @@ impl PeerConnection for PeerConnectionImpl {
-             .await;
- 
-         let driver_handle = self.driver_handle.lock().await.take();
-+        let driver_stopped = self.driver_stopped.lock().awa
++    /// Whether this connection shares a UDP mux. A mux gathers host candidates only, so a
++    /// relay-only ICE policy is rejected at `set_configuration` instead of silently gathering
+
 ```
 
-**File**: `src/peer_connection/transport/turn_relayer.rs` (modified, +30/-5)
+**File**: `src/peer_connection/transport/mod.rs` (modified, +7/-1)
 ```diff
-@@ -69,6 +69,10 @@ pub(crate) struct RTCTurnRelayer {
-     pending_permissions: HashMap<rtc::stun::message::TransactionId, PendingPermission>,
-     pending_permission_pairs: HashMap<(SocketAddr, SocketAddr), rtc::stun::message::TransactionId>,
-     pending_packets: HashMap<(SocketAddr, SocketAddr), VecDeque<TaggedBytesMut>>,
-+    /// Refresh(LIFETIME=0) requests queued while retiring a TURN client. They must survive a
-+    /// configuration reset (which clears `wouts`) and go out on the socket that owns the
-+    /// allocation, so they are kept apart and sent first.
-+    retirement_wouts: VecDeque<TaggedBytesMut>,
-     wouts: VecDeque<TaggedBytesMut>,
-     routs: VecDeque<TaggedBytesMut>,
-     events: VecDeque<RTCTurnRelayEventOut>,
-@@ -96,6 +100,7 @@ impl RTCTurnRelayer {
-             pending_permissions: HashMap::new(),
-             pending_permission_pairs: HashMap::new(),
-             pending_packets: HashMap::new(),
-+            retirement_wouts: VecDeque::new(),
-             wouts: VecDeque::new(),
-             routs: VecDeque::new(),
-             events: VecDeque::new(),
-@@ -131,7 +136,7 @@ impl RTCTurnRelayer {
- 
-         let keys: Vec<FourTuple> = self.clients.keys().copied().collect();
-         for key in keys {
--            self.remove_client(key);
-+            self.remove_client(key, true);
-         }
-         self.relay_addrs.clear();
-         self.pending_permissions.clear();
-@@ -507,8 +512,24 @@ impl RTCTurnRelayer {
-         }
-     }
- 
--    fn remove_client(&mut self, four_tuple: FourTuple) {
-+    /// Drops a TURN client. With `release_allocation`, a live allocation is released first
-+    /// (RFC 8656 §7: a Refresh with LIFETIME 0) instead of being left on the server until its
-+    /// lifetime expires.
-+    fn remove_client(&mut self, four_tuple: FourTuple, release_allocation: bool) {
-         if let Some(mut managed_client) = self.clients.remove(&four_tuple) {
-+            // `Client::close` only clears transaction state; the release is `Relay::close`,
-+            // which queues an authenticated Refresh(LIFETIME=0). Clear the old transactions
-+            // first, then create and drain the release so the driver sends it on the socket
-+            // that owns the allocation.
-+            let _ = managed_client.client.close();
-+            if release_allocation && let Some(relay_addr) = managed_client.relay_addr {
-+                if let Ok(mut relay) = managed_client.client.relay(relay_addr) {
-+                    let _ = relay.close(self.runtime.now());
-+                }
-+                while let Some(msg) = managed_client.client.poll_write() {
-+                    self.retirement_wouts.push_back(msg);
-+                }
-+            }
-             if let Some(relay_addr) = managed_client.relay_addr.take() {
-                 self.relay_addrs.remove(&relay_addr);
-                 self.pending_packets
-@@ -518,7 +539,6 @@ impl RTCTurnRelayer {
-                 self.pending_permission_pairs
-                     .retain(|(addr, _), _| *addr != relay_addr);
-             }
--            let _ = managed_client.client.close();
-         }
-     }
- 
-@@ -645,6 +665,9 @@ impl Protocol<TaggedBytesMut, TaggedBytesMut, RTCTurnRelayEventIn> for RTCTurnRe
-     }
- 
-     fn poll_write(&mut self) -> Option<Self::Wout> {
-+        if let Some(msg) = self.retirement_wouts.pop_front() {
-+            return Some(msg);
-+        }
-         for managed_client in self.clients.values_mut() {
-             while let Some(msg) = managed_client.client.poll_write() {
-                 self.wouts.push_back(msg);
-@@ -656,7 +679,9 @@ impl Protocol<TaggedBytesMut, TaggedBytesMut, RTCTurnRelayEventIn> for RTCTurnRe
-     fn handle_event(&mut self, evt: RTCTurnRelayEventIn) -> Result<()> {
-         match evt {
-             RTCTurnRelayEventIn::SocketWriteFailure(four_tuple) => {
--                self.remove_client(four_tuple);
-+                // The socket is already unusable, so a Refresh(0) could not be delivered; the
-+                // server reclaims this allocation when its lifetime expires.
-+                self.remove_client(four_tuple, false);
-                 self.maybe_emit_gathering_complete();
-             }
-         }
-@@ -795,7 +820,7 @@ impl Protocol<TaggedBytesMut, TaggedBytesMut, RTCTurnRelayEventIn> for RTCTurnRe
-     fn close(&mut self) -> Result<()> {
-         let keys: Vec<FourTuple> = self.clients.keys().copied().collect();
-         for key in keys {
--            self.remove_client(key);
-+            self.remove_client(key, true);
-         }
-         Ok(())
-     }
-```
-
-**File**: `tests/turn_release_on_close.rs` (added, +426/-0)
-```diff
-@@ -0,0 +1,426 @@
-+//! Regression test for webrtc#903: `close()` must release the connection's TURN allocations.
-+//!
-+//! A TURN allocation is released with a Refresh carrying LIFETIME=0 (RFC 8656 §7). The driver
-+//! sends those releases on its way out, but on the general runtime `close()` used to abort the
-+//! driver without waiting, so whether the releases went out was a race — and on master they were
-+//! never queued at all (webrtc#895 had landed on v0.20.x only). The server kept the allocations
-+//! until their lifetime expired.
-+//!
-+//! The same release is owed when an ICE restart rebinds the sockets: the old allocation belongs to
-+//! a socket that is about to be dropped, and a release sent from its replacement would not match
-+//! the allocation's 5-tuple.
-+//!
-+//! A mock TURN server counts the releases it receives. Each close case is repeated because the
-+//! old failure was a race.
-+use std::net::{IpAddr, Ipv4Addr, SocketAddr};
-+use std::sync::Arc;
-+use std::sync::atomic::{AtomicUsize, Ordering};
-+use std::time::{Duration, Instant};
-+
-+use rtc::peer_connection::configuration::setting_engine::SettingEngineBuilder;
-+use rtc::stun::attributes::{ATTR_NONCE, ATTR_REALM};
-+use rtc::stun::error_code::CODE_UNAUTHORIZED;
-+use rtc::stun::message::{
-+    CLASS_ERROR_RESPONSE, CLASS_SUCCESS_RESPONSE, Getter, METHOD_ALLOCATE,
-+    METHOD_CREATE_PERMISSION, METHOD_REFRESH, Message as StunMessage, MessageType,
-+};
-+use rtc::stun::textattrs::{Nonce, Realm};
-+use rtc::turn::proto::lifetime::Lifetime;
-+use rtc::turn::proto::relayaddr::RelayedAddress;
-+use webrtc::peer_connection::{
-+    MediaEngine, PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler,
-+    RTCConfigurationBuilder, RTCIceGatheringState, RTCIceServer, RTCIceTransportPolicy,
-+};
-+use webrtc::runtime::{AsyncUdpSocket, Mutex, Receiver, Sender, channel};
-+
-+mod common;
-+use common::{block_on, runtime, sleep, timeout};
-+
-+/// Each case is repeated this many times: the old failure was a race on the general runtime.
-+const RUNS: usize = 5;
-+
-+/// How long after `close()` returns the release may take to reach the mock server.
-+const RELEASE_TIMEOUT: Duration = Duration::from_secs(2);
-+
-+/// What the mock TURN server has seen.
-+#[derive(Default)]
-+struct Counts {
-+    allocations: AtomicUsize,
-+    releases: AtomicUsize,
-+}
-+
-+/// A TURN server that grants every authenticated Allocate and counts Refresh(LIFETIME=0).
-+async fn run_mock_turn_server(
-+    socket: Arc<dyn AsyncUdpSocket>,
-+    relay_addr: SocketAddr,
-+    counts: Arc<Counts>,
-+) {
-+    let mut buf = vec![0u8; 2048];
-+    loop {
-+        let Ok((n, peer_addr)) = socket.recv_from(&mut buf).await else {
-+            break;
-+        };
-+        let mut msg = StunMessage::new();
-+        msg.raw = buf[..n].to_vec();
-+        if msg.decode().is_err() {
-+            continue;
-+        }
-+
-+        let mut response = StunMessage::new();
-+        let built = match msg.typ.method {
-+            METHOD_ALLOCATE if msg.get(ATTR_NONCE).is_err() => response.build(&[
-+                Box::new(msg.transaction_id),
-+                Box::new(MessageType::new(METHOD_ALLOCATE, CLASS_ERROR_RESPONSE)),
-+                Box::new(CODE_UNAUTHORIZED),
-+                Box::new(Realm::new(ATTR_REALM, "webrtc.rs".to_owned())),
-+                Box::new(Nonce::new(ATTR_NONCE, "nonce".to_owned())),
-+            ]),
-+            METHOD_ALLOCATE => {
-+                counts.allocations.fetch_add(1, Ordering::SeqCst);
-+                response.build(&[
-+                    Box::new(msg.transaction_id),
-+                    Box::new(MessageType::new(METHOD_ALLOCATE, CLASS_SUCCESS_RESPONSE)),
-+                    Box::new(RelayedAddress {
-+                        ip: relay_addr.ip(),
-+                        port: relay_addr.port(),
-+                    }),
-+                    Box::new(Lifetime(Duration::from_secs(600))),
-+                ])
-+            }
-+            METHOD_REFRESH => {
-+                let mut lifetime = Lifetime::default();
-+                let release = lifetime.get_from(&msg).is_ok() && lifetime.0.is_zero();
-+                if release {
-+                    counts.releases.fetch_add(1, Ordering::SeqCst);
-+                }
-+                response.build(&[
-+                    Box::new(msg.transaction_id),
-+                    Box::new(MessageType::new(METHOD_REFRESH, CLASS_SUCCESS_RESPONSE)),
-+                    Box::new(Lifetime(if release {
-+                        Duration::ZERO
-+                    } else {
-+                        Duration::from_secs(600)
-+                    })),
-+                ])
-+            }
-+            METHOD_CREATE_PERMISSION => response.build(&[
-+                Box::new(msg.transaction_id),
-+                Box::new(MessageType::new(
-+                    METHOD_CREATE_PERMISSION,
-+                    CLASS_SUCCESS_RESPONSE,
-+                )),
-+            ]),
-+            _ => continue,
-+        };
-+        if built.is_err() {
-+            continue;
-```
-
----
-
-### Incident Patch 2: `a72f5358` (2026-09-27)
-**Commit Message**: fix: release TURN allocations on close() on both runtimes (#903) (#911)
-
-* fix(turn): release allocations when TURN clients are retired (port of #895)
-
-#895 landed on v0.20.x only. On master, retiring the TURN relayer's clients
-dropped them without releasing their allocations, so the server kept each
-one until its lifetime expired: on close(), on an ICE-restart rebind, and
-on a configuration change that recreates the clients.
-
-Port it:
-
-- RTCTurnRelayer::remove_client takes release_allocation. When set and the
-  client has a relay, Relay::close queues an authenticated Refresh with
-  LIFETIME=0 (RFC 8656 §7), drained into retirement_wouts, which poll_write
-  sends first and which a configuration reset does not clear. A socket
-  write failure retires without releasing: the socket can no longer
-  deliver it.
-- The driver sends those releases on both exit paths (the closing check at
-  the top of the loop and the Close event), through a small
-  release_turn_allocations helper, and before an ICE-restart rebind drops
-  the old sockets, since a release from a new socket would not match the
-  allocation's 5-tuple.
-
-master's rtc-turn takes the time explicitly, so Relay::close is passed the
-r
-
-**File**: `src/peer_connection/driver.rs` (modified, +86/-6)
-```diff
-@@ -44,8 +44,10 @@ use rtc::shared::{FourTuple, TaggedBytesMut, TransportContext, TransportProtocol
- use rtc::{rtcp, rtp};
- use std::collections::hash_map::Entry;
- use std::collections::{HashMap, VecDeque};
-+use std::future::Future;
- use std::io::IoSliceMut;
- use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
-+use std::pin::Pin;
- use std::sync::Arc;
- use std::sync::atomic::Ordering;
- use std::time::{Duration, Instant};
-@@ -134,6 +136,67 @@ const DEFAULT_TIMEOUT_DURATION: Duration = Duration::from_secs(86400); // 1 day
- /// by elapsed time catches every shape.
- const MIN_IMMEDIATE_TIMEOUT_INTERVAL: Duration = Duration::from_millis(1);
- 
-+thread_local! {
-+    /// The connection whose driver task this thread is polling at this moment, or `0`.
-+    static POLLING_DRIVER: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
-+}
-+
-+/// Identifies a connection for [`POLLING_DRIVER`].
-+fn driver_id(inner: &Arc<PeerConnectionRef>) -> usize {
-+    Arc::as_ptr(inner) as usize
-+}
-+
-+/// Whether the caller is running inside `inner`'s own driver task.
-+///
-+/// Application callbacks are awaited on the driver task, so this is true for a `close()`
-+/// called from one of them. Waiting there for the driver to finish can never succeed (it cannot
-+/// make progress until the callback returns), and aborting it would cut off the TURN releases it
-+/// sends on its way out.
-+pub(crate) fn is_polling_driver(inner: &Arc<PeerConnectionRef>) -> bool {
-+    POLLING_DRIVER.with(|polling| polling.get()) == driver_id(inner)
-+}
-+
-+/// Runs a connection's driver future, recording on the polling thread for the duration of every
-+/// poll which connection it belongs to, so [`is_polling_driver`] can answer from inside it.
-+///
-+/// Recorded per poll rather than per task because a multi-threaded runtime may poll the task on a
-+/// different thread each time; everything the driver awaits, callbacks included, runs within one
-+/// of those polls.
-+pub(crate) struct DriverTask {
-+    id: usize,
-+    future: Pin<Box<dyn Future<Output = ()> + Send>>,
-+}
-+
-+impl DriverTask {
-+    pub(crate) fn new(
-+        inner: &Arc<PeerConnectionRef>,
-+        future: impl Future<Output = ()> + Send + 'static,
-+    ) -> Self {
-+        Self {
-+            id: driver_id(inner),
-+            future: Box::pin(future),
-+        }
-+    }
-+}
-+
-+impl Future for DriverTask {
-+    type Output = ();
-+
-+    fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
-+        /// Restores the previous marker even if the poll panics.
-+        struct Restore(usize);
-+        impl Drop for Restore {
-+            fn drop(&mut self) {
-+                POLLING_DRIVER.with(|polling| polling.set(self.0));
-+            }
-+        }
-+
-+        let this = self.get_mut();
-+        let _restore = Restore(POLLING_DRIVER.with(|polling| polling.replace(this.id)));
-+        this.future.as_mut().poll(cx)
-+    }
-+}
-+
- /// Insert `sender` for `channel_id`, returning `true` if the channel should be announced.
- pub(crate) fn insert_data_channel_event_sender(
-     data_channels: &mut HashMap<RTCDataChannelId, Sender<DataChannelEvent>>,
-@@ -563,6 +626,15 @@ where
-     async fn bind_transports(&mut self) -> Result<()> {
-         let runtime = Arc::clone(&self.inner.runtime);
- 
-+        // Release TURN allocations while the old UDP sockets still exist. Rebinding drops them
-+        // below, and a Refresh(0) sent from a new socket would not match the allocation's
-+        // 5-tuple, leaving it on the server until it expires. The initial bind has no previous
-+        // generation to release.
-+        if !self.udp_sockets.is_empty() {
-+            self.turn_relayer.close()?;
-+            self.poll_writes().await?;
-+        }
-+
-         // Drop before binding — see above. Also drops every accepted TCP stream, which is
-         // correct: they belong to the generation being replaced.
-         self.udp_sockets.clear();
-@@ -766,9 +838,7 @@ where
-             // momentarily full channel), this check still guarantees the loop —
-             // and thus a dedicated reactor thread — terminates instead of leaking.
-             if self.inner.closing.load(Ordering::Acquire) {
--                if let Err(err) = self.turn_relayer.close() {
--                    error!("Failed to close turn_relayer: {}", err);
--                }
-+                self.release_turn_allocations().await;
-                 return Ok(());
-             }
- 
-@@ -1689,9 +1759,7 @@ where
-                 self.tcp_transport.register_stream(four_tuple, stream);
-             }
-             PeerConnectionDriverEvent::Close => {
--                if let Err(err) = self.turn_relayer.close() {
--                    error!("Failed to close turn_relayer: {}", err);
--                }
-+                self.release_turn_allocations().await;
-                 return true;
-             }
-         }
-@@ -1848,6 +1916,18 @@ where
-         messages
-     }
- 
-+    /// Releases every TURN allocation (Refresh with LIFETIME=0) and se
-```
-
-**File**: `src/peer_connection/mod.rs` (modified, +55/-31)
-```diff
-@@ -68,7 +68,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
- 
- use driver::{
-     APPLICATION_TO_DRIVER_EVENT_CHANNEL_CAPACITY, DRIVER_TO_DATA_CHANNEL_EVENT_CHANNEL_CAPACITY,
--    PeerConnectionDriver,
-+    DriverTask, PeerConnectionDriver, is_polling_driver,
- };
- 
- use rtc::data_channel::{RTCDataChannelId, RTCDataChannelInit};
-@@ -448,9 +448,15 @@ pub trait PeerConnection: crate::sealed::Sealed + Send + Sync + 'static {
-     /// Idempotent: closing an already-closed connection succeeds. Pending
-     /// [`DataChannel::send`] calls blocked awaiting
-     /// capacity are woken with [`Error::ErrDataChannelClosed`], and every event stream ends:
--    /// [`DataChannel::poll`], [`TrackRemote::poll`](crate::media_stream::track_remote::TrackRemote::poll)
--    /// and [`TrackLocal::poll`](crate::media_stream::track_local::TrackLocal::poll) return `None`
--    /// once the events already queued have been read.
-+    /// [`DataChannel::poll`], [`TrackRemote::poll`] and [`TrackLocal::poll`] return `None` once the
-+    /// events already queued have been read.
-+    ///
-+    /// TURN allocations are released on a best-effort basis: a Refresh with LIFETIME 0 is sent
-+    /// for each one before this returns, so the server frees them now rather than when their
-+    /// lifetime expires. `close()` waits at most about 100 ms for that; if the connection's
-+    /// driver cannot send them in time, it is stopped anyway and the allocations expire on the
-+    /// server. Called from an event-handler callback, which runs on the driver itself, it returns
-+    /// without waiting and the releases are sent as soon as the callback returns.
-     ///
-     /// # Errors
-     ///
-@@ -720,15 +726,25 @@ pub trait PeerConnection: crate::sealed::Sealed + Send + Sync + 'static {
- ///
- /// Not exposed directly — obtained as an opaque `impl PeerConnection` from
- /// [`PeerConnectionBuilder::build`].
-+/// How long `close()` waits for the driver to finish its exit path before aborting it.
-+///
-+/// The exit path is local work: queue the TURN releases and hand them to the socket, with no
-+/// round trip, so it normally completes in a few milliseconds. This only caps the case of a driver
-+/// that cannot get there promptly — one blocked in an application callback, say — where releasing
-+/// the allocations is best effort and `close()` must not be held up for it.
-+const DRIVER_STOP_TIMEOUT: Duration = Duration::from_millis(100);
-+
- pub(crate) struct PeerConnectionImpl {
-     inner: Arc<PeerConnectionRef>,
-     driver_handle: Mutex<Option<Box<dyn JoinHandle>>>,
-+    /// Ends (`recv` returns `None`) once the driver future is gone, whether it ran to completion
-+    /// or was aborted: its sender lives in that future. `close()` waits on it.
-+    driver_stopped: Mutex<Option<crate::runtime::Receiver<()>>>,
-     /// Whether the driver runs on the shared bounded reactor pool (a task pinned to
--    /// one pool thread) rather than the general async runtime. When true, `close()`
--    /// waits for that task to finish and then aborts it, and `Drop` signals it to
--    /// stop (via [`PeerConnectionRef::closing`]) so a driver task is not left
--    /// running on a pool thread if the connection is dropped without an explicit
--    /// `close()`.
-+    /// one pool thread) rather than the general async runtime. When true, `Drop`
-+    /// signals it to stop (via [`PeerConnectionRef::closing`]) so a driver task is not
-+    /// left running on a pool thread if the connection is dropped without an explicit
-+    /// `close()`. (`close()` itself treats both runtimes alike.)
-     dedicated_reactor: bool,
- }
- 
-@@ -1005,6 +1021,7 @@ impl PeerConnectionImpl {
-                 ice_restart_rebind_pending: AtomicBool::new(false),
-             }),
-             driver_handle: Mutex::new(None),
-+            driver_stopped: Mutex::new(None),
-             dedicated_reactor: dedicated_reactor_pool_size > 0,
-         };
- 
-@@ -1021,7 +1038,10 @@ impl PeerConnectionImpl {
-         // future, build the driver, report the init outcome, then run the event
-         // loop to completion.
-         let inner = peer_connection.inner.clone();
-+        let (driver_stopped_tx, driver_stopped_rx) = channel::<()>(1);
-         let run_driver = async move {
-+            // Dropped with this future, which is what `close()` waits for.
-+            let _driver_stopped = driver_stopped_tx;
-             let stopped_inner = Arc::clone(&inner);
-             let mut driver = PeerConnectionDriver::new(
-                 inner,
-@@ -1050,12 +1070,14 @@ impl PeerConnectionImpl {
-             stopped_inner.end_event_streams().await;
-         };
- 
-+        let run_driver = DriverTask::new(&peer_connection.inner, run_driver);
-         let driver_handle = if dedicated_reactor_pool_size > 0 {
-             runtime.spawn_reactor(dedicated_reactor_pool_size, Box::pin(run_driver))
-         } else {
-             runtime.spawn(Box::pin(run_driver))
-         };
-         *peer_connection.driver_handle.lock().await = Some(dr
-```
-
-**File**: `src/peer_connection/transport/turn_relayer.rs` (modified, +30/-5)
-```diff
-@@ -69,6 +69,10 @@ pub(crate) struct RTCTurnRelayer {
-     pending_permissions: HashMap<rtc::stun::message::TransactionId, PendingPermission>,
-     pending_permission_pairs: HashMap<(SocketAddr, SocketAddr), rtc::stun::message::TransactionId>,
-     pending_packets: HashMap<(SocketAddr, SocketAddr), VecDeque<TaggedBytesMut>>,
-+    /// Refresh(LIFETIME=0) requests queued while retiring a TURN client. They must survive a
-+    /// configuration reset (which clears `wouts`) and go out on the socket that owns the
-+    /// allocation, so they are kept apart and sent first.
-+    retirement_wouts: VecDeque<TaggedBytesMut>,
-     wouts: VecDeque<TaggedBytesMut>,
-     routs: VecDeque<TaggedBytesMut>,
-     events: VecDeque<RTCTurnRelayEventOut>,
-@@ -96,6 +100,7 @@ impl RTCTurnRelayer {
-             pending_permissions: HashMap::new(),
-             pending_permission_pairs: HashMap::new(),
-             pending_packets: HashMap::new(),
-+            retirement_wouts: VecDeque::new(),
-             wouts: VecDeque::new(),
-             routs: VecDeque::new(),
-             events: VecDeque::new(),
-@@ -131,7 +136,7 @@ impl RTCTurnRelayer {
- 
-         let keys: Vec<FourTuple> = self.clients.keys().copied().collect();
-         for key in keys {
--            self.remove_client(key);
-+            self.remove_client(key, true);
-         }
-         self.relay_addrs.clear();
-         self.pending_permissions.clear();
-@@ -507,8 +512,24 @@ impl RTCTurnRelayer {
-         }
-     }
- 
--    fn remove_client(&mut self, four_tuple: FourTuple) {
-+    /// Drops a TURN client. With `release_allocation`, a live allocation is released first
-+    /// (RFC 8656 §7: a Refresh with LIFETIME 0) instead of being left on the server until its
-+    /// lifetime expires.
-+    fn remove_client(&mut self, four_tuple: FourTuple, release_allocation: bool) {
-         if let Some(mut managed_client) = self.clients.remove(&four_tuple) {
-+            // `Client::close` only clears transaction state; the release is `Relay::close`,
-+            // which queues an authenticated Refresh(LIFETIME=0). Clear the old transactions
-+            // first, then create and drain the release so the driver sends it on the socket
-+            // that owns the allocation.
-+            let _ = managed_client.client.close();
-+            if release_allocation && let Some(relay_addr) = managed_client.relay_addr {
-+                if let Ok(mut relay) = managed_client.client.relay(relay_addr) {
-+                    let _ = relay.close(self.runtime.now());
-+                }
-+                while let Some(msg) = managed_client.client.poll_write() {
-+                    self.retirement_wouts.push_back(msg);
-+                }
-+            }
-             if let Some(relay_addr) = managed_client.relay_addr.take() {
-                 self.relay_addrs.remove(&relay_addr);
-                 self.pending_packets
-@@ -518,7 +539,6 @@ impl RTCTurnRelayer {
-                 self.pending_permission_pairs
-                     .retain(|(addr, _), _| *addr != relay_addr);
-             }
--            let _ = managed_client.client.close();
-         }
-     }
- 
-@@ -645,6 +665,9 @@ impl Protocol<TaggedBytesMut, TaggedBytesMut, RTCTurnRelayEventIn> for RTCTurnRe
-     }
- 
-     fn poll_write(&mut self) -> Option<Self::Wout> {
-+        if let Some(msg) = self.retirement_wouts.pop_front() {
-+            return Some(msg);
-+        }
-         for managed_client in self.clients.values_mut() {
-             while let Some(msg) = managed_client.client.poll_write() {
-                 self.wouts.push_back(msg);
-@@ -656,7 +679,9 @@ impl Protocol<TaggedBytesMut, TaggedBytesMut, RTCTurnRelayEventIn> for RTCTurnRe
-     fn handle_event(&mut self, evt: RTCTurnRelayEventIn) -> Result<()> {
-         match evt {
-             RTCTurnRelayEventIn::SocketWriteFailure(four_tuple) => {
--                self.remove_client(four_tuple);
-+                // The socket is already unusable, so a Refresh(0) could not be delivered; the
-+                // server reclaims this allocation when its lifetime expires.
-+                self.remove_client(four_tuple, false);
-                 self.maybe_emit_gathering_complete();
-             }
-         }
-@@ -795,7 +820,7 @@ impl Protocol<TaggedBytesMut, TaggedBytesMut, RTCTurnRelayEventIn> for RTCTurnRe
-     fn close(&mut self) -> Result<()> {
-         let keys: Vec<FourTuple> = self.clients.keys().copied().collect();
-         for key in keys {
--            self.remove_client(key);
-+            self.remove_client(key, true);
-         }
-         Ok(())
-     }
-```
-
-**File**: `tests/turn_release_on_close.rs` (added, +426/-0)
-```diff
-@@ -0,0 +1,426 @@
-+//! Regression test for webrtc#903: `close()` must release the connection's TURN allocations.
-+//!
-+//! A TURN allocation is released with a Refresh carrying LIFETIME=0 (RFC 8656 §7). The driver
-+//! sends those releases on its way out, but on the general runtime `close()` used to abort the
-+//! driver without waiting, so whether the releases went out was a race — and on master they were
-+//! never queued at all (webrtc#895 had landed on v0.20.x only). The server kept the allocations
-+//! until their lifetime expired.
-+//!
-+//! The same release is owed when an ICE restart rebinds the sockets: the old allocation belongs to
-+//! a socket that is about to be dropped, and a release sent from its replacement would not match
-+//! the allocation's 5-tuple.
-+//!
-+//! A mock TURN server counts the releases it receives. Each close case is repeated because the
-+//! old failure was a race.
-+use std::net::{IpAddr, Ipv4Addr, SocketAddr};
-+use std::sync::Arc;
-+use std::sync::atomic::{AtomicUsize, Ordering};
-+use std::time::{Duration, Instant};
-+
-+use rtc::peer_connection::configuration::setting_engine::SettingEngineBuilder;
-+use rtc::stun::attributes::{ATTR_NONCE, ATTR_REALM};
-+use rtc::stun::error_code::CODE_UNAUTHORIZED;
-+use rtc::stun::message::{
-+    CLASS_ERROR_RESPONSE, CLASS_SUCCESS_RESPONSE, Getter, METHOD_ALLOCATE,
-+    METHOD_CREATE_PERMISSION, METHOD_REFRESH, Message as StunMessage, MessageType,
-+};
-+use rtc::stun::textattrs::{Nonce, Realm};
-+use rtc::turn::proto::lifetime::Lifetime;
-+use rtc::turn::proto::relayaddr::RelayedAddress;
-+use webrtc::peer_connection::{
-+    MediaEngine, PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler,
-+    RTCConfigurationBuilder, RTCIceGatheringState, RTCIceServer, RTCIceTransportPolicy,
-+};
-+use webrtc::runtime::{AsyncUdpSocket, Mutex, Receiver, Sender, channel};
-+
-+mod common;
-+use common::{block_on, runtime, sleep, timeout};
-+
-+/// Each case is repeated this many times: the old failure was a race on the general runtime.
-+const RUNS: usize = 5;
-+
-+/// How long after `close()` returns the release may take to reach the mock server.
-+const RELEASE_TIMEOUT: Duration = Duration::from_secs(2);
-+
-+/// What the mock TURN server has seen.
-+#[derive(Default)]
-+struct Counts {
-+    allocations: AtomicUsize,
-+    releases: AtomicUsize,
-+}
-+
-+/// A TURN server that grants every authenticated Allocate and counts Refresh(LIFETIME=0).
-+async fn run_mock_turn_server(
-+    socket: Arc<dyn AsyncUdpSocket>,
-+    relay_addr: SocketAddr,
-+    counts: Arc<Counts>,
-+) {
-+    let mut buf = vec![0u8; 2048];
-+    loop {
-+        let Ok((n, peer_addr)) = socket.recv_from(&mut buf).await else {
-+            break;
-+        };
-+        let mut msg = StunMessage::new();
-+        msg.raw = buf[..n].to_vec();
-+        if msg.decode().is_err() {
-+            continue;
-+        }
-+
-+        let mut response = StunMessage::new();
-+        let built = match msg.typ.method {
-+            METHOD_ALLOCATE if msg.get(ATTR_NONCE).is_err() => response.build(&[
-+                Box::new(msg.transaction_id),
-+                Box::new(MessageType::new(METHOD_ALLOCATE, CLASS_ERROR_RESPONSE)),
-+                Box::new(CODE_UNAUTHORIZED),
-+                Box::new(Realm::new(ATTR_REALM, "webrtc.rs".to_owned())),
-+                Box::new(Nonce::new(ATTR_NONCE, "nonce".to_owned())),
-+            ]),
-+            METHOD_ALLOCATE => {
-+                counts.allocations.fetch_add(1, Ordering::SeqCst);
-+                response.build(&[
-+                    Box::new(msg.transaction_id),
-+                    Box::new(MessageType::new(METHOD_ALLOCATE, CLASS_SUCCESS_RESPONSE)),
-+                    Box::new(RelayedAddress {
-+                        ip: relay_addr.ip(),
-+                        port: relay_addr.port(),
-+                    }),
-+                    Box::new(Lifetime(Duration::from_secs(600))),
-+                ])
-+            }
-+            METHOD_REFRESH => {
-+                let mut lifetime = Lifetime::default();
-+                let release = lifetime.get_from(&msg).is_ok() && lifetime.0.is_zero();
-+                if release {
-+                    counts.releases.fetch_add(1, Ordering::SeqCst);
-+                }
-+                response.build(&[
-+                    Box::new(msg.transaction_id),
-+                    Box::new(MessageType::new(METHOD_REFRESH, CLASS_SUCCESS_RESPONSE)),
-+                    Box::new(Lifetime(if release {
-+                        Duration::ZERO
-+                    } else {
-+                        Duration::from_secs(600)
-+                    })),
-+                ])
-+            }
-+            METHOD_CREATE_PERMISSION => response.build(&[
-+                Box::new(msg.transaction_id),
-+                Box::new(MessageType::new(
-+                    METHOD_CREATE_PERMISSION,
-+                    CLASS_SUCCESS_RESPONSE,
-+                )),
-+            ]),
-+            _ => continue,
-+        };
-+        if built.is_err() {
-+            continue;
-```
-
----
-
-### Incident Patch 3: `64b6eeeb` (2026-09-26)
-**Commit Message**: fix(rtp_transceiver): break the PeerConnectionRef reference cycle (#906) (#909)
-
-* fix(rtp_transceiver): break the PeerConnectionRef reference cycle (#906)
-
-PeerConnectionRef.rtp_transceivers owns every RtpTransceiverImpl, and each
-transceiver owns its RtpSenderImpl and RtpReceiverImpl. All three held a
-strong Arc<PeerConnectionRef> back, and neither close() nor Drop empties
-the map, so a single add_track() kept the whole connection alive after
-close() and drop: the event handler, the sans-I/O core with its buffers,
-the runtime handle and every event channel.
-
-Hold the back-reference as Weak in all three. Making only the transceiver's
-Weak is not enough: the sender and receiver are owned by the transceiver,
-so either one still closes the cycle.
-
-Access goes through a peer_connection() helper that upgrades the Weak and
-returns ErrConnectionClosed once the connection is gone. Every public
-method already returns Result. set_sender returns early instead; it is only
-called by the connection's own methods, which keep the connection alive.
-All three types are pub(crate) and their constructors keep their
-signatures, so the public API is unchanged. A sender, receiver or
-transceiver the appl
-
-**File**: `src/peer_connection/driver.rs` (modified, +19/-8)
-```diff
-@@ -1259,7 +1259,13 @@ where
- 
-                         let should_announce = {
-                             let mut data_channels = self.inner.data_channel_events_tx.lock().await;
--                            insert_data_channel_event_sender(&mut data_channels, channel_id, evt_tx)
-+                            // Checked under the map's lock; see `end_event_streams`.
-+                            !self.inner.is_closing()
-+                                && insert_data_channel_event_sender(
-+                                    &mut data_channels,
-+                                    channel_id,
-+                                    evt_tx,
-+                                )
-                         };
- 
-                         if should_announce {
-@@ -1383,13 +1389,18 @@ where
-                                 rtp_transceiver.set_receiver(Some(receiver)).await;
-                             }
- 
--                            self.inner
--                                .track_remote_events_tx
--                                .lock()
--                                .await
--                                .insert(track_id.clone(), (evt_tx, Arc::clone(&track_remote)));
--
--                            pending_on_track = Some(track_remote);
-+                            {
-+                                let mut track_remotes =
-+                                    self.inner.track_remote_events_tx.lock().await;
-+                                // Checked under the map's lock; see `end_event_streams`.
-+                                if !self.inner.is_closing() {
-+                                    track_remotes.insert(
-+                                        track_id.clone(),
-+                                        (evt_tx, Arc::clone(&track_remote)),
-+                                    );
-+                                    pending_on_track = Some(track_remote);
-+                                }
-+                            }
-                         }
-                     }
-                 }
-```
-
-**File**: `src/peer_connection/mod.rs` (modified, +48/-7)
-```diff
-@@ -447,11 +447,15 @@ pub trait PeerConnection: crate::sealed::Sealed + Send + Sync + 'static {
-     ///
-     /// Idempotent: closing an already-closed connection succeeds. Pending
-     /// [`DataChannel::send`] calls blocked awaiting
--    /// capacity are woken with [`Error::ErrDataChannelClosed`].
-+    /// capacity are woken with [`Error::ErrDataChannelClosed`], and every event stream ends:
-+    /// [`DataChannel::poll`], [`TrackRemote::poll`](crate::media_stream::track_remote::TrackRemote::poll)
-+    /// and [`TrackLocal::poll`](crate::media_stream::track_local::TrackLocal::poll) return `None`
-+    /// once the events already queued have been read.
-     ///
-     /// # Errors
-     ///
--    /// Returns an error if the driver could not be reached to perform the shutdown.
-+    /// Returns an error if the underlying `rtc` peer connection fails to close. Failing to reach
-+    /// the driver is not an error: `close()` stops it either way.
-     ///
-     /// # Specification
-     ///
-@@ -889,6 +893,28 @@ fn will_restart_ice(core: &RTCPeerConnection, desc: &RTCSessionDescription) -> b
- const WRITE_YIELD_INTERVAL: usize = 128;
- 
- impl PeerConnectionRef {
-+    /// Whether `close()`, `Drop` or a driver exit has begun shutting the connection down.
-+    #[inline]
-+    pub(crate) fn is_closing(&self) -> bool {
-+        self.closing.load(Ordering::Acquire)
-+    }
-+
-+    /// Ends every application-facing event stream, so a [`DataChannel::poll`],
-+    /// [`TrackRemote::poll`](crate::media_stream::track_remote::TrackRemote::poll) or
-+    /// [`TrackLocal::poll`](crate::media_stream::track_local::TrackLocal::poll) blocked on one
-+    /// returns `None` once the events already queued have been read, instead of waiting forever
-+    /// for events a stopped driver will never deliver.
-+    ///
-+    /// Call only after `closing` is set. Every sender is inserted under its map's lock after
-+    /// checking [`is_closing`](Self::is_closing), so once this has run no new sender can
-+    /// appear: an insert that took the lock first is cleared here, and one that takes it later
-+    /// sees `closing` and skips.
-+    pub(crate) async fn end_event_streams(&self) {
-+        self.data_channel_events_tx.lock().await.clear();
-+        self.track_remote_events_tx.lock().await.clear();
-+        self.track_local_events_tx.lock().await.clear();
-+    }
-+
-     /// Marks that the next gathering pass must rebind the UDP sockets.
-     ///
-     /// A no-op unless the application asked for it through
-@@ -996,6 +1022,7 @@ impl PeerConnectionImpl {
-         // loop to completion.
-         let inner = peer_connection.inner.clone();
-         let run_driver = async move {
-+            let stopped_inner = Arc::clone(&inner);
-             let mut driver = PeerConnectionDriver::new(
-                 inner,
-                 udp_addrs,
-@@ -1016,6 +1043,11 @@ impl PeerConnectionImpl {
-             // send() cannot hang waiting for a drain that will never come — the driver no
-             // longer drains outstanding_bytes. Idempotent when close()/Drop already set it.
-             driver.signal_stopped();
-+            // No more events will be delivered, so end every stream an application task may be
-+            // blocked on. This covers the stops that do not go through `close()`: `Drop` on a
-+            // dedicated reactor, and an abnormal driver exit.
-+            drop(driver);
-+            stopped_inner.end_event_streams().await;
-         };
- 
-         let driver_handle = if dedicated_reactor_pool_size > 0 {
-@@ -1125,6 +1157,10 @@ impl PeerConnection for PeerConnectionImpl {
-             }
-         }
- 
-+        // The driver will deliver no more events, so end every stream an application task may
-+        // be blocked on. `closing` is already set above, which `end_event_streams` requires.
-+        self.inner.end_event_streams().await;
-+
-         Ok(())
-     }
- 
-@@ -1309,7 +1345,10 @@ impl PeerConnection for PeerConnectionImpl {
-         let (evt_tx, evt_rx) = channel(DRIVER_TO_DATA_CHANNEL_EVENT_CHANNEL_CAPACITY);
-         {
-             let mut data_channels = self.inner.data_channel_events_tx.lock().await;
--            data_channels.insert(channel_id, evt_tx);
-+            // Racing a `close()` that has already ended the streams: leave this one ended too.
-+            if !self.inner.is_closing() {
-+                data_channels.insert(channel_id, evt_tx);
-+            }
-         }
- 
-         self.inner.wake_writes().await;
-@@ -1391,7 +1430,9 @@ impl PeerConnection for PeerConnectionImpl {
-             Arc::clone(&self.inner),
-             track,
-         ));
--        rtp_transceiver.set_sender(Some(Arc::clone(&sender))).await;
-+        rtp_transceiver
-+            .set_sender(Some(Arc::clone(&sender)))
-+            .await?;
- 
-         Ok(sender)
-     }
-@@ -1407,7 +1448,7 @@ impl PeerConnection for PeerConnectionImpl {
-         let rtp_transceiver = rtp_transceivers
-             .get(&sender.id().into())
-             .ok_or(Error::ErrRTPTransceiverNotExi
-```
-
-**File**: `src/rtp_transceiver/mod.rs` (modified, +246/-30)
-```diff
-@@ -21,7 +21,7 @@
+@@ -2,7 +2,8 @@
+ //! objects an application reads through.
  //!
- //! ```no_run
- //! # use webrtc::rtp_transceiver::{RtpTransceiver, RTCRtpTransceiverDirection};
--//! # use std::sync::Arc;
-+//! # use std::sync::{Arc, Weak};
- //! # async fn configure_transceiver(transceiver: Arc<dyn RtpTransceiver>) -> webrtc::error::Result<()> {
- //! // Set preferred direction to receive only
- //! transceiver.set_direction(RTCRtpTransceiverDirection::Recvonly).await?;
-@@ -59,7 +59,7 @@ pub use rtc::rtp_transceiver::{
- };
- use rtc::shared::error::Result;
- use rtc::statistics::report::RTCStatsReport;
--use std::sync::Arc;
-+use std::sync::{Arc, Weak};
- use std::time::Instant;
+ //! Two layers share this module. Below: the plumbing that moves bytes — see `stun_gatherer`,
+-//! `tcp_transport`, `turn_relayer` and the GRO/GSO constants, all crate-private. Above:
++//! `tcp_transport`, `turn_relayer` and the GRO/GSO constants, all crate-private, plus the
++//! public [`udp_mux`] (many connections sharing one UDP socket). Above:
+ //! [`SctpTransport`], [`DtlsTransport`] and [`IceTransport`], the public handles mirroring the
+ //! W3C interfaces of the same names.
+ //!
+@@ -54,6 +55,8 @@ pub(crate) mod stun_gatherer;
+ pub(crate) mod tcp_transport;
+ pub(crate) mod turn_relayer;
  
- /// An RTP Receiver that receives media from a remote peer.
-@@ -212,62 +212,83 @@ pub(crate) struct RtpTransceiverImpl {
-     id: RTCRtpTransceiverId,
++pub mod udp_mux;
++
+ /// Plain single-datagram UDP receive buffer size (no GRO coalescing).
+ pub(crate) const UDP_RECV_BUF_LEN: usize = 2000;
  
-     /// Inner PeerConnection Reference
--    inner: Arc<PeerConnectionRef>,
-+    inner: Weak<PeerConnectionRef>,
+@@ -120,6 +123,9 @@ pub(crate) enum SocketRecvResult {
+         stride: usize,
+         local_addr: SocketAddr,
+         peer_addr: SocketAddr,
++        /// The datagram's destination IP from packet info, where the platform supplies it.
++        /// Consulted only for muxed conns, whose socket's bound address names no interface.
++        dst_ip: Option<std::net::IpAddr>,
+         idx: usize,
+         buf: Vec<u8>,
+     },
+```
+
+---
+
+### Incident Patch 2: `e74a9205` (2026-10-24)
+**Commit Message**: fix(turn): retain allocation credentials across configuration updates (#928)
+
+**File**: `src/peer_connection/transport/turn_relayer.rs` (modified, +155/-59)
+```diff
+@@ -116,20 +116,10 @@ impl RTCTurnRelayer {
+         ice_servers: Vec<RTCIceServer>,
+         ice_gather_policy: RTCIceTransportPolicy,
+     ) {
+-        // A pure credential rotation — same servers, same policy, different username or
+-        // password — must NOT tear the allocations down. `local_addrs` is fixed at
+-        // construction (the sockets are shared with host candidates), so a teardown here
+-        // means the following `gather()` re-`Allocate`s on exactly the same 5-tuple. The
+-        // server still holds the previous allocation for it and answers **437 (Allocation
+-        // Mismatch)** per RFC 8656 §7.2, and the restart gathers no relay candidate at all
+-        // (issue #835).
+-        //
+-        // An allocation is a 5-tuple resource, independent of the credential that created
+-        // it, so the correct move is to re-sign the allocation we already have: update the
+-        // client's credential and Refresh. Allocation, permissions and channel bindings all
+-        // survive, so the data path is never interrupted.
++        // RFC 8656 section 5 binds subsequent requests to the allocation's
++        // original username. Keep established clients and their keys intact;
++        // the updated configuration supplies credentials for future allocations.
+         if self.is_credential_only_change(&ice_servers, ice_gather_policy) {
+-            self.rotate_credentials(&ice_servers);
+             self.ice_servers = ice_servers;
+             return;
+         }
+@@ -166,8 +156,8 @@ impl RTCTurnRelayer {
+             return false;
+         }
  
-     sender: Mutex<Option<Arc<dyn RtpSender>>>,
-     receiver: Mutex<Option<Arc<dyn RtpReceiver>>>,
- }
- 
- impl RtpTransceiverImpl {
-+    /// The owning connection, or `ErrConnectionClosed` once it is gone. The back-reference is
-+    /// `Weak` because `PeerConnectionRef` owns this object: a strong one would form a cycle that
-+    /// keeps the whole connection alive after `close()` and drop (webrtc#906).
-+    fn peer_connection(&self) -> Result<Arc<PeerConnectionRef>> {
-+        self.inner.upgrade().ok_or(Error::ErrConnectionClosed)
-+    }
-     /// Create a new rtp transceiver wrapper
-     pub(crate) fn new(id: RTCRtpTransceiverId, inner: Arc<PeerConnectionRef>) -> Self {
-         Self {
-             id,
--            inner,
-+            inner: Arc::downgrade(&inner),
-             sender: Mutex::new(None),
-             receiver: Mutex::new(None),
+-        // Nothing to re-sign unless every live client's allocation is established; a client
+-        // still mid-Allocate has no allocation to keep.
++        // Only established allocations can retain their original credentials;
++        // a client still mid-Allocate has no allocation to keep.
+         if self
+             .clients
+             .values()
+@@ -192,50 +182,6 @@ impl RTCTurnRelayer {
          }
      }
  
--    pub(crate) async fn set_sender(&self, rtp_sender: Option<Arc<dyn RtpSender>>) {
-+    /// Replace this transceiver's sender, wiring the new sender's track to the driver.
-+    ///
-+    /// # Errors
-+    ///
-+    /// - [`Error::ErrConnectionClosed`] once the owning connection is gone.
-+    /// - Whatever the new sender's `get_parameters` fails with. Nothing changes in that case:
-+    ///   the parameters are resolved before the current sender is unbound, so the transceiver
-+    ///   keeps the sender it had rather than being left with none.
-+    pub(crate) async fn set_sender(&self, rtp_sender: Option<Arc<dyn RtpSender>>) -> Result<()> {
-+        let pc = self.peer_connection()?;
-+        let rtp_sender = match rtp_sender {
-+            Some(rtp_sender) => {
-+                let params = rtp_sender.get_parameters().await?;
-+                Some((rtp_sender, params))
-+            }
-+            None => None,
-+        };
+-    /// Re-signs every live allocation with the rotated credential and refreshes it.
+-    ///
+-    /// Best-effort per client: a client whose URL is no longer present, or whose refresh
+-    /// fails to encode, is left alone rather than torn down — its allocation keeps working
+-    /// on the old credential until it expires, which is strictly better than forcing the
+-    /// 437 this path exists to avoid.
+-    fn rotate_credentials(&mut self, ice_servers: &[RTCIceServer]) {
+-        // url string -> (username, credential), matching how `gather` derives them.
+-        let mut credentials: HashMap<String, (String, String)> = HashMap::new();
+-        for ice_server in ice_servers {
+-            let Ok(urls) = ice_server.urls() else {
+-                continue;
+-            };
+-            for url in urls {
+-                credentials.insert(
+-                    url.to_string(),
+-                    (url.username.clone(), url.password.clone()),
+-                );
+-            }
+-        }
+-
+-        for managed in self.clients.values_mut() {
+-            let Some((username, password)) = credentials.get(&managed.url) else {
+-                continue;
+-            };
+-
+-            let _ = managed
+-                .client
+-                .update_credentials(username.clone(), password.clone());
+-
+-            if let Err(err) = managed.client.refresh_allocations(self.runtime.now()) {
+-                warn!(
+-                    "TURN credential rotation: refresh failed for {} via {}: {}",
+-                    managed.local_addr, managed.url, err
+-                );
+-            } else {
+-                debug!(
+-                    "TURN credentials rotated for {} via {}, allocation kept",
+-                    managed.local_addr, managed.url
+-                );
+-            }
+-        }
+-    }
+-
+     pub(crate) fn is_turn_message(&self, msg: &TaggedBytesMut) -> bool {
+         self.matching_client_key(msg).is_some()
+     }
+@@ -1102,4 +1048,154 @@ mod tests {
+             );
+         });
+     }
 +
-         let mut sender = self.sender.lock().await;
++    #[test]
++    fn credential_rotation_preserves_existing_allocation_authentication() {
++        futures::executor::block_on(async {
++            use rtc::stun::attributes::ATTR_USERNAME;
++            use rtc::stun::message::{Getter, METHOD_ALLOCATE, METHOD_REFRESH};
++            use rtc::stun::textattrs::Username;
++            use rtc::turn::proto::lifetime::Lifetime;
++            use rtc::turn::proto::relayaddr::RelayedAddress;
++
++            let local_addr: SocketAddr = "127.0.0.1:50000".parse().unwrap();
++            let server_addr: SocketAddr = "127.0.0.1:3478".parse().unwrap();
++            let relay_addr: SocketAddr = "127.0.0.1:60000".parse().unwrap();
++            let server = |username: &str, password: &str| RTCIceServer {
++                urls: vec![format!("turn:{server_addr}?transport=udp")],
++                username: username.into(),
++                credential: password.into(),
++            };
++            let mut relayer =
+```
+
+**File**: `tests/ice_test.rs` (modified, +11/-19)
+```diff
+@@ -83,7 +83,7 @@ impl PeerConnectionEventHandler for CandidateTypeTracker {
+ ///
+ /// `username_tx` reports `(method, username)` for every authenticated request that carries
+ /// a credential, so a test can tell *how* a credential reached the server — an `Allocate`
+-/// for a fresh allocation, or a `Refresh` re-signing an existing one (issue #835).
++/// for a fresh allocation, or a `Refresh` using an existing allocation's identity.
+ async fn run_mock_turn_server(
+     turn_socket: Arc<dyn AsyncUdpSocket>,
+     relay_addr: SocketAddr,
+@@ -702,27 +702,19 @@ fn test_set_configuration_updates_turn_credentials_on_ice_restart() {
+             .expect("Failed to update ICE server configuration");
+         pc.restart_ice().await.expect("Failed to restart ICE");
  
--        if let Some(rtp_sender) = sender.take() {
--            let track_id = rtp_sender.track().track_id().await;
--            self.inner
--                .track_local_events_tx
--                .lock()
+-        // The rotated credential must reach the server — but as a **Refresh** re-signing the
+-        // existing allocation, not a second Allocate. An allocation is a 5-tuple resource
+-        // independent of the credential that created it, and `local_addrs` is fixed at
+-        // relayer construction, so re-Allocating here would reuse the same 5-tuple and a
+-        // conforming server would reject it with 437 (RFC 5766 §6.2) — issue #835. This mock
+-        // answers every Allocate with success, so the method assertion is what guards it;
+-        // `turn_credential_rotation.rs` covers the same property against a real server.
+-        let (restarted_method, restarted_username) =
+-            timeout(Duration::from_secs(5), username_rx.recv())
 -                .await
--                .remove(&track_id);
--            rtp_sender.track().unbind().await;
-+        if let Some(old_sender) = sender.take() {
-+            let track_id = old_sender.track().track_id().await;
-+            pc.track_local_events_tx.lock().await.remove(&track_id);
-+            old_sender.track().unbind().await;
-         }
- 
--        if let Some(rtp_sender) = rtp_sender
--            && let Ok(params) = rtp_sender.get_parameters().await
--        {
-+        if let Some((rtp_sender, params)) = rtp_sender {
-             // Wire an event channel so RTCP feedback the remote sends about this track
-             // (Receiver Reports, PLI/FIR) can be read via `TrackLocal::poll`. The driver
-             // routes inbound RTCP tagged with this track id to `evt_tx`.
-             let track_id = rtp_sender.track().track_id().await;
-             let (evt_tx, evt_rx) = channel(DRIVER_TO_TRACK_LOCAL_EVENT_CHANNEL_CAPACITY);
--            self.inner
--                .track_local_events_tx
--                .lock()
--                .await
--                .insert(track_id, evt_tx);
-+            {
-+                let mut track_locals = pc.track_local_events_tx.lock().await;
-+                // Checked under the map's lock; see `PeerConnectionRef::end_event_streams`.
-+                if !pc.is_closing() {
-+                    track_locals.insert(track_id, evt_tx);
-+                }
-+            }
-             rtp_sender
-                 .track()
-                 .bind(
-                     TrackLocalContext {
-                         rtp_sender_id: self.id.into(),
-                         rtp_parameters: params.rtp_parameters,
--                        driver_event_tx: self.inner.driver_event_tx.clone(),
-+                        driver_event_tx: pc.driver_event_tx.clone(),
-                     },
-                     evt_rx,
-                 )
-                 .await;
-             *sender = Some(rtp_sender);
-         }
-+
-+        Ok(())
-     }
- 
-     pub(crate) async fn set_receiver(&self, rt
-```
-
-**File**: `src/rtp_transceiver/rtp_receiver.rs` (modified, +27/-10)
-```diff
-@@ -8,7 +8,7 @@ use rtc::rtp_transceiver::rtp_receiver::{RTCRtpContributingSource, RTCRtpSynchro
- use rtc::rtp_transceiver::rtp_sender::{RTCRtpCapabilities, RTCRtpReceiveParameters, RtpCodecKind};
- use rtc::statistics::StatsSelector;
- use rtc::statistics::report::RTCStatsReport;
--use std::sync::Arc;
-+use std::sync::{Arc, Weak};
- use std::time::Instant;
- 
- /// Concrete async rtp receiver implementation (generic over interceptor type).
-@@ -19,19 +19,30 @@ pub(crate) struct RtpReceiverImpl {
-     id: RTCRtpReceiverId,
- 
-     /// Inner PeerConnection Reference
--    inner: Arc<PeerConnectionRef>,
-+    inner: Weak<PeerConnectionRef>,
- 
-     track: Arc<dyn TrackRemote>,
- }
- 
- impl RtpReceiverImpl {
-+    /// The owning connection, or `ErrConnectionClosed` once it is gone. The back-reference is
-+    /// `Weak` because `PeerConnectionRef` owns this object: a strong one would form a cycle that
-+    /// keeps the whole connection alive after `close()` and drop (webrtc#906).
-+    fn peer_connection(&self) -> Result<Arc<PeerConnectionRef>> {
-+        self.inner.upgrade().ok_or(Error::ErrConnectionClosed)
-+    }
-+
-     /// Create a new rtp receiver wrapper
-     pub(crate) fn new(
-         id: RTCRtpReceiverId,
-         inner: Arc<PeerConnectionRef>,
-         track: Arc<dyn TrackRemote>,
-     ) -> Self {
--        Self { id, inner, track }
-+        Self {
-+            id,
-+            inner: Arc::downgrade(&inner),
-+            track,
-+        }
-     }
- }
- 
-@@ -48,7 +59,8 @@ impl RtpReceiver for RtpReceiverImpl {
-     }
- 
-     async fn get_capabilities(&self, kind: RtpCodecKind) -> Result<Option<RTCRtpCapabilities>> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
- 
-         Ok(peer_connection
-             .rtp_receiver(self.id)
-@@ -57,7 +69,8 @@ impl RtpReceiver for RtpReceiverImpl {
-     }
- 
-     async fn get_parameters(&self) -> Result<RTCRtpReceiveParameters> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
- 
-         Ok(peer_connection
-             .rtp_receiver(self.id)
-@@ -67,7 +80,8 @@ impl RtpReceiver for RtpReceiverImpl {
-     }
- 
-     async fn get_contributing_sources(&self) -> Result<Vec<RTCRtpContributingSource>> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
- 
-         Ok(peer_connection
-             .rtp_receiver(self.id)
-@@ -78,7 +92,8 @@ impl RtpReceiver for RtpReceiverImpl {
-     }
- 
-     async fn get_synchronization_sources(&self) -> Result<Vec<RTCRtpSynchronizationSource>> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
- 
-         Ok(peer_connection
-             .rtp_receiver(self.id)
-@@ -89,14 +104,16 @@ impl RtpReceiver for RtpReceiverImpl {
-     }
- 
-     async fn get_stats(&self, now: Instant) -> Result<RTCStatsReport> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
-         peer_connection
-             .rtp_receiver(self.id)
-             .ok_or(Error::ErrRTPReceiverNotExisted)?;
-         Ok(peer_connection.get_stats(now, StatsSelector::Receiver(self.id)))
-     }
-     async fn transport(&self) -> Result<Option<Arc<dyn DtlsTransport>>> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
- 
-         // Walk under the lock and keep only the ids: a borrowed view cannot cross an await, so
-         // the handle re-walks per call and carries the ids so `id()` can stay synchronous.
-@@ -113,7 +130,7 @@ impl RtpReceiver for RtpReceiverImpl {
-                 id,
-                 ice_id,
-                 DtlsRoute::Receiver(self.id),
--                Arc::clone(&self.inner),
-+                Arc::clone(&pc),
-             )) as Arc<dyn DtlsTransport>
-         }))
-     }
-```
-
-**File**: `src/rtp_transceiver/rtp_sender.rs` (modified, +29/-11)
-```diff
-@@ -10,7 +10,7 @@ use rtc::rtp_transceiver::rtp_sender::{
- };
- use rtc::statistics::StatsSelector;
- use rtc::statistics::report::RTCStatsReport;
--use std::sync::Arc;
-+use std::sync::{Arc, Weak};
- use std::time::Instant;
- 
- /// Concrete async rtp sender implementation (generic over interceptor type).
-@@ -21,19 +21,30 @@ pub(crate) struct RtpSenderImpl {
-     id: RTCRtpSenderId,
- 
-     /// Inner PeerConnection Reference
--    inner: Arc<PeerConnectionRef>,
-+    inner: Weak<PeerConnectionRef>,
- 
-     track: Arc<dyn TrackLocal>,
- }
- 
- impl RtpSenderImpl {
-+    /// The owning connection, or `ErrConnectionClosed` once it is gone. The back-reference is
-+    /// `Weak` because `PeerConnectionRef` owns this object: a strong one would form a cycle that
-+    /// keeps the whole connection alive after `close()` and drop (webrtc#906).
-+    fn peer_connection(&self) -> Result<Arc<PeerConnectionRef>> {
-+        self.inner.upgrade().ok_or(Error::ErrConnectionClosed)
-+    }
-+
-     /// Create a new rtp sender wrapper
-     pub(crate) fn new(
-         id: RTCRtpSenderId,
-         inner: Arc<PeerConnectionRef>,
-         track: Arc<dyn TrackLocal>,
-     ) -> Self {
--        Self { id, inner, track }
-+        Self {
-+            id,
-+            inner: Arc::downgrade(&inner),
-+            track,
-+        }
-     }
- }
- 
-@@ -50,7 +61,8 @@ impl RtpSender for RtpSenderImpl {
-     }
- 
-     async fn get_capabilities(&self, kind: RtpCodecKind) -> Result<Option<RTCRtpCapabilities>> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
- 
-         Ok(peer_connection
-             .rtp_sender(self.id)
-@@ -63,7 +75,8 @@ impl RtpSender for RtpSenderImpl {
-         parameters: RTCRtpSendParameters,
-         set_parameter_options: Option<RTCSetParameterOptions>,
-     ) -> Result<()> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
- 
-         peer_connection
-             .rtp_sender(self.id)
-@@ -72,7 +85,8 @@ impl RtpSender for RtpSenderImpl {
-     }
- 
-     async fn get_parameters(&self) -> Result<RTCRtpSendParameters> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
- 
-         Ok(peer_connection
-             .rtp_sender(self.id)
-@@ -82,7 +96,8 @@ impl RtpSender for RtpSenderImpl {
-     }
- 
-     async fn replace_track(&self, track: Arc<dyn TrackLocal>) -> Result<()> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
- 
-         peer_connection
-             .rtp_sender(self.id)
-@@ -91,7 +106,8 @@ impl RtpSender for RtpSenderImpl {
-     }
- 
-     async fn set_streams(&self, streams: Vec<MediaStreamId>) -> Result<()> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
- 
-         peer_connection
-             .rtp_sender(self.id)
-@@ -101,14 +117,16 @@ impl RtpSender for RtpSenderImpl {
-     }
- 
-     async fn get_stats(&self, now: Instant) -> Result<RTCStatsReport> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
-         peer_connection
-             .rtp_sender(self.id)
-             .ok_or(Error::ErrRTPSenderNotExisted)?;
-         Ok(peer_connection.get_stats(now, StatsSelector::Sender(self.id)))
-     }
-     async fn transport(&self) -> Result<Option<Arc<dyn DtlsTransport>>> {
--        let mut peer_connection = self.inner.core.lock().await;
-+        let pc = self.peer_connection()?;
-+        let mut peer_connection = pc.core.lock().await;
- 
-         // Walk under the lock and keep only the ids: a borrowed view cannot cross an await, so
-         // the handle re-walks per call and carries the ids so `id()` can stay synchronous.
-@@ -125,7 +143,7 @@ impl RtpSender for RtpSenderImpl {
-                 id,
-                 ice_id,
-                 DtlsRoute::Sender(self.id),
--                Arc::clone(&self.inner),
-+                Arc::clone(&pc),
-             )) as Arc<dyn DtlsTransport>
-         }))
-     }
-```
-
-**File**: `tests/close_ends_event_streams.rs` (added, +151/-0)
-```diff
-@@ -0,0 +1,151 @@
-+//! Closing a connection must end every application-facing event stream.
-+//!
-+//! `DataChannel::poll`, `TrackRemote::poll` and `TrackLocal::poll` each wait on a channel whose
-+//! sender the connection keeps. `close()` stopped the driver without ever ending those channels:
-+//! the driver exits at the top of its loop before delivering another event, and the senders stayed
-+//! in the connection — which a `DataChannel` handle itself keeps alive — so a task blocked in
-+//! `poll()` never woke, even after the application dropped the connection.
-+//!
-+//! The documented contract is that `poll()` returns `None` once the channel or connection is
-+//! closed; these tests hold `close()` (and a driver stopped by `Drop`) to it.
-+use std::sync::Arc;
-+use std::time::Duration;
-+
-+use rtc::media_stream::MediaStreamTrack;
-+use rtc::peer_connection::configuration::media_engine::MediaEngine;
-+use rtc::rtp_transceiver::rtp_sender::{
-+    RTCRtpCodec, RTCRtpCodingParameters, RTCRtpEncodingParameters, RtpCodecKind,
-+};
-+use webrtc::data_channel::DataChannel;
-+use webrtc::media_stream::track_local::TrackLocal;
-+use webrtc::media_stream::track_local::static_rtp::TrackLocalStaticRTP;
-+use webrtc::peer_connection::{PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler};
-+
-+mod common;
-+use common::{block_on, timeout};
-+
-+/// How long a stream may take to end once the connection is closed.
-+const STREAM_END_TIMEOUT: Duration = Duration::from_secs(2);
-+
-+struct NoopHandler;
-+
-+#[async_trait::async_trait]
-+impl PeerConnectionEventHandler for NoopHandler {}
-+
-+async fn build(dedicated_reactor: bool) -> impl PeerConnection {
-+    let mut media_engine = MediaEngine::default();
-+    media_engine
-+        .register_default_codecs()
-+        .expect("register default codecs");
-+    let mut builder = PeerConnectionBuilder::new()
-+        .with_media_engine(media_engine)
-+        .with_handler(Arc::new(NoopHandler))
-+        .with_udp_addrs(vec!["127.0.0.1:0".to_string()]);
-+    if dedicated_reactor {
-+        builder = builder.with_dedicated_reactor_pool_size(1);
-+    }
-+    builder.build().await.expect("build peer connection")
-+}
-+
-+fn video_track() -> Arc<dyn TrackLocal> {
-+    Arc::new(TrackLocalStaticRTP::new(MediaStreamTrack::new(
-+        "stream".to_owned(),
-+        "track".to_owned(),
-+        "label".to_owned(),
-+        RtpCodecKind::Video,
-+        vec![RTCRtpEncodingParameters {
-+            rtp_coding_parameters: RTCRtpCodingParameters {
-+                ssrc: Some(1234),
-+                ..Default::default()
-+            },
-+            codec: RTCRtpCodec {
-+                mime_type: "video/VP8".to_owned(),
-+                clock_rate: 90000,
-+                ..Default::default()
-+            },
-+            ..Default::default()
-+        }],
-+    )))
-+}
-+
-+#[test]
-+fn data_channel_poll_ends_after_close() {
-+    block_on(async {
-+        for dedicated_reactor in [false, true] {
-+            for drop_connection in [false, true] {
-+                let pc = build(dedicated_reactor).await;
-+                let dc: Arc<dyn DataChannel> = pc
-+                    .create_data_channel("events", None)
-+                    .await
-+                    .expect("create data channel");
-+
-+                pc.close().await.expect("close");
-+                if drop_connection {
-+                    drop(pc);
-+                }
-+
-+                let event = timeout(STREAM_END_TIMEOUT, dc.poll())
-+                    .await
-+                    .unwrap_or_else(|_| {
-+                        panic!(
-+                            "DataChannel::poll still blocked after close() \
-+                         (dedicated_reactor={dedicated_reactor}, drop_connection={drop_connection})"
-+                        )
-+                    });
-+                assert!(
-+                    event.is_none(),
-+                    "no event is pending, so the stream must end"
-+                );
-+            }
-+        }
-+    });
-+}
-+
-+#[test]
-+fn track_local_poll_ends_after_close() {
-+    block_on(async {
-+        for dedicated_reactor in [false, true] {
-+            let pc = build(dedicated_reactor).await;
-+            let track = video_track();
-+            pc.add_track(Arc::clone(&track)).await.expect("add_track");
-+
-+            pc.close().await.expect("close");
-+
-+            let event = timeout(STREAM_END_TIMEOUT, track.poll())
+-                .expect("Timed out waiting for the rotated credential to reach the server")
+-                .expect("TURN username channel closed");
+-        assert_eq!(
+-            (restarted_method, restarted_username.as_str()),
+-            ("refresh", "username-b"),
+-            "a pure credential rotation must re-sign the existing allocation with a Refresh, \
+-             not re-Allocate on the same 5-tuple (issue #835)"
+-        );
+         timeout(Duration::from_secs(5), gathering_rx.recv())
+             .await
+             .expect("Timed out waiting for restarted relay gathering");
++        // Reusing the allocation must retain its authenticated identity. The
++        // previous assertion expected username-b in Refresh, which would be
++        // rejected with 441 by an RFC 8656 section 5 server.
++        assert!(
++            timeout(Duration::from_millis(100), username_rx.recv())
 +                .await
-+                .unwrap_or_else(|_| {
-+                    panic!(
-+                        "TrackLocal::poll still blocked after close() \
-+                         (dedicated_reactor={dedicated_reactor})"
-+                    )
-+                });
-+            assert!(
-+                event.is_none(),
-+                "no RTCP is pending, so the stream must end"
-+            );
-+        }
-+    });
-+}
-+
-+/// `Drop` on a dedicated reactor stops the driver without `close()`; the driver's stop path must
-+/// end the streams too.
-+#[test]
-+fn data_channel_poll_ends_when_a_dedicat
++                .is_err(),
++            "configuration updates must not re-sign an existing allocation"
++        );
++        pc.close().await.unwrap();
+ 
+         turn_task.abort();
+     });
 ```
 
-**File**: `tests/close_releases_connection_with_transceivers.rs` (added, +112/-0)
+**File**: `tests/turn_credential_rotation.rs` (modified, +8/-9)
 ```diff
-@@ -0,0 +1,112 @@
-+//! Regression test for webrtc#906: a connection that ever held a transceiver must be freed after
-+//! `close()` and drop.
-+//!
-+//! `PeerConnectionRef.rtp_transceivers` owns every `RtpTransceiverImpl`, and each transceiver owns
-+//! its `RtpSenderImpl` and `RtpReceiverImpl`. All three used to hold a strong
-+//! `Arc<PeerConnectionRef>` back, a cycle that nothing broke: neither `close()` nor `Drop` empties
-+//! the map. A single `add_track()` therefore kept the event handler, the sans-I/O core and every
-+//! buffer alive for the life of the process. The back-references are now `Weak`.
-+//!
-+//! The connection is observed through a `Weak` to its event handler, which only the connection
-+//! holds once the test has handed it to the builder.
-+use std::sync::Arc;
-+use std::time::Duration;
-+
-+use rtc::media_stream::MediaStreamTrack;
-+use rtc::peer_connection::configuration::media_engine::MediaEngine;
-+use rtc::rtp_transceiver::rtp_sender::{
-+    RTCRtpCodec, RTCRtpCodingParameters, RTCRtpEncodingParameters, RtpCodecKind,
-+};
-+use webrtc::media_stream::track_local::TrackLocal;
-+use webrtc::media_stream::track_local::static_rtp::TrackLocalStaticRTP;
-+use webrtc::peer_connection::{PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler};
-+
-+mod common;
-+use common::{block_on, sleep};
-+
-+/// How long a closed and dropped connection may take to be freed.
-+const RELEASE_TIMEOUT: Duration = Duration::from_secs(2);
-+
-+struct NoopHandler;
-+
-+#[async_trait::async_trait]
-+impl PeerConnectionEventHandler for NoopHandler {}
-+
-+fn video_track() -> Arc<dyn TrackLocal> {
-+    Arc::new(TrackLocalStaticRTP::new(MediaStreamTrack::new(
-+        "stream".to_owned(),
-+        "track".to_owned(),
-+        "label".to_owned(),
-+        RtpCodecKind::Video,
-+        vec![RTCRtpEncodingParameters {
-+            rtp_coding_parameters: RTCRtpCodingParameters {
-+                ssrc: Some(1234),
-+                ..Default::default()
-+            },
-+            codec: RTCRtpCodec {
-+                mime_type: "video/VP8".to_owned(),
-+                clock_rate: 90000,
-+                ..Default::default()
-+            },
-+            ..Default::default()
-+        }],
-+    )))
-+}
-+
-+/// Builds a connection, optionally adds a track (which creates a transceiver with a sender),
-+/// closes and drops it, and reports whether its event handler was freed within
-+/// [`RELEASE_TIMEOUT`].
-+async fn is_released_after_close_and_drop(add_track: bool, dedicated_reactor: bool) -> bool {
-+    let handler = Arc::new(NoopHandler);
-+    let handler_weak = Arc::downgrade(&handler);
-+
-+    let mut media_engine = MediaEngine::default();
-+    media_engine
-+        .register_default_codecs()
-+        .expect("register default codecs");
-+    let mut builder = PeerConnectionBuilder::new()
-+        .with_media_engine(media_engine)
-+        .with_handler(handler)
-+        .with_udp_addrs(vec!["127.0.0.1:0".to_string()]);
-+    if dedicated_reactor {
-+        builder = builder.with_dedicated_reactor_pool_size(1);
-+    }
-+    let pc = builder.build().await.expect("build peer connection");
-+
-+    if add_track {
-+        pc.add_track(video_track()).await.expect("add_track");
-+    }
-+    pc.close().await.expect("close");
-+    drop(pc);
-+
-+    let step = Duration::from_millis(10);
-+    let mut waited = Duration::ZERO;
-+    while waited < RELEASE_TIMEOUT {
-+        if handler_weak.upgrade().is_none() {
-+            return true;
-+        }
-+        sleep(step).await;
-+        waited += step;
-+    }
-+    false
-+}
-+
-+#[test]
-+fn close_and_drop_release_a_connection_that_added_a_track() {
-+    block_on(async {
-+        for dedicated_reactor in [false, true] {
-+            // Control: without a transceiver the connection was always freed, so a failure below
-+            // can only come from the transceiver path.
-+            assert!(
-+                is_released_after_close_and_drop(false, dedicated_reactor).await,
-+                "a connection without tracks was not freed (dedicated_reactor={dedicated_reactor})"
-+            );
-+            assert!(
-+                is_released_after_close_and_drop(true, dedicated_reactor).await,
-+                "a connection that added a track was never freed after close() and drop \
-+                 (dedicated_reactor={dedicated_reactor}): the transceiver, sender or receiver \
-+                 still holds a strong reference to it"
-+            );
-+        }
-+    });
-+}
+@@ -229,8 +229,8 @@ fn test_ice_restart_after_turn_credential_rotation_keeps_relay() {
+ 
+         // ── 2. Rotate credentials and restart ICE ─────────────────────────────
+         // Same server, same policy, different credential: a pure credential rotation. The
+-        // allocation is a 5-tuple resource independent of the credential that created it,
+-        // so nothing here should require giving it up.
++        // allocation keeps its original authenticated username (RFC 8656 section 5),
++        // so rotating the configuration must not mutate its client credentials.
+         let allocates_before = wire.allocates.load(Ordering::SeqCst);
+         assert!(
+             allocates_before > 0,
+@@ -297,7 +297,7 @@ fn test_ice_restart_after_turn_credential_rotation_keeps_relay() {
+         // ── What actually happened on the wire ────────────────────────────────
+         // These are the assertions with teeth. The SDP above keeps the stale relay
+         // candidate whether or not the re-Allocate succeeded, so only the wire distinguishes
+-        // "re-signed the existing allocation" from "tried to re-Allocate and got 437".
++        // "retained the existing allocation" from "tried to re-Allocate and got 437".
+         let allocates_after = wire.allocates.load(Ordering::SeqCst) - allocates_before;
+         let refreshes = wire.refreshes.load(Ordering::SeqCst);
+         let mismatches = wire.alloc_mismatch_437.load(Ordering::SeqCst);
+@@ -315,14 +315,13 @@ fn test_ice_restart_after_turn_credential_rotation_keeps_relay() {
+         assert_eq!(
+             allocates_after, 0,
+             "issue #835: {allocates_after} new Allocate(s) after a pure credential rotation. \
+-             An allocation is a 5-tuple resource independent of the credential that created \
+-             it, so rotating credentials must re-sign the existing allocation, not replace it."
++             The established allocation should retain its original identity until retired."
+         );
+-        assert!(
+-            refreshes > 0,
+-            "expected a Refresh carrying the rotated credential; the server only learns the \
+-             new credential when the allocation is re-signed"
++        assert_eq!(
++            refreshes, 0,
++            "updating credentials must not trigger a Refresh under a new allocation identity"
+         );
++        pc.close().await.unwrap();
+     });
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #922** (2026-10-11): Backport to v0.21.x (@rainliu)
-- **PR #917** (2026-10-03): fix(runtime): don't block the smol executor in connect_tcp (@lovon-spec)
-- **PR #913** (2026-09-27): [v0.20.x] fix: give the driver a brief chance to release TURN allocations on close() (#903) (@yapprtc)
-- **PR #912** (2026-09-27): [v0.21.x] fix: release TURN allocations on close() on both runtimes (#903) (@yapprtc)
-- **PR #911** (2026-09-27): fix: release TURN allocations on close() on both runtimes (#903) (@yapprtc)
-- **PR #910** (2026-09-26): fix(stun_gatherer): complete gathering when a STUN server does not answer (@yapprtc)
+- **PR #937** (2026-10-24): ice: bound STUN writes so one wedged socket cannot stop connectivity checks (@akirilyuk)
+- **PR #936** (2026-10-25): fix(turn): complete UDP authentication and allocation validation (@kookyleo)
+- **PR #934** (2026-10-24): fix(turn): align authentication failures with RFC 8489 (@kookyleo)
+- **PR #932** (2026-10-24): fix(turn): retain server-wide EVEN-PORT socket reservations (@kookyleo)
+- **PR #930** (2026-10-24): fix(turn): protect legacy channel bindings across range exhaustion (@kookyleo)
+- **PR #928** (2026-10-24): fix(turn): retain allocation credentials across configuration updates (@kookyleo)
 
 ---
 
@@ -4138,58 +3154,41 @@ transceiver the appl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [v0.21.x] fix: release TURN allocations on close() on both runtimes (#903) (#912
+## X. webrtc): multiplex peer connections over a single UDP socket (UDPMux) (#918)
 
 **RULE**:
-When implementing operations in `src/peer_connection/driver.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrtc-rs/webrtc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrtc-rs/webrtc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `caa7f072`: [v0.21.x] fix: release TURN allocations on close() on both runtimes (#903) (#912). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a53d7ac4`: webrtc): multiplex peer connections over a single UDP socket (UDPMux) (#918). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/peer_connection/driver.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::future::Future;
-use std::pin::Pin;
-thread_local! {
-    /// The connection whose driver task this thread is polling at this moment, or `0`.
-    static POLLING_DRIVER: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
-}
-
-/// Identifies a connection for [`POLLING_DRIVER`].
-fn driver_id(inner: &Arc<PeerConnectionRef>) -> usize {
-    Arc::as_ptr(inner) as usize
-}
-
-/// Whether the caller is running inside `inner`'s own driver task.
-///
-/// Application callbacks are awaited on the driver task, so this is true for a `close()`
-/// called from one of them. Waiting there for the driver to finish can never succeed (it cannot
-/// make progress until the callback returns), and aborting it would cut off the TURN releases it
-/// sends on its way out.
-pub(crate) fn is_polling_driver(inner: &Arc<PeerConnectionRef>) -> bool {
-    POLLING_DRIVER.with(|polling| polling.get()) == driver_id(inner)
-}
-
-/// Runs a connection's driver future, recording on the polling thread for the duration of every
-/// poll which connection it belongs to, so [`is_polling_driver`] can answer from inside it.
-///
-/// Recorded per poll rather than per task because a multi-threaded runtime may poll the task on
+- **UDP multiplexing: many peer connections over one shared UDP socket** — new
+  `webrtc::peer_connection::transport::udp_mux` module with a `UDPMux` trait and the built-in
+  `UDPMuxDefault`. Handing one mux to every `PeerConnectionBuilder::with_udp_mux` serves any
+  number of connections from a single fixed UDP port (the SRS/mediamtx deployment shape),
+  where a pinned `with_udp_addrs` port fails the second connection's bind with `EADDRINUSE`.
+  The mux's reader demultiplexes inbound datagrams by the local ICE ufrag in each STUN check
+  and by learnt peer address for ufrag-less traffic (DTLS/SRTP/SRTCP); candidates are
+  advertised per interface on the mux's port, with inbound packets attributed to an interface
+  via `RecvMeta::dst_ip` (packet info) and outbound ones pinned with `Transmit::src_ip` on a
+  wildcard listen. Muxed connections gather host candidates only (the restriction Pion's
+  `ICEUDPMux` documents), and their ICE credentials are pinned at build time so the route
+  survives ICE restarts. `tests/udp_mux.rs` runs two connections on one fixed port end to end.
+  Requires `rtc` ≥ the commit that adds `SettingEngine::set_ice_credentials`/
+  `ice_credentials`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                if let Err(err) = self.turn_relayer.close() {
-                    error!("Failed to close turn_relayer: {}", err);
-                }
-                if let Err(err) = self.turn_relayer.close() {
-                    error!("Failed to close turn_relayer: {}", err);
-                }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `caa7f072` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a53d7ac4` are properly handled with clean fallback behavior.

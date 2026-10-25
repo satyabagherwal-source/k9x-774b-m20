@@ -735,8 +735,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-m3",
     "sourceVersion": "hf-baai-bge-m3",
     "license": "Open-Source",
-    "contentHash": "f2549f4518b0f136bd418cdf92e0b68bcc3b9ebf1564b4fe012a275fef1d57af",
-    "lastHarvestedAt": "2026-10-20T21:53:57.317Z",
+    "contentHash": "42cb46071e1ff76667070102af462e7ecf99b37efa82319756fa34bab67bbfeb",
+    "lastHarvestedAt": "2026-10-25T17:30:10.001Z",
     "learningId": "learn-huggingface-baai-bge-m3"
   },
   "hf-qwen-qwen3-0.6b": {
@@ -5043,10 +5043,10 @@
     "repository": "webrtc-rs/webrtc",
     "platform": "github",
     "sourceUrl": "https://github.com/webrtc-rs/webrtc",
-    "sourceVersion": "f6b017b0",
+    "sourceVersion": "a53d7ac4",
     "license": "Apache-2.0",
-    "contentHash": "97c2aceec87e1810c66296512a7c060c1a38fa1a2985629a3e7f6de676e12b5e",
-    "lastHarvestedAt": "2026-10-19T02:54:54.979Z",
+    "contentHash": "30feeed0e1ca5e98881e64e674507e3990041fd59872165415101775d127d58b",
+    "lastHarvestedAt": "2026-10-25T17:30:14.438Z",
     "learningId": "learn-github-webrtc-rs-webrtc"
   },
   "midudev-preguntas-entrevista-react": {

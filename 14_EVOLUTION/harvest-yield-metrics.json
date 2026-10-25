@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T17:21:09.073Z",
-  "total_cycles_completed": 4894,
-  "total_learnings_persisted": 4894,
-  "total_rules_promoted": 4275,
+  "last_updated": "2026-10-25T17:30:14.442Z",
+  "total_cycles_completed": 4896,
+  "total_learnings_persisted": 4896,
+  "total_rules_promoted": 4276,
   "history": [
-    {
-      "timestamp": "2026-10-25T06:55:57.590Z",
-      "repository": "LiquidAI/d1-3B",
-      "learningId": "learn-huggingface-liquidai-d1-3b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T06:55:58.695Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T06:56:52.353Z",
       "repository": "primer/react",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T17:21:09.073Z",
       "repository": "HelixDB/helix-db",
       "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T17:30:10.006Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-baai-bge-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T17:30:14.442Z",
+      "repository": "webrtc-rs/webrtc",
+      "learningId": "learn-github-webrtc-rs-webrtc",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

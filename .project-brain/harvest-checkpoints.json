@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T17:21:09.081Z",
+  "last_updated": "2026-10-25T17:30:14.450Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -935,14 +935,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-m3",
-      "content_hash": "f2549f4518b0f136bd418cdf92e0b68bcc3b9ebf1564b4fe012a275fef1d57af",
-      "verified_at": "2026-10-20T21:53:57.325Z",
+      "content_hash": "42cb46071e1ff76667070102af462e7ecf99b37efa82319756fa34bab67bbfeb",
+      "verified_at": "2026-10-25T17:30:10.008Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:53:57.325Z"
+      "last_updated": "2026-10-25T17:30:10.008Z"
     },
     "Qwen/Qwen3-0.6B": {
       "repository": "Qwen/Qwen3-0.6B",
@@ -7686,14 +7686,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webrtc-rs-webrtc",
-      "content_hash": "97c2aceec87e1810c66296512a7c060c1a38fa1a2985629a3e7f6de676e12b5e",
-      "verified_at": "2026-10-19T02:54:54.984Z",
+      "content_hash": "30feeed0e1ca5e98881e64e674507e3990041fd59872165415101775d127d58b",
+      "verified_at": "2026-10-25T17:30:14.445Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:54:54.984Z"
+      "last_updated": "2026-10-25T17:30:14.445Z"
     },
     "midudev/preguntas-entrevista-react": {
       "repository": "midudev/preguntas-entrevista-react",

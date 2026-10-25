@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T17:21:09.013Z",
+  "last_updated": "2026-10-25T17:30:14.389Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16433,7 +16433,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-m3",
       "source_version": "hf-baai-bge-m3",
-      "content_hash": "f2549f4518b0f136bd418cdf92e0b68bcc3b9ebf1564b4fe012a275fef1d57af",
+      "content_hash": "42cb46071e1ff76667070102af462e7ecf99b37efa82319756fa34bab67bbfeb",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
       "promoted_rules": [
@@ -16481,7 +16481,7 @@
         "learn-huggingface-hf-baai-bge-m3-mv4910r9",
         "learn-huggingface-hf-baai-bge-m3-mv4meu5h"
       ],
-      "verified_at": "2026-10-20T21:53:57.236Z",
+      "verified_at": "2026-10-25T17:30:09.946Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51313,14 +51313,19 @@
       "slug": "webrtc-rs-webrtc",
       "platform": "github",
       "source_url": "https://github.com/webrtc-rs/webrtc",
-      "source_version": "f6b017b0",
-      "content_hash": "97c2aceec87e1810c66296512a7c060c1a38fa1a2985629a3e7f6de676e12b5e",
+      "source_version": "a53d7ac4",
+      "content_hash": "30feeed0e1ca5e98881e64e674507e3990041fd59872165415101775d127d58b",
       "dossier_path": "07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md",
       "promoted_rules": [
         {
           "number": 2042,
           "title": "[v0.21.x] fix: release TURN allocations on close() on both runtimes (#903) (#912",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4395,
+          "title": "webrtc): multiplex peer connections over a single UDP socket (UDPMux) (#918)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -51329,7 +51334,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:54:54.916Z",
+      "verified_at": "2026-10-25T17:30:14.379Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124991,6 +124996,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T17:21:08.996Z"
+    },
+    "rule-4395": {
+      "learning_id": "rule-4395",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4395,
+      "title": "webrtc): multiplex peer connections over a single UDP socket (UDPMux) (#918)",
+      "source_url": "https://github.com/webrtc-rs/webrtc",
+      "source_version": "a53d7ac4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:30:14.379Z"
     }
   },
   "aliases": {

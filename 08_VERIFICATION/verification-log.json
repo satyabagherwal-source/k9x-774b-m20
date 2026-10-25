@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-WLHR",
-    "timestamp": "2026-10-22T20:30:27.279Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "55960f3f253fd4161cf3a559a59adc9a1f5c73ec6bddcef547be52682bdeae12",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-WM3U",
-    "timestamp": "2026-10-22T20:30:28.075Z",
-    "repository": "chroma-core/chroma",
-    "learningId": "learn-github-chroma-core-chroma",
-    "contentHash": "689cac78c1b828b8be960ea90f5ba0f796991bbd130f5902756e4633d225c75b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-52O2",
     "timestamp": "2026-10-22T20:37:02.786Z",
     "repository": "tursodatabase/turso",
@@ -7490,6 +7460,36 @@
     "repository": "HelixDB/helix-db",
     "learningId": "learn-github-helixdb-helix-db",
     "contentHash": "9ec56012c141c6ca9329ffac57eae5080f23ba77bac097dbfd95590663ad1c10",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-SATR",
+    "timestamp": "2026-10-25T17:30:09.999Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-baai-bge-m3",
+    "contentHash": "42cb46071e1ff76667070102af462e7ecf99b37efa82319756fa34bab67bbfeb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-SE8Z",
+    "timestamp": "2026-10-25T17:30:14.435Z",
+    "repository": "webrtc-rs/webrtc",
+    "learningId": "learn-github-webrtc-rs-webrtc",
+    "contentHash": "30feeed0e1ca5e98881e64e674507e3990041fd59872165415101775d127d58b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
