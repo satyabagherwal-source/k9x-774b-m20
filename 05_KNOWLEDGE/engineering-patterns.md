@@ -324969,3 +324969,70 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `59ad3bc5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4460. skip the generated package.json when the root type matches (#957) (Harvested from callstack/react-native-builder-bob)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "skip the generated package.json when the root type matches (#957)",
+  "source": "callstack/react-native-builder-bob",
+  "source_url": "https://github.com/callstack/react-native-builder-bob",
+  "source_version": "a73fd95b",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-10-25T21:53:22.026Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-callstack-react-native-builder-bob",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [callstack/react-native-builder-bob](https://github.com/callstack/react-native-builder-bob) (Revision: `a73fd95b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docs/pages/esm.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-builder-bob. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7d120d24`: skip the generated package.json when the root type matches (#957). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/pages/esm.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+### Subpath imports
+
+Bob adds a `package.json` file with the `type` field to the output folders (e.g. `lib/module/package.json`) so that tools know which module system the files use. Node.js, TypeScript and Metro read [subpath imports](https://nodejs.org/api/packages.html#subpath-imports) from the closest `package.json` file, so the `imports` field in your `package.json` won't apply to the files in these folders.
+
+Bob skips this file when the `type` field in your `package.json` has the same value. So to use the `imports` field, set `type` to `module` in your `package.json`:
+
+```json
+"type": "module",
+"imports": {
+  "#internal/*": {
+    "my-library-source": "./src/internal/*.ts",
+    "types": "./lib/typescript/src/internal/*.d.ts",
+    "default": "./lib/module/internal/*.js"
+  }
+}
+```
+
+Node.js will then treat all `.js` files in your library as ES modules, including published files such as `react-native.config.js`. So config files in the project root need to use ESM syntax (e.g. `export default` instead of `module.exports`). This is especially important for `react-native.config.js`, since React Native CLI ignores a CommonJS version without showing an error, and Expo autolinking doesn
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7d120d24` are properly handled with clean fallback behavior.

@@ -5013,3 +5013,5 @@ Every entry in this ledger must capture:
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `7cd4e5e1` | Multi-dimensional audit evidence | 2026-10-25T21:40:25.193Z |
 | `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-10-25T21:46:49.062Z |
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `59ad3bc5` | Multi-dimensional audit evidence | 2026-10-25T21:46:49.692Z |
+| `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-25T21:53:16.116Z |
+| `learn-github-callstack-react-native-builder-bob` | `https://github.com/callstack/react-native-builder-bob` | `a73fd95b` | Multi-dimensional audit evidence | 2026-10-25T21:53:22.207Z |

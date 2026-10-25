@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md`  
 > **Source**: github ([https://github.com/callstack/react-native-builder-bob](https://github.com/callstack/react-native-builder-bob))  
-> **Source Version**: `13309bc9`  
+> **Source Version**: `a73fd95b`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:12:06.026Z  
+> **Timestamp**: 2026-10-25T21:53:21.824Z  
 > **Learning ID**: `learn-github-callstack-react-native-builder-bob`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/react-native-builder-bob](https://github.com/callstack/react-native-builder-bob))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:12:04.290Z  
+> **Harvest Timestamp**: 2026-10-25T21:53:21.817Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Simple set of CLIs to scaffold and build React Native libraries for different targets
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3231 stars
+- **Stars / Engagement**: 3232 stars
 
 ---
 
@@ -51,7 +51,8 @@ export async function assertNpxExists() {
       throw new Error(
         `Couldn't find ${kleur.blue(
           'npx'
-        )}! Please install it by running ${kleur.blue('npm install -g npx')}`
+        )}! Please install it by running ${kleur.blue('npm install -g npx')}`,
+        { cause: error }
       );
     } else {
       throw error;
@@ -64,6 +65,7 @@ export async function assertNpxExists() {
 ### Core Architecture Module: `packages/create-react-native-library/src/utils/configureTools.ts`
 ```
 import path from 'node:path';
+import ejs from 'ejs';
 import fs from 'fs-extra';
 import { applyTemplate, type TemplateConfiguration } from '../template.ts';
 import sortObjectKeys from './sortObjectKeys.ts';
@@ -206,7 +208,8 @@ export async function configureTools({
 
     await mergePackageJsonTemplate(
       path.join(toolDir, '~package.json'),
-      packageJson
+      packageJson,
+      config
     );
 
     if (fs.existsSync(examplePkgPath)) {
@@ -217,7 +220,8 @@ export async function configureTools({
 
       await mergePackageJsonTemplate(
         examplePkgPath,
-        existingExamplePackageJson
+        existingExamplePackageJson,
+        config
       );
 
       await fs.writeJson(
@@ -235,14 +239,17 @@ export async function configureTools({
 
 async function mergePackageJsonTemplate(
   templatePath: string,
-  packageJson: PackageJson
+  packageJson: PackageJson,
+  config: TemplateConfiguration
 ) {
   if (!fs.existsSync(templatePath)) {
     return;
   }
 
+  const content = await fs.readFile(templatePath, 'utf8');
+
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-  const template = (await fs.readJson(templatePath)) as PackageJson;
+  const template = JSON.parse(ejs.render(content, config)) as PackageJson;
 
   for (const [field, value] of Object.entries(template)) {
     if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
@@ -354,6 +361,7 @@ import type { TemplateConfiguration } from '../template.ts';
 
 type PackageJson = {
   dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
 };
 
 /** @returns `true` if successfull */
@@ -371,10 +379,13 @@ export async function addNitroDependencyToLocalLibrary(
 
   const appPackageJson: PackageJson = await fs.readJson(appPackageJsonPath);
   const dependencies = appPackageJson['dependencies'] ?? {};
+  const devDependencies = appPackageJson['devDependencies'] ?? {};
 
   dependencies['react-native-nitro-modules'] = config.versions.nitro;
+  devDependencies['nitrogen'] = config.versions.nitro;
 
   appPackageJson['dependencies'] = dependencies;
+  appPackageJson['devDependencies'] = devDependencies;
   await fs.writeJson(appPackageJsonPath, appPackageJson, {
     spaces: 2,
   });
@@ -447,7 +458,7 @@ import { spawn } from './spawn.ts';
 export async function resolveNpmPackageVersion(
   name: string,
   fallback: string,
-  timeout: number = 1000
+  timeout: number = 5000
 ): Promise<string> {
   let result: string;
 
@@ -458,7 +469,7 @@ export async function resolveNpmPackageVersion(
       new Promise<string>((resolve) => {
         setTimeout(() => {
           resolve(fallback);
-        }, timeout);
+        }, timeout).unref();
       }),
       promise,
     ]);
@@ -581,16 +592,13 @@ export default defineConfig(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #958** (2026-10-21): **Error occurred during the `generateExampleApp` stage.**
+  *Symptoms*: ### Description  When running `generateExampleApp`, an error may occur because `npx @react-native-community/cli` did not include `@latest` or specify a specific version, potentially using an older version's local cache.  We should change `@react-native-community/cli` to `@react-native-community/cli@latest` or specify a version: https://github.com/callstack/react-native-builder-bob/blob/13309bc9da7d3d413d7cc171e230d36c32f3bbe3/packages/create-react-native-library/src/exampleApp/generateExampleApp.ts#L144    ### Packages  - [x] create-react-native-library - [ ] react-native-builder-bob  ### Selected options  ``` ✔ What do you want to name the npm package? │ test │ ✔ How would you describe the package? │ test │ ✔ What is the name of the package author? │ - │ ✔ What is the email address of the package author? │ - │ ✔ What is the profile URL for the package author? │ - │ ✔ What is the repository URL for the package? │ - │ ✔ What type of library do you want to develop? │ Turbo module │ ✔ Which language do you want to use for native code? │ Kotlin & Objective-C │ ✔ What type of example app do you want to create? │ App with Community CLI │ ✔ Which tools do you want to configure? │ ESLint with Prettier ```  ### Link to repro  N/A  ### Environment  Windows 10
+
 - **Issue #943** (2026-05-19): **yarn start - error**
   *Symptoms*: ### Description  run  npx create-react-native-library@latest    cd test yarn  cd example  yarn start  C:\test>cd test C:\test\test>yarn C:\test\test>cd example C:\test\test\example>yarn start error Error loading Metro config at: C:\test\test\example\metro.config.js (baseConfig.resolver.blockList || []) is not iterable. TypeError: (baseConfig.resolver.blockList || []) is not iterable     at withMetroConfig (file:///C:/test/test/example/node_modules/react-native-monorepo-config/index.js:189:53)     at Object.<anonymous> (C:\test\test\example\metro.config.js:13:16)     at Module._compile (node:internal/modules/cjs/loader:1692:14)     at Object..js (node:internal/modules/cjs/loader:1824:10)     at Module.load (node:internal/modules/cjs/loader:1427:32)     at Module._load (node:internal/modules/cjs/loader:1250:12)     at TracingChannel.traceSync (node:diagnostics_channel:322:14)     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)     at cjsLoader (node:internal/modules/esm/translators:316:5)     at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:208:7)  C:\test\test\example>   ### Packages  - [x] create-react-native-library - [ ] react-native-builder-bob  ### Selected options  C:\test>npx create-react-native-library@latest │ ✔ Where do you want to create the library? │ test │ ✔ What do you want to name the npm package? │ react-native-test │ ✔ How would you describe the package? │ test │ ✔ What is the name of the package author? │ test │ ✔ What is the emai
   **Post-Mortem & Fix Analysis**:
   > hey @Alexufo, please try generating a new project, or if you have an existing project, upgrade `react-native-monorepo-config` to 0.3.5
-
-- **Issue #917** (2025-12-12): **create-react-native-library JS Library not working on docker after being created on windows**
-  *Symptoms*: ### Description  after create-react-native-library on windows and yarn install. dockerfile below is not working:  ``` FROM node:24-alpine WORKDIR /app COPY package.json yarn.lock ./ RUN  corepack enable RUN  yarn set version 4.11.0 RUN yarn install --immutable ```  <img width="1521" height="669" alt="Image" src="https://github.com/user-attachments/assets/9218463f-552e-4e81-9687-7744c602df21" />  ### Packages  - [x] create-react-native-library - [ ] react-native-builder-bob  ### Selected options  <img width="750" height="229" alt="Image" src="https://github.com/user-attachments/assets/03b15b73-a60d-4031-bc66-428846590cf6" />  ### Link to repro  n/a  ### Environment  info Fetching system and libraries information... System:   OS: Windows 11 10.0.26200   CPU: (8) x64 Intel(R) Core(TM) Ultra 7 256V   Memory: 1.91 GB / 15.60 GB Binaries:   Node:     version: 24.11.1     path: C:\nvm4w\nodejs\node.EXE   Yarn:     version: 4.11.0     path: C:\Users\myuser\AppData\Roaming\npm\yarn.CMD   npm:     version: 11.6.2     path: C:\nvm4w\nodejs\npm.CMD   Watchman: Not Found SDKs:   Android SDK: Not Found   Windows SDK:     AllowDevelopmentWithoutDevLicense: Enabled IDEs:   Android Studio: AI-252.25557.131.2521.14432022   Visual Studio: Not Found Languages:   Java:     version: 17.0.17     path: C:\Program Files\Microsoft\jdk-17.0.17.10-hotspot\bin\javac.EXE   Ruby: Not Found npmPackages:   "@react-native-community/cli":     installed: 20.0.2     wanted: ^20.0.2   react: Not Found   react-nat
-  **Post-Mortem & Fix Analysis**:
-  > After trying to understand its seems the problem is related to a depency that works on windows but not on linux. I´ve removed the "example" project workspace dependency on the root package.json and was able to make it work since it isolate node_modules depencies.  Didnt find the root issue yet but:  why is the "example" project being tied to root library (trought workspace)?  this decision brings example dependcies to root library yarn.lock and many problem since it has to be commited. As far as I know, the root library should be fully decoupled from example project.  btw, follow bellow all extra dependencies attached to the it when workspacing example: ``` pcb19a0 → ✓ @babel/helper-define-polyfill-provider@npm:0.6.5 [b493f] doesn't provide @types/supports-color to debug@npm:4.4.3 [8ccf6] p11839c → ✓ @babel/helper-define-polyfill-provider@npm:0.6.5 [b493f] doesn't provide supports-color to debug@npm:4.4.3 [8ccf6] p02bfd6 → ✓ @expo/cli@npm:54.0.18 [c074b] doesn't provide @types/bufferut
-  > It's a monorepo - containing the library and example app - to simplify development. So it is expected that if you only copy the root `package.json`, then the `yarn.lock` will change.  If you don't want a monorepo, then you can remove the `workspaces` field. However, you'd then need to ensure that you install dependencies separately for the root and example app during development.  > this decision brings example dependcies to root library yarn.lock and many problem since it has to be commited. > As far as I know, the root library should be fully decoupled from example project.  We haven't had any issues due to this. If this is what you want, then you're free to change it for your project.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -607,198 +615,647 @@ export default defineConfig(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `844957e9` (2026-09-08)
-**Commit Message**: fix: add ndkVersion to nitro library templates (#951)
-
-<!-- Please provide enough information so that others can review your
-pull request. -->
-<!-- Keep pull requests small and focused on a single change. -->
+### Incident Patch 1: `7d120d24` (2026-10-21)
+**Commit Message**: fix: skip the generated package.json when the root type matches (#957)
 
 ### Summary
-This fixes an issue where library and app compiles with different NDKs.
-Please refer to my issue here
-https://github.com/react/react-native/issues/58005 for more details
-<!-- What existing problem does the pull request solve? Can you solve
-the issue with a different approach? -->
 
-### Test plan
+With `esm: true`, Bob writes `{"type": "module"}` to
+`lib/module/package.json` and `lib/typescript/package.json`, and
+`{"type": "commonjs"}` for CommonJS output. Node.js, TypeScript and
+Metro read the `imports` field from the closest package.json, so a
+library that uses subpath imports breaks after it's built:
 
-<!-- List the steps with which we can test this change. Provide
-screenshots if this changes anything visual. -->|
-Before (2Ndks 27 & 28) 
-<img width="1486" height="166" alt="image"
-src="https://github.com/user-attachments/assets/9eedd526-1ea5-4374-9602-e7cccd8da9de"
-/>
-After (1Ndk 27) 
-<img width="1445" height="135" alt="image"
-src="https://github.com/user-attachments/assets/de5f23b3-3eef-4795-a914-9cd8a1263152"
-/>
+- Node.js: `ERR_PACKAGE_IMPORT_NOT_DEFINED: Package import specifier
+"#internal/helper" is not defined in package
+.../lib/module/package.json`
+- TypeScript: `TS2307: Cannot find module '#internal/helper' or its
+corresponding type declarations.`
+- Metro: `The path for #internal/helper could not be resolved.`
+
+Setting `"type": "module"` in the root package.json doesn't help today
+because Bob writes the file anyway. With this change, Bob skips it when
+the root `type` has the same value and the output folder is inside the
+project, since the built files already get that module type from the
+root. If Bob still has to write the file and the root package.json has a
+non-empty `imports` field, it prints a warning.
+
+Copying `imports` into the generated file isn't a general fix: targets
+outside the outp
+
+**File**: `docs/pages/esm.md` (modified, +21/-0)
+```diff
+@@ -140,6 +140,27 @@ Additionally, the `import.meta` syntax is currently not supported in [Metro](htt
+ 
+ So be careful when using properties from `import.meta`, as relying on properties only available in specific tools may lock your library into supporting only those specific tools. Also, since this is an ESM-only feature, you should avoid using it if you compile your library to CommonJS as well.
+ 
++### Subpath imports
++
++Bob adds a `package.json` file with the `type` field to the output folders (e.g. `lib/module/package.json`) so that tools know which module system the files use. Node.js, TypeScript and Metro read [subpath imports](https://nodejs.org/api/packages.html#subpath-imports) from the closest `package.json` file, so the `imports` field in your `package.json` won't apply to the files in these folders.
++
++Bob skips this file when the `type` field in your `package.json` has the same value. So to use the `imports` field, set `type` to `module` in your `package.json`:
++
++```json
++"type": "module",
++"imports": {
++  "#internal/*": {
++    "my-library-source": "./src/internal/*.ts",
++    "types": "./lib/typescript/src/internal/*.d.ts",
++    "default": "./lib/module/internal/*.js"
++  }
++}
++```
++
++Node.js will then treat all `.js` files in your library as ES modules, including published files such as `react-native.config.js`. So config files in the project root need to use ESM syntax (e.g. `export default` instead of `module.exports`). This is especially important for `react-native.config.js`, since React Native CLI ignores a CommonJS version without showing an error, and Expo autolinking doesn't read `react-native.config.cjs`.
++
++In a [dual package setup](#dual-package-setup), the CommonJS build still gets a `package.json` with `"type": "commonjs"`, so subpath imports won't work in the CommonJS build.
++
+ ## Dual package setup
+ 
+ The previously mentioned setup only works with tools that support ES modules. If you want to support tools that don't support ESM and use the CommonJS module system, you can configure a dual package setup.
+```
+
+**File**: `packages/create-react-native-library/templates/common/babel.config.js` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-module.exports = {
++export default {
+   overrides: [
+     {
+       exclude: /\/node_modules\//,
+```
+
+**File**: `packages/create-react-native-library/templates/tools/eslint/eslint.config.mjs` (modified, +1/-1)
+```diff
+@@ -24,6 +24,6 @@ export default defineConfig([
+     },
+   },
+   {
+-    ignores: ['node_modules/', 'lib/'],
++    ignores: ['node_modules/', 'lib/', 'example/dist/'],
+   },
+ ]);
+```
+
+**File**: `packages/react-native-builder-bob/src/__fixtures__/babel.config.js` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++export default (api) => ({
++  presets: [
++    [
++      '@babel/preset-env',
++      {
++        targets: { node: 'current' },
++        modules: api.caller((caller) => caller?.supportsStaticESM)
++          ? false
++          : 'commonjs',
++      },
++    ],
++    '@babel/preset-typescript',
++  ],
++});
+```
+
+**File**: `packages/react-native-builder-bob/src/__tests__/compile.test.ts` (added, +230/-0)
+```diff
+@@ -0,0 +1,230 @@
++import os from 'node:os';
++import path from 'node:path';
++import fs from 'fs-extra';
++import { beforeEach, expect, test, vi } from 'vitest';
++import buildCommonJS from '../targets/commonjs.ts';
++import buildModule from '../targets/module.ts';
++import type { Report } from '../types.ts';
++import { spawn } from '../utils/spawn.ts';
++
++const report: Report = {
++  info: vi.fn(),
++  warn: vi.fn(),
++  success: vi.fn(),
++  error: vi.fn(),
++};
++
++beforeEach(() => {
++  vi.mocked(report.warn).mockClear();
++});
++
++const buildLibrary = async (
++  root: string,
++  {
++    files,
++    packageJson,
++    targets,
++    output = path.join(root, 'lib'),
++  }: {
++    files: Record<string, string>;
++    packageJson?: Record<string, unknown>;
++    targets: ('commonjs' | 'module')[];
++    output?: string;
++  }
++) => {
++  await fs.writeJSON(path.join(root, 'package.json'), {
++    name: 'library',
++    version: '1.0.0',
++    ...packageJson,
++  });
++
++  await Promise.all(
++    Object.entries(files).map(async ([name, content]) =>
++      fs.outputFile(path.join(root, name), content)
++    )
++  );
++
++  const variants = {
++    commonjs: targets.includes('commonjs'),
++    module: targets.includes('module'),
++  };
++
++  for (const target of targets) {
++    const build = target === 'commonjs' ? buildCommonJS : buildModule;
++
++    await build({
++      root,
++      source: path.join(root, 'src'),
++      output: path.join(output, target),
++      exclude: '**/{__tests__,__fixtures__,__mocks__}/**',
++      options: {
++        esm: true,
++        // The default preset loads the babel plugin from the built files
++        // So it can't be used when running tests against the source code
++        configFile: path.resolve(
++          import.meta.dirname,
++          '../__fixtures__/babel.config.js'
++        ),
++      },
++      variants,
++      report,
++    });
++  }
++};
++
++const getImportsWarnings = () =>
++  vi
++    .mocked(report.warn)
++    .mock.calls.map(([message]) => message)
++    .filter((message) => message.includes("won't apply to the files in"));
++
++const readPackageJson = async (output: string): Promise<unknown> => {
++  const packageJsonPath = path.join(output, 'package.json');
++
++  return (await fs.pathExists(packageJsonPath))
++    ? fs.readJSON(packageJsonPath)
++    : undefined;
++};
++
++test.each([
++  ['module', undefined, { type: 'module' }],
++  ['module', 'commonjs', { type: 'module' }],
++  ['module', 'module', undefined],
++  ['commonjs', undefined, { type: 'commonjs' }],
++  ['commonjs', 'module', { type: 'commonjs' }],
++  ['commonjs', 'commonjs', undefined],
++] as const)(
++  'writes package.json for %s output when the root type is %s',
++  async (target, type, expected) => {
++    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-compile-'));
++
++    try {
++      await buildLibrary(root, {
++        packageJson: { type },
++        files: { 'src/index.ts': 'export const foo = 42;\n' },
++        targets: [target],
++      });
++
++      expect(await readPackageJson(path.join(root, 'lib', target))).toEqual(
++        expected
++      );
++    } finally {
++      await fs.remove(root);
++    }
++  }
++);
++
++test.each(['module', 'commonjs'] as const)(
++  'resolves package imports in %s output when package.json has the same type',
++  async (target) => {
++    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-compile-'));
++
++    try {
++      await buildLibrary(root, {
++        packageJson: {
++          type: target,
++          imports: {
++            '#internal/*': `./lib/${target}/internal/*.js`,
++          },
++        },
++        files: {
++          'src/index.ts': [
++            "import { foo } from '#internal/foo';",
++            '',
++            'console.log(foo);',
++          ].join('\n'),
++          'src/internal/foo.ts': "export const foo = 'bar';\n",
++        },
++        targets: [target],
++      });
++
++      expect(getImportsWarnings()).toEqual([]);
++
++      const stdout = await spawn(
++        process.execPath,
++        [path.join(root, 'lib', target, 'index.js')],
++        { cwd: root }
++      );
++
++      expect(stdout).toBe('bar');
++    } finally {
++      await fs.remove(root);
++    }
++  }
++);
++
++test.each([
++  [['module', 'commonjs'], 'module'],
++  [['commonjs'], 'commonjs'],
++] as const)(
++  'warns about package imports for %j targets only in %s output',
++  async (targets, warned) => {
++    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-compile-'));
++
++    try {
++      await buildLibrary(root, {
++        packageJson: { imports: { '#internal/*': './src/internal/*.ts' } },
++        files: { 'src/index.ts': 'export const foo = 42;\n' },
++        targets: [...targets],
++      });
++
++      expect(getImportsWarnings()).toEqual([
++        expect.stringContaining(path.join('lib', warned)),
++      ]);
++    } finally {
++      await fs.remove(root);
++    }
++  }
++);
++
++test('does not warn about an empty imports field', async () => {
++  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-compile-'));
++
++  try
+```
+
+**File**: `packages/react-native-builder-bob/src/__tests__/typescript.test.ts` (modified, +101/-3)
+```diff
+@@ -2,9 +2,9 @@ import os from 'node:os';
+ import path from 'node:path';
+ import { decode } from '@jridgewell/sourcemap-codec';
+ import fs from 'fs-extra';
+-import { expect, test, vi } from 'vitest';
++import { beforeEach, expect, test, vi } from 'vitest';
+ import build from '../targets/typescript.ts';
+-import type { Report } from '../types.ts';
++import type { Report, Variants } from '../types.ts';
+ import { spawn } from '../utils/spawn.ts';
+ 
+ const tsc = path.resolve(
+@@ -20,6 +20,10 @@ const report: Report = {
+   error: vi.fn(),
+ };
+ 
++beforeEach(() => {
++  vi.mocked(report.warn).mockClear();
++});
++
+ const readDeclarationMap = async (filepath: string) => {
+   const value: unknown = await fs.readJSON(filepath);
+ 
+@@ -47,10 +51,12 @@ const buildLibrary = async (
+     files,
+     compilerOptions,
+     packageJson,
++    variants = { module: true },
+   }: {
+     files: Record<string, string>;
+     compilerOptions?: Record<string, unknown>;
+     packageJson?: Record<string, unknown>;
++    variants?: Variants;
+   }
+ ) => {
+   await fs.writeJSON(path.join(root, 'package.json'), {
+@@ -90,7 +96,7 @@ const buildLibrary = async (
+     report,
+     options: { project: 'tsconfig.json', tsc },
+     esm: true,
+-    variants: { module: true },
++    variants,
+   });
+ };
+ 
+@@ -267,3 +273,95 @@ test('keeps platform-specific declaration imports extensionless', async () => {
+     await fs.remove(root);
+   }
+ });
++
++test('resolves package imports when package.json has the same type', async () => {
++  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-typescript-'));
++
++  try {
++    await buildLibrary(root, {
++      compilerOptions: { customConditions: ['library-source'] },
++      packageJson: {
++        imports: {
++          '#internal/*': {
++            'library-source': './src/internal/*.ts',
++            types: './lib/typescript/src/internal/*.d.ts',
++          },
++        },
++      },
++      files: {
++        'src/index.ts': "export { type Foo } from '#internal/foo';\n",
++        'src/internal/foo.ts': 'export type Foo = { value: string };\n',
++      },
++    });
++
++    expect(
++      await fs.pathExists(path.join(root, 'lib/typescript/package.json'))
++    ).toBe(false);
++
++    expect(report.warn).not.toHaveBeenCalled();
++
++    const stdout = await typeCheckConsumer(
++      root,
++      ["import type { Foo } from 'library';", '', 'type Test = Foo;'].join('\n')
++    );
++
++    expect(stdout).toBeUndefined();
++  } finally {
++    await fs.remove(root);
++  }
++});
++
++test('warns about package imports when package.json has a different type', async () => {
++  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-typescript-'));
++
++  try {
++    await buildLibrary(root, {
++      packageJson: {
++        type: undefined,
++        imports: { '#internal/*': './src/internal/*.ts' },
++      },
++      files: { 'src/index.ts': 'export type Foo = string;\n' },
++    });
++
++    expect(
++      await fs.readJSON(path.join(root, 'lib/typescript/package.json'))
++    ).toEqual({ type: 'module' });
++
++    expect(report.warn).toHaveBeenCalledWith(
++      expect.stringContaining("won't apply to the files in")
++    );
++  } finally {
++    await fs.remove(root);
++  }
++});
++
++test('keeps package.json for commonjs declarations in a dual package setup', async () => {
++  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-typescript-'));
++
++  try {
++    await buildLibrary(root, {
++      packageJson: {
++        exports: {
++          '.': {
++            types: './lib/typescript/module/src/index.d.ts',
++          },
++        },
++        imports: { '#internal/*': './src/internal/*.ts' },
++      },
++      files: { 'src/index.ts': 'export type Foo = string;\n' },
++      variants: { commonjs: true, module: true },
++    });
++
++    expect(
++      await fs.pathExists(path.join(root, 'lib/typescript/module/package.json'))
++    ).toBe(false);
++
++    expect(
++      await fs.readJSON(path.join(root, 'lib/typescript/commonjs/package.json'))
++    ).toEqual({ type: 'commonjs' });
++
++    expect(report.warn).not.toHaveBeenCalled();
++  } finally {
++    await fs.remove(root);
++  }
++});
+```
+
+**File**: `packages/react-native-builder-bob/src/targets/typescript.ts` (modified, +20/-13)
+```diff
+@@ -16,6 +16,7 @@ import {
+ } from '../utils/resolveModuleSpecifier.ts';
+ import { spawn } from '../utils/spawn.ts';
+ import { type Replacement, updateSourceMap } from '../utils/updateSourceMap.ts';
++import { writePackageType } from '../utils/writePackageType.ts';
+ 
+ type Options = Input & {
+   options?: {
+@@ -357,25 +358,31 @@ export default async function build({
+     if (esm) {
+       if (outputs?.commonjs && outputs?.module) {
+         // When ESM compatible output is enabled and commonjs build is present, we need to generate 2 builds for commonjs and esm
+-        // In this case we copy the already generated types, and add `package.json` with `type` field
++        // In this case we copy the already generated types
+         await fs.copy(outputs.commonjs, outputs.module);
+-        await fs.writeJSON(path.join(outputs.commonjs, 'package.json'), {
+-          type: 'commonjs',
+-        });
+-        await fs.writeJSON(path.join(outputs.module, 'package.json'), {
+-          type: 'module',
+-        });
+-      } else if (outputs?.commonjs) {
+-        await fs.writeJSON(path.join(outputs.commonjs, 'package.json'), {
++      }
++
++      if (outputs.commonjs) {
++        await writePackageType({
++          root,
++          output: outputs.commonjs,
+           type: 'commonjs',
+-        });
+-      } else if (outputs?.module) {
+-        await fs.writeJSON(path.join(outputs.module, 'package.json'), {
+-          type: 'module',
++          pkg,
++          variants,
++          report,
+         });
+       }
+ 
+       if (outputs.module) {
++        await writePackageType({
++          root,
++          output: outputs.module,
++          type: 'module',
++          pkg,
++          variants,
++          report,
++        });
++
+         await rewriteDeclarationImports(
+           outputs.module,
+           source,
+```
+
+**File**: `packages/react-native-builder-bob/src/utils/compile.ts` (modified, +7/-1)
+```diff
+@@ -6,6 +6,7 @@ import * as babel from '@babel/core';
+ import { glob } from 'glob';
+ import type { Input, Variants } from '../types.ts';
+ import { isCodegenSpec } from './isCodegenSpec.ts';
++import { writePackageType } from './writePackageType.ts';
+ 
+ const require = createRequire(import.meta.url);
+ 
+@@ -89,8 +90,13 @@ export default async function compile({
+   // So we skip generating `package.json` if `esm` is not enabled and `modules` is not `commonjs`
+   // This means that user can't use `type: 'module'` in root `package.json` without enabling `esm` for `module` target
+   if (esm || modules === 'commonjs') {
+-    await fs.writeJSON(path.join(output, 'package.json'), {
++    await writePackageType({
++      root,
++      output,
+       type: modules === 'commonjs' ? 'commonjs' : 'module',
++      pkg,
++      variants,
++      report,
+     });
+   }
+ 
+```
+
+---
+
+### Incident Patch 2: `c68693e1` (2026-10-21)
+**Commit Message**: fix: use latest Community CLI when generating example (#959)
+
+Closes #958
+
+## Summary
+Updated vanilla example generation to use
+`@react-native-community/cli@latest`.
+Added a behavioral regression test for the generated `npx` command.
+Lint and typecheck pass; the full suite passes 30/30 with an extended
+timeout.
+
+## Changed files
+-
+`packages/create-react-native-library/src/exampleApp/generateExampleApp.ts`
+-
+`packages/create-react-native-library/src/exampleApp/generateExampleApp.test.ts`
+
+## Verification
+- `yarn install --immutable` passed
+- `yarn run test` passed
+- `yarn run lint` passed
+- `yarn run typecheck` passed
+
+---
+Code was written with Codex, reviewed and guided by me.
 
 ---------
 
 Co-authored-by: Satyajit Sahoo <[REDACTED_EMAIL]>
 
-**File**: `packages/create-react-native-library/templates/native-common/android/build.gradle` (modified, +4/-0)
+**File**: `packages/create-react-native-library/src/exampleApp/generateExampleApp.ts` (modified, +2/-2)
 ```diff
-@@ -77,6 +77,10 @@ android {
-   }
- <% if (project.moduleConfig === 'nitro-modules' || project.viewConfig === 'nitro-view') { -%>
- 
-+  if (rootProject.ext.has("ndkVersion")) {
-+    ndkVersion rootProject.ext.ndkVersion
-+  }
-+
-   externalNativeBuild {
-     cmake {
-       path "CMakeLists.txt"
-```
-
----
-
-### Incident Patch 2: `aecdcdf3` (2026-10-12)
-**Commit Message**: fix: copy typescript declaration files as is when compiling
-
-**File**: `packages/react-native-builder-bob/src/utils/compile.ts` (modified, +11/-7)
-```diff
-@@ -26,6 +26,7 @@ type Options = Input &
-   };
- 
- const sourceExt = /\.([cm])?[jt]sx?$/;
-+const declarationExt = /\.d\.[cm]?ts$/;
- 
- export default async function compile({
-   root,
-@@ -95,12 +96,18 @@ export default async function compile({
- 
-   await Promise.all(
-     files.map(async (filepath) => {
--      const outputFilename = path
--        .join(output, path.relative(source, filepath))
--        .replace(sourceExt, '.$1js');
-+      const outputFilepath = path.join(output, path.relative(source, filepath));
-+      const outputFilename = outputFilepath.replace(sourceExt, '.$1js');
- 
-       await fs.mkdirp(path.dirname(outputFilename));
- 
-+      // Declaration files only contain types, so compiling them produces empty JS files
-+      // So we copy them as is to preserve the types alongside the compiled code
-+      if (declarationExt.test(filepath)) {
-+        await fs.copy(filepath, outputFilepath);
-+        return;
-+      }
-+
-       if (!sourceExt.test(filepath)) {
-         // Copy files which aren't source code
-         await fs.copy(filepath, outputFilename);
-@@ -114,10 +121,7 @@ export default async function compile({
-       const codegenEnabled = 'codegenConfig' in pkg;
- 
-       if (codegenEnabled && isCodegenSpec(filepath)) {
--        await fs.copy(
--          filepath,
--          path.join(output, path.relative(source, filepath))
--        );
-+        await fs.copy(filepath, outputFilepath);
-         return;
+@@ -138,9 +138,9 @@ export default async function generateExampleApp({
+         );
        }
  
+-      // `npx @react-native-community/cli init <projectName> --directory example --skip-install`
++      // `npx @react-native-community/cli@latest init <projectName> --directory example --skip-install`
+       args = [
+-        `@react-native-community/cli`,
++        `@react-native-community/cli@latest`,
+         'init',
+         `${config.project.name}Example`,
+         '--package-name',
 ```
 
 ---
 
-### Incident Patch 3: `e7b11cab` (2026-09-08)
-**Commit Message**: fix: fix bob init producing incorrect paths on windows (#954)
+### Incident Patch 3: `1dfdfdff` (2026-10-21)
+**Commit Message**: fix: keep generated gitignore in example apps (#952)
 
-Co-authored-by: Kallinikos Milonakis <[REDACTED_EMAIL]>
+## Problem
 
-**File**: `.gitattributes` (added, +3/-0)
+`create-react-native-library` generates the example app with
+`@react-native-community/cli`, `react-native-test-app` or
+`create-expo-app`, then removes the generated `.gitignore`. That loses
+the app-specific rules for generated local artifacts, such as
+`.xcode.env` and `*.xcworkspace/` for the test app.
+
+## Fix
+
+Keep the generated `.gitignore` for all example types. For Expo examples
+of native libraries, append the `android/` and `ios/` rules instead of
+overwriting the file, so the Expo rules stay. Older Expo SDK templates
+(e.g. SDK 52) don't ignore the native folders, so the rules are still
+needed.
+
+## Validation
+
+- Generated the test-app from the pre-change and current code. Only the
+current output retains `example/.gitignore`.
+- Verified the retained file includes `.xcode.env` and `*.xcworkspace/`
+rules.
+- Ran ESLint, TypeScript build, and `git diff --check`.
+
+---------
+
+Co-authored-by: Satyajit Sahoo <[REDACTED_EMAIL]>
+
+**File**: `packages/create-react-native-library/src/exampleApp/generateExampleApp.ts` (modified, +8/-7)
 ```diff
-@@ -0,0 +1,3 @@
-+* text=auto eol=lf
-+*.bat text eol=crlf
-+*.cmd text eol=crlf
-```
-
-**File**: `.github/workflows/check-project.yml` (modified, +15/-3)
-```diff
-@@ -28,8 +28,20 @@ jobs:
-       - name: Typecheck
-         run: yarn typecheck
+@@ -18,7 +18,6 @@ const FILES_TO_DELETE = [
+   '.eslintrc.js',
+   '.flowconfig',
+   '.git',
+-  '.gitignore',
+   '.prettierrc.js',
+   'App.js',
+   'App.tsx',
+@@ -367,13 +366,15 @@ export default async function generateExampleApp({
+       scripts.android = 'expo run:android';
+       scripts.ios = 'expo run:ios';
  
--      - name: Test
--        run: yarn test
--
-       - name: Build packages
-         run: yarn lerna run prepare
-+
-+  test:
-+    strategy:
-+      matrix:
-+        os: [ubuntu-latest, windows-latest]
-+    runs-on: ${{ matrix.os }}
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-+
-+      - name: Setup
-+        uses: ./.github/actions/setup
-+
-+      - name: Test
-+        run: yarn test
-```
-
-**File**: `packages/react-native-builder-bob/src/init.ts` (modified, +5/-5)
-```diff
-@@ -157,11 +157,11 @@ export async function init() {
+-      await fs.writeFile(
++      await fs.appendFile(
+         path.join(directory, '.gitignore'),
+-        dedent`
+-        # These folders are generated with prebuild (CNG)
+-        android/
+-        ios/
+-        `
++        '\n' +
++          dedent`
++          # These folders are generated with prebuild (CNG)
++          android/
++          ios/
++          ` +
++          '\n'
+       );
+     }
  
-   if (targets.includes('module')) {
-     esm = true;
--    entries.module = `./${path.join(output, 'module', 'index.js')}`;
-+    entries.module = `./${path.posix.join(output, 'module', 'index.js')}`;
-   }
- 
-   if (targets.includes('commonjs')) {
--    entries.commonjs = `./${path.join(output, 'commonjs', 'index.js')}`;
-+    entries.commonjs = `./${path.posix.join(output, 'commonjs', 'index.js')}`;
-   }
- 
-   const types: {
-@@ -170,23 +170,23 @@ export async function init() {
- 
-   if (targets.includes('typescript')) {
-     if (targets.includes('commonjs') && targets.includes('module')) {
--      types.require = `./${path.join(
-+      types.require = `./${path.posix.join(
-         output,
-         'typescript',
-         'commonjs',
-         source,
-         'index.d.ts'
-       )}`;
- 
--      types.import = `./${path.join(
-+      types.import = `./${path.posix.join(
-         output,
-         'typescript',
-         'module',
-         source,
-         'index.d.ts'
-       )}`;
-     } else {
--      types.require = `./${path.join(
-+      types.require = `./${path.posix.join(
-         output,
-         'typescript',
-         source,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #954** (2026-09-08): ci: run unit tests on windows (@satya164)
-- **PR #953** (2026-09-08): fix(init): use posix separators for the paths written into package.json (@KallinikosMil)
-- **PR #951** (2026-09-08): fix: add ndkVersion to library templates (@riteshshukla04)
-- **PR #950** (2026-08-04): chore: upgrade dependencies (@satya164)
-- **PR #948** (2026-06-16): feat: use a unique name for the exports condition for source (@satya164)
-- **PR #947** (2026-06-11): ci: add workflow to test building local libraries (@satya164)
+- **PR #963** (2026-10-22): refactor: clean up templates (@satya164)
+- **PR #962** (2026-10-21): feat: update tools in templates (@satya164)
+- **PR #961** (2026-10-21): feat: remove experimental label from c++ template (@satya164)
+- **PR #960** (2026-10-21): chore: upgrade dependencies (@satya164)
+- **PR #959** (2026-10-21): fix(create-react-native-library): use latest Community CLI (@RezoanurRahman)
+- **PR #957** (2026-10-21): fix: skip the generated package.json when the root type matches (@mrousavy)
 
 ---
 
@@ -818,24 +1275,38 @@ Co-authored-by: Kallinikos Milonakis <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add ndkVersion to nitro library templates (#951)
+## X. skip the generated package.json when the root type matches (#957)
 
 **RULE**:
-When implementing operations in `packages/create-react-native-library/templates/native-common/android/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-builder-bob. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/pages/esm.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-builder-bob. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `844957e9`: add ndkVersion to nitro library templates (#951). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7d120d24`: skip the generated package.json when the root type matches (#957). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/create-react-native-library/templates/native-common/android/build.gradle`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/pages/esm.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-  if (rootProject.ext.has("ndkVersion")) {
-    ndkVersion rootProject.ext.ndkVersion
-  }
+### Subpath imports
 
+Bob adds a `package.json` file with the `type` field to the output folders (e.g. `lib/module/package.json`) so that tools know which module system the files use. Node.js, TypeScript and Metro read [subpath imports](https://nodejs.org/api/packages.html#subpath-imports) from the closest `package.json` file, so the `imports` field in your `package.json` won't apply to the files in these folders.
+
+Bob skips this file when the `type` field in your `package.json` has the same value. So to use the `imports` field, set `type` to `module` in your `package.json`:
+
+```json
+"type": "module",
+"imports": {
+  "#internal/*": {
+    "my-library-source": "./src/internal/*.ts",
+    "types": "./lib/typescript/src/internal/*.d.ts",
+    "default": "./lib/module/internal/*.js"
+  }
+}
+```
+
+Node.js will then treat all `.js` files in your library as ES modules, including published files such as `react-native.config.js`. So config files in the project root need to use ESM syntax (e.g. `export default` instead of `module.exports`). This is especially important for `react-native.config.js`, since React Native CLI ignores a CommonJS version without showing an error, and Expo autolinking doesn
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -845,4 +1316,4 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `844957e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7d120d24` are properly handled with clean fallback behavior.

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T21:46:49.700Z",
-  "total_cycles_completed": 4983,
-  "total_learnings_persisted": 4983,
-  "total_rules_promoted": 4345,
+  "last_updated": "2026-10-25T21:53:22.211Z",
+  "total_cycles_completed": 4985,
+  "total_learnings_persisted": 4985,
+  "total_rules_promoted": 4346,
   "history": [
-    {
-      "timestamp": "2026-10-25T12:23:07.237Z",
-      "repository": "joreilly/PeopleInSpace",
-      "learningId": "learn-github-joreilly-peopleinspace",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T12:23:10.965Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T12:32:00.733Z",
       "repository": "Tencent-TDS/KuiklyUI",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T21:46:49.700Z",
       "repository": "topgrade-rs/topgrade",
       "learningId": "learn-github-topgrade-rs-topgrade",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T21:53:16.121Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T21:53:22.211Z",
+      "repository": "callstack/react-native-builder-bob",
+      "learningId": "learn-github-callstack-react-native-builder-bob",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

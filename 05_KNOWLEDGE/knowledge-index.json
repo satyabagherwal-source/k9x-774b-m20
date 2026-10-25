@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T21:46:49.620Z",
+  "last_updated": "2026-10-25T21:53:22.149Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5101,14 +5101,19 @@
       "slug": "callstack-react-native-builder-bob",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-builder-bob",
-      "source_version": "13309bc9",
-      "content_hash": "663d5620fd50db9c0ae6193049a22c9adcd5e6283ec38796cf43a0aafe74f3c5",
+      "source_version": "a73fd95b",
+      "content_hash": "6976497b125bc4354824d92e0064bc2dea65725260241a603f30010354cfec1e",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md",
       "promoted_rules": [
         {
           "number": 2702,
           "title": "add ndkVersion to nitro library templates (#951)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4460,
+          "title": "skip the generated package.json when the root type matches (#957)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -5117,7 +5122,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:12:06.240Z",
+      "verified_at": "2026-10-25T21:53:22.138Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21426,7 +21431,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
-      "content_hash": "14d743bef1300c4b29c3443da17f3deec32c0420b9b31765849a5715f034ae07",
+      "content_hash": "5c0c2233c57cbabeda7debe3c27f194f2db10f8eb37fc6c9c3b179d2f33985df",
       "dossier_path": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "promoted_rules": [
@@ -21478,7 +21483,7 @@
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c",
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7"
       ],
-      "verified_at": "2026-10-21T02:02:15.034Z",
+      "verified_at": "2026-10-25T21:53:16.047Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126264,6 +126269,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T21:46:49.599Z"
+    },
+    "rule-4460": {
+      "learning_id": "rule-4460",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4460,
+      "title": "skip the generated package.json when the root type matches (#957)",
+      "source_url": "https://github.com/callstack/react-native-builder-bob",
+      "source_version": "a73fd95b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T21:53:22.138Z"
     }
   },
   "aliases": {

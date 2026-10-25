@@ -5006,3 +5006,5 @@
 | `CYCLE-20261025-Q4MD` | `2026-10-25T21:40:25.189Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4458` | Yes (`f601101d...`) |
 | `CYCLE-20261025-YCTF` | `2026-10-25T21:46:49.059Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`c26a8217...`) |
 | `CYCLE-20261025-YDAW` | `2026-10-25T21:46:49.688Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4459` | Yes (`79decd2a...`) |
+| `CYCLE-20261025-6NGX` | `2026-10-25T21:53:16.113Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`5c0c2233...`) |
+| `CYCLE-20261025-6S64` | `2026-10-25T21:53:22.204Z` | `callstack/react-native-builder-bob` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4460` | Yes (`6976497b...`) |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-O7H3",
-    "timestamp": "2026-10-23T08:59:45.495Z",
-    "repository": "cosscom/ui",
-    "learningId": "learn-github-cosscom-ui",
-    "contentHash": "59551b460dd1a92c83408757aa8caf77c27209bfe5352393e8e1d6fa4a4a2ddf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-F93N",
-    "timestamp": "2026-10-23T09:20:47.315Z",
-    "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
-    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-    "contentHash": "ea2857e3f7ac8570a916fab5d9dca1ad7f8dec67f9966e63c8b2cae607b3a148",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-FA78",
     "timestamp": "2026-10-23T09:20:48.740Z",
     "repository": "karakeep-app/karakeep",
@@ -7490,6 +7460,36 @@
     "repository": "topgrade-rs/topgrade",
     "learningId": "learn-github-topgrade-rs-topgrade",
     "contentHash": "79decd2ac35451c61d7cd2716976dd733c89f92ce843ffaeff2c703c4ec984af",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-6NGX",
+    "timestamp": "2026-10-25T21:53:16.113Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "5c0c2233c57cbabeda7debe3c27f194f2db10f8eb37fc6c9c3b179d2f33985df",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-6S64",
+    "timestamp": "2026-10-25T21:53:22.204Z",
+    "repository": "callstack/react-native-builder-bob",
+    "learningId": "learn-github-callstack-react-native-builder-bob",
+    "contentHash": "6976497b125bc4354824d92e0064bc2dea65725260241a603f30010354cfec1e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

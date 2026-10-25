@@ -1055,8 +1055,8 @@
     "sourceUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceVersion": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
     "license": "Open-Source",
-    "contentHash": "14d743bef1300c4b29c3443da17f3deec32c0420b9b31765849a5715f034ae07",
-    "lastHarvestedAt": "2026-10-21T02:02:15.105Z",
+    "contentHash": "5c0c2233c57cbabeda7debe3c27f194f2db10f8eb37fc6c9c3b179d2f33985df",
+    "lastHarvestedAt": "2026-10-25T21:53:16.116Z",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
@@ -8433,10 +8433,10 @@
     "repository": "callstack/react-native-builder-bob",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/react-native-builder-bob",
-    "sourceVersion": "13309bc9",
+    "sourceVersion": "a73fd95b",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "663d5620fd50db9c0ae6193049a22c9adcd5e6283ec38796cf43a0aafe74f3c5",
-    "lastHarvestedAt": "2026-10-19T17:12:06.311Z",
+    "contentHash": "6976497b125bc4354824d92e0064bc2dea65725260241a603f30010354cfec1e",
+    "lastHarvestedAt": "2026-10-25T21:53:22.207Z",
     "learningId": "learn-github-callstack-react-native-builder-bob"
   },
   "electron-electron": {

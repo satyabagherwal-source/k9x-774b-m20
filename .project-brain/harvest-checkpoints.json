@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T21:46:49.710Z",
+  "last_updated": "2026-10-25T21:53:22.215Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1385,14 +1385,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "content_hash": "14d743bef1300c4b29c3443da17f3deec32c0420b9b31765849a5715f034ae07",
-      "verified_at": "2026-10-21T02:02:15.114Z",
+      "content_hash": "5c0c2233c57cbabeda7debe3c27f194f2db10f8eb37fc6c9c3b179d2f33985df",
+      "verified_at": "2026-10-25T21:53:16.124Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:02:15.114Z"
+      "last_updated": "2026-10-25T21:53:16.124Z"
     },
     "pablodawson/MiniMax-H3-360-Orbit-LoRA": {
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -12696,14 +12696,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-react-native-builder-bob",
-      "content_hash": "663d5620fd50db9c0ae6193049a22c9adcd5e6283ec38796cf43a0aafe74f3c5",
-      "verified_at": "2026-10-19T17:12:06.317Z",
+      "content_hash": "6976497b125bc4354824d92e0064bc2dea65725260241a603f30010354cfec1e",
+      "verified_at": "2026-10-25T21:53:22.214Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T17:12:06.317Z"
+      "last_updated": "2026-10-25T21:53:22.215Z"
     },
     "electron/electron": {
       "repository": "electron/electron",
