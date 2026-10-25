@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T17:49:18.667Z",
-  "total_cycles_completed": 4904,
-  "total_learnings_persisted": 4904,
-  "total_rules_promoted": 4283,
+  "last_updated": "2026-10-25T18:02:31.547Z",
+  "total_cycles_completed": 4907,
+  "total_learnings_persisted": 4907,
+  "total_rules_promoted": 4286,
   "history": [
-    {
-      "timestamp": "2026-10-25T07:19:00.810Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T07:19:16.664Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T07:22:25.511Z",
-      "repository": "callstack/agent-device",
-      "learningId": "learn-github-callstack-agent-device",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T07:38:48.776Z",
       "repository": "astral-sh/uv",
@@ -1403,6 +1382,27 @@
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T17:59:11.814Z",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T17:59:17.507Z",
+      "repository": "jacklandrin/OnlySwitch",
+      "learningId": "learn-github-jacklandrin-onlyswitch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:02:31.547Z",
+      "repository": "honojs/hono",
+      "learningId": "learn-github-honojs-hono",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

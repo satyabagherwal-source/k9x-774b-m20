@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T17:49:18.603Z",
+  "last_updated": "2026-10-25T18:02:31.468Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18189,7 +18189,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
       "source_version": "hf-comfy-org-minimax-h3",
-      "content_hash": "871615cdc620904cdd5cccca4fd7bc28bd5d0bbc019cab716128ef76a609886c",
+      "content_hash": "c0f76c22b795da156cc1a342612d733998359100361f3a27924826b7f02fe040",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -18267,7 +18267,7 @@
         "learn-huggingface-hf-comfy-org-minimax-h3-mv49cnz1",
         "learn-huggingface-hf-comfy-org-minimax-h3-mv4mpv5o"
       ],
-      "verified_at": "2026-10-20T22:20:21.251Z",
+      "verified_at": "2026-10-25T17:59:11.722Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28085,14 +28085,24 @@
       "slug": "honojs-hono",
       "platform": "github",
       "source_url": "https://github.com/honojs/hono",
-      "source_version": "5ca49b07",
-      "content_hash": "fa7082a056b92478ffc6ccc0c19d4c965a33ed54c4d657b70338a4d5b64dd1ee",
+      "source_version": "bac5c4a8",
+      "content_hash": "386f23cf518f3d83a9e474f052911f408d447423e8e55de7606a1a4d1c4e9ce4",
       "dossier_path": "07_PROJECT_LEARNING/honojs-hono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/honojs-hono-learnings.md",
       "promoted_rules": [
         {
           "number": 1875,
           "title": "css): Fix multiline CSS handling in style replacement (#5405)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4403,
+          "title": "Invariant Cache Typing for Multi-Consumer Async Request Readers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4404,
+          "title": "Zero-Allocation Fast-Path Query Extraction with Deterministic Decoder Pre-Checks",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -28101,7 +28111,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:51:37.771Z",
+      "verified_at": "2026-10-25T18:02:31.457Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29259,8 +29269,8 @@
       "slug": "jacklandrin-onlyswitch",
       "platform": "github",
       "source_url": "https://github.com/jacklandrin/OnlySwitch",
-      "source_version": "a345e46b",
-      "content_hash": "6dea47b900427c9c775bbc9f838b705762039a9f6502f81a808018c21d865f85",
+      "source_version": "abbde3ce",
+      "content_hash": "cc77505eb24fd0b77cb261bf36bfcd44aa3a52c5a61a834c1b72d33a89ebcbb7",
       "dossier_path": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "promoted_rules": [
@@ -29273,6 +29283,11 @@
           "number": 3462,
           "title": "Show latest launch campaign on every Debug startup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4402,
+          "title": "radio audio packet callback race",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29280,7 +29295,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:42:28.577Z",
+      "verified_at": "2026-10-25T17:59:17.434Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125129,6 +125144,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T17:49:18.592Z"
+    },
+    "rule-4402": {
+      "learning_id": "rule-4402",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4402,
+      "title": "radio audio packet callback race",
+      "source_url": "https://github.com/jacklandrin/OnlySwitch",
+      "source_version": "abbde3ce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:59:17.434Z"
+    },
+    "rule-4403": {
+      "learning_id": "rule-4403",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4403,
+      "title": "Invariant Cache Typing for Multi-Consumer Async Request Readers",
+      "source_url": "https://github.com/honojs/hono",
+      "source_version": "bac5c4a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T18:02:31.457Z"
+    },
+    "rule-4404": {
+      "learning_id": "rule-4404",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4404,
+      "title": "Zero-Allocation Fast-Path Query Extraction with Deterministic Decoder Pre-Checks",
+      "source_url": "https://github.com/honojs/hono",
+      "source_version": "bac5c4a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T18:02:31.457Z"
     }
   },
   "aliases": {

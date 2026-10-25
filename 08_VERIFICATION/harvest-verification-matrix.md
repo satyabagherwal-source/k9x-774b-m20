@@ -4927,3 +4927,6 @@
 | `CYCLE-20261025-GOS1` | `2026-10-25T17:49:07.825Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`f4d1a0fc...`) |
 | `CYCLE-20261025-GPQ3` | `2026-10-25T17:49:09.051Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4400` | Yes (`fc44c6ff...`) |
 | `CYCLE-20261025-GX4Z` | `2026-10-25T17:49:18.659Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4401` | Yes (`6ca361f2...`) |
+| `CYCLE-20261025-TMT5` | `2026-10-25T17:59:11.801Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`c0f76c22...`) |
+| `CYCLE-20261025-TR7F` | `2026-10-25T17:59:17.499Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4402` | Yes (`cc77505e...`) |
+| `CYCLE-20261025-XWXG` | `2026-10-25T18:02:31.540Z` | `honojs/hono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4403, Rule 4404` | Yes (`386f23cf...`) |

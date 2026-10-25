@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-O8XD",
-    "timestamp": "2026-10-22T20:51:57.361Z",
-    "repository": "KeyboardKit/KeyboardKit",
-    "learningId": "learn-github-keyboardkit-keyboardkit",
-    "contentHash": "5ed390188f27ac2d758391ac60b72a3f2e45ed2b3f1197556dc6fca6f2ac8b81",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-OB2X",
-    "timestamp": "2026-10-22T20:52:00.153Z",
-    "repository": "kumahq/kuma",
-    "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "b27b8563fb916cfef636c413407974f9ada2832d8606c9e02c53f710b7ee8405",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-OCU0",
-    "timestamp": "2026-10-22T20:52:02.424Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "5f64aa0c38a3563c6bfb71310f63355622a5b6fddccc6bd012ba19aed99e8c18",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-OGPX",
     "timestamp": "2026-10-22T20:52:07.461Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7447,51 @@
     "contentHash": "6ca361f2806f20d8e0e92c2b845bf7cf879a3aba9a52902be41dfd3b0feb1c96",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-TMT5",
+    "timestamp": "2026-10-25T17:59:11.801Z",
+    "repository": "Comfy-Org/MiniMax-H3",
+    "learningId": "learn-huggingface-comfy-org-minimax-h3",
+    "contentHash": "c0f76c22b795da156cc1a342612d733998359100361f3a27924826b7f02fe040",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-TR7F",
+    "timestamp": "2026-10-25T17:59:17.499Z",
+    "repository": "jacklandrin/OnlySwitch",
+    "learningId": "learn-github-jacklandrin-onlyswitch",
+    "contentHash": "cc77505eb24fd0b77cb261bf36bfcd44aa3a52c5a61a834c1b72d33a89ebcbb7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-XWXG",
+    "timestamp": "2026-10-25T18:02:31.540Z",
+    "repository": "honojs/hono",
+    "learningId": "learn-github-honojs-hono",
+    "contentHash": "386f23cf518f3d83a9e474f052911f408d447423e8e55de7606a1a4d1c4e9ce4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source**: github ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
-> **Source Version**: `a345e46b`  
+> **Source Version**: `abbde3ce`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T00:42:28.373Z  
+> **Timestamp**: 2026-10-25T17:59:17.129Z  
 > **Learning ID**: `learn-github-jacklandrin-onlyswitch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T00:42:28.107Z  
+> **Harvest Timestamp**: 2026-10-25T17:59:17.122Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 👑 The all-in-one macOS menu bar companion: customizable controls, system monitor, AI Agent, Shortcuts, widgets, remote control, and more.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5997 stars
+- **Stars / Engagement**: 6014 stars
 
 ---
 
@@ -840,817 +840,484 @@ public struct RemoteControlStatus: Codable, Equatable, Identifiable, Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1d680d60` (2026-10-20)
-**Commit Message**: Show latest launch campaign on every Debug startup
+### Incident Patch 1: `abbde3ce` (2026-10-23)
+**Commit Message**: Fix radio audio packet callback race
 
-**File**: `ARCHITECTURE.md` (modified, +1/-1)
+**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Parse/Parser+Packets.swift` (modified, +3/-5)
 ```diff
-@@ -36,7 +36,7 @@ Infrastructure details must not leak into SwiftUI views. Feature modules should
- - `OnlyWidget/` contains widget-facing code and must use extension-safe shared models and effects.
- - `OnlySwitchRemote/` contains the remote-control application and must share protocol contracts without importing main-app implementation details. Its root TCA feature owns the independent Aphrodite personal-tools tab and OnlyRemote Plus sheet. Aphrodite access is gated by verified subscription entitlement, with an embedded paywall for nonmembers. Entitlement refresh is independent of product loading and responds to foregrounding, transaction updates, purchases, restoration, and expiration. A Debug-only Settings submenu provides a persisted paywall bypass for development; Release builds ignore this preference. The injected StoreKit client loads and purchases only the one-month `jacklandrin.onlyremote.plus.monthly` auto-renewable product. Only eligible verified transactions unlock access; pending purchases await a later transaction update, and cancellation does not grant access. Recognized verified transactions are finished after processing, and purchase results update both embedded and Settings paywalls without depending on duplicate transaction notifications.
- - `RemoteCore` owns the lightweight, versioned Aphrodite transfer models and the shared HTML and SVG safety validators. Authenticated protocol 1.6 sessions automatically transfer the complete saved library as bounded manifests and 64 KiB chunks with SHA-256 integrity; the wire contract excludes Aphrodite authoring types and private authoring state. OnlyRemote validates each complete transfer before atomically replacing its per-Mac cache, and its WebKit runner uses the same isolated custom origin, content-security policy, and navigation restrictions as the shared sandbox primitives. OnlyRemote lists and runs cached tools but does not create or edit them.
--- Launch Campaign uses an injected TCA client to fetch a bounded manifest and dated HTML from the fixed repository origin. A nonpersistent, navigation-restricted WebKit renderer loads while hidden and acknowledges the date only after successful presentation. The page follows app language and native appearance; its OnlyRemote download link opens the existing native QR window. Failed requests or rendering remain silent and unacknowledged.
-+- Launch Campaign uses an injected TCA client to fetch a bounded manifest and dated HTML from the fixed repository origin. A nonpersistent, navigation-restricted WebKit renderer loads while hidden and acknowledges the date only after successful presentation. The page follows app language and native appearance; its OnlyRemote download link opens the existing native QR window. Failed requests or rendering remain silent and unacknowledged. Debug builds bypass the previously shown date so the latest page appears on every app launch; forced previews do not modify the saved presentation date.
- - `OnlySwitchTests/`, `OnlySwitchRemoteTests/`, and `Modules/Tests/` contain unit, integration, feature, protocol, and end-to-end coverage.
- - `OpenClaw/skills/onlyswitch-deeplink/` contains the OpenClaw integration documentation and skill for invoking built-in switches through deeplinks.
+@@ -10,8 +10,6 @@ import Foundation
+ import AVFoundation
+ import os.log
  
-```
-
-**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignFeature.swift` (modified, +5/-1)
-```diff
-@@ -19,6 +19,8 @@ struct OnlyRemoteCampaignFeature {
-         case showQRCodeTapped
+-let parserQueue = DispatchQueue(label: "com.fastlearner.streamer.parser",attributes: .concurrent)
+-
+ func ParserPacketCallback(_ context: UnsafeMutableRawPointer, _ byteCount: UInt32, _ packetCount: UInt32, _ data: UnsafeRawPointer, _ packetDescriptions: UnsafeMutablePointer<AudioStreamPacketDescription>) {
+     let decriptions:UnsafeMutablePointer<AudioStreamPacketDescription>? = packetDescriptions
+     ParserPacketCallback(context, byteCount, packetCount, data, decriptions)
+@@ -29,15 +27,15 @@ func ParserPacketCallback(_ context: UnsafeMutableRawPointer, _ byteCount: UInt3
      }
- 
-+    var forcePresentation = false
-+
-     private enum CancelID { case loading }
-     @Dependency(\.onlyRemoteCampaign) var campaign
- 
-@@ -29,14 +31,15 @@ struct OnlyRemoteCampaignFeature {
-                 guard !state.hasChecked, !state.isLoading, state.document == nil, !state.isPresented else { return .none }
-                 state.hasChecked = true
-                 state.isLoading = true
-+                let forcePresentation = forcePresentation
-                 return .run { send in
-                     do {
-                         let manifest = try await campaign.fetchLatest()
-                         guard manifest.isValid else {
-                             await send(.campaignLoaded(nil))
-                             return
-                         }
--                        if let acknowledged = campaign.acknowledgedVersion(),
-+                        if !forcePresentation, let acknowledged = campaign.acknowledgedVersion(),
-                            OnlyRemoteCampaignManifest(date: acknowledged, file: acknowledged + ".html").isValid,
-                            acknowledged >= manifest.date {
-                             await send(.campaignLoaded(nil))
-@@ -62,6 +65,7 @@ struct OnlyRemoteCampaignFeature {
-                 guard let document = state.document, document.manifest.date == date,
-                       !state.isPresented else { return .none }
-                 state.isPresented = true
-+                guard !forcePresentation else { return .none }
-                 return .run { _ in await campaign.markAcknowledged(date) }
- 
-             case let .pageFailed(date):
-```
-
-**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignWindowController.swift` (modified, +4/-0)
-```diff
-@@ -19,7 +19,11 @@ final class OnlyRemoteCampaignWindowController: NSWindowController, NSWindowDele
-         store: StoreOf<OnlyRemoteCampaignFeature> = Store(
-             initialState: OnlyRemoteCampaignFeature.State()
-         ) {
-+#if DEBUG
-+            OnlyRemoteCampaignFeature(forcePresentation: true)
-+#else
-             OnlyRemoteCampaignFeature()
-+#endif
-         }
-     ) {
-         self.store = store
-```
-
-**File**: `OnlySwitchTests/RemoteAccess/OnlyRemoteCampaignFeatureTests.swift` (modified, +64/-2)
-```diff
-@@ -222,12 +222,74 @@ struct OnlyRemoteCampaignFeatureTests {
-         #expect(await recorder.acknowledgedVersions.isEmpty)
-     }
- 
-+    @Test(arguments: ["2026-10-20", "2026-10-21"])
-+    func forcedPresentationLoadsLatestHTMLDespiteAcknowledgedDate(acknowledgedDate: String) async {
-+        let recorder = OnlyRemoteCampaignRecorder(
-+            manifest: manifest, html: html, acknowledgedVersion: acknowledgedDate
-+        )
-+        let store = makeStore(recorder, forcePresentation: true)
-+        let document = OnlyRemoteCampaignDocument(manifest: manifest, html: html)
-+
-+        await store.send(.launch) {
-+            $0.hasChecked = true
-+            $0.isLoading = true
-+        }
-+        await store.receive(.campaignLoaded(document)) {
-+            $0.isLoading = false
-+            $0.document = document
-+        }
-+        await store.finish()
-+
-+        #expect(await recorder.htmlFetchCount == 1)
-+        #expect(await recorder.acknowledgedVersions.isEmpty)
-+        #expect(store.state.isPresented == false)
-+
-+        await store.send(.pageLoaded(manifest.date)) { $0.isPresented = true }
-+        await store.finish()
-+
-+        #expect(await recorder.acknowledgedVersions.isEmpty,
-+                "A forced debug preview must preserve the release acknowledgement date.")
-+    }
-+
-+    @Test(arguments: [OnlyRemoteCampaignRecorder.Failure.manifest, .html])
-+    func forcedPresentationRequestFailureRemainsSilent(failure: OnlyRemoteCampaignRecorder.Failure) async {
-+        let recorder = OnlyRemoteCampaignRecorder(
-+            manifest: manifest, html: html, acknowledgedVersion: manifest.date, failure: failure
-+        )
-+        let store = makeStore(recorder, forcePresentation: true)
-+
-+        await store.send(.launch) {
-+            $0.hasChecked = true
-+            $0.isLoading = true
-+        }
-+        await store.receive(.campaignLoaded(nil)) { $0.isLoading = false }
-+        await store.finish()
-+
-+        #expect(store.state.document == nil)
-+        #expect(store.state.isPresented == false)
-+        #expect(await recorder.acknowledgedVersions.isEmpty)
-+    }
-+
-+    @Test
-+    func forcedPresentationStillChecksOnlyOncePerSession() async {
-+        let recorder = OnlyRemoteCampaignRecorder(manifest: manifest, html: html)
-+        var state = OnlyRemoteCampaignFeature.State()
-+        state.hasChecked = true
-+        let store = makeStore(recorder, state: state, forcePresentation: true)
-+
-+        await store.send(.launch)
-+        await store.finish()
-+
-+        #expect(await recorder.manifestFetchCount == 0)
-+    }
-+
-     private func makeStore(
-         _ recorder: OnlyRemoteCampaignRecorder,
--        state: OnlyRemoteCampaignFeature.State = .init()
-+        state: OnlyRemoteCampaignFeature.State = .init(),
-+        forcePresentation: Bool = false
-     ) -> TestStore<OnlyRemoteCampaignFeature.State, OnlyRemoteCampaignFeature.Action> {
-         TestStore(initialState: state) {
--            OnlyRemoteCampaignFeature()
-+            OnlyRemoteCampaignFeature(forcePresentation: forcePresentation)
-         } withDependencies: {
-             $0.onlyRemoteCampaign = recorder.client
-         }
-```
-
----
-
-### Incident Patch 2: `863a3891` (2026-10-20)
-**Commit Message**: Render dated launch campaigns in a compact locale-aware WebView
-
-**File**: `ARCHITECTURE.md` (modified, +1/-0)
-```diff
-@@ -36,6 +36,7 @@ Infrastructure details must not leak into SwiftUI views. Feature modules should
- - `OnlyWidget/` contains widget-facing code and must use extension-safe shared models and effects.
- - `OnlySwitchRemote/` contains the remote-control application and must share protocol contracts without importing main-app implementation details. Its root TCA feature owns the independent Aphrodite personal-tools tab and OnlyRemote Plus sheet. Aphrodite access is gated by verified subscription entitlement, with an embedded paywall for nonmembers. Entitlement refresh is independent of product loading and responds to foregrounding, transaction updates, purchases, restoration, and expiration. A Debug-only Settings submenu provides a persisted paywall bypass for development; Release builds ignore this preference. The injected StoreKit client loads and purchases only the one-month `jacklandrin.onlyremote.plus.monthly` auto-renewable product. Only eligible verified transactions unlock access; pending purchases await a later transaction update, and cancellation does not grant access. Recognized verified transactions are finished after processing, and purchase results update both embedded and Settings paywalls without depending on duplicate transaction notifications.
- - `RemoteCore` owns the lightweight, versioned Aphrodite transfer models and the shared HTML and SVG safety validators. Authenticated protocol 1.6 sessions automatically transfer the complete saved library as bounded manifests and 64 KiB chunks with SHA-256 integrity; the wire contract excludes Aphrodite authoring types and private authoring state. OnlyRemote validates each complete transfer before atomically replacing its per-Mac cache, and its WebKit runner uses the same isolated custom origin, content-security policy, and navigation restrictions as the shared sandbox primitives. OnlyRemote lists and runs cached tools but does not create or edit them.
-+- Launch Campaign uses an injected TCA client to fetch a bounded manifest and dated HTML from the fixed repository origin. A nonpersistent, navigation-restricted WebKit renderer loads while hidden and acknowledges the date only after successful presentation. The page follows app language and native appearance; its OnlyRemote download link opens the existing native QR window. Failed requests or rendering remain silent and unacknowledged.
- - `OnlySwitchTests/`, `OnlySwitchRemoteTests/`, and `Modules/Tests/` contain unit, integration, feature, protocol, and end-to-end coverage.
- - `OpenClaw/skills/onlyswitch-deeplink/` contains the OpenClaw integration documentation and skill for invoking built-in switches through deeplinks.
- 
-```
-
-**File**: `Modules/Sources/Extensions/UserDefaultsKeys.swift` (modified, +1/-0)
-```diff
-@@ -107,6 +107,7 @@ public extension UserDefaults {
-         public static let checkUpdateOnLaunch = "checkUpdateOnLaunchKey"
-         public static let hideMenuAfterRunning = "hideMenuAfterRunningKey"
-         public static let canPlayEffectSound = "canPlayESKey"
-+        public static let onlySwitchLaunchCampaignAcknowledgedDate = "onlySwitchLaunchCampaignAcknowledgedDateKey"
-         public static let onlyRemoteCampaignAcknowledgedVersion = "onlyRemoteCampaignAcknowledgedVersionKey"
- 
-         /// `UserDefaults.standard` keys included in a settings backup.
-```
-
-**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignClient.swift` (modified, +99/-28)
-```diff
-@@ -3,59 +3,130 @@ import Dependencies
- import Extensions
- import Foundation
- 
-+struct OnlyRemoteCampaignManifest: Codable, Equatable, Sendable {
-+    let date: String
-+    let file: String
-+
-+    var isValid: Bool {
-+        let bytes = Array(date.utf8)
-+        guard bytes.count == 10, bytes[4] == 45, bytes[7] == 45,
-+              bytes.enumerated().allSatisfy({ index, byte in
-+                  index == 4 || index == 7 || (48...57).contains(byte)
-+              }), file == date + ".html" else { return false }
-+        let parts = date.split(separator: "-").compactMap { Int($0) }
-+        guard parts.count == 3 else { return false }
-+        let (year, month, day) = (parts[0], parts[1], parts[2])
-+        guard year > 0, (1...12).contains(month) else { return false }
-+        let leapYear = year.isMultiple(of: 400) || (year.isMultiple(of: 4) && !year.isMultiple(of: 100))
-+        let days = [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-+        return (1...days[month - 1]).contains(day)
-+    }
-+}
-+
-+struct OnlyRemoteCampaignDocument: Equatable, Sendable {
-+    let manifest: OnlyRemoteCampaignManifest
-+    let html: String
-+}
-+
- struct OnlyRemoteCampaignClient: Sendable {
--    var currentVersion: @Sendable () -> String
-+    var fetchLatest: @Sendable () async throws -> OnlyRemoteCampaignManifest
-+    var fetchHTML: @Sendable (OnlyRemoteCampaignManifest) async throws -> String
-     var acknowledgedVersion: @Sendable () -> String?
-     var markAcknowledged: @Sendable (String) async -> Void
--    var openAppStore: @Sendable () async -> Void
--    var openRemoteAccessSettings: @Sendable () async -> Void
-+    var showQRCode: @Sendable () async -> Void = {}
- }
- 
- extension OnlyRemoteCampaignClient: DependencyKey {
--    static let campaignVersion = "onlyremote-app-store-launch-v2"
--    static let appStoreURL = URL(
--        string: "https://apps.apple.com/us/app/onlyremote/id6793657946"
--    )!
-+    static let appStoreURL = URL(string: "https://apps.apple.com/us/app/onlyremote/id6793657946")!
- 
-     static var liveValue: Self {
-         Self(
--            currentVersion: { campaignVersion },
--            acknowledgedVersion: {
--                UserDefaults.standard.string(
--                    forKey: UserDefaults.Key.onlyRemoteCampaignAcknowledgedVersion
--                )
--            },
--            markAcknowledged: { version in
--                UserDefaults.standard.set(
--                    version,
--                    forKey: UserDefaults.Key.onlyRemoteCampaignAcknowledgedVersion
--                )
-+            fetchLatest: {
-+                let data = try await OnlyRemoteCampaignLoader.fetch("latest.json", limit: 64 * 1024)
-+                let manifest = try JSONDecoder().decode(OnlyRemoteCampaignManifest.self, from: data)
-+                guard manifest.isValid else { throw OnlyRemoteCampaignLoader.Failure.invalidContent }
-+                return manifest
-             },
--            openAppStore: {
--                await MainActor.run {
--                    _ = NSWorkspace.shared.open(appStoreURL)
-+            fetchHTML: { manifest in
-+                guard manifest.isValid else { throw OnlyRemoteCampaignLoader.Failure.invalidContent }
-+                let data = try await OnlyRemoteCampaignLoader.fetch(manifest.file, limit: 2 * 1024 * 1024)
-+                guard let html = String(data: data, encoding: .utf8),
-+                      html.range(of: "<html", options: .caseInsensitive) != nil,
-+                      html.range(of: "</html>", options: .caseInsensitive) != nil else {
-+                    throw OnlyRemoteCampaignLoader.Failure.invalidContent
-                 }
-+                return html
-+            },
-+            acknowledgedVersion: {
-+                UserDefaults.standard.string(forKey: UserDefaults.Key.onlySwitchLaunchCampaignAcknowledgedDate)
-+            },
-+            markAcknowledged: { date in
-+                UserDefaults.standard.set(date, forKey: UserDefaults.Key.onlySwitchLaunchCampaignAcknowledgedDate)
-             },
--            openRemoteAccessSettings: {
-+            showQRCode: {
-                 await MainActor.run {
--                    SettingsVM.shared.selection = .iOSRemote
--                    SettingsWindow.shared.show()
-+                    QRCodeWindowController.shared.show(url: QRCodeWindowController.onlyRemoteQRCodeURL)
-                 }
+     
+     
+-    parserQueue.sync {
++    parser.withPackets { packets in
+         /// Iterate through the packets and store the data appropriately
+         if isCompressed {
+             for i in 0 ..< Int(packetCount) {
+                 let packetDescription = packetDescriptions![i]
+                 let packetStart = Int(packetDescription.mStartOffset)
+                 let packetSize = Int(packetDescription.mDataByteSize)
+                 let packetData = Data(bytes: data.advanced(by: packetStart), count: packetSize)
+-                parser.packets.append((packetData, packetDescription))
++                packets.append((packetData, packetDescription))
              }
-         )
-     }
- 
-     static var testValue: Self {
-         Self(
--            currentVersion: { "test-onlyremote-campaign" },
-+            fetchLatest: { throw OnlyRemoteCampaignLoader.Failure.invalidContent },
-+            fetchHTML: { _ in throw OnlyRemoteCampaignLoader.Failure.invalidContent },
-             acknowledgedVersion: { nil },
--            markAcknowledged: { _ in },
--            openAppStore: {},
--            openRemoteAccessSettings: {}
-+            markAcknowledged: { _ in }
-         )
-     }
- }
- 
-+private enum OnlyRemoteCampaignLoader {
-+    enum Failure: Error { case
-```
-
-**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignFeature.swift` (modified, +54/-36)
-```diff
-@@ -4,63 +4,81 @@ import ComposableArchitecture
- struct OnlyRemoteCampaignFeature {
-     @ObservableState
-     struct State: Equatable {
-+        var hasChecked = false
-+        var isLoading = false
-+        var document: OnlyRemoteCampaignDocument?
-         var isPresented = false
--        var isOpeningRemoteAccessSettings = false
-     }
- 
-     enum Action: Equatable {
--        case launch(forcePresentation: Bool)
-+        case launch
-+        case campaignLoaded(OnlyRemoteCampaignDocument?)
-+        case pageLoaded(String)
-+        case pageFailed(String)
-         case dismissTapped
--        case downloadTapped
-         case showQRCodeTapped
--        case openRemoteAccessSettingsTapped
-     }
- 
-+    private enum CancelID { case loading }
-     @Dependency(\.onlyRemoteCampaign) var campaign
- 
-     var body: some ReducerOf<Self> {
-         Reduce { state, action in
-             switch action {
--            case let .launch(forcePresentation):
--                state.isPresented = forcePresentation || campaign.acknowledgedVersion() != campaign.currentVersion()
-+            case .launch:
-+                guard !state.hasChecked, !state.isLoading, state.document == nil, !state.isPresented else { return .none }
-+                state.hasChecked = true
-+                state.isLoading = true
-+                return .run { send in
-+                    do {
-+                        let manifest = try await campaign.fetchLatest()
-+                        guard manifest.isValid else {
-+                            await send(.campaignLoaded(nil))
-+                            return
-+                        }
-+                        if let acknowledged = campaign.acknowledgedVersion(),
-+                           OnlyRemoteCampaignManifest(date: acknowledged, file: acknowledged + ".html").isValid,
-+                           acknowledged >= manifest.date {
-+                            await send(.campaignLoaded(nil))
-+                            return
-+                        }
-+                        let html = try await campaign.fetchHTML(manifest)
-+                        try Task.checkCancellation()
-+                        await send(.campaignLoaded(.init(manifest: manifest, html: html)))
-+                    } catch {
-+                        guard !Task.isCancelled else { return }
-+                        await send(.campaignLoaded(nil))
-+                    }
-+                }
-+                .cancellable(id: CancelID.loading)
-+
-+            case let .campaignLoaded(document):
-+                guard state.isLoading else { return .none }
-+                state.isLoading = false
-+                state.document = document
-                 return .none
- 
--            case .dismissTapped:
--                guard state.isPresented else { return .none }
--                state.isPresented = false
--                let version = campaign.currentVersion()
--                return .run { _ in
--                    await campaign.markAcknowledged(version)
--                }
-+            case let .pageLoaded(date):
-+                guard let document = state.document, document.manifest.date == date,
-+                      !state.isPresented else { return .none }
-+                state.isPresented = true
-+                return .run { _ in await campaign.markAcknowledged(date) }
- 
--            case .downloadTapped:
--                guard state.isPresented else { return .none }
-+            case let .pageFailed(date):
-+                guard state.document?.manifest.date == date else { return .none }
-+                state.document = nil
-                 state.isPresented = false
--                let version = campaign.currentVersion()
--                return .run { _ in
--                    await campaign.markAcknowledged(version)
--                    await campaign.openAppStore()
--                }
-+                return .none
- 
--            case .showQRCodeTapped:
--                guard state.isPresented else { return .none }
-+            case .dismissTapped:
-+                state.document = nil
-                 state.isPresented = false
--                let version = campaign.currentVersion()
--                return .run { _ in
--                    await campaign.markAcknowledged(version)
--                }
-+                state.isLoading = false
-+                return .cancel(id: CancelID.loading)
- 
--            case .openRemoteAccessSettingsTapped:
-+            case .showQRCodeTapped:
-                 guard state.isPresented else { return .none }
--                state.isPresented = false
--                // The window controller consults this synchronously while it closes,
--                // keeping the app active until Settings has been brought forward.
--                state.isOpeningRemoteAccessSettings = true
--                let version = campaign.currentVersion()
--                return .run { _ in
--                    await campaign.markAcknowledged(version)
--                    await campaign.openRemoteAcc
-```
-
-**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignView.swift` (modified, +76/-69)
-```diff
-@@ -1,80 +1,87 @@
--import ComposableArchitecture
--import Extensions
--import SwiftUI
-+import Foundation
-+import WebKit
- 
--struct OnlyRemoteCampaignView: View {
--    let store: StoreOf<OnlyRemoteCampaignFeature>
--    let closeWindow: () -> Void
--    let showQRCode: () -> Void
-+/// A presentation-only renderer. Campaign decisions and native effects belong to the feature.
-+@MainActor
-+final class OnlyRemoteCampaignView: WKWebView, WKNavigationDelegate, WKUIDelegate {
-+    private let onLoaded: () -> Void
-+    private let onFailed: () -> Void
-+    private let onDownload: () -> Void
-+    private var isInitialLoad = true
- 
--    var body: some View {
--        WithPerceptionTracking {
--            VStack(spacing: 20) {
--                Image(systemName: "iphone.and.arrow.forward")
--                    .font(.system(.largeTitle))
--                    .foregroundStyle(.tint)
--                    .accessibilityHidden(true)
-+    init(language: String, onLoaded: @escaping () -> Void, onFailed: @escaping () -> Void, onDownload: @escaping () -> Void) {
-+        self.onLoaded = onLoaded
-+        self.onFailed = onFailed
-+        self.onDownload = onDownload
-+        let configuration = WKWebViewConfiguration()
-+        configuration.websiteDataStore = .nonPersistent()
-+        configuration.preferences.javaScriptCanOpenWindowsAutomatically = false
-+        let encodedLanguage = (try? JSONEncoder().encode(language))
-+            .flatMap { String(data: $0, encoding: .utf8) } ?? "\"en\""
-+        configuration.userContentController.addUserScript(WKUserScript(
-+            source: "window.onlySwitchLanguage = \(encodedLanguage);",
-+            injectionTime: .atDocumentStart,
-+            forMainFrameOnly: true
-+        ))
-+        super.init(frame: .zero, configuration: configuration)
-+        navigationDelegate = self
-+        uiDelegate = self
-+        allowsBackForwardNavigationGestures = false
-+    }
- 
--                VStack(spacing: 8) {
--                    Text("OnlyRemote is here".localized())
--                        .font(.title)
--                        .bold()
-+    @available(*, unavailable)
-+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
- 
--                    Text("Control OnlySwitch from your iPhone or iPad".localized())
--                        .font(.title3)
--                        .multilineTextAlignment(.center)
-+    func updateLanguage(_ language: String) {
-+        callAsyncJavaScript(
-+            "if (typeof window.setCampaignLanguage === 'function') { window.setCampaignLanguage(language); }",
-+            arguments: ["language": language],
-+            in: nil,
-+            in: .page,
-+            completionHandler: nil
-+        )
-+    }
- 
--                    Text(
--                        "Use OnlyRemote on the same local network to run switches and control your Mac from anywhere in the room."
--                            .localized()
--                    )
--                    .font(.body)
--                    .foregroundStyle(.secondary)
--                    .multilineTextAlignment(.center)
--                    .fixedSize(horizontal: false, vertical: true)
--                }
-+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-+        guard isInitialLoad else { return }
-+        isInitialLoad = false
-+        onLoaded()
-+    }
- 
--                VStack(spacing: 12) {
--                    Button {
--                        store.send(.showQRCodeTapped)
--                        closeWindow()
--                        showQRCode()
--                    } label: {
--                        Label("Download OnlyRemote on the App Store".localized(), systemImage: "qrcode")
--                            .frame(maxWidth: .infinity)
--                    }
--                    .buttonStyle(.borderedProminent)
--                    .controlSize(.large)
--                    .accessibilityHint(
--                        Text("Opens the OnlyRemote App Store page.".localized())
--                    )
-+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-+        onFailed()
-+    }
- 
--                    Button {
--                        store.send(.openRemoteAccessSettingsTapped)
--                        closeWindow()
--                    } label: {
--                        Label("Set Up Remote Access".localized(), systemImage: "gearshape")
--                            .frame(maxWidth: .infinity)
--                    }
--                    .buttonStyle(.bordered)
--                    .controlSize(.large)
--                    .accessibilityHint(
--                        Text("Opens iOS Remote settings in OnlySwitch.".localized())
--                    )
-+    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-+        onFailed()
-+    }
- 
--                    Button("Not Now".localized()) {
--                        store.send(.dismissTapped)
-- 
-```
-
-**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignWindowController.swift` (modified, +61/-34)
-```diff
-@@ -1,15 +1,19 @@
- import AppKit
-+import Combine
- import ComposableArchitecture
- import Extensions
- import SwiftUI
-+import Utilities
- 
--private let campaignWindowContentSize = NSSize(width: 460, height: 440)
-+private let campaignWindowContentSize = NSSize(width: 520, height: 560)
- private let qrCodeWindowContentSize = NSSize(width: 400, height: 440)
- 
- @MainActor
- final class OnlyRemoteCampaignWindowController: NSWindowController, NSWindowDelegate {
-     private let store: StoreOf<OnlyRemoteCampaignFeature>
--    private var didEvaluateCampaign = false
-+    private var documentObservation: AnyCancellable?
-+    private var renderer: OnlyRemoteCampaignView?
-+    private var renderingDate: String?
- 
-     init(
-         store: StoreOf<OnlyRemoteCampaignFeature> = Store(
-@@ -19,61 +23,84 @@ final class OnlyRemoteCampaignWindowController: NSWindowController, NSWindowDele
+         } else {
+             let format = dataFormat.streamDescription.pointee
+@@ -46,7 +44,7 @@ func ParserPacketCallback(_ context: UnsafeMutableRawPointer, _ byteCount: UInt3
+                 let packetStart = i * bytesPerPacket
+                 let packetSize = bytesPerPacket
+                 let packetData = Data(bytes: data.advanced(by: packetStart), count: packetSize)
+-                parser.packets.append((packetData, nil))
++                packets.append((packetData, nil))
+             }
          }
-     ) {
-         self.store = store
--
-         let window = NSWindow(
-             contentRect: NSRect(origin: .zero, size: campaignWindowContentSize),
--            styleMask: [.titled, .closable, .fullSizeContentView],
-+            styleMask: [.titled, .closable, .resizable],
-             backing: .buffered,
-             defer: false
-         )
--        window.title = "OnlyRemote for iPhone and iPad".localized()
-+        window.title = "OnlySwitch · OnlyRemote"
-+        window.minSize = NSSize(width: 480, height: 500)
-         window.titlebarAppearsTransparent = true
--        window.isMovableByWindowBackground = true
-         window.isReleasedWhenClosed = false
--
-         super.init(window: window)
--
-         window.delegate = self
--        window.contentViewController = NSHostingController(
--            rootView: OnlyRemoteCampaignView(
--                store: store,
--                closeWindow: { [weak self] in
--                    self?.close()
--                },
--                showQRCode: {
--                    QRCodeWindowController.shared.show(
--                        url: QRCodeWindowController.onlyRemoteQRCodeURL
--                    )
--                }
--            )
-+        documentObservation = store.publisher.document.removeDuplicates().sink { [weak self] document in
-+            self?.render(document)
-+        }
-+        NotificationCenter.default.addObserver(
-+            self, selector: #selector(updateLanguage), name: .changeSettings, object: nil
-         )
-     }
+         
+```
+
+**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Parse/Parser+PropertyListener.swift` (modified, +3/-1)
+```diff
+@@ -25,7 +25,9 @@ func ParserPropertyChangeCallback(_ context: UnsafeMutableRawPointer,
+         os_log("Data format: %@", log: Parser.loggerPropertyListenerCallback, type: .debug, String(describing: parser.dataFormat))
+         
+     case kAudioFileStreamProperty_AudioDataPacketCount:
+-        GetPropertyValue(&parser.packetCount, streamID, propertyID)
++        var packetCount: UInt64 = 0
++        GetPropertyValue(&packetCount, streamID, propertyID)
++        parser.packetCount = packetCount
+         os_log("Packet count: %i", log: Parser.loggerPropertyListenerCallback, type: .debug, parser.packetCount)
  
-     @available(*, unavailable)
--    required init?(coder: NSCoder) {
--        fatalError("init(coder:) has not been implemented")
+     default:
+```
+
+**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Parse/Parser.swift` (modified, +43/-8)
+```diff
+@@ -18,23 +18,51 @@ public class Parser: Parsing {
+     
+     // MARK: - Parsing props
+     
+-    public internal(set) var dataFormat: AVAudioFormat?
+-    public var packets = [(Data, AudioStreamPacketDescription?)]()
++    // Protect packet storage and parser metadata on the download and playback threads.
++    private let stateLock = NSLock()
++    private let parseLock = NSLock()
++    private var storedDataFormat: AVAudioFormat?
++    private var storedPackets = [(Data, AudioStreamPacketDescription?)]()
++    private var storedFrameCount: UInt64 = 0
++    private var storedPacketCount: UInt64 = 0
++
++    private func withState<Result>(_ body: () -> Result) -> Result {
++        stateLock.lock()
++        defer { stateLock.unlock() }
++        return body()
++    }
++
++    public internal(set) var dataFormat: AVAudioFormat? {
++        get { withState { storedDataFormat } }
++        set { withState { storedDataFormat = newValue } }
++    }
++    public var packets: [(Data, AudioStreamPacketDescription?)] {
++        get { withState { storedPackets } }
++        set { withState { storedPackets = newValue } }
++    }
++    public func withPackets<Result>(_ body: (inout [(Data, AudioStreamPacketDescription?)]) -> Result) -> Result {
++        withState { body(&storedPackets) }
++    }
+     public var totalPacketCount: AVAudioPacketCount? {
+-        guard let _ = dataFormat else {
+-            return nil
++        withState {
++            guard storedDataFormat != nil else { return nil }
++            return max(AVAudioPacketCount(storedPacketCount), AVAudioPacketCount(storedPackets.count))
+         }
+-        
+-        return max(AVAudioPacketCount(packetCount), AVAudioPacketCount(packets.count))
+     }
+     
+     // MARK: - Properties
+     
+     /// A `UInt64` corresponding to the total frame count parsed by the Audio File Stream Services
+-    public internal(set) var frameCount: UInt64 = 0
++    public internal(set) var frameCount: UInt64 {
++        get { withState { storedFrameCount } }
++        set { withState { storedFrameCount = newValue } }
++    }
+     
+     /// A `UInt64` corresponding to the total packet count parsed by the Audio File Stream Services
+-    public internal(set) var packetCount: UInt64 = 0
++    public internal(set) var packetCount: UInt64 {
++        get { withState { storedPacketCount } }
++        set { withState { storedPacketCount = newValue } }
++    }
+     
+     /// The `AudioFileStreamID` used by the Audio File Stream Services for converting the binary data into audio packets
+     fileprivate var streamID: AudioFileStreamID?
+@@ -50,10 +78,17 @@ public class Parser: Parsing {
+             throw ParserError.streamCouldNotOpen
+         }
+     }
++
++    deinit {
++        if let streamID { AudioFileStreamClose(streamID) }
++    }
+     
+     // MARK: - Methods
+     
+     public func parse(data: Data) throws {
++        guard !data.isEmpty else { return }
++        parseLock.lock()
++        defer { parseLock.unlock() }
+ //        os_log("%@ - %d", log: Parser.logger, type: .debug, #function, #line)
+         
+         let streamID = self.streamID!
+```
+
+**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Parse/Parsing.swift` (modified, +9/-0)
+```diff
+@@ -25,6 +25,11 @@ public protocol Parsing: AnyObject {
+     
+     /// An array of duples, each index presenting a parsed audio packet. For compressed formats each packet of data should contain a `AudioStreamPacketDescription`, which describes the start offset and length of the audio data)
+     var packets: [(Data, AudioStreamPacketDescription?)] { get set }
++
++    /// Access or mutate the packet buffer as one operation. Concurrent parsers must
++    /// synchronize this operation with packet production and buffer clearing.
++    /// The body must not access the parser's packet properties recursively.
++    func withPackets<Result>(_ body: (inout [(Data, AudioStreamPacketDescription?)]) -> Result) -> Result
+     
+     /// The total number of frames (expressed in the data format)
+     var totalFrameCount: AVAudioFrameCount? { get }
+@@ -61,6 +66,10 @@ public protocol Parsing: AnyObject {
+ 
+ // Usually these methods are gonna be calculated using the same way everytime so here are the default implementations that should work 99% of the time relative to the properties defined. 
+ extension Parsing {
++
++    public func withPackets<Result>(_ body: (inout [(Data, AudioStreamPacketDescription?)]) -> Result) -> Result {
++        body(&packets)
++    }
+     
+     public var duration: TimeInterval? {
+         guard let sampleRate = dataFormat?.sampleRate else {
+```
+
+**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Read/Reader+Converter.swift` (modified, +44/-76)
+```diff
+@@ -11,95 +11,63 @@ import AVFoundation
+ import AudioToolbox
+ import os.log
+ 
+-// MARK: - Errors
+-
+-
+-// MARK: -
+-nonisolated(unsafe) var packetDescs:[UnsafeMutablePointer<AudioStreamPacketDescription>?] = []
+-nonisolated(unsafe) var packetDatas:[UnsafeMutableRawPointer?] = []
+-
++/// Input storage belongs to the reader and remains valid until the converter's next
++/// input callback, including across AudioConverterFillComplexBuffer calls.
+ func ReaderConverterCallback(_ converter: AudioConverterRef,
+                              _ packetCount: UnsafeMutablePointer<UInt32>,
+                              _ ioData: UnsafeMutablePointer<AudioBufferList>,
+                              _ outPacketDescriptions: UnsafeMutablePointer<UnsafeMutablePointer<AudioStreamPacketDescription>?>?,
+                              _ context: UnsafeMutableRawPointer?) -> OSStatus {
+     let reader = Unmanaged<Reader>.fromOpaque(context!).takeUnretainedValue()
+-    
+-    //
+-    // Make sure we have a valid source format so we know the data format of the parser's audio packets
+-    //
++    reader.releaseConverterInput()
++    packetCount.pointee = 0
++    outPacketDescriptions?.pointee = nil
++    ioData.pointee.mBuffers.mData = nil
++    ioData.pointee.mBuffers.mDataByteSize = 0
++
+     guard let sourceFormat = reader.parser.dataFormat else {
+         return ReaderMissingSourceFormatError
+     }
+-    
+-    //
+-    // Check if we've reached the end of the packets. We have two scenarios:
+-    //     1. We've reached the end of the packet data and the file has been completely parsed
+-    //     2. We've reached the end of the data we currently have downloaded, but not the file
+-    //
+-    let packetIndex = Int(reader.currentPacket)
+-    let packets = reader.parser.packets
+-    let isEndOfData = packetIndex >= packets.count - 1
+-    if isEndOfData {
+-        if reader.parser.isParsingComplete {
+-            packetCount.pointee = 0
+-            return ReaderReachedEndOfDataError
+-        } else {
+-            return ReaderNotEnoughDataError
++
++    let isParsingComplete = reader.parser.isParsingComplete
++    let packet = reader.parser.withPackets { packets -> (Data, AudioStreamPacketDescription?)? in
++        let packetIndex = Int(reader.currentPacket)
++        guard packetIndex < packets.count else { return nil }
++        let packet = packets[packetIndex]
++        reader.currentPacket += 1
++        if packetIndex >= 256 {
++            packets.removeFirst(256)
++            reader.currentPacket -= 256
+         }
++        return packet
+     }
+-    
+-    //
+-    // Copy data over (note we've only processing a single packet of data at a time)
+-    //
+-    let packet = packets[packetIndex]
+-    var data = packet.0
+-    let dataCount = data.count
+-    ioData.pointee.mNumberBuffers = 1
+-    ioData.pointee.mBuffers.mData = UnsafeMutableRawPointer.allocate(byteCount: dataCount, alignment: 0)
+-    data.withUnsafeMutableBytes { rawMutableBufferPointer in
+-        let bufferPointer = rawMutableBufferPointer.bindMemory(to: UInt8.self)
+-        if let address = bufferPointer.baseAddress {
+-            memcpy((ioData.pointee.mBuffers.mData?.assumingMemoryBound(to: UInt8.self))!, address, dataCount)
+-        }
+-        
++    guard let packet else {
++        return isParsingComplete ? ReaderReachedEndOfDataError : ReaderNotEnoughDataError
+     }
+-    ioData.pointee.mBuffers.mDataByteSize = UInt32(dataCount)
+-    packetDatas.append(ioData.pointee.mBuffers.mData)
+-    
+-    //
+-    // Handle packet descriptions for compressed formats (MP3, AAC, etc)
+-    //
+-    let sourceFormatDescription = sourceFormat.streamDescription.pointee
+-    if sourceFormatDescription.mFormatID != kAudioFormatLinearPCM {
+-        if outPacketDescriptions?.pointee == nil {
+-            outPacketDescriptions?.pointee = UnsafeMutablePointer<AudioStreamPacketDescription>.allocate(capacity: 1)
+-        }
+-        outPacketDescriptions?.pointee?.pointee.mDataByteSize = UInt32(dataCount)
+-        outPacketDescriptions?.pointee?.pointee.mStartOffset = 0
+-        outPacketDescriptions?.pointee?.pointee.mVariableFramesInPacket = 0
+-        packetDescs.append(outPacketDescriptions?.pointee)
 -    }
-+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
- 
-     func presentIfNeeded() {
--        guard !didEvaluateCampaign else { return }
--        didEvaluateCampaign = true
-+        store.send(.launch)
-+    }
- 
--#if DEBUG
--        store.send(.launch(forcePresentation: true))
--#else
--        store.send(.launch(forcePresentation: false))
--#endif
--        guard store.isPresented, let window else { return }
-+    private func render(_ document: OnlyRemoteCampaignDocument?) {
-+        guard let document else {
-+            renderingDate = nil
-+            renderer?.stopLoading()
-+            renderer = nil
-+            window?.contentView = nil
-+            close()
-+            return
-+        }
-+        guard renderingDate != document.manifest.date else { return }
-+        let date = document.manifest.date
-+        renderingDate = date
-+        let view = OnlyRemoteCampaignView(
-+            language: LanguageManager.sharedManager.currentLang,
-+            onLoaded: { [weak self] in self?.presentLoadedDocument(date: date) },
-+            onFailed: { [weak self] in
-+                guard let self, self.renderingDate == date else { return }
-+                self.store.send(.pageFailed(date))
-+            },
-+            onDownload: { [weak self] in self?.store.send(.showQRCodeTapped) }
-+        )
-+        renderer = view
-+        window?.contentView = view
-+        view.loadHTMLString(document.html, baseURL: nil)
-+    }
- 
--        window.title = "OnlyRemote for iPhone and iPad".localized()
-+    private func presentLoadedDocument(date: String) {
-+        guard renderingDate == date, store.document?.manifest.date == date,
-+              !store.isPresented, let window else { return }
-+        updateLanguage()
-+        let screen = NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) } ?? NSScreen.main
-+        let available = screen?.visibleFrame.size ?? campaignWindowContentSize
-+        let size = NSSize(
-+            width: min(campaignWindowContentSize.width, available.width),
-+            height: min(campaignWindowContentSize.height, available.height)
-+        )
-+        window.setContentSize(size)
-+        centerOnCurrentScreen(window)
-         NSApp.activate(ignoringOtherApps: true)
-         showWindow(nil)
-         window.makeKeyAndOrderFront(nil)
--        centerWhenPresented(window, contentSize: campaignWindowContentSize)
-+        // Only acknowledge a page after W
+-    packetCount.pointee = 1
+-    reader.currentPacket = reader.currentPacket + 1
+-    
+-    parserQueue.sync {
+-        if packetIndex >= 256 {
+-            reader.parser.packets.removeSubrange(0...255)
+-            reader.currentPacket = 1
++
++    let data = packet.0
++    let inputData = UnsafeMutableRawPointer.allocate(byteCount: max(data.count, 1), alignment: MemoryLayout<UInt8>.alignment)
++    data.withUnsafeBytes { bytes in
++        if let address = bytes.baseAddress {
++            inputData.copyMemory(from: address, byteCount: data.count)
+         }
+     }
+-    
+-//    print("packets count:\(reader.parser.packets.count)")
+-//    print("current packet:\(reader.currentPacket)")
+-    return noErr;
+-}
++    reader.converterInputData = inputData
++    ioData.pointee.mNumberBuffers = 1
++    ioData.poin
 ```
 
-**File**: `OnlySwitchTests/RemoteAccess/OnlyRemoteCampaignFeatureTests.swift` (modified, +278/-117)
+**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Read/Reader.swift` (modified, +15/-6)
 ```diff
-@@ -4,199 +4,360 @@ import Testing
- 
- @MainActor
- struct OnlyRemoteCampaignFeatureTests {
-+    private let manifest = OnlyRemoteCampaignManifest(date: "2026-10-20", file: "2026-10-20.html")
-+    private let html = "<!doctype html><html><body>Campaign</body></html>"
+@@ -30,15 +30,27 @@ public class Reader: Reading {
+     /// A `DispatchQueue` used to ensure any operations we do changing the current packet index is thread-safe
+     private let queue = DispatchQueue(label: "com.fastlearner.streamer")
+     
++    // Accessed only on the reader queue (or by its synchronous converter callback).
++    var converterInputData: UnsafeMutableRawPointer?
++    var converterInputDescription: UnsafeMutablePointer<AudioStreamPacketDescription>?
 +
-     @Test
--    func launchPresentsCampaignWhenCurrentVersionHasNotBeenAcknowledged() async {
--        let recorder = OnlyRemoteCampaignRecorder(
--            currentVersion: "3.1.0",
--            acknowledgedVersion: nil
--        )
--        let store = TestStore(initialState: OnlyRemoteCampaignFeature.State()) {
--            OnlyRemoteCampaignFeature()
--        } withDependencies: {
--            $0.onlyRemoteCampaign = recorder.client
--        }
-+    func launchLoadsUnseenCampaignWithoutPresentingOrAcknowledgingIt() async {
-+        let recorder = OnlyRemoteCampaignRecorder(manifest: manifest, html: html)
-+        let store = makeStore(recorder)
-+        let document = OnlyRemoteCampaignDocument(manifest: manifest, html: html)
- 
--        await store.send(.launch(forcePresentation: false)) {
--            $0.isPresented = true
-+        await store.send(.launch) {
-+            $0.hasChecked = true
-+            $0.isLoading = true
-+        }
-+        await store.receive(.campaignLoaded(document)) {
-+            $0.isLoading = false
-+            $0.document = document
-         }
-+        await store.finish()
- 
-+        #expect(store.state.isPresented == false)
-         #expect(await recorder.acknowledgedVersions.isEmpty)
-+        #expect(await recorder.htmlFetchCount == 1)
-     }
- 
--    @Test
--    func launchDoesNotPresentCampaignWhenCurrentVersionWasAlreadyAcknowledged() async {
-+    @Test(arguments: ["2026-10-20", "2026-10-21"])
-+    func alreadySeenOrOlderCampaignDoesNotFetchHTML(acknowledgedDate: String) async {
-         let recorder = OnlyRemoteCampaignRecorder(
--            currentVersion: "3.1.0",
--            acknowledgedVersion: "3.1.0"
-+            manifest: manifest, html: html, acknowledgedVersion: acknowledgedDate
-         )
--        let store = TestStore(initialState: OnlyRemoteCampaignFeature.State()) {
--            OnlyRemoteCampaignFeature()
--        } withDependencies: {
--            $0.onlyRemoteCampaign = recorder.client
-+        let store = makeStore(recorder)
-+
-+        await store.send(.launch) {
-+            $0.hasChecked = true
-+            $0.isLoading = true
-         }
-+        await store.receive(.campaignLoaded(nil)) { $0.isLoading = false }
-+        await store.finish()
- 
--        await store.send(.launch(forcePresentation: false))
-+        #expect(store.state.document == nil)
-+        #expect(store.state.isPresented == false)
-+        #expect(await recorder.htmlFetchCount == 0)
-+        #expect(await recorder.acknowledgedVersions.isEmpty)
++    func releaseConverterInput() {
++        converterInputData?.deallocate()
++        converterInputData = nil
++        converterInputDescription?.deinitialize(count: 1)
++        converterInputDescription?.deallocate()
++        converterInputDescription = nil
 +    }
 +
-+    @Test(arguments: [OnlyRemoteCampaignRecorder.Failure.manifest, .html])
-+    func requestFailureIsSilentAndDoesNotAcknowledge(failure: OnlyRemoteCampaignRecorder.Failure) async {
-+        let recorder = OnlyRemoteCampaignRecorder(manifest: manifest, html: html, failure: failure)
-+        let store = makeStore(recorder)
- 
-+        await store.send(.launch) {
-+            $0.hasChecked = true
-+            $0.isLoading = true
-+        }
-+        await store.receive(.campaignLoaded(nil)) { $0.isLoading = false }
-+        await store.finish()
-+
-+        #expect(store.state.document == nil)
-         #expect(store.state.isPresented == false)
-         #expect(await recorder.acknowledgedVersions.isEmpty)
-     }
- 
-     @Test
--    func forcedLaunchPresentsCampaignWhenCurrentVersionWasAlreadyAcknowledged() async {
--        let recorder = OnlyRemoteCampaignRecorder(
--            currentVersion: "3.1.0",
--            acknowledgedVersion: "3.1.0"
--        )
--        let store = TestStore(initialState: OnlyRemoteCampaignFeature.State()) {
--            OnlyRemoteCampaignFeature()
--        } withDependencies: {
--            $0.onlyRemoteCampaign = recorder.client
--        }
-+    func invalidManifestDoesNotFetchOrPresentHTML() async {
-+        let invalid = OnlyRemoteCampaignManifest(date: "2026-02-30", file: "2026-02-30.html")
-+        let recorder = OnlyRemoteCampaignRecorder(manifest: invalid, html: html)
-+        let store = makeStore(recorder)
- 
--        await store.send(.launch(forcePresentation: true)) {
--            $0.isPresented = true
-+        await store.send(.launch) {
-+            $0.hasChecked = true
-+            $0.isLoading = true
+     // MARK: - Lifecycle
+     
+     deinit {
+-        guard AudioConverterDispose(converter!) == noErr else {
++        if let converter, AudioConverterDispose(converter) != noErr {
+             os_log("Failed to dispose of audio converter", log: Reader.logger, type: .error)
+-            return
          }
-+        await store.receive(.campaignLoaded(nil)) { $0.isLoading = false }
-+        await store.finish()
- 
-+        #expect(await recorder.htmlFetchCount == 0)
-+        #expect(store.state.isPresented == false)
-         #expect(await recorder.acknowledgedVersions.isEmpty)
++        releaseConverterInput()
      }
+-    
++
+     public required init(parser: Parsing, readFormat: AVAudioFormat) throws {
+         self.parser = parser
+         
+@@ -73,9 +85,6 @@ public class Reader: Reading {
+         try queue.sync {
+             let context = unsafeBitCast(self, to: UnsafeMutableRawPointer.self)
+             let status = AudioConverterFillComplexBuffer(converter!, ReaderConverterCallback, context, &packets, buffer.mutableAudioBufferList, nil)
+-            if #unavailable(macOS 13) {
+-                cleanupConverterGarbage()
+-            }
+             
+             guard status == noErr else {
+ //                AudioConverterReset(self.converter!);
+```
+
+**File**: `OnlySwitch/Player/CommonPlayer/AudioStreamer/Stream/Streamer.swift` (modified, +2/-2)
+```diff
+@@ -214,7 +214,7 @@ class Streamer: Streaming, @unchecked Sendable {
+         downloader.stop()
+         playerNode.stop()
+         engine.stop()
+-        reader?.parser.packets.removeAll()
++        reader?.parser.withPackets { $0.removeAll() }
+         // Update the state
+         state = .stopped
+     }
+@@ -293,7 +293,7 @@ class Streamer: Streaming, @unchecked Sendable {
+             return
+         }
  
-     @Test
--    func dismissMarksCurrentVersionAndHidesCampaign() async {
--        let recorder = OnlyRemoteCampaignRecorder(
--            currentVersion: "3.1.0",
--            acknowledgedVersion: nil
--        )
--        let store = TestStore(initialState: 
+-        guard (parser?.packets.count)! > 512 else {
++        guard reader.parser.withPackets({ $0.count }) > 512 else {
+             return
+         }
+         
+```
+
+**File**: `OnlySwitchTests/AudioStreamingTests.swift` (added, +171/-0)
+```diff
+@@ -0,0 +1,171 @@
++import AVFoundation
++import Foundation
++import Testing
++@testable import OnlySwitch
++
++struct AudioStreamingTests {
++    private func makeParser() throws -> Parser {
++        let parser = try Parser()
++        parser.dataFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 44_100, channels: 1, interleaved: true)!
++        return parser
++    }
++
++    private func append(_ value: Float, to parser: Parser) {
++        var value = value
++        withUnsafePointer(to: &value) {
++            ParserPacketCallback(Unmanaged.passUnretained(parser).toOpaque(), 4, 1, $0, nil)
++        }
++    }
++
++    @Test("The converter consumes the only packet and reports zero packets on exhaustion")
++    func consumesLastPacket() throws {
++        let parser = try makeParser()
++        append(0.25, to: parser)
++        let reader = try Reader(parser: parser, readFormat: #require(parser.dataFormat))
++        let buffer = try reader.read(1)
++        #expect(buffer.floatChannelData?[0][0] == 0.25)
++        #expect(reader.currentPacket == 1)
++
++        var count: UInt32 = 99
++        var list = AudioBufferList()
++        let status = ReaderConverterCallback(try #require(reader.converter), &count, &list, nil, Unmanaged.passUnretained(reader).toOpaque())
++        #expect(status == ReaderReachedEndOfDataError)
++        #expect(count == 0)
++    }
++
++    @Test("An empty incomplete stream returns no input without indexing the array")
++    func emptyIncompleteStream() throws {
++        let parser = try makeParser()
++        parser.packetCount = 10
++        let reader = try Reader(parser: parser, readFormat: #require(parser.dataFormat))
++        var count: UInt32 = 99
++        var list = AudioBufferList()
++        let status = ReaderConverterCallback(try #require(reader.converter), &count, &list, nil, Unmanaged.passUnretained(reader).toOpaque())
++        #expect(status == ReaderNotEnoughDataError)
++        #expect(count == 0)
++        #expect(reader.currentPacket == 0)
++    }
++
++    @Test("Trimming at 256 packets preserves the next packet and final sample")
++    func trimsConsumedPackets() throws {
++        let parser = try makeParser()
++        for value in 0..<600 { append(Float(value), to: parser) }
++        let reader = try Reader(parser: parser, readFormat: #require(parser.dataFormat))
++        for value in 0..<600 {
++            let buffer = try reader.read(1)
++            #expect(buffer.floatChannelData?[0][0] == Float(value))
++        }
++        #expect(parser.withPackets { $0.count } == 88)
++        #expect(reader.currentPacket == 88)
++    }
++
++    @Test("Input storage stays valid across reads and belongs to each reader")
++    func converterInputOwnership() throws {
++        let firstParser = try makeParser()
++        let secondParser = try makeParser()
++        for value in 0..<100 {
++            append(Float(value), to: firstParser)
++            append(Float(value + 100), to: secondParser)
++        }
++        let first = try Reader(parser: firstParser, readFormat: #require(firstParser.dataFormat))
++        let second = try Reader(parser: secondParser, readFormat: #require(secondParser.dataFormat))
++        for value in 0..<100 {
++            _ = try first.read(1)
++            let firstInput = try #require(first.converterInputData)
++            #expect(firstInput.load(as: Float.self) == Float(value))
++            _ = try second.read(1)
++            #expect(firstInput.load(as: Float.self) == Float(value))
++            #expect(first.converterInputData != second.converterInputData)
++        }
++    }
++
++    @Test("Concurrent packet callbacks and consumption preserve every packet")
++    func concurrentProductionAndConsumption() throws {
++        let shared = try SharedParser(parser: makeParser())
++        DispatchQueue.concurrentPerform(iterations: 2_000) { index in
++            var value = Float(index)
++            withUnsafePointer(to: &value) {
++                ParserPacketCallback(Unmanaged.passUnretained(shared.parser).toOpaque(), 4, 1, $0, nil)
++            }
++            let packet = shared.parser.withPackets { packets -> Data? in
++                packets.isEmpty ? nil : packets.removeFirst().0
++            }
++            if let packet { shared.record(packet) }
++        }
++        let remaining = shared.parser.withPackets { $0.map(\.0) }
++        let values = (shared.consumed + remaining).map { $0.withUnsafeBytes { $0.loadUnaligned(as: Float.self) } }
++        #expect(values.count == 2_000)
++        #expect(Set(values) == Set((0..<2_000).map(Float.init)))
++    }
++
++    @Test("Compressed packet descriptions have reader-owned storage and preserve frame counts")
++    func compressedInputOwnership() throws {
++        let parser = try makeParser()
++        let output = try #require(parser.dataFormat)
++        let first = try Reader(parser: parser, readFormat: output)
++        let second = try Reader(parser: parser, readFormat: output)
++        // Exercise the input callback directly, without requesting a
 ```
 
 ---
 
-### Incident Patch 3: `2bc81e01` (2026-10-19)
+### Incident Patch 2: `d628de57` (2026-10-21)
 **Commit Message**: bump build version
 
 **File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
 ```diff
 @@ -1,2 +1,2 @@
  // Shared build number for the macOS app and its embedded components.
--CURRENT_PROJECT_VERSION = 289
-+CURRENT_PROJECT_VERSION = 290
-```
-
-**File**: `Config/Versions/OnlySwitchRemote.xcconfig` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
- // Independent build number for the iOS remote app.
--CURRENT_PROJECT_VERSION = 13
-+CURRENT_PROJECT_VERSION = 14
+-CURRENT_PROJECT_VERSION = 290
++CURRENT_PROJECT_VERSION = 291
 ```
 
 #### Recent Merged Pull Requests:
@@ -1679,28 +1346,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Show latest launch campaign on every Debug startup
+## X. radio audio packet callback race
 
 **RULE**:
-When implementing operations in `ARCHITECTURE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `OnlySwitch/Player/CommonPlayer/AudioStreamer/Parse/Parser+Packets.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1d680d60`: Show latest launch campaign on every Debug startup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `abbde3ce`: radio audio packet callback race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `ARCHITECTURE.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `OnlySwitch/Player/CommonPlayer/AudioStreamer/Parse/Parser+Packets.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-- Launch Campaign uses an injected TCA client to fetch a bounded manifest and dated HTML from the fixed repository origin. A nonpersistent, navigation-restricted WebKit renderer loads while hidden and acknowledges the date only after successful presentation. The page follows app language and native appearance; its OnlyRemote download link opens the existing native QR window. Failed requests or rendering remain silent and unacknowledged. Debug builds bypass the previously shown date so the latest page appears on every app launch; forced previews do not modify the saved presentation date.
+    parser.withPackets { packets in
+                packets.append((packetData, packetDescription))
+                packets.append((packetData, nil))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-- Launch Campaign uses an injected TCA client to fetch a bounded manifest and dated HTML from the fixed repository origin. A nonpersistent, navigation-restricted WebKit renderer loads while hidden and acknowledges the date only after successful presentation. The page follows app language and native appearance; its OnlyRemote download link opens the existing native QR window. Failed requests or rendering remain silent and unacknowledged.
+let parserQueue = DispatchQueue(label: "com.fastlearner.streamer.parser",attributes: .concurrent)
+
+    parserQueue.sync {
+                parser.packets.append((packetData, packetDescription))
+                parser.packets.append((packetData, nil))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1d680d60` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `abbde3ce` are properly handled with clean fallback behavior.

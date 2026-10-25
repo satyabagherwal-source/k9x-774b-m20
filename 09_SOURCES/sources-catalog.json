@@ -765,8 +765,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "871615cdc620904cdd5cccca4fd7bc28bd5d0bbc019cab716128ef76a609886c",
-    "lastHarvestedAt": "2026-10-20T22:20:21.332Z",
+    "contentHash": "c0f76c22b795da156cc1a342612d733998359100361f3a27924826b7f02fe040",
+    "lastHarvestedAt": "2026-10-25T17:59:11.807Z",
     "learningId": "learn-huggingface-comfy-org-minimax-h3"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
@@ -3723,10 +3723,10 @@
     "repository": "honojs/hono",
     "platform": "github",
     "sourceUrl": "https://github.com/honojs/hono",
-    "sourceVersion": "5ca49b07",
+    "sourceVersion": "bac5c4a8",
     "license": "MIT",
-    "contentHash": "fa7082a056b92478ffc6ccc0c19d4c965a33ed54c4d657b70338a4d5b64dd1ee",
-    "lastHarvestedAt": "2026-10-18T23:51:37.817Z",
+    "contentHash": "386f23cf518f3d83a9e474f052911f408d447423e8e55de7606a1a4d1c4e9ce4",
+    "lastHarvestedAt": "2026-10-25T18:02:31.543Z",
     "learningId": "learn-github-honojs-hono"
   },
   "orange-opensource-hurl": {
@@ -8063,10 +8063,10 @@
     "repository": "jacklandrin/OnlySwitch",
     "platform": "github",
     "sourceUrl": "https://github.com/jacklandrin/OnlySwitch",
-    "sourceVersion": "a345e46b",
+    "sourceVersion": "abbde3ce",
     "license": "MIT",
-    "contentHash": "6dea47b900427c9c775bbc9f838b705762039a9f6502f81a808018c21d865f85",
-    "lastHarvestedAt": "2026-10-21T00:42:28.625Z",
+    "contentHash": "cc77505eb24fd0b77cb261bf36bfcd44aa3a52c5a61a834c1b72d33a89ebcbb7",
+    "lastHarvestedAt": "2026-10-25T17:59:17.502Z",
     "learningId": "learn-github-jacklandrin-onlyswitch"
   },
   "alin23-lunar": {

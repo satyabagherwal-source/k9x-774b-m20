@@ -4934,3 +4934,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-25T17:49:07.828Z |
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `7b23d81b` | Multi-dimensional audit evidence | 2026-10-25T17:49:09.056Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `445e6ab9` | Multi-dimensional audit evidence | 2026-10-25T17:49:18.662Z |
+| `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-25T17:59:11.807Z |
+| `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `abbde3ce` | Multi-dimensional audit evidence | 2026-10-25T17:59:17.502Z |
+| `learn-github-honojs-hono` | `https://github.com/honojs/hono` | `bac5c4a8` | Multi-dimensional audit evidence | 2026-10-25T18:02:31.543Z |

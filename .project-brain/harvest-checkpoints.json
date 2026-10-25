@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T17:49:18.675Z",
+  "last_updated": "2026-10-25T18:02:31.551Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -995,14 +995,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-minimax-h3",
-      "content_hash": "871615cdc620904cdd5cccca4fd7bc28bd5d0bbc019cab716128ef76a609886c",
-      "verified_at": "2026-10-20T22:20:21.339Z",
+      "content_hash": "c0f76c22b795da156cc1a342612d733998359100361f3a27924826b7f02fe040",
+      "verified_at": "2026-10-25T17:59:11.819Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:20:21.339Z"
+      "last_updated": "2026-10-25T17:59:11.819Z"
     },
     "timm/mobilenetv3_small_100.lamb_in1k": {
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -5706,14 +5706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-honojs-hono",
-      "content_hash": "fa7082a056b92478ffc6ccc0c19d4c965a33ed54c4d657b70338a4d5b64dd1ee",
-      "verified_at": "2026-10-18T23:51:37.826Z",
+      "content_hash": "386f23cf518f3d83a9e474f052911f408d447423e8e55de7606a1a4d1c4e9ce4",
+      "verified_at": "2026-10-25T18:02:31.550Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:51:37.826Z"
+      "last_updated": "2026-10-25T18:02:31.550Z"
     },
     "Orange-OpenSource/hurl": {
       "repository": "Orange-OpenSource/hurl",
@@ -12126,14 +12126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jacklandrin-onlyswitch",
-      "content_hash": "6dea47b900427c9c775bbc9f838b705762039a9f6502f81a808018c21d865f85",
-      "verified_at": "2026-10-21T00:42:28.630Z",
+      "content_hash": "cc77505eb24fd0b77cb261bf36bfcd44aa3a52c5a61a834c1b72d33a89ebcbb7",
+      "verified_at": "2026-10-25T17:59:17.510Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:42:28.630Z"
+      "last_updated": "2026-10-25T17:59:17.510Z"
     },
     "alin23/Lunar": {
       "repository": "alin23/Lunar",
