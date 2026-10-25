@@ -4886,3 +4886,7 @@
 | `CYCLE-20261025-6TX0` | `2026-10-25T15:49:29.460Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md` | Yes (`15dc6e3e...`) |
 | `CYCLE-20261025-6YVF` | `2026-10-25T15:49:35.883Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4371` | Yes (`b11a9271...`) |
 | `CYCLE-20261025-750F` | `2026-10-25T15:49:43.839Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4372` | Yes (`edd967d9...`) |
+| `CYCLE-20261025-F1R3` | `2026-10-25T15:55:52.863Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`66acb53c...`) |
+| `CYCLE-20261025-F8XO` | `2026-10-25T15:56:02.172Z` | `octodns/octodns` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4373` | Yes (`3991a4f1...`) |
+| `CYCLE-20261025-FD6G` | `2026-10-25T15:56:07.672Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md` | Yes (`592052b7...`) |
+| `CYCLE-20261025-FH5I` | `2026-10-25T15:56:12.822Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4374` | Yes (`fd30d27f...`) |

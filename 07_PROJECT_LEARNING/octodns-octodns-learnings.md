@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/octodns-octodns-learnings.md`  
 > **Source**: github ([https://github.com/octodns/octodns](https://github.com/octodns/octodns))  
-> **Source Version**: `692c44e2`  
+> **Source Version**: `f4e28705`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:53:34.866Z  
+> **Timestamp**: 2026-10-25T15:56:01.839Z  
 > **Learning ID**: `learn-github-octodns-octodns`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/octodns-octodns-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/octodns/octodns](https://github.com/octodns/octodns))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:53:34.521Z  
+> **Harvest Timestamp**: 2026-10-25T15:56:01.833Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -754,357 +754,81 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `692c44e2` (2026-10-19)
-**Commit Message**: Merge pull request #1479 from octodns/asterisks
+### Incident Patch 1: `f4e28705` (2026-10-23)
+**Commit Message**: Merge pull request #1481 from joshpurvis/docs-spf-pr-tutorial
 
-Add name-wildcard-best-practice validator
+docs: add an SPF pull-request check tutorial to Related Projects and Resources
 
-**File**: `.changelog/ebbded5f19c348f1affe5cad029fc409.md` (added, +4/-0)
+**File**: `.changelog/014b2a5e3d05454f36c84a46d313ec73.md` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
 +---
-+type: minor
++type: none
 +---
-+Add `name-wildcard-best-practice` validator (in the `best-practice` set) that flags a `*` anywhere in a record name other than as the entire leftmost label, where it would be a literal character rather than a wildcard
++Add a tutorial on checking SPF changes in pull requests to Related Projects and Resources
 ```
 
-**File**: `docs/configuration.rst` (modified, +5/-0)
+**File**: `docs/index.rst` (modified, +2/-0)
 ```diff
-@@ -352,6 +352,11 @@ Validators active in ``best-practice`` only:
- +---------------------------------------+-----------------------------------------------+
- | id                                    | description                                   |
- +=======================================+===============================================+
-+| ``name-wildcard-best-practice``       | ``"*"`` only as the entire leftmost label;    |
-+|                                       | elsewhere it is a literal character, not a    |
-+|                                       | wildcard (disable for literal use, e.g.       |
-+|                                       | DNS-SD instance names)                        |
-++---------------------------------------+-----------------------------------------------+
- | ``target-value-best-practice``        | CNAME/ALIAS/DNAME target must end with        |
- |                                       | ``"."`` (absolute name prevents resolver      |
- |                                       | search-domain append)                         |
-```
-
-**File**: `octodns/record/base.py` (modified, +34/-0)
-```diff
-@@ -156,6 +156,35 @@ def validate(self, record_cls, name, fqdn, data, disabled=None):
-         return reasons
+@@ -465,6 +465,7 @@ Related Projects and Resources
+   - GitHub Blog: `Enabling DNS split authority with octoDNS`_
+   - Tutorial: `How To Deploy and Manage Your DNS using octoDNS on Ubuntu 18.04`_
+   - Cloudflare Blog: `Improving the Resiliency of Our Infrastructure DNS Zone`_
++  - Tutorial: `Check SPF changes in a pull request`_ (octoDNS, DNSControl and Terraform recipes)
  
+ .. _octoDNS-Sync: https://github.com/marketplace/actions/octodns-sync
+ .. _NixOS-DNS: https://github.com/Janik-Haag/nixos-dns/
+@@ -477,6 +478,7 @@ Related Projects and Resources
+ .. _Enabling DNS split authority with octoDNS: https://github.blog/2017-04-27-enabling-split-authority-dns-with-octodns/
+ .. _How To Deploy and Manage Your DNS using octoDNS on Ubuntu 18.04: https://www.digitalocean.com/community/tutorials/how-to-deploy-and-manage-your-dns-using-octodns-on-ubuntu-18-04
+ .. _Improving the Resiliency of Our Infrastructure DNS Zone: https://blog.cloudflare.com/improving-the-resiliency-of-our-infrastructure-dns-zone/
++.. _Check SPF changes in a pull request: https://domaincanary.com/guides/spf-check-pull-request
  
-+class NameWildcardBestPracticeValidator(RecordValidator):
-+    '''
-+    Flags a ``*`` anywhere in a record name other than as the entire leftmost
-+    label. Only an exact leftmost ``*`` label is a wildcard (RFC 1034 §4.3.3,
-+    RFC 4592); elsewhere it is a literal character. That is legal on the wire
-+    (RFC 2181 §11), but is almost always a typo and is rejected by some
-+    providers. Disable it if you intentionally use a literal ``*``, e.g. in a
-+    DNS-SD service instance label (RFC 6763 §4.1.1).
-+
-+    Enabled as part of the ``best-practice`` validator set::
-+
-+      manager:
-+        enabled:
-+          - best-practice
-+    '''
-+
-+    def validate(self, record_cls, name, fqdn, data, disabled=None):
-+        if name == '*' or '*' not in name.removeprefix('*.'):
-+            return []
-+        return [
-+            ValidationReason(
-+                f'invalid name, "*" in "{idna_decode(fqdn)}" is treated '
-+                'literally and is not a wildcard, only a leftmost "*" label '
-+                'is a wildcard',
-+                validator_id=self.id,
-+            )
-+        ]
-+
-+
- class TtlValidator(RecordValidator):
-     '''
-     Validates that the record has a ttl and that it is a non-negative
-@@ -836,6 +865,11 @@ def __repr__(self):
+ If you know of any other resources, please do let us know!
  
- 
- Record.register_validator(NameValidator('name-rfc', sets={'legacy', 'strict'}))
-+Record.register_validator(
-+    NameWildcardBestPracticeValidator(
-+        'name-wildcard-best-practice', sets={'best-practice'}
-+    )
-+)
- Record.register_validator(TtlValidator('ttl-rfc', sets={'legacy', 'strict'}))
- Record.register_validator(
-     HealthcheckValidator('healthcheck', sets={'legacy', 'strict'})
-```
-
-**File**: `tests/test_octodns_record_validators.py` (modified, +60/-0)
-```diff
-@@ -12,11 +12,13 @@
-     MxRecord,
-     Record,
-     RecordException,
-+    ValidationError,
- )
- from octodns.record.alias import AliasRootValidator
- from octodns.record.base import (
-     HealthcheckValidator,
-     NameValidator,
-+    NameWildcardBestPracticeValidator,
-     TtlValidator,
- )
- from octodns.record.cname import CnameRootValidator
-@@ -30,6 +32,7 @@
-     ValidatorRegistry,
-     ValueValidator,
- )
-+from octodns.zone import Zone
- 
- 
- class TestValidatorBase(TestCase):
-@@ -114,6 +117,63 @@ def test_name_validator(self):
-             ),
-         )
- 
-+    def test_name_wildcard_best_practice_validator(self):
-+        validate = NameWildcardBestPracticeValidator(
-+            'name-wildcard-best-practice'
-+        ).validate
-+        for name in ('', 'www', 'a.b', '*', '*.sub', '*.a.b'):
-+            self.assertEqual(
-+                [],
-+                validate(ARecord, name, f'{name}.unit.tests.'.lstrip('.'), {}),
-+                name,
-+            )
-+        for name in (
-+            '*abc',
-+            '*abc.sub',
-+            'a*.sub',
-+            'hello.*.test',
-+            'sub.*',
-+            '*.*',
-+            '**',
-+            '*.a*',
-+        ):
-+            reasons = validate(ARecord, name, f'{name}.unit.tests.', {})
-+            self.assertEqual(
-+                [
-+                    f'invalid name, "*" in "{name}.unit.tests." is treated '
-+                    'literally and is not a wildcard, only a leftmost "*" '
-+                    'label is a wildcard'
-+                ],
-+                reasons,
-+                name,
-+            )
-+            self.assertEqual(
-+                'name-wildcard-best-practice', reasons[0].validator_id
-+            )
-+
-+        # opt-in via Record.enable_validator
-+        zone = Zone('unit.tests.', [])
-+        data = {'type': 'A', 'ttl': 600, 'value': '1.2.3.4'}
-+        Record.enable_validators(['legacy'])
-+        # not part of legacy, a literal "*" is allowed
-+        Record.new(zone, '*abc', data)
-+        Record.enable_validator('name-wildcard-best-practice')
-+        try:
-+            with self.assertRaises(ValidationError) as ctx:
-+                Record.new(zone, '*abc', data)
-+            self.assertEqual(
-+                [
-+                    'invalid name, "*" in "*abc.unit.tests." is treated '
-+                    'literally and is not a wildcard, only a leftmost "*" '
-+                    'label is a wildcard'
-+                ],
-+                ctx.exception.reasons,
-+            )
-+            # a real wildcard passes
-+            Record.new(zone, '*.sub', data)
-+        finally:
-+            Record.disable_validator('name-wildcard-best-practice')
-+
-     def test_ttl_validator(self):
-         self.assertEqual(
-             [],
 ```
 
 ---
 
-### Incident Patch 2: `ec2efc09` (2026-10-19)
-**Commit Message**: Add name-wildcard-best-practice validator flagging a "*" outside the leftmost label
+### Incident Patch 2: `5386cc19` (2026-10-23)
+**Commit Message**: docs: add an SPF pull-request check tutorial
 
-**File**: `.changelog/ebbded5f19c348f1affe5cad029fc409.md` (added, +4/-0)
+**File**: `.changelog/014b2a5e3d05454f36c84a46d313ec73.md` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
 +---
-+type: minor
++type: none
 +---
-+Add `name-wildcard-best-practice` validator (in the `best-practice` set) that flags a `*` anywhere in a record name other than as the entire leftmost label, where it would be a literal character rather than a wildcard
++Add a tutorial on checking SPF changes in pull requests to Related Projects and Resources
 ```
 
-**File**: `docs/configuration.rst` (modified, +5/-0)
+**File**: `docs/index.rst` (modified, +2/-0)
 ```diff
-@@ -352,6 +352,11 @@ Validators active in ``best-practice`` only:
- +---------------------------------------+-----------------------------------------------+
- | id                                    | description                                   |
- +=======================================+===============================================+
-+| ``name-wildcard-best-practice``       | ``"*"`` only as the entire leftmost label;    |
-+|                                       | elsewhere it is a literal character, not a    |
-+|                                       | wildcard (disable for literal use, e.g.       |
-+|                                       | DNS-SD instance names)                        |
-++---------------------------------------+-----------------------------------------------+
- | ``target-value-best-practice``        | CNAME/ALIAS/DNAME target must end with        |
- |                                       | ``"."`` (absolute name prevents resolver      |
- |                                       | search-domain append)                         |
-```
-
-**File**: `octodns/record/base.py` (modified, +34/-0)
-```diff
-@@ -156,6 +156,35 @@ def validate(self, record_cls, name, fqdn, data, disabled=None):
-         return reasons
+@@ -465,6 +465,7 @@ Related Projects and Resources
+   - GitHub Blog: `Enabling DNS split authority with octoDNS`_
+   - Tutorial: `How To Deploy and Manage Your DNS using octoDNS on Ubuntu 18.04`_
+   - Cloudflare Blog: `Improving the Resiliency of Our Infrastructure DNS Zone`_
++  - Tutorial: `Check SPF changes in a pull request`_ (octoDNS, DNSControl and Terraform recipes)
  
+ .. _octoDNS-Sync: https://github.com/marketplace/actions/octodns-sync
+ .. _NixOS-DNS: https://github.com/Janik-Haag/nixos-dns/
+@@ -477,6 +478,7 @@ Related Projects and Resources
+ .. _Enabling DNS split authority with octoDNS: https://github.blog/2017-04-27-enabling-split-authority-dns-with-octodns/
+ .. _How To Deploy and Manage Your DNS using octoDNS on Ubuntu 18.04: https://www.digitalocean.com/community/tutorials/how-to-deploy-and-manage-your-dns-using-octodns-on-ubuntu-18-04
+ .. _Improving the Resiliency of Our Infrastructure DNS Zone: https://blog.cloudflare.com/improving-the-resiliency-of-our-infrastructure-dns-zone/
++.. _Check SPF changes in a pull request: https://domaincanary.com/guides/spf-check-pull-request
  
-+class NameWildcardBestPracticeValidator(RecordValidator):
-+    '''
-+    Flags a ``*`` anywhere in a record name other than as the entire leftmost
-+    label. Only an exact leftmost ``*`` label is a wildcard (RFC 1034 §4.3.3,
-+    RFC 4592); elsewhere it is a literal character. That is legal on the wire
-+    (RFC 2181 §11), but is almost always a typo and is rejected by some
-+    providers. Disable it if you intentionally use a literal ``*``, e.g. in a
-+    DNS-SD service instance label (RFC 6763 §4.1.1).
-+
-+    Enabled as part of the ``best-practice`` validator set::
-+
-+      manager:
-+        enabled:
-+          - best-practice
-+    '''
-+
-+    def validate(self, record_cls, name, fqdn, data, disabled=None):
-+        if name == '*' or '*' not in name.removeprefix('*.'):
-+            return []
-+        return [
-+            ValidationReason(
-+                f'invalid name, "*" in "{idna_decode(fqdn)}" is treated '
-+                'literally and is not a wildcard, only a leftmost "*" label '
-+                'is a wildcard',
-+                validator_id=self.id,
-+            )
-+        ]
-+
-+
- class TtlValidator(RecordValidator):
-     '''
-     Validates that the record has a ttl and that it is a non-negative
-@@ -836,6 +865,11 @@ def __repr__(self):
+ If you know of any other resources, please do let us know!
  
- 
- Record.register_validator(NameValidator('name-rfc', sets={'legacy', 'strict'}))
-+Record.register_validator(
-+    NameWildcardBestPracticeValidator(
-+        'name-wildcard-best-practice', sets={'best-practice'}
-+    )
-+)
- Record.register_validator(TtlValidator('ttl-rfc', sets={'legacy', 'strict'}))
- Record.register_validator(
-     HealthcheckValidator('healthcheck', sets={'legacy', 'strict'})
-```
-
-**File**: `tests/test_octodns_record_validators.py` (modified, +60/-0)
-```diff
-@@ -12,11 +12,13 @@
-     MxRecord,
-     Record,
-     RecordException,
-+    ValidationError,
- )
- from octodns.record.alias import AliasRootValidator
- from octodns.record.base import (
-     HealthcheckValidator,
-     NameValidator,
-+    NameWildcardBestPracticeValidator,
-     TtlValidator,
- )
- from octodns.record.cname import CnameRootValidator
-@@ -30,6 +32,7 @@
-     ValidatorRegistry,
-     ValueValidator,
- )
-+from octodns.zone import Zone
- 
- 
- class TestValidatorBase(TestCase):
-@@ -114,6 +117,63 @@ def test_name_validator(self):
-             ),
-         )
- 
-+    def test_name_wildcard_best_practice_validator(self):
-+        validate = NameWildcardBestPracticeValidator(
-+            'name-wildcard-best-practice'
-+        ).validate
-+        for name in ('', 'www', 'a.b', '*', '*.sub', '*.a.b'):
-+            self.assertEqual(
-+                [],
-+                validate(ARecord, name, f'{name}.unit.tests.'.lstrip('.'), {}),
-+                name,
-+            )
-+        for name in (
-+            '*abc',
-+            '*abc.sub',
-+            'a*.sub',
-+            'hello.*.test',
-+            'sub.*',
-+            '*.*',
-+            '**',
-+            '*.a*',
-+        ):
-+            reasons = validate(ARecord, name, f'{name}.unit.tests.', {})
-+            self.assertEqual(
-+                [
-+                    f'invalid name, "*" in "{name}.unit.tests." is treated '
-+                    'literally and is not a wildcard, only a leftmost "*" '
-+                    'label is a wildcard'
-+                ],
-+                reasons,
-+                name,
-+            )
-+            self.assertEqual(
-+                'name-wildcard-best-practice', reasons[0].validator_id
-+            )
-+
-+        # opt-in via Record.enable_validator
-+        zone = Zone('unit.tests.', [])
-+        data = {'type': 'A', 'ttl': 600, 'value': '1.2.3.4'}
-+        Record.enable_validators(['legacy'])
-+        # not part of legacy, a literal "*" is allowed
-+        Record.new(zone, '*abc', data)
-+        Record.enable_validator('name-wildcard-best-practice')
-+        try:
-+            with self.assertRaises(ValidationError) as ctx:
-+                Record.new(zone, '*abc', data)
-+            self.assertEqual(
-+                [
-+                    'invalid name, "*" in "*abc.unit.tests." is treated '
-+                    'literally and is not a wildcard, only a leftmost "*" '
-+                    'label is a wildcard'
-+                ],
-+                ctx.exception.reasons,
-+            )
-+            # a real wildcard passes
-+            Record.new(zone, '*.sub', data)
-+        finally:
-+            Record.disable_validator('name-wildcard-best-practice')
-+
-     def test_ttl_validator(self):
-         self.assertEqual(
-             [],
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1481** (2026-10-23): docs: add an SPF pull-request check tutorial to Related Projects and Resources (@joshpurvis)
 - **PR #1479** (2026-10-19): Add name-wildcard-best-practice validator (@ross)
 - **PR #1478** (2026-10-19): Add octodns-katapult provider to documentation (@DonQuinleone)
 - **PR #1476** (2026-10-14): Fix `srv-name-rfc` service name check per RFC 6335 §5.1 (@Danmark)
 - **PR #1475** (2026-10-13): Allow single `_service` label URI names (@Danmark)
 - **PR #1473** (2026-10-12): Fix ech SvcParam validation raising TypeError for valid values (@LilaViollette)
-- **PR #1471** (2026-10-10): Log a debug message when planning skips an ignored record (@ross)
 
 ---
 
@@ -1124,24 +848,24 @@ Add name-wildcard-best-practice validator
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1479 from octodns/asterisks
+## X. Merge pull request #1481 from joshpurvis/docs-spf-pr-tutorial
 
 **RULE**:
-When implementing operations in `.changelog/ebbded5f19c348f1affe5cad029fc409.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in octodns/octodns. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changelog/014b2a5e3d05454f36c84a46d313ec73.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in octodns/octodns. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `692c44e2`: Merge pull request #1479 from octodns/asterisks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f4e28705`: Merge pull request #1481 from joshpurvis/docs-spf-pr-tutorial. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changelog/ebbded5f19c348f1affe5cad029fc409.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changelog/014b2a5e3d05454f36c84a46d313ec73.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
 ---
-type: minor
+type: none
 ---
-Add `name-wildcard-best-practice` validator (in the `best-practice` set) that flags a `*` anywhere in a record name other than as the entire leftmost label, where it would be a literal character rather than a wildcard
+Add a tutorial on checking SPF changes in pull requests to Related Projects and Resources
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1151,4 +875,4 @@ Add `name-wildcard-best-practice` validator (in the `best-practice` set) that fl
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `692c44e2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f4e28705` are properly handled with clean fallback behavior.

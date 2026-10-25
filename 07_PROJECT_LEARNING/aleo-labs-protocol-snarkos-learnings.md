@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `21c27035`  
+> **Source Version**: `181d6814`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:42:39.765Z  
+> **Timestamp**: 2026-10-25T15:56:07.521Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:42:39.758Z  
+> **Harvest Timestamp**: 2026-10-25T15:56:07.515Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1969,141 +1969,181 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d2154d88` (2026-10-24)
-**Commit Message**: Bump crates with security advisories
+### Incident Patch 1: `181d6814` (2026-10-25)
+**Commit Message**: Merge pull request #4576 from aleo-labs-protocol/deps/relax-exact-pins
 
-Fixes:
-- [RUSTSEC-2026-0385](https://rustsec.org/advisories/RUSTSEC-2026-0385.html) in `ctutils 0.4.2`: Non-constant-time mask generation and `u128` comparisons
-- [RUSTSEC-2026-0386](https://rustsec.org/advisories/RUSTSEC-2026-0386.html) in `tokio 1.53.1`: `AsyncFd::new` and related constructors violate I/O safety
+Drop the elliptic-curve pin and the no-op tokio-stream =
 
-**File**: `Cargo.lock` (modified, +15/-15)
+**File**: `Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -847,7 +847,7 @@ version = "3.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
+@@ -4938,7 +4938,6 @@ version = "4.12.0"
  dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+  "built",
+  "clap",
+- "elliptic-curve",
+  "locktick",
+  "rusty-hook",
+  "snarkos-account",
+```
+
+**File**: `Cargo.toml` (modified, +0/-9)
+```diff
+@@ -118,7 +118,6 @@ version = "1"
+ version = "0.57.2"
  
- [[package]]
-@@ -1220,9 +1220,9 @@ dependencies = [
+ [workspace.dependencies.proptest]
+-# Pin to 1.6 to match the version used in snarkVM. Avoids pulling in rand >=0.9.
+ version = "1.6"
  
- [[package]]
- name = "ctutils"
--version = "0.4.2"
-+version = "0.4.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7d5515a3834141de9eafb9717ad39eea8247b5674e6066c404e8c4b365d2a29e"
-+checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
+ [workspace.dependencies.rayon]
+@@ -376,13 +375,6 @@ tikv-jemallocator = "0.7"
+ [dependencies.tracing]
+ workspace = true
+ 
+-# Pinned to =0.14.1 because k256 v0.14.0 requires it.
+-# Adding this as a direct dependency forces cargo to resolve the exact version
+-# and prevents automatic upgrades to incompatible releases.
+-[dependencies.elliptic-curve]
+-version = "=0.14.1"
+-default-features = false
+-
+ [dev-dependencies.rusty-hook]
+ version = "0.11.2"
+ 
+@@ -414,7 +406,6 @@ opt-level = 2
+ 
+ [package.metadata.cargo-machete]
+ ignored = [
+-  "elliptic-curve", # Needed to pin the crate to a specific version
+   "snarkos-account", # Needed for cuda feature
+   "snarkos-node", # Needed for metrics feature
+   "snarkos-node-bft", # Needed for cuda and locktick features
+```
+
+**File**: `node/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -158,7 +158,7 @@ workspace = true
+ features = [ "rt", "signal" ]
+ 
+ [dependencies.tokio-stream]
+-version = "=0.1"
++version = "0.1"
+ 
+ [dependencies.tokio-util]
+ workspace = true
+```
+
+**File**: `node/router/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -114,7 +114,7 @@ workspace = true
+ features = [ "codec" ]
+ 
+ [dependencies.tokio-stream]
+-version = "=0.1"
++version = "0.1"
+ 
+ [dependencies.tracing]
+ workspace = true
+```
+
+---
+
+### Incident Patch 2: `8fd2c276` (2026-10-25)
+**Commit Message**: Drop the elliptic-curve pin and the no-op tokio-stream =
+
+elliptic-curve was pinned for k256 release candidates. k256 0.14.0
+requires elliptic-curve ^0.14.1 itself, so the =0.14.1 pin only blocks
+patch releases. No snarkos code uses the crate; it was a direct
+dependency only to carry the pin, so it goes, with its cargo-machete
+exemption. The resolved version and its enabled features are unchanged.
+
+tokio-stream's "=0.1" means any 0.1.x, the same as "0.1".
+
+The proptest comment said snarkVM uses 1.6; it uses 1.12 now. The "1.6"
+requirement admits that, so only the comment goes.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01WknVbv96cQthGZ7Ztp2dEQ
+
+**File**: `Cargo.lock` (modified, +0/-1)
+```diff
+@@ -4938,7 +4938,6 @@ version = "4.12.0"
  dependencies = [
-  "cmov",
-  "subtle",
-@@ -1660,7 +1660,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+  "built",
+  "clap",
+- "elliptic-curve",
+  "locktick",
+  "rusty-hook",
+  "snarkos-account",
+```
+
+**File**: `Cargo.toml` (modified, +0/-9)
+```diff
+@@ -118,7 +118,6 @@ version = "1"
+ version = "0.57.2"
  
- [[package]]
-@@ -2386,7 +2386,7 @@ dependencies = [
-  "libc",
-  "percent-encoding",
-  "pin-project-lite",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "system-configuration",
-  "tokio",
-  "tower-service",
-@@ -3231,7 +3231,7 @@ version = "0.50.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
+ [workspace.dependencies.proptest]
+-# Pin to 1.6 to match the version used in snarkVM. Avoids pulling in rand >=0.9.
+ version = "1.6"
  
- [[package]]
-@@ -3850,7 +3850,7 @@ dependencies = [
-  "quinn-udp",
-  "rustc-hash",
-  "rustls",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "thiserror 2.0.20",
-  "tokio",
-  "tracing",
-@@ -3889,9 +3889,9 @@ dependencies = [
-  "cfg_aliases",
-  "libc",
-  "once_cell",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "tracing",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+ [workspace.dependencies.rayon]
+@@ -376,13 +375,6 @@ tikv-jemallocator = "0.7"
+ [dependencies.tracing]
+ workspace = true
  
- [[package]]
-@@ -4396,7 +4396,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys 0.12.1",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+-# Pinned to =0.14.1 because k256 v0.14.0 requires it.
+-# Adding this as a direct dependency forces cargo to resolve the exact version
+-# and prevents automatic upgrades to incompatible releases.
+-[dependencies.elliptic-curve]
+-version = "=0.14.1"
+-default-features = false
+-
+ [dev-dependencies.rusty-hook]
+ version = "0.11.2"
  
- [[package]]
-@@ -4455,7 +4455,7 @@ dependencies = [
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+@@ -414,7 +406,6 @@ opt-level = 2
  
- [[package]]
-@@ -6660,7 +6660,7 @@ dependencies = [
-  "getrandom 0.4.3",
-  "once_cell",
-  "rustix 1.1.4",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+ [package.metadata.cargo-machete]
+ ignored = [
+-  "elliptic-curve", # Needed to pin the crate to a specific version
+   "snarkos-account", # Needed for cuda feature
+   "snarkos-node", # Needed for metrics feature
+   "snarkos-node-bft", # Needed for cuda and locktick features
+```
+
+**File**: `node/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -158,7 +158,7 @@ workspace = true
+ features = [ "rt", "signal" ]
  
- [[package]]
-@@ -6959,9 +6959,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
+ [dependencies.tokio-stream]
+-version = "=0.1"
++version = "0.1"
  
- [[package]]
- name = "tokio"
--version = "1.53.1"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "bytes",
-  "libc",
-@@ -7777,7 +7777,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+ [dependencies.tokio-util]
+ workspace = true
+```
+
+**File**: `node/router/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -114,7 +114,7 @@ workspace = true
+ features = [ "codec" ]
  
- [[package]]
+ [dependencies.tokio-stream]
+-version = "=0.1"
++version = "0.1"
+ 
+ [dependencies.tracing]
+ workspace = true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4576** (2026-10-25): Drop the elliptic-curve pin and the no-op tokio-stream = (@cbeck88)
+- **PR #4575** (2026-10-25): Remove the crypto-bigint pin to move past RUSTSEC-2026-0387 (@cbeck88)
 - **PR #4573** (2026-10-24): Bump crates with security advisories (@aleo-labs-merge-bot[bot])
 - **PR #4572** (2026-10-22): Merge testnet into staging (@aleo-labs-merge-bot[bot])
 - **PR #4571** (2026-10-21): chore(deps): bump webpki-roots and webpki-root-certs to 1.0.10 (@awatts73)
 - **PR #4570** (2026-10-21): bench: rename cache-hit REST verification benches to cached_verify (@cbeck88)
-- **PR #4568** (2026-10-21): [Release] Testnet v4.12.1 (@vicsn)
-- **PR #4567** (2026-10-19): chore(deps): bump mockall from 0.13.1 to 0.15.0 (@dependabot[bot])
 
 ---
 
@@ -2117,62 +2157,3 @@ Fixes:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Bump crates with security advisories
-
-**RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `d2154d88`: Bump crates with security advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
- "windows-sys 0.52.0",
-version = "0.4.5"
-checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
- "windows-sys 0.52.0",
- "socket2 0.5.10",
- "windows-sys 0.59.0",
- "socket2 0.5.10",
- "socket2 0.5.10",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
-version = "1.54.1"
-checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- "windows-sys 0.52.0",
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
- "windows-sys 0.61.2",
-version = "0.4.2"
-checksum = "7d5515a3834141de9eafb9717ad39eea8247b5674e6066c404e8c4b365d2a29e"
- "windows-sys 0.61.2",
- "socket2 0.6.5",
- "windows-sys 0.61.2",
- "socket2 0.6.5",
- "socket2 0.6.5",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
-version = "1.53.1"
-checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
- "windows-sys 0.61.2",
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d2154d88` are properly handled with clean fallback behavior.

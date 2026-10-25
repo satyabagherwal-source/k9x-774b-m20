@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `fb781234`  
+> **Source Version**: `9224e5f6`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:19:01.084Z  
+> **Timestamp**: 2026-10-25T15:56:12.441Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:19:00.748Z  
+> **Harvest Timestamp**: 2026-10-25T15:56:12.434Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3813 stars
+- **Stars / Engagement**: 3814 stars
 
 ---
 
@@ -2203,799 +2203,259 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7c30c8a` (2026-10-24)
-**Commit Message**: fix(validate): piped stdin silently passing, documented stdin forms, uniqueCombinedWith order (#4909)
+### Incident Patch 1: `9224e5f6` (2026-10-25)
+**Commit Message**: fix: QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs review (#4916)
 
-* fix(validate): piped stdin silently passing, documented stdin forms, uniqueCombinedWith order
+* fix: QSV_SNIFF_PREAMBLE skips the preamble rows it finds
 
-- `qsv validate - schema.json` drained stdin while counting rows, then
-  validated 0 rows, printed "All 0 records valid." and exited 0 whatever the
-  data held. stdin is now spooled to a temp file first; outputs stay
-  `stdin.csv.*` in the cwd.
-- `cat data.csv | qsv validate schema.json` (shown in USAGE) failed with
-  "Only a JSON Schema file was provided"; with no data file, a non-terminal
-  stdin is now read. Output files were also named after the first positional
-  arg, which here was the schema.
-- RFC 4180 mode with no input ignored piped stdin ("No data on stdin")
-  despite the USAGE; a non-terminal stdin is now read.
-- `uniqueCombinedWith` accepted whichever duplicate a thread reached first,
-  so the valid/invalid split changed between runs. Schemas using it are now
-  validated in file order on one thread; documented in USAGE.
+Config sniffed the rows above the header and then ignored them, so a
+title line was read as the header. The Config readers now open files
+past the sniffed preamble, and the Polars-based commands (count, sqlp,
+joinp, pivotp, to parquet, writestat, profile, scoresql's plan) pass
+the same count to with_skip_lines.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: cite #4909 in CHANGELOG
+- Indexes still describe the file as stored (Config::index_reader), and
+  a file with a preamble is never read through its index.
+- QSV_SNIFF_DELIMITER alone only sniffs the delimiter; snappy files are
+  no longer sniffed (their bytes are compressed).
+- input keeps its own record-level skip for --auto-skip, so the preamble
+  isn't skipped twice (also in --skip-lastlines' row count), and skips it
+  under the env var without --auto-skip too.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(validate): 
+* fix: preamble skipping in join seeks, luau autoindex, joinp all-string schema
+
+Follow-ups to the QSV_SNIFF_PREAMBLE change (roborev 5836):
+
+- join recorded row positions relative to the reader's start (past the
+  preamble) but se
 
 **File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -95,6 +95,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **Looser: `dynamicEnum` no longer rejects empty cells.** In a column whose `type` allows null (e.g. `["string", "null"]`), an empty cell that `dynamicEnum` used to reject now passes, because no reference file can list null. To keep rejecting empty cells, remove `"null"` from the column's `type`.
+   - **Stricter: `uniqueCombinedWith` must name columns the CSV has.** A column name missing from the header (a typo, or a column only some files have) used to be skipped silently, so uniqueness was checked on fewer columns. Now the schema fails to compile (`'uniqueCombinedWith' column "x" is not in the CSV header`) and no rows are validated. The same goes for a column index past the last column, and for an index whose header name a later column repeats. A schema shared across files with different columns needs a `uniqueCombinedWith` that fits each file.
+ 
++- **`QSV_SNIFF_PREAMBLE` now skips the preamble rows it finds, so commands can return fewer rows and a different header** ([#4916](https://github.com/dathere/qsv/pull/4916)). It used to sniff the number of rows above the header and then ignore it (only `input --auto-skip` used it), so a title line above the header was read as the header. Now every command reads from the header, including `count`, `stats`, `input`, the Polars-based commands (`sqlp`, `joinp`, `pivotp`, `to parquet`, `writestat`) and the DuckDB queries of `scoresql --duckdb` and `describegpt`. A file with a preamble is read without its index, and `qsv index` still indexes the file as stored. Stats caches and Polars schemas are kept apart for the two modes, so turning the env var on or off never reuses one built the other way (a schema of the rows past an N-line preamble is `<file>.skip<N>.pschema.json`). `QSV_SNIFF_DELIMITER` alone now only sniffs the delimiter. Not covered: stdin and Polars SQL's `read_csv()` table function. **If you set `QSV_SNIFF_PREAMBLE`, check your results:** unset it to keep the old behavior, or use `input --skip-lines` to control the skip yourself.
++
+ ### Added
+ - **`viz smart`: optional live mode for Data Schematics with [qsv-clientd](https://github.com/dathere/qsv-client)** ([#4848](https://github.com/dathere/qsv/pull/4848)).
+   - **Embedded source block.** Smart HTML now embeds a `qsv-schematic-source` JSON block. It contains the qsv version, a per-render `schematic_uuid`, a BLAKE3 fingerprint of the input (local files only; memory-mapped and multithreaded, about 0.05s per GB from the OS cache, skipped with `--no-daemon-bridge`), the row count, the PID and the smart arguments.
+@@ -100,6 +102,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
  
  ### Fixed
-+- **`validate`: piped stdin with a JSON Schema is validated instead of silently passing.** ([#4909](https://github.com/dathere/qsv/pull/4909)) `cat data.csv | qsv validate - schema.json` counted the rows by reading stdin to the end, so validation then saw 0 rows, printed `All 0 records valid.` and exited 0 whatever the data held. stdin is now copied to a temp file first, and its output files are `stdin.csv.*` in the current directory, as documented.
-+- **`validate`: `cat data.csv | qsv validate schema.json` works as the USAGE shows.** ([#4909](https://github.com/dathere/qsv/pull/4909)) It failed with "Only a JSON Schema file was provided". With no data file, piped stdin is now read; that error remains when nothing is piped.
-+- **`validate`: with no input file, RFC 4180 mode reads piped stdin.** ([#4909](https://github.com/dathere/qsv/pull/4909)) `cat data.csv | qsv validate` always failed with "No data on stdin", although the USAGE says stdin is read when no input is given. An explicit `-` already worked. In both modes, the implicit read happens only when stdin is not a terminal; like `count` or `stats`, `validate` then waits until stdin is closed, so a caller that leaves stdin open without writing to it should pass a data file or close stdin.
-+- **`validate`: `uniqueCombinedWith` always flags the later duplicate.** ([#4909](https://github.com/dathere/qsv/pull/4909)) Rows were checked in parallel, so whichever copy of a duplicate a thread reached first was accepted, and the `.valid`/`.invalid` split changed from run to run (often putting the first occurrence in `.invalid`). Schemas using `uniqueCombinedWith` are now validated in file order on a single thread.
-+- **`validate`: piped stdin follows `QSV_DEFAULT_DELIMITER`.** ([#4909](https://github.com/dathere/qsv/pull/4909)) stdin is read from a temp `stdin.csv`, and its made-up extension forced a comma in both modes, so with `QSV_DEFAULT_DELIMITER=';'` a semicolon-separated stdin was read as one merged column (in JSON Schema mode, constraints on the real columns were then never checked). stdin now uses `--delimiter`, else `QSV_DEFAULT_DELIMITER`, else `,`, as other commands do.
- - **`schema`: `--pattern-columns` no longer ignores a selection that covers every column.** ([#4908](https://github.com/dathere/qsv/pull/4908)) A selection was treated as "not given" when it matched every column, so `--pattern-columns code` on a one-column CSV, or `--pattern-columns 1-` on any file, silently emitted no `pattern`.
- - **`schema --strict-formats`: plain words are no longer inferred as hostnames.** ([#4908](https://github.com/dathere/qsv/pull/4908)) Any single word is a valid hostname label, so a column like `Alice,Bob,Carol` was given `"format": "hostname"` and later values such as `Mary Ann` failed validation. Hostnames now need a dot (e.g. `example.com`).
- - **`schema`: a very large `--enum-threshold` no longer aborts.** ([#4908](https://github.com/dathere/qsv/pull/4908)) The threshold was used to pre-allocate memory, so `--enum-threshold 100000000000000` crashed with a failed allocation.
++- **`QSV_SNIFF_DELIMITER` no longer sets the output delimiter from the file being replaced** ([#4916](https://github.com/dathere/qsv/pull/4916)). With `-o out.csv` and an existing semicolon-delimited `out.csv`, the new output was written with semicolons, because the output path was sniffed like an input. Writers now use the delimiter from `--delimiter`, the extension or `QSV_DEFAULT_DELIMITER`, as without the env var.
++- **`count` and `frequency` report a missing `dc:` entry** ([#4916](https://github.com/dathere/qsv/pull/4916)). They printed a bare `No such file or directory` for a `dc:` name that isn't cached, where other commands say `dc: cache entry '…' not found. Fetch it first…`. Their index lookup now checks the input's format error first, as the readers do.
++- **`QSV_TOGGLE_HEADERS` accepts the usual true values** ([#4916](https://github.com/dathere/qsv/pull/4916)). It only toggled when set to exactly `1`, so `QSV_TOGGLE_HEADERS = True` (as `dotenv.template` writes it) silently did nothing. It now reads `1`, `true`, `yes`, `on` and the rest like the other boolean env vars, in every command and in `writestat`'s stats-cache check.
+ - **A data file changed in the same second as its index no longer reuses the stale index.** ([#4915](https://github.com/dathere/qsv/pull/4915)) Index staleness compared whole-second mtimes with `>`, so a file rewritten in the same second the index was built looked current. `qsv count` then reported the old row count at exit 0, and commands that seek through the index could read the wrong rows. Mtimes are now compared at full precision, and an index whose mtime equals its data's (on filesystems with coarse timestamps, or mtimes copied from an archive) is rebuilt rather than trusted. That can mean one extra rebuild for a very small file indexed right after it was writt
 ```
 
-**File**: `docs/help/validate.md` (modified, +3/-0)
+**File**: `docs/ENVIRONMENT_VARIABLES.md` (modified, +3/-3)
 ```diff
-@@ -117,6 +117,9 @@ uniqueCombinedWith = ["name", 2]
- When a duplicate combination is found, the validation will fail and the error message will indicate
- which columns had duplicate combinations (named columns first, then indexed columns). The invalid
- records will be written to the .invalid file, while valid records will be written to the .valid file.
-+Rows are checked in file order, so the first row with a combination is valid and its later
-+duplicates are invalid. To keep that order, a schema using `uniqueCombinedWith` is validated
-+on a single thread.
- 
- `uniqueCombinedWith` complements the standard `uniqueItems` keyword, which can only validate
- uniqueness across a single column.
+@@ -5,10 +5,10 @@
+ | `QSV_DOTENV_PATH` | The full pathname of the dotenv file to load, OVERRIDING existing environment variables. This takes precedence over any other dotenv files in the filesystem. Set to "<NONE>" to disable dotenv processing. |
+ | `QSV_DEFAULT_DELIMITER` | single ascii character to use as delimiter when reading stdin or a file without a recognized extension. Files ending in `.csv`, `.tsv`/`.tab` or `.ssv` (or their `.sz` snappy variants) are always read with comma, tab or semicolon respectively, and the `--delimiter` option overrides this variable. Defaults to "," (comma) when not set. Note that this will also set the delimiter for qsv's output to stdout.<br>However, using the `--output` option, regardless of this environment variable, will automatically change the delimiter used in the generated file based on the file extension - i.e. comma for `.csv`; tab for `.tsv` & `.tab` ; and semicolon for `.ssv` files.<br>Exception: `joinp`, `sqlp`, `scoresql` and `readstat` always use tab for a `.tsv`/`.tab` path and semicolon for an `.ssv` path, whether reading it or writing it with `--output`, even when `--delimiter` is given. |
+ | `QSV_STDIN_SPOOL` | Set by qsv itself, not by users: when qsv copies piped stdin to a temp `stdin.csv` and then runs qsv subprocesses on it (e.g. `describegpt`, `moarstats`, `profile`), it passes the temp file's path in this variable so the subprocesses also read it with stdin's delimiter (`QSV_DEFAULT_DELIMITER`) rather than the comma its `.csv` name implies. |
+-| `QSV_SNIFF_DELIMITER` | if set, the delimiter is automatically detected. Overrides `QSV_DEFAULT_DELIMITER` and the file extension; the `--delimiter` option still takes precedence. Note that this does not work with stdin. |
+-| `QSV_SNIFF_PREAMBLE` | if set, qsv will attempt to sniff the number of preamble rows. |
++| `QSV_SNIFF_DELIMITER` | if set, the delimiter is automatically detected. Overrides `QSV_DEFAULT_DELIMITER` and the file extension; the `--delimiter` option still takes precedence. Note that this does not work with stdin. Only inputs are sniffed: an existing output file being replaced doesn't set the delimiter qsv writes with. |
++| `QSV_SNIFF_PREAMBLE` | if set, qsv sniffs the preamble rows above the header (a title or a "generated on" line, say) and skips them, so the header is the first row read. It also sniffs the delimiter, as `QSV_SNIFF_DELIMITER` does. Only files are sniffed, not stdin. The Polars-based commands (`sqlp`, `joinp`, `pivotp`, `to parquet`, …) and the DuckDB queries of `scoresql` and `describegpt` skip the rows too, but Polars SQL's `read_csv()` table function reads the file as stored. A file with a preamble is never read through its index, and `qsv index` still indexes the file as stored. Stats caches and Polars schemas are kept apart for the two modes: a schema of the rows past an N-line preamble is `<file>.skip<N>.pschema.json`. |
+ | `QSV_NO_HEADERS` | if set, the first row will **NOT** be interpreted as headers. Supersedes `QSV_TOGGLE_HEADERS`. |
+-| `QSV_TOGGLE_HEADERS` | if set to `1`, toggles header setting - i.e. inverts qsv header behavior, with no headers being the default, & setting `--no-headers` will actually mean headers will not be ignored. |
++| `QSV_TOGGLE_HEADERS` | if set to a true value (`1`, `true`, `yes`, `on`, ...), toggles header setting - i.e. inverts qsv header behavior, with no headers being the default, & setting `--no-headers` will actually mean headers will not be ignored. |
+ | `QSV_ANTIMODES_LEN` | set to the maximum number of characters when listing "antimodes" in `stats`. Otherwise, the default is 100. Set to 0 to disable length limiting. |
+ | `QSV_AUTOINDEX_SIZE` | if set, specifies the minimum file size (in bytes) of a CSV file before an index is automatically created. Note that stale indices are automatically updated regardless of this setting. |
+ | `QSV_STATSCACHE_MODE` | Specifies how the stats cache is used by "smart" commands. Valid values are:<br />  * auto - use the stats cache if it's valid (the stats-jsonl file exists and is current) - default.<br />  * force - if the cache does not exist, create it by running stats.<br />  * none - do not use the stats cache, even if it exists. |
 ```
 
-**File**: `src/cmd/validate.rs` (modified, +148/-74)
+**File**: `docs/contributor/STATS_QUICK_REFERENCE.md` (modified, +2/-2)
 ```diff
-@@ -103,6 +103,9 @@ are unique. It can be used with either column names or column indices (0-based).
- When a duplicate combination is found, the validation will fail and the error message will indicate
- which columns had duplicate combinations (named columns first, then indexed columns). The invalid
- records will be written to the .invalid file, while valid records will be written to the .valid file.
-+Rows are checked in file order, so the first row with a combination is valid and its later
-+duplicates are invalid. To keep that order, a schema using `uniqueCombinedWith` is validated
-+on a single thread.
+@@ -175,7 +175,7 @@ Bob,25,87.2" | ./target/release/qsv stats
+ - Full technical guide: `STATS_TECHNICAL_GUIDE.md` (this repo)
+ - qsv wiki: https://github.com/dathere/qsv/wiki
+ - stats command docs: `/docs/PERFORMANCE.md`
+-- Test cases: `tests/test_stats.rs` (~9,319 lines)
++- Test cases: `tests/test_stats.rs` (~10,383 lines)
  
- `uniqueCombinedWith` complements the standard `uniqueItems` keyword, which can only validate
- uniqueness across a single column.
-@@ -336,7 +339,7 @@ use std::{
-     env,
-     fmt::Write as _,
-     fs::File,
--    io::{BufReader, BufWriter, Read, Write},
-+    io::{BufReader, BufWriter, IsTerminal, Read, Write},
-     path::{Path, PathBuf},
-     str,
-     sync::{
-@@ -1867,17 +1870,47 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         return fail_clierror!("Cannot validate CSV without headers against a JSON Schema.");
-     }
+ ## Quick Debugging
  
--    let input_path = input_files.first().ok_or_else(|| {
--        if has_json_schema && args.arg_input.len() == 1 {
--            CliError::Other(
--                "Only a JSON Schema file was provided, but no data file to validate. Please \
--                 provide a data file to validate against the schema."
--                    .to_string(),
--            )
-+    // Piped stdin is the input when it is named ("-"), or when no data file is given and
-+    // stdin is not a terminal (`cat data.csv | qsv validate schema.json`).
-+    let stdin_input = match input_files.as_slice() {
-+        [] => !std::io::stdin().is_terminal(),
-+        [path] => path.as_os_str() == "-",
-+        _ => false,
-+    };
-+    // stdin is read more than once (row count, validation, valid/invalid split), so it is
-+    // spooled to a temp file first; reading it directly let the row count drain it, and
-+    // validation then saw no rows and passed. Its outputs are still `stdin.csv.*` in the cwd.
-+    let stdin_tmpdir;
-+    let stdin_spool;
-+    let input_path = if stdin_input {
-+        stdin_tmpdir = tempfile::tempdir()?;
-+        let empty_msg = if input_files.is_empty() {
-+            "Only a JSON Schema file was provided, but no data file to validate. Please provide a \
-+             data file to validate against the schema, or pipe data to stdin."
-         } else {
--            CliError::Other("No input file provided for JSON Schema validation".to_string())
--        }
--    })?;
-+            "No data on stdin. Please provide at least one input file or pipe data to stdin."
-+        };
-+        stdin_spool = spool_stdin(&stdin_tmpdir, empty_msg)?;
-+        &stdin_spool
+@@ -204,7 +204,7 @@ cat file.stats.csv.data.jsonl | jq . | head
+ | `src/config.rs` | CSV reader configuration |
+ | `src/select.rs` | Column selection logic |
+ | `src/util.rs` | Utility functions |
+-| `tests/test_stats.rs` | Comprehensive test suite (~9,319 lines) |
++| `tests/test_stats.rs` | Comprehensive test suite (~10,383 lines) |
+ | `Cargo.toml` | Dependencies (see `stats` and `csv` crates) |
+ 
+ ---
+```
+
+**File**: `dotenv.template` (modified, +2/-1)
+```diff
+@@ -40,7 +40,8 @@
+ # Note that this does not work with stdin.
+ QSV_SNIFF_DELIMITER = False
+ 
+-# if true, qsv will attempt to sniff the number of preamble rows.
++# if true, qsv sniffs the preamble rows above the header (and the delimiter)
++# and skips them, so the header is the first row read. Does not work with stdin.
+ # QSV_SNIFF_PREAMBLE = False
+ 
+ # if true, the first row will **NOT** be interpreted as headers.
+```
+
+**File**: `src/cmd/clean.rs` (modified, +36/-1)
+```diff
+@@ -382,13 +382,27 @@ fn handle_pschema(path: &Path, full: &str, stale: bool, victims: &mut Vec<(PathB
+     let Some(base) = full.strip_suffix(".pschema.json") else {
+         return;
+     };
+-    let source = PathBuf::from(base);
++    // a source can itself be named like `x.skip2` (under QSV_SKIP_FORMAT_CHECK)
++    let source = if Path::new(base).exists() {
++        PathBuf::from(base)
 +    } else {
-+        input_files.first().ok_or_else(|| {
-+            if has_json_schema && args.arg_input.len() == 1 {
-+                CliError::Other(
-+                    "Only a JSON Schema file was provided, but no data file to validate. Please \
-+                     provide a data file to validate against the schema."
-+                        .to_string(),
-+                )
-+            } else {
-+                CliError::Other("No input file provided for JSON Schema validation".to_string())
-+            }
-+        })?
++        PathBuf::from(strip_skip_suffix(base))
 +    };
-+    // base name of the valid/invalid/validation-errors output files
-+    let output_base = if stdin_input {
-+        "stdin.csv".to_string()
-+    } else {
-+        input_path.to_string_lossy().to_string()
-+    };
- 
-     let mut rconfig = Config::new(Some(&input_path.to_string_lossy().to_string()))
-         .no_headers_flag(args.flag_no_headers)
-@@ -1887,7 +1920,9 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-             DEFAULT_RDR_BUFFER_CAPACITY
-         });
- 
--    if args.flag_delimiter.is_some() {
-+    if stdin_input {
-+        rconfig = rconfig.delimiter(Some(stdin_delimiter(args.flag_delimiter)?));
-+    } else if args.flag_delimiter.is_some() {
-         rconfig = rconfig.delimiter(args.flag_delimiter);
+     if stale && !stale_or_orphaned(path, Some(&source)) {
+         return;
      }
-     // ignore the "already set" error so re-entrant calls (e.g., qsv used as a library)
-@@ -2088,64 +2123,73 @@ Try running `qsv validate schema {}` to check the JSON Schema file.", json_schem
- 
-         // do actual validation via Rayon parallel iterator
-         // validation_results vector should have same row count and in same order as input CSV
--        batch[..batch_len]
--            .par_iter()
--            .with_min_len(batch_pariter_min_len)
--            .map(|record| {
--                // --split-ragged: a ragged row has a field count != header_len. Because we append
--                // the row number as an extra field, a well-formed row here has exactly
--                // header_len + 1 fields. Ragged rows are always marked invalid (quarantined) and
--                // skip schema validation entirely (which would otherwise silently zip to the
--                // shorter length an
-```
-
-**File**: `tests/test_validate.rs` (modified, +176/-0)
-```diff
-@@ -4002,3 +4002,179 @@ fn validate_anyof_oneof_error_messages() {
-     .join("\n");
-     assert_eq!(validation_errors, expected);
+     push_if_exists(victims, path.to_path_buf());
  }
-+
-+/// Run `cmd` with `data` piped to its stdin.
-+fn output_with_stdin(cmd: &mut std::process::Command, data: &[u8]) -> std::process::Output {
-+    use std::io::Write;
-+    cmd.stdin(std::process::Stdio::piped())
-+        .stdout(std::process::Stdio::piped())
-+        .stderr(std::process::Stdio::piped());
-+    let mut child = cmd.spawn().unwrap();
-+    child.stdin.take().unwrap().write_all(data).unwrap();
-+    child.wait_with_output().unwrap()
-+}
-+
-+const AGE_SCHEMA: &str = r#"{"$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","properties":{"age":{"type":"integer","minimum":0}}}"#;
-+
-+#[test]
-+fn validate_schema_explicit_stdin_detects_invalid() {
-+    // "-" with a schema used to drain stdin while counting rows, then validate 0 rows and pass
-+    let wrk = Workdir::new("validate_schema_explicit_stdin_detects_invalid");
-+    wrk.create_from_string("age.schema.json", AGE_SCHEMA);
-+
-+    let mut cmd = wrk.command("validate");
-+    cmd.args(["-", "age.schema.json"]);
-+    let output = output_with_stdin(&mut cmd, b"age\nabc\n5\n-3\n");
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(!output.status.success(), "stderr: {stderr}");
-+    assert!(
-+        stderr.contains("2 out of 3 records invalid."),
-+        "stderr: {stderr}"
-+    );
-+
-+    assert_eq!(wrk.read_to_string("stdin.csv.valid").unwrap(), "age\n5\n");
-+    assert_eq!(
-+        wrk.read_to_string("stdin.csv.invalid").unwrap(),
-+        "age\nabc\n-3\n"
-+    );
-+}
-+
-+#[test]
-+fn validate_schema_piped_stdin_without_data_arg() {
-+    // `cat data.csv | qsv validate schema.json` (as in the USAGE) reads the data from stdin
-+    let wrk = Workdir::new("validate_schema_piped_stdin_without_data_arg");
-+    wrk.create_from_string("age.schema.json", AGE_SCHEMA);
-+
-+    let mut cmd = wrk.command("validate");
-+    cmd.arg("age.schema.json");
-+    let output = output_with_stdin(&mut cmd, b"age\n1\n-3\n");
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(
-+        stderr.contains("1 out of 2 records invalid."),
-+        "stderr: {stderr}"
-+    );
-+    assert_eq!(
-+        wrk.read_to_string("stdin.csv.invalid").unwrap(),
-+        "age\n-3\n"
-+    );
-+    assert!(!wrk.path("age.schema.json.invalid").exists());
-+
-+    let mut cmd = wrk.command("validate");
-+    cmd.arg("age.schema.json");
-+    let output = output_with_stdin(&mut cmd, b"age\n1\n2\n");
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(output.status.success(), "stderr: {stderr}");
-+    assert!(stderr.contains("All 2 records valid."), "stderr: {stderr}");
-+}
-+
-+#[test]
-+fn validate_schema_without_data_and_empty_stdin() {
-+    // no data file and nothing on stdin keeps the "no data file" error
-+    let wrk = Workdir::new("validate_schema_without_data_and_empty_stdin");
-+    wrk.create_from_string("age.schema.json", AGE_SCHEMA);
-+
-+    let mut cmd = wrk.command("validate");
-+    cmd.arg("age.schema.json");
-+    let output = output_with_stdin(&mut cmd, b"");
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(!output.status.success(), "stderr: {stderr}");
-+    assert!(
-+        stderr.contains("Only a JSON Schema file was provided"),
-+        "stderr: {stderr}"
-+    );
-+}
-+
-+#[test]
-+fn validate_rfc4180_piped_stdin_without_args() {
-+    // with no input argument, RFC 4180 mode reads piped stdin, as the USAGE says
-+    let wrk = Workdir::new("validate_rfc4180_piped_stdin_without_args");
-+
-+    let mut cmd = wrk.command("validate");
-+    let output = output_with_stdin(&mut cmd, b"a,b\n1,2\n");
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(output.status.success(), "stderr: {stderr}");
-+
-+    let mut cmd = wrk.command("validate");
-+    let output = output_with_stdin(&mut cmd, b"a,b\n1\n");
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(!output.status.success());
-+    assert!(
-+        stderr.contains("found record with 1 fields"),
-+        "stderr: {stderr}"
-+    );
-+}
-+
-+#[test]
-+fn validate_unique_combined_with_flags_later_duplicate() {
-+    // Rows were validated in parallel, so whichever duplicate a thread reached first was
-+    // accepted. Each key occurs at row k and row k + 20000; the later row must be the
-+    // invalid one, every run. (Against parallel validation this only fails when the threads
-+    // race the "wrong" way, roughly half the time; in-order validation always passes.)
-+    let wrk = Workdir::new("validate_unique_combined_with_flags_later_duplicate");
-+    let mut csv = String::from("k,v\n");
-+    for i in 0..40_000 {
-+        csv.push_str(&format!("{},x\n", i % 20_000));
+ 
++/// `<source>.skip<N>` -> `<source>`: a polars schema of the rows past `N` preamble lines that
++/// `QSV_SNIFF_PREAMBLE` skipped (see `util::pschema_path`).
++fn strip_skip_suffix(base: &str) -> &str {
++    match base.rsplit_once(".skip") {
++        Some((source, n)) if !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit()) => source,
++        _ => base,
 +    }
-+    wrk.create_from_string("data.csv", &csv);
-+    wrk.create_from_string(
-+        "data.schema.json",
-+        r#"{"$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","uniqueCombinedWith":["k"],"pr
-```
-
----
-
-### Incident Patch 2: `81f27613` (2026-10-24)
-**Commit Message**: fix(schema): pattern-columns select-all, dotted hostnames, huge enum-threshold, no-filename panic (#4908)
-
-* fix(schema): pattern-columns select-all, dotted hostnames, huge enum-threshold, no-filename panic
-
-- `--pattern-columns` covering every column (e.g. the only column, or `1-`)
-  was treated as "not given" and silently emitted no pattern. Detect an
-  unspecified selection via new `SelectColumns::is_unspecified()` instead.
-- `--strict-formats` inferred `format: hostname` for any single-word column
-  (e.g. Alice,Bob,Carol). Hostnames now require a dot.
-- `--enum-threshold` sized two pre-allocations, so a huge value aborted with
-  a failed allocation. Size them by column count / grow on demand.
-- An input path without a file name (e.g. `..`) panicked on unwrap; it is
-  now a usage error.
-
-Regression tests added for each; all four fail without the fix.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: cite #4908 in CHANGELOG
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(schema): reject --stdout with --polars; correct EnvVarGuard safety comment
-
-- `--polars --stdout` silently ignored `--stdout` and wrote the .pschema.json
-  file anyway. It is now a usage err
-
-**File**: `.claude/skills/qsv/qsv-schema.json` (modified, +2/-2)
-```diff
-@@ -64,7 +64,7 @@
-       {
-         "flag": "--polars",
-         "type": "flag",
--        "description": "Infer a Polars schema instead of a JSON Schema. This option is only available if the `polars` feature is enabled. The generated Polars schema will be written to a file with the `.pschema.json` suffix appended to the input filename."
-+        "description": "Infer a Polars schema instead of a JSON Schema. This option is only available if the `polars` feature is enabled. The generated Polars schema will be written to a file with the `.pschema.json` suffix appended to the input filename. Requires an input file (stdin is not supported), and cannot be combined with the --stdout option."
-       },
-       {
-         "flag": "--prefer-dmy",
-@@ -84,7 +84,7 @@
-       {
-         "flag": "--strict-formats",
-         "type": "flag",
--        "description": "Enforce JSON Schema format constraints for detected email, hostname, and IP address columns. When enabled, String fields are checked against email, hostname, IPv4, and IPv6 formats. Format constraints are only added if ALL unique values in the field match the detected format."
-+        "description": "Enforce JSON Schema format constraints for detected email, hostname, and IP address columns. When enabled, String fields are checked against email, hostname, IPv4, and IPv6 formats. Format constraints are only added if ALL unique values in the field match the detected format. Hostnames must contain a dot (e.g. \"example.com\"), so columns of single words are not mistaken for hostnames."
-       }
-     ]
-   },
-```
-
-**File**: `CHANGELOG.md` (modified, +5/-0)
-```diff
-@@ -95,6 +95,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
- 
- ### Fixed
-+- **`schema`: `--pattern-columns` no longer ignores a selection that covers every column.** ([#4908](https://github.com/dathere/qsv/pull/4908)) A selection was treated as "not given" when it matched every column, so `--pattern-columns code` on a one-column CSV, or `--pattern-columns 1-` on any file, silently emitted no `pattern`.
-+- **`schema --strict-formats`: plain words are no longer inferred as hostnames.** ([#4908](https://github.com/dathere/qsv/pull/4908)) Any single word is a valid hostname label, so a column like `Alice,Bob,Carol` was given `"format": "hostname"` and later values such as `Mary Ann` failed validation. Hostnames now need a dot (e.g. `example.com`).
-+- **`schema`: a very large `--enum-threshold` no longer aborts.** ([#4908](https://github.com/dathere/qsv/pull/4908)) The threshold was used to pre-allocate memory, so `--enum-threshold 100000000000000` crashed with a failed allocation.
-+- **`schema`: an input path with no file name (e.g. `..`) is a usage error, not a panic.** ([#4908](https://github.com/dathere/qsv/pull/4908))
-+- **`schema --polars`: `--stdout` is a usage error instead of being silently ignored.** ([#4908](https://github.com/dathere/qsv/pull/4908)) The Polars schema is always written to a file (`--output` or `<input>.pschema.json`). The USAGE text now also states that `--polars` needs an input file and does not read stdin.
- - **`viz smart`: a Data Schematic rendered from a `dc:` input no longer shows the cache handle in its title.** ([#4902](https://github.com/dathere/qsv/pull/4902)) Rendering `dc:housing.csv` titled the page, its heading and the tour's welcome step "dc:housing.csv — Data Schematic", which is what visitors saw when the schematic was posted to a CKAN site. The default title now uses `housing.csv`; `--title` still overrides it.
- - **Compressed CSV inputs (`.csv.gz`, `.csv.zst`, `.csv.zlib` and their `.tsv`/`.ssv` forms) are read exactly as written.** ([#4901](https://github.com/dathere/qsv/pull/4901), fixes [#4900](https://github.com/dathere/qsv/issues/4900)) They were decompressed by having polars parse the file and write it back out as CSV, which rewrote values for every command that read them: leading zeros were dropped (`00501` → `501`), `1.50` became `1.5`, `TRUE` became `true`, and each blank line became an all-null row (so `count` reported one row too many and `stats` a null in every column). They are now decompressed byte-for-byte, so they give the same results as the uncompressed file. **Behavior change:** a `pschema.json` and `QSV_POLARS_FLOAT_PRECISION` no longer re-type or reformat compressed CSVs; both still apply to Parquet, Avro, Arrow, JSON and JSONL inputs.
- - **`frequency`: a parallel worker that crashes is an error, not a partial table.** ([#4897](https://github.com/dathere/qsv/pull/4897)) A worker that panicked dropped its chunk without recording an error, so the indexed (parallel) run printed frequencies counted over only part of the file as if they were complete. Every parallel pass now checks that it folded every chunk, and fails with "N of M parallel chunks failed" otherwise.
-```
-
-**File**: `docs/help/schema.md` (modified, +2/-2)
-```diff
-@@ -89,15 +89,15 @@ qsv schema --help
- | &nbsp;`‑‑enum‑threshold`&nbsp; | string | Cardinality threshold for adding enum constraints. Enum constraints are compiled for String & Integer types. | `50` |
- | &nbsp;`‑i,`<br>`‑‑ignore‑case`&nbsp; | flag | Ignore case when compiling unique values for enum constraints. String columns are then checked against the enum threshold by their case-insensitive cardinality. As the `validate` command is case-sensitive, the enum & const constraints of String columns are written as equivalent case-insensitive regex patterns instead (e.g. "^(?i:false\|true)$"). These use the inline `(?i:...)` modifier, which other JSON Schema validators may not support, e.g. on older JavaScript engines. |  |
- | &nbsp;`‑‑strict‑dates`&nbsp; | flag | Enforce Internet Datetime format (RFC-3339) for detected date/datetime columns. Otherwise, even if columns are inferred as date/datetime, they are set to type "string" in the schema instead of "date" or "date-time". |  |
--| &nbsp;`‑‑strict‑formats`&nbsp; | flag | Enforce JSON Schema format constraints for detected email, hostname, and IP address columns. When enabled, String fields are checked against email, hostname, IPv4, and IPv6 formats. Format constraints are only added if ALL unique values in the field match the detected format. |  |
-+| &nbsp;`‑‑strict‑formats`&nbsp; | flag | Enforce JSON Schema format constraints for detected email, hostname, and IP address columns. When enabled, String fields are checked against email, hostname, IPv4, and IPv6 formats. Format constraints are only added if ALL unique values in the field match the detected format. Hostnames must contain a dot (e.g. "example.com"), so columns of single words are not mistaken for hostnames. |  |
- | &nbsp;`‑‑pattern‑columns`&nbsp; | string | Select columns to derive regex pattern constraints. That is, this will create a regular expression that matches all values for each specified column. Columns are selected using `select` syntax (see `qsv select --help` for details). |  |
- | &nbsp;`‑‑dates‑whitelist`&nbsp; | string | The case-insensitive patterns to look for when shortlisting fields for date inference. i.e. if the field's name has any of these patterns, it is shortlisted for date inferencing. Set to "all" to inspect ALL fields for date/datetime types. | `date,time,due,open,close,created` |
- | &nbsp;`‑‑prefer‑dmy`&nbsp; | flag | Prefer to parse dates in dmy format. Otherwise, use mdy format. |  |
- | &nbsp;`‑‑force`&nbsp; | flag | Force recomputing cardinality and unique values even if stats cache file exists and is current. |  |
- | &nbsp;`‑‑stdout`&nbsp; | flag | Send generated JSON schema file to stdout instead. |  |
- | &nbsp;`‑j,`<br>`‑‑jobs`&nbsp; | string | The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected. |  |
- | &nbsp;`‑o,`<br>`‑‑output`&nbsp; | string | Write output to <file> instead of using the default filename. For JSON Schema, the default is <input>.schema.json. For Polars schema, the default is <input>.pschema.json. |  |
--| &nbsp;`‑‑polars`&nbsp; | flag | Infer a Polars schema instead of a JSON Schema. This option is only available if the `polars` feature is enabled. The generated Polars schema will be written to a file with the `.pschema.json` suffix appended to the input filename. |  |
-+| &nbsp;`‑‑polars`&nbsp; | flag | Infer a Polars schema instead of a JSON Schema. This option is only available if the `polars` feature is enabled. The generated Polars schema will be written to a file with the `.pschema.json` suffix appended to the input filename. Requires an input file (stdin is not supported), and cannot be combined with the --stdout option. |  |
- 
- <a name="common-options"></a>
- 
-```
-
-**File**: `src/cmd/schema.rs` (modified, +36/-25)
-```diff
-@@ -82,7 +82,9 @@ Schema options:
-                                When enabled, String fields are checked against
-                                email, hostname, IPv4, and IPv6 formats. Format
-                                constraints are only added if ALL unique values
--                               in the field match the detected format.
-+                               in the field match the detected format. Hostnames
-+                               must contain a dot (e.g. "example.com"), so columns
-+                               of single words are not mistaken for hostnames.
-     --pattern-columns <args>   Select columns to derive regex pattern constraints.
-                                That is, this will create a regular expression
-                                that matches all values for each specified column.
-@@ -112,6 +114,8 @@ Schema options:
-                                This option is only available if the `polars` feature is enabled.
-                                The generated Polars schema will be written to a file with the
-                                `.pschema.json` suffix appended to the input filename.
-+                               Requires an input file (stdin is not supported), and
-+                               cannot be combined with the --stdout option.
- 
- Common options:
-     -h, --help                 Display this message
-@@ -161,6 +165,11 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
- 
-     #[cfg(feature = "polars")]
-     if args.flag_polars {
-+        if args.flag_stdout {
-+            return fail_incorrectusage_clierror!(
-+                "--stdout is not supported with --polars. Use --output instead."
-+            );
++}
++
+ fn handle_moarstats(path: &Path, full: &str, stale: bool, victims: &mut Vec<(PathBuf, u64)>) {
+     let Some(base) = full
+         .strip_suffix(".stats.bivariate.joined.csv")
+@@ -496,6 +510,27 @@ fn candidate_anchors(src: &Path) -> Vec<PathBuf> {
+     let full = src.to_string_lossy();
+     v.push(PathBuf::from(format!("{full}.schema.json")));
+     v.push(PathBuf::from(format!("{full}.pschema.json")));
++    // and its `<source>.skip<N>.pschema.json` variants (see `strip_skip_suffix`)
++    // a bare file name's parent is "", which read_dir rejects
++    let dir = if parent.as_os_str().is_empty() {
++        Path::new(".")
++    } else {
++        parent
++    };
++    if let (Some(name), Ok(entries)) = (src.file_name(), fs::read_dir(dir)) {
++        let prefix = format!("{}.skip", name.to_string_lossy());
++        for entry in entries.flatten() {
++            let file_name = entry.file_name();
++            let file_name = file_name.to_string_lossy();
++            if file_name
++                .strip_prefix(&prefix)
++                .and_then(|rest| rest.strip_suffix(".pschema.json"))
++                .is_some_and(|n| !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit()))
++            {
++                v.push(parent.join(&*file_name));
++            }
 +        }
-         if let Some(input) = args.arg_input {
-             let input_path = Path::new(&input);
-             let schema_file = if let Some(output) = args.flag_output {
-@@ -197,11 +206,10 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     // so the name of the generated schema.json file is readable and predictable
-     // (stdin.csv.schema.json)
-     let (input_path, input_filename) = if let Some(ref input) = args.arg_input {
--        let filename = Path::new(&input)
--            .file_name()
--            .unwrap()
--            .to_string_lossy()
--            .to_string();
-+        let Some(filename) = Path::new(&input).file_name() else {
-+            return fail_incorrectusage_clierror!("<input> must be a file path: {input}");
-+        };
-+        let filename = filename.to_string_lossy().to_string();
-         (input.clone(), filename)
-     } else {
-         let mut stdin_file = File::create(STDIN_CSV)?;
-@@ -348,9 +356,9 @@ pub fn infer_schema_from_stats(
++    }
+     v.push(PathBuf::from(format!("{full}.valid")));
+     v.push(PathBuf::from(format!("{full}.invalid")));
+     v.push(PathBuf::from(format!("{full}.validation-errors.tsv")));
+```
+
+**File**: `src/cmd/count.rs` (modified, +5/-0)
+```diff
+@@ -545,6 +545,7 @@ pub fn polars_count_input(conf: &Config) -> CliResult<u64> {
+         };
+ 
+         let delimiter = read_conf.get_delimiter();
++        let preamble_lines = read_conf.preamble_lines()?;
+ 
+         {
+             // First, try to read the first row to check if the file is empty
+@@ -555,6 +556,7 @@ pub fn polars_count_input(conf: &Config) -> CliResult<u64> {
+             let schema_df = LazyCsvReader::new(PlRefPath::new(&*filepath.to_string_lossy()))
+                 .with_separator(delimiter)
+                 .with_comment_prefix(comment_prefix.clone())
++                .with_skip_lines(preamble_lines)
+                 .with_n_rows(Some(1))
+                 .with_ignore_errors(true)
+                 .finish()?
+@@ -584,6 +586,9 @@ pub fn polars_count_input(conf: &Config) -> CliResult<u64> {
+         let lazy_df = LazyCsvReader::new(PlRefPath::new(&*filepath.to_string_lossy()))
+             .with_separator(delimiter)
+             .with_comment_prefix(comment_prefix)
++            // sniffed preamble rows (QSV_SNIFF_PREAMBLE) sit above the header; skipped as raw
++            // lines, as the Config readers skip them
++            .with_skip_lines(preamble_lines)
+             .with_ignore_errors(true)
+             .finish()?;
+ 
+```
+
+**File**: `src/cmd/describegpt.rs` (modified, +12/-3)
+```diff
+@@ -4731,7 +4731,10 @@ fn format_phase_markdown(
+                 READ_CSV_AUTO_REGEX
+                     .replace_all(
+                         &formatted_output,
+-                        format!("read_csv_auto('{escaped_path}', strict_mode=false)"),
++                        format!(
++                            "read_csv_auto('{escaped_path}', strict_mode=false{})",
++                            crate::config::duckdb_skip_arg(Path::new(input_path))
++                        ),
+                     )
+                     .into_owned()
+             } else {
+@@ -5757,14 +5760,20 @@ fn execute_sql_query_phase(
+             sql_query = READ_CSV_AUTO_REGEX
+                 .replace_all(
+                     &sql_query,
+-                    format!("read_csv_auto('{escaped_path}', strict_mode=false)"),
++                    format!(
++                        "read_csv_auto('{escaped_path}', strict_mode=false{})",
++                        crate::config::duckdb_skip_arg(Path::new(input_path))
++                    ),
+                 )
+                 .into_owned();
+         } else {
+             // Fallback: replace {INPUT_TABLE_NAME} directly
+             sql_query = sql_query.replace(
+                 INPUT_TABLE_NAME,
+-                &format!("read_csv_auto('{escaped_path}', strict_mode=false)"),
++                &format!(
++                    "read_csv_auto('{escaped_path}', strict_mode=false{})",
++                    crate::config::duckdb_skip_arg(Path::new(input_path))
++                ),
+             );
          }
-     }
- 
--    // amortize memory allocation
--    let mut low_cardinality_column_indices: Vec<u64> =
--        Vec::with_capacity(args.flag_enum_threshold as usize);
-+    // amortize memory allocation (sized by column count, never by the user-supplied
-+    // --enum-threshold, which can be arbitrarily large)
-+    let mut low_cardinality_column_indices: Vec<u64> = Vec::with_capacity(csv_stats.len());
-     let mut const_column_indices: Vec<u64> = Vec::new();
- 
-     // build column selector arg to invoke cmd::frequency with
-@@ -385,7 +393,7 @@ pub fn infer_schema_from_stats(
-     // amortize memory allocations
-     let mut field_map: Map<String, Value> = Map::with_capacity(10);
-     let mut type_list: Vec<Value> = Vec::with_capacity(4);
--    let mut enum_list: Vec<Value> = Vec::with_capacity(args.flag_enum_threshold as usize);
-+    let mut enum_list: Vec<Value> = Vec::new();
-     let mut const_value: Value;
-     let mut header_string;
-     let mut col_null_count;
-@@ -783,10 +791,11 @@ impl EnvVarGuard {
-         let prev = std::env::var_os(key);
-         // safety: ENV_VAR_LOCK is held for the entire lifetime of this guard,
-         // serializing the set/restore against any other EnvVarGuard user.
--        // Rayon worker threads (e.g. from `parallel_ftables` or `par_sort_unstable`
--        // inside this function) do not exist at the point this is called and
--        // are joined before Drop runs, so no Rayon thread reads env vars while
--        // the mutation is in flight.
-+        // The global Rayon pool may already exist (the earlier stats pass uses it),
-+        // but its threads are idle here: no parallel work runs while the var is
-+        // being set, and the frequency workers spawned in get_unique_values only
-+        // start after this returns and are joined before Drop restores the var.
-+        // So no thread reads the environment while it is being mutated.
-         unsafe { std::env::set_var(key, value) };
-         Self {
-             key,
-@@ -800,8 +809,8 @@ impl Drop for EnvVarGuard {
-     fn drop(&mut self) {
-         // safety: same as EnvVarGuard::set — ENV_VAR_LOCK is still held via
-         // self._lock, so restoring/removing the env var is serialized against
--        // other EnvVarGuard users; Rayon workers spawned in get_unique_values
--        
+         log::debug!("DuckDB SQL query:\n{sql_query}");
 ```
 
-**File**: `src/select.rs` (modified, +6/-0)
+**File**: `src/cmd/index.rs` (modified, +1/-1)
 ```diff
-@@ -26,6 +26,12 @@ impl SelectColumns {
-         })
-     }
+@@ -61,7 +61,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     };
  
-+    /// True for the empty selector a missing select option deserializes to, which
-+    /// `selection` expands to every column.
-+    pub const fn is_unspecified(&self) -> bool {
-+        self.selectors.is_empty() && !self.invert
-+    }
-+
-     pub fn selection(
-         &self,
-         first_record: &csv::ByteRecord,
-```
-
-**File**: `tests/test_schema.rs` (modified, +103/-0)
-```diff
-@@ -1226,3 +1226,106 @@ fn schema_unicode_lengths_indexed_parallel() {
-     validate.args(["u.csv", "u.csv.schema.json"]);
-     wrk.assert_success(&mut validate);
- }
-+
-+#[test]
-+#[file_serial]
-+fn generate_schema_pattern_columns_selecting_every_column() {
-+    // a selection covering every column (here, the only one) must still emit patterns
-+    let wrk = Workdir::new("generate_schema_pattern_columns_selecting_every_column");
-+    wrk.create_from_string("one.csv", "code\nab1\ncd2\nef3\n");
-+
-+    let mut cmd = wrk.command("schema");
-+    cmd.args([
-+        "one.csv",
-+        "--pattern-columns",
-+        "code",
-+        "--enum-threshold",
-+        "1",
-+        "--stdout",
-+    ]);
-+    let schema: Value = serde_json::from_str(&wrk.stdout::<String>(&mut cmd)).unwrap();
-+    assert_eq!(schema["properties"]["code"]["pattern"], "^(?:ab1|cd2|ef3)$");
-+
-+    // without --pattern-columns, no pattern is emitted
-+    let mut cmd = wrk.command("schema");
-+    cmd.args(["one.csv", "--enum-threshold", "1", "--stdout"]);
-+    let schema: Value = serde_json::from_str(&wrk.stdout::<String>(&mut cmd)).unwrap();
-+    assert!(schema["properties"]["code"].get("pattern").is_none());
-+}
-+
-+#[test]
-+#[file_serial]
-+fn generate_schema_strict_formats_undotted_words_not_hostname() {
-+    // single words are valid RFC 1123 labels, but must not be inferred as hostnames
-+    let wrk = Workdir::new("generate_schema_strict_formats_undotted_words_not_hostname");
-+    wrk.create_from_string("names.csv", "name\nAlice\nBob\nCarol\n");
-+
-+    let mut cmd = wrk.command("schema");
-+    cmd.args([
-+        "names.csv",
-+        "--strict-formats",
-+        "--enum-threshold",
-+        "1",
-+        "--stdout",
-+    ]);
-+    let schema: Value = serde_json::from_str(&wrk.stdout::<String>(&mut cmd)).unwrap();
-+    assert!(schema["properties"]["name"].get("format").is_none());
-+}
-+
-+#[test]
-+#[file_serial]
-+fn generate_schema_huge_enum_threshold() {
-+    // --enum-threshold must not size an allocation
-+    let wrk = Workdir::new("generate_schema_huge_enum_threshold");
-+    wrk.create_from_string("data.csv", "code\nab\ncd\nab\n");
-+
-+    let mut cmd = wrk.command("schema");
-+    cmd.args([
-+        "data.csv",
-+        "--enum-threshold",
-+        "100000000000000",
-+        "--stdout",
-+    ]);
-+    let schema: Value = serde_json::from_str(&wrk.stdout::<String>(&mut cmd)).unwrap();
-+    assert_eq!(
-+        schema["properties"]["code"]["enum"],
-+        serde_json::json!(["ab", "cd"])
-+    );
-+}
-+
-+#[test]
-+#[file_serial]
-+fn generate_schema_input_without_file_name() {
-+    // a path with no file name component must error, not panic
-+    let wrk = Workdir::new("generate_schema_input_without_file_name");
-+
-+    let mut cmd = wrk.command("schema");
-+    cmd.arg("..");
-+    let output = wrk.output(&mut cmd);
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert_eq!(output.status.code(), Some(2), "stderr: {stderr}");
-+    assert!(
-+        stderr.contains("<input> must be a file path"),
-+        "stderr: {stderr}"
-+    );
-+}
-+
-+#[cfg(feature = "polars")]
-+#[test]
-+#[file_serial]
-+fn generate_schema_polars_rejects_stdout() {
-+    // --stdout was silently ignored with --polars; it must be a usage error
-+    let wrk = Workdir::new("generate_schema_polars_rejects_stdout");
-+    wrk.create_from_string("data.csv", "a,b\n1,x\n2,y\n");
-+
-+    let mut cmd = wrk.command("schema");
-+    cmd.args(["data.csv", "--polars", "--stdout"]);
-+    let output = wrk.output(&mut cmd);
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert_eq!(output.status.code(), Some(2), "stderr: {stderr}");
-+    assert!(
-+        stderr.contains("--stdout is not supported with --polars"),
-+        "stderr: {stderr}"
-+    );
-+    assert!(!Path::new(&wrk.path("data.csv.pschema.json")).exists());
-+}
-```
-
----
-
-### Incident Patch 3: `fb781234` (2026-10-25)
-**Commit Message**: fix(index): compare index staleness at full mtime precision (#4915)
-
-* fix(index): compare index staleness at full mtime precision
-
-Config::index_files judged a stale index by comparing whole-second mtimes
-with `>`, so data rewritten in the same second its index was built looked
-current: `qsv count` reported the old index's row count (1000 for a 10-row
-file, 5/5 runs) at exit 0, and index-seeking commands could read wrong rows.
-
-Compare FileTimes at full (sub-second) precision, and treat equal mtimes as
-stale: an index written after its data is strictly newer at nanosecond
-precision, so equality only arises on coarse-timestamp filesystems or with
-archive-copied mtimes, where the order is unknowable. Cost: at most one
-extra rebuild for a tiny file indexed within one clock tick of its last write.
-
-Tests set mtimes explicitly (deterministic, no clock races): sub-second-older
-index -> rebuilt; equal mtimes -> rebuilt; newer index -> reused untouched;
-plus a CLI-level `count` regression test.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: cite #4915 in CHANGELOG
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(config): use Windows-representable mtimes in the new
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -100,6 +100,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
+     let rconfig = Config::new(Some(args.arg_input).as_ref());
+-    let mut rdr = rconfig.reader_file()?;
++    let mut rdr = rconfig.index_reader()?;
  
- ### Fixed
-+- **A data file changed in the same second as its index no longer reuses the stale index.** ([#4915](https://github.com/dathere/qsv/pull/4915)) Index staleness compared whole-second mtimes with `>`, so a file rewritten in the same second the index was built looked current. `qsv count` then reported the old row count at exit 0, and commands that seek through the index could read the wrong rows. Mtimes are now compared at full precision, and an index whose mtime equals its data's (on filesystems with coarse timestamps, or mtimes copied from an archive) is rebuilt rather than trusted. That can mean one extra rebuild for a very small file indexed right after it was written.
- - **`validate`: `uniqueCombinedWith` column indices count every column, even with repeated header names.** ([#4913](https://github.com/dathere/qsv/pull/4913)) Index N walked the row's distinct header names, so with an earlier header repeated it pointed at the wrong column or at none; with none, every row after the first "duplicated" the empty combination. Columns are now checked and resolved when the schema compiles (see Breaking Changes for the new errors).
- - **`validate`: an out-of-range `dynamicEnum` column index is an error.** ([#4913](https://github.com/dathere/qsv/pull/4913)) It used to load an empty lookup set, so every row failed with `... is not a valid dynamicEnum value`. The schema now fails to compile with `dynamicEnum column index 3 is out of range: the lookup table has 1 column(s)`.
- - **`validate`: a schema URL is recognized whatever its extension.** ([#4913](https://github.com/dathere/qsv/pull/4913)) Only a last argument ending in `.json` was taken as the schema, so `qsv validate data.csv 'https://.../schema.json?raw=1'` fell back to RFC 4180 mode and checked both arguments as CSV, without a word. Any http(s) URL is now taken as the schema, as data inputs cannot be URLs.
-```
-
-**File**: `src/config.rs` (modified, +90/-4)
-```diff
-@@ -890,7 +890,7 @@ impl Config {
-         // Track the data file's mtime and the resolved index path *only* on the
-         // path that may need a staleness recheck. For the explicit-(path, idx_path)
-         // branch, staleness is not re-checked, so these stay at their default values.
--        let mut data_modified = 0_u64;
-+        let mut data_modified = filetime::FileTime::zero();
-         let data_fsize;
-         let mut idx_path_work: Option<PathBuf> = None;
- 
-@@ -921,7 +921,9 @@ impl Config {
-                 // We generally don't want to report an error here, since we're
-                 // passively trying to find an index.
- 
--                (data_modified, data_fsize) = util::file_metadata(&p.metadata()?);
-+                let data_md = p.metadata()?;
-+                data_modified = filetime::FileTime::from_last_modification_time(&data_md);
-+                data_fsize = data_md.len();
-                 let idx_path = util::idx_path(p);
-                 let idx_file = match fs::File::open(&idx_path) {
-                     Err(_) => {
-@@ -969,8 +971,15 @@ impl Config {
-         // modified, recreate the stale index automatically. Only checked when
-         // we resolved the index path ourselves (idx_path_work is Some).
-         if let Some(idx_path) = &idx_path_work {
--            let (idx_modified, _) = util::file_metadata(&idx_file.metadata()?);
--            if data_modified > idx_modified {
-+            let idx_modified =
-+                filetime::FileTime::from_last_modification_time(&idx_file.metadata()?);
-+            // Full (sub-second) precision, and `>=`. Compared in whole seconds with `>`, data
-+            // rewritten in the same second the index was built looked current, and the old
-+            // index was trusted - `qsv count` reported the old row count at exit 0. An index
-+            // written after its data is strictly newer at nanosecond precision, so equal
-+            // mtimes only arise on coarse-timestamp filesystems (or mtimes copied from an
-+            // archive), where the order is unknowable: rebuild rather than guess.
-+            if data_modified >= idx_modified {
-                 // Rebuild AT MOST ONCE per path per process, and never concurrently - see
-                 // `AUTOINDEXED_STALE`. Late arrivals block here until the rebuild finishes,
-                 // then fall through and re-open the completed index.
-@@ -1442,6 +1451,83 @@ mod tests {
-         assert!(snappy);
-     }
- 
-+    /// Write `rows` data rows to `path`, index it, then rewrite it with `new_rows` rows and
-+    /// stamp the data and index mtimes, so staleness depends only on those stamps.
-+    fn rewritten_after_index(
-+        path: &Path,
-+        rows: usize,
-+        new_rows: usize,
-+        data_mtime: filetime::FileTime,
-+        idx_mtime: filetime::FileTime,
-+    ) -> Config {
-+        use std::io::Write;
-+
-+        let write = |n: usize| {
-+            let mut f = std::fs::File::create(path).unwrap();
-+            writeln!(f, "letter,number").unwrap();
-+            for i in 0..n {
-+                writeln!(f, "x,{i}").unwrap();
-+            }
-+            f.sync_all().unwrap();
-+        };
-+        write(rows);
-+        let config = Config::new(Some(&path.to_string_lossy().to_string()));
-+        crate::util::create_index_for_file(path, &config).unwrap();
-+        write(new_rows);
-+        filetime::set_file_mtime(path, data_mtime).unwrap();
-+        filetime::set_file_mtime(crate::util::idx_path(path), idx_mtime).unwrap();
-+        config
-+    }
-+
-+    /// Data rewritten later in the same second its index was built must make the index
-+    /// stale. Compared in whole seconds, it looked current and its old row count was trusted.
-+    #[test]
-+    fn index_older_by_less_than_a_second_is_stale() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let config = rewritten_after_index(
-+            &dir.path().join("subsecond.csv"),
-+            1_000,
-+            10,
-+            filetime::FileTime::from_unix_time(1_700_000_000, 500_000_000),
-+            filetime::FileTime::from_unix_time(1_700_000_000, 100),
-+        );
-+        let idx = config.indexed().unwrap().expect("rebuilt index");
-+        assert_eq!(idx.count(), 10, "the stale index's row count was trusted");
-+    }
-+
-+    /// Equal mtimes (a coarse-timestamp filesystem, or mtimes copied from an archive) leave
-+    /// the order unknowable, so the index is rebuilt rather than trusted.
-+    #[test]
-+    fn index_with_the_same_mtime_as_its_data_is_stale() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let same = filetime::FileTime::from_unix_time(1_700_000_000, 0);
-+        let config = rewritten_after_index(&dir.path().join("same.csv"), 1_000, 10, same, same);
-+        let idx = config.indexed().unwrap().expect("rebuilt index");
-+        assert_eq!(idx.count(), 10, "the stale index's row count was trusted");
-+    }
-+
-+    /// An index strictly newer than its data is current: it is used as is, not reb
-```
-
-**File**: `tests/test_count.rs` (modified, +33/-0)
-```diff
-@@ -864,3 +864,36 @@ fn count_low_memory_flag_removed() {
-     cmd.arg("t.csv").arg("--low-memory");
-     wrk.assert_err(&mut cmd);
- }
-+
-+#[test]
-+fn count_index_rewritten_within_the_same_second() {
-+    // index staleness compared whole-second mtimes, so data rewritten in the same second the
-+    // index was built looked current, and `count` reported the index's old row count
-+    let wrk = Workdir::new("count_index_rewritten_within_the_same_second");
-+    let mut csv = String::from("a,b\n");
-+    for i in 0..1_000 {
-+        csv.push_str(&format!("{i},x\n"));
-+    }
-+    wrk.create_from_string("data.csv", &csv);
-+    let mut cmd = wrk.command("index");
-+    cmd.arg("data.csv");
-+    wrk.assert_success(&mut cmd);
-+
-+    wrk.create_from_string("data.csv", "a,b\n1,y\n2,y\n3,y\n");
-+    // the data is half a second newer than its index, within the same second
-+    filetime::set_file_mtime(
-+        wrk.path("data.csv.idx"),
-+        filetime::FileTime::from_unix_time(1_700_000_000, 100),
-+    )
-+    .unwrap();
-+    filetime::set_file_mtime(
-+        wrk.path("data.csv"),
-+        filetime::FileTime::from_unix_time(1_700_000_000, 500_000_000),
-+    )
-+    .unwrap();
-+
-+    let mut cmd = wrk.command("count");
-+    cmd.arg("data.csv");
-+    let got: String = wrk.stdout(&mut cmd);
-+    assert_eq!(got, "3");
-+}
+     // build into a temp beside `pidx` and rename into place only once the index is complete.
+     // Writing straight to `pidx` destroyed a pre-existing good index and left a partial one
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4916** (2026-10-25): fix: QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs review (@jqnatividad)
 - **PR #4915** (2026-10-25): fix(index): compare index staleness at full mtime precision (@jqnatividad)
 - **PR #4914** (2026-10-25): fix: describegpt subprocesses and `to parquet` read piped stdin / .tsv with the right delimiter (@jqnatividad)
 - **PR #4913** (2026-10-25): fix(validate): uniqueCombinedWith column checks, duplicate-header indices, dynamicEnum index, schema URLs (@jqnatividad)
 - **PR #4912** (2026-10-24): fix(validate): #4911 follow-ups (boolean dynamicEnum, $id-scoped $refs, test helper) (@jqnatividad)
 - **PR #4911** (2026-10-24): fix(validate): dynamicEnum on numeric/nullable columns, $ref types, multi-type arrays (@jqnatividad)
-- **PR #4910** (2026-10-24): fix: piped stdin follows QSV_DEFAULT_DELIMITER in headers, cat, slice, tojsonl (@jqnatividad)
 
 ---
 
@@ -3015,13 +2475,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. validate): piped stdin silently passing, documented stdin forms, uniqueCombinedW
+## X. QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs rev
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7c30c8a`: validate): piped stdin silently passing, documented stdin forms, uniqueCombinedWith order (#4909). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9224e5f6`: QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs review (#4916). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -3029,9 +2489,9 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`validate`: piped stdin with a JSON Schema is validated instead of silently passing.** ([#4909](https://github.com/dathere/qsv/pull/4909)) `cat data.csv | qsv validate - schema.json` counted the rows by reading stdin to the end, so validation then saw 0 rows, printed `All 0 records valid.` and exited 0 whatever the data held. stdin is now copied to a temp file first, and its output files are `stdin.csv.*` in the current directory, as documented.
-- **`validate`: `cat data.csv | qsv validate schema.json` works as the USAGE shows.** ([#4909](https://github.com/dathere/qsv/pull/4909)) It failed with "Only a JSON Schema file was provided". With no data file, piped stdin is now read; that error remains when nothing is piped.
-- **`validate`: with no input file, RFC 4180 mode reads piped stdin.** ([#4909](https://github.com/dathere/qsv/pull/4909)) `cat data.csv | qsv validate` always failed with "No data on stdin", although the USAGE says stdin is read when no input is given. An explicit `-` already worked. In both modes, the implicit read happens only when stdin is not a terminal; like `count` or `stats`, `validate` then waits until stdin is closed, so a caller that leaves stdin open 
+- **`QSV_SNIFF_PREAMBLE` now skips the preamble rows it finds, so commands can return fewer rows and a different header** ([#4916](https://github.com/dathere/qsv/pull/4916)). It used to sniff the number of rows above the header and then ignore it (only `input --auto-skip` used it), so a title line above the header was read as the header. Now every command reads from the header, including `count`, `stats`, `input`, the Polars-based commands (`sqlp`, `joinp`, `pivotp`, `to parquet`, `writestat`) and the DuckDB queries of `scoresql --duckdb` and `describegpt`. A file with a preamble is read without its index, and `qsv index` still indexes the file as stored. Stats caches and Polars schemas are kept apart for the two modes, so turning the env var on or off never reuses one built the other way (a schema of the rows past an N-line preamble is `<file>.skip<N>.pschema.json`). `QSV_SNIFF_DELIMITER` alone now only sniffs the delimiter. Not covered: stdin and Polars SQL's `read_csv()` table function. **If you set `QSV_SNIFF_PREAMBLE`, check your results:** unset it to keep the old behavior, or use `input --skip-lines` to control the skip yourself.
+
+- **`QSV_SNIFF_DELIMITER` no longer sets the
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3041,4 +2501,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7c30c8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9224e5f6` are properly handled with clean fallback behavior.

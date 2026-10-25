@@ -4893,3 +4893,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-10-25T15:49:29.463Z |
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `3e434793` | Multi-dimensional audit evidence | 2026-10-25T15:49:35.886Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `9dcd26be` | Multi-dimensional audit evidence | 2026-10-25T15:49:43.842Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-25T15:55:52.866Z |
+| `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `f4e28705` | Multi-dimensional audit evidence | 2026-10-25T15:56:02.175Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `181d6814` | Multi-dimensional audit evidence | 2026-10-25T15:56:07.675Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `9224e5f6` | Multi-dimensional audit evidence | 2026-10-25T15:56:12.824Z |

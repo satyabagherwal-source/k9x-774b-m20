@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T15:49:43.785Z",
+  "last_updated": "2026-10-25T15:56:12.713Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7816,8 +7816,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "fb781234",
-      "content_hash": "7496aef1456fcdbde5ade24677b40fce4d35ad622ae7498676d9d0793bfa1652",
+      "source_version": "9224e5f6",
+      "content_hash": "fd30d27ff120219d42b6a04c206f0639a94eff30037688ff520cc844faa7e711",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8005,6 +8005,11 @@
           "number": 3976,
           "title": "validate): piped stdin silently passing, documented stdin forms, uniqueCombinedW",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4374,
+          "title": "QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs rev",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8012,7 +8017,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:19:01.366Z",
+      "verified_at": "2026-10-25T15:56:12.703Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21521,7 +21526,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "e5b0adae2f6f3f82c2476c597358f7b4cf2708482cdf077a087764389bd5c993",
+      "content_hash": "66acb53c72abd3f76659b8a972d9ad13a653c81dc6b4501c15d4391535d0936c",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "promoted_rules": [
@@ -21554,7 +21559,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv47md9a",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t"
       ],
-      "verified_at": "2026-10-20T20:20:13.643Z",
+      "verified_at": "2026-10-25T15:55:52.805Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38218,8 +38223,8 @@
       "slug": "octodns-octodns",
       "platform": "github",
       "source_url": "https://github.com/octodns/octodns",
-      "source_version": "692c44e2",
-      "content_hash": "9e04a245cbfc496577bfad5b9dbc46ec268734d4e3ef85fef9f92bec5cc019f9",
+      "source_version": "f4e28705",
+      "content_hash": "3991a4f1aaa254b1089c0d6769c09f7572632300167a518207b2dd7fa14ca897",
       "dossier_path": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "promoted_rules": [
@@ -38232,6 +38237,11 @@
           "number": 3030,
           "title": "Merge pull request #1479 from octodns/asterisks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4373,
+          "title": "Merge pull request #1481 from joshpurvis/docs-spf-pr-tutorial",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38239,7 +38249,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T03:53:35.179Z",
+      "verified_at": "2026-10-25T15:56:02.119Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61249,13 +61259,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "929648f4",
-      "content_hash": "3d99c9eb02761202d2baf5dd014e1f7eaf4aaf3dc1f94e192faa48a1bfa336e6",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "181d6814",
+      "content_hash": "592052b7d52064ed304a0cab8259a4d5f4613198a0ffad5bcfed9ef98f864a6b",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -61308,7 +61318,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T13:08:21.390Z",
+      "verified_at": "2026-10-25T15:56:07.611Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124568,6 +124578,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T15:49:43.774Z"
+    },
+    "rule-4373": {
+      "learning_id": "rule-4373",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4373,
+      "title": "Merge pull request #1481 from joshpurvis/docs-spf-pr-tutorial",
+      "source_url": "https://github.com/octodns/octodns",
+      "source_version": "f4e28705",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:56:02.119Z"
+    },
+    "rule-4374": {
+      "learning_id": "rule-4374",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4374,
+      "title": "QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs rev",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "9224e5f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:56:12.703Z"
     }
   },
   "aliases": {

@@ -605,8 +605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "e5b0adae2f6f3f82c2476c597358f7b4cf2708482cdf077a087764389bd5c993",
-    "lastHarvestedAt": "2026-10-20T20:20:13.729Z",
+    "contentHash": "66acb53c72abd3f76659b8a972d9ad13a653c81dc6b4501c15d4391535d0936c",
+    "lastHarvestedAt": "2026-10-25T15:55:52.866Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "21c27035",
+    "sourceVersion": "181d6814",
     "license": "Apache-2.0",
-    "contentHash": "a843d372ac399a592871f731bdc387d6314b7c4c4716cad185066db67f384094",
-    "lastHarvestedAt": "2026-10-25T02:42:40.084Z",
+    "contentHash": "592052b7d52064ed304a0cab8259a4d5f4613198a0ffad5bcfed9ef98f864a6b",
+    "lastHarvestedAt": "2026-10-25T15:56:07.675Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "fb781234",
+    "sourceVersion": "9224e5f6",
     "license": "NOASSERTION",
-    "contentHash": "7496aef1456fcdbde5ade24677b40fce4d35ad622ae7498676d9d0793bfa1652",
-    "lastHarvestedAt": "2026-10-25T02:19:01.435Z",
+    "contentHash": "fd30d27ff120219d42b6a04c206f0639a94eff30037688ff520cc844faa7e711",
+    "lastHarvestedAt": "2026-10-25T15:56:12.824Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -5463,10 +5463,10 @@
     "repository": "octodns/octodns",
     "platform": "github",
     "sourceUrl": "https://github.com/octodns/octodns",
-    "sourceVersion": "692c44e2",
+    "sourceVersion": "f4e28705",
     "license": "MIT",
-    "contentHash": "9e04a245cbfc496577bfad5b9dbc46ec268734d4e3ef85fef9f92bec5cc019f9",
-    "lastHarvestedAt": "2026-10-20T03:53:35.252Z",
+    "contentHash": "3991a4f1aaa254b1089c0d6769c09f7572632300167a518207b2dd7fa14ca897",
+    "lastHarvestedAt": "2026-10-25T15:56:02.175Z",
     "learningId": "learn-github-octodns-octodns"
   },
   "netflix-dynomite": {
