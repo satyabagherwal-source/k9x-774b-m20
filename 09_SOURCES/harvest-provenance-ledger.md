@@ -4926,3 +4926,4 @@ Every entry in this ledger must capture:
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `af7e5c5d` | Multi-dimensional audit evidence | 2026-10-25T17:21:09.069Z |
 | `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-25T17:30:10.001Z |
 | `learn-github-webrtc-rs-webrtc` | `https://github.com/webrtc-rs/webrtc` | `a53d7ac4` | Multi-dimensional audit evidence | 2026-10-25T17:30:14.438Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-25T17:36:31.830Z |

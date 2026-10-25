@@ -1695,8 +1695,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
     "license": "Open-Source",
-    "contentHash": "c0c7fb7cc289676c15f41ff6a15c20064db350b0d157b4fb9f4901890035eb03",
-    "lastHarvestedAt": "2026-10-20T22:00:14.891Z",
+    "contentHash": "a59b993dd2a9dcfef612e1bba0cda6f39edbb066a8b28be066472ed88d42bc6e",
+    "lastHarvestedAt": "2026-10-25T17:36:31.830Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017"
   },
   "tw93-pake": {

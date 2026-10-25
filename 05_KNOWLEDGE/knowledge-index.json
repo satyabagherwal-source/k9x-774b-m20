@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T17:30:14.389Z",
+  "last_updated": "2026-10-25T17:36:31.782Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -61879,7 +61879,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
-      "content_hash": "c0c7fb7cc289676c15f41ff6a15c20064db350b0d157b4fb9f4901890035eb03",
+      "content_hash": "a59b993dd2a9dcfef612e1bba0cda6f39edbb066a8b28be066472ed88d42bc6e",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "promoted_rules": [
@@ -61904,7 +61904,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T22:00:14.832Z",
+      "verified_at": "2026-10-25T17:36:31.771Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T17:30:14.442Z",
-  "total_cycles_completed": 4896,
-  "total_learnings_persisted": 4896,
+  "last_updated": "2026-10-25T17:36:31.834Z",
+  "total_cycles_completed": 4897,
+  "total_learnings_persisted": 4897,
   "total_rules_promoted": 4276,
   "history": [
-    {
-      "timestamp": "2026-10-25T06:56:52.353Z",
-      "repository": "primer/react",
-      "learningId": "learn-github-primer-react",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T07:05:13.734Z",
       "repository": "Cactus-Compute/whistle",
@@ -1403,6 +1396,13 @@
       "repository": "webrtc-rs/webrtc",
       "learningId": "learn-github-webrtc-rs-webrtc",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T17:36:31.834Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

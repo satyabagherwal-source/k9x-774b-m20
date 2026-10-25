@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-52O2",
-    "timestamp": "2026-10-22T20:37:02.786Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "280f5c0db1199b1f2b36c4c70701d23accb689a22707d72b52aef46295432d00",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-536K",
     "timestamp": "2026-10-22T20:37:03.452Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7477,21 @@
     "contentHash": "30feeed0e1ca5e98881e64e674507e3990041fd59872165415101775d127d58b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-0HG3",
+    "timestamp": "2026-10-25T17:36:31.827Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+    "contentHash": "a59b993dd2a9dcfef612e1bba0cda6f39edbb066a8b28be066472ed88d42bc6e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
