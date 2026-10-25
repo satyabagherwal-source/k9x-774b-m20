@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T14:44:27.921Z",
+  "last_updated": "2026-10-25T16:09:09.932Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2752,6 +2752,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHY** technical rationale",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
+    },
+    {
+      "id": "CD-W4RW",
+      "directive_title": "Fixed panic with facet filters and empty query facets",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "SeekStorm/SeekStorm",
+      "source_commit": "a20c7c3f",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-seekstorm-seekstorm"
     }
   ]
 }

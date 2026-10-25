@@ -625,8 +625,8 @@
     "sourceUrl": "https://huggingface.co/facebook/sam3",
     "sourceVersion": "hf-facebook-sam3",
     "license": "Open-Source",
-    "contentHash": "2862f9d9c756f841890d6cafb13ee434f7f5aa7c83ea3a5ace2f00f2fa9847c5",
-    "lastHarvestedAt": "2026-10-20T20:35:09.588Z",
+    "contentHash": "f69731dbfb7c6dd17cb6e1ab9553359157577f9ffeb9a52e10e21fd80e3e6790",
+    "lastHarvestedAt": "2026-10-25T16:08:58.005Z",
     "learningId": "learn-huggingface-facebook-sam3"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "b0015350",
+    "sourceVersion": "a20c7c3f",
     "license": "Apache-2.0",
-    "contentHash": "b6d65be4d3235107b77f6b2b99a1c24336655c8aa7bb84038584f70e57d9c42d",
-    "lastHarvestedAt": "2026-10-23T10:45:12.434Z",
+    "contentHash": "3b51590fb6a39e42826969d894941b2cfa30f4b4a5789abe51b8e55c82bcd86f",
+    "lastHarvestedAt": "2026-10-25T16:09:09.927Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {

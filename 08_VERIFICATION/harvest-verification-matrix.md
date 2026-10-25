@@ -4892,3 +4892,5 @@
 | `CYCLE-20261025-FH5I` | `2026-10-25T15:56:12.822Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4374` | Yes (`fd30d27f...`) |
 | `CYCLE-20261025-NSWL` | `2026-10-25T16:02:41.301Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4375, Rule 4376` | Yes (`074b0ebf...`) |
 | `CYCLE-20261025-NUH1` | `2026-10-25T16:02:43.333Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4377` | Yes (`be1e498c...`) |
+| `CYCLE-20261025-VVKH` | `2026-10-25T16:08:58.001Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`f69731db...`) |
+| `CYCLE-20261025-W4RN` | `2026-10-25T16:09:09.923Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md` | Yes (`3b51590f...`) |

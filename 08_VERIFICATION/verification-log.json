@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-C1XM",
-    "timestamp": "2026-10-22T18:50:29.962Z",
-    "repository": "Mintplex-Labs/anything-llm",
-    "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "05b9de9445d8ac6519360c799ae77443ded70d22a653322c23c451ca38f4bf49",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-KBT8",
-    "timestamp": "2026-10-22T18:56:56.012Z",
-    "repository": "inikulin/parse5",
-    "learningId": "learn-github-inikulin-parse5",
-    "contentHash": "c0ffe9f8958f44648a276055da1fc5c829cb6576adfaf7925bf618b354bee011",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-KBV1",
     "timestamp": "2026-10-22T18:56:56.077Z",
     "repository": "nats-io/nats.go",
@@ -7492,6 +7462,36 @@
     "contentHash": "be1e498c8843f5a961b3722a5207bce986740e487f3f4aad1891944511cddd2b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-VVKH",
+    "timestamp": "2026-10-25T16:08:58.001Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "f69731dbfb7c6dd17cb6e1ab9553359157577f9ffeb9a52e10e21fd80e3e6790",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-W4RN",
+    "timestamp": "2026-10-25T16:09:09.923Z",
+    "repository": "SeekStorm/SeekStorm",
+    "learningId": "learn-github-seekstorm-seekstorm",
+    "contentHash": "3b51590fb6a39e42826969d894941b2cfa30f4b4a5789abe51b8e55c82bcd86f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

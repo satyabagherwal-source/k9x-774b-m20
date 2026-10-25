@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source**: github ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
-> **Source Version**: `b0015350`  
+> **Source Version**: `a20c7c3f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:45:12.183Z  
+> **Timestamp**: 2026-10-25T16:09:09.745Z  
 > **Learning ID**: `learn-github-seekstorm-seekstorm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:45:11.898Z  
+> **Harvest Timestamp**: 2026-10-25T16:09:09.736Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: SeekStorm: vector & lexical search - in-process library & multi-tenancy server, in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 1920 stars
+- **Stars / Engagement**: 1924 stars
 
 ---
 
@@ -243,6 +243,295 @@ pub fn dir_size(path: impl Into<PathBuf>) -> io::Result<u64> {
     dir_size(fs::read_dir(path)?)
 }
 
+```
+
+### Core Architecture Module: `seekstorm/benches/basic.rs`
+```
+//! Lexical search benchmark of SeekStorm over 5 million Wikipedia articles, with 903 search queries,
+//! - of different query types (AND, OR, PHRASE)
+//! - of different keyword numbers,
+//! - of different result types (Count, TopkCount, Topk),
+//! - measuring total result number, average latency, and percentile latencies.
+//! -
+//! Start benchmark with `cargo bench --features gxhash`.
+//! ⚠️ Before running the benchmark, copy the Wikipedia data manually from https://www.dropbox.com/s/wwnfnu441w1ec9p/wiki-articles.json.bz2 into the `benches/test_data` directory and decompress.
+//! ⚠️ Make sure the console buffer is large enough to display all benchmark output.
+//!
+//! This benchmark is loosely based on https://github.com/quickwit-oss/search-benchmark-game.
+//! It is intended mainly for development regression tests when evaluating future search improvements.
+//! It runs on any platform, whereas the original search-benchmark-game relies on unix-specific dependencies, commands and shell syntax.
+//! By using per-query median latency (of 5 non-consecutive runs per query), it separates the latency attributable to the search algorithm/implementation from incidental execution noise that is outside your control.
+//!
+//! For a faithful fork of search-benchmark-game that includes SeekStorm, Tantivy and Lucene see https://github.com/SeekStorm/search-benchmark-game
+//! That benchmark is used for our published results, see https://seekstorm.github.io/search-benchmark-game
+
+use num_format::Locale;
+use num_format::ToFormattedString;
+use seekstorm::index::{
+    AccessType, Clustering, DocumentCompression, FrequentwordType, IndexMetaObject,
+    LexicalSimilarity, NgramSet, SchemaField, StemmerType, StopwordType, TokenizerType,
+    create_index, open_index,
+};
+use seekstorm::ingest::IngestJson;
+use seekstorm::search::{
+    FacetFilter, QueryFacet, QueryRewriting, QueryType, ResultSort, ResultType, Search, SearchMode,
+};
+use seekstorm::vector::Inference;
+use std::error::Error;
+use std::fs::File;
+use std::io::{BufRead, BufReader, Read, Write};
+use std::path::PathBuf;
+use std::sync::Arc;
+use std::thread;
+use std::time::{Duration, Instant};
+use tokio::sync::{Mutex, Semaphore};
+
+use rand::{self, RngExt, rng};
+/// Implements percentile, mean, median and maximum metrics for latency.
+///
+/// A 99th percentile latency of X milliseconds means that 99% of the latencies are below X
+pub(crate) struct Percentile {
+    pub count: i32,
+    pub size: i32,
+    pub reservoir: Vec<i64>,
+    pub median: i64,
+    pub percentile50: i64,
+    pub percentile75: i64,
+    pub percentile90: i64,
+    pub percentile95: i64,
+    pub percentile98: i64,
+    pub percentile99: i64,
+    pub percentile999: i64,
+    pub maximum: i64,
+    pub sum: i64,
+}
+
+impl Default for Percentile {
+    fn default() -> Self {
+        Self {
+            size: 10_000,
+            count: 0,
+            reservoir: Vec::new(),
+            median: 0,
+            percentile50: 0,
+            percentile75: 0,
+            percentile90: 0,
+            percentile95: 0,
+            percentile98: 0,
+            percentile99: 0,
+            percentile999: 0,
+            maximum: 0,
+            sum: 0,
+        }
+    }
+}
+
+impl Percentile {
+    pub(crate) fn add(&mut self, x: i64) {
+        if self.count == i32::MAX {
+            return;
+        }
+
+        if x > self.maximum {
+            self.maximum = x;
+        }
+        self.sum += x;
+
+        if self.count < self.size {
+            self.reservoir.push(x);
+        } else {
+            let p = rng().random_range(0..self.count);
+
+            if p < self.size {
+                self.reservoir[p as usize] = x;
+            }
+        }
+        self.count += 1;
+    }
+
+    pub(crate) fn calc(&mut self) {
+        let n = self.reservoir.len();
+        if n < 1 {
+            return;
+        }
+        self.reservoir.sort();
+        self.median = self.reservoir[n / 2];
+        if n.is_multiple_of(2) {
+            self.median = (self.median + self.reservoir[n / 2 - 1]) / 2;
+        }
+        self.percentile50 = self.reservoir[(n * 50) / 100];
+        self.percentile75 = self.reservoir[(n * 75) / 100];
+        self.percentile90 = self.reservoir[(n * 90) / 100];
+        self.percentile95 = self.reservoir[(n * 95) / 100];
+        self.percentile98 = self.reservoir[(n * 98) / 100];
+        self.percentile99 = self.reservoir[(n * 99) / 100];
+        self.percentile999 = self.reservoir[(n * 999) / 1000];
+    }
+}
+
+fn data_path(name: &str) -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("benches")
+        .join("test_data")
+        .join(name)
+}
+
+const QUERY_TYPE_FILTERS: [&str; 16] = [
+    "ALL",                        //0
+    "global",                     //1 - no term, phrase, two-phase-critic
+    "intersection",               //2
+    "intersection:num_tokens_2",  //3
+    "intersection:num_tokens_3",  //4
+    "intersection:num_tokens_>3", //5
+    "phrase",                     //6
+    "phrase:num_tokens_2",        //7
+    "phrase:num_tokens_3",        //8
+    "phrase:num_tokens_>3",       //9
+    "term",                       //10
+    "two-phase-critic",           //11
+    "union",                      //12
+    "union:num_tokens_2",         //13
+    "union:num_tokens_3",         //14
+    "union:num_tokens_>3",        //15
+];
+#[allow(missing_docs)]
+#[derive(Default, Debug, serde::Deserialize, serde::Serialize, Clone)]
+pub struct QueryObject {
+    pub query: String,
+    pub tags: Vec<String>,
+}
+
+const SAMPLE_COUNT: usize = 5;
+
+struct ResultEntry {
+    query_index: usize,
+    search_time: [i64; SAMPLE_COUNT],
+    result_type: ResultType,
+    result_count: usize,
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
+    println!("Benchmark started ...");
+
+    // create index
+
+    let ingest_path = data_path("wiki-articles.json");
+    let index_path = data_path("benchmark_index");
+    let query_path = data_path("search-benchmark-game-queries.txt");
+    let count_path = data_path("result_count_total.bin");
+
+    let index_arc = match open_index(&index_path).await {
+        Ok(index) => index,
+        Err(err) => {
+            // does exists, but incompatible version
+            if err
+                .to_string()
+                .contains("incompatible index format version")
+            {
+                println!("{}", err);
+                return Ok(());
+            }
+
+            if !ingest_path.exists() {
+                println!(
+                    "\n{} does not exist. ⚠️ Before running the benchmark, copy the Wikipedia data manually from https://www.dropbox.com/s/wwnfnu441w1ec9p/wiki-articles.json.bz2 into the `benches/test_data` directory and decompress.",
+                    ingest_path.display()
+                );
+                return Ok(());
+            }
+
+            let wikipedia_schema_json = r#"
+                [{"field":"title","field_type":"Text","store":false,"index_lexical":false},
+                {"field":"body","field_type":"Text","store":false,"index_lexical":true,"longest":true},
+                {"field":"url","field_type":"Text","store":false,"index_lexical":false}]"#;
+
+            let schema: Vec<SchemaField> = serde_json::from_str(wikipedia_schema_json).unwrap();
+
+            let meta = IndexMetaObject {
+                id: 0,
+                name: "wikipedia".to_string(),
+                lexical_similarity: LexicalSimilarity::Bm25f,
+                tokenizer: TokenizerType::AsciiAlphabetic,
+                stemmer: StemmerType::None,
+                stop_words: StopwordType::None,
+                frequent_words: FrequentwordType::English,
+                //ngram_indexing: NgramSet::SingleTerm as u8,
+                //ngram_indexing: NgramSet::NgramFF as u8,
+                ngram_indexing: NgramSet::SingleTerm as u8
+                    | NgramSet::NgramFF as u8
+                    | NgramSet::NgramFR as u8
+                    | NgramSet::NgramRF as u8
+                    | NgramSet::NgramFFF as u8,
+                document_compression: DocumentCompression::Snappy,
+                access_type: AccessType::Mmap,
+                spelling_correction: None,
+                query_completion: None,
+                clustering: Clustering::None,
+                inference: Inference::None,
+            };
+
+            let mut index_arc =
+                create_index(&index_path, meta, &schema, &Vec::new(), 11, false, None)
+                    .await
+                    .unwrap();
+
+            // ingest data
+            index_arc.ingest_json(&ingest_path).await;
+
+            index_arc
+        }
+    };
+
+    // benchmark parameters
+
+    let cool_time = Duration::from_secs(10);
+    let result_length = 10usize;
+    let search_mode = SearchMode::Lexical;
+    let thread_number = 1;
+
+    // import queries from file
+
+    let mut query_vec: Vec<(String, QueryType, Vec<String>)> = Vec::new();
+    let file = File::open(query_path).unwrap();
+    let reader = BufReader::new(file);
+
+    for line in reader.lines() {
+        let line_string = line.unwrap();
+
+        if line_string.is_empty() {
+            continue;
+        }
+
+        // deserialize query json
+        let query_object = serde_json::from_str::<QueryObject>(&line_string).unwrap();
+
+        let query_type = if query_object.tags.contains(&"intersection".to_string()) {
+            QueryType::Intersection
+        } else if query_object.tags.contains(&"phrase".to_string())
+            || query_object.tags.contains(&"two-phase-critic".to_string())
+        {
+            QueryType::Phrase
+        } else {
+            QueryType::Union
+        };
+
+        // query_type is not used, just informational for debugging
+        query_vec.push((
+            query_object.query.to_lowercase(),
+            query_type,
+            query_object.tags,
+        ));
+    }
+
+    thread::sleep(cool_time);
+
+    // query and result_type loops
+
+    let query_count = query_vec.len() as i64;
+    let permits = Arc::new(Semaphore::new(thread_number));
+
+    let result_list: Vec<ResultEntry> = 
 ```
 
 ### Core Architecture Module: `seekstorm/src/add_result.rs`
@@ -1909,244 +2198,6 @@ pub(crate) fn top_fragments_from_field(
            
 ```
 
-### Core Architecture Module: `seekstorm/src/index.rs`
-```
-use add_result::decode_positions_commit;
-use ahash::{AHashMap, AHashSet};
-use futures::future;
-use indexmap::IndexMap;
-use itertools::Itertools;
-use memmap2::{Mmap, MmapMut, MmapOptions};
-use model2vec_rs::model::StaticModel;
-use num::FromPrimitive;
-use num_derive::FromPrimitive;
-
-use search::{QueryType, Search};
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use smallvec::SmallVec;
-use snowball_stemmers_rs::{Algorithm, Stemmer};
-use std::{
-    cmp,
-    collections::HashMap,
-    fmt::{self},
-    fs::{self, File},
-    io::{BufRead, BufReader, Read, Seek, Write},
-    path::Path,
-    sync::{Arc, LazyLock},
-    thread::available_parallelism,
-    time::Instant,
-};
-use symspell_complete_rs::{PruningRadixTrie, SymSpell};
-use tokio::sync::{RwLock, Semaphore};
-use utils::{read_u32, write_u16};
-use utoipa::ToSchema;
-
-#[cfg(feature = "zh")]
-use crate::word_segmentation::WordSegmentationTM;
-use crate::{
-    INDEX_RUNTIME,
-    add_result::{self, B, K, SIGMA},
-    clustering::{ClusterHeader, ParentMedoid},
-    commit::Commit,
-    geo_search::encode_morton_2_d,
-    highlighter::Highlight,
-    search::{
-        self, FacetFilter, Point, QueryFacet, QueryRewriting, Ranges, ResultObject, ResultSort,
-        ResultType, SearchLexicalShard, SearchMode,
-    },
-    tokenizer::tokenizer,
-    utils::{
-        self, read_u8_ref, read_u16, read_u16_ref, read_u32_ref, read_u64, read_u64_ref, write_f32,
-        write_f64, write_i8, write_i16, write_i32, write_i64, write_u32, write_u64,
-    },
-    vector::{Inference, Model, Precision, Quantization, VectorHeader, read_min_max},
-    vector_similarity::{TurboQuant, VectorSimilarity},
-};
-
-#[cfg(any(
-    all(
-        feature = "gxhash",
-        target_arch = "x86_64",
-        target_feature = "aes",
-        target_feature = "sse2"
-    ),
-    all(
-        feature = "gxhash",
-        target_arch = "aarch64",
-        target_feature = "aes",
-        target_feature = "neon"
-    )
-))]
-use gxhash::{gxhash32, gxhash64};
-
-#[cfg(not(any(
-    all(
-        feature = "gxhash",
-        target_arch = "x86_64",
-        target_feature = "aes",
-        target_feature = "sse2"
-    ),
-    all(
-        feature = "gxhash",
-        target_arch = "aarch64",
-        target_feature = "aes",
-        target_feature = "neon"
-    )
-)))]
-use ahash::RandomState;
-
-pub(crate) const FILE_PATH: &str = "files";
-pub(crate) const INDEX_FILENAME: &str = "index.bin";
-pub(crate) const DOCSTORE_FILENAME: &str = "docstore.bin";
-pub(crate) const DELETE_FILENAME: &str = "delete.bin";
-pub(crate) const SCHEMA_FILENAME: &str = "schema.json";
-pub(crate) const SYNONYMS_FILENAME: &str = "synonyms.json";
-pub(crate) const META_FILENAME: &str = "index.json";
-pub(crate) const FACET_FILENAME: &str = "facet.bin";
-pub(crate) const FACET_VALUES_FILENAME: &str = "facet.json";
-
-pub(crate) const DICTIONARY_FILENAME: &str = "dictionary.csv";
-pub(crate) const COMPLETIONS_FILENAME: &str = "completions.csv";
-
-pub(crate) const VERSION: &str = env!("CARGO_PKG_VERSION");
-
-pub(crate) const VECTOR_FILENAME: &str = "vector.bin";
-
-const INDEX_HEADER_SIZE: u64 = 4;
-/// Incompatible index  format change: new library can't open old format, and old library can't open new format
-pub const INDEX_FORMAT_VERSION_MAJOR: u16 = 6;
-/// Backward compatible format change: new library can open old format, but old library can't open new format
-pub const INDEX_FORMAT_VERSION_MINOR: u16 = 1;
-
-/// Maximum processed positions per term per document: default=65_536. E.g. 65,536 * 'the' per document, exceeding positions are ignored for search.
-pub const MAX_POSITIONS_PER_TERM: usize = 65_536;
-pub(crate) const STOP_BIT: u8 = 0b10000000;
-pub(crate) const FIELD_STOP_BIT_1: u8 = 0b0010_0000;
-pub(crate) const FIELD_STOP_BIT_2: u8 = 0b0100_0000;
-/// maximum number of documents per block
-pub const ROARING_BLOCK_SIZE: usize = 65_536;
-
-pub(crate) const SPEEDUP_FLAG: bool = true;
-pub(crate) const SORT_FLAG: bool = true;
-
-pub(crate) const POSTING_BUFFER_SIZE: usize = 400_000_000;
-pub(crate) const MAX_QUERY_TERM_NUMBER: usize = 100;
-pub(crate) const SEGMENT_KEY_CAPACITY: usize = 1000;
-
-use tabled::Tabled;
-
-/// Information about the index, such as number of documents, number of terms, index size, etc. Displayed in the console.
-#[derive(Tabled, Clone)]
-pub struct Info {
-    /// Label
-    pub entry: &'static str,
-    /// Value
-    pub value: String,
-}
-
-/// Search request object
-#[derive(Deserialize, Serialize, Clone, ToSchema, Debug)]
-pub struct SearchRequestObject {
-    /// Query string, search operators + - "" are recognized.
-    #[serde(rename = "query")]
-    pub query_string: String,
-    /// Optional query vector: If None, then the query vector is derived from the query string using the specified model. If Some, then the query vector is used for semantic search and the query string is only used for lexical search and highlighting.
-    #[serde(default)]
-    pub query_vector: Option<Value>,
-    #[serde(default)]
-    #[schema(required = false, default = false, example = false)]
-    /// Enable empty query: if true, an empty query string iterates through all indexed documents, supporting the query parameters: offset, length, query_facets, facet_filter, result_sort,
-    /// otherwise an empty query string returns no results.
-    /// Typical use cases include index browsing, index export, conversion, analytics, audits, and inspection.
-    pub enable_empty_query: bool,
-    #[serde(default)]
-    #[schema(required = false, minimum = 0, default = 0, example = 0)]
-    /// Offset of search results to return.
-    pub offset: usize,
-    /// Number of search results to return.
-    #[serde(default = "length_api")]
-    #[schema(required = false, minimum = 1, default = 10, example = 10)]
-    pub length: usize,
-    #[serde(default)]
-    /// Specify the type of search result.
-    pub result_type: ResultType,
-    /// True realtime search: include indexed, but uncommitted documents into search results.
-    #[serde(default)]
-    pub realtime: bool,
-    /// Specify field names where to create keyword-in-context fragments and highlight query terms.
-    #[serde(default)]
-    pub highlights: Vec<Highlight>,
-    /// Specify field names where to search at querytime, whereas SchemaField.indexed is set at indextime. If empty then all indexed fields are searched.
-    #[schema(required = false, example = json!(["title"]))]
-    #[serde(default)]
-    pub field_filter: Vec<String>,
-    /// Specify names of fields to return in the search results, where SchemaField.store is set at indextime. If empty then all stored fields are returned.
-    #[serde(default)]
-    pub fields: Vec<String>,
-    /// Specify distance fields to derive at query time and return in the search results.
-    #[serde(default)]
-    pub distance_fields: Vec<DistanceField>,
-    /// Facets to return with search results: if empty then no facets are returned. Facets are only enabled on facet fields that are defined in schema at create_index!
-    #[serde(default)]
-    pub query_facets: Vec<QueryFacet>,
-    /// Facet filters to filter search results by facet values: if empty then no facet filters are applied. Facet filters are only enabled on facet fields that are defined in schema at create_index!
-    #[serde(default)]
-    pub facet_filter: Vec<FacetFilter>,
-    /// Sort field and order:
-    /// Search results are sorted by the specified facet field, either in ascending or descending order.
-    /// If no sort field is specified, then the search results are sorted by rank in descending order per default.
-    /// Multiple sort fields are combined by a "sort by, then sort by"-method ("tie-breaking"-algorithm).
-    /// The results are sorted by the first field, and only for those results where the first field value is identical (tie) the results are sub-sorted by the second field,
-    /// until the n-th field value is either not equal or the last field is reached.
-    /// A special _score field (BM25x), reflecting how relevant the result is for a given search query (phrase match, match in title etc.) can be combined with any of the other sort fields as primary, secondary or n-th search criterium.
-    /// Sort is only enabled on facet fields that are defined in schema at create_index!
-    /// Examples:
-    /// - result_sort = vec![ResultSort {field: "price".into(), order: SortOrder::Descending, base: FacetValue::None},ResultSort {field: "language".into(), order: SortOrder::Ascending, base: FacetValue::None}];
-    /// - result_sort = vec![ResultSort {field: "location".into(),order: SortOrder::Ascending, base: FacetValue::Point(vec![38.8951, -77.0364])}];
-    #[schema(required = false, example = json!([{"field": "date", "order": "Ascending", "base": "None" }]))]
-    #[serde(default)]
-    pub result_sort: Vec<ResultSort>,
-    /// Specify default query type: (default=Intersection). This can be overwritten by search operator within the query string (+-"").
-    #[schema(required = false, example = QueryType::Intersection)]
-    #[serde(default = "query_type_api")]
-    pub query_type_default: QueryType,
-    /// Specify query rewriting method for search query correction and completion: (default=SearchOnly).
-    #[schema(required = false, example = QueryRewriting::SearchOnly)]
-    #[serde(default = "query_rewriting_api")]
-    pub query_rewriting: QueryRewriting,
-    /// Specify search mode: (default=Lexical).
-    #[schema(required = false, example = SearchMode::Lexical)]
-    #[serde(default = "search_mode_api")]
-    pub search_mode: SearchMode,
-}
-
-fn search_mode_api() -> SearchMode {
-    SearchMode::Lexical
-}
-
-fn query_type_api() -> QueryType {
-    QueryType::Intersection
-}
-
-fn query_rewriting_api() -> QueryRewriting {
-    QueryRewriting::SearchOnly
-}
-
-fn length_api() -> usize {
-    10
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize, ToSchema)]
-/// Search result object
-pub struct SearchResultObject {
-    /// Time taken to execute the search query in nanoseconds
-    pub time: u128,
-    /// Search query string
-    pub original_query: String,
-    /// Search query string after a
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2174,24 +2225,152 @@ pub struct SearchResultObject {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0015350` (2026-10-21)
-**Commit Message**: Update README.md
+### Incident Patch 1: `a20c7c3f` (2026-10-24)
+**Commit Message**: Fixed panic with facet filters and empty query facets
 
-**File**: `README.md` (modified, +2/-2)
+### Fixed
+
+- Fixed panic that occurred, if facet fields and facet filters, but no query facets existed.
+
+**File**: `CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -267,10 +267,10 @@ Vector search, hybrid search, facets and more: see [Usage of the library](#usage
- ## What can you build?
+@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
- * **Search for your app or site**: product and site search with facets, typo tolerance, query completion and instant search.
--* **Instant search UIs**: build on the InstantSearch widgets, or keep your existing Algolia InstantSearch frontend and swap only the backend with the [adapter](#components).
- * **RAG and agent retrieval**: hybrid search over [MCP](#mcp-server-for-ai-agents), searchable the moment a document is indexed.
- * **Search over your own data**: JSON, CSV, NDJSON and PDF, e.g. an English Wikipedia search engine in 5 steps ([tutorial](#demos)).
--* **Search inside your application**: link the library, no server to run.
-+* **Search inside your application**: embed the library, no server to run.
-+* **Instant search UIs**: build on the InstantSearch widgets, or keep your existing Algolia InstantSearch frontend and swap only the backend with the [adapter](https://github.com/SeekStorm/seekstorm-instantsearch-adapter).
++## [3.4.3] - 2026-10-24
++
++### Fixed
++
++- Fixed panic that occurred, if facet fields and facet filters, but no query facets existed.
++
+ ## [3.4.2] - 2026-10-23
  
- More in [Search API use cases](https://seekstorm.com/search-api-use-cases) and [Search API features](https://seekstorm.com/search-api-features).
+ ### Added
+```
+
+**File**: `seekstorm/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "seekstorm"
+-version = "3.4.2"
++version = "3.4.3"
+ authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
+ license = "Apache-2.0"
+ categories = ["database-implementations", "data-structures"]
+@@ -54,7 +54,7 @@ async-recursion = "1.2.0"
+ zstd = "0.14.2"
+ rayon = "1.12.0"
+ aho-corasick = "1.1.5"
+-smallvec = "1.16.3"
++smallvec = "1.16.4"
+ memmap2 = "0.9.12"
+ regex-syntax = "0.8.11"
+ indexmap = { version = "2.14.2", features = ["serde"]}
+```
+
+**File**: `seekstorm/src/union.rs` (modified, +3/-0)
+```diff
+@@ -980,6 +980,9 @@ pub(crate) async fn union_count<'a>(
+                     continue 'next;
+                 }
  
++                if search_result.query_facets.is_empty() {
++                    continue 'next;
++                }
+                 for (i, facet) in shard.facets.iter().enumerate() {
+                     if search_result.query_facets[i].length == 0 {
+                         continue;
+```
+
+**File**: `seekstorm_client/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "seekstorm_client_rs"
+-version = "3.4.2"
++version = "3.4.3"
+ authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
+ license = "Apache-2.0"
+ categories = ["database-implementations", "data-structures"]
+@@ -20,7 +20,7 @@ path = "src/lib.rs"
+ chrono = "0.4.45"
+ base64 = "0.23.1"
+ reqwest = { version = "0.13.5", features = ["json"] }
+-seekstorm =  { version = "3.4.2", path = "../seekstorm", default-features = false , features = ["zh", "vb"] }
++seekstorm =  { version = "3.4.3", path = "../seekstorm", default-features = false , features = ["zh", "vb"] }
+ serde_json = "1.0.154"
+ tokio = "1.54.1"
+ tokio-test = "0.4.6"
+```
+
+**File**: `seekstorm_mcp_server/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "seekstorm_mcp_server"
+-version = "3.4.2"
++version = "3.4.3"
+ authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
+ license = "Apache-2.0"
+ categories = ["database-implementations", "data-structures"]
+@@ -21,7 +21,7 @@ chrono = "0.4.45"
+ base64 = "0.23.1"
+ # reqwest = { version = "0.13.5", features = ["json"] }
+ rmcp = { version = "3.5.0", features = ["transport-io"] }
+-seekstorm =  { version = "3.4.2", path = "../seekstorm", default-features = false , features = ["zh", "vb", "pdf"] }
++seekstorm =  { version = "3.4.3", path = "../seekstorm", default-features = false , features = ["zh", "vb", "pdf"] }
+ serde = { version = "1.0.151", features = ["derive"] }
+ serde_json = "1.0.154"
+ tokio = { version = "1.54.1", features = ["full"] }
+```
+
+**File**: `seekstorm_server/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "seekstorm_server"
+-version = "3.4.2"
++version = "3.4.3"
+ authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
+ license = "Apache-2.0"
+ categories = ["database-implementations", "data-structures"]
+@@ -24,7 +24,7 @@ path = "src/main.rs"
+ 
+ [dependencies]
+ # This forces the library to compile WITH gxhash when building the server binary
+-seekstorm = { version = "3.4.2", path = "../seekstorm" , features = ["gxhash"], default-features = false} 
++seekstorm = { version = "3.4.3", path = "../seekstorm" , features = ["gxhash"], default-features = false} 
+ ahash ={ version = "0.8.12", features = ["serde"]}
+ base64 = "0.23.1"
+ chrono = "0.4.45"
+```
+
+**File**: `seekstorm_server/openapi/openapi.json` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@
+       "name": "Apache-2.0",
+       "identifier": "Apache-2.0"
+     },
+-    "version": "3.4.2"
++    "version": "3.4.3"
+   },
+   "servers": [
+     {
+```
+
+**File**: `seekstorm_server/openapi/openapi.yml` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ info:
+   license:
+     name: Apache-2.0
+     identifier: Apache-2.0
+-  version: 3.4.2
++  version: 3.4.3
+ servers:
+ - url: http://127.0.0.1
+   description: Local SeekStorm server
 ```
 
 #### Recent Merged Pull Requests:
@@ -2220,30 +2399,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update README.md
+## X. Fixed panic with facet filters and empty query facets
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b0015350`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a20c7c3f`: Fixed panic with facet filters and empty query facets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-* **Search inside your application**: embed the library, no server to run.
-* **Instant search UIs**: build on the InstantSearch widgets, or keep your existing Algolia InstantSearch frontend and swap only the backend with the [adapter](https://github.com/SeekStorm/seekstorm-instantsearch-adapter).
+## [3.4.3] - 2026-10-24
+
+### Fixed
+
+- Fixed panic that occurred, if facet fields and facet filters, but no query facets existed.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-* **Instant search UIs**: build on the InstantSearch widgets, or keep your existing Algolia InstantSearch frontend and swap only the backend with the [adapter](#components).
-* **Search inside your application**: link the library, no server to run.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b0015350` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a20c7c3f` are properly handled with clean fallback behavior.

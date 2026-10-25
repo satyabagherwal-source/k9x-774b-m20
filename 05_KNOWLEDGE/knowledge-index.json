@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T16:02:43.276Z",
+  "last_updated": "2026-10-25T16:09:09.868Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20282,7 +20282,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/sam3",
       "source_version": "hf-facebook-sam3",
-      "content_hash": "2862f9d9c756f841890d6cafb13ee434f7f5aa7c83ea3a5ace2f00f2fa9847c5",
+      "content_hash": "f69731dbfb7c6dd17cb6e1ab9553359157577f9ffeb9a52e10e21fd80e3e6790",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "promoted_rules": [
@@ -20339,7 +20339,7 @@
         "learn-huggingface-hf-facebook-sam3-mv47u4yi",
         "learn-huggingface-hf-facebook-sam3-mv4l4ga1"
       ],
-      "verified_at": "2026-10-20T20:35:09.553Z",
+      "verified_at": "2026-10-25T16:08:57.937Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44036,8 +44036,8 @@
       "slug": "seekstorm-seekstorm",
       "platform": "github",
       "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "b0015350",
-      "content_hash": "b6d65be4d3235107b77f6b2b99a1c24336655c8aa7bb84038584f70e57d9c42d",
+      "source_version": "a20c7c3f",
+      "content_hash": "3b51590fb6a39e42826969d894941b2cfa30f4b4a5789abe51b8e55c82bcd86f",
       "dossier_path": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "promoted_rules": [
@@ -44057,7 +44057,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:45:12.368Z",
+      "verified_at": "2026-10-25T16:09:09.851Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
