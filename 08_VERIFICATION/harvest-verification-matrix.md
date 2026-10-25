@@ -4752,3 +4752,6 @@
 | `CYCLE-20261025-1C5Z` | `2026-10-25T09:13:18.551Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4209, Rule 4210, Rule 4211` | Yes (`b9baf785...`) |
 | `CYCLE-20261025-30XT` | `2026-10-25T09:14:37.313Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | Yes (`4416fcbf...`) |
 | `CYCLE-20261025-7EED` | `2026-10-25T09:18:01.381Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4212` | Yes (`68ff4dde...`) |
+| `CYCLE-20261025-SI8H` | `2026-10-25T09:34:26.129Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4213` | Yes (`7b2e3fd5...`) |
+| `CYCLE-20261025-X2VV` | `2026-10-25T09:37:59.515Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4214, Rule 4215` | Yes (`133cdee8...`) |
+| `CYCLE-20261025-XL82` | `2026-10-25T09:38:23.282Z` | `cloudscape-design/components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4216, Rule 4217, Rule 4218` | Yes (`49e4e5ef...`) |

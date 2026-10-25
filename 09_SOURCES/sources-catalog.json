@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "ec52f111",
+    "sourceVersion": "903f657d",
     "license": "Apache-2.0",
-    "contentHash": "2d17033beb68490cb9625264d15c51743afc5e8297fc150bb5c18de8c344815b",
-    "lastHarvestedAt": "2026-10-22T21:08:10.231Z",
+    "contentHash": "7b2e3fd54464d29549bd5f7d8beeec34c16f495c4a14884b236605b3ce0b4bd8",
+    "lastHarvestedAt": "2026-10-25T09:34:26.132Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -5583,10 +5583,10 @@
     "repository": "cloudscape-design/components",
     "platform": "github",
     "sourceUrl": "https://github.com/cloudscape-design/components",
-    "sourceVersion": "43480f95",
+    "sourceVersion": "1f35242c",
     "license": "Apache-2.0",
-    "contentHash": "217212963e1edc675245221fd7c0b42160871d07d1479fe0464206e30985315b",
-    "lastHarvestedAt": "2026-10-22T21:14:22.987Z",
+    "contentHash": "49e4e5efa691f8d8000f69e470e1a8d7e50dbd343c430264b81927800a7584f8",
+    "lastHarvestedAt": "2026-10-25T09:38:23.285Z",
     "learningId": "learn-github-cloudscape-design-components"
   },
   "async-rs-async-std": {
@@ -10405,8 +10405,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/Kromoss",
     "sourceVersion": "hf-lodestones-kromoss",
     "license": "Open-Source",
-    "contentHash": "163516348f455378a536f0f914a2b9c351d7205cd1b13bca0a7fbf2ecbb9cee2",
-    "lastHarvestedAt": "2026-10-20T15:49:51.818Z",
+    "contentHash": "133cdee81537e0c7f9f3684bbae12e31120d8a5c08901adf98f7830266b41863",
+    "lastHarvestedAt": "2026-10-25T09:37:59.518Z",
     "learningId": "learn-huggingface-lodestones-kromoss"
   },
   "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16": {

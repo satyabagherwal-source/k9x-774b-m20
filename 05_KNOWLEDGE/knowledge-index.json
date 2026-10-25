@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T09:18:01.325Z",
+  "last_updated": "2026-10-25T09:38:23.229Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6362,8 +6362,8 @@
       "slug": "cloudscape-design-components",
       "platform": "github",
       "source_url": "https://github.com/cloudscape-design/components",
-      "source_version": "43480f95",
-      "content_hash": "217212963e1edc675245221fd7c0b42160871d07d1479fe0464206e30985315b",
+      "source_version": "1f35242c",
+      "content_hash": "49e4e5efa691f8d8000f69e470e1a8d7e50dbd343c430264b81927800a7584f8",
       "dossier_path": "07_PROJECT_LEARNING/cloudscape-design-components-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cloudscape-design-components-learnings.md",
       "promoted_rules": [
@@ -6401,6 +6401,21 @@
           "number": 3746,
           "title": "Fixes internal build error caused by new styling mixin imports in test pages (#5",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4216,
+          "title": "Unified Fallback Resolution for Controlled Layout Collapsibility",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4217,
+          "title": "SCSS Header Hygiene in Multi-Entry Sass Bundles",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4218,
+          "title": "Lifecycle-Gated Task Throttling for Concealed Component Slots",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6408,7 +6423,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:14:22.933Z",
+      "verified_at": "2026-10-25T09:38:23.217Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37663,8 +37678,8 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "ec52f111",
-      "content_hash": "2d17033beb68490cb9625264d15c51743afc5e8297fc150bb5c18de8c344815b",
+      "source_version": "903f657d",
+      "content_hash": "7b2e3fd54464d29549bd5f7d8beeec34c16f495c4a14884b236605b3ce0b4bd8",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
@@ -37677,6 +37692,11 @@
           "number": 3744,
           "title": "Build with Go 1.26.10 and drop compromised emSign roots (eMudhra, CVE-2026-11194",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4213,
+          "title": "build(deps): bump renovatebot/github-action from 46.3.8 to 46.3.9 (#5215)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37684,7 +37704,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:08:10.165Z",
+      "verified_at": "2026-10-25T09:34:26.063Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -106947,16 +106967,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/Kromoss",
       "source_version": "hf-lodestones-kromoss",
-      "content_hash": "163516348f455378a536f0f914a2b9c351d7205cd1b13bca0a7fbf2ecbb9cee2",
+      "content_hash": "133cdee81537e0c7f9f3684bbae12e31120d8a5c08901adf98f7830266b41863",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 4214,
+          "title": "Heterogeneous Precision Boundary Isolation for Latent Diffusion Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4215,
+          "title": "Multi-Head Projection Slice-to-Fused Mapping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T15:49:51.748Z",
+      "verified_at": "2026-10-25T09:37:59.426Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -121415,6 +121446,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T09:18:01.314Z"
+    },
+    "rule-4213": {
+      "learning_id": "rule-4213",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4213,
+      "title": "build(deps): bump renovatebot/github-action from 46.3.8 to 46.3.9 (#5215)",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "903f657d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:34:26.063Z"
+    },
+    "rule-4214": {
+      "learning_id": "rule-4214",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4214,
+      "title": "Heterogeneous Precision Boundary Isolation for Latent Diffusion Pipelines",
+      "source_url": "https://huggingface.co/lodestones/Kromoss",
+      "source_version": "hf-lodestones-kromoss",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:37:59.426Z"
+    },
+    "rule-4215": {
+      "learning_id": "rule-4215",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4215,
+      "title": "Multi-Head Projection Slice-to-Fused Mapping Invariant",
+      "source_url": "https://huggingface.co/lodestones/Kromoss",
+      "source_version": "hf-lodestones-kromoss",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:37:59.426Z"
+    },
+    "rule-4216": {
+      "learning_id": "rule-4216",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4216,
+      "title": "Unified Fallback Resolution for Controlled Layout Collapsibility",
+      "source_url": "https://github.com/cloudscape-design/components",
+      "source_version": "1f35242c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:38:23.217Z"
+    },
+    "rule-4217": {
+      "learning_id": "rule-4217",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4217,
+      "title": "SCSS Header Hygiene in Multi-Entry Sass Bundles",
+      "source_url": "https://github.com/cloudscape-design/components",
+      "source_version": "1f35242c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:38:23.217Z"
+    },
+    "rule-4218": {
+      "learning_id": "rule-4218",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4218,
+      "title": "Lifecycle-Gated Task Throttling for Concealed Component Slots",
+      "source_url": "https://github.com/cloudscape-design/components",
+      "source_version": "1f35242c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:38:23.217Z"
     }
   },
   "aliases": {

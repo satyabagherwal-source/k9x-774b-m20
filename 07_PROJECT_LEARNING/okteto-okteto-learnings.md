@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source**: github ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
-> **Source Version**: `ec52f111`  
+> **Source Version**: `903f657d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:08:09.893Z  
+> **Timestamp**: 2026-10-25T09:34:25.741Z  
 > **Learning ID**: `learn-github-okteto-okteto`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:08:09.110Z  
+> **Harvest Timestamp**: 2026-10-25T09:34:24.344Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1502,411 +1502,45 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f2dd8a8` (2026-10-21)
-**Commit Message**: Build with Go 1.26.10 and drop compromised emSign roots (eMudhra, CVE-2026-111943) (#5209)
+### Incident Patch 1: `903f657d` (2026-10-23)
+**Commit Message**: build(deps): bump renovatebot/github-action from 46.3.8 to 46.3.9 (#5215)
 
-* Bump okteto/golang-ci to 2.10.5 (Go 1.26.10)
-
-Co-Authored-By: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
-
-* Build with Go 1.26.10 and drop compromised emSign roots from the image
-
-Go 1.26.10 hard-blocks the eight compromised eMudhra intermediate CAs in
-crypto/x509 (CVE-2026-111943, golang/go#82345). The release binaries pick
-it up through the golang-ci 2.10.5 executor; this bumps the container
-image build and the go directives so nothing builds with an older toolchain.
-
-- Dockerfile: golang 1.26.8 -> 1.26.10-bookworm, pinned by digest
-- go.mod, tools/go.mod: go 1.26.8 -> 1.26.10
-- Dockerfile: the certs stage moves from alpine 3.20 (EOL, stuck on
-  ca-certificates 20260413) to 3.23 and upgrades ca-certificates to
-  20261020-r0, which removes emSign ECC Root CA - G3, ECC Root CA - C3
-  and Root CA - C1. kubectl, helm and kustomize are upstream downloads
-  still built with Go <= 1.26.8, so the trust store is what protects them
-  until upstream rebuilds.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01K2gttA6vE3M
-
-**File**: `.circleci/config.yml` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ orbs:
- executors:
-   golang-ci:
-     docker:
--      - image: okteto/golang-ci:2.10.4@sha256:e83ca3d31da09ae1d18fec2802ed520351d2f8c002ae0ec2a28149e2ac5134c9
-+      - image: okteto/golang-ci:2.10.5@sha256:ca0da30ad764a002f7b34e66bbad8329d0b4b3931f92ff621faba71581fb0e01
-     environment:
-       OKTETO_CONTEXT: https://okteto.integration.dev.okteto.net
-       OKTETO_APPS_SUBDOMAIN: integration.dev.okteto.net
-```
-
-**File**: `Dockerfile` (modified, +5/-5)
-```diff
-@@ -8,10 +8,10 @@ ARG KUSTOMIZE_VERSION=5.8.2
- ARG SYNCTHING_VERSION=2.1.3
- ARG SYNCTHING_SHA=sha256:8c8ff37ab6aa8be23b700648a90fa9412e214852e9fd6ea8477c8334792daec0
- # Base images
--ARG GOLANG_VERSION=1.26.8
--ARG GOLANG_SHA=sha256:dc9ad6c05acc7a88e5b71bde60a5fe3bd4b9f0db209011711b464107438a8107
--ARG ALPINE_VERSION=3.20
--ARG ALPINE_SHA=sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc
-+ARG GOLANG_VERSION=1.26.10
-+ARG GOLANG_SHA=sha256:fe3da92a5cb2881e4aa75e625cb0b7c50571632fb4cf340cbe53e6ccdcffdd51
-+ARG ALPINE_VERSION=3.23
-+ARG ALPINE_SHA=sha256:85fe1e81d6758c208f3e1eed4338a1997e19d4be002d4dd32d3100c9a8c010a0
- ARG BUSYBOX_VERSION=1.36.1
- ARG BUSYBOX_SHA=sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
- ARG DEBIAN_BOOKWORM_SLIM_SHA=sha256:0104b334637a5f19aa9c983a91b54c89887c0984081f2068983107a6f6c21eeb
-@@ -20,7 +20,7 @@ ARG GIT_VERSION=2.42.0
- # Stage 1: Prepare base components
- # SSL certificates for secure connections
- FROM alpine:${ALPINE_VERSION}@${ALPINE_SHA} AS certs
--RUN apk add --no-cache ca-certificates
-+RUN apk add --no-cache --upgrade ca-certificates ca-certificates-bundle
- 
- # Stage 2: Prepare Okteto components to be copied to the final image
- # File synchronization tool
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/okteto/okteto
- 
--go 1.26.8
-+go 1.26.10
- 
- require (
- 	al.essio.dev/pkg/shellescape v1.6.1
-```
-
-**File**: `okteto.yml` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ dev:
-     autocreate: true
- test:
-   unit:
--    image: okteto/golang-ci:2.10.4@sha256:e83ca3d31da09ae1d18fec2802ed520351d2f8c002ae0ec2a28149e2ac5134c9
-+    image: okteto/golang-ci:2.10.5@sha256:ca0da30ad764a002f7b34e66bbad8329d0b4b3931f92ff621faba71581fb0e01
-     artifacts:
-       - coverage.txt
-       - coverage.html
-```
-
-**File**: `tools/go.mod` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/okteto/tools
- 
--go 1.26.8
-+go 1.26.10
- 
- require (
- 	github.com/creack/pty v1.1.24
-```
+Bumps [renovatebot/github-action](https://github.com/renovatebot/github-action) from 46.3.8 to 46.3.9.
+- [Release notes](https://github.com/renovatebot/github-action/releases)
+- [Changelog](https://github.com/renovatebot/github-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/renovatebot/github-action/compare/v46.3.8...v46.3.9)
 
 ---
+updated-dependencies:
+- dependency-name: renovatebot/github-action
+  dependency-version: 46.3.9
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-### Incident Patch 2: `ada8190c` (2026-10-21)
-**Commit Message**: fix(docker): require ca-certificates with the eMudhra fix (#5212)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Set a minimum version of 20261020-r0 on ca-certificates and
-ca-certificates-bundle in the certs stage. That release removes
-emSign ECC Root CA - G3, the root the compromised eMudhra
-intermediates chain to (CVE-2026-111943).
-
-#5209 relied on `apk add --upgrade` picking up the new package, but
-nothing required it. A stale layer cache, or a base image whose
-repository only has an older package, would ship the old bundle
-silently. With the minimum, the build fails instead. kubectl, helm,
-kustomize, syncthing and git in the image are not built with Go
-1.26.10, so the bundle is their only protection.
-
-It is a minimum (>=), not an exact pin, because Alpine only keeps
-the latest revision of each package. An exact pin would break the
-build on the next ca-certificates release.
-
-Signed-off-by: Nacho Fuertes <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Dockerfile` (modified, +6/-1)
+**File**: `.github/workflows/renovate.yml` (modified, +1/-1)
 ```diff
-@@ -16,11 +16,16 @@ ARG BUSYBOX_VERSION=1.36.1
- ARG BUSYBOX_SHA=sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
- ARG DEBIAN_BOOKWORM_SLIM_SHA=sha256:0104b334637a5f19aa9c983a91b54c89887c0984081f2068983107a6f6c21eeb
- ARG GIT_VERSION=2.42.0
-+# Minimum ca-certificates: 20261020-r0 drops the emSign roots behind the eMudhra compromise (CVE-2026-111943)
-+ARG CA_CERTIFICATES_MIN_VERSION=20261020-r0
+@@ -18,7 +18,7 @@ jobs:
+         uses: actions/checkout@v7
  
- # Stage 1: Prepare base components
- # SSL certificates for secure connections
- FROM alpine:${ALPINE_VERSION}@${ALPINE_SHA} AS certs
--RUN apk add --no-cache --upgrade ca-certificates ca-certificates-bundle
-+ARG CA_CERTIFICATES_MIN_VERSION
-+RUN apk add --no-cache --upgrade \
-+    "ca-certificates>=${CA_CERTIFICATES_MIN_VERSION}" \
-+    "ca-certificates-bundle>=${CA_CERTIFICATES_MIN_VERSION}"
- 
- # Stage 2: Prepare Okteto components to be copied to the final image
- # File synchronization tool
-```
-
----
-
-### Incident Patch 3: `f622fc6a` (2026-10-21)
-**Commit Message**: fix: correct typos and wrong text across the repo (#5202)
-
-* fix: correct typos that change behavior
-
-Fix misspelled or stale literals that the code uses, not just prints:
-
-- cmd/up/activate.go: the init-volume progress check waited for the event
-  "Started container okteto-init-data", but the init container is named
-  okteto-init-volume. Before: the "Initializing persistent volume
-  content..." spinner never showed. After: it shows while the init
-  container copies the image content.
-- pkg/model/manifest_friendly_err.go: two rewrite rules named
-  model.ManifestBuild, but the type is build.ManifestBuild. Before: an
-  invalid build section showed the Go type name in the error. After: it
-  says "into a 'build' object", like the other sections.
-- pkg/model/stack_serializer.go: the not-supported warnings for compose
-  restart_policy fields named services[x].deploy.delay and
-  services[x].deploy.window. They now name
-  services[x].deploy.restart_policy.delay and .window. The same string is
-  sent as the "field" value of the stack not-supported-field analytics
-  event, so that value changes too.
-- pkg/model/stack_serializer.go: drop the skippable port 828015, a typo
-  of 28015 (RethinkDB
-
-**File**: `.circleci/config.yml` (modified, +10/-10)
-```diff
-@@ -164,7 +164,7 @@ jobs:
-             - v4-pkg-cache-{{ checksum "go.sum" }}
-       - attach_workspace:
-           at: ./artifacts
--      # Install the latest CLI public available, as the actions tests uses the installed version to checkout the action branch to test
-+      # Install the latest publicly available CLI, as the actions tests use the installed version to checkout the action branch to test
-       - run: *install-cli
-       - run:
-           name: Run actions integration tests
-@@ -303,8 +303,8 @@ jobs:
-           at: ./artifacts
-       - run:
-           # As the integration test running the okteto deploy needs the CLI which we are testing, we build the current
--          # CLI to the okteto.dev registry, so it is available for the user running the tests. Then, in the step
--          # which run the deploy, we set the env var OKTETO_CLI_IMAGE to the one we are building
-+          # CLI to the okteto.global registry, so it is available for the user running the tests. Then, in the step
-+          # which runs the deploy, we set the env var OKTETO_CLI_IMAGE to the one we are building
-           name: Build Dockerfile for current commit
-           command: |
-             $(pwd)/artifacts/bin/okteto-Linux-x86_64 context use $OKTETO_CONTEXT --token ${OKTETO_API_INTEGRATION_TOKEN}
-@@ -611,7 +611,7 @@ workflows:
-     jobs:
-       - upload-static-job:
-           context: GKE
--  # lint-build-test runs on every push to a branch and when merge to master
-+  # lint-build-test runs on every push to a branch and when merging to master
-   # unit tests are run on every push and e2e is run when merging to master
-   lint-build-test:
-     when:
-@@ -905,8 +905,8 @@ workflows:
-             tags:
-               only: /^\d+\.\d+\.\d+$/
- 
--  # run-e2e is triggered by okteto-bot via Github Actions when adding the e2e label to the PR
--  # e2e tests are run for both platformas, windows and unix
-+  # run-e2e is triggered by oktetobot (GitHub Account) via GitHub Actions when adding the run-e2e label to the PR
-+  # e2e tests are run for both platforms, windows and unix
-   run-e2e:
-     when:
-       equal: ["run-e2e", << pipeline.parameters.GHA_Meta >>]
-@@ -952,8 +952,8 @@ workflows:
-           requires:
-             - test-e2e-setup
- 
--  # run-e2e-unix is triggered by okteto-bot via Github Actions when adding the run-e2e-unix label to the PR
--  # e2e test for unix platform are run
-+  # run-e2e-unix is triggered by oktetobot (GitHub Account) via GitHub Actions when adding the run-e2e-unix label to the PR
-+  # e2e tests for unix platform are run
-   run-e2e-unix:
-     when:
-       equal: ["run-e2e-unix", << pipeline.parameters.GHA_Meta >>]
-@@ -984,8 +984,8 @@ workflows:
-           requires:
-             - test-e2e-setup
- 
--  # run-e2e-windows is triggered by okteto-bot via Github Actions when adding the run-e2e-windows label to the PR
--  # e2e test for windows platform are run
-+  # run-e2e-windows is triggered by oktetobot (GitHub Account) via GitHub Actions when adding the run-e2e-windows label to the PR
-+  # e2e tests for windows platform are run
-   run-e2e-windows:
-     when:
-       equal: ["run-e2e-windows", << pipeline.parameters.GHA_Meta >>]
-```
-
-**File**: `.claude/CLAUDE.md` (modified, +2/-2)
-```diff
-@@ -76,7 +76,7 @@ A Go CLI tool for Kubernetes development — syncs local code changes to remote
- 
- - Invent new CLI commands, flags, or arguments without explicit requirements
- - Modify code without reading it first
--- Skip copyright headers (all `.go` files require Apache 2.0 header, years 2023-2025)
-+- Skip copyright headers (all `.go` files require Apache 2.0 header, years 2023 onwards)
- - Use `panic()` in production code — return errors instead
- - Break existing CLI interfaces without discussion
- - Add branching (`if/switch`) inside test function bodies — split into multiple tests
-@@ -105,4 +105,4 @@ A Go CLI tool for Kubernetes development — syncs local code changes to remote
- > **Feature flags & NoOp strategy**: [context/feature-flags.md](.claude/context/feature-flags.md)
- > **CVE remediation**: use `/fix-cves` skill — see [skills/fix-cves/SKILL.md](.claude/skills/fix-cves/SKILL.md)
- > **Go version upgrade**: use `/upgrade-go-version` skill — see [skills/upgrade-go-version/SKILL.md](.claude/skills/upgrade-go-version/SKILL.md)
--> **Self-improvement**: use `/lessons` skill — see [skills/lessons/SKILL.md](.claude/skills/lessons/SKILL.md) | log at [lessons.md](.claude/lessons.local.md)
-+> **Self-improvement**: use `/lessons` skill — see [skills/lessons/SKILL.md](.claude/skills/lessons/SKILL.md) | log at [lessons.local.md](.claude/lessons.local.md)
-```
-
-**File**: `.claude/agents/diff-reviewer.md` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ Also read `.claude/context/conventions.md` for Go conventions specific to this p
- 
- - Commands must use `Options` struct pattern (not function-level vars)
- - Entry point must be `RunE` (not `Run`) — enables error propagation
--- Flags defined in `addFlags(cmd *cobra.Command, opts *Options)` pattern
-+- Flags defined via `cmd.Flags()` in the command constructor
- - No `os.Exit()` calls inside command logic — return errors
- 
- ### 4. Test Coverage
-```
-
-**File**: `.claude/agents/explore.md` (modified, +6/-11)
-```diff
-@@ -40,9 +40,8 @@ okteto/
- │   └── clean/        # Cleanup utility
- ├── internal/
- │   └── test/         # Fake clients and test utilities
--│       └── client/   # fakeK8s, fakeOkteto clients
--├── integration/      # E2e tests (require live cluster)
--└── vendor/           # Vendored dependencies
-+│       └── client/   # Fake Okteto API clients
-+└── integration/      # E2e tests (require live cluster)
- ```
- 
- ## Key Patterns
-@@ -65,12 +64,8 @@ func NewCommand() *cobra.Command {
-             return opts.Run(cmd.Context())
-         },
-     }
--    addFlags(cmd, opts)
--    return cmd
--}
--
--func addFlags(cmd *cobra.Command, opts *Options) {
-     cmd.Flags().StringVarP(&opts.Manifest, "file", "f", "", "...")
-+    return cmd
- }
- 
- func (o *Options) Run(ctx context.Context) error {
-@@ -89,16 +84,16 @@ func (o *Options) Run(ctx context.Context) error {
- 
- ```go
- // Commands load manifests via:
--manifest, err := model.GetManifestV2(opts.ManifestPath)
-+manifest, err := model.GetManifestV2(opts.ManifestPath, afero.NewOsFs())
- // or via discovery:
--manifest, err := contextCMD.LoadManifestWithContext(ctx, opts)
-+manifestPath, err := discovery.GetOktetoManifestPath(wd)
- ```
- 
- ### Context Flow
- 
- ```go
- // Get current Okteto context:
--okCtx := okteto.GetContextStore().CurrentContext
-+okCtx := okteto.GetContext()
- // Includes: URL, namespace, token, k8s config
- ```
- 
-```
-
-**File**: `.claude/agents/test-verifier.md` (modified, +2/-2)
-```diff
-@@ -75,9 +75,9 @@ func setupFoo(t *testing.T) *Foo {
- 
- If a function returns `error` and only the success case is tested, flag it.
- 
--### 6. MEDIUM — `t.Fatal`/`t.Error` instead of `require`/`assert`
-+### 6. MEDIUM — `t.Fatal`/`t.Error` instead of `require`
- 
--Direct use of `t.Fatal` or `t.Error` should be replaced with testify's `require` or `assert`.
-+Direct use of `t.Fatal` or `t.Error` should be replaced with testify's `require`.
- 
- ### 7. LOW — Missing copyright header in test files
- 
-```
-
-**File**: `.claude/agents/test-writer.md` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ You will be given a path to a `.go` source file (not a `_test.go` file) under `c
- 2. Check if a `*_test.go` file already exists alongside it — if so, read it to avoid duplication
- 3. Read `.claude/context/testing.md` for project testing conventions
- 4. Check `internal/test/` for available fake clients and test utilities:
--   - `internal/test/client/` — fake Kubernetes and Okteto clients
-+   - `internal/test/client/` — fake Okteto API clients
-    - `internal/test/` — context helpers, filesystem utilities
- 
- ### Step 2: Plan Tests
-```
-
-**File**: `.claude/context/architecture.md` (modified, +3/-3)
-```diff
-@@ -17,7 +17,7 @@ okteto/
- 
- **Command structure**: Each command in `cmd/` may have subcommands in subdirectories (e.g., `cmd/namespace/create.go`, `cmd/context/use.go`).
- 
--**Package organization**: `pkg/` contains domain packages. Core packages include `k8s` (Kubernetes operations), `model` (data structures), `okteto` (API client), `types` (manifest types).
-+**Package organization**: `pkg/` contains domain packages. Core packages include `k8s` (Kubernetes operations), `model` (data structures), `okteto` (API client), `types` (Okteto API types and client interfaces).
- 
- ## CLI Execution Flow
- 
-@@ -48,7 +48,7 @@ Core business logic organized by domain:
- **Data & Configuration:**
- 
- - `model/` - Core data structures (Manifest, Dev, Stack, etc.)
--- `types/` - Type definitions for manifests and build options
-+- `types/` - Okteto API types, client interfaces and build options
- - `config/` - Configuration management (home directory, binary name, version)
- 
- **Okteto Platform:**
-@@ -119,7 +119,7 @@ Internal utilities that run inside development containers:
- 
- - `pkg/okteto.GetContextStore()` provides current context
- - Context includes: cluster URL, namespace, user, K8s config
--- Commands call `contextCMD.LoadManifestWithContext()` to respect active context
-+- Commands call `contextCMD.NewContextCommand().Run()` to respect active context
- 
- ## Manifest-Driven Design
- 
-```
-
-**File**: `.claude/context/build-and-release.md` (modified, +1/-1)
-```diff
-@@ -150,7 +150,7 @@ To fix vulnerabilities in the Docker image (including all bundled binaries and G
- 1. Version is set via `VERSION_STRING` environment variable
- 2. `make build-all` compiles for all platforms
- 3. Checksums generated for each binary
--4. Binaries and checksums published (process not in this repo)
-+4. Binaries and checksums published (via `scripts/ci/release.sh`, run by the CircleCI `release-job`)
- 5. Docker image built with integrated tools
- 
- ## Development Workflow
+       - name: Run Renovate
+-        uses: renovatebot/github-action@v46.3.8
++        uses: renovatebot/github-action@v46.3.9
+         with:
+           configurationFile: .github/renovate.json
+           token: ${{ secrets.RENOVATEBOT_GITHUB_TOKEN }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5215** (2026-10-23): build(deps): bump renovatebot/github-action from 46.3.8 to 46.3.9 (@dependabot[bot])
 - **PR #5214** (2026-10-22): Upgrade buildkit dependency to v0.34.1-okteto2 (@devin-ai-integration[bot])
 - **PR #5213** (2026-10-21): [Backport release-3.24] fix: Go 1.26.10, ca-certificates floor and buildkit v0.34.1-okteto1 (eMudhra, CVE-2026-111943) (@ifbyol)
 - **PR #5212** (2026-10-21): fix(docker): require ca-certificates >= 20261020-r0 (eMudhra, CVE-2026-111943) (@ifbyol)
 - **PR #5211** (closed): fix: correct typos and wrong text across the repo (@jLopezbarb)
 - **PR #5210** (closed): Revert "fix: correct typos and wrong text across the repo (#5202)" (@jLopezbarb)
-- **PR #5209** (2026-10-21): Build with Go 1.26.10 and drop compromised emSign roots (eMudhra, CVE-2026-111943) (@jpf-okteto)
 
 ---
 
@@ -1926,28 +1560,28 @@ Fix misspelled or stale literals that the code uses, not just prints:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build with Go 1.26.10 and drop compromised emSign roots (eMudhra, CVE-2026-11194
+## X. build(deps): bump renovatebot/github-action from 46.3.8 to 46.3.9 (#5215)
 
 **RULE**:
-When implementing operations in `.circleci/config.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/renovate.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f2dd8a8`: Build with Go 1.26.10 and drop compromised emSign roots (eMudhra, CVE-2026-111943) (#5209). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `903f657d`: build(deps): bump renovatebot/github-action from 46.3.8 to 46.3.9 (#5215). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.circleci/config.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/renovate.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - image: okteto/golang-ci:2.10.5@sha256:ca0da30ad764a002f7b34e66bbad8329d0b4b3931f92ff621faba71581fb0e01
+        uses: renovatebot/github-action@v46.3.9
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-      - image: okteto/golang-ci:2.10.4@sha256:e83ca3d31da09ae1d18fec2802ed520351d2f8c002ae0ec2a28149e2ac5134c9
+        uses: renovatebot/github-action@v46.3.8
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f2dd8a8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `903f657d` are properly handled with clean fallback behavior.

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-NL76",
-    "timestamp": "2026-10-21T16:51:49.650Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "21b146d8c581f5e4b60cc0755a93837c9b5c044a0fbf3bcb55660c3affa803ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-VEQU",
-    "timestamp": "2026-10-21T16:57:54.534Z",
-    "repository": "tamagui/tamagui",
-    "learningId": "learn-github-tamagui-tamagui",
-    "contentHash": "f0a508e76389a3585a8206f9d8bf28eb18d7849e0ec5b6b177ad77e0d1ff2a77",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-4YWK",
-    "timestamp": "2026-10-21T18:01:19.796Z",
-    "repository": "cosscom/coss",
-    "learningId": "learn-github-cosscom-coss",
-    "contentHash": "41d8ea38d93e7540bc54a42aeb986464475b356513839c32bda5101f62f4e704",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-D34U",
     "timestamp": "2026-10-21T18:07:38.526Z",
     "repository": "cheaper-inference/OmniRoute",
@@ -7492,6 +7447,51 @@
     "contentHash": "68ff4ddea1d91109215f933bd3150d034d07543a5d906e2d5d1408ced012a836",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-SI8H",
+    "timestamp": "2026-10-25T09:34:26.129Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "7b2e3fd54464d29549bd5f7d8beeec34c16f495c4a14884b236605b3ce0b4bd8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-X2VV",
+    "timestamp": "2026-10-25T09:37:59.515Z",
+    "repository": "lodestones/Kromoss",
+    "learningId": "learn-huggingface-lodestones-kromoss",
+    "contentHash": "133cdee81537e0c7f9f3684bbae12e31120d8a5c08901adf98f7830266b41863",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-XL82",
+    "timestamp": "2026-10-25T09:38:23.282Z",
+    "repository": "cloudscape-design/components",
+    "learningId": "learn-github-cloudscape-design-components",
+    "contentHash": "49e4e5efa691f8d8000f69e470e1a8d7e50dbd343c430264b81927800a7584f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

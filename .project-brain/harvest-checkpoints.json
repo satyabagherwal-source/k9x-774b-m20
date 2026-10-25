@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T09:18:01.397Z",
+  "last_updated": "2026-10-25T09:38:23.297Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "2d17033beb68490cb9625264d15c51743afc5e8297fc150bb5c18de8c344815b",
-      "verified_at": "2026-10-22T21:08:10.245Z",
+      "content_hash": "7b2e3fd54464d29549bd5f7d8beeec34c16f495c4a14884b236605b3ce0b4bd8",
+      "verified_at": "2026-10-25T09:34:26.146Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:08:10.245Z"
+      "last_updated": "2026-10-25T09:34:26.146Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",
@@ -8496,14 +8496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cloudscape-design-components",
-      "content_hash": "217212963e1edc675245221fd7c0b42160871d07d1479fe0464206e30985315b",
-      "verified_at": "2026-10-22T21:14:22.997Z",
+      "content_hash": "49e4e5efa691f8d8000f69e470e1a8d7e50dbd343c430264b81927800a7584f8",
+      "verified_at": "2026-10-25T09:38:23.297Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:14:22.997Z"
+      "last_updated": "2026-10-25T09:38:23.297Z"
     },
     "async-rs/async-std": {
       "repository": "async-rs/async-std",
@@ -15621,14 +15621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-kromoss",
-      "content_hash": "163516348f455378a536f0f914a2b9c351d7205cd1b13bca0a7fbf2ecbb9cee2",
-      "verified_at": "2026-10-20T15:49:51.825Z",
+      "content_hash": "133cdee81537e0c7f9f3684bbae12e31120d8a5c08901adf98f7830266b41863",
+      "verified_at": "2026-10-25T09:37:59.525Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T15:49:51.825Z"
+      "last_updated": "2026-10-25T09:37:59.525Z"
     },
     "HemmingwayAI/Hemmingway-1": {
       "repository": "HemmingwayAI/Hemmingway-1",

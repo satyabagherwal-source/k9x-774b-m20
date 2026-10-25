@@ -4759,3 +4759,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-10-25T09:13:18.554Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `0173895f` | Multi-dimensional audit evidence | 2026-10-25T09:14:37.316Z |
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `2ddb246a` | Multi-dimensional audit evidence | 2026-10-25T09:18:01.384Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `903f657d` | Multi-dimensional audit evidence | 2026-10-25T09:34:26.132Z |
+| `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-25T09:37:59.518Z |
+| `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `1f35242c` | Multi-dimensional audit evidence | 2026-10-25T09:38:23.285Z |
