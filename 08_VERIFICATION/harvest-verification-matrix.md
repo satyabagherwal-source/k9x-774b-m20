@@ -4792,3 +4792,5 @@
 | `CYCLE-20261025-1R3F` | `2026-10-25T11:33:35.979Z` | `taiga-family/taiga-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4267, Rule 4268` | Yes (`42b2fc8d...`) |
 | `CYCLE-20261025-369P` | `2026-10-25T11:34:42.301Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4269, Rule 4270` | Yes (`1e1d688c...`) |
 | `CYCLE-20261025-EVLA` | `2026-10-25T11:43:48.334Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4271, Rule 4272` | Yes (`f3a59d38...`) |
+| `CYCLE-20261025-RO8E` | `2026-10-25T11:53:45.326Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4273` | Yes (`94b160fb...`) |
+| `CYCLE-20261025-RPZQ` | `2026-10-25T11:53:47.606Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`81c7d7ad...`) |

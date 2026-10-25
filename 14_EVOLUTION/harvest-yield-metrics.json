@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T11:43:48.342Z",
-  "total_cycles_completed": 4769,
-  "total_learnings_persisted": 4769,
-  "total_rules_promoted": 4147,
+  "last_updated": "2026-10-25T11:53:47.615Z",
+  "total_cycles_completed": 4771,
+  "total_learnings_persisted": 4771,
+  "total_rules_promoted": 4148,
   "history": [
-    {
-      "timestamp": "2026-10-24T20:42:01.325Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T20:48:38.132Z",
-      "repository": "Ataraxy-Labs/sem",
-      "learningId": "learn-github-ataraxy-labs-sem",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-24T20:48:38.475Z",
       "repository": "crawlseo/crawlseo",
@@ -1403,6 +1389,20 @@
       "repository": "nvidia/Nemotron-3-Diarization",
       "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:53:45.334Z",
+      "repository": "cachix/devenv",
+      "learningId": "learn-github-cachix-devenv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:53:47.615Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-lightricks-ltx-2-5",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

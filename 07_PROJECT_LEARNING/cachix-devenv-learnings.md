@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source**: github ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
-> **Source Version**: `d9f86dc6`  
+> **Source Version**: `80591248`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:50:17.528Z  
+> **Timestamp**: 2026-10-25T11:53:44.962Z  
 > **Learning ID**: `learn-github-cachix-devenv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:50:16.853Z  
+> **Harvest Timestamp**: 2026-10-25T11:53:43.892Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7773 stars
+- **Stars / Engagement**: 7778 stars
 
 ---
 
@@ -1700,551 +1700,395 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cd351478` (2026-10-21)
-**Commit Message**: fix(shell): match kitty and modifyOtherKeys encodings of intercepted keybindings (#3297)
-
-Motivation: `devenv shell` intercepts chords such as Ctrl-Alt-D/W/E by
-comparing stdin with a single legacy byte sequence. When the foreground
-program (fish 4 at its prompt, Claude Code) enables the kitty keyboard
-protocol or xterm modifyOtherKeys, the same chord arrives as
-`CSI cp;mod u` or `CSI 27;mod;cp ~`, is not recognised, and is forwarded
-to the program instead of triggering the devenv action.
-
-Approach: `ShellKeyChord::matches_input` still accepts the legacy bytes and
-now also decodes kitty CSI u (ignoring alternate-key and event sub-fields,
-rejecting release events, ignoring caps/num lock bits) and modifyOtherKeys
-sequences for character and space chords, comparing codepoint and
-modifiers. `action_for_input` uses it. Named keys (arrows, function keys)
-are unchanged.
-
-Validation: the devenv-shell crate cannot be built on this machine (its
-libghostty dependency needs zig), so I compiled keybindings.rs standalone
-with `rustc --edition 2024 --test` and ran it: 6 tests passed, including a
-new test covering kitty, modifyOtherKeys, legacy, wrong-modifier, release
-and wrong-key inputs. I did 
+### Incident Patch 1: `89e738f0` (2026-10-25)
+**Commit Message**: fix: npm install lock (#3315)
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -12,6 +12,7 @@
- - Fixed machine metadata failing to load when encryption key or extra file target paths contain dots, such as `/tmp/luks.key` ([#3277](https://github.com/cachix/devenv/issues/3277)).
- - Fixed source builds with Meson 1.12, missing syscall declarations in static Linux builds, and Linux linking failures caused by malformed Ghostty compiler-runtime objects.
- - Restore terminal settings after tasks exit or are killed, preventing subsequent terminal output from remaining misaligned ([#3292](https://github.com/cachix/devenv/issues/3292)).
-+- Fixed `devenv shell` keybindings (Ctrl-Alt-D/W/E by default) not working while the foreground program, such as fish 4 or Claude Code, has enabled the kitty keyboard protocol or xterm modifyOtherKeys ([#3294](https://github.com/cachix/devenv/issues/3294)).
- - Updated bundled Nix to 2.35.3 with upstream security fixes ([#3287](https://github.com/cachix/devenv/issues/3287)).
- - Failed process prerequisites and their error output now remain visible in the TUI, including shared prerequisites and when stopped processes are hidden ([#3017](https://github.com/cachix/devenv/issues/3017)). Processes with more than five prerequisites also show the full task list.
- - Fixed `devenv shell` printing `bash: export: … not a valid identifier` and truncating `PATH` at the first space when a task re-exports `PATH` (for example Python venv activation) and the parent `PATH` contains a directory with a space ([#3165](https://github.com/cachix/devenv/issues/3165)).
+@@ -39,6 +39,7 @@
+ - `enterShell` now runs from the project root when `devenv shell` starts in a subdirectory, before the shell moves to that subdirectory. Previously it ran in the subdirectory, so commands with relative paths, such as the JavaScript package install, looked in the wrong place.
+ - Fixed auto-activation waiting for the next prompt when you `cd` from one devenv project directly into another, so you had to press Enter before the second project's shell started. It now starts right away ([#3129](https://github.com/cachix/devenv/issues/3129)).
+ - `devenv up` and `devenv test` no longer run the prerequisites of a process with `start.enable = false`. They now run when that process is started, or when an enabled process depends on it ([#3272](https://github.com/cachix/devenv/issues/3272)).
++- Fixed `languages.javascript.npm.install.enable` corrupting `node_modules` when several shells start at once. Concurrent shells now wait for one npm install to finish instead of running their own.
+ 
+ ## 2.4.0 (2026-09-24)
+ 
 ```
 
-**File**: `devenv-shell/src/keybindings.rs` (modified, +89/-1)
+**File**: `src/modules/languages/javascript.nix` (modified, +10/-1)
 ```diff
-@@ -182,6 +182,28 @@ impl ShellKeyChord {
-         }
-     }
+@@ -64,7 +64,16 @@ let
+         lib.optionalString (cfg.directory != config.devenv.root) "cd ${cfg.directory}/ && "
+       }npm init' to create one." >&2
+     else
+-      _devenv-npm-install
++      # Keep the lock outside node_modules, which clean-install deletes.
++      mkdir -p "${config.devenv.state}"
++      {
++        if ! ${lib.getExe pkgs.flock} -n 9
++        then
++          echo "Waiting for another shell to finish installing npm packages..." >&2
++          ${lib.getExe pkgs.flock} 9
++        fi
++        _devenv-npm-install
++      } 9>"${config.devenv.state}/npm-install.lock"
+     fi
+   '';
  
-+    /// Whether `input` is this chord, in its legacy encoding or as sent once the
-+    /// foreground program enables the kitty keyboard protocol (`CSI cp;mod u`) or
-+    /// xterm modifyOtherKeys (`CSI 27;mod;cp ~`).
-+    pub fn matches_input(&self, input: &[u8]) -> bool {
-+        if self.terminal_bytes() == input {
-+            return true;
-+        }
-+        let expected = match self.code {
-+            ShellKeyCode::Char(character) => character.to_lowercase().next(),
-+            ShellKeyCode::Space => Some(' '),
-+            _ => None,
-+        };
-+        match (expected, decode_enhanced_key(input)) {
-+            (Some(expected), Some((codepoint, modifiers))) => {
-+                modifiers == self.xterm_modifier(false) - 1
-+                    && char::from_u32(codepoint).and_then(|c| c.to_lowercase().next())
-+                        == Some(expected)
-+            }
-+            _ => false,
-+        }
-+    }
-+
-     fn character_bytes(&self, character: char) -> Vec<u8> {
-         let emitted = if self.shift {
-             shifted_character(character)
-@@ -383,7 +405,7 @@ impl ShellKeybindings {
-         ShellAction::INTERCEPTED.into_iter().find(|action| {
-             self.bindings(*action)
-                 .iter()
--                .any(|binding| binding.terminal_bytes() == input)
-+                .any(|binding| binding.matches_input(input))
-         })
-     }
- 
-@@ -437,6 +459,39 @@ pub struct ShellKeybindingConflict {
-     pub chord: String,
- }
- 
-+/// Decode a kitty `CSI cp[:alt];mod[:event] u` or modifyOtherKeys
-+/// `CSI 27;mod;cp ~` key press into its codepoint and modifier bits
-+/// (shift=1, alt=2, ctrl=4). Lock-state bits are ignored; release events are rejected.
-+fn decode_enhanced_key(input: &[u8]) -> Option<(u32, u8)> {
-+    let body = input.strip_prefix(b"\x1b[")?;
-+    let (&last, body) = body.split_last()?;
-+    let body = std::str::from_utf8(body).ok()?;
-+    let mut fields = body.split(';');
-+    let number = |field: &str| field.split(':').next()?.parse::<u32>().ok();
-+    let (codepoint, modifier) = match last {
-+        b'u' => {
-+            let codepoint = number(fields.next()?)?;
-+            let modifier = fields.next().unwrap_or("1");
-+            if modifier.split(':').nth(1) == Some("3") {
-+                return None;
-+            }
-+            (codepoint, number(modifier)?)
-+        }
-+        b'~' => {
-+            if number(fields.next()?)? != 27 {
-+                return None;
-+            }
-+            let modifier = number(fields.next()?)?;
-+            (number(fields.next()?)?, modifier)
-+        }
-+        _ => return None,
-+    };
-+    if fields.next().is_some() || modifier == 0 {
-+        return None;
-+    }
-+    Some((codepoint, ((modifier - 1) & 0b0011_1111) as u8))
-+}
-+
- fn control_byte(character: char) -> Option<u8> {
-     match character {
-         ' ' | '@' => Some(0),
-@@ -500,6 +555,39 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn default_chords_match_enhanced_keyboard_encodings() {
-+        let bindings = ShellKeybindings::default();
-+        // kitty CSI u, with and without event/alternate sub-fields and lock bits
-+        assert_eq!(
-+            bindings.action_for_input(b"\x1b[100;7u"),
-+            Some(ShellAction::TogglePause)
-+        );
-+        assert_eq!(
-+            bindings.action_for_input(b"\x1b[119;7:1u"),
-+            Some(ShellAction::ListWatchedFiles)
-+        );
-+        assert_eq!(
-+            bindings.action_for_input(b"\x1b[101:69;71u"),
-+            Some(ShellAction::ToggleError)
-+        );
-+        // modifyOtherKeys
-+        assert_eq!(
-+            bindings.action_for_input(b"\x1b[27;7;100~"),
-+            Some(ShellAction::TogglePause)
-+        );
-+        // legacy still works
-+        assert_eq!(
-+            bindings.action_for_input(b"\x1b\x04"),
-+            Some(ShellAction::TogglePause)
-+        );
-+        // wrong modifiers, release events and other keys do not match
-+        assert_eq!(bindings.action_for_input(b"\x1b[100;5u"), None);
-+        assert_eq!(bindings.action_for_input(b"\x1b[100;7:3u"), None);
-+        assert_eq!(bindings.action_for_input(b"\x1b[120;7u"), None);
-+        assert_eq!(bindings.action_for_input(b"\x1b[27;7;120~"), None);
-+    }
-+
-     #[test]
-     fn modified_named_keys_use_xterm_sequences() {
-         let chord = ShellKeyChord::new(ShellKeyCode::Up, true, true, false);
 ```
 
----
-
-### Incident Patch 2: `c29bcf42` (2026-10-22)
-**Commit Message**: fix(bootstrap): substitute locked inputs through native Nix fetcher (#3312)
-
-Use fetchFinalTree for inputs with complete locked metadata so source
-trees can be reused locally or substituted without contacting the origin.
-Keep fetchTree for live paths and incomplete metadata.
-
-Bump both Nix locks to the 2.35 backport and cover cache-only shell entry,
-local reuse, and missing timestamp metadata.
-
-Assisted-by: Codex (GPT-6)
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `tests/javascript-npm-concurrent/.gitignore` (added, +2/-0)
 ```diff
-@@ -8,6 +8,7 @@
- 
- ### Bug Fixes
- 
-+- Locked inputs with complete source metadata now reuse sources from the Nix store or configured binary caches without contacting their original remote, so `devenv shell` works when that remote is unavailable ([#3244](https://github.com/cachix/devenv/pull/3244)).
- - `devenv inputs add` preserves surrounding YAML comments, formatting, and key order, and no longer copies imported or local inputs into `devenv.yaml` ([#3268](https://github.com/cachix/devenv/issues/3268)).
- - Fixed machine metadata failing to load when encryption key or extra file target paths contain dots, such as `/tmp/luks.key` ([#3277](https://github.com/cachix/devenv/issues/3277)).
- - Fixed source builds with Meson 1.12, missing syscall declarations in static Linux builds, and Linux linking failures caused by malformed Ghostty compiler-runtime objects.
+@@ -0,0 +1,2 @@
++node_modules
++installs.log
 ```
 
-**File**: `devenv-nix-backend/bootstrap/resolve-lock.nix` (modified, +24/-1)
+**File**: `tests/javascript-npm-concurrent/.npmrc` (added, +1/-0)
 ```diff
-@@ -86,7 +86,30 @@ let
-               && !(locked ? narHash)
-               && builtins.substring 0 1 (resolvedLocked.path or "") == "/";
- 
--            fetchedSource = builtins.fetchTree (node.info or { } // removeAttrs resolvedLocked [ "dir" ]);
-+            sourceAttrs = node.info or { } // removeAttrs resolvedLocked [ "dir" ];
-+            # Final fetches trust the lock's metadata and can substitute the
-+            # source from a binary cache. Keep ordinary fetches for inputs
-+            # whose missing metadata still needs to be supplied by the fetcher.
-+            hasLockedMetadata =
-+              sourceAttrs ? narHash
-+              && (
-+                sourceAttrs.type == "file"
-+                || (
-+                  builtins.elem sourceAttrs.type [
-+                    "git"
-+                    "github"
-+                    "gitlab"
-+                    "sourcehut"
-+                    "tarball"
-+                  ]
-+                  && sourceAttrs ? lastModified
-+                  && (sourceAttrs.type == "tarball" || sourceAttrs ? rev)
-+                  && (sourceAttrs.type != "git" || (sourceAttrs.shallow or true) || sourceAttrs ? revCount)
-+                )
-+              );
-+            fetchTree =
-+              if hasLockedMetadata then builtins.fetchFinalTree or builtins.fetchTree else builtins.fetchTree;
-+            fetchedSource = fetchTree sourceAttrs;
-           in
-           if isLivePath then
-             {
+@@ -0,0 +1 @@
++offline=true
 ```
 
-**File**: `devenv.lock` (modified, +3/-3)
+**File**: `tests/javascript-npm-concurrent/.test-config.yml` (added, +1/-0)
 ```diff
-@@ -530,11 +530,11 @@
-         "nixpkgs-regression": "nixpkgs-regression"
-       },
-       "locked": {
--        "lastModified": 1790176416,
--        "narHash": "sha256-acP7QvsB+dHghUeL9AwSSZ3qS//skpqjv484aveg1EQ=",
-+        "lastModified": 1792603708,
-+        "narHash": "sha256-9KB9OFCP71d8n4Gg09saO6H1VuVzHdjusheiHtgn9jc=",
-         "owner": "cachix",
-         "repo": "nix",
--        "rev": "bd10d7f563420c6034b9d1dc75c4168fc01e5afc",
-+        "rev": "082f14105a3e545e1d60bbbc9028dba19f114a0d",
-         "type": "github"
-       },
-       "original": {
+@@ -0,0 +1 @@
++use_shell: false
 ```
 
-**File**: `flake.lock` (modified, +3/-3)
+**File**: `tests/javascript-npm-concurrent/.test.sh` (added, +19/-0)
 ```diff
-@@ -111,11 +111,11 @@
-         "nixpkgs-regression": []
-       },
-       "locked": {
--        "lastModified": 1792015234,
--        "narHash": "sha256-HBX0GszzUDIkPUL9dtNzhxeKBBJ2vyot3iIyyajEtmY=",
-+        "lastModified": 1792603708,
-+        "narHash": "sha256-9KB9OFCP71d8n4Gg09saO6H1VuVzHdjusheiHtgn9jc=",
-         "owner": "cachix",
-         "repo": "nix",
--        "rev": "ab229d688f8402ef858ba69487e832075f7358e2",
-+        "rev": "082f14105a3e545e1d60bbbc9028dba19f114a0d",
-         "type": "github"
-       },
-       "original": {
-```
-
-**File**: `tests/locked-input-substitution/.test.sh` (added, +87/-0)
-```diff
-@@ -0,0 +1,87 @@
+@@ -0,0 +1,19 @@
 +#!/usr/bin/env bash
 +set -euo pipefail
 +
-+fixture=$(mktemp -d)
-+trap 'rm -rf "$fixture"' EXIT
-+mkdir "$fixture/source" "$fixture/project"
-+cat > "$fixture/source/devenv.nix" <<'EOF'
-+{
-+  env.CACHED_INPUT = "from binary cache";
-+}
-+EOF
-+# Give this test its own source path, so deleting it cannot affect other tests.
-+printf '%s\n' "$fixture" > "$fixture/source/nonce"
-+source_path=$(nix --extra-experimental-features nix-command store add-path --name source "$fixture/source")
-+nar_hash=$(nix --extra-experimental-features nix-command hash path "$fixture/source")
-+cache_url="file://$fixture/cache"
-+nix --extra-experimental-features nix-command copy --to "$cache_url" "$source_path"
-+nix-store --delete "$source_path"
-+if nix --extra-experimental-features nix-command path-info "$source_path"; then
-+    echo "Test source unexpectedly remains in the local store" >&2
-+    exit 1
++pids=()
++for _ in 1 2 3; do
++  devenv shell -- true &
++  pids+=($!)
++done
++for pid in "${pids[@]}"; do
++  wait "$pid"
++done
++
++installs=$(wc -l < installs.log)
++if [ "$installs" -ne 1 ]; then
++  echo "expected 1 npm install across concurrent shells, got $installs"
++  exit 1
 +fi
 +
-+# The origin never exists. Only the binary cache can supply the source.
-+origin="file://$fixture/unreachable.tar.gz"
-+encoded_hash=$(jq -rn --arg hash "$nar_hash" '$hash | @uri')
-+cat > "$fixture/project/devenv.yaml" <<EOF
-+inputs:
-+  cached:
-+    url: "tarball+$origin?narHash=$encoded_hash&lastModified=1000000000"
-+    flake: false
-+imports:
-+  - cached
-+EOF
-+cat > "$fixture/project/devenv.nix" <<'EOF'
-+{ ... }:
-+assert builtins ? fetchFinalTree;
-+{ }
-+EOF
-+jq --arg url "$origin" --arg hash "$nar_hash" '
-+  .nodes[.root].inputs.cached = "cached"
-+  | .nodes.cached = {
-+      flake: false,
-+      locked: { type: "tarball", url: $url, narHash: $hash, lastModified: 1000000000 },
-+      original: { type: "tarball", url: $url, narHash: $hash, lastModified: 1000000000 }
-+    }
-+' devenv.lock > "$fixture/project/devenv.lock"
-+
-+cd "$fixture/project"
-+# shellcheck disable=SC2016
-+devenv --no-eval-cache --nix-option extra-substituters "$cache_url" shell bash -- -c \
-+    'test "$CACHED_INPUT" = "from binary cache"'
-+nix-store --check-validity "$source_path"
-+
-+# With the cache removed, a fresh evaluation must reuse the local store copy.
-+mv "$fixture/cache" "$fixture/cache-unavailable"
-+# shellcheck disable=SC2016
-+devenv --no-eval-cache shell bash -- -c \
-+    'test "$CACHED_INPUT" = "from binary cache"'
-+
-+# Incomplete lock metadata must still be supplied by the ordinary fetcher,
-+# even when the source is already present in the store.
-+touch -d '@1000000000' "$fixture/source" "$fixture/source/"*
-+tar -czf "$fixture/metadata.tar.gz" -C "$fixture" source
-+cat > devenv.yaml <<EOF
-+inputs:
-+  cached:
-+    url: "tarball+file://$fixture/metadata.tar.gz?narHash=$encoded_hash"
-+    flake: false
-+imports:
-+  - cached
-+EOF
-+cat > devenv.nix <<'EOF'
-+{ inputs, ... }:
-+{
-+  env.INPUT_LAST_MODIFIED = toString inputs.cached.lastModified;
-+}
-+EOF
-+jq --arg url "file://$fixture/metadata.tar.gz" '
-+  .nodes.cached.locked.url = $url
-+  | .nodes.cached.original.url = $url
-+  | del(.nodes.cached.locked.lastModified, .nodes.cached.original.lastModified)
-+' devenv.lock > next.lock
-+mv next.lock devenv.lock
-+# shellcheck disable=SC2016
-+devenv --no-eval-cache shell bash -- -c \
-+    'test "$INPUT_LAST_MODIFIED" = 1000000000'
++devenv shell -- node -e "require('dep/package.json')"
 ```
 
-**File**: `tests/locked-input-substitution/devenv.nix` (added, +8/-0)
+**File**: `tests/javascript-npm-concurrent/dep/package.json` (added, +1/-0)
 ```diff
-@@ -0,0 +1,8 @@
-+{ pkgs, ... }:
+@@ -0,0 +1 @@
++{ "name": "dep", "version": "1.0.0" }
+```
+
+**File**: `tests/javascript-npm-concurrent/devenv.nix` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++{ ... }:
++
 +{
-+  packages = [
-+    pkgs.nix
-+    pkgs.gnutar
-+    pkgs.gzip
-+  ];
++  languages.javascript = {
++    enable = true;
++    npm = {
++      enable = true;
++      install.enable = true;
++    };
++  };
 +}
 ```
 
 ---
 
-### Incident Patch 3: `d9f86dc6` (2026-10-22)
-**Commit Message**: fix(rust): preserve large linker response files through Nix wrappers (#3313)
+### Incident Patch 2: `6175d73d` (2026-10-25)
+**Commit Message**: feat(tui): detach from an attached process manager with q (#3317)
 
-Enable Nix linker response-file forwarding for Rust's Clang driver on Linux, with a regression that reproduces GCC collect2 E2BIG and verifies the same oversized link succeeds through the configured driver.
+In `devenv processes attach`, q now detaches straight away and leaves
+the processes running, as a second Ctrl-C does. In a foreground
+`devenv up` the processes run in-process, so q opens the quit prompt
+instead of stopping them without asking. The prompt also accepts q to
+detach when attached, and the hints show q next to Ctrl-C.
 
-Validated with seven targeted integration tests and 64 Linux linker combinations. Prepared and validated with Codex.
+Closes #3264
 
-**File**: `src/modules/languages/rust.nix` (modified, +14/-0)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -316,6 +316,15 @@ in
-   config = lib.mkIf cfg.enable (lib.mkMerge [
-     {
-       changelogs = [
-+        {
-+          date = "2026-10-22";
-+          title = "Large Rust links preserve response files through Nix's linker wrapper";
-+          when = cfg.clangLinker.enable && pkgs.stdenv.hostPlatform.isLinux;
-+          description = ''
-+            Rust shells using Clang on Linux now enable response-file forwarding in Nix's linker wrapper.
-+            This prevents large links from failing with `Argument list too long` after the wrapper expands a response file.
-+          '';
-+        }
-         {
-           date = "2026-10-13";
-           title = "Rust toolchain files without rust-analyzer now use a standalone language server";
-@@ -498,6 +507,11 @@ in
-           # See `hostLinker` for why the linker is not set through RUSTFLAGS.
-           // lib.optionalAttrs (cfg.clangLinker.enable || linkerArgs != [ ]) {
-             "CARGO_TARGET_${pkgs.stdenv.hostPlatform.rust.cargoEnvVarTarget}_LINKER" = hostLinker;
-+          }
-+          // lib.optionalAttrs (cfg.clangLinker.enable && pkgs.stdenv.hostPlatform.isLinux) {
-+            # Clang can forward a response file, but Nix's linker wrapper would
-+            # otherwise expand it back into an oversized exec argument list.
-+            NIX_LD_USE_RESPONSE_FILE = "1";
-           };
+@@ -4,6 +4,7 @@
  
-         # Do not inherit another shell's sources when this toolchain uses its
+ ### Improvements
+ 
++- `q` now detaches from `devenv processes attach` straight away, leaving the processes running, and detaches from its interrupt prompt too. In a foreground `devenv up`, where quitting stops the processes, `q` opens the quit prompt ([#3264](https://github.com/cachix/devenv/issues/3264)).
+ - Added the `tui.emoji` user setting. Set it to `false` to replace the emoji in the interactive shell status line, such as the eye in `devenv watching 11 files`, with non-emoji Unicode glyphs. It defaults to `true`, and the status line stays visible with file watching and automatic reload unchanged.
+ - Updating a remote configuration now composes its updated YAML and dependencies before writing `devenv.lock`, so a second invocation is not needed to finish the update.
+ - `devenv.yaml` can now compose configuration from remote input imports using the existing `inputs` and `imports` syntax. Remote YAML imports and their transitive inputs are pinned in the importing project's `devenv.lock`; the root project's input declarations retain precedence, allowing shared configurations to reuse a single `nixpkgs` input ([#2205](https://github.com/cachix/devenv/issues/2205)).
 ```
 
-**File**: `tests/rust-linker-response-file/.test-config.yml` (added, +2/-0)
+**File**: `devenv-tui/README.md` (modified, +3/-2)
 ```diff
-@@ -0,0 +1,2 @@
-+supported_systems:
-+  - x86_64-linux
+@@ -147,8 +147,9 @@ triage.
+ - `Ctrl+X`: Stop the selected managed process
+ - `Ctrl+H`: Hide or show stopped processes
+ - `Ctrl+C`: Show the quit prompt without stopping managed processes
++- `q`: Detach when attached to a running process manager (`devenv processes attach`), leaving the processes running; otherwise show the quit prompt
+ - `c` or `Esc`: Keep running and clear the prompt
+-- `q` or `Ctrl+C`: Quit from the interrupt prompt
++- `q` or `Ctrl+C`: Quit from the interrupt prompt, or detach when attached
+ - `Esc`: Close the inline preview, clear the selection, or cancel search
+ 
+ ### Expanded Logs
+@@ -164,5 +165,5 @@ Long lines wrap onto continuation rows so their full content stays readable.
+ - `y`: Copy the selection, or the complete retained log when nothing is selected
+ - `Ctrl+C`: Copy the current selection, or show the quit prompt when no selection is active
+ - `c` or `Esc`: Keep running and clear the prompt
+-- `q` or `Ctrl+C`: Quit from the interrupt prompt
++- `q` or `Ctrl+C`: Quit from the interrupt prompt, or detach when attached
+ - `q/Esc`: Return to main view
 ```
 
-**File**: `tests/rust-linker-response-file/devenv.nix` (added, +15/-0)
+**File**: `devenv-tui/src/app.rs` (modified, +65/-1)
 ```diff
-@@ -0,0 +1,15 @@
-+{
-+  config,
-+  lib,
-+  pkgs,
-+  ...
-+}:
-+{
-+  languages.rust.enable = true;
-+
-+  enterTest = ''
-+    ${lib.getExe pkgs.python3} ${./test_response_file.py} \
-+      ${lib.getExe pkgs.gcc} \
-+      ${config.env."CARGO_TARGET_${pkgs.stdenv.hostPlatform.rust.cargoEnvVarTarget}_LINKER"}
-+  '';
+@@ -563,6 +563,22 @@ pub(crate) fn request_interrupt_prompt(
+     }
+ }
+ 
++/// `q` in the main view. Attached to a running manager it detaches straight
++/// away, leaving the processes running, as a second Ctrl-C does. Otherwise
++/// quitting stops the processes, so it opens the quit prompt instead.
++pub(crate) fn handle_quit_key(
++    event_tx: Option<&ProcessCommandSender>,
++    ui_state: &Arc<RwLock<UiState>>,
++    shutdown: &Arc<Shutdown>,
++    attached: bool,
++) {
++    if attached {
++        shutdown.handle_interrupt();
++    } else {
++        request_interrupt_prompt(event_tx, ui_state, false);
++    }
 +}
++
+ #[cfg(test)]
+ pub(crate) fn handle_interrupt_prompt_key(
+     key_event: &KeyEvent,
+@@ -611,7 +627,8 @@ pub(crate) fn handle_interrupt_prompt_action(
+                 ui.clear_interrupt_prompt();
+             }
+         }
+-        Some(Action::Quit) if !attached => {
++        // Attached, the interrupt detaches and leaves the manager running.
++        Some(Action::Quit) => {
+             shutdown.handle_interrupt();
+         }
+         Some(Action::Cancel) => {
+@@ -1172,6 +1189,14 @@ fn MainView(mut hooks: Hooks) -> impl Into<AnyElement<'static>> {
+                                 shutdown.handle_interrupt();
+                             }
+                         }
++                        KeyCode::Char('q') if action == Some(Action::Quit) => {
++                            handle_quit_key(
++                                event_tx.as_ref(),
++                                &ui_state,
++                                &shutdown,
++                                attached_flag.load(Ordering::Relaxed),
++                            );
++                        }
+                         KeyCode::Char('r')
+                             if key_event.modifiers.contains(KeyModifiers::CONTROL) =>
+                         {
+@@ -1673,6 +1698,45 @@ mod tests {
+         assert!(shutdown.is_cancelled());
+     }
+ 
++    #[test]
++    fn test_quit_key_detaches_when_attached() {
++        // In the attached prompt, `q` detaches like a second Ctrl-C.
++        let ui_state = Arc::new(RwLock::new(UiState::new()));
++        ui_state.write().unwrap().show_interrupt_prompt(true);
++        let shutdown = tokio_shutdown::Shutdown::new();
++        let quit = KeyEvent::new(KeyEventKind::Press, KeyCode::Char('q'));
++        assert!(handle_interrupt_prompt_key(
++            &quit, &ui_state, &shutdown, None
++        ));
++        assert!(shutdown.is_cancelled());
++
++        // In the main view, `q` detaches without a prompt.
++        let ui_state = Arc::new(RwLock::new(UiState::new()));
++        let shutdown = tokio_shutdown::Shutdown::new();
++        let (tx, _rx) = mpsc::channel(1);
++        handle_quit_key(Some(&tx), &ui_state, &shutdown, true);
++        assert!(shutdown.is_cancelled());
++        assert!(!ui_state.read().unwrap().interrupt_prompt_active());
++    }
++
++    #[test]
++    fn test_quit_key_opens_the_quit_prompt_when_not_attached() {
++        // Quitting a foreground session stops its processes, so `q` asks first.
++        let ui_state = Arc::new(RwLock::new(UiState::new()));
++        let shutdown = tokio_shutdown::Shutdown::new();
++        let (tx, _rx) = mpsc::channel(1);
++        handle_quit_key(Some(&tx), &ui_state, &shutdown, false);
++        assert!(!shutdown.is_cancelled());
++        assert!(ui_state.read().unwrap().interrupt_prompt_active());
++        assert!(!ui_state.read().unwrap().interrupt_prompt_attached());
++
++        // Without a process session there is nothing to quit.
++        let ui_state = Arc::new(RwLock::new(UiState::new()));
++        handle_quit_key(None, &ui_state, &shutdown, false);
++        assert!(!shutdown.is_cancelled());
++        assert!(!ui_state.read().unwrap().interrupt_prompt_active());
++    }
++
+     #[test]
+     fn test_interrupt_prompt_attached_stop_sends_command() {
+         let (tx, mut rx) = mpsc::channel(1);
 ```
 
-**File**: `tests/rust-linker-response-file/test_response_file.py` (added, +103/-0)
+**File**: `devenv-tui/src/config.rs` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,103 @@
-+"""Exercise rustc's linker response file beyond Linux's exec argument limit."""
-+
-+import os
-+from pathlib import Path
-+import resource
-+import subprocess
-+import sys
-+import tempfile
-+
-+
-+def compile_rust(arguments):
-+    # Let the Nix compiler wrappers pass response files through, so GCC reaches
-+    # collect2 instead of hitting the same exec limit in the wrapper itself.
-+    return subprocess.run(
-+        ["rustc", *arguments],
-+        env=os.environ | {"NIX_CC_USE_RESPONSE_FILE": "1"},
-+        capture_output=True,
-+        text=True,
-+        timeout=120,
-+    )
-+
-+
-+def diagnostic(stderr):
-+    # rustc includes the enormous linker command in its error. Keep the useful
-+    # diagnostic lines without dumping megabytes of search paths into CI logs.
-+    return "\n".join(line for line in stderr.splitlines() if len(line) < 2000)[-8000:]
-+
-+
-+def main():
-+    gcc, clang = sys.argv[1:]
-+    # Linux derives ARG_MAX from the stack limit. Bound it in this test process
-+    # so unlimited-stack shells do not turn the probe into a huge, slow link.
-+    _, hard_stack = resource.getrlimit(resource.RLIMIT_STACK)
-+    stack = 4 * 1024 * 1024
-+    if hard_stack != resource.RLIM_INFINITY:
-+        stack = min(stack, hard_stack)
-+    resource.setrlimit(resource.RLIMIT_STACK, (stack, hard_stack))
-+    with tempfile.TemporaryDirectory(prefix="rust-linker-response-") as directory:
-+        workdir = Path(directory)
-+        source = workdir / "main.rs"
-+        source.write_text('fn main() { println!("response file linked"); }\n')
-+
-+        # First rule out unrelated compiler or toolchain failures.
-+        small = compile_rust(
-+            [str(source), "-C", f"linker={gcc}", "-o", str(workdir / "small")]
-+        )
-+        if small.returncode:
-+            raise AssertionError(f"small GCC link failed:\n{diagnostic(small.stderr)}")
-+
-+        # Give rustc its own response file so the compiler invocation stays small.
-+        # Distinct native search paths survive rustc's deduplication and force it
-+        # to use a second response file when spawning the linker driver.
-+        limit = os.sysconf("SC_ARG_MAX")
-+        paths = []
-+        size = 0
-+        while size <= limit * 5 // 4:
-+            argument = f"-Lnative={workdir}/{'unused-' * 24}/{len(paths):08d}"
-+            paths.append(argument)
-+            size += len(argument.encode()) + 1
-+
-+        response = workdir / "rustc.rsp"
-+
-+        def large_link(driver, name):
-+            output = workdir / name
-+            response.write_text(
-+                "\n".join(
-+                    [str(source), "-C", f"linker={driver}", "-o", str(output), *paths]
-+                )
-+                + "\n"
-+            )
-+            return compile_rust([f"@{response}"]), output
-+
-+        # GCC expands the response file before trying to execute collect2.
-+        broken, _ = large_link(gcc, "gcc-large")
-+        if (
-+            broken.returncode == 0
-+            or "Argument list too long" not in broken.stderr
-+            or "collect2" not in broken.stderr
-+        ):
-+            raise AssertionError(
-+                "did not reproduce GCC's collect2 argument limit:\n"
-+                + diagnostic(broken.stderr)
-+            )
-+
-+        # Use exactly the driver selected by the Rust module, including its LLD
-+        # wrapper on x86_64 Linux. Clang must pass the large link to the linker.
-+        fixed, executable = large_link(clang, "clang-large")
-+        if fixed.returncode:
-+            raise AssertionError(
-+                f"large Clang link failed:\n{diagnostic(fixed.stderr)}"
-+            )
-+        result = subprocess.run(
-+            [str(executable)], capture_output=True, text=True, check=True, timeout=10
-+        )
-+        if result.stdout != "response file linked\n":
-+            raise AssertionError(f"unexpected executable output: {result.stdout!r}")
-+        print(
-+            f"GCC reproduced E2BIG; configured Clang linked {size} bytes successfully"
-+        )
-+
-+
-+if __name__ == "__main__":
-+    main()
+@@ -1056,6 +1056,7 @@ fn actions_for(context: KeyContext) -> &'static [Action] {
+             Action::StopProcess,
+             Action::ToggleStopped,
+             Action::Cancel,
++            Action::Quit,
+         ],
+         KeyContext::ProcessSearch => &[
+             Action::NextMatch,
+@@ -1408,6 +1409,7 @@ fn default_bindings() -> Vec<(KeyContext, Action, Vec<&'static str>)> {
+         (Main, StopProcess, vec!["ctrl+x"]),
+         (Main, ToggleStopped, vec!["ctrl+h"]),
+         (Main, Cancel, vec!["esc"]),
++        (Main, Quit, vec!["q"]),
+         (ProcessSearch, NextMatch, vec!["down"]),
+         (ProcessSearch, PreviousMatch, vec!["up"]),
+         (ProcessSearch, Accept, vec!["enter"]),
+```
+
+**File**: `devenv-tui/src/expanded_view.rs` (modified, +4/-4)
+```diff
+@@ -1661,7 +1661,7 @@ fn render_expanded_view_custom(
+         let mut action_children = Vec::new();
+         if interrupt_prompt_attached && compact {
+             action_children.push(expanded_footer_piece("Detach? ", Color::AnsiValue(245)));
+-            action_children.push(expanded_footer_piece("^C", COLOR_INTERACTIVE));
++            action_children.push(expanded_footer_piece("q/^C", COLOR_INTERACTIVE));
+             action_children.push(expanded_footer_piece(":detach ", Color::AnsiValue(245)));
+             action_children.push(expanded_footer_piece("s", COLOR_INTERACTIVE));
+             action_children.push(expanded_footer_piece(":stop ", Color::AnsiValue(245)));
+@@ -1672,7 +1672,7 @@ fn render_expanded_view_custom(
+                 "Detach or stop the process manager?  ",
+                 Color::AnsiValue(245),
+             ));
+-            action_children.push(expanded_footer_piece("Ctrl-C", COLOR_INTERACTIVE));
++            action_children.push(expanded_footer_piece("q/Ctrl-C", COLOR_INTERACTIVE));
+             action_children.push(expanded_footer_piece(":detach  ", Color::AnsiValue(245)));
+             action_children.push(expanded_footer_piece("s", COLOR_INTERACTIVE));
+             action_children.push(expanded_footer_piece(
+@@ -2401,9 +2401,9 @@ mod tests {
+                 "c:keep running  q:quit  Ctrl-C:quit"
+             };
+             let detach_actions = if width < 120 {
+-                "^C:detach s:stop Esc:watch"
++                "q/^C:detach s:stop Esc:watch"
+             } else {
+-                "Ctrl-C:detach  s:stop manager  Esc:keep watching"
++                "q/Ctrl-C:detach  s:stop manager  Esc:keep watching"
+             };
+ 
+             for (name, ui, expected) in [
+```
+
+**File**: `devenv-tui/src/statusline.rs` (modified, +9/-4)
+```diff
+@@ -163,6 +163,11 @@ pub(crate) fn interrupt_prompt_key_hints(keymap: &Keymap, attached: bool, width:
+     } else {
+         [Action::Cancel, Action::Quit]
+     };
++    // Attached, the quit key detaches, the same as Ctrl-C.
++    let detach_key = keymap
++        .key_label(KeyContext::Prompt, Action::Quit, width < 120)
++        .map(|key| format!("{key}/"))
++        .unwrap_or_default();
+     let compact = width < 120;
+     let mut hints = actions
+         .into_iter()
+@@ -183,9 +188,9 @@ pub(crate) fn interrupt_prompt_key_hints(keymap: &Keymap, attached: bool, width:
+         })
+         .collect::<Vec<_>>();
+     hints.push(if attached && compact {
+-        "^C:detach".to_string()
++        format!("{detach_key}^C:detach")
+     } else if attached {
+-        "Ctrl-C detach".to_string()
++        format!("{detach_key}Ctrl-C detach")
+     } else if compact {
+         "^C:quit".to_string()
+     } else {
+@@ -1198,7 +1203,7 @@ mod tests {
+         let attached = interrupt_prompt_key_hints(&keymap, true, 160);
+         assert!(attached.contains("c cancel"));
+         assert!(attached.contains("s stop manager"));
+-        assert!(attached.contains("Ctrl-C detach"));
++        assert!(attached.contains("q/Ctrl-C detach"));
+         assert!(!attached.contains("q quit"));
+ 
+         let starting = interrupt_prompt_key_hints(&keymap, false, 160);
+@@ -1209,7 +1214,7 @@ mod tests {
+ 
+         assert_eq!(
+             interrupt_prompt_key_hints(&keymap, true, 80),
+-            "c:cancel s:stop ^C:detach"
++            "c:cancel s:stop q/^C:detach"
+         );
+         assert_eq!(
+             interrupt_prompt_key_hints(&keymap, false, 80),
+```
+
+**File**: `devenv-tui/src/view.rs` (modified, +2/-2)
+```diff
+@@ -2015,7 +2015,7 @@ fn build_summary_view_impl(ctx: &SummaryViewContext, terminal_width: u16) -> Any
+ 
+     if interrupt_prompt_active {
+         if interrupt_prompt_attached {
+-            // Attached to a running manager: Ctrl-C detaches (leaves processes
++            // Attached to a running manager: q or Ctrl-C detaches (leaves processes
+             // running), `s` stops the whole manager, Esc keeps watching.
+             let prompt_text = if terminal_width < 60 {
+                 "Detach?"
+@@ -2034,7 +2034,7 @@ fn build_summary_view_impl(ctx: &SummaryViewContext, terminal_width: u16) -> Any
+                     Text(content: prompt_text, color: Color::Yellow, weight: Weight::Bold)
+                 }
+                 View(flex_direction: FlexDirection::Row, flex_shrink: 1.0, min_width: 0, overflow: Overflow::Hidden, margin_left: 2) {
+-                    Text(content: "Ctrl-C", color: COLOR_INTERACTIVE)
++                    Text(content: "q/Ctrl-C", color: COLOR_INTERACTIVE)
+                     Text(content: if compact { ":detach " } else { " detach • " })
+                     Text(content: "s", color: COLOR_INTERACTIVE)
+                     Text(content: if compact { ":stop " } else { " stop manager • " })
+```
+
+**File**: `devenv/src/cli.rs` (modified, +1/-1)
+```diff
+@@ -1171,7 +1171,7 @@ pub enum ProcessesCommand {
+     },
+ 
+     #[command(
+-        about = "Attach to running processes and stream their status and logs until Ctrl-C, leaving them running."
++        about = "Attach to running processes and stream their status and logs until q or Ctrl-C, leaving them running."
+     )]
+     Attach {},
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3317** (2026-10-25): feat(tui): detach from an attached process manager with q (@ozenyunus35)
+- **PR #3315** (2026-10-25): fix: npm install lock (@tonyd33)
 - **PR #3313** (2026-10-22): fix(rust): preserve large linker response files through Nix wrappers (@domenkozar)
 - **PR #3312** (2026-10-22): fix(bootstrap): substitute locked inputs through native Nix fetcher (@domenkozar)
 - **PR #3311** (2026-10-22): feat: compose remote YAML and resolve updates together (@domenkozar)
-- **PR #3308** (2026-10-20): fix(inputs): preserve YAML with yaml-edit (@domenkozar)
-- **PR #3306** (2026-10-20): Add ollama service (@sagikazarmark)
-- **PR #3302** (2026-10-22): fix(rust): scope linker selection to the host target (@sagikazarmark)
+- **PR #3310** (2026-10-25): feat(languages.clojure): add jdk.package option (@SamuelCarriles)
 
 ---
 
@@ -2264,13 +2108,13 @@ Validated with seven targeted integration tests and 64 Linux linker combinations
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. shell): match kitty and modifyOtherKeys encodings of intercepted keybindings (#3
+## X. npm install lock (#3315)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cd351478`: shell): match kitty and modifyOtherKeys encodings of intercepted keybindings (#3297). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `89e738f0`: npm install lock (#3315). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2278,7 +2122,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fixed `devenv shell` keybindings (Ctrl-Alt-D/W/E by default) not working while the foreground program, such as fish 4 or Claude Code, has enabled the kitty keyboard protocol or xterm modifyOtherKeys ([#3294](https://github.com/cachix/devenv/issues/3294)).
+- Fixed `languages.javascript.npm.install.enable` corrupting `node_modules` when several shells start at once. Concurrent shells now wait for one npm install to finish instead of running their own.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2288,4 +2132,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cd351478` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `89e738f0` are properly handled with clean fallback behavior.

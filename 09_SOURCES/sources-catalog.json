@@ -345,8 +345,8 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "b7dfa3aa6df2bcba00e3df4499dcd0cbfa81473698371061917beb2edea6a437",
-    "lastHarvestedAt": "2026-10-20T16:57:09.838Z",
+    "contentHash": "81c7d7ade0a91f8e2fd8e3141331aefe0651bcd5a80422cb4f083843c0120b75",
+    "lastHarvestedAt": "2026-10-25T11:53:47.610Z",
     "learningId": "learn-huggingface-lightricks-ltx-2-5"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "d9f86dc6",
+    "sourceVersion": "80591248",
     "license": "Apache-2.0",
-    "contentHash": "aba930c5787cdf230f49584f71a0b37d5ec76e96e9568fc37a67f49daa21b334",
-    "lastHarvestedAt": "2026-10-22T18:50:17.864Z",
+    "contentHash": "94b160fb181074953b3019383e19a0b9549a05b50da4e950e2a098dd5ae18622",
+    "lastHarvestedAt": "2026-10-25T11:53:45.329Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {

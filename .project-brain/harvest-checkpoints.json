@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T11:43:48.350Z",
+  "last_updated": "2026-10-25T11:53:47.618Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -410,14 +410,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lightricks-ltx-2-5",
-      "content_hash": "b7dfa3aa6df2bcba00e3df4499dcd0cbfa81473698371061917beb2edea6a437",
-      "verified_at": "2026-10-20T16:57:09.846Z",
+      "content_hash": "81c7d7ade0a91f8e2fd8e3141331aefe0651bcd5a80422cb4f083843c0120b75",
+      "verified_at": "2026-10-25T11:53:47.618Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:57:09.846Z"
+      "last_updated": "2026-10-25T11:53:47.618Z"
     },
     "prism-ml/Ternary-Bonsai-2-27B-gguf": {
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "aba930c5787cdf230f49584f71a0b37d5ec76e96e9568fc37a67f49daa21b334",
-      "verified_at": "2026-10-22T18:50:17.876Z",
+      "content_hash": "94b160fb181074953b3019383e19a0b9549a05b50da4e950e2a098dd5ae18622",
+      "verified_at": "2026-10-25T11:53:45.337Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:50:17.876Z"
+      "last_updated": "2026-10-25T11:53:45.337Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",

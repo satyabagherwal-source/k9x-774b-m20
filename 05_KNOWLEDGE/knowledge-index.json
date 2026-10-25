@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T11:43:48.281Z",
+  "last_updated": "2026-10-25T11:53:47.555Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4935,8 +4935,8 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "d9f86dc6",
-      "content_hash": "aba930c5787cdf230f49584f71a0b37d5ec76e96e9568fc37a67f49daa21b334",
+      "source_version": "80591248",
+      "content_hash": "94b160fb181074953b3019383e19a0b9549a05b50da4e950e2a098dd5ae18622",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
@@ -4969,6 +4969,11 @@
           "number": 3697,
           "title": "shell): match kitty and modifyOtherKeys encodings of intercepted keybindings (#3",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4273,
+          "title": "npm install lock (#3315)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4976,7 +4981,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:50:17.797Z",
+      "verified_at": "2026-10-25T11:53:45.261Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21618,7 +21623,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "b7dfa3aa6df2bcba00e3df4499dcd0cbfa81473698371061917beb2edea6a437",
+      "content_hash": "81c7d7ade0a91f8e2fd8e3141331aefe0651bcd5a80422cb4f083843c0120b75",
       "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "promoted_rules": [
@@ -21705,7 +21710,7 @@
         "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
         "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub"
       ],
-      "verified_at": "2026-10-20T16:57:09.764Z",
+      "verified_at": "2026-10-25T11:53:47.544Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122559,6 +122564,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T11:43:48.270Z"
+    },
+    "rule-4273": {
+      "learning_id": "rule-4273",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4273,
+      "title": "npm install lock (#3315)",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "80591248",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:53:45.261Z"
     }
   },
   "aliases": {

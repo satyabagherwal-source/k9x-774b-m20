@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-DDVA",
-    "timestamp": "2026-10-22T15:35:34.774Z",
-    "repository": "rqlite/rqlite",
-    "learningId": "learn-github-rqlite-rqlite",
-    "contentHash": "5c995f82d7f036f30882ab15a26b9f9575936f3920834d22f687f5d5f88e2704",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-DG0M",
-    "timestamp": "2026-10-22T15:35:37.558Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "fb6b2150f5b5a0225e41e1e0c64a59b918621afdca308a83be111013b3b9ccac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-LQWZ",
     "timestamp": "2026-10-22T15:42:04.932Z",
     "repository": "opentofu/opentofu",
@@ -7492,6 +7462,36 @@
     "contentHash": "f3a59d387e7a8d8fab60d1acdd9a5bdd0e86df5b79ba769dce989c1da41f1f17",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-RO8E",
+    "timestamp": "2026-10-25T11:53:45.326Z",
+    "repository": "cachix/devenv",
+    "learningId": "learn-github-cachix-devenv",
+    "contentHash": "94b160fb181074953b3019383e19a0b9549a05b50da4e950e2a098dd5ae18622",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-RPZQ",
+    "timestamp": "2026-10-25T11:53:47.606Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-lightricks-ltx-2-5",
+    "contentHash": "81c7d7ade0a91f8e2fd8e3141331aefe0651bcd5a80422cb4f083843c0120b75",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
