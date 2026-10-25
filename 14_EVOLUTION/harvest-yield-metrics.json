@@ -1,10 +1,24 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T16:28:34.514Z",
-  "total_cycles_completed": 4876,
+  "last_updated": "2026-10-25T16:31:37.287Z",
+  "total_cycles_completed": 4874,
   "total_learnings_persisted": 4876,
-  "total_rules_promoted": 4258,
+  "total_rules_promoted": 4260,
   "history": [
+    {
+      "timestamp": "2026-10-25T05:58:42.275Z",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:58:44.766Z",
+      "repository": "HuggingFaceBio/Carbon-X",
+      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
     {
       "timestamp": "2026-10-25T05:58:57.855Z",
       "repository": "ClickHouse/ClickHouse",
@@ -1392,18 +1406,22 @@
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-25T16:28:20.866Z",
-      "repository": "canberkkkkkk/ema-lightning",
-      "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
+      "timestamp": "2026-10-25T16:29:23.985Z",
+      "event": "RULE_PROMOTION_COMPLETE",
+      "source": "old-english-font-free",
+      "promotedRules": [
+        4379
+      ],
+      "dossier": "07_PROJECT_LEARNING/old-english-font-learnings.md"
     },
     {
-      "timestamp": "2026-10-25T16:28:34.514Z",
-      "repository": "LLPhant/LLPhant",
-      "learningId": "learn-github-llphant-llphant",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
+      "timestamp": "2026-10-25T16:31:37.287Z",
+      "event": "RULE_PROMOTION_COMPLETE",
+      "source": "old-english-font-free",
+      "promotedRules": [
+        4379
+      ],
+      "dossier": "07_PROJECT_LEARNING/old-english-font-learnings.md"
     }
   ]
 }

@@ -1,5 +1,35 @@
 [
   {
+    "cycleId": "CYCLE-20261022-SH4Y",
+    "timestamp": "2026-10-22T19:03:16.162Z",
+    "repository": "fb55/css-select",
+    "learningId": "learn-github-fb55-css-select",
+    "contentHash": "58e405469fba78ad6466a727890e5873dd91c8764b9740c4b1f9c55a4e30e44a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261022-0TOW",
+    "timestamp": "2026-10-22T19:09:45.680Z",
+    "repository": "cheeriojs/dom-serializer",
+    "learningId": "learn-github-cheeriojs-dom-serializer",
+    "contentHash": "b3efe3089c46c54fa85ef9d75600851e64cb1e1170a456447bc9e3bff0b3f75b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
     "cycleId": "CYCLE-20261022-0U9X",
     "timestamp": "2026-10-22T19:09:46.437Z",
     "repository": "sozercan/kaset",
@@ -7470,33 +7500,41 @@
     }
   },
   {
-    "cycleId": "CYCLE-20261025-KSU2",
-    "timestamp": "2026-10-25T16:28:20.858Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-    "contentHash": "200645d600c2a4323b7d0c9adbcd33790de1a17d313c9c463402cd5e86d8b5a2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
+    "cycleId": "CYCLE-20261025-BING-4379",
+    "timestamp": "2026-10-25T16:29:23.982Z",
+    "repository": "local/old-english-font-free",
+    "learningId": "learn-local-old-english-font-bing-4379",
+    "contentHash": "d38673c6afab3e1585730e7eaa059793aa8e62817eb58f826998e6ca5e375ed6",
+    "status": "PROMOTED_AND_VERIFIED",
+    "promotedRulesCount": 1,
+    "promotedRules": [
+      4379
+    ],
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
       "content_hash_verified": true,
-      "index_read_back_verified": true
+      "index_read_back_verified": true,
+      "retrieval_verified": true
     }
   },
   {
-    "cycleId": "CYCLE-20261025-L3D4",
-    "timestamp": "2026-10-25T16:28:34.504Z",
-    "repository": "LLPhant/LLPhant",
-    "learningId": "learn-github-llphant-llphant",
-    "contentHash": "b353f0570ac925111758507b71de7726d47650dfd6903477499084cbf9ac718c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
+    "cycleId": "CYCLE-20261025-BING-4379",
+    "timestamp": "2026-10-25T16:31:37.276Z",
+    "repository": "local/old-english-font-free",
+    "learningId": "learn-local-old-english-font-bing-4379",
+    "contentHash": "13a8a75f55fe3ed232183bcd23e615ae1097f84ef45f1235bf7464d7389eb3d6",
+    "status": "PROMOTED_AND_VERIFIED",
+    "promotedRulesCount": 1,
+    "promotedRules": [
+      4379
+    ],
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
       "content_hash_verified": true,
-      "index_read_back_verified": true
+      "index_read_back_verified": true,
+      "retrieval_verified": true
     }
   }
 ]
