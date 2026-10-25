@@ -1155,8 +1155,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceVersion": "hf-qwen-qwen3-vl-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "03fde8f0070a85e631aef827ff813e8f120b2c6e1e9f4b8bfc6b2ca1ff65ff98",
-    "lastHarvestedAt": "2026-10-21T03:42:57.997Z",
+    "contentHash": "fe24084134d320bc63ff45261775c72a5a768ca4490dd1c4b08f3ed225856d17",
+    "lastHarvestedAt": "2026-10-25T23:53:23.071Z",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
@@ -8663,10 +8663,10 @@
     "repository": "prof18/feed-flow",
     "platform": "github",
     "sourceUrl": "https://github.com/prof18/feed-flow",
-    "sourceVersion": "27e55ef0",
+    "sourceVersion": "478079e6",
     "license": "Apache-2.0",
-    "contentHash": "53ac14ae6e865e29e98a2e9c3a2cd5aa73b17b5e7332ae90890ad9abb33570b6",
-    "lastHarvestedAt": "2026-10-21T15:22:37.304Z",
+    "contentHash": "f5717861eb2627527ec3f695c9a33030a8c950d4e212ccdee83773800619b246",
+    "lastHarvestedAt": "2026-10-25T23:53:32.521Z",
     "learningId": "learn-github-prof18-feed-flow"
   },
   "michaelbull-kotlin-result": {

@@ -5043,3 +5043,5 @@
 | `CYCLE-20261025-Z6U8` | `2026-10-25T23:39:26.432Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4492` | Yes (`33d9989c...`) |
 | `CYCLE-20261025-7GOA` | `2026-10-25T23:45:52.426Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3545` | Yes (`a6d17f1f...`) |
 | `CYCLE-20261025-7L3H` | `2026-10-25T23:45:58.157Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule 1135, Rule 4493` | Yes (`c463c737...`) |
+| `CYCLE-20261025-H4E4` | `2026-10-25T23:53:23.068Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`fe240841...`) |
+| `CYCLE-20261025-HBOM` | `2026-10-25T23:53:32.518Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4494` | Yes (`f5717861...`) |

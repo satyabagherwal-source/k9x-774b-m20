@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T23:45:58.102Z",
+  "last_updated": "2026-10-25T23:53:32.471Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25175,7 +25175,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "03fde8f0070a85e631aef827ff813e8f120b2c6e1e9f4b8bfc6b2ca1ff65ff98",
+      "content_hash": "fe24084134d320bc63ff45261775c72a5a768ca4490dd1c4b08f3ed225856d17",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -25212,7 +25212,7 @@
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1"
       ],
-      "verified_at": "2026-10-21T03:42:57.961Z",
+      "verified_at": "2026-10-25T23:53:22.996Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41379,14 +41379,19 @@
       "slug": "prof18-feed-flow",
       "platform": "github",
       "source_url": "https://github.com/prof18/feed-flow",
-      "source_version": "27e55ef0",
-      "content_hash": "53ac14ae6e865e29e98a2e9c3a2cd5aa73b17b5e7332ae90890ad9abb33570b6",
+      "source_version": "478079e6",
+      "content_hash": "f5717861eb2627527ec3f695c9a33030a8c950d4e212ccdee83773800619b246",
       "dossier_path": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "promoted_rules": [
         {
           "number": 2754,
           "title": "Require Xcode 27.1 for iOS builds",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4494,
+          "title": "Add iOS website verification and enable recovery in release builds",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -41395,7 +41400,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:22:37.254Z",
+      "verified_at": "2026-10-25T23:53:32.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126926,6 +126931,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T23:45:58.090Z"
+    },
+    "rule-4494": {
+      "learning_id": "rule-4494",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4494,
+      "title": "Add iOS website verification and enable recovery in release builds",
+      "source_url": "https://github.com/prof18/feed-flow",
+      "source_version": "478079e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T23:53:32.461Z"
     }
   },
   "aliases": {

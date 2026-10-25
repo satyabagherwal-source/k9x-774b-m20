@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T23:45:58.169Z",
+  "last_updated": "2026-10-25T23:53:32.529Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1535,14 +1535,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "03fde8f0070a85e631aef827ff813e8f120b2c6e1e9f4b8bfc6b2ca1ff65ff98",
-      "verified_at": "2026-10-21T03:42:58.002Z",
+      "content_hash": "fe24084134d320bc63ff45261775c72a5a768ca4490dd1c4b08f3ed225856d17",
+      "verified_at": "2026-10-25T23:53:23.077Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T03:42:58.002Z"
+      "last_updated": "2026-10-25T23:53:23.077Z"
     },
     "nomic-ai/nomic-embed-text-v1.5": {
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -13041,14 +13041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prof18-feed-flow",
-      "content_hash": "53ac14ae6e865e29e98a2e9c3a2cd5aa73b17b5e7332ae90890ad9abb33570b6",
-      "verified_at": "2026-10-21T15:22:37.310Z",
+      "content_hash": "f5717861eb2627527ec3f695c9a33030a8c950d4e212ccdee83773800619b246",
+      "verified_at": "2026-10-25T23:53:32.528Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T15:22:37.310Z"
+      "last_updated": "2026-10-25T23:53:32.528Z"
     },
     "michaelbull/kotlin-result": {
       "repository": "michaelbull/kotlin-result",

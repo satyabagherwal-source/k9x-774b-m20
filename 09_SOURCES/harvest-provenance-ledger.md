@@ -5050,3 +5050,5 @@ Every entry in this ledger must capture:
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `b80c75cb` | Multi-dimensional audit evidence | 2026-10-25T23:39:26.435Z |
 | `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `bd774d32` | Multi-dimensional audit evidence | 2026-10-25T23:45:52.429Z |
 | `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-25T23:45:58.160Z |
+| `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-25T23:53:23.071Z |
+| `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `478079e6` | Multi-dimensional audit evidence | 2026-10-25T23:53:32.521Z |

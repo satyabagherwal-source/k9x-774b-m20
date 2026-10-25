@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T23:45:58.165Z",
-  "total_cycles_completed": 5020,
-  "total_learnings_persisted": 5020,
-  "total_rules_promoted": 4384,
+  "last_updated": "2026-10-25T23:53:32.525Z",
+  "total_cycles_completed": 5022,
+  "total_learnings_persisted": 5022,
+  "total_rules_promoted": 4385,
   "history": [
-    {
-      "timestamp": "2026-10-25T14:03:25.766Z",
-      "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T14:03:28.797Z",
-      "repository": "giancarloerra/SocratiCode",
-      "learningId": "learn-github-giancarloerra-socraticode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T14:03:30.693Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1389,20 @@
       "repository": "openai-community/gpt2",
       "learningId": "learn-huggingface-openai-community-gpt2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T23:53:23.075Z",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T23:53:32.525Z",
+      "repository": "prof18/feed-flow",
+      "learningId": "learn-github-prof18-feed-flow",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
