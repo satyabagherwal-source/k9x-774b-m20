@@ -495,8 +495,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
     "license": "Open-Source",
-    "contentHash": "9edc67be5e9ca67f71d221e83f044804cb7aa73fd3c4904bcd5ad374acf6ebb6",
-    "lastHarvestedAt": "2026-10-20T19:04:31.260Z",
+    "contentHash": "1758a10a102349b138684fb042fbc03a1cde7a50f824905a84d899f3659952c3",
+    "lastHarvestedAt": "2026-10-25T14:31:43.511Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
   },
   "hf-inclusionai-ming-image-0.1-design": {
@@ -6943,10 +6943,10 @@
     "repository": "angular/angular",
     "platform": "github",
     "sourceUrl": "https://github.com/angular/angular",
-    "sourceVersion": "970bbc7c",
+    "sourceVersion": "bd4e7816",
     "license": "MIT",
-    "contentHash": "c43c07dba1d770120f194aa530e7006f132bd5070ffc92389638166ece433721",
-    "lastHarvestedAt": "2026-10-23T10:23:09.060Z",
+    "contentHash": "739e0d11fe6e9799fa2780aa52c28465342d32af2bbccd4853ab41186d676b87",
+    "lastHarvestedAt": "2026-10-25T14:31:39.173Z",
     "learningId": "learn-github-angular-angular"
   },
   "devspace-sh-devspace": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T14:25:20.226Z",
-  "total_cycles_completed": 4830,
-  "total_learnings_persisted": 4830,
-  "total_rules_promoted": 4219,
+  "last_updated": "2026-10-25T14:31:43.515Z",
+  "total_cycles_completed": 4832,
+  "total_learnings_persisted": 4832,
+  "total_rules_promoted": 4223,
   "history": [
-    {
-      "timestamp": "2026-10-25T04:12:34.704Z",
-      "repository": "BAAI/bge-base-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:12:35.297Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T04:12:39.974Z",
       "repository": "GreptimeTeam/greptimedb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T14:25:20.226Z",
       "repository": "akhilaaa3/Jev-Omni",
       "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:31:39.177Z",
+      "repository": "angular/angular",
+      "learningId": "learn-github-angular-angular",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:31:43.515Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

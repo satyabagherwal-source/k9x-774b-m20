@@ -4860,3 +4860,5 @@ Every entry in this ledger must capture:
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `66e63611` | Multi-dimensional audit evidence | 2026-10-25T14:25:10.879Z |
 | `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `36683ed7` | Multi-dimensional audit evidence | 2026-10-25T14:25:16.146Z |
 | `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-25T14:25:20.222Z |
+| `learn-github-angular-angular` | `https://github.com/angular/angular` | `bd4e7816` | Multi-dimensional audit evidence | 2026-10-25T14:31:39.173Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-25T14:31:43.511Z |

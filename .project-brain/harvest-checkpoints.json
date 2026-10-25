@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T14:25:20.235Z",
+  "last_updated": "2026-10-25T14:31:43.523Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -605,14 +605,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "content_hash": "9edc67be5e9ca67f71d221e83f044804cb7aa73fd3c4904bcd5ad374acf6ebb6",
-      "verified_at": "2026-10-20T19:04:31.269Z",
+      "content_hash": "1758a10a102349b138684fb042fbc03a1cde7a50f824905a84d899f3659952c3",
+      "verified_at": "2026-10-25T14:31:43.517Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:04:31.269Z"
+      "last_updated": "2026-10-25T14:31:43.517Z"
     },
     "inclusionAI/Ming-Image-0.1-Design": {
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -10476,14 +10476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-angular-angular",
-      "content_hash": "c43c07dba1d770120f194aa530e7006f132bd5070ffc92389638166ece433721",
-      "verified_at": "2026-10-23T10:23:09.072Z",
+      "content_hash": "739e0d11fe6e9799fa2780aa52c28465342d32af2bbccd4853ab41186d676b87",
+      "verified_at": "2026-10-25T14:31:39.180Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:23:09.072Z"
+      "last_updated": "2026-10-25T14:31:39.180Z"
     },
     "devspace-sh/devspace": {
       "repository": "devspace-sh/devspace",

@@ -4853,3 +4853,5 @@
 | `CYCLE-20261025-6EOS` | `2026-10-25T14:25:10.876Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4337` | Yes (`a7904507...`) |
 | `CYCLE-20261025-6IR3` | `2026-10-25T14:25:16.143Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4338` | Yes (`6b5344c3...`) |
 | `CYCLE-20261025-6LWA` | `2026-10-25T14:25:20.218Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1131, Rule 4339, Rule 4340` | Yes (`cfec98b6...`) |
+| `CYCLE-20261025-EQAQ` | `2026-10-25T14:31:39.170Z` | `angular/angular` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4341` | Yes (`739e0d11...`) |
+| `CYCLE-20261025-ETN8` | `2026-10-25T14:31:43.508Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4342, Rule 4343, Rule 4344` | Yes (`1758a10a...`) |

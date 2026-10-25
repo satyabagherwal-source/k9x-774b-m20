@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T14:25:20.165Z",
+  "last_updated": "2026-10-25T14:31:43.456Z",
   "total_verified_learnings": 1086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1795,8 +1795,8 @@
       "slug": "angular-angular",
       "platform": "github",
       "source_url": "https://github.com/angular/angular",
-      "source_version": "970bbc7c",
-      "content_hash": "c43c07dba1d770120f194aa530e7006f132bd5070ffc92389638166ece433721",
+      "source_version": "bd4e7816",
+      "content_hash": "739e0d11fe6e9799fa2780aa52c28465342d32af2bbccd4853ab41186d676b87",
       "dossier_path": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "promoted_rules": [
@@ -1859,6 +1859,11 @@
           "number": 3872,
           "title": "Separation of Syntactic Dependency Intent from Compiler Fallback Emission",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4341,
+          "title": "docs: label developer preview and experimental APIs in guides",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1866,7 +1871,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:23:08.994Z",
+      "verified_at": "2026-10-25T14:31:39.100Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26919,7 +26924,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "9edc67be5e9ca67f71d221e83f044804cb7aa73fd3c4904bcd5ad374acf6ebb6",
+      "content_hash": "1758a10a102349b138684fb042fbc03a1cde7a50f824905a84d899f3659952c3",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
@@ -27092,6 +27097,21 @@
           "number": 3335,
           "title": "**Precision‑Aware Cache Management**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4342,
+          "title": "**Consistent Special‑Token Mapping Across Tokenizer and Model**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4343,
+          "title": "**Immutable Configuration After Model Load**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4344,
+          "title": "**Strict EOS Token List Enforcement**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27112,7 +27132,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-10-20T19:04:31.205Z",
+      "verified_at": "2026-10-25T14:31:43.438Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -123900,6 +123920,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T14:25:20.154Z"
+    },
+    "rule-4341": {
+      "learning_id": "rule-4341",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4341,
+      "title": "docs: label developer preview and experimental APIs in guides",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "bd4e7816",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:31:39.100Z"
+    },
+    "rule-4342": {
+      "learning_id": "rule-4342",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4342,
+      "title": "**Consistent Special‑Token Mapping Across Tokenizer and Model**",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:31:43.438Z"
+    },
+    "rule-4343": {
+      "learning_id": "rule-4343",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4343,
+      "title": "**Immutable Configuration After Model Load**",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:31:43.438Z"
+    },
+    "rule-4344": {
+      "learning_id": "rule-4344",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4344,
+      "title": "**Strict EOS Token List Enforcement**",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:31:43.438Z"
     }
   },
   "aliases": {
