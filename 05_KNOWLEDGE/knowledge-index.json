@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T12:56:52.295Z",
+  "last_updated": "2026-10-25T13:08:21.402Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15189,7 +15189,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "90f3dbcf304c7f7e8eccb88d5f41c5a5c97a319d0a16947de153fe0333ada02a",
+      "content_hash": "a5bfb8db551a006ba6ef5cadfe5ad6dfadc6035d3c1083e441d587b93b410db6",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -15373,6 +15373,21 @@
           "number": 3306,
           "title": "Max Position Embedding Sufficiency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4300,
+          "title": "Consistent Attention Interval Configuration",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4301,
+          "title": "Dtype Consistency Across Model Components",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4302,
+          "title": "Tokenizer Pad Token Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15393,7 +15408,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-10-20T18:01:59.481Z",
+      "verified_at": "2026-10-25T13:08:15.805Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49237,8 +49252,8 @@
       "slug": "tw93-mole",
       "platform": "github",
       "source_url": "https://github.com/tw93/Mole",
-      "source_version": "f4fbdd63",
-      "content_hash": "c1fd0a97a415608355a10395a32d9f1d2b22d27c225ad33bc2d66b3bc7ae3946",
+      "source_version": "6020bc9c",
+      "content_hash": "79e6be67e0a6ab94434cba3da78c87864462df44413162bf91eb6c976c781f76",
       "dossier_path": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "promoted_rules": [
@@ -49251,6 +49266,11 @@
           "number": 3372,
           "title": "uninstall): keep cask sudo prompts in the foreground (#1784)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4299,
+          "title": "clean): protect active caches and measure reclaimable blocks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49258,7 +49278,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T20:41:40.519Z",
+      "verified_at": "2026-10-25T13:08:14.753Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60896,8 +60916,8 @@
       "slug": "provablehq-snarkos",
       "platform": "github",
       "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "21c27035",
-      "content_hash": "fdf620f048b92f200fa341c42b6d0fc204fa6bf9100ac15f0737a19f8a71bc25",
+      "source_version": "929648f4",
+      "content_hash": "3d99c9eb02761202d2baf5dd014e1f7eaf4aaf3dc1f94e192faa48a1bfa336e6",
       "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
@@ -60940,6 +60960,11 @@
           "number": 3992,
           "title": "Bump crates with security advisories",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4303,
+          "title": "Merge pull request #4575 from aleo-labs-protocol/deps/crypto-bigint-0.7.7",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60947,7 +60972,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:45:09.943Z",
+      "verified_at": "2026-10-25T13:08:21.390Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -123058,6 +123083,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T12:56:52.286Z"
+    },
+    "rule-4299": {
+      "learning_id": "rule-4299",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4299,
+      "title": "clean): protect active caches and measure reclaimable blocks",
+      "source_url": "https://github.com/tw93/Mole",
+      "source_version": "6020bc9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:08:14.753Z"
+    },
+    "rule-4300": {
+      "learning_id": "rule-4300",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4300,
+      "title": "Consistent Attention Interval Configuration",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:08:15.805Z"
+    },
+    "rule-4301": {
+      "learning_id": "rule-4301",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4301,
+      "title": "Dtype Consistency Across Model Components",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:08:15.805Z"
+    },
+    "rule-4302": {
+      "learning_id": "rule-4302",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4302,
+      "title": "Tokenizer Pad Token Consistency",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:08:15.805Z"
+    },
+    "rule-4303": {
+      "learning_id": "rule-4303",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4303,
+      "title": "Merge pull request #4575 from aleo-labs-protocol/deps/crypto-bigint-0.7.7",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "929648f4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:08:21.390Z"
     }
   },
   "aliases": {

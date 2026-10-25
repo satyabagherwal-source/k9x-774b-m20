@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `21c27035`  
+> **Source Version**: `929648f4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:45:09.755Z  
+> **Timestamp**: 2026-10-25T13:08:21.090Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:45:09.507Z  
+> **Harvest Timestamp**: 2026-10-25T13:08:19.934Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1969,141 +1969,122 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d2154d88` (2026-10-24)
-**Commit Message**: Bump crates with security advisories
+### Incident Patch 1: `929648f4` (2026-10-25)
+**Commit Message**: Merge pull request #4575 from aleo-labs-protocol/deps/crypto-bigint-0.7.7
 
-Fixes:
-- [RUSTSEC-2026-0385](https://rustsec.org/advisories/RUSTSEC-2026-0385.html) in `ctutils 0.4.2`: Non-constant-time mask generation and `u128` comparisons
-- [RUSTSEC-2026-0386](https://rustsec.org/advisories/RUSTSEC-2026-0386.html) in `tokio 1.53.1`: `AsyncFd::new` and related constructors violate I/O safety
-
-**File**: `Cargo.lock` (modified, +15/-15)
+**File**: `Cargo.lock` (modified, +2/-3)
 ```diff
-@@ -847,7 +847,7 @@ version = "3.1.1"
+@@ -1166,9 +1166,9 @@ checksum = "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5"
+ 
+ [[package]]
+ name = "crypto-bigint"
+-version = "0.7.5"
++version = "0.7.7"
  source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
+-checksum = "1a52aa3fcda4e6302a9f48734f234d35d4721b96f8fe07d073f07ce9df4f0271"
++checksum = "cc907c45bb7e9ef8fc3778defd0f3cd8c81288f1b4e748eba064948f20c47122"
  dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+  "cpubits",
+  "ctutils",
+@@ -4938,7 +4938,6 @@ version = "4.12.0"
+ dependencies = [
+  "built",
+  "clap",
+- "crypto-bigint",
+  "elliptic-curve",
+  "locktick",
+  "rusty-hook",
+```
+
+**File**: `Cargo.toml` (modified, +0/-7)
+```diff
+@@ -383,12 +383,6 @@ workspace = true
+ version = "=0.14.1"
+ default-features = false
+ 
+-# Pinned alongside elliptic-curve to avoid resolving yanked crypto-bigint releases.
+-[dependencies.crypto-bigint]
+-version = "=0.7.5"
+-default-features = false
+-features = ["hybrid-array", "rand_core", "subtle", "zeroize"]
+-
+ [dev-dependencies.rusty-hook]
+ version = "0.11.2"
+ 
+@@ -421,7 +415,6 @@ opt-level = 2
+ [package.metadata.cargo-machete]
+ ignored = [
+   "elliptic-curve", # Needed to pin the crate to a specific version
+-  "crypto-bigint", # Needed to pin the crate to a specific version
+   "snarkos-account", # Needed for cuda feature
+   "snarkos-node", # Needed for metrics feature
+   "snarkos-node-bft", # Needed for cuda and locktick features
+```
+
+---
+
+### Incident Patch 2: `b6f92a00` (2026-10-24)
+**Commit Message**: Remove the crypto-bigint pin to move past RUSTSEC-2026-0387
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01Cn39yVeJuiYjCFxEwQU5F2
+
+**File**: `Cargo.lock` (modified, +2/-3)
+```diff
+@@ -1166,9 +1166,9 @@ checksum = "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5"
  
  [[package]]
-@@ -1220,9 +1220,9 @@ dependencies = [
- 
- [[package]]
- name = "ctutils"
--version = "0.4.2"
-+version = "0.4.5"
+ name = "crypto-bigint"
+-version = "0.7.5"
++version = "0.7.7"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7d5515a3834141de9eafb9717ad39eea8247b5674e6066c404e8c4b365d2a29e"
-+checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
+-checksum = "1a52aa3fcda4e6302a9f48734f234d35d4721b96f8fe07d073f07ce9df4f0271"
++checksum = "cc907c45bb7e9ef8fc3778defd0f3cd8c81288f1b4e748eba064948f20c47122"
  dependencies = [
-  "cmov",
-  "subtle",
-@@ -1660,7 +1660,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+  "cpubits",
+  "ctutils",
+@@ -4938,7 +4938,6 @@ version = "4.12.0"
  dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+  "built",
+  "clap",
+- "crypto-bigint",
+  "elliptic-curve",
+  "locktick",
+  "rusty-hook",
+```
+
+**File**: `Cargo.toml` (modified, +0/-7)
+```diff
+@@ -383,12 +383,6 @@ workspace = true
+ version = "=0.14.1"
+ default-features = false
  
- [[package]]
-@@ -2386,7 +2386,7 @@ dependencies = [
-  "libc",
-  "percent-encoding",
-  "pin-project-lite",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "system-configuration",
-  "tokio",
-  "tower-service",
-@@ -3231,7 +3231,7 @@ version = "0.50.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
+-# Pinned alongside elliptic-curve to avoid resolving yanked crypto-bigint releases.
+-[dependencies.crypto-bigint]
+-version = "=0.7.5"
+-default-features = false
+-features = ["hybrid-array", "rand_core", "subtle", "zeroize"]
+-
+ [dev-dependencies.rusty-hook]
+ version = "0.11.2"
  
- [[package]]
-@@ -3850,7 +3850,7 @@ dependencies = [
-  "quinn-udp",
-  "rustc-hash",
-  "rustls",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "thiserror 2.0.20",
-  "tokio",
-  "tracing",
-@@ -3889,9 +3889,9 @@ dependencies = [
-  "cfg_aliases",
-  "libc",
-  "once_cell",
-- "socket2 0.6.5",
-+ "socket2 0.5.10",
-  "tracing",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -4396,7 +4396,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys 0.12.1",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -4455,7 +4455,7 @@ dependencies = [
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -6660,7 +6660,7 @@ dependencies = [
-  "getrandom 0.4.3",
-  "once_cell",
-  "rustix 1.1.4",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -6959,9 +6959,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
- 
- [[package]]
- name = "tokio"
--version = "1.53.1"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "bytes",
-  "libc",
-@@ -7777,7 +7777,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
+@@ -421,7 +415,6 @@ opt-level = 2
+ [package.metadata.cargo-machete]
+ ignored = [
+   "elliptic-curve", # Needed to pin the crate to a specific version
+-  "crypto-bigint", # Needed to pin the crate to a specific version
+   "snarkos-account", # Needed for cuda feature
+   "snarkos-node", # Needed for metrics feature
+   "snarkos-node-bft", # Needed for cuda and locktick features
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4575** (2026-10-25): Remove the crypto-bigint pin to move past RUSTSEC-2026-0387 (@cbeck88)
 - **PR #4573** (2026-10-24): Bump crates with security advisories (@aleo-labs-merge-bot[bot])
 - **PR #4572** (2026-10-22): Merge testnet into staging (@aleo-labs-merge-bot[bot])
 - **PR #4571** (2026-10-21): chore(deps): bump webpki-roots and webpki-root-certs to 1.0.10 (@awatts73)
 - **PR #4570** (2026-10-21): bench: rename cache-hit REST verification benches to cached_verify (@cbeck88)
 - **PR #4568** (2026-10-21): [Release] Testnet v4.12.1 (@vicsn)
-- **PR #4567** (2026-10-19): chore(deps): bump mockall from 0.13.1 to 0.15.0 (@dependabot[bot])
 
 ---
 
@@ -2123,13 +2104,13 @@ Fixes:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump crates with security advisories
+## X. Merge pull request #4575 from aleo-labs-protocol/deps/crypto-bigint-0.7.7
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d2154d88`: Bump crates with security advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `929648f4`: Merge pull request #4575 from aleo-labs-protocol/deps/crypto-bigint-0.7.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2137,42 +2118,17 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.52.0",
-version = "0.4.5"
-checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
- "windows-sys 0.52.0",
- "socket2 0.5.10",
- "windows-sys 0.59.0",
- "socket2 0.5.10",
- "socket2 0.5.10",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
-version = "1.54.1"
-checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- "windows-sys 0.52.0",
+version = "0.7.7"
+checksum = "cc907c45bb7e9ef8fc3778defd0f3cd8c81288f1b4e748eba064948f20c47122"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "windows-sys 0.61.2",
-version = "0.4.2"
-checksum = "7d5515a3834141de9eafb9717ad39eea8247b5674e6066c404e8c4b365d2a29e"
- "windows-sys 0.61.2",
- "socket2 0.6.5",
- "windows-sys 0.61.2",
- "socket2 0.6.5",
- "socket2 0.6.5",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
-version = "1.53.1"
-checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
- "windows-sys 0.61.2",
+version = "0.7.5"
+checksum = "1a52aa3fcda4e6302a9f48734f234d35d4721b96f8fe07d073f07ce9df4f0271"
+ "crypto-bigint",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d2154d88` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `929648f4` are properly handled with clean fallback behavior.

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-1NFE",
-    "timestamp": "2026-10-22T16:22:26.522Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "8e885ab0268bc697e3d3e86b5b9769d4add02e7fccd277e43cbf5f9749962cce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-1S0L",
-    "timestamp": "2026-10-22T16:22:32.469Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "9ae356823ee232e2d2cf74632da90d871f98e37e4de5fca08e9efe1130b26660",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-6ERC",
-    "timestamp": "2026-10-22T16:26:08.568Z",
-    "repository": "0xCUB3/wBlock",
-    "learningId": "learn-github-0xcub3-wblock",
-    "contentHash": "de8a26ff6e1fdba3393e20b0d0a186e7ebdf9d349d42914052e64fc8105556cf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-6GGF",
     "timestamp": "2026-10-22T16:26:10.767Z",
     "repository": "open-policy-agent/gatekeeper",
@@ -7490,6 +7445,51 @@
     "repository": "zarf-dev/zarf",
     "learningId": "learn-github-zarf-dev-zarf",
     "contentHash": "e0b4c9cc5161acb8f20b9ca1d9a61117ba53961b07c7fb497ea94ef5d7f3d428",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-FGX4",
+    "timestamp": "2026-10-25T13:08:14.824Z",
+    "repository": "tw93/Mole",
+    "learningId": "learn-github-tw93-mole",
+    "contentHash": "79e6be67e0a6ab94434cba3da78c87864462df44413162bf91eb6c976c781f76",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-FHQ6",
+    "timestamp": "2026-10-25T13:08:15.870Z",
+    "repository": "HemmingwayAI/Hemmingway-1",
+    "learningId": "learn-huggingface-altworld-hemmingway-1",
+    "contentHash": "a5bfb8db551a006ba6ef5cadfe5ad6dfadc6035d3c1083e441d587b93b410db6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-FM1C",
+    "timestamp": "2026-10-25T13:08:21.456Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "3d99c9eb02761202d2baf5dd014e1f7eaf4aaf3dc1f94e192faa48a1bfa336e6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

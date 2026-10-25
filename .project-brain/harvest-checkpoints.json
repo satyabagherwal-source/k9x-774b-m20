@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T12:56:52.353Z",
+  "last_updated": "2026-10-25T13:08:21.473Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "fdf620f048b92f200fa341c42b6d0fc204fa6bf9100ac15f0737a19f8a71bc25",
-      "verified_at": "2026-10-25T03:45:10.026Z",
+      "content_hash": "3d99c9eb02761202d2baf5dd014e1f7eaf4aaf3dc1f94e192faa48a1bfa336e6",
+      "verified_at": "2026-10-25T13:08:21.466Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:45:10.026Z"
+      "last_updated": "2026-10-25T13:08:21.466Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -11106,14 +11106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-mole",
-      "content_hash": "c1fd0a97a415608355a10395a32d9f1d2b22d27c225ad33bc2d66b3bc7ae3946",
-      "verified_at": "2026-10-20T20:41:40.607Z",
+      "content_hash": "79e6be67e0a6ab94434cba3da78c87864462df44413162bf91eb6c976c781f76",
+      "verified_at": "2026-10-25T13:08:14.835Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T20:41:40.607Z"
+      "last_updated": "2026-10-25T13:08:14.835Z"
     },
     "siderolabs/talos": {
       "repository": "siderolabs/talos",
@@ -15636,14 +15636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-altworld-hemmingway-1",
-      "content_hash": "90f3dbcf304c7f7e8eccb88d5f41c5a5c97a319d0a16947de153fe0333ada02a",
-      "verified_at": "2026-10-20T18:01:59.552Z",
+      "content_hash": "a5bfb8db551a006ba6ef5cadfe5ad6dfadc6035d3c1083e441d587b93b410db6",
+      "verified_at": "2026-10-25T13:08:15.883Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T18:01:59.552Z"
+      "last_updated": "2026-10-25T13:08:15.883Z"
     },
     "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16": {
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",

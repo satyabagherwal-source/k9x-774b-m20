@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T12:56:52.345Z",
-  "total_cycles_completed": 4797,
-  "total_learnings_persisted": 4797,
-  "total_rules_promoted": 4174,
+  "last_updated": "2026-10-25T13:08:21.463Z",
+  "total_cycles_completed": 4800,
+  "total_learnings_persisted": 4800,
+  "total_rules_promoted": 4179,
   "history": [
-    {
-      "timestamp": "2026-10-25T02:58:25.790Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T02:58:32.666Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T03:06:07.345Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T03:06:14.157Z",
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-25T12:56:52.345Z",
       "repository": "zarf-dev/zarf",
       "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T13:08:14.832Z",
+      "repository": "tw93/Mole",
+      "learningId": "learn-github-tw93-mole",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T13:08:15.880Z",
+      "repository": "HemmingwayAI/Hemmingway-1",
+      "learningId": "learn-huggingface-altworld-hemmingway-1",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T13:08:21.463Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

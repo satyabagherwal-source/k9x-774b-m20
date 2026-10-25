@@ -4820,3 +4820,6 @@
 | `CYCLE-20261025-0NIF` | `2026-10-25T12:56:43.527Z` | `flox/flox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/flox-flox-learnings.md` | Yes (`bf41708c...`) |
 | `CYCLE-20261025-0OMK` | `2026-10-25T12:56:44.972Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4296, Rule 4297` | Yes (`0534eeb6...`) |
 | `CYCLE-20261025-0UB6` | `2026-10-25T12:56:52.338Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4298` | Yes (`e0b4c9cc...`) |
+| `CYCLE-20261025-FGX4` | `2026-10-25T13:08:14.824Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4299` | Yes (`79e6be67...`) |
+| `CYCLE-20261025-FHQ6` | `2026-10-25T13:08:15.870Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4300, Rule 4301, Rule 4302` | Yes (`a5bfb8db...`) |
+| `CYCLE-20261025-FM1C` | `2026-10-25T13:08:21.456Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4303` | Yes (`3d99c9eb...`) |

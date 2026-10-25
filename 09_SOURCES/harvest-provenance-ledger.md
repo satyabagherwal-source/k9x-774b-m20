@@ -4827,3 +4827,6 @@ Every entry in this ledger must capture:
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `0e1822c8` | Multi-dimensional audit evidence | 2026-10-25T12:56:43.529Z |
 | `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-25T12:56:44.974Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `2904d9e1` | Multi-dimensional audit evidence | 2026-10-25T12:56:52.341Z |
+| `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `6020bc9c` | Multi-dimensional audit evidence | 2026-10-25T13:08:14.827Z |
+| `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-25T13:08:15.873Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `929648f4` | Multi-dimensional audit evidence | 2026-10-25T13:08:21.459Z |
